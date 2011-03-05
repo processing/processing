@@ -12,8 +12,38 @@ X   just delete ~/.android/debug.keystore
 X .java files are reported with Syntax Error with the Android build 0191
 X   http://code.google.com/p/processing/issues/detail?id=404
 
+_ when returning to android application, sometimes screen stays black
+_   http://code.google.com/p/processing/issues/detail?id=237
+Here's what is happening with the A2D renderer.  When the user hits the home button, the Android framework calls PApplet.surfaceDestroyed(), which recycles the drawing surface by calling PGraphicsAndroid2D.dispose().  The surface is never recreated.  The code path in PApplet.handleDraw() that reallocates the surface by calling PGraphicsAndroid2D.setSize() is missed because the dimensions of the sketch have not changed.
+Removing "bitmap.recycle()" from PGraphicsAndroid2D.dispose() fixes the problem.
+
 _ need sizeChanged() method... 
 _   also add the param to the xml file saying that it can deal w/ rotation
+
+mess
+X implement mode switching for android/java/etc
+_ check out andres' changes for PShape
+_ ctrl-shift-r (run on device) is totally hosed
+adb devices
+    status: 1
+    167ms
+    stdout:
+    stderr:
+error: protocol fault (no status)
+_ re: android libraries, from shawn van every
+The most powerful part were the libraries (and the ease with which they could be developed).  Location, SMS, Camera/Video, Bluetooth (for Arduino integration) and PClient/PRequest were by far the most used.  The ones that came with it, plus the ones from MJSoft were good though I ended up making a couple of very specific ones for my students: http://www.mobvcasting.com/wp/?cat=4
+_ adb -s HT91MLC00031 install -r sketchbook/Hue/android/bin/Hue-debug.apk
+_ 	pkg: /data/local/tmp/Hue-debug.apk
+_   Failure [INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES]
+_   why does this result return 0?
+_ separate activity and view
+_ process trackball events (they're only deltas)
+_ handle repeat key events 
+_ implement link()
+_ pause/resume trickiness with interactive apps
+_   can we serialize objects (even if slow?)
+_   add pause() and resume() methods to PApplet
+_ need to post android examples
 
 _ try using the internal javac on windows and see if exceptions come through..
 _   actually i think that might have been worse...
@@ -47,8 +77,6 @@ _   new for sdk tools r8, it's using ascii as the default, we're utf-8
 
 _ need to do something to make it easier to do new screen sizes.
 
-_ when returning to android application, sometimes screen stays black
-_   http://code.google.com/p/processing/issues/detail?id=237
 _ sketches must be removed manually if the debug keystore changes
 _   http://code.google.com/p/processing/issues/detail?id=236
 
