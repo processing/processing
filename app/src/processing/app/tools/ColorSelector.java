@@ -3,12 +3,11 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2006-08 Ben Fry and Casey Reas
+  Copyright (c) 2006-11 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
+  it under the terms of the GNU General Public License version 2
+  as published by the Free Software Foundation.
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -131,7 +130,7 @@ public class ColorSelector implements Tool, DocumentListener {
     blueField.getDocument().addDocumentListener(this);
     hexField.getDocument().addDocumentListener(this);
 
-    hexField.setText("FFFFFF");
+    hexField.setText("#FFFFFF");
   }
 
   
@@ -192,6 +191,9 @@ public class ColorSelector implements Tool, DocumentListener {
 
     } else if (doc == hexField.getDocument()) {
       String str = hexField.getText();
+      if (str.startsWith("#")) {
+        str = str.substring(1);
+      }
       while (str.length() < 6) {
         str += "0";
       }
@@ -253,7 +255,8 @@ public class ColorSelector implements Tool, DocumentListener {
 
 
   protected void updateHex() {
-    hexField.setText(PApplet.hex(red, 2) +
+    hexField.setText("#" + 
+                     PApplet.hex(red, 2) +
                      PApplet.hex(green, 2) +
                      PApplet.hex(blue, 2));
   }
@@ -310,7 +313,7 @@ public class ColorSelector implements Tool, DocumentListener {
     Box row;
 
     row = Box.createHorizontalBox();
-    row.add(createFixedLabel("H:"));
+    row.add(createFixedLabel("H"));
     row.add(hueField = new NumberField(4, false));
     row.add(new JLabel(" \u00B0"));  // degree symbol
     row.add(Box.createHorizontalGlue());
@@ -318,7 +321,7 @@ public class ColorSelector implements Tool, DocumentListener {
     box.add(Box.createVerticalStrut(5));
 
     row = Box.createHorizontalBox();
-    row.add(createFixedLabel("S:"));
+    row.add(createFixedLabel("S"));
     row.add(saturationField = new NumberField(4, false));
     row.add(new JLabel(" %"));
     row.add(Box.createHorizontalGlue());
@@ -326,7 +329,7 @@ public class ColorSelector implements Tool, DocumentListener {
     box.add(Box.createVerticalStrut(5));
 
     row = Box.createHorizontalBox();
-    row.add(createFixedLabel("B:"));
+    row.add(createFixedLabel("B"));
     row.add(brightnessField = new NumberField(4, false));
     row.add(new JLabel(" %"));
     row.add(Box.createHorizontalGlue());
@@ -336,21 +339,21 @@ public class ColorSelector implements Tool, DocumentListener {
     //
 
     row = Box.createHorizontalBox();
-    row.add(createFixedLabel("R:"));
+    row.add(createFixedLabel("R"));
     row.add(redField = new NumberField(4, false));
     row.add(Box.createHorizontalGlue());
     box.add(row);
     box.add(Box.createVerticalStrut(5));
 
     row = Box.createHorizontalBox();
-    row.add(createFixedLabel("G:"));
+    row.add(createFixedLabel("G"));
     row.add(greenField = new NumberField(4, false));
     row.add(Box.createHorizontalGlue());
     box.add(row);
     box.add(Box.createVerticalStrut(5));
 
     row = Box.createHorizontalBox();
-    row.add(createFixedLabel("B:"));
+    row.add(createFixedLabel("B"));
     row.add(blueField = new NumberField(4, false));
     row.add(Box.createHorizontalGlue());
     box.add(row);
@@ -359,7 +362,7 @@ public class ColorSelector implements Tool, DocumentListener {
     //
 
     row = Box.createHorizontalBox();
-    row.add(createFixedLabel("#"));
+    row.add(createFixedLabel(""));
     row.add(hexField = new NumberField(5, true));
     row.add(Box.createHorizontalGlue());
     box.add(row);
@@ -593,6 +596,7 @@ public class ColorSelector implements Tool, DocumentListener {
         if (parentField.allowHex) {
           if ((chars[i] >= 'A') && (chars[i] <= 'F')) ok = true;
           if ((chars[i] >= 'a') && (chars[i] <= 'f')) ok = true;
+          if ((offs == 0) && (i == 0) && (chars[i] == '#')) ok = true;
         }
         if (ok) {
           if (charCount != i) {  // shift if necessary
