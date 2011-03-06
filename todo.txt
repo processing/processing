@@ -95,21 +95,18 @@ X 'book' examples will be another category
 X   i'll add vida examples, can offer to others if they want
 X   should be "Getting Started" not GettingStarted
 X window that opens and contains list of examples
-_ examples button on toolbar?
-_ also, move open to a submenu? 
-_   then we'd have open / recent / sketchbook
 
 regressions
 X test code folder on desktop
 X   with applet
 X   with application
-_ test controlp5 on app
-_ test controlp5 on applet
-_ test code folder on android
+X test controlp5 on app
+X test controlp5 on applet
+X test code folder on android
+X resize image not shown in lower-right of window
 _ test libraries on android
 _ test opengl on android
 _ test .java files on desktop version
-_ resize image not shown in lower-right of window
 
 _ from jer: 'unexpected token void' for any type of error
 _   (due to fallback in preprocessor)
@@ -117,6 +114,9 @@ _   'public' keyword in class declarations breaks syntax checker
 _   http://code.google.com/p/processing/issues/detail?id=551
 
 _ untitled sketches not working properly
+
+discuss w/ casey
+_ examples button on toolbar? open / recent / sketchbook?
 
 ugliness
 _ inside AndroidPreprocessor
