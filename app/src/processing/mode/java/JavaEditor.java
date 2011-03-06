@@ -552,6 +552,13 @@ public class JavaEditor extends Editor {
   }
   
   
+  public void statusError(String what) {
+    super.statusError(what);
+//    new Exception("deactivating RUN").printStackTrace();
+    toolbar.deactivate(JavaToolbar.RUN);
+  }
+
+  
   /**
    * Deactivate the Run button. This is called by Runner to notify that the
    * sketch has stopped running, usually in response to an error (or maybe
