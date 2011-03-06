@@ -513,6 +513,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
     redraw = true;  // draw this guy once
     firstMotion = true;
 
+    // these need to be inited before setup
+    sizeMethods = new RegisteredMethods();
+    preMethods = new RegisteredMethods();
+    drawMethods = new RegisteredMethods();
+    postMethods = new RegisteredMethods();
+    mouseEventMethods = new RegisteredMethods();
+    keyEventMethods = new RegisteredMethods();
+    disposeMethods = new RegisteredMethods();
+
     Context context = getApplicationContext();
     sketchPath = context.getFilesDir().getAbsolutePath();
 
@@ -2494,7 +2503,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * Not to be called or overriden by users. If called multiple times, 
    * will only notify listeners once. Register a dispose listener instead.
    */
-  public void dispose(){
+  public void dispose() {
     // moved here from stop()
     finished = true;  // let the sketch know it is shut down time
 
@@ -2504,6 +2513,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     
     // call to shut down renderer, in case it needs it (pdf does)
     if (g != null) g.dispose();
+
     disposeMethods.handle();
   }
 
