@@ -1424,8 +1424,6 @@ public class PApplet extends Applet
 
   //synchronized public void paint(Graphics screen) {  // shutting off for 0146
   public void paint(Graphics screen) {
-    println("non-active paint");
-
     // ignore the very first call to paint, since it's coming
     // from the o.s., and the applet will soon update itself anyway.
     if (frameCount == 0) {
