@@ -2027,7 +2027,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         mess = mess.substring(javaLang.length());
       }
       String rxString = "RuntimeException: ";
-      if (mess.indexOf(rxString) == 0) {
+      if (mess.startsWith(rxString)) {
         mess = mess.substring(rxString.length());
       }
       statusError(mess);
