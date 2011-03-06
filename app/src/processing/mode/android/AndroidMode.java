@@ -22,6 +22,7 @@
 package processing.mode.android;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,6 +58,15 @@ public class AndroidMode extends JavaMode {
   }
   
   
+  protected File[] getExampleCategoryFolders() {
+    return examplesFolder.listFiles(new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        return dir.isDirectory() && name.charAt(0) != '.';
+      }
+    });
+  }
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
