@@ -112,7 +112,7 @@ class EmulatorController {
             }
             Thread.sleep(2000);
 //            System.out.println("done sleeping");
-            for (final String device : Devices.listDevices()) {
+            for (final String device : Devices.list()) {
               if (device.contains("emulator")) {
                 //                System.err.println("EmulatorController: Emulator booted.");
                 setState(State.RUNNING);

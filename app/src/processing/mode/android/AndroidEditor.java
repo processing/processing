@@ -301,6 +301,13 @@ public class AndroidEditor extends JavaEditor {
 //  }
   
   
+  public void statusError(String what) {
+    super.statusError(what);
+//    new Exception("deactivating RUN").printStackTrace();
+    toolbar.deactivate(AndroidToolbar.RUN);
+  }
+
+
   public void sketchStopped() {
     deactivateRun();
     statusEmpty();
@@ -313,6 +320,8 @@ public class AndroidEditor extends JavaEditor {
   public void handleRunEmulator() {
     new Thread() { 
       public void run() {
+        toolbar.activate(AndroidToolbar.RUN);
+        startIndeterminate();
         prepareRun();
         try {
           amode.handleRunEmulator(sketch, AndroidEditor.this);
@@ -321,6 +330,7 @@ public class AndroidEditor extends JavaEditor {
         } catch (IOException e) {
           statusError(e);
         }
+        stopIndeterminate();
       }
     }.start();
   }
@@ -332,6 +342,8 @@ public class AndroidEditor extends JavaEditor {
   public void handleRunDevice() {
     new Thread() {
       public void run() {
+        toolbar.activate(AndroidToolbar.RUN);
+        startIndeterminate();
         prepareRun();
         try {
           amode.handleRunDevice(sketch, AndroidEditor.this);
@@ -340,12 +352,14 @@ public class AndroidEditor extends JavaEditor {
         } catch (IOException e) {
           statusError(e);
         }
+        stopIndeterminate();
       }
     }.start();    
   }
 
 
   public void handleStop() {
+    toolbar.deactivate(AndroidToolbar.RUN);
     stopIndeterminate();
     amode.handleStop();
   }
