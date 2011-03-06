@@ -72,9 +72,9 @@ public class AndroidToolbar extends EditorToolbar {
     switch (sel) {
     case RUN:
       if (shift) {
-        aeditor.handleRunEmulator();
-      } else {
         aeditor.handleRunDevice();
+      } else {
+        aeditor.handleRunEmulator();
       }
       break;
 

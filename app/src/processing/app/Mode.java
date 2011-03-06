@@ -362,21 +362,24 @@ public abstract class Mode {
 //      examplesTree.expandPath(new TreePath(examplesParent));
 
       // get library examples
+      boolean any = false;
       DefaultMutableTreeNode libParent = new DefaultMutableTreeNode("Libraries");
       for (Library lib : coreLibraries) {
         if (lib.hasExamples()) {
 //          JMenu libMenu = new JMenu(lib.getName());
           DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
 //          base.addSketches(libMenu, lib.getExamplesFolder(), replace);
-          base.addSketches(libNode, lib.getExamplesFolder());
+          any |= base.addSketches(libNode, lib.getExamplesFolder());
 //          menu.add(libMenu);
           libParent.add(libNode);
         }
       }
-      node.add(libParent);
+      if (any) {
+        node.add(libParent);
+      }
 
       // get contrib library examples
-      boolean any = false;
+      any = false;
       for (Library lib : contribLibraries) {
         if (lib.hasExamples()) {
           any = true;
@@ -407,7 +410,7 @@ public abstract class Mode {
   
   public void showExamplesFrame() {
     if (examplesFrame == null) {
-      examplesFrame = new JFrame("Examples");
+      examplesFrame = new JFrame(getTitle() + " Examples");
       final JTree tree = buildExamplesTree();
 
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
