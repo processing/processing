@@ -104,8 +104,8 @@ X test controlp5 on app
 X test controlp5 on applet
 X test code folder on android
 X resize image not shown in lower-right of window
+X test opengl on android
 _ test libraries on android
-_ test opengl on android
 _ test .java files on desktop version
 
 _ from jer: 'unexpected token void' for any type of error

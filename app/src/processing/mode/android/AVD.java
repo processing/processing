@@ -137,11 +137,11 @@ public class AVD {
   static public boolean ensureEclairAVD(final AndroidSDK sdk) {
     try {
       if (defaultAVD.exists(sdk)) {
-        System.out.println("the avd exists");
+//        System.out.println("the avd exists");
         return true;
       }
       if (defaultAVD.create(sdk)) {
-        System.out.println("the avd was created");
+//        System.out.println("the avd was created");
         return true;
       }
       Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
