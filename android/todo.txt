@@ -81,6 +81,12 @@ _ sketches must be removed manually if the debug keystore changes
 _   http://code.google.com/p/processing/issues/detail?id=236
 
 _ register(this, "pause") -> libs will need pause events on android
+_ add registered methods again
+_   need to figure out generic event queueing first
+_   may need a different subset of methods, and introduce new ones
+_     that will be usable on both android and desktop
+_ dispose() was calling disposeMethods.handle(), but they're null
+
 _ thread is continually running - 'inside handleDraw()' running continually
 _   inside run() it shouldn't still be going
 
@@ -188,10 +194,6 @@ _   this is currently draining batteries
 
 X look into touch event code, see if there's a good way to integrate
 _   make a decision on how to integrate touch event code
-_ add registered methods again
-_   need to figure out generic event queueing first
-_   may need a different subset of methods, and introduce new ones
-_     that will be usable on both android and desktop
 
 _ "Unable to resolve target 'Google...'" when APIs aren't installed
 _   add an error message that explains what to do
