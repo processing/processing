@@ -1424,6 +1424,8 @@ public class PApplet extends Applet
 
   //synchronized public void paint(Graphics screen) {  // shutting off for 0146
   public void paint(Graphics screen) {
+    println("non-active paint");
+
     // ignore the very first call to paint, since it's coming
     // from the o.s., and the applet will soon update itself anyway.
     if (frameCount == 0) {
@@ -1448,28 +1450,6 @@ public class PApplet extends Applet
     if ((g != null) && (g.image != null)) {
 //      println("inside paint(), screen.drawImage()");
       screen.drawImage(g.image, 0, 0, null);
-    }
-  }
-
-
-  // active paint method
-  protected void paint() {
-    try {
-      Graphics screen = this.getGraphics();
-      if (screen != null) {
-        if ((g != null) && (g.image != null)) {
-          screen.drawImage(g.image, 0, 0, null);
-        }
-        Toolkit.getDefaultToolkit().sync();
-      }
-    } catch (Exception e) {
-      // Seen on applet destroy, maybe can ignore?
-      e.printStackTrace();
-
-//    } finally {
-//      if (g != null) {
-//        g.dispose();
-//      }
     }
   }
 
@@ -1649,11 +1629,8 @@ public class PApplet extends Applet
       frameRateLastNanos = now;
       frameCount++;
 
-      // Actively render the screen
-      paint();
-
-//    repaint();
-//    getToolkit().sync();  // force repaint now (proper method)
+      repaint();
+      getToolkit().sync();  // force repaint now (proper method)
 
       postMethods.handle();
     }
