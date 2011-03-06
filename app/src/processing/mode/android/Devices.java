@@ -41,8 +41,8 @@ class Devices {
 
 
   public static void killAdbServer() {
-    System.err.println("Shutting down any existing adb server...");
-    System.err.flush();
+    System.out.println("Shutting down any existing adb server...");
+    System.out.flush();
     try {
       AndroidSDK.runADB("kill-server");
       //      System.err.println("OK.");
@@ -56,7 +56,7 @@ class Devices {
 
   private Devices() {
     if (processing.app.Base.DEBUG) {
-      System.out.println("Starting up AndroidEnvironment");
+      System.out.println("Starting up Devices");
     }
 //    killAdbServer();
     Runtime.getRuntime().addShutdownHook(
@@ -70,11 +70,13 @@ class Devices {
 
 
   private void shutdown() {
-    System.out.println("Shutting down AndroidEnvironment");
+//    System.out.println("Shutting down Devices");
+//    System.out.flush();
     for (Device device : new ArrayList<Device>(devices.values())) {
       device.shutdown();
     }
-    killAdbServer();
+    // Don't do this, it'll just make Eclipse and others freak out.
+//    killAdbServer();
   }
 
 
@@ -92,20 +94,33 @@ class Devices {
 
 
   private final Device blockingGetEmulator() {
+//    System.out.println("going looking for emulator");
     Device emu = find(true);
     if (emu != null) {
+//      System.out.println("found emu " + emu);
       return emu;
     }
+//    System.out.println("no emu found");
 
     final EmulatorController emuController = EmulatorController.getInstance();
+//    System.out.println("checking emulator state");
     if (emuController.getState() == State.NOT_RUNNING) {
       try {
+//        System.out.println("not running, gonna launch");
         emuController.launch(); // this blocks until emulator boots
+//        System.out.println("not just gonna, we've done the launch");
       } catch (final IOException e) {
+        System.err.println("Problem while launching emulator.");
         e.printStackTrace(System.err);
         return null;
       }
+    } else {
+      System.out.println("Emulator is " + emuController.getState() + 
+                         ", which is not expected.");
     }
+//    System.out.println("and now we're out");
+
+//    System.out.println("Devices.blockingGet thread is " + Thread.currentThread());
     while (!Thread.currentThread().isInterrupted()) {
       //      System.err.println("AndroidEnvironment: looking for emulator in loop.");
       //      System.err.println("AndroidEnvironment: emulatorcontroller state is "
@@ -123,7 +138,7 @@ class Devices {
       try {
         Thread.sleep(2000);
       } catch (final InterruptedException e) {
-        System.err.println("AndroidEnvironment: interrupted in loop.");
+        System.err.println("Devices: interrupted in loop.");
         return null;
       }
     }
@@ -182,7 +197,7 @@ class Devices {
 
 
   private void refresh() {
-    final List<String> activeDevices = listDevices();
+    final List<String> activeDevices = list();
     for (final String deviceId : activeDevices) {
       if (!devices.containsKey(deviceId)) {
         addDevice(new Device(this, deviceId));
@@ -215,23 +230,23 @@ class Devices {
 
 
   /**
-   *    <p>First line starts "List of devices"
-
-        <p>When an emulator is started with a debug port, then it shows up
-        in the list of devices.
-
-        <p>List of devices attached
-        <br>HT91MLC00031 device
-        <br>emulator-5554 offline
-
-        <p>List of devices attached
-        <br>HT91MLC00031 device
-        <br>emulator-5554 device
-
+   * <p>First line starts "List of devices"
+   *
+   * <p>When an emulator is started with a debug port, then it shows up
+   * in the list of devices.
+   *
+   * <p>List of devices attached
+   * <br>HT91MLC00031 device
+   * <br>emulator-5554 offline
+   *
+   * <p>List of devices attached
+   * <br>HT91MLC00031 device
+   * <br>emulator-5554 device
+   *
    * @return list of device identifiers
    * @throws IOException
    */
-  public static List<String> listDevices() {
+  public static List<String> list() {
     ProcessResult result;
     try {
 //      System.out.println("listing devices 00");
@@ -240,7 +255,7 @@ class Devices {
     } catch (InterruptedException e) {
       return Collections.emptyList();
     } catch (IOException e) {
-      System.err.println("AndroidEnvironment.listDevices() did this to me");
+      System.err.println("Problem inside Devices.list()");
       e.printStackTrace();
 //      System.err.println(e);
 //      System.err.println("checking devices");
@@ -262,18 +277,18 @@ class Devices {
     final String stdout = result.getStdout();
     if (!(stdout.startsWith("List of devices") || stdout.trim().length() == 0)) {
       System.err.println(ADB_DEVICES_ERROR);
+      System.err.println("Output was “" + stdout + "”");
       return Collections.emptyList();
     }
 
 //    System.out.println("listing devices 30");
     final List<String> devices = new ArrayList<String>();
     for (final String line : result) {
-      if (!line.contains("\t")) {
-        continue;
-      }
-      final String[] fields = line.split("\t");
-      if (fields[1].equals("device")) {
-        devices.add(fields[0]);
+      if (line.contains("\t")) {
+        final String[] fields = line.split("\t");
+        if (fields[1].equals("device")) {
+          devices.add(fields[0]);
+        }
       }
     }
     return devices;
