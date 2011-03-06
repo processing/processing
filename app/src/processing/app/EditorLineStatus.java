@@ -64,7 +64,7 @@ public class EditorLineStatus extends JComponent {
     high = mode.getInteger("linestatus.height");
 
     if (Base.isMacOS()) {
-      resize = mode.loadImage("resize.gif");
+      resize = mode.loadImage("theme/resize.gif");
     }
   }
 
