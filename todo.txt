@@ -114,7 +114,6 @@ _   (due to fallback in preprocessor)
 _   'public' keyword in class declarations breaks syntax checker
 _   http://code.google.com/p/processing/issues/detail?id=551
 
-
 _ untitled sketches not working properly
 
 ugliness
