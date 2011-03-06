@@ -346,6 +346,7 @@ public class AndroidEditor extends JavaEditor {
 
 
   public void handleStop() {
+    stopIndeterminate();
     amode.handleStop();
   }
 
