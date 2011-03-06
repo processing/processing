@@ -1,15 +1,13 @@
 package processing.mode.android;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.ArrayList;
 
 import processing.app.Base;
 import processing.app.exec.ProcessHelper;
-import processing.app.exec.ProcessRegistry;
 import processing.app.exec.ProcessResult;
-import processing.app.exec.StreamPump;
 import processing.core.PApplet;
+
 
 public class AVD {
   private static final String AVD_CREATE_ERROR =
@@ -92,7 +90,7 @@ public class AVD {
 //      "-s", DEFAULT_WIDTH + "x" + DEFAULT_HEIGHT
     };
     
-    throw new RuntimeException("avd.create() not currently working");
+//    throw new RuntimeException("avd.create() not currently working");
 //    final StringWriter outWriter = new StringWriter();
 //    final StringWriter errWriter = new StringWriter();
 //    final long startTime = System.currentTimeMillis();
@@ -123,27 +121,27 @@ public class AVD {
 //      ProcessRegistry.unwatch(process);
 //    }
     
-//    final ProcessHelper p = new ProcessHelper(params);
-//    try {
-//      final ProcessResult createAvdResult = p.execute();
-//      if (createAvdResult.succeeded()) {
-//        return true;
-//      }
-//      System.err.println(createAvdResult);
-//    } catch (final InterruptedException ie) { }
+    final ProcessHelper p = new ProcessHelper(params);
+    try {
+      final ProcessResult createAvdResult = p.execute();
+      if (createAvdResult.succeeded()) {
+        return true;
+      }
+      System.err.println(createAvdResult);
+    } catch (final InterruptedException ie) { }
 
-//    return false;
+    return false;
   }
 
 
   static public boolean ensureEclairAVD(final AndroidSDK sdk) {
     try {
       if (defaultAVD.exists(sdk)) {
-//        System.out.println("the avd exists");
+        System.out.println("the avd exists");
         return true;
       }
       if (defaultAVD.create(sdk)) {
-//        System.out.println("the avd was created");
+        System.out.println("the avd was created");
         return true;
       }
       Base.showWarning("Android Error", AVD_CREATE_ERROR, null);

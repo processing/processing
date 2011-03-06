@@ -11,6 +11,8 @@ o occasional exception in "copy for discourse"
 o   http://dev.processing.org/bugs/show_bug.cgi?id=729
 X move compiler to mode.java.* instead of runner
 X fix the encoding on OS X for the "Fix Encoding and Reload" function
+X broken link on ye olde' http://processing.org/bugs/bugzilla
+X   http://code.google.com/p/processing/issues/detail?id=528
 
 fixed in 0192
 J auto-format screws up if/else/else if blocks
@@ -60,6 +62,7 @@ X   sketchbook location hasn't been determined yet
 X change 'export' to 'export applet'
 X android will be "Export Project", "Export Release Application"
 X   along with "Run in Emulator" and "Run on Device"
+X base needs to have a default mode, which is the last used
 
 serial
 X updated serial lib for mac osx
@@ -103,6 +106,16 @@ _ test controlp5 on applet
 _ test code folder on android
 _ test libraries on android
 _ test opengl on android
+_ test .java files on desktop version
+_ resize image not shown in lower-right of window
+
+_ from jer: 'unexpected token void' for any type of error
+_   (due to fallback in preprocessor)
+_   'public' keyword in class declarations breaks syntax checker
+_   http://code.google.com/p/processing/issues/detail?id=551
+
+
+_ untitled sketches not working properly
 
 ugliness
 _ inside AndroidPreprocessor
@@ -116,7 +129,31 @@ _   Build does the heavy lifting anyway...
 _ don't make examples read-only
 _   just do them from psk files
 
+blob of mess from todo list
+_ multiple sketch windows.. having a windows menu?
+_   recent sketches?
+_ modes have their own methods for digging through sketch & libraries folders
+_   therefore it need only check the sketch.txt file to see if it's ok
+_   (between android and java) 
+_   but more importantly, if it's something totally different (.py) then
+_   that'll be ok, and work fine
+_   need another extension for the p5 py stuff
+_ android mode will make no attempt to figure out which of your sketches are relevant... however you can add the sketch.txt file (sketch.properties?) to the directory if you want to be specific about it.
+_ idea of examples, libraries, reference built into the base system
+_ look through web/java_generate to see how the doc stuff works
+_ work through andres' pshape changes to smooth things out
+_ post videos online of the android work
+_ why we can't do OpenGL applets that are self-signed (wiki?) 
+_   http://www.cert.org/blogs/vuls/2008/06/signed_java_security_worse_tha.html
+
 _ strange window flicker when first opened
+
+_ hex value from color picker does not start with #
+_   http://code.google.com/p/processing/issues/detail?id=529
+
+http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
+
+_ p5 assets need to be licensed differently from the source
 
 _ make sure that android is working again
 
@@ -198,6 +235,10 @@ _   big deal for psk and others
 _ need to get a new stable release out there, the docs/ref are out of sync
 _ build is currently broken for p5 because of changes to the file layout
 _   something that gets fixed my 'make clean'
+
+_ Added some basic Emacs cursor navigator keybindings
+_   just implement these as a preference
+_   http://code.google.com/p/processing/issues/detail?id=555
 
 . . . . 
 
