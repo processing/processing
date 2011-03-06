@@ -124,7 +124,15 @@ public class ThinkDifferent implements ApplicationListener {
     fileMenu.add(item);
 
     fileMenu.add(base.getSketchbookMenu());
-    fileMenu.add(base.nextEditorMode().getExamplesMenu());
+    
+//    fileMenu.add(base.nextEditorMode().getExamplesMenu());
+    item = new JMenuItem("Examples...");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.nextEditorMode().showExamplesFrame();
+      }
+    });
+    fileMenu.add(item);
 
     return fileMenu;
   }

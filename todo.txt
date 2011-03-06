@@ -13,6 +13,8 @@ X move compiler to mode.java.* instead of runner
 X fix the encoding on OS X for the "Fix Encoding and Reload" function
 X broken link on ye olde' http://processing.org/bugs/bugzilla
 X   http://code.google.com/p/processing/issues/detail?id=528
+X hex value from color picker does not start with #
+X   http://code.google.com/p/processing/issues/detail?id=529
 
 fixed in 0192
 J auto-format screws up if/else/else if blocks
@@ -92,8 +94,8 @@ X   Basics, Topics, 3D, Books, Libraries, Contributed Libraries
 X 'book' examples will be another category
 X   i'll add vida examples, can offer to others if they want
 X   should be "Getting Started" not GettingStarted
+X window that opens and contains list of examples
 _ examples button on toolbar?
-_ window that opens and contains list of examples
 _ also, move open to a submenu? 
 _   then we'd have open / recent / sketchbook
 
@@ -146,9 +148,6 @@ _ why we can't do OpenGL applets that are self-signed (wiki?)
 _   http://www.cert.org/blogs/vuls/2008/06/signed_java_security_worse_tha.html
 
 _ strange window flicker when first opened
-
-_ hex value from color picker does not start with #
-_   http://code.google.com/p/processing/issues/detail?id=529
 
 http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
 
