@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.tree.*;
 
 import processing.app.syntax.*;
 //import processing.app.tools.Tool;
@@ -30,6 +32,9 @@ public abstract class Mode {
   // each time a sketch is created, renamed, or moved.
   protected JMenu examplesMenu;  // this is for the menubar, not the toolbar
   protected JMenu importMenu;
+  
+//  protected JTree examplesTree;
+  protected JFrame examplesFrame;
   
   // popup menu used for the toolbar
   protected JMenu toolbarMenu;
@@ -159,9 +164,16 @@ public abstract class Mode {
       });
     toolbarMenu.add(item);
     
-    JMenu examplesMenu = new JMenu("Examples");
-    rebuildExamplesMenu(examplesMenu, true);
-    toolbarMenu.add(examplesMenu);
+//    JMenu examplesMenu = new JMenu("Examples");
+//    rebuildExamplesMenu(examplesMenu, true);
+    item = new JMenuItem("Examples...");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        showExamplesFrame();
+      }
+    });
+    toolbarMenu.add(item);
+//    toolbarMenu.add(examplesMenu);
     
     toolbarMenu.addSeparator();
 
@@ -253,11 +265,8 @@ public abstract class Mode {
   public void rebuildExamplesMenu(JMenu menu, boolean replace) {
     try {
       // break down the examples folder for examples
-      File[] subfolders = examplesFolder.listFiles(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          return dir.isDirectory() && name.charAt(0) != '.';
-        }
-      });
+      File[] subfolders = getExampleCategoryFolders();
+      
       for (File sub : subfolders) {
         Base.addDisabledItem(menu, sub.getName());
 //        JMenuItem categoryItem = new JMenuItem(sub.getName());
@@ -304,6 +313,185 @@ public abstract class Mode {
     }
   }
   
+
+
+  /**
+   * Override this to control the order of the first set of example folders
+   * and how they appear in the examples window.
+   */
+  protected File[] getExampleCategoryFolders() {
+    return examplesFolder.listFiles(new FilenameFilter() {
+      public boolean accept(File dir, String name) {
+        return dir.isDirectory() && name.charAt(0) != '.';
+      }
+    });
+  }
+  
+  
+  public JTree buildExamplesTree() {
+    DefaultMutableTreeNode node = new DefaultMutableTreeNode("Examples");
+
+    JTree examplesTree = new JTree(node);
+//    rebuildExamplesTree(node);
+//  }
+
+    //DefaultTreeCellRenderer renderer = tree.
+//    TreeCellRenderer tcr = examplesTree.getCellRenderer();
+
+    //
+//  
+//  public void rebuildExamplesTree(DefaultMutableTreeNode node) {
+    try {
+      // break down the examples folder for examples
+//      File[] subfolders = examplesFolder.listFiles(new FilenameFilter() {
+//        public boolean accept(File dir, String name) {
+//          return dir.isDirectory() && name.charAt(0) != '.';
+//        }
+//      });
+      File[] subfolders = getExampleCategoryFolders();
+
+//      DefaultMutableTreeNode examplesParent = new DefaultMutableTreeNode("Examples");
+      for (File sub : subfolders) {
+        DefaultMutableTreeNode subNode = new DefaultMutableTreeNode(sub.getName());
+        if (base.addSketches(subNode, sub)) {
+//          examplesParent.add(subNode);
+          node.add(subNode);
+        }
+      }
+//      node.add(examplesParent);
+//      examplesTree.expandPath(new TreePath(examplesParent));
+
+      // get library examples
+      DefaultMutableTreeNode libParent = new DefaultMutableTreeNode("Libraries");
+      for (Library lib : coreLibraries) {
+        if (lib.hasExamples()) {
+//          JMenu libMenu = new JMenu(lib.getName());
+          DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
+//          base.addSketches(libMenu, lib.getExamplesFolder(), replace);
+          base.addSketches(libNode, lib.getExamplesFolder());
+//          menu.add(libMenu);
+          libParent.add(libNode);
+        }
+      }
+      node.add(libParent);
+
+      // get contrib library examples
+      boolean any = false;
+      for (Library lib : contribLibraries) {
+        if (lib.hasExamples()) {
+          any = true;
+        }
+      }
+      if (any) {
+//        menu.addSeparator();
+        DefaultMutableTreeNode contribParent = new DefaultMutableTreeNode("Contributed Libraries");
+//        Base.addDisabledItem(menu, "Contributed");
+        for (Library lib : contribLibraries) {
+          if (lib.hasExamples()) {
+//            JMenu libMenu = new JMenu(lib.getName());
+            DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
+//            base.addSketches(libMenu, lib.getExamplesFolder(), replace);
+            base.addSketches(libNode, lib.getExamplesFolder());
+//            menu.add(libMenu);
+            contribParent.add(libNode);
+          }
+        }
+        node.add(contribParent);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return examplesTree;
+  }
+  
+  
+  public void showExamplesFrame() {
+    if (examplesFrame == null) {
+      examplesFrame = new JFrame("Examples");
+      final JTree tree = buildExamplesTree();
+
+      tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+      tree.setShowsRootHandles(true);
+      // expand the root
+      tree.expandRow(0);
+      // now hide the root
+      tree.setRootVisible(false);
+      // now expand the other folks
+      for (int row = tree.getRowCount()-1; row >= 0; --row) {
+        tree.expandRow(row);
+      }
+
+      /*
+      tree.addTreeSelectionListener(new TreeSelectionListener() {
+        public void valueChanged(TreeSelectionEvent e) {
+          DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+          tree.getLastSelectedPathComponent();
+
+          if (node != null) {
+            Object nodeInfo = node.getUserObject();
+            if (node.isLeaf()) {
+              System.out.println(node + " user obj: " + nodeInfo);
+              //            BookInfo book = (BookInfo)nodeInfo;
+              //            displayURL(book.bookURL);
+            }
+          }
+        }
+      });
+      */
+      tree.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          if (e.getClickCount() > 1) {
+            DefaultMutableTreeNode node = 
+              (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            if (node != null && node.isLeaf()) {
+//              File sketch = (File) node.getUserObject();
+              
+//              base.handleOpen(sketch.getAbsolutePath());
+//              System.out.println(node + " user obj: " + node.getUserObject());
+
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          }
+        }
+      });
+      tree.addKeyListener(new KeyAdapter() {
+        public void keyTyped(KeyEvent e) {
+//          System.out.println(e);
+          if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+            DefaultMutableTreeNode node = 
+              (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+            if (node != null && node.isLeaf()) {
+//              System.out.println(node + " user obj: " + node.getUserObject());
+//              File sketch = (File) node.getUserObject();
+//              base.handleOpen(sketch.getAbsolutePath());
+              
+//              Object[] obj = (Object[]) node.getUserObject();
+//              base.handleOpen(((File) obj[1]).getAbsolutePath());
+              SketchReference sketch = (SketchReference) node.getUserObject();
+              base.handleOpen(sketch.getPath());
+            }
+          } else if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
+            examplesFrame.setVisible(false);
+          }
+        }
+      });
+      
+      tree.setBorder(new EmptyBorder(5, 5, 5, 5));
+      JScrollPane treeView = new JScrollPane(tree);
+      treeView.setPreferredSize(new Dimension(250, 450));
+      examplesFrame.add(treeView);
+      examplesFrame.pack();
+    }
+    if (base.activeEditor != null) {
+      Point p = base.activeEditor.getLocation();
+      examplesFrame.setLocation(p.x - examplesFrame.getWidth() - 20, p.y);
+    } else {
+      examplesFrame.setLocationRelativeTo(null);
+    }
+    examplesFrame.setVisible(true);
+  }
+
 
 //  public void handleActivated(Editor editor) {
 //    //// re-add the sub-menus that are shared by all windows

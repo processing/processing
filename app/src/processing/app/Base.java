@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.zip.*;
 
 import javax.swing.*;
+import javax.swing.tree.*;
 
 import processing.core.*;
 import processing.mode.android.AndroidMode;
@@ -1191,6 +1192,84 @@ public class Base {
       }
     }
     return found;  // actually ignored, but..
+  }
+  
+  
+  protected boolean addSketches(DefaultMutableTreeNode node, File folder) throws IOException {
+    // skip .DS_Store files, etc (this shouldn't actually be necessary)
+    if (!folder.isDirectory()) {
+      return false;
+    }
+
+    if (folder.getName().equals("libraries")) {
+      return false;  // let's not go there
+    }
+    
+    String[] list = folder.list();
+    // If a bad folder or unreadable or whatever, this will come back null
+    if (list == null) {
+      return false;
+    }
+
+    // Alphabetize the list, since it's not always alpha order
+    Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
+
+//    ActionListener listener = new ActionListener() {
+//        public void actionPerformed(ActionEvent e) {
+//          String path = e.getActionCommand();
+//          if (new File(path).exists()) {
+//            handleOpen(path);
+//          } else {
+//            showWarning("Sketch Disappeared",
+//                        "The selected sketch no longer exists.\n" +
+//                        "You may need to restart Processing to update\n" +
+//                        "the sketchbook menu.", null);
+//          }
+//        }
+//    };
+    // offers no speed improvement
+    //menu.addActionListener(listener);
+
+    boolean found = false;
+
+    for (String name : list) {
+      if (name.charAt(0) == '.') {
+        continue;
+      }
+      
+//      JTree tree = null;
+//      TreePath[] a = tree.getSelectionPaths();
+//      for (TreePath path : a) {
+//        Object[] o = path.getPath();
+//      }
+
+      File subfolder = new File(folder, name);
+      if (subfolder.isDirectory()) {
+        File entry = checkSketchFolder(subfolder, name);
+        if (entry != null) {
+//          DefaultMutableTreeNode item = new DefaultMutableTreeNode(name);
+          DefaultMutableTreeNode item = 
+            new DefaultMutableTreeNode(new SketchReference(name, entry));
+//          item.addActionListener(listener);
+//          item.setActionCommand(entry.getAbsolutePath());
+//          menu.add(item);
+          node.add(item);
+          found = true;
+
+        } else {
+          // not a sketch folder, but maybe a subfolder containing sketches
+//          JMenu submenu = new JMenu(name);
+          DefaultMutableTreeNode subnode = new DefaultMutableTreeNode(name);
+          // needs to be separate var otherwise would set ifound to false
+          boolean anything = addSketches(subnode, subfolder);
+          if (anything) {
+            node.add(subnode);
+            found = true;
+          }
+        }
+      }
+    }
+    return found;
   }
 
 

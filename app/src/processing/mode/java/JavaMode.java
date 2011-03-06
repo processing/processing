@@ -139,6 +139,17 @@ public class JavaMode extends Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  protected File[] getExampleCategoryFolders() {
+    // Basics, Topics, 3D, Books
+    return new File[] { 
+      new File(examplesFolder, "Basics"),
+      new File(examplesFolder, "Topics"),
+      new File(examplesFolder, "3D"),
+      new File(examplesFolder, "Books")
+    };
+  }
+  
+
   public String getDefaultExtension() {
     return "pde";
   }
