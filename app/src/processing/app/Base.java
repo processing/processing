@@ -50,6 +50,7 @@ public class Base {
   static public boolean RELEASE = false;
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
+//  static public boolean DEBUG = true;
 
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
@@ -214,6 +215,7 @@ public class Base {
     defaultMode = new JavaMode(this, getContentFile("modes/java"));
     Mode androidMode = new AndroidMode(this, getContentFile("modes/android"));
     modeList = new Mode[] { defaultMode, androidMode };
+//    defaultMode = androidMode;
 
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
@@ -290,6 +292,32 @@ public class Base {
    * application is first launched.
    */
   protected boolean restoreSketches() {
+    String lastMode = Preferences.get("last.sketch.mode");
+    if (DEBUG) {
+      System.out.println("setting mode to " + lastMode);
+    }
+    if (lastMode != null) {
+//      try {
+//        Class<?> modeClass = Class.forName(lastMode);
+//        defaultMode = (Mode) modeClass.newInstance();
+//      } catch (ClassNotFoundException e) {
+//        e.printStackTrace();
+//      } catch (InstantiationException e) {
+//        e.printStackTrace();
+//      } catch (IllegalAccessException e) {
+//        e.printStackTrace();
+//      }
+      for (Mode m : modeList) {
+        if (m.getClass().getName().equals(lastMode)) {
+          defaultMode = m;
+        }
+      }
+    }
+
+    if (DEBUG) {
+      System.out.println("default mode set to " + defaultMode.getClass().getName());
+    }
+    
     if (!Preferences.getBoolean("last.sketch.restore")) {
       return false;
     }
@@ -373,6 +401,7 @@ public class Base {
       index++;
     }
     Preferences.setInteger("last.sketch.count", index);
+    Preferences.set("last.sketch.mode", defaultMode.getClass().getName());
   }
 
 
