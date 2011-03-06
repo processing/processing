@@ -1,4 +1,10 @@
 0193 core
+X fix problem that made applets suck in Google Chrome and Firefox 4
+
+
+_ java.lang.OutOfMemoryError using get() and image() inside a tight loop
+_   just need to swap out use of clone() since it's causing trouble
+_   http://code.google.com/p/processing/issues/detail?id=42
 
 _ need to finish font changes wrt native fonts before any release
 _   right now not in a good place--default font will be bitmapped and ugly
