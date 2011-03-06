@@ -1469,13 +1469,13 @@ public class JavaBuild {
     });
     for (File sub : files) {
       String relativePath = sub.getAbsolutePath().substring(rootPath.length());
-      System.out.println("relative path is " + relativePath);
+//      System.out.println("relative path is " + relativePath);
 
       if (sub.isDirectory()) {
         addClasses(zos, sub, rootPath);
 
       } else if (sub.getName().endsWith(".class")) {
-        System.out.println("  adding item " + relativePath);
+//        System.out.println("  adding item " + relativePath);
         ZipEntry entry = new ZipEntry(relativePath);
         zos.putNextEntry(entry);
         zos.write(Base.loadBytesRaw(sub));
