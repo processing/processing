@@ -1,11 +1,15 @@
 package processing.mode.android;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.StringWriter;
+import java.util.ArrayList;
+
 import processing.app.Base;
 import processing.app.exec.ProcessHelper;
+import processing.app.exec.ProcessRegistry;
 import processing.app.exec.ProcessResult;
+import processing.app.exec.StreamPump;
+import processing.core.PApplet;
 
 public class AVD {
   private static final String AVD_CREATE_ERROR =
@@ -14,12 +18,6 @@ public class AVD {
     "Android SDK is installed properly, and that the Android\n" +
     "and Google APIs are installed for level " + AndroidBuild.sdkVersion + ".";
 
-  // Tempting to switch to WVGA854 (854x480), the same aspect ratio
-  // (with rounding), as 1920x1080, or 16:9.
-//  static final int DEFAULT_WIDTH = 320;
-//  static final int DEFAULT_HEIGHT = 480;
-//  static final int DEFAULT_WIDTH = 480;
-//  static final int DEFAULT_HEIGHT = 800;
   static final String DEFAULT_SKIN = "WVGA800";
 
   /** Name of this avd. */
@@ -28,31 +26,13 @@ public class AVD {
   /** "android-7" or "Google Inc.:Google APIs:7" */
   protected String target;
 
-  /**
-   * Default virtual device used by Processing.
-   */
-  public static final AVD defaultAVD =
+  /** Default virtual device used by Processing. */
+  static public final AVD defaultAVD =
     new AVD("Processing-Android-" + AndroidBuild.sdkVersion,
             AndroidBuild.sdkTarget);
-            //"Google Inc.:Google APIs:" + AndroidBuild.sdkVersion);
-
-
-  public static boolean ensureEclairAVD(final AndroidSDK sdk) {
-    try {
-      if (defaultAVD.exists(sdk)) {
-//        System.out.println("the avd exists");
-        return true;
-      }
-      if (defaultAVD.create(sdk)) {
-//        System.out.println("the avd was created");
-        return true;
-      }
-      Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
-    } catch (final Exception e) {
-      Base.showWarning("Android Error", AVD_CREATE_ERROR, e);
-    }
-    return false;
-  }
+  
+  static ArrayList<String> avdList;
+//  static ArrayList<String> skinList;
 
 
   public AVD(final String name, final String target) {
@@ -61,20 +41,23 @@ public class AVD {
   }
 
 
-  private static final Pattern AVD_ROW = Pattern.compile("\\s+Name:\\s+(\\S+)");
-
-  protected boolean exists(final AndroidSDK sdk) throws IOException {
+  static protected void list(final AndroidSDK sdk) throws IOException {
     try {
+      avdList = new ArrayList<String>();
       ProcessResult listResult =
         new ProcessHelper(sdk.getAndroidToolPath(), "list", "avds").execute();
       if (listResult.succeeded()) {
         for (String line : listResult) {
-          final Matcher m = AVD_ROW.matcher(line);
-          if (m.matches() && m.group(1).equals(name)) {
-            return true;
+          String[] m = PApplet.match(line, "\\s+Name\\:\\s+(\\S+)");
+          if (m != null) {
+            avdList.add(m[1]);
+//            if (m[1].equals(name)) {
+//              return true;
+//            }
           }
           // "The following Android Virtual Devices could not be loaded:"
           if (line.contains("could not be loaded:")) {
+            System.err.println("could not get AVDs ");
             break;
           }
         }
@@ -82,7 +65,18 @@ public class AVD {
         System.err.println("Unhappy inside exists()");
         System.err.println(listResult);
       }
-    } catch (final InterruptedException ie) {
+    } catch (final InterruptedException ie) { }
+  }
+
+
+  protected boolean exists(final AndroidSDK sdk) throws IOException {
+    if (avdList == null) {
+      list(sdk);
+    }
+    for (String avd : avdList) {
+      if (avd.equals(name)) {
+        return true;
+      }
     }
     return false;
   }
@@ -97,14 +91,64 @@ public class AVD {
       "-s", DEFAULT_SKIN
 //      "-s", DEFAULT_WIDTH + "x" + DEFAULT_HEIGHT
     };
-    final ProcessHelper p = new ProcessHelper(params);
+    
+    throw new RuntimeException("avd.create() not currently working");
+//    final StringWriter outWriter = new StringWriter();
+//    final StringWriter errWriter = new StringWriter();
+//    final long startTime = System.currentTimeMillis();
+//
+//    final String prettyCommand = toString();
+//    //    System.err.println("ProcessHelper: >>>>> " + Thread.currentThread().getId()
+//    //        + " " + prettyCommand);
+//    final Process process = Runtime.getRuntime().exec(cmd);
+//    ProcessRegistry.watch(process);
+//    try {
+//      String title = PApplet.join(cmd, ' '); 
+//      new StreamPump(process.getInputStream(), "out: " + title).addTarget(outWriter).start();
+//      new StreamPump(process.getErrorStream(), "err: " + title).addTarget(errWriter).start();
+//      try {
+//        final int result = process.waitFor();
+//        final long time = System.currentTimeMillis() - startTime;
+//        //        System.err.println("ProcessHelper: <<<<< "
+//        //            + Thread.currentThread().getId() + " " + cmd[0] + " (" + time
+//        //            + "ms)");
+//        return new ProcessResult(prettyCommand, result, outWriter.toString(),
+//                                 errWriter.toString(), time);
+//      } catch (final InterruptedException e) {
+//        System.err.println("Interrupted: " + prettyCommand);
+//        throw e;
+//      }
+//    } finally {
+//      process.destroy();
+//      ProcessRegistry.unwatch(process);
+//    }
+    
+//    final ProcessHelper p = new ProcessHelper(params);
+//    try {
+//      final ProcessResult createAvdResult = p.execute();
+//      if (createAvdResult.succeeded()) {
+//        return true;
+//      }
+//      System.err.println(createAvdResult);
+//    } catch (final InterruptedException ie) { }
+
+//    return false;
+  }
+
+
+  static public boolean ensureEclairAVD(final AndroidSDK sdk) {
     try {
-      final ProcessResult createAvdResult = p.execute();
-      if (createAvdResult.succeeded()) {
+      if (defaultAVD.exists(sdk)) {
+//        System.out.println("the avd exists");
         return true;
       }
-      System.err.println(createAvdResult);
-    } catch (final InterruptedException ie) {
+      if (defaultAVD.create(sdk)) {
+//        System.out.println("the avd was created");
+        return true;
+      }
+      Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
+    } catch (final Exception e) {
+      Base.showWarning("Android Error", AVD_CREATE_ERROR, e);
     }
     return false;
   }
