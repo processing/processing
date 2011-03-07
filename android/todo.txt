@@ -18,6 +18,8 @@ X   http://code.google.com/p/processing/issues/detail?id=202
 X android mode is currently per-editor (and clunky)
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1379
 X   http://code.google.com/p/processing/issues/detail?id=201
+X remove use of clone() for images
+X   http://code.google.com/p/processing/issues/detail?id=42
 
 _ pause/resume trickiness with interactive apps
 _   can we serialize objects (even if slow?)
