@@ -11,17 +11,38 @@ X   http://forum.processing.org/topic/ant-rules-r3-xml-209-395-error#25080000000
 X   just delete ~/.android/debug.keystore
 X .java files are reported with Syntax Error with the Android build 0191
 X   http://code.google.com/p/processing/issues/detail?id=404
+X implement mode switching for android/java/etc
+X save state re: whether sketches are android or java mode (or others?)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1380
+X   http://code.google.com/p/processing/issues/detail?id=202
+X android mode is currently per-editor (and clunky)
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1379
+X   http://code.google.com/p/processing/issues/detail?id=201
+
+_ pause/resume trickiness with interactive apps
+_   can we serialize objects (even if slow?)
+_   add pause() and resume() methods to PApplet
+_ register(this, "pause") -> libs will need pause events on android
+_ add registered methods again
+_   need to figure out generic event queueing first
+_   may need a different subset of methods, and introduce new ones
+_     that will be usable on both android and desktop
+_ dispose() was calling disposeMethods.handle(), but they're null
+_ possible major issue with sketches not quitting out of run() when in bg
+_   pause needs to actually kill the thread
+_   returning from pause needs to reset the clock
+_   this is currently draining batteries
+_ thread is continually running - 'inside handleDraw()' running continually
+_   inside run() it shouldn't still be going
+
+_ need sizeChanged() method... 
+_   also add the param to the xml file saying that it can deal w/ rotation
 
 _ when returning to android application, sometimes screen stays black
 _   http://code.google.com/p/processing/issues/detail?id=237
 Here's what is happening with the A2D renderer.  When the user hits the home button, the Android framework calls PApplet.surfaceDestroyed(), which recycles the drawing surface by calling PGraphicsAndroid2D.dispose().  The surface is never recreated.  The code path in PApplet.handleDraw() that reallocates the surface by calling PGraphicsAndroid2D.setSize() is missed because the dimensions of the sketch have not changed.
 Removing "bitmap.recycle()" from PGraphicsAndroid2D.dispose() fixes the problem.
 
-_ need sizeChanged() method... 
-_   also add the param to the xml file saying that it can deal w/ rotation
-
-mess
-X implement mode switching for android/java/etc
 _ check out andres' changes for PShape
 _ ctrl-shift-r (run on device) is totally hosed
 adb devices
@@ -32,17 +53,10 @@ adb devices
 error: protocol fault (no status)
 _ re: android libraries, from shawn van every
 The most powerful part were the libraries (and the ease with which they could be developed).  Location, SMS, Camera/Video, Bluetooth (for Arduino integration) and PClient/PRequest were by far the most used.  The ones that came with it, plus the ones from MJSoft were good though I ended up making a couple of very specific ones for my students: http://www.mobvcasting.com/wp/?cat=4
-_ adb -s HT91MLC00031 install -r sketchbook/Hue/android/bin/Hue-debug.apk
-_ 	pkg: /data/local/tmp/Hue-debug.apk
-_   Failure [INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES]
-_   why does this result return 0?
 _ separate activity and view
 _ process trackball events (they're only deltas)
 _ handle repeat key events 
 _ implement link()
-_ pause/resume trickiness with interactive apps
-_   can we serialize objects (even if slow?)
-_   add pause() and resume() methods to PApplet
 _ need to post android examples
 
 _ try using the internal javac on windows and see if exceptions come through..
@@ -79,16 +93,6 @@ _ need to do something to make it easier to do new screen sizes.
 
 _ sketches must be removed manually if the debug keystore changes
 _   http://code.google.com/p/processing/issues/detail?id=236
-
-_ register(this, "pause") -> libs will need pause events on android
-_ add registered methods again
-_   need to figure out generic event queueing first
-_   may need a different subset of methods, and introduce new ones
-_     that will be usable on both android and desktop
-_ dispose() was calling disposeMethods.handle(), but they're null
-
-_ thread is continually running - 'inside handleDraw()' running continually
-_   inside run() it shouldn't still be going
 
 _ Error 336  Can't run any sketch.
 _   http://code.google.com/p/processing/issues/detail?id=393
@@ -186,11 +190,6 @@ _   removing local version of java helped someone fix it
 
 _ don't let the keystore message show up in red
 _   Using keystore: /Users/fry/.android/debug.keystore
-
-_ possible major issue with sketches not quitting out of run() when in bg
-_   pause needs to actually kill the thread
-_   returning from pause needs to reset the clock
-_   this is currently draining batteries
 
 X look into touch event code, see if there's a good way to integrate
 _   make a decision on how to integrate touch event code
@@ -300,13 +299,9 @@ W/System.err(  242): 	at processing.core.PApplet.createOutput(PApplet.java:3677)
 
 P2 _ move the android tools into its own source package in SVN
 P2 _   started, but needs proper Tool or Mode packaging
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1388
+P2 _   http://code.google.com/p/processing/issues/detail?id=206
 P2 _ implement method for selecting the AVD
 P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1390
-P2 _ android mode is currently per-editor (and clunky)
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1379
-P2 _ save state re: whether sketches are android or java mode (or others?)
-P2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1380
 
 DM _ compiler errors on Windows not appearing, nor highlighting the line number
 DM _   http://code.google.com/p/processing/issues/detail?id=253
@@ -319,7 +314,11 @@ P3 _   --> implement selector to choose the default device for debugging
 P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1389
 P3 _ if different machines, debug.keystore changes, requiring manual removal
 P3 _   or find a way to do it automatically with processing
-P3 _     can't keep it with the sketch, don't want to give away private key
+P3 _   adb -s HT91MLC00031 install -r sketchbook/Hue/android/bin/Hue-debug.apk
+P3 _ 	  pkg: /data/local/tmp/Hue-debug.apk
+P3 _     Failure [INSTALL_PARSE_FAILED_INCONSISTENT_CERTIFICATES]
+P3 _     why does this result return 0?
+P3 _   can't keep it with the sketch, don't want to give away private key
 P3 _   with different machines, users are required to remove signature
 P3 _   add a method to remove an application if the debug key is different
 P3 _     perhaps the first time an application is installed, remove it?
