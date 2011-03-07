@@ -464,27 +464,35 @@ public class JavaEditor extends Editor {
   public void handleRun() {
     toolbar.activate(JavaToolbar.RUN);
 
-    prepareRun();
-    try {
-      jmode.handleRun(sketch, this);
-    } catch (Exception e) {
-      statusError(e);
-    }
+    new Thread(new Runnable() {
+      public void run() {
+        prepareRun();
+        try {
+          jmode.handleRun(sketch, JavaEditor.this);
+        } catch (Exception e) {
+          statusError(e);
+        }
+      }
+    }).start();
   }
   
   
   public void handlePresent() {
     toolbar.activate(JavaToolbar.RUN);
 
-    prepareRun();
-    try {
-      jmode.handlePresent(sketch, this);
-    } catch (Exception e) {
-      statusError(e);
-    }
+    new Thread(new Runnable() {
+      public void run() {
+        prepareRun();
+        try {
+          jmode.handlePresent(sketch, JavaEditor.this);
+        } catch (Exception e) {
+          statusError(e);
+        }
+      }
+    }).start();
   }
-  
-  
+
+
   public void handleStop() {
     toolbar.activate(JavaToolbar.STOP);
 
