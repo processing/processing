@@ -62,7 +62,10 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   static protected String fontList[];
 
 
-  public PGraphicsPDF() { }
+  public PGraphicsPDF() { 
+    // PDF always likes native fonts. Always.
+    hint(ENABLE_NATIVE_FONTS);
+  }
 
 
   public void setPath(String path) {

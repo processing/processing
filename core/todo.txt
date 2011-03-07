@@ -6,11 +6,13 @@ X   http://code.google.com/p/processing/issues/detail?id=42
 X textAlign() incorrect with default font on Mac OS X 10.6
 X   http://code.google.com/p/processing/issues/detail?id=362
 X   changed default font to Lucida Sans, available on all platforms
+X need to finish font changes wrt native fonts before any release
+X   right now not in a good place--default font will be bitmapped and ugly
+X   http://code.google.com/p/processing/issues/detail?id=416
+o   need to have some kind of subsetting mode, but 'subsetting' a bad name
 
-_ need to finish font changes wrt native fonts before any release
-_   right now not in a good place--default font will be bitmapped and ugly
-_   http://code.google.com/p/processing/issues/detail?id=416
-_   need to have some kind of subsetting mode, but 'subsetting' a bad name
+_ make sure that loadXxxx() methods are used after init()
+_   nasty errors when loadImage/Font/createFont/etc used outside
 
 _ selectInput() and selectOutput() freeze on OS X
 _   http://code.google.com/p/processing/issues/detail?id=445
