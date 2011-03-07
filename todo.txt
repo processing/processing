@@ -112,6 +112,9 @@ X make sure that android is working again
 X export is broken in 0192
 X   http://code.google.com/p/processing/issues/detail?id=487
 
+*** 
+_ exceptions in setup() are locking the PDE
+
 _ strange window flicker when first opened
 _ test libraries on android
 _ test .java files on desktop version

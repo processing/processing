@@ -7339,7 +7339,7 @@ public class PApplet extends Applet
 
     // remove the grow box by default
     // users who want it back can call frame.setResizable(true)
-    //frame.setResizable(false);
+//    frame.setResizable(false);
     // moved later (issue #467)
 
     // Set the trimmings around the image
