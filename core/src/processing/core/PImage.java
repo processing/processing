@@ -498,15 +498,7 @@ public class PImage implements PConstants, Cloneable {
    * CloneNotSupportedException, and from doing a cast from the result.
    */
   public Object clone() throws CloneNotSupportedException {  // ignore
-    PImage c = (PImage) super.clone();
-
-    // super.clone() will only copy the reference to the pixels
-    // array, so this will do a proper duplication of it instead.
-    c.pixels = new int[width * height];
-    System.arraycopy(pixels, 0, c.pixels, 0, pixels.length);
-
-    // return the goods
-    return c;
+    return get();
   }
 
 
@@ -659,15 +651,9 @@ public class PImage implements PConstants, Cloneable {
    * Returns a copy of this PImage. Equivalent to get(0, 0, width, height).
    */
   public PImage get() {
-    try {
-      PImage clone = (PImage) clone();
-      // don't want to pass this down to the others
-      // http://dev.processing.org/bugs/show_bug.cgi?id=1245
-      clone.cacheMap = null;
-      return clone;
-    } catch (CloneNotSupportedException e) {
-      return null;
-    }
+    // Formerly this used clone(), which caused memory problems.
+    // http://code.google.com/p/processing/issues/detail?id=42
+    return get(0, 0, width, height);
   }
 
 
