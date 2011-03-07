@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-10 Ben Fry and Casey Reas
+  Copyright (c) 2005-11 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 package processing.pdf;
 
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.io.*;
 import java.util.*;
 
@@ -100,6 +101,12 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   }
 
 
+  protected void defaultSettings() {  // ignore
+    super.defaultSettings();
+    textMode = SHAPE;
+  }
+  
+  
   public void beginDraw() {
 //    long t0 = System.currentTimeMillis();
 
@@ -125,7 +132,13 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       }
 
 //      System.out.println("beginDraw fonts " + (System.currentTimeMillis() - t));
-      g2 = content.createGraphics(width, height, getMapper());
+//      g2 = content.createGraphics(width, height, getMapper());
+//      if (textMode == SHAPE) {
+      g2 = content.createGraphicsShapes(width, height);
+//      } else if (textMode == MODEL) {
+//        g2 = content.createGraphics(width, height, getMapper());
+//      }
+//      g2 = createGraphics();
 //      g2 = template.createGraphics(width, height, mapper);
     }
 //    System.out.println("beginDraw " + (System.currentTimeMillis() - t0));
@@ -299,13 +312,20 @@ public class PGraphicsPDF extends PGraphicsJava2D {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    if (textMode == SHAPE) {
-      g2 = content.createGraphicsShapes(width, height);
-    } else if (textMode == MODEL) {
-      g2 = content.createGraphics(width, height, mapper);
-    }
+    g2 = createGraphics();
     beginDraw();
     style(savedStyle);
+  }
+  
+  
+  protected Graphics2D createGraphics() {
+    if (textMode == SHAPE) {
+      return content.createGraphicsShapes(width, height);
+    } else if (textMode == MODEL) {
+      return content.createGraphics(width, height, getMapper());
+    }
+    // Should not be reachable...
+    throw new RuntimeException("Invalid textMode() selected for PDF.");
   }
 
 
@@ -417,7 +437,7 @@ public class PGraphicsPDF extends PGraphicsJava2D {
   /**
    * Change the textMode() to either SHAPE or MODEL.
    * <br/>
-   * This resets all renderer settings, and should therefore
+   * This resets all renderer settings, and therefore must
    * be called <EM>before</EM> any other commands that set the fill()
    * or the textFont() or anything. Unlike other renderers,
    * use textMode() directly after the size() command.
@@ -427,11 +447,13 @@ public class PGraphicsPDF extends PGraphicsJava2D {
       if (mode == SHAPE) {
         textMode = SHAPE;
         g2.dispose();
-        g2 = content.createGraphicsShapes(width, height);
+//        g2 = content.createGraphicsShapes(width, height);
+        g2 = createGraphics();
       } else if (mode == MODEL) {
         textMode = MODEL;
         g2.dispose();
-        g2 = content.createGraphics(width, height, mapper);
+//        g2 = content.createGraphics(width, height, mapper);
+        g2 = createGraphics();
 //        g2 = template.createGraphics(width, height, mapper);
       } else if (mode == SCREEN) {
         throw new RuntimeException("textMode(SCREEN) not supported with PDF");
@@ -591,10 +613,18 @@ public class PGraphicsPDF extends PGraphicsJava2D {
                                    ".ttf and .otf files with createFont().");
       } else if (mapper.getAliases().get(textFont.getName()) == null) {
         //System.out.println("alias for " + name + " = " + mapper.getAliases().get(name));
-        System.err.println("Use PGraphicsPDF.listFonts() to get a list of " +
-                           "fonts that can be used with PDF.");
-        throw new RuntimeException("The font “" + textFont.getName() + "” " +
-                                   "cannot be used with PDF Export.");
+//        System.err.println("Use PGraphicsPDF.listFonts() to get a list of " +
+//                           "fonts that can be used with PDF.");
+//        throw new RuntimeException("The font “" + textFont.getName() + "” " +
+//                                   "cannot be used with PDF Export.");
+        if (textFont.getName().equals("Lucida Sans")) {
+          throw new RuntimeException("Use textMode(SHAPE) with the default " +
+          		                       "font when exporting to PDF.");
+        } else {
+          throw new RuntimeException("Use textMode(SHAPE) with " +
+        	  	                       "“" + textFont.getName() + "” " +
+                                     "when exporting to PDF.");
+        }
       }
     }
   }
