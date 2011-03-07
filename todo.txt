@@ -65,6 +65,9 @@ X change 'export' to 'export applet'
 X android will be "Export Project", "Export Release Application"
 X   along with "Run in Emulator" and "Run on Device"
 X base needs to have a default mode, which is the last used
+X locations: sketchbook, examples, libraries
+X 'export' and 'export application' titles and/or # of items
+X 'run' and 'present' under sketch, and/or # of items
 
 serial
 X updated serial lib for mac osx
@@ -105,18 +108,16 @@ X test controlp5 on applet
 X test code folder on android
 X resize image not shown in lower-right of window
 X test opengl on android
+X make sure that android is working again
+X export is broken in 0192
+X   http://code.google.com/p/processing/issues/detail?id=487
+
+_ strange window flicker when first opened
 _ test libraries on android
 _ test .java files on desktop version
-
-_ from jer: 'unexpected token void' for any type of error
-_   (due to fallback in preprocessor)
-_   'public' keyword in class declarations breaks syntax checker
-_   http://code.google.com/p/processing/issues/detail?id=551
-
 _ untitled sketches not working properly
-
-discuss w/ casey
-_ examples button on toolbar? open / recent / sketchbook?
+_ clicking the editor window (from the examples window) causes an exception
+_ examples window sketches should load in proper environment
 
 ugliness
 _ inside AndroidPreprocessor
@@ -127,12 +128,14 @@ _ remove any reference to 'Editor' from Sketch.java
 _   or is that excessive, since Document is in there, etc
 _   Build does the heavy lifting anyway...
 
-_ don't make examples read-only
-_   just do them from psk files
+_ from jer: 'unexpected token void' for any type of error
+_   (due to fallback in preprocessor)
+_   'public' keyword in class declarations breaks syntax checker
+_   http://code.google.com/p/processing/issues/detail?id=551
 
-blob of mess from todo list
+blob of mess
 _ multiple sketch windows.. having a windows menu?
-_   recent sketches?
+_   examples button on toolbar? open / recent / sketchbook?
 _ modes have their own methods for digging through sketch & libraries folders
 _   therefore it need only check the sketch.txt file to see if it's ok
 _   (between android and java) 
@@ -146,20 +149,15 @@ _ work through andres' pshape changes to smooth things out
 _ post videos online of the android work
 _ why we can't do OpenGL applets that are self-signed (wiki?) 
 _   http://www.cert.org/blogs/vuls/2008/06/signed_java_security_worse_tha.html
-
-_ strange window flicker when first opened
+_ don't make examples read-only
+_   just do them from psk files
 
 http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
 
 _ p5 assets need to be licensed differently from the source
 
-_ make sure that android is working again
-
 _ the build is broken! the build is broken!
 _   http://code.google.com/p/processing/issues/detail?id=519
-
-_ export is broken in 0192
-_   http://code.google.com/p/processing/issues/detail?id=487
 
 DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
 
@@ -284,11 +282,6 @@ _   figure out a better way to do this automatically during build
 
 _ remove version number from splash image
 _   http://code.google.com/p/processing/issues/detail?id=324
-
-mode work
-_ locations: sketchbook, examples, libraries
-_ 'export' and 'export application' titles and/or # of items
-_ 'run' and 'present' under sketch, and/or # of items
 
 _ add processing.js export tool from florian
 _   http://github.com/fjenett/processingjstool/

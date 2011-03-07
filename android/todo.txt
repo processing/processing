@@ -35,6 +35,12 @@ _   this is currently draining batteries
 _ thread is continually running - 'inside handleDraw()' running continually
 _   inside run() it shouldn't still be going
 
+_ go through all basics/topics examples
+_   remove those that don't make sense with android
+_   remove size() commands from most/all
+_     (or remove ones that truly require size...)
+_   optimize for android use
+
 _ need sizeChanged() method... 
 _   also add the param to the xml file saying that it can deal w/ rotation
 
