@@ -3,15 +3,14 @@ X fix problem that made applets suck in Google Chrome and Firefox 4
 X java.lang.OutOfMemoryError using get() and image() inside a tight loop
 X   just need to swap out use of clone() since it's causing trouble
 X   http://code.google.com/p/processing/issues/detail?id=42
-
+X textAlign() incorrect with default font on Mac OS X 10.6
+X   http://code.google.com/p/processing/issues/detail?id=362
+X   changed default font to Lucida Sans, available on all platforms
 
 _ need to finish font changes wrt native fonts before any release
 _   right now not in a good place--default font will be bitmapped and ugly
 _   http://code.google.com/p/processing/issues/detail?id=416
 _   need to have some kind of subsetting mode, but 'subsetting' a bad name
-
-_ check glyph code < 0 instead of Font.canDisplay() 
-_   OS X claims that it can display more glyphs because of substitutions
 
 _ selectInput() and selectOutput() freeze on OS X
 _   http://code.google.com/p/processing/issues/detail?id=445
@@ -52,8 +51,8 @@ Unfortunately I don't really understand the true cause of the underlying problem
 _ Seeming problem displaying SVG data when layer data is grouped
 _   http://code.google.com/p/processing/issues/detail?id=388
 
-_ textAlign() incorrect with default font on Mac OS X 10.6
-_   http://code.google.com/p/processing/issues/detail?id=362
+_ check glyph code < 0 instead of Font.canDisplay() 
+_   OS X claims that it can display more glyphs because of substitutions
 
 _ bug in SVG parser for shorthand curves (T/t and S/s)
 _   http://code.google.com/p/processing/issues/detail?id=350
