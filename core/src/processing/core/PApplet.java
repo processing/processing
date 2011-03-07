@@ -4184,7 +4184,7 @@ public class PApplet extends Applet
 //    println("n: " + f.getName());
 //    println("fn: " + f.getFontName());
 //    println("ps: " + f.getPSName());
-    return createFont("SansSerif", size, true, null);
+    return createFont("Lucida Sans", size, true, null);
   }
 
 
