@@ -467,7 +467,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 
    <exec executable="tar">
      <arg value="--directory=linux" />
-     <arg value="--file=linux/processing-${version}.tgz" />
+     <arg value="--file=linux/processing-${version}-linux.tgz" />
      <arg value="-cpz" />
      <arg value="processing-${version}" />
 
@@ -480,7 +480,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
       =======================================================
       Processing for Linux was built. Grab the archive from   
       
-      linux/processing-${version}.tgz
+      linux/processing-${version}-linux.tgz
       =======================================================
     </echo>
   </target>
@@ -572,12 +572,12 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 	 excludes="java/**" />
     -->
 
-    <zip destfile="windows/processing-${version}.zip">
+    <zip destfile="windows/processing-${version}-windows.zip">
       <zipfileset dir="windows/work" 
 		  prefix="processing-${version}" />
     </zip>
 
-    <zip destfile="windows/processing-${version}-expert.zip">
+    <zip destfile="windows/processing-${version}-windows-expert.zip">
       <zipfileset dir="windows/work" 
 		  prefix="processing-${version}" 
 		  excludes="java/**" />
@@ -587,8 +587,8 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
       =======================================================
       Processing for Windows was built. Grab the archive from   
       
-      windows/processing-${version}.zip
-      windows/processing-${version}-expert.zip
+      windows/processing-${version}-windows.zip
+      windows/processing-${version}-windows-expert.zip
       =======================================================
     </echo>
   </target>

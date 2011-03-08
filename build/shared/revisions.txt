@@ -16,6 +16,10 @@ libraries, the code folder, and so on.
 
 [ pde changes/fixes ] 
 
++ Added support for separate 32 and 64 bit versions of libraries.
+
++ Added a 64 bit version of the OpenGL library.
+
 + Code folder oddity on application export (in SVN)
   http://code.google.com/p/processing/issues/detail?id=486
 
