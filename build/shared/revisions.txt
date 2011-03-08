@@ -46,6 +46,10 @@ libraries, the code folder, and so on.
 
 + Added a 64 bit version of the OpenGL library.
 
++ Updates to Java 6u23 in the download.
+
++ Fix issue with javac.exe not being included in the download.
+
 + Also added opengl2, which rolls GLGraphics and the new Android OpenGL
   library into a newer, faster, more amazinger OpenGL that will eventually
   be the default.
