@@ -107,11 +107,20 @@
 
     <copy todir="${target.path}/modes/java">
       <fileset dir="../java">
-	<exclude name="**/bin/**" />
-	<exclude name="**/src/**" />
-	<exclude name="cmd" />
+<!--
+	<exclude name="**/bin/*" />
+	<exclude name="**/src/*" />
+-->
+	<exclude name="**/examples/**" />
+	<exclude name="**/cmd/**" />
 	<exclude name="reference.zip" />
 	<exclude name="**/._*" />
+      </fileset>
+    </copy>
+
+    <copy todir="${target.path}/modes/java/examples">
+      <fileset dir="../java/examples">
+	<exclude name="**/applet/**" />
       </fileset>
     </copy>
 
