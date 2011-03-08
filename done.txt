@@ -1,3 +1,119 @@
+0193 (pre)
+X Code folder oddity on application export (in SVN)
+X   http://code.google.com/p/processing/issues/detail?id=486
+L Processing cannot run because it could not ... store your settings.
+L   http://code.google.com/p/processing/issues/detail?id=410
+J AutoFormat unecessarily adds spaces to function with multiple args
+J   http://code.google.com/p/processing/issues/detail?id=462
+X fix for linux build script (thanks to Kevin Keraudren)
+X   http://code.google.com/p/processing/issues/detail?id=466
+o occasional exception in "copy for discourse"
+o   http://dev.processing.org/bugs/show_bug.cgi?id=729
+X move compiler to mode.java.* instead of runner
+X fix the encoding on OS X for the "Fix Encoding and Reload" function
+X broken link on ye olde' http://processing.org/bugs/bugzilla
+X   http://code.google.com/p/processing/issues/detail?id=528
+X hex value from color picker does not start with #
+X   http://code.google.com/p/processing/issues/detail?id=529
+
+fixed in 0192
+J auto-format screws up if/else/else if blocks
+J   http://code.google.com/p/processing/issues/detail?id=325
+L Exported libraries don't mantain symbolic links
+L   http://code.google.com/p/processing/issues/detail?id=353
+
+fixed earlier
+o add to mac reference for present mode
+o   can make full screen work via Info.plist key
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1135921427;start=7#7
+X   added to export defaults in a much earlier version
+X when running externally, set window frame title to the sketch name
+X   is this only a problem on macosx? 
+
+console, preferences
+X removed build.path from preferences.txt
+X   not really used anywhere, just trying to clean things up
+X removed 'console.output.file' and 'console.error.file'
+X   these weren't respected as paths, no reason for them
+X change console to write to the 'console/' folder in settings
+X   this may eventually create a problem with logs that need to be cleaned
+X   but we'll keep an eye on it for now
+X removed 'console' true/false from preferences
+o console output has wrong character encoding
+o   this may be fixed now, but writing lots of NULs to the output
+o   message(new String(b, offset, length), err, false);
+o   http://code.google.com/p/processing/issues/detail?id=197
+X   couldn't find a good way to reproduce this, closing
+
+macosx
+X add splash image on os x
+If you want a bundled app to show a splash screen you can do so by adding an entry named SplashFile to the Java section of the Info.plist:
+<key>SplashFile</key>
+<string>$JAVAROOT/splash.png</string>
+I do not know if it still works but it did in 2008 (see <http://lists.apple.com/archives/Java-dev/2008/Jun/msg00012.html>).
+
+mode work
+X opt for separate examples/sketchbook/libraries for each mode
+X   better to put the onus on the mode developers than users
+X   and rather than trying to figure out a complicated scheme for inclusion
+X   we can have something that takes care of auto-copying per-mode examples
+X implement option to change modes
+X preliminary, ugly version of android coloring
+X can't do fileMenu.add(base.getSketchbookMenu()); inside ThinkDifferent
+X   sketchbook location hasn't been determined yet
+X change 'export' to 'export applet'
+X android will be "Export Project", "Export Release Application"
+X   along with "Run in Emulator" and "Run on Device"
+X base needs to have a default mode, which is the last used
+X locations: sketchbook, examples, libraries
+X 'export' and 'export application' titles and/or # of items
+X 'run' and 'present' under sketch, and/or # of items
+
+serial
+X updated serial lib for mac osx
+X   http://code.google.com/p/processing/issues/detail?id=503
+X   http://rxtx.qbang.org/wiki/index.php/Download
+
+editor
+X accented letter input is broken (on os x and windows)
+X   http://code.google.com/p/processing/issues/detail?id=335
+X   disabled input method support for now
+X make some fancy extendo things because the tabs get too big
+X   either condense or popdown menu thingy
+o   http://dev.processing.org/bugs/show_bug.cgi?id=54
+X   http://code.google.com/p/processing/issues/detail?id=17
+X   don't show tabs when there are too many
+X   maybe move the list of files to the top?
+X   or indicate which are visible somehow
+X   slightly longer.. rearrange?
+X     or just show tabs in (alpha?) order based on what's most recently used
+X   have some indicator that shows the tabs when they've disappeared
+X   or little mini tabs that expand/contract?
+X     and a way to control who's expanded and not
+
+examples menu
+X top level directories will be grayed out categories
+X   Basics, Topics, 3D, Books, Libraries, Contributed Libraries
+X 'book' examples will be another category
+X   i'll add vida examples, can offer to others if they want
+X   should be "Getting Started" not GettingStarted
+X window that opens and contains list of examples
+
+regressions
+X test code folder on desktop
+X   with applet
+X   with application
+X test controlp5 on app
+X test controlp5 on applet
+X test code folder on android
+X resize image not shown in lower-right of window
+X test opengl on android
+X make sure that android is working again
+X export is broken in 0192
+X   http://code.google.com/p/processing/issues/detail?id=487
+X exceptions in setup() are locking the PDE
+
+
 0192 (pre)
 J Getting error: Syntax error on token "else", } expected
 J   http://code.google.com/p/processing/issues/detail?id=400
