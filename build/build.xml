@@ -477,7 +477,6 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
      <arg value="--file=linux/processing-${version}-linux.tgz" />
      <arg value="-cpz" />
      <arg value="processing-${version}" />
-
    </exec>
 
    <!-- put... the candle... back -->
