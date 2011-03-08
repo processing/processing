@@ -5929,56 +5929,57 @@ public class PGraphics extends PImage implements PConstants {
   // New API:
   
   protected String[] getSupportedShapeFormats() {
+    showMissingWarning("getSupportedShapeFormats");
     return null;
   }
 
   
   protected PShape loadShape(String filename, Object params) {
-    showMissingWarning("loading OBJ files requires OPENGL2");
+    showMissingWarning("loadShape");
     return null;
   }
   
   
   protected PShape createShape(int size, Object params) {
-    showMissingWarning("creating PShape3D objects requires OPENGL2");
+    showMissingWarning("createShape");
     return null;
   }
   
   
   public void screenBlend(int mode) {
-    showMissingWarning("screen blending requires OPENGL2");
+    showMissingWarning("screenBlend");
   }
 
   
   public void textureBlend(int mode) {
-    showMissingWarning("texture blending requires OPENGL2");
+    showMissingWarning("textureBlend");
   }
   
   
   public PShape beginRecord() { // ignore
-    showMissingWarning("shape recording requires OPENGL2");
+    showMissingWarning("beginRecord");
     return null;
   }
   
   
   public void endRecord() {  // ignore
-    showMissingWarning("shape recording requires OPENGL2");   
+    showMissingWarning("endRecord");   
   }
   
   
   public boolean isRecording() {
-    showMissingWarning("shape recording requires OPENGL2"); 
+    showMissingWarning("isRecording"); 
     return false;
   }
   
   
   public void mergeShapes(boolean val) { 
-    showMissingWarning("shape recording requires OPENGL2");    
+    showMissingWarning("mergeShapes");    
   }
   
   
   public void shapeName(String name) {
-    showMissingWarning("shape recording requires OPENGL2"); 
+    showMissingWarning("shapeName"); 
   }
   
   
@@ -5988,7 +5989,7 @@ public class PGraphics extends PImage implements PConstants {
 
   
   public void matrixMode(int mode) {
-    showMissingWarning("setting matrix mode requires OPENGL2"); 
+    showMissingWarning("matrixMode"); 
   }
 
   
@@ -6003,16 +6004,16 @@ public class PGraphics extends PImage implements PConstants {
 
   
   public void texture(PImage... images) {
-    showMissingWarning("multitexturing requires OPENGL2");    
+    showMissingWarning("texture");    
   }
 
   
   public void vertex(float x, float y, float... uv) {
-    showMissingWarning("multitexturing requires OPENGL2");    
+    showMissingWarning("vertex");    
   }
  
   
   public void vertex(float x, float y, float z, float... uv) {
-    showMissingWarning("multitexturing requires OPENGL2");    
+    showMissingWarning("vertex");    
   }    
 }
