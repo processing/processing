@@ -5085,55 +5085,56 @@ public class PGraphics extends PImage implements PConstants {
   // New API:
   
   protected String[] getSupportedShapeFormats() {
+    showMissingWarning("getSupportedShapeFormats");
     return null;
   }
 
   
   protected PShape loadShape(String filename, Object params) {
-    showMissingWarning("loading OBJ files requires A3D");
+    showMissingWarning("loadShape");
     return null;
   }
   
   
   protected PShape createShape(int size, Object params) {
-    showMissingWarning("creating PShape3D objects requires A3D");
+    showMissingWarning("createShape");
     return null;
   }  
 
   public void screenBlend(int mode) {
-    showMissingWarning("screen blending requires A3D");
+    showMissingWarning("screenBlend");
   }
 
   
   public void textureBlend(int mode) {
-    showMissingWarning("texture blending requires A3D");
+    showMissingWarning("textureBlend");
   }
   
   
   public PShape beginRecord() {
-    showMissingWarning("shape recording requires A3D");
+    showMissingWarning("beginRecord");
     return null;
   }
   
   
   public void endRecord() {
-    showMissingWarning("shape recording requires A3D");   
+    showMissingWarning("endRecord");   
   }
   
   
   public boolean isRecording() {
-    showMissingWarning("shape recording requires A3D"); 
+    showMissingWarning("isRecording"); 
     return false;
   }  
   
   
   public void mergeShapes(boolean val) { 
-    showMissingWarning("shape recording requires A3D");      
+    showMissingWarning("mergeShapes");      
   }
   
   
   public void shapeName(String name) {
-    showMissingWarning("shape recording requires A3D");
+    showMissingWarning("shapeName");
   }
   
 
@@ -5143,7 +5144,7 @@ public class PGraphics extends PImage implements PConstants {
   
   
   public void matrixMode(int mode) {
-    showMissingWarning("setting matrix mode requires A3D"); 
+    showMissingWarning("matrixMode"); 
   }
   
   
@@ -5158,16 +5159,16 @@ public class PGraphics extends PImage implements PConstants {
   
   
   public void texture(PImage... images) {
-    showMissingWarning("multitexturing requires A3D");    
+    showMissingWarning("texture");    
   }
 
   
   public void vertex(float x, float y, float... uv) {
-    showMissingWarning("multitexturing requires A3D");    
+    showMissingWarning("vertex");    
   }
  
   
   public void vertex(float x, float y, float z, float... uv) {
-    showMissingWarning("multitexturing requires A3D");    
+    showMissingWarning("vertex");    
   }
 }
