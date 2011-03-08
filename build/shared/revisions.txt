@@ -1,6 +1,99 @@
-PROCESSING REV 0193 - XX February 2011
+PROCESSING REV 0193 - 7 March 2011
 
-The PDE is receiving a major overhaul. 
+The PDE is receiving a major overhaul. The most obvious change is that 
+there's now a menu that allows you to switch between "modes". "Standard"
+is the Java-based mode that we're all used to, and "Android" compiles 
+things for Android devices. 
+
+Basically it's all pre-releases from here until 2.0. 
+
+With the mode support, it will soon be possible to embed other projects, 
+like the Python version, or the JS exporter, directly inside the PDE. 
+More on this later.
+
+This release also fixes a handful of Android problems, like the use of
+libraries, the code folder, and so on.
+
+[ pde changes/fixes ] 
+
++ Code folder oddity on application export (in SVN)
+  http://code.google.com/p/processing/issues/detail?id=486
+
++ Processing cannot run because it could not ... store your settings.
+  http://code.google.com/p/processing/issues/detail?id=410
+
++ AutoFormat unecessarily adds spaces to function with multiple args
+  http://code.google.com/p/processing/issues/detail?id=462
+
++ Fix for linux build script (thanks to Kevin Keraudren)
+  http://code.google.com/p/processing/issues/detail?id=466
+
++ Fix the encoding on OS X for the "Fix Encoding and Reload" function
+
++ Hex value from color picker does not start with #
+  http://code.google.com/p/processing/issues/detail?id=529
+
++ Console, preferences cleanup: removed build.path, as well as
+  console.output.file, and console.error.file. Also removed 'console' 
+  true/false from preferences.
+
++ Change console to write to the 'console/' folder in settings.
+  This may eventually create a problem with logs that need to be cleaned,
+  but we'll keep an eye on it for now.
+
++ Add splash image on OS X.
+
++ Added window for examples. It's a bit ugly, but the menu was too much
+  and we should be able to clean this feller up later. Also makes the 
+  examples a bit more obvious.
+
++ Updated the serial library for Mac OS X
+  http://code.google.com/p/processing/issues/detail?id=503
+  http://rxtx.qbang.org/wiki/index.php/Download
+
++ Accented letter input is broken (on OS X and Windows)
+  http://code.google.com/p/processing/issues/detail?id=335
+  Had to disable input method support (Japanese) for now.
+
++ For projects with too many tabs, condense the ones that are used less.
+  http://dev.processing.org/bugs/show_bug.cgi?id=54
+  http://code.google.com/p/processing/issues/detail?id=17
+
+[ fixed in 0192 ] 
+
++ Auto-format screws up if/else/else if blocks
+  http://code.google.com/p/processing/issues/detail?id=325
+
++ Exported libraries don't mantain symbolic links
+  http://code.google.com/p/processing/issues/detail?id=353
+
+[ android edits ]
+
++ Remove the need to download the android core.jar separately
+  http://code.google.com/p/processing/issues/detail?id=421
+
++ Remove the Google APIs requirement, just use the standard.
+  This means losing the standard skin on the emulator, but we'll see
+  about bringing it back in some other fashion in the future.
+  We weren't actually using the Google APIs, so it seemed silly
+  because of how much complexity it added.
+
++ Deal with issue of debug certificates expiring.
+  http://forum.processing.org/topic/ant-rules-r3-xml-209-395-error#25080000000262001
+
++ Fix use of .java files in Android projects
+  http://code.google.com/p/processing/issues/detail?id=404
+
++ Save state for whether using Android or Standard mode
+  http://dev.processing.org/bugs/show_bug.cgi?id=1380
+  http://code.google.com/p/processing/issues/detail?id=202
+
++ New mode support makes the Android switch less clunky
+  http://dev.processing.org/bugs/show_bug.cgi?id=1379
+  http://code.google.com/p/processing/issues/detail?id=201
+
++ With mode support, "Run on Device" and "Run in Emulator" instead of 
+  "Run" and "Present".
 
 [ internal changes ] 
 
