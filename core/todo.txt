@@ -11,13 +11,12 @@ X   right now not in a good place--default font will be bitmapped and ugly
 X   http://code.google.com/p/processing/issues/detail?id=416
 o   need to have some kind of subsetting mode, but 'subsetting' a bad name
 X changing PDF to use textMode(SHAPE) by default
-_   need to update the reference for textMode(MODEL)
+X saving a PGraphics as jpg using save() makes a cmyk file
+X   need to shut off the alpha channel when writing
+X   http://code.google.com/p/processing/issues/detail?id=415
 
-_ saving a PGraphics as jpg using save() makes a cmyk file
-_   need to shut off the alpha channel when writing
-_   http://code.google.com/p/processing/issues/detail?id=415
+_ present mode is no longer centering on macosx
 
-_ present mode is no longer centering on osx?
 _ bug: textAlign(RIGHT) is shutting off native fonts
 _   makes salaryper super ugly
 
