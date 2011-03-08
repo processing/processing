@@ -1,25 +1,5 @@
-0193 android
-o verify that processing-core.jar has downloaded properly
-o   http://code.google.com/p/processing/issues/detail?id=421
-o   this is the download page: 
-o     http://code.google.com/p/processing/downloads/detail?name=processing-android-core-0191.zip
-o   so look for "SHA1 Checksum: 1ed63f9316441fe46949ef5a92a28f58cc7ee226"
-X just use generic android apis as requirement, not the google apis
-X   though it does give us the emulator skin.. maybe another option
-X android debug certificate expired
-X   http://forum.processing.org/topic/ant-rules-r3-xml-209-395-error#25080000000262001
-X   just delete ~/.android/debug.keystore
-X .java files are reported with Syntax Error with the Android build 0191
-X   http://code.google.com/p/processing/issues/detail?id=404
-X implement mode switching for android/java/etc
-X save state re: whether sketches are android or java mode (or others?)
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1380
-X   http://code.google.com/p/processing/issues/detail?id=202
-X android mode is currently per-editor (and clunky)
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1379
-X   http://code.google.com/p/processing/issues/detail?id=201
-X remove use of clone() for images
-X   http://code.google.com/p/processing/issues/detail?id=42
+0194 android
+
 
 _ pause/resume trickiness with interactive apps
 _   can we serialize objects (even if slow?)

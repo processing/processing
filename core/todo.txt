@@ -1,24 +1,4 @@
-0193 core
-X fix problem that made applets suck in Google Chrome and Firefox 4
-X java.lang.OutOfMemoryError using get() and image() inside a tight loop
-X   just need to swap out use of clone() since it's causing trouble
-X   http://code.google.com/p/processing/issues/detail?id=42
-X textAlign() incorrect with default font on Mac OS X 10.6
-X   http://code.google.com/p/processing/issues/detail?id=362
-X   changed default font to Lucida Sans, available on all platforms
-X need to finish font changes wrt native fonts before any release
-X   right now not in a good place--default font will be bitmapped and ugly
-X   http://code.google.com/p/processing/issues/detail?id=416
-o   need to have some kind of subsetting mode, but 'subsetting' a bad name
-X changing PDF to use textMode(SHAPE) by default
-X saving a PGraphics as jpg using save() makes a cmyk file
-X   need to shut off the alpha channel when writing
-X   http://code.google.com/p/processing/issues/detail?id=415
-X present mode is no longer centering on macosx
-X   problem with setExtendedState(), which doesn't seem to be necessary
-o only top left 100 x 100 pixels are displayed in presentation mode (Linux 1.1+)
-o   also was just crashing in main() for me, check on this later
-o   http://dev.processing.org/bugs/show_bug.cgi?id=1560
+0194 core
 
 
 _ bug: textAlign(RIGHT) is shutting off native fonts

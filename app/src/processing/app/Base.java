@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2004-11 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -44,9 +44,9 @@ import processing.mode.java.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 193;
+  static final int REVISION = 194;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0193";
+  static public String VERSION_NAME = "0194";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   /** True if heavy debugging error/log messages are enabled */
@@ -120,7 +120,7 @@ public class Base {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    
+
     initPlatform();
 
     // Use native popups so they don't look so crappy on osx
@@ -279,8 +279,8 @@ public class Base {
 //  static protected String getExtension() {
 //    return ".pde";
 //  }
-  
-  
+
+
 //  public Mode getDefaultMode() {
 //    return defaultMode;
 //  }
@@ -318,7 +318,7 @@ public class Base {
     if (DEBUG) {
       System.out.println("default mode set to " + defaultMode.getClass().getName());
     }
-    
+
     if (!Preferences.getBoolean("last.sketch.restore")) {
       return false;
     }
@@ -518,14 +518,14 @@ public class Base {
     if (activeEditor.getMode() != mode) {
       Sketch sketch = activeEditor.getSketch();
       if (sketch.isModified()) {
-        Base.showWarning("Save", 
-                         "Please save the sketch before changing the mode.", 
+        Base.showWarning("Save",
+                         "Please save the sketch before changing the mode.",
                          null);
       } else {
         String mainPath = sketch.getMainFilePath();
 
         // save a mode file into this sketch folder
-        File sketchProps = new File(sketch.getFolder(), "sketch.properties"); 
+        File sketchProps = new File(sketch.getFolder(), "sketch.properties");
         PrintWriter writer = PApplet.createWriter(sketchProps);
         writer.println("mode=" + mode.getTitle());
         writer.flush();
@@ -534,14 +534,14 @@ public class Base {
         // close this sketch
         int[] where = activeEditor.getPlacement();
         handleClose(activeEditor);
-        
+
         // re-open the sketch
         handleOpen(mainPath, where);
       }
     }
   }
-  
-  
+
+
   public Mode[] getModeList() {
     return modeList;
   }
@@ -781,7 +781,7 @@ public class Base {
     for (Mode mode : modeList) {
       extensions.add(mode.getDefaultExtension());
     }
-    
+
     // Only show .pde files as eligible bachelors
     fd.setFilenameFilter(new FilenameFilter() {
         public boolean accept(File dir, String name) {
@@ -791,7 +791,7 @@ public class Base {
               return true;
             }
           }
-          return false; 
+          return false;
         }
       });
 
@@ -867,7 +867,7 @@ public class Base {
         if (modeTitle != null) {
           nextMode = findMode(modeTitle);
           if (nextMode == null) {
-            Base.showWarning("Depeche Mode", 
+            Base.showWarning("Depeche Mode",
                              "This sketch was last used in “" + modeTitle + "” mode,\n" +
                              "which does not appear to be installed. The sketch will\n" +
                              "be opened in “" + defaultMode.getTitle() + "” mode instead.", null);
@@ -894,8 +894,8 @@ public class Base {
 
     return editor;
   }
-  
-  
+
+
   protected Mode findMode(String title) {
     for (Mode mode : modeList) {
       if (mode.getTitle().equals(title)) {
@@ -1105,7 +1105,7 @@ public class Base {
     if (folder.getName().equals("libraries")) {
       return false;  // let's not go there
     }
-    
+
     String[] list = folder.list();
     // If a bad folder or unreadable or whatever, this will come back null
     if (list == null) {
@@ -1193,8 +1193,8 @@ public class Base {
     }
     return found;  // actually ignored, but..
   }
-  
-  
+
+
   protected boolean addSketches(DefaultMutableTreeNode node, File folder) throws IOException {
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) {
@@ -1204,7 +1204,7 @@ public class Base {
     if (folder.getName().equals("libraries")) {
       return false;  // let's not go there
     }
-    
+
     String[] list = folder.list();
     // If a bad folder or unreadable or whatever, this will come back null
     if (list == null) {
@@ -1236,7 +1236,7 @@ public class Base {
       if (name.charAt(0) == '.') {
         continue;
       }
-      
+
 //      JTree tree = null;
 //      TreePath[] a = tree.getSelectionPaths();
 //      for (TreePath path : a) {
@@ -1248,7 +1248,7 @@ public class Base {
         File entry = checkSketchFolder(subfolder, name);
         if (entry != null) {
 //          DefaultMutableTreeNode item = new DefaultMutableTreeNode(name);
-          DefaultMutableTreeNode item = 
+          DefaultMutableTreeNode item =
             new DefaultMutableTreeNode(new SketchReference(name, entry));
 //          item.addActionListener(listener);
 //          item.setActionCommand(entry.getAbsolutePath());
@@ -1274,7 +1274,7 @@ public class Base {
 
 
   /**
-   * Check through the various modes and see if this is a legit sketch. 
+   * Check through the various modes and see if this is a legit sketch.
    * Because the default mode will be the first in the list, this will always
    * prefer that one over the others.
    */
