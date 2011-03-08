@@ -2768,60 +2768,24 @@ public class PImage implements PConstants, Cloneable {
    */
   protected void saveImageIO(String path) throws IOException {
     try {
-      BufferedImage bimage =
-        new BufferedImage(width, height, (format == ARGB) ?
-                          BufferedImage.TYPE_INT_ARGB :
-                          BufferedImage.TYPE_INT_RGB);
-      /*
-      Class bufferedImageClass =
-        Class.forName("java.awt.image.BufferedImage");
-      Constructor bufferedImageConstructor =
-        bufferedImageClass.getConstructor(new Class[] {
-            Integer.TYPE,
-            Integer.TYPE,
-            Integer.TYPE });
-      Field typeIntRgbField = bufferedImageClass.getField("TYPE_INT_RGB");
-      int typeIntRgb = typeIntRgbField.getInt(typeIntRgbField);
-      Field typeIntArgbField = bufferedImageClass.getField("TYPE_INT_ARGB");
-      int typeIntArgb = typeIntArgbField.getInt(typeIntArgbField);
-      Object bimage =
-        bufferedImageConstructor.newInstance(new Object[] {
-            new Integer(width),
-            new Integer(height),
-            new Integer((format == ARGB) ? typeIntArgb : typeIntRgb)
-          });
-      */
-
+      int outputFormat = (format == ARGB) ?
+        BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+      
+      // JPEG and BMP images that have an alpha channel set get pretty unhappy.
+      // BMP just doesn't write, and JPEG writes it as a CMYK image.
+      // http://code.google.com/p/processing/issues/detail?id=415
+      String lower = path.toLowerCase();
+      if (lower.endsWith("bmp") || lower.endsWith("jpg") || lower.endsWith("jpeg")) {
+        outputFormat = BufferedImage.TYPE_INT_RGB;
+      }
+      
+      BufferedImage bimage = new BufferedImage(width, height, outputFormat);
       bimage.setRGB(0, 0, width, height, pixels, 0, width);
-      /*
-      Method setRgbMethod =
-        bufferedImageClass.getMethod("setRGB", new Class[] {
-            Integer.TYPE, Integer.TYPE,
-            Integer.TYPE, Integer.TYPE,
-            pixels.getClass(),
-            Integer.TYPE, Integer.TYPE
-          });
-      setRgbMethod.invoke(bimage, new Object[] {
-          new Integer(0), new Integer(0),
-          new Integer(width), new Integer(height),
-          pixels, new Integer(0), new Integer(width)
-        });
-      */
 
       File file = new File(path);
       String extension = path.substring(path.lastIndexOf('.') + 1);
 
       ImageIO.write(bimage, extension, file);
-      /*
-      Class renderedImageClass =
-        Class.forName("java.awt.image.RenderedImage");
-      Class ioClass = Class.forName("javax.imageio.ImageIO");
-      Method writeMethod =
-        ioClass.getMethod("write", new Class[] {
-            renderedImageClass, String.class, File.class
-          });
-      writeMethod.invoke(null, new Object[] { bimage, extension, file });
-      */
 
     } catch (Exception e) {
       e.printStackTrace();
