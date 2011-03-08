@@ -7382,7 +7382,8 @@ public class PApplet extends Applet
       frame.setBackground(backgroundColor);
       if (exclusive) {
         displayDevice.setFullScreenWindow(frame);
-        frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+        // this trashes the location of the window on os x
+        //frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
         fullScreenRect = frame.getBounds();
       } else {
         DisplayMode mode = displayDevice.getDisplayMode();

@@ -14,8 +14,12 @@ X changing PDF to use textMode(SHAPE) by default
 X saving a PGraphics as jpg using save() makes a cmyk file
 X   need to shut off the alpha channel when writing
 X   http://code.google.com/p/processing/issues/detail?id=415
+X present mode is no longer centering on macosx
+X   problem with setExtendedState(), which doesn't seem to be necessary
+o only top left 100 x 100 pixels are displayed in presentation mode (Linux 1.1+)
+o   also was just crashing in main() for me, check on this later
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1560
 
-_ present mode is no longer centering on macosx
 
 _ bug: textAlign(RIGHT) is shutting off native fonts
 _   makes salaryper super ugly
@@ -53,9 +57,6 @@ Unfortunately I don't really understand the true cause of the underlying problem
 
 _ Seeming problem displaying SVG data when layer data is grouped
 _   http://code.google.com/p/processing/issues/detail?id=388
-
-_ check glyph code < 0 instead of Font.canDisplay() 
-_   OS X claims that it can display more glyphs because of substitutions
 
 _ bug in SVG parser for shorthand curves (T/t and S/s)
 _   http://code.google.com/p/processing/issues/detail?id=350
@@ -95,10 +96,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1502
 _ transparency issue (might just be a bug in their code?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1280
 _   http://code.google.com/p/processing/issues/detail?id=182
-
-_ only top left 100 x 100 pixels are displayed in presentation mode (Linux 1.1+)
-_   also was just crashing in main() for me, check on this later
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1560
 
 _ need to make sure the createFont() reference is up to date for charset
 
