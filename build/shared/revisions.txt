@@ -14,6 +14,32 @@ More on this later.
 This release also fixes a handful of Android problems, like the use of
 libraries, the code folder, and so on.
 
+[ core ] 
+
++ Fix problem that made applets suck in Google Chrome and Firefox 4.
+
++ Fix java.lang.OutOfMemoryError using get() and image() inside a tight loop.
+  http://code.google.com/p/processing/issues/detail?id=42
+
++ Changed default font to Lucida Sans, available on all platforms. 
+  This means that your text may be a slightly different size if you haven't
+  used textFont(), but hey, you probably don't use the default font, right? 
+  A fella (or gal) like you?
+
++ textAlign() incorrect with default font on Mac OS X 10.6
+  http://code.google.com/p/processing/issues/detail?id=362
+
++ Clean up how PDF fonts are handled. Default to writing fonts as shapes, 
+  which makes PDF files larger, but is likely to work in more cases. If you
+  want editable/real text, you can call textMode(MODEL) right after creating
+  the PDF renderer (directly below size() or beginRecord()).
+  http://code.google.com/p/processing/issues/detail?id=416
+
++ Saving a PGraphics as jpg using save() makes a cmyk file
+  http://code.google.com/p/processing/issues/detail?id=415
+
++ Fix bizarre window placement when using Present mode on OS X.
+
 [ pde changes/fixes ] 
 
 + Added support for separate 32 and 64 bit versions of libraries.
