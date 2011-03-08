@@ -1,9 +1,9 @@
 // Earth
 // by Mike 'Flux' Chang (cleaned up by Aaron Koblin). 
 // Based on code by Toxi. 
-// Android port by Andres Colubri
+// OPENGL2 port by Andres Colubri
 //
-// This example shows the shape recording functionality in A3D,
+// This example shows the shape recording functionality in OPENGL2,
 // where an entire geometry drawn with the regular API can be
 // stored in a PShape3D object for later use. This greatly
 // improves the performance of the application.
