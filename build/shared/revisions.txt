@@ -20,6 +20,13 @@ libraries, the code folder, and so on.
 
 + Added a 64 bit version of the OpenGL library.
 
++ Also added opengl2, which rolls GLGraphics and the new Android OpenGL
+  library into a newer, faster, more amazinger OpenGL that will eventually
+  be the default.
+
++ Added a *lot* of examples. This has also had the effect of making the 
+  download enormous. It's currently obese. We'll sort that out later.
+
 + Code folder oddity on application export (in SVN)
   http://code.google.com/p/processing/issues/detail?id=486
 
