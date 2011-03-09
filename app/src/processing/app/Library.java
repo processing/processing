@@ -215,6 +215,8 @@ public class Library {
   }
   
 
+  static protected HashMap<String, Object> packageWarningMap = new HashMap<String, Object>();
+  
   /** 
    * Add the packages provided by this library to the master list that maps
    * imports to specific libraries.
@@ -226,12 +228,17 @@ public class Library {
       //    pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
       Library library = importToLibraryTable.get(pkg);
       if (library != null) {
-        System.err.println("The library found in " + getPath());
-        System.err.println("conflicts with " + library.getPath());
-        System.err.println("which already defines the package " + pkg);
-        System.err.println();
+        if (!packageWarningMap.containsKey(pkg)) {
+          packageWarningMap.put(pkg, null);
+          System.err.println("The library found in " + getPath());
+          System.err.println("conflicts with " + library.getPath());
+          System.err.println("which already defines the package " + pkg);
+          System.err.println("If you have a line in your sketch that reads");
+          System.err.println("import " + pkg + ".*;");
+          System.err.println("Then you'll need to first remove one of those libraries.");
+          System.err.println();
+        }
       } else {
-//        PApplet.println("adding pkg " + pkg + " for " + name);
         importToLibraryTable.put(pkg, this);
       }
     }
