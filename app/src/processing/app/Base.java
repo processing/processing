@@ -534,7 +534,7 @@ public class Base {
 
         // close this sketch
         int[] where = activeEditor.getPlacement();
-        handleClose(activeEditor);
+        handleClose(activeEditor, true);
 
         // re-open the sketch
         Editor editor = handleOpen(mainPath, where);
@@ -915,7 +915,7 @@ public class Base {
    * @param editor Editor object of the sketch to be closed.
    * @return true if succeeded in closing, false if canceled.
    */
-  public boolean handleClose(Editor editor) {
+  public boolean handleClose(Editor editor, boolean modeSwitch) {
     // Check if modified
 //    boolean immediate = editors.size() == 1;
     if (!editor.checkModified()) {
@@ -967,9 +967,10 @@ public class Base {
       Preferences.save();
 
       if (defaultFileMenu == null) {
-        // Since this wasn't an actual Quit event, call System.exit()
-        System.exit(0);
-
+        if (!modeSwitch) {
+          // Since this wasn't an actual Quit event, call System.exit()
+          System.exit(0);
+        }
       } else {
         editor.setVisible(false);
         editor.dispose();
