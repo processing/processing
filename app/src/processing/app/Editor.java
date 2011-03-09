@@ -649,6 +649,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     menu.addSeparator();
 
+    item = Base.newJMenuItem("Auto Format", 'T');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleAutoFormat();
+        }
+    });
+    menu.add(item);
+
     item = Base.newJMenuItem("Comment/Uncomment", '/');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {

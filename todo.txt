@@ -4,10 +4,14 @@ X examples menu still showing in regular mode
 X import library shows nothing on osx and android
 X examples not showing up in the window
 X   build.xml problem knocking out the library examples
+X auto format missing
+X remove "temporarily skipping deletion of" message
+X figure out how to suppress errors from find in build.xml
 
 _ flickering issue
 
 _ when changing sketchbook location, need to reload examples window
+_   and libraries, etc.. maybe just require a restart?
 
 
 regressions
