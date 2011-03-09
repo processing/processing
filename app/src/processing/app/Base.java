@@ -522,6 +522,7 @@ public class Base {
                          "Please save the sketch before changing the mode.",
                          null);
       } else {
+        boolean untitled = activeEditor.untitled;
         String mainPath = sketch.getMainFilePath();
 
         // save a mode file into this sketch folder
@@ -536,7 +537,10 @@ public class Base {
         handleClose(activeEditor);
 
         // re-open the sketch
-        handleOpen(mainPath, where);
+        Editor editor = handleOpen(mainPath, where);
+        if (editor != null) {
+          editor.untitled = untitled;
+        }
       }
     }
   }
