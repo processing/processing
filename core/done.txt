@@ -1,3 +1,8 @@
+0194 core (pre)
+X flicker between background and rest with JAVA2D
+X   http://code.google.com/p/processing/issues/detail?id=558
+
+
 0193 core (pre)
 X fix problem that made applets suck in Google Chrome and Firefox 4
 X java.lang.OutOfMemoryError using get() and image() inside a tight loop

@@ -1,6 +1,4 @@
-0194 android
-X Can't change Sketch Permissions
-X   http://code.google.com/p/processing/issues/detail?id=559
+0195 android
 
 
 _ pause/resume trickiness with interactive apps
