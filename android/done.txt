@@ -1,3 +1,8 @@
+0194 android (pre)
+X Can't change Sketch Permissions
+X   http://code.google.com/p/processing/issues/detail?id=559
+
+
 0193 android (pre)
 o verify that processing-core.jar has downloaded properly
 o   http://code.google.com/p/processing/issues/detail?id=421

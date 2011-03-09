@@ -44,9 +44,9 @@ import processing.mode.java.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 194;
+  static final int REVISION = 195;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0194";
+  static public String VERSION_NAME = "0195";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   /** True if heavy debugging error/log messages are enabled */
@@ -1064,10 +1064,10 @@ public class Base {
       }
     });
   }
-  
+
 
   /**
-   * Synchronous version of rebuild, used when the sketchbook folder has 
+   * Synchronous version of rebuild, used when the sketchbook folder has
    * changed, so that the libraries are properly re-scanned before those menus
    * (and the examples window) are rebuilt.
    */
@@ -1226,7 +1226,7 @@ public class Base {
 
     // Alphabetize the list, since it's not always alpha order
     Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
-    
+
 //    ActionListener listener = new ActionListener() {
 //        public void actionPerformed(ActionEvent e) {
 //          String path = e.getActionCommand();

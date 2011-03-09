@@ -1,3 +1,22 @@
+0194 (pre)
+X add new icon for exported sketches
+X examples menu still showing in regular mode
+X import library shows nothing on osx and android
+X examples not showing up in the window
+X   build.xml problem knocking out the library examples
+X auto format missing
+X remove "temporarily skipping deletion of" message
+X figure out how to suppress errors from find in build.xml
+X when changing sketchbook location, need to reload examples window
+X   and libraries, etc.. maybe just require a restart?
+X rebuilding library list, etc when changing sketchbook location
+X untitled sketches not working properly
+X   empty/unmodified sketch, re-open in new mode, untitled bit not set
+X the build is broken! the build is broken!
+X   http://code.google.com/p/processing/issues/detail?id=519
+X mode switching broken in windows/linux (closes last window...)
+
+
 0193 (pre)
 X Code folder oddity on application export (in SVN)
 X   http://code.google.com/p/processing/issues/detail?id=486
