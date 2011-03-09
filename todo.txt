@@ -12,6 +12,10 @@ X   and libraries, etc.. maybe just require a restart?
 X rebuilding library list, etc when changing sketchbook location
 X untitled sketches not working properly
 X   empty/unmodified sketch, re-open in new mode, untitled bit not set
+X the build is broken! the build is broken!
+X   http://code.google.com/p/processing/issues/detail?id=519
+
+_ mode switching broken in windows/linux (closes last window...)
 
 
 regressions
@@ -61,9 +65,6 @@ _   just do them from psk files
 http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
 
 _ p5 assets need to be licensed differently from the source
-
-_ the build is broken! the build is broken!
-_   http://code.google.com/p/processing/issues/detail?id=519
 
 DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
 

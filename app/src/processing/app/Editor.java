@@ -113,7 +113,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // add listener to handle window close box hit event
     addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-          base.handleClose(Editor.this);
+          base.handleClose(Editor.this, false);
         }
       });
     // don't close the window when clicked, the app will take care
@@ -501,7 +501,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     item = Base.newJMenuItem("Close", 'W');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.handleClose(Editor.this);
+        base.handleClose(Editor.this, false);
       }
     });
     fileMenu.add(item);
