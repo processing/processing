@@ -1,5 +1,7 @@
 PROCESSING REV 0194 - 9 March 2011
 
+Lots of fixes for late-breaking problems in release 0193.
+
 [ fixes ] 
 
 + The Auto Format command went missing in 0193. It's back for 0194, but is 
@@ -10,7 +12,23 @@ PROCESSING REV 0194 - 9 March 2011
   for the time being, there are no core libraries on Android. (OpenGL is built
   in, for instance.)
 
++ Fix mode switching for Windows and Linux.
+
 + Library examples weren't showing up in 0193, now they're back.
+
++ Fix for flicker problem in the default renderer.
+  http://code.google.com/p/processing/issues/detail?id=558
+
++ The examples menu wasn't completely removed in 0193. 
+
++ Remove "temporarily skipping deletion of" debugging message on export.
+
++ Properly reload examples & libraries when changing the sketchbook location.
+
++ Fix a problem with untitled sketches and mode switching.
+
++ Fix problem with Sketch Permissions for Android.
+  http://code.google.com/p/processing/issues/detail?id=559
 
 [ notes ] 
 
@@ -37,6 +55,9 @@ PROCESSING REV 0194 - 9 March 2011
 
 + Added a new icon for "Export to Application", along the lines of the 
   icons used on the Android side. 
+
++ Remove warning about the broken build.
+  http://code.google.com/p/processing/issues/detail?id=519
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 

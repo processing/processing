@@ -14,8 +14,7 @@ X untitled sketches not working properly
 X   empty/unmodified sketch, re-open in new mode, untitled bit not set
 X the build is broken! the build is broken!
 X   http://code.google.com/p/processing/issues/detail?id=519
-
-_ mode switching broken in windows/linux (closes last window...)
+X mode switching broken in windows/linux (closes last window...)
 
 
 regressions
