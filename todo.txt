@@ -10,8 +10,8 @@ X figure out how to suppress errors from find in build.xml
 X when changing sketchbook location, need to reload examples window
 X   and libraries, etc.. maybe just require a restart?
 X rebuilding library list, etc when changing sketchbook location
-
-_ untitled sketches not working properly (!)
+X untitled sketches not working properly
+X   empty/unmodified sketch, re-open in new mode, untitled bit not set
 
 
 regressions
