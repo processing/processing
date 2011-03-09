@@ -516,8 +516,7 @@ public class Preferences {
     String oldPath = get("sketchbook.path");
     String newPath = sketchbookLocationField.getText();
     if (!newPath.equals(oldPath)) {
-      editor.base.rebuildSketchbookMenus();
-      set("sketchbook.path", newPath);
+      editor.base.setSketchbookFolder(new File(newPath));
     }
 
     setBoolean("editor.external", externalEditorBox.isSelected());

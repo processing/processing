@@ -7,19 +7,23 @@ X   build.xml problem knocking out the library examples
 X auto format missing
 X remove "temporarily skipping deletion of" message
 X figure out how to suppress errors from find in build.xml
+X when changing sketchbook location, need to reload examples window
+X   and libraries, etc.. maybe just require a restart?
+X rebuilding library list, etc when changing sketchbook location
 
-_ flickering issue
-
-_ when changing sketchbook location, need to reload examples window
-_   and libraries, etc.. maybe just require a restart?
+_ flickering issue with JAVA2D
 
 
 regressions
 _ strange window flicker when first opened
 _ test libraries on android
 _ test .java files on desktop version
-_ untitled sketches not working properly
+_ untitled sketches not working properly(?)
 _ clicking the editor window (from the examples window) causes an exception
+
+additions
+_ when creating a sketch within non-java mode, should write the settings file
+_   so that it re-loads in the proper environment
 _ examples window sketches should load in proper environment
 
 ugliness
