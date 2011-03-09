@@ -53,7 +53,8 @@ public class Permissions extends JFrame {
   
   public Permissions(Sketch sketch) {
   //public Permissions(Editor editor) {
-    super("Android Permissions Selector");    
+    super("Android Permissions Selector");
+    this.sketch = sketch;
 //    this.editor = editor;
 
 //    XMLElement xml = 
