@@ -125,7 +125,8 @@
 	       includes="**/applet/*" />
     </delete>
 -->
-    <exec executable="find" dir="${target.path}/modes/java/examples">
+    <exec executable="find" dir="${target.path}/modes/java/examples"
+	  errorproperty="ignored">
       <arg line=". -name applet -exec rm -rf {} ';'" />
 <!--      <arg line=". -name applet -exec echo {} ';'" />-->
     </exec>
