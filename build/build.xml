@@ -101,21 +101,28 @@
 	<exclude name="**/cmd/**" />
 	<exclude name="reference.zip" />
 	<exclude name="**/._*" />
+
+	<exclude name="examples/**/applet/**" />
       </fileset>
     </copy>
 
+    <delete dir="${target.path}/modes/java/examples">
+      <include name="**/applet/**" />
+    </delete>
 <!--
-    not sure why this isn't working, but i need to move on w/ my life
     <delete>
       <fileset dir="${target.path}/modes/java/examples"
-	       includes="**/applet/*" />
+	       includes="**/applet/**" />
     </delete>
 -->
+
+<!--
+    not happy on windows, since cygwin may not be installed
     <exec executable="find" dir="${target.path}/modes/java/examples"
 	  errorproperty="ignored">
       <arg line=". -name applet -exec rm -rf {} ';'" />
-<!--      <arg line=". -name applet -exec echo {} ';'" />-->
     </exec>
+-->
 
 <!--
     <copy todir="${target.path}/modes/java/examples">
