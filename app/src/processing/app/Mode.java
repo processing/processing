@@ -200,7 +200,6 @@ public abstract class Mode {
 
   public JMenu getImportMenu() {
     if (importMenu == null) {
-      importMenu = new JMenu("Import Library...");
       rebuildImportMenu();
     }
     return importMenu;
@@ -208,8 +207,12 @@ public abstract class Mode {
 
 
   public void rebuildImportMenu() {  //JMenu importMenu) {
-    //System.out.println("rebuilding import menu");
-    importMenu.removeAll();
+    if (importMenu == null) {
+      importMenu = new JMenu("Import Library...");
+    } else {
+      //System.out.println("rebuilding import menu");
+      importMenu.removeAll();
+    }
 
     rebuildLibraryList();
     
@@ -225,17 +228,24 @@ public abstract class Mode {
 //      e1.printStackTrace();
 //    }
 
-    for (Library library : coreLibraries) {
-      JMenuItem item = new JMenuItem(library.getName());
-      item.addActionListener(listener);
-      item.setActionCommand(library.getJarPath());
+    if (coreLibraries.size() == 0) {
+      JMenuItem item = new JMenuItem(getTitle() + " mode has no core libraries");
+      item.setEnabled(false);
       importMenu.add(item);
+    } else {
+      for (Library library : coreLibraries) {
+        JMenuItem item = new JMenuItem(library.getName());
+        item.addActionListener(listener);
+        item.setActionCommand(library.getJarPath());
+        importMenu.add(item);
+      }
     }
 
     if (contribLibraries.size() != 0) {
       importMenu.addSeparator();
       JMenuItem contrib = new JMenuItem("Contributed");
       contrib.setEnabled(false);
+      importMenu.add(contrib);
 
       for (Library library : contribLibraries) {
         JMenuItem item = new JMenuItem(library.getName());
@@ -407,6 +417,23 @@ public abstract class Mode {
   }
   
   
+  public void resetExamples() {
+    if (examplesFrame != null) {
+      boolean visible = examplesFrame.isVisible();
+      Rectangle bounds = null;
+      if (visible) {
+        bounds = examplesFrame.getBounds();
+        examplesFrame.setVisible(false);
+      }
+      examplesFrame = null;
+      if (visible) {
+        showExamplesFrame();
+        examplesFrame.setBounds(bounds);
+      }
+    }
+  }
+
+
   public void showExamplesFrame() {
     if (examplesFrame == null) {
       examplesFrame = new JFrame(getTitle() + " Examples");
