@@ -1445,10 +1445,18 @@ public class PApplet extends Applet
 
     // make sure the screen is visible and usable
     // (also prevents over-drawing when using PGraphicsOpenGL)
-    if ((g != null) && (g.image != null)) {
-//      println("inside paint(), screen.drawImage()");
-      screen.drawImage(g.image, 0, 0, null);
+    if (g != null) {
+      // added synchronization for 0194 because of flicker issues with JAVA2D
+      // 
+      synchronized (g) {
+        if (g.image != null) {
+          screen.drawImage(g.image, 0, 0, null);
+        }
+      }
     }
+//    if ((g != null) && (g.image != null)) {
+//      screen.drawImage(g.image, 0, 0, null);
+//    }
   }
 
 
@@ -1565,6 +1573,7 @@ public class PApplet extends Applet
 
       //System.out.println("handleDraw() " + frameCount);
 
+      synchronized (g) {
       g.beginDraw();
       if (recorder != null) {
         recorder.beginDraw();
@@ -1620,12 +1629,14 @@ public class PApplet extends Applet
       }
 
       g.endDraw();
+      
       if (recorder != null) {
         recorder.endDraw();
       }
 
       frameRateLastNanos = now;
       frameCount++;
+      }
 
       repaint();
       getToolkit().sync();  // force repaint now (proper method)
