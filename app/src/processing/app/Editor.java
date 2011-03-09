@@ -128,7 +128,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           base.handleActivated(Editor.this);
 //          mode.handleActivated(Editor.this);
           fileMenu.insert(base.getSketchbookMenu(), 2);
-          fileMenu.insert(mode.getExamplesMenu(), 3);
+//          fileMenu.insert(mode.getExamplesMenu(), 3);
           sketchMenu.insert(mode.getImportMenu(), 4);
         }
 
@@ -138,7 +138,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //          EditorConsole.systemErr.println("editor window deactivated");
 //          mode.handleDeactivated(Editor.this);
           fileMenu.remove(base.getSketchbookMenu());
-          fileMenu.remove(mode.getExamplesMenu());
+//          fileMenu.remove(mode.getExamplesMenu());
           sketchMenu.remove(mode.getImportMenu());
         }
       });
@@ -488,7 +488,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     fileMenu.add(item);
 
     fileMenu.add(base.getSketchbookMenu());
-    fileMenu.add(mode.getExamplesMenu());
+
+//    fileMenu.add(mode.getExamplesMenu());
+    item = new JMenuItem("Examples...");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        mode.showExamplesFrame();
+      }
+    });
+    fileMenu.add(item);
 
     item = Base.newJMenuItem("Close", 'W');
     item.addActionListener(new ActionListener() {

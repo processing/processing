@@ -1,4 +1,9 @@
 0194 (pre)
+X add new icon for exported sketches
+X examples menu still showing in regular mode
+
+_ import library shows nothing on osx and android
+_   might actually be build.xml issue
 
 
 regressions
