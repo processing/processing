@@ -1,4 +1,6 @@
 0194 core
+X flicker between background and rest with JAVA2D
+X   http://code.google.com/p/processing/issues/detail?id=558
 
 
 _ bug: textAlign(RIGHT) is shutting off native fonts
