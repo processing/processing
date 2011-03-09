@@ -494,7 +494,7 @@ public class Sketch {
 
         // get the changes into the sketchbook menu
         // (re-enabled in 0115 to fix bug #332)
-        editor.base.rebuildSketchbookMenus();
+        editor.base.rebuildSketchbookMenusAsync();
 
       } else {  // else if something besides code[0]
         if (!current.renameTo(newFile, newExtension)) {
@@ -891,8 +891,7 @@ public class Sketch {
                                editor.getScrollPosition());
 
     // Name changed, rebuild the sketch menus
-    //editor.sketchbook.rebuildMenusAsync();
-    editor.base.rebuildSketchbookMenus();
+    editor.base.rebuildSketchbookMenusAsync();
 
     // Make sure that it's not an untitled sketch
     setUntitled(false);

@@ -1,5 +1,17 @@
 PROCESSING REV 0194 - 9 March 2011
 
+[ fixes ] 
+
++ The Auto Format command went missing in 0193. It's back for 0194, but is 
+  now located in the Edit menu, where it will stay for the rest of its long
+  and happy life.
+
++ The "Import Library" menu wasn't being updated properly in 0193. Note that
+  for the time being, there are no core libraries on Android. (OpenGL is built
+  in, for instance.)
+
++ Library examples weren't showing up in 0193, now they're back.
+
 [ notes ] 
 
 + Because both OpenGL and OpenGL2 are present, there may be conflicts if you
@@ -12,15 +24,14 @@ PROCESSING REV 0194 - 9 March 2011
   then you should remove one of the OpenGL libraries, depending on which you
   would like to use. 
 
-[ fixes ] 
++ OpenGL is built-in on Android. You don't need to add it as a library, the
+  way you do with the desktop. A "import processing.opengl.*" line won't
+  hurt anything (the preprocessor removes it), but it's also not necessary.
+  (This is also noted in the Android wiki.)
 
-+ The Auto Format command went missing in 0193. It's back for 0194, but is 
-  now located in the Edit menu, where it will stay for the rest of its long
-  and happy life.
-
-+ The "Import Library" menu wasn't being updated properly in 0193. Note that
-  for the time being, there are no core libraries on Android. (OpenGL is built
-  in, for instance.)
++ Library examples no longer show up buried in the sketchbook. Instead they
+  can be found in the "Libraries" and "Contributed Libraries" sections of
+  the examples window.
 
 [ additions ]
 

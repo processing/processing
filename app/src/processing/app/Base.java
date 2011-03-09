@@ -1050,21 +1050,30 @@ public class Base {
    * Asynchronous version of menu rebuild to be used on save and rename
    * to prevent the interface from locking up until the menus are done.
    */
-  protected void rebuildSketchbookMenus() {
+  protected void rebuildSketchbookMenusAsync() {
     //System.out.println("async enter");
     //new Exception().printStackTrace();
     EventQueue.invokeLater(new Runnable() {
       public void run() {
-        //System.out.println("starting rebuild");
-//        rebuildSketchbookMenu(sketchbookMenu);
-        rebuildSketchbookMenu();
-        for (Mode mode : modeList) {
-          mode.rebuildToolbarMenu();
-        }
-        //System.out.println("done with rebuild");
+        rebuildSketchbookMenus();
       }
     });
-    //System.out.println("async exit");
+  }
+  
+
+  /**
+   * Synchronous version of rebuild, used when the sketchbook folder has 
+   * changed, so that the libraries are properly re-scanned before those menus
+   * (and the examples window) are rebuilt.
+   */
+  protected void rebuildSketchbookMenus() {
+    rebuildSketchbookMenu();
+    for (Mode mode : modeList) {
+      //mode.rebuildLibraryList();
+      mode.rebuildImportMenu();  // calls rebuildLibraryList
+      mode.rebuildToolbarMenu();
+      mode.resetExamples();
+    }
   }
 
 
@@ -1587,6 +1596,13 @@ public class Base {
       }
     }
 //    System.err.println("sketchbook: " + sketchbookFolder);
+  }
+
+
+  public void setSketchbookFolder(File folder) {
+    sketchbookFolder = folder;
+    Preferences.set("sketchbook.path", folder.getAbsolutePath());
+    rebuildSketchbookMenus();
   }
 
 
