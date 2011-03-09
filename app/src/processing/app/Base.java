@@ -970,8 +970,7 @@ public class Base {
         editor.setVisible(false);
         editor.dispose();
         defaultFileMenu.insert(sketchbookMenu, 2);
-//        defaultFileMenu.insert(Base.examplesMenu, 3);
-        defaultFileMenu.insert(defaultMode.getExamplesMenu(), 3);
+//        defaultFileMenu.insert(defaultMode.getExamplesMenu(), 3);
         activeEditor = null;
       }
 
@@ -1196,6 +1195,8 @@ public class Base {
 
 
   protected boolean addSketches(DefaultMutableTreeNode node, File folder) throws IOException {
+    System.out.println("checking " + folder.getAbsolutePath());
+    
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) {
       return false;
@@ -1213,7 +1214,7 @@ public class Base {
 
     // Alphabetize the list, since it's not always alpha order
     Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
-
+    
 //    ActionListener listener = new ActionListener() {
 //        public void actionPerformed(ActionEvent e) {
 //          String path = e.getActionCommand();
