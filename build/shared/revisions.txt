@@ -1,3 +1,36 @@
+PROCESSING REV 0194 - 9 March 2011
+
+[ notes ] 
+
++ Because both OpenGL and OpenGL2 are present, there may be conflicts if you
+  implement any OpenGL-specific code outside the Processing API. If your sketch
+  includes either of the following lines:
+
+  import javax.media.opengl.*;
+  import javax.media.opengl.glu.*;
+
+  then you should remove one of the OpenGL libraries, depending on which you
+  would like to use. 
+
+[ fixes ] 
+
++ The Auto Format command went missing in 0193. It's back for 0194, but is 
+  now located in the Edit menu, where it will stay for the rest of its long
+  and happy life.
+
++ The "Import Library" menu wasn't being updated properly in 0193. Note that
+  for the time being, there are no core libraries on Android. (OpenGL is built
+  in, for instance.)
+
+[ additions ]
+
++ Added a new icon for "Export to Application", along the lines of the 
+  icons used on the Android side. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0193 - 8 March 2011
 
 The PDE is receiving a major overhaul. The most obvious change is that 
