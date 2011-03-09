@@ -366,21 +366,11 @@ public abstract class Mode {
       // get library examples
       boolean any = false;
       DefaultMutableTreeNode libParent = new DefaultMutableTreeNode("Libraries");
-      System.out.println("core libraries " + coreLibraries.size());
       for (Library lib : coreLibraries) {
-        System.out.println("checking " + lib.getName() + " for examples");
         if (lib.hasExamples()) {
-          System.out.println("has examples");
-          any = true;
-//          JMenu libMenu = new JMenu(lib.getName());
           DefaultMutableTreeNode libNode = new DefaultMutableTreeNode(lib.getName());
-//          base.addSketches(libMenu, lib.getExamplesFolder(), replace);
-//          any |= base.addSketches(libNode, lib.getExamplesFolder());
-          base.addSketches(libNode, lib.getExamplesFolder());
-//          menu.add(libMenu);
+          any |= base.addSketches(libNode, lib.getExamplesFolder());
           libParent.add(libNode);
-        } else {
-          System.out.println("no examples");
         }
       }
       if (any) {

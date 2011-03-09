@@ -1195,8 +1195,6 @@ public class Base {
 
 
   protected boolean addSketches(DefaultMutableTreeNode node, File folder) throws IOException {
-    System.out.println("checking " + folder.getAbsolutePath());
-    
     // skip .DS_Store files, etc (this shouldn't actually be necessary)
     if (!folder.isDirectory()) {
       return false;
