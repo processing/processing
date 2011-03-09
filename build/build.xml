@@ -110,19 +110,33 @@
 <!--
 	<exclude name="**/bin/*" />
 	<exclude name="**/src/*" />
+	<exclude name="examples" />
 -->
-	<exclude name="**/examples/**" />
 	<exclude name="**/cmd/**" />
 	<exclude name="reference.zip" />
 	<exclude name="**/._*" />
       </fileset>
     </copy>
 
+<!--
+    not sure why this isn't working, but i need to move on w/ my life
+    <delete>
+      <fileset dir="${target.path}/modes/java/examples"
+	       includes="**/applet/*" />
+    </delete>
+-->
+    <exec executable="find" dir="${target.path}/modes/java/examples">
+      <arg line=". -name applet -exec rm -rf {} ';'" />
+<!--      <arg line=". -name applet -exec echo {} ';'" />-->
+    </exec>
+
+<!--
     <copy todir="${target.path}/modes/java/examples">
       <fileset dir="../java/examples">
 	<exclude name="**/applet/**" />
       </fileset>
     </copy>
+-->
 
     <copy todir="${target.path}/modes/android">
       <fileset dir="../android">

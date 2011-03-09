@@ -1,9 +1,13 @@
 0194 (pre)
 X add new icon for exported sketches
 X examples menu still showing in regular mode
+X import library shows nothing on osx and android
+X examples not showing up in the window
+X   build.xml problem knocking out the library examples
 
-_ import library shows nothing on osx and android
-_   might actually be build.xml issue
+_ flickering issue
+
+_ when changing sketchbook location, need to reload examples window
 
 
 regressions
