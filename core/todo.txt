@@ -1,4 +1,9 @@
 0195 core
+X deal with bad screen updates for sketches running < 60 fps in JAVA2D
+X   had to add an additional offscreen buffer, which is more memory
+X   however hopefully not a problem on modern machines
+X   and probably no worse than what MemoryImageSource does
+X   removed large synchronized block
 
 
 _ bug: textAlign(RIGHT) is shutting off native fonts

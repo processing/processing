@@ -50,6 +50,8 @@ import java.awt.image.*;
 public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   public Graphics2D g2;
+  protected BufferedImage offscreen;
+  
   GeneralPath gpath;
 
   /// break the shape at the next vertex (next vertex() call is a moveto())
@@ -122,8 +124,18 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   protected void allocate() {
 //    System.out.println("PGraphicsJava2D allocate() " + width + " " + height);
 //    System.out.println("allocate " + Thread.currentThread().getName());
+
+    // Tried this with RGB instead of ARGB for the primarySurface version, 
+    // but didn't see any performance difference (OS X 10.6, Java 6u24)
     image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-    g2 = (Graphics2D) image.getGraphics();
+    if (primarySurface) {
+      offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+      g2 = (Graphics2D) offscreen.getGraphics();
+    } else {
+      // if the buffer's offscreen anyway, no need for the extra offscreen buffer
+      g2 = (Graphics2D) image.getGraphics();
+    }
+
     // can't un-set this because this may be only a resize
     // http://dev.processing.org/bugs/show_bug.cgi?id=463
     //defaultsInited = false;
@@ -161,8 +173,14 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     // copy of all the pixels to the surface.. so that's kind of a mess.
     //updatePixels();
 
-    // TODO this is probably overkill for most tasks...
-    if (!primarySurface) {
+    if (primarySurface) {
+      // don't copy the pixels/data elements of the buffered image directly, 
+      // since it'll disable the nice speedy pipeline stuff, sending all drawing
+      // into a world of suck that's rough 6 trillion times slower.
+      image.getGraphics().drawImage(offscreen, 0, 0, null);
+
+    } else {
+      // TODO this is probably overkill for most tasks...
       loadPixels();
     }
     modified = true;
