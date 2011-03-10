@@ -373,7 +373,10 @@ public class PdePreprocessor {
   }
 
   private static final Pattern PUBLIC_CLASS = 
-    Pattern.compile("(^|;)\\s*public\\s+class", Pattern.MULTILINE);
+    Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
+    // Can't only match any 'public class', needs to be a PApplet
+    // http://code.google.com/p/processing/issues/detail?id=551 
+    //Pattern.compile("(^|;)\\s*public\\s+class", Pattern.MULTILINE);
 
   private static final Pattern FUNCTION_DECL = 
     Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +

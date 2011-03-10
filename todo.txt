@@ -1,4 +1,11 @@
 0195 (pre)
+X Sketch restarts automatically after pressing stop button on PDE
+X   problem with window focus issues
+X   http://code.google.com/p/processing/issues/detail?id=561
+X 'unexpected token void' for any type of error
+X   (due to fallback in preprocessor)
+X   'public' keyword in class declarations breaks syntax checker
+X   http://code.google.com/p/processing/issues/detail?id=551
 
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
@@ -13,10 +20,6 @@ _   this might be the same as arduino?
 
 
 regressions
-_ from jer: 'unexpected token void' for any type of error
-_   (due to fallback in preprocessor)
-_   'public' keyword in class declarations breaks syntax checker
-_   http://code.google.com/p/processing/issues/detail?id=551
 _ strange window flicker when first opened
 _ test libraries on android
 _ test .java files on desktop version
@@ -59,8 +62,6 @@ _   just do them from psk files
 http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-dll-files
 
 _ p5 assets need to be licensed differently from the source
-
-DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
 
 _ casey's vote:
 _   Standard, Android, JavaScript, Jython
@@ -1421,6 +1422,8 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1513
 
 DIST / Mac OS X
 
+_ the word from apple on Info.plist setup
+DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
 _ instead of "show sketch folder" method, use:
 The com.apple.eio.FileManager now has two new desktop interaction methods, revealInFinder(File) and moveToTrash(File). You can use revealInFinder() to open a Finder window in the parent directory of of a file and select it. You can use moveToTrash() to move a file to the most appropriate Trash directory for the volume that contains that file. 
 _ setup() and draw() are not bold on osx (10.4)
