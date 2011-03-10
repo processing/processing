@@ -35,18 +35,6 @@ import javax.swing.event.*;
  */
 public abstract class EditorToolbar extends JComponent implements MouseInputListener, KeyListener {
 
-//  /** Rollover titles for each button. */
-//  static final String title[] = {
-//    "Run", "Stop", "New", "Open", "Save", "Export"
-//  };
-//  
-//  /** Titles for each button when the shift key is pressed. */ 
-//  static final String titleShift[] = {
-//    "Present", "Stop", "New Editor Window", "Open in Another Window", "Save", "Export to Application"
-//  };
-
-
-//  static final int BUTTON_COUNT = title.length;
   /** Width of each toolbar button. */
   static final int BUTTON_WIDTH = 27;
   /** Height of each toolbar button. */
@@ -279,6 +267,20 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
     }
   }
 
+  
+  protected void checkRollover(int x, int y) {
+    Button over = findSelection(x, y);
+    if (over != null) {
+      //        if (state[sel] != ACTIVE) {
+      if (over.state != ACTIVE) {
+        //          setState(sel, ROLLOVER, true);
+        over.setState(ROLLOVER, true);
+        //          currentRollover = sel;
+        rollover = over;
+      }
+    }
+  }
+
 
   public void mouseMoved(MouseEvent e) {
     if (!isEnabled()) return;
@@ -310,17 +312,7 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
         rollover = null;
       }
     }
-    //      int sel = findSelection(x, y);
-    Button over = findSelection(x, y);
-    if (over != null) {
-      //        if (state[sel] != ACTIVE) {
-      if (over.state != ACTIVE) {
-        //          setState(sel, ROLLOVER, true);
-        over.setState(ROLLOVER, true);
-        //          currentRollover = sel;
-        rollover = over;
-      }
-    }
+    checkRollover(x, y);
   }
 
 
@@ -442,6 +434,10 @@ public abstract class EditorToolbar extends JComponent implements MouseInputList
         popup.show(this, x, y);
       }
       
+      // Need to reset the rollover here. If the window isn't active, 
+      // the rollover wouldn't have been updated.
+      // http://code.google.com/p/processing/issues/detail?id=561
+      checkRollover(x, y);
       if (rollover != null) {
         //handlePressed(rollover);
         handlePressed(e, buttons.indexOf(rollover));
