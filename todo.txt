@@ -1,11 +1,27 @@
 0195 (pre)
 
+earlier
+X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1557
+X on linux, mozilla shouldn't be the default browser anymore
+X   is there a way to query the default browser? gnome-open? xdg-open?
+X   cleaned up some things inside settings, but this was already done
+
+reference
+_ auto-format has been moved to edit
+_   this might be the same as arduino?
+
 
 regressions
+_ from jer: 'unexpected token void' for any type of error
+_   (due to fallback in preprocessor)
+_   'public' keyword in class declarations breaks syntax checker
+_   http://code.google.com/p/processing/issues/detail?id=551
 _ strange window flicker when first opened
 _ test libraries on android
 _ test .java files on desktop version
 _ clicking the editor window (from the examples window) causes an exception
+_   also from other editor windows... weird. IME related?
 
 additions
 _ when creating a sketch within non-java mode, should write the settings file
@@ -20,11 +36,6 @@ _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
 _ remove any reference to 'Editor' from Sketch.java
 _   or is that excessive, since Document is in there, etc
 _   Build does the heavy lifting anyway...
-
-_ from jer: 'unexpected token void' for any type of error
-_   (due to fallback in preprocessor)
-_   'public' keyword in class declarations breaks syntax checker
-_   http://code.google.com/p/processing/issues/detail?id=551
 
 blob of mess
 _ multiple sketch windows.. having a windows menu?
@@ -55,13 +66,7 @@ _ casey's vote:
 _   Standard, Android, JavaScript, Jython
 _   or: Processing, Android, Processing.js, Processing.py
 
-_ note for reference: auto-format has been moved to edit
-_   this might be the same as arduino?
-
 We're making an assumption that the idea of a "library" refers to a block of Java-based code. The reasoning is that from within the PDE, we anticipate that it will be Java-compatible versions of other languages (such as Jython, JRuby, or Scala) as opposed to more generic languages. In the future we could open this up, but we'd rather not complicate things for the moment.
-
-_ on linux, mozilla shouldn't be the default browser anymore
-_   is there a way to query the default browser? gnome-open? xdg-open?
 
 _ TextAreaDefaults
 _   is editable in use?
@@ -190,9 +195,6 @@ closing this bug, because we'll be replacing the current video library with anot
 
 _ Signature issue on contributed libraries affects unrelated opengl sketches
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1570
-
-_ Unsatisfied Link Error running OPENGL on 64-bit ubuntu
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1557
 
 _ create default tools folder (just like libraries)
 
