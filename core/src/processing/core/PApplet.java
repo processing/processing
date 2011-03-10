@@ -1422,7 +1422,6 @@ public class PApplet extends Applet
   }
 
 
-  //synchronized public void paint(Graphics screen) {  // shutting off for 0146
   public void paint(Graphics screen) {
     // ignore the very first call to paint, since it's coming
     // from the o.s., and the applet will soon update itself anyway.
@@ -1447,16 +1446,13 @@ public class PApplet extends Applet
     // (also prevents over-drawing when using PGraphicsOpenGL)
     if (g != null) {
       // added synchronization for 0194 because of flicker issues with JAVA2D
-      // 
-      synchronized (g) {
-        if (g.image != null) {
+      // http://code.google.com/p/processing/issues/detail?id=558
+      if (g.image != null) {
+        synchronized (g.image) {
           screen.drawImage(g.image, 0, 0, null);
         }
       }
     }
-//    if ((g != null) && (g.image != null)) {
-//      screen.drawImage(g.image, 0, 0, null);
-//    }
   }
 
 
@@ -1571,9 +1567,6 @@ public class PApplet extends Applet
         return;
       }
 
-      //System.out.println("handleDraw() " + frameCount);
-
-      synchronized (g) {
       g.beginDraw();
       if (recorder != null) {
         recorder.beginDraw();
@@ -1636,7 +1629,6 @@ public class PApplet extends Applet
 
       frameRateLastNanos = now;
       frameCount++;
-      }
 
       repaint();
       getToolkit().sync();  // force repaint now (proper method)
