@@ -6,6 +6,8 @@ X 'unexpected token void' for any type of error
 X   (due to fallback in preprocessor)
 X   'public' keyword in class declarations breaks syntax checker
 X   http://code.google.com/p/processing/issues/detail?id=551
+X found issue where editor objects were being kept around after closing
+X   particularly on mac os x, since the object wasn't being removed at 1 editor
 
 _ with one sketch open, changing the mode doesn't close the original editor
 _   only affects linux and windows

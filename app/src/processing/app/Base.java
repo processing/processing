@@ -972,6 +972,7 @@ public class Base {
           editor.setVisible(false);
           editor.dispose();
           activeEditor = null;
+          editors.remove(editor);
         } else {
           // Since this wasn't an actual Quit event, call System.exit()
           System.exit(0);
@@ -982,6 +983,7 @@ public class Base {
         defaultFileMenu.insert(sketchbookMenu, 2);
 //        defaultFileMenu.insert(defaultMode.getExamplesMenu(), 3);
         activeEditor = null;
+        editors.remove(editor);
       }
 
     } else {
