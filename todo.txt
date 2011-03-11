@@ -7,6 +7,10 @@ X   (due to fallback in preprocessor)
 X   'public' keyword in class declarations breaks syntax checker
 X   http://code.google.com/p/processing/issues/detail?id=551
 
+_ with one sketch open, changing the mode doesn't close the original editor
+_   only affects linux and windows
+_   http://code.google.com/p/processing/issues/detail?id=569
+
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1557
