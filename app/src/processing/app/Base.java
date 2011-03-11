@@ -967,7 +967,12 @@ public class Base {
       Preferences.save();
 
       if (defaultFileMenu == null) {
-        if (!modeSwitch) {
+        if (modeSwitch) {
+          // need to close this editor, ever so temporarily
+          editor.setVisible(false);
+          editor.dispose();
+          activeEditor = null;
+        } else {
           // Since this wasn't an actual Quit event, call System.exit()
           System.exit(0);
         }
