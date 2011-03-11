@@ -7,8 +7,6 @@
   </target>
   
   <target name="compile" description="Compile sources">
-    <echo message="${runtime.jars}" />
-
     <condition property="core-built">
       <available file="../../../core/core.jar" />
     </condition>
