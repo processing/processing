@@ -31,6 +31,7 @@ import java.awt.geom.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.*;
+import java.util.ArrayList;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
@@ -1764,6 +1765,55 @@ public class PGraphicsOpenGL extends PGraphics3D {
   }
   */
 
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  // tessellation hack, allows you to steal polygon data
+  
+  
+  public void tessBegin() {
+    glu.gluTessBeginPolygon(tobj, null);
+  }
+  
+  public void tessVertex(float x, float y) {
+    double[] vertex = new double[] { x, y, 0 };
+    glu.gluTessVertex(tobj, vertex, 0, vertex);
+  }
+
+  public void tessBreak() {
+    glu.gluTessEndContour(tobj);
+  }
+  
+  public void tessEnd() {
+    glu.gluTessEndPolygon(tobj);
+  }
+
+
+  public class TessInfo {
+    public int tessShape;
+    public int tessCount;
+    public float[] tessPoints;
+    
+    public TessInfo() {
+      tessShape = shape;
+      tessCount = vertexCount;
+      tessPoints = new float[vertexCount * 2];
+      for (int i = 0; i < vertexCount; i++) {
+        tessPoints[i*2 + 0] = vertices[i][X];
+        tessPoints[i*2 + 1] = vertices[i][Y];
+      }
+    }    
+  }
+  public ArrayList<TessInfo> tessInfo = new ArrayList<TessInfo>();
+  public boolean tessInfoEnabled = false;
+  
+  public void tessInfoReset() {
+    tessInfo.clear();
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
 
   public class TessCallback extends GLUtessellatorCallbackAdapter {
     public void begin(int type) {
@@ -1775,6 +1825,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
     }
 
     public void end() {
+      if (tessInfoEnabled) {
+        tessInfo.add(new TessInfo());
+      }
+      
       //gl.glEnd();
       endShape();
     }

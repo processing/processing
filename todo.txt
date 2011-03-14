@@ -9,10 +9,16 @@ X   http://code.google.com/p/processing/issues/detail?id=551
 X found issue where editor objects were being kept around after closing
 X   with 1 editor open, the editors array wasn't being cleared
 X   (before default file menu, there was no point)
+X with one sketch open, changing the mode doesn't close the original editor
+X   only affects linux and windows
+X   http://code.google.com/p/processing/issues/detail?id=569
+X move library examples to the examples menu
+o   do this once the library documentation has been fixed up
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1278
+X   http://code.google.com/p/processing/issues/detail?id=181
 
-_ with one sketch open, changing the mode doesn't close the original editor
-_   only affects linux and windows
-_   http://code.google.com/p/processing/issues/detail?id=569
+_ "No library found" message when using import statements and the code folder
+_   http://code.google.com/p/processing/issues/detail?id=568
 
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
@@ -359,13 +365,13 @@ _   save sketch zip files
 _   have a means to load them from "teacher" version of p5
 _   figure out how to use the 
 
+version 2.0
 _ add proper copyright and license information for all included projects
 _   http://code.google.com/p/processing/issues/detail?id=185
+_   list of license issues
+_   http://code.google.com/p/processing/issues/detail?id=575
 
 _ need an "install library" option to deal with urls.. oy
-_ move library examples to the examples menu
-_   do this once the library documentation has been fixed up
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1278
 _ proper libraries warning dialog
 _   check if libraries folder does not exist
 _   check to see if other libraries are installed
