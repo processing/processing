@@ -2142,6 +2142,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       // stroke weight zero will cause a gl error
       if (sw > 0) {
         gl2f.glLineWidth(sw);
+        
         if (sw0 != sw && recordingShape) {
           // Add new vertex group.
 
@@ -2149,16 +2150,23 @@ public class PGraphicsOpenGL2 extends PGraphics {
           // The final index is n0 + pathLength[j] and not n0 + pathLength[j] -1 
           // because of the first point added before the loop (see below).
           int n1 = n0 + pathLength[j];
+          /*
+          
+          // Not grouping the consecutive lines with same stroke solves issue 579
+          // http://code.google.com/p/processing/issues/detail?id=579
+          // but also increases the inefficiency of line drawing. 
+          
           // Identifying where this group should end (when stroke length
           // changes).
           for (int k = j + 1; k < stop; k++) {
             int i1 = pathOffset[k];
             float sw1 = vertices[lines[i1][VERTEX1]][SW];
-            if (sw0 != sw1) {
+            if (sw != sw1) {
               break;
             }
-            n1 = n0 + pathLength[k];
+            n1 += pathLength[k] + 1;
           }
+          */
           
           String name = "shape";
           if (mergeRecShapes) {
@@ -2244,7 +2252,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         }
 
       }
-      sw0 = sw;
+      //sw0 = sw;
     }
 
     gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
