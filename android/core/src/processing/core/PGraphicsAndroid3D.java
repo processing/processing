@@ -2033,6 +2033,8 @@ public class PGraphicsAndroid3D extends PGraphics {
           // The final index is n0 + pathLength[j] and not n0 + pathLength[j] -1 
           // because of the first point added before the loop (see below).
           int n1 = n0 + pathLength[j];
+          /*
+          
           // Identifying where this group should end (when stroke length
           // changes).
           for (int k = j + 1; k < stop; k++) {
@@ -2043,6 +2045,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             }
             n1 = n0 + pathLength[k];
           }
+          */
           
           String name = "shape";
           if (mergeRecShapes) {
@@ -2128,7 +2131,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
 
       }
-      sw0 = sw;
+      //sw0 = sw;
     }
 
     gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
