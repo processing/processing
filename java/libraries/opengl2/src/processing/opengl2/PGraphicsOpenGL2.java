@@ -3704,7 +3704,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     if (mode == PROJECTION) {
       gl2f.glMatrixMode(GL2.GL_PROJECTION);
       matrixMode = PROJECTION;
-    } else if (matrixMode == MODELVIEW) {
+    } else if (mode == MODELVIEW) {
       gl2f.glMatrixMode(GL2.GL_MODELVIEW);
       matrixMode = MODELVIEW;
     } else {
@@ -5283,13 +5283,20 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   protected void backgroundImpl(PImage image) {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+    
+    gl.glClearColor(0, 0, 0, 0);
+    gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+    
     set(0, 0, image);
   }
 
   protected void backgroundImpl() {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+    
+    gl.glClearColor(0, 0, 0, 0);
+    gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
   }  
   
   //////////////////////////////////////////////////////////////
