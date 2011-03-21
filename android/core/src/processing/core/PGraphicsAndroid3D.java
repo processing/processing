@@ -3591,7 +3591,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (mode == PROJECTION) {
       gl.glMatrixMode(GL10.GL_PROJECTION);
       matrixMode = PROJECTION;
-    } else if (matrixMode == MODELVIEW) {
+    } else if (mode == MODELVIEW) {
       gl.glMatrixMode(GL10.GL_MODELVIEW);
       matrixMode = MODELVIEW;
     } else {
@@ -5169,7 +5169,11 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected void backgroundImpl(PImage image) {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+    gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+    
+    gl.glClearColor(0, 0, 0, 0);
+    gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+    
     set(0, 0, image);
     if (0 < parent.frameCount) {
       // Only one call to background during the drawing loop is needed to set the clear mode to true.    
@@ -5179,7 +5183,11 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected void backgroundImpl() {
     gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+    gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+    
+    gl.glClearColor(0, 0, 0, 0);
+    gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+    
     if (0 < parent.frameCount) {
       // Only one call to background during the drawing loop is needed to set the clear mode to true.    
       clearColorBuffer = true;
