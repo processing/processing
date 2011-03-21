@@ -3709,7 +3709,7 @@ public class PGraphics3D extends PGraphics {
   public void matrixMode(int mode) {    
     if (mode == PROJECTION) {
       matrixMode = PROJECTION;
-    } else if (matrixMode == MODELVIEW) {
+    } else if (mode == MODELVIEW) {
       matrixMode = MODELVIEW;
     } else {
       showWarning("Invalid matrix mode. Use PROJECTION or MODELVIEW");
