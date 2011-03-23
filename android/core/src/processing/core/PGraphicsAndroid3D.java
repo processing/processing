@@ -3601,22 +3601,36 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void resetMatrix() {
     gl.glLoadIdentity();
+    
+    if (usingGLMatrixStack) {
+      if (matrixMode == PROJECTION) {
+        projectionStack.setIdentity();
+        projectionUpdated = false;
+      } else {          
+        modelviewStack.setIdentity(); 
+        modelviewUpdated = false;
+      }
+    }     
   }
 
   public void applyMatrix(PMatrix2D source) {
-    applyMatrix(source.m00, source.m01, source.m02, source.m10, source.m11,
-        source.m12);
+    applyMatrix(source.m00, source.m01, source.m02, 
+                source.m10, source.m11, source.m12);
   }
 
-  public void applyMatrix(float n00, float n01, float n02, float n10,
-      float n11, float n12) {
-    applyMatrix(n00, n01, n02, 0, n10, n11, n12, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+  public void applyMatrix(float n00, float n01, float n02, 
+                          float n10, float n11, float n12) {
+    applyMatrix(n00, n01, n02, 0, 
+                n10, n11, n12, 0, 
+                0,   0,   1,   0, 
+                0,   0,   0,   1);
   }
 
   public void applyMatrix(PMatrix3D source) {
-    applyMatrix(source.m00, source.m01, source.m02, source.m03, source.m10,
-        source.m11, source.m12, source.m13, source.m20, source.m21, source.m22,
-        source.m23, source.m30, source.m31, source.m32, source.m33);
+    applyMatrix(source.m00, source.m01, source.m02, source.m03, 
+                source.m10, source.m11, source.m12, source.m13, 
+                source.m20, source.m21, source.m22, source.m23, 
+                source.m30, source.m31, source.m32, source.m33);
   }
 
   /**
@@ -3625,8 +3639,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * inverse of the transform. So avoid it whenever possible.
    */
   public void applyMatrix(float n00, float n01, float n02, float n03,
-      float n10, float n11, float n12, float n13, float n20, float n21,
-      float n22, float n23, float n30, float n31, float n32, float n33) {
+                          float n10, float n11, float n12, float n13, 
+                          float n20, float n21, float n22, float n23, 
+                          float n30, float n31, float n32, float n33) {
 
     gltemp[0] = n00;
     gltemp[1] = n10;
@@ -3751,8 +3766,14 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public PMatrix getMatrix() {
     if (matrixMode == PROJECTION) {
+      if (!projectionUpdated) {
+        getProjectionMatrix();      
+      }      
       return projection.get();
-    } else {
+    } else {      
+      if (!modelviewUpdated) {
+        getModelviewMatrix();    
+      }
       return modelview.get();  
     } 
   }
@@ -3764,8 +3785,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       target = new PMatrix3D();
     }
     if (matrixMode == PROJECTION) {
+      if (!projectionUpdated) {
+        getProjectionMatrix();      
+      }        
       target.set(projection);
     } else {
+      if (!modelviewUpdated) {
+        getModelviewMatrix();    
+      }
       target.set(modelview);
     }
     return target;
