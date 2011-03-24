@@ -1462,23 +1462,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
   }  
     
   
-  public void vertex(float x, float y, float... uv) {
-    int len = uv.length / 2;   
-    if (len <= maxTextureUnits) {
-      float u, v;
-      for (int t = 0; t < len; t++) {
-        u = uv[t];
-        v = uv[2 * t];
-        vertexTexture(u, v, t);  
-      }
-      vertex(x, y);
-      setTextureData(len);
-    } else {
-      System.err.println("OPENGL2: insufficient texture units.");
-    }
-  }
-  
-  
   public void vertex(float x, float y, float z, float u, float v) {  
     vertexTexture(u, v, 0);
     vertex(x, y, z);  
@@ -1491,20 +1474,31 @@ public class PGraphicsOpenGL2 extends PGraphics {
   }
 
   
-  public void vertex(float x, float y, float z, float... uv) {
-    int len = uv.length / 2;   
-    if (len <= maxTextureUnits) {
+  public void vertex(float... values) {
+    int len = values.length;
+    if (len < 2) {
+      System.err.println("OPENGL2: call vertex() with at least 2 parameters.");      
+      return;
+    }
+    
+    int dim = len % 2 == 0 ? 2 : 3; 
+    int nuv = (len - dim) / 2;
+    if (nuv <= maxTextureUnits) {
       float u, v;
-      for (int t = 0; t < len; t++) {
-        u = uv[t];
-        v = uv[2 * t];
+      for (int t = 0; t < nuv; t++) {
+        u = values[dim + 2 * t];
+        v = values[dim + 2 * t + 1];
         vertexTexture(u, v, t);  
-      }
-      vertex(x, y, z);
-      setTextureData(len);
+      }       
+      if (dim == 2) {
+        vertex(values[0], values[1]);
+      } else {
+        vertex(values[0], values[1], values[2]);
+      }        
+      setTextureData(nuv);      
     } else {
       System.err.println("OPENGL2: insufficient texture units.");
-    }
+    }      
   }
   
   
@@ -1614,7 +1608,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
     vertexV = tempv;
     vertexTex = tempi;
     
-    numTexBuffers += more;    
+    numTexBuffers += more;
+
+    // This avoid multi-texturing issues when running the sketch in
+    // static mode (textures after the first not displayed at all).
+    gl.glActiveTexture(GL.GL_TEXTURE0 + numTexBuffers - 1); 
   }
 
   protected void setTextureData(int ntex) {
@@ -2333,8 +2331,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     
     faceCount++;
   }
-  
-  
+   
   protected void renderTriangles(int start, int stop) {
     report("render_triangles in");    
 
@@ -2347,6 +2344,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
     for (int j = start; j < stop; j++) {
       int i = faceOffset[j];
 
+
+        
       PImage[] images = faceTextures[j];
       if (1 < numTextures) {
         for (int t = 0; t < numTextures; t++) {
@@ -2355,11 +2354,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
             if (tex == null) {
               break;
             }
-              
-            gl.glEnable(tex.getGLTarget());
+                          
+            gl.glEnable(tex.getGLTarget());            
             gl.glActiveTexture(GL.GL_TEXTURE0 + t);
-            gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
+            gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
             renderTextures[tcount] = tex;
+            
             tcount++;
           } else {
             // If there is a null texture image at some point in the
@@ -2379,7 +2379,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
           tcount = 1;
         }
       }
-      
+        
       if (0 < tcount) {
         if (numTexBuffers < tcount) {
           addTexBuffers(tcount - numTexBuffers);
@@ -2729,6 +2729,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
           gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * faceLength[j]);
         }        
       }
+
             
       if (0 < tcount) {
         if (1 < tcount) {
@@ -2739,19 +2740,24 @@ public class PGraphicsOpenGL2 extends PGraphics {
           gl.glActiveTexture(GL.GL_TEXTURE0 + t);
           gl.glBindTexture(tex.getGLTarget(), 0);
         }
+        
+
         // Disable the texture targets at the end in a separate loop, otherwise the 
         // textures are not properly unbound. Example: we have multitexturing, with 
-        // two 2D textures. If the glDisable() call in in the previous loop, then the
+        // two 2D textures. If the glDisable() call is in the previous loop, then the
         // 2D texture target is disabled in the first iteration, which invalidates the
         // glBindTexture in the second iteration.
         for (int t = 0; t < tcount; t++) {
           PTexture tex = renderTextures[t];
           gl.glDisable(tex.getGLTarget());          
         }        
+
+        
         for (int t = 0; t < tcount; t++) {
           gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
           gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
         }
+        
       }
     }
 
