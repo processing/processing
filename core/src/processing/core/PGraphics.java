@@ -1166,14 +1166,14 @@ public class PGraphics extends PImage implements PConstants {
    * formatted vertex information.
    * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
    */
-  public void vertex(float[] v) {
+  public void vertexFields(float[] v) {
     vertexCheck();
     curveVertexCount = 0;
     float[] vertex = vertices[vertexCount];
     System.arraycopy(v, 0, vertex, 0, VERTEX_FIELD_COUNT);
     vertexCount++;
   }
-
+  
 
   public void vertex(float x, float y, float u, float v) {
     vertexTexture(u, v);
@@ -6007,13 +6007,7 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("texture");    
   }
 
-  
-  public void vertex(float x, float y, float... uv) {
+  public void vertex(float... values) {
     showMissingWarning("vertex");    
-  }
- 
-  
-  public void vertex(float x, float y, float z, float... uv) {
-    showMissingWarning("vertex");    
-  }    
+  }   
 }
