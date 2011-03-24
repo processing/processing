@@ -7860,9 +7860,9 @@ public class PApplet extends Applet
    * formatted vertex information.
    * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
    */
-  public void vertex(float[] v) {
-    if (recorder != null) recorder.vertex(v);
-    g.vertex(v);
+  public void vertexFields(float[] v) {
+    if (recorder != null) recorder.vertexFields(v);
+    g.vertexFields(v);
   }
 
 
@@ -10225,15 +10225,9 @@ public class PApplet extends Applet
   }
 
 
-  public void vertex(float x, float y, float... uv) {
-    if (recorder != null) recorder.vertex(x, y, uv);
-    g.vertex(x, y, uv);
-  }
-
-
-  public void vertex(float x, float y, float z, float... uv) {
-    if (recorder != null) recorder.vertex(x, y, z, uv);
-    g.vertex(x, y, z, uv);
+  public void vertex(float... values) {
+    if (recorder != null) recorder.vertex(values);
+    g.vertex(values);
   }
 
 
