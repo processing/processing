@@ -1349,22 +1349,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       vertexV[n][i] = texturesV[0];        
     }
   }
-
-  public void vertex(float x, float y, float... uv) {
-    int len = uv.length / 2;   
-    if (len <= maxTextureUnits) {
-      float u, v;
-      for (int t = 0; t < len; t++) {
-        u = uv[t];
-        v = uv[2 * t];
-        vertexTexture(u, v, t);  
-      }
-      vertex(x, y);
-      setTextureData(len);
-    } else {
-      System.err.println("A3D: insufficient texture units.");
-    }
-  }
   
   public void vertex(float x, float y, float z, float u, float v) {  
     vertexTexture(u, v, 0);
@@ -1377,21 +1361,31 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }
 
-  
-  public void vertex(float x, float y, float z, float... uv) {
-    int len = uv.length / 2;   
-    if (len <= maxTextureUnits) {
+  public void vertex(float... values) {
+    int len = values.length;
+    if (len < 2) {
+      System.err.println("A3D: call vertex() with at least 2 parameters.");      
+      return;
+    }
+    
+    int dim = len % 2 == 0 ? 2 : 3; 
+    int nuv = (len - dim) / 2;
+    if (nuv <= maxTextureUnits) {
       float u, v;
-      for (int t = 0; t < len; t++) {
-        u = uv[t];
-        v = uv[2 * t];
+      for (int t = 0; t < nuv; t++) {
+        u = values[dim + 2 * t];
+        v = values[dim + 2 * t + 1];
         vertexTexture(u, v, t);  
-      }
-      vertex(x, y, z);
-      setTextureData(len);
+      }       
+      if (dim == 2) {
+        vertex(values[0], values[1]);
+      } else {
+        vertex(values[0], values[1], values[2]);
+      }        
+      setTextureData(nuv);      
     } else {
       System.err.println("A3D: insufficient texture units.");
-    }
+    }      
   }
   
   
@@ -1502,6 +1496,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     vertexTex = tempi;
     
     numTexBuffers += more;    
+    
+    // This avoid multi-texturing issues when running the sketch in
+    // static mode (textures after the first not displayed at all).
+    gl.glActiveTexture(GL10.GL_TEXTURE0 + numTexBuffers - 1);     
   }
 
   protected void setTextureData(int ntex) {
@@ -7300,11 +7298,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
       
       parent.handleDraw();
-
-      gl = null;
-      gl11 = null;
-      gl11x = null;
-      gl11xp = null;
     }
 
     public void onSurfaceChanged(GL10 igl, int iwidth, int iheight) {
@@ -7330,10 +7323,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
       
       setSize(iwidth, iheight);
-      gl = null;
-      gl11 = null;
-      gl11x = null;
-      gl11xp = null;
     }
 
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {
@@ -7430,6 +7419,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_UNITS, temp, 0);
       maxTextureUnits = PApplet.min(MAX_TEXTURES, temp[0]);
       
+      // TODO: Check this:
       // Any remanining resources are deleted now, so we (re) start
       // from scratch.
       // Since this method is only called when the sketch starts or 
@@ -7438,11 +7428,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       // location to release resources. Also, at this point we are 
       // guaranteed to have all the gl objects non-null. 
       //deleteAllGLResources();
-      
-      gl = null;
-      gl11 = null;
-      gl11x = null;
-      gl11xp = null;
     }
   }
 
