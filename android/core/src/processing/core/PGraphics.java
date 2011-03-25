@@ -1099,7 +1099,7 @@ public class PGraphics extends PImage implements PConstants {
    * formatted vertex information.
    * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
    */
-  public void vertex(float[] v) {
+  public void vertexFields(float[] v) {
     vertexCheck();
     curveVertexCount = 0;
     float[] vertex = vertices[vertexCount];
@@ -5163,12 +5163,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   
-  public void vertex(float x, float y, float... uv) {
+  public void vertex(float... values) {
     showMissingWarning("vertex");    
-  }
- 
-  
-  public void vertex(float x, float y, float z, float... uv) {
-    showMissingWarning("vertex");    
-  }
+  } 
 }
