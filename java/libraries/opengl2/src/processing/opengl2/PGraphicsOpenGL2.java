@@ -289,7 +289,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   static protected final int VERTEX1 = 0;
   static protected final int VERTEX2 = 1;
   static protected final int VERTEX3 = 2; // (triangles only)
-  static protected final int POINT_FIELD_COUNT = 2;
+  static protected final int POINT_FIELD_COUNT = 1;
   static protected final int LINE_FIELD_COUNT = 2;
   static protected final int TRIANGLE_FIELD_COUNT = 3;
 
@@ -1393,7 +1393,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
       // reset vertex, line and triangle information
       // every shape is rendered at endShape();
       vertexCount = 0;
-      lineCount = 0;
+      pathCount = 0;
+      faceCount = 0;
+      
+      pointCount = 0;
+      lineCount = 0;      
       triangleCount = 0;
     }
 
@@ -1660,7 +1664,16 @@ public class PGraphicsOpenGL2 extends PGraphics {
         vertexCount = 0;
         triangleCount = 0;        
       }
+      
       if (stroke) {
+        if (pointCount > 0) {
+          renderPoints(0, pointCount);
+          if (raw != null) {
+            //renderPoints(0, pointCount);
+          }          
+          pointCount = 0;
+        }
+        
         renderLines(0, pathCount);
         if (raw != null) {
           // rawLines(0, lineCount);
@@ -1680,8 +1693,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
     case POINTS: {
       int stop = shapeLast;
       for (int i = shapeFirst; i < stop; i++) {
-        addLineBreak(); // total overkill for points
-        addLine(i, i);
+        addPoint(i);
+        //addLineBreak(); // total overkill for points
+        //addLine(i, i);
       }
     }
       break;
@@ -2035,6 +2049,19 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   // POINTS
 
+  protected void addPoint(int a) {
+    if (pointCount == points.length) {
+      int[][] temp = new int[pointCount << 1][POINT_FIELD_COUNT];
+      System.arraycopy(points, 0, temp, 0, pointCount);
+      points = temp;
+    }
+    points[pointCount][VERTEX1] = a;
+    //points[pointCount][STROKE_MODE] = strokeCap | strokeJoin;
+    //points[pointCount][STROKE_COLOR] = strokeColor;
+    //points[pointCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
+    pointCount++;
+  }  
+  
   protected void renderPoints(int start, int stop) {
     gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
     gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
@@ -2046,7 +2073,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       expandBuffers();
     }
     
-    float sw = vertices[lines[start][VERTEX1]][SW];
+    float sw = vertices[points[start][VERTEX1]][SW];
     if (sw > 0) {
       gl2f.glPointSize(sw); // can only be set outside glBegin/glEnd
 
