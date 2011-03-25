@@ -7006,8 +7006,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void vertex(float[] v) {
-    g.vertex(v);
+  public void vertexFields(float[] v) {
+    g.vertexFields(v);
   }
 
 
@@ -8139,13 +8139,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void vertex(float x, float y, float... uv) {
-    g.vertex(x, y, uv);
+  public void vertex(float... values) {
+    g.vertex(values);
   }
-
-
-  public void vertex(float x, float y, float z, float... uv) {
-    g.vertex(x, y, z, uv);
-  }  
 }
 
