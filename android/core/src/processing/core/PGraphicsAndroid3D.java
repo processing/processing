@@ -230,7 +230,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected final int VERTEX1 = 0;
   static protected final int VERTEX2 = 1;
   static protected final int VERTEX3 = 2; // (triangles only)
-  static protected final int POINT_FIELD_COUNT = 2;
+  static protected final int POINT_FIELD_COUNT = 1;
   static protected final int LINE_FIELD_COUNT = 2;
   static protected final int TRIANGLE_FIELD_COUNT = 3;
 
@@ -1286,7 +1286,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       // reset vertex, line and triangle information
       // every shape is rendered at endShape();
       vertexCount = 0;
-      lineCount = 0;
+      pathCount = 0;
+      faceCount = 0;
+      
+      pointCount = 0;
+      lineCount = 0;      
       triangleCount = 0;
     }
 
@@ -1543,15 +1547,27 @@ public class PGraphicsAndroid3D extends PGraphics {
         if (raw != null) {
           // rawTriangles(0, triangleCount);
         }
+        
+        vertexCount = 0;
         triangleCount = 0;
       }
+      
       if (stroke) {
+        if (pointCount > 0) {
+          renderPoints(0, pointCount);
+          if (raw != null) {
+            //renderPoints(0, pointCount);
+          }          
+          pointCount = 0;
+        } 
+        
         renderLines(0, pathCount);
         if (raw != null) {
           // rawLines(0, lineCount);
         }
         lineCount = 0;
       }
+      
       pathCount = 0;
       faceCount = 0;
     }
@@ -1564,8 +1580,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     case POINTS: {
       int stop = shapeLast;
       for (int i = shapeFirst; i < stop; i++) {
-        addLineBreak(); // total overkill for points
-        addLine(i, i);
+        addPoint(i);
+        //addLineBreak(); // total overkill for points
+        //addLine(i, i);
       }
     }
       break;
@@ -1918,6 +1935,19 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // POINTS
 
+  protected void addPoint(int a) {
+    if (pointCount == points.length) {
+      int[][] temp = new int[pointCount << 1][POINT_FIELD_COUNT];
+      System.arraycopy(points, 0, temp, 0, pointCount);
+      points = temp;
+    }
+    points[pointCount][VERTEX1] = a;
+    //points[pointCount][STROKE_MODE] = strokeCap | strokeJoin;
+    //points[pointCount][STROKE_COLOR] = strokeColor;
+    //points[pointCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
+    pointCount++;
+  }    
+  
   protected void renderPoints(int start, int stop) {
     gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
     gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
@@ -1929,7 +1959,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       expandBuffers();
     }
     
-    float sw = vertices[lines[start][VERTEX1]][SW];
+    float sw = vertices[points[start][VERTEX1]][SW];
     if (sw > 0) {
       gl.glPointSize(sw); // can only be set outside glBegin/glEnd
 
