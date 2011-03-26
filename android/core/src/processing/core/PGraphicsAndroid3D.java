@@ -86,10 +86,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected float maxLineWidth;
   static protected int maxTextureUnits;
   
-  /** OpenGL version strings */
+  /** OpenGL information strings */
   static public String OPENGL_VENDOR;
   static public String OPENGL_RENDERER;
-  static public String OPENGL_VERSION;    
+  static public String OPENGL_VERSION;
+  static public String OPENGL_EXTENSIONS;
 
   // ........................................................
 
@@ -7386,20 +7387,20 @@ public class PGraphicsAndroid3D extends PGraphics {
       texenvCrossbarSupported = false;
       vboSupported = false;
       fboSupported = false;
-      String extensions = gl.glGetString(GL10.GL_EXTENSIONS);      
-      if (-1 < extensions.indexOf("texture_non_power_of_two")) {
+      OPENGL_EXTENSIONS = gl.glGetString(GL10.GL_EXTENSIONS);      
+      if (-1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two")) {
         npotTexSupported = true;
       }
-      if (-1 < extensions.indexOf("generate_mipmap")) {
+      if (-1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap")) {
         mipmapGeneration = true;
       }
-      if (-1 < extensions.indexOf("matrix_get")) {
+      if (-1 < OPENGL_EXTENSIONS.indexOf("matrix_get")) {
         matrixGetSupported = true;
       }
-      if (-1 < extensions.indexOf("texture_env_crossbar")) {
+      if (-1 < OPENGL_EXTENSIONS.indexOf("texture_env_crossbar")) {
         texenvCrossbarSupported = true;
       }
-      if (-1 < extensions.indexOf("vertex_buffer_object")
+      if (-1 < OPENGL_EXTENSIONS.indexOf("vertex_buffer_object")
           || -1 < OPENGL_VERSION.indexOf("1.1") || // Just in case
                                                    // vertex_buffer_object
                                                    // doesn't appear in the list
@@ -7409,7 +7410,7 @@ public class PGraphicsAndroid3D extends PGraphics {
                                                // be supported.
         vboSupported = true;
       }
-      if (-1 < extensions.indexOf("framebuffer_object") && gl11xp != null) {
+      if (-1 < OPENGL_EXTENSIONS.indexOf("framebuffer_object") && gl11xp != null) {
         try {
           gl11xp.glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);
           fboSupported = true;
