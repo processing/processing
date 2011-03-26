@@ -1660,7 +1660,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         if (raw != null) {
           // rawTriangles(0, triangleCount);
         }
-        faceCount = 0;
+      
         vertexCount = 0;
         triangleCount = 0;        
       }
