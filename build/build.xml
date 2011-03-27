@@ -131,7 +131,12 @@
       </fileset>
     </copy>
 -->
-
+    <copy todir="${target.path}/modes/javascript">
+      <fileset dir="../javascript">
+      	<exclude name="**/._*" />
+      </fileset>
+    </copy>
+    
     <copy todir="${target.path}/modes/android">
       <fileset dir="../android">
 	<include name="android-core.zip" />
