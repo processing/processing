@@ -4,6 +4,14 @@ X   had to add an additional offscreen buffer, which is more memory
 X   however hopefully not a problem on modern machines
 X   and probably no worse than what MemoryImageSource does
 X   removed large synchronized block
+A OPENGL2 record only saves one line in a LINES shape
+A   http://code.google.com/p/processing/issues/detail?id=579
+
+_ save() no longer works at bottom of draw with JAVA2D
+X   neither does loadPixels it seems
+X   http://code.google.com/p/processing/issues/detail?id=594
+X   made an edit so that loadPixels will apply to the offscreen image, but...
+X   ironing out more issues with set() and the latest release
 
 
 _ bug: textAlign(RIGHT) is shutting off native fonts
