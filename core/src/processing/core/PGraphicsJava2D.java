@@ -1701,7 +1701,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       pixels = new int[width * height];
     }
     //((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
-    WritableRaster raster = ((BufferedImage) image).getRaster();
+    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
     raster.getDataElements(0, 0, width, height, pixels);
   }
 
@@ -1714,7 +1714,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
    */
   public void updatePixels() {
     //updatePixels(0, 0, width, height);
-    WritableRaster raster = ((BufferedImage) image).getRaster();
+    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
     raster.setDataElements(0, 0, width, height, pixels);
   }
 
@@ -1745,7 +1745,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public int get(int x, int y) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
     //return ((BufferedImage) image).getRGB(x, y);
-    WritableRaster raster = ((BufferedImage) image).getRaster();
+    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
     raster.getDataElements(x, y, getset);
     return getset[0];
   }
@@ -1760,7 +1760,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
     // oops, the last parameter is the scan size of the *target* buffer
     //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
-    WritableRaster raster = ((BufferedImage) image).getRaster();
+    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
     raster.getDataElements(x, y, w, h, output.pixels);
 
     return output;
@@ -1776,14 +1776,14 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
 //    ((BufferedImage) image).setRGB(x, y, argb);
     getset[0] = argb;
-    WritableRaster raster = ((BufferedImage) image).getRaster();
+    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
     raster.setDataElements(x, y, getset);
   }
 
 
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
                          PImage src) {
-    WritableRaster raster = ((BufferedImage) image).getRaster();
+    WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
     if ((sx == 0) && (sy == 0) && (sw == src.width) && (sh == src.height)) {
       raster.setDataElements(dx, dy, src.width, src.height, src.pixels);
     } else {
