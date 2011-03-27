@@ -153,6 +153,11 @@
 	<exclude name="**/._*" />
       </fileset>
     </copy>
+
+    <!-- ensure that the android-core.zip file has been built -->
+    <available file="${target.path}/modes/android/android-core.zip" 
+	       property="android-core-present"/>
+    <fail unless="android-core-present" />
     
     <!-- copy libraries -->
 <!--

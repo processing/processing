@@ -3,7 +3,14 @@
 <project default="build" name="Create .zip file for core">
   <property environment="env" />
 
-  <target name="build" if="env.ANDROID_SDK">
+  <!-- oh ant, you're so cute and convoluted -->
+  <target name="build" depends="sdk_chatter,actual_build" />
+
+  <target name="sdk_chatter" unless="env.ANDROID_SDK">
+    <echo message="ANDROID_SDK not set, skipping build of android-core.zip" />
+  </target>
+
+  <target name="actual_build" if="env.ANDROID_SDK">
     <mkdir dir="bin" />
     <javac target="1.5" 
 	   encoding="UTF-8"
@@ -14,7 +21,7 @@
     <jar basedir="bin" destfile="../android-core.zip" />
   </target>
 
-  <target name="clean" if="env.ANDROID_SDK"
+  <target name="clean" 
 	  description="Clean out the build directories">
     <delete dir="bin" />
     <delete file="../android-core.zip" />
