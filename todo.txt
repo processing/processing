@@ -17,8 +17,28 @@ o   do this once the library documentation has been fixed up
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1278
 X   http://code.google.com/p/processing/issues/detail?id=181
 
+_ No .java file export
+_   http://code.google.com/p/processing/issues/detail?id=570
+
+_ reference not available from the pde (0194) on mac
+_   http://code.google.com/p/processing/issues/detail?id=572
+
 _ "No library found" message when using import statements and the code folder
 _   http://code.google.com/p/processing/issues/detail?id=568
+
+_ Subfolders in /libraries folder not supported anymore (toxi)
+_   http://code.google.com/p/processing/issues/detail?id=578
+
+from peter n lewis 
+_ Use Selection For Find
+_   http://code.google.com/p/processing/issues/detail?id=571
+_ Double and Triple click and drag behaviour
+_   http://code.google.com/p/processing/issues/detail?id=576
+_ double-clicking whitespace selects adjacent chars
+_   http://code.google.com/p/processing/issues/detail?id=59
+_ Find Previous and FindReplace dialog cleanup
+_   http://code.google.com/p/processing/issues/detail?id=580
+_ bugs 67, 68, 69 (below) cover more of this
 
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
@@ -30,6 +50,9 @@ X   cleaned up some things inside settings, but this was already done
 reference
 _ auto-format has been moved to edit
 _   this might be the same as arduino?
+
+_ Internationalization
+_   http://code.google.com/p/processing/issues/detail?id=593
 
 
 regressions
