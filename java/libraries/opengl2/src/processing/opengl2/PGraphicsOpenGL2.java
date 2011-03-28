@@ -6652,8 +6652,15 @@ public class PGraphicsOpenGL2 extends PGraphics {
       // is called with its argument set to false.
       GLProfile.initSingleton(false);
     } else {
-      PApplet.println("Initializing JOGL2");
-      GLProfile.initSingleton(true);
+      if (PApplet.platform == LINUX) {
+        // Special case for Linux, since the multithreading issues described for
+        // example here:
+        // http://forum.jogamp.org/QtJambi-JOGL-Ubuntu-Lucid-td909554.html
+        // have not been solved yet (at least for stable release b32 of JOGL2).
+        GLProfile.initSingleton(false);
+      } else { 
+        GLProfile.initSingleton(true);
+      }
     }
     
     ogl = this;
