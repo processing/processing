@@ -6621,23 +6621,46 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   // INITIALIZATION ROUTINES    
   
-  protected void initPrimary() {
-    // Calling this one leads to crash from native code in Linux 64 bits:
-    //GLProfile.initSingleton(true);
-    // Some more info that could be relevant is here:
-    // http://jogamp.762907.n3.nabble.com/QtJambi-JOGL-Ubuntu-Lucid-td909554.html
-    // Some more about threading, X11 and AWT:
-    // http://jogamp.762907.n3.nabble.com/SIGSEGV-when-closing-JOGL-applications-td895912.html
-    
-    // TODO: when running as applet use:      
-    // GLProfile.initSingleton(false);      
-    // RCP Application (Applet's, Webstart, Netbeans, ..) using JOGL may not be able 
-    // to initialize JOGL before the first UI action.      
+  static public void init() {
+    init(true);
+  }
 
+  /**
+   * This static method can be called by applications that use
+   * Processing+OPENGL2 inside their own GUI, so they can initialize
+   * JOGL2 before anything else.
+   * According to the JOGL2 documentation, applications shall call 
+   * GLProfile.initSingleton() ASAP, before any other UI invocation.
+   * In case applications are able to initialize JOGL before any other 
+   * UI action, hey shall invoke this method with beforeUI=true and 
+   * benefit from fast native multithreading support on all platforms 
+   * if possible. 
+   *
+   */
+  static public void init(boolean beforeUI) {
+    try {
+      GLProfile.initSingleton(beforeUI);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }    
+  }
+    
+  protected void initPrimary() {
+    if (parent.online) {
+      // RCP Application (Applet's, Webstart, Netbeans, ..) using JOGL may not 
+      // be able to initialize JOGL before the first UI action, so initSingleton()
+      // is called with its argument set to false.
+      GLProfile.initSingleton(false);
+    } else {
+      PApplet.println("Initializing JOGL2");
+      GLProfile.initSingleton(true);
+    }
+    
     ogl = this;
     
     profile = null;      
     
+    profile = GLProfile.getDefault();
     profile = GLProfile.get(GLProfile.GL2ES1);
     pipeline = FIXED;
 
