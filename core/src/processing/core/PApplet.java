@@ -1381,12 +1381,12 @@ public class PApplet extends Applet
 
   /**
    * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
-   */ 
+   */
   public PImage createImage(int wide, int high, int format) {
     return createImage(wide, high, format, null);
   }
 
-  
+
   /**
    * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
    * <br><br>Be sure to include all three parameters, specifying only the width and height (but no format) will produce a strange error.
@@ -1622,7 +1622,7 @@ public class PApplet extends Applet
       }
 
       g.endDraw();
-      
+
       if (recorder != null) {
         recorder.endDraw();
       }
@@ -3609,20 +3609,20 @@ public class PApplet extends Applet
     return loadImage(filename, null, null);
   }
 
-  
+
   /**
    * Load an image from the data folder or a local directory...
-   */  
+   */
   public PImage loadImage(String filename, String extension) {
     return loadImage(filename, extension, null);
   }
-  
-  
+
+
   public PImage loadImage(String filename, Object params) {
     return loadImage(filename, null, params);
   }
-  
-  
+
+
   /**
    * Loads an image into a variable of type <b>PImage</b>. Four types of images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them at the start of the program. Loading images inside <b>draw()</b> will reduce the speed of a program.
    * <br><br>The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</a>.
@@ -3686,7 +3686,7 @@ public class PApplet extends Applet
       if (params != null) {
         image.setParams(g, params);
       }
-      return image;      
+      return image;
     }
 
     // For jpeg, gif, and png, load them using createImage(),
@@ -3710,7 +3710,7 @@ public class PApplet extends Applet
           if (extension.equals("gif") || extension.equals("png")) {
             image.checkAlpha();
           }
-          
+
           if (params != null) {
             image.setParams(g, params);
           }
@@ -3747,12 +3747,12 @@ public class PApplet extends Applet
     return requestImage(filename, null, null);
   }
 
-  
+
   public PImage requestImage(String filename, String extension) {
     return requestImage(filename, extension, null);
   }
 
-  
+
   /**
    * This function load images on a separate thread so that your sketch does not freeze while images load during <b>setup()</b>. While the image is loading, its width and height will be 0. If an error occurs while loading the image, its width and height will be set to -1. You'll know when the image has loaded properly because its width and height will be greater than 0. Asynchronous image loading (particularly when downloading from a server) can dramatically improve performance.<br><br>
    * The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>requestImage()</b>.
@@ -3789,7 +3789,7 @@ public class PApplet extends Applet
     String filename;
     String extension;
     PImage vessel;
-    
+
     public AsyncImageLoader(String filename, String extension, PImage vessel) {
       this.filename = filename;
       this.extension = extension;
@@ -4080,13 +4080,13 @@ public class PApplet extends Applet
   // SHAPE I/O
 
   protected String[] loadShapeFormats;
-  
-  
+
+
   public PShape loadShape(String filename) {
     return loadShape(filename, null);
   }
-  
-  
+
+
   /**
    * Loads vector shapes into a variable of type <b>PShape</b>. Currently, only SVG files may be loaded.
    * To load correctly, the file must be located in the data directory of the current sketch.
@@ -4106,7 +4106,7 @@ public class PApplet extends Applet
    */
   public PShape loadShape(String filename, Object params) {
     String extension;
-    
+
     String lower = filename.toLowerCase();
     int dot = filename.lastIndexOf('.');
     if (dot == -1) {
@@ -4119,8 +4119,8 @@ public class PApplet extends Applet
     int question = extension.indexOf('?');
     if (question != -1) {
       extension = extension.substring(0, question);
-    }        
-    
+    }
+
     if (extension.equals("svg")) {
       return new PShapeSVG(this, filename);
 
@@ -4134,9 +4134,9 @@ public class PApplet extends Applet
       }
     } else {
       // Loading the formats supported by the renderer.
-    
+
       loadShapeFormats = g.getSupportedShapeFormats();
-    
+
       if (loadShapeFormats != null) {
         for (int i = 0; i < loadShapeFormats.length; i++) {
           if (extension.equals(loadShapeFormats[i])) {
@@ -4144,22 +4144,22 @@ public class PApplet extends Applet
           }
         }
       }
-        
+
     }
-    
+
     return null;
   }
 
 
   /**
-   * Creates an empty shape, with the specified size and parameters. 
+   * Creates an empty shape, with the specified size and parameters.
    * The actual type will depend on the renderer.
-   */ 
+   */
   public PShape createShape(int size, Object params) {
     return g.createShape(size, params);
   }
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // FONT I/O
@@ -6209,6 +6209,7 @@ public class PApplet extends Applet
    * to zero will return false, and any other value will return true.
    * @return array of boolean elements
    */
+  /*
   static final public boolean[] parseBoolean(byte what[]) {
     boolean outgoing[] = new boolean[what.length];
     for (int i = 0; i < what.length; i++) {
@@ -6216,6 +6217,7 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
+  */
 
   /**
    * Convert an int array to a boolean array. An int equal
@@ -7650,15 +7652,15 @@ public class PApplet extends Applet
 
 
   /**
-   * Starts shape recording and returns the PShape object that will 
-   * contain the geometry.   
-   */  
+   * Starts shape recording and returns the PShape object that will
+   * contain the geometry.
+   */
   public PShape beginRecord() {
     return g.beginRecord();
   }
-  
+
   //////////////////////////////////////////////////////////////
-  
+
 
   /**
    * Loads the pixel data for the display window into the <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
@@ -10183,7 +10185,7 @@ public class PApplet extends Applet
   }
 
 
-  public void mergeShapes(boolean val) { 
+  public void mergeShapes(boolean val) {
     if (recorder != null) recorder.mergeShapes(val);
     g.mergeShapes(val);
   }
@@ -10244,7 +10246,7 @@ public class PApplet extends Applet
    * PGraphicsJava2D, or resized image data and OpenGL texture indices for
    * PGraphicsOpenGL.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer   
+   * @param storage The metadata required by the renderer
    */
   public void setCache(PGraphics renderer, Object storage) {
     if (recorder != null) recorder.setCache(renderer, storage);
@@ -10279,7 +10281,7 @@ public class PApplet extends Applet
    * Store parameters for a renderer that requires extra metadata of
    * some kind.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer  
+   * @param storage The parameters required by the renderer
    */
   public void setParams(PGraphics renderer, Object params) {
     if (recorder != null) recorder.setParams(renderer, params);
