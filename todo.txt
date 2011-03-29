@@ -16,6 +16,10 @@ X move library examples to the examples menu
 o   do this once the library documentation has been fixed up
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1278
 X   http://code.google.com/p/processing/issues/detail?id=181
+X ctrl-slash not working with esfera on linux (line ending trouble?)
+X   or maybe ctrl-slash just broken on linux?
+X   http://code.google.com/p/processing/issues/detail?id=596
+
 
 _ No .java file export
 _   http://code.google.com/p/processing/issues/detail?id=570
@@ -207,8 +211,6 @@ protected void finalize() throws Throwable {
     }
 }
 
-_ ctrl-slash not working with esfera on linux (line ending trouble?)
-_   or maybe ctrl-slash just broken on linux?
 _ not properly revving the version numbers in releases in the .app file
 _   figure out a better way to do this automatically during build
 
