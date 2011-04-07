@@ -656,6 +656,10 @@ public class PShape implements PConstants {
     return childCount;
   }
 
+  public PShape[] getChildren() {
+    return children;
+  }
+  
   /**
    * 
    * @param index the layer position of the shape to get
@@ -863,6 +867,9 @@ public class PShape implements PConstants {
 
 
   public int[] getVertexCodes() {
+    if (vertexCodes == null) {
+      return null;
+    }
     if (vertexCodes.length != vertexCodeCount) {
       vertexCodes = PApplet.subset(vertexCodes, 0, vertexCodeCount);
     }
@@ -880,6 +887,11 @@ public class PShape implements PConstants {
    */
   public int getVertexCode(int index) {
     return vertexCodes[index];
+  }
+  
+  
+  public boolean isClosed() {
+    return close;
   }
   
 

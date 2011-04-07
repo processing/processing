@@ -83,13 +83,13 @@ public class PShape implements PConstants {
   /**
    * The width of the PShape document.
    * @webref
-   * @brief  	Shape document width
+   * @brief     Shape document width
    */
   public float width;
   /**
    * The width of the PShape document.
    * @webref
-   * @brief  	Shape document height
+   * @brief     Shape document height
    */
   public float height;
   public float depth;
@@ -192,7 +192,7 @@ public class PShape implements PConstants {
    * Returns a boolean value "true" if the image is set to be visible, "false" if not. This is modified with the <b>setVisible()</b> parameter.
    * <br><br>The visibility of a shape is usually controlled by whatever program created the SVG file.
    * For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
-   * 
+   *
    * @webref
    * @brief Returns a boolean value "true" if the image is set to be visible, "false" if not
    */
@@ -220,7 +220,7 @@ public class PShape implements PConstants {
    * colors. Identical to ignoreStyles(true). Also disables styles for all
    * child shapes.
    * @webref
-   * @brief  	Disables the shape's style data and uses Processing styles
+   * @brief     Disables the shape's style data and uses Processing styles
    */
   public void disableStyle() {
     style = false;
@@ -258,7 +258,7 @@ public class PShape implements PConstants {
 
 
   /**
-   * Get the width of the drawing area (not necessarily the shape boundary). 
+   * Get the width of the drawing area (not necessarily the shape boundary).
    */
   public float getWidth() {
     //checkBounds();
@@ -267,7 +267,7 @@ public class PShape implements PConstants {
 
 
   /**
-   * Get the height of the drawing area (not necessarily the shape boundary). 
+   * Get the height of the drawing area (not necessarily the shape boundary).
    */
   public float getHeight() {
     //checkBounds();
@@ -277,21 +277,21 @@ public class PShape implements PConstants {
 
   /**
    * Get the depth of the shape area (not necessarily the shape boundary). Only makes sense for 3D PShape subclasses,
-   * such as PShape3D. 
+   * such as PShape3D.
    */
   public float getDepth() {
     //checkBounds();
     return depth;
-  } 
-  
-  
+  }
+
+
   /**
    * Return true if this shape is 3D. Defaults to false.
-   */  
+   */
   public boolean is3D() {
     return false;
   }
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -638,13 +638,20 @@ public class PShape implements PConstants {
     return childCount;
   }
 
+
+  public PShape[] getChildren() {
+    return children;
+  }
+
+
   /**
-   * 
+   *
    * @param index the layer position of the shape to get
    */
   public PShape getChild(int index) {
     return children[index];
   }
+
 
   /**
    * Extracts a child shape from a parent shape. Specify the name of the shape with the <b>target</b> parameter.
@@ -692,53 +699,56 @@ public class PShape implements PConstants {
       children = (PShape[]) PApplet.expand(children);
     }
     children[childCount++] = who;
-    who.parent = this; 
+    who.parent = this;
 
     if (who.getName() != null) {
       addName(who.getName(), who);
     }
   }
 
+
   public void addChild(PShape who, int idx) {
     if (idx < childCount) {
       if (childCount == children.length) {
         children = (PShape[]) PApplet.expand(children);
       }
-      
+
       // Copy [idx, childCount - 1] to [idx + 1, childCount]
       for (int i = childCount - 1; i >= idx; i--) {
         children[i + 1] = children[i];
       }
       childCount++;
-      
+
       children[idx] = who;
-      
-      who.parent = this; 
-      
+
+      who.parent = this;
+
       if (who.getName() != null) {
         addName(who.getName(), who);
-      }      
+      }
     }
   }
 
+
   /**
    * Remove the shape with index idx.
-   */  
+   */
   public void removeChild(int idx) {
     if (idx < childCount) {
       PShape child = children[idx];
-     
+
       // Copy [idx + 1, childCount - 1] to [idx, childCount - 2]
       for (int i = idx; i < childCount - 1; i++) {
         children[i] = children[i + 1];
-      }      
+      }
       childCount--;
-      
+
       if (child.getName() != null && nameTable != null) {
         nameTable.remove(child.getName());
-      }       
+      }
     }
   }
+
 
   /**
    * Add a shape to the name lookup table.
@@ -754,10 +764,10 @@ public class PShape implements PConstants {
     }
   }
 
-  
+
   /**
    * Returns the index of child who.
-   */ 
+   */
   protected int getChildIdx(PShape who) {
     for (int i = 0; i < childCount; i++) {
       if (children[i] == who) {
@@ -766,7 +776,7 @@ public class PShape implements PConstants {
     }
     return -1;
   }
- 
+
 
 //  public PShape createGroup() {
 //    PShape group = new PShape();
@@ -778,7 +788,7 @@ public class PShape implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   /** The shape type, one of GROUP, PRIMITIVE, PATH, or GEOMETRY. */
   public int getFamily() {
     return family;
@@ -788,7 +798,7 @@ public class PShape implements PConstants {
   public int getPrimitive() {
     return primitive;
   }
-  
+
 
   public float[] getParams() {
     return getParams(null);
@@ -807,13 +817,13 @@ public class PShape implements PConstants {
   public float getParam(int index) {
     return params[index];
   }
-  
-  
+
+
   public int getVertexCount() {
     return vertexCount;
   }
-  
-  
+
+
   public float[] getVertex(int index) {
     if (index < 0 || index >= vertexCount) {
       String msg = "No vertex " + index + " for this shape, " +
@@ -822,24 +832,27 @@ public class PShape implements PConstants {
     }
     return vertices[index];
   }
-  
-  
+
+
   public float getVertexX(int index) {
     return vertices[index][X];
   }
 
-  
+
   public float getVertexY(int index) {
     return vertices[index][Y];
   }
 
-  
+
   public float getVertexZ(int index) {
     return vertices[index][Z];
   }
 
 
   public int[] getVertexCodes() {
+    if (vertexCodes == null) {
+      return null;
+    }
     if (vertexCodes.length != vertexCodeCount) {
       vertexCodes = PApplet.subset(vertexCodes, 0, vertexCodeCount);
     }
@@ -850,15 +863,20 @@ public class PShape implements PConstants {
   public int getVertexCodeCount() {
     return vertexCodeCount;
   }
-  
 
-  /** 
+
+  /**
    * One of VERTEX, BEZIER_VERTEX, CURVE_VERTEX, or BREAK.
    */
   public int getVertexCode(int index) {
     return vertexCodes[index];
   }
-  
+
+
+  public boolean isClosed() {
+    return close;
+  }
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -869,10 +887,10 @@ public class PShape implements PConstants {
       boolean c = false;
       for (int i = 0, j = vertexCount-1; i < vertexCount; j = i++) {
         if (((vertices[i][Y] > y) != (vertices[j][Y] > y)) &&
-            (x < 
-                (vertices[j][X]-vertices[i][X]) * 
-                (y-vertices[i][Y]) / 
-                (vertices[j][1]-vertices[i][Y]) + 
+            (x <
+                (vertices[j][X]-vertices[i][X]) *
+                (y-vertices[i][Y]) /
+                (vertices[j][1]-vertices[i][Y]) +
                 vertices[i][X])) {
           c = !c;
         }
@@ -883,7 +901,7 @@ public class PShape implements PConstants {
     }
   }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -898,7 +916,7 @@ public class PShape implements PConstants {
   }
 
   /**
-   * Specifies an amount to displace the shape. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Subsequent calls to the method accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * Specifies an amount to displace the shape. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Subsequent calls to the method accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
    * <br><br>Using this method with the <b>z</b> parameter requires using the P3D or OPENGL parameter in combination with size.
    * @webref
    * @param tx left/right translation
@@ -910,12 +928,12 @@ public class PShape implements PConstants {
     checkMatrix(3);
     matrix.translate(tx, ty, tz);
   }
-  
+
   /**
    * Rotates a shape around the x-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
    * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
    * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateX(HALF_PI)</b> and then <b>rotateX(HALF_PI)</b> is the same as <b>rotateX(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.  
+   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
    * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
    * @param angle angle of rotation specified in radians
    * @webref
@@ -929,7 +947,7 @@ public class PShape implements PConstants {
    * Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
    * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
    * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateY(HALF_PI)</b> and then <b>rotateY(HALF_PI)</b> is the same as <b>rotateY(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
    * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
    * @param angle angle of rotation specified in radians
    * @webref
@@ -944,7 +962,7 @@ public class PShape implements PConstants {
    * Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
    * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
    * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateZ(HALF_PI)</b> and then <b>rotateZ(HALF_PI)</b> is the same as <b>rotateZ(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
    * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
    * @param angle angle of rotation specified in radians
    * @webref
@@ -953,14 +971,14 @@ public class PShape implements PConstants {
   public void rotateZ(float angle) {
     rotate(angle, 0, 0, 1);
   }
-  
+
   /**
    * Rotates a shape the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
    * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
    * Transformations apply to everything that happens after and subsequent calls to the method accumulates the effect.
    * For example, calling <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as <b>rotate(PI)</b>.
    * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * @param angle angle of rotation specified in radians 
+   * @param angle angle of rotation specified in radians
    * @webref
    * @brief Rotates the shape
    */
@@ -977,7 +995,7 @@ public class PShape implements PConstants {
 
 
   //
-  
+
   /**
    * @param s percentage to scale the object
    */
@@ -997,7 +1015,7 @@ public class PShape implements PConstants {
    * Increases or decreases the size of a shape by expanding and contracting vertices. Shapes always scale from the relative origin of their bounding box.
    * Scale values are specified as decimal percentages. For example, the method call <b>scale(2.0)</b> increases the dimension of a shape by 200%.
    * Subsequent calls to the method multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
    * <br><br>Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter.
    * @param x percentage to scale the object in the x-axis
    * @param y percentage to scale the object in the y-axis
@@ -1010,11 +1028,11 @@ public class PShape implements PConstants {
     matrix.scale(x, y, z);
   }
 
-  
+
   public void centerAt(float cx, float cy, float cz) {
-    
+
   }
-  
+
 
   //
 
