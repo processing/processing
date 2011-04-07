@@ -19,6 +19,7 @@ X   http://code.google.com/p/processing/issues/detail?id=181
 X ctrl-slash not working with esfera on linux (line ending trouble?)
 X   or maybe ctrl-slash just broken on linux?
 X   http://code.google.com/p/processing/issues/detail?id=596
+X   fix from pkalauskas
 
 
 _ No .java file export
