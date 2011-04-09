@@ -7,6 +7,8 @@ X   removed large synchronized block
 A OPENGL2 record only saves one line in a LINES shape
 A   http://code.google.com/p/processing/issues/detail?id=579
 X add isClosed() and getChildren() methods to PShape
+_ questions re: final xml api changes
+_   http://code.google.com/p/processing/issues/detail?id=612
 
 _ save() no longer works at bottom of draw with JAVA2D
 X   neither does loadPixels it seems
