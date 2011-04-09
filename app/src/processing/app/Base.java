@@ -44,7 +44,7 @@ import processing.mode.java.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static final int REVISION = 195;
+  static public final int REVISION = 195;
   /** This might be replaced by main() if there's a lib/version.txt file. */
   static public String VERSION_NAME = "0195";
   /** Set true if this a proper release rather than a numbered revision. */

@@ -1,19 +1,22 @@
 0195 android
 X point() doesn't render in A3D
 X   http://code.google.com/p/processing/issues/detail?id=592
+X Processing 0194 + Android = "Starting Build"
+X   http://code.google.com/p/processing/issues/detail?id=590
+X   hanging at problem where it's prompting for info on the cmd line
+o renaming the old AVD is fixing a lot of issues with hanging at startup
+X modes/android/android-core.zip (No such file or directory)
+X   problem was that the build was ignoring no sdk silently
+X   need to require ANDROID_SDK set for build.xml dist
+X   http://code.google.com/p/processing/issues/detail?id=577
 
-_ Processing 0194 + Android = "Starting Build"
-_   http://code.google.com/p/processing/issues/detail?id=590
-_   hanging at problem where it's prompting for info on the cmd line
-_ renaming the old AVD is fixing a lot of issues with hanging at startup
+_ "Unable to resolve target 'Google...'" when APIs aren't installed
+_   add an error message that explains what to do
 
 _ canceling an attempt to find the Android SDK leaves no window open
 _   (Linux and Windows)
-
-_ modes/android/android-core.zip (No such file or directory)
-_   problem was that the build was ignoring no sdk silently
-_   need to require ANDROID_SDK set for build.xml dist
-_   http://code.google.com/p/processing/issues/detail?id=577
+_ crash when trying to change Android mode void sketch no Android SDK Installed
+_   http://code.google.com/p/processing/issues/detail?id=605
 
 _ Temp Files are not deleted
 _   http://code.google.com/p/processing/issues/detail?id=562
@@ -205,9 +208,6 @@ _   Using keystore: /Users/fry/.android/debug.keystore
 X look into touch event code, see if there's a good way to integrate
 _   make a decision on how to integrate touch event code
 
-_ "Unable to resolve target 'Google...'" when APIs aren't installed
-_   add an error message that explains what to do
-
 _ for libraries that don't work with android, don't let them export
 _   http://code.google.com/p/processing/issues/detail?id=248
 _   add line for export in libraries to say whether they're compatible
@@ -340,6 +340,11 @@ P3 _   http://dev.processing.org/bugs/show_bug.cgi?id=1439
 P4 _ don't require android tools to be installed already
 P4 _   or implement automatic download/install of android tools
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1383
+
+EH _ Remove requirement for Google APIs in Android mode
+EH _   http://code.google.com/p/processing/issues/detail?id=613
+PM _ Error for "android create avd" when the AVD is already installed
+PM -   http://code.google.com/p/processing/issues/detail?id=614
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 

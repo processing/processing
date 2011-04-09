@@ -37,7 +37,8 @@ class AndroidSDK {
     "Choose the location of the Android SDK";
 
   private static final String NOT_ANDROID_SDK =
-    "The selected folder does not appear to contain an Android SDK.";
+    "The selected folder does not appear to contain an Android SDK,\n" +
+    "or the SDK needs to be updated to the latest version.";
 
   private static final String ANDROID_SDK_URL =
     "http://developer.android.com/sdk/";
