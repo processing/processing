@@ -92,26 +92,22 @@ public class JavaEditor extends Editor {
     JMenu menu = new JMenu("Help ");
     JMenuItem item;
 
-    item = new JMenuItem("Getting Started");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://processing.org/learning/gettingstarted/");
-        }
-      });
-    menu.add(item);
+    // macosx already has its own about menu
+    if (!Base.isMacOS()) {
+      menu.addSeparator();
+      item = new JMenuItem("About Processing");
+      item.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            base.handleAbout();
+          }
+        });
+      menu.add(item);
+    }
 
     item = new JMenuItem("Environment");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           showReference("environment" + File.separator + "index.html");
-        }
-      });
-    menu.add(item);
-
-    item = new JMenuItem("Troubleshooting");
-    item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://wiki.processing.org/w/Troubleshooting");
         }
       });
     menu.add(item);
@@ -133,6 +129,27 @@ public class JavaEditor extends Editor {
         }
       });
     menu.add(item);
+    
+    menu.addSeparator();
+    item = new JMenuItem("Online");
+    item.setEnabled(false);
+    menu.add(item);
+
+    item = new JMenuItem("Getting Started");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.openURL("http://processing.org/learning/gettingstarted/");
+        }
+      });
+    menu.add(item);
+
+    item = new JMenuItem("Troubleshooting");
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          Base.openURL("http://wiki.processing.org/w/Troubleshooting");
+        }
+      });
+    menu.add(item);
 
     item = new JMenuItem("Frequently Asked Questions");
     item.addActionListener(new ActionListener() {
@@ -149,18 +166,6 @@ public class JavaEditor extends Editor {
         }
       });
     menu.add(item);
-
-    // macosx already has its own about menu
-    if (!Base.isMacOS()) {
-      menu.addSeparator();
-      item = new JMenuItem("About Processing");
-      item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            base.handleAbout();
-          }
-        });
-      menu.add(item);
-    }
 
     return menu;
   }    
