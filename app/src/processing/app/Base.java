@@ -35,7 +35,6 @@ import javax.swing.tree.*;
 import processing.core.*;
 import processing.mode.android.AndroidMode;
 import processing.mode.java.*;
-import processing.mode.javascript.JavaScriptMode;
 
 
 /**
@@ -216,9 +215,9 @@ public class Base {
     // TODO this will be dynamically loading modes in no time
     defaultMode = new JavaMode(this, getContentFile("modes/java"));
     Mode androidMode = new AndroidMode(this, getContentFile("modes/android"));
-    Mode javaScriptMode = new JavaScriptMode(this, getContentFile("modes/javascript"));
-    modeList = new Mode[] { defaultMode, androidMode, javaScriptMode };
-//    defaultMode = androidMode;
+//    Mode javaScriptMode = new JavaScriptMode(this, getContentFile("modes/javascript"));
+//    modeList = new Mode[] { defaultMode, androidMode, javaScriptMode };
+    modeList = new Mode[] { defaultMode, androidMode };
 
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
