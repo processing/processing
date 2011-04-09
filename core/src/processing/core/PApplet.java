@@ -10185,7 +10185,7 @@ public class PApplet extends Applet
   }
 
 
-  public void mergeShapes(boolean val) {
+  public void mergeShapes(boolean val) { 
     if (recorder != null) recorder.mergeShapes(val);
     g.mergeShapes(val);
   }
@@ -10246,7 +10246,7 @@ public class PApplet extends Applet
    * PGraphicsJava2D, or resized image data and OpenGL texture indices for
    * PGraphicsOpenGL.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer
+   * @param storage The metadata required by the renderer   
    */
   public void setCache(PGraphics renderer, Object storage) {
     if (recorder != null) recorder.setCache(renderer, storage);
@@ -10281,7 +10281,7 @@ public class PApplet extends Applet
    * Store parameters for a renderer that requires extra metadata of
    * some kind.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer
+   * @param storage The parameters required by the renderer  
    */
   public void setParams(PGraphics renderer, Object params) {
     if (recorder != null) recorder.setParams(renderer, params);
