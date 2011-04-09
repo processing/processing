@@ -156,8 +156,9 @@
 
     <!-- ensure that the android-core.zip file has been built -->
     <available file="${target.path}/modes/android/android-core.zip" 
-	       property="android-core-present"/>
-    <fail unless="android-core-present" />
+	       property="android-core-present" />
+    <fail unless="android-core-present" 
+	  message="android-core.zip was not built, but is required for dist. Install the Android tools, set ANDROID_SDK, and try again." />
     
     <!-- copy libraries -->
 <!--
