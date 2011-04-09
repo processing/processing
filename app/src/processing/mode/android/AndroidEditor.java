@@ -232,6 +232,15 @@ public class AndroidEditor extends JavaEditor {
     return menu;
   }
   
+
+  /** override the standard grab reference to just show the java reference */
+  public void showReference(String filename) {
+    File javaReferenceFolder = Base.getContentFile("modes/java/reference");
+    File file = new File(javaReferenceFolder, filename);
+    Base.openURL(file.getAbsolutePath());
+  }
+
+  
   
 //  protected void updateMode() {
 //    // When the selection is made, the menu will update itself

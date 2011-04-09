@@ -41,6 +41,7 @@ public abstract class Mode {
   
   protected File examplesFolder;
   protected File librariesFolder;
+  protected File referenceFolder;
 
   protected ArrayList<Library> coreLibraries;
   protected ArrayList<Library> contribLibraries;  
@@ -53,6 +54,7 @@ public abstract class Mode {
     // Get paths for the libraries and examples in the mode folder
     examplesFolder = new File(folder, "examples");
     librariesFolder = new File(folder, "libraries");
+    referenceFolder = new File(folder, "reference");
 
 //    rebuildToolbarMenu();
     rebuildLibraryList();
@@ -98,6 +100,11 @@ public abstract class Mode {
 
   public File getLibrariesFolder() {
     return librariesFolder;
+  }
+  
+  
+  public File getReferenceFolder() {
+    return referenceFolder;
   }
 
 
@@ -557,7 +564,11 @@ public abstract class Mode {
   //}
 
 
-  public String getReference(String keyword) {
+  /** 
+   * Returns the HTML filename (including path prefix if necessary)  
+   * for this keyword, or null if it doesn't exist. 
+   */
+  public String lookupReference(String keyword) {
     return keywordToReference.get(keyword);
   }
 
