@@ -8,7 +8,7 @@ import processing.core.*;
 
 public class Library {
   static final String[] platformNames = PConstants.platformNames;
-  
+
   protected File folder;
   protected File libraryFolder;   // name/library
   protected File examplesFolder;  // name/examples
@@ -24,22 +24,22 @@ public class Library {
 
   /** Packages provided by this library. */
   String[] packageList;
-  
+
   /** Per-platform exports for this library. */
   HashMap<String,String[]> exportList;
-  
+
   /** Applet exports (cross-platform by definition). */
   String[] appletExportList;
-  
+
   /** True if there are separate 32/64 bit for the specified platform index. */
   boolean[] multipleArch = new boolean[platformNames.length];
 
   /**
-   * For runtime, the native library path for this platform. e.g. on Windows 64, 
+   * For runtime, the native library path for this platform. e.g. on Windows 64,
    * this might be the windows64 subfolder with the library.
    */
   String nativeLibraryPath;
-  
+
   /** How many bits this machine is */
   static int nativeBits;
   static {
@@ -55,7 +55,7 @@ public class Library {
         nativeBits = 64;
       }
     }
-  }  
+  }
 
   /** Filter to pull out just files and no directories, and to skip export.txt */
   static FilenameFilter standardFilter = new FilenameFilter() {
@@ -64,7 +64,7 @@ public class Library {
       if (name.charAt(0) == '.') return false;
       if (name.equals("CVS")) return false;
       if (name.equals("export.txt")) return false;
-      File file = new File(dir, name); 
+      File file = new File(dir, name);
       return (!file.isDirectory());
     }
   };
@@ -74,7 +74,7 @@ public class Library {
       if (name.charAt(0) == '.') return false;  // skip ._blah.jar crap on OS X
       if (new File(dir, name).isDirectory()) return false;
       String lc = name.toLowerCase();
-      return lc.endsWith(".jar") || lc.endsWith(".zip"); 
+      return lc.endsWith(".jar") || lc.endsWith(".zip");
     }
   };
 
@@ -109,13 +109,13 @@ public class Library {
 
     // for the host platform, need to figure out what's available
     File nativeLibraryFolder = libraryFolder;
-    String hostPlatform = Base.getPlatformName(); 
+    String hostPlatform = Base.getPlatformName();
     // see if there's a 'windows', 'macosx', or 'linux' folder
     File hostLibrary = new File(libraryFolder, hostPlatform);
     if (hostLibrary.exists()) {
       nativeLibraryFolder = hostLibrary;
     }
-    // check for bit-specific version, e.g. on windows, check if there  
+    // check for bit-specific version, e.g. on windows, check if there
     // is a window32 or windows64 folder (on windows)
     hostLibrary = new File(libraryFolder, hostPlatform + nativeBits);
     if (hostLibrary.exists()) {
@@ -165,12 +165,12 @@ public class Library {
         multipleArch[i] = true;
       }
 
-      // if there aren't any relevant imports specified or in their own folders, 
-      // then use the baseList (root of the library folder) as the default. 
+      // if there aren't any relevant imports specified or in their own folders,
+      // then use the baseList (root of the library folder) as the default.
       if (platformList == null && platformList32 == null && platformList64 == null) {
         exportList.put(platformName, baseList);
-        
-      } else {      
+
+      } else {
         // once we've figured out which side our bread is buttered on, save it.
         // (also concatenate the list of files in the root folder as well
         if (platformList != null) {
@@ -192,8 +192,8 @@ public class Library {
     // get the path for all .jar files in this code folder
     packageList = Base.packageListFromClassPath(getClassPath());
   }
-  
-  
+
+
   /**
    * List who's inside a windows64, macosx, linux32, etc folder.
    */
@@ -213,14 +213,14 @@ public class Library {
     }
     return null;
   }
-  
+
 
   static protected HashMap<String, Object> packageWarningMap = new HashMap<String, Object>();
-  
-  /** 
+
+  /**
    * Add the packages provided by this library to the master list that maps
    * imports to specific libraries.
-   * @param importToLibraryTable mapping from package names to Library objects 
+   * @param importToLibraryTable mapping from package names to Library objects
    */
   public void addPackageList(HashMap<String,Library> importToLibraryTable) {
 //    PApplet.println(packages);
@@ -230,8 +230,10 @@ public class Library {
       if (library != null) {
         if (!packageWarningMap.containsKey(pkg)) {
           packageWarningMap.put(pkg, null);
-          System.err.println("The library found in " + getPath());
-          System.err.println("conflicts with " + library.getPath());
+          System.err.println("The library found in");
+          System.err.println(getPath());
+          System.err.println("conflicts with");
+          System.err.println(library.getPath());
           System.err.println("which already defines the package " + pkg);
           System.err.println("If you have a line in your sketch that reads");
           System.err.println("import " + pkg + ".*;");
@@ -243,13 +245,13 @@ public class Library {
       }
     }
   }
-  
-  
+
+
   public String getName() {
     return name;
   }
-  
-  
+
+
   public boolean hasExamples() {
     return examplesFolder.exists();
   }
@@ -258,27 +260,27 @@ public class Library {
   public File getExamplesFolder() {
     return examplesFolder;
   }
-  
-  
+
+
   public String getPath() {
     return folder.getAbsolutePath();
   }
 
-  
+
   public String getLibraryPath() {
     return libraryFolder.getAbsolutePath();
   }
 
 
   public String getJarPath() {
-    return new File(folder, "library/" + name + ".jar").getAbsolutePath(); 
+    return new File(folder, "library/" + name + ".jar").getAbsolutePath();
   }
-  
+
 
   // this prepends a colon so that it can be appended to other paths safely
   public String getClassPath() {
     StringBuilder cp = new StringBuilder();
-    
+
 //    PApplet.println(libraryFolder.getAbsolutePath());
 //    PApplet.println(libraryFolder.list());
     String[] jarHeads = libraryFolder.list(jarFilter);
@@ -305,8 +307,8 @@ public class Library {
 //  public String[] getAppletExports() {
 //    return appletExportList;
 //  }
-  
-  
+
+
   protected File[] wrapFiles(String[] list) {
     File[] outgoing = new File[list.length];
     for (int i = 0; i < list.length; i++) {
@@ -319,13 +321,13 @@ public class Library {
   /**
    * Applet exports don't go by platform, since by their nature applets are
    * meant to be cross-platform. Technically, you could have a situation where
-   * you want to export applet code for different platforms, but it's too 
-   * obscure a case that we're not interested in supporting it. 
+   * you want to export applet code for different platforms, but it's too
+   * obscure a case that we're not interested in supporting it.
    */
   public File[] getAppletExports() {
     return wrapFiles(appletExportList);
   }
-  
+
 
   public File[] getApplicationExports(int platform, int bits) {
     String[] list = getApplicationExportList(platform, bits);
@@ -334,9 +336,9 @@ public class Library {
 
 
   /**
-   * Returns the necessary exports for the specified platform. 
+   * Returns the necessary exports for the specified platform.
    * If no 32 or 64-bit version of the exports exists, it returns the version
-   * that doesn't specify bit depth. 
+   * that doesn't specify bit depth.
    */
   public String[] getApplicationExportList(int platform, int bits) {
     String platformName = PApplet.platformNames[platform];
@@ -359,8 +361,8 @@ public class Library {
   public boolean hasMultipleArch(int platform) {
     return multipleArch[platform];
   }
-  
-  
+
+
 //  static boolean hasMultipleArch(String platformName, ArrayList<LibraryFolder> libraries) {
 //    int platform = Base.getPlatformIndex(platformName);
   static public boolean hasMultipleArch(int platform, ArrayList<Library> libraries) {
@@ -371,7 +373,7 @@ public class Library {
     }
     return false;
   }
-  
+
 
   // for sorting
 //  public int compareTo(Object o) {
@@ -414,7 +416,7 @@ public class Library {
           if (libraryJar.exists()) {
             String sanityCheck = Sketch.sanitizeName(potentialName);
             if (sanityCheck.equals(potentialName)) {
-              libraries.add(new Library(baseFolder));              
+              libraries.add(new Library(baseFolder));
 
             } else {
               String mess =
