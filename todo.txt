@@ -20,6 +20,15 @@ X ctrl-slash not working with esfera on linux (line ending trouble?)
 X   or maybe ctrl-slash just broken on linux?
 X   http://code.google.com/p/processing/issues/detail?id=596
 X   fix from pkalauskas
+X update to Java 6u24 for Linux and Windows
+X   brings things in sync with OS X 10.6
+
+earlier
+X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1557
+X on linux, mozilla shouldn't be the default browser anymore
+X   is there a way to query the default browser? gnome-open? xdg-open?
+X   cleaned up some things inside settings, but this was already done
 
 
 _ No .java file export
@@ -44,13 +53,6 @@ _   http://code.google.com/p/processing/issues/detail?id=59
 _ Find Previous and FindReplace dialog cleanup
 _   http://code.google.com/p/processing/issues/detail?id=580
 _ bugs 67, 68, 69 (below) cover more of this
-
-earlier
-X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
-X   http://dev.processing.org/bugs/show_bug.cgi?id=1557
-X on linux, mozilla shouldn't be the default browser anymore
-X   is there a way to query the default browser? gnome-open? xdg-open?
-X   cleaned up some things inside settings, but this was already done
 
 reference
 _ auto-format has been moved to edit
