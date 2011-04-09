@@ -750,6 +750,14 @@ public class JavaBuild {
         e.printStackTrace();  // ho hum, just move on...
       }
     }
+    // move the .java file from the preproc there too
+    String preprocFilename = sketch.getName() + ".java";
+    File preprocFile = new File(srcFolder, preprocFilename);
+    if (preprocFile.exists()) {
+      preprocFile.renameTo(new File(appletFolder, preprocFilename));
+    } else {
+      System.err.println("Could not copy source file: " + preprocFile.getAbsolutePath());
+    }
 
     // Use separate .jar files whenever a library or code folder is in use.
     boolean separateJar =
@@ -1415,9 +1423,11 @@ public class JavaBuild {
     }
     // move the .java file from the preproc there too
     String preprocFilename = sketch.getName() + ".java";
-    File preprocFile = new File(destFolder, preprocFilename);
+    File preprocFile = new File(srcFolder, preprocFilename);
     if (preprocFile.exists()) {
       preprocFile.renameTo(new File(sourceFolder, preprocFilename));
+    } else {
+      System.err.println("Could not copy source file: " + preprocFile.getAbsolutePath());
     }
 
 
