@@ -14,7 +14,9 @@ public class AVD {
     "An error occurred while running “android create avd”\n" +
     "to set up the default Android emulator. Make sure that the\n" +
     "Android SDK is installed properly, and that the Android\n" +
-    "and Google APIs are installed for level " + AndroidBuild.sdkVersion + ".";
+    "and Google APIs are installed for level " + AndroidBuild.sdkVersion + ".\n" +
+    "(Between you and me, occasionally, this error is a red herring,\n" + 
+    "and your sketch may be launching shortly.)";
 
   static final String DEFAULT_SKIN = "WVGA800";
 
@@ -26,8 +28,10 @@ public class AVD {
 
   /** Default virtual device used by Processing. */
   static public final AVD defaultAVD =
-    new AVD("Processing-Android-" + AndroidBuild.sdkVersion,
-            AndroidBuild.sdkTarget);
+    new AVD(//"Processing-Android-" + AndroidBuild.sdkVersion,
+            "Processing-0" + Base.REVISION,
+            "Google Inc.:Google APIs:" + AndroidBuild.sdkVersion);
+            //AndroidBuild.sdkTarget);
   
   static ArrayList<String> avdList;
 //  static ArrayList<String> skinList;
@@ -48,6 +52,7 @@ public class AVD {
         for (String line : listResult) {
           String[] m = PApplet.match(line, "\\s+Name\\:\\s+(\\S+)");
           if (m != null) {
+//            System.out.println("Found AVD " + m[1]);
             avdList.add(m[1]);
 //            if (m[1].equals(name)) {
 //              return true;
@@ -55,7 +60,8 @@ public class AVD {
           }
           // "The following Android Virtual Devices could not be loaded:"
           if (line.contains("could not be loaded:")) {
-            System.err.println("could not get AVDs ");
+//            System.err.println("Could not list AVDs:");
+            System.err.println(listResult);
             break;
           }
         }
