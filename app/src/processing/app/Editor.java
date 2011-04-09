@@ -991,12 +991,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   abstract public JMenu buildHelpMenu();
-  
-  
+
+
   public void showReference(String filename) {
-    File referenceFolder = Base.getContentFile("reference");
-    File referenceFile = new File(referenceFolder, filename);
-    Base.openURL(referenceFile.getAbsolutePath());
+//    File referenceFolder = Base.getContentFile("reference");
+//    File referenceFile = new File(referenceFolder, filename);
+//    Base.openURL(referenceFile.getAbsolutePath());
+    File file = new File(mode.getReferenceFolder(), filename);
+    Base.openURL(file.getAbsolutePath());
   }
 
   
@@ -1572,7 +1574,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       statusNotice("First select a word to find in the reference.");
 
     } else {
-      String referenceFile = mode.getReference(text);
+      String referenceFile = mode.lookupReference(text);
       //System.out.println("reference file is " + referenceFile);
       if (referenceFile == null) {
         statusNotice("No reference available for \"" + text + "\"");
@@ -2196,7 +2198,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         discourseItem.setEnabled(true);
 
         String sel = textarea.getSelectedText().trim();
-        String referenceFile = mode.getReference(sel);
+        String referenceFile = mode.lookupReference(sel);
         referenceItem.setEnabled(referenceFile != null);
 
       } else {
