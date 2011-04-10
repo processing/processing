@@ -483,7 +483,7 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   protected boolean autoNormal;
-  
+
   /** Current normal vector. */
   public float normalX, normalY, normalZ;
 
@@ -684,7 +684,7 @@ public class PGraphics extends PImage implements PConstants {
 
     rectMode(CORNER);
     ellipseMode(DIAMETER);
-    
+
     autoNormal = true;
 
     // no current font
@@ -857,7 +857,7 @@ public class PGraphics extends PImage implements PConstants {
    this.edge = edge;
   }
 
-  
+
   /**
    * Sets the current normal vector. Only applies with 3D rendering
    * and inside a beginShape/endShape block.
@@ -894,8 +894,8 @@ public class PGraphics extends PImage implements PConstants {
   public void texture(PImage image) {
     textureImage = image;
   }
-  
-  
+
+
   /**
    * Removes texture image for current shape.
    * Needs to be called between @see beginShape and @see endShape
@@ -904,8 +904,8 @@ public class PGraphics extends PImage implements PConstants {
   public void noTexture() {
     textureImage = null;
   }
-  
-    
+
+
   protected void vertexCheck() {
     if (vertexCount == vertices.length) {
       float temp[][] = new float[vertexCount << 1][VERTEX_FIELD_COUNT];
@@ -956,14 +956,14 @@ public class PGraphics extends PImage implements PConstants {
       vertex[SA] = strokeA;
       vertex[SW] = strokeWeight;
     }
-    
+
     vertex[U] = textureU;
     vertex[V] = textureV;
-        
+
     if (autoNormal) {
       float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
       if (norm2 < EPSILON) {
-        vertex[HAS_NORMAL] = 0;  
+        vertex[HAS_NORMAL] = 0;
       } else {
         if (Math.abs(norm2 - 1) > EPSILON) {
           // The normal vector is not normalized.
@@ -975,13 +975,13 @@ public class PGraphics extends PImage implements PConstants {
         vertex[HAS_NORMAL] = 1;
       }
     } else {
-      vertex[HAS_NORMAL] = 1;  
+      vertex[HAS_NORMAL] = 1;
     }
-    
+
     vertex[NX] = normalX;
     vertex[NY] = normalY;
-    vertex[NZ] = normalZ;    
-    
+    vertex[NZ] = normalZ;
+
     vertexCount++;
   }
 
@@ -1056,7 +1056,7 @@ public class PGraphics extends PImage implements PConstants {
       vertex[EB] = emissiveB;
       */
     }
-    
+
     if (stroke) {
       vertex[SR] = strokeR;
       vertex[SG] = strokeG;
@@ -1064,14 +1064,14 @@ public class PGraphics extends PImage implements PConstants {
       vertex[SA] = strokeA;
       vertex[SW] = strokeWeight;
     }
-    
+
     vertex[U] = textureU;
     vertex[V] = textureV;
-    
+
     if (autoNormal) {
       float norm2 = normalX * normalX + normalY * normalY + normalZ * normalZ;
       if (norm2 < EPSILON) {
-        vertex[HAS_NORMAL] = 0;  
+        vertex[HAS_NORMAL] = 0;
       } else {
         if (Math.abs(norm2 - 1) > EPSILON) {
           // The normal vector is not normalized.
@@ -1085,11 +1085,11 @@ public class PGraphics extends PImage implements PConstants {
     } else {
       vertex[HAS_NORMAL] = 1;
     }
-    
+
     vertex[NX] = normalX;
     vertex[NY] = normalY;
     vertex[NZ] = normalZ;
-    
+
     vertexCount++;
   }
 
@@ -1112,14 +1112,14 @@ public class PGraphics extends PImage implements PConstants {
     vertexTexture(u, v);
     vertex(x, y);
   }
-  
-  
+
+
   public void vertex(float x, float y, float z, float u, float v) {
     vertexTexture(u, v);
     vertex(x, y, z);
   }
 
-  
+
   /**
    * Internal method to copy all style information for the given vertex.
    * Can be overridden by subclasses to handle only properties pertinent to
@@ -1771,7 +1771,7 @@ public class PGraphics extends PImage implements PConstants {
       normal(sphereX[i], sphereY[i], sphereZ[i]);
       vertex(r * sphereX[i], r * sphereY[i], r * sphereZ[i]);
     }
-    //normal(0, -1, 0);
+    normal(0, -r, 0);
     vertex(0, -r, 0);
     normal(sphereX[0], sphereY[0], sphereZ[0]);
     vertex(r * sphereX[0], r * sphereY[0], r * sphereZ[0]);
@@ -2356,12 +2356,12 @@ public class PGraphics extends PImage implements PConstants {
       popMatrix();
     }
   }
-  
+
 
   public void shape(PShape shape, float x, float y, float z) {
-    showMissingWarning("shape");    
-  }  
-  
+    showMissingWarning("shape");
+  }
+
 
   public void shape(PShape shape, float x, float y, float c, float d) {
     if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
@@ -2390,11 +2390,11 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-  
+
   public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
-    showMissingWarning("shape");    
-  }  
-  
+    showMissingWarning("shape");
+  }
+
 
   //////////////////////////////////////////////////////////////
 
@@ -3308,8 +3308,8 @@ public class PGraphics extends PImage implements PConstants {
   public void scale(float x, float y, float z) {
     showMissingWarning("scale");
   }
-  
-  
+
+
   /**
    * Shear along X axis
    */
@@ -3491,11 +3491,11 @@ public class PGraphics extends PImage implements PConstants {
   public void ortho() {
     showMissingWarning("ortho");
   }
-  
+
   public void ortho(float left, float right,
                     float bottom, float top) {
-    showMissingWarning("ortho");  
-  }    
+    showMissingWarning("ortho");
+  }
 
   public void ortho(float left, float right,
                     float bottom, float top,
@@ -5031,11 +5031,11 @@ public class PGraphics extends PImage implements PConstants {
   protected void defaultFontOrDeath(String method) {
     defaultFontOrDeath(method, 12);
   }
-  
+
 
   /**
-   * First try to create a default font, but if that's not possible, throw  
-   * an exception that halts the program because textFont() has not been used 
+   * First try to create a default font, but if that's not possible, throw
+   * an exception that halts the program because textFont() has not been used
    * prior to the specified method.
    */
   protected void defaultFontOrDeath(String method, float size) {
@@ -5081,89 +5081,89 @@ public class PGraphics extends PImage implements PConstants {
     return false;
   }
   //////////////////////////////////////////////////////////////
-  
+
   // New API:
-  
+
   protected String[] getSupportedShapeFormats() {
     showMissingWarning("getSupportedShapeFormats");
     return null;
   }
 
-  
+
   protected PShape loadShape(String filename, Object params) {
     showMissingWarning("loadShape");
     return null;
   }
-  
-  
+
+
   protected PShape createShape(int size, Object params) {
     showMissingWarning("createShape");
     return null;
-  }  
+  }
 
   public void screenBlend(int mode) {
     showMissingWarning("screenBlend");
   }
 
-  
+
   public void textureBlend(int mode) {
     showMissingWarning("textureBlend");
   }
-  
-  
+
+
   public PShape beginRecord() {
     showMissingWarning("beginRecord");
     return null;
   }
-  
-  
+
+
   public void endRecord() {
-    showMissingWarning("endRecord");   
+    showMissingWarning("endRecord");
   }
-  
-  
+
+
   public boolean isRecording() {
-    showMissingWarning("isRecording"); 
+    showMissingWarning("isRecording");
     return false;
-  }  
-  
-  
-  public void mergeShapes(boolean val) { 
-    showMissingWarning("mergeShapes");      
   }
-  
-  
+
+
+  public void mergeShapes(boolean val) {
+    showMissingWarning("mergeShapes");
+  }
+
+
   public void shapeName(String name) {
     showMissingWarning("shapeName");
   }
-  
+
 
   public void autoNormal(boolean auto) {
-    this.autoNormal = auto;   
+    this.autoNormal = auto;
   }
-  
-  
+
+
   public void matrixMode(int mode) {
-    showMissingWarning("matrixMode"); 
+    showMissingWarning("matrixMode");
   }
-  
-  
+
+
   public void beginText() {
     showMissingWarning("beginText");
   }
 
-  
+
   public void endText() {
     showMissingWarning("endText");
-  }    
-  
-  
-  public void texture(PImage... images) {
-    showMissingWarning("texture");    
   }
 
-  
+
+  public void texture(PImage... images) {
+    showMissingWarning("texture");
+  }
+
+
   public void vertex(float... values) {
-    showMissingWarning("vertex");    
-  } 
+    showMissingWarning("vertex");
+  }
 }
