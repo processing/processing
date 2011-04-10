@@ -21,6 +21,9 @@ public class Library {
   protected String paragraph;     // <paragraph length description for site>
   protected int version;          // 102
   protected String prettyVersion; // "1.0.2"
+  
+  /** Subfolder for grouping libraries in a menu. */
+  protected String group;
 
   /** Packages provided by this library. */
   String[] packageList;
@@ -79,12 +82,14 @@ public class Library {
   };
 
 
-  public Library(File folder) {
+  public Library(File folder, String subfolder) {
     this.folder = folder;
+    this.group = subfolder;
+
     libraryFolder = new File(folder, "library");
     examplesFolder = new File(folder, "examples");
     referenceFile = new File(folder, "reference/index.html");
-
+   
     File exportSettings = new File(libraryFolder, "export.txt");
     HashMap<String,String> exportTable = Base.readSettings(exportSettings);
 
@@ -262,6 +267,11 @@ public class Library {
   }
 
 
+  public String getGroup() {
+    return group;
+  }
+  
+  
   public String getPath() {
     return folder.getAbsolutePath();
   }
@@ -392,6 +402,11 @@ public class Library {
 
 
   static protected void list(File folder, ArrayList<Library> libraries) throws IOException {
+    list(folder, libraries, null);
+  }
+  
+  
+  static protected void list(File folder, ArrayList<Library> libraries, String subfolder) throws IOException {
     if (folder.isDirectory()) {
       String[] list = folder.list(new FilenameFilter() {
         public boolean accept(File dir, String name) {
@@ -416,7 +431,7 @@ public class Library {
           if (libraryJar.exists()) {
             String sanityCheck = Sketch.sanitizeName(potentialName);
             if (sanityCheck.equals(potentialName)) {
-              libraries.add(new Library(baseFolder));
+              libraries.add(new Library(baseFolder, subfolder));
 
             } else {
               String mess =
@@ -426,6 +441,10 @@ public class Library {
               Base.showMessage("Ignoring bad library name", mess);
               continue;
             }
+          } else if (subfolder == null) {  // no library jar, maybe a subfolder?
+            // Add the recursive library folders back for toxi
+            // http://code.google.com/p/processing/issues/detail?id=578
+            list(new File(folder, potentialName), libraries, potentialName);
           }
         }
       }
