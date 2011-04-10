@@ -47,6 +47,8 @@ X "No library found" message when using import statements and the code folder
 X   http://code.google.com/p/processing/issues/detail?id=568
 X remove version number from splash image
 X   http://code.google.com/p/processing/issues/detail?id=324
+X Subfolders in /libraries folder not supported anymore (toxi)
+X   http://code.google.com/p/processing/issues/detail?id=578
 
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
@@ -57,9 +59,6 @@ X   cleaned up some things inside settings, but this was already done
 X 64-bit windows causes UnsatisfiedLinkError with OpenGL
 
 _ even though it doesn't look modified in the GUI, sketch wants to be saved
-
-_ Subfolders in /libraries folder not supported anymore (toxi)
-_   http://code.google.com/p/processing/issues/detail?id=578
 
 
 0196
@@ -91,6 +90,8 @@ regressions
 _ strange window flicker when first opened
 _ test libraries on android
 _ test .java files on desktop version
+_ Closing sketch file closes applet
+_   http://code.google.com/p/processing/issues/detail?id=606
 
 additions
 _ when creating a sketch within non-java mode, should write the settings file
