@@ -14,6 +14,9 @@ X   need to suppress the messages ala java.*
 o ctrl-shift-r (run on device) is totally hosed
 X when returning to android application, sometimes screen stays black
 X   http://code.google.com/p/processing/issues/detail?id=237
+X Device Killed or Disconnected Error Message with Libraries
+X   http://code.google.com/p/processing/issues/detail?id=565
+X there's gotta be something we can do to get better ant build messages
 
 earlier
 X Error 336  Can't run any sketch.
@@ -29,10 +32,6 @@ _   (Linux and Windows)
 _ crash when trying to change Android mode void sketch no Android SDK Installed
 _   http://code.google.com/p/processing/issues/detail?id=605
 
-_ Device Killed or Disconnected Error Message with Libraries
-_   http://code.google.com/p/processing/issues/detail?id=565
-
-. . . . 
 
 lifecycle/size changes/etc
 _ pause/resume trickiness with interactive apps
