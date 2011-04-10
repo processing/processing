@@ -9,6 +9,8 @@ X modes/android/android-core.zip (No such file or directory)
 X   problem was that the build was ignoring no sdk silently
 X   need to require ANDROID_SDK set for build.xml dist
 X   http://code.google.com/p/processing/issues/detail?id=577
+X No library found for android.content (and all the others)
+X   need to suppress the messages ala java.*
 
 _ "Unable to resolve target 'Google...'" when APIs aren't installed
 _   add an error message that explains what to do
@@ -18,14 +20,18 @@ _   (Linux and Windows)
 _ crash when trying to change Android mode void sketch no Android SDK Installed
 _   http://code.google.com/p/processing/issues/detail?id=605
 
-_ Temp Files are not deleted
-_   http://code.google.com/p/processing/issues/detail?id=562
-
 _ Device Killed or Disconnected Error Message with Libraries
 _   http://code.google.com/p/processing/issues/detail?id=565
 
-_ No library found for android.content (and all the others)
-_   need to suppress the messages ala java.*
+_ when returning to android application, sometimes screen stays black
+_   http://code.google.com/p/processing/issues/detail?id=237
+Here's what is happening with the A2D renderer.  When the user hits the home button, the Android framework calls PApplet.surfaceDestroyed(), which recycles the drawing surface by calling PGraphicsAndroid2D.dispose().  The surface is never recreated.  The code path in PApplet.handleDraw() that reallocates the surface by calling PGraphicsAndroid2D.setSize() is missed because the dimensions of the sketch have not changed.
+Removing "bitmap.recycle()" from PGraphicsAndroid2D.dispose() fixes the problem.
+
+. . . . 
+
+_ Temp Files are not deleted
+_   http://code.google.com/p/processing/issues/detail?id=562
 
 _ pause/resume trickiness with interactive apps
 _   can we serialize objects (even if slow?)
@@ -51,11 +57,6 @@ _   optimize for android use
 
 _ need sizeChanged() method... 
 _   also add the param to the xml file saying that it can deal w/ rotation
-
-_ when returning to android application, sometimes screen stays black
-_   http://code.google.com/p/processing/issues/detail?id=237
-Here's what is happening with the A2D renderer.  When the user hits the home button, the Android framework calls PApplet.surfaceDestroyed(), which recycles the drawing surface by calling PGraphicsAndroid2D.dispose().  The surface is never recreated.  The code path in PApplet.handleDraw() that reallocates the surface by calling PGraphicsAndroid2D.setSize() is missed because the dimensions of the sketch have not changed.
-Removing "bitmap.recycle()" from PGraphicsAndroid2D.dispose() fixes the problem.
 
 _ check out andres' changes for PShape
 _ ctrl-shift-r (run on device) is totally hosed

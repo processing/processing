@@ -7,8 +7,11 @@ X   removed large synchronized block
 A OPENGL2 record only saves one line in a LINES shape
 A   http://code.google.com/p/processing/issues/detail?id=579
 X add isClosed() and getChildren() methods to PShape
-_ questions re: final xml api changes
-_   http://code.google.com/p/processing/issues/detail?id=612
+X Frame skipping with processor intensive applets using 1.6
+X   http://dev.processing.org/bugs/show_bug.cgi?id=766
+X   may be fixed, but not verified
+o definite present-mode weirdness with background colors
+
 
 _ save() no longer works at bottom of draw with JAVA2D
 X   neither does loadPixels it seems
@@ -16,8 +19,7 @@ X   http://code.google.com/p/processing/issues/detail?id=594
 X   made an edit so that loadPixels will apply to the offscreen image, but...
 X   ironing out more issues with set() and the latest release
 
-
-_ bug: textAlign(RIGHT) is shutting off native fonts
+_ textAlign(RIGHT) is shutting off native fonts
 _   makes salaryper super ugly
 
 _ make sure that loadXxxx() methods are used after init()
@@ -25,8 +27,6 @@ _   nasty errors when loadImage/Font/createFont/etc used outside
 
 _ selectInput() and selectOutput() freeze on OS X
 _   http://code.google.com/p/processing/issues/detail?id=445
-
-_ definite present-mode weirdness with background colors
 
 _ OpenGL Applets won't load with JRE 6 update 21 or higher
 _   http://code.google.com/p/processing/issues/detail?id=429
@@ -69,9 +69,6 @@ _ OpenGL noSmooth() problems
 _   http://code.google.com/p/processing/issues/detail?id=328
 
 hanging chads for the xml library
-_ ref: constructor has changed to .parse(...) instead of new XMLElement(str)
-_ add XMLElement.listChildren() to reference
-_ document XMLElement save() and write(), and their differences
 
 _ possible addition for 'implementation' variable
 _   http://code.google.com/p/processing/issues/detail?id=281
@@ -240,8 +237,6 @@ _ noloop ref even says that redraw will be called on resize, make sure it is
 _ add version of math functions that use doubles?
 _   what other methods should work with doubles? all math functions?
 _   seems like internal (mostly static) things, but not graphics api
-_ look into replacing nanoxml
-_   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
 
 
 [ known problems ]
@@ -262,9 +257,6 @@ _   * this may just be an OutOfMemoryError happening
 
 [ needs verification ] 
 
-_ Frame skipping with processor intensive applets using 1.6
-_   http://dev.processing.org/bugs/show_bug.cgi?id=766
-_   may be fixed, but not verified
 _ focus not coming through, ESC no longer working(?)
 
 
@@ -650,7 +642,6 @@ _ when using get(), reset the bounds for the objects
 _   otherwise it's always relative to the original document
 _ support for text (shouldn't be too bad, use createFont)
 _   implement text spans for svg output
-_ get entity tags working in xml library
 _ try enabling blending modes
 _ add better support for attributes buried in styles (support ai9/10/11)
 _ test what happens when transparency is used with gradient fill
@@ -687,11 +678,20 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 
 
 LIBRARIES / XML
+
+_ ref: constructor has changed to .parse(...) instead of new XMLElement(str)
+_ add XMLElement.listChildren() to reference
+_ document XMLElement save() and write(), and their differences
+_ questions re: final xml api changes
+_   http://code.google.com/p/processing/issues/detail?id=612
+_ look into replacing nanoxml
+_   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
+_ need to handle <!ENTITY tags for svg documents
+_   get entity tags working in xml library for SVG
 _ handle charset decoding in xml element parser?
 _   same with the other methods like loadStrings()
 _   could also be a way to handle gzip too?
 _   tho charset + gzip would be a problem
-_ need to handle <!ENTITY tags for svg documents
 _ vectors shouldn't be exposed, need to expose attr lists as arrays
 _   or also add a method for getting the vectors?
 

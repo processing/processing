@@ -216,15 +216,18 @@ public class Compiler {
             errorMessage.endsWith("cannot be resolved")) {
           // The import poo cannot be resolved
           //import poo.shoe.blah.*;
-          String what = errorMessage.substring("The import ".length());
-          what = what.substring(0, what.indexOf(' '));
-          System.err.println("Note that release 1.0, libraries must be " +
+          //String what = errorMessage.substring("The import ".length());
+          String[] m = PApplet.match(errorMessage, "The import (.*) cannot be resolved");
+          //what = what.substring(0, what.indexOf(' '));
+          if (m != null) {
+            exception.setMessage("The package " +
+                                 "\u201C" + m[1] + "\u201D" +
+                                 " does not exist. " +
+                                 "You might be missing a library.");
+          }
+          System.err.println("As of release 1.0, libraries must be " +
                              "installed in a folder named 'libraries' " +
                              "inside the 'sketchbook' folder.");
-          exception.setMessage("The package " +
-                               "\u201C" + what + "\u201D" +
-                               " does not exist. " +
-                               "You might be missing a library.");
 
 //          // Actually create the folder and open it for the user
 //          File sketchbookLibraries = Base.getSketchbookLibrariesFolder();
