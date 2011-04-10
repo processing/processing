@@ -114,6 +114,8 @@ public class SketchCode {
   
   
   protected boolean renameTo(File what, String ext) {
+    System.out.println("renaming " + file);
+    System.out.println("      to " + what);
     boolean success = file.renameTo(what);
     if (success) {
       this.file = what;  // necessary?
