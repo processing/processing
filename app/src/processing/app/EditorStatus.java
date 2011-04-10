@@ -66,10 +66,10 @@ public class EditorStatus extends JPanel {
   JTextField editField;
 
   int response;
-  
+
   boolean indeterminate;
   Thread thread;
-  
+
 
 
   public EditorStatus(Editor editor) {
@@ -77,11 +77,11 @@ public class EditorStatus extends JPanel {
     empty();
     updateMode();
   }
-  
-  
+
+
   public void updateMode() {
     Mode mode = editor.getMode();
-    bgcolor = new Color[] { 
+    bgcolor = new Color[] {
       mode.getColor("status.notice.bgcolor"),
       mode.getColor("status.error.bgcolor"),
       mode.getColor("status.edit.bgcolor")
@@ -111,7 +111,7 @@ public class EditorStatus extends JPanel {
     repaint();
   }
 
-  
+
   public void unnotice(String unmessage) {
     if (message.equals(unmessage)) empty();
   }
@@ -139,7 +139,7 @@ public class EditorStatus extends JPanel {
     repaint();
   }
 
-  
+
   public void unedit() {
     okButton.setVisible(false);
     cancelButton.setVisible(false);
@@ -147,8 +147,8 @@ public class EditorStatus extends JPanel {
     editor.textarea.requestFocusInWindow();
     empty();
   }
-  
-  
+
+
   public void startIndeterminate() {
     indeterminate = true;
     thread = new Thread() {
@@ -163,8 +163,8 @@ public class EditorStatus extends JPanel {
     };
     thread.start();
   }
-  
-  
+
+
   public void stopIndeterminate() {
     indeterminate = false;
     thread = null;
@@ -201,6 +201,11 @@ public class EditorStatus extends JPanel {
     }
 
     Graphics g = offscreen.getGraphics();
+
+    Graphics2D g2 = (Graphics2D) g;
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
     g.setFont(font);
     if (metrics == null) {
       metrics = g.getFontMetrics();
@@ -232,7 +237,7 @@ public class EditorStatus extends JPanel {
         g.drawLine(r, y, r, y+h);
       }
     }
-    
+
     screen.drawImage(offscreen, 0, 0, null);
   }
 
@@ -250,7 +255,7 @@ public class EditorStatus extends JPanel {
           }
         }
       });
-      
+
       okButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           // answering to rename/new code question
@@ -284,7 +289,7 @@ public class EditorStatus extends JPanel {
 
       //if (Base.platform != Base.MACOSX) {
       editField.addKeyListener(new KeyAdapter() {
-        
+
           // Grab ESC with keyPressed, because it's not making it to keyTyped
           public void keyPressed(KeyEvent event) {
             if (event.getKeyChar() == KeyEvent.VK_ESCAPE) {
@@ -341,7 +346,7 @@ public class EditorStatus extends JPanel {
                        ((c >= 'A') && (c <= 'Z')) ||
                        ((c >= 'a') && (c <= 'z'))) {
               // these are ok, allow them through
-              
+
             } else if ((c >= '0') && (c <= '9')) {
               // getCaretPosition == 0 means that it's the first char
               // and the field is empty.
@@ -404,7 +409,7 @@ public class EditorStatus extends JPanel {
     return new Dimension(300, Preferences.GRID_SIZE);
   }
 
-  
+
   public Dimension getMaximumSize() {
     return new Dimension(3000, Preferences.GRID_SIZE);
   }
