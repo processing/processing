@@ -265,7 +265,7 @@ class AndroidBuild extends JavaBuild {
     Base.copyDir(projectFolder, exportFolder);
     return true;
   }
-  
+
 
   /**
    * @param target "debug" or "release"
@@ -279,12 +279,18 @@ class AndroidBuild extends JavaBuild {
     p.setUserProperty("build.compiler", "extJavac");
     // p.setUserProperty("build.compiler.emacs", "true"); // does nothing
 
+    // try to spew something useful to the console
     final DefaultLogger consoleLogger = new DefaultLogger();
     consoleLogger.setErrorPrintStream(System.err);
-    //    consoleLogger.setOutputPrintStream(System.out);
-    consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
+    consoleLogger.setOutputPrintStream(System.out);  // ? uncommented before
+    // WARN, INFO, VERBOSE, DEBUG
+    //consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
+    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
     p.addBuildListener(consoleLogger);
 
+    // This logger is used to pick up javac errors to be parsed into 
+    // SketchException objects. Note that most errors seem to show up on stdout
+    // since that's where the [javac] prefixed lines are coming through.
     final DefaultLogger errorLogger = new DefaultLogger();
     final ByteArrayOutputStream errb = new ByteArrayOutputStream();
     final PrintStream errp = new PrintStream(errb);
