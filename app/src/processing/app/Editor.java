@@ -222,14 +222,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // Bring back the general options for the editor
     applyPreferences();
     
-    // Recommendation, but doesn't seem to do much for us
-    // http://download.oracle.com/javase/tutorial/uiswing/misc/focus.html
     // Make textField get the focus whenever frame is activated.
-//    addWindowFocusListener(new WindowAdapter() {
-//        public void windowGainedFocus(WindowEvent e) {
-//            textarea.requestFocusInWindow();
-//        }
-//    });
+    // http://download.oracle.com/javase/tutorial/uiswing/misc/focus.html
+    // May not be necessary, but helps avoid random situations with 
+    // the editor not being able to request its own focus.
+    addWindowFocusListener(new WindowAdapter() {
+        public void windowGainedFocus(WindowEvent e) {
+            textarea.requestFocusInWindow();
+        }
+    });
 
     // Open the document that was passed in
     boolean loaded = handleOpenInternal(path);
