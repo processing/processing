@@ -45,6 +45,8 @@ X save as/rename don't properly set focus
 X   http://code.google.com/p/processing/issues/detail?id=13
 X "No library found" message when using import statements and the code folder
 X   http://code.google.com/p/processing/issues/detail?id=568
+X remove version number from splash image
+X   http://code.google.com/p/processing/issues/detail?id=324
 
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
@@ -224,9 +226,6 @@ protected void finalize() throws Throwable {
 
 _ not properly revving the version numbers in releases in the .app file
 _   figure out a better way to do this automatically during build
-
-_ remove version number from splash image
-_   http://code.google.com/p/processing/issues/detail?id=324
 
 _ add processing.js export tool from florian
 _   http://github.com/fjenett/processingjstool/

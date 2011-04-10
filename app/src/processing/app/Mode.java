@@ -254,11 +254,25 @@ public abstract class Mode {
       contrib.setEnabled(false);
       importMenu.add(contrib);
 
+      HashMap<String, JMenu> subfolders = new HashMap<String, JMenu>();
+      
       for (Library library : contribLibraries) {
         JMenuItem item = new JMenuItem(library.getName());
         item.addActionListener(listener);
         item.setActionCommand(library.getJarPath());
-        importMenu.add(item);
+      
+        String group = library.getGroup();
+        if (group != null) {
+          JMenu subMenu = subfolders.get(group);
+          if (subMenu == null) {
+            subMenu = new JMenu(group);
+            importMenu.add(subMenu);
+            subfolders.put(group, subMenu);
+          }
+          subMenu.add(item);
+        } else {          
+          importMenu.add(item);
+        }
       }
     }
   }
