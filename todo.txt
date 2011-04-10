@@ -49,6 +49,8 @@ X remove version number from splash image
 X   http://code.google.com/p/processing/issues/detail?id=324
 X Subfolders in /libraries folder not supported anymore (toxi)
 X   http://code.google.com/p/processing/issues/detail?id=578
+X even though it doesn't look modified in the GUI, sketch wants to be saved
+X   save untitled sketch, then try to rename, says "save before renaming"
 
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
@@ -57,8 +59,6 @@ X on linux, mozilla shouldn't be the default browser anymore
 X   is there a way to query the default browser? gnome-open? xdg-open?
 X   cleaned up some things inside settings, but this was already done
 X 64-bit windows causes UnsatisfiedLinkError with OpenGL
-
-_ even though it doesn't look modified in the GUI, sketch wants to be saved
 
 
 0196
