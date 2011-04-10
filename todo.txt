@@ -36,8 +36,15 @@ X   happens because the window is not the focused component
 X JEditTextArea
 X   focusedComponent = this -> bad solution for a symptom
 X   in Editor, textarea.requestFocus -> requestFocusInWindow, watch the bool
+X don't reload sketch on "save as"
+X   this can result in loss of data (undo is lost)
+X   http://code.google.com/p/processing/issues/detail?id=62
 X smooth text on status bar (Linux)
 X clear up some issues with focus handling
+X save as/rename don't properly set focus
+X   http://code.google.com/p/processing/issues/detail?id=13
+X "No library found" message when using import statements and the code folder
+X   http://code.google.com/p/processing/issues/detail?id=568
 
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
@@ -47,15 +54,18 @@ X   is there a way to query the default browser? gnome-open? xdg-open?
 X   cleaned up some things inside settings, but this was already done
 X 64-bit windows causes UnsatisfiedLinkError with OpenGL
 
-0196
-_ help casey re-export all applets for the site
-_ include a new version of the reference
-
-_ "No library found" message when using import statements and the code folder
-_   http://code.google.com/p/processing/issues/detail?id=568
+_ even though it doesn't look modified in the GUI, sketch wants to be saved
 
 _ Subfolders in /libraries folder not supported anymore (toxi)
 _   http://code.google.com/p/processing/issues/detail?id=578
+
+
+0196
+_ help casey re-export all applets for the site
+_   remove .java files, use one central loading.gif and core.jar?
+_   use a custom applet.html template for the export
+_     the tool could copy this into the folder just before exporting
+_ build a new version of the reference
 
 from peter n lewis 
 _ Use Selection For Find
@@ -63,10 +73,14 @@ _   http://code.google.com/p/processing/issues/detail?id=571
 _ Double and Triple click and drag behaviour
 _   http://code.google.com/p/processing/issues/detail?id=576
 _ double-clicking whitespace selects adjacent chars
+_   clicking i-- ) between -- and ) will select "-- )"
+_   in eclipse, it looks to see which is closest and selects that
+_   need to check behavior for word and bbedit
 _   http://code.google.com/p/processing/issues/detail?id=59
 _ Find Previous and FindReplace dialog cleanup
 _   http://code.google.com/p/processing/issues/detail?id=580
 _ bugs 67, 68, 69 (below) cover more of this
+
 
 _ Internationalization
 _   http://code.google.com/p/processing/issues/detail?id=593
@@ -90,6 +104,12 @@ _ move Java-specific InputHandler to its own subclass
 _ remove any reference to 'Editor' from Sketch.java
 _   or is that excessive, since Document is in there, etc
 _   Build does the heavy lifting anyway...
+_ TextAreaDefaults
+_   is editable in use?
+_   what's electricScroll?
+_   caretBlinks always true.. just remove the pref?
+_   blockCaret always false.. remove it?
+_ EditorToolbar, two TODO items for open menu handling
 
 blob of mess
 _ multiple sketch windows.. having a windows menu?
@@ -115,13 +135,6 @@ http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-d
 _ p5 assets need to be licensed differently from the source
 
 We're making an assumption that the idea of a "library" refers to a block of Java-based code. The reasoning is that from within the PDE, we anticipate that it will be Java-compatible versions of other languages (such as Jython, JRuby, or Scala) as opposed to more generic languages. In the future we could open this up, but we'd rather not complicate things for the moment.
-
-_ TextAreaDefaults
-_   is editable in use?
-_   what's electricScroll?
-_   caretBlinks always true.. just remove the pref?
-_   blockCaret always false.. remove it?
-_ EditorToolbar, two TODO items for open menu handling
 
 libraries
 _ need to deal with classpath conflicts
@@ -191,11 +204,6 @@ _   messy since some displays have negative coords
 _   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _   http://code.google.com/p/processing/issues/detail?id=27
 Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
-
-_ don't reload sketch on "save as"
-_   this can result in loss of data (undo is lost)
-_   http://code.google.com/p/processing/issues/detail?id=62
-Chris has attached a patch for this one.
 
 _ sketch marked as modified too aggressively
 _   http://dev.processing.org/bugs/show_bug.cgi?id=328
@@ -1019,10 +1027,6 @@ _   http://processing.org/bugs/show_bug.cgi?id=51
 _ code coloring is imperfect because it's not based on a parser
 _   i.e. mousePressed() is red but mouseMoved() is brown
 _   http://dev.processing.org/bugs/show_bug.cgi?id=113
-_ clicking i-- ) between -- and ) will select "-- )"
-_   in eclipse, it looks to see which is closest and selects that
-_   need to check behavior for word and bbedit
-_   http://dev.processing.org/bugs/show_bug.cgi?id=348
 _ implement emacs keybindings (list is at the bug report)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=401
 _ implement better method of showing curly brace closure
