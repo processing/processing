@@ -668,7 +668,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     // part of SurfaceHolder.Callback
     public void surfaceDestroyed(SurfaceHolder holder) {
-      g2.dispose();
+      //g2.dispose();
     }
 
 
@@ -2499,12 +2499,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /** 
    * Called to dispose of resources and shut down the sketch. 
-   * Destroys the thread, dispose the renderer,and notify listeners.
+   * Destroys the thread, dispose the renderer, and notify listeners.
    * <p>
    * Not to be called or overriden by users. If called multiple times, 
    * will only notify listeners once. Register a dispose listener instead.
    */
-  public void dispose() {
+  final public void dispose() {
     // moved here from stop()
     finished = true;  // let the sketch know it is shut down time
 

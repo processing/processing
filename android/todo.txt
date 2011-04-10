@@ -11,6 +11,15 @@ X   need to require ANDROID_SDK set for build.xml dist
 X   http://code.google.com/p/processing/issues/detail?id=577
 X No library found for android.content (and all the others)
 X   need to suppress the messages ala java.*
+o ctrl-shift-r (run on device) is totally hosed
+X when returning to android application, sometimes screen stays black
+X   http://code.google.com/p/processing/issues/detail?id=237
+
+earlier
+X Error 336  Can't run any sketch.
+X   javac.exe was not included with the download
+X   http://code.google.com/p/processing/issues/detail?id=393
+
 
 _ "Unable to resolve target 'Google...'" when APIs aren't installed
 _   add an error message that explains what to do
@@ -23,19 +32,15 @@ _   http://code.google.com/p/processing/issues/detail?id=605
 _ Device Killed or Disconnected Error Message with Libraries
 _   http://code.google.com/p/processing/issues/detail?id=565
 
-_ when returning to android application, sometimes screen stays black
-_   http://code.google.com/p/processing/issues/detail?id=237
-Here's what is happening with the A2D renderer.  When the user hits the home button, the Android framework calls PApplet.surfaceDestroyed(), which recycles the drawing surface by calling PGraphicsAndroid2D.dispose().  The surface is never recreated.  The code path in PApplet.handleDraw() that reallocates the surface by calling PGraphicsAndroid2D.setSize() is missed because the dimensions of the sketch have not changed.
-Removing "bitmap.recycle()" from PGraphicsAndroid2D.dispose() fixes the problem.
-
 . . . . 
 
-_ Temp Files are not deleted
-_   http://code.google.com/p/processing/issues/detail?id=562
-
+lifecycle/size changes/etc
 _ pause/resume trickiness with interactive apps
 _   can we serialize objects (even if slow?)
-_   add pause() and resume() methods to PApplet
+_   add pause() and resume() methods to PApplet -> this is start/stop
+_ need to smooth out screen orientation changes
+_ g2 and g3 are no longer disposed on pause (0195), but probably should be
+_   they're deleted when dispose() is called (on exit()) 
 _ register(this, "pause") -> libs will need pause events on android
 _ add registered methods again
 _   need to figure out generic event queueing first
@@ -48,6 +53,11 @@ _   returning from pause needs to reset the clock
 _   this is currently draining batteries
 _ thread is continually running - 'inside handleDraw()' running continually
 _   inside run() it shouldn't still be going
+_ need sizeChanged() method... 
+_   also add the param to the xml file saying that it can deal w/ rotation
+
+_ temp files are not deleted
+_   http://code.google.com/p/processing/issues/detail?id=562
 
 _ go through all basics/topics examples
 _   remove those that don't make sense with android
@@ -55,17 +65,8 @@ _   remove size() commands from most/all
 _     (or remove ones that truly require size...)
 _   optimize for android use
 
-_ need sizeChanged() method... 
-_   also add the param to the xml file saying that it can deal w/ rotation
-
 _ check out andres' changes for PShape
-_ ctrl-shift-r (run on device) is totally hosed
-adb devices
-    status: 1
-    167ms
-    stdout:
-    stderr:
-error: protocol fault (no status)
+
 _ re: android libraries, from shawn van every
 The most powerful part were the libraries (and the ease with which they could be developed).  Location, SMS, Camera/Video, Bluetooth (for Arduino integration) and PClient/PRequest were by far the most used.  The ones that came with it, plus the ones from MJSoft were good though I ended up making a couple of very specific ones for my students: http://www.mobvcasting.com/wp/?cat=4
 _ separate activity and view
@@ -101,17 +102,10 @@ _   think the location is valid, which is totally different.
 _   ...because it's ignoring the exception messages that come in from trying
 _   to create the new sdk object
 
-_ need to do this for utf8: "overridable Ant javac properties: java.encoding"
-_   new for sdk tools r8, it's using ascii as the default, we're utf-8
-
 _ need to do something to make it easier to do new screen sizes.
 
 _ sketches must be removed manually if the debug keystore changes
 _   http://code.google.com/p/processing/issues/detail?id=236
-
-_ Error 336  Can't run any sketch.
-_   http://code.google.com/p/processing/issues/detail?id=393
-_   javac.exe not included with the download
 
 _ gui stuff: http://hg.postspectacular.com/cp5magic/wiki/Home
 
