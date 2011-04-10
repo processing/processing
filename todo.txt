@@ -36,6 +36,8 @@ X   happens because the window is not the focused component
 X JEditTextArea
 X   focusedComponent = this -> bad solution for a symptom
 X   in Editor, textarea.requestFocus -> requestFocusInWindow, watch the bool
+X smooth text on status bar (Linux)
+X clear up some issues with focus handling
 
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
