@@ -79,11 +79,20 @@ public class JEditTextArea extends JComponent
    * Creates a new JEditTextArea with the specified settings.
    * @param defaults The default settings
    */
-  public JEditTextArea(TextAreaDefaults defaults)
-  {
+  public JEditTextArea(TextAreaDefaults defaults) {
     // Enable the necessary events
     enableEvents(AWTEvent.KEY_EVENT_MASK);
 
+    caretTimer = new Timer(500, new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if (hasFocus()) {
+          blinkCaret();      
+        }
+      }
+    }); //new CaretBlinker//new CaretBlinker());
+    caretTimer.setInitialDelay(500);
+    caretTimer.start();
+    
     // Initialize some misc. stuff
     painter = new TextAreaPainter(this, defaults);
     documentHandler = new DocumentHandler();
@@ -119,7 +128,7 @@ public class JEditTextArea extends JComponent
     electricScroll = defaults.electricScroll;
 
     // We don't seem to get the initial focus event?
-    focusedComponent = this;
+//    focusedComponent = this;
 
     addMouseWheelListener(new MouseWheelListener() {
       public void mouseWheelMoved(MouseWheelEvent e) {
@@ -585,12 +594,12 @@ public class JEditTextArea extends JComponent
    * @param line The line
    * @param x The x co-ordinate
    */
-  public int xToOffset(int line, int x)
-  {
+  public int xToOffset(int line, int x) {
     TokenMarker tokenMarker = getTokenMarker();
 
     /* Use painter's cached info for speed */
     FontMetrics fm = painter.getFontMetrics();
+//    System.out.println("metrics: " + fm);
 
     getLineText(line,lineSegment);
 
@@ -625,29 +634,24 @@ public class JEditTextArea extends JComponent
 
         width += charWidth;
       }
-
       return segmentCount;
-    }
-    else
-    {
+
+    } else {
       Token tokens;
-      if(painter.currentLineIndex == line && painter
-          .currentLineTokens != null)
+      if (painter.currentLineIndex == line && 
+          painter.currentLineTokens != null) {
         tokens = painter.currentLineTokens;
-      else
-      {
+      } else {
         painter.currentLineIndex = line;
-        tokens = painter.currentLineTokens
-        = tokenMarker.markTokens(lineSegment,line);
+        tokens = painter.currentLineTokens = tokenMarker.markTokens(lineSegment,line);
       }
 
       int offset = 0;
-      //Toolkit toolkit = painter.getToolkit();
       Font defaultFont = painter.getFont();
       SyntaxStyle[] styles = painter.getStyles();
+//      System.out.println("painter is " + painter + ", doc is " + document);
 
-      for(;;)
-      {
+      for(;;) {
         byte id = tokens.id;
         if(id == Token.END)
           return offset;
@@ -659,25 +663,28 @@ public class JEditTextArea extends JComponent
 
         int length = tokens.length;
 
-        for(int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
+//          System.out.println("segmentOffset = " + segmentOffset +
+//                             ", offset = " + offset + 
+//                             ", i = " + i +
+//                             ", length = " + length +
+//                             ", array len = " + segmentArray.length);
           char c = segmentArray[segmentOffset + offset + i];
           int charWidth;
-          if(c == '\t')
-            charWidth = (int)painter.nextTabStop(width,offset + i)
-            - width;
-          else
+          if (c == '\t') {
+            charWidth = (int)painter.nextTabStop(width,offset + i) - width;
+          } else {
             charWidth = fm.charWidth(c);
-
-          if(painter.isBlockCaretEnabled())
-          {
-            if(x - charWidth <= width)
-              return offset + i;
           }
-          else
-          {
-            if(x - charWidth / 2 <= width)
+
+          if (painter.isBlockCaretEnabled()) {
+            if (x - charWidth <= width) {
               return offset + i;
+            }
+          } else {
+            if (x - charWidth / 2 <= width) {
+              return offset + i;
+            }
           }
 
           width += charWidth;
@@ -1736,11 +1743,11 @@ public class JEditTextArea extends JComponent
    * Called by the AWT when this component is removed from it's parent.
    * This stops clears the currently focused component.
    */
-  public void removeNotify()
-  {
+  public void removeNotify() {
     super.removeNotify();
-    if(focusedComponent == this)
-      focusedComponent = null;
+//    if(focusedComponent == this)
+//      focusedComponent = null;
+    caretTimer.stop();
   }
 
   /**
@@ -1787,7 +1794,7 @@ public class JEditTextArea extends JComponent
   protected static String RIGHT = "right";
   protected static String BOTTOM = "bottom";
 
-  protected static JEditTextArea focusedComponent;
+//  protected static JEditTextArea focusedComponent;
   protected static Timer caretTimer;
 
   protected TextAreaPainter painter;
@@ -2020,15 +2027,15 @@ public class JEditTextArea extends JComponent
     private Vector leftOfScrollBar = new Vector();
   }
 
-  static class CaretBlinker implements ActionListener
-  {
-    public void actionPerformed(ActionEvent evt)
-    {
-      if(focusedComponent != null
-          && focusedComponent.hasFocus())
-        focusedComponent.blinkCaret();
-    }
-  }
+//  static class CaretBlinker implements ActionListener
+//  {
+//    public void actionPerformed(ActionEvent evt)
+//    {
+//      if(focusedComponent != null
+//          && focusedComponent.hasFocus())
+//        focusedComponent.blinkCaret();
+//    }
+//  }
 
   class MutableCaretEvent extends CaretEvent
   {
@@ -2172,32 +2179,42 @@ public class JEditTextArea extends JComponent
     public void mouseMoved(MouseEvent evt) {}
   }
 
+  
   class FocusHandler implements FocusListener
   {
     public void focusGained(FocusEvent evt)
     {
       //System.out.println("JEditTextArea: focusGained");
       setCaretVisible(true);
-      focusedComponent = JEditTextArea.this;
+//      focusedComponent = JEditTextArea.this;
     }
 
     public void focusLost(FocusEvent evt)
     {
       //System.out.println("JEditTextArea: focusLost");
       setCaretVisible(false);
-      focusedComponent = null;
+//      focusedComponent = null;
     }
   }
+
 
   class MouseHandler extends MouseAdapter
   {
     public void mousePressed(MouseEvent evt)
     {
-      requestFocus();
-
-      // Focus events not fired sometimes?
-      setCaretVisible(true);
-      focusedComponent = JEditTextArea.this;
+      try {
+//      requestFocus();
+//      // Focus events not fired sometimes?
+//      setCaretVisible(true);
+//      focusedComponent = JEditTextArea.this;
+        // Here be dragons: for release 0195, this fixes a problem where the
+        // line segment data from the previous window was being used for 
+        // selections, causing an exception when the window you're clicking to
+        // was not full of text. Simply ignoring clicks when not focused fixes
+        // the problem, though it's not clear why the wrong Document data was
+        // being using regardless of the focusedComponent.
+//        if (focusedComponent != JEditTextArea.this) return;
+        if (!hasFocus()) return;
 
       // isPopupTrigger wasn't working for danh on windows
       boolean trigger = (evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0;
@@ -2233,6 +2250,11 @@ public class JEditTextArea extends JComponent
       case 3:
         doTripleClick(evt,line,offset,dot);
         break;
+      }
+      } catch (ArrayIndexOutOfBoundsException aioobe) {
+        aioobe.printStackTrace();
+        int line = yToLine(evt.getY());
+        System.out.println("line is " + line + ", line count is " + getLineCount());
       }
     }
 
@@ -2410,10 +2432,10 @@ public class JEditTextArea extends JComponent
     }
   }
 
-  static
-  {
-    caretTimer = new Timer(500,new CaretBlinker());
-    caretTimer.setInitialDelay(500);
-    caretTimer.start();
-  }
+//  static
+//  {
+//    caretTimer = new Timer(500, new CaretBlinker());
+//    caretTimer.setInitialDelay(500);
+//    caretTimer.start();
+//  }
 }
