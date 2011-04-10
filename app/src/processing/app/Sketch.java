@@ -427,6 +427,16 @@ public class Sketch {
                            "\"" + newName + "\" already exists.", null);
           return;
         }
+        
+        // renaming the containing sketch folder
+        boolean success = folder.renameTo(newFolder);
+        if (!success) {
+          Base.showWarning("Error", "Could not rename the sketch folder.", null);
+          return;
+        }
+        // let this guy know where he's living (at least for a split second)
+        current.setFolder(newFolder);
+        // folder will be set to newFolder by updateInternal()
 
         // unfortunately this can't be a "save as" because that
         // only copies the sketch files and the data folder
@@ -438,30 +448,14 @@ public class Sketch {
 //          return;
 //        }
 
+        // This isn't changing folders, just changes the name
+        newFile = new File(newFolder, newName);
         if (!current.renameTo(newFile, newExtension)) {
           Base.showWarning("Error",
                            "Could not rename \"" + current.getFileName() +
                            "\" to \"" + newFile.getName() + "\"", null);
           return;
         }
-
-        // save each of the other tabs because this is gonna be re-opened
-//        try {
-//          for (int i = 1; i < codeCount; i++) {
-//            code[i].save();
-//          }
-//        } catch (Exception e) {
-//          Base.showWarning("Error", "Could not rename the sketch. (1)", e);
-//          return;
-//        }
-
-        // now rename the sketch folder and re-open
-        boolean success = folder.renameTo(newFolder);
-        if (!success) {
-          Base.showWarning("Error", "Could not rename the sketch folder.", null);
-          return;
-        }
-        // if successful, set base properties for the sketch
 
         // Tell each code file the good news about their new home.
         // current.renameTo() above already took care of the main tab.
@@ -496,7 +490,7 @@ public class Sketch {
         }
       }
 
-    } else {  // creating a new file
+    } else {  // not renaming, creating a new file
       try {
         if (!newFile.createNewFile()) {
           // Already checking for IOException, so make our own.
@@ -870,7 +864,7 @@ public class Sketch {
     // reset all the state information for the sketch object 
     primaryFile = code[0].getFile();
     name = sketchName;
-    folder = sketchFolder;    
+    folder = sketchFolder;
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
     
@@ -879,9 +873,11 @@ public class Sketch {
     // nah, this might just annoy people
 
     // Name changed, rebuild the sketch menus
+    calcModified();
+//    System.out.println("modified is now " + modified);
     editor.setTitle();
     editor.base.rebuildSketchbookMenus();
-    editor.header.rebuild();
+//    editor.header.rebuild();
   }
 
 
