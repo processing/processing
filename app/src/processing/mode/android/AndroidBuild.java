@@ -79,6 +79,22 @@ class AndroidBuild extends JavaBuild {
   }
   
   
+  /** 
+   * Tell the PDE to not complain about android.* packages and others that are
+   * part of the OS library set as if they're missing.
+   */
+  protected boolean ignorableImport(String pkg) {
+    if (pkg.startsWith("android.")) return true;
+    if (pkg.startsWith("java.")) return true;
+    if (pkg.startsWith("javax.")) return true;
+    if (pkg.startsWith("org.apache.http.")) return true;
+    if (pkg.startsWith("org.json.")) return true;
+    if (pkg.startsWith("org.w3c.dom.")) return true;
+    if (pkg.startsWith("org.xml.sax.")) return true;
+    return false;
+  }
+ 
+  
   /**
    * Create an Android project folder, and run the preprocessor on the sketch. 
    * Populates the 'src' folder with Java code, and 'libs' folder with the 

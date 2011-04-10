@@ -73,13 +73,7 @@ public class JavaBuild {
    * List of library folders, as figured out during preprocessing.
    */
   private ArrayList<Library> importedLibraries;
-  //private ArrayList<File> importedLibraries;
 
-
-//  public Build(Editor editor) {
-//    this.editor = editor;
-//    this.sketch = editor.getSketch();
-//  }
 
   public JavaBuild(Sketch sketch) {
     this.sketch = sketch;
@@ -397,12 +391,22 @@ public class JavaBuild {
           javaLibraryPath += File.pathSeparator + library.getNativePath();
         }
       } else {
-        // Don't bother complaining about java.* or javax.* because it's
-        // probably in boot.class.path. But we're not checking against that
-        // path since it's enormous. Unfortunately we do still have to check
-        // for libraries that begin with a prefix like javax, since that
-        // includes the OpenGL library.
-        if (!item.startsWith("java.") && !item.startsWith("javax.")) {
+        boolean found = false;
+        // If someone insists on unnecessarily repeating the code folder 
+        // import, don't show an error for it.
+        if (codeFolderPackages != null) {
+          String itemPkg = item.substring(0, item.lastIndexOf('.'));
+          for (String pkg : codeFolderPackages) {
+            if (pkg.equals(itemPkg)) {
+              found = true;
+              break;
+            }
+          }
+        }
+        if (ignorableImport(item)) {
+          found = true;
+        }
+        if (!found) {
           System.err.println("No library found for " + entry);
         }
       }
@@ -471,6 +475,20 @@ public class JavaBuild {
     }
     foundMain = preprocessor.getFoundMain();
     return result.className;
+  }
+
+  /**
+   * Returns true if this package isn't part of a library (it's a system import
+   * or something like that). Don't bother complaining about java.* or javax.* 
+   * because it's probably in boot.class.path. But we're not checking against 
+   * that path since it's enormous. Unfortunately we do still have to check
+   * for libraries that begin with a prefix like javax, since that includes 
+   * the OpenGL library, even though we're just returning true here, hrm...
+   */
+  protected boolean ignorableImport(String pkg) {
+    if (pkg.startsWith("java.")) return true;
+    if (pkg.startsWith("javax.")) return true;
+    return false;
   }
   
   
