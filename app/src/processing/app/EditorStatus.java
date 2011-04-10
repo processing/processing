@@ -134,7 +134,7 @@ public class EditorStatus extends JPanel {
     editField.setVisible(true);
     editField.setText(dflt);
     editField.selectAll();
-    editField.requestFocus();
+    editField.requestFocusInWindow();
 
     repaint();
   }
@@ -144,6 +144,7 @@ public class EditorStatus extends JPanel {
     okButton.setVisible(false);
     cancelButton.setVisible(false);
     editField.setVisible(false);
+    editor.textarea.requestFocusInWindow();
     empty();
   }
   
