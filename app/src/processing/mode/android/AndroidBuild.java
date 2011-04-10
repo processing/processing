@@ -357,13 +357,17 @@ class AndroidBuild extends JavaBuild {
           }
         }
       }
-//      editor.statusError(e);
-      System.err.println("Problem during build:");
-      e.printStackTrace();
-      // Couldn't parse the exception, so wrap it up and chuck it
-//      throw new SketchException(e);
+      // this info will have already been printed
+//      System.err.println("Problem during build: " + e.getMessage());
+      // this info is a huge stacktrace of where it died inside the ant code (totally useless)
+//      e.printStackTrace();
+      // Couldn't parse the exception, so send something generic
+      SketchException skex = 
+        new SketchException("Error from inside the Android tools, check the console.");
+      skex.hideStackTrace();
+      throw skex;
     }
-    return false;
+    //return false;
   }
 
   
