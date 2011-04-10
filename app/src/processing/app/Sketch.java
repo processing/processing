@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2004-11 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -308,6 +308,11 @@ public class Sketch {
       return;
     }
 
+    if (isModified()) {
+      Base.showMessage("Save", "Please save the sketch before renaming.");
+      return;
+    }
+
     // if read-only, give an error
     if (isReadOnly()) {
       // if the files are read-only, need to first do a "save as".
@@ -410,22 +415,6 @@ public class Sketch {
     }
 
     File newFile = new File(folder, newName);
-//    if (newFile.exists()) {  // yay! users will try anything
-//      Base.showMessage("Nope",
-//                       "A file named \"" + newFile + "\" already exists\n" +
-//                       "in \"" + folder.getAbsolutePath() + "\"");
-//      return;
-//    }
-
-//    File newFileHidden = new File(folder, newName + ".x");
-//    if (newFileHidden.exists()) {
-//      // don't let them get away with it if they try to create something
-//      // with the same name as something hidden
-//      Base.showMessage("No Way",
-//                       "A hidden tab with the same name already exists.\n" +
-//                       "Use \"Unhide\" to bring it back.");
-//      return;
-//    }
 
     if (renamingCode) {
       if (currentIndex == 0) {
@@ -443,17 +432,11 @@ public class Sketch {
         // only copies the sketch files and the data folder
         // however this *will* first save the sketch, then rename
 
-        // first get the contents of the editor text area
-        if (current.isModified()) {
-          current.setProgram(editor.getText());
-          try {
-            // save this new SketchCode
-            current.save();
-          } catch (Exception e) {
-            Base.showWarning("Error", "Could not rename the sketch. (0)", e);
-            return;
-          }
-        }
+        // moved this further up in the process (before prompting for the name)
+//        if (isModified()) {
+//          Base.showMessage("Save", "Please save the sketch before renaming.");
+//          return;
+//        }
 
         if (!current.renameTo(newFile, newExtension)) {
           Base.showWarning("Error",
@@ -463,38 +446,46 @@ public class Sketch {
         }
 
         // save each of the other tabs because this is gonna be re-opened
-        try {
-          for (int i = 1; i < codeCount; i++) {
-            code[i].save();
-          }
-        } catch (Exception e) {
-          Base.showWarning("Error", "Could not rename the sketch. (1)", e);
-          return;
-        }
+//        try {
+//          for (int i = 1; i < codeCount; i++) {
+//            code[i].save();
+//          }
+//        } catch (Exception e) {
+//          Base.showWarning("Error", "Could not rename the sketch. (1)", e);
+//          return;
+//        }
 
         // now rename the sketch folder and re-open
         boolean success = folder.renameTo(newFolder);
         if (!success) {
-          Base.showWarning("Error", "Could not rename the sketch. (2)", null);
+          Base.showWarning("Error", "Could not rename the sketch folder.", null);
           return;
         }
         // if successful, set base properties for the sketch
 
-        File newMainFile = new File(newFolder, newName + ".pde");
-        String newMainFilePath = newMainFile.getAbsolutePath();
+        // Tell each code file the good news about their new home.
+        // current.renameTo() above already took care of the main tab.
+        for (int i = 1; i < codeCount; i++) {
+          code[i].setFolder(newFolder);
+        }
+        // Update internal state to reflect the new location
+        updateInternal(sanitaryName, newFolder);
 
-        // having saved everything and renamed the folder and the main .pde,
-        // use the editor to re-open the sketch to re-init state
-        // (unfortunately this will kill positions for carets etc)
-        editor.handleOpenUnchecked(newMainFilePath,
-                                   currentIndex,
-                                   editor.getSelectionStart(),
-                                   editor.getSelectionStop(),
-                                   editor.getScrollPosition());
-
-        // get the changes into the sketchbook menu
-        // (re-enabled in 0115 to fix bug #332)
-        editor.base.rebuildSketchbookMenusAsync();
+//        File newMainFile = new File(newFolder, newName + ".pde");
+//        String newMainFilePath = newMainFile.getAbsolutePath();
+//
+//        // having saved everything and renamed the folder and the main .pde,
+//        // use the editor to re-open the sketch to re-init state
+//        // (unfortunately this will kill positions for carets etc)
+//        editor.handleOpenUnchecked(newMainFilePath,
+//                                   currentIndex,
+//                                   editor.getSelectionStart(),
+//                                   editor.getSelectionStop(),
+//                                   editor.getScrollPosition());
+//
+//        // get the changes into the sketchbook menu
+//        // (re-enabled in 0115 to fix bug #332)
+//        editor.base.rebuildSketchbookMenusAsync();
 
       } else {  // else if something besides code[0]
         if (!current.renameTo(newFile, newExtension)) {
@@ -678,9 +669,9 @@ public class Sketch {
     ensureExistence();
 
     // first get the contents of the editor text area
-    if (current.isModified()) {
-      current.setProgram(editor.getText());
-    }
+//    if (current.isModified()) {
+    current.setProgram(editor.getText());
+//    }
 
     // don't do anything if not actually modified
     //if (!modified) return false;
@@ -858,46 +849,39 @@ public class Sketch {
       code[i].saveAs(newFile);
     }
 
-    /*
-    // re-copy the data folder (this may take a while.. add progress bar?)
-    if (dataFolder.exists()) {
-      File newDataFolder = new File(newFolder, "data");
-      Base.copyDir(dataFolder, newDataFolder);
-    }
-
-    // re-copy the code folder
-    if (codeFolder.exists()) {
-      File newCodeFolder = new File(newFolder, "code");
-      Base.copyDir(codeFolder, newCodeFolder);
-    }
-
-    // copy custom applet.html file if one exists
-    // http://dev.processing.org/bugs/show_bug.cgi?id=485
-    File customHtml = new File(folder, "applet.html");
-    if (customHtml.exists()) {
-      File newHtml = new File(newFolder, "applet.html");
-      Base.copyFile(customHtml, newHtml);
-    }
-    */
-
     // save the main tab with its new name
     File newFile = new File(newFolder, newName + ".pde");
     code[0].saveAs(newFile);
 
-    editor.handleOpenUnchecked(newFile.getPath(),
-                               currentIndex,
-                               editor.getSelectionStart(),
-                               editor.getSelectionStop(),
-                               editor.getScrollPosition());
-
-    // Name changed, rebuild the sketch menus
-    editor.base.rebuildSketchbookMenusAsync();
+    updateInternal(newName, newFolder);
 
     // Make sure that it's not an untitled sketch
     setUntitled(false);
 
     // let Editor know that the save was successful
     return true;
+  }
+  
+  
+  /** 
+   * Update internal state for new sketch name or folder location.
+   */
+  protected void updateInternal(String sketchName, File sketchFolder) {
+    // reset all the state information for the sketch object 
+    primaryFile = code[0].getFile();
+    name = sketchName;
+    folder = sketchFolder;    
+    codeFolder = new File(folder, "code");
+    dataFolder = new File(folder, "data");
+    
+    // set the main file to be the current tab
+    //setCurrentCode(0);
+    // nah, this might just annoy people
+
+    // Name changed, rebuild the sketch menus
+    editor.setTitle();
+    editor.base.rebuildSketchbookMenus();
+    editor.header.rebuild();
   }
 
 
@@ -1191,27 +1175,28 @@ public class Sketch {
    * but not its contents.
    */
   public void ensureExistence() {
-    if (folder.exists()) return;
+    if (!folder.exists()) {
+      // Disaster recovery, try to salvage what's there already.
+      Base.showWarning("Sketch Disappeared",
+                       "The sketch folder has disappeared.\n " +
+                       "Will attempt to re-save in the same location,\n" +
+                       "but anything besides the code will be lost.", null);
+      try {
+        folder.mkdirs();
+        modified = true;
 
-    Base.showWarning("Sketch Disappeared",
-                     "The sketch folder has disappeared.\n " +
-                     "Will attempt to re-save in the same location,\n" +
-                     "but anything besides the code will be lost.", null);
-    try {
-      folder.mkdirs();
-      modified = true;
+        for (int i = 0; i < codeCount; i++) {
+          code[i].save();  // this will force a save
+        }
+        calcModified();
 
-      for (int i = 0; i < codeCount; i++) {
-        code[i].save();  // this will force a save
+      } catch (Exception e) {
+        Base.showWarning("Could not re-save sketch",
+                         "Could not properly re-save the sketch. " +
+                         "You may be in trouble at this point,\n" +
+                         "and it might be time to copy and paste " +
+                         "your code to another text editor.", e);
       }
-      calcModified();
-
-    } catch (Exception e) {
-      Base.showWarning("Could not re-save sketch",
-                       "Could not properly re-save the sketch. " +
-                       "You may be in trouble at this point,\n" +
-                       "and it might be time to copy and paste " +
-                       "your code to another text editor.", e);
     }
   }
 

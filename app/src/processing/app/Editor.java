@@ -221,6 +221,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     
     // Bring back the general options for the editor
     applyPreferences();
+    
+    // Recommendation, but doesn't seem to do much for us
+    // http://download.oracle.com/javase/tutorial/uiswing/misc/focus.html
+    // Make textField get the focus whenever frame is activated.
+//    addWindowFocusListener(new WindowAdapter() {
+//        public void windowGainedFocus(WindowEvent e) {
+//            textarea.requestFocusInWindow();
+//        }
+//    });
 
     // Open the document that was passed in
     boolean loaded = handleOpenInternal(path);
@@ -1370,7 +1379,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
                          code.getSelectionStart(), code.getSelectionStop(),
                          code.getScrollPosition());
 
-    textarea.requestFocus();  // get the caret blinking
+//    textarea.requestFocus();  // get the caret blinking
+    textarea.requestFocusInWindow();  // required for caret blinking
 
     this.undo = code.getUndo();
     undoAction.updateUndoState();
@@ -1698,18 +1708,18 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Open a sketch from a particular path, but don't check to save changes.
    * Used by Sketch.saveAs() to re-open a sketch after the "Save As"
    */
-  protected void handleOpenUnchecked(String path, int codeIndex,
-                                     int selStart, int selStop, int scrollPos) {
-    internalCloseRunner();
-    handleOpenInternal(path);
-    // Replacing a document that may be untitled. If this is an actual
-    // untitled document, then editor.untitled will be set by Base.
-    untitled = false;
-
-    sketch.setCurrentCode(codeIndex);
-    textarea.select(selStart, selStop);
-    textarea.setScrollPosition(scrollPos);
-  }
+//  protected void handleOpenUnchecked(String path, int codeIndex,
+//                                     int selStart, int selStop, int scrollPos) {
+//    internalCloseRunner();
+//    handleOpenInternal(path);
+//    // Replacing a document that may be untitled. If this is an actual
+//    // untitled document, then editor.untitled will be set by Base.
+//    untitled = false;
+//
+//    sketch.setCurrentCode(codeIndex);
+//    textarea.select(selStart, selStop);
+//    textarea.setScrollPosition(scrollPos);
+//  }
 
 
   /**
@@ -1802,8 +1812,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       return false;
     }
     header.rebuild();
-    // Set the title of the window to "sketch_070752a - Processing 0126"
-    setTitle(sketch.getName() + " | Processing " + Base.VERSION_NAME);
+    setTitle();
     // Disable untitled setting from previous document, if any
     untitled = false;
 
@@ -1820,6 +1829,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //      statusError(e);
 //      return false;
 //    }
+  }
+  
+  
+  /** 
+   * Set the title of the PDE window based on the current sketch, i.e. 
+   * something like "sketch_070752a - Processing 0126"
+   */
+  public void setTitle() {
+    setTitle(sketch.getName() + " | Processing " + Base.VERSION_NAME);
   }
 
 

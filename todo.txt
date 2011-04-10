@@ -28,6 +28,14 @@ X reference not available from the pde (0194) on mac
 X   http://code.google.com/p/processing/issues/detail?id=572
 X reference: auto-format has been moved to edit
 X   fix other items on the Environment page
+X casey's vote:
+X   Standard, Android, JavaScript, Jython
+X   or: Processing, Android, Processing.js, Processing.py
+X clicking the editor window (from the examples window) causes an exception
+X   happens because the window is not the focused component
+X JEditTextArea
+X   focusedComponent = this -> bad solution for a symptom
+X   in Editor, textarea.requestFocus -> requestFocusInWindow, watch the bool
 
 earlier
 X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
@@ -35,7 +43,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=1557
 X on linux, mozilla shouldn't be the default browser anymore
 X   is there a way to query the default browser? gnome-open? xdg-open?
 X   cleaned up some things inside settings, but this was already done
+X 64-bit windows causes UnsatisfiedLinkError with OpenGL
 
+0196
+_ help casey re-export all applets for the site
+_ include a new version of the reference
 
 _ "No library found" message when using import statements and the code folder
 _   http://code.google.com/p/processing/issues/detail?id=568
@@ -57,13 +69,10 @@ _ bugs 67, 68, 69 (below) cover more of this
 _ Internationalization
 _   http://code.google.com/p/processing/issues/detail?id=593
 
-
 regressions
 _ strange window flicker when first opened
 _ test libraries on android
 _ test .java files on desktop version
-_ clicking the editor window (from the examples window) causes an exception
-_   also from other editor windows... weird. IME related?
 
 additions
 _ when creating a sketch within non-java mode, should write the settings file
@@ -75,6 +84,7 @@ _ inside AndroidPreprocessor
 _   processing.mode.java.JavaBuild.scrubComments(sketch.getCode(0).getProgram())
 _   PApplet.match(scrubbed, processing.mode.java.JavaBuild.SIZE_REGEX);
 _ remove PdeKeyListener, roll it into the Java InputHandler for JEditTextArea
+_ move Java-specific InputHandler to its own subclass
 _ remove any reference to 'Editor' from Sketch.java
 _   or is that excessive, since Document is in there, etc
 _   Build does the heavy lifting anyway...
@@ -102,10 +112,6 @@ http://stackoverflow.com/questions/1611357/how-to-make-a-jar-file-that-include-d
 
 _ p5 assets need to be licensed differently from the source
 
-_ casey's vote:
-_   Standard, Android, JavaScript, Jython
-_   or: Processing, Android, Processing.js, Processing.py
-
 We're making an assumption that the idea of a "library" refers to a block of Java-based code. The reasoning is that from within the PDE, we anticipate that it will be Java-compatible versions of other languages (such as Jython, JRuby, or Scala) as opposed to more generic languages. In the future we could open this up, but we'd rather not complicate things for the moment.
 
 _ TextAreaDefaults
@@ -113,9 +119,6 @@ _   is editable in use?
 _   what's electricScroll?
 _   caretBlinks always true.. just remove the pref?
 _   blockCaret always false.. remove it?
-_ JEditTextArea
-_   focusedComponent = this -> bad solution for a symptom
-_   in Editor, textarea.requestFocus -> requestFocusInWindow, watch the bool
 _ EditorToolbar, two TODO items for open menu handling
 
 libraries
@@ -145,7 +148,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=321
 _   http://code.google.com/p/processing/issues/detail?id=56
 _ changing the sketchbook folder will make libraries show up
 _   but it won't reload the library mapping table
-_ 64-bit windows causes UnsatisfiedLinkError with OpenGL
 _ make sure there aren't library jar files named the same thing 
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
 _   when the files are copied over
