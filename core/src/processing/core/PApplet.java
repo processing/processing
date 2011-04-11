@@ -10185,7 +10185,7 @@ public class PApplet extends Applet
   }
 
 
-  public void mergeShapes(boolean val) { 
+  public void mergeShapes(boolean val) {
     if (recorder != null) recorder.mergeShapes(val);
     g.mergeShapes(val);
   }
