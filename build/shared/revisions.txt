@@ -1,3 +1,108 @@
+PROCESSING REV 0195 - 10 April 2011
+
+Bug fixes and several Android updates. Working to close in on a proper 
+Processing 1.5 release.
+
+This release has several changes to renaming sketches, using Save As, 
+and how untitled sketches are handled. Please help test!
+
+Note that on the Android side, this release once again requires installation
+of the Google APIs. See the Android Wiki page for details.
+
+[ general ] 
+
++ Sketch restarts automatically after pressing stop button on PDE
+  http://code.google.com/p/processing/issues/detail?id=561
+
++ 'unexpected token void' for any type of error (due to fallback)
+  http://code.google.com/p/processing/issues/detail?id=551
+
++ Deal with weird states when closing last editor window on OS X
+
++ With one sketch open, changing the mode doesn't close the original editor
+  http://code.google.com/p/processing/issues/detail?id=569
+
++ Move library examples to the examples menu
+  http://dev.processing.org/bugs/show_bug.cgi?id=1278
+  http://code.google.com/p/processing/issues/detail?id=181
+
++ Ctrl-slash not working on Linux (fix from pkalauskas, thanks!)
+  http://code.google.com/p/processing/issues/detail?id=596
+
++ Update to Java 6u24 for Linux and Windows
+
++ Export .java source files with applets and applications.
+  http://code.google.com/p/processing/issues/detail?id=570
+
++ Reference broken in 0194.
+  http://code.google.com/p/processing/issues/detail?id=572
+
++ Other reference tweaks
+
++ Fix exception spew when clicking between editor windows.
+
++ Don't reload sketch on "save as"
+  http://code.google.com/p/processing/issues/detail?id=62
+
++ Smooth text on the status bar on Linux.
+
++ Clear up some issues with focus handling in the editor.
+
++ Save As/Rename don't properly set focus
+  http://code.google.com/p/processing/issues/detail?id=13
+
++ "No library found" message when using import statements and the code folder
+  http://code.google.com/p/processing/issues/detail?id=568
+
++ Remove version number from splash image
+  http://code.google.com/p/processing/issues/detail?id=324
+
++ Subfolders in /libraries folder not supported in 0194, 
+  bring them back for toxi and the toxiclibs folks.
+  http://code.google.com/p/processing/issues/detail?id=578
+
+[ core ] 
+
++ Deal with bad screen updates for sketches running < 60 fps in JAVA2D
+
++ OPENGL2 record only saves one line in a LINES shape (fix from Andres)
+  http://code.google.com/p/processing/issues/detail?id=579
+
++ normal() command commented out in sphere() method
+  http://code.google.com/p/processing/issues/detail?id=602
+
++ save() and other pixel operations no longer working with JAVA2D in 0194
+  http://code.google.com/p/processing/issues/detail?id=594
+
+[ android ] 
+
++ point() doesn't render in A3D
+  http://code.google.com/p/processing/issues/detail?id=592
+
++ Android stuck at "Starting Build"
+  http://code.google.com/p/processing/issues/detail?id=590
+
++ Deal with missing android-core.zip (No such file or directory)
+  http://code.google.com/p/processing/issues/detail?id=577
+
++ Error messages about "No library found for android.*"
+
++ When returning to android application, sometimes screen stays black
+  http://code.google.com/p/processing/issues/detail?id=237
+
++ Device Killed or Disconnected Error Message with Libraries
+  http://code.google.com/p/processing/issues/detail?id=565
+
++ Better error handling when certain SDK components are not installed.
+
++ Canceling an attempt to find the Android SDK leaves no window open, 
+  or crash when trying to change to Android mode w/ no Android SDK
+  http://code.google.com/p/processing/issues/detail?id=605
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0194 - 9 March 2011
 
 Lots of fixes for late-breaking problems in release 0193.
