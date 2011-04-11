@@ -10,24 +10,29 @@ import processing.core.PApplet;
 
 
 public class AVD {
-  static private final String AVD_CREATE_ERROR =
-    "An error occurred while running “android create avd”\n" +
-    "to set up the default Android emulator. Make sure that the\n" +
-    "Android SDK is installed properly, and that the Android\n" +
-    "and Google APIs are installed for level " + AndroidBuild.sdkVersion + ".\n" +
-    "(Between you and me, occasionally, this error is a red herring,\n" + 
+  static private final String AVD_CREATE_PRIMARY =
+    "An error occurred while running “android create avd”";
+  
+  static private final String AVD_CREATE_SECONDARY = 
+    "The default Android emulator could not be set up. Make sure<br>" +
+    "that the Android SDK is installed properly, and that the<br>" +
+    "Android and Google APIs are installed for level " + AndroidBuild.sdkVersion + ".<br>" +
+    "(Between you and me, occasionally, this error is a red herring,<br>" + 
     "and your sketch may be launching shortly.)";
 
-  static private final String AVD_CANNOT_LOAD =
-    "There is an error with the Processing AVD. This could mean that the\n" + 
-    "Android tools need to be updated, or that the Processing AVD should\n" +
-    "be deleted (it will automatically re-created the next time you run\n" +
-    "Processing). Open the Android SDK manager to check for any errors.";
+  static private final String AVD_LOAD_PRIMARY =
+    "There is an error with the Processing AVD.";
+  static private final String AVD_LOAD_SECONDARY =
+    "This could mean that the Android tools need to be updated,<br>" +
+    "or that the Processing AVD should be deleted (it will<br>" +
+    "automatically re-created the next time you run Processing).<br>" +
+    "Open the Android SDK manager to check for any errors.";
   
-  static private final String AVD_TARGET_MISSING = 
-    "The Google APIs are not installed properly, please re-read\n" +
-    "the installation instructions for Android Processing from\n" + 
-    "http://android.processing.org and try again.";
+  static private final String AVD_TARGET_PRIMARY = 
+    "The Google APIs are not installed properly";
+  static private final String AVD_TARGET_SECONDARY =
+    "Please re-read the installation instructions for Processing<br>" + 
+    "found at http://android.processing.org and try again.";
 
   static final String DEFAULT_SKIN = "WVGA800";
 
@@ -134,11 +139,12 @@ public class AVD {
       }
       if (createAvdResult.toString().contains("Target id is not valid")) {
         // They didn't install the Google APIs
-        Base.showWarning("Android Error", AVD_TARGET_MISSING, null);
+        Base.showWarningTiered("Android Error", AVD_TARGET_PRIMARY, AVD_TARGET_SECONDARY, null);
 //        throw new IOException("Missing required SDK components");
       } else {
         // Just generally not working
-        Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
+//        Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
+        Base.showWarningTiered("Android Error", AVD_CREATE_PRIMARY, AVD_CREATE_SECONDARY, null);
 //        throw new IOException("Error creating the AVD");
       }
       //System.err.println(createAvdResult);
@@ -155,7 +161,8 @@ public class AVD {
         return true;
       }
       if (defaultAVD.badness()) {
-        Base.showWarning("Android Error", AVD_CANNOT_LOAD, null);
+//        Base.showWarning("Android Error", AVD_CANNOT_LOAD, null);
+        Base.showWarningTiered("Android Error", AVD_LOAD_PRIMARY, AVD_LOAD_SECONDARY, null);
         return false;
       }
       if (defaultAVD.create(sdk)) {
@@ -163,7 +170,8 @@ public class AVD {
         return true;
       }
     } catch (final Exception e) {
-      Base.showWarning("Android Error", AVD_CREATE_ERROR, e);
+//      Base.showWarning("Android Error", AVD_CREATE_ERROR, e);
+      Base.showWarningTiered("Android Error", AVD_CREATE_PRIMARY, AVD_CREATE_SECONDARY, null);
     }
     return false;
   }

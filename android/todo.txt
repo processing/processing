@@ -19,17 +19,15 @@ X   http://code.google.com/p/processing/issues/detail?id=565
 X there's gotta be something we can do to get better ant build message
 X "Unable to resolve target 'Google...'" when APIs aren't installed
 X   add an error message that explains what to do
+X canceling an attempt to find the Android SDK leaves no window open
+X   (Linux and Windows)
+X crash when trying to change Android mode void sketch no Android SDK Installed
+X   http://code.google.com/p/processing/issues/detail?id=605
 
 earlier
 X Error 336  Can't run any sketch.
 X   javac.exe was not included with the download
 X   http://code.google.com/p/processing/issues/detail?id=393
-
-
-_ canceling an attempt to find the Android SDK leaves no window open
-_   (Linux and Windows)
-_ crash when trying to change Android mode void sketch no Android SDK Installed
-_   http://code.google.com/p/processing/issues/detail?id=605
 
 
 lifecycle/size changes/etc
