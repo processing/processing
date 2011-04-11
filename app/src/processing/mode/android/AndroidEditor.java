@@ -59,21 +59,21 @@ public class AndroidEditor extends JavaEditor {
   
   
   
-  protected AndroidEditor(Base base, String path, int[] location, Mode mode) {
+  protected AndroidEditor(Base base, String path, int[] location, Mode mode) throws Exception {
     super(base, path, location, mode);
     amode = (AndroidMode) mode;
 
-    try {
-      AndroidSDK sdk = amode.loadSDK();
-      if (sdk == null) {
-        sdk = AndroidSDK.locate(this);
-      }      
-    } catch (BadSDKException bse) {
-      statusError(bse);
-      
-    } catch (IOException e) {
-      statusError(e);
-    }
+//    try {
+    AndroidSDK sdk = amode.loadSDK();
+    if (sdk == null) {
+      sdk = AndroidSDK.locate(this);
+    }      
+//    } catch (BadSDKException bse) {
+//      statusError(bse);
+//      
+//    } catch (IOException e) {
+//      statusError(e);
+//    }
 
     /*
     if (sdk == null) {
