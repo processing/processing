@@ -1,3 +1,66 @@
+0195 (pre)
+X Sketch restarts automatically after pressing stop button on PDE
+X   problem with window focus issues
+X   http://code.google.com/p/processing/issues/detail?id=561
+X 'unexpected token void' for any type of error
+X   (due to fallback in preprocessor)
+X   'public' keyword in class declarations breaks syntax checker
+X   http://code.google.com/p/processing/issues/detail?id=551
+X found issue where editor objects were being kept around after closing
+X   with 1 editor open, the editors array wasn't being cleared
+X   (before default file menu, there was no point)
+X with one sketch open, changing the mode doesn't close the original editor
+X   only affects linux and windows
+X   http://code.google.com/p/processing/issues/detail?id=569
+X move library examples to the examples menu
+o   do this once the library documentation has been fixed up
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1278
+X   http://code.google.com/p/processing/issues/detail?id=181
+X ctrl-slash not working with esfera on linux (line ending trouble?)
+X   or maybe ctrl-slash just broken on linux?
+X   http://code.google.com/p/processing/issues/detail?id=596
+X   fix from pkalauskas
+X update to Java 6u24 for Linux and Windows
+X   brings things in sync with OS X 10.6
+X No .java file export
+X   http://code.google.com/p/processing/issues/detail?id=570
+X reference not available from the pde (0194) on mac
+X   http://code.google.com/p/processing/issues/detail?id=572
+X reference: auto-format has been moved to edit
+X   fix other items on the Environment page
+X casey's vote:
+X   Standard, Android, JavaScript, Jython
+X   or: Processing, Android, Processing.js, Processing.py
+X clicking the editor window (from the examples window) causes an exception
+X   happens because the window is not the focused component
+X JEditTextArea
+X   focusedComponent = this -> bad solution for a symptom
+X   in Editor, textarea.requestFocus -> requestFocusInWindow, watch the bool
+X don't reload sketch on "save as"
+X   this can result in loss of data (undo is lost)
+X   http://code.google.com/p/processing/issues/detail?id=62
+X smooth text on status bar (Linux)
+X clear up some issues with focus handling
+X save as/rename don't properly set focus
+X   http://code.google.com/p/processing/issues/detail?id=13
+X "No library found" message when using import statements and the code folder
+X   http://code.google.com/p/processing/issues/detail?id=568
+X remove version number from splash image
+X   http://code.google.com/p/processing/issues/detail?id=324
+X Subfolders in /libraries folder not supported anymore (toxi)
+X   http://code.google.com/p/processing/issues/detail?id=578
+X even though it doesn't look modified in the GUI, sketch wants to be saved
+X   save untitled sketch, then try to rename, says "save before renaming"
+
+earlier
+X Unsatisfied Link Error running OPENGL on 64-bit ubuntu
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1557
+X on linux, mozilla shouldn't be the default browser anymore
+X   is there a way to query the default browser? gnome-open? xdg-open?
+X   cleaned up some things inside settings, but this was already done
+X 64-bit windows causes UnsatisfiedLinkError with OpenGL
+
+
 0194 (pre)
 X add new icon for exported sketches
 X examples menu still showing in regular mode

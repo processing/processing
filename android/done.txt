@@ -1,3 +1,35 @@
+0195 android (pre)
+X point() doesn't render in A3D
+X   http://code.google.com/p/processing/issues/detail?id=592
+X Processing 0194 + Android = "Starting Build"
+X   http://code.google.com/p/processing/issues/detail?id=590
+X   hanging at problem where it's prompting for info on the cmd line
+o renaming the old AVD is fixing a lot of issues with hanging at startup
+X modes/android/android-core.zip (No such file or directory)
+X   problem was that the build was ignoring no sdk silently
+X   need to require ANDROID_SDK set for build.xml dist
+X   http://code.google.com/p/processing/issues/detail?id=577
+X No library found for android.content (and all the others)
+X   need to suppress the messages ala java.*
+o ctrl-shift-r (run on device) is totally hosed
+X when returning to android application, sometimes screen stays black
+X   http://code.google.com/p/processing/issues/detail?id=237
+X Device Killed or Disconnected Error Message with Libraries
+X   http://code.google.com/p/processing/issues/detail?id=565
+X there's gotta be something we can do to get better ant build message
+X "Unable to resolve target 'Google...'" when APIs aren't installed
+X   add an error message that explains what to do
+X canceling an attempt to find the Android SDK leaves no window open
+X   (Linux and Windows)
+X crash when trying to change Android mode void sketch no Android SDK Installed
+X   http://code.google.com/p/processing/issues/detail?id=605
+
+earlier
+X Error 336  Can't run any sketch.
+X   javac.exe was not included with the download
+X   http://code.google.com/p/processing/issues/detail?id=393
+
+
 0194 android (pre)
 X Can't change Sketch Permissions
 X   http://code.google.com/p/processing/issues/detail?id=559
