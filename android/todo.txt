@@ -16,16 +16,15 @@ X when returning to android application, sometimes screen stays black
 X   http://code.google.com/p/processing/issues/detail?id=237
 X Device Killed or Disconnected Error Message with Libraries
 X   http://code.google.com/p/processing/issues/detail?id=565
-X there's gotta be something we can do to get better ant build messages
+X there's gotta be something we can do to get better ant build message
+X "Unable to resolve target 'Google...'" when APIs aren't installed
+X   add an error message that explains what to do
 
 earlier
 X Error 336  Can't run any sketch.
 X   javac.exe was not included with the download
 X   http://code.google.com/p/processing/issues/detail?id=393
 
-
-_ "Unable to resolve target 'Google...'" when APIs aren't installed
-_   add an error message that explains what to do
 
 _ canceling an attempt to find the Android SDK leaves no window open
 _   (Linux and Windows)
