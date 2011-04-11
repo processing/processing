@@ -44,9 +44,9 @@ import processing.mode.java.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 195;
+  static public final int REVISION = 196;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0195";
+  static public String VERSION_NAME = "0196";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   /** True if heavy debugging error/log messages are enabled */
@@ -872,7 +872,7 @@ public class Base {
         if (modeTitle != null) {
           nextMode = findMode(modeTitle);
           if (nextMode == null) {
-            final String msg = 
+            final String msg =
               "This sketch was last used in “" + modeTitle + "” mode,\n" +
               "which does not appear to be installed. The sketch will\n" +
               "be opened in “" + defaultMode.getTitle() + "” mode instead.";
@@ -891,10 +891,10 @@ public class Base {
       // if it's not mode[0] already, then don't go into an infinite loop
       // trying to recreate a window with the default mode.
       if (nextMode == modeList[0]) {
-        Base.showError("Editor Problems", 
-                       "An error occurred while trying to change modes.\n" + 
+        Base.showError("Editor Problems",
+                       "An error occurred while trying to change modes.\n" +
                        "We'll have to quit for now because it's an\n" +
-                       "unfortunate bit of indigestion.", 
+                       "unfortunate bit of indigestion.",
                        null);
       } else {
         editor = modeList[0].createEditor(this, path, location);
@@ -1871,17 +1871,17 @@ public class Base {
   /**
    * Non-fatal error message with optional stack trace side dish.
    */
-  static public void showWarningTiered(String title, 
-                                       String primary, String secondary, 
+  static public void showWarningTiered(String title,
+                                       String primary, String secondary,
                                        Exception e) {
     if (title == null) title = "Warning";
 
-    final String message = primary + "\n" + secondary; 
+    final String message = primary + "\n" + secondary;
     if (commandLine) {
       System.out.println(title + ": " + message);
 
     } else {
-//      JOptionPane.showMessageDialog(new Frame(), message, 
+//      JOptionPane.showMessageDialog(new Frame(), message,
 //                                    title, JOptionPane.WARNING_MESSAGE);
       if (!Base.isMacOS()) {
         JOptionPane.showMessageDialog(new JFrame(),
@@ -1925,7 +1925,7 @@ public class Base {
     }
     if (e != null) e.printStackTrace();
   }
-  
+
 
   /**
    * Show an error message that's actually fatal to the program.
