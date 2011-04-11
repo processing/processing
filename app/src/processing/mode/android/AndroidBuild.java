@@ -57,7 +57,7 @@ class AndroidBuild extends JavaBuild {
     sdk = mode.getSDK();
     coreZipFile = mode.getCoreZipLocation();
     
-    AVD.ensureEclairAVD(sdk);
+//    AVD.ensureEclairAVD(sdk);
   }
 
 
@@ -68,6 +68,14 @@ class AndroidBuild extends JavaBuild {
    * @throws IOException 
    */
   public File build(String target) throws IOException, SketchException {
+    boolean avd = AVD.ensureEclairAVD(sdk);
+    if (!avd) {
+      SketchException se = 
+        new SketchException("Could not create a virtual device for the emulator.");
+      se.hideStackTrace();
+      throw se;
+    }
+
     this.target = target;
     File folder = createProject();
     if (folder != null) {
