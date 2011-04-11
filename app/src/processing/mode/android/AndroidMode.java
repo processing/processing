@@ -47,7 +47,12 @@ public class AndroidMode extends JavaMode {
   
   @Override
   public Editor createEditor(Base base, String path, int[] location) {
-    return new AndroidEditor(base, path, location, this);
+    try {
+      return new AndroidEditor(base, path, location, this);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   

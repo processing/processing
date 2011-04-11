@@ -872,10 +872,11 @@ public class Base {
         if (modeTitle != null) {
           nextMode = findMode(modeTitle);
           if (nextMode == null) {
-            Base.showWarning("Depeche Mode",
-                             "This sketch was last used in “" + modeTitle + "” mode,\n" +
-                             "which does not appear to be installed. The sketch will\n" +
-                             "be opened in “" + defaultMode.getTitle() + "” mode instead.", null);
+            final String msg = 
+              "This sketch was last used in “" + modeTitle + "” mode,\n" +
+              "which does not appear to be installed. The sketch will\n" +
+              "be opened in “" + defaultMode.getTitle() + "” mode instead.";
+            Base.showWarning("Depeche Mode", msg, null);
             nextMode = defaultMode;
           }
         }
@@ -884,6 +885,21 @@ public class Base {
       e.printStackTrace();
     }
     Editor editor = nextMode.createEditor(this, path, location);
+    if (editor == null) {
+      // if it's the last editor window
+//      if (editors.size() == 0 && defaultFileMenu == null) {
+      // if it's not mode[0] already, then don't go into an infinite loop
+      // trying to recreate a window with the default mode.
+      if (nextMode == modeList[0]) {
+        Base.showError("Editor Problems", 
+                       "An error occurred while trying to change modes.\n" + 
+                       "We'll have to quit for now because it's an\n" +
+                       "unfortunate bit of indigestion.", 
+                       null);
+      } else {
+        editor = modeList[0].createEditor(this, path, location);
+      }
+    }
 
     // Make sure that the sketch actually loaded
     if (editor.getSketch() == null) {
@@ -1853,6 +1869,65 @@ public class Base {
 
 
   /**
+   * Non-fatal error message with optional stack trace side dish.
+   */
+  static public void showWarningTiered(String title, 
+                                       String primary, String secondary, 
+                                       Exception e) {
+    if (title == null) title = "Warning";
+
+    final String message = primary + "\n" + secondary; 
+    if (commandLine) {
+      System.out.println(title + ": " + message);
+
+    } else {
+//      JOptionPane.showMessageDialog(new Frame(), message, 
+//                                    title, JOptionPane.WARNING_MESSAGE);
+      if (!Base.isMacOS()) {
+        JOptionPane.showMessageDialog(new JFrame(),
+                                      "<html><body>" +
+                                      "<b>" + primary + "</b>" +
+                                      "<br>" + secondary, title,
+                                      JOptionPane.WARNING_MESSAGE);
+      } else {
+        // Pane formatting adapted from the Quaqua guide
+        // http://www.randelshofer.ch/quaqua/guide/joptionpane.html
+        JOptionPane pane =
+          new JOptionPane("<html> " +
+                          "<head> <style type=\"text/css\">"+
+                          "b { font: 13pt \"Lucida Grande\" }"+
+                          "p { font: 11pt \"Lucida Grande\"; margin-top: 8px }"+
+                          "</style> </head>" +
+                          "<b>" + primary + "</b>" +
+                          "<p>" + secondary + "</p>",
+                          JOptionPane.WARNING_MESSAGE);
+
+//        String[] options = new String[] {
+//            "Yes", "No"
+//        };
+//        pane.setOptions(options);
+
+        // highlight the safest option ala apple hig
+//        pane.setInitialValue(options[0]);
+
+        JDialog dialog = pane.createDialog(new JFrame(), null);
+        dialog.setVisible(true);
+
+//        Object result = pane.getValue();
+//        if (result == options[0]) {
+//          return JOptionPane.YES_OPTION;
+//        } else if (result == options[1]) {
+//          return JOptionPane.NO_OPTION;
+//        } else {
+//          return JOptionPane.CLOSED_OPTION;
+//        }
+      }
+    }
+    if (e != null) e.printStackTrace();
+  }
+  
+
+  /**
    * Show an error message that's actually fatal to the program.
    * This is an error that can't be recovered. Use showWarning()
    * for errors that allow P5 to continue running.
@@ -1954,7 +2029,7 @@ public class Base {
 //      }
 
   static public int showYesNoQuestion(Frame editor, String title,
-                                            String primary, String secondary) {
+                                      String primary, String secondary) {
     if (!Base.isMacOS()) {
       return JOptionPane.showConfirmDialog(editor,
                                            "<html><body>" +
