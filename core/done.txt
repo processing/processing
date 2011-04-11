@@ -1,3 +1,25 @@
+0195 core (pre)
+X deal with bad screen updates for sketches running < 60 fps in JAVA2D
+X   had to add an additional offscreen buffer, which is more memory
+X   however hopefully not a problem on modern machines
+X   and probably no worse than what MemoryImageSource does
+X   removed large synchronized block
+A OPENGL2 record only saves one line in a LINES shape
+A   http://code.google.com/p/processing/issues/detail?id=579
+X add isClosed() and getChildren() methods to PShape
+X Frame skipping with processor intensive applets using 1.6
+X   http://dev.processing.org/bugs/show_bug.cgi?id=766
+X   may be fixed, but not verified
+o definite present-mode weirdness with background colors
+X normal() command commented out in sphere() method
+X   http://code.google.com/p/processing/issues/detail?id=602
+X save() no longer works at bottom of draw with JAVA2D
+X   neither does loadPixels it seems
+X   http://code.google.com/p/processing/issues/detail?id=594
+X   made an edit so that loadPixels will apply to the offscreen image, but...
+X   ironing out more issues with set() and the latest release
+
+
 0194 core (pre)
 X flicker between background and rest with JAVA2D
 X   http://code.google.com/p/processing/issues/detail?id=558
