@@ -3849,8 +3849,14 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void printMatrix() {
     if (matrixMode == PROJECTION) {
+      if (!projectionUpdated) {
+        getProjectionMatrix();      
+      }       
       projection.print();
     } else {
+      if (!modelviewUpdated) {
+        getModelviewMatrix();    
+      }      
       modelview.print();  
     } 
   }
@@ -4483,6 +4489,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * Print the current projection matrix.
    */
   public void printProjection() {
+    if (!projectionUpdated) {
+      getProjectionMatrix();      
+    }    
     projection.print();
   }
 
