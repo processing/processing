@@ -579,7 +579,7 @@ public class PFont implements PConstants {
       if (index != -1) {
         return index;
       }
-      if (font.canDisplay(c)) {
+      if (font != null && font.canDisplay(c)) {
         // create the glyph
         addGlyph(c);
         // now where did i put that?
