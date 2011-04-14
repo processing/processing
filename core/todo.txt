@@ -1,28 +1,36 @@
 0196 core
+o textAlign(RIGHT) is shutting off native fonts
+o   makes salaryper super ugly
+X   i think this must have been fixed?
+X fix minor native fonts issue
+
+_ image resizing is ugly (just use java2d?)
+_   also deal with copy()/blend() inaccuracies
+_   http://code.google.com/p/processing/issues/detail?id=332
 
 
-_ textAlign(RIGHT) is shutting off native fonts
-_   makes salaryper super ugly
-
+for 2.0
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
-
-_ selectInput() and selectOutput() freeze on OS X
-_   http://code.google.com/p/processing/issues/detail?id=445
-
+_ selectInput() and selectOutput() freezes
+_   just nix the function and go with a callback setup
+_   http://code.google.com/p/processing/issues/detail?id=173
+o   http://code.google.com/p/processing/issues/detail?id=445
+o selectInput() fails when called from within keyPressed()
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1220
 _ OpenGL Applets won't load with JRE 6 update 21 or higher
+_   need to make the final call on this and implement
 _   http://code.google.com/p/processing/issues/detail?id=429
+_ clean up filter stuff?
+_   filter(GRAY) -> to push things to luminosity-based gray
+_   filter(MASK, ...) -> or ALPHA? 
+_   filter(TINT, tintColor)
 
 _ clipping
 _   http://mrl.nyu.edu/~perlin/experiments/borg/render/index.html
 _   http://en.wikipedia.org/wiki/Clip_Mapping
 _   http://www.cubic.org/docs/3dclip.htm
 _ perspective() applied after camera()... problems?
-
-_ clean up filter stuff?
-_   filter(GRAY) -> to push things to luminosity-based gray
-_   filter(MASK, ...) -> or ALPHA? 
-_   filter(TINT, tintColor)
 
 Hi all, just thought I'd share something. 
 For a while now, I've been having unexpected frame rate drops with JOGL when switching into fullscreen-exclusive mode (it halved no matter what I did - resolution switching, reducing how much I drew, etc). 
@@ -32,9 +40,6 @@ app.requestForeground(true);
 // app extends com.apple.eawt.Application implements Runnable, GLEventListener 
 in my switch-to-fullscreen method, after creating the new fullscreen frame and before calling setFullScreenWindow(...); 
 Unfortunately I don't really understand the true cause of the underlying problem (and it requires apple.awt.fakefullscreen="true" to work), so this solution is voodoo programming at best. I hope someone finds it helpful regardless :)
-
-_ image resizing is ugly (just use java2d?)
-_   http://code.google.com/p/processing/issues/detail?id=332
 
 _ show an error when using a font character that isn't available
 _   maybe fall back on other characters instead?
@@ -144,9 +149,6 @@ _ inconsistent anti-aliasing with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1413
 _ modify PVector to include better methods for chaining operations
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1415
-
-_ selectInput() fails when called from within keyPressed()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1220
 
 _ add java.io.Reader (and Writer?) to imports
 
@@ -305,7 +307,7 @@ _ P3D smooshes the top row of pixels when drawing text (or images)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=466
 _ textAlign(CENTER) with P3D and OPENGL produces messy result
 _   probably rounding error with the images
-_   http://dev.processing.org/bugs/show_bug.cgi?id=475
+_   http://code.google.com/p/processing/issues/detail?id=65
 X textures truly did get worse in P3D
 _   problem is that bilinear is turned on by default starting in 0124(?)
 X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
@@ -322,9 +324,9 @@ _   in opengl mode, use its tesselator
 _   because the vertex calls can just come right back to regular vertex calls
 _   this way we can also implement breakShape() for opengl
 _ smooth in P3D has zbuffer glitches
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1000
+_   http://code.google.com/p/processing/issues/detail?id=131
 _ smoothing is slow
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1001
+_   http://code.google.com/p/processing/issues/detail?id=132
 _ textured sphere example needs to set normals
 _   also needs fix for last edge and the seam
 
