@@ -127,23 +127,23 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   // GL parameters
   
-  static protected boolean glparamsRead = false;
+  static protected boolean glParamsRead = false;
   
   /** Extensions used by Processing */
-  static protected boolean npotTexSupported;
-  static protected boolean mipmapGeneration;
-  static protected boolean matrixGetSupported;
-  static protected boolean vboSupported;
-  static protected boolean fboSupported;
-  static protected boolean blendEqSupported;
-  static protected boolean texenvCrossbarSupported;
-  static protected boolean fboMultisampleSupported;
+  static public boolean npotTexSupported;
+  static public boolean mipmapGeneration;
+  static public boolean matrixGetSupported;
+  static public boolean vboSupported;
+  static public boolean fboSupported;
+  static public boolean blendEqSupported;
+  static public boolean texenvCrossbarSupported;
+  static public boolean fboMultisampleSupported;
   
   /** Some hardware limits */  
-  static protected int maxTextureSize;
-  static protected float maxPointSize;
-  static protected float maxLineWidth;
-  static protected int maxTextureUnits;
+  static public int maxTextureSize;
+  static public float maxPointSize;
+  static public float maxLineWidth;
+  static public int maxTextureUnits;
   
   /** OpenGL information strings */
   static public String OPENGL_VENDOR;
@@ -899,7 +899,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       
     getGLObjects();
     
-    if (!glparamsRead) {
+    if (!glParamsRead) {
       getGLParameters();  
     }
     
@@ -2383,9 +2383,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
               break;
             }
                           
-            gl.glEnable(tex.getGLTarget());            
+            gl.glEnable(tex.glTarget);            
             gl.glActiveTexture(GL.GL_TEXTURE0 + t);
-            gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
+            gl.glBindTexture(tex.glTarget, tex.glID);
             renderTextures[tcount] = tex;
             
             tcount++;
@@ -2400,9 +2400,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
       } else if (images[0] != null) {        
         PTexture tex = getTexture(images[0]);        
         if (tex != null) {      
-          gl.glEnable(tex.getGLTarget());
+          gl.glEnable(tex.glTarget);
           gl.glActiveTexture(GL.GL_TEXTURE0);
-          gl.glBindTexture(tex.getGLTarget(), tex.getGLID());   
+          gl.glBindTexture(tex.glTarget, tex.glID);   
           renderTextures[0] = tex;
           tcount = 1;
         }
@@ -2766,7 +2766,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         for (int t = 0; t < tcount; t++) {
           PTexture tex = renderTextures[t];          
           gl.glActiveTexture(GL.GL_TEXTURE0 + t);
-          gl.glBindTexture(tex.getGLTarget(), 0);
+          gl.glBindTexture(tex.glTarget, 0);
         }
         
 
@@ -2777,7 +2777,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         // glBindTexture in the second iteration.
         for (int t = 0; t < tcount; t++) {
           PTexture tex = renderTextures[t];
-          gl.glDisable(tex.getGLTarget());          
+          gl.glDisable(tex.glTarget);          
         }        
 
         
@@ -6099,22 +6099,22 @@ public class PGraphicsOpenGL2 extends PGraphics {
       if (texBlendMode == REPLACE) {
         // Texture 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
         // Simply sample the texture:
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
         // Texture 1:
         gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
         // Sample the texture, replacing the previous one.
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
       } else if (texBlendMode == BLEND) {
         // Texture 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
         // Texture 1:
         gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
         // Interpolate RGB with RGB...
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_INTERPOLATE);   
@@ -6137,12 +6137,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
       } else if (texBlendMode == MULTIPLY) {
         // Texture 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
         // Simply sample the texture.
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
         // Texture 1:
         gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
         // Combine this texture with the previous one.
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
         // Modulate (multiply) RGB with RGB:
@@ -6159,11 +6159,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);      
       } else if (texBlendMode == ADD) {
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
         // Add RGB with RGB:
         gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_ADD);    
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
@@ -6179,11 +6179,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
       } else if (texBlendMode == SUBTRACT) {
         // Texture 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
         // Texture 1:
         gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].getGLTarget(), textures[1].getGLID());
+        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
         // Subtract RGB with RGB:
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_SUBTRACT);    
@@ -6208,7 +6208,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       if (texBlendMode == REPLACE) {
         // Sampler 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());         
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);         
         // Replace using texture 1:
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
         // Replace RGB:
@@ -6224,7 +6224,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       } else if (texBlendMode == BLEND) {
         // Sampler 0: interpolation between textures 0 and 1 using alpha of 1.
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
         // Interpolate RGB with RGB...
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_INTERPOLATE);   
@@ -6249,7 +6249,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       } else if (texBlendMode == MULTIPLY) {
         // Sampler 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);        
         // Modulate (multiply) texture 0 with texture 1.
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
         // Modulate RGB with RGB:
@@ -6269,7 +6269,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       } else if (texBlendMode == ADD) {
         // Sampler 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);        
         // Add texture 0 to texture 1:
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_ADD);    
@@ -6288,7 +6288,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       } else if (texBlendMode == SUBTRACT) {
         // Sampler 0:
         gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].getGLTarget(), textures[0].getGLID());        
+        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);        
         // Substract texture 1 from texture 0:
         gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
         // Subtract RGB with RGB:
@@ -6318,7 +6318,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   protected void modulateWithPrimaryColor(int unit, PTexture tex) {
     gl2f.glActiveTexture(GL2.GL_TEXTURE0 + unit);
-    gl2f.glBindTexture(tex.getGLTarget(), tex.getGLID());
+    gl2f.glBindTexture(tex.glTarget, tex.glID);
     // Interpolate RGB of previous color (result of blending in sampler 0) with RGB
     // of primary color (tinted and lit from pixel)...
     gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
@@ -6373,11 +6373,21 @@ public class PGraphicsOpenGL2 extends PGraphics {
   // TEXTURE UTILS  
 
   /**
+   * This utility method returns the texture associated to the renderer's.
+   * drawing surface, making sure is updated to reflect the current contents
+   * off the screen (or offscreen drawing surface).
+   */    
+  public PTexture getTexture() {    
+    loadTexture();
+    return texture;
+  }
+  
+  /**
    * This utility method returns the texture associated to the image.
    * creating and/or updating it if needed.
    * @param img the image to have a texture metadata associated to it
    */  
-  protected PTexture getTexture(PImage img) {
+  public PTexture getTexture(PImage img) {
     PTexture tex = (PTexture)img.getCache(ogl);
     if (tex == null) {
       tex = addTexture(img);
@@ -6439,8 +6449,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
     gl2f.glPushMatrix();
     gl2f.glLoadIdentity();    
     
-    gl.glEnable(tex.getGLTarget());
-    gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
+    gl.glEnable(tex.glTarget);
+    gl.glBindTexture(tex.glTarget, tex.glID);
     gl.glDepthMask(false);
     gl.glDisable(GL.GL_BLEND);
 
@@ -6457,8 +6467,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
     // with the current fragment color.
     gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
     
-    gl.glBindTexture(tex.getGLTarget(), 0);
-    gl.glDisable(tex.getGLTarget());
+    gl.glBindTexture(tex.glTarget, 0);
+    gl.glDisable(tex.glTarget);
     
     if (hints[DISABLE_DEPTH_MASK]) {
       gl.glDepthMask(false);  
@@ -6572,11 +6582,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * Utility function to copy buffer to texture.
    */
   protected void copyToTexture(PTexture tex, IntBuffer buffer, int x, int y, int w, int h) {
-    gl.glEnable(tex.getGLTarget());
-    gl.glBindTexture(tex.getGLTarget(), tex.getGLID());    
-    gl.glTexSubImage2D(tex.getGLTarget(), 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
-    gl.glBindTexture(tex.getGLTarget(), 0);
-    gl.glDisable(tex.getGLTarget());
+    gl.glEnable(tex.glTarget);
+    gl.glBindTexture(tex.glTarget, tex.glID);    
+    gl.glTexSubImage2D(tex.glTarget, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+    gl.glBindTexture(tex.glTarget, 0);
+    gl.glDisable(tex.glTarget);
   }   
 
   //////////////////////////////////////////////////////////////
@@ -6764,8 +6774,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];    
     
     offscreenMultisample = false;
-    offscreenFramebuffer = new PFramebuffer(parent, texture.getGLWidth(), 
-                                                    texture.getGLHeight(), false);
+    offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, false);
     
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
@@ -6776,8 +6785,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       } else if (opengl4X) {
         nsamples = 4;
       } 
-      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.getGLWidth(), 
-                                                                 texture.getGLHeight(), false);
+      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, false);
       try {                        
         offscreenFramebufferMultisample.addColorBufferMultisample(nsamples);
         offscreenMultisample = true;
@@ -6918,7 +6926,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     gl.glGetIntegerv(GL2.GL_MAX_TEXTURE_UNITS, temp, 0);
     maxTextureUnits = PApplet.min(MAX_TEXTURES, temp[0]);
     
-    glparamsRead = true;
+    glParamsRead = true;
   }
   
   
@@ -7255,9 +7263,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
       if (0 < texCount) {
         for (int t = 0; t < texCount; t++) {
           PTexture tex = texturesArray[t];
-          gl.glEnable(tex.getGLTarget());
+          gl.glEnable(tex.glTarget);
           gl.glActiveTexture(GL.GL_TEXTURE0 + t);
-          gl.glBindTexture(tex.getGLTarget(), tex.getGLID());        
+          gl.glBindTexture(tex.glTarget, tex.glID);        
           gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
           gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
         }
@@ -7269,13 +7277,13 @@ public class PGraphicsOpenGL2 extends PGraphics {
         for (int t = 0; t < texCount; t++) {
           PTexture tex = texturesArray[t];
           gl.glActiveTexture(GL.GL_TEXTURE0 + t);
-          gl.glBindTexture(tex.getGLTarget(), 0);        
+          gl.glBindTexture(tex.glTarget, 0);        
           gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
           gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
         }
         for (int t = 0; t < texCount; t++) {
           PTexture tex = texturesArray[t];
-          gl.glDisable(tex.getGLTarget());
+          gl.glDisable(tex.glTarget);
         }
       }    
       gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
