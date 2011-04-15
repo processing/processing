@@ -48,16 +48,15 @@ public class PTexture implements PConstants {
   protected PGraphicsAndroid3D a3d;  
   protected GL10 gl;
 
-  protected int glID; 
-  protected int glTarget;
-  protected int glFormat;
-  protected int glMinFilter;  
-  protected int glMagFilter;
-  protected int glWrapS; 
-  protected int glWrapT;
-  
-  protected int glWidth;
-  protected int glHeight;
+  public int glID; 
+  public int glTarget;
+  public int glFormat;
+  public int glMinFilter;  
+  public int glMagFilter;
+  public int glWrapS; 
+  public int glWrapT;  
+  public int glWidth;
+  public int glHeight;
   
   protected boolean usingMipmaps; 
   protected float maxTexCoordU;
@@ -399,82 +398,12 @@ public class PTexture implements PConstants {
  
   // Get OpenGL parameters
   
-  
-  protected int getGLWidth() {
-    return glWidth;
-  }
-  
-  
-  protected int getGLHeight() {
-    return glHeight;
-  }  
-  
-  
-  /**
-   * Provides the ID of the OpenGL texture object.
-   * @return int
-   */ 
-  protected int getGLID()  {
-    return glID;
-  }
-
-  
-  /**
-   * Returns the texture target.
-   * @return int
-   */ 
-  protected int getGLTarget()  {
-    return glTarget;
-  }    
-
-  
-  /**
-   * Returns the texture internal format.
-   * @return int
-   */ 
-  protected int getGLFormat() {
-    return glFormat;
-  }
-
-  
-  /**
-   * Returns the texture minimization filter.
-   * @return int
-   */ 
-  protected int getGLMinFilter() {
-    return glMinFilter;
-  }
-
-  
-  /**
-   * Returns the texture magnification filter.
-   * @return int
-   */ 
-  protected int getGLMagFilter() {
-    return glMagFilter;
-  }
-  
-  /**
-   * Returns the texture wrapping mode for the S coordinate.
-   * @return int
-   */ 
-  protected int getGLWrapS() {
-    return glWrapS;
-  }
-  
-  /**
-   * Returns the texture wrapping mode for the T coordinate.
-   * @return int
-   */ 
-  protected int getGLWrapT() {
-    return glWrapT;
-  }
     
   /**
    * Returns true or false whether or not the texture is using mipmaps.
    * @return boolean
    */ 
-  protected boolean usingMipmaps()  {
+  public boolean usingMipmaps()  {
     return usingMipmaps;
   }
   
@@ -483,7 +412,7 @@ public class PTexture implements PConstants {
    * Returns the maximum possible value for the texture coordinate U (horizontal).
    * @return float
    */ 
-  protected float getMaxTexCoordU() {
+  public float getMaxTexCoordU() {
     return maxTexCoordU;
   }
   
@@ -492,7 +421,7 @@ public class PTexture implements PConstants {
    * Returns the maximum possible value for the texture coordinate V (vertical).
    * @return float
    */ 
-  protected float getMaxTexCoordV() {
+  public float getMaxTexCoordV() {
     return maxTexCoordV;
   }
   
@@ -501,7 +430,7 @@ public class PTexture implements PConstants {
    * Returns true if the texture is flipped along the horizontal direction.
    * @return boolean;
    */ 
-  protected boolean isFlippedX() {
+  public boolean isFlippedX() {
     return flippedX;
   }
 
@@ -510,7 +439,7 @@ public class PTexture implements PConstants {
    * Sets the texture as flipped or not flipped on the horizontal direction.
    * @param v boolean;
    */ 
-  protected void setFlippedX(boolean v) {
+  public void setFlippedX(boolean v) {
     flippedX = v;
   } 
   
@@ -519,7 +448,7 @@ public class PTexture implements PConstants {
    * Returns true if the texture is flipped along the vertical direction.
    * @return boolean;
    */ 
-  protected boolean isFlippedY() {
+  public boolean isFlippedY() {
     return flippedY;
   }
 

@@ -42,11 +42,12 @@ public class PFramebuffer implements PConstants {
   protected PGraphicsAndroid3D a3d;
   protected GL10 gl;  
   protected GL11ExtensionPack gl11xp;  
-  protected int glFboID;
-  protected int glDepthBufferID;
-  protected int glStencilBufferID;
-  protected int width;
-  protected int height;
+  
+  public int glFboID;
+  public int glDepthBufferID;
+  public int glStencilBufferID;
+  public int width;
+  public int height;
   
   protected int numColorBuffers;
   protected int[] colorBufferAttchPoints;
@@ -133,15 +134,15 @@ public class PFramebuffer implements PConstants {
 
       for (int i = 0; i < numColorBuffers; i++) {
         colorBufferAttchPoints[i] = GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i;
-        glColorBufferTargets[i] = textures[i].getGLTarget();
-        glColorBufferIDs[i] = textures[i].getGLID();
+        glColorBufferTargets[i] = textures[i].glTarget;
+        glColorBufferIDs[i] = textures[i].glID;
         gl11xp.glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, colorBufferAttchPoints[i],
             glColorBufferTargets[i], glColorBufferIDs[i], 0);
       }
 
       if (validFbo() && textures != null && 0 < textures.length) {
-        width = textures[0].getGLWidth();
-        height = textures[0].getGLHeight();
+        width = textures[0].glWidth;
+        height = textures[0].glHeight;
       }
 
       a3d.popFramebuffer();
@@ -150,8 +151,8 @@ public class PFramebuffer implements PConstants {
       glColorBufferTargets = new int[numColorBuffers];
       glColorBufferIDs = new int[numColorBuffers];      
       for (int i = 0; i < numColorBuffers; i++) {
-        glColorBufferTargets[i] = textures[i].getGLTarget();
-        glColorBufferIDs[i] = textures[i].getGLID();
+        glColorBufferTargets[i] = textures[i].glTarget;
+        glColorBufferIDs[i] = textures[i].glID;
       }
     }
   }
@@ -270,7 +271,7 @@ public class PFramebuffer implements PConstants {
   public void backupScreen() {  
     if (pixelBuffer == null) allocatePixelBuffer();
     gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);    
-    copyToTexture(pixelBuffer, backupTexture.getGLID(), backupTexture.getGLTarget());
+    copyToTexture(pixelBuffer, backupTexture.glID, backupTexture.glTarget);
   }
 
   // Draws the contents of the backup texture to the screen.
