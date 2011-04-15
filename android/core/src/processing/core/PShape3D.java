@@ -55,17 +55,19 @@ public class PShape3D extends PShape implements PConstants {
     
   // ROOT shape properties:
 
-  // STATIC or DYNAMIC
-  protected int glUsage;
-  
   // Number of texture buffers currently in use:
-  protected int numTexBuffers;  
+  protected int numTexBuffers;    
   
+  // STATIC or DYNAMIC
+  // TODO: vertex, color, normal and texcoord data can potentially have 
+  // different usage modes.  
+  protected int glUsage;
+    
   // The OpenGL IDs for the different VBOs
-  protected int glVertexBufferID;
-  protected int glColorBufferID;
-  protected int glNormalBufferID;
-  protected int[] glTexCoordBufferID;
+  public int glVertexBufferID;
+  public int glColorBufferID;
+  public int glNormalBufferID;
+  public int[] glTexCoordBufferID;
   
   // The float buffers (directly allocated) used to put data into the VBOs
   protected FloatBuffer vertexBuffer;
@@ -2371,9 +2373,9 @@ public class PShape3D extends PShape implements PConstants {
             break;
           }
 
-          gl.glEnable(tex.getGLTarget());
+          gl.glEnable(tex.glTarget);
           gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-          gl.glBindTexture(tex.getGLTarget(), tex.getGLID());
+          gl.glBindTexture(tex.glTarget, tex.glID);
           renderTextures[numTextures] = tex;
           numTextures++;
         } else {
@@ -2451,11 +2453,11 @@ public class PShape3D extends PShape implements PConstants {
       for (int t = 0; t < numTextures; t++) {
         PTexture tex = renderTextures[t];
         gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-        gl.glBindTexture(tex.getGLTarget(), 0); 
+        gl.glBindTexture(tex.glTarget, 0); 
       }      
       for (int t = 0; t < numTextures; t++) {
         PTexture tex = renderTextures[t];
-        gl.glDisable(tex.getGLTarget());
+        gl.glDisable(tex.glTarget);
       }      
       if (pointSprites)   {
         gl.glDisable(GL11.GL_POINT_SPRITE_OES);
