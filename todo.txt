@@ -1,11 +1,23 @@
 0196
 
+_ checkbox in mode menu smashing into things
+_ remove opengl2 for 1.5 and examples
+
+
+_ colors for 2.0
+_ nurbs or other arch stuff for 2.0?
+
+_ changing number of screens between run causes things to show up off-screen
+_   so when running, check to make sure that things are out of the area
 
 _ help casey re-export all applets for the site
 _   remove .java files, use one central loading.gif and core.jar?
 _   use a custom applet.html template for the export
 _     the tool could copy this into the folder just before exporting
 _ build a new version of the reference
+
+_ PDE change indicator partially broken
+_   http://code.google.com/p/processing/issues/detail?id=620
 
 from peter n lewis 
 _ Use Selection For Find

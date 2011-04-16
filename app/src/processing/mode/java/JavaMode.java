@@ -139,7 +139,7 @@ public class JavaMode extends Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  protected File[] getExampleCategoryFolders() {
+  public File[] getExampleCategoryFolders() {
     // Basics, Topics, 3D, Books
     return new File[] { 
       new File(examplesFolder, "Basics"),
