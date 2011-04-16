@@ -85,7 +85,7 @@ public class JavaScriptMode extends Mode {
 
   
   //TODO Add examples
-  protected File[] getExampleCategoryFolders() {
+  public File[] getExampleCategoryFolders() {
     return new File[] {};
     /*
     return new File[] { 

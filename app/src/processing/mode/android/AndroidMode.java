@@ -62,7 +62,7 @@ public class AndroidMode extends JavaMode {
   }
   
   
-  protected File[] getExampleCategoryFolders() {
+  public File[] getExampleCategoryFolders() {
     return new File[] { 
       new File(examplesFolder, "Basics"),
       new File(examplesFolder, "Topics"),
