@@ -9,6 +9,8 @@ o   could this be an issue fixed by a MediaTracker?
 o first line of applets is missing on java 1.4+ on the mac
 X   http://dev.processing.org/bugs/show_bug.cgi?id=283
 o make the PFont index lookup use numbers up to 256?
+X change JAVA2D surface to be RGB instead of ARGB
+X   seeing some strange behavior, hopefully this won't be a regression
 
 
 for 2.0
@@ -36,12 +38,14 @@ _ image resizing is ugly (just use java2d?)
 _   also deal with copy()/blend() inaccuracies
 _   http://code.google.com/p/processing/issues/detail?id=332
 _ implement a more efficient version of blend()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=942
+_   http://code.google.com/p/processing/issues/detail?id=120
 _ blend() bugs with identically-sized images
 _   http://code.google.com/p/processing/issues/detail?id=285
 _ transparency issue with JAVA2D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1280
 _   http://code.google.com/p/processing/issues/detail?id=182
+_ copy(image with transparency) doesn't keep the transparency at start up
+_   http://code.google.com/p/processing/issues/detail?id=601
+
 o filter() doesn't need a loadPixels
 o   but if you want to filter *and* mess w/ pixels (avoid double load)
 o   then do loadPixels() /before/ filter, and updatePixels after messing
