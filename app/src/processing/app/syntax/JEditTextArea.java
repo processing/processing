@@ -834,6 +834,23 @@ public class JEditTextArea extends JComponent
   }
 
   /**
+   * Returns the start offset of the line after this line, or the end of 
+   * this line if there is no next line.
+   * @param line The line
+   * @return The end offset of the specified line, or -1 if the line is
+   * invalid.
+   */
+  public int getLineSelectionStopOffset(int line)
+  {
+    Element lineElement = document.getDefaultRootElement()
+    .getElement(line);
+    if(lineElement == null)
+      return -1;
+    else
+      return Math.min(lineElement.getEndOffset(),getDocumentLength());
+  }
+
+  /**
    * Returns the length of the specified line.
    * @param line The line
    */
@@ -1143,7 +1160,7 @@ public class JEditTextArea extends JComponent
     {
       throw new IllegalArgumentException("Bounds out of"
           + " range: " + newStart + "," +
-          newEnd);
+          newEnd + " [" + getDocumentLength() + "]");
     }
 
     // If the new position is the same as the old, we don't
@@ -1199,6 +1216,64 @@ public class JEditTextArea extends JComponent
       //System.out.println(getLineOfOffset(start) + " " +
       //                 getLineOfOffset(end));
     }
+  }
+  
+  private enum CharacterKinds {
+      Word,
+      Whitespace,
+      Other
+  }
+  
+  private CharacterKinds CharacterKind( char ch, String noWordSep )
+  {
+    if ( Character.isLetterOrDigit(ch) || ch=='_' || noWordSep.indexOf(ch) != -1 )
+      return CharacterKinds.Word;
+    else if ( Character.isWhitespace(ch) )
+      return CharacterKinds.Whitespace;
+    else
+      return CharacterKinds.Other;
+  }
+
+  protected void setNewSelectionWord( int line, int offset )
+  {
+    if (getLineLength(line) == 0) {
+      newSelectionStart = getLineStartOffset(line);
+      newSelectionEnd = newSelectionStart;
+      return;
+    }
+    
+    String noWordSep = (String)document.getProperty("noWordSep");
+    if(noWordSep == null)
+      noWordSep = "";
+
+    String lineText = getLineText(line);
+
+    int wordStart = 0;
+    int wordEnd = lineText.length();
+
+    char ch = lineText.charAt(Math.max(0,offset - 1));
+    
+    CharacterKinds thisWord = CharacterKind(ch,noWordSep);
+    
+    for(int i = offset - 1; i >= 0; i--) {
+      ch = lineText.charAt(i);
+      if(CharacterKind(ch,noWordSep) != thisWord) {
+        wordStart = i + 1;
+        break;
+      }
+    }
+
+    for(int i = offset; i < lineText.length(); i++) {
+      ch = lineText.charAt(i);
+      if(CharacterKind(ch,noWordSep) != thisWord) {
+        wordEnd = i;
+        break;
+      }
+    }
+    int lineStart = getLineStartOffset(line);
+    
+    newSelectionStart = lineStart + wordStart;
+    newSelectionEnd = lineStart + wordEnd;
   }
 
 
@@ -1833,6 +1908,14 @@ public class JEditTextArea extends JComponent
   protected int selectionEndLine;
   protected boolean biasLeft;
 
+  protected int newSelectionStart; // hack to get around lack of multiple returns in Java
+  protected int newSelectionEnd;
+
+  protected boolean selectWord;
+  protected boolean selectLine;
+  protected int selectionAncorStart;
+  protected int selectionAncorEnd;
+
   protected int bracketPosition;
   protected int bracketLine;
 
@@ -2171,9 +2254,26 @@ public class JEditTextArea extends JComponent
     {
       if (popup != null && popup.isVisible()) return;
 
+      if ( !selectWord && !selectLine ) {
       setSelectionRectangular((evt.getModifiers()
           & InputEvent.CTRL_MASK) != 0);
       select(getMarkPosition(),xyToOffset(evt.getX(),evt.getY()));
+      } else {
+        int line = yToLine(evt.getY());
+        if ( selectWord ) {
+          setNewSelectionWord( line, xToOffset(line,evt.getX()) );
+        } else {
+          newSelectionStart = getLineStartOffset(line);
+          newSelectionEnd = getLineSelectionStopOffset(line);
+        }
+        if ( newSelectionStart < selectionAncorStart ) {
+          select(newSelectionStart,selectionAncorEnd);
+        } else if ( newSelectionEnd > selectionAncorEnd ) {
+          select(selectionAncorStart,newSelectionEnd);
+        } else {
+          select(newSelectionStart,newSelectionEnd);
+        }
+      }
     }
 
     public void mouseMoved(MouseEvent evt) {}
@@ -2202,7 +2302,7 @@ public class JEditTextArea extends JComponent
   {
     public void mousePressed(MouseEvent evt)
     {
-      try {
+//      try {
 //      requestFocus();
 //      // Focus events not fired sometimes?
 //      setCaretVisible(true);
@@ -2214,7 +2314,10 @@ public class JEditTextArea extends JComponent
         // the problem, though it's not clear why the wrong Document data was
         // being using regardless of the focusedComponent.
 //        if (focusedComponent != JEditTextArea.this) return;
-        if (!hasFocus()) return;
+        if (!hasFocus()) {
+          requestFocusInWindow();
+          return;
+        }
 
       // isPopupTrigger wasn't working for danh on windows
       boolean trigger = (evt.getModifiers() & InputEvent.BUTTON3_MASK) != 0;
@@ -2230,6 +2333,9 @@ public class JEditTextArea extends JComponent
       int line = yToLine(evt.getY());
       int offset = xToOffset(line,evt.getX());
       int dot = getLineStartOffset(line) + offset;
+
+      selectLine = false;
+      selectWord = false;
 
       switch(evt.getClickCount()) {
 
@@ -2251,11 +2357,11 @@ public class JEditTextArea extends JComponent
         doTripleClick(evt,line,offset,dot);
         break;
       }
-      } catch (ArrayIndexOutOfBoundsException aioobe) {
-        aioobe.printStackTrace();
-        int line = yToLine(evt.getY());
-        System.out.println("line is " + line + ", line count is " + getLineCount());
-      }
+//      } catch (ArrayIndexOutOfBoundsException aioobe) {
+//        aioobe.printStackTrace();
+//        int line = yToLine(evt.getY());
+//        System.out.println("line is " + line + ", line count is " + getLineCount());
+//      }
     }
 
 
@@ -2294,74 +2400,11 @@ public class JEditTextArea extends JComponent
         bl.printStackTrace();
       }
 
-      String noWordSep = (String)document.getProperty("noWordSep");
-      if(noWordSep == null)
-        noWordSep = "";
-
-      // Ok, it's not a bracket... select the word
-      String lineText = getLineText(line);
-
-      int wordStart = 0;
-      int wordEnd = lineText.length();
-
-      char ch = lineText.charAt(Math.max(0,offset - 1));
-
-      // special case for whitespace (fry 0122, bug #348)
-      // this is really nasty.. turns out that double-clicking any non-letter
-      // or digit char gets lumped together.. sooo, this quickly gets messy,
-      // because really it needs to check whether the chars are of the same
-      // type.. so a double space or double - might be grouped together,
-      // but what about a +=1? do + and - get grouped but not the 1? blech,
-      // coming back to this later. it's not a difficult fix, just a
-      // time-consuming one to track down all the proper cases.
-      /*
-      if (ch == ' ') {
-        //System.out.println("yeehaa");
-
-        for(int i = offset - 1; i >= 0; i--) {
-          if (lineText.charAt(i) == ' ') {
-            wordStart = i;
-          } else {
-            break;
-          }
-        }
-        for(int i = offset; i < lineText.length(); i++) {
-          if (lineText.charAt(i) == ' ') {
-            wordEnd = i + 1;
-          } else {
-            break;
-          }
-        }
-
-      } else {
-       */
-
-      // If the user clicked on a non-letter char,
-      // we select the surrounding non-letters
-      boolean selectNoLetter = (!Character.isLetterOrDigit(ch)
-          && noWordSep.indexOf(ch) == -1);
-
-      for(int i = offset - 1; i >= 0; i--) {
-        ch = lineText.charAt(i);
-        if (selectNoLetter ^ (!Character.isLetterOrDigit(ch) &&
-            noWordSep.indexOf(ch) == -1)) {
-          wordStart = i + 1;
-          break;
-        }
-      }
-
-      for(int i = offset; i < lineText.length(); i++) {
-        ch = lineText.charAt(i);
-        if(selectNoLetter ^ (!Character.isLetterOrDigit(ch) &&
-            noWordSep.indexOf(ch) == -1)) {
-          wordEnd = i;
-          break;
-        }
-      }
-      //}
-
-      int lineStart = getLineStartOffset(line);
-      select(lineStart + wordStart,lineStart + wordEnd);
+      setNewSelectionWord( line, offset );
+      select(newSelectionStart,newSelectionEnd);
+      selectWord = true;
+      selectionAncorStart = selectionStart;
+      selectionAncorEnd = selectionEnd;
 
       /*
         String lineText = getLineText(line);
@@ -2377,7 +2420,10 @@ public class JEditTextArea extends JComponent
     private void doTripleClick(MouseEvent evt, int line,
         int offset, int dot)
     {
-      select(getLineStartOffset(line),getLineStopOffset(line)-1);
+      selectLine = true;
+      select(getLineStartOffset(line),getLineSelectionStopOffset(line));
+      selectionAncorStart = selectionStart;
+      selectionAncorEnd = selectionEnd;
     }
   }
 
