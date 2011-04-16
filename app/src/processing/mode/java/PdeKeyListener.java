@@ -213,70 +213,19 @@ public class PdeKeyListener {
     switch ((int) c) {
 
     case 9:  // TAB
-      if (textarea.isSelectionActive()) {
-        if ((event.getModifiers() & KeyEvent.SHIFT_MASK) == 0) {
-          editor.handleIndent();
-        } else {
-          editor.handleOutdent();
-        }
+      if ((event.getModifiers() & KeyEvent.SHIFT_MASK) != 0) {
+        // if shift is down, the user always expects an outdent
+        // http://code.google.com/p/processing/issues/detail?id=458
+        editor.handleOutdent();
+
+      } else if (textarea.isSelectionActive()) {
+        editor.handleIndent();
+        
       } else if (Preferences.getBoolean("editor.tabs.expand")) {
         int tabSize = Preferences.getInteger("editor.tabs.size");
         textarea.setSelectedText(spaces(tabSize));
         event.consume();
         return true;
-
-//      } else if (tabsIndent) {
-//        // this code is incomplete
-//
-//        // if this brace is the only thing on the line, outdent
-//        //char contents[] = getCleanedContents();
-//        char contents[] = textarea.getText().toCharArray();
-//        // index to the character to the left of the caret
-//        int prevCharIndex = textarea.getCaretPosition() - 1;
-//
-//        // now find the start of this line
-//        int lineStart = calcLineStart(prevCharIndex, contents);
-//
-//        int lineEnd = lineStart;
-//        while ((lineEnd < contents.length - 1) &&
-//               (contents[lineEnd] != 10)) {
-//          lineEnd++;
-//        }
-//
-//        // get the number of braces, to determine whether this is an indent
-//        int braceBalance = 0;
-//        int index = lineStart;
-//        while ((index < contents.length) &&
-//               (contents[index] != 10)) {
-//          if (contents[index] == '{') {
-//            braceBalance++;
-//          } else if (contents[index] == '}') {
-//            braceBalance--;
-//          }
-//          index++;
-//        }
-//
-//        // if it's a starting indent, need to ignore it, so lineStart
-//        // will be the counting point. but if there's a closing indent,
-//        // then the lineEnd should be used.
-//        int where = (braceBalance > 0) ? lineStart : lineEnd;
-//        int indent = calcBraceIndent(where, contents);
-//        if (indent == -1) {
-//          // no braces to speak of, do nothing
-//          indent = 0;
-//        } else {
-//          indent += tabSize;
-//        }
-//
-//        // and the number of spaces it has
-//        int spaceCount = calcSpaceCount(prevCharIndex, contents);
-//
-//        textarea.setSelectionStart(lineStart);
-//        textarea.setSelectionEnd(lineStart + spaceCount);
-//        textarea.setSelectedText(Editor.EMPTY.substring(0, indent));
-//
-//        event.consume();
-//        return true;
       }
       break;
 
