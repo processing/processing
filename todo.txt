@@ -1,27 +1,23 @@
 0196
-
-_ checkbox in mode menu smashing into things
-_ remove opengl2 for 1.5 and examples
-
-
-_ colors for 2.0
-_ nurbs or other arch stuff for 2.0?
-
-_ changing number of screens between run causes things to show up off-screen
-_   so when running, check to make sure that things are out of the area
+X upgrade to Quaqua 7.3.4 on OS X
+X   fixes checkbox in mode menu smashing into things
+C build a new version of the reference
 
 _ help casey re-export all applets for the site
 _   remove .java files, use one central loading.gif and core.jar?
 _   use a custom applet.html template for the export
 _     the tool could copy this into the folder just before exporting
-_ build a new version of the reference
+
+_ changing number of screens between run causes things to show up off-screen
+_   so when running, check to make sure that things are out of the area
 
 _ PDE change indicator partially broken
 _   http://code.google.com/p/processing/issues/detail?id=620
 
 from peter n lewis 
-_ Use Selection For Find
-_   http://code.google.com/p/processing/issues/detail?id=571
+Fixes from Peter N Lewis incorporated for the next release (0196 or 1.5, whichever comes first).
+X Use Selection For Find
+X   http://code.google.com/p/processing/issues/detail?id=571
 _ Double and Triple click and drag behaviour
 _   http://code.google.com/p/processing/issues/detail?id=576
 _ double-clicking whitespace selects adjacent chars
@@ -32,6 +28,13 @@ _   http://code.google.com/p/processing/issues/detail?id=59
 _ Find Previous and FindReplace dialog cleanup
 _   http://code.google.com/p/processing/issues/detail?id=580
 _ bugs 67, 68, 69 (below) cover more of this
+
+_ remove opengl2 for 1.5 and examples
+
+
+2.0
+_ colors for 2.0
+_ nurbs or other arch stuff for 2.0?
 
 
 _ Internationalization
