@@ -18,17 +18,16 @@ X shift-indent without selection increases indention
 X   http://code.google.com/p/processing/issues/detail?id=458
 X Running a sketch destroys other running PApplets
 X   http://code.google.com/p/processing/issues/detail?id=567
+X   allow more than one sketch to run at a time
 
-_ allow more than one sketch to run at a time
 _ help casey re-export all applets for the site
 _   remove .java files, use one central loading.gif and core.jar?
 _   use a custom applet.html template for the export
 _     the tool could copy this into the folder just before exporting
 _ remove all the 'applet' folders from svn
+
 _ remove opengl2 for 1.5 and examples for the final 1.5
 _ need to get a new stable release out there, the docs/ref are out of sync
-_ build is currently broken for p5 because of changes to the file layout
-_   something that gets fixed my 'make clean'
 
 from peter n lewis 
 X Use Selection For Find
@@ -68,6 +67,8 @@ X   http://code.google.com/p/processing/issues/detail?id=13
 2.0
 _ colors for 2.0
 _ nurbs or other arch stuff for 2.0?
+_ build is currently broken for fresh checkout due to changes to file layout
+_   something that gets fixed by 'make clean'
 
 _ Internationalization
 _   http://code.google.com/p/processing/issues/detail?id=593
