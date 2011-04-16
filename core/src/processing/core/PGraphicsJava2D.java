@@ -127,11 +127,14 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
     // Tried this with RGB instead of ARGB for the primarySurface version, 
     // but didn't see any performance difference (OS X 10.6, Java 6u24)
-    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    //image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);  // 0196
     if (primarySurface) {
-      offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);  // 0196
+      offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);  // 0196
+      //offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);  // 0196
       g2 = (Graphics2D) offscreen.getGraphics();
     } else {
+      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);  // 0196
       // if the buffer's offscreen anyway, no need for the extra offscreen buffer
       g2 = (Graphics2D) image.getGraphics();
     }
