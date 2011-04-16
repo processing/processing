@@ -3,31 +3,40 @@ X upgrade to Quaqua 7.3.4 on OS X
 X   fixes checkbox in mode menu smashing into things
 C build a new version of the reference
 
+from peter n lewis 
+X Use Selection For Find
+X   http://code.google.com/p/processing/issues/detail?id=571
+X double-clicking whitespace selects adjacent chars
+X   clicking i-- ) between -- and ) will select "-- )"
+X   in eclipse, it looks to see which is closest and selects that
+X   need to check behavior for word and bbedit
+X   http://code.google.com/p/processing/issues/detail?id=59
+X   http://code.google.com/p/processing/issues/detail?id=576
+X find/replace all around very ugly, fix it up
+o   http://dev.processing.org/bugs/show_bug.cgi?id=67
+X   http://code.google.com/p/processing/issues/detail?id=23
+X   http://code.google.com/p/processing/issues/detail?id=580
+X several tweaks
+o   http://dev.processing.org/bugs/show_bug.cgi?id=68
+o   only enable "find next" in menu after a find has happened
+X   http://code.google.com/p/processing/issues/detail?id=24
+
+_ sketch marked as modified too aggressively
+o   http://dev.processing.org/bugs/show_bug.cgi?id=328
+_   http://code.google.com/p/processing/issues/detail?id=57
+_ "save" clears undo information
+_   http://code.google.com/p/processing/issues/detail?id=411
+The problem comes from Editor.java's UndoAction inner class. The updateUndoState() method marks a sketch as unmodified when the undo stack is exhausted. This made sense when the undo stack was cleared on save, but it is no longer correct.
+Fix: remove lines 985-987 from Editor.java
+_ PDE change indicator partially broken
+_   http://code.google.com/p/processing/issues/detail?id=620
+
+
 _ help casey re-export all applets for the site
 _   remove .java files, use one central loading.gif and core.jar?
 _   use a custom applet.html template for the export
 _     the tool could copy this into the folder just before exporting
 
-_ changing number of screens between run causes things to show up off-screen
-_   so when running, check to make sure that things are out of the area
-
-_ PDE change indicator partially broken
-_   http://code.google.com/p/processing/issues/detail?id=620
-
-from peter n lewis 
-Fixes from Peter N Lewis incorporated for the next release (0196 or 1.5, whichever comes first).
-X Use Selection For Find
-X   http://code.google.com/p/processing/issues/detail?id=571
-_ Double and Triple click and drag behaviour
-_   http://code.google.com/p/processing/issues/detail?id=576
-_ double-clicking whitespace selects adjacent chars
-_   clicking i-- ) between -- and ) will select "-- )"
-_   in eclipse, it looks to see which is closest and selects that
-_   need to check behavior for word and bbedit
-_   http://code.google.com/p/processing/issues/detail?id=59
-_ Find Previous and FindReplace dialog cleanup
-_   http://code.google.com/p/processing/issues/detail?id=580
-_ bugs 67, 68, 69 (below) cover more of this
 
 _ remove opengl2 for 1.5 and examples
 
@@ -147,11 +156,9 @@ _   http://code.google.com/p/processing/issues/detail?id=555
 
 . . . . 
 
-_ "save" clears undo information
-_   http://code.google.com/p/processing/issues/detail?id=411
-The problem comes from Editor.java's UndoAction inner class. The updateUndoState() method marks a sketch as unmodified when the undo stack is exhausted. This made sense when the undo stack was cleared on save, but it is no longer correct.
-Fix: remove lines 985-987 from Editor.java
 
+_ changing number of screens between run causes things to show up off-screen
+_   so when running, check to make sure that things are out of the area
 _ saved window positions.. if displays has changed, becomes a problem
 _   record the display that it was on?
 _     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
@@ -161,9 +168,6 @@ _   messy since some displays have negative coords
 _   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _   http://code.google.com/p/processing/issues/detail?id=27
 Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
-
-_ sketch marked as modified too aggressively
-_   http://dev.processing.org/bugs/show_bug.cgi?id=328
 
 . . . . 
 
@@ -1060,11 +1064,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=924
 
 PDE / Find & Replace
 
-_ all around very ugly, fix it up
-_   http://dev.processing.org/bugs/show_bug.cgi?id=67
-_ several tweaks
-_   http://dev.processing.org/bugs/show_bug.cgi?id=68
-_   only enable "find next" in menu after a find has happened
 _ allowing to find & replace over multiple tabs 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=69
 
