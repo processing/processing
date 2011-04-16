@@ -45,6 +45,9 @@ public class SketchCode {
 
   /** Text of the program text for this tab */
   private String program;
+  
+  /** Last version of the program on disk. */
+  private String savedProgram;
 
   /** Document object for this tab. Currently this is a SyntaxDocument. */
   private Document document;
@@ -58,6 +61,9 @@ public class SketchCode {
    * that's currently the front.
    */
   private UndoManager undo = new UndoManager();
+  
+  /** What was on top of the undo stack when last saved. */ 
+//  private UndoableEdit lastEdit;
 
   // saved positions from last time this tab was used
   private int selectionStart;
@@ -150,16 +156,24 @@ public class SketchCode {
     return extension.equals(what);
   }
   
-  
+
+  /** get the current text for this tab */
   public String getProgram() {
     return program;
   }
-  
-  
+
+
+  /** set the current text for this tab */
   public void setProgram(String replacement) {
     program = replacement;
   }
-  
+
+
+  /** get the last version saved of this tab */
+  public String getSavedProgram() {
+    return savedProgram;
+  }
+
   
   public int getLineCount() {
     return Base.countLines(program);
@@ -259,6 +273,7 @@ public class SketchCode {
    */
   public void load() throws IOException {
     program = Base.loadFile(file);
+    savedProgram = program;
 
     if (program.indexOf('\uFFFD') != -1) {
       System.err.println(file.getName() + " contains unrecognized characters."); 
@@ -282,6 +297,7 @@ public class SketchCode {
     //history.record(s, SketchHistory.SAVE);
 
     Base.saveFile(program, file);
+    savedProgram = program;
     setModified(false);
   }
 
@@ -291,12 +307,13 @@ public class SketchCode {
    */
   public void saveAs(File newFile) throws IOException {
     Base.saveFile(program, newFile);
+    savedProgram = program;
     file = newFile;
     makePrettyName();
     setModified(false);
   }
   
-
+  
   /**
    * Called when the sketch folder name/location has changed. Called when 
    * renaming tab 0, the main code. 
