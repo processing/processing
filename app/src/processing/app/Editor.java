@@ -89,6 +89,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private JMenuItem undoItem, redoItem;
   protected UndoAction undoAction;
   protected RedoAction redoAction;
+  /** the currently selected tab's undo manager */
   private UndoManager undo;
   // used internally, and only briefly
   private CompoundEdit compoundEdit;
@@ -1068,6 +1069,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
       updateUndoState();
       redoAction.updateRedoState();
+      if (sketch != null) {
+        sketch.setModified(!getText().equals(sketch.getCurrentCode().getSavedProgram()));
+      }
     }
 
     protected void updateUndoState() {
@@ -1076,17 +1080,17 @@ public abstract class Editor extends JFrame implements RunnerListener {
         undoItem.setEnabled(true);
         undoItem.setText(undo.getUndoPresentationName());
         putValue(Action.NAME, undo.getUndoPresentationName());
-        if (sketch != null) {
-          sketch.setModified(true);  // 0107
-        }
+//        if (sketch != null) {
+//          sketch.setModified(true);  // 0107, removed for 0196
+//        }
       } else {
         this.setEnabled(false);
         undoItem.setEnabled(false);
         undoItem.setText("Undo");
         putValue(Action.NAME, "Undo");
-        if (sketch != null) {
-          sketch.setModified(false);  // 0107
-        }
+//        if (sketch != null) {
+//          sketch.setModified(false);  // 0107
+//        }
       }
     }
   }
@@ -1113,6 +1117,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
       updateRedoState();
       undoAction.updateUndoState();
+      if (sketch != null) {
+        sketch.setModified(!getText().equals(sketch.getCurrentCode().getSavedProgram()));
+      }
     }
 
     protected void updateRedoState() {

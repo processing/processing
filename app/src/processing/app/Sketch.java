@@ -626,9 +626,11 @@ public class Sketch {
    */
   public void setModified(boolean state) {
     //System.out.println("setting modified to " + state);
-    //new Exception().printStackTrace();
-    current.setModified(state);
-    calcModified();
+    //new Exception().printStackTrace(System.out);
+    if (current.isModified() != state) { 
+      current.setModified(state);
+      calcModified();
+    }
   }
 
 
