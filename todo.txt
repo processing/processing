@@ -11,6 +11,11 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=810
 X   http://code.google.com/p/processing/issues/detail?id=100
 X fix bug in loadfile2 example 
 X   http://code.google.com/p/processing/issues/detail?id=522
+o when running with external editor, hide the editor text area
+o   http://dev.processing.org/bugs/show_bug.cgi?id=20
+X   http://code.google.com/p/processing/issues/detail?id=9
+X shift-indent without selection increases indention
+X   http://code.google.com/p/processing/issues/detail?id=458
 
 _ allow more than one sketch to run at a time
 _ help casey re-export all applets for the site
@@ -970,8 +975,6 @@ _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility
 _   to overwrite. i.e. make a change and save in external editor,
 _   don't actually 
-_ when running with external editor, hide the editor text area
-_   http://dev.processing.org/bugs/show_bug.cgi?id=20
 _ add mnemonics for menus (alt-f to open 'file')
 _   http://code.google.com/p/processing/issues/detail?id=12
 _ option to just print all code in project
