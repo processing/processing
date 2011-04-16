@@ -349,6 +349,11 @@
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub*" perm="ugo+x" />
 
+    <replace file="macosx/work/Processing.app/Contents/Info.plist"
+	     token="VERSION" value="${version}" />
+    <replace file="macosx/work/Processing.app/Contents/Info.plist"
+	     token="REVISION" value="${revision}" />
+
     <exec executable="ditto" dir="macosx/work">
       <arg line="-c -k -rsrc . ../processing-${version}-macosx.zip" />
     </exec>
