@@ -128,12 +128,12 @@ public class PdeKeyListener {
     }
 
     // TODO i don't like these accessors. clean em up later.
-    if (!editor.getSketch().isModified()) {
-      if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
-          (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
-        sketch.setModified(true);
-      }
+//    if (!editor.getSketch().isModified()) {
+    if ((code == KeyEvent.VK_BACK_SPACE) || (code == KeyEvent.VK_TAB) ||
+        (code == KeyEvent.VK_ENTER) || ((c >= 32) && (c < 128))) {
+      sketch.setModified(true);
     }
+//    }
 
     if ((code == KeyEvent.VK_UP) &&
         ((event.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
