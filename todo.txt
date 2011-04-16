@@ -16,6 +16,8 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=20
 X   http://code.google.com/p/processing/issues/detail?id=9
 X shift-indent without selection increases indention
 X   http://code.google.com/p/processing/issues/detail?id=458
+X Running a sketch destroys other running PApplets
+X   http://code.google.com/p/processing/issues/detail?id=567
 
 _ allow more than one sketch to run at a time
 _ help casey re-export all applets for the site
