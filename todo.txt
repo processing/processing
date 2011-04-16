@@ -2,6 +2,26 @@
 X upgrade to Quaqua 7.3.4 on OS X
 X   fixes checkbox in mode menu smashing into things
 C build a new version of the reference
+X automatically add version numbers to Info.plist
+X   would help with beta releases, and not having to edit by hand
+X add another fix for text focus handling
+X   http://code.google.com/p/processing/issues/detail?id=627
+X file-save stops running sketch
+X   http://dev.processing.org/bugs/show_bug.cgi?id=810
+X   http://code.google.com/p/processing/issues/detail?id=100
+X fix bug in loadfile2 example 
+X   http://code.google.com/p/processing/issues/detail?id=522
+
+_ allow more than one sketch to run at a time
+_ help casey re-export all applets for the site
+_   remove .java files, use one central loading.gif and core.jar?
+_   use a custom applet.html template for the export
+_     the tool could copy this into the folder just before exporting
+_ remove all the 'applet' folders from svn
+_ remove opengl2 for 1.5 and examples for the final 1.5
+_ need to get a new stable release out there, the docs/ref are out of sync
+_ build is currently broken for p5 because of changes to the file layout
+_   something that gets fixed my 'make clean'
 
 from peter n lewis 
 X Use Selection For Find
@@ -21,30 +41,26 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=68
 o   only enable "find next" in menu after a find has happened
 X   http://code.google.com/p/processing/issues/detail?id=24
 
-_ sketch marked as modified too aggressively
+several changes to the undo setup
+X sketch marked as modified too aggressively
 o   http://dev.processing.org/bugs/show_bug.cgi?id=328
-_   http://code.google.com/p/processing/issues/detail?id=57
-_ "save" clears undo information
-_   http://code.google.com/p/processing/issues/detail?id=411
-The problem comes from Editor.java's UndoAction inner class. The updateUndoState() method marks a sketch as unmodified when the undo stack is exhausted. This made sense when the undo stack was cleared on save, but it is no longer correct.
-Fix: remove lines 985-987 from Editor.java
-_ PDE change indicator partially broken
-_   http://code.google.com/p/processing/issues/detail?id=620
+X   http://code.google.com/p/processing/issues/detail?id=57
+X "save" clears undo information
+X   http://code.google.com/p/processing/issues/detail?id=411
+X PDE change indicator partially broken
+X   http://code.google.com/p/processing/issues/detail?id=620
 
-
-_ help casey re-export all applets for the site
-_   remove .java files, use one central loading.gif and core.jar?
-_   use a custom applet.html template for the export
-_     the tool could copy this into the folder just before exporting
-
-
-_ remove opengl2 for 1.5 and examples
+fixed in 0195
+X rename/saveas doesn't properly have its focus set
+X   under windows, immediately typing after rename doesn't select
+X   the whole thing is selected, but not directly editable
+o   http://dev.processing.org/bugs/show_bug.cgi?id=31
+X   http://code.google.com/p/processing/issues/detail?id=13
 
 
 2.0
 _ colors for 2.0
 _ nurbs or other arch stuff for 2.0?
-
 
 _ Internationalization
 _   http://code.google.com/p/processing/issues/detail?id=593
@@ -145,10 +161,6 @@ _   (on mac os x, due to the change for no windows open)
 
 _ how to handle double-clicked files on windows?
 _   big deal for psk and others
-
-_ need to get a new stable release out there, the docs/ref are out of sync
-_ build is currently broken for p5 because of changes to the file layout
-_   something that gets fixed my 'make clean'
 
 _ Added some basic Emacs cursor navigator keybindings
 _   just implement these as a preference
@@ -276,9 +288,6 @@ _ why aren't prefs from theme.txt showing up in preferences.txt? hrm
 _   or rather, why can't they be overridden? 
 _   should fonts at least be in prefs.txt?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1444
-
-_ automatically add version numbers to Info.plist
-_   would help with beta releases, and not having to edit by hand
 
 _ for tools, maybe don't run on event thread? (makes the gui hang)
 _   but instead, things that affect gui need to be called w/ invokeLater?
@@ -937,8 +946,6 @@ _ go through other sketch-opening menus to check for disappearing sketches
 _ deal with isManagingFocus() warning in the editor src
 _ [LaunchRunner Error] processing.app.Base.main(String[]) threw an exception
 _   http://dev.processing.org/bugs/show_bug.cgi?id=821
-_ file-save stops running sketch
-_   http://dev.processing.org/bugs/show_bug.cgi?id=810
 _ strange NullPointerException problem prevents launch
 _   some kind of NPE in handleOpenInternal and friends
 _   appears to be a synchronization problem with the loading
@@ -972,10 +979,6 @@ _   option to export all the code as colored html
 _   http://dev.processing.org/bugs/show_bug.cgi?id=28
 _ "page setup" sucks in java
 _   http://dev.processing.org/bugs/show_bug.cgi?id=435
-_ rename/saveas doesn't properly have its focus set
-_   under windows, immediately typing after rename doesn't select
-_   the whole thing is selected, but not directly editable
-_   http://dev.processing.org/bugs/show_bug.cgi?id=31
 _ dim edit menus as appropriate during selection/no selection/etc
 _   http://dev.processing.org/bugs/show_bug.cgi?id=33
 _ fonts smaller than 10 cause problems in the editor
@@ -995,6 +998,8 @@ P5 _ problems with file/print
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1230
 P4 _ comments not always colored correctly
 P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1194
+_ program sometimes goes gray because it thinks everything is in a comment
+_   http://code.google.com/p/processing/issues/detail?id=564
 
 
 PDE / Editor Buttons

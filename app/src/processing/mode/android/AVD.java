@@ -145,6 +145,7 @@ public class AVD {
         // Just generally not working
 //        Base.showWarning("Android Error", AVD_CREATE_ERROR, null);
         Base.showWarningTiered("Android Error", AVD_CREATE_PRIMARY, AVD_CREATE_SECONDARY, null);
+        System.out.println(createAvdResult);
 //        throw new IOException("Error creating the AVD");
       }
       //System.err.println(createAvdResult);
