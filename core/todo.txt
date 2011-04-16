@@ -10,6 +10,8 @@ _   http://code.google.com/p/processing/issues/detail?id=332
 
 
 for 2.0
+_ rounded rectangle method 
+_   http://code.google.com/p/processing/issues/detail?id=265
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
 _ selectInput() and selectOutput() freezes

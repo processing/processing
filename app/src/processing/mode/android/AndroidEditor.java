@@ -370,7 +370,7 @@ public class AndroidEditor extends JavaEditor {
   public void handleStop() {
     toolbar.deactivate(AndroidToolbar.RUN);
     stopIndeterminate();
-    amode.handleStop();
+    amode.handleStop(this);
   }
 
   
