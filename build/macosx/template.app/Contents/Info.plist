@@ -7,11 +7,11 @@
 
     <!-- all these need to change for new releases -->
     <key>CFBundleGetInfoString</key>
-    <string>1.x, Copyright © Ben Fry and Casey Reas</string>
+    <string>VERSION, Copyright © Ben Fry and Casey Reas</string>
     <key>CFBundleVersion</key>
-    <string>1.x</string>
+    <string>REVISION</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.x</string>
+    <string>VERSION</string>
     <!-- now stop changing things and get outta here -->
 
     <key>CFBundleAllowMixedLocalizations</key>
