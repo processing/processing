@@ -9,12 +9,17 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 import processing.app.*;
+import processing.mode.java.runner.Runner;
 
 
 public class JavaEditor extends Editor {
   JavaMode jmode;
+
   // TODO this needs prefs to be applied when necessary
   PdeKeyListener listener;
+  
+  // Runner associated with this editor window
+  private Runner runtime;
 
   
   protected JavaEditor(Base base, String path, int[] location, Mode mode) {
@@ -502,7 +507,11 @@ public class JavaEditor extends Editor {
     toolbar.activate(JavaToolbar.STOP);
 
     try {
-      jmode.handleStop();
+      //jmode.handleStop();
+      if (runtime != null) {
+        runtime.close();  // kills the window
+        runtime = null; // will this help?
+      }
     } catch (Exception e) {
       statusError(e);
     }
@@ -517,15 +526,15 @@ public class JavaEditor extends Editor {
   
   public void handleSave() {
     toolbar.activate(JavaToolbar.SAVE);
-    handleStop();
+    //handleStop();
     super.handleSave();
     toolbar.deactivate(JavaToolbar.SAVE);
   }
-  
-  
+
+
   public boolean handleSaveAs() {
     toolbar.activate(JavaToolbar.SAVE);
-    handleStop();
+    //handleStop();
     boolean result = super.handleSaveAs();
     toolbar.deactivate(JavaToolbar.SAVE);
     return result;
@@ -589,6 +598,7 @@ public class JavaEditor extends Editor {
   
   
   public void internalCloseRunner() {
-    jmode.handleStop();
+    //jmode.handleStop();
+    handleStop();
   }
 }

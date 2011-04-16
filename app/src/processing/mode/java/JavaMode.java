@@ -38,8 +38,6 @@ import processing.mode.java.runner.Runner;
 
 
 public class JavaMode extends Mode {
-  private Runner runtime;
-
   // classpath for all known libraries for p5
   // (both those in the p5/libs folder and those with lib subfolders
   // found in the sketchbook)
@@ -173,32 +171,36 @@ public class JavaMode extends Mode {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
-  public void handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
+  public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
+    Runner runtime = null; 
     JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build();
     if (appletClassName != null) {
       runtime = new Runner(build, listener);
       runtime.launch(false);
     }
+    return runtime;
   }
 
 
-  public void handlePresent(Sketch sketch, RunnerListener listener) throws SketchException {
+  public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException {
+    Runner runtime = null;
     JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build();
     if (appletClassName != null) {
       runtime = new Runner(build, listener);
       runtime.launch(true);
     }
+    return runtime;
   }
 
 
-  public void handleStop() {
-    if (runtime != null) {
-      runtime.close();  // kills the window
-      runtime = null; // will this help?
-    }
-  }
+//  public void handleStop() {
+//    if (runtime != null) {
+//      runtime.close();  // kills the window
+//      runtime = null; // will this help?
+//    }
+//  }
   
   
   public boolean handleExportApplet(Sketch sketch) throws SketchException, IOException {
