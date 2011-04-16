@@ -478,7 +478,8 @@ public class JavaEditor extends Editor {
       public void run() {
         prepareRun();
         try {
-          jmode.handleRun(sketch, JavaEditor.this);
+          runtime = jmode.handleRun(sketch, JavaEditor.this);
+//          System.out.println("runtime now " + runtime);
         } catch (Exception e) {
           statusError(e);
         }
@@ -494,7 +495,7 @@ public class JavaEditor extends Editor {
       public void run() {
         prepareRun();
         try {
-          jmode.handlePresent(sketch, JavaEditor.this);
+          runtime = jmode.handlePresent(sketch, JavaEditor.this);
         } catch (Exception e) {
           statusError(e);
         }
@@ -510,7 +511,9 @@ public class JavaEditor extends Editor {
       //jmode.handleStop();
       if (runtime != null) {
         runtime.close();  // kills the window
-        runtime = null; // will this help?
+        runtime = null;
+//      } else {
+//        System.out.println("runtime is null");
       }
     } catch (Exception e) {
       statusError(e);

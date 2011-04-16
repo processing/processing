@@ -172,26 +172,34 @@ public class JavaMode extends Mode {
 
   
   public Runner handleRun(Sketch sketch, RunnerListener listener) throws SketchException {
-    Runner runtime = null; 
     JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build();
     if (appletClassName != null) {
-      runtime = new Runner(build, listener);
-      runtime.launch(false);
+      final Runner runtime = new Runner(build, listener);
+      new Thread(new Runnable() {
+        public void run() {
+          runtime.launch(false);  // this blocks until finished
+        }
+      }).start();
+      return runtime;
     }
-    return runtime;
+    return null;
   }
 
 
   public Runner handlePresent(Sketch sketch, RunnerListener listener) throws SketchException {
-    Runner runtime = null;
     JavaBuild build = new JavaBuild(sketch);
     String appletClassName = build.build();
     if (appletClassName != null) {
-      runtime = new Runner(build, listener);
-      runtime.launch(true);
+      final Runner runtime = new Runner(build, listener);
+      new Thread(new Runnable() {
+        public void run() {
+          runtime.launch(true);
+        }
+      }).start();
+      return runtime;      
     }
-    return runtime;
+    return null;
   }
 
 
