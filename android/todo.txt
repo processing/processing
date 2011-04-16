@@ -1,5 +1,17 @@
 0196 android
 
+earlier
+X Build an interface for control of permissions on Android
+X   http://code.google.com/p/processing/issues/detail?id=275
+X Implement createGraphics() 
+X   http://code.google.com/p/processing/issues/detail?id=240
+
+
+_ go through all basics/topics examples
+_   remove those that don't make sense with android
+_   remove size() commands from most/all
+_     (or remove ones that truly require size...)
+_   optimize for android use
 
 lifecycle/size changes/etc
 _ pause/resume trickiness with interactive apps
@@ -25,12 +37,6 @@ _   also add the param to the xml file saying that it can deal w/ rotation
 
 _ temp files are not deleted
 _   http://code.google.com/p/processing/issues/detail?id=562
-
-_ go through all basics/topics examples
-_   remove those that don't make sense with android
-_   remove size() commands from most/all
-_     (or remove ones that truly require size...)
-_   optimize for android use
 
 _ check out andres' changes for PShape
 
@@ -70,6 +76,10 @@ _   ...because it's ignoring the exception messages that come in from trying
 _   to create the new sdk object
 
 _ need to do something to make it easier to do new screen sizes.
+
+_ add method to bring up the keyboard in sketches
+_   actually, just write an example of how to do it, since holding menu works
+_   http://code.google.com/p/processing/issues/detail?id=234
 
 _ sketches must be removed manually if the debug keystore changes
 _   http://code.google.com/p/processing/issues/detail?id=236
