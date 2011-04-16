@@ -3,10 +3,12 @@ o textAlign(RIGHT) is shutting off native fonts
 o   makes salaryper super ugly
 X   i think this must have been fixed?
 X fix minor native fonts issue
-
-_ image resizing is ugly (just use java2d?)
-_   also deal with copy()/blend() inaccuracies
-_   http://code.google.com/p/processing/issues/detail?id=332
+o updatePixels() is slow to create a BufferedImage
+o   therefore the incomplete rendering
+o   could this be an issue fixed by a MediaTracker?
+o first line of applets is missing on java 1.4+ on the mac
+X   http://dev.processing.org/bugs/show_bug.cgi?id=283
+o make the PFont index lookup use numbers up to 256?
 
 
 for 2.0
@@ -27,6 +29,24 @@ _ clean up filter stuff?
 _   filter(GRAY) -> to push things to luminosity-based gray
 _   filter(MASK, ...) -> or ALPHA? 
 _   filter(TINT, tintColor)
+_ post() is called after setup() (make decision)
+_   http://code.google.com/p/processing/issues/detail?id=455
+
+_ image resizing is ugly (just use java2d?)
+_   also deal with copy()/blend() inaccuracies
+_   http://code.google.com/p/processing/issues/detail?id=332
+_ implement a more efficient version of blend()
+_   http://dev.processing.org/bugs/show_bug.cgi?id=942
+_ blend() bugs with identically-sized images
+_   http://code.google.com/p/processing/issues/detail?id=285
+_ transparency issue with JAVA2D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1280
+_   http://code.google.com/p/processing/issues/detail?id=182
+o filter() doesn't need a loadPixels
+o   but if you want to filter *and* mess w/ pixels (avoid double load)
+o   then do loadPixels() /before/ filter, and updatePixels after messing
+o   same will go for blend()
+_   make sure that filter, blend, copy, etc say that no loadPixels necessary
 
 _ clipping
 _   http://mrl.nyu.edu/~perlin/experiments/borg/render/index.html
@@ -67,9 +87,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1504
 
 _ new PGraphics(... OutputStream) 
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1502
-_ transparency issue (might just be a bug in their code?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1280
-_   http://code.google.com/p/processing/issues/detail?id=182
 
 _ need to make sure the createFont() reference is up to date for charset
 
@@ -181,8 +198,6 @@ _   need to say "no drawing inside mouse/key events w/ noLoop"
 _ redraw() doesn't work from within draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1363
 
-_ make the index lookup use numbers up to 256?
-
 _ decide whether to keep:
 _   public float textWidth(char[] chars, int start, int length)
 
@@ -276,11 +291,6 @@ _   or it's the PGraphics object, which does an updatePixels() immediately
 _ if (modified) don't loadPixels again, just ignore it
 _   make a note that updatePixels() only sets a flag in PImage
 _     (but not PGraphics, which does it immediately)
-o filter() doesn't need a loadPixels
-o   but if you want to filter *and* mess w/ pixels (avoid double load)
-o   then do loadPixels() /before/ filter, and updatePixels after messing
-o   same will go for blend()
-_   make sure that filter, blend, copy, etc say that no loadPixels necessary
 
 
 rework some text/font code [1.0]
@@ -580,8 +590,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1420
 _ improve blend() accuracy when using ADD
 _   http://code.google.com/p/processing/issues/detail?id=133
 _   includes code for a slow but more accurate mode
-_ blend() bugs with identically-sized images
-_   http://code.google.com/p/processing/issues/detail?id=285
 _ for a PGraphics2D, should its image cache object be the memoryimagesource?
 _ loading lots of images is a problem, describe how to unload
 _   is it possible? necessary to call delay(5) or something?
@@ -595,9 +603,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=342
 _ when drawing an image, sense whether drawn rotated
 _   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
-_ updatePixels() is slow to create a BufferedImage
-_   therefore the incomplete rendering
-_   could this be an issue fixed by a MediaTracker?
 _ should smoothing not be turned on by default? handle this where?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1195
 
@@ -645,8 +650,6 @@ _ set the application name to sketch name (not processing.core.PApplet)
 _   System.setProperty("com.apple.mrj.application.apple.menu.about.name", ...)
 _   -Xdock:name=<application name>
 _   -Xdock:icon=<path to icon file>
-_ first line of applets is missing on java 1.4+ on the mac
-_   http://dev.processing.org/bugs/show_bug.cgi?id=283
 _ cursor() broken in applets on macosx?
 _   or is it a java 1.4 versus java 1.3 problem?
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081645955
@@ -685,8 +688,6 @@ _ implement setImpl() instead of set() inside PGraphicsOpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=943
 _ use glCopyPixels() or glReadPixels() instead of copy() method
 _   http://dev.processing.org/bugs/show_bug.cgi?id=941
-_ implement a more efficient version of blend()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=942
 _ copy() does not update the screen with OpenGL
 _   http://dev.processing.org/bugs/show_bug.cgi?id=933
 _ set() requires updatePixels() with OpenGL
