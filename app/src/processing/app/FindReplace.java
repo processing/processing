@@ -178,18 +178,14 @@ public class FindReplace extends JFrame implements ActionListener {
 
     ypos += buttonsDimension.height + EDGE;
 
-//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
     int wide = visibleButtonWidth + EDGE*2;
-    int high = ypos; // butt.y + butt.height + EDGE*2 + SMALL;
+    int high = ypos;
 
     pack();
     Insets insets = getInsets();
-//    System.out.println("Insets = " + insets);
     setSize(wide + insets.left + insets.right,high + insets.top + insets.bottom);
 
-    setLocationRelativeTo( null ); // center
- //   setBounds((screen.width - wide) / 2, (screen.height - high) / 2, wide, high);
+    setLocationRelativeTo(null); // center
 
     replaceButton.addActionListener(this);
     replaceAllButton.addActionListener(this);
@@ -302,7 +298,7 @@ public class FindReplace extends JFrame implements ActionListener {
       //int selectionStart = editor.textarea.getSelectionStart();
       int selectionStart = editor.getSelectionStart()-1;
 
-      if ( selectionStart >= 0 ) {
+      if (selectionStart >= 0) {
         nextIndex = text.lastIndexOf(search, selectionStart);
       } else {
         nextIndex = -1;
@@ -351,35 +347,35 @@ public class FindReplace extends JFrame implements ActionListener {
     editor.setSelection(0, 0);
 
     boolean foundAtLeastOne = false;
-    while ( true ) {
-      if ( find(false,false) ) {
+    while (true) {
+      if (find(false, false)) {
         foundAtLeastOne = true;
         replace();
      } else {
         break;
       }
     }
-    if ( !foundAtLeastOne ) {
+    if (!foundAtLeastOne) {
       Toolkit.getDefaultToolkit().beep();
     }
   }
 
 
-  public void setFindText( String t ) {
-    findField.setText( t );
+  public void setFindText(String t) {
+    findField.setText(t);
     findString = t;
   }
 
 
   public void findNext() {
-    if ( !find( wrapAround, false ) ) {
+    if (!find(wrapAround, false)) {
       Toolkit.getDefaultToolkit().beep();
     }
   }
 
 
   public void findPrevious() {
-    if ( !find( wrapAround, true ) ) {
+    if (!find(wrapAround, true)) {
       Toolkit.getDefaultToolkit().beep();
     }
   }
