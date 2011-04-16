@@ -386,9 +386,9 @@ public class Sketch {
       if (renamingCode) {  // If creating a new tab, don't show this error
         if (current == code[0]) {  // If this is the main tab, disallow
           Base.showWarning("Problem with rename",
-                           "The main .pde file cannot be .java file.\n" +
+                           "The first tab cannot be ." + newExtension + " file.\n" +
                            "(It may be time for your to graduate to a\n" +
-                           "\"real\" programming environment)", null);
+                           "\"real\" programming environment, hotshot.)", null);
           return;
         }
       }
