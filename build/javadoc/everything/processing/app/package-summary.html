@@ -53,7 +53,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../antlr/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/antlr/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/exec/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -86,7 +86,16 @@ Package processing.app
 <B>Interface Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/app/Formatter.html" title="interface in processing.app">Formatter</A></B></TD>
+<TD>This may change to a more generic String manipulating interface/class, since
+ it probably affects other code as well.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/app/Platform.CLibrary.html" title="interface in processing.app">Platform.CLibrary</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/app/RunnerListener.html" title="interface in processing.app">RunnerListener</A></B></TD>
 <TD>&nbsp;</TD>
 </TR>
 </TABLE>
@@ -102,10 +111,6 @@ Package processing.app
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/app/Base.html" title="class in processing.app">Base</A></B></TD>
 <TD>The base class for the main processing application.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../../processing/app/Commander.html" title="class in processing.app">Commander</A></B></TD>
-<TD>Class to handle running Processing from the command line.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A></B></TD>
@@ -124,10 +129,6 @@ Package processing.app
 <TD>Li'l status bar fella that shows the line number.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../../processing/app/EditorListener.html" title="class in processing.app">EditorListener</A></B></TD>
-<TD>Filters key events for tab expansion/indent/etc.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/app/EditorStatus.html" title="class in processing.app">EditorStatus</A></B></TD>
 <TD>Panel just below the editing area that contains status messages.</TD>
 </TR>
@@ -140,7 +141,11 @@ Package processing.app
 <TD>Find & Replace window for the Processing editor.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../../processing/app/LibraryFolder.html" title="class in processing.app">LibraryFolder</A></B></TD>
+<TD WIDTH="15%"><B><A HREF="../../processing/app/Library.html" title="class in processing.app">Library</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/app/Mode.html" title="class in processing.app">Mode</A></B></TD>
 <TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
@@ -153,8 +158,8 @@ Package processing.app
 <TD>Storage class for user preferences and environment settings.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../../processing/app/PresentMode.html" title="class in processing.app">PresentMode</A></B></TD>
-<TD>Helper class for full-screen presentation mode.</TD>
+<TD WIDTH="15%"><B><A HREF="../../processing/app/Settings.html" title="class in processing.app">Settings</A></B></TD>
+<TD>Storage class for theme settings.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/app/Sketch.html" title="class in processing.app">Sketch</A></B></TD>
@@ -165,8 +170,8 @@ Package processing.app
 <TD>Represents a single tab of a sketch.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD WIDTH="15%"><B><A HREF="../../processing/app/Theme.html" title="class in processing.app">Theme</A></B></TD>
-<TD>Storage class for theme settings.</TD>
+<TD WIDTH="15%"><B><A HREF="../../processing/app/SketchReference.html" title="class in processing.app">SketchReference</A></B></TD>
+<TD>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="../../processing/app/UpdateCheck.html" title="class in processing.app">UpdateCheck</A></B></TD>
@@ -177,6 +182,21 @@ Package processing.app
 <TD>This code is placed here in anticipation of running the reference from an
  internal web server that reads the docs from a zip file, instead of using
  thousands of .html files on the disk, which is really inefficient.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Exception Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></B></TD>
+<TD>An exception with a line number attached that occurs
+ during either pre-processing, compile, or run time.</TD>
 </TR>
 </TABLE>
 &nbsp;
@@ -214,7 +234,7 @@ Package processing.app
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../antlr/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/antlr/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/exec/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

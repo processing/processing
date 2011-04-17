@@ -52,8 +52,8 @@ function windowTitle()
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../processing/app/EditorToolbar.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/LibraryFolder.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/EditorToolbar.Button.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/Formatter.html" title="interface in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/FindReplace.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="FindReplace.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -224,7 +224,15 @@ Find & Replace window for the Processing editor.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/FindReplace.html#find(boolean)">find</A></B>(boolean&nbsp;wrap)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/FindReplace.html#findNext()">findNext</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/FindReplace.html#findPrevious()">findPrevious</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -254,6 +262,23 @@ Find & Replace window for the Processing editor.
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Replace everything that matches by doing find and replace
  alternately until nothing more found.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/FindReplace.html#replaceAndFindNext()">replaceAndFindNext</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Replace the current selection with whatever's in the
+ replacement text field, and then find the next match</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/FindReplace.html#setFindText(java.lang.String)">setFindText</A></B>(java.lang.String&nbsp;t)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_javax.swing.JFrame"><!-- --></A>
@@ -377,11 +402,14 @@ public void <B>actionPerformed</B>(java.awt.event.ActionEvent&nbsp;e)</PRE>
 </DL>
 <HR>
 
-<A NAME="find(boolean)"><!-- --></A><H3>
-find</H3>
+<A NAME="replace()"><!-- --></A><H3>
+replace</H3>
 <PRE>
-public void <B>find</B>(boolean&nbsp;wrap)</PRE>
+public void <B>replace</B>()</PRE>
 <DL>
+<DD>Replace the current selection with whatever's in the
+ replacement text field.
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -391,13 +419,13 @@ public void <B>find</B>(boolean&nbsp;wrap)</PRE>
 </DL>
 <HR>
 
-<A NAME="replace()"><!-- --></A><H3>
-replace</H3>
+<A NAME="replaceAndFindNext()"><!-- --></A><H3>
+replaceAndFindNext</H3>
 <PRE>
-public void <B>replace</B>()</PRE>
+public void <B>replaceAndFindNext</B>()</PRE>
 <DL>
 <DD>Replace the current selection with whatever's in the
- replacement text field.
+ replacement text field, and then find the next match
 <P>
 <DD><DL>
 </DL>
@@ -416,6 +444,48 @@ public void <B>replaceAll</B>()</PRE>
 <DD>Replace everything that matches by doing find and replace
  alternately until nothing more found.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFindText(java.lang.String)"><!-- --></A><H3>
+setFindText</H3>
+<PRE>
+public void <B>setFindText</B>(java.lang.String&nbsp;t)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findNext()"><!-- --></A><H3>
+findNext</H3>
+<PRE>
+public void <B>findNext</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findPrevious()"><!-- --></A><H3>
+findPrevious</H3>
+<PRE>
+public void <B>findPrevious</B>()</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>
@@ -453,8 +523,8 @@ public void <B>replaceAll</B>()</PRE>
 
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../processing/app/EditorToolbar.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/LibraryFolder.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/EditorToolbar.Button.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../processing/app/Formatter.html" title="interface in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/FindReplace.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="FindReplace.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

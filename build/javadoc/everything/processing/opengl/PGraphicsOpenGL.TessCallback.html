@@ -53,7 +53,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;NEXT CLASS</FONT></TD>
+&nbsp;<A HREF="../../processing/opengl/PGraphicsOpenGL.TessInfo.html" title="class in processing.opengl"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/opengl/PGraphicsOpenGL.TessCallback.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="PGraphicsOpenGL.TessCallback.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -90,29 +90,16 @@ processing.opengl</FONT>
 Class PGraphicsOpenGL.TessCallback</H2>
 <PRE>
 java.lang.Object
-  <IMG SRC="../../resources/inherit.gif" ALT="extended by ">javax.media.opengl.glu.GLUtessellatorCallbackAdapter
+  <IMG SRC="../../resources/inherit.gif" ALT="extended by ">GLUtessellatorCallbackAdapter
       <IMG SRC="../../resources/inherit.gif" ALT="extended by "><B>processing.opengl.PGraphicsOpenGL.TessCallback</B>
 </PRE>
-<DL>
-<DT><B>All Implemented Interfaces:</B> <DD>javax.media.opengl.glu.GLUtessellatorCallback</DD>
-</DL>
 <DL>
 <DT><B>Enclosing class:</B><DD><A HREF="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl">PGraphicsOpenGL</A></DD>
 </DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>PGraphicsOpenGL.TessCallback</B><DT>extends javax.media.opengl.glu.GLUtessellatorCallbackAdapter</DL>
+<DT><PRE>public class <B>PGraphicsOpenGL.TessCallback</B><DT>extends GLUtessellatorCallbackAdapter</DL>
 </PRE>
-
-<P>
-There must be a better way to do this, but I'm having a brain fart
- with all the inner class crap. Fix it later once this stuff is debugged.
- <p/>
- The method "void vertex(float $1, float $2, float $3);" contained in
- the enclosing type "processing.core.PGraphics3" is a perfect match for
- this method call. However, it is not visible in this nested class because
- a method with the same name in an intervening class is hiding it.
-<P>
 
 <P>
 <HR>
@@ -195,15 +182,6 @@ There must be a better way to do this, but I'm having a brain fart
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
-&nbsp;<A NAME="methods_inherited_from_class_javax.media.opengl.glu.GLUtessellatorCallbackAdapter"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class javax.media.opengl.glu.GLUtessellatorCallbackAdapter</B></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>beginData, combineData, edgeFlag, edgeFlagData, endData, errorData, vertexData</CODE></TD>
-</TR>
-</TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
@@ -249,9 +227,6 @@ begin</H3>
 public void <B>begin</B>(int&nbsp;type)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE>begin</CODE> in interface <CODE>javax.media.opengl.glu.GLUtessellatorCallback</CODE><DT><B>Overrides:</B><DD><CODE>begin</CODE> in class <CODE>javax.media.opengl.glu.GLUtessellatorCallbackAdapter</CODE></DL>
-</DD>
-<DD><DL>
 </DL>
 </DD>
 </DL>
@@ -262,9 +237,6 @@ end</H3>
 <PRE>
 public void <B>end</B>()</PRE>
 <DL>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE>end</CODE> in interface <CODE>javax.media.opengl.glu.GLUtessellatorCallback</CODE><DT><B>Overrides:</B><DD><CODE>end</CODE> in class <CODE>javax.media.opengl.glu.GLUtessellatorCallbackAdapter</CODE></DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -288,9 +260,6 @@ vertex</H3>
 public void <B>vertex</B>(java.lang.Object&nbsp;data)</PRE>
 <DL>
 <DD><DL>
-<DT><B>Specified by:</B><DD><CODE>vertex</CODE> in interface <CODE>javax.media.opengl.glu.GLUtessellatorCallback</CODE><DT><B>Overrides:</B><DD><CODE>vertex</CODE> in class <CODE>javax.media.opengl.glu.GLUtessellatorCallbackAdapter</CODE></DL>
-</DD>
-<DD><DL>
 </DL>
 </DD>
 </DL>
@@ -301,9 +270,6 @@ error</H3>
 <PRE>
 public void <B>error</B>(int&nbsp;errnum)</PRE>
 <DL>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE>error</CODE> in interface <CODE>javax.media.opengl.glu.GLUtessellatorCallback</CODE><DT><B>Overrides:</B><DD><CODE>error</CODE> in class <CODE>javax.media.opengl.glu.GLUtessellatorCallbackAdapter</CODE></DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -320,9 +286,6 @@ public void <B>combine</B>(double[]&nbsp;coords,
 <DL>
 <DD>Implementation of the GLU_TESS_COMBINE callback.
 <P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE>combine</CODE> in interface <CODE>javax.media.opengl.glu.GLUtessellatorCallback</CODE><DT><B>Overrides:</B><DD><CODE>combine</CODE> in class <CODE>javax.media.opengl.glu.GLUtessellatorCallbackAdapter</CODE></DL>
-</DD>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>coords</CODE> - is the 3-vector of the new vertex<DD><CODE>data</CODE> - is the vertex data to be combined, up to four elements.
  This is useful when mixing colors together or any other
@@ -364,7 +327,7 @@ public void <B>combine</B>(double[]&nbsp;coords,
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../processing/opengl/PGraphicsOpenGL.html" title="class in processing.opengl"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;NEXT CLASS</FONT></TD>
+&nbsp;<A HREF="../../processing/opengl/PGraphicsOpenGL.TessInfo.html" title="class in processing.opengl"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/opengl/PGraphicsOpenGL.TessCallback.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="PGraphicsOpenGL.TessCallback.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

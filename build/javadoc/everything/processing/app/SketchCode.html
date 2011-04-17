@@ -53,7 +53,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../processing/app/Sketch.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/Theme.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/SketchException.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/SketchCode.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="SketchCode.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -141,6 +141,14 @@ Represents a single tab of a sketch.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/SketchCode.html#copyTo(java.io.File)">copyTo</A></B>(java.io.File&nbsp;dest)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;javax.swing.text.Document</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/SketchCode.html#getDocument()">getDocument</A></B>()</CODE>
 
@@ -201,7 +209,15 @@ Represents a single tab of a sketch.
 <TD><CODE><B><A HREF="../../processing/app/SketchCode.html#getProgram()">getProgram</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the current text for this tab</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/SketchCode.html#getSavedProgram()">getSavedProgram</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the last version saved of this tab</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -253,6 +269,14 @@ Represents a single tab of a sketch.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/SketchCode.html#lastVisited()">lastVisited</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/SketchCode.html#load()">load</A></B>()</CODE>
 
@@ -287,6 +311,14 @@ Represents a single tab of a sketch.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/SketchCode.html#setFolder(java.io.File)">setFolder</A></B>(java.io.File&nbsp;sketchFolder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called when the sketch folder name/location has changed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/SketchCode.html#setModified(boolean)">setModified</A></B>(boolean&nbsp;modified)</CODE>
 
 <BR>
@@ -306,7 +338,7 @@ Represents a single tab of a sketch.
 <TD><CODE><B><A HREF="../../processing/app/SketchCode.html#setProgram(java.lang.String)">setProgram</A></B>(java.lang.String&nbsp;replacement)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the current text for this tab</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
@@ -360,6 +392,20 @@ public java.io.File <B>getFile</B>()</PRE>
 </DL>
 <HR>
 
+<A NAME="copyTo(java.io.File)"><!-- --></A><H3>
+copyTo</H3>
+<PRE>
+public void <B>copyTo</B>(java.io.File&nbsp;dest)
+            throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="getFileName()"><!-- --></A><H3>
 getFileName</H3>
 <PRE>
@@ -409,6 +455,8 @@ getProgram</H3>
 <PRE>
 public java.lang.String <B>getProgram</B>()</PRE>
 <DL>
+<DD>get the current text for this tab
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -420,6 +468,21 @@ setProgram</H3>
 <PRE>
 public void <B>setProgram</B>(java.lang.String&nbsp;replacement)</PRE>
 <DL>
+<DD>set the current text for this tab
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSavedProgram()"><!-- --></A><H3>
+getSavedProgram</H3>
+<PRE>
+public java.lang.String <B>getSavedProgram</B>()</PRE>
+<DL>
+<DD>get the last version saved of this tab
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -558,6 +621,17 @@ public int <B>getScrollPosition</B>()</PRE>
 </DL>
 <HR>
 
+<A NAME="lastVisited()"><!-- --></A><H3>
+lastVisited</H3>
+<PRE>
+public long <B>lastVisited</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="load()"><!-- --></A><H3>
 load</H3>
 <PRE>
@@ -605,6 +679,20 @@ public void <B>saveAs</B>(java.io.File&nbsp;newFile)
 <DD><CODE>java.io.IOException</CODE></DL>
 </DD>
 </DL>
+<HR>
+
+<A NAME="setFolder(java.io.File)"><!-- --></A><H3>
+setFolder</H3>
+<PRE>
+public void <B>setFolder</B>(java.io.File&nbsp;sketchFolder)</PRE>
+<DL>
+<DD>Called when the sketch folder name/location has changed. Called when 
+ renaming tab 0, the main code.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -636,7 +724,7 @@ public void <B>saveAs</B>(java.io.File&nbsp;newFile)
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../processing/app/Sketch.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/Theme.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/SketchException.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/SketchCode.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="SketchCode.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
