@@ -13,21 +13,24 @@ javadoc -public -notimestamp -d everything \
     ../../core/src/processing/core/*.java \
     ../../core/src/processing/xml/*.java \
     ../../app/src/antlr/*.java \
-    ../../app/generated/processing/app/antlr/*.java \
     ../../app/src/processing/app/*.java \
-    ../../app/src/processing/app/debug/*.java \
+    ../../app/src/processing/app/exec/*.java \
     ../../app/src/processing/app/linux/*.java \
     ../../app/src/processing/app/macosx/*.java \
-    ../../app/src/processing/app/preproc/*.java \
     ../../app/src/processing/app/syntax/*.java \
     ../../app/src/processing/app/tools/*.java \
     ../../app/src/processing/app/windows/*.java \
-    ../../dxf/src/processing/dxf/*.java \
-    ../../net/src/processing/net/*.java \
-    ../../opengl/src/processing/opengl/*.java \
-    ../../pdf/src/processing/pdf/*.java \
-    ../../serial/src/processing/serial/*.java \
-    ../../video/src/processing/video/*.java 
+    ../../app/src/processing/mode/android/*.java \
+    ../../app/src/processing/mode/java/*.java \
+    ../../app/src/processing/mode/java/preproc/*.java \
+    ../../app/src/processing/mode/java/runner/*.java \
+    ../../app/src/processing/mode/javascript/*.java \
+    ../../java/libraries/dxf/src/processing/dxf/*.java \
+    ../../java/libraries/net/src/processing/net/*.java \
+    ../../java/libraries/opengl/src/processing/opengl/*.java \
+    ../../java/libraries/pdf/src/processing/pdf/*.java \
+    ../../java/libraries/serial/src/processing/serial/*.java \
+    ../../java/libraries/video/src/processing/video/*.java 
 
 cp stylesheet.css core/
 cp stylesheet.css everything/

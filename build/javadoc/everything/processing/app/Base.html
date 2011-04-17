@@ -53,7 +53,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../processing/app/Commander.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/Editor.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/Base.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Base.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -142,6 +142,14 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#REVISION">REVISION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#VERSION_NAME">VERSION_NAME</A></B></CODE>
 
@@ -176,8 +184,9 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;javax.swing.JMenu</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#buildFileMenu(processing.app.Editor)">buildFileMenu</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#addDisabledItem(javax.swing.JMenu, java.lang.String)">addDisabledItem</A></B>(javax.swing.JMenu&nbsp;menu,
+                java.lang.String&nbsp;title)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -189,6 +198,15 @@ The base class for the main processing application.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculate the size of the contents of a folder.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#contentsToClassPath(java.io.File)">contentsToClassPath</A></B>(java.io.File&nbsp;folder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Given a folder, return a list of absolute paths to all jar or zip files
+ inside that folder, separated by pathSeparatorChar.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -220,19 +238,21 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.io.File</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#createTempFolder(java.lang.String)">createTempFolder</A></B>(java.lang.String&nbsp;name)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#createTempFolder(java.lang.String, java.lang.String)">createTempFolder</A></B>(java.lang.String&nbsp;prefix,
+                 java.lang.String&nbsp;suffix)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the path to the platform's temporary folder, by creating
- a temporary temporary file and getting its parent folder.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a temporary folder by using the createTempFile() mechanism,
+ deleting the file it creates, and making a folder using the location
+ that was provided.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.io.File</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#getBuildFolder()">getBuildFolder</A></B>()</CODE>
+<CODE>&nbsp;<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getActiveEditor()">getActiveEditor</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the frontmost, active editor window.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -244,28 +264,12 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#getExamplesPath()">getExamplesPath</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.awt.Image</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getLibImage(java.lang.String, java.awt.Component)">getLibImage</A></B>(java.lang.String&nbsp;name,
             java.awt.Component&nbsp;who)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return an Image object from inside the Processing lib folder.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#getLibrariesPath()">getLibrariesPath</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I></I>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -274,6 +278,14 @@ The base class for the main processing application.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return an InputStream for a file inside the Processing lib folder.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/app/Mode.html" title="class in processing.app">Mode</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getModeList()">getModeList</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -326,7 +338,7 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.io.File</CODE></FONT></TD>
+<CODE>&nbsp;java.io.File</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getSketchbookFolder()">getSketchbookFolder</A></B>()</CODE>
 
 <BR>
@@ -334,8 +346,16 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.io.File</CODE></FONT></TD>
+<CODE>&nbsp;java.io.File</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getSketchbookLibrariesFolder()">getSketchbookLibrariesFolder</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;javax.swing.JMenu</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#getSketchbookMenu()">getSketchbookMenu</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -347,20 +367,12 @@ The base class for the main processing application.
               java.awt.Component&nbsp;who)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get an image associated with the current color theme.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I></I>&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.io.File</CODE></FONT></TD>
+<CODE>&nbsp;java.io.File</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#getToolsFolder()">getToolsFolder</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#getToolsPath()">getToolsPath</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -376,7 +388,8 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#handleClose(processing.app.Editor)">handleClose</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#handleClose(processing.app.Editor, boolean)">handleClose</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
+            boolean&nbsp;modeSwitch)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Close a sketch as specified by its editor window.</TD>
@@ -447,6 +460,14 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#initRequirements()">initRequirements</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#isLinux()">isLinux</A></B>()</CODE>
 
@@ -476,17 +497,18 @@ The base class for the main processing application.
           boolean&nbsp;relative)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Recursively creates a list of all files within the specified folder,
+ and returns a list of their relative paths.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.lang.String[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#listFiles(java.lang.String, boolean)">listFiles</A></B>(java.lang.String&nbsp;path,
-          boolean&nbsp;relative)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#listFiles(java.io.File, boolean, java.lang.String)">listFiles</A></B>(java.io.File&nbsp;folder,
+          boolean&nbsp;relative,
+          java.lang.String&nbsp;extension)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Recursively creates a list of all files within the specified folder,
- and returns a list of their relative paths.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -552,6 +574,15 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/app/Mode.html" title="class in processing.app">Mode</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#nextEditorMode()">nextEditorMode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the same mode as the active editor, or the default mode, which
+ begins as Java/Standard, but is updated with the last mode used.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#openFolder(java.io.File)">openFolder</A></B>(java.io.File&nbsp;file)</CODE>
 
@@ -573,36 +604,22 @@ The base class for the main processing application.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#packageListFromClassPath(java.lang.String)">packageListFromClassPath</A></B>(java.lang.String&nbsp;path)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A classpath, separated by the path separator, will contain
+ a series of .jar/.zip files or directories containing .class
+ files, or containing subdirectories that have .class files.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.util.HashMap&lt;java.lang.String,java.lang.String&gt;</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#readSettings(java.io.File)">readSettings</A></B>(java.io.File&nbsp;inputFile)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read from a file with a bunch of attribute/value pairs
  that are separated by = and ignore comments with #.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#rebuildExamplesMenu(javax.swing.JMenu)">rebuildExamplesMenu</A></B>(javax.swing.JMenu&nbsp;menu)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#rebuildImportMenu()">rebuildImportMenu</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#rebuildLibraryList()">rebuildLibraryList</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -654,15 +671,7 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#setIcon(java.awt.Frame)">setIcon</A></B>(java.awt.Frame&nbsp;frame)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Give this Frame a Processing icon.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#showChanges()">showChanges</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#setCommandLine()">setCommandLine</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -670,7 +679,15 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#showEnvironment()">showEnvironment</A></B>()</CODE>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#setIcon(java.awt.Frame)">setIcon</A></B>(java.awt.Frame&nbsp;frame)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Give this Frame a Processing icon.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#setSketchbookFolder(java.io.File)">setSketchbookFolder</A></B>(java.io.File&nbsp;folder)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -688,22 +705,6 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#showFAQ()">showFAQ</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#showGettingStarted()">showGettingStarted</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#showMessage(java.lang.String, java.lang.String)">showMessage</A></B>(java.lang.String&nbsp;title,
             java.lang.String&nbsp;message)</CODE>
 
@@ -713,41 +714,20 @@ The base class for the main processing application.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#showPlatforms()">showPlatforms</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#showReference()">showReference</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#showReference(java.lang.String)">showReference</A></B>(java.lang.String&nbsp;filename)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/Base.html#showTroubleshooting()">showTroubleshooting</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/Base.html#showWarning(java.lang.String, java.lang.String, java.lang.Exception)">showWarning</A></B>(java.lang.String&nbsp;title,
             java.lang.String&nbsp;message,
             java.lang.Exception&nbsp;e)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Non-fatal error message with optional stack trace side dish.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/Base.html#showWarningTiered(java.lang.String, java.lang.String, java.lang.String, java.lang.Exception)">showWarningTiered</A></B>(java.lang.String&nbsp;title,
+                  java.lang.String&nbsp;primary,
+                  java.lang.String&nbsp;secondary,
+                  java.lang.Exception&nbsp;e)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Non-fatal error message with optional stack trace side dish.</TD>
@@ -796,6 +776,16 @@ The base class for the main processing application.
 <B>Field Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="REVISION"><!-- --></A><H3>
+REVISION</H3>
+<PRE>
+public static final int <B>REVISION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../constant-values.html#processing.app.Base.REVISION">Constant Field Values</A></DL>
+</DL>
+<HR>
 
 <A NAME="VERSION_NAME"><!-- --></A><H3>
 VERSION_NAME</H3>
@@ -880,10 +870,32 @@ public static void <B>main</B>(java.lang.String[]&nbsp;args)</PRE>
 </DL>
 <HR>
 
+<A NAME="setCommandLine()"><!-- --></A><H3>
+setCommandLine</H3>
+<PRE>
+public static void <B>setCommandLine</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="initPlatform()"><!-- --></A><H3>
 initPlatform</H3>
 <PRE>
 public static void <B>initPlatform</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="initRequirements()"><!-- --></A><H3>
+initRequirements</H3>
+<PRE>
+public static void <B>initRequirements</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -949,11 +961,50 @@ public static javax.swing.JCheckBoxMenuItem <B>newJCheckBoxMenuItem</B>(java.lan
 </DL>
 <HR>
 
-<A NAME="buildFileMenu(processing.app.Editor)"><!-- --></A><H3>
-buildFileMenu</H3>
+<A NAME="addDisabledItem(javax.swing.JMenu, java.lang.String)"><!-- --></A><H3>
+addDisabledItem</H3>
 <PRE>
-public javax.swing.JMenu <B>buildFileMenu</B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
+public static void <B>addDisabledItem</B>(javax.swing.JMenu&nbsp;menu,
+                                   java.lang.String&nbsp;title)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getActiveEditor()"><!-- --></A><H3>
+getActiveEditor</H3>
+<PRE>
+public <A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A> <B>getActiveEditor</B>()</PRE>
+<DL>
+<DD>Returns the frontmost, active editor window.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getModeList()"><!-- --></A><H3>
+getModeList</H3>
+<PRE>
+public <A HREF="../../processing/app/Mode.html" title="class in processing.app">Mode</A>[] <B>getModeList</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="nextEditorMode()"><!-- --></A><H3>
+nextEditorMode</H3>
+<PRE>
+public <A HREF="../../processing/app/Mode.html" title="class in processing.app">Mode</A> <B>nextEditorMode</B>()</PRE>
+<DL>
+<DD>Return the same mode as the active editor, or the default mode, which
+ begins as Java/Standard, but is updated with the last mode used.
+<P>
 <DD><DL>
 </DL>
 </DD>
@@ -1027,10 +1078,11 @@ public <A HREF="../../processing/app/Editor.html" title="class in processing.app
 </DL>
 <HR>
 
-<A NAME="handleClose(processing.app.Editor)"><!-- --></A><H3>
+<A NAME="handleClose(processing.app.Editor, boolean)"><!-- --></A><H3>
 handleClose</H3>
 <PRE>
-public boolean <B>handleClose</B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</PRE>
+public boolean <B>handleClose</B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
+                           boolean&nbsp;modeSwitch)</PRE>
 <DL>
 <DD>Close a sketch as specified by its editor window.
 <P>
@@ -1055,32 +1107,10 @@ public boolean <B>handleQuit</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="rebuildLibraryList()"><!-- --></A><H3>
-rebuildLibraryList</H3>
+<A NAME="getSketchbookMenu()"><!-- --></A><H3>
+getSketchbookMenu</H3>
 <PRE>
-public void <B>rebuildLibraryList</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="rebuildImportMenu()"><!-- --></A><H3>
-rebuildImportMenu</H3>
-<PRE>
-public void <B>rebuildImportMenu</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="rebuildExamplesMenu(javax.swing.JMenu)"><!-- --></A><H3>
-rebuildExamplesMenu</H3>
-<PRE>
-public void <B>rebuildExamplesMenu</B>(javax.swing.JMenu&nbsp;menu)</PRE>
+public javax.swing.JMenu <B>getSketchbookMenu</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1229,52 +1259,21 @@ public static java.io.File <B>getSettingsFile</B>(java.lang.String&nbsp;filename
 </DL>
 <HR>
 
-<A NAME="getBuildFolder()"><!-- --></A><H3>
-getBuildFolder</H3>
-<PRE>
-public static java.io.File <B>getBuildFolder</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="createTempFolder(java.lang.String)"><!-- --></A><H3>
+<A NAME="createTempFolder(java.lang.String, java.lang.String)"><!-- --></A><H3>
 createTempFolder</H3>
 <PRE>
-public static java.io.File <B>createTempFolder</B>(java.lang.String&nbsp;name)</PRE>
+public static java.io.File <B>createTempFolder</B>(java.lang.String&nbsp;prefix,
+                                            java.lang.String&nbsp;suffix)
+                                     throws java.io.IOException</PRE>
 <DL>
-<DD>Get the path to the platform's temporary folder, by creating
- a temporary temporary file and getting its parent folder.
- <br/>
- Modified for revision 0094 to actually make the folder randomized
- to avoid conflicts in multi-user environments. (Bug 177)
+<DD>Create a temporary folder by using the createTempFile() mechanism,
+ deleting the file it creates, and making a folder using the location
+ that was provided.
 <P>
 <DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
 
-<A NAME="getExamplesPath()"><!-- --></A><H3>
-getExamplesPath</H3>
-<PRE>
-public static java.lang.String <B>getExamplesPath</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getLibrariesPath()"><!-- --></A><H3>
-getLibrariesPath</H3>
-<PRE>
-public static java.lang.String <B>getLibrariesPath</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
 </DD>
 </DL>
 <HR>
@@ -1282,7 +1281,7 @@ public static java.lang.String <B>getLibrariesPath</B>()</PRE>
 <A NAME="getToolsFolder()"><!-- --></A><H3>
 getToolsFolder</H3>
 <PRE>
-public static java.io.File <B>getToolsFolder</B>()</PRE>
+public java.io.File <B>getToolsFolder</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1290,10 +1289,10 @@ public static java.io.File <B>getToolsFolder</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="getToolsPath()"><!-- --></A><H3>
-getToolsPath</H3>
+<A NAME="setSketchbookFolder(java.io.File)"><!-- --></A><H3>
+setSketchbookFolder</H3>
 <PRE>
-public static java.lang.String <B>getToolsPath</B>()</PRE>
+public void <B>setSketchbookFolder</B>(java.io.File&nbsp;folder)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1304,7 +1303,7 @@ public static java.lang.String <B>getToolsPath</B>()</PRE>
 <A NAME="getSketchbookFolder()"><!-- --></A><H3>
 getSketchbookFolder</H3>
 <PRE>
-public static java.io.File <B>getSketchbookFolder</B>()</PRE>
+public java.io.File <B>getSketchbookFolder</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1315,7 +1314,7 @@ public static java.io.File <B>getSketchbookFolder</B>()</PRE>
 <A NAME="getSketchbookLibrariesFolder()"><!-- --></A><H3>
 getSketchbookLibrariesFolder</H3>
 <PRE>
-public static java.io.File <B>getSketchbookLibrariesFolder</B>()</PRE>
+public java.io.File <B>getSketchbookLibrariesFolder</B>()</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -1403,94 +1402,6 @@ public static void <B>registerWindowCloseKeys</B>(javax.swing.JRootPane&nbsp;roo
 </DL>
 <HR>
 
-<A NAME="showReference(java.lang.String)"><!-- --></A><H3>
-showReference</H3>
-<PRE>
-public static void <B>showReference</B>(java.lang.String&nbsp;filename)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="showReference()"><!-- --></A><H3>
-showReference</H3>
-<PRE>
-public static void <B>showReference</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="showEnvironment()"><!-- --></A><H3>
-showEnvironment</H3>
-<PRE>
-public static void <B>showEnvironment</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="showChanges()"><!-- --></A><H3>
-showChanges</H3>
-<PRE>
-public static void <B>showChanges</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="showFAQ()"><!-- --></A><H3>
-showFAQ</H3>
-<PRE>
-public static void <B>showFAQ</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="showGettingStarted()"><!-- --></A><H3>
-showGettingStarted</H3>
-<PRE>
-public static void <B>showGettingStarted</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="showPlatforms()"><!-- --></A><H3>
-showPlatforms</H3>
-<PRE>
-public static void <B>showPlatforms</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="showTroubleshooting()"><!-- --></A><H3>
-showTroubleshooting</H3>
-<PRE>
-public static void <B>showTroubleshooting</B>()</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="showMessage(java.lang.String, java.lang.String)"><!-- --></A><H3>
 showMessage</H3>
 <PRE>
@@ -1512,6 +1423,22 @@ showWarning</H3>
 public static void <B>showWarning</B>(java.lang.String&nbsp;title,
                                java.lang.String&nbsp;message,
                                java.lang.Exception&nbsp;e)</PRE>
+<DL>
+<DD>Non-fatal error message with optional stack trace side dish.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showWarningTiered(java.lang.String, java.lang.String, java.lang.String, java.lang.Exception)"><!-- --></A><H3>
+showWarningTiered</H3>
+<PRE>
+public static void <B>showWarningTiered</B>(java.lang.String&nbsp;title,
+                                     java.lang.String&nbsp;primary,
+                                     java.lang.String&nbsp;secondary,
+                                     java.lang.Exception&nbsp;e)</PRE>
 <DL>
 <DD>Non-fatal error message with optional stack trace side dish.
 <P>
@@ -1585,6 +1512,8 @@ getThemeImage</H3>
 public static java.awt.Image <B>getThemeImage</B>(java.lang.String&nbsp;name,
                                            java.awt.Component&nbsp;who)</PRE>
 <DL>
+<DD><B>Deprecated.</B>&nbsp;<I></I>
+<P>
 <DD>Get an image associated with the current color theme.
 <P>
 <DD><DL>
@@ -1599,6 +1528,8 @@ getLibImage</H3>
 public static java.awt.Image <B>getLibImage</B>(java.lang.String&nbsp;name,
                                          java.awt.Component&nbsp;who)</PRE>
 <DL>
+<DD><B>Deprecated.</B>&nbsp;<I></I>
+<P>
 <DD>Return an Image object from inside the Processing lib folder.
 <P>
 <DD><DL>
@@ -1778,10 +1709,10 @@ public static int <B>calcFolderSize</B>(java.io.File&nbsp;folder)</PRE>
 </DL>
 <HR>
 
-<A NAME="listFiles(java.lang.String, boolean)"><!-- --></A><H3>
+<A NAME="listFiles(java.io.File, boolean)"><!-- --></A><H3>
 listFiles</H3>
 <PRE>
-public static java.lang.String[] <B>listFiles</B>(java.lang.String&nbsp;path,
+public static java.lang.String[] <B>listFiles</B>(java.io.File&nbsp;folder,
                                            boolean&nbsp;relative)</PRE>
 <DL>
 <DD>Recursively creates a list of all files within the specified folder,
@@ -1794,14 +1725,53 @@ public static java.lang.String[] <B>listFiles</B>(java.lang.String&nbsp;path,
 </DL>
 <HR>
 
-<A NAME="listFiles(java.io.File, boolean)"><!-- --></A><H3>
+<A NAME="listFiles(java.io.File, boolean, java.lang.String)"><!-- --></A><H3>
 listFiles</H3>
 <PRE>
 public static java.lang.String[] <B>listFiles</B>(java.io.File&nbsp;folder,
-                                           boolean&nbsp;relative)</PRE>
+                                           boolean&nbsp;relative,
+                                           java.lang.String&nbsp;extension)</PRE>
 <DL>
 <DD><DL>
 </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="contentsToClassPath(java.io.File)"><!-- --></A><H3>
+contentsToClassPath</H3>
+<PRE>
+public static java.lang.String <B>contentsToClassPath</B>(java.io.File&nbsp;folder)</PRE>
+<DL>
+<DD>Given a folder, return a list of absolute paths to all jar or zip files
+ inside that folder, separated by pathSeparatorChar.
+
+ This will prepend a colon (or whatever the path separator is)
+ so that it can be directly appended to another path string.
+
+ As of 0136, this will no longer add the root folder as well.
+
+ This function doesn't bother checking to see if there are any .class
+ files in the folder or within a subfolder.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="packageListFromClassPath(java.lang.String)"><!-- --></A><H3>
+packageListFromClassPath</H3>
+<PRE>
+public static java.lang.String[] <B>packageListFromClassPath</B>(java.lang.String&nbsp;path)</PRE>
+<DL>
+<DD>A classpath, separated by the path separator, will contain
+ a series of .jar/.zip files or directories containing .class
+ files, or containing subdirectories that have .class files.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>path</CODE> - the input classpath
+<DT><B>Returns:</B><DD>array of possible package names</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->
@@ -1835,7 +1805,7 @@ public static java.lang.String[] <B>listFiles</B>(java.io.File&nbsp;folder,
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;PREV CLASS&nbsp;
-&nbsp;<A HREF="../../processing/app/Commander.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/Editor.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/Base.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="Base.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;

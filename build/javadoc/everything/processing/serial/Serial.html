@@ -92,12 +92,9 @@ Class Serial</H2>
 java.lang.Object
   <IMG SRC="../../resources/inherit.gif" ALT="extended by "><B>processing.serial.Serial</B>
 </PRE>
-<DL>
-<DT><B>All Implemented Interfaces:</B> <DD>gnu.io.SerialPortEventListener, java.util.EventListener</DD>
-</DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>Serial</B><DT>extends java.lang.Object<DT>implements gnu.io.SerialPortEventListener</DL>
+<DT><PRE>public class <B>Serial</B><DT>extends java.lang.Object</DL>
 </PRE>
 
 <P>
@@ -150,7 +147,7 @@ Class for sending and receiving data using the serial communication protocol.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;gnu.io.SerialPort</CODE></FONT></TD>
+<CODE>&nbsp;SerialPort</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/serial/Serial.html#port">port</A></B></CODE>
 
 <BR>
@@ -383,7 +380,7 @@ Class for sending and receiving data using the serial communication protocol.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/serial/Serial.html#serialEvent(gnu.io.SerialPortEvent)">serialEvent</A></B>(gnu.io.SerialPortEvent&nbsp;serialEvent)</CODE>
+<TD><CODE><B><A HREF="../../processing/serial/Serial.html#serialEvent(SerialPortEvent)">serialEvent</A></B>(SerialPortEvent&nbsp;serialEvent)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -462,7 +459,7 @@ Class for sending and receiving data using the serial communication protocol.
 <A NAME="port"><!-- --></A><H3>
 port</H3>
 <PRE>
-public gnu.io.SerialPort <B>port</B></PRE>
+public SerialPort <B>port</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -604,9 +601,6 @@ public void <B>setProperties</B>(java.util.Properties&nbsp;props)</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -626,9 +620,6 @@ public void <B>stop</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -639,9 +630,6 @@ public void <B>dispose</B>()</PRE>
 <DL>
 <DD>Used by PApplet to shut things down.
 <P>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -658,20 +646,14 @@ public void <B>setDTR</B>(boolean&nbsp;state)</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
-<A NAME="serialEvent(gnu.io.SerialPortEvent)"><!-- --></A><H3>
+<A NAME="serialEvent(SerialPortEvent)"><!-- --></A><H3>
 serialEvent</H3>
 <PRE>
-public void <B>serialEvent</B>(gnu.io.SerialPortEvent&nbsp;serialEvent)</PRE>
+public void <B>serialEvent</B>(SerialPortEvent&nbsp;serialEvent)</PRE>
 <DL>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE>serialEvent</CODE> in interface <CODE>gnu.io.SerialPortEventListener</CODE></DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -689,9 +671,6 @@ public void <B>buffer</B>(int&nbsp;count)</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -703,9 +682,6 @@ public void <B>bufferUntil</B>(int&nbsp;what)</PRE>
 <DD>Set a specific byte to buffer until before calling
  serialEvent() in the host applet.
 <P>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -723,9 +699,6 @@ public int <B>available</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -736,9 +709,6 @@ public void <B>clear</B>()</PRE>
 <DL>
 <DD>Ignore all the bytes read so far and empty the buffer.
 <P>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -758,9 +728,6 @@ public int <B>read</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -773,9 +740,6 @@ public int <B>last</B>()</PRE>
  and clears the buffer. Useful when you just want the most
  recent value sent over the port.
 <P>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -793,9 +757,6 @@ public char <B>readChar</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -806,9 +767,6 @@ public char <B>lastChar</B>()</PRE>
 <DL>
 <DD>Just like last() and readChar().
 <P>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -825,9 +783,6 @@ public byte[] <B>readBytes</B>()</PRE>
  a byte array on each read, but it's easier to use than
  readBytes(byte b[]) (see below).
 <P>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -850,9 +805,6 @@ public int <B>readBytes</B>(byte[]&nbsp;outgoing)</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -865,9 +817,6 @@ public byte[] <B>readBytesUntil</B>(int&nbsp;interesting)</PRE>
  including a particular character. If the character isn't in
  the serial buffer, then 'null' is returned.
 <P>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -892,9 +841,6 @@ public int <B>readBytesUntil</B>(int&nbsp;interesting,
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -910,9 +856,6 @@ public java.lang.String <B>readString</B>()</PRE>
  String to a byte stream in the representation of your choice
  (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
 <P>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -935,9 +878,6 @@ public java.lang.String <B>readStringUntil</B>(int&nbsp;interesting)</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -951,9 +891,6 @@ public void <B>write</B>(int&nbsp;what)</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -962,9 +899,6 @@ write</H3>
 <PRE>
 public void <B>write</B>(byte[]&nbsp;bytes)</PRE>
 <DL>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>
@@ -990,9 +924,6 @@ public void <B>write</B>(java.lang.String&nbsp;what)</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -1008,9 +939,6 @@ public static java.lang.String[] <B>list</B>()</PRE>
 <DD><DL>
 </DL>
 </DD>
-<DD><DL>
-</DL>
-</DD>
 </DL>
 <HR>
 
@@ -1023,9 +951,6 @@ public static void <B>errorMessage</B>(java.lang.String&nbsp;where,
 <DD>General error reporting, all corraled here just in case
  I think of something slightly more intelligent to do.
 <P>
-<DD><DL>
-</DL>
-</DD>
 <DD><DL>
 </DL>
 </DD>

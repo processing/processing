@@ -304,15 +304,6 @@ The text area repaint manager. It performs double buffering and paints
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;boolean</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/syntax/TextAreaPainter.html#getInvalidLinesPainted()">getInvalidLinesPainted</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns true if invalid lines are painted as red tildes (~),
- false otherwise.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.awt.Color</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/syntax/TextAreaPainter.html#getLineHighlightColor()">getLineHighlightColor</A></B>()</CODE>
 
@@ -438,6 +429,14 @@ The text area repaint manager. It performs double buffering and paints
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/TextAreaPainter.html#setAntialias(boolean)">setAntialias</A></B>(boolean&nbsp;antialias)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/syntax/TextAreaPainter.html#setBlockCaretEnabled(boolean)">setBlockCaretEnabled</A></B>(boolean&nbsp;blockCaret)</CODE>
 
 <BR>
@@ -486,6 +485,14 @@ The text area repaint manager. It performs double buffering and paints
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/TextAreaPainter.html#setDefaults(processing.app.syntax.TextAreaDefaults)">setDefaults</A></B>(<A HREF="../../../processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax">TextAreaDefaults</A>&nbsp;defaults)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/syntax/TextAreaPainter.html#setEOLMarkerColor(java.awt.Color)">setEOLMarkerColor</A></B>(java.awt.Color&nbsp;eolMarkerColor)</CODE>
 
 <BR>
@@ -506,14 +513,6 @@ The text area repaint manager. It performs double buffering and paints
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the font for this component.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/syntax/TextAreaPainter.html#setInvalidLinesPainted(boolean)">setInvalidLinesPainted</A></B>(boolean&nbsp;paintInvalid)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets if invalid lines are to be painted as red tildes.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -603,8 +602,7 @@ TextAreaPainter</H3>
 public <B>TextAreaPainter</B>(<A HREF="../../../processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</A>&nbsp;textArea,
                        <A HREF="../../../processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax">TextAreaDefaults</A>&nbsp;defaults)</PRE>
 <DL>
-<DD>Creates a new repaint manager. This should be not be called
- directly.
+<DD>Creates a new repaint manager. This should be not be called directly.
 <P>
 </DL>
 
@@ -617,6 +615,20 @@ public <B>TextAreaPainter</B>(<A HREF="../../../processing/app/syntax/JEditTextA
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="setDefaults(processing.app.syntax.TextAreaDefaults)"><!-- --></A><H3>
+setDefaults</H3>
+<PRE>
+public void <B>setDefaults</B>(<A HREF="../../../processing/app/syntax/TextAreaDefaults.html" title="class in processing.app.syntax">TextAreaDefaults</A>&nbsp;defaults)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
 
 <A NAME="getCompositionTextpainter()"><!-- --></A><H3>
 getCompositionTextpainter</H3>
@@ -963,35 +975,16 @@ public final void <B>setEOLMarkersPainted</B>(boolean&nbsp;eolMarkers)</PRE>
 </DL>
 <HR>
 
-<A NAME="getInvalidLinesPainted()"><!-- --></A><H3>
-getInvalidLinesPainted</H3>
+<A NAME="setAntialias(boolean)"><!-- --></A><H3>
+setAntialias</H3>
 <PRE>
-public boolean <B>getInvalidLinesPainted</B>()</PRE>
+public final void <B>setAntialias</B>(boolean&nbsp;antialias)</PRE>
 <DL>
-<DD>Returns true if invalid lines are painted as red tildes (~),
- false otherwise.
-<P>
 <DD><DL>
 </DL>
 </DD>
 <DD><DL>
 </DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="setInvalidLinesPainted(boolean)"><!-- --></A><H3>
-setInvalidLinesPainted</H3>
-<PRE>
-public void <B>setInvalidLinesPainted</B>(boolean&nbsp;paintInvalid)</PRE>
-<DL>
-<DD>Sets if invalid lines are to be painted as red tildes.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>paintInvalid</CODE> - True if invalid lines should be drawn, false otherwise</DL>
 </DD>
 </DL>
 <HR>

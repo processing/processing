@@ -600,6 +600,14 @@ Base class for all sketches that use processing.core.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#paused">paused</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true if the animation thread is paused.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;int[]</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#pixels">pixels</A></B></CODE>
 
@@ -720,7 +728,7 @@ Base class for all sketches that use processing.core.
 <TH ALIGN="left"><B>Fields inherited from interface processing.core.<A HREF="../../processing/core/PConstants.html" title="interface in processing.core">PConstants</A></B></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../processing/core/PConstants.html#A">A</A>, <A HREF="../../processing/core/PConstants.html#AB">AB</A>, <A HREF="../../processing/core/PConstants.html#ADD">ADD</A>, <A HREF="../../processing/core/PConstants.html#AG">AG</A>, <A HREF="../../processing/core/PConstants.html#ALPHA">ALPHA</A>, <A HREF="../../processing/core/PConstants.html#ALPHA_MASK">ALPHA_MASK</A>, <A HREF="../../processing/core/PConstants.html#ALT">ALT</A>, <A HREF="../../processing/core/PConstants.html#AMBIENT">AMBIENT</A>, <A HREF="../../processing/core/PConstants.html#AR">AR</A>, <A HREF="../../processing/core/PConstants.html#ARC">ARC</A>, <A HREF="../../processing/core/PConstants.html#ARGB">ARGB</A>, <A HREF="../../processing/core/PConstants.html#ARROW">ARROW</A>, <A HREF="../../processing/core/PConstants.html#B">B</A>, <A HREF="../../processing/core/PConstants.html#BACKSPACE">BACKSPACE</A>, <A HREF="../../processing/core/PConstants.html#BASELINE">BASELINE</A>, <A HREF="../../processing/core/PConstants.html#BEEN_LIT">BEEN_LIT</A>, <A HREF="../../processing/core/PConstants.html#BEVEL">BEVEL</A>, <A HREF="../../processing/core/PConstants.html#BLEND">BLEND</A>, <A HREF="../../processing/core/PConstants.html#BLUE_MASK">BLUE_MASK</A>, <A HREF="../../processing/core/PConstants.html#BLUR">BLUR</A>, <A HREF="../../processing/core/PConstants.html#BOTTOM">BOTTOM</A>, <A HREF="../../processing/core/PConstants.html#BOX">BOX</A>, <A HREF="../../processing/core/PConstants.html#BURN">BURN</A>, <A HREF="../../processing/core/PConstants.html#CENTER">CENTER</A>, <A HREF="../../processing/core/PConstants.html#CENTER_DIAMETER">CENTER_DIAMETER</A>, <A HREF="../../processing/core/PConstants.html#CENTER_RADIUS">CENTER_RADIUS</A>, <A HREF="../../processing/core/PConstants.html#CHATTER">CHATTER</A>, <A HREF="../../processing/core/PConstants.html#CLOSE">CLOSE</A>, <A HREF="../../processing/core/PConstants.html#CMYK">CMYK</A>, <A HREF="../../processing/core/PConstants.html#CODED">CODED</A>, <A HREF="../../processing/core/PConstants.html#COMPLAINT">COMPLAINT</A>, <A HREF="../../processing/core/PConstants.html#CONTROL">CONTROL</A>, <A HREF="../../processing/core/PConstants.html#CORNER">CORNER</A>, <A HREF="../../processing/core/PConstants.html#CORNERS">CORNERS</A>, <A HREF="../../processing/core/PConstants.html#CROSS">CROSS</A>, <A HREF="../../processing/core/PConstants.html#CUSTOM">CUSTOM</A>, <A HREF="../../processing/core/PConstants.html#DA">DA</A>, <A HREF="../../processing/core/PConstants.html#DARKEST">DARKEST</A>, <A HREF="../../processing/core/PConstants.html#DB">DB</A>, <A HREF="../../processing/core/PConstants.html#DEG_TO_RAD">DEG_TO_RAD</A>, <A HREF="../../processing/core/PConstants.html#DELETE">DELETE</A>, <A HREF="../../processing/core/PConstants.html#DG">DG</A>, <A HREF="../../processing/core/PConstants.html#DIAMETER">DIAMETER</A>, <A HREF="../../processing/core/PConstants.html#DIFFERENCE">DIFFERENCE</A>, <A HREF="../../processing/core/PConstants.html#DILATE">DILATE</A>, <A HREF="../../processing/core/PConstants.html#DIRECTIONAL">DIRECTIONAL</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_ACCURATE_TEXTURES">DISABLE_ACCURATE_TEXTURES</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_DEPTH_SORT">DISABLE_DEPTH_SORT</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_DEPTH_TEST">DISABLE_DEPTH_TEST</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_NATIVE_FONTS">DISABLE_NATIVE_FONTS</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_OPENGL_2X_SMOOTH">DISABLE_OPENGL_2X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_OPENGL_ERROR_REPORT">DISABLE_OPENGL_ERROR_REPORT</A>, <A HREF="../../processing/core/PConstants.html#DODGE">DODGE</A>, <A HREF="../../processing/core/PConstants.html#DOWN">DOWN</A>, <A HREF="../../processing/core/PConstants.html#DR">DR</A>, <A HREF="../../processing/core/PConstants.html#DXF">DXF</A>, <A HREF="../../processing/core/PConstants.html#EB">EB</A>, <A HREF="../../processing/core/PConstants.html#EDGE">EDGE</A>, <A HREF="../../processing/core/PConstants.html#EG">EG</A>, <A HREF="../../processing/core/PConstants.html#ELLIPSE">ELLIPSE</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_ACCURATE_TEXTURES">ENABLE_ACCURATE_TEXTURES</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_DEPTH_SORT">ENABLE_DEPTH_SORT</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_DEPTH_TEST">ENABLE_DEPTH_TEST</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_NATIVE_FONTS">ENABLE_NATIVE_FONTS</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_2X_SMOOTH">ENABLE_OPENGL_2X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_4X_SMOOTH">ENABLE_OPENGL_4X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_ERROR_REPORT">ENABLE_OPENGL_ERROR_REPORT</A>, <A HREF="../../processing/core/PConstants.html#ENTER">ENTER</A>, <A HREF="../../processing/core/PConstants.html#EPSILON">EPSILON</A>, <A HREF="../../processing/core/PConstants.html#ER">ER</A>, <A HREF="../../processing/core/PConstants.html#ERODE">ERODE</A>, <A HREF="../../processing/core/PConstants.html#ERROR_BACKGROUND_IMAGE_FORMAT">ERROR_BACKGROUND_IMAGE_FORMAT</A>, <A HREF="../../processing/core/PConstants.html#ERROR_BACKGROUND_IMAGE_SIZE">ERROR_BACKGROUND_IMAGE_SIZE</A>, <A HREF="../../processing/core/PConstants.html#ERROR_PUSHMATRIX_OVERFLOW">ERROR_PUSHMATRIX_OVERFLOW</A>, <A HREF="../../processing/core/PConstants.html#ERROR_PUSHMATRIX_UNDERFLOW">ERROR_PUSHMATRIX_UNDERFLOW</A>, <A HREF="../../processing/core/PConstants.html#ERROR_TEXTFONT_NULL_PFONT">ERROR_TEXTFONT_NULL_PFONT</A>, <A HREF="../../processing/core/PConstants.html#ESC">ESC</A>, <A HREF="../../processing/core/PConstants.html#EXCLUSION">EXCLUSION</A>, <A HREF="../../processing/core/PConstants.html#G">G</A>, <A HREF="../../processing/core/PConstants.html#GIF">GIF</A>, <A HREF="../../processing/core/PConstants.html#GRAY">GRAY</A>, <A HREF="../../processing/core/PConstants.html#GREEN_MASK">GREEN_MASK</A>, <A HREF="../../processing/core/PConstants.html#HALF_PI">HALF_PI</A>, <A HREF="../../processing/core/PConstants.html#HAND">HAND</A>, <A HREF="../../processing/core/PConstants.html#HARD_LIGHT">HARD_LIGHT</A>, <A HREF="../../processing/core/PConstants.html#HINT_COUNT">HINT_COUNT</A>, <A HREF="../../processing/core/PConstants.html#HSB">HSB</A>, <A HREF="../../processing/core/PConstants.html#IMAGE">IMAGE</A>, <A HREF="../../processing/core/PConstants.html#INVERT">INVERT</A>, <A HREF="../../processing/core/PConstants.html#JAVA2D">JAVA2D</A>, <A HREF="../../processing/core/PConstants.html#JPEG">JPEG</A>, <A HREF="../../processing/core/PConstants.html#LEFT">LEFT</A>, <A HREF="../../processing/core/PConstants.html#LIGHTEST">LIGHTEST</A>, <A HREF="../../processing/core/PConstants.html#LINE">LINE</A>, <A HREF="../../processing/core/PConstants.html#LINES">LINES</A>, <A HREF="../../processing/core/PConstants.html#LINUX">LINUX</A>, <A HREF="../../processing/core/PConstants.html#MACOSX">MACOSX</A>, <A HREF="../../processing/core/PConstants.html#MAX_FLOAT">MAX_FLOAT</A>, <A HREF="../../processing/core/PConstants.html#MAX_INT">MAX_INT</A>, <A HREF="../../processing/core/PConstants.html#MIN_FLOAT">MIN_FLOAT</A>, <A HREF="../../processing/core/PConstants.html#MIN_INT">MIN_INT</A>, <A HREF="../../processing/core/PConstants.html#MITER">MITER</A>, <A HREF="../../processing/core/PConstants.html#MODEL">MODEL</A>, <A HREF="../../processing/core/PConstants.html#MOVE">MOVE</A>, <A HREF="../../processing/core/PConstants.html#MULTIPLY">MULTIPLY</A>, <A HREF="../../processing/core/PConstants.html#NORMAL">NORMAL</A>, <A HREF="../../processing/core/PConstants.html#NORMALIZED">NORMALIZED</A>, <A HREF="../../processing/core/PConstants.html#NX">NX</A>, <A HREF="../../processing/core/PConstants.html#NY">NY</A>, <A HREF="../../processing/core/PConstants.html#NZ">NZ</A>, <A HREF="../../processing/core/PConstants.html#OPAQUE">OPAQUE</A>, <A HREF="../../processing/core/PConstants.html#OPEN">OPEN</A>, <A HREF="../../processing/core/PConstants.html#OPENGL">OPENGL</A>, <A HREF="../../processing/core/PConstants.html#ORTHOGRAPHIC">ORTHOGRAPHIC</A>, <A HREF="../../processing/core/PConstants.html#OTHER">OTHER</A>, <A HREF="../../processing/core/PConstants.html#OVERLAY">OVERLAY</A>, <A HREF="../../processing/core/PConstants.html#P2D">P2D</A>, <A HREF="../../processing/core/PConstants.html#P3D">P3D</A>, <A HREF="../../processing/core/PConstants.html#PATH">PATH</A>, <A HREF="../../processing/core/PConstants.html#PDF">PDF</A>, <A HREF="../../processing/core/PConstants.html#PERSPECTIVE">PERSPECTIVE</A>, <A HREF="../../processing/core/PConstants.html#PI">PI</A>, <A HREF="../../processing/core/PConstants.html#platformNames">platformNames</A>, <A HREF="../../processing/core/PConstants.html#POINT">POINT</A>, <A HREF="../../processing/core/PConstants.html#POINTS">POINTS</A>, <A HREF="../../processing/core/PConstants.html#POLYGON">POLYGON</A>, <A HREF="../../processing/core/PConstants.html#POSTERIZE">POSTERIZE</A>, <A HREF="../../processing/core/PConstants.html#PROBLEM">PROBLEM</A>, <A HREF="../../processing/core/PConstants.html#PROJECT">PROJECT</A>, <A HREF="../../processing/core/PConstants.html#QUAD">QUAD</A>, <A HREF="../../processing/core/PConstants.html#QUAD_STRIP">QUAD_STRIP</A>, <A HREF="../../processing/core/PConstants.html#QUADS">QUADS</A>, <A HREF="../../processing/core/PConstants.html#QUARTER_PI">QUARTER_PI</A>, <A HREF="../../processing/core/PConstants.html#R">R</A>, <A HREF="../../processing/core/PConstants.html#RAD_TO_DEG">RAD_TO_DEG</A>, <A HREF="../../processing/core/PConstants.html#RADIUS">RADIUS</A>, <A HREF="../../processing/core/PConstants.html#RECT">RECT</A>, <A HREF="../../processing/core/PConstants.html#RED_MASK">RED_MASK</A>, <A HREF="../../processing/core/PConstants.html#REPLACE">REPLACE</A>, <A HREF="../../processing/core/PConstants.html#RETURN">RETURN</A>, <A HREF="../../processing/core/PConstants.html#RGB">RGB</A>, <A HREF="../../processing/core/PConstants.html#RIGHT">RIGHT</A>, <A HREF="../../processing/core/PConstants.html#ROUND">ROUND</A>, <A HREF="../../processing/core/PConstants.html#SA">SA</A>, <A HREF="../../processing/core/PConstants.html#SB">SB</A>, <A HREF="../../processing/core/PConstants.html#SCREEN">SCREEN</A>, <A HREF="../../processing/core/PConstants.html#SG">SG</A>, <A HREF="../../processing/core/PConstants.html#SHAPE">SHAPE</A>, <A HREF="../../processing/core/PConstants.html#SHIFT">SHIFT</A>, <A HREF="../../processing/core/PConstants.html#SHINE">SHINE</A>, <A HREF="../../processing/core/PConstants.html#SOFT_LIGHT">SOFT_LIGHT</A>, <A HREF="../../processing/core/PConstants.html#SPB">SPB</A>, <A HREF="../../processing/core/PConstants.html#SPG">SPG</A>, <A HREF="../../processing/core/PConstants.html#SPHERE">SPHERE</A>, <A HREF="../../processing/core/PConstants.html#SPOT">SPOT</A>, <A HREF="../../processing/core/PConstants.html#SPR">SPR</A>, <A HREF="../../processing/core/PConstants.html#SQUARE">SQUARE</A>, <A HREF="../../processing/core/PConstants.html#SR">SR</A>, <A HREF="../../processing/core/PConstants.html#SUBTRACT">SUBTRACT</A>, <A HREF="../../processing/core/PConstants.html#SW">SW</A>, <A HREF="../../processing/core/PConstants.html#TAB">TAB</A>, <A HREF="../../processing/core/PConstants.html#TARGA">TARGA</A>, <A HREF="../../processing/core/PConstants.html#TEXT">TEXT</A>, <A HREF="../../processing/core/PConstants.html#THIRD_PI">THIRD_PI</A>, <A HREF="../../processing/core/PConstants.html#THRESHOLD">THRESHOLD</A>, <A HREF="../../processing/core/PConstants.html#TIFF">TIFF</A>, <A HREF="../../processing/core/PConstants.html#TOP">TOP</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE">TRIANGLE</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE_FAN">TRIANGLE_FAN</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE_STRIP">TRIANGLE_STRIP</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLES">TRIANGLES</A>, <A HREF="../../processing/core/PConstants.html#TWO_PI">TWO_PI</A>, <A HREF="../../processing/core/PConstants.html#TX">TX</A>, <A HREF="../../processing/core/PConstants.html#TY">TY</A>, <A HREF="../../processing/core/PConstants.html#TZ">TZ</A>, <A HREF="../../processing/core/PConstants.html#U">U</A>, <A HREF="../../processing/core/PConstants.html#UP">UP</A>, <A HREF="../../processing/core/PConstants.html#V">V</A>, <A HREF="../../processing/core/PConstants.html#VERTEX_FIELD_COUNT">VERTEX_FIELD_COUNT</A>, <A HREF="../../processing/core/PConstants.html#VW">VW</A>, <A HREF="../../processing/core/PConstants.html#VX">VX</A>, <A HREF="../../processing/core/PConstants.html#VY">VY</A>, <A HREF="../../processing/core/PConstants.html#VZ">VZ</A>, <A HREF="../../processing/core/PConstants.html#WAIT">WAIT</A>, <A HREF="../../processing/core/PConstants.html#WHITESPACE">WHITESPACE</A>, <A HREF="../../processing/core/PConstants.html#WINDOWS">WINDOWS</A>, <A HREF="../../processing/core/PConstants.html#X">X</A>, <A HREF="../../processing/core/PConstants.html#Y">Y</A>, <A HREF="../../processing/core/PConstants.html#Z">Z</A></CODE></TD>
+<TD><CODE><A HREF="../../processing/core/PConstants.html#A">A</A>, <A HREF="../../processing/core/PConstants.html#AB">AB</A>, <A HREF="../../processing/core/PConstants.html#ADD">ADD</A>, <A HREF="../../processing/core/PConstants.html#AG">AG</A>, <A HREF="../../processing/core/PConstants.html#ALPHA">ALPHA</A>, <A HREF="../../processing/core/PConstants.html#ALPHA_MASK">ALPHA_MASK</A>, <A HREF="../../processing/core/PConstants.html#ALT">ALT</A>, <A HREF="../../processing/core/PConstants.html#AMBIENT">AMBIENT</A>, <A HREF="../../processing/core/PConstants.html#AR">AR</A>, <A HREF="../../processing/core/PConstants.html#ARC">ARC</A>, <A HREF="../../processing/core/PConstants.html#ARGB">ARGB</A>, <A HREF="../../processing/core/PConstants.html#ARROW">ARROW</A>, <A HREF="../../processing/core/PConstants.html#B">B</A>, <A HREF="../../processing/core/PConstants.html#BACKSPACE">BACKSPACE</A>, <A HREF="../../processing/core/PConstants.html#BASELINE">BASELINE</A>, <A HREF="../../processing/core/PConstants.html#BEEN_LIT">BEEN_LIT</A>, <A HREF="../../processing/core/PConstants.html#BEVEL">BEVEL</A>, <A HREF="../../processing/core/PConstants.html#BILINEAR">BILINEAR</A>, <A HREF="../../processing/core/PConstants.html#BLEND">BLEND</A>, <A HREF="../../processing/core/PConstants.html#BLUE_MASK">BLUE_MASK</A>, <A HREF="../../processing/core/PConstants.html#BLUR">BLUR</A>, <A HREF="../../processing/core/PConstants.html#BOTTOM">BOTTOM</A>, <A HREF="../../processing/core/PConstants.html#BOX">BOX</A>, <A HREF="../../processing/core/PConstants.html#BURN">BURN</A>, <A HREF="../../processing/core/PConstants.html#CENTER">CENTER</A>, <A HREF="../../processing/core/PConstants.html#CENTER_DIAMETER">CENTER_DIAMETER</A>, <A HREF="../../processing/core/PConstants.html#CENTER_RADIUS">CENTER_RADIUS</A>, <A HREF="../../processing/core/PConstants.html#CHATTER">CHATTER</A>, <A HREF="../../processing/core/PConstants.html#CLAMP">CLAMP</A>, <A HREF="../../processing/core/PConstants.html#CLOSE">CLOSE</A>, <A HREF="../../processing/core/PConstants.html#CMYK">CMYK</A>, <A HREF="../../processing/core/PConstants.html#CODED">CODED</A>, <A HREF="../../processing/core/PConstants.html#COMPLAINT">COMPLAINT</A>, <A HREF="../../processing/core/PConstants.html#CONTROL">CONTROL</A>, <A HREF="../../processing/core/PConstants.html#CORNER">CORNER</A>, <A HREF="../../processing/core/PConstants.html#CORNERS">CORNERS</A>, <A HREF="../../processing/core/PConstants.html#CROSS">CROSS</A>, <A HREF="../../processing/core/PConstants.html#CUSTOM">CUSTOM</A>, <A HREF="../../processing/core/PConstants.html#DA">DA</A>, <A HREF="../../processing/core/PConstants.html#DARKEST">DARKEST</A>, <A HREF="../../processing/core/PConstants.html#DB">DB</A>, <A HREF="../../processing/core/PConstants.html#DEG_TO_RAD">DEG_TO_RAD</A>, <A HREF="../../processing/core/PConstants.html#DELETE">DELETE</A>, <A HREF="../../processing/core/PConstants.html#DG">DG</A>, <A HREF="../../processing/core/PConstants.html#DIAMETER">DIAMETER</A>, <A HREF="../../processing/core/PConstants.html#DIFFERENCE">DIFFERENCE</A>, <A HREF="../../processing/core/PConstants.html#DILATE">DILATE</A>, <A HREF="../../processing/core/PConstants.html#DIRECTIONAL">DIRECTIONAL</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_ACCURATE_TEXTURES">DISABLE_ACCURATE_TEXTURES</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_DEPTH_MASK">DISABLE_DEPTH_MASK</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_DEPTH_SORT">DISABLE_DEPTH_SORT</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_DEPTH_TEST">DISABLE_DEPTH_TEST</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_NATIVE_FONTS">DISABLE_NATIVE_FONTS</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_OPENGL_2X_SMOOTH">DISABLE_OPENGL_2X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#DISABLE_OPENGL_ERROR_REPORT">DISABLE_OPENGL_ERROR_REPORT</A>, <A HREF="../../processing/core/PConstants.html#DODGE">DODGE</A>, <A HREF="../../processing/core/PConstants.html#DOWN">DOWN</A>, <A HREF="../../processing/core/PConstants.html#DR">DR</A>, <A HREF="../../processing/core/PConstants.html#DXF">DXF</A>, <A HREF="../../processing/core/PConstants.html#DYNAMIC">DYNAMIC</A>, <A HREF="../../processing/core/PConstants.html#EB">EB</A>, <A HREF="../../processing/core/PConstants.html#EDGE">EDGE</A>, <A HREF="../../processing/core/PConstants.html#EG">EG</A>, <A HREF="../../processing/core/PConstants.html#ELLIPSE">ELLIPSE</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_ACCURATE_TEXTURES">ENABLE_ACCURATE_TEXTURES</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_DEPTH_MASK">ENABLE_DEPTH_MASK</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_DEPTH_SORT">ENABLE_DEPTH_SORT</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_DEPTH_TEST">ENABLE_DEPTH_TEST</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_NATIVE_FONTS">ENABLE_NATIVE_FONTS</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_2X_SMOOTH">ENABLE_OPENGL_2X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_4X_SMOOTH">ENABLE_OPENGL_4X_SMOOTH</A>, <A HREF="../../processing/core/PConstants.html#ENABLE_OPENGL_ERROR_REPORT">ENABLE_OPENGL_ERROR_REPORT</A>, <A HREF="../../processing/core/PConstants.html#ENTER">ENTER</A>, <A HREF="../../processing/core/PConstants.html#EPSILON">EPSILON</A>, <A HREF="../../processing/core/PConstants.html#ER">ER</A>, <A HREF="../../processing/core/PConstants.html#ERODE">ERODE</A>, <A HREF="../../processing/core/PConstants.html#ERROR_BACKGROUND_IMAGE_FORMAT">ERROR_BACKGROUND_IMAGE_FORMAT</A>, <A HREF="../../processing/core/PConstants.html#ERROR_BACKGROUND_IMAGE_SIZE">ERROR_BACKGROUND_IMAGE_SIZE</A>, <A HREF="../../processing/core/PConstants.html#ERROR_PUSHMATRIX_OVERFLOW">ERROR_PUSHMATRIX_OVERFLOW</A>, <A HREF="../../processing/core/PConstants.html#ERROR_PUSHMATRIX_UNDERFLOW">ERROR_PUSHMATRIX_UNDERFLOW</A>, <A HREF="../../processing/core/PConstants.html#ERROR_TEXTFONT_NULL_PFONT">ERROR_TEXTFONT_NULL_PFONT</A>, <A HREF="../../processing/core/PConstants.html#ESC">ESC</A>, <A HREF="../../processing/core/PConstants.html#EXCLUSION">EXCLUSION</A>, <A HREF="../../processing/core/PConstants.html#FIXED">FIXED</A>, <A HREF="../../processing/core/PConstants.html#G">G</A>, <A HREF="../../processing/core/PConstants.html#GIF">GIF</A>, <A HREF="../../processing/core/PConstants.html#GRAY">GRAY</A>, <A HREF="../../processing/core/PConstants.html#GREEN_MASK">GREEN_MASK</A>, <A HREF="../../processing/core/PConstants.html#HALF_PI">HALF_PI</A>, <A HREF="../../processing/core/PConstants.html#HAND">HAND</A>, <A HREF="../../processing/core/PConstants.html#HARD_LIGHT">HARD_LIGHT</A>, <A HREF="../../processing/core/PConstants.html#HAS_NORMAL">HAS_NORMAL</A>, <A HREF="../../processing/core/PConstants.html#HINT_COUNT">HINT_COUNT</A>, <A HREF="../../processing/core/PConstants.html#HSB">HSB</A>, <A HREF="../../processing/core/PConstants.html#IMAGE">IMAGE</A>, <A HREF="../../processing/core/PConstants.html#INVERT">INVERT</A>, <A HREF="../../processing/core/PConstants.html#JAVA2D">JAVA2D</A>, <A HREF="../../processing/core/PConstants.html#JPEG">JPEG</A>, <A HREF="../../processing/core/PConstants.html#LEFT">LEFT</A>, <A HREF="../../processing/core/PConstants.html#LIGHTEST">LIGHTEST</A>, <A HREF="../../processing/core/PConstants.html#LINE">LINE</A>, <A HREF="../../processing/core/PConstants.html#LINE_LOOP">LINE_LOOP</A>, <A HREF="../../processing/core/PConstants.html#LINE_STRIP">LINE_STRIP</A>, <A HREF="../../processing/core/PConstants.html#LINEAR">LINEAR</A>, <A HREF="../../processing/core/PConstants.html#LINES">LINES</A>, <A HREF="../../processing/core/PConstants.html#LINUX">LINUX</A>, <A HREF="../../processing/core/PConstants.html#MACOSX">MACOSX</A>, <A HREF="../../processing/core/PConstants.html#MAX_FLOAT">MAX_FLOAT</A>, <A HREF="../../processing/core/PConstants.html#MAX_INT">MAX_INT</A>, <A HREF="../../processing/core/PConstants.html#MIN_FLOAT">MIN_FLOAT</A>, <A HREF="../../processing/core/PConstants.html#MIN_INT">MIN_INT</A>, <A HREF="../../processing/core/PConstants.html#MITER">MITER</A>, <A HREF="../../processing/core/PConstants.html#MODEL">MODEL</A>, <A HREF="../../processing/core/PConstants.html#MODELVIEW">MODELVIEW</A>, <A HREF="../../processing/core/PConstants.html#MOVE">MOVE</A>, <A HREF="../../processing/core/PConstants.html#MULTIPLY">MULTIPLY</A>, <A HREF="../../processing/core/PConstants.html#NORMAL">NORMAL</A>, <A HREF="../../processing/core/PConstants.html#NORMALIZED">NORMALIZED</A>, <A HREF="../../processing/core/PConstants.html#NX">NX</A>, <A HREF="../../processing/core/PConstants.html#NY">NY</A>, <A HREF="../../processing/core/PConstants.html#NZ">NZ</A>, <A HREF="../../processing/core/PConstants.html#OPAQUE">OPAQUE</A>, <A HREF="../../processing/core/PConstants.html#OPEN">OPEN</A>, <A HREF="../../processing/core/PConstants.html#OPENGL">OPENGL</A>, <A HREF="../../processing/core/PConstants.html#OPENGL2">OPENGL2</A>, <A HREF="../../processing/core/PConstants.html#ORTHOGRAPHIC">ORTHOGRAPHIC</A>, <A HREF="../../processing/core/PConstants.html#OTHER">OTHER</A>, <A HREF="../../processing/core/PConstants.html#OVERLAY">OVERLAY</A>, <A HREF="../../processing/core/PConstants.html#P2D">P2D</A>, <A HREF="../../processing/core/PConstants.html#P3D">P3D</A>, <A HREF="../../processing/core/PConstants.html#PATH">PATH</A>, <A HREF="../../processing/core/PConstants.html#PDF">PDF</A>, <A HREF="../../processing/core/PConstants.html#PERSPECTIVE">PERSPECTIVE</A>, <A HREF="../../processing/core/PConstants.html#PI">PI</A>, <A HREF="../../processing/core/PConstants.html#platformNames">platformNames</A>, <A HREF="../../processing/core/PConstants.html#POINT">POINT</A>, <A HREF="../../processing/core/PConstants.html#POINT_SPRITES">POINT_SPRITES</A>, <A HREF="../../processing/core/PConstants.html#POINTS">POINTS</A>, <A HREF="../../processing/core/PConstants.html#POLYGON">POLYGON</A>, <A HREF="../../processing/core/PConstants.html#POSTERIZE">POSTERIZE</A>, <A HREF="../../processing/core/PConstants.html#PROBLEM">PROBLEM</A>, <A HREF="../../processing/core/PConstants.html#PROG_GL2">PROG_GL2</A>, <A HREF="../../processing/core/PConstants.html#PROG_GL3">PROG_GL3</A>, <A HREF="../../processing/core/PConstants.html#PROG_GL4">PROG_GL4</A>, <A HREF="../../processing/core/PConstants.html#PROJECT">PROJECT</A>, <A HREF="../../processing/core/PConstants.html#PROJECTION">PROJECTION</A>, <A HREF="../../processing/core/PConstants.html#QUAD">QUAD</A>, <A HREF="../../processing/core/PConstants.html#QUAD_STRIP">QUAD_STRIP</A>, <A HREF="../../processing/core/PConstants.html#QUADRATIC">QUADRATIC</A>, <A HREF="../../processing/core/PConstants.html#QUADS">QUADS</A>, <A HREF="../../processing/core/PConstants.html#QUARTER_PI">QUARTER_PI</A>, <A HREF="../../processing/core/PConstants.html#R">R</A>, <A HREF="../../processing/core/PConstants.html#RAD_TO_DEG">RAD_TO_DEG</A>, <A HREF="../../processing/core/PConstants.html#RADIUS">RADIUS</A>, <A HREF="../../processing/core/PConstants.html#RECT">RECT</A>, <A HREF="../../processing/core/PConstants.html#RED_MASK">RED_MASK</A>, <A HREF="../../processing/core/PConstants.html#REPEAT">REPEAT</A>, <A HREF="../../processing/core/PConstants.html#REPLACE">REPLACE</A>, <A HREF="../../processing/core/PConstants.html#RETURN">RETURN</A>, <A HREF="../../processing/core/PConstants.html#RGB">RGB</A>, <A HREF="../../processing/core/PConstants.html#RIGHT">RIGHT</A>, <A HREF="../../processing/core/PConstants.html#ROUND">ROUND</A>, <A HREF="../../processing/core/PConstants.html#SA">SA</A>, <A HREF="../../processing/core/PConstants.html#SB">SB</A>, <A HREF="../../processing/core/PConstants.html#SCREEN">SCREEN</A>, <A HREF="../../processing/core/PConstants.html#SG">SG</A>, <A HREF="../../processing/core/PConstants.html#SHAPE">SHAPE</A>, <A HREF="../../processing/core/PConstants.html#SHIFT">SHIFT</A>, <A HREF="../../processing/core/PConstants.html#SHINE">SHINE</A>, <A HREF="../../processing/core/PConstants.html#SOFT_LIGHT">SOFT_LIGHT</A>, <A HREF="../../processing/core/PConstants.html#SPB">SPB</A>, <A HREF="../../processing/core/PConstants.html#SPG">SPG</A>, <A HREF="../../processing/core/PConstants.html#SPHERE">SPHERE</A>, <A HREF="../../processing/core/PConstants.html#SPOT">SPOT</A>, <A HREF="../../processing/core/PConstants.html#SPR">SPR</A>, <A HREF="../../processing/core/PConstants.html#SQUARE">SQUARE</A>, <A HREF="../../processing/core/PConstants.html#SR">SR</A>, <A HREF="../../processing/core/PConstants.html#STATIC">STATIC</A>, <A HREF="../../processing/core/PConstants.html#STREAM">STREAM</A>, <A HREF="../../processing/core/PConstants.html#SUBTRACT">SUBTRACT</A>, <A HREF="../../processing/core/PConstants.html#SW">SW</A>, <A HREF="../../processing/core/PConstants.html#TAB">TAB</A>, <A HREF="../../processing/core/PConstants.html#TARGA">TARGA</A>, <A HREF="../../processing/core/PConstants.html#TEXT">TEXT</A>, <A HREF="../../processing/core/PConstants.html#TEXTURE2D">TEXTURE2D</A>, <A HREF="../../processing/core/PConstants.html#THIRD_PI">THIRD_PI</A>, <A HREF="../../processing/core/PConstants.html#THRESHOLD">THRESHOLD</A>, <A HREF="../../processing/core/PConstants.html#TIFF">TIFF</A>, <A HREF="../../processing/core/PConstants.html#TOP">TOP</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE">TRIANGLE</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE_FAN">TRIANGLE_FAN</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLE_STRIP">TRIANGLE_STRIP</A>, <A HREF="../../processing/core/PConstants.html#TRIANGLES">TRIANGLES</A>, <A HREF="../../processing/core/PConstants.html#TRILINEAR">TRILINEAR</A>, <A HREF="../../processing/core/PConstants.html#TWO_PI">TWO_PI</A>, <A HREF="../../processing/core/PConstants.html#TX">TX</A>, <A HREF="../../processing/core/PConstants.html#TY">TY</A>, <A HREF="../../processing/core/PConstants.html#TZ">TZ</A>, <A HREF="../../processing/core/PConstants.html#U">U</A>, <A HREF="../../processing/core/PConstants.html#UP">UP</A>, <A HREF="../../processing/core/PConstants.html#V">V</A>, <A HREF="../../processing/core/PConstants.html#VERTEX_FIELD_COUNT">VERTEX_FIELD_COUNT</A>, <A HREF="../../processing/core/PConstants.html#VW">VW</A>, <A HREF="../../processing/core/PConstants.html#VX">VX</A>, <A HREF="../../processing/core/PConstants.html#VY">VY</A>, <A HREF="../../processing/core/PConstants.html#VZ">VZ</A>, <A HREF="../../processing/core/PConstants.html#WAIT">WAIT</A>, <A HREF="../../processing/core/PConstants.html#WHITESPACE">WHITESPACE</A>, <A HREF="../../processing/core/PConstants.html#WINDOWS">WINDOWS</A>, <A HREF="../../processing/core/PConstants.html#X">X</A>, <A HREF="../../processing/core/PConstants.html#Y">Y</A>, <A HREF="../../processing/core/PConstants.html#Z">Z</A></CODE></TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_java.awt.image.ImageObserver"><!-- --></A>
@@ -1066,6 +1074,14 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#autoNormal(boolean)">autoNormal</A></B>(boolean&nbsp;auto)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#background(float)">background</A></B>(float&nbsp;gray)</CODE>
 
 <BR>
@@ -1156,6 +1172,15 @@ Base class for all sketches that use processing.core.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#beginRecord()">beginRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Starts shape recording and returns the PShape object that will
+ contain the geometry.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#beginRecord(processing.core.PGraphics)">beginRecord</A></B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;recorder)</CODE>
 
@@ -1187,6 +1212,14 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start a new shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#beginText()">beginText</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1739,6 +1772,17 @@ Base class for all sketches that use processing.core.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#createImage(int, int, int, java.lang.Object)">createImage</A></B>(int&nbsp;wide,
+            int&nbsp;high,
+            int&nbsp;format,
+            java.lang.Object&nbsp;params)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new PImage (the datatype for storing images).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;java.io.InputStream</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#createInput(java.io.File)">createInput</A></B>(java.io.File&nbsp;file)</CODE>
 
@@ -1818,6 +1862,15 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I want to read lines from a file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#createShape(int, java.lang.Object)">createShape</A></B>(int&nbsp;size,
+            java.lang.Object&nbsp;params)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an empty shape, with the specified size and parameters.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2014,6 +2067,14 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#delete()">delete</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#destroy()">destroy</A></B>()</CODE>
 
 <BR>
@@ -2059,6 +2120,14 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return true if this renderer should be drawn to the screen.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#dispose()">dispose</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Called to dispose of resources and shut down the sketch.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2182,6 +2251,14 @@ Base class for all sketches that use processing.core.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#endShape(int)">endShape</A></B>(int&nbsp;mode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#endText()">endText</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -2501,7 +2578,7 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;java.lang.Object</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PApplet.html#getCache(java.lang.Object)">getCache</A></B>(java.lang.Object&nbsp;parent)</CODE>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#getCache(processing.core.PGraphics)">getCache</A></B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get cache storage data for the specified renderer.</TD>
@@ -2529,6 +2606,14 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy the current transformation matrix into the specified target.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Object</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#getParams(processing.core.PGraphics)">getParams</A></B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the parameters for the specified renderer.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2586,6 +2671,14 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set various hints and hacks for the renderer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#hintEnabled(int)">hintEnabled</A></B>(int&nbsp;which)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -2653,6 +2746,14 @@ Base class for all sketches that use processing.core.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#init()">init</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#isRecording()">isRecording</A></B>()</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -2873,8 +2974,27 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#loadImage(java.lang.String, java.lang.Object)">loadImage</A></B>(java.lang.String&nbsp;filename,
+          java.lang.Object&nbsp;params)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#loadImage(java.lang.String, java.lang.String)">loadImage</A></B>(java.lang.String&nbsp;filename,
           java.lang.String&nbsp;extension)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load an image from the data folder or a local directory...</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#loadImage(java.lang.String, java.lang.String, java.lang.Object)">loadImage</A></B>(java.lang.String&nbsp;filename,
+          java.lang.String&nbsp;extension,
+          java.lang.Object&nbsp;params)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loads an image into a variable of type <b>PImage</b>.</TD>
@@ -2891,6 +3011,15 @@ Base class for all sketches that use processing.core.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#loadShape(java.lang.String)">loadShape</A></B>(java.lang.String&nbsp;filename)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#loadShape(java.lang.String, java.lang.Object)">loadShape</A></B>(java.lang.String&nbsp;filename,
+          java.lang.Object&nbsp;params)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loads vector shapes into a variable of type <b>PShape</b>.</TD>
@@ -3013,6 +3142,14 @@ Base class for all sketches that use processing.core.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#matrixMode(int)">matrixMode</A></B>(int&nbsp;mode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;float</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#max(float[])">max</A></B>(float[]&nbsp;list)</CODE>
 
@@ -3061,6 +3198,14 @@ Base class for all sketches that use processing.core.
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#max(int, int, int)">max</A></B>(int&nbsp;a,
     int&nbsp;b,
     int&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#mergeShapes(boolean)">mergeShapes</A></B>(boolean&nbsp;val)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -3556,6 +3701,14 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#noTexture()">noTexture</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes texture image for current shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#noTint()">noTint</A></B>()</CODE>
 
 <BR>
@@ -3596,6 +3749,17 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#ortho(float, float, float, float)">ortho</A></B>(float&nbsp;left,
+      float&nbsp;right,
+      float&nbsp;bottom,
+      float&nbsp;top)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#ortho(float, float, float, float, float, float)">ortho</A></B>(float&nbsp;left,
       float&nbsp;right,
       float&nbsp;bottom,
@@ -3621,14 +3785,6 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads the value of a param.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;boolean[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PApplet.html#parseBoolean(byte[])">parseBoolean</A></B>(byte[]&nbsp;what)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert a byte array to a boolean array.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -4322,7 +4478,15 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PApplet.html#removeCache(java.lang.Object)">removeCache</A></B>(java.lang.Object&nbsp;parent)</CODE>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#removeCache(processing.core.PGraphics)">removeCache</A></B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove information associated with this renderer from the cache, if any.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#removeParams(processing.core.PGraphics)">removeParams</A></B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove information associated with this renderer from the cache, if any.</TD>
@@ -4340,6 +4504,16 @@ Base class for all sketches that use processing.core.
 <CODE>&nbsp;<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#requestImage(java.lang.String, java.lang.String)">requestImage</A></B>(java.lang.String&nbsp;filename,
              java.lang.String&nbsp;extension)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#requestImage(java.lang.String, java.lang.String, java.lang.Object)">requestImage</A></B>(java.lang.String&nbsp;filename,
+             java.lang.String&nbsp;extension,
+             java.lang.Object&nbsp;params)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function load images on a separate thread so that your sketch does not freeze while images load during <b>setup()</b>.</TD>
@@ -4575,6 +4749,15 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#saveStream(java.lang.String, java.io.InputStream)">saveStream</A></B>(java.lang.String&nbsp;targetFilename,
+           java.io.InputStream&nbsp;sourceStream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#saveStream(java.lang.String, java.lang.String)">saveStream</A></B>(java.lang.String&nbsp;targetFilename,
            java.lang.String&nbsp;sourceLocation)</CODE>
 
@@ -4634,6 +4817,14 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scale in X, Y, and Z.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#screenBlend(int)">screenBlend</A></B>(int&nbsp;mode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -4766,7 +4957,7 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PApplet.html#setCache(java.lang.Object, java.lang.Object)">setCache</A></B>(java.lang.Object&nbsp;parent,
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#setCache(processing.core.PGraphics, java.lang.Object)">setCache</A></B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer,
          java.lang.Object&nbsp;storage)</CODE>
 
 <BR>
@@ -4796,6 +4987,16 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the current transformation to the contents of the specified source.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#setParams(processing.core.PGraphics, java.lang.Object)">setParams</A></B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer,
+          java.lang.Object&nbsp;params)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Store parameters for a renderer that requires extra metadata of
+ some kind.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -4859,6 +5060,14 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Modifies the location from which shapes draw.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#shapeName(java.lang.String)">shapeName</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -4939,6 +5148,50 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#showDepthWarning(java.lang.String)">showDepthWarning</A></B>(java.lang.String&nbsp;method)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display a warning that the specified method is only available with 3D.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#showDepthWarningXYZ(java.lang.String)">showDepthWarningXYZ</A></B>(java.lang.String&nbsp;method)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display a warning that the specified method that takes x, y, z parameters
+ can only be used with x and y parameters in this renderer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#showMethodWarning(java.lang.String)">showMethodWarning</A></B>(java.lang.String&nbsp;method)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display a warning that the specified method is simply unavailable.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#showMissingWarning(java.lang.String)">showMissingWarning</A></B>(java.lang.String&nbsp;method)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display a warning that the specified method is not implemented, meaning
+ that it could be either a completely missing function, although other
+ variations of it may still work properly.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#showVariationWarning(java.lang.String)">showVariationWarning</A></B>(java.lang.String&nbsp;str)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Error that a particular variation of a method is unavailable (even though
+ other variations are).</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -5929,10 +6182,26 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#texture(processing.core.PImage...)">texture</A></B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>...&nbsp;images)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/core/PApplet.html#texture(processing.core.PImage)">texture</A></B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>&nbsp;image)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set texture image for current shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#textureBlend(int)">textureBlend</A></B>(int&nbsp;mode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -6183,11 +6452,10 @@ Base class for all sketches that use processing.core.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/core/PApplet.html#vertex(float[])">vertex</A></B>(float[]&nbsp;v)</CODE>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#vertex(float...)">vertex</A></B>(float...&nbsp;values)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used by renderer subclasses or PShape to efficiently pass in already
- formatted vertex information.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -6230,6 +6498,15 @@ Base class for all sketches that use processing.core.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/core/PApplet.html#vertexFields(float[])">vertexFields</A></B>(float[]&nbsp;v)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used by renderer subclasses or PShape to efficiently pass in already
+ formatted vertex information.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -6903,6 +7180,18 @@ public volatile boolean <B>finished</B></PRE>
 </DL>
 <HR>
 
+<A NAME="paused"><!-- --></A><H3>
+paused</H3>
+<PRE>
+public volatile boolean <B>paused</B></PRE>
+<DL>
+<DD>true if the animation thread is paused.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
 <A NAME="ARGS_EDITOR_LOCATION"><!-- --></A><H3>
 ARGS_EDITOR_LOCATION</H3>
 <PRE>
@@ -7218,9 +7507,6 @@ public void <B>destroy</B>()</PRE>
 <DD>Called by the browser or applet viewer to inform this applet
  that it is being reclaimed and that it should destroy
  any resources that it has allocated.
- <p/>
- This also attempts to call PApplet.stop(), in case there
- was an inadvertent override of the stop() function by a user.
  <p/>
  destroy() supposedly gets called as the applet viewer
  is shutting down the applet. stop() is called
@@ -7642,6 +7928,25 @@ createImage</H3>
 public <A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A> <B>createImage</B>(int&nbsp;wide,
                           int&nbsp;high,
                           int&nbsp;format)</PRE>
+<DL>
+<DD>Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createImage(int, int, int, java.lang.Object)"><!-- --></A><H3>
+createImage</H3>
+<PRE>
+public <A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A> <B>createImage</B>(int&nbsp;wide,
+                          int&nbsp;high,
+                          int&nbsp;format,
+                          java.lang.Object&nbsp;params)</PRE>
 <DL>
 <DD>Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
  <br><br>Be sure to include all three parameters, specifying only the width and height (but no format) will produce a strange error.
@@ -8604,6 +8909,26 @@ public void <B>exit</B>()</PRE>
 <DL>
 <DD>Call to safely exit the sketch when finished. For instance,
  to render a single frame, save it, and quit.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dispose()"><!-- --></A><H3>
+dispose</H3>
+<PRE>
+public void <B>dispose</B>()</PRE>
+<DL>
+<DD>Called to dispose of resources and shut down the sketch.
+ Destroys the thread, dispose the renderer,and notify listeners.
+ <p>
+ Not to be called or overriden by users. If called multiple times,
+ will only notify listeners once. Register a dispose listener instead.
 <P>
 <DD><DL>
 </DL>
@@ -9864,9 +10189,43 @@ loadImage</H3>
 public <A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A> <B>loadImage</B>(java.lang.String&nbsp;filename,
                         java.lang.String&nbsp;extension)</PRE>
 <DL>
+<DD>Load an image from the data folder or a local directory...
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadImage(java.lang.String, java.lang.Object)"><!-- --></A><H3>
+loadImage</H3>
+<PRE>
+public <A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A> <B>loadImage</B>(java.lang.String&nbsp;filename,
+                        java.lang.Object&nbsp;params)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadImage(java.lang.String, java.lang.String, java.lang.Object)"><!-- --></A><H3>
+loadImage</H3>
+<PRE>
+public <A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A> <B>loadImage</B>(java.lang.String&nbsp;filename,
+                        java.lang.String&nbsp;extension,
+                        java.lang.Object&nbsp;params)</PRE>
+<DL>
 <DD>Loads an image into a variable of type <b>PImage</b>. Four types of images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them at the start of the program. Loading images inside <b>draw()</b> will reduce the speed of a program.
  <br><br>The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</a>.
  <br><br>The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>loadImage()</b>, as shown in the third example on this page.
+ <br><br>The <b>params</b> parameter is used to set an parameter object for the image, as might be used by specific renderers such as OPENGL2. Specify the extension as the third parameter to <b>loadImage()</b>, as shown in the fourth example on this page.
  <br><br>If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadImage()</b> is null.<br><br>Depending on the type of error, a <b>PImage</b> object may still be returned, but the width and height of the image will be set to -1. This happens if bad image data is returned or cannot be decoded properly. Sometimes this happens with image URLs that produce a 403 error or that redirect to a password prompt, because <b>loadImage()</b> will attempt to interpret the HTML as image data.
 
  =advanced
@@ -9909,6 +10268,22 @@ requestImage</H3>
 public <A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A> <B>requestImage</B>(java.lang.String&nbsp;filename,
                            java.lang.String&nbsp;extension)</PRE>
 <DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="requestImage(java.lang.String, java.lang.String, java.lang.Object)"><!-- --></A><H3>
+requestImage</H3>
+<PRE>
+public <A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A> <B>requestImage</B>(java.lang.String&nbsp;filename,
+                           java.lang.String&nbsp;extension,
+                           java.lang.Object&nbsp;params)</PRE>
+<DL>
 <DD>This function load images on a separate thread so that your sketch does not freeze while images load during <b>setup()</b>. While the image is loading, its width and height will be 0. If an error occurs while loading the image, its width and height will be set to -1. You'll know when the image has loaded properly because its width and height will be greater than 0. Asynchronous image loading (particularly when downloading from a server) can dramatically improve performance.<br><br>
  The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>requestImage()</b>.
 <P>
@@ -9926,6 +10301,21 @@ public <A HREF="../../processing/core/PImage.html" title="class in processing.co
 loadShape</H3>
 <PRE>
 public <A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A> <B>loadShape</B>(java.lang.String&nbsp;filename)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadShape(java.lang.String, java.lang.Object)"><!-- --></A><H3>
+loadShape</H3>
+<PRE>
+public <A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A> <B>loadShape</B>(java.lang.String&nbsp;filename,
+                        java.lang.Object&nbsp;params)</PRE>
 <DL>
 <DD>Loads vector shapes into a variable of type <b>PShape</b>. Currently, only SVG files may be loaded.
  To load correctly, the file must be located in the data directory of the current sketch.
@@ -9945,6 +10335,24 @@ public <A HREF="../../processing/core/PShape.html" title="class in processing.co
 <DT><B>See Also:</B><DD><A HREF="../../processing/core/PShape.html" title="class in processing.core"><CODE>PShape</CODE></A>, 
 <A HREF="../../processing/core/PApplet.html#shape(processing.core.PShape)"><CODE>shape(PShape)</CODE></A>, 
 <A HREF="../../processing/core/PApplet.html#shapeMode(int)"><CODE>shapeMode(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createShape(int, java.lang.Object)"><!-- --></A><H3>
+createShape</H3>
+<PRE>
+public <A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A> <B>createShape</B>(int&nbsp;size,
+                          java.lang.Object&nbsp;params)</PRE>
+<DL>
+<DD>Creates an empty shape, with the specified size and parameters.
+ The actual type will depend on the renderer.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <HR>
@@ -10515,9 +10923,25 @@ public boolean <B>saveStream</B>(java.io.File&nbsp;targetFile,
 <DL>
 <DD>Identical to the other saveStream(), but writes to a File
  object, for greater control over the file location.
+ <p/>
  Note that unlike other api methods, this will not automatically
  compress or uncompress gzip files.
 <P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="saveStream(java.lang.String, java.io.InputStream)"><!-- --></A><H3>
+saveStream</H3>
+<PRE>
+public boolean <B>saveStream</B>(java.lang.String&nbsp;targetFilename,
+                          java.io.InputStream&nbsp;sourceStream)</PRE>
+<DL>
 <DD><DL>
 </DL>
 </DD>
@@ -12336,25 +12760,6 @@ public static final boolean <B>parseBoolean</B>(java.lang.String&nbsp;what)</PRE
 </DL>
 <HR>
 
-<A NAME="parseBoolean(byte[])"><!-- --></A><H3>
-parseBoolean</H3>
-<PRE>
-public static final boolean[] <B>parseBoolean</B>(byte[]&nbsp;what)</PRE>
-<DL>
-<DD>Convert a byte array to a boolean array. Each element will be
- evaluated identical to the integer case, where a byte equal
- to zero will return false, and any other value will return true.
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>array of boolean elements</DL>
-</DD>
-</DL>
-<HR>
-
 <A NAME="parseBoolean(int[])"><!-- --></A><H3>
 parseBoolean</H3>
 <PRE>
@@ -13773,6 +14178,23 @@ public void <B>endRaw</B>()</PRE>
 </DL>
 <HR>
 
+<A NAME="beginRecord()"><!-- --></A><H3>
+beginRecord</H3>
+<PRE>
+public <A HREF="../../processing/core/PShape.html" title="class in processing.core">PShape</A> <B>beginRecord</B>()</PRE>
+<DL>
+<DD>Starts shape recording and returns the PShape object that will
+ contain the geometry.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="loadPixels()"><!-- --></A><H3>
 loadPixels</H3>
 <PRE>
@@ -13867,6 +14289,20 @@ public void <B>hint</B>(int&nbsp;which)</PRE>
 <DT><B>Parameters:</B><DD><CODE>which</CODE> - name of the hint to be enabled or disabled<DT><B>See Also:</B><DD><A HREF="../../processing/core/PGraphics.html" title="class in processing.core"><CODE>PGraphics</CODE></A>, 
 <A HREF="../../processing/core/PApplet.html#createGraphics(int, int, java.lang.String, java.lang.String)"><CODE>createGraphics(int, int, String, String)</CODE></A>, 
 <A HREF="../../processing/core/PApplet.html#size(int, int)"><CODE>size(int, int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hintEnabled(int)"><!-- --></A><H3>
+hintEnabled</H3>
+<PRE>
+public boolean <B>hintEnabled</B>(int&nbsp;which)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
 </DD>
 </DL>
 <HR>
@@ -14003,6 +14439,23 @@ public void <B>texture</B>(<A HREF="../../processing/core/PImage.html" title="cl
 </DL>
 <HR>
 
+<A NAME="noTexture()"><!-- --></A><H3>
+noTexture</H3>
+<PRE>
+public void <B>noTexture</B>()</PRE>
+<DL>
+<DD>Removes texture image for current shape.
+ Needs to be called between @see beginShape and @see endShape
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="vertex(float, float)"><!-- --></A><H3>
 vertex</H3>
 <PRE>
@@ -14034,10 +14487,10 @@ public void <B>vertex</B>(float&nbsp;x,
 </DL>
 <HR>
 
-<A NAME="vertex(float[])"><!-- --></A><H3>
-vertex</H3>
+<A NAME="vertexFields(float[])"><!-- --></A><H3>
+vertexFields</H3>
 <PRE>
-public void <B>vertex</B>(float[]&nbsp;v)</PRE>
+public void <B>vertexFields</B>(float[]&nbsp;v)</PRE>
 <DL>
 <DD>Used by renderer subclasses or PShape to efficiently pass in already
  formatted vertex information.
@@ -16223,6 +16676,23 @@ public void <B>ortho</B>()</PRE>
 </DL>
 <HR>
 
+<A NAME="ortho(float, float, float, float)"><!-- --></A><H3>
+ortho</H3>
+<PRE>
+public void <B>ortho</B>(float&nbsp;left,
+                  float&nbsp;right,
+                  float&nbsp;bottom,
+                  float&nbsp;top)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="ortho(float, float, float, float, float, float)"><!-- --></A><H3>
 ortho</H3>
 <PRE>
@@ -17644,6 +18114,91 @@ public static int <B>lerpColor</B>(int&nbsp;c1,
 </DL>
 <HR>
 
+<A NAME="showDepthWarning(java.lang.String)"><!-- --></A><H3>
+showDepthWarning</H3>
+<PRE>
+public static void <B>showDepthWarning</B>(java.lang.String&nbsp;method)</PRE>
+<DL>
+<DD>Display a warning that the specified method is only available with 3D.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>method</CODE> - The method name (no parentheses)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showDepthWarningXYZ(java.lang.String)"><!-- --></A><H3>
+showDepthWarningXYZ</H3>
+<PRE>
+public static void <B>showDepthWarningXYZ</B>(java.lang.String&nbsp;method)</PRE>
+<DL>
+<DD>Display a warning that the specified method that takes x, y, z parameters
+ can only be used with x and y parameters in this renderer.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>method</CODE> - The method name (no parentheses)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showMethodWarning(java.lang.String)"><!-- --></A><H3>
+showMethodWarning</H3>
+<PRE>
+public static void <B>showMethodWarning</B>(java.lang.String&nbsp;method)</PRE>
+<DL>
+<DD>Display a warning that the specified method is simply unavailable.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showVariationWarning(java.lang.String)"><!-- --></A><H3>
+showVariationWarning</H3>
+<PRE>
+public static void <B>showVariationWarning</B>(java.lang.String&nbsp;str)</PRE>
+<DL>
+<DD>Error that a particular variation of a method is unavailable (even though
+ other variations are). For instance, if vertex(x, y, u, v) is not
+ available, but vertex(x, y) is just fine.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showMissingWarning(java.lang.String)"><!-- --></A><H3>
+showMissingWarning</H3>
+<PRE>
+public static void <B>showMissingWarning</B>(java.lang.String&nbsp;method)</PRE>
+<DL>
+<DD>Display a warning that the specified method is not implemented, meaning
+ that it could be either a completely missing function, although other
+ variations of it may still work properly.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
 <A NAME="displayable()"><!-- --></A><H3>
 displayable</H3>
 <PRE>
@@ -17665,10 +18220,178 @@ public boolean <B>displayable</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="setCache(java.lang.Object, java.lang.Object)"><!-- --></A><H3>
+<A NAME="screenBlend(int)"><!-- --></A><H3>
+screenBlend</H3>
+<PRE>
+public void <B>screenBlend</B>(int&nbsp;mode)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="textureBlend(int)"><!-- --></A><H3>
+textureBlend</H3>
+<PRE>
+public void <B>textureBlend</B>(int&nbsp;mode)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isRecording()"><!-- --></A><H3>
+isRecording</H3>
+<PRE>
+public boolean <B>isRecording</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mergeShapes(boolean)"><!-- --></A><H3>
+mergeShapes</H3>
+<PRE>
+public void <B>mergeShapes</B>(boolean&nbsp;val)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shapeName(java.lang.String)"><!-- --></A><H3>
+shapeName</H3>
+<PRE>
+public void <B>shapeName</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="autoNormal(boolean)"><!-- --></A><H3>
+autoNormal</H3>
+<PRE>
+public void <B>autoNormal</B>(boolean&nbsp;auto)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="matrixMode(int)"><!-- --></A><H3>
+matrixMode</H3>
+<PRE>
+public void <B>matrixMode</B>(int&nbsp;mode)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="beginText()"><!-- --></A><H3>
+beginText</H3>
+<PRE>
+public void <B>beginText</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="endText()"><!-- --></A><H3>
+endText</H3>
+<PRE>
+public void <B>endText</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="texture(processing.core.PImage...)"><!-- --></A><H3>
+texture</H3>
+<PRE>
+public void <B>texture</B>(<A HREF="../../processing/core/PImage.html" title="class in processing.core">PImage</A>...&nbsp;images)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="vertex(float...)"><!-- --></A><H3>
+vertex</H3>
+<PRE>
+public void <B>vertex</B>(float...&nbsp;values)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="delete()"><!-- --></A><H3>
+delete</H3>
+<PRE>
+public void <B>delete</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCache(processing.core.PGraphics, java.lang.Object)"><!-- --></A><H3>
 setCache</H3>
 <PRE>
-public void <B>setCache</B>(java.lang.Object&nbsp;parent,
+public void <B>setCache</B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer,
                      java.lang.Object&nbsp;storage)</PRE>
 <DL>
 <DD>Store data of some kind for a renderer that requires extra metadata of
@@ -17681,15 +18404,15 @@ public void <B>setCache</B>(java.lang.Object&nbsp;parent,
 </DL>
 </DD>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>renderer</CODE> - The PGraphics renderer associated to the image<DD><CODE>storage</CODE> - The metadata required by the renderer</DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="getCache(java.lang.Object)"><!-- --></A><H3>
+<A NAME="getCache(processing.core.PGraphics)"><!-- --></A><H3>
 getCache</H3>
 <PRE>
-public java.lang.Object <B>getCache</B>(java.lang.Object&nbsp;parent)</PRE>
+public java.lang.Object <B>getCache</B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer)</PRE>
 <DL>
 <DD>Get cache storage data for the specified renderer. Because each renderer
  will cache data in different formats, it's necessary to store cache data
@@ -17700,16 +18423,16 @@ public java.lang.Object <B>getCache</B>(java.lang.Object&nbsp;parent)</PRE>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>parent</CODE> - The PGraphics object (or any object, really) associated
-<DT><B>Returns:</B><DD>data stored for the specified parent</DL>
+<DT><B>Parameters:</B><DD><CODE>renderer</CODE> - The PGraphics renderer associated to the image
+<DT><B>Returns:</B><DD>metadata stored for the specified renderer</DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="removeCache(java.lang.Object)"><!-- --></A><H3>
+<A NAME="removeCache(processing.core.PGraphics)"><!-- --></A><H3>
 removeCache</H3>
 <PRE>
-public void <B>removeCache</B>(java.lang.Object&nbsp;parent)</PRE>
+public void <B>removeCache</B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer)</PRE>
 <DL>
 <DD>Remove information associated with this renderer from the cache, if any.
 <P>
@@ -17717,7 +18440,58 @@ public void <B>removeCache</B>(java.lang.Object&nbsp;parent)</PRE>
 </DL>
 </DD>
 <DD><DL>
-<DT><B>Parameters:</B><DD><CODE>parent</CODE> - The PGraphics object whose cache data should be removed</DL>
+<DT><B>Parameters:</B><DD><CODE>renderer</CODE> - The PGraphics renderer whose cache data should be removed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setParams(processing.core.PGraphics, java.lang.Object)"><!-- --></A><H3>
+setParams</H3>
+<PRE>
+public void <B>setParams</B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer,
+                      java.lang.Object&nbsp;params)</PRE>
+<DL>
+<DD>Store parameters for a renderer that requires extra metadata of
+ some kind.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>renderer</CODE> - The PGraphics renderer associated to the image<DD><CODE>storage</CODE> - The parameters required by the renderer</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getParams(processing.core.PGraphics)"><!-- --></A><H3>
+getParams</H3>
+<PRE>
+public java.lang.Object <B>getParams</B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer)</PRE>
+<DL>
+<DD>Get the parameters for the specified renderer.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>renderer</CODE> - The PGraphics renderer associated to the image
+<DT><B>Returns:</B><DD>parameters stored for the specified renderer</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeParams(processing.core.PGraphics)"><!-- --></A><H3>
+removeParams</H3>
+<PRE>
+public void <B>removeParams</B>(<A HREF="../../processing/core/PGraphics.html" title="class in processing.core">PGraphics</A>&nbsp;renderer)</PRE>
+<DL>
+<DD>Remove information associated with this renderer from the cache, if any.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>renderer</CODE> - The PGraphics renderer whose parameters should be removed</DL>
 </DD>
 </DL>
 <HR>
