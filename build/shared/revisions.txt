@@ -13,6 +13,10 @@ All of the changes since 1.2.1 are listed in this document. If you get stuck,
 give it a search to see if there might be a clue about something that has
 changed. Or if you have problems, please file a bug.
 
+For people who have been using OPENGL2 in the pre-releases, the library
+has been removed from 1.5, and will return in future pre-releases before
+eventually replacing the built-in OpenGL library for 2.0.
+
 Meanwhile, here are the changes since revision 0195, the last pre-release:
 
 [ pde ] 
