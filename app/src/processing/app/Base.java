@@ -707,7 +707,8 @@ public class Base {
         Editor editor = handleOpen(path);
         editor.untitled = true;
       } else {
-        System.err.println("untitled went null...");
+        // happens when user gets to the end of 26 new sketches for the day
+        //System.err.println("untitled went null...");
       }
 
     } catch (IOException e) {
