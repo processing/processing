@@ -85,6 +85,7 @@ public class JEditTextArea extends JComponent
 
     caretTimer = new Timer(500, new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        System.out.println(caretTimer);
         if (hasFocus()) {
           blinkCaret();      
         }
@@ -1870,7 +1871,7 @@ public class JEditTextArea extends JComponent
   protected static String BOTTOM = "bottom";
 
 //  protected static JEditTextArea focusedComponent;
-  protected static Timer caretTimer;
+  protected Timer caretTimer;
 
   protected TextAreaPainter painter;
 
