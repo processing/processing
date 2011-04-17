@@ -1423,6 +1423,10 @@ public class PApplet extends Applet
 
 
   public void paint(Graphics screen) {
+//    int r = (int) random(10000);
+//    System.out.println("into paint " + r);
+    //super.paint(screen);
+    
     // ignore the very first call to paint, since it's coming
     // from the o.s., and the applet will soon update itself anyway.
     if (frameCount == 0) {
@@ -1432,6 +1436,20 @@ public class PApplet extends Applet
       return;
     }
 
+//    //MACOSX
+//    // every public entry point for drawing should
+//    // disable/enable flushing to avoid screen flickering
+//    sun.java2d.SurfaceData sd = null;
+//    if (platform == MACOSX) {
+//      if (screen instanceof sun.java2d.SunGraphics2D) {
+//        sd = ((sun.java2d.SunGraphics2D) screen).surfaceData;
+//      }
+//      if (sd != null) {
+//        sd.disableFlushing();
+//      }
+//    }
+//    try {
+    
     // without ignoring the first call, the first several frames
     // are confused because paint() gets called in the midst of
     // the initial nextFrame() call, so there are multiple
@@ -1453,6 +1471,16 @@ public class PApplet extends Applet
         }
       }
     }
+
+//    System.out.println(" out paint " + r);
+
+//    } finally {
+//      if (platform == MACOSX) {
+//        if (sd != null) {
+//          sd.enableFlushing();
+//        }
+//      }
+//    }
   }
 
 
