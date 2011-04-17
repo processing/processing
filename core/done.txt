@@ -1,3 +1,22 @@
+0196 core (1.5)
+o textAlign(RIGHT) is shutting off native fonts
+o   makes salaryper super ugly
+X   i think this must have been fixed?
+X fix minor native fonts issue
+o updatePixels() is slow to create a BufferedImage
+o   therefore the incomplete rendering
+o   could this be an issue fixed by a MediaTracker?
+o first line of applets is missing on java 1.4+ on the mac
+X   http://dev.processing.org/bugs/show_bug.cgi?id=283
+o make the PFont index lookup use numbers up to 256?
+X change JAVA2D surface to be RGB instead of ARGB
+X   seeing some strange behavior, hopefully this won't be a regression
+o filter() doesn't need a loadPixels
+o   but if you want to filter *and* mess w/ pixels (avoid double load)
+o   then do loadPixels() /before/ filter, and updatePixels after messing
+o   same will go for blend()
+
+
 0195 core (pre)
 X deal with bad screen updates for sketches running < 60 fps in JAVA2D
 X   had to add an additional offscreen buffer, which is more memory

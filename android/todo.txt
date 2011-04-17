@@ -1,14 +1,4 @@
-0196 android
-X workaround for loadImage(url) bug in Google's Android source (via psoden)
-X   http://code.google.com/p/processing/issues/detail?id=629
-
-earlier
-X Build an interface for control of permissions on Android
-X   http://code.google.com/p/processing/issues/detail?id=275
-X Implement createGraphics() 
-X   http://code.google.com/p/processing/issues/detail?id=240
-X Android 0192 sketch in static mode crashes on exit
-X   http://code.google.com/p/processing/issues/detail?id=518
+0197 android 
 
 
 _ go through all basics/topics examples

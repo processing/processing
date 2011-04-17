@@ -1,3 +1,70 @@
+0196 pde (1.5)
+X upgrade to Quaqua 7.3.4 on OS X
+X   fixes checkbox in mode menu smashing into things
+C build a new version of the reference
+X automatically add version numbers to Info.plist
+X   would help with beta releases, and not having to edit by hand
+X add another fix for text focus handling
+X   http://code.google.com/p/processing/issues/detail?id=627
+X file-save stops running sketch
+X   http://dev.processing.org/bugs/show_bug.cgi?id=810
+X   http://code.google.com/p/processing/issues/detail?id=100
+X fix bug in loadfile2 example 
+X   http://code.google.com/p/processing/issues/detail?id=522
+o when running with external editor, hide the editor text area
+o   http://dev.processing.org/bugs/show_bug.cgi?id=20
+X   http://code.google.com/p/processing/issues/detail?id=9
+X shift-indent without selection increases indention
+X   http://code.google.com/p/processing/issues/detail?id=458
+X Running a sketch destroys other running PApplets
+X   http://code.google.com/p/processing/issues/detail?id=567
+X   allow more than one sketch to run at a time
+X fix caret bug leading to slow degredation of the PDE
+X fix color selector to be more efficient
+X help casey re-export all applets for the site
+X   remove .java files, use one central loading.gif and core.jar?
+X   use a custom applet.html template for the export
+X     the tool could copy this into the folder just before exporting
+X remove all the 'applet' folders from svn
+X run the javadoc for 1.5
+X remove opengl2 for 1.5 and examples for the final 1.5
+X need to get a new stable release out there, the docs/ref are out of sync
+
+from peter n lewis 
+X Use Selection For Find
+X   http://code.google.com/p/processing/issues/detail?id=571
+X double-clicking whitespace selects adjacent chars
+X   clicking i-- ) between -- and ) will select "-- )"
+X   in eclipse, it looks to see which is closest and selects that
+X   need to check behavior for word and bbedit
+X   http://code.google.com/p/processing/issues/detail?id=59
+X   http://code.google.com/p/processing/issues/detail?id=576
+X find/replace all around very ugly, fix it up
+o   http://dev.processing.org/bugs/show_bug.cgi?id=67
+X   http://code.google.com/p/processing/issues/detail?id=23
+X   http://code.google.com/p/processing/issues/detail?id=580
+X several tweaks
+o   http://dev.processing.org/bugs/show_bug.cgi?id=68
+o   only enable "find next" in menu after a find has happened
+X   http://code.google.com/p/processing/issues/detail?id=24
+
+several changes to the undo setup
+X sketch marked as modified too aggressively
+o   http://dev.processing.org/bugs/show_bug.cgi?id=328
+X   http://code.google.com/p/processing/issues/detail?id=57
+X "save" clears undo information
+X   http://code.google.com/p/processing/issues/detail?id=411
+X PDE change indicator partially broken
+X   http://code.google.com/p/processing/issues/detail?id=620
+
+fixed in 0195
+X rename/saveas doesn't properly have its focus set
+X   under windows, immediately typing after rename doesn't select
+X   the whole thing is selected, but not directly editable
+o   http://dev.processing.org/bugs/show_bug.cgi?id=31
+X   http://code.google.com/p/processing/issues/detail?id=13
+
+
 0195 (pre)
 X Sketch restarts automatically after pressing stop button on PDE
 X   problem with window focus issues
