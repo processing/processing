@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-08 Ben Fry and Casey Reas
+  Copyright (c) 2005-11 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -126,15 +126,17 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //    System.out.println("allocate " + Thread.currentThread().getName());
 
     // Tried this with RGB instead of ARGB for the primarySurface version, 
-    // but didn't see any performance difference (OS X 10.6, Java 6u24)
-    //image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);  // 0196
+    // but didn't see any performance difference (OS X 10.6, Java 6u24).
+    // For 0196, also attempted RGB instead of ARGB, but that causes 
+    // strange things to happen with blending.
+    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     if (primarySurface) {
-      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);  // 0196
-      offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);  // 0196
-      //offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);  // 0196
+//      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+//      offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+      offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) offscreen.getGraphics();
     } else {
-      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);  // 0196
+//      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       // if the buffer's offscreen anyway, no need for the extra offscreen buffer
       g2 = (Graphics2D) image.getGraphics();
     }
