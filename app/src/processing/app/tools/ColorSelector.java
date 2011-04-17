@@ -43,7 +43,12 @@ import javax.swing.text.*;
 public class ColorSelector implements Tool, DocumentListener {
 
   Editor editor;
-  JFrame frame;
+  
+  /** 
+   * Only create one instance, otherwise we'll have dozens of animation 
+   * threads going if you open/close a lot of editor windows. 
+   */
+  static JFrame frame;
 
   int hue, saturation, brightness;  // range 360, 100, 100
   int red, green, blue;   // range 256, 256, 256
@@ -66,7 +71,13 @@ public class ColorSelector implements Tool, DocumentListener {
   
   public void init(Editor editor) {
     this.editor = editor;
-
+    if (frame == null) {
+      createFrame();
+    }
+  }
+  
+  
+  void createFrame() {
     frame = new JFrame("Color Selector");
     frame.getContentPane().setLayout(new BorderLayout());
 
@@ -461,7 +472,7 @@ public class ColorSelector implements Tool, DocumentListener {
     
     public void keyPressed() {
       if (key == ESC) {
-        ColorSelector.this.frame.setVisible(false);
+        ColorSelector.frame.setVisible(false);
         // don't quit out of processing
         // http://dev.processing.org/bugs/show_bug.cgi?id=1006
         key = 0;
@@ -529,7 +540,7 @@ public class ColorSelector implements Tool, DocumentListener {
     
     public void keyPressed() {
       if (key == ESC) {
-        ColorSelector.this.frame.setVisible(false);
+        ColorSelector.frame.setVisible(false);
         // don't quit out of processing
         // http://dev.processing.org/bugs/show_bug.cgi?id=1006
         key = 0;
