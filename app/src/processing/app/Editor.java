@@ -974,7 +974,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menu.add(createToolMenuItem("processing.app.tools.ColorSelector"));
     menu.add(createToolMenuItem("processing.app.tools.Archiver"));
     menu.add(createToolMenuItem("processing.app.tools.FixEncoding"));
-    menu.add(createToolMenuItem("processing.app.tools.ExportExamples"));
+
+    if (Base.DEBUG) {
+      menu.add(createToolMenuItem("processing.app.tools.ExportExamples"));
+    }
 
 //    // These are temporary entries while Android mode is being worked out.
 //    // The mode will not be in the tools menu, and won't involve a cmd-key

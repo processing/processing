@@ -137,6 +137,11 @@ public class ExportExamples implements Tool {
     }
     sketchCore.delete();
     
+    File loadingTarget = new File(outputFolder, "loading.gif");
+    if (!loadingTarget.exists()) {
+      Base.copyFile(new File(appletFolder, "loading.gif"), loadingTarget);
+    }
+    
     new File(appletFolder, "index.html").delete();
     new File(appletFolder, "loading.gif").delete();
     new File(appletFolder, sketch.getName() + ".java").delete();

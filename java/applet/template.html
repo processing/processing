@@ -46,9 +46,11 @@
             archive: '@@archive@@',
             width: @@width@@, 
             height: @@height@@,
-            image: 'loading.gif'
           };
-          var parameters = { };
+          var parameters = { 
+            image: 'loading.gif',
+            centerimage: 'true',
+          };
           var version = '1.5';
           deployJava.runApplet(attributes, parameters, version);
 
@@ -71,8 +73,6 @@
 	    <param name="image" value="loading.gif" />
 	    <param name="boxmessage" value="Loading Processing software..." />
 	    <param name="boxbgcolor" value="#FFFFFF" />
-	    
-	    <param name="test_string" value="outer" />
 	  <!--<![endif]-->
 
 	    <!-- For more instructions on deployment, 
@@ -93,8 +93,6 @@
 	      <param name="image" value="loading.gif" />
 	      <param name="boxmessage" value="Loading Processing software..." />
 	      <param name="boxbgcolor" value="#FFFFFF" />
-	      
-	      <param name="test_string" value="inner" />
 	      
 	      <p>
 		<strong>

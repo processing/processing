@@ -16,6 +16,7 @@ _   remove those that don't make sense with android
 _   remove size() commands from most/all
 _     (or remove ones that truly require size...)
 _   optimize for android use
+_   need to set permissions as necessary (therefore add manifest files)
 
 lifecycle/size changes/etc
 _ pause/resume trickiness with interactive apps
