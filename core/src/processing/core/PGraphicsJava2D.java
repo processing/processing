@@ -182,8 +182,10 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       // don't copy the pixels/data elements of the buffered image directly, 
       // since it'll disable the nice speedy pipeline stuff, sending all drawing
       // into a world of suck that's rough 6 trillion times slower.
-      image.getGraphics().drawImage(offscreen, 0, 0, null);
-
+      synchronized (image) {
+        //System.out.println("inside j2d sync");
+        image.getGraphics().drawImage(offscreen, 0, 0, null);
+      }
     } else {
       // TODO this is probably overkill for most tasks...
       loadPixels();
