@@ -11,9 +11,14 @@ X   http://dev.processing.org/bugs/show_bug.cgi?id=283
 o make the PFont index lookup use numbers up to 256?
 X change JAVA2D surface to be RGB instead of ARGB
 X   seeing some strange behavior, hopefully this won't be a regression
+o filter() doesn't need a loadPixels
+o   but if you want to filter *and* mess w/ pixels (avoid double load)
+o   then do loadPixels() /before/ filter, and updatePixels after messing
+o   same will go for blend()
 
 
 for 2.0
+_ arrayobjects (and others) flickers like hell in chrome 10 on os x
 _ rounded rectangle method 
 _   http://code.google.com/p/processing/issues/detail?id=265
 _ make sure that loadXxxx() methods are used after init()
@@ -46,11 +51,7 @@ _   http://code.google.com/p/processing/issues/detail?id=182
 _ copy(image with transparency) doesn't keep the transparency at start up
 _   http://code.google.com/p/processing/issues/detail?id=601
 
-o filter() doesn't need a loadPixels
-o   but if you want to filter *and* mess w/ pixels (avoid double load)
-o   then do loadPixels() /before/ filter, and updatePixels after messing
-o   same will go for blend()
-_   make sure that filter, blend, copy, etc say that no loadPixels necessary
+_ make sure that filter, blend, copy, etc say that no loadPixels necessary
 
 _ clipping
 _   http://mrl.nyu.edu/~perlin/experiments/borg/render/index.html
