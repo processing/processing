@@ -85,7 +85,6 @@ public class JEditTextArea extends JComponent
 
     caretTimer = new Timer(500, new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        System.out.println(caretTimer);
         if (hasFocus()) {
           blinkCaret();      
         }
