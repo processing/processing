@@ -189,7 +189,7 @@ The text area component from the JEdit Syntax (syntax.jedit.org) project.
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../processing/app/EditorListener.html" title="class in processing.app">EditorListener</A></CODE></FONT></TD>
+<CODE>&nbsp;<A HREF="../../../processing/mode/java/PdeKeyListener.html" title="class in processing.mode.java">PdeKeyListener</A></CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../../processing/app/syntax/JEditTextArea.html#editorListener">editorListener</A></B></CODE>
 
 <BR>
@@ -203,6 +203,14 @@ The text area component from the JEdit Syntax (syntax.jedit.org) project.
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adding components with this name to the text area will place
  them left of the horizontal scroll bar.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/JEditTextArea.html#leftHandGutter">leftHandGutter</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The size of the offset between the leftmost padding and the code</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_javax.swing.JComponent"><!-- --></A>
@@ -396,7 +404,7 @@ The text area component from the JEdit Syntax (syntax.jedit.org) project.
 <TD><CODE><B><A HREF="../../../processing/app/syntax/JEditTextArea.html#getInputMethodRequests()">getInputMethodRequests</A></B>()</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Inline Input Method Support for Japanese.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -421,6 +429,15 @@ The text area component from the JEdit Syntax (syntax.jedit.org) project.
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the line containing the specified offset.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/JEditTextArea.html#getLineSelectionStopOffset(int)">getLineSelectionStopOffset</A></B>(int&nbsp;line)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the start offset of the line after this line, or the end of 
+ this line if there is no next line.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -1036,10 +1053,22 @@ public static java.lang.String <B>LEFT_OF_SCROLLBAR</B></PRE>
 </DL>
 <HR>
 
+<A NAME="leftHandGutter"><!-- --></A><H3>
+leftHandGutter</H3>
+<PRE>
+public static final int <B>leftHandGutter</B></PRE>
+<DL>
+<DD>The size of the offset between the leftmost padding and the code
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#processing.app.syntax.JEditTextArea.leftHandGutter">Constant Field Values</A></DL>
+</DL>
+<HR>
+
 <A NAME="editorListener"><!-- --></A><H3>
 editorListener</H3>
 <PRE>
-public <A HREF="../../../processing/app/EditorListener.html" title="class in processing.app">EditorListener</A> <B>editorListener</B></PRE>
+public <A HREF="../../../processing/mode/java/PdeKeyListener.html" title="class in processing.mode.java">PdeKeyListener</A> <B>editorListener</B></PRE>
 <DL>
 <DD>Forwards key events directly to the input handler.
  This is slightly faster than using a KeyListener
@@ -1097,6 +1126,8 @@ getInputMethodRequests</H3>
 <PRE>
 public java.awt.im.InputMethodRequests <B>getInputMethodRequests</B>()</PRE>
 <DL>
+<DD>Inline Input Method Support for Japanese.
+<P>
 <DD><DL>
 <DT><B>Overrides:</B><DD><CODE>getInputMethodRequests</CODE> in class <CODE>java.awt.Component</CODE></DL>
 </DD>
@@ -1628,6 +1659,22 @@ getLineStopOffset</H3>
 public int <B>getLineStopOffset</B>(int&nbsp;line)</PRE>
 <DL>
 <DD>Returns the end offset of the specified line.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>line</CODE> - The line
+<DT><B>Returns:</B><DD>The end offset of the specified line, or -1 if the line is
+ invalid.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLineSelectionStopOffset(int)"><!-- --></A><H3>
+getLineSelectionStopOffset</H3>
+<PRE>
+public int <B>getLineSelectionStopOffset</B>(int&nbsp;line)</PRE>
+<DL>
+<DD>Returns the start offset of the line after this line, or the end of 
+ this line if there is no next line.
 <P>
 <DD><DL>
 <DT><B>Parameters:</B><DD><CODE>line</CODE> - The line

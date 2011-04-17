@@ -735,6 +735,15 @@ base</H3>
 </DL>
 <HR>
 <H3>
+mode</H3>
+<PRE>
+<A HREF="processing/app/Mode.html" title="class in processing.app">Mode</A> <B>mode</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
 untitled</H3>
 <PRE>
 boolean <B>untitled</B></PRE>
@@ -773,18 +782,27 @@ javax.swing.JMenu <B>fileMenu</B></PRE>
 </DL>
 <HR>
 <H3>
-sketchMenu</H3>
+saveMenuItem</H3>
 <PRE>
-javax.swing.JMenu <B>sketchMenu</B></PRE>
+javax.swing.JMenuItem <B>saveMenuItem</B></PRE>
 <DL>
 <DL>
 </DL>
 </DL>
 <HR>
 <H3>
-toolbar</H3>
+saveAsMenuItem</H3>
 <PRE>
-<A HREF="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</A> <B>toolbar</B></PRE>
+javax.swing.JMenuItem <B>saveAsMenuItem</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+sketchMenu</H3>
+<PRE>
+javax.swing.JMenu <B>sketchMenu</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -800,18 +818,27 @@ header</H3>
 </DL>
 <HR>
 <H3>
-status</H3>
+toolbar</H3>
 <PRE>
-<A HREF="processing/app/EditorStatus.html" title="class in processing.app">EditorStatus</A> <B>status</B></PRE>
+<A HREF="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</A> <B>toolbar</B></PRE>
 <DL>
 <DL>
 </DL>
 </DL>
 <HR>
 <H3>
-console</H3>
+textarea</H3>
 <PRE>
-<A HREF="processing/app/EditorConsole.html" title="class in processing.app">EditorConsole</A> <B>console</B></PRE>
+<A HREF="processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</A> <B>textarea</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+status</H3>
+<PRE>
+<A HREF="processing/app/EditorStatus.html" title="class in processing.app">EditorStatus</A> <B>status</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -836,9 +863,9 @@ javax.swing.JPanel <B>consolePanel</B></PRE>
 </DL>
 <HR>
 <H3>
-sketch</H3>
+console</H3>
 <PRE>
-<A HREF="processing/app/Sketch.html" title="class in processing.app">Sketch</A> <B>sketch</B></PRE>
+<A HREF="processing/app/EditorConsole.html" title="class in processing.app">EditorConsole</A> <B>console</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -854,18 +881,9 @@ lineStatus</H3>
 </DL>
 <HR>
 <H3>
-textarea</H3>
+sketch</H3>
 <PRE>
-<A HREF="processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</A> <B>textarea</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-listener</H3>
-<PRE>
-<A HREF="processing/app/EditorListener.html" title="class in processing.app">EditorListener</A> <B>listener</B></PRE>
+<A HREF="processing/app/Sketch.html" title="class in processing.app">Sketch</A> <B>sketch</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -875,33 +893,6 @@ listener</H3>
 sketchWindowLocation</H3>
 <PRE>
 java.awt.Point <B>sketchWindowLocation</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-runtime</H3>
-<PRE>
-<A HREF="processing/app/debug/Runner.html" title="class in processing.app.debug">Runner</A> <B>runtime</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-saveMenuItem</H3>
-<PRE>
-javax.swing.JMenuItem <B>saveMenuItem</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-saveAsMenuItem</H3>
-<PRE>
-javax.swing.JMenuItem <B>saveAsMenuItem</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -948,6 +939,8 @@ undo</H3>
 <PRE>
 javax.swing.undo.UndoManager <B>undo</B></PRE>
 <DL>
+<DD>the currently selected tab's undo manager
+<P>
 <DL>
 </DL>
 </DL>
@@ -956,60 +949,6 @@ javax.swing.undo.UndoManager <B>undo</B></PRE>
 compoundEdit</H3>
 <PRE>
 javax.swing.undo.CompoundEdit <B>compoundEdit</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-find</H3>
-<PRE>
-<A HREF="processing/app/FindReplace.html" title="class in processing.app">FindReplace</A> <B>find</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-runHandler</H3>
-<PRE>
-java.lang.Runnable <B>runHandler</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-presentHandler</H3>
-<PRE>
-java.lang.Runnable <B>presentHandler</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-stopHandler</H3>
-<PRE>
-java.lang.Runnable <B>stopHandler</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-exportHandler</H3>
-<PRE>
-java.lang.Runnable <B>exportHandler</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-exportAppHandler</H3>
-<PRE>
-java.lang.Runnable <B>exportAppHandler</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1028,6 +967,24 @@ java.util.Stack&lt;E&gt; <B>caretUndoStack</B></PRE>
 caretRedoStack</H3>
 <PRE>
 java.util.Stack&lt;E&gt; <B>caretRedoStack</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+find</H3>
+<PRE>
+<A HREF="processing/app/FindReplace.html" title="class in processing.app">FindReplace</A> <B>find</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+modeMenu</H3>
+<PRE>
+javax.swing.JMenu <B>modeMenu</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1124,6 +1081,24 @@ int <B>maxLineCount</B></PRE>
 </TABLE>
 
 <H3>
+backgroundColor</H3>
+<PRE>
+java.awt.Color <B>backgroundColor</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+textColor</H3>
+<PRE>
+java.awt.Color[] <B>textColor</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
 editor</H3>
 <PRE>
 <A HREF="processing/app/Editor.html" title="class in processing.app">Editor</A> <B>editor</B></PRE>
@@ -1133,18 +1108,18 @@ editor</H3>
 </DL>
 <HR>
 <H3>
-tabLeft</H3>
+tabs</H3>
 <PRE>
-int[] <B>tabLeft</B></PRE>
+processing.app.EditorHeader.Tab[] <B>tabs</B></PRE>
 <DL>
 <DL>
 </DL>
 </DL>
 <HR>
 <H3>
-tabRight</H3>
+visitOrder</H3>
 <PRE>
-int[] <B>tabRight</B></PRE>
+processing.app.EditorHeader.Tab[] <B>visitOrder</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1214,6 +1189,15 @@ int <B>menuRight</B></PRE>
 </DL>
 <HR>
 <H3>
+pieces</H3>
+<PRE>
+java.awt.Image[][] <B>pieces</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
 offscreen</H3>
 <PRE>
 java.awt.Image <B>offscreen</B></PRE>
@@ -1257,6 +1241,15 @@ int <B>imageH</B></PRE>
 <DL>
 </DL>
 </DL>
+<HR>
+<H3>
+lastNoticeName</H3>
+<PRE>
+java.lang.String <B>lastNoticeName</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
 
 <P>
 <A NAME="processing.app.EditorLineStatus"><!-- --></A>
@@ -1277,9 +1270,9 @@ int <B>imageH</B></PRE>
 </TABLE>
 
 <H3>
-textarea</H3>
+editor</H3>
 <PRE>
-<A HREF="processing/app/syntax/JEditTextArea.html" title="class in processing.app.syntax">JEditTextArea</A> <B>textarea</B></PRE>
+<A HREF="processing/app/Editor.html" title="class in processing.app">Editor</A> <B>editor</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1375,6 +1368,24 @@ java.lang.String <B>text</B></PRE>
 </TR>
 </TABLE>
 
+<H3>
+bgcolor</H3>
+<PRE>
+java.awt.Color[] <B>bgcolor</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+fgcolor</H3>
+<PRE>
+java.awt.Color[] <B>fgcolor</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
 <H3>
 editor</H3>
 <PRE>
@@ -1509,6 +1520,24 @@ int <B>response</B></PRE>
 <DL>
 </DL>
 </DL>
+<HR>
+<H3>
+indeterminate</H3>
+<PRE>
+boolean <B>indeterminate</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+thread</H3>
+<PRE>
+java.lang.Thread <B>thread</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
 
 <P>
 <A NAME="processing.app.EditorToolbar"><!-- --></A>
@@ -1529,9 +1558,27 @@ int <B>response</B></PRE>
 </TABLE>
 
 <H3>
+base</H3>
+<PRE>
+<A HREF="processing/app/Base.html" title="class in processing.app">Base</A> <B>base</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
 editor</H3>
 <PRE>
 <A HREF="processing/app/Editor.html" title="class in processing.app">Editor</A> <B>editor</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+mode</H3>
+<PRE>
+<A HREF="processing/app/Mode.html" title="class in processing.app">Mode</A> <B>mode</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1574,99 +1621,9 @@ java.awt.Color <B>bgcolor</B></PRE>
 </DL>
 <HR>
 <H3>
-currentRollover</H3>
+rollover</H3>
 <PRE>
-int <B>currentRollover</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-popup</H3>
-<PRE>
-javax.swing.JPopupMenu <B>popup</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-menu</H3>
-<PRE>
-javax.swing.JMenu <B>menu</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-buttonCount</H3>
-<PRE>
-int <B>buttonCount</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-state</H3>
-<PRE>
-int[] <B>state</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-stateImage</H3>
-<PRE>
-java.awt.Image[] <B>stateImage</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-which</H3>
-<PRE>
-int[] <B>which</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-x1</H3>
-<PRE>
-int[] <B>x1</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-x2</H3>
-<PRE>
-int[] <B>x2</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-y1</H3>
-<PRE>
-int <B>y1</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-y2</H3>
-<PRE>
-int <B>y2</B></PRE>
+<A HREF="processing/app/EditorToolbar.Button.html" title="class in processing.app">EditorToolbar.Button</A> <B>rollover</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1700,9 +1657,90 @@ boolean <B>shiftPressed</B></PRE>
 </DL>
 <HR>
 <H3>
-wasDown</H3>
+modeButtonColor</H3>
 <PRE>
-int <B>wasDown</B></PRE>
+java.awt.Color <B>modeButtonColor</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+modeTextFont</H3>
+<PRE>
+java.awt.Font <B>modeTextFont</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+modeTextColor</H3>
+<PRE>
+java.awt.Color <B>modeTextColor</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+modeTitle</H3>
+<PRE>
+java.lang.String <B>modeTitle</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+modeX1</H3>
+<PRE>
+int <B>modeX1</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+modeY1</H3>
+<PRE>
+int <B>modeY1</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+modeX2</H3>
+<PRE>
+int <B>modeX2</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+modeY2</H3>
+<PRE>
+int <B>modeY2</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+modeMenu</H3>
+<PRE>
+javax.swing.JMenu <B>modeMenu</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+buttons</H3>
+<PRE>
+java.util.ArrayList&lt;E&gt; <B>buttons</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -1781,6 +1819,15 @@ javax.swing.JButton <B>replaceFindButton</B></PRE>
 </DL>
 <HR>
 <H3>
+previousButton</H3>
+<PRE>
+javax.swing.JButton <B>previousButton</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
 findButton</H3>
 <PRE>
 javax.swing.JButton <B>findButton</B></PRE>
@@ -1799,28 +1846,20 @@ javax.swing.JCheckBox <B>ignoreCaseBox</B></PRE>
 </DL>
 <HR>
 <H3>
-found</H3>
+wrapAroundBox</H3>
 <PRE>
-boolean <B>found</B></PRE>
+javax.swing.JCheckBox <B>wrapAroundBox</B></PRE>
 <DL>
 <DL>
 </DL>
 </DL>
-<HR SIZE="4" NOSHADE>
-
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="center"><FONT SIZE="+2">
-<B>Package</B> <B>processing.app.debug</B></FONT></TH>
-</TR>
-</TABLE>
 
 <P>
-<A NAME="processing.app.debug.RunnerException"><!-- --></A>
+<A NAME="processing.app.SketchException"><!-- --></A>
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
 <TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Class <A HREF="processing/app/debug/RunnerException.html" title="class in processing.app.debug">processing.app.debug.RunnerException</A> extends java.lang.Exception implements Serializable</B></FONT></TH>
+<B>Class <A HREF="processing/app/SketchException.html" title="class in processing.app">processing.app.SketchException</A> extends java.lang.Exception implements Serializable</B></FONT></TH>
 </TR>
 </TABLE>
 
@@ -1905,6 +1944,15 @@ boolean <B>showStackTrace</B></PRE>
 </TABLE>
 
 <H3>
+inputMethodSupport</H3>
+<PRE>
+InputMethodSupport <B>inputMethodSupport</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
 bracketHelper</H3>
 <PRE>
 <A HREF="processing/app/syntax/Brackets.html" title="class in processing.app.syntax">Brackets</A> <B>bracketHelper</B></PRE>
@@ -1914,20 +1962,9 @@ bracketHelper</H3>
 </DL>
 <HR>
 <H3>
-inputMethodSupport</H3>
-<PRE>
-InputMethodSupport <B>inputMethodSupport</B></PRE>
-<DL>
-<DD>Inline Input Method Support for Japanese.
-<P>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
 editorListener</H3>
 <PRE>
-<A HREF="processing/app/EditorListener.html" title="class in processing.app">EditorListener</A> <B>editorListener</B></PRE>
+<A HREF="processing/mode/java/PdeKeyListener.html" title="class in processing.mode.java">PdeKeyListener</A> <B>editorListener</B></PRE>
 <DL>
 <DD>Forwards key events directly to the input handler.
  This is slightly faster than using a KeyListener
@@ -1944,6 +1981,15 @@ editorLineStatus</H3>
 <DL>
 <DD>The component that tracks the current line number.
 <P>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+caretTimer</H3>
+<PRE>
+javax.swing.Timer <B>caretTimer</B></PRE>
+<DL>
 <DL>
 </DL>
 </DL>
@@ -2159,6 +2205,60 @@ int <B>selectionEndLine</B></PRE>
 biasLeft</H3>
 <PRE>
 boolean <B>biasLeft</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+newSelectionStart</H3>
+<PRE>
+int <B>newSelectionStart</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+newSelectionEnd</H3>
+<PRE>
+int <B>newSelectionEnd</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+selectWord</H3>
+<PRE>
+boolean <B>selectWord</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+selectLine</H3>
+<PRE>
+boolean <B>selectLine</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+selectionAncorStart</H3>
+<PRE>
+int <B>selectionAncorStart</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+selectionAncorEnd</H3>
+<PRE>
+int <B>selectionAncorEnd</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -2399,15 +2499,6 @@ boolean <B>lineHighlight</B></PRE>
 bracketHighlight</H3>
 <PRE>
 boolean <B>bracketHighlight</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-<H3>
-paintInvalid</H3>
-<PRE>
-boolean <B>paintInvalid</B></PRE>
 <DL>
 <DL>
 </DL>
@@ -3290,6 +3381,17 @@ boolean <B>finished</B></PRE>
 </DL>
 <HR>
 <H3>
+paused</H3>
+<PRE>
+boolean <B>paused</B></PRE>
+<DL>
+<DD>true if the animation thread is paused.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
 exitCalled</H3>
 <PRE>
 boolean <B>exitCalled</B></PRE>
@@ -3555,6 +3657,15 @@ int <B>requestImageCount</B></PRE>
 </DL>
 <HR>
 <H3>
+loadShapeFormats</H3>
+<PRE>
+java.lang.String[] <B>loadShapeFormats</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
 selectedFile</H3>
 <PRE>
 java.io.File <B>selectedFile</B></PRE>
@@ -3636,6 +3747,254 @@ float <B>z</B></PRE>
 <DL>
 </DL>
 </DL>
+<HR SIZE="4" NOSHADE>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="center"><FONT SIZE="+2">
+<B>Package</B> <B>processing.mode.android</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<A NAME="processing.mode.android.AndroidEditor"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="processing/mode/android/AndroidEditor.html" title="class in processing.mode.android">processing.mode.android.AndroidEditor</A> extends <A HREF="processing/mode/java/JavaEditor.html" title="class in processing.mode.java">JavaEditor</A> implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<A NAME="serializedForm"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Serialized Fields</B></FONT></TH>
+</TR>
+</TABLE>
+
+<H3>
+amode</H3>
+<PRE>
+<A HREF="processing/mode/android/AndroidMode.html" title="class in processing.mode.android">AndroidMode</A> <B>amode</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<P>
+<A NAME="processing.mode.android.AndroidToolbar"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="processing/mode/android/AndroidToolbar.html" title="class in processing.mode.android">processing.mode.android.AndroidToolbar</A> extends <A HREF="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</A> implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+
+<P>
+<A NAME="processing.mode.android.BadSDKException"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="processing/mode/android/BadSDKException.html" title="class in processing.mode.android">processing.mode.android.BadSDKException</A> extends java.lang.Exception implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+
+<P>
+<A NAME="processing.mode.android.Keys"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="processing/mode/android/Keys.html" title="class in processing.mode.android">processing.mode.android.Keys</A> extends javax.swing.JFrame implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<A NAME="serializedForm"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Serialized Fields</B></FONT></TH>
+</TR>
+</TABLE>
+
+<H3>
+editor</H3>
+<PRE>
+<A HREF="processing/app/Editor.html" title="class in processing.app">Editor</A> <B>editor</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<P>
+<A NAME="processing.mode.android.Permissions"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="processing/mode/android/Permissions.html" title="class in processing.mode.android">processing.mode.android.Permissions</A> extends javax.swing.JFrame implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<A NAME="serializedForm"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Serialized Fields</B></FONT></TH>
+</TR>
+</TABLE>
+
+<H3>
+permissionScroller</H3>
+<PRE>
+javax.swing.JScrollPane <B>permissionScroller</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+permissionList</H3>
+<PRE>
+javax.swing.JList <B>permissionList</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+descriptionLabel</H3>
+<PRE>
+javax.swing.JLabel <B>descriptionLabel</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+sketch</H3>
+<PRE>
+<A HREF="processing/app/Sketch.html" title="class in processing.app">Sketch</A> <B>sketch</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR SIZE="4" NOSHADE>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="center"><FONT SIZE="+2">
+<B>Package</B> <B>processing.mode.java</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<A NAME="processing.mode.java.JavaEditor"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="processing/mode/java/JavaEditor.html" title="class in processing.mode.java">processing.mode.java.JavaEditor</A> extends <A HREF="processing/app/Editor.html" title="class in processing.app">Editor</A> implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<A NAME="serializedForm"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Serialized Fields</B></FONT></TH>
+</TR>
+</TABLE>
+
+<H3>
+jmode</H3>
+<PRE>
+<A HREF="processing/mode/java/JavaMode.html" title="class in processing.mode.java">JavaMode</A> <B>jmode</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+listener</H3>
+<PRE>
+<A HREF="processing/mode/java/PdeKeyListener.html" title="class in processing.mode.java">PdeKeyListener</A> <B>listener</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+<H3>
+runtime</H3>
+<PRE>
+<A HREF="processing/mode/java/runner/Runner.html" title="class in processing.mode.java.runner">Runner</A> <B>runtime</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<P>
+<A NAME="processing.mode.java.JavaToolbar"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="processing/mode/java/JavaToolbar.html" title="class in processing.mode.java">processing.mode.java.JavaToolbar</A> extends <A HREF="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</A> implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<HR SIZE="4" NOSHADE>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="center"><FONT SIZE="+2">
+<B>Package</B> <B>processing.mode.javascript</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<A NAME="processing.mode.javascript.JavaScriptEditor"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="processing/mode/javascript/JavaScriptEditor.html" title="class in processing.mode.javascript">processing.mode.javascript.JavaScriptEditor</A> extends <A HREF="processing/app/Editor.html" title="class in processing.app">Editor</A> implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
+<A NAME="serializedForm"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Serialized Fields</B></FONT></TH>
+</TR>
+</TABLE>
+
+<H3>
+jsMode</H3>
+<PRE>
+<A HREF="processing/mode/javascript/JavaScriptMode.html" title="class in processing.mode.javascript">JavaScriptMode</A> <B>jsMode</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<P>
+<A NAME="processing.mode.javascript.JavaScriptToolbar"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class <A HREF="processing/mode/javascript/JavaScriptToolbar.html" title="class in processing.mode.javascript">processing.mode.javascript.JavaScriptToolbar</A> extends <A HREF="processing/app/EditorToolbar.html" title="class in processing.app">EditorToolbar</A> implements Serializable</B></FONT></TH>
+</TR>
+</TABLE>
+
+<P>
 <HR SIZE="4" NOSHADE>
 
 <TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">

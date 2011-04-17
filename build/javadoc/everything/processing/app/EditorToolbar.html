@@ -53,7 +53,7 @@ function windowTitle()
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../processing/app/EditorStatus.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/FindReplace.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/EditorToolbar.Button.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/EditorToolbar.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="EditorToolbar.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -73,7 +73,7 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_javax.swing.JComponent">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_javax.swing.JComponent">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_javax.swing.JComponent">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
 DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
@@ -98,9 +98,12 @@ java.lang.Object
 <DL>
 <DT><B>All Implemented Interfaces:</B> <DD>java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener, java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable, java.util.EventListener, javax.swing.event.MouseInputListener</DD>
 </DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../processing/mode/android/AndroidToolbar.html" title="class in processing.mode.android">AndroidToolbar</A>, <A HREF="../../processing/mode/javascript/JavaScriptToolbar.html" title="class in processing.mode.javascript">JavaScriptToolbar</A>, <A HREF="../../processing/mode/java/JavaToolbar.html" title="class in processing.mode.java">JavaToolbar</A></DD>
+</DL>
 <HR>
 <DL>
-<DT><PRE>public class <B>EditorToolbar</B><DT>extends javax.swing.JComponent<DT>implements javax.swing.event.MouseInputListener, java.awt.event.KeyListener</DL>
+<DT><PRE>public abstract class <B>EditorToolbar</B><DT>extends javax.swing.JComponent<DT>implements javax.swing.event.MouseInputListener, java.awt.event.KeyListener</DL>
 </PRE>
 
 <P>
@@ -120,6 +123,14 @@ run/stop/etc buttons for the ide
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.Button.html" title="class in processing.app">EditorToolbar.Button</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="nested_classes_inherited_from_class_javax.swing.JComponent"><!-- --></A>
@@ -188,8 +199,8 @@ run/stop/etc buttons for the ide
 <B>Constructor Summary</B></FONT></TH>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#EditorToolbar(processing.app.Editor, javax.swing.JMenu)">EditorToolbar</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
-              javax.swing.JMenu&nbsp;menu)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#EditorToolbar(processing.app.Editor, processing.app.Base)">EditorToolbar</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
+              <A HREF="../../processing/app/Base.html" title="class in processing.app">Base</A>&nbsp;base)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -211,6 +222,17 @@ run/stop/etc buttons for the ide
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set a particular button to be active.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#addButton(java.lang.String, java.lang.String, java.awt.Image[], boolean)">addButton</A></B>(java.lang.String&nbsp;title,
+          java.lang.String&nbsp;shiftTitle,
+          java.awt.Image[]&nbsp;images,
+          boolean&nbsp;gap)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -246,11 +268,20 @@ run/stop/etc buttons for the ide
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#handleMouse(java.awt.event.MouseEvent)">handleMouse</A></B>(java.awt.event.MouseEvent&nbsp;e)</CODE>
+<CODE>abstract &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#handlePressed(java.awt.event.MouseEvent, int)">handlePressed</A></B>(java.awt.event.MouseEvent&nbsp;e,
+              int&nbsp;index)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#init()">init</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Load images and add toolbar buttons</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -275,6 +306,15 @@ run/stop/etc buttons for the ide
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Image[][]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../processing/app/EditorToolbar.html#loadImages()">loadImages</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only call this from paintComponent, or when the comp is displayable, 
+ otherwise createImage() might fail.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
@@ -390,11 +430,11 @@ run/stop/etc buttons for the ide
 </TR>
 </TABLE>
 
-<A NAME="EditorToolbar(processing.app.Editor, javax.swing.JMenu)"><!-- --></A><H3>
+<A NAME="EditorToolbar(processing.app.Editor, processing.app.Base)"><!-- --></A><H3>
 EditorToolbar</H3>
 <PRE>
 public <B>EditorToolbar</B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor,
-                     javax.swing.JMenu&nbsp;menu)</PRE>
+                     <A HREF="../../processing/app/Base.html" title="class in processing.app">Base</A>&nbsp;base)</PRE>
 <DL>
 </DL>
 
@@ -407,6 +447,39 @@ public <B>EditorToolbar</B>(<A HREF="../../processing/app/Editor.html" title="cl
 <B>Method Detail</B></FONT></TH>
 </TR>
 </TABLE>
+
+<A NAME="init()"><!-- --></A><H3>
+init</H3>
+<PRE>
+public abstract void <B>init</B>()</PRE>
+<DL>
+<DD>Load images and add toolbar buttons
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="loadImages()"><!-- --></A><H3>
+loadImages</H3>
+<PRE>
+public java.awt.Image[][] <B>loadImages</B>()</PRE>
+<DL>
+<DD>Only call this from paintComponent, or when the comp is displayable, 
+ otherwise createImage() might fail.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
 
 <A NAME="paintComponent(java.awt.Graphics)"><!-- --></A><H3>
 paintComponent</H3>
@@ -443,20 +516,6 @@ public void <B>mouseDragged</B>(java.awt.event.MouseEvent&nbsp;e)</PRE>
 <DL>
 <DD><DL>
 <DT><B>Specified by:</B><DD><CODE>mouseDragged</CODE> in interface <CODE>java.awt.event.MouseMotionListener</CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="handleMouse(java.awt.event.MouseEvent)"><!-- --></A><H3>
-handleMouse</H3>
-<PRE>
-public void <B>handleMouse</B>(java.awt.event.MouseEvent&nbsp;e)</PRE>
-<DL>
-<DD><DL>
-</DL>
 </DD>
 <DD><DL>
 </DL>
@@ -527,6 +586,21 @@ public void <B>mouseReleased</B>(java.awt.event.MouseEvent&nbsp;e)</PRE>
 <DL>
 <DD><DL>
 <DT><B>Specified by:</B><DD><CODE>mouseReleased</CODE> in interface <CODE>java.awt.event.MouseListener</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="handlePressed(java.awt.event.MouseEvent, int)"><!-- --></A><H3>
+handlePressed</H3>
+<PRE>
+public abstract void <B>handlePressed</B>(java.awt.event.MouseEvent&nbsp;e,
+                                   int&nbsp;index)</PRE>
+<DL>
+<DD><DL>
+</DL>
 </DD>
 <DD><DL>
 </DL>
@@ -648,6 +722,23 @@ public void <B>keyTyped</B>(java.awt.event.KeyEvent&nbsp;e)</PRE>
 </DL>
 </DD>
 </DL>
+<HR>
+
+<A NAME="addButton(java.lang.String, java.lang.String, java.awt.Image[], boolean)"><!-- --></A><H3>
+addButton</H3>
+<PRE>
+public void <B>addButton</B>(java.lang.String&nbsp;title,
+                      java.lang.String&nbsp;shiftTitle,
+                      java.awt.Image[]&nbsp;images,
+                      boolean&nbsp;gap)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
 <HR>
 
@@ -679,7 +770,7 @@ public void <B>keyTyped</B>(java.awt.event.KeyEvent&nbsp;e)</PRE>
 <TR>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
 &nbsp;<A HREF="../../processing/app/EditorStatus.html" title="class in processing.app"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../processing/app/FindReplace.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
+&nbsp;<A HREF="../../processing/app/EditorToolbar.Button.html" title="class in processing.app"><B>NEXT CLASS</B></A></FONT></TD>
 <TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
   <A HREF="../../index.html?processing/app/EditorToolbar.html" target="_top"><B>FRAMES</B></A>  &nbsp;
 &nbsp;<A HREF="EditorToolbar.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
@@ -699,7 +790,7 @@ public void <B>keyTyped</B>(java.awt.event.KeyEvent&nbsp;e)</PRE>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_javax.swing.JComponent">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_javax.swing.JComponent">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_javax.swing.JComponent">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
 DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>

@@ -91,13 +91,17 @@ Class PdeKeywords</H2>
 <PRE>
 java.lang.Object
   <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../processing/app/syntax/TokenMarker.html" title="class in processing.app.syntax">processing.app.syntax.TokenMarker</A>
-      <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../processing/app/syntax/CTokenMarker.html" title="class in processing.app.syntax">processing.app.syntax.CTokenMarker</A>
-          <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>processing.app.syntax.PdeKeywords</B>
+      <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>processing.app.syntax.PdeKeywords</B>
 </PRE>
 <HR>
 <DL>
-<DT><PRE>public class <B>PdeKeywords</B><DT>extends <A HREF="../../../processing/app/syntax/CTokenMarker.html" title="class in processing.app.syntax">CTokenMarker</A></DL>
+<DT><PRE>public class <B>PdeKeywords</B><DT>extends <A HREF="../../../processing/app/syntax/TokenMarker.html" title="class in processing.app.syntax">TokenMarker</A></DL>
 </PRE>
+
+<P>
+This class reads a keywords.txt file to get coloring put links to reference
+ locations for the set of keywords.
+<P>
 
 <P>
 <HR>
@@ -130,28 +134,22 @@ java.lang.Object
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../../../processing/app/syntax/KeywordMap.html" title="class in processing.app.syntax">KeywordMap</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/syntax/PdeKeywords.html#getKeywords()">getKeywords</A></B>()</CODE>
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/PdeKeywords.html#addColoring(java.lang.String, java.lang.String)">addColoring</A></B>(java.lang.String&nbsp;keyword,
+            java.lang.String&nbsp;coloring)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Handles loading of keywords file.</TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add a keyword, and the associated coloring.</TD>
 </TR>
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../processing/app/syntax/PdeKeywords.html#getReference(java.lang.String)">getReference</A></B>(java.lang.String&nbsp;keyword)</CODE>
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/app/syntax/PdeKeywords.html#markTokensImpl(byte, javax.swing.text.Segment, int)">markTokensImpl</A></B>(byte&nbsp;token,
+               javax.swing.text.Segment&nbsp;line,
+               int&nbsp;lineIndex)</CODE>
 
 <BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-</TABLE>
-&nbsp;<A NAME="methods_inherited_from_class_processing.app.syntax.CTokenMarker"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class processing.app.syntax.<A HREF="../../../processing/app/syntax/CTokenMarker.html" title="class in processing.app.syntax">CTokenMarker</A></B></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><A HREF="../../../processing/app/syntax/CTokenMarker.html#markTokensImpl(byte, javax.swing.text.Segment, int)">markTokensImpl</A></CODE></TD>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An abstract method that splits a line up into tokens.</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="methods_inherited_from_class_processing.app.syntax.TokenMarker"><!-- --></A>
@@ -202,32 +200,45 @@ public <B>PdeKeywords</B>()</PRE>
 </TR>
 </TABLE>
 
-<A NAME="getKeywords()"><!-- --></A><H3>
-getKeywords</H3>
+<A NAME="addColoring(java.lang.String, java.lang.String)"><!-- --></A><H3>
+addColoring</H3>
 <PRE>
-public static <A HREF="../../../processing/app/syntax/KeywordMap.html" title="class in processing.app.syntax">KeywordMap</A> <B>getKeywords</B>()</PRE>
+public void <B>addColoring</B>(java.lang.String&nbsp;keyword,
+                        java.lang.String&nbsp;coloring)</PRE>
 <DL>
-<DD>Handles loading of keywords file.
- <P>
- Uses getKeywords()  method because that's part of the
- TokenMarker classes.
- <P>
- It is recommended that a # sign be used for comments
- inside keywords.txt.
+<DD>Add a keyword, and the associated coloring.
 <P>
 <DD><DL>
-</DL>
+<DT><B>Parameters:</B><DD><CODE>coloring</CODE> - one of KEYWORD1, KEYWORD2, LITERAL1, etc.</DL>
 </DD>
 </DL>
 <HR>
 
-<A NAME="getReference(java.lang.String)"><!-- --></A><H3>
-getReference</H3>
+<A NAME="markTokensImpl(byte, javax.swing.text.Segment, int)"><!-- --></A><H3>
+markTokensImpl</H3>
 <PRE>
-public static java.lang.String <B>getReference</B>(java.lang.String&nbsp;keyword)</PRE>
+public byte <B>markTokensImpl</B>(byte&nbsp;token,
+                           javax.swing.text.Segment&nbsp;line,
+                           int&nbsp;lineIndex)</PRE>
 <DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../processing/app/syntax/TokenMarker.html#markTokensImpl(byte, javax.swing.text.Segment, int)">TokenMarker</A></CODE></B></DD>
+<DD>An abstract method that splits a line up into tokens. It
+ should parse the line, and call <code>addToken()</code> to
+ add syntax tokens to the token list. Then, it should return
+ the initial token type for the next line.<p>
+
+ For example if the current line contains the start of a
+ multiline comment that doesn't end on that line, this method
+ should return the comment token type so that it continues on
+ the next line.
+<P>
 <DD><DL>
 </DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>token</CODE> - The initial token type for this line<DD><CODE>line</CODE> - The line to be tokenized<DD><CODE>lineIndex</CODE> - The index of the line in the document,
+ starting at 0
+<DT><B>Returns:</B><DD>The initial token type for the next line</DL>
 </DD>
 </DL>
 <!-- ========= END OF CLASS DATA ========= -->

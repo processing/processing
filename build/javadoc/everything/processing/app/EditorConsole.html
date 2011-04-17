@@ -73,9 +73,9 @@ function windowTitle()
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_javax.swing.JComponent">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_javax.swing.JComponent">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_javax.swing.JComponent">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_top"></A>
@@ -106,10 +106,16 @@ java.lang.Object
 
 <P>
 Message console that sits below the editing area.
- <P>
- Debugging this class is tricky... If it's throwing exceptions,
+ <p />
+ Be careful when debugging this class, because if it's throwing exceptions,
  don't take over System.err, and debug while watching just System.out
- or just write println() or whatever directly to systemOut or systemErr.
+ or just call println() or whatever directly to systemOut or systemErr.
+ <p />
+ Also note that encodings will not work properly when run from Eclipse. This
+ means that if you use non-ASCII characters in a println() or some such, 
+ the characters won't print properly in the Processing and/or Eclipse console.
+ It seems that Eclipse's console-grabbing and that of Processing don't 
+ get along with one another. Use 'ant run' to work on encoding-related issues.
 <P>
 
 <P>
@@ -154,22 +160,6 @@ Message console that sits below the editing area.
 <TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
 <TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
 <B>Field Summary</B></FONT></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.io.PrintStream</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/EditorConsole.html#systemErr">systemErr</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;java.io.PrintStream</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/EditorConsole.html#systemOut">systemOut</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
 </TR>
 </TABLE>
 &nbsp;<A NAME="fields_inherited_from_class_javax.swing.JComponent"><!-- --></A>
@@ -252,9 +242,8 @@ Message console that sits below the editing area.
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/EditorConsole.html#message(java.lang.String, boolean, boolean)">message</A></B>(java.lang.String&nbsp;what,
-        boolean&nbsp;err,
-        boolean&nbsp;advance)</CODE>
+<TD><CODE><B><A HREF="../../processing/app/EditorConsole.html#message(java.lang.String, boolean)">message</A></B>(java.lang.String&nbsp;what,
+        boolean&nbsp;err)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -263,17 +252,6 @@ Message console that sits below the editing area.
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>static&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../processing/app/EditorConsole.html#setEditor(processing.app.Editor)">setEditor</A></B>(<A HREF="../../processing/app/Editor.html" title="class in processing.app">Editor</A>&nbsp;editor)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../processing/app/EditorConsole.html#write(byte[], int, int, boolean)">write</A></B>(byte[]&nbsp;b,
-      int&nbsp;offset,
-      int&nbsp;length,
-      boolean&nbsp;err)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -326,35 +304,6 @@ Message console that sits below the editing area.
 </TABLE>
 &nbsp;
 <P>
-
-<!-- ============ FIELD DETAIL =========== -->
-
-<A NAME="field_detail"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Field Detail</B></FONT></TH>
-</TR>
-</TABLE>
-
-<A NAME="systemOut"><!-- --></A><H3>
-systemOut</H3>
-<PRE>
-public static java.io.PrintStream <B>systemOut</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="systemErr"><!-- --></A><H3>
-systemErr</H3>
-<PRE>
-public static java.io.PrintStream <B>systemErr</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
 
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 
@@ -412,26 +361,11 @@ public void <B>handleQuit</B>()</PRE>
 </DL>
 <HR>
 
-<A NAME="write(byte[], int, int, boolean)"><!-- --></A><H3>
-write</H3>
-<PRE>
-public void <B>write</B>(byte[]&nbsp;b,
-                  int&nbsp;offset,
-                  int&nbsp;length,
-                  boolean&nbsp;err)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="message(java.lang.String, boolean, boolean)"><!-- --></A><H3>
+<A NAME="message(java.lang.String, boolean)"><!-- --></A><H3>
 message</H3>
 <PRE>
 public void <B>message</B>(java.lang.String&nbsp;what,
-                    boolean&nbsp;err,
-                    boolean&nbsp;advance)</PRE>
+                    boolean&nbsp;err)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -499,9 +433,9 @@ public void <B>clear</B>()</PRE>
 </TR>
 <TR>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_javax.swing.JComponent">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_javax.swing.JComponent">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_javax.swing.JComponent">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
 <TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
 </TR>
 </TABLE>
 <A NAME="skip-navbar_bottom"></A>
