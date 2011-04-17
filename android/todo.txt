@@ -1,4 +1,6 @@
 0196 android
+X workaround for loadImage(url) bug in Google's Android source (via psoden)
+X   http://code.google.com/p/processing/issues/detail?id=629
 
 earlier
 X Build an interface for control of permissions on Android
