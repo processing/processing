@@ -20,6 +20,7 @@ X Running a sketch destroys other running PApplets
 X   http://code.google.com/p/processing/issues/detail?id=567
 X   allow more than one sketch to run at a time
 X fix caret bug leading to slow degredation of the PDE
+X fix color selector to be more efficient
 
 _ help casey re-export all applets for the site
 _   remove .java files, use one central loading.gif and core.jar?
