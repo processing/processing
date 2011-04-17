@@ -1,4 +1,23 @@
 0197 pde
+X Windows splash screen for version 1.5 says "1.2"
+X   http://code.google.com/p/processing/issues/detail?id=631
+
+
+cleaning
+X check to see whether this bug is fixed once 0140 is released
+X   properly handle non-ascii chars in p5 folder name
+X   http://dev.processing.org/bugs/show_bug.cgi?id=49
+X   (could also just warn user to install elsewhere)
+o   perhaps the get around this by building into sketch folder
+o     when non-ascii chars in use, just launch everything externally
+X "Could not find the main class: processing.app.Base. Program will exit."
+X   http://code.google.com/p/processing/issues/detail?id=151
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1126
+o "Fatal exception occurred. Program will exit." on startup
+o   seems to be font related, deleting prefs will fix it
+o   http://dev.processing.org/bugs/show_bug.cgi?id=688
+o Processing IDE icon ALT + Tab low res in Windows XP
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1040
 
 
 2.0
@@ -1342,28 +1361,14 @@ _   and include an md5hash to see if the file is correct
 
 DIST / Windows
 
-2 _ Windows problem with some lab machines "Processing cannot run because 
-2 _   it could not create a folder to store your settings"
-2 _   http://dev.processing.org/bugs/show_bug.cgi?id=1016
-_ check to see whether this bug is fixed once 0140 is released
-_   properly handle non-ascii chars in p5 folder name
-_   http://dev.processing.org/bugs/show_bug.cgi?id=49
-_   (could also just warn user to install elsewhere)
-o   perhaps the get around this by building into sketch folder
-o     when non-ascii chars in use, just launch everything externally
-_ icon is skewed on vista 64
-_   http://dev.processing.org/bugs/show_bug.cgi?id=801
-_ "Fatal exception occurred. Program will exit." on startup
-_   seems to be font related, deleting prefs will fix it
-_   http://dev.processing.org/bugs/show_bug.cgi?id=688
-_ Processing IDE icon ALT + Tab low res in Windows XP
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1040
-4 _ "Could not find the main class: processing.app.Base. Program will exit."
-4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1126
-5 _ process still visible in Sysinternals Process Explorer after quit
-5 _  http://dev.processing.org/bugs/show_bug.cgi?id=1567
+_ Update Windows icons for multiple sizes, implement them in the PDE
+_   http://code.google.com/p/processing/issues/detail?id=632
+_   http://code.google.com/p/processing/issues/detail?id=138
+_   http://code.google.com/p/processing/issues/detail?id=98
 _ .pde file type not getting associated properly
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1513
+_ process still visible in Sysinternals Process Explorer after quit
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1567
 
 
 DIST / Mac OS X
