@@ -1,3 +1,102 @@
+PROCESSING 1.5 (REV 0196) - 17 April 2011
+
+A lot has changed in the nine months since 1.2.1 was released, the biggest
+being the introduction of "modes" for the editor, allowing you to switch
+between Android development or the classic desktop/web mode. More modes are
+coming in future releases.
+
+Another significant change is a fix for applets that were stuttering or 
+appearing to run very, very slowly in Firefox 4 and Chrome. That's the major
+reason that we're releasing this version in advance on 2.0 later this summer.
+
+All of the changes since 1.2.1 are listed in this document. If you get stuck,
+give it a search to see if there might be a clue about something that has
+changed. Or if you have problems, please file a bug.
+
+Meanwhile, here are the changes since revision 0195, the last pre-release:
+
+[ pde ] 
+
++ A new version of the reference and examples have been posted online.
+
++ Upgraded to Quaqua 7.3.4 on OS X. Fixes mode menu checkbox on OS X
+
++ Added a fix for text focus handling in the editor (0195 problem)
+  http://code.google.com/p/processing/issues/detail?id=627
+
++ File -> Save no longer stops the running sketch
+  http://dev.processing.org/bugs/show_bug.cgi?id=810
+  http://code.google.com/p/processing/issues/detail?id=100
+
++ Fixed a bug in the LoadFile2 example 
+  http://code.google.com/p/processing/issues/detail?id=522
+
++ Shift-indent without selection increases indention
+  http://code.google.com/p/processing/issues/detail?id=458
+
++ Allow more than one sketch to run at a time (problem in 0194/5)
+  http://code.google.com/p/processing/issues/detail?id=567
+
++ Fix caret bug leading to slow degredation of the PDE.
+
++ Fix Color Selector to be more efficient with many sketch windows.
+
++ Fix sketch marked as modified too aggressively
+  http://dev.processing.org/bugs/show_bug.cgi?id=328
+  http://code.google.com/p/processing/issues/detail?id=57
+  http://code.google.com/p/processing/issues/detail?id=620
+
++ Prevent "save" from clearing undo information
+  http://code.google.com/p/processing/issues/detail?id=411
+
++ Rename/Save As doesn't properly have its focus set (fixed in 0195)
+  http://dev.processing.org/bugs/show_bug.cgi?id=31
+  http://code.google.com/p/processing/issues/detail?id=13
+
+[ peter lewis ]
+
+Several fixes for text selection and editing, provided by a
+Mac software developer hero of my youth, Peter N Lewis.
+
++ Use Selection For Find
+  http://code.google.com/p/processing/issues/detail?id=571
+
++ Double-clicking whitespace selects adjacent chars
+  http://code.google.com/p/processing/issues/detail?id=59
+  http://code.google.com/p/processing/issues/detail?id=576
+
++ Find/Replace all around very ugly, fix it up
+  http://dev.processing.org/bugs/show_bug.cgi?id=67
+  http://code.google.com/p/processing/issues/detail?id=23
+  http://code.google.com/p/processing/issues/detail?id=580
+
++ Several additional tweaks
+  http://dev.processing.org/bugs/show_bug.cgi?id=68
+  http://code.google.com/p/processing/issues/detail?id=24
+
+[ core ]
+
++ Fix minor native fonts issue.
+
+[ android ] 
+
++ Workaround for loadImage(url) bug in Google's Android source.  
+  Issue tracked down by psoden. (Thanks!)
+  http://code.google.com/p/processing/issues/detail?id=629
+
++ Build an interface for control of permissions on Android (earlier)
+  http://code.google.com/p/processing/issues/detail?id=275
+
++ Implement createGraphics() (completed in earlier releases)
+  http://code.google.com/p/processing/issues/detail?id=240
+
++ Android 0192 sketch in static mode crashes on exit (fixed in 0193 or so)
+  http://code.google.com/p/processing/issues/detail?id=518
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0195 - 10 April 2011
 
 Bug fixes and several Android updates. Working to close in on a proper 

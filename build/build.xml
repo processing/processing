@@ -101,6 +101,8 @@
 	<exclude name="**/cmd/**" />
 	<exclude name="reference.zip" />
 	<exclude name="**/._*" />
+	<!-- disable for the 1.5 release -->
+	<exclude name="libraries/opengl2/**" />
 
 	<exclude name="examples/**/applet/**" />
       </fileset>
