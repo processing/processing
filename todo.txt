@@ -22,12 +22,12 @@ X   allow more than one sketch to run at a time
 X fix caret bug leading to slow degredation of the PDE
 X fix color selector to be more efficient
 
-_ help casey re-export all applets for the site
+X help casey re-export all applets for the site
 X   remove .java files, use one central loading.gif and core.jar?
 X   use a custom applet.html template for the export
 X     the tool could copy this into the folder just before exporting
-_ remove all the 'applet' folders from svn
-_ run the javadoc for 1.5
+X remove all the 'applet' folders from svn
+X run the javadoc for 1.5
 _ remove opengl2 for 1.5 and examples for the final 1.5
 _ need to get a new stable release out there, the docs/ref are out of sync
 
