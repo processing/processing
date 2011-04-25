@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.io.BufferedReader;
+
 import javax.microedition.khronos.opengles.*;
 
 /**
@@ -90,6 +91,7 @@ public class PShape3D extends PShape implements PConstants {
   protected ShortBuffer indexBuffer = null;
   protected int indexCount = 0;
   protected short[] indices;  
+  protected boolean useIndices;
   
   // To put the texture coordinate values adjusted according to texture 
   // flipping mode, max UV range, etc.
@@ -1873,6 +1875,7 @@ public class PShape3D extends PShape implements PConstants {
     indexBuffer = ibb.asShortBuffer();
     
     indices = new short[indexCount];
+    useIndices = true;
   }
   
   public void setIndices(ArrayList<Short> recordedIndices) {
@@ -1885,12 +1888,48 @@ public class PShape3D extends PShape implements PConstants {
     indexBuffer.put(indices);    
     indexBuffer.flip();
     
-    
     gl.glBufferSubData(GL11.GL_ELEMENT_ARRAY_BUFFER, 0, indexCount * PGraphicsAndroid3D.SIZEOF_SHORT, 
                        indexBuffer);
         
     gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);    
   }  
+  
+  public void setIndices(int src[]) {
+    gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);   
+    
+    PApplet.arrayCopy(src, indices);
+    indexBuffer.position(0);
+    indexBuffer.put(indices);    
+    indexBuffer.flip();
+    
+    gl.glBufferSubData(GL11.GL_ELEMENT_ARRAY_BUFFER, 0, indexCount * PGraphicsAndroid3D.SIZEOF_SHORT, 
+                       indexBuffer);
+        
+    gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);  
+  }    
+  
+  public void useIndices(boolean val) {
+    if (family == GROUP) {
+      init();
+      for (int i = 0; i < childCount; i++) {
+        useIndices(i, val);
+      }            
+    } else { 
+      useIndices = val;
+    }
+  }
+  
+  public void useIndices(int idx, boolean val) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).useIndices = val;
+      
+      // Debugging. This mess needs to be fixed soon, which means 
+      // using the indexed mode everywhere and sorting out the 
+      // issues with children data.      
+      ((PShape3D)children[idx]).firstIndex = 0;
+      ((PShape3D)children[idx]).lastIndex = indexCount - 1;
+    }
+  }    
   
   ////////////////////////////////////////////////////////////  
   
@@ -2438,7 +2477,7 @@ public class PShape3D extends PShape implements PConstants {
       }              
     }
 
-    if (glIndexBufferID != 0) {
+    if (glIndexBufferID != 0 && useIndices) {
       gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
       // Here the vertex indices are understood as the range of indices.
       int last = lastIndex;
