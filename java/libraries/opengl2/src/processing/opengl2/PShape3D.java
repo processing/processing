@@ -95,6 +95,7 @@ public class PShape3D extends PShape {
   protected IntBuffer indexBuffer = null;
   protected int indexCount = 0;
   protected int[] indices;
+  protected boolean useIndices;
   
   // To put the texture coordinate values adjusted according to texture 
   // flipping mode, max UV range, etc.
@@ -1892,6 +1893,7 @@ public class PShape3D extends PShape {
     gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0); 
     
     indices = new int[indexCount];
+    useIndices = true;
   }
   
   public void setIndices(ArrayList<Integer> recordedIndices) {
@@ -1906,6 +1908,40 @@ public class PShape3D extends PShape {
     gl.glUnmapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER);
     gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);    
   }
+  
+  public void setIndices(int src[]) {
+    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
+    indexBuffer = gl.glMapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, GL.GL_WRITE_ONLY).asIntBuffer();
+    
+    PApplet.arrayCopy(src, indices);
+    indexBuffer.put(indices);    
+    
+    gl.glUnmapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER);
+    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);    
+  }    
+    
+  public void useIndices(boolean val) {
+    if (family == GROUP) {
+      init();
+      for (int i = 0; i < childCount; i++) {
+        useIndices(i, val);
+      }            
+    } else { 
+      useIndices = val;
+    }
+  }
+  
+  public void useIndices(int idx, boolean val) {
+    if (0 <= idx && idx < childCount) {
+      ((PShape3D)children[idx]).useIndices = val;
+      
+      // Debugging. This mess needs to be fixed soon, which means 
+      // using the indexed mode everywhere and sorting out the 
+      // issues with children data.      
+      ((PShape3D)children[idx]).firstIndex = 0;
+      ((PShape3D)children[idx]).lastIndex = indexCount - 1;
+    }
+  }  
   
   ////////////////////////////////////////////////////////////  
   
@@ -2425,8 +2461,8 @@ public class PShape3D extends PShape {
         pgl.setFillColor();                  
       }              
     }
-
-    if (glIndexBufferID != 0) {
+    
+    if (glIndexBufferID != 0 && useIndices) {
       gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
       // Here the vertex indices are understood as the range of indices.
       int last = lastIndex;

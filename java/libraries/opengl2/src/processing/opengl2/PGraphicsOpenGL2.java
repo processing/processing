@@ -852,6 +852,14 @@ public class PGraphicsOpenGL2 extends PGraphics {
   public GLCapabilities getCapabilities() {
     return capabilities;
   }  
+
+  
+  /**
+   * Get the current drawable.
+   */  
+  public GLDrawable getDrawable() {
+    return drawable;
+  }
   
   
   /**
@@ -6687,7 +6695,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
     profile = null;      
     
     profile = GLProfile.getDefault();
-    profile = GLProfile.get(GLProfile.GL2ES1);
+    //profile = GLProfile.get(GLProfile.GL2ES1);
+    //profile = GLProfile.get(GLProfile.GL4bc);
+    //profile = GLProfile.getMaxProgrammable();    
     pipeline = FIXED;
 
     /*
@@ -6744,6 +6754,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
     GLDrawableFactory factory = GLDrawableFactory.getFactory(profile);
     drawable = factory.createGLDrawable(win);
     context = drawable.createContext(null);    
+    
+    PApplet.println("PROFILE:\n" + profile);
+    PApplet.println("CONTEXT:\n" + context);
   }
   
   
@@ -6837,6 +6850,11 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   protected void getGLObjects() {
     gl = context.getGL();        
+    
+    //PApplet.println("GL:\n" + gl.getClass());
+    //PApplet.println("GL3:\n" + gl.getGL4bc());
+    
+    
     if (pipeline == PROG_GL4) {
       gl4p = gl.getGL4();
       gl3p = gl4p;
