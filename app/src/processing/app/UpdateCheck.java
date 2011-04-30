@@ -47,7 +47,7 @@ import processing.core.PApplet;
  * people are using Processing, which helps us when writing grant
  * proposals and that kind of thing so that we can keep Processing free.
  */
-public class UpdateCheck implements Runnable {
+public class UpdateCheck {
   Base base;
   String downloadURL = "http://processing.org/download/latest.txt";
 
@@ -55,14 +55,21 @@ public class UpdateCheck implements Runnable {
 
 
   public UpdateCheck(Base base) {
-    Thread thread = new Thread(this);
-    thread.start();
+    this.base = base;
+    new Thread(new Runnable() {
+      public void run() {
+        try {
+          Thread.sleep(30 * 1000);  // give the PDE time to get rolling
+          updateCheck();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }).start();
   }
 
 
-  public void run() {
-    //System.out.println("checking for updates...");
-
+  public void updateCheck() throws Exception {
     // generate a random id in case none exists yet
     Random r = new Random();
     long id = r.nextLong();
@@ -74,52 +81,47 @@ public class UpdateCheck implements Runnable {
       Preferences.set("update.id", String.valueOf(id));
     }
 
-    try {
-      String info;
-      info = URLEncoder.encode(id + "\t" +
-                        PApplet.nf(Base.REVISION, 4) + "\t" +
-                        System.getProperty("java.version") + "\t" +
-                        System.getProperty("java.vendor") + "\t" +
-                        System.getProperty("os.name") + "\t" +
-                        System.getProperty("os.version") + "\t" +
-                        System.getProperty("os.arch"), "UTF-8");
-      
-      int latest = readInt(downloadURL + "?" + info);
+    String info;
+    info = URLEncoder.encode(id + "\t" +
+                             PApplet.nf(Base.REVISION, 4) + "\t" +
+                             System.getProperty("java.version") + "\t" +
+                             System.getProperty("java.vendor") + "\t" +
+                             System.getProperty("os.name") + "\t" +
+                             System.getProperty("os.version") + "\t" +
+                             System.getProperty("os.arch"), "UTF-8");
 
-      String lastString = Preferences.get("update.last");
-      long now = System.currentTimeMillis();
-      if (lastString != null) {
-        long when = Long.parseLong(lastString);
-        if (now - when < ONE_DAY) {
-          // don't annoy the shit outta people
-          return;
+    int latest = readInt(downloadURL + "?" + info);
+
+    String lastString = Preferences.get("update.last");
+    long now = System.currentTimeMillis();
+    if (lastString != null) {
+      long when = Long.parseLong(lastString);
+      if (now - when < ONE_DAY) {
+        // don't annoy the shit outta people
+        return;
+      }
+    }
+    Preferences.set("update.last", String.valueOf(now));
+
+    String prompt =
+      "A new version of Processing is available,\n" +
+      "would you like to visit the Processing download page?";
+
+    if (base.activeEditor != null) {
+      if (latest > Base.REVISION) {
+        Object[] options = { "Yes", "No" };
+        int result = JOptionPane.showOptionDialog(base.activeEditor,
+                                                  prompt,
+                                                  "Update",
+                                                  JOptionPane.YES_NO_OPTION,
+                                                  JOptionPane.QUESTION_MESSAGE,
+                                                  null,
+                                                  options,
+                                                  options[0]);
+        if (result == JOptionPane.YES_OPTION) {
+          Base.openURL("http://processing.org/download/");
         }
       }
-      Preferences.set("update.last", String.valueOf(now));
-
-      String prompt =
-        "A new version of Processing is available,\n" +
-        "would you like to visit the Processing download page?";
-
-      if (base.activeEditor != null) {
-        if (latest > Base.REVISION) {
-          Object[] options = { "Yes", "No" };
-          int result = JOptionPane.showOptionDialog(base.activeEditor,
-                                                    prompt,
-                                                    "Update",
-                                                    JOptionPane.YES_NO_OPTION,
-                                                    JOptionPane.QUESTION_MESSAGE,
-                                                    null,
-                                                    options,
-                                                    options[0]);
-          if (result == JOptionPane.YES_OPTION) {
-            Base.openURL("http://processing.org/download/");
-          }
-        }
-      }
-    } catch (Exception e) {
-      //e.printStackTrace();
-      //System.err.println("Error while trying to check for an update.");
     }
   }
 
