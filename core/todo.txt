@@ -3,6 +3,7 @@
 
 for 2.0
 _ arrayobjects (and others) flickers like hell in chrome 10 on os x
+_   http://code.google.com/p/processing/issues/detail?id=646
 _ rounded rectangle method 
 _   http://code.google.com/p/processing/issues/detail?id=265
 _ make sure that loadXxxx() methods are used after init()
@@ -22,6 +23,10 @@ _   filter(MASK, ...) -> or ALPHA?
 _   filter(TINT, tintColor)
 _ post() is called after setup() (make decision)
 _   http://code.google.com/p/processing/issues/detail?id=455
+
+_ callback for requestImage()
+_   http://code.google.com/p/processing/issues/detail?id=641
+_   might work with the selectXxxx() functions as well
 
 _ image resizing is ugly (just use java2d?)
 _   also deal with copy()/blend() inaccuracies

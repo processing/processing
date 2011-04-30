@@ -1,6 +1,7 @@
 0197 pde
 X Windows splash screen for version 1.5 says "1.2"
 X   http://code.google.com/p/processing/issues/detail?id=631
+X fix broken UpdateCheck (base was never set)
 
 
 cleaning
@@ -183,8 +184,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1570
 _ create default tools folder (just like libraries)
 
 _ problem with associating .pde files on windows 7
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1513
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1536
+_   http://code.google.com/p/processing/issues/detail?id=247
 _ do some testing for windows 7 on 64-bit
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1424
 _ problem with startup on vista 64

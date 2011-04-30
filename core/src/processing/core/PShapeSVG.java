@@ -282,7 +282,7 @@ public class PShapeSVG extends PShape {
 
     String transformStr = properties.getString("transform");
     if (transformStr != null) {
-      matrix = parseMatrix(transformStr);
+      matrix = parseTransform(transformStr);
     }
 
     parseColors(properties);
@@ -825,8 +825,27 @@ public class PShapeSVG extends PShape {
    * @param matrixStr text of the matrix param.
    * @return a good old-fashioned PMatrix2D
    */
-  static protected PMatrix2D parseMatrix(String matrixStr) {
-    String[] pieces = PApplet.match(matrixStr, "\\s*(\\w+)\\((.*)\\)");
+  static protected PMatrix2D parseTransform(String matrixStr) {
+    matrixStr = matrixStr.trim();
+    PMatrix2D outgoing = null;
+    int start = 0;
+    int stop = -1;
+    while ((stop = matrixStr.indexOf(')', start)) != -1) {
+      PMatrix2D m = parseSingleTransform(matrixStr.substring(start, stop+1));
+      if (outgoing == null) {
+        outgoing = m;
+      } else {
+        outgoing.apply(m);
+      }
+      start = stop + 1;
+    }
+    return outgoing;
+  }
+
+
+  static protected PMatrix2D parseSingleTransform(String matrixStr) {
+    //String[] pieces = PApplet.match(matrixStr, "^\\s*(\\w+)\\((.*)\\)\\s*$");
+    String[] pieces = PApplet.match(matrixStr, "[,\\s]*(\\w+)\\((.*)\\)");
     if (pieces == null) {
       System.err.println("Could not parse transform " + matrixStr);
       return null;
@@ -1198,7 +1217,7 @@ public class PShapeSVG extends PShape {
         properties.getString("gradientTransform");
 
       if (transformStr != null) {
-        float t[] = parseMatrix(transformStr).get(null);
+        float t[] = parseTransform(transformStr).get(null);
         this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
 
         Point2D t1 = transform.transform(new Point2D.Float(x1, y1), null);
@@ -1227,7 +1246,7 @@ public class PShapeSVG extends PShape {
         properties.getString("gradientTransform");
 
       if (transformStr != null) {
-        float t[] = parseMatrix(transformStr).get(null);
+        float t[] = parseTransform(transformStr).get(null);
         this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
 
         Point2D t1 = transform.transform(new Point2D.Float(cx, cy), null);
