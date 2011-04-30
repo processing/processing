@@ -2766,7 +2766,7 @@ public class PImage implements PConstants, Cloneable {
    * To get a list of the supported formats for writing, use: <BR>
    * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
    */
-  protected void saveImageIO(String path) throws IOException {
+  protected boolean saveImageIO(String path) throws IOException {
     try {
       int outputFormat = (format == ARGB) ?
         BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
@@ -2785,7 +2785,7 @@ public class PImage implements PConstants, Cloneable {
       File file = new File(path);
       String extension = path.substring(path.lastIndexOf('.') + 1);
 
-      ImageIO.write(bimage, extension, file);
+      return ImageIO.write(bimage, extension, file);
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -2863,7 +2863,9 @@ public class PImage implements PConstants, Cloneable {
       if (saveImageFormats != null) {
         for (int i = 0; i < saveImageFormats.length; i++) {
           if (filename.endsWith("." + saveImageFormats[i])) {
-            saveImageIO(filename);
+            if (!saveImageIO(filename)) {
+              throw new RuntimeException("Error while saving image.");
+            }
             return;
           }
         }

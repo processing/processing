@@ -863,13 +863,13 @@ public class PFont implements PConstants {
     public int leftExtent;
 
     
-    protected Glyph() {
+    public Glyph() {
       index = -1;
       // used when reading from a stream or for subclasses
     }
     
     
-    protected Glyph(DataInputStream is) throws IOException {
+    public Glyph(DataInputStream is) throws IOException {
       index = -1;
       readHeader(is);
     }

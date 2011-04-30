@@ -23,9 +23,17 @@
 
 package processing.core;
 
+import java.awt.Paint;
+import java.awt.PaintContext;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.util.HashMap;
-
-import android.graphics.*;
 
 import processing.xml.XMLElement;
 
@@ -143,11 +151,11 @@ public class PShapeSVG extends PShape {
 
 
   Gradient strokeGradient;
-  Shader strokeGradientPaint;
+  Paint strokeGradientPaint;
   String strokeName;  // id of another object, gradients only?
 
   Gradient fillGradient;
-  Shader fillGradientPaint;
+  Paint fillGradientPaint;
   String fillName;  // id of another object
 
 
@@ -274,7 +282,7 @@ public class PShapeSVG extends PShape {
 
     String transformStr = properties.getString("transform");
     if (transformStr != null) {
-      matrix = parseMatrix(transformStr);
+      matrix = parseTransform(transformStr);
     }
 
     parseColors(properties);
@@ -817,8 +825,27 @@ public class PShapeSVG extends PShape {
    * @param matrixStr text of the matrix param.
    * @return a good old-fashioned PMatrix2D
    */
-  static protected PMatrix2D parseMatrix(String matrixStr) {
-    String[] pieces = PApplet.match(matrixStr, "\\s*(\\w+)\\((.*)\\)");
+  static protected PMatrix2D parseTransform(String matrixStr) {
+    matrixStr = matrixStr.trim();
+    PMatrix2D outgoing = null;
+    int start = 0;
+    int stop = -1;
+    while ((stop = matrixStr.indexOf(')', start)) != -1) {
+      PMatrix2D m = parseSingleTransform(matrixStr.substring(start, stop+1));
+      if (outgoing == null) {
+        outgoing = m;
+      } else {
+        outgoing.apply(m);
+      }
+      start = stop + 1;
+    }
+    return outgoing;
+  }
+
+
+  static protected PMatrix2D parseSingleTransform(String matrixStr) {
+    //String[] pieces = PApplet.match(matrixStr, "^\\s*(\\w+)\\((.*)\\)\\s*$");
+    String[] pieces = PApplet.match(matrixStr, "[,\\s]*(\\w+)\\((.*)\\)");
     if (pieces == null) {
       System.err.println("Could not parse transform " + matrixStr);
       return null;
@@ -1014,7 +1041,7 @@ public class PShapeSVG extends PShape {
     int color = 0;
     String name = "";
     Gradient gradient = null;
-    Shader paint = null;
+    Paint paint = null;
     if (colorText.equals("none")) {
       visible = false;
     } else if (colorText.equals("black")) {
@@ -1131,7 +1158,7 @@ public class PShapeSVG extends PShape {
 
 
   static class Gradient extends PShapeSVG {
-    Matrix transform;
+    AffineTransform transform;
 
     float[] offset;
     int[] color;
@@ -1190,30 +1217,16 @@ public class PShapeSVG extends PShape {
         properties.getString("gradientTransform");
 
       if (transformStr != null) {
-        float t[] = parseMatrix(transformStr).get(null);
-        //this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
-        transform = new Matrix();
-        transform.setValues(new float[] {  // TODO don't create temp floats
-          t[0], t[1], t[2],
-          t[3], t[4], t[5],
-          0, 0, 1
-        });
+        float t[] = parseTransform(transformStr).get(null);
+        this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
 
-//        Point2D t1 = transform.transform(new Point2D.Float(x1, y1), null);
-//        Point2D t2 = transform.transform(new Point2D.Float(x2, y2), null);
-        float[] t1 = new float[] { x1, y1 };
-        float[] t2 = new float[] { x2, y2 };
-        transform.mapPoints(t1);
-        transform.mapPoints(t2);
+        Point2D t1 = transform.transform(new Point2D.Float(x1, y1), null);
+        Point2D t2 = transform.transform(new Point2D.Float(x2, y2), null);
 
-//        this.x1 = (float) t1.getX();
-//        this.y1 = (float) t1.getY();
-//        this.x2 = (float) t2.getX();
-//        this.y2 = (float) t2.getY();
-        x1 = t1[0];
-        y1 = t1[1];
-        x2 = t2[0];
-        y2 = t2[1];
+        this.x1 = (float) t1.getX();
+        this.y1 = (float) t1.getY();
+        this.x2 = (float) t2.getX();
+        this.y2 = (float) t2.getY();
       }
     }
   }
@@ -1233,34 +1246,21 @@ public class PShapeSVG extends PShape {
         properties.getString("gradientTransform");
 
       if (transformStr != null) {
-        float t[] = parseMatrix(transformStr).get(null);
-//        this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
-        transform = new Matrix();
-        transform.setValues(new float[] {  // TODO don't create temp floats
-          t[0], t[1], t[2],
-          t[3], t[4], t[5],
-          0, 0, 1
-        });
+        float t[] = parseTransform(transformStr).get(null);
+        this.transform = new AffineTransform(t[0], t[3], t[1], t[4], t[2], t[5]);
 
-//        Point2D t1 = transform.transform(new Point2D.Float(cx, cy), null);
-//        Point2D t2 = transform.transform(new Point2D.Float(cx + r, cy), null);
-        float[] t1 = new float[] { cx, cy };
-        float[] t2 = new float[] { cx + r, cy };
-        transform.mapPoints(t1);
-        transform.mapPoints(t2);
+        Point2D t1 = transform.transform(new Point2D.Float(cx, cy), null);
+        Point2D t2 = transform.transform(new Point2D.Float(cx + r, cy), null);
 
-//        this.cx = (float) t1.getX();
-//        this.cy = (float) t1.getY();
-//        this.r = (float) (t2.getX() - t1.getX());
-        cx = t1[0];
-        cy = t1[1];
-        r = t2[0] - t1[0];
+        this.cx = (float) t1.getX();
+        this.cy = (float) t1.getY();
+        this.r = (float) (t2.getX() - t1.getX());
       }
     }
   }
 
 
-/*
+
   class LinearGradientPaint implements Paint {
     float x1, y1, x2, y2;
     float[] offset;
@@ -1324,7 +1324,7 @@ public class PShapeSVG extends PShape {
           ny /= len;
         }
 
-        int span = (int) PActivity.dist(tx1, ty1, tx2, ty2) * ACCURACY;
+        int span = (int) PApplet.dist(tx1, ty1, tx2, ty2) * ACCURACY;
         if (span <= 0) {
           //System.err.println("span is too small");
           // annoying edge case where the gradient isn't legit
@@ -1347,11 +1347,11 @@ public class PShapeSVG extends PShape {
             int last = (int) (offset[i] * (span-1));
             //System.out.println("last is " + last);
             for (int j = prev; j <= last; j++) {
-              float btwn = PActivity.norm(j, prev, last);
-              interp[j][0] = (int) PActivity.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
-              interp[j][1] = (int) PActivity.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
-              interp[j][2] = (int) PActivity.lerp(c0 & 0xff, c1 & 0xff, btwn);
-              interp[j][3] = (int) (PActivity.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
+              float btwn = PApplet.norm(j, prev, last);
+              interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
+              interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
+              interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+              interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
               //System.out.println(j + " " + interp[j][0] + " " + interp[j][1] + " " + interp[j][2]);
             }
             prev = last;
@@ -1384,10 +1384,8 @@ public class PShapeSVG extends PShape {
       }
     }
   }
-  */
 
 
-  /*
   class RadialGradientPaint implements Paint {
     float cx, cy, radius;
     float[] offset;
@@ -1436,11 +1434,11 @@ public class PShapeSVG extends PShape {
           int c1 = color[i];
           int last = (int) (offset[i] * (span - 1));
           for (int j = prev; j <= last; j++) {
-            float btwn = PActivity.norm(j, prev, last);
-            interp[j][0] = (int) PActivity.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
-            interp[j][1] = (int) PActivity.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
-            interp[j][2] = (int) PActivity.lerp(c0 & 0xff, c1 & 0xff, btwn);
-            interp[j][3] = (int) (PActivity.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
+            float btwn = PApplet.norm(j, prev, last);
+            interp[j][0] = (int) PApplet.lerp((c0 >> 16) & 0xff, (c1 >> 16) & 0xff, btwn);
+            interp[j][1] = (int) PApplet.lerp((c0 >> 8) & 0xff, (c1 >> 8) & 0xff, btwn);
+            interp[j][2] = (int) PApplet.lerp(c0 & 0xff, c1 & 0xff, btwn);
+            interp[j][3] = (int) (PApplet.lerp((c0 >> 24) & 0xff, (c1 >> 24) & 0xff, btwn) * opacity);
           }
           prev = last;
         }
@@ -1449,8 +1447,8 @@ public class PShapeSVG extends PShape {
         int index = 0;
         for (int j = 0; j < h; j++) {
           for (int i = 0; i < w; i++) {
-            float distance = PActivity.dist(cx, cy, x + i, y + j);
-            int which = PActivity.min((int) (distance * ACCURACY), interp.length-1);
+            float distance = PApplet.dist(cx, cy, x + i, y + j);
+            int which = PApplet.min((int) (distance * ACCURACY), interp.length-1);
 
             data[index++] = interp[which][0];
             data[index++] = interp[which][1];
@@ -1464,41 +1462,26 @@ public class PShapeSVG extends PShape {
       }
     }
   }
-  */
 
 
-  protected Shader calcGradientPaint(Gradient gradient) {
-    // TODO just do this with the other parsing
-    int[] colors = new int[gradient.count];
-    int opacityMask = ((int) (opacity * 255)) << 24;
-    for (int i = 0; i < gradient.count; i++) {
-      colors[i] = opacityMask | (gradient.color[i] & 0xFFFFFF);
-    }
-
+  protected Paint calcGradientPaint(Gradient gradient) {
     if (gradient instanceof LinearGradient) {
       LinearGradient grad = (LinearGradient) gradient;
-//      return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
-//                                     grad.offset, grad.color, grad.count,
-//                                     opacity);
-      return new android.graphics.LinearGradient(grad.x1, grad.y1,
-                                                 grad.x2, grad.y2,
-                                                 colors, grad.offset,
-                                                 Shader.TileMode.CLAMP );
+      return new LinearGradientPaint(grad.x1, grad.y1, grad.x2, grad.y2,
+                                     grad.offset, grad.color, grad.count,
+                                     opacity);
 
     } else if (gradient instanceof RadialGradient) {
       RadialGradient grad = (RadialGradient) gradient;
-//      return new RadialGradientPaint(grad.cx, grad.cy, grad.r,
-//                                     grad.offset, grad.color, grad.count,
-//                                     opacity);
-      return new android.graphics.RadialGradient(grad.cx, grad.cy, grad.r,
-                                                 colors, grad.offset,
-                                                 Shader.TileMode.CLAMP);
+      return new RadialGradientPaint(grad.cx, grad.cy, grad.r,
+                                     grad.offset, grad.color, grad.count,
+                                     opacity);
     }
     return null;
   }
 
 
-//  protected Shader calcGradientPaint(Gradient gradient,
+//  protected Paint calcGradientPaint(Gradient gradient,
 //                                    float x1, float y1, float x2, float y2) {
 //    if (gradient instanceof LinearGradient) {
 //      LinearGradient grad = (LinearGradient) gradient;
@@ -1510,7 +1493,7 @@ public class PShapeSVG extends PShape {
 //  }
 
 
-//  protected Shader calcGradientPaint(Gradient gradient,
+//  protected Paint calcGradientPaint(Gradient gradient,
 //                                    float cx, float cy, float r) {
 //    if (gradient instanceof RadialGradient) {
 //      RadialGradient grad = (RadialGradient) gradient;
@@ -1528,18 +1511,22 @@ public class PShapeSVG extends PShape {
   protected void styles(PGraphics g) {
     super.styles(g);
 
-    if (g instanceof PGraphicsAndroid2D) {
-      PGraphicsAndroid2D gg = (PGraphicsAndroid2D) g;
+    if (g instanceof PGraphicsJava2D) {
+      PGraphicsJava2D p2d = (PGraphicsJava2D) g;
 
       if (strokeGradient != null) {
-//        gg.strokeGradient = true;
-//        gg.strokeGradientObject = strokeGradientPaint;
-        gg.strokePaint.setShader(strokeGradientPaint);
+        p2d.strokeGradient = true;
+        p2d.strokeGradientObject = strokeGradientPaint;
+      } else {
+        // need to shut off, in case parent object has a gradient applied
+        //p2d.strokeGradient = false;
       }
       if (fillGradient != null) {
-//        p2d.fillGradient = true;
-//        p2d.fillGradientObject = fillGradientPaint;
-        gg.fillPaint.setShader(fillGradientPaint);
+        p2d.fillGradient = true;
+        p2d.fillGradientObject = fillGradientPaint;
+      } else {
+        // need to shut off, in case parent object has a gradient applied
+        //p2d.fillGradient = false;
       }
     }
   }
