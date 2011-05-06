@@ -21,9 +21,12 @@
   Boston, MA  02111-1307  USA
 */
 
-package processing.core;
+package scratch;
 
 import java.io.Serializable;
+
+import processing.core.PApplet;
+import processing.core.PConstants;
 
 /**
  * A class to describe a two or three dimensional vector.
@@ -521,6 +524,26 @@ public class PVector implements Serializable {
     }
   }
 
+  /**
+   * Sets the magnitude of the vector to an arbitrary amount.
+   * @param len the new length for this vector
+   */
+  public void scaleTo(float len) {
+    normalize();
+    mult(len);	
+  }
+
+  /**
+   * Sets the magnitude of this vector, storing the result in another vector.
+   * @param target Set to null to create a new vector
+   * @param len the new length for the new vector
+   * @return a new vector (if target was null), or target
+   */
+  public PVector scaleTo(PVector target, float len) {
+	target = normalize(target);
+	target.mult(len);
+	return target;
+  }
 
   /**
    * Calculate the angle of rotation for this vector (only 2D vectors)
@@ -531,6 +554,16 @@ public class PVector implements Serializable {
     return -1*angle;
   }
 
+  /**
+   * Rotate the vector by an angle (only 2D vectors), magnitude remains the same
+   * @param theta the angle of rotation
+   */
+  public void rotate(float theta) {
+    float xTemp = x;
+	// Might need to check for rounding errors like with angleBetween function?
+    x = x*PApplet.cos(theta) - y*PApplet.sin(theta);
+    y = xTemp*PApplet.sin(theta) + y*PApplet.cos(theta);
+  }
 
   /**
    * Calculate the angle between two vectors, using the dot product
