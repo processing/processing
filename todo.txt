@@ -183,8 +183,9 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1570
 
 _ create default tools folder (just like libraries)
 
-_ problem with associating .pde files on windows 7
+_ problem with associating .pde files 
 _   http://code.google.com/p/processing/issues/detail?id=247
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1513
 _ do some testing for windows 7 on 64-bit
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1424
 _ problem with startup on vista 64
@@ -1365,8 +1366,6 @@ _ Update Windows icons for multiple sizes, implement them in the PDE
 _   http://code.google.com/p/processing/issues/detail?id=632
 _   http://code.google.com/p/processing/issues/detail?id=138
 _   http://code.google.com/p/processing/issues/detail?id=98
-_ .pde file type not getting associated properly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1513
 _ process still visible in Sysinternals Process Explorer after quit
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1567
 
