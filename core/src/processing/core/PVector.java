@@ -21,7 +21,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package scratch;
+package processing.core;
 
 import java.io.Serializable;
 
