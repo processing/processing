@@ -1,4 +1,6 @@
 0197 core
+X Seeming problem displaying SVG data when layer data is grouped
+X   http://code.google.com/p/processing/issues/detail?id=388
 
 
 for 2.0
@@ -611,8 +613,6 @@ _ for PShape, need to be able to set the origin (flash people)
 
 CORE / PShapeSVG
 
-_ Seeming problem displaying SVG data when layer data is grouped
-_   http://code.google.com/p/processing/issues/detail?id=388
 _ bug in SVG parser for shorthand curves (T/t and S/s)
 _   http://code.google.com/p/processing/issues/detail?id=350
 _ cover the svg changes in a future release
