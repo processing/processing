@@ -1026,7 +1026,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     }
     
     Font font = textFont.getFont();
-    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+    if (font != null) {
       FontMetrics metrics = parent.getFontMetrics(font);
       return metrics.getAscent();
     }
@@ -1039,7 +1040,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       defaultFontOrDeath("textAscent");
     }
     Font font = textFont.getFont();
-    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+    if (font != null) {
       FontMetrics metrics = parent.getFontMetrics(font);
       return metrics.getDescent();
     }
@@ -1082,7 +1084,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //      textFontNativeMetrics = g2.getFontMetrics(textFontNative);
 //    }
     Font font = textFont.getFont();
-    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+    if (font != null) {
       Font dfont = font.deriveFont(size);
       g2.setFont(dfont);
       textFont.setFont(dfont);
@@ -1103,7 +1106,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   protected float textWidthImpl(char buffer[], int start, int stop) {
     Font font = textFont.getFont();
-    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+    //if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+    if (font != null) {
       // maybe should use one of the newer/fancier functions for this?
       int length = stop - start;
       FontMetrics metrics = g2.getFontMetrics(font);
@@ -1148,7 +1152,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
     Font font = textFont.getFont();
-    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+//    if (font != null && (textFont.isStream() || hints[ENABLE_NATIVE_FONTS])) {
+    if (font != null) {
       /*
       // save the current setting for text smoothing. note that this is
       // different from the smooth() function, because the font smoothing

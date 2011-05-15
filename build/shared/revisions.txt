@@ -1,3 +1,58 @@
+PROCESSING 1.5.1 (REV 0197) - 15 May 2011
+
+This release fixes a handful of regressions and quirks that were found in
+the Processing 1.5 release last month. 
+
+[ editor ] 
+
++ Windows splash screen for version 1.5 says "1.2"
+  http://code.google.com/p/processing/issues/detail?id=631
+
++ "Import Library" was broken for several built-in libraries.
+  http://code.google.com/p/processing/issues/detail?id=637
+
++ Fixed broken update checker.
+
++ Reverted to the old shell script on Linux.
+  http://code.google.com/p/processing/issues/detail?id=633
+
++ Applets exported on Windows can't find files in the data folder.
+  http://code.google.com/p/processing/issues/detail?id=666
+
++ File > New and Command-N stop working on OS X after running a sketch
+  http://code.google.com/p/processing/issues/detail?id=664
+
+[ core ] 
+
++ Reverted to the old createFont() behavior, where native fonts will
+  be used with createFont() in more situations.
+  http://code.google.com/p/processing/issues/detail?id=662
+
+[ svg ] 
+
++ Improve handling of transformations in SVG files.
+  http://code.google.com/p/processing/issues/detail?id=388
+
++ Fix bug in SVG parser for shorthand curves (T/t and S/s)
+  http://code.google.com/p/processing/issues/detail?id=350
+
++ Prevent shape(PshapeSVG) from failing if SVG contains <path d=""/>
+  http://code.google.com/p/processing/issues/detail?id=434
+
++ Fix misshapen quadratic bezier curves when drawing SVG files.
+
+[ examples ] 
+
++ HsvSpace example sketch in 1.5 download requires additional import
+  http://code.google.com/p/processing/issues/detail?id=661
+
++ Obsolete Network > HTTPClient sketch
+  http://code.google.com/p/processing/issues/detail?id=655
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.5 (REV 0196) - 17 April 2011
 
 A lot has changed in the nine months since 1.2.1 was released, the biggest
