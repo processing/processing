@@ -4,7 +4,8 @@
  * 
  * Arrange the pixels from live video into the HSV Color Cone.
  */
- 
+
+import java.awt.Color;
  
 import processing.opengl.*;
 import processing.video.*;
