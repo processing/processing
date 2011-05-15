@@ -572,7 +572,9 @@ public class Base {
     int defaultWidth = Preferences.getInteger("editor.window.width.default");
     int defaultHeight = Preferences.getInteger("editor.window.height.default");
 
-    if (activeEditor == null) {
+//    if (activeEditor == null) {
+    if (editors.size() == 0) {
+//      System.out.println("active editor is " + activeEditor);
       // If no current active editor, use default placement
       return new int[] {
           (screen.width - defaultWidth) / 2,
