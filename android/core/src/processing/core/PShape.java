@@ -122,8 +122,9 @@ public class PShape implements PConstants {
 
   static public final int VERTEX = 0;
   static public final int BEZIER_VERTEX = 1;
-  static public final int CURVE_VERTEX = 2;
-  static public final int BREAK = 3;
+  static public final int QUAD_BEZIER_VERTEX = 2;
+  static public final int CURVE_VERTEX = 3;
+  static public final int BREAK = 4;
   /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEX calls. */
   protected int vertexCodeCount;
   protected int[] vertexCodes;
@@ -583,13 +584,32 @@ public class PShape implements PConstants {
 
           case VERTEX:
             g.vertex(vertices[index][X], vertices[index][Y]);
+//            cx = vertices[index][X];
+//            cy = vertices[index][Y];
             index++;
+            break;
+
+          case QUAD_BEZIER_VERTEX:
+            g.quadVertex(vertices[index+0][X], vertices[index+0][Y],
+                         vertices[index+1][X], vertices[index+1][Y]);
+//            float x1 = vertices[index+0][X];
+//            float y1 = vertices[index+0][Y];
+//            float x2 = vertices[index+1][X];
+//            float y2 = vertices[index+1][Y];
+//            g.bezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f),
+//                           x2 + ((cx-x2)*2/3.0f), y2 + ((cy-y2)*2/3.0f),
+//                           x2, y2);
+//            cx = vertices[index+1][X];
+//            cy = vertices[index+1][Y];
+            index += 2;
             break;
 
           case BEZIER_VERTEX:
             g.bezierVertex(vertices[index+0][X], vertices[index+0][Y],
                            vertices[index+1][X], vertices[index+1][Y],
                            vertices[index+2][X], vertices[index+2][Y]);
+//            cx = vertices[index+2][X];
+//            cy = vertices[index+2][Y];
             index += 3;
             break;
 
@@ -607,8 +627,18 @@ public class PShape implements PConstants {
 
           case VERTEX:
             g.vertex(vertices[index][X], vertices[index][Y], vertices[index][Z]);
+//            cx = vertices[index][X];
+//            cy = vertices[index][Y];
+//            cz = vertices[index][Z];
             index++;
             break;
+
+          case QUAD_BEZIER_VERTEX:
+            g.quadVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
+                         vertices[index+1][X], vertices[index+1][Y], vertices[index+0][Z]);
+            index += 2;
+            break;
+
 
           case BEZIER_VERTEX:
             g.bezierVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
@@ -633,6 +663,10 @@ public class PShape implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+
+  public PShape getParent() {
+    return parent;
+  }
 
   public int getChildCount() {
     return childCount;
@@ -707,6 +741,7 @@ public class PShape implements PConstants {
   }
 
 
+  // adds child who exactly at position idx in the array of children.
   public void addChild(PShape who, int idx) {
     if (idx < childCount) {
       if (childCount == children.length) {
@@ -731,7 +766,7 @@ public class PShape implements PConstants {
 
 
   /**
-   * Remove the shape with index idx.
+   * Remove the child shape with index idx.
    */
   public void removeChild(int idx) {
     if (idx < childCount) {
@@ -753,7 +788,7 @@ public class PShape implements PConstants {
   /**
    * Add a shape to the name lookup table.
    */
-  protected void addName(String nom, PShape shape) {
+  public void addName(String nom, PShape shape) {
     if (parent != null) {
       parent.addName(nom, shape);
     } else {
@@ -768,7 +803,7 @@ public class PShape implements PConstants {
   /**
    * Returns the index of child who.
    */
-  protected int getChildIdx(PShape who) {
+  public int getChildIndex(PShape who) {
     for (int i = 0; i < childCount; i++) {
       if (children[i] == who) {
         return i;

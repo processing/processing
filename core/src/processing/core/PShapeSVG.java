@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2006-10 Ben Fry and Casey Reas
+  Copyright (c) 2006-11 Ben Fry and Casey Reas
   Copyright (c) 2004-06 Michael Chang
 
   This library is free software; you can redistribute it and/or
@@ -173,7 +173,7 @@ public class PShapeSVG extends PShape {
    * Initializes a new SVG Object from the given XMLElement.
    */
   public PShapeSVG(XMLElement svg) {
-    this(null, svg);
+    this(null, svg, true);
 
     if (!svg.getName().equals("svg")) {
       throw new RuntimeException("root is not <svg>, it's <" + svg.getName() + ">");
@@ -210,12 +210,12 @@ public class PShapeSVG extends PShape {
     }
 
     //root = new Group(null, svg);
-    parseChildren(svg);  // ?
+//    parseChildren(svg);  // ?
   }
 
 
-  public PShapeSVG(PShapeSVG parent, XMLElement properties) {
-    // Need to set this so that findChild() works. 
+  public PShapeSVG(PShapeSVG parent, XMLElement properties, boolean parseKids) {
+    // Need to set this so that findChild() works.
     // Otherwise 'parent' is null until addChild() is called later.
     this.parent = parent;
 
@@ -285,8 +285,10 @@ public class PShapeSVG extends PShape {
       matrix = parseTransform(transformStr);
     }
 
-    parseColors(properties);
-    parseChildren(properties);
+    if (parseKids) {
+      parseColors(properties);
+      parseChildren(properties);
+    }
   }
 
 
@@ -304,6 +306,7 @@ public class PShapeSVG extends PShape {
         addChild(kid);
       }
     }
+    children = (PShape[]) PApplet.subset(children, 0, childCount);
   }
 
 
@@ -312,53 +315,54 @@ public class PShapeSVG extends PShape {
    * Override this method to add parsing for more SVG elements.
    */
   protected PShape parseChild(XMLElement elem) {
+//    System.err.println("parsing child in pshape " + elem.getName());
     String name = elem.getName();
     PShapeSVG shape = null;
 
     if (name.equals("g")) {
       //return new BaseObject(this, elem);
-      shape = new PShapeSVG(this, elem);
+      shape = new PShapeSVG(this, elem, true);
 
     } else if (name.equals("defs")) {
       // generally this will contain gradient info, so may
       // as well just throw it into a group element for parsing
       //return new BaseObject(this, elem);
-      shape = new PShapeSVG(this, elem);
+      shape = new PShapeSVG(this, elem, true);
 
     } else if (name.equals("line")) {
       //return new Line(this, elem);
       //return new BaseObject(this, elem, LINE);
-      shape = new PShapeSVG(this, elem);
+      shape = new PShapeSVG(this, elem, true);
       shape.parseLine();
 
     } else if (name.equals("circle")) {
       //return new BaseObject(this, elem, ELLIPSE);
-      shape = new PShapeSVG(this, elem);
+      shape = new PShapeSVG(this, elem, true);
       shape.parseEllipse(true);
 
     } else if (name.equals("ellipse")) {
       //return new BaseObject(this, elem, ELLIPSE);
-      shape = new PShapeSVG(this, elem);
+      shape = new PShapeSVG(this, elem, true);
       shape.parseEllipse(false);
 
     } else if (name.equals("rect")) {
       //return new BaseObject(this, elem, RECT);
-      shape = new PShapeSVG(this, elem);
+      shape = new PShapeSVG(this, elem, true);
       shape.parseRect();
 
     } else if (name.equals("polygon")) {
       //return new BaseObject(this, elem, POLYGON);
-      shape = new PShapeSVG(this, elem);
+      shape = new PShapeSVG(this, elem, true);
       shape.parsePoly(true);
 
     } else if (name.equals("polyline")) {
       //return new BaseObject(this, elem, POLYGON);
-      shape = new PShapeSVG(this, elem);
+      shape = new PShapeSVG(this, elem, true);
       shape.parsePoly(false);
 
     } else if (name.equals("path")) {
       //return new BaseObject(this, elem, PATH);
-      shape = new PShapeSVG(this, elem);
+      shape = new PShapeSVG(this, elem, true);
       shape.parsePath();
 
     } else if (name.equals("radialGradient")) {
@@ -367,9 +371,22 @@ public class PShapeSVG extends PShape {
     } else if (name.equals("linearGradient")) {
       return new LinearGradient(this, elem);
 
-    } else if (name.equals("text") || name.equals("font")) {
+    } else if (name.equals("font")) {
+      return new Font(this, elem);
+
+//    } else if (name.equals("font-face")) {
+//      return new FontFace(this, elem);
+
+//    } else if (name.equals("glyph") || name.equals("missing-glyph")) {
+//      return new FontGlyph(this, elem);
+
+    } else if (name.equals("metadata")) {
+      // fontforge just stuffs this in as a comment
+      return null;
+
+    } else if (name.equals("text")) {  // || name.equals("font")) {
       PGraphics.showWarning("Text and fonts in SVG files " +
-      		                  "are not currently supported, " +
+                                  "are not currently supported, " +
                             "convert text to outlines instead.");
 
     } else if (name.equals("filter")) {
@@ -383,12 +400,13 @@ public class PShapeSVG extends PShape {
 
     } else if (name.equals("stop")) {
       // stop tag is handled by gradient parser, so don't warn about it
-      
+
     } else if (name.equals("sodipodi:namedview")) {
-      // these are always in Inkscape files, the warnings get tedious  
-      
+      // these are always in Inkscape files, the warnings get tedious
+
     } else {
-      PGraphics.showWarning("Ignoring  <" + name + "> tag.");
+      PGraphics.showWarning("Ignoring <" + name + "> tag.");
+//      new Exception().printStackTrace();
     }
     return shape;
   }
@@ -472,7 +490,9 @@ public class PShapeSVG extends PShape {
     primitive = 0;
 
     String pathData = element.getString("d");
-    if (pathData == null) return;
+    if (pathData == null || PApplet.trim(pathData).length() == 0) {
+      return;
+    }
     char[] pathDataChars = pathData.toCharArray();
 
     StringBuffer pathBuffer = new StringBuffer();
@@ -490,6 +510,7 @@ public class PShapeSVG extends PShape {
           c == 'S' || c == 's' ||
           c == 'Q' || c == 'q' ||  // quadratic beziers
           c == 'T' || c == 't' ||
+//          c == 'A' || c == 'a' ||  // elliptical arc
           c == 'Z' || c == 'z' ||  // closepath
           c == ',') {
         separate = true;
@@ -501,7 +522,7 @@ public class PShapeSVG extends PShape {
         separate = false;
       }
       if (c == '-' && !lastSeparate) {
-        // allow for 'e' notation in numbers, e.g. 2.10e-9 
+        // allow for 'e' notation in numbers, e.g. 2.10e-9
         // http://dev.processing.org/bugs/show_bug.cgi?id=1408
         if (i == 0 || pathDataChars[i-1] != 'e') {
           pathBuffer.append("|");
@@ -517,20 +538,23 @@ public class PShapeSVG extends PShape {
     }
 
     // use whitespace constant to get rid of extra spaces and CR or LF
-    String[] pathDataKeys =
+    String[] pathTokens =
       PApplet.splitTokens(pathBuffer.toString(), "|" + WHITESPACE);
-    vertices = new float[pathDataKeys.length][2];
-    vertexCodes = new int[pathDataKeys.length];
+    vertices = new float[pathTokens.length][2];
+    vertexCodes = new int[pathTokens.length];
 
     float cx = 0;
     float cy = 0;
     int i = 0;
 
     char implicitCommand = '\0';
+//    char prevCommand = '\0';
+    boolean prevCurve = false;
+    float ctrlX, ctrlY;
 
-    while (i < pathDataKeys.length) {
-      char c = pathDataKeys[i].charAt(0);
-      if(((c >= '0' && c <= '9') || (c == '-')) && implicitCommand != '\0') {
+    while (i < pathTokens.length) {
+      char c = pathTokens[i].charAt(0);
+      if (((c >= '0' && c <= '9') || (c == '-')) && implicitCommand != '\0') {
         c = implicitCommand;
         i--;
       } else {
@@ -539,191 +563,241 @@ public class PShapeSVG extends PShape {
       switch (c) {
 
       case 'M':  // M - move to (absolute)
-        cx = PApplet.parseFloat(pathDataKeys[i + 1]);
-        cy = PApplet.parseFloat(pathDataKeys[i + 2]);
+        cx = PApplet.parseFloat(pathTokens[i + 1]);
+        cy = PApplet.parseFloat(pathTokens[i + 2]);
         parsePathMoveto(cx, cy);
         implicitCommand = 'L';
         i += 3;
         break;
 
       case 'm':  // m - move to (relative)
-        cx = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
-        cy = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
+        cx = cx + PApplet.parseFloat(pathTokens[i + 1]);
+        cy = cy + PApplet.parseFloat(pathTokens[i + 2]);
         parsePathMoveto(cx, cy);
         implicitCommand = 'l';
         i += 3;
         break;
 
       case 'L':
-        cx = PApplet.parseFloat(pathDataKeys[i + 1]);
-        cy = PApplet.parseFloat(pathDataKeys[i + 2]);
+        cx = PApplet.parseFloat(pathTokens[i + 1]);
+        cy = PApplet.parseFloat(pathTokens[i + 2]);
         parsePathLineto(cx, cy);
         i += 3;
         break;
 
       case 'l':
-        cx = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
-        cy = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
+        cx = cx + PApplet.parseFloat(pathTokens[i + 1]);
+        cy = cy + PApplet.parseFloat(pathTokens[i + 2]);
         parsePathLineto(cx, cy);
         i += 3;
         break;
 
         // horizontal lineto absolute
       case 'H':
-        cx = PApplet.parseFloat(pathDataKeys[i + 1]);
+        cx = PApplet.parseFloat(pathTokens[i + 1]);
         parsePathLineto(cx, cy);
         i += 2;
         break;
 
         // horizontal lineto relative
       case 'h':
-        cx = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
+        cx = cx + PApplet.parseFloat(pathTokens[i + 1]);
         parsePathLineto(cx, cy);
         i += 2;
         break;
 
       case 'V':
-        cy = PApplet.parseFloat(pathDataKeys[i + 1]);
+        cy = PApplet.parseFloat(pathTokens[i + 1]);
         parsePathLineto(cx, cy);
         i += 2;
         break;
 
       case 'v':
-        cy = cy + PApplet.parseFloat(pathDataKeys[i + 1]);
+        cy = cy + PApplet.parseFloat(pathTokens[i + 1]);
         parsePathLineto(cx, cy);
         i += 2;
         break;
 
         // C - curve to (absolute)
       case 'C': {
-        float ctrlX1 = PApplet.parseFloat(pathDataKeys[i + 1]);
-        float ctrlY1 = PApplet.parseFloat(pathDataKeys[i + 2]);
-        float ctrlX2 = PApplet.parseFloat(pathDataKeys[i + 3]);
-        float ctrlY2 = PApplet.parseFloat(pathDataKeys[i + 4]);
-        float endX = PApplet.parseFloat(pathDataKeys[i + 5]);
-        float endY = PApplet.parseFloat(pathDataKeys[i + 6]);
+        float ctrlX1 = PApplet.parseFloat(pathTokens[i + 1]);
+        float ctrlY1 = PApplet.parseFloat(pathTokens[i + 2]);
+        float ctrlX2 = PApplet.parseFloat(pathTokens[i + 3]);
+        float ctrlY2 = PApplet.parseFloat(pathTokens[i + 4]);
+        float endX = PApplet.parseFloat(pathTokens[i + 5]);
+        float endY = PApplet.parseFloat(pathTokens[i + 6]);
         parsePathCurveto(ctrlX1, ctrlY1, ctrlX2, ctrlY2, endX, endY);
         cx = endX;
         cy = endY;
         i += 7;
+        prevCurve = true;
       }
-        break;
+      break;
 
         // c - curve to (relative)
       case 'c': {
-        float ctrlX1 = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
-        float ctrlY1 = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
-        float ctrlX2 = cx + PApplet.parseFloat(pathDataKeys[i + 3]);
-        float ctrlY2 = cy + PApplet.parseFloat(pathDataKeys[i + 4]);
-        float endX = cx + PApplet.parseFloat(pathDataKeys[i + 5]);
-        float endY = cy + PApplet.parseFloat(pathDataKeys[i + 6]);
+        float ctrlX1 = cx + PApplet.parseFloat(pathTokens[i + 1]);
+        float ctrlY1 = cy + PApplet.parseFloat(pathTokens[i + 2]);
+        float ctrlX2 = cx + PApplet.parseFloat(pathTokens[i + 3]);
+        float ctrlY2 = cy + PApplet.parseFloat(pathTokens[i + 4]);
+        float endX = cx + PApplet.parseFloat(pathTokens[i + 5]);
+        float endY = cy + PApplet.parseFloat(pathTokens[i + 6]);
         parsePathCurveto(ctrlX1, ctrlY1, ctrlX2, ctrlY2, endX, endY);
         cx = endX;
         cy = endY;
         i += 7;
+        prevCurve = true;
       }
-        break;
+      break;
 
-        // S - curve to shorthand (absolute)
+      // S - curve to shorthand (absolute)
+      // Draws a cubic Bézier curve from the current point to (x,y). The first
+      // control point is assumed to be the reflection of the second control
+      // point on the previous command relative to the current point.
+      // (x2,y2) is the second control point (i.e., the control point
+      // at the end of the curve). S (uppercase) indicates that absolute
+      // coordinates will follow; s (lowercase) indicates that relative
+      // coordinates will follow. Multiple sets of coordinates may be specified
+      // to draw a polybézier. At the end of the command, the new current point
+      // becomes the final (x,y) coordinate pair used in the polybézier.
       case 'S': {
-        float ppx = vertices[vertexCount-2][X];
-        float ppy = vertices[vertexCount-2][Y];
-        float px = vertices[vertexCount-1][X];
-        float py = vertices[vertexCount-1][Y];
-        float ctrlX1 = px + (px - ppx);
-        float ctrlY1 = py + (py - ppy);
-        float ctrlX2 = PApplet.parseFloat(pathDataKeys[i + 1]);
-        float ctrlY2 = PApplet.parseFloat(pathDataKeys[i + 2]);
-        float endX = PApplet.parseFloat(pathDataKeys[i + 3]);
-        float endY = PApplet.parseFloat(pathDataKeys[i + 4]);
-        parsePathCurveto(ctrlX1, ctrlY1, ctrlX2, ctrlY2, endX, endY);
+        // (If there is no previous command or if the previous command was not
+        // an C, c, S or s, assume the first control point is coincident with
+        // the current point.)
+        if (!prevCurve) {
+          ctrlX = cx;
+          ctrlY = cy;
+        } else {
+          float ppx = vertices[vertexCount-2][X];
+          float ppy = vertices[vertexCount-2][Y];
+          float px = vertices[vertexCount-1][X];
+          float py = vertices[vertexCount-1][Y];
+          ctrlX = px + (px - ppx);
+          ctrlY = py + (py - ppy);
+        }
+        float ctrlX2 = PApplet.parseFloat(pathTokens[i + 1]);
+        float ctrlY2 = PApplet.parseFloat(pathTokens[i + 2]);
+        float endX = PApplet.parseFloat(pathTokens[i + 3]);
+        float endY = PApplet.parseFloat(pathTokens[i + 4]);
+        parsePathCurveto(ctrlX, ctrlY, ctrlX2, ctrlY2, endX, endY);
         cx = endX;
         cy = endY;
         i += 5;
+        prevCurve = true;
       }
-        break;
+      break;
 
         // s - curve to shorthand (relative)
       case 's': {
-        float ppx = vertices[vertexCount-2][X];
-        float ppy = vertices[vertexCount-2][Y];
-        float px = vertices[vertexCount-1][X];
-        float py = vertices[vertexCount-1][Y];
-        float ctrlX1 = px + (px - ppx);
-        float ctrlY1 = py + (py - ppy);
-        float ctrlX2 = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
-        float ctrlY2 = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
-        float endX = cx + PApplet.parseFloat(pathDataKeys[i + 3]);
-        float endY = cy + PApplet.parseFloat(pathDataKeys[i + 4]);
-        parsePathCurveto(ctrlX1, ctrlY1, ctrlX2, ctrlY2, endX, endY);
+        if (!prevCurve) {
+          ctrlX = cx;
+          ctrlY = cy;
+        } else {
+          float ppx = vertices[vertexCount-2][X];
+          float ppy = vertices[vertexCount-2][Y];
+          float px = vertices[vertexCount-1][X];
+          float py = vertices[vertexCount-1][Y];
+          ctrlX = px + (px - ppx);
+          ctrlY = py + (py - ppy);
+        }
+        float ctrlX2 = cx + PApplet.parseFloat(pathTokens[i + 1]);
+        float ctrlY2 = cy + PApplet.parseFloat(pathTokens[i + 2]);
+        float endX = cx + PApplet.parseFloat(pathTokens[i + 3]);
+        float endY = cy + PApplet.parseFloat(pathTokens[i + 4]);
+        parsePathCurveto(ctrlX, ctrlY, ctrlX2, ctrlY2, endX, endY);
         cx = endX;
         cy = endY;
         i += 5;
+        prevCurve = true;
       }
-        break;
+      break;
 
-        // Q - quadratic curve to (absolute)
+      // Q - quadratic curve to (absolute)
+      // Draws a quadratic Bézier curve from the current point to (x,y) using
+      // (x1,y1) as the control point. Q (uppercase) indicates that absolute
+      // coordinates will follow; q (lowercase) indicates that relative
+      // coordinates will follow. Multiple sets of coordinates may be specified
+      // to draw a polybézier. At the end of the command, the new current point
+      // becomes the final (x,y) coordinate pair used in the polybézier.
       case 'Q': {
-        float ctrlX = PApplet.parseFloat(pathDataKeys[i + 1]);
-        float ctrlY = PApplet.parseFloat(pathDataKeys[i + 2]);
-        float endX = PApplet.parseFloat(pathDataKeys[i + 3]);
-        float endY = PApplet.parseFloat(pathDataKeys[i + 4]);
-        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
+        ctrlX = PApplet.parseFloat(pathTokens[i + 1]);
+        ctrlY = PApplet.parseFloat(pathTokens[i + 2]);
+        float endX = PApplet.parseFloat(pathTokens[i + 3]);
+        float endY = PApplet.parseFloat(pathTokens[i + 4]);
+        //parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 5;
+        prevCurve = true;
       }
-        break;
+      break;
 
-        // q - quadratic curve to (relative)
+      // q - quadratic curve to (relative)
       case 'q': {
-        float ctrlX = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
-        float ctrlY = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
-        float endX = cx + PApplet.parseFloat(pathDataKeys[i + 3]);
-        float endY = cy + PApplet.parseFloat(pathDataKeys[i + 4]);
-        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
+        ctrlX = cx + PApplet.parseFloat(pathTokens[i + 1]);
+        ctrlY = cy + PApplet.parseFloat(pathTokens[i + 2]);
+        float endX = cx + PApplet.parseFloat(pathTokens[i + 3]);
+        float endY = cy + PApplet.parseFloat(pathTokens[i + 4]);
+        //parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 5;
+        prevCurve = true;
       }
-        break;
+      break;
 
-        // T - quadratic curve to shorthand (absolute)
-        // The control point is assumed to be the reflection of the
-        // control point on the previous command relative to the
-        // current point. (If there is no previous command or if the
-        // previous command was not a Q, q, T or t, assume the control
-        // point is coincident with the current point.)
+      // T - quadratic curveto shorthand (absolute)
+      // The control point is assumed to be the reflection of the control
+      // point on the previous command relative to the current point.
       case 'T': {
-        float ppx = vertices[vertexCount-2][X];
-        float ppy = vertices[vertexCount-2][Y];
-        float px = vertices[vertexCount-1][X];
-        float py = vertices[vertexCount-1][Y];
-        float ctrlX = px + (px - ppx);
-        float ctrlY = py + (py - ppy);
-        float endX = PApplet.parseFloat(pathDataKeys[i + 1]);
-        float endY = PApplet.parseFloat(pathDataKeys[i + 2]);
-        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
+        // If there is no previous command or if the previous command was
+        // not a Q, q, T or t, assume the control point is coincident
+        // with the current point.
+        if (!prevCurve) {
+          ctrlX = cx;
+          ctrlY = cy;
+        } else {
+          float ppx = vertices[vertexCount-2][X];
+          float ppy = vertices[vertexCount-2][Y];
+          float px = vertices[vertexCount-1][X];
+          float py = vertices[vertexCount-1][Y];
+          ctrlX = px + (px - ppx);
+          ctrlY = py + (py - ppy);
+        }
+        float endX = PApplet.parseFloat(pathTokens[i + 1]);
+        float endY = PApplet.parseFloat(pathTokens[i + 2]);
+        //parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 3;
+        prevCurve = true;
       }
         break;
 
-        // t - quadratic curve to shorthand (relative)
+        // t - quadratic curveto shorthand (relative)
       case 't': {
-        float ppx = vertices[vertexCount-2][X];
-        float ppy = vertices[vertexCount-2][Y];
-        float px = vertices[vertexCount-1][X];
-        float py = vertices[vertexCount-1][Y];
-        float ctrlX = px + (px - ppx);
-        float ctrlY = py + (py - ppy);
-        float endX = cx + PApplet.parseFloat(pathDataKeys[i + 1]);
-        float endY = cy + PApplet.parseFloat(pathDataKeys[i + 2]);
-        parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
+        if (!prevCurve) {
+          ctrlX = cx;
+          ctrlY = cy;
+        } else {
+          float ppx = vertices[vertexCount-2][X];
+          float ppy = vertices[vertexCount-2][Y];
+          float px = vertices[vertexCount-1][X];
+          float py = vertices[vertexCount-1][Y];
+          ctrlX = px + (px - ppx);
+          ctrlY = py + (py - ppy);
+        }
+        float endX = cx + PApplet.parseFloat(pathTokens[i + 1]);
+        float endY = cy + PApplet.parseFloat(pathTokens[i + 2]);
+        //parsePathQuadto(cx, cy, ctrlX, ctrlY, endX, endY);
+        parsePathQuadto(ctrlX, ctrlY, endX, endY);
         cx = endX;
         cy = endY;
         i += 3;
+        prevCurve = true;
       }
         break;
 
@@ -735,18 +809,19 @@ public class PShapeSVG extends PShape {
 
       default:
         String parsed =
-          PApplet.join(PApplet.subset(pathDataKeys, 0, i), ",");
+          PApplet.join(PApplet.subset(pathTokens, 0, i), ",");
         String unparsed =
-          PApplet.join(PApplet.subset(pathDataKeys, i), ",");
+          PApplet.join(PApplet.subset(pathTokens, i), ",");
         System.err.println("parsed: " + parsed);
         System.err.println("unparsed: " + unparsed);
-        if (pathDataKeys[i].equals("a") || pathDataKeys[i].equals("A")) {
+        if (pathTokens[i].equals("a") || pathTokens[i].equals("A")) {
           String msg = "Sorry, elliptical arc support for SVG files " +
-            "is not yet implemented (See bug #996 for details)";
+            "is not yet implemented (See issue #130 for updates)";
           throw new RuntimeException(msg);
         }
-        throw new RuntimeException("shape command not handled: " + pathDataKeys[i]);
+        throw new RuntimeException("shape command not handled: " + pathTokens[i]);
       }
+//      prevCommand = c;
     }
   }
 
@@ -805,13 +880,26 @@ public class PShapeSVG extends PShape {
     parsePathVertex(x3, y3);
   }
 
-  private void parsePathQuadto(float x1, float y1, 
-                               float cx, float cy,
+//  private void parsePathQuadto(float x1, float y1,
+//                               float cx, float cy,
+//                               float x2, float y2) {
+//    //System.out.println("quadto: " + x1 + "," + y1 + " " + cx + "," + cy + " " + x2 + "," + y2);
+////    parsePathCode(BEZIER_VERTEX);
+//    parsePathCode(QUAD_BEZIER_VERTEX);
+//    // x1/y1 already covered by last moveto, lineto, or curveto
+//
+//    parsePathVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f));
+//    parsePathVertex(x2 + ((cx-x2)*2/3.0f), y2 + ((cy-y2)*2/3.0f));
+//    parsePathVertex(x2, y2);
+//  }
+
+  private void parsePathQuadto(float cx, float cy,
                                float x2, float y2) {
-    parsePathCode(BEZIER_VERTEX);
+    //System.out.println("quadto: " + x1 + "," + y1 + " " + cx + "," + cy + " " + x2 + "," + y2);
+//    parsePathCode(BEZIER_VERTEX);
+    parsePathCode(QUAD_BEZIER_VERTEX);
     // x1/y1 already covered by last moveto, lineto, or curveto
-    parsePathVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f));
-    parsePathVertex(x2 + ((cx-x2)*2/3.0f), y2 + ((cy-y2)*2/3.0f));
+    parsePathVertex(cx, cy);
     parsePathVertex(x2, y2);
   }
 
@@ -902,7 +990,7 @@ public class PShapeSVG extends PShape {
       String strokeText = properties.getString("stroke");
       setColor(strokeText, false);
     }
-    
+
     if (properties.hasAttribute("stroke-opacity")) {
       String strokeOpacityText = properties.getString("stroke-opacity");
       setStrokeOpacity(strokeOpacityText);
@@ -934,8 +1022,8 @@ public class PShapeSVG extends PShape {
     if (properties.hasAttribute("fill-opacity")) {
       String fillOpacityText = properties.getString("fill-opacity");
       setFillOpacity(fillOpacityText);
-    }    
-    
+    }
+
     if (properties.hasAttribute("style")) {
       String styleText = properties.getString("style");
       String[] styleTokens = PApplet.splitTokens(styleText, ";");
@@ -978,19 +1066,19 @@ public class PShapeSVG extends PShape {
     }
   }
 
-  
+
   void setOpacity(String opacityText) {
     opacity = PApplet.parseFloat(opacityText);
     strokeColor = ((int) (opacity * 255)) << 24 | strokeColor & 0xFFFFFF;
     fillColor = ((int) (opacity * 255)) << 24 | fillColor & 0xFFFFFF;
   }
 
-  
+
   void setStrokeWeight(String lineweight) {
     strokeWeight = parseUnitSize(lineweight);
   }
 
-  
+
   void setStrokeOpacity(String opacityText) {
     strokeOpacity = PApplet.parseFloat(opacityText);
     strokeColor = ((int) (strokeOpacity * 255)) << 24 | strokeColor & 0xFFFFFF;
@@ -1012,7 +1100,7 @@ public class PShapeSVG extends PShape {
     }
   }
 
-  
+
   void setStrokeCap(String linecap) {
     if (linecap.equals("inherit")) {
       // do nothing, will inherit automatically
@@ -1027,13 +1115,13 @@ public class PShapeSVG extends PShape {
       strokeCap = PConstants.PROJECT;
     }
   }
-  
+
 
   void setFillOpacity(String opacityText) {
     fillOpacity = PApplet.parseFloat(opacityText);
     fillColor = ((int) (fillOpacity * 255)) << 24 | fillColor & 0xFFFFFF;
   }
-  
+
 
   void setColor(String colorText, boolean isFill) {
     int opacityMask = fillColor & 0xFF000000;
@@ -1087,7 +1175,7 @@ public class PShapeSVG extends PShape {
     }
   }
 
-  
+
   static protected int parseRGB(String what) {
     int leftParen = what.indexOf('(') + 1;
     int rightParen = what.indexOf(')');
@@ -1109,7 +1197,7 @@ public class PShapeSVG extends PShape {
 
 
   /**
-   * Used in place of element.getFloatAttribute(a) because we can 
+   * Used in place of element.getFloatAttribute(a) because we can
    * have a unit suffix (length or coordinate).
    * @param element what to parse
    * @param attribute name of the attribute to get
@@ -1165,7 +1253,7 @@ public class PShapeSVG extends PShape {
     int count;
 
     public Gradient(PShapeSVG parent, XMLElement properties) {
-      super(parent, properties);
+      super(parent, properties, true);
 
       XMLElement elements[] = properties.getChildren();
       offset = new float[elements.length];
@@ -1538,6 +1626,193 @@ public class PShapeSVG extends PShape {
   //public void drawImpl(PGraphics g) {
   // do nothing
   //}
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public class Font extends PShapeSVG {
+    public FontFace face;
+
+    public HashMap<String,FontGlyph> namedGlyphs;
+    public HashMap<Character,FontGlyph> unicodeGlyphs;
+
+    public int glyphCount;
+    public FontGlyph[] glyphs;
+    public FontGlyph missingGlyph;
+
+    int horizAdvX;
+
+
+    public Font(PShapeSVG parent, XMLElement properties) {
+      super(parent, properties, false);
+//      handle(parent, properties);
+
+      XMLElement[] elements = properties.getChildren();
+
+      horizAdvX = properties.getInt("horiz-adv-x", 0);
+
+      namedGlyphs = new HashMap<String,FontGlyph>();
+      unicodeGlyphs = new HashMap<Character,FontGlyph>();
+      glyphCount = 0;
+      glyphs = new FontGlyph[elements.length];
+
+      for (int i = 0; i < elements.length; i++) {
+        String name = elements[i].getName();
+        XMLElement elem = elements[i];
+        if (name.equals("glyph")) {
+          FontGlyph fg = new FontGlyph(this, elem, this);
+          if (fg.isLegit()) {
+            if (fg.name != null) {
+              namedGlyphs.put(fg.name, fg);
+            }
+            if (fg.unicode != 0) {
+              unicodeGlyphs.put(new Character(fg.unicode), fg);
+            }
+          }
+          glyphs[glyphCount++] = fg;
+
+        } else if (name.equals("missing-glyph")) {
+//          System.out.println("got missing glyph inside <font>");
+          missingGlyph = new FontGlyph(this, elem, this);
+        } else if (name.equals("font-face")) {
+          face = new FontFace(this, elem);
+        } else {
+          System.err.println("Ignoring " + name + " inside <font>");
+        }
+      }
+    }
+
+
+    protected void drawShape() {
+      // does nothing for fonts
+    }
+
+
+    public void drawString(PGraphics g, String str, float x, float y, float size) {
+      // 1) scale by the 1.0/unitsPerEm
+      // 2) scale up by a font size
+      g.pushMatrix();
+      float s =  size / (float) face.unitsPerEm;
+      //System.out.println("scale is " + s);
+      // swap y coord at the same time, since fonts have y=0 at baseline
+      g.translate(x, y);
+      g.scale(s, -s);
+      char[] c = str.toCharArray();
+      for (int i = 0; i < c.length; i++) {
+        // call draw on each char (pulling it w/ the unicode table)
+        FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c[i]));
+        if (fg != null) {
+          fg.draw(g);
+          // add horizAdvX/unitsPerEm to the x coordinate along the way
+          g.translate(fg.horizAdvX, 0);
+        } else {
+          System.err.println("'" + c[i] + "' not available.");
+        }
+      }
+      g.popMatrix();
+    }
+
+
+    public void drawChar(PGraphics g, char c, float x, float y, float size) {
+      g.pushMatrix();
+      float s =  size / (float) face.unitsPerEm;
+      g.translate(x, y);
+      g.scale(s, -s);
+      FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c));
+      if (fg != null) g.shape(fg);
+      g.popMatrix();
+    }
+
+
+    public float textWidth(String str, float size) {
+      float w = 0;
+      char[] c = str.toCharArray();
+      for (int i = 0; i < c.length; i++) {
+        // call draw on each char (pulling it w/ the unicode table)
+        FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c[i]));
+        if (fg != null) {
+          w += (float) fg.horizAdvX / face.unitsPerEm;
+        }
+      }
+      return w * size;
+    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  class FontFace extends PShapeSVG {
+    int horizOriginX;  // dflt 0
+    int horizOriginY;  // dflt 0
+//    int horizAdvX;     // no dflt?
+    int vertOriginX;   // dflt horizAdvX/2
+    int vertOriginY;   // dflt ascent
+    int vertAdvY;      // dflt 1em (unitsPerEm value)
+
+    String fontFamily;
+    int fontWeight;    // can also be normal or bold (also comma separated)
+    String fontStretch;
+    int unitsPerEm;    // dflt 1000
+    int[] panose1;     // dflt "0 0 0 0 0 0 0 0 0 0"
+    int ascent;
+    int descent;
+    int[] bbox;        // spec says comma separated, tho not w/ forge
+    int underlineThickness;
+    int underlinePosition;
+    //String unicodeRange; // gonna ignore for now
+
+
+    public FontFace(PShapeSVG parent, XMLElement properties) {
+      super(parent, properties, true);
+
+      unitsPerEm = properties.getInt("units-per-em", 1000);
+    }
+
+
+    protected void drawShape() {
+      // nothing to draw in the font face attribute
+    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public class FontGlyph extends PShapeSVG {  // extends Path
+    public String name;
+    char unicode;
+    int horizAdvX;
+
+    public FontGlyph(PShapeSVG parent, XMLElement properties, Font font) {
+      super(parent, properties, true);
+      super.parsePath();  // ??
+
+      name = properties.getString("glyph-name");
+      String u = properties.getString("unicode");
+      unicode = 0;
+      if (u != null) {
+        if (u.length() == 1) {
+          unicode = u.charAt(0);
+          //System.out.println("unicode for " + name + " is " + u);
+        } else {
+          System.err.println("unicode for " + name +
+                             " is more than one char: " + u);
+        }
+      }
+      if (properties.hasAttribute("horiz-adv-x")) {
+        horizAdvX = properties.getInt("horiz-adv-x");
+      } else {
+        horizAdvX = font.horizAdvX;
+      }
+    }
+
+
+    protected boolean isLegit() {  // TODO need a better way to handle this...
+      return vertexCount != 0;
+    }
+  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

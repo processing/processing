@@ -7943,6 +7943,20 @@ public class PApplet extends Applet
   }
 
 
+  public void quadVertex(float cx, float cy,
+                         float x3, float y3) {
+    if (recorder != null) recorder.quadVertex(cx, cy, x3, y3);
+    g.quadVertex(cx, cy, x3, y3);
+  }
+
+
+  public void quadVertex(float cx, float cy, float cz,
+                         float x3, float y3, float z3) {
+    if (recorder != null) recorder.quadVertex(cx, cy, cz, x3, y3, z3);
+    g.quadVertex(cx, cy, cz, x3, y3, z3);
+  }
+
+
   public void curveVertex(float x, float y) {
     if (recorder != null) recorder.curveVertex(x, y);
     g.curveVertex(x, y);

@@ -423,6 +423,32 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   //////////////////////////////////////////////////////////////
 
+  // QUADRATIC BEZIER VERTICES
+
+
+  public void quadVertex(float ctrlX, float ctrlY,
+                         float endX, float endY) {
+    bezierVertexCheck();
+    Point2D cur = gpath.getCurrentPoint();
+
+    float x1 = (float) cur.getX();
+    float y1 = (float) cur.getY();
+    
+    bezierVertex(x1 + ((ctrlX-x1)*2/3.0f), y1 + ((ctrlY-y1)*2/3.0f),
+                 endX + ((ctrlX-endX)*2/3.0f), endY + ((ctrlY-endY)*2/3.0f),
+                 endX, endY);
+  }
+
+
+  public void quadVertex(float x2, float y2, float z2,
+                         float x4, float y4, float z4) {
+    showDepthWarningXYZ("quadVertex");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
   // CURVE VERTICES
 
 
