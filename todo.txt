@@ -11,16 +11,10 @@ X 1.5 can't find java sdk -- patch shell script?
 X   http://code.google.com/p/processing/issues/detail?id=633
 X Obsolete Network > HTTPClient sketch
 X   http://code.google.com/p/processing/issues/detail?id=655
-
-_ Applets exported by PDE don't find data folder in 1.5 (philho)
-_   http://code.google.com/p/processing/issues/detail?id=666
-
-_ add deployJava.js to local sketch folder (causes internet requirement)
-_   http://code.google.com/p/processing/issues/detail?id=650
-
-_ libraries in java tabs (separate .java files) are reported missing
-_   need to scan the .java files for imports that need to be included
-_   http://code.google.com/p/processing/issues/detail?id=459
+X Applets exported by PDE don't find data folder in 1.5
+X   http://code.google.com/p/processing/issues/detail?id=666
+X File > New and Command-N stop working on OS X after running a sketch
+X   http://code.google.com/p/processing/issues/detail?id=664
 
 cleaning
 X check to see whether this bug is fixed once 0140 is released
@@ -45,8 +39,20 @@ _ nurbs or other arch stuff for 2.0?
 _ build is currently broken for fresh checkout due to changes to file layout
 _   something that gets fixed by 'make clean'
 
+_ active editor not being set null
+_   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
+_   instead of (activeEditor == null), but that's papering over a problem
+_   where the active editor is not being set null
+
 _ Internationalization
 _   http://code.google.com/p/processing/issues/detail?id=593
+
+_ add deployJava.js to local sketch folder (causes internet requirement)
+_   http://code.google.com/p/processing/issues/detail?id=650
+
+_ libraries in java tabs (separate .java files) are reported missing
+_   need to scan the .java files for imports that need to be included
+_   http://code.google.com/p/processing/issues/detail?id=459
 
 regressions
 _ strange window flicker when first opened
