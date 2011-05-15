@@ -7,12 +7,9 @@ X shape(PshapeSVG) fails if SVG contains <path d=""/>
 X   http://code.google.com/p/processing/issues/detail?id=434
 X implement quadVertex()
 X fix svg issues when dealing with quadratic bezier curves
+X revert to old createFont() behavior
+X   http://code.google.com/p/processing/issues/detail?id=662
 
-_ revert to old createFont() behavior
-_   http://code.google.com/p/processing/issues/detail?id=662
-
-_ hitting ESC in a running noLoop()ed sketch won't close the sketch?
-_   work through serial examples
 
 for 2.0
 _ in PShape, getChild(name) refers to a <blah id="name">
@@ -22,6 +19,7 @@ _ move to new XML library
 _   add XHTML parsing or any others?
 _ html parser? javax.swing.text.html.parser... has binary DTDs
 _ how should quadVertex() be named?
+_   need documentation for it
 _ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
 _   also works that way with tables
 _ XMLElemnt.parse() or new XMLElement(xmldata)?
@@ -51,6 +49,9 @@ _   filter(MASK, ...) -> or ALPHA?
 _   filter(TINT, tintColor)
 _ post() is called after setup() (make decision)
 _   http://code.google.com/p/processing/issues/detail?id=455
+
+_ hitting ESC in a running noLoop()ed sketch won't close the sketch?
+_   work through serial examples
 
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
