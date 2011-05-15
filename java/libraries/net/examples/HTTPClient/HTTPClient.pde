@@ -2,7 +2,13 @@
  * HTTP Client. 
  * 
  * Starts a network client that connects to a server on port 80,
- * sends an HTTP 1.1 GET request, and prints the results. 
+ * sends an HTTP 1.0 GET request, and prints the results. 
+ *
+ * Note that this code is not necessary for simple HTTP GET request:
+ * Simply calling loadStrings("http://www.processing.org") would do
+ * the same thing as (and more efficiently than) this example.
+ * This example is for people who might want to do something more 
+ * complicated later.
  */
  
 
@@ -16,8 +22,8 @@ void setup() {
   background(50);
   fill(200);
   c = new Client(this, "www.processing.org", 80); // Connect to server on port 80
-  c.write("GET / HTTP/1.1\n"); // Use the HTTP "GET" command to ask for a Web page
-  c.write("Host: my_domain_name.com\n\n"); // Be polite and say who we are
+  c.write("GET / HTTP/1.0\r\n"); // Use the HTTP "GET" command to ask for a Web page
+  c.write("\r\n");
 }
 
 void draw() {
