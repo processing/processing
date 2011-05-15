@@ -1663,6 +1663,193 @@ public class PShapeSVG extends PShape {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  public class Font extends PShapeSVG {
+    public FontFace face;
+
+    public HashMap<String,FontGlyph> namedGlyphs;
+    public HashMap<Character,FontGlyph> unicodeGlyphs;
+
+    public int glyphCount;
+    public FontGlyph[] glyphs;
+    public FontGlyph missingGlyph;
+
+    int horizAdvX;
+
+
+    public Font(PShapeSVG parent, XMLElement properties) {
+      super(parent, properties, false);
+//      handle(parent, properties);
+
+      XMLElement[] elements = properties.getChildren();
+
+      horizAdvX = properties.getInt("horiz-adv-x", 0);
+
+      namedGlyphs = new HashMap<String,FontGlyph>();
+      unicodeGlyphs = new HashMap<Character,FontGlyph>();
+      glyphCount = 0;
+      glyphs = new FontGlyph[elements.length];
+
+      for (int i = 0; i < elements.length; i++) {
+        String name = elements[i].getName();
+        XMLElement elem = elements[i];
+        if (name.equals("glyph")) {
+          FontGlyph fg = new FontGlyph(this, elem, this);
+          if (fg.isLegit()) {
+            if (fg.name != null) {
+              namedGlyphs.put(fg.name, fg);
+            }
+            if (fg.unicode != 0) {
+              unicodeGlyphs.put(new Character(fg.unicode), fg);
+            }
+          }
+          glyphs[glyphCount++] = fg;
+
+        } else if (name.equals("missing-glyph")) {
+//          System.out.println("got missing glyph inside <font>");
+          missingGlyph = new FontGlyph(this, elem, this);
+        } else if (name.equals("font-face")) {
+          face = new FontFace(this, elem);
+        } else {
+          System.err.println("Ignoring " + name + " inside <font>");
+        }
+      }
+    }
+
+
+    protected void drawShape() {
+      // does nothing for fonts
+    }
+
+
+    public void drawString(PGraphics g, String str, float x, float y, float size) {
+      // 1) scale by the 1.0/unitsPerEm
+      // 2) scale up by a font size
+      g.pushMatrix();
+      float s =  size / (float) face.unitsPerEm;
+      //System.out.println("scale is " + s);
+      // swap y coord at the same time, since fonts have y=0 at baseline
+      g.translate(x, y);
+      g.scale(s, -s);
+      char[] c = str.toCharArray();
+      for (int i = 0; i < c.length; i++) {
+        // call draw on each char (pulling it w/ the unicode table)
+        FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c[i]));
+        if (fg != null) {
+          fg.draw(g);
+          // add horizAdvX/unitsPerEm to the x coordinate along the way
+          g.translate(fg.horizAdvX, 0);
+        } else {
+          System.err.println("'" + c[i] + "' not available.");
+        }
+      }
+      g.popMatrix();
+    }
+
+
+    public void drawChar(PGraphics g, char c, float x, float y, float size) {
+      g.pushMatrix();
+      float s =  size / (float) face.unitsPerEm;
+      g.translate(x, y);
+      g.scale(s, -s);
+      FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c));
+      if (fg != null) g.shape(fg);
+      g.popMatrix();
+    }
+
+
+    public float textWidth(String str, float size) {
+      float w = 0;
+      char[] c = str.toCharArray();
+      for (int i = 0; i < c.length; i++) {
+        // call draw on each char (pulling it w/ the unicode table)
+        FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c[i]));
+        if (fg != null) {
+          w += (float) fg.horizAdvX / face.unitsPerEm;
+        }
+      }
+      return w * size;
+    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  class FontFace extends PShapeSVG {
+    int horizOriginX;  // dflt 0
+    int horizOriginY;  // dflt 0
+//    int horizAdvX;     // no dflt?
+    int vertOriginX;   // dflt horizAdvX/2
+    int vertOriginY;   // dflt ascent
+    int vertAdvY;      // dflt 1em (unitsPerEm value)
+
+    String fontFamily;
+    int fontWeight;    // can also be normal or bold (also comma separated)
+    String fontStretch;
+    int unitsPerEm;    // dflt 1000
+    int[] panose1;     // dflt "0 0 0 0 0 0 0 0 0 0"
+    int ascent;
+    int descent;
+    int[] bbox;        // spec says comma separated, tho not w/ forge
+    int underlineThickness;
+    int underlinePosition;
+    //String unicodeRange; // gonna ignore for now
+
+
+    public FontFace(PShapeSVG parent, XMLElement properties) {
+      super(parent, properties, true);
+
+      unitsPerEm = properties.getInt("units-per-em", 1000);
+    }
+
+
+    protected void drawShape() {
+      // nothing to draw in the font face attribute
+    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public class FontGlyph extends PShapeSVG {  // extends Path
+    public String name;
+    char unicode;
+    int horizAdvX;
+
+    public FontGlyph(PShapeSVG parent, XMLElement properties, Font font) {
+      super(parent, properties, true);
+      super.parsePath();  // ??
+
+      name = properties.getString("glyph-name");
+      String u = properties.getString("unicode");
+      unicode = 0;
+      if (u != null) {
+        if (u.length() == 1) {
+          unicode = u.charAt(0);
+          //System.out.println("unicode for " + name + " is " + u);
+        } else {
+          System.err.println("unicode for " + name +
+                             " is more than one char: " + u);
+        }
+      }
+      if (properties.hasAttribute("horiz-adv-x")) {
+        horizAdvX = properties.getInt("horiz-adv-x");
+      } else {
+        horizAdvX = font.horizAdvX;
+      }
+    }
+
+
+    protected boolean isLegit() {  // TODO need a better way to handle this...
+      return vertexCount != 0;
+    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
   /**
    * Get a particular element based on its SVG ID. When editing SVG by hand,
    * this is the id="" tag on any SVG element. When editing from Illustrator,
