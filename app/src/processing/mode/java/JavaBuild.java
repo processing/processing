@@ -1519,8 +1519,12 @@ public class JavaBuild {
       int offset = sketch.getFolder().getAbsolutePath().length() + 1;
       for (String path : dataFiles) {
         if (Base.isWindows()) {
+          System.out.println("base is windows");
           //dataFiles[i] = dataFiles[i].replace('\\', '/');
           path = path.replace('\\', '/');
+          System.out.println("new path is " + path);
+        } else {
+          System.out.println("base NOT windows");
         }
         //File dataFile = new File(dataFiles[i]);
         File dataFile = new File(path);

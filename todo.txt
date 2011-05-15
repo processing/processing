@@ -9,6 +9,14 @@ X library imports are broken (using pretty name not folder name)
 X   http://code.google.com/p/processing/issues/detail?id=637
 X 1.5 can't find java sdk -- patch shell script?
 X   http://code.google.com/p/processing/issues/detail?id=633
+X Obsolete Network > HTTPClient sketch
+X   http://code.google.com/p/processing/issues/detail?id=655
+
+_ Applets exported by PDE don't find data folder in 1.5 (philho)
+_   http://code.google.com/p/processing/issues/detail?id=666
+
+_ add deployJava.js to local sketch folder (causes internet requirement)
+_   http://code.google.com/p/processing/issues/detail?id=650
 
 _ libraries in java tabs (separate .java files) are reported missing
 _   need to scan the .java files for imports that need to be included
