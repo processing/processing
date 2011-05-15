@@ -1,10 +1,36 @@
 0197 core
 X Seeming problem displaying SVG data when layer data is grouped
 X   http://code.google.com/p/processing/issues/detail?id=388
+X bug in SVG parser for shorthand curves (T/t and S/s)
+X   http://code.google.com/p/processing/issues/detail?id=350
+X shape(PshapeSVG) fails if SVG contains <path d=""/>
+X   http://code.google.com/p/processing/issues/detail?id=434
+X implement quadVertex()
+X fix svg issues when dealing with quadratic bezier curves
 
+_ revert to old createFont() behavior
+_   http://code.google.com/p/processing/issues/detail?id=662
+
+_ hitting ESC in a running noLoop()ed sketch won't close the sketch?
+_   work through serial examples
 
 for 2.0
-_ arrayobjects (and others) flickers like hell in chrome 10 on os x
+_ in PShape, getChild(name) refers to a <blah id="name">
+_   however in an XML file, that's <name ...>, meaning the name of the tag
+_   change it to getShape(name)? also for fonts getShape(char c)
+_ move to new XML library
+_   add XHTML parsing or any others?
+_ html parser? javax.swing.text.html.parser... has binary DTDs
+_ how should quadVertex() be named?
+_ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
+_   also works that way with tables
+_ XMLElemnt.parse() or new XMLElement(xmldata)?
+_   same goes for PShape.. parse from a string?
+_   http://code.google.com/p/processing/issues/detail?id=277
+_ how should stroke work w/ arcs?
+_   has an effect elliptical arc
+_   http://code.google.com/p/processing/issues/detail?id=130
+_ arrayobjects (and others) flicker like hell in chrome 10 
 _   http://code.google.com/p/processing/issues/detail?id=646
 _ rounded rectangle method 
 _   http://code.google.com/p/processing/issues/detail?id=265
@@ -25,6 +51,9 @@ _   filter(MASK, ...) -> or ALPHA?
 _   filter(TINT, tintColor)
 _ post() is called after setup() (make decision)
 _   http://code.google.com/p/processing/issues/detail?id=455
+
+_ memory leak when many createGraphics(..., JAVA2D) calls are used
+_   http://code.google.com/p/processing/issues/detail?id=507
 
 _ callback for requestImage()
 _   http://code.google.com/p/processing/issues/detail?id=641
@@ -613,8 +642,6 @@ _ for PShape, need to be able to set the origin (flash people)
 
 CORE / PShapeSVG
 
-_ bug in SVG parser for shorthand curves (T/t and S/s)
-_   http://code.google.com/p/processing/issues/detail?id=350
 _ cover the svg changes in a future release
 _ load PShape from a string object
 _   http://code.google.com/p/processing/issues/detail?id=277

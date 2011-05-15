@@ -796,7 +796,7 @@ public class PShape3D extends PShape implements PConstants {
   /**
    * Add a shape to the name lookup table.
    */
-  protected void addName(String nom, PShape shape) {    
+  public void addName(String nom, PShape shape) {    
     if (nameTable == null) {
       nameTable = new HashMap<String,PShape>();
     }
@@ -894,7 +894,7 @@ public class PShape3D extends PShape implements PConstants {
     child = gchildren[0];    
     p = child.parent;
     if (p != null) {
-      idx = p.getChildIdx(child);
+      idx = p.getChildIndex(child);
       if (idx < 0) idx = 0; 
     } else {
       p = this;
@@ -908,7 +908,7 @@ public class PShape3D extends PShape implements PConstants {
       child = gchildren[i];
       p = child.parent;
       if (p != null) {
-        idx = p.getChildIdx(child);
+        idx = p.getChildIndex(child);
         if (-1 < idx) {
           p.removeChild(idx);
         }

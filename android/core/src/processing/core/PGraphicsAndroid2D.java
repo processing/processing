@@ -486,6 +486,25 @@ public class PGraphicsAndroid2D extends PGraphics {
 
   //////////////////////////////////////////////////////////////
 
+  // QUADRATIC BEZIER VERTICES
+
+
+  public void quadVertex(float ctrlX, float ctrlY,
+                         float endX, float endY) {
+    bezierVertexCheck();
+    path.quadTo(ctrlX, ctrlY, endX, endY);
+  }
+
+
+  public void quadVertex(float x2, float y2, float z2,
+                         float x4, float y4, float z4) {
+    showDepthWarningXYZ("quadVertex");
+  }
+
+
+
+  //////////////////////////////////////////////////////////////
+
   // CURVE VERTICES
 
 
