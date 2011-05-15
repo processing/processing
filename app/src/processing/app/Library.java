@@ -9,10 +9,10 @@ import processing.core.*;
 public class Library {
   static final String[] platformNames = PConstants.platformNames;
 
-  protected File folder;
-  protected File libraryFolder;   // name/library
-  protected File examplesFolder;  // name/examples
-  protected File referenceFile;   // name/reference/index.html
+  protected File folder;          // /path/to/shortname
+  protected File libraryFolder;   // shortname/library
+  protected File examplesFolder;  // shortname/examples
+  protected File referenceFile;   // shortname/reference/index.html
 
   protected String name;          // "pdf" or "PDF Export"
   protected String author;        // Ben Fry
@@ -283,7 +283,8 @@ public class Library {
 
 
   public String getJarPath() {
-    return new File(folder, "library/" + name + ".jar").getAbsolutePath();
+    //return new File(folder, "library/" + name + ".jar").getAbsolutePath();
+    return new File(libraryFolder, folder.getName() + ".jar").getAbsolutePath();
   }
 
 

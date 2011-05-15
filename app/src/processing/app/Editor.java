@@ -785,7 +785,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
   
   
-  abstract public void handleImportLibrary(String item);
+  abstract public void handleImportLibrary(String jarPath);
 
 
   protected JMenu buildToolsMenu() {
