@@ -1,8 +1,4 @@
-0197 android 
-
-fixed earlier
-X compiler errors on Windows not appearing, nor highlighting the line number
-X   http://code.google.com/p/processing/issues/detail?id=253
+0198 android
 
 
 _ go through all basics/topics examples

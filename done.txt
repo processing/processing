@@ -1,3 +1,38 @@
+0197 pde (1.5.1)
+X Windows splash screen for version 1.5 says "1.2"
+X   http://code.google.com/p/processing/issues/detail?id=631
+X fix broken UpdateCheck (base was never set)
+o osx splash screen may say 2010 (the one shown on startup in Info.plist)
+X HsvSpace example sketch in 1.5 download requires addition of import
+X   http://code.google.com/p/processing/issues/detail?id=661
+X library imports are broken (using pretty name not folder name)
+X   http://code.google.com/p/processing/issues/detail?id=637
+X 1.5 can't find java sdk -- patch shell script?
+X   http://code.google.com/p/processing/issues/detail?id=633
+X Obsolete Network > HTTPClient sketch
+X   http://code.google.com/p/processing/issues/detail?id=655
+X Applets exported by PDE don't find data folder in 1.5
+X   http://code.google.com/p/processing/issues/detail?id=666
+X File > New and Command-N stop working on OS X after running a sketch
+X   http://code.google.com/p/processing/issues/detail?id=664
+
+cleaning
+X check to see whether this bug is fixed once 0140 is released
+X   properly handle non-ascii chars in p5 folder name
+X   http://dev.processing.org/bugs/show_bug.cgi?id=49
+X   (could also just warn user to install elsewhere)
+o   perhaps the get around this by building into sketch folder
+o     when non-ascii chars in use, just launch everything externally
+X "Could not find the main class: processing.app.Base. Program will exit."
+X   http://code.google.com/p/processing/issues/detail?id=151
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1126
+o "Fatal exception occurred. Program will exit." on startup
+o   seems to be font related, deleting prefs will fix it
+o   http://dev.processing.org/bugs/show_bug.cgi?id=688
+o Processing IDE icon ALT + Tab low res in Windows XP
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1040
+
+
 0196 pde (1.5)
 X upgrade to Quaqua 7.3.4 on OS X
 X   fixes checkbox in mode menu smashing into things
