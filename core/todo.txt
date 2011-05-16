@@ -1,5 +1,10 @@
 0198 core
 
+_ memory leak when many createGraphics(..., JAVA2D) calls are used
+_   http://code.google.com/p/processing/issues/detail?id=507
+_ stop() not called in 1.5
+_   http://code.google.com/p/processing/issues/detail?id=636
+
 
 for 2.0
 _ in PShape, getChild(name) refers to a <blah id="name">
