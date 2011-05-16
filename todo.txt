@@ -1,5 +1,14 @@
 0198 pde
 
+serial issues
+_ incorporate RXTXcomm.jar and others from Dave
+_ Closing applet window in Processing 1.5 causes serial crash
+_   http://code.google.com/p/processing/issues/detail?id=635
+_ Serial.list() cannot find /dev/ttyACM0
+_   http://code.google.com/p/processing/issues/detail?id=634
+
+_ Export reports "Could not copy source file" (even though it works)
+_   http://code.google.com/p/processing/issues/detail?id=638
 
 2.0
 _ colors for 2.0
