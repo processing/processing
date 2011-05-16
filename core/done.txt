@@ -1,3 +1,16 @@
+0197 core (1.5.1)
+X Seeming problem displaying SVG data when layer data is grouped
+X   http://code.google.com/p/processing/issues/detail?id=388
+X bug in SVG parser for shorthand curves (T/t and S/s)
+X   http://code.google.com/p/processing/issues/detail?id=350
+X shape(PshapeSVG) fails if SVG contains <path d=""/>
+X   http://code.google.com/p/processing/issues/detail?id=434
+X implement quadVertex()
+X fix svg issues when dealing with quadratic bezier curves
+X revert to old createFont() behavior
+X   http://code.google.com/p/processing/issues/detail?id=662
+
+
 0196 core (1.5)
 o textAlign(RIGHT) is shutting off native fonts
 o   makes salaryper super ugly
