@@ -1,3 +1,10 @@
+0197 android (1.5.1)
+
+fixed earlier
+X compiler errors on Windows not appearing, nor highlighting the line number
+X   http://code.google.com/p/processing/issues/detail?id=253
+
+
 0196 android (1.5)
 X workaround for loadImage(url) bug in Google's Android source (via psoden)
 X   http://code.google.com/p/processing/issues/detail?id=629
