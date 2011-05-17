@@ -6367,7 +6367,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       img.setParams(a3d, params);
     }
     PTexture tex = new PTexture(img.parent, img.width, img.height, params);
-    img.loadPixels();
+    if (img.pixels == null) {
+      img.loadPixels();
+    }
     tex.set(img.pixels);
     img.setCache(a3d, tex);
     return tex;
