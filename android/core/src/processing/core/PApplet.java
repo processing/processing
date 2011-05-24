@@ -6187,20 +6187,38 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // HEX/BINARY CONVERSION
 
 
+  /**
+   * Convert a byte into a two digit hex string.
+   */
   static final public String hex(byte what) {
     return hex(what, 2);
   }
 
+  /**
+   * Convert a Unicode character into a four digit hex string.
+   */
   static final public String hex(char what) {
     return hex(what, 4);
   }
 
+  /**
+   * Convert an integer into an eight digit hex string.
+   */
   static final public String hex(int what) {
     return hex(what, 8);
   }
 
+  /**
+   * Format an integer as a hex string using the specified number of digits.
+   * @param what the value to format
+   * @param digits the number of digits (maximum 8)
+   * @return a String object with the formatted values
+   */
   static final public String hex(int what, int digits) {
     String stuff = Integer.toHexString(what).toUpperCase();
+    if (digits > 8) {
+      digits = 8;
+    }
 
     int length = stuff.length();
     if (length > digits) {
@@ -6255,6 +6273,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   static final public String binary(int what, int digits) {
     String stuff = Integer.toBinaryString(what);
+    if (digits > 32) {
+      digits = 32;
+    }
 
     int length = stuff.length();
     if (length > digits) {
