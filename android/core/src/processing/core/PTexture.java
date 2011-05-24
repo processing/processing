@@ -461,13 +461,26 @@ public class PTexture implements PConstants {
     flippedY = v;
   }
     
+  ////////////////////////////////////////////////////////////     
   
+  // Bind/unbind  
+  
+  public void bind() {
+    gl.glEnable(glTarget);
+    gl.glBindTexture(glTarget, glID);
+  }
+  
+  public void unbind() {
+    gl.glEnable(glTarget);
+    gl.glBindTexture(glTarget, 0);    
+  }    
+    
   ////////////////////////////////////////////////////////////     
  
   // Utilities 
   
   // bit shifting this might be more efficient
-  private int nextPowerOfTwo(int val) {
+  protected int nextPowerOfTwo(int val) {
     int ret = 1;
     while (ret < val) {
       ret <<= 1;
@@ -903,16 +916,6 @@ public class PTexture implements PConstants {
   
   protected void setTexels(int level, int x, int y, int w, int h, int[] pix) {
     gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
-  }
-  
-  protected void bind() {
-    gl.glEnable(glTarget);
-    gl.glBindTexture(glTarget, glID);
-  }
-  
-  protected void unbind() {
-    gl.glEnable(glTarget);
-    gl.glBindTexture(glTarget, 0);    
   }
   
   protected void copyObject(PTexture src) {
