@@ -40,8 +40,7 @@ public class PTexture implements PConstants {
   public int width, height;
     
   protected PApplet parent;
-  protected PGraphicsOpenGL2 ogl;  
-  protected GL gl;
+  protected PGraphicsOpenGL2 ogl;
 
   // These are public but use at your own risk!
   public int glID; 
@@ -95,7 +94,6 @@ public class PTexture implements PConstants {
     this.height = height;
        
     ogl = (PGraphicsOpenGL2)parent.g;
-    gl = ogl.gl;
     
     glID = 0;
     
@@ -123,8 +121,7 @@ public class PTexture implements PConstants {
   public PTexture(PApplet parent, String filename, Object params)  {
     this.parent = parent;
      
-    ogl = (PGraphicsOpenGL2)parent.g;
-    gl = ogl.gl;  
+    ogl = (PGraphicsOpenGL2)parent.g;  
 
     glID = 0;
     
@@ -255,15 +252,15 @@ public class PTexture implements PConstants {
       createTexture(width, height);
     }   
     
-    gl.glEnable(glTarget);
-    gl.glBindTexture(glTarget, glID);
+    getGl().glEnable(glTarget);
+    getGl().glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
       if (PGraphicsOpenGL2.mipmapGeneration) {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_GENERATE_MIPMAP, GL.GL_TRUE);        
+        getGl().glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_GENERATE_MIPMAP, GL.GL_TRUE);        
         setTexels(x, y, w, h, rgbaPixels);
       } else {
         // TODO: Manual mipmap generation.
@@ -276,8 +273,8 @@ public class PTexture implements PConstants {
       setTexels(x, y, w, h, rgbaPixels);
     }
 
-    gl.glBindTexture(glTarget, 0);
-    gl.glDisable(glTarget);
+    getGl().glBindTexture(glTarget, 0);
+    getGl().glDisable(glTarget);
   }  
   
   
@@ -418,13 +415,13 @@ public class PTexture implements PConstants {
   // Bind/unbind  
   
   public void bind() {
-    gl.glEnable(glTarget);
-    gl.glBindTexture(glTarget, glID);
+    getGl().glEnable(glTarget);
+    getGl().glBindTexture(glTarget, glID);
   }
   
   public void unbind() {
-    gl.glEnable(glTarget);
-    gl.glBindTexture(glTarget, 0);    
+    getGl().glEnable(glTarget);
+    getGl().glBindTexture(glTarget, 0);    
   }  
   
   ////////////////////////////////////////////////////////////     
@@ -704,22 +701,22 @@ public class PTexture implements PConstants {
     
     usingMipmaps = glMinFilter == GL.GL_LINEAR_MIPMAP_LINEAR;
     
-    gl.glEnable(glTarget);
+    getGl().glEnable(glTarget);
     glID = ogl.createGLResource(PGraphicsOpenGL2.GL_TEXTURE_OBJECT);     
-    gl.glBindTexture(glTarget, glID);
-    gl.glTexParameteri(glTarget, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
-    gl.glTexParameteri(glTarget, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
-    gl.glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_S, glWrapS);
-    gl.glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_T, glWrapT);
+    getGl().glBindTexture(glTarget, glID);
+    getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
+    getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
+    getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_S, glWrapS);
+    getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_T, glWrapT);
     
     // This array is used to make sure that the texture doesn't contain any
     // garbage.
     int[] initArray = new int[glWidth * glHeight];
     java.util.Arrays.fill(initArray, 0, glWidth * glHeight, 0x00000000);
-    gl.glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL.GL_RGBA, 
-                    GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(initArray));
-    gl.glBindTexture(glTarget, 0);
-    gl.glDisable(glTarget);
+    getGl().glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL.GL_RGBA, 
+                         GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(initArray));
+    getGl().glBindTexture(glTarget, 0);
+    getGl().glDisable(glTarget);
         
     flippedX = false;
     flippedY = false;
@@ -778,7 +775,7 @@ public class PTexture implements PConstants {
   }
   
   protected void setTexels(int level, int x, int y, int w, int h, int[] pix) {
-    gl.glTexSubImage2D(glTarget, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
+    getGl().glTexSubImage2D(glTarget, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
   }
   
   protected void copyObject(PTexture src) {
@@ -791,7 +788,6 @@ public class PTexture implements PConstants {
     
     parent = src.parent;
     ogl = src.ogl;
-    gl = src.gl;
     
     glID = src.glID;
     glTarget = src.glTarget;
@@ -906,6 +902,14 @@ public class PTexture implements PConstants {
     }
   } 
 
+  /////////////////////////////////////////////////////////////////////////// 
+
+  // Utilities 
+  
+  
+  protected GL getGl() {
+    return ogl.gl;
+  }  
 
   /////////////////////////////////////////////////////////////////////////// 
 

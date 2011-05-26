@@ -178,8 +178,7 @@ class PFontTexture implements PConstants {
     return glyphTexinfos[n];
   }  
   
-  
-  // It was inside PFont.Glyph
+
   // Adds this glyph to the opengl texture in PFont.
   protected void addToTexture(int idx, PFont.Glyph glyph) {           
     // Converting the pixels array from the PImage into a valid RGBA array for OpenGL.
@@ -200,7 +199,7 @@ class PFontTexture implements PConstants {
       }
     }
     
-    // Is there room for this glyph on the current line?
+    // Is there room for this glyph in the current line?
     if (offsetX + glyph.width> textures[currentTex].glWidth) {
       // No room, go to the next line:
       offsetX = 0;
@@ -211,7 +210,7 @@ class PFontTexture implements PConstants {
     
     boolean resized = false;
     if (offsetY + lineHeight > textures[currentTex].glHeight) {    
-      // We run out of space in the current texture, we add a new texture:
+      // We run out of space in the current texture, so we add a new texture:
       resized = addTexture();
       if (resized) {
         // Because the current texture has been resized, we need to 
@@ -238,7 +237,6 @@ class PFontTexture implements PConstants {
       setTexture(lastTex);
     }
     
-    //PApplet.println(glyph.width * glyph.height + " " + rgba.length);
     textures[currentTex].setTexels(offsetX, offsetY, glyph.width, glyph.height, rgba);
     
     TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY + glyph.height, glyph.width, -glyph.height);
