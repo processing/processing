@@ -1480,7 +1480,44 @@ public class PApplet extends Activity implements PConstants, Runnable {
       pg = new PGraphicsAndroid2D();
     } else if (irenderer.equals(A3D)) {
       pg = new PGraphicsAndroid3D();
+    } else {
+      Class<?> rendererClass = null;
+      Constructor<?> constructor = null;
+      try {
+        // The context class loader doesn't work:
+        //rendererClass = Thread.currentThread().getContextClassLoader().loadClass(irenderer);
+        // even though it should, according to this discussion:
+        // http://code.google.com/p/android/issues/detail?id=11101
+        // While the method that is not supposed to work, using the class loader, does:
+        rendererClass = this.getClass().getClassLoader().loadClass(irenderer);
+      } catch (ClassNotFoundException cnfe) {
+        throw new RuntimeException("Missing renderer class");
+      }
+      
+      if (rendererClass != null) {
+        try {
+          constructor = rendererClass.getConstructor(new Class[] { });
+        } catch (NoSuchMethodException nsme) {
+          throw new RuntimeException("Missing renderer constructor");
+        }
+        
+        if (constructor != null) {
+          try {
+            pg = (PGraphics) constructor.newInstance();
+          } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+          } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());            
+          } catch (InstantiationException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+          }            
+        }
+      }      
     }
+    
     pg.setParent(this);
     pg.setPrimary(false);
     pg.setSize(iwidth, iheight);
