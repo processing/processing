@@ -3255,7 +3255,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
-      textTex.addAllGlyphsToTexture();
     }    
     textTex.setFirstTexture();
 
