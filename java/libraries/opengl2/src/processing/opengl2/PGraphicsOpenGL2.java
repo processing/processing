@@ -666,10 +666,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
       if (context == null) {
         initPrimary();
       } else {
-        // The following three lines are a fix for Bug #1176
-        // http://dev.processing.org/bugs/show_bug.cgi?id=1176
-        context.destroy();
-        context = drawable.createContext(null);
         reapplySettings();
       }      
     } else {      
@@ -3379,7 +3375,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
-      textTex.addAllGlyphsToTexture();
     }    
     textTex.setFirstTexture();
 
@@ -6694,8 +6689,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
     
     profile = null;      
     
-    profile = GLProfile.getDefault();
-    //profile = GLProfile.get(GLProfile.GL2ES1);
+    //profile = GLProfile.getDefault();
+    profile = GLProfile.get(GLProfile.GL2ES1);
     //profile = GLProfile.get(GLProfile.GL4bc);
     //profile = GLProfile.getMaxProgrammable();    
     pipeline = FIXED;
@@ -6754,9 +6749,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
     GLDrawableFactory factory = GLDrawableFactory.getFactory(profile);
     drawable = factory.createGLDrawable(win);
     context = drawable.createContext(null);    
-    
-    PApplet.println("PROFILE:\n" + profile);
-    PApplet.println("CONTEXT:\n" + context);
   }
   
   
