@@ -533,6 +533,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
   /** Used to hold color values to be sent to OpenGL. */
   protected float[] colorFloats; 
   
+  /** Used to detect the occurrence of a frame resize event. */
+  protected boolean resized = false;
+  
   // ........................................................
 
   // Utility constants:  
@@ -567,9 +570,10 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
 
   //public void setPath(String path)  // PGraphics
-  
-  
+    
   public void setSize(int iwidth, int iheight) {
+    resized = (0 < width && width != iwidth) || (0 < height && height != iwidth);
+    
     width = iwidth;
     height = iheight;
     width1 = width - 1;
@@ -577,7 +581,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     
     allocate();
     reapplySettings();
-
+    
     vertexCheck();
 
     // init perspective projection based on new dimensions
@@ -965,7 +969,22 @@ public class PGraphicsOpenGL2 extends PGraphics {
     }
 
     // setup opengl viewport.
-    gl.glViewport(0, 0, width, height);    
+    gl.glViewport(0, 0, width, height);  
+    if (resized) {
+      // To avoid having garbage in the screen after a resize,
+      // in the case background is not called in draw().
+      background(0);
+      if (texture != null) {
+        // The screen texture should be deleted because it 
+        // corresponds to the old window size.
+        this.removeCache(ogl);
+        this.removeParams(ogl);
+        texture.delete();
+        texture = null;
+        loadTexture();
+      }      
+      resized = false;            
+    }
     
     // set up the default camera and initializes modelview matrix.
     camera();
@@ -5785,7 +5804,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   protected void loadTextureImpl(int sampling) {
     if (width == 0 || height == 0) return;
-    if (texture == null) {      
+    if (texture == null) {
       PTexture.Parameters params = PTexture.newParameters(ARGB, sampling);
       texture = new PTexture(parent, width, height, params);
       texture.setFlippedY(true);
