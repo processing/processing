@@ -103,6 +103,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
 
   /// IntBuffer to go with the pixels[] array
   protected IntBuffer pixelBuffer;
+  
+  /** Used to detect the occurrence of a frame resize event. */
+  protected boolean resized = false;
 
   /**
    * Set to true if the host system is big endian (PowerPC, MIPS, SPARC),
@@ -237,7 +240,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
   //public void setPath(String path)  // PGraphics
 
 
-  //public void setSize(int iwidth, int iheight)  // PGraphics3D
+  public void setSize(int iwidth, int iheight) {
+    resized = (0 < width && width != iwidth) || (0 < height && height != iwidth);
+    super.setSize(iwidth, iheight);
+  }
 
 
   /**
@@ -291,9 +297,9 @@ public class PGraphicsOpenGL extends PGraphics3D {
     } else {
       // The following three lines are a fix for Bug #1176
       // http://dev.processing.org/bugs/show_bug.cgi?id=1176
-      context.destroy();
-      context = drawable.createContext(null);
-      gl = context.getGL();
+      //context.destroy();
+      //context = drawable.createContext(null);
+      //gl = context.getGL();
       reapplySettings();
     }
   }
@@ -381,6 +387,14 @@ public class PGraphicsOpenGL extends PGraphics3D {
     for (int i = 0; i < MAX_LIGHTS; i++) {
       gl.glDisable(GL.GL_LIGHT0 + i);
     }
+    
+    gl.glViewport(0, 0, width, height);
+    if (resized) {
+      // To avoid having garbage in the screen after a resize,
+      // in the case background is not called in draw().
+      background(0);
+      resized = false;            
+    }    
 
     updateProjection();
 
