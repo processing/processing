@@ -36,12 +36,9 @@ import javax.microedition.khronos.opengles.GL11ExtensionPack;
  * 
  * By Andres Colubri.
  */
-public class PFramebuffer implements PConstants {
-  
+public class PFramebuffer implements PConstants {  
   protected PApplet parent;  
   protected PGraphicsAndroid3D a3d;
-  protected GL10 gl;  
-  protected GL11ExtensionPack gl11xp;  
   
   public int glFboID;
   public int glDepthBufferID;
@@ -81,11 +78,8 @@ public class PFramebuffer implements PConstants {
     FboMode = PGraphicsAndroid3D.fboSupported;
     numColorBuffers = 0;
     
-    gl = a3d.gl;
-    
     // We need gl11 extension pack at least to bind a zero (screen) buffer.    
-    gl11xp = a3d.gl11xp;
-    if (gl11xp == null) {
+    if (a3d.gl11xp == null) {
       throw new RuntimeException("PFramebuffer: OpenGL ES 1.1 Extension Pack required");
     }
     
@@ -123,8 +117,8 @@ public class PFramebuffer implements PConstants {
 
       // Making sure nothing is attached.
       for (int i = 0; i < numColorBuffers; i++) {
-        gl11xp.glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
-            GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i, GL10.GL_TEXTURE_2D, 0, 0);      
+        getGlx().glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
+                                           GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i, GL10.GL_TEXTURE_2D, 0, 0);      
       }
 
       numColorBuffers = PApplet.min(n, textures.length);
@@ -136,8 +130,8 @@ public class PFramebuffer implements PConstants {
         colorBufferAttchPoints[i] = GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i;
         glColorBufferTargets[i] = textures[i].glTarget;
         glColorBufferIDs[i] = textures[i].glID;
-        gl11xp.glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, colorBufferAttchPoints[i],
-            glColorBufferTargets[i], glColorBufferIDs[i], 0);
+        getGlx().glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, colorBufferAttchPoints[i],
+                                           glColorBufferTargets[i], glColorBufferIDs[i], 0);
       }
 
       if (validFbo() && textures != null && 0 < textures.length) {
@@ -169,7 +163,7 @@ public class PFramebuffer implements PConstants {
       a3d.setFramebuffer(this);
 
       glDepthBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_RENDER_BUFFER);
-      gl11xp.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
+      getGlx().glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
 
       int glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT16;
       if (bits == 16) {
@@ -179,11 +173,11 @@ public class PFramebuffer implements PConstants {
       } else if (bits == 32) {
         glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT32;              
       }
-      gl11xp.glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
+      getGlx().glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
 
-      gl11xp.glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,            
-          GL11ExtensionPack.GL_DEPTH_ATTACHMENT_OES,
-          GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
+      getGlx().glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,            
+                                            GL11ExtensionPack.GL_DEPTH_ATTACHMENT_OES,
+                                            GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
 
       a3d.popFramebuffer();
     }
@@ -201,7 +195,7 @@ public class PFramebuffer implements PConstants {
       a3d.setFramebuffer(this);
 
       glStencilBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_RENDER_BUFFER);
-      gl11xp.glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
+      getGlx().glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
 
       int glConst = GL11ExtensionPack.GL_STENCIL_INDEX1_OES;
       if (bits == 1) {
@@ -211,11 +205,11 @@ public class PFramebuffer implements PConstants {
       } else if (bits == 8) {
         glConst = GL11ExtensionPack.GL_STENCIL_INDEX8_OES;              
       }
-      gl11xp.glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
+      getGlx().glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
 
-      gl11xp.glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
-          GL11ExtensionPack.GL_STENCIL_ATTACHMENT_OES,
-          GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
+      getGlx().glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
+                                            GL11ExtensionPack.GL_STENCIL_ATTACHMENT_OES,
+                                            GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
 
       a3d.popFramebuffer();
     }
@@ -224,14 +218,14 @@ public class PFramebuffer implements PConstants {
   public void bind() {
     if (screenFb) {
       if (PGraphicsAndroid3D.fboSupported) {
-        gl11xp.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, 0);
+        getGlx().glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, 0);
       }
     } else if (FboMode) {
-      gl11xp.glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, glFboID);  
+      getGlx().glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, glFboID);  
     } else {
       backupScreen();
       if (noDepth) {
-        gl.glDisable(GL10.GL_DEPTH_TEST); 
+        getGl().glDisable(GL10.GL_DEPTH_TEST); 
       }
     }
   }
@@ -244,9 +238,9 @@ public class PFramebuffer implements PConstants {
     if (noDepth) {
       // No need to clear depth buffer because depth testing was disabled.
       if (a3d.hints[DISABLE_DEPTH_TEST]) {
-        gl.glDisable(GL10.GL_DEPTH_TEST);
+        getGl().glDisable(GL10.GL_DEPTH_TEST);
       } else {
-        gl.glEnable(GL10.GL_DEPTH_TEST);
+        getGl().glEnable(GL10.GL_DEPTH_TEST);
       }        
     }
     
@@ -261,8 +255,8 @@ public class PFramebuffer implements PConstants {
         // after this offscreen render.
         // A consequence of this behavior is that all the offscreen rendering when
         // no FBOs are available should be done before any onscreen drawing.
-        gl.glClearColor(0, 0, 0, 0);
-        gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+        getGl().glClearColor(0, 0, 0, 0);
+        getGl().glClear(GL10.GL_DEPTH_BUFFER_BIT);
       }
     }
   }
@@ -270,7 +264,7 @@ public class PFramebuffer implements PConstants {
   // Saves content of the screen into the backup texture.
   public void backupScreen() {  
     if (pixelBuffer == null) allocatePixelBuffer();
-    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);    
+    getGl().glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);    
     copyToTexture(pixelBuffer, backupTexture.glID, backupTexture.glTarget);
   }
 
@@ -282,7 +276,7 @@ public class PFramebuffer implements PConstants {
   // Copies current content of screen to color buffers.
   public void copyToColorBuffers() {
     if (pixelBuffer == null) allocatePixelBuffer();
-    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+    getGl().glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
     for (int i = 0; i < numColorBuffers; i++) {
       copyToTexture(pixelBuffer, glColorBufferIDs[i], glColorBufferTargets[i]);
     }
@@ -290,7 +284,7 @@ public class PFramebuffer implements PConstants {
   
   public void readPixels() {
     if (pixelBuffer == null) allocatePixelBuffer();
-    gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+    getGl().glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
   }
   
   public void getPixels(int[] pixels) {
@@ -306,11 +300,11 @@ public class PFramebuffer implements PConstants {
   
   // Internal copy to texture method.
   protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {
-    gl.glEnable(gltarget);
-    gl.glBindTexture(gltarget, glid);    
-    gl.glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
-    gl.glBindTexture(gltarget, 0);
-    gl.glDisable(gltarget);
+    getGl().glEnable(gltarget);
+    getGl().glBindTexture(gltarget, glid);    
+    getGl().glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
+    getGl().glBindTexture(gltarget, 0);
+    getGl().glDisable(gltarget);
   }
   
   protected void allocatePixelBuffer() {
@@ -353,7 +347,7 @@ public class PFramebuffer implements PConstants {
   }
   
   public boolean validFbo() {
-    int status = gl11xp.glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);        
+    int status = getGlx().glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);        
     if (status == GL11ExtensionPack.GL_FRAMEBUFFER_COMPLETE_OES) {
       return true;
     } else if (status == GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES) {
@@ -374,4 +368,12 @@ public class PFramebuffer implements PConstants {
       throw new RuntimeException("PFramebuffer: unknown framebuffer error (" + Integer.toHexString(status) + ")");
     }
   }
+  
+  protected GL10 getGl() {
+    return a3d.gl;
+  }
+  
+  protected GL11ExtensionPack getGlx() {
+    return a3d.gl11xp;    
+  }   
 }
