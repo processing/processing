@@ -44,10 +44,9 @@ import javax.microedition.khronos.opengles.*;
  * 
  */
 public class PShape3D extends PShape implements PConstants {
-  protected PApplet papplet;    
-  protected GL11 gl;  
+  protected PApplet papplet;     
   protected PGraphicsAndroid3D a3d;
-
+  
   // Element types handled by PShape3D (vertices, normals, color, texture coordinates).
   protected static final int VERTICES = 0;
   protected static final int NORMALS = 1;
@@ -173,7 +172,7 @@ public class PShape3D extends PShape implements PConstants {
     a3d = (PGraphicsAndroid3D)parent.g;
     this.family = PShape.GROUP;
     this.name = "root";
-    this.root = this;    
+    this.root = this;
   }
   
   public PShape3D(PApplet parent, int numVert) {
@@ -248,7 +247,7 @@ public class PShape3D extends PShape implements PConstants {
     firstUpdateIdx = first;
     lastUpdateIdx = last;
     
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);    
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);    
   }  
   
   
@@ -265,9 +264,9 @@ public class PShape3D extends PShape implements PConstants {
       vertexBuffer.put(vertices, offset, size);
       vertexBuffer.flip();
       
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
-                         size * PGraphicsAndroid3D.SIZEOF_FLOAT, vertexBuffer);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+      getGl().glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
+                              size * PGraphicsAndroid3D.SIZEOF_FLOAT, vertexBuffer);
+      getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
     
       updateElement = -1;
     } else {
@@ -297,7 +296,7 @@ public class PShape3D extends PShape implements PConstants {
     firstUpdateIdx = first;
     lastUpdateIdx = last;
     
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
   }
   
   
@@ -310,9 +309,9 @@ public class PShape3D extends PShape implements PConstants {
       colorBuffer.put(colors, offset, size);
       colorBuffer.flip();
   
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
-                                               size * PGraphicsAndroid3D.SIZEOF_FLOAT, colorBuffer);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+      getGl().glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
+                              size * PGraphicsAndroid3D.SIZEOF_FLOAT, colorBuffer);
+      getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
       
       updateElement = -1;      
     } else {
@@ -342,7 +341,7 @@ public class PShape3D extends PShape implements PConstants {
     firstUpdateIdx = first;
     lastUpdateIdx = last;
     
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
   }
   
   
@@ -355,9 +354,9 @@ public class PShape3D extends PShape implements PConstants {
       normalBuffer.put(normals, offset, size);
       normalBuffer.flip();
     
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
-                         size * PGraphicsAndroid3D.SIZEOF_FLOAT, normalBuffer);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+      getGl().glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
+                              size * PGraphicsAndroid3D.SIZEOF_FLOAT, normalBuffer);
+      getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
       
       updateElement = -1;      
     } else {
@@ -402,7 +401,7 @@ public class PShape3D extends PShape implements PConstants {
       addTexBuffers(unit - numTexBuffers + 1);
     }
     
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[unit]);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[unit]);
     
     texcoords = allTexcoords[unit];
   }  
@@ -419,9 +418,9 @@ public class PShape3D extends PShape implements PConstants {
       texCoordBuffer.put(convTexcoords, offset, size);
       texCoordBuffer.flip();
       
-      gl.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
-                         size * PGraphicsAndroid3D.SIZEOF_FLOAT, texCoordBuffer);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+      getGl().glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * PGraphicsAndroid3D.SIZEOF_FLOAT, 
+                              size * PGraphicsAndroid3D.SIZEOF_FLOAT, texCoordBuffer);
+      getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
       
       texCoordSet[updateTexunit] = true;
       
@@ -741,8 +740,7 @@ public class PShape3D extends PShape implements PConstants {
       if (newShape) {
         PShape3D who3d = (PShape3D)who;
         who3d.papplet = papplet;
-        who3d.a3d = a3d;
-        who3d.gl = gl;        
+        who3d.a3d = a3d;     
         who3d.root = root;        
         
         // So we can use the load/update methods in the child geometries.        
@@ -882,8 +880,7 @@ public class PShape3D extends PShape implements PConstants {
     group.family = PShape.GROUP;
     group.name = gname;
     group.papplet = papplet;
-    group.a3d = a3d;
-    group.gl = gl; 
+    group.a3d = a3d; 
     group.root = root;
     
     PShape child, p;
@@ -1865,10 +1862,10 @@ public class PShape3D extends PShape implements PConstants {
     indexCount = n;
     
     glIndexBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);    
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glIndexBufferID);    
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glIndexBufferID);    
     final int bufferSize = indexCount * PGraphicsAndroid3D.SIZEOF_INT;
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, null, GL11.GL_STATIC_DRAW);    
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0); 
+    getGl().glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, null, GL11.GL_STATIC_DRAW);    
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0); 
     
     ByteBuffer ibb = ByteBuffer.allocateDirect(indexCount * PGraphicsAndroid3D.SIZEOF_SHORT);
     ibb.order(ByteOrder.nativeOrder());
@@ -1879,7 +1876,7 @@ public class PShape3D extends PShape implements PConstants {
   }
   
   public void setIndices(ArrayList<Short> recordedIndices) {
-    gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);    
+    getGl().glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);    
     
     for (int i = 0; i < indexCount; i++) {
       indices[i] = (Short)recordedIndices.get(i);
@@ -1888,24 +1885,24 @@ public class PShape3D extends PShape implements PConstants {
     indexBuffer.put(indices);    
     indexBuffer.flip();
     
-    gl.glBufferSubData(GL11.GL_ELEMENT_ARRAY_BUFFER, 0, indexCount * PGraphicsAndroid3D.SIZEOF_SHORT, 
-                       indexBuffer);
+    getGl().glBufferSubData(GL11.GL_ELEMENT_ARRAY_BUFFER, 0, indexCount * PGraphicsAndroid3D.SIZEOF_SHORT, 
+                            indexBuffer);
         
-    gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);    
+    getGl().glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);    
   }  
   
   public void setIndices(int src[]) {
-    gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);   
+    getGl().glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);   
     
     PApplet.arrayCopy(src, indices);
     indexBuffer.position(0);
     indexBuffer.put(indices);    
     indexBuffer.flip();
     
-    gl.glBufferSubData(GL11.GL_ELEMENT_ARRAY_BUFFER, 0, indexCount * PGraphicsAndroid3D.SIZEOF_SHORT, 
-                       indexBuffer);
+    getGl().glBufferSubData(GL11.GL_ELEMENT_ARRAY_BUFFER, 0, indexCount * PGraphicsAndroid3D.SIZEOF_SHORT, 
+                            indexBuffer);
         
-    gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);  
+    getGl().glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);  
   }    
   
   public void useIndices(boolean val) {
@@ -1931,6 +1928,7 @@ public class PShape3D extends PShape implements PConstants {
     }
   }    
   
+  
   ////////////////////////////////////////////////////////////  
   
   // Data allocation, deletion.
@@ -1955,8 +1953,7 @@ public class PShape3D extends PShape implements PConstants {
   
   protected void initShape(int numVert, Parameters params) {
     // Checking we have what we need:
-    gl = a3d.gl11;
-    if (gl == null) {
+    if (a3d.gl11 == null) {
       throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
     }
     if (!PGraphicsAndroid3D.vboSupported) {
@@ -1973,8 +1970,7 @@ public class PShape3D extends PShape implements PConstants {
   
   protected void initShapeOBJ(String filename, Parameters params) {
     // Checking we have all we need:
-    gl = a3d.gl11;
-    if (gl == null) {
+    if (a3d.gl11 == null) {
       throw new RuntimeException("PShape3D: OpenGL ES 1.1 required");
     }
     if (!PGraphicsAndroid3D.vboSupported) {
@@ -2045,10 +2041,10 @@ public class PShape3D extends PShape implements PConstants {
     deleteVertexBuffer();  // Just in the case this object is being re-initialized.
     
     glVertexBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);    
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);    
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);    
     final int bufferSize = vertexBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, vertexBuffer, glUsage);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+    getGl().glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, vertexBuffer, glUsage);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
 
@@ -2071,10 +2067,10 @@ public class PShape3D extends PShape implements PConstants {
     deleteColorBuffer();
     
     glColorBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
     final int bufferSize = colorBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;    
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, colorBuffer, glUsage);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+    getGl().glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, colorBuffer, glUsage);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
 
@@ -2093,10 +2089,10 @@ public class PShape3D extends PShape implements PConstants {
     deleteNormalBuffer();
     
     glNormalBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
     final int bufferSize = normalBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;    
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, normalBuffer, glUsage);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+    getGl().glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, normalBuffer, glUsage);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
   }
   
 
@@ -2124,10 +2120,10 @@ public class PShape3D extends PShape implements PConstants {
     }
     
     glTexCoordBufferID[0] = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
     final int bufferSize = texCoordBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;
-    gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);    
+    getGl().glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);    
   }
   
   
@@ -2137,10 +2133,10 @@ public class PShape3D extends PShape implements PConstants {
       deleteTexCoordBuffer(t);
       
       glTexCoordBufferID[t] = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);      
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
+      getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
       final int bufferSize = texCoordBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;
-      gl.glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);     
+      getGl().glBufferData(GL11.GL_ARRAY_BUFFER, bufferSize, texCoordBuffer, glUsage);
+      getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);     
     }
     
     // We need more arrays for texture coordinates, and to save the contents of the already
@@ -2377,30 +2373,30 @@ public class PShape3D extends PShape implements PConstants {
     // Setting line width and point size from stroke value, using 
     // either the group's weight or the renderer's weight. 
     if (0 < strokeWeight && style) {
-      gl.glLineWidth(strokeWeight);
+      getGl().glLineWidth(strokeWeight);
       pointSize = PApplet.min(strokeWeight, PGraphicsAndroid3D.maxPointSize);
     } else {
-      gl.glLineWidth(g.strokeWeight);
+      getGl().glLineWidth(g.strokeWeight);
       pointSize = PApplet.min(g.strokeWeight, PGraphicsAndroid3D.maxPointSize);
     }
     if (!pointSprites) {
       // Point sprites use their own size variable (set below).
-      gl.glPointSize(pointSize); 
+      getGl().glPointSize(pointSize); 
     }
     
-    gl.glEnableClientState(GL11.GL_NORMAL_ARRAY);
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
-    gl.glNormalPointer(GL11.GL_FLOAT, 0, 0);    
+    getGl().glEnableClientState(GL11.GL_NORMAL_ARRAY);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
+    getGl().glNormalPointer(GL11.GL_FLOAT, 0, 0);    
 
     if (style) {
-      gl.glEnableClientState(GL11.GL_COLOR_ARRAY);
-      gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
-      gl.glColorPointer(4, GL11.GL_FLOAT, 0, 0);
+      getGl().glEnableClientState(GL11.GL_COLOR_ARRAY);
+      getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
+      getGl().glColorPointer(4, GL11.GL_FLOAT, 0, 0);
     }        
 
-    gl.glEnableClientState(GL11.GL_VERTEX_ARRAY);            
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);
-    gl.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
+    getGl().glEnableClientState(GL11.GL_VERTEX_ARRAY);            
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);
+    getGl().glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
 
     numTextures = 0;
     if (style) {
@@ -2412,9 +2408,9 @@ public class PShape3D extends PShape implements PConstants {
             break;
           }
 
-          gl.glEnable(tex.glTarget);
-          gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-          gl.glBindTexture(tex.glTarget, tex.glID);
+          getGl().glEnable(tex.glTarget);
+          getGl().glActiveTexture(GL10.GL_TEXTURE0 + t);
+          getGl().glBindTexture(tex.glTarget, tex.glID);
           renderTextures[numTextures] = tex;
           numTextures++;
         } else {
@@ -2431,10 +2427,10 @@ public class PShape3D extends PShape implements PConstants {
         // instead of shrinking them past a defined threshold size. The threshold 
         // is defined by GL_POINT_FADE_THRESHOLD_SIZE and is not clamped to the 
         // minimum and maximum point sizes.
-        gl.glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * maxSpriteSize);
-        gl.glPointParameterf(GL11.GL_POINT_SIZE_MIN, 1.0f);
-        gl.glPointParameterf(GL11.GL_POINT_SIZE_MAX, maxSpriteSize);
-        gl.glPointSize(maxSpriteSize);
+        getGl().glPointParameterf(GL11.GL_POINT_FADE_THRESHOLD_SIZE, 0.6f * maxSpriteSize);
+        getGl().glPointParameterf(GL11.GL_POINT_SIZE_MIN, 1.0f);
+        getGl().glPointParameterf(GL11.GL_POINT_SIZE_MAX, maxSpriteSize);
+        getGl().glPointSize(maxSpriteSize);
         
         // This is how will our point sprite's size will be modified by 
         // distance from the viewer:
@@ -2443,20 +2439,20 @@ public class PShape3D extends PShape implements PConstants {
         // in glPointParameterf(GL11.GL_POINT_SIZE_MIN/GL11.GL_POINT_SIZE_MAX. 
         // d is the distance from the point sprite to the camera and p is the array parameter 
         // passed in the following call: 
-        gl.glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, spriteDistAtt, 0);
+        getGl().glPointParameterfv(GL11.GL_POINT_DISTANCE_ATTENUATION, spriteDistAtt, 0);
 
         // Specify point sprite texture coordinate replacement mode for each 
         // texture unit
-        gl.glTexEnvf(GL11.GL_POINT_SPRITE_OES, GL11.GL_COORD_REPLACE_OES, GL11.GL_TRUE);
+        getGl().glTexEnvf(GL11.GL_POINT_SPRITE_OES, GL11.GL_COORD_REPLACE_OES, GL11.GL_TRUE);
 
-        gl.glEnable(GL11.GL_POINT_SPRITE_OES);           
+        getGl().glEnable(GL11.GL_POINT_SPRITE_OES);           
       } else {
         // Regular texturing.                 
         for (int t = 0; t < numTextures; t++) {
-          gl.glClientActiveTexture(GL11.GL_TEXTURE0 + t);
-          gl.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-          gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
-          gl.glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
+          getGl().glClientActiveTexture(GL11.GL_TEXTURE0 + t);
+          getGl().glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+          getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);
+          getGl().glTexCoordPointer(2, GL11.GL_FLOAT, 0, 0);
         }          
         if (1 < numTextures) {
           a3d.setTextureBlend(renderTextures, numTextures);
@@ -2468,42 +2464,42 @@ public class PShape3D extends PShape implements PConstants {
       // Using fill or tint color when the style is disabled.
       if (0 < numTextures) {
         if (g.tint) {
-          gl.glColor4f(g.tintR, g.tintG, g.tintB, g.tintA);  
+          getGl().glColor4f(g.tintR, g.tintG, g.tintB, g.tintA);  
         } else {
-          gl.glColor4f(1, 1, 1, 1);  
+          getGl().glColor4f(1, 1, 1, 1);  
         }
       } else {
-        gl.glColor4f(g.fillR, g.fillG, g.fillB, g.fillA);          
+        getGl().glColor4f(g.fillR, g.fillG, g.fillB, g.fillA);          
       }              
     }
 
     if (glIndexBufferID != 0 && useIndices) {
-      gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
+      getGl().glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
       // Here the vertex indices are understood as the range of indices.
       int last = lastIndex;
       int first = firstIndex;
-      gl.glDrawElements(glMode, last - first + 1, GL11.GL_UNSIGNED_SHORT, first * PGraphicsAndroid3D.SIZEOF_SHORT);      
-      gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
+      getGl().glDrawElements(glMode, last - first + 1, GL11.GL_UNSIGNED_SHORT, first * PGraphicsAndroid3D.SIZEOF_SHORT);      
+      getGl().glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
     } else {    
-      gl.glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
+      getGl().glDrawArrays(glMode, firstVertex, lastVertex - firstVertex + 1);
     }    
     
     if (0 < numTextures) {
       for (int t = 0; t < numTextures; t++) {
         PTexture tex = renderTextures[t];
-        gl.glActiveTexture(GL10.GL_TEXTURE0 + t);
-        gl.glBindTexture(tex.glTarget, 0); 
+        getGl().glActiveTexture(GL10.GL_TEXTURE0 + t);
+        getGl().glBindTexture(tex.glTarget, 0); 
       }      
       for (int t = 0; t < numTextures; t++) {
         PTexture tex = renderTextures[t];
-        gl.glDisable(tex.glTarget);
+        getGl().glDisable(tex.glTarget);
       }      
       if (pointSprites)   {
-        gl.glDisable(GL11.GL_POINT_SPRITE_OES);
+        getGl().glDisable(GL11.GL_POINT_SPRITE_OES);
       } else {
         for (int t = 0; t < numTextures; t++) {
-          gl.glClientActiveTexture(GL10.GL_TEXTURE0 + t);        
-          gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+          getGl().glClientActiveTexture(GL10.GL_TEXTURE0 + t);        
+          getGl().glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         }
         if (1 < numTextures) {
           a3d.cleanupTextureBlend(numTextures);
@@ -2511,12 +2507,21 @@ public class PShape3D extends PShape implements PConstants {
       }
     }
 
-    gl.glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
-    gl.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-    gl.glDisableClientState(GL11.GL_COLOR_ARRAY);
-    gl.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+    getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, 0);
+    getGl().glDisableClientState(GL11.GL_VERTEX_ARRAY);
+    getGl().glDisableClientState(GL11.GL_COLOR_ARRAY);
+    getGl().glDisableClientState(GL11.GL_NORMAL_ARRAY);
   }
   
+  /////////////////////////////////////////////////////////////////////////// 
+
+  // Utilities 
+  
+  
+  protected GL11 getGl() {
+    return a3d.gl11;
+  }    
+ 
   
   ///////////////////////////////////////////////////////////////////////////   
   
