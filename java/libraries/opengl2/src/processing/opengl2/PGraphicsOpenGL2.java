@@ -6510,8 +6510,69 @@ public class PGraphicsOpenGL2 extends PGraphics {
     gl2f.glPopMatrix();        
   }  
   
+  /** Utility function to render texture. */
+  protected void drawTexture(int target, int id, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+    int[] crop = {x1, y1, w1, h1};
+    drawTexture(target, id, crop, x2, y2, w2, h2);    
+  }  
+  
+  /** Utility function to render texture. */
+  protected void drawTexture(int target, int id, int[] crop, int x, int y, int w, int h) {
+    gl.glViewport(0, 0, w, h);
+
+    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    gl2f.glPushMatrix();
+    gl2f.glLoadIdentity();
+    
+    gl2f.glOrthof(0, w, 0, h, -1, 1);
+
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    gl2f.glPushMatrix();
+    gl2f.glLoadIdentity();    
+    
+    gl.glEnable(target);
+    gl.glBindTexture(target, id);
+    gl.glDepthMask(false);
+    gl.glDisable(GL.GL_BLEND);
+
+    // The texels of the texture replace the color of wherever is on the screen.
+    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);    
+
+    gl2f.glTranslatef(x, y, 0);
+    gl2f.glScalef(w, h, 1);
+    // Rendering the quad with the appropriate texture coordinates needed for the
+    // specified crop region
+    renderTexQuad(crop[0] / w, crop[1] / h, (crop[0] + crop[2]) / w, (crop[1] + crop[3]) / h);
+    
+    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
+    // with the current fragment color.
+    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+    
+    gl.glBindTexture(target, 0);
+    gl.glDisable(target);
+    
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    }
+
+    screenBlend(screenBlendMode);
+
+    // Restoring viewport.
+    gl.glViewport(0, 0, width, height);
+
+    // Restoring matrices.
+    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    gl2f.glPopMatrix();
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    gl2f.glPopMatrix();        
+  }  
+  
+  
   /** 
-   * Utility function to render currently bound using current blend mode. Equivalent to:
+   * Utility function to render currently bound texture using current blend mode. 
+   * Equivalent to:
    * glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
    * glDrawTexiOES(x, y, 0, w, h);
    * in OpenGL ES. 
@@ -6934,7 +6995,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     if (-1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample")) {
       fboMultisampleSupported = true;
     }    
-    
+
     blendEqSupported = true;   
     
     usingGLMatrixStack = !matrixGetSupported;
