@@ -3592,9 +3592,18 @@ public class PGraphics3D extends PGraphics {
    * standard orthographic projection.
    */
   public void ortho() {
-    ortho(0, width, 0, height, -10, 10);
+    ortho(0, width, 0, height, cameraNear, cameraFar);
   }
 
+  /**
+   * Calls ortho() with the specified size of the viewing volume along
+   * the X and Z directions. The near and far clipping planes are taken
+   * from the current camera configuration.
+   */  
+  public void ortho(float left, float right,
+                    float bottom, float top) {
+    ortho(left, right, bottom, top, cameraNear, cameraFar);
+  }  
 
   /**
    * Similar to gluOrtho(), but wipes out the current projection matrix.
@@ -3604,6 +3613,12 @@ public class PGraphics3D extends PGraphics {
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
+    left -= width/2;
+    right -= width/2;
+    
+    bottom -= height/2;
+    top -= height/2;    
+    
     float x =  2.0f / (right - left);
     float y =  2.0f / (top - bottom);
     float z = -2.0f / (far - near);
