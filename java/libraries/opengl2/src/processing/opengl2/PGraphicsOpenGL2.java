@@ -4482,7 +4482,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * orthographic projection.
    */
   public void ortho() {
-    ortho(0, width, 0, height, cameraNear, cameraFar);
+    ortho(0, width, 0, height, -10, 10);
   }
 
   /**
