@@ -705,6 +705,17 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   // RESOURCE HANDLING
 
+  /*
+  protected int createGLResource(int type, Object obj) {
+    glTextureObjects.add(new Texture(id, obj));
+  }
+  
+  public void recreateGLResources() {
+  for each cached object, run its init method (which in turn will delete and
+  recreate the cached opengl resources). 
+  }
+  */
+  
 
   protected int createGLResource(int type) {
     int id = 0;
@@ -3460,7 +3471,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
         textCharModelImpl(tinfo, x1, y1, x2, y2);
 
-      } else if (textMode == SCREEN) {
+      } else if (textMode == SCREEN) {        
         int xx = (int) x + glyph.leftExtent;
         int yy = (int) y - glyph.topExtent;
 
@@ -3542,8 +3553,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
     if (textTex.currentTex != info.texIndex) {
       textTex.setTexture(info.texIndex);
     }
-
-    drawTexture(info.crop, xx, height - yy, w0, h0); 
+    
+    drawTexture(info.width, info.height, info.crop, xx, height - (yy + h0), w0, h0);
   }
 
   protected void allocateTextModel() {  
@@ -4490,7 +4501,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * the X and Z directions. The near and far clipping planes are taken
    * from the current camera configuration.
    */  
-  public void ortho(float left, float right, float bottom, float top) {
+  public void ortho(float left, float right, 
+                    float bottom, float top) {
     ortho(left, right, bottom, top, cameraNear, cameraFar);
   }  
   
@@ -4503,8 +4515,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * camera position.
    * 
    */
-  public void ortho(float left, float right, float bottom, float top,
-      float near, float far) {
+  public void ortho(float left, float right, 
+                    float bottom, float top,
+                    float near, float far) {
     left -= width/2;
     right -= width/2;
     
@@ -5511,7 +5524,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       pixelBuffer = IntBuffer.allocate(pixels.length);
       pixelBuffer.rewind();
     }
-
+    
     gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
     pixelBuffer.get(pixels);
     pixelBuffer.rewind();
@@ -5567,6 +5580,12 @@ public class PGraphicsOpenGL2 extends PGraphics {
         }
       }
     }
+    
+    if (primarySurface) {
+      // Load texture.
+      loadTextureImpl(POINT);           
+      pixelsToTexture();
+    }    
   }
 
   /**
@@ -6459,116 +6478,42 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   /** Utility function to render texture. */
   protected void drawTexture(PTexture tex, int[] crop, int x, int y, int w, int h) {
-    gl.glViewport(0, 0, w, h);
-
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPushMatrix();
-    gl2f.glLoadIdentity();
-    
-    gl2f.glOrthof(0, w, 0, h, -1, 1);
-
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glPushMatrix();
-    gl2f.glLoadIdentity();    
-    
-    gl.glEnable(tex.glTarget);
-    gl.glBindTexture(tex.glTarget, tex.glID);
-    gl.glDepthMask(false);
-    gl.glDisable(GL.GL_BLEND);
-
-    // The texels of the texture replace the color of wherever is on the screen.
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);    
-
-    gl2f.glTranslatef(x, y, 0);
-    gl2f.glScalef(w, h, 1);
-    // Rendering the quad with the appropriate texture coordinates needed for the
-    // specified crop region
-    renderTexQuad(crop[0] / w, crop[1] / h, (crop[0] + crop[2]) / w, (crop[1] + crop[3]) / h);
-    
-    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
-    // with the current fragment color.
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
-    
-    gl.glBindTexture(tex.glTarget, 0);
-    gl.glDisable(tex.glTarget);
-    
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
-    } else {
-      gl.glDepthMask(true);
-    }
-
-    screenBlend(screenBlendMode);
-
-    // Restoring viewport.
-    gl.glViewport(0, 0, width, height);
-
-    // Restoring matrices.
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPopMatrix();
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glPopMatrix();        
+    drawTexture(tex.glTarget, tex.glID, tex.glWidth, tex.glHeight, crop, x, y, w, h);
   }  
   
+  
   /** Utility function to render texture. */
-  protected void drawTexture(int target, int id, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+  protected void drawTexture(int target, int id, int w, int h, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
     int[] crop = {x1, y1, w1, h1};
-    drawTexture(target, id, crop, x2, y2, w2, h2);    
+    drawTexture(target, id, w, h, crop, x2, y2, w2, h2);    
   }  
   
+  
   /** Utility function to render texture. */
-  protected void drawTexture(int target, int id, int[] crop, int x, int y, int w, int h) {
-    gl.glViewport(0, 0, w, h);
-
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPushMatrix();
-    gl2f.glLoadIdentity();
-    
-    gl2f.glOrthof(0, w, 0, h, -1, 1);
-
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glPushMatrix();
-    gl2f.glLoadIdentity();    
-    
+  protected void drawTexture(int target, int id, int tw, int th, int[] crop, int x, int y, int w, int h) {
     gl.glEnable(target);
-    gl.glBindTexture(target, id);
-    gl.glDepthMask(false);
-    gl.glDisable(GL.GL_BLEND);
-
+    gl.glBindTexture(target, id);    
+    gl.glDisable(GL.GL_BLEND);    
+    
     // The texels of the texture replace the color of wherever is on the screen.
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);    
-
-    gl2f.glTranslatef(x, y, 0);
-    gl2f.glScalef(w, h, 1);
-    // Rendering the quad with the appropriate texture coordinates needed for the
-    // specified crop region
-    renderTexQuad(crop[0] / w, crop[1] / h, (crop[0] + crop[2]) / w, (crop[1] + crop[3]) / h);
+    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);       
+    
+    drawTexture(tw, th, crop, x, y, w, h);
     
     // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
     // with the current fragment color.
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);        
     
     gl.glBindTexture(target, 0);
     gl.glDisable(target);
     
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
-    } else {
-      gl.glDepthMask(true);
-    }
-
     screenBlend(screenBlendMode);
-
-    // Restoring viewport.
-    gl.glViewport(0, 0, width, height);
-
-    // Restoring matrices.
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPopMatrix();
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glPopMatrix();        
   }  
   
+  protected void drawTexture(int w, int h, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+    int[] crop = {x1, y1, w1, h1};
+    drawTexture(w, h, crop, x2, y2, w2, h2);
+  }
   
   /** 
    * Utility function to render currently bound texture using current blend mode. 
@@ -6577,15 +6522,17 @@ public class PGraphicsOpenGL2 extends PGraphics {
    * glDrawTexiOES(x, y, 0, w, h);
    * in OpenGL ES. 
    */
-  protected void drawTexture(int[] crop, int x, int y, int w, int h) {
-    gl.glViewport(0, 0, w, h);
+  protected void drawTexture(int tw, int th, int[] crop, int x, int y, int w, int h) {
+    gl.glDepthMask(false);
+    
+    gl.glViewport(0, 0, width, height);
 
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glPushMatrix();
     gl2f.glLoadIdentity();
     
-    gl2f.glOrthof(0, w, 0, h, -1, 1);
-
+    gl2f.glOrthof(0, width, 0, height, -1, 1);
+    
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     gl2f.glPushMatrix();
     gl2f.glLoadIdentity();      
@@ -6594,22 +6541,23 @@ public class PGraphicsOpenGL2 extends PGraphics {
     gl2f.glScalef(w, h, 1);
     // Rendering the quad with the appropriate texture coordinates needed for the
     // specified crop region
-    renderTexQuad(crop[0] / w, crop[1] / h, (crop[0] + crop[2]) / w, (crop[1] + crop[3]) / h);
-
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
-    } else {
-      gl.glDepthMask(true);
-    }
-
-    // Restoring viewport.
-    gl.glViewport(0, 0, width, height);
+    float s0 = (float)crop[0] / tw;
+    float s1 = (float)(crop[0] + crop[2]) / tw;    
+    float t0 = (float)crop[1] / th;
+    float t1 = (float)(crop[1] + crop[3]) / th;
+    drawTexQuad(s0, t0, s1, t1);
 
     // Restoring matrices.
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glPopMatrix();
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glPopMatrix();      
+    gl2f.glPopMatrix();
+    
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    }    
   }
   
   protected void allocateTexQuad() {  
@@ -6628,18 +6576,24 @@ public class PGraphicsOpenGL2 extends PGraphics {
                                       1, 1, 0});
   }
   
-  protected void renderTexQuad() { 
-    renderTexQuad(0, 0, 1, 1);
+  protected void drawTexQuad() { 
+    drawTexQuad(0, 0, 1, 1);
   }
   
   /** 
    * Pushes a normalized (1x1) textured quad to the GPU.
    */
-  protected void renderTexQuad(float u0, float v0, float u1, float v1) {  
+  protected void drawTexQuad(float u0, float v0, float u1, float v1) {  
     if (quadVertexBuffer == null) {
       allocateTexQuad();
     }
-            
+     
+    quadVertexBuffer.position(0);       
+    quadVertexBuffer.put(new float[] {0, 0, 0, 
+                                      0, 1, 0, 
+                                      1, 0, 0,                        
+                                      1, 1, 0});
+    
     quadTexCoordBuffer.position(0);
     quadTexCoordBuffer.put(new float[] {u0, v0, 
                                         u0, v1, 
@@ -6654,7 +6608,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     
     gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, quadVertexBuffer);
     gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, quadTexCoordBuffer);
-    gl2f.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 12);
+    gl2f.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
 
     gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
     gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    

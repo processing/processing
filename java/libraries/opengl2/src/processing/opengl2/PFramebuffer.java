@@ -312,7 +312,7 @@ public class PFramebuffer implements PConstants {
       if (0 < numColorBuffers) {
         // Drawing the current contents of the first color buffer to emulate
         // front-back buffer swap.
-        ogl.drawTexture(glColorBufferTargets[0], glColorBufferIDs[0], 0, 0, width, height, 0, 0, width, height);
+        ogl.drawTexture(glColorBufferTargets[0], glColorBufferIDs[0], width, height, 0, 0, width, height, 0, 0, width, height);
       }
       
       if (noDepth) {
