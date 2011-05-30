@@ -1501,7 +1501,14 @@ public class PGraphics2D extends PGraphics {
 
   // These will be handled entirely by PGraphics.
 
-
+  
+  protected void beginTextScreenMode() {  
+    loadPixels();
+  }
+  
+  protected void endTextScreenMode() {
+    updatePixels();
+  }
 
   //////////////////////////////////////////////////////////////
 
