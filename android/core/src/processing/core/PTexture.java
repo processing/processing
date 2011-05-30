@@ -153,7 +153,16 @@ public class PTexture implements PConstants {
    * @param height int
    */
   public void init(int width, int height) {
-    init(width, height, new Parameters());
+    Parameters params;
+    if (0 < glID) {
+      // Re-initializing a pre-existing texture.
+      // We use the current parameters as default:
+      params = getParameters();      
+    } else {
+      // Just built-in default parameters otherwise:
+      params = new Parameters();
+    }    
+    init(width, height, params);
   }
   
 

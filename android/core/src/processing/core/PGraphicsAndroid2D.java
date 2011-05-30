@@ -1091,6 +1091,14 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    PApplet.println("P2D textSize textLeading = " + textLeading);
   }
 
+  
+  protected void beginTextScreenMode() {
+    loadPixels();
+  }
+  
+  protected void endTextScreenMode() {
+    updatePixels();
+  }   
 
   //public float textWidth(char c)
 
