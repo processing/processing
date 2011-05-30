@@ -99,7 +99,9 @@ public class PLine implements PConstants
 
   private PGraphics parent;
 
-
+  private boolean noDepthTest;
+  private boolean updateZBuffer;
+  
   public PLine(PGraphics g) {
     INTERPOLATE_Z = false;
 
@@ -126,6 +128,11 @@ public class PLine implements PConstants
     //m_stencil = parent.stencil;
     if (parent instanceof PGraphics3D) {
       m_zbuffer = ((PGraphics3D) parent).zbuffer;
+      noDepthTest = parent.hints[DISABLE_DEPTH_TEST];
+      updateZBuffer = !parent.hints[DISABLE_DEPTH_MASK];
+    } else {
+      noDepthTest = true;
+      updateZBuffer = false;
     }
 
     // other things to reset
@@ -526,9 +533,9 @@ public class PLine implements PConstants
       m_pixels[offset] = m_stroke;
       
     } else {
-      if (iz <= m_zbuffer[offset]) {
+      if (noDepthTest || iz <= m_zbuffer[offset]) {
         m_pixels[offset] = m_stroke;
-        m_zbuffer[offset] = iz;
+        if (updateZBuffer) m_zbuffer[offset] = iz;
       }
     }
   }
@@ -542,7 +549,7 @@ public class PLine implements PConstants
     float iz = m_z0;
     int offset = y0 * SCREEN_WIDTH + x0;
 
-    if ((m_zbuffer == null) || iz <= m_zbuffer[offset]) {
+    if (noDepthTest || (m_zbuffer == null) || iz <= m_zbuffer[offset]) {
       int alpha = ia >> 16;
       int r0 = m_pixels[offset];
       int g0 = r0 & 0xFF00;
@@ -555,7 +562,7 @@ public class PLine implements PConstants
 
       m_pixels[offset] = 0xFF000000 |
         (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-      if (m_zbuffer != null) m_zbuffer[offset] = iz;
+      if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = iz;
     }
   }
 
@@ -578,7 +585,7 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
         m_pixels[offset] = m_stroke;
-        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
+        if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = m_z0;
         j+=dt;
       }
 
@@ -588,7 +595,7 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
         m_pixels[offset] = m_stroke;
-        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
+        if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = m_z0;
         j+=dt;
       }
     }
@@ -666,7 +673,7 @@ public class PLine implements PConstants
         offset = y0 * SCREEN_WIDTH + (j>>16);
         m_pixels[offset] = 0xFF000000 |
           ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
-        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
+        if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = m_z0;
         ir += dr;
         ig += dg;
         ib += db;
@@ -679,7 +686,7 @@ public class PLine implements PConstants
         offset = (j>>16) * SCREEN_WIDTH + x0;
         m_pixels[offset] = 0xFF000000 |
           ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
-        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
+        if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = m_z0;
         ir += dr;
         ig += dg;
         ib += db;
@@ -720,7 +727,7 @@ public class PLine implements PConstants
 
         m_pixels[offset] = 0xFF000000 |
           (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
+        if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = m_z0;
 
         ir+= dr;
         ig+= dg;
@@ -751,7 +758,7 @@ public class PLine implements PConstants
 
         m_pixels[offset] = 0xFF000000 |
           (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-        if (m_zbuffer != null) m_zbuffer[offset] = m_z0;
+        if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = m_z0;
 
         ir+= dr;
         ig+= dg;
@@ -773,9 +780,9 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
         if (offset < m_pixels.length) {
-          if (iz <= m_zbuffer[offset]) {
+          if (noDepthTest || iz <= m_zbuffer[offset]) {
             m_pixels[offset] = m_stroke;
-            m_zbuffer[offset] = iz;
+            if (updateZBuffer) m_zbuffer[offset] = iz;
           }
         }
         iz+=dz;
@@ -787,9 +794,9 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
         if (offset < m_pixels.length) {
-          if (iz <= m_zbuffer[offset]) {
+          if (noDepthTest || iz <= m_zbuffer[offset]) {
             m_pixels[offset] = m_stroke;
-            m_zbuffer[offset] = iz;
+            if (updateZBuffer) m_zbuffer[offset] = iz;
           }
         }
         iz+=dz;
@@ -815,7 +822,7 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
         if (offset < m_pixels.length) {
-          if (iz <= m_zbuffer[offset]) {
+          if (noDepthTest || iz <= m_zbuffer[offset]) {
             int alpha = ia >> 16;
             int r0 = m_pixels[offset];
             int g0 = r0 & 0xFF00;
@@ -827,7 +834,7 @@ public class PLine implements PConstants
 
             m_pixels[offset] = 0xFF000000 |
               (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-            m_zbuffer[offset] = iz;
+            if (updateZBuffer) m_zbuffer[offset] = iz;
           }
         }
         iz +=dz;
@@ -841,7 +848,7 @@ public class PLine implements PConstants
         offset = (j>>16) * SCREEN_WIDTH + x0;
 
         if (offset < m_pixels.length) {
-          if (iz <= m_zbuffer[offset]) {
+          if (noDepthTest || iz <= m_zbuffer[offset]) {
             int alpha = ia >> 16;
             int r0 = m_pixels[offset];
             int g0 = r0 & 0xFF00;
@@ -853,7 +860,7 @@ public class PLine implements PConstants
 
             m_pixels[offset] = 0xFF000000 |
               (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-            m_zbuffer[offset] = iz;
+            if (updateZBuffer) m_zbuffer[offset] = iz;
           }
         }
         iz += dz;
@@ -878,10 +885,10 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
 
-        if (iz <= m_zbuffer[offset]) {
+        if (noDepthTest || iz <= m_zbuffer[offset]) {
           m_pixels[offset] = 0xFF000000 |
             ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
-          m_zbuffer[offset] = iz;
+          if (updateZBuffer) m_zbuffer[offset] = iz;
         }
         iz +=dz;
         ir += dr;
@@ -893,10 +900,10 @@ public class PLine implements PConstants
       length += x0;
       for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
-        if (iz <= m_zbuffer[offset]) {
+        if (noDepthTest || iz <= m_zbuffer[offset]) {
           m_pixels[offset] = 0xFF000000 |
             ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
-          m_zbuffer[offset] = iz;
+          if (updateZBuffer) m_zbuffer[offset] = iz;
         }
         iz += dz;
         ir += dr;
@@ -924,7 +931,7 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (x0<<16); y0 <= length; ++y0) {
         offset = y0 * SCREEN_WIDTH + (j>>16);
 
-        if (iz <= m_zbuffer[offset]) {
+        if (noDepthTest || iz <= m_zbuffer[offset]) {
           int pr = ir & 0xFF0000;
           int pg = (ig >> 8) & 0xFF00;
           int pb = (ib >> 16);
@@ -942,7 +949,7 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          m_zbuffer[offset] = iz;
+          if (updateZBuffer) m_zbuffer[offset] = iz;
         }
         iz+=dz;
         ir+= dr;
@@ -957,7 +964,7 @@ public class PLine implements PConstants
       for (int j = 0x8000 + (y0<<16); x0 <= length; ++x0) {
         offset = (j>>16) * SCREEN_WIDTH + x0;
 
-        if (iz <= m_zbuffer[offset]) {
+        if (noDepthTest || iz <= m_zbuffer[offset]) {
           int pr = ir & 0xFF0000;
           int pg = (ig >> 8) & 0xFF00;
           int pb = (ib >> 16);
@@ -975,7 +982,7 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          m_zbuffer[offset] = iz;
+          if (updateZBuffer) m_zbuffer[offset] = iz;
         }
         iz += dz;
         ir += dr;
@@ -1016,7 +1023,7 @@ public class PLine implements PConstants
         int pg = (ig >> 8) & 0xFF00;
         int pb = (ib >> 16);
 
-        if ((m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
+        if (noDepthTest || (m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
           int alpha = (((~xi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1030,7 +1037,7 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          if (m_zbuffer != null) m_zbuffer[offset] = iz;
+          if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = iz;
         }
 
         // this if() makes things slow. there should be a better way to check 
@@ -1044,7 +1051,7 @@ public class PLine implements PConstants
 
         offset = (yi>>16) * SCREEN_WIDTH + temp;
 
-        if ((m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
+        if (noDepthTest || (m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
           int alpha = (((xi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1058,7 +1065,7 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          if (m_zbuffer != null) m_zbuffer[offset] = iz;
+          if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = iz;
         }
 
         xi += dt;
@@ -1083,7 +1090,7 @@ public class PLine implements PConstants
         int pg = (ig >> 8) & 0xFF00;
         int pb = (ib >> 16);
 
-        if ((m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
+        if (noDepthTest || (m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
           int alpha = (((~yi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1097,7 +1104,7 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          if (m_zbuffer != null) m_zbuffer[offset] = iz;
+          if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = iz;
         }
 
         // see above [rocha]
@@ -1110,7 +1117,7 @@ public class PLine implements PConstants
 
         offset = temp * SCREEN_WIDTH + (xi>>16);
 
-        if ((m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
+        if (noDepthTest || (m_zbuffer == null) || (iz <= m_zbuffer[offset])) {
           int alpha = (((yi >> 8) & 0xFF) * (ia >> 16)) >> 8;
 
           int r0 = m_pixels[offset];
@@ -1124,7 +1131,7 @@ public class PLine implements PConstants
 
           m_pixels[offset] = 0xFF000000 |
             (r0 & 0xFF0000) | (g0 & 0xFF00) | (b0 & 0xFF);
-          if (m_zbuffer != null) m_zbuffer[offset] = iz;
+          if (updateZBuffer && m_zbuffer != null) m_zbuffer[offset] = iz;
         }
 
         xi += (1 << 16);

@@ -76,6 +76,7 @@ public class PSmoothTriangle implements PConstants {
   int r2, g2, b2, a2, a2orig;
 
   boolean noDepthTest;
+  boolean updateZBuffer;
 
   PGraphics3D parent;
   int pixels[];
@@ -188,7 +189,8 @@ public class PSmoothTriangle implements PConstants {
     pixels = parent.pixels;
     zbuffer = parent.zbuffer;
 
-    noDepthTest = false;//parent.hints[DISABLE_DEPTH_TEST];
+    noDepthTest = parent.hints[DISABLE_DEPTH_TEST];
+    updateZBuffer = !parent.hints[DISABLE_DEPTH_MASK];
 
     // In 0148+, should always be true if this code is called at all
     //smooth = parent.smooth;
@@ -561,7 +563,7 @@ public class PSmoothTriangle implements PConstants {
           if ((ta == 254) || (ta == 255)) {  // if (ta & 0xf8) would be good
             // no need to blend
             pixels[offset+x] = 0xff000000 | (tr << 16) | (tg << 8) | tb;
-            zbuffer[offset+x] = sp[Z];
+            if (updateZBuffer) zbuffer[offset+x] = sp[Z];
           } else {
             // blend with pixel on screen
             int a1 = 255-ta;
@@ -578,7 +580,7 @@ public class PSmoothTriangle implements PConstants {
 
             //System.out.println("17");
             //check
-            if (ta > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
+            if (updateZBuffer && ta > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
           }
 
           //System.out.println("18");
@@ -601,7 +603,7 @@ public class PSmoothTriangle implements PConstants {
           if (weight == 255) {
             // no blend, no aa, just the rgba
             pixels[offset+x] = rgba;
-            zbuffer[offset+x] = sp[Z];
+            if (updateZBuffer) zbuffer[offset+x] = sp[Z];
 
           } else {
             int r1 = (pixels[offset+x] >> 16) & 0xff;
@@ -616,7 +618,7 @@ public class PSmoothTriangle implements PConstants {
                                 ((g1*a1 + g2*a2) >> 8) << 8 |
                                 ((b1*a1 + b2*a2) >> 8));
 
-            if (a2 > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
+            if (updateZBuffer && a2 > ZBUFFER_MIN_COVERAGE) zbuffer[offset+x] = sp[Z];
           }
         }
       }

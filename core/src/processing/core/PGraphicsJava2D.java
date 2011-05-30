@@ -1130,7 +1130,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     return super.textWidthImpl(buffer, start, stop);
   }
 
-
+  protected void beginTextScreenMode() {  
+    loadPixels();
+  }
+  
+  protected void endTextScreenMode() {
+    updatePixels();
+  }
 
   //////////////////////////////////////////////////////////////
 
