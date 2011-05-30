@@ -94,7 +94,7 @@ class PFontTexture implements PConstants {
       h = PApplet.min(2 * textures[currentTex].glHeight, maxTexHeight);
       resize = true;
     } else {
-      h = PApplet.min(512, maxTexHeight / 4);
+      h = PApplet.min(PGraphicsAndroid3D.maxTextureSize, 512, maxTexHeight / 4);
       resize = false;
     }
     
@@ -238,10 +238,9 @@ class PFontTexture implements PConstants {
       setTexture(lastTex);
     }
     
-    //PApplet.println(glyph.width * glyph.height + " " + rgba.length);
     textures[currentTex].setTexels(offsetX, offsetY, glyph.width, glyph.height, rgba);
     
-    TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY + glyph.height, glyph.width, -glyph.height);
+    TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY, glyph.width, glyph.height);
     offsetX += glyph.width;
  
     if (idx == glyphTexinfos.length) {
@@ -257,28 +256,34 @@ class PFontTexture implements PConstants {
   
   public class TextureInfo {
     public int texIndex;
+    public int width;
+    public int height;    
     public int[] crop;
     public float u0, u1;
     public float v0, v1;
 
     public TextureInfo(int tidx, int cropX, int cropY, int cropW, int cropH) {
-      texIndex = tidx;          
+      texIndex = tidx;
+      width = textures[tidx].glWidth;
+      height = textures[tidx].glHeight;       
       crop = new int[4];
       crop[0] = cropX;
-      crop[1] = cropY;
+      crop[1] = cropY + cropH;
       crop[2] = cropW;
-      crop[3] = cropH;
-      u0 = (float)cropX / (float)textures[tidx].glWidth;
-      u1 = u0 + (float)cropW / (float)textures[tidx].glWidth;
-      v0 = (float)(cropY + cropH) / (float)textures[tidx].glHeight;
-      v1 = (float)cropY / (float)textures[tidx].glHeight;
+      crop[3] = -cropH;
+      u0 = (float)cropX / (float)width;
+      u1 = u0 + (float)cropW / (float)width;
+      v0 = (float)cropY / (float)height;
+      v1 = v0 + (float)cropH / (float)height;
     }
 
     void updateUV() {
-      u0 = (float)crop[0] / (float)textures[texIndex].glWidth;
-      u1 = u0 + (float)crop[2] / (float)textures[texIndex].glWidth;
-      v0 = (float)(crop[1] + crop[3]) / (float)textures[texIndex].glHeight;
-      v1 = (float)crop[1] / (float)textures[texIndex].glHeight;  
+      width = textures[texIndex].glWidth;
+      height = textures[texIndex].glHeight;      
+      u0 = (float)crop[0] / (float)width;
+      u1 = u0 + (float)crop[2] / (float)width;
+      v0 = (float)(crop[1] + crop[3]) / (float)height;
+      v1 = v0 - (float)crop[3] / (float)height; 
     }
   }
 }
