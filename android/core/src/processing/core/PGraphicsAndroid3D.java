@@ -3405,7 +3405,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       textTex.setTexture(info.texIndex);
     }
 
-    drawTexture(info.crop, xx, height - yy, w0, h0);    
+    drawTexture(info.crop, xx, height - (yy + h0), w0, h0);    
   }
 
   protected void allocateTextModel() {  
@@ -4350,7 +4350,8 @@ public class PGraphicsAndroid3D extends PGraphics {
    * the X and Z directions. The near and far clipping planes are taken
    * from the current camera configuration.
    */  
-  public void ortho(float left, float right, float bottom, float top) {
+  public void ortho(float left, float right, 
+                    float bottom, float top) {
     ortho(left, right, bottom, top, cameraNear, cameraFar);
   }  
   
@@ -4363,8 +4364,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * camera position.
    * 
    */
-  public void ortho(float left, float right, float bottom, float top,
-      float near, float far) {
+  public void ortho(float left, float right, 
+                    float bottom, float top,
+                    float near, float far) {
     left -= width/2;
     right -= width/2;
     
@@ -5430,6 +5432,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
       }
     }
+    
+    if (primarySurface && !fboSupported) {
+      // Load texture.
+      loadTextureImpl(POINT);
+      pixelsToTexture();
+    }
   }
 
   /**
@@ -6395,52 +6403,67 @@ public class PGraphicsAndroid3D extends PGraphics {
     drawTexture(tex, crop, x2, y2, w2, h2);    
   }
   
+  
   /** Utility function to render texture. */
   protected void drawTexture(PTexture tex, int[] crop, int x, int y, int w, int h) {
-    gl.glEnable(tex.glTarget);
-    gl.glBindTexture(tex.glTarget, tex.glID);
-    gl.glDepthMask(false);
-    gl.glDisable(GL10.GL_BLEND);
-
-    // The texels of the texture replace the color of wherever is on the screen.
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+    drawTexture(tex.glTarget, tex.glID, crop, x, y, w, h);
+  }  
+  
+  
+  /** Utility function to render texture. */
+  protected void drawTexture(int target, int id, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+    int[] crop = {x1, y1, w1, h1};
+    drawTexture(target, id, crop, x2, y2, w2, h2);    
+  }  
+  
+  
+  /** Utility function to render texture. */
+  protected void drawTexture(int target, int id, int[] crop, int x, int y, int w, int h) {
+    gl.glEnable(target);
+    gl.glBindTexture(target, id);    
+    gl.glDisable(GL10.GL_BLEND);    
     
-    // Setting texture crop.
-    gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
-
-    // There is no need to setup orthographic projection or call any related matrix set/restore
-    // functions here because glDrawTexiOES operates on window coordinates directly:
-    // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
-    // (except for mapping Z to the depth range), so there is no need for any 
-    // matrix setup/restore code."
-    // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).      
-    gl11x.glDrawTexiOES(x, y, 0, w, h);
+    // The texels of the texture replace the color of wherever is on the screen.
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);      
+    
+    drawTexture(crop, x, y, w, h);
     
     // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
     // with the current fragment color.
-    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
+    gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);      
     
-    gl.glBindTexture(tex.glTarget, 0);
-    gl.glDisable(tex.glTarget);
+    gl.glBindTexture(target, 0);
+    gl.glDisable(target);
     
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
-    } else {
-      gl.glDepthMask(true);
-    }
-
     screenBlend(screenBlendMode);
-  }
+  }  
   
+  
+  /** Utility function to render texture. */
+  protected void drawTexture(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+    int[] crop = {x1, y1, w1, h1};
+    drawTexture(crop, x2, y2, w2, h2);
+  }  
+  
+  
+  /** Utility function to render texture. */
   protected void drawTexture(int[] crop, int x, int y, int w, int h) {
- // There is no need to setup orthographic projection or any related matrix set/restore
+    gl.glDepthMask(false);
+    
+    // There is no need to setup orthographic projection or any related matrix set/restore
     // operations here because glDrawTexiOES operates on window coordinates:
     // "glDrawTexiOES takes window coordinates and bypasses the transform pipeline 
     // (except for mapping Z to the depth range), so there is no need for any 
     // matrix setup/restore code."
     // (from https://www.khronos.org/message_boards/viewtopic.php?f=4&t=948&p=2553).        
     gl11.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
-    gl11x.glDrawTexiOES(x, y, 0, w, h);    
+    gl11x.glDrawTexiOES(x, y, 0, w, h);
+    
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);  
+    } else {
+      gl.glDepthMask(true);
+    } 
   }  
   
   // Utility function to copy buffer to texture

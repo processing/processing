@@ -2598,6 +2598,12 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  protected void beginTextScreenMode() {   
+  }
+  
+  protected void endTextScreenMode() {    
+  }    
+  
   // ........................................................
 
 
@@ -2677,7 +2683,7 @@ public class PGraphics extends PImage implements PConstants {
       defaultFontOrDeath("text");
     }
 
-    if (textMode == SCREEN) loadPixels();
+    if (textMode == SCREEN) beginTextScreenMode();
 
     if (textAlignY == CENTER) {
       y += textAscent() / 2;
@@ -2692,7 +2698,7 @@ public class PGraphics extends PImage implements PConstants {
     textBuffer[0] = c;
     textLineAlignImpl(textBuffer, 0, 1, x, y);
 
-    if (textMode == SCREEN) updatePixels();
+    if (textMode == SCREEN) endTextScreenMode();
   }
 
 
@@ -2733,7 +2739,7 @@ public class PGraphics extends PImage implements PConstants {
       defaultFontOrDeath("text");
     }
 
-    if (textMode == SCREEN) loadPixels();
+    if (textMode == SCREEN) beginTextScreenMode();
 
     int length = str.length();
     if (length > textBuffer.length) {
@@ -2778,7 +2784,8 @@ public class PGraphics extends PImage implements PConstants {
     if (start < length) {
       textLineAlignImpl(textBuffer, start, index, x, y);
     }
-    if (textMode == SCREEN) updatePixels();
+    
+    if (textMode == SCREEN) endTextScreenMode();
   }
 
 
@@ -2818,7 +2825,7 @@ public class PGraphics extends PImage implements PConstants {
       defaultFontOrDeath("text");
     }
 
-    if (textMode == SCREEN) loadPixels();
+    if (textMode == SCREEN) beginTextScreenMode();
 
     float hradius, vradius;
     switch (rectMode) {
@@ -2927,7 +2934,7 @@ public class PGraphics extends PImage implements PConstants {
       }
     }
 
-    if (textMode == SCREEN) updatePixels();
+    if (textMode == SCREEN) endTextScreenMode();
   }
 
 
