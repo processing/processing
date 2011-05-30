@@ -524,10 +524,13 @@ public class PGraphics3D extends PGraphics {
     if (which == DISABLE_DEPTH_SORT) {
       flush();
     } else if (which == DISABLE_DEPTH_TEST) {
-      if (zbuffer != null) {  // will be null in OpenGL and others
-        Arrays.fill(zbuffer, Float.MAX_VALUE);
-      }
+      
+      //if (zbuffer != null) {  // will be null in OpenGL and others
+      //  Arrays.fill(zbuffer, Float.MAX_VALUE);
+      //}
+      
     }
+    
     super.hint(which);
   }
 
@@ -1007,7 +1010,7 @@ public class PGraphics3D extends PGraphics {
         if (sx >= 0 && sx < width && sy >= 0 && sy < height) {
           int index = sy*width + sx;
           pixels[index] = points[i][STROKE_COLOR];
-          zbuffer[index] = a[TZ];
+          if (!hints[DISABLE_DEPTH_MASK]) zbuffer[index] = a[TZ];
         }
       }
     }
@@ -2970,6 +2973,13 @@ public class PGraphics3D extends PGraphics {
     return (textMode == MODEL) || (textMode == SCREEN);
   }
 
+  protected void beginTextScreenMode() {  
+    loadPixels();
+  }
+  
+  protected void endTextScreenMode() {
+    updatePixels();
+  }
 
 
   //////////////////////////////////////////////////////////////

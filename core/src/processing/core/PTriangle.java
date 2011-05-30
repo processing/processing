@@ -194,6 +194,7 @@ public class PTriangle implements PConstants
   private PGraphics3D parent;
 
   private boolean noDepthTest;
+  private boolean updateZBuffer;
   //private boolean argbSurface;
 
   /** */
@@ -264,6 +265,7 @@ public class PTriangle implements PConstants
     m_zbuffer = parent.zbuffer;
 
     noDepthTest = parent.hints[DISABLE_DEPTH_TEST];
+    updateZBuffer = !parent.hints[DISABLE_DEPTH_MASK];
     //argbSurface = parent.format == PConstants.ARGB;
 
     // other things to reset
@@ -1102,7 +1104,7 @@ public class PTriangle implements PConstants
 
       for ( ; xstart < xend; xstart++ ) {
         if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-          m_zbuffer[xstart] = iz;
+          if (updateZBuffer) m_zbuffer[xstart] = iz;
           m_pixels[xstart] = m_fill;
 //          m_stencil[xstart] = p;
         }
@@ -1223,7 +1225,7 @@ public class PTriangle implements PConstants
 
       for ( ; xstart < xend; xstart++ ) {
         if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-          m_zbuffer[xstart] = iz;
+          if (updateZBuffer) m_zbuffer[xstart] = iz;
           m_pixels[xstart] = 0xFF000000 | 
             ((ir & 0xFF0000) | ((ig >> 8) & 0xFF00) | (ib >> 16));
 //          m_stencil[xstart] = p;
@@ -1860,7 +1862,7 @@ public class PTriangle implements PConstants
         // try-catch just in case pixel offset is out of range
         try{
           if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            m_zbuffer[xstart] = iz;
+            if (updateZBuffer) m_zbuffer[xstart] = iz;
             if (m_bilinear) {
               //We could (should?) add bounds checking on iu and iv here (keep in mind the 16 bit shift!).
               //This would also be the place to add looping texture mode (bounds check == clamped).
@@ -3086,7 +3088,7 @@ public class PTriangle implements PConstants
 
         try {
           if (noDepthTest || (iz <= m_zbuffer[xstart])) {
-            m_zbuffer[xstart] = iz;
+            if (updateZBuffer) m_zbuffer[xstart] = iz;
 
             int red;
             int grn;
