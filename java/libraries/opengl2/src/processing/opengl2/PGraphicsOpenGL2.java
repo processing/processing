@@ -1108,6 +1108,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     // Restoring hints.
     if (hints[DISABLE_DEPTH_TEST]) {
       gl.glDisable(GL.GL_DEPTH_TEST);
+      gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
     } else {
       gl.glEnable(GL.GL_DEPTH_TEST);
@@ -1265,6 +1266,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
     if (which == DISABLE_DEPTH_TEST) {
       gl.glDisable(GL.GL_DEPTH_TEST);
+      gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 
     } else if (which == ENABLE_DEPTH_TEST) {
@@ -5387,21 +5389,16 @@ public class PGraphicsOpenGL2 extends PGraphics {
   // BACKGROUND
 
   protected void backgroundImpl(PImage image) {
-    gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-    
-    gl.glClearColor(0, 0, 0, 0);
-    gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
-    
+    backgroundImpl();
     set(0, 0, image);
   }
 
   protected void backgroundImpl() {
-    gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-    
     gl.glClearColor(0, 0, 0, 0);
     gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+
+    gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
   }  
   
   //////////////////////////////////////////////////////////////
@@ -6524,8 +6521,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
    */
   protected void drawTexture(int tw, int th, int[] crop, int x, int y, int w, int h) {
     gl.glDepthMask(false);
-    
-    gl.glViewport(0, 0, width, height);
 
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glPushMatrix();
@@ -6587,12 +6582,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
     if (quadVertexBuffer == null) {
       allocateTexQuad();
     }
-     
-    quadVertexBuffer.position(0);       
-    quadVertexBuffer.put(new float[] {0, 0, 0, 
-                                      0, 1, 0, 
-                                      1, 0, 0,                        
-                                      1, 1, 0});
     
     quadTexCoordBuffer.position(0);
     quadTexCoordBuffer.put(new float[] {u0, v0, 
