@@ -28,7 +28,7 @@ PShape wing;
 boolean usingPShape = false;
 
 void setup() {
-  size(480, 800, A3D);
+  size(screenWidth, screenHeight, A3D);
   orientation(PORTRAIT);
   
   PFont font = createFont(PFont.list()[0], 24);
