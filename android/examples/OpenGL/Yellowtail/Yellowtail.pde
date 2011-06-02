@@ -20,7 +20,7 @@ int tmpXp[];
 int tmpYp[];
 
 void setup() {
-  size(480, 800, A3D);
+  size(screenWidth, screenHeight, A3D);
   orientation(PORTRAIT);
   
   background(0, 0, 0);
