@@ -992,6 +992,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Restoring hints.
     if (hints[DISABLE_DEPTH_TEST]) {
       gl.glDisable(GL10.GL_DEPTH_TEST);
+      gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
     } else {
       gl.glEnable(GL10.GL_DEPTH_TEST);
@@ -1147,6 +1148,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     if (which == DISABLE_DEPTH_TEST) {
       gl.glDisable(GL10.GL_DEPTH_TEST);
+      gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
 
     } else if (which == ENABLE_DEPTH_TEST) {
@@ -5236,25 +5238,18 @@ public class PGraphicsAndroid3D extends PGraphics {
   // BACKGROUND
 
   protected void backgroundImpl(PImage image) {
-    gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-    
-    gl.glClearColor(0, 0, 0, 0);
-    gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
-    
+    backgroundImpl();    
     set(0, 0, image);
-    if (0 < parent.frameCount) {
-      // Only one call to background during the drawing loop is needed to set the clear mode to true.    
-      clearColorBuffer = true;
-    }    
   }
 
   protected void backgroundImpl() {
-    gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-    
+    // On some hardware (Mali-400 for example), clearing the depth 
+    // buffer later might result in the color buffer not cleared.
     gl.glClearColor(0, 0, 0, 0);
     gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+    
+    gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
+    gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
     
     if (0 < parent.frameCount) {
       // Only one call to background during the drawing loop is needed to set the clear mode to true.    
