@@ -13,19 +13,16 @@ import processing.app.syntax.PdeKeywords;
 import processing.core.PApplet;
 
 /**
- * JS Mode is very simple. Since P.js is dependent on a browser there is
- * no runner, just an export so that users can debug in the browser of their
- * choice. 
+ * JS Mode for Processing based on Processing.js. Comes with a server as
+ *	replacement for the normal runner.
  */
 public class JavaScriptMode extends Mode {
   
-
   // create a new editor with the mode
   public Editor createEditor(Base base, String path, int[] location) {
     return new JavaScriptEditor(base, path, location, this);
   }
 
-  
   public JavaScriptMode(Base base, File folder) {
     super(base, folder);
     
@@ -37,7 +34,6 @@ public class JavaScriptMode extends Mode {
     }
   }
 
-  
   protected void loadKeywords() throws IOException {
     File file = new File(folder, "keywords.txt");
     BufferedReader reader = PApplet.createReader(file);
@@ -102,16 +98,16 @@ public class JavaScriptMode extends Mode {
     return "pde";
   }
 
-  
   // all file extensions it supports
   public String[] getExtensions() {
-    return new String[] {"pde", "pjs"};
+    return new String[] {"pde", "js"};
   }
 
-  
   public String[] getIgnorable() {
     return new String[] {
-      "applet_js" // not sure what color to paint this bike shed
+	  "applet",
+      "applet_js", 
+	  "template_js"
     };
   }
   

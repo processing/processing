@@ -58,7 +58,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   /**
    * true if this file has not yet been given a name by the user
    */
-  boolean untitled;
+  protected boolean untitled;
 
   private PageFormat pageFormat;
   private PrinterJob printerJob;
