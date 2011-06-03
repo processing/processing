@@ -11,26 +11,49 @@ import javax.swing.JOptionPane;
 import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
+import processing.app.Sketch;
 import processing.app.Formatter;
 import processing.app.Mode;
 import processing.mode.java.AutoFormat;
+import processing.mode.java.JavaEditor;
 
-public class JavaScriptEditor extends Editor {
+
+import javax.swing.*;
+
+public class JavaScriptEditor extends Editor 
+{
+	
   private JavaScriptMode jsMode;
+  private JavaScriptServer jsServer;
 
-  
-  protected JavaScriptEditor(Base base, String path, int[] location, Mode mode) {
+  private DirectivesEditor directivesEditor;
+
+	// TODO how to handle multiple servers
+	// TODO read settings from sketch.properties
+	// NOTE 0.0.0.0 does not work on XP
+  private static final String localDomain = "http://127.0.0.1";
+
+  // tapping into Java mode might not be wanted?
+  processing.mode.java.PdeKeyListener listener;
+
+  protected JavaScriptEditor ( Base base, String path, int[] location, Mode mode ) 
+  {
     super(base, path, location, mode);
+
+	listener = new processing.mode.java.PdeKeyListener(this,textarea);
+	
     jsMode = (JavaScriptMode) mode;
   }
 
   
-  public EditorToolbar createToolbar() {
+  public EditorToolbar createToolbar () 
+  {
     return new JavaScriptToolbar(this, base);
   }
 
   
-  public Formatter createFormatter() { 
+  public Formatter createFormatter () 
+  { 
     return new AutoFormat();    
   }
 
@@ -39,25 +62,78 @@ public class JavaScriptEditor extends Editor {
   // Menu methods
 
   
-  public JMenu buildFileMenu() {
+  public JMenu buildFileMenu () 
+  {
     JMenuItem exportItem = Base.newJMenuItem("export title", 'E');
     exportItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleExport();
+        handleExport( true );
       }
     });
     return buildFileMenu(new JMenuItem[] { exportItem });
   }
 
 
-  public JMenu buildSketchMenu() {
-    return buildSketchMenu(new JMenuItem[] {});
+  public JMenu buildSketchMenu () 
+  {
+	JMenuItem startServerItem = Base.newJMenuItem("Start server", 'R');
+    startServerItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleStartServer();
+        }
+      });
+
+    JMenuItem stopServerItem = new JMenuItem("Stop server");
+    stopServerItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleStopServer();
+        }
+      });
+
+	JMenuItem showDirectivesWindow = new JMenuItem("Directives");
+	showDirectivesWindow.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+	      handleShowDirectivesEditor();
+		}
+	});
+
+	JMenuItem copyTemplate = new JMenuItem("Copy template to sketch");
+	copyTemplate.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		  Sketch sketch = getSketch();
+		  File ajs = sketch.getMode().getContentFile(JavaScriptBuild.EXPORTED_FOLDER_NAME);
+		  File tjs = new File( sketch.getFolder(), JavaScriptBuild.TEMPLATE_FOLDER_NAME );
+		  if ( !tjs.exists() )
+		  {
+			try {
+	      		Base.copyDir( ajs, tjs );
+				statusNotice( "Default template copied." );
+				Base.openFolder( tjs );
+			} catch ( java.io.IOException ioe ) {
+				Base.showWarning("Copy default template folder", 
+					"Something went wrong when copying the template folder.", ioe);
+			}
+		  }
+		  else
+			statusError( "You need to remove the current "+
+					     "\""+JavaScriptBuild.TEMPLATE_FOLDER_NAME+"\" "+
+						 "folder from the sketch." );
+		}
+	});
+
+    return buildSketchMenu(new JMenuItem[] {
+		startServerItem, stopServerItem,
+		showDirectivesWindow, copyTemplate
+		});
   }
 
   
-  public JMenu buildHelpMenu() {
+  public JMenu buildHelpMenu () 
+  {
     JMenu menu = new JMenu("Help ");
     JMenuItem item;
+
+	// TODO switch to "http://js.processing.org/"?
 
     item = new JMenuItem("QuickStart for JS Devs");
     item.addActionListener(new ActionListener() {
@@ -108,13 +184,7 @@ public class JavaScriptEditor extends Editor {
     item = Base.newJMenuItemShift("Find in Reference", 'F');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (textarea.isSelectionActive()) {
-          Base.openURL(
-            "http://www.google.com/search?q=" +
-            textarea.getSelectedText() + 
-            "+site%3Ahttp%3A%2F%2Fprocessingjs.org%2Freference"
-          );
-        }
+        handleFindReferenceHACK();
       }
     });
     menu.add(item);
@@ -156,25 +226,129 @@ public class JavaScriptEditor extends Editor {
   // - - - - - - - - - - - - - - - - - -
   
   
-  public String getCommentPrefix() { 
+  public String getCommentPrefix () 
+  { 
     return "//";
   }
   
   
   // - - - - - - - - - - - - - - - - - -
+
+  private void handleShowDirectivesEditor ()
+  {
+	if ( directivesEditor == null )
+	{
+	  directivesEditor = new DirectivesEditor(this);
+	}
+	
+	directivesEditor.show();
+  }
+
+  // this catches the textarea right-click events
+  public void showReference( String filename )
+  {
+	// TODO: catch handleFindReference directly
+	handleFindReferenceHACK();
+  }
+
+  private void handleFindReferenceHACK ()
+  {
+	if (textarea.isSelectionActive()) {
+        Base.openURL(
+          "http://www.google.com/search?q=" +
+          textarea.getSelectedText().trim() + 
+          "+site%3Ahttp%3A%2F%2Fprocessingjs.org%2Freference"
+        );
+     }
+  }
+
+  public void handleStartStopServer ()
+  {
+  	if ( jsServer != null && jsServer.isRunning())
+    {
+		handleStopServer();
+	}
+	else
+	{
+		handleStartServer();
+	}
+  }
   
+  /**
+   *  Replacement for RUN: 
+   *  export to folder, start server, open in default browser.
+   */
+  public void handleStartServer ()
+  {
+  	handleExport( false );
+
+	File serverRoot = new File(sketch.getFolder(), JavaScriptBuild.EXPORTED_FOLDER_NAME);
+
+	// if server hung or something else went wrong .. stop it.
+	if ( jsServer != null && (!jsServer.isRunning() || !jsServer.getRoot().equals(serverRoot)) )
+    {
+		jsServer.shutDown();
+		jsServer = null;
+	}
+	
+    if ( jsServer == null )
+	{
+		jsServer = new JavaScriptServer( serverRoot );
+		jsServer.start();
+		System.out.println( "Server started." );
+		
+		while ( !jsServer.isRunning() ) {}
+		
+		String location = localDomain + ":" + jsServer.getPort() + "/";
+		System.out.println( location );
+
+		if ( !System.getProperty("os.name").startsWith("Mac OS") )
+			Base.openURL( location );
+		else
+		{
+			try {
+				String scpt = "osascript -e "+
+							  "\"tell application \\\"Finder\\\" to open location \\\"" + location + "\\\"\"";
+				String[] cmd = { "/bin/bash", "-c", scpt };
+				Process process = new ProcessBuilder( cmd ).start();
+			} catch ( Exception e ) {
+				Base.openURL( location );
+			}
+		}
+	}
+	else if ( jsServer.isRunning() )
+	{
+		System.out.println( "Server running, reload your browser window." );
+		System.out.println( localDomain + ":" + jsServer.getPort() + "/" );
+	}
+    toolbar.activate(JavaScriptToolbar.RUN);
+  }
+
+  /**
+   *  Replacement for STOP: stop server.
+   */
+  public void handleStopServer ()
+  {
+	if ( jsServer != null && jsServer.isRunning() )
+		jsServer.shutDown();
+	
+	System.out.println("Server stopped.");
+	toolbar.deactivate(JavaScriptToolbar.RUN);
+  }
   
   /**
    * Call the export method of the sketch and handle the gui stuff
    */
-  public void handleExport() {
+  public void handleExport ( boolean openFolder ) 
+  {
     if (handleExportCheckModified()) {
       toolbar.activate(JavaScriptToolbar.EXPORT);
       try {
         boolean success = jsMode.handleExport(sketch);
-        if (success) {
-          File appletJSFolder = new File(sketch.getFolder(), "applet_js");
+        if ( success && openFolder ) {
+          File appletJSFolder = new File(sketch.getFolder(), JavaScriptBuild.EXPORTED_FOLDER_NAME );
           Base.openFolder(appletJSFolder);
+
           statusNotice("Finished exporting.");
         } else { 
           // error message already displayed by handleExport          
@@ -186,8 +360,34 @@ public class JavaScriptEditor extends Editor {
     }
   }
   
+  /**
+   *  Changed from Editor.java to automaticaly export and
+   *  handle the server when it's running. Normal save ops otherwise.
+   */
+  public boolean handleSaveRequest(boolean immediately)
+  {
+    if (untitled) {
+      return handleSaveAs();
+      // need to get the name, user might also cancel here
+
+    } else if (immediately) {
+      handleSave();
+	  if ( jsServer != null && jsServer.isRunning() )
+		handleStartServer();
+    } else {
+      SwingUtilities.invokeLater(new Runnable() {
+          public void run() {
+            handleSave();
+			  if ( jsServer != null && jsServer.isRunning() )
+				handleStartServer();
+          }
+        });
+    }
+    return true;
+  }
   
-  public boolean handleExportCheckModified() {
+  public boolean handleExportCheckModified () 
+  {
     if (sketch.isModified()) {
       Object[] options = { "OK", "Cancel" };
       int result = JOptionPane.showOptionDialog(this,
@@ -215,14 +415,16 @@ public class JavaScriptEditor extends Editor {
   }
   
   
-  public void handleSave() { 
+  public void handleSave () 
+  { 
     toolbar.activate(JavaScriptToolbar.SAVE);
     super.handleSave();
     toolbar.deactivate(JavaScriptToolbar.SAVE);
   }
   
   
-  public boolean handleSaveAs() { 
+  public boolean handleSaveAs () 
+  { 
     toolbar.activate(JavaScriptToolbar.SAVE);
     boolean result = super.handleSaveAs();
     toolbar.deactivate(JavaScriptToolbar.SAVE);
@@ -230,18 +432,17 @@ public class JavaScriptEditor extends Editor {
   }
 
 
-  public void handleImportLibrary(String item) {
+  public void handleImportLibrary (String item) 
+  {
     Base.showWarning("Processing.js doesn't support libraries",
                      "Libraries are not supported. Import statements are " +
                      "ignored, and code relying on them will break.",
                      null);
   }
 
-
   /** JavaScript mode has no runner. This method is empty. */
-  public void internalCloseRunner() { }
-
+  public void internalCloseRunner () { }
 
   /** JavaScript mode does not run anything. This method is empty. */
-  public void deactivateRun() { } 
+  public void deactivateRun () { } 
 }
