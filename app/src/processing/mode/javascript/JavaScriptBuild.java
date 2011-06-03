@@ -4,33 +4,41 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 import processing.app.Base;
 import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchCode;
+import processing.app.SketchException;
+
 import processing.core.PApplet;
+
 import processing.mode.java.JavaBuild;
+import processing.mode.java.preproc.PdePreprocessor;
+import processing.mode.java.preproc.PreprocessorResult;
 
-/** 
- * A collection of static methods to aid in building a 
- * web page with Processing.js from a Sketch object.
- */
-public class JavaScriptBuild {
-
-  // public static final String SIZE_REGEX
-
-  // public static final String PACKAGE_REGEX
+public class JavaScriptBuild
+{
+	public final static String TEMPLATE_FOLDER_NAME = "template_js";
+	public final static String EXPORTED_FOLDER_NAME = "applet_js";
+	public final static String TEMPLATE_FILE_NAME = "template.html";
   
   /**
    * Answers with the first java doc style comment in the string,
    * or an empty string if no such comment can be found.
    */
-  public static String getDocString(String s) {
+  public static String getDocString ( String s ) 
+  {
     String[] javadoc = PApplet.match(s, "/\\*{2,}(.*?)\\*+/");
-    if (javadoc != null) {
+
+    if (javadoc != null) 
+	{
       StringBuffer dbuffer = new StringBuffer();
       String[] pieces = PApplet.split(javadoc[1], '\n');
       for (String line : pieces) {
@@ -58,9 +66,11 @@ public class JavaScriptBuild {
    * @param args template keys, data values to replace them
    * @throws IOException when there are problems writing to or from the files
    */
-  public static void writeTemplate(File template, File output, Map<String, String> fields) throws IOException {
+  public static void writeTemplate ( File template, File output, Map<String, String> fields )
+  throws IOException 
+  {
     BufferedReader reader = PApplet.createReader(template);
-    PrintWriter theOutWriter = PApplet.createWriter(output);
+    PrintWriter writer = PApplet.createWriter(output);
 
     String line = null;
     while ((line = reader.readLine()) != null) {
@@ -80,9 +90,9 @@ public class JavaScriptBuild {
         }
         line = sb.toString();
       }
-      theOutWriter.println(line);
+      writer.println(line);
     }
-    theOutWriter.close();
+    writer.close();
   }
   
   // -----------------------------------------------------
@@ -100,8 +110,8 @@ public class JavaScriptBuild {
   
   protected File binFolder;
   
-  
-  public JavaScriptBuild(Sketch sketch) {
+  public JavaScriptBuild ( Sketch sketch ) 
+  {
     this.sketch = sketch;
     this.mode = sketch.getMode();
   }
@@ -116,32 +126,45 @@ public class JavaScriptBuild {
    * 3. cp -r sketch/data/* bin/ (p.js doesn't recognize the data folder)
    * 4. series of greps to find height, width, name, desc
    * 5. cat template.html | sed 's/@@sketch@@/[name]/g' ... [many sed filters] > bin/index.html  
+   * </p>
    * 
    * @param bin the output folder for the built sketch
    * @return boolean whether the build was successful
    */
-  public boolean build(File bin)  {
+  public boolean build ( File bin )  
+  {
     // make sure the user isn't playing "hide-the-sketch-folder" again
     sketch.ensureExistence();
     
     this.binFolder = bin;
     
-    if (bin.exists()) {    
+    if ( bin.exists() ) 
+    {    
       Base.removeDescendants(bin);
     } //else will be created during preprocesss
     
-    try {
+	// pass through preprocessor to catch syntax errors
+    try 
+    {
       preprocess(bin);
-    } catch (IOException e) {
-      final String msg = "A problem occured while writing to the output folder.";
-      Base.showWarning("Could not build the sketch", msg, e);
-      return false;
-    }
 
-    // move the data files
-    if (sketch.hasDataFolder()) {
+    } catch ( IOException ioe ) {
+      final String msg = "A problem occured while writing to the output folder.";
+      Base.showWarning("Could not build the sketch", msg, ioe);
+      return false;
+
+    } catch ( SketchException se ) {
+	  final String msg = "The preprocessor found a problem in your code.";
+	  Base.showWarning("Could not build the sketch", msg, se);
+	  return false;
+	}
+
+    // move the data files, copies contents of sketch/data/ to applet_js/
+    if (sketch.hasDataFolder()) 
+	{
       try {
         Base.copyDir(sketch.getDataFolder(), bin);
+
       } catch (IOException e) {
         final String msg = "An exception occured while trying to copy the data folder. " + 
                            "You may have to manually move the contents of sketch/data to " +
@@ -151,20 +174,52 @@ public class JavaScriptBuild {
       }
     }
     
-    // TODO Code folder contents ending in .js could be moved and added as script tags?
+	// as .js files are allowed now include these into the mix,
+	// first find 'em ..
+	String[] sketchFolderFilesRaw = sketch.getFolder().list();
+	String[] sketchFolderFiles = new String[0];
+	ArrayList sffList = new ArrayList();
+	if ( sketchFolderFilesRaw != null )
+	{
+		for ( String s : sketchFolderFilesRaw )
+		{
+			if ( s.toLowerCase().startsWith(".") ) continue;
+			if ( !s.toLowerCase().endsWith(".js") ) continue;
+			sffList.add(s);
+		}
+		if ( sffList.size() > 0 )
+			sketchFolderFiles = (String[])sffList.toArray(new String[0]);
+	}
+	for ( String s : sketchFolderFiles )
+	{
+		try {
+			Base.copyFile( new File(sketch.getFolder(), s), new File(bin, s) );
+		} catch ( IOException ioe ) {
+			String msg = "Unable to copy file: "+s;
+			Base.showWarning("Problem building the sketch", msg, ioe);
+			return false;
+		}
+	}
     
     // get width and height
     int wide = PApplet.DEFAULT_WIDTH;
     int high = PApplet.DEFAULT_HEIGHT;
 
+	// TODO
+	// Really scrub comments from code? 
+	// Con: larger files, PJS needs to do it later
+	// Pro: being literate as we are in a script language.
     String scrubbed = JavaBuild.scrubComments(sketch.getCode(0).getProgram());
     String[] matches = PApplet.match(scrubbed, JavaBuild.SIZE_REGEX);
 
-    if (matches != null) {
-      try {
+    if (matches != null) 
+	{
+      try 
+	  {
         wide = Integer.parseInt(matches[1]);
         high = Integer.parseInt(matches[2]);
         // renderer
+
       } catch (NumberFormatException e) {
         // found a reference to size, but it didn't seem to contain numbers
         final String message =
@@ -177,21 +232,47 @@ public class JavaScriptBuild {
       }
     }  // else no size() command found, defaults will be used
 
-    // final prep and write to template    
-    File templateFile = sketch.getMode().getContentFile("applet_js/template.html");
+    // final prep and write to template.
+	// getTemplateFile() is very important as it looks and preps
+	// any custom templates present in the sketch folder.
+    File templateFile = getTemplateFile();
     File htmlOutputFile = new File(bin, "index.html");
-
+	
     Map<String, String> templateFields = new HashMap<String, String>();
-    templateFields.put("width", String.valueOf(wide));
-    templateFields.put("height", String.valueOf(high));
-    templateFields.put("sketch", sketch.getName());
-    templateFields.put("description", getSketchDescription());
-    templateFields.put("source",
-                       "<a href=\"" + sketch.getName() + ".pde\">" + 
-                       sketch.getName() + "</a>");
+    templateFields.put( "width", 		String.valueOf(wide) );
+    templateFields.put( "height", 		String.valueOf(high) );
+    templateFields.put( "sketch", 		sketch.getName() );
+    templateFields.put( "description", 	getSketchDescription() );
 
-    try{
+	// generate an ID for the sketch to use with <canvas id="XXXX"></canvas>
+	String sketchID = sketch.getName().replaceAll("[^a-zA-Z0-9]+", "").replaceAll("^[^a-zA-Z]+","");
+	// add a handy method to read the generated sketchID
+	String scriptFiles = "<script type=\"text/javascript\">" +
+						 "function getProcessingSketchID () { return '"+sketchID+"'; }" +
+						 "</script>\n";
+
+	// main .pde file first
+	String sourceFiles = "<a href=\"" + sketch.getName() + ".pde\">" + 
+                    					sketch.getName() + "</a> ";
+	
+	// add all other files (both types: .pde and .js)
+	if ( sketchFolderFiles != null )
+	{
+		for ( String s : sketchFolderFiles )
+		{
+			sourceFiles += "<a href=\"" + s + "\">" + s + "</a> ";
+			scriptFiles += "<script src=\""+ s +"\" type=\"text/javascript\"></script>\n";
+		}
+	}
+	templateFields.put( "source", sourceFiles );
+    templateFields.put( "scripts", scriptFiles );
+	templateFields.put( "id", sketchID );
+
+	// process template replace tokens with content
+    try
+	{
       writeTemplate(templateFile, htmlOutputFile, templateFields);
+
     } catch (IOException ioe) {
       final String msg = "There was a problem writing the html template " +
       		               "to the build folder.";
@@ -200,9 +281,14 @@ public class JavaScriptBuild {
     }
     
     // finally, add Processing.js
-    try {
-      Base.copyFile(sketch.getMode().getContentFile("applet_js/processing.js"),
-                    new File(bin, "processing.js"));
+    try 
+	{
+      Base.copyFile( sketch.getMode().getContentFile(
+						EXPORTED_FOLDER_NAME+"/processing.js"
+					 ),
+                     new File( bin, "processing.js")
+	  );
+
     } catch (IOException ioe) {
       final String msg = "There was a problem copying processing.js to the " +
                          "build folder. You will have to manually add " + 
@@ -214,14 +300,59 @@ public class JavaScriptBuild {
 
     return true;
   }
+
+  /**
+   *  Find and return the template HTML file to use. This also checks for custom
+   *  templates that might be living in the sketch folder. If such a "template_js"
+   *  folder exists then it's contents will be copied over to "applet_js" and
+   *  it's template.html will be used as template.
+   */
+  private File getTemplateFile ()
+  {
+	File sketchFolder = sketch.getFolder();
+	File customTemplateFolder = new File( sketchFolder, TEMPLATE_FOLDER_NAME );
+	if ( customTemplateFolder.exists() && 
+		 customTemplateFolder.isDirectory() && 
+		 customTemplateFolder.canRead() )
+	{
+		File appletJsFolder = new File( sketchFolder, EXPORTED_FOLDER_NAME );
+		
+		try {
+			//TODO: this is potentially dangerous as it might override files in applet_js 
+			Base.copyDir( customTemplateFolder, appletJsFolder );
+			if ( !(new File( appletJsFolder, TEMPLATE_FILE_NAME )).delete() )
+			{
+				// ignore?
+			}
+			return new File( customTemplateFolder, TEMPLATE_FILE_NAME );
+		} catch ( Exception e ) {	
+			String msg = "";
+			Base.showWarning("There was a problem copying your custom template folder", msg, e);
+			return sketch.getMode().getContentFile(
+				EXPORTED_FOLDER_NAME + File.separator + TEMPLATE_FILE_NAME
+			);
+		}
+	}
+	else
+    	return sketch.getMode().getContentFile(
+			EXPORTED_FOLDER_NAME + File.separator + TEMPLATE_FILE_NAME
+		);
+  }
   
   
   /** 
-   * Prepares the sketch code objects for use with Processing.js
+   * Collects the sketch code and runs it by the Java-mode preprocessor
+   * to fish for errors.
+   *
    * @param bin the output folder
+   *
+   * @see processing.mode.java.JavaBuild#preprocess(java.io.File)
    */
-  public void preprocess(File bin) throws IOException {    
+  public void preprocess ( File bin ) throws IOException, SketchException
+  {
+	// COLLECT .pde FILES INTO ONE,
     // essentially... cat sketchFolder/*.pde > bin/sketchname.pde
+
     StringBuffer bigCode = new StringBuffer();
     for (SketchCode sc : sketch.getCode()){
       if (sc.isExtension("pde")) {
@@ -234,9 +365,150 @@ public class JavaScriptBuild {
       bin.mkdirs();
     }
     File bigFile = new File(bin, sketch.getName() + ".pde");
-    Base.saveFile(bigCode.toString(), bigFile);
+	String bigCodeContents = bigCode.toString();
+    Base.saveFile( bigCodeContents, bigFile );
+
+	// RUN THROUGH JAVA-MODE PREPROCESSOR,
+	// some minor changes made since we are not running the result
+	// but are only interested in any possible errors that may
+	// surface
+
+	PdePreprocessor preprocessor = new PdePreprocessor( sketch.getName() );
+	PreprocessorResult result;
+	
+    try 
+	{
+      File outputFolder = sketch.makeTempFolder();
+      final File java = new File( outputFolder, sketch.getName() + ".java" );
+      final PrintWriter stream = new PrintWriter( new FileWriter(java) );
+      try {
+        result = preprocessor.write( stream, bigCodeContents, null );
+      } finally {
+        stream.close();
+      }
+
+    } catch (FileNotFoundException fnfe) {
+      fnfe.printStackTrace();
+      String msg = "Build folder disappeared or could not be written";
+      throw new SketchException(msg);
+
+    } catch (antlr.RecognitionException re) {
+      // re also returns a column that we're not bothering with for now
+
+      // first assume that it's the main file
+      int errorLine = re.getLine() - 1;
+
+      // then search through for anyone else whose preprocName is null,
+      // since they've also been combined into the main pde.
+      int errorFile = findErrorFile(errorLine);
+      errorLine -= sketch.getCode(errorFile).getPreprocOffset();
+
+      String msg = re.getMessage();
+
+      if (msg.equals("expecting RCURLY, found 'null'")) {
+        // This can be a problem since the error is sometimes listed as a line
+        // that's actually past the number of lines. For instance, it might
+        // report "line 15" of a 14 line program. Added code to highlightLine()
+        // inside Editor to deal with this situation (since that code is also
+        // useful for other similar situations).
+        throw new SketchException("Found one too many { characters " +
+                                  "without a } to match it.",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
+      if (msg.indexOf("expecting RBRACK") != -1) {
+        System.err.println(msg);
+        throw new SketchException("Syntax error, " +
+                                  "maybe a missing ] character?",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
+      if (msg.indexOf("expecting SEMI") != -1) {
+        System.err.println(msg);
+        throw new SketchException("Syntax error, " +
+                                  "maybe a missing semicolon?",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
+      if (msg.indexOf("expecting RPAREN") != -1) {
+        System.err.println(msg);
+        throw new SketchException("Syntax error, " +
+                                  "maybe a missing right parenthesis?",
+                                  errorFile, errorLine, re.getColumn());
+      }
+
+      if (msg.indexOf("preproc.web_colors") != -1) {
+        throw new SketchException("A web color (such as #ffcc00) " +
+                                  "must be six digits.",
+                                  errorFile, errorLine, re.getColumn(), false);
+      }
+
+      //System.out.println("msg is " + msg);
+      throw new SketchException(msg, errorFile,
+                                errorLine, re.getColumn());
+
+    } catch (antlr.TokenStreamRecognitionException tsre) {
+      // while this seems to store line and column internally,
+      // there doesn't seem to be a method to grab it..
+      // so instead it's done using a regexp
+
+      // TODO not tested since removing ORO matcher.. ^ could be a problem
+      String mess = "^line (\\d+):(\\d+):\\s";
+
+      String[] matches = PApplet.match(tsre.toString(), mess);
+      if (matches != null) {
+        int errorLine = Integer.parseInt(matches[1]) - 1;
+        int errorColumn = Integer.parseInt(matches[2]);
+
+        int errorFile = 0;
+        for (int i = 1; i < sketch.getCodeCount(); i++) {
+          SketchCode sc = sketch.getCode(i);
+          if (sc.isExtension("pde") &&
+              (sc.getPreprocOffset() < errorLine)) {
+            errorFile = i;
+          }
+        }
+        errorLine -= sketch.getCode(errorFile).getPreprocOffset();
+
+        throw new SketchException(tsre.getMessage(),
+                                  errorFile, errorLine, errorColumn);
+
+      } else {
+        // this is bad, defaults to the main class.. hrm.
+        String msg = tsre.toString();
+        throw new SketchException(msg, 0, -1, -1);
+      }
+
+    } catch (SketchException pe) {
+      // RunnerExceptions are caught here and re-thrown, so that they don't
+      // get lost in the more general "Exception" handler below.
+      throw pe;
+
+    } catch (Exception ex) {
+      // TODO better method for handling this?
+      System.err.println("Uncaught exception type:" + ex.getClass());
+      ex.printStackTrace();
+      throw new SketchException(ex.toString());
+    }
   }
-  
+
+  /**
+   * Copied from JavaBuild as it is protected there.
+   * @see processing.mode.java.JavaBuild#findErrorFile(int)
+   */
+  protected int findErrorFile ( int errorLine ) 
+  {
+    for (int i = 1; i < sketch.getCodeCount(); i++) 
+    {
+      SketchCode sc = sketch.getCode(i);
+      if (sc.isExtension("pde") && (sc.getPreprocOffset() < errorLine)) 
+      {
+        // keep looping until the errorLine is past the offset
+        return i;
+      }
+    }
+    return 0;  // i give up
+  }
   
   /**
    * Parse the sketch to retrieve it's description. Answers with the first 
@@ -256,9 +528,10 @@ public class JavaScriptBuild {
    * Export the sketch to the default applet_js folder.  
    * @return success of the operation 
    */
-  public boolean export() throws IOException {
-    File applet_js = new File(sketch.getFolder(), "applet_js");
-    return exportApplet_js(applet_js);
+  public boolean export() throws IOException 
+  {
+    File applet_js = new File(sketch.getFolder(), EXPORTED_FOLDER_NAME);
+    return exportToFolder( applet_js );
   }
 
   
@@ -266,7 +539,8 @@ public class JavaScriptBuild {
    * Export the sketch to the provided folder 
    * @return success of the operation 
    */
-  public boolean exportApplet_js(File appletfolder) throws IOException {
-    return build(appletfolder);
+  public boolean exportToFolder( File exportFolder ) throws IOException 
+  {
+    return build( exportFolder );
   }
 }
