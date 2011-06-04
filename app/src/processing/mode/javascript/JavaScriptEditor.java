@@ -440,9 +440,16 @@ public class JavaScriptEditor extends Editor
                      null);
   }
 
-  /** JavaScript mode has no runner. This method is empty. */
-  public void internalCloseRunner () { }
+  /**
+   *  Called when the window is going to be reused for another sketch.
+   */
+  public void internalCloseRunner()
+  {
+      handleStopServer();
+  }
 
-  /** JavaScript mode does not run anything. This method is empty. */
-  public void deactivateRun () { } 
+  public void deactivateRun ()
+  {
+      // not sure what to do here ..
+  } 
 }

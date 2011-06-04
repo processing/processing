@@ -1,5 +1,8 @@
 package processing.mode.javascript;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowAdapter;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -19,11 +22,14 @@ import processing.mode.java.JavaMode;
  *	replacement for the normal runner.
  */
 public class JavaScriptMode extends Mode
-{  
+{
+	private JavaScriptEditor jsEditor;
+
   // create a new editor with the mode
   public Editor createEditor( Base base, String path, int[] location )
   {
-    return new JavaScriptEditor( base, path, location, this );
+	jsEditor = new JavaScriptEditor( base, path, location, this );
+    return jsEditor;
   }
 
   public JavaScriptMode( Base base, File folder )
@@ -77,8 +83,6 @@ public class JavaScriptMode extends Mode
   // public Formatter createFormatter() { }
 
   //  public Editor createEditor(Base ibase, String path, int[] location) { }
-
-  // abstract public void internalCloseRunner();
   
   // ------------------------------------------------
 
