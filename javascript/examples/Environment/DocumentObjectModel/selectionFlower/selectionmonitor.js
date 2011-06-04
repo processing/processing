@@ -43,7 +43,6 @@ function monitorSelection ( ) {
     if ( txt !== undefined && txt != "" )
     {
         mySketchInstance.setSelectionText(txt);  // set the text in the sketch
-        console.log( txt );
     }
     
     setTimeout(monitorSelection, 1000/5);
