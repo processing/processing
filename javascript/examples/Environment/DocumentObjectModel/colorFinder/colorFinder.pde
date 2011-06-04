@@ -23,10 +23,7 @@ void mouseDragged ()
     colorMode(HSB);
     mColor = color( map(mouseX, 0,width, 0,255), 200, map(mouseY, 0, height, 255, 0) );
     colorMode(RGB);
-}
-
-void mouseReleased ()
-{
+    
     if ( js )
     {
         js.setColor(red(mColor), green(mColor), blue(mColor));
@@ -34,11 +31,11 @@ void mouseReleased ()
 }
 
 /**
- *    Define an interface that will act as glue between your sketch
- *    and "real" JavaScript running in your page. The name does not matter.
+ *    Define an interface that will act as glue between this sketch
+ *    and "real" JavaScript running in the HTML page. The name does not matter.
  *
- *    The interface must define any functions that you intend to call
- *    from inside your sketch.
+ *    The interface must define any functions that one intends to call
+ *    from inside the sketch.
  */
 interface JavaScriptInterface
 {

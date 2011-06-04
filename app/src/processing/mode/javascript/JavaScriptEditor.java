@@ -280,7 +280,9 @@ public class JavaScriptEditor extends Editor
    */
   public void handleStartServer ()
   {
-  	handleExport( false );
+	statusEmpty();
+  	boolean success = handleExport( false );
+    if ( !success ) return;
 
 	File serverRoot = new File(sketch.getFolder(), JavaScriptBuild.EXPORTED_FOLDER_NAME);
 
@@ -338,25 +340,29 @@ public class JavaScriptEditor extends Editor
   /**
    * Call the export method of the sketch and handle the gui stuff
    */
-  public void handleExport ( boolean openFolder ) 
+  public boolean handleExport ( boolean openFolder ) 
   {
-    if (handleExportCheckModified()) {
+    if (handleExportCheckModified())
+    {
       toolbar.activate(JavaScriptToolbar.EXPORT);
       try {
         boolean success = jsMode.handleExport(sketch);
-        if ( success && openFolder ) {
+        if ( success && openFolder ) 
+		{
           File appletJSFolder = new File(sketch.getFolder(), JavaScriptBuild.EXPORTED_FOLDER_NAME );
           Base.openFolder(appletJSFolder);
 
           statusNotice("Finished exporting.");
-        } else { 
-          // error message already displayed by handleExport          
+        } else if ( !success ) { 
+          // error message already displayed by handleExport
+	      return false;
         }
       } catch (Exception e) {
         statusError(e);
       }
       toolbar.deactivate(JavaScriptToolbar.EXPORT);
     }
+	return true;
   }
   
   /**
