@@ -105,6 +105,7 @@ public class JavaScriptMode extends Mode
 	
 	File jExamples = jMode.getContentFile("examples");
     return new File[] { 
+      new File(examplesFolder, "Environment"),
       new File(jExamples, "Basics"),
       new File(jExamples, "Topics"),
       new File(jExamples, "3D"),
