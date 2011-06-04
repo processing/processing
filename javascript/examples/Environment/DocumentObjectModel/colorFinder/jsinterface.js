@@ -1,6 +1,6 @@
 /**
- *    This code will be embedded into your HTML page as "normal"
- *    JavaScript code with a <script> tag. This allows you to
+ *    This code will be embedded into the HTML page as "normal"
+ *    JavaScript code with a <script> tag. This allows one to
  *    interact with the page as any normal JavaScript code can.
  */
  
@@ -9,7 +9,7 @@
      makeTheLink();
  }
  
- // make the connection with your sketch
+ // make the connection with the sketch
  function makeTheLink() {
      
      // Get the instance. The id is automatically generated 
@@ -25,7 +25,7 @@
      mySketchInstance.setInterfaceLink(this); // make the connection
  }
  
- // called from your sketch!
+ // called from the sketch!
  function setColor ( rr, gg, bb ) {
      
      var colorString = 'rgb('+rr+','+gg+','+bb+')';

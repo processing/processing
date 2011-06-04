@@ -14,8 +14,11 @@
 		a:link, a:visited, a:active, a:hover { 
 			color: #3399cc; text-decoration: underline;
 		}
-		canvas { outline: 0px; } /*hide that focus outline*/
+		canvas { outline: 0px; }
 		</style>
+		<!--[if lt IE 9]>
+			<script type="text/javascript">alert("Your browser does not support the canvas tag.");</script>
+		<![endif]-->
 		<script src="processing.js" type="text/javascript"></script>
 		@@scripts@@
 	</head>
