@@ -12,18 +12,22 @@ import processing.app.Sketch;
 import processing.app.syntax.PdeKeywords;
 import processing.core.PApplet;
 
+import processing.mode.java.JavaMode;
+
 /**
  * JS Mode for Processing based on Processing.js. Comes with a server as
  *	replacement for the normal runner.
  */
-public class JavaScriptMode extends Mode {
-  
+public class JavaScriptMode extends Mode
+{  
   // create a new editor with the mode
-  public Editor createEditor(Base base, String path, int[] location) {
-    return new JavaScriptEditor(base, path, location, this);
+  public Editor createEditor( Base base, String path, int[] location )
+  {
+    return new JavaScriptEditor( base, path, location, this );
   }
 
-  public JavaScriptMode(Base base, File folder) {
+  public JavaScriptMode( Base base, File folder )
+  {
     super(base, folder);
     
     try {
@@ -34,7 +38,8 @@ public class JavaScriptMode extends Mode {
     }
   }
 
-  protected void loadKeywords() throws IOException {
+  protected void loadKeywords() throws IOException
+  {
     File file = new File(folder, "keywords.txt");
     BufferedReader reader = PApplet.createReader(file);
 
@@ -61,49 +66,62 @@ public class JavaScriptMode extends Mode {
     }
   }
 
-  
   // pretty printable name of the mode
-  public String getTitle() {
+  public String getTitle()
+  {
     return "JavaScript";
   }
 
-  
   // public EditorToolbar createToolbar(Editor editor) { }
 
-  
   // public Formatter createFormatter() { }
 
-  
   //  public Editor createEditor(Base ibase, String path, int[] location) { }
 
+  // abstract public void internalCloseRunner();
   
   // ------------------------------------------------
 
-  
-  //TODO Add examples
-  public File[] getExampleCategoryFolders() {
-    return new File[] {};
-    /*
+  /**
+   * For now just add JavaMode examples.
+   */
+  public File[] getExampleCategoryFolders()
+  {
+	JavaMode jMode = null;
+	for ( Mode m : base.getModeList() )
+	{
+		if ( m.getClass() == JavaMode.class )
+		{
+			jMode = (JavaMode)m;
+			break;
+		}
+	}
+	if ( jMode == null )
+		return new File[0];
+	
+	File jExamples = jMode.getContentFile("examples");
     return new File[] { 
-      new File(examplesFolder, "Basics"),
-      new File(examplesFolder, "Topics"),
-      new File(examplesFolder, "3D"),
-      new File(examplesFolder, "Books")
+      new File(jExamples, "Basics"),
+      new File(jExamples, "Topics"),
+      new File(jExamples, "3D"),
+      new File(jExamples, "Books")
     };
-      */
   }
   
   
-  public String getDefaultExtension() {
+  public String getDefaultExtension() 
+  {
     return "pde";
   }
 
   // all file extensions it supports
-  public String[] getExtensions() {
+  public String[] getExtensions() 
+  {
     return new String[] {"pde", "js"};
   }
 
-  public String[] getIgnorable() {
+  public String[] getIgnorable() 
+  {
     return new String[] {
 	  "applet",
       "applet_js", 
@@ -114,15 +132,13 @@ public class JavaScriptMode extends Mode {
   
   // ------------------------------------------------
   
-  
-  public boolean handleExport(Sketch sketch) throws IOException {
+  public boolean handleExport(Sketch sketch) throws IOException 
+  {
     JavaScriptBuild build = new JavaScriptBuild(sketch);
     return build.export();
   }
   
-  
   //public boolean handleExportApplet(Sketch sketch) throws SketchException, IOException { }
-  
   
   //public boolean handleExportApplication(Sketch sketch) throws SketchException, IOException { }
 }
