@@ -295,16 +295,16 @@ public class JavaScriptEditor extends Editor
 	{
 		jsServer = new JavaScriptServer( serverRoot );
 		jsServer.start();
-		System.out.println( "Server started." );
 		
 		while ( !jsServer.isRunning() ) {}
 		
 		String location = localDomain + ":" + jsServer.getPort() + "/";
-		System.out.println( location );
+		
+		statusNotice( "Server started: " + location );
 
-		if ( !System.getProperty("os.name").startsWith("Mac OS") )
+		//if ( !System.getProperty("os.name").startsWith("Mac OS") )
 			Base.openURL( location );
-		else
+		/*else
 		{
 			try {
 				String scpt = "osascript -e "+
@@ -314,12 +314,11 @@ public class JavaScriptEditor extends Editor
 			} catch ( Exception e ) {
 				Base.openURL( location );
 			}
-		}
+		}*/
 	}
 	else if ( jsServer.isRunning() )
 	{
-		System.out.println( "Server running, reload your browser window." );
-		System.out.println( localDomain + ":" + jsServer.getPort() + "/" );
+		statusNotice( "Server running ("+localDomain + ":" + jsServer.getPort() +"), reload your browser window." );
 	}
     toolbar.activate(JavaScriptToolbar.RUN);
   }
@@ -332,7 +331,7 @@ public class JavaScriptEditor extends Editor
 	if ( jsServer != null && jsServer.isRunning() )
 		jsServer.shutDown();
 	
-	System.out.println("Server stopped.");
+	statusNotice("Server stopped.");
 	toolbar.deactivate(JavaScriptToolbar.RUN);
   }
   

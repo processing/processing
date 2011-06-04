@@ -4,21 +4,17 @@
 		<title>@@sketch@@ : Built with Processing and Processing.js</title>
 		<style type="text/css">
 		body {
-  		  margin: 60px 0px 0px 55px;
-  		  color: #fff;
+  		  margin: 60px 0px 0px 55px; background-color: #333;
 		  font-family: Lucida Grande, Lucida Sans, Arial, Helvetica Neue, Verdana, Geneva, sans-serif;
-		  font-size: 11px; 
-		  background-color: #333;
-		  text-decoration: none; 
-		  font-weight: normal; 
-		  line-height: normal; 
+		  font-size: 11px; font-weight: normal; text-decoration: none;
+  		  color: #fff; line-height: normal;
 		}
-		p          { width: @@width@@px;}
-		a          { color: #3399cc; }
-		a:link     { color: #3399cc; text-decoration: underline; }
-		a:visited  { color: #3399cc; text-decoration: underline; }
-		a:active   { color: #3399cc; text-decoration: underline; }
-		a:hover    { color: #3399cc; text-decoration: underline; }
+		p { width: @@width@@px;}
+		a { color: #3399cc; }
+		a:link, a:visited, a:active, a:hover { 
+			color: #3399cc; text-decoration: underline;
+		}
+		canvas { outline: 0px; } /*hide that focus outline*/
 		</style>
 		<script src="processing.js" type="text/javascript"></script>
 		@@scripts@@
@@ -29,7 +25,7 @@
 			<div>
 				<canvas id="@@id@@" data-processing-sources="@@sketch@@.pde" 
 						width="@@width@@" height="@@height@@">
-					<p>Sorry, your browser does not support the canvas tag.</p>
+					<p>Your browser does not support the canvas tag.</p>
 				</canvas>
 				<noscript>
 					<p>JavaScript is required to view the contents of this page.</p>
