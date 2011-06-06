@@ -397,11 +397,7 @@ public class PGraphicsOpenGL extends PGraphics3D {
     }    
 
     updateProjection();
-
-    gl.glMatrixMode(GL.GL_MODELVIEW);
-    gl.glLoadIdentity();
-    // Flip Y-axis to make y count from 0 downwards
-    gl.glScalef(1, -1, 1);
+    updateModelview();
 
     // these are necessary for alpha (i.e. fonts) to work
     gl.glEnable(GL.GL_BLEND);
@@ -2018,6 +2014,14 @@ public class PGraphicsOpenGL extends PGraphics3D {
     }
     //projection.print();
     gl.glLoadMatrixf(projectionFloats, 0);
+    gl.glMatrixMode(GL.GL_MODELVIEW);
+  }
+
+  protected void updateModelview() {
+    gl.glMatrixMode(GL.GL_MODELVIEW);
+    gl.glLoadIdentity();
+    // Flip Y-axis to make y count from 0 downwards
+    gl.glScalef(1, -1, 1);    
   }
 
   //public void printProjection()
@@ -3076,9 +3080,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
     fy = y - (int) y;
     gl.glRasterPos4f(fx, fy, 0, w);
 
-    // restore matrices, viewport and matrix mode
-    gl.glPopMatrix();
+    // restore matrices, viewport and matrix mode    
     gl.glMatrixMode(GL.GL_PROJECTION);
+    gl.glPopMatrix();
+    gl.glMatrixMode(GL.GL_MODELVIEW);
     gl.glPopMatrix();
 
     gl.glPopAttrib();
