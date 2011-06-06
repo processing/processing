@@ -259,29 +259,43 @@ outerloop:
                     break;
                 }
             }
+
             String fname = (new String(buf, 0, index, i-index)).replace('/', File.separatorChar);
             if (fname.startsWith(File.separator)) 
 			{
                 fname = fname.substring(1);
             }
+
 			fname = java.net.URLDecoder.decode(fname);
-            File targ = new File( getRoot(), fname );
-            if (targ.isDirectory()) 
+			
+			//TODO:
+			//implement a logger service that will receive messages from p.js?
+			//processing-1.2.1-examples/examples/seneca/log/customLogger.html
+			if ( fname.startsWith("logger?") )
 			{
-                File ind = new File(targ, "index.html");
-                if (ind.exists()) {
-                    targ = ind;
-                }
-            }
-            boolean OK = printHeaders(targ, ps);
-            if (doingGet) 
-			{
-                if (OK) {
-                    sendFile(targ, ps);
-                } else {
-                    send404(targ, ps);
-                }
-            }
+				System.out.println(fname.substring(7));  // somewhere on the way the encoding gets screw'd
+			}
+			else
+			{		
+       	    	File targ = new File( getRoot(), fname );
+	            if (targ.isDirectory()) 
+				{
+	                File ind = new File(targ, "index.html");
+	                if (ind.exists()) {
+	                    targ = ind;
+	                }
+	            }
+
+	            boolean OK = printHeaders(targ, ps);
+	            if (doingGet) 
+				{
+	                if (OK) {
+	                    sendFile(targ, ps);
+	                } else {
+	                    send404(targ, ps);
+	                }
+	            }
+			}
         } finally {
             s.close();
         }
@@ -339,6 +353,12 @@ outerloop:
         ps.write(EOL);
         ps.println("Not Found\n\n"+
                    "The requested resource was not found.\n");
+    }
+
+    void logAndSendNop (PrintStream ps) throws IOException {
+        ps.write(EOL);
+        ps.write(EOL);
+        ps.println("\n");
     }
 
     void sendFile(File targ, PrintStream ps) throws IOException {
@@ -473,10 +493,10 @@ outerloop:
 		setSuffix(".m4b", 	  "audio/mp4a-latm");
 		setSuffix(".m4p", 	  "audio/mp4a-latm");
 		setSuffix(".m4u", 	  "video/vnd.mpegurl");
-		setSuffix(".m4v", 	  "video/x-m4v");
+		setSuffix(".m4v", 	  "video/m4v");
 		setSuffix(".mac", 	  "image/x-macpaint");
 		setSuffix(".man",	  "application/x-troff-man");
-		setSuffix(".mathml", 	  "application/mathml+xml");
+		setSuffix(".mathml",  "application/mathml+xml");
 		setSuffix(".mbd",	  "application/mbedlet");
 		setSuffix(".mcf",	  "image/vasa");
 		setSuffix(".me",	  "application/x-troff-me"); 
@@ -603,7 +623,8 @@ outerloop:
 		setSuffix(".wav",	  "audio/x-wav");
 		setSuffix(".wav", 	  "audio/x-wav");
 		setSuffix(".wbmp",	  "image/vnd.wap.wbmp");
-		setSuffix(".wbmxl", 	  "application/vnd.wap.wbxml");
+		setSuffix(".wbmxl",   "application/vnd.wap.wbxml");
+		setSuffix(".webm",	  "video/webm");
 		setSuffix(".wml",	  "text/vnd.wap.wml");
 		setSuffix(".wmlc",	  "application/vnd.wap.wmlc");
 		setSuffix(".wmls",	  "text/vnd.wap.wmlscript");
