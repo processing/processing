@@ -3028,6 +3028,7 @@ public class PGraphics3D extends PGraphics {
       }
       pmatrixStackDepth--;
       projection.set(pmatrixStack[pmatrixStackDepth]);
+      updateProjection();
     } else {      
       if (matrixStackDepth == 0) {
         throw new RuntimeException(ERROR_PUSHMATRIX_UNDERFLOW);
@@ -3052,6 +3053,7 @@ public class PGraphics3D extends PGraphics {
   public void translate(float tx, float ty, float tz) {
     if (matrixMode == PROJECTION) {
       projection.translate(tx, ty, tz);
+      updateProjection();
     } else {
       forwardTransform.translate(tx, ty, tz);
       reverseTransform.invTranslate(tx, ty, tz);
@@ -3073,6 +3075,7 @@ public class PGraphics3D extends PGraphics {
   public void rotateX(float angle) {
     if (matrixMode == PROJECTION) {
       projection.rotateX(angle);
+      updateProjection();
     } else { 
       forwardTransform.rotateX(angle);
       reverseTransform.invRotateX(angle);
@@ -3083,6 +3086,7 @@ public class PGraphics3D extends PGraphics {
   public void rotateY(float angle) {
     if (matrixMode == PROJECTION) {
       projection.rotateY(angle);
+      updateProjection();
     } else {    
       forwardTransform.rotateY(angle);
       reverseTransform.invRotateY(angle);
@@ -3093,6 +3097,7 @@ public class PGraphics3D extends PGraphics {
   public void rotateZ(float angle) {
     if (matrixMode == PROJECTION) {
       projection.rotateZ(angle);
+      updateProjection();
     } else {    
       forwardTransform.rotateZ(angle);
       reverseTransform.invRotateZ(angle);
@@ -3107,6 +3112,7 @@ public class PGraphics3D extends PGraphics {
   public void rotate(float angle, float v0, float v1, float v2) {
     if (matrixMode == PROJECTION) {
       projection.rotate(angle, v0, v1, v2);
+      updateProjection();
     } else {    
       forwardTransform.rotate(angle, v0, v1, v2);
       reverseTransform.invRotate(angle, v0, v1, v2);
@@ -3136,6 +3142,7 @@ public class PGraphics3D extends PGraphics {
   public void scale(float x, float y, float z) {
     if (matrixMode == PROJECTION) {
       projection.scale(x, y, z);
+      updateProjection();
     } else {    
       forwardTransform.scale(x, y, z);
       reverseTransform.invScale(x, y, z);
@@ -3170,6 +3177,7 @@ public class PGraphics3D extends PGraphics {
   public void resetMatrix() {
     if (matrixMode == PROJECTION) {
       projection.reset();
+      updateProjection();
     } else {        
       forwardTransform.reset();
       reverseTransform.reset();
@@ -3214,6 +3222,7 @@ public class PGraphics3D extends PGraphics {
                        n10, n11, n12, n13,
                        n20, n21, n22, n23,
                        n30, n31, n32, n33);
+      updateProjection();
     } else {
       forwardTransform.apply(n00, n01, n02, n03,
                              n10, n11, n12, n13,
