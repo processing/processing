@@ -996,7 +996,7 @@ public class PGraphics extends PImage implements PConstants {
 //    }
     boolean textured = textureImage != null;
     if (fill || textured) {
-      if (textureImage == null) {
+      if (!textured) {
         vertex[R] = fillR;
         vertex[G] = fillG;
         vertex[B] = fillB;
@@ -1085,7 +1085,7 @@ public class PGraphics extends PImage implements PConstants {
 
     boolean textured = textureImage != null;
     if (fill || textured) {
-      if (textureImage == null) {
+      if (!textured) {
         vertex[R] = fillR;
         vertex[G] = fillG;
         vertex[B] = fillB;
