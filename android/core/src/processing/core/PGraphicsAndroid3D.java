@@ -346,6 +346,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** Number of textures currently in use. */
   protected int numTextures;
   
+  /** Number of textures used by a shape. */
+  protected int shapeTextures;  
+  
   /** Number of currently initialized texture buffers. */
   protected int numTexBuffers;
   
@@ -1299,6 +1302,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       triangleCount = 0;
     }
 
+    shapeTextures = 0;
     noTexture();
   }
   
@@ -1323,7 +1327,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     super.texture(image);
     textureImages[0] = image;
     java.util.Arrays.fill(textureImages, 1, maxTextureUnits, null);
-    numTextures = 1;    
+    numTextures = 1; 
+    shapeTextures++;
   }
   
   public void texture(PImage... images) {
@@ -1336,6 +1341,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (numTexBuffers < len) {
         addTexBuffers(len - numTexBuffers);
       }
+      shapeTextures += len;
     } else {
       System.err.println("A3D: insufficient texture units.");
     }    
@@ -1540,14 +1546,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       endShapeStroke(mode);
     }
 
-    if (fill) {
+    if (fill || 0 < shapeTextures) {
       endShapeFill();
     }
 
     // render shape and fill here if not saving the shapes for later
     // if true, the shapes will be rendered on endDraw
     if (!hints[ENABLE_DEPTH_SORT]) {
-      if (fill) {
+      if (fill || 0 < shapeTextures) {
         renderTriangles(0, faceCount);
         if (raw != null) {
           // rawTriangles(0, triangleCount);
@@ -1555,6 +1561,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         
         vertexCount = 0;
         triangleCount = 0;
+        shapeTextures = 0;
       }
       
       if (stroke) {
