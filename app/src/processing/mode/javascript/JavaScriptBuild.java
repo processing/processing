@@ -131,7 +131,7 @@ public class JavaScriptBuild
    * @param bin the output folder for the built sketch
    * @return boolean whether the build was successful
    */
-  public boolean build ( File bin )  
+  public boolean build ( File bin ) throws IOException, SketchException
   {
     // make sure the user isn't playing "hide-the-sketch-folder" again
     sketch.ensureExistence();
@@ -144,20 +144,8 @@ public class JavaScriptBuild
     } //else will be created during preprocesss
     
 	// pass through preprocessor to catch syntax errors
-    try 
-    {
-      preprocess(bin);
-
-    } catch ( IOException ioe ) {
-      final String msg = "A problem occured while writing to the output folder.";
-      Base.showWarning("Could not build the sketch", msg, ioe);
-      return false;
-
-    } catch ( SketchException se ) {
-	  final String msg = "The preprocessor found a problem in your code.";
-	  Base.showWarning("Could not build the sketch", msg, se);
-	  return false;
-	}
+    // .. exceptions bubble up.
+    preprocess(bin);
 
     // move the data files, copies contents of sketch/data/ to applet_js/
     if (sketch.hasDataFolder()) 
@@ -528,19 +516,9 @@ public class JavaScriptBuild
    * Export the sketch to the default applet_js folder.  
    * @return success of the operation 
    */
-  public boolean export() throws IOException 
+  public boolean export() throws IOException, SketchException
   {
     File applet_js = new File(sketch.getFolder(), EXPORTED_FOLDER_NAME);
-    return exportToFolder( applet_js );
-  }
-
-  
-  /** 
-   * Export the sketch to the provided folder 
-   * @return success of the operation 
-   */
-  public boolean exportToFolder( File exportFolder ) throws IOException 
-  {
-    return build( exportFolder );
+    return build( applet_js );
   }
 }
