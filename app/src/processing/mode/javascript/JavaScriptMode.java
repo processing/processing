@@ -12,6 +12,7 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.Mode;
 import processing.app.Sketch;
+import processing.app.SketchException;
 import processing.app.syntax.PdeKeywords;
 import processing.core.PApplet;
 
@@ -137,7 +138,7 @@ public class JavaScriptMode extends Mode
   
   // ------------------------------------------------
   
-  public boolean handleExport(Sketch sketch) throws IOException 
+  public boolean handleExport(Sketch sketch) throws IOException, SketchException
   {
     JavaScriptBuild build = new JavaScriptBuild(sketch);
     return build.export();
