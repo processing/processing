@@ -1,20 +1,29 @@
 0198 pde
+X incorporate RXTXcomm.jar and others from Dave
+X Serial.list() cannot find /dev/ttyACM0
+X   http://code.google.com/p/processing/issues/detail?id=634
 
-serial issues
-_ incorporate RXTXcomm.jar and others from Dave
+
 _ Closing applet window in Processing 1.5 causes serial crash
 _   http://code.google.com/p/processing/issues/detail?id=635
-_ Serial.list() cannot find /dev/ttyACM0
-_   http://code.google.com/p/processing/issues/detail?id=634
 
 _ Export reports "Could not copy source file" (even though it works)
 _   http://code.google.com/p/processing/issues/detail?id=638
+
+_ Base.listFiles does not list recursivly if extension is given
+_   this is for fjen/js.. fix already contributed:
+_   http://code.google.com/p/processing/issues/detail?id=718
 
 2.0
 _ colors for 2.0
 _ nurbs or other arch stuff for 2.0?
 _ build is currently broken for fresh checkout due to changes to file layout
 _   something that gets fixed by 'make clean'
+
+_ launch4j problem - FIXABLE
+_   no crash when double-clicking a sketch and loading it (?)
+_   http://code.google.com/p/processing/issues/detail?id=231
+_   also move back to using non-custom for 2.0 when we can drop QT support
 
 _ active editor not being set null
 _   in Base.nextEditorLocation(), changed to "editors.size() == 0" 
@@ -170,10 +179,6 @@ _   http://github.com/fjenett/processingjstool/zipball/v0.0.6
 
 _ Input Method support (for Japanese et al.) has been disabled
 _   http://code.google.com/p/processing/issues/detail?id=526
-
-_ launch4j problem - FIXABLE
-_   no crash when double-clicking a sketch and loading it
-_   http://code.google.com/p/processing/issues/detail?id=231
 
 _ fix line endings in revisions.txt for windows
 
