@@ -3,6 +3,17 @@ o arrayobjects (and others) flicker like hell in chrome 10
 o   http://code.google.com/p/processing/issues/detail?id=646
 o   http://code.google.com/p/chromium/issues/detail?id=62004
 o   http://code.google.com/p/chromium/issues/detail?id=79939
+A ortho() behaving differently in P3D vs OPENGL
+A   http://dev.processing.org/bugs/show_bug.cgi?id=100
+A   http://code.google.com/p/processing/issues/detail?id=37
+A   shows a blank canvas
+A   (was only happening once b/c was drawing first in perspective)
+A   seems to be mapping to 0, 0 - width/2, height/2
+A   fix 3D > OrthoVsPerspective example once ortho works properly
+A     there's a depth problem in addition to the ortho weirdness
+
+_ Potential race condition when resizing sketches
+_   http://code.google.com/p/processing/issues/detail?id=697
 
 patches submitted for a handful of GL issues
 _ Resizing window in OPENGL breaks ImageCaches
@@ -21,6 +32,7 @@ _ font rotation (native font problem?) with natives?
 _   http://code.google.com/p/processing/issues/detail?id=692
 
 for 2.0
+_ PVector discussion with Dan
 _ have andres take over all current GL issues in the tracker
 _ sort out destroy(), stop(), pause() et al
 _   ColorSelector should stop/pause when not visible
@@ -165,14 +177,6 @@ _   really, stop() should just call noLoop() (and start re-enable if done)
 _     and on android, start/stop can be used to save state information
 
 big ones
-_ ortho() behaving differently in P3D vs OPENGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=100
-_   http://code.google.com/p/processing/issues/detail?id=37
-_   shows a blank canvas
-_   (was only happening once b/c was drawing first in perspective)
-_   seems to be mapping to 0, 0 - width/2, height/2
-_   fix 3D > OrthoVsPerspective example once ortho works properly
-_     there's a depth problem in addition to the ortho weirdness
 _ modelx/y/z broken when aiming a camera
 _   http://code.google.com/p/processing/issues/detail?id=148
 _ opengl + resize window => window content garbled
