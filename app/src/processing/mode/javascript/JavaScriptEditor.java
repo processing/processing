@@ -3,6 +3,7 @@ package processing.mode.javascript;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -12,6 +13,7 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
 import processing.app.Sketch;
+import processing.app.SketchException;
 import processing.app.Formatter;
 import processing.app.Mode;
 import processing.mode.java.AutoFormat;
@@ -90,19 +92,21 @@ public class JavaScriptEditor extends Editor
         }
       });
 
-	JMenuItem showDirectivesWindow = new JMenuItem("Directives");
+	JMenuItem showDirectivesWindow = new JMenuItem("Playback settings");
 	showDirectivesWindow.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      handleShowDirectivesEditor();
 		}
 	});
 
-	JMenuItem copyTemplate = new JMenuItem("Copy template to sketch");
+	JMenuItem copyTemplate = new JMenuItem("Start custom template");
 	copyTemplate.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		  Sketch sketch = getSketch();
-		  File ajs = sketch.getMode().getContentFile(JavaScriptBuild.EXPORTED_FOLDER_NAME);
-		  File tjs = new File( sketch.getFolder(), JavaScriptBuild.TEMPLATE_FOLDER_NAME );
+		  File ajs = sketch.getMode().
+						getContentFile(JavaScriptBuild.EXPORTED_FOLDER_NAME);
+		  File tjs = new File( sketch.getFolder(), 
+							   JavaScriptBuild.TEMPLATE_FOLDER_NAME );
 		  if ( !tjs.exists() )
 		  {
 			try {
@@ -281,13 +285,14 @@ public class JavaScriptEditor extends Editor
   public void handleStartServer ()
   {
 	statusEmpty();
-  	boolean success = handleExport( false );
-    if ( !success ) return;
+	if ( !handleExport( false ) ) return;
 
-	File serverRoot = new File(sketch.getFolder(), JavaScriptBuild.EXPORTED_FOLDER_NAME);
+	File serverRoot = new File( sketch.getFolder(),
+	 							JavaScriptBuild.EXPORTED_FOLDER_NAME );
 
 	// if server hung or something else went wrong .. stop it.
-	if ( jsServer != null && (!jsServer.isRunning() || !jsServer.getRoot().equals(serverRoot)) )
+	if ( jsServer != null && 
+		 (!jsServer.isRunning() || !jsServer.getRoot().equals(serverRoot)) )
     {
 		jsServer.shutDown();
 		jsServer = null;
@@ -303,24 +308,14 @@ public class JavaScriptEditor extends Editor
 		String location = localDomain + ":" + jsServer.getPort() + "/";
 		
 		statusNotice( "Server started: " + location );
-
-		//if ( !System.getProperty("os.name").startsWith("Mac OS") )
-			Base.openURL( location );
-		/*else
-		{
-			try {
-				String scpt = "osascript -e "+
-							  "\"tell application \\\"Finder\\\" to open location \\\"" + location + "\\\"\"";
-				String[] cmd = { "/bin/bash", "-c", scpt };
-				Process process = new ProcessBuilder( cmd ).start();
-			} catch ( Exception e ) {
-				Base.openURL( location );
-			}
-		}*/
+		
+		Base.openURL( location );
 	}
 	else if ( jsServer.isRunning() )
 	{
-		statusNotice( "Server running ("+localDomain + ":" + jsServer.getPort() +"), reload your browser window." );
+		statusNotice( "Server running (" + 
+					  localDomain + ":" + jsServer.getPort() +
+					  "), reload your browser window." );
 	}
     toolbar.activate(JavaScriptToolbar.RUN);
   }
@@ -349,7 +344,8 @@ public class JavaScriptEditor extends Editor
         boolean success = jsMode.handleExport(sketch);
         if ( success && openFolder ) 
 		{
-          File appletJSFolder = new File(sketch.getFolder(), JavaScriptBuild.EXPORTED_FOLDER_NAME );
+          File appletJSFolder = new File( sketch.getFolder(),
+ 										  JavaScriptBuild.EXPORTED_FOLDER_NAME );
           Base.openFolder(appletJSFolder);
 
           statusNotice("Finished exporting.");
@@ -359,6 +355,8 @@ public class JavaScriptEditor extends Editor
         }
       } catch (Exception e) {
         statusError(e);
+	    toolbar.deactivate(JavaScriptToolbar.EXPORT);
+		return false;
       }
       toolbar.deactivate(JavaScriptToolbar.EXPORT);
     }
@@ -451,6 +449,11 @@ public class JavaScriptEditor extends Editor
   public void internalCloseRunner()
   {
       handleStopServer();
+	  if ( directivesEditor != null )
+	  {
+		directivesEditor.hide();
+		directivesEditor = null;
+	  }
   }
 
   public void deactivateRun ()

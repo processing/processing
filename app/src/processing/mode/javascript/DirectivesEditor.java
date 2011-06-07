@@ -30,7 +30,7 @@ public class DirectivesEditor
 {
 	JavaScriptEditor editor;
   
-    static JFrame frame;
+    JFrame frame;
 	JCheckBox 	crispBox;
 	JTextField 	fontField;
     JCheckBox 	globalKeyEventsBox;
@@ -72,8 +72,9 @@ public class DirectivesEditor
 	{
 		if ( editor.getSketch().isModified())
 		{
-			Base.showWarning( "Directives Editor", "Please save your sketch before changing the directives.", null);
-			//editor.statusError("Please save your sketch before changing the directives.");
+			Base.showWarning( "Directives Editor", 
+							  "Please save your sketch before changing "+
+							  "the directives.", null);
 			return;
 		}
 		
@@ -85,7 +86,8 @@ public class DirectivesEditor
 	
 	private void resetInterface ()
 	{
-		for ( JCheckBox b : new JCheckBox[]{ crispBox, globalKeyEventsBox, pauseOnBlurBox, transparentBox } )
+		for ( JCheckBox b : new JCheckBox[] {
+			crispBox, globalKeyEventsBox, pauseOnBlurBox, transparentBox } )
 		{
 			b.setSelected(false);
 		}
