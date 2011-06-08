@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import processing.app.Base;
+
 /**
  * Based on Sun tutorial at: http://bit.ly/fpoHAF
  *
@@ -19,7 +21,7 @@ class JavaScriptServer implements HttpConstants, Runnable
 
     private File virtualRoot;
     private int timeout = 5000;
-	private int port = 0; /* using whatever port is available */
+	private int port = -1;
 	
 	private boolean running = false, inited = false;
 	private boolean stopping = false;
@@ -51,9 +53,21 @@ class JavaScriptServer implements HttpConstants, Runnable
 	{
 		return port;
 	}
+	
+	public void setPort ( int newPort )
+	{
+		if ( !isRunning() ) {
+			port = newPort;
+		}
+	}
 
 	public void start ()
 	{
+		// TODO check port available?
+		// see:
+		// http://stackoverflow.com/questions/434718/sockets-discover-port-availability-using-java
+		// http://stackoverflow.com/questions/2675362/how-to-find-an-available-port
+		
 		thread = null;
 		thread = new Thread(this, "ProcessingJSServer");
 		thread.start();
@@ -101,22 +115,44 @@ class JavaScriptServer implements HttpConstants, Runnable
 		try
 		{
 			running = true;
-	        server = new ServerSocket( 0 );
 	
-			port = server.getLocalPort();
-			
-			inited = true;
-	
-	        while ( thread != null )
+			if ( port < 0 )
 			{
-				Socket s = server.accept();
+	        	server = new ServerSocket( 0 );
+				port = server.getLocalPort();
+				/* self assigned free port */
+			}
+			else
+			{
+        		server = new ServerSocket( port );
+			}
+			
+			if ( server != null )
+			{
+				inited = true;
+	
+		        while ( thread != null )
+				{
+					Socket s = server.accept();
 
-	            Worker ws = new Worker( virtualRoot );
-                ws.setSocket(s);
-                (new Thread(ws, "ProcessingJSServer Worker")).start();
-	        }
+		            Worker ws = new Worker( virtualRoot );
+	                ws.setSocket(s);
+	                (new Thread(ws, "ProcessingJSServer Worker")).start();
+		        }
+			}
 		} catch ( IOException ioe ) {
-			//ioe.printStackTrace();
+			System.err.println(ioe);
+			/*Base.showError( "Unable to start server",
+					        "Processing could not start the internal server. "+
+					        "Most of the time this means that the port is "+
+					        "already in use: " + port,
+					        ioe );*/
+		} catch ( SecurityException se ) {
+			System.err.println(se);
+			/*Base.showError( "Unable to start server",
+					        "Processing could not start the internal server "+
+					        "due to a security setting.",
+					        se );*/
 		}
 		running = false;
     }
@@ -260,7 +296,8 @@ outerloop:
                 }
             }
 
-            String fname = (new String(buf, 0, index, i-index)).replace('/', File.separatorChar);
+            String fname = (new String(buf, 0, index, i-index)).
+									replace('/', File.separatorChar);
             if (fname.startsWith(File.separator)) 
 			{
                 fname = fname.substring(1);
@@ -268,12 +305,13 @@ outerloop:
 
 			fname = java.net.URLDecoder.decode(fname);
 			
-			//TODO:
+			// TODO
 			//implement a logger service that will receive messages from p.js?
 			//processing-1.2.1-examples/examples/seneca/log/customLogger.html
 			if ( fname.startsWith("logger?") )
 			{
-				System.out.println(fname.substring(7));  // somewhere on the way the encoding gets screw'd
+				System.out.println(fname.substring(7));  
+				// TODO somewhere on the way the encoding gets screw'd
 			}
 			else
 			{		
