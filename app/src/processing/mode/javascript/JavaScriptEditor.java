@@ -10,6 +10,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import processing.app.Base;
+import processing.app.Settings;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
 import processing.app.Sketch;
@@ -301,6 +302,17 @@ public class JavaScriptEditor extends Editor
     if ( jsServer == null )
 	{
 		jsServer = new JavaScriptServer( serverRoot );
+		File sketchFolder = getSketch().getFolder();
+	    File sketchProps = new File(sketchFolder, "sketch.properties");
+	    if ( sketchProps.exists() ) {
+			try {
+	        	Settings props = new Settings(sketchProps);
+	        	int port = Integer.parseInt(props.get("server.port"));
+				jsServer.setPort(port);
+			} catch ( IOException ioe ) {
+				statusError(ioe);
+			}
+	    }
 		jsServer.start();
 		
 		while ( !jsServer.isRunning() ) {}
