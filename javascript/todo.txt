@@ -1,0 +1,2 @@
+We have some discussion here:
+http://code.google.com/p/processing/issues/detail?id=573
