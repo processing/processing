@@ -307,8 +307,12 @@ public class JavaScriptEditor extends Editor
 	    if ( sketchProps.exists() ) {
 			try {
 	        	Settings props = new Settings(sketchProps);
-	        	int port = Integer.parseInt(props.get("server.port"));
-				jsServer.setPort(port);
+				String portString = props.get("server.port");
+				if ( portString != null && !portString.trim().equals("") )
+				{
+	        		int port = Integer.parseInt(portString);
+					jsServer.setPort(port);
+				}
 			} catch ( IOException ioe ) {
 				statusError(ioe);
 			}
