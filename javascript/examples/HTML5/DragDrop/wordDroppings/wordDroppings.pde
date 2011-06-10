@@ -1,6 +1,12 @@
 /**
- *    Drag one of the links below into the sketch window!      <br/>
- *    (Opera currently not supported, sorry!)
+ *    This sketch demonstrates HTML5 drag and drop functionality.
+ *
+ *    <div class="draggables">
+ *        <div>Drag</div> <div>us</div> <div>to</div> <div>your</div> <div>sketch</div>
+ *    </div>
+ *    <style>.draggables div{display: inline-block;background:white;color: black;padding: 10px;}</style>
+ *    <br />
+ *    (Opera currently not supported …)
  */
  
 color normalColor;
@@ -39,7 +45,7 @@ void draw ()
     {
         for ( int i = 1; i < trail.size(); i++ )
         {
-            stroke(map(i,1,trail.size(),100,0));
+            stroke(map(i,1,trail.size(),80,0));
             line( trail.get(i-1)[0], trail.get(i-1)[1], 
                   trail.get(i)[0],   trail.get(i)[1] );
         }
