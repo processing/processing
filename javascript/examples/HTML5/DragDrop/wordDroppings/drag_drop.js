@@ -17,7 +17,7 @@ function initDragDrop ( sketch ) {
   var targetPosition = getElementPosition(target);
   var messageType = 'text/plain';
     
-  var links = document.querySelectorAll('a'), el = null;
+  var links = document.querySelectorAll('.draggables > div'), el = null;
   for (var i = 0; i < links.length; i++) {
     el = links[i];
   
