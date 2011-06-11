@@ -74,6 +74,9 @@ public class Base {
 
   // A single instance of the preferences window
   Preferences preferencesFrame;
+  
+  // A single instance of the library manager window
+  LibraryManager libraryManagerFrame;
 
   // set to true after the first time the menu is built.
   // so that the errors while building don't show up again.
@@ -1388,7 +1391,14 @@ public class Base {
     if (preferencesFrame == null) preferencesFrame = new Preferences();
     preferencesFrame.showFrame(activeEditor);
   }
-
+  
+  /**
+   * Show the library installer window.
+   */
+  public void handleAddOrRemoveLibrary() {
+    if (libraryManagerFrame == null) libraryManagerFrame = new LibraryManager();
+    libraryManagerFrame.showFrame(activeEditor);
+  }
 
   // ...................................................................
 
