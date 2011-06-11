@@ -68,10 +68,11 @@ public class LibraryManager {
       
       public void actionPerformed(ActionEvent arg) {
         try {
-          URI uri = new URI(libraryUri.getText());
-          System.out.println("Installing library: " + uri);
-        } catch (URISyntaxException e) {
-          System.err.println("Malformed URI");
+          URL url = new URL(libraryUri.getText());
+          System.out.println("Installing library: " + url);
+          installLibrary(url);
+        } catch (MalformedURLException e) {
+          System.err.println("Malformed URL");
         }
         libraryUri.setText("");
       }
@@ -100,6 +101,66 @@ public class LibraryManager {
                       (screen.height - dialog.getHeight()) / 2);
   }
   
+  protected void installLibrary(URL url) {
+    try {
+      String[] paths = url.getFile().split("/");
+      if (paths.length != 0) {
+        String fileName = paths[paths.length - 1];
+        File tmpFolder = Base.createTempFolder(fileName.split("\\.")[0], "library");
+        
+        File libFile = new File(tmpFolder, fileName);
+        libFile.setWritable(true);
+      
+        downloadFile(url, libFile);
+      }
+    } catch (IOException e) {
+      Base.showError("Trouble creating temporary folder",
+                     "Could not create a place to store libraries being downloaded.\n" +
+                     "That's gonna prevent us from continuing.", e);
+    }
+  }
+  
+  /**
+   * Returns true if the file was successfully downloaded, false otherwise
+   */
+  protected boolean downloadFile(URL source, File dest) {
+    try {
+      URLConnection urlConn = source.openConnection();
+      urlConn.setConnectTimeout(1000);
+      urlConn.setReadTimeout(1000);
+      
+      // String expectedType1 = "application/x-zip-compressed";
+      // String expectedType2 = "application/zip";
+      // String type = urlConn.getContentType();
+      // if (expectedType1.equals(type) || expectedType2.equals(type)) {
+      // }
+
+      int fileSize = urlConn.getContentLength();
+      InputStream in = urlConn.getInputStream();
+      FileOutputStream out = new FileOutputStream(dest);
+      
+      byte[] b = new byte[256];
+      int bytesDownloaded = 0, len;
+      while ((len = in.read(b)) != -1) {
+        int progress = (int) (100.0 * bytesDownloaded / fileSize );
+        // System.out.println("Downloaded " + progress + "%");
+        out.write(b, 0, len);
+        bytesDownloaded += len;
+      }
+      out.close();
+      // System.out.println("Done!");
+    
+      return true;
+      
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    return false;
+  }
+
   protected void showFrame(Editor editor) {
     this.editor = editor;
     dialog.setVisible(true);
