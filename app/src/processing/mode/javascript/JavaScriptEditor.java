@@ -393,12 +393,16 @@ public class JavaScriptEditor extends Editor
       handleSave();
 	  if ( jsServer != null && jsServer.isRunning() )
 		handleStartServer();
+	  else
+		statusEmpty();
     } else {
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             handleSave();
 			  if ( jsServer != null && jsServer.isRunning() )
 				handleStartServer();
+			  else
+				statusEmpty();
           }
         });
     }
