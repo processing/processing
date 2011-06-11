@@ -763,7 +763,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     sketchMenu.addSeparator();
 
     sketchMenu.add(mode.getImportMenu());
-
+    
+    item = new JMenuItem("Install Library...");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleAddOrRemoveLibrary();
+      }
+    });
+    sketchMenu.add(item);
+  
     item = Base.newJMenuItem("Show Sketch Folder", 'K');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
