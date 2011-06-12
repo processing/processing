@@ -539,6 +539,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
   /** Used to detect the occurrence of a frame resize event. */
   protected boolean resized = false;
   
+  /** Stores previous viewport dimensions. */
+  protected int[] viewport = {0, 0, 0, 0};
+  
   // ........................................................
 
   // Utility constants:  
@@ -982,7 +985,8 @@ public class PGraphicsOpenGL2 extends PGraphics {
       gl.glDepthMask(true);
     }
 
-    // setup opengl viewport.
+    // setup opengl viewport.    
+    gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
     gl.glViewport(0, 0, width, height);  
     if (resized) {
       // To avoid having garbage in the screen after a resize,
@@ -1045,6 +1049,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   public void endDraw() {
     report("top endDraw()");
+    
+    // Restoring previous viewport.
+    gl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]); 
 
     if (USE_GEO_BUFFER) {
       if (GEO_BUFFER_ACCUM_ALL && geoBuffer != null && 0 < geoBuffer.vertCount) {
