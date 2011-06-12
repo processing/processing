@@ -388,6 +388,11 @@ public class PGraphicsOpenGL extends PGraphics3D {
       gl.glDisable(GL.GL_LIGHT0 + i);
     }
     
+    // The current viewport is saved, since this 
+    // instance of PGraphicsOpenGL might correspond
+    // to an offscreen renderer with a resolution 
+    // different from the primary renderer.
+    gl.glPushAttrib(GL.GL_VIEWPORT_BIT);
     gl.glViewport(0, 0, width, height);
     if (resized) {
       // To avoid having garbage in the screen after a resize,
@@ -446,7 +451,10 @@ public class PGraphicsOpenGL extends PGraphics3D {
     if (drawable != null) {
       drawable.swapBuffers();
     }
-
+    
+    // Restoring previous viewport.
+    gl.glPopAttrib();
+    
     //insideDraw = false;
     report("bot endDraw()");
 
