@@ -479,6 +479,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** Used to hold color values to be sent to OpenGL. */
   protected float[] colorFloats;
 
+  /** Stores previous viewport dimensions. */
+  protected int[] viewport = {0, 0, 0, 0};  
+  
   // ........................................................
 
   // Utility constants:  
@@ -864,6 +867,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     // setup opengl viewport.
+    gl.glGetIntegerv(GL11.GL_VIEWPORT, viewport, 0);
     gl.glViewport(0, 0, width, height);
     
     // set up the default camera and initializes modelview matrix.
@@ -907,6 +911,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void endDraw() {
     report("top endDraw()");
+    
+    // Restoring previous viewport.
+    gl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
     
     if (USE_GEO_BUFFER) {
       if (GEO_BUFFER_ACCUM_ALL && geoBuffer != null && 0 < geoBuffer.vertCount) {
