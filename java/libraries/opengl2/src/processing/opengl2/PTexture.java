@@ -271,6 +271,7 @@ public class PTexture implements PConstants {
         convertToRGBA(pixels, rgbaPixels, format, w, h);
         getGl().glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_GENERATE_MIPMAP, GL.GL_TRUE);        
         setTexels(x, y, w, h, rgbaPixels);
+        rgbaPixels = null;
       } else {
         // TODO: Manual mipmap generation.
         // Open source implementation of gluBuild2DMipmaps here:
@@ -280,6 +281,7 @@ public class PTexture implements PConstants {
       int[] rgbaPixels = new int[w * h];
       convertToRGBA(pixels, rgbaPixels, format, w, h);
       setTexels(x, y, w, h, rgbaPixels);
+      rgbaPixels = null;
     }
 
     getGl().glBindTexture(glTarget, 0);
@@ -718,12 +720,18 @@ public class PTexture implements PConstants {
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_S, glWrapS);
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_T, glWrapT);
     
-    // This array is used to make sure that the texture doesn't contain any
-    // garbage.
-    int[] initArray = new int[glWidth * glHeight];
-    java.util.Arrays.fill(initArray, 0, glWidth * glHeight, 0x00000000);
+    //First, we use glTexImage2D to set the full size of the texture (glW/H might be diff from
+    // w/h in the case that the GPU doesn't support NPOT textures)
     getGl().glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL.GL_RGBA, 
-                         GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(initArray));
+                         GL.GL_UNSIGNED_BYTE, null);
+    
+    // Once OpenGL knows the size of the new texture, we make sure it doesn't
+    // contain any garbage in the region of interest (0, 0, w, h):
+    int[] texels = new int[w * h];
+    java.util.Arrays.fill(texels, 0, w * h, 0x00000000); 
+    setTexels(0, 0, w, h, texels); 
+    texels = null;
+    
     getGl().glBindTexture(glTarget, 0);
     getGl().glDisable(glTarget);
         
