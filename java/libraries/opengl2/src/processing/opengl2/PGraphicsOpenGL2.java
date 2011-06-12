@@ -703,7 +703,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   public void dispose() { // PGraphics    
     super.dispose();
-    deleteAllGLResources();    
+    detainContext();
+    deleteAllGLResources();
+    releaseContext();
     GLProfile.shutdown();
   }
 
