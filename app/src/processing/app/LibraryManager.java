@@ -27,6 +27,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.zip.*;
 
 import javax.swing.*;
@@ -67,7 +69,7 @@ public class LibraryManager {
       public void actionPerformed(ActionEvent arg) {
         try {
           URL url = new URL(libraryUri.getText());
-          System.out.println("Installing library: " + url);
+          // System.out.println("Installing library: " + url);
           File libFile = downloadLibrary(url);
           if (libFile != null) {
             installLibrary(libFile);
@@ -152,18 +154,38 @@ public class LibraryManager {
       File tmpFolder = Base.createTempFolder(libName, "uncompressed");
       unzip(libFile, tmpFolder);
       
-      File[] files = tmpFolder.listFiles();
-      for (File libraryFolder : files) {
-        if (libraryFolder.isDirectory()) {
-          // The folder is possibly a library. Check if it is, and install
-          // if necessary.
-        }
-      }
-      
+      installLibraries(Library.list(tmpFolder));
     } catch (IOException e) {
       Base.showError("Trouble creating temporary folder",
-                     "Could not create a place to store libary's uncompressed contents.\n"
-                         + "That's gonna prevent us from continuing.", e);
+           "Could not create a place to store libary's uncompressed contents.\n"
+         + "That's gonna prevent us from continuing.", e);
+    }
+  }
+  
+  protected void installLibraries(ArrayList<Library> newLibs) {
+    ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
+
+    // Remove any libraries that are already installed.
+    Iterator<Library> it = newLibs.iterator();
+    while (it.hasNext()) {
+      Library lib = it.next();
+
+      // XXX: We need to dynamically load the libraries or restart the PDE for
+      // this to work properly. For now, files will be clobbered if the same
+      // library is installed twice without restarting the PDE.
+      for (Library oldLib : oldLibs) {
+        if (oldLib.getName().equals(lib.getName())) {
+          System.err.println("A library by the name " + oldLib.getName() + " is already installed.");
+          it.remove();
+          break;
+        }
+      }
+    }
+    
+    for (Library newLib : newLibs) {
+      String libFolderName = newLib.folder.getName();
+      newLib.folder.renameTo(new File(editor.getBase().getSketchbookLibrariesFolder(),
+                                      libFolderName));
     }
   }
 
