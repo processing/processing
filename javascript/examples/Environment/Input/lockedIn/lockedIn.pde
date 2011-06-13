@@ -1,5 +1,5 @@
 /**
- *  Promt for user input
+ *  This example demonstrates how to promt for user input
  */
  
 String password = null;
@@ -12,6 +12,9 @@ void setup ()
     
     textFont(createFont("Arial", 22));
     textAlign(CENTER);
+    
+    rectMode(CENTER);    
+    noStroke();
 }
 
 void draw ()
@@ -27,15 +30,29 @@ void draw ()
     {
         background( 100 );
         
+        fill(255,0,0);
+        pushMatrix();
+            translate(width/2,height/3);
+            rotate(HALF_PI/2); rect(0,0,40,10);
+            rotate(HALF_PI); rect(0,0,40,10);
+        popMatrix();
+        
         fill( 255 );
-        text( "LOCKED, click to unlock", width/2, height/2);
+        text( "LOCKED, click to unlock", width/2, 2*(height/3));
     }
     else
     {
         background( 255 );
         
+        fill(0,255,0);
+        pushMatrix();
+            translate(width/2,height/3+10);
+            rotate(-HALF_PI/2); rect(15,0,40,10);
+            rotate(-HALF_PI); rect(5,0,20,10);
+        popMatrix();
+        
         fill( 0 );
-        text( "UNLOCKED\nwill lock in "+int(ceil((nextLock-millis())/1000))+" secs", width/2, height/2);
+        text( "UNLOCKED\nwill lock in "+int(ceil((nextLock-millis())/1000))+" secs", width/2, 2*(height/3));
         
         if ( nextLock-millis() < 0 ) locked = true;
     }
@@ -59,16 +76,21 @@ void mousePressed ()
         else if ( locked )
         {
             String passTry = js.promtForInput( "Enter your password", "" );
-            while ( passTry != null && !passTry.equals(password) )
+            while ( testLocked(passTry) )
             {
                 passTry = js.promtForInput( "Nope, try again", "" );
                 if ( passTry == null ) break;
             }
-            locked = passTry != null && !passTry.equals(password);
+            locked = testLocked(passTry);
             if ( !locked )
                 nextLock = millis() + 5000;
         }
     }
+}
+
+boolean testLocked ( String passTry )
+{
+    return passTry == null || !passTry.equals(password);
 }
 
 
