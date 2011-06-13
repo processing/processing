@@ -16,8 +16,9 @@ class JavaScriptServer implements HttpConstants, Runnable
 	Thread thread = null;
 	ServerSocket server = null;
 	
-    private ArrayList<Worker> threads = new ArrayList<Worker>();
-    private int workers = 5;
+	// TODO: this needed? SocketException on stop coming from here?
+    //private ArrayList<Worker> threads = new ArrayList<Worker>();
+    //private int workers = 5;
 
     private File virtualRoot;
     private int timeout = 5000;
@@ -84,18 +85,20 @@ class JavaScriptServer implements HttpConstants, Runnable
 	// http://bit.ly/eA8iGj
 	public void shutDown ()
 	{		
-		if ( threads != null )
+		/*if ( threads != null )
 		{
 			for ( Worker w : threads )
 			{
 				w.stop();
 			}
-		}
+		}*/
 		
 		thread = null;
 		try {
 			if ( server != null )
+			{
 				server.close();
+			}
 		} catch ( Exception e ) {;}
 	}
 	
@@ -127,6 +130,14 @@ class JavaScriptServer implements HttpConstants, Runnable
         		server = new ServerSocket( port );
 			}
 			
+		} catch ( IOException ioe ) {
+			// problem starting server!
+			System.err.println(ioe);
+		} catch ( SecurityException se ) {
+			System.err.println(se);
+		}
+		
+		try {	
 			if ( server != null )
 			{
 				inited = true;
@@ -137,23 +148,15 @@ class JavaScriptServer implements HttpConstants, Runnable
 
 		            Worker ws = new Worker( virtualRoot );
 	                ws.setSocket(s);
+				    //threads.add(ws);
 	                (new Thread(ws, "ProcessingJSServer Worker")).start();
 		        }
 			}
 		} catch ( IOException ioe ) {
-			System.err.println(ioe);
-			/*Base.showError( "Unable to start server",
-					        "Processing could not start the internal server. "+
-					        "Most of the time this means that the port is "+
-					        "already in use: " + port,
-					        ioe );*/
-		} catch ( SecurityException se ) {
-			System.err.println(se);
-			/*Base.showError( "Unable to start server",
-					        "Processing could not start the internal server "+
-					        "due to a security setting.",
-					        se );*/
+			// happens on shutDown(), ignore ..
+			//System.err.println(ioe);
 		}
+		
 		running = false;
     }
 }
@@ -186,7 +189,7 @@ implements HttpConstants, Runnable
         notify();
     }
 
-	void stop ()
+	synchronized void stop ()
 	{
 		stopping = true;
 		notify();
