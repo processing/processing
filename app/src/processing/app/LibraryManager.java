@@ -147,22 +147,24 @@ public class LibraryManager {
    * Installs the given library file to the active sketchbook. The contents of
    * the library are extracted to a temporary folder before being moved.
    */
-  protected void installLibrary(File libFile) {
+  protected int installLibrary(File libFile) {
     try {
       String libName = guessLibraryName(libFile.getPath());
 
       File tmpFolder = Base.createTempFolder(libName, "uncompressed");
       unzip(libFile, tmpFolder);
       
-      installLibraries(Library.list(tmpFolder));
+      return installLibraries(Library.list(tmpFolder));
     } catch (IOException e) {
       Base.showError("Trouble creating temporary folder",
            "Could not create a place to store libary's uncompressed contents.\n"
          + "That's gonna prevent us from continuing.", e);
     }
+    
+    return 0;
   }
   
-  protected void installLibraries(ArrayList<Library> newLibs) {
+  protected int installLibraries(ArrayList<Library> newLibs) {
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
 
     // Remove any libraries that are already installed.
@@ -187,6 +189,8 @@ public class LibraryManager {
       newLib.folder.renameTo(new File(editor.getBase().getSketchbookLibrariesFolder(),
                                       libFolderName));
     }
+    
+    return newLibs.size();
   }
 
   /**
@@ -263,6 +267,22 @@ public class LibraryManager {
   protected void showFrame(Editor editor) {
     this.editor = editor;
     dialog.setVisible(true);
+  }
+
+  public int confirmAndInstallLibrary(Editor editor, File libFile) {
+    this.editor = editor;
+    
+    String prompt = "Install libraries from " + libFile.getName() + "?  ";
+
+    int result = JOptionPane.showConfirmDialog(this.editor, prompt, "Close",
+                                               JOptionPane.YES_NO_OPTION,
+                                               JOptionPane.QUESTION_MESSAGE);
+    
+    if (result == 0) {
+      return installLibrary(libFile);
+    }
+    
+    return 0;
   }
 
 }
