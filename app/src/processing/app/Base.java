@@ -1399,6 +1399,15 @@ public class Base {
     if (libraryManagerFrame == null) libraryManagerFrame = new LibraryManager();
     libraryManagerFrame.showFrame(activeEditor);
   }
+  
+  /**
+   * Installed the libraries in the given file after a confirmation from the
+   * user. Returns the number of libraries installed.
+   */
+  public int handleConfirmAndInstallLibrary(File libFile) {
+    if (libraryManagerFrame == null) libraryManagerFrame = new LibraryManager();
+    return libraryManagerFrame.confirmAndInstallLibrary(activeEditor, libFile);
+  }
 
   // ...................................................................
 
