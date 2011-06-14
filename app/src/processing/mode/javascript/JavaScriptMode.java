@@ -92,6 +92,16 @@ public class JavaScriptMode extends Mode
    */
   public File[] getExampleCategoryFolders()
   {
+	// find included example subdirs
+	File[] inclExamples = examplesFolder.listFiles(new java.io.FileFilter(){
+		public boolean accept (File f) {
+			// only the subfolders
+			return f.isDirectory();
+		}
+	});
+	java.util.Arrays.sort(inclExamples);
+	
+	// add JavaMode examples as these are supposed to run in JSMode
 	JavaMode jMode = null;
 	for ( Mode m : base.getModeList() )
 	{
@@ -105,16 +115,21 @@ public class JavaScriptMode extends Mode
 		return new File[0];
 	
 	File jExamples = jMode.getContentFile("examples");
-    return new File[] { 
-      new File(examplesFolder, "Environment"),
-	  new File(examplesFolder, "HTML5"),
-	  new File(examplesFolder, "Libraries"),
-	  new File(examplesFolder, "Services"),
+	File[] jModeExamples = new File[] {
       new File(jExamples, "Basics"),
       new File(jExamples, "Topics"),
       new File(jExamples, "3D"),
       new File(jExamples, "Books")
     };
+	
+	// merge them all
+	File[] finalExamples = new File[inclExamples.length + jModeExamples.length];
+	for ( int i = 0; i < inclExamples.length; i++ )
+		finalExamples[i] = inclExamples[i];
+	for ( int i = 0; i < jModeExamples.length; i++ )
+		finalExamples[inclExamples.length+i] = jModeExamples[i];
+	
+    return finalExamples;
   }
   
   
