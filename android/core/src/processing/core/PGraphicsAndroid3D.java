@@ -3337,7 +3337,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         float y2 = y1 + high * textSize;
 
         textCharModelImpl(tinfo, x1, y1, x2, y2);
-
       } else if (textMode == SCREEN) {
         int xx = (int) x + glyph.leftExtent;
         int yy = (int) y - glyph.topExtent;
