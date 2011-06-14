@@ -253,6 +253,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     public boolean importData(JComponent src, Transferable transferable) {
       int successful = 0;
 
+      ArrayList<File> libraryFiles = new ArrayList<File>();
+      ArrayList<File> sketchFiles = new ArrayList<File>();
+
       try {
         DataFlavor uriListFlavor =
           new DataFlavor("text/uri-list;class=java.lang.String");
@@ -262,8 +265,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
             transferable.getTransferData(DataFlavor.javaFileListFlavor);
           for (int i = 0; i < list.size(); i++) {
             File file = (File) list.get(i);
-            if (sketch.addFile(file)) {
-              successful++;
+            if (file.getName().endsWith(".plb")) {
+              libraryFiles.add(file);
+            } else {
+              sketchFiles.add(file);
             }
           }
         } else if (transferable.isDataFlavorSupported(uriListFlavor)) {
@@ -280,8 +285,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
             } else if (pieces[i].startsWith("file:/")) {
               path = pieces[i].substring(5);
             }
-            if (sketch.addFile(new File(path))) {
-              successful++;
+            
+            File file = new File(path);
+            if (path.endsWith(".plb")) {
+              libraryFiles.add(file);
+            } else {
+              sketchFiles.add(file);
             }
           }
         }
@@ -290,16 +299,43 @@ public abstract class Editor extends JFrame implements RunnerListener {
                          "An error occurred while trying to add files to the sketch.", e);
         return false;
       }
+      
+      if (libraryFiles.isEmpty()) {
+        for (File file : sketchFiles) {
+          if (sketch.addFile(file)) {
+            successful++;
+          }
+        }
+        
+        if (successful == 0) {
+          statusError("No files were added to the sketch.");
 
-      if (successful == 0) {
-        statusError("No files were added to the sketch.");
+        } else if (successful == 1) {
+          statusNotice("One file added to the sketch.");
 
-      } else if (successful == 1) {
-        statusNotice("One file added to the sketch.");
-
+        } else {
+          statusNotice(successful + " files added to the sketch.");
+        }
       } else {
-        statusNotice(successful + " files added to the sketch.");
+        if (sketchFiles.isEmpty()) {
+          for (File file : libraryFiles) {
+            successful += getBase().handleConfirmAndInstallLibrary(file);
+          }
+          
+          if (successful == 0) {
+            statusError("No libraries were added to the sketchbook.");
+
+          } else if (successful == 1) {
+            statusNotice("One library added to the sketchbook.");
+
+          } else {
+            statusNotice(successful + " libraries added to the sketchbook.");
+          }
+        } else {
+          statusError("Can't install libraries and add files to the sketch in a single operation.");
+        }
       }
+      
       return true;
     }
   }
