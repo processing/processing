@@ -1294,6 +1294,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       if (opengl2X) {
         if (primarySurface) {
           releaseContext();
+          // TODO: we need to recreate resources here...?
           context.destroy();
           context = null;
           allocate();
@@ -1310,6 +1311,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
       if (!opengl4X) {
         if (primarySurface) {
           releaseContext();
+          // TODO: we need to recreate resources here...?
           context.destroy();
           context = null;
           allocate();
@@ -3403,7 +3405,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   // protected void textLineAlignImpl(char buffer[], int start, int stop,
   // float x, float y)
-
+  
   /**
    * Implementation of actual drawing for a line of text.
    */
@@ -3474,7 +3476,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
         tinfo = textTex.addToTexture(glyph);
       }
       
-      if (textMode == MODEL) {
+      if (textMode == MODEL) {       
         float high = glyph.height / (float) textFont.getSize();
         float bwidth = glyph.width / (float) textFont.getSize();
         float lextent = glyph.leftExtent / (float) textFont.getSize();
@@ -3486,7 +3488,6 @@ public class PGraphicsOpenGL2 extends PGraphics {
         float y2 = y1 + high * textSize;
 
         textCharModelImpl(tinfo, x1, y1, x2, y2);
-
       } else if (textMode == SCREEN) {        
         int xx = (int) x + glyph.leftExtent;
         int yy = (int) y - glyph.topExtent;
@@ -6773,7 +6774,9 @@ public class PGraphicsOpenGL2 extends PGraphics {
     } else if (hints[ENABLE_OPENGL_4X_SMOOTH]) {
       capabilities.setSampleBuffers(true);
       capabilities.setNumSamples(4);
-    }      
+    } else {
+      capabilities.setSampleBuffers(false);
+    }
 
     // Getting the native window:
     // http://www.java-gaming.org/index.php/topic,21559.0.html
