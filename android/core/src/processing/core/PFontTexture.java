@@ -181,33 +181,54 @@ class PFontTexture implements PConstants {
   
   // It was inside PFont.Glyph
   // Adds this glyph to the opengl texture in PFont.
-  protected void addToTexture(int idx, PFont.Glyph glyph) {           
-    // Converting the pixels array from the PImage into a valid RGBA array for OpenGL.
-    int[] rgba = new int[glyph.width * glyph.height];
+  protected void addToTexture(int idx, PFont.Glyph glyph) {
+    // We add one pixel to avoid issues when sampling the font texture at fractional
+    // screen positions. I.e.: the pixel on the screen only contains half of the 
+    // font rectangle, so it would sample half of the color from the glyph 
+    // area in the texture, and the other half from the contiguous pixel. If the
+    // later contains a portion of the neighbor glyph and former doesn't, this
+    // would result in a shaded pixel when the correct output is blank.
+    // This is a consequence of putting all the glyphs in a common texture with
+    // bilinear sampling.
+    int w = 1 + glyph.width + 1;
+    int h = 1 + glyph.height + 1;
+    
+    // Converting the pixels array from the PImage into a valid RGBA array for OpenGL.    
+    int[] rgba = new int[w * h];
     int t = 0;
     int p = 0;
-    if (PGraphicsAndroid3D.BIG_ENDIAN)  {
+    if (PGraphicsAndroid3D.BIG_ENDIAN)  {            
+      java.util.Arrays.fill(rgba, 0, w, 0xFFFFFF00); // Set the first row to blank pixels.
+      t = w;      
       for (int y = 0; y < glyph.height; y++) {
+        rgba[t++] = 0xFFFFFF00; // Set the leftmost pixel in this row as blank
         for (int x = 0; x < glyph.width; x++) {
           rgba[t++] = 0xFFFFFF00 | glyph.image.pixels[p++];
-        }
+        }        
+        rgba[t++] = 0xFFFFFF00; // Set the rightmost pixel in this row as blank
       }
+      java.util.Arrays.fill(rgba, (h - 1) * w, h * w, 0xFFFFFF00); // Set the last row to blank pixels.
     } else {
+      java.util.Arrays.fill(rgba, 0, w, 0x00FFFFFF); // Set the first row to blank pixels.
+      t = w;      
       for (int y = 0; y < glyph.height; y++) {
+        rgba[t++] = 0x00FFFFFF; // Set the leftmost pixel in this row as blank
         for (int x = 0; x < glyph.width; x++) {
           rgba[t++] = (glyph.image.pixels[p++] << 24) | 0x00FFFFFF;
         }
+        rgba[t++] = 0x00FFFFFF; // Set the rightmost pixel in this row as blank
       }
+      java.util.Arrays.fill(rgba, (h - 1) * w, h * w, 0x00FFFFFF); // Set the last row to blank pixels.
     }
     
     // Is there room for this glyph on the current line?
-    if (offsetX + glyph.width> textures[currentTex].glWidth) {
+    if (offsetX + w > textures[currentTex].glWidth) {
       // No room, go to the next line:
       offsetX = 0;
       offsetY += lineHeight;
       lineHeight = 0;
     }
-    lineHeight = Math.max(lineHeight, glyph.height);
+    lineHeight = Math.max(lineHeight, h);
     
     boolean resized = false;
     if (offsetY + lineHeight > textures[currentTex].glHeight) {    
@@ -238,10 +259,10 @@ class PFontTexture implements PConstants {
       setTexture(lastTex);
     }
     
-    textures[currentTex].setTexels(offsetX, offsetY, glyph.width, glyph.height, rgba);
+    textures[currentTex].setTexels(offsetX, offsetY, w, h, rgba);
     
-    TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY, glyph.width, glyph.height);
-    offsetX += glyph.width;
+    TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY, w, h);
+    offsetX += w;
  
     if (idx == glyphTexinfos.length) {
       TextureInfo[] temp = new TextureInfo[glyphTexinfos.length + 1];
@@ -263,18 +284,16 @@ class PFontTexture implements PConstants {
     public float v0, v1;
 
     public TextureInfo(int tidx, int cropX, int cropY, int cropW, int cropH) {
-      texIndex = tidx;
-      width = textures[tidx].glWidth;
-      height = textures[tidx].glHeight;       
+      texIndex = tidx;      
       crop = new int[4];
-      crop[0] = cropX;
-      crop[1] = cropY + cropH;
-      crop[2] = cropW;
-      crop[3] = -cropH;
-      u0 = (float)cropX / (float)width;
-      u1 = u0 + (float)cropW / (float)width;
-      v0 = (float)cropY / (float)height;
-      v1 = v0 + (float)cropH / (float)height;
+      // The region of the texture corresponding to the glyph is surrounded by a 
+      // 1-pixel wide border to avoid artifacts due to bilinear sampling. This is
+      // why the additions and subtractions to the crop values. 
+      crop[0] = cropX + 1;
+      crop[1] = cropY + 1 + cropH - 2;
+      crop[2] = cropW - 2;
+      crop[3] = -cropH + 2;
+      updateUV();
     }
 
     void updateUV() {
@@ -283,7 +302,7 @@ class PFontTexture implements PConstants {
       u0 = (float)crop[0] / (float)width;
       u1 = u0 + (float)crop[2] / (float)width;
       v0 = (float)(crop[1] + crop[3]) / (float)height;
-      v1 = v0 - (float)crop[3] / (float)height; 
+      v1 = v0 - (float)crop[3] / (float)height;  
     }
   }
 }
