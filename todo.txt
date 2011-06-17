@@ -4,6 +4,83 @@ X Serial.list() cannot find /dev/ttyACM0
 X   http://code.google.com/p/processing/issues/detail?id=634
 
 
+2.0
+_ colors for 2.0
+_ nurbs or other arch stuff for 2.0?
+_ build is currently broken for fresh checkout due to changes to file layout
+_   something that gets fixed by 'make clean'
+_ require Java 6 (and with that, OS X 10.5 plus Core 2 Intel Mac)?
+_   though we need a 64-bit browser before applets will run...
+_   http://www.ornl.gov/~t6p/Main/Utilities.html
+_ get rid of static mode? only setup/draw mode? or create project that way?
+_ use launch4j for export and p5 app itself
+_   perhaps even calling it through an ant task
+_ do examples need to be installed as bundles? 
+_ add === for String.equals()
+_   might be problematic since it might be opposite the javascript meaning
+_ l10n, i18n of environment/core - arduino pushing on this one
+_ indents and loops
+_   really, should just enforce this
+_   or make the area light up gray as it's being worked on
+_ eclipse import/export
+_   simple mechanism to export to eclipse
+_     don't worry about subversion stuff, just export with libraries
+_   something clever to import back from eclipse
+_   could keep the .svn files in with the libs and all
+_   then when exporting for eclipse, people can update as necessary
+_ catch 1.5 code in libraries - is this still an issue for 1.6 on 1.5? 
+_   Exception in thread "main" java.lang.UnsupportedClassVersionError: quicktime/QTException (Unsupported major.minor version 49.0) 
+_ javascript and liveconnect to preload applets
+_   http://code.google.com/p/processing/issues/detail?id=66
+_ warn the user that the applet/application folders will be replaced
+_ firmata as a core library (read/write to/from arduino)?
+_   package cc.arduino.*
+_ how is autoformat doing?
+_ errors that cannot be placed (i.e. missing brace) 
+_   this makes things to jump to the last tab
+_ add page numbers and file name to printing in p5
+_   also add something to control the font & font size
+_ prevent people from setting the font size too small in the editor
+_   how do we figure out what "too small" is?
+
+reference/examples
+_ import p5 reference into the javadoc
+_ local web server to run reference from .zip?
+_   no more gazillion file nastiness
+_ add notes to build instructions re: building core with eclipse
+_ yahoo search example is out of date (included in the examples? the book?)
+_ document the move of the auto format menu
+_   in the book(s)? in the reference?
+_ improve documentation of the pdf stuff
+_   be clearer about the font setup stuff
+_   fonts by default not working that well?
+
+opengl
+_ new opengl2
+_ optimize: sending buffers of vertices
+_ optimize: ellipse and sphere implementations
+_ OpenGL tessellator implementation (for complex shapes)
+_ opengl isn't drawing rectangles out to raw properly with fonts
+_   when not in textMode(SHAPE) should have rects
+_ making jogl behave better in the browser - or remove it/add warning
+_ edge flag work (OpenGL and P3D)
+_ stroke caps and joins in P2D, P3D, and OpenGL
+_ start caching shape objects with opengl
+_   store them in the PFont itself?
+
+gsvideo
+_ incorporate gsvideo library from Andres
+_ fast java2d video?
+
+gsoc
+_ "install library" menu option
+
+3.0
+_ better text editor / live debugging (integrate Eclipse JDT)
+_ it's too difficult for students to debug their code
+_   can the jdt be hooked in somewhat easily?
+
+
 _ Closing applet window in Processing 1.5 causes serial crash
 _   http://code.google.com/p/processing/issues/detail?id=635
 
@@ -13,12 +90,6 @@ _   http://code.google.com/p/processing/issues/detail?id=638
 _ Base.listFiles does not list recursivly if extension is given
 _   this is for fjen/js.. fix already contributed:
 _   http://code.google.com/p/processing/issues/detail?id=718
-
-2.0
-_ colors for 2.0
-_ nurbs or other arch stuff for 2.0?
-_ build is currently broken for fresh checkout due to changes to file layout
-_   something that gets fixed by 'make clean'
 
 _ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it (?)
