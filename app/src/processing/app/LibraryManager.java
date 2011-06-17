@@ -32,6 +32,10 @@ import java.util.Iterator;
 import java.util.zip.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import processing.app.LibraryListPanel.LibraryPanel;
 
 /**
  * 
@@ -40,12 +44,8 @@ public class LibraryManager {
 
   JFrame dialog;
 
-  JLabel uriLabel;
-
-  JTextField libraryUri;
-
-  JButton installButton;
-
+  LibraryListPanel libraryListPane;
+  
   // the calling editor, so updates can be applied
 
   Editor editor;
@@ -60,44 +60,29 @@ public class LibraryManager {
 
     Base.setIcon(dialog);
 
-    uriLabel = new JLabel("Library URI:");
-    libraryUri = new JTextField(40);
-    installButton = new JButton("Install");
-
-    ActionListener installLibAction = new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg) {
-        try {
-          URL url = new URL(libraryUri.getText());
-          // System.out.println("Installing library: " + url);
-          File libFile = downloadLibrary(url);
-          if (libFile != null) {
-            installLibrary(libFile);
-          }
-        } catch (MalformedURLException e) {
-          System.err.println("Malformed URL");
-        }
-        libraryUri.setText("");
-      }
-    };
-    libraryUri.addActionListener(installLibAction);
-    installButton.addActionListener(installLibAction);
-
     Container pane = dialog.getContentPane();
-    BoxLayout boxLayout = new BoxLayout(pane, BoxLayout.Y_AXIS);
-    pane.setLayout(boxLayout);
-
-    Box horizontal = Box.createHorizontalBox();
-    horizontal.add(Box.createVerticalStrut(2));
-    horizontal.add(uriLabel);
-    uriLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-    horizontal.add(Box.createVerticalStrut(5));
-
-    horizontal.add(libraryUri);
-    horizontal.add(installButton);
-
-    pane.add(horizontal);
-
+    pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+    pane.setBackground(Color.red);
+    
+    libraryListPane = new LibraryListPanel(fetchLibraryInfo());
+    
+    final JScrollPane scrollPane = new JScrollPane();
+    scrollPane.setViewportView(libraryListPane);
+    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    pane.add(scrollPane);
+    scrollPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    
+    scrollPane.getViewport().addChangeListener(new ChangeListener() {
+      
+      public void stateChanged(ChangeEvent ce) {
+        
+        int width = scrollPane.getViewportBorderBounds().width;
+        libraryListPane.setWidth(width);
+      }
+    });
+    
+    dialog.setMinimumSize(new Dimension(400, 400));
     dialog.pack();
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     dialog.setLocation((screen.width - dialog.getWidth()) / 2,
@@ -284,5 +269,52 @@ public class LibraryManager {
     
     return 0;
   }
+  
+  /**
+   * Placeholder function which returns a list of information on libraries.
+   */
+  public ArrayList<LibraryInfo> fetchLibraryInfo() {
+    ArrayList<LibraryInfo> libInfos = new ArrayList<LibraryInfo>();
+    
+    LibraryInfo libInfo = new LibraryInfo();
+    libInfo.name = "BlobDetection";
+    libInfo.briefOverview = "Performs the computer vision technique of finding \"blobs\" in an image.";
+    libInfo.isInstalled = true;
+    libInfo.tags.add("blob");
+    libInfo.tags.add("vision");
+    libInfo.tags.add("image");
+    libInfos.add(libInfo);
+    
+    libInfo = new LibraryInfo();
+    libInfo.name = "OpenCV";
+    libInfo.briefOverview = "An OpenCV implementation for processing including blob detection, face recognition and more. This library is highly recommended.";
+    libInfo.isInstalled = false;
+    libInfo.tags.add("face");
+    libInfo.tags.add("vision");
+    libInfo.tags.add("image");
+    libInfos.add(libInfo);
+    
+    libInfo = new LibraryInfo();
+    libInfo.name = "SQLibrary";
+    libInfo.briefOverview = "A library to facilitate communication with MySQL or SQLite databases.";
+    libInfo.isInstalled = false;
+    libInfo.tags.add("database");
+    libInfos.add(libInfo);
+    
+    return libInfos;
+  }
 
+  static class LibraryInfo {
+    String name;
+    String briefOverview;
+    String version;
+    String url;
+    ArrayList<String> tags;
+    boolean isInstalled;
+    
+    public LibraryInfo() {
+      tags = new ArrayList<String>();
+      isInstalled = false;
+    }
+  }
 }
