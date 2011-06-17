@@ -36,6 +36,8 @@ _ font rotation (native font problem?) with natives?
 _   http://code.google.com/p/processing/issues/detail?id=692
 
 for 2.0
+_ PUtil -> move match(), lots of other non-gui functions into own class
+_   and merge it in statically via the methods code
 _ PVector discussion with Dan
 _ have andres take over all current GL issues in the tracker
 _ sort out destroy(), stop(), pause() et al
@@ -78,6 +80,34 @@ _   filter(MASK, ...) -> or ALPHA?
 _   filter(TINT, tintColor)
 _ post() is called after setup() (make decision)
 _   http://code.google.com/p/processing/issues/detail?id=455
+_ createColor() instead of color()?
+_ screen.width/screen.height -> screen.width, screenW/H
+_   needs to be documented, and excise all screen.width/height references
+_ change default save() to use PNG instead of TIFF (speed?)
+_ PImage.save() should return a success boolean
+_   and not throw an exception when it fails
+_ route all exceptions through PException and catch method
+_   advanced users can override the method if they want
+_   or you can set an option to have PExceptions be raised
+_ touch events.. can't do MouseEvent et al with Android
+_ how should we handle registered methods?
+_ make loading images lighter, ala android 
+_   require loadPixels to get 2D image data from images
+_   only load PImage pixels when necessary (faster for java2d)
+ _ pdf fonts
+_   rewrite documentation about pdf fonts (errors with non-native fonts)
+_   figure out why font naming not working correctly
+_ add note to begin/endRecord, that settings are not inherited
+_   http://dev.processing.org/bugs/show_bug.cgi?id=346
+_   or actually inherit the settings
+_ inputFile() and outputFile() need a fix
+_   remove them from the code, write examples for these
+_   use callbacks instead
+_   need to decide if you specify the function name, or if it's specific
+_ how much of com.benfry.* should go in? 
+_   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
+_ actual shape api for things like rectangles and whatnot?
+_ PShape api to handle internal vertex stuff
 
 _ hitting ESC in a running noLoop()ed sketch won't close the sketch?
 _   work through serial examples
