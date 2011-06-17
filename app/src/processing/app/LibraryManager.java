@@ -259,7 +259,7 @@ public class LibraryManager {
     
     String prompt = "Install libraries from " + libFile.getName() + "?  ";
 
-    int result = JOptionPane.showConfirmDialog(this.editor, prompt, "Close",
+    int result = JOptionPane.showConfirmDialog(this.editor, prompt, "Install",
                                                JOptionPane.YES_NO_OPTION,
                                                JOptionPane.QUESTION_MESSAGE);
     
