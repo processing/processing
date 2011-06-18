@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<project name="Processing OpenGL2 Library" default="build">
+<project name="Processing OpenGL Library" default="build">
   
   <target name="clean" description="Clean the build directories">
     <delete dir="bin" />
-    <delete file="library/opengl2.jar" />
+    <delete file="library/opengl.jar" />
   </target>
   
   <target name="compile" description="Compile sources">
@@ -20,7 +20,7 @@
 	   classpath="../../../core/core.jar; library/jogl.all.jar; library/nativewindow.all.jar;" />
   </target>
 
-  <target name="build" depends="compile" description="Build OpenGL2 library">
-    <jar basedir="bin" destfile="library/opengl2.jar" />
+  <target name="build" depends="compile" description="Build OpenGL library">
+    <jar basedir="bin" destfile="library/opengl.jar" />
   </target>
 </project>
