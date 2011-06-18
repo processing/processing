@@ -17,7 +17,7 @@
  * Boston, MA  02111-1307  USA
  */
 
-package codeanticode.gsvideo;
+package processing.video;
 
 import processing.core.*;
 
@@ -35,7 +35,7 @@ import org.gstreamer.elements.*;
  * This class makes it possible to load movies and to play them back in many
  * ways including looping, pausing, and changing speed.
  */
-public class GSMovie extends PImage implements PConstants {
+public class Movie extends PImage implements PConstants {
   protected String filename;
   
   protected boolean playing = false;
@@ -74,7 +74,7 @@ public class GSMovie extends PImage implements PConstants {
    * @param parent PApplet
    * @param filename String
    */  
-  public GSMovie(PApplet parent, String filename) {
+  public Movie(PApplet parent, String filename) {
     super(0, 0, RGB);
     initGStreamer(parent, filename);
   }
@@ -161,7 +161,7 @@ public class GSMovie extends PImage implements PConstants {
 
     try {
       movieEventMethod = eventHandler.getClass().getMethod("movieEvent",
-          new Class[] { GSMovie.class });
+          new Class[] { Movie.class });
     } catch (Exception e) {
       // no such method, or an error.. which is fine, just ignore
     }

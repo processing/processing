@@ -17,7 +17,7 @@
  * Boston, MA  02111-1307  USA
  */
 
-package codeanticode.gsvideo;
+package processing.video;
 
 import processing.core.*;
 
@@ -30,7 +30,7 @@ import org.gstreamer.elements.RGBDataFileSink;
 /**
  * This class makes movies from a running program.
  */
-public class GSMovieMaker {
+public class MovieMaker {
   protected PApplet parent;
   protected boolean recording;
   protected RGBDataFileSink recorder;
@@ -53,7 +53,7 @@ public class GSMovieMaker {
    * Constructor that sets the codec to THEORA, MEDIUM quality and 30 fps. 
    * 
    */
-  public GSMovieMaker(PApplet parent, int requestWidth, int requestHeight,
+  public MovieMaker(PApplet parent, int requestWidth, int requestHeight,
       String filename) {
     init(parent, requestWidth, requestHeight, filename, THEORA, MEDIUM, 30);
   }
@@ -62,7 +62,7 @@ public class GSMovieMaker {
    * Constructor that allows to set codec type and fps. 
    * 
    */  
-  public GSMovieMaker(PApplet parent, int requestWidth, int requestHeight,
+  public MovieMaker(PApplet parent, int requestWidth, int requestHeight,
       String filename, int codecType, int ifps) {
     init(parent, requestWidth, requestHeight, filename, codecType, MEDIUM, ifps);
   }
@@ -71,7 +71,7 @@ public class GSMovieMaker {
    * Constructor that allows to set codec type, encoding quality and fps. 
    * 
    */    
-  public GSMovieMaker(PApplet parent, int requestWidth, int requestHeight,
+  public MovieMaker(PApplet parent, int requestWidth, int requestHeight,
       String filename, int codecType, int codecQuality, int ifps) {
     init(parent, requestWidth, requestHeight, filename, codecType,
         codecQuality, ifps);
@@ -82,7 +82,7 @@ public class GSMovieMaker {
    * Properties for encoder and muxer are left to wherever the default values are.  
    * 
    */
-  public GSMovieMaker(PApplet parent, int requestWidth, int requestHeight,
+  public MovieMaker(PApplet parent, int requestWidth, int requestHeight,
       String filename, String encoder, String muxer, int ifps) {
     init(parent, requestWidth, requestHeight, filename, encoder, muxer, null, null, ifps);
   }  
@@ -92,7 +92,7 @@ public class GSMovieMaker {
    * well as the properties.  
    * 
    */  
-  public GSMovieMaker(PApplet parent, int requestWidth, int requestHeight,
+  public MovieMaker(PApplet parent, int requestWidth, int requestHeight,
       String filename, String encoder, String muxer, String[] propNames, Object[] propValues, int ifps) {
     init(parent, requestWidth, requestHeight, filename, encoder, muxer, propNames, propValues, ifps);
   }

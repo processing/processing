@@ -17,7 +17,7 @@
  * Boston, MA  02111-1307  USA
  */
 
-package codeanticode.gsvideo;
+package processing.video;
 
 import processing.core.*;
 
