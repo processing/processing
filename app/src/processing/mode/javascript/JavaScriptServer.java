@@ -297,14 +297,14 @@ outerloop:
                 }
             }
 
-            String fname = (new String(buf, 0, index, i-index)).
+            String fname = (new String(buf, index, i-index)).
 									replace('/', File.separatorChar);
             if (fname.startsWith(File.separator)) 
 			{
                 fname = fname.substring(1);
             }
 
-			fname = java.net.URLDecoder.decode(fname);
+			fname = java.net.URLDecoder.decode(fname, "UTF-8");
 			
 			// TODO
 			//implement a logger service that will receive messages from p.js?
@@ -342,14 +342,14 @@ outerloop:
 
     boolean printHeaders(File targ, PrintStream ps) throws IOException {
         boolean ret = false;
-        int rCode = 0;
+//        int rCode = 0;
         if (!targ.exists()) {
-            rCode = HTTP_NOT_FOUND;
+//            rCode = HTTP_NOT_FOUND;
             ps.print("HTTP/1.0 " + HTTP_NOT_FOUND + " not found");
             ps.write(EOL);
             ret = false;
         }  else {
-            rCode = HTTP_OK;
+//            rCode = HTTP_OK;
             ps.print("HTTP/1.0 " + HTTP_OK+" OK");
             ps.write(EOL);
             ret = true;

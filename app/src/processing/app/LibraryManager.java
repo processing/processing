@@ -24,7 +24,6 @@
 package processing.app;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -34,8 +33,6 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import processing.app.LibraryListPanel.LibraryPanel;
 
 /**
  * 
@@ -200,6 +197,7 @@ public class LibraryManager {
       byte[] b = new byte[256];
       int bytesDownloaded = 0, len;
       while ((len = in.read(b)) != -1) {
+        @SuppressWarnings("unused")
         int progress = (int) (100.0 * bytesDownloaded / fileSize);
         // System.out.println("Downloaded " + progress + "%");
         out.write(b, 0, len);

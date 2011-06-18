@@ -2,6 +2,7 @@
 X incorporate RXTXcomm.jar and others from Dave
 X Serial.list() cannot find /dev/ttyACM0
 X   http://code.google.com/p/processing/issues/detail?id=634
+X incorporate gsvideo and opengl2 as the default libraries for video and opengl
 
 cleanup
 X how is autoformat doing? good now
@@ -21,6 +22,9 @@ X   -> jer: "can we put fax support in there too?"
 o prevent people from setting the font size too small in the editor
 o   how do we figure out what "too small" is?
 X   -> everyone thinks this is funny
+
+_ Resize box on OS X is not present in Examples box
+_   http://code.google.com/p/processing/issues/detail?id=730
 
 
 pnode: look more closely at json and xml compatibility
