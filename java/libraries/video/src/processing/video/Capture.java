@@ -17,7 +17,7 @@
  * Boston, MA  02111-1307  USA
  */
 
-package codeanticode.gsvideo;
+package processing.video;
 
 import processing.core.*;
 
@@ -35,7 +35,7 @@ import org.gstreamer.interfaces.Property;
  * Class for storing and manipulating video frames from an attached capture
  * device such as a camera.
  */
-public class GSCapture extends PImage implements PConstants {
+public class Capture extends PImage implements PConstants {
   protected String source;
   
   protected boolean playing = false;
@@ -77,7 +77,7 @@ public class GSCapture extends PImage implements PConstants {
    * Basic constructor: tries to auto-detect all the capture parameters,
    * with the exception of the resolution.
    */
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight) {
+  public Capture(PApplet parent, int requestWidth, int requestHeight) {
     super(requestWidth, requestHeight, RGB);
     initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
                  new String[] {}, new String[] {}, "");
@@ -86,7 +86,7 @@ public class GSCapture extends PImage implements PConstants {
   /**
    * Constructor that takes resolution and framerate indicated as a single number.
    */  
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, int frameRate) {
+  public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate) {
     super(requestWidth, requestHeight, RGB);
     initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
                  new String[] {}, new String[] {}, frameRate + "/1");
@@ -96,7 +96,7 @@ public class GSCapture extends PImage implements PConstants {
    * This constructor allows to specify the camera name. In Linux, for example, this
    * should be a string of the form /dev/video0, /dev/video1, etc.
    */   
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, String cameraName) {
+  public Capture(PApplet parent, int requestWidth, int requestHeight, String cameraName) {
     super(requestWidth, requestHeight, RGB);
     initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
                  new String[] { devicePropertyName() }, new String[] { cameraName }, "");
@@ -105,7 +105,7 @@ public class GSCapture extends PImage implements PConstants {
   /**
    * This constructor allows to specify the camera name and the desired framerate.
    */     
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
+  public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
                    String cameraName) {
     super(requestWidth, requestHeight, RGB);
     initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
@@ -117,7 +117,7 @@ public class GSCapture extends PImage implements PConstants {
    * This constructor lets to indicate which source element to use (i.e.: v4l2src, 
    * osxvideosrc, dshowvideosrc, ksvideosrc, etc).
    */   
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
+  public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
                    String sourceName, String cameraName) {
     super(requestWidth, requestHeight, RGB);
     initGStreamer(parent, requestWidth, requestHeight, sourceName, new String[] {}, new int[] {}, 
@@ -130,7 +130,7 @@ public class GSCapture extends PImage implements PConstants {
    * The camera name could be one of these properties. The framerate must be specified
    * as a fraction string: 30/1, 15/2, etc.
    */    
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
+  public Capture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
                    String sourceName, String[] strPropNames, String[] strPropValues) {
     super(requestWidth, requestHeight, RGB);
     initGStreamer(parent, requestWidth, requestHeight, sourceName, new String[] {}, new int[] {},
@@ -142,7 +142,7 @@ public class GSCapture extends PImage implements PConstants {
    * as well as a list of integer properties. This could be useful if a camera cannot by
    * specified by name but by index. Framerate must be a fraction string: 30/1, 15/2, etc.
    */   
-  public GSCapture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
+  public Capture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
                    String sourceName, String[] strPropNames, String[] strPropValues,
                    String[] intPropNames, int[] intPropValues) {
     super(requestWidth, requestHeight, RGB);
@@ -232,7 +232,7 @@ public class GSCapture extends PImage implements PConstants {
 
     try {
       captureEventMethod = parent.getClass().getMethod("captureEvent",
-          new Class[] { GSCapture.class });
+          new Class[] { Capture.class });
     } catch (Exception e) {
       // no such method, or an error.. which is fine, just ignore
     }
