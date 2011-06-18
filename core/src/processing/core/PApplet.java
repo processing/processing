@@ -40,7 +40,6 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 
 import processing.core.PShape;
-import processing.xml.XMLElement;
 
 
 /**
@@ -4155,7 +4154,7 @@ public class PApplet extends Applet
     } else if (extension.equals("svgz")) {
       try {
         InputStream input = new GZIPInputStream(createInput(filename));
-        XMLElement xml = new XMLElement(createReader(input));
+        PNode xml = new PNodeXML(createReader(input));
         return new PShapeSVG(xml);
       } catch (IOException e) {
         e.printStackTrace();
@@ -4188,6 +4187,22 @@ public class PApplet extends Applet
   }
 
 
+  //////////////////////////////////////////////////////////////
+
+  // NODE I/O (XML, JSON, etc.)
+  
+  public PNode loadNode(String filename) {
+    if (filename.toLowerCase().endsWith(".xml")) {
+      return new PNodeXML(this, filename);
+    } else if (filename.toLowerCase().endsWith(".json")) {
+      throw new RuntimeException("loadNode() for JSON not yet implemented");
+    } else {
+      throw new RuntimeException("loadNode() must end with either XML or JSON");
+    }
+  }
+
+  
+  
   //////////////////////////////////////////////////////////////
 
   // FONT I/O

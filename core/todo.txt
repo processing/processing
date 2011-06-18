@@ -16,15 +16,15 @@ A  http://code.google.com/p/processing/issues/detail?id=483
 X   works with OPENGL2, so no problem
 A finish OPENGL2 renderer
 A   http://code.google.com/p/processing/issues/detail?id=495
+o Can resize sketch with P3D, but not OPENGL
+o   http://code.google.com/p/processing/issues/detail?id=383
+
 
 _ Potential race condition when resizing sketches
 _   http://code.google.com/p/processing/issues/detail?id=697
 
-patches submitted for a handful of GL issues
 _ Resizing window in OPENGL breaks ImageCaches
 _   http://code.google.com/p/processing/issues/detail?id=184
-_ Can resize sketch with P3D, but not OPENGL
-_   http://code.google.com/p/processing/issues/detail?id=383
 
 _ jogl demos, NEWT examples crash on osx http://jogamp.org/jogl-demos/www/
 _   http://jogamp.org/jogl-demos/www/applettest-jnlp.html
@@ -45,12 +45,16 @@ _   and merge it in statically via the methods code
 
 2.0
 _ PVector discussion with Dan
+_   jer and dan will look at their code, plus toxiclibs
 _ have andres take over all current GL issues in the tracker
 _ sort out destroy(), stop(), pause() et al
 _   ColorSelector should stop/pause when not visible
 _   start()/stop() perform like onPause()/onResume()
 _     all of which call pause() and resume()
 _ decision on registered methods
+_   remove registerPre() et al
+_   add PEvent 
+
 _ call reapplySettings() when using beginRecord()?
 _ binary() auto-sizes, hex() does not
 _ in PShape, getChild(name) refers to a <blah id="name">

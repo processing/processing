@@ -10,8 +10,8 @@
   License as published by the Free Software Foundation, version 2.
 
   This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty 
-  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  but WITHOUT ANY WARRANTY; without even the implied warranty
+  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the GNU Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General
@@ -26,7 +26,7 @@ import java.io.*;
 
 
 /**
- * This is the base class used for the Processing XML library, 
+ * This is the base class used for the Processing XML library,
  * representing a single node of an XML tree.
  */
 public interface PNode extends Serializable {
@@ -37,7 +37,7 @@ public interface PNode extends Serializable {
    */
   public PNode getParent();
 
-    
+
   /**
    * Returns the full name (i.e. the name including an eventual namespace
    * prefix) of the element.
@@ -45,7 +45,7 @@ public interface PNode extends Serializable {
    */
   public String getName();
 
-    
+
   /**
    * Returns the name of the element (without namespace prefix).
    * @return the name, or null if the element only contains #PCDATA.
@@ -59,14 +59,14 @@ public interface PNode extends Serializable {
    */
   public int getChildCount();
 
-    
+
   /**
-   * Put the names of all children into an array. Same as looping through 
+   * Put the names of all children into an array. Same as looping through
    * each child and calling getName() on each XMLElement.
    */
   public String[] listChildren();
-    
-    
+
+
   /**
    * Returns an array containing all the child elements.
    */
@@ -103,7 +103,7 @@ public interface PNode extends Serializable {
    */
   public int getAttributeCount();
 
-  
+
   /**
    * Get a list of the names for all of the attributes for this node.
    */
@@ -115,11 +115,14 @@ public interface PNode extends Serializable {
    */
   public boolean hasAttribute(String name);
 
-  
+
   public String getString(String name);
 
 
   public String getString(String name, String defaultValue);
+
+
+  public void setString(String name, String value);
 
 
   public int getInt(String name);
@@ -136,12 +139,15 @@ public interface PNode extends Serializable {
   public int getInt(String name, int defaultValue);
 
 
+  public void setInt(String name, int value);
+
+
   /**
    * Returns the value of an attribute, or zero if not present.
    */
   public float getFloat(String name);
-  
-  
+
+
   /**
    * Returns the value of an attribute.
    *
@@ -153,9 +159,12 @@ public interface PNode extends Serializable {
   public float getFloat(String name, float defaultValue);
 
 
+  public void setFloat(String name, float value);
+
+
   public double getDouble(String name);
 
-  
+
   /**
    * Returns the value of an attribute.
    *
@@ -165,6 +174,9 @@ public interface PNode extends Serializable {
    * @return the value, or defaultValue if the attribute does not exist.
    */
   public double getDouble(String name, double defaultValue);
+
+
+  public void setDouble(String name, double value);
 
 
   /**
@@ -177,9 +189,9 @@ public interface PNode extends Serializable {
    */
   public String getContent();
 
-  
+
   public String toString();
-  
-  
+
+
   public String toString(boolean indent);
 }
