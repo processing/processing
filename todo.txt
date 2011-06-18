@@ -3,45 +3,62 @@ X incorporate RXTXcomm.jar and others from Dave
 X Serial.list() cannot find /dev/ttyACM0
 X   http://code.google.com/p/processing/issues/detail?id=634
 
+cleanup
+X how is autoformat doing? good now
+X catch 1.5 code in libraries - is this still an issue for 1.6 on 1.5? 
+X   Exception in thread "main" java.lang.UnsupportedClassVersionError: quicktime/QTException (Unsupported major.minor version 49.0) 
+o javascript and liveconnect to preload applets
+o   http://code.google.com/p/processing/issues/detail?id=66
+X   let's not bother
+o warn the user that the applet/application folders will be replaced
+X   nope, people not seeing this much
+o firmata as a core library (read/write to/from arduino)?
+o   package cc.arduino.*
+X   no thanks, they've abandoned it
+o add page numbers and file name to printing in p5
+o   also add something to control the font & font size
+X   -> jer: "can we put fax support in there too?" 
+o prevent people from setting the font size too small in the editor
+o   how do we figure out what "too small" is?
+X   -> everyone thinks this is funny
 
-2.0
-_ colors for 2.0
-_ nurbs or other arch stuff for 2.0?
+
+pnode: look more closely at json and xml compatibility
+
+frequent requests/projects
+_ nurbs or other architecture stuff
+_ force indentation - implement an option for beginners especially
+_ indents and loops
+_   or make the area light up gray as it's being worked on
+_ fix autoformat to indent like the p5 book/examples
+_ common error messages
+_   with a proper list, we can add links when throwing an error in the PDE
+
+
+casey
+_ colors for 2.0 - casey working on it, presenting sunday
+
+ben
 _ build is currently broken for fresh checkout due to changes to file layout
 _   something that gets fixed by 'make clean'
-_ require Java 6 (and with that, OS X 10.5 plus Core 2 Intel Mac)?
-_   though we need a 64-bit browser before applets will run...
-_   http://www.ornl.gov/~t6p/Main/Utilities.html
-_ get rid of static mode? only setup/draw mode? or create project that way?
+_   also test on windows and linux
 _ use launch4j for export and p5 app itself
 _   perhaps even calling it through an ant task
-_ do examples need to be installed as bundles? 
-_ add === for String.equals()
-_   might be problematic since it might be opposite the javascript meaning
 _ l10n, i18n of environment/core - arduino pushing on this one
-_ indents and loops
-_   really, should just enforce this
-_   or make the area light up gray as it's being worked on
 _ eclipse import/export
 _   simple mechanism to export to eclipse
 _     don't worry about subversion stuff, just export with libraries
 _   something clever to import back from eclipse
 _   could keep the .svn files in with the libs and all
 _   then when exporting for eclipse, people can update as necessary
-_ catch 1.5 code in libraries - is this still an issue for 1.6 on 1.5? 
-_   Exception in thread "main" java.lang.UnsupportedClassVersionError: quicktime/QTException (Unsupported major.minor version 49.0) 
-_ javascript and liveconnect to preload applets
-_   http://code.google.com/p/processing/issues/detail?id=66
-_ warn the user that the applet/application folders will be replaced
-_ firmata as a core library (read/write to/from arduino)?
-_   package cc.arduino.*
-_ how is autoformat doing?
+_   -> dan et al say better to do fixed versions and have it work simply
 _ errors that cannot be placed (i.e. missing brace) 
 _   this makes things to jump to the last tab
-_ add page numbers and file name to printing in p5
-_   also add something to control the font & font size
-_ prevent people from setting the font size too small in the editor
-_   how do we figure out what "too small" is?
+_   also happens with stray characters sometimes...
+_   casey: accidentally typing a letter at the top of the tab
+_     throws you onto the end of the last tab... exactly the worst location
+_ jer: omitting a semicolon shows the error on the line after it...
+_ find across all tabs
 
 reference/examples
 _ import p5 reference into the javadoc
@@ -54,6 +71,11 @@ _   in the book(s)? in the reference?
 _ improve documentation of the pdf stuff
 _   be clearer about the font setup stuff
 _   fonts by default not working that well?
+_ jer: opengl2 tutorial
+_ jer: android tutorial
+_ probably later: examples into categories based on difficulty
+_   add ratings/difficult level to examples online and in the pde
+_ go through examples, figure out how to do many on the site w/ js instead
 
 opengl
 _ new opengl2
@@ -74,11 +96,23 @@ _ fast java2d video?
 
 gsoc
 _ "install library" menu option
+_ see how library installation goes, then possibly do same w/ examples
+
 
 3.0
 _ better text editor / live debugging (integrate Eclipse JDT)
+_   line numbers
 _ it's too difficult for students to debug their code
 _   can the jdt be hooked in somewhat easily?
+_ require Java 6 (and with that, OS X 10.5 plus Core 2 Intel Mac)?
+_   though we need a 64-bit browser before applets will run...
+_   http://www.ornl.gov/~t6p/Main/Utilities.html
+_ get rid of static mode? only setup/draw mode? or create project that way?
+_   pro: simplify internal code, fixes some of the worst errors
+_   con: people love it, most of the books use it heavily
+_ add === for String.equals()
+_   might be problematic since it might be opposite the javascript meaning
+_   jer: it's a decent time to start talking abt references/vars
 
 
 _ Closing applet window in Processing 1.5 causes serial crash
