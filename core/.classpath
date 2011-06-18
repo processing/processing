@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="processing/core/PSmoothTriangle.java|processing/core/PGraphics3D.java|processing/core/PLine.java|processing/core/PTriangle.java|processing/core/PGraphics2D.java|processing/core/PPolygon.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
