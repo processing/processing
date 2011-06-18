@@ -40,6 +40,14 @@
     <antcall target="${platform}-dist" />
   </target>
 
+  <target name="android-dist-check">
+    <!-- ensure that the android-core.zip file has been built -->
+    <available file="${target.path}/modes/android/android-core.zip" 
+	       property="android-core-present" />
+    <fail unless="android-core-present" 
+	  message="android-core.zip was not built, but is required for dist. Install the Android tools, set ANDROID_SDK, and try again." />
+  </target>
+
   <!-- "§$§$&, ant doesn't have a built-in help target :(  -->
   <target name="help" description="Show project help">
     <java classname="org.apache.tools.ant.Main">
@@ -57,7 +65,6 @@
     <subant buildpath="../java/libraries/dxf" target="clean"/>
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/opengl" target="clean"/>
-    <subant buildpath="../java/libraries/opengl2" target="clean"/>    
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
@@ -70,7 +77,6 @@
     <subant buildpath="../java/libraries/dxf" target="build"/>
     <subant buildpath="../java/libraries/net" target="build"/>
     <subant buildpath="../java/libraries/opengl" target="build"/>
-    <subant buildpath="../java/libraries/opengl2" target="build"/>    
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
@@ -101,8 +107,6 @@
 	<exclude name="**/cmd/**" />
 	<exclude name="reference.zip" />
 	<exclude name="**/._*" />
-	<!-- removing for the 1.5 release -->
-<!--	<exclude name="libraries/opengl2/**" />-->
 
 	<exclude name="examples/**/applet/**" />
       </fileset>
@@ -156,12 +160,6 @@
 	<exclude name="**/._*" />
       </fileset>
     </copy>
-
-    <!-- ensure that the android-core.zip file has been built -->
-    <available file="${target.path}/modes/android/android-core.zip" 
-	       property="android-core-present" />
-    <fail unless="android-core-present" 
-	  message="android-core.zip was not built, but is required for dist. Install the Android tools, set ANDROID_SDK, and try again." />
     
     <!-- copy libraries -->
 <!--
@@ -190,9 +188,6 @@
     </copy>
     <copy todir="${target.path}/modes/java/libraries/opengl">
       <fileset dir="../opengl" includes="library/**,src/**" />
-    </copy>
-    <copy todir="${target.path}/modes/java/libraries/opengl2">
-      <fileset dir="../opengl2" includes="library/**,src/**" />
     </copy>
     <copy todir="${target.path}/modes/java/libraries/pdf">
       <fileset dir="../pdf" includes="library/**,src/**" />
@@ -344,7 +339,7 @@
     <exec executable="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" spawn="true"/>
   </target>
 
-  <target name="macosx-dist" if="macosx" depends="macosx-build" description="Create a downloadable .zip for the Mac OS X version">
+  <target name="macosx-dist" if="macosx" depends="macosx-build,android-dist-check" description="Create a downloadable .zip for the Mac OS X version">
 
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub*" perm="ugo+x" />
@@ -465,7 +460,7 @@
     <exec executable="./processing" dir="linux/work" spawn="true"/>
   </target>
   
-  <target name="linux-dist" depends="linux-build" 
+  <target name="linux-dist" depends="linux-build,android-dist-check" 
 	  description="Build .tar.gz of linux version">
 
     <get src="http://processing.googlecode.com/files/jre-tools-6u24-linux-i586.tgz" 
@@ -586,7 +581,7 @@ http://www.gnu.org/software/tar/manual/html_section/transform.html
 	  dir="windows/work" spawn="true"/>
   </target>
 
-  <target name="windows-dist" depends="windows-build" 
+  <target name="windows-dist" depends="windows-build,android-dist-check" 
 	  description="Create .zip files of windows version">
 
     <get src="http://processing.googlecode.com/files/jre-tools-6u24-windows-i586.zip" 
