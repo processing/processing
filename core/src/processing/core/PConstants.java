@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2004-11 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -118,13 +118,12 @@ public interface PConstants {
 
   // renderers known to processing.core
 
-  static final String P2D     = "processing.core.PGraphics2D";
-  static final String P3D     = "processing.core.PGraphics3D";
-  static final String JAVA2D  = "processing.core.PGraphicsJava2D";
-  static final String OPENGL  = "processing.opengl.PGraphicsOpenGL";
-  static final String OPENGL2 = "processing.opengl2.PGraphicsOpenGL2";  
-  static final String PDF     = "processing.pdf.PGraphicsPDF";
-  static final String DXF     = "processing.dxf.RawDXF";
+  static final String P2D    = "processing.core.PGraphicsJava2D";
+  static final String P3D    = "processing.opengl.PGraphicsOpenGL";
+  static final String JAVA2D = "processing.core.PGraphicsJava2D";
+  static final String OPENGL = "processing.opengl.PGraphicsOpenGL";
+  static final String PDF    = "processing.pdf.PGraphicsPDF";
+  static final String DXF    = "processing.dxf.RawDXF";
 
 
   // platform IDs for PApplet.platform
