@@ -21,7 +21,6 @@ import processing.core.PApplet;
 
 import processing.mode.java.JavaBuild;
 import processing.mode.java.preproc.PdePreprocessor;
-import processing.mode.java.preproc.PreprocessorResult;
 
 public class JavaScriptBuild
 {
@@ -362,7 +361,7 @@ public class JavaScriptBuild
 	// surface
 
 	PdePreprocessor preprocessor = new PdePreprocessor( sketch.getName() );
-	PreprocessorResult result;
+	//PreprocessorResult result;
 	
     try 
 	{
@@ -370,7 +369,7 @@ public class JavaScriptBuild
       final File java = new File( outputFolder, sketch.getName() + ".java" );
       final PrintWriter stream = new PrintWriter( new FileWriter(java) );
       try {
-        result = preprocessor.write( stream, bigCodeContents, null );
+        /*result =*/ preprocessor.write( stream, bigCodeContents, null );
       } finally {
         stream.close();
       }
