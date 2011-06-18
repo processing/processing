@@ -39,7 +39,7 @@ import processing.core.PApplet;
  * This is the base class used for the Processing XML library, 
  * representing a single node of an XML tree.
  */
-public class PNodeXML implements PNode,Serializable {
+public class PNodeXML implements PNode, Serializable {
 
   /** The internal representation, a DOM node. */
   protected Node node;
@@ -120,9 +120,22 @@ public class PNodeXML implements PNode,Serializable {
   }
   
   
-  public PNodeXML(PNode parent, Node node) {
+  public PNodeXML(String name) {
+    this(name, null);
+  }
+
+  
+  public PNodeXML(String name, PNode parent) {
+    PNodeXML pxml = PNodeXML.parse("<" + name + ">");
+    this.node = pxml.node;
+    this.name = name;
     this.parent = parent;
+  }
+
+  
+  protected PNodeXML(PNode parent, Node node) {
     this.node = node;
+    this.parent = parent;
     
     if (node.getNodeType() == Node.ELEMENT_NODE) {
       name = node.getNodeName();
@@ -130,7 +143,7 @@ public class PNodeXML implements PNode,Serializable {
   }
   
   
-  static public PNode parse(String xml) { 
+  static public PNodeXML parse(String xml) { 
     return new PNodeXML(new StringReader(xml));
   }
 
@@ -402,12 +415,6 @@ public class PNodeXML implements PNode,Serializable {
   public String getString(String name, String defaultValue) {
     Node attr = node.getAttributes().getNamedItem(name);
     return (attr == null) ? defaultValue : attr.getNodeValue();
-  }
-
-
-  /** @deprecated */
-  public int getIntAttribute(String name) {
-    return getInt(name, 0);
   }
 
 
