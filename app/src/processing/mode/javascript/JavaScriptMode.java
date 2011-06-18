@@ -1,8 +1,5 @@
 package processing.mode.javascript;
 
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowAdapter;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;

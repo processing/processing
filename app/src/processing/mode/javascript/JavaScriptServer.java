@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import processing.app.Base;
-
 /**
  * Based on Sun tutorial at: http://bit.ly/fpoHAF
  *
@@ -25,7 +23,7 @@ class JavaScriptServer implements HttpConstants, Runnable
 	private int port = -1;
 	
 	private boolean running = false, inited = false;
-	private boolean stopping = false;
+//	private boolean stopping = false;
 	
 	JavaScriptServer ( File root ) 
 	{
