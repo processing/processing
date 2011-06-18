@@ -40,7 +40,7 @@ public class PTexture implements PConstants {
   public int width, height;
     
   protected PApplet parent;
-  protected PGraphicsOpenGL2 ogl;
+  protected PGraphicsOpenGL ogl;
 
   // These are public but use at your own risk!
   public int glID; 
@@ -93,7 +93,7 @@ public class PTexture implements PConstants {
     this.width = width;
     this.height = height;
        
-    ogl = (PGraphicsOpenGL2)parent.g;
+    ogl = (PGraphicsOpenGL)parent.g;
     
     glID = 0;
     
@@ -121,7 +121,7 @@ public class PTexture implements PConstants {
   public PTexture(PApplet parent, String filename, Object params)  {
     this.parent = parent;
      
-    ogl = (PGraphicsOpenGL2)parent.g;  
+    ogl = (PGraphicsOpenGL)parent.g;  
 
     glID = 0;
     
@@ -265,7 +265,7 @@ public class PTexture implements PConstants {
     getGl().glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
-      if (PGraphicsOpenGL2.mipmapGeneration) {
+      if (PGraphicsOpenGL.mipmapGeneration) {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
@@ -310,7 +310,7 @@ public class PTexture implements PConstants {
       tempFbo = new PFramebuffer(parent, glWidth, glHeight);
     }
     
-    if (PGraphicsOpenGL2.fboSupported) {
+    if (PGraphicsOpenGL.fboSupported) {
       // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
       // from the current draw buffer (which is the color buffer of the FBO).
       tempFbo.setColorBuffer(this);
@@ -511,7 +511,7 @@ public class PTexture implements PConstants {
    * @param h int
    */
   protected void convertToRGBA(int[] intArray, int[] tIntArray, int arrayFormat, int w, int h)  {
-    if (PGraphicsOpenGL2.BIG_ENDIAN)  {
+    if (PGraphicsOpenGL.BIG_ENDIAN)  {
       switch (arrayFormat) {
       case ALPHA:
                   
@@ -651,7 +651,7 @@ public class PTexture implements PConstants {
   protected void convertToARGB(int[] intArray, int[] tIntArray) {
     int t = 0; 
     int p = 0;
-    if (PGraphicsOpenGL2.BIG_ENDIAN) {
+    if (PGraphicsOpenGL.BIG_ENDIAN) {
 
       // RGBA to ARGB conversion: shifting RGB 8 bits to the right,
       // and placing A 24 bits to the left.
@@ -695,7 +695,7 @@ public class PTexture implements PConstants {
   protected void createTexture(int w, int h) {
     deleteTexture(); // Just in the case this object is being re-initialized.
       
-    if (PGraphicsOpenGL2.npotTexSupported) {
+    if (PGraphicsOpenGL.npotTexSupported) {
       glWidth = w;
       glHeight = h;
     } else {
@@ -703,17 +703,17 @@ public class PTexture implements PConstants {
       glHeight = nextPowerOfTwo(h);
     }
     
-    if ((glWidth > PGraphicsOpenGL2.maxTextureSize) || (glHeight > PGraphicsOpenGL2.maxTextureSize)) {
+    if ((glWidth > PGraphicsOpenGL.maxTextureSize) || (glHeight > PGraphicsOpenGL.maxTextureSize)) {
       glWidth = glHeight = 0;
       throw new RuntimeException("Image width and height cannot be" +
-                                 " larger than " + PGraphicsOpenGL2.maxTextureSize +
+                                 " larger than " + PGraphicsOpenGL.maxTextureSize +
                                  " with this graphics card.");
     }    
     
     usingMipmaps = glMinFilter == GL.GL_LINEAR_MIPMAP_LINEAR;
     
     getGl().glEnable(glTarget);
-    glID = ogl.createGLResource(PGraphicsOpenGL2.GL_TEXTURE_OBJECT);     
+    glID = ogl.createGLResource(PGraphicsOpenGL.GL_TEXTURE_OBJECT);     
     getGl().glBindTexture(glTarget, glID);
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
@@ -752,7 +752,7 @@ public class PTexture implements PConstants {
    */
   protected void deleteTexture() {
     if (glID != 0) {
-      ogl.deleteGLResource(glID, PGraphicsOpenGL2.GL_TEXTURE_OBJECT);
+      ogl.deleteGLResource(glID, PGraphicsOpenGL.GL_TEXTURE_OBJECT);
       glID = 0;
     }
   }

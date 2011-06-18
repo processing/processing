@@ -94,7 +94,7 @@ class PFontTexture implements PConstants {
       h = PApplet.min(2 * textures[currentTex].glHeight, maxTexHeight);
       resize = true;
     } else {
-      h = PApplet.min(PGraphicsOpenGL2.maxTextureSize, 512, maxTexHeight / 4);
+      h = PApplet.min(PGraphicsOpenGL.maxTextureSize, 512, maxTexHeight / 4);
       resize = false;
     }
     
@@ -199,7 +199,7 @@ class PFontTexture implements PConstants {
     int[] rgba = new int[w * h];
     int t = 0;
     int p = 0;
-    if (PGraphicsOpenGL2.BIG_ENDIAN)  {            
+    if (PGraphicsOpenGL.BIG_ENDIAN)  {            
       java.util.Arrays.fill(rgba, 0, w, 0xFFFFFF00); // Set the first row to blank pixels.
       t = w;      
       for (int y = 0; y < glyph.height; y++) {

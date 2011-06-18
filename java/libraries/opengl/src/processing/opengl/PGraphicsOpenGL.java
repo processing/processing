@@ -59,7 +59,7 @@ import processing.core.PApplet;
  * By Andres Colubri
  * 
  */
-public class PGraphicsOpenGL2 extends PGraphics {
+public class PGraphicsOpenGL extends PGraphics {
   // JOGL2 objects:
   
   /** 
@@ -121,7 +121,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   protected GLContext context;
   
   /** The PApplet renderer. For the primary surface, pgl == this. */
-  protected PGraphicsOpenGL2 ogl;
+  protected PGraphicsOpenGL ogl;
 
   // ........................................................  
   
@@ -562,7 +562,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
 
   // INIT/ALLOCATE/FINISH
   
-  public PGraphicsOpenGL2() {
+  public PGraphicsOpenGL() {
   }
   
 
@@ -6794,7 +6794,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
   
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
-    ogl = (PGraphicsOpenGL2)parent.g;
+    ogl = (PGraphicsOpenGL)parent.g;
     
     context = ogl.getContext();
     capabilities = ogl.getCapabilities();
@@ -6823,7 +6823,7 @@ public class PGraphicsOpenGL2 extends PGraphics {
     
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
-    if (PGraphicsOpenGL2.fboMultisampleSupported && gl2x != null && (opengl2X || opengl4X)) {
+    if (PGraphicsOpenGL.fboMultisampleSupported && gl2x != null && (opengl2X || opengl4X)) {
       int nsamples = 1;
       if (opengl2X) {
         nsamples = 2;
