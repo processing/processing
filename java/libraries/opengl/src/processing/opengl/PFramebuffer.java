@@ -20,7 +20,7 @@
  Boston, MA  02111-1307  USA
  */
 
-package processing.opengl2;
+package processing.opengl;
 
 import java.nio.IntBuffer;
 import javax.media.opengl.GL;
