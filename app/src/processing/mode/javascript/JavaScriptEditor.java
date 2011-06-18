@@ -14,11 +14,9 @@ import processing.app.Settings;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
 import processing.app.Sketch;
-import processing.app.SketchException;
 import processing.app.Formatter;
 import processing.app.Mode;
 import processing.mode.java.AutoFormat;
-import processing.mode.java.JavaEditor;
 
 
 import javax.swing.*;

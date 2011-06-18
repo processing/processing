@@ -1,28 +1,17 @@
 package processing.mode.javascript;
 
-import processing.mode.java.JavaEditor;
 import processing.app.Base;
 import processing.app.Sketch;
 import processing.app.SketchCode;
-
-import processing.core.PApplet;
 
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
 
 import java.io.*;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Vector;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.util.*;
+import java.util.regex.*;
 
 /* http://processingjs.org/reference/pjs%20directive */
 
