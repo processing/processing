@@ -1,5 +1,5 @@
 /**
- *   Blobbbs. <br />
+ *   Blobbbs. Bouncy, noisy.<br />
  *
  *   <audio>
  *    <source src="BD.wav" />
@@ -30,20 +30,7 @@
      }
  }
  
- void newAudio ( Audio a )
- {
-     if ( audio == null )
-     {
-         audio = a;
-         
-         balls = new Ball[10];
-         for ( int i = 0; i < balls.length; i++ )
-         {
-             balls[i] = new Ball();
-         }
-     }
- }
- 
+ // a ball class .. again.
  class Ball
  {
      float px,py;
@@ -108,7 +95,23 @@
      }
  }
  
- /* let Processing know about the HTMLAudioElement */
+ // called from JavaScript to set the Audio Element
+ void newAudio ( Audio a )
+ {
+     if ( audio == null )
+     {
+         audio = a;
+         
+         balls = new Ball[10];
+         for ( int i = 0; i < balls.length; i++ )
+         {
+             balls[i] = new Ball();
+         }
+     }
+ }
+ 
+ // let Processing know about the HTMLAudioElement:
+ // http://dev.w3.org/html5/spec/the-iframe-element.html#the-audio-element
  interface Audio
  {
      boolean muted;

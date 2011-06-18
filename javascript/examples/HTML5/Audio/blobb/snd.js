@@ -1,12 +1,13 @@
 
+// wait for document to load
 window.onload = function () {
     var audioNode = document.getElementsByTagName("audio")[0];
     
     function tryFindSketch () {
         var sketch = Processing.instances[0];
         if ( sketch == undefined )
-            return setTimeout(tryFindSketch,200); // retry
-        
+            setTimeout(tryFindSketch,200); // retry
+        else
             sketch.newAudio( audioNode );
     }
     
