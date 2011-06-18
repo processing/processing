@@ -21,7 +21,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package processing.opengl2;
+package processing.opengl;
 
 import processing.core.*;
 
