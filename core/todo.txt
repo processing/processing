@@ -11,10 +11,11 @@ A   (was only happening once b/c was drawing first in perspective)
 A   seems to be mapping to 0, 0 - width/2, height/2
 A   fix 3D > OrthoVsPerspective example once ortho works properly
 A     there's a depth problem in addition to the ortho weirdness
-
 A using createGraphics() image repeatedly runs out of memory with OPENGL
 A  http://code.google.com/p/processing/issues/detail?id=483
 X   works with OPENGL2, so no problem
+A finish OPENGL2 renderer
+A   http://code.google.com/p/processing/issues/detail?id=495
 
 _ Potential race condition when resizing sketches
 _   http://code.google.com/p/processing/issues/detail?id=697
