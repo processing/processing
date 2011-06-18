@@ -1,6 +1,6 @@
 /**
  *    This code will be embedded into the HTML page as "normal"
- *    JavaScript code with a <script> tag. This allows one to
+ *    JavaScript code though a <script> tag. This allows one to
  *    interact with the page as any normal JavaScript code can.
  */
  
@@ -12,17 +12,16 @@
  // make the connection with the sketch
  function makeTheLink() {
      
-     // Get the instance. The id is automatically generated 
-     // based on the sketch name by removing anything but letters
-     // and numbers.
-     var mySketchInstance = Processing.getInstanceById( "colorFinder" );
+     // Get the instance. We just use the first one. Another way would be to use
+     // the automaticaly generated ID "colorFinder", see <canvas> in index.html
+     var mySketchInstance = Processing.instances[0];
      
      if ( mySketchInstance == undefined ) { // means it has not started
          setTimeout( makeTheLink, 200 );    // try again later
-         return;
+         
+     } else {
+         mySketchInstance.setInterfaceLink(this); // make the connection
      }
-     
-     mySketchInstance.setInterfaceLink(this); // make the connection
  }
  
  // called from the sketch!
@@ -36,5 +35,13 @@
      if ( h1s != undefined && h1s.length > 0 )
      {
          h1s[0].innerHTML = "Color is: " + colorString;
+     }
+     
+     var links = document.links;
+     if ( links.length > 0 )
+     {
+         for ( var l in links ) {
+             links[l].style.color = colorString;
+         }
      }
  }

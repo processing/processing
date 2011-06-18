@@ -1,17 +1,20 @@
+
+// wait for document to load ...
 window.onload = function () {
     tryLinkSketch();
 }
 
+// try and find the sketch
 function tryLinkSketch() {
-    var sketchId = "wordDroppings";
-    var sketch = Processing.getInstanceById(sketchId);
+    var sketch = Processing.instances[0];
     if ( sketch == undefined )
-        return setTimeout(tryLinkSketch, 200); /*try again later*/
+        setTimeout(tryLinkSketch, 200); /*try again later*/
     else {
         initDragDrop(sketch);
     }
 }
 
+// initialize DnD, add event listeners
 function initDragDrop ( sketch ) {
   var target = sketch.externals.canvas;
   var targetPosition = getElementPosition(target);

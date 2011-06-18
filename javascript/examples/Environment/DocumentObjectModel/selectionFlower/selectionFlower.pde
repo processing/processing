@@ -1,6 +1,6 @@
 /**
  *    <p>This example shows you how to get the currently selected text 
- *    from the HTML page that this sketch is running in.</p>
+ *    from this HTML page.</p>
  *
  *    <p>Just select some text somewhere on this page and see it be transformed
  *    into a ... graph.</p>
@@ -8,6 +8,7 @@
  *    <p>Heavily inspired by <a href="http://bit.ly/jHvvWX">Boris Müller</a>.</p>
  */
 
+// a directive to set the background transparent
 /* @pjs transparent=true; */
 
 String selectedText = "";
@@ -65,10 +66,11 @@ void draw ()
     else
     {
         fill( map( sin(frameCount/12.0),-1,1,100,200 ) );
-        text("Select some (other) text on this page to start.", 2, height/2);
+        text("Select some text (not this) to start.", 2, height/2);
     }
 }
 
+// called from JavaScript
 void setSelectionText ( String txt )
 {
     selectedText = txt;

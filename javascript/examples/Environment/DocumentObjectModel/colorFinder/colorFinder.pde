@@ -1,9 +1,6 @@
 /**
  *    <p>This example shows you how to manipulate the DOM of a
- *    HTML page that this sketch is placed in.</p>
- *
- *    <p>Click and drag inside the sketch area to change the 
- *    text color of the page</p> 
+ *    HTML page from a sketch.</p>
  */
 
 color mColor = 255;
@@ -16,6 +13,9 @@ void setup ()
 void draw ()
 {
     background( mColor );
+    
+    textAlign(CENTER); fill(0);
+    text("<<  click and drag here  >>", width/2, height/2);
 }
 
 void mouseDragged ()
@@ -26,15 +26,16 @@ void mouseDragged ()
     
     if ( js )
     {
+        // call JavaScript function, see "jsinterface.js"
         js.setColor(red(mColor), green(mColor), blue(mColor));
     }
 }
 
 /**
  *    Define an interface that will act as glue between this sketch
- *    and "real" JavaScript running in the HTML page. The name does not matter.
+ *    and "real" JavaScript running in the HTML page.
  *
- *    The interface must define any functions that one intends to call
+ *    The interface must define all functions that you intend to call
  *    from inside the sketch.
  */
 interface JavaScriptInterface

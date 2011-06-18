@@ -1,5 +1,5 @@
 /**
- *    <video width="160" height="120">
+ *    <video width="160" height="120" style="display:none">
  *        <source src="station.mp4" />
  *        <source src="station.ogv" />
  *        <source src="station.webm" />
@@ -13,7 +13,6 @@
  {
      size( 320, 240 );
      
-     textFont(createFont("Arial", 20));
      noStroke();
      
      textFont(createFont("Arial", 20));
@@ -39,32 +38,37 @@
                  ellipse(ix*2, iy*2, br, br);
              }
          }
-         fill(0);
-         text(video.currentTime, 5, height-5);
+         
+         fill(200);
+         rect(5,height-5-20,width-10,20);
+         fill(100);
+         rect(5,height-5-20,
+              map(video.currentTime,0,video.duration,0,width-10),
+              20);
+     }
+ }
+ 
+ boolean wasDragged = false;
+ void mouseDragged ()
+ {
+     if ( video != null )
+     {
+         video.currentTime = map(constrain(mouseX,0,width-10),0,width-10,0,video.duration);
+         wasDragged = true;
+         video.pause();
      }
  }
  
  void mouseReleased ()
  {
-     if ( video != null )
+     if ( video != null && !wasDragged )
      {
-         if ( video.paused || video.ended )
-         {
-             video.loop = true;
+         if ( video.paused )
              video.play();
-         }
          else
              video.pause();
      }
- }
- 
- void mouseDragged ()
- {
-     if ( video != null )
-     {
-         video.pause();
-         video.currentTime = map(mouseX,0,width,0,video.duration);
-     }
+     wasDragged = false;
  }
  
  /* called from JavaScript to set the freshly loaded video */
