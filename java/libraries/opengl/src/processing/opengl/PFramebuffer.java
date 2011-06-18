@@ -41,7 +41,7 @@ import processing.core.PConstants;
  */
 public class PFramebuffer implements PConstants {  
   protected PApplet parent;
-  protected PGraphicsOpenGL2 ogl;
+  protected PGraphicsOpenGL ogl;
   
   public int glFboID;
   public int glDepthBufferID;
@@ -76,7 +76,7 @@ public class PFramebuffer implements PConstants {
   
   PFramebuffer(PApplet parent, int w, int h, boolean screen) {
     this.parent = parent;
-    ogl = (PGraphicsOpenGL2)parent.g;
+    ogl = (PGraphicsOpenGL)parent.g;
     
     glFboID = 0;
     glDepthBufferID = 0;
@@ -86,7 +86,7 @@ public class PFramebuffer implements PConstants {
     
     screenFb = screen;
     noDepth = false;
-    fboMode = PGraphicsOpenGL2.fboSupported;
+    fboMode = PGraphicsOpenGL.fboSupported;
     numColorBuffers = 0;
         
     multisample = false;
@@ -189,7 +189,7 @@ public class PFramebuffer implements PConstants {
       colorBufferAttchPoints = new int[numColorBuffers];
       colorBufferAttchPoints[0] = GL.GL_COLOR_ATTACHMENT0;
       
-      glColorBufferMultisampleID = ogl.createGLResource(PGraphicsOpenGL2.GL_RENDER_BUFFER);
+      glColorBufferMultisampleID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
       getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glColorBufferMultisampleID);
       getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, 
                                                 GL.GL_RGBA8, width, height);            
@@ -211,7 +211,7 @@ public class PFramebuffer implements PConstants {
       ogl.pushFramebuffer();
       ogl.setFramebuffer(this);
       
-      glDepthStencilBufferID = ogl.createGLResource(PGraphicsOpenGL2.GL_RENDER_BUFFER);
+      glDepthStencilBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
       getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthStencilBufferID);
       
       if (multisample) { 
@@ -240,7 +240,7 @@ public class PFramebuffer implements PConstants {
       ogl.pushFramebuffer();
       ogl.setFramebuffer(this);
 
-      glDepthBufferID = ogl.createGLResource(PGraphicsOpenGL2.GL_RENDER_BUFFER);
+      glDepthBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
       getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthBufferID);
 
       int glConst = GL.GL_DEPTH_COMPONENT16;
@@ -276,7 +276,7 @@ public class PFramebuffer implements PConstants {
       ogl.pushFramebuffer();
       ogl.setFramebuffer(this);
 
-      glStencilBufferID = ogl.createGLResource(PGraphicsOpenGL2.GL_RENDER_BUFFER);
+      glStencilBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
       getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glStencilBufferID);
 
       int glConst = GL.GL_STENCIL_INDEX1;
@@ -301,7 +301,7 @@ public class PFramebuffer implements PConstants {
   
   public void bind() {
     if (screenFb) {
-      if (PGraphicsOpenGL2.fboSupported) {
+      if (PGraphicsOpenGL.fboSupported) {
         getGl().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
       }
     } else if (fboMode) {
@@ -412,7 +412,7 @@ public class PFramebuffer implements PConstants {
     if (screenFb) {
       glFboID = 0;
     } else if (fboMode) {
-      glFboID = ogl.createGLResource(PGraphicsOpenGL2.GL_FRAME_BUFFER); 
+      glFboID = ogl.createGLResource(PGraphicsOpenGL.GL_FRAME_BUFFER); 
     }  else {
       glFboID = 0;
     }
@@ -420,27 +420,27 @@ public class PFramebuffer implements PConstants {
   
   protected void deleteFramebuffer() {
     if (glFboID != 0) {
-      ogl.deleteGLResource(glFboID, PGraphicsOpenGL2.GL_FRAME_BUFFER);
+      ogl.deleteGLResource(glFboID, PGraphicsOpenGL.GL_FRAME_BUFFER);
       glFboID = 0;
     }
     
     if (glDepthBufferID != 0) {
-      ogl.deleteGLResource(glDepthBufferID, PGraphicsOpenGL2.GL_RENDER_BUFFER);
+      ogl.deleteGLResource(glDepthBufferID, PGraphicsOpenGL.GL_RENDER_BUFFER);
       glDepthBufferID = 0;
     }
     
     if (glStencilBufferID != 0) {
-      ogl.deleteGLResource(glStencilBufferID, PGraphicsOpenGL2.GL_RENDER_BUFFER);
+      ogl.deleteGLResource(glStencilBufferID, PGraphicsOpenGL.GL_RENDER_BUFFER);
       glStencilBufferID = 0;
     }
     
     if (glColorBufferMultisampleID != 0) {
-      ogl.deleteGLResource(glColorBufferMultisampleID, PGraphicsOpenGL2.GL_RENDER_BUFFER);
+      ogl.deleteGLResource(glColorBufferMultisampleID, PGraphicsOpenGL.GL_RENDER_BUFFER);
       glColorBufferMultisampleID = 0;
     }    
 
     if (glDepthStencilBufferID != 0) {
-      ogl.deleteGLResource(glDepthStencilBufferID, PGraphicsOpenGL2.GL_RENDER_BUFFER);
+      ogl.deleteGLResource(glDepthStencilBufferID, PGraphicsOpenGL.GL_RENDER_BUFFER);
       glDepthStencilBufferID = 0;
     }    
     
