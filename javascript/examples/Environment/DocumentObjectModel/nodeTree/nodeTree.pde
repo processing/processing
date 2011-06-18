@@ -1,5 +1,5 @@
 /**
- *    Renders a simple graph from this documents node tree.
+ *    Renders a simple graph from this documents DOM node tree.
  */
  
  Node tree;
@@ -72,13 +72,15 @@
      text( label, x+10, y+3 );
  }
  
+ // called by JavaScript, sends the root DOM Node
  void setTree ( Node root )
  {
      tree = root;
  }
  
  
- /* explain Node to Processing */
+ // explain Node to Processing, the attributes described here are part of the DOM Node:
+ // http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1950641247
  interface Node
  {
      Node[] childNodes;

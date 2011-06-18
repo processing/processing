@@ -1,7 +1,6 @@
 /**
  *    This code will be embedded into the HTML page as "normal"
- *    JavaScript code through a <script> tag. This allows one to
- *    interact with the page as any normal JavaScript code can.
+ *    JavaScript code through a <script> tag.
  */
 
 var mySketchInstance;
@@ -13,17 +12,19 @@ window.onload = function () {
 
 // this is called (repeatedly) to find the sketch
 function getSketchInstance() {
-    var s = Processing.getInstanceById("selectionFlower");
-    if ( s == undefined )
-        return setTimeout(getSketchInstance, 200); // try again a bit later
-
-    mySketchInstance = s;
-    monitorSelection();
+    var s = Processing.instances[0];
+    if ( s == undefined ) {
+        setTimeout(getSketchInstance, 200); // try again a bit later
+        
+    } else {
+        mySketchInstance = s;
+        monitorSelection();
+    }
 }
 
-// this code gets called all the time (every 1/5 sec) to check
+// this code gets called repeatedly (every 1/5 sec) to check
 // if the selection changed
-function monitorSelection ( ) {
+function monitorSelection () {
     
     var txt = undefined;
     

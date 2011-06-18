@@ -5,8 +5,6 @@
  *        <div>Drag</div> <div>us</div> <div>to</div> <div>your</div> <div>sketch</div>
  *    </div>
  *    <style>.draggables div{display: inline-block;background:white;color: black;padding: 10px;}</style>
- *    <br />
- *    (Opera currently not supported …)
  */
  
 color normalColor;
@@ -59,6 +57,9 @@ void draw ()
     ellipse( cx, cy, 7, 7 );
     text( message, cx+7.5, cy+2.5 );
 }
+
+// the following events are not part of Processing API. they
+// are being called from JavaScript, see ".js" tab
 
 void dragEnter ()
 {

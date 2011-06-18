@@ -1,5 +1,6 @@
 /**
- *  This example demonstrates how to promt for user input
+ *  This example demonstrates how to promt for user input. It first asks
+ *  for password which then is used to unlock the sketch.
  */
  
 String password = null;
@@ -94,15 +95,17 @@ boolean testLocked ( String passTry )
 }
 
 
-// this is needed to define a way for us to be able to call out
-
+/* this interface is needed to explain Processing what the
+properties of the object are that is handed in from JS */
 interface JavaScript
 {
     String promtForInput( String message, String defaultAnswer );
 }
 
+// a variable
 JavaScript js;
 
+// called from JavaScript to hand in the object
 void setJS ( JavaScript jsi )
 {
     js = jsi;

@@ -1,17 +1,32 @@
 window.onload = function () {
     var video = document.getElementsByTagName("video")[0];
-    
-    addEvent(video, 'canplaythrough', function(e) {
-        tryFindSketch();
-    }, false);
+    video['loop'] = true;
     
     function tryFindSketch () {
         var sketch = Processing.instances[0];
         if ( sketch == undefined )
             return setTimeout(tryFindSketch, 200); // retry in 0.2 secs
 
-        sketch.setVideo( video );
+        (function( s, v ){
+            var tryAddVideo = function () {
+                if ( v.readyState > 0 ) {
+                    s.setVideo(v);
+                } else {
+                    setTimeout(tryAddVideo, 200);
+                }
+            }
+            tryAddVideo();
+        })( sketch, video );
     }
+    
+    addEvent(video,'ended',function(){
+        if ( 'loop' in this && this.loop ) {
+            this.currentTime = 0;
+            this.play();
+        }
+    });
+    
+    tryFindSketch();
 }
 
 // http://html5demos.com/
