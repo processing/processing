@@ -19,9 +19,30 @@ A   http://code.google.com/p/processing/issues/detail?id=495
 o Can resize sketch with P3D, but not OPENGL
 o   http://code.google.com/p/processing/issues/detail?id=383
 
-cleaning
+decisions
 o call reapplySettings() when using beginRecord()?
 X   nope, won't work for many fonts, can't get the background
+_   should beginRecord inherit settings from its parent renderer?
+_     textFont() is null on beginRecord
+_     same would be the case for strokeWeight, background, etc.
+_     http://dev.processing.org/bugs/show_bug.cgi?id=346
+_   add note to begin/endRecord, that settings are not inherited
+_     http://dev.processing.org/bugs/show_bug.cgi?id=346
+_     or actually inherit the settings
+X clean up filter stuff?
+X   filter(GRAY) -> to push things to luminosity-based gray
+X     already implemented this way
+o   filter(MASK, ...) -> or ALPHA? 
+o   filter(TINT, tintColor)
+X   decision: use luminosity for gray
+X   decision: tinting is usually for a dynamic thing, so not necessary
+o change default save() to use PNG instead of TIFF (speed?)
+o   decision: due to speed, just keep it as TIFF
+o clipping
+o   http://mrl.nyu.edu/~perlin/experiments/borg/render/index.html
+o   http://en.wikipedia.org/wiki/Clip_Mapping
+o   http://www.cubic.org/docs/3dclip.htm
+o perspective() applied after camera()... problems?
 
 xml changes
 o see if write() is necessary inside PNodeXML
@@ -29,6 +50,15 @@ o   it needs a proper header on it, so maybe that's the difference w/ toString()
 o inefficient: the way new nodes are created
 o also inefficient: adding/removing kids just nukes the children array
 X toString() adds the XML header
+
+3.0
+_ createColor() instead of color()?
+_ route all exceptions through PException and catch method
+_   advanced users can override the method if they want
+_   or you can set an option to have PExceptions be raised
+_   decision: just copy & paste the serial/net code.. 
+_     until we can find a more compelling example
+_ actual shape api for things like rectangles and whatnot?
 
 _ add support for automatically including OpenGL when asking for P3D
 _ when using P3D and not realizing that it's really OpenGL...
@@ -57,9 +87,10 @@ _   http://code.google.com/p/processing/issues/detail?id=636
 _ font rotation (native font problem?) with natives?
 _   http://code.google.com/p/processing/issues/detail?id=692
 
-ben
-_ PUtil -> move match(), lots of other non-gui functions into own class
-_   and merge it in statically via the methods code
+casey
+ _ pdf fonts
+_   rewrite documentation about pdf fonts (errors with non-native fonts)
+_   figure out why font naming not working correctly
 
 2.0
 _ PVector discussion with Dan
@@ -110,60 +141,64 @@ _   http://code.google.com/p/processing/issues/detail?id=173
 o   http://code.google.com/p/processing/issues/detail?id=445
 _   decision: named callback functions
 _   if can't find the function, tell people to put it in the main tab
+_   inputFile() and outputFile() need a fix
+_     remove them from the code, write examples for these
+_     use callbacks instead
+_     need to decide if you specify the function name, or if it's specific
 _ remove delay()
 _   if you really want it, you can use Thread.sleep()
-
 _ thread() and method()
-
+_   thread() method (web workers?)
+_   decision: add thread, method isn't great
 _ OpenGL Applets won't load with JRE 6 update 21 or higher
 _   need to make the final call on this and implement
 _   http://code.google.com/p/processing/issues/detail?id=429
-_ clean up filter stuff?
-_   filter(GRAY) -> to push things to luminosity-based gray
-_   filter(MASK, ...) -> or ALPHA? 
-_   filter(TINT, tintColor)
+_   decision: 
 _ post() is called after setup() (make decision)
 _   http://code.google.com/p/processing/issues/detail?id=455
-_ createColor() instead of color()?
+_   decision: post() only gets called in draw, not setup.. document
 _ screen.width/screen.height -> screen.width, screenW/H
 _   needs to be documented, and excise all screen.width/height references
-_ change default save() to use PNG instead of TIFF (speed?)
+_   add to the 'changes' document
 _ PImage.save() should return a success boolean
 _   and not throw an exception when it fails
-_ route all exceptions through PException and catch method
-_   advanced users can override the method if they want
-_   or you can set an option to have PExceptions be raised
 _ touch events.. can't do MouseEvent et al with Android
-_ how should we handle registered methods?
+_   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
+_   http://www.html5rocks.com/en/mobile/touch.html
+_   decision: go with what looks like javascript/ios
+_   touchEvent(), gestureEvent()?
 _ make loading images lighter, ala android 
 _   require loadPixels to get 2D image data from images
 _   only load PImage pixels when necessary (faster for java2d)
- _ pdf fonts
-_   rewrite documentation about pdf fonts (errors with non-native fonts)
-_   figure out why font naming not working correctly
-_ add note to begin/endRecord, that settings are not inherited
-_   http://dev.processing.org/bugs/show_bug.cgi?id=346
-_   or actually inherit the settings
-_ inputFile() and outputFile() need a fix
-_   remove them from the code, write examples for these
-_   use callbacks instead
-_   need to decide if you specify the function name, or if it's specific
+_ loadImage() should use the faster loading methods
+_   hint(DISABLE_IMAGE_CACHING)
+_   add a note to the loadImage() reference page
+_ callback for requestImage()
+_   http://code.google.com/p/processing/issues/detail?id=641
+_   might work with the selectXxxx() functions as well
+_ PShape API to handle internal vertex stuff
+_   add deconstruct() method for paths
+_   toArray() and toVector()
+_   setVertex(0, x, y), setVertex(0, x, y, z)
+_ svg font support seems nice.. add PFontSVG
+_ PUtil -> move match(), lots of other non-gui functions into own class
+_   and merge it in statically via the methods code
+
 _ how much of com.benfry.* should go in? 
 _   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
-_ actual shape api for things like rectangles and whatnot?
-_ PShape api to handle internal vertex stuff
+
 _ size() and resize() and whatever? 
-_ thread() method (web workers?)
+_   should be setSize(), but that's odd for image files
+_ should we kill import xxxx syntax for libraries? 
+_   just give up and use a gui for it
+
+_ if PShape3D, then is it PShape2D? or do you handle both the same?
 
 _ hitting ESC in a running noLoop()ed sketch won't close the sketch?
 _   work through serial examples
 
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
-
-_ callback for requestImage()
-_   http://code.google.com/p/processing/issues/detail?id=641
-_   might work with the selectXxxx() functions as well
 
 _ image resizing is ugly (just use java2d?)
 _   also deal with copy()/blend() inaccuracies
@@ -178,12 +213,6 @@ _ copy(image with transparency) doesn't keep the transparency at start up
 _   http://code.google.com/p/processing/issues/detail?id=601
 
 _ make sure that filter, blend, copy, etc say that no loadPixels necessary
-
-_ clipping
-_   http://mrl.nyu.edu/~perlin/experiments/borg/render/index.html
-_   http://en.wikipedia.org/wiki/Clip_Mapping
-_   http://www.cubic.org/docs/3dclip.htm
-_ perspective() applied after camera()... problems?
 
 Hi all, just thought I'd share something. 
 For a while now, I've been having unexpected frame rate drops with JOGL when switching into fullscreen-exclusive mode (it halved no matter what I did - resolution switching, reducing how much I drew, etc). 
@@ -972,10 +1001,6 @@ _   textMode(SCREEN) is out of its league?
 _ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
 _   maybe need to add properties to the size() command?
 _   or use a getXxxx() method?
-_ should beginRecord inherit settings from its parent renderer?
-_   textFont() is null on beginRecord
-_   same would be the case for strokeWeight, background, etc.
-_   http://dev.processing.org/bugs/show_bug.cgi?id=346
 _ repeating texture support
 _ exactly how should pixel filling work with single pixel strokes?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1025
