@@ -277,13 +277,6 @@ public class PApplet extends Applet
   public int screenWidth, screenHeight;
 
   /**
-   * Use screenW and screenH instead.
-   * @deprecated
-   */
-  public Dimension screen =
-    Toolkit.getDefaultToolkit().getScreenSize();
-
-  /**
    * A leech graphics object that is echoing all events.
    */
   public PGraphics recorder;
