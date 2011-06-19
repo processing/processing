@@ -435,6 +435,7 @@ public class ColorSelector implements Tool, DocumentListener {
         }
       }
 
+      updatePixels();
       stroke((brightness > 50) ? 0 : 255);
       rect(lastX, lastY, 9, 9);
     }
@@ -492,10 +493,11 @@ public class ColorSelector implements Tool, DocumentListener {
       size(WIDE, HIGH); //, P3D);
       colorMode(HSB, 255, 100, 100);
       noLoop();
+      loadPixels();
     }
 
     public void draw() {
-      if ((g == null) || (g.pixels == null)) return;
+//      if ((g == null) || (g.pixels == null)) return;
       if ((width != WIDE) || (height < HIGH)) {
         //System.out.println("bad size " + width + " " + height);
         return;
@@ -510,6 +512,7 @@ public class ColorSelector implements Tool, DocumentListener {
           g.pixels[index++] = c;
         }
       }
+      updatePixels();
     }
 
     public void mousePressed() {
