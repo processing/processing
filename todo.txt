@@ -26,14 +26,16 @@ X   -> everyone thinks this is funny
 _ write quicktime uncompressed (w/o qtjava)
 _   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
 
-_ add INTERNET permissions to the android net examples
+_ add support for automatically including OpenGL when asking for P3D
+_ when using P3D and not realizing that it's really OpenGL...
+Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
+Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
 
 _ Resize box on OS X is not present in Examples box
 _   http://code.google.com/p/processing/issues/detail?id=730
 
 _ fix opengl applets so that we can safely kill P3D
 _ automatically insert the 'import processing.opengl' when P3D used
-
 
 pnode: look more closely at json and xml compatibility
 
