@@ -112,7 +112,7 @@ import processing.core.*;
  * Updated again for inclusion as a core library in March 2006.
  * Constructor modifications in September 2008 as we approach 1.0.
  */
-public class RawDXF extends PGraphics3D {
+public class RawDXF extends PGraphics {
 
   File file;
   PrintWriter writer;
