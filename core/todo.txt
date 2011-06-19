@@ -18,6 +18,213 @@ A finish OPENGL2 renderer
 A   http://code.google.com/p/processing/issues/detail?id=495
 o Can resize sketch with P3D, but not OPENGL
 o   http://code.google.com/p/processing/issues/detail?id=383
+A Resizing window in OPENGL breaks ImageCaches
+A   http://code.google.com/p/processing/issues/detail?id=184
+X need to make sure the createFont() reference is up to date for charset
+o opengl + resize window => window content garbled
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1360
+o P2D transformation bug from ira
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1175
+X resize not working in revision 5707
+X   camera() and perspective() were commented out in setSize()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1391
+X   this was fixed for 0176
+o changing vertex alpha in P3D in a QUAD_STRIP is ignored
+o   with smoothing, it works fine, but with PTriangle, it's not
+X   goodbye P3D
+o gl power of 2 with textures
+o   P3D also seems to have trouble w/ textures edges.. bad math?
+o No textures render with hint(ENABLE_ACCURATE_TEXTURES)
+X   http://code.google.com/p/processing/issues/detail?id=129
+o textAlign(JUSTIFY) (with implementation)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1309
+X   http://code.google.com/p/processing/issues/detail?id=186
+X   decided with casey not to include
+o resizing opengl destroys context and textures
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1176
+o in P2D, two vertex() line calls with fill() causes duplicate output
+o   works fine in other renderers, has to do with tesselation
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1191
+X   http://code.google.com/p/processing/issues/detail?id=162
+o extra triangles being seen in P2D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1192
+X   http://code.google.com/p/processing/issues/detail?id=163
+A implement repeating textures
+A   http://code.google.com/p/processing/issues/detail?id=94
+o add a limit to pushStyle() to catch unmatched sets?
+X   http://code.google.com/p/processing/issues/detail?id=198
+
+cleanup
+o if too many errors come through during setup, app will terminate
+o   printStackTrace() throttles on osx and poops out
+o   seen especially on old mac laptops (slow ppc garbage) 
+o   can this be confirmed properly?
+o   * this may just be an OutOfMemoryError happening
+o when drawing into a JAVA2D surface, have to call loadPixels()
+o   to draw it later with P3D (or OPENGL prolly)
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
+o alpha not set on saveFrame, so can't be used in photoshop as a layer
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623
+o an offscreen JAVA2D graphics needs loadPixels() before being drawn
+o   i.e. offscreen JAVA2D, then image() with OPENGL renderer as main
+o   needs to be marked as its cache needs an update, but not its pixels
+X begin/endPixels.. change has been made
+o   on PImage, sets a flag that marks it to be updated on next render
+o   for PImage, begin after an end is ignored, no pixels are re-loaded
+o     the "changed" bit gets turned off when the PImage is rendered
+o   for subclasses of PGraphics, the reload bit needs to be set on endFrame
+o   filter() checks to see if inside begin/endPixels, if so doesn't call
+o   if line() is called inside beginpixels, call updatepixels?
+o   when NPE on line with pixels[], suggest user includes beginPixels
+o need to test/straighten out load/update pixels
+o   loadPixels() and updatePixels() only need to be used when 
+o   touching pixels[]. All other functions including get(), set(),
+o   filter(), etc shouldn't need them. 
+o image memory use.. how to handle lots of images
+o   need to figure out exactly how they should/can unload
+o don't do a loadPixels unless an updatePixels has completed
+o   tho this won't affect anything, since either it's an image buffer
+o   or it's the PGraphics object, which does an updatePixels() immediately
+o if (modified) don't loadPixels again, just ignore it
+o   make a note that updatePixels() only sets a flag in PImage
+o     (but not PGraphics, which does it immediately)
+o smoothing
+o   how to handle smoothing images in P3D even though it has no smoothing?
+o   noSmooth() in opengl should switch to nearest neighbor on textures/images
+o   same for P3D
+o P3D smooshes the top row of pixels when drawing text (or images)
+X   http://code.google.com/p/processing/issues/detail?id=64
+X textures truly did get worse in P3D
+o   problem is that bilinear is turned on by default starting in 0124(?)
+X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
+o Implement support for complex shapes when using P2D and P3D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1053
+X   http://code.google.com/p/processing/issues/detail?id=145
+o smooth in P3D has zbuffer glitches
+X   http://code.google.com/p/processing/issues/detail?id=131
+o smoothing is slow
+X   http://code.google.com/p/processing/issues/detail?id=132
+o textured sphere example needs to set normals
+o   also needs fix for last edge and the seam
+o text() not setting zbuffer in P3D because not fully opaque
+X   http://dev.processing.org/bugs/show_bug.cgi?id=696
+X   http://code.google.com/p/processing/issues/detail?id=88
+o osx 10.5 (not 10.4) performing text width calculation differently
+o   http://dev.processing.org/bugs/show_bug.cgi?id=972
+X   http://code.google.com/p/processing/issues/detail?id=128
+o Automatically use textMode(SCREEN) with text() when possible
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1020
+X   http://code.google.com/p/processing/issues/detail?id=134
+o writing image file (missing a flush() call?) on exit() fails
+o   lots of zero length files
+o saveFrame() at the end of a draw mode program is problematic
+o   app might exit before the file has finished writing to disk
+o   need to block other activity inside screenGrab until finished
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
+A test P3D lighting to see how it compares with native OpenGL
+o ed's thread re: fullscreen strategies
+o   could add a new BApplet that uses BufferStrategy?
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
+o size() has memory limitations (pitaru)
+o   catch OutOfMemoryError inside size() and let the user know
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
+o remove some of the bloat, how can we make things more compact?
+o   i.e. if not using 3D, can leave out PGraphics3, PTriangle, PLine
+o   http://dev.processing.org/bugs/show_bug.cgi?id=127
+o fix-up the curve_init() and the rest to use matrices
+o   and not have ugly names (i.e. just g.curveDetail is good)
+o weird ellipse bug with an alpha line in same image
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
+o scaled ellipse showing up as a hexagon
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083674213
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1084652597;start=0
+o problem with the fill
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077834735
+o z values not set properly on ellipses?
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
+o ellipses are just plain ugly
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
+o should noSmooth() disable image smoothing consistently (does for Java2D)
+o   may need to bring back a hint, or use smoothMode() or smooth(IMAGES)
+o lines are conflicting with type in 2D
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094174791;start=0
+o mgorbet stroke transparency problem
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
+o make sure line() commands don't try to have a fill
+o make thick lines draw perpendicular to the screen with P3D
+o   http://dev.processing.org/bugs/show_bug.cgi?id=956
+o   ewjordan suggests building the quad in screen coords after perspective
+o images are losing pixels at the edges
+X   http://code.google.com/p/processing/issues/detail?id=38
+o odd error with some pixels from images not drawing properly
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453
+o clipping not implemented
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1393
+X   http://code.google.com/p/processing/issues/detail?id=210
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1095170607;start=0
+o   things are flying into the camera and halting apps
+o   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
+o   NullPointerException apparently when things way offscreen
+o     i.e. glyphrot with scale set to 4
+o     or at least that things get ridiculously slow
+o     clipping issues here.. but also something in scan converter
+o     not clipping areas from offscreen
+o       huge geometry slows things way down
+o STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
+o   use the SW from vertex instead.. why set stroke in triangle vars at all?
+o   currently truncating to an int inside add_line_no_clip
+o   need to clean all this crap up
+o switch to glWindowPos() instead of glRasterPos() silliness
+o get rid of some of the sillier IntBuffer stuff where it's not needed
+o   use the version of the prototypes that use an offset into the array
+o   need to test performance either way
+o make a note about the anti-aliasing types in the faq
+o   polygon vs line etc.. may want to enable lines but disable polys
+o invocationtargetexception in gl with aioobe:
+o   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
+o resolve ARGB versus RGBA versus just A issues for fonts
+o   make sure that current scenario works identically on mac
+o   if so, just switch the image code to expect alpha in the high bits
+o   fonts probably need to be RGBA, not ALPHA style images
+o   there's nothing really ALPHA about them?
+o bit shifting in opengl, get down to 2 ops by using other image modes
+o   i.e. ABGR_EXT might allow for just two shifts instead of 4
+o allow access to native pixel buffer in opengl and power of 2
+o   so that no need to copy/update everything
+o how to handle gluTessVertex calls
+o   need to re-map through the regular "vertex" command, 
+o   but that makes things messy because the glu calls make calls to vertex()
+o   and i don't want an additional "pathVertex()" function
+o with opengl optimizations via call lists..
+o   watch out to make sure raw recording still works
+o   (optimizations will have to be disabled to some extent)
+o look into using glu quadrics to handle shape geometries quickly
+o optimizations to opengl
+o   disabling error reporting (what's taking it so long?)
+o     maybe use a hint() to enable it? or a getError() function?
+o   make cached display list of filled/non-filled ellipse.. rect.. etc
+o     these don't work when the vertex colors change, but..
+o   http://dev.processing.org/bugs/show_bug.cgi?id=657
+o   or maybe should be using vertex arrays?
+o maybe break out a separate timage object in textures?
+o   needs tindex and tbuffer, both gl specific
+o     and for tpixels and twidth/theight, could use another PImage
+o   under assumption that most will just need an extra image object
+o   this could also be used by people eventually to control tex themselves
+o   or maybe call the object "texture"?
+o   in opengl lib, need beginTexture(PImage) and endTexture()
+o   this will be helpful to have access to the raw texture data
+o   that way it can be re-bound by itself, and ppl can write directly to it
+o make textMode(SHAPE) faster in opengl
+o   cache for type should be per-renderer
+o   make the opengl textmode shape stuff get better and use PShape
+o   because opengl needs vectors, but also the image cache for textures
+X stroke showing above fill when used with P3D
+X   http://dev.processing.org/bugs/show_bug.cgi?id=1032
+X   fixed in release 0160
 
 decisions
 o call reapplySettings() when using beginRecord()?
@@ -43,6 +250,8 @@ o   http://mrl.nyu.edu/~perlin/experiments/borg/render/index.html
 o   http://en.wikipedia.org/wiki/Clip_Mapping
 o   http://www.cubic.org/docs/3dclip.htm
 o perspective() applied after camera()... problems?
+o make sure that filter, blend, copy, etc say that no loadPixels necessary
+_ add java.io.Reader (and Writer?) to imports
 
 xml changes
 o see if write() is necessary inside PNodeXML
@@ -51,41 +260,60 @@ o inefficient: the way new nodes are created
 o also inefficient: adding/removing kids just nukes the children array
 X toString() adds the XML header
 
-3.0
-_ createColor() instead of color()?
-_ route all exceptions through PException and catch method
-_   advanced users can override the method if they want
-_   or you can set an option to have PExceptions be raised
-_   decision: just copy & paste the serial/net code.. 
-_     until we can find a more compelling example
-_ actual shape api for things like rectangles and whatnot?
-
-_ add support for automatically including OpenGL when asking for P3D
-_ when using P3D and not realizing that it's really OpenGL...
-Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
-Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
-
-_ check on DXFWriter, since it used to subclass P3D
-_   at least implement is3D? 
-
-_ Potential race condition when resizing sketches
-_   http://code.google.com/p/processing/issues/detail?id=697
-
-_ Resizing window in OPENGL breaks ImageCaches
-_   http://code.google.com/p/processing/issues/detail?id=184
-
-_ jogl demos, NEWT examples crash on osx http://jogamp.org/jogl-demos/www/
-_   http://jogamp.org/jogl-demos/www/applettest-jnlp.html
-
-_ sleep time needs to be set *much* higher for dormant applets
-_   10s should be fine--no need to keep spinning (bad for android too)
-_   just call interrupt() when it's time to get back to work
-_ memory leak when many createGraphics(..., JAVA2D) calls are used
-_   http://code.google.com/p/processing/issues/detail?id=507
-_ stop() not called in 1.5 when closing the sketch window
-_   http://code.google.com/p/processing/issues/detail?id=636
-_ font rotation (native font problem?) with natives?
-_   http://code.google.com/p/processing/issues/detail?id=692
+andres 
+_ OpenGL noSmooth() problems
+_   http://code.google.com/p/processing/issues/detail?id=328
+_ inconsistent anti-aliasing with OpenGL
+_   http://code.google.com/p/processing/issues/detail?id=217
+_ modelX/Y/Z broken when aiming a camera
+_   http://code.google.com/p/processing/issues/detail?id=148
+_ OS X slow with FSEM enabled
+_   http://code.google.com/p/processing/issues/detail?id=737
+_ chopping out triangles in OpenGL (though it's only 2D drawing)
+_   http://code.google.com/p/processing/issues/detail?id=193
+_ get() with OPENGL is grabbing the wrong coords
+_   http://code.google.com/p/processing/issues/detail?id=191
+_ deal with issue of single pixel seam at the edge of textures
+_   should vertexTexture() divide by width/height or width-1/height-1?
+_   http://code.google.com/p/processing/issues/detail?id=76
+_ lousy graphics cards cause background to flicker if background() not used
+_   http://code.google.com/p/processing/issues/detail?id=146
+_   OPENGL sketches flicker w/ Vista when background() not used inside draw()
+_   Disabling Aero scheme sometimes prevents the problem
+_   Updating graphics drivers may prevent the problem 
+_ text characters showing up as opaque rectangles in tga files
+o   solution is to implement alpha compositing across all of P3D 
+o   http://en.wikipedia.org/wiki/Alpha_compositing
+_   http://code.google.com/p/processing/issues/detail?id=80
+_ textAlign(CENTER) with P3D and OPENGL produces messy result
+_   probably rounding error with the images
+_   http://code.google.com/p/processing/issues/detail?id=65
+_ when turning smoothing on, internal lines of shapes are visible
+_   add an edge flag when tesselating 
+_   mind the opengl tesselation flags
+_   need to turn off smoothing for the interior of shapes
+_   http://code.google.com/p/processing/issues/detail?id=53
+_ Implement support for complex shapes when using the OpenGL renderer 
+_   in opengl mode, use its tesselator
+_   because the vertex calls can just come right back to regular vertex calls
+_   this way we can also implement breakShape() for opengl
+_   http://code.google.com/p/processing/issues/detail?id=122
+_ strokeCap() and strokeJoin() for use with OPENGL
+_   http://code.google.com/p/processing/issues/detail?id=123
+_ ellipse scaling method isn't great
+_   http://code.google.com/p/processing/issues/detail?id=87
+_ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
+_   http://code.google.com/p/processing/issues/detail?id=51
+_   polygon z-order depth sorting with alpha in opengl
+_   complete the implementation of hint() with proper implementation
+_   gl alpha on images when flipped around backwards
+_     will sorting based on depth help this? also ask simon for ideas
+_   need to merge sorting/drawing of lines and triangles
+_     lines will occlude tris and vice versa
+_     will need to split each based on the other
+_     sort issues will affect both
+_ Stroking a rect() leaves off the upper right pixel
+_   http://code.google.com/p/processing/issues/detail?id=67
 
 casey
  _ pdf fonts
@@ -93,8 +321,6 @@ _   rewrite documentation about pdf fonts (errors with non-native fonts)
 _   figure out why font naming not working correctly
 
 2.0
-_ PVector discussion with Dan
-_   jer and dan will look at their code, plus toxiclibs
 _ have andres take over all current GL issues in the tracker
 _ sort out destroy(), stop(), pause() et al
 _   ColorSelector should stop/pause when not visible
@@ -131,6 +357,7 @@ _   decision: we should do pie, you can make the other kind w/o it
 _ rounded rectangle method 
 _   http://code.google.com/p/processing/issues/detail?id=265
 _   clockwise from upper-left
+X   check with casey about finalizing and adding to the docs
 _ require people to put things in the data folder
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
@@ -150,10 +377,6 @@ _   if you really want it, you can use Thread.sleep()
 _ thread() and method()
 _   thread() method (web workers?)
 _   decision: add thread, method isn't great
-_ OpenGL Applets won't load with JRE 6 update 21 or higher
-_   need to make the final call on this and implement
-_   http://code.google.com/p/processing/issues/detail?id=429
-_   decision: 
 _ post() is called after setup() (make decision)
 _   http://code.google.com/p/processing/issues/detail?id=455
 _   decision: post() only gets called in draw, not setup.. document
@@ -173,6 +396,9 @@ _   only load PImage pixels when necessary (faster for java2d)
 _ loadImage() should use the faster loading methods
 _   hint(DISABLE_IMAGE_CACHING)
 _   add a note to the loadImage() reference page
+_ figure out why 1024x768 image takes 3.5 seconds to load
+_   would using a BufferedImage work better?
+_   is the image actually a BufferedImage so PixelGrabber is a waste?
 _ callback for requestImage()
 _   http://code.google.com/p/processing/issues/detail?id=641
 _   might work with the selectXxxx() functions as well
@@ -180,77 +406,81 @@ _ PShape API to handle internal vertex stuff
 _   add deconstruct() method for paths
 _   toArray() and toVector()
 _   setVertex(0, x, y), setVertex(0, x, y, z)
-_ svg font support seems nice.. add PFontSVG
 _ PUtil -> move match(), lots of other non-gui functions into own class
 _   and merge it in statically via the methods code
-
 _ how much of com.benfry.* should go in? 
 _   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
-
+_   decision: depends on if we can think of a good name
 _ size() and resize() and whatever? 
 _   should be setSize(), but that's odd for image files
-_ should we kill import xxxx syntax for libraries? 
-_   just give up and use a gui for it
-
+_   -> resize() is fine with PImage and PGraphics... 
+_   we may be inheriting the resize() from Java -> make it final?
 _ if PShape3D, then is it PShape2D? or do you handle both the same?
-
-_ hitting ESC in a running noLoop()ed sketch won't close the sketch?
-_   work through serial examples
-
+_ nfc() is a problem on intl systems when subsetting fonts
+_   decision: add note to reference that the 'c' is a misnomer
+_ svg fonts
+_ check on DXFWriter, since it used to subclass P3D
+_   at least implement is3D? 
+_ Potential race condition when resizing sketches
+_   http://code.google.com/p/processing/issues/detail?id=697
+_ sleep time needs to be set *much* higher for dormant applets
+_   10s should be fine--no need to keep spinning (bad for android too)
+_   just call interrupt() when it's time to get back to work
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
-
-_ image resizing is ugly (just use java2d?)
-_   also deal with copy()/blend() inaccuracies
-_   http://code.google.com/p/processing/issues/detail?id=332
-_ implement a more efficient version of blend()
-_   http://code.google.com/p/processing/issues/detail?id=120
-_ blend() bugs with identically-sized images
-_   http://code.google.com/p/processing/issues/detail?id=285
-_ transparency issue with JAVA2D
-_   http://code.google.com/p/processing/issues/detail?id=182
-_ copy(image with transparency) doesn't keep the transparency at start up
-_   http://code.google.com/p/processing/issues/detail?id=601
-
-_ make sure that filter, blend, copy, etc say that no loadPixels necessary
-
-Hi all, just thought I'd share something. 
-For a while now, I've been having unexpected frame rate drops with JOGL when switching into fullscreen-exclusive mode (it halved no matter what I did - resolution switching, reducing how much I drew, etc). 
-Just recently I've started putting my latest game into fullscreen from the start instead of an option later, and so also started using apple.awt.fakefullscreen="true" - much to my surprise, this seemed to fix the problem. On closer examination, switching away from the game and back via command-tab (which wasn't possible without fakefullscreen) was the actual trigger. 
-I now have 
-app.requestForeground(true);
-// app extends com.apple.eawt.Application implements Runnable, GLEventListener 
-in my switch-to-fullscreen method, after creating the new fullscreen frame and before calling setFullScreenWindow(...); 
-Unfortunately I don't really understand the true cause of the underlying problem (and it requires apple.awt.fakefullscreen="true" to work), so this solution is voodoo programming at best. I hope someone finds it helpful regardless :)
-
-_ show an error when using a font character that isn't available
-_   maybe fall back on other characters instead?
-
-_ nfc() is a problem on intl systems when subsetting fonts
-
-_ OpenGL noSmooth() problems
-_   http://code.google.com/p/processing/issues/detail?id=328
-
-_ possible addition for 'implementation' variable
-_   http://code.google.com/p/processing/issues/detail?id=281
-
-_ possibly add rounded rect method
-_   check with casey about finalizing and adding to the docs
-
 _ need to wrap mouse/key events for p5
 _   need a version that works with both android and desktop
 _   also need to interleave events properly (as per report)
+_ need to clean up the hints in the reference/source
 
+3.0
+_ createColor() instead of color()?
+_ route all exceptions through PException and catch method
+_   advanced users can override the method if they want
+_   or you can set an option to have PExceptions be raised
+_   decision: just copy & paste the serial/net code.. 
+_     until we can find a more compelling example
+_ actual shape api for things like rectangles and whatnot?
+_ should we kill import xxxx syntax for libraries? 
+_   just give up and use a gui for it
+_   cons: copy & paste breaks
+_   pro: there's no guaranteed 1:1 between packages and single libraries
+_ method of threading but queue an event to be run when safe
+_   e.g. queueing items like mouse/keybd, but generic fxns
+_ for begin/endRecord, use a piggyback mechanism
+_   that way won't have to pass a PApplet around
+_   this has a big impact on the SVG library
+_   in fact, this maybe should be a library that does it
+_     so that the file size can be much smaller
+_ add setOutput() method across other renderers?
+
+decisions to make
+_ possible addition for 'implementation' variable
+_   http://code.google.com/p/processing/issues/detail?id=281
+_ PVector discussion with Dan
+_   jer and dan will look at their code, plus toxiclibs
+_ modify PVector to include better methods for chaining operations
+_   http://code.google.com/p/processing/issues/detail?id=218
+_ should map() actually constrain to the low and high values?
+_ decide whether to keep:
+_   public float textWidth(char[] chars, int start, int length)
+_ add version of math functions that use doubles?
+_   what other methods should work with doubles? all math functions?
+_   seems like internal (mostly static) things, but not graphics api
+_ add shuffle methods for arrays
+_   http://code.google.com/p/processing/issues/detail?id=229
+_ don't allow things inside begin/endShape() that aren't possible
+_   better lockout inside beginShape() to keep other things from happening
+_   don't allow you to draw stroked items unless stroke() is called
+_   don't allow beginShape() if shape is already set
+_     (otherwise will cause some very strange errors)
+_   http://code.google.com/p/processing/issues/detail?id=135
+_ make determination on shape(x,y,z,w,h,d) or no
+_ new PGraphics(... OutputStream) 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1502
 _ path for selectXxxxx() functions
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1475
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1504
-
-_ new PGraphics(... OutputStream) 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1502
-
-_ need to make sure the createFont() reference is up to date for charset
-
-_ make determination on shape(x,y,z,w,h,d) or no
 
 stop() mess
 _ notes
@@ -262,7 +492,7 @@ _   browser will call start() and stop() methods
 _ need to figure out start/stop signals coming from the browser
 _   is it dispose/destroy? 
 _ stop() not getting called
-_   http://dev.processing.org/bugs/show_bug.cgi?id=183 (dupe of 131)
+_   http://code.google.com/p/processing/issues/detail?id=43
 _   major problem for libraries
 _   and start() is supposedly called by the applet viewer
 _   http://java.sun.com/j2se/1.4.2/docs/api/java/applet/Applet.html#start()
@@ -276,6 +506,17 @@ _   make sure the main() doesn't exit until the applet has finished
 _   i.e. problem with main calling itself multiple times in Alpheus
 _   if exit() (or stop) is called, then System.exit() gets called,
 _   even though the main() wants to keep going
+_ hitting ESC in a running noLoop()ed sketch won't close the sketch?
+o   work through serial examples
+_ noloop ref even says that redraw will be called on resize, make sure it is
+_ focus not coming through, ESC no longer working(?)
+_ stop() not called in 1.5 when closing the sketch window
+_   http://code.google.com/p/processing/issues/detail?id=636
+
+fix opengl applets
+_ implement new applet-opengl.html based on the latest jogl 
+_ jogl demos, NEWT examples crash on osx http://jogamp.org/jogl-demos/www/
+_   http://jogamp.org/jogl-demos/www/applettest-jnlp.html
 _ opengl applet problems
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1364
 _   http://code.google.com/p/processing/issues/detail?id=196
@@ -284,62 +525,13 @@ _   stop() called between tabs/pages, start() may be called again
 _   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
 _   really, stop() should just call noLoop() (and start re-enable if done)
 _     and on android, start/stop can be used to save state information
+_ OpenGL Applets won't load with JRE 6 update 21 or higher
+_   need to make the final call on this and implement
+_   http://code.google.com/p/processing/issues/detail?id=429
 
-big ones
-_ modelx/y/z broken when aiming a camera
-_   http://code.google.com/p/processing/issues/detail?id=148
-_ opengl + resize window => window content garbled
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1360
-_ modify PVector to include better methods for chaining operations
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1415
-
-quickies
-_ PFont.size not available.. other font accessors? 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1510
-_ img.get() weirdness
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1198
-_ add a limit to pushStyle() to catch unmatched sets?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1368
-_ P2D transformation bug from ira
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1175
-_ resize not working in revision 5707
-_   camera() and perspective() were commented out in setSize()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1391
-_ chopping out triangles in OpenGL (though it's only 2D drawing)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1359
-_ make sure that get() and set() (for pixels and subsets) work w/ loaded images
-_ make sure that get() and set() (for pixels and subsets) work w/ P2D
-_ make sure that get() and set() (for pixels and subsets) work w/ P3D
-
-_ add setOutput() method across other renderers?
-
-_ method of threading but queue an event to be run when safe
-_   e.g. queueing items like mouse/keybd, but generic fxns
-
-_ inconsistent anti-aliasing with OpenGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1413
-_ modify PVector to include better methods for chaining operations
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1415
-
-_ add java.io.Reader (and Writer?) to imports
-
-_ changing vertex alpha in P3D in a QUAD_STRIP is ignored
-_   with smoothing, it works fine, but with PTriangle, it's not
 _ smooth() not working with applets an createGraphics(JAVA2D)
 _   but works fine with applications
-_ get() with OPENGL is grabbing the wrong coords
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1349
-
-_ gl power of 2 with textures
-_   P3D also seems to have trouble w/ textures edges.. bad math?
-
-_ No textures render with hint(ENABLE_ACCURATE_TEXTURES)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=985
-_   need to remove the hint from the reference
-_   need to throw an error when it's used
-_ deal with issue of single pixel seam at the edge of textures
-_   http://dev.processing.org/bugs/show_bug.cgi?id=602
-_   should vertexTexture() divide by width/height or width-1/height-1?
+_   need an example of this
 
 looping/events
 _ key and mouse events delivered out of order
@@ -350,172 +542,9 @@ _   need to say "no drawing inside mouse/key events w/ noLoop"
 _ redraw() doesn't work from within draw()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1363
 
-_ decide whether to keep:
-_   public float textWidth(char[] chars, int start, int length)
-
-_ textAlign(JUSTIFY) (with implementation)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1309
-
-_ Semitransparent rect drawn over image not rendered correctly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1280
-
-_ should map() actually constrain to the low and high values?
-
-_ file chooser fails with opengl on linux
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1221
-
-_ resizing opengl destroys context and textures
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1176
-_ what's the difference with ascent on loadFont vs. createFont?
-_ noCursor() doesn't work in present mode
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1177
-_ in P2D, two vertex() line calls with fill() causes duplicate output
-_   works fine in other renderers, has to do with tesselation
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1191
-_ extra triangles being seen in P2D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1192
-_ noloop ref even says that redraw will be called on resize, make sure it is
-
-
-[ features ] 
-
-_ add version of math functions that use doubles?
-_   what other methods should work with doubles? all math functions?
-_   seems like internal (mostly static) things, but not graphics api
-
-
-[ known problems ]
-
-_ lousy graphics cards cause background to flicker if background() not used
-_   http://code.google.com/p/processing/issues/detail?id=146
-_   OPENGL sketches flicker w/ Vista when background() not used inside draw()
-_   Disabling Aero scheme sometimes prevents the problem
-_   Updating graphics drivers may prevent the problem 
-
-[ need problem sketch ] 
-
-_ if too many errors come through during setup, app will terminate
-_   printStackTrace() throttles on osx and poops out
-_   seen especially on old mac laptops (slow ppc garbage) 
-_   can this be confirmed properly?
-_   * this may just be an OutOfMemoryError happening
-
-[ needs verification ] 
-
-_ focus not coming through, ESC no longer working(?)
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-createGraphics() and load/updatePixels() mess [1.0]
-_ text characters showing up as opaque rectangles in tga files
-_   http://dev.processing.org/bugs/show_bug.cgi?id=641
-_   solution is to implement alpha compositing across all of P3D 
-_   http://en.wikipedia.org/wiki/Alpha_compositing
-_ text() not setting zbuffer in P3D because not fully opaque
-_   http://dev.processing.org/bugs/show_bug.cgi?id=696
-_ alpha not set on saveFrame, so can't be used in photoshop as a layer
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=general;action=display;num=1078441623
-_ when drawing into a JAVA2D surface, have to call loadPixels()
-_   to draw it later with P3D (or OPENGL prolly)
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Syntax;action=display;num=1171574044
-_ an offscreen JAVA2D graphics needs loadPixels() before being drawn
-_   i.e. offscreen JAVA2D, then image() with OPENGL renderer as main
-_   needs to be marked as its cache needs an update, but not its pixels
-X begin/endPixels.. change has been made
-_   on PImage, sets a flag that marks it to be updated on next render
-_   for PImage, begin after an end is ignored, no pixels are re-loaded
-_     the "changed" bit gets turned off when the PImage is rendered
-_   for subclasses of PGraphics, the reload bit needs to be set on endFrame
-_   filter() checks to see if inside begin/endPixels, if so doesn't call
-o   if line() is called inside beginpixels, call updatepixels?
-_   when NPE on line with pixels[], suggest user includes beginPixels
-_ need to test/straighten out load/update pixels
-_   loadPixels() and updatePixels() only need to be used when 
-_   touching pixels[]. All other functions including get(), set(),
-_   filter(), etc shouldn't need them. 
-_ image memory use.. how to handle lots of images
-_   need to figure out exactly how they should/can unload
-_ don't do a loadPixels unless an updatePixels has completed
-_   tho this won't affect anything, since either it's an image buffer
-_   or it's the PGraphics object, which does an updatePixels() immediately
-_ if (modified) don't loadPixels again, just ignore it
-_   make a note that updatePixels() only sets a flag in PImage
-_     (but not PGraphics, which does it immediately)
-
-
-rework some text/font code [1.0]
-_ text placement is ugly, seems like fractional metrics problem
-_   http://dev.processing.org/bugs/show_bug.cgi?id=866
-_ text(char c) with char 0 and undefined should print nothing
-_   perhaps also DEL or other nonprintables?
-_   book example 25-03
-_ text position is quantized in JAVA2D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=806
-_ accessors inside PFont need a lot of work
-_ osx 10.5 (not 10.4) performing text width calculation differently
-_   http://dev.processing.org/bugs/show_bug.cgi?id=972
-_   http://code.google.com/p/processing/issues/detail?id=128
-_ Automatically use textMode(SCREEN) with text() when possible
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1020
-_   http://code.google.com/p/processing/issues/detail?id=134
-
-
-P2D, P3D, PPolygon [1.0]
-_ smoothing
-_   how to handle smoothing images in P3D even though it has no smoothing?
-_   noSmooth() in opengl should switch to nearest neighbor on textures/images
-_   same for P3D
-_ P3D smooshes the top row of pixels when drawing text (or images)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=466
-_ textAlign(CENTER) with P3D and OPENGL produces messy result
-_   probably rounding error with the images
-_   http://code.google.com/p/processing/issues/detail?id=65
-X textures truly did get worse in P3D
-_   problem is that bilinear is turned on by default starting in 0124(?)
-X   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=Programs;action=display;num=1205171649
-_ when turning smoothing on, internal lines of shapes are visible
-_   add an edge flag when tesselating 
-_   mind the opengl tesselation flags
-_   need to turn off smoothing for the interior of shapes
-_   http://dev.processing.org/bugs/show_bug.cgi?id=200
-_ Implement support for complex shapes when using P2D and P3D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1053
-_ Implement support for complex shapes when using the OpenGL renderer 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=947
-_   in opengl mode, use its tesselator
-_   because the vertex calls can just come right back to regular vertex calls
-_   this way we can also implement breakShape() for opengl
-_ smooth in P3D has zbuffer glitches
-_   http://code.google.com/p/processing/issues/detail?id=131
-_ smoothing is slow
-_   http://code.google.com/p/processing/issues/detail?id=132
-_ textured sphere example needs to set normals
-_   also needs fix for last edge and the seam
-
-
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
-
-
-threading and exiting
-_ writing image file (missing a flush() call?) on exit() fails
-_   lots of zero length files
-_ saveFrame() at the end of a draw mode program is problematic
-_   app might exit before the file has finished writing to disk
-_   need to block other activity inside screenGrab until finished
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1081706752
-
-_ for begin/endRecord, use a piggyback mechanism
-_   that way won't have to pass a PApplet around
-_   this has a big impact on the SVG library
-_   in fact, this maybe should be a library that does it
-_     so that the file size can be much smaller
-
-_ STROKE_WEIGHT field in PGraphics3 is a disaster, because it's an int
-_   use the SW from vertex instead.. why set stroke in triangle vars at all?
-_   currently truncating to an int inside add_line_no_clip
-_   need to clean all this crap up
+_ cursor functions don't work in present mode
+_   just add a note to the reference
+_   http://code.google.com/p/processing/issues/detail?id=160
 
 
 
@@ -530,9 +559,6 @@ _ PApplet.main(new String[] { "classname" }) won't pass in args
 _   this means that no args are after passed to the class
 _   the fix would be to use the following as the call to main()
 _   PApplet.main(append(new String[] { "classname }, args));
-_ figure out why 1024x768 image takes 3.5 seconds to load
-_   would using a BufferedImage work better?
-_   is the image actually a BufferedImage so PixelGrabber is a waste?
 _ detect when using full screen
 _   and if so, remove decoration and don't bother with bg present frame
 _   frame.setUndecorated(true);
@@ -547,20 +573,8 @@ o size() inside draw is missing a new call to cameraMode, etc
 _ fix param() to use a sketch.properties file when run as an app
 _   make this also be used in generating the html file
 _ test winding polygons in different directions
-_ test P3D lighting to see how it compares with native OpenGL
-_ ed's thread re: fullscreen strategies
-_   could add a new BApplet that uses BufferStrategy?
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Programs;action=display;num=1081335361;start=15
-_ size() has memory limitations (pitaru)
-_   catch OutOfMemoryError inside size() and let the user know
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1038847001
 _ loadBytes() needs optimization
 _   don't bother using a buffering stream, just handle internally. gah!
-_ remove some of the bloat, how can we make things more compact?
-_   i.e. if not using 3D, can leave out PGraphics3, PTriangle, PLine
-_   http://dev.processing.org/bugs/show_bug.cgi?id=127
-E4 _ add shuffle methods for arrays
-E4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1462
 
 
 CORE / PApplet - main()
@@ -595,6 +609,20 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1257
 
 CORE / PFont and text()
 
+_ what's the difference with ascent on loadFont vs. createFont?
+_ svg font support seems nice.. add PFontSVG
+_ font rotation (native font problem?) with natives?
+_   http://code.google.com/p/processing/issues/detail?id=692
+_ text placement is ugly, seems like fractional metrics problem
+_   http://dev.processing.org/bugs/show_bug.cgi?id=866
+_ text(char c) with char 0 and undefined should print nothing
+_   perhaps also DEL or other nonprintables?
+_   book example 25-03
+_ text position is quantized in JAVA2D
+_   http://dev.processing.org/bugs/show_bug.cgi?id=806
+_ accessors inside PFont need a lot of work
+_ PFont.size not available.. other font accessors? 
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1510
 _ improve font metrics
 _   http://java.sun.com/products/java-media/2D/reference/faqs/index.html#Q_How_do_I_obtain_font_metrics
 _ font encoding issues 
@@ -623,23 +651,16 @@ _   need to be able to handle shapes within shapes (reverse winding)
 _   ftgl: main code is in FTVectoriser
 _   uses gluTessBeginContour and gluTessEndContour
 _   and then does 5 step sizes for each curveto
+_ show an error when using a font character that isn't available
+_   maybe fall back on other characters instead?
 
 
 CORE / PGraphics
 
-_ stroke showing above fill when used with P3D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1032
-_ strokeCap() and strokeJoin() for use with P2D, P3D and OPENGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=955
 _ y2 position of rectangles not same as y2 position of lines
 _   happens when the rectangle is flipped on the x or y axis
 _   probably a hack that draws the "last" point differently
-_ beginShape() 
-_   better lockout inside beginShape() to keep other things from happening
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1022
-_   don't allow you to draw stroked items unless stroke() is called
-_   don't allow beginShape() if shape is already set
-_     (otherwise will cause some very strange errors)
+
 _ lines
 _   z value hack for lines is causing trouble for 2D
 _     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1089737928;start=0
@@ -647,33 +668,6 @@ _   rewrite line and stroke code, it's a buggy mess
 _     lines become 2 pixels thick after a 3D transform 
 _     better handling of single-pixel special case
 _       flat_line_retribution is a hack, can go away
-_ fix-up the curve_init() and the rest to use matrices
-_   and not have ugly names (i.e. just g.curveDetail is good)
-_ ellipse scaling method isn't great
-_   toxi ellipses don't adapt properly with transformations
-_   http://dev.processing.org/bugs/show_bug.cgi?id=695
-_   weird ellipse bug with an alpha line in same image
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083221401;start=0
-_   scaled ellipse showing up as a hexagon
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1083674213
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1084652597;start=0
-_   problem with the fill
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1077834735
-_   z values not set properly on ellipses?
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1068752615
-_   ellipses are just plain ugly
-_     http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1073409011;start=0
-
-
-CORE / PGraphics2D
-
-_ should noSmooth() disable image smoothing consistently (does for Java2D)
-_   may need to bring back a hint, or use smoothMode() or smooth(IMAGES)
-_ lines are conflicting with type in 2D
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1094174791;start=0
-_ mgorbet stroke transparency problem
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1076383048;start=0
-_ make sure line() commands don't try to have a fill
 
 
 CORE / PGraphicsJava2D
@@ -691,39 +685,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=104
 
 CORE / PGraphics3D
 
-_ make thick lines draw perpendicular to the screen with P3D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=956
-_   ewjordan suggests building the quad in screen coords after perspective
-_ improve hint(ENABLE_DEPTH_SORT) to use proper painter's algo
-_   http://dev.processing.org/bugs/show_bug.cgi?id=176
-_   polygon z-order depth sorting with alpha in opengl
-_   complete the implementation of hint() with proper implementation
-_   gl alpha on images when flipped around backwards
-_     will sorting based on depth help this? also ask simon for ideas
-_   need to merge sorting/drawing of lines and triangles
-_     lines will occlude tris and vice versa
-_     will need to split each based on the other
-_     sort issues will affect both
-_ images are losing pixels at the edges
-_   http://dev.processing.org/bugs/show_bug.cgi?id=102
-_ odd error with some pixels from images not drawing properly
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115681453
-_ clipping not implemented
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1393
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1114184516
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1058491568;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1052313604;start=0
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_Software;action=display;num=1095170607;start=0
-_   things are flying into the camera and halting apps
-_   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs;action=display;num=1042699742
-_   NullPointerException apparently when things way offscreen
-_     i.e. glyphrot with scale set to 4
-_     or at least that things get ridiculously slow
-_     clipping issues here.. but also something in scan converter
-_     not clipping areas from offscreen
-_       huge geometry slows things way down
-_ Stroking a rect() leaves off the upper right pixel
-_   http://dev.processing.org/bugs/show_bug.cgi?id=501
 _ box is not opaque
 _   problem is that lines are drawn second
 _   one pixel lines have no z value.. argh
@@ -737,8 +698,21 @@ _   box(40);
 
 CORE / PImage
 
+_ img.get() quirks
+_   http://code.google.com/p/processing/issues/detail?id=167
+_ image resizing is ugly (just use java2d?)
+_   also deal with copy()/blend() inaccuracies
+_   http://code.google.com/p/processing/issues/detail?id=332
+_ implement a more efficient version of blend()
+_   http://code.google.com/p/processing/issues/detail?id=120
+_ blend() bugs with identically-sized images
+_   http://code.google.com/p/processing/issues/detail?id=285
+_ transparency issue with JAVA2D
+_   http://code.google.com/p/processing/issues/detail?id=182
+_ copy(image with transparency) doesn't keep the transparency at start up
+_   http://code.google.com/p/processing/issues/detail?id=601
 _ accuracy problems make alpha channel go to FE with image.copy()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1420
+_   http://code.google.com/p/processing/issues/detail?id=219
 _ improve blend() accuracy when using ADD
 _   http://code.google.com/p/processing/issues/detail?id=133
 _   includes code for a slow but more accurate mode
@@ -757,6 +731,8 @@ _   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ should smoothing not be turned on by default? handle this where?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1195
+_ Semitransparent rect drawn over image not rendered correctly
+_   http://code.google.com/p/processing/issues/detail?id=182
 
 
 CORE / PShape
@@ -829,67 +805,24 @@ _ vectors shouldn't be exposed, need to expose attr lists as arrays
 _   or also add a method for getting the vectors?
 
 
-LIBRARIES / PGraphicsOpenGL
-
-_ switch to glWindowPos() instead of glRasterPos() silliness
+more andres
 _ implement setImpl() instead of set() inside PGraphicsOpenGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=943
+_   http://code.google.com/p/processing/issues/detail?id=121
 _ use glCopyPixels() or glReadPixels() instead of copy() method
-_   http://dev.processing.org/bugs/show_bug.cgi?id=941
+_   http://code.google.com/p/processing/issues/detail?id=119
 _ copy() does not update the screen with OpenGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=933
+_   http://code.google.com/p/processing/issues/detail?id=118
 _ set() requires updatePixels() with OpenGL
-_   http://dev.processing.org/bugs/show_bug.cgi?id=705
+_   http://code.google.com/p/processing/issues/detail?id=89
 _ first few frames of OpenGL sketches on Windows run slowly
-_   http://dev.processing.org/bugs/show_bug.cgi?id=874
+_   http://code.google.com/p/processing/issues/detail?id=107
 _ updatePixels wth OpenGL requires a lot of memory, need better texture update
-_   http://dev.processing.org/bugs/show_bug.cgi?id=610
-_ with opengl optimizations via call lists..
-_   watch out to make sure raw recording still works
-_   (optimizations will have to be disabled to some extent)
-_ look into using glu quadrics to handle shape geometries quickly
-_ optimizations to opengl
-_   disabling error reporting (what's taking it so long?)
-_     maybe use a hint() to enable it? or a getError() function?
-_   make cached display list of filled/non-filled ellipse.. rect.. etc
-_     these don't work when the vertex colors change, but..
-_   http://dev.processing.org/bugs/show_bug.cgi?id=657
-_   or maybe should be using vertex arrays?
-_ maybe break out a separate timage object in textures?
-_   needs tindex and tbuffer, both gl specific
-_     and for tpixels and twidth/theight, could use another PImage
-_   under assumption that most will just need an extra image object
-_   this could also be used by people eventually to control tex themselves
-_   or maybe call the object "texture"?
-_   in opengl lib, need beginTexture(PImage) and endTexture()
-_   this will be helpful to have access to the raw texture data
-_   that way it can be re-bound by itself, and ppl can write directly to it
-_ make textMode(SHAPE) faster in opengl
-_   cache for type should be per-renderer
-_   make the opengl textmode shape stuff get better and use PShape
-_   because opengl needs vectors, but also the image cache for textures
+_   http://code.google.com/p/processing/issues/detail?id=77
+_ implement textMode(SHAPE) with OPENGL
+_   http://code.google.com/p/processing/issues/detail?id=738
+
 _ opengl needs to shut itself down properly when closing applet
 _   otherwise can crash the whole browser
-_ get rid of some of the sillier IntBuffer stuff where it's not needed
-_   use the version of the prototypes that use an offset into the array
-_   need to test performance either way
-_ make a note about the anti-aliasing types in the faq
-_   polygon vs line etc.. may want to enable lines but disable polys
-_ invocationtargetexception in gl with aioobe:
-_   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=SoftwareBugs;action=display;num=1115185737
-_ resolve ARGB versus RGBA versus just A issues for fonts
-_   make sure that current scenario works identically on mac
-_   if so, just switch the image code to expect alpha in the high bits
-_   fonts probably need to be RGBA, not ALPHA style images
-_   there's nothing really ALPHA about them?
-_ bit shifting in opengl, get down to 2 ops by using other image modes
-_   i.e. ABGR_EXT might allow for just two shifts instead of 4
-_ allow access to native pixel buffer in opengl and power of 2
-_   so that no need to copy/update everything
-_ how to handle gluTessVertex calls
-_   need to re-map through the regular "vertex" command, 
-_   but that makes things messy because the glu calls make calls to vertex()
-_   and i don't want an additional "pathVertex()" function
 
 
 LIBRARIES / PGraphicsPDF
