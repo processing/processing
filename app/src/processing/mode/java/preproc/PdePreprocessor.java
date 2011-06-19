@@ -671,7 +671,9 @@ public class PdePreprocessor {
   }
 
   public String[] getCoreImports() {
-    return new String[] { "processing.core.*", "processing.xml.*" };
+    return new String[] { 
+      "processing.core.*"
+    };
   }
 
   public String[] getDefaultImports() {

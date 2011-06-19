@@ -167,8 +167,7 @@ public class AndroidPreprocessor extends PdePreprocessor {
   @Override
   public String[] getCoreImports() {
     return new String[] { 
-      "processing.core.*", 
-      "processing.xml.*" 
+      "processing.core.*" 
     };
   }
 

@@ -1,5 +1,4 @@
 import processing.core.*; 
-import processing.xml.*; 
 
 import java.applet.*; 
 import java.awt.Dimension; 
