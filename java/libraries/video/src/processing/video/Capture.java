@@ -799,7 +799,7 @@ public class Capture extends PImage implements PConstants {
     } else if (PApplet.platform == WINDOWS) {
       return "device-name";
     } else if (PApplet.platform == MACOSX) {
-      return "device";
+      return "device-name";
     } else {
       return "";
     }
@@ -812,7 +812,7 @@ public class Capture extends PImage implements PConstants {
     } else if (PApplet.platform == WINDOWS) {
       return "device-index";
     } else if (PApplet.platform == MACOSX) {
-      return "device-index"; // Is this correct? Probably not.
+      return "device";
     } else {
       return "";
     }
