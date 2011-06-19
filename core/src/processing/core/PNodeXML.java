@@ -362,12 +362,18 @@ public class PNodeXML implements PNode, Serializable {
   }
   
   
-  public void addChild(PNode kid) {
-    node.appendChild(((PNodeXML) kid).node);
-    children = null;  // TODO not efficient
+  public PNode addChild(String tag) {
+    Document document = node.getOwnerDocument();
+    Node newChild = document.createElement(tag);
+    node.appendChild(newChild);
+    PNode pn = new PNodeXML(this, newChild);
+    if (children != null) {
+      children = (PNode[]) PApplet.concat(children, new PNode[] { pn });
+    }
+    return pn;
   }
-  
-  
+
+
   public void removeChild(PNode kid) {
     node.removeChild(((PNodeXML) kid).node);
     children = null;  // TODO not efficient
@@ -593,10 +599,10 @@ public class PNodeXML implements PNode, Serializable {
   }
   
   
-  static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-
-  public void write(PrintWriter writer) {
-    writer.println(HEADER);
-    writer.print(toString(2));
-  }
+//  static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+//
+//  public void write(PrintWriter writer) {
+//    writer.println(HEADER);
+//    writer.print(toString(2));
+//  }
 }
