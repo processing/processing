@@ -411,16 +411,18 @@ public class ColorSelector implements Tool, DocumentListener {
 
 
     public void setup() {
-      size(WIDE, HIGH, P3D);
+      size(WIDE, HIGH); //, P3D);
       noLoop();
 
       colorMode(HSB, 360, 256, 256);
       noFill();
       rectMode(CENTER);
+      
+      loadPixels();
     }
 
     public void draw() {
-      if ((g == null) || (g.pixels == null)) return;
+//      if ((g == null) || (g.pixels == null)) return;
       if ((width != WIDE) || (height < HIGH)) {
         //System.out.println("bad size " + width + " " + height);
         return;
@@ -487,7 +489,7 @@ public class ColorSelector implements Tool, DocumentListener {
     static final int HIGH = 256;
 
     public void setup() {
-      size(WIDE, HIGH, P3D);
+      size(WIDE, HIGH); //, P3D);
       colorMode(HSB, 255, 100, 100);
       noLoop();
     }

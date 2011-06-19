@@ -111,9 +111,11 @@ public class Manifest {
     }
     // ...and add the new kids back
     for (String name : names) {
-      PNode newbie = new PNodeXML("uses-permission");
+//      PNode newbie = new PNodeXML("uses-permission");
+//      newbie.setString("android:name", PERMISSION_PREFIX + name);
+//      xml.addChild(newbie);
+      PNode newbie = xml.addChild("uses-permission");
       newbie.setString("android:name", PERMISSION_PREFIX + name);
-      xml.addChild(newbie);
     }
     save();
   }
@@ -216,7 +218,9 @@ public class Manifest {
     activity.setString("android:name", "." + className);  // this has to be right
 
     PrintWriter writer = PApplet.createWriter(file);
-    mf.write(writer);
+    writer.print(mf.toString());
+    writer.flush();
+//    mf.write(writer);
     writer.close();
   }
 
@@ -271,7 +275,9 @@ public class Manifest {
    */
   protected void save(File file) {
     PrintWriter writer = PApplet.createWriter(file);
-    xml.write(writer);
+//    xml.write(writer);
+    writer.print(xml.toString());
+    writer.flush();
     writer.close();
   }
 
