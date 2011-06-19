@@ -19,6 +19,15 @@ A   http://code.google.com/p/processing/issues/detail?id=495
 o Can resize sketch with P3D, but not OPENGL
 o   http://code.google.com/p/processing/issues/detail?id=383
 
+cleaning
+o call reapplySettings() when using beginRecord()?
+X   nope, won't work for many fonts, can't get the background
+
+_ see if write() is necessary inside PNodeXML
+_   it needs a proper header on it, so maybe that's the difference w/ toString()
+_ inefficient: the way new nodes are created
+_ also inefficient: adding/removing kids just nukes the children array
+_ check on DXFWriter, since it used to subclass P3D
 
 _ Potential race condition when resizing sketches
 _   http://code.google.com/p/processing/issues/detail?id=697
@@ -53,36 +62,50 @@ _   start()/stop() perform like onPause()/onResume()
 _     all of which call pause() and resume()
 _ decision on registered methods
 _   remove registerPre() et al
+_   add register("pause", ...) 
 _   add PEvent 
-
-_ call reapplySettings() when using beginRecord()?
 _ binary() auto-sizes, hex() does not
+_   decision: remove auto-sizing from binary
 _ in PShape, getChild(name) refers to a <blah id="name">
 _   however in an XML file, that's <name ...>, meaning the name of the tag
 _   change it to getShape(name)? also for fonts getShape(char c)
+_   decision: use getShape() (maybe add getShapeCount and getShape(int)) 
+_     and remove getChild() from PShape
 _ move to new XML library
 _   add XHTML parsing or any others?
-_ html parser? javax.swing.text.html.parser... has binary DTDs
-_ how should quadVertex() be named?
+_   html parser? javax.swing.text.html.parser... has binary DTDs
+_   decision: it's someone else's job
+_ how should quadVertex() be named? bezierVertex() quadraticVertex() 
 _   need documentation for it
+_   decision: quadraticVertex() to avoid confusion with quads
 _ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
 _   also works that way with tables
+_   decision: useExtension() or something like that
 _ XMLElemnt.parse() or new XMLElement(xmldata)?
 _   same goes for PShape.. parse from a string?
 _   http://code.google.com/p/processing/issues/detail?id=277
 _ how should stroke work w/ arcs?
 _   has an effect elliptical arc
 _   http://code.google.com/p/processing/issues/detail?id=130
+_   decision: we should do pie, you can make the other kind w/o it
 _ rounded rectangle method 
 _   http://code.google.com/p/processing/issues/detail?id=265
+_   clockwise from upper-left
+_ require people to put things in the data folder
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
+_   decision: add error messages where possible
 _ selectInput() and selectOutput() freezes
 _   just nix the function and go with a callback setup
 _   http://code.google.com/p/processing/issues/detail?id=173
 o   http://code.google.com/p/processing/issues/detail?id=445
-o selectInput() fails when called from within keyPressed()
-o   http://dev.processing.org/bugs/show_bug.cgi?id=1220
+_   decision: named callback functions
+_   if can't find the function, tell people to put it in the main tab
+_ remove delay()
+_   if you really want it, you can use Thread.sleep()
+
+_ thread() and method()
+
 _ OpenGL Applets won't load with JRE 6 update 21 or higher
 _   need to make the final call on this and implement
 _   http://code.google.com/p/processing/issues/detail?id=429
@@ -121,6 +144,7 @@ _   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
 _ actual shape api for things like rectangles and whatnot?
 _ PShape api to handle internal vertex stuff
 _ size() and resize() and whatever? 
+_ thread() method (web workers?)
 
 _ hitting ESC in a running noLoop()ed sketch won't close the sketch?
 _   work through serial examples

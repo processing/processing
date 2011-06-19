@@ -98,6 +98,12 @@ public interface PNode extends Serializable {
   public PNode[] getChildren(String name);
 
 
+  public void addChild(PNode kid);
+
+  
+  public void removeChild(PNode kid);
+
+  
   /**
    * Returns the number of attributes.
    */
@@ -193,5 +199,8 @@ public interface PNode extends Serializable {
   public String toString();
 
 
-  public String toString(boolean indent);
+  public String toString(int indent);
+  
+  
+  public void write(PrintWriter writer);
 }
