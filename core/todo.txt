@@ -23,11 +23,20 @@ cleaning
 o call reapplySettings() when using beginRecord()?
 X   nope, won't work for many fonts, can't get the background
 
-_ see if write() is necessary inside PNodeXML
-_   it needs a proper header on it, so maybe that's the difference w/ toString()
-_ inefficient: the way new nodes are created
-_ also inefficient: adding/removing kids just nukes the children array
+xml changes
+o see if write() is necessary inside PNodeXML
+o   it needs a proper header on it, so maybe that's the difference w/ toString()
+o inefficient: the way new nodes are created
+o also inefficient: adding/removing kids just nukes the children array
+X toString() adds the XML header
+
+_ add support for automatically including OpenGL when asking for P3D
+_ when using P3D and not realizing that it's really OpenGL...
+Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
+Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
+
 _ check on DXFWriter, since it used to subclass P3D
+_   at least implement is3D? 
 
 _ Potential race condition when resizing sketches
 _   http://code.google.com/p/processing/issues/detail?id=697

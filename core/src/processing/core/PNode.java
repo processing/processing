@@ -98,7 +98,7 @@ public interface PNode extends Serializable {
   public PNode[] getChildren(String name);
 
 
-  public void addChild(PNode kid);
+  public PNode addChild(String name);
 
   
   public void removeChild(PNode kid);
@@ -202,5 +202,5 @@ public interface PNode extends Serializable {
   public String toString(int indent);
   
   
-  public void write(PrintWriter writer);
+//  public void write(PrintWriter writer);
 }
