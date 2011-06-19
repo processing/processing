@@ -118,19 +118,32 @@ public class PNodeXML implements PNode, Serializable {
       e2.printStackTrace();
     }    
   }
-  
-  
+
+
+  // TODO is there a more efficient way of doing this? wow.
+  // i.e. can we use one static document object for all PNodeXML objects?
   public PNodeXML(String name) {
-    this(name, null);
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = factory.newDocumentBuilder();
+      Document document = builder.newDocument();
+      node = document.createElement(name);
+      
+      this.name = name;
+      this.parent = null;
+      
+    } catch (ParserConfigurationException e) {
+      e.printStackTrace();
+    }
   }
 
   
-  public PNodeXML(String name, PNode parent) {
-    PNodeXML pxml = PNodeXML.parse("<" + name + ">");
-    this.node = pxml.node;
-    this.name = name;
-    this.parent = parent;
-  }
+//  public PNodeXML(String name, PNode parent) {
+//    PNodeXML pxml = PNodeXML.parse("<" + name + ">");
+//    this.node = pxml.node;
+//    this.name = name;
+//    this.parent = parent;
+//  }
 
   
   protected PNodeXML(PNode parent, Node node) {
@@ -347,6 +360,18 @@ public class PNodeXML implements PNode, Serializable {
     }
     return outgoing;
   }
+  
+  
+  public void addChild(PNode kid) {
+    node.appendChild(((PNodeXML) kid).node);
+    children = null;  // TODO not efficient
+  }
+  
+  
+  public void removeChild(PNode kid) {
+    node.removeChild(((PNodeXML) kid).node);
+    children = null;  // TODO not efficient
+  }
 
 
   /**
@@ -401,12 +426,6 @@ public class PNodeXML implements PNode, Serializable {
 //  }
 
   
-  /** @deprecated */
-  public String getStringAttribute(String name) {
-    return getString(name, null);
-  }
-
-  
   public String getString(String name) {
     return getString(name, null);
   }
@@ -418,11 +437,21 @@ public class PNodeXML implements PNode, Serializable {
   }
 
 
+  public void setString(String name, String value) {
+    ((Element) node).setAttribute(name, value);
+  }
+
+
   public int getInt(String name) {
     return getInt(name, 0);
   }
 
+  
+  public void setInt(String name, int value) {
+    setString(name, String.valueOf(value));
+  }
 
+  
   /**
    * Returns the value of an attribute.
    *
@@ -434,12 +463,6 @@ public class PNodeXML implements PNode, Serializable {
   public int getInt(String name, int defaultValue) {
     String value = getString(name);
     return (value == null) ? defaultValue : Integer.parseInt(value);
-  }
-
-
-  /** @deprecated */
-  public float getFloatAttribute(String name) {
-    return getFloat(name);
   }
 
 
@@ -465,12 +488,11 @@ public class PNodeXML implements PNode, Serializable {
   }
 
 
-  /** @deprecated */
-  public double getDoubleAttribute(String name) {
-    return getDouble(name, 0);
+  public void setFloat(String name, float value) {
+    setString(name, String.valueOf(value));
   }
 
-
+  
   public double getDouble(String name) {
     return getDouble(name, 0);
   }
@@ -488,6 +510,11 @@ public class PNodeXML implements PNode, Serializable {
     String value = getString(name);
     return (value == null) ? defaultValue : Double.parseDouble(value);
   }
+  
+  
+  public void setDouble(String name, double value) {
+    setString(name, String.valueOf(value));
+  }
 
 
   /**
@@ -504,11 +531,11 @@ public class PNodeXML implements PNode, Serializable {
 
   
   public String toString() {
-    return toString(true);
+    return toString(2);
   }
   
   
-  public String toString(boolean indent) {
+  public String toString(int indent) {
     try {
       DOMSource dumSource = new DOMSource(node);
       TransformerFactory tf = TransformerFactory.newInstance();
@@ -521,8 +548,8 @@ public class PNodeXML implements PNode, Serializable {
 //      transformer.setOutputProperty(OutputKeys.ENCODING,"ISO-8859-1");
       transformer.setOutputProperty(OutputKeys.ENCODING,"UTF8");
       // indent by default, but sometimes this needs to be turned off
-      if (indent) {
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+      if (indent != 0) {
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       }
       java.io.StringWriter sw = new java.io.StringWriter();
@@ -566,24 +593,10 @@ public class PNodeXML implements PNode, Serializable {
   }
   
   
-//    return toString(true);
-//  }
-//    
-//
-//  // TODO finish the writer here!
-//  public String toString(boolean pretty) {
-//    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//    OutputStreamWriter osw = new OutputStreamWriter(baos);
-//        XMLWriter writer = new XMLWriter(osw);
-//        try {
-//          if (pretty) {
-//            writer.write(this, true, 2, true);
-//          } else {
-//            writer.write(this, false, 0, true);
-//          }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    return baos.toString();
-//  }
+  static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+
+  public void write(PrintWriter writer) {
+    writer.println(HEADER);
+    writer.print(toString(2));
+  }
 }

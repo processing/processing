@@ -23,8 +23,16 @@ o prevent people from setting the font size too small in the editor
 o   how do we figure out what "too small" is?
 X   -> everyone thinks this is funny
 
+_ write quicktime uncompressed (w/o qtjava)
+_   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
+
+_ add INTERNET permissions to the android net examples
+
 _ Resize box on OS X is not present in Examples box
 _   http://code.google.com/p/processing/issues/detail?id=730
+
+_ fix opengl applets so that we can safely kill P3D
+_ automatically insert the 'import processing.opengl' when P3D used
 
 
 pnode: look more closely at json and xml compatibility
@@ -371,9 +379,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1444
 
 _ for tools, maybe don't run on event thread? (makes the gui hang)
 _   but instead, things that affect gui need to be called w/ invokeLater?
-
-_ write quicktime uncompressed (w/o qtjava)
-_   http://blog.hslu.ch/rawcoder/2008/06/21/writing-quicktime-movies-in-pure-java/
 
 _ improve the speed of file copying
 _   use FileChannels, see FileInputStream.getChannel(), 
