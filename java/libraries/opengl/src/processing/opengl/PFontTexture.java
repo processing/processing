@@ -98,10 +98,7 @@ class PFontTexture implements PConstants {
       resize = false;
     }
     
-    PTexture.Parameters par = new PTexture.Parameters(ARGB, BILINEAR);
-    par.wrapU = CLAMP;
-    par.wrapV = CLAMP;
-    PTexture tex = new PTexture(parent, w, h, par);
+    PTexture tex = new PTexture(parent, w, h, new PTexture.Parameters(ARGB, BILINEAR));
 
     if (textures == null) {
       textures = new PTexture[1];
