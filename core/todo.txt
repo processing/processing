@@ -258,13 +258,14 @@ o   http://dev.processing.org/bugs/show_bug.cgi?id=964
 decisions
 o call reapplySettings() when using beginRecord()?
 X   nope, won't work for many fonts, can't get the background
-_   should beginRecord inherit settings from its parent renderer?
-_     textFont() is null on beginRecord
-_     same would be the case for strokeWeight, background, etc.
-_     http://dev.processing.org/bugs/show_bug.cgi?id=346
-_   add note to begin/endRecord, that settings are not inherited
-_     http://dev.processing.org/bugs/show_bug.cgi?id=346
-_     or actually inherit the settings
+X   should beginRecord inherit settings from its parent renderer?
+X     textFont() is null on beginRecord
+X     same would be the case for strokeWeight, background, etc.
+X   add note to begin/endRecord, that settings are not inherited
+X     http://dev.processing.org/bugs/show_bug.cgi?id=346
+o     or actually inherit the settings
+X   decision: too many minor glitches possible, just note in the ref
+X     i.e. some fonts don't work with PDF, or bg color can't be re-set
 X clean up filter stuff?
 X   filter(GRAY) -> to push things to luminosity-based gray
 X     already implemented this way
@@ -280,7 +281,9 @@ o   http://en.wikipedia.org/wiki/Clip_Mapping
 o   http://www.cubic.org/docs/3dclip.htm
 o perspective() applied after camera()... problems?
 o make sure that filter, blend, copy, etc say that no loadPixels necessary
-_ add java.io.Reader (and Writer?) to imports
+o add java.io.Reader (and Writer?) to imports
+X binary() auto-sizes, hex() does not
+X   decision: remove auto-sizing from binary
 
 xml changes
 o see if write() is necessary inside PNodeXML
@@ -360,6 +363,7 @@ _   figure out why font naming not working correctly
 _ add blendMode() to reference, remove blend()
 _ need documentation for quadraticVertex()
 _ docs for rect(x, y, w, h, r) and rect(x, y, w, h, tl, tr, br, bl)
+_ svg examples should use getShape(name) not getChild(name)
 
 2.0
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
@@ -381,13 +385,6 @@ _   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
 _   http://www.html5rocks.com/en/mobile/touch.html
 _   decision: go with what looks like javascript/ios
 _   touchEvent(), gestureEvent()?
-_ binary() auto-sizes, hex() does not
-_   decision: remove auto-sizing from binary
-_ in PShape, getChild(name) refers to a <blah id="name">
-_   however in an XML file, that's <name ...>, meaning the name of the tag
-_   change it to getShape(name)? also for fonts getShape(char c)
-_   decision: use getShape() (maybe add getShapeCount and getShape(int)) 
-_     and remove getChild() from PShape
 _ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
 _   also works that way with tables
 _   decision: useExtension() or something like that
@@ -523,6 +520,12 @@ _   http://code.google.com/p/processing/issues/detail?id=246
 _ path for selectXxxxx() functions
 _   http://code.google.com/p/processing/issues/detail?id=233
 _ provide a way to clear the PGraphics with plain alpha
+_ in PShape, getChild(name) refers to a <blah id="name">
+_   however in an XML file, that's <name ...>, meaning the name of the tag
+_   change it to getShape(name)? also for fonts getShape(char c)
+_   decision: use getShape() (maybe add getShapeCount and getShape(int)) 
+_     and remove getChild() from PShape
+_   oops: getParent() is in there, as is getChildren() and others...
 
 stop() mess
 _ notes
