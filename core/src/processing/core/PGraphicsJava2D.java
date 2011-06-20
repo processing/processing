@@ -426,7 +426,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // QUADRATIC BEZIER VERTICES
 
 
-  public void quadVertex(float ctrlX, float ctrlY,
+  public void quadrativVertex(float ctrlX, float ctrlY,
                          float endX, float endY) {
     bezierVertexCheck();
     Point2D cur = gpath.getCurrentPoint();
@@ -440,7 +440,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
-  public void quadVertex(float x2, float y2, float z2,
+  public void quadraticVertex(float x2, float y2, float z2,
                          float x4, float y4, float z4) {
     showDepthWarningXYZ("quadVertex");
   }
@@ -1878,8 +1878,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
     if ((sw != dw) || (sh != dh)) {
-      // use slow version if changing size
-      copy(this, sx, sy, sw, sh, dx, dy, dw, dh);
+      Image img = primarySurface ? offscreen : image;
+      g2.drawImage(img, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
 
     } else {
       dx = dx - sx;  // java2d's "dx" is the delta, not dest
@@ -1889,13 +1889,11 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
-//  public void copy(PImage src,
-//                   int sx1, int sy1, int sx2, int sy2,
-//                   int dx1, int dy1, int dx2, int dy2) {
-//    loadPixels();
-//    super.copy(src, sx1, sy1, sx2, sy2, dx1, dy1, dx2, dy2);
-//    updatePixels();
-//  }
+  public void copy(PImage src,
+                   int sx, int sy, int sw, int sh,
+                   int dx, int dy, int dw, int dh) {
+    g2.drawImage(src.getImage(), dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
+  }
 
 
 
