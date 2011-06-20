@@ -1325,7 +1325,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void quadrativVertex(float cx, float cy,
+  public void quadraticVertex(float cx, float cy,
                               float x3, float y3) {
     float[] prev = vertices[vertexCount-1];
     float x1 = prev[X];
@@ -1704,73 +1704,25 @@ public class PGraphics extends PImage implements PConstants {
   // (e.g. not all renderers use the vertices array)
   // Also seems to be some issues on quality here (too dense)
   // http://code.google.com/p/processing/issues/detail?id=265
-  private void quadraticVertex(float cpx, float cpy, float x, float y) {
-    float[] prev = vertices[vertexCount - 1];
-    float prevX = prev[X];
-    float prevY = prev[Y];
-    float cp1x = prevX + 2.0f/3.0f*(cpx - prevX);
-    float cp1y = prevY + 2.0f/3.0f*(cpy - prevY);
-    float cp2x = cp1x + (x - prevX)/3.0f;
-    float cp2y = cp1y + (y - prevY)/3.0f;
-    bezierVertex(cp1x, cp1y, cp2x, cp2y, x, y);
-  }
+//  private void quadraticVertex(float cpx, float cpy, float x, float y) {
+//    float[] prev = vertices[vertexCount - 1];
+//    float prevX = prev[X];
+//    float prevY = prev[Y];
+//    float cp1x = prevX + 2.0f/3.0f*(cpx - prevX);
+//    float cp1y = prevY + 2.0f/3.0f*(cpy - prevY);
+//    float cp2x = cp1x + (x - prevX)/3.0f;
+//    float cp2y = cp1y + (y - prevY)/3.0f;
+//    bezierVertex(cp1x, cp1y, cp2x, cp2y, x, y);
+//  }
 
 
-  public void rect(float a, float b, float c, float d, float hr, float vr) {
-    float hradius, vradius;
-    switch (rectMode) {
-    case CORNERS:
-      break;
-    case CORNER:
-      c += a; d += b;
-      break;
-    case RADIUS:
-      hradius = c;
-      vradius = d;
-      c = a + hradius;
-      d = b + vradius;
-      a -= hradius;
-      b -= vradius;
-      break;
-    case CENTER:
-      hradius = c / 2.0f;
-      vradius = d / 2.0f;
-      c = a + hradius;
-      d = b + vradius;
-      a -= hradius;
-      b -= vradius;
-    }
-
-    if (a > c) {
-      float temp = a; a = c; c = temp;
-    }
-
-    if (b > d) {
-      float temp = b; b = d; d = temp;
-    }
-
-    rectImpl(a, b, c, d, hr, vr);
-  }
-
-
-  protected void rectImpl(float x1, float y1, float x2, float y2, float hr, float vr) {
-    beginShape();
-//    vertex(x1+hr, y1);
-    vertex(x2-hr, y1);
-    quadraticVertex(x2, y1, x2, y1+vr);
-    vertex(x2, y2-vr);
-    quadraticVertex(x2, y2, x2-hr, y2);
-    vertex(x1+hr, y2);
-    quadraticVertex(x1, y2, x1, y2-vr);
-    vertex(x1, y1+vr);
-    quadraticVertex(x1, y1, x1+hr, y1);
-//    endShape();
-    endShape(CLOSE);
+  public void rect(float a, float b, float c, float d, float r) {
+    rect(a, b, c, d, r, r, r, r);
   }
 
 
   public void rect(float a, float b, float c, float d,
-                   float tl, float tr, float bl, float br) {
+                   float tl, float tr, float br, float bl) {
     float hradius, vradius;
     switch (rectMode) {
     case CORNERS:
@@ -1803,12 +1755,12 @@ public class PGraphics extends PImage implements PConstants {
       float temp = b; b = d; d = temp;
     }
 
-    rectImpl(a, b, c, d, tl, tr, bl, br);
+    rectImpl(a, b, c, d, tl, tr, br, bl);
   }
 
 
   protected void rectImpl(float x1, float y1, float x2, float y2,
-                          float tl, float tr, float bl, float br) {
+                          float tl, float tr, float br, float bl) {
     beginShape();
 //    vertex(x1+tl, y1);
     if (tr != 0) {
