@@ -2708,20 +2708,8 @@ public class PImage implements PConstants, Cloneable {
    * require a black and white image. Basic testing produced a zero-length
    * file with no error.
    */
-  public void save(String path) {  // ignore
+  public boolean save(String path) {  // ignore
     boolean success = false;
-
-//    File file = new File(path);
-//    if (!file.isAbsolute()) {
-//      if (parent != null) {
-//        //file = new File(parent.savePath(filename));
-//        path = parent.savePath(path);
-//      } else {
-//        String msg = "PImage.save() requires an absolute path. " +
-//        "Use createImage(), or pass savePath() to save().";
-//        PGraphics.showException(msg);
-//      }
-//    }
 
     // Make sure the pixel data is ready to go
     loadPixels();
@@ -2760,6 +2748,6 @@ public class PImage implements PConstants, Cloneable {
     if (!success) {
       System.err.println("Could not write the image to " + path);
     }
-    //return success;
+    return success;
   }
 }

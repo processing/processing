@@ -2835,7 +2835,7 @@ public class PImage implements PConstants, Cloneable {
    * @brief Saves the image to a TIFF, TARGA, PNG, or JPEG file
    * @param filename a sequence of letters and numbers
    */
-  public void save(String filename) {  // ignore
+  public boolean save(String filename) {  // ignore
     boolean success = false;
 
 //    File file = new File(filename);
@@ -2864,9 +2864,9 @@ public class PImage implements PConstants, Cloneable {
         for (int i = 0; i < saveImageFormats.length; i++) {
           if (filename.endsWith("." + saveImageFormats[i])) {
             if (!saveImageIO(filename)) {
-              throw new RuntimeException("Error while saving image.");
+              System.err.println("Error while saving image.");
+              return false;
             }
-            return;
           }
         }
       }
@@ -2888,13 +2888,11 @@ public class PImage implements PConstants, Cloneable {
       os.close();
 
     } catch (IOException e) {
-      //System.err.println("Error while saving image.");
+      System.err.println("Error while saving image.");
       e.printStackTrace();
       success = false;
     }
-    if (!success) {
-      throw new RuntimeException("Error while saving image.");
-    }
+    return success;
   }
 }
 

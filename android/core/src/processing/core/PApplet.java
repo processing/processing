@@ -2536,12 +2536,19 @@ public class PApplet extends Activity implements PConstants, Runnable {
     disposeMethods.handle();
   }
 
+
+  
   //////////////////////////////////////////////////////////////
 
 
+  /**
+   * Call a method in the current class based on its name.
+   * <p/> 
+   * Note that the function being called must be public. Inside the PDE, 
+   * 'public' is automatically added, but when used without the preprocessor, 
+   * (like from Eclipse) you'll have to do it yourself.
+   */
   public void method(String name) {
-//    final Object o = this;
-//    final Class<?> c = getClass();
     try {
       Method method = getClass().getMethod(name, new Class[] {});
       method.invoke(this, new Object[] { });
@@ -2561,6 +2568,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  /**
+   * Launch a new thread and call the specified function from that new thread.
+   * This is a very simple way to do a thread without needing to get into 
+   * classes, runnables, etc.  
+   * <p/> 
+   * Note that the function being called must be public. Inside the PDE, 
+   * 'public' is automatically added, but when used without the preprocessor, 
+   * (like from Eclipse) you'll have to do it yourself.
+   */
   public void thread(final String name) {
     Thread later = new Thread() {
       public void run() {
