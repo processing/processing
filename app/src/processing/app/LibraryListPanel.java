@@ -66,7 +66,9 @@ public class LibraryListPanel extends JPanel {
       configureInfoPane();
       
       setShowInfo(false);
+      updateColors();
       updateLibraryListSize();
+      
       addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           for (Component c : LibraryListPanel.this.getComponents()) {
@@ -76,6 +78,7 @@ public class LibraryListPanel extends JPanel {
             }
           }
           setShowInfo(true);
+          updateColors();
           updateLibraryListSize();
         }
       });
@@ -172,14 +175,8 @@ public class LibraryListPanel extends JPanel {
       CardLayout cardLayout = (CardLayout) infoPanel.getLayout();
       
       if (isInfoShown) {
-        setBackground(UIManager.getColor("List.selectionBackground"));
-        cascadeForgroundColor(this, UIManager.getColor("List.selectionForeground"));
-        
         cardLayout.show(infoPanel, clickedCardId);
       } else {
-        setBackground(UIManager.getColor("List.background"));
-        cascadeForgroundColor(this, UIManager.getColor("List.foreground"));
-        
         cardLayout.show(infoPanel, unclickedCardId);      
       }
       
@@ -317,6 +314,34 @@ public class LibraryListPanel extends JPanel {
     }
     
     return noLines;
+  }
+  
+  private void updateColors() {
+    
+    int count = 0;
+    for (Component c : getComponents()) {
+      if (c instanceof LibraryPanel) {
+        LibraryPanel libPanel = (LibraryPanel) c;
+        
+        if (libPanel.isInfoShown) {
+          libPanel.setBackground(UIManager.getColor("List.selectionBackground"));
+          cascadeForgroundColor(libPanel, UIManager.getColor("List.selectionForeground"));
+          libPanel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
+        } else {
+          if (Base.isMacOS()) {
+            if (count % 2 == 1) {
+              libPanel.setBorder(UIManager.getBorder("List.evenRowBackgroundPainter"));
+            } else {
+              libPanel.setBorder(UIManager.getBorder("List.oddRowBackgroundPainter"));
+            }
+          }
+          libPanel.setBackground(UIManager.getColor("List.background"));
+          cascadeForgroundColor(libPanel, UIManager.getColor("List.foreground"));
+        }
+        
+        count++;
+      }
+    }
   }
 
   /**
