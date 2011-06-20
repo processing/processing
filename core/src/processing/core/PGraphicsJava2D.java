@@ -426,7 +426,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   // QUADRATIC BEZIER VERTICES
 
 
-  public void quadrativVertex(float ctrlX, float ctrlY,
+  public void quadraticVertex(float ctrlX, float ctrlY,
                          float endX, float endY) {
     bezierVertexCheck();
     Point2D cur = gpath.getCurrentPoint();

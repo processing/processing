@@ -1533,7 +1533,83 @@ public class PGraphics extends PImage implements PConstants {
   protected void rectImpl(float x1, float y1, float x2, float y2) {
     quad(x1, y1,  x2, y1,  x2, y2,  x1, y2);
   }
+  
+  
+  public void rect(float a, float b, float c, float d, float r) {
+    rect(a, b, c, d, r, r, r, r);
+  }
 
+
+  public void rect(float a, float b, float c, float d,
+                   float tl, float tr, float br, float bl) {
+    float hradius, vradius;
+    switch (rectMode) {
+    case CORNERS:
+      break;
+    case CORNER:
+      c += a; d += b;
+      break;
+    case RADIUS:
+      hradius = c;
+      vradius = d;
+      c = a + hradius;
+      d = b + vradius;
+      a -= hradius;
+      b -= vradius;
+      break;
+    case CENTER:
+      hradius = c / 2.0f;
+      vradius = d / 2.0f;
+      c = a + hradius;
+      d = b + vradius;
+      a -= hradius;
+      b -= vradius;
+    }
+
+    if (a > c) {
+      float temp = a; a = c; c = temp;
+    }
+
+    if (b > d) {
+      float temp = b; b = d; d = temp;
+    }
+
+    rectImpl(a, b, c, d, tl, tr, br, bl);
+  }
+
+
+  protected void rectImpl(float x1, float y1, float x2, float y2,
+                          float tl, float tr, float br, float bl) {
+    beginShape();
+//    vertex(x1+tl, y1);
+    if (tr != 0) {
+      vertex(x2-tr, y1);
+      quadraticVertex(x2, y1, x2, y1+tr);
+    } else {
+      vertex(x2, y1);
+    }
+    if (br != 0) {
+      vertex(x2, y2-br);
+      quadraticVertex(x2, y2, x2-br, y2);
+    } else {
+      vertex(x2, y2);
+    }
+    if (bl != 0) {
+      vertex(x1+bl, y2);
+      quadraticVertex(x1, y2, x1, y2-bl);
+    } else {
+      vertex(x1, y2);
+    }
+    if (tl != 0) {
+      vertex(x1, y1+tl);
+      quadraticVertex(x1, y1, x1+tl, y1);
+    } else {
+      vertex(x1, y1);
+    }
+//    endShape();
+    endShape(CLOSE);
+  }
+  
 
 
   //////////////////////////////////////////////////////////////
