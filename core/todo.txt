@@ -53,6 +53,9 @@ A implement repeating textures
 A   http://code.google.com/p/processing/issues/detail?id=94
 o add a limit to pushStyle() to catch unmatched sets?
 X   http://code.google.com/p/processing/issues/detail?id=198
+X how should quadVertex() be named? bezierVertex() quadraticVertex() 
+X   decision: quadraticVertex() to avoid confusion with quads
+X more efficient version of copy() added for 2D
 
 cleanup
 o if too many errors come through during setup, app will terminate
@@ -335,18 +338,20 @@ _   http://code.google.com/p/processing/issues/detail?id=502
 _ Signature issue on contributed libraries affects unrelated opengl sketches
 _   http://code.google.com/p/processing/issues/detail?id=261
 _ remove matrixMode(), add a projection() method
+_ remove screenBlend(), textureBlend() from PGraphics et al
+_ have andres take over all current GL issues in the tracker
 
 casey
  _ pdf fonts
 _   rewrite documentation about pdf fonts (errors with non-native fonts)
 _   figure out why font naming not working correctly
+_ add blendMode() to reference, remove blend()
+_ need documentation for quadraticVertex()
 
 2.0
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
 _ remove blend(), add blendMode()
-
-_ have andres take over all current GL issues in the tracker
 _ sort out destroy(), stop(), pause() et al
 _   ColorSelector should stop/pause when not visible
 _   start()/stop() perform like onPause()/onResume()
@@ -354,7 +359,15 @@ _     all of which call pause() and resume()
 _ decision on registered methods
 _   remove registerPre() et al
 _   add register("pause", ...) 
-_   add PEvent 
+_   add PEvent
+_ need to wrap mouse/key events for p5
+_   need a version that works with both android and desktop
+_   also need to interleave events properly (as per report)
+_ touch events.. can't do MouseEvent et al with Android
+_   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
+_   http://www.html5rocks.com/en/mobile/touch.html
+_   decision: go with what looks like javascript/ios
+_   touchEvent(), gestureEvent()?
 _ binary() auto-sizes, hex() does not
 _   decision: remove auto-sizing from binary
 _ in PShape, getChild(name) refers to a <blah id="name">
@@ -366,9 +379,6 @@ _ move to new XML library
 _   add XHTML parsing or any others?
 _   html parser? javax.swing.text.html.parser... has binary DTDs
 _   decision: it's someone else's job
-_ how should quadVertex() be named? bezierVertex() quadraticVertex() 
-_   need documentation for it
-_   decision: quadraticVertex() to avoid confusion with quads
 _ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
 _   also works that way with tables
 _   decision: useExtension() or something like that
@@ -410,11 +420,6 @@ _   needs to be documented, and excise all screen.width/height references
 _   add to the 'changes' document
 _ PImage.save() should return a success boolean
 _   and not throw an exception when it fails
-_ touch events.. can't do MouseEvent et al with Android
-_   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
-_   http://www.html5rocks.com/en/mobile/touch.html
-_   decision: go with what looks like javascript/ios
-_   touchEvent(), gestureEvent()?
 _ make loading images lighter, ala android 
 _   require loadPixels to get 2D image data from images
 _   only load PImage pixels when necessary (faster for java2d)
@@ -453,9 +458,6 @@ _   10s should be fine--no need to keep spinning (bad for android too)
 _   just call interrupt() when it's time to get back to work
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
-_ need to wrap mouse/key events for p5
-_   need a version that works with both android and desktop
-_   also need to interleave events properly (as per report)
 _ need to clean up the hints in the reference/source
 _ Abnormal high Java CPU usage at empty sketch with draw() 
 _   http://code.google.com/p/processing/issues/detail?id=729
