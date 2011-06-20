@@ -7972,15 +7972,15 @@ public class PApplet extends Applet
   }
 
 
-  public void quadVertex(float cx, float cy,
-                         float x3, float y3) {
-    if (recorder != null) recorder.quadrativVertex(cx, cy, x3, y3);
-    g.quadrativVertex(cx, cy, x3, y3);
+  public void quadraticVertex(float cx, float cy,
+                              float x3, float y3) {
+    if (recorder != null) recorder.quadraticVertex(cx, cy, x3, y3);
+    g.quadraticVertex(cx, cy, x3, y3);
   }
 
 
-  public void quadVertex(float cx, float cy, float cz,
-                         float x3, float y3, float z3) {
+  public void quadraticVertex(float cx, float cy, float cz,
+                              float x3, float y3, float z3) {
     if (recorder != null) recorder.quadraticVertex(cx, cy, cz, x3, y3, z3);
     g.quadraticVertex(cx, cy, cz, x3, y3, z3);
   }
@@ -8142,16 +8142,16 @@ public class PApplet extends Applet
   }
 
 
-  public void rect(float a, float b, float c, float d, float hr, float vr) {
-    if (recorder != null) recorder.rect(a, b, c, d, hr, vr);
-    g.rect(a, b, c, d, hr, vr);
+  public void rect(float a, float b, float c, float d, float r) {
+    if (recorder != null) recorder.rect(a, b, c, d, r);
+    g.rect(a, b, c, d, r);
   }
 
 
   public void rect(float a, float b, float c, float d,
-                   float tl, float tr, float bl, float br) {
-    if (recorder != null) recorder.rect(a, b, c, d, tl, tr, bl, br);
-    g.rect(a, b, c, d, tl, tr, bl, br);
+                   float tl, float tr, float br, float bl) {
+    if (recorder != null) recorder.rect(a, b, c, d, tl, tr, br, bl);
+    g.rect(a, b, c, d, tl, tr, br, bl);
   }
 
 

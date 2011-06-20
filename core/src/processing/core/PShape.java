@@ -606,7 +606,7 @@ public class PShape implements PConstants {
             break;
 
           case QUAD_BEZIER_VERTEX:
-            g.quadrativVertex(vertices[index+0][X], vertices[index+0][Y],
+            g.quadraticVertex(vertices[index+0][X], vertices[index+0][Y],
                          vertices[index+1][X], vertices[index+1][Y]);
 //            float x1 = vertices[index+0][X];
 //            float y1 = vertices[index+0][Y];

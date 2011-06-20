@@ -56,6 +56,18 @@ X   http://code.google.com/p/processing/issues/detail?id=198
 X how should quadVertex() be named? bezierVertex() quadraticVertex() 
 X   decision: quadraticVertex() to avoid confusion with quads
 X more efficient version of copy() added for 2D
+X move to new XML library
+X   add XHTML parsing or any others?
+X   html parser? javax.swing.text.html.parser... has binary DTDs
+X   decision: it's someone else's job
+X XMLElemnt.parse() or new XMLElement(xmldata)?
+X   same goes for PShape.. parse from a string?
+X   http://code.google.com/p/processing/issues/detail?id=277
+X rounded rectangle method 
+X   http://code.google.com/p/processing/issues/detail?id=265
+X   clockwise from upper-left
+X   check with casey about finalizing and adding to the docs
+
 
 cleanup
 o if too many errors come through during setup, app will terminate
@@ -347,6 +359,7 @@ _   rewrite documentation about pdf fonts (errors with non-native fonts)
 _   figure out why font naming not working correctly
 _ add blendMode() to reference, remove blend()
 _ need documentation for quadraticVertex()
+_ docs for rect(x, y, w, h, r) and rect(x, y, w, h, tl, tr, br, bl)
 
 2.0
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
@@ -375,24 +388,14 @@ _   however in an XML file, that's <name ...>, meaning the name of the tag
 _   change it to getShape(name)? also for fonts getShape(char c)
 _   decision: use getShape() (maybe add getShapeCount and getShape(int)) 
 _     and remove getChild() from PShape
-_ move to new XML library
-_   add XHTML parsing or any others?
-_   html parser? javax.swing.text.html.parser... has binary DTDs
-_   decision: it's someone else's job
 _ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
 _   also works that way with tables
 _   decision: useExtension() or something like that
-_ XMLElemnt.parse() or new XMLElement(xmldata)?
-_   same goes for PShape.. parse from a string?
-_   http://code.google.com/p/processing/issues/detail?id=277
 _ how should stroke work w/ arcs?
 _   has an effect elliptical arc
 _   http://code.google.com/p/processing/issues/detail?id=130
-_   decision: we should do pie, you can make the other kind w/o it
-_ rounded rectangle method 
-_   http://code.google.com/p/processing/issues/detail?id=265
-_   clockwise from upper-left
-X   check with casey about finalizing and adding to the docs
+o   decision: we should do pie, you can make the other kind w/o it
+_   add an additional parameter for the others
 _ require people to put things in the data folder
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
