@@ -6292,16 +6292,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   /**
-   * Returns a String that contains the binary value of an int.
-   * The length depends on the size of the number itself.
-   * An int can be up to 32 binary digits, but that seems like
-   * overkill for almost any situation, so this function just
-   * auto-size. If you want a specific number of digits (like all 32)
-   * use binary(int what, int digits) to specify how many digits.
+   * Returns a String that contains the binary value of an int. The length 
+   * depends on the size of the number itself. If you want a specific number 
+   * of digits use binary(int what, int digits) to specify how many.
    */
   static final public String binary(int what) {
-    return Integer.toBinaryString(what);
-    //return binary(what, 32);
+    return binary(what, 32);
   }
 
   /**
