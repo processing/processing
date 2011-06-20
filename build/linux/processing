@@ -96,10 +96,10 @@ export PATH="$JDKDIR/bin":"$PATH"
 log PATH
 
 # Start Processing in the same directory as this script
-cd "$APPDIR"
 if [ "$1" ]; then
   SKETCH=`readlink -f $1`
 else
   SKETCH=
 fi
+cd "$APPDIR"
 java processing.app.Base "$SKETCH" &
