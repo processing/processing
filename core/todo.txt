@@ -410,6 +410,8 @@ _ sort out destroy(), stop(), pause() et al
 _   ColorSelector should stop/pause when not visible
 _   start()/stop() perform like onPause()/onResume()
 _     all of which call pause() and resume()
+_ problem with destroy() calling System.exit()
+_   http://code.google.com/p/processing/issues/detail?id=698
 _ decision on registered methods
 _   remove registerPre() et al
 _   add register("pause", ...) 
@@ -968,3 +970,5 @@ _ repeating texture support
 _ exactly how should pixel filling work with single pixel strokes?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1025
 _ consider bringing back text/image using cache/names
+_ exactly how pixel-filling works for strokes
+_   http://processing.org/bugs/bugzilla/1025.html
