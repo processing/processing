@@ -2359,30 +2359,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   /**
-   * The delay() function causes the program to halt for a specified time.
-   * Delay times are specified in thousandths of a second. For example,
-   * running delay(3000) will stop the program for three seconds and
-   * delay(500) will stop the program for a half-second. Remember: the
-   * display window is updated only at the end of draw(), so putting more
-   * than one delay() inside draw() will simply add them together and the new
-   * frame will be drawn when the total delay is over.
-   * <br/> <br/>
-   * I'm not sure if this is even helpful anymore, as the screen isn't
-   * updated before or after the delay, meaning which means it just
-   * makes the app lock up temporarily.
-   */
-  public void delay(int napTime) {
-    if (frameCount != 0) {
-      if (napTime > 0) {
-        try {
-          Thread.sleep(napTime);
-        } catch (InterruptedException e) { }
-      }
-    }
-  }
-
-
-  /**
    * Set a target frameRate. This will cause delay() to be called
    * after each frame so that the sketch synchronizes to a particular speed.
    * Note that this only sets the maximum frame rate, it cannot be used to

@@ -2279,30 +2279,6 @@ public class PApplet extends Applet
 
 
   /**
-   * The delay() function causes the program to halt for a specified time.
-   * Delay times are specified in thousandths of a second. For example,
-   * running delay(3000) will stop the program for three seconds and
-   * delay(500) will stop the program for a half-second. Remember: the
-   * display window is updated only at the end of draw(), so putting more
-   * than one delay() inside draw() will simply add them together and the new
-   * frame will be drawn when the total delay is over.
-   * <br/> <br/>
-   * I'm not sure if this is even helpful anymore, as the screen isn't
-   * updated before or after the delay, meaning which means it just
-   * makes the app lock up temporarily.
-   */
-  public void delay(int napTime) {
-    if (frameCount != 0) {
-      if (napTime > 0) {
-        try {
-          Thread.sleep(napTime);
-        } catch (InterruptedException e) { }
-      }
-    }
-  }
-
-
-  /**
    * Specifies the number of frames to be displayed every second.
    * If the processor is not fast enough to maintain the specified rate, it will not be achieved.
    * For example, the function call <b>frameRate(30)</b> will attempt to refresh 30 times a second.
@@ -6731,6 +6707,12 @@ public class PApplet extends Applet
   }
 
 
+  /** 
+   * nfc() or "number format with commas". This is an unfortunate misnomer 
+   * because in locales where a comma is not the separator for numbers, it
+   * won't actually be outputting a comma, it'll use whatever makes sense for
+   * the locale.
+   */
   static public String nfc(int num) {
     if ((int_nf != null) &&
         (int_nf_digits == 0) &&
