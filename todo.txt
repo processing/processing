@@ -5,6 +5,8 @@ X   http://code.google.com/p/processing/issues/detail?id=634
 X incorporate gsvideo and opengl2 as the default libraries for video and opengl
 X Launch script for Linux fails to open a sketches with relative paths
 X   http://code.google.com/p/processing/issues/detail?id=707
+X Badly formed character constant exception
+X   http://code.google.com/p/processing/issues/detail?id=714
 
 _ add deployJava.js to local sketch folder (causes internet requirement)
 _   http://code.google.com/p/processing/issues/detail?id=650
@@ -80,7 +82,8 @@ _   also happens with stray characters sometimes...
 _   casey: accidentally typing a letter at the top of the tab
 _     throws you onto the end of the last tab... exactly the worst location
 _ jer: omitting a semicolon shows the error on the line after it...
-_ find across all tabs
+_ find across all tabs (jer request)
+_   http://code.google.com/p/processing/issues/detail?id=705
 
 reference/examples
 _ import p5 reference into the javadoc
@@ -998,7 +1001,7 @@ _   make the buildXxxx folders relate to time/date?
 
 low (common errors around reserved names/class naming)
 _ Saving sketch with the same name as a class or primitive breaks sketch
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1165
+_   http://code.google.com/p/processing/issues/detail?id=157
 _ don't allow people to override methods like paint() 
 _   make them final? just improve the error messages?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1219
