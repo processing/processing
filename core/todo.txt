@@ -225,6 +225,20 @@ o   because opengl needs vectors, but also the image cache for textures
 X stroke showing above fill when used with P3D
 X   http://dev.processing.org/bugs/show_bug.cgi?id=1032
 X   fixed in release 0160
+o Stroked polygons losing stroke pixels due to z-buffer issues in P3D
+o   http://code.google.com/p/processing/issues/detail?id=73
+X refactor PApplet.main() and Runner.startInternal() to remove duplication
+X   http://dev.processing.org/bugs/show_bug.cgi?id=245
+o PFont.size not available.. other font accessors? 
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1510
+o implement method for lightweight components with processing applets
+o   http://dev.processing.org/bugs/show_bug.cgi?id=686
+X   closed as LATER in the original bugs db
+o add getSketchSize() and getSketchRenderer()
+o   these could simply have the defaults at the outset
+X   added in the more recent revisions
+o Writing XML files (clean up the API)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=964
 
 decisions
 o call reapplySettings() when using beginRecord()?
@@ -314,6 +328,13 @@ _     will need to split each based on the other
 _     sort issues will affect both
 _ Stroking a rect() leaves off the upper right pixel
 _   http://code.google.com/p/processing/issues/detail?id=67
+_ implement a more efficient version of blend()
+_   http://code.google.com/p/processing/issues/detail?id=120
+_ Implement anisotropic filtering when using OPENGL
+_   http://code.google.com/p/processing/issues/detail?id=502
+_ Signature issue on contributed libraries affects unrelated opengl sketches
+_   http://code.google.com/p/processing/issues/detail?id=261
+_ remove matrixMode(), add a projection() method
 
 casey
  _ pdf fonts
@@ -321,6 +342,10 @@ _   rewrite documentation about pdf fonts (errors with non-native fonts)
 _   figure out why font naming not working correctly
 
 2.0
+_ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
+_   toColorArray(), toColorArray(float[])...
+_ remove blend(), add blendMode()
+
 _ have andres take over all current GL issues in the tracker
 _ sort out destroy(), stop(), pause() et al
 _   ColorSelector should stop/pause when not visible
@@ -432,8 +457,20 @@ _ need to wrap mouse/key events for p5
 _   need a version that works with both android and desktop
 _   also need to interleave events properly (as per report)
 _ need to clean up the hints in the reference/source
+_ Abnormal high Java CPU usage at empty sketch with draw() 
+_   http://code.google.com/p/processing/issues/detail?id=729
+_ properly read/write sketch.properties
+_   http://code.google.com/p/processing/issues/detail?id=722
+_ add methods to PShape to apply all transformations in the tree
 
-3.0
+_ json issues
+http://www.xml.com/lpt/a/1658
+http://www.json.org/java/
+
+3.0 goals
+_ add shader support
+
+3.0 decisions
 _ createColor() instead of color()?
 _ route all exceptions through PException and catch method
 _   advanced users can override the method if they want
@@ -477,10 +514,10 @@ _     (otherwise will cause some very strange errors)
 _   http://code.google.com/p/processing/issues/detail?id=135
 _ make determination on shape(x,y,z,w,h,d) or no
 _ new PGraphics(... OutputStream) 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1502
+_   http://code.google.com/p/processing/issues/detail?id=246
 _ path for selectXxxxx() functions
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1475
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1504
+_   http://code.google.com/p/processing/issues/detail?id=233
+_ provide a way to clear the PGraphics with plain alpha
 
 stop() mess
 _ notes
@@ -518,7 +555,6 @@ _ implement new applet-opengl.html based on the latest jogl
 _ jogl demos, NEWT examples crash on osx http://jogamp.org/jogl-demos/www/
 _   http://jogamp.org/jogl-demos/www/applettest-jnlp.html
 _ opengl applet problems
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1364
 _   http://code.google.com/p/processing/issues/detail?id=196
 _ look into p5 bug with opengl in applets
 _   stop() called between tabs/pages, start() may be called again
@@ -535,12 +571,12 @@ _   need an example of this
 
 looping/events
 _ key and mouse events delivered out of order
-_   http://dev.processing.org/bugs/show_bug.cgi?id=638
+_   http://code.google.com/p/processing/issues/detail?id=79
 _ key/mouse events have concurrency problems with noLoop()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1323
+_   http://code.google.com/p/processing/issues/detail?id=187
 _   need to say "no drawing inside mouse/key events w/ noLoop"
 _ redraw() doesn't work from within draw()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1363
+_   http://code.google.com/p/processing/issues/detail?id=195
 
 _ cursor functions don't work in present mode
 _   just add a note to the reference
@@ -579,8 +615,6 @@ _   don't bother using a buffering stream, just handle internally. gah!
 
 CORE / PApplet - main()
 
-_ refactor PApplet.main() and Runner.startInternal() to remove duplication
-_   http://dev.processing.org/bugs/show_bug.cgi?id=245
 _ implement full screen mode.. this takes over the screen as best it can
 _   size(screen.width, screen.height, OPENGL);
 _   if size is screen.width and screen.height, does its best
@@ -603,9 +637,10 @@ _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
 _ --display not working on osx
-_   http://dev.processing.org/bugs/show_bug.cgi?id=531
+_   http://code.google.com/p/processing/issues/detail?id=71
 _ "Target VM failed to initialize" when using Present mode on Mac OS X
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1257
+_   http://code.google.com/p/processing/issues/detail?id=178
+
 
 CORE / PFont and text()
 
@@ -613,16 +648,13 @@ _ what's the difference with ascent on loadFont vs. createFont?
 _ svg font support seems nice.. add PFontSVG
 _ font rotation (native font problem?) with natives?
 _   http://code.google.com/p/processing/issues/detail?id=692
-_ text placement is ugly, seems like fractional metrics problem
-_   http://dev.processing.org/bugs/show_bug.cgi?id=866
+_ text position is quantized in JAVA2D
+_   text placement is ugly, seems like fractional metrics problem
+_   http://code.google.com/p/processing/issues/detail?id=99
 _ text(char c) with char 0 and undefined should print nothing
 _   perhaps also DEL or other nonprintables?
 _   book example 25-03
-_ text position is quantized in JAVA2D
-_   http://dev.processing.org/bugs/show_bug.cgi?id=806
 _ accessors inside PFont need a lot of work
-_ PFont.size not available.. other font accessors? 
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1510
 _ improve font metrics
 _   http://java.sun.com/products/java-media/2D/reference/faqs/index.html#Q_How_do_I_obtain_font_metrics
 _ font encoding issues 
@@ -680,7 +712,7 @@ _   along with 90, 180 and 270 versions of it as well
 _   tie to glDrawPixels.. how to clear matrix properly for that?
 _   maybe just disable this for JAVA2D cuz it's silly?
 _ catch sun.dc.pr.PRException?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=104
+_   http://code.google.com/p/processing/issues/detail?id=39
 
 
 CORE / PGraphics3D
@@ -703,8 +735,6 @@ _   http://code.google.com/p/processing/issues/detail?id=167
 _ image resizing is ugly (just use java2d?)
 _   also deal with copy()/blend() inaccuracies
 _   http://code.google.com/p/processing/issues/detail?id=332
-_ implement a more efficient version of blend()
-_   http://code.google.com/p/processing/issues/detail?id=120
 _ blend() bugs with identically-sized images
 _   http://code.google.com/p/processing/issues/detail?id=285
 _ transparency issue with JAVA2D
@@ -722,15 +752,15 @@ _   is it possible? necessary to call delay(5) or something?
 _ don't grab pixels of java2d images unless asked
 _   this is the difference between a lot of loadPixels() and not
 _   so important to have it in before beta if that's the change
-_   http://dev.processing.org/bugs/show_bug.cgi?id=356
+_   http://code.google.com/p/processing/issues/detail?id=60
 _ add ability to control jpeg compression level with save() and saveFrame()
 _   or just write a better example for this one?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=342
+_   http://code.google.com/p/processing/issues/detail?id=58
 _ when drawing an image, sense whether drawn rotated
 _   specifically, if drawn rotated 90 in either direction, or 180
 _   if just rotate/translate, then can use SCREEN_SPACE for fonts
-_ should smoothing not be turned on by default? handle this where?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1195
+_ should PImage smoothing not be turned on by default? handle this where?
+_   http://code.google.com/p/processing/issues/detail?id=165
 _ Semitransparent rect drawn over image not rendered correctly
 _   http://code.google.com/p/processing/issues/detail?id=182
 
@@ -759,7 +789,7 @@ _ test what happens when transparency is used with gradient fill
 _ look into transformation issues... guessing this is probably wrong
 _   this may be what's throwing off the radial radius transform
 _ implement A and a (elliptical arcs)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=996
+_   http://code.google.com/p/processing/issues/detail?id=130
 _ check for any other pieces of missing path api
 _   multiple sets of coordinates after a command not supported
 _   i.e. M with several coords means moveto followed by many linetos
@@ -828,7 +858,7 @@ _   otherwise can crash the whole browser
 LIBRARIES / PGraphicsPDF
 
 _ pdf not rendering unicode with beginRecord()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=727
+_   http://code.google.com/p/processing/issues/detail?id=90
 _ beginRecord() doesn't use current settings of the sketch
 _   sometimes reported as a bug, but probably not a good way to 
 _   consistently carry these over
@@ -867,8 +897,6 @@ _     it's too significant a change, and not enough time to test
 
 LATER (post 1.0)
 
-_ add getSketchSize() and getSketchRenderer()
-_   these could simply have the defaults at the outset
 _ opengl.jar with eclipse
 _   auto-extract native libs from opengl.jar 
 _   to remove java.library.path problems (!)
@@ -878,8 +906,6 @@ _   what's actually gained by the split--would have to do weird hacks
 _   to get the accum buffer, etc. to work anyway
 _ add some sort of unprojectX/Y/Z method (based on glu fxn)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1176483247
-_ implement method for lightweight components with processing applets
-_   http://dev.processing.org/bugs/show_bug.cgi?id=686
 _ Use getContextClassLoader() instead of Class.forName()
 _   http://dev.processing.org/bugs/show_bug.cgi?id=514
 _ add a timer(obj, "functionname", 45) method
@@ -937,6 +963,4 @@ _   or use a getXxxx() method?
 _ repeating texture support
 _ exactly how should pixel filling work with single pixel strokes?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1025
-_ Writing XML files (clean up the API)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=964
 _ consider bringing back text/image using cache/names

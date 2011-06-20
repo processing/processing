@@ -23,6 +23,8 @@ o prevent people from setting the font size too small in the editor
 o   how do we figure out what "too small" is?
 X   -> everyone thinks this is funny
 
+_ play button (and others) no longer highlighting
+_   http://code.google.com/p/processing/issues/detail?id=688
 _ write quicktime uncompressed (w/o qtjava)
 _   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
 
