@@ -67,7 +67,11 @@ X rounded rectangle method
 X   http://code.google.com/p/processing/issues/detail?id=265
 X   clockwise from upper-left
 X   check with casey about finalizing and adding to the docs
-
+X nfc() is a problem on intl systems when subsetting fonts
+X   decision: add note to reference that the 'c' is a misnomer
+X screen.width/screen.height -> screen.width, screenW/H
+o   needs to be documented, and excise all screen.width/height references
+X   add to the 'changes' document
 
 cleanup
 o if too many errors come through during setup, app will terminate
@@ -284,6 +288,8 @@ o make sure that filter, blend, copy, etc say that no loadPixels necessary
 o add java.io.Reader (and Writer?) to imports
 X binary() auto-sizes, hex() does not
 X   decision: remove auto-sizing from binary
+X remove delay()
+X   if you really want it, you can use Thread.sleep()
 
 xml changes
 o see if write() is necessary inside PNodeXML
@@ -364,6 +370,9 @@ _ add blendMode() to reference, remove blend()
 _ need documentation for quadraticVertex()
 _ docs for rect(x, y, w, h, r) and rect(x, y, w, h, tl, tr, br, bl)
 _ svg examples should use getShape(name) not getChild(name)
+_ screen.width/height shouldn't be anywhere
+_ add docs for screenWidth and screenHeight 
+_ remove delay() documentation
 
 2.0
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
@@ -407,19 +416,16 @@ _   inputFile() and outputFile() need a fix
 _     remove them from the code, write examples for these
 _     use callbacks instead
 _     need to decide if you specify the function name, or if it's specific
-_ remove delay()
-_   if you really want it, you can use Thread.sleep()
 _ thread() and method()
 _   thread() method (web workers?)
 _   decision: add thread, method isn't great
 _ post() is called after setup() (make decision)
 _   http://code.google.com/p/processing/issues/detail?id=455
 _   decision: post() only gets called in draw, not setup.. document
-_ screen.width/screen.height -> screen.width, screenW/H
-_   needs to be documented, and excise all screen.width/height references
-_   add to the 'changes' document
+
 _ PImage.save() should return a success boolean
 _   and not throw an exception when it fails
+
 _ make loading images lighter, ala android 
 _   require loadPixels to get 2D image data from images
 _   only load PImage pixels when necessary (faster for java2d)
@@ -446,8 +452,6 @@ _   should be setSize(), but that's odd for image files
 _   -> resize() is fine with PImage and PGraphics... 
 _   we may be inheriting the resize() from Java -> make it final?
 _ if PShape3D, then is it PShape2D? or do you handle both the same?
-_ nfc() is a problem on intl systems when subsetting fonts
-_   decision: add note to reference that the 'c' is a misnomer
 _ svg fonts
 _ check on DXFWriter, since it used to subclass P3D
 _   at least implement is3D? 
@@ -458,12 +462,12 @@ _   10s should be fine--no need to keep spinning (bad for android too)
 _   just call interrupt() when it's time to get back to work
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
-_ need to clean up the hints in the reference/source
 _ Abnormal high Java CPU usage at empty sketch with draw() 
 _   http://code.google.com/p/processing/issues/detail?id=729
 _ properly read/write sketch.properties
 _   http://code.google.com/p/processing/issues/detail?id=722
 _ add methods to PShape to apply all transformations in the tree
+_ need to clean up the hints in the reference/source
 
 _ json issues
 http://www.xml.com/lpt/a/1658
