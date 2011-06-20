@@ -249,21 +249,30 @@ public class PdePreprocessor {
                                       stringStart)));
         }
       } else if (program.charAt(i) == '\'') {
-        i++;
+        i++;  // step over the initial quote
         if (i >= length) {
-          throw new SketchException("Unterminated character constant", 0,
+          throw new SketchException("Unterminated character constant (after initial quote)", 0,
                                     countNewlines(program.substring(0, i)));
         }
         if (program.charAt(i) == '\\') {
-          i++;
+          i++;  // step over the backslash
         }
-        i++;
+        if (i >= length) {
+          throw new SketchException("Unterminated character constant (after backslash)", 0,
+                                    countNewlines(program.substring(0, i)));
+        }
+        if (program.charAt(i) == 'u') {
+          i += 5;  // step over the u, and the four digit unicode constant
+        } else {
+          i++;  // step over a single character
+        }
         if (i >= length) {
           throw new SketchException("Unterminated character constant", 0,
                                     countNewlines(program.substring(0, i)));
         }
         if (program.charAt(i) != '\'') {
-          throw new SketchException("Badly formed character constant", 0,
+          throw new SketchException("Badly formed character constant " +
+          		                      "(expecting quote, got " + program.charAt(i) + ")", 0,
                                     countNewlines(program.substring(0, i)));
         }
       }
