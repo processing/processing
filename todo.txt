@@ -3,6 +3,12 @@ X incorporate RXTXcomm.jar and others from Dave
 X Serial.list() cannot find /dev/ttyACM0
 X   http://code.google.com/p/processing/issues/detail?id=634
 X incorporate gsvideo and opengl2 as the default libraries for video and opengl
+X Launch script for Linux fails to open a sketches with relative paths
+X   http://code.google.com/p/processing/issues/detail?id=707
+
+_ add deployJava.js to local sketch folder (causes internet requirement)
+_   http://code.google.com/p/processing/issues/detail?id=650
+_   http://www.java.com/js/deployJava.js
 
 cleanup
 X how is autoformat doing? good now
@@ -153,9 +159,6 @@ _   where the active editor is not being set null
 
 _ Internationalization
 _   http://code.google.com/p/processing/issues/detail?id=593
-
-_ add deployJava.js to local sketch folder (causes internet requirement)
-_   http://code.google.com/p/processing/issues/detail?id=650
 
 _ libraries in java tabs (separate .java files) are reported missing
 _   need to scan the .java files for imports that need to be included

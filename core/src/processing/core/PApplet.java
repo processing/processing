@@ -2604,11 +2604,19 @@ public class PApplet extends Applet
     disposeMethods.handle();
   }
 
+  
+  
   //////////////////////////////////////////////////////////////
 
+
+  /**
+   * Call a method in the current class based on its name.
+   * <p/> 
+   * Note that the function being called must be public. Inside the PDE, 
+   * 'public' is automatically added, but when used without the preprocessor, 
+   * (like from Eclipse) you'll have to do it yourself.
+   */
   public void method(String name) {
-//    final Object o = this;
-//    final Class<?> c = getClass();
     try {
       Method method = getClass().getMethod(name, new Class[] {});
       method.invoke(this, new Object[] { });
@@ -2628,6 +2636,15 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Launch a new thread and call the specified function from that new thread.
+   * This is a very simple way to do a thread without needing to get into 
+   * classes, runnables, etc.  
+   * <p/> 
+   * Note that the function being called must be public. Inside the PDE, 
+   * 'public' is automatically added, but when used without the preprocessor, 
+   * (like from Eclipse) you'll have to do it yourself.
+   */
   public void thread(final String name) {
     Thread later = new Thread() {
       public void run() {
@@ -2636,39 +2653,6 @@ public class PApplet extends Applet
     };
     later.start();
   }
-
-
-  /*
-  public void thread(String name) {
-    final Object o = this;
-    final Class<?> c = getClass();
-    try {
-      final Method method = c.getMethod(name, new Class[] {});
-      Thread later = new Thread() {
-        public void run() {
-          try {
-            method.invoke(o, new Object[] { });
-
-          } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-          } catch (IllegalAccessException e) {
-            e.printStackTrace();
-          } catch (InvocationTargetException e) {
-            e.getTargetException().printStackTrace();
-          }
-        }
-      };
-      later.start();
-
-    } catch (NoSuchMethodException nsme) {
-      System.err.println("There is no " + name + "() method " +
-                         "in the class " + getClass().getName());
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-  */
 
 
 

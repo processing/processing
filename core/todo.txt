@@ -258,6 +258,11 @@ o   these could simply have the defaults at the outset
 X   added in the more recent revisions
 o Writing XML files (clean up the API)
 o   http://dev.processing.org/bugs/show_bug.cgi?id=964
+X Use getContextClassLoader() instead of Class.forName()
+X   http://dev.processing.org/bugs/show_bug.cgi?id=514
+X cursor functions don't work in present mode
+X   just add a note to the reference
+X   http://code.google.com/p/processing/issues/detail?id=160
 
 decisions
 o call reapplySettings() when using beginRecord()?
@@ -290,6 +295,29 @@ X binary() auto-sizes, hex() does not
 X   decision: remove auto-sizing from binary
 X remove delay()
 X   if you really want it, you can use Thread.sleep()
+X thread() and method()
+X   thread() method (web workers?)
+X   decision: add thread, method isn't great
+X   oops: method() is just used by thread
+X PImage.save() should return a success boolean
+X   and not throw an exception when it fails
+o cmyk version of tiff encoder code?
+o illustrator export / rendering mode
+o   also postscript or pdf export?
+o   update illustrator code to use core api
+o     even if not actually working properly.. just in naming of things
+o   sorting of polygons/lines on simple painters algorithm
+o   better lighting model to show darkness at various depths
+o     maybe just ultra-high res bitmaps from gl
+o cairo tesselation used: 
+o   John Hobby, Practical Segment Intersection with Finite Precision Output. 
+o   Computational Geometry Theory and Application, 13(4), 1999.
+o   http://citeseer.ist.psu.edu/hobby93practical.html
+o textMode(SHAPE) and textMode(IMAGE)?
+o   textMode(SCREEN) is out of its league?
+o textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
+o   maybe need to add properties to the size() command?
+o   or use a getXxxx() method?
 
 xml changes
 o see if write() is necessary inside PNodeXML
@@ -402,6 +430,7 @@ _   has an effect elliptical arc
 _   http://code.google.com/p/processing/issues/detail?id=130
 o   decision: we should do pie, you can make the other kind w/o it
 _   add an additional parameter for the others
+_   http://code.google.com/p/processing/issues/detail?id=711
 _ require people to put things in the data folder
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
@@ -416,28 +445,9 @@ _   inputFile() and outputFile() need a fix
 _     remove them from the code, write examples for these
 _     use callbacks instead
 _     need to decide if you specify the function name, or if it's specific
-_ thread() and method()
-_   thread() method (web workers?)
-_   decision: add thread, method isn't great
 _ post() is called after setup() (make decision)
 _   http://code.google.com/p/processing/issues/detail?id=455
 _   decision: post() only gets called in draw, not setup.. document
-
-_ PImage.save() should return a success boolean
-_   and not throw an exception when it fails
-
-_ make loading images lighter, ala android 
-_   require loadPixels to get 2D image data from images
-_   only load PImage pixels when necessary (faster for java2d)
-_ loadImage() should use the faster loading methods
-_   hint(DISABLE_IMAGE_CACHING)
-_   add a note to the loadImage() reference page
-_ figure out why 1024x768 image takes 3.5 seconds to load
-_   would using a BufferedImage work better?
-_   is the image actually a BufferedImage so PixelGrabber is a waste?
-_ callback for requestImage()
-_   http://code.google.com/p/processing/issues/detail?id=641
-_   might work with the selectXxxx() functions as well
 _ PShape API to handle internal vertex stuff
 _   add deconstruct() method for paths
 _   toArray() and toVector()
@@ -469,33 +479,27 @@ _   http://code.google.com/p/processing/issues/detail?id=722
 _ add methods to PShape to apply all transformations in the tree
 _ need to clean up the hints in the reference/source
 
+images
+_ make loading images lighter, ala android 
+_   require loadPixels to get 2D image data from images
+_   only load PImage pixels when necessary (faster for java2d)
+_ loadImage() should use the faster loading methods
+_   hint(DISABLE_IMAGE_CACHING)
+_   add a note to the loadImage() reference page
+_ figure out why 1024x768 image takes 3.5 seconds to load
+_   would using a BufferedImage work better?
+_   is the image actually a BufferedImage so PixelGrabber is a waste?
+_ work through loadPixels in PImage, how consistent do we need to be?
+_   with get() and set() methods, this gets really tricky (too slow)
+_   could optimize by keeping a java image around, but table for later
+_     it's too significant a change, and not enough time to test
+_ callback for requestImage()
+_   http://code.google.com/p/processing/issues/detail?id=641
+_   might work with the selectXxxx() functions as well
+
 _ json issues
 http://www.xml.com/lpt/a/1658
 http://www.json.org/java/
-
-3.0 goals
-_ add shader support
-
-3.0 decisions
-_ createColor() instead of color()?
-_ route all exceptions through PException and catch method
-_   advanced users can override the method if they want
-_   or you can set an option to have PExceptions be raised
-_   decision: just copy & paste the serial/net code.. 
-_     until we can find a more compelling example
-_ actual shape api for things like rectangles and whatnot?
-_ should we kill import xxxx syntax for libraries? 
-_   just give up and use a gui for it
-_   cons: copy & paste breaks
-_   pro: there's no guaranteed 1:1 between packages and single libraries
-_ method of threading but queue an event to be run when safe
-_   e.g. queueing items like mouse/keybd, but generic fxns
-_ for begin/endRecord, use a piggyback mechanism
-_   that way won't have to pass a PApplet around
-_   this has a big impact on the SVG library
-_   in fact, this maybe should be a library that does it
-_     so that the file size can be much smaller
-_ add setOutput() method across other renderers?
 
 decisions to make
 _ possible addition for 'implementation' variable
@@ -505,6 +509,7 @@ _   jer and dan will look at their code, plus toxiclibs
 _ modify PVector to include better methods for chaining operations
 _   http://code.google.com/p/processing/issues/detail?id=218
 _ should map() actually constrain to the low and high values?
+_   or have an alternate version that does that?
 _ decide whether to keep:
 _   public float textWidth(char[] chars, int start, int length)
 _ add version of math functions that use doubles?
@@ -530,6 +535,34 @@ _   change it to getShape(name)? also for fonts getShape(char c)
 _   decision: use getShape() (maybe add getShapeCount and getShape(int)) 
 _     and remove getChild() from PShape
 _   oops: getParent() is in there, as is getChildren() and others...
+
+fix opengl applets
+_ implement new applet-opengl.html based on the latest jogl 
+_ jogl demos, NEWT examples crash on osx http://jogamp.org/jogl-demos/www/
+_   http://jogamp.org/jogl-demos/www/applettest-jnlp.html
+_ opengl applet problems
+_   http://code.google.com/p/processing/issues/detail?id=196
+_ look into p5 bug with opengl in applets
+_   stop() called between tabs/pages, start() may be called again
+_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
+_   really, stop() should just call noLoop() (and start re-enable if done)
+_     and on android, start/stop can be used to save state information
+_ OpenGL Applets won't load with JRE 6 update 21 or higher
+_   need to make the final call on this and implement
+_   http://code.google.com/p/processing/issues/detail?id=429
+
+_ smooth() not working with applets an createGraphics(JAVA2D)
+_   but works fine with applications
+_   need an example of this
+
+looping/events
+_ key and mouse events delivered out of order
+_   http://code.google.com/p/processing/issues/detail?id=79
+_ key/mouse events have concurrency problems with noLoop()
+_   http://code.google.com/p/processing/issues/detail?id=187
+_   need to say "no drawing inside mouse/key events w/ noLoop"
+_ redraw() doesn't work from within draw()
+_   http://code.google.com/p/processing/issues/detail?id=195
 
 stop() mess
 _ notes
@@ -561,38 +594,6 @@ _ noloop ref even says that redraw will be called on resize, make sure it is
 _ focus not coming through, ESC no longer working(?)
 _ stop() not called in 1.5 when closing the sketch window
 _   http://code.google.com/p/processing/issues/detail?id=636
-
-fix opengl applets
-_ implement new applet-opengl.html based on the latest jogl 
-_ jogl demos, NEWT examples crash on osx http://jogamp.org/jogl-demos/www/
-_   http://jogamp.org/jogl-demos/www/applettest-jnlp.html
-_ opengl applet problems
-_   http://code.google.com/p/processing/issues/detail?id=196
-_ look into p5 bug with opengl in applets
-_   stop() called between tabs/pages, start() may be called again
-_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
-_   really, stop() should just call noLoop() (and start re-enable if done)
-_     and on android, start/stop can be used to save state information
-_ OpenGL Applets won't load with JRE 6 update 21 or higher
-_   need to make the final call on this and implement
-_   http://code.google.com/p/processing/issues/detail?id=429
-
-_ smooth() not working with applets an createGraphics(JAVA2D)
-_   but works fine with applications
-_   need an example of this
-
-looping/events
-_ key and mouse events delivered out of order
-_   http://code.google.com/p/processing/issues/detail?id=79
-_ key/mouse events have concurrency problems with noLoop()
-_   http://code.google.com/p/processing/issues/detail?id=187
-_   need to say "no drawing inside mouse/key events w/ noLoop"
-_ redraw() doesn't work from within draw()
-_   http://code.google.com/p/processing/issues/detail?id=195
-
-_ cursor functions don't work in present mode
-_   just add a note to the reference
-_   http://code.google.com/p/processing/issues/detail?id=160
 
 
 
@@ -901,14 +902,30 @@ _   might be worth doing a test to see if it actually would help at all
 _     before rewriting all of createInput()
 _ too much object creation in java2d
 _   causes inconsistency/hiccups as the gc runs?
-_ work through loadPixels in PImage, how consistent do we need to be?
-_   with get() and set() methods, this gets really tricky (too slow)
-_   could optimize by keeping a java image around, but table for later
-_     it's too significant a change, and not enough time to test
 
 
-LATER (post 1.0)
+LATER (post 2.0)
 
+_ add shader support
+_ createColor() instead of color()?
+_ route all exceptions through PException and catch method
+_   advanced users can override the method if they want
+_   or you can set an option to have PExceptions be raised
+_   decision: just copy & paste the serial/net code.. 
+_     until we can find a more compelling example
+_ actual shape api for things like rectangles and whatnot?
+_ should we kill import xxxx syntax for libraries? 
+_   just give up and use a gui for it
+_   cons: copy & paste breaks
+_   pro: there's no guaranteed 1:1 between packages and single libraries
+_ method of threading but queue an event to be run when safe
+_   e.g. queueing items like mouse/keybd, but generic fxns
+_ for begin/endRecord, use a piggyback mechanism
+_   that way won't have to pass a PApplet around
+_   this has a big impact on the SVG library
+_   in fact, this maybe should be a library that does it
+_     so that the file size can be much smaller
+_ add setOutput() method across other renderers?
 _ opengl.jar with eclipse
 _   auto-extract native libs from opengl.jar 
 _   to remove java.library.path problems (!)
@@ -918,26 +935,22 @@ _   what's actually gained by the split--would have to do weird hacks
 _   to get the accum buffer, etc. to work anyway
 _ add some sort of unprojectX/Y/Z method (based on glu fxn)
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=OpenGL;action=display;num=1176483247
-_ Use getContextClassLoader() instead of Class.forName()
-_   http://dev.processing.org/bugs/show_bug.cgi?id=514
 _ add a timer(obj, "functionname", 45) method
 _   this can be used to schedule something to happen at a specific time
 _   or import the swing timer (for actionPerformed)
-X   look into javascript timers to see how they work
 _   also add interval("functionname", 40)
-_   and thread("functionname");
-_   problem is that this will 
-_ cmyk version of tiff encoder code?
-_ because 'color' isn't a real data type
-_   color(0, 0, 0, 0) produces black
-_     because color(0, 0, 0, 0) creates an int that is simply '0'
-_     although fill(0, 0, 0, 0) does the right thing
-_     also, rgb255 not getting set
-_     http://dev.processing.org/bugs/show_bug.cgi?id=382
-_   should fill(c) instead be fillColor(c)?
-_   should color(123, 4, 99) instead be createColor()?
-_   gray that's greater than the colorMode() can produce strange colors
-_     http://dev.processing.org/bugs/show_bug.cgi?id=432
+_ color(0, 0, 0, 0) produces black
+_   because color(0, 0, 0, 0) creates an int that is simply '0'
+_   although fill(0, 0, 0, 0) does the right thing
+_   also, rgb255 not getting set
+_   http://dev.processing.org/bugs/show_bug.cgi?id=382
+_ should fill(c) instead be fillColor(c)?
+_ should color(123, 4, 99) instead be createColor()?
+_ rounding errors on color conversion
+_   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
+_   will return 127, instead of 128.
+_ gray that's greater than the colorMode() can produce strange colors
+_   http://dev.processing.org/bugs/show_bug.cgi?id=432
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1083650609
 _   http://processing.org/discourse/yabb/YaBB.cgi?board=Syntax;action=display;num=1082481891
 _ add stroke() to type
@@ -949,29 +962,8 @@ _   gradient-painted lines and fills
 _     java2d will do both line and fill, illusfarter only does fills
 _   gradients not supported in java2d
 _     http://dev.processing.org/bugs/show_bug.cgi?id=371
-_ illustrator export / rendering mode
-_   also postscript or pdf export?
-_   update illustrator code to use core api
-_     even if not actually working properly.. just in naming of things
-_   sorting of polygons/lines on simple painters algorithm
-_   better lighting model to show darkness at various depths
-_     maybe just ultra-high res bitmaps from gl
 _ bspline or nurbs (later, want to do the 3D/arch stuff correctly)
-_ cairo tesselation used: 
-_   John Hobby, Practical Segment Intersection with Finite Precision Output. 
-_   Computational Geometry Theory and Application, 13(4), 1999.
-_   http://citeseer.ist.psu.edu/hobby93practical.html
-_ color
-_   rounding errors on color conversion
-_   colorMode(RGB, 1.0); colorMode(255); println(red(color(0.5,1,1)));
-_   will return 127, instead of 128.
-_ curves
-_   non-homogenous coloring for curve vertices
-_ textMode(SHAPE) and textMode(IMAGE)?
-_   textMode(SCREEN) is out of its league?
-_ textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
-_   maybe need to add properties to the size() command?
-_   or use a getXxxx() method?
+_ non-homogenous coloring for curve vertices
 _ repeating texture support
 _ exactly how should pixel filling work with single pixel strokes?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1025
