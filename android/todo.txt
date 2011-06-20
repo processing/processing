@@ -7,8 +7,7 @@ A excessive rotation of application causes memory to run out
 A   http://code.google.com/p/processing/issues/detail?id=235
 A mirroring in A3D when background() not called within draw()
 A   http://code.google.com/p/processing/issues/detail?id=624
-
-_ remove A2D and A3D constants
+X remove A2D and A3D constants
 
 _ add INTERNET permissions to the android net examples
 

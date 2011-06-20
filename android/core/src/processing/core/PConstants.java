@@ -108,22 +108,15 @@ public interface PConstants {
 
   // built-in rendering options
 
-  static final String A2D    = "processing.core.PGraphicsAndroid2D";
-  static final String A3D    = "processing.core.PGraphicsAndroid3D";
-  
   static final String DEFAULT_COLOR_DEPTH = "DEFAULT";
   static final String LOW_COLOR_DEPTH = "4:4:4:4:16:0";
   static final String MEDIUM_COLOR_DEPTH = "8:8:8:8:16:0";
   static final String HIGH_COLOR_DEPTH = "8:8:8:8:24:8";
 
-  /** Alias to the Android-specific A2D renderer (for compatibility).*/
-  static final String P2D = A2D;
-  /** Alias to the Android-specific A2D renderer (for compatibility).*/
-  static final String JAVA2D = A2D;
-  /** Alias to the Android-specific A3D renderer (for compatibility).*/
-  static final String P3D = A3D;
-  /** Alias to the Android-specific A3D renderer (for compatibility).*/
-  static final String OPENGL = A3D;
+  static final String P2D = "processing.core.PGraphicsAndroid2D";
+  static final String JAVA2D = P2D;
+  static final String P3D = "processing.core.PGraphicsAndroid3D";
+  static final String OPENGL = P3D;
 
   // The PDF and DXF renderers are not available for Android. 
   

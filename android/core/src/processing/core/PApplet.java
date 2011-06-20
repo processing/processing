@@ -443,9 +443,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
     int sw = sketchWidth();
     int sh = sketchHeight();
 
-    if (sketchRenderer().equals(A2D)) {
+    if (sketchRenderer().equals(P2D)) {
       surfaceView = new SketchSurfaceView2D(this, sw, sh);
-    } else if (sketchRenderer().equals(A3D)) {
+    } else if (sketchRenderer().equals(P3D)) {
       surfaceView = new SketchSurfaceView3D(this, sw, sh);
     }
     g = ((SketchSurfaceView) surfaceView).getGraphics();
@@ -949,7 +949,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public String sketchRenderer() {
-    return A2D;
+    return P2D;
   }
 
   
@@ -1303,7 +1303,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * previous renderer and simply resize it.
    */
   public void size(int iwidth, int iheight) {
-    size(iwidth, iheight, A2D, null);
+    size(iwidth, iheight, P2D, null);
   }
 
 
@@ -1476,9 +1476,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public PGraphics createGraphics(int iwidth, int iheight, String irenderer) {
     PGraphics pg = null;
-    if (irenderer.equals(A2D)) {
+    if (irenderer.equals(P2D)) {
       pg = new PGraphicsAndroid2D();
-    } else if (irenderer.equals(A3D)) {
+    } else if (irenderer.equals(P3D)) {
       pg = new PGraphicsAndroid3D();
     } else {
       Class<?> rendererClass = null;
