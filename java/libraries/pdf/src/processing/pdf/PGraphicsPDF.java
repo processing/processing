@@ -568,8 +568,9 @@ public class PGraphicsPDF extends PGraphicsJava2D {
 
   //
 
-  public void save(String filename) {
+  public boolean save(String filename) {
     nope("save");
+    return false;
   }
 
 
