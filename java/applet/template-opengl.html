@@ -34,75 +34,40 @@
     <div id="content">
       
       <div id="@@sketch@@_container">
-	
-	<!--[if !IE]> -->
-	<object classid="java:org.jdesktop.applet.util.JNLPAppletLauncher" 
-            	type="application/x-java-applet"
-            	archive="@@archive@@,http://download.java.net/media/applet-launcher/applet-launcher.jar,http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jar,http://download.java.net/media/gluegen/webstart/gluegen-rt.jar"
-            	width="@@width@@" height="@@height@@"
-            	standby="Loading Processing software..." >
-          
-	  <param name="archive" value="@@archive@@,http://download.java.net/media/applet-launcher/applet-launcher.jar,http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jar,http://download.java.net/media/gluegen/webstart/gluegen-rt.jar" />
-	  <param name="jnlpNumExtensions" value="1">
-	  <param name="jnlpExtension1" value="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp">
-
-	  <param name="mayscript" value="true" />
-	  <param name="scriptable" value="true" />
-	  
-	  <param name="image" value="loading.gif" />
-	  <param name="boxmessage" value="Loading Processing software..." />
-	  <param name="boxbgcolor" value="#FFFFFF" />
+	<applet code="org.jdesktop.applet.util.JNLPAppletLauncher"
+		width="@@width@@"
+		height="@@height@@"
+		archive="@@archive@@,
+			 http://jogamp.org/deployment/util/applet-launcher.jar,
+			 http://jogamp.org/deployment/webstart/nativewindow.all.jar,
+			 http://jogamp.org/deployment/webstart/jogl.all.jar,
+			 http://jogamp.org/deployment/webstart/gluegen-rt.jar">
+	  <!--http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos.jar-->
+	  <param name="codebase_lookup" value="false" />
+	  <param name="subapplet.classname" value="@@sketch@@" />
+	  <!--<param name="subapplet.displayname" value="Pretty Name Here">-->
+	  <param name="noddraw.check" value="true" />
 	  <param name="progressbar" value="true" />
-	  <!--<param name="noddraw.check" value="true">-->
+	  <param name="jnlpNumExtensions" value="1" />
+	  <param name="jnlpExtension1"
+		 value="http://jogamp.org/deployment/webstart/jogl-core.jnlp" />
+	  <param name="java_arguments" value="-Dsun.java2d.noddraw=true" />
+	  <!--<param name="jnlp_href" value="applet-gears.jnlp">-->
 	  
-	  <param name="subapplet.classname" value="@@sketch@@" /> 
-	  <param name="subapplet.displayname" value="@@sketch@@" />
-	  
-	  <param name="test_string" value="outer" />
-	  <!--<![endif]-->
-	  
-	  <object classid="clsid:CAFEEFAC-0016-0000-FFFF-ABCDEFFEDCBA" 
-		  width="@@width@@" height="@@height@@"
-		  standby="Loading Processing software..."  >
+	  <p>
+	    <strong>
+	      This browser does not have a Java Plug-in.
+	      <br />
+	      <a href="http://www.java.com/getjava" 
+		 title="Download Java Plug-in">
+		Get the latest Java Plug-in here.
+	      </a>
+	    </strong>
+	  </p>
 
-	    <param name="code" 
-		   value="org.jdesktop.applet.util.JNLPAppletLauncher" />
-	    <param name="archive" value="@@archive@@,http://download.java.net/media/applet-launcher/applet-launcher.jar,http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jar,http://download.java.net/media/gluegen/webstart/gluegen-rt.jar" />
-	    <param name="jnlpNumExtensions" value="1">
-	    <param name="jnlpExtension1" value="http://download.java.net/media/jogl/builds/archive/jsr-231-webstart-current/jogl.jnlp">
-	    
-	    <param name="mayscript" value="true" />
-	    <param name="scriptable" value="true" />
-	    
-	    <param name="image" value="loading.gif" />
-	    <param name="boxmessage" value="Loading Processing software..." />
-	    <param name="boxbgcolor" value="#FFFFFF" />
-	    <param name="progressbar" value="true" />
-	    <!--<param name="noddraw.check" value="true">-->
-
-	    <param name="subapplet.classname" value="@@sketch@@" /> 
-	    <param name="subapplet.displayname" value="@@sketch@@" />
-	    
-	    <param name="test_string" value="inner" />
-	    
-	    <p>
-	      <strong>
-		This browser does not have a Java Plug-in.
-		<br />
-		<a href="http://www.java.com/getjava" title="Download Java Plug-in">
-		  Get the latest Java Plug-in here.
-		</a>
-	      </strong>
-	    </p>
-	    
-	  </object>
-	  
-	  <!--[if !IE]> -->
-	</object>
-	<!--<![endif]-->
-	
+	</applet>
       </div>
-      
+   
       <p>
 	@@description@@
       </p>

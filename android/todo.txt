@@ -8,6 +8,8 @@ A   http://code.google.com/p/processing/issues/detail?id=235
 A mirroring in A3D when background() not called within draw()
 A   http://code.google.com/p/processing/issues/detail?id=624
 X remove A2D and A3D constants
+o colorMode() error 
+o   http://code.google.com/p/processing/issues/detail?id=223
 
 _ add INTERNET permissions to the android net examples
 
@@ -244,8 +246,6 @@ P5 _   instead, create a new resized bitmap, and get rid of pixels[]
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1487
 P5 _ should alpha PImage stuff use a non-4byte config?
 P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1490
-DL _ colorMode() error 
-DL _   http://code.google.com/p/processing/issues/detail?id=223
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
