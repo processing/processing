@@ -7,10 +7,12 @@ X Launch script for Linux fails to open a sketches with relative paths
 X   http://code.google.com/p/processing/issues/detail?id=707
 X Badly formed character constant exception
 X   http://code.google.com/p/processing/issues/detail?id=714
-
-_ add deployJava.js to local sketch folder (causes internet requirement)
-_   http://code.google.com/p/processing/issues/detail?id=650
-_   http://www.java.com/js/deployJava.js
+o people not knowing how to use Java w/ OpenGL renderer
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1259
+o add deployJava.js to local sketch folder (causes internet requirement)
+X   http://code.google.com/p/processing/issues/detail?id=650
+X   http://www.java.com/js/deployJava.js
+X   bad idea, since it adds 17k to every download
 
 cleanup
 X how is autoformat doing? good now
@@ -31,21 +33,27 @@ o prevent people from setting the font size too small in the editor
 o   how do we figure out what "too small" is?
 X   -> everyone thinks this is funny
 
-_ play button (and others) no longer highlighting
-_   http://code.google.com/p/processing/issues/detail?id=688
-_ write quicktime uncompressed (w/o qtjava)
-_   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
-
+_ fix opengl applets so that we can safely kill P3D
+_ automatically insert the 'import processing.opengl' when P3D used
 _ add support for automatically including OpenGL when asking for P3D
 _ when using P3D and not realizing that it's really OpenGL...
 Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
 Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
+_ why we can't do OpenGL applets that are self-signed (wiki?) 
+_   http://www.cert.org/blogs/vuls/2008/06/signed_java_security_worse_tha.html
+
+_ handleFindReference in Editor.java should be public for alternative modes (?)
+_   http://code.google.com/p/processing/issues/detail?id=713
+_ play button (and others) no longer highlighting
+_   http://code.google.com/p/processing/issues/detail?id=688
+
+_ write quicktime uncompressed (w/o qtjava)
+_   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
 
 _ Resize box on OS X is not present in Examples box
 _   http://code.google.com/p/processing/issues/detail?id=730
-
-_ fix opengl applets so that we can safely kill P3D
-_ automatically insert the 'import processing.opengl' when P3D used
+_ examples window placed off-screen when PDE window is maximized
+_   http://code.google.com/p/processing/issues/detail?id=669
 
 pnode: look more closely at json and xml compatibility
 
@@ -209,8 +217,6 @@ _ idea of examples, libraries, reference built into the base system
 _ look through web/java_generate to see how the doc stuff works
 _ work through andres' pshape changes to smooth things out
 _ post videos online of the android work
-_ why we can't do OpenGL applets that are self-signed (wiki?) 
-_   http://www.cert.org/blogs/vuls/2008/06/signed_java_security_worse_tha.html
 _ don't make examples read-only
 _   just do them from psk files
 
@@ -229,9 +235,6 @@ _   jogl jar files, or jogl install will cause trouble
 _     /System/Library/Java/Extensions or /Library/Java/Extensions
 _     the /System one contains qtjava
 _     the /Library one is empty (by default), maybe skip it?
-_     http://dev.processing.org/bugs/show_bug.cgi?id=1259
-_   another problem with opengl libraries
-_     http://dev.processing.org/bugs/show_bug.cgi?id=1570
 _ when a conflicting library is found, need to report it
 _   altho prolly only when it's actually different (md5hash it?)
 _   this seems to be causing a lot of trouble with recent releases

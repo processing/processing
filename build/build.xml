@@ -112,6 +112,14 @@
       </fileset>
     </copy>
 
+<!-- decided against this. 
+     see: http://code.google.com/p/processing/issues/detail?id=650 -->
+<!--
+    <get src="http://www.java.com/js/deployJava.js" 
+	 dest="${target.path}/modes/java/applet/deployJava.js"
+	 usetimestamp="true" />
+-->
+
     <delete dir="${target.path}/modes/java/examples">
       <include name="**/applet/**" />
     </delete>

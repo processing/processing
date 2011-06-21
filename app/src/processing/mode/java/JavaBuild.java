@@ -783,17 +783,22 @@ public class JavaBuild {
       sketch.hasCodeFolder() ||
       javaLibraryPath.length() != 0;
 
+    File skeletonFolder = mode.getContentFile("applet");
+    
     // Copy the loading gif to the applet
     String LOADING_IMAGE = "loading.gif";
     // Check if the user already has their own loader image
     File loadingImage = new File(sketch.getFolder(), LOADING_IMAGE);
     if (!loadingImage.exists()) {
 //      File skeletonFolder = new File(Base.getContentFile("lib"), "export");
-      File skeletonFolder = mode.getContentFile("applet");
       loadingImage = new File(skeletonFolder, LOADING_IMAGE);
     }
     Base.copyFile(loadingImage, new File(appletFolder, LOADING_IMAGE));
 
+    // not a good idea after all
+//    File deployFile = new File(skeletonFolder, "deployJava.js");
+//    Base.copyFile(deployFile, new File(appletFolder, "deployJava.js"));
+    
     // Create new .jar file
     FileOutputStream zipOutputFile =
       new FileOutputStream(new File(appletFolder, sketch.getName() + ".jar"));

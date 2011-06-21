@@ -72,6 +72,8 @@ X   decision: add note to reference that the 'c' is a misnomer
 X screen.width/screen.height -> screen.width, screenW/H
 o   needs to be documented, and excise all screen.width/height references
 X   add to the 'changes' document
+X saveBytes() error when writing to existing file
+X   http://code.google.com/p/processing/issues/detail?id=667
 
 cleanup
 o if too many errors come through during setup, app will terminate
