@@ -24,6 +24,7 @@
 package processing.app;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -41,11 +42,57 @@ public class LibraryManager {
 
   JFrame dialog;
 
+  FilterField filterField;
+  
   LibraryListPanel libraryListPane;
+  
+  JComboBox categoryChooser;
   
   // the calling editor, so updates can be applied
 
   Editor editor;
+  
+  class FilterField extends JTextField {
+    final static String filterHint = "Filter your search...";
+    boolean isShowingHint;
+    
+    public FilterField () {
+      super(filterHint);
+      
+      isShowingHint = true;
+      
+      addFocusListener(new FocusListener() {
+        
+        public void focusLost(FocusEvent focusEvent) {
+          if (filterField.getText().isEmpty()) {
+            isShowingHint = true;
+          }
+          
+          updateStyle();
+        }
+        
+        public void focusGained(FocusEvent focusEvent) {
+          if (isShowingHint) {
+            isShowingHint = false;
+            filterField.setText("");
+          }
+          
+          updateStyle();
+        }
+      });
+    }
+    
+    public void updateStyle() {
+      if (isShowingHint) {
+        filterField.setText(filterHint);
+        
+        // setForeground(UIManager.getColor("TextField.light")); // too light
+        setForeground(Color.gray);
+      } else {
+        setForeground(UIManager.getColor("TextField.foreground"));
+      }
+    }
+  }
 
   public LibraryManager() {
 
@@ -58,16 +105,32 @@ public class LibraryManager {
     Base.setIcon(dialog);
 
     Container pane = dialog.getContentPane();
-    pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
-    pane.setBackground(Color.red);
+    pane.setLayout(new GridBagLayout());
+    
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.gridwidth = 2;
+    c.weightx = 1;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    filterField = new FilterField();
+    pane.add(filterField, c);
     
     libraryListPane = new LibraryListPanel(fetchLibraryInfo());
     
+    c = new GridBagConstraints();
+    c.fill = GridBagConstraints.BOTH;
+    c.gridx = 0;
+    c.gridy = 1;
+    c.gridwidth = 2;
+    c.weighty = 1;
+    c.weightx = 1;
+    
     final JScrollPane scrollPane = new JScrollPane();
+    scrollPane.setPreferredSize(new Dimension(300,300));
     scrollPane.setViewportView(libraryListPane);
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    pane.add(scrollPane);
-    scrollPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+    pane.add(scrollPane, c);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
     scrollPane.getViewport().addChangeListener(new ChangeListener() {
@@ -79,11 +142,32 @@ public class LibraryManager {
       }
     });
     
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 2;
+    pane.add(new Label("Category:"), c);
+    
+    c = new GridBagConstraints();
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
+    c.gridy = 2;
+    
+    String[] categories = {
+      "3D", "Animation", "Compilations", "Computer Vision",
+      "Data and Protocols", "Geometry", "Graphic Interface",
+      "Hardware Interface", "Import / Export", "Math", "Simulation", "Sound",
+      "Tools", "Typography", "Video" };
+    categoryChooser = new JComboBox(categories);
+    pane.add(categoryChooser, c);
+
+    
     dialog.setMinimumSize(new Dimension(400, 400));
     dialog.pack();
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     dialog.setLocation((screen.width - dialog.getWidth()) / 2,
                        (screen.height - dialog.getHeight()) / 2);
+    
+    libraryListPane.grabFocus();
   }
   
   /**

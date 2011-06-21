@@ -56,6 +56,7 @@ public class LibraryListPanel extends JPanel {
     
     boolean isInfoShown;
     
+    
     private LibraryPanel(LibraryInfo libInfo) {
       this.libInfo = libInfo;
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -65,6 +66,7 @@ public class LibraryListPanel extends JPanel {
       configureHeaderPane();
       configureInfoPane();
       
+      setFocusable(true);
       setShowInfo(false);
       updateColors();
       updateLibraryListSize();
@@ -77,11 +79,14 @@ public class LibraryListPanel extends JPanel {
               lp.setShowInfo(false);
             }
           }
+          
           setShowInfo(true);
           updateColors();
           updateLibraryListSize();
+          requestFocusInWindow();
         }
       });
+      
     }
 
     /**
@@ -90,6 +95,7 @@ public class LibraryListPanel extends JPanel {
      */
     private void configureHeaderPane() {
       headerPanel = new JPanel();
+      headerPanel.setFocusable(true);
       headerPanel.setOpaque(false);
       headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
       
@@ -115,6 +121,10 @@ public class LibraryListPanel extends JPanel {
       infoPanel.setOpaque(false);
       unclickedCard.setOpaque(false);
       clickedCard.setOpaque(false);
+      
+      infoPanel.setFocusable(true);
+      unclickedCard.setFocusable(true);
+      clickedCard.setFocusable(true);
       
       briefText = new JTextArea(libInfo.briefOverview);
       installOrRemove = new JButton();
@@ -162,7 +172,7 @@ public class LibraryListPanel extends JPanel {
       
       infoPanel.add(unclickedCard, unclickedCardId);
       infoPanel.add(clickedCard, clickedCardId);
-    
+      
       add(infoPanel);
     }
 
@@ -239,6 +249,15 @@ public class LibraryListPanel extends JPanel {
     verticalFill.gridx = 0;
     verticalFill.gridy = row++;
     add(Box.createVerticalGlue(), verticalFill);
+    
+    setFocusable(true);
+    addMouseListener(new MouseAdapter() {
+
+      public void mousePressed(MouseEvent mouseEvent) {
+        requestFocusInWindow();
+      }
+    });
+    
   }
   
   /**
@@ -316,6 +335,9 @@ public class LibraryListPanel extends JPanel {
     return noLines;
   }
   
+  /**
+   * Updates the colors of all library panels that are visible.
+   */
   private void updateColors() {
     
     int count = 0;
@@ -323,23 +345,25 @@ public class LibraryListPanel extends JPanel {
       if (c instanceof LibraryPanel) {
         LibraryPanel libPanel = (LibraryPanel) c;
         
-        if (libPanel.isInfoShown) {
-          libPanel.setBackground(UIManager.getColor("List.selectionBackground"));
-          cascadeForgroundColor(libPanel, UIManager.getColor("List.selectionForeground"));
-          libPanel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
-        } else {
-          if (Base.isMacOS()) {
-            if (count % 2 == 1) {
-              libPanel.setBorder(UIManager.getBorder("List.evenRowBackgroundPainter"));
-            } else {
-              libPanel.setBorder(UIManager.getBorder("List.oddRowBackgroundPainter"));
+        if (libPanel.isVisible()) {
+          if (libPanel.isInfoShown) {
+            libPanel.setBackground(UIManager.getColor("List.selectionBackground"));
+            cascadeForgroundColor(libPanel, UIManager.getColor("List.selectionForeground"));
+            libPanel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
+          } else {
+            if (Base.isMacOS()) {
+              if (count % 2 == 1) {
+                libPanel.setBorder(UIManager.getBorder("List.evenRowBackgroundPainter"));
+              } else {
+                libPanel.setBorder(UIManager.getBorder("List.oddRowBackgroundPainter"));
+              }
             }
+            libPanel.setBackground(UIManager.getColor("List.background"));
+            cascadeForgroundColor(libPanel, UIManager.getColor("List.foreground"));
           }
-          libPanel.setBackground(UIManager.getColor("List.background"));
-          cascadeForgroundColor(libPanel, UIManager.getColor("List.foreground"));
+          
+          count++;
         }
-        
-        count++;
       }
     }
   }
