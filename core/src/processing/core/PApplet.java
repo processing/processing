@@ -5007,6 +5007,12 @@ public class PApplet extends Applet
       bos.close();
       bos = null;
 
+      if (targetFile.exists()) {
+        if (!targetFile.delete()) {
+          System.err.println("Could not replace " + 
+                             targetFile.getAbsolutePath() + "."); 
+        }
+      }
       if (!tempFile.renameTo(targetFile)) {
         System.err.println("Could not rename temporary file " +
                            tempFile.getAbsolutePath());
@@ -5058,6 +5064,12 @@ public class PApplet extends Applet
       output.close();
       output = null;
 
+      if (file.exists()) {
+        if (!file.delete()) {
+          System.err.println("Could not replace " + file.getAbsolutePath());
+        }
+      }
+      
       if (!tempFile.renameTo(file)) {
         System.err.println("Could not rename temporary file " +
                            tempFile.getAbsolutePath());
