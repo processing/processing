@@ -39,14 +39,29 @@ import javax.swing.event.ChangeListener;
  * 
  */
 public class LibraryManager {
-
+  
+  /**
+   * true to use manual URL specification only
+   * false to use searchable library list
+   */
+  static boolean USE_SIMPLE = true;
+  
   JFrame dialog;
 
+  // Simple UI widgets:
+  JLabel urlLabel;
+
+  JTextField libraryUri;
+
+  JButton installButton;
+  
+  // Non-simple UI widgets:
   FilterField filterField;
   
   LibraryListPanel libraryListPane;
   
   JComboBox categoryChooser;
+  
   
   // the calling editor, so updates can be applied
 
@@ -103,71 +118,124 @@ public class LibraryManager {
     dialog.setResizable(true);
 
     Base.setIcon(dialog);
-
+    
     Container pane = dialog.getContentPane();
     pane.setLayout(new GridBagLayout());
     
-    GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.gridwidth = 2;
-    c.weightx = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    filterField = new FilterField();
-    pane.add(filterField, c);
+    GridBagConstraints c; 
     
-    libraryListPane = new LibraryListPanel(fetchLibraryInfo());
-    
-    c = new GridBagConstraints();
-    c.fill = GridBagConstraints.BOTH;
-    c.gridx = 0;
-    c.gridy = 1;
-    c.gridwidth = 2;
-    c.weighty = 1;
-    c.weightx = 1;
-    
-    final JScrollPane scrollPane = new JScrollPane();
-    scrollPane.setPreferredSize(new Dimension(300,300));
-    scrollPane.setViewportView(libraryListPane);
-    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    pane.add(scrollPane, c);
-    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
-    scrollPane.getViewport().addChangeListener(new ChangeListener() {
+    if (USE_SIMPLE) {
+      urlLabel = new JLabel("Library URL:");
+      libraryUri = new JTextField();
+      installButton = new JButton("Install");
       
-      public void stateChanged(ChangeEvent ce) {
-        
-        int width = scrollPane.getViewportBorderBounds().width;
-        libraryListPane.setWidth(width);
-      }
-    });
-    
-    c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 2;
-    pane.add(new Label("Category:"), c);
-    
-    c = new GridBagConstraints();
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridx = 1;
-    c.gridy = 2;
-    
-    String[] categories = {
-      "3D", "Animation", "Compilations", "Computer Vision",
-      "Data and Protocols", "Geometry", "Graphic Interface",
-      "Hardware Interface", "Import / Export", "Math", "Simulation", "Sound",
-      "Tools", "Typography", "Video" };
-    categoryChooser = new JComboBox(categories);
-    pane.add(categoryChooser, c);
+      ActionListener installLibAction = new ActionListener() {
 
+        public void actionPerformed(ActionEvent arg) {
+          try {
+            URL url = new URL(libraryUri.getText());
+            // System.out.println("Installing library: " + url);
+            File libFile = downloadLibrary(url);
+            if (libFile != null) {
+              installLibrary(libFile);
+            }
+          } catch (MalformedURLException e) {
+            System.err.println("Malformed URL");
+          }
+          libraryUri.setText("");
+        }
+      };
+      libraryUri.addActionListener(installLibAction);
+      installButton.addActionListener(installLibAction);
+
+      c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 0;
+      c.weightx = 1;
+      c.anchor = GridBagConstraints.WEST;
+      pane.add(urlLabel, c);
+      
+      c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 1;
+      c.weightx = 1;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      pane.add(libraryUri, c);
+      
+      c = new GridBagConstraints();
+      c.gridx = 1;
+      c.gridy = 1;
+      c.anchor = GridBagConstraints.EAST;
+      pane.add(installButton, c);
+      
+      Dimension d = dialog.getSize();
+      d.width = 320;
+      dialog.setMinimumSize(d);
+    } else {
+      c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 0;
+      c.gridwidth = 2;
+      c.weightx = 1;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      filterField = new FilterField();
+      pane.add(filterField, c);
+      
+      libraryListPane = new LibraryListPanel(fetchLibraryInfo());
+      
+      c = new GridBagConstraints();
+      c.fill = GridBagConstraints.BOTH;
+      c.gridx = 0;
+      c.gridy = 1;
+      c.gridwidth = 2;
+      c.weighty = 1;
+      c.weightx = 1;
+      
+      final JScrollPane scrollPane = new JScrollPane();
+      scrollPane.setPreferredSize(new Dimension(300,300));
+      scrollPane.setViewportView(libraryListPane);
+      scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      pane.add(scrollPane, c);
+      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      
+      scrollPane.getViewport().addChangeListener(new ChangeListener() {
+        
+        public void stateChanged(ChangeEvent ce) {
+          
+          int width = scrollPane.getViewportBorderBounds().width;
+          libraryListPane.setWidth(width);
+        }
+      });
+      
+      c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 2;
+      pane.add(new Label("Category:"), c);
+      
+      c = new GridBagConstraints();
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.gridx = 1;
+      c.gridy = 2;
+      
+      String[] categories = {
+        "3D", "Animation", "Compilations", "Computer Vision",
+        "Data and Protocols", "Geometry", "Graphic Interface",
+        "Hardware Interface", "Import / Export", "Math", "Simulation", "Sound",
+        "Tools", "Typography", "Video" };
+      categoryChooser = new JComboBox(categories);
+      pane.add(categoryChooser, c);
+  
+      dialog.setMinimumSize(new Dimension(400, 400));
+    }
     
-    dialog.setMinimumSize(new Dimension(400, 400));
     dialog.pack();
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     dialog.setLocation((screen.width - dialog.getWidth()) / 2,
                        (screen.height - dialog.getHeight()) / 2);
     
-    libraryListPane.grabFocus();
+    if (!USE_SIMPLE) {
+      libraryListPane.grabFocus();
+    }
   }
   
   /**
