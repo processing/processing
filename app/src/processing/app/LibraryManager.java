@@ -27,18 +27,72 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.zip.*;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.*;
+
+class ProgressMonitor {
+  JProgressBar progressBar;
+  boolean isCancelled = false;
+  
+  public ProgressMonitor(JProgressBar progressBar) {
+    this.progressBar = progressBar;
+  }
+  
+  public boolean isCanceled() {
+    return isCancelled;
+  }
+
+  public void cancel() {
+    isCancelled = true;
+  }
+  
+}
 
 /**
  * 
  */
 public class LibraryManager {
+  
+  class LibraryDownloader implements Runnable {
+    URL url;
+    ProgressMonitor progressMonitor;
+    File libFile;
+    
+    public LibraryDownloader(URL url, ProgressMonitor progressMonitor) {
+      this.url = url;
+      this.progressMonitor = progressMonitor;
+      libFile = null;
+    }
+
+    public void run() {
+      libraryUrl.setEnabled(false);
+      installButton.setEnabled(false);
+      progressMonitor.progressBar.setIndeterminate(false);
+      
+      progressMonitor.progressBar.setString("Downloading");
+      libFile = downloadLibrary(url, progressMonitor);
+      
+      if (libFile != null) {
+        progressMonitor.progressBar.setString("Installing");
+        progressMonitor.progressBar.setIndeterminate(true);
+        installLibrary(libFile);
+      }
+      
+      libraryUrl.setEnabled(true);
+      installButton.setEnabled(true);
+      
+      installProgressBar.setVisible(false);
+      dialog.pack();
+    }
+
+    public File getFile() {
+      return libFile;
+    }
+    
+  }
   
   /**
    * true to use manual URL specification only
@@ -51,9 +105,11 @@ public class LibraryManager {
   // Simple UI widgets:
   JLabel urlLabel;
 
-  JTextField libraryUri;
+  JTextField libraryUrl;
 
   JButton installButton;
+  
+  JProgressBar installProgressBar;
   
   // Non-simple UI widgets:
   FilterField filterField;
@@ -61,7 +117,6 @@ public class LibraryManager {
   LibraryListPanel libraryListPane;
   
   JComboBox categoryChooser;
-  
   
   // the calling editor, so updates can be applied
 
@@ -125,27 +180,74 @@ public class LibraryManager {
     GridBagConstraints c; 
     
     if (USE_SIMPLE) {
+      dialog.setResizable(false);
+      
       urlLabel = new JLabel("Library URL:");
-      libraryUri = new JTextField();
+      libraryUrl = new JTextField();
       installButton = new JButton("Install");
+      installProgressBar = new JProgressBar();
+
+//      Dimension d = installProgressBar.getSize();
+//      d.height = 2 * pane.getFontMetrics(installProgressBar.getFont()).getHeight();
+//      installProgressBar.setPreferredSize(d);
+      installProgressBar.setVisible(false);
+      installProgressBar.setString("");
+      installProgressBar.setStringPainted(true);
+
+      installButton.setEnabled(false);
+      libraryUrl.getDocument().addDocumentListener(new DocumentListener() {
+        
+        private void checkUrl() {
+          try {
+            new URL(libraryUrl.getText());
+            installButton.setEnabled(true);
+            installButton.setToolTipText("");
+          } catch (MalformedURLException e) {
+            installButton.setEnabled(false);
+            installButton.setToolTipText("URL is malformed");
+          }
+        }
+        
+        public void removeUpdate(DocumentEvent de) {
+          checkUrl();
+        }
+        
+        public void insertUpdate(DocumentEvent de) {
+          checkUrl();
+        }
+        
+        public void changedUpdate(DocumentEvent de) {
+          checkUrl();
+        }
+      });
       
       ActionListener installLibAction = new ActionListener() {
 
         public void actionPerformed(ActionEvent arg) {
           try {
-            URL url = new URL(libraryUri.getText());
-            // System.out.println("Installing library: " + url);
-            File libFile = downloadLibrary(url);
-            if (libFile != null) {
-              installLibrary(libFile);
-            }
+            installProgressBar.setVisible(true);
+            dialog.pack();
+            
+            URL url = new URL(libraryUrl.getText());
+            
+            final ProgressMonitor pm = new ProgressMonitor(installProgressBar);
+            
+            dialog.addWindowListener(new WindowAdapter() {
+              
+              public void windowClosing(WindowEvent we) {
+                pm.cancel();
+              }
+            });
+            
+            LibraryDownloader downloader = new LibraryDownloader(url, pm);
+            new Thread(downloader).start();
           } catch (MalformedURLException e) {
             System.err.println("Malformed URL");
           }
-          libraryUri.setText("");
+          libraryUrl.setText("");
         }
       };
-      libraryUri.addActionListener(installLibAction);
+      libraryUrl.addActionListener(installLibAction);
       installButton.addActionListener(installLibAction);
 
       c = new GridBagConstraints();
@@ -160,13 +262,21 @@ public class LibraryManager {
       c.gridy = 1;
       c.weightx = 1;
       c.fill = GridBagConstraints.HORIZONTAL;
-      pane.add(libraryUri, c);
+      pane.add(libraryUrl, c);
       
       c = new GridBagConstraints();
       c.gridx = 1;
       c.gridy = 1;
       c.anchor = GridBagConstraints.EAST;
       pane.add(installButton, c);
+      
+      c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 2;
+      c.gridwidth = 2;
+      c.weightx = 1;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      pane.add(installProgressBar, c);
       
       Dimension d = dialog.getSize();
       d.width = 320;
@@ -249,13 +359,15 @@ public class LibraryManager {
     if (paths.length != 0) {
       String fileName = paths[paths.length - 1];
       int lastDot = fileName.lastIndexOf(".");
-      return fileName.substring(0, lastDot);
+      if (lastDot != -1) {
+        return fileName.substring(0, lastDot);
+      }
     }
     
     return null;
   }
   
-  protected File downloadLibrary(URL url) {
+  protected File downloadLibrary(URL url, ProgressMonitor progressMonitor) {
     try {
       String libName = guessLibraryName(url.getFile());
       if (libName != null) {
@@ -263,9 +375,14 @@ public class LibraryManager {
         
         File libFile = new File(tmpFolder, libName + ".plb");
         libFile.setWritable(true);
-      
-        if (downloadFile(url, libFile)) {
-          return libFile;
+        
+        try {
+          if (downloadFile(url, libFile, progressMonitor)) {
+            return libFile;
+          }
+        } catch (IOException e) {
+          Base.showError("Trouble downloading file",
+                         "An error occured while downloading the library.", e);
         }
       }
     } catch (IOException e) {
@@ -329,12 +446,13 @@ public class LibraryManager {
 
   /**
    * Returns true if the file was successfully downloaded, false otherwise
+   * @param progressMonitor 
+   * @throws FileNotFoundException 
    */
-  protected boolean downloadFile(URL source, File dest) {
-    try {
+  protected boolean downloadFile(URL source, File dest, ProgressMonitor progressMonitor) throws IOException, FileNotFoundException {
       URLConnection urlConn = source.openConnection();
       urlConn.setConnectTimeout(1000);
-      urlConn.setReadTimeout(1000);
+      urlConn.setReadTimeout(5000);
 
       // String expectedType1 = "application/x-zip-compressed";
       // String expectedType2 = "application/zip";
@@ -343,29 +461,25 @@ public class LibraryManager {
       // }
 
       int fileSize = urlConn.getContentLength();
+      progressMonitor.progressBar.setMaximum(fileSize);
+      
       InputStream in = urlConn.getInputStream();
       FileOutputStream out = new FileOutputStream(dest);
 
       byte[] b = new byte[256];
       int bytesDownloaded = 0, len;
-      while ((len = in.read(b)) != -1) {
-        @SuppressWarnings("unused")
-        int progress = (int) (100.0 * bytesDownloaded / fileSize);
-        // System.out.println("Downloaded " + progress + "%");
+      while (!progressMonitor.isCanceled() && (len = in.read(b)) != -1) {
         out.write(b, 0, len);
         bytesDownloaded += len;
+        
+        progressMonitor.progressBar.setValue(bytesDownloaded);
       }
       out.close();
-      // System.out.println("Done!");
-
-      return true;
-
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
+      
+      if (!progressMonitor.isCanceled()) {
+        return true;
+      }
+      
     return false;
   }
   
