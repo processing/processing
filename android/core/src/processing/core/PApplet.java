@@ -4399,6 +4399,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
       bos.close();
       bos = null;
 
+      if (targetFile.exists() && !targetFile.delete()) {
+        System.err.println("Could not replace " + 
+                           targetFile.getAbsolutePath() + "."); 
+      }
+
       if (!tempFile.renameTo(targetFile)) {
         System.err.println("Could not rename temporary file " +
                            tempFile.getAbsolutePath());
