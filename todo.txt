@@ -33,14 +33,11 @@ o prevent people from setting the font size too small in the editor
 o   how do we figure out what "too small" is?
 X   -> everyone thinks this is funny
 
-_ fix opengl applets so that we can safely kill P3D
 _ automatically insert the 'import processing.opengl' when P3D used
-_ add support for automatically including OpenGL when asking for P3D
-_ when using P3D and not realizing that it's really OpenGL...
+_   add support for automatically including OpenGL when asking for P3D
+_   when using P3D and not realizing that it's really OpenGL...
 Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
 Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
-_ why we can't do OpenGL applets that are self-signed (wiki?) 
-_   http://www.cert.org/blogs/vuls/2008/06/signed_java_security_worse_tha.html
 
 _ handleFindReference in Editor.java should be public for alternative modes (?)
 _   http://code.google.com/p/processing/issues/detail?id=713
@@ -91,7 +88,7 @@ _   casey: accidentally typing a letter at the top of the tab
 _     throws you onto the end of the last tab... exactly the worst location
 _ jer: omitting a semicolon shows the error on the line after it...
 _ find across all tabs (jer request)
-_   http://code.google.com/p/processing/issues/detail?id=705
+_   http://code.google.com/p/processing/issues/detail?id=25
 
 reference/examples
 _ import p5 reference into the javadoc
@@ -160,7 +157,7 @@ _   http://code.google.com/p/processing/issues/detail?id=718
 
 _ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it (?)
-_   http://code.google.com/p/processing/issues/detail?id=231
+_   http://code.google.com/p/processing/issues/detail?id=176
 _   also move back to using non-custom for 2.0 when we can drop QT support
 
 _ active editor not being set null

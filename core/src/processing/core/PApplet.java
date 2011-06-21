@@ -7637,9 +7637,9 @@ public class PApplet extends Applet
       recorder.dispose();
       recorder = null;
     }
-    if (g.isRecording()) {
-      g.endRecord();
-    }
+//    if (g.isRecording()) {
+//    g.endRecord();
+//    }
   }
 
 
@@ -10222,11 +10222,6 @@ public class PApplet extends Applet
   public void textureBlend(int mode) {
     if (recorder != null) recorder.textureBlend(mode);
     g.textureBlend(mode);
-  }
-
-
-  public boolean isRecording() {
-    return g.isRecording();
   }
 
 

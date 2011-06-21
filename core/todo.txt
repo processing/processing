@@ -56,13 +56,6 @@ X   http://code.google.com/p/processing/issues/detail?id=198
 X how should quadVertex() be named? bezierVertex() quadraticVertex() 
 X   decision: quadraticVertex() to avoid confusion with quads
 X more efficient version of copy() added for 2D
-X move to new XML library
-X   add XHTML parsing or any others?
-X   html parser? javax.swing.text.html.parser... has binary DTDs
-X   decision: it's someone else's job
-X XMLElemnt.parse() or new XMLElement(xmldata)?
-X   same goes for PShape.. parse from a string?
-X   http://code.google.com/p/processing/issues/detail?id=277
 X rounded rectangle method 
 X   http://code.google.com/p/processing/issues/detail?id=265
 X   clockwise from upper-left
@@ -74,6 +67,17 @@ o   needs to be documented, and excise all screen.width/height references
 X   add to the 'changes' document
 X saveBytes() error when writing to existing file
 X   http://code.google.com/p/processing/issues/detail?id=667
+
+opengl applets
+X implement new applet-opengl.html based on the latest jogl 
+o jogl demos, NEWT examples crash on osx http://jogamp.org/jogl-demos/www/
+o   http://jogamp.org/jogl-demos/www/applettest-jnlp.html
+X   not sure why these do/don't work, but it's mostly working
+X OpenGL Applets won't load with JRE 6 update 21 or higher
+X   need to make the final call on this and implement
+X   http://code.google.com/p/processing/issues/detail?id=429
+o why we can't do OpenGL applets that are self-signed (wiki?) 
+o   http://www.cert.org/blogs/vuls/2008/06/signed_java_security_worse_tha.html
 
 cleanup
 o if too many errors come through during setup, app will terminate
@@ -258,13 +262,16 @@ X   closed as LATER in the original bugs db
 o add getSketchSize() and getSketchRenderer()
 o   these could simply have the defaults at the outset
 X   added in the more recent revisions
-o Writing XML files (clean up the API)
-o   http://dev.processing.org/bugs/show_bug.cgi?id=964
 X Use getContextClassLoader() instead of Class.forName()
 X   http://dev.processing.org/bugs/show_bug.cgi?id=514
 X cursor functions don't work in present mode
 X   just add a note to the reference
 X   http://code.google.com/p/processing/issues/detail?id=160
+o when drawing an image, sense whether drawn rotated
+o   specifically, if drawn rotated 90 in either direction, or 180
+o   if just rotate/translate, then can use SCREEN_SPACE for fonts
+o "Target VM failed to initialize" when using Present mode on Mac OS X
+o   http://code.google.com/p/processing/issues/detail?id=178
 
 decisions
 o call reapplySettings() when using beginRecord()?
@@ -327,6 +334,24 @@ o   it needs a proper header on it, so maybe that's the difference w/ toString()
 o inefficient: the way new nodes are created
 o also inefficient: adding/removing kids just nukes the children array
 X toString() adds the XML header
+X move to new XML library
+X   add XHTML parsing or any others?
+X   html parser? javax.swing.text.html.parser... has binary DTDs
+X   decision: it's someone else's job
+X XMLElemnt.parse() or new XMLElement(xmldata)?
+X   same goes for PShape.. parse from a string?
+X   http://code.google.com/p/processing/issues/detail?id=277
+o Writing XML files (clean up the API)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=964
+X XMLElement lacks add/set/remove methods
+X   http://code.google.com/p/processing/issues/detail?id=440
+_ finish updating XML documentation
+_   http://code.google.com/p/processing/issues/detail?id=382
+_ json issues
+_   http://www.xml.com/lpt/a/1658
+_   http://www.json.org/java/
+_ remove unnecessary processing.xml.* code from android-core
+_   http://code.google.com/p/processing/issues/detail?id=214
 
 andres 
 _ OpenGL noSmooth() problems
@@ -483,28 +508,6 @@ _   http://code.google.com/p/processing/issues/detail?id=722
 _ add methods to PShape to apply all transformations in the tree
 _ need to clean up the hints in the reference/source
 
-images
-_ make loading images lighter, ala android 
-_   require loadPixels to get 2D image data from images
-_   only load PImage pixels when necessary (faster for java2d)
-_ loadImage() should use the faster loading methods
-_   hint(DISABLE_IMAGE_CACHING)
-_   add a note to the loadImage() reference page
-_ figure out why 1024x768 image takes 3.5 seconds to load
-_   would using a BufferedImage work better?
-_   is the image actually a BufferedImage so PixelGrabber is a waste?
-_ work through loadPixels in PImage, how consistent do we need to be?
-_   with get() and set() methods, this gets really tricky (too slow)
-_   could optimize by keeping a java image around, but table for later
-_     it's too significant a change, and not enough time to test
-_ callback for requestImage()
-_   http://code.google.com/p/processing/issues/detail?id=641
-_   might work with the selectXxxx() functions as well
-
-_ json issues
-http://www.xml.com/lpt/a/1658
-http://www.json.org/java/
-
 decisions to make
 _ possible addition for 'implementation' variable
 _   http://code.google.com/p/processing/issues/detail?id=281
@@ -540,10 +543,6 @@ _   decision: use getShape() (maybe add getShapeCount and getShape(int))
 _     and remove getChild() from PShape
 _   oops: getParent() is in there, as is getChildren() and others...
 
-fix opengl applets
-_ implement new applet-opengl.html based on the latest jogl 
-_ jogl demos, NEWT examples crash on osx http://jogamp.org/jogl-demos/www/
-_   http://jogamp.org/jogl-demos/www/applettest-jnlp.html
 _ opengl applet problems
 _   http://code.google.com/p/processing/issues/detail?id=196
 _ look into p5 bug with opengl in applets
@@ -551,9 +550,7 @@ _   stop() called between tabs/pages, start() may be called again
 _   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
 _   really, stop() should just call noLoop() (and start re-enable if done)
 _     and on android, start/stop can be used to save state information
-_ OpenGL Applets won't load with JRE 6 update 21 or higher
-_   need to make the final call on this and implement
-_   http://code.google.com/p/processing/issues/detail?id=429
+_ fix opengl applets so that we can safely kill P3D
 
 _ smooth() not working with applets an createGraphics(JAVA2D)
 _   but works fine with applications
@@ -655,8 +652,6 @@ _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
 _ --display not working on osx
 _   http://code.google.com/p/processing/issues/detail?id=71
-_ "Target VM failed to initialize" when using Present mode on Mac OS X
-_   http://code.google.com/p/processing/issues/detail?id=178
 
 
 CORE / PFont and text()
@@ -747,6 +742,23 @@ _   box(40);
 
 CORE / PImage
 
+_ make loading images lighter, ala android 
+_   require loadPixels to get 2D image data from images
+_   only load PImage pixels when necessary (faster for java2d)
+_   http://code.google.com/p/processing/issues/detail?id=60
+_ loadImage() should use the faster loading methods
+_   hint(DISABLE_IMAGE_CACHING)
+_   add a note to the loadImage() reference page
+_ figure out why 1024x768 image takes 3.5 seconds to load
+_   would using a BufferedImage work better?
+_   is the image actually a BufferedImage so PixelGrabber is a waste?
+_ work through loadPixels in PImage, how consistent do we need to be?
+_   with get() and set() methods, this gets really tricky (too slow)
+_   could optimize by keeping a java image around, but table for later
+_     it's too significant a change, and not enough time to test
+_ callback for requestImage()
+_   http://code.google.com/p/processing/issues/detail?id=641
+_   might work with the selectXxxx() functions as well
 _ img.get() quirks
 _   http://code.google.com/p/processing/issues/detail?id=167
 _ image resizing is ugly (just use java2d?)
@@ -773,9 +785,6 @@ _   http://code.google.com/p/processing/issues/detail?id=60
 _ add ability to control jpeg compression level with save() and saveFrame()
 _   or just write a better example for this one?
 _   http://code.google.com/p/processing/issues/detail?id=58
-_ when drawing an image, sense whether drawn rotated
-_   specifically, if drawn rotated 90 in either direction, or 180
-_   if just rotate/translate, then can use SCREEN_SPACE for fonts
 _ should PImage smoothing not be turned on by default? handle this where?
 _   http://code.google.com/p/processing/issues/detail?id=165
 _ Semitransparent rect drawn over image not rendered correctly

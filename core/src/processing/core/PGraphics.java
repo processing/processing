@@ -5945,15 +5945,15 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void endRecord() {  // ignore
-    showMissingWarning("endRecord");
-  }
+//  public void endRecord() {  // ignore
+//    showMissingWarning("endRecord");
+//  }
 
 
-  public boolean isRecording() {
-    showMissingWarning("isRecording");
-    return false;
-  }
+//  public boolean isRecording() {
+//    showMissingWarning("isRecording");
+//    return false;
+//  }
 
 
   public void mergeShapes(boolean val) {
