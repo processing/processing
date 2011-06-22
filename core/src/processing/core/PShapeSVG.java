@@ -1824,7 +1824,7 @@ public class PShapeSVG extends PShape {
    * beneath them can be used here.
    * <PRE>
    * // This code grabs "Layer 3" and the shapes beneath it.
-   * PShape layer3 = svg.getShape("Layer 3");
+   * PShape layer3 = svg.getChild("Layer 3");
    * </PRE>
    */
   public PShape getChild(String name) {

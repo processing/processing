@@ -67,6 +67,8 @@ o   needs to be documented, and excise all screen.width/height references
 X   add to the 'changes' document
 X saveBytes() error when writing to existing file
 X   http://code.google.com/p/processing/issues/detail?id=667
+X destroy() in PApplet ultimately calls System.exit()
+X   http://code.google.com/p/processing/issues/detail?id=698
 
 opengl applets
 X implement new applet-opengl.html based on the latest jogl 
@@ -327,6 +329,16 @@ o   textMode(SCREEN) is out of its league?
 o textMode(SHAPE) and hint(SMOOTHING) calls are really awkward
 o   maybe need to add properties to the size() command?
 o   or use a getXxxx() method?
+o in PShape, getChild(name) refers to a <blah id="name">
+o   however in an XML file, that's <name ...>, meaning the name of the tag
+o   change it to getShape(name)? also for fonts getShape(char c)
+o   decision: use getShape() (maybe add getShapeCount and getShape(int)) 
+o     and remove getChild() from PShape
+o   oops: getParent() is in there, as is getChildren() and others...
+o   svg examples should use getShape(name) not getChild(name)
+X   better to not break the naming, since getParent() needs to stay
+X   nobody felt strongly enough about getShape()
+X   so better to not change (and start breaking things)
 
 xml changes
 o see if write() is necessary inside PNodeXML
@@ -424,7 +436,6 @@ _   figure out why font naming not working correctly
 _ add blendMode() to reference, remove blend()
 _ need documentation for quadraticVertex()
 _ docs for rect(x, y, w, h, r) and rect(x, y, w, h, tl, tr, br, bl)
-_ svg examples should use getShape(name) not getChild(name)
 _ screen.width/height shouldn't be anywhere
 _ add docs for screenWidth and screenHeight 
 _ remove delay() documentation
@@ -433,7 +444,7 @@ _ remove delay() documentation
 _ texts using textMode(SCREEN) not displayed in Processing 1.5.1
 _   http://code.google.com/p/processing/issues/detail?id=741
 _ thread() causes weird flickering
-_   http://code.google.com/p/processing/issues/detail?id=742svn st
+_   http://code.google.com/p/processing/issues/detail?id=742
 
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
@@ -541,12 +552,6 @@ _   http://code.google.com/p/processing/issues/detail?id=246
 _ path for selectXxxxx() functions
 _   http://code.google.com/p/processing/issues/detail?id=233
 _ provide a way to clear the PGraphics with plain alpha
-_ in PShape, getChild(name) refers to a <blah id="name">
-_   however in an XML file, that's <name ...>, meaning the name of the tag
-_   change it to getShape(name)? also for fonts getShape(char c)
-_   decision: use getShape() (maybe add getShapeCount and getShape(int)) 
-_     and remove getChild() from PShape
-_   oops: getParent() is in there, as is getChildren() and others...
 
 _ opengl applet problems
 _   http://code.google.com/p/processing/issues/detail?id=196
