@@ -462,6 +462,7 @@ public abstract class Mode {
 
       tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
       tree.setShowsRootHandles(true);
+      tree.setToggleClickCount(2);
       // expand the root
       tree.expandRow(0);
       // now hide the root
@@ -488,42 +489,65 @@ public abstract class Mode {
         }
       });
       */
+      
+      /*
+       *  MouseListener ml = new MouseAdapter() {
+       *     public void <b>mousePressed</b>(MouseEvent e) {
+       *         int selRow = tree.getRowForLocation(e.getX(), e.getY());
+       *         TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+       *         if(selRow != -1) {
+       *             if(e.getClickCount() == 1) {
+       *                 mySingleClick(selRow, selPath);
+       *             }
+       *             else if(e.getClickCount() == 2) {
+       *                 myDoubleClick(selRow, selPath);
+       *             }
+       *         }
+       *     }
+       * };
+       * tree.addMouseListener(ml);
+       */
       tree.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
-          if (e.getClickCount() > 1) {
+          if (e.getClickCount() == 2) {
             DefaultMutableTreeNode node = 
               (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
             if (node != null && node.isLeaf()) {
-//              File sketch = (File) node.getUserObject();
-              
-//              base.handleOpen(sketch.getAbsolutePath());
-//              System.out.println(node + " user obj: " + node.getUserObject());
-
               SketchReference sketch = (SketchReference) node.getUserObject();
               base.handleOpen(sketch.getPath());
+            } else {
+              System.out.println("double clicking...");
+              int selRow = tree.getRowForLocation(e.getX(), e.getY());
+              TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
+              System.out.println("  clicked on " + selRow + " -> " + selPath);
+              if (selRow != -1) {
+                if (tree.isExpanded(selRow)) {
+                  System.out.println("  collapsing");
+                  tree.collapsePath(selPath);
+                } else {
+                  System.out.println("  expanding");
+                  tree.expandPath(selPath);
+                }
+              }
             }
           }
         }
       });
       tree.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  // doesn't fire keyTyped()
+            examplesFrame.setVisible(false);
+          }
+        }
         public void keyTyped(KeyEvent e) {
-//          System.out.println(e);
           if (e.getKeyChar() == KeyEvent.VK_ENTER) {
             DefaultMutableTreeNode node = 
               (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
             if (node != null && node.isLeaf()) {
-//              System.out.println(node + " user obj: " + node.getUserObject());
-//              File sketch = (File) node.getUserObject();
-//              base.handleOpen(sketch.getAbsolutePath());
-              
-//              Object[] obj = (Object[]) node.getUserObject();
-//              base.handleOpen(((File) obj[1]).getAbsolutePath());
               SketchReference sketch = (SketchReference) node.getUserObject();
               base.handleOpen(sketch.getPath());
             }
-          } else if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-            examplesFrame.setVisible(false);
-          }
+          } 
         }
       });
       
@@ -533,11 +557,17 @@ public abstract class Mode {
       examplesFrame.add(treeView);
       examplesFrame.pack();
     }
-    if (base.activeEditor != null) {
-      Point p = base.activeEditor.getLocation();
-      examplesFrame.setLocation(p.x - examplesFrame.getWidth() - 20, p.y);
-    } else {
+    // Space for the editor plus a li'l gap
+    int roughWidth = examplesFrame.getWidth() + 20;
+    Point p = null;
+    // If no window open, or the editor is at the edge of the screen
+    if (base.activeEditor == null ||  
+        (p = base.activeEditor.getLocation()).x < roughWidth) {
+      // Center the window on the screen
       examplesFrame.setLocationRelativeTo(null);
+    } else {
+      // Open the window relative to the editor
+      examplesFrame.setLocation(p.x - roughWidth, p.y);  
     }
     examplesFrame.setVisible(true);
   }
