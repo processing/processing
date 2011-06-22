@@ -2852,6 +2852,8 @@ public class PGraphicsOpenGL extends PGraphics {
   // protected void rawTriangles(int start, int stop) // PGraphics3D
 
   /**
+   * TODO: replace with better algorithm, using the glu tesellator code from
+   * PGraphicsOpenGL
    * Triangulate the current polygon. <BR>
    * <BR>
    * Simple ear clipping polygon triangulation adapted from code by John W.
