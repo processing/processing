@@ -182,8 +182,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     consolePanel.add(lineStatus, BorderLayout.SOUTH);
 
     upper.add(textarea);
+    
+    // alternate spot for status, but ugly
+//    status = new EditorStatus(this);
+//    upper.add(status);
+
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, consolePanel);
 
+    // disable this because it hides the message area, which is essential (issue #745)
     splitPane.setOneTouchExpandable(false);
     // repaint child panes while resizing
     splitPane.setContinuousLayout(true);
