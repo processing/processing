@@ -548,9 +548,10 @@ public abstract class Mode {
       });
       
       tree.setBorder(new EmptyBorder(5, 5, 5, 5));
-      JScrollPane treeView = new JScrollPane(tree);
-      treeView.setPreferredSize(new Dimension(250, 450));
-      examplesFrame.add(treeView);
+      JScrollPane treePane = new JScrollPane(tree);
+      treePane.setPreferredSize(new Dimension(250, 450));
+      treePane.setBorder(new EmptyBorder(0, 0, 0, 0));
+      examplesFrame.getContentPane().add(treePane);
       examplesFrame.pack();
     }
     // Space for the editor plus a li'l gap

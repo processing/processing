@@ -34,8 +34,6 @@ public class EditorLineStatus extends JComponent {
 //  JEditTextArea textarea;
   int start = -1, stop;
 
-  Image resize;
-
   Color foreground;
   Color background;
   Font font;
@@ -62,10 +60,6 @@ public class EditorLineStatus extends JComponent {
     font = mode.getFont("linestatus.font");
     foreground = mode.getColor("linestatus.color");
     high = mode.getInteger("linestatus.height");
-
-    if (Base.isMacOS()) {
-      resize = mode.loadImage("theme/resize.gif");
-    }
   }
 
 
@@ -101,10 +95,6 @@ public class EditorLineStatus extends JComponent {
     g.setColor(foreground);
     int baseline = (high + g.getFontMetrics().getAscent()) / 2;
     g.drawString(text, 6, baseline);
-
-    if (Base.isMacOS()) {
-      g.drawImage(resize, size.width - 20, 0, this);
-    }
   }
 
 
