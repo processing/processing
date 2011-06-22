@@ -184,7 +184,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     upper.add(textarea);
     splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, upper, consolePanel);
 
-    splitPane.setOneTouchExpandable(true);
+    splitPane.setOneTouchExpandable(false);
     // repaint child panes while resizing
     splitPane.setContinuousLayout(true);
     // if window increases in size, give all of increase to

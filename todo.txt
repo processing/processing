@@ -19,6 +19,8 @@ X examples window placed off-screen when PDE window is maximized
 X   http://code.google.com/p/processing/issues/detail?id=669
 X Resize box on OS X is not present in Examples box
 X   http://code.google.com/p/processing/issues/detail?id=730
+_ New/Rename Tab commands inhibited when Console/Message Area is hidden
+_   http://code.google.com/p/processing/issues/detail?id=745
 
 cleanup
 X how is autoformat doing? good now
