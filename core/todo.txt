@@ -430,6 +430,11 @@ _ add docs for screenWidth and screenHeight
 _ remove delay() documentation
 
 2.0
+_ texts using textMode(SCREEN) not displayed in Processing 1.5.1
+_   http://code.google.com/p/processing/issues/detail?id=741
+_ thread() causes weird flickering
+_   http://code.google.com/p/processing/issues/detail?id=742svn st
+
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
 _ remove blend(), add blendMode()
@@ -566,6 +571,8 @@ _ redraw() doesn't work from within draw()
 _   http://code.google.com/p/processing/issues/detail?id=195
 
 stop() mess
+_ destroy() shouldn't call exit()... change from lonnen
+_   calls ((PApplet)this).exit() instead of stop() (since stop is pause)
 _ notes
 _   exit() should do the actual exit
 _   if inside draw, let it finish the loop
