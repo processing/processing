@@ -27,6 +27,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.*;
 
@@ -190,7 +191,7 @@ public class LibraryManager {
 //      Dimension d = installProgressBar.getSize();
 //      d.height = 2 * pane.getFontMetrics(installProgressBar.getFont()).getHeight();
 //      installProgressBar.setPreferredSize(d);
-      installProgressBar.setVisible(false);
+      installProgressBar.setVisible(true);
       installProgressBar.setString("");
       installProgressBar.setStringPainted(true);
 
@@ -417,7 +418,8 @@ public class LibraryManager {
   
   protected int installLibraries(ArrayList<Library> newLibs) {
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
-
+    ArrayList<Library> libsToBeBackuped = new ArrayList<Library>();
+    
     // Remove any libraries that are already installed.
     Iterator<Library> it = newLibs.iterator();
     while (it.hasNext()) {
@@ -427,18 +429,69 @@ public class LibraryManager {
       // this to work properly. For now, files will be clobbered if the same
       // library is installed twice without restarting the PDE.
       for (Library oldLib : oldLibs) {
+        
         if (oldLib.getName().equals(lib.getName())) {
-          System.err.println("A library by the name " + oldLib.getName() + " is already installed.");
-          it.remove();
+          String prompt = "Library named \"" + oldLib.getName() + "\" already installed.\n\nReplace existing library?";
+          
+          int result = JOptionPane.showConfirmDialog(this.editor, prompt, "Replace",
+                                                     JOptionPane.YES_NO_OPTION,
+                                                     JOptionPane.QUESTION_MESSAGE);
+          
+          if (result != 0) {
+            it.remove();
+          } else {
+            libsToBeBackuped.add(oldLib);
+          }
           break;
         }
       }
     }
     
+    for (Library lib : libsToBeBackuped) {
+      String libFolderName = lib.folder.getName();
+      
+      File backupFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
+                                   "old");
+      if (!backupFolder.exists() || !backupFolder.isDirectory()) {
+        if (!backupFolder.mkdir()) {
+          Base.showError("Trouble creating folder to store old libraries in\"" + lib.getName() + "\"",
+                         "Could not create folder " + backupFolder.getAbsolutePath() + ".\n"
+                         + "That's gonna prevent us from continuing.", null);
+        }
+      }
+      
+      String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+      final String backupName = prefix + "_" + libFolderName;
+      File backupFolderForLib;
+      int i = 1;
+      do {
+        String folderName = backupName;
+        if (i >= 2) {
+          folderName += "(" + i + ")";
+        }
+        i++;
+        
+        backupFolderForLib = new File(backupFolder, folderName);
+      } while (backupFolderForLib.exists());
+      
+      if (!lib.folder.renameTo(backupFolderForLib)) {
+        Base.showError("Trouble creating backup of old \"" + lib.getName() + "\" library",
+                       "Could not move library to "
+                     + backupFolderForLib.getAbsolutePath() + "\n"
+                     + "That's gonna prevent us from continuing.", null);
+      }
+    }
+    
     for (Library newLib : newLibs) {
       String libFolderName = newLib.folder.getName();
-      newLib.folder.renameTo(new File(editor.getBase().getSketchbookLibrariesFolder(),
-                                      libFolderName));
+      File libFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
+                                libFolderName);
+      if (!newLib.folder.renameTo(libFolder)) {
+        Base.showError("Trouble moving new library to the sketchbook",
+                       "Could not move \"" + newLib.getName() + "\" to "
+                     + libFolder.getAbsolutePath() + ".\n"
+                     + "That's gonna prevent us from continuing.", null);
+      }
     }
     
     return newLibs.size();
