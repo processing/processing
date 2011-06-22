@@ -17,6 +17,8 @@ X make examples window respond to ESC
 X   and double-click events to expand/collapse nodes
 X examples window placed off-screen when PDE window is maximized
 X   http://code.google.com/p/processing/issues/detail?id=669
+X Resize box on OS X is not present in Examples box
+X   http://code.google.com/p/processing/issues/detail?id=730
 
 cleanup
 X how is autoformat doing? good now
@@ -37,6 +39,7 @@ o prevent people from setting the font size too small in the editor
 o   how do we figure out what "too small" is?
 X   -> everyone thinks this is funny
 
+required for 0198 release
 _ automatically insert the 'import processing.opengl' when P3D used
 _   add support for automatically including OpenGL when asking for P3D
 _   when using P3D and not realizing that it's really OpenGL...
@@ -51,8 +54,6 @@ _   http://code.google.com/p/processing/issues/detail?id=688
 _ write quicktime uncompressed (w/o qtjava)
 _   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
 
-_ Resize box on OS X is not present in Examples box
-_   http://code.google.com/p/processing/issues/detail?id=730
 
 pnode: look more closely at json and xml compatibility
 

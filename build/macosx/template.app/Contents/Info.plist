@@ -97,7 +97,7 @@
         <string>true</string>
 
 	<key>apple.awt.showGrowBox</key>
-	<string>false</string>
+	<string>true</string>
 	<key>com.apple.smallTabs</key>
 	<string>true</string>
 	<key>apple.awt.Antialiasing</key>
