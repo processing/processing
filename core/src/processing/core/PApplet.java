@@ -799,7 +799,7 @@ public class PApplet extends Applet
    * when moving between pages), though.
    */
   public void destroy() {
-    ((PApplet)this).exit();
+    ((PApplet) this).dispose();
   }
 
 
@@ -1600,7 +1600,7 @@ public class PApplet extends Applet
     // If the user called the exit() function, the window should close,
     // rather than the sketch just halting.
     if (exitCalled) {
-      exit2();
+      exitActual();
     }
   }
 
@@ -2585,7 +2585,7 @@ public class PApplet extends Applet
     if (thread == null) {
       // exit immediately, dispose() has already been called,
       // meaning that the main thread has long since exited
-      exit2();
+      exitActual();
 
     } else if (looping) {
       // dispose() will be called as the thread exits
@@ -2600,11 +2600,12 @@ public class PApplet extends Applet
       dispose();
 
       // now get out
-      exit2();
+      exitActual();
     }
   }
 
-  void exit2() {
+  
+  void exitActual() {
     try {
       System.exit(0);
     } catch (SecurityException e) {
@@ -2612,6 +2613,7 @@ public class PApplet extends Applet
     }
   }
 
+  
   /**
    * Called to dispose of resources and shut down the sketch.
    * Destroys the thread, dispose the renderer,and notify listeners.
@@ -2619,7 +2621,7 @@ public class PApplet extends Applet
    * Not to be called or overriden by users. If called multiple times,
    * will only notify listeners once. Register a dispose listener instead.
    */
-  public void dispose(){
+  public void dispose() {
     // moved here from stop()
     finished = true;  // let the sketch know it is shut down time
 
