@@ -364,12 +364,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1426
 
 svn copy https://processing.googlecode.com/svn/trunk/processing https://processing.googlecode.com/svn/tags/processing-01XX
 
-svn copy svn://processing.org/trunk/processing svn://processing.org/tags/processing-01XX
-svn copy svn+ssh://dev.processing.org/var/svn/trunk/processing svn+ssh://dev.processing.org/var/svn/tags/processing-0178
-svn copy -r 6334 svn+ssh://dev.processing.org/var/svn/trunk/processing svn+ssh://dev.processing.org/var/svn/tags/processing-0178
-
 svn copy https://processing.googlecode.com/svn/trunk/processing https://processing.googlecode.com/svn/branches/processing-0192-refactor
 svn switch https://processing.googlecode.com/svn/branches/processing-0192-refactor .
+svn co https://processing.googlecode.com/svn/tags/processing-1.2.1/core processing-core-1.2.1
+svn co https://processing.googlecode.com/svn/tags/processing-1.5.1/core processing-core-1.5.1
 
 from user Batuff
 > sudo apt-get install xvfb

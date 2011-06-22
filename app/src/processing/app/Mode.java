@@ -516,16 +516,12 @@ public abstract class Mode {
               SketchReference sketch = (SketchReference) node.getUserObject();
               base.handleOpen(sketch.getPath());
             } else {
-              System.out.println("double clicking...");
               int selRow = tree.getRowForLocation(e.getX(), e.getY());
               TreePath selPath = tree.getPathForLocation(e.getX(), e.getY());
-              System.out.println("  clicked on " + selRow + " -> " + selPath);
               if (selRow != -1) {
                 if (tree.isExpanded(selRow)) {
-                  System.out.println("  collapsing");
                   tree.collapsePath(selPath);
                 } else {
-                  System.out.println("  expanding");
                   tree.expandPath(selPath);
                 }
               }
