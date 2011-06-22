@@ -91,15 +91,27 @@ public class JavaScriptEditor extends Editor
         }
       });
 
-	JMenuItem showDirectivesWindow = new JMenuItem("Playback settings");
-	showDirectivesWindow.addActionListener(new ActionListener() {
+    return buildSketchMenu(new JMenuItem[] {
+		startServerItem, stopServerItem
+		});
+  }
+
+  public JMenu buildModeMenu() {
+    JMenu menu = new JMenu("JavaScript");    
+    JMenuItem item;
+
+	item = new JMenuItem("Playback settings (directives)");
+	item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      handleShowDirectivesEditor();
 		}
 	});
+	menu.add(item);
 
-	JMenuItem copyTemplate = new JMenuItem("Start custom template");
-	copyTemplate.addActionListener(new ActionListener() {
+    menu.addSeparator();
+
+	item = new JMenuItem("Start custom template");
+	item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		  Sketch sketch = getSketch();
 		  File ajs = sketch.getMode().
@@ -123,13 +135,10 @@ public class JavaScriptEditor extends Editor
 						 "folder from the sketch." );
 		}
 	});
+	menu.add(item);
 
-    return buildSketchMenu(new JMenuItem[] {
-		startServerItem, stopServerItem,
-		showDirectivesWindow, copyTemplate
-		});
+    return menu;
   }
-
   
   public JMenu buildHelpMenu () 
   {
