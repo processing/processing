@@ -1427,52 +1427,79 @@ public class PApplet extends Applet
       // are finally painted to the screen and the thread gets going
       return;
     }
-
-//    //MACOSX
-//    // every public entry point for drawing should
-//    // disable/enable flushing to avoid screen flickering
-//    sun.java2d.SurfaceData sd = null;
-//    if (platform == MACOSX) {
-//      if (screen instanceof sun.java2d.SunGraphics2D) {
-//        sd = ((sun.java2d.SunGraphics2D) screen).surfaceData;
-//      }
-//      if (sd != null) {
-//        sd.disableFlushing();
-//      }
-//    }
-//    try {
-    
     // without ignoring the first call, the first several frames
     // are confused because paint() gets called in the midst of
     // the initial nextFrame() call, so there are multiple
     // updates fighting with one another.
 
-    // g.image is synchronized so that draw/loop and paint don't
-    // try to fight over it. this was causing a randomized slowdown
-    // that would cut the frameRate into a third on macosx,
-    // and is probably related to the windows sluggishness bug too
-
     // make sure the screen is visible and usable
     // (also prevents over-drawing when using PGraphicsOpenGL)
+    
+    /* the 1.5.x version
     if (g != null) {
       // added synchronization for 0194 because of flicker issues with JAVA2D
       // http://code.google.com/p/processing/issues/detail?id=558
+      // g.image is synchronized so that draw/loop and paint don't
+      // try to fight over it. this was causing a randomized slowdown
+      // that would cut the frameRate into a third on macosx,
+      // and is probably related to the windows sluggishness bug too
       if (g.image != null) {
+        System.out.println("ui paint");
         synchronized (g.image) {
           screen.drawImage(g.image, 0, 0, null);
         }
       }
     }
+*/
+    // the 1.2.1 version
+    if ((g != null) && (g.image != null)) {
+//      println("inside paint(), screen.drawImage()");
+      screen.drawImage(g.image, 0, 0, null);
+    }
+  }
 
-//    System.out.println(" out paint " + r);
+  
+  // active paint method
+  protected void paint() {
+    try {
+      Graphics screen = this.getGraphics();
+      if (screen != null) {
+        if ((g != null) && (g.image != null)) {
+          screen.drawImage(g.image, 0, 0, null);
+        }
+        Toolkit.getDefaultToolkit().sync();
+      }
+    } catch (Exception e) {
+      // Seen on applet destroy, maybe can ignore?
+      e.printStackTrace();
 
 //    } finally {
-//      if (platform == MACOSX) {
-//        if (sd != null) {
-//          sd.enableFlushing();
-//        }
+//      if (g != null) {
+//        g.dispose();
 //      }
-//    }
+    }
+  }
+  
+  protected void paint_1_5_1() {
+    try { 
+      Graphics screen = getGraphics();
+      if (screen != null) {
+        if (g != null) {
+          // added synchronization for 0194 because of flicker issues with JAVA2D
+          // http://code.google.com/p/processing/issues/detail?id=558
+          if (g.image != null) {
+            System.out.println("active paint");
+            synchronized (g.image) {
+              screen.drawImage(g.image, 0, 0, null);
+            }
+            Toolkit.getDefaultToolkit().sync();
+          }
+        }
+      }
+    } catch (Exception e) {
+      // Seen on applet destroy, maybe can ignore?
+      e.printStackTrace();
+    }
   }
 
 
@@ -1650,8 +1677,9 @@ public class PApplet extends Applet
       frameRateLastNanos = now;
       frameCount++;
 
-      repaint();
-      getToolkit().sync();  // force repaint now (proper method)
+      paint();  // back to active paint
+//      repaint();
+//      getToolkit().sync();  // force repaint now (proper method)
 
       postMethods.handle();
     }
