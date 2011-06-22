@@ -115,8 +115,8 @@ public class JavaScriptMode extends Mode
 	File[] jModeExamples = new File[] {
       new File(jExamples, "Basics"),
       new File(jExamples, "Topics"),
-      new File(jExamples, "3D"),
-      new File(jExamples, "Books")
+      new File(jExamples, "3D") /*,
+      new File(jExamples, "Books")*/
     };
 	
 	// merge them all
