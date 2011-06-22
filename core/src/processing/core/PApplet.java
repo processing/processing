@@ -7686,9 +7686,11 @@ public class PApplet extends Applet
    * Starts shape recording and returns the PShape object that will
    * contain the geometry.
    */
+  /*
   public PShape beginRecord() {
     return g.beginRecord();
   }
+  */
 
   //////////////////////////////////////////////////////////////
 

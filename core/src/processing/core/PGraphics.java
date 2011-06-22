@@ -5938,11 +5938,10 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("textureBlend");
   }
 
-
-  public PShape beginRecord() { // ignore
-    showMissingWarning("beginRecord");
-    return null;
-  }
+//  public PShape beginRecord() { // ignore
+//    showMissingWarning("beginRecord");
+//    return null;
+//  }
 
 
 //  public void endRecord() {  // ignore
