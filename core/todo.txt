@@ -441,11 +441,11 @@ _ add docs for screenWidth and screenHeight
 _ remove delay() documentation
 
 2.0
+_ PNode.getChildren() shouldn't make a new array.. toArray() can do that
 _ texts using textMode(SCREEN) not displayed in Processing 1.5.1
 _   http://code.google.com/p/processing/issues/detail?id=741
 _ thread() causes weird flickering
 _   http://code.google.com/p/processing/issues/detail?id=742
-
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
 _ remove blend(), add blendMode()
@@ -524,6 +524,18 @@ _   http://code.google.com/p/processing/issues/detail?id=722
 _ add methods to PShape to apply all transformations in the tree
 _ need to clean up the hints in the reference/source
 
+gui priorities
++ Label
++ Button
++ Scrollbar/Slider
+- Checkbox
+- Radio
+. List
+. Textblock
+\ Knob
+\ Progress bar
+\ Toggle
+
 decisions to make
 _ possible addition for 'implementation' variable
 _   http://code.google.com/p/processing/issues/detail?id=281
@@ -552,6 +564,8 @@ _   http://code.google.com/p/processing/issues/detail?id=246
 _ path for selectXxxxx() functions
 _   http://code.google.com/p/processing/issues/detail?id=233
 _ provide a way to clear the PGraphics with plain alpha
+_ add breakShape to the public API 
+_   or handle differently in general.. nested beginPath() calls?
 
 _ opengl applet problems
 _   http://code.google.com/p/processing/issues/detail?id=196

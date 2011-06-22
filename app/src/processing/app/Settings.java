@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2004-11 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -37,21 +37,31 @@ import processing.core.*;
  * and to make way for future ability to customize.
  */
 public class Settings {
-  /** Copy of the defaults in case the user mangles a preference. */
+  /** 
+   * Copy of the defaults in case the user mangles a preference. 
+   * It's necessary to keep a copy of the defaults around, because the user may
+   * have mangled a setting on their own. In the past, we used to load the 
+   * defaults, then replace those with what was in the user's preferences file.
+   * Problem is, if something like a font entry in the user's file no longer 
+   * parses properly, we need to be able to get back to a clean version of that
+   * setting so we can recover.
+   */
   HashMap<String,String> defaults;
-  /** Table of attributes/values for the theme. */
+  
+  /** Table of attributes/values. */
   HashMap<String,String> table = new HashMap<String,String>();;
+  
   /** Associated file for this settings data. */
   File file;
 
 
   public Settings(File file) throws IOException {
     this.file = file;
-    load();
-
-    // other things that have to be set explicitly for the defaults
-    setColor("run.window.bgcolor", SystemColor.control);
-
+    
+    if (file.exists()) {
+      load();
+    }
+    
     // clone the hash table
     defaults = (HashMap<String,String>) table.clone();
   }
@@ -86,19 +96,23 @@ public class Settings {
   }
 
 
+  public void save() {
+    PrintWriter writer = PApplet.createWriter(file);
+
+    for (String key : table.keySet()) {
+      writer.println(key + "=" + table.get(key));
+    }
+
+    writer.flush();
+    writer.close();
+  }
+
+
   public String get(String attribute) {
     return table.get(attribute);
   }
 
 
-  /**
-   * It's necessary to keep a copy of the defaults around, because the user may
-   * have mangled a setting on their own. In the past, we used to load the 
-   * defaults, then replace those with what was in the user's preferences file.
-   * Problem is, if something like a font entry in the user's file no longer 
-   * parses properly, we need to be able to get back to a clean version of that
-   * setting so we can recover.
-   */
   public String getDefault(String attribute) {
     return defaults.get(attribute);
   }

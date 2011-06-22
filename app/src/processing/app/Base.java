@@ -533,10 +533,17 @@ public class Base {
 
         // save a mode file into this sketch folder
         File sketchProps = new File(sketch.getFolder(), "sketch.properties");
-        PrintWriter writer = PApplet.createWriter(sketchProps);
-        writer.println("mode=" + mode.getTitle());
-        writer.flush();
-        writer.close();
+        try {
+          Settings props = new Settings(sketchProps);
+          props.set("mode", mode.getTitle());
+          props.save();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+//        PrintWriter writer = PApplet.createWriter(sketchProps);
+//        writer.println("mode=" + mode.getTitle());
+//        writer.flush();
+//        writer.close();
 
         // close this sketch
         int[] where = activeEditor.getPlacement();
