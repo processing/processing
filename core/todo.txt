@@ -977,7 +977,6 @@ _   gradients not supported in java2d
 _     http://dev.processing.org/bugs/show_bug.cgi?id=371
 _ bspline or nurbs (later, want to do the 3D/arch stuff correctly)
 _ non-homogenous coloring for curve vertices
-_ repeating texture support
 _ exactly how should pixel filling work with single pixel strokes?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1025
 _ consider bringing back text/image using cache/names

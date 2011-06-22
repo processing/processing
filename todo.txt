@@ -13,6 +13,10 @@ o add deployJava.js to local sketch folder (causes internet requirement)
 X   http://code.google.com/p/processing/issues/detail?id=650
 X   http://www.java.com/js/deployJava.js
 X   bad idea, since it adds 17k to every download
+X make examples window respond to ESC 
+X   and double-click events to expand/collapse nodes
+X examples window placed off-screen when PDE window is maximized
+X   http://code.google.com/p/processing/issues/detail?id=669
 
 cleanup
 X how is autoformat doing? good now
@@ -49,8 +53,6 @@ _   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-jav
 
 _ Resize box on OS X is not present in Examples box
 _   http://code.google.com/p/processing/issues/detail?id=730
-_ examples window placed off-screen when PDE window is maximized
-_   http://code.google.com/p/processing/issues/detail?id=669
 
 pnode: look more closely at json and xml compatibility
 
