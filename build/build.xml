@@ -7,11 +7,24 @@
   <condition property="linux"><os family="unix" /></condition>
   
   <condition property="platform" 
-	     value="macosx"><os family="mac" /></condition>
+	     value="macosx"><os family="mac" /> </condition>
   <condition property="platform" 
-	     value="windows"><os family="windows" /></condition>
+	     value="windows"><os family="windows" /> </condition>
   <condition property="platform" 
-	     value="linux"><os family="unix" /></condition>
+	     value="linux"><os family="unix" /> </condition>
+
+  <condition property="target.path" 
+	     value="macosx/work/Processing.app/Contents/Resources/Java">
+    <os family="mac" /> 
+  </condition>
+
+  <condition property="target.path" value="linux/work">
+    <os family="unix" />
+  </condition>
+
+  <condition property="target.path" value="windows/work">
+    <os family="windows" /> 
+  </condition>
 
   <!-- Libraries required for running processing -->
   <fileset dir=".." id="runtime.jars">
@@ -44,6 +57,7 @@
     <!-- ensure that the android-core.zip file has been built -->
     <available file="${target.path}/modes/android/android-core.zip" 
 	       property="android-core-present" />
+    <!--<echo message="${target.path}/modes/android/android-core.zip" />-->
     <fail unless="android-core-present" 
 	  message="android-core.zip was not built, but is required for dist. Install the Android tools, set ANDROID_SDK, and try again." />
   </target>
