@@ -21,6 +21,8 @@ X Resize box on OS X is not present in Examples box
 X   http://code.google.com/p/processing/issues/detail?id=730
 X New/Rename Tab commands inhibited when Console/Message Area is hidden
 X   http://code.google.com/p/processing/issues/detail?id=745
+X make sketch.properties usable elsewhere by loading/reloading
+X   http://code.google.com/p/processing/issues/detail?id=722
 
 cleanup
 X how is autoformat doing? good now
@@ -40,6 +42,12 @@ X   -> jer: "can we put fax support in there too?"
 o prevent people from setting the font size too small in the editor
 o   how do we figure out what "too small" is?
 X   -> everyone thinks this is funny
+
+decisions
+_ kill external editor (for all its quirks) in favor of command line? 
+_ use external editor needs to enable/disable across all windows
+_   http://code.google.com/p/processing/issues/detail?id=515
+_ lots of other things in the google code issues list
 
 required for 0198 release
 _ automatically insert the 'import processing.opengl' when P3D used
