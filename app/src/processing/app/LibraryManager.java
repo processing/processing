@@ -57,6 +57,12 @@ class ProgressMonitor {
  */
 public class LibraryManager {
   
+  private static final String DRAG_AND_DROP_SECONDARY =
+    ".plb files usually contain contributed libraries for <br>" +
+    "Processing. Click “Yes” to install this library to your<br>" +
+    "sketchbook. If you wish to add this file to your<br>" +
+    "sketch instead, click “No” and use <i>Sketch &gt;<br>Add File...</i>";
+  
   class LibraryDownloader implements Runnable {
     URL url;
     ProgressMonitor progressMonitor;
@@ -431,16 +437,18 @@ public class LibraryManager {
       for (Library oldLib : oldLibs) {
         
         if (oldLib.getName().equals(lib.getName())) {
-          String prompt = "Library named \"" + oldLib.getName() + "\" already installed.\n\nReplace existing library?";
           
-          int result = JOptionPane.showConfirmDialog(this.editor, prompt, "Replace",
-                                                     JOptionPane.YES_NO_OPTION,
-                                                     JOptionPane.QUESTION_MESSAGE);
+          int result = Base.showYesNoQuestion(editor, "Replace",
+                 "Replace existing \"" + oldLib.getName() + "\" library?",
+                 "An existing copy of the \"" + oldLib.getName() + "\" library<br>"+
+                 "has been found in your sketchbook. Clicking “Yes”<br>"+
+                 "will move the existing library to a backup folder<br>" +
+                 " in <i>libraries/old</i> before replacing it.");
           
-          if (result != 0) {
-            it.remove();
-          } else {
+          if (result == JOptionPane.YES_OPTION) {
             libsToBeBackuped.add(oldLib);
+          } else {
+            it.remove();
           }
           break;
         }
@@ -574,13 +582,11 @@ public class LibraryManager {
   public int confirmAndInstallLibrary(Editor editor, File libFile) {
     this.editor = editor;
     
-    String prompt = "Install libraries from " + libFile.getName() + "?  ";
-
-    int result = JOptionPane.showConfirmDialog(this.editor, prompt, "Install",
-                                               JOptionPane.YES_NO_OPTION,
-                                               JOptionPane.QUESTION_MESSAGE);
+    int result = Base.showYesNoQuestion(this.editor, "Install",
+                             "Install libraries from " + libFile.getName() + "?",
+                             DRAG_AND_DROP_SECONDARY);
     
-    if (result == 0) {
+    if (result == JOptionPane.YES_OPTION) {
       return installLibrary(libFile);
     }
     
