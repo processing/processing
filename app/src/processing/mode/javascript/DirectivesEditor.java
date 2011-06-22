@@ -145,10 +145,14 @@ public class DirectivesEditor
 				
 				/* remove framing */
 				mm = mm.replaceAll("^\\/\\*\\s*@pjs","").replaceAll("\\s*\\*\\/\\s*$","");
+				/* fix multiline nice formatting */
+				mm = mm.replaceAll("[\\s]*([^;\\s\\n\\r]+)[\\s]*,[\\s]*[\\n\\r]+","$1,");
 				/* fix multiline version without semicolons */
-				mm = mm.replaceAll("([^;\\s\\n\\r]+)[\\s]*[\\n\\r]+","$1;");
-				mm = mm.replaceAll("\n","").replaceAll("\r","");
+				mm = mm.replaceAll("[\\s]*([^;\\s\\n\\r]+)[\\s]*[\\n\\r]+","$1;");
+				mm = mm.replaceAll("\n"," ").replaceAll("\r"," ");
 				
+				System.out.println(mm);
+					
 				if ( clean )
 				{
 					m.appendReplacement(buffer, "");
@@ -198,7 +202,14 @@ public class DirectivesEditor
 			return;
 		}
 		
-		String key = pair[0].trim(), value = pair[1].trim();
+		String key   = pair[0].trim(), 
+			   value = pair[1].trim();
+		
+		// clean these, might have too much whitespace around commas
+		if ( validKeys.indexOf(key) == FONT || validKeys.indexOf(key) == PRELOAD )
+		{
+			value = value.replaceAll("[\\s]*,[\\s]*", ",");
+		}
 		
 		if ( validKeys.indexOf(key) == -1 )
 		{

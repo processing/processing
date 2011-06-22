@@ -351,10 +351,15 @@ public class JavaScriptEditor extends Editor
    */
   public boolean handleExport ( boolean openFolder ) 
   {
-    if (handleExportCheckModified())
+    if ( !handleExportCheckModified() )
     {
+		return false;
+	}
+	else
+	{
       toolbar.activate(JavaScriptToolbar.EXPORT);
-      try {
+      try 
+	  {
         boolean success = jsMode.handleExport(sketch);
         if ( success && openFolder ) 
 		{

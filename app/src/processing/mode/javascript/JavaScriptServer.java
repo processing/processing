@@ -14,7 +14,6 @@ class JavaScriptServer implements HttpConstants, Runnable
 	Thread thread = null;
 	ServerSocket server = null;
 	
-	// TODO: this needed? SocketException on stop coming from here?
     //private ArrayList<Worker> threads = new ArrayList<Worker>();
     //private int workers = 5;
 
