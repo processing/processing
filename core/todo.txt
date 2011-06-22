@@ -69,6 +69,9 @@ X saveBytes() error when writing to existing file
 X   http://code.google.com/p/processing/issues/detail?id=667
 X destroy() in PApplet ultimately calls System.exit()
 X   http://code.google.com/p/processing/issues/detail?id=698
+X post() is called after setup() (make decision)
+X   http://code.google.com/p/processing/issues/detail?id=455
+X   decision: post() only gets called in draw, not setup.. document
 
 opengl applets
 X implement new applet-opengl.html based on the latest jogl 
@@ -490,9 +493,6 @@ _   inputFile() and outputFile() need a fix
 _     remove them from the code, write examples for these
 _     use callbacks instead
 _     need to decide if you specify the function name, or if it's specific
-_ post() is called after setup() (make decision)
-_   http://code.google.com/p/processing/issues/detail?id=455
-_   decision: post() only gets called in draw, not setup.. document
 _ PShape API to handle internal vertex stuff
 _   add deconstruct() method for paths
 _   toArray() and toVector()

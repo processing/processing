@@ -1639,7 +1639,9 @@ public class PApplet extends Applet
         float instantaneousRate = (float) rate / 1000.0f;
         frameRate = (frameRate * 0.9f) + (instantaneousRate * 0.1f);
 
-        preMethods.handle();
+        if (frameCount != 0) {
+          preMethods.handle();
+        }
 
         // use dmouseX/Y as previous mouse pos, since this is the
         // last position the mouse was in during the previous draw.
@@ -1681,7 +1683,9 @@ public class PApplet extends Applet
 //      repaint();
 //      getToolkit().sync();  // force repaint now (proper method)
 
-      postMethods.handle();
+      if (frameCount != 0) {
+        postMethods.handle();
+      }
     }
   }
 
