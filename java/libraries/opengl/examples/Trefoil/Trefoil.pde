@@ -6,7 +6,7 @@
 // the same surface but without the texture, and the 
 // offscreen texture with the particle system.
 
-import processing.opengl2.*;
+import processing.opengl.*;
 
 PGraphics pg;
 PShape trefoil;
@@ -14,7 +14,7 @@ PShape3D particles;
 int mode = 0;
 
 void setup() {
-  size(280, 400, OPENGL2);
+  size(280, 400, OPENGL);
   
   PFont font = createFont(PFont.list()[0], 18);
   textFont(font, 18);
@@ -23,7 +23,7 @@ void setup() {
   noStroke();
 
   // Creating offscreen surface for 3D rendering.
-  pg = createGraphics(32, 512, OPENGL2);
+  pg = createGraphics(32, 512, OPENGL);
 
   // Initializing particle system
   PShape3D.Parameters params = PShape3D.newParameters(POINT_SPRITES, STREAM);  

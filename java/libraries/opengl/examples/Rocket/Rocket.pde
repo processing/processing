@@ -3,7 +3,7 @@
 // the PShape3D class to create a particle system.
 // Rocket model from http://keleb.free.fr/codecorner/models-en.htm
 
-import processing.opengl2.*;
+import processing.opengl.*;
 
 PShape3D rocket;
 PShape3D particles;
@@ -19,7 +19,7 @@ float timeInc = 0.03;
 PVector axis, pos, vel;
 
 void setup() {
-  size(800, 600, OPENGL2);
+  size(800, 600, OPENGL);
   //orientation(PORTRAIT);
 
   rocket = (PShape3D)loadShape("rocket.obj");
