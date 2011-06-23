@@ -3,7 +3,7 @@
 // available in OPENGL2.   
 // Images by Kevin Bjorke.
 
-import processing.opengl2.*;
+import processing.opengl.*;
 
 PImage pic1, pic2;
 int selMode = REPLACE;
@@ -11,7 +11,7 @@ String name = "replace";
 int picAlpha = 255;
 
 void setup() {
-  size(800, 480, OPENGL2);
+  size(800, 480, OPENGL);
   
   PFont font = createFont(PFont.list()[0], 20);
   textFont(font, 20);    

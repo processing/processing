@@ -4,7 +4,7 @@
 // Ported from NeHe tutorial 8:
 // http://nehe.gamedev.net/data/lessons/lesson.asp?lesson=08
 
-import processing.opengl2.*;
+import processing.opengl.*;
 
 import javax.media.opengl.*;
 import java.nio.*;
@@ -52,7 +52,7 @@ float ySpeed = 0.2f;
 GLUgl2 glu;
 
 void setup() {
-  size(400, 400, OPENGL2);
+  size(400, 400, OPENGL);
   //  orientation(PORTRAIT);  
 
   glu = new GLUgl2();
@@ -86,7 +86,7 @@ void setup() {
   lightDifBfr = FloatBuffer.wrap(lightDif);
   lightPosBfr = FloatBuffer.wrap(lightPos);    
 
-  PGraphicsOpenGL2 pgl = (PGraphicsOpenGL2)g;
+  PGraphicsOpenGL pgl = (PGraphicsOpenGL)g;
   GL gl = pgl.beginGL();
 
   Texture teximage = null;
@@ -134,7 +134,7 @@ void setup() {
 public void draw() {
   background(0);
 
-  PGraphicsOpenGL2 pgl = (PGraphicsOpenGL2)g;
+  PGraphicsOpenGL pgl = (PGraphicsOpenGL)g;
   GL gl = pgl.beginGL();
 
   pgl.gl2f.glShadeModel(GL2.GL_SMOOTH);

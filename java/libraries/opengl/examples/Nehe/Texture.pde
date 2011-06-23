@@ -1,4 +1,3 @@
-import com.sun.opengl.util.BufferUtil;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
@@ -36,7 +35,8 @@ Texture readPixels(BufferedImage img, boolean storeAlphaChannel) {
   }
 
   int bytesPerPixel = storeAlphaChannel ? 4 : 3;
-  ByteBuffer unpackedPixels = BufferUtil.newByteBuffer(packedPixels.length * bytesPerPixel);
+  //ByteBuffer unpackedPixels = BufferUtil.newByteBuffer(packedPixels.length * bytesPerPixel);
+  ByteBuffer unpackedPixels = ByteBuffer.allocate(packedPixels.length * bytesPerPixel);
 
   for (int row = img.getHeight() - 1; row >= 0; row--) {
     for (int col = 0; col < img.getWidth(); col++) {
