@@ -18,11 +18,13 @@ import processing.app.Formatter;
 import processing.app.Mode;
 import processing.mode.java.AutoFormat;
 
-
 import javax.swing.*;
 
 public class JavaScriptEditor extends Editor 
 {
+	final static String PROP_KEY_MODE = "mode";
+	final static String PROP_VAL_MODE = "JavaScript";
+	final static String PROP_KEY_SERVER_PORT = "js.server.port";
 	
   private JavaScriptMode jsMode;
   private JavaScriptServer jsServer;
@@ -100,10 +102,18 @@ public class JavaScriptEditor extends Editor
 	// 		}
 	// 	}
 	// );
+	
+	JMenuItem setServerPortItem = new JMenuItem("Set server port");
+	setServerPortItem.addActionListener(new ActionListener(){
+		public void actionPerformed (ActionEvent e) {
+			handleSetServerPort();
+		}
+	});
 
     return buildSketchMenu(new JMenuItem[] {
-		startServerItem, stopServerItem, copyServerAddressItem
-		});
+		startServerItem, stopServerItem, 
+		copyServerAddressItem, setServerPortItem
+	});
   }
 
   public JMenu buildModeMenu() {
@@ -244,6 +254,86 @@ public class JavaScriptEditor extends Editor
   
   // - - - - - - - - - - - - - - - - - -
 
+  private void handleSetServerPort ()
+  {
+	statusEmpty();
+	
+	String pString = null;
+	String msg = "Set the server port (1024 < port < 65535)";
+	int currentPort = -1;
+	
+	if ( jsServer != null ) currentPort = jsServer.getPort();
+	
+	if ( currentPort > 0 )
+		pString = JOptionPane.showInputDialog( msg, (currentPort+"") );
+	else
+		pString = JOptionPane.showInputDialog( msg );
+	
+	if ( pString == null ) return;
+	
+	int port = -1;
+	try {
+		port = Integer.parseInt(pString);
+	} catch ( Exception e ) {
+		// sending foobar? you lil' hacker you ...
+		statusError("That number was not okay ..");
+		return;
+	}
+	
+	if ( port < 0 || port > 65535 )
+	{
+		statusError("That port number is out of range");
+		return;
+	}
+	
+	createJavaScriptServer();
+	if ( jsServer != null )
+	{
+		jsServer.setPort(port);
+	}
+	
+	saveSketchSettings();
+  }
+
+  private void saveSketchSettings ()
+  {
+	statusEmpty();
+
+	File sketchProps = getSketchPropertiesFile();
+	if ( !sketchProps.exists() )
+	{
+		try {
+			sketchProps.createNewFile();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			statusError( "Unable to create sketch properties file!" );
+			return;
+		}
+	}
+	
+	Settings settings;
+	try {
+		settings = new Settings(sketchProps);
+	} catch ( IOException ioe ) {
+		ioe.printStackTrace();
+		return;
+	}
+	if ( settings == null )
+	{
+		statusError( "Unable to create sketch properties file!" );
+		return;
+	}
+	settings.set( PROP_KEY_MODE, PROP_VAL_MODE );
+	
+	if ( jsServer != null )
+	{
+		int port = jsServer.getPort();
+		if ( port > 0 ) settings.set( PROP_KEY_SERVER_PORT, (port+"") );
+	}
+	
+	settings.save();
+  }
+
   private void handleCreateCustomTemplate ()
   {
 	Sketch sketch = getSketch();
@@ -270,12 +360,6 @@ public class JavaScriptEditor extends Editor
 					 "folder from the sketch." );
   }
 
-  private File getCustomTemplateFolder ()
-  {
-	return new File( sketch.getFolder(), 
-					   JavaScriptBuild.TEMPLATE_FOLDER_NAME );
-  }
-
   private void handleOpenCustomTemplateFolder ()
   {
   	File tjs = getCustomTemplateFolder();
@@ -292,14 +376,14 @@ public class JavaScriptEditor extends Editor
 
   private void handleCopyServerAddress ()
   {
-		if ( jsServer != null && jsServer.isRunning() )
-		{
-			java.awt.datatransfer.StringSelection stringSelection = 
-				new java.awt.datatransfer.StringSelection( jsServer.getAddress() );
-		    java.awt.datatransfer.Clipboard clipboard = 
-				java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
-		    clipboard.setContents( stringSelection, null );
-		}
+	if ( jsServer != null && jsServer.isRunning() )
+	{
+		java.awt.datatransfer.StringSelection stringSelection = 
+			new java.awt.datatransfer.StringSelection( jsServer.getAddress() );
+	    java.awt.datatransfer.Clipboard clipboard = 
+			java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
+	    clipboard.setContents( stringSelection, null );
+	}
   }
 
   private void handleShowDirectivesEditor ()
@@ -341,6 +425,23 @@ public class JavaScriptEditor extends Editor
 		handleStartServer();
 	}
   }
+
+  private File getExportFolder ()
+  {
+  	return new File( getSketch().getFolder(),
+	 				 JavaScriptBuild.EXPORTED_FOLDER_NAME );
+  }
+
+  private File getSketchPropertiesFile ()
+  {
+  	return new File( getSketch().getFolder(), "sketch.properties");
+  }
+
+  private File getCustomTemplateFolder ()
+  {
+	return new File( getSketch().getFolder(), 
+					 JavaScriptBuild.TEMPLATE_FOLDER_NAME );
+  }
   
   /**
    *  Replacement for RUN: 
@@ -351,8 +452,7 @@ public class JavaScriptEditor extends Editor
 	statusEmpty();
 	if ( !handleExport( false ) ) return;
 
-	File serverRoot = new File( sketch.getFolder(),
-	 							JavaScriptBuild.EXPORTED_FOLDER_NAME );
+	File serverRoot = getExportFolder();
 
 	// if server hung or something else went wrong .. stop it.
 	if ( jsServer != null && 
@@ -364,22 +464,7 @@ public class JavaScriptEditor extends Editor
 	
     if ( jsServer == null )
 	{
-		jsServer = new JavaScriptServer( serverRoot );
-		File sketchFolder = getSketch().getFolder();
-	    File sketchProps = new File(sketchFolder, "sketch.properties");
-	    if ( sketchProps.exists() ) {
-			try {
-	        	Settings props = new Settings(sketchProps);
-				String portString = props.get("server.port");
-				if ( portString != null && !portString.trim().equals("") )
-				{
-	        		int port = Integer.parseInt(portString);
-					jsServer.setPort(port);
-				}
-			} catch ( IOException ioe ) {
-				statusError(ioe);
-			}
-	    }
+		jsServer = createJavaScriptServer();
 		jsServer.start();
 		
 		while ( !jsServer.isRunning() ) {}
@@ -397,6 +482,30 @@ public class JavaScriptEditor extends Editor
 					  "), reload your browser window." );
 	}
     toolbar.activate(JavaScriptToolbar.RUN);
+  }
+
+  private JavaScriptServer createJavaScriptServer ()
+  {
+	if ( jsServer != null ) return jsServer;
+	
+	jsServer = new JavaScriptServer( getExportFolder() );
+	
+    File sketchProps = getSketchPropertiesFile();
+    if ( sketchProps.exists() ) {
+		try {
+        	Settings props = new Settings(sketchProps);
+			String portString = props.get( PROP_KEY_SERVER_PORT );
+			if ( portString != null && !portString.trim().equals("") )
+			{
+        		int port = Integer.parseInt(portString);
+				jsServer.setPort(port);
+			}
+		} catch ( IOException ioe ) {
+			statusError(ioe);
+		}
+    }
+
+	return jsServer;
   }
 
   /**
