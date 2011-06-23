@@ -4141,7 +4141,7 @@ public class PApplet extends Applet
     } else if (extension.equals("svgz")) {
       try {
         InputStream input = new GZIPInputStream(createInput(filename));
-        PNode xml = new PNodeXML(createReader(input));
+        PNode xml = new PNode(createReader(input));
         return new PShapeSVG(xml);
       } catch (IOException e) {
         e.printStackTrace();
@@ -4180,15 +4180,22 @@ public class PApplet extends Applet
   
   public PNode loadNode(String filename) {
     if (filename.toLowerCase().endsWith(".xml")) {
-      return new PNodeXML(this, filename);
-    } else if (filename.toLowerCase().endsWith(".json")) {
-      throw new RuntimeException("loadNode() for JSON not yet implemented");
+      return new PNode(this, filename);
     } else {
-      throw new RuntimeException("loadNode() must end with either XML or JSON");
+      throw new RuntimeException("filename used for loadNode() must end with XML");
     }
   }
-
   
+  
+//  public PData loadData(String filename) {
+//    if (filename.toLowerCase().endsWith(".json")) {
+//      return new PData(this, filename);
+//    } else {
+//      throw new RuntimeException("filename used for loadNode() must end with XML");
+//    }
+//  }
+
+
   
   //////////////////////////////////////////////////////////////
 

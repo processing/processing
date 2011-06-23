@@ -30,7 +30,6 @@ import java.io.PrintWriter;
 import processing.app.*;
 import processing.core.PApplet;
 import processing.core.PNode;
-import processing.core.PNodeXML;
 
 
 public class Manifest {
@@ -196,7 +195,7 @@ public class Manifest {
     save(file);
     
     // load the copy from the build location and start messing with it
-    PNode mf = new PNodeXML(new FileReader(file));
+    PNode mf = new PNode(new FileReader(file));
 
     // package name, or default
     String p = mf.getString("package").trim();
@@ -232,7 +231,7 @@ public class Manifest {
     File manifestFile = getManifestFile();
     if (manifestFile.exists()) {
       try {
-        xml = new PNodeXML(new FileReader(manifestFile));
+        xml = new PNode(new FileReader(manifestFile));
       } catch (Exception e) {
         e.printStackTrace();
         System.err.println("Problem reading AndroidManifest.xml, creating a new version");
@@ -252,7 +251,7 @@ public class Manifest {
     if (xml == null) {
       writeBlankManifest(manifestFile);
       try {
-        xml = new PNodeXML(new FileReader(manifestFile));
+        xml = new PNode(new FileReader(manifestFile));
       } catch (FileNotFoundException e) {
         System.err.println("Could not read " + manifestFile.getAbsolutePath());
         e.printStackTrace();
