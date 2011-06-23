@@ -1,3 +1,56 @@
+0198 pde
+X incorporate RXTXcomm.jar and others from Dave
+X Serial.list() cannot find /dev/ttyACM0
+X   http://code.google.com/p/processing/issues/detail?id=634
+X incorporate gsvideo and opengl2 as the default libraries for video and opengl
+X Launch script for Linux fails to open a sketches with relative paths
+X   http://code.google.com/p/processing/issues/detail?id=707
+X Badly formed character constant exception
+X   http://code.google.com/p/processing/issues/detail?id=714
+o people not knowing how to use Java w/ OpenGL renderer
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1259
+o add deployJava.js to local sketch folder (causes internet requirement)
+X   http://code.google.com/p/processing/issues/detail?id=650
+X   http://www.java.com/js/deployJava.js
+X   bad idea, since it adds 17k to every download
+X make examples window respond to ESC 
+X   and double-click events to expand/collapse nodes
+X examples window placed off-screen when PDE window is maximized
+X   http://code.google.com/p/processing/issues/detail?id=669
+X Resize box on OS X is not present in Examples box
+X   http://code.google.com/p/processing/issues/detail?id=730
+X New/Rename Tab commands inhibited when Console/Message Area is hidden
+X   http://code.google.com/p/processing/issues/detail?id=745
+X make sketch.properties usable elsewhere by loading/reloading
+X   http://code.google.com/p/processing/issues/detail?id=722
+X Export to Application reports "Could not copy source file:" 
+X   http://code.google.com/p/processing/issues/detail?id=638
+X automatically insert the 'import processing.opengl' when P3D used
+X   add support for automatically including OpenGL when asking for P3D
+X   when using P3D and not realizing that it's really OpenGL...
+X Export Application Fails When Large File in Data Folder
+X   http://code.google.com/p/processing/issues/detail?id=747
+
+cleanup
+X how is autoformat doing? good now
+X catch 1.5 code in libraries - is this still an issue for 1.6 on 1.5? 
+X   Exception in thread "main" java.lang.UnsupportedClassVersionError: quicktime/QTException (Unsupported major.minor version 49.0) 
+o javascript and liveconnect to preload applets
+o   http://code.google.com/p/processing/issues/detail?id=66
+X   let's not bother
+o warn the user that the applet/application folders will be replaced
+X   nope, people not seeing this much
+o firmata as a core library (read/write to/from arduino)?
+o   package cc.arduino.*
+X   no thanks, they've abandoned it
+o add page numbers and file name to printing in p5
+o   also add something to control the font & font size
+X   -> jer: "can we put fax support in there too?" 
+o prevent people from setting the font size too small in the editor
+o   how do we figure out what "too small" is?
+X   -> everyone thinks this is funny
+
+
 0197 pde (1.5.1)
 X Windows splash screen for version 1.5 says "1.2"
 X   http://code.google.com/p/processing/issues/detail?id=631
