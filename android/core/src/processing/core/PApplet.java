@@ -3630,6 +3630,31 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return g.createShape(size, params);
   }
 
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // NODE I/O (XML, JSON, etc.)
+  
+  public PNode loadNode(String filename) {
+    if (filename.toLowerCase().endsWith(".xml")) {
+      return new PNode(this, filename);
+    } else {
+      throw new RuntimeException("filename used for loadNode() must end with XML");
+    }
+  }
+  
+  
+//  public PData loadData(String filename) {
+//    if (filename.toLowerCase().endsWith(".json")) {
+//      return new PData(this, filename);
+//    } else {
+//      throw new RuntimeException("filename used for loadNode() must end with XML");
+//    }
+//  }
+
+
+  
   //////////////////////////////////////////////////////////////
 
   // FONT I/O
