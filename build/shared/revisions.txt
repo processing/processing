@@ -1,3 +1,120 @@
+PROCESSING REV 0198 - 23 June 2011
+
+Major internal work as we start blowing things up for 2.0. The main things are
+covered on the changes page in the Wiki: http://wiki.processing.org/w/Changes
+
+This is an interim release so that Andres can do a workshop. Not recommended
+for casual use. Hostile or belligerent whiners need not apply.
+
+Android mode has received zero testing, so XML, SVG, 3D, and other major 
+features may be broken. See statement directly above.
+
+[ bugs fixed ] 
+
++ Examples window placed off-screen when PDE window is maximized
+  http://code.google.com/p/processing/issues/detail?id=669
+
++ Make examples window respond to ESC, and double-click events to 
+  expand/collapse nodes.
+
++ Launch script for Linux fails to open a sketches with relative paths
+  http://code.google.com/p/processing/issues/detail?id=707
+
++ Badly formed character constant exception
+  http://code.google.com/p/processing/issues/detail?id=714
+
++ Resize box on OS X is not present in Examples box
+  http://code.google.com/p/processing/issues/detail?id=730
+
++ New/Rename Tab commands inhibited when Console/Message Area is hidden
+  http://code.google.com/p/processing/issues/detail?id=745
+
++ Make sketch.properties usable elsewhere by loading/reloading
+  http://code.google.com/p/processing/issues/detail?id=722
+
++ Export to Application reports "Could not copy source file:" 
+  http://code.google.com/p/processing/issues/detail?id=638
+
++ Automatically insert the 'import processing.opengl' when P3D used.
+
++ Export Application Fails When Large File in Data Folder
+  http://code.google.com/p/processing/issues/detail?id=747
+
+[ reference ]
+
++ Add some notes about how to work with deployJava.js and applets
+  http://dev.processing.org/bugs/show_bug.cgi?id=1259
+
+[ core ]
+
++ Added quadraticVertex() method to do a quadratic bezier vertex.
+
++ More efficient version of copy() added for 2D.
+
++ Implemented rounded rectangle method.
+  http://code.google.com/p/processing/issues/detail?id=265
+
++ Removed the delay() method. It was awful.
+
++ Addded thread() method that takes a function name as a parameter, 
+  and runs it on its own thread. No more classes!
+
++ PImage.save() returns a success boolean (rather than throwing an 
+  exception when it fails).
+
+[ core bugs fixed ]
+
++ saveBytes() error when writing to existing file
+  http://code.google.com/p/processing/issues/detail?id=667
+
++ problem with destroy() calling System.exit()
+  http://code.google.com/p/processing/issues/detail?id=698
+
++ post() is called after setup() 
+  http://code.google.com/p/processing/issues/detail?id=455
+
++ Remove auto-sizing from binary() (was inconsistent with hex() method).
+
+[ libraries ]
+
++ Reverted back to the older serial libs, which should improve stability a bit.
+  Also grabbed the 64 bit Linux driver and a patch for /dev/ttyACM0 from
+  the Arduino guys. Thanks to Dave Mellis for the pointer.
+  http://code.google.com/p/processing/issues/detail?id=634
+
++ Fix applet exporting for new OpenGL, also fixes signed applet requirement.
+  http://code.google.com/p/processing/issues/detail?id=429
+
++ New XML library that more accurately reflects how DOM parsing works.
+  Also straightening out the API a bit. Documentation to come later.
+  http://code.google.com/p/processing/issues/detail?id=277
+  http://code.google.com/p/processing/issues/detail?id=440
+
+[ andres' bag of awesome ]
+
++ Finish OPENGL2 renderer
+  http://code.google.com/p/processing/issues/detail?id=495
+
++ Using createGraphics() image repeatedly runs out of memory with OPENGL
+  http://code.google.com/p/processing/issues/detail?id=483
+
++ Resizing window in OPENGL breaks ImageCaches
+  http://code.google.com/p/processing/issues/detail?id=184
+
++ Resize not working in revision 5707
+  camera() and perspective() were commented out in setSize()
+  http://dev.processing.org/bugs/show_bug.cgi?id=1391
+
++ Resizing opengl destroys context and textures
+  http://dev.processing.org/bugs/show_bug.cgi?id=1176
+
++ Implement repeating textures
+  http://code.google.com/p/processing/issues/detail?id=94
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 1.5.1 (REV 0197) - 15 May 2011
 
 This release fixes a handful of regressions and quirks that were found in

@@ -28,10 +28,6 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
-
 import processing.core.PApplet;
 
 
@@ -532,7 +528,17 @@ public class PNode implements Serializable {
    * @return the content.
    */
   public String getContent() {
-    return node.getTextContent();
+    //return node.getTextContent();  // requires Android 2.2
+
+    StringBuilder buffer = new StringBuilder();
+    NodeList childList = node.getChildNodes();
+    for (int i = 0; i < childList.getLength(); i++) {
+      Node child = childList.item(i);
+      if (child.getNodeType() == Node.TEXT_NODE) {  // skip non-text nodes 
+        buffer.append(child.getNodeValue());
+      }
+    }
+    return buffer.toString();
   }
 
   
@@ -542,6 +548,16 @@ public class PNode implements Serializable {
   
   
   public String toString(int indent) {
+    return super.toString();
+    
+    // requires API level 8
+//    javax.xml.transform.TransformerFactory factory = new javax.xml.transform.TransformerFactory();
+//    javax.xml.transform.Transformer transformer = factory.newTransformer();
+//    javax.xml.transform.dom.DOMSource domSource = new javax.xml.transform.dom.DOMSource(rootNode);
+//    javax.xml.transform.stream.StreamResult result = new javax.xml.transform.stream.StreamResult(outputStream);
+//    transformer(domSource, result);
+    
+    /*
     try {
       DOMSource dumSource = new DOMSource(node);
       TransformerFactory tf = TransformerFactory.newInstance();
@@ -567,42 +583,6 @@ public class PNode implements Serializable {
       e.printStackTrace();
     }
     return null;
-    
-//    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//    try {
-//      DocumentBuilder builder = factory.newDocumentBuilder();
-//      //builder.get
-////      Document document = builder.
-//      
-//    } catch (ParserConfigurationException e) {
-//      e.printStackTrace();
-//    }
-
-    
-    
-    //    Document doc = new DocumentImpl();
-//    return node.toString();
-    
-//    TransformerFactory transfac = TransformerFactory.newInstance();
-//    Transformer trans = transfac.newTransformer();
-//    trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-//    trans.setOutputProperty(OutputKeys.INDENT, "yes");
-//
-//    //create string from xml tree
-//    StringWriter sw = new StringWriter();
-//    StreamResult result = new StreamResult(sw);
-////    Document doc = 
-//    DOMSource source = new DOMSource(doc);
-//    trans.transform(source, result);
-//    String xmlString = sw.toString();
-
+    */
   }
-  
-  
-//  static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-//
-//  public void write(PrintWriter writer) {
-//    writer.println(HEADER);
-//    writer.print(toString(2));
-//  }
 }

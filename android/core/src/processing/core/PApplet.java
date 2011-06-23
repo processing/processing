@@ -25,7 +25,6 @@ package processing.core;
 
 import java.io.IOException;
 import java.io.InputStream;
-import processing.xml.XMLElement;
 import android.content.*;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
@@ -3598,7 +3597,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     } else if (extension.equals("svgz")) {
       try {
         InputStream input = new GZIPInputStream(createInput(filename));
-        XMLElement xml = new XMLElement(createReader(input));
+        PNode xml = new PNode(createReader(input));
         return new PShapeSVG(xml);
       } catch (IOException e) {
         e.printStackTrace();

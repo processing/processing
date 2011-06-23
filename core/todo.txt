@@ -437,6 +437,9 @@ _     and on android, start/stop can be used to save state information
 _   need to fix opengl applets so that we can safely kill P3D
 
 more xml/json changes
+_ finish xml writing on android
+_   http://stackoverflow.com/questions/2290945/writing-xml-on-android
+_   consider switch to android 2.2 as the minimum
 _ finish updating XML documentation
 _   http://code.google.com/p/processing/issues/detail?id=382
 _ json issues
