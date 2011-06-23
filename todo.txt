@@ -53,6 +53,9 @@ _ kill external editor (for all its quirks) in favor of command line?
 _ use external editor needs to enable/disable across all windows
 _   http://code.google.com/p/processing/issues/detail?id=515
 _ lots of other things in the google code issues list
+_ does editor.bgcolor live in the theme.txt file for the mode? 
+_   or should it be a user preference thing
+_   for that matter, need to decide on how much modes can customize themselves
 
 required for 0198 release
 _ automatically insert the 'import processing.opengl' when P3D used
