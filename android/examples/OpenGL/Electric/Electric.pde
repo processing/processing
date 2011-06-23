@@ -12,7 +12,7 @@ int startTime = 0;
 ArrayList LBolts;
 
 void setup() {
-  size(480, 800, A3D);
+  size(480, 800, P3D);
   orientation(PORTRAIT);
 
   LBolts = new ArrayList();

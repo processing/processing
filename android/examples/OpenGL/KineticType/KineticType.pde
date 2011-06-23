@@ -12,7 +12,7 @@ String words[] = {
 };
 
 void setup() {
-  size(800, 480, A3D);
+  size(800, 480, P3D);
   orientation(LANDSCAPE);   
   
   // Array of line objects

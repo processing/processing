@@ -15,7 +15,7 @@ int limit = 200;
 Cube[]cubes = new Cube[limit];
 
 void setup() {
-  size(800, 480, A3D); 
+  size(800, 480, P3D); 
   orientation(LANDSCAPE);
   
   background(0); 

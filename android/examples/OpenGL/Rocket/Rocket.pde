@@ -17,7 +17,7 @@ float timeInc = 0.03;
 PVector axis, pos, vel;
 
 void setup() {
-  size(480, 800, A3D);
+  size(480, 800, P3D);
   orientation(PORTRAIT);
 
   rocket = (PShape3D)loadShape("rocket.obj");

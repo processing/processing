@@ -48,7 +48,7 @@ float xSpeed = 0.2f;
 float ySpeed = 0.2f;  
 
 void setup() {
-  size(480, 800, A3D);
+  size(480, 800, P3D);
   orientation(PORTRAIT);  
 
   int SIZEOF_FLOAT = Float.SIZE / 8;
