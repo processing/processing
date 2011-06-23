@@ -1448,7 +1448,7 @@ public class JavaBuild {
     String preprocFilename = sketch.getName() + ".java";
     File preprocFile = new File(srcFolder, preprocFilename);
     if (preprocFile.exists()) {
-      preprocFile.renameTo(new File(sourceFolder, preprocFilename));
+      Base.copyFile(preprocFile, new File(sourceFolder, preprocFilename));
     } else {
       System.err.println("Could not copy source file: " + preprocFile.getAbsolutePath());
     }
