@@ -67,7 +67,7 @@ o   needs to be documented, and excise all screen.width/height references
 X   add to the 'changes' document
 X saveBytes() error when writing to existing file
 X   http://code.google.com/p/processing/issues/detail?id=667
-X destroy() in PApplet ultimately calls System.exit()
+X problem with destroy() calling System.exit()
 X   http://code.google.com/p/processing/issues/detail?id=698
 X post() is called after setup() (make decision)
 X   http://code.google.com/p/processing/issues/detail?id=455
@@ -425,6 +425,13 @@ _   http://code.google.com/p/processing/issues/detail?id=261
 _ remove matrixMode(), add a projection() method
 _ remove screenBlend(), textureBlend() from PGraphics et al
 _ have andres take over all current GL issues in the tracker
+_ opengl applet problems with tabs - needs to handle stop() and start() 
+_   http://code.google.com/p/processing/issues/detail?id=196
+_   stop() called between tabs/pages, start() may be called again
+_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
+_   really, stop() should just call noLoop() (and start re-enable if done)
+_     and on android, start/stop can be used to save state information
+_   need to fix opengl applets so that we can safely kill P3D
 
 more xml/json changes
 _ finish updating XML documentation
@@ -451,19 +458,13 @@ _ Abnormal high Java CPU usage at empty sketch with draw()
 _   http://code.google.com/p/processing/issues/detail?id=729
 _   https://forum.processing.org/topic/absurd-java-cpu-usage-at-empty-sketch-with-draw
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
-_ texts using textMode(SCREEN) not displayed in Processing 1.5.1
+_ text using textMode(SCREEN) not displayed in Processing 1.5.1
 _   http://code.google.com/p/processing/issues/detail?id=741
 _ thread() causes weird flickering
 _   http://code.google.com/p/processing/issues/detail?id=742
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
 _ remove blend(), add blendMode()
-_ sort out destroy(), stop(), pause() et al
-_   ColorSelector should stop/pause when not visible
-_   start()/stop() perform like onPause()/onResume()
-_     all of which call pause() and resume()
-_ problem with destroy() calling System.exit()
-_   http://code.google.com/p/processing/issues/detail?id=698
 _ decision on registered methods
 _   remove registerPre() et al
 _   add register("pause", ...) 
@@ -568,15 +569,8 @@ _   http://code.google.com/p/processing/issues/detail?id=233
 _ provide a way to clear the PGraphics with plain alpha
 _ add breakShape to the public API 
 _   or handle differently in general.. nested beginPath() calls?
-
-_ opengl applet problems
-_   http://code.google.com/p/processing/issues/detail?id=196
-_ look into p5 bug with opengl in applets
-_   stop() called between tabs/pages, start() may be called again
-_   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
-_   really, stop() should just call noLoop() (and start re-enable if done)
-_     and on android, start/stop can be used to save state information
-_ fix opengl applets so that we can safely kill P3D
+_ remove textMode(SCREEN)
+_   is it possible to do decent vlw text with JAVA2D and OPENGL?
 
 _ smooth() not working with applets an createGraphics(JAVA2D)
 _   but works fine with applications
@@ -592,6 +586,10 @@ _ redraw() doesn't work from within draw()
 _   http://code.google.com/p/processing/issues/detail?id=195
 
 stop() mess
+_ sort out destroy(), stop(), pause() et al
+_   ColorSelector should stop/pause when not visible
+_   start()/stop() perform like onPause()/onResume()
+_     all of which call pause() and resume()
 _ destroy() shouldn't call exit()... change from lonnen
 _   calls ((PApplet)this).exit() instead of stop() (since stop is pause)
 _ notes
