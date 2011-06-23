@@ -19,7 +19,7 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
-*/
+ */
 
 package processing.core;
 
@@ -167,6 +167,16 @@ public class PVector implements Serializable {
     return (float) Math.sqrt(x*x + y*y + z*z);
   }
 
+  /**
+   * Calculate  the squared magnitude of the vector
+   * Faster if the real length is not required in the 
+   * case of comparing vectors, etc.
+   * 
+   * @return squared magnitude of the vector
+   */
+  public float magSq() {
+    return (x*x + y*y + z*z);
+  }
 
   /**
    * Add a vector to this vector
@@ -439,7 +449,7 @@ public class PVector implements Serializable {
 
 
   static public float dot(PVector v1, PVector v2) {
-      return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
+    return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
   }
 
 
@@ -528,7 +538,7 @@ public class PVector implements Serializable {
    * Sets the magnitude of the vector to an arbitrary amount.
    * @param len the new length for this vector
    */
-  public void scaleTo(float len) {
+  public void setMag(float len) {
     normalize();
     mult(len);	
   }
@@ -539,10 +549,10 @@ public class PVector implements Serializable {
    * @param len the new length for the new vector
    * @return a new vector (if target was null), or target
    */
-  public PVector scaleTo(PVector target, float len) {
-	target = normalize(target);
-	target.mult(len);
-	return target;
+  public PVector setMag(PVector target, float len) {
+    target = normalize(target);
+    target.mult(len);
+    return target;
   }
 
   /**
@@ -560,10 +570,27 @@ public class PVector implements Serializable {
    */
   public void rotate(float theta) {
     float xTemp = x;
-	// Might need to check for rounding errors like with angleBetween function?
+    // Might need to check for rounding errors like with angleBetween function?
     x = x*PApplet.cos(theta) - y*PApplet.sin(theta);
     y = xTemp*PApplet.sin(theta) + y*PApplet.cos(theta);
   }
+
+  /**
+   * Linear interpolate the vector to another vector
+   * @param PVector the vector to lerp to
+   * @param amt  The amt parameter is the amount to interpolate between the two vectors where 1.0 equal to the new vector
+   * 0.1 is very near the new vector, 0.5 is half-way in between.
+   */
+  public void lerp(PVector v, float amt) {
+    x = PApplet.lerp(x,v.x,amt);
+    y = PApplet.lerp(y,v.y,amt);
+  }
+
+  public void lerp(float x, float y, float z, float amt) {
+    this.x = PApplet.lerp(this.x,x,amt);
+    this.y = PApplet.lerp(this.y,y,amt);
+  }
+
 
   /**
    * Calculate the angle between two vectors, using the dot product
