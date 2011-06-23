@@ -27,8 +27,6 @@ import java.util.HashMap;
 
 import android.graphics.*;
 
-import processing.xml.PNode;
-
 
 /**
  * SVG stands for Scalable Vector Graphics, a portable graphics format. It is
