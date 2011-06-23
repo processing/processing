@@ -77,10 +77,63 @@ class JavaScriptServer implements HttpConstants, Runnable
 		// http://stackoverflow.com/questions/434718/sockets-discover-port-availability-using-java
 		// http://stackoverflow.com/questions/2675362/how-to-find-an-available-port
 		
+		if ( port >= 0 )
+		{
+			if ( !available(port) )
+			{
+				System.err.println( "JavaScriptServer: " + 
+								    "that port ("+port+") seems to be taken " + 
+									"or is out of range (0-65535)");
+				port = -1;
+			}
+		}
+		
 		thread = null;
 		thread = new Thread(this, "ProcessingJSServer");
 		thread.start();
 	}
+	
+	/**
+	 * Checks to see if a specific port is available.
+	 * http://mina.apache.org/
+	 * http://stackoverflow.com/questions/434718/sockets-discover-port-availability-using-java
+	 */
+	public static boolean available (int port)
+	{
+		// http://en.wikipedia.org/wiki/Port_number
+		// http://en.wikipedia.org/wiki/Ephemeral_port
+	    if (port < 0 || port > 65535)
+		{
+	        //throw new IllegalArgumentException( "Invalid start port: " + port );
+			return false;
+	    }
+
+	    ServerSocket ss = null;
+	    DatagramSocket ds = null;
+	    try {
+	        ss = new ServerSocket(port);
+	        ss.setReuseAddress(true);
+	        ds = new DatagramSocket(port);
+	        ds.setReuseAddress(true);
+	        return true;
+	    } catch (IOException e) {
+	    } finally {
+	        if (ds != null) {
+	            ds.close();
+	        }
+
+	        if (ss != null) {
+	            try {
+	                ss.close();
+	            } catch (IOException e) {
+	                /* should not be thrown */
+	            }
+	        }
+	    }
+
+	    return false;
+	}
+	
 	
 	public void restart ()
 	{
@@ -136,6 +189,7 @@ class JavaScriptServer implements HttpConstants, Runnable
 			else
 			{
         		server = new ServerSocket( port );
+				//System.out.println( server.getLocalPort() );
 			}
 			
 		} catch ( IOException ioe ) {
