@@ -11,9 +11,9 @@ X remove A2D and A3D constants
 o colorMode() error 
 o   http://code.google.com/p/processing/issues/detail?id=223
 
-_ add INTERNET permissions to the android net examples
-
 _ tries to create and AVD when running on the phone.. why?
+_   this is a real problem, causes lots of crashing on startup
+_ add INTERNET permissions to the android net examples
 _ too many 'already exists' messages
 
 _ go through all basics/topics examples
