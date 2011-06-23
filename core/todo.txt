@@ -344,8 +344,9 @@ X   nobody felt strongly enough about getShape()
 X   so better to not change (and start breaking things)
 
 xml changes
-o see if write() is necessary inside PNodeXML
+X see if write() is necessary inside PNodeXML
 o   it needs a proper header on it, so maybe that's the difference w/ toString()
+X   verified that toString() also writes a header
 o inefficient: the way new nodes are created
 o also inefficient: adding/removing kids just nukes the children array
 X toString() adds the XML header
@@ -363,6 +364,8 @@ X   http://code.google.com/p/processing/issues/detail?id=440
 X PNode is final(?) name, get that implemented
 
 andres 
+_ beginRaw() not working with 3D
+_   http://code.google.com/p/processing/issues/detail?id=744
 _ OpenGL noSmooth() problems
 _   http://code.google.com/p/processing/issues/detail?id=328
 _ inconsistent anti-aliasing with OpenGL
@@ -454,6 +457,7 @@ _ add docs for screenWidth and screenHeight
 _ remove delay() documentation
 
 2.0
+_ enable smooth() by default
 _ Abnormal high Java CPU usage at empty sketch with draw() 
 _   http://code.google.com/p/processing/issues/detail?id=729
 _   https://forum.processing.org/topic/absurd-java-cpu-usage-at-empty-sketch-with-draw
@@ -515,6 +519,8 @@ _   -> resize() is fine with PImage and PGraphics...
 _   we may be inheriting the resize() from Java -> make it final?
 _ if PShape3D, then is it PShape2D? or do you handle both the same?
 _ svg fonts
+_   would be nifty if we could convert on the fly to ttf for speed...
+_   http://code.google.com/p/processing/issues/detail?id=748
 _ check on DXFWriter, since it used to subclass P3D
 _   at least implement is3D? 
 _ Potential race condition when resizing sketches

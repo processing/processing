@@ -11,6 +11,8 @@ X remove A2D and A3D constants
 o colorMode() error 
 o   http://code.google.com/p/processing/issues/detail?id=223
 
+_ /opt/android using version #s again? fix build script
+
 _ tries to create and AVD when running on the phone.. why?
 _   this is a real problem, causes lots of crashing on startup
 _ add INTERNET permissions to the android net examples

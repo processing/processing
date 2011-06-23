@@ -25,6 +25,11 @@ X make sketch.properties usable elsewhere by loading/reloading
 X   http://code.google.com/p/processing/issues/detail?id=722
 X Export to Application reports "Could not copy source file:" 
 X   http://code.google.com/p/processing/issues/detail?id=638
+X automatically insert the 'import processing.opengl' when P3D used
+X   add support for automatically including OpenGL when asking for P3D
+X   when using P3D and not realizing that it's really OpenGL...
+X Export Application Fails When Large File in Data Folder
+X   http://code.google.com/p/processing/issues/detail?id=747
 
 cleanup
 X how is autoformat doing? good now
@@ -48,6 +53,13 @@ X   -> everyone thinks this is funny
 _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions
 
+_ switch to a non-modified version of the launcher exe
+_   move the launcher to jsmooth or something like that?
+
+_ is there a better way to handle the data folder for apps?
+_   rather than adding it to the main zip file?
+_   otherwise ppl are copying really large files into a jar...
+
 decisions
 _ kill external editor (for all its quirks) in favor of command line? 
 _ use external editor needs to enable/disable across all windows
@@ -57,10 +69,7 @@ _ does editor.bgcolor live in the theme.txt file for the mode?
 _   or should it be a user preference thing
 _   for that matter, need to decide on how much modes can customize themselves
 
-required for 0198 release
-_ automatically insert the 'import processing.opengl' when P3D used
-_   add support for automatically including OpenGL when asking for P3D
-_   when using P3D and not realizing that it's really OpenGL...
+_ how to catch these?
 Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
 Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
 
@@ -71,7 +80,6 @@ _   http://code.google.com/p/processing/issues/detail?id=688
 
 _ write quicktime uncompressed (w/o qtjava)
 _   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
-
 
 pnode: look more closely at json and xml compatibility
 
@@ -148,7 +156,6 @@ _ fast java2d video?
 gsoc
 _ "install library" menu option
 _ see how library installation goes, then possibly do same w/ examples
-
 
 3.0
 _ better text editor / live debugging (integrate Eclipse JDT)

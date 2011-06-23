@@ -4,10 +4,17 @@
   <property environment="env" />
 
   <!-- oh ant, you're so cute and convoluted -->
-  <target name="build" depends="sdk_chatter,actual_build" />
+  <target name="build" depends="sdk_chatter,sdk_whining,actual_build" />
 
   <target name="sdk_chatter" unless="env.ANDROID_SDK">
     <echo message="ANDROID_SDK not set, skipping build of android-core.zip" />
+  </target>
+
+  <target name="sdk_whining">
+    <available file="${env.ANDROID_SDK}/platforms/android-7/android.jar"
+	       property="andoid-jar-present" />
+    <fail unless="andoid-jar-present" 
+	  message="Android SDK 7 could not be found in ${env.ANDROID_SDK}/platforms/android-7/android.jar" />
   </target>
 
   <target name="actual_build" if="env.ANDROID_SDK">
