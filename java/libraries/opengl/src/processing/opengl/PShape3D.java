@@ -233,6 +233,167 @@ public class PShape3D extends PShape {
 
   ////////////////////////////////////////////////////////////
 
+  // SHAPE RECORDING HACK
+
+  public void beginRecord() {
+    ogl.beginRecord(this);
+  }
+  
+  public void endRecord() {
+    ogl.endRecord();
+  }
+  
+  public void beginShape(int kind) {
+    ogl.beginShape(kind);
+  }
+  
+  public void endShape() {
+    ogl.endShape();
+  }
+  
+  public void endShape(int mode) {
+    ogl.endShape(mode);
+  }
+  
+  public void shapeName(String name) {
+    ogl.shapeName(name);
+  }
+  
+  public void mergeShapes(boolean val) {
+    ogl.mergeShapes(val);
+  }  
+  
+  public void vertex(float x, float y, float u, float v) {
+    ogl.vertex(x, y, u, v);
+  }
+
+  public void vertex(float x, float y, float z, float u, float v) {
+    ogl.vertex(x, y, z, u, v);
+  }
+  
+  public void vertex(float... values) {
+    ogl.vertex(values);
+  }
+  
+  public void normal(float nx, float ny, float nz) {
+    ogl.normal(nx, ny, nz);
+  }
+  
+  public void texture(PImage image) {
+    ogl.texture(image);
+  }
+  
+  public void texture(PImage... images) {
+    ogl.texture(images);
+  }
+
+  public void sphereDetail(int res) {
+    ogl.sphereDetail(res);
+  }
+  
+  public void sphereDetail(int ures, int vres) {
+    ogl.sphereDetail(ures, vres);
+  }
+  
+  public void sphere(float r) {
+    ogl.sphere(r);
+  }
+  
+  public void box(float size) {
+    ogl.box(size);
+  }
+  
+  public void box(float w, float h, float d) {
+    ogl.box(w, h, d);
+  }
+  
+  public void noFill() {
+    ogl.saveDrawingState();
+    ogl.noFill();
+    ogl.restoreDrawingState();
+  }
+
+  public void fill(int rgb) {
+    ogl.saveDrawingState();
+    ogl.fill(rgb);
+    ogl.restoreDrawingState();
+  }
+
+  public void fill(int rgb, float alpha) {
+    ogl.saveDrawingState();
+    ogl.fill(rgb, alpha);
+    ogl.restoreDrawingState();
+  }
+
+  public void fill(float gray) {
+    ogl.saveDrawingState();
+    ogl.fill(gray);
+    ogl.restoreDrawingState();
+  }
+
+  public void fill(float gray, float alpha) {
+    ogl.saveDrawingState();
+    ogl.fill(gray, alpha);
+    ogl.restoreDrawingState();
+  }
+
+  public void fill(float x, float y, float z) {
+    ogl.saveDrawingState();
+    ogl.fill(x, y, z);
+    ogl.restoreDrawingState();
+  }
+
+  public void fill(float x, float y, float z, float a) {
+    ogl.saveDrawingState();
+    ogl.fill(x, y, z, a);    
+    ogl.restoreDrawingState();
+  }
+    
+  public void noStroke() {
+    ogl.saveDrawingState();
+    ogl.noStroke();
+    ogl.restoreDrawingState();
+  }
+  
+  public void stroke(int rgb) {
+    ogl.saveDrawingState();
+    ogl.stroke(rgb);
+    ogl.restoreDrawingState();
+  }
+
+  public void stroke(int rgb, float alpha) {
+    ogl.saveDrawingState();
+    ogl.stroke(rgb, alpha);
+    ogl.restoreDrawingState();
+  }
+
+  public void stroke(float gray) {
+    ogl.saveDrawingState();
+    ogl.stroke(gray);
+    ogl.restoreDrawingState();
+  }
+
+  public void stroke(float gray, float alpha) {
+    ogl.saveDrawingState();
+    ogl.stroke(gray, alpha);
+    ogl.restoreDrawingState();
+  }
+
+  public void stroke(float x, float y, float z) {
+    ogl.saveDrawingState();
+    ogl.stroke(x, y, z);    
+    ogl.restoreDrawingState();
+  }
+
+  public void stroke(float x, float y, float z, float a) {
+    ogl.saveDrawingState();
+    ogl.stroke(x, y, z, a);
+    ogl.restoreDrawingState();
+  }
+  
+  
+  ////////////////////////////////////////////////////////////
+
   // load/update/set/get methods
  
   
