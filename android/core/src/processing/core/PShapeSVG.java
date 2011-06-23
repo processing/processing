@@ -27,7 +27,7 @@ import java.util.HashMap;
 
 import android.graphics.*;
 
-import processing.xml.XMLElement;
+import processing.xml.PNode;
 
 
 /**
@@ -134,7 +134,7 @@ import processing.xml.XMLElement;
  * <A HREF="http://www.w3.org/TR/SVG">here</A>.
  */
 public class PShapeSVG extends PShape {
-  XMLElement element;
+  PNode element;
 
   /// Values between 0 and 1.
   float opacity;
@@ -157,14 +157,14 @@ public class PShapeSVG extends PShape {
   public PShapeSVG(PApplet parent, String filename) {
     // this will grab the root document, starting <svg ...>
     // the xml version and initial comments are ignored
-    this(new XMLElement(parent, filename));
+    this(new PNode(parent, filename));
   }
 
 
   /**
-   * Initializes a new SVG Object from the given XMLElement.
+   * Initializes a new SVG Object from the given PNode.
    */
-  public PShapeSVG(XMLElement svg) {
+  public PShapeSVG(PNode svg) {
     this(null, svg, true);
 
     if (!svg.getName().equals("svg")) {
@@ -206,7 +206,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  public PShapeSVG(PShapeSVG parent, XMLElement properties, boolean parseKids) {
+  public PShapeSVG(PShapeSVG parent, PNode properties, boolean parseKids) {
     // Need to set this so that findChild() works.
     // Otherwise 'parent' is null until addChild() is called later.
     this.parent = parent;
@@ -284,12 +284,12 @@ public class PShapeSVG extends PShape {
   }
 
 
-  protected void parseChildren(XMLElement graphics) {
-    XMLElement[] elements = graphics.getChildren();
+  protected void parseChildren(PNode graphics) {
+    PNode[] elements = graphics.getChildren();
     children = new PShape[elements.length];
     childCount = 0;
 
-    for (XMLElement elem : elements) {
+    for (PNode elem : elements) {
       PShape kid = parseChild(elem);
       if (kid != null) {
 //        if (kid.name != null) {
@@ -306,7 +306,7 @@ public class PShapeSVG extends PShape {
    * Parse a child XML element.
    * Override this method to add parsing for more SVG elements.
    */
-  protected PShape parseChild(XMLElement elem) {
+  protected PShape parseChild(PNode elem) {
 //    System.err.println("parsing child in pshape " + elem.getName());
     String name = elem.getName();
     PShapeSVG shape = null;
@@ -972,7 +972,7 @@ public class PShapeSVG extends PShape {
   }
 
 
-  protected void parseColors(XMLElement properties) {
+  protected void parseColors(PNode properties) {
     if (properties.hasAttribute("opacity")) {
       String opacityText = properties.getString("opacity");
       setOpacity(opacityText);
@@ -1195,7 +1195,7 @@ public class PShapeSVG extends PShape {
    * @param attribute name of the attribute to get
    * @return unit-parsed version of the data
    */
-  static protected float getFloatWithUnit(XMLElement element, String attribute) {
+  static protected float getFloatWithUnit(PNode element, String attribute) {
     String val = element.getString(attribute);
     return (val == null) ? 0 : parseUnitSize(val);
   }
@@ -1244,16 +1244,16 @@ public class PShapeSVG extends PShape {
     int[] color;
     int count;
 
-    public Gradient(PShapeSVG parent, XMLElement properties) {
+    public Gradient(PShapeSVG parent, PNode properties) {
       super(parent, properties, true);
 
-      XMLElement elements[] = properties.getChildren();
+      PNode elements[] = properties.getChildren();
       offset = new float[elements.length];
       color = new int[elements.length];
 
       // <stop  offset="0" style="stop-color:#967348"/>
       for (int i = 0; i < elements.length; i++) {
-        XMLElement elem = elements[i];
+        PNode elem = elements[i];
         String name = elem.getName();
         if (name.equals("stop")) {
           String offsetAttr = elem.getString("offset");
@@ -1285,7 +1285,7 @@ public class PShapeSVG extends PShape {
   class LinearGradient extends Gradient {
     float x1, y1, x2, y2;
 
-    public LinearGradient(PShapeSVG parent, XMLElement properties) {
+    public LinearGradient(PShapeSVG parent, PNode properties) {
       super(parent, properties);
 
       this.x1 = getFloatWithUnit(properties, "x1");
@@ -1329,7 +1329,7 @@ public class PShapeSVG extends PShape {
   class RadialGradient extends Gradient {
     float cx, cy, r;
 
-    public RadialGradient(PShapeSVG parent, XMLElement properties) {
+    public RadialGradient(PShapeSVG parent, PNode properties) {
       super(parent, properties);
 
       this.cx = getFloatWithUnit(properties, "cx");
@@ -1676,11 +1676,11 @@ public class PShapeSVG extends PShape {
     int horizAdvX;
 
 
-    public Font(PShapeSVG parent, XMLElement properties) {
+    public Font(PShapeSVG parent, PNode properties) {
       super(parent, properties, false);
 //      handle(parent, properties);
 
-      XMLElement[] elements = properties.getChildren();
+      PNode[] elements = properties.getChildren();
 
       horizAdvX = properties.getInt("horiz-adv-x", 0);
 
@@ -1691,7 +1691,7 @@ public class PShapeSVG extends PShape {
 
       for (int i = 0; i < elements.length; i++) {
         String name = elements[i].getName();
-        XMLElement elem = elements[i];
+        PNode elem = elements[i];
         if (name.equals("glyph")) {
           FontGlyph fg = new FontGlyph(this, elem, this);
           if (fg.isLegit()) {
@@ -1796,7 +1796,7 @@ public class PShapeSVG extends PShape {
     //String unicodeRange; // gonna ignore for now
 
 
-    public FontFace(PShapeSVG parent, XMLElement properties) {
+    public FontFace(PShapeSVG parent, PNode properties) {
       super(parent, properties, true);
 
       unitsPerEm = properties.getInt("units-per-em", 1000);
@@ -1817,7 +1817,7 @@ public class PShapeSVG extends PShape {
     char unicode;
     int horizAdvX;
 
-    public FontGlyph(PShapeSVG parent, XMLElement properties, Font font) {
+    public FontGlyph(PShapeSVG parent, PNode properties, Font font) {
       super(parent, properties, true);
       super.parsePath();  // ??
 
