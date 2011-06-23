@@ -23,6 +23,8 @@ X New/Rename Tab commands inhibited when Console/Message Area is hidden
 X   http://code.google.com/p/processing/issues/detail?id=745
 X make sketch.properties usable elsewhere by loading/reloading
 X   http://code.google.com/p/processing/issues/detail?id=722
+X Export to Application reports "Could not copy source file:" 
+X   http://code.google.com/p/processing/issues/detail?id=638
 
 cleanup
 X how is autoformat doing? good now
@@ -42,6 +44,9 @@ X   -> jer: "can we put fax support in there too?"
 o prevent people from setting the font size too small in the editor
 o   how do we figure out what "too small" is?
 X   -> everyone thinks this is funny
+
+_ update the build instructions page
+_   http://code.google.com/p/processing/wiki/BuildInstructions
 
 decisions
 _ kill external editor (for all its quirks) in favor of command line? 
@@ -1098,10 +1103,10 @@ _ implement better method of showing curly brace closure
 _   http://dev.processing.org/bugs/show_bug.cgi?id=295
 _ sketches should only write to the console of their editor window
 _   http://dev.processing.org/bugs/show_bug.cgi?id=921
-P5 _ problems with file/print
-P5 _   http://dev.processing.org/bugs/show_bug.cgi?id=1230
-P4 _ comments not always colored correctly
-P4 _   http://dev.processing.org/bugs/show_bug.cgi?id=1194
+_ problems with file/print
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1230
+_ comments shown as code / code shown as comments
+_   http://code.google.com/p/processing/issues/detail?id=164
 _ program sometimes goes gray because it thinks everything is in a comment
 _   http://code.google.com/p/processing/issues/detail?id=564
 
