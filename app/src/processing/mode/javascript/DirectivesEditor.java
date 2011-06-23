@@ -143,6 +143,8 @@ public class DirectivesEditor
 			{
 				String mm = m.group();
 				
+				// TODO this urgently needs tests ..
+				
 				/* remove framing */
 				mm = mm.replaceAll("^\\/\\*\\s*@pjs","").replaceAll("\\s*\\*\\/\\s*$","");
 				/* fix multiline nice formatting */
