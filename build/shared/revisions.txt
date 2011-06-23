@@ -111,6 +111,25 @@ features may be broken. See statement directly above.
 + Implement repeating textures
   http://code.google.com/p/processing/issues/detail?id=94
 
+[ android ] (these were missing from the actual release notes)
+
++ mask() has no effect unless image has already been drawn in A3D
+  http://code.google.com/p/processing/issues/detail?id=623
+
++ point() doesn't render in A3D
+  http://code.google.com/p/processing/issues/detail?id=592
+
++ excessive rotation of application causes memory to run out
+  http://code.google.com/p/processing/issues/detail?id=235
+
++ mirroring in A3D when background() not called within draw()
+  http://code.google.com/p/processing/issues/detail?id=624
+
++ removed A2D and A3D constants
+
++ colorMode() error 
+  http://code.google.com/p/processing/issues/detail?id=223
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
