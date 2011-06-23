@@ -5033,20 +5033,11 @@ public class PApplet extends Applet
       // make sure that this path actually exists before writing
       createPath(targetFile);
       tempFile = File.createTempFile(targetFile.getName(), null, parentDir);
+      FileOutputStream targetStream = new FileOutputStream(tempFile);
 
-      BufferedInputStream bis = new BufferedInputStream(sourceStream, 16384);
-      FileOutputStream fos = new FileOutputStream(tempFile);
-      BufferedOutputStream bos = new BufferedOutputStream(fos);
-
-      byte[] buffer = new byte[8192];
-      int bytesRead;
-      while ((bytesRead = bis.read(buffer)) != -1) {
-        bos.write(buffer, 0, bytesRead);
-      }
-
-      bos.flush();
-      bos.close();
-      bos = null;
+      saveStream(targetStream, sourceStream);
+      targetStream.close();
+      targetStream = null;
 
       if (targetFile.exists()) {
         if (!targetFile.delete()) {
@@ -5068,6 +5059,21 @@ public class PApplet extends Applet
       e.printStackTrace();
       return false;
     }
+  }
+  
+  
+  static public void saveStream(OutputStream targetStream, 
+                                InputStream sourceStream) throws IOException {
+    BufferedInputStream bis = new BufferedInputStream(sourceStream, 16384);
+    BufferedOutputStream bos = new BufferedOutputStream(targetStream);
+
+    byte[] buffer = new byte[8192];
+    int bytesRead;
+    while ((bytesRead = bis.read(buffer)) != -1) {
+      bos.write(buffer, 0, bytesRead);
+    }
+
+    bos.flush();
   }
 
 

@@ -249,6 +249,21 @@ public class JavaBuild {
       }
     }
 
+    // Automatically insert the OpenGL import line if P3D is used. Do this by
+    // modifying the code here instead of 
+    String scrubbed = scrubComments(sketch.getCode(0).getProgram());
+    String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
+    String renderer = "";
+    if (matches != null) {
+      // Adding back the trim() for 0136 to handle Bug #769
+      if (matches.length == 4) renderer = matches[3].trim();
+      // Actually, matches.length should always be 4...
+    }
+    // OpenGL import time! Really, this is for P3D, but may as well do it
+    // for OpenGL as well.
+    if (renderer.equals("P3D") || renderer.equals("OPENGL")) {  
+      bigCode.insert(0, "import processing.opengl.*; ");
+    }
 
     PreprocessorResult result;
     try {
@@ -335,7 +350,7 @@ public class JavaBuild {
       // TODO not tested since removing ORO matcher.. ^ could be a problem
       String mess = "^line (\\d+):(\\d+):\\s";
 
-      String[] matches = PApplet.match(tsre.toString(), mess);
+      matches = PApplet.match(tsre.toString(), mess);
       if (matches != null) {
         int errorLine = Integer.parseInt(matches[1]) - 1;
         int errorColumn = Integer.parseInt(matches[2]);
@@ -876,26 +891,6 @@ public class JavaBuild {
       }
     }
 
-//    if (dataFolder.exists()) {
-//      String dataFiles[] = Base.listFiles(dataFolder, false);
-//      int offset = folder.getAbsolutePath().length() + 1;
-//      for (int i = 0; i < dataFiles.length; i++) {
-//        if (Base.isWindows()) {
-//          dataFiles[i] = dataFiles[i].replace('\\', '/');
-//        }
-//        File dataFile = new File(dataFiles[i]);
-//        if (dataFile.isDirectory()) continue;
-//
-//        // don't export hidden files
-//        // skipping dot prefix removes all: . .. .DS_Store
-//        if (dataFile.getName().charAt(0) == '.') continue;
-//
-//        entry = new ZipEntry(dataFiles[i].substring(offset));
-//        zos.putNextEntry(entry);
-//        zos.write(Base.loadBytesRaw(dataFile));
-//        zos.closeEntry();
-//      }
-//    }
     // Add the data folder to the output .jar file
     addDataFolder(zos);
 
@@ -904,40 +899,7 @@ public class JavaBuild {
     // since there may be some inner classes
     // (add any .class files from the applet dir, then delete them)
     // TODO this needs to be recursive (for packages)
-//    String classfiles[] = appletFolder.list();
-//    for (int i = 0; i < classfiles.length; i++) {
-//      if (classfiles[i].endsWith(".class")) {
-//        entry = new ZipEntry(classfiles[i]);
-//        zos.putNextEntry(entry);
-//        zos.write(Base.loadBytesRaw(new File(appletFolder, classfiles[i])));
-//        zos.closeEntry();
-//      }
-//    }
     addClasses(zos, binFolder);
-
-    // remove the .class files from the applet folder. if they're not
-    // removed, the msjvm will complain about an illegal access error,
-    // since the classes are outside the jar file.
-//    for (int i = 0; i < classfiles.length; i++) {
-//      if (classfiles[i].endsWith(".class")) {
-//        File deadguy = new File(appletFolder, classfiles[i]);
-//        if (!deadguy.delete()) {
-//          Base.showWarning("Could not delete",
-//                           classfiles[i] + " could not \n" +
-//                           "be deleted from the applet folder.  \n" +
-//                           "You'll need to remove it by hand.", null);
-//        }
-//      }
-//    }
-
-//    if (false) {
-//    if (!srcFolder.delete() || !binFolder.delete()) {
-//      Base.showWarning("Could not delete",
-//                       buildFolder.getName() + " could not \n" +
-//                       "be deleted from the applet folder.  \n" +
-//                       "You'll need to remove it by hand.", null);
-//    }
-//    }
 
     // close up the jar file
     zos.flush();
@@ -1511,7 +1473,8 @@ public class JavaBuild {
 //        System.out.println("  adding item " + relativePath);
         ZipEntry entry = new ZipEntry(relativePath);
         zos.putNextEntry(entry);
-        zos.write(Base.loadBytesRaw(sub));
+        //zos.write(Base.loadBytesRaw(sub));
+        PApplet.saveStream(zos, new FileInputStream(sub));
         zos.closeEntry();
       }
     }
@@ -1534,7 +1497,8 @@ public class JavaBuild {
           if (dataFile.getName().charAt(0) != '.') {
             ZipEntry entry = new ZipEntry(path.substring(offset));
             zos.putNextEntry(entry);
-            zos.write(Base.loadBytesRaw(dataFile));
+            //zos.write(Base.loadBytesRaw(dataFile));
+            PApplet.saveStream(zos, new FileInputStream(dataFile));
             zos.closeEntry();
           }
         }
@@ -1640,7 +1604,8 @@ public class JavaBuild {
             files[i].charAt(0) != '.') {
           ZipEntry entry = new ZipEntry(nowfar);
           zos.putNextEntry(entry);
-          zos.write(Base.loadBytesRaw(sub));
+          //zos.write(Base.loadBytesRaw(sub));
+          PApplet.saveStream(zos, new FileInputStream(sub));
           zos.closeEntry();
         }
       }
