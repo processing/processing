@@ -7671,6 +7671,13 @@ public class PApplet extends Applet
     recorder.beginDraw();
   }
 
+  public PShape beginRecord() {
+    if (!g.isRecordingShape()) {
+      return g.beginRecord();
+    }
+    return null;
+  }
+  
 
   public void endRecord() {
     if (recorder != null) {
@@ -7678,9 +7685,9 @@ public class PApplet extends Applet
       recorder.dispose();
       recorder = null;
     }
-//    if (g.isRecording()) {
-//    g.endRecord();
-//    }
+    if (g.isRecordingShape()) {
+      g.endRecord();
+    }
   }
 
 
@@ -10265,6 +10272,11 @@ public class PApplet extends Applet
   public void textureBlend(int mode) {
     if (recorder != null) recorder.textureBlend(mode);
     g.textureBlend(mode);
+  }
+
+
+  public boolean isRecordingShape() {
+    return g.isRecordingShape();
   }
 
 
