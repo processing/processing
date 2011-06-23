@@ -1730,7 +1730,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (fill || 0 < shapeTextures) {
         renderTriangles(0, faceCount);
         if (raw != null) {
-          // rawTriangles(0, triangleCount);
+          //rawTriangles(0, triangleCount);
         }
         
         vertexCount = 0;
@@ -2866,6 +2866,139 @@ public class PGraphicsOpenGL extends PGraphics {
     report("render_triangles out");
   }
 
+  protected void endShapeModelToCamera(int start, int stop) {
+    for (int i = start; i < stop; i++) {
+      float vertex[] = vertices[i];
+
+      vertex[VX] =
+        modelview.m00*vertex[X] + modelview.m01*vertex[Y] +
+        modelview.m02*vertex[Z] + modelview.m03;
+      vertex[VY] =
+        modelview.m10*vertex[X] + modelview.m11*vertex[Y] +
+        modelview.m12*vertex[Z] + modelview.m13;
+      vertex[VZ] =
+        modelview.m20*vertex[X] + modelview.m21*vertex[Y] +
+        modelview.m22*vertex[Z] + modelview.m23;
+      vertex[VW] =
+        modelview.m30*vertex[X] + modelview.m31*vertex[Y] +
+        modelview.m32*vertex[Z] + modelview.m33;
+
+      // normalize
+      if (vertex[VW] != 0 && vertex[VW] != 1) {
+        vertex[VX] /= vertex[VW];
+        vertex[VY] /= vertex[VW];
+        vertex[VZ] /= vertex[VW];
+      }
+      vertex[VW] = 1;
+    }    
+  }
+  
+  protected void rawTriangles(int start, int stop) {
+    raw.colorMode(RGB, 1);
+    raw.noStroke();
+    raw.beginShape(TRIANGLES);
+
+    //y = -1 * y; // To take into account Processsing's inverted Y axis with
+    // respect to OpenGL.
+
+    if (!modelviewUpdated) {
+      getModelviewMatrix();      
+    }
+
+    if (!projectionUpdated) {
+      getProjectionMatrix();      
+    }
+
+    /*
+float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
+float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
+float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
+float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
+
+float ox = glprojection[0] * ax + glprojection[4] * ay + glprojection[8] * az + glprojection[12] * aw;
+float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
+
+if (ow != 0) {
+ox /= ow;
+}
+return width * (1 + ox) / 2.0f;
+*/
+
+    
+    for (int i = start; i < stop; i++) {
+      float a[] = vertices[triangles[i][VERTEX1]];
+      float b[] = vertices[triangles[i][VERTEX2]];
+      float c[] = vertices[triangles[i][VERTEX3]];
+
+      
+      float ar = 255;
+      float ag = 255;
+      float ab = 255;
+      float br = 255;
+      float bg = 255;
+      float bb = 255;
+      float cr = 255;
+      float cg = 255;
+      float cb = 255;
+      
+      /*
+       // How to do OpenGL lights on software...?
+      float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
+      float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
+      float ab = clamp(triangleColors[i][0][TRI_DIFFUSE_B] + triangleColors[i][0][TRI_SPECULAR_B]);
+      float br = clamp(triangleColors[i][1][TRI_DIFFUSE_R] + triangleColors[i][1][TRI_SPECULAR_R]);
+      float bg = clamp(triangleColors[i][1][TRI_DIFFUSE_G] + triangleColors[i][1][TRI_SPECULAR_G]);
+      float bb = clamp(triangleColors[i][1][TRI_DIFFUSE_B] + triangleColors[i][1][TRI_SPECULAR_B]);
+      float cr = clamp(triangleColors[i][2][TRI_DIFFUSE_R] + triangleColors[i][2][TRI_SPECULAR_R]);
+      float cg = clamp(triangleColors[i][2][TRI_DIFFUSE_G] + triangleColors[i][2][TRI_SPECULAR_G]);
+      float cb = clamp(triangleColors[i][2][TRI_DIFFUSE_B] + triangleColors[i][2][TRI_SPECULAR_B]);
+      */
+
+      //int tex = triangles[i][TEXTURE_INDEX];
+      //PImage texImage = (tex > -1) ? textures[tex] : null;
+      PImage texImage = null;
+      if (texImage != null) {
+        if (raw.is3D()) {
+          if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
+            raw.fill(ar, ag, ab, a[A]);
+            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW], a[U], a[V]);
+            raw.fill(br, bg, bb, b[A]);
+            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW], b[U], b[V]);
+            raw.fill(cr, cg, cb, c[A]);
+            raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW], c[U], c[V]);
+          }
+        } else if (raw.is2D()) {
+          raw.fill(ar, ag, ab, a[A]);
+          raw.vertex(a[TX], a[TY], a[U], a[V]);
+          raw.fill(br, bg, bb, b[A]);
+          raw.vertex(b[TX], b[TY], b[U], b[V]);
+          raw.fill(cr, cg, cb, c[A]);
+          raw.vertex(c[TX], c[TY], c[U], c[V]);
+        }
+      } else {  // no texture
+        if (raw.is3D()) {
+          if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
+            raw.fill(ar, ag, ab, a[A]);
+            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
+            raw.fill(br, bg, bb, b[A]);
+            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
+            raw.fill(cr, cg, cb, c[A]);
+            raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
+          }
+        } else if (raw.is2D()) {
+          raw.fill(ar, ag, ab, a[A]);
+          raw.vertex(a[TX], a[TY]);
+          raw.fill(br, bg, bb, b[A]);
+          raw.vertex(b[TX], b[TY]);
+          raw.fill(cr, cg, cb, c[A]);
+          raw.vertex(c[TX], c[TY]);
+        }
+      }
+    }
+
+    raw.endShape();
+  }
+  
   
   // protected void rawTriangles(int start, int stop) // PGraphics3D
 
