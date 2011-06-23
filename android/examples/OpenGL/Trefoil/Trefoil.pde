@@ -17,7 +17,7 @@ PShape3D particles;
 int mode = 0;
 
 void setup() {
-  size(480, 800, A3D);
+  size(480, 800, P3D);
   orientation(PORTRAIT);
   
   PFont font = createFont(PFont.list()[0], 24);
@@ -27,7 +27,7 @@ void setup() {
   noStroke();
 
   // Creating offscreen surface for 3D rendering.
-  pg = createGraphics(32, 512, A3D);
+  pg = createGraphics(32, 512, P3D);
 
   // Initializing particle system
   particles = (PShape3D)createShape(1000, PShape3D.newParameters(POINT_SPRITES, DYNAMIC));

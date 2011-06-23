@@ -22,7 +22,7 @@ VRCube vr;
 boolean outside = true;
 
 void setup() {
-  size(800, 480, A3D);
+  size(800, 480, P3D);
   orientation(LANDSCAPE);
   
   xMid = width/2; 
