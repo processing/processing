@@ -360,13 +360,7 @@ o Writing XML files (clean up the API)
 o   http://dev.processing.org/bugs/show_bug.cgi?id=964
 X XMLElement lacks add/set/remove methods
 X   http://code.google.com/p/processing/issues/detail?id=440
-_ finish updating XML documentation
-_   http://code.google.com/p/processing/issues/detail?id=382
-_ json issues
-_   http://www.xml.com/lpt/a/1658
-_   http://www.json.org/java/
-_ remove unnecessary processing.xml.* code from android-core
-_   http://code.google.com/p/processing/issues/detail?id=214
+X PNode is final(?) name, get that implemented
 
 andres 
 _ OpenGL noSmooth() problems
@@ -432,6 +426,15 @@ _ remove matrixMode(), add a projection() method
 _ remove screenBlend(), textureBlend() from PGraphics et al
 _ have andres take over all current GL issues in the tracker
 
+more xml/json changes
+_ finish updating XML documentation
+_   http://code.google.com/p/processing/issues/detail?id=382
+_ json issues
+_   http://www.xml.com/lpt/a/1658
+_   http://www.json.org/java/
+_ remove unnecessary processing.xml.* code from android-core
+_   http://code.google.com/p/processing/issues/detail?id=214
+
 casey
  _ pdf fonts
 _   rewrite documentation about pdf fonts (errors with non-native fonts)
@@ -444,6 +447,9 @@ _ add docs for screenWidth and screenHeight
 _ remove delay() documentation
 
 2.0
+_ Abnormal high Java CPU usage at empty sketch with draw() 
+_   http://code.google.com/p/processing/issues/detail?id=729
+_   https://forum.processing.org/topic/absurd-java-cpu-usage-at-empty-sketch-with-draw
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
 _ texts using textMode(SCREEN) not displayed in Processing 1.5.1
 _   http://code.google.com/p/processing/issues/detail?id=741
@@ -517,10 +523,6 @@ _   10s should be fine--no need to keep spinning (bad for android too)
 _   just call interrupt() when it's time to get back to work
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
-_ Abnormal high Java CPU usage at empty sketch with draw() 
-_   http://code.google.com/p/processing/issues/detail?id=729
-_ properly read/write sketch.properties
-_   http://code.google.com/p/processing/issues/detail?id=722
 _ add methods to PShape to apply all transformations in the tree
 _ need to clean up the hints in the reference/source
 
