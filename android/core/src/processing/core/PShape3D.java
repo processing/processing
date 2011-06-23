@@ -223,6 +223,166 @@ public class PShape3D extends PShape implements PConstants {
 
   ////////////////////////////////////////////////////////////
 
+  // SHAPE RECORDING HACK
+
+  public void beginRecord() {
+    a3d.beginRecord(this);
+  }
+  
+  public void endRecord() {
+    a3d.endRecord();
+  }
+  
+  public void beginShape(int kind) {
+    a3d.beginShape(kind);
+  }
+  
+  public void endShape() {
+    a3d.endShape();
+  }
+  
+  public void endShape(int mode) {
+    a3d.endShape(mode);
+  }
+  
+  public void shapeName(String name) {
+    a3d.shapeName(name);
+  }
+  
+  public void mergeShapes(boolean val) {
+    a3d.mergeShapes(val);
+  }  
+  
+  public void vertex(float x, float y, float u, float v) {
+    a3d.vertex(x, y, u, v);
+  }
+
+  public void vertex(float x, float y, float z, float u, float v) {
+    a3d.vertex(x, y, z, u, v);
+  }
+  
+  public void vertex(float... values) {
+    a3d.vertex(values);
+  }
+  
+  public void normal(float nx, float ny, float nz) {
+    a3d.normal(nx, ny, nz);
+  }
+  
+  public void texture(PImage image) {
+    a3d.texture(image);
+  }
+  
+  public void texture(PImage... images) {
+    a3d.texture(images);
+  }
+
+  public void sphereDetail(int res) {
+    a3d.sphereDetail(res);
+  }
+  
+  public void sphereDetail(int ures, int vres) {
+    a3d.sphereDetail(ures, vres);
+  }
+  
+  public void sphere(float r) {
+    a3d.sphere(r);
+  }
+  
+  public void box(float size) {
+    a3d.box(size);
+  }
+  
+  public void box(float w, float h, float d) {
+    a3d.box(w, h, d);
+  }
+  
+  public void noFill() {
+    a3d.saveDrawingState();
+    a3d.noFill();
+    a3d.restoreDrawingState();
+  }
+
+  public void fill(int rgb) {
+    a3d.saveDrawingState();
+    a3d.fill(rgb);
+    a3d.restoreDrawingState();
+  }
+
+  public void fill(int rgb, float alpha) {
+    a3d.saveDrawingState();
+    a3d.fill(rgb, alpha);
+    a3d.restoreDrawingState();
+  }
+
+  public void fill(float gray) {
+    a3d.saveDrawingState();
+    a3d.fill(gray);
+    a3d.restoreDrawingState();
+  }
+
+  public void fill(float gray, float alpha) {
+    a3d.saveDrawingState();
+    a3d.fill(gray, alpha);
+    a3d.restoreDrawingState();
+  }
+
+  public void fill(float x, float y, float z) {
+    a3d.saveDrawingState();
+    a3d.fill(x, y, z);
+    a3d.restoreDrawingState();
+  }
+
+  public void fill(float x, float y, float z, float a) {
+    a3d.saveDrawingState();
+    a3d.fill(x, y, z, a);    
+    a3d.restoreDrawingState();
+  }
+    
+  public void noStroke() {
+    a3d.saveDrawingState();
+    a3d.noStroke();
+    a3d.restoreDrawingState();
+  }
+  
+  public void stroke(int rgb) {
+    a3d.saveDrawingState();
+    a3d.stroke(rgb);
+    a3d.restoreDrawingState();
+  }
+
+  public void stroke(int rgb, float alpha) {
+    a3d.saveDrawingState();
+    a3d.stroke(rgb, alpha);
+    a3d.restoreDrawingState();
+  }
+
+  public void stroke(float gray) {
+    a3d.saveDrawingState();
+    a3d.stroke(gray);
+    a3d.restoreDrawingState();
+  }
+
+  public void stroke(float gray, float alpha) {
+    a3d.saveDrawingState();
+    a3d.stroke(gray, alpha);
+    a3d.restoreDrawingState();
+  }
+
+  public void stroke(float x, float y, float z) {
+    a3d.saveDrawingState();
+    a3d.stroke(x, y, z);    
+    a3d.restoreDrawingState();
+  }
+
+  public void stroke(float x, float y, float z, float a) {
+    a3d.saveDrawingState();
+    a3d.stroke(x, y, z, a);
+    a3d.restoreDrawingState();
+  }  
+  
+  ////////////////////////////////////////////////////////////
+
   // load/update/set/get methods
  
   
