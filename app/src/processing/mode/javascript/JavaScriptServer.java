@@ -11,6 +11,12 @@ import java.util.*;
  */
 class JavaScriptServer implements HttpConstants, Runnable
 {
+
+	// TODO how to handle too many servers?
+	// TODO read settings from sketch.properties
+	// NOTE 0.0.0.0 does not work on XP
+	public static final String localDomain = "http://127.0.0.1";
+
 	Thread thread = null;
 	ServerSocket server = null;
 	
@@ -45,6 +51,11 @@ class JavaScriptServer implements HttpConstants, Runnable
 	public int getTimeout ()
 	{
 		return timeout;
+	}
+	
+	public String getAddress ()
+	{
+		return localDomain + ":" + getPort() + "/";
 	}
 	
 	public int getPort ()

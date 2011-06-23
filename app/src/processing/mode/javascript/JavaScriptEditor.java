@@ -29,11 +29,6 @@ public class JavaScriptEditor extends Editor
 
   private DirectivesEditor directivesEditor;
 
-	// TODO how to handle multiple servers
-	// TODO read settings from sketch.properties
-	// NOTE 0.0.0.0 does not work on XP
-  private static final String localDomain = "http://127.0.0.1";
-
   // tapping into Java mode might not be wanted?
   processing.mode.java.PdeKeyListener listener;
 
@@ -91,8 +86,23 @@ public class JavaScriptEditor extends Editor
         }
       });
 
+	JMenuItem copyServerAddressItem = new JMenuItem("Copy server address");
+	copyServerAddressItem.addActionListener(new ActionListener(){
+		public void actionPerformed(ActionEvent e) {
+			handleCopyServerAddress();
+		}
+	});
+	// copyServerAddressItem.getInputMap().put(
+	// 	javax.swing.KeyStroke.getKeyStroke('C', java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.META_MASK ),
+	// 	new AbstractAction () {
+	// 		public void actionPerformed ( ActionEvent e ) {
+	// 			handleCopyServerAddress();
+	// 		}
+	// 	}
+	// );
+
     return buildSketchMenu(new JMenuItem[] {
-		startServerItem, stopServerItem
+		startServerItem, stopServerItem, copyServerAddressItem
 		});
   }
 
@@ -113,26 +123,15 @@ public class JavaScriptEditor extends Editor
 	item = new JMenuItem("Start custom template");
 	item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-		  Sketch sketch = getSketch();
-		  File ajs = sketch.getMode().
-						getContentFile(JavaScriptBuild.EXPORTED_FOLDER_NAME);
-		  File tjs = new File( sketch.getFolder(), 
-							   JavaScriptBuild.TEMPLATE_FOLDER_NAME );
-		  if ( !tjs.exists() )
-		  {
-			try {
-	      		Base.copyDir( ajs, tjs );
-				statusNotice( "Default template copied." );
-				Base.openFolder( tjs );
-			} catch ( java.io.IOException ioe ) {
-				Base.showWarning("Copy default template folder", 
-					"Something went wrong when copying the template folder.", ioe);
-			}
-		  }
-		  else
-			statusError( "You need to remove the current "+
-					     "\""+JavaScriptBuild.TEMPLATE_FOLDER_NAME+"\" "+
-						 "folder from the sketch." );
+		  handleCreateCustomTemplate();
+		}
+	});
+	menu.add(item);
+
+	item = new JMenuItem("Show custom template");
+	item.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		  handleOpenCustomTemplateFolder();
 		}
 	});
 	menu.add(item);
@@ -243,8 +242,65 @@ public class JavaScriptEditor extends Editor
     return "//";
   }
   
-  
   // - - - - - - - - - - - - - - - - - -
+
+  private void handleCreateCustomTemplate ()
+  {
+	Sketch sketch = getSketch();
+	
+	File ajs = sketch.getMode().
+				getContentFile(JavaScriptBuild.EXPORTED_FOLDER_NAME);
+				
+	File tjs = getCustomTemplateFolder();
+					
+	if ( !tjs.exists() )
+	{
+		try {
+			Base.copyDir( ajs, tjs );
+			statusNotice( "Default template copied." );
+			Base.openFolder( tjs );
+		} catch ( java.io.IOException ioe ) {
+			Base.showWarning("Copy default template folder", 
+				"Something went wrong when copying the template folder.", ioe);
+		}
+	}
+	else
+		statusError( "You need to remove the current "+
+				     "\""+JavaScriptBuild.TEMPLATE_FOLDER_NAME+"\" "+
+					 "folder from the sketch." );
+  }
+
+  private File getCustomTemplateFolder ()
+  {
+	return new File( sketch.getFolder(), 
+					   JavaScriptBuild.TEMPLATE_FOLDER_NAME );
+  }
+
+  private void handleOpenCustomTemplateFolder ()
+  {
+  	File tjs = getCustomTemplateFolder();
+	if ( tjs.exists() )
+	{
+		Base.openFolder( tjs );
+	}
+	else
+	{
+		// TODO: promt to create one?
+		statusNotice( "You have no custom template with this sketch. Create one from the menu!" );
+	}
+  }
+
+  private void handleCopyServerAddress ()
+  {
+		if ( jsServer != null && jsServer.isRunning() )
+		{
+			java.awt.datatransfer.StringSelection stringSelection = 
+				new java.awt.datatransfer.StringSelection( jsServer.getAddress() );
+		    java.awt.datatransfer.Clipboard clipboard = 
+				java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
+		    clipboard.setContents( stringSelection, null );
+		}
+  }
 
   private void handleShowDirectivesEditor ()
   {
@@ -328,7 +384,7 @@ public class JavaScriptEditor extends Editor
 		
 		while ( !jsServer.isRunning() ) {}
 		
-		String location = localDomain + ":" + jsServer.getPort() + "/";
+		String location = jsServer.getAddress();
 		
 		statusNotice( "Server started: " + location );
 		
@@ -337,7 +393,7 @@ public class JavaScriptEditor extends Editor
 	else if ( jsServer.isRunning() )
 	{
 		statusNotice( "Server running (" + 
-					  localDomain + ":" + jsServer.getPort() +
+					  jsServer.getAddress() +
 					  "), reload your browser window." );
 	}
     toolbar.activate(JavaScriptToolbar.RUN);
