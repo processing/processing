@@ -45,9 +45,9 @@ import processing.mode.java.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 198;
+  static public final int REVISION = 199;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0198";
+  static public String VERSION_NAME = "0199";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   /** True if heavy debugging error/log messages are enabled */
@@ -75,7 +75,7 @@ public class Base {
 
   // A single instance of the preferences window
   Preferences preferencesFrame;
-  
+
   // A single instance of the library manager window
   LibraryManager libraryManagerFrame;
 
@@ -220,7 +220,7 @@ public class Base {
     // TODO this will be dynamically loading modes in no time
     defaultMode = new JavaMode(this, getContentFile("modes/java"));
     Mode androidMode = new AndroidMode(this, getContentFile("modes/android"));
-	Mode javaScriptMode = new JavaScriptMode(this, getContentFile("modes/javascript"));
+        Mode javaScriptMode = new JavaScriptMode(this, getContentFile("modes/javascript"));
     modeList = new Mode[] { defaultMode, androidMode, javaScriptMode };
 //    modeList = new Mode[] { defaultMode, androidMode };
 
@@ -1399,7 +1399,7 @@ public class Base {
     if (preferencesFrame == null) preferencesFrame = new Preferences();
     preferencesFrame.showFrame(activeEditor);
   }
-  
+
   /**
    * Show the library installer window.
    */
@@ -1407,7 +1407,7 @@ public class Base {
     if (libraryManagerFrame == null) libraryManagerFrame = new LibraryManager();
     libraryManagerFrame.showFrame(activeEditor);
   }
-  
+
   /**
    * Installed the libraries in the given file after a confirmation from the
    * user. Returns the number of libraries installed.

@@ -1,15 +1,5 @@
-0198 android
-A mask() has no effect unless image has already been drawn in A3D
-A  http://code.google.com/p/processing/issues/detail?id=623
-A point() doesn't render in A3D
-A   http://code.google.com/p/processing/issues/detail?id=592
-A excessive rotation of application causes memory to run out
-A   http://code.google.com/p/processing/issues/detail?id=235
-A mirroring in A3D when background() not called within draw()
-A   http://code.google.com/p/processing/issues/detail?id=624
-X remove A2D and A3D constants
-o colorMode() error 
-o   http://code.google.com/p/processing/issues/detail?id=223
+0199 android
+
 
 _ /opt/android using version #s again? fix build script
 
