@@ -35,7 +35,6 @@ import processing.core.PImage;
  * By Andres Colubri
  * 
  */
-@SuppressWarnings("unused")
 public class PTexture implements PConstants { 
   public int width, height;
     
