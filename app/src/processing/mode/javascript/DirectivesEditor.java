@@ -151,7 +151,7 @@ public class DirectivesEditor
 				mm = mm.replaceAll("[\\s]*([^;\\s\\n\\r]+)[\\s]*[\\n\\r]+","$1;");
 				mm = mm.replaceAll("\n"," ").replaceAll("\r"," ");
 				
-				System.out.println(mm);
+				//System.out.println(mm);
 					
 				if ( clean )
 				{
