@@ -1209,7 +1209,25 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
-  public boolean isRecording() {
+  public void beginRecord(PShape3D shape) {
+    if (recordingShape) {
+      System.err.println("A3D: Already recording.");
+    } else {
+      if (USE_GEO_BUFFER) {        
+        if (geoBuffer != null && 0 < geoBuffer.vertCount) {
+          geoBuffer.pre();    
+          geoBuffer.render();
+          geoBuffer.post();
+        }
+        if (geoBuffer == null) geoBuffer = new GeometryBuffer();
+      }      
+
+      recordedShape = shape;
+      beginShapeRecorderImpl();
+    }    
+  }  
+  
+  public boolean isRecordingShape() {
     return recordingShape;
   }   
   

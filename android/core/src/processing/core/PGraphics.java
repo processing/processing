@@ -5232,8 +5232,8 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public boolean isRecording() {
-    showMissingWarning("isRecording");
+  public boolean isRecordingShape() {
+    //showMissingWarning("isRecording");
     return false;
   }
 
