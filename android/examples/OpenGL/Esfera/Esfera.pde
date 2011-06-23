@@ -15,7 +15,7 @@ float rx = 0;
 float ry =0;
 
 void setup() {
-  size(480, 800, A3D);
+  size(480, 800, P3D);
   orientation(PORTRAIT);
   
   radio = height/3.5;

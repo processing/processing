@@ -4,13 +4,10 @@
 // Android port by Andres Colubri
 //
 // This example shows the shape recording functionality in A3D,
-// where an entire geometry drawn with the regular API can be
-// stored in a PShape3D object for later use. This greatly
-// improves the performance of the application.
-// Tap on the screen to enable/disable drawing with the recorded
-// shape.
+// using the object-oriented mode, where the drawing calls are methods
+// in the PShape3D object.
 
-PShape globe;
+PShape3D globe;
 PImage texmap;
 
 int sDetail = 32;  // Sphere detail setting
@@ -40,12 +37,13 @@ public void setup() {
   noStroke();
   
   // Everything that is drawn between beginRecord/endRecord
-  // is saved into the PShape3D returned by beginRecord.
+  // is saved into the PShape3D object.
   // Drawing the PShape3D object is much faster than redrawing
   // all the geometry again in the draw() function.
-  globe = beginRecord();
-  texturedSphere(globeRadius, texmap);
-  endRecord();
+  globe = new PShape3D(this);
+  globe.beginRecord();
+  recTexSphere(globe, globeRadius, texmap);
+  globe.endRecord();
 }
 
 public void draw() {
@@ -76,7 +74,7 @@ public void renderGlobe() {
   if (usingPShape) {
     shape(globe);
   } else {
-    texturedSphere(globeRadius, texmap);
+    drawTexSphere(globeRadius, texmap);
   }
   
   popMatrix();  
@@ -130,7 +128,7 @@ public void initializeSphere(int res) {
 }
 
 // Generic routine to draw textured sphere
-void texturedSphere(float r, PImage t) {
+void drawTexSphere(float r, PImage t) {
   int v1,v11,v2;
   r = (r + 240 ) * 0.33;
   beginShape(TRIANGLE_STRIP);
@@ -194,4 +192,70 @@ void texturedSphere(float r, PImage t) {
   vertex(sphereX[voff]*r, sphereY[voff]*r, sphereZ[voff]*r, u, v);
 
   endShape(); 
+}
+
+void recTexSphere(PShape3D obj, float r, PImage t) {
+  int v1,v11,v2;
+  r = (r + 240 ) * 0.33;
+  obj.beginShape(TRIANGLE_STRIP);
+  obj.texture(t);
+  float iu=(float)(t.width-1)/(sDetail);
+  float iv=(float)(t.height-1)/(sDetail);
+  float u=0,v=iv;
+  for (int i = 0; i < sDetail; i++) {
+    obj.normal(0, -1, 0);
+    obj.vertex(0, -r, 0,u,0);
+    obj.normal(sphereX[i], sphereY[i], sphereZ[i]);
+    obj.vertex(sphereX[i]*r, sphereY[i]*r, sphereZ[i]*r, u, v);
+    u+=iu;
+  }
+  obj.vertex(0, -r, 0,u,0);
+  obj.normal(sphereX[0], sphereY[0], sphereZ[0]);
+  obj.vertex(sphereX[0]*r, sphereY[0]*r, sphereZ[0]*r, u, v);
+  obj.endShape();   
+  
+  // Middle rings
+  int voff = 0;
+  for(int i = 2; i < sDetail; i++) {
+    v1=v11=voff;
+    voff += sDetail;
+    v2=voff;
+    u=0;
+    obj.beginShape(TRIANGLE_STRIP);
+    obj.texture(t);
+    for (int j = 0; j < sDetail; j++) {
+      normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
+      obj.vertex(sphereX[v1]*r, sphereY[v1]*r, sphereZ[v1++]*r, u, v);
+      obj.normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
+      obj.vertex(sphereX[v2]*r, sphereY[v2]*r, sphereZ[v2++]*r, u, v+iv);
+      u+=iu;
+    }
+  
+    // Close each ring
+    v1=v11;
+    v2=voff;
+    obj.normal(sphereX[v1], sphereY[v1], sphereZ[v1]);
+    obj.vertex(sphereX[v1]*r, sphereY[v1]*r, sphereZ[v1]*r, u, v);
+    obj.normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
+    obj.vertex(sphereX[v2]*r, sphereY[v2]*r, sphereZ[v2]*r, u, v+iv);
+    obj.endShape();
+    v+=iv;
+  }
+  u=0;
+  
+  // Add the northern cap
+  obj.beginShape(TRIANGLE_STRIP);
+  obj.texture(t);
+  for (int i = 0; i < sDetail; i++) {
+    v2 = voff + i;
+    obj.normal(sphereX[v2], sphereY[v2], sphereZ[v2]);
+    obj.vertex(sphereX[v2]*r, sphereY[v2]*r, sphereZ[v2]*r, u, v);
+    obj.normal(0, 1, 0);
+    obj.vertex(0, r, 0, u, v+iv); 
+    u+=iu;
+  }
+  obj.normal(sphereX[voff], sphereY[voff], sphereZ[voff]);
+  obj.vertex(sphereX[voff]*r, sphereY[voff]*r, sphereZ[voff]*r, u, v);
+
+  obj.endShape(); 
 }

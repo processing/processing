@@ -8,7 +8,7 @@ PShape3D object;
 PShape group1, group2, group3;
 
 void setup() {
-  size(480, 800, A3D);
+  size(480, 800, P3D);
   orientation(PORTRAIT);
   noStroke();
   
