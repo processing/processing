@@ -4,7 +4,7 @@
   <property environment="env" />
 
   <!-- oh ant, you're so cute and convoluted -->
-  <target name="build" depends="sdk_chatter,sdk_whining,actual_build" />
+  <target name="build" depends="sdk_chatter,actual_build" />
 
   <target name="sdk_chatter" unless="env.ANDROID_SDK">
     <echo message="ANDROID_SDK not set, skipping build of android-core.zip" />
