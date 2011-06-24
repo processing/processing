@@ -33,6 +33,16 @@ import java.util.zip.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import processing.app.LibraryListing.LibraryListFetcher;
 
 class JProgressMonitor extends AbstractProgressMonitor {
   JProgressBar progressBar;
@@ -69,7 +79,7 @@ public class LibraryManager {
    * true to use manual URL specification only
    * false to use searchable library list
    */
-  static boolean USE_SIMPLE = true;
+  static boolean USE_SIMPLE = false;
   
   JFrame dialog;
 
@@ -244,7 +254,13 @@ public class LibraryManager {
     filterField = new FilterField();
     pane.add(filterField, c);
     
-    libraryListPane = new LibraryListPanel(fetchLibraryInfo());
+    LibraryListFetcher llf = new LibraryListFetcher();
+    llf.fetchLibraryList(null);
+    while (!llf.isDone()) {
+      Thread.yield();
+    }
+    
+    libraryListPane = new LibraryListPanel(llf.getLibraryListing());
     
     c = new GridBagConstraints();
     c.fill = GridBagConstraints.BOTH;
@@ -517,39 +533,32 @@ public class LibraryManager {
     out.close();
   }
 
-  /**
-   * Placeholder function which returns a list of information on libraries.
-   */
-  public static ArrayList<LibraryInfo> fetchLibraryInfo() {
-    ArrayList<LibraryInfo> libInfos = new ArrayList<LibraryInfo>();
-    
-    LibraryInfo libInfo = new LibraryInfo();
-    libInfo.name = "BlobDetection";
-    libInfo.briefOverview = "Performs the computer vision technique of finding \"blobs\" in an image.";
-    libInfo.isInstalled = true;
-    libInfo.tags.add("blob");
-    libInfo.tags.add("vision");
-    libInfo.tags.add("image");
-    libInfos.add(libInfo);
-    
-    libInfo = new LibraryInfo();
-    libInfo.name = "OpenCV";
-    libInfo.briefOverview = "An OpenCV implementation for processing including blob detection, face recognition and more. This library is highly recommended.";
-    libInfo.isInstalled = false;
-    libInfo.tags.add("face");
-    libInfo.tags.add("vision");
-    libInfo.tags.add("image");
-    libInfos.add(libInfo);
-    
-    libInfo = new LibraryInfo();
-    libInfo.name = "SQLibrary";
-    libInfo.briefOverview = "A library to facilitate communication with MySQL or SQLite databases.";
-    libInfo.isInstalled = false;
-    libInfo.tags.add("database");
-    libInfos.add(libInfo);
-    
-    return libInfos;
-  }
+//  /**
+//   * Placeholder function which returns a list of information on libraries.
+//   */
+//  public static ArrayList<LibraryInfo> fetchLibraryInfo() {
+//    ArrayList<LibraryInfo> libInfos = new ArrayList<LibraryInfo>();
+//    
+//    LibraryInfo libInfo = new LibraryInfo();
+//    libInfo.name = "BlobDetection";
+//    libInfo.description = "Performs the computer vision technique of finding \"blobs\" in an image.";
+//    libInfo.isInstalled = true;
+//    libInfos.add(libInfo);
+//    
+//    libInfo = new LibraryInfo();
+//    libInfo.name = "OpenCV";
+//    libInfo.description = "An OpenCV implementation for processing including blob detection, face recognition and more. This library is highly recommended.";
+//    libInfo.isInstalled = false;
+//    libInfos.add(libInfo);
+//    
+//    libInfo = new LibraryInfo();
+//    libInfo.name = "SQLibrary";
+//    libInfo.description = "A library to facilitate communication with MySQL or SQLite databases.";
+//    libInfo.isInstalled = false;
+//    libInfos.add(libInfo);
+//    
+//    return libInfos;
+//  }
 
   class FilterField extends JTextField {
     final static String filterHint = "Filter your search...";
@@ -620,20 +629,6 @@ public class LibraryManager {
       installProgressBar.setVisible(false);
       dialog.pack();
       
-    }
-  }
-
-  static class LibraryInfo {
-    String name;
-    String briefOverview;
-    String version;
-    String url;
-    ArrayList<String> tags;
-    boolean isInstalled;
-    
-    public LibraryInfo() {
-      tags = new ArrayList<String>();
-      isInstalled = false;
     }
   }
   
