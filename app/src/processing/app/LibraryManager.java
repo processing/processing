@@ -276,7 +276,7 @@ public class LibraryManager {
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     pane.add(scrollPane, c);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
+
     scrollPane.getViewport().addChangeListener(new ChangeListener() {
       
       public void stateChanged(ChangeEvent ce) {
