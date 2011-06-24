@@ -34,20 +34,22 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-class ProgressMonitor {
+class ProgressMonitor2 extends AbstractProgressMonitor {
   JProgressBar progressBar;
-  boolean isCancelled = false;
   
-  public ProgressMonitor(JProgressBar progressBar) {
+  public ProgressMonitor2(JProgressBar progressBar) {
     this.progressBar = progressBar;
   }
   
-  public boolean isCanceled() {
-    return isCancelled;
+  public void startTask(String name, int maxValue) {
+    progressBar.setString(name);
+    progressBar.setIndeterminate(maxValue == UNKNOWN);
+    progressBar.setMaximum(maxValue);
   }
-
-  public void cancel() {
-    isCancelled = true;
+  
+  public void setProgress(int value) {
+    super.setProgress(value);
+    progressBar.setValue(value);
   }
   
 }
@@ -77,14 +79,12 @@ public class LibraryManager {
     public void run() {
       libraryUrl.setEnabled(false);
       installButton.setEnabled(false);
-      progressMonitor.progressBar.setIndeterminate(false);
       
-      progressMonitor.progressBar.setString("Downloading");
       libFile = downloadLibrary(url, progressMonitor);
       
       if (libFile != null) {
-        progressMonitor.progressBar.setString("Installing");
-        progressMonitor.progressBar.setIndeterminate(true);
+        progressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
+        
         installLibrary(libFile);
       }
       
@@ -237,7 +237,7 @@ public class LibraryManager {
             
             URL url = new URL(libraryUrl.getText());
             
-            final ProgressMonitor pm = new ProgressMonitor(installProgressBar);
+            final ProgressMonitor2 pm = new ProgressMonitor2(installProgressBar);
             
             dialog.addWindowListener(new WindowAdapter() {
               
@@ -522,7 +522,7 @@ public class LibraryManager {
       // }
 
       int fileSize = urlConn.getContentLength();
-      progressMonitor.progressBar.setMaximum(fileSize);
+      progressMonitor.startTask("Downloading", fileSize);
       
       InputStream in = urlConn.getInputStream();
       FileOutputStream out = new FileOutputStream(dest);
@@ -533,7 +533,7 @@ public class LibraryManager {
         out.write(b, 0, len);
         bytesDownloaded += len;
         
-        progressMonitor.progressBar.setValue(bytesDownloaded);
+        progressMonitor.setProgress(bytesDownloaded);
       }
       out.close();
       
