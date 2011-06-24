@@ -59,7 +59,11 @@ public class FileDownloader implements Runnable {
   public FileDownloader(URL url, File dest, ProgressMonitor progressMonitor) {
     this.url = url;
     this.dest = dest;
-    this.progressMonitor = progressMonitor;
+    if (progressMonitor == null) {
+      this.progressMonitor = new NullProgressMonitor();
+    } else {
+      this.progressMonitor = progressMonitor;
+    }
     post = null;
     libFile = null;
   }

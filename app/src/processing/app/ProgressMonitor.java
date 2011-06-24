@@ -87,3 +87,10 @@ abstract class AbstractProgressMonitor implements ProgressMonitor {
   }
 
 }
+
+class NullProgressMonitor extends AbstractProgressMonitor {
+
+  public void startTask(String name, int maxValue) {
+  }
+  
+}
