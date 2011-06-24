@@ -34,7 +34,7 @@ import java.util.*;
 import processing.app.LibraryListing.LibraryInfo;
 import processing.app.LibraryManager.*;
 
-public class LibraryListPanel extends JPanel {
+public class LibraryListPanel extends JPanel implements Scrollable {
   
   public LibraryListPanel(LibraryListing libraries) {
     super();
@@ -91,8 +91,8 @@ public class LibraryListPanel extends JPanel {
   
     for (Component c : getComponents()) {
       if (c.isVisible()) {
-        if (c instanceof LibraryListPanel) {
-          Dimension d = c.getSize();
+        if (c instanceof LibraryPanel) {
+          Dimension d = c.getPreferredSize();
           if (d.width > width) {
             width = d.width;
           }
@@ -356,14 +356,16 @@ public class LibraryListPanel extends JPanel {
        * Updates the sizes of components in this panel given width as a constraint
        */
       public void updateSize(int width) {
-        Dimension textDimentions = briefText.getPreferredSize();
-        textDimentions.width = width - installOrRemove.getPreferredSize().width;
-        textDimentions.height = calculateHeight(briefText, textDimentions.width);
-        
-        briefText.setMaximumSize(textDimentions);
-        briefText.setMinimumSize(textDimentions);
-        briefText.setPreferredSize(textDimentions);
-        //briefText.setSize(textDimentions);
+        if (isInfoShown) {
+          Dimension textDimentions = briefText.getPreferredSize();
+          textDimentions.width = width - installOrRemove.getPreferredSize().width;
+          textDimentions.height = calculateHeight(briefText, textDimentions.width);
+          
+          briefText.setMaximumSize(textDimentions);
+          briefText.setMinimumSize(textDimentions);
+          briefText.setPreferredSize(textDimentions);
+          briefText.setSize(textDimentions);
+        }
   
         Dimension d;
         if (isInfoShown) {
@@ -379,11 +381,82 @@ public class LibraryListPanel extends JPanel {
         setMaximumSize(d);
         setMinimumSize(d);
         setPreferredSize(d);
-        //setSize(d);
+        setSize(d);
         
         revalidate();
       }
       
     }
+
+  public Dimension getPreferredScrollableViewportSize() {
+    return getPreferredSize();
+  }
+
+  /**
+   * Amount to scroll to reveal a new page of items
+   */
+  public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+    if (orientation == SwingConstants.VERTICAL) {
+      int blockAmount = visibleRect.height;
+      if (direction > 0) {
+        visibleRect.y += blockAmount;
+      } else {
+        visibleRect.y -= blockAmount;
+      }
+      
+      blockAmount += getScrollableUnitIncrement(visibleRect, orientation, direction);
+      return blockAmount;
+    }
+    return 0;
+  }
+
+  /**
+   * Amount to scroll to reveal the rest of something we are on or a new item
+   */
+  public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+    if (orientation == SwingConstants.VERTICAL) {
+
+      int lastHeight = 0, height = 0;
+      int bottomOfScrollArea = visibleRect.y + visibleRect.height;
+
+      for (Component c : getComponents()) {
+        if (c.isVisible()) {
+          if (c instanceof LibraryPanel) {
+            Dimension d = c.getPreferredSize();
+
+            int nextHeight = height + d.height;
+
+            if (direction > 0) {
+              if (nextHeight > bottomOfScrollArea) {
+                return nextHeight - bottomOfScrollArea;
+              }
+            } else {
+              if (nextHeight > visibleRect.y) {
+                if (visibleRect.y != height) {
+                  return visibleRect.y - height;
+                } else {
+                  return visibleRect.y - lastHeight;
+                }
+              }
+            }
+
+            lastHeight = height;
+            height = nextHeight;
+          }
+        }
+      }
+    }
+    
+    return 0;
+  }
+  
+  public boolean getScrollableTracksViewportHeight() {
+    return false;
+  }
+
+  public boolean getScrollableTracksViewportWidth() {
+    return false;
+  }
+
 
 }
