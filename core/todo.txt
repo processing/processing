@@ -1,4 +1,6 @@
 0199 core
+X pnode: look more closely at json and xml compatibility
+X argh, dumb mistake that broke SVG loading with loadNode()
 
 
 andres 
