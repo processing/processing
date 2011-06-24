@@ -1,6 +1,8 @@
 0199 pde
 
 
+_ update to java 6u26
+
 _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions
 
@@ -32,8 +34,6 @@ _   http://code.google.com/p/processing/issues/detail?id=688
 _ write quicktime uncompressed (w/o qtjava)
 _   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
 
-pnode: look more closely at json and xml compatibility
-
 frequent requests/projects
 _ nurbs or other architecture stuff
 _ force indentation - implement an option for beginners especially
@@ -42,10 +42,6 @@ _   or make the area light up gray as it's being worked on
 _ fix autoformat to indent like the p5 book/examples
 _ common error messages
 _   with a proper list, we can add links when throwing an error in the PDE
-
-
-casey
-_ colors for 2.0 - casey working on it, presenting sunday
 
 ben
 _ build is currently broken for fresh checkout due to changes to file layout
@@ -86,6 +82,7 @@ _ jer: android tutorial
 _ probably later: examples into categories based on difficulty
 _   add ratings/difficult level to examples online and in the pde
 _ go through examples, figure out how to do many on the site w/ js instead
+_ colors/design for 2.0
 
 opengl
 _ new opengl2
