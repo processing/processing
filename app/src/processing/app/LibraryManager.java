@@ -34,10 +34,10 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-class ProgressMonitor2 extends AbstractProgressMonitor {
+class JProgressMonitor extends AbstractProgressMonitor {
   JProgressBar progressBar;
   
-  public ProgressMonitor2(JProgressBar progressBar) {
+  public JProgressMonitor(JProgressBar progressBar) {
     this.progressBar = progressBar;
   }
   
@@ -237,7 +237,7 @@ public class LibraryManager {
             
             URL url = new URL(libraryUrl.getText());
             
-            final ProgressMonitor2 pm = new ProgressMonitor2(installProgressBar);
+            final JProgressMonitor pm = new JProgressMonitor(installProgressBar);
             
             dialog.addWindowListener(new WindowAdapter() {
               
@@ -345,10 +345,35 @@ public class LibraryManager {
       dialog.setMinimumSize(new Dimension(400, 400));
     }
     
+    dialog.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        disposeFrame();
+      }
+    });
+    ActionListener disposer = new ActionListener() {
+      public void actionPerformed(ActionEvent actionEvent) {
+        disposeFrame();
+      }
+    };
+    Base.registerWindowCloseKeys(dialog.getRootPane(), disposer);
+    
     dialog.pack();
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     dialog.setLocation((screen.width - dialog.getWidth()) / 2,
                        (screen.height - dialog.getHeight()) / 2);
+    
+    // handle window closing commands for ctrl/cmd-W or hitting ESC.
+
+    pane.addKeyListener(new KeyAdapter() {
+        public void keyPressed(KeyEvent e) {
+          //System.out.println(e);
+          KeyStroke wc = Base.WINDOW_CLOSE_KEYSTROKE;
+          if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
+              (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
+            disposeFrame();
+          }
+        }
+      });
     
     if (!USE_SIMPLE) {
       libraryListPane.grabFocus();
@@ -388,8 +413,8 @@ public class LibraryManager {
             return libFile;
           }
         } catch (IOException e) {
-          Base.showError("Trouble downloading file",
-                         "An error occured while downloading the library.", e);
+          Base.showWarning("Trouble downloading file",
+                           "An error occured while downloading the library: " + e.getMessage(), e);
         }
       }
     } catch (IOException e) {
@@ -640,4 +665,13 @@ public class LibraryManager {
       isInstalled = false;
     }
   }
+  
+
+  /**
+   * Close the window after an OK or Cancel.
+   */
+  protected void disposeFrame() {
+    dialog.dispose();
+  }
+  
 }
