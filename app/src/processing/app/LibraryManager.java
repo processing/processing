@@ -65,42 +65,6 @@ public class LibraryManager {
     "sketchbook. If you wish to add this file to your<br>" +
     "sketch instead, click “No” and use <i>Sketch &gt;<br>Add File...</i>";
   
-  class LibraryDownloader implements Runnable {
-    URL url;
-    ProgressMonitor progressMonitor;
-    File libFile;
-    
-    public LibraryDownloader(URL url, ProgressMonitor progressMonitor) {
-      this.url = url;
-      this.progressMonitor = progressMonitor;
-      libFile = null;
-    }
-
-    public void run() {
-      libraryUrl.setEnabled(false);
-      installButton.setEnabled(false);
-      
-      libFile = downloadLibrary(url, progressMonitor);
-      
-      if (libFile != null) {
-        progressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
-        
-        installLibrary(libFile);
-      }
-      
-      libraryUrl.setEnabled(true);
-      installButton.setEnabled(true);
-      
-      installProgressBar.setVisible(false);
-      dialog.pack();
-    }
-
-    public File getFile() {
-      return libFile;
-    }
-    
-  }
-  
   /**
    * true to use manual URL specification only
    * false to use searchable library list
@@ -129,222 +93,205 @@ public class LibraryManager {
 
   Editor editor;
   
-  class FilterField extends JTextField {
-    final static String filterHint = "Filter your search...";
-    boolean isShowingHint;
-    
-    public FilterField () {
-      super(filterHint);
-      
-      isShowingHint = true;
-      
-      addFocusListener(new FocusListener() {
-        
-        public void focusLost(FocusEvent focusEvent) {
-          if (filterField.getText().isEmpty()) {
-            isShowingHint = true;
-          }
-          
-          updateStyle();
-        }
-        
-        public void focusGained(FocusEvent focusEvent) {
-          if (isShowingHint) {
-            isShowingHint = false;
-            filterField.setText("");
-          }
-          
-          updateStyle();
-        }
-      });
-    }
-    
-    public void updateStyle() {
-      if (isShowingHint) {
-        filterField.setText(filterHint);
-        
-        // setForeground(UIManager.getColor("TextField.light")); // too light
-        setForeground(Color.gray);
-      } else {
-        setForeground(UIManager.getColor("TextField.foreground"));
-      }
-    }
-  }
-
   public LibraryManager() {
 
-    // setup dialog for the prefs
-
-    // dialog = new JDialog(editor, "Preferences", true);
     dialog = new JFrame("Library Manager");
-    dialog.setResizable(true);
-
     Base.setIcon(dialog);
+    
+    if (USE_SIMPLE) {
+      createSimpleUiComponents();
+    } else {
+      createComplexUiComponents();
+    }
+    
+    registerDisposeListeners();
+    
+    dialog.pack();
+    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    dialog.setLocation((screen.width - dialog.getWidth()) / 2,
+                       (screen.height - dialog.getHeight()) / 2);
+    
+    if (!USE_SIMPLE) {
+      libraryListPane.grabFocus();
+    }
+    
+  }
+  
+  private void createSimpleUiComponents() {
+    dialog.setResizable(false);
     
     Container pane = dialog.getContentPane();
     pane.setLayout(new GridBagLayout());
     
-    GridBagConstraints c; 
+    urlLabel = new JLabel("Library URL:");
+    libraryUrl = new JTextField();
+    installButton = new JButton("Install");
+    installProgressBar = new JProgressBar();
+
+    installProgressBar.setVisible(true);
+    installProgressBar.setString("");
+    installProgressBar.setStringPainted(true);
+
+    installButton.setEnabled(false);
+    libraryUrl.getDocument().addDocumentListener(new DocumentListener() {
+      
+      private void checkUrl() {
+        try {
+          new URL(libraryUrl.getText());
+          installButton.setEnabled(true);
+          installButton.setToolTipText("");
+        } catch (MalformedURLException e) {
+          installButton.setEnabled(false);
+          installButton.setToolTipText("URL is malformed");
+        }
+      }
+      
+      public void removeUpdate(DocumentEvent de) {
+        checkUrl();
+      }
+      
+      public void insertUpdate(DocumentEvent de) {
+        checkUrl();
+      }
+      
+      public void changedUpdate(DocumentEvent de) {
+        checkUrl();
+      }
+    });
     
-    if (USE_SIMPLE) {
-      dialog.setResizable(false);
-      
-      urlLabel = new JLabel("Library URL:");
-      libraryUrl = new JTextField();
-      installButton = new JButton("Install");
-      installProgressBar = new JProgressBar();
+    ActionListener installLibAction = new ActionListener() {
 
-//      Dimension d = installProgressBar.getSize();
-//      d.height = 2 * pane.getFontMetrics(installProgressBar.getFont()).getHeight();
-//      installProgressBar.setPreferredSize(d);
-      installProgressBar.setVisible(true);
-      installProgressBar.setString("");
-      installProgressBar.setStringPainted(true);
-
-      installButton.setEnabled(false);
-      libraryUrl.getDocument().addDocumentListener(new DocumentListener() {
-        
-        private void checkUrl() {
-          try {
-            new URL(libraryUrl.getText());
-            installButton.setEnabled(true);
-            installButton.setToolTipText("");
-          } catch (MalformedURLException e) {
-            installButton.setEnabled(false);
-            installButton.setToolTipText("URL is malformed");
-          }
-        }
-        
-        public void removeUpdate(DocumentEvent de) {
-          checkUrl();
-        }
-        
-        public void insertUpdate(DocumentEvent de) {
-          checkUrl();
-        }
-        
-        public void changedUpdate(DocumentEvent de) {
-          checkUrl();
-        }
-      });
-      
-      ActionListener installLibAction = new ActionListener() {
-
-        public void actionPerformed(ActionEvent arg) {
-          try {
-            installProgressBar.setVisible(true);
-            dialog.pack();
-            
-            URL url = new URL(libraryUrl.getText());
-            
-            final JProgressMonitor pm = new JProgressMonitor(installProgressBar);
-            
-            dialog.addWindowListener(new WindowAdapter() {
-              
-              public void windowClosing(WindowEvent we) {
-                pm.cancel();
-              }
-            });
-            
-            LibraryDownloader downloader = new LibraryDownloader(url, pm);
-            new Thread(downloader).start();
-          } catch (MalformedURLException e) {
-            System.err.println("Malformed URL");
-          }
-          libraryUrl.setText("");
-        }
-      };
-      libraryUrl.addActionListener(installLibAction);
-      installButton.addActionListener(installLibAction);
-
-      c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 0;
-      c.weightx = 1;
-      c.anchor = GridBagConstraints.WEST;
-      pane.add(urlLabel, c);
-      
-      c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 1;
-      c.weightx = 1;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      pane.add(libraryUrl, c);
-      
-      c = new GridBagConstraints();
-      c.gridx = 1;
-      c.gridy = 1;
-      c.anchor = GridBagConstraints.EAST;
-      pane.add(installButton, c);
-      
-      c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 2;
-      c.gridwidth = 2;
-      c.weightx = 1;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      pane.add(installProgressBar, c);
-      
-      Dimension d = dialog.getSize();
-      d.width = 320;
-      dialog.setMinimumSize(d);
-    } else {
-      c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 0;
-      c.gridwidth = 2;
-      c.weightx = 1;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      filterField = new FilterField();
-      pane.add(filterField, c);
-      
-      libraryListPane = new LibraryListPanel(fetchLibraryInfo());
-      
-      c = new GridBagConstraints();
-      c.fill = GridBagConstraints.BOTH;
-      c.gridx = 0;
-      c.gridy = 1;
-      c.gridwidth = 2;
-      c.weighty = 1;
-      c.weightx = 1;
-      
-      final JScrollPane scrollPane = new JScrollPane();
-      scrollPane.setPreferredSize(new Dimension(300,300));
-      scrollPane.setViewportView(libraryListPane);
-      scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-      pane.add(scrollPane, c);
-      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      
-      scrollPane.getViewport().addChangeListener(new ChangeListener() {
-        
-        public void stateChanged(ChangeEvent ce) {
+      public void actionPerformed(ActionEvent arg) {
+        try {
+          installProgressBar.setVisible(true);
+          dialog.pack();
           
-          int width = scrollPane.getViewportBorderBounds().width;
-          libraryListPane.setWidth(width);
+          URL url = new URL(libraryUrl.getText());
+          
+          final JProgressMonitor pm = new JProgressMonitor(installProgressBar);
+          
+          dialog.addWindowListener(new WindowAdapter() {
+            
+            public void windowClosing(WindowEvent we) {
+              pm.cancel();
+            }
+          });
+          
+          libraryUrl.setEnabled(false);
+          installButton.setEnabled(false);
+          
+          File libDest = getTemporaryFile(url);
+          
+          FileDownloader downloader = new FileDownloader(url, libDest, pm);
+          downloader.setPostOperation(new LibraryInstaller(downloader, pm));
+          
+          new Thread(downloader).start();
+          
+        } catch (MalformedURLException e) {
+          System.err.println("Malformed URL");
         }
-      });
-      
-      c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 2;
-      pane.add(new Label("Category:"), c);
-      
-      c = new GridBagConstraints();
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.gridx = 1;
-      c.gridy = 2;
-      
-      String[] categories = {
-        "3D", "Animation", "Compilations", "Computer Vision",
-        "Data and Protocols", "Geometry", "Graphic Interface",
-        "Hardware Interface", "Import / Export", "Math", "Simulation", "Sound",
-        "Tools", "Typography", "Video" };
-      categoryChooser = new JComboBox(categories);
-      pane.add(categoryChooser, c);
-  
-      dialog.setMinimumSize(new Dimension(400, 400));
-    }
+        libraryUrl.setText("");
+      }
+    };
+    libraryUrl.addActionListener(installLibAction);
+    installButton.addActionListener(installLibAction);
+
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.weightx = 1;
+    c.anchor = GridBagConstraints.WEST;
+    pane.add(urlLabel, c);
     
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 1;
+    c.weightx = 1;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    pane.add(libraryUrl, c);
+    
+    c = new GridBagConstraints();
+    c.gridx = 1;
+    c.gridy = 1;
+    c.anchor = GridBagConstraints.EAST;
+    pane.add(installButton, c);
+    
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 2;
+    c.gridwidth = 2;
+    c.weightx = 1;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    pane.add(installProgressBar, c);
+    
+    Dimension d = dialog.getSize();
+    d.width = 320;
+    dialog.setMinimumSize(d);
+  }
+
+  private void createComplexUiComponents() {
+    dialog.setResizable(true);
+    
+    Container pane = dialog.getContentPane();
+    pane.setLayout(new GridBagLayout());
+    
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.gridwidth = 2;
+    c.weightx = 1;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    filterField = new FilterField();
+    pane.add(filterField, c);
+    
+    libraryListPane = new LibraryListPanel(fetchLibraryInfo());
+    
+    c = new GridBagConstraints();
+    c.fill = GridBagConstraints.BOTH;
+    c.gridx = 0;
+    c.gridy = 1;
+    c.gridwidth = 2;
+    c.weighty = 1;
+    c.weightx = 1;
+    
+    final JScrollPane scrollPane = new JScrollPane();
+    scrollPane.setPreferredSize(new Dimension(300,300));
+    scrollPane.setViewportView(libraryListPane);
+    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+    pane.add(scrollPane, c);
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    
+    scrollPane.getViewport().addChangeListener(new ChangeListener() {
+      
+      public void stateChanged(ChangeEvent ce) {
+        
+        int width = scrollPane.getViewportBorderBounds().width;
+        libraryListPane.setWidth(width);
+      }
+    });
+    
+    c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 2;
+    pane.add(new Label("Category:"), c);
+    
+    c = new GridBagConstraints();
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 1;
+    c.gridy = 2;
+    
+    String[] categories = {
+      "3D", "Animation", "Compilations", "Computer Vision",
+      "Data and Protocols", "Geometry", "Graphic Interface",
+      "Hardware Interface", "Import / Export", "Math", "Simulation", "Sound",
+      "Tools", "Typography", "Video" };
+    categoryChooser = new JComboBox(categories);
+    pane.add(categoryChooser, c);
+
+    dialog.setMinimumSize(new Dimension(400, 400));
+  }
+
+  private void registerDisposeListeners() {
     dialog.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         disposeFrame();
@@ -357,73 +304,44 @@ public class LibraryManager {
     };
     Base.registerWindowCloseKeys(dialog.getRootPane(), disposer);
     
-    dialog.pack();
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    dialog.setLocation((screen.width - dialog.getWidth()) / 2,
-                       (screen.height - dialog.getHeight()) / 2);
-    
     // handle window closing commands for ctrl/cmd-W or hitting ESC.
+    
+    dialog.getContentPane().addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) {
+        //System.out.println(e);
+        KeyStroke wc = Base.WINDOW_CLOSE_KEYSTROKE;
+        if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
+            (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
+          disposeFrame();
+        }
+      }
+    });
+  }
 
-    pane.addKeyListener(new KeyAdapter() {
-        public void keyPressed(KeyEvent e) {
-          //System.out.println(e);
-          KeyStroke wc = Base.WINDOW_CLOSE_KEYSTROKE;
-          if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
-              (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
-            disposeFrame();
-          }
-        }
-      });
-    
-    if (!USE_SIMPLE) {
-      libraryListPane.grabFocus();
-    }
+  protected void showFrame(Editor editor) {
+    this.editor = editor;
+    dialog.setVisible(true);
   }
-  
+
   /**
-   * Returns the presumed name of a library by looking at its filename. For
-   * example,
-   *   "/path/to/helpfullib.zip" -> "helpfullib"
-   *   "helpfullib-0.1.1.plb" -> "helpfullib-0.1.1"
+   * Close the window after an OK or Cancel.
    */
-  protected static String guessLibraryName(String filePath) {
-    String[] paths = filePath.split("/");
-    if (paths.length != 0) {
-      String fileName = paths[paths.length - 1];
-      int lastDot = fileName.lastIndexOf(".");
-      if (lastDot != -1) {
-        return fileName.substring(0, lastDot);
-      }
-    }
-    
-    return null;
+  protected void disposeFrame() {
+    dialog.dispose();
   }
-  
-  protected File downloadLibrary(URL url, ProgressMonitor progressMonitor) {
-    try {
-      String libName = guessLibraryName(url.getFile());
-      if (libName != null) {
-        File tmpFolder = Base.createTempFolder(libName, "download");
-        
-        File libFile = new File(tmpFolder, libName + ".plb");
-        libFile.setWritable(true);
-        
-        try {
-          if (downloadFile(url, libFile, progressMonitor)) {
-            return libFile;
-          }
-        } catch (IOException e) {
-          Base.showWarning("Trouble downloading file",
-                           "An error occured while downloading the library: " + e.getMessage(), e);
-        }
-      }
-    } catch (IOException e) {
-      Base.showError("Trouble creating temporary folder",
-                     "Could not create a place to store libraries being downloaded.\n" +
-                     "That's gonna prevent us from continuing.", e);
+
+  public int confirmAndInstallLibrary(Editor editor, File libFile) {
+    this.editor = editor;
+    
+    int result = Base.showYesNoQuestion(this.editor, "Install",
+                             "Install libraries from " + libFile.getName() + "?",
+                             DRAG_AND_DROP_SECONDARY);
+    
+    if (result == JOptionPane.YES_OPTION) {
+      return installLibrary(libFile);
     }
     
-    return null;
+    return 0;
   }
 
   /**
@@ -447,6 +365,45 @@ public class LibraryManager {
     return 0;
   }
   
+  protected File getTemporaryFile(URL url) {
+    try {
+      String libName = guessLibraryName(url.getFile());
+      if (libName != null) {
+        File tmpFolder = Base.createTempFolder(libName, "download");
+        
+        File libFile = new File(tmpFolder, libName + ".plb");
+        libFile.setWritable(true);
+        
+        return libFile;
+      }
+    } catch (IOException e) {
+      Base.showError("Trouble creating temporary folder",
+                     "Could not create a place to store libraries being downloaded.\n" +
+                     "That's gonna prevent us from continuing.", e);
+    }
+    
+    return null;
+  }
+
+  /**
+   * Returns the presumed name of a library by looking at its filename. For
+   * example,
+   *   "/path/to/helpfullib.zip" -> "helpfullib"
+   *   "helpfullib-0.1.1.plb" -> "helpfullib-0.1.1"
+   */
+  protected static String guessLibraryName(String filePath) {
+    String[] paths = filePath.split("/");
+    if (paths.length != 0) {
+      String fileName = paths[paths.length - 1];
+      int lastDot = fileName.lastIndexOf(".");
+      if (lastDot != -1) {
+        return fileName.substring(0, lastDot);
+      }
+    }
+    
+    return null;
+  }
+
   protected int installLibraries(ArrayList<Library> newLibs) {
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
     ArrayList<Library> libsToBeBackuped = new ArrayList<Library>();
@@ -530,45 +487,6 @@ public class LibraryManager {
     return newLibs.size();
   }
 
-  /**
-   * Returns true if the file was successfully downloaded, false otherwise
-   * @param progressMonitor 
-   * @throws FileNotFoundException 
-   */
-  protected boolean downloadFile(URL source, File dest, ProgressMonitor progressMonitor) throws IOException, FileNotFoundException {
-      URLConnection urlConn = source.openConnection();
-      urlConn.setConnectTimeout(1000);
-      urlConn.setReadTimeout(5000);
-
-      // String expectedType1 = "application/x-zip-compressed";
-      // String expectedType2 = "application/zip";
-      // String type = urlConn.getContentType();
-      // if (expectedType1.equals(type) || expectedType2.equals(type)) {
-      // }
-
-      int fileSize = urlConn.getContentLength();
-      progressMonitor.startTask("Downloading", fileSize);
-      
-      InputStream in = urlConn.getInputStream();
-      FileOutputStream out = new FileOutputStream(dest);
-
-      byte[] b = new byte[256];
-      int bytesDownloaded = 0, len;
-      while (!progressMonitor.isCanceled() && (len = in.read(b)) != -1) {
-        out.write(b, 0, len);
-        bytesDownloaded += len;
-        
-        progressMonitor.setProgress(bytesDownloaded);
-      }
-      out.close();
-      
-      if (!progressMonitor.isCanceled()) {
-        return true;
-      }
-      
-    return false;
-  }
-  
   public static void unzip(File zipFile, File dest) {
     try {
       FileInputStream fis = new FileInputStream(zipFile);
@@ -598,30 +516,11 @@ public class LibraryManager {
     }
     out.close();
   }
-  
-  protected void showFrame(Editor editor) {
-    this.editor = editor;
-    dialog.setVisible(true);
-  }
 
-  public int confirmAndInstallLibrary(Editor editor, File libFile) {
-    this.editor = editor;
-    
-    int result = Base.showYesNoQuestion(this.editor, "Install",
-                             "Install libraries from " + libFile.getName() + "?",
-                             DRAG_AND_DROP_SECONDARY);
-    
-    if (result == JOptionPane.YES_OPTION) {
-      return installLibrary(libFile);
-    }
-    
-    return 0;
-  }
-  
   /**
    * Placeholder function which returns a list of information on libraries.
    */
-  public ArrayList<LibraryInfo> fetchLibraryInfo() {
+  public static ArrayList<LibraryInfo> fetchLibraryInfo() {
     ArrayList<LibraryInfo> libInfos = new ArrayList<LibraryInfo>();
     
     LibraryInfo libInfo = new LibraryInfo();
@@ -652,6 +551,78 @@ public class LibraryManager {
     return libInfos;
   }
 
+  class FilterField extends JTextField {
+    final static String filterHint = "Filter your search...";
+    boolean isShowingHint;
+    
+    public FilterField () {
+      super(filterHint);
+      
+      isShowingHint = true;
+      
+      addFocusListener(new FocusListener() {
+        
+        public void focusLost(FocusEvent focusEvent) {
+          if (filterField.getText().isEmpty()) {
+            isShowingHint = true;
+          }
+          
+          updateStyle();
+        }
+        
+        public void focusGained(FocusEvent focusEvent) {
+          if (isShowingHint) {
+            isShowingHint = false;
+            filterField.setText("");
+          }
+          
+          updateStyle();
+        }
+      });
+    }
+    
+    public void updateStyle() {
+      if (isShowingHint) {
+        filterField.setText(filterHint);
+        
+        // setForeground(UIManager.getColor("TextField.light")); // too light
+        setForeground(Color.gray);
+      } else {
+        setForeground(UIManager.getColor("TextField.foreground"));
+      }
+    }
+  }
+
+  class LibraryInstaller implements Runnable {
+    
+    ProgressMonitor progressMonitor;
+    
+    FileDownloader fileDownloader;
+    
+    public LibraryInstaller(FileDownloader downloader, ProgressMonitor pm) {
+      progressMonitor = pm;
+      fileDownloader = downloader;
+    }
+    
+    public void run() {
+  
+      File libFile = fileDownloader.getFile();
+      
+      if (libFile != null) {
+        progressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
+        
+        installLibrary(libFile);
+      }
+      
+      libraryUrl.setEnabled(true);
+      installButton.setEnabled(true);
+  
+      installProgressBar.setVisible(false);
+      dialog.pack();
+      
+    }
+  }
+
   static class LibraryInfo {
     String name;
     String briefOverview;
@@ -664,14 +635,6 @@ public class LibraryManager {
       tags = new ArrayList<String>();
       isInstalled = false;
     }
-  }
-  
-
-  /**
-   * Close the window after an OK or Cancel.
-   */
-  protected void disposeFrame() {
-    dialog.dispose();
   }
   
 }
