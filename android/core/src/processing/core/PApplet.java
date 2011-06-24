@@ -3636,11 +3636,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // NODE I/O (XML, JSON, etc.)
   
   public PNode loadNode(String filename) {
-    if (filename.toLowerCase().endsWith(".xml")) {
-      return new PNode(this, filename);
-    } else {
-      throw new RuntimeException("filename used for loadNode() must end with XML");
-    }
+    return new PNode(this, filename);
   }
   
   
