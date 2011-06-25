@@ -29,15 +29,17 @@ import java.awt.event.*;
 import java.awt.font.*;
 import java.awt.*;
 import java.text.*;
-import java.util.*;
 
 import processing.app.LibraryListing.LibraryInfo;
-import processing.app.LibraryManager.*;
 
 public class LibraryListPanel extends JPanel implements Scrollable {
   
+  private PreferredViewPositionListener preferredViewPositionListener;
+
   public LibraryListPanel(LibraryListing libraries) {
     super();
+    
+    preferredViewPositionListener = null;
     
     setLayout(new GridBagLayout());
     int row = 0;
@@ -78,16 +80,34 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       }
     }
     
-    updateLibraryListSize();
+    updateLibraryListSizeAndPosition(0, true, null);
   }
 
   /**
-   * Updates the width and height of this library list based on the sizes of
-   * the library panes it contains.
+   * Updates the width and height of this library list based on the sizes of the
+   * library panes it contains.
+   * 
+   * @param obtainedSpace
+   *          the height of the space obtained from the closing of the previous
+   *          panel
+   * @param obtainedSpaceIsAbove
+   *          true if the panel that was closed was above the panel which was
+   *          just opened
+   * @param expandedPanel
+   *          the panel that was expanded, or null if none
    */
-  private void updateLibraryListSize() {
+  private void updateLibraryListSizeAndPosition(int obtainedSpace,
+                                                boolean obtainedSpaceIsAbove,
+                                                LibraryPanel expandedPanel) {
+
     int height = 0;
     int width = 0;
+    
+//    int selectedTop = 0, selectedBottom = 0;
+//    if (expandedPanel != null) {
+//      selectedTop = expandedPanel.getLocation().y;
+//      selectedBottom = selectedTop + expandedPanel.getHeight();
+//    }
   
     for (Component c : getComponents()) {
       if (c.isVisible()) {
@@ -101,6 +121,15 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       }
     }
     
+    Rectangle r = getVisibleRect();
+    if (obtainedSpaceIsAbove && preferredViewPositionListener != null) {
+
+      Point p = new Point(r.x, r.y);
+      p.y -= obtainedSpace;
+
+      preferredViewPositionListener.handlePreferredLocation(p);
+    }
+
     setPreferredSize(new Dimension(width, height));
   }
 
@@ -193,201 +222,6 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     return lineHeight * lineCount(textArea, width);
   }
 
-  /**
-     * Panel that expands and gives a brief overview of a library when clicked.
-     */
-    class LibraryPanel extends JPanel {
-      final String unclickedCardId = "unclicked";
-      final String clickedCardId = "clicked";
-      final int topAndBottomBorder = 2;
-      
-      LibraryInfo libInfo;
-      
-      JPanel headerPanel;
-      JLabel nameLabel;
-      
-      JPanel infoPanel;
-      JPanel unclickedCard;
-      JPanel clickedCard;
-      JTextArea briefText;
-      JButton installOrRemove;
-      
-      boolean isInfoShown;
-      
-      
-      private LibraryPanel(LibraryInfo libInfo) {
-        this.libInfo = libInfo;
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        
-        setBorder(BorderFactory.createEmptyBorder(topAndBottomBorder, 2, topAndBottomBorder, 2));
-        
-        configureHeaderPane();
-        configureInfoPane();
-        
-        setFocusable(true);
-        setShowInfo(false);
-        updateColors();
-        updateLibraryListSize();
-        
-        addMouseListener(new MouseAdapter() {
-          public void mouseClicked(MouseEvent e) {
-            for (Component c : LibraryListPanel.this.getComponents()) {
-              if (c != LibraryPanel.this && c instanceof LibraryPanel) {
-                LibraryPanel lp = (LibraryPanel) c;
-                lp.setShowInfo(false);
-              }
-            }
-            
-            setShowInfo(true);
-            updateColors();
-            updateLibraryListSize();
-            requestFocusInWindow();
-          }
-        });
-        
-      }
-  
-      /**
-       * Create the widgets for the header panel which is visible when the library
-       * panel is not clicked
-       */
-      private void configureHeaderPane() {
-        headerPanel = new JPanel();
-        headerPanel.setFocusable(true);
-        headerPanel.setOpaque(false);
-        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
-        
-        nameLabel = new JLabel(libInfo.name);
-        headerPanel.add(this.nameLabel);
-        headerPanel.add(Box.createHorizontalGlue());
-        
-        add(headerPanel);
-      }
-  
-      /**
-       * Create the widgets for the info panel which is visible when the library
-       * panel is clicked
-       */
-      private void configureInfoPane() {
-        infoPanel = new JPanel();
-        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
-        infoPanel.setLayout(new CardLayout());
-        
-        unclickedCard = new JPanel();
-        clickedCard = new JPanel();
-        
-        infoPanel.setOpaque(false);
-        unclickedCard.setOpaque(false);
-        clickedCard.setOpaque(false);
-        
-        infoPanel.setFocusable(true);
-        unclickedCard.setFocusable(true);
-        clickedCard.setFocusable(true);
-        
-        briefText = new JTextArea(libInfo.description);
-        installOrRemove = new JButton();
-  //    installOrRemove = new JButton("Install");
-  //    ActionListener installLibAction = new ActionListener() {
-  //
-  //      public void actionPerformed(ActionEvent arg) {
-  //        try {
-  //          URL url = new URL(libraryUri.getText());
-  //          // System.out.println("Installing library: " + url);
-  //          File libFile = downloadLibrary(url);
-  //          if (libFile != null) {
-  //            installLibrary(libFile);
-  //          }
-  //        } catch (MalformedURLException e) {
-  //          System.err.println("Malformed URL");
-  //        }
-  //        libraryUri.setText("");
-  //      }
-  //    };
-  //    installOrRemove.addActionListener(installLibAction);
-        
-        clickedCard.setLayout(new BoxLayout(clickedCard, BoxLayout.X_AXIS));
-        
-        briefText.setHighlighter(null);
-        briefText.setOpaque(false);
-        briefText.setEditable(false);
-        briefText.setLineWrap(true);
-        briefText.setWrapStyleWord(true);
-        Font font = this.briefText.getFont();
-        font = font.deriveFont(font.getSize() * 0.9f);
-        briefText.setFont(font);
-        
-        clickedCard.add(briefText);
-        clickedCard.add(Box.createHorizontalGlue());
-        clickedCard.add(installOrRemove);
-        
-        installOrRemove.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-        briefText.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-        
-        installOrRemove.setText("Install");
-        Dimension installButtonDimensions = installOrRemove.getPreferredSize();
-        installButtonDimensions.width = 100;
-        installOrRemove.setPreferredSize(installButtonDimensions);
-        
-        infoPanel.add(unclickedCard, unclickedCardId);
-        infoPanel.add(clickedCard, clickedCardId);
-        
-        add(infoPanel);
-      }
-  
-      /**
-       * Turns on/off the info panel which contains a brief description of the
-       * library and a button to Install/Remove a library.
-       */
-      public void setShowInfo(boolean doShow) {
-        isInfoShown = doShow;
-        CardLayout cardLayout = (CardLayout) infoPanel.getLayout();
-        
-        if (isInfoShown) {
-          cardLayout.show(infoPanel, clickedCardId);
-        } else {
-          cardLayout.show(infoPanel, unclickedCardId);      
-        }
-        
-        int width = getSize().width;
-        updateSize(width > 0 ? width : 100);
-      }
-      
-      /**
-       * Updates the sizes of components in this panel given width as a constraint
-       */
-      public void updateSize(int width) {
-        if (isInfoShown) {
-          Dimension textDimentions = briefText.getPreferredSize();
-          textDimentions.width = width - installOrRemove.getPreferredSize().width;
-          textDimentions.height = calculateHeight(briefText, textDimentions.width);
-          
-          briefText.setMaximumSize(textDimentions);
-          briefText.setMinimumSize(textDimentions);
-          briefText.setPreferredSize(textDimentions);
-          briefText.setSize(textDimentions);
-        }
-  
-        Dimension d;
-        if (isInfoShown) {
-          d = headerPanel.getPreferredSize();
-          d.width = width;
-          d.height += clickedCard.getPreferredSize().height + 2 * topAndBottomBorder;
-        } else {
-          d = headerPanel.getPreferredSize();
-          d.width = width;
-          d.height += 2 * topAndBottomBorder;
-        }
-        
-        setMaximumSize(d);
-        setMinimumSize(d);
-        setPreferredSize(d);
-        setSize(d);
-        
-        revalidate();
-      }
-      
-    }
-
   public Dimension getPreferredScrollableViewportSize() {
     return getPreferredSize();
   }
@@ -458,5 +292,228 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     return false;
   }
 
+  public void setPreferredViewPositionListener(PreferredViewPositionListener preferredViewPositionListener) {
+    this.preferredViewPositionListener = preferredViewPositionListener;
+  }
+
+  /**
+   * Panel that expands and gives a brief overview of a library when clicked.
+   */
+  class LibraryPanel extends JPanel {
+    final String unclickedCardId = "unclicked";
+
+    final String clickedCardId = "clicked";
+
+    final int topAndBottomBorder = 2;
+
+    LibraryInfo libInfo;
+
+    JPanel headerPanel;
+
+    JLabel nameLabel;
+
+    JPanel infoPanel;
+
+    JPanel unclickedCard;
+
+    JPanel clickedCard;
+
+    JTextArea briefText;
+
+    JButton installOrRemove;
+
+    boolean isInfoShown;
+
+    private LibraryPanel(LibraryInfo libInfo) {
+      this.libInfo = libInfo;
+      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+      setBorder(BorderFactory.createEmptyBorder(topAndBottomBorder, 2,
+                                                topAndBottomBorder, 2));
+
+      configureHeaderPane();
+      configureInfoPane();
+
+      setFocusable(true);
+      setShowInfo(false);
+      updateColors();
+      updateLibraryListSizeAndPosition(0, true, null);
+
+      addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+          
+          int obtainedSpace = 0;
+          boolean obtainedSpaceIsAbove = true;
+          
+          for (Component c : LibraryListPanel.this.getComponents()) {
+            if (c == LibraryPanel.this) {
+              obtainedSpaceIsAbove = false;
+            } else if (c instanceof LibraryPanel) {
+              LibraryPanel lp = (LibraryPanel) c;
+              if (lp.isInfoShown) {
+                obtainedSpace = lp.briefText.getSize().height;
+                lp.setShowInfo(false);
+                break;
+              }
+            }
+          }
+          
+          setShowInfo(true);
+          updateColors();
+          updateLibraryListSizeAndPosition(obtainedSpace, obtainedSpaceIsAbove,
+                                           LibraryPanel.this);
+          requestFocusInWindow();
+        }
+      });
+
+    }
+
+    /**
+     * Create the widgets for the header panel which is visible when the library
+     * panel is not clicked
+     */
+    private void configureHeaderPane() {
+      headerPanel = new JPanel();
+      headerPanel.setFocusable(true);
+      headerPanel.setOpaque(false);
+      headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
+
+      nameLabel = new JLabel(libInfo.name);
+      headerPanel.add(this.nameLabel);
+      headerPanel.add(Box.createHorizontalGlue());
+
+      add(headerPanel);
+    }
+
+    /**
+     * Create the widgets for the info panel which is visible when the library
+     * panel is clicked
+     */
+    private void configureInfoPane() {
+      infoPanel = new JPanel();
+      infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+      infoPanel.setLayout(new CardLayout());
+
+      unclickedCard = new JPanel();
+      clickedCard = new JPanel();
+
+      infoPanel.setOpaque(false);
+      unclickedCard.setOpaque(false);
+      clickedCard.setOpaque(false);
+
+      infoPanel.setFocusable(true);
+      unclickedCard.setFocusable(true);
+      clickedCard.setFocusable(true);
+
+      briefText = new JTextArea(libInfo.description);
+      installOrRemove = new JButton();
+      // installOrRemove = new JButton("Install");
+      // ActionListener installLibAction = new ActionListener() {
+      //
+      // public void actionPerformed(ActionEvent arg) {
+      // try {
+      // URL url = new URL(libraryUri.getText());
+      // // System.out.println("Installing library: " + url);
+      // File libFile = downloadLibrary(url);
+      // if (libFile != null) {
+      // installLibrary(libFile);
+      // }
+      // } catch (MalformedURLException e) {
+      // System.err.println("Malformed URL");
+      // }
+      // libraryUri.setText("");
+      // }
+      // };
+      // installOrRemove.addActionListener(installLibAction);
+
+      clickedCard.setLayout(new BoxLayout(clickedCard, BoxLayout.X_AXIS));
+
+      briefText.setHighlighter(null);
+      briefText.setOpaque(false);
+      briefText.setEditable(false);
+      briefText.setLineWrap(true);
+      briefText.setWrapStyleWord(true);
+      Font font = this.briefText.getFont();
+      font = font.deriveFont(font.getSize() * 0.9f);
+      briefText.setFont(font);
+
+      clickedCard.add(briefText);
+      clickedCard.add(Box.createHorizontalGlue());
+      clickedCard.add(installOrRemove);
+
+      installOrRemove.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+      briefText.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+
+      installOrRemove.setText("Install");
+      Dimension installButtonDimensions = installOrRemove.getPreferredSize();
+      installButtonDimensions.width = 100;
+      installOrRemove.setPreferredSize(installButtonDimensions);
+
+      infoPanel.add(unclickedCard, unclickedCardId);
+      infoPanel.add(clickedCard, clickedCardId);
+
+      add(infoPanel);
+    }
+
+    /**
+     * Turns on/off the info panel which contains a brief description of the
+     * library and a button to Install/Remove a library.
+     */
+    public void setShowInfo(boolean doShow) {
+      isInfoShown = doShow;
+      CardLayout cardLayout = (CardLayout) infoPanel.getLayout();
+
+      if (isInfoShown) {
+        cardLayout.show(infoPanel, clickedCardId);
+      } else {
+        cardLayout.show(infoPanel, unclickedCardId);
+      }
+
+      int width = getSize().width;
+      updateSize(width > 0 ? width : 100);
+    }
+
+    /**
+     * Updates the sizes of components in this panel given width as a constraint
+     */
+    public void updateSize(int width) {
+      if (isInfoShown) {
+        Dimension textDimentions = briefText.getPreferredSize();
+        textDimentions.width = width - installOrRemove.getPreferredSize().width;
+        textDimentions.height = calculateHeight(briefText, textDimentions.width);
+
+        briefText.setMaximumSize(textDimentions);
+        briefText.setMinimumSize(textDimentions);
+        briefText.setPreferredSize(textDimentions);
+        briefText.setSize(textDimentions);
+      }
+
+      Dimension d;
+      if (isInfoShown) {
+        d = headerPanel.getPreferredSize();
+        d.width = width;
+        d.height += clickedCard.getPreferredSize().height + 2
+            * topAndBottomBorder;
+      } else {
+        d = headerPanel.getPreferredSize();
+        d.width = width;
+        d.height += 2 * topAndBottomBorder;
+      }
+
+      setMaximumSize(d);
+      setMinimumSize(d);
+      setPreferredSize(d);
+      setSize(d);
+
+      revalidate();
+    }
+
+  }
+
+  public static interface PreferredViewPositionListener {
+    
+    void handlePreferredLocation(Point p);
+    
+  }
 
 }

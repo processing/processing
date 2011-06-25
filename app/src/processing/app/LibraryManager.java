@@ -42,6 +42,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import processing.app.LibraryListPanel.PreferredViewPositionListener;
 import processing.app.LibraryListing.LibraryListFetcher;
 
 class JProgressMonitor extends AbstractProgressMonitor {
@@ -285,6 +286,14 @@ public class LibraryManager {
         libraryListPane.setWidth(width);
       }
     });
+      
+    libraryListPane.setPreferredViewPositionListener(new PreferredViewPositionListener() {
+
+      public void handlePreferredLocation(Point p) {
+        scrollPane.getViewport().setViewPosition(p);
+      }
+
+    });
     
     c = new GridBagConstraints();
     c.gridx = 0;
@@ -297,7 +306,7 @@ public class LibraryManager {
     c.gridy = 2;
     
     String[] categories = {
-      "3D", "Animation", "Compilations", "Computer Vision",
+      "Any", "3D", "Animation", "Compilations", "Computer Vision",
       "Data and Protocols", "Geometry", "Graphic Interface",
       "Hardware Interface", "Import / Export", "Math", "Simulation", "Sound",
       "Tools", "Typography", "Video" };
