@@ -5,7 +5,6 @@ o   http://code.google.com/p/processing/issues/detail?id=752
 X additional fixes to handling bad character constants in PdePreprocessor
 
 
-
 _ update to java 6u26
 
 _ update the build instructions page
