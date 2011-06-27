@@ -1,3 +1,32 @@
+PROCESSING REV 0199 - 27 June 2011
+
+Handful of bug fixes, primarly to deal with issues introduced in 0198. 
+
++ Remove error messages for UpdateCheck w/o internet connection.
+
++ char c = 'u' breaks sketches in 0198
+  http://code.google.com/p/processing/issues/detail?id=752
+  Also additional fixes to handling bad character constants in the preprocessor
+
++ Deal with extraneous error messages about the emulator and AVD when trying
+  to run Processing on an Android device.
+
++ Fix broken loadShape().
+
++ Fix broken loadNode() and XML usage in general.
+
++ Fix problem with save() writing multiple image files with an extra .tif
+  at the end. 
+
++ Added no-op orientation() method to the desktop version so that code
+  will work unchanged between Android and desktop.
+
++ Add warning for missing glyphs in PFont. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0198 - 23 June 2011
 
 Major internal work as we start blowing things up for 2.0. The main things are
