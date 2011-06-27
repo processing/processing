@@ -1,10 +1,10 @@
 0199 android
+X tries to create and AVD when running on the phone.. why?
+X   this is a real problem, causes lots of crashing on startup
 
 
 _ /opt/android using version #s again? fix build script
 
-_ tries to create and AVD when running on the phone.. why?
-_   this is a real problem, causes lots of crashing on startup
 _ add INTERNET permissions to the android net examples
 _ too many 'already exists' messages
 
