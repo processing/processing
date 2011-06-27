@@ -132,7 +132,8 @@ import antlr.collections.AST;
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  */
 public class PdePreprocessor {
-
+  protected static final String UNICODE_ESCAPES = "0123456789abcdefABCDEF"; 
+  
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
 
@@ -254,15 +255,26 @@ public class PdePreprocessor {
           throw new SketchException("Unterminated character constant (after initial quote)", 0,
                                     countNewlines(program.substring(0, i)));
         }
+        boolean escaped = false;
         if (program.charAt(i) == '\\') {
           i++;  // step over the backslash
+          escaped = true;
         }
         if (i >= length) {
           throw new SketchException("Unterminated character constant (after backslash)", 0,
                                     countNewlines(program.substring(0, i)));
         }
-        if (program.charAt(i) == 'u') {
-          i += 5;  // step over the u, and the four digit unicode constant
+        if (escaped && program.charAt(i) == 'u') {  // unicode escape sequence?
+          i++;  // step over the u
+          //i += 4;  // and the four digit unicode constant
+          for (int j = 0; j < 4; j++) {
+            if (UNICODE_ESCAPES.indexOf(program.charAt(i)) == -1) {
+              throw new SketchException("Bad or unfinished \\uXXXX sequence " +
+              		                      "(malformed Unicode character constant)", 0,
+                                        countNewlines(program.substring(0, i)));     
+            }
+            i++;
+          }
         } else {
           i++;  // step over a single character
         }
@@ -276,7 +288,6 @@ public class PdePreprocessor {
                                     countNewlines(program.substring(0, i)));
         }
       }
-
     }
   }
 
