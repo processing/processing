@@ -101,6 +101,7 @@ public class PNode implements Serializable {
 //      Document document = builder.parse(dataPath("1_alt.html"));
       Document document = builder.parse(new InputSource(reader));
       node = document.getDocumentElement();
+      name = node.getNodeName();
 //      NodeList nodeList = document.getDocumentElement().getChildNodes();
 //      for (int i = 0; i < nodeList.getLength(); i++) {
 //      }
