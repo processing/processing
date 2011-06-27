@@ -33,8 +33,6 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 
-
-
 /**
  * Datatype for storing images. Processing can display <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, and <b>.png</b> images. Images may be displayed in 2D and 3D space.
  * Before an image is used, it must be loaded with the <b>loadImage()</b> function.
@@ -2867,6 +2865,7 @@ public class PImage implements PConstants, Cloneable {
               System.err.println("Error while saving image.");
               return false;
             }
+            return true;
           }
         }
       }
