@@ -34,7 +34,7 @@ import java.awt.event.KeyEvent;
  * An attempt is made to keep the constants as short/non-verbose
  * as possible. For instance, the constant is TIFF instead of
  * FILE_TYPE_TIFF. We'll do this as long as we can get away with it.
- * 
+ *
  * @usage Web &amp; Application
  */
 public interface PConstants {
@@ -112,8 +112,8 @@ public interface PConstants {
   static public final int BEEN_LIT = 35;
 
   // has this vertex been assigned a normal yet
-  static public final int HAS_NORMAL = 36;  
-  
+  static public final int HAS_NORMAL = 36;
+
   static public final int VERTEX_FIELD_COUNT = 37;
 
   // renderers known to processing.core
@@ -162,24 +162,24 @@ public interface PConstants {
 
 
   // useful goodness
-  
+
   /**
    * PI is a mathematical constant with the value 3.14159265358979323846.
    * It is the ratio of the circumference of a circle to its diameter.
    * It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>.
-   * 
+   *
    * @webref constants
    * @see processing.core.PConstants#HALF_PI
    * @see processing.core.PConstants#TWO_PI
    * @see processing.core.PConstants#QUARTER_PI
-   * 
+   *
    */
   static final float PI = (float) Math.PI;
   /**
    * HALF_PI is a mathematical constant with the value 1.57079632679489661923.
    * It is half the ratio of the circumference of a circle to its diameter.
    * It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>.
-   * 
+   *
    * @webref constants
    * @see processing.core.PConstants#PI
    * @see processing.core.PConstants#TWO_PI
@@ -191,7 +191,7 @@ public interface PConstants {
    * QUARTER_PI is a mathematical constant with the value 0.7853982.
    * It is one quarter the ratio of the circumference of a circle to its diameter.
    * It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>.
-   * 
+   *
    * @webref constants
    * @see processing.core.PConstants#PI
    * @see processing.core.PConstants#TWO_PI
@@ -202,7 +202,7 @@ public interface PConstants {
    * TWO_PI is a mathematical constant with the value 6.28318530717958647693.
    * It is twice the ratio of the circumference of a circle to its diameter.
    * It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>.
-   * 
+   *
    * @webref constants
    * @see processing.core.PConstants#PI
    * @see processing.core.PConstants#HALF_PI
@@ -290,10 +290,10 @@ public interface PConstants {
 
 
   // types of transformation matrices
-  
+
   static final int PROJECTION = 0;
   static final int MODELVIEW  = 1;
-  
+
   // types of projection matrices
 
   static final int CUSTOM       = 0; // user-specified fanciness
@@ -333,11 +333,11 @@ public interface PConstants {
   static final int SPHERE          = 40;
   static final int BOX             = 41;
 
-  static public final int LINE_STRIP    = 50;   
-  static public final int LINE_LOOP     = 51;   
-  static public final int POINT_SPRITES = 52;  
+  static public final int LINE_STRIP    = 50;
+  static public final int LINE_LOOP     = 51;
+  static public final int POINT_SPRITES = 52;
 
-  
+
   // shape closing modes
 
   static final int OPEN = 1;
@@ -415,17 +415,17 @@ public interface PConstants {
   // are inherited from LEFT, CENTER, RIGHT
 
   // PTexture
-  
+
   /** This constant identifies the texture target GL_TEXTURE_2D, that is, textures with normalized coordinates */
   public static final int TEXTURE2D = 0;
-  
+
   /** This constant identifies the nearest texture filter (point sampling) */
-  //public static final int POINT = 2; // shared with shape feature  
+  //public static final int POINT = 2; // shared with shape feature
   /** This constant identifies the linear texture filter, usually called bilinear sampling */
   public static final int BILINEAR = 3;
   /** This constant identifies the linear/linear function to build mipmaps  */
   public static final int TRILINEAR = 4;
-    
+
   /** This constant identifies the clamp-to-edge wrapping mode */
   public static final int CLAMP = 0;
   /** This constant identifies the repeat wrapping mode */
@@ -434,17 +434,17 @@ public interface PConstants {
   /** Point sprite distance attenuation functions */
   public static final int LINEAR = 0;
   public static final int QUADRATIC = 1;
-    
+
   // PShape3D
-  
+
   /**  Static usage mode for PShape3D (vertices won't be updated after creation).  */
   public static final int STATIC = 0;
   /**  Dynamic usage mode for PShape3D (vertices will be updated after creation). */
   public static final int DYNAMIC = 1;
   /**  Dynamic usage mode for PShape3D (vertices will be updated at every frame). */
   public static final int STREAM = 2;
-  
-  
+
+
   // stroke modes
 
   static final int SQUARE   = 1 << 0;  // called 'butt' in the svg spec
@@ -494,6 +494,14 @@ public interface PConstants {
   static final int SHIFT     = KeyEvent.VK_SHIFT;
 
 
+  // orientations (only used on Android, ignored on desktop)
+
+  /** Screen orientation constant for portrait (the hamburger way). */
+  static final int PORTRAIT = 1;
+  /** Screen orientation constant for landscape (the hot dog way). */
+  static final int LANDSCAPE = 2;
+
+
   // cursor types
 
   static final int ARROW = Cursor.DEFAULT_CURSOR;
@@ -527,17 +535,17 @@ public interface PConstants {
   static final int DISABLE_ACCURATE_TEXTURES   = -7;
 
   static final int DISABLE_DEPTH_MASK          =  8;
-  static final int ENABLE_DEPTH_MASK           = -8;  
-  
+  static final int ENABLE_DEPTH_MASK           = -8;
+
   static final int HINT_COUNT                  = 10;
 
   // Rendering pipeline modes
-  
+
   static final int FIXED    = 0;
-  static final int PROG_GL2 = 1; 
+  static final int PROG_GL2 = 1;
   static final int PROG_GL3 = 2;
-  static final int PROG_GL4 = 3;  
-  
+  static final int PROG_GL4 = 3;
+
   // error messages
 
   static final String ERROR_BACKGROUND_IMAGE_SIZE =
