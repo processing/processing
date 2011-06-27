@@ -145,6 +145,14 @@ public class AndroidMode extends JavaMode {
     listener.statusNotice("Building Android project...");
     build.build("debug");
     
+    boolean avd = AVD.ensureEclairAVD(sdk);
+    if (!avd) {
+      SketchException se = 
+        new SketchException("Could not create a virtual device for the emulator.");
+      se.hideStackTrace();
+      throw se;
+    }
+
     listener.statusNotice("Running sketch on emulator...");
     runner = new AndroidRunner(build, listener);
     runner.launch(Devices.getInstance().getEmulator());
