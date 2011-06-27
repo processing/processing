@@ -2,6 +2,8 @@
 X tries to create and AVD when running on the phone.. why?
 X   this is a real problem, causes lots of crashing on startup
 
+_ don't let the examples get overwritten with other mode stuff
+_   the whole sketch.properties thing is yech
 
 _ /opt/android using version #s again? fix build script
 

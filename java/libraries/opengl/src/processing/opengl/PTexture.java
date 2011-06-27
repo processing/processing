@@ -24,7 +24,6 @@ package processing.opengl;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
-import java.lang.reflect.Method;
 import java.nio.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
