@@ -1,10 +1,24 @@
 0199 pde
-
+X remove error messages for UpdateCheck w/o internet connection
 
 _ update to java 6u26
 
 _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions
+
+http://support.microsoft.com/kb/184082
+http://msdn.microsoft.com/en-us/library/cc144175%28v=VS.85%29.aspx
+http://msdn.microsoft.com/en-us/library/cc144104%28v=VS.85%29.aspx
+http://msdn.microsoft.com/en-us/library/cc144067%28v=VS.85%29.aspx
+In regedit: Navigate to Computer\HKEY_CLASSES_ROOT\Applications and find your .exe name. Navigate under its name to shell>open>command. In the Default change its location to the actual location of the executable, hit okay and then try and reassociate the file type as you normally would.
+_ problem with associating .pde files 
+_   http://code.google.com/p/processing/issues/detail?id=247
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1513
+_ do some testing for windows 7 on 64-bit
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1424
+_ problem with startup on vista 64
+_   try this with windows 7 64-bit (install on laptop?)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
 _ switch to a non-modified version of the launcher exe
 _   move the launcher to jsmooth or something like that?
@@ -21,6 +35,7 @@ _ lots of other things in the google code issues list
 _ does editor.bgcolor live in the theme.txt file for the mode? 
 _   or should it be a user preference thing
 _   for that matter, need to decide on how much modes can customize themselves
+_ could move to java6 and better internal javac support (drop ecj)
 
 _ how to catch these?
 Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
@@ -291,15 +306,6 @@ _ Signature issue on contributed libraries affects unrelated opengl sketches
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1570
 
 _ create default tools folder (just like libraries)
-
-_ problem with associating .pde files 
-_   http://code.google.com/p/processing/issues/detail?id=247
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1513
-_ do some testing for windows 7 on 64-bit
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1424
-_ problem with startup on vista 64
-_   try this with windows 7 64-bit (install on laptop?)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
 _ add explanation to the reference about using beginRecord() with fonts
 _   pdf.textMode(SHAPE)

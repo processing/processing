@@ -317,7 +317,10 @@ public class PShapeSVG extends PShape {
     String name = elem.getName();
     PShapeSVG shape = null;
 
-    if (name.equals("g")) {
+    if (name == null) {
+      // just some whitespace that can be ignored (hopefully)
+
+    } else if (name.equals("g")) {
       //return new BaseObject(this, elem);
       shape = new PShapeSVG(this, elem, true);
 
@@ -1658,7 +1661,9 @@ public class PShapeSVG extends PShape {
       for (int i = 0; i < elements.length; i++) {
         String name = elements[i].getName();
         PNode elem = elements[i];
-        if (name.equals("glyph")) {
+        if (name == null) {
+          // skip it 
+        } else if (name.equals("glyph")) {
           FontGlyph fg = new FontGlyph(this, elem, this);
           if (fg.isLegit()) {
             if (fg.name != null) {
