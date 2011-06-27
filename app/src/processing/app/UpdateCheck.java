@@ -62,12 +62,14 @@ public class UpdateCheck {
           Thread.sleep(30 * 1000);  // give the PDE time to get rolling
           updateCheck();
         } catch (Exception e) {
-          String msg = e.getMessage();
-          if (msg.contains("UnknownHostException")) {
-            // nah, do nothing.. this happens when not connected to the net
-          } else {
-            e.printStackTrace();
-          }
+          // this can safely be ignored, too many instances where no net
+          // connection is available, so we'll leave it well alone.
+//          String msg = e.getMessage();
+//          if (msg.contains("UnknownHostException")) {
+//            // nah, do nothing.. this happens when not connected to the net
+//          } else {
+//            e.printStackTrace();
+//          }
         }
       }
     }).start();
