@@ -744,6 +744,11 @@ public class PApplet extends Applet
   }
 
 
+  public void orientation(int which) {
+    // ignore calls to the orientation command
+  }
+
+
   /**
    * Called by the browser or applet viewer to inform this applet that it
    * should start its execution. It is called after the init method and
@@ -1416,7 +1421,7 @@ public class PApplet extends Applet
 //    int r = (int) random(10000);
 //    System.out.println("into paint " + r);
     //super.paint(screen);
-    
+
     // ignore the very first call to paint, since it's coming
     // from the o.s., and the applet will soon update itself anyway.
     if (frameCount == 0) {
@@ -1432,7 +1437,7 @@ public class PApplet extends Applet
 
     // make sure the screen is visible and usable
     // (also prevents over-drawing when using PGraphicsOpenGL)
-    
+
     /* the 1.5.x version
     if (g != null) {
       // added synchronization for 0194 because of flicker issues with JAVA2D
@@ -1456,7 +1461,7 @@ public class PApplet extends Applet
     }
   }
 
-  
+
   // active paint method
   protected void paint() {
     try {
@@ -1477,9 +1482,9 @@ public class PApplet extends Applet
 //      }
     }
   }
-  
+
   protected void paint_1_5_1() {
-    try { 
+    try {
       Graphics screen = getGraphics();
       if (screen != null) {
         if (g != null) {
@@ -2606,7 +2611,7 @@ public class PApplet extends Applet
     }
   }
 
-  
+
   void exitActual() {
     try {
       System.exit(0);
@@ -2615,7 +2620,7 @@ public class PApplet extends Applet
     }
   }
 
-  
+
   /**
    * Called to dispose of resources and shut down the sketch.
    * Destroys the thread, dispose the renderer,and notify listeners.
@@ -2636,16 +2641,16 @@ public class PApplet extends Applet
     disposeMethods.handle();
   }
 
-  
-  
+
+
   //////////////////////////////////////////////////////////////
 
 
   /**
    * Call a method in the current class based on its name.
-   * <p/> 
-   * Note that the function being called must be public. Inside the PDE, 
-   * 'public' is automatically added, but when used without the preprocessor, 
+   * <p/>
+   * Note that the function being called must be public. Inside the PDE,
+   * 'public' is automatically added, but when used without the preprocessor,
    * (like from Eclipse) you'll have to do it yourself.
    */
   public void method(String name) {
@@ -2670,11 +2675,11 @@ public class PApplet extends Applet
 
   /**
    * Launch a new thread and call the specified function from that new thread.
-   * This is a very simple way to do a thread without needing to get into 
-   * classes, runnables, etc.  
-   * <p/> 
-   * Note that the function being called must be public. Inside the PDE, 
-   * 'public' is automatically added, but when used without the preprocessor, 
+   * This is a very simple way to do a thread without needing to get into
+   * classes, runnables, etc.
+   * <p/>
+   * Note that the function being called must be public. Inside the PDE,
+   * 'public' is automatically added, but when used without the preprocessor,
    * (like from Eclipse) you'll have to do it yourself.
    */
   public void thread(final String name) {
@@ -4175,12 +4180,12 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
   // NODE I/O (XML, JSON, etc.)
-  
+
   public PNode loadNode(String filename) {
     return new PNode(this, filename);
   }
-  
-  
+
+
 //  public PData loadData(String filename) {
 //    if (filename.toLowerCase().endsWith(".json")) {
 //      return new PData(this, filename);
@@ -4190,7 +4195,7 @@ public class PApplet extends Applet
 //  }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // FONT I/O
@@ -5035,8 +5040,8 @@ public class PApplet extends Applet
 
       if (targetFile.exists()) {
         if (!targetFile.delete()) {
-          System.err.println("Could not replace " + 
-                             targetFile.getAbsolutePath() + "."); 
+          System.err.println("Could not replace " +
+                             targetFile.getAbsolutePath() + ".");
         }
       }
       if (!tempFile.renameTo(targetFile)) {
@@ -5054,9 +5059,9 @@ public class PApplet extends Applet
       return false;
     }
   }
-  
-  
-  static public void saveStream(OutputStream targetStream, 
+
+
+  static public void saveStream(OutputStream targetStream,
                                 InputStream sourceStream) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(sourceStream, 16384);
     BufferedOutputStream bos = new BufferedOutputStream(targetStream);
@@ -5110,7 +5115,7 @@ public class PApplet extends Applet
           System.err.println("Could not replace " + file.getAbsolutePath());
         }
       }
-      
+
       if (!tempFile.renameTo(file)) {
         System.err.println("Could not rename temporary file " +
                            tempFile.getAbsolutePath());
@@ -6744,8 +6749,8 @@ public class PApplet extends Applet
   }
 
 
-  /** 
-   * nfc() or "number format with commas". This is an unfortunate misnomer 
+  /**
+   * nfc() or "number format with commas". This is an unfortunate misnomer
    * because in locales where a comma is not the separator for numbers, it
    * won't actually be outputting a comma, it'll use whatever makes sense for
    * the locale.
@@ -6982,8 +6987,8 @@ public class PApplet extends Applet
   }
 
   /**
-   * Returns a String that contains the binary value of an int. The length 
-   * depends on the size of the number itself. If you want a specific number 
+   * Returns a String that contains the binary value of an int. The length
+   * depends on the size of the number itself. If you want a specific number
    * of digits use binary(int what, int digits) to specify how many.
    */
   static final public String binary(int what) {
@@ -7677,7 +7682,7 @@ public class PApplet extends Applet
     }
     return null;
   }
-  
+
 
   public void endRecord() {
     if (recorder != null) {
