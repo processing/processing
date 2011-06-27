@@ -3734,6 +3734,8 @@ public class PGraphics extends PImage implements PConstants {
 
         textCharScreenImpl(glyph.image, xx, yy, w0, h0);
       }
+    } else {
+      showWarning("No glyph found for the " + ch + " (\\u" + PApplet.hex(ch, 4) + ") character");
     }
   }
 
