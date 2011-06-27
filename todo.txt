@@ -1,11 +1,5 @@
-0199 pde
-X remove error messages for UpdateCheck w/o internet connection
-X 'u' breaks sketches in 0198
-o   http://code.google.com/p/processing/issues/detail?id=752
-X additional fixes to handling bad character constants in PdePreprocessor
-
-
-_ update to java 6u26
+0200 pde
+X update to java 6u26
 
 _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions
