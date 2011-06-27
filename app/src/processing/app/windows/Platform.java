@@ -40,9 +40,6 @@ import processing.app.windows.Registry.REGISTRY_ROOT_KEY;
 import processing.core.PApplet;
 
 
-// http://developer.apple.com/documentation/QuickTime/Conceptual/QT7Win_Update_Guide/Chapter03/chapter_3_section_1.html
-// HKEY_LOCAL_MACHINE\SOFTWARE\Apple Computer, Inc.\QuickTime\QTSysDir
-
 // HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion -> 1.6 (String)
 // HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Development Kit\CurrentVersion\1.6\JavaHome -> c:\jdk-1.6.0_05
 
@@ -52,13 +49,14 @@ public class Platform extends processing.app.Platform {
     System.getProperty("user.dir").replace('/', '\\') +
     "\\processing.exe \"%1\"";
   static final String DOC = "Processing.Document";
+//  static final String DOC = "Processing.exe";
 
 
   public void init(Base base) {
     super.init(base);
 
     checkAssociations();
-    checkQuickTime();
+    //checkQuickTime();
     checkPath();
   }
 
@@ -67,6 +65,13 @@ public class Platform extends processing.app.Platform {
    * Make sure that .pde files are associated with processing.exe.
    */
   protected void checkAssociations() {
+//    HKEY_CLASSES_ROOT
+//    MyProgram.exe
+//       shell
+//          open
+//             command
+//                (Default) = C:\MyDir\MyProgram.exe "%1"
+
     try {
       String knownCommand =
         Registry.getStringValue(REGISTRY_ROOT_KEY.CLASSES_ROOT,
@@ -122,27 +127,29 @@ public class Platform extends processing.app.Platform {
   /**
    * Find QuickTime for Java installation.
    */
-  protected void checkQuickTime() {
-    try {
-      String qtsystemPath =
-        Registry.getStringValue(REGISTRY_ROOT_KEY.LOCAL_MACHINE,
-                                "Software\\Apple Computer, Inc.\\QuickTime",
-                                "QTSysDir");
-      // Could show a warning message here if QT not installed, but that
-      // would annoy people who don't want anything to do with QuickTime.
-      if (qtsystemPath != null) {
-        File qtjavaZip = new File(qtsystemPath, "QTJava.zip");
-        if (qtjavaZip.exists()) {
-          String qtjavaZipPath = qtjavaZip.getAbsolutePath();
-          String cp = System.getProperty("java.class.path");
-          System.setProperty("java.class.path",
-                             cp + File.pathSeparator + qtjavaZipPath);
-        }
-      }
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    }
-  }
+//  protected void checkQuickTime() {
+//   // http://developer.apple.com/documentation/QuickTime/Conceptual/QT7Win_Update_Guide/Chapter03/chapter_3_section_1.html
+//   // HKEY_LOCAL_MACHINE\SOFTWARE\Apple Computer, Inc.\QuickTime\QTSysDir
+//    try {
+//      String qtsystemPath =
+//        Registry.getStringValue(REGISTRY_ROOT_KEY.LOCAL_MACHINE,
+//                                "Software\\Apple Computer, Inc.\\QuickTime",
+//                                "QTSysDir");
+//      // Could show a warning message here if QT not installed, but that
+//      // would annoy people who don't want anything to do with QuickTime.
+//      if (qtsystemPath != null) {
+//        File qtjavaZip = new File(qtsystemPath, "QTJava.zip");
+//        if (qtjavaZip.exists()) {
+//          String qtjavaZipPath = qtjavaZip.getAbsolutePath();
+//          String cp = System.getProperty("java.class.path");
+//          System.setProperty("java.class.path",
+//                             cp + File.pathSeparator + qtjavaZipPath);
+//        }
+//      }
+//    } catch (UnsupportedEncodingException e) {
+//      e.printStackTrace();
+//    }
+//  }
 
 
   /**
