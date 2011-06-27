@@ -33,14 +33,6 @@ import java.util.zip.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import processing.app.LibraryListPanel.PreferredViewPositionListener;
 import processing.app.LibraryListing.LibraryListFetcher;
@@ -136,6 +128,8 @@ public class LibraryManager {
     
     urlLabel = new JLabel("Library URL:");
     libraryUrl = new JTextField();
+    libraryUrl.setPreferredSize(new Dimension(0, 10 + libraryUrl
+        .getFontMetrics(libraryUrl.getFont()).getHeight()));
     installButton = new JButton("Install");
     installProgressBar = new JProgressBar();
 
@@ -253,6 +247,30 @@ public class LibraryManager {
     c.weightx = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
     filterField = new FilterField();
+    filterField.getDocument().addDocumentListener(new DocumentListener() {
+      
+      public void removeUpdate(DocumentEvent e) {
+        filter();
+      }
+      
+      public void insertUpdate(DocumentEvent e) {
+        filter();
+      }
+      
+      public void changedUpdate(DocumentEvent e) {
+        filter();
+      }
+      
+      void filter() {
+        String filter = filterField.getFilterText();
+        filter = filter.toLowerCase();
+        
+        // Replace anything but 0-9 or a-z with a space
+        filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a]", " ");
+        libraryListPane.filterLibraries(Arrays.asList(filter.split(" ")));
+      }
+    });
+    
     pane.add(filterField, c);
     
     LibraryListFetcher llf = new LibraryListFetcher();
@@ -274,10 +292,11 @@ public class LibraryManager {
     final JScrollPane scrollPane = new JScrollPane();
     scrollPane.setPreferredSize(new Dimension(300,300));
     scrollPane.setViewportView(libraryListPane);
+    scrollPane.getViewport().setBackground(UIManager.getColor("List.background"));
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     pane.add(scrollPane, c);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
+    
     scrollPane.getViewport().addChangeListener(new ChangeListener() {
       
       public void stateChanged(ChangeEvent ce) {
@@ -599,6 +618,10 @@ public class LibraryManager {
       });
     }
     
+    public String getFilterText() {
+      return isShowingHint ? "" : getText();
+    }
+
     public void updateStyle() {
       if (isShowingHint) {
         filterField.setText(filterHint);
