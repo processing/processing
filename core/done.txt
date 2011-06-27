@@ -1,3 +1,13 @@
+0199 core
+X pnode: look more closely at json and xml compatibility
+X argh, dumb mistake that broke SVG loading with loadNode()
+X fix major XML loading problem with names not getting set
+X image saving also broken, saving duplicate images (adding .tif to em all)
+X make note about XML dealing with whitespace differently
+X   leaves it intact, 'name' will be set to null
+X add orientation() no-op and the two constants
+
+
 0198 core
 o arrayobjects (and others) flicker like hell in chrome 10 
 o   http://code.google.com/p/processing/issues/detail?id=646

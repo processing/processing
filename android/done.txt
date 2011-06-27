@@ -1,3 +1,8 @@
+0199 android
+X tries to create and AVD when running on the phone.. why?
+X   this is a real problem, causes lots of crashing on startup
+
+
 0198 android
 A mask() has no effect unless image has already been drawn in A3D
 A  http://code.google.com/p/processing/issues/detail?id=623
