@@ -33,15 +33,26 @@ import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
+import processing.app.LibraryListing.LibraryInfo.Author;
+
 public class LibraryListing {
 
   Map<String, List<LibraryInfo>> librariesByCategory;
-
+  ArrayList<LibraryInfo> allLibraries;
+  
   public LibraryListing(File xmlFile) {
 
     librariesByCategory = new HashMap<String, List<LibraryInfo>>();
 
     new LibraryXmlParser(xmlFile);
+    
+    allLibraries = new ArrayList<LibraryInfo>();
+    for (Entry<String, List<LibraryInfo>> libListEntry : librariesByCategory
+        .entrySet()) {
+      allLibraries.addAll(libListEntry.getValue());
+    }
+    
+    Collections.sort(allLibraries);
   }
 
   public Set<String> getCategories() {
@@ -49,16 +60,50 @@ public class LibraryListing {
   }
 
   public List<LibraryInfo> getAllLibararies() {
-    ArrayList<LibraryInfo> allLibs = new ArrayList<LibraryInfo>();
-    for (Entry<String, List<LibraryInfo>> libListEntry : librariesByCategory
-        .entrySet()) {
-      allLibs.addAll(libListEntry.getValue());
-    }
-    return allLibs;
+    return new ArrayList<LibraryInfo>(allLibraries);
   }
 
   public List<LibraryInfo> getLibararies(String category) {
-    return librariesByCategory.get(category);
+    ArrayList<LibraryInfo> libinfos = new ArrayList<LibraryInfo>(librariesByCategory.get(category));
+    Collections.sort(libinfos);
+    return libinfos;
+  }
+  
+  public List<LibraryInfo> getFilteredLibraryList(List<String> filters) {
+    ArrayList<LibraryInfo> filteredList = new ArrayList<LibraryInfo>();
+    filteredList.addAll(allLibraries);
+    
+    Iterator<LibraryInfo> it = filteredList.iterator();
+    while (it.hasNext()) {
+      LibraryInfo libInfo = it.next();
+      
+      for (String filter : filters) {
+        if (!matches(libInfo, filter)) {
+          it.remove();
+          break;
+        }
+      }
+      
+    }
+    
+    return filteredList;
+  }
+
+  private boolean matches(LibraryInfo libInfo, String filter) {
+    filter = "\\p{Alnum}*" + filter.toLowerCase() + "\\p{Alnum}*";
+    
+    if (filter.isEmpty()) {
+      return true;
+    }
+    
+    for (Author author : libInfo.authors) {
+      if (author.name.toLowerCase().matches(filter)) {
+        return true;
+      }
+    }
+    return libInfo.name.toLowerCase().matches(filter)
+        || libInfo.name.toLowerCase().matches(filter);
+        
   }
 
   public static class LibraryListFetcher {
@@ -115,7 +160,7 @@ public class LibraryListing {
     }
   }
 
-  public static class LibraryInfo {
+  public static class LibraryInfo implements Comparable<LibraryInfo> {
     public final String categoryName;
     
     public final String name;
@@ -153,6 +198,10 @@ public class LibraryListing {
         this.url = url;
       }
 
+    }
+
+    public int compareTo(LibraryInfo o) {
+      return name.compareTo(o.name);
     }
 
   }

@@ -22,6 +22,9 @@
 
 package processing.app;
 
+import java.util.*;
+import java.util.List;
+
 import javax.swing.*;
 import javax.swing.text.*;
 
@@ -34,14 +37,20 @@ import processing.app.LibraryListing.LibraryInfo;
 
 public class LibraryListPanel extends JPanel implements Scrollable {
   
+  HashMap<LibraryInfo, LibraryPanel> libPanelsByInfo;
+  LibraryListing libraries;
   private PreferredViewPositionListener preferredViewPositionListener;
 
   public LibraryListPanel(LibraryListing libraries) {
     super();
     
     preferredViewPositionListener = null;
+    this.libraries = libraries;
     
     setLayout(new GridBagLayout());
+    
+    libPanelsByInfo = new HashMap<LibraryInfo, LibraryPanel>();
+    
     int row = 0;
     for (LibraryInfo libInfo : libraries.getAllLibararies()) {
       GridBagConstraints c = new GridBagConstraints();
@@ -50,7 +59,9 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       c.gridx = 0;
       c.gridy = row++;
       
-       add(new LibraryPanel(libInfo), c);
+      LibraryPanel libPanel = new LibraryPanel(libInfo);
+      libPanelsByInfo.put(libPanel.libInfo, libPanel);
+      add(libPanel, c);
     }
     
     GridBagConstraints verticalFill = new GridBagConstraints();
@@ -67,7 +78,22 @@ public class LibraryListPanel extends JPanel implements Scrollable {
         requestFocusInWindow();
       }
     });
+
+  }
+  
+  public void filterLibraries(List<String> filters) {
     
+    List<LibraryInfo> hiddenLibraries = libraries.getAllLibararies();
+    for (LibraryInfo lib : libraries.getFilteredLibraryList(filters)) {
+      libPanelsByInfo.get(lib).setVisible(true);
+      hiddenLibraries.remove(lib);
+    }
+    
+    for (LibraryInfo lib : hiddenLibraries) {
+      libPanelsByInfo.get(lib).setVisible(false);
+    }
+    
+    updateLibraryListSizeAndPosition(0, false, null);
   }
   
   /**
