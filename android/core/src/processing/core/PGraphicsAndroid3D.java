@@ -3355,14 +3355,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         float y2 = y1 + high * textSize;
 
         textCharModelImpl(tinfo, x1, y1, x2, y2);
-      } else if (textMode == SCREEN) {
-        int xx = (int) x + glyph.leftExtent;
-        int yy = (int) y - glyph.topExtent;
-
-        int w0 = glyph.width;
-        int h0 = glyph.height;
-
-        textCharScreenImpl(tinfo, xx, yy, w0, h0);
       }
     }
   }
@@ -3430,15 +3422,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     n++;
     
     textVertexCount = n;
-  }
-
-  protected void textCharScreenImpl(PFontTexture.TextureInfo info, int xx, int yy,
-      int w0, int h0) {
-    if (textTex.currentTex != info.texIndex) {
-      textTex.setTexture(info.texIndex);
-    }
-
-    drawTexture(info.crop, xx, height - (yy + h0), w0, h0);    
   }
 
   protected void allocateTextModel() {  
@@ -5958,21 +5941,21 @@ public class PGraphicsAndroid3D extends PGraphics {
         gl11xp.glBlendEquation(GL_MAX_EXT);
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_DST_ALPHA);
       } else {
-        PGraphics.showWarning("A3D: This blend mode is currently unsupported.");
+        showBlendWarning("LIGHTEST");
       }
     } else if (mode == DARKEST) {
       if (blendEqSupported) { 
         gl11xp.glBlendEquation(GL_MIN_EXT);      
         gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_DST_ALPHA);
       } else {
-        PGraphics.showWarning("A3D: This blend mode is currently unsupported.");  
+        showBlendWarning("DARKEST");
       }
     } else if (mode == DIFFERENCE) {
       if (blendEqSupported) {
         gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_REVERSE_SUBTRACT);
         gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE);
       } else {
-        PGraphics.showWarning("A3D: This blend mode is currently unsupported.");
+        showBlendWarning("DIFFERENCE");
       }       
     } else if (mode == EXCLUSION) {
       if (blendEqSupported) gl11xp.glBlendEquation(GL11ExtensionPack.GL_FUNC_ADD);
@@ -5987,6 +5970,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     // HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be implemented
     // in fixed-function pipeline because they require conditional blending and
     // non-linear blending equations.
+  }
+  
+  void showBlendWarning(String mode) {
+    showWarning("blendMode(" + mode + ") is unsupported by this OpenGL implementation.");
   }
 
   
