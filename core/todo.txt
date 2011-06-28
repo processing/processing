@@ -1,4 +1,6 @@
 0200 core
+X remove textMode(SCREEN)
+_ enable smooth() by default
 
 
 andres 
@@ -98,7 +100,6 @@ _ add docs for screenWidth and screenHeight
 _ remove delay() documentation
 
 2.0
-_ enable smooth() by default
 _ Abnormal high Java CPU usage at empty sketch with draw() 
 _   http://code.google.com/p/processing/issues/detail?id=729
 _   https://forum.processing.org/topic/absurd-java-cpu-usage-at-empty-sketch-with-draw

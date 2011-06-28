@@ -1,6 +1,8 @@
 0200 pde
 X update to java 6u26
 
+ ./configure --disable-werror --target=i686-pc-mingw32
+
 _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions
 

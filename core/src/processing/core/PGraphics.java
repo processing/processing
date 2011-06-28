@@ -3046,7 +3046,7 @@ public class PGraphics extends PImage implements PConstants {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
     }
-    return textFont.ascent() * ((textMode == SCREEN) ? textFont.size : textSize);
+    return textFont.ascent() * textSize;
   }
 
 
@@ -3059,7 +3059,7 @@ public class PGraphics extends PImage implements PConstants {
     if (textFont == null) {
       defaultFontOrDeath("textDescent");
     }
-    return textFont.descent() * ((textMode == SCREEN) ? textFont.size : textSize);
+    return textFont.descent() * textSize;
   }
 
 
@@ -3127,11 +3127,10 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Sets the text rendering/placement to be either SCREEN (direct
-   * to the screen, exact coordinates, only use the font's original size)
-   * or MODEL (the default, where text is manipulated by translate() and
-   * can have a textSize). The text size cannot be set when using
-   * textMode(SCREEN), because it uses the pixels directly from the font.
+   * Sets the text rendering/placement to be either MODEL (the normal mode,
+   * where text bitmaps are used (or the native font, when available). 
+   * Or SHAPE, where text is rendered as actual vector data (much slower in
+   * some cases, faster in others). SCREEN mode has been removed for 2.0. 
    */
   public void textMode(int mode) {
     // CENTER and MODEL overlap (they're both 3)
@@ -3139,32 +3138,20 @@ public class PGraphics extends PImage implements PConstants {
       showWarning("Since Processing beta, textMode() is now textAlign().");
       return;
     }
-//    if ((mode != SCREEN) && (mode != MODEL)) {
-//      showError("Only textMode(SCREEN) and textMode(MODEL) " +
-//      "are available with this renderer.");
-//    }
+    if (mode == SCREEN) {
+      showWarning("textMode(SCREEN) has been removed from Processing 2.0.");
+    }
 
     if (textModeCheck(mode)) {
       textMode = mode;
     } else {
       String modeStr = String.valueOf(mode);
       switch (mode) {
-        case SCREEN: modeStr = "SCREEN"; break;
         case MODEL: modeStr = "MODEL"; break;
         case SHAPE: modeStr = "SHAPE"; break;
       }
       showWarning("textMode(" + modeStr + ") is not supported by this renderer.");
     }
-
-    // reset the font to its natural size
-    // (helps with width calculations and all that)
-    //if (textMode == SCREEN) {
-    //textSize(textFont.size);
-    //}
-
-    //} else {
-    //throw new RuntimeException("use textFont() before textMode()");
-    //}
   }
 
 
@@ -3184,11 +3171,6 @@ public class PGraphics extends PImage implements PConstants {
     textLeading = (textAscent() + textDescent()) * 1.275f;
   }
 
-  protected void beginTextScreenMode() {   
-  }
-  
-  protected void endTextScreenMode() {    
-  }  
   
   // ........................................................
 
@@ -3277,8 +3259,6 @@ public class PGraphics extends PImage implements PConstants {
       defaultFontOrDeath("text");
     }
 
-    if (textMode == SCREEN) beginTextScreenMode();
-
     if (textAlignY == CENTER) {
       y += textAscent() / 2;
     } else if (textAlignY == TOP) {
@@ -3291,8 +3271,6 @@ public class PGraphics extends PImage implements PConstants {
 
     textBuffer[0] = c;
     textLineAlignImpl(textBuffer, 0, 1, x, y);
-
-    if (textMode == SCREEN) endTextScreenMode();
   }
 
 
@@ -3348,8 +3326,6 @@ public class PGraphics extends PImage implements PConstants {
    * not be converted to a char array before drawing.
    */
   public void text(char[] chars, int start, int stop, float x, float y) {
-    if (textMode == SCREEN) beginTextScreenMode();
-    
     // If multiple lines, sum the height of the additional lines
     float high = 0; //-textAscent();
     for (int i = start; i < stop; i++) {
@@ -3387,8 +3363,6 @@ public class PGraphics extends PImage implements PConstants {
     if (start < stop) {  //length) {
       textLineAlignImpl(chars, start, index, x, y);
     }
-    
-    if (textMode == SCREEN) endTextScreenMode();
   }
 
 
@@ -3433,8 +3407,6 @@ public class PGraphics extends PImage implements PConstants {
     if (textFont == null) {
       defaultFontOrDeath("text");
     }
-
-    if (textMode == SCREEN) beginTextScreenMode();
 
     float hradius, vradius;
     switch (rectMode) {
@@ -3542,8 +3514,6 @@ public class PGraphics extends PImage implements PConstants {
         y += textLeading;
       }
     }
-
-    if (textMode == SCREEN) endTextScreenMode();
   }
 
 
@@ -3724,15 +3694,6 @@ public class PGraphics extends PImage implements PConstants {
         textCharModelImpl(glyph.image,
                           x1, y1, x2, y2,
                           glyph.width, glyph.height);
-
-      } else if (textMode == SCREEN) {
-        int xx = (int) x + glyph.leftExtent;
-        int yy = (int) y - glyph.topExtent;
-
-        int w0 = glyph.width;
-        int h0 = glyph.height;
-
-        textCharScreenImpl(glyph.image, xx, yy, w0, h0);
       }
     } else {
       showWarning("No glyph found for the " + ch + " (\\u" + PApplet.hex(ch, 4) + ") character");

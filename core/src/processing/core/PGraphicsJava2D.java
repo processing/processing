@@ -1062,7 +1062,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
 
   protected boolean textModeCheck(int mode) {
-    return (mode == MODEL) || (mode == SCREEN);
+    return mode == MODEL;
   }
 
 
