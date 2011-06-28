@@ -2533,7 +2533,7 @@ public class PGraphics extends PImage implements PConstants {
     if (textFont == null) {
       defaultFontOrDeath("textAscent");
     }
-    return textFont.ascent() * ((textMode == SCREEN) ? textFont.size : textSize);
+    return textFont.ascent() * textSize;
   }
 
 
@@ -2546,7 +2546,7 @@ public class PGraphics extends PImage implements PConstants {
     if (textFont == null) {
       defaultFontOrDeath("textDescent");
     }
-    return textFont.descent() * ((textMode == SCREEN) ? textFont.size : textSize);
+    return textFont.descent() * textSize;
   }
 
 
@@ -2624,32 +2624,20 @@ public class PGraphics extends PImage implements PConstants {
       showWarning("Since Processing beta, textMode() is now textAlign().");
       return;
     }
-//    if ((mode != SCREEN) && (mode != MODEL)) {
-//      showError("Only textMode(SCREEN) and textMode(MODEL) " +
-//      "are available with this renderer.");
-//    }
+    if (mode == SCREEN) {
+      showWarning("textMode(SCREEN) has been removed from Processing 2.0.");
+    }
 
     if (textModeCheck(mode)) {
       textMode = mode;
     } else {
       String modeStr = String.valueOf(mode);
       switch (mode) {
-        case SCREEN: modeStr = "SCREEN"; break;
         case MODEL: modeStr = "MODEL"; break;
         case SHAPE: modeStr = "SHAPE"; break;
       }
       showWarning("textMode(" + modeStr + ") is not supported by this renderer.");
     }
-
-    // reset the font to its natural size
-    // (helps with width calculations and all that)
-    //if (textMode == SCREEN) {
-    //textSize(textFont.size);
-    //}
-
-    //} else {
-    //throw new RuntimeException("use textFont() before textMode()");
-    //}
   }
 
 
@@ -2673,12 +2661,6 @@ public class PGraphics extends PImage implements PConstants {
 //    PApplet.println("textSize textLeading = " + textLeading);
   }
 
-
-  protected void beginTextScreenMode() {   
-  }
-  
-  protected void endTextScreenMode() {    
-  }    
   
   // ........................................................
 
@@ -2759,8 +2741,6 @@ public class PGraphics extends PImage implements PConstants {
       defaultFontOrDeath("text");
     }
 
-    if (textMode == SCREEN) beginTextScreenMode();
-
     if (textAlignY == CENTER) {
       y += textAscent() / 2;
     } else if (textAlignY == TOP) {
@@ -2773,8 +2753,6 @@ public class PGraphics extends PImage implements PConstants {
 
     textBuffer[0] = c;
     textLineAlignImpl(textBuffer, 0, 1, x, y);
-
-    if (textMode == SCREEN) endTextScreenMode();
   }
 
 
@@ -2814,8 +2792,6 @@ public class PGraphics extends PImage implements PConstants {
     if (textFont == null) {
       defaultFontOrDeath("text");
     }
-
-    if (textMode == SCREEN) beginTextScreenMode();
 
     int length = str.length();
     if (length > textBuffer.length) {
@@ -2860,8 +2836,6 @@ public class PGraphics extends PImage implements PConstants {
     if (start < length) {
       textLineAlignImpl(textBuffer, start, index, x, y);
     }
-    
-    if (textMode == SCREEN) endTextScreenMode();
   }
 
 
@@ -2900,8 +2874,6 @@ public class PGraphics extends PImage implements PConstants {
     if (textFont == null) {
       defaultFontOrDeath("text");
     }
-
-    if (textMode == SCREEN) beginTextScreenMode();
 
     float hradius, vradius;
     switch (rectMode) {
@@ -3009,8 +2981,6 @@ public class PGraphics extends PImage implements PConstants {
         y += textLeading;
       }
     }
-
-    if (textMode == SCREEN) endTextScreenMode();
   }
 
 
@@ -3195,15 +3165,6 @@ public class PGraphics extends PImage implements PConstants {
         textCharModelImpl(glyph.image,
                           x1, y1, x2, y2,
                           glyph.width, glyph.height);
-
-      } else if (textMode == SCREEN) {
-        int xx = (int) x + glyph.leftExtent;
-        int yy = (int) y - glyph.topExtent;
-
-        int w0 = glyph.width;
-        int h0 = glyph.height;
-
-        textCharScreenImpl(glyph.image, xx, yy, w0, h0);
       }
     }
   }
@@ -3215,85 +3176,14 @@ public class PGraphics extends PImage implements PConstants {
                                    int u2, int v2) {
     boolean savedTint = tint;
     int savedTintColor = tintColor;
-//    float savedTintR = tintR;
-//    float savedTintG = tintG;
-//    float savedTintB = tintB;
-//    float savedTintA = tintA;
-//    boolean savedTintAlpha = tintAlpha;
-
-//    tint = true;
-//    tintColor = fillColor;
-//    tintR = fillR;
-//    tintG = fillG;
-//    tintB = fillB;
-//    tintA = fillA;
-//    tintAlpha = fillAlpha;
     tint(fillColor);
 
     imageImpl(glyph, x1, y1, x2, y2, 0, 0, u2, v2);
 
-//    tint = savedTint;
-//    tintColor = savedTintColor;
-//    tintR = savedTintR;
-//    tintG = savedTintG;
-//    tintB = savedTintB;
-//    tintA = savedTintA;
-//    tintAlpha = savedTintAlpha;
     if (savedTint) {
       tint(savedTintColor);
     } else {
       noTint();
-    }
-  }
-
-
-  protected void textCharScreenImpl(PImage glyph,
-                                    int xx, int yy,
-                                    int w0, int h0) {
-    int x0 = 0;
-    int y0 = 0;
-
-    if ((xx >= width) || (yy >= height) ||
-        (xx + w0 < 0) || (yy + h0 < 0)) return;
-
-    if (xx < 0) {
-      x0 -= xx;
-      w0 += xx;
-      xx = 0;
-    }
-    if (yy < 0) {
-      y0 -= yy;
-      h0 += yy;
-      yy = 0;
-    }
-    if (xx + w0 > width) {
-      w0 -= ((xx + w0) - width);
-    }
-    if (yy + h0 > height) {
-      h0 -= ((yy + h0) - height);
-    }
-
-    int fr = fillRi;
-    int fg = fillGi;
-    int fb = fillBi;
-    int fa = fillAi;
-
-    int pixels1[] = glyph.pixels; //images[glyph].pixels;
-
-    // TODO this can be optimized a bit
-    for (int row = y0; row < y0 + h0; row++) {
-      for (int col = x0; col < x0 + w0; col++) {
-        int a1 = (fa * pixels1[row * glyph.width + col]) >> 8;
-        int a2 = a1 ^ 0xff;
-        //int p1 = pixels1[row * glyph.width + col];
-        int p2 = pixels[(yy + row-y0)*width + (xx+col-x0)];
-
-        pixels[(yy + row-y0)*width + xx+col-x0] =
-          (0xff000000 |
-           (((a1 * fr + a2 * ((p2 >> 16) & 0xff)) & 0xff00) << 8) |
-           (( a1 * fg + a2 * ((p2 >>  8) & 0xff)) & 0xff00) |
-           (( a1 * fb + a2 * ( p2        & 0xff)) >> 8));
-      }
     }
   }
 

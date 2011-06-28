@@ -3641,15 +3641,7 @@ return width * (1 + ox) / 2.0f;
         float y2 = y1 + high * textSize;
 
         textCharModelImpl(tinfo, x1, y1, x2, y2);
-      } else if (textMode == SCREEN) {        
-        int xx = (int) x + glyph.leftExtent;
-        int yy = (int) y - glyph.topExtent;
-
-        int w0 = glyph.width;
-        int h0 = glyph.height;
-
-        textCharScreenImpl(tinfo, xx, yy, w0, h0);
-      }
+      } 
     }
   }
 

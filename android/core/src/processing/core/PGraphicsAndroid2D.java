@@ -1061,7 +1061,7 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   protected boolean textModeCheck(int mode) {
-    return (mode == MODEL) || (mode == SCREEN);
+    return mode == MODEL;
   }
 
 
