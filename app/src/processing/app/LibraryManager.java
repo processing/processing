@@ -29,6 +29,7 @@ import java.io.*;
 import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.zip.*;
 
 import javax.swing.*;
@@ -68,6 +69,7 @@ public class LibraryManager {
     "sketchbook. If you wish to add this file to your<br>" +
     "sketch instead, click “No” and use <i>Sketch &gt;<br>Add File...</i>";
   
+  static final String ANY_CATEGORY = "Any";
   /**
    * true to use manual URL specification only
    * false to use searchable library list
@@ -83,7 +85,7 @@ public class LibraryManager {
 
   JButton installButton;
   
-  JProgressBar installProgressBar;
+  LibraryListing libraryListing;
   
   // Non-simple UI widgets:
   FilterField filterField;
@@ -92,9 +94,13 @@ public class LibraryManager {
   
   JComboBox categoryChooser;
   
+  String category;
+  
   // the calling editor, so updates can be applied
 
   Editor editor;
+  
+  JProgressBar installProgressBar;
   
   public LibraryManager() {
 
@@ -185,12 +191,7 @@ public class LibraryManager {
           libraryUrl.setEnabled(false);
           installButton.setEnabled(false);
           
-          File libDest = getTemporaryFile(url);
-          
-          FileDownloader downloader = new FileDownloader(url, libDest, pm);
-          downloader.setPostOperation(new LibraryInstaller(downloader, pm));
-          
-          new Thread(downloader).start();
+          installLibraryFromUrl(url, pm);
           
         } catch (MalformedURLException e) {
           System.err.println("Malformed URL");
@@ -247,39 +248,10 @@ public class LibraryManager {
     c.weightx = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
     filterField = new FilterField();
-    filterField.getDocument().addDocumentListener(new DocumentListener() {
-      
-      public void removeUpdate(DocumentEvent e) {
-        filter();
-      }
-      
-      public void insertUpdate(DocumentEvent e) {
-        filter();
-      }
-      
-      public void changedUpdate(DocumentEvent e) {
-        filter();
-      }
-      
-      void filter() {
-        String filter = filterField.getFilterText();
-        filter = filter.toLowerCase();
-        
-        // Replace anything but 0-9 or a-z with a space
-        filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a]", " ");
-        libraryListPane.filterLibraries(Arrays.asList(filter.split(" ")));
-      }
-    });
     
     pane.add(filterField, c);
-    
-    LibraryListFetcher llf = new LibraryListFetcher();
-    llf.fetchLibraryList(null);
-    while (!llf.isDone()) {
-      Thread.yield();
-    }
-    
-    libraryListPane = new LibraryListPanel(llf.getLibraryListing());
+   
+    libraryListPane = new LibraryListPanel(this);
     
     c = new GridBagConstraints();
     c.fill = GridBagConstraints.BOTH;
@@ -324,13 +296,35 @@ public class LibraryManager {
     c.gridx = 1;
     c.gridy = 2;
     
-    String[] categories = {
-      "Any", "3D", "Animation", "Compilations", "Computer Vision",
-      "Data and Protocols", "Geometry", "Graphic Interface",
-      "Hardware Interface", "Import / Export", "Math", "Simulation", "Sound",
-      "Tools", "Typography", "Video" };
-    categoryChooser = new JComboBox(categories);
+    ArrayList<String> categories = new ArrayList<String>(getLibraryListing(null).getCategories());
+    Collections.sort(categories);
+    categories.add(0, ANY_CATEGORY);
+    
+    categoryChooser = new JComboBox(categories.toArray());
     pane.add(categoryChooser, c);
+    categoryChooser.addItemListener(new ItemListener() {
+      
+      public void itemStateChanged(ItemEvent e) {
+        category = (String) categoryChooser.getSelectedItem();
+        if (ANY_CATEGORY.equals(category)) {
+          category = null;
+        }
+        
+        libraryListPane.filterLibraries(category, filterField.filters);
+      }
+    });
+    
+    c = new GridBagConstraints();
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.gridx = 0;
+    c.gridy = 3;
+    c.weightx = 1;
+    c.gridwidth = 2;
+    installProgressBar = new JProgressBar();
+    installProgressBar.setString("");
+    installProgressBar.setStringPainted(true);
+    installProgressBar.setVisible(false);
+    pane.add(installProgressBar, c);
 
     dialog.setMinimumSize(new Dimension(400, 400));
   }
@@ -372,6 +366,30 @@ public class LibraryManager {
    */
   protected void disposeFrame() {
     dialog.dispose();
+  }
+
+  public LibraryListing getLibraryListing(ProgressMonitor pm) {
+    if (libraryListing == null) {
+      LibraryListFetcher llf = new LibraryListFetcher();
+      llf.fetchLibraryList(pm);
+      
+      // This is dumb. Lets make it better.
+      while (!llf.isDone()) {
+        Thread.yield();
+      }
+      libraryListing = llf.getLibraryListing();
+    }
+    
+    return libraryListing;
+  }
+  
+  public void installLibraryFromUrl(URL url, JProgressMonitor pm) {
+    File libDest = getTemporaryFile(url);
+    
+    FileDownloader downloader = new FileDownloader(url, libDest, pm);
+    downloader.setPostOperation(new LibraryInstaller(downloader, pm));
+    
+    new Thread(downloader).start();
   }
 
   public int confirmAndInstallLibrary(Editor editor, File libFile) {
@@ -589,13 +607,19 @@ public class LibraryManager {
 //  }
 
   class FilterField extends JTextField {
+    
     final static String filterHint = "Filter your search...";
+
     boolean isShowingHint;
+    
+    List<String> filters;
     
     public FilterField () {
       super(filterHint);
       
       isShowingHint = true;
+      
+      filters = new ArrayList<String>();
       
       addFocusListener(new FocusListener() {
         
@@ -614,6 +638,31 @@ public class LibraryManager {
           }
           
           updateStyle();
+        }
+      });
+      
+      getDocument().addDocumentListener(new DocumentListener() {
+        
+        public void removeUpdate(DocumentEvent e) {
+          filter();
+        }
+        
+        public void insertUpdate(DocumentEvent e) {
+          filter();
+        }
+        
+        public void changedUpdate(DocumentEvent e) {
+          filter();
+        }
+        
+        void filter() {
+          String filter = filterField.getFilterText();
+          filter = filter.toLowerCase();
+          
+          // Replace anything but 0-9 or a-z with a space
+          filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a]", " ");
+          filters = Arrays.asList(filter.split(" "));
+          libraryListPane.filterLibraries(category, filters);
         }
       });
     }
