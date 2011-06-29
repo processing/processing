@@ -269,15 +269,6 @@ public class LibraryManager {
     pane.add(scrollPane, c);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
-    scrollPane.getViewport().addChangeListener(new ChangeListener() {
-      
-      public void stateChanged(ChangeEvent ce) {
-        
-        int width = scrollPane.getViewportBorderBounds().width;
-        libraryListPane.setWidth(width);
-      }
-    });
-      
     libraryListPane.setPreferredViewPositionListener(new PreferredViewPositionListener() {
 
       public void handlePreferredLocation(Point p) {
@@ -314,19 +305,7 @@ public class LibraryManager {
       }
     });
     
-    c = new GridBagConstraints();
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridx = 0;
-    c.gridy = 3;
-    c.weightx = 1;
-    c.gridwidth = 2;
-    installProgressBar = new JProgressBar();
-    installProgressBar.setString("");
-    installProgressBar.setStringPainted(true);
-    installProgressBar.setVisible(false);
-    pane.add(installProgressBar, c);
-
-    dialog.setMinimumSize(new Dimension(400, 400));
+    dialog.setMinimumSize(new Dimension(650, 400));
   }
 
   private void registerDisposeListeners() {
@@ -690,7 +669,11 @@ public class LibraryManager {
     FileDownloader fileDownloader;
     
     public LibraryInstaller(FileDownloader downloader, ProgressMonitor pm) {
-      progressMonitor = pm;
+      if (pm == null) {
+        progressMonitor = new NullProgressMonitor();
+      } else {
+        progressMonitor = pm;
+      }
       fileDownloader = downloader;
     }
     

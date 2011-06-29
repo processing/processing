@@ -93,7 +93,7 @@ public class LibraryListing {
   }
 
   private boolean matches(LibraryInfo libInfo, String filter) {
-    filter = "\\p{Alnum}*" + filter.toLowerCase() + "\\p{Alnum}*";
+    filter = ".*" + filter.toLowerCase() + ".*";
     
     if (filter.isEmpty()) {
       return true;
@@ -104,9 +104,11 @@ public class LibraryListing {
         return true;
       }
     }
-    return libInfo.name.toLowerCase().matches(filter)
+    
+    return libInfo.description.toLowerCase().matches(filter)
+        || libInfo.categoryName.toLowerCase().matches(filter)
         || libInfo.name.toLowerCase().matches(filter);
-        
+ 
   }
 
   public static class LibraryListFetcher {
@@ -175,7 +177,7 @@ public class LibraryListing {
     public String versionId;
     public String link;
 
-    boolean isInstalled;
+    boolean isInstalled = false;
 
     public String brief;
 
@@ -271,9 +273,15 @@ public class LibraryListing {
         currentLibInfo.authors.add(currentAuthor);
         currentAuthor = null;
         doingAuthor = false;
+
       } else if (doingDescription) {
-        currentLibInfo.description = new String(ch, start, length).trim();
-        doingDescription = false;
+        String str = new String(ch, start, length);
+        if (currentLibInfo.description == null) {
+          currentLibInfo.description = str;
+        } else {
+          currentLibInfo.description += str;
+        }
+        
       }
     }
 
@@ -291,6 +299,9 @@ public class LibraryListing {
         }
 
         currentLibInfo = null;
+      } else if ("description".equals(qName)) {
+        currentLibInfo.description = currentLibInfo.description.trim();
+        doingDescription = false;
       }
 
     }
