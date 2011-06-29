@@ -5749,8 +5749,19 @@ public class PGraphicsAndroid3D extends PGraphics {
       getsetBuffer = IntBuffer.allocate(1);
       getsetBuffer.rewind();
     }
-        
-    gl.glReadPixels(x, height - y, 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, getsetBuffer);
+     
+    boolean nonCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (nonCurrent) {
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }
+    
+    gl.glReadPixels(x, height - y - 1, 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, getsetBuffer);
+
+    if (nonCurrent) {
+      popFramebuffer();
+    }  
+    
     int getset = getsetBuffer.get(0);
 
     if (BIG_ENDIAN) {
@@ -5769,9 +5780,22 @@ public class PGraphicsAndroid3D extends PGraphics {
     PTexture newbieTex = addTexture(newbie);
 
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);
-    gl.glReadPixels(x, height - y, w, -h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, newbieBuffer);
+    
+    boolean nonCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (nonCurrent) {
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }      
+    
+    gl.glReadPixels(x, height - y - h, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, newbieBuffer);
+    
+    if (nonCurrent) {
+      popFramebuffer();
+    }     
+    
     copyToTexture(newbieTex, newbieBuffer, 0, 0, w, h);
     newbie.loadPixels();
+    newbieTex.flippedY = true;
     newbieTex.get(newbie.pixels);
     
     return newbie;
