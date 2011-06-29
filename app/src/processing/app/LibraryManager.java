@@ -105,6 +105,14 @@ public class LibraryManager {
   public LibraryManager() {
 
     dialog = new JFrame("Library Manager");
+    dialog.addMouseListener(new MouseAdapter() {
+      
+      public void mouseReleased(MouseEvent e) {
+        System.out.println("It was released");
+      }
+      
+    });
+    
     Base.setIcon(dialog);
     
     if (USE_SIMPLE) {

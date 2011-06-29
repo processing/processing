@@ -36,7 +36,7 @@ import org.xml.sax.helpers.*;
 import processing.app.LibraryListing.LibraryInfo.Author;
 
 public class LibraryListing {
-
+  
   Map<String, List<LibraryInfo>> librariesByCategory;
   ArrayList<LibraryInfo> allLibraries;
   
