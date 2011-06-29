@@ -6041,9 +6041,24 @@ return width * (1 + ox) / 2.0f;
       getsetBuffer.rewind();
     }
     
-    gl.glReadPixels(x, height - y, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
-    int getset = getsetBuffer.get(0);
+    boolean nonCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (nonCurrent) {
+      // If the surface is not primary and multisampling is on, then the framebuffer
+      // will be switched momentarily from offscreenFramebufferMultisample to offscreenFramebuffer.
+      // This is in fact correct, because the glReadPixels() function doesn't work with 
+      // multisample framebuffer attached as the read buffer.
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }
+     
+    gl.glReadPixels(x, height - y - 1, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
 
+    if (nonCurrent) {
+      popFramebuffer();
+    }
+
+    int getset = getsetBuffer.get(0);
+    
     if (BIG_ENDIAN) {
       return 0xff000000 | ((getset >> 8) & 0x00ffffff);
 
@@ -6059,10 +6074,23 @@ return width * (1 + ox) / 2.0f;
     PImage newbie = parent.createImage(w, h, ARGB);
     PTexture newbieTex = addTexture(newbie);
 
-    IntBuffer newbieBuffer = IntBuffer.allocate(w * h);
-    gl.glReadPixels(x, height - y, w, -h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
+    IntBuffer newbieBuffer = IntBuffer.allocate(w * h);    
+    
+    boolean nonCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (nonCurrent) {
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }    
+
+    gl.glReadPixels(x, height - y - h, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
+
+    if (nonCurrent) {
+      popFramebuffer();
+    }    
+    
     copyToTexture(newbieTex, newbieBuffer, 0, 0, w, h);
     newbie.loadPixels();
+    newbieTex.flippedY = true;
     newbieTex.get(newbie.pixels);
     
     return newbie;
