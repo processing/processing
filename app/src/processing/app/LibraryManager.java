@@ -105,13 +105,6 @@ public class LibraryManager {
   public LibraryManager() {
 
     dialog = new JFrame("Library Manager");
-    dialog.addMouseListener(new MouseAdapter() {
-      
-      public void mouseReleased(MouseEvent e) {
-        System.out.println("It was released");
-      }
-      
-    });
     
     Base.setIcon(dialog);
     
@@ -272,9 +265,13 @@ public class LibraryManager {
     final JScrollPane scrollPane = new JScrollPane();
     scrollPane.setPreferredSize(new Dimension(300,300));
     scrollPane.setViewportView(libraryListPane);
-    scrollPane.getViewport().setBackground(UIManager.getColor("List.background"));
+    scrollPane.getViewport().setOpaque(true);
+    
+    scrollPane.getViewport().setBackground(libraryListPane.getBackground());
+    
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     pane.add(scrollPane, c);
+    //pane.add(scrollPane, c);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
     libraryListPane.setPreferredViewPositionListener(new PreferredViewPositionListener() {
@@ -565,33 +562,6 @@ public class LibraryManager {
     }
     out.close();
   }
-
-//  /**
-//   * Placeholder function which returns a list of information on libraries.
-//   */
-//  public static ArrayList<LibraryInfo> fetchLibraryInfo() {
-//    ArrayList<LibraryInfo> libInfos = new ArrayList<LibraryInfo>();
-//    
-//    LibraryInfo libInfo = new LibraryInfo();
-//    libInfo.name = "BlobDetection";
-//    libInfo.description = "Performs the computer vision technique of finding \"blobs\" in an image.";
-//    libInfo.isInstalled = true;
-//    libInfos.add(libInfo);
-//    
-//    libInfo = new LibraryInfo();
-//    libInfo.name = "OpenCV";
-//    libInfo.description = "An OpenCV implementation for processing including blob detection, face recognition and more. This library is highly recommended.";
-//    libInfo.isInstalled = false;
-//    libInfos.add(libInfo);
-//    
-//    libInfo = new LibraryInfo();
-//    libInfo.name = "SQLibrary";
-//    libInfo.description = "A library to facilitate communication with MySQL or SQLite databases.";
-//    libInfo.isInstalled = false;
-//    libInfos.add(libInfo);
-//    
-//    return libInfos;
-//  }
 
   class FilterField extends JTextField {
     
