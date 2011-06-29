@@ -24,6 +24,7 @@ package processing.app;
 
 import java.util.*;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -76,6 +77,18 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     libraries = libraryManager.getLibraryListing(null);
     
     setLayout(new GridBagLayout());
+    setFocusable(true);
+    setOpaque(true);
+    
+    if (Base.isLinux()) {
+      // Thanks to a bug with GNOME, getColor returns the wrong value for
+      // List.background. We'll just assume its white. The intersection
+      // of people using Linux and people using a weird inverted color theme
+      // should be small enough.
+      setBackground(Color.white);
+    } else {
+      setBackground(UIManager.getColor("List.background"));
+    }
     
     libPanelsByInfo = new HashMap<LibraryInfo, LibraryPanel>();
     
@@ -89,17 +102,10 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       
       LibraryPanel libPanel = new LibraryPanel(libInfo);
       libPanelsByInfo.put(libPanel.libInfo, libPanel);
+      
       add(libPanel, c);
     }
     
-    GridBagConstraints verticalFill = new GridBagConstraints();
-    verticalFill.fill = GridBagConstraints.VERTICAL;
-    verticalFill.weighty = 1;
-    verticalFill.gridx = 0;
-    verticalFill.gridy = row++;
-    add(Box.createVerticalGlue(), verticalFill);
-    
-    setFocusable(true);
     addMouseListener(new MouseAdapter() {
 
       public void mousePressed(MouseEvent mouseEvent) {
@@ -107,6 +113,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       }
     });
 
+    updateColors();
   }
   
   public void filterLibraries(String category, List<String> filters) {
@@ -172,38 +179,35 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   private void updateColors() {
     
     int count = 0;
-    for (Component c : getComponents()) {
-      if (c instanceof LibraryPanel) {
-        LibraryPanel libPanel = (LibraryPanel) c;
-        
-        if (libPanel.isVisible()) {
-          if (libPanel.isInfoShown) {
-            libPanel.setBackground(UIManager.getColor("List.selectionBackground"));
-            cascadeForgroundColor(libPanel, UIManager.getColor("List.selectionForeground"));
-            libPanel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
-          } else {
-            Border border = null;
-            if (Base.isMacOS()) {
-              if (count % 2 == 1) {
-                border = UIManager.getBorder("List.evenRowBackgroundPainter");
-              } else {
-                border = UIManager.getBorder("List.oddRowBackgroundPainter");
-              }
+    for (Entry<LibraryInfo, LibraryPanel> entry : libPanelsByInfo.entrySet()) {
+      LibraryPanel libPanel = entry.getValue();
+
+      if (libPanel.isVisible()) {
+        if (libPanel.isSelected) {
+          libPanel.setBackground(UIManager.getColor("List.selectionBackground"));
+          cascadeForgroundColor(libPanel, UIManager.getColor("List.selectionForeground"));
+          libPanel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
+        } else {
+          Border border = null;
+          if (Base.isMacOS()) {
+            if (count % 2 == 1) {
+              border = UIManager.getBorder("List.evenRowBackgroundPainter");
+            } else {
+              border = UIManager.getBorder("List.oddRowBackgroundPainter");
             }
-            
-            if (border == null) {
-              border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
-            }
-            
-            libPanel.setBorder(border);
-            
-            libPanel.setBackground(UIManager.getColor("List.background"));
-            cascadeForgroundColor(libPanel, UIManager.getColor("List.foreground"));
-            
           }
-          
-          count++;
+
+          if (border == null) {
+            border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
+          }
+
+          libPanel.setBorder(border);
+
+          libPanel.setBackground(LibraryListPanel.this.getBackground());
+          cascadeForgroundColor(libPanel, UIManager.getColor("List.foreground"));
         }
+
+        count++;
       }
     }
   }
@@ -314,7 +318,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     
     JButton installOrRemove;
 
-    boolean isInfoShown;
+    boolean isSelected;
     
     String authorsWithLinks = "";
     
@@ -324,14 +328,13 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       
       generateAuthorString();
 
-      
       addPaneComponents();
       addProgressBarAndButton();
 
+      setBackground(LibraryListPanel.this.getBackground());
       setOpaque(true);
       setFocusable(true);
-      setShowInfo(false);
-      updateColors();
+      setSelected(false);
 
       MouseAdapter expandPanelMouseListener = new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
@@ -339,14 +342,14 @@ public class LibraryListPanel extends JPanel implements Scrollable {
           for (Component c : LibraryListPanel.this.getComponents()) {
             if (c instanceof LibraryPanel) {
               LibraryPanel lp = (LibraryPanel) c;
-              if (lp.isInfoShown) {
-                lp.setShowInfo(false);
+              if (lp.isSelected) {
+                lp.setSelected(false);
                 break;
               }
             }
           }
 
-          setShowInfo(true);
+          setSelected(true);
           updateColors();
           getParent().requestFocusInWindow();
         }
@@ -361,8 +364,6 @@ public class LibraryListPanel extends JPanel implements Scrollable {
 //      }
       authorLabel.addMouseListener(expandPanelMouseListener);
       descriptionText.addMouseListener(expandPanelMouseListener);
-
-      updateColors();
     }
 
     private void generateAuthorString() {
@@ -518,9 +519,17 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       rightPane.setPreferredSize(d);
     }
 
-    public void setShowInfo(boolean doShow) {
-      isInfoShown = doShow;
+    public void setSelected(boolean doShow) {
+      isSelected = doShow;
       installOrRemove.setVisible(doShow);
+      
+//      if (doShow) {
+//        authorLabel.removeHyperlinkListener(nullHyperlinkListener);
+//        authorLabel.addHyperlinkListener(hyperlinkOpener);
+//      } else {
+//        authorLabel.removeHyperlinkListener(hyperlinkOpener);
+//        authorLabel.addHyperlinkListener(nullHyperlinkListener);
+//      }
     }
 
     /**
