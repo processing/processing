@@ -86,6 +86,8 @@ public class FileDownloader implements Runnable {
     if (post != null) {
       post.run();
     }
+    
+    progressMonitor.finished();
   }
 
   public File getFile() {

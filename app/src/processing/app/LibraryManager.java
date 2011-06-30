@@ -38,7 +38,7 @@ import javax.swing.event.*;
 import processing.app.LibraryListPanel.PreferredViewPositionListener;
 import processing.app.LibraryListing.LibraryListFetcher;
 
-class JProgressMonitor extends AbstractProgressMonitor {
+abstract class JProgressMonitor extends AbstractProgressMonitor {
   JProgressBar progressBar;
   
   public JProgressMonitor(JProgressBar progressBar) {
@@ -46,6 +46,7 @@ class JProgressMonitor extends AbstractProgressMonitor {
   }
   
   public void startTask(String name, int maxValue) {
+    isFinished = false;
     progressBar.setString(name);
     progressBar.setIndeterminate(maxValue == UNKNOWN);
     progressBar.setMaximum(maxValue);
@@ -55,6 +56,14 @@ class JProgressMonitor extends AbstractProgressMonitor {
     super.setProgress(value);
     progressBar.setValue(value);
   }
+  
+  @Override
+  public void finished() {
+    super.finished();
+    finishedAction();
+  }
+
+  public abstract void finishedAction();
   
 }
 
@@ -180,7 +189,12 @@ public class LibraryManager {
           
           URL url = new URL(libraryUrl.getText());
           
-          final JProgressMonitor pm = new JProgressMonitor(installProgressBar);
+          final JProgressMonitor pm = new JProgressMonitor(installProgressBar) {
+            
+            @Override
+            public void finishedAction() {
+            }
+          };
           
           dialog.addWindowListener(new WindowAdapter() {
             
@@ -252,7 +266,11 @@ public class LibraryManager {
     
     pane.add(filterField, c);
    
-    libraryListPane = new LibraryListPanel(this);
+    libraryListPane = new LibraryListPanel(this, libraryListing);
+    if (libraryListing == null) {
+      JProgressBar progressBar = libraryListPane.getSetupProgressBar();
+      getLibraryListing(progressBar);
+    }
     
     c = new GridBagConstraints();
     c.fill = GridBagConstraints.BOTH;
@@ -292,11 +310,8 @@ public class LibraryManager {
     c.gridx = 1;
     c.gridy = 2;
     
-    ArrayList<String> categories = new ArrayList<String>(getLibraryListing(null).getCategories());
-    Collections.sort(categories);
-    categories.add(0, ANY_CATEGORY);
-    
-    categoryChooser = new JComboBox(categories.toArray());
+    categoryChooser = new JComboBox();
+    updateCategoryChooser();
     pane.add(categoryChooser, c);
     categoryChooser.addItemListener(new ItemListener() {
       
@@ -311,6 +326,22 @@ public class LibraryManager {
     });
     
     dialog.setMinimumSize(new Dimension(650, 400));
+  }
+
+  private void updateCategoryChooser() {
+    ArrayList<String> categories;
+    if (libraryListing != null) {
+      categoryChooser.removeAllItems();
+      categories = new ArrayList<String>(libraryListing.getCategories());
+      Collections.sort(categories);
+      categories.add(0, ANY_CATEGORY);
+    } else {
+      categories = new ArrayList<String>();
+      categories.add(0, ANY_CATEGORY);
+    }
+    for (String s : categories) {
+      categoryChooser.addItem(s);
+    }
   }
 
   private void registerDisposeListeners() {
@@ -352,16 +383,33 @@ public class LibraryManager {
     dialog.dispose();
   }
 
-  public LibraryListing getLibraryListing(ProgressMonitor pm) {
+
+  /**
+   * @return true if the library listing has already been downloaded
+   */
+  public boolean hasLibraryListing() {
+    return libraryListing != null;
+  }
+  
+  private LibraryListing getLibraryListing(JProgressBar progressBar) {
     if (libraryListing == null) {
-      LibraryListFetcher llf = new LibraryListFetcher();
-      llf.fetchLibraryList(pm);
+      final LibraryListFetcher llf = new LibraryListFetcher();
+      llf.setProgressMonitor(new JProgressMonitor(progressBar) {
+        
+        @Override
+        public void finishedAction() {
+          libraryListing = llf.getLibraryListing();
+          synchronized (libraryListing) {
+            libraryListing = llf.getLibraryListing();
+            if (libraryListPane != null) {
+              libraryListPane.setLibraryList(libraryListing);
+            }
+            updateCategoryChooser();
+          }
+        }
+      });
+      new Thread(llf).start();
       
-      // This is dumb. Lets make it better.
-      while (!llf.isDone()) {
-        Thread.yield();
-      }
-      libraryListing = llf.getLibraryListing();
     }
     
     return libraryListing;
