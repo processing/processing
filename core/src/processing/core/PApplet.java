@@ -8911,11 +8911,10 @@ public class PApplet extends Applet
 
 
   /**
-   * Sets the text rendering/placement to be either SCREEN (direct
-   * to the screen, exact coordinates, only use the font's original size)
-   * or MODEL (the default, where text is manipulated by translate() and
-   * can have a textSize). The text size cannot be set when using
-   * textMode(SCREEN), because it uses the pixels directly from the font.
+   * Sets the text rendering/placement to be either MODEL (the normal mode,
+   * where text bitmaps are used (or the native font, when available). 
+   * Or SHAPE, where text is rendered as actual vector data (much slower in
+   * some cases, faster in others). SCREEN mode has been removed for 2.0. 
    */
   public void textMode(int mode) {
     if (recorder != null) recorder.textMode(mode);
