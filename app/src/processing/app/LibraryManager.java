@@ -79,12 +79,7 @@ public class LibraryManager {
     "sketch instead, click “No” and use <i>Sketch &gt;<br>Add File...</i>";
   
   static final String ANY_CATEGORY = "Any";
-  /**
-   * true to use manual URL specification only
-   * false to use searchable library list
-   */
-  static boolean USE_SIMPLE = false;
-  
+
   JFrame dialog;
 
   // Simple UI widgets:
@@ -117,11 +112,7 @@ public class LibraryManager {
     
     Base.setIcon(dialog);
     
-    if (USE_SIMPLE) {
-      createSimpleUiComponents();
-    } else {
-      createComplexUiComponents();
-    }
+    createComponents();
     
     registerDisposeListeners();
     
@@ -130,127 +121,11 @@ public class LibraryManager {
     dialog.setLocation((screen.width - dialog.getWidth()) / 2,
                        (screen.height - dialog.getHeight()) / 2);
     
-    if (!USE_SIMPLE) {
-      libraryListPane.grabFocus();
-    }
+    libraryListPane.grabFocus();
     
   }
   
-  private void createSimpleUiComponents() {
-    dialog.setResizable(false);
-    
-    Container pane = dialog.getContentPane();
-    pane.setLayout(new GridBagLayout());
-    
-    urlLabel = new JLabel("Library URL:");
-    libraryUrl = new JTextField();
-    libraryUrl.setPreferredSize(new Dimension(0, 10 + libraryUrl
-        .getFontMetrics(libraryUrl.getFont()).getHeight()));
-    installButton = new JButton("Install");
-    installProgressBar = new JProgressBar();
-
-    installProgressBar.setVisible(true);
-    installProgressBar.setString("");
-    installProgressBar.setStringPainted(true);
-
-    installButton.setEnabled(false);
-    libraryUrl.getDocument().addDocumentListener(new DocumentListener() {
-      
-      private void checkUrl() {
-        try {
-          new URL(libraryUrl.getText());
-          installButton.setEnabled(true);
-          installButton.setToolTipText("");
-        } catch (MalformedURLException e) {
-          installButton.setEnabled(false);
-          installButton.setToolTipText("URL is malformed");
-        }
-      }
-      
-      public void removeUpdate(DocumentEvent de) {
-        checkUrl();
-      }
-      
-      public void insertUpdate(DocumentEvent de) {
-        checkUrl();
-      }
-      
-      public void changedUpdate(DocumentEvent de) {
-        checkUrl();
-      }
-    });
-    
-    ActionListener installLibAction = new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg) {
-        try {
-          installProgressBar.setVisible(true);
-          dialog.pack();
-          
-          URL url = new URL(libraryUrl.getText());
-          
-          final JProgressMonitor pm = new JProgressMonitor(installProgressBar) {
-            
-            @Override
-            public void finishedAction() {
-            }
-          };
-          
-          dialog.addWindowListener(new WindowAdapter() {
-            
-            public void windowClosing(WindowEvent we) {
-              pm.cancel();
-            }
-          });
-          
-          libraryUrl.setEnabled(false);
-          installButton.setEnabled(false);
-          
-          installLibraryFromUrl(url, pm);
-          
-        } catch (MalformedURLException e) {
-          System.err.println("Malformed URL");
-        }
-        libraryUrl.setText("");
-      }
-    };
-    libraryUrl.addActionListener(installLibAction);
-    installButton.addActionListener(installLibAction);
-
-    GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.weightx = 1;
-    c.anchor = GridBagConstraints.WEST;
-    pane.add(urlLabel, c);
-    
-    c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 1;
-    c.weightx = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    pane.add(libraryUrl, c);
-    
-    c = new GridBagConstraints();
-    c.gridx = 1;
-    c.gridy = 1;
-    c.anchor = GridBagConstraints.EAST;
-    pane.add(installButton, c);
-    
-    c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 2;
-    c.gridwidth = 2;
-    c.weightx = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    pane.add(installProgressBar, c);
-    
-    Dimension d = dialog.getSize();
-    d.width = 320;
-    dialog.setMinimumSize(d);
-  }
-
-  private void createComplexUiComponents() {
+  private void createComponents() {
     dialog.setResizable(true);
     
     Container pane = dialog.getContentPane();
@@ -716,9 +591,9 @@ public class LibraryManager {
       libraryUrl.setEnabled(true);
       installButton.setEnabled(true);
   
-      installProgressBar.setVisible(false);
       dialog.pack();
       
+      progressMonitor.finished();
     }
   }
   
