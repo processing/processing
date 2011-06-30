@@ -505,9 +505,8 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       add(rightPane, c);
       
       installProgressBar = new JProgressBar();
-      installProgressBar.setString("");
       installProgressBar.setStringPainted(true);
-      installProgressBar.setVisible(false);
+      resetInstallProgressBarState();
       Dimension d = installProgressBar.getPreferredSize();
       d.width = BUTTON_WIDTH;
       installProgressBar.setPreferredSize(d);
@@ -540,8 +539,9 @@ public class LibraryListPanel extends JPanel implements Scrollable {
 
                 public void finishedAction() {
                   // Finished installing library
-                  installProgressBar.setVisible(false);
+                  resetInstallProgressBarState();
                 }
+
               });
             } catch (MalformedURLException e) {
               Base.showWarning("Install Failed",
@@ -570,6 +570,13 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       d.height = d.height+d2.height;
       rightPane.setMinimumSize(d);
       rightPane.setPreferredSize(d);
+    }
+    
+    private void resetInstallProgressBarState() {
+      installProgressBar.setString("Starting");
+      installProgressBar.setIndeterminate(false);
+      installProgressBar.setValue(0);
+      installProgressBar.setVisible(false);
     }
 
     public void setSelected(boolean doShow) {

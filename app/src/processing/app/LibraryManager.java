@@ -464,7 +464,7 @@ public class LibraryManager {
       while ((next = zis.getNextEntry()) != null) {
         File currentFile = new File(dest, next.getName());
         if (next.isDirectory()) {
-          currentFile.mkdir();
+          currentFile.mkdirs();
         } else {
           currentFile.createNewFile();
           unzipEntry(zis, currentFile);
