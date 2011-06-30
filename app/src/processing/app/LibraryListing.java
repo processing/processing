@@ -204,6 +204,7 @@ public class LibraryListing {
    * Class to parse the libraries xml file
    */
   class LibraryXmlParser extends DefaultHandler {
+    
     String currentCategoryName;
 
     LibraryInfo currentLibInfo;
@@ -217,7 +218,7 @@ public class LibraryListing {
     LibraryXmlParser(File xmlFile) {
       SAXParserFactory spf = SAXParserFactory.newInstance();
       spf.setValidating(false);
-
+      
       try {
         SAXParser sp = spf.newSAXParser();
 
@@ -226,12 +227,18 @@ public class LibraryListing {
         sp.parse(input, this);
 
         // XXX: Do something meaningful when we get an error
-      } catch (SAXException e) {
-        e.printStackTrace();
       } catch (IOException e) {
-        e.printStackTrace();
-      } catch (ParserConfigurationException e) {
-        e.printStackTrace();
+        Base.showWarning("Error reading library list",
+                         "A error occured while reading the list of available libraries.\n" +
+                         "Try restarting the Library Manager.\n", e);
+      } catch (Exception e) {
+        Base.showWarning("Error reading library list",
+                         "The list of libraries downloaded from Processing.org\n" +
+                         "appears to be malformed. You can still install libraries\n" + 
+                         "manually while we work on fixing this.", e);
+        
+        librariesByCategory = null;
+        allLibraries = null;
       }
     }
 
