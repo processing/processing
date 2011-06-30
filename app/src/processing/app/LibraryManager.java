@@ -82,13 +82,6 @@ public class LibraryManager {
 
   JFrame dialog;
 
-  // Simple UI widgets:
-  JLabel urlLabel;
-
-  JTextField libraryUrl;
-
-  JButton installButton;
-  
   LibraryListing libraryListing;
   
   // Non-simple UI widgets:
@@ -289,13 +282,19 @@ public class LibraryManager {
     
     return libraryListing;
   }
-  
-  public void installLibraryFromUrl(URL url, JProgressMonitor pm) {
+
+  public void installLibraryFromUrl(URL url,
+                                    JProgressMonitor downloadProgressMonitor,
+                                    JProgressMonitor installProgressMonitor) {
+    
     File libDest = getTemporaryFile(url);
     
-    FileDownloader downloader = new FileDownloader(url, libDest, pm);
-    downloader.setPostOperation(new LibraryInstaller(downloader, pm));
+    FileDownloader downloader = new FileDownloader(url, libDest,
+                                                   downloadProgressMonitor);
     
+    downloader.setPostOperation(new LibraryInstaller(downloader,
+                                                     installProgressMonitor));
+
     new Thread(downloader).start();
   }
 
@@ -588,9 +587,6 @@ public class LibraryManager {
         installLibrary(libFile);
       }
       
-      libraryUrl.setEnabled(true);
-      installButton.setEnabled(true);
-  
       dialog.pack();
       
       progressMonitor.finished();
