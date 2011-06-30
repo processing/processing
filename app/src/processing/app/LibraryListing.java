@@ -111,7 +111,7 @@ public class LibraryListing {
  
   }
 
-  public static class LibraryListFetcher {
+  public static class LibraryListFetcher implements Runnable {
 
     LibraryListing libListing;
 
@@ -123,8 +123,12 @@ public class LibraryListing {
     
     Thread downloaderThread;
     
+    ProgressMonitor progressMonitor;
 
     public LibraryListFetcher() {
+      
+      progressMonitor = new NullProgressMonitor();
+      
       libListing = null;
       try {
         File tmpFolder = Base.createTempFolder("libarylist", "download");
@@ -135,13 +139,16 @@ public class LibraryListing {
         url = new URL("http://dl.dropbox.com/u/700641/libraries.xml");
 
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
+    
+    public void setProgressMonitor(ProgressMonitor pm) {
+      progressMonitor = pm;
+    }
 
-    public void fetchLibraryList(ProgressMonitor pm) {
-      downloader = new FileDownloader(url, dest, pm);
+    public void run() {
+      downloader = new FileDownloader(url, dest, progressMonitor);
       downloader.setPostOperation(new Runnable() {
         
         public void run() {
@@ -152,12 +159,7 @@ public class LibraryListing {
         }
       });
       
-      downloaderThread = new Thread(downloader);
-      downloaderThread.start();
-    }
-    
-    public boolean isDone() {
-      return !downloaderThread.isAlive();
+      downloader.run();
     }
     
     public LibraryListing getLibraryListing() {

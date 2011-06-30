@@ -60,7 +60,17 @@ public interface ProgressMonitor {
    * Requests for the task to be cancelled by setting isCanceled() to true.
    */
   public void cancel();
-
+  
+  /**
+   * Returns true if this task is complete
+   */
+  public boolean isFinished();
+  
+  /**
+   * This is called when the current task is finished
+   */
+  public void finished();
+  
 }
 
 abstract class AbstractProgressMonitor implements ProgressMonitor {
@@ -84,6 +94,14 @@ abstract class AbstractProgressMonitor implements ProgressMonitor {
 
   public void cancel() {
     isCanceled = true;
+  }
+  
+  public boolean isFinished() {
+    return isFinished;
+  }
+  
+  public void finished() {
+    isFinished = true;
   }
 
 }

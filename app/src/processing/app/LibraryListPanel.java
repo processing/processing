@@ -59,10 +59,11 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   
   HashMap<LibraryInfo, LibraryPanel> libPanelsByInfo;
   private PreferredViewPositionListener preferredViewPositionListener;
-  private LibraryManager libraryManager;
   LibraryListing libraries;
-
-  public LibraryListPanel(LibraryManager libraryManager) {
+  LibraryManager libraryManager;
+  JProgressBar setupProgressBar;
+  
+  public LibraryListPanel(LibraryManager libraryManager, LibraryListing libraryListing) {
     super();
     
     this.libraryManager = libraryManager;
@@ -73,8 +74,6 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       }
 
     };
-    
-    libraries = libraryManager.getLibraryListing(null);
     
     setLayout(new GridBagLayout());
     setFocusable(true);
@@ -92,6 +91,40 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     
     libPanelsByInfo = new HashMap<LibraryInfo, LibraryPanel>();
     
+    addMouseListener(new MouseAdapter() {
+
+      public void mousePressed(MouseEvent mouseEvent) {
+        requestFocusInWindow();
+      }
+    });
+    
+    if (libraryListing == null) {
+      GridBagConstraints c = new GridBagConstraints();
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.weightx = 1;
+      c.weighty = 1;
+      c.anchor = GridBagConstraints.CENTER;
+      
+      setupProgressBar = new JProgressBar();
+      setupProgressBar.setString("");
+      setupProgressBar.setStringPainted(true);
+      add(setupProgressBar, c);
+    } else {
+      setLibraryList(libraryListing);
+    }
+    
+  }
+  
+  public void setLibraryList(LibraryListing libraryListing) {
+    libraries = libraryListing;
+    if (setupProgressBar != null) {
+      remove(setupProgressBar);
+      setupProgressBar = null;
+    }
+    populateLibraryPanels();
+  }
+  
+  private void populateLibraryPanels() {
     int row = 0;
     for (LibraryInfo libInfo : libraries.getAllLibararies()) {
       GridBagConstraints c = new GridBagConstraints();
@@ -106,26 +139,21 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       add(libPanel, c);
     }
     
-    addMouseListener(new MouseAdapter() {
-
-      public void mousePressed(MouseEvent mouseEvent) {
-        requestFocusInWindow();
-      }
-    });
-
     updateColors();
   }
-  
+
   public void filterLibraries(String category, List<String> filters) {
     
-    List<LibraryInfo> hiddenLibraries = libraries.getAllLibararies();
-    for (LibraryInfo lib : libraries.getFilteredLibraryList(category, filters)) {
-      libPanelsByInfo.get(lib).setVisible(true);
-      hiddenLibraries.remove(lib);
-    }
-    
-    for (LibraryInfo lib : hiddenLibraries) {
-      libPanelsByInfo.get(lib).setVisible(false);
+    if (libraries != null) {
+      List<LibraryInfo> hiddenLibraries = libraries.getAllLibararies();
+      for (LibraryInfo lib : libraries.getFilteredLibraryList(category, filters)) {
+        libPanelsByInfo.get(lib).setVisible(true);
+        hiddenLibraries.remove(lib);
+      }
+      
+      for (LibraryInfo lib : hiddenLibraries) {
+        libPanelsByInfo.get(lib).setVisible(false);
+      }
     }
   }
 
@@ -553,6 +581,10 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     
     void handlePreferredLocation(Point p);
     
+  }
+
+  public JProgressBar getSetupProgressBar() {
+    return setupProgressBar;
   }
 
 }
