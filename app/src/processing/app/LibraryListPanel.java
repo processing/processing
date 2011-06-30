@@ -118,10 +118,20 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   public void setLibraryList(LibraryListing libraryListing) {
     libraries = libraryListing;
     if (setupProgressBar != null) {
+      setupProgressBar.setString("");
+      setupProgressBar.setIndeterminate(true);
+    }
+    populateLibraryPanels();
+    synchronized (libPanelsByInfo) {
+      for (Entry<LibraryInfo, LibraryPanel> entry : libPanelsByInfo.entrySet()) {
+        entry.getValue().setVisible(true);
+      }
+    }
+    updateColors();
+    if (setupProgressBar != null) {
       remove(setupProgressBar);
       setupProgressBar = null;
     }
-    populateLibraryPanels();
   }
   
   private void populateLibraryPanels() {
@@ -136,12 +146,11 @@ public class LibraryListPanel extends JPanel implements Scrollable {
           c.gridy = row++;
 
           LibraryPanel libPanel = new LibraryPanel(libInfo);
+          libPanel.setVisible(false);
           libPanelsByInfo.put(libPanel.libInfo, libPanel);
 
           add(libPanel, c);
         }
-
-        updateColors();
       }
     }
   }
