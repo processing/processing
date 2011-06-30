@@ -126,33 +126,43 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   
   private void populateLibraryPanels() {
     int row = 0;
-    for (LibraryInfo libInfo : libraries.getAllLibararies()) {
-      GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.weightx = 1;
-      c.gridx = 0;
-      c.gridy = row++;
-      
-      LibraryPanel libPanel = new LibraryPanel(libInfo);
-      libPanelsByInfo.put(libPanel.libInfo, libPanel);
-      
-      add(libPanel, c);
+    synchronized (libraries) {
+      synchronized (libPanelsByInfo) {
+        for (LibraryInfo libInfo : libraries.getAllLibararies()) {
+          GridBagConstraints c = new GridBagConstraints();
+          c.fill = GridBagConstraints.HORIZONTAL;
+          c.weightx = 1;
+          c.gridx = 0;
+          c.gridy = row++;
+
+          LibraryPanel libPanel = new LibraryPanel(libInfo);
+          libPanelsByInfo.put(libPanel.libInfo, libPanel);
+
+          add(libPanel, c);
+        }
+
+        updateColors();
+      }
     }
-    
-    updateColors();
   }
 
   public void filterLibraries(String category, List<String> filters) {
-    
-    if (libraries != null) {
-      List<LibraryInfo> hiddenLibraries = libraries.getAllLibararies();
-      for (LibraryInfo lib : libraries.getFilteredLibraryList(category, filters)) {
-        libPanelsByInfo.get(lib).setVisible(true);
-        hiddenLibraries.remove(lib);
-      }
-      
-      for (LibraryInfo lib : hiddenLibraries) {
-        libPanelsByInfo.get(lib).setVisible(false);
+
+    if (libraries != null && libPanelsByInfo != null) {
+      synchronized (libraries) {
+        synchronized (libPanelsByInfo) {
+
+          List<LibraryInfo> hiddenLibraries = libraries.getAllLibararies();
+          for (LibraryInfo lib : libraries.getFilteredLibraryList(category,
+                                                                  filters)) {
+            libPanelsByInfo.get(lib).setVisible(true);
+            hiddenLibraries.remove(lib);
+          }
+
+          for (LibraryInfo lib : hiddenLibraries) {
+            libPanelsByInfo.get(lib).setVisible(false);
+          }
+        }
       }
     }
   }
@@ -207,35 +217,38 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   private void updateColors() {
     
     int count = 0;
-    for (Entry<LibraryInfo, LibraryPanel> entry : libPanelsByInfo.entrySet()) {
-      LibraryPanel libPanel = entry.getValue();
+    synchronized (libPanelsByInfo) {
+      for (Entry<LibraryInfo, LibraryPanel> entry : libPanelsByInfo.entrySet()) {
+        LibraryPanel libPanel = entry.getValue();
 
-      if (libPanel.isVisible()) {
-        if (libPanel.isSelected) {
-          libPanel.setBackground(UIManager.getColor("List.selectionBackground"));
-          cascadeForgroundColor(libPanel, UIManager.getColor("List.selectionForeground"));
-          libPanel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
-        } else {
-          Border border = null;
-          if (Base.isMacOS()) {
-            if (count % 2 == 1) {
-              border = UIManager.getBorder("List.evenRowBackgroundPainter");
-            } else {
-              border = UIManager.getBorder("List.oddRowBackgroundPainter");
+        if (libPanel.isVisible()) {
+          if (libPanel.isSelected) {
+            libPanel.setBackground(UIManager.getColor("List.selectionBackground"));
+            cascadeForgroundColor(libPanel, UIManager.getColor("List.selectionForeground"));
+            libPanel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
+          } else {
+            Border border = null;
+            if (Base.isMacOS()) {
+              if (count % 2 == 1) {
+                border = UIManager.getBorder("List.evenRowBackgroundPainter");
+              } else {
+                border = UIManager.getBorder("List.oddRowBackgroundPainter");
+              }
             }
+
+            if (border == null) {
+              border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
+            }
+
+            libPanel.setBorder(border);
+
+            libPanel.setBackground(LibraryListPanel.this.getBackground());
+            cascadeForgroundColor(libPanel,
+                                  UIManager.getColor("List.foreground"));
           }
 
-          if (border == null) {
-            border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
-          }
-
-          libPanel.setBorder(border);
-
-          libPanel.setBackground(LibraryListPanel.this.getBackground());
-          cascadeForgroundColor(libPanel, UIManager.getColor("List.foreground"));
+          count++;
         }
-
-        count++;
       }
     }
   }
@@ -517,7 +530,19 @@ public class LibraryListPanel extends JPanel implements Scrollable {
             try {
               URL url = new URL(libInfo.link);
               
-              libraryManager.installLibraryFromUrl(url, null);
+              installProgressBar.setVisible(true);
+              libraryManager.installLibraryFromUrl(url, new JProgressMonitor(installProgressBar) {
+
+                public void finishedAction() {
+                  // Finished downloading library
+                }
+              }, new JProgressMonitor(installProgressBar) {
+
+                public void finishedAction() {
+                  // Finished installing library
+                  installProgressBar.setVisible(false);
+                }
+              });
             } catch (MalformedURLException e) {
               Base.showWarning("Install Failed",
                                "The link fetched from Processing.org is invalid.\n" +
