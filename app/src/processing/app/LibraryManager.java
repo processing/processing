@@ -251,6 +251,11 @@ public class LibraryManager {
    */
   protected void disposeFrame() {
     dialog.dispose();
+
+    editor.getMode().rebuildLibraryList();
+    editor.getMode().rebuildImportMenu();
+//    editor.base.
+//    editor.base.rebuildSketchbookMenus();
   }
 
 
@@ -345,9 +350,8 @@ public class LibraryManager {
       
       return libFile;
     } catch (IOException e) {
-      Base.showError("Trouble creating temporary folder",
-                     "Could not create a place to store libraries being downloaded.\n" +
-                     "That's gonna prevent us from continuing.", e);
+      Base.showWarning("Trouble creating temporary folder",
+                       "Could not create a place to store libraries being downloaded.\n", e);
     }
     
     return null;
@@ -438,10 +442,9 @@ public class LibraryManager {
       success = lib.folder.renameTo(backupFolderForLib);
       
       if (!success) {
-        Base.showError("Trouble creating backup of old \"" + lib.getName() + "\" library",
-                       "Could not move library to "
-                     + backupFolderForLib.getAbsolutePath() + "\n"
-                     + "That's gonna prevent us from continuing.", null);
+        Base.showWarning("Trouble creating backup of old \"" + lib.getName() + "\" library",
+                         "Could not move library to "
+                          + backupFolderForLib.getAbsolutePath() + "\n", null);
       }
     }
     
@@ -450,10 +453,9 @@ public class LibraryManager {
       File libFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
                                 libFolderName);
       if (!newLib.folder.renameTo(libFolder)) {
-        Base.showError("Trouble moving new library to the sketchbook",
-                       "Could not move \"" + newLib.getName() + "\" to "
-                     + libFolder.getAbsolutePath() + ".\n"
-                     + "That's gonna prevent us from continuing.", null);
+        Base.showWarning("Trouble moving new library to the sketchbook",
+                         "Could not move \"" + newLib.getName() + "\" to "
+                          + libFolder.getAbsolutePath() + ".\n", null);
       }
     }
     
