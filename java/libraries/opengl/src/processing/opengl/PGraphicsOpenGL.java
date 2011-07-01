@@ -715,6 +715,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /*
   protected int createGLResource(int type, Object obj) {
+    pTextureObjects.add(obj);
+    
     glTextureObjects.add(new Texture(id, obj));
   }
   
@@ -724,7 +726,20 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   */
   
+  public void recreateGLResources() {
+    
+    
+  }
+  
+  protected void registerGLObject(Object obj) {
+    
+  }
 
+  protected void unregisterGLObject(Object obj) {
+    
+  }
+  
+  
   protected int createGLResource(int type) {
     int id = 0;
     if (type == GL_TEXTURE_OBJECT) {
@@ -732,11 +747,13 @@ public class PGraphicsOpenGL extends PGraphics {
       gl.glGenTextures(1, temp, 0);
       id = temp[0];
       glTextureObjects.add(id);
+      //pTextureObjects.add((PTexture)obj);
     } else if (type == GL_VERTEX_BUFFER) {
       int[] temp = new int[1];
       gl.glGenBuffers(1, temp, 0);
       id = temp[0];
       glVertexBuffers.add(id);
+      //pTextureObjects.add((PTexture)obj);
     } else if (type == GL_FRAME_BUFFER) {
       int[] temp = new int[1];
       gl.glGenFramebuffers(1, temp, 0);
@@ -6990,10 +7007,7 @@ return width * (1 + ox) / 2.0f;
     
     boolean opengl2X = !hints[DISABLE_OPENGL_2X_SMOOTH];
     boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];    
-    
-    offscreenMultisample = false;
-    offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, false);
-    
+        
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
     if (PGraphicsOpenGL.fboMultisampleSupported && gl2x != null && (opengl2X || opengl4X)) {
@@ -7003,15 +7017,37 @@ return width * (1 + ox) / 2.0f;
       } else if (opengl4X) {
         nsamples = 4;
       } 
-      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, false);
+      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, nsamples, 0, 
+                                                         offscreenDepthBits, offscreenStencilBits, 
+                                                         offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
+      /*
       try {                        
         offscreenFramebufferMultisample.addColorBufferMultisample(nsamples);
         offscreenMultisample = true;
       } catch (GLException e) {
         PGraphics.showWarning("Unable to create antialised offscreen surface.");
-      }            
+      }    
+      */
+      offscreenFramebufferMultisample.clear();
+      offscreenMultisample = true;
+      
+      // The offscreen framebuffer where the multisampled image is finally drawn to doesn't
+      // need depth and stencil buffers since they are part of the multisampled framebuffer.
+      offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
+                                              0, 0,
+                                              false, false); 
+    } else {
+      offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
+                                              offscreenDepthBits, offscreenStencilBits,
+                                              offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
+      offscreenMultisample = false;
     }
+        
+    offscreenFramebuffer.setColorBuffer(texture);
+    offscreenFramebuffer.clear();
     
+    
+    /*
     if (offscreenMultisample) {
       // We have multisampling. The fbo with the depth and stencil buffers is the
       // multisampled fbo, not the regular one. This is because the actual drawing 
@@ -7049,16 +7085,13 @@ return width * (1 + ox) / 2.0f;
         }
       }
     }
+    */
     
-    offscreenFramebuffer.clear();        
+            
   }
   
   protected void getGLObjects() {
     gl = context.getGL();        
-    
-    //PApplet.println("GL:\n" + gl.getClass());
-    //PApplet.println("GL3:\n" + gl.getGL4bc());
-    
     
     if (pipeline == PROG_GL4) {
       gl4p = gl.getGL4();
