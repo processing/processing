@@ -251,11 +251,6 @@ public class LibraryManager {
    */
   protected void disposeFrame() {
     dialog.dispose();
-
-    editor.getMode().rebuildLibraryList();
-    editor.getMode().rebuildImportMenu();
-//    editor.base.
-//    editor.base.rebuildSketchbookMenus();
   }
 
 
@@ -445,9 +440,11 @@ public class LibraryManager {
         Base.showWarning("Trouble creating backup of old \"" + lib.getName() + "\" library",
                          "Could not move library to "
                           + backupFolderForLib.getAbsolutePath() + "\n", null);
+        return 0;
       }
     }
     
+    int failures = 0;
     for (Library newLib : newLibs) {
       String libFolderName = newLib.folder.getName();
       File libFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
@@ -456,10 +453,17 @@ public class LibraryManager {
         Base.showWarning("Trouble moving new library to the sketchbook",
                          "Could not move \"" + newLib.getName() + "\" to "
                           + libFolder.getAbsolutePath() + ".\n", null);
+        failures++;
       }
     }
     
-    return newLibs.size();
+    int numInstalled = newLibs.size() - failures;
+    if (numInstalled > 0) {
+      editor.getMode().rebuildLibraryList();
+      editor.getMode().rebuildImportMenu();
+    }
+    
+    return numInstalled;
   }
 
   /**
