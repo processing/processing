@@ -96,7 +96,7 @@ public class PTexture implements PConstants {
     glID = 0;
     
     setParameters((Parameters)params);
-    createTexture(width, height);        
+    allocate(width, height);        
   } 
   
 
@@ -130,7 +130,7 @@ public class PTexture implements PConstants {
 
 
   public void delete() {
-    deleteTexture();
+    release();
   }
 
   ////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ public class PTexture implements PConstants {
     this.width = width;
     this.height = height;    
     setParameters(params);
-    createTexture(width, height);
+    allocate(width, height);
   } 
 
 
@@ -256,7 +256,7 @@ public class PTexture implements PConstants {
     }
     
     if (glID == 0) {
-      createTexture(width, height);
+      allocate(width, height);
     }   
     
     getGl().glEnable(glTarget);
@@ -682,16 +682,16 @@ public class PTexture implements PConstants {
   
   ///////////////////////////////////////////////////////////  
 
-  // Create/delete texture.    
+  // Allocate/release texture.    
 
     
   /**
-   * Creates the opengl texture object.
+   * Allocates the opengl texture object.
    * @param w int
    * @param h int  
    */
-  protected void createTexture(int w, int h) {
-    deleteTexture(); // Just in the case this object is being re-initialized.
+  protected void allocate(int w, int h) {
+    release(); // Just in the case this object is being re-initialized.
       
     if (PGraphicsOpenGL.npotTexSupported) {
       glWidth = w;
@@ -711,15 +711,15 @@ public class PTexture implements PConstants {
     usingMipmaps = glMinFilter == GL.GL_LINEAR_MIPMAP_LINEAR;
     
     getGl().glEnable(glTarget);
-    glID = ogl.createGLResource(PGraphicsOpenGL.GL_TEXTURE_OBJECT);     
+    glID = ogl.createGLResource(PGraphicsOpenGL.GL_TEXTURE_OBJECT);
     getGl().glBindTexture(glTarget, glID);
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_S, glWrapS);
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_T, glWrapT);
     
-    //First, we use glTexImage2D to set the full size of the texture (glW/H might be diff from
-    // w/h in the case that the GPU doesn't support NPOT textures)
+    // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
+    // from w/h in the case that the GPU doesn't support NPOT textures)
     getGl().glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL.GL_RGBA, 
                          GL.GL_UNSIGNED_BYTE, null);
     
@@ -744,16 +744,24 @@ public class PTexture implements PConstants {
     maxTexCoordV = (float)h / glHeight; 
   }
 
-    
+  protected void reallocate() {
+    allocate(width, height);
+  }
+  
   /**
    * Deletes the opengl texture object.
    */
-  protected void deleteTexture() {
+  protected void release() {
     if (glID != 0) {
       ogl.deleteGLResource(glID, PGraphicsOpenGL.GL_TEXTURE_OBJECT);
       glID = 0;
     }
   }
+  
+  ///////////////////////////////////////////////////////////  
+
+  // Utilities.    
+  
   
   // Copies source texture tex into this.
   protected void copyTexels(PTexture tex, int x, int y, int w, int h, boolean scale) {
@@ -796,7 +804,7 @@ public class PTexture implements PConstants {
   protected void copyObject(PTexture src) {
     // The OpenGL texture of this object is replaced with the one from the source object, 
     // so we delete the former to avoid resource wasting.
-    deleteTexture(); 
+    release(); 
   
     width = src.width;
     height = src.height;

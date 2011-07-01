@@ -50,6 +50,13 @@ public class PFramebuffer implements PConstants {
   public int glColorBufferMultisampleID;
   public int width;
   public int height;
+
+  protected int depthBits;
+  protected int stencilBits;
+  protected boolean combinedDepthStencil;
+  
+  protected boolean multisample;
+  protected int nsamples;
   
   protected int numColorBuffers;
   protected int[] colorBufferAttchPoints;
@@ -58,41 +65,36 @@ public class PFramebuffer implements PConstants {
 
   protected boolean screenFb;
   protected boolean noDepth;
-  protected boolean fboMode;
-  
-  protected boolean multisample;
-  protected int nsamples;
+  protected boolean fboMode;  
    
   protected PTexture backupTexture;
   protected IntBuffer pixelBuffer;
 
-  PFramebuffer(PApplet parent) {
-    this(parent, 0, 0, false);
+  PFramebuffer(PApplet parent, int w, int h) {
+    this(parent, w, h, 1, 1, 0, 0, false, false);
   }  
   
-  PFramebuffer(PApplet parent, int w, int h) {
-    this(parent, w, h, false);
-  }
-  
   PFramebuffer(PApplet parent, int w, int h, boolean screen) {
+    this(parent, w, h, 1, 1, 0, 0, false, screen);
+  }
+
+  PFramebuffer(PApplet parent, int w, int h, int samples, int colorBuffers, 
+               int depthBits, int stencilBits, boolean combinedDepthStencil, 
+               boolean screen) {
     this.parent = parent;
     ogl = (PGraphicsOpenGL)parent.g;
     
     glFboID = 0;
     glDepthBufferID = 0;
     glStencilBufferID = 0;
-    glDepthStencilBufferID = 0;
+    glDepthStencilBufferID = 0;    
     glColorBufferMultisampleID = 0;
-    
-    screenFb = screen;
-    noDepth = false;
-    fboMode = PGraphicsOpenGL.fboSupported;
-    numColorBuffers = 0;
         
-    multisample = false;
-    nsamples = 0;
+    fboMode = PGraphicsOpenGL.fboSupported;
     
-    createFramebuffer(w, h);
+    allocate(w, h, samples, colorBuffers, depthBits, stencilBits,
+             combinedDepthStencil, screen);
+    noDepth = false;
     
     pixelBuffer = null;
     
@@ -102,11 +104,11 @@ public class PFramebuffer implements PConstants {
       // buffer to the texture bound as color buffer to this PFramebuffer object and then drawing 
       // the backup texture back on the screen.
       backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, POINT));       
-    }  
+    }
   }
-
+    
   public void delete() {
-    deleteFramebuffer();
+    release();
   }
 
   public void clear() {
@@ -122,181 +124,6 @@ public class PFramebuffer implements PConstants {
     getGl().glBindFramebuffer(GL2.GL_DRAW_FRAMEBUFFER, dest.glFboID);
     getGl2().glBlitFramebuffer(0, 0, this.width, this.height, 0, 0, dest.width, dest.height, 
                                GL.GL_COLOR_BUFFER_BIT, GL.GL_NEAREST);
-  }
-  
-  public void setColorBuffer(PTexture tex) {
-    setColorBuffers(new PTexture[] { tex }, 1);
-  }
-
-  public void setColorBuffers(PTexture[] textures) {
-    setColorBuffers(textures, textures.length);
-  }
-  
-  public void setColorBuffers(PTexture[] textures, int n) {
-    if (screenFb) return;
-    
-    if (fboMode) {
-      ogl.pushFramebuffer();
-      ogl.setFramebuffer(this);
-
-      // Making sure nothing is attached.
-      for (int i = 0; i < numColorBuffers; i++) {
-        getGl().glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0 + i, 
-                                       GL.GL_TEXTURE_2D, 0, 0);
-      }
-
-      numColorBuffers = PApplet.min(n, textures.length);
-      colorBufferAttchPoints = new int[numColorBuffers];
-      glColorBufferTargets = new int[numColorBuffers];
-      glColorBufferIDs = new int[numColorBuffers];
-
-      for (int i = 0; i < numColorBuffers; i++) {
-        colorBufferAttchPoints[i] = GL.GL_COLOR_ATTACHMENT0 + i;
-        glColorBufferTargets[i] = textures[i].glTarget;
-        glColorBufferIDs[i] = textures[i].glID;
-        getGl().glFramebufferTexture2D(GL.GL_FRAMEBUFFER, colorBufferAttchPoints[i],
-                                       glColorBufferTargets[i], glColorBufferIDs[i], 0);
-      }
-
-      if (validFbo() && textures != null && 0 < textures.length) {
-        width = textures[0].glWidth;
-        height = textures[0].glHeight;
-      }
-
-      ogl.popFramebuffer();
-    } else {
-      numColorBuffers = PApplet.min(n, textures.length);
-      glColorBufferTargets = new int[numColorBuffers];
-      glColorBufferIDs = new int[numColorBuffers];      
-      for (int i = 0; i < numColorBuffers; i++) {
-        glColorBufferTargets[i] = textures[i].glTarget;
-        glColorBufferIDs[i] = textures[i].glID;
-      }
-    }
-  }
-  
-  public void addColorBufferMultisample(int samples) {
-    if (screenFb) return;
-    
-    if (fboMode) {
-      ogl.pushFramebuffer();
-      ogl.setFramebuffer(this);
-      
-      multisample = true;
-      nsamples = samples;
-      
-      numColorBuffers = 1;
-      colorBufferAttchPoints = new int[numColorBuffers];
-      colorBufferAttchPoints[0] = GL.GL_COLOR_ATTACHMENT0;
-      
-      glColorBufferMultisampleID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
-      getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glColorBufferMultisampleID);
-      getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, 
-                                                GL.GL_RGBA8, width, height);            
-      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, colorBufferAttchPoints[0], 
-                                        GL.GL_RENDERBUFFER, glColorBufferMultisampleID);
-      
-      ogl.popFramebuffer();      
-    }
-  }
-  
-  public void addDepthStencilBuffer() {
-    if (screenFb) return;
-    
-    if (width == 0 || height == 0) {
-      throw new RuntimeException("PFramebuffer: size undefined.");
-    }
-    
-    if (fboMode) {    
-      ogl.pushFramebuffer();
-      ogl.setFramebuffer(this);
-      
-      glDepthStencilBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
-      getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthStencilBufferID);
-      
-      if (multisample) { 
-        getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, GL.GL_DEPTH24_STENCIL8, width, height);
-      } else {
-        getGl().glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_DEPTH24_STENCIL8, width, height);
-      }
-      
-      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, 
-                                        GL.GL_RENDERBUFFER, glDepthStencilBufferID);
-      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, 
-                                        GL.GL_RENDERBUFFER, glDepthStencilBufferID);
-      
-      ogl.popFramebuffer();  
-    }    
-  }
-  
-  public void addDepthBuffer(int bits) {
-    if (screenFb) return;
-    
-    if (width == 0 || height == 0) {
-      throw new RuntimeException("PFramebuffer: size undefined.");
-    }
-    
-    if (fboMode) {
-      ogl.pushFramebuffer();
-      ogl.setFramebuffer(this);
-
-      glDepthBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
-      getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthBufferID);
-
-      int glConst = GL.GL_DEPTH_COMPONENT16;
-      if (bits == 16) {
-        glConst = GL.GL_DEPTH_COMPONENT16; 
-      } else if (bits == 24) {
-        glConst = GL.GL_DEPTH_COMPONENT24;
-      } else if (bits == 32) {
-        glConst = GL.GL_DEPTH_COMPONENT32;              
-      }
-      
-      if (multisample) { 
-        getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, glConst, width, height);
-      } else {
-        getGl().glRenderbufferStorage(GL.GL_RENDERBUFFER, glConst, width, height);  
-      }                    
-
-      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT,
-                                   GL.GL_RENDERBUFFER, glDepthBufferID);
-
-      ogl.popFramebuffer();
-    }
-  }
-    
-  public void addStencilBuffer(int bits) {
-    if (screenFb) return;
-    
-    if (width == 0 || height == 0) {
-      throw new RuntimeException("PFramebuffer: size undefined.");
-    }
-
-    if (fboMode) {    
-      ogl.pushFramebuffer();
-      ogl.setFramebuffer(this);
-
-      glStencilBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
-      getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glStencilBufferID);
-
-      int glConst = GL.GL_STENCIL_INDEX1;
-      if (bits == 1) {
-        glConst = GL.GL_STENCIL_INDEX1; 
-      } else if (bits == 4) {
-        glConst = GL.GL_STENCIL_INDEX4;
-      } else if (bits == 8) {
-        glConst = GL.GL_STENCIL_INDEX8;              
-      }
-      if (multisample) { 
-        getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, glConst, width, height);
-      } else {      
-        getGl().glRenderbufferStorage(GL.GL_RENDERBUFFER, glConst, width, height);              
-      }
-      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT,
-                                        GL.GL_RENDERBUFFER, glStencilBufferID);
-
-      ogl.popFramebuffer();
-    }
   }
   
   public void bind() {
@@ -354,7 +181,7 @@ public class PFramebuffer implements PConstants {
     
   // Saves content of the screen into the backup texture.
   public void backupScreen() {  
-    if (pixelBuffer == null) allocatePixelBuffer();
+    if (pixelBuffer == null) createPixelBuffer();
     getGl().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);    
     copyToTexture(pixelBuffer, backupTexture.glID, backupTexture.glTarget);
   }
@@ -366,7 +193,7 @@ public class PFramebuffer implements PConstants {
   
   // Copies current content of screen to color buffers.
   public void copyToColorBuffers() {
-    if (pixelBuffer == null) allocatePixelBuffer();
+    if (pixelBuffer == null) createPixelBuffer();
     getGl().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
     for (int i = 0; i < numColorBuffers; i++) {
       copyToTexture(pixelBuffer, glColorBufferIDs[i], glColorBufferTargets[i]);
@@ -374,7 +201,7 @@ public class PFramebuffer implements PConstants {
   }  
   
   public void readPixels() {
-    if (pixelBuffer == null) allocatePixelBuffer();
+    if (pixelBuffer == null) createPixelBuffer();
     getGl().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
   }
   
@@ -389,26 +216,113 @@ public class PFramebuffer implements PConstants {
     return pixelBuffer;
   }
   
-  // Internal copy to texture method.
-  protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {
-    getGl().glEnable(gltarget);
-    getGl().glBindTexture(gltarget, glid);    
-    getGl().glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
-    getGl().glBindTexture(gltarget, 0);
-    getGl().glDisable(gltarget);
+  public boolean hasDepthBuffer() {
+    return 0 < depthBits;
+  }
+
+  public boolean hasStencilBuffer() {
+    return 0 < stencilBits;
   }
   
-  protected void allocatePixelBuffer() {
-    pixelBuffer = IntBuffer.allocate(width * height);
-    pixelBuffer.rewind();     
+  ///////////////////////////////////////////////////////////  
+
+  // Color buffer setters.
+  
+  public void setColorBuffer(PTexture tex) {
+    setColorBuffers(new PTexture[] { tex }, 1);
+  }
+
+  public void setColorBuffers(PTexture[] textures) {
+    setColorBuffers(textures, textures.length);
   }
   
-  protected void createFramebuffer(int w, int h) {
-    deleteFramebuffer(); // Just in the case this object is being re-initialized.
+  public void setColorBuffers(PTexture[] textures, int n) {
+    if (screenFb) return;
+    
+    if (numColorBuffers != PApplet.min(n, textures.length)) {
+      throw new RuntimeException("Wrong number of textures to set the color buffers.");
+    }
+    
+    if (fboMode) {
+      ogl.pushFramebuffer();
+      ogl.setFramebuffer(this);
+
+      // Making sure nothing is attached.
+      for (int i = 0; i < numColorBuffers; i++) {
+        getGl().glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0 + i, 
+                                       GL.GL_TEXTURE_2D, 0, 0);
+      }
+
+      for (int i = 0; i < numColorBuffers; i++) {
+        glColorBufferTargets[i] = textures[i].glTarget;
+        glColorBufferIDs[i] = textures[i].glID;
+        getGl().glFramebufferTexture2D(GL.GL_FRAMEBUFFER, colorBufferAttchPoints[i],
+                                       glColorBufferTargets[i], glColorBufferIDs[i], 0);
+      }
+
+      if (validFbo() && textures != null && 0 < textures.length) {
+        width = textures[0].glWidth;
+        height = textures[0].glHeight;
+      }
+
+      ogl.popFramebuffer();
+    } else {     
+      for (int i = 0; i < numColorBuffers; i++) {
+        glColorBufferTargets[i] = textures[i].glTarget;
+        glColorBufferIDs[i] = textures[i].glID;
+      }
+    }
+  }  
+  
+  ///////////////////////////////////////////////////////////  
+
+  // Allocate/release framebuffer.   
+  
+  
+  protected void allocate(int w, int h, int samples, int colorBuffers, 
+                          int depthBits, int stencilBits, boolean combinedDepthStencil, 
+                          boolean screen) {
+    release(); // Just in the case this object is being re-initialized.
     
     width = w;
     height = h;
-        
+    
+    if (1 < samples) {
+      multisample = true;
+      nsamples = samples;      
+    } else {
+      multisample = false;
+      nsamples = 1;      
+    }
+    
+    numColorBuffers = colorBuffers;
+    colorBufferAttchPoints = new int[numColorBuffers];
+    glColorBufferTargets = new int[numColorBuffers];
+    glColorBufferIDs = new int[numColorBuffers];
+    for (int i = 0; i < numColorBuffers; i++) {
+      colorBufferAttchPoints[i] = GL.GL_COLOR_ATTACHMENT0 + i;
+    }
+    
+    if (depthBits < 1 && stencilBits < 1) {
+      this.depthBits = 0;
+      this.stencilBits = 0;
+      this.combinedDepthStencil = false;
+    } else {
+      if (combinedDepthStencil) {
+        // When combined depth/stencil format is required, the depth and stencil bits
+        // are overriden and the 24/8 combination for a 32 bits surface is used. 
+        this.depthBits = 24;
+        this.stencilBits = 8;
+        this.combinedDepthStencil = true;        
+      } else {
+        this.depthBits = depthBits;
+        this.stencilBits = stencilBits;
+        this.combinedDepthStencil = false;        
+      }
+    }
+    
+    screenFb = screen;
+    
     if (screenFb) {
       glFboID = 0;
     } else if (fboMode) {
@@ -416,36 +330,218 @@ public class PFramebuffer implements PConstants {
     }  else {
       glFboID = 0;
     }
+    
+    // create the rest of the stuff...
+    if (multisample) {
+      createColorBufferMultisample();
+    }
+   
+    if (combinedDepthStencil) {
+      createCombinedDepthStencilBuffer();
+    } else {
+      if (0 < depthBits) {
+        createDepthBuffer();
+      }
+      if (0 < stencilBits) {
+        createStencilBuffer();
+      }      
+    }
+    
   }
   
-  protected void deleteFramebuffer() {
+  
+  protected void release() {
+    deleteFbo();
+    deleteDepthBuffer();    
+    deleteStencilBuffer();
+    deleteCombinedDepthStencilBuffer();
+    deleteColorBufferMultisample();    
+    width = height = 0;    
+  }
+  
+  
+  protected void deleteFbo() {
     if (glFboID != 0) {
       ogl.deleteGLResource(glFboID, PGraphicsOpenGL.GL_FRAME_BUFFER);
       glFboID = 0;
-    }
-    
+    }    
+  }
+  
+  
+  protected void deleteDepthBuffer() {
     if (glDepthBufferID != 0) {
       ogl.deleteGLResource(glDepthBufferID, PGraphicsOpenGL.GL_RENDER_BUFFER);
       glDepthBufferID = 0;
     }
-    
+  }
+  
+  
+  protected void deleteStencilBuffer() {
     if (glStencilBufferID != 0) {
       ogl.deleteGLResource(glStencilBufferID, PGraphicsOpenGL.GL_RENDER_BUFFER);
       glStencilBufferID = 0;
-    }
-    
+    }    
+  }
+  
+  
+  protected void deleteColorBufferMultisample() {
     if (glColorBufferMultisampleID != 0) {
       ogl.deleteGLResource(glColorBufferMultisampleID, PGraphicsOpenGL.GL_RENDER_BUFFER);
       glColorBufferMultisampleID = 0;
-    }    
-
+    }   
+  }
+  
+  
+  protected void deleteCombinedDepthStencilBuffer() {
     if (glDepthStencilBufferID != 0) {
       ogl.deleteGLResource(glDepthStencilBufferID, PGraphicsOpenGL.GL_RENDER_BUFFER);
       glDepthStencilBufferID = 0;
     }    
-    
-    width = height = 0;    
   }
+  
+  
+  protected void createColorBufferMultisample() {
+    if (screenFb) return;
+    
+    if (fboMode) {
+      ogl.pushFramebuffer();
+      ogl.setFramebuffer(this);
+      
+      numColorBuffers = 1;
+      colorBufferAttchPoints = new int[numColorBuffers];
+      colorBufferAttchPoints[0] = GL.GL_COLOR_ATTACHMENT0;
+      
+      glColorBufferMultisampleID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
+      getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glColorBufferMultisampleID);
+      getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, 
+                                                GL.GL_RGBA8, width, height);            
+      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, colorBufferAttchPoints[0], 
+                                        GL.GL_RENDERBUFFER, glColorBufferMultisampleID);
+      
+      ogl.popFramebuffer();      
+    }
+  }
+  
+  
+  protected void createCombinedDepthStencilBuffer() {
+    if (screenFb) return;
+    
+    if (width == 0 || height == 0) {
+      throw new RuntimeException("PFramebuffer: size undefined.");
+    }
+    
+    if (fboMode) {    
+      ogl.pushFramebuffer();
+      ogl.setFramebuffer(this);
+      
+      glDepthStencilBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
+      getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthStencilBufferID);
+      
+      if (multisample) { 
+        getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, GL.GL_DEPTH24_STENCIL8, width, height);
+      } else {
+        getGl().glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_DEPTH24_STENCIL8, width, height);
+      }
+      
+      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, 
+                                        GL.GL_RENDERBUFFER, glDepthStencilBufferID);
+      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT, 
+                                        GL.GL_RENDERBUFFER, glDepthStencilBufferID);
+      
+      ogl.popFramebuffer();  
+    }    
+  }
+  
+  
+  protected void createDepthBuffer() {
+    if (screenFb) return;
+    
+    if (width == 0 || height == 0) {
+      throw new RuntimeException("PFramebuffer: size undefined.");
+    }
+    
+    if (fboMode) {
+      ogl.pushFramebuffer();
+      ogl.setFramebuffer(this);
+
+      glDepthBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
+      getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthBufferID);
+
+      int glConst = GL.GL_DEPTH_COMPONENT16;
+      if (depthBits == 16) {
+        glConst = GL.GL_DEPTH_COMPONENT16; 
+      } else if (depthBits == 24) {
+        glConst = GL.GL_DEPTH_COMPONENT24;
+      } else if (depthBits == 32) {
+        glConst = GL.GL_DEPTH_COMPONENT32;              
+      }
+      
+      if (multisample) { 
+        getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, glConst, width, height);
+      } else {
+        getGl().glRenderbufferStorage(GL.GL_RENDERBUFFER, glConst, width, height);  
+      }                    
+
+      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT,
+                                   GL.GL_RENDERBUFFER, glDepthBufferID);
+
+      ogl.popFramebuffer();
+    }
+  }
+    
+  
+  protected void createStencilBuffer() {
+    if (screenFb) return;
+    
+    if (width == 0 || height == 0) {
+      throw new RuntimeException("PFramebuffer: size undefined.");
+    }
+
+    if (fboMode) {    
+      ogl.pushFramebuffer();
+      ogl.setFramebuffer(this);
+
+      glStencilBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
+      getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glStencilBufferID);
+
+      int glConst = GL.GL_STENCIL_INDEX1;
+      if (stencilBits == 1) {
+        glConst = GL.GL_STENCIL_INDEX1; 
+      } else if (stencilBits == 4) {
+        glConst = GL.GL_STENCIL_INDEX4;
+      } else if (stencilBits == 8) {
+        glConst = GL.GL_STENCIL_INDEX8;              
+      }
+      if (multisample) { 
+        getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, glConst, width, height);
+      } else {      
+        getGl().glRenderbufferStorage(GL.GL_RENDERBUFFER, glConst, width, height);              
+      }
+      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_STENCIL_ATTACHMENT,
+                                        GL.GL_RENDERBUFFER, glStencilBufferID);
+
+      ogl.popFramebuffer();
+    }
+  }  
+  
+  
+  protected void createPixelBuffer() {
+    pixelBuffer = IntBuffer.allocate(width * height);
+    pixelBuffer.rewind();     
+  }  
+  
+  ///////////////////////////////////////////////////////////  
+
+  // Utilities.  
+  
+  // Internal copy to texture method.
+  protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {
+    getGl().glEnable(gltarget);
+    getGl().glBindTexture(gltarget, glid);    
+    getGl().glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+    getGl().glBindTexture(gltarget, 0);
+    getGl().glDisable(gltarget);
+  }  
   
   public boolean validFbo() {
     int status = getGl().glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);        

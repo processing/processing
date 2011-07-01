@@ -224,11 +224,7 @@ public class PShape3D extends PShape {
   public void delete() {
     if (root != this) return; // Can be done only from the root shape.
     
-    deleteVertexBuffer();
-    deleteColorBuffer();
-    deleteTexCoordBuffer();
-    deleteNormalBuffer();    
-    deleteIndexBuffer();
+    release();
   }
 
   ////////////////////////////////////////////////////////////
@@ -2103,7 +2099,7 @@ public class PShape3D extends PShape {
   
   ////////////////////////////////////////////////////////////  
   
-  // Data allocation, deletion.
+  // Init methods.
 
   public void init() {
     if (root != this) return; // Can be done only from the root shape.
@@ -2133,7 +2129,7 @@ public class PShape3D extends PShape {
     }
     
     setParameters(params);
-    allocateShape(numVert);         
+    allocate(numVert);         
     updateElement = -1;
     
     resetBounds();
@@ -2174,15 +2170,22 @@ public class PShape3D extends PShape {
     // field, although the actual geometry hasn't been sent to the VBOs yet.
     vertexCount = objVertices.size();
   }
+   
+  ///////////////////////////////////////////////////////////  
+
+  // Allocate/release shape. 
+  
+  
+  protected void allocate(int numVert) {
+    release(); // Just in the case this object is being re-initialized.
     
-  protected void allocateShape(int numVert) {
     vertexCount = numVert;
     numTexBuffers = 1;
     firstVertex = 0;
     lastVertex = numVert - 1;
     
     initVertexData();
-    createVertexBuffer();   
+    createVertexBuffer();
     initColorData();
     createColorBuffer();
     initNormalData();
@@ -2193,10 +2196,23 @@ public class PShape3D extends PShape {
     initChildrenData(); 
   }
   
-  protected void initChildrenData() {
-    children = null;
-    vertexChild = new PShape3D[vertexCount];    
+  protected void reallocate() {
+    allocate(vertexCount);
   }
+  
+  protected void release() {
+    deleteVertexBuffer();
+    deleteColorBuffer();
+    deleteTexCoordBuffer();
+    deleteNormalBuffer();    
+    deleteIndexBuffer();    
+  }
+    
+  
+  ////////////////////////////////////////////////////////////  
+  
+  // Data creation, deletion.
+  
   
   protected void initVertexData() {    
     vertices = new float[vertexCount * 3];
@@ -2204,8 +2220,6 @@ public class PShape3D extends PShape {
   
   
   protected void createVertexBuffer() {    
-    deleteVertexBuffer();  // Just in the case this object is being re-initialized.
-    
     glVertexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);    
     final int bufferSize = vertexCount * 3 * PGraphicsOpenGL.SIZEOF_FLOAT;
@@ -2223,8 +2237,6 @@ public class PShape3D extends PShape {
   
   
   protected void createColorBuffer() {
-    deleteColorBuffer();
-    
     glColorBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glColorBufferID);
     final int bufferSize = vertexCount * 4 * PGraphicsOpenGL.SIZEOF_FLOAT;    
@@ -2239,8 +2251,6 @@ public class PShape3D extends PShape {
 
   
   protected void createNormalBuffer() {
-    deleteNormalBuffer();
-    
     glNormalBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glNormalBufferID);
     final int bufferSize = vertexCount * 3 * PGraphicsOpenGL.SIZEOF_FLOAT;    
@@ -2261,8 +2271,6 @@ public class PShape3D extends PShape {
     if (glTexCoordBufferID == null) {
       glTexCoordBufferID = new int[PGraphicsOpenGL.MAX_TEXTURES];
       java.util.Arrays.fill(glTexCoordBufferID, 0);      
-    } else {
-      deleteTexCoordBuffer();
     }
     
     glTexCoordBufferID[0] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
@@ -2302,6 +2310,7 @@ public class PShape3D extends PShape {
     updateTexBuffers();
   }
   
+  
   protected void updateTexBuffers() {
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -2313,6 +2322,7 @@ public class PShape3D extends PShape {
       texcoords = allTexcoords[0];
     }
   }
+  
   
   protected void deleteVertexBuffer() {
     if (glVertexBufferID != 0) {    
@@ -2345,6 +2355,7 @@ public class PShape3D extends PShape {
     }
   }
   
+  
   protected void deleteTexCoordBuffer() {
     for (int i = 0; i < numTexBuffers; i++) { 
       deleteTexCoordBuffer(i);    
@@ -2358,8 +2369,14 @@ public class PShape3D extends PShape {
       glTexCoordBufferID[idx] = 0;
     }
   }
-  
 
+  
+  protected void initChildrenData() {
+    children = null;
+    vertexChild = new PShape3D[vertexCount];    
+  }
+
+  
   ///////////////////////////////////////////////////////////  
 
   // These methods are not available in PShape3D.  
@@ -3045,7 +3062,7 @@ public class PShape3D extends PShape {
     }
     
     // Allocate space for the geometry that the triangulator has generated from the OBJ model.
-    allocateShape(ogl.recordedVertices.size());          
+    allocate(ogl.recordedVertices.size());          
     updateElement = -1;
     
     width = height = depth = 0;
