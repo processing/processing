@@ -35,6 +35,8 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import com.sun.jna.*;
+
 import processing.app.LibraryListPanel.PreferredViewPositionListener;
 import processing.app.LibraryListing.LibraryListFetcher;
 
@@ -193,7 +195,7 @@ public class LibraryManager {
       }
     });
     
-    dialog.setMinimumSize(new Dimension(650, 400));
+    dialog.setMinimumSize(new Dimension(550, 400));
   }
 
   private void updateCategoryChooser() {
@@ -318,16 +320,16 @@ public class LibraryManager {
    */
   protected int installLibrary(File libFile) {
     try {
-      String libName = guessLibraryName(libFile.getPath());
+      String libName = guessLibraryName(libFile);
 
       File tmpFolder = Base.createTempFolder(libName, "uncompressed");
       unzip(libFile, tmpFolder);
       
       return installLibraries(Library.list(tmpFolder));
     } catch (IOException e) {
-      Base.showError("Trouble creating temporary folder",
-           "Could not create a place to store libary's uncompressed contents.\n"
-         + "That's gonna prevent us from continuing.", e);
+      Base.showWarning("Trouble creating temporary folder",
+           "Could not create a place to store libary's uncompressed contents,\n" + 
+           "so it won't be installed.", e);
     }
     
     return 0;
@@ -335,15 +337,13 @@ public class LibraryManager {
   
   protected File getTemporaryFile(URL url) {
     try {
-      String libName = guessLibraryName(url.getFile());
-      if (libName != null) {
-        File tmpFolder = Base.createTempFolder(libName, "download");
-        
-        File libFile = new File(tmpFolder, libName + ".plb");
-        libFile.setWritable(true);
-        
-        return libFile;
-      }
+      File tmpFolder = Base.createTempFolder("library", "download");
+      
+      String[] segments = url.getFile().split("/");
+      File libFile = new File(tmpFolder, segments[segments.length - 1]);
+      libFile.setWritable(true);
+      
+      return libFile;
     } catch (IOException e) {
       Base.showError("Trouble creating temporary folder",
                      "Could not create a place to store libraries being downloaded.\n" +
@@ -359,19 +359,25 @@ public class LibraryManager {
    *   "/path/to/helpfullib.zip" -> "helpfullib"
    *   "helpfullib-0.1.1.plb" -> "helpfullib-0.1.1"
    */
-  protected static String guessLibraryName(String filePath) {
-    String[] paths = filePath.split("/");
-    if (paths.length != 0) {
-      String fileName = paths[paths.length - 1];
-      int lastDot = fileName.lastIndexOf(".");
-      if (lastDot != -1) {
-        return fileName.substring(0, lastDot);
-      }
+  protected static String guessLibraryName(File libFile) {
+    String path = libFile.getPath();
+    int lastSeparator = path.lastIndexOf(File.separatorChar);
+    
+    String fileName;
+    if (lastSeparator != -1) {
+      fileName = path.substring(lastSeparator + 1);
+    } else {
+      fileName = path;
     }
     
-    return null;
+    int lastDot = fileName.lastIndexOf('.');
+    if (lastDot != -1) {
+      return fileName.substring(0, lastDot);
+    }
+    
+    return fileName;
   }
-
+  
   protected int installLibraries(ArrayList<Library> newLibs) {
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
     ArrayList<Library> libsToBeBackuped = new ArrayList<Library>();
@@ -405,34 +411,33 @@ public class LibraryManager {
       }
     }
     
+    File backupFolder = null;
+    if (!libsToBeBackuped.isEmpty()) {
+      backupFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
+          "old");
+      if (!backupFolder.exists() || !backupFolder.isDirectory()) {
+        if (!backupFolder.mkdirs()) {
+          Base.showWarning("Trouble creating folder to store old libraries in",
+                           "Could not create folder " + backupFolder.getAbsolutePath() + ".\n"
+                           + "That's gonna prevent us from replacing the library.", null);
+          return 0;
+        }
+      }
+    }
+    
+    // Backup libraries
     for (Library lib : libsToBeBackuped) {
       String libFolderName = lib.folder.getName();
       
-      File backupFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
-                                   "old");
-      if (!backupFolder.exists() || !backupFolder.isDirectory()) {
-        if (!backupFolder.mkdir()) {
-          Base.showError("Trouble creating folder to store old libraries in\"" + lib.getName() + "\"",
-                         "Could not create folder " + backupFolder.getAbsolutePath() + ".\n"
-                         + "That's gonna prevent us from continuing.", null);
-        }
-      }
-      
       String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
       final String backupName = prefix + "_" + libFolderName;
-      File backupFolderForLib;
-      int i = 1;
-      do {
-        String folderName = backupName;
-        if (i >= 2) {
-          folderName += "(" + i + ")";
-        }
-        i++;
-        
-        backupFolderForLib = new File(backupFolder, folderName);
-      } while (backupFolderForLib.exists());
+      File backupFolderForLib = getUniqueName(backupFolder, backupName);
       
-      if (!lib.folder.renameTo(backupFolderForLib)) {
+      // XXX: Windows does not like to move this folder because it is still in use
+      boolean success = false;
+      success = lib.folder.renameTo(backupFolderForLib);
+      
+      if (!success) {
         Base.showError("Trouble creating backup of old \"" + lib.getName() + "\" library",
                        "Could not move library to "
                      + backupFolderForLib.getAbsolutePath() + "\n"
@@ -453,6 +458,29 @@ public class LibraryManager {
     }
     
     return newLibs.size();
+  }
+
+  /**
+   * Returns a file in the parent folder that does not exist yet. If
+   * parent/fileName already exists, this will look for parent/fileName(2)
+   * then parent/fileName(3) and so forth.
+   * 
+   * @return a file that does not exist yet
+   */
+  public static File getUniqueName(File parentFolder, String fileName) {
+    File backupFolderForLib;
+    int i = 1;
+    do {
+      String folderName = fileName;
+      if (i >= 2) {
+        folderName += "(" + i + ")";
+      }
+      i++;
+      
+      backupFolderForLib = new File(parentFolder, folderName);
+    } while (backupFolderForLib.exists());
+    
+    return backupFolderForLib;
   }
 
   public static void unzip(File zipFile, File dest) {
