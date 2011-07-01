@@ -30,30 +30,31 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.*;
 import javax.swing.text.*;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.StyleSheet;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Stylesheet;
 
 import java.awt.event.*;
 import java.awt.font.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.*;
 import java.text.*;
 
 import processing.app.LibraryListing.LibraryInfo;
 import processing.app.LibraryListing.LibraryInfo.Author;
+import sun.net.www.HeaderParser;
 
 public class LibraryListPanel extends JPanel implements Scrollable {
   
   private static HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
     
     public void hyperlinkUpdate(HyperlinkEvent e) {
-    }
-  };
-  
-  private static HyperlinkListener hyperlinkOpener = new HyperlinkListener() {
-    
-    public void hyperlinkUpdate(HyperlinkEvent e) {
-      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-        Base.openURL(e.getURL().toString());
-      }
     }
   };
   
@@ -189,8 +190,23 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     if (component instanceof JLabel || component instanceof JTextComponent) {
       component.setForeground(color);
     }
+    
+    if (component instanceof JEditorPane) {
+      JEditorPane editorPane = (JEditorPane) component;
+      Document doc = editorPane.getDocument();
+      
+      if (doc instanceof HTMLDocument) {
+        HTMLDocument html = (HTMLDocument) doc;
+        StyleSheet stylesheet = html.getStyleSheet();
+        stylesheet.addRule("body {color:" + toHex(color) + ";}");
+      }
+      
+      // This call improves the response time, but make a NullPointerException
+      // get thrown by the "AWT-EventQueue-0" thread.
+      // editorPane.updateUI();
+    }
   }
-
+  
   /**
    * Counts the numbers of lines needed to display the text in a JTextArea given
    * a width as a contained. This assumed that both word wrap and wrap-style
@@ -235,6 +251,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
             libPanel.setBackground(UIManager.getColor("List.selectionBackground"));
             cascadeForgroundColor(libPanel, UIManager.getColor("List.selectionForeground"));
             libPanel.setBorder(UIManager.getBorder("List.focusCellHighlightBorder"));
+            
           } else {
             Border border = null;
             if (Base.isMacOS()) {
@@ -258,8 +275,19 @@ public class LibraryListPanel extends JPanel implements Scrollable {
 
           count++;
         }
+        
+        
+        libPanel.updateHyperLinkStyles();
       }
     }
+  }
+
+  static String toHex(Color c) {
+    StringBuilder hex = new StringBuilder();
+    hex.append(Integer.toString(c.getRed(), 16));
+    hex.append(Integer.toString(c.getGreen(), 16));
+    hex.append(Integer.toString(c.getBlue(), 16));
+    return hex.toString();
   }
 
   /**
@@ -358,9 +386,25 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     
     private static final int BUTTON_WIDTH = 100;
 
+    boolean okayToOpenHyperLink;
+    
+    class ConditionalHyperlinkListener implements HyperlinkListener {
+      
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          if (okayToOpenHyperLink) {
+            Base.openURL(e.getURL().toString());
+          }
+        }
+      }
+    }
+    HyperlinkListener hyperlinkOpener;
+    
     LibraryInfo libInfo;
 
-    JTextPane authorLabel;
+    JTextPane headerLabel;
+    
+    JLabel categoryLabel;
     
     JTextPane descriptionText;
 
@@ -370,13 +414,15 @@ public class LibraryListPanel extends JPanel implements Scrollable {
 
     boolean isSelected;
     
-    String authorsWithLinks = "";
-    
     private LibraryPanel(LibraryInfo libInfo) {
       this.libInfo = libInfo;
+      
+      okayToOpenHyperLink = false;
+      hyperlinkOpener = new ConditionalHyperlinkListener();
+      
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       
-      generateAuthorString();
+      createAuthorString();
 
       addPaneComponents();
       addProgressBarAndButton();
@@ -389,55 +435,134 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       MouseAdapter expandPanelMouseListener = new MouseAdapter() {
         public void mousePressed(MouseEvent e) {
           
-          for (Component c : LibraryListPanel.this.getComponents()) {
-            if (c instanceof LibraryPanel) {
-              LibraryPanel lp = (LibraryPanel) c;
-              if (lp.isSelected) {
-                lp.setSelected(false);
-                break;
+          okayToOpenHyperLink = isSelected;
+          
+          if (!isSelected) {
+            for (Component c : LibraryListPanel.this.getComponents()) {
+              if (c instanceof LibraryPanel) {
+                LibraryPanel lp = (LibraryPanel) c;
+                if (lp.isSelected) {
+                  lp.setSelected(false);
+                  break;
+                }
               }
             }
+  
+            setSelected(true);
+            updateColors();
+            getParent().requestFocusInWindow();
           }
-
-          setSelected(true);
-          updateColors();
-          getParent().requestFocusInWindow();
         }
+
+//        public void mouseReleased(MouseEvent e) {
+//          updateLiseners(headerLabel);
+//          updateLiseners(descriptionText);
+//        }
+        
       };
       
       addMouseListener(expandPanelMouseListener);
-//      for (MouseListener l : authorLabel.getMouseListeners()) {
-//        authorLabel.removeMouseListener(l);
-//      }
-//      for (MouseListener l : descriptionText.getMouseListeners()) {
-//        descriptionText.removeMouseListener(l);
-//      }
-      authorLabel.addMouseListener(expandPanelMouseListener);
+      stripListeners(headerLabel);
+      stripListeners(descriptionText);
+      headerLabel.addMouseListener(expandPanelMouseListener);
+      categoryLabel.addMouseListener(expandPanelMouseListener);
       descriptionText.addMouseListener(expandPanelMouseListener);
     }
+    
+    void stripListeners(JEditorPane editorPane) {
+      for (MouseListener l : editorPane.getMouseListeners()) {
+        if (!l.getClass().getName().endsWith("LinkController")) {
+          editorPane.removeMouseListener(l);
+        }
+      }
+    }
 
-    private void generateAuthorString() {
+    private String createAuthorString() {
+      StringBuilder authors = new StringBuilder();
+      
       if (!libInfo.authors.isEmpty()) {
-        authorsWithLinks = "<html><body><small>by ";
+        authors.append(" by ");
         
         for (int i = 0; i < libInfo.authors.size(); i++) {
           Author author = libInfo.authors.get(i);
-          authorsWithLinks += "<a href=\"" + author.url + "\">" + author.name + "</a>";
+          if (author.url == null) {
+            authors.append(author.name);
+          } else {
+            authors.append("<a href=\"" + author.url + "\">" + author.name + "</a>");
+          }
           if (i + 2 < libInfo.authors.size()) {
-            authorsWithLinks += ", ";
+            authors.append(", ");
           } else if (i + 2 == libInfo.authors.size()) {
             if (libInfo.authors.size() > 2) {
-              authorsWithLinks += ", and ";
+              authors.append(", and ");
             } else {
-              authorsWithLinks += " and ";
+              authors.append(" and ");
             }
           }
         }
         
-        authorsWithLinks += "</small></body></html>";
       }
+      
+      return authors.toString();
     }
 
+    void setTextStyle(JTextPane textPane) {
+      
+      textPane.setHighlighter(null);
+      textPane.setOpaque(false);
+      textPane.setEditable(true);
+      
+      Font font = UIManager.getFont("Label.font");
+
+      StyledDocument sdoc = textPane.getStyledDocument();
+      SimpleAttributeSet sa = new SimpleAttributeSet();
+      StyleConstants.setAlignment(sa, StyleConstants.ALIGN_JUSTIFIED);
+      sdoc.setParagraphAttributes(0, 1, sa, false);
+      
+      Document doc = textPane.getDocument();
+      
+      if (doc instanceof HTMLDocument) {
+        HTMLDocument html = (HTMLDocument) doc;
+        StyleSheet stylesheet = html.getStyleSheet();
+        
+        stylesheet.addRule("body {font-family:"+font.getFamily()+";" + 
+                           "font-size:"+font.getSize()+"pt;}");
+      }
+      
+      updateHyperLinkStyle(textPane);
+    }
+    
+    void updateHyperLinkStyles() {
+      updateHyperLinkStyle(headerLabel);
+      updateHyperLinkStyle(descriptionText);
+    }
+    
+    private void updateHyperLinkStyle(JTextPane textPane) {
+      Document doc = textPane.getDocument();
+      
+      if (doc instanceof HTMLDocument) {
+
+        HTMLDocument html = (HTMLDocument) doc;
+        
+        StyleSheet stylesheet = html.getStyleSheet();
+        
+        if (isSelected) {
+          // Use hyperlink color and underline
+          // XXX: Get the hyperlink color from the system
+          Color linkColor = UIManager.getColor("List.selectionForeground");
+          
+          stylesheet.addRule("a {color:" + toHex(linkColor) + ";"
+                              + "text-decoration:underline}");
+        } else {
+          Color foreground = UIManager.getColor("List.foreground");
+          
+          // Use normal forground color and do not underline
+          stylesheet.addRule("a {color:" + toHex(foreground) + ";"
+                              + "text-decoration:none}");
+        }
+      }
+    }
+    
     /**
      * Create the widgets for the header panel which is visible when the library
      * panel is not clicked
@@ -449,27 +574,38 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       GridBagConstraints c = new GridBagConstraints();
       c.gridx = 0;
       c.gridy = 0;
+      c.weightx = 1;
+      c.fill = GridBagConstraints.BOTH;
       c.anchor = GridBagConstraints.WEST;
-      JLabel nameLabel = new JLabel(libInfo.name);
-      Font font = nameLabel.getFont();
-      font = font.deriveFont(font.getStyle() | Font.BOLD);
-      nameLabel.setFont(font);
-      add(nameLabel, c);
+      
+      headerLabel = new JTextPane();
+      headerLabel.setContentType("text/html");
+//      nameLabel.getDocument().
+//      ((HTMLDocument)nameLabel.getDocument()).getStyleSheet().addRule("a {font-family:"+font.getFamily()+";}");
+      
+      StringBuilder header = new StringBuilder();
+      header.append("<html><body>");
+      header.append("<b>");
+      if (libInfo.url == null) {
+        header.append(libInfo.name);
+      } else {
+        header.append("<a href=\"" + libInfo.url + "\">" + libInfo.name + "</a>");
+      }
+      header.append("</b>");
+      header.append(createAuthorString());
+      header.append("</body></html>");
+      headerLabel.setText(header.toString());
+      
+      setTextStyle(headerLabel);
+      headerLabel.addHyperlinkListener(nullHyperlinkListener);
+      add(headerLabel, c);
       
       c = new GridBagConstraints();
       c.gridx = 1;
       c.gridy = 0;
-      c.weightx = 1;
-      c.fill = GridBagConstraints.HORIZONTAL;
       c.anchor = GridBagConstraints.EAST;
-      authorLabel = new JTextPane();
-      authorLabel.setContentType("text/html");
-      authorLabel.setText(authorsWithLinks);
-      authorLabel.setHighlighter(null);
-      authorLabel.setOpaque(false);
-      authorLabel.setEditable(false);
-      authorLabel.addHyperlinkListener(hyperlinkOpener);
-      add(authorLabel, c);
+      categoryLabel = new JLabel("[" + libInfo.categoryName + "]");
+      add(categoryLabel, c);
       
 //      c = new GridBagConstraints();
 //      c.gridx = 2;
@@ -492,11 +628,9 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       descriptionText = new JTextPane();
       descriptionText.setContentType("text/html");
       descriptionText.setText("<html><body>" + libInfo.description + "</body></html>");
-      descriptionText.setHighlighter(null);
-      descriptionText.setOpaque(false);
-      descriptionText.setEditable(false);
-      descriptionText.setMargin(new Insets(0, 0, 10, 5));
-      descriptionText.addHyperlinkListener(hyperlinkOpener);
+      descriptionText.addHyperlinkListener(nullHyperlinkListener);
+      descriptionText.setMargin(new Insets(0, 25, 10, 5));
+      setTextStyle(descriptionText);
       add(descriptionText, c);
     }
     
@@ -592,13 +726,21 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       isSelected = doShow;
       installOrRemove.setVisible(doShow);
       
-//      if (doShow) {
-//        authorLabel.removeHyperlinkListener(nullHyperlinkListener);
-//        authorLabel.addHyperlinkListener(hyperlinkOpener);
-//      } else {
-//        authorLabel.removeHyperlinkListener(hyperlinkOpener);
-//        authorLabel.addHyperlinkListener(nullHyperlinkListener);
-//      }
+      updateLiseners(headerLabel);
+      updateLiseners(descriptionText);
+      
+    }
+
+    private void updateLiseners(JEditorPane editorPane) {
+      if (isSelected) {
+        editorPane.removeHyperlinkListener(nullHyperlinkListener);
+        editorPane.addHyperlinkListener(hyperlinkOpener);
+        editorPane.setEditable(false);
+      } else {
+        editorPane.removeHyperlinkListener(hyperlinkOpener);
+        editorPane.addHyperlinkListener(nullHyperlinkListener);
+        editorPane.setEditable(true);
+      }
     }
 
     /**
