@@ -2212,19 +2212,20 @@ public class PShape3D extends PShape {
     numTexBuffers = 1;
     
     firstVertex = 0;
-    lastVertex = numVert - 1;    
+    lastVertex = numVert - 1;
+
+    initVertexData();
+    initColorData();
+    initNormalData();
+    initTexCoordData();    
   }
   
   protected void allocate() {
     release(); // Just in the case this object is being re-allocated.
-        
-    initVertexData();
-    createVertexBuffer();
-    initColorData();
-    createColorBuffer();
-    initNormalData();
-    createNormalBuffer();
-    initTexCoordData();
+    
+    createVertexBuffer();    
+    createColorBuffer();    
+    createNormalBuffer();    
     createTexCoordBuffer();
   }
   
@@ -2385,8 +2386,10 @@ public class PShape3D extends PShape {
   
   
   protected void deleteTexCoordBuffer() {
-    for (int i = 0; i < glTexCoordBufferID.length; i++) { 
-      deleteTexCoordBuffer(i);    
+    if (glTexCoordBufferID != null) {
+      for (int i = 0; i < glTexCoordBufferID.length; i++) { 
+        deleteTexCoordBuffer(i);    
+      }
     }
   }
   
