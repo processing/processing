@@ -2154,7 +2154,9 @@ public class PShape3D extends PShape {
     }
     
     setParameters(params);
-    allocate(numVert);         
+    setSize(numVert);
+    allocate();
+    initChildrenData();
     updateElement = -1;
     
     resetBounds();
@@ -2200,15 +2202,17 @@ public class PShape3D extends PShape {
 
   // Allocate/release shape. 
   
-  
-  protected void allocate(int numVert) {
-    release(); // Just in the case this object is being re-allocated.
-    
+  protected void setSize(int numVert) {
     vertexCount = numVert;
     numTexBuffers = 1;
-    firstVertex = 0;
-    lastVertex = numVert - 1;
     
+    firstVertex = 0;
+    lastVertex = numVert - 1;    
+  }
+  
+  protected void allocate() {
+    release(); // Just in the case this object is being re-allocated.
+        
     initVertexData();
     createVertexBuffer();
     initColorData();
@@ -2217,12 +2221,6 @@ public class PShape3D extends PShape {
     createNormalBuffer();
     initTexCoordData();
     createTexCoordBuffer();
-    
-    initChildrenData(); 
-  }
-  
-  protected void reallocate() {
-    allocate(vertexCount);
   }
   
   protected void release() {
@@ -2382,7 +2380,7 @@ public class PShape3D extends PShape {
   
   
   protected void deleteTexCoordBuffer() {
-    for (int i = 0; i < numTexBuffers; i++) { 
+    for (int i = 0; i < glTexCoordBufferID.length; i++) { 
       deleteTexCoordBuffer(i);    
     }
   }
@@ -3087,7 +3085,9 @@ public class PShape3D extends PShape {
     }
     
     // Allocate space for the geometry that the triangulator has generated from the OBJ model.
-    allocate(ogl.recordedVertices.size());          
+    setSize(ogl.recordedVertices.size());
+    allocate();
+    initChildrenData();
     updateElement = -1;
     
     width = height = depth = 0;

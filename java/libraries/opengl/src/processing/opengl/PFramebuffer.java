@@ -60,8 +60,6 @@ public class PFramebuffer implements PConstants {
   
   protected int numColorBuffers;
   protected int[] colorBufferAttchPoints;
-  protected int[] glColorBufferTargets; // should remove this?
-  protected int[] glColorBufferIDs;     // should remove this?
   protected PTexture[] colorBufferTex;
 
   protected boolean screenFb;
@@ -94,8 +92,46 @@ public class PFramebuffer implements PConstants {
         
     fboMode = PGraphicsOpenGL.fboSupported;
     
-    allocate(w, h, samples, colorBuffers, depthBits, stencilBits,
-             combinedDepthStencil, screen);
+    width = w;
+    height = h;
+    
+    if (1 < samples) {
+      multisample = true;
+      nsamples = samples;      
+    } else {
+      multisample = false;
+      nsamples = 1;      
+    }
+        
+    numColorBuffers = colorBuffers;
+    colorBufferAttchPoints = new int[numColorBuffers];
+    colorBufferTex = new PTexture[numColorBuffers];
+    for (int i = 0; i < numColorBuffers; i++) {
+      colorBufferAttchPoints[i] = GL.GL_COLOR_ATTACHMENT0 + i; 
+      colorBufferTex[i] = null;
+    }    
+    
+    if (depthBits < 1 && stencilBits < 1) {
+      this.depthBits = 0;
+      this.stencilBits = 0;
+      this.combinedDepthStencil = false;
+    } else {
+      if (combinedDepthStencil) {
+        // When combined depth/stencil format is required, the depth and stencil bits
+        // are overriden and the 24/8 combination for a 32 bits surface is used. 
+        this.depthBits = 24;
+        this.stencilBits = 8;
+        this.combinedDepthStencil = true;        
+      } else {
+        this.depthBits = depthBits;
+        this.stencilBits = stencilBits;
+        this.combinedDepthStencil = false;        
+      }
+    }
+    
+    screenFb = screen;
+
+    allocate();
     noDepth = false;
     
     pixelBuffer = null;
@@ -149,7 +185,7 @@ public class PFramebuffer implements PConstants {
       if (0 < numColorBuffers) {
         // Drawing the current contents of the first color buffer to emulate
         // front-back buffer swap.
-        ogl.drawTexture(glColorBufferTargets[0], glColorBufferIDs[0], width, height, 0, 0, width, height, 0, 0, width, height);
+        ogl.drawTexture(colorBufferTex[0].glTarget, colorBufferTex[0].glID, width, height, 0, 0, width, height, 0, 0, width, height);
       }
       
       if (noDepth) {
@@ -206,7 +242,7 @@ public class PFramebuffer implements PConstants {
     if (pixelBuffer == null) createPixelBuffer();
     getGl().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
     for (int i = 0; i < numColorBuffers; i++) {
-      copyToTexture(pixelBuffer, glColorBufferIDs[i], glColorBufferTargets[i]);
+      copyToTexture(pixelBuffer, colorBufferTex[i].glID, colorBufferTex[i].glTarget);
     }
   }  
   
@@ -248,11 +284,15 @@ public class PFramebuffer implements PConstants {
   
   public void setColorBuffers(PTexture[] textures, int n) {
     if (screenFb) return;
-    
+
     if (numColorBuffers != PApplet.min(n, textures.length)) {
       throw new RuntimeException("Wrong number of textures to set the color buffers.");
     }
-    
+        
+    for (int i = 0; i < numColorBuffers; i++) {
+      colorBufferTex[i] = textures[i];
+    }
+      
     if (fboMode) {
       ogl.pushFramebuffer();
       ogl.setFramebuffer(this);
@@ -264,11 +304,8 @@ public class PFramebuffer implements PConstants {
       }
 
       for (int i = 0; i < numColorBuffers; i++) {
-        this.colorBufferTex[i] = textures[i];
-        glColorBufferTargets[i] = textures[i].glTarget;
-        glColorBufferIDs[i] = textures[i].glID;
         getGl().glFramebufferTexture2D(GL.GL_FRAMEBUFFER, colorBufferAttchPoints[i],
-                                       glColorBufferTargets[i], glColorBufferIDs[i], 0);
+                                       colorBufferTex[i].glTarget, colorBufferTex[i].glID, 0);
       }
 
       if (validFbo() && textures != null && 0 < textures.length) {
@@ -277,11 +314,6 @@ public class PFramebuffer implements PConstants {
       }
 
       ogl.popFramebuffer();
-    } else {     
-      for (int i = 0; i < numColorBuffers; i++) {
-        glColorBufferTargets[i] = textures[i].glTarget;
-        glColorBufferIDs[i] = textures[i].glID;
-      }
     }
   }  
   
@@ -290,52 +322,8 @@ public class PFramebuffer implements PConstants {
   // Allocate/release framebuffer.   
   
   
-  protected void allocate(int w, int h, int samples, int colorBuffers, 
-                          int depthBits, int stencilBits, boolean combinedDepthStencil, 
-                          boolean screen) {
-    release(); // Just in the case this object is being re-allocated.
-    
-    width = w;
-    height = h;
-    
-    if (1 < samples) {
-      multisample = true;
-      nsamples = samples;      
-    } else {
-      multisample = false;
-      nsamples = 1;      
-    }
-    
-    numColorBuffers = colorBuffers;
-    colorBufferAttchPoints = new int[numColorBuffers];
-    glColorBufferTargets = new int[numColorBuffers];
-    glColorBufferIDs = new int[numColorBuffers];
-    colorBufferTex = new PTexture[numColorBuffers];
-    for (int i = 0; i < numColorBuffers; i++) {
-      colorBufferAttchPoints[i] = GL.GL_COLOR_ATTACHMENT0 + i;
-      glColorBufferIDs[i] = 0; 
-      colorBufferTex[i] = null;
-    }    
-    
-    if (depthBits < 1 && stencilBits < 1) {
-      this.depthBits = 0;
-      this.stencilBits = 0;
-      this.combinedDepthStencil = false;
-    } else {
-      if (combinedDepthStencil) {
-        // When combined depth/stencil format is required, the depth and stencil bits
-        // are overriden and the 24/8 combination for a 32 bits surface is used. 
-        this.depthBits = 24;
-        this.stencilBits = 8;
-        this.combinedDepthStencil = true;        
-      } else {
-        this.depthBits = depthBits;
-        this.stencilBits = stencilBits;
-        this.combinedDepthStencil = false;        
-      }
-    }
-    
-    screenFb = screen;
+  protected void allocate() {
+    release(); // Just in the case this object is being re-allocated.    
     
     if (screenFb) {
       glFboID = 0;
@@ -359,23 +347,16 @@ public class PFramebuffer implements PConstants {
       if (0 < stencilBits) {
         createStencilBuffer();
       }      
-    }
-    
+    }    
   }
   
-  protected void reallocate() {
-    allocate(width, height, nsamples, numColorBuffers, 
-             depthBits, stencilBits, combinedDepthStencil, 
-             screenFb);    
-  }
   
   protected void release() {
     deleteFbo();
     deleteDepthBuffer();    
     deleteStencilBuffer();
     deleteCombinedDepthStencilBuffer();
-    deleteColorBufferMultisample();    
-    width = height = 0;    
+    deleteColorBufferMultisample();      
   }
   
   
@@ -426,15 +407,11 @@ public class PFramebuffer implements PConstants {
       ogl.pushFramebuffer();
       ogl.setFramebuffer(this);
       
-      numColorBuffers = 1;
-      colorBufferAttchPoints = new int[numColorBuffers];
-      colorBufferAttchPoints[0] = GL.GL_COLOR_ATTACHMENT0;
-      
       glColorBufferMultisampleID = ogl.createGLResource(PGraphicsOpenGL.GL_RENDER_BUFFER);
       getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glColorBufferMultisampleID);
       getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, 
                                                 GL.GL_RGBA8, width, height);            
-      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, colorBufferAttchPoints[0], 
+      getGl().glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, 
                                         GL.GL_RENDERBUFFER, glColorBufferMultisampleID);
       
       ogl.popFramebuffer();      
