@@ -154,11 +154,10 @@ public class PFramebuffer implements PConstants {
   }
   
   public void backup() {
-    
   }
   
   public void restore() {    
-    setColorBuffers(colorBufferTex.clone(), colorBufferTex.length);        
+    setColorBuffers(colorBufferTex.clone(), colorBufferTex.length);
   }  
   
   public void clear() {
