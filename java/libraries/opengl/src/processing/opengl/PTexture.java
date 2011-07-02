@@ -89,16 +89,13 @@ public class PTexture implements PConstants {
    */  
   public PTexture(PApplet parent, int width, int height, Object params) { 
     this.parent = parent;
-    this.width = width;
-    this.height = height;
        
     ogl = (PGraphicsOpenGL)parent.g;
     ogl.registerGLObject(this);
     
     glID = 0;
     
-    setParameters((Parameters)params);
-    allocate(width, height);        
+    init(width, height, (Parameters)params);
   } 
   
 
@@ -107,17 +104,19 @@ public class PTexture implements PConstants {
    * @param parent PApplet
    * @param filename String
    */ 
+  /*
   public PTexture(PApplet parent, String filename)  {
     this(parent, filename, new Parameters());
   }
-
+*/
   
   /**
    * Creates an instance of PTexture using image file filename as source and the specified texture parameters.
    * @param parent PApplet
    * @param filename String
    * @param params Parameters
-   */ 
+   */
+  /*
   public PTexture(PApplet parent, String filename, Object params)  {
     this.parent = parent;
      
@@ -128,15 +127,27 @@ public class PTexture implements PConstants {
     
     PImage img = parent.loadImage(filename);
     setParameters((Parameters)params);
-    set(img);       
+    set(img);
   }
-
+*/
 
   public void delete() {
     release();
     img = null;
     ogl.unregisterGLObject(this);
   }
+  
+  
+  public void update() {
+    if (img != null) {
+      //if (img.pixels == null) {
+        img.loadPixels();
+     // }
+      //get(img.pixels);
+      //img.updatePixels();
+    }    
+  }
+
   
   public void refresh() {
     if (img != null && img.pixels != null) {
@@ -179,10 +190,9 @@ public class PTexture implements PConstants {
    * @param params GLTextureParameters 
    */
   public void init(int width, int height, Parameters params)  {
-    this.width = width;
-    this.height = height;    
     setParameters(params);
-    allocate(width, height);
+    setSize(width, height);
+    allocate();
   } 
 
 
@@ -265,10 +275,6 @@ public class PTexture implements PConstants {
     if (pixels.length != w * h) {
       throw new RuntimeException("PTexture: wrong length of pixels array");
     }
-    
-    if (glID == 0) {
-      allocate(width, height);
-    }   
     
     getGl().glEnable(glTarget);
     getGl().glBindTexture(glTarget, glID);
@@ -695,15 +701,10 @@ public class PTexture implements PConstants {
 
   // Allocate/release texture.    
 
+  protected void setSize(int w, int h) {
+    width = w;
+    height = h;
     
-  /**
-   * Allocates the opengl texture object.
-   * @param w int
-   * @param h int  
-   */
-  protected void allocate(int w, int h) {
-    release(); // Just in the case this object is being re-allocated.
-      
     if (PGraphicsOpenGL.npotTexSupported) {
       glWidth = w;
       glHeight = h;
@@ -717,9 +718,23 @@ public class PTexture implements PConstants {
       throw new RuntimeException("Image width and height cannot be" +
                                  " larger than " + PGraphicsOpenGL.maxTextureSize +
                                  " with this graphics card.");
-    }    
+    }
     
-    usingMipmaps = glMinFilter == GL.GL_LINEAR_MIPMAP_LINEAR;
+    // If non-power-of-two textures are not supported, and the specified width or height
+    // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
+    // is chosen to be the next power of two, and this quotient will give the appropriate
+    // maximum texture coordinate value given this situation.
+    maxTexCoordU = (float)width / glWidth;
+    maxTexCoordV = (float)height / glHeight;    
+  }
+  
+  /**
+   * Allocates the opengl texture object.
+   * @param w int
+   * @param h int  
+   */
+  protected void allocate() {
+    release(); // Just in the case this object is being re-allocated.
     
     getGl().glEnable(glTarget);
     glID = ogl.createGLResource(PGraphicsOpenGL.GL_TEXTURE_OBJECT);
@@ -735,28 +750,14 @@ public class PTexture implements PConstants {
                          GL.GL_UNSIGNED_BYTE, null);
     
     // Once OpenGL knows the size of the new texture, we make sure it doesn't
-    // contain any garbage in the region of interest (0, 0, w, h):
-    int[] texels = new int[w * h];
-    java.util.Arrays.fill(texels, 0, w * h, 0x00000000); 
-    setTexels(0, 0, w, h, texels); 
+    // contain any garbage in the region of interest (0, 0, width, height):
+    int[] texels = new int[width * height];
+    java.util.Arrays.fill(texels, 0, width * height, 0x00000000); 
+    setTexels(0, 0, width, height, texels); 
     texels = null;
     
     getGl().glBindTexture(glTarget, 0);
-    getGl().glDisable(glTarget);
-        
-    flippedX = false;
-    flippedY = false;
- 
-    // If non-power-of-two textures are not supported, and the specified width or height
-    // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
-    // is chosen to be the next power of two, and this quotient will give the appropriate
-    // maximum texture coordinate value given this situation.
-    maxTexCoordU = (float)w / glWidth;
-    maxTexCoordV = (float)h / glHeight; 
-  }
-
-  protected void reallocate() {
-    allocate(width, height);
+    getGl().glDisable(glTarget); 
   }
   
   /**
@@ -934,6 +935,11 @@ public class PTexture implements PConstants {
     } else {
       throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
     }
+    
+    usingMipmaps = glMinFilter == GL.GL_LINEAR_MIPMAP_LINEAR;
+    
+    flippedX = false;
+    flippedY = false;    
   } 
 
   /////////////////////////////////////////////////////////////////////////// 
