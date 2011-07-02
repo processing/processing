@@ -985,6 +985,7 @@ public class PGraphics extends PImage implements PConstants {
 
     vertex[X] = x;
     vertex[Y] = y;
+    vertex[Z] = 0;
 
     vertex[EDGE] = edge ? 1 : 0;
 
