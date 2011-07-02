@@ -84,8 +84,17 @@ class PFontTexture implements PConstants {
   }
   
   
-  public void refresh() {
-    // loop over current glyphs.
+  public void backup() {    
+    // Nothing to do here: the font textures will backup
+    // themselves.
+  }
+  
+  
+  public void restore() {
+    // Restoration we have to do explicitly because the font
+    // textures don't have a backing PImage object, so the
+    // updateTex() method is in charge of updating each appropriate
+    // section of the font textures. 
     for (int i = 0; i < PApplet.min(font.getGlyphCount(), glyphTexinfos.length); i++) {
       TextureInfo tinfo = glyphTexinfos[i];
       textures[tinfo.texIndex].bind();
@@ -94,7 +103,11 @@ class PFontTexture implements PConstants {
     }   
   }
 
-  
+  protected void allocate() {    
+    // Nothing to do here: the font textures will allocate
+    // themselves.
+  }
+   
   protected void initTexture(int w, int h) {
     maxTexWidth = w;
     maxTexHeight = h;

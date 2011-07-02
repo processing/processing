@@ -152,8 +152,12 @@ public class PFramebuffer implements PConstants {
     }
     ogl.unregisterGLObject(this);
   }
-
-  public void refresh() {
+  
+  public void backup() {
+    
+  }
+  
+  public void restore() {    
     setColorBuffers(colorBufferTex.clone(), colorBufferTex.length);        
   }  
   
