@@ -400,6 +400,9 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     }
     HyperlinkListener hyperlinkOpener;
     
+    ActionListener removeAction;
+    ActionListener installLibAction;
+    
     LibraryInfo libInfo;
 
     JTextPane headerLabel;
@@ -424,6 +427,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       
       createAuthorString();
 
+      createInstallRemoveActions();
       addPaneComponents();
       addProgressBarAndButton();
 
@@ -469,6 +473,45 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       descriptionText.addMouseListener(expandPanelMouseListener);
     }
     
+    private void createInstallRemoveActions() {
+      
+     removeAction = new ActionListener() {
+        
+        public void actionPerformed(ActionEvent arg) {
+          System.out.println("Removing library");
+        }
+      };
+      
+      installLibAction = new ActionListener() {
+        
+        public void actionPerformed(ActionEvent arg) {
+          try {
+            URL url = new URL(libInfo.link);
+            
+            installProgressBar.setVisible(true);
+            libraryManager.installLibraryFromUrl(url, new JProgressMonitor(installProgressBar) {
+
+              public void finishedAction() {
+                // Finished downloading library
+              }
+            }, new JProgressMonitor(installProgressBar) {
+
+              public void finishedAction() {
+                // Finished installing library
+                resetInstallProgressBarState();
+              }
+
+            });
+          } catch (MalformedURLException e) {
+            Base.showWarning("Install Failed",
+                             "The link fetched from Processing.org is invalid.\n" +
+                             "You can still intall this library manually by visiting\n" +
+                             "the library's website.", e);
+          }
+        }
+      };
+    }
+
     void stripListeners(JEditorPane editorPane) {
       for (MouseListener l : editorPane.getMouseListeners()) {
         if (!l.getClass().getName().endsWith("LinkController")) {
@@ -587,9 +630,9 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       header.append("<html><body>");
       header.append("<b>");
       if (libInfo.url == null) {
-        header.append(libInfo.name);
+        header.append(libInfo.displayName);
       } else {
-        header.append("<a href=\"" + libInfo.url + "\">" + libInfo.name + "</a>");
+        header.append("<a href=\"" + libInfo.url + "\">" + libInfo.displayName + "</a>");
       }
       header.append("</b>");
       header.append(createAuthorString());
@@ -663,37 +706,10 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       
       installOrRemove = new JButton();
       if (libInfo.isInstalled) {
-        
+        installOrRemove.setText("Remove");
+        installOrRemove.addActionListener(removeAction);
       } else {
         installOrRemove.setText("Install");
-        ActionListener installLibAction = new ActionListener() {
-  
-          public void actionPerformed(ActionEvent arg) {
-            try {
-              URL url = new URL(libInfo.link);
-              
-              installProgressBar.setVisible(true);
-              libraryManager.installLibraryFromUrl(url, new JProgressMonitor(installProgressBar) {
-
-                public void finishedAction() {
-                  // Finished downloading library
-                }
-              }, new JProgressMonitor(installProgressBar) {
-
-                public void finishedAction() {
-                  // Finished installing library
-                  resetInstallProgressBarState();
-                }
-
-              });
-            } catch (MalformedURLException e) {
-              Base.showWarning("Install Failed",
-                               "The link fetched from Processing.org is invalid.\n" +
-                               "You can still intall this library manually by visiting\n" +
-                               "the library's website.", e);
-            }
-          }
-        };
         installOrRemove.addActionListener(installLibAction);
       }
       Dimension installButtonDimensions = installOrRemove.getPreferredSize();
