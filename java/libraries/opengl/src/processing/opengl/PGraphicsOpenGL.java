@@ -160,10 +160,11 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected final int GL_FRAME_BUFFER = 2;
   static protected final int GL_RENDER_BUFFER = 3;
   
+  static protected Set<Object> glObjects = new HashSet<Object>();
   static protected Set<Integer> glTextureObjects = new HashSet<Integer>();
   static protected Set<Integer> glVertexBuffers = new HashSet<Integer>();
   static protected Set<Integer> glFrameBuffers = new HashSet<Integer>();
-  static protected Set<Integer> glRenderBuffers = new HashSet<Integer>();
+  static protected Set<Integer> glRenderBuffers = new HashSet<Integer>();  
   
   // ........................................................  
 
@@ -675,6 +676,11 @@ public class PGraphicsOpenGL extends PGraphics {
       // Allocation of the main renderer, which mainly involves initializing OpenGL.
       if (context == null) {
         initPrimary();
+        // If there are registered GL objects (i.e.: PTexture, PShape3D, etc), it means
+        // that the context has been recreated, so we need to re-allocate them in
+        // order to be able to keep using them. This step doesn't refresh their data, this 
+        // is, they are empty after re-allocation.
+        reallocateGLObjects();        
       } else {
         reapplySettings();
       }      
@@ -712,33 +718,32 @@ public class PGraphicsOpenGL extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // RESOURCE HANDLING
-
-  /*
-  protected int createGLResource(int type, Object obj) {
-    pTextureObjects.add(obj);
-    
-    glTextureObjects.add(new Texture(id, obj));
-  }
   
-  public void recreateGLResources() {
-  for each cached object, run its init method (which in turn will delete and
-  recreate the cached opengl resources). 
-  }
-  */
-  
-  public void recreateGLResources() {
-    
-    
+  protected void reallocateGLObjects() {
+    if (!glObjects.isEmpty()) {
+      Object[] globjs = glObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {    
+        if (globjs[i] instanceof PTexture) {
+          ((PTexture)globjs[i]).reallocate();
+        } else if (globjs[i] instanceof PShape3D) {
+          ((PShape3D)globjs[i]).reallocate();
+        } else if (globjs[i] instanceof PFramebuffer) {
+          ((PFramebuffer)globjs[i]).reallocate();
+        } else if (globjs[i] instanceof PFontTexture) {
+          // No need to do reallocation for a PFontTexture, since its
+          // textures will reallocate themselves.
+        }        
+      }
+    }    
   }
   
   protected void registerGLObject(Object obj) {
-    
+    glObjects.add(obj);  
   }
 
   protected void unregisterGLObject(Object obj) {
-    
+    glTextureObjects.remove(obj);
   }
-  
   
   protected int createGLResource(int type) {
     int id = 0;
@@ -746,14 +751,12 @@ public class PGraphicsOpenGL extends PGraphics {
       int[] temp = new int[1];
       gl.glGenTextures(1, temp, 0);
       id = temp[0];
-      glTextureObjects.add(id);
-      //pTextureObjects.add((PTexture)obj);
+      glTextureObjects.add(id);      
     } else if (type == GL_VERTEX_BUFFER) {
       int[] temp = new int[1];
       gl.glGenBuffers(1, temp, 0);
       id = temp[0];
       glVertexBuffers.add(id);
-      //pTextureObjects.add((PTexture)obj);
     } else if (type == GL_FRAME_BUFFER) {
       int[] temp = new int[1];
       gl.glGenFramebuffers(1, temp, 0);
@@ -1123,6 +1126,28 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   
+  public void reallocateGL() {
+    reallocateGLObjects();    
+  }
+  
+  
+  public void refreshGL() {
+    if (!glObjects.isEmpty()) {
+      Object[] globjs = glObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {    
+        if (globjs[i] instanceof PTexture) {
+          ((PTexture)globjs[i]).refresh();
+        } else if (globjs[i] instanceof PShape3D) {
+          ((PShape3D)globjs[i]).refresh();
+        } else if (globjs[i] instanceof PFramebuffer) {
+          ((PFramebuffer)globjs[i]).refresh();
+        } else if (globjs[i] instanceof PFontTexture) {
+          ((PFontTexture)globjs[i]).refresh();
+        }        
+      }
+    }
+  }
+  
   protected void saveGLState() {
     saveGLMatrices();
   }
@@ -1310,11 +1335,11 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (which == DISABLE_OPENGL_2X_SMOOTH) {
       if (opengl2X) {
         if (primarySurface) {
-          releaseContext();
-          // TODO: we need to recreate resources here...?
+          releaseContext();          
           context.destroy();
           context = null;
           allocate();
+          refreshGL();
           throw new PApplet.RendererChangeException();
         } else {
           initOffscreen();
@@ -1328,10 +1353,10 @@ public class PGraphicsOpenGL extends PGraphics {
       if (!opengl4X) {
         if (primarySurface) {
           releaseContext();
-          // TODO: we need to recreate resources here...?
           context.destroy();
           context = null;
           allocate();
+          refreshGL();
           throw new PApplet.RendererChangeException();
         } else {
           initOffscreen();
@@ -6652,9 +6677,10 @@ return width * (1 + ox) / 2.0f;
       img.setParams(ogl, params);
     }
     PTexture tex = new PTexture(img.parent, img.width, img.height, params);
-    img.loadPixels();
+    img.loadPixels();    
     tex.set(img.pixels);
     img.setCache(ogl, tex);
+    tex.setImage(img); // The parent image so the texture can regenerate itself upon re-allocation.
     return tex;
   }
   
@@ -7045,49 +7071,6 @@ return width * (1 + ox) / 2.0f;
         
     offscreenFramebuffer.setColorBuffer(texture);
     offscreenFramebuffer.clear();
-    
-    
-    /*
-    if (offscreenMultisample) {
-      // We have multisampling. The fbo with the depth and stencil buffers is the
-      // multisampled fbo, not the regular one. This is because the actual drawing 
-      // occurs on the multisampled surface, which is blit into the color buffer 
-      // of the regular fbo at endDraw().
-      if (offscreenDepthBits == 24 && offscreenStencilBits == 8) {
-        // A single 24-8 depth-stencil buffer is created here.
-        offscreenFramebufferMultisample.addDepthStencilBuffer();          
-      } else {
-        // Separate depth and stencil buffers with custom number of bits are
-        // created here. But there is no guarantee that this will lead to a valid 
-        // offscreen surface.
-        offscreenFramebufferMultisample.addDepthBuffer(offscreenDepthBits);          
-        if (0 < offscreenStencilBits) {
-          offscreenFramebufferMultisample.addStencilBuffer(offscreenStencilBits); 
-        }
-      }
-      offscreenFramebufferMultisample.clear();
-      
-      offscreenFramebuffer.setColorBuffer(texture);          
-    } else {
-      // No multisampling.          
-      offscreenFramebuffer.setColorBuffer(texture);
-      
-      if (offscreenDepthBits == 24 && offscreenStencilBits == 8) {
-        // A single 24-8 depth-stencil buffer is created here.
-        offscreenFramebuffer.addDepthStencilBuffer();          
-      } else {
-        // Separate depth and stencil buffers with custom number of bits are
-        // created here. But there is no guarantee that this will lead to a valid 
-        // offscreen surface.
-        offscreenFramebuffer.addDepthBuffer(offscreenDepthBits);          
-        if (0 < offscreenStencilBits) {
-          offscreenFramebuffer.addStencilBuffer(offscreenStencilBits); 
-        }
-      }
-    }
-    */
-    
-            
   }
   
   protected void getGLObjects() {
