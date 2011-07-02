@@ -270,7 +270,7 @@ public class LibraryManager {
         public void finishedAction() {
           libraryListing = llf.getLibraryListing();
           synchronized (libraryListing) {
-            libraryListing = llf.getLibraryListing();
+            libraryListing.updateInstalled(editor.getMode().contribLibraries);
             if (libraryListPane != null) {
               libraryListPane.setLibraryList(libraryListing);
             }
@@ -381,7 +381,6 @@ public class LibraryManager {
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
     ArrayList<Library> libsToBeBackuped = new ArrayList<Library>();
     
-    // Remove any libraries that are already installed.
     Iterator<Library> it = newLibs.iterator();
     while (it.hasNext()) {
       Library lib = it.next();
