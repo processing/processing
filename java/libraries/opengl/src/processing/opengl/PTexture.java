@@ -37,8 +37,9 @@ import processing.core.PImage;
 public class PTexture implements PConstants { 
   public int width, height;
     
-  protected PApplet parent;
-  protected PGraphicsOpenGL ogl;
+  protected PApplet parent;      // The Processing applet
+  protected PGraphicsOpenGL ogl; // The main renderer
+  protected PImage img;          // The parent image
 
   // These are public but use at your own risk!
   public int glID; 
@@ -92,6 +93,7 @@ public class PTexture implements PConstants {
     this.height = height;
        
     ogl = (PGraphicsOpenGL)parent.g;
+    ogl.registerGLObject(this);
     
     glID = 0;
     
@@ -120,7 +122,8 @@ public class PTexture implements PConstants {
     this.parent = parent;
      
     ogl = (PGraphicsOpenGL)parent.g;  
-
+    ogl.registerGLObject(this);
+    
     glID = 0;
     
     PImage img = parent.loadImage(filename);
@@ -131,6 +134,14 @@ public class PTexture implements PConstants {
 
   public void delete() {
     release();
+    img = null;
+    ogl.unregisterGLObject(this);
+  }
+  
+  public void refresh() {
+    if (img != null && img.pixels != null) {
+      set(img.pixels);
+    }
   }
 
   ////////////////////////////////////////////////////////////
@@ -691,7 +702,7 @@ public class PTexture implements PConstants {
    * @param h int  
    */
   protected void allocate(int w, int h) {
-    release(); // Just in the case this object is being re-initialized.
+    release(); // Just in the case this object is being re-allocated.
       
     if (PGraphicsOpenGL.npotTexSupported) {
       glWidth = w;
@@ -929,6 +940,9 @@ public class PTexture implements PConstants {
 
   // Utilities 
   
+  protected void setImage(PImage img) {
+    this.img = img;
+  }
   
   protected GL getGl() {
     return ogl.gl;

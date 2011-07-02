@@ -60,8 +60,9 @@ public class PFramebuffer implements PConstants {
   
   protected int numColorBuffers;
   protected int[] colorBufferAttchPoints;
-  protected int[] glColorBufferTargets;
-  protected int[] glColorBufferIDs;
+  protected int[] glColorBufferTargets; // should remove this?
+  protected int[] glColorBufferIDs;     // should remove this?
+  protected PTexture[] colorBufferTex;
 
   protected boolean screenFb;
   protected boolean noDepth;
@@ -83,6 +84,7 @@ public class PFramebuffer implements PConstants {
                boolean screen) {
     this.parent = parent;
     ogl = (PGraphicsOpenGL)parent.g;
+    ogl.registerGLObject(this);
     
     glFboID = 0;
     glDepthBufferID = 0;
@@ -109,8 +111,16 @@ public class PFramebuffer implements PConstants {
     
   public void delete() {
     release();
+    for (int i = 0; i < numColorBuffers; i++) {
+      colorBufferTex[i] = null;  
+    }
+    ogl.unregisterGLObject(this);
   }
 
+  public void refresh() {
+    setColorBuffers(colorBufferTex.clone(), colorBufferTex.length);        
+  }  
+  
   public void clear() {
     ogl.pushFramebuffer();
     ogl.setFramebuffer(this);
@@ -254,6 +264,7 @@ public class PFramebuffer implements PConstants {
       }
 
       for (int i = 0; i < numColorBuffers; i++) {
+        this.colorBufferTex[i] = textures[i];
         glColorBufferTargets[i] = textures[i].glTarget;
         glColorBufferIDs[i] = textures[i].glID;
         getGl().glFramebufferTexture2D(GL.GL_FRAMEBUFFER, colorBufferAttchPoints[i],
@@ -282,7 +293,7 @@ public class PFramebuffer implements PConstants {
   protected void allocate(int w, int h, int samples, int colorBuffers, 
                           int depthBits, int stencilBits, boolean combinedDepthStencil, 
                           boolean screen) {
-    release(); // Just in the case this object is being re-initialized.
+    release(); // Just in the case this object is being re-allocated.
     
     width = w;
     height = h;
@@ -299,9 +310,12 @@ public class PFramebuffer implements PConstants {
     colorBufferAttchPoints = new int[numColorBuffers];
     glColorBufferTargets = new int[numColorBuffers];
     glColorBufferIDs = new int[numColorBuffers];
+    colorBufferTex = new PTexture[numColorBuffers];
     for (int i = 0; i < numColorBuffers; i++) {
       colorBufferAttchPoints[i] = GL.GL_COLOR_ATTACHMENT0 + i;
-    }
+      glColorBufferIDs[i] = 0; 
+      colorBufferTex[i] = null;
+    }    
     
     if (depthBits < 1 && stencilBits < 1) {
       this.depthBits = 0;
@@ -349,6 +363,11 @@ public class PFramebuffer implements PConstants {
     
   }
   
+  protected void reallocate() {
+    allocate(width, height, nsamples, numColorBuffers, 
+             depthBits, stencilBits, combinedDepthStencil, 
+             screenFb);    
+  }
   
   protected void release() {
     deleteFbo();
