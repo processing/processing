@@ -138,18 +138,20 @@ public class PTexture implements PConstants {
   }
   
   
-  public void update() {
+  public void backup() {
     if (img != null) {
-      //if (img.pixels == null) {
-        img.loadPixels();
-     // }
-      //get(img.pixels);
-      //img.updatePixels();
+      img.loadPixels();
+      if (img.pixels != null && (img instanceof PGraphicsOpenGL)) {
+        // When img is an offscreen renderer, the loadPixels() call above 
+        // already takes care of copying the contents of the color buffer 
+        // to  the pixels array.
+        get(img.pixels);
+      }
     }    
   }
 
   
-  public void refresh() {
+  public void restore() {
     if (img != null && img.pixels != null) {
       set(img.pixels);
     }
