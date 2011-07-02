@@ -319,18 +319,61 @@ public class LibraryManager {
    * the library are extracted to a temporary folder before being moved.
    */
   protected int installLibrary(File libFile) {
+    
+    String libName = guessLibraryName(libFile);
+    
+    File tmpFolder = null;
+    
     try {
-      String libName = guessLibraryName(libFile);
-
-      File tmpFolder = Base.createTempFolder(libName, "uncompressed");
-      unzip(libFile, tmpFolder);
-      
-      return installLibraries(Library.list(tmpFolder));
+      tmpFolder = Base.createTempFolder(libName, "uncompressed");
     } catch (IOException e) {
       Base.showWarning("Trouble creating temporary folder",
            "Could not create a place to store libary's uncompressed contents,\n" + 
            "so it won't be installed.", e);
     }
+    
+    Exception e = null;
+    boolean errorEncountered = false;
+    unzip(libFile, tmpFolder);
+    try {  
+      ArrayList<Library> discoveredLibs = Library.list(tmpFolder);
+      if (discoveredLibs.isEmpty()) {
+        // No libraries found. It's okay though, the author might not have not
+        // read the library guidelines and placed all their folders in the base
+        // directory of the their zip file. If this is the case, let's help them
+        // out, rather than complain about it.
+        
+        File newLibFolder = getUniqueName(tmpFolder, libName);
+        if (newLibFolder.mkdirs()) {
+          for (File f : tmpFolder.listFiles()) {
+            if (!f.equals(newLibFolder)) {
+              if (!f.renameTo(new File(newLibFolder, f.getName()))) {
+                // The file wasn't moved for whatever reason
+                errorEncountered = true;
+              }
+            }
+          }
+          discoveredLibs = Library.list(tmpFolder);
+        } else {
+          // We couldn't make the directory to move the library to
+          errorEncountered = true;
+        }
+        
+      }
+      
+      // Do this, or windows won't let us move the files we just moved again.
+      System.gc();
+      
+      if (!errorEncountered) {
+        return installLibraries(discoveredLibs);
+      }
+    } catch (IOException ioe) {
+      e = ioe;
+    }
+    
+    Base.showWarning("Trouble discovering libraries",
+                     "Could not find libraries in the downloaded file.\n" + 
+                     "This may be a one time error, please try again.", e);
     
     return 0;
   }
