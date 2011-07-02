@@ -433,7 +433,7 @@ public class LibraryManager {
       // library is installed twice without restarting the PDE.
       for (Library oldLib : oldLibs) {
         
-        if (oldLib.getName().equals(lib.getName())) {
+        if (oldLib.getName().equals(lib.getName()) && oldLib.libraryFolder.exists()) {
           
           int result = Base.showYesNoQuestion(editor, "Replace",
                  "Replace existing \"" + oldLib.getName() + "\" library?",
