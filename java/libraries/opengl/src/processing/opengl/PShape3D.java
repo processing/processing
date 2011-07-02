@@ -252,7 +252,7 @@ public class PShape3D extends PShape {
     updateNormals();
 
     for (int i = 0; i < numTexBuffers; i++) {
-      loadTexcoords();    
+      loadTexcoords(i);    
       updateTexcoords();
     }
   }
@@ -2302,11 +2302,13 @@ public class PShape3D extends PShape {
       java.util.Arrays.fill(glTexCoordBufferID, 0);      
     }
     
-    glTexCoordBufferID[0] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
-    final int bufferSize = vertexCount * 2 * PGraphicsOpenGL.SIZEOF_FLOAT;
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, null, glUsage);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    for (int i = 0; i < numTexBuffers; i++) {
+      glTexCoordBufferID[i] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glTexCoordBufferID[i]);
+      final int bufferSize = vertexCount * 2 * PGraphicsOpenGL.SIZEOF_FLOAT;
+      getGl().glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, null, glUsage);
+      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    }
   }
   
   
@@ -2316,7 +2318,6 @@ public class PShape3D extends PShape {
       deleteTexCoordBuffer(t);
       
       glTexCoordBufferID[t] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
-      
       getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);    
       final int bufferSize = vertexCount * 2 * PGraphicsOpenGL.SIZEOF_FLOAT;
       getGl().glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, null, glUsage);
