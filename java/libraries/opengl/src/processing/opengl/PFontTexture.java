@@ -86,7 +86,7 @@ class PFontTexture implements PConstants {
   
   public void refresh() {
     // loop over current glyphs.
-    for (int i = 0; i < font.getGlyphCount(); i++) {
+    for (int i = 0; i < PApplet.min(font.getGlyphCount(), glyphTexinfos.length); i++) {
       TextureInfo tinfo = glyphTexinfos[i];
       textures[tinfo.texIndex].bind();
       tinfo.updateTex();

@@ -680,7 +680,7 @@ public class PGraphicsOpenGL extends PGraphics {
         // that the context has been recreated, so we need to re-allocate them in
         // order to be able to keep using them. This step doesn't refresh their data, this 
         // is, they are empty after re-allocation.
-        reallocateGLObjects();        
+        allocateGLObjects();        
       } else {
         reapplySettings();
       }      
@@ -719,19 +719,53 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // RESOURCE HANDLING
   
-  protected void reallocateGLObjects() {
+  protected void allocateGLObjects() {
     if (!glObjects.isEmpty()) {
       Object[] globjs = glObjects.toArray();
       for (int i = 0; i < globjs.length; i++) {    
         if (globjs[i] instanceof PTexture) {
-          ((PTexture)globjs[i]).reallocate();
+          ((PTexture)globjs[i]).allocate();
         } else if (globjs[i] instanceof PShape3D) {
-          ((PShape3D)globjs[i]).reallocate();
+          ((PShape3D)globjs[i]).allocate();
         } else if (globjs[i] instanceof PFramebuffer) {
-          ((PFramebuffer)globjs[i]).reallocate();
+          ((PFramebuffer)globjs[i]).allocate();
         } else if (globjs[i] instanceof PFontTexture) {
           // No need to do reallocation for a PFontTexture, since its
           // textures will reallocate themselves.
+        }        
+      }
+    }    
+  }
+  
+  protected void updateGLObjects() {
+    if (!glObjects.isEmpty()) {
+      Object[] globjs = glObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {    
+        if (globjs[i] instanceof PTexture) {
+          ((PTexture)globjs[i]).update();
+        } else if (globjs[i] instanceof PShape3D) {
+          //((PShape3D)globjs[i]).refresh();
+        } else if (globjs[i] instanceof PFramebuffer) {
+          //((PFramebuffer)globjs[i]).refresh();
+        } else if (globjs[i] instanceof PFontTexture) {
+          //((PFontTexture)globjs[i]).refresh();
+        }        
+      }
+    }    
+  }  
+  
+  protected void refreshGLObjects() {
+    if (!glObjects.isEmpty()) {
+      Object[] globjs = glObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {    
+        if (globjs[i] instanceof PTexture) {
+          ((PTexture)globjs[i]).refresh();
+        } else if (globjs[i] instanceof PShape3D) {
+          ((PShape3D)globjs[i]).refresh();
+        } else if (globjs[i] instanceof PFramebuffer) {
+          ((PFramebuffer)globjs[i]).refresh();
+        } else if (globjs[i] instanceof PFontTexture) {
+          ((PFontTexture)globjs[i]).refresh();
         }        
       }
     }    
@@ -1126,26 +1160,16 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   
-  public void reallocateGL() {
-    reallocateGLObjects();    
+  public void allocateGL() {
+    allocateGLObjects();    
   }
   
+  public void updateGL() {
+    updateGLObjects();
+  }  
   
   public void refreshGL() {
-    if (!glObjects.isEmpty()) {
-      Object[] globjs = glObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {    
-        if (globjs[i] instanceof PTexture) {
-          ((PTexture)globjs[i]).refresh();
-        } else if (globjs[i] instanceof PShape3D) {
-          ((PShape3D)globjs[i]).refresh();
-        } else if (globjs[i] instanceof PFramebuffer) {
-          ((PFramebuffer)globjs[i]).refresh();
-        } else if (globjs[i] instanceof PFontTexture) {
-          ((PFontTexture)globjs[i]).refresh();
-        }        
-      }
-    }
+    refreshGLObjects();
   }
   
   protected void saveGLState() {
@@ -5724,7 +5748,18 @@ return width * (1 + ox) / 2.0f;
       pixelBuffer.rewind();
     }
     
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }
+    
     gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
+    
+    if (notCurrent) {
+      popFramebuffer();
+    }    
+    
     pixelBuffer.get(pixels);
     pixelBuffer.rewind();
 
@@ -6004,8 +6039,24 @@ return width * (1 + ox) / 2.0f;
     
     // Copying pixel buffer to screen texture...
     copyToTexture(pixelBuffer);
+    
     // ...and drawing the texture to screen.
-    drawTexture(texture, texCrop, 0, 0, width, height);   
+    
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
+      // If this is an offscreen surface that is not current, then the offscreen framebuffer
+      // is bound so the texture is drawn to it instead to the main surface. Even if the
+      // surface in antialiased we don't need to bind the multisample framebuffer, we
+      // just draw to the regular offscreen framebuffer.
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }
+    
+    drawTexture(texture, texCrop, 0, 0, width, height);
+    
+    if (notCurrent) {
+      popFramebuffer();
+    }    
   }
     
   //////////////////////////////////////////////////////////////
@@ -6028,6 +6079,7 @@ return width * (1 + ox) / 2.0f;
       texture.setFlippedY(true);
       this.setCache(ogl, texture);
       this.setParams(ogl, params);
+      texture.setImage(this);
       
       texCrop = new int[4];
       texCrop[0] = 0;
@@ -6039,7 +6091,17 @@ return width * (1 + ox) / 2.0f;
   
   // Draws wherever it is in the screen texture right now to the screen.
   public void updateTexture() {
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }  
+    
     drawTexture();
+    
+    if (notCurrent) {
+      popFramebuffer();
+    }    
   }
   
   protected void drawTexture() {
@@ -6083,8 +6145,8 @@ return width * (1 + ox) / 2.0f;
       getsetBuffer.rewind();
     }
     
-    boolean nonCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    if (nonCurrent) {
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
       // If the surface is not primary and multisampling is on, then the framebuffer
       // will be switched momentarily from offscreenFramebufferMultisample to offscreenFramebuffer.
       // This is in fact correct, because the glReadPixels() function doesn't work with 
@@ -6095,7 +6157,7 @@ return width * (1 + ox) / 2.0f;
      
     gl.glReadPixels(x, height - y - 1, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
 
-    if (nonCurrent) {
+    if (notCurrent) {
       popFramebuffer();
     }
 
@@ -6118,21 +6180,21 @@ return width * (1 + ox) / 2.0f;
 
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);    
     
-    boolean nonCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    if (nonCurrent) {
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
       pushFramebuffer();
       setFramebuffer(offscreenFramebuffer);
     }    
 
     gl.glReadPixels(x, height - y - h, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
 
-    if (nonCurrent) {
+    if (notCurrent) {
       popFramebuffer();
     }    
     
     copyToTexture(newbieTex, newbieBuffer, 0, 0, w, h);
     newbie.loadPixels();
-    newbieTex.flippedY = true;
+    newbieTex.setFlippedY(true);
     newbieTex.get(newbie.pixels);
     
     return newbie;
@@ -6166,8 +6228,19 @@ return width * (1 + ox) / 2.0f;
       getsetTexture = new PTexture(parent, 1, 1, new PTexture.Parameters(ARGB, POINT));
     }
     
-    copyToTexture(getsetTexture, getsetBuffer, 0, 0, 1, 1);    
+    copyToTexture(getsetTexture, getsetBuffer, 0, 0, 1, 1);
+    
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    } 
+    
     drawTexture(getsetTexture, 0, 0, 1, 1, x, height - y, 1, 1);
+    
+    if (notCurrent) {
+      popFramebuffer();
+    }    
   }
 
   /**
@@ -6180,9 +6253,21 @@ return width * (1 + ox) / 2.0f;
     if (tex != null) {
       int w = source.width; 
       int h = source.height;
+      
+      boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+      if (notCurrent) {
+        pushFramebuffer();
+        setFramebuffer(offscreenFramebuffer);
+      } 
+            
+      
       // The crop region and draw rectangle are given like this to take into account
       // inverted y-axis in Processin with respect to OpenGL.
       drawTexture(tex, 0, h, w, -h, x, height - y, w, h);
+      
+      if (notCurrent) {
+        popFramebuffer();
+      }      
     }
   }  
       
@@ -7046,14 +7131,6 @@ return width * (1 + ox) / 2.0f;
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, nsamples, 0, 
                                                          offscreenDepthBits, offscreenStencilBits, 
                                                          offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
-      /*
-      try {                        
-        offscreenFramebufferMultisample.addColorBufferMultisample(nsamples);
-        offscreenMultisample = true;
-      } catch (GLException e) {
-        PGraphics.showWarning("Unable to create antialised offscreen surface.");
-      }    
-      */
       offscreenFramebufferMultisample.clear();
       offscreenMultisample = true;
       
