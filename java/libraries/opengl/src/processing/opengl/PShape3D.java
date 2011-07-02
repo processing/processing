@@ -231,7 +231,12 @@ public class PShape3D extends PShape {
     ogl.unregisterGLObject(this);
   }
   
-  public void refresh() {
+  
+  public void backup() {
+    
+  }
+  
+  public void restore() {
     if (root != this) return; // Can be done only from the root shape.
     
     // Loading/updating each piece of data so the arrays on the CPU-side 
