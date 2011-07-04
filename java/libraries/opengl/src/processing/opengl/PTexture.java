@@ -91,7 +91,7 @@ public class PTexture implements PConstants {
     this.parent = parent;
        
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerGLObject(this);
+    ogl.registerPGLObject(this);
     
     glID = 0;
     
@@ -134,7 +134,7 @@ public class PTexture implements PConstants {
   public void delete() {
     release();
     img = null;
-    ogl.unregisterGLObject(this);
+    ogl.unregisterPGLObject(this);
   }
   
   
@@ -147,14 +147,14 @@ public class PTexture implements PConstants {
         // to  the pixels array.
         get(img.pixels);
       }
-    }    
+    }        
   }
 
   
-  public void restore() {
+  public void restore() {    
     if (img != null && img.pixels != null) {
       set(img.pixels);
-    }
+    }    
   }
 
   ////////////////////////////////////////////////////////////

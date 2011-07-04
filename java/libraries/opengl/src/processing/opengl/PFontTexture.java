@@ -70,7 +70,7 @@ class PFontTexture implements PConstants {
     // contains any native OpenGL resources, it does contains a list of textures 
     // that don't depend on any PImage, so it is registered so in the case of a refresh
     // event the textures are re-initialized with the correct data. 
-    ogl.registerGLObject(this);
+    ogl.registerPGLObject(this);
     
     initTexture(maxw, maxh);
   }    
@@ -80,7 +80,7 @@ class PFontTexture implements PConstants {
     for (int i = 0; i < textures.length; i++) {
       textures[i].delete();
     }
-    ogl.unregisterGLObject(this);
+    ogl.unregisterPGLObject(this);
   }
   
   
