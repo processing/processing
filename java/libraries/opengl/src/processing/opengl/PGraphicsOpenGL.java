@@ -160,7 +160,11 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected final int GL_FRAME_BUFFER = 2;
   static protected final int GL_RENDER_BUFFER = 3;
   
-  static protected Set<Object> glObjects = new HashSet<Object>();
+  static protected Set<PGraphicsOpenGL> pGraphicsOpenGLObjects = new HashSet<PGraphicsOpenGL>();
+  static protected Set<PTexture> pTextureObjects = new HashSet<PTexture>();
+  static protected Set<PFramebuffer> pFramebufferObjects = new HashSet<PFramebuffer>();
+  static protected Set<PShape3D> pShape3DObjects = new HashSet<PShape3D>();
+  static protected Set<PFontTexture> pFontTextureObjects = new HashSet<PFontTexture>();  
   static protected Set<Integer> glTextureObjects = new HashSet<Integer>();
   static protected Set<Integer> glVertexBuffers = new HashSet<Integer>();
   static protected Set<Integer> glFrameBuffers = new HashSet<Integer>();
@@ -680,7 +684,8 @@ public class PGraphicsOpenGL extends PGraphics {
         // that the context has been re-created, so we need to re-allocate them in
         // order to be able to keep using them. This step doesn't refresh their data, this 
         // is, they are empty after re-allocation.
-        allocateGLObjects();        
+        //getGLObjects();
+        //allocateGLObjects();        
       } else {
         reapplySettings();
       }      
@@ -689,6 +694,9 @@ public class PGraphicsOpenGL extends PGraphics {
       if (context == null) {
         initOffscreen();
       } else {
+        // Updating OpenGL context associated to this offscreen
+        // surface, to take into account a context recreation situation.
+        updateOffscreenContext();
         reapplySettings();
       }
     }    
@@ -702,7 +710,13 @@ public class PGraphicsOpenGL extends PGraphics {
       super.delete();
       if (offscreenFramebuffer != null) {
         offscreenFramebuffer.delete();
+        offscreenFramebuffer = null;
       }
+      if (offscreenFramebufferMultisample != null) {
+        offscreenFramebufferMultisample.delete();
+        offscreenFramebufferMultisample = null;
+      }      
+      unregisterPGLObject(this);
     }
   }
   
@@ -719,74 +733,160 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // RESOURCE HANDLING
   
-  protected void allocateGLObjects() {
-    if (!glObjects.isEmpty()) {
-      Object[] globjs = glObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {    
-        if (globjs[i] instanceof PTexture) {
-          ((PTexture)globjs[i]).allocate();
-        } else if (globjs[i] instanceof PShape3D) {
-          ((PShape3D)globjs[i]).allocate();
-        } else if (globjs[i] instanceof PFramebuffer) {
-          ((PFramebuffer)globjs[i]).allocate();
-        } else if (globjs[i] instanceof PFontTexture) {
-          ((PFontTexture)globjs[i]).allocate();
-        }        
-      }
-    }    
+  protected void allocatePGLObjects() {
+    // Note: it is important that allocation / backup / restoration are don
+    // in the order below (0: PGraphicsOpenGL, 1: PTexture objects, 2: PFramebuffer 
+    // objects, etc.) since both PFramebuffers and PShape3Ds might need a valid PTexture 
+    // for their re-allocation.
+    // The case of PGraphicsOpenGL is special, the list is only stores offscreen surfaces
+    // in order to call allocate() upon context re-creation. allocate() for non-primary
+    // surfaces ends up just updating the context associated to them.     
+    
+    if (!pGraphicsOpenGLObjects.isEmpty()) {
+      Object[] globjs = pGraphicsOpenGLObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PGraphicsOpenGL obj = (PGraphicsOpenGL)globjs[i];
+        obj.allocate();
+      }  
+    }      
+    
+    if (!pTextureObjects.isEmpty()) {
+      Object[] globjs = pTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PTexture obj = (PTexture)globjs[i];
+        obj.allocate();
+      }  
+    }      
+      
+    if (!pFramebufferObjects.isEmpty()) {
+      Object[] globjs = pFramebufferObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFramebuffer obj = (PFramebuffer)globjs[i];
+        obj.allocate();
+      }  
+    }   
+    
+    if (!pShape3DObjects.isEmpty()) {
+      Object[] globjs = pShape3DObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PShape3D obj = (PShape3D)globjs[i];
+        obj.allocate();
+      }  
+    }     
+    
+    if (!pFontTextureObjects.isEmpty()) {
+      Object[] globjs = pFontTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFontTexture obj = (PFontTexture)globjs[i];
+        obj.allocate();
+      }  
+    }
   }
   
-  protected void backupGLObjects() {
-    if (!glObjects.isEmpty()) {
-      Object[] globjs = glObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {    
-        if (globjs[i] instanceof PTexture) {
-          ((PTexture)globjs[i]).backup();
-        } else if (globjs[i] instanceof PShape3D) {
-          ((PShape3D)globjs[i]).backup();
-        } else if (globjs[i] instanceof PFramebuffer) {
-          ((PFramebuffer)globjs[i]).backup();
-        } else if (globjs[i] instanceof PFontTexture) {
-          ((PFontTexture)globjs[i]).backup();
-        }        
-      }
-    }    
+  protected void backupPGLObjects() {
+    if (!pTextureObjects.isEmpty()) {
+      Object[] globjs = pTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PTexture obj = (PTexture)globjs[i];
+        obj.backup();
+      }  
+    }      
+      
+    if (!pFramebufferObjects.isEmpty()) {
+      Object[] globjs = pFramebufferObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFramebuffer obj = (PFramebuffer)globjs[i];
+        obj.backup();
+      }  
+    }   
+    
+    if (!pShape3DObjects.isEmpty()) {
+      Object[] globjs = pShape3DObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PShape3D obj = (PShape3D)globjs[i];
+        obj.backup();
+      }  
+    }     
+    
+    if (!pFontTextureObjects.isEmpty()) {
+      Object[] globjs = pFontTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFontTexture obj = (PFontTexture)globjs[i];
+        obj.backup();
+      }  
+    }
   }  
   
-  protected void clearGLFramebuffers() {
-    if (!glObjects.isEmpty()) {
-      Object[] globjs = glObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {    
-        if (globjs[i] instanceof PFramebuffer) {
-          ((PFramebuffer)globjs[i]).clear();
-        }        
-      }
-    }      
+  protected void clearPGLFramebuffers() {
+    if (!pFramebufferObjects.isEmpty()) {
+      Object[] globjs = pFramebufferObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFramebuffer obj = (PFramebuffer)globjs[i];
+        obj.clear();
+      }  
+    }     
   }
   
-  protected void restoreGLObjects() {
-    if (!glObjects.isEmpty()) {
-      Object[] globjs = glObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {    
-        if (globjs[i] instanceof PTexture) {
-          ((PTexture)globjs[i]).restore();
-        } else if (globjs[i] instanceof PShape3D) {
-          ((PShape3D)globjs[i]).restore();
-        } else if (globjs[i] instanceof PFramebuffer) {
-          ((PFramebuffer)globjs[i]).restore();
-        } else if (globjs[i] instanceof PFontTexture) {
-          ((PFontTexture)globjs[i]).restore();
-        }        
-      }
+  protected void restorePGLObjects() {
+    if (!pTextureObjects.isEmpty()) {
+      Object[] globjs = pTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PTexture obj = (PTexture)globjs[i];
+        obj.restore();
+      }  
+    }      
+      
+    if (!pFramebufferObjects.isEmpty()) {
+      Object[] globjs = pFramebufferObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFramebuffer obj = (PFramebuffer)globjs[i];
+        obj.restore();
+      }  
+    }   
+    
+    if (!pShape3DObjects.isEmpty()) {
+      Object[] globjs = pShape3DObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PShape3D obj = (PShape3D)globjs[i];
+        obj.restore();
+      }  
+    }     
+    
+    if (!pFontTextureObjects.isEmpty()) {
+      Object[] globjs = pFontTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFontTexture obj = (PFontTexture)globjs[i];
+        obj.restore();
+      }  
+    }  
+  }
+  
+  protected void registerPGLObject(Object obj) {
+    if (obj instanceof PGraphicsOpenGL) {
+      pGraphicsOpenGLObjects.add((PGraphicsOpenGL)obj);
+    } else if (obj instanceof PTexture) {
+      pTextureObjects.add((PTexture)obj);
+    } else if (obj instanceof PFramebuffer) {
+      pFramebufferObjects.add((PFramebuffer)obj);
+    } else if (obj instanceof PShape3D) {
+      pShape3DObjects.add((PShape3D)obj);
+    } else if (obj instanceof PFontTexture) {
+      pFontTextureObjects.add((PFontTexture)obj);
     }    
   }
-  
-  protected void registerGLObject(Object obj) {
-    glObjects.add(obj);  
-  }
 
-  protected void unregisterGLObject(Object obj) {
-    glTextureObjects.remove(obj);
+  protected void unregisterPGLObject(Object obj) {
+    if (obj instanceof PGraphicsOpenGL) {
+      pGraphicsOpenGLObjects.remove(obj);
+    } else if (obj instanceof PTexture) {
+      pTextureObjects.remove(obj);
+    } else if (obj instanceof PFramebuffer) {
+      pFramebufferObjects.remove(obj);
+    } else if (obj instanceof PShape3D) {
+      pShape3DObjects.remove(obj);
+    } else if (obj instanceof PFontTexture) {
+      pFontTextureObjects.remove(obj);
+    }
   }
   
   protected int createGLResource(int type) {
@@ -966,7 +1066,27 @@ public class PGraphicsOpenGL extends PGraphics {
     context.release();
   }
 
+  
+  /**
+   * Destroys current OpenGL context and creates a new one, making sure that all
+   * the current OpenGL objects remain valid afterward.
+   */  
+  public void restartContext() {
+    backupPGLObjects();
+      
+    releaseContext();
+    context.destroy();
+    context = null;
+    allocate();          
+    detainContext();
+      
+    getGLProfiles();
+    allocatePGLObjects();
+    clearPGLFramebuffers();
+    restorePGLObjects();
+  }  
 
+  
   /**
    * OpenGL cannot draw until a proper native peer is available, so this
    * returns the value of PApplet.isDisplayable() (inherited from Component).
@@ -988,7 +1108,7 @@ public class PGraphicsOpenGL extends PGraphics {
       detainContext();
     }
       
-    getGLObjects();
+    getGLProfiles();
     
     if (!glParamsRead) {
       getGLParameters();  
@@ -1171,16 +1291,16 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   public void allocateGL() {
-    allocateGLObjects();    
+    allocatePGLObjects();    
   }
   
   public void backupGL() {
-    backupGLObjects();
+    backupPGLObjects();
   }  
   
   public void restoreGL() {
-    clearGLFramebuffers();
-    restoreGLObjects();
+    clearPGLFramebuffers();
+    restorePGLObjects();
   }
   
   protected void saveGLState() {
@@ -1370,12 +1490,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (which == DISABLE_OPENGL_2X_SMOOTH) {
       if (opengl2X) {
         if (primarySurface) {
-          backupGL();
-          releaseContext();          
-          context.destroy();
-          context = null;
-          allocate();
-          restoreGL();
+          restartContext();          
           throw new PApplet.RendererChangeException();
         } else {
           initOffscreen();
@@ -1383,17 +1498,19 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
     } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
-      // do nothing, this is the default in release 0158 and later
+      if (!opengl2X) {
+        if (primarySurface) {
+          restartContext();          
+          throw new PApplet.RendererChangeException();
+        } else {
+          initOffscreen();
+        }
+      }
 
     } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
       if (!opengl4X) {
         if (primarySurface) {
-          backupGL();
-          releaseContext();
-          context.destroy();
-          context = null;
-          allocate();
-          restoreGL();
+          restartContext();          
           throw new PApplet.RendererChangeException();
         } else {
           initOffscreen();
@@ -1402,6 +1519,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
   }
+
   
   //////////////////////////////////////////////////////////////
 
@@ -5757,8 +5875,7 @@ return width * (1 + ox) / 2.0f;
   public void loadPixels() {
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];      
-      pixelBuffer = IntBuffer.allocate(pixels.length);
-      pixelBuffer.rewind();
+      pixelBuffer = IntBuffer.allocate(pixels.length);      
     }
     
     boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
@@ -5767,14 +5884,14 @@ return width * (1 + ox) / 2.0f;
       setFramebuffer(offscreenFramebuffer);
     }
     
+    pixelBuffer.rewind();
     gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
     
     if (notCurrent) {
       popFramebuffer();
-    }    
-    
+    } 
+        
     pixelBuffer.get(pixels);
-    pixelBuffer.rewind();
 
     // flip vertically (opengl stores images upside down),
     // and swap RGBA components to ARGB (big endian)
@@ -6154,8 +6271,7 @@ return width * (1 + ox) / 2.0f;
   
   public int get(int x, int y) {
     if (getsetBuffer == null) {
-      getsetBuffer = IntBuffer.allocate(1);
-      getsetBuffer.rewind();
+      getsetBuffer = IntBuffer.allocate(1);      
     }
     
     boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
@@ -6168,6 +6284,7 @@ return width * (1 + ox) / 2.0f;
       setFramebuffer(offscreenFramebuffer);
     }
      
+    getsetBuffer.rewind();
     gl.glReadPixels(x, height - y - 1, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
 
     if (notCurrent) {
@@ -6199,6 +6316,7 @@ return width * (1 + ox) / 2.0f;
       setFramebuffer(offscreenFramebuffer);
     }    
 
+    newbieBuffer.rewind();
     gl.glReadPixels(x, height - y - h, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
 
     if (notCurrent) {
@@ -7105,7 +7223,6 @@ return width * (1 + ox) / 2.0f;
     context = drawable.createContext(null);    
   }
   
-  
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
     ogl = (PGraphicsOpenGL)parent.g;
@@ -7114,7 +7231,9 @@ return width * (1 + ox) / 2.0f;
     capabilities = ogl.getCapabilities();
     drawable = null;
     
-    getGLObjects();
+    registerPGLObject(this);
+    
+    getGLProfiles();
     loadTextureImpl(BILINEAR);
     
     // In case of reinitialization (for example, when the smooth level
@@ -7163,7 +7282,15 @@ return width * (1 + ox) / 2.0f;
     offscreenFramebuffer.clear();
   }
   
-  protected void getGLObjects() {
+  protected void updateOffscreenContext() {
+    context = ogl.getContext();
+    capabilities = ogl.getCapabilities();
+    drawable = null;    
+    
+    getGLProfiles();
+  }  
+  
+  protected void getGLProfiles() {
     gl = context.getGL();        
     
     if (pipeline == PROG_GL4) {
@@ -7232,7 +7359,7 @@ return width * (1 + ox) / 2.0f;
       fboSupported = true;
     }
     if (-1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample")) {
-      fboMultisampleSupported = true;
+      //fboMultisampleSupported = true;
     }    
 
     blendEqSupported = true;   

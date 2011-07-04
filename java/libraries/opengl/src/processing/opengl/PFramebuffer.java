@@ -73,7 +73,7 @@ public class PFramebuffer implements PConstants {
     this(parent, w, h, 1, 1, 0, 0, false, false);
   }  
   
-  PFramebuffer(PApplet parent, int w, int h, boolean screen) {
+  PFramebuffer(PApplet parent, int w, int h, boolean screen) {    
     this(parent, w, h, 1, 1, 0, 0, false, screen);
   }
 
@@ -82,7 +82,7 @@ public class PFramebuffer implements PConstants {
                boolean screen) {
     this.parent = parent;
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerGLObject(this);
+    ogl.registerPGLObject(this);
     
     glFboID = 0;
     glDepthBufferID = 0;
@@ -91,6 +91,13 @@ public class PFramebuffer implements PConstants {
     glColorBufferMultisampleID = 0;
         
     fboMode = PGraphicsOpenGL.fboSupported;
+    
+    if (screen) {
+      // If this framebuffer is used to represent a on-screen buffer,
+      // then it doesn't make it sense for it to have multisampling,
+      // color, depth or stencil buffers.
+      depthBits = stencilBits = samples = colorBuffers = 0; 
+    }
     
     width = w;
     height = h;
@@ -150,7 +157,7 @@ public class PFramebuffer implements PConstants {
     for (int i = 0; i < numColorBuffers; i++) {
       colorBufferTex[i] = null;  
     }
-    ogl.unregisterGLObject(this);
+    ogl.unregisterPGLObject(this);
   }
   
   public void backup() {
@@ -230,7 +237,8 @@ public class PFramebuffer implements PConstants {
     
   // Saves content of the screen into the backup texture.
   public void backupScreen() {  
-    if (pixelBuffer == null) createPixelBuffer();
+    if (pixelBuffer == null) createPixelBuffer();    
+    pixelBuffer.rewind();
     getGl().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);    
     copyToTexture(pixelBuffer, backupTexture.glID, backupTexture.glTarget);
   }
@@ -243,6 +251,7 @@ public class PFramebuffer implements PConstants {
   // Copies current content of screen to color buffers.
   public void copyToColorBuffers() {
     if (pixelBuffer == null) createPixelBuffer();
+    pixelBuffer.rewind();
     getGl().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
     for (int i = 0; i < numColorBuffers; i++) {
       copyToTexture(pixelBuffer, colorBufferTex[i].glID, colorBufferTex[i].glTarget);
@@ -251,6 +260,7 @@ public class PFramebuffer implements PConstants {
   
   public void readPixels() {
     if (pixelBuffer == null) createPixelBuffer();
+    pixelBuffer.rewind();
     getGl().glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
   }
   
@@ -311,10 +321,7 @@ public class PFramebuffer implements PConstants {
                                        colorBufferTex[i].glTarget, colorBufferTex[i].glID, 0);
       }
 
-      if (validFbo() && textures != null && 0 < textures.length) {
-        width = textures[0].glWidth;
-        height = textures[0].glHeight;
-      }
+      validateFbo();
 
       ogl.popFramebuffer();
     }
@@ -542,7 +549,7 @@ public class PFramebuffer implements PConstants {
     getGl().glDisable(gltarget);
   }  
   
-  public boolean validFbo() {
+  public boolean validateFbo() {
     int status = getGl().glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);        
     if (status == GL.GL_FRAMEBUFFER_COMPLETE) {
       return true;

@@ -176,7 +176,7 @@ public class PShape3D extends PShape {
     this();
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerGLObject(this);
+    ogl.registerPGLObject(this);
     
     this.family = PShape.GROUP;
     this.name = "root";
@@ -190,7 +190,7 @@ public class PShape3D extends PShape {
   public PShape3D(PApplet parent, String filename, Parameters params) {
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerGLObject(this);
+    ogl.registerPGLObject(this);
 
     this.family = PShape.GROUP;
     this.name = "root";
@@ -209,7 +209,7 @@ public class PShape3D extends PShape {
   public PShape3D(PApplet parent, int size, Parameters params) {
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerGLObject(this);
+    ogl.registerPGLObject(this);
     
     this.family = PShape.GROUP;
     this.name = "root";
@@ -228,7 +228,7 @@ public class PShape3D extends PShape {
   public void delete() {
     if (root != this) return; // Can be done only from the root shape.    
     release();
-    ogl.unregisterGLObject(this);
+    ogl.unregisterPGLObject(this);
   }
   
   
