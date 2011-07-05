@@ -7359,7 +7359,7 @@ return width * (1 + ox) / 2.0f;
       fboSupported = true;
     }
     if (-1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample")) {
-      //fboMultisampleSupported = true;
+      fboMultisampleSupported = true;
     }    
 
     blendEqSupported = true;   
