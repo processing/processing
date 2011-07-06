@@ -201,6 +201,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected float[] pcamera;
   protected float[] pcameraInv;
   
+  protected float[] pprojection;
+  
   protected float[] gltemp;
   
   // PMatrix3D version for use in Processing.
@@ -210,6 +212,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public PMatrix3D camera;
   public PMatrix3D cameraInv;
+  
+  /** 
+   * Marks when changes to the size have occurred, so that the camera 
+   * will be reset in beginDraw().
+   */
+  protected boolean sizeChanged;  
   
   protected boolean modelviewUpdated;
   protected boolean projectionUpdated;
@@ -603,6 +611,9 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraNear = cameraZ / 10.0f;
     cameraFar = cameraZ * 10.0f;
     cameraAspect = (float) width / (float) height;
+    
+    // set this flag so that beginDraw() will do an update to the camera.
+    sizeChanged = true;    
   }
 
 
@@ -621,6 +632,7 @@ public class PGraphicsOpenGL extends PGraphics {
       glmodelviewInv = new float[16];
       pcamera = new float[16];
       pcameraInv = new float[16];
+      pprojection = new float[16];
       gltemp = new float[16];
       
       projection = new PMatrix3D();
@@ -1190,14 +1202,25 @@ public class PGraphicsOpenGL extends PGraphics {
       resized = false;            
     }
     
-    // set up the default camera and initializes modelview matrix.
-    camera();
+    if (sizeChanged) {    
+      // set up the default camera and initializes modelview matrix.
+      camera();
 
-    // defaults to perspective, if the user has setup up their
-    // own projection, they'll need to fix it after resize anyway.
-    // this helps the people who haven't set up their own projection.
-    perspective();
-        
+      // defaults to perspective, if the user has setup up their
+      // own projection, they'll need to fix it after resize anyway.
+      // this helps the people who haven't set up their own projection.
+      perspective();
+      // clear the flag
+      sizeChanged = false;
+    } else {
+      // The pcamera and pprojection arrays, saved when calling camera() and frustrum()
+      // are set as the current modelview and projection matrices. This is done to
+      // remove any additional modelview transformation (and less likely, projection
+      // transformations) applied by the user after setting the camera and/or projection      
+      restoreCamera();
+      restoreProjection();
+    }
+      
     noLights();
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
@@ -4422,9 +4445,24 @@ return width * (1 + ox) / 2.0f;
       gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     }    
     if (usingGLMatrixStack) {
-      projection.set(glmodelview);
+      projectionStack.set(glprojection);
     }
     projectionUpdated = true;
+  }
+  
+  public void restoreProjection() {
+    PApplet.arrayCopy(pprojection, glprojection);
+    copyGLArrayToPMatrix(pprojection, projection);
+    
+    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    gl2f.glLoadMatrixf(glprojection, 0);
+    if (matrixMode == MODELVIEW) { 
+      gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    }    
+    if (usingGLMatrixStack) {
+      projectionStack.set(glprojection);
+    }
+    projectionUpdated = true;    
   }
   
   //////////////////////////////////////////////////////////////
@@ -4831,12 +4869,28 @@ return width * (1 + ox) / 2.0f;
     modelviewUpdated = true;
 
     calculateModelviewInvNoScaling();
+    
     PApplet.arrayCopy(glmodelview, pcamera);
     PApplet.arrayCopy(glmodelviewInv, pcameraInv);
     copyGLArrayToPMatrix(pcamera, camera);
-    copyGLArrayToPMatrix(pcameraInv, cameraInv);
+    copyGLArrayToPMatrix(pcameraInv, cameraInv);        
   }
 
+  public void restoreCamera() {
+    PApplet.arrayCopy(pcamera, glmodelview);
+    PApplet.arrayCopy(pcameraInv, glmodelviewInv);
+    copyGLArrayToPMatrix(pcamera, camera);
+    copyGLArrayToPMatrix(pcameraInv, cameraInv);
+    
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    gl2f.glLoadMatrixf(glmodelview, 0);
+    if (usingGLMatrixStack) {
+      modelviewStack.set(glmodelview);
+    }
+    copyGLArrayToPMatrix(glmodelview, modelview);
+    modelviewUpdated = true;    
+  }
+  
   /**
    * Print the current camera matrix.
    */
@@ -4994,7 +5048,9 @@ return width * (1 + ox) / 2.0f;
     gl2f.glLoadMatrixf(glprojection, 0);
     copyGLArrayToPMatrix(glprojection, projection);
     projectionUpdated = true;
-
+    
+    PApplet.arrayCopy(glprojection, pprojection);
+    
     // The matrix mode is always MODELVIEW, because the user will be doing
     // geometrical transformations all the time, projection transformations 
     // only a few times.
