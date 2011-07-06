@@ -300,8 +300,7 @@ class PFontTexture implements PConstants {
     if (currentTex != lastTex || resized) {
       setTexture(lastTex);
     }
-    
-    //textures[currentTex].setTexels(offsetX, offsetY, w, h, rgba);    
+      
     TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY, w, h, rgba);
     offsetX += w;
  

@@ -287,13 +287,16 @@ public class PFramebuffer implements PConstants {
 
   // Color buffer setters.
   
+  
   public void setColorBuffer(PTexture tex) {
     setColorBuffers(new PTexture[] { tex }, 1);
   }
+  
 
   public void setColorBuffers(PTexture[] textures) {
     setColorBuffers(textures, textures.length);
   }
+  
   
   public void setColorBuffers(PTexture[] textures, int n) {
     if (screenFb) return;
@@ -326,6 +329,7 @@ public class PFramebuffer implements PConstants {
       ogl.popFramebuffer();
     }
   }  
+  
   
   ///////////////////////////////////////////////////////////  
 
