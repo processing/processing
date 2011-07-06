@@ -6185,7 +6185,7 @@ return width * (1 + ox) / 2.0f;
       setFramebuffer(offscreenFramebuffer);
     }
     
-    drawTexture(texture, texCrop, 0, 0, width, height);
+    drawTexture();
     
     if (notCurrent) {
       popFramebuffer();
@@ -6392,8 +6392,7 @@ return width * (1 + ox) / 2.0f;
       if (notCurrent) {
         pushFramebuffer();
         setFramebuffer(offscreenFramebuffer);
-      } 
-            
+      }
       
       // The crop region and draw rectangle are given like this to take into account
       // inverted y-axis in Processin with respect to OpenGL.
