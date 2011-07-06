@@ -1294,14 +1294,17 @@ public class PGraphicsOpenGL extends PGraphics {
     allocatePGLObjects();    
   }
   
+  
   public void backupGL() {
     backupPGLObjects();
   }  
+  
   
   public void restoreGL() {
     clearPGLFramebuffers();
     restorePGLObjects();
   }
+  
   
   protected void saveGLState() {
     saveGLMatrices();
