@@ -44,8 +44,9 @@ import java.nio.*;
 public class PTexture implements PConstants { 
   public int width, height;
     
-  protected PApplet parent;
-  protected PGraphicsAndroid3D a3d;
+  protected PApplet parent;         // The Processing applet
+  protected PGraphicsAndroid3D a3d; // The main renderer
+  protected PImage img;             // The parent image
 
   public int glID; 
   public int glTarget;
@@ -98,47 +99,39 @@ public class PTexture implements PConstants {
     this.height = height;
        
     a3d = (PGraphicsAndroid3D)parent.g;
+    a3d.registerPGLObject(this);
     
     glID = 0;
     
-    setParameters(params);
-    createTexture(width, height);        
+    init(width, height, (Parameters)params);       
   } 
-  
-
-  /**
-   * Creates an instance of PTexture using image file filename as source.
-   * @param parent PApplet
-   * @param filename String
-   */ 
-  public PTexture(PApplet parent, String filename)  {
-    this(parent, filename,  new Parameters());
-  }
-
-  
-  /**
-   * Creates an instance of PTexture using image file filename as source and the specified texture parameters.
-   * @param parent PApplet
-   * @param filename String
-   * @param params Parameters
-   */ 
-  public PTexture(PApplet parent, String filename, Parameters params)  {
-    this.parent = parent;
-     
-    a3d = (PGraphicsAndroid3D)parent.g;
-
-    glID = 0;
-    
-    PImage img = parent.loadImage(filename);
-    setParameters(params);
-    set(img);       
-  }
 
 
   public void delete() {    
-    deleteTexture();
+    release();
+    img = null;
+    a3d.unregisterPGLObject(this);
   }
   
+  
+  public void backup() {
+    if (img != null) {
+      img.loadPixels();
+      if (img.pixels != null && (img instanceof PGraphicsAndroid3D)) {
+        // When img is an offscreen renderer, the loadPixels() call above 
+        // already takes care of copying the contents of the color buffer 
+        // to  the pixels array.
+        get(img.pixels);
+      }
+    }        
+  }
+
+  
+  public void restore() {    
+    if (img != null && img.pixels != null) {
+      set(img.pixels);
+    }    
+  }  
   
   ////////////////////////////////////////////////////////////
   
@@ -175,10 +168,9 @@ public class PTexture implements PConstants {
    * @param params GLTextureParameters 
    */
   public void init(int width, int height, Parameters params)  {
-    this.width = width;
-    this.height = height;    
     setParameters(params);
-    createTexture(width, height);
+    setSize(width, height);
+    allocate();
   } 
 
 
@@ -261,10 +253,6 @@ public class PTexture implements PConstants {
     if (pixels.length != w * h) {
       throw new RuntimeException("PTexture: wrong length of pixels array");
     }
-    
-    if (glID == 0) {
-      createTexture(width, height);
-    }   
     
     getGl().glEnable(glTarget);
     getGl().glBindTexture(glTarget, glID);
@@ -824,17 +812,13 @@ public class PTexture implements PConstants {
   
   ///////////////////////////////////////////////////////////  
 
-  // Create/delete texture.    
+  // Allocate/release texture.    
+ 
 
+  protected void setSize(int w, int h) {
+    width = w;
+    height = h;
     
-  /**
-   * Creates the opengl texture object.
-   * @param w int
-   * @param h int  
-   */
-  protected void createTexture(int w, int h) {
-    deleteTexture(); // Just in the case this object is being re-initialized.
-      
     if (PGraphicsAndroid3D.npotTexSupported) {
       glWidth = w;
       glHeight = h;
@@ -850,7 +834,20 @@ public class PTexture implements PConstants {
                                  " with this graphics card.");
     }    
     
-    usingMipmaps = glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR;
+    // If non-power-of-two textures are not supported, and the specified width or height
+    // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
+    // is chosen to be the next power of two, and this quotient will give the appropriate
+    // maximum texture coordinate value given this situation.
+    maxTexCoordU = (float)w / glWidth;
+    maxTexCoordV = (float)h / glHeight;  
+  }
+  
+    
+  /**
+   * Creates the opengl texture object.
+   */
+  protected void allocate() {
+    release(); // Just in the case this object is being re-initialized.
      
     getGl().glEnable(glTarget);
     glID = a3d.createGLResource(PGraphicsAndroid3D.GL_TEXTURE_OBJECT);     
@@ -860,42 +857,38 @@ public class PTexture implements PConstants {
     getGl().glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_S, glWrapS);
     getGl().glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, glWrapT);
      
-    //First, we use glTexImage2D to set the full size of the texture (glW/H might be diff from
-    // w/h in the case that the GPU doesn't support NPOT textures)
+ // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
+    // from w/h in the case that the GPU doesn't support NPOT textures)
     getGl().glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, 
                          GL10.GL_UNSIGNED_BYTE, null);
 
     // Once OpenGL knows the size of the new texture, we make sure it doesn't
     // contain any garbage in the region of interest (0, 0, w, h):
-    int[] texels = new int[w * h];
-    java.util.Arrays.fill(texels, 0, w * h, 0x00000000);    
-    setTexels(0, 0, w, h, texels);    
+    int[] texels = new int[width * height];
+    java.util.Arrays.fill(texels, 0, width * height, 0x00000000); 
+    setTexels(0, 0, width, height, texels); 
     texels = null;
     
     getGl().glBindTexture(glTarget, 0);
     getGl().glDisable(glTarget);
-        
-    flippedX = false;
-    flippedY = false;
- 
-    // If non-power-of-two textures are not supported, and the specified width or height
-    // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
-    // is chosen to be the next power of two, and this quotient will give the appropriate
-    // maximum texture coordinate value given this situation.
-    maxTexCoordU = (float)w / glWidth;
-    maxTexCoordV = (float)h / glHeight; 
   }
 
     
   /**
    * Deletes the opengl texture object.
    */
-  protected void deleteTexture() {
+  protected void release() {
     if (glID != 0) {
       a3d.deleteGLResource(glID, PGraphicsAndroid3D.GL_TEXTURE_OBJECT);
       glID = 0;
     }
   }
+
+  
+  ///////////////////////////////////////////////////////////  
+
+  // Utilities.    
+  
   
   // Copies source texture tex into this.
   protected void copyTexels(PTexture tex, int x, int y, int w, int h, boolean scale) {
@@ -938,7 +931,7 @@ public class PTexture implements PConstants {
   protected void copyObject(PTexture src) {
     // The OpenGL texture of this object is replaced with the one from the source object, 
     // so we delete the former to avoid resource wasting.
-    deleteTexture(); 
+    release(); 
   
     width = src.width;
     height = src.height;
@@ -1057,6 +1050,11 @@ public class PTexture implements PConstants {
     } else {
       throw new RuntimeException("A3D: Unknown wrapping mode");     
     }
+    
+    usingMipmaps = glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR;
+    
+    flippedX = false;
+    flippedY = false;    
   } 
 
   /////////////////////////////////////////////////////////////////////////// 
