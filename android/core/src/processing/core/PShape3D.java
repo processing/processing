@@ -191,6 +191,8 @@ public class PShape3D extends PShape implements PConstants {
     glNormalBufferID = 0;
     glTexCoordBufferID = null;
     
+    updateElement = -1; 
+    
     initShapeOBJ(filename, params);    
   }  
   
@@ -207,12 +209,16 @@ public class PShape3D extends PShape implements PConstants {
     glNormalBufferID = 0;
     glTexCoordBufferID = null;
     
+    updateElement = -1; 
+    
     initShape(size, params);
   }
   
 
   public void delete() {
     if (root != this) return; // Can be done only from the root shape.
+    release();
+    a3d.unregisterPGLObject(this);
     
     deleteVertexBuffer();
     deleteColorBuffer();
@@ -221,6 +227,31 @@ public class PShape3D extends PShape implements PConstants {
     deleteIndexBuffer();
   }
 
+  public void backup() {
+    
+  }  
+  
+  public void restore() {
+    if (root != this) return; // Can be done only from the root shape.
+    
+    // Loading/updating each piece of data so the arrays on the CPU-side 
+    // are copied to the VBOs on the GPU.
+    
+    loadVertices();
+    updateVertices();
+    
+    loadColors();
+    updateColors();
+    
+    loadNormals();
+    updateNormals();
+
+    for (int i = 0; i < numTexBuffers; i++) {
+      loadTexcoords(i);    
+      updateTexcoords();
+    }
+  }  
+  
   ////////////////////////////////////////////////////////////
 
   // SHAPE RECORDING HACK
@@ -2121,7 +2152,9 @@ public class PShape3D extends PShape implements PConstants {
     }
     
     setParameters(params);
-    allocateShape(numVert);         
+    setSize(numVert);
+    allocate();
+    initChildrenData();
     updateElement = -1;
     
     resetBounds();
@@ -2163,28 +2196,45 @@ public class PShape3D extends PShape implements PConstants {
     vertexCount = objVertices.size();
   }
     
-  protected void allocateShape(int numVert) {
+  ///////////////////////////////////////////////////////////  
+
+  // Allocate/release shape. 
+  
+  protected void setSize(int numVert) {
     vertexCount = numVert;
     numTexBuffers = 1;
+    
     firstVertex = 0;
     lastVertex = numVert - 1;
-    
+
     initVertexData();
-    createVertexBuffer();   
     initColorData();
-    createColorBuffer();
     initNormalData();
-    createNormalBuffer();
-    initTexCoordData();
-    createTexCoordBuffer();
-    
-    initChildrenData(); 
+    initTexCoordData();    
   }
   
-  protected void initChildrenData() {
-    children = null;
-    vertexChild = new PShape3D[vertexCount];    
+  protected void allocate() {
+    release(); // Just in the case this object is being re-allocated.
+    
+    createVertexBuffer();    
+    createColorBuffer();    
+    createNormalBuffer();    
+    createTexCoordBuffer();
   }
+  
+  protected void release() {
+    deleteVertexBuffer();
+    deleteColorBuffer();
+    deleteTexCoordBuffer();
+    deleteNormalBuffer();    
+    deleteIndexBuffer();    
+  }
+    
+  
+  ////////////////////////////////////////////////////////////  
+  
+  // Data creation, deletion.
+
   
   protected void initVertexData() {    
     ByteBuffer vbb = ByteBuffer.allocateDirect(vertexCount * 3 * PGraphicsAndroid3D.SIZEOF_FLOAT);
@@ -2198,8 +2248,6 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void createVertexBuffer() {    
-    deleteVertexBuffer();  // Just in the case this object is being re-initialized.
-    
     glVertexBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);    
     getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glVertexBufferID);    
     final int bufferSize = vertexBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;
@@ -2224,8 +2272,6 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void createColorBuffer() {
-    deleteColorBuffer();
-    
     glColorBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
     getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glColorBufferID);
     final int bufferSize = colorBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;    
@@ -2246,8 +2292,6 @@ public class PShape3D extends PShape implements PConstants {
 
   
   protected void createNormalBuffer() {
-    deleteNormalBuffer();
-    
     glNormalBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
     getGl().glBindBuffer(GL11.GL_ARRAY_BUFFER, glNormalBufferID);
     final int bufferSize = normalBuffer.capacity() * PGraphicsAndroid3D.SIZEOF_FLOAT;    
@@ -2275,8 +2319,6 @@ public class PShape3D extends PShape implements PConstants {
     if (glTexCoordBufferID == null) {
       glTexCoordBufferID = new int[PGraphicsAndroid3D.MAX_TEXTURES];
       java.util.Arrays.fill(glTexCoordBufferID, 0);      
-    } else {
-      deleteTexCoordBuffer();
     }
     
     glTexCoordBufferID[0] = a3d.createGLResource(PGraphicsAndroid3D.GL_VERTEX_BUFFER);
@@ -2360,8 +2402,10 @@ public class PShape3D extends PShape implements PConstants {
   
   
   protected void deleteTexCoordBuffer() {
-    for (int i = 0; i < numTexBuffers; i++) { 
-      deleteTexCoordBuffer(i);    
+    if (glTexCoordBufferID != null) {
+      for (int i = 0; i < glTexCoordBufferID.length; i++) { 
+        deleteTexCoordBuffer(i);    
+      }
     }
   }
   
@@ -2373,6 +2417,11 @@ public class PShape3D extends PShape implements PConstants {
     }
   }
   
+  
+  protected void initChildrenData() {
+    children = null;
+    vertexChild = new PShape3D[vertexCount];    
+  }  
 
   ///////////////////////////////////////////////////////////  
 
@@ -3059,7 +3108,9 @@ public class PShape3D extends PShape implements PConstants {
     }
     
     // Allocate space for the geometry that the triangulator has generated from the OBJ model.
-    allocateShape(a3d.recordedVertices.size());          
+    setSize(a3d.recordedVertices.size());
+    allocate();
+    initChildrenData();
     updateElement = -1;
     
     width = height = depth = 0;

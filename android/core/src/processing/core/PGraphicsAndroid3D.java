@@ -103,6 +103,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected final int GL_FRAME_BUFFER = 2;
   static protected final int GL_RENDER_BUFFER = 3;
   
+  static protected Set<PGraphicsAndroid3D> pGraphicsAndroid3DObjects = new HashSet<PGraphicsAndroid3D>();
+  static protected Set<PTexture> pTextureObjects = new HashSet<PTexture>();
+  static protected Set<PFramebuffer> pFramebufferObjects = new HashSet<PFramebuffer>();
+  static protected Set<PShape3D> pShape3DObjects = new HashSet<PShape3D>();
+  static protected Set<PFontTexture> pFontTextureObjects = new HashSet<PFontTexture>();   
   static protected Set<Integer> glTextureObjects = new HashSet<Integer>();
   static protected Set<Integer> glVertexBuffers = new HashSet<Integer>();
   static protected Set<Integer> glFrameBuffers = new HashSet<Integer>();
@@ -611,6 +616,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (primarySurface){
       a3d = this;
     } else {
+      if (a3d == null) {
+        registerPGLObject(this);
+      }
       a3d = (PGraphicsAndroid3D)parent.g;
     }
     
@@ -625,6 +633,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (offscreenFramebuffer != null) {
         offscreenFramebuffer.delete();
       }
+      unregisterPGLObject(this);
     }
   }
   
@@ -639,6 +648,161 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // RESOURCE HANDLING
     
+  protected void allocatePGLObjects() {
+    // Note: it is important that allocation / backup / restoration are don
+    // in the order below (0: pGraphicsAndroid3DObjects, 1: PTexture objects, 2: PFramebuffer 
+    // objects, etc.) since both PFramebuffers and PShape3Ds might need a valid PTexture 
+    // for their re-allocation.
+    // The case of pGraphicsAndroid3DObjects is special, the list is only stores offscreen surfaces
+    // in order to call allocate() upon context re-creation. allocate() for non-primary
+    // surfaces ends up just updating the context associated to them.     
+    
+    if (!pGraphicsAndroid3DObjects.isEmpty()) {
+      Object[] globjs = pGraphicsAndroid3DObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PGraphicsAndroid3D obj = (PGraphicsAndroid3D)globjs[i];
+        obj.allocate();
+      }  
+    }      
+    
+    if (!pTextureObjects.isEmpty()) {
+      Object[] globjs = pTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PTexture obj = (PTexture)globjs[i];
+        obj.allocate();
+      }  
+    }      
+      
+    if (!pFramebufferObjects.isEmpty()) {
+      Object[] globjs = pFramebufferObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFramebuffer obj = (PFramebuffer)globjs[i];
+        obj.allocate();
+      }  
+    }   
+    
+    if (!pShape3DObjects.isEmpty()) {
+      Object[] globjs = pShape3DObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PShape3D obj = (PShape3D)globjs[i];
+        obj.allocate();
+      }  
+    }     
+    
+    if (!pFontTextureObjects.isEmpty()) {
+      Object[] globjs = pFontTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFontTexture obj = (PFontTexture)globjs[i];
+        obj.allocate();
+      }  
+    }
+  }
+  
+  protected void backupPGLObjects() {
+    if (!pTextureObjects.isEmpty()) {
+      Object[] globjs = pTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PTexture obj = (PTexture)globjs[i];
+        obj.backup();
+      }  
+    }      
+      
+    if (!pFramebufferObjects.isEmpty()) {
+      Object[] globjs = pFramebufferObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFramebuffer obj = (PFramebuffer)globjs[i];
+        obj.backup();
+      }  
+    }   
+    
+    if (!pShape3DObjects.isEmpty()) {
+      Object[] globjs = pShape3DObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PShape3D obj = (PShape3D)globjs[i];
+        obj.backup();
+      }  
+    }     
+    
+    if (!pFontTextureObjects.isEmpty()) {
+      Object[] globjs = pFontTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFontTexture obj = (PFontTexture)globjs[i];
+        obj.backup();
+      }  
+    }
+  }  
+  
+  protected void clearPGLFramebuffers() {
+    if (!pFramebufferObjects.isEmpty()) {
+      Object[] globjs = pFramebufferObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFramebuffer obj = (PFramebuffer)globjs[i];
+        obj.clear();
+      }  
+    }     
+  }
+  
+  protected void restorePGLObjects() {
+    if (!pTextureObjects.isEmpty()) {
+      Object[] globjs = pTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PTexture obj = (PTexture)globjs[i];
+        obj.restore();
+      }  
+    }      
+      
+    if (!pFramebufferObjects.isEmpty()) {
+      Object[] globjs = pFramebufferObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFramebuffer obj = (PFramebuffer)globjs[i];
+        obj.restore();
+      }  
+    }   
+    
+    if (!pShape3DObjects.isEmpty()) {
+      Object[] globjs = pShape3DObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PShape3D obj = (PShape3D)globjs[i];
+        obj.restore();
+      }  
+    }     
+    
+    if (!pFontTextureObjects.isEmpty()) {
+      Object[] globjs = pFontTextureObjects.toArray();
+      for (int i = 0; i < globjs.length; i++) {
+        PFontTexture obj = (PFontTexture)globjs[i];
+        obj.restore();
+      }  
+    }  
+  }
+  
+  protected void registerPGLObject(Object obj) {
+    if (obj instanceof PGraphicsAndroid3D) {
+      pGraphicsAndroid3DObjects.add((PGraphicsAndroid3D)obj);
+    } else if (obj instanceof PTexture) {
+      pTextureObjects.add((PTexture)obj);
+    } else if (obj instanceof PFramebuffer) {
+      pFramebufferObjects.add((PFramebuffer)obj);
+    } else if (obj instanceof PShape3D) {
+      pShape3DObjects.add((PShape3D)obj);
+    } else if (obj instanceof PFontTexture) {
+      pFontTextureObjects.add((PFontTexture)obj);
+    }    
+  }
+
+  protected void unregisterPGLObject(Object obj) {
+    if (obj instanceof PGraphicsAndroid3D) {
+      pGraphicsAndroid3DObjects.remove(obj);
+    } else if (obj instanceof PTexture) {
+      pTextureObjects.remove(obj);
+    } else if (obj instanceof PFramebuffer) {
+      pFramebufferObjects.remove(obj);
+    } else if (obj instanceof PShape3D) {
+      pShape3DObjects.remove(obj);
+    } else if (obj instanceof PFontTexture) {
+      pFontTextureObjects.remove(obj);
+    }
+  }
   
   protected int createGLResource(int type) {
     int id = 0;
@@ -987,6 +1151,22 @@ public class PGraphicsAndroid3D extends PGraphics {
     restoreGLState();
   }
 
+  
+  public void allocateGL() {
+    allocatePGLObjects();    
+  }
+  
+  
+  public void backupGL() {
+    backupPGLObjects();
+  }  
+  
+  
+  public void restoreGL() {
+    clearPGLFramebuffers();
+    restorePGLObjects();
+  }  
+  
   
   protected void saveGLState() {
     saveGLMatrices();  
@@ -5386,7 +5566,18 @@ public class PGraphicsAndroid3D extends PGraphics {
       pixelBuffer.rewind();
     }
 
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }    
+    
     gl.glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+    
+    if (notCurrent) {
+      popFramebuffer();
+    } 
+    
     pixelBuffer.get(pixels);
     pixelBuffer.rewind();
 
@@ -5666,8 +5857,24 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // Copying pixel buffer to screen texture...
     copyToTexture(pixelBuffer);
+        
     // ...and drawing the texture to screen.
-    drawTexture();   
+    
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
+      // If this is an offscreen surface that is not current, then the offscreen framebuffer
+      // is bound so the texture is drawn to it instead to the main surface. Even if the
+      // surface in antialiased we don't need to bind the multisample framebuffer, we
+      // just draw to the regular offscreen framebuffer.
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }
+    
+    drawTexture();  
+    
+    if (notCurrent) {
+      popFramebuffer();
+    }     
   }
   
   //////////////////////////////////////////////////////////////
@@ -5706,7 +5913,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // Draws wherever it is in the screen texture right now to the screen.
   public void updateTexture() {
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    }  
+    
     drawTexture();
+    
+    if (notCurrent) {
+      popFramebuffer();
+    }     
   }
   
   protected void drawTexture() {
@@ -5750,15 +5967,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       getsetBuffer.rewind();
     }
      
-    boolean nonCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    if (nonCurrent) {
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
       pushFramebuffer();
       setFramebuffer(offscreenFramebuffer);
     }
     
     gl.glReadPixels(x, height - y - 1, 1, 1, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, getsetBuffer);
 
-    if (nonCurrent) {
+    if (notCurrent) {
       popFramebuffer();
     }  
     
@@ -5781,15 +5998,15 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);
     
-    boolean nonCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    if (nonCurrent) {
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
       pushFramebuffer();
       setFramebuffer(offscreenFramebuffer);
     }      
     
     gl.glReadPixels(x, height - y - h, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, newbieBuffer);
     
-    if (nonCurrent) {
+    if (notCurrent) {
       popFramebuffer();
     }     
     
@@ -5829,8 +6046,19 @@ public class PGraphicsAndroid3D extends PGraphics {
       getsetTexture = new PTexture(parent, 1, 1, new PTexture.Parameters(ARGB, POINT));
     }
     
-    copyToTexture(getsetTexture, getsetBuffer, 0, 0, 1, 1);    
+    copyToTexture(getsetTexture, getsetBuffer, 0, 0, 1, 1);  
+    
+    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    if (notCurrent) {
+      pushFramebuffer();
+      setFramebuffer(offscreenFramebuffer);
+    } 
+    
     drawTexture(getsetTexture, 0, 0, 1, 1, x, height - y, 1, 1);
+    
+    if (notCurrent) {
+      popFramebuffer();
+    }     
   }
 
   /**
@@ -5843,9 +6071,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (tex != null) {
       int w = source.width; 
       int h = source.height;
+      
+      boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+      if (notCurrent) {
+        pushFramebuffer();
+        setFramebuffer(offscreenFramebuffer);
+      }
+      
       // The crop region and draw rectangle are given like this to take into account
       // inverted y-axis in Processin with respect to OpenGL.
       drawTexture(tex, 0, h, w, -h, x, height - y, w, h);
+      
+      if (notCurrent) {
+        popFramebuffer();
+      }       
     }
   }
 
@@ -6340,12 +6579,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     offscreenIndex = 0;
 
-    offscreenFramebuffer = new PFramebuffer(parent, offscreenTextures[0].glWidth, offscreenTextures[0].glHeight, false);
-
-    offscreenFramebuffer.addDepthBuffer(offscreenDepthBits);
-    if (0 < offscreenStencilBits) {
-      offscreenFramebuffer.addStencilBuffer(offscreenStencilBits); 
-    }
+    offscreenFramebuffer = new PFramebuffer(parent, offscreenTextures[0].glWidth, offscreenTextures[0].glHeight,
+                                            1, 1, offscreenDepthBits, offscreenStencilBits, false);
     
     // The image texture points to the current offscreen texture.
     texture = offscreenTextures[offscreenIndex]; 
