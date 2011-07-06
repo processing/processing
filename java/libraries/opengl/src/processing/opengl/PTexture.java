@@ -97,39 +97,7 @@ public class PTexture implements PConstants {
     
     init(width, height, (Parameters)params);
   } 
-  
 
-  /**
-   * Creates an instance of PTexture using image file filename as source.
-   * @param parent PApplet
-   * @param filename String
-   */ 
-  /*
-  public PTexture(PApplet parent, String filename)  {
-    this(parent, filename, new Parameters());
-  }
-*/
-  
-  /**
-   * Creates an instance of PTexture using image file filename as source and the specified texture parameters.
-   * @param parent PApplet
-   * @param filename String
-   * @param params Parameters
-   */
-  /*
-  public PTexture(PApplet parent, String filename, Object params)  {
-    this.parent = parent;
-     
-    ogl = (PGraphicsOpenGL)parent.g;  
-    ogl.registerGLObject(this);
-    
-    glID = 0;
-    
-    PImage img = parent.loadImage(filename);
-    setParameters((Parameters)params);
-    set(img);
-  }
-*/
 
   public void delete() {
     release();
@@ -703,6 +671,7 @@ public class PTexture implements PConstants {
 
   // Allocate/release texture.    
 
+  
   protected void setSize(int w, int h) {
     width = w;
     height = h;
@@ -730,10 +699,9 @@ public class PTexture implements PConstants {
     maxTexCoordV = (float)height / glHeight;    
   }
   
+  
   /**
-   * Allocates the opengl texture object.
-   * @param w int
-   * @param h int  
+   * Allocates the opengl texture object. 
    */
   protected void allocate() {
     release(); // Just in the case this object is being re-allocated.
@@ -762,6 +730,7 @@ public class PTexture implements PConstants {
     getGl().glDisable(glTarget); 
   }
   
+  
   /**
    * Deletes the opengl texture object.
    */
@@ -771,6 +740,7 @@ public class PTexture implements PConstants {
       glID = 0;
     }
   }
+
   
   ///////////////////////////////////////////////////////////  
 
