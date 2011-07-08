@@ -79,7 +79,7 @@ public class FileDownloader implements Runnable {
       }
     } catch (IOException e) {
       Base.showWarning("Trouble downloading file",
-                       "An error occured while downloading the library:\n"
+                       "An error occured while downloading the file:\n"
                            + e.getMessage(), e);
     }
 
