@@ -39,8 +39,8 @@ import java.awt.*;
 import java.net.*;
 import java.text.*;
 
-import processing.app.LibraryListing.LibraryInfo;
-import processing.app.LibraryListing.LibraryInfo.Author;
+import processing.app.Library.LibraryInfo;
+import processing.app.Library.LibraryInfo.Author;
 
 public class LibraryListPanel extends JPanel implements Scrollable {
   
@@ -516,20 +516,20 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     private String createAuthorString() {
       StringBuilder authors = new StringBuilder();
       
-      if (!libInfo.authors.isEmpty()) {
+      if (libInfo.authorList != null && !libInfo.authorList.isEmpty()) {
         authors.append(" by ");
         
-        for (int i = 0; i < libInfo.authors.size(); i++) {
-          Author author = libInfo.authors.get(i);
+        for (int i = 0; i < libInfo.authorList.size(); i++) {
+          Author author = libInfo.authorList.get(i);
           if (author.url == null) {
             authors.append(author.name);
           } else {
             authors.append("<a href=\"" + author.url + "\">" + author.name + "</a>");
           }
-          if (i + 2 < libInfo.authors.size()) {
+          if (i + 2 < libInfo.authorList.size()) {
             authors.append(", ");
-          } else if (i + 2 == libInfo.authors.size()) {
-            if (libInfo.authors.size() > 2) {
+          } else if (i + 2 == libInfo.authorList.size()) {
+            if (libInfo.authorList.size() > 2) {
               authors.append(", and ");
             } else {
               authors.append(" and ");
@@ -640,7 +640,8 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       c.gridx = 1;
       c.gridy = 0;
       c.anchor = GridBagConstraints.EAST;
-      categoryLabel = new JLabel("[" + libInfo.categoryName + "]");
+      categoryLabel = new JLabel("[" + libInfo.category + "]");
+      categoryLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 7));
       add(categoryLabel, c);
       
 //      c = new GridBagConstraints();
@@ -663,7 +664,20 @@ public class LibraryListPanel extends JPanel implements Scrollable {
 
       descriptionText = new JTextPane();
       descriptionText.setContentType("text/html");
-      descriptionText.setText("<html><body>" + libInfo.brief + " " + libInfo.description + "</body></html>");
+      StringBuilder description = new StringBuilder();
+      description.append("<html><body>");
+      
+      if (libInfo.sentence != null)
+        description.append(libInfo.sentence);
+      
+      if (libInfo.sentence != null && libInfo.paragraph != null)
+        description.append(" ");
+      
+      if (libInfo.sentence != null && libInfo.paragraph != null)
+        description.append(libInfo.paragraph);
+      
+      description.append("</body></html>");
+      descriptionText.setText(description.toString());
       descriptionText.addHyperlinkListener(nullHyperlinkListener);
       descriptionText.setMargin(new Insets(0, 25, 10, 5));
       setTextStyle(descriptionText);
@@ -698,7 +712,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       rightPane.add(Box.createVerticalGlue());
       
       installOrRemove = new JButton();
-      if (libInfo.isInstalled) {
+      if (libInfo.installed) {
         installOrRemove.setText("Remove");
         installOrRemove.addActionListener(removeAction);
       } else {
