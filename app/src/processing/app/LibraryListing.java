@@ -58,15 +58,13 @@ public class LibraryListing {
   public void updateInstalled(List<Library> installed) {
     HashSet<String> installedLibraries = new HashSet<String>();
     for (Library library : installed) {
-      installedLibraries.add(library.name.toLowerCase());
+      installedLibraries.add(library.name);
     }
     
     for (LibraryInfo libInfo : allLibraries) {
-      for (String name : libInfo.names) {
-        if (installedLibraries.contains(name.toLowerCase())) {
-          libInfo.isInstalled = true;
-          break;
-        }
+      if (installedLibraries.contains(libInfo.name)) {
+        libInfo.isInstalled = true;
+        break;
       }
     }
   }
@@ -123,7 +121,7 @@ public class LibraryListing {
     
     return libInfo.description.toLowerCase().matches(filter)
         || libInfo.categoryName.toLowerCase().matches(filter)
-        || libInfo.displayName.toLowerCase().matches(filter);
+        || libInfo.name.toLowerCase().matches(filter);
  
   }
 
@@ -152,7 +150,7 @@ public class LibraryListing {
         dest = new File(tmpFolder, "libraries.xml");
         dest.setWritable(true);
 
-        url = new URL("http://dl.dropbox.com/u/700641/libraries.xml");
+        url = new URL("http://dl.dropbox.com/u/700641/generated/software.xml");
 
       } catch (IOException e) {
         e.printStackTrace();
@@ -186,25 +184,24 @@ public class LibraryListing {
   public static class LibraryInfo implements Comparable<LibraryInfo> {
     public String categoryName;
     
-    public String displayName;
-    public String url;
-    public String description;
+    public String name = "";
+    public String url = "";
+    public String description = "";
 
-    public ArrayList<Author> authors;
+    public ArrayList<Author> authors = new ArrayList<Author>();
 
-    public String versionId;
-    public String link;
+    public String versionId = "";
+    public String link = "";
     
-    public ArrayList<String> names;
     boolean isInstalled = false;
 
-    public String brief;
+    public String brief = "";
     
-    public LibraryInfo() {
-      authors = new ArrayList<Author>();
-      names = new ArrayList<String>();
+    public LibraryInfo(String categoryName, String name) {
+      this.categoryName = categoryName;
+      this.name = name;
     }
-
+    
     public static class Author {
       public String name;
 
@@ -213,7 +210,7 @@ public class LibraryListing {
     }
 
     public int compareTo(LibraryInfo o) {
-      return displayName.toLowerCase().compareTo(o.displayName.toLowerCase());
+      return name.toLowerCase().compareTo(o.name.toLowerCase());
     }
 
   }
@@ -268,25 +265,9 @@ public class LibraryListing {
         currentCategoryName = attributes.getValue("name");
 
       } else if ("library".equals(qName)) {
-        currentLibInfo = new LibraryInfo();
-        currentLibInfo.categoryName = currentCategoryName;
-        currentLibInfo.displayName = attributes.getValue("name");
+        currentLibInfo = new LibraryInfo(currentCategoryName,
+                                         attributes.getValue("name"));
         currentLibInfo.url = attributes.getValue("url");
-        currentLibInfo.names.add(currentLibInfo.displayName);
-        
-      } else if ("installed".equals(qName)) {
-        // The installed tag contains a comma seperated list of the libraries
-        // that will be installed. This can contain 1 or more names.
-        // If omitted, the name of the library once installed is assumed to be
-        // the same as its display name.
-        String nameList = attributes.getValue("name");
-        if (nameList != null) {
-          currentLibInfo.names.clear();
-
-          for (String name : nameList.split(",")) {
-            currentLibInfo.names.add(name.trim());
-          }
-        }
         
       } else if ("author".equals(qName)) {
         currentAuthor = new Author();
@@ -294,9 +275,12 @@ public class LibraryListing {
         doingAuthor = true;
 
       } else if ("description".equals(qName)) {
-        currentLibInfo.brief = attributes.getValue("brief");
+        String brief = attributes.getValue("brief");
+        if (brief != null) {
+          currentLibInfo.brief = brief;
+        }
         doingDescription = true;
-
+        
       } else if ("version".equals(qName)) {
         currentLibInfo.versionId = attributes.getValue("id"); 
 
@@ -318,11 +302,7 @@ public class LibraryListing {
 
       } else if (doingDescription) {
         String str = new String(ch, start, length);
-        if (currentLibInfo.description == null) {
-          currentLibInfo.description = str;
-        } else {
-          currentLibInfo.description += str;
-        }
+        currentLibInfo.description += str;
         
       }
     }
@@ -342,7 +322,9 @@ public class LibraryListing {
 
         currentLibInfo = null;
       } else if ("description".equals(qName)) {
-        currentLibInfo.description = currentLibInfo.description.trim();
+        if (currentLibInfo.description != null) {
+          currentLibInfo.description = currentLibInfo.description.trim();
+        }
         doingDescription = false;
       }
 
