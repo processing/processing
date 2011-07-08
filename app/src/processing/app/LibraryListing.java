@@ -26,46 +26,76 @@ package processing.app;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.*;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
-import processing.app.LibraryListing.LibraryInfo.Author;
+import processing.app.Library.LibraryInfo;
+import processing.app.Library.LibraryInfo.Author;
 
 public class LibraryListing {
   
   Map<String, List<LibraryInfo>> librariesByCategory;
+  
   ArrayList<LibraryInfo> allLibraries;
   
-  public LibraryListing(File xmlFile) {
-
+  boolean hasDownloadedList;
+  
+  
+  public LibraryListing() {
+    
     librariesByCategory = new HashMap<String, List<LibraryInfo>>();
+    allLibraries = new ArrayList<LibraryInfo>();
+    hasDownloadedList = false;
+  }
 
+
+  public void rebuildList(File xmlFile) {
+    
+    librariesByCategory = new HashMap<String, List<LibraryInfo>>();
+    allLibraries = new ArrayList<LibraryInfo>();
+    hasDownloadedList = true;
+    
     new LibraryXmlParser(xmlFile);
     
-    allLibraries = new ArrayList<LibraryInfo>();
-    for (Entry<String, List<LibraryInfo>> libListEntry : librariesByCategory
-        .entrySet()) {
-      allLibraries.addAll(libListEntry.getValue());
-    }
-    
     Collections.sort(allLibraries);
+    
   }
   
+  
   public void updateInstalled(List<Library> installed) {
+    
+    // Since there is no 'category' attribute in export.txt, we need some way to
+    // determine the category names of libraries that are already installed. For
+    // this, we use a mapping of library names to category names.
+    HashMap<String, String> categoriesByName = new HashMap<String, String>();
+    
+    // Check if any of the advertised libraries are already installed, and
+    // remove them if they are
     HashSet<String> installedLibraries = new HashSet<String>();
     for (Library library : installed) {
-      installedLibraries.add(library.name);
+      installedLibraries.add(library.getName());
     }
     
-    for (LibraryInfo libInfo : allLibraries) {
+    Iterator<LibraryInfo> it = allLibraries.iterator();
+    while (it.hasNext()) {
+      LibraryInfo libInfo = it.next();
       if (installedLibraries.contains(libInfo.name)) {
-        libInfo.isInstalled = true;
-        break;
+        it.remove();
+        categoriesByName.put(libInfo.name, libInfo.category);
       }
+    }
+    
+    // Create LibraryInfo objects for each of the installed libraries. Place
+    // them into the unknown category if they weren't advertised at all.
+    for (Library library : installed) {
+      String category = categoriesByName.get(library.getName());
+      if (category != null) {
+        library.info.category = category;
+      }
+      addLibrary(library.info);
     }
   }
 
@@ -90,7 +120,7 @@ public class LibraryListing {
     while (it.hasNext()) {
       LibraryInfo libInfo = it.next();
       
-      if (category != null && !category.equals(libInfo.categoryName)) {
+      if (category != null && !category.equals(libInfo.category)) {
         it.remove();
       } else {
         for (String filter : filters) {
@@ -113,15 +143,16 @@ public class LibraryListing {
       return true;
     }
     
-    for (Author author : libInfo.authors) {
+    for (Author author : libInfo.authorList) {
       if (author.name.toLowerCase().matches(filter)) {
         return true;
       }
     }
     
-    return libInfo.description.toLowerCase().matches(filter)
-        || libInfo.categoryName.toLowerCase().matches(filter)
-        || libInfo.name.toLowerCase().matches(filter);
+    return libInfo.sentence != null && libInfo.sentence.toLowerCase().matches(filter)
+        || libInfo.paragraph != null && libInfo.paragraph.toLowerCase().matches(filter)
+        || libInfo.category != null && libInfo.category.toLowerCase().matches(filter)
+        || libInfo.name != null && libInfo.name.toLowerCase().matches(filter);
  
   }
 
@@ -166,9 +197,11 @@ public class LibraryListing {
       downloader.setPostOperation(new Runnable() {
         
         public void run() {
+          libListing = new LibraryListing();
+          
           File xmlFile = downloader.getFile();
           if (xmlFile != null) {
-            libListing = new LibraryListing(xmlFile);
+            libListing.rebuildList(xmlFile);
           }
         }
       });
@@ -181,40 +214,17 @@ public class LibraryListing {
     }
   }
 
-  public static class LibraryInfo implements Comparable<LibraryInfo> {
-    public String categoryName;
-    
-    public String name = "";
-    public String url = "";
-    public String description = "";
-
-    public ArrayList<Author> authors = new ArrayList<Author>();
-
-    public String versionId = "";
-    public String link = "";
-    
-    boolean isInstalled = false;
-
-    public String brief = "";
-    
-    public LibraryInfo(String categoryName, String name) {
-      this.categoryName = categoryName;
-      this.name = name;
+  private void addLibrary(LibraryInfo libInfo) {
+    if (librariesByCategory.containsKey(libInfo.category)) {
+      librariesByCategory.get(libInfo.category).add(libInfo);
+    } else {
+      ArrayList<LibraryInfo> libs = new ArrayList<LibraryInfo>();
+      libs.add(libInfo);
+      librariesByCategory.put(libInfo.category, libs);
     }
-    
-    public static class Author {
-      public String name;
-
-      public String url;
-
-    }
-
-    public int compareTo(LibraryInfo o) {
-      return name.toLowerCase().compareTo(o.name.toLowerCase());
-    }
-
+    allLibraries.add(libInfo);
   }
-
+  
   /**
    * Class to parse the libraries xml file
    */
@@ -223,12 +233,6 @@ public class LibraryListing {
     String currentCategoryName;
 
     LibraryInfo currentLibInfo;
-
-    boolean doingDescription = false;
-    
-    Author currentAuthor;
-
-    boolean doingAuthor = false;
 
     LibraryXmlParser(File xmlFile) {
       SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -251,9 +255,6 @@ public class LibraryListing {
                          "The list of libraries downloaded from Processing.org\n" +
                          "appears to be malformed. You can still install libraries\n" + 
                          "manually while we work on fixing this.", e);
-        
-        librariesByCategory = null;
-        allLibraries = null;
       }
     }
 
@@ -265,69 +266,40 @@ public class LibraryListing {
         currentCategoryName = attributes.getValue("name");
 
       } else if ("library".equals(qName)) {
-        currentLibInfo = new LibraryInfo(currentCategoryName,
-                                         attributes.getValue("name"));
+        currentLibInfo = new LibraryInfo();
+        currentLibInfo.authorList = new ArrayList<Author>();
+        currentLibInfo.category = currentCategoryName;
+        currentLibInfo.name = attributes.getValue("name");
         currentLibInfo.url = attributes.getValue("url");
         
       } else if ("author".equals(qName)) {
-        currentAuthor = new Author();
-        currentAuthor.url = attributes.getValue("url");
-        doingAuthor = true;
+        Author author = new Author();
+        author.name = attributes.getValue("name");
+        author.url = attributes.getValue("url");
+        currentLibInfo.authorList.add(author);
 
       } else if ("description".equals(qName)) {
-        String brief = attributes.getValue("brief");
-        if (brief != null) {
-          currentLibInfo.brief = brief;
-        }
-        doingDescription = true;
+        currentLibInfo.sentence = attributes.getValue("sentence");
+        currentLibInfo.paragraph = attributes.getValue("paragraph");
         
       } else if ("version".equals(qName)) {
-        currentLibInfo.versionId = attributes.getValue("id"); 
+        currentLibInfo.version = Integer.parseInt(attributes.getValue("id"));
+        currentLibInfo.prettyVersion = attributes.getValue("pretty");
 
       } else if ("location".equals(qName)) {
         currentLibInfo.link = attributes.getValue("url");
 
       }
     }
-
-    @Override
-    public void characters(char[] ch, int start, int length)
-        throws SAXException {
-
-      if (doingAuthor) {
-        currentAuthor.name = new String(ch, start, length).trim();
-        currentLibInfo.authors.add(currentAuthor);
-        currentAuthor = null;
-        doingAuthor = false;
-
-      } else if (doingDescription) {
-        String str = new String(ch, start, length);
-        currentLibInfo.description += str;
-        
-      }
-    }
-
+    
     @Override
     public void endElement(String uri, String localName, String qName)
         throws SAXException {
 
       if ("library".equals(qName)) {
-        if (librariesByCategory.containsKey(currentCategoryName)) {
-          librariesByCategory.get(currentCategoryName).add(currentLibInfo);
-        } else {
-          ArrayList<LibraryInfo> libs = new ArrayList<LibraryInfo>();
-          libs.add(currentLibInfo);
-          librariesByCategory.put(currentCategoryName, libs);
-        }
-
+        addLibrary(currentLibInfo);
         currentLibInfo = null;
-      } else if ("description".equals(qName)) {
-        if (currentLibInfo.description != null) {
-          currentLibInfo.description = currentLibInfo.description.trim();
-        }
-        doingDescription = false;
       }
-
     }
 
     @Override

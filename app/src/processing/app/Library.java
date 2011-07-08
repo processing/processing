@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import processing.core.*;
-
+import processing.app.Library.LibraryInfo.Author;
 
 public class Library {
   static final String[] platformNames = PConstants.platformNames;
@@ -14,13 +14,7 @@ public class Library {
   protected File examplesFolder;  // shortname/examples
   protected File referenceFile;   // shortname/reference/index.html
 
-  protected String name;          // "pdf" or "PDF Export"
-  protected String author;        // Ben Fry
-  protected String authorURL;     // http://processing.org
-  protected String sentence;      // Write graphics to PDF files.
-  protected String paragraph;     // <paragraph length description for site>
-  protected int version;          // 102
-  protected String prettyVersion; // "1.0.2"
+  protected LibraryInfo info;
   
   /** Subfolder for grouping libraries in a menu. */
   protected String group;
@@ -92,11 +86,38 @@ public class Library {
    
     File exportSettings = new File(libraryFolder, "export.txt");
     HashMap<String,String> exportTable = Base.readSettings(exportSettings);
-
-    name = exportTable.get("name");
-    if (name == null) {
-      name = folder.getName();
+    
+    info = new LibraryInfo();
+    
+    info.category = "Unknown";
+    info.installed = true;
+    
+    info.name = exportTable.get("name");
+    if (info.name == null) {
+      info.name = folder.getName();
     }
+    
+    String authors = exportTable.get("authorList");
+    info.authorList = new ArrayList<Author>();
+    if (authors != null) {
+      String[] authorNames = authors.split(";");
+      for (String authorName : authorNames) {
+        Author author = new Author();
+        author.name = authorName.trim(); 
+        
+        info.authorList.add(author);
+      }
+    }
+    
+    info.url = exportTable.get("url");
+    info.sentence = exportTable.get("sentence");
+    info.paragraph = exportTable.get("paragraph");
+    
+    try {
+      info.version = Integer.parseInt(exportTable.get("version"));
+    } catch (NumberFormatException e) {
+    }
+    info.prettyVersion = exportTable.get("prettyVersion");
 
     exportList = new HashMap<String, String[]>();
 
@@ -257,7 +278,7 @@ public class Library {
 
 
   public String getName() {
-    return name;
+    return info.name;
   }
 
 
@@ -455,4 +476,32 @@ public class Library {
       }
     }
   }
+  
+  public static class LibraryInfo implements Comparable<LibraryInfo> {
+    
+    protected String category;         // "Sound"
+    protected String name;             // "pdf" or "PDF Export"
+    protected List<Author> authorList; // Ben Fry
+    protected String url;              // http://processing.org
+    protected String sentence;         // Write graphics to PDF files.
+    protected String paragraph;        // <paragraph length description for site>
+    protected int version;             // 102
+    protected String prettyVersion;    // "1.0.2"
+    
+    public String link = "";
+    boolean installed = false;
+    
+    public static class Author {
+      public String name;
+      
+      public String url;
+      
+    }
+
+    public int compareTo(LibraryInfo o) {
+      return name.toLowerCase().compareTo(o.name.toLowerCase());
+    }
+
+  }
+  
 }

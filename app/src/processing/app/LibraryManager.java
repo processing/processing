@@ -267,14 +267,12 @@ public class LibraryManager {
         @Override
         public void finishedAction() {
           libraryListing = llf.getLibraryListing();
-          if (libraryListing != null) {
-            synchronized (libraryListing) {
-              libraryListing.updateInstalled(editor.getMode().contribLibraries);
-              if (libraryListPane != null) {
-                libraryListPane.setLibraryList(libraryListing);
-              }
-              updateCategoryChooser();
+          synchronized (libraryListing) {
+            libraryListing.updateInstalled(editor.getMode().contribLibraries);
+            if (libraryListPane != null) {
+              libraryListPane.setLibraryList(libraryListing);
             }
+            updateCategoryChooser();
           }
         }
       });
