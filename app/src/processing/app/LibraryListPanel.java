@@ -33,22 +33,14 @@ import javax.swing.text.*;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Stylesheet;
-
 import java.awt.event.*;
 import java.awt.font.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.net.*;
 import java.text.*;
 
 import processing.app.LibraryListing.LibraryInfo;
 import processing.app.LibraryListing.LibraryInfo.Author;
-import sun.net.www.HeaderParser;
 
 public class LibraryListPanel extends JPanel implements Scrollable {
   
@@ -59,6 +51,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   };
   
   HashMap<LibraryInfo, LibraryPanel> libPanelsByInfo;
+  @SuppressWarnings("unused")
   private PreferredViewPositionListener preferredViewPositionListener;
   LibraryListing libraries;
   LibraryManager libraryManager;
@@ -630,9 +623,9 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       header.append("<html><body>");
       header.append("<b>");
       if (libInfo.url == null) {
-        header.append(libInfo.displayName);
+        header.append(libInfo.name);
       } else {
-        header.append("<a href=\"" + libInfo.url + "\">" + libInfo.displayName + "</a>");
+        header.append("<a href=\"" + libInfo.url + "\">" + libInfo.name + "</a>");
       }
       header.append("</b>");
       header.append(createAuthorString());
@@ -670,7 +663,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
 
       descriptionText = new JTextPane();
       descriptionText.setContentType("text/html");
-      descriptionText.setText("<html><body>" + libInfo.description + "</body></html>");
+      descriptionText.setText("<html><body>" + libInfo.brief + " " + libInfo.description + "</body></html>");
       descriptionText.addHyperlinkListener(nullHyperlinkListener);
       descriptionText.setMargin(new Insets(0, 25, 10, 5));
       setTextStyle(descriptionText);

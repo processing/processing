@@ -35,8 +35,6 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import com.sun.jna.*;
-
 import processing.app.LibraryListPanel.PreferredViewPositionListener;
 import processing.app.LibraryListing.LibraryListFetcher;
 
@@ -269,12 +267,14 @@ public class LibraryManager {
         @Override
         public void finishedAction() {
           libraryListing = llf.getLibraryListing();
-          synchronized (libraryListing) {
-            libraryListing.updateInstalled(editor.getMode().contribLibraries);
-            if (libraryListPane != null) {
-              libraryListPane.setLibraryList(libraryListing);
+          if (libraryListing != null) {
+            synchronized (libraryListing) {
+              libraryListing.updateInstalled(editor.getMode().contribLibraries);
+              if (libraryListPane != null) {
+                libraryListPane.setLibraryList(libraryListing);
+              }
+              updateCategoryChooser();
             }
-            updateCategoryChooser();
           }
         }
       });
