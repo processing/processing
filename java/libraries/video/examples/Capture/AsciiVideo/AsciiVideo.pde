@@ -35,7 +35,7 @@ public void setup() {
 
   // Uses the default video input, see the reference if this causes an error
   video = new GSCapture(this, 160, 120);
-  video.play();  
+  video.start();  
   int count = video.width * video.height;
   println(count);
 

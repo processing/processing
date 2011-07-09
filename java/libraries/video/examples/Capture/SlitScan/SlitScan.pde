@@ -25,7 +25,7 @@ void setup() {
   
   // Uses the default video input, see the reference if this causes an error
   video = new GSCapture(this, 320, 240);
-  video.play();
+  video.start();
   
   videoSliceX = video.width / 2;
   drawPositionX = width - 1;

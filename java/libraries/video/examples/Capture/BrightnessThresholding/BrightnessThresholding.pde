@@ -21,7 +21,7 @@ void setup() {
   strokeWeight(5);
   // Uses the default video input, see the reference if this causes an error
   video = new GSCapture(this, width, height);
-  video.play();  
+  video.start();  
   numPixels = video.width * video.height;
   noCursor();
   smooth();
