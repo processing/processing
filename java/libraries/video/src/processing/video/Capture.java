@@ -38,8 +38,7 @@ import org.gstreamer.interfaces.Property;
 public class Capture extends PImage implements PConstants {
   protected String source;
   
-  protected boolean playing = false;
-  protected boolean paused = false;
+  protected boolean capturing = false;
   
   protected String fps;  
   protected int bufWidth;
@@ -257,35 +256,26 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
-   * Returns whether the stream is playing or not.
+   * Returns whether the device is capturing frames or not.
    * 
    * @return boolean
    */
-  public boolean isPlaying() {
-    return playing;  
+  public boolean isCapturing() {
+    return capturing;  
   }
 
-  /**
-   * Returns whether the stream is paused or not.
-   * 
-   * @return boolean
-   */
-  public boolean isPaused() {
-    return paused;  
-  }    
   
   /**
-   * Resumes the capture pipeline.
+   * Starts the capture pipeline.
    */
-  public void play() {
+  public void start() {
     boolean init = false;
     if (!pipelineReady) {
       initPipeline();
       init = true;
     }
     
-    playing = true;
-    paused = false;
+    capturing = true;
     gpipeline.play();
     
     if (init) {
@@ -298,10 +288,10 @@ public class Capture extends PImage implements PConstants {
   /**
    * Stops the capture pipeline.
    */
-  public void pause() {
-    playing = false;
-    paused = true;
-    gpipeline.pause();
+  public void stop() {
+    capturing = false;
+    //gpipeline.pause();
+    gpipeline.stop();
   }  
   
   /**
