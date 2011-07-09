@@ -33,7 +33,7 @@ import java.util.List;
  * This class contains some basic functions used by the rest of the classes in
  * this library.
  */
-public class GSVideo implements PConstants {
+public class Video implements PConstants {
   protected static String VERSION_STRING = "0.9";
   protected static long INSTANCES_COUNT = 0;
 
@@ -108,7 +108,7 @@ public class GSVideo implements PConstants {
     }
 
     if ((PApplet.platform == WINDOWS) && !globalGStreamer) {
-      GSLibraryLoader loader = GSLibraryLoader.getInstance();
+      LibraryLoader loader = LibraryLoader.getInstance();
       if (loader == null) {
         System.err.println("Cannot load local version of GStreamer libraries.");
       }
@@ -154,7 +154,7 @@ public class GSVideo implements PConstants {
     } else {
       globalGStreamer = false;
       if (localGStreamerPath.equals("")) {
-        GSLibraryPath libPath = new GSLibraryPath();
+        LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
         gstreamerBinPath = path + "/gstreamer/linux";
         gstreamerPluginsPath = path + "/gstreamer/linux/" + localPluginsFolder;
@@ -172,7 +172,7 @@ public class GSVideo implements PConstants {
     } else {
       globalGStreamer = false;
       if (localGStreamerPath.equals("")) {
-        GSLibraryPath libPath = new GSLibraryPath();
+        LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
         gstreamerBinPath = path + "\\gstreamer\\win";
         gstreamerPluginsPath = path + "\\gstreamer\\win\\" + localPluginsFolder;
@@ -190,7 +190,7 @@ public class GSVideo implements PConstants {
     } else {
       globalGStreamer = false;  
       if (localGStreamerPath.equals("")) {
-        GSLibraryPath libPath = new GSLibraryPath();
+        LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
         gstreamerBinPath = path + "/gstreamer/macosx";
         gstreamerPluginsPath = path + "/gstreamer/macosx/" + localPluginsFolder;

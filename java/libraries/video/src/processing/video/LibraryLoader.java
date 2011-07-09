@@ -27,12 +27,12 @@ import com.sun.jna.Native;
 import com.sun.jna.Platform;
 
 // Library loader class by Tal Shalif
-public class GSLibraryLoader {
+public class LibraryLoader {
 
   public interface DummyLibrary extends Library {
   }
 
-  private static GSLibraryLoader instance;
+  private static LibraryLoader instance;
    
   // These dependencies correspond to gstreamer-winbuilds 0.10.6
   static final Object[][] WIN32_DEPENDENCIES = {
@@ -149,7 +149,7 @@ public class GSLibraryLoader {
 
   private static final int RECURSIVE_LOAD_MAX_DEPTH = 5;
   
-  private GSLibraryLoader() {
+  private LibraryLoader() {
   }
 
   private void preLoadLibs() {
@@ -250,10 +250,10 @@ public class GSLibraryLoader {
     }
   }
 
-  public static synchronized GSLibraryLoader getInstance() {
+  public static synchronized LibraryLoader getInstance() {
 
     if (null == instance) {
-      instance = new GSLibraryLoader();
+      instance = new LibraryLoader();
       instance.preLoadLibs();
     }
 

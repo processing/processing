@@ -417,7 +417,7 @@ public class Capture extends PImage implements PConstants {
   }
   
   static protected String[] list(String sourceName, String propertyName) {
-    GSVideo.init();
+    Video.init();
     String[] valuesListing = new String[0];
     Element videoSource = ElementFactory.make(sourceName, "Source");
     PropertyProbe probe = PropertyProbe.wrap(videoSource);
@@ -524,7 +524,7 @@ public class Capture extends PImage implements PConstants {
                                String[] strPropNames, String[] strPropValues, String frameRate) {
     this.parent = parent;
 
-    GSVideo.init();
+    Video.init();
 
     // register methods
     parent.registerDispose(this);
@@ -627,7 +627,7 @@ public class Capture extends PImage implements PConstants {
       // Setting direct buffer passing in the video sink, so no new buffers are created
       // and disposed by the GC on each frame (thanks to Octavi Estape for pointing 
       // out this one).
-      rgbSink.setPassDirectBuffer(GSVideo.passDirectBuffer);      
+      rgbSink.setPassDirectBuffer(Video.passDirectBuffer);      
       
       // No need for rgbSink.dispose(), because the addMany() doesn't increment the
       // refcount of the videoSink object.      

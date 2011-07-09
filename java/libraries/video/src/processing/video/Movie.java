@@ -275,7 +275,7 @@ public class Movie extends PImage implements PConstants {
   public float duration() {
     float sec = gplayer.queryDuration().toSeconds();
     float nanosec = gplayer.queryDuration().getNanoSeconds();
-    return sec + GSVideo.nanoSecToSecFrac(nanosec);
+    return sec + Video.nanoSecToSecFrac(nanosec);
   }  
   
   /**
@@ -286,7 +286,7 @@ public class Movie extends PImage implements PConstants {
   public float time() {
     float sec = gplayer.queryPosition().toSeconds();
     float nanosec = gplayer.queryPosition().getNanoSeconds();
-    return sec + GSVideo.nanoSecToSecFrac(nanosec);
+    return sec + Video.nanoSecToSecFrac(nanosec);
   }
 
   /**
@@ -319,7 +319,7 @@ public class Movie extends PImage implements PConstants {
     }
     
     boolean res;
-    long start = GSVideo.secToNanoLong(where);
+    long start = Video.secToNanoLong(where);
     long stop = -1; // or whatever > new_pos
     
     res = gplayer.seek(1.0, Format.TIME, SeekFlags.FLUSH,
@@ -555,7 +555,7 @@ public class Movie extends PImage implements PConstants {
 
     File file;
 
-    GSVideo.init();
+    Video.init();
 
     // first check to see if this can be read locally from a file.
     try {
@@ -666,7 +666,7 @@ public class Movie extends PImage implements PConstants {
       // Setting direct buffer passing in the video sink, so no new buffers are created
       // and disposed by the GC on each frame (thanks to Octavi Estape for pointing 
       // out this one).      
-      rgbSink.setPassDirectBuffer(GSVideo.passDirectBuffer);
+      rgbSink.setPassDirectBuffer(Video.passDirectBuffer);
       gplayer.setVideoSink(rgbSink);
       // The setVideoSink() method sets the videoSink as a property of the PlayBin,
       // which increments the refcount of the videoSink element. Disposing here once
