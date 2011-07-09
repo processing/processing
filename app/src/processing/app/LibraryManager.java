@@ -35,42 +35,16 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import processing.app.Library.LibraryInfo;
 import processing.app.LibraryListPanel.PreferredViewPositionListener;
 import processing.app.LibraryListing.LibraryListFetcher;
-
-abstract class JProgressMonitor extends AbstractProgressMonitor {
-  JProgressBar progressBar;
-  
-  public JProgressMonitor(JProgressBar progressBar) {
-    this.progressBar = progressBar;
-  }
-  
-  public void startTask(String name, int maxValue) {
-    isFinished = false;
-    progressBar.setString(name);
-    progressBar.setIndeterminate(maxValue == UNKNOWN);
-    progressBar.setMaximum(maxValue);
-  }
-  
-  public void setProgress(int value) {
-    super.setProgress(value);
-    progressBar.setValue(value);
-  }
-  
-  @Override
-  public void finished() {
-    super.finished();
-    finishedAction();
-  }
-
-  public abstract void finishedAction();
-  
-}
 
 /**
  * 
  */
 public class LibraryManager {
+  
+  File backupFolder = null;
   
   private static final String DRAG_AND_DROP_SECONDARY =
     ".plb files usually contain contributed libraries for <br>" +
@@ -87,7 +61,7 @@ public class LibraryManager {
   // Non-simple UI widgets:
   FilterField filterField;
   
-  LibraryListPanel libraryListPane;
+  LibraryListPanel libraryListPanel;
   
   JComboBox categoryChooser;
   
@@ -114,7 +88,7 @@ public class LibraryManager {
     dialog.setLocation((screen.width - dialog.getWidth()) / 2,
                        (screen.height - dialog.getHeight()) / 2);
     
-    libraryListPane.grabFocus();
+    libraryListPanel.grabFocus();
     
   }
   
@@ -134,9 +108,9 @@ public class LibraryManager {
     
     pane.add(filterField, c);
    
-    libraryListPane = new LibraryListPanel(this, libraryListing);
+    libraryListPanel = new LibraryListPanel(this, libraryListing);
     if (libraryListing == null) {
-      JProgressBar progressBar = libraryListPane.getSetupProgressBar();
+      JProgressBar progressBar = libraryListPanel.getSetupProgressBar();
       getLibraryListing(progressBar);
     }
     
@@ -150,17 +124,17 @@ public class LibraryManager {
     
     final JScrollPane scrollPane = new JScrollPane();
     scrollPane.setPreferredSize(new Dimension(300,300));
-    scrollPane.setViewportView(libraryListPane);
+    scrollPane.setViewportView(libraryListPanel);
     scrollPane.getViewport().setOpaque(true);
     
-    scrollPane.getViewport().setBackground(libraryListPane.getBackground());
+    scrollPane.getViewport().setBackground(libraryListPanel.getBackground());
     
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     pane.add(scrollPane, c);
     //pane.add(scrollPane, c);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
-    libraryListPane.setPreferredViewPositionListener(new PreferredViewPositionListener() {
+    libraryListPanel.setPreferredViewPositionListener(new PreferredViewPositionListener() {
 
       public void handlePreferredLocation(Point p) {
         scrollPane.getViewport().setViewPosition(p);
@@ -189,7 +163,7 @@ public class LibraryManager {
           category = null;
         }
         
-        libraryListPane.filterLibraries(category, filterField.filters);
+        libraryListPanel.filterLibraries(category, filterField.filters);
       }
     });
     
@@ -268,9 +242,16 @@ public class LibraryManager {
         public void finishedAction() {
           libraryListing = llf.getLibraryListing();
           synchronized (libraryListing) {
-            libraryListing.updateInstalled(editor.getMode().contribLibraries);
-            if (libraryListPane != null) {
-              libraryListPane.setLibraryList(libraryListing);
+            // Bleh, lets change how the installed libraries are stored and
+            // tracked.
+            ArrayList<Library> libraries = editor.getMode().contribLibraries;
+            ArrayList<LibraryInfo> infoList = new ArrayList<LibraryInfo>();
+            for (Library library : libraries) {
+              infoList.add(library.info);
+            }
+            libraryListing.updateList(infoList);
+            if (libraryListPanel != null) {
+              libraryListPanel.setLibraryList(libraryListing);
             }
             updateCategoryChooser();
           }
@@ -359,7 +340,8 @@ public class LibraryManager {
         
       }
       
-      // Do this, or windows won't let us move the files we just moved again.
+      // Run the garbage collector or windows won't let us delete/move the files
+      // we just moved.
       System.gc();
       
       if (!errorEncountered) {
@@ -420,15 +402,11 @@ public class LibraryManager {
   
   protected int installLibraries(ArrayList<Library> newLibs) {
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
-    ArrayList<Library> libsToBeBackuped = new ArrayList<Library>();
     
     Iterator<Library> it = newLibs.iterator();
     while (it.hasNext()) {
       Library lib = it.next();
 
-      // XXX: We need to dynamically load the libraries or restart the PDE for
-      // this to work properly. For now, files will be clobbered if the same
-      // library is installed twice without restarting the PDE.
       for (Library oldLib : oldLibs) {
         
         if (oldLib.getName().equals(lib.getName()) && oldLib.libraryFolder.exists()) {
@@ -441,46 +419,14 @@ public class LibraryManager {
                  " in <i>libraries/old</i> before replacing it.");
           
           if (result == JOptionPane.YES_OPTION) {
-            libsToBeBackuped.add(oldLib);
+            if (!backupLibrary(oldLib)) {
+              return 0;
+            }
           } else {
             it.remove();
           }
           break;
         }
-      }
-    }
-    
-    File backupFolder = null;
-    if (!libsToBeBackuped.isEmpty()) {
-      backupFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
-          "old");
-      if (!backupFolder.exists() || !backupFolder.isDirectory()) {
-        if (!backupFolder.mkdirs()) {
-          Base.showWarning("Trouble creating folder to store old libraries in",
-                           "Could not create folder " + backupFolder.getAbsolutePath() + ".\n"
-                           + "That's gonna prevent us from replacing the library.", null);
-          return 0;
-        }
-      }
-    }
-    
-    // Backup libraries
-    for (Library lib : libsToBeBackuped) {
-      String libFolderName = lib.folder.getName();
-      
-      String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-      final String backupName = prefix + "_" + libFolderName;
-      File backupFolderForLib = getUniqueName(backupFolder, backupName);
-      
-      // XXX: Windows does not like to move this folder because it is still in use
-      boolean success = false;
-      success = lib.folder.renameTo(backupFolderForLib);
-      
-      if (!success) {
-        Base.showWarning("Trouble creating backup of old \"" + lib.getName() + "\" library",
-                         "Could not move library to "
-                          + backupFolderForLib.getAbsolutePath() + "\n", null);
-        return 0;
       }
     }
     
@@ -499,11 +445,72 @@ public class LibraryManager {
     
     int numInstalled = newLibs.size() - failures;
     if (numInstalled > 0) {
-      editor.getMode().rebuildLibraryList();
-      editor.getMode().rebuildImportMenu();
+      refreshInstalled();
     }
     
     return numInstalled;
+  }
+  
+  public void uninstallLibrary(Library library) {
+    if (library != null) {
+      if (backupLibrary(library)) {
+        refreshInstalled();
+      }
+    }
+  }
+
+  private void refreshInstalled() {
+    editor.getMode().rebuildLibraryList();
+    editor.getMode().rebuildImportMenu();
+    libraryListPanel.rebuild();
+  }
+
+  /**
+   * Moves the given library to a backup folder.
+   */
+  private boolean backupLibrary(Library lib) {
+    if (!createBackupFolder()) {
+      return false;
+    }
+    
+    String libFolderName = lib.folder.getName();
+    
+    String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    final String backupName = prefix + "_" + libFolderName;
+    File backupFolderForLib = getUniqueName(backupFolder, backupName);
+    
+    boolean success = lib.folder.renameTo(backupFolderForLib);
+    if (!success) {
+      Base.showWarning("Trouble creating backup of old \"" + lib.getName() + "\" library",
+                       "Could not move library to backup folder.\n", null);
+    }
+    
+    return success;
+  }
+
+  /**
+   * @return false if there was an error creating the backup folder, true if it
+   *         already exists or was created successfully
+   */
+  private boolean createBackupFolder() {
+    if (backupFolder != null)
+      return true;
+    
+    backupFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
+                            "old");
+    if (!backupFolder.exists() || !backupFolder.isDirectory()) {
+      if (!backupFolder.mkdirs()) {
+        Base.showWarning("Trouble creating folder to store old libraries in",
+                         "Could not create folder "
+                             + backupFolder.getAbsolutePath()
+                             + ".\n"
+                             + "That's gonna prevent us from replacing the library.",
+                         null);
+        return false;
+      }
+    }
+    
+    return true;
   }
 
   /**
@@ -615,7 +622,7 @@ public class LibraryManager {
           // Replace anything but 0-9 or a-z with a space
           filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a]", " ");
           filters = Arrays.asList(filter.split(" "));
-          libraryListPane.filterLibraries(category, filters);
+          libraryListPanel.filterLibraries(category, filters);
         }
       });
     }
@@ -666,5 +673,34 @@ public class LibraryManager {
       progressMonitor.finished();
     }
   }
+  
+}
+
+abstract class JProgressMonitor extends AbstractProgressMonitor {
+  JProgressBar progressBar;
+  
+  public JProgressMonitor(JProgressBar progressBar) {
+    this.progressBar = progressBar;
+  }
+  
+  public void startTask(String name, int maxValue) {
+    isFinished = false;
+    progressBar.setString(name);
+    progressBar.setIndeterminate(maxValue == UNKNOWN);
+    progressBar.setMaximum(maxValue);
+  }
+  
+  public void setProgress(int value) {
+    super.setProgress(value);
+    progressBar.setValue(value);
+  }
+  
+  @Override
+  public void finished() {
+    super.finished();
+    finishedAction();
+  }
+
+  public abstract void finishedAction();
   
 }
