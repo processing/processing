@@ -22,7 +22,7 @@ void setup() {
 
   // Uses the default video input, see the reference if this causes an error
   video = new GSCapture(this, 160, 120);
-  video.play();
+  video.start();
 
   maxRows = height * 2;
   buffer = new int[width * maxRows];

@@ -41,7 +41,7 @@ public void setup() {
   //size(screen.width, screen.height, OPENGL);
 
   video = new GSCapture(this, 160, 120);
-  video.play();
+  video.start();
   count = video.width * video.height;
 
   sphereDetail(60);
