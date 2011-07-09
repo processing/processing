@@ -685,13 +685,16 @@ public class Capture extends PImage implements PConstants {
   protected void getSuppResAndFpsList() {
     suppResList = new ArrayList<int[]>();
     suppFpsList = new ArrayList<String>();
-    
+   
     for (Element src : gpipeline.getSources()) {
       for (Pad pad : src.getPads()) {
+        
         Caps caps = pad.getCaps();
         int n = caps.size(); 
         for (int i = 0; i < n; i++) {           
           Structure str = caps.getStructure(i);
+          
+          if (!str.hasIntField("width") || !str.hasIntField("height")) continue;
           
           int w = ((Integer)str.getValue("width")).intValue();
           int h = ((Integer)str.getValue("height")).intValue();
