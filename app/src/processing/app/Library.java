@@ -88,9 +88,8 @@ public class Library {
     HashMap<String,String> exportTable = Base.readSettings(exportSettings);
     
     info = new LibraryInfo();
-    
+    info.library = this;
     info.category = "Unknown";
-    info.installed = true;
     
     info.name = exportTable.get("name");
     if (info.name == null) {
@@ -479,6 +478,8 @@ public class Library {
   
   public static class LibraryInfo implements Comparable<LibraryInfo> {
     
+    protected Library library;
+    
     protected String category;         // "Sound"
     protected String name;             // "pdf" or "PDF Export"
     protected List<Author> authorList; // Ben Fry
@@ -489,7 +490,6 @@ public class Library {
     protected String prettyVersion;    // "1.0.2"
     
     public String link = "";
-    boolean installed = false;
     
     public static class Author {
       public String name;
@@ -500,6 +500,10 @@ public class Library {
 
     public int compareTo(LibraryInfo o) {
       return name.toLowerCase().compareTo(o.name.toLowerCase());
+    }
+    
+    public boolean isInstalled() {
+      return library != null;
     }
 
   }

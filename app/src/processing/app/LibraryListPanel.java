@@ -50,12 +50,12 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     }
   };
   
-  HashMap<LibraryInfo, LibraryPanel> libPanelsByInfo;
   @SuppressWarnings("unused")
   private PreferredViewPositionListener preferredViewPositionListener;
   LibraryListing libraries;
   LibraryManager libraryManager;
   JProgressBar setupProgressBar;
+  ArrayList<LibraryPanel> libPanels;
   
   public LibraryListPanel(LibraryManager libraryManager, LibraryListing libraryListing) {
     super();
@@ -83,7 +83,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       setBackground(UIManager.getColor("List.background"));
     }
     
-    libPanelsByInfo = new HashMap<LibraryInfo, LibraryPanel>();
+    libPanels = new ArrayList<LibraryPanel>();
     
     addMouseListener(new MouseAdapter() {
 
@@ -116,9 +116,9 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       setupProgressBar.setIndeterminate(true);
     }
     populateLibraryPanels();
-    synchronized (libPanelsByInfo) {
-      for (Entry<LibraryInfo, LibraryPanel> entry : libPanelsByInfo.entrySet()) {
-        entry.getValue().setVisible(true);
+    synchronized (libPanels) {
+      for (LibraryPanel libPanel : libPanels) {
+        libPanel.setVisible(true);
       }
     }
     updateColors();
@@ -131,7 +131,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   private void populateLibraryPanels() {
     int row = 0;
     synchronized (libraries) {
-      synchronized (libPanelsByInfo) {
+      synchronized (libPanels) {
         for (LibraryInfo libInfo : libraries.getAllLibararies()) {
           GridBagConstraints c = new GridBagConstraints();
           c.fill = GridBagConstraints.HORIZONTAL;
@@ -141,7 +141,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
 
           LibraryPanel libPanel = new LibraryPanel(libInfo);
           libPanel.setVisible(false);
-          libPanelsByInfo.put(libPanel.libInfo, libPanel);
+          libPanels.add(libPanel);
 
           add(libPanel, c);
         }
@@ -151,19 +151,24 @@ public class LibraryListPanel extends JPanel implements Scrollable {
 
   public void filterLibraries(String category, List<String> filters) {
 
-    if (libraries != null && libPanelsByInfo != null) {
+    if (libraries != null && libPanels != null) {
       synchronized (libraries) {
-        synchronized (libPanelsByInfo) {
+        synchronized (libPanels) {
 
-          List<LibraryInfo> hiddenLibraries = libraries.getAllLibararies();
+          List<LibraryPanel> hiddenPanels = new ArrayList(libPanels);
           for (LibraryInfo lib : libraries.getFilteredLibraryList(category,
                                                                   filters)) {
-            libPanelsByInfo.get(lib).setVisible(true);
-            hiddenLibraries.remove(lib);
+            
+            for (LibraryPanel libPanel : libPanels) {
+              if (libPanel.libInfo.equals(lib)) {
+                libPanel.setVisible(true);
+                hiddenPanels.remove(libPanel);
+              }
+            }
           }
-
-          for (LibraryInfo lib : hiddenLibraries) {
-            libPanelsByInfo.get(lib).setVisible(false);
+          
+          for (LibraryPanel libPanel : hiddenPanels) {
+            libPanel.setVisible(false);
           }
         }
       }
@@ -235,9 +240,8 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   private void updateColors() {
     
     int count = 0;
-    synchronized (libPanelsByInfo) {
-      for (Entry<LibraryInfo, LibraryPanel> entry : libPanelsByInfo.entrySet()) {
-        LibraryPanel libPanel = entry.getValue();
+    synchronized (libPanels) {
+      for (LibraryPanel libPanel : libPanels) {
 
         if (libPanel.isVisible()) {
           if (libPanel.isSelected) {
@@ -372,6 +376,16 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     this.preferredViewPositionListener = preferredViewPositionListener;
   }
 
+  public JProgressBar getSetupProgressBar() {
+    return setupProgressBar;
+  }
+  
+  public void rebuild() {
+    for (LibraryPanel libPanel : libPanels) {
+      // XXX: REBUILD HERE
+    }
+  }
+  
   /**
    * Panel that expands and gives a brief overview of a library when clicked.
    */
@@ -397,7 +411,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     ActionListener installLibAction;
     
     LibraryInfo libInfo;
-
+    
     JTextPane headerLabel;
     
     JLabel categoryLabel;
@@ -471,7 +485,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
      removeAction = new ActionListener() {
         
         public void actionPerformed(ActionEvent arg) {
-          System.out.println("Removing library");
+          libraryManager.uninstallLibrary(libInfo.library);
         }
       };
       
@@ -712,7 +726,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       rightPane.add(Box.createVerticalGlue());
       
       installOrRemove = new JButton();
-      if (libInfo.installed) {
+      if (libInfo.isInstalled()) {
         installOrRemove.setText("Remove");
         installOrRemove.addActionListener(removeAction);
       } else {
@@ -787,10 +801,6 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     
     void handlePreferredLocation(Point p);
     
-  }
-
-  public JProgressBar getSetupProgressBar() {
-    return setupProgressBar;
   }
 
 }
