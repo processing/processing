@@ -23,7 +23,7 @@ import java.net.URL;
 
 import com.sun.jna.Platform;
 
-class GSLibraryPath {
+class LibraryPath {
   // This method returns the folder inside which the gstreamer library folder
   // should be located.
   String get() {
