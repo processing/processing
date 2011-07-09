@@ -24,7 +24,7 @@ void setup() {
       println(cameras[i]);
     }
     cam = new GSCapture(this, 640, 480, cameras[0]);
-    cam.play();    
+    cam.start();    
 
     /*
     // You can get the resolutions supported by the

@@ -26,7 +26,7 @@ void setup() {
 
   // Uses the default video input, see the reference if this causes an error
   video = new GSCapture(this, 160, 120);
-  video.play();
+  video.start();
   videoCount = video.width * video.height;
 
   pixelCount = width*height;
