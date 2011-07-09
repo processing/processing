@@ -34,7 +34,7 @@ import java.util.List;
  * this library.
  */
 public class Video implements PConstants {
-  protected static String VERSION_STRING = "0.9";
+  protected static String VERSION_STRING = "2.0";
   protected static long INSTANCES_COUNT = 0;
 
   protected static String gstreamerBinPath = "";
