@@ -268,6 +268,14 @@ public class LibraryManager {
     libraryListing.updateList(infoList);
   }
 
+  public void uninstallLibrary(Library library, JProgressMonitor pm) {
+    
+    LibraryUninstaller libUninstaller = new LibraryUninstaller(library, pm);
+    
+    new Thread(libUninstaller).start();
+
+  }
+  
   public void installLibraryFromUrl(URL url,
                                     LibraryPanel libPanel,
                                     JProgressMonitor downloadProgressMonitor,
@@ -453,14 +461,6 @@ public class LibraryManager {
     return newLibs;
   }
   
-  public void uninstallLibrary(Library library) {
-    if (library != null) {
-      if (backupLibrary(library)) {
-        refreshInstalled();
-      }
-    }
-  }
-
   public void refreshInstalled() {
     editor.getMode().rebuildLibraryList();
     editor.getMode().rebuildImportMenu();
@@ -651,6 +651,29 @@ public class LibraryManager {
     }
   }
 
+  class LibraryUninstaller implements Runnable {
+
+    Library library;
+
+    ProgressMonitor pm;
+
+    public LibraryUninstaller(Library library, ProgressMonitor pm) {
+      this.library = library;
+      this.pm = pm;
+    }
+
+    public void run() {
+      pm.startTask("Removing", ProgressMonitor.UNKNOWN);
+      if (library != null) {
+        if (backupLibrary(library)) {
+          refreshInstalled();
+        }
+      }
+      pm.finished();
+    }
+    
+  }
+  
   class LibraryInstaller implements Runnable {
     
     LibraryPanel libraryPanel;
