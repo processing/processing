@@ -536,7 +536,17 @@ public class LibraryListPanel extends JPanel implements Scrollable {
         
         public void actionPerformed(ActionEvent arg) {
           installOrRemove.setEnabled(false);
-          libraryManager.uninstallLibrary(info.library);
+          installProgressBar.setVisible(true);
+          libraryManager.uninstallLibrary(info.library,
+            new JProgressMonitor(installProgressBar) {
+              
+              public void finishedAction() {
+                // Finished uninstalling the library
+                resetInstallProgressBarState();
+              }
+            }
+          );
+          
           installOrRemove.setEnabled(true);
         }
       };
@@ -812,7 +822,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     
     private void resetInstallProgressBarState() {
       installProgressBar.setString("Starting");
-      installProgressBar.setIndeterminate(false);
+      installProgressBar.setIndeterminate(true);
       installProgressBar.setValue(0);
       installProgressBar.setVisible(false);
     }
