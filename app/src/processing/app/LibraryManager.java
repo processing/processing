@@ -346,7 +346,7 @@ public class LibraryManager {
         
       }
       
-      // Run the garbage collector or windows won't let us delete/move the files
+      // Run the garbage collector so windows will let us delete/move the files
       // we just moved.
       System.gc();
       
@@ -354,12 +354,10 @@ public class LibraryManager {
         return installLibraries(discoveredLibs);
       }
     } catch (IOException ioe) {
-      e = ioe;
+      Base.showWarning("Trouble discovering libraries",
+                       "An internal error occured while searching for libraries in the file.\n" + 
+                       "This may be a one time error, so try again.", ioe);
     }
-    
-    Base.showWarning("Trouble discovering libraries",
-                     "Could not find libraries in the downloaded file.\n" + 
-                     "This may be a one time error, please try again.", e);
     
     return null;
   }
@@ -684,7 +682,13 @@ public class LibraryManager {
         
         ArrayList<Library> info = installLibrary(libFile);
         if (info != null) {
-          libraryPanel.info = info.get(0).info;
+          if (info.isEmpty()) {
+            Base.showWarning("Trouble discovering libraries",
+                             "Maybe it's just us, but it looks like there are no\n"
+                           + "libraries in the file we just downloaded.\n", null);
+          } else {
+            libraryPanel.info = info.get(0).info;
+          }
         }
         
         refreshInstalled();
