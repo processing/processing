@@ -77,6 +77,9 @@ public class FileDownloader implements Runnable {
       if (downloadFile(url, dest, progressMonitor)) {
         libFile = dest;
       }
+    } catch (FileNotFoundException e) {
+      Base.showWarning("Trouble downloading file",
+                       "The file was not found on the server.\n", null);
     } catch (IOException e) {
       Base.showWarning("Trouble downloading file",
                        "An error occured while downloading the file:\n"
