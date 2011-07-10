@@ -24,14 +24,12 @@ package processing.app;
 
 import java.util.*;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.swing.*;
-import javax.swing.border.Border;
+import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.StyleSheet;
+import javax.swing.text.html.*;
 
 import java.awt.event.*;
 import java.awt.font.*;
@@ -484,16 +482,36 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       descriptionText.addMouseListener(expandPanelMouseListener);
     }
     
-    public void useInstalledAction() {
-      installOrRemove.removeActionListener(removeAction);
-      installOrRemove.setText("Install");
-      installOrRemove.addActionListener(installLibAction);      
+    /**
+     * @return true if the install action was added, false if it was already
+     *         being used.
+     */
+    public boolean useInstalledAction() {
+      if (Arrays.asList(installOrRemove.getActionListeners())
+          .contains(installLibAction)) {
+        return false;
+      } else {
+        installOrRemove.removeActionListener(removeAction);
+        installOrRemove.setText("Install");
+        installOrRemove.addActionListener(installLibAction);
+        return true;
+      }
     }
-
-    public void useRemoveAction() {
-      installOrRemove.removeActionListener(installLibAction);
-      installOrRemove.setText("Remove");
-      installOrRemove.addActionListener(removeAction);
+    
+    /**
+     * @return true if the remove action was added, false if it was already
+     *         being used.
+     */
+    public boolean useRemoveAction() {
+      if (Arrays.asList(installOrRemove.getActionListeners())
+          .contains(removeAction)) {
+        return false;
+      } else {
+        installOrRemove.removeActionListener(installLibAction);
+        installOrRemove.setText("Remove");
+        installOrRemove.addActionListener(removeAction);
+        return true;
+      }
     }
 
     private void createInstallRemoveActions() {
