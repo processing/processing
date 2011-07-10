@@ -158,7 +158,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
                                                                   filters)) {
             
             for (LibraryPanel libPanel : libPanels) {
-              if (libPanel.libInfo.equals(lib)) {
+              if (libPanel.info.equals(lib)) {
                 libPanel.setVisible(true);
                 hiddenPanels.remove(libPanel);
               }
@@ -380,12 +380,28 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   
   public void rebuild() {
     for (LibraryPanel libPanel : libPanels) {
-      if (libPanel.libInfo.isInstalled()) {
-        libPanel.useRemoveAction();
+      if (libPanel.info.isInstalled()) {
+        if (libPanel.info.library.folder.exists()) {
+          libPanel.useRemoveAction();
+        } else {
+          libraries.removeLibrary(libPanel.info);
+          
+          String libName = libPanel.info.name;
+          LibraryInfo newLibInfo = libraries.getAdvertisedLibrary(libName);
+
+          if (newLibInfo == null) {
+            remove(libPanel);
+          } else {
+            libPanel.info = newLibInfo;
+            libPanel.useInstalledAction();
+          }
+        }
       } else {
         libPanel.useInstalledAction();
       }
     }
+    
+    updateUI();
   }
   
   /**
@@ -412,7 +428,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     ActionListener removeAction;
     ActionListener installLibAction;
     
-    LibraryInfo libInfo;
+    LibraryInfo info;
     
     JTextPane headerLabel;
     
@@ -427,7 +443,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     boolean isSelected;
     
     private LibraryPanel(LibraryInfo libInfo) {
-      this.libInfo = libInfo;
+      this.info = libInfo;
       
       okayToOpenHyperLink = false;
       hyperlinkOpener = new ConditionalHyperlinkListener();
@@ -520,7 +536,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
         
         public void actionPerformed(ActionEvent arg) {
           installOrRemove.setEnabled(false);
-          libraryManager.uninstallLibrary(libInfo.library);
+          libraryManager.uninstallLibrary(info.library);
           installOrRemove.setEnabled(true);
         }
       };
@@ -530,7 +546,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
         public void actionPerformed(ActionEvent arg) {
           installOrRemove.setEnabled(false);
           try {
-            URL url = new URL(libInfo.link);
+            URL url = new URL(info.link);
             
             installProgressBar.setVisible(true);
             
@@ -572,20 +588,20 @@ public class LibraryListPanel extends JPanel implements Scrollable {
     private String createAuthorString() {
       StringBuilder authors = new StringBuilder();
       
-      if (libInfo.authorList != null && !libInfo.authorList.isEmpty()) {
+      if (info.authorList != null && !info.authorList.isEmpty()) {
         authors.append(" by ");
         
-        for (int i = 0; i < libInfo.authorList.size(); i++) {
-          Author author = libInfo.authorList.get(i);
+        for (int i = 0; i < info.authorList.size(); i++) {
+          Author author = info.authorList.get(i);
           if (author.url == null) {
             authors.append(author.name);
           } else {
             authors.append("<a href=\"" + author.url + "\">" + author.name + "</a>");
           }
-          if (i + 2 < libInfo.authorList.size()) {
+          if (i + 2 < info.authorList.size()) {
             authors.append(", ");
-          } else if (i + 2 == libInfo.authorList.size()) {
-            if (libInfo.authorList.size() > 2) {
+          } else if (i + 2 == info.authorList.size()) {
+            if (info.authorList.size() > 2) {
               authors.append(", and ");
             } else {
               authors.append(" and ");
@@ -680,10 +696,10 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       StringBuilder header = new StringBuilder();
       header.append("<html><body>");
       header.append("<b>");
-      if (libInfo.url == null) {
-        header.append(libInfo.name);
+      if (info.url == null) {
+        header.append(info.name);
       } else {
-        header.append("<a href=\"" + libInfo.url + "\">" + libInfo.name + "</a>");
+        header.append("<a href=\"" + info.url + "\">" + info.name + "</a>");
       }
       header.append("</b>");
       header.append(createAuthorString());
@@ -698,7 +714,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       c.gridx = 1;
       c.gridy = 0;
       c.anchor = GridBagConstraints.EAST;
-      categoryLabel = new JLabel("[" + libInfo.category + "]");
+      categoryLabel = new JLabel("[" + info.category + "]");
       categoryLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 7));
       add(categoryLabel, c);
       
@@ -725,14 +741,14 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       StringBuilder description = new StringBuilder();
       description.append("<html><body>");
       
-      if (libInfo.sentence != null)
-        description.append(libInfo.sentence);
+      if (info.sentence != null)
+        description.append(info.sentence);
       
-      if (libInfo.sentence != null && libInfo.paragraph != null)
+      if (info.sentence != null && info.paragraph != null)
         description.append(" ");
       
-      if (libInfo.sentence != null && libInfo.paragraph != null)
-        description.append(libInfo.paragraph);
+      if (info.sentence != null && info.paragraph != null)
+        description.append(info.paragraph);
       
       description.append("</body></html>");
       descriptionText.setText(description.toString());
@@ -770,7 +786,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       rightPane.add(Box.createVerticalGlue());
       
       installOrRemove = new JButton();
-      if (libInfo.isInstalled()) {
+      if (info.isInstalled()) {
         useRemoveAction();
       } else {
         useInstalledAction();

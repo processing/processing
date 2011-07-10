@@ -684,7 +684,7 @@ public class LibraryManager {
         
         ArrayList<Library> info = installLibrary(libFile);
         if (info != null) {
-          libraryPanel.libInfo = info.get(0).info;
+          libraryPanel.info = info.get(0).info;
         }
         
         refreshInstalled();
