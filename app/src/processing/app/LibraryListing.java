@@ -84,6 +84,9 @@ public class LibraryListing {
     while (it.hasNext()) {
       LibraryInfo libInfo = it.next();
       if (installedLibraryNames.contains(libInfo.name)) {
+        if (librariesByCategory.containsKey(libInfo.category)) {
+          librariesByCategory.get(libInfo.category).remove(libInfo);
+        }
         it.remove();
         categoriesByName.put(libInfo.name, libInfo.category);
       }
