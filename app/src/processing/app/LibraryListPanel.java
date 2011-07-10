@@ -382,7 +382,11 @@ public class LibraryListPanel extends JPanel implements Scrollable {
   
   public void rebuild() {
     for (LibraryPanel libPanel : libPanels) {
-      // XXX: REBUILD HERE
+      if (libPanel.libInfo.isInstalled()) {
+        libPanel.useRemoveAction();
+      } else {
+        libPanel.useInstalledAction();
+      }
     }
   }
   
@@ -480,41 +484,61 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       descriptionText.addMouseListener(expandPanelMouseListener);
     }
     
+    public void useInstalledAction() {
+      installOrRemove.removeActionListener(removeAction);
+      installOrRemove.setText("Install");
+      installOrRemove.addActionListener(installLibAction);      
+    }
+
+    public void useRemoveAction() {
+      installOrRemove.removeActionListener(installLibAction);
+      installOrRemove.setText("Remove");
+      installOrRemove.addActionListener(removeAction);
+    }
+
     private void createInstallRemoveActions() {
       
      removeAction = new ActionListener() {
         
         public void actionPerformed(ActionEvent arg) {
+          installOrRemove.setEnabled(false);
           libraryManager.uninstallLibrary(libInfo.library);
+          installOrRemove.setEnabled(true);
         }
       };
       
       installLibAction = new ActionListener() {
         
         public void actionPerformed(ActionEvent arg) {
+          installOrRemove.setEnabled(false);
           try {
             URL url = new URL(libInfo.link);
             
             installProgressBar.setVisible(true);
-            libraryManager.installLibraryFromUrl(url, new JProgressMonitor(installProgressBar) {
-
-              public void finishedAction() {
-                // Finished downloading library
+            
+            libraryManager.installLibraryFromUrl(url, LibraryPanel.this,
+              new JProgressMonitor(installProgressBar) {
+  
+                public void finishedAction() {
+                  // Finished downloading library
+                }
+              },
+              new JProgressMonitor(installProgressBar) {
+  
+                public void finishedAction() {
+                  // Finished installing library
+                  resetInstallProgressBarState();
+                }
               }
-            }, new JProgressMonitor(installProgressBar) {
-
-              public void finishedAction() {
-                // Finished installing library
-                resetInstallProgressBarState();
-              }
-
-            });
+            );
+            
           } catch (MalformedURLException e) {
             Base.showWarning("Install Failed",
                              "The link fetched from Processing.org is invalid.\n" +
                              "You can still intall this library manually by visiting\n" +
                              "the library's website.", e);
           }
+          installOrRemove.setEnabled(true);
         }
       };
     }
@@ -556,7 +580,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       return authors.toString();
     }
 
-    void setTextStyle(JTextPane textPane) {
+    void setHtmlTextStyle(JTextPane textPane, boolean justified) {
       
       textPane.setHighlighter(null);
       textPane.setOpaque(false);
@@ -564,10 +588,12 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       
       Font font = UIManager.getFont("Label.font");
 
-      StyledDocument sdoc = textPane.getStyledDocument();
-      SimpleAttributeSet sa = new SimpleAttributeSet();
-      StyleConstants.setAlignment(sa, StyleConstants.ALIGN_JUSTIFIED);
-      sdoc.setParagraphAttributes(0, 1, sa, false);
+      if (justified) {
+        StyledDocument sdoc = textPane.getStyledDocument();
+        SimpleAttributeSet sa = new SimpleAttributeSet();
+        StyleConstants.setAlignment(sa, StyleConstants.ALIGN_JUSTIFIED);
+        sdoc.setParagraphAttributes(0, 1, sa, false);
+      }
       
       Document doc = textPane.getDocument();
       
@@ -646,7 +672,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       header.append("</body></html>");
       headerLabel.setText(header.toString());
       
-      setTextStyle(headerLabel);
+      setHtmlTextStyle(headerLabel, false);
       headerLabel.addHyperlinkListener(nullHyperlinkListener);
       add(headerLabel, c);
       
@@ -694,7 +720,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       descriptionText.setText(description.toString());
       descriptionText.addHyperlinkListener(nullHyperlinkListener);
       descriptionText.setMargin(new Insets(0, 25, 10, 5));
-      setTextStyle(descriptionText);
+      setHtmlTextStyle(descriptionText, true);
       add(descriptionText, c);
     }
     
@@ -727,11 +753,9 @@ public class LibraryListPanel extends JPanel implements Scrollable {
       
       installOrRemove = new JButton();
       if (libInfo.isInstalled()) {
-        installOrRemove.setText("Remove");
-        installOrRemove.addActionListener(removeAction);
+        useRemoveAction();
       } else {
-        installOrRemove.setText("Install");
-        installOrRemove.addActionListener(installLibAction);
+        useInstalledAction();
       }
       Dimension installButtonDimensions = installOrRemove.getPreferredSize();
       installButtonDimensions.width = BUTTON_WIDTH;
