@@ -536,6 +536,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
         
         public void actionPerformed(ActionEvent arg) {
           installOrRemove.setEnabled(false);
+          
           installProgressBar.setVisible(true);
           libraryManager.uninstallLibrary(info.library,
             new JProgressMonitor(installProgressBar) {
@@ -543,11 +544,11 @@ public class LibraryListPanel extends JPanel implements Scrollable {
               public void finishedAction() {
                 // Finished uninstalling the library
                 resetInstallProgressBarState();
+                installOrRemove.setEnabled(true);
               }
             }
           );
           
-          installOrRemove.setEnabled(true);
         }
       };
       
@@ -555,6 +556,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
         
         public void actionPerformed(ActionEvent arg) {
           installOrRemove.setEnabled(false);
+          
           try {
             URL url = new URL(info.link);
             
@@ -572,6 +574,7 @@ public class LibraryListPanel extends JPanel implements Scrollable {
                 public void finishedAction() {
                   // Finished installing library
                   resetInstallProgressBarState();
+                  installOrRemove.setEnabled(true);
                 }
               }
             );
@@ -581,8 +584,8 @@ public class LibraryListPanel extends JPanel implements Scrollable {
                              "The link fetched from Processing.org is invalid.\n" +
                              "You can still intall this library manually by visiting\n" +
                              "the library's website.", e);
+            installOrRemove.setEnabled(true);
           }
-          installOrRemove.setEnabled(true);
         }
       };
     }
