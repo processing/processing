@@ -36,6 +36,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import processing.app.Library.LibraryInfo;
+import processing.app.LibraryListPanel.LibraryPanel;
 import processing.app.LibraryListPanel.PreferredViewPositionListener;
 import processing.app.LibraryListing.LibraryListFetcher;
 
@@ -55,10 +56,9 @@ public class LibraryManager {
   static final String ANY_CATEGORY = "Any";
 
   JFrame dialog;
-
+  
   LibraryListing libraryListing;
   
-  // Non-simple UI widgets:
   FilterField filterField;
   
   LibraryListPanel libraryListPanel;
@@ -242,14 +242,7 @@ public class LibraryManager {
         public void finishedAction() {
           libraryListing = llf.getLibraryListing();
           synchronized (libraryListing) {
-            // Bleh, lets change how the installed libraries are stored and
-            // tracked.
-            ArrayList<Library> libraries = editor.getMode().contribLibraries;
-            ArrayList<LibraryInfo> infoList = new ArrayList<LibraryInfo>();
-            for (Library library : libraries) {
-              infoList.add(library.info);
-            }
-            libraryListing.updateList(infoList);
+            updateLibraryListing();
             if (libraryListPanel != null) {
               libraryListPanel.setLibraryList(libraryListing);
             }
@@ -264,7 +257,19 @@ public class LibraryManager {
     return libraryListing;
   }
 
+  protected void updateLibraryListing() {
+    // Bleh, lets change how the installed libraries are stored and
+    // tracked.
+    ArrayList<Library> libraries = editor.getMode().contribLibraries;
+    ArrayList<LibraryInfo> infoList = new ArrayList<LibraryInfo>();
+    for (Library library : libraries) {
+      infoList.add(library.info);
+    }
+    libraryListing.updateList(infoList);
+  }
+
   public void installLibraryFromUrl(URL url,
+                                    LibraryPanel libPanel,
                                     JProgressMonitor downloadProgressMonitor,
                                     JProgressMonitor installProgressMonitor) {
     
@@ -274,12 +279,13 @@ public class LibraryManager {
                                                    downloadProgressMonitor);
     
     downloader.setPostOperation(new LibraryInstaller(downloader,
+                                                     libPanel,
                                                      installProgressMonitor));
 
     new Thread(downloader).start();
   }
 
-  public int confirmAndInstallLibrary(Editor editor, File libFile) {
+  public ArrayList<Library> confirmAndInstallLibrary(Editor editor, File libFile) {
     this.editor = editor;
     
     int result = Base.showYesNoQuestion(this.editor, "Install",
@@ -290,14 +296,14 @@ public class LibraryManager {
       return installLibrary(libFile);
     }
     
-    return 0;
+    return null;
   }
 
   /**
    * Installs the given library file to the active sketchbook. The contents of
    * the library are extracted to a temporary folder before being moved.
    */
-  protected int installLibrary(File libFile) {
+  protected ArrayList<Library> installLibrary(File libFile) {
     
     String libName = guessLibraryName(libFile);
     
@@ -355,7 +361,7 @@ public class LibraryManager {
                      "Could not find libraries in the downloaded file.\n" + 
                      "This may be a one time error, please try again.", e);
     
-    return 0;
+    return null;
   }
   
   protected File getTemporaryFile(URL url) {
@@ -400,7 +406,7 @@ public class LibraryManager {
     return fileName;
   }
   
-  protected int installLibraries(ArrayList<Library> newLibs) {
+  protected ArrayList<Library> installLibraries(ArrayList<Library> newLibs) {
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
     
     Iterator<Library> it = newLibs.iterator();
@@ -420,7 +426,7 @@ public class LibraryManager {
           
           if (result == JOptionPane.YES_OPTION) {
             if (!backupLibrary(oldLib)) {
-              return 0;
+              return null;
             }
           } else {
             it.remove();
@@ -430,8 +436,9 @@ public class LibraryManager {
       }
     }
     
-    int failures = 0;
-    for (Library newLib : newLibs) {
+    it = newLibs.iterator();
+    while (it.hasNext()) {
+      Library newLib = it.next();
       String libFolderName = newLib.folder.getName();
       File libFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
                                 libFolderName);
@@ -439,16 +446,11 @@ public class LibraryManager {
         Base.showWarning("Trouble moving new library to the sketchbook",
                          "Could not move \"" + newLib.getName() + "\" to "
                           + libFolder.getAbsolutePath() + ".\n", null);
-        failures++;
+        it.remove();
       }
     }
     
-    int numInstalled = newLibs.size() - failures;
-    if (numInstalled > 0) {
-      refreshInstalled();
-    }
-    
-    return numInstalled;
+    return newLibs;
   }
   
   public void uninstallLibrary(Library library) {
@@ -459,9 +461,11 @@ public class LibraryManager {
     }
   }
 
-  private void refreshInstalled() {
+  public void refreshInstalled() {
     editor.getMode().rebuildLibraryList();
     editor.getMode().rebuildImportMenu();
+    
+    updateLibraryListing();
     libraryListPanel.rebuild();
   }
 
@@ -645,11 +649,18 @@ public class LibraryManager {
 
   class LibraryInstaller implements Runnable {
     
+    LibraryPanel libraryPanel;
+
     ProgressMonitor progressMonitor;
     
     FileDownloader fileDownloader;
+
     
-    public LibraryInstaller(FileDownloader downloader, ProgressMonitor pm) {
+    public LibraryInstaller(FileDownloader downloader, LibraryPanel libPanel,
+                            ProgressMonitor pm) {
+      
+      libraryPanel = libPanel;
+      
       if (pm == null) {
         progressMonitor = new NullProgressMonitor();
       } else {
@@ -665,7 +676,12 @@ public class LibraryManager {
       if (libFile != null) {
         progressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
         
-        installLibrary(libFile);
+        ArrayList<Library> info = installLibrary(libFile);
+        if (info != null) {
+          libraryPanel.libInfo = info.get(0).info;
+        }
+        
+        refreshInstalled();
       }
       
       dialog.pack();
