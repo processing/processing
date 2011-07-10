@@ -37,6 +37,8 @@ import processing.app.Library.LibraryInfo.Author;
 
 public class LibraryListing {
   
+  ArrayList<LibraryInfo> advertisedLibraries;
+  
   Map<String, List<LibraryInfo>> librariesByCategory;
   
   ArrayList<LibraryInfo> allLibraries;
@@ -57,7 +59,8 @@ public class LibraryListing {
     hasDownloadedList = true;
     
     LibraryXmlParser xmlParser = new LibraryXmlParser(xmlFile);
-    updateList(xmlParser.getLibraries());
+    advertisedLibraries = xmlParser.getLibraries();
+    updateList(advertisedLibraries);
     
     Collections.sort(allLibraries);
     
@@ -105,6 +108,24 @@ public class LibraryListing {
     Collections.sort(allLibraries);
     
   }
+  
+  public void removeLibrary(LibraryInfo info) {
+    if (librariesByCategory.containsKey(info.category)) {
+      librariesByCategory.get(info.category).remove(info);
+    }
+    allLibraries.remove(info);
+  }
+  
+  public LibraryInfo getAdvertisedLibrary(String libName) {
+    for (LibraryInfo libInfo : advertisedLibraries) {
+      if (libInfo.name.equals(libName)) {
+        return libInfo;
+      }
+    }
+    
+    return null;
+  }
+
 
   public Set<String> getCategories() {
     return librariesByCategory.keySet();
