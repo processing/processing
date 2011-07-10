@@ -442,7 +442,9 @@ public class LibraryManager {
       String libFolderName = newLib.folder.getName();
       File libFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
                                 libFolderName);
-      if (!newLib.folder.renameTo(libFolder)) {
+      if (newLib.folder.renameTo(libFolder)) {
+        newLib.folder = libFolder;
+      } else {
         Base.showWarning("Trouble moving new library to the sketchbook",
                          "Could not move \"" + newLib.getName() + "\" to "
                           + libFolder.getAbsolutePath() + ".\n", null);
@@ -483,13 +485,17 @@ public class LibraryManager {
     final String backupName = prefix + "_" + libFolderName;
     File backupFolderForLib = getUniqueName(backupFolder, backupName);
     
-    boolean success = lib.folder.renameTo(backupFolderForLib);
-    if (!success) {
+//    try {
+    if (lib.folder.renameTo(backupFolderForLib)) {
+//      FileUtils.moveDirectory(lib.folder, backupFolderForLib);
+      return true;
+//    } catch (IOException e) {
+    } else {
       Base.showWarning("Trouble creating backup of old \"" + lib.getName() + "\" library",
-                       "Could not move library to backup folder.\n", null);
+                       "Could not move library to backup folder:\n"
+                           + backupFolderForLib.getAbsolutePath(), null);
+      return false;
     }
-    
-    return success;
   }
 
   /**
