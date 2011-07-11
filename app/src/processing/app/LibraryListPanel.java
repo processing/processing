@@ -49,6 +49,8 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     }
   };
   
+  HashMap<LibraryPanel, Integer> rowForEachPanel;
+  
   @SuppressWarnings("unused")
   private PreferredViewPositionListener preferredViewPositionListener;
 
@@ -60,6 +62,8 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     super();
     
     this.libraryManager = libraryManager;
+    
+    rowForEachPanel = new HashMap<LibraryPanel, Integer>();
     
     preferredViewPositionListener = new PreferredViewPositionListener() {
       
@@ -111,39 +115,67 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     
   }
   
-  // XXX: Lets choose rows better.
-  int row = 0;
   public void libraryAdded(LibraryInfo libraryInfo) {
-    System.out.println("Adding " + libraryInfo.name);
+    
+    LibraryPanel newPanel = new LibraryPanel(libraryInfo);
+    
+    synchronized (libPanels) {
+      libPanels.add(newPanel);
+      Collections.sort(libPanels);
+    }
     
     GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.HORIZONTAL;
     c.weightx = 1;
     c.gridx = 0;
-    c.gridy = row++;
-
-    LibraryPanel libPanel = new LibraryPanel(libraryInfo);
-    synchronized (libPanels) {
-      libPanels.add(libPanel);
-    }
-
-    add(libPanel, c);
+    c.gridy = getRowForPanel(newPanel);
+    rowForEachPanel.put(newPanel, c.gridy);
+    
+    add(newPanel, c);
     updateColors();
   }
   
+  private int getRowForPanel(LibraryPanel newPanel) {
+    int currentIndex = 0;
+    while (currentIndex < libPanels.size()) {
+      LibraryPanel currentPanel = libPanels.get(currentIndex);
+      if (currentPanel == newPanel) {
+        break;
+      }
+      currentIndex++;
+    }
+    
+    int lastIndex = currentIndex - 1;
+    int nextIndex = currentIndex + 1;
+    LibraryPanel last = null, next = null;
+    if (0 <= lastIndex && lastIndex < libPanels.size())
+      last = libPanels.get(lastIndex);
+    if (0 <= nextIndex && nextIndex < libPanels.size())
+      next = libPanels.get(nextIndex);
+    
+    Integer lastRow = rowForEachPanel.get(last);
+    if (lastRow == null) lastRow = 0;
+    Integer nextRow = rowForEachPanel.get(next);
+    if (nextRow == null) nextRow = 16384;
+    
+    return lastRow + ((nextRow - lastRow) / 2);
+  }
+
   public void libraryRemoved(LibraryInfo libraryInfo) {
-    System.out.println("Removing " + libraryInfo.name);
     
     synchronized (libPanels) {
       Iterator<LibraryPanel> it = libPanels.iterator();
       while (it.hasNext()) {
         LibraryPanel panel = it.next();
         if (panel.info == libraryInfo) {
+          rowForEachPanel.remove(panel);
           remove(panel);
           it.remove();
         }
       }
     }
+    
+    updateUI();
   }
   
   public void libraryChanged(LibraryInfo oldLib, LibraryInfo newLib) {
@@ -387,7 +419,7 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
   /**
    * Panel that expands and gives a brief overview of a library when clicked.
    */
-  class LibraryPanel extends JPanel {
+  class LibraryPanel extends JPanel implements Comparable<LibraryPanel> {
     
     private static final int BUTTON_WIDTH = 100;
 
@@ -846,6 +878,10 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
       revalidate();
     }
 
+    public int compareTo(LibraryPanel o) {
+      return info.name.toLowerCase().compareTo(o.info.name.toLowerCase());
+    }
+    
   }
 
   public static interface PreferredViewPositionListener {
