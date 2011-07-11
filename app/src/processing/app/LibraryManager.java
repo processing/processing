@@ -163,7 +163,7 @@ public class LibraryManager {
           category = null;
         }
         
-        libraryListPanel.filterLibraries(category, filterField.filters);
+        filterLibraries(category, filterField.filters);
       }
     });
     
@@ -225,7 +225,6 @@ public class LibraryManager {
     dialog.dispose();
   }
 
-
   /**
    * @return true if the library listing has already been downloaded
    */
@@ -233,9 +232,23 @@ public class LibraryManager {
     return libraryListing != null;
   }
   
-  private LibraryListing getLibraryListing(JProgressBar progressBar) {
+  public void filterLibraries(String category, List<String> filters) {
+
+    if (libraryListing != null) {
+
+      List<LibraryInfo> filteredLibraries = libraryListing
+          .getFilteredLibraryList(category, filters);
+
+      libraryListPanel.filterLibraries(filteredLibraries);
+    }
+  }
+  
+  private void getLibraryListing(JProgressBar progressBar) {
     if (libraryListing == null) {
-      final LibraryListFetcher llf = new LibraryListFetcher();
+      libraryListing = new LibraryListing();
+      libraryListing.addLibraryListener(libraryListPanel); 
+    
+      final LibraryListFetcher llf = new LibraryListFetcher(libraryListing);
       llf.setProgressMonitor(new JProgressMonitor(progressBar) {
         
         @Override
@@ -243,28 +256,26 @@ public class LibraryManager {
           libraryListing = llf.getLibraryListing();
           synchronized (libraryListing) {
             updateLibraryListing();
-            if (libraryListPanel != null) {
-              libraryListPanel.setLibraryList(libraryListing);
-            }
             updateCategoryChooser();
+            
+            progressBar.setVisible(false);
           }
         }
       });
       new Thread(llf).start();
-      
     }
-    
-    return libraryListing;
   }
 
   protected void updateLibraryListing() {
     // Bleh, lets change how the installed libraries are stored and
     // tracked.
     ArrayList<Library> libraries = editor.getMode().contribLibraries;
+    
     ArrayList<LibraryInfo> infoList = new ArrayList<LibraryInfo>();
     for (Library library : libraries) {
       infoList.add(library.info);
     }
+    
     libraryListing.updateList(infoList);
   }
 
@@ -325,7 +336,6 @@ public class LibraryManager {
            "so it won't be installed.", e);
     }
     
-    Exception e = null;
     boolean errorEncountered = false;
     unzip(libFile, tmpFolder);
     try {  
@@ -464,9 +474,6 @@ public class LibraryManager {
   public void refreshInstalled() {
     editor.getMode().rebuildLibraryList();
     editor.getMode().rebuildImportMenu();
-    
-    updateLibraryListing();
-    libraryListPanel.rebuild();
   }
 
   /**
@@ -630,7 +637,7 @@ public class LibraryManager {
           // Replace anything but 0-9 or a-z with a space
           filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a]", " ");
           filters = Arrays.asList(filter.split(" "));
-          libraryListPanel.filterLibraries(category, filters);
+          filterLibraries(category, filters);
         }
       });
     }
@@ -666,9 +673,17 @@ public class LibraryManager {
       pm.startTask("Removing", ProgressMonitor.UNKNOWN);
       if (library != null) {
         if (backupLibrary(library)) {
-          refreshInstalled();
+          LibraryInfo advertisedVersion = libraryListing
+              .getAdvertisedLibrary(library.info.name);
+          
+          if (advertisedVersion == null) {
+            libraryListing.removeLibrary(library.info);
+          } else {
+            libraryListing.replaceLibrary(library.info, advertisedVersion);
+          }
         }
       }
+      refreshInstalled();
       pm.finished();
     }
     
@@ -710,7 +725,7 @@ public class LibraryManager {
                              "Maybe it's just us, but it looks like there are no\n"
                            + "libraries in the file we just downloaded.\n", null);
           } else {
-            libraryPanel.info = info.get(0).info;
+            libraryListing.replaceLibrary(libraryPanel.info, info.get(0).info);
           }
         }
         
