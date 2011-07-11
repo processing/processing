@@ -37,6 +37,8 @@ import processing.app.Library.LibraryInfo.Author;
 
 public class LibraryListing {
   
+  ArrayList<LibraryChangeListener> listeners;
+  
   ArrayList<LibraryInfo> advertisedLibraries;
   
   Map<String, List<LibraryInfo>> librariesByCategory;
@@ -47,7 +49,7 @@ public class LibraryListing {
   
   
   public LibraryListing() {
-    
+    listeners = new ArrayList<LibraryChangeListener>();
     librariesByCategory = new HashMap<String, List<LibraryInfo>>();
     allLibraries = new ArrayList<LibraryInfo>();
     hasDownloadedList = false;
@@ -70,11 +72,11 @@ public class LibraryListing {
    * Adds the installed libraries to the listing of libraries, replacing any
    * pre-existing libraries by the same name as one in the list.
    */
-  public void updateList(List<LibraryInfo> installedLibraries) {
+  public void updateList(List<LibraryInfo> libraries) {
     
     // First, record the names of all the libraries in installedLibraries
     HashSet<String> installedLibraryNames = new HashSet<String>();
-    for (LibraryInfo libInfo : installedLibraries) {
+    for (LibraryInfo libInfo : libraries) {
       installedLibraryNames.add(libInfo.name);
     }
 
@@ -91,13 +93,12 @@ public class LibraryListing {
           librariesByCategory.get(libInfo.category).remove(libInfo);
         }
         it.remove();
+        notifyRemove(libInfo);
         categoriesByName.put(libInfo.name, libInfo.category);
       }
     }
     
-    // Create LibraryInfo objects for each of the installed libraries. Place
-    // them into the unknown category if they weren't advertised at all.
-    for (LibraryInfo libInfo : installedLibraries) {
+    for (LibraryInfo libInfo : libraries) {
       String category = categoriesByName.get(libInfo.name);
       if (category != null) {
         libInfo.category = category;
@@ -109,17 +110,64 @@ public class LibraryListing {
     
   }
   
+  
+  public void replaceLibrary(LibraryInfo oldLib, LibraryInfo newLib) {
+    
+    if (oldLib == null || newLib == null) {
+      return;
+    }
+    
+    if (librariesByCategory.containsKey(oldLib.category)) {
+      List<LibraryInfo> list = librariesByCategory.get(oldLib.category);
+      
+      for (int i = 0; i < list.size(); i++) {
+        if (list.get(i) == oldLib) {
+          list.set(i, newLib);
+        }
+      }
+    }
+    
+    for (int i = 0; i < allLibraries.size(); i++) {
+      if (allLibraries.get(i) == oldLib) {
+        allLibraries.set(i, newLib);
+      }
+    }
+    
+    notifyChange(oldLib, newLib);
+  }
+  
+  public void addLibrary(LibraryInfo libInfo) {
+    
+    if (librariesByCategory.containsKey(libInfo.category)) {
+      List<LibraryInfo> list = librariesByCategory.get(libInfo.category);
+      list.add(libInfo);
+      
+      Collections.sort(list);
+    } else {
+      ArrayList<LibraryInfo> libs = new ArrayList<LibraryInfo>();
+      libs.add(libInfo);
+      librariesByCategory.put(libInfo.category, libs);
+    }
+    allLibraries.add(libInfo);
+    
+    notifyAdd(libInfo);
+    
+    Collections.sort(allLibraries);
+  }
+  
   public void removeLibrary(LibraryInfo info) {
     if (librariesByCategory.containsKey(info.category)) {
       librariesByCategory.get(info.category).remove(info);
     }
     allLibraries.remove(info);
+    
+    notifyRemove(info);
   }
   
   public LibraryInfo getAdvertisedLibrary(String libName) {
-    for (LibraryInfo libInfo : advertisedLibraries) {
-      if (libInfo.name.equals(libName)) {
-        return libInfo;
+    for (LibraryInfo advertisedLib : advertisedLibraries) {
+      if (advertisedLib.name.equals(libName)) {
+        return advertisedLib;
       }
     }
     
@@ -184,18 +232,46 @@ public class LibraryListing {
  
   }
 
-  private void addLibrary(LibraryInfo libInfo) {
-    
-    if (librariesByCategory.containsKey(libInfo.category)) {
-      librariesByCategory.get(libInfo.category).add(libInfo);
-    } else {
-      ArrayList<LibraryInfo> libs = new ArrayList<LibraryInfo>();
-      libs.add(libInfo);
-      librariesByCategory.put(libInfo.category, libs);
+  private void notifyRemove(LibraryInfo libraryInfo) {
+    for (LibraryChangeListener listener : listeners) {
+      listener.libraryRemoved(libraryInfo);
     }
-    allLibraries.add(libInfo);
   }
-
+  
+  private void notifyAdd(LibraryInfo libraryInfo) {
+    for (LibraryChangeListener listener : listeners) {
+      listener.libraryAdded(libraryInfo);
+    }
+  }
+  
+  private void notifyChange(LibraryInfo oldLib, LibraryInfo newLib) {
+    for (LibraryChangeListener listener : listeners) {
+      listener.libraryChanged(oldLib, newLib);
+    }
+  }
+  
+  public void addLibraryListener(LibraryChangeListener listener) {
+    listeners.add(listener);
+  }
+  
+  public void removeLibraryListener(LibraryChangeListener listener) {
+    listeners.remove(listener);
+  }
+  
+  public ArrayList<LibraryChangeListener> getLibraryListeners() {
+    return new ArrayList<LibraryChangeListener>(listeners);
+  }
+  
+  public static interface LibraryChangeListener {
+    
+    public void libraryAdded(LibraryInfo libraryInfo);
+    
+    public void libraryRemoved(LibraryInfo libraryInfo);
+    
+    public void libraryChanged(LibraryInfo oldLib, LibraryInfo newLib);
+    
+  }
+  
   public static class LibraryListFetcher implements Runnable {
 
     LibraryListing libListing;
@@ -210,11 +286,12 @@ public class LibraryListing {
     
     ProgressMonitor progressMonitor;
 
-    public LibraryListFetcher() {
+    public LibraryListFetcher(LibraryListing libListing) {
+      
+      this.libListing = libListing;
       
       progressMonitor = new NullProgressMonitor();
       
-      libListing = null;
       try {
         File tmpFolder = Base.createTempFolder("libarylist", "download");
 
@@ -237,7 +314,6 @@ public class LibraryListing {
       downloader.setPostOperation(new Runnable() {
         
         public void run() {
-          libListing = new LibraryListing();
           
           File xmlFile = downloader.getFile();
           if (xmlFile != null) {
@@ -257,7 +333,7 @@ public class LibraryListing {
   /**
    * Class to parse the libraries xml file
    */
-  static class LibraryXmlParser extends DefaultHandler {
+  private static class LibraryXmlParser extends DefaultHandler {
     
     ArrayList<LibraryInfo> libraries;
     
