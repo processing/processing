@@ -133,8 +133,10 @@ public class JEditTextArea extends JComponent
     addMouseWheelListener(new MouseWheelListener() {
       public void mouseWheelMoved(MouseWheelEvent e) {
         if (scrollBarsInitialized) {
-          int amt = e.getWheelRotation();
-          vertical.setValue(vertical.getValue() + amt);
+          if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+            int amt = e.getUnitsToScroll();
+            vertical.setValue(vertical.getValue() + amt);
+          }
         }
       }
     });
