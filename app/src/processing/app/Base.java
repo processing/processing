@@ -1414,7 +1414,7 @@ public class Base {
    */
   public int handleConfirmAndInstallLibrary(File libFile) {
     if (libraryManagerFrame == null) libraryManagerFrame = new LibraryManager();
-    return libraryManagerFrame.confirmAndInstallLibrary(activeEditor, libFile);
+    return libraryManagerFrame.confirmAndInstallLibrary(activeEditor, libFile).size();
   }
 
   // ...................................................................
