@@ -27,6 +27,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -302,6 +303,7 @@ public class LibraryManager {
                                                      installProgressMonitor));
 
     new Thread(downloader).start();
+
   }
 
   public ArrayList<Library> confirmAndInstallLibrary(Editor editor, File libFile) {
@@ -354,6 +356,11 @@ public class LibraryManager {
                 // The file wasn't moved for whatever reason
                 errorEncountered = true;
               }
+//              try {
+//                FileUtils.moveDirectory(f, new File(newLibFolder, f.getName()));
+//              } catch (IOException e) {
+//                errorEncountered = true;
+//              }
             }
           }
           discoveredLibs = Library.list(tmpFolder);
@@ -366,7 +373,7 @@ public class LibraryManager {
       
       // Run the garbage collector so windows will let us delete/move the files
       // we just moved.
-      System.gc();
+      // System.gc();
       
       if (!errorEncountered) {
         return installLibraries(discoveredLibs);
@@ -458,12 +465,18 @@ public class LibraryManager {
       String libFolderName = newLib.folder.getName();
       File libFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
                                 libFolderName);
+      
       if (newLib.folder.renameTo(libFolder)) {
         newLib.folder = libFolder;
+//      try {
+//        FileUtils.copyDirectory(newLib.folder, libFolder);
+//        FileUtils.deleteQuietly(newLib.folder);
+//        newLib.folder = libFolder;
+//      } catch (IOException e) {
       } else {
         Base.showWarning("Trouble moving new library to the sketchbook",
                          "Could not move \"" + newLib.getName() + "\" to "
-                          + libFolder.getAbsolutePath() + ".\n", null);
+                             + libFolder.getAbsolutePath() + ".\n", null);
         it.remove();
       }
     }
@@ -491,11 +504,12 @@ public class LibraryManager {
     File backupFolderForLib = getUniqueName(backupFolder, backupName);
     
 //    try {
-    if (lib.folder.renameTo(backupFolderForLib)) {
 //      FileUtils.moveDirectory(lib.folder, backupFolderForLib);
+//      return true;
+    if (lib.folder.renameTo(backupFolderForLib)) {
       return true;
-//    } catch (IOException e) {
     } else {
+//    } catch (IOException e) {
       Base.showWarning("Trouble creating backup of old \"" + lib.getName() + "\" library",
                        "Could not move library to backup folder:\n"
                            + backupFolderForLib.getAbsolutePath(), null);
@@ -580,7 +594,7 @@ public class LibraryManager {
     }
     out.close();
   }
-
+  
   class FilterField extends JTextField {
     
     final static String filterHint = "Filter your search...";
@@ -737,7 +751,7 @@ public class LibraryManager {
       progressMonitor.finished();
     }
   }
-  
+
 }
 
 abstract class JProgressMonitor extends AbstractProgressMonitor {

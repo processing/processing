@@ -217,9 +217,6 @@ public class Library {
     // get the path for all .jar files in this code folder
     packageList = Base.packageListFromClassPath(getClassPath());
     
-    // Garbage collect any objects that have a lock on the files and prevent
-    // windows from manipulating this library's files.
-    System.gc();
   }
 
 
