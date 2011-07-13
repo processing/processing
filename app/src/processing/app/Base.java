@@ -77,7 +77,7 @@ public class Base {
   Preferences preferencesFrame;
 
   // A single instance of the library manager window
-  LibraryManager libraryManagerFrame;
+  ContributionManager libraryManagerFrame;
 
   // set to true after the first time the menu is built.
   // so that the errors while building don't show up again.
@@ -1404,7 +1404,7 @@ public class Base {
    * Show the library installer window.
    */
   public void handleAddOrRemoveLibrary() {
-    if (libraryManagerFrame == null) libraryManagerFrame = new LibraryManager();
+    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager();
     libraryManagerFrame.showFrame(activeEditor);
   }
 
@@ -1413,7 +1413,7 @@ public class Base {
    * user. Returns the number of libraries installed.
    */
   public int handleConfirmAndInstallLibrary(File libFile) {
-    if (libraryManagerFrame == null) libraryManagerFrame = new LibraryManager();
+    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager();
     return libraryManagerFrame.confirmAndInstallLibrary(activeEditor, libFile).size();
   }
 
