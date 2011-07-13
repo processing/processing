@@ -439,7 +439,9 @@ public class PApplet extends Applet
    * 
    * Processing automatically tracks if the mouse button is pressed and which button is pressed. The value of the system variable 
    * ( end auto-generated )
+   * 
    * <h3>Advanced:</h3>
+   * 
    * If running on Mac OS, a ctrl-click will be interpreted as
    * the righthand mouse button (unlike Java, which reports it as
    * the left mouse).
@@ -2774,8 +2776,8 @@ public class PApplet extends Applet
    * Saves a numbered sequence of images, one image each time the function is run. To save an image that is identical to the display window, run the function at the end of 
    * ( end auto-generated )
    * @webref output:image
-   * @see PApplet#save()
-   * @see PApplet#createGraphics()
+   * @see PApplet#save(String)
+   * @see PApplet#createGraphics(int, int, String, String)
    * @param what any sequence of letters or numbers that ends with either ".tif", ".tga", ".jpg", or ".png"
    */
   public void saveFrame(String what) {
@@ -3119,7 +3121,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:calculation
    * @param a float or int
-   * @see PApplet#sqrt()
+   * @see PApplet#sqrt(float)
    */
   static public final float sq(float a) {
     return a*a;
@@ -3132,8 +3134,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:calculation
    * @param a non-negative number
-   * @see PApplet#pow()
-   * @see PApplet#sq()
+   * @see PApplet#pow(float, float)
+   * @see PApplet#sq(float)
    */
   static public final float sqrt(float a) {
     return (float)Math.sqrt(a);
@@ -3171,7 +3173,7 @@ public class PApplet extends Applet
    * @webref math:calculation
    * @param a base of the exponential expression
    * @param b power of which to raise the base
-   * @see PApplet#sqrt()
+   * @see PApplet#sqrt(float)
    */
   static public final float pow(float a, float b) {
     return (float)Math.pow(a, b);
@@ -3215,7 +3217,7 @@ public class PApplet extends Applet
    * @param a int or float
    * @param b int or float
    * @param c int or float
-   * @see PApplet#min()
+   * @see PApplet#min(float, float, float)
    */
   static public final float max(float a, float b, float c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
@@ -3300,7 +3302,7 @@ public class PApplet extends Applet
    * @param a int or float
    * @param b int or float
    * @param c int or float
-   * @see PApplet#max()
+   * @see PApplet#max(float, float, float)
    */
   static public final float min(float a, float b, float c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
@@ -3377,8 +3379,8 @@ public class PApplet extends Applet
    * @param amt the value to constrain
    * @param low minimum limit
    * @param high maximum limit
-   * @see PApplet#max()
-   * @see PApplet#min()
+   * @see PApplet#max(float, float, float)
+   * @see PApplet#min(float, float, float)
    */
 
   static public final float constrain(float amt, float low, float high) {
@@ -3392,9 +3394,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
-   * @see PApplet#cos()
-   * @see PApplet#tan()
-   * @see PApplet#radians()
+   * @see PApplet#cos(float)
+   * @see PApplet#tan(float)
+   * @see PApplet#radians(float)
    */
   static public final float sin(float angle) {
     return (float)Math.sin(angle);
@@ -3407,9 +3409,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
-   * @see PApplet#sin()
-   * @see PApplet#tan()
-   * @see PApplet#radians()
+   * @see PApplet#sin(float)
+   * @see PApplet#tan(float)
+   * @see PApplet#radians(float)
    */
   static public final float cos(float angle) {
     return (float)Math.cos(angle);
@@ -3422,9 +3424,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
-   * @see PApplet#cos()
-   * @see PApplet#sin()
-   * @see PApplet#radians()
+   * @see PApplet#cos(float)
+   * @see PApplet#sin(float)
+   * @see PApplet#radians(float)
    */
   static public final float tan(float angle) {
     return (float)Math.tan(angle);
@@ -3437,9 +3439,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param value the value whose arc sine is to be returned
-   * @see PApplet#sin()
-   * @see PApplet#acos()
-   * @see PApplet#atan()
+   * @see PApplet#sin(float)
+   * @see PApplet#acos(float)
+   * @see PApplet#atan(float)
    */
   static public final float asin(float value) {
     return (float)Math.asin(value);
@@ -3452,9 +3454,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param value the value whose arc cosine is to be returned
-   * @see PApplet#cos()
-   * @see PApplet#asin()
-   * @see PApplet#atan()
+   * @see PApplet#cos(float)
+   * @see PApplet#asin(float)
+   * @see PApplet#atan(float)
    */
   static public final float acos(float value) {
     return (float)Math.acos(value);
@@ -3467,9 +3469,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param value -Infinity to Infinity (exclusive)
-   * @see PApplet#tan()
-   * @see PApplet#asin()
-   * @see PApplet#acos()
+   * @see PApplet#tan(float)
+   * @see PApplet#asin(float)
+   * @see PApplet#acos(float)
    */
   static public final float atan(float value) {
     return (float)Math.atan(value);
@@ -3483,7 +3485,7 @@ public class PApplet extends Applet
    * @webref math:trigonometry
    * @param a y-coordinate of the point
    * @param b x-coordinate of the point
-   * @see PApplet#tan()
+   * @see PApplet#tan(float)
    */
   static public final float atan2(float a, float b) {
     return (float)Math.atan2(a, b);
@@ -3496,7 +3498,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param radians int or float
-   * @see PApplet#radians()
+   * @see PApplet#radians(float)
    */
   static public final float degrees(float radians) {
     return radians * RAD_TO_DEG;
@@ -3509,7 +3511,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param degrees int or float
-   * @see PApplet#degrees()
+   * @see PApplet#degrees(float)
    */
   static public final float radians(float degrees) {
     return degrees * DEG_TO_RAD;
@@ -3522,8 +3524,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:calculation
    * @param what float
-   * @see PApplet#floor()
-   * @see PApplet#round()
+   * @see PApplet#floor(float)
+   * @see PApplet#round(float)
    */
   static public final int ceil(float what) {
     return (int) Math.ceil(what);
@@ -3537,8 +3539,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:calculation
    * @param what float
-   * @see PApplet#ceil()
-   * @see PApplet#round()
+   * @see PApplet#ceil(float)
+   * @see PApplet#round(float)
    */
   static public final int floor(float what) {
     return (int) Math.floor(what);
@@ -3551,8 +3553,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:calculation
    * @param what float
-   * @see PApplet#floor()
-   * @see PApplet#ceil()
+   * @see PApplet#floor(float)
+   * @see PApplet#ceil(float)
    */
   static public final int round(float what) {
     return (int) Math.round(what);
@@ -3573,7 +3575,7 @@ public class PApplet extends Applet
    * @param a first value
    * @param b second value
    * @param c third value
-   * @see PApplet#dist()
+   * @see PApplet#dist(float, float, float, float)
    */
   static public final float mag(float a, float b, float c) {
     return (float)Math.sqrt(a*a + b*b + c*c);
@@ -3612,8 +3614,8 @@ public class PApplet extends Applet
    * @param start first value
    * @param stop second value
    * @param amt float between 0.0 and 1.0
-   * @see PGraphics#curvePoint()
-   * @see PGraphics#bezierPoint()
+   * @see PGraphics#curvePoint(float, float, float, float, float)
+   * @see PGraphics#bezierPoint(float, float, float, float, float)
    */
   static public final float lerp(float start, float stop, float amt) {
     return start + (stop-start) * amt;
@@ -3629,8 +3631,8 @@ public class PApplet extends Applet
    * @param value the incoming value to be converted
    * @param start lower bound of the value's current range
    * @param stop upper bound of the value's current range
-   * @see PApplet#map()
-   * @see PApplet#lerp()
+   * @see PApplet#map(float, float, float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   static public final float norm(float value, float start, float stop) {
     return (value - start) / (stop - start);
@@ -3651,8 +3653,8 @@ public class PApplet extends Applet
    * @param istop upper bound of the value's current range
    * @param ostart lower bound of the value's target range
    * @param ostop upper bound of the value's target range
-   * @see PApplet#norm()
-   * @see PApplet#lerp()
+   * @see PApplet#norm(float, float, float)
+   * @see PApplet#lerp(float, float, float)
    */
   static public final float map(float value,
                                 float istart, float istop,
@@ -3709,8 +3711,8 @@ public class PApplet extends Applet
    * @webref math:random
    * @param howsmall int or float
    * @param howbig int or float
-   * @see PApplet#randomSeed()
-   * @see PApplet#noise()
+   * @see PApplet#randomSeed(long)
+   * @see PApplet#noise(float, float, float)
    */
   public final float random(float howsmall, float howbig) {
     if (howsmall >= howbig) return howsmall;
@@ -3725,9 +3727,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:random
    * @param what int
-   * @see PApplet#random()
-   * @see PApplet#noise()
-   * @see PApplet#noiseSeed()
+   * @see PApplet#random(float,float)
+   * @see PApplet#noise(float, float, float)
+   * @see PApplet#noiseSeed(long)
    */
   public final void randomSeed(long what) {
     // internal random number object
@@ -3786,14 +3788,14 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from noise.xml )
    * 
-   * Returns the Perlin noise value at specified coordinates. Perlin noise is a random sequence generator producing a more natural ordered, harmonic succession of numbers compared to the standard 
+   * 
    * ( end auto-generated )
    * @webref math:random
    * @param x x-coordinate in noise space
    * @param y y-coordinate in noise space
    * @param z z-coordinate in noise space
-   * @see PApplet#noiseDetail()
-   * @see PApplet#random()
+   * @see PApplet#noiseDetail(int, float)
+   * @see PApplet#random(float,float)
    */
   public float noise(float x, float y, float z) {
     if (perlin == null) {
@@ -3886,7 +3888,7 @@ public class PApplet extends Applet
    * @webref math:random
    * @param lod number of octaves to be used by the noise
    * @param falloff falloff factor for each octave
-   * @see PApplet#noise()
+   * @see PApplet#noise(float, float, float)
    */
   public void noiseDetail(int lod, float falloff) {
     if (lod>0) perlin_octaves=lod;
@@ -3900,10 +3902,10 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:random
    * @param what int
-   * @see PApplet#noise()
-   * @see PApplet#noiseDetail()
-   * @see PApplet#random()
-   * @see PApplet#randomSeed()
+   * @see PApplet#noise(float, float, float)
+   * @see PApplet#noiseDetail(int, float)
+   * @see PApplet#random(float,float)
+   * @see PApplet#randomSeed(long)
    */
   public void noiseSeed(long what) {
     if (perlinRandom == null) perlinRandom = new Random();
@@ -3933,9 +3935,9 @@ public class PApplet extends Applet
    * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
    * @param extension the type of image to load, for example "png", "gif", "jpg"
    * @see PImage#PImage
-   * @see PGraphics#image()
-   * @see PGraphics#imageMode()
-   * @see PGraphics#background()
+   * @see PGraphics#image(PImage, float, float, float, float)
+   * @see PGraphics#imageMode(int)
+   * @see PGraphics#background(float, float, float, float)
    */
   public PImage loadImage(String filename, String extension) {
     return loadImage(filename, extension, null);
@@ -4080,7 +4082,7 @@ public class PApplet extends Applet
  * @webref image:loading_displaying
  * @param filename name of the file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
  * @param extension the type of image to load, for example "png", "gif", "jpg"
- * @see PApplet#loadImage()
+ * @see PApplet#loadImage(String, String)
  * @see PImage#PImage
  */
   public PImage requestImage(String filename, String extension) {
@@ -4426,8 +4428,8 @@ public class PApplet extends Applet
  * @webref shape:load_displaying
  * @param filename name of the file to load
  * @see PShape#PShape
- * @see PGraphics#shape()
- * @see PGraphics#shapeMode()
+ * @see PGraphics#shape(PShape, float, float, float, float)
+ * @see PGraphics#shapeMode(int)
  */
   public PShape loadShape(String filename) {
     return loadShape(filename, null);
@@ -4540,9 +4542,9 @@ public class PApplet extends Applet
  * @webref typography:loading_displaying
  * @param filename name of the font to load
  * @see PFont#PFont
- * @see PGraphics#textFont()
- * @see PGraphics#text()
- * @see PApplet#createFont()
+ * @see PGraphics#textFont(PFont, float)
+ * @see PGraphics#text(String, float, float, float, float, float)
+ * @see PApplet#createFont(String, float, boolean, char[])
  */
   public PFont loadFont(String filename) {
     try {
@@ -4592,9 +4594,9 @@ public class PApplet extends Applet
    * @param smooth true for an antialiased font, false for aliased
    * @param charset array containing characters to be generated
    * @see PFont#PFont
-   * @see PGraphics#textFont()
-   * @see PGraphics#text()
-   * @see PApplet#loadFont()
+   * @see PGraphics#textFont(PFont, float)
+   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PApplet#loadFont(String)
    */
   public PFont createFont(String name, float size,
                           boolean smooth, char charset[]) {
@@ -4795,11 +4797,11 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:files
    * @param filename name of the file to be opened
-   * @see PApplet#BufferedReader
-   * @see PApplet#createWriter()
-   * @see PApplet#PrintWriter
-   * @see PApplet#try
-   * @see PApplet#catch
+   * @see BufferedReader
+   * @see PApplet#createWriter(String)
+   * @see PrintWriter
+   * @see try
+   * @see catch
    */
   public BufferedReader createReader(String filename) {
     try {
@@ -4864,9 +4866,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to be created
-   * @see PApplet#PrintWriter
+   * @see PrintWriter
    * @see PApplet#createReader
-   * @see PApplet#BufferedReader
+   * @see BufferedReader
    */
   public PrintWriter createWriter(String filename) {
     return createWriter(saveFile(filename));
@@ -5318,7 +5320,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to open
-   * @see PApplet#createInput()
+   * @see PApplet#createInput(String)
    * @see PApplet#selectOutput()
    */
   public OutputStream createOutput(String filename) {
@@ -5350,7 +5352,7 @@ public class PApplet extends Applet
    * @webref output:files
    * @param targetFilename name of the file to write to
    * @param sourceLocation location to save the file
-   * @see PApplet#createOutput()
+   * @see PApplet#createOutput(String)
    */
   public boolean saveStream(String targetFilename, String sourceLocation) {
     return saveStream(saveFile(targetFilename), sourceLocation);
@@ -5436,9 +5438,9 @@ public class PApplet extends Applet
    * @webref output:files
    * @param filename name of the file to write to
    * @param buff array of bytes to be written
-   * @see PApplet#loadStrings()
-   * @see PApplet#loadBytes()
-   * @see PApplet#saveStrings()
+   * @see PApplet#loadStrings(String)
+   * @see PApplet#loadBytes(String)
+   * @see PApplet#saveStrings(String, String[])
    */
   public void saveBytes(String filename, byte buffer[]) {
     saveBytes(saveFile(filename), buffer);
@@ -5514,9 +5516,9 @@ public class PApplet extends Applet
  * @webref output:files
  * @param filename filename for output
  * @param strings string array to be written
- * @see PApplet#loadStrings()
- * @see PApplet#loadBytes()
- * @see PApplet#saveBytes()
+ * @see PApplet#loadStrings(String)
+ * @see PApplet#loadBytes(String)
+ * @see PApplet#saveBytes(String, byte[])
  */
   public void saveStrings(String filename, String strings[]) {
     saveStrings(saveFile(filename), strings);
@@ -5694,7 +5696,7 @@ public class PApplet extends Applet
  * @webref data:array_functions
  * @param what String[], int[], or float[]
  * @param count int
- * @see PApplet#reverse()
+ * @see PApplet#reverse(boolean[])
  */
   static public byte[] sort(byte[] what, int count) {
     byte[] outgoing = new byte[what.length];
@@ -5785,6 +5787,7 @@ public class PApplet extends Applet
    * Convenience method for arraycopy().
    * Identical to <CODE>arraycopy(src, 0, dst, 0, length);</CODE>
    */
+   /** ??? */
   static public void arrayCopy(Object src, Object dst, int length) {
     System.arraycopy(src, 0, dst, 0, length);
   }
@@ -5795,6 +5798,7 @@ public class PApplet extends Applet
    * the source into the destination array.
    * Identical to <CODE>arraycopy(src, 0, dst, 0, src.length);</CODE>
    */
+   /** ??? */
   static public void arrayCopy(Object src, Object dst) {
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
   }
@@ -5813,6 +5817,7 @@ public class PApplet extends Applet
   /**
    * @deprecated Use arrayCopy() instead.
    */
+   /** ??? */
   static public void arraycopy(Object src, Object dst, int length) {
     System.arraycopy(src, 0, dst, 0, length);
   }
@@ -5820,6 +5825,7 @@ public class PApplet extends Applet
   /**
    * @deprecated Use arrayCopy() instead.
    */
+   /** ??? */
   static public void arraycopy(Object src, Object dst) {
     System.arraycopy(src, 0, dst, 0, Array.getLength(src));
   }
@@ -5837,7 +5843,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
  * @webref data:array_functions
  * @param list[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
- * @see PApplet#shorten()
+ * @see PApplet#shorten(boolean[])
  */
   static public boolean[] expand(boolean list[], int newSize) {
     boolean temp[] = new boolean[newSize];
@@ -5921,36 +5927,55 @@ public class PApplet extends Applet
 
   //
 
+/**
+ * @generate append.xml
+ * @webref data:array_functions
+ * @param b[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ * @param value new data for the array
+ * @see PApplet#shorten(boolean[])
+ * @see PApplet#expand(boolean[])
+ */
   static public byte[] append(byte b[], byte value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
     return b;
   }
-
+/**
+ * @param b[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
+ /** ??? */
   static public char[] append(char b[], char value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
     return b;
   }
-
+/**
+ * @param b[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
   static public int[] append(int b[], int value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
     return b;
   }
-
+/**
+ * @param b[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
   static public float[] append(float b[], float value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
     return b;
   }
-
+/**
+ * @param b[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
   static public String[] append(String b[], String value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
     return b;
   }
-
+/**
+ * @param b[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
   static public Object append(Object b, Object value) {
     int length = Array.getLength(b);
     b = expand(b, length + 1);
@@ -5959,31 +5984,50 @@ public class PApplet extends Applet
   }
 
   //
-
+/**
+ * @generate shorten.xml
+ * @webref data:array_functions
+ * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ * @see PApplet#append(byte[], byte)
+ * @see PApplet#expand(boolean[])
+ */
   static public boolean[] shorten(boolean list[]) {
     return subset(list, 0, list.length-1);
   }
-
+/**
+ * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
+ /** ??? */
   static public byte[] shorten(byte list[]) {
     return subset(list, 0, list.length-1);
   }
-
+/**
+ * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
   static public char[] shorten(char list[]) {
     return subset(list, 0, list.length-1);
   }
-
+/**
+ * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
   static public int[] shorten(int list[]) {
     return subset(list, 0, list.length-1);
   }
-
+/**
+ * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
   static public float[] shorten(float list[]) {
     return subset(list, 0, list.length-1);
   }
-
+/**
+ * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
   static public String[] shorten(String list[]) {
     return subset(list, 0, list.length-1);
   }
-
+/**
+ * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ */
   static public Object shorten(Object list) {
     int length = Array.getLength(list);
     return subset(list, 0, length - 1);
@@ -5991,6 +6035,15 @@ public class PApplet extends Applet
 
   //
 
+/**
+ * @generate splice.xml
+ * @webref data:array_functions
+ * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ * @param v value to be spliced in
+ * @param index position in the array from which to insert data
+ * @see PApplet#concat(boolean[], boolean[])
+ * @see PApplet#subset(boolean[], int, int)
+ */
   static final public boolean[] splice(boolean list[],
                                        boolean v, int index) {
     boolean outgoing[] = new boolean[list.length + 1];
@@ -6000,7 +6053,7 @@ public class PApplet extends Applet
                      list.length - index);
     return outgoing;
   }
-
+/** ??? */
   static final public boolean[] splice(boolean list[],
                                        boolean v[], int index) {
     boolean outgoing[] = new boolean[list.length + v.length];
@@ -6011,7 +6064,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static final public byte[] splice(byte list[],
                                     byte v, int index) {
     byte outgoing[] = new byte[list.length + 1];
@@ -6021,7 +6074,7 @@ public class PApplet extends Applet
                      list.length - index);
     return outgoing;
   }
-
+/** ??? */
   static final public byte[] splice(byte list[],
                                     byte v[], int index) {
     byte outgoing[] = new byte[list.length + v.length];
@@ -6032,7 +6085,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static final public char[] splice(char list[],
                                     char v, int index) {
     char outgoing[] = new char[list.length + 1];
@@ -6042,7 +6095,7 @@ public class PApplet extends Applet
                      list.length - index);
     return outgoing;
   }
-
+/** ??? */
   static final public char[] splice(char list[],
                                     char v[], int index) {
     char outgoing[] = new char[list.length + v.length];
@@ -6053,7 +6106,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static final public int[] splice(int list[],
                                    int v, int index) {
     int outgoing[] = new int[list.length + 1];
@@ -6063,7 +6116,7 @@ public class PApplet extends Applet
                      list.length - index);
     return outgoing;
   }
-
+/** ??? */
   static final public int[] splice(int list[],
                                    int v[], int index) {
     int outgoing[] = new int[list.length + v.length];
@@ -6074,7 +6127,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static final public float[] splice(float list[],
                                      float v, int index) {
     float outgoing[] = new float[list.length + 1];
@@ -6084,7 +6137,7 @@ public class PApplet extends Applet
                      list.length - index);
     return outgoing;
   }
-
+/** ??? */
   static final public float[] splice(float list[],
                                      float v[], int index) {
     float outgoing[] = new float[list.length + v.length];
@@ -6095,7 +6148,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static final public String[] splice(String list[],
                                       String v, int index) {
     String outgoing[] = new String[list.length + 1];
@@ -6105,7 +6158,7 @@ public class PApplet extends Applet
                      list.length - index);
     return outgoing;
   }
-
+/** ??? */
   static final public String[] splice(String list[],
                                       String v[], int index) {
     String outgoing[] = new String[list.length + v.length];
@@ -6116,7 +6169,7 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static final public Object splice(Object list, Object v, int index) {
     Object[] outgoing = null;
     int length = Array.getLength(list);
@@ -6143,6 +6196,15 @@ public class PApplet extends Applet
   static public boolean[] subset(boolean list[], int start) {
     return subset(list, start, list.length - start);
   }
+  
+/**
+ * @generate subset.xml
+ * @webref data:array_functions
+ * @param list[] boolean[], byte, char[], int[], float[], String[] or an array of objects
+ * @param start position to begin
+ * @param count number of values to extract
+ * @see PApplet#splice(boolean[], boolean, int)
+ */
 
   static public boolean[] subset(boolean list[], int start, int count) {
     boolean output[] = new boolean[count];
@@ -6150,11 +6212,13 @@ public class PApplet extends Applet
     return output;
   }
 
-
   static public byte[] subset(byte list[], int start) {
     return subset(list, start, list.length - start);
   }
-
+  
+/**
+ * @param list[] boolean[], byte, char[], int[], float[], String[] or an array of objects
+ */
   static public byte[] subset(byte list[], int start, int count) {
     byte output[] = new byte[count];
     System.arraycopy(list, start, output, 0, count);
@@ -6165,7 +6229,10 @@ public class PApplet extends Applet
   static public char[] subset(char list[], int start) {
     return subset(list, start, list.length - start);
   }
-
+  
+/**
+ * @param list[] boolean[], byte, char[], int[], float[], String[] or an array of objects
+ */
   static public char[] subset(char list[], int start, int count) {
     char output[] = new char[count];
     System.arraycopy(list, start, output, 0, count);
@@ -6177,6 +6244,9 @@ public class PApplet extends Applet
     return subset(list, start, list.length - start);
   }
 
+/**
+ * @param list[] boolean[], byte, char[], int[], float[], String[] or an array of objects
+ */
   static public int[] subset(int list[], int start, int count) {
     int output[] = new int[count];
     System.arraycopy(list, start, output, 0, count);
@@ -6187,7 +6257,10 @@ public class PApplet extends Applet
   static public float[] subset(float list[], int start) {
     return subset(list, start, list.length - start);
   }
-
+  
+/**
+ * @param list[] boolean[], byte, char[], int[], float[], String[] or an array of objects
+ */
   static public float[] subset(float list[], int start, int count) {
     float output[] = new float[count];
     System.arraycopy(list, start, output, 0, count);
@@ -6199,6 +6272,9 @@ public class PApplet extends Applet
     return subset(list, start, list.length - start);
   }
 
+/**
+ * @param list[] boolean[], byte, char[], int[], float[], String[] or an array of objects
+ */
   static public String[] subset(String list[], int start, int count) {
     String output[] = new String[count];
     System.arraycopy(list, start, output, 0, count);
@@ -6210,7 +6286,10 @@ public class PApplet extends Applet
     int length = Array.getLength(list);
     return subset(list, start, length - start);
   }
-
+  
+/**
+ * @param list[] boolean[], byte, char[], int[], float[], String[] or an array of objects
+ */
   static public Object subset(Object list, int start, int count) {
     Class<?> type = list.getClass().getComponentType();
     Object outgoing = Array.newInstance(type, count);
@@ -6220,48 +6299,73 @@ public class PApplet extends Applet
 
   //
 
+/**
+ * @generate concat.xml
+ * @webref data:array_functions
+ * @param a[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ * @param b[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ * @see PApplet#splice(boolean[], boolean, int)
+ */
   static public boolean[] concat(boolean a[], boolean b[]) {
     boolean c[] = new boolean[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
-
+/**
+ * @param a[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ * @param b[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ */
   static public byte[] concat(byte a[], byte b[]) {
     byte c[] = new byte[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
-
+/**
+ * @param a[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ * @param b[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ */
   static public char[] concat(char a[], char b[]) {
     char c[] = new char[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
-
+/**
+ * @param a[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ * @param b[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ */
   static public int[] concat(int a[], int b[]) {
     int c[] = new int[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
-
+/**
+ * @param a[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ * @param b[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ */
   static public float[] concat(float a[], float b[]) {
     float c[] = new float[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
-
+/**
+ * @param a[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ * @param b[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ */
   static public String[] concat(String a[], String b[]) {
     String c[] = new String[a.length + b.length];
     System.arraycopy(a, 0, c, 0, a.length);
     System.arraycopy(b, 0, c, a.length, b.length);
     return c;
   }
-
+/**
+ * @param a[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ * @param b[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ */
   static public Object concat(Object a, Object b) {
     Class<?> type = a.getClass().getComponentType();
     int alength = Array.getLength(a);
@@ -6274,6 +6378,13 @@ public class PApplet extends Applet
 
   //
 
+
+/**
+ * @generate reverse.xml
+ * @webref data:array_functions
+ * @param list[] booleans[], bytes[], chars[], ints[], floats[], or Strings[]
+ * @see PApplet#sort(String[], int)
+ */
   static public boolean[] reverse(boolean list[]) {
     boolean outgoing[] = new boolean[list.length];
     int length1 = list.length - 1;
@@ -6282,7 +6393,9 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-
+/**
+ * @param list[] booleans[], bytes[], chars[], ints[], floats[], or Strings[]
+ */
   static public byte[] reverse(byte list[]) {
     byte outgoing[] = new byte[list.length];
     int length1 = list.length - 1;
@@ -6291,7 +6404,9 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-
+/**
+ * @param list[] booleans[], bytes[], chars[], ints[], floats[], or Strings[]
+ */
   static public char[] reverse(char list[]) {
     char outgoing[] = new char[list.length];
     int length1 = list.length - 1;
@@ -6300,7 +6415,9 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-
+/**
+ * @param list[] booleans[], bytes[], chars[], ints[], floats[], or Strings[]
+ */
   static public int[] reverse(int list[]) {
     int outgoing[] = new int[list.length];
     int length1 = list.length - 1;
@@ -6309,7 +6426,9 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-
+/**
+ * @param list[] booleans[], bytes[], chars[], ints[], floats[], or Strings[]
+ */
   static public float[] reverse(float list[]) {
     float outgoing[] = new float[list.length];
     int length1 = list.length - 1;
@@ -6318,7 +6437,9 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-
+/**
+ * @param list[] booleans[], bytes[], chars[], ints[], floats[], or Strings[]
+ */
   static public String[] reverse(String list[]) {
     String outgoing[] = new String[list.length];
     int length1 = list.length - 1;
@@ -6327,7 +6448,7 @@ public class PApplet extends Applet
     }
     return outgoing;
   }
-
+/** ??? */
   static public Object reverse(Object list) {
     Class<?> type = list.getClass().getComponentType();
     int length = Array.getLength(list);
@@ -6346,19 +6467,19 @@ public class PApplet extends Applet
 
 
   /**
-   * Remove whitespace characters from the beginning and ending
-   * of a String. Works like String.trim() but includes the
-   * unicode nbsp character as well.
+   * @generate trim.xml
+   * @webref data:string_functions
+   * @param str any string
+   * @see PApplet#split(String, String)
+   * @see PApplet#join(String[], char)
    */
   static public String trim(String str) {
     return str.replace('\u00A0', ' ').trim();
   }
 
-
-  /**
-   * Trim the whitespace from a String array. This returns a new
-   * array and does not affect the passed-in array.
-   */
+/**
+ * @param array a String array
+ */
   static public String[] trim(String[] array) {
     String[] outgoing = new String[array.length];
     for (int i = 0; i < array.length; i++) {
@@ -6371,8 +6492,14 @@ public class PApplet extends Applet
 
 
   /**
-   * Join an array of Strings together as a single String,
-   * separated by the whatever's passed in for the separator.
+   * @generate join.xml
+   * @webref data:string_functions
+   * @param str[] array of Strings
+   * @param separator char or String to be placed between each item
+   * @see PApplet#split(String, String)
+   * @see PApplet#trim(String)
+   * @see PApplet#nf(float, int, int)
+   * @see PApplet#nfs(float, int, int)
    */
   static public String join(String str[], char separator) {
     return join(str, String.valueOf(separator));
@@ -6380,15 +6507,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Join an array of Strings together as a single String,
-   * separated by the whatever's passed in for the separator.
-   * <P>
-   * To use this on numbers, first pass the array to nf() or nfs()
-   * to get a list of String objects, then use join on that.
-   * <PRE>
-   * e.g. String stuff[] = { "apple", "bear", "cat" };
-   *      String list = join(stuff, ", ");
-   *      // list is now "apple, bear, cat"</PRE>
+   * @param separator char or String to be placed between each item
    */
   static public String join(String str[], String separator) {
     StringBuffer buffer = new StringBuffer();
@@ -6400,39 +6519,20 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Split the provided String at wherever whitespace occurs.
-   * Multiple whitespace (extra spaces or tabs or whatever)
-   * between items will count as a single break.
-   * <P>
-   * The whitespace characters are "\t\n\r\f", which are the defaults
-   * for java.util.StringTokenizer, plus the unicode non-breaking space
-   * character, which is found commonly on files created by or used
-   * in conjunction with Mac OS X (character 160, or 0x00A0 in hex).
-   * <PRE>
-   * i.e. splitTokens("a b") -> { "a", "b" }
-   *      splitTokens("a    b") -> { "a", "b" }
-   *      splitTokens("a\tb") -> { "a", "b" }
-   *      splitTokens("a \t  b  ") -> { "a", "b" }</PRE>
-   */
+
   static public String[] splitTokens(String what) {
     return splitTokens(what, WHITESPACE);
   }
 
 
   /**
-   * Splits a string into pieces, using any of the chars in the
-   * String 'delim' as separator characters. For instance,
-   * in addition to white space, you might want to treat commas
-   * as a separator. The delimeter characters won't appear in
-   * the returned String array.
-   * <PRE>
-   * i.e. splitTokens("a, b", " ,") -> { "a", "b" }
-   * </PRE>
-   * To include all the whitespace possibilities, use the variable
-   * WHITESPACE, found in PConstants:
-   * <PRE>
-   * i.e. splitTokens("a   | b", WHITESPACE + "|");  ->  { "a", "b" }</PRE>
+   * @generate splitTokens.xml
+   * @webref data:string_functions
+   * @param what the string to be split
+   * @param delim list of individual characters that will be used as separators
+   * @see PApplet#split(String, String)
+   * @see PApplet#join(String[], String)
+   * @see PApplet#trim(String)
    */
   static public String[] splitTokens(String what, String delim) {
     StringTokenizer toker = new StringTokenizer(what, delim);
@@ -6457,6 +6557,7 @@ public class PApplet extends Applet
    * one can split on tab characters, but maintain the column
    * alignments (of say an excel file) where there are empty columns.
    */
+   /** ??? */
   static public String[] split(String what, char delim) {
     // do this so that the exception occurs inside the user's
     // program, rather than appearing to be a bug inside split()
@@ -6504,6 +6605,7 @@ public class PApplet extends Applet
    * confusing than necessary, and String.split() is always available for
    * those who want regexp.
    */
+   /** ??? */
   static public String[] split(String what, String delim) {
     ArrayList<String> items = new ArrayList<String>();
     int index;
@@ -6547,14 +6649,15 @@ public class PApplet extends Applet
 
 
   /**
-   * Match a string with a regular expression, and returns the match as an
-   * array. The first index is the matching expression, and array elements
-   * [1] and higher represent each of the groups (sequences found in parens).
-   *
-   * This uses multiline matching (Pattern.MULTILINE) and dotall mode
-   * (Pattern.DOTALL) by default, so that ^ and $ match the beginning and
-   * end of any lines found in the source, and the . operator will also
-   * pick up newline characters.
+   * @generate match.xml
+   * @webref data:string_functions
+   * @param what the String to be searched
+   * @param regexp the regexp to be used for matching
+   * @see PApplet#matchAll(String, String)
+   * @see PApplet#split(String, String)
+   * @see PApplet#splitTokens(String, String)
+   * @see PApplet#join(String[], String)
+   * @see PApplet#trim(String)
    */
   static public String[] match(String what, String regexp) {
     Pattern p = matchPattern(regexp);
@@ -6572,8 +6675,15 @@ public class PApplet extends Applet
 
 
   /**
-   * Identical to match(), except that it returns an array of all matches in
-   * the specified String, rather than just the first.
+   * @generate matchAll.xml
+   * @webref data:string_functions
+   * @param what the String to search inside
+   * @param regexp the regexp to be used for matching
+   * @see PApplet#match(String, String)
+   * @see PApplet#split(String, String)
+   * @see PApplet#splitTokens(String, String)
+   * @see PApplet#join(String[], String)
+   * @see PApplet#trim(String)
    */
   static public String[][] matchAll(String what, String regexp) {
     Pattern p = matchPattern(regexp);
@@ -7111,7 +7221,6 @@ public class PApplet extends Applet
   static private int int_nf_digits;
   static private boolean int_nf_commas;
 
-
   static public String[] nf(int num[], int digits) {
     String formatted[] = new String[num.length];
     for (int i = 0; i < formatted.length; i++) {
@@ -7120,7 +7229,15 @@ public class PApplet extends Applet
     return formatted;
   }
 
-
+/**
+ * @generate nf.xml
+ * @webref data:string_functions
+ * @param num the number(s) to format
+ * @param digits number of digits to pad with zero
+ * @see PApplet#nfs(float, int, int)
+ * @see PApplet#nfp(float, int, int)
+ * @see PApplet#nfc(float, int)
+ */
   static public String nf(int num, int digits) {
     if ((int_nf != null) &&
         (int_nf_digits == digits) &&
@@ -7136,7 +7253,14 @@ public class PApplet extends Applet
     return int_nf.format(num);
   }
 
-
+/**
+ * @generate nfc.xml
+ * @webref data:string_functions
+ * @param num[] the number(s) to format
+ * @see PApplet#nf(float, int, int)
+ * @see PApplet#nfp(float, int, int)
+ * @see PApplet#nfc(float, int)
+ */
   static public String[] nfc(int num[]) {
     String formatted[] = new String[num.length];
     for (int i = 0; i < formatted.length; i++) {
@@ -7174,6 +7298,16 @@ public class PApplet extends Applet
    * when it's positive so that it can be properly aligned with
    * numbers that have a negative sign in front of them.
    */
+  
+  /**
+  * @generate nfs.xml   
+  * @webref data:string_functions
+  * @param num[] the number(s) to format
+  * @param digits number of digits to pad with zeroes
+  * @see PApplet#nf(float, int, int)
+  * @see PApplet#nfp(float, int, int)
+  * @see PApplet#nfc(float, int)
+  */
   static public String nfs(int num, int digits) {
     return (num < 0) ? nf(num, digits) : (' ' + nf(num, digits));
   }
@@ -7193,6 +7327,15 @@ public class PApplet extends Applet
    * Formats a number, always placing a - or + sign
    * in the front when it's negative or positive.
    */
+ /**
+  * @generate nfp.xml   
+  * @webref data:string_functions
+  * @param num[] the number(s) to format
+  * @param digits number of digits to pad with zeroes
+  * @see PApplet#nf(float, int, int)
+  * @see PApplet#nfs(float, int, int)
+  * @see PApplet#nfc(float, int)
+  */
   static public String nfp(int num, int digits) {
     return (num < 0) ? nf(num, digits) : ('+' + nf(num, digits));
   }
@@ -7216,7 +7359,6 @@ public class PApplet extends Applet
   static private int float_nf_left, float_nf_right;
   static private boolean float_nf_commas;
 
-
   static public String[] nf(float num[], int left, int right) {
     String formatted[] = new String[num.length];
     for (int i = 0; i < formatted.length; i++) {
@@ -7224,8 +7366,11 @@ public class PApplet extends Applet
     }
     return formatted;
   }
-
-
+/**
+ * @param num[] the number(s) to format
+ * @param left number of digits to the left of the decimal point
+ * @param right number of digits to the right of the decimal point
+ */
   static public String nf(float num, int left, int right) {
     if ((float_nf != null) &&
         (float_nf_left == left) &&
@@ -7248,7 +7393,10 @@ public class PApplet extends Applet
     return float_nf.format(num);
   }
 
-
+/**
+ * @param num[] the number(s) to format
+ * @param right number of digits to the right of the decimal point
+ */
   static public String[] nfc(float num[], int right) {
     String formatted[] = new String[num.length];
     for (int i = 0; i < formatted.length; i++) {
@@ -7280,10 +7428,11 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Number formatter that takes into account whether the number
-   * has a sign (positive, negative, etc) in front of it.
-   */
+ /**
+  * @param num[] the number(s) to format
+  * @param left the number of digits to the left of the decimal point
+  * @param right the number of digits to the right of the decimal point
+  */
   static public String[] nfs(float num[], int left, int right) {
     String formatted[] = new String[num.length];
     for (int i = 0; i < formatted.length; i++) {
@@ -7296,7 +7445,11 @@ public class PApplet extends Applet
     return (num < 0) ? nf(num, left, right) :  (' ' + nf(num, left, right));
   }
 
-
+ /**
+  * @param num[] the number(s) to format
+  * @param left the number of digits to the left of the decimal point
+  * @param right the number of digits to the right of the decimal point
+  */
   static public String[] nfp(float num[], int left, int right) {
     String formatted[] = new String[num.length];
     for (int i = 0; i < formatted.length; i++) {
@@ -7304,7 +7457,9 @@ public class PApplet extends Applet
     }
     return formatted;
   }
-
+/**
+ * @param num the number(s) to format
+ */
   static public String nfp(float num, int left, int right) {
     return (num < 0) ? nf(num, left, right) :  ('+' + nf(num, left, right));
   }
@@ -7317,32 +7472,36 @@ public class PApplet extends Applet
 
 
   /**
-   * Convert a byte into a two digit hex string.
+   * @param what the value to convert
    */
+   /** ??? */
   static final public String hex(byte what) {
     return hex(what, 2);
   }
 
   /**
-   * Convert a Unicode character into a four digit hex string.
+   * @param what the value to convert
    */
   static final public String hex(char what) {
     return hex(what, 4);
   }
 
   /**
-   * Convert an integer into an eight digit hex string.
+   * @param what the value to convert
    */
   static final public String hex(int what) {
     return hex(what, 8);
   }
 
-  /**
-   * Format an integer as a hex string using the specified number of digits.
-   * @param what the value to format
-   * @param digits the number of digits (maximum 8)
-   * @return a String object with the formatted values
-   */
+ /**
+  * @generate hex.xml
+  * @webref data:conversion
+  * @param what the value to convert
+  * @param digits the number of digits (maximum 8)
+  * @see PApplet#unhex(String)
+  * @see PApplet#binary(byte)
+  * @see PApplet#unbinary(String)
+  */
   static final public String hex(int what, int digits) {
     String stuff = Integer.toHexString(what).toUpperCase();
     if (digits > 8) {
@@ -7359,6 +7518,14 @@ public class PApplet extends Applet
     return stuff;
   }
 
+ /**
+  * @generate unhex.xml
+  * @webref data:conversion
+  * @param what string
+  * @see PApplet#hex(int, int)
+  * @see PApplet#binary(byte)
+  * @see PApplet#unbinary(String)
+  */
   static final public int unhex(String what) {
     // has to parse as a Long so that it'll work for numbers bigger than 2^31
     return (int) (Long.parseLong(what, 16));
@@ -7370,6 +7537,7 @@ public class PApplet extends Applet
    * Returns a String that contains the binary value of a byte.
    * The returned value will always have 8 digits.
    */
+   /** ??? */
   static final public String binary(byte what) {
     return binary(what, 8);
   }
@@ -7396,6 +7564,18 @@ public class PApplet extends Applet
    * Returns a String that contains the binary value of an int.
    * The digits parameter determines how many digits will be used.
    */
+   
+ /**
+  * ( begin auto-generated from binary.xml )
+  * 
+  *
+  * ( end auto-generated )
+  * @webref data:conversion
+  * @param what value to convert
+  * @param digits number of digits to return
+  * @see PApplet#unhex(String)
+  * @see PApplet#unbinary(String)
+  */
   static final public String binary(int what, int digits) {
     String stuff = Integer.toBinaryString(what);
     if (digits > 32) {
@@ -7414,10 +7594,13 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * Unpack a binary String into an int.
-   * i.e. unbinary("00001000") would return 8.
-   */
+ /**
+  * @webref data:conversion
+  * @param what String
+  * @see PApplet#hex(int,int)
+  * @see PApplet#binary(byte)
+  */
+  /** ??? */
   static final public int unbinary(String what) {
     return Integer.parseInt(what, 2);
   }
@@ -7520,17 +7703,14 @@ public class PApplet extends Applet
   }
 
   /**
-   * Creates colors for storing in variables of the <b>color</b> datatype. The parameters are interpreted as RGB or HSB values depending on the current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 and therefore, the function call <b>color(255, 204, 0)</b> will return a bright yellow color. More about how colors are stored can be found in the reference for the <a href="color_datatype.html">color</a> datatype.
-   *
    * @webref color:creating_reading
    * @param x red or hue values relative to the current color range
    * @param y green or saturation values relative to the current color range
    * @param z blue or brightness values relative to the current color range
    * @param a alpha relative to current color range
-   *
-   * @see processing.core.PApplet#colorMode(int)
-   * @ref color_datatype
+   * @see PApplet#colorMode(int)
    */
+   /** ??? */
   public final int color(float x, float y, float z, float a) {
     if (g == null) {
       if (a > 255) a = 255; else if (a < 0) a = 0;
@@ -8054,8 +8234,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Begin recording to a new renderer of the specified type, using the width
-   * and height of the main drawing surface.
+   * @generate beginRecord
+   * @webref output:files
+   * @param renderer for example, PDF
+   * @param filename filename for output
+   * @see PApplet#endRecord()
    */
   public PGraphics beginRecord(String renderer, String filename) {
     filename = insertFrame(filename);
@@ -8068,6 +8251,7 @@ public class PApplet extends Applet
   /**
    * Begin recording (echoing) commands to the specified PGraphics object.
    */
+   /** ??? */
   public void beginRecord(PGraphics recorder) {
     this.recorder = recorder;
     recorder.beginDraw();
@@ -8080,7 +8264,11 @@ public class PApplet extends Applet
     return null;
   }
 
-
+/** 
+ * @generate endRecord.xml
+ * @webref output:files
+ * @see PApplet#beginRecord(String, String)
+ */
   public void endRecord() {
     if (recorder != null) {
       recorder.endDraw();
@@ -8094,11 +8282,12 @@ public class PApplet extends Applet
 
 
   /**
-   * Begin recording raw shape data to a renderer of the specified type,
-   * using the width and height of the main drawing surface.
-   *
-   * If hashmarks (###) are found in the filename, they'll be replaced
-   * by the current frame number (frameCount).
+   * @generate beginRaw.xml
+   * @webref outpit:files
+   * @param renderer for example, PDF or DXF
+   * @param filename filename for output
+   * @see PApplet#endRaw()
+   * @see PApplet#hint(int)
    */
   public PGraphics beginRaw(String renderer, String filename) {
     filename = insertFrame(filename);
@@ -8115,17 +8304,16 @@ public class PApplet extends Applet
    * generated by preproc.pl) for clarity and so that it doesn't echo the
    * command should beginRecord() be in use.
    */
+   /** ??? */
   public void beginRaw(PGraphics rawGraphics) {
     g.beginRaw(rawGraphics);
   }
 
 
   /**
-   * Stop recording raw shape data to the specified renderer.
-   *
-   * This simply echoes to g.beginRaw(), but since is placed here (rather than
-   * generated by preproc.pl) for clarity and so that it doesn't echo the
-   * command should beginRecord() be in use.
+   * @generate endRaw.xml
+   * @webref output:files
+   * @see PApplet#beginRaw(String, String)
    */
   public void endRaw() {
     g.endRaw();
@@ -8146,38 +8334,35 @@ public class PApplet extends Applet
 
 
   /**
-   * Loads the pixel data for the display window into the <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
-   * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
-   * =advanced
+   * @generate loadPixels.xml
+   * <h3>Advanced</h3>
    * Override the g.pixels[] function to set the pixels[] array
    * that's part of the PApplet object. Allows the use of
    * pixels[] in the code, rather than g.pixels[].
    *
    * @webref image:pixels
-   * @see processing.core.PApplet#pixels
-   * @see processing.core.PApplet#updatePixels()
+   * @see pixels[int]
+   * @see PApplet#updatePixels()
    */
   public void loadPixels() {
     g.loadPixels();
     pixels = g.pixels;
   }
 
-  /**
-   * Updates the display window with the data in the <b>pixels[]</b> array. Use in conjunction with <b>loadPixels()</b>. If you're only reading pixels from the array, there's no need to call <b>updatePixels()</b> unless there are changes.
-   * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
-   * <br><br>Currently, none of the renderers use the additional parameters to <b>updatePixels()</b>, however this may be implemented in the future.
-   *
-   * @webref image:pixels
-   *
-   * @see processing.core.PApplet#loadPixels()
-   * @see processing.core.PApplet#updatePixels()
-   *
-   */
   public void updatePixels() {
     g.updatePixels();
   }
 
-
+  /**
+   * @generate updatePixels.xml
+   * @webref image:pixels
+   * @param x1 x-coordinate of the upper-left corner
+   * @param y1 y-coordinate of the upper-left corner
+   * @param x2 width of the region
+   * @param y2 height of the region
+   * @see PApplet#loadPixels()
+   * @see pixels[int]
+   */
   public void updatePixels(int x1, int y1, int x2, int y2) {
     g.updatePixels(x1, y1, x2, y2);
   }
@@ -8213,7 +8398,7 @@ public class PApplet extends Applet
    * @param which name of the hint to be enabled or disabled
    *
    * @see processing.core.PGraphics
-   * @see processing.core.PApplet#createGraphics(int, int, String, String)
+   * @see processing.core.PApplet#createGraphics(int, int, String)
    * @see processing.core.PApplet#size(int, int)
    */
   public void hint(int which) {
@@ -9226,7 +9411,7 @@ public class PApplet extends Applet
    *
    * @webref shape:loading_displaying
    * @see PShape
-   * @see PGraphics#loadShape(String)
+   * @see PApplet#loadShape(String)
    * @see PGraphics#shapeMode(int)
    */
   public void shape(PShape shape, float x, float y, float c, float d) {
