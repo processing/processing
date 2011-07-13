@@ -254,12 +254,18 @@ public class PApplet extends Applet
   public Frame frame;
 
   /**
-   * @generate screenWidth.xml
+   * ( begin auto-generated from screenWidth.xml )
+   * 
+   * System variable which stores the width of the computer screen. For example, if the current screen resolution is 1024x768, 
+   * ( end auto-generated )
    */
   public int screenWidth;
   
   /**
-   * @generate screenHeight.xml
+   * ( begin auto-generated from screenHeight.xml )
+   * 
+   * System variable that stores the height of the computer screen. For example, if the current screen resolution is 1024x768, 
+   * ( end auto-generated )
    */
   public int screenHeight;
 
@@ -315,7 +321,10 @@ public class PApplet extends Applet
   volatile int resizeHeight;
 
   /**
-   * @generate pixels.xml
+   * ( begin auto-generated from pixels.xml )
+   * 
+   * Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The 
+   * ( end auto-generated )
    *
    * @webref image:pixels
    * @see PApplet#loadPixels()
@@ -327,21 +336,30 @@ public class PApplet extends Applet
   public int pixels[];
 
   /** 
-   * @generate width.xml
+   * ( begin auto-generated from width.xml )
+   * 
+   * System variable which stores the width of the display window. This value is set by the first parameter of the 
+   * ( end auto-generated )
    * @webref environment
    * @see height
    */
   public int width;
 
   /** 
-   * @generate height.xml
+   * ( begin auto-generated from height.xml )
+   * 
+   * System variable which stores the height of the display window. This value is set by the second parameter of the 
+   * ( end auto-generated )
    * @webref environment
    * @see width
    * */
   public int height;
 
   /**
-   * @generate mouseX.xml
+   * ( begin auto-generated from mouseX.xml )
+   * 
+   * The system variable 
+   * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseY
    * @see PApplet#mousePressed
@@ -354,7 +372,10 @@ public class PApplet extends Applet
   public int mouseX;
 
   /**
-   * @generate mouseY.xml
+   * ( begin auto-generated from mouseY.xml )
+   * 
+   * The system variable 
+   * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mousePressed
@@ -378,7 +399,10 @@ public class PApplet extends Applet
   public int pmouseX;
 
   /**
-   * @generate pmouseY.xml
+   * ( begin auto-generated from pmouseY.xml )
+   * 
+   * The system variable 
+   * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#pmouseX
    * @see PApplet#mouseX
@@ -411,7 +435,10 @@ public class PApplet extends Applet
   public boolean firstMouse;
 
   /**
-   * @generate mouseButton.xml
+   * ( begin auto-generated from mouseButton.xml )
+   * 
+   * Processing automatically tracks if the mouse button is pressed and which button is pressed. The value of the system variable 
+   * ( end auto-generated )
    * <h3>Advanced:</h3>
    * If running on Mac OS, a ctrl-click will be interpreted as
    * the righthand mouse button (unlike Java, which reports it as
@@ -427,7 +454,10 @@ public class PApplet extends Applet
   public int mouseButton;
 
   /**
-   * @generate mousePressed_var.xml
+   * ( begin auto-generated from mousePressed_var.xml )
+   * 
+   * Variable storing if a mouse button is pressed. The value of the system variable 
+   * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
@@ -439,7 +469,10 @@ public class PApplet extends Applet
   public MouseEvent mouseEvent;
 
   /**
-   * @generate key.xml
+   * ( begin auto-generated from key.xml )
+   * 
+   * The system variable 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    *
    * Last key pressed.
@@ -455,7 +488,10 @@ public class PApplet extends Applet
   public char key;
 
   /**
-   * @generate keyCode.xml
+   * ( begin auto-generated from keyCode.xml )
+   * 
+   * The variable 
+   * ( end auto-generated )
    *
    * <h3>Advanced</h3>
    * When "key" is set to CODED, this will contain a Java key code.
@@ -472,7 +508,10 @@ public class PApplet extends Applet
   public int keyCode;
 
   /**
-   * @generate keyPressed_var.xml
+   * ( begin auto-generated from keyPressed_var.xml )
+   * 
+   * The boolean system variable 
+   * ( end auto-generated )
    * @webref input:keyboard
    * @see PApplet#key
    * @see PApplet#keyCode
@@ -487,13 +526,21 @@ public class PApplet extends Applet
   public KeyEvent keyEvent;
 
   /**
-   * @generate focused.xml
+   * ( begin auto-generated from focused.xml )
+   * 
+   * Confirms if a Processing program is "focused", meaning that it is active and will accept input from mouse or keyboard. This variable is "true" if it is focused and "false" if not. This variable is often used when you want to warn people they need to click on or roll over an applet before it will work.
+   * 
+   * ( end auto-generated )
    * @webref environment
    */
   public boolean focused = false;
 
   /**
-   * @generate online.xml
+   * ( begin auto-generated from online.xml )
+   * 
+   * Confirms if a Processing program is running inside a web browser. This variable is "true" if the program is online and "false" if not.
+   * 
+   * ( end auto-generated )
    * @webref environment
    */
   public boolean online = false;
@@ -506,7 +553,10 @@ public class PApplet extends Applet
   long millisOffset = System.currentTimeMillis();
 
   /**
-   * @generate frameRate_var.xml
+   * ( begin auto-generated from frameRate_var.xml )
+   * 
+   * The system variable 
+   * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate()
    */
@@ -524,7 +574,10 @@ public class PApplet extends Applet
   protected boolean redraw;
 
   /**
-   * @generate frameCount.xml
+   * ( begin auto-generated from frameCount.xml )
+   * 
+   * The system variable 
+   * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate()
    */
@@ -1025,19 +1078,22 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate size.xml
+   * ( begin auto-generated from size.xml )
+   * 
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Starts up and creates a two-dimensional drawing surface,
    * or resizes the current drawing surface.
-   * <P>
+   * <p>
    * This should be the first thing called inside of setup().
-   * <P>
+   * <p>
    * If using Java 1.3 or later, this will default to using
    * PGraphics2, the Java2D-based renderer. If using Java 1.1,
    * or if PGraphics2 is not available, then PGraphics will be used.
    * To set your own renderer, use the other version of the size()
    * method that takes a renderer as its last parameter.
-   * <P>
+   * <p>
    * If called once a renderer has already been set, this will
    * use the previous renderer and simply resize it.
    *
@@ -1104,7 +1160,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate createGraphics.xml
+   * ( begin auto-generated from createGraphics.xml )
+   * 
+   * Creates and returns a new 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Create an offscreen PGraphics object for drawing. This can be used
    * for bitmap or vector images drawing or rendering.
@@ -1322,7 +1381,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate createImage.xml
+   * ( begin auto-generated from createImage.xml )
+   * 
+   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Preferred method of creating new PImage objects, ensures that a
    * reference to the parent PApplet is included, which makes save() work
@@ -1846,7 +1908,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate mousePressed.xml
+   * ( begin auto-generated from mousePressed.xml )
+   * 
+   * The 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    *
    * If you must, use
@@ -1866,7 +1931,10 @@ public class PApplet extends Applet
   public void mousePressed() { }
 
   /**
-   * @generate mouseReleased.xml
+   * ( begin auto-generated from mouseReleased.xml )
+   * 
+   * The 
+   * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
@@ -1878,7 +1946,10 @@ public class PApplet extends Applet
   public void mouseReleased() { }
 
   /**
-   * @generate mouseClicked.xml
+   * ( begin auto-generated from mouseClicked.xml )
+   * 
+   * The 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * When the mouse is clicked, mousePressed() will be called,
    * then mouseReleased(), then mouseClicked(). Note that
@@ -1895,7 +1966,10 @@ public class PApplet extends Applet
   public void mouseClicked() { }
 
   /**
-   * @generate mouseDragged.xml
+   * ( begin auto-generated from mouseDragged.xml )
+   * 
+   * The 
+   * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
@@ -1907,7 +1981,10 @@ public class PApplet extends Applet
   public void mouseDragged() { }
 
   /**
-   * @generate mouseMoved.xml
+   * ( begin auto-generated from mouseMoved.xml )
+   * 
+   * The 
+   * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
@@ -2010,7 +2087,10 @@ public class PApplet extends Applet
 
   /**
    *
-   * @generate keyPressed.xml
+   * ( begin auto-generated from keyPressed.xml )
+   * 
+   * The 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    *
    * Called each time a single key on the keyboard is pressed.
@@ -2068,7 +2148,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate keyReleased.xml
+   * ( begin auto-generated from keyReleased.xml )
+   * 
+   * The 
+   * ( end auto-generated )
    * @webref input:keyboard
    * @see PApplet#key
    * @see PApplet#keyCode
@@ -2079,7 +2162,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate keyTyped.xml
+   * ( begin auto-generated from keyTyped.xml )
+   * 
+   * The 
+   * ( end auto-generated )
    * @webref input:keyboard
    * @see PApplet#keyPressed
    * @see PApplet#key
@@ -2118,7 +2204,11 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate millis.xml
+   * ( begin auto-generated from millis.xml )
+   * 
+   * Returns the number of milliseconds (thousandths of a second) since starting an applet. This information is often used for timing animation sequences. 
+   * 
+   * ( end auto-generated )
    *
    * <h3>Advanced</h3>
    * <P>
@@ -2139,7 +2229,10 @@ public class PApplet extends Applet
   }
 
   /** 
-   * @generate second.xml
+   * ( begin auto-generated from second.xml )
+   * 
+   * Processing communicates with the clock on your computer. The 
+   * ( end auto-generated )
    * @webref input:time_date
    * @see PApplet#millis()
    * @see PApplet#minute()
@@ -2153,7 +2246,10 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate minute.xml
+   * ( begin auto-generated from minute.xml )
+   * 
+   * Processing communicates with the clock on your computer. The 
+   * ( end auto-generated )
    *
    * @webref input:time_date
    * @see PApplet#millis()
@@ -2169,7 +2265,10 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate hour.xml
+   * ( begin auto-generated from hour.xml )
+   * 
+   * Processing communicates with the clock on your computer. The 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Hour position of the current time in international format (0-23).
    * <P>
@@ -2191,7 +2290,10 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate day.xml
+   * ( begin auto-generated from day.xml )
+   * 
+   * Processing communicates with the clock on your computer. The 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Get the current day of the month (1 through 31).
    * <P>
@@ -2211,7 +2313,10 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate month.xml
+   * ( begin auto-generated from month.xml )
+   * 
+   * Processing communicates with the clock on your computer. The 
+   * ( end auto-generated )
    *
    * @webref input:time_date
    * @see PApplet#millis()
@@ -2227,7 +2332,10 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate year.xml
+   * ( begin auto-generated from year.xml )
+   * 
+   * Processing communicates with the clock on your computer. The 
+   * ( end auto-generated )
    * The <b>year()</b> function returns the current year as an integer (2003, 2004, 2005, etc).
    *
    * @webref input:time_date
@@ -2249,7 +2357,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate frameRate.xml
+   * ( begin auto-generated from frameRate.xml )
+   * 
+   * Specifies the number of frames to be displayed every second. If the processor is not fast enough to maintain the specified rate, it will not be achieved. For example, the function call 
+   * ( end auto-generated )
    *  <h3>Advanced</h3>
    * Set a target frameRate. This will cause delay() to be called
    * after each frame so that the sketch synchronizes to a particular speed.
@@ -2259,7 +2370,6 @@ public class PApplet extends Applet
    * maximum speed.
    * @webref environment
    * @param newRateTarget number of frames per second
-   * @see PApplet#delay(int)
    */
   public void frameRate(float newRateTarget) {
     frameRateTarget = newRateTarget;
@@ -2271,7 +2381,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate param.xml
+   * ( begin auto-generated from param.xml )
+   * 
+   * Reads the value of a param. Values are always read as a String so if you want them to be an integer or other datatype they must be converted. The 
+   * ( end auto-generated )
    *
    * @webref input:web
    * @usage Web
@@ -2290,7 +2403,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate statis.xml
+   * ( begin auto-generated from status.xml )
+   * 
+   * Displays message in the browser's status area. This is the text area in the lower left corner of the browser. The 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Show status in the status bar of a web browser, or in the
    * System.out console. Eventually this might show status in the
@@ -2316,7 +2432,11 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate link.xml
+   * ( begin auto-generated from link.xml )
+   * 
+   * Links to a webpage either in the same window or in a new window. The complete URL must be specified.
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Link to an external page without all the muss.
    * <P>
@@ -2393,7 +2513,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate open.xml
+   * ( begin auto-generated from open.xml )
+   * 
+   * Attempts to open an application or file using your platform's launcher. The 
+   * ( end auto-generated )
    * @webref input:files
    * @param filename name of the file
    * @usage Application
@@ -2503,7 +2626,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate exit.xml
+   * ( begin auto-generated from exit.xml )
+   * 
+   * Quits/stops/exits the program. Programs without a 
+   * ( end auto-generated )
    * @webref structure
    */
   public void exit() {
@@ -2617,10 +2743,13 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate save.xml
+   * ( begin auto-generated from save.xml )
+   * 
+   * Saves an image from the display window. Images are saved in TIFF, TARGA, JPEG, and PNG format depending on the extension within the 
+   * ( end auto-generated )
    * @webref output:image
    * @see PApplet#saveFrame()
-   * @see PApplet#createGraphics()
+   * @see PApplet#createGraphics(int, int, String)
    */
   public void save(String filename) {
     g.save(savePath(filename));
@@ -2640,7 +2769,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate saveFrame.xml
+   * ( begin auto-generated from saveFrame.xml )
+   * 
+   * Saves a numbered sequence of images, one image each time the function is run. To save an image that is identical to the display window, run the function at the end of 
+   * ( end auto-generated )
    * @webref output:image
    * @see PApplet#save()
    * @see PApplet#createGraphics()
@@ -2711,7 +2843,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate cursor.xml
+   * ( begin auto-generated from cursor.xml )
+   * 
+   * Sets the cursor to a predefined symbol, an image, or makes it visible if already hidden. If you are trying to set an image as the cursor, it is recommended to make the size 16x16 or 32x32 pixels. It is not possible to load an image as the cursor if you are exporting your program for the Web and not all MODES work with all Web browsers. The values for parameters 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Set a custom cursor to an image with a specific hotspot.
    * Only works with JDK 1.2 and later.
@@ -2758,7 +2893,11 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate noCursor.xml
+   * ( begin auto-generated from noCursor.xml )
+   * 
+   * Hides the cursor from view. Will not work when running the program in a web browser or when running in full screen (Present) mode.
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Hide the cursor by creating a transparent image
    * and using it as a custom cursor.
@@ -2956,7 +3095,11 @@ public class PApplet extends Applet
   // things all the time is annoying, thus the functions below.
 
 /**
-   * @generate abs.xml
+   * ( begin auto-generated from abs.xml )
+   * 
+   * Calculates the absolute value (magnitude) of a number. The absolute value of a number is always positive.
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param n float or int
    */
@@ -2969,7 +3112,11 @@ public class PApplet extends Applet
   }
   
 /**
-   * @generate sq.xml
+   * ( begin auto-generated from sq.xml )
+   * 
+   * Squares a number (multiplies a number by itself). The result is always a positive number, as multiplying two negative numbers always yields a positive result. For example, -1 * -1 = 1.
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param a float or int
    * @see PApplet#sqrt()
@@ -2979,7 +3126,10 @@ public class PApplet extends Applet
   }
   
 /**
-   * @generate sqrt.xml
+   * ( begin auto-generated from sqrt.xml )
+   * 
+   * Calculates the square root of a number. The square root of a number is always positive, even though there may be a valid negative root. The square root 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param a non-negative number
    * @see PApplet#pow()
@@ -2990,7 +3140,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate log.xml
+   * ( begin auto-generated from log.xml )
+   * 
+   * Calculates the natural logarithm (the base-
+   * ( end auto-generated )
    * @webref math:calculation
    * @param a int or float greater than 0.0
    */
@@ -2999,7 +3152,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate exp.xml
+   * ( begin auto-generated from exp.xml )
+   * 
+   * Returns Euler's number 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param a the exponent to raise
    */
@@ -3008,7 +3164,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate pow.xml
+   * ( begin auto-generated from pow.xml )
+   * 
+   * Facilitates exponential expressions. The 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param a base of the exponential expression
    * @param b power of which to raise the base
@@ -3023,7 +3182,11 @@ public class PApplet extends Applet
   }
   
 /**
-   * @generate max.xml
+   * ( begin auto-generated from max.xml )
+   * 
+   * Determines the largest value in a sequence of numbers.
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param n float or int
    */
@@ -3043,7 +3206,11 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate max.xml
+   * ( begin auto-generated from max.xml )
+   * 
+   * Determines the largest value in a sequence of numbers.
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param a int or float
    * @param b int or float
@@ -3124,7 +3291,11 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate min.xml
+   * ( begin auto-generated from min.xml )
+   * 
+   * Determines the smallest value in a sequence of numbers.
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param a int or float
    * @param b int or float
@@ -3197,7 +3368,11 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate constrain.xml
+   * ( begin auto-generated from constrain.xml )
+   * 
+   * Constrains a value to not exceed a maximum and minimum value.
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param amt the value to constrain
    * @param low minimum limit
@@ -3211,7 +3386,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate sin.xml
+   * ( begin auto-generated from sin.xml )
+   * 
+   * Calculates the sine of an angle. This function expects the values of the 
+   * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
    * @see PApplet#cos()
@@ -3223,7 +3401,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate cos.xml
+   * ( begin auto-generated from cos.xml )
+   * 
+   * Calculates the cosine of an angle. This function expects the values of the 
+   * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
    * @see PApplet#sin()
@@ -3235,7 +3416,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate tan.xml
+   * ( begin auto-generated from tan.xml )
+   * 
+   * Calculates the ratio of the sine and cosine of an angle. This function expects the values of the 
+   * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
    * @see PApplet#cos()
@@ -3247,7 +3431,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate asin.xml
+   * ( begin auto-generated from asin.xml )
+   * 
+   * The inverse of 
+   * ( end auto-generated )
    * @webref math:trigonometry
    * @param value the value whose arc sine is to be returned
    * @see PApplet#sin()
@@ -3259,7 +3446,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate acos.xml
+   * ( begin auto-generated from acos.xml )
+   * 
+   * The inverse of 
+   * ( end auto-generated )
    * @webref math:trigonometry
    * @param value the value whose arc cosine is to be returned
    * @see PApplet#cos()
@@ -3271,7 +3461,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate atan.xml
+   * ( begin auto-generated from atan.xml )
+   * 
+   * The inverse of 
+   * ( end auto-generated )
    * @webref math:trigonometry
    * @param value -Infinity to Infinity (exclusive)
    * @see PApplet#tan()
@@ -3283,7 +3476,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate atan2.xml
+   * ( begin auto-generated from atan2.xml )
+   * 
+   * Calculates the angle (in radians) from a specified point to the coordinate origin as measured from the positive x-axis. Values are returned as a 
+   * ( end auto-generated )
    * @webref math:trigonometry
    * @param a y-coordinate of the point
    * @param b x-coordinate of the point
@@ -3294,7 +3490,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate degrees.xml
+   * ( begin auto-generated from degrees.xml )
+   * 
+   * 
+   * ( end auto-generated )
    * @webref math:trigonometry
    * @param radians int or float
    * @see PApplet#radians()
@@ -3304,7 +3503,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate radians.xml
+   * ( begin auto-generated from radians.xml )
+   * 
+   * 
+   * ( end auto-generated )
    * @webref math:trigonometry
    * @param degrees int or float
    * @see PApplet#degrees()
@@ -3314,7 +3516,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate ceil.xml
+   * ( begin auto-generated from ceil.xml )
+   * 
+   * Calculates the closest int value that is greater than or equal to the value of the parameter. For example, 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param what float
    * @see PApplet#floor()
@@ -3325,7 +3530,11 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate floor.xml
+   * ( begin auto-generated from floor.xml )
+   * 
+   * Calculates the closest int value that is less than or equal to the value of the parameter.
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param what float
    * @see PApplet#ceil()
@@ -3336,7 +3545,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate round.xml
+   * ( begin auto-generated from round.xml )
+   * 
+   * Calculates the integer closest to the 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param what float
    * @see PApplet#floor()
@@ -3352,7 +3564,11 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate mag.xml
+   * ( begin auto-generated from mag.xml )
+   * 
+   * Calculates the magnitude (or length) of a vector. A vector is a direction in space commonly used in computer graphics and linear algebra. Because it has no "start" position, the magnitude of a vector can be thought of as the distance from coordinate (0,0) to its (x,y) value. Therefore, mag() is a shortcut for writing "dist(0, 0, x, y)". 
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param a first value
    * @param b second value
@@ -3369,7 +3585,11 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate dist.xml
+   * ( begin auto-generated from dist.xml )
+   * 
+   * Calculates the distance between two points.
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param x1 x-coordinate of the first point
    * @param y1 y-coordinate of the first point
@@ -3384,7 +3604,10 @@ public class PApplet extends Applet
   }
 
 /**
-   * @generate lerp.xml
+   * ( begin auto-generated from lerp.xml )
+   * 
+   * Calculates a number between two numbers at a specific increment. The 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param start first value
    * @param stop second value
@@ -3397,7 +3620,11 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate norm.xml
+   * ( begin auto-generated from norm.xml )
+   * 
+   * Normalizes a number from another range into a value between 0 and 1. 
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param value the incoming value to be converted
    * @param start lower bound of the value's current range
@@ -3410,7 +3637,14 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate map.xml
+   * ( begin auto-generated from map.xml )
+   * 
+   * Re-maps a number from one range to another. In the example above, 
+   * the number '25' is converted from a value in the range 0..100 into
+   * a value that ranges from the left edge (0) to the right edge (width) 
+   * of the screen.
+   * 
+   * ( end auto-generated )
    * @webref math:calculation
    * @param value the incoming value to be converted
    * @param istart lower bound of the value's current range
@@ -3468,7 +3702,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate random.xml
+   * ( begin auto-generated from random.xml )
+   * 
+   * Generates random numbers. Each time the 
+   * ( end auto-generated )
    * @webref math:random
    * @param howsmall int or float
    * @param howbig int or float
@@ -3482,7 +3719,10 @@ public class PApplet extends Applet
   }
 
  /**
-   * @generate randomSeed.xml
+   * ( begin auto-generated from randomSeed.xml )
+   * 
+   * Sets the seed value for 
+   * ( end auto-generated )
    * @webref math:random
    * @param what int
    * @see PApplet#random()
@@ -3544,7 +3784,10 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate noise.xml
+   * ( begin auto-generated from noise.xml )
+   * 
+   * Returns the Perlin noise value at specified coordinates. Perlin noise is a random sequence generator producing a more natural ordered, harmonic succession of numbers compared to the standard 
+   * ( end auto-generated )
    * @webref math:random
    * @param x x-coordinate in noise space
    * @param y y-coordinate in noise space
@@ -3636,7 +3879,10 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate noiseDetail.xml
+   * ( begin auto-generated from noiseDetail.xml )
+   * 
+   * Adjusts the character and level of detail produced by the Perlin noise function. Similar to harmonics in physics, noise is computed over several octaves. Lower octaves contribute more to the output signal and as such define the overal intensity of the noise, whereas higher octaves create finer grained details in the noise sequence. By default, noise is computed over 4 octaves with each octave contributing exactly half than its predecessor, starting at 50% strength for the 1st octave. This falloff amount can be changed by adding an additional function parameter. Eg. a falloff factor of 0.75 means each octave will now have 75% impact (25% less) of the previous lower octave. Any value between 0.0 and 1.0 is valid, however note that values greater than 0.5 might result in greater than 1.0 values returned by 
+   * ( end auto-generated )
    * @webref math:random
    * @param lod number of octaves to be used by the noise
    * @param falloff falloff factor for each octave
@@ -3648,7 +3894,10 @@ public class PApplet extends Applet
   }
 
   /**
-   * @generate noiseSeed.xml
+   * ( begin auto-generated from noiseSeed.xml )
+   * 
+   * Sets the seed value for 
+   * ( end auto-generated )
    * @webref math:random
    * @param what int
    * @see PApplet#noise()
@@ -3676,7 +3925,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate loadImage.xml
+   * ( begin auto-generated from loadImage.xml )
+   * 
+   * Loads an image into a variable of type 
+   * ( end auto-generated )
    * @webref image:load_displaying
    * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
    * @param extension the type of image to load, for example "png", "gif", "jpg"
@@ -3821,7 +4073,10 @@ public class PApplet extends Applet
   }
 
 /**
- * @generate requestImage.xml
+   * ( begin auto-generated from requestImage.xml )
+   * 
+   * This function load images on a separate thread so that your sketch does not freeze while images load during 
+   * ( end auto-generated )
  * @webref image:loading_displaying
  * @param filename name of the file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
  * @param extension the type of image to load, for example "png", "gif", "jpg"
@@ -4164,7 +4419,10 @@ public class PApplet extends Applet
 
 
 /**
- * @generate loadShape.xml
+   * ( begin auto-generated from loadShape.xml )
+   * 
+   * Loads vector shapes into a variable of type 
+   * ( end auto-generated )
  * @webref shape:load_displaying
  * @param filename name of the file to load
  * @see PShape#PShape
@@ -4275,7 +4533,10 @@ public class PApplet extends Applet
   // FONT I/O
 
 /**
- * @generate loadFont.xml
+   * ( begin auto-generated from loadFont.xml )
+   * 
+   * Loads a font into a variable of type 
+   * ( end auto-generated )
  * @webref typography:loading_displaying
  * @param filename name of the font to load
  * @see PFont#PFont
@@ -4320,7 +4581,11 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate createFont.xml
+   * ( begin auto-generated from createFont.xml )
+   * 
+   * Dynamically converts a font to the format used by Processing from either a font name that's installed on the computer, or from a .ttf or .otf file inside the sketches "data" folder. This function is an advanced feature for precise control. On most occasions you should create fonts through selecting "Create Font..." from the Tools menu.
+   * 
+   * ( end auto-generated )
    * @webref typography:loading_displaying
    * @param name name of the font to load
    * @param size point size of the font
@@ -4401,7 +4666,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate selectInput.xml
+   * ( begin auto-generated from selectInput.xml )
+   * 
+   * Opens a platform-specific file chooser dialog to select a file for input. This function returns the full path to the selected file as a 
+   * ( end auto-generated )
    * @webref input:files
    * @param prompt message you want the user to see in the file chooser
    * @see PApplet#selectOutput(String)
@@ -4422,7 +4690,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate selectOutput.xml
+   * ( begin auto-generated from selectOutput.xml )
+   * 
+   * Open a platform-specific file save dialog to create of select a file for output. This function returns the full path to the selected file as a 
+   * ( end auto-generated )
    * @webref output:files
    * @param prompt message you want the user to see in the file chooser
    * @see PApplet#selectInput(String)
@@ -4463,7 +4734,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate selectFolder.xml
+   * ( begin auto-generated from selectFolder.xml )
+   * 
+   * Opens a platform-specific file chooser dialog to select a folder for input. This function returns the full path to the selected folder as a 
+   * ( end auto-generated )
    * @webref input:files
    * @param prompt message you want the user to see in the file chooser
    * @see PApplet#selectOutput(String)
@@ -4515,7 +4789,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate createReader.xml
+   * ( begin auto-generated from createReader.xml )
+   * 
+   * Creates a 
+   * ( end auto-generated )
    * @webref input:files
    * @param filename name of the file to be opened
    * @see PApplet#BufferedReader
@@ -4581,7 +4858,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate createWriter.xml
+   * ( begin auto-generated from createWriter.xml )
+   * 
+   * Creates a new file in the sketch folder, and a 
+   * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to be created
    * @see PApplet#PrintWriter
@@ -4649,7 +4929,11 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate createInput.xml
+   * ( begin auto-generated from createInput.xml )
+   * 
+   * This is a method for advanced programmers to open a Java InputStream. The method is useful if you want to use the facilities provided by PApplet to easily open files from the data folder or from a URL, but want an InputStream object so that you can use other Java methods to take more control of how the stream is read.
+   * 
+   * ( end auto-generated )
    *
    * <h3>Advanced</h3>
    * Simplified method to open a Java InputStream.
@@ -4893,7 +5177,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate loadBytes.xml
+   * ( begin auto-generated from loadBytes.xml )
+   * 
+   * 
+   * ( end auto-generated )
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
    * @see PApplet#loadStrings(String)
@@ -4947,7 +5234,11 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate loadStrings.xml
+   * ( begin auto-generated from loadStrings.xml )
+   * 
+   * Reads the contents of a file or url and creates a String array of its individual lines. If a file is specified, it must be located in the sketch's "data" directory/folder.
+   * 
+   * ( end auto-generated )
    *
    * <h3>Advanced</h3>
    * Load data from a file and shove it into a String array.
@@ -5021,7 +5312,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate createOutput.xml
+   * ( begin auto-generated from createOutput.xml )
+   * 
+   * Similar to 
+   * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to open
    * @see PApplet#createInput()
@@ -5049,7 +5343,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate saveStream.xml
+   * ( begin auto-generated from saveStream.xml )
+   * 
+   * Save the contents of a stream to a file in the sketch folder. This is basically 
+   * ( end auto-generated )
    * @webref output:files
    * @param targetFilename name of the file to write to
    * @param sourceLocation location to save the file
@@ -5132,7 +5429,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate saveBytes.xml
+   * ( begin auto-generated from saveBytes.xml )
+   * 
+   * Opposite of 
+   * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to write to
    * @param buff array of bytes to be written
@@ -5206,7 +5506,11 @@ public class PApplet extends Applet
   //
 
 /**
- * @generate saveStrings.xml
+   * ( begin auto-generated from saveStrings.xml )
+   * 
+   * Writes an array of strings to a file, one line per string. This file is saved to the sketch's folder, which is opened by selecting "Show sketch folder" from the "Sketch" menu.
+   * 
+   * ( end auto-generated )
  * @webref output:files
  * @param filename filename for output
  * @param strings string array to be written
@@ -5383,7 +5687,10 @@ public class PApplet extends Applet
   }
 
 /**
- * @generate sort.xml
+   * ( begin auto-generated from sort.xml )
+   * 
+   * Sorts an array of numbers from smallest to largest and puts an array of words in alphabetical order. The original array is not modified, a re-ordered array is returned. The 
+   * ( end auto-generated )
  * @webref data:array_functions
  * @param what String[], int[], or float[]
  * @param count int
@@ -5456,7 +5763,10 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate arrayCopy.xml
+   * ( begin auto-generated from arrayCopy.xml )
+   * 
+   * Copies an array (or part of an array) to another array. The 
+   * ( end auto-generated )
    * @webref data:array_functions
    * @param src the source array
    * @param srcPosition starting position in the source array
@@ -5521,7 +5831,10 @@ public class PApplet extends Applet
   }
   
 /**
- * @generate expand.xml
+   * ( begin auto-generated from expand.xml )
+   * 
+   * Increases the size of an array. By default, this function doubles the size of the array, but the optional 
+   * ( end auto-generated )
  * @webref data:array_functions
  * @param list[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
  * @see PApplet#shorten()
