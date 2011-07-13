@@ -27,8 +27,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
-import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.*;
 import java.util.List;
 import java.util.zip.*;
@@ -36,15 +35,14 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import processing.app.Library.LibraryInfo;
-import processing.app.LibraryListPanel.ContributionPanel;
-import processing.app.LibraryListPanel.PreferredViewPositionListener;
-import processing.app.LibraryListing.LibraryListFetcher;
+import processing.app.ContributionListPanel.ContributionPanel;
+import processing.app.ContributionListPanel.PreferredViewPositionListener;
+import processing.app.ContributionListing.ContributionListFetcher;
 
 /**
  * 
  */
-public class LibraryManager {
+public class ContributionManager {
   
   File backupFolder = null;
   
@@ -58,11 +56,11 @@ public class LibraryManager {
 
   JFrame dialog;
   
-  LibraryListing contributionListing;
+  ContributionListing contributionListing;
   
   FilterField filterField;
   
-  LibraryListPanel contributionListPanel;
+  ContributionListPanel contributionListPanel;
   
   JComboBox categoryChooser;
   
@@ -74,7 +72,7 @@ public class LibraryManager {
   
   JProgressBar installProgressBar;
   
-  public LibraryManager() {
+  public ContributionManager() {
 
     dialog = new JFrame("Contribution Manager");
     
@@ -109,10 +107,10 @@ public class LibraryManager {
     
     pane.add(filterField, c);
    
-    contributionListPanel = new LibraryListPanel(this, contributionListing);
+    contributionListPanel = new ContributionListPanel(this, contributionListing);
     if (contributionListing == null) {
       JProgressBar progressBar = contributionListPanel.getSetupProgressBar();
-      getLibraryListing(progressBar);
+      getContributionListing(progressBar);
     }
     
     c = new GridBagConstraints();
@@ -229,7 +227,7 @@ public class LibraryManager {
   /**
    * @return true if the library listing has already been downloaded
    */
-  public boolean hasLibraryListing() {
+  public boolean hasContributionListing() {
     return contributionListing != null;
   }
   
@@ -244,19 +242,19 @@ public class LibraryManager {
     }
   }
   
-  private void getLibraryListing(JProgressBar progressBar) {
+  private void getContributionListing(JProgressBar progressBar) {
     if (contributionListing == null) {
-      contributionListing = new LibraryListing();
-      contributionListing.addLibraryListener(contributionListPanel); 
+      contributionListing = new ContributionListing();
+      contributionListing.addContributionListener(contributionListPanel); 
     
-      final LibraryListFetcher llf = new LibraryListFetcher(contributionListing);
+      final ContributionListFetcher llf = new ContributionListFetcher(contributionListing);
       llf.setProgressMonitor(new JProgressMonitor(progressBar) {
         
         @Override
         public void finishedAction() {
-          contributionListing = llf.getLibraryListing();
+          contributionListing = llf.getContributionListing();
           synchronized (contributionListing) {
-            updateLibraryListing();
+            updateContributionListing();
             updateCategoryChooser();
             
             progressBar.setVisible(false);
@@ -267,7 +265,7 @@ public class LibraryManager {
     }
   }
 
-  protected void updateLibraryListing() {
+  protected void updateContributionListing() {
     ArrayList<Library> libraries = editor.getMode().contribLibraries;
     
     ArrayList<ContributionInfo> infoList = new ArrayList<ContributionInfo>();
