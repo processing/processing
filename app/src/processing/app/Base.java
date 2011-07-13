@@ -2598,6 +2598,7 @@ public class Base {
           }
         }
       }
+      file.close();
     } catch (IOException e) {
       System.err.println("Ignoring " + filename + " (" + e.getMessage() + ")");
       //e.printStackTrace();
