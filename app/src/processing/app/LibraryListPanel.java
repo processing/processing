@@ -38,10 +38,21 @@ import java.net.*;
 import java.text.*;
 
 import processing.app.Library.LibraryInfo;
-import processing.app.Library.LibraryInfo.Author;
+import processing.app.ContributionInfo.Author;
+import processing.app.ContributionInfo.ContributionType;
 import processing.app.LibraryListing.LibraryChangeListener;
 
 public class LibraryListPanel extends JPanel implements Scrollable, LibraryChangeListener {
+  
+  LibraryManager contributionManager;
+  
+  JProgressBar setupProgressBar;
+  
+  ArrayList<ContributionPanel> contributionPanels;
+  
+  @SuppressWarnings("unused")
+  private PreferredViewPositionListener preferredViewPositionListener;
+  
   
   private static HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
     
@@ -49,21 +60,15 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     }
   };
   
-  HashMap<LibraryPanel, Integer> rowForEachPanel;
+  HashMap<ContributionPanel, Integer> rowForEachPanel;
   
-  @SuppressWarnings("unused")
-  private PreferredViewPositionListener preferredViewPositionListener;
-
-  LibraryManager libraryManager;
-  JProgressBar setupProgressBar;
-  ArrayList<LibraryPanel> libPanels;
   
   public LibraryListPanel(LibraryManager libraryManager, LibraryListing libraryListing) {
     super();
     
-    this.libraryManager = libraryManager;
+    this.contributionManager = libraryManager;
     
-    rowForEachPanel = new HashMap<LibraryPanel, Integer>();
+    rowForEachPanel = new HashMap<ContributionPanel, Integer>();
     
     preferredViewPositionListener = new PreferredViewPositionListener() {
       
@@ -86,7 +91,7 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
       setBackground(UIManager.getColor("List.background"));
     }
     
-    libPanels = new ArrayList<LibraryPanel>();
+    contributionPanels = new ArrayList<ContributionPanel>();
     
     addMouseListener(new MouseAdapter() {
 
@@ -108,37 +113,48 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
       add(setupProgressBar, c);
     } else {
       // Add all the libraries in libraryListing to this panel
-      for (LibraryInfo info : libraryListing.getAllLibararies()) {
+      for (ContributionInfo info : libraryListing.getAllLibararies()) {
         libraryAdded(info);
       }
     }
     
   }
   
-  public void libraryAdded(LibraryInfo libraryInfo) {
+  public void libraryAdded(ContributionInfo contributionInfo) {
     
-    LibraryPanel newPanel = new LibraryPanel(libraryInfo);
-    
-    synchronized (libPanels) {
-      libPanels.add(newPanel);
-      Collections.sort(libPanels);
+    ContributionPanel newPanel = null;
+    if (contributionInfo.getType() == ContributionType.LIBRARY) {
+      newPanel = new LibraryPanel((LibraryInfo) contributionInfo);
     }
     
-    GridBagConstraints c = new GridBagConstraints();
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 1;
-    c.gridx = 0;
-    c.gridy = getRowForPanel(newPanel);
-    rowForEachPanel.put(newPanel, c.gridy);
-    
-    add(newPanel, c);
-    updateColors();
+    if (newPanel != null) {
+      synchronized (contributionPanels) {
+        contributionPanels.add(newPanel);
+        Collections.sort(contributionPanels);
+      }
+      
+      GridBagConstraints c = new GridBagConstraints();
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.weightx = 1;
+      c.gridx = 0;
+      c.gridy = getRowForPanel(newPanel);
+      rowForEachPanel.put(newPanel, c.gridy);
+      
+      add(newPanel, c);
+      updateColors();
+    }
   }
   
-  private int getRowForPanel(LibraryPanel newPanel) {
+  /**
+   * Returns the row number for a panel to be inserted.
+   * 
+   * The chosen row will be equidistant from the panel before and after the new
+   * panel.
+   */
+  private int getRowForPanel(ContributionPanel newPanel) {
     int currentIndex = 0;
-    while (currentIndex < libPanels.size()) {
-      LibraryPanel currentPanel = libPanels.get(currentIndex);
+    while (currentIndex < contributionPanels.size()) {
+      ContributionPanel currentPanel = contributionPanels.get(currentIndex);
       if (currentPanel == newPanel) {
         break;
       }
@@ -147,11 +163,11 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     
     int lastIndex = currentIndex - 1;
     int nextIndex = currentIndex + 1;
-    LibraryPanel last = null, next = null;
-    if (0 <= lastIndex && lastIndex < libPanels.size())
-      last = libPanels.get(lastIndex);
-    if (0 <= nextIndex && nextIndex < libPanels.size())
-      next = libPanels.get(nextIndex);
+    ContributionPanel last = null, next = null;
+    if (0 <= lastIndex && lastIndex < contributionPanels.size())
+      last = contributionPanels.get(lastIndex);
+    if (0 <= nextIndex && nextIndex < contributionPanels.size())
+      next = contributionPanels.get(nextIndex);
     
     Integer lastRow = rowForEachPanel.get(last);
     if (lastRow == null) lastRow = 0;
@@ -161,13 +177,13 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     return lastRow + ((nextRow - lastRow) / 2);
   }
 
-  public void libraryRemoved(LibraryInfo libraryInfo) {
+  public void libraryRemoved(ContributionInfo contributionInfo) {
     
-    synchronized (libPanels) {
-      Iterator<LibraryPanel> it = libPanels.iterator();
+    synchronized (contributionPanels) {
+      Iterator<ContributionPanel> it = contributionPanels.iterator();
       while (it.hasNext()) {
-        LibraryPanel panel = it.next();
-        if (panel.info == libraryInfo) {
+        ContributionPanel panel = it.next();
+        if (panel.info == contributionInfo) {
           rowForEachPanel.remove(panel);
           remove(panel);
           it.remove();
@@ -178,26 +194,26 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     updateUI();
   }
   
-  public void libraryChanged(LibraryInfo oldLib, LibraryInfo newLib) {
-    synchronized (libPanels) {
-      for (LibraryPanel panel : libPanels) {
-        if (panel.info == oldLib) {
-          panel.info = newLib;
+  public void contributionChanged(ContributionInfo oldInfo, ContributionInfo newInfo) {
+    synchronized (contributionPanels) {
+      for (ContributionPanel panel : contributionPanels) {
+        if (panel.info == oldInfo) {
+          panel.info = newInfo;
           panel.updateState();
         }
       }
     }
   }
   
-  public void filterLibraries(List<LibraryInfo> filteredLibraries) {
+  public void filterLibraries(List<ContributionInfo> filteredContributions) {
 
-    if (libPanels != null) {
-      synchronized (libPanels) {
+    if (contributionPanels != null) {
+      synchronized (contributionPanels) {
 
-        List<LibraryPanel> hiddenPanels = new ArrayList(libPanels);
-        for (LibraryInfo lib : filteredLibraries) {
+        List<ContributionPanel> hiddenPanels = new ArrayList(contributionPanels);
+        for (ContributionInfo lib : filteredContributions) {
 
-          for (LibraryPanel libPanel : libPanels) {
+          for (ContributionPanel libPanel : contributionPanels) {
             if (libPanel.info == lib) {
               libPanel.setVisible(true);
               hiddenPanels.remove(libPanel);
@@ -205,7 +221,7 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
           }
         }
 
-        for (LibraryPanel libPanel : hiddenPanels) {
+        for (ContributionPanel libPanel : hiddenPanels) {
           libPanel.setVisible(false);
         }
       }
@@ -277,8 +293,8 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
   private void updateColors() {
 
     int count = 0;
-    synchronized (libPanels) {
-      for (LibraryPanel libPanel : libPanels) {
+    synchronized (contributionPanels) {
+      for (ContributionPanel libPanel : contributionPanels) {
 
           if (libPanel.isVisible() && libPanel.isSelected) {
             libPanel.setBackground(UIManager.getColor("List.selectionBackground"));
@@ -369,7 +385,7 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
 
       for (Component c : getComponents()) {
         if (c.isVisible()) {
-          if (c instanceof LibraryPanel) {
+          if (c instanceof ContributionPanel) {
             Dimension d = c.getPreferredSize();
 
             int nextHeight = height + d.height;
@@ -416,31 +432,105 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     return setupProgressBar;
   }
   
+  class LibraryPanel extends ContributionPanel {
+    
+    public LibraryPanel(LibraryInfo libInfo) {
+      super(libInfo);
+    }
+    
+    private LibraryInfo getInfo() {
+      return (LibraryInfo) info;
+    }
+    
+    protected ActionListener createRemoveAction() {
+      
+      return new ActionListener() {
+         
+         public void actionPerformed(ActionEvent arg) {
+           installOrRemove.setEnabled(false);
+           
+           installProgressBar.setVisible(true);
+           contributionManager.uninstallLibrary(getInfo().library,
+             new JProgressMonitor(installProgressBar) {
+               
+               public void finishedAction() {
+                 // Finished uninstalling the library
+                 resetInstallProgressBarState();
+                 installOrRemove.setEnabled(true);
+               }
+             }
+           );
+           
+         }
+       };
+    }
+    
+    protected ActionListener createInstallAction() {
+       
+       return new ActionListener() {
+         
+         public void actionPerformed(ActionEvent arg) {
+           installOrRemove.setEnabled(false);
+           
+           try {
+             URL url = new URL(info.link);
+             
+             installProgressBar.setVisible(true);
+             
+             contributionManager.installLibraryFromUrl(url, LibraryPanel.this,
+               new JProgressMonitor(installProgressBar) {
+   
+                 public void finishedAction() {
+                   // Finished downloading library
+                 }
+               },
+               new JProgressMonitor(installProgressBar) {
+   
+                 public void finishedAction() {
+                   // Finished installing library
+                   resetInstallProgressBarState();
+                   installOrRemove.setEnabled(true);
+                 }
+               }
+             );
+             
+           } catch (MalformedURLException e) {
+             Base.showWarning("Install Failed",
+                              "The link fetched from Processing.org is invalid.\n" +
+                              "You can still intall this library manually by visiting\n" +
+                              "the library's website.", e);
+             installOrRemove.setEnabled(true);
+           }
+         }
+       };
+     }
+    
+    public void updateState() {
+      if (getInfo().isInstalled()) {
+        useRemoveAction();
+      } else {
+        useInstalledAction();
+      }
+    }
+    
+  }
+  
   /**
    * Panel that expands and gives a brief overview of a library when clicked.
    */
-  class LibraryPanel extends JPanel implements Comparable<LibraryPanel> {
+  abstract class ContributionPanel extends JPanel implements Comparable<ContributionPanel> {
     
     private static final int BUTTON_WIDTH = 100;
 
     boolean okayToOpenHyperLink;
     
-    class ConditionalHyperlinkListener implements HyperlinkListener {
-      
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          if (okayToOpenHyperLink) {
-            Base.openURL(e.getURL().toString());
-          }
-        }
-      }
-    }
     HyperlinkListener hyperlinkOpener;
     
-    ActionListener removeAction;
-    ActionListener installLibAction;
+    private ActionListener removeAction;
+
+    private ActionListener installAction;
     
-    LibraryInfo info;
+    ContributionInfo info;
     
     JTextPane headerLabel;
     
@@ -454,8 +544,8 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
 
     boolean isSelected;
     
-    private LibraryPanel(LibraryInfo libInfo) {
-      this.info = libInfo;
+    private ContributionPanel(ContributionInfo contributionInfo) {
+      this.info = contributionInfo;
       
       okayToOpenHyperLink = false;
       hyperlinkOpener = new ConditionalHyperlinkListener();
@@ -464,7 +554,9 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
       
       createAuthorString();
 
-      createInstallRemoveActions();
+      installAction = createInstallAction();
+      removeAction = createRemoveAction();
+
       addPaneComponents();
       addProgressBarAndButton();
 
@@ -480,8 +572,8 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
           
           if (!isSelected) {
             for (Component c : LibraryListPanel.this.getComponents()) {
-              if (c instanceof LibraryPanel) {
-                LibraryPanel lp = (LibraryPanel) c;
+              if (c instanceof ContributionPanel) {
+                ContributionPanel lp = (ContributionPanel) c;
                 if (lp.isSelected) {
                   lp.setSelected(false);
                   break;
@@ -511,12 +603,12 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
      */
     public boolean useInstalledAction() {
       if (Arrays.asList(installOrRemove.getActionListeners())
-          .contains(installLibAction)) {
+          .contains(installAction)) {
         return false;
       } else {
         installOrRemove.removeActionListener(removeAction);
         installOrRemove.setText("Install");
-        installOrRemove.addActionListener(installLibAction);
+        installOrRemove.addActionListener(installAction);
         return true;
       }
     }
@@ -530,72 +622,16 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
           .contains(removeAction)) {
         return false;
       } else {
-        installOrRemove.removeActionListener(installLibAction);
+        installOrRemove.removeActionListener(installAction);
         installOrRemove.setText("Remove");
         installOrRemove.addActionListener(removeAction);
         return true;
       }
     }
 
-    private void createInstallRemoveActions() {
-      
-     removeAction = new ActionListener() {
-        
-        public void actionPerformed(ActionEvent arg) {
-          installOrRemove.setEnabled(false);
-          
-          installProgressBar.setVisible(true);
-          libraryManager.uninstallLibrary(info.library,
-            new JProgressMonitor(installProgressBar) {
-              
-              public void finishedAction() {
-                // Finished uninstalling the library
-                resetInstallProgressBarState();
-                installOrRemove.setEnabled(true);
-              }
-            }
-          );
-          
-        }
-      };
-      
-      installLibAction = new ActionListener() {
-        
-        public void actionPerformed(ActionEvent arg) {
-          installOrRemove.setEnabled(false);
-          
-          try {
-            URL url = new URL(info.link);
-            
-            installProgressBar.setVisible(true);
-            
-            libraryManager.installLibraryFromUrl(url, LibraryPanel.this,
-              new JProgressMonitor(installProgressBar) {
-  
-                public void finishedAction() {
-                  // Finished downloading library
-                }
-              },
-              new JProgressMonitor(installProgressBar) {
-  
-                public void finishedAction() {
-                  // Finished installing library
-                  resetInstallProgressBarState();
-                  installOrRemove.setEnabled(true);
-                }
-              }
-            );
-            
-          } catch (MalformedURLException e) {
-            Base.showWarning("Install Failed",
-                             "The link fetched from Processing.org is invalid.\n" +
-                             "You can still intall this library manually by visiting\n" +
-                             "the library's website.", e);
-            installOrRemove.setEnabled(true);
-          }
-        }
-      };
-    }
+    protected abstract ActionListener createInstallAction();
+
+    protected abstract ActionListener createRemoveAction();
 
     void stripListeners(JEditorPane editorPane) {
       for (MouseListener l : editorPane.getMouseListeners()) {
@@ -827,15 +863,9 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
       rightPane.setPreferredSize(d);
     }
     
-    public void updateState() {
-      if (info.isInstalled()) {
-        useRemoveAction();
-      } else {
-        useInstalledAction();
-      }
-    }
+    public  abstract void updateState();
     
-    private void resetInstallProgressBarState() {
+    protected void resetInstallProgressBarState() {
       installProgressBar.setString("Starting");
       installProgressBar.setIndeterminate(true);
       installProgressBar.setValue(0);
@@ -878,8 +908,19 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
       revalidate();
     }
 
-    public int compareTo(LibraryPanel o) {
+    public int compareTo(ContributionPanel o) {
       return info.name.toLowerCase().compareTo(o.info.name.toLowerCase());
+    }
+    
+    class ConditionalHyperlinkListener implements HyperlinkListener {
+      
+      public void hyperlinkUpdate(HyperlinkEvent e) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          if (okayToOpenHyperLink) {
+            Base.openURL(e.getURL().toString());
+          }
+        }
+      }
     }
     
   }

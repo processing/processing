@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import processing.core.*;
-import processing.app.Library.LibraryInfo.Author;
+import processing.app.ContributionInfo.Author;
 
 public class Library {
   static final String[] platformNames = PConstants.platformNames;
@@ -473,34 +473,32 @@ public class Library {
     }
   }
   
-  public static class LibraryInfo implements Comparable<LibraryInfo> {
+  public static class LibraryInfo extends ContributionInfo {
     
     protected Library library;
-    
-    protected String category;         // "Sound"
-    protected String name;             // "pdf" or "PDF Export"
-    protected List<Author> authorList; // Ben Fry
-    protected String url;              // http://processing.org
-    protected String sentence;         // Write graphics to PDF files.
-    protected String paragraph;        // <paragraph length description for site>
-    protected int version;             // 102
-    protected String prettyVersion;    // "1.0.2"
-    
-    public String link = "";
-    
-    public static class Author {
-      public String name;
-      
-      public String url;
-      
-    }
 
-    public int compareTo(LibraryInfo o) {
-      return name.toLowerCase().compareTo(o.name.toLowerCase());
-    }
-    
     public boolean isInstalled() {
       return library != null;
+    }
+
+    public ContributionType getType() {
+      return ContributionType.LIBRARY;
+    }
+
+  }
+  
+  public static class LibraryCompilationInfo extends ContributionInfo {
+    
+    protected List<Library> libraries;
+    protected List<String> libraryNames;
+
+    public boolean isInstalled() {
+      // TODO: Check that the right number of libraries are installed
+      return libraries != null;
+    }
+
+    public ContributionType getType() {
+      return ContributionType.LIBRARY_COMPILATION;
     }
 
   }
