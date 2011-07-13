@@ -376,7 +376,14 @@ public class LibraryManager {
       // System.gc();
       
       if (!errorEncountered) {
-        return installLibraries(discoveredLibs);
+        if (discoveredLibs.isEmpty()) {
+          Base.showWarning("Trouble discovering libraries",
+                           "Maybe it's just us, but it looks like there are no\n"
+                         + "libraries in the file we just downloaded.\n", null);
+          return null;
+        } else {
+          return installLibraries(discoveredLibs);
+        }
       }
     } catch (IOException ioe) {
       Base.showWarning("Trouble discovering libraries",
@@ -733,14 +740,8 @@ public class LibraryManager {
         progressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
         
         ArrayList<Library> info = installLibrary(libFile);
-        if (info != null) {
-          if (info.isEmpty()) {
-            Base.showWarning("Trouble discovering libraries",
-                             "Maybe it's just us, but it looks like there are no\n"
-                           + "libraries in the file we just downloaded.\n", null);
-          } else {
-            libraryListing.replaceLibrary(libraryPanel.info, info.get(0).info);
-          }
+        if (info != null && !info.isEmpty()) {
+          libraryListing.replaceLibrary(libraryPanel.info, info.get(0).info);
         }
         
         refreshInstalled();
