@@ -40,11 +40,11 @@ import java.text.*;
 import processing.app.Library.LibraryInfo;
 import processing.app.ContributionInfo.Author;
 import processing.app.ContributionInfo.ContributionType;
-import processing.app.LibraryListing.LibraryChangeListener;
+import processing.app.ContributionListing.ContributionChangeListener;
 
-public class LibraryListPanel extends JPanel implements Scrollable, LibraryChangeListener {
+public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
   
-  LibraryManager contributionManager;
+  ContributionManager contributionManager;
   
   JProgressBar setupProgressBar;
   
@@ -63,7 +63,7 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
   HashMap<ContributionPanel, Integer> rowForEachPanel;
   
   
-  public LibraryListPanel(LibraryManager libraryManager, LibraryListing libraryListing) {
+  public ContributionListPanel(ContributionManager libraryManager, ContributionListing libraryListing) {
     super();
     
     this.contributionManager = libraryManager;
@@ -114,13 +114,13 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     } else {
       // Add all the libraries in libraryListing to this panel
       for (ContributionInfo info : libraryListing.getAllLibararies()) {
-        libraryAdded(info);
+        contributionAdded(info);
       }
     }
     
   }
   
-  public void libraryAdded(ContributionInfo contributionInfo) {
+  public void contributionAdded(ContributionInfo contributionInfo) {
     
     ContributionPanel newPanel = null;
     if (contributionInfo.getType() == ContributionType.LIBRARY) {
@@ -177,7 +177,7 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
     return lastRow + ((nextRow - lastRow) / 2);
   }
 
-  public void libraryRemoved(ContributionInfo contributionInfo) {
+  public void contributionRemoved(ContributionInfo contributionInfo) {
     
     synchronized (contributionPanels) {
       Iterator<ContributionPanel> it = contributionPanels.iterator();
@@ -319,7 +319,7 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
 
             libPanel.setBorder(border);
 
-            libPanel.setBackground(LibraryListPanel.this.getBackground());
+            libPanel.setBackground(ContributionListPanel.this.getBackground());
             cascadeForgroundColor(libPanel,
                                   UIManager.getColor("List.foreground"));
           }
@@ -560,7 +560,7 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
       addPaneComponents();
       addProgressBarAndButton();
 
-      setBackground(LibraryListPanel.this.getBackground());
+      setBackground(ContributionListPanel.this.getBackground());
       setOpaque(true);
       setFocusable(true);
       setSelected(false);
@@ -571,7 +571,7 @@ public class LibraryListPanel extends JPanel implements Scrollable, LibraryChang
           okayToOpenHyperLink = isSelected;
           
           if (!isSelected) {
-            for (Component c : LibraryListPanel.this.getComponents()) {
+            for (Component c : ContributionListPanel.this.getComponents()) {
               if (c instanceof ContributionPanel) {
                 ContributionPanel lp = (ContributionPanel) c;
                 if (lp.isSelected) {

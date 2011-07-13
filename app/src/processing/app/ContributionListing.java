@@ -36,9 +36,9 @@ import processing.app.Library.LibraryInfo;
 import processing.app.Library.LibraryCompilationInfo;
 import processing.app.ContributionInfo.Author;
 
-public class LibraryListing {
+public class ContributionListing {
   
-  ArrayList<LibraryChangeListener> listeners;
+  ArrayList<ContributionChangeListener> listeners;
   
   ArrayList<ContributionInfo> advertisedLibraries;
   
@@ -49,8 +49,8 @@ public class LibraryListing {
   boolean hasDownloadedList;
   
   
-  public LibraryListing() {
-    listeners = new ArrayList<LibraryChangeListener>();
+  public ContributionListing() {
+    listeners = new ArrayList<ContributionChangeListener>();
     librariesByCategory = new HashMap<String, List<ContributionInfo>>();
     allLibraries = new ArrayList<ContributionInfo>();
     hasDownloadedList = false;
@@ -61,7 +61,7 @@ public class LibraryListing {
     
     hasDownloadedList = true;
     
-    LibraryXmlParser xmlParser = new LibraryXmlParser(xmlFile);
+    ContributionXmlParser xmlParser = new ContributionXmlParser(xmlFile);
     advertisedLibraries = xmlParser.getLibraries();
     updateList(advertisedLibraries);
     
@@ -76,20 +76,20 @@ public class LibraryListing {
   public void updateList(List<ContributionInfo> libraries) {
     
     // First, record the names of all the libraries in installedLibraries
-    HashSet<String> installedLibraryNames = new HashSet<String>();
+    HashSet<String> installedContributionNames = new HashSet<String>();
     for (ContributionInfo libInfo : libraries) {
-      installedLibraryNames.add(libInfo.name);
+      installedContributionNames.add(libInfo.name);
     }
 
     // We also want to remember categories of libraries that happen to already
     // exist since there is no 'category' attribute in export.txt. For this, we
-    // use a mapping of library names to category names.
+    // use a mapping of contributions names to category names.
     HashMap<String, String> categoriesByName = new HashMap<String, String>();
     
     Iterator<ContributionInfo> it = allLibraries.iterator();
     while (it.hasNext()) {
       ContributionInfo libInfo = it.next();
-      if (installedLibraryNames.contains(libInfo.name)) {
+      if (installedContributionNames.contains(libInfo.name)) {
         if (librariesByCategory.containsKey(libInfo.category)) {
           librariesByCategory.get(libInfo.category).remove(libInfo);
         }
@@ -104,7 +104,7 @@ public class LibraryListing {
       if (category != null) {
         libInfo.category = category;
       }
-      addLibrary(libInfo);
+      addContribution(libInfo);
     }
     
     Collections.sort(allLibraries);
@@ -137,7 +137,7 @@ public class LibraryListing {
     notifyChange(oldLib, newLib);
   }
   
-  public void addLibrary(ContributionInfo libInfo) {
+  public void addContribution(ContributionInfo libInfo) {
     
     if (librariesByCategory.containsKey(libInfo.category)) {
       List<ContributionInfo> list = librariesByCategory.get(libInfo.category);
@@ -234,48 +234,48 @@ public class LibraryListing {
   }
 
   private void notifyRemove(ContributionInfo ContributionInfo) {
-    for (LibraryChangeListener listener : listeners) {
-      listener.libraryRemoved(ContributionInfo);
+    for (ContributionChangeListener listener : listeners) {
+      listener.contributionRemoved(ContributionInfo);
     }
   }
   
   private void notifyAdd(ContributionInfo ContributionInfo) {
-    for (LibraryChangeListener listener : listeners) {
-      listener.libraryAdded(ContributionInfo);
+    for (ContributionChangeListener listener : listeners) {
+      listener.contributionAdded(ContributionInfo);
     }
   }
   
   private void notifyChange(ContributionInfo oldLib, ContributionInfo newLib) {
-    for (LibraryChangeListener listener : listeners) {
+    for (ContributionChangeListener listener : listeners) {
       listener.contributionChanged(oldLib, newLib);
     }
   }
   
-  public void addLibraryListener(LibraryChangeListener listener) {
+  public void addContributionListener(ContributionChangeListener listener) {
     listeners.add(listener);
   }
   
-  public void removeLibraryListener(LibraryChangeListener listener) {
+  public void removeContributionListener(ContributionChangeListener listener) {
     listeners.remove(listener);
   }
   
-  public ArrayList<LibraryChangeListener> getLibraryListeners() {
-    return new ArrayList<LibraryChangeListener>(listeners);
+  public ArrayList<ContributionChangeListener> getContributionListeners() {
+    return new ArrayList<ContributionChangeListener>(listeners);
   }
   
-  public static interface LibraryChangeListener {
+  public static interface ContributionChangeListener {
     
-    public void libraryAdded(ContributionInfo ContributionInfo);
+    public void contributionAdded(ContributionInfo ContributionInfo);
     
-    public void libraryRemoved(ContributionInfo ContributionInfo);
+    public void contributionRemoved(ContributionInfo ContributionInfo);
     
     public void contributionChanged(ContributionInfo oldLib, ContributionInfo newLib);
     
   }
   
-  public static class LibraryListFetcher implements Runnable {
+  public static class ContributionListFetcher implements Runnable {
 
-    LibraryListing libListing;
+    ContributionListing libListing;
 
     File dest;
     
@@ -287,7 +287,7 @@ public class LibraryListing {
     
     ProgressMonitor progressMonitor;
 
-    public LibraryListFetcher(LibraryListing libListing) {
+    public ContributionListFetcher(ContributionListing libListing) {
       
       this.libListing = libListing;
       
@@ -326,7 +326,7 @@ public class LibraryListing {
       downloader.run();
     }
     
-    public LibraryListing getLibraryListing() {
+    public ContributionListing getContributionListing() {
       return libListing;
     }
   }
@@ -334,7 +334,7 @@ public class LibraryListing {
   /**
    * Class to parse the libraries xml file
    */
-  private static class LibraryXmlParser extends DefaultHandler {
+  private static class ContributionXmlParser extends DefaultHandler {
     
     ArrayList<ContributionInfo> libraries;
     
@@ -342,7 +342,7 @@ public class LibraryListing {
 
     ContributionInfo currentInfo;
 
-    LibraryXmlParser(File xmlFile) {
+    ContributionXmlParser(File xmlFile) {
       SAXParserFactory spf = SAXParserFactory.newInstance();
       spf.setValidating(false);
       
@@ -355,16 +355,16 @@ public class LibraryListing {
         sp.parse(input, this); // throws SAXException
 
       } catch (ParserConfigurationException e) {
-        Base.showWarning("Error reading library list",
+        Base.showWarning("Error reading contributions list",
                          "An internal error occured when preparing to read the list\n" +
                              "of libraries. You can still install libraries manually while\n" +
                              "we work on fixing this.", e);
       } catch (IOException e) {
-        Base.showWarning("Error reading library list",
+        Base.showWarning("Error reading contributions list",
                          "A error occured while reading the list of available libraries.\n" +
-                         "Try restarting the Library Manager.\n", e);
+                         "Try restarting the Contribution Manager.\n", e);
       } catch (SAXException e) {
-        Base.showWarning("Error reading library list",
+        Base.showWarning("Error reading contributions list",
                          "The list of libraries downloaded from Processing.org\n" +
                          "appears to be malformed. You can still install libraries\n" + 
                          "manually while we work on fixing this.", e);
