@@ -33,25 +33,26 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
 import processing.app.Library.LibraryInfo;
-import processing.app.Library.LibraryInfo.Author;
+import processing.app.Library.LibraryCompilationInfo;
+import processing.app.ContributionInfo.Author;
 
 public class LibraryListing {
   
   ArrayList<LibraryChangeListener> listeners;
   
-  ArrayList<LibraryInfo> advertisedLibraries;
+  ArrayList<ContributionInfo> advertisedLibraries;
   
-  Map<String, List<LibraryInfo>> librariesByCategory;
+  Map<String, List<ContributionInfo>> librariesByCategory;
   
-  ArrayList<LibraryInfo> allLibraries;
+  ArrayList<ContributionInfo> allLibraries;
   
   boolean hasDownloadedList;
   
   
   public LibraryListing() {
     listeners = new ArrayList<LibraryChangeListener>();
-    librariesByCategory = new HashMap<String, List<LibraryInfo>>();
-    allLibraries = new ArrayList<LibraryInfo>();
+    librariesByCategory = new HashMap<String, List<ContributionInfo>>();
+    allLibraries = new ArrayList<ContributionInfo>();
     hasDownloadedList = false;
   }
 
@@ -72,11 +73,11 @@ public class LibraryListing {
    * Adds the installed libraries to the listing of libraries, replacing any
    * pre-existing libraries by the same name as one in the list.
    */
-  public void updateList(List<LibraryInfo> libraries) {
+  public void updateList(List<ContributionInfo> libraries) {
     
     // First, record the names of all the libraries in installedLibraries
     HashSet<String> installedLibraryNames = new HashSet<String>();
-    for (LibraryInfo libInfo : libraries) {
+    for (ContributionInfo libInfo : libraries) {
       installedLibraryNames.add(libInfo.name);
     }
 
@@ -85,9 +86,9 @@ public class LibraryListing {
     // use a mapping of library names to category names.
     HashMap<String, String> categoriesByName = new HashMap<String, String>();
     
-    Iterator<LibraryInfo> it = allLibraries.iterator();
+    Iterator<ContributionInfo> it = allLibraries.iterator();
     while (it.hasNext()) {
-      LibraryInfo libInfo = it.next();
+      ContributionInfo libInfo = it.next();
       if (installedLibraryNames.contains(libInfo.name)) {
         if (librariesByCategory.containsKey(libInfo.category)) {
           librariesByCategory.get(libInfo.category).remove(libInfo);
@@ -98,7 +99,7 @@ public class LibraryListing {
       }
     }
     
-    for (LibraryInfo libInfo : libraries) {
+    for (ContributionInfo libInfo : libraries) {
       String category = categoriesByName.get(libInfo.name);
       if (category != null) {
         libInfo.category = category;
@@ -111,14 +112,14 @@ public class LibraryListing {
   }
   
   
-  public void replaceLibrary(LibraryInfo oldLib, LibraryInfo newLib) {
+  public void replaceLibrary(ContributionInfo oldLib, ContributionInfo newLib) {
     
     if (oldLib == null || newLib == null) {
       return;
     }
     
     if (librariesByCategory.containsKey(oldLib.category)) {
-      List<LibraryInfo> list = librariesByCategory.get(oldLib.category);
+      List<ContributionInfo> list = librariesByCategory.get(oldLib.category);
       
       for (int i = 0; i < list.size(); i++) {
         if (list.get(i) == oldLib) {
@@ -136,15 +137,15 @@ public class LibraryListing {
     notifyChange(oldLib, newLib);
   }
   
-  public void addLibrary(LibraryInfo libInfo) {
+  public void addLibrary(ContributionInfo libInfo) {
     
     if (librariesByCategory.containsKey(libInfo.category)) {
-      List<LibraryInfo> list = librariesByCategory.get(libInfo.category);
+      List<ContributionInfo> list = librariesByCategory.get(libInfo.category);
       list.add(libInfo);
       
       Collections.sort(list);
     } else {
-      ArrayList<LibraryInfo> libs = new ArrayList<LibraryInfo>();
+      ArrayList<ContributionInfo> libs = new ArrayList<ContributionInfo>();
       libs.add(libInfo);
       librariesByCategory.put(libInfo.category, libs);
     }
@@ -155,7 +156,7 @@ public class LibraryListing {
     Collections.sort(allLibraries);
   }
   
-  public void removeLibrary(LibraryInfo info) {
+  public void removeLibrary(ContributionInfo info) {
     if (librariesByCategory.containsKey(info.category)) {
       librariesByCategory.get(info.category).remove(info);
     }
@@ -164,8 +165,8 @@ public class LibraryListing {
     notifyRemove(info);
   }
   
-  public LibraryInfo getAdvertisedLibrary(String libName) {
-    for (LibraryInfo advertisedLib : advertisedLibraries) {
+  public ContributionInfo getAdvertisedContribution(String libName) {
+    for (ContributionInfo advertisedLib : advertisedLibraries) {
       if (advertisedLib.name.equals(libName)) {
         return advertisedLib;
       }
@@ -179,22 +180,22 @@ public class LibraryListing {
     return librariesByCategory.keySet();
   }
 
-  public List<LibraryInfo> getAllLibararies() {
-    return new ArrayList<LibraryInfo>(allLibraries);
+  public List<ContributionInfo> getAllLibararies() {
+    return new ArrayList<ContributionInfo>(allLibraries);
   }
 
-  public List<LibraryInfo> getLibararies(String category) {
-    ArrayList<LibraryInfo> libinfos = new ArrayList<LibraryInfo>(librariesByCategory.get(category));
+  public List<ContributionInfo> getLibararies(String category) {
+    ArrayList<ContributionInfo> libinfos = new ArrayList<ContributionInfo>(librariesByCategory.get(category));
     Collections.sort(libinfos);
     return libinfos;
   }
   
-  public List<LibraryInfo> getFilteredLibraryList(String category, List<String> filters) {
-    ArrayList<LibraryInfo> filteredList = new ArrayList<LibraryInfo>(allLibraries);
+  public List<ContributionInfo> getFilteredLibraryList(String category, List<String> filters) {
+    ArrayList<ContributionInfo> filteredList = new ArrayList<ContributionInfo>(allLibraries);
     
-    Iterator<LibraryInfo> it = filteredList.iterator();
+    Iterator<ContributionInfo> it = filteredList.iterator();
     while (it.hasNext()) {
-      LibraryInfo libInfo = it.next();
+      ContributionInfo libInfo = it.next();
       
       if (category != null && !category.equals(libInfo.category)) {
         it.remove();
@@ -212,7 +213,7 @@ public class LibraryListing {
     return filteredList;
   }
 
-  private boolean matches(LibraryInfo libInfo, String filter) {
+  private boolean matches(ContributionInfo libInfo, String filter) {
     filter = ".*" + filter.toLowerCase() + ".*";
     
     if (filter.isEmpty()) {
@@ -232,21 +233,21 @@ public class LibraryListing {
  
   }
 
-  private void notifyRemove(LibraryInfo libraryInfo) {
+  private void notifyRemove(ContributionInfo ContributionInfo) {
     for (LibraryChangeListener listener : listeners) {
-      listener.libraryRemoved(libraryInfo);
+      listener.libraryRemoved(ContributionInfo);
     }
   }
   
-  private void notifyAdd(LibraryInfo libraryInfo) {
+  private void notifyAdd(ContributionInfo ContributionInfo) {
     for (LibraryChangeListener listener : listeners) {
-      listener.libraryAdded(libraryInfo);
+      listener.libraryAdded(ContributionInfo);
     }
   }
   
-  private void notifyChange(LibraryInfo oldLib, LibraryInfo newLib) {
+  private void notifyChange(ContributionInfo oldLib, ContributionInfo newLib) {
     for (LibraryChangeListener listener : listeners) {
-      listener.libraryChanged(oldLib, newLib);
+      listener.contributionChanged(oldLib, newLib);
     }
   }
   
@@ -264,11 +265,11 @@ public class LibraryListing {
   
   public static interface LibraryChangeListener {
     
-    public void libraryAdded(LibraryInfo libraryInfo);
+    public void libraryAdded(ContributionInfo ContributionInfo);
     
-    public void libraryRemoved(LibraryInfo libraryInfo);
+    public void libraryRemoved(ContributionInfo ContributionInfo);
     
-    public void libraryChanged(LibraryInfo oldLib, LibraryInfo newLib);
+    public void contributionChanged(ContributionInfo oldLib, ContributionInfo newLib);
     
   }
   
@@ -298,7 +299,7 @@ public class LibraryListing {
         dest = new File(tmpFolder, "libraries.xml");
         dest.setWritable(true);
 
-        url = new URL("http://dl.dropbox.com/u/700641/generated/software.xml");
+        url = new URL("http://dl.dropbox.com/u/700641/generated/contributions.xml");
 
       } catch (IOException e) {
         e.printStackTrace();
@@ -335,11 +336,11 @@ public class LibraryListing {
    */
   private static class LibraryXmlParser extends DefaultHandler {
     
-    ArrayList<LibraryInfo> libraries;
+    ArrayList<ContributionInfo> libraries;
     
     String currentCategoryName;
 
-    LibraryInfo currentLibInfo;
+    ContributionInfo currentInfo;
 
     LibraryXmlParser(File xmlFile) {
       SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -350,7 +351,7 @@ public class LibraryListing {
 
         InputSource input = new InputSource(new FileReader(xmlFile));
 
-        libraries = new ArrayList<LibraryInfo>();
+        libraries = new ArrayList<ContributionInfo>();
         sp.parse(input, this); // throws SAXException
 
       } catch (ParserConfigurationException e) {
@@ -371,7 +372,7 @@ public class LibraryListing {
       }
     }
 
-    public ArrayList<LibraryInfo> getLibraries() {
+    public ArrayList<ContributionInfo> getLibraries() {
       return libraries;
     }
 
@@ -383,30 +384,45 @@ public class LibraryListing {
         currentCategoryName = attributes.getValue("name");
 
       } else if ("library".equals(qName)) {
-        currentLibInfo = new LibraryInfo();
-        currentLibInfo.authorList = new ArrayList<Author>();
-        currentLibInfo.category = currentCategoryName;
-        currentLibInfo.name = attributes.getValue("name");
-        currentLibInfo.url = attributes.getValue("url");
+        currentInfo = new LibraryInfo();
+        setCommonAttributes(attributes);
+
+      } else if ("librarycompilation".equals(qName)) {
+        LibraryCompilationInfo compilationInfo = new LibraryCompilationInfo();
+        String[] names = attributes.getValue("libraryNames").split(";");
+        for (int i = 0; i < names.length; i++) {
+          names[i] = names[i].trim();
+        }
+        compilationInfo.libraryNames = Arrays.asList(names);
+        currentInfo = compilationInfo;
+        setCommonAttributes(attributes);
         
       } else if ("author".equals(qName)) {
         Author author = new Author();
         author.name = attributes.getValue("name");
         author.url = attributes.getValue("url");
-        currentLibInfo.authorList.add(author);
+        currentInfo.authorList.add(author);
 
       } else if ("description".equals(qName)) {
-        currentLibInfo.sentence = attributes.getValue("sentence");
-        currentLibInfo.paragraph = attributes.getValue("paragraph");
+        currentInfo.sentence = attributes.getValue("sentence");
+        currentInfo.paragraph = attributes.getValue("paragraph");
         
       } else if ("version".equals(qName)) {
-        currentLibInfo.version = Integer.parseInt(attributes.getValue("id"));
-        currentLibInfo.prettyVersion = attributes.getValue("pretty");
+        currentInfo.version = Integer.parseInt(attributes.getValue("id"));
+        currentInfo.prettyVersion = attributes.getValue("pretty");
 
       } else if ("location".equals(qName)) {
-        currentLibInfo.link = attributes.getValue("url");
+        currentInfo.link = attributes.getValue("url");
 
       }
+      
+    }
+    
+    private void setCommonAttributes(Attributes attributes) {
+      currentInfo.authorList = new ArrayList<Author>();
+      currentInfo.category = currentCategoryName;
+      currentInfo.name = attributes.getValue("name");
+      currentInfo.url = attributes.getValue("url");
     }
     
     @Override
@@ -414,8 +430,8 @@ public class LibraryListing {
         throws SAXException {
 
       if ("library".equals(qName)) {
-        libraries.add(currentLibInfo);
-        currentLibInfo = null;
+        libraries.add(currentInfo);
+        currentInfo = null;
       }
     }
 

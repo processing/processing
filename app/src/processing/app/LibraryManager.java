@@ -37,7 +37,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import processing.app.Library.LibraryInfo;
-import processing.app.LibraryListPanel.LibraryPanel;
+import processing.app.LibraryListPanel.ContributionPanel;
 import processing.app.LibraryListPanel.PreferredViewPositionListener;
 import processing.app.LibraryListing.LibraryListFetcher;
 
@@ -58,11 +58,11 @@ public class LibraryManager {
 
   JFrame dialog;
   
-  LibraryListing libraryListing;
+  LibraryListing contributionListing;
   
   FilterField filterField;
   
-  LibraryListPanel libraryListPanel;
+  LibraryListPanel contributionListPanel;
   
   JComboBox categoryChooser;
   
@@ -76,7 +76,7 @@ public class LibraryManager {
   
   public LibraryManager() {
 
-    dialog = new JFrame("Library Manager");
+    dialog = new JFrame("Contribution Manager");
     
     Base.setIcon(dialog);
     
@@ -89,7 +89,7 @@ public class LibraryManager {
     dialog.setLocation((screen.width - dialog.getWidth()) / 2,
                        (screen.height - dialog.getHeight()) / 2);
     
-    libraryListPanel.grabFocus();
+    contributionListPanel.grabFocus();
     
   }
   
@@ -109,9 +109,9 @@ public class LibraryManager {
     
     pane.add(filterField, c);
    
-    libraryListPanel = new LibraryListPanel(this, libraryListing);
-    if (libraryListing == null) {
-      JProgressBar progressBar = libraryListPanel.getSetupProgressBar();
+    contributionListPanel = new LibraryListPanel(this, contributionListing);
+    if (contributionListing == null) {
+      JProgressBar progressBar = contributionListPanel.getSetupProgressBar();
       getLibraryListing(progressBar);
     }
     
@@ -125,17 +125,17 @@ public class LibraryManager {
     
     final JScrollPane scrollPane = new JScrollPane();
     scrollPane.setPreferredSize(new Dimension(300,300));
-    scrollPane.setViewportView(libraryListPanel);
+    scrollPane.setViewportView(contributionListPanel);
     scrollPane.getViewport().setOpaque(true);
     
-    scrollPane.getViewport().setBackground(libraryListPanel.getBackground());
+    scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
     
     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
     pane.add(scrollPane, c);
     //pane.add(scrollPane, c);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
-    libraryListPanel.setPreferredViewPositionListener(new PreferredViewPositionListener() {
+    contributionListPanel.setPreferredViewPositionListener(new PreferredViewPositionListener() {
 
       public void handlePreferredLocation(Point p) {
         scrollPane.getViewport().setViewPosition(p);
@@ -173,9 +173,9 @@ public class LibraryManager {
 
   private void updateCategoryChooser() {
     ArrayList<String> categories;
-    if (libraryListing != null) {
+    if (contributionListing != null) {
       categoryChooser.removeAllItems();
-      categories = new ArrayList<String>(libraryListing.getCategories());
+      categories = new ArrayList<String>(contributionListing.getCategories());
       Collections.sort(categories);
       categories.add(0, ANY_CATEGORY);
     } else {
@@ -230,32 +230,32 @@ public class LibraryManager {
    * @return true if the library listing has already been downloaded
    */
   public boolean hasLibraryListing() {
-    return libraryListing != null;
+    return contributionListing != null;
   }
   
   public void filterLibraries(String category, List<String> filters) {
 
-    if (libraryListing != null) {
+    if (contributionListing != null) {
 
-      List<LibraryInfo> filteredLibraries = libraryListing
+      List<ContributionInfo> filteredLibraries = contributionListing
           .getFilteredLibraryList(category, filters);
 
-      libraryListPanel.filterLibraries(filteredLibraries);
+      contributionListPanel.filterLibraries(filteredLibraries);
     }
   }
   
   private void getLibraryListing(JProgressBar progressBar) {
-    if (libraryListing == null) {
-      libraryListing = new LibraryListing();
-      libraryListing.addLibraryListener(libraryListPanel); 
+    if (contributionListing == null) {
+      contributionListing = new LibraryListing();
+      contributionListing.addLibraryListener(contributionListPanel); 
     
-      final LibraryListFetcher llf = new LibraryListFetcher(libraryListing);
+      final LibraryListFetcher llf = new LibraryListFetcher(contributionListing);
       llf.setProgressMonitor(new JProgressMonitor(progressBar) {
         
         @Override
         public void finishedAction() {
-          libraryListing = llf.getLibraryListing();
-          synchronized (libraryListing) {
+          contributionListing = llf.getLibraryListing();
+          synchronized (contributionListing) {
             updateLibraryListing();
             updateCategoryChooser();
             
@@ -268,16 +268,14 @@ public class LibraryManager {
   }
 
   protected void updateLibraryListing() {
-    // Bleh, lets change how the installed libraries are stored and
-    // tracked.
     ArrayList<Library> libraries = editor.getMode().contribLibraries;
     
-    ArrayList<LibraryInfo> infoList = new ArrayList<LibraryInfo>();
+    ArrayList<ContributionInfo> infoList = new ArrayList<ContributionInfo>();
     for (Library library : libraries) {
       infoList.add(library.info);
     }
     
-    libraryListing.updateList(infoList);
+    contributionListing.updateList(infoList);
   }
 
   public void uninstallLibrary(Library library, JProgressMonitor pm) {
@@ -289,7 +287,7 @@ public class LibraryManager {
   }
   
   public void installLibraryFromUrl(URL url,
-                                    LibraryPanel libPanel,
+                                    ContributionPanel libPanel,
                                     JProgressMonitor downloadProgressMonitor,
                                     JProgressMonitor installProgressMonitor) {
     
@@ -694,13 +692,13 @@ public class LibraryManager {
       pm.startTask("Removing", ProgressMonitor.UNKNOWN);
       if (library != null) {
         if (backupLibrary(library)) {
-          LibraryInfo advertisedVersion = libraryListing
-              .getAdvertisedLibrary(library.info.name);
+          ContributionInfo advertisedVersion = contributionListing
+              .getAdvertisedContribution(library.info.name);
           
           if (advertisedVersion == null) {
-            libraryListing.removeLibrary(library.info);
+            contributionListing.removeLibrary(library.info);
           } else {
-            libraryListing.replaceLibrary(library.info, advertisedVersion);
+            contributionListing.replaceLibrary(library.info, advertisedVersion);
           }
         }
       }
@@ -712,14 +710,14 @@ public class LibraryManager {
   
   class LibraryInstaller implements Runnable {
     
-    LibraryPanel libraryPanel;
+    ContributionPanel libraryPanel;
 
     ProgressMonitor progressMonitor;
     
     FileDownloader fileDownloader;
 
     
-    public LibraryInstaller(FileDownloader downloader, LibraryPanel libPanel,
+    public LibraryInstaller(FileDownloader downloader, ContributionPanel libPanel,
                             ProgressMonitor pm) {
       
       libraryPanel = libPanel;
@@ -741,7 +739,7 @@ public class LibraryManager {
         
         ArrayList<Library> info = installLibrary(libFile);
         if (info != null && !info.isEmpty()) {
-          libraryListing.replaceLibrary(libraryPanel.info, info.get(0).info);
+          contributionListing.replaceLibrary(libraryPanel.info, info.get(0).info);
         }
         
         refreshInstalled();
