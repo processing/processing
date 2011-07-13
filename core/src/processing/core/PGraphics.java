@@ -35,7 +35,7 @@ import java.util.HashMap;
  * The <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are necessary to set up the buffer and to finalize it.
  * The fields and methods for this class are extensive;
  * for a complete list visit the developer's reference: http://dev.processing.org/reference/core/
- * =advanced
+ * <h3>Advanced</h3>
  * Main graphics and rendering context, as well as the base API implementation.
  *
  * <h2>Subclassing and initializing PGraphics objects</h2>
@@ -646,7 +646,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Sets the default properties for a PGraphics object. It should be called before anything is drawn into the object.
-   * =advanced
+   * <h3>Advanced</h3>
    * <p/>
    * When creating your own PGraphics, you should call this before
    * drawing anything.
@@ -660,7 +660,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Finalizes the rendering of a PGraphics object so that it can be shown on screen.
-   * =advanced
+   * <h3>Advanced</h3>
    * <p/>
    * When creating your own PGraphics, you should call this when
    * you're finished drawing.
@@ -2056,7 +2056,7 @@ public class PGraphics extends PImage implements PConstants {
    * and vertical resolution independently, use the version of the functions
    * with two parameters.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Code for sphereDetail() submitted by toxi [031031].
    * Code for enhanced u/v version from davbol [080801].
    *
@@ -2118,7 +2118,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Draw a sphere with radius r centered at coordinate 0, 0, 0.
    * A sphere is a hollow ball made from tessellated triangles.
-   * =advanced
+   * <h3>Advanced</h3>
    * <P>
    * Implementation notes:
    * <P>
@@ -2223,7 +2223,7 @@ public class PGraphics extends PImage implements PConstants {
    * curve, call this function once with the x coordinates and a second time
    * with the y coordinates to get the location of a bezier curve at t.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * For instance, to convert the following example:<PRE>
    * stroke(255, 102, 0);
    * line(85, 20, 10, 10);
@@ -2265,7 +2265,7 @@ public class PGraphics extends PImage implements PConstants {
    * Calculates the tangent of a point on a Bezier curve. There is a good
    * definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Code submitted by Dave Bollinger (davol) for release 0136.
    *
    * @webref shape:curves
@@ -2337,7 +2337,7 @@ public class PGraphics extends PImage implements PConstants {
    * Bezier. Using the 3D version of requires rendering with P3D or OPENGL
    * (see the Environment reference for more information).
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Draw a cubic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
    * or 'handles' in an application like Illustrator.
@@ -2443,7 +2443,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Calculates the tangent of a point on a Catmull-Rom curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Code thanks to Dave Bollinger (Bug #715)
    *
    * @webref shape:curves
@@ -2579,7 +2579,7 @@ public class PGraphics extends PImage implements PConstants {
    * rendering with P3D or OPENGL (see the Environment reference for more
    * information).
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * As of revision 0070, this function no longer doubles the first
    * and last points. The curves are a bit more boring, but it's more
    * mathematically correct, and properly mirrored in curvePoint().
@@ -2760,7 +2760,7 @@ public class PGraphics extends PImage implements PConstants {
    * parameters to define the x and y values of the opposite corner of the
    * image.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Starting with release 0124, when using the default (JAVA2D) renderer,
    * smooth() will also improve image quality of resized images.
    *
@@ -4976,7 +4976,7 @@ public class PGraphics extends PImage implements PConstants {
    * <br><br>Images used as background will ignore the current tint() setting.
    * <br><br>It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics</b>.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * <p>Clear the background with a color that includes an alpha value. This can
    * only be used with objects created by createGraphics(), because the main
    * drawing surface cannot be set transparent.</p>

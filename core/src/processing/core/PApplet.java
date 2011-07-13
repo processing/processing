@@ -254,25 +254,14 @@ public class PApplet extends Applet
   public Frame frame;
 
   /**
-   * The screen size when the applet was started.
-   * <P>
-   * Access this via screen.width and screen.height. To make an applet
-   * run at full screen, use size(screen.width, screen.height).
-   * <P>
-   * If you have multiple displays, this will be the size of the main
-   * display. Running full screen across multiple displays isn't
-   * particularly supported, and requires more monkeying with the values.
-   * This probably can't/won't be fixed until/unless I get a dual head
-   * system.
-   * <P>
-   * Note that this won't update if you change the resolution
-   * of your screen once the the applet is running.
-   * <p>
-   * This variable is not static because in the desktop version of Processing,
-   * not all instances of PApplet will necessarily be started on a screen of
-   * the same size.
+   * @generate screenWidth.xml
    */
-  public int screenWidth, screenHeight;
+  public int screenWidth;
+  
+  /**
+   * @generate screenHeight.xml
+   */
+  public int screenHeight;
 
   /**
    * A leech graphics object that is echoing all events.
@@ -326,33 +315,33 @@ public class PApplet extends Applet
   volatile int resizeHeight;
 
   /**
-   * Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The <b>index</b> value defines the position of a value within the array. For example, the statment <b>color b = pixels[230]</b> will set the variable <b>b</b> to be equal to the value at that location in the array. <br><br> Before accessing this array, the data must loaded with the <b>loadPixels()</b> function. After the array data has been modified, the <b>updatePixels()</b> function must be run to update the changes. Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
-   * Pixel buffer from this applet's PGraphics.
-   * <P>
-   * When used with OpenGL or Java2D, this value will
-   * be null until loadPixels() has been called.
+   * @generate pixels.xml
    *
    * @webref image:pixels
-   * @see processing.core.PApplet#loadPixels()
-   * @see processing.core.PApplet#updatePixels()
-   * @see processing.core.PApplet#get(int, int, int, int)
-   * @see processing.core.PApplet#set(int, int, int)
-   * @see processing.core.PImage
+   * @see PApplet#loadPixels()
+   * @see PApplet#updatePixels()
+   * @see PApplet#get(int, int, int, int)
+   * @see PApplet#set(int, int, int)
+   * @see PImage
    */
   public int pixels[];
 
-  /** width of this applet's associated PGraphics
+  /** 
+   * @generate width.xml
    * @webref environment
+   * @see height
    */
   public int width;
 
-  /** height of this applet's associated PGraphics
+  /** 
+   * @generate height.xml
    * @webref environment
+   * @see width
    * */
   public int height;
 
   /**
-   * The system variable <b>mouseX</b> always contains the current horizontal coordinate of the mouse.
+   * @generate mouseX.xml
    * @webref input:mouse
    * @see PApplet#mouseY
    * @see PApplet#mousePressed
@@ -365,7 +354,7 @@ public class PApplet extends Applet
   public int mouseX;
 
   /**
-   * The system variable <b>mouseY</b> always contains the current vertical coordinate of the mouse.
+   * @generate mouseY.xml
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mousePressed
@@ -377,13 +366,10 @@ public class PApplet extends Applet
   public int mouseY;
 
   /**
-   * Previous x/y position of the mouse. This will be a different value
-   * when inside a mouse handler (like the mouseMoved() method) versus
-   * when inside draw(). Inside draw(), pmouseX is updated once each
-   * frame, but inside mousePressed() and friends, it's updated each time
-   * an event comes through. Be sure to use only one or the other type of
-   * means for tracking pmouseX and pmouseY within your sketch, otherwise
-   * you're gonna run into trouble.
+   * ( begin auto-generated from pmouseX.xml )
+   * 
+   * The system variable 
+   * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#pmouseY
    * @see PApplet#mouseX
@@ -392,6 +378,7 @@ public class PApplet extends Applet
   public int pmouseX;
 
   /**
+   * @generate pmouseY.xml
    * @webref input:mouse
    * @see PApplet#pmouseX
    * @see PApplet#mouseX
@@ -424,8 +411,7 @@ public class PApplet extends Applet
   public boolean firstMouse;
 
   /**
-   * Processing automatically tracks if the mouse button is pressed and which button is pressed.
-   * The value of the system variable <b>mouseButton</b> is either <b>LEFT</b>, <b>RIGHT</b>, or <b>CENTER</b> depending on which button is pressed.
+   * @generate mouseButton.xml
    * <h3>Advanced:</h3>
    * If running on Mac OS, a ctrl-click will be interpreted as
    * the righthand mouse button (unlike Java, which reports it as
@@ -441,7 +427,7 @@ public class PApplet extends Applet
   public int mouseButton;
 
   /**
-   * Variable storing if a mouse button is pressed. The value of the system variable <b>mousePressed</b> is true if a mouse button is pressed and false if a button is not pressed.
+   * @generate mousePressed_var.xml
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
@@ -453,12 +439,8 @@ public class PApplet extends Applet
   public MouseEvent mouseEvent;
 
   /**
-   * The system variable <b>key</b> always contains the value of the most recent key on the keyboard that was used (either pressed or released). <br><br>
-   * For non-ASCII keys, use the <b>keyCode</b> variable.
-   * The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
-   * If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
-   * Check for both ENTER and RETURN to make sure your program will work for all platforms.
-   * =advanced
+   * @generate key.xml
+   * <h3>Advanced</h3>
    *
    * Last key pressed.
    * <P>
@@ -473,15 +455,9 @@ public class PApplet extends Applet
   public char key;
 
   /**
-   * The variable <b>keyCode</b> is used to detect special keys such as the UP, DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT.
-   * When checking for these keys, it's first necessary to check and see if the key is coded. This is done with the conditional "if (key == CODED)" as shown in the example.
-   * <br><br>The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
-   * If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
-   * Check for both ENTER and RETURN to make sure your program will work for all platforms.
-   * <br><br>For users familiar with Java, the values for UP and DOWN are simply shorter versions of Java's KeyEvent.VK_UP and KeyEvent.VK_DOWN.
-   * Other keyCode values can be found in the Java <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/KeyEvent.html">KeyEvent</a> reference.
+   * @generate keyCode.xml
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * When "key" is set to CODED, this will contain a Java key code.
    * <P>
    * For the arrow keys, keyCode will be one of UP, DOWN, LEFT and RIGHT.
@@ -496,7 +472,7 @@ public class PApplet extends Applet
   public int keyCode;
 
   /**
-   * The boolean system variable <b>keyPressed</b> is <b>true</b> if any key is pressed and <b>false</b> if no keys are pressed.
+   * @generate keyPressed_var.xml
    * @webref input:keyboard
    * @see PApplet#key
    * @see PApplet#keyCode
@@ -511,16 +487,13 @@ public class PApplet extends Applet
   public KeyEvent keyEvent;
 
   /**
-   * Gets set to true/false as the applet gains/loses focus.
+   * @generate focused.xml
    * @webref environment
    */
   public boolean focused = false;
 
   /**
-   * true if the applet is online.
-   * <P>
-   * This can be used to test how the applet should behave
-   * since online situations are different (no file writing, etc).
+   * @generate online.xml
    * @webref environment
    */
   public boolean online = false;
@@ -533,13 +506,9 @@ public class PApplet extends Applet
   long millisOffset = System.currentTimeMillis();
 
   /**
-   * The current value of frames per second.
-   * <P>
-   * The initial value will be 10 fps, and will be updated with each
-   * frame thereafter. The value is not instantaneous (since that
-   * wouldn't be very useful since it would jump around so much),
-   * but is instead averaged (integrated) over several frames.
-   * As such, this value won't be valid until after 5-10 frames.
+   * @generate frameRate_var.xml
+   * @webref environment
+   * @see PApplet#frameRate()
    */
   public float frameRate = 10;
   /** Last time in nanoseconds that frameRate was checked */
@@ -555,13 +524,9 @@ public class PApplet extends Applet
   protected boolean redraw;
 
   /**
-   * How many frames have been displayed since the applet started.
-   * <P>
-   * This value is read-only <EM>do not</EM> attempt to set it,
-   * otherwise bad things will happen.
-   * <P>
-   * Inside setup(), frameCount is 0.
-   * For the first iteration of draw(), frameCount will equal 1.
+   * @generate frameCount.xml
+   * @webref environment
+   * @see PApplet#frameRate()
    */
   public int frameCount;
 
@@ -1060,17 +1025,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Defines the dimension of the display window in units of pixels. The <b>size()</b> function <em>must</em> be the first line in <b>setup()</b>. If <b>size()</b> is not called, the default size of the window is 100x100 pixels. The system variables <b>width</b> and <b>height</b> are set by the parameters passed to the <b>size()</b> function. <br><br>
-   * Do not use variables as the parameters to <b>size()</b> command, because it will cause problems when exporting your sketch. When variables are used, the dimensions of your sketch cannot be determined during export. Instead, employ numeric values in the <b>size()</b> statement, and then use the built-in <b>width</b> and <b>height</b> variables inside your program when you need the dimensions of the display window are needed. <br><br>
-   * The MODE parameters selects which rendering engine to use. For example, if you will be drawing 3D shapes for the web use <b>P3D</b>, if you want to export a program with OpenGL graphics acceleration use <b>OPENGL</b>. A brief description of the four primary renderers follows:<br><br><b>JAVA2D</b> - The default renderer. This renderer supports two dimensional drawing and provides higher image quality in overall, but generally slower than P2D.<br><br><b>P2D</b> (Processing 2D) - Fast 2D renderer, best used with pixel data, but not as accurate as the JAVA2D default. <br><br><b>P3D</b> (Processing 3D) - Fast 3D renderer for the web. Sacrifices rendering quality for quick 3D drawing.<br><br><b>OPENGL</b> - High speed 3D graphics renderer that makes use of OpenGL-compatible graphics hardware is available. Keep in mind that OpenGL is not magic pixie dust that makes any sketch faster (though it's close), so other rendering options may produce better results depending on the nature of your code. Also note that with OpenGL, all graphics are smoothed: the smooth() and noSmooth() commands are ignored. <br><br><b>PDF</b> - The PDF renderer draws 2D graphics directly to an Acrobat PDF file. This produces excellent results when you need vector shapes for high resolution output or printing. You must first use Import Library &rarr; PDF to make use of the library. More information can be found in the PDF library reference.
-   * If you're manipulating pixels (using methods like get() or blend(), or manipulating the pixels[] array), P2D and P3D will usually be faster than the default (JAVA2D) setting, and often the OPENGL setting as well. Similarly, when handling lots of images, or doing video playback, P2D and P3D will tend to be faster.<br><br>
-   * The P2D, P3D, and OPENGL renderers do not support strokeCap() or strokeJoin(), which can lead to ugly results when using strokeWeight(). (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>) <br><br>
-   * For the most elegant and accurate results when drawing in 2D, particularly when using smooth(), use the JAVA2D renderer setting. It may be slower than the others, but is the most complete, which is why it's the default. Advanced users will want to switch to other renderers as they learn the tradeoffs. <br><br>
-   * Rendering graphics requires tradeoffs between speed, accuracy, and general usefulness of the available features. None of the renderers are perfect, so we provide multiple options so that you can decide what tradeoffs make the most sense for your project. We'd prefer all of them to have perfect visual accuracy, high performance, and support a wide range of features, but that's simply not possible. <br><br>
-   * The maximum width and height is limited by your operating system, and is usually the width and height of your actual screen. On some machines it may simply be the number of pixels on your current screen, meaning that a screen that's 800x600 could support size(1600, 300), since it's the same number of pixels. This varies widely so you'll have to try different rendering modes and sizes until you get what you're looking for. If you need something larger, use <b>createGraphics</b> to create a non-visible drawing surface.
-   * <br><br>Again, the size() method must be the first line of the code (or first item inside setup). Any code that appears before the size() command may run more than once, which can lead to confusing results.
-   *
-   * =advanced
+   * @generate size.xml
+   * <h3>Advanced</h3>
    * Starts up and creates a two-dimensional drawing surface,
    * or resizes the current drawing surface.
    * <P>
@@ -1095,7 +1051,7 @@ public class PApplet extends Applet
 
   /**
    *
-   * @param irenderer   Either P2D, P3D, JAVA2D, or OPENGL
+   * @param irenderer   Either P2D, P3D
    */
   public void size(int iwidth, int iheight, String irenderer) {
     size(iwidth, iheight, irenderer, null);
@@ -1103,17 +1059,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Creates a new PGraphics object and sets it to the specified size.
    *
-   * Note that you cannot change the renderer once outside of setup().
-   * In most cases, you can call size() to give it a new size,
-   * but you need to always ask for the same renderer, otherwise
-   * you're gonna run into trouble.
-   *
-   * The size() method should *only* be called from inside the setup() or
-   * draw() methods, so that it is properly run on the main animation thread.
-   * To change the size of a PApplet externally, use setSize(), which will
-   * update the component size, and queue a resize of the renderer as well.
    */
   public void size(final int iwidth, final int iheight,
                    String irenderer, String ipath) {
@@ -1158,11 +1104,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Creates and returns a new <b>PGraphics</b> object of the types P2D, P3D, and JAVA2D. Use this class if you need to draw into an off-screen graphics buffer. It's not possible to use <b>createGraphics()</b> with OPENGL, because it doesn't allow offscreen use. The DXF and PDF renderers require the filename parameter.
-   * <br><br>It's important to call any drawing commands between beginDraw() and endDraw() statements. This is also true for any commands that affect drawing, such as smooth() or colorMode().
-   * <br><br>Unlike the main drawing surface which is completely opaque, surfaces created with createGraphics() can have transparency. This makes it possible to draw into a graphics and maintain the alpha channel. By using save() to write a PNG or TGA file, the transparency of the graphics object will be honored. Note that transparency levels are binary: pixels are either complete opaque or transparent. For the time being (as of release 0127), this means that text characters will be opaque blocks. This will be fixed in a future release (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=641">Bug 641</a>).
-   *
-   * =advanced
+   * @generate createGraphics.xml
+   * <h3>Advanced</h3>
    * Create an offscreen PGraphics object for drawing. This can be used
    * for bitmap or vector images drawing or rendering.
    * <UL>
@@ -1215,9 +1158,9 @@ public class PApplet extends Applet
    * @webref rendering
    * @param iwidth width in pixels
    * @param iheight height in pixels
-   * @param irenderer Either P2D (not yet implemented), P3D, JAVA2D, PDF, DXF
+   * @param irenderer Either P2D, P3D, PDF, DXF
    *
-   * @see processing.core.PGraphics
+   * @see PGraphics#PGraphics
    *
    */
   public PGraphics createGraphics(int iwidth, int iheight,
@@ -1246,10 +1189,6 @@ public class PApplet extends Applet
 
   /**
    * Version of createGraphics() used internally.
-   *
-   * @param ipath must be an absolute path, usually set via savePath()
-   * @oaram applet the parent applet object, this should only be non-null
-   *               in cases where this is the main drawing surface object.
    */
   protected PGraphics makeGraphics(int iwidth, int iheight,
                                    String irenderer, String ipath,
@@ -1375,7 +1314,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
+   * 
    */
   public PImage createImage(int wide, int high, int format) {
     return createImage(wide, high, format, null);
@@ -1383,10 +1322,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
-   * <br><br>Be sure to include all three parameters, specifying only the width and height (but no format) will produce a strange error.
-   * <br><br>Advanced users please note that createImage() should be used instead of the syntax <tt>new PImage()</tt>.
-   * =advanced
+   * @generate createImage.xml
+   * <h3>Advanced</h3>
    * Preferred method of creating new PImage objects, ensures that a
    * reference to the parent PApplet is included, which makes save() work
    * without needing an absolute path.
@@ -1396,8 +1333,8 @@ public class PApplet extends Applet
    * @param high height in pixels
    * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
    *
-   * @see processing.core.PImage
-   * @see processing.core.PGraphics
+   * @see PImage#PImage
+   * @see PGraphics#PGraphics
    */
   public PImage createImage(int wide, int high, int format, Object params) {
     PImage image = new PImage(wide, high, format);
@@ -1909,8 +1846,8 @@ public class PApplet extends Applet
 
 
   /**
-   * The <b>mousePressed()</b> function is called once after every time a mouse button is pressed. The <b>mouseButton</b> variable (see the related reference entry) can be used to determine which button has been pressed.
-   * =advanced
+   * @generate mousePressed.xml
+   * <h3>Advanced</h3>
    *
    * If you must, use
    * int button = mouseEvent.getButton();
@@ -1929,7 +1866,7 @@ public class PApplet extends Applet
   public void mousePressed() { }
 
   /**
-   * The <b>mouseReleased()</b> function is called every time a mouse button is released.
+   * @generate mouseReleased.xml
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
@@ -1941,8 +1878,8 @@ public class PApplet extends Applet
   public void mouseReleased() { }
 
   /**
-   * The <b>mouseClicked()</b> function is called once after a mouse button has been pressed and then released.
-   * =advanced
+   * @generate mouseClicked.xml
+   * <h3>Advanced</h3>
    * When the mouse is clicked, mousePressed() will be called,
    * then mouseReleased(), then mouseClicked(). Note that
    * mousePressed is already false inside of mouseClicked().
@@ -1958,7 +1895,7 @@ public class PApplet extends Applet
   public void mouseClicked() { }
 
   /**
-   * The <b>mouseDragged()</b> function is called once every time the mouse moves and a mouse button is pressed.
+   * @generate mouseDragged.xml
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
@@ -1970,7 +1907,7 @@ public class PApplet extends Applet
   public void mouseDragged() { }
 
   /**
-   * The <b>mouseMoved()</b> function is called every time the mouse moves and a mouse button is not pressed.
+   * @generate mouseMoved.xml
    * @webref input:mouse
    * @see PApplet#mouseX
    * @see PApplet#mouseY
@@ -2073,13 +2010,8 @@ public class PApplet extends Applet
 
   /**
    *
-   * The <b>keyPressed()</b> function is called once every time a key is pressed. The key that was pressed is stored in the <b>key</b> variable.
-   * <br><br>For non-ASCII keys, use the <b>keyCode</b> variable.
-   * The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b>
-   * If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh.
-   * Check for both ENTER and RETURN to make sure your program will work for all platforms.<br><br>Because of how operating systems handle key repeats, holding down a key may cause multiple calls to keyPressed() (and keyReleased() as well).
-   * The rate of repeat is set by the operating system and how each computer is configured.
-   * =advanced
+   * @generate keyPressed.xml
+   * <h3>Advanced</h3>
    *
    * Called each time a single key on the keyboard is pressed.
    * Because of how operating systems handle key repeats, holding
@@ -2126,30 +2058,33 @@ public class PApplet extends Applet
    *    Java 1.1 (Microsoft VM) passes the TAB key through normally.
    *    Not tested on other platforms or for 1.3.
    * </PRE>
+   * @webref input:keyboard
    * @see PApplet#key
    * @see PApplet#keyCode
    * @see PApplet#keyPressed
    * @see PApplet#keyReleased()
-   * @webref input:keyboard
    */
   public void keyPressed() { }
 
 
   /**
-   * The <b>keyReleased()</b> function is called once every time a key is released. The key that was released will be stored in the <b>key</b> variable. See <b>key</b> and <b>keyReleased</b> for more information.
-   *
+   * @generate keyReleased.xml
+   * @webref input:keyboard
    * @see PApplet#key
    * @see PApplet#keyCode
    * @see PApplet#keyPressed
    * @see PApplet#keyPressed()
-   * @webref input:keyboard
    */
   public void keyReleased() { }
 
 
   /**
-   * Only called for "regular" keys like letters,
-   * see keyPressed() for full documentation.
+   * @generate keyTyped.xml
+   * @webref input:keyboard
+   * @see PApplet#keyPressed
+   * @see PApplet#key
+   * @see PApplet#keyCode
+   * @see PApplet#keyReleased()
    */
   public void keyTyped() { }
 
@@ -2183,50 +2118,50 @@ public class PApplet extends Applet
 
 
   /**
-   * Returns the number of milliseconds (thousandths of a second) since starting an applet. This information is often used for timing animation sequences.
+   * @generate millis.xml
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * <P>
    * This is a function, rather than a variable, because it may
    * change multiple times per frame.
    *
    * @webref input:time_date
-   * @see processing.core.PApplet#second()
-   * @see processing.core.PApplet#minute()
-   * @see processing.core.PApplet#hour()
-   * @see processing.core.PApplet#day()
-   * @see processing.core.PApplet#month()
-   * @see processing.core.PApplet#year()
+   * @see PApplet#second()
+   * @see PApplet#minute()
+   * @see PApplet#hour()
+   * @see PApplet#day()
+   * @see PApplet#month()
+   * @see PApplet#year()
    *
    */
   public int millis() {
     return (int) (System.currentTimeMillis() - millisOffset);
   }
 
-  /** Seconds position of the current time.
-   *
+  /** 
+   * @generate second.xml
    * @webref input:time_date
-   * @see processing.core.PApplet#millis()
-   * @see processing.core.PApplet#minute()
-   * @see processing.core.PApplet#hour()
-   * @see processing.core.PApplet#day()
-   * @see processing.core.PApplet#month()
-   * @see processing.core.PApplet#year()
+   * @see PApplet#millis()
+   * @see PApplet#minute()
+   * @see PApplet#hour()
+   * @see PApplet#day()
+   * @see PApplet#month()
+   * @see PApplet#year()
    * */
   static public int second() {
     return Calendar.getInstance().get(Calendar.SECOND);
   }
 
   /**
-   * Processing communicates with the clock on your computer. The <b>minute()</b> function returns the current minute as a value from 0 - 59.
+   * @generate minute.xml
    *
    * @webref input:time_date
-   * @see processing.core.PApplet#millis()
-   * @see processing.core.PApplet#second()
-   * @see processing.core.PApplet#hour()
-   * @see processing.core.PApplet#day()
-   * @see processing.core.PApplet#month()
-   * @see processing.core.PApplet#year()
+   * @see PApplet#millis()
+   * @see PApplet#second()
+   * @see PApplet#hour()
+   * @see PApplet#day()
+   * @see PApplet#month()
+   * @see PApplet#year()
    *
    * */
   static public int minute() {
@@ -2234,8 +2169,8 @@ public class PApplet extends Applet
   }
 
   /**
-   * Processing communicates with the clock on your computer. The <b>hour()</b> function returns the current hour as a value from 0 - 23.
-   * =advanced
+   * @generate hour.xml
+   * <h3>Advanced</h3>
    * Hour position of the current time in international format (0-23).
    * <P>
    * To convert this value to American time: <BR>
@@ -2243,12 +2178,12 @@ public class PApplet extends Applet
    * if (yankeeHour == 0) yankeeHour = 12;</PRE>
    *
    * @webref input:time_date
-   * @see processing.core.PApplet#millis()
-   * @see processing.core.PApplet#second()
-   * @see processing.core.PApplet#minute()
-   * @see processing.core.PApplet#day()
-   * @see processing.core.PApplet#month()
-   * @see processing.core.PApplet#year()
+   * @see PApplet#millis()
+   * @see PApplet#second()
+   * @see PApplet#minute()
+   * @see PApplet#day()
+   * @see PApplet#month()
+   * @see PApplet#year()
    *
    */
   static public int hour() {
@@ -2256,35 +2191,35 @@ public class PApplet extends Applet
   }
 
   /**
-   * Processing communicates with the clock on your computer. The <b>day()</b> function returns the current day as a value from 1 - 31.
-   * =advanced
+   * @generate day.xml
+   * <h3>Advanced</h3>
    * Get the current day of the month (1 through 31).
    * <P>
    * If you're looking for the day of the week (M-F or whatever)
    * or day of the year (1..365) then use java's Calendar.get()
    *
    * @webref input:time_date
-   * @see processing.core.PApplet#millis()
-   * @see processing.core.PApplet#second()
-   * @see processing.core.PApplet#minute()
-   * @see processing.core.PApplet#hour()
-   * @see processing.core.PApplet#month()
-   * @see processing.core.PApplet#year()
+   * @see PApplet#millis()
+   * @see PApplet#second()
+   * @see PApplet#minute()
+   * @see PApplet#hour()
+   * @see .PApplet#month()
+   * @see pPApplet#year()
    */
   static public int day() {
     return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
   }
 
   /**
-   * Processing communicates with the clock on your computer. The <b>month()</b> function returns the current month as a value from 1 - 12.
+   * @generate month.xml
    *
    * @webref input:time_date
-   * @see processing.core.PApplet#millis()
-   * @see processing.core.PApplet#second()
-   * @see processing.core.PApplet#minute()
-   * @see processing.core.PApplet#hour()
-   * @see processing.core.PApplet#day()
-   * @see processing.core.PApplet#year()
+   * @see PApplet#millis()
+   * @see PApplet#second()
+   * @see PApplet#minute()
+   * @see PApplet#hour()
+   * @see PApplet#day()
+   * @see PApplet#year()
    */
   static public int month() {
     // months are number 0..11 so change to colloquial 1..12
@@ -2292,16 +2227,16 @@ public class PApplet extends Applet
   }
 
   /**
-   * Processing communicates with the clock on your computer.
+   * @generate year.xml
    * The <b>year()</b> function returns the current year as an integer (2003, 2004, 2005, etc).
    *
    * @webref input:time_date
-   * @see processing.core.PApplet#millis()
-   * @see processing.core.PApplet#second()
-   * @see processing.core.PApplet#minute()
-   * @see processing.core.PApplet#hour()
-   * @see processing.core.PApplet#day()
-   * @see processing.core.PApplet#month()
+   * @see PApplet#millis()
+   * @see PApplet#second()
+   * @see PApplet#minute()
+   * @see PApplet#hour()
+   * @see PApplet#day()
+   * @see PApplet#month()
    */
   static public int year() {
     return Calendar.getInstance().get(Calendar.YEAR);
@@ -2314,11 +2249,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Specifies the number of frames to be displayed every second.
-   * If the processor is not fast enough to maintain the specified rate, it will not be achieved.
-   * For example, the function call <b>frameRate(30)</b> will attempt to refresh 30 times a second.
-   * It is recommended to set the frame rate within <b>setup()</b>. The default rate is 60 frames per second.
-   *  =advanced
+   * @generate frameRate.xml
+   *  <h3>Advanced</h3>
    * Set a target frameRate. This will cause delay() to be called
    * after each frame so that the sketch synchronizes to a particular speed.
    * Note that this only sets the maximum frame rate, it cannot be used to
@@ -2339,11 +2271,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Reads the value of a param.
-   * Values are always read as a String so if you want them to be an integer or other datatype they must be converted.
-   * The <b>param()</b> function will only work in a web browser.
-   * The function should be called inside <b>setup()</b>,
-   * otherwise the applet may not yet be initialized and connected to its parent web browser.
+   * @generate param.xml
    *
    * @webref input:web
    * @usage Web
@@ -2362,9 +2290,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Displays message in the browser's status area. This is the text area in the lower left corner of the browser.
-   * The <b>status()</b> function will only work when the Processing program is running in a web browser.
-   * =advanced
+   * @generate statis.xml
+   * <h3>Advanced</h3>
    * Show status in the status bar of a web browser, or in the
    * System.out console. Eventually this might show status in the
    * p5 environment itself, rather than relying on the console.
@@ -2389,8 +2316,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Links to a webpage either in the same window or in a new window. The complete URL must be specified.
-   * =advanced
+   * @generate link.xml
+   * <h3>Advanced</h3>
    * Link to an external page without all the muss.
    * <P>
    * When run with an applet, uses the browser to open the url,
@@ -2466,16 +2393,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Attempts to open an application or file using your platform's launcher. The <b>file</b> parameter is a String specifying the file name and location. The location parameter must be a full path name, or the name of an executable in the system's PATH. In most cases, using a full path is the best option, rather than relying on the system PATH. Be sure to make the file executable before attempting to open it (chmod +x).
-   * <br><br>
-   * The <b>args</b> parameter is a String or String array which is passed to the command line. If you have multiple parameters, e.g. an application and a document, or a command with multiple switches, use the version that takes a String array, and place each individual item in a separate element.
-   * <br><br>
-   * If args is a String (not an array), then it can only be a single file or application with no parameters. It's not the same as executing that String using a shell. For instance, open("jikes -help") will not work properly.
-   * <br><br>
-   * This function behaves differently on each platform. On Windows, the parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the "open" command is used (type "man open" in Terminal.app for documentation). On Linux, it first tries gnome-open, then kde-open, but if neither are available, it sends the command to the shell without any alterations.
-   * <br><br>
-   * For users familiar with Java, this is not quite the same as Runtime.exec(), because the launcher command is prepended. Instead, the <b>exec(String[])</b> function is a shortcut for Runtime.getRuntime.exec(String[]).
-   *
+   * @generate open.xml
    * @webref input:files
    * @param filename name of the file
    * @usage Application
@@ -2585,8 +2503,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Call to safely exit the sketch when finished. For instance,
-   * to render a single frame, save it, and quit.
+   * @generate exit.xml
+   * @webref structure
    */
   public void exit() {
     if (thread == null) {
@@ -2699,9 +2617,10 @@ public class PApplet extends Applet
 
 
   /**
-   * Intercepts any relative paths to make them absolute (relative
-   * to the sketch folder) before passing to save() in PImage.
-   * (Changed in 0100)
+   * @generate save.xml
+   * @webref output:image
+   * @see PApplet#saveFrame()
+   * @see PApplet#createGraphics()
    */
   public void save(String filename) {
     g.save(savePath(filename));
@@ -2709,12 +2628,6 @@ public class PApplet extends Applet
 
 
   /**
-   * Grab an image of what's currently in the drawing area and save it
-   * as a .tif or .tga file.
-   * <P>
-   * Best used just before endDraw() at the end of your draw().
-   * This can only create .tif or .tga images, so if neither extension
-   * is specified it defaults to writing a tiff and adds a .tif suffix.
    */
   public void saveFrame() {
     try {
@@ -2727,14 +2640,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Save the current frame as a .tif or .tga image.
-   * <P>
-   * The String passed in can contain a series of # signs
-   * that will be replaced with the screengrab number.
-   * <PRE>
-   * i.e. saveFrame("blah-####.tif");
-   *      // saves a numbered tiff image, replacing the
-   *      // #### signs with zeros and the frame number </PRE>
+   * @generate saveFrame.xml
+   * @webref output:image
+   * @see PApplet#save()
+   * @see PApplet#createGraphics()
+   * @param what any sequence of letters or numbers that ends with either ".tif", ".tga", ".jpg", or ".png"
    */
   public void saveFrame(String what) {
     try {
@@ -2801,11 +2711,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Sets the cursor to a predefined symbol, an image, or turns it on if already hidden.
-   * If you are trying to set an image as the cursor, it is recommended to make the size 16x16 or 32x32 pixels.
-   * It is not possible to load an image as the cursor if you are exporting your program for the Web.
-   * The values for parameters <b>x</b> and <b>y</b> must be less than the dimensions of the image.
-   * =advanced
+   * @generate cursor.xml
+   * <h3>Advanced</h3>
    * Set a custom cursor to an image with a specific hotspot.
    * Only works with JDK 1.2 and later.
    * Currently seems to be broken on Java 1.4 for Mac OS X
@@ -2814,10 +2721,10 @@ public class PApplet extends Applet
    * code to handle Java versions via reflection by Jonathan Feinberg.
    * Reflection removed for release 0128 and later.
    * @webref environment
-   * @see       PApplet#noCursor()
-   * @param image       any variable of type PImage
-   * @param hotspotX    the horizonal active spot of the cursor
-   * @param hotspotY    the vertical active spot of the cursor
+   * @see PApplet#noCursor()
+   * @param image any variable of type PImage
+   * @param hotspotX the horizonal active spot of the cursor
+   * @param hotspotY the vertical active spot of the cursor
    */
   public void cursor(PImage image, int hotspotX, int hotspotY) {
     // don't set this as cursor type, instead use cursor_type
@@ -2851,8 +2758,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Hides the cursor from view. Will not work when running the program in a web browser.
-   * =advanced
+   * @generate noCursor.xml
+   * <h3>Advanced</h3>
    * Hide the cursor by creating a transparent image
    * and using it as a custom cursor.
    * @webref environment
@@ -3048,7 +2955,11 @@ public class PApplet extends Applet
   // doubles are overkill for processing applets, and casting
   // things all the time is annoying, thus the functions below.
 
-
+/**
+   * @generate abs.xml
+   * @webref math:calculation
+   * @param n float or int
+   */
   static public final float abs(float n) {
     return (n < 0) ? -n : n;
   }
@@ -3056,32 +2967,66 @@ public class PApplet extends Applet
   static public final int abs(int n) {
     return (n < 0) ? -n : n;
   }
-
+  
+/**
+   * @generate sq.xml
+   * @webref math:calculation
+   * @param a float or int
+   * @see PApplet#sqrt()
+   */
   static public final float sq(float a) {
     return a*a;
   }
-
+  
+/**
+   * @generate sqrt.xml
+   * @webref math:calculation
+   * @param a non-negative number
+   * @see PApplet#pow()
+   * @see PApplet#sq()
+   */
   static public final float sqrt(float a) {
     return (float)Math.sqrt(a);
   }
 
+/**
+   * @generate log.xml
+   * @webref math:calculation
+   * @param a int or float greater than 0.0
+   */
   static public final float log(float a) {
     return (float)Math.log(a);
   }
 
+/**
+   * @generate exp.xml
+   * @webref math:calculation
+   * @param a the exponent to raise
+   */
   static public final float exp(float a) {
     return (float)Math.exp(a);
   }
 
+/**
+   * @generate pow.xml
+   * @webref math:calculation
+   * @param a base of the exponential expression
+   * @param b power of which to raise the base
+   * @see PApplet#sqrt()
+   */
   static public final float pow(float a, float b) {
     return (float)Math.pow(a, b);
   }
 
-
   static public final int max(int a, int b) {
     return (a > b) ? a : b;
   }
-
+  
+/**
+   * @generate max.xml
+   * @webref math:calculation
+   * @param n float or int
+   */
   static public final float max(float a, float b) {
     return (a > b) ? a : b;
   }
@@ -3097,16 +3042,21 @@ public class PApplet extends Applet
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   }
 
+/**
+   * @generate max.xml
+   * @webref math:calculation
+   * @param a int or float
+   * @param b int or float
+   * @param c int or float
+   * @see PApplet#min()
+   */
   static public final float max(float a, float b, float c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   }
 
 
   /**
-   * Find the maximum value in an array.
-   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
-   * @param list the source array
-   * @return The maximum value
+   * @param list int or float array
    */
   static public final int max(int[] list) {
     if (list.length == 0) {
@@ -3120,10 +3070,7 @@ public class PApplet extends Applet
   }
 
   /**
-   * Find the maximum value in an array.
-   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
-   * @param list the source array
-   * @return The maximum value
+   * @param list int or float array
    */
   static public final float max(float[] list) {
     if (list.length == 0) {
@@ -3176,6 +3123,14 @@ public class PApplet extends Applet
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
 
+/**
+   * @generate min.xml
+   * @webref math:calculation
+   * @param a int or float
+   * @param b int or float
+   * @param c int or float
+   * @see PApplet#max()
+   */
   static public final float min(float a, float b, float c) {
     return (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c);
   }
@@ -3188,10 +3143,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Find the minimum value in an array.
-   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
-   * @param list the source array
-   * @return The minimum value
+   * @param list int or float array
    */
   static public final int min(int[] list) {
     if (list.length == 0) {
@@ -3206,10 +3158,7 @@ public class PApplet extends Applet
 
 
   /**
-   * Find the minimum value in an array.
-   * Throws an ArrayIndexOutOfBoundsException if the array is length 0.
-   * @param list the source array
-   * @return The minimum value
+   * @param list int or float array
    */
   static public final float min(float[] list) {
     if (list.length == 0) {
@@ -3242,62 +3191,157 @@ public class PApplet extends Applet
   }
   */
 
+
   static public final int constrain(int amt, int low, int high) {
     return (amt < low) ? low : ((amt > high) ? high : amt);
   }
+
+/**
+   * @generate constrain.xml
+   * @webref math:calculation
+   * @param amt the value to constrain
+   * @param low minimum limit
+   * @param high maximum limit
+   * @see PApplet#max()
+   * @see PApplet#min()
+   */
 
   static public final float constrain(float amt, float low, float high) {
     return (amt < low) ? low : ((amt > high) ? high : amt);
   }
 
-
+/**
+   * @generate sin.xml
+   * @webref math:trigonometry
+   * @param angle an angle in radians
+   * @see PApplet#cos()
+   * @see PApplet#tan()
+   * @see PApplet#radians()
+   */
   static public final float sin(float angle) {
     return (float)Math.sin(angle);
   }
 
+/**
+   * @generate cos.xml
+   * @webref math:trigonometry
+   * @param angle an angle in radians
+   * @see PApplet#sin()
+   * @see PApplet#tan()
+   * @see PApplet#radians()
+   */
   static public final float cos(float angle) {
     return (float)Math.cos(angle);
   }
 
+/**
+   * @generate tan.xml
+   * @webref math:trigonometry
+   * @param angle an angle in radians
+   * @see PApplet#cos()
+   * @see PApplet#sin()
+   * @see PApplet#radians()
+   */
   static public final float tan(float angle) {
     return (float)Math.tan(angle);
   }
 
-
+/**
+   * @generate asin.xml
+   * @webref math:trigonometry
+   * @param value the value whose arc sine is to be returned
+   * @see PApplet#sin()
+   * @see PApplet#acos()
+   * @see PApplet#atan()
+   */
   static public final float asin(float value) {
     return (float)Math.asin(value);
   }
 
+/**
+   * @generate acos.xml
+   * @webref math:trigonometry
+   * @param value the value whose arc cosine is to be returned
+   * @see PApplet#cos()
+   * @see PApplet#asin()
+   * @see PApplet#atan()
+   */
   static public final float acos(float value) {
     return (float)Math.acos(value);
   }
 
+/**
+   * @generate atan.xml
+   * @webref math:trigonometry
+   * @param value -Infinity to Infinity (exclusive)
+   * @see PApplet#tan()
+   * @see PApplet#asin()
+   * @see PApplet#acos()
+   */
   static public final float atan(float value) {
     return (float)Math.atan(value);
   }
 
+/**
+   * @generate atan2.xml
+   * @webref math:trigonometry
+   * @param a y-coordinate of the point
+   * @param b x-coordinate of the point
+   * @see PApplet#tan()
+   */
   static public final float atan2(float a, float b) {
     return (float)Math.atan2(a, b);
   }
 
-
+/**
+   * @generate degrees.xml
+   * @webref math:trigonometry
+   * @param radians int or float
+   * @see PApplet#radians()
+   */
   static public final float degrees(float radians) {
     return radians * RAD_TO_DEG;
   }
 
+/**
+   * @generate radians.xml
+   * @webref math:trigonometry
+   * @param degrees int or float
+   * @see PApplet#degrees()
+   */
   static public final float radians(float degrees) {
     return degrees * DEG_TO_RAD;
   }
 
-
+/**
+   * @generate ceil.xml
+   * @webref math:calculation
+   * @param what float
+   * @see PApplet#floor()
+   * @see PApplet#round()
+   */
   static public final int ceil(float what) {
     return (int) Math.ceil(what);
   }
 
+/**
+   * @generate floor.xml
+   * @webref math:calculation
+   * @param what float
+   * @see PApplet#ceil()
+   * @see PApplet#round()
+   */
   static public final int floor(float what) {
     return (int) Math.floor(what);
   }
 
+/**
+   * @generate round.xml
+   * @webref math:calculation
+   * @param what float
+   * @see PApplet#floor()
+   * @see PApplet#ceil()
+   */
   static public final int round(float what) {
     return (int) Math.round(what);
   }
@@ -3307,6 +3351,14 @@ public class PApplet extends Applet
     return (float)Math.sqrt(a*a + b*b);
   }
 
+/**
+   * @generate mag.xml
+   * @webref math:calculation
+   * @param a first value
+   * @param b second value
+   * @param c third value
+   * @see PApplet#dist()
+   */
   static public final float mag(float a, float b, float c) {
     return (float)Math.sqrt(a*a + b*b + c*c);
   }
@@ -3316,28 +3368,57 @@ public class PApplet extends Applet
     return sqrt(sq(x2-x1) + sq(y2-y1));
   }
 
+/**
+   * @generate dist.xml
+   * @webref math:calculation
+   * @param x1 x-coordinate of the first point
+   * @param y1 y-coordinate of the first point
+   * @param z1 z-coordinate of the first point
+   * @param x2 x-coordinate of the second point
+   * @param y2 y-coordinate of the second point
+   * @param z2 z-coordinate of the second point
+   */
   static public final float dist(float x1, float y1, float z1,
                                  float x2, float y2, float z2) {
     return sqrt(sq(x2-x1) + sq(y2-y1) + sq(z2-z1));
   }
 
-
+/**
+   * @generate lerp.xml
+   * @webref math:calculation
+   * @param start first value
+   * @param stop second value
+   * @param amt float between 0.0 and 1.0
+   * @see PGraphics#curvePoint()
+   * @see PGraphics#bezierPoint()
+   */
   static public final float lerp(float start, float stop, float amt) {
     return start + (stop-start) * amt;
   }
 
   /**
-   * Normalize a value to exist between 0 and 1 (inclusive).
-   * Mathematically the opposite of lerp(), figures out what proportion
-   * a particular value is relative to start and stop coordinates.
+   * @generate norm.xml
+   * @webref math:calculation
+   * @param value the incoming value to be converted
+   * @param start lower bound of the value's current range
+   * @param stop upper bound of the value's current range
+   * @see PApplet#map()
+   * @see PApplet#lerp()
    */
   static public final float norm(float value, float start, float stop) {
     return (value - start) / (stop - start);
   }
 
   /**
-   * Convenience function to map a variable from one coordinate space
-   * to another. Equivalent to unlerp() followed by lerp().
+   * @generate map.xml
+   * @webref math:calculation
+   * @param value the incoming value to be converted
+   * @param istart lower bound of the value's current range
+   * @param istop upper bound of the value's current range
+   * @param ostart lower bound of the value's target range
+   * @param ostop upper bound of the value's target range
+   * @see PApplet#norm()
+   * @see PApplet#lerp()
    */
   static public final float map(float value,
                                 float istart, float istop,
@@ -3364,10 +3445,7 @@ public class PApplet extends Applet
   Random internalRandom;
 
   /**
-   * Return a random number in the range [0, howbig).
-   * <P>
-   * The number returned will range from zero up to
-   * (but not including) 'howbig'.
+   * 
    */
   public final float random(float howbig) {
     // for some reason (rounding error?) Math.random() * 3
@@ -3390,14 +3468,12 @@ public class PApplet extends Applet
 
 
   /**
-   * Return a random number in the range [howsmall, howbig).
-   * <P>
-   * The number returned will range from 'howsmall' up to
-   * (but not including 'howbig'.
-   * <P>
-   * If howsmall is >= howbig, howsmall will be returned,
-   * meaning that random(5, 5) will return 5 (useful)
-   * and random(7, 4) will return 7 (not useful.. better idea?)
+   * @generate random.xml
+   * @webref math:random
+   * @param howsmall int or float
+   * @param howbig int or float
+   * @see PApplet#randomSeed()
+   * @see PApplet#noise()
    */
   public final float random(float howsmall, float howbig) {
     if (howsmall >= howbig) return howsmall;
@@ -3405,7 +3481,14 @@ public class PApplet extends Applet
     return random(diff) + howsmall;
   }
 
-
+ /**
+   * @generate randomSeed.xml
+   * @webref math:random
+   * @param what int
+   * @see PApplet#random()
+   * @see PApplet#noise()
+   * @see PApplet#noiseSeed()
+   */
   public final void randomSeed(long what) {
     // internal random number object
     if (internalRandom == null) internalRandom = new Random();
@@ -3448,7 +3531,6 @@ public class PApplet extends Applet
 
 
   /**
-   * Computes the Perlin noise function value at point x.
    */
   public float noise(float x) {
     // is this legit? it's a dumb way to do it (but repair it later)
@@ -3456,14 +3538,19 @@ public class PApplet extends Applet
   }
 
   /**
-   * Computes the Perlin noise function value at the point x, y.
    */
   public float noise(float x, float y) {
     return noise(x, y, 0f);
   }
 
   /**
-   * Computes the Perlin noise function value at x, y, z.
+   * @generate noise.xml
+   * @webref math:random
+   * @param x x-coordinate in noise space
+   * @param y y-coordinate in noise space
+   * @param z z-coordinate in noise space
+   * @see PApplet#noiseDetail()
+   * @see PApplet#random()
    */
   public float noise(float x, float y, float z) {
     if (perlin == null) {
@@ -3548,11 +3635,27 @@ public class PApplet extends Applet
     if (lod>0) perlin_octaves=lod;
   }
 
+  /**
+   * @generate noiseDetail.xml
+   * @webref math:random
+   * @param lod number of octaves to be used by the noise
+   * @param falloff falloff factor for each octave
+   * @see PApplet#noise()
+   */
   public void noiseDetail(int lod, float falloff) {
     if (lod>0) perlin_octaves=lod;
     if (falloff>0) perlin_amp_falloff=falloff;
   }
 
+  /**
+   * @generate noiseSeed.xml
+   * @webref math:random
+   * @param what int
+   * @see PApplet#noise()
+   * @see PApplet#noiseDetail()
+   * @see PApplet#random()
+   * @see PApplet#randomSeed()
+   */
   public void noiseSeed(long what) {
     if (perlinRandom == null) perlinRandom = new Random();
     perlinRandom.setSeed(what);
@@ -3567,74 +3670,26 @@ public class PApplet extends Applet
 
   protected String[] loadImageFormats;
 
-
-  /**
-   * Load an image from the data folder or a local directory.
-   * Supports .gif (including transparency), .tga, and .jpg images.
-   * In Java 1.3 or later, .png images are
-   * <A HREF="http://java.sun.com/j2se/1.3/docs/guide/2d/new_features.html">
-   * also supported</A>.
-   * <P>
-   * Generally, loadImage() should only be used during setup, because
-   * re-loading images inside draw() is likely to cause a significant
-   * delay while memory is allocated and the thread blocks while waiting
-   * for the image to load because loading is not asynchronous.
-   * <P>
-   * To load several images asynchronously, see more information in the
-   * FAQ about writing your own threaded image loading method.
-   * <P>
-   * As of 0096, returns null if no image of that name is found,
-   * rather than an error.
-   * <P>
-   * Release 0115 also provides support for reading TIFF and RLE-encoded
-   * Targa (.tga) files written by Processing via save() and saveFrame().
-   * Other TIFF and Targa files will probably not load, use a different
-   * format (gif, jpg and png are safest bets) when creating images with
-   * another application to use with Processing.
-   * <P>
-   * Also in release 0115, more image formats (BMP and others) can
-   * be read when using Java 1.4 and later. Because many people still
-   * use Java 1.1 and 1.3, these formats are not recommended for
-   * work that will be posted on the web. To get a list of possible
-   * image formats for use with Java 1.4 and later, use the following:
-   * <TT>println(javax.imageio.ImageIO.getReaderFormatNames())</TT>
-   * <P>
-   * Images are loaded via a byte array that is passed to
-   * Toolkit.createImage(). Unfortunately, we cannot use Applet.getImage()
-   * because it takes a URL argument, which would be a pain in the a--
-   * to make work consistently for online and local sketches.
-   * Sometimes this causes problems, resulting in issues like
-   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=279">Bug 279</A>
-   * and
-   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=305">Bug 305</A>.
-   * In release 0115, everything was instead run through javax.imageio,
-   * but that turned out to be very slow, see
-   * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=392">Bug 392</A>.
-   * As a result, starting with 0116, the following happens:
-   * <UL>
-   * <LI>TGA and TIFF images are loaded using the internal load methods.
-   * <LI>JPG, GIF, and PNG images are loaded via loadBytes().
-   * <LI>If the image still isn't loaded, it's passed to javax.imageio.
-   * </UL>
-   * For releases 0116 and later, if you have problems such as those seen
-   * in Bugs 279 and 305, use Applet.getImage() instead. You'll be stuck
-   * with the limitations of getImage() (the headache of dealing with
-   * online/offline use). Set up your own MediaTracker, and pass the resulting
-   * java.awt.Image to the PImage constructor that takes an AWT image.
-   */
   public PImage loadImage(String filename) {
     return loadImage(filename, null, null);
   }
 
 
   /**
-   * Load an image from the data folder or a local directory...
+   * @generate loadImage.xml
+   * @webref image:load_displaying
+   * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
+   * @param extension the type of image to load, for example "png", "gif", "jpg"
+   * @see PImage#PImage
+   * @see PGraphics#image()
+   * @see PGraphics#imageMode()
+   * @see PGraphics#background()
    */
   public PImage loadImage(String filename, String extension) {
     return loadImage(filename, extension, null);
   }
 
-
+/** ??? */
   public PImage loadImage(String filename, Object params) {
     return loadImage(filename, null, params);
   }
@@ -3647,7 +3702,7 @@ public class PApplet extends Applet
    * <br><br>The <b>params</b> parameter is used to set an parameter object for the image, as might be used by specific renderers such as OPENGL2. Specify the extension as the third parameter to <b>loadImage()</b>, as shown in the fourth example on this page.
    * <br><br>If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadImage()</b> is null.<br><br>Depending on the type of error, a <b>PImage</b> object may still be returned, but the width and height of the image will be set to -1. This happens if bad image data is returned or cannot be decoded properly. Sometimes this happens with image URLs that produce a 403 error or that redirect to a password prompt, because <b>loadImage()</b> will attempt to interpret the HTML as image data.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Identical to loadImage, but allows you to specify the type of
    * image by its extension. Especially useful when downloading from
    * CGI scripts.
@@ -3664,6 +3719,7 @@ public class PApplet extends Applet
    * @see processing.core.PApplet#imageMode(int)
    * @see processing.core.PApplet#background(float, float, float)
    */
+   /** ??? */
   public PImage loadImage(String filename, String extension, Object params) {
     if (extension == null) {
       String lower = filename.toLowerCase();
@@ -3764,7 +3820,14 @@ public class PApplet extends Applet
     return requestImage(filename, null, null);
   }
 
-
+/**
+ * @generate requestImage.xml
+ * @webref image:loading_displaying
+ * @param filename name of the file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
+ * @param extension the type of image to load, for example "png", "gif", "jpg"
+ * @see PApplet#loadImage()
+ * @see PImage#PImage
+ */
   public PImage requestImage(String filename, String extension) {
     return requestImage(filename, extension, null);
   }
@@ -3781,6 +3844,7 @@ public class PApplet extends Applet
    * @see processing.core.PApplet#loadImage(String, String)
    * @see processing.core.PImage
    */
+   /** ??? */
   public PImage requestImage(String filename, String extension, Object params) {
     PImage vessel = createImage(0, 0, ARGB, params);
     AsyncImageLoader ail =
@@ -4099,6 +4163,14 @@ public class PApplet extends Applet
   protected String[] loadShapeFormats;
 
 
+/**
+ * @generate loadShape.xml
+ * @webref shape:load_displaying
+ * @param filename name of the file to load
+ * @see PShape#PShape
+ * @see PGraphics#shape()
+ * @see PGraphics#shapeMode()
+ */
   public PShape loadShape(String filename) {
     return loadShape(filename, null);
   }
@@ -4121,6 +4193,7 @@ public class PApplet extends Applet
    * @see PApplet#shape(PShape)
    * @see PApplet#shapeMode(int)
    */
+   /** ??? */
   public PShape loadShape(String filename, Object params) {
     String extension;
 
@@ -4172,6 +4245,7 @@ public class PApplet extends Applet
    * Creates an empty shape, with the specified size and parameters.
    * The actual type will depend on the renderer.
    */
+   /** ??? */
   public PShape createShape(int size, Object params) {
     return g.createShape(size, params);
   }
@@ -4180,7 +4254,7 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
   // NODE I/O (XML, JSON, etc.)
-
+/** ??? */
   public PNode loadNode(String filename) {
     return new PNode(this, filename);
   }
@@ -4200,7 +4274,15 @@ public class PApplet extends Applet
 
   // FONT I/O
 
-
+/**
+ * @generate loadFont.xml
+ * @webref typography:loading_displaying
+ * @param filename name of the font to load
+ * @see PFont#PFont
+ * @see PGraphics#textFont()
+ * @see PGraphics#text()
+ * @see PApplet#createFont()
+ */
   public PFont loadFont(String filename) {
     try {
       InputStream input = createInput(filename);
@@ -4238,23 +4320,16 @@ public class PApplet extends Applet
 
 
   /**
-   * Create a .vlw font on the fly from either a font name that's
-   * installed on the system, or from a .ttf or .otf that's inside
-   * the data folder of this sketch.
-   * <P/>
-   * Many .otf fonts don't seem to be supported by Java, perhaps because
-   * they're CFF based?
-   * <P/>
-   * Font names are inconsistent across platforms and Java versions.
-   * On Mac OS X, Java 1.3 uses the font menu name of the font,
-   * whereas Java 1.4 uses the PostScript name of the font. Java 1.4
-   * on OS X will also accept the font menu name as well. On Windows,
-   * it appears that only the menu names are used, no matter what
-   * Java version is in use. Naming system unknown/untested for 1.5.
-   * <P/>
-   * Use 'null' for the charset if you want to dynamically create
-   * character bitmaps only as they're needed. (Version 1.0.9 and
-   * earlier would interpret null as all unicode characters.)
+   * @generate createFont.xml
+   * @webref typography:loading_displaying
+   * @param name name of the font to load
+   * @param size point size of the font
+   * @param smooth true for an antialiased font, false for aliased
+   * @param charset array containing characters to be generated
+   * @see PFont#PFont
+   * @see PGraphics#textFont()
+   * @see PGraphics#text()
+   * @see PApplet#loadFont()
    */
   public PFont createFont(String name, float size,
                           boolean smooth, char charset[]) {
@@ -4326,14 +4401,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Opens a platform-specific file chooser dialog to select a file for input. This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
-   *
+   * @generate selectInput.xml
    * @webref input:files
    * @param prompt message you want the user to see in the file chooser
-   * @return full path to the selected file, or null if canceled.
-   *
-   * @see processing.core.PApplet#selectOutput(String)
-   * @see processing.core.PApplet#selectFolder(String)
+   * @see PApplet#selectOutput(String)
+   * @see PApplet#selectFolder(String)
    */
   public String selectInput(String prompt) {
     return selectFileImpl(prompt, FileDialog.LOAD);
@@ -4350,17 +4422,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Open a platform-specific file save dialog to create of select a file for output.
-   * This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
-   * If you select an existing file, that file will be replaced.
-   * Alternatively, you can navigate to a folder and create a new file to write to.
-   *
+   * @generate selectOutput.xml
+   * @webref output:files
    * @param prompt message you want the user to see in the file chooser
-   * @return full path to the file entered, or null if canceled.
-   *
-   * @webref input:files
-   * @see processing.core.PApplet#selectInput(String)
-   * @see processing.core.PApplet#selectFolder(String)
+   * @see PApplet#selectInput(String)
+   * @see PApplet#selectFolder(String)
    */
   public String selectOutput(String prompt) {
     return selectFileImpl(prompt, FileDialog.SAVE);
@@ -4397,15 +4463,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Opens a platform-specific file chooser dialog to select a folder for input.
-   * This function returns the full path to the selected folder as a <b>String</b>, or <b>null</b> if no selection.
-   *
+   * @generate selectFolder.xml
    * @webref input:files
    * @param prompt message you want the user to see in the file chooser
-   * @return full path to the selected folder, or null if no selection.
-   *
-   * @see processing.core.PApplet#selectOutput(String)
-   * @see processing.core.PApplet#selectInput(String)
+   * @see PApplet#selectOutput(String)
+   * @see PApplet#selectInput(String)
    */
   public String selectFolder(final String prompt) {
     checkParentFrame();
@@ -4453,8 +4515,14 @@ public class PApplet extends Applet
 
 
   /**
-   * I want to read lines from a file. I have RSI from typing these
-   * eight lines of code so many times.
+   * @generate createReader.xml
+   * @webref input:files
+   * @param filename name of the file to be opened
+   * @see PApplet#BufferedReader
+   * @see PApplet#createWriter()
+   * @see PApplet#PrintWriter
+   * @see PApplet#try
+   * @see PApplet#catch
    */
   public BufferedReader createReader(String filename) {
     try {
@@ -4476,9 +4544,7 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * I want to read lines from a file. And I'm still annoyed.
-   */
+  /**???*/
   static public BufferedReader createReader(File file) {
     try {
       InputStream is = new FileInputStream(file);
@@ -4504,6 +4570,7 @@ public class PApplet extends Applet
    * I want to read lines from a stream. If I have to type the
    * following lines any more I'm gonna send Sun my medical bills.
    */
+    /**???*/
   static public BufferedReader createReader(InputStream input) {
     InputStreamReader isr = null;
     try {
@@ -4514,7 +4581,12 @@ public class PApplet extends Applet
 
 
   /**
-   * I want to print lines to a file. Why can't I?
+   * @generate createWriter.xml
+   * @webref output:files
+   * @param filename name of the file to be created
+   * @see PApplet#PrintWriter
+   * @see PApplet#createReader
+   * @see PApplet#BufferedReader
    */
   public PrintWriter createWriter(String filename) {
     return createWriter(saveFile(filename));
@@ -4525,6 +4597,7 @@ public class PApplet extends Applet
    * I want to print lines to a file. I have RSI from typing these
    * eight lines of code so many times.
    */
+    /**???*/
   static public PrintWriter createWriter(File file) {
     try {
       createPath(file);  // make sure in-between folders exist
@@ -4551,6 +4624,7 @@ public class PApplet extends Applet
    * I want to print lines to a file. Why am I always explaining myself?
    * It's the JavaSoft API engineers who need to explain themselves.
    */
+    /**???*/
   static public PrintWriter createWriter(OutputStream output) {
     try {
       BufferedOutputStream bos = new BufferedOutputStream(output, 8192);
@@ -4575,18 +4649,9 @@ public class PApplet extends Applet
 
 
   /**
-   * This is a method for advanced programmers to open a Java InputStream. The method is useful if you want to use the facilities provided by PApplet to easily open files from the data folder or from a URL, but want an InputStream object so that you can use other Java methods to take more control of how the stream is read.
-   * <br><br>If the requested item doesn't exist, null is returned.
-   * <br><br>In earlier releases, this method was called <b>openStream()</b>.
-   * <br><br>If not online, this will also check to see if the user is asking for a file whose name isn't properly capitalized. If capitalization is different an error will be printed to the console. This helps prevent issues that appear when a sketch is exported to the web, where case sensitivity matters, as opposed to running from inside the Processing Development Environment on Windows or Mac OS, where case sensitivity is preserved but ignored.
-   * <br><br>The filename passed in can be:<br>
-   * - A URL, for instance openStream("http://processing.org/");<br>
-   * - A file in the sketch's data folder<br>
-   * - The full path to a file to be opened locally (when running as an application)
-   * <br><br>
-   * If the file ends with <b>.gz</b>, the stream will automatically be gzip decompressed. If you don't want the automatic decompression, use the related function <b>createInputRaw()</b>.
+   * @generate createInput.xml
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Simplified method to open a Java InputStream.
    * <P>
    * This method is useful if you want to use the facilities provided
@@ -4618,11 +4683,10 @@ public class PApplet extends Applet
    * </UL>
    *
    * @webref input:files
-   * @see processing.core.PApplet#createOutput(String)
-   * @see processing.core.PApplet#selectOutput(String)
-   * @see processing.core.PApplet#selectInput(String)
-   *
    * @param filename the name of the file to use as input
+   * @see PApplet#createOutput(String)
+   * @see PApplet#selectOutput(String)
+   * @see PApplet#selectInput(String)
    *
    */
   public InputStream createInput(String filename) {
@@ -4829,15 +4893,12 @@ public class PApplet extends Applet
 
 
   /**
-   * Reads the contents of a file or url and places it in a byte array. If a file is specified, it must be located in the sketch's "data" directory/folder.
-   * <br><br>The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</a>.
-   *
+   * @generate loadBytes.xml
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
-   *
-   * @see processing.core.PApplet#loadStrings(String)
-   * @see processing.core.PApplet#saveStrings(String, String[])
-   * @see processing.core.PApplet#saveBytes(String, byte[])
+   * @see PApplet#loadStrings(String)
+   * @see PApplet#saveStrings(String, String[])
+   * @see PApplet#saveBytes(String, byte[])
    *
    */
   public byte[] loadBytes(String filename) {
@@ -4851,7 +4912,7 @@ public class PApplet extends Applet
     return null;
   }
 
-
+/** ??? */
   static public byte[] loadBytes(InputStream input) {
     try {
       BufferedInputStream bis = new BufferedInputStream(input);
@@ -4871,13 +4932,13 @@ public class PApplet extends Applet
     return null;
   }
 
-
+/** ??? */
   static public byte[] loadBytes(File file) {
     InputStream is = createInput(file);
     return loadBytes(is);
   }
 
-
+/** ??? */
   static public String[] loadStrings(File file) {
     InputStream is = createInput(file);
     if (is != null) return loadStrings(is);
@@ -4886,12 +4947,9 @@ public class PApplet extends Applet
 
 
   /**
-   * Reads the contents of a file or url and creates a String array of its individual lines. If a file is specified, it must be located in the sketch's "data" directory/folder.
-   * <br><br>The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</a>.
-   * <br><br>If the file is not available or an error occurs, <b>null</b> will be returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned is null.
-   * <br><br>Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
+   * @generate loadStrings.xml
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Load data from a file and shove it into a String array.
    * <P>
    * Exceptions are handled internally, when an error, occurs, an
@@ -4905,10 +4963,9 @@ public class PApplet extends Applet
    *
    * @webref input:files
    * @param filename name of the file or url to load
-   *
-   * @see processing.core.PApplet#loadBytes(String)
-   * @see processing.core.PApplet#saveStrings(String, String[])
-   * @see processing.core.PApplet#saveBytes(String, byte[])
+   * @see PApplet#loadBytes(String)
+   * @see PApplet#saveStrings(String, String[])
+   * @see PApplet#saveBytes(String, byte[])
    */
   public String[] loadStrings(String filename) {
     InputStream is = createInput(filename);
@@ -4921,7 +4978,7 @@ public class PApplet extends Applet
     return null;
   }
 
-
+/** ??? */
   static public String[] loadStrings(InputStream input) {
     try {
       BufferedReader reader =
@@ -4964,24 +5021,17 @@ public class PApplet extends Applet
 
 
   /**
-   * Similar to createInput() (formerly openStream), this creates a Java
-   * OutputStream for a given filename or path. The file will be created in
-   * the sketch folder, or in the same folder as an exported application.
-   * <p/>
-   * If the path does not exist, intermediate folders will be created. If an
-   * exception occurs, it will be printed to the console, and null will be
-   * returned.
-   * <p/>
-   * Future releases may also add support for handling HTTP POST via this
-   * method (for better symmetry with createInput), however that's maybe a
-   * little too clever (and then we'd have to add the same features to the
-   * other file functions like createWriter). Who you callin' bloated?
+   * @generate createOutput.xml
+   * @webref output:files
+   * @param filename name of the file to open
+   * @see PApplet#createInput()
+   * @see PApplet#selectOutput()
    */
   public OutputStream createOutput(String filename) {
     return createOutput(saveFile(filename));
   }
 
-
+/** ??? */
   static public OutputStream createOutput(File file) {
     try {
       createPath(file);  // make sure the path exists
@@ -4999,9 +5049,11 @@ public class PApplet extends Applet
 
 
   /**
-   * Save the contents of a stream to a file in the sketch folder.
-   * This is basically saveBytes(blah, loadBytes()), but done
-   * more efficiently (and with less confusing syntax).
+   * @generate saveStream.xml
+   * @webref output:files
+   * @param targetFilename name of the file to write to
+   * @param sourceLocation location to save the file
+   * @see PApplet#createOutput()
    */
   public boolean saveStream(String targetFilename, String sourceLocation) {
     return saveStream(saveFile(targetFilename), sourceLocation);
@@ -5014,17 +5066,20 @@ public class PApplet extends Applet
    * <p/>
    * Note that unlike other api methods, this will not automatically
    * compress or uncompress gzip files.
+   * 
+   * @param targetFile the file to write to 
    */
+   /** ??? */
   public boolean saveStream(File targetFile, String sourceLocation) {
     return saveStream(targetFile, createInputRaw(sourceLocation));
   }
 
-
+/** ??? */
   public boolean saveStream(String targetFilename, InputStream sourceStream) {
     return saveStream(saveFile(targetFilename), sourceStream);
   }
 
-
+/** ??? */
   static public boolean saveStream(File targetFile, InputStream sourceStream) {
     File tempFile = null;
     try {
@@ -5060,7 +5115,7 @@ public class PApplet extends Applet
     }
   }
 
-
+/** ??? */
   static public void saveStream(OutputStream targetStream,
                                 InputStream sourceStream) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(sourceStream, 16384);
@@ -5077,11 +5132,13 @@ public class PApplet extends Applet
 
 
   /**
-   * Saves bytes to a file to inside the sketch folder.
-   * The filename can be a relative path, i.e. "poo/bytefun.txt"
-   * would save to a file named "bytefun.txt" to a subfolder
-   * called 'poo' inside the sketch folder. If the in-between
-   * subfolders don't exist, they'll be created.
+   * @generate saveBytes.xml
+   * @webref output:files
+   * @param filename name of the file to write to
+   * @param buff array of bytes to be written
+   * @see PApplet#loadStrings()
+   * @see PApplet#loadBytes()
+   * @see PApplet#saveStrings()
    */
   public void saveBytes(String filename, byte buffer[]) {
     saveBytes(saveFile(filename), buffer);
@@ -5091,6 +5148,7 @@ public class PApplet extends Applet
   /**
    * Saves bytes to a specific File location specified by the user.
    */
+   /** ??? */
   static public void saveBytes(File file, byte buffer[]) {
     File tempFile = null;
     try {
@@ -5134,6 +5192,7 @@ public class PApplet extends Applet
   /**
    * Spews a buffer of bytes to an OutputStream.
    */
+   /** ??? */
   static public void saveBytes(OutputStream output, byte buffer[]) {
     try {
       output.write(buffer);
@@ -5146,11 +5205,20 @@ public class PApplet extends Applet
 
   //
 
+/**
+ * @generate saveStrings.xml
+ * @webref output:files
+ * @param filename filename for output
+ * @param strings string array to be written
+ * @see PApplet#loadStrings()
+ * @see PApplet#loadBytes()
+ * @see PApplet#saveBytes()
+ */
   public void saveStrings(String filename, String strings[]) {
     saveStrings(saveFile(filename), strings);
   }
 
-
+/** ??? */
   static public void saveStrings(File file, String strings[]) {
     saveStrings(createOutput(file), strings);
     /*
@@ -5170,7 +5238,7 @@ public class PApplet extends Applet
     */
   }
 
-
+/** ??? */
   static public void saveStrings(OutputStream output, String strings[]) {
     PrintWriter writer = createWriter(output);
     for (int i = 0; i < strings.length; i++) {
@@ -5314,7 +5382,13 @@ public class PApplet extends Applet
     return sort(what, what.length);
   }
 
-
+/**
+ * @generate sort.xml
+ * @webref data:array_functions
+ * @param what String[], int[], or float[]
+ * @param count int
+ * @see PApplet#reverse()
+ */
   static public byte[] sort(byte[] what, int count) {
     byte[] outgoing = new byte[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -5322,12 +5396,12 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static public char[] sort(char what[]) {
     return sort(what, what.length);
   }
 
-
+/** ??? */
   static public char[] sort(char[] what, int count) {
     char[] outgoing = new char[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -5335,12 +5409,12 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static public int[] sort(int what[]) {
     return sort(what, what.length);
   }
 
-
+/** ??? */
   static public int[] sort(int[] what, int count) {
     int[] outgoing = new int[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -5348,12 +5422,12 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static public float[] sort(float what[]) {
     return sort(what, what.length);
   }
 
-
+/** ??? */
   static public float[] sort(float[] what, int count) {
     float[] outgoing = new float[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -5361,12 +5435,12 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-
+/** ??? */
   static public String[] sort(String what[]) {
     return sort(what, what.length);
   }
 
-
+/** ??? */
   static public String[] sort(String[] what, int count) {
     String[] outgoing = new String[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -5382,9 +5456,13 @@ public class PApplet extends Applet
 
 
   /**
-   * Calls System.arraycopy(), included here so that we can
-   * avoid people needing to learn about the System object
-   * before they can just copy an array.
+   * @generate arrayCopy.xml
+   * @webref data:array_functions
+   * @param src the source array
+   * @param srcPosition starting position in the source array
+   * @param dst the destination array of the same data type as the source array
+   * @param dstPosition starting position in the destination array
+   * @param length number of array elements to be copied
    */
   static public void arrayCopy(Object src, int srcPosition,
                                Object dst, int dstPosition,
@@ -5441,62 +5519,68 @@ public class PApplet extends Applet
   static public boolean[] expand(boolean list[]) {
     return expand(list, list.length << 1);
   }
-
+  
+/**
+ * @generate expand.xml
+ * @webref data:array_functions
+ * @param list[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+ * @see PApplet#shorten()
+ */
   static public boolean[] expand(boolean list[], int newSize) {
     boolean temp[] = new boolean[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-
+/** ??? */
   static public byte[] expand(byte list[]) {
     return expand(list, list.length << 1);
   }
-
+/** ??? */
   static public byte[] expand(byte list[], int newSize) {
     byte temp[] = new byte[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-
+/** ??? */
   static public char[] expand(char list[]) {
     return expand(list, list.length << 1);
   }
-
+/** ??? */
   static public char[] expand(char list[], int newSize) {
     char temp[] = new char[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-
+/** ??? */
   static public int[] expand(int list[]) {
     return expand(list, list.length << 1);
   }
-
+/** ??? */
   static public int[] expand(int list[], int newSize) {
     int temp[] = new int[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-
+/** ??? */
   static public float[] expand(float list[]) {
     return expand(list, list.length << 1);
   }
-
+/** ??? */
   static public float[] expand(float list[], int newSize) {
     float temp[] = new float[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
 
-
+/** ??? */
   static public String[] expand(String list[]) {
     return expand(list, list.length << 1);
   }
-
+/** ??? */
   static public String[] expand(String list[], int newSize) {
     String temp[] = new String[newSize];
     // in case the new size is smaller than list.length
@@ -5504,11 +5588,11 @@ public class PApplet extends Applet
     return temp;
   }
 
-
+/** ??? */
   static public Object expand(Object array) {
     return expand(array, Array.getLength(array) << 1);
   }
-
+/** ??? */
   static public Object expand(Object list, int newSize) {
     Class<?> type = list.getClass().getComponentType();
     Object temp = Array.newInstance(type, newSize);
@@ -8303,7 +8387,7 @@ public class PApplet extends Applet
    * and vertical resolution independently, use the version of the functions
    * with two parameters.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Code for sphereDetail() submitted by toxi [031031].
    * Code for enhanced u/v version from davbol [080801].
    *
@@ -8329,7 +8413,7 @@ public class PApplet extends Applet
   /**
    * Draw a sphere with radius r centered at coordinate 0, 0, 0.
    * A sphere is a hollow ball made from tessellated triangles.
-   * =advanced
+   * <h3>Advanced</h3>
    * <P>
    * Implementation notes:
    * <P>
@@ -8366,7 +8450,7 @@ public class PApplet extends Applet
    * curve, call this function once with the x coordinates and a second time
    * with the y coordinates to get the location of a bezier curve at t.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * For instance, to convert the following example:<PRE>
    * stroke(255, 102, 0);
    * line(85, 20, 10, 10);
@@ -8407,7 +8491,7 @@ public class PApplet extends Applet
    * Calculates the tangent of a point on a Bezier curve. There is a good
    * definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Code submitted by Dave Bollinger (davol) for release 0136.
    *
    * @webref shape:curves
@@ -8451,7 +8535,7 @@ public class PApplet extends Applet
    * Bezier. Using the 3D version of requires rendering with P3D or OPENGL
    * (see the Environment reference for more information).
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Draw a cubic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
    * or 'handles' in an application like Illustrator.
@@ -8535,7 +8619,7 @@ public class PApplet extends Applet
   /**
    * Calculates the tangent of a point on a Catmull-Rom curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Code thanks to Dave Bollinger (Bug #715)
    *
    * @webref shape:curves
@@ -8608,7 +8692,7 @@ public class PApplet extends Applet
    * rendering with P3D or OPENGL (see the Environment reference for more
    * information).
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * As of revision 0070, this function no longer doubles the first
    * and last points. The curves are a bit more boring, but it's more
    * mathematically correct, and properly mirrored in curvePoint().
@@ -8725,7 +8809,7 @@ public class PApplet extends Applet
    * parameters to define the x and y values of the opposite corner of the
    * image.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Starting with release 0124, when using the default (JAVA2D) renderer,
    * smooth() will also improve image quality of resized images.
    *
@@ -9971,7 +10055,7 @@ public class PApplet extends Applet
    * <br><br>Images used as background will ignore the current tint() setting.
    * <br><br>It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics</b>.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * <p>Clear the background with a color that includes an alpha value. This can
    * only be used with objects created by createGraphics(), because the main
    * drawing surface cannot be set transparent.</p>
@@ -10465,7 +10549,7 @@ public class PApplet extends Applet
    * <br><br>Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". You must call <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before setting the values and calling <b>updatePixels()</b> to update the window with any changes.
    * <br><br>As of release 1.0, this function ignores <b>imageMode()</b>.
    * <br><br>Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
-   * =advanced
+   * <h3>Advanced</h3>
    * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
    *
    * @webref image:pixels
@@ -10536,7 +10620,7 @@ public class PApplet extends Applet
 
   /**
    * Filters an image as defined by one of the following modes:<br><br>THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br><br>GRAY - converts any colors in the image to grayscale equivalents<br><br>INVERT - sets each pixel to its inverse value<br><br>POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br><br>BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br><br>OPAQUE - sets the alpha channel to entirely opaque.<br><br>ERODE - reduces the light areas with the amount defined by the level parameter.<br><br>DILATE - increases the light areas with the amount defined by the level parameter
-   * =advanced
+   * <h3>Advanced</h3>
    * Method to apply a variety of basic filters to this image.
    * <P>
    * <UL>
