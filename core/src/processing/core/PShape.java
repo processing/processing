@@ -33,7 +33,7 @@ import processing.core.PApplet;
  * The <b>PShape</b> object contain a group of methods, linked below, that can operate on the shape data.
  * <br><br>The <b>loadShape()</b> method supports SVG files created with Inkscape and Adobe Illustrator.
  * It is not a full SVG implementation, but offers some straightforward support for handling vector data.
- * =advanced
+ * <h3>Advanced</h3>
  *
  * In-progress class to handle shape data, currently to be considered of
  * alpha or beta quality. Major structural work may be performed on this class
@@ -232,7 +232,7 @@ public class PShape implements PConstants {
 
   /**
    * Disables the shape's style data and uses Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints.
-   *  =advanced
+   *  <h3>Advanced</h3>
    * Overrides this shape's style information and uses PGraphics styles and
    * colors. Identical to ignoreStyles(true). Also disables styles for all
    * child shapes.

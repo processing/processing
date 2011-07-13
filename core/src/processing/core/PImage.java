@@ -41,7 +41,7 @@ import javax.imageio.ImageIO;
  * A group of methods, described below, allow easy access to the image's pixels and alpha channel and simplify the process of compositing.
  * <br><br>Before using the <b>pixels[]</b> array, be sure to use the <b>loadPixels()</b> method on the image to make sure that the pixel data is properly loaded.
  * <br><br>To create a new image, use the <b>createImage()</b> function (do not use <b>new PImage()</b>).
- * =advanced
+ * <h3>Advanced</h3>
  *
  * Storage class for pixel data. This is the base class for most image and
  * pixel information, such as PGraphics and the video library classes.
@@ -409,7 +409,7 @@ public class PImage implements PConstants, Cloneable {
   /**
    * Loads the pixel data for the image into its <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
    * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
-   * =advanced
+   * <h3>Advanced</h3>
    * Call this when you want to mess with the pixels[] array.
    * <p/>
    * For subclasses where the pixels[] buffer isn't set by default,
@@ -429,7 +429,7 @@ public class PImage implements PConstants, Cloneable {
    * Updates the image with the data in its <b>pixels[]</b> array. Use in conjunction with <b>loadPixels()</b>. If you're only reading pixels from the array, there's no need to call <b>updatePixels()</b>.
    * <br><br>Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
    * <br><br>Currently, none of the renderers use the additional parameters to <b>updatePixels()</b>, however this may be implemented in the future.
-   * =advanced
+   * <h3>Advanced</h3>
    * Mark the pixels in this region as needing an update.
    * This is not currently used by any of the renderers, however the api
    * is structured this way in the hope of being able to use this to
@@ -660,7 +660,7 @@ public class PImage implements PConstants, Cloneable {
    * <br><br>Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". You must call <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before setting the values and calling <b>updatePixels()</b> to update the window with any changes.
    * <br><br>As of release 1.0, this function ignores <b>imageMode()</b>.
    * <br><br>Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
-   * =advanced
+   * <h3>Advanced</h3>
    * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
    *
    * @webref image:pixels
@@ -862,7 +862,7 @@ public class PImage implements PConstants, Cloneable {
 
   /**
    * Filters an image as defined by one of the following modes:<br><br>THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br><br>GRAY - converts any colors in the image to grayscale equivalents<br><br>INVERT - sets each pixel to its inverse value<br><br>POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br><br>BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br><br>OPAQUE - sets the alpha channel to entirely opaque.<br><br>ERODE - reduces the light areas with the amount defined by the level parameter.<br><br>DILATE - increases the light areas with the amount defined by the level parameter
-   * =advanced
+   * <h3>Advanced</h3>
    * Method to apply a variety of basic filters to this image.
    * <P>
    * <UL>
@@ -2804,7 +2804,7 @@ public class PImage implements PConstants, Cloneable {
    * function so it is aware of the location of the program and can therefore save the file to the right place.
    * See the <b>createImage()</b> reference for more information.
    *
-   * =advanced
+   * <h3>Advanced</h3>
    * Save this image to disk.
    * <p>
    * As of revision 0100, this function requires an absolute path,
