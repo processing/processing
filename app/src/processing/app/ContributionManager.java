@@ -35,8 +35,7 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import processing.app.ContributionListPanel.ContributionPanel;
-import processing.app.ContributionListPanel.PreferredViewPositionListener;
+import processing.app.ContributionListPanel.*;
 import processing.app.ContributionListing.ContributionListFetcher;
 
 /**
@@ -44,19 +43,24 @@ import processing.app.ContributionListing.ContributionListFetcher;
  */
 public class ContributionManager {
   
-  File backupFolder = null;
-  
   private static final String DRAG_AND_DROP_SECONDARY =
-    ".plb files usually contain contributed libraries for <br>" +
-    "Processing. Click “Yes” to install this library to your<br>" +
-    "sketchbook. If you wish to add this file to your<br>" +
-    "sketch instead, click “No” and use <i>Sketch &gt;<br>Add File...</i>";
+      ".plb files usually contain contributed libraries for <br>" +
+      "Processing. Click “Yes” to install this library to your<br>" +
+      "sketchbook. If you wish to add this file to your<br>" +
+      "sketch instead, click “No” and use <i>Sketch &gt;<br>Add File...</i>";
+  
+  private static final String DISCOVERY_ERROR_TITLE = "Trouble discovering libraries";
+
+  private static final String DISCOVERY_INTERNAL_ERROR_MESSAGE =
+        "An internal error occured while searching for libraries in the file.\n"
+      + "This may be a one time error, so try again.";
   
   static final String ANY_CATEGORY = "Any";
 
+  
   JFrame dialog;
   
-  ContributionListing contributionListing;
+  JProgressBar installProgressBar;
   
   FilterField filterField;
   
@@ -64,13 +68,14 @@ public class ContributionManager {
   
   JComboBox categoryChooser;
   
-  String category;
-  
   // the calling editor, so updates can be applied
-
   Editor editor;
   
-  JProgressBar installProgressBar;
+  String category;
+  
+  ContributionListing contributionListing;
+  
+  File backupFolder;
   
   public ContributionManager() {
 
@@ -276,7 +281,7 @@ public class ContributionManager {
     contributionListing.updateList(infoList);
   }
 
-  public void uninstallLibrary(Library library, JProgressMonitor pm) {
+  public void removeLibrary(Library library, JProgressMonitor pm) {
     
     LibraryUninstaller libUninstaller = new LibraryUninstaller(library, pm);
     
@@ -284,25 +289,96 @@ public class ContributionManager {
 
   }
   
-  public void installLibraryFromUrl(URL url,
-                                    ContributionPanel libPanel,
-                                    JProgressMonitor downloadProgressMonitor,
-                                    JProgressMonitor installProgressMonitor) {
+  interface Installer {
+    public boolean install(File f);
+  }
+  
+  private void downloadAndInstall(URL url,
+                                  final JProgressMonitor downloadProgressMonitor,
+                                  final JProgressMonitor installProgressMonitor,
+                                  final Installer installOperation) {
     
     File libDest = getTemporaryFile(url);
     
-    FileDownloader downloader = new FileDownloader(url, libDest,
-                                                   downloadProgressMonitor);
-    
-    downloader.setPostOperation(new LibraryInstaller(downloader,
-                                                     libPanel,
-                                                     installProgressMonitor));
+    final FileDownloader downloader = new FileDownloader(url, libDest,
+                                                         downloadProgressMonitor);
+
+    downloader.setPostOperation(new Runnable() {
+
+      public void run() {
+
+        File libFile = downloader.getFile();
+
+        if (libFile != null) {
+          installProgressMonitor.startTask("Installing",
+                                           ProgressMonitor.UNKNOWN);
+
+          installOperation.install(libFile);
+          refreshInstalled();
+        }
+
+        dialog.pack();
+
+        installProgressMonitor.finished();
+      }
+    });
 
     new Thread(downloader).start();
+  }
+  
+  public void installLibraryCompilationFromUrl(URL url,
+                                final LibraryCompilationPanel libPanel,
+                                JProgressMonitor downloadProgressMonitor,
+                                final JProgressMonitor installProgressMonitor) {
+    
+    downloadAndInstall(url, downloadProgressMonitor, installProgressMonitor,
+                       new Installer() {
+     
+      public boolean install(File f) {
+        String libName = getFileName(f);
+        File parentDir = unzipFileToTemp(f, libName);
+        
+        String folderName = libPanel.info.name;
+        
+        File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
+        File dest = new File(libraryDestination, folderName);
+        
+        // XXX: Check for conflicts with other library names, etc.
+        boolean errorEncountered = false;
+        if (dest.exists()) {
+          if (!dest.delete()) {
+            // Problem
+          }
+        }
+        
+        return !errorEncountered && parentDir.renameTo(dest);
+      }
+    });
+  }
+  
+  public void installLibraryFromUrl(URL url,
+                                    final LibraryPanel libPanel,
+                                    JProgressMonitor downloadProgressMonitor,
+                                    final JProgressMonitor installProgressMonitor) {
+    
+    downloadAndInstall(url, downloadProgressMonitor, installProgressMonitor,
+                       new Installer() {
 
+      public boolean install(File f) {
+        Library installedLib = installLibrary(f);
+        
+        if (installedLib != null) {
+          contributionListing.replaceLibrary(libPanel.info, installedLib.info);
+          libPanel.info = installedLib.info;
+          return true;
+        }
+        
+        return false;
+      }
+    });
   }
 
-  public ArrayList<Library> confirmAndInstallLibrary(Editor editor, File libFile) {
+  public Library confirmAndInstallLibrary(Editor editor, File libFile) {
     this.editor = editor;
     
     int result = Base.showYesNoQuestion(this.editor, "Install",
@@ -317,77 +393,24 @@ public class ContributionManager {
   }
 
   /**
-   * Installs the given library file to the active sketchbook. The contents of
-   * the library are extracted to a temporary folder before being moved.
+   * Unzips a file to a temporary folder.
+   * 
+   * @return the folder where the zips contents have been unzipped to.
    */
-  protected ArrayList<Library> installLibrary(File libFile) {
-    
-    String libName = guessLibraryName(libFile);
-    
+  private static File unzipFileToTemp(File libFile, String id) {
     File tmpFolder = null;
     
     try {
-      tmpFolder = Base.createTempFolder(libName, "uncompressed");
+      tmpFolder = Base.createTempFolder(id, "uncompressed");
     } catch (IOException e) {
       Base.showWarning("Trouble creating temporary folder",
            "Could not create a place to store libary's uncompressed contents,\n" + 
            "so it won't be installed.", e);
     }
     
-    boolean errorEncountered = false;
     unzip(libFile, tmpFolder);
-    try {  
-      ArrayList<Library> discoveredLibs = Library.list(tmpFolder);
-      if (discoveredLibs.isEmpty()) {
-        // No libraries found. It's okay though, the author might not have not
-        // read the library guidelines and placed all their folders in the base
-        // directory of the their zip file. If this is the case, let's help them
-        // out, rather than complain about it.
-        
-        File newLibFolder = getUniqueName(tmpFolder, libName);
-        if (newLibFolder.mkdirs()) {
-          for (File f : tmpFolder.listFiles()) {
-            if (!f.equals(newLibFolder)) {
-              if (!f.renameTo(new File(newLibFolder, f.getName()))) {
-                // The file wasn't moved for whatever reason
-                errorEncountered = true;
-              }
-//              try {
-//                FileUtils.moveDirectory(f, new File(newLibFolder, f.getName()));
-//              } catch (IOException e) {
-//                errorEncountered = true;
-//              }
-            }
-          }
-          discoveredLibs = Library.list(tmpFolder);
-        } else {
-          // We couldn't make the directory to move the library to
-          errorEncountered = true;
-        }
-        
-      }
-      
-      // Run the garbage collector so windows will let us delete/move the files
-      // we just moved.
-      // System.gc();
-      
-      if (!errorEncountered) {
-        if (discoveredLibs.isEmpty()) {
-          Base.showWarning("Trouble discovering libraries",
-                           "Maybe it's just us, but it looks like there are no\n"
-                         + "libraries in the file we just downloaded.\n", null);
-          return null;
-        } else {
-          return installLibraries(discoveredLibs);
-        }
-      }
-    } catch (IOException ioe) {
-      Base.showWarning("Trouble discovering libraries",
-                       "An internal error occured while searching for libraries in the file.\n" + 
-                       "This may be a one time error, so try again.", ioe);
-    }
     
-    return null;
+    return tmpFolder;
   }
   
   protected File getTemporaryFile(URL url) {
@@ -408,12 +431,13 @@ public class ContributionManager {
   }
 
   /**
-   * Returns the presumed name of a library by looking at its filename. For
-   * example,
-   *   "/path/to/helpfullib.zip" -> "helpfullib"
-   *   "helpfullib-0.1.1.plb" -> "helpfullib-0.1.1"
+   * Returns the name of a file without its path or extension.
+   * 
+   * For example,
+   *   "/path/to/helpfullib.zip" returns "helpfullib"
+   *   "helpfullib-0.1.1.plb" returns "helpfullib-0.1.1"
    */
-  protected static String guessLibraryName(File libFile) {
+  protected static String getFileName(File libFile) {
     String path = libFile.getPath();
     int lastSeparator = path.lastIndexOf(File.separatorChar);
     
@@ -432,45 +456,125 @@ public class ContributionManager {
     return fileName;
   }
   
-  protected ArrayList<Library> installLibraries(ArrayList<Library> newLibs) {
+  /**
+   * Sometimes library authors place all their folders in the base directory of
+   * a zip file instead of in single folder as the guidelines suggest. This
+   * method attempts to find the library, if this is the case, by moving the
+   * contents to a new subdirectory and then searching it for libraries.
+   * 
+   * @return A list of discovered libraries (may be empty), or null there was an
+   *         error dealing with the filesystem
+   */
+  private ArrayList<Library> recoverLibrary(File tempDir, String libName)
+      throws IOException {
+    // No libraries found. It's okay though, the author might not have not
+    // read the library guidelines and placed all their folders in the base
+    // directory of the their zip file. If this is the case, let's help them
+    // out, rather than complaining about it.
+    
+    File newLibFolder = getUniqueName(tempDir, libName);
+    if (newLibFolder.mkdirs()) {
+      for (File f : tempDir.listFiles()) {
+        if (!f.equals(newLibFolder)) {
+          if (!f.renameTo(new File(newLibFolder, f.getName()))) {
+            // The file wasn't moved for whatever reason
+            return null;
+          }
+//          try {
+//            FileUtils.moveDirectory(f, new File(newLibFolder, f.getName()));
+//          } catch (IOException e) {
+//            errorEncountered = true;
+//          }
+        }
+      }
+      return Library.list(tempDir);
+    } else {
+      // We couldn't make the directory to move the library to
+      return null;
+    }
+  }
+  
+  protected Library installLibrary(File libFile) {
+    String libName = getFileName(libFile);
+    File tempDir = unzipFileToTemp(libFile, libName);
+    
+    try {
+      ArrayList<Library> discoveredLibs = Library.list(tempDir);
+      if (discoveredLibs.isEmpty()) {
+        discoveredLibs = recoverLibrary(tempDir, libName);
+      }
+      
+      if (discoveredLibs != null && discoveredLibs.size() == 1) {
+        Library discoveredLib = discoveredLibs.get(0);
+        if (installLibrary(discoveredLib)) {
+          return discoveredLib;
+        } else {
+          return null;
+        }
+      } else {
+        // Diagnose the problem and notify the user
+        if (discoveredLibs == null) {
+          Base.showWarning(DISCOVERY_ERROR_TITLE,
+                           DISCOVERY_INTERNAL_ERROR_MESSAGE, null);
+        } else if (discoveredLibs.isEmpty()) {
+          Base.showWarning(DISCOVERY_ERROR_TITLE,
+                           "Maybe it's just us, but it looks like there are no\n"
+                         + "libraries in the file we just downloaded.\n", null);
+        } else {
+          Base.showWarning("Too many libraries",
+                           "We found more than one library in the library file\n"
+                         + "we just downloaded. That shouldn't happen, so we're\n"
+                         + "going to ignore this file.", null);
+        }
+      }
+    } catch (IOException ioe) {
+      Base.showWarning(DISCOVERY_ERROR_TITLE, DISCOVERY_INTERNAL_ERROR_MESSAGE,
+                       ioe);
+    }
+    
+    return null;
+  }
+  
+  protected boolean installLibrary(Library newLib) {
+    
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
     
-    Iterator<Library> it = newLibs.iterator();
-    while (it.hasNext()) {
-      Library lib = it.next();
-
-      for (Library oldLib : oldLibs) {
+    String libFolderName = newLib.folder.getName();
+    
+    File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
+    File newLibDest = new File(libraryDestination, libFolderName);
+    
+    boolean doInstall = true;
+    
+    for (Library oldLib : oldLibs) {
+      
+      // XXX: Handle other cases when installing libraries.
+      //   -What if a library by the same name is already installed?
+      //   -What if newLibDest exists, but isn't used by an existing library?
+      if (oldLib.libraryFolder.exists() && oldLib.equals(newLibDest)) {
         
-        if (oldLib.getName().equals(lib.getName()) && oldLib.libraryFolder.exists()) {
-          
-          int result = Base.showYesNoQuestion(editor, "Replace",
-                 "Replace existing \"" + oldLib.getName() + "\" library?",
-                 "An existing copy of the \"" + oldLib.getName() + "\" library<br>"+
-                 "has been found in your sketchbook. Clicking “Yes”<br>"+
-                 "will move the existing library to a backup folder<br>" +
-                 " in <i>libraries/old</i> before replacing it.");
-          
-          if (result == JOptionPane.YES_OPTION) {
-            if (!backupLibrary(oldLib)) {
-              return null;
-            }
-          } else {
-            it.remove();
+        int result = Base.showYesNoQuestion(editor, "Replace",
+               "Replace existing \"" + oldLib.getName() + "\" library?",
+               "An existing copy of the \"" + oldLib.getName() + "\" library<br>"+
+               "has been found in your sketchbook. Clicking “Yes”<br>"+
+               "will move the existing library to a backup folder<br>" +
+               " in <i>libraries/old</i> before replacing it.");
+        
+        if (result == JOptionPane.YES_OPTION) {
+          if (!backupLibrary(oldLib)) {
+            return false;
           }
-          break;
+        } else {
+          doInstall = false;
         }
       }
     }
     
-    it = newLibs.iterator();
-    while (it.hasNext()) {
-      Library newLib = it.next();
-      String libFolderName = newLib.folder.getName();
-      File libFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
-                                libFolderName);
-      
-      if (newLib.folder.renameTo(libFolder)) {
-        newLib.folder = libFolder;
+    if (doInstall) {
+      // Move newLib to the sketchbook library folder
+      if (newLib.folder.renameTo(newLibDest)) {
+        newLib.folder = newLibDest;
+        return true;
 //      try {
 //        FileUtils.copyDirectory(newLib.folder, libFolder);
 //        FileUtils.deleteQuietly(newLib.folder);
@@ -478,13 +582,12 @@ public class ContributionManager {
 //      } catch (IOException e) {
       } else {
         Base.showWarning("Trouble moving new library to the sketchbook",
-                         "Could not move \"" + newLib.getName() + "\" to "
-                             + libFolder.getAbsolutePath() + ".\n", null);
-        it.remove();
+                         "Could not move library \"" + newLib.getName() + "\" to "
+                             + newLibDest.getAbsolutePath() + ".\n", null);
       }
     }
     
-    return newLibs;
+    return false;
   }
   
   public void refreshInstalled() {
@@ -706,49 +809,6 @@ public class ContributionManager {
     
   }
   
-  class LibraryInstaller implements Runnable {
-    
-    ContributionPanel libraryPanel;
-
-    ProgressMonitor progressMonitor;
-    
-    FileDownloader fileDownloader;
-
-    
-    public LibraryInstaller(FileDownloader downloader, ContributionPanel libPanel,
-                            ProgressMonitor pm) {
-      
-      libraryPanel = libPanel;
-      
-      if (pm == null) {
-        progressMonitor = new NullProgressMonitor();
-      } else {
-        progressMonitor = pm;
-      }
-      fileDownloader = downloader;
-    }
-    
-    public void run() {
-  
-      File libFile = fileDownloader.getFile();
-      
-      if (libFile != null) {
-        progressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
-        
-        ArrayList<Library> info = installLibrary(libFile);
-        if (info != null && !info.isEmpty()) {
-          contributionListing.replaceLibrary(libraryPanel.info, info.get(0).info);
-        }
-        
-        refreshInstalled();
-      }
-      
-      dialog.pack();
-      
-      progressMonitor.finished();
-    }
-  }
-
 }
 
 abstract class JProgressMonitor extends AbstractProgressMonitor {

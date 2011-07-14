@@ -37,12 +37,20 @@ import java.awt.*;
 import java.net.*;
 import java.text.*;
 
+import processing.app.Library.LibraryCompilationInfo;
 import processing.app.Library.LibraryInfo;
 import processing.app.ContributionInfo.Author;
 import processing.app.ContributionInfo.ContributionType;
 import processing.app.ContributionListing.ContributionChangeListener;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
+  
+  public static final String INSTALL_FAILURE_TITLE = "Install Failed";
+
+  public static final String MALFORMED_URL_MESSAGE =
+                      "The link fetched from Processing.org is invalid.\n"
+                    + "You can still intall this library manually by visiting\n"
+                    + "the library's website.";
   
   ContributionManager contributionManager;
   
@@ -125,6 +133,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     ContributionPanel newPanel = null;
     if (contributionInfo.getType() == ContributionType.LIBRARY) {
       newPanel = new LibraryPanel((LibraryInfo) contributionInfo);
+    } else if (contributionInfo.getType() == ContributionType.LIBRARY_COMPILATION) {
+      newPanel = new LibraryCompilationPanel((LibraryCompilationInfo) contributionInfo);
     }
     
     if (newPanel != null) {
@@ -432,6 +442,62 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     return setupProgressBar;
   }
   
+  class LibraryCompilationPanel extends ContributionPanel {
+    
+    public LibraryCompilationPanel(LibraryCompilationInfo compilationInfo) {
+      super(compilationInfo);
+    }
+    
+    public LibraryCompilationInfo getInfo() {
+      return (LibraryCompilationInfo) info;
+    }
+    
+    protected ActionListener createRemoveAction() {
+      return new ActionListener() {
+        
+        public void actionPerformed(ActionEvent event) {
+        }
+      };
+    }
+    
+    protected ActionListener createInstallAction() {
+      return new ActionListener() {
+        
+        public void actionPerformed(ActionEvent arg) {
+          installOrRemove.setEnabled(false);
+          
+          try {
+            URL url = new URL(info.link);
+            
+            installProgressBar.setVisible(true);
+            
+            contributionManager.installLibraryCompilationFromUrl(url, LibraryCompilationPanel.this,
+              new JProgressMonitor(installProgressBar) {
+  
+                public void finishedAction() {
+                  // Finished downloading library
+                }
+              },
+              new JProgressMonitor(installProgressBar) {
+  
+                public void finishedAction() {
+                  // Finished installing library
+                  resetInstallProgressBarState();
+                  installOrRemove.setEnabled(true);
+                }
+              }
+            );
+            
+          } catch (MalformedURLException e) {
+            Base.showWarning(INSTALL_FAILURE_TITLE, MALFORMED_URL_MESSAGE, e);
+            installOrRemove.setEnabled(true);
+          }
+        }
+      };
+    }
+
+  }
+  
   class LibraryPanel extends ContributionPanel {
     
     public LibraryPanel(LibraryInfo libInfo) {
@@ -450,7 +516,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
            installOrRemove.setEnabled(false);
            
            installProgressBar.setVisible(true);
-           contributionManager.uninstallLibrary(getInfo().library,
+           contributionManager.removeLibrary(getInfo().library,
              new JProgressMonitor(installProgressBar) {
                
                public void finishedAction() {
@@ -495,23 +561,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
              );
              
            } catch (MalformedURLException e) {
-             Base.showWarning("Install Failed",
-                              "The link fetched from Processing.org is invalid.\n" +
-                              "You can still intall this library manually by visiting\n" +
-                              "the library's website.", e);
+             Base.showWarning(INSTALL_FAILURE_TITLE, MALFORMED_URL_MESSAGE, e);
              installOrRemove.setEnabled(true);
            }
          }
        };
      }
-    
-    public void updateState() {
-      if (getInfo().isInstalled()) {
-        useRemoveAction();
-      } else {
-        useInstalledAction();
-      }
-    }
     
   }
   
@@ -626,6 +681,14 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         installOrRemove.setText("Remove");
         installOrRemove.addActionListener(removeAction);
         return true;
+      }
+    }
+    
+    public void updateState() {
+      if (info.isInstalled()) {
+        useRemoveAction();
+      } else {
+        useInstalledAction();
       }
     }
 
@@ -862,8 +925,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       rightPane.setMinimumSize(d);
       rightPane.setPreferredSize(d);
     }
-    
-    public  abstract void updateState();
     
     protected void resetInstallProgressBarState() {
       installProgressBar.setString("Starting");

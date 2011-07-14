@@ -31,4 +31,7 @@ public abstract class ContributionInfo implements Comparable<ContributionInfo> {
   public static enum ContributionType {
     LIBRARY, LIBRARY_COMPILATION, TOOL, MODE;
   }
+
+  public abstract boolean isInstalled();
+  
 }

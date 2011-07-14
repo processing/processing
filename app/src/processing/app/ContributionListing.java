@@ -296,7 +296,7 @@ public class ContributionListing {
       try {
         File tmpFolder = Base.createTempFolder("libarylist", "download");
 
-        dest = new File(tmpFolder, "libraries.xml");
+        dest = new File(tmpFolder, "contributions.xml");
         dest.setWritable(true);
 
         url = new URL("http://dl.dropbox.com/u/700641/generated/contributions.xml");
@@ -429,7 +429,7 @@ public class ContributionListing {
     public void endElement(String uri, String localName, String qName)
         throws SAXException {
 
-      if ("library".equals(qName)) {
+      if ("library".equals(qName) || "librarycompilation".equals(qName)) {
         libraries.add(currentInfo);
         currentInfo = null;
       }
