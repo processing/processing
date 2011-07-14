@@ -489,6 +489,7 @@ public class Library {
   
   public static class LibraryCompilationInfo extends ContributionInfo {
     
+    protected File folder;
     protected List<Library> libraries;
     protected List<String> libraryNames;
 
