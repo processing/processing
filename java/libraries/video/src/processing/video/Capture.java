@@ -290,7 +290,6 @@ public class Capture extends PImage implements PConstants {
    */
   public void stop() {
     capturing = false;
-    //gpipeline.pause();
     gpipeline.stop();
   }  
   
