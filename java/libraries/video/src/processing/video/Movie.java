@@ -23,6 +23,7 @@ import processing.core.*;
 
 import java.awt.Dimension;
 import java.io.*;
+import java.net.URI;
 import java.nio.*;
 import java.util.concurrent.TimeUnit;
 import java.lang.reflect.*;
@@ -580,15 +581,25 @@ public class Movie extends PImage implements PConstants {
           if (file.exists()) {
             gplayer = new PlayBin2("GSMovie Player");            
             gplayer.setInputFile(file);
-          } else {
-            System.err.println("File " + filename + " does not exist. Please check location.");  
           }
         } catch (Exception e) {
           PApplet.println("Shit coming...");
           e.printStackTrace();
         }
       }
-      // Network read needs to be implemented...
+
+      // Network read...      
+      if (gplayer == null) {
+        try {
+          PApplet.println("network read");
+          gplayer = new PlayBin2("GSMovie Player");            
+          gplayer.setURI(URI.create(filename));
+        } catch (Exception e) {
+          PApplet.println("Shit coming...");
+          e.printStackTrace();
+        }      
+      }
+      
     } catch (SecurityException se) {
       // online, whups. catch the security exception out here rather than
       // doing it three times (or whatever) for each of the cases above.
