@@ -1412,9 +1412,9 @@ public class Base {
    * Installed the libraries in the given file after a confirmation from the
    * user. Returns the number of libraries installed.
    */
-  public int handleConfirmAndInstallLibrary(File libFile) {
+  public boolean handleConfirmAndInstallLibrary(File libFile) {
     if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager();
-    return libraryManagerFrame.confirmAndInstallLibrary(activeEditor, libFile).size();
+    return libraryManagerFrame.confirmAndInstallLibrary(activeEditor, libFile) != null;
   }
 
   // ...................................................................
