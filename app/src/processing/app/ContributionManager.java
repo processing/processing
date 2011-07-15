@@ -35,6 +35,7 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import processing.app.Contribution.ContributionInfo;
 import processing.app.ContributionListPanel.*;
 import processing.app.ContributionListing.ContributionListFetcher;
 
@@ -50,10 +51,14 @@ public class ContributionManager {
       "sketch instead, click “No” and use <i>Sketch &gt;<br>Add File...</i>";
   
   private static final String DISCOVERY_ERROR_TITLE = "Trouble discovering libraries";
-
+  
   private static final String DISCOVERY_INTERNAL_ERROR_MESSAGE =
         "An internal error occured while searching for libraries in the file.\n"
       + "This may be a one time error, so try again.";
+  
+  private static final String DISCOVERY_NONE_FOUND_ERROR_MESSAGE =
+      "Maybe it's just us, but it looks like there are no\n"
+    + "libraries in the file we just downloaded.\n";
   
   static final String ANY_CATEGORY = "Any";
 
@@ -74,8 +79,6 @@ public class ContributionManager {
   String category;
   
   ContributionListing contributionListing;
-  
-  File backupFolder;
   
   public ContributionManager() {
 
@@ -272,20 +275,47 @@ public class ContributionManager {
 
   protected void updateContributionListing() {
     ArrayList<Library> libraries = editor.getMode().contribLibraries;
+    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
+
+    for (LibraryCompilation compilation : compilations) {
+      for (Library lib : compilation.libraries) {
+        libraries.remove(lib);
+      }
+    }
     
     ArrayList<ContributionInfo> infoList = new ArrayList<ContributionInfo>();
     for (Library library : libraries) {
       infoList.add(library.info);
     }
+    for (LibraryCompilation compilation : compilations) {
+      infoList.add(compilation.info);
+    }
     
     contributionListing.updateList(infoList);
   }
-
-  public void removeLibrary(Library library, JProgressMonitor pm) {
+ 
+  public void removeLibrary(final Contribution library, final JProgressMonitor pm) {
     
-    LibraryUninstaller libUninstaller = new LibraryUninstaller(library, pm);
-    
-    new Thread(libUninstaller).start();
+    new Thread(new Runnable() {
+      
+      public void run() {
+        pm.startTask("Removing", ProgressMonitor.UNKNOWN);
+        if (library != null) {
+          if (backupContribution(library)) {
+            ContributionInfo advertisedVersion = contributionListing
+                .getAdvertisedContribution(library.getInfo().name, library.getInfo().getType());
+            
+            if (advertisedVersion == null) {
+              contributionListing.removeLibrary(library.getInfo());
+            } else {
+              contributionListing.replaceLibrary(library.getInfo(), advertisedVersion);
+            }
+          }
+        }
+        refreshInstalled();
+        pm.finished();
+      }
+    }).start();
 
   }
   
@@ -335,27 +365,55 @@ public class ContributionManager {
                        new Installer() {
      
       public boolean install(File f) {
-        String libName = getFileName(f);
-        File parentDir = unzipFileToTemp(f, libName);
+        LibraryCompilation installedCompilation = installLibraryCompilation(f);
         
-        String folderName = libPanel.info.name;
-        
-        File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
-        File dest = new File(libraryDestination, folderName);
-        
-        // XXX: Check for conflicts with other library names, etc.
-        boolean errorEncountered = false;
-        if (dest.exists()) {
-          if (!dest.delete()) {
-            // Problem
-          }
+        if (installedCompilation != null) {
+          contributionListing.replaceLibrary(libPanel.info, installedCompilation.info);
+          libPanel.info = installedCompilation.info;
+          return true;
         }
         
-        return !errorEncountered && parentDir.renameTo(dest);
+        return false;
       }
     });
   }
   
+  protected LibraryCompilation installLibraryCompilation(File f) {
+    File parentDir = unzipFileToTemp(f);
+    
+    LibraryCompilation compilation = LibraryCompilation.create(parentDir);
+
+    if (compilation == null) {
+      Base.showWarning(DISCOVERY_ERROR_TITLE,
+                       DISCOVERY_NONE_FOUND_ERROR_MESSAGE, null);
+      return null;
+    }
+      
+    String folderName = compilation.info.name;
+    
+    File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
+    File dest = new File(libraryDestination, folderName);
+    
+    // XXX: Check for conflicts with other library names, etc.
+    boolean errorEncountered = false;
+    if (dest.exists()) {
+      if (!dest.delete()) {
+        // Problem
+        errorEncountered = true;
+      }
+    }
+    
+    if (!errorEncountered) {
+      // Install it, return it
+      if (parentDir.renameTo(dest)) {
+        compilation.folder = dest;
+        return compilation;
+      }
+    }
+    
+    return null;
+  }
+
   public void installLibraryFromUrl(URL url,
                                     final LibraryPanel libPanel,
                                     JProgressMonitor downloadProgressMonitor,
@@ -393,15 +451,27 @@ public class ContributionManager {
   }
 
   /**
-   * Unzips a file to a temporary folder.
+   * Creates a temporary folder and unzips a file to a subdirectory of the temp
+   * folder. The subdirectory is the only file of the tempo folder.
    * 
-   * @return the folder where the zips contents have been unzipped to.
+   * e.g. if the contents of foo.zip are /hello and /world, then the resulting
+   * files will be
+   *     /tmp/foo9432423uncompressed/foo/hello
+   *     /tmp/foo9432423uncompress/foo/world
+   * ...and "/tmp/id9432423uncompress/foo/" will be returned.
+   * 
+   * @return the folder where the zips contents have been unzipped to (the
+   *         subdirectory of the temp folder).
    */
-  private static File unzipFileToTemp(File libFile, String id) {
+  private static File unzipFileToTemp(File libFile) {
+    
+    String fileName = getFileName(libFile);
     File tmpFolder = null;
     
     try {
-      tmpFolder = Base.createTempFolder(id, "uncompressed");
+      tmpFolder = Base.createTempFolder(fileName, "uncompressed");
+      tmpFolder = new File(tmpFolder, fileName);
+      tmpFolder.mkdirs();
     } catch (IOException e) {
       Base.showWarning("Trouble creating temporary folder",
            "Could not create a place to store libary's uncompressed contents,\n" + 
@@ -456,52 +526,17 @@ public class ContributionManager {
     return fileName;
   }
   
-  /**
-   * Sometimes library authors place all their folders in the base directory of
-   * a zip file instead of in single folder as the guidelines suggest. This
-   * method attempts to find the library, if this is the case, by moving the
-   * contents to a new subdirectory and then searching it for libraries.
-   * 
-   * @return A list of discovered libraries (may be empty), or null there was an
-   *         error dealing with the filesystem
-   */
-  private ArrayList<Library> recoverLibrary(File tempDir, String libName)
-      throws IOException {
-    // No libraries found. It's okay though, the author might not have not
-    // read the library guidelines and placed all their folders in the base
-    // directory of the their zip file. If this is the case, let's help them
-    // out, rather than complaining about it.
-    
-    File newLibFolder = getUniqueName(tempDir, libName);
-    if (newLibFolder.mkdirs()) {
-      for (File f : tempDir.listFiles()) {
-        if (!f.equals(newLibFolder)) {
-          if (!f.renameTo(new File(newLibFolder, f.getName()))) {
-            // The file wasn't moved for whatever reason
-            return null;
-          }
-//          try {
-//            FileUtils.moveDirectory(f, new File(newLibFolder, f.getName()));
-//          } catch (IOException e) {
-//            errorEncountered = true;
-//          }
-        }
-      }
-      return Library.list(tempDir);
-    } else {
-      // We couldn't make the directory to move the library to
-      return null;
-    }
-  }
-  
   protected Library installLibrary(File libFile) {
-    String libName = getFileName(libFile);
-    File tempDir = unzipFileToTemp(libFile, libName);
+    File tempDir = unzipFileToTemp(libFile);
     
     try {
       ArrayList<Library> discoveredLibs = Library.list(tempDir);
       if (discoveredLibs.isEmpty()) {
-        discoveredLibs = recoverLibrary(tempDir, libName);
+        // Sometimes library authors place all their folders in the base
+        // directory of a zip file instead of in single folder as the
+        // guidelines suggest. If this is the case, we might be able to find the
+        // library by stepping up a directory and searching for libraries again.
+        discoveredLibs = Library.list(tempDir.getParentFile());
       }
       
       if (discoveredLibs != null && discoveredLibs.size() == 1) {
@@ -518,8 +553,7 @@ public class ContributionManager {
                            DISCOVERY_INTERNAL_ERROR_MESSAGE, null);
         } else if (discoveredLibs.isEmpty()) {
           Base.showWarning(DISCOVERY_ERROR_TITLE,
-                           "Maybe it's just us, but it looks like there are no\n"
-                         + "libraries in the file we just downloaded.\n", null);
+                           DISCOVERY_NONE_FOUND_ERROR_MESSAGE, null);
         } else {
           Base.showWarning("Too many libraries",
                            "We found more than one library in the library file\n"
@@ -561,7 +595,7 @@ public class ContributionManager {
                " in <i>libraries/old</i> before replacing it.");
         
         if (result == JOptionPane.YES_OPTION) {
-          if (!backupLibrary(oldLib)) {
+          if (!backupContribution(oldLib)) {
             return false;
           }
         } else {
@@ -596,14 +630,25 @@ public class ContributionManager {
   }
 
   /**
-   * Moves the given library to a backup folder.
+   * Moves the given contribution to a backup folder.
    */
-  private boolean backupLibrary(Library lib) {
-    if (!createBackupFolder()) {
-      return false;
+  private boolean backupContribution(Contribution lib) {
+    
+    File backupFolder = null;
+    
+    switch (lib.getInfo().getType()) {
+    case LIBRARY:
+    case LIBRARY_COMPILATION:
+      backupFolder = createLibraryBackupFolder();
+      break;
+    case MODE:
+    case TOOL:
+      break;
     }
     
-    String libFolderName = lib.folder.getName();
+    if (backupFolder == null) return false;
+    
+    String libFolderName = lib.getFolder().getName();
     
     String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     final String backupName = prefix + "_" + libFolderName;
@@ -612,11 +657,11 @@ public class ContributionManager {
 //    try {
 //      FileUtils.moveDirectory(lib.folder, backupFolderForLib);
 //      return true;
-    if (lib.folder.renameTo(backupFolderForLib)) {
+    if (lib.getFolder().renameTo(backupFolderForLib)) {
       return true;
     } else {
 //    } catch (IOException e) {
-      Base.showWarning("Trouble creating backup of old \"" + lib.getName() + "\" library",
+      Base.showWarning("Trouble creating backup of old \"" + lib.getInfo().name + "\" library",
                        "Could not move library to backup folder:\n"
                            + backupFolderForLib.getAbsolutePath(), null);
       return false;
@@ -627,25 +672,24 @@ public class ContributionManager {
    * @return false if there was an error creating the backup folder, true if it
    *         already exists or was created successfully
    */
-  private boolean createBackupFolder() {
-    if (backupFolder != null)
-      return true;
+  private File createLibraryBackupFolder() {
     
-    backupFolder = new File(editor.getBase().getSketchbookLibrariesFolder(),
-                            "old");
-    if (!backupFolder.exists() || !backupFolder.isDirectory()) {
-      if (!backupFolder.mkdirs()) {
+    File libraryBackupFolder = new File(editor.getBase()
+        .getSketchbookLibrariesFolder(), "old");
+
+    if (!libraryBackupFolder.exists() || !libraryBackupFolder.isDirectory()) {
+      if (!libraryBackupFolder.mkdirs()) {
         Base.showWarning("Trouble creating folder to store old libraries in",
                          "Could not create folder "
-                             + backupFolder.getAbsolutePath()
+                             + libraryBackupFolder.getAbsolutePath()
                              + ".\n"
                              + "That's gonna prevent us from replacing the library.",
                          null);
-        return false;
+        return null;
       }
     }
     
-    return true;
+    return libraryBackupFolder;
   }
 
   /**
@@ -778,37 +822,6 @@ public class ContributionManager {
     }
   }
 
-  class LibraryUninstaller implements Runnable {
-
-    Library library;
-
-    ProgressMonitor pm;
-
-    public LibraryUninstaller(Library library, ProgressMonitor pm) {
-      this.library = library;
-      this.pm = pm;
-    }
-
-    public void run() {
-      pm.startTask("Removing", ProgressMonitor.UNKNOWN);
-      if (library != null) {
-        if (backupLibrary(library)) {
-          ContributionInfo advertisedVersion = contributionListing
-              .getAdvertisedContribution(library.info.name);
-          
-          if (advertisedVersion == null) {
-            contributionListing.removeLibrary(library.info);
-          } else {
-            contributionListing.replaceLibrary(library.info, advertisedVersion);
-          }
-        }
-      }
-      refreshInstalled();
-      pm.finished();
-    }
-    
-  }
-  
 }
 
 abstract class JProgressMonitor extends AbstractProgressMonitor {
