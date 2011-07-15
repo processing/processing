@@ -4,9 +4,10 @@ import java.io.*;
 import java.util.*;
 
 import processing.core.*;
-import processing.app.ContributionInfo.Author;
+import processing.app.Contribution.ContributionInfo;
+import processing.app.Contribution.ContributionInfo.Author;
 
-public class Library {
+public class Library extends Contribution {
   static final String[] platformNames = PConstants.platformNames;
 
   protected File folder;          // /path/to/shortname
@@ -89,34 +90,10 @@ public class Library {
     
     info = new LibraryInfo();
     info.library = this;
-    info.category = "Unknown";
-    
-    info.name = exportTable.get("name");
+    readProperties(exportTable, info);
     if (info.name == null) {
       info.name = folder.getName();
     }
-    
-    String authors = exportTable.get("authorList");
-    info.authorList = new ArrayList<Author>();
-    if (authors != null) {
-      String[] authorNames = authors.split(";");
-      for (String authorName : authorNames) {
-        Author author = new Author();
-        author.name = authorName.trim(); 
-        
-        info.authorList.add(author);
-      }
-    }
-    
-    info.url = exportTable.get("url");
-    info.sentence = exportTable.get("sentence");
-    info.paragraph = exportTable.get("paragraph");
-    
-    try {
-      info.version = Integer.parseInt(exportTable.get("version"));
-    } catch (NumberFormatException e) {
-    }
-    info.prettyVersion = exportTable.get("prettyVersion");
 
     exportList = new HashMap<String, String[]>();
 
@@ -273,6 +250,11 @@ public class Library {
   }
 
 
+  public ContributionInfo getInfo() {
+    return info;
+  }
+
+
   public String getName() {
     return info.name;
   }
@@ -290,6 +272,11 @@ public class Library {
 
   public String getGroup() {
     return group;
+  }
+  
+  
+  public File getFolder() {
+    return folder;
   }
   
   
@@ -477,29 +464,16 @@ public class Library {
     
     protected Library library;
 
+    public ContributionType getType() {
+      return ContributionType.LIBRARY;
+    }
+    
     public boolean isInstalled() {
       return library != null;
     }
 
-    public ContributionType getType() {
-      return ContributionType.LIBRARY;
-    }
-
-  }
-  
-  public static class LibraryCompilationInfo extends ContributionInfo {
-    
-    protected File folder;
-    protected List<Library> libraries;
-    protected List<String> libraryNames;
-
-    public boolean isInstalled() {
-      // TODO: Check that the right number of libraries are installed
-      return libraries != null;
-    }
-
-    public ContributionType getType() {
-      return ContributionType.LIBRARY_COMPILATION;
+    public Contribution getContribution() {
+      return library;
     }
 
   }

@@ -37,11 +37,12 @@ import java.awt.*;
 import java.net.*;
 import java.text.*;
 
-import processing.app.Library.LibraryCompilationInfo;
-import processing.app.Library.LibraryInfo;
-import processing.app.ContributionInfo.Author;
-import processing.app.ContributionInfo.ContributionType;
+import processing.app.Contribution.ContributionInfo;
+import processing.app.Contribution.ContributionInfo.Author;
+import processing.app.Contribution.ContributionInfo.ContributionType;
 import processing.app.ContributionListing.ContributionChangeListener;
+import processing.app.Library.LibraryInfo;
+import processing.app.LibraryCompilation.LibraryCompilationInfo;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
   
@@ -129,6 +130,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   }
   
   public void contributionAdded(ContributionInfo contributionInfo) {
+    
+    if (setupProgressBar.isVisible()) {
+      setupProgressBar.setVisible(false);
+    }
     
     ContributionPanel newPanel = null;
     if (contributionInfo.getType() == ContributionType.LIBRARY) {
@@ -452,14 +457,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       return (LibraryCompilationInfo) info;
     }
     
-    protected ActionListener createRemoveAction() {
-      return new ActionListener() {
-        
-        public void actionPerformed(ActionEvent event) {
-        }
-      };
-    }
-    
     protected ActionListener createInstallAction() {
       return new ActionListener() {
         
@@ -502,33 +499,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
     public LibraryPanel(LibraryInfo libInfo) {
       super(libInfo);
-    }
-    
-    private LibraryInfo getInfo() {
-      return (LibraryInfo) info;
-    }
-    
-    protected ActionListener createRemoveAction() {
-      
-      return new ActionListener() {
-         
-         public void actionPerformed(ActionEvent arg) {
-           installOrRemove.setEnabled(false);
-           
-           installProgressBar.setVisible(true);
-           contributionManager.removeLibrary(getInfo().library,
-             new JProgressMonitor(installProgressBar) {
-               
-               public void finishedAction() {
-                 // Finished uninstalling the library
-                 resetInstallProgressBarState();
-                 installOrRemove.setEnabled(true);
-               }
-             }
-           );
-           
-         }
-       };
     }
     
     protected ActionListener createInstallAction() {
@@ -694,7 +664,28 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     protected abstract ActionListener createInstallAction();
 
-    protected abstract ActionListener createRemoveAction();
+    protected ActionListener createRemoveAction() {
+      
+      return new ActionListener() {
+         
+         public void actionPerformed(ActionEvent arg) {
+           installOrRemove.setEnabled(false);
+           
+           installProgressBar.setVisible(true);
+           contributionManager.removeLibrary(info.getContribution(),
+             new JProgressMonitor(installProgressBar) {
+               
+               public void finishedAction() {
+                 // Finished uninstalling the library
+                 resetInstallProgressBarState();
+                 installOrRemove.setEnabled(true);
+               }
+             }
+           );
+           
+         }
+       };
+    }
 
     void stripListeners(JEditorPane editorPane) {
       for (MouseListener l : editorPane.getMouseListeners()) {
