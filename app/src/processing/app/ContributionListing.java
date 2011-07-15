@@ -32,15 +32,17 @@ import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
+import processing.app.Contribution.ContributionInfo;
+import processing.app.Contribution.ContributionInfo.Author;
+import processing.app.Contribution.ContributionInfo.ContributionType;
 import processing.app.Library.LibraryInfo;
-import processing.app.Library.LibraryCompilationInfo;
-import processing.app.ContributionInfo.Author;
+import processing.app.LibraryCompilation.LibraryCompilationInfo;
 
 public class ContributionListing {
   
   ArrayList<ContributionChangeListener> listeners;
   
-  ArrayList<ContributionInfo> advertisedLibraries;
+  ArrayList<ContributionInfo> advertisedContributions;
   
   Map<String, List<ContributionInfo>> librariesByCategory;
   
@@ -62,8 +64,8 @@ public class ContributionListing {
     hasDownloadedList = true;
     
     ContributionXmlParser xmlParser = new ContributionXmlParser(xmlFile);
-    advertisedLibraries = xmlParser.getLibraries();
-    updateList(advertisedLibraries);
+    advertisedContributions = xmlParser.getLibraries();
+    updateList(advertisedContributions);
     
     Collections.sort(allLibraries);
     
@@ -73,11 +75,11 @@ public class ContributionListing {
    * Adds the installed libraries to the listing of libraries, replacing any
    * pre-existing libraries by the same name as one in the list.
    */
-  public void updateList(List<ContributionInfo> libraries) {
+  public void updateList(List<ContributionInfo> contributions) {
     
     // First, record the names of all the libraries in installedLibraries
     HashSet<String> installedContributionNames = new HashSet<String>();
-    for (ContributionInfo libInfo : libraries) {
+    for (ContributionInfo libInfo : contributions) {
       installedContributionNames.add(libInfo.name);
     }
 
@@ -99,7 +101,7 @@ public class ContributionListing {
       }
     }
     
-    for (ContributionInfo libInfo : libraries) {
+    for (ContributionInfo libInfo : contributions) {
       String category = categoriesByName.get(libInfo.name);
       if (category != null) {
         libInfo.category = category;
@@ -165,11 +167,17 @@ public class ContributionListing {
     notifyRemove(info);
   }
   
-  public ContributionInfo getAdvertisedContribution(String libName) {
-    for (ContributionInfo advertisedLib : advertisedLibraries) {
-      if (advertisedLib.name.equals(libName)) {
-        return advertisedLib;
+  public ContributionInfo getAdvertisedContribution(String contributionName,
+                                                    ContributionType contributionType) {
+    
+    for (ContributionInfo advertised : advertisedContributions) {
+      
+      if (advertised.getType() == contributionType
+          && advertised.name.equals(contributionName)) {
+        
+        return advertised;
       }
+      
     }
     
     return null;
