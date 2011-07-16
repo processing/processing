@@ -31,7 +31,8 @@ import java.util.HashMap;
 /**
    * ( begin auto-generated from PGraphics.xml )
    * 
-   * Main graphics and rendering context, as well as the base API implementation for processing "core". Use this class if you need to draw into an off-screen graphics buffer. A PGraphics object can be constructed with the 
+   * Main graphics and rendering context, as well as the base API implementation for processing "core". Use this class if you need to draw into an off-screen graphics buffer. A PGraphics object can be constructed with the <b>createGraphics()</b> function. The <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are necessary to set up the buffer and to finalize it. The fields and methods for this class are extensive; for a complete list visit the developer's reference: http://dev.processing.org/reference/core/
+   * 
    * ( end auto-generated )
  * <h3>Advanced</h3>
  * Main graphics and rendering context, as well as the base API implementation.
@@ -823,6 +824,22 @@ public class PGraphics extends PImage implements PConstants {
    * ( begin auto-generated from hint.xml )
    * 
    * Set various hints and hacks for the renderer. This is used to handle obscure rendering features that cannot be implemented in a consistent manner across renderers. Many options will often graduate to standard features instead of hints over time.
+   * <br/> <br/>
+   * hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for OpenGL. This can help force anti-aliasing if it has not been enabled by the user. On some graphics cards, this can also be set by the graphics driver's control panel, however not all cards make this available. This hint must be called immediately after the size() command because it resets the renderer, obliterating any settings and anything drawn (and like size(), re-running the code that came before it again). 
+   * <br/> <br/>
+   * hint(DISABLE_OPENGL_2X_SMOOTH) - In Processing 1.0, Processing always enables 2x smoothing when the OpenGL renderer is used. This hint disables the default 2x smoothing and returns the smoothing behavior found in earlier releases, where smooth() and noSmooth() could be used to enable and disable smoothing, though the quality was inferior.
+   * <br/> <br/>
+   * hint(ENABLE_NATIVE_FONTS) - Use the native version fonts when they are installed, rather than the bitmapped version from a .vlw file. This is useful with the default (or JAVA2D) renderer setting, as it will improve font rendering speed. This is not enabled by default, because it can be misleading while testing because the type will look great on your machine (because you have the font installed) but lousy on others' machines if the identical font is unavailable. This option can only be set per-sketch, and must be called before any use of textFont().
+   * <br/> <br/>
+   * hint(DISABLE_DEPTH_TEST) - Disable the zbuffer, allowing you to draw on top of everything at will. When depth testing is disabled, items will be drawn to the screen sequentially, like a painting. This hint is most often used to draw in 3D, then draw in 2D on top of it (for instance, to draw GUI controls in 2D on top of a 3D interface). Starting in release 0149, this will also clear the depth buffer. Restore the default with hint(ENABLE_DEPTH_TEST), but note that with the depth buffer cleared, any 3D drawing that happens later in draw() will ignore existing shapes on the screen.
+   * <br/> <br/>
+   * hint(ENABLE_DEPTH_SORT) - Enable primitive z-sorting of triangles and lines in P3D and OPENGL. This can slow performance considerably, and the algorithm is not yet perfect. Restore the default with hint(DISABLE_DEPTH_SORT).
+   * <br/> <br/>
+   * hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the OPENGL renderer setting by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
+   * <br/> <br/>
+   * <!--hint(ENABLE_ACCURATE_TEXTURES) - Enables better texture accuracy for the P3D renderer. This option will do a better job of dealing with textures in perspective. hint(DISABLE_ACCURATE_TEXTURES) returns to the default. This hint is not likely to last long.
+   * <br/> <br/>-->
+   * As of release 0149, unhint() has been removed in favor of adding additional ENABLE/DISABLE constants to reset the default behavior. This prevents the double negatives, and also reinforces which hints can be enabled or disabled.
    * 
    * ( end auto-generated )
    * @webref rendering
@@ -831,7 +848,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#createGraphics(int, int, String, String)
    * @see PApplet#size(int, int)
    */
-  public void sizint which) {
+  public void hint(int which) {
     if (which > 0) {
       hints[which] = true;
     } else {
@@ -863,7 +880,12 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from beginShape.xml )
    * 
-   * Using the 
+   * Using the <b>beginShape()</b> and <b>endShape()</b> functions allow creating more complex forms. <b>beginShape()</b> begins recording vertices for a shape and <b>endShape()</b> stops recording. The value of the <b>MODE</b> parameter tells it which types of shapes to create from the provided vertices. With no mode specified, the shape can be any irregular polygon. The parameters available for beginShape() are POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, and QUAD_STRIP. After calling the <b>beginShape()</b> function, a series of <b>vertex()</b> commands must follow. To stop drawing the shape, call <b>endShape()</b>. The <b>vertex()</b> function with two parameters specifies a position in 2D and the <b>vertex()</b> function with three parameters specifies a position in 3D. Each shape will be outlined with the current stroke color and filled with the fill color. 
+   * <br/> <br/>
+   * Transformations such as <b>translate()</b>, <b>rotate()</b>, and <b>scale()</b> do not work within <b>beginShape()</b>. It is also not possible to use other shapes, such as <b>ellipse()</b> or <b>rect()</b> within <b>beginShape()</b>. 
+   * <br/> <br/>
+   * The P2D, P3D, and OPENGL renderer settings allow stroke() and fill() settings to be altered per-vertex, however the default JAVA2D renderer does not. Settings such as strokeWeight(), strokeCap(), and strokeJoin() cannot be changed while inside a beginShape()/endShape() block with any renderer.
+   * 
    * ( end auto-generated )
    * @webref shape:vertex
    * @param kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
@@ -944,7 +966,10 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from texture.xml )
    * 
-   * Sets a texture to be applied to vertex points. The 
+   * Sets a texture to be applied to vertex points. The <b>texture()</b> function must be called between <b>beginShape()</b> and <b>endShape()</b> and before any calls to <b>vertex()</b>.
+   * <br/> <br/>
+   * When textures are in use, the fill color is ignored. Instead, use tint() to specify the color of the texture as it is applied to the shape.
+   * 
    * ( end auto-generated )
    * @webref shape:vertex
    * @param image the texture to apply
@@ -1186,7 +1211,8 @@ public class PGraphics extends PImage implements PConstants {
 /**
    * ( begin auto-generated from vertex.xml )
    * 
-   * All shapes are constructed by connecting a series of vertices. 
+   * All shapes are constructed by connecting a series of vertices. <b>vertex()</b> is used to specify the vertex coordinates for points, lines, triangles, quads, and polygons and is used exclusively within the <b>beginShape()</b> and <b>endShape()</b> function. <br /><br />Drawing a vertex in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example.<br /><br />This function is also used to map a texture onto the geometry. The <b>texture()</b> function declares the texture to apply to the geometry and the <b>u</b> and <b>v</b> coordinates set define the mapping of this texture to the form. By default, the coordinates used for <b>u</b> and <b>v</b> are specified in relation to the image's size in pixels, but this relation can be changed with <b>textureMode()</b>.
+   * 
    * ( end auto-generated )
  * @webref shape:vertex
  * @param x x-coordinate of the vertex
@@ -1264,7 +1290,8 @@ public class PGraphics extends PImage implements PConstants {
 /**
    * ( begin auto-generated from endShape.xml )
    * 
-   * The 
+   * The <b>endShape()</b> function is the companion to <b>beginShape()</b> and may only be called after <b>beginShape()</b>. When <b>endshape()</b> is called, all of image data defined since the previous call to <b>beginShape()</b> is written into the image buffer. The constant CLOSE as the value for the MODE parameter to close the shape (to connect the beginning and the end). 
+   * 
    * ( end auto-generated )
  * @webref shape:vertex
  * @param mode use CLOSE to close the shape
@@ -1321,7 +1348,8 @@ public class PGraphics extends PImage implements PConstants {
 /**
    * ( begin auto-generated from bezierVertex.xml )
    * 
-   * Specifies vertex coordinates for Bezier curves. Each call to 
+   * Specifies vertex coordinates for Bezier curves. Each call to <b>bezierVertex()</b> defines the position of two control points and one anchor point of a Bezier curve, adding a new segment to a line or shape. The first time <b>bezierVertex()</b> is used within a <b>beginShape()</b> call, it must be prefaced with a call to <b>vertex()</b> to set the first anchor point. This function must be used between <b>beginShape()</b> and <b>endShape()</b> and only when there is no MODE parameter specified to <b>beginShape()</b>. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
+   * 
    * ( end auto-generated )
  * @webref shape:vertex
  * @param x2 the x-coordinate of the 1st control point
@@ -1442,7 +1470,8 @@ public class PGraphics extends PImage implements PConstants {
 /**
    * ( begin auto-generated from curveVertex.xml )
    * 
-   * Specifies vertex coordinates for curves. This function may only be used between 
+   * Specifies vertex coordinates for curves. This function may only be used between <b>beginShape()</b> and <b>endShape()</b> and only when there is no MODE parameter specified to <b>beginShape()</b>. The first and last points in a series of <b>curveVertex()</b> lines will be used to guide the beginning and end of a the curve. A minimum of four points is required to draw a tiny curve between the second and third points. Adding a fifth point with <b>curveVertex()</b> will draw the curve between the second, third, and fourth points. The <b>curveVertex()</b> function is an implementation of Catmull-Rom splines. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
+   * 
    * ( end auto-generated )
  * @webref shape:vertex
  * @param x the x-coordinate of the vertex
@@ -1570,7 +1599,10 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from point.xml )
    * 
-   * Draws a point, a coordinate in space at the dimension of one pixel. The first parameter is the horizontal value for the point, the second value is the vertical value for the point, and the optional third value is the depth value. Drawing this shape in 3D using the 
+   * Draws a point, a coordinate in space at the dimension of one pixel. The first parameter is the horizontal value for the point, the second value is the vertical value for the point, and the optional third value is the depth value. Drawing this shape in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example. 
+   * <br/> <br/>
+   * Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
+   * 
    * ( end auto-generated )
    *
    * @webref shape:2d_primitives
@@ -1598,7 +1630,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from line.xml )
    * 
-   * Draws a line (a direct path between two points) to the screen. The version of 
+   * Draws a line (a direct path between two points) to the screen. The version of <b>line()</b> with four parameters draws the line in 2D.  To color a line, use the <b>stroke()</b> function. A line cannot be filled, therefore the <b>fill()</b> method will not affect the color of a line. 2D lines are drawn with a width of one pixel by default, but this can be changed with the <b>strokeWeight()</b> function. The version with six parameters allows the line to be placed anywhere within XYZ space. Drawing this shape in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example. 
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param x1 x-coordinate of the first point
@@ -1681,7 +1714,8 @@ public class PGraphics extends PImage implements PConstants {
  /**
    * ( begin auto-generated from rectMode.xml )
    * 
-   * Modifies the location from which rectangles draw. The default mode is 
+   * Modifies the location from which rectangles draw. The default mode is <b>rectMode(CORNER)</b>, which specifies the location to be the upper left corner of the shape and uses the third and fourth parameters of <b>rect()</b> to specify the width and height. The syntax <b>rectMode(CORNERS)</b> uses the first and second parameters of <b>rect()</b> to set the location of one corner and uses the third and fourth parameters to set the opposite corner. The syntax <b>rectMode(CENTER)</b> draws the image from its center point and uses the third and forth parameters of <b>rect()</b> to specify the image's width and height. The syntax <b>rectMode(RADIUS)</b> draws the image from its center point and uses the third and forth parameters of <b>rect()</b> to specify half of the image's width and height. The parameter must be written in ALL CAPS because Processing is a case sensitive language. Note: In version 125, the mode named CENTER_RADIUS was shortened to RADIUS.
+   * 
    * ( end auto-generated )
   * @webref shape:attributes
   * @param mode either CORNER, CORNERS, CENTER, or RADIUS
@@ -1695,7 +1729,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from rect.xml )
    * 
-   * Draws a rectangle to the screen. A rectangle is a four-sided shape with every angle at ninety degrees. By default, the first two parameters set the location of the upper-left corner, the third sets the width, and the fourth sets the height. These parameters may be changed with the 
+   * Draws a rectangle to the screen. A rectangle is a four-sided shape with every angle at ninety degrees. By default, the first two parameters set the location of the upper-left corner, the third sets the width, and the fourth sets the height. These parameters may be changed with the <b>rectMode()</b> function. 
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param a x-coordinate of the rectangle
@@ -1848,7 +1883,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from ellipseMode.xml )
    * 
-   * The origin of the ellipse is modified by the 
+   * The origin of the ellipse is modified by the <b>ellipseMode()</b> function. The default configuration is <b>ellipseMode(CENTER)</b>, which specifies the location of the ellipse as the center of the shape. The RADIUS mode is the same, but the width and height parameters to <b>ellipse()</b> specify the radius of the ellipse, rather than the diameter. The CORNER mode draws the shape from the upper-left corner of its bounding box. The CORNERS mode uses the four parameters to <b>ellipse()</b> to set two opposing corners of the ellipse's bounding box. The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
+   * 
    * ( end auto-generated )
    * @webref shape:attributes
    * @param mode either CENTER, RADIUS, CORNER, or CORNERS
@@ -1862,7 +1898,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from ellipse.xml )
    * 
-   * Draws an ellipse (oval) in the display window. An ellipse with an equal 
+   * Draws an ellipse (oval) in the display window. An ellipse with an equal <b>width</b> and <b>height</b> is a circle. The first two parameters set the location, the third sets the width, and the fourth sets the height. The origin may be changed with the <b>ellipseMode()</b> function. 
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param a x-coordinate of the ellipse
@@ -1913,7 +1950,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from arc.xml )
    * 
-   * Draws an arc in the display window. Arcs are drawn along the outer edge of an ellipse defined by the 
+   * Draws an arc in the display window. Arcs are drawn along the outer edge of an ellipse defined by the <b>x</b>, <b>y</b>, <b>width</b> and <b>height</b> parameters. The origin or the arc's ellipse may be changed with the <b>ellipseMode()</b> function. The <b>start</b> and <b>stop</b> parameters specify the angles at which to draw the arc. 
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param a x-coordinate of the arc's ellipse
@@ -2077,7 +2115,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from sphereDetail.xml )
    * 
-   * Controls the detail used to render a sphere by adjusting the number of vertices of the sphere mesh. The default resolution is 30, which creates a fairly detailed sphere definition with vertices every 360/30 = 12 degrees. If you're going to render a great number of spheres per frame, it is advised to reduce the level of detail using this function. The setting stays active until 
+   * Controls the detail used to render a sphere by adjusting the number of vertices of the sphere mesh. The default resolution is 30, which creates a fairly detailed sphere definition with vertices every 360/30 = 12 degrees. If you're going to render a great number of spheres per frame, it is advised to reduce the level of detail using this function. The setting stays active until <b>sphereDetail()</b> is called again with a new parameter and so should <i>not</i> be called prior to every <b>sphere()</b> statement, unless you wish to render spheres with different settings, e.g. using less detail for smaller spheres or ones further away from the camera. To control the detail of the horizontal and vertical resolution independently, use the version of the functions with two parameters.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Code for sphereDetail() submitted by toxi [031031].
@@ -2281,7 +2320,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from bezierTangent.xml )
    * 
-   * Calculates the tangent of a point on a Bezier curve. There is a good definition of "tangent" at Wikipedia: 
+   * Calculates the tangent of a point on a Bezier curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Code submitted by Dave Bollinger (davol) for release 0136.
@@ -2422,8 +2462,12 @@ public class PGraphics extends PImage implements PConstants {
 
   // CATMULL-ROM CURVE
 
-
-  /**@generate curvePoint.xml
+  /*
+   * ( begin auto-generated from curvePoint.xml )
+   * 
+   * Evalutes the curve at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a curve at t.
+   * 
+   * ( end auto-generated )
    * @webref shape:curves
    * @param a coordinate of first point on the curve
    * @param b coordinate of second point on the curve
@@ -2450,7 +2494,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @generate curveTangent.xml
+   * ( begin auto-generated from curveTangent.xml )
+   * 
+   * Calculates the tangent of a point on a curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Code thanks to Dave Bollinger (Bug #715)
    *
@@ -2481,7 +2529,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @generate curveDetail.xml
+   * ( begin auto-generated from curveDetail.xml )
+   * 
+   * Sets the resolution at which curves display. The default value is 20. This function is only useful when using the P3D or OPENGL renderer as the default (JAVA2D) renderer does not use this information.
+   * 
+   * ( end auto-generated )
    * @webref shape:curves
    * @param detail resolution of the curves
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -2495,7 +2547,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @generate curveTightness.xml
+   * ( begin auto-generated from curveTightness.xml )
+   * 
+   * Modifies the quality of forms created with <b>curve()</b> and <b>curveVertex()</b>. The parameter <b>squishy</b> determines how the curve fits to the vertex points. The value 0.0 is the default value for <b>squishy</b> (this value defines the curves to be Catmull-Rom splines) and the value 1.0 connects all the points with straight lines. Values within the range -5.0 and 5.0 will deform the curves but will leave them recognizable and as values increase in magnitude, they will continue to deform.
+   * 
+   * ( end auto-generated )
    * @webref shape:curves
    * @param tightness amount of deformation from the original vertices
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -2573,8 +2629,13 @@ public class PGraphics extends PImage implements PConstants {
     endShape();
   }
 
- /**
-   * @generate curve.xml
+  /**
+   * ( begin auto-generated from curve.xml )
+   * 
+   * Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two parameters specify the ending control point. The middle parameters specify the start and stop of the curve. Longer curves can be created by putting a series of <b>curve()</b> functions together or using <b>curveVertex()</b>. An additional function called <b>curveTightness()</b> provides control for the visual quality of the curve. The <b>curve()</b> function is an implementation of Catmull-Rom splines. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
+   * 
+   * ( end auto-generated )
+   *
    * <h3>Advanced</h3>
    * As of revision 0070, this function no longer doubles the first
    * and last points. The curves are a bit more boring, but it's more
@@ -2658,7 +2719,17 @@ public class PGraphics extends PImage implements PConstants {
    */
    
   /**
-   * @generate smooth.xml
+   * ( begin auto-generated from smooth.xml )
+   * 
+   * Draws all geometry with smooth (anti-aliased) edges. This will slow down the frame rate of the application, but will enhance the visual refinement. 
+   * <br/><br/>
+   * Note that smooth() will also improve image quality of resized images, and noSmooth() will disable image (and font) smoothing altogether.
+   * <br/><br/>
+   * Starting in Processing 1.0, smoothing is always enabled with the OPENGL renderer setting. The smooth() and noSmooth() methods are ignored. See the hint() reference for information on disabling smoothing with OpenGL.
+   * <br/><br/>
+   * In the current release, smoothing is imperfect with the P2D and P3D renderers. In some situations, drawing with smooth() will create <a href="http://dev.processing.org/bugs/show_bug.cgi?id=200">small hairlines inside filled shapes</a> or <a href="http://dev.processing.org/bugs/show_bug.cgi?id=1000">inaccuracies with shape depth</a> can cause odd visual artifacts at the edges of shapes.
+   * 
+   * ( end auto-generated )
    * @webref shape:attributes
    * @see PGraphics#noSmooth()
    * @see PGraphics#hint(int)
@@ -2669,7 +2740,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   /**
-   * @generate noSmooth.xml
+   * ( begin auto-generated from noSmooth.xml )
+   * 
+   * Draws all geometry with jagged (aliased) edges.
+   * 
+   * ( end auto-generated )
    * @webref shape:attributes
    * @see PGraphics#smooth()
    */
@@ -2685,7 +2760,13 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @generate imageMode.xml
+   * ( begin auto-generated from imageMode.xml )
+   * 
+   * Modifies the location from which images draw. The default mode is <b>imageMode(CORNER)</b>, which specifies the location to be the upper left corner and uses the fourth and fifth parameters of <b>image()</b> to set the image's width and height. The syntax <b>imageMode(CORNERS)</b> uses the second and third parameters of <b>image()</b> to set the location of one corner of the image and uses the fourth and fifth parameters to set the opposite corner. Use <b>imageMode(CENTER)</b> to draw images centered at the given x and y position.
+   * <br/> <br/>
+   * The parameter to <b>imageMode()</b> must be written in ALL CAPS because Processing is a case sensitive language.
+   * 
+   * ( end auto-generated )
    * @webref image:loading_displaying
    * @param mode either CORNER, CORNERS, or CENTER
    * @see PApplet#loadImage(String, String)
@@ -2725,7 +2806,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @generate image.xml
+   * ( begin auto-generated from image.xml )
+   * 
+   * Displays images to the screen. The images must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the image. Processing currently works with GIF, JPEG, and Targa images. The color of an image may be modified with the <b>tint()</b> function and if a GIF has transparency, it will maintain its transparency. The <b>img</b> parameter specifies the image to display and the <b>x</b> and <b>y</b> parameters define the location of the image from its upper-left corner. The image is displayed at its original size unless the <b>width</b> and <b>height</b> parameters specify a different size. The <b>imageMode()</b> function changes the way the parameters work. A call to <b>imageMode(CORNERS)</b> will change the width and height parameters to define the x and y values of the opposite corner of the image.
+   * <br/> <br/>
+   * Starting with release 0124, when using the default (JAVA2D) renderer, 
+   * smooth() will also improve image quality of resized images.
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Starting with release 0124, when using the default (JAVA2D) renderer,
    * smooth() will also improve image quality of resized images.
@@ -2861,7 +2949,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @generate shapeMode.xml
+   * ( begin auto-generated from shapeMode.xml )
+   * 
+   * Modifies the location from which shapes draw. The default mode is <b>shapeMode(CORNER)</b>, which specifies the location to be the upper left corner of the shape and uses the third and fourth parameters of <b>shape()</b> to specify the width and height. The syntax <b>shapeMode(CORNERS)</b> uses the first and second parameters of <b>shape()</b> to set the location of one corner and uses the third and fourth parameters to set the opposite corner. The syntax <b>shapeMode(CENTER)</b> draws the shape from its center point and uses the third and forth parameters of <b>shape()</b> to specify the width and height. The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
+   * 
+   * ( end auto-generated )
    * @webref shape:loading_displaying
    * @param mode either CORNER, CORNERS, CENTER
    * @see PGraphics#shape(PShape)
@@ -2909,7 +3001,13 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @generate shape.xml
+   * ( begin auto-generated from shape.xml )
+   * 
+   * Displays shapes to the screen. The shapes must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the shape. Processing currently works with SVG shapes only. The <b>sh</b> parameter specifies the shape to display and the <b>x</b> and <b>y</b> parameters define the location of the shape from its upper-left corner. The shape is displayed at its original size unless the <b>width</b> and <b>height</b> parameters specify a different size. The <b>shapeMode()</b> function changes the way the parameters work. A call to <b>shapeMode(CORNERS)</b>, for example, will change the width and height parameters to define the x and y values of the opposite corner of the shape.
+   * <br /><br />
+   * Note complex shapes may draw awkwardly with P2D, P3D, and OPENGL. Those renderers do not yet support shapes that have holes or complicated breaks. 
+   * 
+   * ( end auto-generated )
    * @webref shape:loading_displaying
    * @param shape the shape to display
    * @param x x-coordinate of the shape
@@ -2960,7 +3058,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @generate textAlign.xml
+   * ( begin auto-generated from textAlign.xml )
+   * 
+   * Sets the current alignment for drawing text. The parameters LEFT, CENTER, and RIGHT set the display characteristics of the letters in relation to the values for the <b>x</b> and <b>y</b> parameters of the <b>text()</b> function.
+   * <br/> <br/>
+   * In Processing 0125 and later, an optional second parameter can be used to vertically align the text. BASELINE is the default, and the vertical alignment will be reset to BASELINE if the second parameter is not used. The TOP and CENTER parameters are straightforward. The BOTTOM parameter offsets the line based on the current <b>textDescent()</b>. For multiple lines, the final line will be aligned to the bottom, with the previous lines appearing above it.
+   * <br/> <br/>
+   * When using <b>text()</b> with width and height parameters, BASELINE is ignored, and treated as TOP. (Otherwise, text would by default draw outside the box, since BASELINE is the default setting. BASELINE is not a useful drawing mode for text drawn in a rectangle.)
+   * <br/> <br/>
+   * The vertical alignment is based on the value of <b>textAscent()</b>, which many fonts do not specify correctly. It may be necessary to use a hack and offset by a few pixels by hand so that the offset looks correct. To do this as less of a hack, use some percentage of <b>textAscent()</b> or <b>textDescent()</b> so that the hack works even if you change the size of the font.
+   * 
+   * ( end auto-generated )
    * @webref typography:attributes
    * @param alignX horizontal alignment, either LEFT, CENTER, or RIGHT
    * @param alignY vertical alignment, either TOP, BOTTOM, CENTER, or BASELINE

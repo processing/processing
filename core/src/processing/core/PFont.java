@@ -167,7 +167,8 @@ public class PFont implements PConstants {
   /**
    * ( begin auto-generated from PFont.xml )
    * 
-   * PFont is the font class for Processing. To create a font to use with Processing, select "Create Font..." from the Tools menu. This will create a font in the format Processing requires and also adds it to the current sketch's data directory. Processing displays fonts using the .vlw font format, which uses images for each letter, rather than defining them through vector data. The 
+   * PFont is the font class for Processing. To create a font to use with Processing, select "Create Font..." from the Tools menu. This will create a font in the format Processing requires and also adds it to the current sketch's data directory. Processing displays fonts using the .vlw font format, which uses images for each letter, rather than defining them through vector data. The <b>loadFont()</b> function constructs a new font and <b>textFont()</b> makes a font active. The <b>list()</b> method creates a list of the fonts installed on the computer, which is useful information to use with the <b>createFont()</b> function for dynamically converting fonts into a format to use with Processing. 
+   * 
    * ( end auto-generated )
    * @webref typography:pfont
    * @param font
