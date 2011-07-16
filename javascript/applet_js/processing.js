@@ -1,6 +1,6 @@
 /***
 
-    P R O C E S S I N G . J S - 1.2.1
+    P R O C E S S I N G . J S - 1.2.3
     a port of the Processing visualization language
 
     Processing.js is licensed under the MIT License, see LICENSE.
@@ -10,7 +10,9 @@
 
 ***/
 
-(function(window, document, Math, nop, undef) {
+(function(window, document, Math, undef) {
+
+  var nop = function(){};
 
   var debug = (function() {
     if ("console" in window) {
@@ -36,17 +38,6 @@
   };
 
   var isDOMPresent = ("document" in this) && !("fake" in this.document);
-
-  /* Browsers fixes start */
-  (function fixOperaCreateImageData() {
-    try {
-      if (!("createImageData" in CanvasRenderingContext2D.prototype)) {
-        CanvasRenderingContext2D.prototype.createImageData = function (sw, sh) {
-          return new ImageData(sw, sh);
-        };
-      }
-    } catch(e) {}
-  }());
 
   // Typed Arrays: fallback to WebGL arrays or Native JS arrays if unavailable
   function setupTypedArray(name, fallback) {
@@ -477,7 +468,7 @@
       if (arguments.length === 0) {
         array = [];
       } else if (arguments.length > 0 && typeof arguments[0] !== 'number') {
-        array = arguments[0];
+        array = arguments[0].toArray();
       } else {
         array = [];
         array.length = 0 | arguments[0];
@@ -660,7 +651,7 @@
        * @returns {ArrayList} a clone of this ArrayList instance
        */
       this.clone = function() {
-        return new ArrayList(array.slice(0));
+        return new ArrayList(this);
       };
 
       /**
@@ -1093,7 +1084,7 @@
     PVector.prototype = {
       set: function(v, y, z) {
         if (arguments.length === 1) {
-          this.set(v.x || v[0], v.y || v[1], v.z || v[2]);
+          this.set(v.x || v[0] || 0, v.y || v[1] || 0, v.z || v[2] || 0);
         } else {
           this.x = v;
           this.y = y;
@@ -1218,6 +1209,110 @@
   //defaultScope.PShape    = PShape;     // TODO
   //defaultScope.PShapeSVG = PShapeSVG;  // TODO
 
+  ////////////////////////////////////////////////////////////////////////////
+  // Class inheritance helper methods
+  ////////////////////////////////////////////////////////////////////////////
+
+  defaultScope.defineProperty = function(obj, name, desc) {
+    if("defineProperty" in Object) {
+      Object.defineProperty(obj, name, desc);
+    } else {
+      if (desc.hasOwnProperty("get")) {
+        obj.__defineGetter__(name, desc.get);
+      }
+      if (desc.hasOwnProperty("set")) {
+        obj.__defineSetter__(name, desc.set);
+      }
+    }
+  };
+
+  function extendClass(subClass, baseClass) {
+    function extendGetterSetter(propertyName) {
+      defaultScope.defineProperty(subClass, propertyName, {
+        get: function() {
+          return baseClass[propertyName];
+        },
+        set: function(v) {
+          baseClass[propertyName]=v;
+        },
+        enumerable: true
+      });
+    }
+
+    var properties = [];
+    for (var propertyName in baseClass) {
+      if (typeof baseClass[propertyName] === 'function') {
+        // Overriding all non-overriden functions
+        if (!subClass.hasOwnProperty(propertyName)) {
+          subClass[propertyName] = baseClass[propertyName];
+        }
+      } else if(propertyName.charAt(0) !== "$" && !(propertyName in subClass)) {
+        // Delaying the properties extension due to the IE9 bug (see #918).
+        properties.push(propertyName);
+      }
+    }
+    while (properties.length > 0) {
+      extendGetterSetter(properties.shift());
+    }
+  }
+
+  defaultScope.extendClassChain = function(base) {
+    var path = [base];
+    for (var self = base.$upcast; self; self = self.$upcast) {
+      extendClass(self, base);
+      path.push(self);
+      base = self;
+    }
+    while (path.length > 0) {
+      path.pop().$self=base;
+    }
+  };
+
+  defaultScope.extendStaticMembers = function(derived, base) {
+    extendClass(derived, base);
+  };
+
+  defaultScope.extendInterfaceMembers = function(derived, base) {
+    extendClass(derived, base);
+  };
+
+  defaultScope.addMethod = function(object, name, fn, superAccessor) {
+    if (object[name]) {
+      var args = fn.length,
+        oldfn = object[name];
+
+      object[name] = function() {
+        if (arguments.length === args) {
+          return fn.apply(this, arguments);
+        } else {
+          return oldfn.apply(this, arguments);
+        }
+      };
+    } else {
+      object[name] = fn;
+    }
+  };
+
+  defaultScope.createJavaArray = function(type, bounds) {
+    var result = null;
+    if (typeof bounds[0] === 'number') {
+      var itemsCount = 0 | bounds[0];
+      if (bounds.length <= 1) {
+        result = [];
+        result.length = itemsCount;
+        for (var i = 0; i < itemsCount; ++i) {
+          result[i] = 0;
+        }
+      } else {
+        result = [];
+        var newBounds = bounds.slice(1);
+        for (var j = 0; j < itemsCount; ++j) {
+          result.push(defaultScope.createJavaArray(type, newBounds));
+        }
+      }
+    }
+    return result;
+  };
 
   var colors = {
     aliceblue:            "#f0f8ff",
@@ -1397,7 +1492,6 @@
     var pgraphicsMode = (arguments.length === 0);
     if (pgraphicsMode) {
       curElement = document.createElement("canvas");
-      p.canvas = curElement;
     }
 
     // PJS specific (non-p5) methods and properties to externalize
@@ -1463,19 +1557,6 @@
     // The height/width of the canvas
     p.width           = 100;
     p.height          = 100;
-
-    p.defineProperty = function(obj, name, desc) {
-      if("defineProperty" in Object) {
-        Object.defineProperty(obj, name, desc);
-      } else {
-        if (desc.hasOwnProperty("get")) {
-          obj.__defineGetter__(name, desc.get);
-        }
-        if (desc.hasOwnProperty("set")) {
-          obj.__defineSetter__(name, desc.set);
-        }
-      }
-    };
 
     // "Private" variables used to maintain state
     var curContext,
@@ -1674,7 +1755,8 @@
 
     var rectNorms = new Float32Array([0,0,1, 0,0,1, 0,0,1, 0,0,1]);
 
-    // Vertex shader for points and lines
+
+    // Shader for points and lines in begin/endShape
     var vShaderSrcUnlitShape =
       "varying vec4 frontColor;" +
 
@@ -1683,9 +1765,11 @@
 
       "uniform mat4 uView;" +
       "uniform mat4 uProjection;" +
+      "uniform float pointSize;" +
 
       "void main(void) {" +
       "  frontColor = aColor;" +
+      "  gl_PointSize = pointSize;" +
       "  gl_Position = uProjection * uView * vec4(aVertex, 1.0);" +
       "}";
 
@@ -1700,7 +1784,7 @@
       "  gl_FragColor = frontColor;" +
       "}";
 
-    // Vertex shader for points and lines
+    // Shader for rect, text, box outlines, sphere outlines, point() and line()
     var vertexShaderSource2D =
       "varying vec4 frontColor;" +
 
@@ -1803,8 +1887,9 @@
       "  if(index == 4) return lights4;" +
       "  if(index == 5) return lights5;" +
       "  if(index == 6) return lights6;" +
-      // some cards complain that not all paths return if we have
-      // this last one in a conditional.
+      // Do not use a conditional for the last return statement
+      // because some video cards will fail and complain that
+      // "not all paths return"
       "  return lights7;" +
       "}" +
 
@@ -3099,6 +3184,7 @@
             m = params.replace(/,+/g, " ").split(/\s+/);
           };
         }()));
+        return m;
       }
 
       return function(str) {
@@ -3335,6 +3421,8 @@
           } else if (valOf === 109) {  // m - move to (relative)
             if (tmpArray.length >= 2 && tmpArray.length % 2 === 0) {
               // need one+ pairs of co-ordinates
+              cx += tmpArray[0];
+              cy += tmpArray[1];
               this.parsePathMoveto(cx,cy);
               if (tmpArray.length > 2) {
                 for (j = 2, k = tmpArray.length; j < k; j+=2) {
@@ -3701,6 +3789,9 @@
       this.params[1] = this.element.getFloatAttribute("y");
       this.params[2] = this.element.getFloatAttribute("width");
       this.params[3] = this.element.getFloatAttribute("height");
+      if (this.params[2] < 0 || this.params[3] < 0) {
+        throw("svg error: negative width or height found while parsing <rect>");
+      }
     };
     /**
      * @member PShapeSVG
@@ -3713,15 +3804,21 @@
       this.family = PConstants.PRIMITIVE;
       this.params = [];
 
-      this.params[0] = this.element.getFloatAttribute("cx");
-      this.params[1] = this.element.getFloatAttribute("cy");
+      this.params[0] = this.element.getFloatAttribute("cx") | 0 ;
+      this.params[1] = this.element.getFloatAttribute("cy") | 0;
 
       var rx, ry;
       if (val) {
         rx = ry = this.element.getFloatAttribute("r");
+        if (rx < 0) {
+          throw("svg error: negative radius found while parsing <circle>");
+        }
       } else {
         rx = this.element.getFloatAttribute("rx");
         ry = this.element.getFloatAttribute("ry");
+        if (rx < 0 || ry < 0) {
+          throw("svg error: negative x-axis radius or y-axis radius found while parsing <ellipse>");
+        }
       }
       this.params[0] -= rx;
       this.params[1] -= ry;
@@ -3826,6 +3923,10 @@
         this.fill = false;
       } else if (fillText.indexOf("#") === 0) {
         this.fill      = true;
+        if (fillText.length === 4) {
+          // convert #00F to #0000FF
+          fillText = fillText.replace(/#(.)(.)(.)/,"#$1$1$2$2$3$3");
+        }
         this.fillColor = opacityMask |
                          (parseInt(fillText.substring(1), 16 )) &
                          0xFFFFFF;
@@ -3834,21 +3935,11 @@
         this.fillColor = opacityMask | this.parseRGB(fillText);
       } else if (fillText.indexOf("url(#") === 0) {
         this.fillName = fillText.substring(5, fillText.length - 1 );
-        /*Object fillObject = findChild(fillName);
-        if (fillObject instanceof Gradient) {
-          fill = true;
-          fillGradient = (Gradient) fillObject;
-          fillGradientPaint = calcGradientPaint(fillGradient); //, opacity);
-        } else {
-          System.err.println("url " + fillName + " refers to unexpected data");
-        }*/
-      } else {
-        if (colors[fillText]) {
-          this.fill      = true;
-          this.fillColor = opacityMask |
-                           (parseInt(colors[fillText].substring(1), 16)) &
-                           0xFFFFFF;
-        }
+      } else if (colors[fillText]) {
+        this.fill      = true;
+        this.fillColor = opacityMask |
+                         (parseInt(colors[fillText].substring(1), 16)) &
+                         0xFFFFFF;
       }
     };
     /**
@@ -3879,6 +3970,10 @@
         this.stroke = false;
       } else if (strokeText.charAt( 0 ) === "#") {
         this.stroke      = true;
+        if (strokeText.length === 4) {
+          // convert #00F to #0000FF
+          strokeText = strokeText.replace(/#(.)(.)(.)/,"#$1$1$2$2$3$3");
+        }
         this.strokeColor = opacityMask |
                            (parseInt( strokeText.substring( 1 ), 16 )) &
                            0xFFFFFF;
@@ -3887,22 +3982,11 @@
         this.strokeColor = opacityMask | this.parseRGB(strokeText);
       } else if (strokeText.indexOf( "url(#" ) === 0) {
         this.strokeName = strokeText.substring(5, strokeText.length - 1);
-          //this.strokeObject = findChild(strokeName);
-        /*if (strokeObject instanceof Gradient) {
-          strokeGradient = (Gradient) strokeObject;
-          strokeGradientPaint = calcGradientPaint(strokeGradient);
-                                //, opacity);
-        } else {
-          System.err.println("url " + strokeName +
-                             " refers to unexpected data");
-        }*/
-      } else {
-        if (colors[strokeText]){
-          this.stroke      = true;
-          this.strokeColor = opacityMask |
-                             (parseInt(colors[strokeText].substring(1), 16)) &
-                             0xFFFFFF;
-        }
+      } else if (colors[strokeText]) {
+        this.stroke      = true;
+        this.strokeColor = opacityMask |
+                           (parseInt(colors[strokeText].substring(1), 16)) &
+                           0xFFFFFF;
       }
     };
     /**
@@ -6839,14 +6923,6 @@
       return  p.color.toHSB(colInt)[0];
     };
 
-    var verifyChannel = function(aColor) {
-      if (aColor.constructor === Array) {
-        return aColor;
-      } else {
-        return p.color(aColor);
-      }
-    };
-
     /**
     * Extracts the red value from a color, scaled to match current colorMode().
     * This value is always returned as a float so be careful not to assign it to an int value.
@@ -6963,26 +7039,6 @@
       var a = parseFloat(p.lerp(a1, a2, amt) * colorModeA);
 
       return p.color.toInt(r, g, b, a);
-    };
-
-    // Forced default color mode for #aaaaaa style
-    /**
-    * Convert 3 int values to a color in the default color mode RGB even if curColorMode is not set to RGB
-    *
-    * @param {int} aValue1              range for the red color
-    * @param {int} aValue2              range for the green color
-    * @param {int} aValue3              range for the blue color
-    *
-    * @returns {Color}
-    *
-    * @see color
-    */
-    p.defaultColor = function(aValue1, aValue2, aValue3) {
-      var tmpColorMode = curColorMode;
-      curColorMode = PConstants.RGB;
-      var c = p.color(aValue1 / 255 * colorModeX, aValue2 / 255 * colorModeY, aValue3 / 255 * colorModeZ);
-      curColorMode = tmpColorMode;
-      return c;
     };
 
     /**
@@ -7326,13 +7382,13 @@
     * @see popMatrix
     * @see pushMatrix
     */
-    p.rotateZ = function(angleInRadians) {
+    Drawing2D.prototype.rotateZ = function() {
+      throw "rotateZ() is not supported in 2D mode. Use rotate(float) instead.";
+    };
+
+    Drawing3D.prototype.rotateZ = function(angleInRadians) {
       forwardTransform.rotateZ(angleInRadians);
       reverseTransform.invRotateZ(angleInRadians);
-      if (p.use3DContext) {
-        return;
-      }
-      curContext.rotate(angleInRadians);
     };
 
     /**
@@ -7386,7 +7442,9 @@
     * @see pushMatrix
     */
     Drawing2D.prototype.rotate = function(angleInRadians) {
-      p.rotateZ(angleInRadians);
+      forwardTransform.rotateZ(angleInRadians);
+      reverseTransform.invRotateZ(angleInRadians);
+      curContext.rotate(angleInRadians);
     };
 
     Drawing3D.prototype.rotate = function(angleInRadians) {
@@ -7673,6 +7731,7 @@
       doLoop = false;
       loopStarted = false;
       clearInterval(looping);
+      curSketch.onPause();
     };
 
     /**
@@ -7693,7 +7752,9 @@
 
       looping = window.setInterval(function() {
         try {
+          curSketch.onFrameStart();
           p.redraw();
+          curSketch.onFrameEnd();
         } catch(e_loop) {
           window.clearInterval(looping);
           throw e_loop;
@@ -7701,6 +7762,7 @@
       }, curMsPerFrame);
       doLoop = true;
       loopStarted = true;
+      curSketch.onLoop();
     };
 
     /**
@@ -7726,7 +7788,31 @@
       }
     };
 
+    ////////////////////////////////////////////////////////////////////////////
+    // JavaScript event binding and releasing
+    ////////////////////////////////////////////////////////////////////////////
+
     var eventHandlers = [];
+
+    function attachEventHandler(elem, type, fn) {
+      if (elem.addEventListener) {
+        elem.addEventListener(type, fn, false);
+      } else {
+        elem.attachEvent("on" + type, fn);
+      }
+      eventHandlers.push({elem: elem, type: type, fn: fn});
+    }
+
+    function detachEventHandler(eventHandler) {
+      var elem = eventHandler.elem,
+          type = eventHandler.type,
+          fn   = eventHandler.fn;
+      if (elem.removeEventListener) {
+        elem.removeEventListener(type, fn, false);
+      } else if (elem.detachEvent) {
+        elem.detachEvent("on" + type, fn);
+      }
+    }
 
     /**
     * Quits/stops/exits the program. Programs without a draw() function exit automatically
@@ -7751,17 +7837,11 @@
         }
       }
 
-      for (var i=0, ehl=eventHandlers.length; i<ehl; i++) {
-        var elem = eventHandlers[i][0],
-            type = eventHandlers[i][1],
-            fn   = eventHandlers[i][2];
-
-        if (elem.removeEventListener) {
-          elem.removeEventListener(type, fn, false);
-        } else if (elem.detachEvent) {
-          elem.detachEvent("on" + type, fn);
-        }
+      var i = eventHandlers.length;
+      while (i--) {
+        detachEventHandler(eventHandlers[i]);
       }
+      curSketch.onExit();
     };
 
     ////////////////////////////////////////////////////////////////////////////
@@ -7840,29 +7920,15 @@
     };
 
     // PGraphics methods
-    // TODO: These functions are suppose to be called before any operations are called on the
-    //       PGraphics object. They currently do nothing.
-    p.beginDraw = function() {};
-    p.endDraw = function() {};
+    // These functions exist only for compatibility with P5
+    p.beginDraw = nop;
+    p.endDraw = nop;
 
     // Imports an external Processing.js library
     p.Import = function(lib) {
       // Replace evil-eval method with a DOM <script> tag insert method that
       // binds new lib code to the Processing.lib names-space and the current
       // p context. -F1LT3R
-    };
-
-    var contextMenu = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-    };
-
-    p.disableContextMenu = function() {
-      curElement.addEventListener('contextmenu', contextMenu, false);
-    };
-
-    p.enableContextMenu = function() {
-      curElement.removeEventListener('contextmenu', contextMenu, false);
     };
 
     /**
@@ -8260,7 +8326,7 @@
     * @see saveStrings
     * @see saveBytes
     */
-    p.loadBytes = function(url, strings) {
+    p.loadBytes = function(url) {
       var string = ajax(url);
       var ret = [];
 
@@ -8458,6 +8524,10 @@
      * @return {String[]} an array of tokens from the split string
      */
     p.__split = function(subject, regex, limit) {
+      if (typeof subject !== "string") {
+        return subject.split.apply(subject, removeFirstArgument(arguments));
+      }
+
       var pattern = new RegExp(regex);
 
       // If limit is not specified, use JavaScript's built-in String.split.
@@ -8509,9 +8579,7 @@
       if (subject.hashCode instanceof Function) {
         return subject.hashCode.apply(subject, removeFirstArgument(arguments));
       }
-
-      // TODO use virtHashCode for HashMap here
-      return 0 | subject;
+      return virtHashCode(subject);
     };
     /**
      * The __printStackTrace() prints stack trace to the console.
@@ -8940,11 +9008,11 @@
     * @see dist
     */
     p.mag = function(a, b, c) {
-      if (arguments.length === 2) {
-        return Math.sqrt(a * a + b * b);
-      } else if (arguments.length === 3) {
+      if (c) {
         return Math.sqrt(a * a + b * b + c * c);
       }
+
+      return Math.sqrt(a * a + b * b);
     };
 
     /**
@@ -9620,15 +9688,14 @@
         // lighting calculations could be ommitted from that program object.
         programObject2D = createProgramObject(curContext, vertexShaderSource2D, fragmentShaderSource2D);
 
-        // set the defaults
-        curContext.useProgram(programObject2D);
-        p.strokeWeight(1.0);
-
-        programObject3D = createProgramObject(curContext, vertexShaderSource3D, fragmentShaderSource3D);
         programObjectUnlitShape = createProgramObject(curContext, vShaderSrcUnlitShape, fShaderSrcUnlitShape);
+
+        // Set the default point and line width for the 2D and unlit shapes.
+        p.strokeWeight(1.0);
 
         // Now that the programs have been compiled, we can set the default
         // states for the lights.
+        programObject3D = createProgramObject(curContext, vertexShaderSource3D, fragmentShaderSource3D);
         curContext.useProgram(programObject3D);
 
         // assume we aren't using textures by default
@@ -10361,7 +10428,6 @@
         uniformi("picktype2d", programObject2D, "picktype", 0);
         vertexAttribPointer("vertex2d", programObject2D, "Vertex", 3, boxOutlineBuffer);
         disableVertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord");
-        curContext.lineWidth(lineWidth);
         curContext.drawArrays(curContext.LINES, 0, boxOutlineVerts.length / 3);
       }
     };
@@ -10603,7 +10669,6 @@
         disableVertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord");
         uniformf("color2d", programObject2D, "color", strokeStyle);
         uniformi("picktype2d", programObject2D, "picktype", 0);
-        curContext.lineWidth(lineWidth);
         curContext.drawArrays(curContext.LINE_STRIP, 0, sphereVerts.length / 3);
       }
     };
@@ -11133,8 +11198,17 @@
 
     Drawing3D.prototype.strokeWeight = function(w) {
       DrawingShared.prototype.strokeWeight.apply(this, arguments);
+      
+      // Processing groups the weight of points and lines under this one function,
+      // but for WebGL, we need to set a uniform for points and call a function for line.
+      
       curContext.useProgram(programObject2D);
       uniformf("pointSize2d", programObject2D, "pointSize", w);
+      
+      curContext.useProgram(programObjectUnlitShape);
+      uniformf("pointSizeUnlitShape", programObjectUnlitShape, "pointSize", w);
+      
+      curContext.lineWidth(w);
     };
 
     /**
@@ -11146,7 +11220,6 @@
      */
     p.strokeCap = function(value) {
       drawing.$ensureContext().lineCap = value;
-
     };
 
     /**
@@ -11318,32 +11391,18 @@
      * @see curveVertex
      * @see texture
      */
-    DrawingShared.prototype.vertex = function() {
+
+    Drawing2D.prototype.vertex = function(x, y, u, v) {
       var vert = [];
 
       if (firstVert) { firstVert = false; }
-
-      if (arguments.length === 4) { //x, y, u, v
-        vert[0] = arguments[0];
-        vert[1] = arguments[1];
-        vert[2] = 0;
-        vert[3] = arguments[2];
-        vert[4] = arguments[3];
-      } else { // x, y, z, u, v
-        vert[0] = arguments[0];
-        vert[1] = arguments[1];
-        vert[2] = arguments[2] || 0;
-        vert[3] = arguments[3] || 0;
-        vert[4] = arguments[4] || 0;
-      }
-
       vert["isVert"] = true;
 
-      return vert;
-    };
-
-    Drawing2D.prototype.vertex = function() {
-      var vert = DrawingShared.prototype.vertex.apply(this, arguments);
+      vert[0] = x;
+      vert[1] = y;
+      vert[2] = 0;
+      vert[3] = u;
+      vert[4] = v;
 
       // fill and stroke color
       vert[5] = currentFillColor;
@@ -11352,8 +11411,17 @@
       vertArray.push(vert);
     };
 
-    Drawing3D.prototype.vertex = function() {
-      var vert = DrawingShared.prototype.vertex.apply(this, arguments);
+    Drawing3D.prototype.vertex = function(x, y, z, u, v) {
+      var vert = [];
+
+      if (firstVert) { firstVert = false; }
+      vert["isVert"] = true;
+
+      vert[0] = x;
+      vert[1] = y;
+      vert[2] = z || 0;
+      vert[3] = u || 0;
+      vert[4] = v || 0;
 
       // fill rgba
       vert[5] = fillStyle[0];
@@ -11391,11 +11459,15 @@
       view.transpose();
 
       curContext.useProgram(programObjectUnlitShape);
+      
       uniformMatrix("uViewUS", programObjectUnlitShape, "uView", false, view.array());
+
       vertexAttribPointer("aVertexUS", programObjectUnlitShape, "aVertex", 3, pointBuffer);
       curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array(vArray), curContext.STREAM_DRAW);
+
       vertexAttribPointer("aColorUS", programObjectUnlitShape, "aColor", 4, fillColorBuffer);
       curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array(cArray), curContext.STREAM_DRAW);
+
       curContext.drawArrays(curContext.POINTS, 0, vArray.length/3);
     };
 
@@ -11434,7 +11506,6 @@
       curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array(vArray), curContext.STREAM_DRAW);
       vertexAttribPointer("aColorUS", programObjectUnlitShape, "aColor", 4, strokeColorBuffer);
       curContext.bufferData(curContext.ARRAY_BUFFER, new Float32Array(cArray), curContext.STREAM_DRAW);
-      curContext.lineWidth(lineWidth);
       curContext.drawArrays(ctxMode, 0, vArray.length/3);
     };
 
@@ -12820,14 +12891,7 @@
     * @see strokeCap
     * @see beginShape
     */
-    Drawing2D.prototype.line = function() {
-      var x1, y1, x2, y2;
-
-      x1 = arguments[0];
-      y1 = arguments[1];
-      x2 = arguments[2];
-      y2 = arguments[3];
-
+    Drawing2D.prototype.line = function(x1, y1, x2, y2) {
       // a line is only defined if it has different start and end coordinates.
       // If they are the same, we call point instead.
       if (x1===x2 && y1===y2) {
@@ -12860,23 +12924,12 @@
       }
     };
 
-    Drawing3D.prototype.line = function() {
-      var x1, y1, z1, x2, y2, z2;
-
-      if (arguments.length === 6) {
-        x1 = arguments[0];
-        y1 = arguments[1];
-        z1 = arguments[2];
-        x2 = arguments[3];
-        y2 = arguments[4];
-        z2 = arguments[5];
-      } else if (arguments.length === 4) {
-        x1 = arguments[0];
-        y1 = arguments[1];
-        z1 = 0;
-        x2 = arguments[2];
-        y2 = arguments[3];
+    Drawing3D.prototype.line = function(x1, y1, z1, x2, y2, z2) {
+      if (y2 === undef || z2 === undef) { // 2D line called in 3D context
         z2 = 0;
+        y2 = x2;
+        x2 = z1;
+        z1 = 0;
       }
 
       // a line is only defined if it has different start and end coordinates.
@@ -12901,8 +12954,6 @@
 
         uniformf("color2d", programObject2D, "color", strokeStyle);
         uniformi("picktype2d", programObject2D, "picktype", 0);
-
-        curContext.lineWidth(lineWidth);
 
         vertexAttribPointer("vertex2d", programObject2D, "Vertex", 3, lineBuffer);
         disableVertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord");
@@ -13171,7 +13222,6 @@
         uniformi("picktype2d", programObject2D, "picktype", 0);
         vertexAttribPointer("vertex2d", programObject2D, "Vertex", 3, rectBuffer);
         disableVertexAttribPointer("aTextureCoord2d", programObject2D, "aTextureCoord");
-        curContext.lineWidth(lineWidth);
         curContext.drawArrays(curContext.LINE_LOOP, 0, rectVerts.length / 3);
       }
 
@@ -14358,11 +14408,11 @@
      * @see #tint()
      * @see #colorMode()
      */
-    DrawingShared.prototype.background = function() {
+    var backgroundHelper = function(arg1, arg2, arg3, arg4) {
       var obj;
       
-      if (arguments[0] instanceof PImage) {
-        obj = arguments[0];
+      if (arg1 instanceof PImage) {
+        obj = arg1;
 
         if (!obj.loaded) {
           throw "Error using image in background(): PImage not loaded.";
@@ -14370,20 +14420,15 @@
           throw "Background image must be the same dimensions as the canvas.";
         }
       } else {
-        obj = p.color.apply(this, arguments);
-        
-        // override alpha value, processing ignores the alpha for background color
-        if (!curSketch.options.isTransparent) {
-          obj = obj | PConstants.ALPHA_MASK;
-        }
+        obj = p.color(arg1, arg2, arg3, arg4);
       }
       
       backgroundObj = obj;
     };
 
-    Drawing2D.prototype.background = function() {
-      if (arguments.length > 0) {
-        DrawingShared.prototype.background.apply(this, arguments);
+    Drawing2D.prototype.background = function(arg1, arg2, arg3, arg4) {
+      if (arg1 !== undef) {
+        backgroundHelper(arg1, arg2, arg3, arg4);
       }
 
       if (backgroundObj instanceof PImage) {
@@ -14395,7 +14440,8 @@
         saveContext();
         curContext.setTransform(1, 0, 0, 1, 0, 0);
 
-        if (curSketch.options.isTransparent) {
+        // If the background is transparent
+        if (p.alpha(backgroundObj) !== colorModeA) {
           curContext.clearRect(0,0, p.width, p.height);
         }
         curContext.fillStyle = p.color.toString(backgroundObj);
@@ -14405,9 +14451,9 @@
       }
     };
 
-    Drawing3D.prototype.background = function() {
+    Drawing3D.prototype.background = function(arg1, arg2, arg3, arg4) {
       if (arguments.length > 0) {
-        DrawingShared.prototype.background.apply(this, arguments);
+        backgroundHelper(arg1, arg2, arg3, arg4);
       }
 
       var c = p.color.toGLArray(backgroundObj);
@@ -16322,9 +16368,18 @@
 
       var buildPath = function(d) {
         var c = regex("[A-Za-z][0-9\\- ]+|Z", d);
+        var beforePathDraw = function() {
+          saveContext();
+          return drawing.$ensureContext();
+        };
+        var afterPathDraw = function() {
+          executeContextFill();
+          executeContextStroke();
+          restoreContext();
+        };
 
         // Begin storing path object
-        path = "var path={draw:function(){saveContext();curContext.beginPath();";
+        path = "return {draw:function(){var curContext=beforePathDraw();curContext.beginPath();";
 
         x = 0;
         y = 0;
@@ -16407,12 +16462,11 @@
           lastCom = com[0];
         }
 
-        path += "executeContextFill();executeContextStroke();";
-        path += "restoreContext();";
+        path += "afterPathDraw();";
         path += "curContext.translate(" + horiz_adv_x + ",0);";
         path += "}}";
 
-        return path;
+        return ((new Function("beforePathDraw", "afterPathDraw", path))(beforePathDraw, afterPathDraw));
       };
 
       // Parse SVG font-file into block of Canvas commands
@@ -16442,7 +16496,6 @@
           // Split path commands in glpyh
           if (d !== undef) {
             path = buildPath(d);
-            eval(path);
             // Store glyph data to table object
             p.glyphTable[url][name] = {
               name: name,
@@ -16565,6 +16618,7 @@
     DrawingPre.prototype.resetMatrix = createDrawingPreFunction("resetMatrix");
     DrawingPre.prototype.applyMatrix = createDrawingPreFunction("applyMatrix");
     DrawingPre.prototype.rotate = createDrawingPreFunction("rotate");
+    DrawingPre.prototype.rotateZ = createDrawingPreFunction("rotateZ");
     DrawingPre.prototype.redraw = createDrawingPreFunction("redraw");
     DrawingPre.prototype.ambientLight = createDrawingPreFunction("ambientLight");
     DrawingPre.prototype.directionalLight = createDrawingPreFunction("directionalLight");
@@ -16631,118 +16685,9 @@
       return curContext;
     };
 
-    ////////////////////////////////////////////////////////////////////////////
-    // Class methods
-    ////////////////////////////////////////////////////////////////////////////
-
-    function extendClass(subClass, baseClass) {
-      function extendGetterSetter(propertyName) {
-        p.defineProperty(subClass, propertyName, {
-          get: function() {
-            return baseClass[propertyName];
-          },
-          set: function(v) {
-            baseClass[propertyName]=v;
-          },
-          enumerable: true
-        });
-      }
-
-      var properties = [];
-      for (var propertyName in baseClass) {
-        if (typeof baseClass[propertyName] === 'function') {
-          // Overriding all non-overriden functions
-          if (!subClass.hasOwnProperty(propertyName)) {
-            subClass[propertyName] = baseClass[propertyName];
-          }
-        } else if(propertyName.charAt(0) !== "$" && !(propertyName in subClass)) {
-          // Delaying the properties extension due to the IE9 bug (see #918).
-          properties.push(propertyName);
-        }
-      }
-      while (properties.length > 0) {
-        extendGetterSetter(properties.shift());
-      }
-    }
-
-    p.extendClassChain = function(base) {
-      var path = [base];
-      for (var self = base.$upcast; self; self = self.$upcast) {
-        extendClass(self, base);
-        path.push(self);
-        base = self;
-      }
-      while (path.length > 0) {
-        path.pop().$self=base;
-      }
-    };
-
-    p.extendStaticMembers = function(derived, base) {
-      extendClass(derived, base);
-    };
-
-    p.extendInterfaceMembers = function(derived, base) {
-      extendClass(derived, base);
-    };
-
-    p.addMethod = function(object, name, fn, superAccessor) {
-      if (object[name]) {
-        var args = fn.length,
-          oldfn = object[name];
-
-        object[name] = function() {
-          if (arguments.length === args) {
-            return fn.apply(this, arguments);
-          } else {
-            return oldfn.apply(this, arguments);
-          }
-        };
-      } else {
-        object[name] = fn;
-      }
-    };
-
-    p.createJavaArray = function(type, bounds) {
-      var result = null;
-      if (typeof bounds[0] === 'number') {
-        var itemsCount = 0 | bounds[0];
-        if (bounds.length <= 1) {
-          result = [];
-          result.length = itemsCount;
-          for (var i = 0; i < itemsCount; ++i) {
-            result[i] = 0;
-          }
-        } else {
-          result = [];
-          var newBounds = bounds.slice(1);
-          for (var j = 0; j < itemsCount; ++j) {
-            result.push(p.createJavaArray(type, newBounds));
-          }
-        }
-      }
-      return result;
-    };
-
     //////////////////////////////////////////////////////////////////////////
-    // Event handling
+    // Touch and Mouse event handling
     //////////////////////////////////////////////////////////////////////////
-
-    function attach(elem, type, fn) {
-      if (elem.addEventListener) {
-        elem.addEventListener(type, fn, false);
-      } else {
-        elem.attachEvent("on" + type, fn);
-      }
-      eventHandlers.push([elem, type, fn]);
-    }
-
-    function detach(elem, type, fn) {
-      if (elem.removeEventListener) {
-        elem.removeEventListener(type, fn, false);
-      } else if (elem.detachEvent) {
-        elem.detachEvent("on" + type, fn);
-      }
-    }
 
     function calculateOffset(curElement, event) {
       var element = curElement,
@@ -16814,25 +16759,19 @@
       return t;
     }
 
-    //////////////////////////////////////////////////////////////////////////
-    // Touch event handling
-    //////////////////////////////////////////////////////////////////////////
-
-    attach(curElement, "touchstart", function (t) {
+    attachEventHandler(curElement, "touchstart", function (t) {
       // Removes unwanted behaviour of the canvas when touching canvas
       curElement.setAttribute("style","-webkit-user-select: none");
       curElement.setAttribute("onclick","void(0)");
       curElement.setAttribute("style","-webkit-tap-highlight-color:rgba(0,0,0,0)");
       // Loop though eventHandlers and remove mouse listeners
       for (var i=0, ehl=eventHandlers.length; i<ehl; i++) {
-        var elem = eventHandlers[i][0],
-            type = eventHandlers[i][1],
-            fn   = eventHandlers[i][2];
+        var type = eventHandlers[i].type;
         // Have this function remove itself from the eventHandlers list too
         if (type === "mouseout" ||  type === "mousemove" ||
             type === "mousedown" || type === "mouseup" ||
             type === "DOMMouseScroll" || type === "mousewheel" || type === "touchstart") {
-          detach(elem, type, fn);
+          detachEventHandler(eventHandlers[i]);
         }
       }
 
@@ -16840,14 +16779,14 @@
       // Otherwise, connect all of the emulated mouse events
       if (p.touchStart !== undef || p.touchMove !== undef ||
           p.touchEnd !== undef || p.touchCancel !== undef) {
-        attach(curElement, "touchstart", function(t) {
+        attachEventHandler(curElement, "touchstart", function(t) {
           if (p.touchStart !== undef) {
             t = addTouchEventOffset(t);
             p.touchStart(t);
           }
         });
 
-        attach(curElement, "touchmove", function(t) {
+        attachEventHandler(curElement, "touchmove", function(t) {
           if (p.touchMove !== undef) {
             t.preventDefault(); // Stop the viewport from scrolling
             t = addTouchEventOffset(t);
@@ -16855,14 +16794,14 @@
           }
         });
 
-        attach(curElement, "touchend", function(t) {
+        attachEventHandler(curElement, "touchend", function(t) {
           if (p.touchEnd !== undef) {
             t = addTouchEventOffset(t);
             p.touchEnd(t);
           }
         });
 
-        attach(curElement, "touchcancel", function(t) {
+        attachEventHandler(curElement, "touchcancel", function(t) {
           if (p.touchCancel !== undef) {
             t = addTouchEventOffset(t);
             p.touchCancel(t);
@@ -16871,7 +16810,7 @@
 
       } else {
         // Emulated touch start/mouse down event
-        attach(curElement, "touchstart", function(e) {
+        attachEventHandler(curElement, "touchstart", function(e) {
           updateMousePosition(curElement, e.touches[0]);
 
           p.__mousePressed = true;
@@ -16884,7 +16823,7 @@
         });
 
         // Emulated touch move/mouse move event
-        attach(curElement, "touchmove", function(e) {
+        attachEventHandler(curElement, "touchmove", function(e) {
           e.preventDefault();
           updateMousePosition(curElement, e.touches[0]);
 
@@ -16898,7 +16837,7 @@
         });
 
         // Emulated touch up/mouse up event
-        attach(curElement, "touchend", function(e) {
+        attachEventHandler(curElement, "touchend", function(e) {
           p.__mousePressed = false;
 
           if (typeof p.mouseClicked === "function" && !p.mouseDragging) {
@@ -16915,11 +16854,31 @@
       curElement.dispatchEvent(t);
     });
 
-    //////////////////////////////////////////////////////////////////////////
-    // Mouse event handling
-    //////////////////////////////////////////////////////////////////////////
+    (function() {
+      var enabled = true,
+          contextMenu = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+          };
 
-    attach(curElement, "mousemove", function(e) {
+      p.disableContextMenu = function() {
+        if (!enabled) {
+          return;
+        }
+        attachEventHandler(curElement, 'contextmenu', contextMenu);
+        enabled = false;
+      };
+
+      p.enableContextMenu = function() {
+        if (enabled) {
+          return;
+        }
+        detachEventHandler({elem: curElement, type: 'contextmenu', fn: contextMenu});
+        enabled = true;
+      };
+    }());
+
+    attachEventHandler(curElement, "mousemove", function(e) {
       updateMousePosition(curElement, e);
       if (typeof p.mouseMoved === "function" && !p.__mousePressed) {
         p.mouseMoved();
@@ -16930,20 +16889,20 @@
       }
     });
 
-    attach(curElement, "mouseout", function(e) {
+    attachEventHandler(curElement, "mouseout", function(e) {
       if (typeof p.mouseOut === "function") {
         p.mouseOut();
       }
     });
 
-    attach(curElement, "mouseover", function(e) {
+    attachEventHandler(curElement, "mouseover", function(e) {
       updateMousePosition(curElement, e);
       if (typeof p.mouseOver === "function") {
         p.mouseOver();
       }
     });
 
-    attach(curElement, "mousedown", function(e) {
+    attachEventHandler(curElement, "mousedown", function(e) {
       p.__mousePressed = true;
       p.mouseDragging = false;
       switch (e.which) {
@@ -16963,7 +16922,7 @@
       }
     });
 
-    attach(curElement, "mouseup", function(e) {
+    attachEventHandler(curElement, "mouseup", function(e) {
       p.__mousePressed = false;
 
       if (typeof p.mouseClicked === "function" && !p.mouseDragging) {
@@ -16995,8 +16954,8 @@
     };
 
     // Support Gecko and non-Gecko scroll events
-    attach(document, 'DOMMouseScroll', mouseWheelHandler);
-    attach(document, 'mousewheel', mouseWheelHandler);
+    attachEventHandler(document, 'DOMMouseScroll', mouseWheelHandler);
+    attachEventHandler(document, 'mousewheel', mouseWheelHandler);
 
     //////////////////////////////////////////////////////////////////////////
     // Keyboard Events
@@ -17149,10 +17108,6 @@
 
       wireDimensionalFunctions();
 
-      if ("mozOpaque" in curElement) {
-        curElement.mozOpaque = !curSketch.options.isTransparent;
-      }
-
       // the onfocus and onblur events are handled in two parts.
       // 1) the p.focused property is handled per sketch
       curElement.onfocus = function() {
@@ -17168,13 +17123,13 @@
 
       // 2) looping status is handled per page, based on the pauseOnBlur @pjs directive
       if (curSketch.options.pauseOnBlur) {
-        attach(window, 'focus', function() {
+        attachEventHandler(window, 'focus', function() {
           if (doLoop) {
             p.loop();
           }
         });
 
-        attach(window, 'blur', function() {
+        attachEventHandler(window, 'blur', function() {
           if (doLoop && loopStarted) {
             p.noLoop();
             doLoop = true; // make sure to keep this true after the noLoop call
@@ -17186,9 +17141,9 @@
       // if keyboard events should be handled globally, the listeners should
       // be bound to the document window, rather than to the current canvas
       var keyTrigger = curSketch.options.globalKeyEvents ? window : curElement;
-      attach(keyTrigger, "keydown", handleKeydown);
-      attach(keyTrigger, "keypress", handleKeypress);
-      attach(keyTrigger, "keyup", handleKeyup);
+      attachEventHandler(keyTrigger, "keydown", handleKeydown);
+      attachEventHandler(keyTrigger, "keypress", handleKeypress);
+      attachEventHandler(keyTrigger, "keyup", handleKeyup);
 
       // Step through the libraries that were attached at doc load...
       for (var i in Processing.lib) {
@@ -17207,6 +17162,7 @@
         // Don't start until all specified images and fonts in the cache are preloaded
         if (!curSketch.imageCache.pending && curSketch.fonts.pending()) {
           curSketch.attach(processing, defaultScope);
+          curSketch.onLoad();
 
           // Run void setup()
           if (processing.setup) {
@@ -17215,6 +17171,7 @@
             if (curContext && !p.use3DContext) {
               curContext.setTransform(1, 0, 0, 1, 0, 0);
             }
+            curSketch.onSetup();
           }
 
           // some pixels can be cached, flushing
@@ -17242,7 +17199,6 @@
       // No executable sketch was specified
       // or called via createGraphics
       curSketch = new Processing.Sketch();
-      curSketch.options.isTransparent = true;
 
       wireDimensionalFunctions();
 
@@ -17304,7 +17260,7 @@
       "concat", "console", "constrain", "copy", "cos", "createFont",
       "createGraphics", "createImage", "cursor", "curve", "curveDetail",
       "curvePoint", "curveTangent", "curveTightness", "curveVertex", "day",
-      "defaultColor", "degrees", "directionalLight", "disableContextMenu",
+      "degrees", "directionalLight", "disableContextMenu",
       "dist", "draw", "ellipse", "ellipseMode", "emissive", "enableContextMenu",
       "endCamera", "endDraw", "endShape", "exit", "exp", "expand", "externals",
       "fill", "filter", "filter_bilinear", "filter_new_scanline",
@@ -18822,40 +18778,66 @@
     }
 
     function setWeight(ast) {
-      var queue = [], checked = {};
-      var id, class_;
+      var queue = [], tocheck = {};
+      var id, scopeId, class_;
       // queue most inner and non-inherited
       for (id in declaredClasses) {
         if (declaredClasses.hasOwnProperty(id)) {
           class_ = declaredClasses[id];
           if (!class_.inScope && !class_.derived) {
             queue.push(id);
-            checked[id] = true;
             class_.weight = 0;
+          } else {
+            var dependsOn = [];
+            if (class_.inScope) {
+              for (scopeId in class_.inScope) {
+                if (class_.inScope.hasOwnProperty(scopeId)) {
+                  dependsOn.push(class_.inScope[scopeId]);
+                }
+              }
+            }
+            if (class_.derived) {
+              dependsOn = dependsOn.concat(class_.derived);
+            }
+            tocheck[id] = dependsOn;
           }
         }
+      }
+      function removeDependentAndCheck(targetId, from) {
+        var dependsOn = tocheck[targetId];
+        if (!dependsOn) {
+          return false; // no need to process
+        }
+        var i = dependsOn.indexOf(from);
+        if (i < 0) {
+          return false;
+        }
+        dependsOn.splice(i, 1);
+        if (dependsOn.length > 0) {
+          return false;
+        }
+        delete tocheck[targetId];
+        return true;
       }
       while (queue.length > 0) {
         id = queue.shift();
         class_ = declaredClasses[id];
-        if (class_.scopeId && !checked[class_.scopeId]) {
+        if (class_.scopeId && removeDependentAndCheck(class_.scopeId, class_)) {
           queue.push(class_.scopeId);
-          checked[class_.scopeId] = true;
           declaredClasses[class_.scopeId].weight = class_.weight + 1;
         }
-        if (class_.base && !checked[class_.base.classId]) {
+        if (class_.base && removeDependentAndCheck(class_.base.classId, class_)) {
           queue.push(class_.base.classId);
-          checked[class_.base.classId] = true;
           class_.base.weight = class_.weight + 1;
         }
         if (class_.interfaces) {
           var i, l;
           for (i = 0, l = class_.interfaces.length; i < l; ++i) {
-            if (!class_.interfaces[i] || checked[class_.interfaces[i].classId]) {
+            if (!class_.interfaces[i] ||
+                !removeDependentAndCheck(class_.interfaces[i].classId, class_)) {
               continue;
             }
             queue.push(class_.interfaces[i].classId);
-            checked[class_.interfaces[i].classId] = true;
             class_.interfaces[i].weight = class_.weight + 1;
           }
         }
@@ -18907,8 +18889,6 @@
               var imageName = clean(list[j]);
               sketch.imageCache.add(imageName);
             }
-          } else if (key === "transparent") {
-            sketch.options.isTransparent = value === "true";
           // fonts can be declared as a string containing a url,
           // or a JSON object, containing a font name, and a url
           } else if (key === "font") {
@@ -19210,7 +19190,7 @@
 
   Processing.logger = tinylogLite;
 
-  Processing.version = "1.2.1";
+  Processing.version = "1.2.3";
 
   // Share lib space
   Processing.lib = {};
@@ -19234,11 +19214,28 @@
   Processing.Sketch = function(attachFunction) {
     this.attachFunction = attachFunction; // can be optional
     this.options = {
-      isTransparent: false,
       crispLines: false,
       pauseOnBlur: false,
       globalKeyEvents: false
     };
+
+    /* Optional Sketch event hooks:
+     *   onLoad - parsing/preloading is done, before sketch starts
+     *   onSetup - setup() has been called, before first draw()
+     *   onPause - noLoop() has been called, pausing draw loop
+     *   onLoop - loop() has been called, resuming draw loop
+     *   onFrameStart - draw() loop about to begin
+     *   onFrameEnd - draw() loop finished
+     *   onExit - exit() done being called
+     */
+    this.onLoad = nop;
+    this.onSetup = nop;
+    this.onPause = nop;
+    this.onLoop = nop;
+    this.onFrameStart = nop;
+    this.onFrameEnd = nop;
+    this.onExit = nop;
+
     this.params = {};
     this.imageCache = {
       pending: 0,
@@ -19269,7 +19266,7 @@
         element.style.fontFamily = "serif";
         element.style.fontSize = "72px";
         element.style.visibility = "hidden";
-        element.innerHTML = "abcmmmmmmmmmmlll";
+        element.innerHTML = "This element is a text block for font loading";
         document.getElementsByTagName("body")[0].appendChild(element);
         return element;
       }()),
@@ -19332,7 +19329,7 @@
         preLoader.style.fontFamily = "'" + fontName + "', serif";
         preLoader.style.fontSize = "72px";
         preLoader.style.visibility = "hidden";
-        preLoader.innerHTML = "abcmmmmmmmmmmlll";
+        preLoader.innerHTML = "This element is a text block for font loading";
         document.getElementsByTagName("body")[0].appendChild(preLoader);
         this.fontList.push(preLoader);
       }
@@ -19343,7 +19340,7 @@
       if(typeof this.attachFunction === "function") {
         this.attachFunction(processing);
       } else if(this.sourceCode) {
-        var func = eval(this.sourceCode);
+        var func = ((new Function("return (" + this.sourceCode + ");"))());
         func(processing);
         this.attachFunction = func;
       } else {
@@ -19374,6 +19371,7 @@
 //#endif
   };
 
+//#if PARSER
   /**
    * aggregate all source code into a single file, then rewrite that
    * source and bind to canvas via new Processing(canvas, sourcestring).
@@ -19391,8 +19389,16 @@
           if (xhr.status !== 200 && xhr.status !== 0) {
             error = "Invalid XHR status " + xhr.status;
           } else if (xhr.responseText === "") {
-            error = "No content";
+            // Give a hint when loading fails due to same-origin issues on file:/// urls
+            if ( ("withCredentials" in new XMLHttpRequest()) &&
+                 (new XMLHttpRequest()).withCredentials === false &&
+                 window.location.protocol === "file:" ) {
+              error = "XMLHttpRequest failure, possibly due to a same-origin policy violation. You can try loading this page in another browser, or load it from http://localhost using a local webserver. See the Processing.js README for a more detailed explanation of this problem and solutions.";
+            } else {
+              error = "File is empty.";
+            }
           }
+
           callback(xhr.responseText, error);
         }
       };
@@ -19405,11 +19411,11 @@
     }
 
     function loadBlock(index, filename) {
-      ajaxAsync(filename, function (block, error) {
+      function callback(block, error) {
         code[index] = block;
         ++loaded;
-        if (error) {
-          errors.push("  " + filename + " ==> " + error);
+        if (error) { 
+          errors.push(filename + " ==> " + error);
         }
         if (loaded === sourcesCount) {
           if (errors.length === 0) {
@@ -19419,10 +19425,22 @@
               Processing.logger.log("Unable to execute pjs sketch: " + e);
             }
           } else {
-            Processing.logger.log("Unable to load pjs sketch files:\n" + errors.join("\n"));
+            Processing.logger.log("Unable to load pjs sketch files: " + errors.join("\n"));
           }
         }
-      });
+      }
+      if (filename.charAt(0) === '#') {
+        // trying to get script from the element
+        var scriptElement = document.getElementById(filename.substring(1));
+        if (scriptElement) {
+          callback(scriptElement.text || scriptElement.textContent);
+        } else {
+          callback("", "Unable to load pjs sketch: element with id \'" + filename.substring(1) + "\' was not found");
+        }
+        return;
+      }
+
+      ajaxAsync(filename, callback);
     }
 
     for (var i = 0; i < sourcesCount; ++i) {
@@ -19434,7 +19452,10 @@
    * Automatic initialization function.
    */
   var init = function() {
-    var canvas = document.getElementsByTagName('canvas');
+    document.removeEventListener('DOMContentLoaded', init, false);
+
+    var canvas = document.getElementsByTagName('canvas'),
+      filenames;
 
     for (var i = 0, l = canvas.length; i < l; i++) {
       // datasrc and data-src are deprecated.
@@ -19447,7 +19468,7 @@
         }
       }
       if (processingSources) {
-        var filenames = processingSources.split(' ');
+        filenames = processingSources.split(' ');
         for (var j = 0; j < filenames.length;) {
           if (filenames[j]) {
             j++;
@@ -19456,6 +19477,43 @@
           }
         }
         loadSketchFromSources(canvas[i], filenames);
+      }
+    }
+
+    // also process all <script>-indicated sketches, if there are any
+    var scripts = document.getElementsByTagName('script');
+    var s, source, instance;
+    for (s = 0; s < scripts.length; s++) {
+      var script = scripts[s];
+      if (!script.getAttribute) {
+        continue;
+      }
+
+      var type = script.getAttribute("type");
+      if (type && (type.toLowerCase() === "text/processing" || type.toLowerCase() === "application/processing")) {
+        var target = script.getAttribute("data-processing-target");
+        canvas = undef;
+        if (target) {
+          canvas = document.getElementById(target);
+        } else {
+          var nextSibling = script.nextSibling;
+          while (nextSibling && nextSibling.nodeType !== 1) {
+            nextSibling = nextSibling.nextSibling;
+          }
+          if (nextSibling.nodeName.toLowerCase() === "canvas") {
+            canvas = nextSibling;
+          }
+        }
+
+        if (canvas) {
+          if (script.getAttribute("src")) {
+            filenames = script.getAttribute("src").split(/\s+/);
+            loadSketchFromSources(canvas, filenames);
+            continue;
+          }
+          source =  script.innerText || script.textContent;
+          instance = new Processing(canvas, source);
+        }
       }
     }
   };
@@ -19473,26 +19531,15 @@
       document.removeEventListener('DOMContentLoaded', init, false);
     }
   };
-
-  /**
-   * Make loadSketchFromSources publically visible
-   */
-  Processing.loadSketchFromSources = loadSketchFromSources;
-
-  /**
-   * Disable the automatic loading of all sketches on the page
-   */
-  Processing.disableInit = function() {
-    if(isDOMPresent) {
-      document.removeEventListener('DOMContentLoaded', init, false);
-    }
-  };
+//#endif
 
   if(isDOMPresent) {
     window['Processing'] = Processing;
+//#if PARSER
     document.addEventListener('DOMContentLoaded', init, false);
+//#endif
   } else {
     // DOM is not found
     this.Processing = Processing;
   }
-}(window, window.document, Math, function(){}));
+}(window, window.document, Math));
