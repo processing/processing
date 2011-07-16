@@ -36,12 +36,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import processing.app.Contribution.ContributionInfo;
-import processing.app.ContributionListPanel.*;
 import processing.app.ContributionListing.ContributionListFetcher;
 
-/**
- * 
- */
 public class ContributionManager {
   
   private static final String DRAG_AND_DROP_SECONDARY =
@@ -140,14 +136,6 @@ public class ContributionManager {
     pane.add(scrollPane, c);
     //pane.add(scrollPane, c);
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
-    contributionListPanel.setPreferredViewPositionListener(new PreferredViewPositionListener() {
-
-      public void handlePreferredLocation(Point p) {
-        scrollPane.getViewport().setViewPosition(p);
-      }
-
-    });
     
     c = new GridBagConstraints();
     c.gridx = 0;
@@ -294,21 +282,22 @@ public class ContributionManager {
     contributionListing.updateList(infoList);
   }
  
-  public void removeLibrary(final Contribution library, final JProgressMonitor pm) {
-    
+  public void removeContribution(final Contribution contribution,
+                                 final JProgressMonitor pm) {
+
     new Thread(new Runnable() {
       
       public void run() {
         pm.startTask("Removing", ProgressMonitor.UNKNOWN);
-        if (library != null) {
-          if (backupContribution(library)) {
+        if (contribution != null) {
+          if (backupContribution(contribution)) {
             ContributionInfo advertisedVersion = contributionListing
-                .getAdvertisedContribution(library.getInfo().name, library.getInfo().getType());
+                .getAdvertisedContribution(contribution.getInfo().name, contribution.getInfo().getType());
             
             if (advertisedVersion == null) {
-              contributionListing.removeLibrary(library.getInfo());
+              contributionListing.removeContribution(contribution.getInfo());
             } else {
-              contributionListing.replaceLibrary(library.getInfo(), advertisedVersion);
+              contributionListing.replaceContribution(contribution.getInfo(), advertisedVersion);
             }
           }
         }
@@ -319,14 +308,11 @@ public class ContributionManager {
 
   }
   
-  interface Installer {
-    public boolean install(File f);
-  }
-  
-  private void downloadAndInstall(URL url,
+  public void downloadAndInstall(URL url,
+                                  final ContributionInfo info,
+                                  final ContributionInstaller installOperation,
                                   final JProgressMonitor downloadProgressMonitor,
-                                  final JProgressMonitor installProgressMonitor,
-                                  final Installer installOperation) {
+                                  final JProgressMonitor installProgressMonitor) {
     
     File libDest = getTemporaryFile(url);
     
@@ -343,8 +329,13 @@ public class ContributionManager {
           installProgressMonitor.startTask("Installing",
                                            ProgressMonitor.UNKNOWN);
 
-          installOperation.install(libFile);
-          refreshInstalled();
+          Contribution contribution = installOperation.installContribution(libFile);
+          
+          if (contribution != null) {
+            contributionListing.replaceContribution(info, contribution.getInfo());
+            refreshInstalled();
+          }
+          
         }
 
         dialog.pack();
@@ -354,28 +345,6 @@ public class ContributionManager {
     });
 
     new Thread(downloader).start();
-  }
-  
-  public void installLibraryCompilationFromUrl(URL url,
-                                final LibraryCompilationPanel libPanel,
-                                JProgressMonitor downloadProgressMonitor,
-                                final JProgressMonitor installProgressMonitor) {
-    
-    downloadAndInstall(url, downloadProgressMonitor, installProgressMonitor,
-                       new Installer() {
-     
-      public boolean install(File f) {
-        LibraryCompilation installedCompilation = installLibraryCompilation(f);
-        
-        if (installedCompilation != null) {
-          contributionListing.replaceLibrary(libPanel.info, installedCompilation.info);
-          libPanel.info = installedCompilation.info;
-          return true;
-        }
-        
-        return false;
-      }
-    });
   }
   
   protected LibraryCompilation installLibraryCompilation(File f) {
@@ -413,29 +382,7 @@ public class ContributionManager {
     
     return null;
   }
-
-  public void installLibraryFromUrl(URL url,
-                                    final LibraryPanel libPanel,
-                                    JProgressMonitor downloadProgressMonitor,
-                                    final JProgressMonitor installProgressMonitor) {
-    
-    downloadAndInstall(url, downloadProgressMonitor, installProgressMonitor,
-                       new Installer() {
-
-      public boolean install(File f) {
-        Library installedLib = installLibrary(f);
-        
-        if (installedLib != null) {
-          contributionListing.replaceLibrary(libPanel.info, installedLib.info);
-          libPanel.info = installedLib.info;
-          return true;
-        }
-        
-        return false;
-      }
-    });
-  }
-
+  
   public Library confirmAndInstallLibrary(Editor editor, File libFile) {
     this.editor = editor;
     
@@ -820,6 +767,18 @@ public class ContributionManager {
         setForeground(UIManager.getColor("TextField.foreground"));
       }
     }
+  }
+
+  interface ContributionInstaller {
+    /**
+     * Installs a contribution contained in the given zipped file.
+     * 
+     * @param zippedFile
+     *          zip file containing a contribution. Never null.
+     * @return the contribution if it was installed. Null otherwise.
+     */
+    public Contribution installContribution(File zippedFile);
+    
   }
 
 }

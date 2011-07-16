@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.*;
 
 import processing.core.*;
-import processing.app.Contribution.ContributionInfo;
-import processing.app.Contribution.ContributionInfo.Author;
 
 public class Library extends Contribution {
   static final String[] platformNames = PConstants.platformNames;
