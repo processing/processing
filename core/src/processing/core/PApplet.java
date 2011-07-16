@@ -2349,13 +2349,6 @@ public class PApplet extends Applet
    * Processing communicates with the clock on your computer. The <b>hour()</b> function returns the current hour as a value from 0 - 23.
    * 
    * ( end auto-generated )
-   * <h3>Advanced</h3>
-   * Hour position of the current time in international format (0-23).
-   * <p>
-   * To convert this value to American time: <BR>
-   * <PRE>int yankeeHour = (hour() % 12);
-   * if (yankeeHour == 0) yankeeHour = 12;</PRE>
-   *
    * @webref input:time_date
    * @see PApplet#millis()
    * @see PApplet#second()
@@ -2386,8 +2379,8 @@ public class PApplet extends Applet
    * @see PApplet#second()
    * @see PApplet#minute()
    * @see PApplet#hour()
-   * @see .PApplet#month()
-   * @see pPApplet#year()
+   * @see PApplet#month()
+   * @see PApplet#year()
    */
   static public int day() {
     return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
@@ -4975,8 +4968,6 @@ public class PApplet extends Applet
    * @see BufferedReader
    * @see PApplet#createWriter(String)
    * @see PrintWriter
-   * @see try
-   * @see catch
    */
   public BufferedReader createReader(String filename) {
     try {
@@ -8592,7 +8583,7 @@ public class PApplet extends Applet
    * pixels[] in the code, rather than g.pixels[].
    *
    * @webref image:pixels
-   * @see pixels[int]
+   * @see PApplet#pixels[int]
    * @see PApplet#updatePixels()
    */
   public void loadPixels() {
@@ -8620,7 +8611,7 @@ public class PApplet extends Applet
    * @param x2 width of the region
    * @param y2 height of the region
    * @see PApplet#loadPixels()
-   * @see pixels[int]
+   * @see PApplet#pixels[int]
    */
   public void updatePixels(int x1, int y1, int x2, int y2) {
     g.updatePixels(x1, y1, x2, y2);
@@ -9670,7 +9661,7 @@ public class PApplet extends Applet
    *
    * @webref shape:loading_displaying
    * @see PShape
-   * @see PGraphics#loadShape(String)
+   * @see PApplet#loadShape(String)
    * @see PGraphics#shapeMode(int)
    */
   public void shape(PShape shape, float x, float y, float c, float d) {

@@ -949,7 +949,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Set texture image for current shape.
-   * Needs to be called between @see beginShape and @see endShape
+   * Needs to be called between beginShape and endShape
    *
    * @param image reference to a PImage object
    */
@@ -960,7 +960,7 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * Removes texture image for current shape.
-   * Needs to be called between @see beginShape and @see endShape
+   * Needs to be called between beginShape and endShape
    *
    */
   public void noTexture() {
@@ -2981,7 +2981,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref shape:loading_displaying
    * @see PShape
-   * @see PGraphics#loadShape(String)
+   * @see PApplet#loadShape(String)
    * @see PGraphics#shapeMode(int)
    */
   public void shape(PShape shape, float x, float y, float c, float d) {
