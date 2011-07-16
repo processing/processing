@@ -114,7 +114,7 @@ public class ContributionListing {
   }
   
   
-  public void replaceLibrary(ContributionInfo oldLib, ContributionInfo newLib) {
+  public void replaceContribution(ContributionInfo oldLib, ContributionInfo newLib) {
     
     if (oldLib == null || newLib == null) {
       return;
@@ -158,7 +158,7 @@ public class ContributionListing {
     Collections.sort(allLibraries);
   }
   
-  public void removeLibrary(ContributionInfo info) {
+  public void removeContribution(ContributionInfo info) {
     if (librariesByCategory.containsKey(info.category)) {
       librariesByCategory.get(info.category).remove(info);
     }
