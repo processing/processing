@@ -1532,9 +1532,9 @@ public class PImage implements PConstants, Cloneable {
    * @param dh destination image height
    * @param mode Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
    *
-   * @see processing.core.PGraphics#alpha(int)
-   * @see processing.core.PGraphics#copy(PImage, int, int, int, int, int, int, int, int)
-   * @see processing.core.PImage#blendColor(int,int,int)
+   * @see PGraphics#alpha(int)
+   * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
+   * @see PImage#blendColor(int,int,int)
    */
   public void blend(PImage src,
                     int sx, int sy, int sw, int sh,
