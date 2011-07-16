@@ -67,6 +67,11 @@ public class PImage implements PConstants, Cloneable {
   public int format;
 
   /**
+   * ( begin auto-generated from pixels.xml )
+   * 
+   * Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The <b>index</b> value defines the position of a value within the array. For example, the statment <b>color b = pixels[230]</b> will set the variable <b>b</b> to be equal to the value at that location in the array. <br /> <br /> Before accessing this array, the data must loaded with the <b>loadPixels()</b> function. After the array data has been modified, the <b>updatePixels()</b> function must be run to update the changes. Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
+   * 
+   * ( end auto-generated )
    * Array containing the values for all the pixels in the image. These values are of the color datatype.
    * This array is the size of the image, meaning if the image is 100x100 pixels, there will be 10000 values
    * and if the window is 200x300 pixels, there will be 60000 values.
@@ -750,8 +755,6 @@ public class PImage implements PConstants, Cloneable {
    * For a more accurate conversion, first use filter(GRAY)
    * which will make the image into a "correct" grayscale by
    * performing a proper luminance-based conversion.
-   *
-   * @param maskArray any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array
    */
   public void mask(int maskArray[]) {
     loadPixels();
@@ -775,9 +778,6 @@ public class PImage implements PConstants, Cloneable {
    *  In addition to using a mask image, an integer array containing the alpha channel data can be specified directly.
    *  This method is useful for creating dynamically generated alpha masks.
    *  This array must be of the same length as the target image's pixels array and should contain only grayscale data of values between 0-255.
-   * @webref
-   * @brief     Masks part of the image from displaying
-   * @param maskImg any PImage object used as the alpha channel for "img", needs to be same size as "img"
    */
   public void mask(PImage maskImg) {
     maskImg.loadPixels();
