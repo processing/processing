@@ -165,10 +165,16 @@ public class PFont implements PConstants {
 
 
   /**
-   * Create a new Processing font from a native font, but don't create all the
-   * characters at once, instead wait until they're used to include them.
+   * ( begin auto-generated from PFont.xml )
+   * 
+   * PFont is the font class for Processing. To create a font to use with Processing, select "Create Font..." from the Tools menu. This will create a font in the format Processing requires and also adds it to the current sketch's data directory. Processing displays fonts using the .vlw font format, which uses images for each letter, rather than defining them through vector data. The 
+   * ( end auto-generated )
+   * @webref typography:pfont
    * @param font
    * @param smooth
+   * @see PApplet#loadFont(String)
+   * @see PGraphics#textFont(PFont, float)
+   * @see PGraphics#text(String, float, float, float, float, float)
    */
   public PFont(Font font, boolean smooth) {
     this(font, smooth, null);
@@ -311,7 +317,9 @@ public class PFont implements PConstants {
     this.stream = stream;
   }
   
-
+/**
+ * @param input InputStream
+ */
   public PFont(InputStream input) throws IOException {
     DataInputStream is = new DataInputStream(input);
 

@@ -3920,6 +3920,7 @@ public class PApplet extends Applet
    * Returns the Perlin noise value at specified coordinates. Perlin noise is a random sequence generator producing a more natural ordered, harmonic succession of numbers compared to the standard <b>random()</b> function. It was invented by Ken Perlin in the 1980s and been used since in graphical applications to produce procedural textures, natural motion, shapes, terrains etc.<br /><br /> The main difference to the <b>random()</b> function is that Perlin noise is defined in an infinite n-dimensional space where each pair of coordinates corresponds to a fixed semi-random value (fixed only for the lifespan of the program). The resulting value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D noise, depending on the number of coordinates given. The noise value can be animated by moving through the noise space as demonstrated in the example above. The 2nd and 3rd dimension can also be interpreted as time.<br /><br />The actual noise is structured similar to an audio signal, in respect to the function's use of frequencies. Similar to the concept of harmonics in physics, perlin noise is computed over several octaves which are added together for the final result. <br /><br />Another way to adjust the character of the resulting sequence is the scale of the input coordinates. As the function works within an infinite space the value of the coordinates doesn't matter as such, only the distance between successive coordinates does (eg. when using <b>noise()</b> within a loop). As a general rule the smaller the difference between coordinates, the smoother the resulting noise sequence will be. Steps of 0.005-0.03 work best for most applications, but this will differ depending on use.
    * 
    * ( end auto-generated )
+   * 
    * @webref math:random
    * @param x x-coordinate in noise space
    * @param y y-coordinate in noise space
@@ -7797,7 +7798,6 @@ public class PApplet extends Applet
  /**
    * ( begin auto-generated from unbinary.xml )
    * 
-   * Converts a String representation of a binary number to its equivalent integer value. For example, unbinary("00001000") will return 8.
    * 
    * ( end auto-generated )
   * @webref data:conversion
