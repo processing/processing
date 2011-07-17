@@ -279,7 +279,7 @@ public class ContributionManager {
       infoList.add(compilation.info);
     }
     
-    contributionListing.updateList(infoList);
+    contributionListing.updateInstalledList(infoList);
   }
  
   public void removeContribution(final Contribution contribution,
@@ -332,6 +332,7 @@ public class ContributionManager {
           Contribution contribution = installOperation.installContribution(libFile);
           
           if (contribution != null) {
+            contributionListing.getInformationFromAdvertised(contribution.getInfo());
             contributionListing.replaceContribution(info, contribution.getInfo());
             refreshInstalled();
           }
@@ -391,7 +392,7 @@ public class ContributionManager {
                              DRAG_AND_DROP_SECONDARY);
     
     if (result == JOptionPane.YES_OPTION) {
-      return installLibrary(libFile);
+      return installLibrary(libFile, true);
     }
     
     return null;
@@ -473,7 +474,7 @@ public class ContributionManager {
     return fileName;
   }
   
-  protected Library installLibrary(File libFile) {
+  protected Library installLibrary(File libFile, boolean confirmReplace) {
     File tempDir = unzipFileToTemp(libFile);
     
     try {
@@ -488,7 +489,7 @@ public class ContributionManager {
       
       if (discoveredLibs != null && discoveredLibs.size() == 1) {
         Library discoveredLib = discoveredLibs.get(0);
-        if (installLibrary(discoveredLib)) {
+        if (installLibrary(discoveredLib, confirmReplace)) {
           return discoveredLib;
         } else {
           return null;
@@ -515,8 +516,15 @@ public class ContributionManager {
     
     return null;
   }
-  
-  protected boolean installLibrary(Library newLib) {
+
+  /**
+   * 
+   * @param confirmReplace
+   *          if true and the library is already installed, opens a prompt to
+   *          ask the user if it's okay to replace the library. If false, the
+   *          library is always replaced with the new copy.
+   */
+  protected boolean installLibrary(Library newLib, boolean confirmReplace) {
     
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
     
@@ -532,16 +540,18 @@ public class ContributionManager {
       // XXX: Handle other cases when installing libraries.
       //   -What if a library by the same name is already installed?
       //   -What if newLibDest exists, but isn't used by an existing library?
-      if (oldLib.libraryFolder.exists() && oldLib.equals(newLibDest)) {
+      if (oldLib.folder.exists() && oldLib.folder.equals(newLibDest)) {
         
-        int result = Base.showYesNoQuestion(editor, "Replace",
-               "Replace existing \"" + oldLib.getName() + "\" library?",
-               "An existing copy of the \"" + oldLib.getName() + "\" library<br>"+
-               "has been found in your sketchbook. Clicking “Yes”<br>"+
-               "will move the existing library to a backup folder<br>" +
-               " in <i>libraries/old</i> before replacing it.");
-        
-        if (result == JOptionPane.YES_OPTION) {
+        int result = 0;
+        if (confirmReplace) {
+          result = Base.showYesNoQuestion(editor, "Replace",
+                 "Replace existing \"" + oldLib.getName() + "\" library?",
+                 "An existing copy of the \"" + oldLib.getName() + "\" library<br>"+
+                 "has been found in your sketchbook. Clicking “Yes”<br>"+
+                 "will move the existing library to a backup folder<br>" +
+                 " in <i>libraries/old</i> before replacing it.");
+        }
+        if (!confirmReplace || result == JOptionPane.YES_OPTION) {
           if (!backupContribution(oldLib)) {
             return false;
           }
