@@ -6,7 +6,7 @@
 int dim = 40;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   background(0);
   smooth();
   noStroke();
