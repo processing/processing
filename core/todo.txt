@@ -2,6 +2,8 @@
 X remove textMode(SCREEN)
 _ enable smooth() by default
 
+_ trimming text on URLs?
+_   http://code.google.com/p/processing/issues/detail?id=715
 
 andres 
 _ beginRaw() not working with 3D
@@ -98,6 +100,8 @@ _ docs for rect(x, y, w, h, r) and rect(x, y, w, h, tl, tr, br, bl)
 _ screen.width/height shouldn't be anywhere
 _ add docs for screenWidth and screenHeight 
 _ remove delay() documentation
+_ remove textMode(SCREEN) references
+_ find in reference for copy() goes to PVector (oog)
 
 2.0
 _ Abnormal high Java CPU usage at empty sketch with draw() 
@@ -111,6 +115,8 @@ _   http://code.google.com/p/processing/issues/detail?id=742
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
 _ remove blend(), add blendMode()
+_ fix blue-channel bias on blend() so that blendMode() will work in 2.0
+_   http://code.google.com/p/processing/issues/detail?id=475
 _ decision on registered methods
 _   remove registerPre() et al
 _   add register("pause", ...) 
