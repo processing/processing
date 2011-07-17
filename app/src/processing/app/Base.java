@@ -53,7 +53,7 @@ public class Base {
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
 //  static public boolean DEBUG = true;
-  static public boolean ENABLE_LIBRARY_MANAGER = false;
+  static public boolean ENABLE_LIBRARY_MANAGER = true;
 
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
