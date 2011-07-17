@@ -1,5 +1,7 @@
 0200 android
 
+_ usb host and nfc reader need other changes to the app hierarchy to work
+_   http://code.google.com/p/processing/issues/detail?id=767
 
 _ don't let the examples get overwritten with other mode stuff
 _   the whole sketch.properties thing is yech
