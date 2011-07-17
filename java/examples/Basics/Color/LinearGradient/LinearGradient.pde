@@ -10,26 +10,34 @@
 // constants
 int Y_AXIS = 1;
 int X_AXIS = 2;
+color b1, b2, c1, c2, c3, c4, c5, c6;
 
 void setup(){
-  size(200, 200);
+  size(640, 360);
 
   // create some gradients
-  // background
-  color b1 = color(190, 190, 190);
-  color b2 = color(20, 20, 20);
-  setGradient(0, 0, width, height, b1, b2, Y_AXIS);
-  //center squares
-  color c1 = color(255, 120, 0);
-  color c2 = color(10, 45, 255);
-  color c3 = color(10, 255, 15);
-  color c4 = color(125, 2, 140);
-  color c5 = color(255, 255, 0);
-  color c6 = color(25, 255, 200);
+
+  b1 = color(190, 190, 190);
+  b2 = color(20, 20, 20);
+
+
+  c1 = color(255, 120, 0);
+  c2 = color(10, 45, 255);
+  c3 = color(10, 255, 15);
+  c4 = color(125, 2, 140);
+  c5 = color(255, 255, 0);
+  c6 = color(25, 255, 200);
+  noLoop();
+}
+
+void draw() {
+    // background
+    setGradient(0, 0, width, height, b1, b2, Y_AXIS);
+    //center squares
   setGradient(25, 25, 75, 75, c1, c2, Y_AXIS);
   setGradient(100, 25, 75, 75, c3, c4, X_AXIS);
   setGradient(25, 100, 75, 75, c2, c5, X_AXIS);
-  setGradient(100, 100, 75, 75, c4, c6, Y_AXIS);
+  setGradient(100, 100, 75, 75, c4, c6, Y_AXIS); 
 }
 
 void setGradient(int x, int y, float w, float h, color c1, color c2, int axis ){
