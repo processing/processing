@@ -755,8 +755,8 @@ public class ContributionManager {
           String filter = filterField.getFilterText();
           filter = filter.toLowerCase();
           
-          // Replace anything but 0-9 or a-z with a space
-          filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a]", " ");
+          // Replace anything but 0-9, a-z, or : with a space
+          filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a^\\x3a]", " ");
           filters = Arrays.asList(filter.split(" "));
           filterLibraries(category, filters);
         }

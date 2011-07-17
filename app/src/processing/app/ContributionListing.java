@@ -220,23 +220,39 @@ public class ContributionListing {
     return filteredList;
   }
 
-  private boolean matches(ContributionInfo libInfo, String filter) {
+  private boolean matches(ContributionInfo info, String filter) {
+    
+    // Maybe this can be fancy some other time
+    if (filter.equals("has:update") || filter.equals("has:updates")) {
+      return info.latestVersion != null;
+    }
+    if (filter.equals("is:installed")) {
+      return info.isInstalled();
+    }
+    if (filter.equals("not:installed")) {
+      return !info.isInstalled();
+    }
+    if (filter.contains(":")) {
+      // Return true and ignore everything else if the property is invalid.
+      return true;
+    }
+    // sdfikjfdslk Added filters properties for showing installed and upgrade 
     filter = ".*" + filter.toLowerCase() + ".*";
     
     if (filter.isEmpty()) {
       return true;
     }
     
-    for (Author author : libInfo.authorList) {
+    for (Author author : info.authorList) {
       if (author.name.toLowerCase().matches(filter)) {
         return true;
       }
     }
     
-    return libInfo.sentence != null && libInfo.sentence.toLowerCase().matches(filter)
-        || libInfo.paragraph != null && libInfo.paragraph.toLowerCase().matches(filter)
-        || libInfo.category != null && libInfo.category.toLowerCase().matches(filter)
-        || libInfo.name != null && libInfo.name.toLowerCase().matches(filter);
+    return info.sentence != null && info.sentence.toLowerCase().matches(filter)
+        || info.paragraph != null && info.paragraph.toLowerCase().matches(filter)
+        || info.category != null && info.category.toLowerCase().matches(filter)
+        || info.name != null && info.name.toLowerCase().matches(filter);
  
   }
 
