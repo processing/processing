@@ -13,7 +13,7 @@ int[] bvals;
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   xvals = new int[width];
   yvals = new int[width];
   bvals = new int[width];
@@ -25,7 +25,7 @@ void draw()
 {
   background(102);
   
-  for(int i=1; i<width; i++) { 
+  for(int i = 1; i < width; i++) { 
     xvals[i-1] = xvals[i]; 
     yvals[i-1] = yvals[i];
     bvals[i-1] = bvals[i];

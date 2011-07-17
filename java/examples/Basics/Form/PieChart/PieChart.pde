@@ -5,19 +5,27 @@
  * Uses the arc() function to generate a pie chart from the data
  * stored in an array. 
  */
- 
-size(200, 200);
-background(100);
-smooth();
-noStroke();
 
-float diameter = min(width, height) * 0.75;
-int[] angs = {30, 10, 45, 35, 60, 38, 75, 67};
-float lastAng = 0;
 
-for (int i = 0; i < angs.length; i++){
-  fill(angs[i] * 3.0);
-  arc(width/2, height/2, diameter, diameter, lastAng, lastAng+radians(angs[i]));
-  lastAng += radians(angs[i]);  
+float diameter;
+int[] angles = { 30, 10, 45, 35, 60, 38, 75, 67 };
+float lastAngle = 0;
+
+void setup() {
+  size(640, 360);
+  background(100);
+  smooth();
+  noStroke();
+  diameter = min(width, height) * 0.75;
+  noLoop();  // Run once and stop
+}
+
+
+void draw() {
+  for (int i = 0; i < angles.length; i++) {
+    fill(angles[i] * 3.0);
+    arc(width/2, height/2, diameter, diameter, lastAngle, lastAngle+radians(angles[i]));
+    lastAngle += radians(angles[i]);
+  }
 }
 

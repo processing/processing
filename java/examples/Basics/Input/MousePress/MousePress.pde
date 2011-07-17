@@ -1,5 +1,5 @@
 /**
- * Click. 
+ * Mouse Press. 
  * 
  * Move the mouse to position the shape. 
  * Press the mouse button to invert the color. 
@@ -7,7 +7,7 @@
 
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   fill(126);
   background(102);
 }

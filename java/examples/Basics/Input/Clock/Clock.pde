@@ -15,7 +15,7 @@ float hoursRadius;
 float clockDiameter;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   stroke(255);
   smooth();
   
@@ -29,7 +29,7 @@ void setup() {
   cy = height / 2;
 }
 
-void draw2() {
+void draw() {
   background(0);
   
   // Draw the clock background

@@ -7,12 +7,12 @@
  * Move the cursor vertically over each bar to alter its saturation. 
  */
  
-int barWidth = 5;
+int barWidth = 20;
 int lastBar = -1;
 
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   colorMode(HSB, width, height, 100); 
   noStroke();
 }

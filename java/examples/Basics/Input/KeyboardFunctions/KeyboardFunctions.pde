@@ -9,12 +9,12 @@
  * function that is called when a key is released.
  */
  
-int max_height = 20;
-int min_height = 10;
-int letter_height = max_height; // Height of the letters
-int letter_width = 10;          // Width of the letter
+int maxHeight = 40;
+int minHeight = 20;
+int letterHeight = maxHeight; // Height of the letters
+int letterWidth = 20;          // Width of the letter
 
-int x = -letter_width;          // X position of the letters
+int x = -letterWidth;          // X position of the letters
 int y = 0;                      // Y position of the letters
 
 boolean newletter;              
@@ -24,7 +24,7 @@ color[] colors = new color[numChars];
 
 void setup()
 {
-  size(200, 200);
+  size(640, 360);
   noStroke();
   colorMode(RGB, numChars);
   background(numChars/2);
@@ -39,14 +39,14 @@ void draw()
   if(newletter == true) {
     // Draw the "letter"
     int y_pos;
-    if (letter_height == max_height) {
+    if (letterHeight == maxHeight) {
       y_pos = y;
-      rect( x, y_pos, letter_width, letter_height );
+      rect( x, y_pos, letterWidth, letterHeight );
     } else {
-      y_pos = y + min_height;
-      rect( x, y_pos, letter_width, letter_height );
+      y_pos = y + minHeight;
+      rect( x, y_pos, letterWidth, letterHeight );
       fill(numChars/2);
-      rect( x, y_pos-min_height, letter_width, letter_height );
+      rect( x, y_pos-minHeight, letterWidth, letterHeight );
     }
     newletter = false;
   }
@@ -54,36 +54,36 @@ void draw()
 
 void keyPressed()
 {
-  // if the key is between 'A'(65) and 'z'(122)
+  // If the key is between 'A'(65) and 'z'(122)
   if( key >= 'A' && key <= 'z') {
     int keyIndex;
     if(key <= 'Z') {
       keyIndex = key-'A';
-      letter_height = max_height;
+      letterHeight = maxHeight;
       fill(colors[key-'A']);
     } else {
       keyIndex = key-'a';
-      letter_height = min_height;
+      letterHeight = minHeight;
       fill(colors[key-'a']);
     }
   } else {
     fill(0);
-    letter_height = 10;
+    letterHeight = 10;
   }
 
   newletter = true;
 
   // Update the "letter" position
-  x = ( x + letter_width ); 
+  x = ( x + letterWidth ); 
 
   // Wrap horizontally
-  if (x > width - letter_width) {
+  if (x > width - letterWidth) {
     x = 0;
-    y+= max_height;
+    y+= maxHeight;
   }
 
   // Wrap vertically
-  if( y > height - letter_height) {
+  if( y > height - letterHeight) {
     y = 0;      // reset y to 0
   }
 }

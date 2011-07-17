@@ -6,7 +6,7 @@
  
 void setup() 
 {
-  size(200, 200); 
+  size(640, 360); 
   noStroke();
   rectMode(CENTER);
 }

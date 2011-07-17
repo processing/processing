@@ -1,45 +1,41 @@
 /**
  * Iteration. 
  * 
- * Iteration with a "for" structure constructs repetitive forms. 
+ * Iteration with a "for" structure to construct repetitive forms. 
  */
  
-int k;
-int xpos1 = 100; 
-int xpos2 = 118; 
-int count = 0; 
-int timey = 0;
-int num = 12;
+int y;
+int num = 14;
 
-size(200, 200);
+size(640, 360);
 background(102);
 noStroke();
  
 // Draw gray bars 
 fill(255);
-k=60;
-for(int i=0; i < num/3; i++) {
-  rect(25, k, 155, 5);
-  k+=10;
+y = 60;
+for(int i = 0; i < num/3; i++) {
+  rect(50, y, 475, 10);
+  y+=20;
 }
 
-// Black bars
+// Gray bars
 fill(51);
-k = 40;
-for(int i=0; i < num; i++) {
-  rect(105, k, 30, 5);
-  k += 10;
-}
-k = 15;
+y = 40;
 for(int i = 0; i < num; i++) {
-  rect(125, k, 30, 5);
-  k +=10;
+  rect(405, y, 30, 10);
+  y += 20;
+}
+y = 50;
+for(int i = 0; i < num; i++) {
+  rect(425, y, 30, 10);
+  y += 20;
 }
   
 // Thin lines
-k = 42;
+y = 45;
 fill(0);
-for(int i=0; i < num-1; i++) {
-  rect(36, k, 20, 1);
-  k+=10;
+for(int i = 0; i < num-1; i++) {
+  rect(120, y, 40, 1);
+  y+= 20;
 }

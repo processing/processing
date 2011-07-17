@@ -9,9 +9,13 @@
  * To stop drawing the shape, call the endShape() functions.
  */
  
-size(200, 200);
+size(640, 360);
 background(0);
 noFill();
+
+translate(140, 20);
+scale(1.5);
+strokeWeight(.5);
 
 stroke(102);
 beginShape();
