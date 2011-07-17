@@ -57,6 +57,8 @@ public abstract class Contribution {
     
     protected String link = "";
     
+    protected ContributionInfo latestVersion;
+    
     public static class Author {
       public String name;
       
@@ -81,6 +83,10 @@ public abstract class Contribution {
      *         installed
      */
     public abstract Contribution getContribution();
+
+    public void setLatestVersion(ContributionInfo advertisedInfo) {
+      latestVersion = advertisedInfo;
+    }
     
   }
   

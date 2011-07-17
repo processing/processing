@@ -48,68 +48,67 @@ public class ContributionListing {
   
   ArrayList<ContributionInfo> allLibraries;
   
-  boolean hasDownloadedList;
-  
   
   public ContributionListing() {
     listeners = new ArrayList<ContributionChangeListener>();
     librariesByCategory = new HashMap<String, List<ContributionInfo>>();
     allLibraries = new ArrayList<ContributionInfo>();
-    hasDownloadedList = false;
   }
 
 
-  public void updateList(File xmlFile) {
-    
-    hasDownloadedList = true;
+  public void setAdvertisedList(File xmlFile) {
     
     ContributionXmlParser xmlParser = new ContributionXmlParser(xmlFile);
     advertisedContributions = xmlParser.getLibraries();
-    updateList(advertisedContributions);
+    for (ContributionInfo info : advertisedContributions) {
+      addContribution(info);
+    }
     
     Collections.sort(allLibraries);
     
   }
   
   /**
+   * If a the given contribution has a version of it which is advertised. This
+   * method sets the latestVersion and category for the contribution.
+   */
+  public void getInformationFromAdvertised(ContributionInfo contribution) {
+    
+    ContributionInfo advertised = getAdvertisedContribution(contribution.name,
+                                                            contribution.getType());
+    contribution.setLatestVersion(advertised);
+
+    if (advertised != null) {
+      // Merge information from the advertised and local versions.
+      if (advertised.category != null) {
+        contribution.category = advertised.category;
+      }
+    }
+  }
+  
+  /**
    * Adds the installed libraries to the listing of libraries, replacing any
    * pre-existing libraries by the same name as one in the list.
    */
-  public void updateList(List<ContributionInfo> contributions) {
+  public void updateInstalledList(List<ContributionInfo> installedContributions) {
     
-    // First, record the names of all the libraries in installedLibraries
-    HashSet<String> installedContributionNames = new HashSet<String>();
-    for (ContributionInfo libInfo : contributions) {
-      installedContributionNames.add(libInfo.name);
-    }
-
-    // We also want to remember categories of libraries that happen to already
-    // exist since there is no 'category' attribute in export.txt. For this, we
-    // use a mapping of contributions names to category names.
-    HashMap<String, String> categoriesByName = new HashMap<String, String>();
-    
-    Iterator<ContributionInfo> it = allLibraries.iterator();
-    while (it.hasNext()) {
-      ContributionInfo libInfo = it.next();
-      if (installedContributionNames.contains(libInfo.name)) {
-        if (librariesByCategory.containsKey(libInfo.category)) {
-          librariesByCategory.get(libInfo.category).remove(libInfo);
+    for (ContributionInfo contribution : installedContributions) {
+      
+      getInformationFromAdvertised(contribution);
+      
+      boolean found= false;
+      for (ContributionInfo existing : allLibraries) {
+        if (existing.name.equals(contribution.name) && existing.getType() == contribution.getType()) {
+          replaceContribution(existing, contribution);
+          found = true;
+          break;
         }
-        it.remove();
-        notifyRemove(libInfo);
-        categoriesByName.put(libInfo.name, libInfo.category);
+      }
+      
+      if (!found) {
+        addContribution(contribution);
       }
     }
-    
-    for (ContributionInfo libInfo : contributions) {
-      String category = categoriesByName.get(libInfo.name);
-      if (category != null) {
-        libInfo.category = category;
-      }
-      addContribution(libInfo);
-    }
-    
-    Collections.sort(allLibraries);
     
   }
   
@@ -326,7 +325,7 @@ public class ContributionListing {
           
           File xmlFile = downloader.getFile();
           if (xmlFile != null) {
-            libListing.updateList(xmlFile);
+            libListing.setAdvertisedList(xmlFile);
           }
         }
       });

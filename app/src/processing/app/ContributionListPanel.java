@@ -53,6 +53,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
                     + "You can still intall this library manually by visiting\n"
                     + "the library's website.";
   
+  private static String UPDATE_LINK = "http://update/";
+  
   ContributionManager contributionManager;
   
   JProgressBar setupProgressBar;
@@ -82,7 +84,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     libraryInstaller = new ContributionInstaller() {
 
       public Contribution installContribution(File f) {
-        return contributionManager.installLibrary(f);
+        return contributionManager.installLibrary(f, false);
       }
     };
     
@@ -471,6 +473,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
     JTextPane headerLabel;
     
+    JTextPane versionLabel;
+    
     JLabel categoryLabel;
     
     JTextPane descriptionText;
@@ -480,6 +484,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     JButton installOrRemove;
 
     boolean isSelected;
+
+    private ArrayList<JTextPane> htmlPanes;
     
     private ContributionPanel(ContributionInfo contributionInfo,
                               ContributionInstaller contributionInstaller) {
@@ -487,13 +493,19 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       this.info = contributionInfo;
       this.installer = contributionInstaller;
       
+      htmlPanes = new ArrayList<JTextPane>();
+      
       okayToOpenHyperLink = false;
       conditionalHyperlinkOpener = new HyperlinkListener() {
         
         public void hyperlinkUpdate(HyperlinkEvent e) {
           if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             if (okayToOpenHyperLink) {
-              Base.openURL(e.getURL().toString());
+              if (UPDATE_LINK.equals(e.getURL().toString())) {
+                installContribution(info.latestVersion.link);
+              } else {
+                Base.openURL(e.getURL().toString());
+              }
             }
           }
         }
@@ -501,8 +513,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       
-      createAuthorString();
-
       installAction = createInstallAction();
       removeAction = createRemoveAction();
 
@@ -535,15 +545,27 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             getParent().requestFocusInWindow();
           }
         }
-
+        
       };
       
       addMouseListener(expandPanelMouseListener);
-      stripListeners(headerLabel);
-      stripListeners(descriptionText);
-      headerLabel.addMouseListener(expandPanelMouseListener);
-      categoryLabel.addMouseListener(expandPanelMouseListener);
-      descriptionText.addMouseListener(expandPanelMouseListener);
+      stripListener(expandPanelMouseListener, this);
+    }
+    
+    private void stripListener(MouseAdapter expandPanelMouseListener,
+                               Container con) {
+      
+      for (Component c : con.getComponents()) {
+        if (c instanceof Container) {
+          stripListener(expandPanelMouseListener, (Container) c);
+        }
+        if (c instanceof JTextPane) {
+          stripListeners((JTextPane) c);
+        }
+        if (c instanceof JComponent) {
+          ((JComponent) c).addMouseListener(expandPanelMouseListener);
+        }
+      }
     }
     
     /**
@@ -579,49 +601,74 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
     
     public void updateState() {
+      
       if (info.isInstalled()) {
+        // Display the version number and upgrade link
+        StringBuilder versionText = new StringBuilder();
+        versionText.append("<html><body>");
+        versionText.append("Version ");
+        versionText.append(info.prettyVersion);
+        versionText.append(" installed.");
+        if (info.latestVersion != null
+            && info.latestVersion.version > info.version) {
+          versionText.append(" <a href=\"");
+          versionText.append(UPDATE_LINK);
+          versionText.append("\">");
+          versionText.append("Click here to update to latest version.</a>");
+        }
+        versionText.append("</body></html>");
+        versionLabel.setText(versionText.toString());
+        versionLabel.setMargin(new Insets(0, 25, 10, 5));
+        versionLabel.setVisible(true);
+        
         useRemoveAction();
       } else {
         useInstalledAction();
+        versionLabel.setVisible(false);
       }
+      
     }
     
     protected ActionListener createInstallAction() {
       return new ActionListener() {
         
         public void actionPerformed(ActionEvent arg) {
-          installOrRemove.setEnabled(false);
-          
-          try {
-            URL url = new URL(info.link);
-            
-            installProgressBar.setVisible(true);
-            
-            contributionManager.downloadAndInstall(url, info, installer,
-              new JProgressMonitor(installProgressBar) {
-  
-                public void finishedAction() {
-                  // Finished downloading library
-                }
-              },
-              new JProgressMonitor(installProgressBar) {
-  
-                public void finishedAction() {
-                  // Finished installing library
-                  resetInstallProgressBarState();
-                  installOrRemove.setEnabled(true);
-                }
-              }
-            );
-            
-          } catch (MalformedURLException e) {
-            Base.showWarning(INSTALL_FAILURE_TITLE, MALFORMED_URL_MESSAGE, e);
-            installOrRemove.setEnabled(true);
-          }
+          installContribution(info.link);
         }
       };
     }
+    
+    private void installContribution(String url) {
+      installOrRemove.setEnabled(false);
+      
+      try {
+        URL downloadUrl = new URL(url);
+        
+        installProgressBar.setVisible(true);
+        
+        contributionManager.downloadAndInstall(downloadUrl, info, installer,
+          new JProgressMonitor(installProgressBar) {
 
+            public void finishedAction() {
+              // Finished downloading library
+            }
+          },
+          new JProgressMonitor(installProgressBar) {
+
+            public void finishedAction() {
+              // Finished installing library
+              resetInstallProgressBarState();
+              installOrRemove.setEnabled(true);
+            }
+          }
+        );
+        
+      } catch (MalformedURLException e) {
+        Base.showWarning(INSTALL_FAILURE_TITLE, MALFORMED_URL_MESSAGE, e);
+        installOrRemove.setEnabled(true);
+      }
+    }
+    
     protected ActionListener createRemoveAction() {
       
       return new ActionListener() {
@@ -664,7 +711,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (author.url == null) {
             authors.append(author.name);
           } else {
-            authors.append("<a href=\"" + author.url + "\">" + author.name + "</a>");
+            authors.append("<a href=\"");
+            authors.append(author.url);
+            authors.append("\">");
+            authors.append(author.name);
+            authors.append("</a>");
           }
           if (i + 2 < info.authorList.size()) {
             authors.append(", ");
@@ -708,11 +759,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
       
       updateHyperLinkStyle(textPane);
+      htmlPanes.add(textPane);
     }
     
     void updateHyperLinkStyles() {
-      updateHyperLinkStyle(headerLabel);
-      updateHyperLinkStyle(descriptionText);
+      for (JTextPane textPane : htmlPanes) {
+        updateHyperLinkStyle(textPane);
+      }
     }
     
     private void updateHyperLinkStyle(JTextPane textPane) {
@@ -745,6 +798,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
      * Create the widgets for the header panel which is visible when the library
      * panel is not clicked
      */
+    /**
+     * 
+     */
     private void addPaneComponents() {
       setFocusable(true);
       setLayout(new GridBagLayout());
@@ -761,46 +817,35 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 //      nameLabel.getDocument().
 //      ((HTMLDocument)nameLabel.getDocument()).getStyleSheet().addRule("a {font-family:"+font.getFamily()+";}");
       
-      StringBuilder header = new StringBuilder();
-      header.append("<html><body>");
-      header.append("<b>");
+      StringBuilder nameText = new StringBuilder();
+      nameText.append("<html><body><b>");
       if (info.url == null) {
-        header.append(info.name);
+        nameText.append(info.name);
       } else {
-        header.append("<a href=\"" + info.url + "\">" + info.name + "</a>");
+        nameText.append("<a href=\"" + info.url + "\">" + info.name + "</a>");
       }
-      header.append("</b>");
-      header.append(createAuthorString());
-      header.append("</body></html>");
-      headerLabel.setText(header.toString());
+      nameText.append("</b>");
+      nameText.append(createAuthorString());
+      nameText.append("</body></html>");
+      headerLabel.setText(nameText.toString());
       
       setHtmlTextStyle(headerLabel, false);
-      headerLabel.addHyperlinkListener(nullHyperlinkListener);
       add(headerLabel, c);
       
       c = new GridBagConstraints();
       c.gridx = 1;
       c.gridy = 0;
-      c.anchor = GridBagConstraints.EAST;
+      c.anchor = GridBagConstraints.WEST;
+      
       categoryLabel = new JLabel("[" + info.category + "]");
       categoryLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 7));
       add(categoryLabel, c);
-      
-//      c = new GridBagConstraints();
-//      c.gridx = 2;
-//      c.gridy = 0;
-//      c.anchor = GridBagConstraints.NORTHEAST;
-//      JLabel categoryLabel = new JLabel(libInfo.categoryName + "  ");
-//      font = categoryLabel.getFont();
-//      font = font.deriveFont(font.getSize() * 0.7f);
-//      categoryLabel.setFont(font);
-//      headerPanel.add(categoryLabel, c);
       
       c = new GridBagConstraints();
       c.gridx = 0;
       c.gridy = 1;
       c.weightx = 1;
-      c.gridwidth = 3;
+      c.gridwidth = 2;
       c.fill = GridBagConstraints.BOTH;
       c.anchor = GridBagConstraints.WEST;
 
@@ -820,18 +865,31 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
       description.append("</body></html>");
       descriptionText.setText(description.toString());
-      descriptionText.addHyperlinkListener(nullHyperlinkListener);
       descriptionText.setMargin(new Insets(0, 25, 10, 5));
       setHtmlTextStyle(descriptionText, true);
       add(descriptionText, c);
+      
+      c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 2;
+      c.weightx = 1;
+      c.gridwidth = 2;
+      c.fill = GridBagConstraints.BOTH;
+      c.anchor = GridBagConstraints.WEST;
+
+      versionLabel = new JTextPane();
+      versionLabel.setContentType("text/html");
+      setHtmlTextStyle(versionLabel, false);
+      versionLabel.setVisible(false);
+      add(versionLabel, c);
     }
     
     public void addProgressBarAndButton() {
       GridBagConstraints c = new GridBagConstraints();
-      c.gridx = 3;
+      c.gridx = 4;
       c.gridy = 0;
       c.weighty = 1;
-      c.gridheight = 2;
+      c.gridheight = 3;
       c.fill = GridBagConstraints.VERTICAL;
       c.anchor = GridBagConstraints.NORTH;
       JPanel rightPane = new JPanel();
@@ -882,24 +940,23 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       installProgressBar.setVisible(false);
     }
 
-    public void setSelected(boolean doShow) {
-      isSelected = doShow;
-      installOrRemove.setVisible(doShow);
-      
-      updateLiseners(headerLabel);
-      updateLiseners(descriptionText);
-      
-    }
+    public void setSelected(boolean isSelected) {
+      this.isSelected = isSelected;
+      installOrRemove.setVisible(isSelected);
 
-    private void updateLiseners(JEditorPane editorPane) {
-      if (isSelected) {
-        editorPane.removeHyperlinkListener(nullHyperlinkListener);
-        editorPane.addHyperlinkListener(conditionalHyperlinkOpener);
-        editorPane.setEditable(false);
-      } else {
-        editorPane.removeHyperlinkListener(conditionalHyperlinkOpener);
-        editorPane.addHyperlinkListener(nullHyperlinkListener);
-        editorPane.setEditable(true);
+      for (JTextPane textPane : htmlPanes) {
+        if (textPane instanceof JEditorPane) {
+          JEditorPane editorPane = (JEditorPane) textPane;
+          if (isSelected) {
+            editorPane.removeHyperlinkListener(nullHyperlinkListener);
+            editorPane.addHyperlinkListener(conditionalHyperlinkOpener);
+            editorPane.setEditable(false);
+          } else {
+            editorPane.removeHyperlinkListener(conditionalHyperlinkOpener);
+            editorPane.addHyperlinkListener(nullHyperlinkListener);
+            editorPane.setEditable(true);
+          }
+        }
       }
     }
 
@@ -923,5 +980,4 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
     
   }
-
 }
