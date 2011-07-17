@@ -6,26 +6,25 @@
  * Move the cursor vertically over each bar to alter its hue. 
  */
  
-int barWidth = 5;
-int[] hue;
+int barWidth = 20;
+int lastBar = -1;
 
 void setup() 
 {
-  size(200, 200);
-  colorMode(HSB, 360, height, height);  
-  hue = new int[width/barWidth];
+  size(640, 360);
+  colorMode(HSB, height, height, height);  
   noStroke();
+  background(0);
 }
 
 void draw() 
 {
-  int j = 0;
-  for (int i=0; i<=(width-barWidth); i+=barWidth) {  
-    if ((mouseX > i) && (mouseX < i+barWidth)) {
-      hue[j] = mouseY;
-    }
-    fill(hue[j], height/1.2, height/1.2);
-    rect(i, 0, barWidth, height);  
-    j++;
+  int whichBar = mouseX / barWidth;
+  if (whichBar != lastBar) {
+    int barX = whichBar * barWidth;
+    fill(mouseY, height, height);
+    rect(barX, 0, barWidth, height);
+    lastBar = whichBar;
   }
 }
+

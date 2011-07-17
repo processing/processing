@@ -6,14 +6,15 @@
  * The four variables set the positions based on the value of 'd'. 
  */
  
-int d = 40;
+int d = 70;
 int p1 = d;
 int p2 = p1+d;
 int p3 = p2+d;
 int p4 = p3+d;
 
-size(200, 200);
+size(640, 360);
 background(0);
+translate(140, 0);
 
 // Draw gray box
 stroke(153);

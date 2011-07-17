@@ -15,7 +15,7 @@ float[] dx = new float[maxwaves];          // Value for incrementing X, to be ca
 float[] yvalues;                           // Using an array to store height values for the wave (not entirely necessary)
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   frameRate(30);
   colorMode(RGB, 255, 255, 255, 100);
   smooth();

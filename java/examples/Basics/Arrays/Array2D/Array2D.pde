@@ -6,27 +6,32 @@
  * 2D arrays are useful for storing images. In this example, each dot 
  * is colored in relation to its distance from the center of the image. 
  */
- 
+
 float[][] distances;
 float maxDistance;
+int spacer = 10;
 
-size(200, 200);
-background(0);
-maxDistance = dist(width/2, height/2, width, height);
-distances = new float[width][height];
-for(int i=0; i<height; i++) {
-  for(int j=0; j<width; j++) {
-    float dist = dist(width/2, height/2, j, i);
-    distances[j][i] = dist/maxDistance * 255; 
+void setup() {
+  size(640, 360);
+  maxDistance = dist(width/2, height/2, width, height);
+  distances = new float[width][height];
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      float dist = dist(width/2, height/2, x, y);
+      distances[x][y] = dist/maxDistance * 255;
+    }
   }
+  noLoop();  // Run once and stop
 }
 
-for(int i=0; i<height; i+=2) {
-  for(int j=0; j<width; j+=2) {
-    stroke(distances[j][i]);
-    point(j, i);
+void draw() {
+  background(0);
+  for (int y = 0; y < height; y += spacer) {
+    for (int x = 0; x < width; x += spacer) {
+      stroke(distances[x][y]);
+      point(x + spacer/2, y + spacer/2);
+    }
   }
 }
-
 
 

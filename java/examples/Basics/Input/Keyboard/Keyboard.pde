@@ -10,7 +10,7 @@
 int rectWidth;
    
 void setup() {
-  size(200, 200);
+  size(640, 360);
   noStroke();
   background(0);
   rectWidth = width/4;

@@ -8,45 +8,46 @@
  */
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   colorMode(RGB, 100);
+  smooth();
   background(0);
   noFill();
-  noLoop();
+  noLoop();  // Run once and stop
 }
 
 void draw() {
   stroke(40);
   beginShape();
-  for(int i=0; i<width; i++) {
+  for(int i = 0; i < width; i++) {
    vertex(i, singraph((float)i/width)*height);
   }
   endShape();
   
   stroke(55);
   beginShape();
-  for(int i=0; i<width; i++) {
+  for(int i = 0; i < width; i++) {
    vertex(i, quad((float)i/width)*height);
   }
   endShape();
   
   stroke(70);
   beginShape();
-  for(int i=0; i<width; i++) {
+  for(int i = 0; i < width; i++) {
    vertex(i, quadHump((float)i/width)*height);
   }
   endShape();
   
   stroke(85);
   beginShape();
-  for(int i=0; i<width; i++) {
+  for(int i = 0; i < width; i++) {
    vertex(i, hump((float)i/width)*height);
   }
   endShape();
   
   stroke(100);
   beginShape();
-  for(int i=0; i<width; i++) {
+  for(int i = 0; i < width; i++) {
    vertex(i, squared((float)i/width)*height);
   }
   endShape();

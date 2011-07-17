@@ -18,7 +18,7 @@ color controlPtCol = #222222;
 color anchorPtCol = #BBBBBB;
 
 void setup(){
-  size(200, 200);
+  size(640, 360);
   smooth();
   setEllipse(pts, 65, 65);
   frameRate(1);
@@ -30,12 +30,12 @@ void draw(){
   setEllipse(int(random(3, 12)), random(-100, 150), random(-100, 150));
 }
 
-// draw ellipse with anchor/control points
+// Draw ellipse with anchor/control points
 void drawEllipse(){
   strokeWeight(1.125);
   stroke(255);
   noFill();
-  // create ellipse
+  // Create ellipse
   for (int i=0; i<pts; i++){
     if (i==pts-1) {
       bezier(px[i], py[i], cx[i], cy[i], cx2[i], cy2[i],  px[0], py[0]);
@@ -48,9 +48,9 @@ void drawEllipse(){
   stroke(0);
   rectMode(CENTER);
 
-  // control handles and tangent lines
-  for ( int i=0; i< pts; i++){
-    if (i==pts-1){  // last loop iteration-close path
+  // Control handles and tangent lines
+  for ( int i = 0; i < pts; i++){
+    if (i==pts-1){  // Last loop iteration-close path
       line(px[0], py[0], cx2[i], cy2[i]);
     }
     if (i>0){
@@ -62,18 +62,18 @@ void drawEllipse(){
   for ( int i=0; i< pts; i++){
     fill(controlPtCol);
     noStroke();
-    //control handles
+    // Control handles
     ellipse(cx[i], cy[i], 4, 4);
     ellipse(cx2[i], cy2[i], 4, 4);
 
     fill(anchorPtCol);
     stroke(0);
-    //anchor points
+    // Anchor points
     rect(px[i], py[i], 5, 5);
   }
 }
 
-// fill up arrays with ellipse coordinate data
+// Fill arrays with ellipse coordinate data
 void setEllipse(int points, float radius, float controlRadius){
   pts = points;
   px = new float[points];
@@ -97,7 +97,7 @@ void setEllipse(int points, float radius, float controlRadius){
     cy2[i] = height/2+sin(radians(angle+controlAngle2))* 
       controlRadius/cos(radians(controlAngle1));
 
-    //increment angle so trig functions keep chugging along
+    // Increment angle so trig functions keep chugging along
     angle+=360.0/points;
   }
 }
