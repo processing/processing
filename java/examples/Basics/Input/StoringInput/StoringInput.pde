@@ -6,8 +6,6 @@
  * into an array and played back every frame. Between each
  * frame, the newest value are added to the end of each array
  * and the oldest value is deleted. 
- * 
- * Updated 27 February 2010.
  */
  
 int num = 60;
@@ -15,7 +13,7 @@ float mx[] = new float[num];
 float my[] = new float[num];
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   smooth();
   noStroke();
   fill(255, 153); 
@@ -33,6 +31,6 @@ void draw() {
   for (int i = 0; i < num; i++) {
     // which+1 is the smallest (the oldest in the array)
     int index = (which+1 + i) % num;
-    ellipse(mx[index], my[index], i/2, i/2);
+    ellipse(mx[index], my[index], i, i);
   }
 }

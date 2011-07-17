@@ -1,38 +1,39 @@
 class Module {
-  int mx, my;
-  int big;
+  int xOffset;
+  int yOffset;
   float x, y;
-  int xdir = 1;
-  int ydir = 1;
+  int unit;
+  int xDirection = 1;
+  int yDirection = 1;
   float speed; 
   
-  // Contructor (required)
-  Module(int imx, int imy, int ix, int iy, float ispeed) {
-    mx = imx;
-    my = imy;
-    x = ix;
-    y = iy;
-    speed = ispeed;
-    big = unit;
+  // Contructor
+  Module(int xOffsetTemp, int yOffsetTemp, int xTemp, int yTemp, float speedTemp, int tempUnit) {
+    xOffset = xOffsetTemp;
+    yOffset = yOffsetTemp;
+    x = xTemp;
+    y = yTemp;
+    speed = speedTemp;
+    unit = tempUnit;
   }
   
   // Custom method for updating the variables
   void update() {
-    x = x + (speed * xdir);
-    if (x >= big || x <= 0) {
-      xdir *= -1;
-      x = x + (1 * xdir);
-      y = y + (1 * ydir);
+    x = x + (speed * xDirection);
+    if (x >= unit || x <= 0) {
+      xDirection *= -1;
+      x = x + (1 * xDirection);
+      y = y + (1 * yDirection);
     }
-    if (y >= big || y <= 0) {
-      ydir *= -1;
-      y = y + (1 * ydir);
+    if (y >= unit || y <= 0) {
+      yDirection *= -1;
+      y = y + (1 * yDirection);
     }
   }
   
   // Custom method for drawing the object
   void draw() {
-    stroke(second() * 4);
-    point(mx+x-1, my+y-1);
+    fill(255);
+    ellipse(xOffset + x, yOffset + y, 6, 6);
   }
 }

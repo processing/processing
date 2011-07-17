@@ -7,10 +7,21 @@
  * This example will not run in a web broswer and will only work when 
  * the computer is connected to the Internet. 
  */
- 
-size(200, 200);
-PImage img1;
-img1 = loadImage("http://processing.org/img/processing_cover.gif");
-if (img != null) {
-  image(img1, 0, 0);
+
+PImage img;
+
+void setup() {
+  size(640, 360);
+  img = loadImage("http://processing.org/img/processing_cover.gif");
+  noLoop();
 }
+
+void draw() {
+  background(0);
+  if (img != null) {
+    image(img, 0, 0);
+    image(img, 0, img.height);
+    image(img, 0, img.height * 2);
+  }
+}
+

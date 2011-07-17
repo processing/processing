@@ -8,14 +8,18 @@
  * of parameters to determine the shape's position and size. 
  */
  
-size(200, 200);
+size(640, 360);
 smooth(); 
 background(0);
 noStroke();
-fill(226);
-triangle(10, 10, 10, 200, 45, 200);
-rect(45, 45, 35, 35);
-quad(105, 10, 120, 10, 120, 200, 80, 200);
-ellipse(140, 80, 40, 40);
-triangle(160, 10, 195, 200, 160, 200); 
+fill(204);
+triangle(18, 18, 18, 360, 81, 360);
+fill(153);
+rect(81, 81, 63, 63);
+fill(204);
+quad(189, 18, 216, 18, 216, 360, 144, 360);
+fill(255);
+ellipse(252, 144, 72, 72);
+fill(204);
+triangle(288, 18, 351, 360, 288, 360); 
 

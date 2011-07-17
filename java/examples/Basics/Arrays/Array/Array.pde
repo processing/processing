@@ -10,26 +10,35 @@
  * separate ways on the screen.  
  */
 
-size(200, 200);
 
-float[] coswave = new float[width];
+float[] coswave; 
 
-for (int i = 0; i < width; i++) {
-  float amount = map(i, 0, width, 0, PI);
-  coswave[i] = abs(cos(amount));
+void setup() {
+  size(640, 360);
+  coswave = new float[width];
+  for (int i = 0; i < width; i++) {
+    float amount = map(i, 0, width, 0, PI);
+    coswave[i] = abs(cos(amount));
+  }
+  noLoop();
 }
 
-for (int i = 0; i < width; i++) {
-  stroke(coswave[i]*255);
-  line(i, 0, i, height/3);
+void draw() {
+
+  for (int i = 0; i < width; i++) {
+    stroke(coswave[i]*255);
+    line(i, 0, i, height/3);
+  }
+
+  for (int i = 0; i < width; i++) {
+    stroke(coswave[i]*255 / 4);
+    line(i, height/3, i, height/3*2);
+  }
+
+  for (int i = 0; i < width; i++) {
+    stroke(255 - coswave[i]*255);
+    line(i, height/3*2, i, height);
+  }
+  
 }
 
-for (int i = 0; i < width; i++) {
-  stroke(coswave[i]*255 / 4);
-  line(i, height/3, i, height/3*2);
-}
-
-for (int i = 0; i < width; i++) {
-  stroke(255 - coswave[i]*255);
-  line(i, height/3*2, i, height);
-}

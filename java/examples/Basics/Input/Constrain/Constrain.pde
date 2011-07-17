@@ -11,11 +11,11 @@ float mx;
 float my;
 float easing = 0.05;
 int radius = 24;
-int edge = 56;
+int edge = 100;
 int inner = edge + radius;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   noStroke(); 
   smooth();
   ellipseMode(RADIUS);

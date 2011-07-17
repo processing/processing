@@ -16,14 +16,14 @@ float easing = 0.05;
 
 void setup() 
 {
-  size(200, 200); 
+  size(640, 360); 
   smooth();
   noStroke();  
 }
 
 void draw() 
 { 
-  background( 51 );
+  background(51);
   
   targetX = mouseX;
   float dx = targetX - x;
@@ -37,5 +37,5 @@ void draw()
     y += dy * easing;
   }
   
-  ellipse(x, y, 33, 33);
+  ellipse(x, y, 66, 66);
 }

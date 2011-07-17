@@ -6,7 +6,7 @@
  
 float bx;
 float by;
-int bs = 20;
+int bs = 75;
 boolean bover = false;
 boolean locked = false;
 float bdifx = 0.0; 
@@ -15,7 +15,7 @@ float bdify = 0.0;
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   bx = width/2.0;
   by = height/2.0;
   rectMode(RADIUS);  
