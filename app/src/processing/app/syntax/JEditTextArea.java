@@ -1708,7 +1708,7 @@ public class JEditTextArea extends JComponent
     if (tokenMarker == null) {
       for (int j = 0; j < segmentCount; j++) {
         char c = segmentArray[j + segmentOffset];
-        cf = cf.append(c);
+        //cf = cf.append(c);
         appendAsHTML(cf, c);
       }
     } else {
@@ -1733,7 +1733,7 @@ public class JEditTextArea extends JComponent
         if (id == Token.END) {
           char c = segmentArray[segmentOffset + offset];
           if (segmentOffset + offset < limit) {
-            //            cf.append(c);
+            //cf.append(c);
             appendAsHTML(cf, c);
           } else {
             cf.append('\n');
@@ -1756,7 +1756,8 @@ public class JEditTextArea extends JComponent
             // Force spaces at the beginning of the line
             cf.append("&nbsp;");
           } else {
-            cf.append(c);
+            appendAsHTML(cf, c);
+            //cf.append(c);
           }
           // Place close tags [/]
           if (j == (length - 1) && id != Token.NULL && styles[id].isBold())
