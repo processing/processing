@@ -8,12 +8,12 @@
  * Updated 28 February 2010.
  */
  
-int barWidth = 5;
+int barWidth = 20;
 int lastBar = -1;
 
 void setup() {
-  size(200, 200);
-  colorMode(HSB, 360, 100, height);
+  size(640, 360);
+  colorMode(HSB, width, 100, width);
   noStroke();
   background(0);
 }
