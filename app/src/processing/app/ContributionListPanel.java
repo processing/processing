@@ -74,7 +74,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   private ContributionInstaller compilationInstaller;
   
   
-  public ContributionListPanel(ContributionManager libraryManager, ContributionListing libraryListing) {
+  public ContributionListPanel(ContributionManager libraryManager) {
     super();
     
     this.contributionManager = libraryManager;
@@ -117,24 +117,17 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         requestFocusInWindow();
       }
     });
+  
+    GridBagConstraints c = new GridBagConstraints();
+    c.fill = GridBagConstraints.HORIZONTAL;
+    c.weightx = 1;
+    c.weighty = 1;
+    c.anchor = GridBagConstraints.CENTER;
     
-    if (libraryListing == null) {
-      GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.weightx = 1;
-      c.weighty = 1;
-      c.anchor = GridBagConstraints.CENTER;
-      
-      setupProgressBar = new JProgressBar();
-      setupProgressBar.setString("");
-      setupProgressBar.setStringPainted(true);
-      add(setupProgressBar, c);
-    } else {
-      // Add all the libraries in libraryListing to this panel
-      for (ContributionInfo info : libraryListing.getAllLibararies()) {
-        contributionAdded(info);
-      }
-    }
+    setupProgressBar = new JProgressBar();
+    setupProgressBar.setString("");
+    setupProgressBar.setStringPainted(true);
+    add(setupProgressBar, c);
     
   }
   
@@ -502,7 +495,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
             if (okayToOpenHyperLink) {
               if (UPDATE_LINK.equals(e.getURL().toString())) {
-                installContribution(info.latestVersion.link);
+                installContribution(info.advertisedVersion.link);
               } else {
                 Base.openURL(e.getURL().toString());
               }
@@ -609,8 +602,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         versionText.append("Version ");
         versionText.append(info.prettyVersion);
         versionText.append(" installed.");
-        if (info.latestVersion != null
-            && info.latestVersion.version > info.version) {
+        if (info.hasUpdates()) {
           versionText.append(" <a href=\"");
           versionText.append(UPDATE_LINK);
           versionText.append("\">");
