@@ -76,7 +76,7 @@ public class ContributionListing {
     
     ContributionInfo advertised = getAdvertisedContribution(contribution.name,
                                                             contribution.getType());
-    contribution.setLatestVersion(advertised);
+    contribution.setAdvertisedVersion(advertised);
 
     if (advertised != null) {
       // Merge information from the advertised and local versions.
@@ -181,8 +181,7 @@ public class ContributionListing {
     
     return null;
   }
-
-
+  
   public Set<String> getCategories() {
     return librariesByCategory.keySet();
   }
@@ -224,7 +223,7 @@ public class ContributionListing {
     
     // Maybe this can be fancy some other time
     if (filter.equals("has:update") || filter.equals("has:updates")) {
-      return info.latestVersion != null;
+      return info.hasUpdates();
     }
     if (filter.equals("is:installed")) {
       return info.isInstalled();
@@ -286,6 +285,13 @@ public class ContributionListing {
     return new ArrayList<ContributionChangeListener>(listeners);
   }
   
+  public void getAdvertisedContributions(ProgressMonitor pm) {
+  
+    final ContributionListFetcher llf = new ContributionListFetcher();
+    llf.setProgressMonitor(pm);
+    new Thread(llf).start();
+  }
+  
   public static interface ContributionChangeListener {
     
     public void contributionAdded(ContributionInfo ContributionInfo);
@@ -296,9 +302,7 @@ public class ContributionListing {
     
   }
   
-  public static class ContributionListFetcher implements Runnable {
-
-    ContributionListing libListing;
+  public class ContributionListFetcher implements Runnable {
 
     File dest;
     
@@ -310,9 +314,7 @@ public class ContributionListing {
     
     ProgressMonitor progressMonitor;
 
-    public ContributionListFetcher(ContributionListing libListing) {
-      
-      this.libListing = libListing;
+    public ContributionListFetcher() {
       
       progressMonitor = new NullProgressMonitor();
       
@@ -341,7 +343,7 @@ public class ContributionListing {
           
           File xmlFile = downloader.getFile();
           if (xmlFile != null) {
-            libListing.setAdvertisedList(xmlFile);
+            setAdvertisedList(xmlFile);
           }
         }
       });
@@ -349,9 +351,6 @@ public class ContributionListing {
       downloader.run();
     }
     
-    public ContributionListing getContributionListing() {
-      return libListing;
-    }
   }
 
   /**
@@ -476,6 +475,15 @@ public class ContributionListing {
           + exception.getMessage());
       throw (exception);
     }
+  }
+
+  public boolean hasUpdates() {
+    for (ContributionInfo info : allLibraries) {
+      if (info.hasUpdates()) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
