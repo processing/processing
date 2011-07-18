@@ -53,7 +53,7 @@ public class Base {
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
 //  static public boolean DEBUG = true;
-  static public boolean ENABLE_LIBRARY_MANAGER = true;
+  static public boolean ENABLE_LIBRARY_MANAGER = false;
 
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
@@ -1404,16 +1404,22 @@ public class Base {
    * Show the library installer window.
    */
   public void handleAddOrRemoveLibrary() {
-    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager();
+    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager(activeEditor);
     libraryManagerFrame.showFrame(activeEditor);
   }
-
+  
+  public void handleShowUpdates() {
+    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager(activeEditor);
+    libraryManagerFrame.showFrame(activeEditor);
+    libraryManagerFrame.setFilterText("has:updates");
+  }
+  
   /**
    * Installed the libraries in the given file after a confirmation from the
    * user. Returns the number of libraries installed.
    */
   public boolean handleConfirmAndInstallLibrary(File libFile) {
-    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager();
+    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager(activeEditor);
     return libraryManagerFrame.confirmAndInstallLibrary(activeEditor, libFile) != null;
   }
 

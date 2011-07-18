@@ -36,7 +36,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import processing.app.Contribution.ContributionInfo;
-import processing.app.ContributionListing.ContributionListFetcher;
 
 public class ContributionManager {
   
@@ -75,9 +74,12 @@ public class ContributionManager {
   String category;
   
   ContributionListing contributionListing;
-  
-  public ContributionManager() {
 
+  private boolean hasBeenShow;
+  
+  public ContributionManager(Editor editor) {
+
+    this.editor = editor;
     dialog = new JFrame("Contribution Manager");
     
     Base.setIcon(dialog);
@@ -111,11 +113,23 @@ public class ContributionManager {
     
     pane.add(filterField, c);
    
-    contributionListPanel = new ContributionListPanel(this, contributionListing);
-    if (contributionListing == null) {
-      JProgressBar progressBar = contributionListPanel.getSetupProgressBar();
-      getContributionListing(progressBar);
-    }
+    contributionListing = new ContributionListing();
+    contributionListPanel = new ContributionListPanel(this);
+    contributionListing.addContributionListener(contributionListPanel);
+    
+    JProgressBar progressBar = contributionListPanel.getSetupProgressBar();
+    contributionListing.getAdvertisedContributions(new JProgressMonitor(progressBar) {
+
+      @Override
+      public void finishedAction() {
+        synchronized (contributionListing) {
+          updateContributionListing();
+          updateCategoryChooser();
+
+          progressBar.setVisible(false);
+        }
+      }
+    });
     
     c = new GridBagConstraints();
     c.fill = GridBagConstraints.BOTH;
@@ -167,15 +181,10 @@ public class ContributionManager {
 
   private void updateCategoryChooser() {
     ArrayList<String> categories;
-    if (contributionListing != null) {
-      categoryChooser.removeAllItems();
-      categories = new ArrayList<String>(contributionListing.getCategories());
-      Collections.sort(categories);
-      categories.add(0, ANY_CATEGORY);
-    } else {
-      categories = new ArrayList<String>();
-      categories.add(0, ANY_CATEGORY);
-    }
+    categoryChooser.removeAllItems();
+    categories = new ArrayList<String>(contributionListing.getCategories());
+    Collections.sort(categories);
+    categories.add(0, ANY_CATEGORY);
     for (String s : categories) {
       categoryChooser.addItem(s);
     }
@@ -210,6 +219,7 @@ public class ContributionManager {
 
   protected void showFrame(Editor editor) {
     this.editor = editor;
+    hasBeenShow = true;
     dialog.setVisible(true);
   }
 
@@ -220,45 +230,16 @@ public class ContributionManager {
     dialog.dispose();
   }
 
-  /**
-   * @return true if the library listing has already been downloaded
-   */
-  public boolean hasContributionListing() {
-    return contributionListing != null;
+  public boolean hasBeenShow() {
+    return hasBeenShow;
   }
-  
+
   public void filterLibraries(String category, List<String> filters) {
 
-    if (contributionListing != null) {
+    List<ContributionInfo> filteredLibraries = contributionListing
+        .getFilteredLibraryList(category, filters);
 
-      List<ContributionInfo> filteredLibraries = contributionListing
-          .getFilteredLibraryList(category, filters);
-
-      contributionListPanel.filterLibraries(filteredLibraries);
-    }
-  }
-  
-  private void getContributionListing(JProgressBar progressBar) {
-    if (contributionListing == null) {
-      contributionListing = new ContributionListing();
-      contributionListing.addContributionListener(contributionListPanel); 
-    
-      final ContributionListFetcher llf = new ContributionListFetcher(contributionListing);
-      llf.setProgressMonitor(new JProgressMonitor(progressBar) {
-        
-        @Override
-        public void finishedAction() {
-          contributionListing = llf.getContributionListing();
-          synchronized (contributionListing) {
-            updateContributionListing();
-            updateCategoryChooser();
-            
-            progressBar.setVisible(false);
-          }
-        }
-      });
-      new Thread(llf).start();
-    }
+    contributionListPanel.filterLibraries(filteredLibraries);
   }
 
   protected void updateContributionListing() {
@@ -702,6 +683,18 @@ public class ContributionManager {
     out.close();
   }
   
+  public void setFilterText(String filter) {
+    if (filter == null || filter.isEmpty()) {
+      filterField.setText("");
+      filterField.isShowingHint = true;
+    } else {
+      filterField.setText(filter);
+      filterField.isShowingHint = false;
+    }
+    filterField.applyFilter();
+    
+  }
+  
   class FilterField extends JTextField {
     
     final static String filterHint = "Filter your search...";
@@ -740,27 +733,27 @@ public class ContributionManager {
       getDocument().addDocumentListener(new DocumentListener() {
         
         public void removeUpdate(DocumentEvent e) {
-          filter();
+          applyFilter();
         }
         
         public void insertUpdate(DocumentEvent e) {
-          filter();
+          applyFilter();
         }
         
         public void changedUpdate(DocumentEvent e) {
-          filter();
-        }
-        
-        void filter() {
-          String filter = filterField.getFilterText();
-          filter = filter.toLowerCase();
-          
-          // Replace anything but 0-9, a-z, or : with a space
-          filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a^\\x3a]", " ");
-          filters = Arrays.asList(filter.split(" "));
-          filterLibraries(category, filters);
+          applyFilter();
         }
       });
+    }
+    
+    public void applyFilter() {
+      String filter = filterField.getFilterText();
+      filter = filter.toLowerCase();
+      
+      // Replace anything but 0-9, a-z, or : with a space
+      filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a^\\x3a]", " ");
+      filters = Arrays.asList(filter.split(" "));
+      filterLibraries(category, filters);
     }
     
     public String getFilterText() {

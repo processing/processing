@@ -114,6 +114,10 @@ public class UpdateCheck {
       "A new version of Processing is available,\n" +
       "would you like to visit the Processing download page?";
 
+    String contributionPrompt =
+        "There are updates available for some of the installed contributions,\n" +
+        "would you like to open the the Contribution Manager now?";
+    
     if (base.activeEditor != null) {
       if (latest > Base.REVISION) {
         Object[] options = { "Yes", "No" };
@@ -127,6 +131,27 @@ public class UpdateCheck {
                                                   options[0]);
         if (result == JOptionPane.YES_OPTION) {
           Base.openURL("http://processing.org/download/");
+        }
+      } else {
+        if (base.libraryManagerFrame == null)
+          base.libraryManagerFrame = new ContributionManager(base.getActiveEditor());
+        
+        Thread.sleep(5 * 1000);
+        if (!base.libraryManagerFrame.hasBeenShow() && 
+            base.libraryManagerFrame.contributionListing.hasUpdates()) {
+          
+          Object[] options = { "Yes", "No" };
+          int result = JOptionPane.showOptionDialog(base.activeEditor,
+                                                    contributionPrompt,
+                                                    "Update",
+                                                    JOptionPane.YES_NO_OPTION,
+                                                    JOptionPane.QUESTION_MESSAGE,
+                                                    null,
+                                                    options,
+                                                    options[0]);
+          if (result == JOptionPane.YES_OPTION) {
+            base.handleShowUpdates();
+          }
         }
       }
     }
