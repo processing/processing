@@ -349,7 +349,6 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref environment
-   * @see height
    */
   public int width;
 
@@ -360,8 +359,8 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref environment
-   * @see width
-   * */
+   * 
+   */
   public int height;
 
   /**
@@ -378,7 +377,8 @@ public class PApplet extends Applet
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
    *
-   * */
+   * 
+   */
   public int mouseX;
 
   /**
@@ -394,7 +394,8 @@ public class PApplet extends Applet
    * @see PApplet#mouseReleased()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
-   * */
+   * 
+   */
   public int mouseY;
 
   /**
@@ -590,7 +591,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref environment
-   * @see PApplet#frameRate()
+   * @see PApplet#frameRate(float)
    */
   public float frameRate = 10;
   /** Last time in nanoseconds that frameRate was checked */
@@ -612,7 +613,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref environment
-   * @see PApplet#frameRate()
+   * @see PApplet#frameRate(float)
    */
   public int frameCount;
 
@@ -3321,9 +3322,9 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a int or float
-   * @param b int or float
-   * @param c int or float
+   * @param a 
+   * @param b 
+   * @param c 
    * @see PApplet#min(float, float, float)
    */
   static public final float max(float a, float b, float c) {
@@ -3406,9 +3407,9 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a int or float
-   * @param b int or float
-   * @param c int or float
+   * @param a 
+   * @param b 
+   * @param c 
    * @see PApplet#max(float, float, float)
    */
   static public final float min(float a, float b, float c) {
@@ -3612,7 +3613,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:trigonometry
-   * @param radians int or float
+   * @param radians 
    * @see PApplet#radians(float)
    */
   static public final float degrees(float radians) {
@@ -3626,7 +3627,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:trigonometry
-   * @param degrees int or float
+   * @param degrees 
    * @see PApplet#degrees(float)
    */
   static public final float radians(float degrees) {
@@ -3837,8 +3838,8 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:random
-   * @param howsmall int or float
-   * @param howbig int or float
+   * @param howsmall 
+   * @param howbig 
    * @see PApplet#randomSeed(long)
    * @see PApplet#noise(float, float, float)
    */
@@ -3855,7 +3856,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:random
-   * @param what int
+   * @param what 
    * @see PApplet#random(float,float)
    * @see PApplet#noise(float, float, float)
    * @see PApplet#noiseSeed(long)
@@ -4235,17 +4236,8 @@ public class PApplet extends Applet
   }
 
 
-  // ???
   /**
-   * This function load images on a separate thread so that your sketch does not freeze while images load during <b>setup()</b>. While the image is loading, its width and height will be 0. If an error occurs while loading the image, its width and height will be set to -1. You'll know when the image has loaded properly because its width and height will be greater than 0. Asynchronous image loading (particularly when downloading from a server) can dramatically improve performance.<br><br>
-   * The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>requestImage()</b>.
-   *
-   * @webref image:loading_displaying
-   * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
-   * @param extension the type of image to load, for example "png", "gif", "jpg"
-   *
-   * @see processing.core.PApplet#loadImage(String, String)
-   * @see processing.core.PImage
+   * @param params ???
    */
   public PImage requestImage(String filename, String extension, Object params) {
     PImage vessel = createImage(0, 0, ARGB, params);
@@ -4966,6 +4958,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:files
    * @param filename name of the file to be opened
+   * @param file ???
+   * @param input ???
    * @see BufferedReader
    * @see PApplet#createWriter(String)
    * @see PrintWriter
@@ -5036,6 +5030,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to be created
+   * @param file ???
+   * @param output ???
    * @see PrintWriter
    * @see PApplet#createReader
    * @see BufferedReader
@@ -7680,7 +7676,6 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref data:conversion
    * @param what the value to convert
-   * @param digits the number of digits (maximum 8)
    * @see PApplet#unhex(String)
    * @see PApplet#binary(byte)
    * @see PApplet#unbinary(String)
@@ -7696,7 +7691,9 @@ public class PApplet extends Applet
   static final public String hex(int what) {
     return hex(what, 8);
   }
-
+/**
+ * @param digits the number of digits (maximum 8)
+ */
   static final public String hex(int what, int digits) {
     String stuff = Integer.toHexString(what).toUpperCase();
     if (digits > 8) {
@@ -7897,6 +7894,17 @@ public class PApplet extends Applet
     return g.color(x, y, z);
   }
 
+  public final int color(int x, int y, int z, int a) {
+    if (g == null) {
+      if (a > 255) a = 255; else if (a < 0) a = 0;
+      if (x > 255) x = 255; else if (x < 0) x = 0;
+      if (y > 255) y = 255; else if (y < 0) y = 0;
+      if (z > 255) z = 255; else if (z < 0) z = 0;
+
+      return (a << 24) | (x << 16) | (y << 8) | z;
+    }
+    return g.color(x, y, z, a);
+  }
 
   public final int color(float x, float y, float z) {
     if (g == null) {
@@ -7909,18 +7917,6 @@ public class PApplet extends Applet
     return g.color(x, y, z);
   }
 
-
-  public final int color(int x, int y, int z, int a) {
-    if (g == null) {
-      if (a > 255) a = 255; else if (a < 0) a = 0;
-      if (x > 255) x = 255; else if (x < 0) x = 0;
-      if (y > 255) y = 255; else if (y < 0) y = 0;
-      if (z > 255) z = 255; else if (z < 0) z = 0;
-
-      return (a << 24) | (x << 16) | (y << 8) | z;
-    }
-    return g.color(x, y, z, a);
-  }
 
   public final int color(float x, float y, float z, float a) {
     if (g == null) {
@@ -8994,7 +8990,10 @@ public class PApplet extends Applet
    * @param b y-coordinate of the rectangle
    * @param c width of the rectangle
    * @param d height of the rectangle
-   *
+   * @param tl radius of the top left corner
+   * @param tr radius of the top right corner
+   * @param br radius of the bottom right corner
+   * @param bl radius of the bottom left corner
    * @see PGraphics#rectMode(int)
    * @see PGraphics#quad(float, float, float, float, float, float, float, float)
    */
