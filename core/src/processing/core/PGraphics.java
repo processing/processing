@@ -651,7 +651,6 @@ public class PGraphics extends PImage implements PConstants {
    * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
-   * <p/>
    * When creating your own PGraphics, you should call this before
    * drawing anything.
    *
@@ -890,9 +889,9 @@ public class PGraphics extends PImage implements PConstants {
    * @webref shape:vertex
    * @param kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
    * @see PGraphics#endShape()
-   * @see PGraphics#vertex()
-   * @see PGraphics#curveVertex()
-   * @see PGraphics#bezierVertex()
+   * @see PGraphics#vertex(float, float, float, float, float)
+   * @see PGraphics#curveVertex(float, float, float)
+   * @see PGraphics#bezierVertex(float, float, float, float, float, float, float, float, float)
    */
   public void beginShape(int kind) {
     shape = kind;
@@ -3072,9 +3071,9 @@ public class PGraphics extends PImage implements PConstants {
    * @webref typography:attributes
    * @param alignX horizontal alignment, either LEFT, CENTER, or RIGHT
    * @param alignY vertical alignment, either TOP, BOTTOM, CENTER, or BASELINE
-   * @see PApplet#loadFont()
+   * @see PApplet#loadFont(String)
    * @see PFont
-   * @see PGraphics#text()
+   * @see PGraphics#text(String, float, float, float, float, float)
    */
   public void textAlign(int alignX, int alignY) {
     textAlign = alignX;
@@ -3083,9 +3082,13 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Returns the ascent of the current font at the current size.
-   * This is a method, rather than a variable inside the PGraphics object
-   * because it requires calculation.
+   * ( begin auto-generated from textAscent.xml )
+   * 
+   * Returns ascent of the current font at its current size. This information is useful for determining the height of the font above the baseline. For example, adding the <b>textAscent()</b> and <b>textDescent()</b> values will give you the total height of the line.
+   * 
+   * ( end auto-generated )
+   * @webref typography:metrics
+   * @see PGraphics#textDescent()
    */
   public float textAscent() {
     if (textFont == null) {
@@ -3096,9 +3099,13 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Returns the descent of the current font at the current size.
-   * This is a method, rather than a variable inside the PGraphics object
-   * because it requires calculation.
+   * ( begin auto-generated from textDescent.xml )
+   * 
+   * Returns descent of the current font at its current size. This information is useful for determining the height of the font below the baseline. For example, adding the <b>textAscent()</b> and <b>textDescent()</b> values will give you the total height of the line.
+   * 
+   * ( end auto-generated )
+   * @webref typography:metrics
+   * @see PGraphics#textAscent()
    */
   public float textDescent() {
     if (textFont == null) {
@@ -3109,9 +3116,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Sets the current font. The font's size will be the "natural"
-   * size of this font (the size that was set when using "Create Font").
-   * The leading will also be reset.
+   * ( begin auto-generated from textFont.xml )
+   * 
+   * Sets the current font that will be drawn with the <b>text()</b> function. Fonts must be loaded with <b>loadFont()</b> before it can be used. This font will be used in all subsequent calls to the <b>text()</b> function. If no <b>size</b> parameter is input, the font will appear at its original size (the size it was created at with the "Create Font..." tool) until it is changed with <b>textSize()</b>. <br /> <br /> Because fonts are usually bitmaped, you should create fonts at the sizes that will be used most commonly. Using <b>textFont()</b> without the size parameter will result in the cleanest-looking text. <br /><br /> With the default (JAVA2D) and PDF renderers, it's also possible to enable the use of native fonts via the command <b>hint(ENABLE_NATIVE_FONTS)</b>. This will produce vector text in JAVA2D sketches and PDF output in cases where the vector data is available: when the font is still installed, or the font is created via the <b>createFont()</b> function (rather than the Create Font tool).
+   * 
+   * ( end auto-generated )
+   * @webref typography:loading_display
+   * @param which any variable of the type PFont
+   * @see PApplet#createFont(String, float, boolean)
+   * @see PApplet#loadFont(String)
+   * @see PFont#PFont
+   * @see PGraphics#text(String, float, float, float, float, float)
    */
   public void textFont(PFont which) {
     if (which != null) {
@@ -3153,7 +3168,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Useful function to set the font and size at the same time.
+   * @param size the size of the letters in units of pixels
    */
   public void textFont(PFont which, float size) {
     textFont(which);
@@ -3162,9 +3177,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the text leading to a specific value. If using a custom
-   * value for the text leading, you'll have to call textLeading()
-   * again after any calls to textSize().
+   * ( begin auto-generated from textLeading.xml )
+   * 
+   * Sets the spacing between lines of text in units of pixels. This setting will be used in all subsequent calls to the <b>text()</b> function.
+   * 
+   * ( end auto-generated )
+   * @webref typography:attributes
+   * @param leading the sie in pixels for spacing between lines
+   * @see PApplet#loadFont(String)
+   * @see PFont#PFont
+   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#textFont(PFont)
    */
   public void textLeading(float leading) {
     textLeading = leading;
@@ -3172,10 +3195,24 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Sets the text rendering/placement to be either MODEL (the normal mode,
-   * where text bitmaps are used (or the native font, when available). 
-   * Or SHAPE, where text is rendered as actual vector data (much slower in
-   * some cases, faster in others). SCREEN mode has been removed for 2.0. 
+   * ( begin auto-generated from textMode.xml )
+   * 
+   * Sets the way text draws to the screen. In the default configuration (the MODEL mode), it's possible to rotate, scale, and place letters in two and three dimensional space. 
+   * <br /><br />
+   * Changing to SCREEN mode draws letters directly to the front of the window and greatly increases rendering quality and speed when used with the P2D and P3D renderers. textMode(SCREEN) with OPENGL and JAVA2D (the default) renderers will generally be slower, though pixel accurate with P2D and P3D. With textMode(SCREEN), the letters draw at the actual size of the font (in pixels) and therefore calls to <b>textSize()</b> will not affect the size of the letters. To create a font at the size you desire, use the "Create font..." option in the Tools menu, or use the createFont() function. When using textMode(SCREEN), any z-coordinate passed to a text() command will be ignored, because your computer screen is...flat!
+   * <br /><br />
+   * The SHAPE mode draws text using the the glyph outlines of individual characters rather than as textures. This mode is only only supported with the PDF and OPENGL renderer settings. With the PDF renderer, you must call textMode(SHAPE) before any other drawing occurs. If the outlines are not available, then <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will be used instead.
+   * <br /><br />
+   * The textMode(SHAPE) option in OPENGL mode can be combined with beginRaw() to write vector-accurate text to 2D and 3D output files, for instance DXF or PDF. textMode(SHAPE) is not currently optimized for OPENGL, so if recording shape data, use textMode(MODEL) until you're ready to capture the geometry with beginRaw().
+   * 
+   * ( end auto-generated )
+   * @webref typography:attributes
+   * @param mode either MODEL, SCREEN, or SHAPE
+   * @see PApplet#loadFont(String)
+   * @see PFont#PFont
+   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#textFont(PFont)
+   * @see PApplet#createFont(String, float, boolean)
    */
   public void textMode(int mode) {
     // CENTER and MODEL overlap (they're both 3)
@@ -3206,7 +3243,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Sets the text size, also resets the value for the leading.
+   * ( begin auto-generated from textSize.xml )
+   * 
+   * Sets the current font size. This size will be used in all subsequent calls to the <b>text()</b> function. Font size is measured in units of pixels.
+   * 
+   * ( end auto-generated )
+   * @webref typography:attributes
+   * @param size the size of the letters in units of pixels
+   * @see PApplet#loadFont(String)
+   * @see PFont#PFont
+   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#textFont(PFont)
    */
   public void textSize(float size) {
     if (textFont == null) {
@@ -3227,8 +3274,17 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Return the width of a line of text. If the text has multiple
-   * lines, this returns the length of the longest line.
+   * ( begin auto-generated from textWidth.xml )
+   * 
+   * Calculates and returns the width of any character or text string.
+   * 
+   * ( end auto-generated )
+   * @webref typography:attributes
+   * @param str
+   * @see PApplet#loadFont(String)
+   * @see PFont#PFont
+   * @see PGraphics#text(String, float, float, float, float, float)
+   * @see PGraphics#textFont(PFont)
    */
   public float textWidth(String str) {
     if (textFont == null) {
@@ -3260,6 +3316,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * ???
    * TODO not sure if this stays...
    */
   public float textWidth(char[] chars, int start, int length) {
@@ -3287,7 +3344,22 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Write text where we just left off.
+   * ( begin auto-generated from text.xml )
+   * 
+   * Draws text to the screen. Displays the information specified in the <b>data</b> or <b>stringdata</b> parameters on the screen in the position specified by the <b>x</b> and <b>y</b> parameters and the optional <b>z</b> parameter. A default font will be used unless a font is set with the <b>textFont()</b> function. Change the color of the text with the <b>fill()</b> function. The text displays in relation to the <b>textAlign()</b> function, which gives the option to draw to the left, right, and center of the coordinates. 
+   * <br/> <br/>
+   * The <b>width</b> and <b>height</b> parameters define a rectangular area to display within and may only be used with string data. For text drawn inside a rectangle, the coordinates are interpreted based on the current <b>rectMode()</b> setting.
+   * <br/> <br/>
+   * Use the <b>textMode()</b> function with the <b>SCREEN</b> parameter to display text in 2D at the surface of the window. 
+   * 
+   * ( end auto-generated )
+   * @webref typography:loading_displaying
+   * @param c the alphanumeric symbols to be displayed
+   * @see PGraphics#textAlign(int, int)
+   * @see PGraphics#textMode(int)
+   * @see PApplet#loadFont(String)
+   * @see PFont#PFont
+   * @see PGraphics#textFont(PFont)
    */
   public void text(char c) {
     text(c, textX, textY, textZ);
@@ -3295,9 +3367,12 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * <h3>Advanced</h3>
    * Draw a single character on screen.
    * Extremely slow when used with textMode(SCREEN) and Java 2D,
    * because loadPixels has to be called first and updatePixels last.
+   * @param x x-coordinate of text
+   * @param y y-coordinate of text
    */
   public void text(char c, float x, float y) {
     if (textFont == null) {
@@ -3320,7 +3395,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Draw a single character on screen (with a z coordinate)
+   * @param z z-coordinate of text
    */
   public void text(char c, float x, float y, float z) {
 //    if ((z != 0) && (textMode == SCREEN)) {
@@ -3338,7 +3413,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Write text where we just left off.
+   * @param str the alphanumeric symbols to be displayed
    */
   public void text(String str) {
     text(str, textX, textY, textZ);
@@ -3346,6 +3421,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * <h3>Advanced</h3>
    * Draw a chunk of text.
    * Newlines that are \n (Unix newline or linefeed char, ascii 10)
    * are honored, but \r (carriage return, Windows and Mac OS) are
@@ -3366,9 +3442,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * <h3>Advanced</h3>
    * Method to draw text from an array of chars. This method will usually be
    * more efficient than drawing from a String object, because the String will
    * not be converted to a char array before drawing.
+   * @param chars letters to be displayed
+   * @param start ???
+   * @param stop ???
+   * @param x ???
+   * @param y ???
    */
   public void text(char[] chars, int start, int stop, float x, float y) {
     // If multiple lines, sum the height of the additional lines
@@ -3436,6 +3518,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * <h3>Advanced</h3>
    * Draw text in a box that is constrained to a particular size.
    * The current rectMode() determines what the coordinates mean
    * (whether x1/y1/x2/y2 or x/y/w/h).
@@ -3447,6 +3530,11 @@ public class PGraphics extends PImage implements PConstants {
    * Newlines that are \n (Unix newline or linefeed char, ascii 10)
    * are honored, and \r (carriage return, Windows and Mac OS) are
    * ignored.
+   *
+   * @param x1 x-coordinate of text
+   * @param y1 y-coordinate of text
+   * @param x2 ???
+   * @param y2 ???
    */
   public void text(String str, float x1, float y1, float x2, float y2) {
     if (textFont == null) {
@@ -3669,6 +3757,8 @@ public class PGraphics extends PImage implements PConstants {
    * Users who want more control should use their own nf() cmmand,
    * or if they want the long, ugly version of float,
    * use String.valueOf() to convert the float to a String first.
+   *
+   * @param num the alphanumeric symbols to be displayed
    */
   public void text(float num, float x, float y) {
     text(PApplet.nfs(num, 0, 3), x, y);
@@ -3837,7 +3927,18 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Push a copy of the current transformation matrix onto the stack.
+   * ( begin auto-generated from pushMatrix.xml )
+   * 
+   * Pushes the current transformation matrix onto the matrix stack. Understanding <b>pushMatrix()</b> and <b>popMatrix()</b> requires understanding the concept of a matrix stack. The <b>pushMatrix()</b> function saves the current coordinate system to the stack and <b>popMatrix()</b> restores the prior coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with the other transformation methods and may be embedded to control the scope of the transformations.
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#translate(float, float, float)
+   * @see PGraphics#rotate(float)
+   * @see PGraphics#rotateX(float)
+   * @see PGraphics#rotateY(float)
+   * @see PGraphics#rotateZ(float)
    */
   public void pushMatrix() {
     showMethodWarning("pushMatrix");
@@ -3845,7 +3946,13 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Replace the current transformation matrix with the top of the stack.
+   * ( begin auto-generated from popMatrix.xml )
+   * 
+   * Pops the current transformation matrix off the matrix stack. Understanding pushing and popping requires understanding the concept of a matrix stack. The <b>pushMatrix()</b> function saves the current coordinate system to the stack and <b>popMatrix()</b> restores the prior coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with the other transformation methods and may be embedded to control the scope of the transformations.
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @see PGraphics#pushMatrix()
    */
   public void popMatrix() {
     showMethodWarning("popMatrix");
@@ -3859,7 +3966,21 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Translate in X and Y.
+   * ( begin auto-generated from translate.xml )
+   * 
+   * Specifies an amount to displace objects within the display window. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Using this function with the <b>z</b> parameter requires using the P3D or OPENGL parameter in combination with size as shown in the above example. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. If <b>translate()</b> is called within <b>draw()</b>, the transformation is reset when the loop begins again. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b>.
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @param tx left/right translation
+   * @param ty up/down translation
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#rotate(float)
+   * @see PGraphics#rotateX(float)
+   * @see PGraphics#rotateY(float)
+   * @see PGraphics#rotateZ(float)
+   * @see PGraphics#scale(float, float, float)
    */
   public void translate(float tx, float ty) {
     showMissingWarning("translate");
@@ -3867,7 +3988,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Translate in X, Y, and Z.
+   * @param tz forward/backward translation
    */
   public void translate(float tx, float ty, float tz) {
     showMissingWarning("translate");
@@ -3875,13 +3996,24 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Two dimensional rotation.
-   *
-   * Same as rotateZ (this is identical to a 3D rotation along the z-axis)
-   * but included for clarity. It'd be weird for people drawing 2D graphics
-   * to be using rotateZ. And they might kick our a-- for the confusion.
-   *
-   * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
+   * ( begin auto-generated from rotate.xml )
+   * 
+   * Rotates a shape the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> function. 
+   * <br/> <br/>
+   * Objects are always rotated around their relative position to the origin and positive numbers rotate objects in a clockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as <b>rotate(PI)</b>. All tranformations are reset when <b>draw()</b> begins again. 
+   * <br/> <br/>
+   * Technically, <b>rotate()</b> multiplies the current transformation matrix by a rotation matrix. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b>.
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @param angle angle of rotation specified in radians
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#rotateX(float)
+   * @see PGraphics#rotateY(float)
+   * @see PGraphics#rotateZ(float)
+   * @see PGraphics#scale(float, float, float)
+   * @see PApplet#radians(float)
    */
   public void rotate(float angle) {
     showMissingWarning("rotate");
@@ -3889,7 +4021,20 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Rotate around the X axis.
+   * ( begin auto-generated from rotateX.xml )
+   * 
+   * Rotates a shape around the x-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always rotated around their relative position to the origin and positive numbers rotate objects in a counterclockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotateX(PI/2)</b> and then <b>rotateX(PI/2)</b> is the same as <b>rotateX(PI)</b>. If <b>rotateX()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function requires passing P3D or OPENGL into the size() parameter as shown in the example above. 
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @param angle angle of rotation specified in radians
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#rotate(float)
+   * @see PGraphics#rotateY(float)
+   * @see PGraphics#rotateZ(float)
+   * @see PGraphics#scale(float, float, float)
+   * @see PGraphics#translate(float, float, float)
    */
   public void rotateX(float angle) {
     showMethodWarning("rotateX");
@@ -3897,7 +4042,20 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Rotate around the Y axis.
+   * ( begin auto-generated from rotateY.xml )
+   * 
+   * Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always rotated around their relative position to the origin and positive numbers rotate objects in a counterclockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotateY(PI/2)</b> and then <b>rotateY(PI/2)</b> is the same as <b>rotateY(PI)</b>. If <b>rotateY()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function requires passing P3D or OPENGL into the size() parameter as shown in the example above. 
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @param angle angle of rotation specified in radians
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#rotate(float)
+   * @see PGraphics#rotateX(float)
+   * @see PGraphics#rotateZ(float)
+   * @see PGraphics#scale(float, float, float)
+   * @see PGraphics#translate(float, float, float)
    */
   public void rotateY(float angle) {
     showMethodWarning("rotateY");
@@ -3905,12 +4063,20 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Rotate around the Z axis.
-   *
-   * The functions rotate() and rotateZ() are identical, it's just that it make
-   * sense to have rotate() and then rotateX() and rotateY() when using 3D;
-   * nor does it make sense to use a function called rotateZ() if you're only
-   * doing things in 2D. so we just decided to have them both be the same.
+   * ( begin auto-generated from rotateZ.xml )
+   * 
+   * Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always rotated around their relative position to the origin and positive numbers rotate objects in a counterclockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotateZ(PI/2)</b> and then <b>rotateZ(PI/2)</b> is the same as <b>rotateZ(PI)</b>. If <b>rotateZ()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function requires passing P3D or OPENGL into the size() parameter as shown in the example above. 
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @param angle angle of rotation specified in radians
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#rotate(float)
+   * @see PGraphics#rotateX(float)
+   * @see PGraphics#rotateY(float)
+   * @see PGraphics#scale(float, float, float)
+   * @see PGraphics#translate(float, float, float)
    */
   public void rotateZ(float angle) {
     showMethodWarning("rotateZ");
@@ -3918,7 +4084,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * <h3>Advanced</h3>
    * Rotate about a vector in space. Same as the glRotatef() function.
+   * @param vx ???
+   * @param vy ???
+   * @param vz ???
    */
   public void rotate(float angle, float vx, float vy, float vz) {
     showMissingWarning("rotate");
@@ -3926,7 +4096,20 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Scale in all dimensions.
+   * ( begin auto-generated from scale.xml )
+   * 
+   * Increases or decreases the size of a shape by expanding and contracting vertices. Objects always scale from their relative origin to the coordinate system. Scale values are specified as decimal percentages. For example, the function call <b>scale(2.0)</b> increases the dimension of a shape by 200%. Transformations apply to everything that happens after and subsequent calls to the function multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>. If <b>scale()</b> is called within <b>draw()</b>, the transformation is reset when the loop begins again. Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter as shown in the example above. This function can be further controlled by <b>pushMatrix()</b> and <b>popMatrix()</b>.
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @param s percentage to scale the object
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#rotate(float)
+   * @see PGraphics#rotateX(float)
+   * @see PGraphics#rotateY(float)
+   * @see PGraphics#rotateZ(float)
+   * @see PGraphics#translate(float, float, float)
    */
   public void scale(float s) {
     showMissingWarning("scale");
@@ -3934,10 +4117,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * <h3>Advanced</h3>
    * Scale in X and Y. Equivalent to scale(sx, sy, 1).
    *
    * Not recommended for use in 3D, because the z-dimension is just
    * scaled by 1, since there's no way to know what else to scale it by.
+   * 
+   * @param sx percentage to scale the object in the x-axis
+   * @param sy percentage to scale the objects in the y-axis
    */
   public void scale(float sx, float sy) {
     showMissingWarning("scale");
@@ -3945,7 +4132,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Scale in X, Y, and Z.
+   * @param x percentage to scale the object in the x-axis
+   * @param y percentage to scale the objects in the y-axis
+   * @param z percentage to scale the object in the z-axis
    */
   public void scale(float x, float y, float z) {
     showMissingWarning("scale");
@@ -3953,7 +4142,21 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Shear along X axis
+   * ( begin auto-generated from shearX.xml )
+   * 
+   * Shears a shape around the x-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always sheared around their relative position to the origin and positive numbers shear objects in a clockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>shearX(PI/2)</b> and then <b>shearX(PI/2)</b> is the same as <b>shearX(PI)</b>. If <b>shearX()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function works in P2D or JAVA2D mode as shown in the example above.
+   * <br/> <br/>
+   * Technically, <b>shearX()</b> multiplies the current transformation matrix by a rotation matrix. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @param angle angle of shear specified in radians
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#shearY(float)
+   * @see PGraphics#scale(float, float, float)
+   * @see PGraphics#translate(float, float, float)
+   * @see PApplet#radians(float)
    */
   public void shearX(float angle) {
     showMissingWarning("shearX");
@@ -3961,7 +4164,21 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Shear along Y axis
+   * ( begin auto-generated from shearY.xml )
+   * 
+   * Shears a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always sheared around their relative position to the origin and positive numbers shear objects in a clockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>shearY(PI/2)</b> and then <b>shearY(PI/2)</b> is the same as <b>shearY(PI)</b>. If <b>shearY()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function works in P2D or JAVA2D mode as shown in the example above.
+   * <br/> <br/>
+   * Technically, <b>shearY()</b> multiplies the current transformation matrix by a rotation matrix. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @param angle angle of shear specified in radians
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#shearX(float)
+   * @see PGraphics#scale(float, float, float)
+   * @see PGraphics#translate(float, float, float)
+   * @see PApplet#radians(float)
    */
   public void shearY(float angle) {
     showMissingWarning("shearY");
@@ -3974,13 +4191,34 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the current transformation matrix to identity.
+   * ( begin auto-generated from resetMatrix.xml )
+   * 
+   * Replaces the current matrix with the identity matrix. The equivalent function in OpenGL is glLoadIdentity(). 
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#applyMatrix(PMatrix)
+   * @see PGraphics#printMatrix()
    */
   public void resetMatrix() {
     showMethodWarning("resetMatrix");
   }
 
-
+  /**
+   * ( begin auto-generated from applyMatrix.xml )
+   * 
+   * Multiplies the current matrix by the one specified through the parameters. This is very slow because it will try to calculate the inverse of the transform, so avoid it whenever possible. The equivalent function in OpenGL is glMultMatrix().
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @source ???
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#resetMatrix()
+   * @see PGraphics#printMatrix()
+   */
   public void applyMatrix(PMatrix source) {
     if (source instanceof PMatrix2D) {
       applyMatrix((PMatrix2D) source);
@@ -3997,14 +4235,29 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Apply a 3x2 affine transformation matrix.
+   * @param n00 numbers which define the 4x4 matrix to be multiplied
+   * @param n01 numbers which define the 4x4 matrix to be multiplied
+   * @param n02 numbers which define the 4x4 matrix to be multiplied
+   * @param n10 numbers which define the 4x4 matrix to be multiplied
+   * @param n11 numbers which define the 4x4 matrix to be multiplied
+   * @param n12 numbers which define the 4x4 matrix to be multiplied
    */
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
     showMissingWarning("applyMatrix");
   }
 
-
+  /**
+   * @param n13 numbers which define the 4x4 matrix to be multiplied
+   * @param n20 numbers which define the 4x4 matrix to be multiplied
+   * @param n21 numbers which define the 4x4 matrix to be multiplied
+   * @param n22 numbers which define the 4x4 matrix to be multiplied
+   * @param n23 numbers which define the 4x4 matrix to be multiplied
+   * @param n30 numbers which define the 4x4 matrix to be multiplied
+   * @param n31 numbers which define the 4x4 matrix to be multiplied
+   * @param n32 numbers which define the 4x4 matrix to be multiplied
+   * @param n33 numbers which define the 4x4 matrix to be multiplied
+   */
   public void applyMatrix(PMatrix3D source) {
     applyMatrix(source.m00, source.m01, source.m02, source.m03,
                 source.m10, source.m11, source.m12, source.m13,
@@ -4085,7 +4338,16 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Print the current model (or "transformation") matrix.
+   * ( begin auto-generated from printMatrix.xml )
+   * 
+   * Prints the current matrix to the text window.
+   * 
+   * ( end auto-generated )
+   * @webref transform
+   * @see PGraphics#pushMatrix()
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#resetMatrix()
+   * @see PGraphics#applyMatrix(PMatrix)
    */
   public void printMatrix() {
     showMethodWarning("printMatrix");
@@ -4096,29 +4358,77 @@ public class PGraphics extends PImage implements PConstants {
 
   // CAMERA
 
-
+/**
+   * ( begin auto-generated from beginCamera.xml )
+   * 
+   * The <b>beginCamera()</b> and <b>endCamera()</b> functions enable advanced customization of the camera space. The functions are useful if you want to more control over camera movement, however for most users, the <b>camera()</b> function will be sufficient.<br /><br />The camera functions will replace any transformations (such as <b>rotate()</b> or <b>translate()</b>) that occur before them in <b>draw()</b>, but they will not automatically replace the camera transform itself. For this reason, camera functions should be placed at the beginning of <b>draw()</b> (so that transformations happen afterwards), and the <b>camera()</b> function can be used after <b>beginCamera()</b> if you want to reset the camera before applying transformations.<br /><br />This function sets the matrix mode to the camera matrix so calls such as <b>translate()</b>, <b>rotate()</b>, applyMatrix() and resetMatrix() affect the camera. <b>beginCamera()</b> should always be used with a following <b>endCamera()</b> and pairs of <b>beginCamera()</b> and <b>endCamera()</b> cannot be nested.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:camera
+ * @see PGraphics#camera()
+ * @see PGraphics#endCamera()
+ * @see PGraphics#applyMatrix(PMatrix)
+ * @see PGraphics#resetMatrix()
+ * @see PGraphics#translate(float, float, float)
+ * @see PGraphics#scale(float, float, float)
+ */
   public void beginCamera() {
     showMethodWarning("beginCamera");
   }
 
-
+/**
+   * ( begin auto-generated from endCamera.xml )
+   * 
+   * The <b>beginCamera()</b> and <b>endCamera()</b> functions enable advanced customization of the camera space. Please see the reference for <b>beginCamera()</b> for a description of how the functions are used.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:camera
+ * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
+ */
   public void endCamera() {
     showMethodWarning("endCamera");
   }
 
-
+/**
+   * ( begin auto-generated from camera.xml )
+   * 
+   * Sets the position of the camera through setting the eye position, the center of the scene, and which axis is facing upward. Moving the eye position and the direction it is pointing (the center of the scene) allows the images to be seen from different angles. The version without any parameters sets the camera to the default position, pointing to the center of the display window with the Y axis as up. The default values are camera(width/2.0, height/2.0, (height/2.0) / tan(PI*60.0 / 360.0), width/2.0, height/2.0, 0, 0, 1, 0). This function is similar to gluLookAt() in OpenGL, but it first clears the current camera settings.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:camera
+ * @see PGraphics#endCamera()
+ * @see PGraphics#frustum(float, float, float, float, float, float)
+ */
   public void camera() {
     showMissingWarning("camera");
   }
 
-
+/**
+ * @param eyeX x-coordinate for the eye
+ * @param eyeY y-coordinate for the eye
+ * @param eyeZ z-coordinate for the eye
+ * @param centerX x-coordinate for the center of the scene
+ * @param centerY y-coordinate for the center of the scene
+ * @param centerZ z-coordinate for the center of the scene
+ * @param upX usually 0.0, 1.0, or -1.0
+ * @param upY usually 0.0, 1.0, or -1.0
+ * @param upZ usually 0.0, 1.0, or -1.0
+ */
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
     showMissingWarning("camera");
   }
 
-
+/**
+   * ( begin auto-generated from printCamera.xml )
+   * 
+   * Prints the current camera matrix to the text window.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:camera
+ * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
+ */
   public void printCamera() {
     showMethodWarning("printCamera");
   }
@@ -4129,42 +4439,93 @@ public class PGraphics extends PImage implements PConstants {
 
   // PROJECTION
 
-
+/**
+   * ( begin auto-generated from ortho.xml )
+   * 
+   * Sets an orthographic projection and defines a parallel clipping volume. All objects with the same dimension appear the same size, regardless of whether they are near or far from the camera. The parameters to this function specify the clipping volume where left and right are the minimum and maximum x values, top and bottom are the minimum and maximum y values, and near and far are the minimum and maximum z values. If no parameters are given, the default is used: ortho(0, width, 0, height, -10, 10).
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:camera
+ */
   public void ortho() {
     showMissingWarning("ortho");
   }
 
-
+/**
+ * @param left left plane of the clipping volume
+ * @param right right plane of the clipping volume
+ * @param bottom bottom plane of the clipping volume
+ * @param top top plane of the clipping volume
+ */
   public void ortho(float left, float right,
                     float bottom, float top) {
     showMissingWarning("ortho");
   }
 
-
+/**
+ * @param near maximum distance from the origin to the viewer
+ * @param far maximum distance from the origin away from the viewer
+ */
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
     showMissingWarning("ortho");
   }
 
-
+/**
+   * ( begin auto-generated from perspective.xml )
+   * 
+   * Sets a perspective projection applying foreshortening, making distant objects appear smaller than closer ones. The parameters define a viewing volume with the shape of truncated pyramid. Objects near to the front of the volume appear their actual size, while farther objects appear smaller. This projection simulates the perspective of the world more accurately than orthographic projection. The version of perspective without parameters sets the default perspective and the version with four parameters allows the programmer to set the area precisely. The default values are: perspective(PI/3.0, width/height, cameraZ/10.0, cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:camera
+ */
   public void perspective() {
     showMissingWarning("perspective");
   }
 
-
+/**
+ * @param fovy field-of-view angle (in radians) for vertical direction
+ * @param aspect ratio of width to height
+ * @param zNear z-position of nearest clipping plane
+ * @param zFar z-position of nearest farthest plane
+ */
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
     showMissingWarning("perspective");
   }
 
-
+/**
+   * ( begin auto-generated from frustum.xml )
+   * 
+   * Sets a perspective matrix defined through the parameters. Works like glFrustum, except it wipes out the current perspective matrix rather than muliplying itself with it.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:camera
+ * @param left left coordinate of the clipping plane
+ * @param right right coordinate of the clipping plane
+ * @param bottom bottom coordinate of the clipping plane
+ * @param top top coordinate of the clipping plane
+ * @param near near component of the clipping plane
+ * @param far far component of the clipping plane
+ * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
+ * @see PGraphics#endCamera()
+ * @see PGraphics#perspective(float, float, float, float)
+ */
   public void frustum(float left, float right,
                       float bottom, float top,
                       float near, float far) {
     showMethodWarning("frustum");
   }
 
-
+/**
+   * ( begin auto-generated from printProjection.xml )
+   * 
+   * Prints the current projection matrix to the text window.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:camera
+ * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
+ */
   public void printProjection() {
     showMethodWarning("printCamera");
   }
@@ -4177,9 +4538,16 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Given an x and y coordinate, returns the x position of where
-   * that point would be placed on screen, once affected by translate(),
-   * scale(), or any other transformations.
+   * ( begin auto-generated from screenX.xml )
+   * 
+   * Takes a three-dimensional X, Y, Z position and returns the X value for where it will appear on a (two-dimensional) screen.
+   * 
+   * ( end auto-generated )
+   * @webref lights_camera:coordinates
+   * @param x 3D x-coordinate to be mapped
+   * @param y 3D y-coordinate to be mapped
+   * @see PGraphics#screenY(float, float, float)
+   * @see PGraphics#screenZ(float, float, float)
    */
   public float screenX(float x, float y) {
     showMissingWarning("screenX");
@@ -4188,9 +4556,16 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Given an x and y coordinate, returns the y position of where
-   * that point would be placed on screen, once affected by translate(),
-   * scale(), or any other transformations.
+   * ( begin auto-generated from screenY.xml )
+   * 
+   * Takes a three-dimensional X, Y, Z position and returns the Y value for where it will appear on a (two-dimensional) screen.
+   * 
+   * ( end auto-generated )
+   * @webref lights_camera:coordinates
+   * @param x 3D x-coordinate to be mapped
+   * @param y 3D y-coordinate to be mapped
+   * @see PGraphics#screenX(float, float, float)
+   * @see PGraphics#screenZ(float, float, float)
    */
   public float screenY(float x, float y) {
     showMissingWarning("screenY");
@@ -4199,11 +4574,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Maps a three dimensional point to its placement on-screen.
-   * <P>
-   * Given an (x, y, z) coordinate, returns the x position of where
-   * that point would be placed on screen, once affected by translate(),
-   * scale(), or any other transformations.
+   * @param z 3D z-coordinate to be mapped
    */
   public float screenX(float x, float y, float z) {
     showMissingWarning("screenX");
@@ -4212,11 +4583,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Maps a three dimensional point to its placement on-screen.
-   * <P>
-   * Given an (x, y, z) coordinate, returns the y position of where
-   * that point would be placed on screen, once affected by translate(),
-   * scale(), or any other transformations.
+   * @param z 3D z-coordinate to be mapped
    */
   public float screenY(float x, float y, float z) {
     showMissingWarning("screenY");
@@ -4224,16 +4591,19 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  
   /**
-   * Maps a three dimensional point to its placement on-screen.
-   * <P>
-   * Given an (x, y, z) coordinate, returns its z value.
-   * This value can be used to determine if an (x, y, z) coordinate
-   * is in front or in back of another (x, y, z) coordinate.
-   * The units are based on how the zbuffer is set up, and don't
-   * relate to anything "real". They're only useful for in
-   * comparison to another value obtained from screenZ(),
-   * or directly out of the zbuffer[].
+   * ( begin auto-generated from screenZ.xml )
+   * 
+   * Takes a three-dimensional X, Y, Z position and returns the Z value for where it will appear on a (two-dimensional) screen.
+   * 
+   * ( end auto-generated )
+   * @webref lights_camera:coordinates
+   * @param x 3D x-coordinate to be mapped
+   * @param y 3D y-coordinate to be mapped
+   * @param z 3D z-coordinate to be mapped
+   * @see PGraphics#screenX(float, float, float)
+   * @see PGraphics#screenY(float, float, float)
    */
   public float screenZ(float x, float y, float z) {
     showMissingWarning("screenZ");
@@ -4242,13 +4612,19 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Returns the model space x value for an x, y, z coordinate.
-   * <P>
-   * This will give you a coordinate after it has been transformed
-   * by translate(), rotate(), and camera(), but not yet transformed
-   * by the projection matrix. For instance, his can be useful for
-   * figuring out how points in 3D space relate to the edge
-   * coordinates of a shape.
+   * ( begin auto-generated from modelX.xml )
+   * 
+   * Returns the three-dimensional X, Y, Z position in model space. This returns the X value for a given coordinate based on the current set of transformations (scale, rotate, translate, etc.) The X value can be used to place an object in space relative to the location of the original point once the transformations are no longer in use. 
+   * <br/> <br/>
+   * In the example, the modelX(), modelY(), and modelZ() methods record the location of a box in space after being placed using a series of translate and rotate commands. After popMatrix() is called, those transformations no longer apply, but the (x, y, z) coordinate returned by the model functions is used to place another box in the same location.
+   * 
+   * ( end auto-generated )
+   * @webref lights_camera
+   * @param x 3D x-coordinate to be mapped
+   * @param y 3D y-coordinate to be mapped
+   * @param z 3D z-coordinate to be mapped
+   * @see PGraphics#modelY(float, float, float)
+   * @see PGraphics#modelZ(float, float, float)
    */
   public float modelX(float x, float y, float z) {
     showMissingWarning("modelX");
@@ -4257,7 +4633,19 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Returns the model space y value for an x, y, z coordinate.
+   * ( begin auto-generated from modelY.xml )
+   * 
+   * Returns the three-dimensional X, Y, Z position in model space. This returns the Y value for a given coordinate based on the current set of transformations (scale, rotate, translate, etc.) The Y value can be used to place an object in space relative to the location of the original point once the transformations are no longer in use. 
+   * <br/> <br/>
+   * In the example, the modelX(), modelY(), and modelZ() methods record the location of a box in space after being placed using a series of translate and rotate commands. After popMatrix() is called, those transformations no longer apply, but the (x, y, z) coordinate returned by the model functions is used to place another box in the same location.
+   * 
+   * ( end auto-generated )
+   * @webref lights_camera
+   * @param x 3D x-coordinate to be mapped
+   * @param y 3D y-coordinate to be mapped
+   * @param z 3D z-coordinate to be mapped
+   * @see PGraphics#modelX(float, float, float)
+   * @see PGraphics#modelZ(float, float, float) 
    */
   public float modelY(float x, float y, float z) {
     showMissingWarning("modelY");
@@ -4266,7 +4654,19 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Returns the model space z value for an x, y, z coordinate.
+   * ( begin auto-generated from modelZ.xml )
+   * 
+   * Returns the three-dimensional X, Y, Z position in model space. This returns the Z value for a given coordinate based on the current set of transformations (scale, rotate, translate, etc.) The Z value can be used to place an object in space relative to the location of the original point once the transformations are no longer in use. 
+   * <br/> <br/>
+   * In the example, the modelX(), modelY(), and modelZ() methods record the location of a box in space after being placed using a series of translate and rotate commands. After popMatrix() is called, those transformations no longer apply, but the (x, y, z) coordinate returned by the model functions is used to place another box in the same location.
+   * 
+   * ( end auto-generated )
+   * @webref lights_camera
+   * @param x 3D x-coordinate to be mapped
+   * @param y 3D y-coordinate to be mapped
+   * @param z 3D z-coordinate to be mapped
+   * @see PGraphics#modelX(float, float, float)
+   * @see PGraphics#modelY(float, float, float)
    */
   public float modelZ(float x, float y, float z) {
     showMissingWarning("modelZ");
@@ -4279,7 +4679,18 @@ public class PGraphics extends PImage implements PConstants {
 
   // STYLE
 
-
+/**
+   * ( begin auto-generated from pushStyle.xml )
+   * 
+   * The <b>pushStyle()</b> function saves the current style settings and <b>popStyle()</b> restores the prior settings. Note that these functions are always used together. They allow you to change the style settings and later return to what you had. When a new style is started with <b>pushStyle()</b>, it builds on the current style information. The <b>pushStyle()</b> and <b>popStyle()</b> functions can be embedded to provide more control (see the second example above for a demonstration.)
+   * <br /><br />
+   * The style information controlled by the following functions are included in the style:
+   * fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), emissive(), specular(), shininess(), ambient() 
+   * 
+   * ( end auto-generated )
+ * @webref structure
+ * @see PGraphics#popStyle()
+ */
   public void pushStyle() {
     if (styleStackDepth == styleStack.length) {
       styleStack = (PStyle[]) PApplet.expand(styleStack);
@@ -4291,7 +4702,15 @@ public class PGraphics extends PImage implements PConstants {
     getStyle(s);
   }
 
-
+/**
+   * ( begin auto-generated from popStyle.xml )
+   * 
+   * The <b>pushStyle()</b> function saves the current style settings and <b>popStyle()</b> restores the prior settings; these functions are always used together. They allow you to change the style settings and later return to what you had. When a new style is started with <b>pushStyle()</b>, it builds on the current style information. The <b>pushStyle()</b> and <b>popStyle()</b> functions can be embedded to provide more control (see the second example above for a demonstration.)
+   * 
+   * ( end auto-generated )
+ * @webref structure
+ * @see PGraphics#pushStyle()
+ */
   public void popStyle() {
     if (styleStackDepth == 0) {
       throw new RuntimeException("Too many popStyle() without enough pushStyle()");
@@ -4434,17 +4853,61 @@ public class PGraphics extends PImage implements PConstants {
 
   // STROKE CAP/JOIN/WEIGHT
 
-
+/**
+   * ( begin auto-generated from strokeWeight.xml )
+   * 
+   * Sets the width of the stroke used for lines, points, and the border around shapes. All widths are set in units of pixels. 
+   * <br/> <br/>
+   * With P2D, P3D, and OPENGL, series of connected lines (such as the stroke around a polygon, triangle, or ellipse) produce unattractive results when strokeWeight is set (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>).
+   * <br/> <br/>
+   * When used with P3D, strokeWeight does not interpolate the Z-coordinates of the lines, which means that when rotated, these flat lines will disappear (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=956">Bug 956</a>). The OPENGL renderer setting does not share this problem because it always draws lines perpendicular to the screen.
+   * <br/> <br/>
+   * When using OPENGL, the minimum and maximum values for strokeWeight() are controlled by the graphics card and the operating system's OpenGL implementation. For instance, the weight may not go higher than 10. 
+   * 
+   * ( end auto-generated )
+ * @webref shape:attributes
+ * @param weight the weight (in pixels) of the stroke
+ * @see PGraphics#stroke(int, float)
+ * @see PGraphics#strokeJoin(int)
+ * @see PGraphics#strokeCap(int)
+ */
   public void strokeWeight(float weight) {
     strokeWeight = weight;
   }
 
-
+/**
+   * ( begin auto-generated from strokeJoin.xml )
+   * 
+   * Sets the style of the joints which connect line segments. These joints are either mitered, beveled, or rounded and specified with the corresponding parameters MITER, BEVEL, and ROUND. The default joint is MITER. 
+   * <br/> <br/>
+   * This function is not available with the P2D, P3D, or OPENGL renderers (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">see bug report</a>). More information about the renderers can be found in the <b>size()</b> reference.
+   * 
+   * ( end auto-generated )
+ * @webref shape:attributes
+ * @param join either MITER, BEVEL, ROUND
+ * @see PGraphics#stroke(int, float)
+ * @see PGraphics#strokeWeight(float)
+ * @see PGraphics#strokeCap(int)
+ */
   public void strokeJoin(int join) {
     strokeJoin = join;
   }
 
-
+/**
+   * ( begin auto-generated from strokeCap.xml )
+   * 
+   * Sets the style for rendering line endings. These ends are either squared, extended, or rounded and specified with the corresponding parameters SQUARE, PROJECT, and ROUND. The default cap is ROUND. 
+   * <br/> <br/>
+   * This function is not available with the P2D, P3D, or OPENGL renderers (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">see bug report</a>). More information about the renderers can be found in the <b>size()</b> reference.
+   * 
+   * ( end auto-generated )
+ * @webref shape:attributes
+ * @param cap either SQUARE, PROJECT, or ROUND
+ * @see PGraphics#stroke(int, float)
+ * @see PGraphics#strokeWeight(float)
+ * @see PGraphics#strokeJoin(int)
+ * @see PApplet#size(int, int, String, String)
+ */
   public void strokeCap(int cap) {
     strokeCap = cap;
   }
@@ -4457,11 +4920,12 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Disables drawing the stroke (outline). If both <b>noStroke()</b> and
-   * <b>noFill()</b> are called, no shapes will be drawn to the screen.
-   *
+   * ( begin auto-generated from noStroke.xml )
+   * 
+   * Disables drawing the stroke (outline). If both <b>noStroke()</b> and <b>noFill()</b> are called, nothing will be drawn to the screen.
+   * 
+   * ( end auto-generated )
    * @webref color:setting
-   *
    * @see PGraphics#stroke(float, float, float, float)
    */
   public void noStroke() {
@@ -4470,17 +4934,31 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the tint to either a grayscale or ARGB value.
-   * See notes attached to the fill() function.
+   * ( begin auto-generated from stroke.xml )
+   * 
+   * Sets the color used to draw lines and borders around shapes. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255). 
+   * <br/> <br/>
+   * When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
+   * <br/> <br/>
+   * The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+   * 
+   * ( end auto-generated )
+   * @webref color:setting
    * @param rgb color value in hexadecimal notation
-   * (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
+   * @see PGraphics#noStroke()
+   * @see PGraphics#fill(int, float)
+   * @see PGraphics#tint(int, float)
+   * @see PGraphics#background(float, float, float, float)
+   * @see PGraphics#colorMode(int, float, float, float, float)
    */
   public void stroke(int rgb) {
     colorCalc(rgb);
     strokeFromCalc();
   }
 
-
+/**
+ * @param alpha opacity of the stroke
+ */
   public void stroke(int rgb, float alpha) {
     colorCalc(rgb, alpha);
     strokeFromCalc();
@@ -4488,7 +4966,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   *
    * @param gray specifies a value between white and black
    */
   public void stroke(float gray) {
@@ -4502,7 +4979,11 @@ public class PGraphics extends PImage implements PConstants {
     strokeFromCalc();
   }
 
-
+/**
+ * @param x red or hue value (depending on current color mode)
+ * @param y green or saturation value (depending on current color mode)
+ * @param z blue or brightness value (depending on current color mode)
+ */
   public void stroke(float x, float y, float z) {
     colorCalc(x, y, z);
     strokeFromCalc();
@@ -4510,26 +4991,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Sets the color used to draw lines and borders around shapes. This color
-   * is either specified in terms of the RGB or HSB color depending on the
-   * current <b>colorMode()</b> (the default color space is RGB, with each
-   * value in the range from 0 to 255).
-   * <br><br>When using hexadecimal notation to specify a color, use "#" or
-   * "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six
-   * digits to specify a color (the way colors are specified in HTML and CSS).
-   * When using the hexadecimal notation starting with "0x", the hexadecimal
-   * value must be specified with eight characters; the first two characters
-   * define the alpha component and the remainder the red, green, and blue
-   * components.
-   * <br><br>The value for the parameter "gray" must be less than or equal
-   * to the current maximum value as specified by <b>colorMode()</b>.
-   * The default maximum value is 255.
-   *
-   * @webref color:setting
-   * @param alpha opacity of the stroke
-   * @param x red or hue value (depending on the current color mode)
-   * @param y green or saturation value (depending on the current color mode)
-   * @param z blue or brightness value (depending on the current color mode)
+   * @param a opacity of the stroke
    */
   public void stroke(float x, float y, float z, float a) {
     colorCalc(x, y, z, a);
@@ -4559,11 +5021,15 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * ( begin auto-generated from noTint.xml )
+   * 
    * Removes the current fill value for displaying images and reverts to displaying images with their original hues.
-   *
+   * 
+   * ( end auto-generated )
    * @webref image:loading_displaying
-   * @see processing.core.PGraphics#tint(float, float, float, float)
-   * @see processing.core.PGraphics#image(PImage, float, float, float, float)
+   * @usage web_application
+   * @see PGraphics#tint(float, float, float, float)
+   * @see PGraphics#image(PImage, float, float, float, float)
    */
   public void noTint() {
     tint = false;
@@ -4571,7 +5037,24 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the tint to either a grayscale or ARGB value.
+   * ( begin auto-generated from tint.xml )
+   * 
+   * Sets the fill value for displaying images. Images can be tinted to specified colors or made transparent by setting the alpha. 
+   * <br/> <br/>
+   * To make an image transparent, but not change it's color, use white as the tint color and specify an alpha value. For instance, tint(255, 128) will make an image 50% transparent (unless <b>colorMode()</b> has been used).
+   * <br/> <br/>
+   * When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
+   * <br/> <br/>
+   * The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+   * <br/> <br/>
+   * The tint() method is also used to control the coloring of textures in 3D. 
+   * 
+   * ( end auto-generated )
+   * @webref image:loading_displaying
+   * @usage web_application
+   * @param rgb color value in hexadecimal notation
+   * @see PGraphics#noTint()
+   * @see PGraphics#image(PImage, float, float, float, float)
    */
   public void tint(int rgb) {
     colorCalc(rgb);
@@ -4581,7 +5064,6 @@ public class PGraphics extends PImage implements PConstants {
 
   /**
    * @param rgb color value in hexadecimal notation
-   * (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
    * @param alpha opacity of the image
    */
   public void tint(int rgb, float alpha) {
@@ -4604,7 +5086,11 @@ public class PGraphics extends PImage implements PConstants {
     tintFromCalc();
   }
 
-
+/**
+ * @param x red or hue value (depending on current color mode)
+ * @param y green or saturation value (depending on current color mode)
+ * @param z blue or brightness value (depending on current color mode)
+ */
   public void tint(float x, float y, float z) {
     colorCalc(x, y, z);
     tintFromCalc();
@@ -4612,33 +5098,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Sets the fill value for displaying images. Images can be tinted to
-   * specified colors or made transparent by setting the alpha.
-   * <br><br>To make an image transparent, but not change it's color,
-   * use white as the tint color and specify an alpha value. For instance,
-   * tint(255, 128) will make an image 50% transparent (unless
-   * <b>colorMode()</b> has been used).
-   *
-   * <br><br>When using hexadecimal notation to specify a color, use "#" or
-   * "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six
-   * digits to specify a color (the way colors are specified in HTML and CSS).
-   * When using the hexadecimal notation starting with "0x", the hexadecimal
-   * value must be specified with eight characters; the first two characters
-   * define the alpha component and the remainder the red, green, and blue
-   * components.
-   * <br><br>The value for the parameter "gray" must be less than or equal
-   * to the current maximum value as specified by <b>colorMode()</b>.
-   * The default maximum value is 255.
-   * <br><br>The tint() method is also used to control the coloring of
-   * textures in 3D.
-   *
-   * @webref image:loading_displaying
-   * @param x red or hue value
-   * @param y green or saturation value
-   * @param z blue or brightness value
-   *
-   * @see processing.core.PGraphics#noTint()
-   * @see processing.core.PGraphics#image(PImage, float, float, float, float)
+   * @param z opacity of the image
    */
   public void tint(float x, float y, float z, float a) {
     colorCalc(x, y, z, a);
@@ -4668,13 +5128,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Disables filling geometry. If both <b>noStroke()</b> and <b>noFill()</b>
-   * are called, no shapes will be drawn to the screen.
-   *
+   * ( begin auto-generated from noFill.xml )
+   * 
+   * Disables filling geometry. If both <b>noStroke()</b> and <b>noFill()</b> are called, nothing will be drawn to the screen.
+   * 
+   * ( end auto-generated )
    * @webref color:setting
-   *
+   * @usage web_application
    * @see PGraphics#fill(float, float, float, float)
-   *
    */
   public void noFill() {
     fill = false;
@@ -4682,15 +5143,34 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the fill to either a grayscale value or an ARGB int.
+   * ( begin auto-generated from fill.xml )
+   * 
+   * Sets the color used to fill shapes. For example, if you run <b>fill(204, 102, 0)</b>, all subsequent shapes will be filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255). 
+   * <br/> <br/>
+   * When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
+   * <br/> <br/>
+   * The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+   * <br/> <br/>
+   * To change the color of an image (or a texture), use tint().
+   * 
+   * ( end auto-generated )
+   * @webref color:setting
+   * @usage web_application
    * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
+   * @see PGraphics#noFill()
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#tint(int, float)
+   * @see PGraphics#background(float, float, float, float)
+   * @see PGraphics#colorMode(int, float, float, float, float)
    */
   public void fill(int rgb) {
     colorCalc(rgb);
     fillFromCalc();
   }
 
-
+/**
+ * @param alpha opacity of the fill
+ */
   public void fill(int rgb, float alpha) {
     colorCalc(rgb, alpha);
     fillFromCalc();
@@ -4711,6 +5191,11 @@ public class PGraphics extends PImage implements PConstants {
     fillFromCalc();
   }
 
+/**
+ * @param x red or hue value (depending on current color mode)
+ * @param y green or saturation value (depending on current color mode)
+ * @param z blue or brightness value (depending on current color mode)
+ */
 
   public void fill(float x, float y, float z) {
     colorCalc(x, y, z);
@@ -4719,22 +5204,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Sets the color used to fill shapes. For example, if you run <b>fill(204, 102, 0)</b>, all subsequent shapes will be filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255).
-   * <br><br>When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components.
-   * <br><br>The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
-   * <br><br>To change the color of an image (or a texture), use tint().
-   *
-   * @webref color:setting
-   * @param x red or hue value
-   * @param y green or saturation value
-   * @param z blue or brightness value
-   * @param alpha opacity of the fill
-   *
-   * @see PGraphics#noFill()
-   * @see PGraphics#stroke(float)
-   * @see PGraphics#tint(float)
-   * @see PGraphics#background(float, float, float, float)
-   * @see PGraphics#colorMode(int, float, float, float, float)
+   * @param a opacity of the fill
    */
   public void fill(float x, float y, float z, float a) {
     colorCalc(x, y, z, a);
@@ -4762,7 +5232,19 @@ public class PGraphics extends PImage implements PConstants {
 
   // MATERIAL PROPERTIES
 
-
+/**
+   * ( begin auto-generated from ambient.xml )
+   * 
+   * Sets the ambient reflectance for shapes drawn to the screen. This is combined with the ambient light component of environment. The color components set through the parameters define the reflectance. For example in the default color mode, setting v1=255, v2=126, v3=0, would cause all the red light to reflect and half of the green light to reflect. Used in combination with <b>emissive()</b>, <b>specular()</b>, and <b>shininess()</b> in setting the material properties of shapes.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:material_properties
+ * @usage web_application
+ * @param rgb ???
+ * @see PGraphics#emissive(float, float, float)
+ * @see PGraphics#specular(float, float, float)
+ * @see PGraphics#shininess(float)
+ */
   public void ambient(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
 //      ambient((float) rgb);
@@ -4775,13 +5257,19 @@ public class PGraphics extends PImage implements PConstants {
     ambientFromCalc();
   }
 
-
+/**
+ * @param gray number specifying value between white and black
+ */
   public void ambient(float gray) {
     colorCalc(gray);
     ambientFromCalc();
   }
 
-
+/**
+ * @param x red or hue value (depending on current color mode)
+ * @param y green or saturation value (depending on current color mode)
+ * @param z blue or brightness value (depending on current color mode)
+ */
   public void ambient(float x, float y, float z) {
     colorCalc(x, y, z);
     ambientFromCalc();
@@ -4794,7 +5282,19 @@ public class PGraphics extends PImage implements PConstants {
     ambientB = calcB;
   }
 
-
+/**
+   * ( begin auto-generated from specular.xml )
+   * 
+   * Sets the specular color of the materials used for shapes drawn to the screen, which sets the color of hightlights. Specular refers to light which bounces off a surface in a perferred direction (rather than bouncing in all directions like a diffuse light). Used in combination with <b>emissive()</b>, <b>ambient()</b>, and <b>shininess()</b> in setting the material properties of shapes.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:material_properties
+ * @usage web_application
+ * @param rgb ???
+ * @see PGraphics#emissive(float, float, float)
+ * @see PGraphics#ambient(float, float, float)
+ * @see PGraphics#shininess(float)
+ */
   public void specular(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
 //      specular((float) rgb);
@@ -4807,13 +5307,19 @@ public class PGraphics extends PImage implements PConstants {
     specularFromCalc();
   }
 
-
+/**
+ * gray number specifying value between white and black
+ */
   public void specular(float gray) {
     colorCalc(gray);
     specularFromCalc();
   }
 
-
+/**
+ * @param x red or hue value (depending on current color mode)
+ * @param y green or saturation value (depending on current color mode)
+ * @param z blue or brightness value (depending on current color mode)
+ */
   public void specular(float x, float y, float z) {
     colorCalc(x, y, z);
     specularFromCalc();
@@ -4826,12 +5332,36 @@ public class PGraphics extends PImage implements PConstants {
     specularB = calcB;
   }
 
-
+/**
+   * ( begin auto-generated from shininess.xml )
+   * 
+   * Sets the amount of gloss in the surface of shapes. Used in combination with <b>ambient()</b>, <b>specular()</b>, and <b>emissive()</b> in setting the material properties of shapes.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:material_properties
+ * @usage web_application
+ * @param shine degree of shininess
+ * @see PGraphics#emissive(float, float, float)
+ * @see PGraphics#ambient(float, float, float)
+ * @see PGraphics#specular(float, float, float)
+ */
   public void shininess(float shine) {
     shininess = shine;
   }
 
-
+/**
+   * ( begin auto-generated from emissive.xml )
+   * 
+   * Sets the emissive color of the material used for drawing shapes drawn to the screen. Used in combination with <b>ambient()</b>, <b>specular()</b>, and <b>shininess()</b> in setting the material properties of shapes.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:material_properties
+ * @usage web_application
+ * @param rgb ???
+ * @see PGraphics#ambient(float, float, float)
+ * @see PGraphics#specular(float, float, float)
+ * @see PGraphics#shininess(float)
+ */
   public void emissive(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
 //      emissive((float) rgb);
@@ -4844,13 +5374,19 @@ public class PGraphics extends PImage implements PConstants {
     emissiveFromCalc();
   }
 
-
+/**
+ * gray number specifying value between white and black
+ */
   public void emissive(float gray) {
     colorCalc(gray);
     emissiveFromCalc();
   }
 
-
+/**
+ * @param x red or hue value (depending on current color mode)
+ * @param y green or saturation value (depending on current color mode)
+ * @param z blue or brightness value (depending on current color mode)
+ */
   public void emissive(float x, float y, float z) {
     colorCalc(x, y, z);
     emissiveFromCalc();
@@ -4873,33 +5409,139 @@ public class PGraphics extends PImage implements PConstants {
   // class does not handle any details of settings lights. It does however
   // display warning messages that the functions are not available.
 
-
+/**
+   * ( begin auto-generated from lights.xml )
+   * 
+   * Sets the default ambient light, directional light, falloff, and specular values. The defaults are ambientLight(128, 128, 128) and directionalLight(128, 128, 128, 0, 0, -1), lightFalloff(1, 0, 0), and lightSpecular(0, 0, 0). Lights need to be included in the draw() to remain persistent in a looping program. Placing them in the setup() of a looping program will cause them to only have an effect the first time through the loop.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:lights
+ * @usage web_application
+ * @see PGraphics#ambientLight(float, float, float, float, float, float)
+ * @see PGraphics#directionalLight(float, float, float, float, float, float)
+ * @see PGraphics#pointLight(float, float, float, float, float, float)
+ * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+ * @see PGraphics#noLights()
+ */
   public void lights() {
     showMethodWarning("lights");
   }
 
+/**
+   * ( begin auto-generated from noLights.xml )
+   * 
+   * Disable all lighting. Lighting is turned off by default and enabled with the lights() method. This function can be used to disable lighting so that 2D geometry (which does not require lighting) can be drawn after a set of lighted 3D geometry.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:lights
+ * @usage web_application
+ * @see PGraphics#lights()
+ */
   public void noLights() {
     showMethodWarning("noLights");
   }
 
+/**
+   * ( begin auto-generated from ambientLight.xml )
+   * 
+   * Adds an ambient light. Ambient light doesn't come from a specific direction, the rays have light have bounced around so much that objects are evenly lit from all sides. Ambient lights are almost always used in combination with other types of lights. Lights need to be included in the <b>draw()</b> to remain persistent in a looping program. Placing them in the <b>setup()</b> of a looping program will cause them to only have an effect the first time through the loop. The effect of the parameters is determined by the current color mode.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:lights
+ * @usage web_application
+ * @param red red or hue value
+ * @param green green or hue value
+ * @param blue blue or hue value
+ * @see PGraphics#lights()
+ * @see PGraphics#directionalLight(float, float, float, float, float, float)
+ * @see PGraphics#pointLight(float, float, float, float, float, float)
+ * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+ */
   public void ambientLight(float red, float green, float blue) {
     showMethodWarning("ambientLight");
   }
 
+/**
+ * @param x x-coordinate of the light
+ * @param y y-coordinate of the light
+ * @param z z-coordinate of the light
+ */
   public void ambientLight(float red, float green, float blue,
                            float x, float y, float z) {
     showMethodWarning("ambientLight");
   }
 
+/**
+   * ( begin auto-generated from directionalLight.xml )
+   * 
+   * Adds a directional light. Directional light comes from one direction and is stronger when hitting a surface squarely and weaker if it hits at a a gentle angle. After hitting a surface, a directional lights scatters in all directions. Lights need to be included in the <b>draw()</b> to remain persistent in a looping program. Placing them in the <b>setup()</b> of a looping program will cause them to only have an effect the first time through the loop. The affect of the <b>v1</b>, <b>v2</b>, and <b>v3</b> parameters is determined by the current color mode. The <b>nx</b>, <b>ny</b>, and <b>nz</b> parameters specify the direction the light is facing. For example, setting <b>ny</b> to -1 will cause the geometry to be lit from below (the light is facing directly upward).
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:lights
+ * @usage web_application
+ * @param red red or hue value
+ * @param green green or hue value
+ * @param blue blue or hue value
+ * @param nx direction along the x-axis
+ * @param ny direction along the y-axis
+ * @param nz direction along the z-axis
+ * @see PGraphics#lights()
+ * @see PGraphics#ambientLight(float, float, float, float, float, float)
+ * @see PGraphics#pointLight(float, float, float, float, float, float)
+ * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+ */
   public void directionalLight(float red, float green, float blue,
                                float nx, float ny, float nz) {
     showMethodWarning("directionalLight");
   }
 
+/**
+   * ( begin auto-generated from pointLight.xml )
+   * 
+   * Adds a point light. Lights need to be included in the <b>draw()</b> to remain persistent in a looping program. Placing them in the <b>setup()</b> of a looping program will cause them to only have an effect the first time through the loop. The affect of the <b>v1</b>, <b>v2</b>, and <b>v3</b> parameters is determined by the current color mode. The <b>x</b>, <b>y</b>, and <b>z</b> parameters set the position of the light.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:lights
+ * @usage web_application
+ * @param red red or hue value
+ * @param green green or hue value
+ * @param blue blue or hue value
+ * @param x x-coordinate of the light
+ * @param y y-coordinate of the light
+ * @param z z-coordinate of the light
+ * @see PGraphics#lights()
+ * @see PGraphics#directionalLight(float, float, float, float, float, float)
+ * @see PGraphics#ambientLight(float, float, float, float, float, float)
+ * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+ */
+
   public void pointLight(float red, float green, float blue,
                          float x, float y, float z) {
     showMethodWarning("pointLight");
   }
+
+/**
+   * ( begin auto-generated from spotLight.xml )
+   * 
+   * Adds a spot light. Lights need to be included in the <b>draw()</b> to remain persistent in a looping program. Placing them in the <b>setup()</b> of a looping program will cause them to only have an effect the first time through the loop. The affect of the <b>v1</b>, <b>v2</b>, and <b>v3</b> parameters is determined by the current color mode. The <b>x</b>, <b>y</b>, and <b>z</b> parameters specify the position of the light and <b>nx</b>, <b>ny</b>, <b>nz</b> specify the direction or light. The <b>angle</b> parameter affects angle of the spotlight cone.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:lights
+ * @usage web_application
+ * @param red red or hue value
+ * @param green green or hue value
+ * @param blue blue or hue value
+ * @param x x-coordinate of the light
+ * @param y y-coordinate of the light
+ * @param z z-coordinate of the light
+ * @param nx direction along the x axis
+ * @param ny direction along the y axis
+ * @param nz direction along the z axis
+ * @see PGraphics#lights()
+ * @see PGraphics#directionalLight(float, float, float, float, float, float)
+ * @see PGraphics#pointLight(float, float, float, float, float, float)
+ * @see PGraphics#ambientLight(float, float, float, float, float, float)
+ */
 
   public void spotLight(float red, float green, float blue,
                         float x, float y, float z,
@@ -4908,9 +5550,44 @@ public class PGraphics extends PImage implements PConstants {
     showMethodWarning("spotLight");
   }
 
+/**
+   * ( begin auto-generated from lightFalloff.xml )
+   * 
+   * Sets the falloff rates for point lights, spot lights, and ambient lights. The parameters are used to determine the falloff with the following equation:<br /><br />d = distance from light position to vertex position<br />falloff = 1 / (CONSTANT + d * LINEAR + (d*d) * QUADRATIC)<br /><br />Like <b>fill()</b>, it affects only the elements which are created after it in the code. The default value if <b>LightFalloff(1.0, 0.0, 0.0)</b>. Thinking about an ambient light with a falloff can be tricky. It is used, for example, if you wanted a region of your scene to be lit ambiently one color and another region to be lit ambiently by another color, you would use an ambient light with location and falloff. You can think of it as a point light that doesn't care which direction a surface is facing.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:lights
+ * @usage web_application
+ * @param constant constant value or determining falloff
+ * @param linear linear value for determining falloff
+ * @param quadratic quadratic value for determining falloff
+ * @see PGraphics#lights()
+ * @see PGraphics#ambientLight(float, float, float, float, float, float)
+ * @see PGraphics#pointLight(float, float, float, float, float, float)
+ * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+ * @see PGraphics#lightSpecular(float, float, float)
+ */
+
   public void lightFalloff(float constant, float linear, float quadratic) {
     showMethodWarning("lightFalloff");
   }
+  
+/**
+   * ( begin auto-generated from lightSpecular.xml )
+   * 
+   * Sets the specular color for lights. Like <b>fill()</b>, it affects only the elements which are created after it in the code. Specular refers to light which bounces off a surface in a perferred direction (rather than bouncing in all directions like a diffuse light) and is used for creating highlights. The specular quality of a light interacts with the specular material qualities set through the <b>specular()</b> and <b>shininess()</b> functions.
+   * 
+   * ( end auto-generated )
+ * @webref lights_camera:lights
+ * @usage web_application
+ * @param red red or hue value
+ * @param green green or hue value
+ * @param blue blue or hue value
+ * @see PGraphics#lights()
+ * @see PGraphics#ambientLight(float, float, float, float, float, float)
+ * @see PGraphics#pointLight(float, float, float, float, float, float)
+ * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+ */
 
   public void lightSpecular(float x, float y, float z) {
     showMethodWarning("lightSpecular");
@@ -4924,17 +5601,34 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the background to a gray or ARGB color.
-   * <p>
-   * For the main drawing surface, the alpha value will be ignored. However,
-   * alpha can be used on PGraphics objects from createGraphics(). This is
-   * the only way to set all the pixels partially transparent, for instance.
-   * <p>
-   * Note that background() should be called before any transformations occur,
-   * because some implementations may require the current transformation matrix
-   * to be identity before drawing.
+   * ( begin auto-generated from background.xml )
+   * 
+   * The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to clear the display window at the beginning of each frame.
+   * <br/> <br/>
+   * An image can also be used as the background for a sketch, however its width and height must be the same size as the sketch window. To resize an image 'b' to the size of the sketch window, use b.resize(width, height).
+   * <br/> <br/>
+   * Images used as background will ignore the current <b>tint()</b> setting.
+   * <br/> <br/>
+   * It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics()</b>.
+   * 
+   * ( end auto-generated )
+   * <h3>Advanced</h3>
+   * <p>Clear the background with a color that includes an alpha value. This can
+   * only be used with objects created by createGraphics(), because the main
+   * drawing surface cannot be set transparent.</p>
+   * <p>It might be tempting to use this function to partially clear the screen
+   * on each frame, however that's not how this function works. When calling
+   * background(), the pixels will be replaced with pixels that have that level
+   * of transparency. To do a semi-transparent overlay, use fill() with alpha
+   * and draw a rectangle.</p>
    *
+   * @webref color:setting
+   * @usage web_application
    * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00)<br/>or any value of the color datatype
+   * @see PGraphics#stroke(float)
+   * @see PGraphics#fill(float)
+   * @see PGraphics#tint(float)
+   * @see PGraphics#colorMode(int)
    */
   public void background(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
@@ -4954,7 +5648,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * See notes about alpha in background(x, y, z, a).
+   * @param alpha opacity of the background
    */
   public void background(int rgb, float alpha) {
 //    if (format == RGB) {
@@ -4976,8 +5670,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the background to a grayscale value, based on the
-   * current colorMode.
+   * @param gray specifies a value between white and black
    */
   public void background(float gray) {
     colorCalc(gray);
@@ -4986,11 +5679,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /**
-   * See notes about alpha in background(x, y, z, a).
-   * @param gray specifies a value between white and black
-   * @param alpha opacity of the background
-   */
   public void background(float gray, float alpha) {
     if (format == RGB) {
       background(gray);  // ignore alpha for main drawing surface
@@ -5004,8 +5692,9 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Set the background to an r, g, b or h, s, b value,
-   * based on the current colorMode.
+   * @param x red or hue value (depending on the current color mode)
+   * @param y green or saturation value (depending on the current color mode)
+   * @param z blue or brightness value (depending on the current color mode)
    */
   public void background(float x, float y, float z) {
     colorCalc(x, y, z);
@@ -5014,32 +5703,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /**
-   * The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to clear the display window at the beginning of each frame.
-   * <br><br>An image can also be used as the background for a sketch, however its width and height must be the same size as the sketch window. To resize an image 'b' to the size of the sketch window, use b.resize(width, height).
-   * <br><br>Images used as background will ignore the current tint() setting.
-   * <br><br>It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics</b>.
-   *
-   * <h3>Advanced</h3>
-   * <p>Clear the background with a color that includes an alpha value. This can
-   * only be used with objects created by createGraphics(), because the main
-   * drawing surface cannot be set transparent.</p>
-   * <p>It might be tempting to use this function to partially clear the screen
-   * on each frame, however that's not how this function works. When calling
-   * background(), the pixels will be replaced with pixels that have that level
-   * of transparency. To do a semi-transparent overlay, use fill() with alpha
-   * and draw a rectangle.</p>
-   *
-   * @webref color:setting
-   * @param x red or hue value (depending on the current color mode)
-   * @param y green or saturation value (depending on the current color mode)
-   * @param z blue or brightness value (depending on the current color mode)
-   *
-   * @see PGraphics#stroke(float)
-   * @see PGraphics#fill(float)
-   * @see PGraphics#tint(float)
-   * @see PGraphics#colorMode(int)
-   */
+/**
+ * @param a opacity of the background
+ */
   public void background(float x, float y, float z, float a) {
 //    if (format == RGB) {
 //      background(x, y, z);  // don't allow people to set alpha
@@ -5071,6 +5737,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * ???
    * Takes an RGB or ARGB image and sets it as the background.
    * The width and height of the image must be the same size as the sketch.
    * Use image.resize(width, height) to make short work of such a task.
@@ -5151,48 +5818,44 @@ public class PGraphics extends PImage implements PConstants {
 
   // COLOR MODE
 
-
   /**
+   * ( begin auto-generated from colorMode.xml )
+   * 
+   * Changes the way Processing interprets color data. By default, the parameters for <b>fill()</b>, <b>stroke()</b>, <b>background()</b>, and <b>color()</b> are defined by values between 0 and 255 using the RGB color model. The <b>colorMode()</b> function is used to change the numerical range used for specifying colors and to switch color systems. For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values are specified between 0 and 1. The limits for defining colors are altered by setting the parameters range1, range2, range3, and range 4. 
+   * 
+   * ( end auto-generated )
+   * @webref color:setting
+   * @usage web_application
    * @param mode Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
-   * @param max range for all color elements
+   * @see PGraphics#background(float)
+   * @see PGraphics#fill(float)
+   * @see PGraphics#stroke(float)
    */
+
   public void colorMode(int mode) {
     colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
   }
 
-
+  /**
+   * @param max range for all color elements
+   */
   public void colorMode(int mode, float max) {
     colorMode(mode, max, max, max, max);
   }
 
 
   /**
-   * Set the colorMode and the maximum values for (r, g, b)
-   * or (h, s, b).
-   * <P>
-   * Note that this doesn't set the maximum for the alpha value,
-   * which might be confusing if for instance you switched to
-   * <PRE>colorMode(HSB, 360, 100, 100);</PRE>
-   * because the alpha values were still between 0 and 255.
+   * @param maxX range for the red or hue depending on the current color mode
+   * @param maxY range for the green or saturation depending on the current color mode
+   * @param maxZ range for the blue or brightness depending on the current color mode
    */
   public void colorMode(int mode, float maxX, float maxY, float maxZ) {
     colorMode(mode, maxX, maxY, maxZ, colorModeA);
   }
 
-
-  /**
-   * Changes the way Processing interprets color data. By default, the parameters for <b>fill()</b>, <b>stroke()</b>, <b>background()</b>, and <b>color()</b> are defined by values between 0 and 255 using the RGB color model. The <b>colorMode()</b> function is used to change the numerical range used for specifying colors and to switch color systems. For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values are specified between 0 and 1. The limits for defining colors are altered by setting the parameters range1, range2, range3, and range 4.
-   *
-   * @webref color:setting
-   * @param maxX range for the red or hue depending on the current color mode
-   * @param maxY range for the green or saturation depending on the current color mode
-   * @param maxZ range for the blue or brightness depending on the current color mode
-   * @param maxA range for the alpha
-   *
-   * @see PGraphics#background(float)
-   * @see PGraphics#fill(float)
-   * @see PGraphics#stroke(float)
-   */
+/**
+ * @param maxA range for the alpha
+ */
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA) {
     colorMode = mode;
@@ -5509,10 +6172,20 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * ( begin auto-generated from alpha.xml )
+   * 
    * Extracts the alpha value from a color.
-   *
+   * 
+   * ( end auto-generated )
    * @webref color:creating_reading
+   * @usage web_application
    * @param what any value of the color datatype
+   * @see PGraphics#green(int)
+   * @see PGraphics#red(int)
+   * @see PGraphics#blue(int)
+   * @see PGraphics#hue(int)
+   * @see PGraphics#saturation(int)
+   * @see PGraphics#brightness(int)
    */
   public final float alpha(int what) {
     float c = (what >> 24) & 0xff;
@@ -5522,11 +6195,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Extracts the red value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The red() function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = red(myColor);<br>float r2 = myColor &gt;&gt; 16 &amp; 0xFF;</pre>
-   *
+   * ( begin auto-generated from red.xml )
+   * 
+   * Extracts the red value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br /><br />The red() function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br /><pre>float r1 = red(myColor);<br />float r2 = myColor &gt;&gt; 16 &amp; 0xFF;</pre>
+   * 
+   * ( end auto-generated )
    * @webref color:creating_reading
+   * @usage web_application
    * @param what any value of the color datatype
-   *
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#hue(int)
@@ -5542,11 +6218,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Extracts the green value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>green()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = green(myColor);<br>float r2 = myColor &gt;&gt; 8 &amp; 0xFF;</pre>
-   *
+   * ( begin auto-generated from green.xml )
+   * 
+   * Extracts the green value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br /><br />The <b>green()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br /><pre>float r1 = green(myColor);<br />float r2 = myColor &gt;&gt; 8 &amp; 0xFF;</pre>
+   * 
+   * ( end auto-generated )
    * @webref color:creating_reading
+   * @usage web_application
    * @param what any value of the color datatype
-   *
    * @see PGraphics#red(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#hue(int)
@@ -5562,11 +6241,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Extracts the blue value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>blue()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use a bit mask to remove the other color components. For example, the following two lines of code are equivalent:<br><pre>float r1 = blue(myColor);<br>float r2 = myColor &amp; 0xFF;</pre>
-   *
+   * ( begin auto-generated from blue.xml )
+   * 
+   * Extracts the blue value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br /><br />The <b>blue()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use a bit mask to remove the other color components. For example, the following two lines of code are equivalent:<br /><pre>float r1 = blue(myColor);<br />float r2 = myColor &amp; 0xFF;</pre>
+   * 
+   * ( end auto-generated )
    * @webref color:creating_reading
+   * @usage web_application
    * @param what any value of the color datatype
-   *
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#hue(int)
@@ -5581,11 +6263,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * ( begin auto-generated from hue.xml )
+   * 
    * Extracts the hue value from a color.
-   *
+   * 
+   * ( end auto-generated )
    * @webref color:creating_reading
+   * @usage web_application
    * @param what any value of the color datatype
-   *
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -5603,11 +6288,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * ( begin auto-generated from saturation.xml )
+   * 
    * Extracts the saturation value from a color.
-   *
+   * 
+   * ( end auto-generated )
    * @webref color:creating_reading
+   * @usage web_application
    * @param what any value of the color datatype
-   *
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -5625,12 +6313,14 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * ( begin auto-generated from brightness.xml )
+   * 
    * Extracts the brightness value from a color.
-   *
-   *
+   * 
+   * ( end auto-generated )
    * @webref color:creating_reading
+   * @usage web_application
    * @param what any value of the color datatype
-   *
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -5656,13 +6346,16 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * Calculates a color or colors between two color at a specific increment. The <b>amt</b> parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is half-way in between, etc.
-   *
+   * ( begin auto-generated from lerpColor.xml )
+   * 
+   * Calculates a color or colors between two color at a specific increment. The <b>amt</b> parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is half-way in between, etc. 
+   * 
+   * ( end auto-generated )
    * @webref color:creating_reading
+   * @usage web_application
    * @param c1 interpolate from this color
    * @param c2 interpolate to this color
    * @param amt between 0.0 and 1.0
-   *
    * @see PGraphics#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
    */
@@ -5674,8 +6367,11 @@ public class PGraphics extends PImage implements PConstants {
   static float[] lerpColorHSB2;
 
   /**
+   * <h3>Advanced</h3>
    * Interpolate between two colors. Like lerp(), but for the
    * individual color components of a color supplied as an int value.
+   *
+   * @param mode ???
    */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
     if (mode == RGB) {
