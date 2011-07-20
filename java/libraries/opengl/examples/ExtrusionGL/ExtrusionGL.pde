@@ -5,9 +5,6 @@
  * around the center.
  */
 
-
-import processing.opengl.*;
-
 PImage a;
 boolean onetime = true;
 int[][] aPixels;
@@ -15,7 +12,7 @@ int[][] values;
 float angle;
 
 void setup() {
-  size(1024, 768, OPENGL);
+  size(1024, 768, P3D);
   
   aPixels = new int[width][height];
   values = new int[width][height];

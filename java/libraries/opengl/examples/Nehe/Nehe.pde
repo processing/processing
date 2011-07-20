@@ -4,8 +4,6 @@
 // Ported from NeHe tutorial 8:
 // http://nehe.gamedev.net/data/lessons/lesson.asp?lesson=08
 
-import processing.opengl.*;
-
 import javax.media.opengl.*;
 import java.nio.*;
 import javax.media.opengl.glu.gl2.GLUgl2;
@@ -52,8 +50,7 @@ float ySpeed = 0.2f;
 GLUgl2 glu;
 
 void setup() {
-  size(400, 400, OPENGL);
-  //  orientation(PORTRAIT);  
+  size(400, 400, P3D);
 
   glu = new GLUgl2();
 

@@ -13,7 +13,6 @@
  */
 
 
-import processing.opengl.*;
 import java.awt.Polygon;
 
 Gesture gestureArray[];
@@ -27,7 +26,7 @@ int tmpYp[];
 
 
 void setup() {
-  size(1024, 768, OPENGL);
+  size(1024, 768, P3D);
   background(0, 0, 0);
   noStroke();
 

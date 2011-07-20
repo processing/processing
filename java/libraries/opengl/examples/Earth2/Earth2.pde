@@ -7,8 +7,6 @@
 // using the object-oriented mode, where the drawing calls are methods
 // in the PShape3D object.
 
-import processing.opengl.*;
-
 PShape3D globe;
 PImage texmap;
 
@@ -26,7 +24,7 @@ int SINCOS_LENGTH = (int)(360.0f / SINCOS_PRECISION);
 boolean usingPShape = false;
 
 public void setup() {
-  size(600, 600, OPENGL);
+  size(600, 600, P3D);
 
   PFont font = createFont(PFont.list()[0], 12);
   textFont(font, 12);

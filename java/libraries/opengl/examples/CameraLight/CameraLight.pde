@@ -2,12 +2,10 @@
 // Simple example showing a lit rotating cube. The projection
 // is set to orthographic if the mouse is pressed.
 
-import processing.opengl.*;
-
 float spin = 0.0;
 
 void setup() {
-  size(400, 400, OPENGL);
+  size(400, 400, P3D);
   
   noStroke();
 }
