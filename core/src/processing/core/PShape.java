@@ -28,11 +28,13 @@ import processing.core.PApplet;
 
 
 /**
- * Datatype for storing shapes. Processing can currently load and display SVG (Scalable Vector Graphics) shapes.
- * Before a shape is used, it must be loaded with the <b>loadShape()</b> function. The <b>shape()</b> function is used to draw the shape to the display window.
- * The <b>PShape</b> object contain a group of methods, linked below, that can operate on the shape data.
- * <br><br>The <b>loadShape()</b> method supports SVG files created with Inkscape and Adobe Illustrator.
- * It is not a full SVG implementation, but offers some straightforward support for handling vector data.
+   * ( begin auto-generated from PShape.xml )
+   * 
+   * Datatype for storing shapes. Processing can currently load and display SVG (Scalable Vector Graphics) shapes. Before a shape is used, it must be loaded with the <b>loadShape()</b> function. The <b>shape()</b> function is used to draw the shape to the display window. The <b>PShape</b> object contain a group of methods, linked below, that can operate on the shape data. 
+   * <br /><br />
+   * The <b>loadShape()</b> method supports SVG files created with Inkscape and Adobe Illustrator. It is not a full SVG implementation, but offers some straightforward support for handling vector data.
+   * 
+   * ( end auto-generated )
  * <h3>Advanced</h3>
  *
  * In-progress class to handle shape data, currently to be considered of
@@ -60,7 +62,7 @@ import processing.core.PApplet;
  * shape data, so that they can eventually hook into the bounty that will be
  * the PShape interface, and the ease of loadShape() and shape().</p>
  *
- * @webref Shape
+ * @webref shape
  * @usage Web &amp; Application
  * @see PApplet#shape(PShape)
  * @see PApplet#loadShape(String)
@@ -97,14 +99,24 @@ public class PShape implements PConstants {
   //protected float width;
   //protected float height;
   /**
+   * ( begin auto-generated from PShape_width.xml )
+   * 
    * The width of the PShape document.
-   * @webref
+   * 
+   * ( end auto-generated )
+   * @webref pshape:field
+   * @usage web_application
    * @brief     Shape document width
    */
   public float width;
   /**
-   * The width of the PShape document.
-   * @webref
+   * ( begin auto-generated from PShape_height.xml )
+   * 
+   * The height of the PShape document.
+   * 
+   * ( end auto-generated )
+   * @webref pshape:field
+   * @usage web_application
    * @brief     Shape document height
    */
   public float height;
@@ -190,7 +202,9 @@ public class PShape implements PConstants {
     this.family = GROUP;
   }
 
-
+/**
+ * @param family ???
+ */
   public PShape(int family) {
     this.family = family;
   }
@@ -206,11 +220,15 @@ public class PShape implements PConstants {
   }
 
   /**
+   * ( begin auto-generated from PShape_isVisible.xml )
+   * 
    * Returns a boolean value "true" if the image is set to be visible, "false" if not. This is modified with the <b>setVisible()</b> parameter.
-   * <br><br>The visibility of a shape is usually controlled by whatever program created the SVG file.
-   * For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
-   *
-   * @webref
+   * <br/> <br/>
+   * The visibility of a shape is usually controlled by whatever program created the SVG file. For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
+   * 
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Returns a boolean value "true" if the image is set to be visible, "false" if not
    */
   public boolean isVisible() {
@@ -218,12 +236,17 @@ public class PShape implements PConstants {
   }
 
   /**
+   * ( begin auto-generated from PShape_setVisible.xml )
+   * 
    * Sets the shape to be visible or invisible. This is determined by the value of the <b>visible</b> parameter.
-   * <br><br>The visibility of a shape is usually controlled by whatever program created the SVG file.
-   * For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
-   * @param visible "false" makes the shape invisible and "true" makes it visible
-   * @webref
+   * <br/> <br/>
+   * The visibility of a shape is usually controlled by whatever program created the SVG file. For instance, this parameter is controlled by showing or hiding the shape in the layers palette in Adobe Illustrator.
+   * 
+   * ( end auto-generated )
+   * @webref pshape:mathod
+   * @usage web_application
    * @brief Sets the shape to be visible or invisible
+   * @param visible "false" makes the shape invisible and "true" makes it visible
    */
   public void setVisible(boolean visible) {
     this.visible = visible;
@@ -231,12 +254,17 @@ public class PShape implements PConstants {
 
 
   /**
-   * Disables the shape's style data and uses Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints.
+   * ( begin auto-generated from PShape_disableStyle.xml )
+   * 
+   * Disables the shape's style data and uses Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints. 
+   * 
+   * ( end auto-generated )
    *  <h3>Advanced</h3>
    * Overrides this shape's style information and uses PGraphics styles and
    * colors. Identical to ignoreStyles(true). Also disables styles for all
    * child shapes.
-   * @webref
+   * @webref pshape:method
+   * @usage web_application
    * @brief     Disables the shape's style data and uses Processing styles
    */
   public void disableStyle() {
@@ -249,8 +277,13 @@ public class PShape implements PConstants {
 
 
   /**
-   * Enables the shape's style data and ignores Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints.
-   * @webref
+   * ( begin auto-generated from PShape_enableStyle.xml )
+   * 
+   * Enables the shape's style data and ignores Processing's current styles. Styles include attributes such as colors, stroke weight, and stroke joints. 
+   * 
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Enables the shape's style data and ignores the Processing styles
    */
   public void enableStyle() {
@@ -693,23 +726,24 @@ public class PShape implements PConstants {
     return children;
   }
 
-
   /**
-   *
+   * ( begin auto-generated from PShape_getChild.xml )
+   * 
+   * Extracts a child shape from a parent shape. Specify the name of the shape with the <b>target</b> parameter. The shape is returned as a <b>PShape</b> object, or <b>null</b> is returned if there is an error.
+   * 
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
+   * @brief Returns a child element of a shape as a PShape object
    * @param index the layer position of the shape to get
    */
   public PShape getChild(int index) {
     return children[index];
   }
 
-
-  /**
-   * Extracts a child shape from a parent shape. Specify the name of the shape with the <b>target</b> parameter.
-   * The shape is returned as a <b>PShape</b> object, or <b>null</b> is returned if there is an error.
-   * @param target the name of the shape to get
-   * @webref
-   * @brief Returns a child element of a shape as a PShape object
-   */
+ /**
+  * @param target the name of the shape to get
+  */
   public PShape getChild(String target) {
     if (name != null && name.equals(target)) {
       return this;
@@ -961,19 +995,27 @@ public class PShape implements PConstants {
   // if matrix is null when one is called,
   //   it is created and set to identity
 
+/**
+   * ( begin auto-generated from PShape_translate.xml )
+   * 
+   * Specifies an amount to displace the shape. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Subsequent calls to the method accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * <br /><br />
+   * Using this method with the <b>z</b> parameter requires using the P3D or OPENGL parameter in combination with size. 
+   * 
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
+   * @brief Displaces the shape
+   * @param tx left/right translation
+   * @param ty up/down translation
+   */
   public void translate(float tx, float ty) {
     checkMatrix(2);
     matrix.translate(tx, ty);
   }
 
   /**
-   * Specifies an amount to displace the shape. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Subsequent calls to the method accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>Using this method with the <b>z</b> parameter requires using the P3D or OPENGL parameter in combination with size.
-   * @webref
-   * @param tx left/right translation
-   * @param ty up/down translation
    * @param tz forward/back translation
-   * @brief Displaces the shape
    */
   public void translate(float tx, float ty, float tz) {
     checkMatrix(3);
@@ -981,28 +1023,38 @@ public class PShape implements PConstants {
   }
 
   /**
+   * ( begin auto-generated from PShape_rotateX.xml )
+   * 
    * Rotates a shape around the x-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
-   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
-   * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateX(HALF_PI)</b> and then <b>rotateX(HALF_PI)</b> is the same as <b>rotateX(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
-   * @param angle angle of rotation specified in radians
-   * @webref
+   * <br /><br />
+   * Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction. Subsequent calls to the method accumulates the effect. For example, calling <b>rotateX(HALF_PI)</b> and then <b>rotateX(HALF_PI)</b> is the same as <b>rotateX(PI)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.  
+   * <br /><br />
+   * This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+   * 
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Rotates the shape around the x-axis
+   * @param angle angle of rotation specified in radians
    */
   public void rotateX(float angle) {
     rotate(angle, 1, 0, 0);
   }
 
   /**
+   * ( begin auto-generated from PShape_rotateY.xml )
+   * 
    * Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
-   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
-   * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateY(HALF_PI)</b> and then <b>rotateY(HALF_PI)</b> is the same as <b>rotateY(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
-   * @param angle angle of rotation specified in radians
-   * @webref
+   * <br /><br />
+   * Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction. Subsequent calls to the method accumulates the effect. For example, calling <b>rotateY(HALF_PI)</b> and then <b>rotateY(HALF_PI)</b> is the same as <b>rotateY(PI)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * <br /><br />
+   * This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+   * 
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Rotates the shape around the y-axis
+   * @param angle angle of rotation specified in radians
    */
   public void rotateY(float angle) {
     rotate(angle, 0, 1, 0);
@@ -1010,35 +1062,47 @@ public class PShape implements PConstants {
 
 
   /**
+   * ( begin auto-generated from PShape_rotateZ.xml )
+   * 
    * Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
-   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
-   * Subsequent calls to the method accumulates the effect. For example, calling <b>rotateZ(HALF_PI)</b> and then <b>rotateZ(HALF_PI)</b> is the same as <b>rotateZ(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
-   * @param angle angle of rotation specified in radians
-   * @webref
+   * <br /><br />
+   * Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction. Subsequent calls to the method accumulates the effect. For example, calling <b>rotateZ(HALF_PI)</b> and then <b>rotateZ(HALF_PI)</b> is the same as <b>rotateZ(PI)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * <br /><br />
+   * This method requires a 3D renderer. You need to pass P3D or OPENGL as a third parameter into the <b>size()</b> method as shown in the example above.
+   * 
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Rotates the shape around the z-axis
+   * @param angle angle of rotation specified in radians
    */
   public void rotateZ(float angle) {
     rotate(angle, 0, 0, 1);
   }
 
   /**
+   * ( begin auto-generated from PShape_rotate.xml )
+   * 
    * Rotates a shape the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> method.
-   * <br><br>Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction.
-   * Transformations apply to everything that happens after and subsequent calls to the method accumulates the effect.
-   * For example, calling <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as <b>rotate(PI)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * @param angle angle of rotation specified in radians
-   * @webref
+   * <br /><br />
+   * Shapes are always rotated around the upper-left corner of their bounding box. Positive numbers rotate objects in a clockwise direction. Transformations apply to everything that happens after and subsequent calls to the method accumulates the effect. For example, calling <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as <b>rotate(PI)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * 
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
    * @brief Rotates the shape
+   * @param angle angle of rotation specified in radians
    */
   public void rotate(float angle) {
     checkMatrix(2);  // at least 2...
     matrix.rotate(angle);
   }
 
-
+/**
+ * @param v0 ???
+ * @param v1 ???
+ * @param v2 ???
+ */
   public void rotate(float angle, float v0, float v1, float v2) {
     checkMatrix(3);
     matrix.rotate(angle, v0, v1, v2);
@@ -1048,7 +1112,17 @@ public class PShape implements PConstants {
   //
 
   /**
-   * @param s percentage to scale the object
+   * ( begin auto-generated from PShape_scale.xml )
+   * 
+   * Increases or decreases the size of a shape by expanding and contracting vertices. Shapes always scale from the relative origin of their bounding box. Scale values are specified as decimal percentages. For example, the method call <b>scale(2.0)</b> increases the dimension of a shape by 200%. Subsequent calls to the method multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>. This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run. 
+   * <br /><br />
+   * Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter.
+   * 
+   * ( end auto-generated )
+   * @webref pshape:method
+   * @usage web_application
+   * @brief Increases and decreases the size of a shape
+   * @param s percentate to scale the object
    */
   public void scale(float s) {
     checkMatrix(2);  // at least 2...
@@ -1061,19 +1135,11 @@ public class PShape implements PConstants {
     matrix.scale(x, y);
   }
 
-
-  /**
-   * Increases or decreases the size of a shape by expanding and contracting vertices. Shapes always scale from the relative origin of their bounding box.
-   * Scale values are specified as decimal percentages. For example, the method call <b>scale(2.0)</b> increases the dimension of a shape by 200%.
-   * Subsequent calls to the method multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>.
-   * This transformation is applied directly to the shape, it's not refreshed each time <b>draw()</b> is run.
-   * <br><br>Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter.
-   * @param x percentage to scale the object in the x-axis
-   * @param y percentage to scale the object in the y-axis
-   * @param z percentage to scale the object in the z-axis
-   * @webref
-   * @brief Increases and decreases the size of a shape
-   */
+/**
+ * @param x percentage to scale the object in the x-axis
+ * @param y percentage to scale the object in the y-axis
+ * @param z percentage to scale the object in the z-axis
+ */
   public void scale(float x, float y, float z) {
     checkMatrix(3);
     matrix.scale(x, y, z);
@@ -1082,7 +1148,15 @@ public class PShape implements PConstants {
 
   //
 
-
+/**
+   * ( begin auto-generated from PShape_resetMatrix.xml )
+   * 
+   * Replaces the current matrix of a shape with the identity matrix. The equivalent function in OpenGL is glLoadIdentity(). 
+   * 
+   * ( end auto-generated )
+ * @webref pshape:method
+ * @usage web_application
+ */
   public void resetMatrix() {
     checkMatrix(2);
     matrix.reset();

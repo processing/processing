@@ -79,14 +79,22 @@ public class PImage implements PConstants, Cloneable {
   public int[] pixels;
 
   /**
-   * @generate PImage_width.xml
+   * ( begin auto-generated from PImage_width.xml )
+   * 
+   * The width of the image in units of pixels.
+   * 
+   * ( end auto-generated )
    * @webref pimage:field
    * @usage web_application
    * @brief     Image width
    */
   public int width;
   /**
-   * @generate PImage_height.xml
+   * ( begin auto-generated from PImage_height.xml )
+   * 
+   * The height of the image in units of pixels.
+   * 
+   * ( end auto-generated )
    * @webref pimage:field
    * @usage web_application
    * @brief     Image height
@@ -416,7 +424,13 @@ public class PImage implements PConstants, Cloneable {
   
   
   /**
-   * @generate PImage_loadPixels.xml
+   * ( begin auto-generated from PImage_loadPixels.xml )
+   * 
+   * Loads the pixel data for the image into its <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
+   * <br/><br/>
+   * Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Call this when you want to mess with the pixels[] array.
    * <p/>
@@ -435,7 +449,15 @@ public class PImage implements PConstants, Cloneable {
   }
 
   /**
-   * @generate PImage_updatePixels.xml
+   * ( begin auto-generated from PImage_updatePixels.xml )
+   * 
+   * Updates the image with the data in its <b>pixels[]</b> array. Use in conjunction with <b>loadPixels()</b>. If you're only reading pixels from the array, there's no need to call <b>updatePixels()</b>.
+   * <br/><br/>
+   * Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+   * <br/> <br/>
+   * Currently, none of the renderers use the additional parameters to <b>updatePixels()</b>, however this may be implemented in the future. 
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Mark the pixels in this region as needing an update.
    * This is not currently used by any of the renderers, however the api
@@ -509,7 +531,13 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * @generate PImage_resize.xml
+   * ( begin auto-generated from PImage_resize.xml )
+   * 
+   * Resize the image to a new width and height. To make the image scale proportionally, use 0 as the value for the <b>wide</b> or <b>high</b> parameter. For instance, to make the width of an image 150 pixels, and change the height using the same proportion, use resize(150, 0).
+   * <br /> <br />
+   * Even though a PGraphics is technically a PImage, it is not possible to rescale the image data found in a PGraphics. (It's simply not possible to do this consistently across renderers: technically infeasible with OpenGL, or what would it even do with PDF?) If you want to resize PGraphics content, first get a copy of its image data using the get() method, and call resize() on the PImage that is returned.
+   * 
+   * ( end auto-generated )
    * @webref pimage:method
    * @brief Changes the size of an image to a new width and height
    * @usage web_application
@@ -588,8 +616,16 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * @generate PImage_get.xml
-   * @webref pimaget:method
+   * ( begin auto-generated from PImage_get.xml )
+   * 
+   * Reads the color of any pixel or grabs a group of pixels. If no parameters are specified, the entire image is returned. Get the value of one pixel by specifying an x,y coordinate. Get a section of the display window by specifing an additional <b>width</b> and <b>height</b> parameter. If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. Even though you may have drawn a shape with <b>colorMode(HSB)</b>, the numbers returned will be in RGB.
+   * <br /><br />
+   * Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
+   * <br /><br />
+   * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * ( end auto-generated )
+   * @webref pimage:method
    * @brief Reads the color of any pixel or grabs a rectangle of pixels
    * @usage web_application
    * @param x x-coordinate of the pixel
@@ -661,7 +697,13 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * @generate PImage_set.xml
+   * ( begin auto-generated from PImage_set.xml )
+   * 
+   * Changes the color of any pixel or writes an image directly into the image. The <b>x</b> and <b>y</b> parameter specify the pixel or the upper-left corner of the image. The <b>color</b> parameter specifies the color value.<br /><br />Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values and calling <b>updatePixels()</b> to update the window.
+   * <br /><br />
+   * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
    * 
@@ -762,7 +804,11 @@ public class PImage implements PConstants, Cloneable {
    * which will make the image into a "correct" grayscale by
    * performing a proper luminance-based conversion.
    *
-   * @generate PImage_mask.xml
+   * ( begin auto-generated from PImage_mask.xml )
+   * 
+   * Masks part of an image from displaying by loading another image and using it as an alpha channel. This mask image should only contain grayscale data, but only the blue color channel is used. The mask image needs to be the same size as the image to which it is applied.<br /><br />In addition to using a mask image, an integer array containing the alpha channel data can be specified directly. This method is useful for creating dynamically generated alpha masks. This array must be of the same length as the target image's pixels array and should contain only grayscale data of values between 0-255.
+   * 
+   * ( end auto-generated )
    * @webref pimage:pixels
    * @usage web_application
    * @param maskArray[] any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
@@ -867,7 +913,11 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * @generate PImage_filter.xml
+   * ( begin auto-generated from PImage_filter.xml )
+   * 
+   * Filters an image as defined by one of the following modes:<br /><br />THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br /><br />GRAY - converts any colors in the image to grayscale equivalents<br /><br />INVERT - sets each pixel to its inverse value<br /><br />POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br /><br />BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br /><br />OPAQUE - sets the alpha channel to entirely opaque.<br /><br />ERODE - reduces the light areas with the amount defined by the level parameter.<br /><br />DILATE - increases the light areas with the amount defined by the level parameter
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Method to apply a variety of basic filters to this image.
    * <P>
@@ -1363,7 +1413,13 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * @generate PImage_copy.xml
+   * ( begin auto-generated from PImage_copy.xml )
+   * 
+   * Copies a region of pixels from one image into another. If the source and destination regions aren't the same size, it will automatically resize source pixels to fit the specified target region. No alpha information is used in the process, however if the source image has an alpha channel set, it will be copied as well.
+   * <br /><br />
+   * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
+   * ( end auto-generated )
    * @webref pimage:method
    * @brief     Copies the entire image
    * @usage web_application
@@ -1401,7 +1457,11 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * @generate blendColor.xml
+   * ( begin auto-generated from blendColor.xml )
+   * 
+   * Blends two color values together based on the blending mode given as the <b>MODE</b> parameter. The possible modes are described in the reference for the <b>blend()</b> function.
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * <UL>
    * <LI>REPLACE - destination colour equals colour of source pixel: C = A.
@@ -1500,12 +1560,6 @@ public class PImage implements PConstants, Cloneable {
     return 0;
   }
 
-
-  /**
-   * Blends one area of this image to another area.
-   *
-   * @see processing.core.PImage#blendColor(int,int,int)
-   */
   public void blend(int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
     blend(this, sx, sy, sw, sh, dx, dy, dw, dh, mode);
@@ -1555,7 +1609,7 @@ public class PImage implements PConstants, Cloneable {
    * 
    * ( end auto-generated )
    *
-   * @webref pimage:medthod
+   * @webref pimage:method
    * @brief  Copies a pixel or rectangle of pixels using different blending modes
    * @param src an image variable referring to the source image
    * @param sx X coordinate of the source's upper left corner
@@ -2831,15 +2885,11 @@ public class PImage implements PConstants, Cloneable {
   protected String[] saveImageFormats;
 
   /**
-   * Saves the image into a file. Images are saved in TIFF, TARGA, JPEG, and PNG format depending on the extension within the <b>filename</b> parameter.
-   * For example, "image.tif" will have a TIFF image and "image.png" will save a PNG image.
-   * If no extension is included in the filename, the image will save in TIFF format and <b>.tif</b> will be added to the name.
-   * These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu.
-   * It is not possible to use <b>save()</b> while running the program in a web browser.<br><br>
-   * To save an image created within the code, rather than through loading, it's necessary to make the image with the <b>createImage()</b>
-   * function so it is aware of the location of the program and can therefore save the file to the right place.
-   * See the <b>createImage()</b> reference for more information.
-   *
+   * ( begin auto-generated from PImage_save.xml )
+   * 
+   * Saves the image into a file. Images are saved in TIFF, TARGA, JPEG, and PNG format depending on the extension within the <b>filename</b> parameter. For example, "image.tif" will have a TIFF image and "image.png" will save a PNG image. If no extension is included in the filename, the image will save in TIFF format and <b>.tif</b> will be added to the name. These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu. It is not possible to use <b>save()</b> while running the program in a web browser.<br /><br />To save an image created within the code, rather than through loading, it's necessary to make the image with the <b>createImage()</b> function so it is aware of the location of the program and can therefore save the file to the right place. See the <b>createImage()</b> reference for more information.
+   * 
+   * ( end auto-generated )
    * <h3>Advanced</h3>
    * Save this image to disk.
    * <p>
@@ -2865,8 +2915,9 @@ public class PImage implements PConstants, Cloneable {
    * require a black and white image. Basic testing produced a zero-length
    * file with no error.
    *
-   * @webref
+   * @webref pimage:method
    * @brief Saves the image to a TIFF, TARGA, PNG, or JPEG file
+   * @usage application
    * @param filename a sequence of letters and numbers
    */
   public boolean save(String filename) {  // ignore

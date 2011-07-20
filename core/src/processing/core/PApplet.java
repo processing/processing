@@ -1085,11 +1085,24 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
-
+/**
+ * @generate setup.xml
+ * @webref structure
+ * @usage web_application
+ * @see PApplet#loop()
+ * @see PApplet#size(int, int)
+ */
   public void setup() {
   }
 
-
+/**
+ * @generate draw.xml
+ * @webref structure
+ * @usage web_application
+ * @see PApplet#setup()
+ * @see PApplet#loop()
+ * @see PApplet#noLoop()
+ */
   public void draw() {
     // if no draw method, then shut things down
     //System.out.println("no draw method, goodbye");
@@ -1460,7 +1473,7 @@ public class PApplet extends Applet
    * @param wide width in pixels
    * @param high height in pixels
    * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
-   *
+   * @param params ???
    * @see PImage#PImage
    * @see PGraphics#PGraphics
    */
@@ -1761,7 +1774,13 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
-
+/**
+ * @generate redraw.xml
+ * @webref structure
+ * @usage web_application
+ * @see PApplet#noLoop()
+ * @see PApplet#loop()
+ */
   synchronized public void redraw() {
     if (!looping) {
       redraw = true;
@@ -1779,14 +1798,26 @@ public class PApplet extends Applet
     }
   }
 
-
+/**
+ * @generate loop.xml
+ * @webref structure
+ * @usage web_application
+ * @see PApplet#noLoop()
+ */
   synchronized public void loop() {
     if (!looping) {
       looping = true;
     }
   }
 
-
+/**
+ * @generate noLoop.xml
+ * @webref structure
+ * @usage web_application
+ * @see PApplet#loop()
+ * @see PApplet#redraw()
+ * @see PApplet#draw()
+ */
   synchronized public void noLoop() {
     if (looping) {
       looping = false;
@@ -3026,7 +3057,14 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
-
+/**
+ * @generate print.xml
+ * @webref output:text_area
+ * @usage IDE
+ * @param what boolean, byte, char, color, int, float, String, Object
+ * @see PApplet#println(byte)
+ * @see PApplet#join(String[], char)
+ */
   static public void print(byte what) {
     System.out.print(what);
     System.out.flush();
@@ -3067,13 +3105,20 @@ public class PApplet extends Applet
   }
 
   //
-
+/**
+ * @generate println.xml
+ * @webref output:text_area
+ * @usage IDE
+ * @see PApplet#print(byte)
+ */
   static public void println() {
     System.out.println();
   }
 
   //
-
+/**
+ * @param what boolean, byte, char, color, int, float, String, Object
+ */
   static public void println(byte what) {
     print(what); System.out.println();
   }
@@ -3207,7 +3252,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param n float or int
+   * @param n number to compute
    */
   static public final float abs(float n) {
     return (n < 0) ? -n : n;
@@ -3224,7 +3269,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a float or int
+   * @param a number to square
    * @see PApplet#sqrt(float)
    */
   static public final float sq(float a) {
@@ -3253,7 +3298,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a int or float greater than 0.0
+   * @param a number greater than 0.0
    */
   static public final float log(float a) {
     return (float)Math.log(a);
@@ -3266,7 +3311,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a the exponent to raise
+   * @param a exponent to raise
    */
   static public final float exp(float a) {
     return (float)Math.exp(a);
@@ -3287,10 +3332,6 @@ public class PApplet extends Applet
     return (float)Math.pow(a, b);
   }
 
-  static public final int max(int a, int b) {
-    return (a > b) ? a : b;
-  }
-  
 /**
    * ( begin auto-generated from max.xml )
    * 
@@ -3298,8 +3339,14 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param n float or int
+   * @param a first number to compare
+   * @param b second number to compare
+   * @see PApplet#min(float, float, float)
    */
+  static public final int max(int a, int b) {
+    return (a > b) ? a : b;
+  }
+
   static public final float max(float a, float b) {
     return (a > b) ? a : b;
   }
@@ -3310,30 +3357,21 @@ public class PApplet extends Applet
   }
   */
 
-
+/**
+ * @param c third number to compare
+ */
   static public final int max(int a, int b, int c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   }
 
-/**
-   * ( begin auto-generated from max.xml )
-   * 
-   * Determines the largest value in a sequence of numbers.
-   * 
-   * ( end auto-generated )
-   * @webref math:calculation
-   * @param a 
-   * @param b 
-   * @param c 
-   * @see PApplet#min(float, float, float)
-   */
+
   static public final float max(float a, float b, float c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
   }
 
 
   /**
-   * @param list int or float array
+   * @param list list to compare
    */
   static public final int max(int[] list) {
     if (list.length == 0) {
@@ -3346,9 +3384,6 @@ public class PApplet extends Applet
     return max;
   }
 
-  /**
-   * @param list int or float array
-   */
   static public final float max(float[] list) {
     if (list.length == 0) {
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
@@ -3613,7 +3648,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:trigonometry
-   * @param radians 
+   * @param radians radian value to convert to degrees
    * @see PApplet#radians(float)
    */
   static public final float degrees(float radians) {
@@ -3627,7 +3662,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:trigonometry
-   * @param degrees 
+   * @param degrees degree value to convert to radians
    * @see PApplet#degrees(float)
    */
   static public final float radians(float degrees) {
@@ -3641,7 +3676,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param what float
+   * @param what number to round up
    * @see PApplet#floor(float)
    * @see PApplet#round(float)
    */
@@ -3656,7 +3691,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param what float
+   * @param what number to round down
    * @see PApplet#ceil(float)
    * @see PApplet#round(float)
    */
@@ -3671,7 +3706,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref math:calculation
-   * @param what float
+   * @param what number to round
    * @see PApplet#floor(float)
    * @see PApplet#ceil(float)
    */
@@ -6128,7 +6163,8 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref data:array_functions
-   * @param list[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+   * @param b array to append
+   * @param value new data for the array
    * @see PApplet#shorten(boolean[])
    * @see PApplet#expand(boolean[])
    */
@@ -6137,7 +6173,7 @@ public class PApplet extends Applet
     b[b.length-1] = value;
     return b;
   }
-  
+
   static public char[] append(char b[], char value) {
     b = expand(b, b.length + 1);
     b[b.length-1] = value;
@@ -6179,7 +6215,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
   * @webref data:array_functions
-  * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+  * @param list boolean[], byte[], char[], int[], float[], or String[], or an array of objects
   * @see PApplet#append(byte[], byte)
   * @see PApplet#expand(boolean[])
   */
@@ -6222,7 +6258,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
  * @webref data:array_functions
- * @param list[] boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ * @param list boolean[], byte[], char[], int[], float[], or String[], or an array of objects
  * @param v value to be spliced in
  * @param index position in the array from which to insert data
  * @see PApplet#concat(boolean[], boolean[])
@@ -6383,7 +6419,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
   * @webref data:array_functions
-  * @param list[] boolean[], byte, char[], int[], float[], String[] or an array of objects
+  * @param list boolean[], byte, char[], int[], float[], String[] or an array of objects
   * @param start position to begin
   * @param count number of values to extract
   * @see PApplet#splice(boolean[], boolean, int)
@@ -6469,8 +6505,8 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
   * @webref data:array_functions
-  * @param a[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
-  * @param b[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+  * @param a first array to concatenate
+  * @param b second array to concatenate
   * @see PApplet#splice(boolean[], boolean, int)
   */
   static public boolean[] concat(boolean a[], boolean b[]) {
@@ -7836,7 +7872,9 @@ public class PApplet extends Applet
     return g.color(gray);
   }
 
-
+/**
+ * @param fgray ???
+ */
   public final int color(float fgray) {
     if (g == null) {
       int gray = (int) fgray;
@@ -7850,7 +7888,7 @@ public class PApplet extends Applet
   /**
    * As of 0116 this also takes color(#FF8800, alpha)
    *
-   * @param alpha alpha relative to current color range
+   * @param alpha relative to current color range
    */
   public final int color(int gray, int alpha) {
     if (g == null) {
@@ -7866,7 +7904,9 @@ public class PApplet extends Applet
     return g.color(gray, alpha);
   }
 
-
+/**
+ * @param falpha ???
+ */
   public final int color(float fgray, float falpha) {
     if (g == null) {
       int gray = (int) fgray;
@@ -8511,7 +8551,7 @@ public class PApplet extends Applet
    * See examples in the reference for the <b>PDF</b> and <b>DXF</b> libraries for more information.
    * 
    * ( end auto-generated )
-   * @webref outpit:files
+   * @webref output:files
    * @param renderer for example, PDF or DXF
    * @param filename filename for output
    * @see PApplet#endRaw()
@@ -8532,6 +8572,8 @@ public class PApplet extends Applet
    * This simply echoes to g.beginRaw(), but since is placed here (rather than
    * generated by preproc.pl) for clarity and so that it doesn't echo the
    * command should beginRecord() be in use.
+   * 
+   * @param rawGraphics ???
    */
 
   public void beginRaw(PGraphics rawGraphics) {
