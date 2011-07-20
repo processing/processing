@@ -793,18 +793,13 @@ public class PFont implements PConstants {
 
 
   /**
-   * Get a list of the fonts installed on the system that can be used
-   * by Java. Not all fonts can be used in Java, in fact it's mostly
-   * only TrueType fonts. OpenType fonts with CFF data such as Adobe's
-   * OpenType fonts seem to have trouble (even though they're sort of
-   * TrueType fonts as well, or may have a .ttf extension). Regular
-   * PostScript fonts seem to work OK, however.
-   * <P>
-   * Not recommended for use in applets, but this is implemented
-   * in PFont because the Java methods to access this information
-   * have changed between 1.1 and 1.4, and the 1.4 method is
-   * typical of the sort of undergraduate-level over-abstraction
-   * that the seems to have made its way into the Java API after 1.1.
+   * ( begin auto-generated from PFont_list.xml )
+   * 
+   * Gets a list of the fonts installed on the system. The data is returned as a String array. This list provides the names of each font for input into <b>createFont()</b>, which allows Processing to dynamically format fonts. This function is meant as a tool for programming local applications and is not recommended for use in applets.
+   * 
+   * ( end auto-generated )
+   * @webref pfont
+   * @usage application
    */
   static public String[] list() {
     loadFonts();

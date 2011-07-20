@@ -2126,11 +2126,6 @@ public class PGraphics extends PImage implements PConstants {
    * @param vres number of segments used latitudinally from top to bottom
    * @see PGraphics#sphere(float)
    */
-  /**
-   * Set the detail level for approximating a sphere. The ures and vres params
-   * control the horizontal and vertical resolution.
-   *
-   */
   public void sphereDetail(int ures, int vres) {
     if (ures < 3) ures = 3; // force a minimum res
     if (vres < 2) vres = 2; // force a minimum res
@@ -4247,6 +4242,14 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("applyMatrix");
   }
 
+  public void applyMatrix(PMatrix3D source) {
+    applyMatrix(source.m00, source.m01, source.m02, source.m03,
+                source.m10, source.m11, source.m12, source.m13,
+                source.m20, source.m21, source.m22, source.m23,
+                source.m30, source.m31, source.m32, source.m33);
+  }
+
+
   /**
    * @param n13 numbers which define the 4x4 matrix to be multiplied
    * @param n20 numbers which define the 4x4 matrix to be multiplied
@@ -4257,17 +4260,6 @@ public class PGraphics extends PImage implements PConstants {
    * @param n31 numbers which define the 4x4 matrix to be multiplied
    * @param n32 numbers which define the 4x4 matrix to be multiplied
    * @param n33 numbers which define the 4x4 matrix to be multiplied
-   */
-  public void applyMatrix(PMatrix3D source) {
-    applyMatrix(source.m00, source.m01, source.m02, source.m03,
-                source.m10, source.m11, source.m12, source.m13,
-                source.m20, source.m21, source.m22, source.m23,
-                source.m30, source.m31, source.m32, source.m33);
-  }
-
-
-  /**
-   * Apply a 4x4 transformation matrix.
    */
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13,
@@ -4619,7 +4611,7 @@ public class PGraphics extends PImage implements PConstants {
    * In the example, the modelX(), modelY(), and modelZ() methods record the location of a box in space after being placed using a series of translate and rotate commands. After popMatrix() is called, those transformations no longer apply, but the (x, y, z) coordinate returned by the model functions is used to place another box in the same location.
    * 
    * ( end auto-generated )
-   * @webref lights_camera
+   * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
    * @param z 3D z-coordinate to be mapped
@@ -4640,7 +4632,7 @@ public class PGraphics extends PImage implements PConstants {
    * In the example, the modelX(), modelY(), and modelZ() methods record the location of a box in space after being placed using a series of translate and rotate commands. After popMatrix() is called, those transformations no longer apply, but the (x, y, z) coordinate returned by the model functions is used to place another box in the same location.
    * 
    * ( end auto-generated )
-   * @webref lights_camera
+   * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
    * @param z 3D z-coordinate to be mapped
@@ -4661,7 +4653,7 @@ public class PGraphics extends PImage implements PConstants {
    * In the example, the modelX(), modelY(), and modelZ() methods record the location of a box in space after being placed using a series of translate and rotate commands. After popMatrix() is called, those transformations no longer apply, but the (x, y, z) coordinate returned by the model functions is used to place another box in the same location.
    * 
    * ( end auto-generated )
-   * @webref lights_camera
+   * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
    * @param z 3D z-coordinate to be mapped
@@ -5240,7 +5232,7 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
  * @webref lights_camera:material_properties
  * @usage web_application
- * @param rgb ???
+ * @param rgb any value of the color datatype
  * @see PGraphics#emissive(float, float, float)
  * @see PGraphics#specular(float, float, float)
  * @see PGraphics#shininess(float)
@@ -5449,9 +5441,9 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
  * @webref lights_camera:lights
  * @usage web_application
- * @param red red or hue value
- * @param green green or hue value
- * @param blue blue or hue value
+ * @param red red or hue value (depending on current color mode)
+ * @param green green or saturation value (depending on current color mode)
+ * @param blue blue or brightness value (depending on current color mode)
  * @see PGraphics#lights()
  * @see PGraphics#directionalLight(float, float, float, float, float, float)
  * @see PGraphics#pointLight(float, float, float, float, float, float)
@@ -5479,9 +5471,9 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
  * @webref lights_camera:lights
  * @usage web_application
- * @param red red or hue value
- * @param green green or hue value
- * @param blue blue or hue value
+ * @param red red or hue value (depending on current color mode)
+ * @param green green or saturation value (depending on current color mode)
+ * @param blue blue or brightness value (depending on current color mode)
  * @param nx direction along the x-axis
  * @param ny direction along the y-axis
  * @param nz direction along the z-axis
@@ -5503,9 +5495,9 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
  * @webref lights_camera:lights
  * @usage web_application
- * @param red red or hue value
- * @param green green or hue value
- * @param blue blue or hue value
+ * @param red red or hue value (depending on current color mode)
+ * @param green green or saturation value (depending on current color mode)
+ * @param blue blue or brightness value (depending on current color mode)
  * @param x x-coordinate of the light
  * @param y y-coordinate of the light
  * @param z z-coordinate of the light
@@ -5528,9 +5520,9 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
  * @webref lights_camera:lights
  * @usage web_application
- * @param red red or hue value
- * @param green green or hue value
- * @param blue blue or hue value
+ * @param red red or hue value (depending on current color mode)
+ * @param green green or saturation value (depending on current color mode)
+ * @param blue blue or brightness value (depending on current color mode)
  * @param x x-coordinate of the light
  * @param y y-coordinate of the light
  * @param z z-coordinate of the light
@@ -5580,9 +5572,9 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
  * @webref lights_camera:lights
  * @usage web_application
- * @param red red or hue value
- * @param green green or hue value
- * @param blue blue or hue value
+ * @param red red or hue value (depending on current color mode)
+ * @param green green or saturation value (depending on current color mode)
+ * @param blue blue or brightness value (depending on current color mode)
  * @see PGraphics#lights()
  * @see PGraphics#ambientLight(float, float, float, float, float, float)
  * @see PGraphics#pointLight(float, float, float, float, float, float)
@@ -5624,7 +5616,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref color:setting
    * @usage web_application
-   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00)<br/>or any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#stroke(float)
    * @see PGraphics#fill(float)
    * @see PGraphics#tint(float)
@@ -6356,7 +6348,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param c1 interpolate from this color
    * @param c2 interpolate to this color
    * @param amt between 0.0 and 1.0
-   * @see PGraphics#blendColor(int, int, int)
+   * @see PImage#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
    */
   public int lerpColor(int c1, int c2, float amt) {
