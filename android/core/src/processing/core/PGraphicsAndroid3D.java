@@ -4460,11 +4460,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    * cz, ux, uy, uz) as naked calls because they do all the matrix resetting
    * automatically.
    */
-  public void camera(float eyeX, float eyeY, float eyeZ, float centerX,
-      float centerY, float centerZ, float upX, float upY, float upZ) {
-    eyeY = height - eyeY;
-    centerY = height - centerY;
-          
+  public void camera(float eyeX, float eyeY, float eyeZ, 
+                     float centerX, float centerY, float centerZ, 
+                     float upX, float upY, float upZ) {
     // Calculating Z vector
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
@@ -4531,18 +4529,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Translating to the eye position, followed by a translation of height units along the Y axis.
     // The last one is needed to properly invert coordinate axis of OpenGL so it matches Processing's.
     float tx = -eyeX;
-    float ty = -eyeY + height;
+    float ty = -eyeY;
     float tz = -eyeZ;
     m[12] += tx * m[0] + ty * m[4] + tz * m[8];
     m[13] += tx * m[1] + ty * m[5] + tz * m[9];
     m[14] += tx * m[2] + ty * m[6] + tz * m[10];
     m[15] += tx * m[3] + ty * m[7] + tz * m[11];        
-
-    // Inverting Y axis.
-    m[4] = -m[4];
-    m[5] = -m[5];
-    m[6] = -m[6];
-    m[7] = -m[7];
     
     gl.glMatrixMode(GL10.GL_MODELVIEW);
     gl.glLoadMatrixf(glmodelview, 0);
@@ -4711,12 +4703,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     temp2 = right - left;
     temp3 = top - bottom;
     temp4 = zfar - znear;
+    
     glprojection[0] = temp / temp2;
     glprojection[1] = 0.0f;
     glprojection[2] = 0.0f;
     glprojection[3] = 0.0f;
     glprojection[4] = 0.0f;
-    glprojection[5] = temp / temp3;
+    
+    // The minus here inverts the Y axis in order to use Processing's convention:
+    glprojection[5] = -temp / temp3;
+    
     glprojection[6] = 0.0f;
     glprojection[7] = 0.0f;
     glprojection[8] = (right + left) / temp2;
