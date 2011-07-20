@@ -2,8 +2,6 @@
 //
 // Using push() and pop() to define the curves of the lines of type. 
  
-import processing.opengl.*; 
- 
 Line ln;
 Line lns[];
 
@@ -14,7 +12,7 @@ String words[] = {
 };
 
 void setup() {
-  size(800, 480, OPENGL);
+  size(800, 480, P3D);
   
   // Array of line objects
   lns = new Line[8];

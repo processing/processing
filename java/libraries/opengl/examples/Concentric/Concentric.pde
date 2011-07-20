@@ -4,13 +4,11 @@
 // be later organized in a tree structure to apply geometrical
 // transformations to different levels of the tree.
 
-import processing.opengl.*;
-
 PShape3D object;
 PShape group1, group2, group3;
 
 void setup() {
-  size(600, 600, OPENGL);
+  size(600, 600, P3D);
   noStroke();
   
   // We record all the geometry in object.

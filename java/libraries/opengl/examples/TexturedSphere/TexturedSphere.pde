@@ -8,8 +8,6 @@
  * Use an "arc ball" to deal with this appropriately.
  */ 
 
-import processing.opengl.*;
-
 PImage bg;
 PImage texmap;
 
@@ -29,7 +27,7 @@ int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 
 void setup() {
-  size(1024, 768, OPENGL);  
+  size(1024, 768, P3D);  
   texmap = loadImage("world32k.jpg");    
   initializeSphere(sDetail);
 }

@@ -5,12 +5,9 @@
  * Display a box with three different kinds of lights. 
  */
 
-
-import processing.opengl.*;
-
 void setup() 
 {
-  size(1024, 768, OPENGL);
+  size(1024, 768, P3D);
   noStroke();
 }
 

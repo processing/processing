@@ -9,8 +9,6 @@
  * and right to zoom.
  */
 
-import processing.opengl.*;
-
 // Used for oveall rotation
 float ang;
 
@@ -21,7 +19,7 @@ int limit = 500;
 Cube[]cubes = new Cube[limit];
 
 void setup() {
-  size(1024, 768, OPENGL); 
+  size(1024, 768, P3D); 
   background(0); 
   noStroke();
 
