@@ -6,15 +6,13 @@
 // the same surface but without the texture, and the 
 // offscreen texture with the particle system.
 
-import processing.opengl.*;
-
 PGraphics pg;
 PShape trefoil;
 PShape3D particles;
 int mode = 0;
 
 void setup() {
-  size(280, 400, OPENGL);
+  size(280, 400, P3D);
   
   PFont font = createFont(PFont.list()[0], 18);
   textFont(font, 18);

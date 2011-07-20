@@ -10,8 +10,6 @@
 // Click on the screen to enable/disable drawing with the recorded
 // shape.
 
-import processing.opengl.*;
-
 PShape globe;
 PImage texmap;
 
@@ -29,7 +27,7 @@ int SINCOS_LENGTH = (int)(360.0f / SINCOS_PRECISION);
 boolean usingPShape = false;
 
 public void setup() {
-  size(600, 600, OPENGL);
+  size(600, 600, P3D);
 
   PFont font = createFont(PFont.list()[0], 12);
   textFont(font, 12);

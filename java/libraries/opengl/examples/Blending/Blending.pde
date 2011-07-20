@@ -3,15 +3,13 @@
 // available in OPENGL2.   
 // Images by Kevin Bjorke.
 
-import processing.opengl.*;
-
 PImage pic1, pic2;
 int selMode = REPLACE;
 String name = "replace";
 int picAlpha = 255;
 
 void setup() {
-  size(800, 480, OPENGL);
+  size(800, 480, P3D);
   
   PFont font = createFont(PFont.list()[0], 20);
   textFont(font, 20);    

@@ -4,8 +4,6 @@
 // from a file in PDB format (http://www.pdb.org/) and displays 
 // the structure using a ribbon representation.
 
-import processing.opengl.*;
-
 String pdbFile = "4HHB.pdb"; // PDB file to read
 //String pdbFile = "2POR.pdb";
 //String pdbFile = "1CBS.pdb";
@@ -24,7 +22,7 @@ ArrayList models;
 Arcball arcball;
 
 void setup() {
-  size(800, 600, OPENGL);
+  size(800, 600, P3D);
   
   arcball = new Arcball(width/2, height/2, 600);  
   readPDB(pdbFile);

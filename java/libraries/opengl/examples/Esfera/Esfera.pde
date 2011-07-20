@@ -5,8 +5,6 @@
  * Distribucion aleatoria uniforme sobre la superficie de una esfera. 
  */
 
-import processing.opengl.*;
-
 int cuantos = 8000;
 pelo[] lista ;
 float[] z = new float[cuantos]; 
@@ -17,7 +15,7 @@ float rx = 0;
 float ry =0;
 
 void setup() {
-  size(1024, 768, OPENGL);
+  size(1024, 768, P3D);
   radio = height/3.5;
   
   lista = new pelo[cuantos];

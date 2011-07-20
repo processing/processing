@@ -6,9 +6,6 @@
  * rotating arcs on the screen.
 */
  
-
-import processing.opengl.*;
- 
 // Trig lookup tables borrowed from Toxi; cryptic but effective.
 float sinLUT[];
 float cosLUT[];
@@ -23,7 +20,7 @@ int style[];
 
  
 void setup() {
-  size(1024, 768, OPENGL);
+  size(1024, 768, P3D);
   background(255);
   
   // Fill the tables

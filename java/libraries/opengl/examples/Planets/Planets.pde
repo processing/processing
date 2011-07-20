@@ -6,8 +6,6 @@
 // Sun and mercury textures from http://planetpixelemporium.com
 // Star field picture from http://www.galacticimages.com/
 
-import processing.opengl.*;
-
 PImage starfield;
 
 PShape sun;
@@ -21,7 +19,7 @@ PShape planet2;
 PImage surftex2;
 
 void setup() {
-  size(800,  480,  OPENGL);
+  size(800,  480,  P3D);
   
   starfield = loadImage("starfield.jpg");
   suntex = loadImage("sun.jpg");  
