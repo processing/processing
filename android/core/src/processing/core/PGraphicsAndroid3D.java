@@ -4630,7 +4630,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     glprojection[3] = 0.0f;
 
     glprojection[4] = 0.0f;
-    glprojection[5] = y;
+    glprojection[5] = -y; // The minus here inverts the Y axis in order to use Processing's convention
     glprojection[6] = 0.0f;
     glprojection[7] = 0.0f;
 
