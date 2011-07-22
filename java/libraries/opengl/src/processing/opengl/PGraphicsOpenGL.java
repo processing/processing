@@ -1050,6 +1050,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   /**
+   * Get the current profile.
+   */  
+  public GLProfile getProfile() {
+    return profile;
+  }
+  
+  
+  /**
    * Get the current drawable.
    */  
   public GLDrawable getDrawable() {
