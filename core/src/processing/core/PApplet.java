@@ -256,10 +256,15 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from screenWidth.xml )
    * 
-   * System variable which stores the width of the computer screen. For example, if the current screen resolution is 1024x768, <b>screenWidth</b> is 1024 and <b>screenHeight</b> is 768. These dimensions are useful when exporting full-screen applications. 
+   * System variable which stores the width of the computer screen. For 
+   * example, if the current screen resolution is 1024x768, 
+   * <b>screenWidth</b> is 1024 and <b>screenHeight</b> is 768. These 
+   * dimensions are useful when exporting full-screen applications. 
    * <br /><br />
-   * To ensure that the sketch takes over the entire screen, use "Present" instead of "Run". Otherwise the window will still have a frame border around it and not be placed in the upper corner of the screen. On Mac OS X, the menu bar will remain present unless "Present" mode is used.
-   * 
+   * To ensure that the sketch takes over the entire screen, use "Present" 
+   * instead of "Run". Otherwise the window will still have a frame border 
+   * around it and not be placed in the upper corner of the screen. On Mac OS 
+   * X, the menu bar will remain present unless "Present" mode is used.
    * ( end auto-generated )
    */
   public int screenWidth;
@@ -267,10 +272,15 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from screenHeight.xml )
    * 
-   * System variable that stores the height of the computer screen. For example, if the current screen resolution is 1024x768, <b>screenWidth</b> is 1024 and <b>screenHeight</b> is 768. These dimensions are useful when exporting full-screen applications. 
+   * System variable that stores the height of the computer screen. For 
+   * example, if the current screen resolution is 1024x768, 
+   * <b>screenWidth</b> is 1024 and <b>screenHeight</b> is 768. These 
+   * dimensions are useful when exporting full-screen applications. 
    * <br /><br />
-   * To ensure that the sketch takes over the entire screen, use "Present" instead of "Run". Otherwise the window will still have a frame border around it and not be placed in the upper corner of the screen. On Mac OS X, the menu bar will remain present unless "Present" mode is used.
-   * 
+   * To ensure that the sketch takes over the entire screen, use "Present" 
+   * instead of "Run". Otherwise the window will still have a frame border 
+   * around it and not be placed in the upper corner of the screen. On Mac OS 
+   * X, the menu bar will remain present unless "Present" mode is used.
    * ( end auto-generated )
    */
   public int screenHeight;
@@ -329,8 +339,18 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from pixels.xml )
    * 
-   * Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The <b>index</b> value defines the position of a value within the array. For example, the statment <b>color b = pixels[230]</b> will set the variable <b>b</b> to be equal to the value at that location in the array. <br /> <br /> Before accessing this array, the data must loaded with the <b>loadPixels()</b> function. After the array data has been modified, the <b>updatePixels()</b> function must be run to update the changes. Without <b>loadPixels()</b>, running the code may (or will in future releases) result in a NullPointerException.
-   * 
+   * Array containing the values for all the pixels in the display window. 
+   * These values are of the color datatype. This array is the size of the 
+   * display window. For example, if the image is 100x100 pixels, there will 
+   * be 10000 values and if the window is 200x300 pixels, there will be 60000 
+   * values. The <b>index</b> value defines the position of a value within 
+   * the array. For example, the statment <b>color b = pixels[230]</b> will 
+   * set the variable <b>b</b> to be equal to the value at that location in 
+   * the array. <br /> <br /> Before accessing this array, the data must 
+   * loaded with the <b>loadPixels()</b> function. After the array data has 
+   * been modified, the <b>updatePixels()</b> function must be run to update 
+   * the changes. Without <b>loadPixels()</b>, running the code may (or will 
+   * in future releases) result in a NullPointerException.
    * ( end auto-generated )
    *
    * @webref image:pixels
@@ -345,8 +365,11 @@ public class PApplet extends Applet
   /** 
    * ( begin auto-generated from width.xml )
    * 
-   * System variable which stores the width of the display window. This value is set by the first parameter of the <b>size()</b> function. For example, the function call <b>size(320, 240)</b> sets the <b>width</b> variable to the value 320. The value of <b>width</b> is zero until <b>size()</b> is called.
-   * 
+   * System variable which stores the width of the display window. This value 
+   * is set by the first parameter of the <b>size()</b> function. For 
+   * example, the function call <b>size(320, 240)</b> sets the <b>width</b> 
+   * variable to the value 320. The value of <b>width</b> is zero until 
+   * <b>size()</b> is called.
    * ( end auto-generated )
    * @webref environment
    */
@@ -355,8 +378,11 @@ public class PApplet extends Applet
   /** 
    * ( begin auto-generated from height.xml )
    * 
-   * System variable which stores the height of the display window. This value is set by the second parameter of the <b>size()</b> function. For example, the function call <b>size(320, 240)</b> sets the <b>height</b> variable to the value 240. The value of <b>height</b> is zero until <b>size()</b> is called.
-   * 
+   * System variable which stores the height of the display window. This 
+   * value is set by the second parameter of the <b>size()</b> function. For 
+   * example, the function call <b>size(320, 240)</b> sets the <b>height</b> 
+   * variable to the value 240. The value of <b>height</b> is zero until 
+   * <b>size()</b> is called.
    * ( end auto-generated )
    * @webref environment
    * 
@@ -366,8 +392,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from mouseX.xml )
    * 
-   * The system variable <b>mouseX</b> always contains the current horizontal coordinate of the mouse.
-   * 
+   * The system variable <b>mouseX</b> always contains the current horizontal 
+   * coordinate of the mouse.
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseY
@@ -384,8 +410,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from mouseY.xml )
    * 
-   * The system variable <b>mouseY</b> always contains the current vertical coordinate of the mouse.
-   * 
+   * The system variable <b>mouseY</b> always contains the current vertical 
+   * coordinate of the mouse.
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -401,10 +427,24 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from pmouseX.xml )
    * 
-   * The system variable <b>pmouseX</b> always contains the horizontal position of the mouse in the frame previous to the current frame.<br />
+   * The system variable <b>pmouseX</b> always contains the horizontal 
+   * position of the mouse in the frame previous to the current frame.<br />
    * <br />
-   * You may find that <b>pmouseX</b> and <b>pmouseY</b> have different values inside <b>draw()</b> and inside events like <b>mousePressed()</b> and <b>mouseMoved()</b>. This is because they're used for different roles, so don't mix them! Inside <b>draw()</b>, <b>pmouseX</b> and <b>pmouseY</b> update only once per frame (once per trip through your <b>draw()</b>). But, inside mouse events, they update each time the event is called. If they weren't separated, then the mouse would be read only once per frame, making response choppy. If the mouse variables were always updated multiple times per frame, using <NOBR><b>line(pmouseX, pmouseY, mouseX, mouseY)</b></NOBR> inside <b>draw()</b> would have lots of gaps, because <b>pmouseX</b> may have changed several times in between the calls to <b>line()</b>. Use <b>pmouseX</b> and <b>pmouseY</b> inside <b>draw()</b> if you want values relative to the previous frame. Use <b>pmouseX</b> and <b>pmouseY</b> inside the mouse functions if you want continuous response.
-   * 
+   * You may find that <b>pmouseX</b> and <b>pmouseY</b> have different 
+   * values inside <b>draw()</b> and inside events like <b>mousePressed()</b> 
+   * and <b>mouseMoved()</b>. This is because they're used for different 
+   * roles, so don't mix them! Inside <b>draw()</b>, <b>pmouseX</b> and 
+   * <b>pmouseY</b> update only once per frame (once per trip through your 
+   * <b>draw()</b>). But, inside mouse events, they update each time the 
+   * event is called. If they weren't separated, then the mouse would be read 
+   * only once per frame, making response choppy. If the mouse variables were 
+   * always updated multiple times per frame, using <NOBR><b>line(pmouseX, 
+   * pmouseY, mouseX, mouseY)</b></NOBR> inside <b>draw()</b> would have lots 
+   * of gaps, because <b>pmouseX</b> may have changed several times in 
+   * between the calls to <b>line()</b>. Use <b>pmouseX</b> and 
+   * <b>pmouseY</b> inside <b>draw()</b> if you want values relative to the 
+   * previous frame. Use <b>pmouseX</b> and <b>pmouseY</b> inside the mouse 
+   * functions if you want continuous response.
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#pmouseY
@@ -416,8 +456,10 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from pmouseY.xml )
    * 
-   * The system variable <b>pmouseY</b> always contains the vertical position of the mouse in the frame previous to the current frame. More detailed information about how <b>pmouseY</b> is updated inside of <b>draw()</b> and mouse events is explained in the reference for <a href="http://processing.org/reference/pmouseX.html"><b>pmouseX</b></a>.
-   * 
+   * The system variable <b>pmouseY</b> always contains the vertical position 
+   * of the mouse in the frame previous to the current frame. More detailed 
+   * information about how <b>pmouseY</b> is updated inside of <b>draw()</b> 
+   * and mouse events is explained in the reference for <a href="http://processing.org/reference/pmouseX.html"><b>pmouseX</b></a>.
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#pmouseX
@@ -453,8 +495,10 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from mouseButton.xml )
    * 
-   * Processing automatically tracks if the mouse button is pressed and which button is pressed. The value of the system variable <b>mouseButton</b> is either <b>LEFT</b>, <b>RIGHT</b>, or <b>CENTER</b> depending on which button is pressed.
-   * 
+   * Processing automatically tracks if the mouse button is pressed and which 
+   * button is pressed. The value of the system variable <b>mouseButton</b> 
+   * is either <b>LEFT</b>, <b>RIGHT</b>, or <b>CENTER</b> depending on which 
+   * button is pressed.
    * ( end auto-generated )
    * 
    * <h3>Advanced:</h3>
@@ -475,8 +519,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from mousePressed_var.xml )
    * 
-   * Variable storing if a mouse button is pressed. The value of the system variable <b>mousePressed</b> is true if a mouse button is pressed and false if a button is not pressed.
-   * 
+   * Variable storing if a mouse button is pressed. The value of the system 
+   * variable <b>mousePressed</b> is true if a mouse button is pressed and 
+   * false if a button is not pressed.
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -491,10 +536,17 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from key.xml )
    * 
-   * The system variable <b>key</b> always contains the value of the most recent key on the keyboard that was used (either pressed or released). 
+   * The system variable <b>key</b> always contains the value of the most 
+   * recent key on the keyboard that was used (either pressed or released). 
    * <br/> <br/>
-   * For non-ASCII keys, use the <b>keyCode</b> variable. The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b> If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh. Check for both ENTER and RETURN to make sure your program will work for all platforms.
-   * 
+   * For non-ASCII keys, use the <b>keyCode</b> variable. The keys included 
+   * in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and 
+   * DELETE) do not require checking to see if they key is coded, and you 
+   * should simply use the <b>key</b> variable instead of <b>keyCode</b> If 
+   * you're making cross-platform projects, note that the ENTER key is 
+   * commonly used on PCs and Unix and the RETURN key is used instead on 
+   * Macintosh. Check for both ENTER and RETURN to make sure your program 
+   * will work for all platforms.
    * ( end auto-generated )
    * 
    * <h3>Advanced</h3>
@@ -515,12 +567,24 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from keyCode.xml )
    * 
-   * The variable <b>keyCode</b> is used to detect special keys such as the UP, DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT. When checking for these keys, it's first necessary to check and see if the key is coded. This is done with the conditional "if (key == CODED)" as shown in the example. 
+   * The variable <b>keyCode</b> is used to detect special keys such as the 
+   * UP, DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT. When checking 
+   * for these keys, it's first necessary to check and see if the key is 
+   * coded. This is done with the conditional "if (key == CODED)" as shown in 
+   * the example. 
    * <br/> <br/>
-   * The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b> If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh. Check for both ENTER and RETURN to make sure your program will work for all platforms.
+   * The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, 
+   * RETURN, ESC, and DELETE) do not require checking to see if they key is 
+   * coded, and you should simply use the <b>key</b> variable instead of 
+   * <b>keyCode</b> If you're making cross-platform projects, note that the 
+   * ENTER key is commonly used on PCs and Unix and the RETURN key is used 
+   * instead on Macintosh. Check for both ENTER and RETURN to make sure your 
+   * program will work for all platforms.
    * <br/> <br/>
-   * For users familiar with Java, the values for UP and DOWN are simply shorter versions of Java's KeyEvent.VK_UP and KeyEvent.VK_DOWN. Other keyCode values can be found in the Java <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/KeyEvent.html">KeyEvent</a> reference.
-   * 
+   * For users familiar with Java, the values for UP and DOWN are simply 
+   * shorter versions of Java's KeyEvent.VK_UP and KeyEvent.VK_DOWN. Other 
+   * keyCode values can be found in the Java <a 
+   * href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/KeyEvent.html">KeyEvent</a> reference.
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -541,8 +605,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from keyPressed_var.xml )
    * 
-   * The boolean system variable <b>keyPressed</b> is <b>true</b> if any key is pressed and <b>false</b> if no keys are pressed.
-   * 
+   * The boolean system variable <b>keyPressed</b> is <b>true</b> if any key 
+   * is pressed and <b>false</b> if no keys are pressed.
    * ( end auto-generated )
    * @webref input:keyboard
    * @see PApplet#key
@@ -560,8 +624,11 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from focused.xml )
    * 
-   * Confirms if a Processing program is "focused", meaning that it is active and will accept input from mouse or keyboard. This variable is "true" if it is focused and "false" if not. This variable is often used when you want to warn people they need to click on or roll over an applet before it will work.
-   * 
+   * Confirms if a Processing program is "focused", meaning that it is active 
+   * and will accept input from mouse or keyboard. This variable is "true" if 
+   * it is focused and "false" if not. This variable is often used when you 
+   * want to warn people they need to click on or roll over an applet before 
+   * it will work.
    * ( end auto-generated )
    * @webref environment
    */
@@ -570,8 +637,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from online.xml )
    * 
-   * Confirms if a Processing program is running inside a web browser. This variable is "true" if the program is online and "false" if not.
-   * 
+   * Confirms if a Processing program is running inside a web browser. This 
+   * variable is "true" if the program is online and "false" if not.
    * ( end auto-generated )
    * @webref environment
    */
@@ -587,8 +654,10 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from frameRate_var.xml )
    * 
-   * The system variable <b>frameRate</b> contains the approximate frame rate of the software as it executes. The initial value is 10 fps and is updated with each frame. The value is averaged (integrated) over several frames. As such, this value won't be valid until after 5-10 frames.
-   * 
+   * The system variable <b>frameRate</b> contains the approximate frame rate 
+   * of the software as it executes. The initial value is 10 fps and is 
+   * updated with each frame. The value is averaged (integrated) over several 
+   * frames. As such, this value won't be valid until after 5-10 frames.
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
@@ -609,8 +678,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from frameCount.xml )
    * 
-   * The system variable <b>frameCount</b> contains the number of frames displayed since the program started. Inside <b>setup()</b> the value is 0 and and after the first iteration of draw it is 1, etc.
-   * 
+   * The system variable <b>frameCount</b> contains the number of frames 
+   * displayed since the program started. Inside <b>setup()</b> the value is 
+   * 0 and and after the first iteration of draw it is 1, etc.
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
@@ -1086,7 +1156,16 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 /**
- * @generate setup.xml
+   * ( begin auto-generated from setup.xml )
+   * 
+   * Called once when the program is started. Used to define initial 
+   * enviroment properties such as screen size, background color, loading 
+   * images, etc. before the <b>draw()</b> begins executing. Variables 
+   * declared within <b>setup()</b> are not accessible within other 
+   * functions, including<b>draw()</b>. There can only be one <b>setup()</b> 
+   * function for each program and it should not be called again after it's 
+   * initial execution.
+   * ( end auto-generated )
  * @webref structure
  * @usage web_application
  * @see PApplet#loop()
@@ -1096,7 +1175,24 @@ public class PApplet extends Applet
   }
 
 /**
- * @generate draw.xml
+   * ( begin auto-generated from draw.xml )
+   * 
+   * Called directly after <b>setup()</b> and continuously executes the lines 
+   * of code contained inside its block until the program is stopped or 
+   * <b>noLoop()</b> is called. The <b>draw()</b> function is called 
+   * automatically and should never be called explicitly. It should always be 
+   * controlled with <b>noLoop()</b>, <b>redraw()</b> and <b>loop()</b>. 
+   * After <b>noLoop()</b> stops the code in <b>draw()</b> from executing, 
+   * <b>redraw()</b> causes the code inside <b>draw()</b> to execute once and 
+   * <b>loop()</b> will causes the code inside <b>draw()</b> to execute 
+   * continuously again. The number of times <b>draw()</b> executes in each 
+   * second may be controlled with the <b>delay()</b> and <b>frameRate()</b> 
+   * functions. There can only be one <b>draw()</b> function for each sketch 
+   * and <b>draw()</b> must exist if you want the code to run continuously or 
+   * to process events such as <b>mousePressed()</b>. Sometimes, you might 
+   * have an empty call to <b>draw()</b> in your program as shown in the 
+   * above example. 
+   * ( end auto-generated )
  * @webref structure
  * @usage web_application
  * @see PApplet#setup()
@@ -1127,36 +1223,75 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from size.xml )
    * 
-   * Defines the dimension of the display window in units of pixels. The <b>size()</b> function <em>must</em> be the first line in <b>setup()</b>. If <b>size()</b> is not called, the default size of the window is 100x100 pixels. The system variables <b>width</b> and <b>height</b> are set by the parameters passed to the <b>size()</b> function. <br /> <br />
-   * 
-   * Do not use variables as the parameters to <b>size()</b> command, because it will cause problems when exporting your sketch. When variables are used, the dimensions of your sketch cannot be determined during export. Instead, employ numeric values in the <b>size()</b> statement, and then use the built-in <b>width</b> and <b>height</b> variables inside your program when you need the dimensions of the display window are needed. <br /><br />
-   * 
-   * The size() command can only be used once inside a sketch, and cannot be used for resizing. <br/> <br/>
-   * 
-   * The MODE parameters selects which rendering engine to use. For example, if you will be drawing 3D shapes for the web use <b>P3D</b>, if you want to export a program with OpenGL graphics acceleration use <b>OPENGL</b>. A brief description of the four primary renderers follows:<br /><br />
-   * 
-   * <b>JAVA2D</b> - The default renderer. This renderer supports two dimensional drawing and provides higher image quality in overall, but generally slower than P2D.<br /><br />
-   * 
-   * <b>P2D</b> (Processing 2D) - Fast 2D renderer, best used with pixel data, but not as accurate as the JAVA2D default. <br /><br />
-   * 
-   * <b>P3D</b> (Processing 3D) - Fast 3D renderer for the web. Sacrifices rendering quality for quick 3D drawing.<br /><br />
-   * 
-   * <b>OPENGL</b> - High speed 3D graphics renderer that makes use of OpenGL-compatible graphics hardware is available. Keep in mind that OpenGL is not magic pixie dust that makes any sketch faster (though it's close), so other rendering options may produce better results depending on the nature of your code. Also note that with OpenGL, all graphics are smoothed: the smooth() and noSmooth() commands are ignored. <br /><br />
-   * 
-   * <b>PDF</b> - The PDF renderer draws 2D graphics directly to an Acrobat PDF file. This produces excellent results when you need vector shapes for high resolution output or printing. You must first use Import Library &rarr; PDF to make use of the library. More information can be found in the PDF library reference.
-   * 
-   * If you're manipulating pixels (using methods like get() or blend(), or manipulating the pixels[] array), P2D and P3D will usually be faster than the default (JAVA2D) setting, and often the OPENGL setting as well. Similarly, when handling lots of images, or doing video playback, P2D and P3D will tend to be faster.<br /><br />
-   * 
-   * The P2D, P3D, and OPENGL renderers do not support strokeCap() or strokeJoin(), which can lead to ugly results when using strokeWeight(). (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>) <br /><br />
-   * 
-   * For the most elegant and accurate results when drawing in 2D, particularly when using smooth(), use the JAVA2D renderer setting. It may be slower than the others, but is the most complete, which is why it's the default. Advanced users will want to switch to other renderers as they learn the tradeoffs. <br /><br />
-   * 
-   * Rendering graphics requires tradeoffs between speed, accuracy, and general usefulness of the available features. None of the renderers are perfect, so we provide multiple options so that you can decide what tradeoffs make the most sense for your project. We'd prefer all of them to have perfect visual accuracy, high performance, and support a wide range of features, but that's simply not possible. <br /><br />
-   * 
-   * The maximum width and height is limited by your operating system, and is usually the width and height of your actual screen. On some machines it may simply be the number of pixels on your current screen, meaning that a screen that's 800x600 could support size(1600, 300), since it's the same number of pixels. This varies widely so you'll have to try different rendering modes and sizes until you get what you're looking for. If you need something larger, use <b>createGraphics</b> to create a non-visible drawing surface.
+   * Defines the dimension of the display window in units of pixels. The 
+   * <b>size()</b> function <em>must</em> be the first line in 
+   * <b>setup()</b>. If <b>size()</b> is not called, the default size of the 
+   * window is 100x100 pixels. The system variables <b>width</b> and 
+   * <b>height</b> are set by the parameters passed to the <b>size()</b> 
+   * function. <br /> <br />
+   * not use variables as the parameters to <b>size()</b> command, because it 
+   * will cause problems when exporting your sketch. When variables are used, 
+   * the dimensions of your sketch cannot be determined during export. 
+   * Instead, employ numeric values in the <b>size()</b> statement, and then 
+   * use the built-in <b>width</b> and <b>height</b> variables inside your 
+   * program when you need the dimensions of the display window are needed. 
+   * <br /><br />
+   * size() command can only be used once inside a sketch, and cannot be used 
+   * for resizing. <br/> <br/>
+   * MODE parameters selects which rendering engine to use. For example, if 
+   * you will be drawing 3D shapes for the web use <b>P3D</b>, if you want to 
+   * export a program with OpenGL graphics acceleration use <b>OPENGL</b>. A 
+   * brief description of the four primary renderers follows:<br /><br />
+   * - The default renderer. This renderer supports two dimensional drawing 
+   * and provides higher image quality in overall, but generally slower than 
+   * P2D.<br /><br />
+   * (Processing 2D) - Fast 2D renderer, best used with pixel data, but not 
+   * as accurate as the JAVA2D default. <br /><br />
+   * (Processing 3D) - Fast 3D renderer for the web. Sacrifices rendering 
+   * quality for quick 3D drawing.<br /><br />
+   * - High speed 3D graphics renderer that makes use of OpenGL-compatible 
+   * graphics hardware is available. Keep in mind that OpenGL is not magic 
+   * pixie dust that makes any sketch faster (though it's close), so other 
+   * rendering options may produce better results depending on the nature of 
+   * your code. Also note that with OpenGL, all graphics are smoothed: the 
+   * smooth() and noSmooth() commands are ignored. <br /><br />
+   * - The PDF renderer draws 2D graphics directly to an Acrobat PDF file. 
+   * This produces excellent results when you need vector shapes for high 
+   * resolution output or printing. You must first use Import Library &rarr; 
+   * PDF to make use of the library. More information can be found in the PDF 
+   * library reference.
+   * you're manipulating pixels (using methods like get() or blend(), or 
+   * manipulating the pixels[] array), P2D and P3D will usually be faster 
+   * than the default (JAVA2D) setting, and often the OPENGL setting as well. 
+   * Similarly, when handling lots of images, or doing video playback, P2D 
+   * and P3D will tend to be faster.<br /><br />
+   * P2D, P3D, and OPENGL renderers do not support strokeCap() or 
+   * strokeJoin(), which can lead to ugly results when using strokeWeight(). 
+   * (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 
+   * 955</a>) <br /><br />
+   * the most elegant and accurate results when drawing in 2D, particularly 
+   * when using smooth(), use the JAVA2D renderer setting. It may be slower 
+   * than the others, but is the most complete, which is why it's the 
+   * default. Advanced users will want to switch to other renderers as they 
+   * learn the tradeoffs. <br /><br />
+   * graphics requires tradeoffs between speed, accuracy, and general 
+   * usefulness of the available features. None of the renderers are perfect, 
+   * so we provide multiple options so that you can decide what tradeoffs 
+   * make the most sense for your project. We'd prefer all of them to have 
+   * perfect visual accuracy, high performance, and support a wide range of 
+   * features, but that's simply not possible. <br /><br />
+   * maximum width and height is limited by your operating system, and is 
+   * usually the width and height of your actual screen. On some machines it 
+   * may simply be the number of pixels on your current screen, meaning that 
+   * a screen that's 800x600 could support size(1600, 300), since it's the 
+   * same number of pixels. This varies widely so you'll have to try 
+   * different rendering modes and sizes until you get what you're looking 
+   * for. If you need something larger, use <b>createGraphics</b> to create a 
+   * non-visible drawing surface.
    * <br/> <br/>
-   * Again, the size() method must be the first line of the code (or first item inside setup). Any code that appears before the size() command may run more than once, which can lead to confusing results.
-   * 
+   * Again, the size() method must be the first line of the code (or first 
+   * item inside setup). Any code that appears before the size() command may 
+   * run more than once, which can lead to confusing results.
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Starts up and creates a two-dimensional drawing surface,
@@ -1234,12 +1369,26 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from createGraphics.xml )
    * 
-   * Oy2. Creates and returns a new <b>PGraphics</b> object of the types P2D, P3D, and JAVA2D. Use this class if you need to draw into an off-screen graphics buffer. It's not possible to use <b>createGraphics()</b> with OPENGL, because it doesn't allow offscreen use. The PDF renderer requires the filename parameter. The DXF renderer should not be used with createGraphics(), it's only built for use with beginRaw() and endRaw().
+   * Oy2. Creates and returns a new <b>PGraphics</b> object of the types P2D, 
+   * P3D, and JAVA2D. Use this class if you need to draw into an off-screen 
+   * graphics buffer. It's not possible to use <b>createGraphics()</b> with 
+   * OPENGL, because it doesn't allow offscreen use. The PDF renderer 
+   * requires the filename parameter. The DXF renderer should not be used 
+   * with createGraphics(), it's only built for use with beginRaw() and endRaw().
    * <br/> <br/>
-   * It's important to call any drawing commands between beginDraw() and endDraw() statements. This is also true for any commands that affect drawing, such as smooth() or colorMode().
+   * It's important to call any drawing commands between beginDraw() and 
+   * endDraw() statements. This is also true for any commands that affect 
+   * drawing, such as smooth() or colorMode().
    * <br/> <br/>
-   * Unlike the main drawing surface which is completely opaque, surfaces created with createGraphics() can have transparency. This makes it possible to draw into a graphics and maintain the alpha channel. By using save() to write a PNG or TGA file, the transparency of the graphics object will be honored. Note that transparency levels are binary: pixels are either complete opaque or transparent. For the time being (as of release 1.2.1), this means that text characters will be opaque blocks. This will be fixed in a future release (<A HREF="http://code.google.com/p/processing/issues/detail?id=80">Issue 80</A>).
-   * 
+   * Unlike the main drawing surface which is completely opaque, surfaces 
+   * created with createGraphics() can have transparency. This makes it 
+   * possible to draw into a graphics and maintain the alpha channel. By 
+   * using save() to write a PNG or TGA file, the transparency of the 
+   * graphics object will be honored. Note that transparency levels are 
+   * binary: pixels are either complete opaque or transparent. For the time 
+   * being (as of release 1.2.1), this means that text characters will be 
+   * opaque blocks. This will be fixed in a future release (<A 
+   * HREF="http://code.google.com/p/processing/issues/detail?id=80">Issue 80</A>).
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Create an offscreen PGraphics object for drawing. This can be used
@@ -1457,12 +1606,16 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from createImage.xml )
    * 
-   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
+   * Creates a new PImage (the datatype for storing images). This provides a 
+   * fresh buffer of pixels to play with. Set the size of the buffer with the 
+   * <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter 
+   * defines how the pixels are stored. See the PImage reference for more information.
    * <br/> <br/>
-   * Be sure to include all three parameters, specifying only the width and height (but no format) will produce a strange error.
+   * Be sure to include all three parameters, specifying only the width and 
+   * height (but no format) will produce a strange error.
    * <br/> <br/>
-   * Advanced users please note that createImage() should be used instead of the syntax <tt>new PImage()</tt>. 
-   * 
+   * Advanced users please note that createImage() should be used instead of 
+   * the syntax <tt>new PImage()</tt>. 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Preferred method of creating new PImage objects, ensures that a
@@ -1775,7 +1928,19 @@ public class PApplet extends Applet
 
 
 /**
- * @generate redraw.xml
+   * ( begin auto-generated from redraw.xml )
+   * 
+   * Executes the code within <b>draw()</b> one time. This functions allows 
+   * the program to update the display window only when necessary, for 
+   * example when an event registered by <b>mousePressed()</b> or 
+   * <b>keyPressed()</b> occurs. 
+   * <br/><br/> structuring a program, it only makes sense to call redraw() 
+   * within events such as <b>mousePressed()</b>. This is because 
+   * <b>redraw()</b> does not run <b>draw()</b> immediately (it only sets a 
+   * flag that indicates an update is needed). 
+   * <br/><br/> <b>redraw()</b> within <b>draw()</b> has no effect because 
+   * <b>draw()</b> is continuously called anyway.
+   * ( end auto-generated )
  * @webref structure
  * @usage web_application
  * @see PApplet#noLoop()
@@ -1799,7 +1964,11 @@ public class PApplet extends Applet
   }
 
 /**
- * @generate loop.xml
+   * ( begin auto-generated from loop.xml )
+   * 
+   * Causes Processing to continuously execute the code within <b>draw()</b>. 
+   * If <b>noLoop()</b> is called, the code in <b>draw()</b> stops executing.
+   * ( end auto-generated )
  * @webref structure
  * @usage web_application
  * @see PApplet#noLoop()
@@ -1811,7 +1980,25 @@ public class PApplet extends Applet
   }
 
 /**
- * @generate noLoop.xml
+   * ( begin auto-generated from noLoop.xml )
+   * 
+   * Stops Processing from continuously executing the code within 
+   * <b>draw()</b>. If <b>loop()</b> is called, the code in <b>draw()</b> 
+   * begin to run continuously again. If using <b>noLoop()</b> in 
+   * <b>setup()</b>, it should be the last line inside the block.
+   * <br/> <br/>
+   * When <b>noLoop()</b> is used, it's not possible to manipulate or access 
+   * the screen inside event handling functions such as <b>mousePressed()</b> 
+   * or <b>keyPressed()</b>. Instead, use those functions to call 
+   * <b>redraw()</b> or <b>loop()</b>, which will run <b>draw()</b>, which 
+   * can update the screen properly. This means that when noLoop() has been 
+   * called, no drawing can happen, and functions like saveFrame() or 
+   * loadPixels() may not be used.
+   * <br/> <br/>
+   * Note that if the sketch is resized, <b>redraw()</b> will be called to 
+   * update the sketch, even after <b>noLoop()</b> has been specified. 
+   * Otherwise, the sketch would enter an odd state until <b>loop()</b> was called.
+   * ( end auto-generated )
  * @webref structure
  * @usage web_application
  * @see PApplet#loop()
@@ -2007,8 +2194,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from mousePressed.xml )
    * 
-   * The <b>mousePressed()</b> function is called once after every time a mouse button is pressed. The <b>mouseButton</b> variable (see the related reference entry) can be used to determine which button has been pressed.
-   * 
+   * The <b>mousePressed()</b> function is called once after every time a 
+   * mouse button is pressed. The <b>mouseButton</b> variable (see the 
+   * related reference entry) can be used to determine which button has been pressed.
    * ( end auto-generated )
    * <h3>Advanced</h3>
    *
@@ -2031,8 +2219,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from mouseReleased.xml )
    * 
-   * The <b>mouseReleased()</b> function is called every time a mouse button is released.
-   * 
+   * The <b>mouseReleased()</b> function is called every time a mouse button 
+   * is released.
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -2047,8 +2235,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from mouseClicked.xml )
    * 
-   * The <b>mouseClicked()</b> function is called once after a mouse button has been pressed and then released.
-   * 
+   * The <b>mouseClicked()</b> function is called once after a mouse button 
+   * has been pressed and then released.
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * When the mouse is clicked, mousePressed() will be called,
@@ -2068,8 +2256,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from mouseDragged.xml )
    * 
-   * The <b>mouseDragged()</b> function is called once every time the mouse moves and a mouse button is pressed.
-   * 
+   * The <b>mouseDragged()</b> function is called once every time the mouse 
+   * moves and a mouse button is pressed.
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -2084,8 +2272,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from mouseMoved.xml )
    * 
-   * The <b>mouseMoved()</b> function is called every time the mouse moves and a mouse button is not pressed.
-   * 
+   * The <b>mouseMoved()</b> function is called every time the mouse moves 
+   * and a mouse button is not pressed.
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -2191,12 +2379,22 @@ public class PApplet extends Applet
    *
    * ( begin auto-generated from keyPressed.xml )
    * 
-   * The <b>keyPressed()</b> function is called once every time a key is pressed. The key that was pressed is stored in the <b>key</b> variable. 
+   * The <b>keyPressed()</b> function is called once every time a key is 
+   * pressed. The key that was pressed is stored in the <b>key</b> variable. 
    * <br/> <br/>
-   * For non-ASCII keys, use the <b>keyCode</b> variable. The keys included in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and DELETE) do not require checking to see if they key is coded, and you should simply use the <b>key</b> variable instead of <b>keyCode</b> If you're making cross-platform projects, note that the ENTER key is commonly used on PCs and Unix and the RETURN key is used instead on Macintosh. Check for both ENTER and RETURN to make sure your program will work for all platforms.
+   * For non-ASCII keys, use the <b>keyCode</b> variable. The keys included 
+   * in the ASCII specification (BACKSPACE, TAB, ENTER, RETURN, ESC, and 
+   * DELETE) do not require checking to see if they key is coded, and you 
+   * should simply use the <b>key</b> variable instead of <b>keyCode</b> If 
+   * you're making cross-platform projects, note that the ENTER key is 
+   * commonly used on PCs and Unix and the RETURN key is used instead on 
+   * Macintosh. Check for both ENTER and RETURN to make sure your program 
+   * will work for all platforms.
    * <br/> <br/>
-   * Because of how operating systems handle key repeats, holding down a key may cause multiple calls to keyPressed() (and keyReleased() as well). The rate of repeat is set by the operating system and how each computer is configured.
-   * 
+   * Because of how operating systems handle key repeats, holding down a key 
+   * may cause multiple calls to keyPressed() (and keyReleased() as well). 
+   * The rate of repeat is set by the operating system and how each computer 
+   * is configured.
    * ( end auto-generated )
    * <h3>Advanced</h3>
    *
@@ -2257,8 +2455,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from keyReleased.xml )
    * 
-   * The <b>keyReleased()</b> function is called once every time a key is released. The key that was released will be stored in the <b>key</b> variable. See <b>key</b> and <b>keyReleased</b> for more information.
-   * 
+   * The <b>keyReleased()</b> function is called once every time a key is 
+   * released. The key that was released will be stored in the <b>key</b> 
+   * variable. See <b>key</b> and <b>keyReleased</b> for more information.
    * ( end auto-generated )
    * @webref input:keyboard
    * @see PApplet#key
@@ -2272,8 +2471,11 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from keyTyped.xml )
    * 
-   * The <b>keyTyped()</b> function is called once every time a key is pressed, but action keys such as Ctrl, Shift, and Alt are ignored. Because of how operating systems handle key repeats, holding down a key will cause multiple calls to <b>keyTyped()</b>, the rate is set by the operating system and how each computer is configured. 
-   * 
+   * The <b>keyTyped()</b> function is called once every time a key is 
+   * pressed, but action keys such as Ctrl, Shift, and Alt are ignored. 
+   * Because of how operating systems handle key repeats, holding down a key 
+   * will cause multiple calls to <b>keyTyped()</b>, the rate is set by the 
+   * operating system and how each computer is configured. 
    * ( end auto-generated )
    * @webref input:keyboard
    * @see PApplet#keyPressed
@@ -2315,8 +2517,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from millis.xml )
    * 
-   * Returns the number of milliseconds (thousandths of a second) since starting an applet. This information is often used for timing animation sequences. 
-   * 
+   * Returns the number of milliseconds (thousandths of a second) since 
+   * starting an applet. This information is often used for timing animation 
+   * sequences. 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -2340,8 +2543,8 @@ public class PApplet extends Applet
   /** 
    * ( begin auto-generated from second.xml )
    * 
-   * Processing communicates with the clock on your computer. The <b>second()</b> function returns the current second as a value from 0 - 59.
-   * 
+   * Processing communicates with the clock on your computer. The 
+   * <b>second()</b> function returns the current second as a value from 0 - 59.
    * ( end auto-generated )
    * @webref input:time_date
    * @see PApplet#millis()
@@ -2358,8 +2561,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from minute.xml )
    * 
-   * Processing communicates with the clock on your computer. The <b>minute()</b> function returns the current minute as a value from 0 - 59.
-   * 
+   * Processing communicates with the clock on your computer. The 
+   * <b>minute()</b> function returns the current minute as a value from 0 - 59.
    * ( end auto-generated )
    *
    * @webref input:time_date
@@ -2378,8 +2581,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from hour.xml )
    * 
-   * Processing communicates with the clock on your computer. The <b>hour()</b> function returns the current hour as a value from 0 - 23.
-   * 
+   * Processing communicates with the clock on your computer. The 
+   * <b>hour()</b> function returns the current hour as a value from 0 - 23.
    * ( end auto-generated )
    * @webref input:time_date
    * @see PApplet#millis()
@@ -2397,8 +2600,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from day.xml )
    * 
-   * Processing communicates with the clock on your computer. The <b>day()</b> function returns the current day as a value from 1 - 31.
-   * 
+   * Processing communicates with the clock on your computer. The 
+   * <b>day()</b> function returns the current day as a value from 1 - 31.
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Get the current day of the month (1 through 31).
@@ -2421,8 +2624,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from month.xml )
    * 
-   * Processing communicates with the clock on your computer. The <b>month()</b> function returns the current month as a value from 1 - 12.
-   * 
+   * Processing communicates with the clock on your computer. The 
+   * <b>month()</b> function returns the current month as a value from 1 - 12.
    * ( end auto-generated )
    *
    * @webref input:time_date
@@ -2441,8 +2644,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from year.xml )
    * 
-   * Processing communicates with the clock on your computer. The <b>year()</b> function returns the current year as an integer (2003, 2004, 2005, etc).
-   * 
+   * Processing communicates with the clock on your computer. The 
+   * <b>year()</b> function returns the current year as an integer (2003, 
+   * 2004, 2005, etc).
    * ( end auto-generated )
    * The <b>year()</b> function returns the current year as an integer (2003, 2004, 2005, etc).
    *
@@ -2467,8 +2671,11 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from frameRate.xml )
    * 
-   * Specifies the number of frames to be displayed every second. If the processor is not fast enough to maintain the specified rate, it will not be achieved. For example, the function call <b>frameRate(30)</b> will attempt to refresh 30 times a second. It is recommended to set the frame rate within <b>setup()</b>. The default rate is 60 frames per second.
-   * 
+   * Specifies the number of frames to be displayed every second. If the 
+   * processor is not fast enough to maintain the specified rate, it will not 
+   * be achieved. For example, the function call <b>frameRate(30)</b> will 
+   * attempt to refresh 30 times a second. It is recommended to set the frame 
+   * rate within <b>setup()</b>. The default rate is 60 frames per second.
    * ( end auto-generated )
    *  <h3>Advanced</h3>
    * Set a target frameRate. This will cause delay() to be called
@@ -2492,8 +2699,11 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from param.xml )
    * 
-   * Reads the value of a param. Values are always read as a String so if you want them to be an integer or other datatype they must be converted. The <b>param()</b> function will only work in a web browser. The function should be called inside <b>setup()</b>, otherwise the applet may not yet be initialized and connected to its parent web browser.
-   * 
+   * Reads the value of a param. Values are always read as a String so if you 
+   * want them to be an integer or other datatype they must be converted. The 
+   * <b>param()</b> function will only work in a web browser. The function 
+   * should be called inside <b>setup()</b>, otherwise the applet may not yet 
+   * be initialized and connected to its parent web browser.
    * ( end auto-generated )
    *
    * @webref input:web
@@ -2515,8 +2725,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from status.xml )
    * 
-   * Displays message in the browser's status area. This is the text area in the lower left corner of the browser. The <b>status()</b> function will only work when the Processing program is running in a web browser.
-   * 
+   * Displays message in the browser's status area. This is the text area in 
+   * the lower left corner of the browser. The <b>status()</b> function will 
+   * only work when the Processing program is running in a web browser.
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Show status in the status bar of a web browser, or in the
@@ -2545,8 +2756,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from link.xml )
    * 
-   * Links to a webpage either in the same window or in a new window. The complete URL must be specified.
-   * 
+   * Links to a webpage either in the same window or in a new window. The 
+   * complete URL must be specified.
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Link to an external page without all the muss.
@@ -2626,16 +2837,34 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from open.xml )
    * 
-   * Attempts to open an application or file using your platform's launcher. The <b>file</b> parameter is a String specifying the file name and location. The location parameter must be a full path name, or the name of an executable in the system's PATH. In most cases, using a full path is the best option, rather than relying on the system PATH. Be sure to make the file executable before attempting to open it (chmod +x). 
+   * Attempts to open an application or file using your platform's launcher. 
+   * The <b>file</b> parameter is a String specifying the file name and 
+   * location. The location parameter must be a full path name, or the name 
+   * of an executable in the system's PATH. In most cases, using a full path 
+   * is the best option, rather than relying on the system PATH. Be sure to 
+   * make the file executable before attempting to open it (chmod +x). 
    * <br/> <br/>
-   * The <b>args</b> parameter is a String or String array which is passed to the command line. If you have multiple parameters, e.g. an application and a document, or a command with multiple switches, use the version that takes a String array, and place each individual item in a separate element. 
+   * The <b>args</b> parameter is a String or String array which is passed to 
+   * the command line. If you have multiple parameters, e.g. an application 
+   * and a document, or a command with multiple switches, use the version 
+   * that takes a String array, and place each individual item in a separate 
+   * element. 
    * <br/> <br/>
-   * If args is a String (not an array), then it can only be a single file or application with no parameters. It's not the same as executing that String using a shell. For instance, open("jikes -help") will not work properly.
+   * If args is a String (not an array), then it can only be a single file or 
+   * application with no parameters. It's not the same as executing that 
+   * String using a shell. For instance, open("jikes -help") will not work properly.
    * <br/> <br/>
-   * This function behaves differently on each platform. On Windows, the parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the "open" command is used (type "man open" in Terminal.app for documentation). On Linux, it first tries gnome-open, then kde-open, but if neither are available, it sends the command to the shell without any alterations. 
+   * This function behaves differently on each platform. On Windows, the 
+   * parameters are sent to the Windows shell via "cmd /c". On Mac OS X, the 
+   * "open" command is used (type "man open" in Terminal.app for 
+   * documentation). On Linux, it first tries gnome-open, then kde-open, but 
+   * if neither are available, it sends the command to the shell without any 
+   * alterations. 
    * <br/> <br/>
-   * For users familiar with Java, this is not quite the same as Runtime.exec(), because the launcher command is prepended. Instead, the <b>exec(String[])</b> function is a shortcut for Runtime.getRuntime.exec(String[]). 
-   * 
+   * For users familiar with Java, this is not quite the same as 
+   * Runtime.exec(), because the launcher command is prepended. Instead, the 
+   * <b>exec(String[])</b> function is a shortcut for 
+   * Runtime.getRuntime.exec(String[]). 
    * ( end auto-generated )
    * @webref input:files
    * @param filename name of the file
@@ -2748,12 +2977,18 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from exit.xml )
    * 
-   * Quits/stops/exits the program. Programs without a <b>draw()</b> function exit automatically after the last line has run, but programs with <b>draw()</b> run continuously until the program is manually stopped or <b>exit()</b> is run. 
+   * Quits/stops/exits the program. Programs without a <b>draw()</b> function 
+   * exit automatically after the last line has run, but programs with 
+   * <b>draw()</b> run continuously until the program is manually stopped or 
+   * <b>exit()</b> is run. 
    * <br/> <br/>
-   * Rather than terminating immediately, <b>exit()</b> will cause the sketch to exit after <b>draw()</b> has completed (or after <b>setup()</b> completes if called during the <b>setup()</b> method).
+   * Rather than terminating immediately, <b>exit()</b> will cause the sketch 
+   * to exit after <b>draw()</b> has completed (or after <b>setup()</b> 
+   * completes if called during the <b>setup()</b> method).
    * <br/> <br/>
-   * For Java programmers, this is <em>not</em> the same as System.exit(). Further, System.exit() should not be used because closing out an application while draw() is running may cause a crash (particularly with OpenGL).
-   * 
+   * For Java programmers, this is <em>not</em> the same as System.exit(). 
+   * Further, System.exit() should not be used because closing out an 
+   * application while draw() is running may cause a crash (particularly with OpenGL).
    * ( end auto-generated )
    * @webref structure
    */
@@ -2870,10 +3105,17 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from save.xml )
    * 
-   * Saves an image from the display window. Images are saved in TIFF, TARGA, JPEG, and PNG format depending on the extension within the <b>filename</b> parameter. For example, "image.tif" will have a TIFF image and "image.png" will save a PNG image. If no extension is included in the filename, the image will save in TIFF format and <b>.tif</b> will be added to the name. These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu. It is not possible to use <b>save()</b> while running the program in a web browser.
-   * <br/>
-   * All images saved from the main drawing window will be opaque. To save images without a background, use <b>createGraphics()</b>.
-   * 
+   * Saves an image from the display window. Images are saved in TIFF, TARGA, 
+   * JPEG, and PNG format depending on the extension within the 
+   * <b>filename</b> parameter. For example, "image.tif" will have a TIFF 
+   * image and "image.png" will save a PNG image. If no extension is included 
+   * in the filename, the image will save in TIFF format and <b>.tif</b> will 
+   * be added to the name. These files are saved to the sketch's folder, 
+   * which may be opened by selecting "Show sketch folder" from the "Sketch" 
+   * menu. It is not possible to use <b>save()</b> while running the program 
+   * in a web browser.
+   * <br/> images saved from the main drawing window will be opaque. To save 
+   * images without a background, use <b>createGraphics()</b>.
    * ( end auto-generated )
    * @webref output:image
    * @see PApplet#saveFrame()
@@ -2899,13 +3141,28 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from saveFrame.xml )
    * 
-   * Saves a numbered sequence of images, one image each time the function is run. To save an image that is identical to the display window, run the function at the end of <b>draw()</b> or within mouse and key events such as <b>mousePressed()</b> and <b>keyPressed()</b>. If <b>saveFrame()</b> is called without parameters, it will save the files as screen-0000.tif, screen-0001.tif, etc. It is possible to specify the name of the sequence with the <b>filename</b> parameter and make the choice of saving TIFF, TARGA, PNG, or JPEG files with the <b>ext</b> parameter. These image sequences can be loaded into programs such as Apple's QuickTime software and made into movies. These files are saved to the sketch's folder, which may be opened by selecting "Show sketch folder" from the "Sketch" menu. 
+   * Saves a numbered sequence of images, one image each time the function is 
+   * run. To save an image that is identical to the display window, run the 
+   * function at the end of <b>draw()</b> or within mouse and key events such 
+   * as <b>mousePressed()</b> and <b>keyPressed()</b>. If <b>saveFrame()</b> 
+   * is called without parameters, it will save the files as screen-0000.tif, 
+   * screen-0001.tif, etc. It is possible to specify the name of the sequence 
+   * with the <b>filename</b> parameter and make the choice of saving TIFF, 
+   * TARGA, PNG, or JPEG files with the <b>ext</b> parameter. These image 
+   * sequences can be loaded into programs such as Apple's QuickTime software 
+   * and made into movies. These files are saved to the sketch's folder, 
+   * which may be opened by selecting "Show sketch folder" from the "Sketch" 
+   * menu. 
    * <br/> <br/>
-   * It is not possible to use saveXxxxx() methods inside a web browser unless the sketch is <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. To save a file back to a server, see the <A HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to web</A> example.
+   * It is not possible to use saveXxxxx() methods inside a web browser 
+   * unless the sketch is <A 
+   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. 
+   * To save a file back to a server, see the <A 
+   * HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to 
+   * web</A> example.
    * <br/> <br/>
-   * <br/>
-   * All images saved from the main drawing window will be opaque. To save images without a background, use <b>createGraphics()</b>.
-   * 
+   * <br/> images saved from the main drawing window will be opaque. To save 
+   * images without a background, use <b>createGraphics()</b>.
    * ( end auto-generated )
    * @webref output:image
    * @see PApplet#save(String)
@@ -2979,10 +3236,15 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from cursor.xml )
    * 
-   * Sets the cursor to a predefined symbol, an image, or makes it visible if already hidden. If you are trying to set an image as the cursor, it is recommended to make the size 16x16 or 32x32 pixels. It is not possible to load an image as the cursor if you are exporting your program for the Web and not all MODES work with all Web browsers. The values for parameters <b>x</b> and <b>y</b> must be less than the dimensions of the image.
+   * Sets the cursor to a predefined symbol, an image, or makes it visible if 
+   * already hidden. If you are trying to set an image as the cursor, it is 
+   * recommended to make the size 16x16 or 32x32 pixels. It is not possible 
+   * to load an image as the cursor if you are exporting your program for the 
+   * Web and not all MODES work with all Web browsers. The values for 
+   * parameters <b>x</b> and <b>y</b> must be less than the dimensions of the image.
    * <br /> <br />
-   * Setting or hiding the cursor generally does not work with "Present" mode (when running full-screen).
-   * 
+   * Setting or hiding the cursor generally does not work with "Present" mode 
+   * (when running full-screen).
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Set a custom cursor to an image with a specific hotspot.
@@ -3032,8 +3294,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from noCursor.xml )
    * 
-   * Hides the cursor from view. Will not work when running the program in a web browser or when running in full screen (Present) mode.
-   * 
+   * Hides the cursor from view. Will not work when running the program in a 
+   * web browser or when running in full screen (Present) mode.
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Hide the cursor by creating a transparent image
@@ -3058,7 +3320,28 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 /**
- * @generate print.xml
+   * ( begin auto-generated from print.xml )
+   * 
+   * Writes to the console area of the Processing environment. This is often 
+   * helpful for looking at the data a program is producing. The companion 
+   * function <b>println()</b> works like <b>print()</b>, but creates a new 
+   * line of text for each call to the function. Individual elements can be 
+   * separated with quotes ("") and joined with the addition operator (+). 
+   * <br/><br/> with release 0125, to print the contents of an array, use 
+   * println(). 
+   * There's no sensible way to do a <b>print()</b> of an array, 
+   * because there are too many possibilities for how to separate the data 
+   * (spaces, commas, etc). 
+   * If you want to print an array as a single line, use <b>join()</b>. 
+   * With join(), you can choose any delimiter you like and <b>print()</b> 
+   * the result. 
+   * <br/><br/> <b>print()</b> on an object will output <b>null</b>, a memory 
+   * location 
+   * that may look like "@10be08," or the result of the <b>toString()</b> 
+   * method from the object that's being printed.
+   * Advanced users who want more useful output when calling print() on their 
+   * own classes can add a toString() method to the class that returns a String.
+   * ( end auto-generated )
  * @webref output:text_area
  * @usage IDE
  * @param what boolean, byte, char, color, int, float, String, Object
@@ -3106,7 +3389,20 @@ public class PApplet extends Applet
 
   //
 /**
- * @generate println.xml
+   * ( begin auto-generated from println.xml )
+   * 
+   * Writes to the text area of the Processing environment's console. This is 
+   * often helpful for looking at the data a program is producing. Each call 
+   * to this function creates a new line of output. Individual elements can 
+   * be separated with quotes ("") and joined with the string concatenation 
+   * operator (+). See <b>print()</b> for more about what to expect in the output.
+   * <br/><br/> <b>println()</b> on an array (by itself) will write the 
+   * contents of the array to the console. This is often helpful for looking 
+   * at the data a program is producing. A new line is put between each 
+   * element of the array. This function can only print one dimensional 
+   * arrays. For arrays with higher dimensions, the result will be closer to 
+   * that of <b>print()</b>.
+   * ( end auto-generated )
  * @webref output:text_area
  * @usage IDE
  * @see PApplet#print(byte)
@@ -3248,8 +3544,8 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from abs.xml )
    * 
-   * Calculates the absolute value (magnitude) of a number. The absolute value of a number is always positive.
-   * 
+   * Calculates the absolute value (magnitude) of a number. The absolute 
+   * value of a number is always positive.
    * ( end auto-generated )
    * @webref math:calculation
    * @param n number to compute
@@ -3265,8 +3561,9 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from sq.xml )
    * 
-   * Squares a number (multiplies a number by itself). The result is always a positive number, as multiplying two negative numbers always yields a positive result. For example, -1 * -1 = 1.
-   * 
+   * Squares a number (multiplies a number by itself). The result is always a 
+   * positive number, as multiplying two negative numbers always yields a 
+   * positive result. For example, -1 * -1 = 1.
    * ( end auto-generated )
    * @webref math:calculation
    * @param a number to square
@@ -3279,8 +3576,10 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from sqrt.xml )
    * 
-   * Calculates the square root of a number. The square root of a number is always positive, even though there may be a valid negative root. The square root <b>s</b> of number <b>a</b> is such that <b>s*s = a</b>. It is the opposite of squaring.
-   * 
+   * Calculates the square root of a number. The square root of a number is 
+   * always positive, even though there may be a valid negative root. The 
+   * square root <b>s</b> of number <b>a</b> is such that <b>s*s = a</b>. It 
+   * is the opposite of squaring.
    * ( end auto-generated )
    * @webref math:calculation
    * @param a non-negative number
@@ -3294,8 +3593,8 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from log.xml )
    * 
-   * Calculates the natural logarithm (the base-<i>e</i> logarithm) of a number. This function expects the values greater than 0.0.
-   * 
+   * Calculates the natural logarithm (the base-<i>e</i> logarithm) of a 
+   * number. This function expects the values greater than 0.0.
    * ( end auto-generated )
    * @webref math:calculation
    * @param a number greater than 0.0
@@ -3307,8 +3606,8 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from exp.xml )
    * 
-   * Returns Euler's number <i>e</i> (2.71828...) raised to the power of the <b>value</b> parameter.
-   * 
+   * Returns Euler's number <i>e</i> (2.71828...) raised to the power of the 
+   * <b>value</b> parameter.
    * ( end auto-generated )
    * @webref math:calculation
    * @param a exponent to raise
@@ -3320,8 +3619,10 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from pow.xml )
    * 
-   * Facilitates exponential expressions. The <b>pow()</b> function is an efficient way of multiplying numbers by themselves (or their reciprocal) in large quantities. For example, <b>pow(3, 5)</b> is equivalent to the expression 3*3*3*3*3 and <b>pow(3, -5)</b> is equivalent to 1 / 3*3*3*3*3.
-   * 
+   * Facilitates exponential expressions. The <b>pow()</b> function is an 
+   * efficient way of multiplying numbers by themselves (or their reciprocal) 
+   * in large quantities. For example, <b>pow(3, 5)</b> is equivalent to the 
+   * expression 3*3*3*3*3 and <b>pow(3, -5)</b> is equivalent to 1 / 3*3*3*3*3.
    * ( end auto-generated )
    * @webref math:calculation
    * @param a base of the exponential expression
@@ -3336,7 +3637,6 @@ public class PApplet extends Applet
    * ( begin auto-generated from max.xml )
    * 
    * Determines the largest value in a sequence of numbers.
-   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a first number to compare
@@ -3439,7 +3739,6 @@ public class PApplet extends Applet
    * ( begin auto-generated from min.xml )
    * 
    * Determines the smallest value in a sequence of numbers.
-   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a 
@@ -3516,7 +3815,6 @@ public class PApplet extends Applet
    * ( begin auto-generated from constrain.xml )
    * 
    * Constrains a value to not exceed a maximum and minimum value.
-   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param amt the value to constrain
@@ -3533,8 +3831,9 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from sin.xml )
    * 
-   * Calculates the sine of an angle. This function expects the values of the <b>angle</b> parameter to be provided in radians (values from 0 to 6.28). Values are returned in the range -1 to 1.
-   * 
+   * Calculates the sine of an angle. This function expects the values of the 
+   * <b>angle</b> parameter to be provided in radians (values from 0 to 
+   * 6.28). Values are returned in the range -1 to 1.
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
@@ -3549,8 +3848,9 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from cos.xml )
    * 
-   * Calculates the cosine of an angle. This function expects the values of the <b>angle</b> parameter to be provided in radians (values from 0 to PI*2). Values are returned in the range -1 to 1.
-   * 
+   * Calculates the cosine of an angle. This function expects the values of 
+   * the <b>angle</b> parameter to be provided in radians (values from 0 to 
+   * PI*2). Values are returned in the range -1 to 1.
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
@@ -3565,8 +3865,10 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from tan.xml )
    * 
-   * Calculates the ratio of the sine and cosine of an angle. This function expects the values of the <b>angle</b> parameter to be provided in radians (values from 0 to PI*2). Values are returned in the range <b>infinity</b> to <b>-infinity</b>.
-   * 
+   * Calculates the ratio of the sine and cosine of an angle. This function 
+   * expects the values of the <b>angle</b> parameter to be provided in 
+   * radians (values from 0 to PI*2). Values are returned in the range 
+   * <b>infinity</b> to <b>-infinity</b>.
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
@@ -3581,8 +3883,9 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from asin.xml )
    * 
-   * The inverse of <b>sin()</b>, returns the arc sine of a value. This function expects the values in the range of -1 to 1 and values are returned in the range <b>-PI/2</b> to <b>PI/2</b>.
-   * 
+   * The inverse of <b>sin()</b>, returns the arc sine of a value. This 
+   * function expects the values in the range of -1 to 1 and values are 
+   * returned in the range <b>-PI/2</b> to <b>PI/2</b>.
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param value the value whose arc sine is to be returned
@@ -3597,8 +3900,9 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from acos.xml )
    * 
-   * The inverse of <b>cos()</b>, returns the arc cosine of a value. This function expects the values in the range of -1 to 1 and values are returned in the range <b>0</b> to <b>PI (3.1415927)</b>.
-   * 
+   * The inverse of <b>cos()</b>, returns the arc cosine of a value. This 
+   * function expects the values in the range of -1 to 1 and values are 
+   * returned in the range <b>0</b> to <b>PI (3.1415927)</b>.
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param value the value whose arc cosine is to be returned
@@ -3613,8 +3917,9 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from atan.xml )
    * 
-   * The inverse of <b>tan()</b>, returns the arc tangent of a value. This function expects the values in the range of -Infinity to Infinity (exclusive) and values are returned in the range <b>-PI/2</b> to <b>PI/2 </b>.
-   * 
+   * The inverse of <b>tan()</b>, returns the arc tangent of a value. This 
+   * function expects the values in the range of -Infinity to Infinity 
+   * (exclusive) and values are returned in the range <b>-PI/2</b> to <b>PI/2 </b>.
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param value -Infinity to Infinity (exclusive)
@@ -3629,8 +3934,13 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from atan2.xml )
    * 
-   * Calculates the angle (in radians) from a specified point to the coordinate origin as measured from the positive x-axis. Values are returned as a <b>float</b> in the range from <b>PI</b> to <b>-PI</b>. The <b>atan2()</b> function is most often used for orienting geometry to the position of the cursor.  Note: The y-coordinate of the point is the first parameter and the x-coordinate is the second due the the structure of calculating the tangent.
-   * 
+   * Calculates the angle (in radians) from a specified point to the 
+   * coordinate origin as measured from the positive x-axis. Values are 
+   * returned as a <b>float</b> in the range from <b>PI</b> to <b>-PI</b>. 
+   * The <b>atan2()</b> function is most often used for orienting geometry to 
+   * the position of the cursor.  Note: The y-coordinate of the point is the 
+   * first parameter and the x-coordinate is the second due the the structure 
+   * of calculating the tangent.
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param a y-coordinate of the point
@@ -3644,8 +3954,11 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from degrees.xml )
    * 
-   * Converts a radian measurement to its corresponding value in degrees. Radians and degrees are two ways of measuring the same thing. There are 360 degrees in a circle and 2*PI radians in a circle. For example, 90&deg; = PI/2 = 1.5707964. All trigonometric methods in Processing require their parameters to be specified in radians.
-   * 
+   * Converts a radian measurement to its corresponding value in degrees. 
+   * Radians and degrees are two ways of measuring the same thing. There are 
+   * 360 degrees in a circle and 2*PI radians in a circle. For example, 
+   * 90&deg; = PI/2 = 1.5707964. All trigonometric methods in Processing 
+   * require their parameters to be specified in radians.
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param radians radian value to convert to degrees
@@ -3658,8 +3971,11 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from radians.xml )
    * 
-   * Converts a degree measurement to its corresponding value in radians. Radians and degrees are two ways of measuring the same thing. There are 360 degrees in a circle and 2*PI radians in a circle. For example, 90&deg; = PI/2 = 1.5707964. All trigonometric methods in Processing require their parameters to be specified in radians.
-   * 
+   * Converts a degree measurement to its corresponding value in radians. 
+   * Radians and degrees are two ways of measuring the same thing. There are 
+   * 360 degrees in a circle and 2*PI radians in a circle. For example, 
+   * 90&deg; = PI/2 = 1.5707964. All trigonometric methods in Processing 
+   * require their parameters to be specified in radians.
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param degrees degree value to convert to radians
@@ -3672,8 +3988,8 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from ceil.xml )
    * 
-   * Calculates the closest int value that is greater than or equal to the value of the parameter. For example, <b>ceil(9.03)</b> returns the value 10.
-   * 
+   * Calculates the closest int value that is greater than or equal to the 
+   * value of the parameter. For example, <b>ceil(9.03)</b> returns the value 10.
    * ( end auto-generated )
    * @webref math:calculation
    * @param what number to round up
@@ -3687,8 +4003,8 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from floor.xml )
    * 
-   * Calculates the closest int value that is less than or equal to the value of the parameter.
-   * 
+   * Calculates the closest int value that is less than or equal to the value 
+   * of the parameter.
    * ( end auto-generated )
    * @webref math:calculation
    * @param what number to round down
@@ -3702,8 +4018,8 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from round.xml )
    * 
-   * Calculates the integer closest to the <b>value</b> parameter. For example, <b>round(9.2)</b> returns the value 9.
-   * 
+   * Calculates the integer closest to the <b>value</b> parameter. For 
+   * example, <b>round(9.2)</b> returns the value 9.
    * ( end auto-generated )
    * @webref math:calculation
    * @param what number to round
@@ -3722,8 +4038,11 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from mag.xml )
    * 
-   * Calculates the magnitude (or length) of a vector. A vector is a direction in space commonly used in computer graphics and linear algebra. Because it has no "start" position, the magnitude of a vector can be thought of as the distance from coordinate (0,0) to its (x,y) value. Therefore, mag() is a shortcut for writing "dist(0, 0, x, y)". 
-   * 
+   * Calculates the magnitude (or length) of a vector. A vector is a 
+   * direction in space commonly used in computer graphics and linear 
+   * algebra. Because it has no "start" position, the magnitude of a vector 
+   * can be thought of as the distance from coordinate (0,0) to its (x,y) 
+   * value. Therefore, mag() is a shortcut for writing "dist(0, 0, x, y)". 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a first value
@@ -3744,7 +4063,6 @@ public class PApplet extends Applet
    * ( begin auto-generated from dist.xml )
    * 
    * Calculates the distance between two points.
-   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param x1 x-coordinate of the first point
@@ -3762,8 +4080,11 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from lerp.xml )
    * 
-   * Calculates a number between two numbers at a specific increment. The <b>amt</b> parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is half-way in between, etc. The lerp function is convenient for creating motion along a straight path and for drawing dotted lines.
-   * 
+   * Calculates a number between two numbers at a specific increment. The 
+   * <b>amt</b> parameter is the amount to interpolate between the two values 
+   * where 0.0 equal to the first point, 0.1 is very near the first point, 
+   * 0.5 is half-way in between, etc. The lerp function is convenient for 
+   * creating motion along a straight path and for drawing dotted lines.
    * ( end auto-generated )
    * @webref math:calculation
    * @param start first value
@@ -3785,7 +4106,6 @@ public class PApplet extends Applet
    * <br/> <br/>
    * Numbers outside the range are not clamped to 0 and 1, because
    * out-of-range values are often intentional and useful.
-   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param value the incoming value to be converted
@@ -3808,7 +4128,6 @@ public class PApplet extends Applet
    * <br/> <br/>
    * Numbers outside the range are not clamped to 0 and 1, because
    * out-of-range values are often intentional and useful.
-   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param value the incoming value to be converted
@@ -3869,8 +4188,16 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from random.xml )
    * 
-   * Generates random numbers. Each time the <b>random()</b> function is called, it returns an unexpected value within the specified range. If one parameter is passed to the function it will return a <b>float</b> between zero and the value of the <b>high</b> parameter. The function call <b>random(5)</b> returns values between 0 and 5 (starting at zero, up to but not including 5). If two parameters are passed, it will return a <b>float</b> with a value between the the parameters. The function call <b>random(-5, 10.2)</b> returns values starting at -5 up to (but not including) 10.2. To convert a floating-point random number to an integer, use the <b>int()</b> function.
-   * 
+   * Generates random numbers. Each time the <b>random()</b> function is 
+   * called, it returns an unexpected value within the specified range. If 
+   * one parameter is passed to the function it will return a <b>float</b> 
+   * between zero and the value of the <b>high</b> parameter. The function 
+   * call <b>random(5)</b> returns values between 0 and 5 (starting at zero, 
+   * up to but not including 5). If two parameters are passed, it will return 
+   * a <b>float</b> with a value between the the parameters. The function 
+   * call <b>random(-5, 10.2)</b> returns values starting at -5 up to (but 
+   * not including) 10.2. To convert a floating-point random number to an 
+   * integer, use the <b>int()</b> function.
    * ( end auto-generated )
    * @webref math:random
    * @param howsmall 
@@ -3887,8 +4214,10 @@ public class PApplet extends Applet
  /**
    * ( begin auto-generated from randomSeed.xml )
    * 
-   * Sets the seed value for <b>random()</b>. By default, <b>random()</b> produces different results each time the program is run. Set the <b>value</b> parameter to a constant to return the same pseudo-random numbers each time the software is run.
-   * 
+   * Sets the seed value for <b>random()</b>. By default, <b>random()</b> 
+   * produces different results each time the program is run. Set the 
+   * <b>value</b> parameter to a constant to return the same pseudo-random 
+   * numbers each time the software is run.
    * ( end auto-generated )
    * @webref math:random
    * @param what 
@@ -3953,8 +4282,31 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from noise.xml )
    * 
-   * Returns the Perlin noise value at specified coordinates. Perlin noise is a random sequence generator producing a more natural ordered, harmonic succession of numbers compared to the standard <b>random()</b> function. It was invented by Ken Perlin in the 1980s and been used since in graphical applications to produce procedural textures, natural motion, shapes, terrains etc.<br /><br /> The main difference to the <b>random()</b> function is that Perlin noise is defined in an infinite n-dimensional space where each pair of coordinates corresponds to a fixed semi-random value (fixed only for the lifespan of the program). The resulting value will always be between 0.0 and 1.0. Processing can compute 1D, 2D and 3D noise, depending on the number of coordinates given. The noise value can be animated by moving through the noise space as demonstrated in the example above. The 2nd and 3rd dimension can also be interpreted as time.<br /><br />The actual noise is structured similar to an audio signal, in respect to the function's use of frequencies. Similar to the concept of harmonics in physics, perlin noise is computed over several octaves which are added together for the final result. <br /><br />Another way to adjust the character of the resulting sequence is the scale of the input coordinates. As the function works within an infinite space the value of the coordinates doesn't matter as such, only the distance between successive coordinates does (eg. when using <b>noise()</b> within a loop). As a general rule the smaller the difference between coordinates, the smoother the resulting noise sequence will be. Steps of 0.005-0.03 work best for most applications, but this will differ depending on use.
-   * 
+   * Returns the Perlin noise value at specified coordinates. Perlin noise is 
+   * a random sequence generator producing a more natural ordered, harmonic 
+   * succession of numbers compared to the standard <b>random()</b> function. 
+   * It was invented by Ken Perlin in the 1980s and been used since in 
+   * graphical applications to produce procedural textures, natural motion, 
+   * shapes, terrains etc.<br /><br /> The main difference to the 
+   * <b>random()</b> function is that Perlin noise is defined in an infinite 
+   * n-dimensional space where each pair of coordinates corresponds to a 
+   * fixed semi-random value (fixed only for the lifespan of the program). 
+   * The resulting value will always be between 0.0 and 1.0. Processing can 
+   * compute 1D, 2D and 3D noise, depending on the number of coordinates 
+   * given. The noise value can be animated by moving through the noise space 
+   * as demonstrated in the example above. The 2nd and 3rd dimension can also 
+   * be interpreted as time.<br /><br />The actual noise is structured 
+   * similar to an audio signal, in respect to the function's use of 
+   * frequencies. Similar to the concept of harmonics in physics, perlin 
+   * noise is computed over several octaves which are added together for the 
+   * final result. <br /><br />Another way to adjust the character of the 
+   * resulting sequence is the scale of the input coordinates. As the 
+   * function works within an infinite space the value of the coordinates 
+   * doesn't matter as such, only the distance between successive coordinates 
+   * does (eg. when using <b>noise()</b> within a loop). As a general rule 
+   * the smaller the difference between coordinates, the smoother the 
+   * resulting noise sequence will be. Steps of 0.005-0.03 work best for most 
+   * applications, but this will differ depending on use.
    * ( end auto-generated )
    * 
    * @webref math:random
@@ -4050,8 +4402,20 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from noiseDetail.xml )
    * 
-   * Adjusts the character and level of detail produced by the Perlin noise function. Similar to harmonics in physics, noise is computed over several octaves. Lower octaves contribute more to the output signal and as such define the overal intensity of the noise, whereas higher octaves create finer grained details in the noise sequence. By default, noise is computed over 4 octaves with each octave contributing exactly half than its predecessor, starting at 50% strength for the 1st octave. This falloff amount can be changed by adding an additional function parameter. Eg. a falloff factor of 0.75 means each octave will now have 75% impact (25% less) of the previous lower octave. Any value between 0.0 and 1.0 is valid, however note that values greater than 0.5 might result in greater than 1.0 values returned by <b>noise()</b>.<br /><br />By changing these parameters, the signal created by the <b>noise()</b> function can be adapted to fit very specific needs and characteristics.
-   * 
+   * Adjusts the character and level of detail produced by the Perlin noise 
+   * function. Similar to harmonics in physics, noise is computed over 
+   * several octaves. Lower octaves contribute more to the output signal and 
+   * as such define the overal intensity of the noise, whereas higher octaves 
+   * create finer grained details in the noise sequence. By default, noise is 
+   * computed over 4 octaves with each octave contributing exactly half than 
+   * its predecessor, starting at 50% strength for the 1st octave. This 
+   * falloff amount can be changed by adding an additional function 
+   * parameter. Eg. a falloff factor of 0.75 means each octave will now have 
+   * 75% impact (25% less) of the previous lower octave. Any value between 
+   * 0.0 and 1.0 is valid, however note that values greater than 0.5 might 
+   * result in greater than 1.0 values returned by <b>noise()</b>.<br /><br 
+   * />By changing these parameters, the signal created by the <b>noise()</b> 
+   * function can be adapted to fit very specific needs and characteristics.
    * ( end auto-generated )
    * @webref math:random
    * @param lod number of octaves to be used by the noise
@@ -4066,8 +4430,10 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from noiseSeed.xml )
    * 
-   * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b> produces different results each time the program is run. Set the <b>value</b> parameter to a constant to return the same pseudo-random numbers each time the software is run. 
-   * 
+   * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b> 
+   * produces different results each time the program is run. Set the 
+   * <b>value</b> parameter to a constant to return the same pseudo-random 
+   * numbers each time the software is run. 
    * ( end auto-generated )
    * @webref math:random
    * @param what int
@@ -4098,16 +4464,36 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from loadImage.xml )
    * 
-   * Loads an image into a variable of type <b>PImage</b>. Four types of images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them at the start of the program. Loading images inside <b>draw()</b> will reduce the speed of a program. 
+   * Loads an image into a variable of type <b>PImage</b>. Four types of 
+   * images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may 
+   * be loaded. To load correctly, images must be located in the data 
+   * directory of the current sketch. In most cases, load all images in 
+   * <b>setup()</b> to preload them at the start of the program. Loading 
+   * images inside <b>draw()</b> will reduce the speed of a program. 
    * <br/> <br/>
-   * The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
+   * The <b>filename</b> parameter can also be a URL to a file found online. 
+   * For security reasons, a Processing sketch found online can only download 
+   * files from the same server from which it came. Getting around this 
+   * restriction requires a <A 
+   * HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
    * <br/> <br/>
-   * The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>loadImage()</b>, as shown in the third example on this page.
+   * The <b>extension</b> parameter is used to determine the image type in 
+   * cases where the image filename does not end with a proper extension. 
+   * Specify the extension as the second parameter to <b>loadImage()</b>, as 
+   * shown in the third example on this page.
    * <br/> <br/>
-   * If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadImage()</b> is null.
+   * If an image is not loaded successfully, the <b>null</b> value is 
+   * returned and an error message will be printed to the console. The error 
+   * message does not halt the program, however the null value may cause a 
+   * NullPointerException if your code does not check whether the value 
+   * returned from <b>loadImage()</b> is null.
    * <br/> <br/>
-   * Depending on the type of error, a <b>PImage</b> object may still be returned, but the width and height of the image will be set to -1. This happens if bad image data is returned or cannot be decoded properly. Sometimes this happens with image URLs that produce a 403 error or that redirect to a password prompt, because <b>loadImage()</b> will attempt to interpret the HTML as image data.
-   * 
+   * Depending on the type of error, a <b>PImage</b> object may still be 
+   * returned, but the width and height of the image will be set to -1. This 
+   * happens if bad image data is returned or cannot be decoded properly. 
+   * Sometimes this happens with image URLs that produce a 403 error or that 
+   * redirect to a password prompt, because <b>loadImage()</b> will attempt 
+   * to interpret the HTML as image data.
    * ( end auto-generated )
    * @webref image:load_displaying
    * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
@@ -4255,10 +4641,16 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from requestImage.xml )
    * 
-   * This function load images on a separate thread so that your sketch does not freeze while images load during <b>setup()</b>. While the image is loading, its width and height will be 0. If an error occurs while loading the image, its width and height will be set to -1. You'll know when the image has loaded properly because its width and height will be greater than 0. Asynchronous image loading (particularly when downloading from a server) can dramatically improve performance.<br />
-   * <br/>
-   * The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>requestImage()</b>.
-   * 
+   * This function load images on a separate thread so that your sketch does 
+   * not freeze while images load during <b>setup()</b>. While the image is 
+   * loading, its width and height will be 0. If an error occurs while 
+   * loading the image, its width and height will be set to -1. You'll know 
+   * when the image has loaded properly because its width and height will be 
+   * greater than 0. Asynchronous image loading (particularly when 
+   * downloading from a server) can dramatically improve performance.<br />
+   * <br/> <b>extension</b> parameter is used to determine the image type in 
+   * cases where the image filename does not end with a proper extension. 
+   * Specify the extension as the second parameter to <b>requestImage()</b>.
    * ( end auto-generated )
  * @webref image:loading_displaying
  * @param filename name of the file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
@@ -4595,12 +4987,23 @@ public class PApplet extends Applet
  /**
    * ( begin auto-generated from loadShape.xml )
    * 
-   * Loads vector shapes into a variable of type <b>PShape</b>. Currently, only SVG files may be loaded. To load correctly, the file must be located in the data directory of the current sketch. In most cases, <b>loadShape()</b> should be used inside <b>setup()</b> because loading shapes inside <b>draw()</b> will reduce the speed of a sketch. 
+   * Loads vector shapes into a variable of type <b>PShape</b>. Currently, 
+   * only SVG files may be loaded. To load correctly, the file must be 
+   * located in the data directory of the current sketch. In most cases, 
+   * <b>loadShape()</b> should be used inside <b>setup()</b> because loading 
+   * shapes inside <b>draw()</b> will reduce the speed of a sketch. 
    * <br/> <br/>
-   * The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
+   * The <b>filename</b> parameter can also be a URL to a file found online. 
+   * For security reasons, a Processing sketch found online can only download 
+   * files from the same server from which it came. Getting around this 
+   * restriction requires a <A 
+   * HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
    * <br/> <br/>
-   * If a shape is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadShape()</b> is null.
-   * 
+   * If a shape is not loaded successfully, the <b>null</b> value is returned 
+   * and an error message will be printed to the console. The error message 
+   * does not halt the program, however the null value may cause a 
+   * NullPointerException if your code does not check whether the value 
+   * returned from <b>loadShape()</b> is null.
    * ( end auto-generated )
    * @webref shape:load_displaying
    * @param filename name of the file to load
@@ -4714,14 +5117,27 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from loadFont.xml )
    * 
-   * Loads a font into a variable of type <b>PFont</b>. To load correctly, fonts must be located in the data directory of the current sketch. To create a font to use with Processing, select "Create Font..." from the Tools menu. This will create a font in the format Processing requires and also adds it to the current sketch's data directory. 
+   * Loads a font into a variable of type <b>PFont</b>. To load correctly, 
+   * fonts must be located in the data directory of the current sketch. To 
+   * create a font to use with Processing, select "Create Font..." from the 
+   * Tools menu. This will create a font in the format Processing requires 
+   * and also adds it to the current sketch's data directory. 
    * <br/> <br/>
-   * Like <b>loadImage()</b> and other methods that load data, the <b>loadFont()</b> function should not be used inside <b>draw()</b>, because it will slow down the sketch considerably, as the font will be re-loaded from the disk (or network) on each frame.
+   * Like <b>loadImage()</b> and other methods that load data, the 
+   * <b>loadFont()</b> function should not be used inside <b>draw()</b>, 
+   * because it will slow down the sketch considerably, as the font will be 
+   * re-loaded from the disk (or network) on each frame.
    * <br/> <br/>
-   * For most renderers, Processing displays fonts using the .vlw font format, which uses images for each letter, rather than defining them through vector data. When <b>hint(ENABLE_NATIVE_FONTS)</b> is used with the JAVA2D renderer, the native version of a font will be used if it is installed on the user's machine. 
+   * For most renderers, Processing displays fonts using the .vlw font 
+   * format, which uses images for each letter, rather than defining them 
+   * through vector data. When <b>hint(ENABLE_NATIVE_FONTS)</b> is used with 
+   * the JAVA2D renderer, the native version of a font will be used if it is 
+   * installed on the user's machine. 
    * <br/> <br/>
-   * Using <b>createFont()</b> (instead of loadFont) enables vector data to be used with the JAVA2D (default) renderer setting. This can be helpful when many font sizes are needed, or when using any renderer based on JAVA2D, such as the PDF library. 
-   * 
+   * Using <b>createFont()</b> (instead of loadFont) enables vector data to 
+   * be used with the JAVA2D (default) renderer setting. This can be helpful 
+   * when many font sizes are needed, or when using any renderer based on 
+   * JAVA2D, such as the PDF library. 
    * ( end auto-generated )
   * @webref typography:loading_displaying
   * @param filename name of the font to load
@@ -4769,14 +5185,39 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from createFont.xml )
    * 
-   * Dynamically converts a font to the format used by Processing from either a font name that's installed on the computer, or from a .ttf or .otf file inside the sketches "data" folder. This function is an advanced feature for precise control. On most occasions you should create fonts through selecting "Create Font..." from the Tools menu.
+   * Dynamically converts a font to the format used by Processing from either 
+   * a font name that's installed on the computer, or from a .ttf or .otf 
+   * file inside the sketches "data" folder. This function is an advanced 
+   * feature for precise control. On most occasions you should create fonts 
+   * through selecting "Create Font..." from the Tools menu.
    * <br /><br />
-   * Use the <b>PFont.list()</b> method to first determine the names for the fonts recognized by the computer and are compatible with this function. Because of limitations in Java, not all fonts can be used and some might work with one operating system and not others. When sharing a sketch with other people or posting it on the web, you may need to include a .ttf or .otf version of your font in the data directory of the sketch because other people might not have the font installed on their computer. Only fonts that can legally be distributed should be included with a sketch. 
+   * Use the <b>PFont.list()</b> method to first determine the names for the 
+   * fonts recognized by the computer and are compatible with this function. 
+   * Because of limitations in Java, not all fonts can be used and some might 
+   * work with one operating system and not others. When sharing a sketch 
+   * with other people or posting it on the web, you may need to include a 
+   * .ttf or .otf version of your font in the data directory of the sketch 
+   * because other people might not have the font installed on their 
+   * computer. Only fonts that can legally be distributed should be included 
+   * with a sketch. 
    * <br /><br />
-   * The <b>size</b> parameter states the font size you want to generate. The <b>smooth</b> parameter specifies if the font should be antialiased or not, and the <b>charset</b> parameter is an array of chars that specifies the characters to generate. 
+   * The <b>size</b> parameter states the font size you want to generate. The 
+   * <b>smooth</b> parameter specifies if the font should be antialiased or 
+   * not, and the <b>charset</b> parameter is an array of chars that 
+   * specifies the characters to generate. 
    * <br /><br />
-   * This function creates a bitmapped version of a font in the same manner as the Create Font tool. It loads a font by name, and converts it to a series of images based on the size of the font. When possible, the text() function will use a native font rather than the bitmapped version created behind the scenes with createFont(). For instance, when using the default renderer setting (JAVA2D), the actual native version of the font will be employed by the sketch, improving drawing quality and performance. With the P2D, P3D, and OPENGL renderer settings, the bitmapped version will be used. While this can drastically improve speed and appearance, results are poor when exporting if the sketch does not include the .otf or .ttf file, and the requested font is not available on the machine running the sketch. 
-   * 
+   * This function creates a bitmapped version of a font in the same manner 
+   * as the Create Font tool. It loads a font by name, and converts it to a 
+   * series of images based on the size of the font. When possible, the 
+   * text() function will use a native font rather than the bitmapped version 
+   * created behind the scenes with createFont(). For instance, when using 
+   * the default renderer setting (JAVA2D), the actual native version of the 
+   * font will be employed by the sketch, improving drawing quality and 
+   * performance. With the P2D, P3D, and OPENGL renderer settings, the 
+   * bitmapped version will be used. While this can drastically improve speed 
+   * and appearance, results are poor when exporting if the sketch does not 
+   * include the .otf or .ttf file, and the requested font is not available 
+   * on the machine running the sketch. 
    * ( end auto-generated )
    * @webref typography:loading_displaying
    * @param name name of the font to load
@@ -4860,8 +5301,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from selectInput.xml )
    * 
-   * Opens a platform-specific file chooser dialog to select a file for input. This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection.
-   * 
+   * Opens a platform-specific file chooser dialog to select a file for 
+   * input. This function returns the full path to the selected file as a 
+   * <b>String</b>, or <b>null</b> if no selection.
    * ( end auto-generated )
    * @webref input:files
    * @param prompt message you want the user to see in the file chooser
@@ -4885,8 +5327,11 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from selectOutput.xml )
    * 
-   * Open a platform-specific file save dialog to create of select a file for output. This function returns the full path to the selected file as a <b>String</b>, or <b>null</b> if no selection. If you select an existing file, that file will be replaced. Alternatively, you can navigate to a folder and create a new file to write to. 
-   * 
+   * Open a platform-specific file save dialog to create of select a file for 
+   * output. This function returns the full path to the selected file as a 
+   * <b>String</b>, or <b>null</b> if no selection. If you select an existing 
+   * file, that file will be replaced. Alternatively, you can navigate to a 
+   * folder and create a new file to write to. 
    * ( end auto-generated )
    * @webref output:files
    * @param prompt message you want the user to see in the file chooser
@@ -4930,8 +5375,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from selectFolder.xml )
    * 
-   * Opens a platform-specific file chooser dialog to select a folder for input. This function returns the full path to the selected folder as a <b>String</b>, or <b>null</b> if no selection.
-   * 
+   * Opens a platform-specific file chooser dialog to select a folder for 
+   * input. This function returns the full path to the selected folder as a 
+   * <b>String</b>, or <b>null</b> if no selection.
    * ( end auto-generated )
    * @webref input:files
    * @param prompt message you want the user to see in the file chooser
@@ -4986,10 +5432,14 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from createReader.xml )
    * 
-   * Creates a <b>BufferedReader</b> object that can be used to read files line-by-line as individual <b>String</b> objects. This is the complement to the <b>createWriter()</b> function.
+   * Creates a <b>BufferedReader</b> object that can be used to read files 
+   * line-by-line as individual <b>String</b> objects. This is the complement 
+   * to the <b>createWriter()</b> function.
    * <br/> <br/>
-   * Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
-   * 
+   * Starting with Processing release 0134, all files loaded and saved by the 
+   * Processing API use UTF-8 encoding. In previous releases, the default 
+   * encoding for your platform was used, which causes problems when files 
+   * are moved to other platforms.
    * ( end auto-generated )
    * @webref input:files
    * @param filename name of the file to be opened
@@ -5058,10 +5508,15 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from createWriter.xml )
    * 
-   * Creates a new file in the sketch folder, and a <b>PrintWriter</b> object to write to it. For the file to be made correctly, it should be flushed and must be closed with its <b>flush()</b> and <b>close()</b> methods (see above example). 
+   * Creates a new file in the sketch folder, and a <b>PrintWriter</b> object 
+   * to write to it. For the file to be made correctly, it should be flushed 
+   * and must be closed with its <b>flush()</b> and <b>close()</b> methods 
+   * (see above example). 
    * <br/> <br/>
-   * Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
-   * 
+   * Starting with Processing release 0134, all files loaded and saved by the 
+   * Processing API use UTF-8 encoding. In previous releases, the default 
+   * encoding for your platform was used, which causes problems when files 
+   * are moved to other platforms.
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to be created
@@ -5133,21 +5588,32 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from createInput.xml )
    * 
-   * This is a method for advanced programmers to open a Java InputStream. The method is useful if you want to use the facilities provided by PApplet to easily open files from the data folder or from a URL, but want an InputStream object so that you can use other Java methods to take more control of how the stream is read.
+   * This is a method for advanced programmers to open a Java InputStream. 
+   * The method is useful if you want to use the facilities provided by 
+   * PApplet to easily open files from the data folder or from a URL, but 
+   * want an InputStream object so that you can use other Java methods to 
+   * take more control of how the stream is read.
    * <br /><br />
    * If the requested item doesn't exist, null is returned. 
    * <br /><br />
    * In earlier releases, this method was called <b>openStream()</b>.
    * <br /><br />
-   * If not online, this will also check to see if the user is asking for a file whose name isn't properly capitalized. If capitalization is different an error will be printed to the console. This helps prevent issues that appear when a sketch is exported to the web, where case sensitivity matters, as opposed to running from inside the Processing Development Environment on Windows or Mac OS, where case sensitivity is preserved but ignored.
+   * If not online, this will also check to see if the user is asking for a 
+   * file whose name isn't properly capitalized. If capitalization is 
+   * different an error will be printed to the console. This helps prevent 
+   * issues that appear when a sketch is exported to the web, where case 
+   * sensitivity matters, as opposed to running from inside the Processing 
+   * Development Environment on Windows or Mac OS, where case sensitivity is 
+   * preserved but ignored.
    * <br /><br />
    * The filename passed in can be:<br />
    * - A URL, for instance openStream("http://processing.org/");<br />
    * - A file in the sketch's data folder<br />
    * - The full path to a file to be opened locally (when running as an application)
    * <br /><br />
-   * If the file ends with <b>.gz</b>, the stream will automatically be gzip decompressed. If you don't want the automatic decompression, use the related function <b>createInputRaw()</b>.
-   * 
+   * If the file ends with <b>.gz</b>, the stream will automatically be gzip 
+   * decompressed. If you don't want the automatic decompression, use the 
+   * related function <b>createInputRaw()</b>.
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -5394,10 +5860,14 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from loadBytes.xml )
    * 
-   * Reads the contents of a file or url and places it in a byte array. If a file is specified, it must be located in the sketch's "data" directory/folder.
+   * Reads the contents of a file or url and places it in a byte array. If a 
+   * file is specified, it must be located in the sketch's "data" directory/folder.
    * <br/> <br/>
-   * The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</A>.
-   * 
+   * The filename parameter can also be a URL to a file found online. For 
+   * security reasons, a Processing sketch found online can only download 
+   * files from the same server from which it came. Getting around this 
+   * restriction requires a <A 
+   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</A>.
    * ( end auto-generated )
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
@@ -5454,14 +5924,26 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from loadStrings.xml )
    * 
-   * Reads the contents of a file or url and creates a String array of its individual lines. If a file is specified, it must be located in the sketch's "data" directory/folder.
+   * Reads the contents of a file or url and creates a String array of its 
+   * individual lines. If a file is specified, it must be located in the 
+   * sketch's "data" directory/folder.
    * <br/> <br/>
-   * The filename parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</A>.
+   * The filename parameter can also be a URL to a file found online. For 
+   * security reasons, a Processing sketch found online can only download 
+   * files from the same server from which it came. Getting around this 
+   * restriction requires a <A 
+   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</A>.
    * <br/> <br/>
-   * If the file is not available or an error occurs, <b>null</b> will be returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned is null.
+   * If the file is not available or an error occurs, <b>null</b> will be 
+   * returned and an error message will be printed to the console. The error 
+   * message does not halt the program, however the null value may cause a 
+   * NullPointerException if your code does not check whether the value 
+   * returned is null.
    * <br/> <br/>
-   * Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
-   * 
+   * Starting with Processing release 0134, all files loaded and saved by the 
+   * Processing API use UTF-8 encoding. In previous releases, the default 
+   * encoding for your platform was used, which causes problems when files 
+   * are moved to other platforms.
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -5538,14 +6020,21 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from createOutput.xml )
    * 
-   * Similar to <b>createInput()</b>, this creates a Java <b>OutputStream</b> for a given filename or path. The file will be created in the sketch folder, or in the same folder as an exported application.
+   * Similar to <b>createInput()</b>, this creates a Java <b>OutputStream</b> 
+   * for a given filename or path. The file will be created in the sketch 
+   * folder, or in the same folder as an exported application.
    * <br /><br />
-   * If the path does not exist, intermediate folders will be created. If an exception occurs, it will be printed to the console, and <b>null</b> will be returned.
+   * If the path does not exist, intermediate folders will be created. If an 
+   * exception occurs, it will be printed to the console, and <b>null</b> 
+   * will be returned.
    * <br /><br />
-   * This method is a convenience over the Java approach that requires you to 1) create a FileOutputStream object, 2) determine the exact file location, and 3) handle exceptions. Exceptions are handled internally by the function, which is more appropriate for "sketch" projects.
+   * This method is a convenience over the Java approach that requires you to 
+   * 1) create a FileOutputStream object, 2) determine the exact file 
+   * location, and 3) handle exceptions. Exceptions are handled internally by 
+   * the function, which is more appropriate for "sketch" projects.
    * <br /><br />
-   * If the output filename ends with <b>.gz</b>, the output will be automatically GZIP compressed as it is written.
-   * 
+   * If the output filename ends with <b>.gz</b>, the output will be 
+   * automatically GZIP compressed as it is written.
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to open
@@ -5576,10 +6065,14 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from saveStream.xml )
    * 
-   * Save the contents of a stream to a file in the sketch folder. This is basically <b>saveBytes(blah, loadBytes())</b>, but done more efficiently (and with less confusing syntax).
+   * Save the contents of a stream to a file in the sketch folder. This is 
+   * basically <b>saveBytes(blah, loadBytes())</b>, but done more efficiently 
+   * (and with less confusing syntax).
    * <br /><br />   
-   * When using the <b>targetFile</b> parameter, it writes to a <b>File</b> object for greater control over the file location. (Note that unlike other api methods, this will not automatically compress or uncompress gzip files.)
-   * 
+   * When using the <b>targetFile</b> parameter, it writes to a <b>File</b> 
+   * object for greater control over the file location. (Note that unlike 
+   * other api methods, this will not automatically compress or uncompress 
+   * gzip files.)
    * ( end auto-generated )
    * @webref output:files
    * @param targetFilename name of the file to write to
@@ -5664,11 +6157,18 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from saveBytes.xml )
    * 
-   * Opposite of <b>loadBytes()</b>, will write an entire array of bytes to a file. The data is saved in binary format. This file is saved to the sketch's folder, which is opened by selecting "Show sketch folder" from the "Sketch" menu.
+   * Opposite of <b>loadBytes()</b>, will write an entire array of bytes to a 
+   * file. The data is saved in binary format. This file is saved to the 
+   * sketch's folder, which is opened by selecting "Show sketch folder" from 
+   * the "Sketch" menu.
    * <br/> <br/>
    * <br/> <br/>
-   * It is not possible to use saveXxxxx() methods inside a web browser unless the sketch is <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. To save a file back to a server, see the <A HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to web</A> example.
-   * 
+   * It is not possible to use saveXxxxx() methods inside a web browser 
+   * unless the sketch is <A 
+   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. 
+   * To save a file back to a server, see the <A 
+   * HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to 
+   * web</A> example.
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to write to
@@ -5743,12 +6243,21 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from saveStrings.xml )
    * 
-   * Writes an array of strings to a file, one line per string. This file is saved to the sketch's folder, which is opened by selecting "Show sketch folder" from the "Sketch" menu.
+   * Writes an array of strings to a file, one line per string. This file is 
+   * saved to the sketch's folder, which is opened by selecting "Show sketch 
+   * folder" from the "Sketch" menu.
    * <br/> <br/>
-   * It is not possible to use saveXxxxx() methods inside a web browser unless the sketch is <A HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. To save a file back to a server, see the <A HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to web</A> example.
+   * It is not possible to use saveXxxxx() methods inside a web browser 
+   * unless the sketch is <A 
+   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. 
+   * To save a file back to a server, see the <A 
+   * HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to 
+   * web</A> example.
    * <br/> <br/>
-   * Starting with Processing release 0134, all files loaded and saved by the Processing API use UTF-8 encoding. In previous releases, the default encoding for your platform was used, which causes problems when files are moved to other platforms.
-   * 
+   * Starting with Processing release 0134, all files loaded and saved by the 
+   * Processing API use UTF-8 encoding. In previous releases, the default 
+   * encoding for your platform was used, which causes problems when files 
+   * are moved to other platforms.
    * ( end auto-generated )
  * @webref output:files
  * @param filename filename for output
@@ -5928,8 +6437,13 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from sort.xml )
    * 
-   * Sorts an array of numbers from smallest to largest and puts an array of words in alphabetical order. The original array is not modified, a re-ordered array is returned. The <b>count</b> parameter states the number of elements to sort. For example if there are 12 elements in an array and if count is the value 5, only the first five elements on the array will be sorted. As of release 0126, the alphabetical ordering is case insensitive.
-   * 
+   * Sorts an array of numbers from smallest to largest and puts an array of 
+   * words in alphabetical order. The original array is not modified, a 
+   * re-ordered array is returned. The <b>count</b> parameter states the 
+   * number of elements to sort. For example if there are 12 elements in an 
+   * array and if count is the value 5, only the first five elements on the 
+   * array will be sorted. As of release 0126, the alphabetical ordering is 
+   * case insensitive.
    * ( end auto-generated )
  * @webref data:array_functions
  * @param what String[], int[], or float[]
@@ -6005,8 +6519,15 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from arrayCopy.xml )
    * 
-   * Copies an array (or part of an array) to another array. The <b>src</b> array is copied to the <b>dst</b> array, beginning at the position specified by <b>srcPos</b> and into the position specified by <b>dstPos</b>. The number of elements to copy is determined by <b>length</b>. The simplified version with two arguments copies an entire array to another of the same size. It is equivalent to "arrayCopy(src, 0, dst, 0, src.length)". This function is far more efficient for copying array data than iterating through a <b>for</b> and copying each element.
-   * 
+   * Copies an array (or part of an array) to another array. The <b>src</b> 
+   * array is copied to the <b>dst</b> array, beginning at the position 
+   * specified by <b>srcPos</b> and into the position specified by 
+   * <b>dstPos</b>. The number of elements to copy is determined by 
+   * <b>length</b>. The simplified version with two arguments copies an 
+   * entire array to another of the same size. It is equivalent to 
+   * "arrayCopy(src, 0, dst, 0, src.length)". This function is far more 
+   * efficient for copying array data than iterating through a <b>for</b> and 
+   * copying each element.
    * ( end auto-generated )
    * @webref data:array_functions
    * @param src the source array
@@ -6069,10 +6590,13 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from expand.xml )
    * 
-   * Increases the size of an array. By default, this function doubles the size of the array, but the optional <b>newSize</b> parameter provides precise control over the increase in size. 
+   * Increases the size of an array. By default, this function doubles the 
+   * size of the array, but the optional <b>newSize</b> parameter provides 
+   * precise control over the increase in size. 
    * <br/> <br/>
-   * When using an array of objects, the data returned from the function must be cast to the object array's data type. For example: <em>SomeClass[] items = (SomeClass[]) expand(originalArray)</em>.
-   * 
+   * When using an array of objects, the data returned from the function must 
+   * be cast to the object array's data type. For example: <em>SomeClass[] 
+   * items = (SomeClass[]) expand(originalArray)</em>.
    * ( end auto-generated )
    * @webref data:array_functions
    * @param list[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
@@ -6157,10 +6681,13 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from append.xml )
    * 
-   * Expands an array by one element and adds data to the new position. The datatype of the <b>element</b> parameter must be the same as the datatype of the array.
+   * Expands an array by one element and adds data to the new position. The 
+   * datatype of the <b>element</b> parameter must be the same as the 
+   * datatype of the array.
    * <br/> <br/>
-   * When using an array of objects, the data returned from the function must be cast to the object array's data type. For example: <em>SomeClass[] items = (SomeClass[]) append(originalArray, element)</em>.
-   * 
+   * When using an array of objects, the data returned from the function must 
+   * be cast to the object array's data type. For example: <em>SomeClass[] 
+   * items = (SomeClass[]) append(originalArray, element)</em>.
    * ( end auto-generated )
    * @webref data:array_functions
    * @param b array to append
@@ -6211,8 +6738,9 @@ public class PApplet extends Applet
    * 
    * Decreases an array by one element and returns the shortened array.
    * <br/> <br/>
-   * When using an array of objects, the data returned from the function must be cast to the object array's data type. For example: <em>SomeClass[] items = (SomeClass[]) shorten(originalArray)</em>.
-   * 
+   * When using an array of objects, the data returned from the function must 
+   * be cast to the object array's data type. For example: <em>SomeClass[] 
+   * items = (SomeClass[]) shorten(originalArray)</em>.
    * ( end auto-generated )
   * @webref data:array_functions
   * @param list boolean[], byte[], char[], int[], float[], or String[], or an array of objects
@@ -6252,10 +6780,14 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from splice.xml )
    * 
-   * Inserts a value or array of values into an existing array. The first two parameters must be of the same datatype. The <b>array</b> parameter defines the array which will be modified and the second parameter defines the data which will be inserted.
+   * Inserts a value or array of values into an existing array. The first two 
+   * parameters must be of the same datatype. The <b>array</b> parameter 
+   * defines the array which will be modified and the second parameter 
+   * defines the data which will be inserted.
    * <br/> <br/>
-   * When using an array of objects, the data returned from the function must be cast to the object array's data type. For example: <em>SomeClass[] items = (SomeClass[]) splice(array1, array2, index)</em>.
-   * 
+   * When using an array of objects, the data returned from the function must 
+   * be cast to the object array's data type. For example: <em>SomeClass[] 
+   * items = (SomeClass[]) splice(array1, array2, index)</em>.
    * ( end auto-generated )
  * @webref data:array_functions
  * @param list boolean[], byte[], char[], int[], float[], or String[], or an array of objects
@@ -6413,10 +6945,17 @@ public class PApplet extends Applet
  /**
    * ( begin auto-generated from subset.xml )
    * 
-   * Extracts an array of elements from an existing array. The <b>array</b> parameter defines the array from which the elements will be copied and the <b>offset</b> and <b>length</b> parameters determine which elements to extract. If no <b>length</b> is given, elements will be extracted from the <b>offset</b> to the end of the array. When specifying the <b>offset</b> remember the first array element is 0. This function does not change the source array.
+   * Extracts an array of elements from an existing array. The <b>array</b> 
+   * parameter defines the array from which the elements will be copied and 
+   * the <b>offset</b> and <b>length</b> parameters determine which elements 
+   * to extract. If no <b>length</b> is given, elements will be extracted 
+   * from the <b>offset</b> to the end of the array. When specifying the 
+   * <b>offset</b> remember the first array element is 0. This function does 
+   * not change the source array.
    * <br/> <br/>
-   * When using an array of objects, the data returned from the function must be cast to the object array's data type. For example: <em>SomeClass[] items = (SomeClass[]) subset(originalArray, 0, 4)</em>.
-   * 
+   * When using an array of objects, the data returned from the function must 
+   * be cast to the object array's data type. For example: <em>SomeClass[] 
+   * items = (SomeClass[]) subset(originalArray, 0, 4)</em>.
    * ( end auto-generated )
   * @webref data:array_functions
   * @param list boolean[], byte, char[], int[], float[], String[] or an array of objects
@@ -6499,10 +7038,13 @@ public class PApplet extends Applet
  /**
    * ( begin auto-generated from concat.xml )
    * 
-   * Concatenates two arrays. For example, concatenating the array { 1, 2, 3 } and the array { 4, 5, 6 } yields { 1, 2, 3, 4, 5, 6 }. Both parameters must be arrays of the same datatype.
+   * Concatenates two arrays. For example, concatenating the array { 1, 2, 3 
+   * } and the array { 4, 5, 6 } yields { 1, 2, 3, 4, 5, 6 }. Both parameters 
+   * must be arrays of the same datatype.
    * <br/> <br/>
-   * When using an array of objects, the data returned from the function must be cast to the object array's data type. For example: <em>SomeClass[] items = (SomeClass[]) concat(array1, array2)</em>.
-   * 
+   * When using an array of objects, the data returned from the function must 
+   * be cast to the object array's data type. For example: <em>SomeClass[] 
+   * items = (SomeClass[]) concat(array1, array2)</em>.
    * ( end auto-generated )
   * @webref data:array_functions
   * @param a first array to concatenate
@@ -6567,7 +7109,6 @@ public class PApplet extends Applet
    * ( begin auto-generated from reverse.xml )
    * 
    * Reverses the order of an array.
-   * 
    * ( end auto-generated )
   * @webref data:array_functions
   * @param list[] booleans[], bytes[], chars[], ints[], floats[], or Strings[]
@@ -6647,8 +7188,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from trim.xml )
    * 
-   * Removes whitespace characters from the beginning and end of a String. In addition to standard whitespace characters such as space, carriage return, and tab, this function also removes the Unicode "nbsp" character.
-   * 
+   * Removes whitespace characters from the beginning and end of a String. In 
+   * addition to standard whitespace characters such as space, carriage 
+   * return, and tab, this function also removes the Unicode "nbsp" character.
    * ( end auto-generated )
    * @webref data:string_functions
    * @param str any string
@@ -6676,8 +7218,10 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from join.xml )
    * 
-   * Combines an array of Strings into one String, each separated by the character(s) used for the <b>separator</b> parameter. To join arrays of ints or floats, it's necessary to first convert them to strings using <b>nf()</b> or <b>nfs()</b>.
-   * 
+   * Combines an array of Strings into one String, each separated by the 
+   * character(s) used for the <b>separator</b> parameter. To join arrays of 
+   * ints or floats, it's necessary to first convert them to strings using 
+   * <b>nf()</b> or <b>nfs()</b>.
    * ( end auto-generated )
    * @webref data:string_functions
    * @param str[] array of Strings
@@ -6714,10 +7258,15 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from splitTokens.xml )
    * 
-   * The splitTokens() function splits a String at one or many character "tokens." The <b>tokens</b> parameter specifies the character or characters to be used as a boundary.
+   * The splitTokens() function splits a String at one or many character 
+   * "tokens." The <b>tokens</b> parameter specifies the character or 
+   * characters to be used as a boundary.
    * <br/> <br/>
-   * If no <b>tokens</b> character is specified, any whitespace character is used to split. Whitespace characters include tab (\\t), line feed (\\n), carriage return (\\r), form feed (\\f), and space. To convert a String to an array of integers or floats, use the datatype conversion functions <b>int()</b> and <b>float()</b> to convert the array of Strings.
-   * 
+   * If no <b>tokens</b> character is specified, any whitespace character is 
+   * used to split. Whitespace characters include tab (\\t), line feed (\\n), 
+   * carriage return (\\r), form feed (\\f), and space. To convert a String 
+   * to an array of integers or floats, use the datatype conversion functions 
+   * <b>int()</b> and <b>float()</b> to convert the array of Strings.
    * ( end auto-generated )
    * @webref data:string_functions
    * @param what the string to be split
@@ -6842,15 +7391,27 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from match.xml )
    * 
-   * The match() function is used to apply a regular expression to a piece of text, and return matching groups (elements found inside parentheses) as a String array. No match will return null. If no groups are specified in the regexp, but the sequence matches, an array of length one (with the matched text as the first element of the array) will be returned.
+   * The match() function is used to apply a regular expression to a piece of 
+   * text, and return matching groups (elements found inside parentheses) as 
+   * a String array. No match will return null. If no groups are specified in 
+   * the regexp, but the sequence matches, an array of length one (with the 
+   * matched text as the first element of the array) will be returned.
    * <br/> <br/>
-   * To use the function, first check to see if the result is null. If the result is null, then the sequence did not match. If the sequence did match, an array is returned. 
-   * If there are groups (specified by sets of parentheses) in the regexp, then the contents of each will be returned in the array.  
-   * Element [0] of a regexp match returns the entire matching string, and the match groups start at element [1] (the first group is [1], the second [2], and so on).
+   * To use the function, first check to see if the result is null. If the 
+   * result is null, then the sequence did not match. If the sequence did 
+   * match, an array is returned. 
+   * If there are groups (specified by sets of parentheses) in the regexp, 
+   * then the contents of each will be returned in the array.  
+   * Element [0] of a regexp match returns the entire matching string, and 
+   * the match groups start at element [1] (the first group is [1], the 
+   * second [2], and so on).
    * <br/> <br/>
-   * The syntax can be found in the reference for Java's <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">Pattern</A> class. For regular expression syntax, read the <A HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java Tutorial</A> on the topic. 
+   * The syntax can be found in the reference for Java's <A 
+   * HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">Pattern</A> 
+   * class. For regular expression syntax, read the <A 
+   * HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java 
+   * Tutorial</A> on the topic. 
    * <br/> <br/>
-   * 
    * ( end auto-generated )
    * @webref data:string_functions
    * @param what the String to be searched
@@ -6879,15 +7440,28 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from matchAll.xml )
    * 
-   * The matchAll() function is used to apply a regular expression to a piece of text, and return a list of matching groups (elements found inside parentheses) as a two-dimensional String array. No matches will return null. If no groups are specified in the regexp, but the sequence matches, a two dimensional array is still returned, but the second dimension is only of length one.
+   * The matchAll() function is used to apply a regular expression to a piece 
+   * of text, and return a list of matching groups (elements found inside 
+   * parentheses) as a two-dimensional String array. No matches will return 
+   * null. If no groups are specified in the regexp, but the sequence 
+   * matches, a two dimensional array is still returned, but the second 
+   * dimension is only of length one.
    * <br/> <br/>
-   * To use the function, first check to see if the result is null. If the result is null, then the sequence did not match at all. If the sequence did match, a 2D array is returned. 
-   * If there are groups (specified by sets of parentheses) in the regexp, then the contents of each will be returned in the array.  
-   * Assuming, a loop with counter variable i, element [i][0] of a regexp match returns the entire matching string, and the match groups start at element [i][1] (the first group is [i][1], the second [i][2], and so on).
+   * To use the function, first check to see if the result is null. If the 
+   * result is null, then the sequence did not match at all. If the sequence 
+   * did match, a 2D array is returned. 
+   * If there are groups (specified by sets of parentheses) in the regexp, 
+   * then the contents of each will be returned in the array.  
+   * Assuming, a loop with counter variable i, element [i][0] of a regexp 
+   * match returns the entire matching string, and the match groups start at 
+   * element [i][1] (the first group is [i][1], the second [i][2], and so on).
    * <br/> <br/>
-   * The syntax can be found in the reference for Java's <A HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">Pattern</A> class. For regular expression syntax, read the <A HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java Tutorial</A> on the topic. 
+   * The syntax can be found in the reference for Java's <A 
+   * HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">Pattern</A> 
+   * class. For regular expression syntax, read the <A 
+   * HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java 
+   * Tutorial</A> on the topic. 
    * <br/> <br/>
-   * 
    * ( end auto-generated )
    * @webref data:string_functions
    * @param what the String to search inside
@@ -7445,8 +8019,15 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from nf.xml )
    * 
-   * Utility function for formatting numbers into strings. There are two versions, one for formatting floats and one for formatting ints. The values for the <b>digits</b>, <b>left</b>, and <b>right</b> parameters should always be positive integers.<br /><br />As shown in the above example, <b>nf()</b> is used to add zeros to the left and/or right of a number. This is typically for aligning a list of numbers. To <em>remove</em> digits from a floating-point number, use the <b>int()</b>, <b>ceil()</b>, <b>floor()</b>, or <b>round()</b> functions.  
-   * 
+   * Utility function for formatting numbers into strings. There are two 
+   * versions, one for formatting floats and one for formatting ints. The 
+   * values for the <b>digits</b>, <b>left</b>, and <b>right</b> parameters 
+   * should always be positive integers.<br /><br />As shown in the above 
+   * example, <b>nf()</b> is used to add zeros to the left and/or right of a 
+   * number. This is typically for aligning a list of numbers. To 
+   * <em>remove</em> digits from a floating-point number, use the 
+   * <b>int()</b>, <b>ceil()</b>, <b>floor()</b>, or <b>round()</b> 
+   * functions.  
    * ( end auto-generated )
  * @webref data:string_functions
  * @param num the number(s) to format
@@ -7473,10 +8054,13 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from nfc.xml )
    * 
-   * Utility function for formatting numbers into strings and placing appropriate commas to mark units of 1000. There are two versions, one for formatting ints and one for formatting an array of ints. The value for the <b>digits</b> parameter should always be a positive integer.
+   * Utility function for formatting numbers into strings and placing 
+   * appropriate commas to mark units of 1000. There are two versions, one 
+   * for formatting ints and one for formatting an array of ints. The value 
+   * for the <b>digits</b> parameter should always be a positive integer.
    * <br/> <br/>
-   * For a non-US locale, this will insert periods instead of commas, or whatever is apprioriate for that region.
-   * 
+   * For a non-US locale, this will insert periods instead of commas, or 
+   * whatever is apprioriate for that region.
    * ( end auto-generated )
  * @webref data:string_functions
  * @param num[] the number(s) to format
@@ -7525,8 +8109,12 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from nfs.xml )
    * 
-   * Utility function for formatting numbers into strings. Similar to <b>nf()</b> but leaves a blank space in front of positive numbers so they align with negative numbers in spite of the minus symbol. There are two versions, one for formatting floats and one for formatting ints. The values for the <b>digits</b>, <b>left</b>, and <b>right</b> parameters should always be positive integers.
-   * 
+   * Utility function for formatting numbers into strings. Similar to 
+   * <b>nf()</b> but leaves a blank space in front of positive numbers so 
+   * they align with negative numbers in spite of the minus symbol. There are 
+   * two versions, one for formatting floats and one for formatting ints. The 
+   * values for the <b>digits</b>, <b>left</b>, and <b>right</b> parameters 
+   * should always be positive integers.
    * ( end auto-generated )
   * @webref data:string_functions
   * @param num[] the number(s) to format
@@ -7557,8 +8145,11 @@ public class PApplet extends Applet
  /**
    * ( begin auto-generated from nfp.xml )
    * 
-   * Utility function for formatting numbers into strings. Similar to <b>nf()</b> but puts a "+" in front of positive numbers and a "-" in front of negative numbers. There are two versions, one for formatting floats and one for formatting ints. The values for the <b>digits</b>, <b>left</b>, and <b>right</b> parameters should always be positive integers.
-   * 
+   * Utility function for formatting numbers into strings. Similar to 
+   * <b>nf()</b> but puts a "+" in front of positive numbers and a "-" in 
+   * front of negative numbers. There are two versions, one for formatting 
+   * floats and one for formatting ints. The values for the <b>digits</b>, 
+   * <b>left</b>, and <b>right</b> parameters should always be positive integers.
    * ( end auto-generated )
   * @webref data:string_functions
   * @param num[] the number(s) to format
@@ -7705,10 +8296,14 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from hex.xml )
    * 
-   * Converts a byte, char, int, or color to a String containing the equivalent hexadecimal notation. For example color(0, 102, 153) will convert to the String "FF006699". This function can help make your geeky debugging sessions much happier.
+   * Converts a byte, char, int, or color to a String containing the 
+   * equivalent hexadecimal notation. For example color(0, 102, 153) will 
+   * convert to the String "FF006699". This function can help make your geeky 
+   * debugging sessions much happier.
    * <br/> <br/>
-   * Note that the maximum number of digits is 8, because an int value can only represent up to 32 bits. Specifying more than eight digits will simply shorten the string to eight anyway.
-   * 
+   * Note that the maximum number of digits is 8, because an int value can 
+   * only represent up to 32 bits. Specifying more than eight digits will 
+   * simply shorten the string to eight anyway.
    * ( end auto-generated )
    * @webref data:conversion
    * @param what the value to convert
@@ -7749,8 +8344,8 @@ public class PApplet extends Applet
  /**
    * ( begin auto-generated from unhex.xml )
    * 
-   * Converts a String representation of a hexadecimal number to its equivalent integer value.
-   * 
+   * Converts a String representation of a hexadecimal number to its 
+   * equivalent integer value.
    * ( end auto-generated )
   * @webref data:conversion
   * @param what string
@@ -7799,10 +8394,14 @@ public class PApplet extends Applet
  /**
    * ( begin auto-generated from binary.xml )
    * 
-   * Converts a byte, char, int, or color to a String containing the equivalent binary notation. For example color(0, 102, 153, 255) will convert to the String "11111111000000000110011010011001". This function can help make your geeky debugging sessions much happier.
+   * Converts a byte, char, int, or color to a String containing the 
+   * equivalent binary notation. For example color(0, 102, 153, 255) will 
+   * convert to the String "11111111000000000110011010011001". This function 
+   * can help make your geeky debugging sessions much happier.
    * <br/> <br/>
-   * Note that the maximum number of digits is 32, because an int value can only represent up to 32 bits. Specifying more than 32 digits will simply shorten the string to 32 anyway.
-   * 
+   * Note that the maximum number of digits is 32, because an int value can 
+   * only represent up to 32 bits. Specifying more than 32 digits will simply 
+   * shorten the string to 32 anyway.
    * ( end auto-generated )
   * @webref data:conversion
   * @param what value to convert
@@ -7831,8 +8430,8 @@ public class PApplet extends Applet
  /**
    * ( begin auto-generated from unbinary.xml )
    * 
-   * Converts a String representation of a binary number to its equivalent integer value. For example, unbinary("00001000") will return 8.
-   * 
+   * Converts a String representation of a binary number to its equivalent 
+   * integer value. For example, unbinary("00001000") will return 8.
    * ( end auto-generated )
   * @webref data:conversion
   * @param what String
@@ -7857,8 +8456,12 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from color.xml )
    * 
-   * Creates colors for storing in variables of the <b>color</b> datatype. The parameters are interpreted as RGB or HSB values depending on the current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 and therefore, the function call <b>color(255, 204, 0)</b> will return a bright yellow color. More about how colors are stored can be found in the reference for the <a href="color_datatype.html">color</a> datatype.
-   * 
+   * Creates colors for storing in variables of the <b>color</b> datatype. 
+   * The parameters are interpreted as RGB or HSB values depending on the 
+   * current <b>colorMode()</b>. The default mode is RGB values from 0 to 255 
+   * and therefore, the function call <b>color(255, 204, 0)</b> will return a 
+   * bright yellow color. More about how colors are stored can be found in 
+   * the reference for the <a href="color_datatype.html">color</a> datatype.
    * ( end auto-generated )
    * @webref color:creating_reading
    * @param gray number specifying value between white and black
@@ -8483,10 +9086,16 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from beginRecord.xml )
    * 
-   * Opens a new file and all subsequent drawing functions are echoed to this file as well as the display window. The <b>beginRecord()</b> function requires two parameters, the first is the renderer and the second is the file name. This function is always used with <b>endRecord()</b> to stop the recording process and close the file.
+   * Opens a new file and all subsequent drawing functions are echoed to this 
+   * file as well as the display window. The <b>beginRecord()</b> function 
+   * requires two parameters, the first is the renderer and the second is the 
+   * file name. This function is always used with <b>endRecord()</b> to stop 
+   * the recording process and close the file.
    * <br /> <br />
-   * Note that beginRecord() will only pick up any settings that happen after it has been called. For instance, if you call textFont() before beginRecord(), then that font will not be set for the file that you're recording to. 
-   * 
+   * Note that beginRecord() will only pick up any settings that happen after 
+   * it has been called. For instance, if you call textFont() before 
+   * beginRecord(), then that font will not be set for the file that you're 
+   * recording to. 
    * ( end auto-generated )
    * @webref output:files
    * @param renderer for example, PDF
@@ -8519,8 +9128,8 @@ public class PApplet extends Applet
  /** 
    * ( begin auto-generated from endRecord.xml )
    * 
-   * Stops the recording process started by <b>beginRecord()</b> and closes the file.
-   * 
+   * Stops the recording process started by <b>beginRecord()</b> and closes 
+   * the file.
    * ( end auto-generated )
   * @webref output:files
   * @see PApplet#beginRecord(String, String)
@@ -8540,16 +9149,32 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from beginRaw.xml )
    * 
-   * To create vectors from 3D data, use the <b>beginRaw()</b> and <b>endRaw()</b> commands. These commands will grab the shape data just before it is rendered to the screen. At this stage, your entire scene is nothing but a long list of individual lines and triangles. This means that a shape created with <b>sphere()</b> method will be made up of hundreds of triangles, rather than a single object. Or that a multi-segment line shape (such as a curve) will be rendered as individual segments.
+   * To create vectors from 3D data, use the <b>beginRaw()</b> and 
+   * <b>endRaw()</b> commands. These commands will grab the shape data just 
+   * before it is rendered to the screen. At this stage, your entire scene is 
+   * nothing but a long list of individual lines and triangles. This means 
+   * that a shape created with <b>sphere()</b> method will be made up of 
+   * hundreds of triangles, rather than a single object. Or that a 
+   * multi-segment line shape (such as a curve) will be rendered as 
+   * individual segments.
    * <br /><br />
-   * When using <b>beginRaw()</b> and <b>endRaw()</b>, it's possible to write to either a 2D or 3D renderer. For instance, <b>beginRaw()</b> with the PDF library will write the geometry as flattened triangles and lines, even if recording from a 3D renderer such as <b>P3D</b> or <b>OPENGL</b>. 
+   * When using <b>beginRaw()</b> and <b>endRaw()</b>, it's possible to write 
+   * to either a 2D or 3D renderer. For instance, <b>beginRaw()</b> with the 
+   * PDF library will write the geometry as flattened triangles and lines, 
+   * even if recording from a 3D renderer such as <b>P3D</b> or 
+   * <b>OPENGL</b>. 
    * <br /><br />
-   * If you want a background to show up in your files, use <b>rect(0, 0, width, height)</b> after setting the <b>fill()</b> to the background color. Otherwise the background will not be rendered to the file because the background is not shape.
+   * If you want a background to show up in your files, use <b>rect(0, 0, 
+   * width, height)</b> after setting the <b>fill()</b> to the background 
+   * color. Otherwise the background will not be rendered to the file because 
+   * the background is not shape.
    * <br /><br />
-   * Using <b>hint(ENABLE_DEPTH_SORT)</b> can improve the appearance of 3D geometry drawn to 2D file formats. See the <b>hint()</b> reference for more details.
+   * Using <b>hint(ENABLE_DEPTH_SORT)</b> can improve the appearance of 3D 
+   * geometry drawn to 2D file formats. See the <b>hint()</b> reference for 
+   * more details.
    * <br /><br />
-   * See examples in the reference for the <b>PDF</b> and <b>DXF</b> libraries for more information.
-   * 
+   * See examples in the reference for the <b>PDF</b> and <b>DXF</b> 
+   * libraries for more information.
    * ( end auto-generated )
    * @webref output:files
    * @param renderer for example, PDF or DXF
@@ -8584,8 +9209,10 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from endRaw.xml )
    * 
-   * Complement to <b>beginRaw()</b>; they must always be used together. See the <a href="http://www.processing.org/reference/beginRaw_.html"><b>beginRaw()</b></a> reference for details.
-   * 
+   * Complement to <b>beginRaw()</b>; they must always be used together. See 
+   * the <a 
+   * href="http://www.processing.org/reference/beginRaw_.html"><b>beginRaw()</b></a> 
+   * reference for details.
    * ( end auto-generated )
    * @webref output:files
    * @see PApplet#beginRaw(String, String)
@@ -8611,10 +9238,16 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from loadPixels.xml )
    * 
-   * Loads the pixel data for the display window into the <b>pixels[]</b> array. This function must always be called before reading from or writing to <b>pixels[]</b>.
-   * <br/><br/>
-   * Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
-   * 
+   * Loads the pixel data for the display window into the <b>pixels[]</b> 
+   * array. This function must always be called before reading from or 
+   * writing to <b>pixels[]</b>.
+   * <br/><br/> renderers may or may not seem to require <b>loadPixels()</b> 
+   * or <b>updatePixels()</b>. However, the rule is that any time you want to 
+   * manipulate the <b>pixels[]</b> array, you must first call 
+   * <b>loadPixels()</b>, and after changes have been made, call 
+   * <b>updatePixels()</b>. Even if the renderer may not seem to use this 
+   * function in the current Processing release, this will always be subject 
+   * to change.
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Override the g.pixels[] function to set the pixels[] array
@@ -8637,12 +9270,20 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from updatePixels.xml )
    * 
-   * Updates the display window with the data in the <b>pixels[]</b> array. Use in conjunction with <b>loadPixels()</b>. If you're only reading pixels from the array, there's no need to call <b>updatePixels()</b> unless there are changes.
-   * <br/><br/>
-   * Certain renderers may or may not seem to require <b>loadPixels()</b> or <b>updatePixels()</b>. However, the rule is that any time you want to manipulate the <b>pixels[]</b> array, you must first call <b>loadPixels()</b>, and after changes have been made, call <b>updatePixels()</b>. Even if the renderer may not seem to use this function in the current Processing release, this will always be subject to change.
+   * Updates the display window with the data in the <b>pixels[]</b> array. 
+   * Use in conjunction with <b>loadPixels()</b>. If you're only reading 
+   * pixels from the array, there's no need to call <b>updatePixels()</b> 
+   * unless there are changes.
+   * <br/><br/> renderers may or may not seem to require <b>loadPixels()</b> 
+   * or <b>updatePixels()</b>. However, the rule is that any time you want to 
+   * manipulate the <b>pixels[]</b> array, you must first call 
+   * <b>loadPixels()</b>, and after changes have been made, call 
+   * <b>updatePixels()</b>. Even if the renderer may not seem to use this 
+   * function in the current Processing release, this will always be subject 
+   * to change.
    * <br/> <br/>
-   * Currently, none of the renderers use the additional parameters to <b>updatePixels()</b>, however this may be implemented in the future. 
-   * 
+   * Currently, none of the renderers use the additional parameters to 
+   * <b>updatePixels()</b>, however this may be implemented in the future. 
    * ( end auto-generated )
    * @webref image:pixels
    * @param x1 x-coordinate of the upper-left corner
