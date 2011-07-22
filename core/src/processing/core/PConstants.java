@@ -166,8 +166,10 @@ public interface PConstants {
   /**
    * ( begin auto-generated from PI.xml )
    * 
-   * PI is a mathematical constant with the value 3.14159265358979323846. It is the ratio of the circumference of a circle to its diameter. It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>. 
-   * 
+   * PI is a mathematical constant with the value 3.14159265358979323846. It 
+   * is the ratio of the circumference of a circle to its diameter. It is 
+   * useful in combination with the trigonometric functions <b>sin()</b> and 
+   * <b>cos()</b>. 
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#HALF_PI
@@ -179,8 +181,10 @@ public interface PConstants {
   /**
    * ( begin auto-generated from HALF_PI.xml )
    * 
-   * HALF_PI is a mathematical constant with the value 1.57079632679489661923. It is half the ratio of the circumference of a circle to its diameter. It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>. 
-   * 
+   * HALF_PI is a mathematical constant with the value 
+   * 1.57079632679489661923. It is half the ratio of the circumference of a 
+   * circle to its diameter. It is useful in combination with the 
+   * trigonometric functions <b>sin()</b> and <b>cos()</b>. 
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#PI
@@ -192,8 +196,10 @@ public interface PConstants {
   /**
    * ( begin auto-generated from QUARTER_PI.xml )
    * 
-   * QUARTER_PI is a mathematical constant with the value 0.7853982. It is one quarter the ratio of the circumference of a circle to its diameter. It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>. 
-   * 
+   * QUARTER_PI is a mathematical constant with the value 0.7853982. It is 
+   * one quarter the ratio of the circumference of a circle to its diameter. 
+   * It is useful in combination with the trigonometric functions 
+   * <b>sin()</b> and <b>cos()</b>. 
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#PI
@@ -204,8 +210,10 @@ public interface PConstants {
   /**
    * ( begin auto-generated from TWO_PI.xml )
    * 
-   * TWO_PI is a mathematical constant with the value 6.28318530717958647693. It is twice the ratio of the circumference of a circle to its diameter. It is useful in combination with the trigonometric functions <b>sin()</b> and <b>cos()</b>. 
-   * 
+   * TWO_PI is a mathematical constant with the value 6.28318530717958647693. 
+   * It is twice the ratio of the circumference of a circle to its diameter. 
+   * It is useful in combination with the trigonometric functions 
+   * <b>sin()</b> and <b>cos()</b>. 
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#PI
