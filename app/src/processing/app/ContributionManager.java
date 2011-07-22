@@ -74,46 +74,16 @@ public class ContributionManager {
   String category;
   
   ContributionListing contributionListing;
-
-  private boolean hasBeenShow;
   
-  public ContributionManager(Editor editor) {
-
-    this.editor = editor;
-    dialog = new JFrame("Contribution Manager");
-    
-    Base.setIcon(dialog);
-    
-    createComponents();
-    
-    registerDisposeListeners();
-    
-    dialog.pack();
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    dialog.setLocation((screen.width - dialog.getWidth()) / 2,
-                       (screen.height - dialog.getHeight()) / 2);
-    
-    contributionListPanel.grabFocus();
-    
-  }
-  
-  private void createComponents() {
-    dialog.setResizable(true);
-    
-    Container pane = dialog.getContentPane();
-    pane.setLayout(new GridBagLayout());
-    
-    GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.gridwidth = 2;
-    c.weightx = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    filterField = new FilterField();
-    
-    pane.add(filterField, c);
-   
+  /**
+   * Initializes the contribution listing and fetches the advertised
+   * contributions in a separate thread. This does not initialize any AWT
+   * components except for a single JProgressBar which is needed in case
+   * showFrame is called in the middle of downloading.
+   */
+  public ContributionManager() {
     contributionListing = new ContributionListing();
+    
     contributionListPanel = new ContributionListPanel(this);
     contributionListing.addContributionListener(contributionListPanel);
     
@@ -130,6 +100,56 @@ public class ContributionManager {
         }
       }
     });
+  }
+  
+  protected void showFrame(Editor editor) {
+    this.editor = editor;
+    
+    updateContributionListing();
+    
+    if (dialog == null) {
+      dialog = new JFrame("Contribution Manager");
+  
+      Base.setIcon(dialog);
+  
+      createComponents();
+  
+      registerDisposeListeners();
+  
+      dialog.pack();
+      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+      dialog.setLocation((screen.width - dialog.getWidth()) / 2,
+                         (screen.height - dialog.getHeight()) / 2);
+  
+      contributionListPanel.grabFocus();
+    }
+    
+    dialog.setVisible(true);
+  }
+
+  /**
+   * Close the window after an OK or Cancel.
+   */
+  protected void disposeFrame() {
+    dialog.dispose();
+    editor = null;
+  }
+
+  private void createComponents() {
+    dialog.setResizable(true);
+    
+    Container pane = dialog.getContentPane();
+    pane.setLayout(new GridBagLayout());
+    
+    GridBagConstraints c = new GridBagConstraints();
+    c.gridx = 0;
+    c.gridy = 0;
+    c.gridwidth = 2;
+    c.weightx = 1;
+    c.fill = GridBagConstraints.HORIZONTAL;
+    filterField = new FilterField();
+    
+    pane.add(filterField, c);
     
     c = new GridBagConstraints();
     c.fill = GridBagConstraints.BOTH;
@@ -180,6 +200,9 @@ public class ContributionManager {
   }
 
   private void updateCategoryChooser() {
+    if (categoryChooser == null)
+      return;
+    
     ArrayList<String> categories;
     categoryChooser.removeAllItems();
     categories = new ArrayList<String>(contributionListing.getCategories());
@@ -217,23 +240,6 @@ public class ContributionManager {
     });
   }
 
-  protected void showFrame(Editor editor) {
-    this.editor = editor;
-    hasBeenShow = true;
-    dialog.setVisible(true);
-  }
-
-  /**
-   * Close the window after an OK or Cancel.
-   */
-  protected void disposeFrame() {
-    dialog.dispose();
-  }
-
-  public boolean hasBeenShow() {
-    return hasBeenShow;
-  }
-
   public void filterLibraries(String category, List<String> filters) {
 
     List<ContributionInfo> filteredLibraries = contributionListing
@@ -243,6 +249,9 @@ public class ContributionManager {
   }
 
   protected void updateContributionListing() {
+    if (editor == null)
+      return;
+    
     ArrayList<Library> libraries = editor.getMode().contribLibraries;
     ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
 
@@ -263,6 +272,9 @@ public class ContributionManager {
     contributionListing.updateInstalledList(infoList);
   }
  
+  /**
+   * Non-blocking call to remove a contribution in a new thread.
+   */
   public void removeContribution(final Contribution contribution,
                                  final JProgressMonitor pm) {
 
@@ -288,13 +300,15 @@ public class ContributionManager {
     }).start();
 
   }
-  
+
+  /**
+   * Non-blocking call to download and install a contribution in a new thread.
+   */
   public void downloadAndInstall(URL url,
-                                  final ContributionInfo info,
-                                  final ContributionInstaller installOperation,
-                                  final JProgressMonitor downloadProgressMonitor,
-                                  final JProgressMonitor installProgressMonitor) {
-    
+                                 final ContributionInfo info,
+                                 final JProgressMonitor downloadProgressMonitor,
+                                 final JProgressMonitor installProgressMonitor) {
+
     File libDest = getTemporaryFile(url);
     
     final FileDownloader downloader = new FileDownloader(url, libDest,
@@ -310,7 +324,15 @@ public class ContributionManager {
           installProgressMonitor.startTask("Installing",
                                            ProgressMonitor.UNKNOWN);
 
-          Contribution contribution = installOperation.installContribution(libFile);
+          Contribution contribution = null;
+          switch (info.getType()) {
+          case LIBRARY:
+            contribution = installLibrary(libFile, false);
+            break;
+          case LIBRARY_COMPILATION:
+            contribution = installLibraryCompilation(libFile);
+            break;
+          }
           
           if (contribution != null) {
             contributionListing.getInformationFromAdvertised(contribution.getInfo());
@@ -772,18 +794,10 @@ public class ContributionManager {
     }
   }
 
-  interface ContributionInstaller {
-    /**
-     * Installs a contribution contained in the given zipped file.
-     * 
-     * @param zippedFile
-     *          zip file containing a contribution. Never null.
-     * @return the contribution if it was installed. Null otherwise.
-     */
-    public Contribution installContribution(File zippedFile);
-    
+  public boolean hasAlreadyBeenOpened() {
+    return dialog != null;
   }
-
+  
 }
 
 abstract class JProgressMonitor extends AbstractProgressMonitor {

@@ -76,13 +76,16 @@ public class ContributionListing {
     
     ContributionInfo advertised = getAdvertisedContribution(contribution.name,
                                                             contribution.getType());
-    contribution.setAdvertisedVersion(advertised);
 
     if (advertised != null) {
       // Merge information from the advertised and local versions.
       if (advertised.category != null) {
         contribution.category = advertised.category;
       }
+      if (advertised.link != null) {
+        contribution.link = advertised.link;
+      }
+      contribution.latestVersion = advertised.version;
     }
   }
   
@@ -96,7 +99,7 @@ public class ContributionListing {
       
       getInformationFromAdvertised(contribution);
       
-      boolean found= false;
+      boolean found = false;
       for (ContributionInfo existing : allLibraries) {
         if (existing.name.equals(contribution.name) && existing.getType() == contribution.getType()) {
           replaceContribution(existing, contribution);
@@ -186,7 +189,7 @@ public class ContributionListing {
     return librariesByCategory.keySet();
   }
 
-  public List<ContributionInfo> getAllLibararies() {
+  public List<ContributionInfo> getAllContributions() {
     return new ArrayList<ContributionInfo>(allLibraries);
   }
 

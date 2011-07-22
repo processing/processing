@@ -110,54 +110,73 @@ public class UpdateCheck {
     }
     Preferences.set("update.last", String.valueOf(now));
 
-    String prompt =
-      "A new version of Processing is available,\n" +
-      "would you like to visit the Processing download page?";
-
-    String contributionPrompt =
-        "There are updates available for some of the installed contributions,\n" +
-        "would you like to open the the Contribution Manager now?";
-    
     if (base.activeEditor != null) {
+      
+      boolean offerToUpdateContributions = true;
+      
       if (latest > Base.REVISION) {
-        Object[] options = { "Yes", "No" };
-        int result = JOptionPane.showOptionDialog(base.activeEditor,
-                                                  prompt,
-                                                  "Update",
-                                                  JOptionPane.YES_NO_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE,
-                                                  null,
-                                                  options,
-                                                  options[0]);
-        if (result == JOptionPane.YES_OPTION) {
-          Base.openURL("http://processing.org/download/");
-        }
-      } else {
-        if (base.libraryManagerFrame == null)
-          base.libraryManagerFrame = new ContributionManager(base.getActiveEditor());
-        
+        // Assume the person is busy downloading the latest version
+        offerToUpdateContributions = !promptToVisitDownloadPage();
+      }
+      
+      if (offerToUpdateContributions) {
+        // Wait for xml file to be downloaded and updates to come in. (this
+        // should really be handled better).
         Thread.sleep(5 * 1000);
-        if (!base.libraryManagerFrame.hasBeenShow() && 
+        if (!base.libraryManagerFrame.hasAlreadyBeenOpened() &&
             base.libraryManagerFrame.contributionListing.hasUpdates()) {
-          
-          Object[] options = { "Yes", "No" };
-          int result = JOptionPane.showOptionDialog(base.activeEditor,
-                                                    contributionPrompt,
-                                                    "Update",
-                                                    JOptionPane.YES_NO_OPTION,
-                                                    JOptionPane.QUESTION_MESSAGE,
-                                                    null,
-                                                    options,
-                                                    options[0]);
-          if (result == JOptionPane.YES_OPTION) {
-            base.handleShowUpdates();
-          }
+          promptToOpenContributionManager();
         }
       }
     }
   }
 
-
+  protected boolean promptToVisitDownloadPage() {
+    
+    String prompt =
+        "A new version of Processing is available,\n" +
+            "would you like to visit the Processing download page?";
+    
+    Object[] options = { "Yes", "No" };
+    int result = JOptionPane.showOptionDialog(base.activeEditor,
+                                              prompt,
+                                              "Update",
+                                              JOptionPane.YES_NO_OPTION,
+                                              JOptionPane.QUESTION_MESSAGE,
+                                              null,
+                                              options,
+                                              options[0]);
+    if (result == JOptionPane.YES_OPTION) {
+      Base.openURL("http://processing.org/download/");
+      return true;
+    }
+    
+    return false;
+  }
+  
+  protected boolean promptToOpenContributionManager() {
+    
+    String contributionPrompt =
+        "There are updates available for some of the installed contributions,\n" +
+            "would you like to open the the Contribution Manager now?";
+    
+    Object[] options = { "Yes", "No" };
+    int result = JOptionPane.showOptionDialog(base.activeEditor,
+                                              contributionPrompt,
+                                              "Update",
+                                              JOptionPane.YES_NO_OPTION,
+                                              JOptionPane.QUESTION_MESSAGE,
+                                              null,
+                                              options,
+                                              options[0]);
+    if (result == JOptionPane.YES_OPTION) {
+      base.handleShowUpdates();
+      return true;
+    }
+    
+    return false;
+  }
+  
   protected int readInt(String filename) throws Exception {
     URL url = new URL(filename);
     InputStream stream = url.openStream();
