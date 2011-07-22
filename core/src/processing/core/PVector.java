@@ -71,6 +71,7 @@ public class PVector implements Serializable {
   /**
    * Constructor for a 3D vector.
    *
+   * @webref
    * @param  x the x coordinate.
    * @param  y the y coordinate.
    * @param  z the y coordinate.
@@ -96,8 +97,14 @@ public class PVector implements Serializable {
 
 
   /**
+   * ( begin auto-generated from PVector_set.xml )
+   * 
+   * Sets the x, y, and z component of the vector using three separate 
+   * variables, the data from a PVector, or the values from a float array.
+   * ( end auto-generated )
    * Set x, y, and z coordinates.
    *
+   * @webref pvector
    * @param x the x coordinate.
    * @param y the y coordinate.
    * @param z the z coordinate.
@@ -138,6 +145,7 @@ public class PVector implements Serializable {
 
   /**
    * Get a copy of this vector.
+   * @webref
    */
   public PVector get() {
     return new PVector(x, y, z);
@@ -161,6 +169,8 @@ public class PVector implements Serializable {
 
   /**
    * Calculate the magnitude (length) of the vector
+   *
+   * @webref
    * @return the magnitude of the vector
    */
   public float mag() {
@@ -172,6 +182,7 @@ public class PVector implements Serializable {
    * Faster if the real length is not required in the 
    * case of comparing vectors, etc.
    * 
+   * @webref
    * @return squared magnitude of the vector
    */
   public float magSq() {
