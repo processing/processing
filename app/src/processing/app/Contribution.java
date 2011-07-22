@@ -53,11 +53,10 @@ public abstract class Contribution {
     protected String sentence;         // Write graphics to PDF files.
     protected String paragraph;        // <paragraph length description for site>
     protected int version;             // 102
+    protected int latestVersion;       // 103
     protected String prettyVersion;    // "1.0.2"
     
     protected String link = "";
-    
-    protected ContributionInfo advertisedVersion;
     
     public static class Author {
       public String name;
@@ -83,13 +82,9 @@ public abstract class Contribution {
      *         installed
      */
     public abstract Contribution getContribution();
-
-    public void setAdvertisedVersion(ContributionInfo advertisedInfo) {
-      advertisedVersion = advertisedInfo;
-    }
-
+    
     public boolean hasUpdates() {
-      return advertisedVersion != null && advertisedVersion.version > version;
+      return latestVersion > version && link != null;
     }
     
   }

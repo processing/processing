@@ -223,6 +223,8 @@ public class Base {
         Mode javaScriptMode = new JavaScriptMode(this, getContentFile("modes/javascript"));
     modeList = new Mode[] { defaultMode, androidMode, javaScriptMode };
 //    modeList = new Mode[] { defaultMode, androidMode };
+    
+    libraryManagerFrame = new ContributionManager();
 
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
@@ -1404,12 +1406,10 @@ public class Base {
    * Show the library installer window.
    */
   public void handleAddOrRemoveLibrary() {
-    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager(activeEditor);
     libraryManagerFrame.showFrame(activeEditor);
   }
   
   public void handleShowUpdates() {
-    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager(activeEditor);
     libraryManagerFrame.showFrame(activeEditor);
     libraryManagerFrame.setFilterText("has:updates");
   }
@@ -1419,7 +1419,6 @@ public class Base {
    * user. Returns the number of libraries installed.
    */
   public boolean handleConfirmAndInstallLibrary(File libFile) {
-    if (libraryManagerFrame == null) libraryManagerFrame = new ContributionManager(activeEditor);
     return libraryManagerFrame.confirmAndInstallLibrary(activeEditor, libFile) != null;
   }
 
