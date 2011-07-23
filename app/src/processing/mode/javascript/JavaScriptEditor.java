@@ -62,7 +62,7 @@ public class JavaScriptEditor extends Editor
   
   public JMenu buildFileMenu () 
   {
-    JMenuItem exportItem = Base.newJMenuItem("export title", 'E');
+    JMenuItem exportItem = Base.newJMenuItem("Export", 'E');
     exportItem.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleExport( true );
