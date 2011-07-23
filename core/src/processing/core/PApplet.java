@@ -9314,32 +9314,22 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from hint.xml )
-   * 
    * Set various hints and hacks for the renderer. This is used to handle obscure rendering features that cannot be implemented in a consistent manner across renderers. Many options will often graduate to standard features instead of hints over time.
-   * <br/> <br/>
-   * hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for OpenGL. This can help force anti-aliasing if it has not been enabled by the user. On some graphics cards, this can also be set by the graphics driver's control panel, however not all cards make this available. This hint must be called immediately after the size() command because it resets the renderer, obliterating any settings and anything drawn (and like size(), re-running the code that came before it again). 
-   * <br/> <br/>
-   * hint(DISABLE_OPENGL_2X_SMOOTH) - In Processing 1.0, Processing always enables 2x smoothing when the OpenGL renderer is used. This hint disables the default 2x smoothing and returns the smoothing behavior found in earlier releases, where smooth() and noSmooth() could be used to enable and disable smoothing, though the quality was inferior.
-   * <br/> <br/>
-   * hint(ENABLE_NATIVE_FONTS) - Use the native version fonts when they are installed, rather than the bitmapped version from a .vlw file. This is useful with the default (or JAVA2D) renderer setting, as it will improve font rendering speed. This is not enabled by default, because it can be misleading while testing because the type will look great on your machine (because you have the font installed) but lousy on others' machines if the identical font is unavailable. This option can only be set per-sketch, and must be called before any use of textFont().
-   * <br/> <br/>
-   * hint(DISABLE_DEPTH_TEST) - Disable the zbuffer, allowing you to draw on top of everything at will. When depth testing is disabled, items will be drawn to the screen sequentially, like a painting. This hint is most often used to draw in 3D, then draw in 2D on top of it (for instance, to draw GUI controls in 2D on top of a 3D interface). Starting in release 0149, this will also clear the depth buffer. Restore the default with hint(ENABLE_DEPTH_TEST), but note that with the depth buffer cleared, any 3D drawing that happens later in draw() will ignore existing shapes on the screen.
-   * <br/> <br/>
-   * hint(ENABLE_DEPTH_SORT) - Enable primitive z-sorting of triangles and lines in P3D and OPENGL. This can slow performance considerably, and the algorithm is not yet perfect. Restore the default with hint(DISABLE_DEPTH_SORT).
-   * <br/> <br/>
-   * hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the OPENGL renderer setting by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
-   * <br/> <br/>
-   * <!--hint(ENABLE_ACCURATE_TEXTURES) - Enables better texture accuracy for the P3D renderer. This option will do a better job of dealing with textures in perspective. hint(DISABLE_ACCURATE_TEXTURES) returns to the default. This hint is not likely to last long.
-   * <br/> <br/>-->
-   * As of release 0149, unhint() has been removed in favor of adding additional ENABLE/DISABLE constants to reset the default behavior. This prevents the double negatives, and also reinforces which hints can be enabled or disabled.
-   * 
-   * ( end auto-generated )
+   * <br><br>hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for OpenGL. This can help force anti-aliasing if it has not been enabled by the user. On some graphics cards, this can also be set by the graphics driver's control panel, however not all cards make this available. This hint must be called immediately after the size() command because it resets the renderer, obliterating any settings and anything drawn (and like size(), re-running the code that came before it again).
+   * <br><br>hint(DISABLE_OPENGL_2X_SMOOTH) - In Processing 1.0, Processing always enables 2x smoothing when the OpenGL renderer is used. This hint disables the default 2x smoothing and returns the smoothing behavior found in earlier releases, where smooth() and noSmooth() could be used to enable and disable smoothing, though the quality was inferior.
+   * <br><br>hint(ENABLE_NATIVE_FONTS) - Use the native version fonts when they are installed, rather than the bitmapped version from a .vlw file. This is useful with the JAVA2D renderer setting, as it will improve font rendering speed. This is not enabled by default, because it can be misleading while testing because the type will look great on your machine (because you have the font installed) but lousy on others' machines if the identical font is unavailable. This option can only be set per-sketch, and must be called before any use of textFont().
+   * <br><br>hint(DISABLE_DEPTH_TEST) - Disable the zbuffer, allowing you to draw on top of everything at will. When depth testing is disabled, items will be drawn to the screen sequentially, like a painting. This hint is most often used to draw in 3D, then draw in 2D on top of it (for instance, to draw GUI controls in 2D on top of a 3D interface). Starting in release 0149, this will also clear the depth buffer. Restore the default with hint(ENABLE_DEPTH_TEST), but note that with the depth buffer cleared, any 3D drawing that happens later in draw() will ignore existing shapes on the screen.
+   * <br><br>hint(ENABLE_DEPTH_SORT) - Enable primitive z-sorting of triangles and lines in P3D and OPENGL. This can slow performance considerably, and the algorithm is not yet perfect. Restore the default with hint(DISABLE_DEPTH_SORT).
+   * <br><br>hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the OPENGL renderer setting by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
+   * <br><br><!--hint(ENABLE_ACCURATE_TEXTURES) - Enables better texture accuracy for the P3D renderer. This option will do a better job of dealing with textures in perspective. hint(DISABLE_ACCURATE_TEXTURES) returns to the default. This hint is not likely to last long.
+   * <br/> <br/>-->As of release 0149, unhint() has been removed in favor of adding additional ENABLE/DISABLE constants to reset the default behavior. This prevents the double negatives, and also reinforces which hints can be enabled or disabled.
+   *
    * @webref rendering
    * @param which name of the hint to be enabled or disabled
-   * @see PGraphics
-   * @see PApplet#createGraphics(int, int, String, String)
-   * @see PApplet#size(int, int)
+   *
+   * @see processing.core.PGraphics
+   * @see processing.core.PApplet#createGraphics(int, int, String, String)
+   * @see processing.core.PApplet#size(int, int)
    */
   public void hint(int which) {
     if (recorder != null) recorder.hint(which);
@@ -9362,21 +9352,26 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from beginShape.xml )
-   * 
-   * Using the <b>beginShape()</b> and <b>endShape()</b> functions allow creating more complex forms. <b>beginShape()</b> begins recording vertices for a shape and <b>endShape()</b> stops recording. The value of the <b>MODE</b> parameter tells it which types of shapes to create from the provided vertices. With no mode specified, the shape can be any irregular polygon. The parameters available for beginShape() are POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, and QUAD_STRIP. After calling the <b>beginShape()</b> function, a series of <b>vertex()</b> commands must follow. To stop drawing the shape, call <b>endShape()</b>. The <b>vertex()</b> function with two parameters specifies a position in 2D and the <b>vertex()</b> function with three parameters specifies a position in 3D. Each shape will be outlined with the current stroke color and filled with the fill color. 
-   * <br/> <br/>
-   * Transformations such as <b>translate()</b>, <b>rotate()</b>, and <b>scale()</b> do not work within <b>beginShape()</b>. It is also not possible to use other shapes, such as <b>ellipse()</b> or <b>rect()</b> within <b>beginShape()</b>. 
-   * <br/> <br/>
-   * The P2D, P3D, and OPENGL renderer settings allow stroke() and fill() settings to be altered per-vertex, however the default JAVA2D renderer does not. Settings such as strokeWeight(), strokeCap(), and strokeJoin() cannot be changed while inside a beginShape()/endShape() block with any renderer.
-   * 
-   * ( end auto-generated )
-   * @webref shape:vertex
-   * @param kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
-   * @see PGraphics#endShape()
-   * @see PGraphics#vertex(float, float, float, float, float)
-   * @see PGraphics#curveVertex(float, float, float)
-   * @see PGraphics#bezierVertex(float, float, float, float, float, float, float, float, float)
+   * Start a new shape.
+   * <P>
+   * <B>Differences between beginShape() and line() and point() methods.</B>
+   * <P>
+   * beginShape() is intended to be more flexible at the expense of being
+   * a little more complicated to use. it handles more complicated shapes
+   * that can consist of many connected lines (so you get joins) or lines
+   * mixed with curves.
+   * <P>
+   * The line() and point() command are for the far more common cases
+   * (particularly for our audience) that simply need to draw a line
+   * or a point on the screen.
+   * <P>
+   * From the code side of things, line() may or may not call beginShape()
+   * to do the drawing. In the beta code, they do, but in the alpha code,
+   * they did not. they might be implemented one way or the other depending
+   * on tradeoffs of runtime efficiency vs. implementation efficiency &mdash
+   * meaning the speed that things run at vs. the speed it takes me to write
+   * the code and maintain it. for beta, the latter is most important so
+   * that's how things are implemented.
    */
   public void beginShape(int kind) {
     if (recorder != null) recorder.beginShape(kind);
@@ -9395,18 +9390,19 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from normal.xml )
-   * 
-   * Sets the current normal vector. This is for drawing three dimensional shapes and surfaces and specifies a vector perpendicular to the surface of the shape which determines how lighting affects it. Processing attempts to automatically assign normals to shapes, but since that's imperfect, this is a better option when you want more control. This function is identical to glNormal3f() in OpenGL.
-   * 
-   * ( end auto-generated )
-   * @webref lights_camera:lights
-   * @param nx x direction
-   * @param ny y direction
-   * @param nz z direction
-   * @see PGraphics#beginShape(int)
-   * @see PGraphics#endShape(int)
-   * @see PGraphics#lights()
+   * Sets the current normal vector. Only applies with 3D rendering
+   * and inside a beginShape/endShape block.
+   * <P/>
+   * This is for drawing three dimensional shapes and surfaces,
+   * allowing you to specify a vector perpendicular to the surface
+   * of the shape, which determines how lighting affects it.
+   * <P/>
+   * For the most part, PGraphics3D will attempt to automatically
+   * assign normals to shapes, but since that's imperfect,
+   * this is a better option when you want more control.
+   * <P/>
+   * For people familiar with OpenGL, this function is basically
+   * identical to glNormal3f().
    */
   public void normal(float nx, float ny, float nz) {
     if (recorder != null) recorder.normal(nx, ny, nz);
@@ -9415,14 +9411,8 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from textureMode.xml )
-   * 
-   * Sets the coordinate space for texture mapping. There are two options, IMAGE, which refers to the actual coordinates of the image, and NORMALIZED, which refers to a normalized space of values ranging from 0 to 1. The default mode is IMAGE. In IMAGE, if an image is 100 x 200 pixels, mapping the image onto the entire size of a quad would require the points (0,0) (0,100) (100,200) (0,200). The same mapping in NORMAL_SPACE is (0,0) (0,1) (1,1) (0,1).
-   * 
-   * ( end auto-generated )
-   * @webref shape:vertex
-   * @param mode either IMAGE or NORMALIZED
-   * @see PGraphics#texture(PImage)
+   * Set texture mode to either to use coordinates based on the IMAGE
+   * (more intuitive for new users) or NORMALIZED (better for advanced chaps)
    */
   public void textureMode(int mode) {
     if (recorder != null) recorder.textureMode(mode);
@@ -9431,19 +9421,8 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from texture.xml )
-   * 
-   * Sets a texture to be applied to vertex points. The <b>texture()</b> function must be called between <b>beginShape()</b> and <b>endShape()</b> and before any calls to <b>vertex()</b>.
-   * <br/> <br/>
-   * When textures are in use, the fill color is ignored. Instead, use tint() to specify the color of the texture as it is applied to the shape.
-   * 
-   * ( end auto-generated )
-   * @webref shape:vertex
-   * @param image the texture to apply
-   * @see PGraphics#textureMode(int)
-   * @see PGraphics#beginShape(int)
-   * @see PGraphics#endShape(int)
-   * @see PGraphics#vertex(float, float, float, float, float)
+   * Set texture image for current shape.
+   * Needs to be called between @see beginShape and @see endShape
    *
    * @param image reference to a PImage object
    */
@@ -9455,7 +9434,7 @@ public class PApplet extends Applet
 
   /**
    * Removes texture image for current shape.
-   * Needs to be called between beginShape and endShape
+   * Needs to be called between @see beginShape and @see endShape
    *
    */
   public void noTexture() {
@@ -9493,24 +9472,6 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from vertex.xml )
-   * 
-   * All shapes are constructed by connecting a series of vertices. <b>vertex()</b> is used to specify the vertex coordinates for points, lines, triangles, quads, and polygons and is used exclusively within the <b>beginShape()</b> and <b>endShape()</b> function. <br /><br />Drawing a vertex in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example.<br /><br />This function is also used to map a texture onto the geometry. The <b>texture()</b> function declares the texture to apply to the geometry and the <b>u</b> and <b>v</b> coordinates set define the mapping of this texture to the form. By default, the coordinates used for <b>u</b> and <b>v</b> are specified in relation to the image's size in pixels, but this relation can be changed with <b>textureMode()</b>.
-   * 
-   * ( end auto-generated )
- * @webref shape:vertex
- * @param x x-coordinate of the vertex
- * @param y y-coordinate of the vertex
- * @param z z-coordinate of the vertex
- * @param u horizontal coordinate for the texture mapping
- * @param v vertical coordinate for the texture mapping
- * @see PGraphics#beginShape(int)
- * @see PGraphics#endShape(int)
- * @see PGraphics#bezierVertex(float, float, float, float, float, float, float, float, float)
- * @see PGraphics#curveVertex(float, float, float)
- * @see PGraphics#texture(PImage)
- */
   public void vertex(float x, float y, float z, float u, float v) {
     if (recorder != null) recorder.vertex(x, y, z, u, v);
     g.vertex(x, y, z, u, v);
@@ -9530,16 +9491,6 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from endShape.xml )
-   * 
-   * The <b>endShape()</b> function is the companion to <b>beginShape()</b> and may only be called after <b>beginShape()</b>. When <b>endshape()</b> is called, all of image data defined since the previous call to <b>beginShape()</b> is written into the image buffer. The constant CLOSE as the value for the MODE parameter to close the shape (to connect the beginning and the end). 
-   * 
-   * ( end auto-generated )
- * @webref shape:vertex
- * @param mode use CLOSE to close the shape
- * @see PGraphics#beginShape(int)
- */
   public void endShape(int mode) {
     if (recorder != null) recorder.endShape(mode);
     g.endShape(mode);
@@ -9554,26 +9505,6 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from bezierVertex.xml )
-   * 
-   * Specifies vertex coordinates for Bezier curves. Each call to <b>bezierVertex()</b> defines the position of two control points and one anchor point of a Bezier curve, adding a new segment to a line or shape. The first time <b>bezierVertex()</b> is used within a <b>beginShape()</b> call, it must be prefaced with a call to <b>vertex()</b> to set the first anchor point. This function must be used between <b>beginShape()</b> and <b>endShape()</b> and only when there is no MODE parameter specified to <b>beginShape()</b>. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
-   * 
-   * ( end auto-generated )
- * @webref shape:vertex
- * @param x2 the x-coordinate of the 1st control point
- * @param y2 the y-coordinate of the 1st control point
- * @param z2 the z-coordinate of the 1st control point
- * @param x3 the x-coordinate of the 2nd control point
- * @param y3 the y-coordinate of the 2nd control point
- * @param z3 the z-coordinate of the 2nd control point
- * @param x4 the x-coordinate of the anchor point
- * @param y4 the y-coordinate of the anchor point
- * @param z4 the z-coordinate of the anchor point
- * @see PGraphics#curveVertex(float, float, float)
- * @see PGraphics#vertex(float, float, float, float, float)
- * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
- */
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
@@ -9602,22 +9533,6 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from curveVertex.xml )
-   * 
-   * Specifies vertex coordinates for curves. This function may only be used between <b>beginShape()</b> and <b>endShape()</b> and only when there is no MODE parameter specified to <b>beginShape()</b>. The first and last points in a series of <b>curveVertex()</b> lines will be used to guide the beginning and end of a the curve. A minimum of four points is required to draw a tiny curve between the second and third points. Adding a fifth point with <b>curveVertex()</b> will draw the curve between the second, third, and fourth points. The <b>curveVertex()</b> function is an implementation of Catmull-Rom splines. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
-   * 
-   * ( end auto-generated )
- * @webref shape:vertex
- * @param x the x-coordinate of the vertex
- * @param y the y-coordinate of the vertex
- * @param z the z-coordinate of the vertex
- * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
- * @see PGraphics#beginShape(int)
- * @see PGraphics#endShape(int)
- * @see PGraphics#vertex(float, float, float, float, float)
- * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
- */
   public void curveVertex(float x, float y, float z) {
     if (recorder != null) recorder.curveVertex(x, y, z);
     g.curveVertex(x, y, z);
@@ -9631,18 +9546,23 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from point.xml )
-   * 
-   * Draws a point, a coordinate in space at the dimension of one pixel. The first parameter is the horizontal value for the point, the second value is the vertical value for the point, and the optional third value is the depth value. Drawing this shape in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example. 
-   * <br/> <br/>
-   * Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
-   * 
-   * ( end auto-generated )
+   * Draws a point, a coordinate in space at the dimension of one pixel.
+   * The first parameter is the horizontal value for the point, the second
+   * value is the vertical value for the point, and the optional third value
+   * is the depth value. Drawing this shape in 3D using the <b>z</b>
+   * parameter requires the P3D or OPENGL parameter in combination with
+   * size as shown in the above example.
+   * <br><br>Due to what appears to be a bug in Apple's Java implementation,
+   * the point() and set() methods are extremely slow in some circumstances
+   * when used with the default renderer. Using P2D or P3D will fix the
+   * problem. Grouping many calls to point() or set() together can also
+   * help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
    *
    * @webref shape:2d_primitives
    * @param x x-coordinate of the point
    * @param y y-coordinate of the point
    * @param z z-coordinate of the point
+   *
    * @see PGraphics#beginShape()
    */
   public void point(float x, float y, float z) {
@@ -9658,11 +9578,17 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from line.xml )
-   * 
-   * Draws a line (a direct path between two points) to the screen. The version of <b>line()</b> with four parameters draws the line in 2D.  To color a line, use the <b>stroke()</b> function. A line cannot be filled, therefore the <b>fill()</b> method will not affect the color of a line. 2D lines are drawn with a width of one pixel by default, but this can be changed with the <b>strokeWeight()</b> function. The version with six parameters allows the line to be placed anywhere within XYZ space. Drawing this shape in 3D using the <b>z</b> parameter requires the P3D or OPENGL parameter in combination with size as shown in the above example. 
-   * 
-   * ( end auto-generated )
+   * Draws a line (a direct path between two points) to the screen.
+   * The version of <b>line()</b> with four parameters draws the line in 2D.
+   * To color a line, use the <b>stroke()</b> function. A line cannot be
+   * filled, therefore the <b>fill()</b> method will not affect the color
+   * of a line. 2D lines are drawn with a width of one pixel by default,
+   * but this can be changed with the <b>strokeWeight()</b> function.
+   * The version with six parameters allows the line to be placed anywhere
+   * within XYZ space. Drawing this shape in 3D using the <b>z</b> parameter
+   * requires the P3D or OPENGL parameter in combination with size as shown
+   * in the above example.
+   *
    * @webref shape:2d_primitives
    * @param x1 x-coordinate of the first point
    * @param y1 y-coordinate of the first point
@@ -9670,6 +9596,7 @@ public class PApplet extends Applet
    * @param x2 x-coordinate of the second point
    * @param y2 y-coordinate of the second point
    * @param z2 z-coordinate of the second point
+   *
    * @see PGraphics#strokeWeight(float)
    * @see PGraphics#strokeJoin(int)
    * @see PGraphics#strokeCap(int)
@@ -9683,11 +9610,10 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from triangle.xml )
-   * 
-   * A triangle is a plane created by connecting three points. The first two arguments specify the first point, the middle two arguments specify the second point, and the last two arguments specify the third point. 
-   * 
-   * ( end auto-generated )
+   * A triangle is a plane created by connecting three points. The first two
+   * arguments specify the first point, the middle two arguments specify
+   * the second point, and the last two arguments specify the third point.
+   *
    * @webref shape:2d_primitives
    * @param x1 x-coordinate of the first point
    * @param y1 y-coordinate of the first point
@@ -9695,6 +9621,7 @@ public class PApplet extends Applet
    * @param y2 y-coordinate of the second point
    * @param x3 x-coordinate of the third point
    * @param y3 y-coordinate of the third point
+   *
    * @see PApplet#beginShape()
    */
   public void triangle(float x1, float y1, float x2, float y2,
@@ -9705,11 +9632,12 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from quad.xml )
-   * 
-   * A quad is a quadrilateral, a four sided polygon. It is similar to a rectangle, but the angles between its edges are not constrained to ninety degrees. The first pair of parameters (x1,y1) sets the first vertex and the subsequent pairs should proceed clockwise or counter-clockwise around the defined shape.
-   * 
-   * ( end auto-generated )
+   * A quad is a quadrilateral, a four sided polygon. It is similar to
+   * a rectangle, but the angles between its edges are not constrained
+   * ninety degrees. The first pair of parameters (x1,y1) sets the
+   * first vertex and the subsequent pairs should proceed clockwise or
+   * counter-clockwise around the defined shape.
+   *
    * @webref shape:2d_primitives
    * @param x1 x-coordinate of the first corner
    * @param y1 y-coordinate of the first corner
@@ -9719,6 +9647,7 @@ public class PApplet extends Applet
    * @param y3 y-coordinate of the third corner
    * @param x4 x-coordinate of the fourth corner
    * @param y4 y-coordinate of the fourth corner
+   *
    */
   public void quad(float x1, float y1, float x2, float y2,
                    float x3, float y3, float x4, float y4) {
@@ -9727,16 +9656,6 @@ public class PApplet extends Applet
   }
 
 
- /**
-   * ( begin auto-generated from rectMode.xml )
-   * 
-   * Modifies the location from which rectangles draw. The default mode is <b>rectMode(CORNER)</b>, which specifies the location to be the upper left corner of the shape and uses the third and fourth parameters of <b>rect()</b> to specify the width and height. The syntax <b>rectMode(CORNERS)</b> uses the first and second parameters of <b>rect()</b> to set the location of one corner and uses the third and fourth parameters to set the opposite corner. The syntax <b>rectMode(CENTER)</b> draws the image from its center point and uses the third and forth parameters of <b>rect()</b> to specify the image's width and height. The syntax <b>rectMode(RADIUS)</b> draws the image from its center point and uses the third and forth parameters of <b>rect()</b> to specify half of the image's width and height. The parameter must be written in ALL CAPS because Processing is a case sensitive language. Note: In version 125, the mode named CENTER_RADIUS was shortened to RADIUS.
-   * 
-   * ( end auto-generated )
-  * @webref shape:attributes
-  * @param mode either CORNER, CORNERS, CENTER, or RADIUS
-  * @see PGraphics#rect(float, float, float, float)
-  */
   public void rectMode(int mode) {
     if (recorder != null) recorder.rectMode(mode);
     g.rectMode(mode);
@@ -9744,16 +9663,20 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from rect.xml )
-   * 
-   * Draws a rectangle to the screen. A rectangle is a four-sided shape with every angle at ninety degrees. By default, the first two parameters set the location of the upper-left corner, the third sets the width, and the fourth sets the height. These parameters may be changed with the <b>rectMode()</b> function. 
-   * 
-   * ( end auto-generated )
+   * Draws a rectangle to the screen. A rectangle is a four-sided shape with
+   * every angle at ninety degrees. The first two parameters set the location,
+   * the third sets the width, and the fourth sets the height. The origin is
+   * changed with the <b>rectMode()</b> function.
+   *
    * @webref shape:2d_primitives
    * @param a x-coordinate of the rectangle
    * @param b y-coordinate of the rectangle
    * @param c width of the rectangle
    * @param d height of the rectangle
+   * @param tl radius of the top left corner
+   * @param tr radius of the top right corner
+   * @param br radius of the bottom right corner
+   * @param bl radius of the bottom left corner
    * @see PGraphics#rectMode(int)
    * @see PGraphics#quad(float, float, float, float, float, float, float, float)
    */
@@ -9763,7 +9686,6 @@ public class PApplet extends Applet
   }
 
 
-/** ??? */
   public void rect(float a, float b, float c, float d, float r) {
     if (recorder != null) recorder.rect(a, b, c, d, r);
     g.rect(a, b, c, d, r);
@@ -9778,13 +9700,20 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from ellipseMode.xml )
-   * 
-   * The origin of the ellipse is modified by the <b>ellipseMode()</b> function. The default configuration is <b>ellipseMode(CENTER)</b>, which specifies the location of the ellipse as the center of the shape. The RADIUS mode is the same, but the width and height parameters to <b>ellipse()</b> specify the radius of the ellipse, rather than the diameter. The CORNER mode draws the shape from the upper-left corner of its bounding box. The CORNERS mode uses the four parameters to <b>ellipse()</b> to set two opposing corners of the ellipse's bounding box. The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
-   * 
-   * ( end auto-generated )
+   * The origin of the ellipse is modified by the <b>ellipseMode()</b>
+   * function. The default configuration is <b>ellipseMode(CENTER)</b>,
+   * which specifies the location of the ellipse as the center of the shape.
+   * The RADIUS mode is the same, but the width and height parameters to
+   * <b>ellipse()</b> specify the radius of the ellipse, rather than the
+   * diameter. The CORNER mode draws the shape from the upper-left corner
+   * of its bounding box. The CORNERS mode uses the four parameters to
+   * <b>ellipse()</b> to set two opposing corners of the ellipse's bounding
+   * box. The parameter must be written in "ALL CAPS" because Processing
+   * syntax is case sensitive.
+   *
    * @webref shape:attributes
-   * @param mode either CENTER, RADIUS, CORNER, or CORNERS
+   *
+   * @param mode        Either CENTER, RADIUS, CORNER, or CORNERS.
    * @see PApplet#ellipse(float, float, float, float)
    */
   public void ellipseMode(int mode) {
@@ -9794,16 +9723,17 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from ellipse.xml )
-   * 
-   * Draws an ellipse (oval) in the display window. An ellipse with an equal <b>width</b> and <b>height</b> is a circle. The first two parameters set the location, the third sets the width, and the fourth sets the height. The origin may be changed with the <b>ellipseMode()</b> function. 
-   * 
-   * ( end auto-generated )
+   * Draws an ellipse (oval) in the display window. An ellipse with an equal
+   * <b>width</b> and <b>height</b> is a circle. The first two parameters set
+   * the location, the third sets the width, and the fourth sets the height.
+   * The origin may be changed with the <b>ellipseMode()</b> function.
+   *
    * @webref shape:2d_primitives
    * @param a x-coordinate of the ellipse
    * @param b y-coordinate of the ellipse
    * @param c width of the ellipse
    * @param d height of the ellipse
+   *
    * @see PApplet#ellipseMode(int)
    */
   public void ellipse(float a, float b, float c, float d) {
@@ -9813,11 +9743,14 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from arc.xml )
-   * 
-   * Draws an arc in the display window. Arcs are drawn along the outer edge of an ellipse defined by the <b>x</b>, <b>y</b>, <b>width</b> and <b>height</b> parameters. The origin or the arc's ellipse may be changed with the <b>ellipseMode()</b> function. The <b>start</b> and <b>stop</b> parameters specify the angles at which to draw the arc. 
-   * 
-   * ( end auto-generated )
+   * Draws an arc in the display window.
+   * Arcs are drawn along the outer edge of an ellipse defined by the
+   * <b>x</b>, <b>y</b>, <b>width</b> and <b>height</b> parameters.
+   * The origin or the arc's ellipse may be changed with the
+   * <b>ellipseMode()</b> function.
+   * The <b>start</b> and <b>stop</b> parameters specify the angles
+   * at which to draw the arc.
+   *
    * @webref shape:2d_primitives
    * @param a x-coordinate of the arc's ellipse
    * @param b y-coordinate of the arc's ellipse
@@ -9825,6 +9758,7 @@ public class PApplet extends Applet
    * @param d height of the arc's ellipse
    * @param start angle to start the arc, specified in radians
    * @param stop angle to stop the arc, specified in radians
+   *
    * @see PGraphics#ellipseMode(int)
    * @see PGraphics#ellipse(float, float, float, float)
    */
@@ -9845,16 +9779,15 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from box.xml )
-   * 
-   * A box is an extruded rectangle. A box with equal dimension on all sides is a cube.
-   * 
-   * ( end auto-generated )
+   * A box is an extruded rectangle. A box with equal dimension
+   * on all sides is a cube.
+   *
    * @webref shape:3d_primitives
    * @param w dimension of the box in the x-dimension
    * @param h dimension of the box in the y-dimension
    * @param d dimension of the box in the z-dimension
-   * @see PGraphics#sphere(float)
+   *
+   * @see PApplet#sphere(float)
    */
   public void box(float w, float h, float d) {
     if (recorder != null) recorder.box(w, h, d);
@@ -9872,18 +9805,29 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from sphereDetail.xml )
-   * 
-   * Controls the detail used to render a sphere by adjusting the number of vertices of the sphere mesh. The default resolution is 30, which creates a fairly detailed sphere definition with vertices every 360/30 = 12 degrees. If you're going to render a great number of spheres per frame, it is advised to reduce the level of detail using this function. The setting stays active until <b>sphereDetail()</b> is called again with a new parameter and so should <i>not</i> be called prior to every <b>sphere()</b> statement, unless you wish to render spheres with different settings, e.g. using less detail for smaller spheres or ones further away from the camera. To control the detail of the horizontal and vertical resolution independently, use the version of the functions with two parameters.
-   * 
-   * ( end auto-generated )
+   * Controls the detail used to render a sphere by adjusting the number of
+   * vertices of the sphere mesh. The default resolution is 30, which creates
+   * a fairly detailed sphere definition with vertices every 360/30 = 12
+   * degrees. If you're going to render a great number of spheres per frame,
+   * it is advised to reduce the level of detail using this function.
+   * The setting stays active until <b>sphereDetail()</b> is called again with
+   * a new parameter and so should <i>not</i> be called prior to every
+   * <b>sphere()</b> statement, unless you wish to render spheres with
+   * different settings, e.g. using less detail for smaller spheres or ones
+   * further away from the camera. To control the detail of the horizontal
+   * and vertical resolution independently, use the version of the functions
+   * with two parameters.
+   *
    * <h3>Advanced</h3>
    * Code for sphereDetail() submitted by toxi [031031].
    * Code for enhanced u/v version from davbol [080801].
    *
    * @webref shape:3d_primitives
-   * @param ures number of segments used longitudinally per full circle revolutoin
-   * @param vres number of segments used latitudinally from top to bottom
+   * @param ures number of segments used horizontally (longitudinally)
+   *        per full circle revolution
+   * @param vres number of segments used vertically (latitudinally)
+   *        from top to bottom
+   *
    * @see PGraphics#sphere(float)
    */
   /**
@@ -9898,11 +9842,8 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from sphere.xml )
-   * 
+   * Draw a sphere with radius r centered at coordinate 0, 0, 0.
    * A sphere is a hollow ball made from tessellated triangles.
-   * 
-   * ( end auto-generated )
    * <h3>Advanced</h3>
    * <P>
    * Implementation notes:
@@ -9934,11 +9875,12 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from bezierPoint.xml )
-   * 
-   * Evaluates the Bezier at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a bezier curve at t.
-   * 
-   * ( end auto-generated )
+   * Evalutes quadratic bezier at point t for points a, b, c, d.
+   * The parameter t varies between 0 and 1. The a and d parameters are the
+   * on-curve points, b and c are the control points. To make a two-dimensional
+   * curve, call this function once with the x coordinates and a second time
+   * with the y coordinates to get the location of a bezier curve at t.
+   *
    * <h3>Advanced</h3>
    * For instance, to convert the following example:<PRE>
    * stroke(255, 102, 0);
@@ -9966,6 +9908,7 @@ public class PApplet extends Applet
    * @param c coordinate of second control point
    * @param d coordinate of second point on the curve
    * @param t value between 0 and 1
+   *
    * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#bezierVertex(float, float, float, float, float, float)
    * @see PGraphics#curvePoint(float, float, float, float, float)
@@ -9976,11 +9919,9 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from bezierTangent.xml )
-   * 
-   * Calculates the tangent of a point on a Bezier curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
-   * 
-   * ( end auto-generated )
+   * Calculates the tangent of a point on a Bezier curve. There is a good
+   * definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   *
    * <h3>Advanced</h3>
    * Code submitted by Dave Bollinger (davol) for release 0136.
    *
@@ -9990,6 +9931,7 @@ public class PApplet extends Applet
    * @param c coordinate of second control point
    * @param d coordinate of second point on the curve
    * @param t value between 0 and 1
+   *
    * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#bezierVertex(float, float, float, float, float, float)
    * @see PGraphics#curvePoint(float, float, float, float, float)
@@ -10000,16 +9942,14 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from bezierDetail.xml )
-   * 
    * Sets the resolution at which Beziers display. The default value is 20. This function is only useful when using the P3D or OPENGL renderer as the default (JAVA2D) renderer does not use this information.
-   * 
-   * ( end auto-generated )
+   *
    * @webref shape:curves
    * @param detail resolution of the curves
-   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PGraphics#curveVertex(float, float, float)
-   * @see PGraphics#curveTightness(float)
+   *
+   * @see PApplet#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PApplet#curveVertex(float, float)
+   * @see PApplet#curveTightness(float)
    */
   public void bezierDetail(int detail) {
     if (recorder != null) recorder.bezierDetail(detail);
@@ -10017,21 +9957,15 @@ public class PApplet extends Applet
   }
 
 
-  public void bezier(float x1, float y1,
-                     float x2, float y2,
-                     float x3, float y3,
-                     float x4, float y4) {
-    if (recorder != null) recorder.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
-    g.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
-  }
-
-
   /**
-   * ( begin auto-generated from bezier.xml )
-   * 
-   * Draws a Bezier curve on the screen. These curves are defined by a series of anchor and control points. The first two parameters specify the first anchor point and the last two parameters specify the other anchor point. The middle parameters specify the control points which define the shape of the curve. Bezier curves were developed by French engineer Pierre Bezier. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
-   * 
-   * ( end auto-generated )
+   * Draws a Bezier curve on the screen. These curves are defined by a series
+   * of anchor and control points. The first two parameters specify the first
+   * anchor point and the last two parameters specify the other anchor point.
+   * The middle parameters specify the control points which define the shape
+   * of the curve. Bezier curves were developed by French engineer Pierre
+   * Bezier. Using the 3D version of requires rendering with P3D or OPENGL
+   * (see the Environment reference for more information).
+   *
    * <h3>Advanced</h3>
    * Draw a cubic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
@@ -10072,6 +10006,15 @@ public class PApplet extends Applet
    * @see PGraphics#bezierVertex(float, float, float, float, float, float)
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    */
+  public void bezier(float x1, float y1,
+                     float x2, float y2,
+                     float x3, float y3,
+                     float x4, float y4) {
+    if (recorder != null) recorder.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+    g.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
   public void bezier(float x1, float y1, float z1,
                      float x2, float y2, float z2,
                      float x3, float y3, float z3,
@@ -10081,18 +10024,20 @@ public class PApplet extends Applet
   }
 
 
-  /*
-   * ( begin auto-generated from curvePoint.xml )
-   * 
-   * Evalutes the curve at point t for points a, b, c, d. The parameter t varies between 0 and 1, a and d are points on the curve, and b and c are the control points. This can be done once with the x coordinates and a second time with the y coordinates to get the location of a curve at t.
-   * 
-   * ( end auto-generated )
+  /**
+   * Evalutes the Catmull-Rom curve at point t for points a, b, c, d. The
+   * parameter t varies between 0 and 1, a and d are points on the curve,
+   * and b and c are the control points. This can be done once with the x
+   * coordinates and a second time with the y coordinates to get the
+   * location of a curve at t.
+   *
    * @webref shape:curves
    * @param a coordinate of first point on the curve
    * @param b coordinate of second point on the curve
    * @param c coordinate of third point on the curve
    * @param d coordinate of fourth point on the curve
    * @param t value between 0 and 1
+   *
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float)
    * @see PGraphics#bezierPoint(float, float, float, float, float)
@@ -10103,11 +10048,8 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from curveTangent.xml )
-   * 
-   * Calculates the tangent of a point on a curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
-   * 
-   * ( end auto-generated )
+   * Calculates the tangent of a point on a Catmull-Rom curve. There is a good definition of "tangent" at Wikipedia: <a href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>.
+   *
    * <h3>Advanced</h3>
    * Code thanks to Dave Bollinger (Bug #715)
    *
@@ -10117,6 +10059,7 @@ public class PApplet extends Applet
    * @param c coordinate of second control point
    * @param d coordinate of second point on the curve
    * @param t value between 0 and 1
+   *
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float)
    * @see PGraphics#curvePoint(float, float, float, float, float)
@@ -10128,13 +10071,13 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from curveDetail.xml )
-   * 
-   * Sets the resolution at which curves display. The default value is 20. This function is only useful when using the P3D or OPENGL renderer as the default (JAVA2D) renderer does not use this information.
-   * 
-   * ( end auto-generated )
+   * Sets the resolution at which curves display. The default value is 20.
+   * This function is only useful when using the P3D or OPENGL renderer as
+   * the default (JAVA2D) renderer does not use this information.
+   *
    * @webref shape:curves
    * @param detail resolution of the curves
+   *
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float)
    * @see PGraphics#curveTightness(float)
@@ -10146,15 +10089,21 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from curveTightness.xml )
-   * 
-   * Modifies the quality of forms created with <b>curve()</b> and <b>curveVertex()</b>. The parameter <b>squishy</b> determines how the curve fits to the vertex points. The value 0.0 is the default value for <b>squishy</b> (this value defines the curves to be Catmull-Rom splines) and the value 1.0 connects all the points with straight lines. Values within the range -5.0 and 5.0 will deform the curves but will leave them recognizable and as values increase in magnitude, they will continue to deform.
-   * 
-   * ( end auto-generated )
+   * Modifies the quality of forms created with <b>curve()</b> and
+   *<b>curveVertex()</b>. The parameter <b>squishy</b> determines how the
+   * curve fits to the vertex points. The value 0.0 is the default value for
+   * <b>squishy</b> (this value defines the curves to be Catmull-Rom splines)
+   * and the value 1.0 connects all the points with straight lines.
+   * Values within the range -5.0 and 5.0 will deform the curves but
+   * will leave them recognizable and as values increase in magnitude,
+   * they will continue to deform.
+   *
    * @webref shape:curves
    * @param tightness amount of deformation from the original vertices
+   *
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float)
+   *
    */
   public void curveTightness(float tightness) {
     if (recorder != null) recorder.curveTightness(tightness);
@@ -10162,21 +10111,17 @@ public class PApplet extends Applet
   }
 
 
-  public void curve(float x1, float y1,
-                    float x2, float y2,
-                    float x3, float y3,
-                    float x4, float y4) {
-    if (recorder != null) recorder.curve(x1, y1, x2, y2, x3, y3, x4, y4);
-    g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
-  }
-
-
   /**
-   * ( begin auto-generated from curve.xml )
-   * 
-   * Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two parameters specify the ending control point. The middle parameters specify the start and stop of the curve. Longer curves can be created by putting a series of <b>curve()</b> functions together or using <b>curveVertex()</b>. An additional function called <b>curveTightness()</b> provides control for the visual quality of the curve. The <b>curve()</b> function is an implementation of Catmull-Rom splines. Using the 3D version of requires rendering with P3D or OPENGL (see the Environment reference for more information).
-   * 
-   * ( end auto-generated )
+   * Draws a curved line on the screen. The first and second parameters
+   * specify the beginning control point and the last two parameters specify
+   * the ending control point. The middle parameters specify the start and
+   * stop of the curve. Longer curves can be created by putting a series of
+   * <b>curve()</b> functions together or using <b>curveVertex()</b>.
+   * An additional function called <b>curveTightness()</b> provides control
+   * for the visual quality of the curve. The <b>curve()</b> function is an
+   * implementation of Catmull-Rom splines. Using the 3D version of requires
+   * rendering with P3D or OPENGL (see the Environment reference for more
+   * information).
    *
    * <h3>Advanced</h3>
    * As of revision 0070, this function no longer doubles the first
@@ -10205,10 +10150,20 @@ public class PApplet extends Applet
    * @param x4 coordinates for the ending control point
    * @param y4 coordinates for the ending control point
    * @param z4 coordinates for the ending control point
+   *
    * @see PGraphics#curveVertex(float, float)
    * @see PGraphics#curveTightness(float)
    * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
    */
+  public void curve(float x1, float y1,
+                    float x2, float y2,
+                    float x3, float y3,
+                    float x4, float y4) {
+    if (recorder != null) recorder.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+    g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
   public void curve(float x1, float y1, float z1,
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
@@ -10219,21 +10174,8 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from smooth.xml )
-   * 
-   * Draws all geometry with smooth (anti-aliased) edges. This will slow down the frame rate of the application, but will enhance the visual refinement. 
-   * <br/><br/>
-   * Note that smooth() will also improve image quality of resized images, and noSmooth() will disable image (and font) smoothing altogether.
-   * <br/><br/>
-   * Starting in Processing 1.0, smoothing is always enabled with the OPENGL renderer setting. The smooth() and noSmooth() methods are ignored. See the hint() reference for information on disabling smoothing with OpenGL.
-   * <br/><br/>
-   * In the current release, smoothing is imperfect with the P2D and P3D renderers. In some situations, drawing with smooth() will create <a href="http://dev.processing.org/bugs/show_bug.cgi?id=200">small hairlines inside filled shapes</a> or <a href="http://dev.processing.org/bugs/show_bug.cgi?id=1000">inaccuracies with shape depth</a> can cause odd visual artifacts at the edges of shapes.
-   * 
-   * ( end auto-generated )
-   * @webref shape:attributes
-   * @see PGraphics#noSmooth()
-   * @see PGraphics#hint(int)
-   * @see PApplet#size(int, int, String)
+   * If true in PImage, use bilinear interpolation for copy()
+   * operations. When inherited by PGraphics, also controls shapes.
    */
   public void smooth() {
     if (recorder != null) recorder.smooth();
@@ -10242,13 +10184,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from noSmooth.xml )
-   * 
-   * Draws all geometry with jagged (aliased) edges.
-   * 
-   * ( end auto-generated )
-   * @webref shape:attributes
-   * @see PGraphics#smooth()
+   * Disable smoothing. See smooth().
    */
   public void noSmooth() {
     if (recorder != null) recorder.noSmooth();
@@ -10257,19 +10193,25 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from imageMode.xml )
-   * 
-   * Modifies the location from which images draw. The default mode is <b>imageMode(CORNER)</b>, which specifies the location to be the upper left corner and uses the fourth and fifth parameters of <b>image()</b> to set the image's width and height. The syntax <b>imageMode(CORNERS)</b> uses the second and third parameters of <b>image()</b> to set the location of one corner of the image and uses the fourth and fifth parameters to set the opposite corner. Use <b>imageMode(CENTER)</b> to draw images centered at the given x and y position.
-   * <br/> <br/>
-   * The parameter to <b>imageMode()</b> must be written in ALL CAPS because Processing is a case sensitive language.
-   * 
-   * ( end auto-generated )
+   * Modifies the location from which images draw. The default mode is
+   * <b>imageMode(CORNER)</b>, which specifies the location to be the
+   * upper-left corner and uses the fourth and fifth parameters of
+   * <b>image()</b> to set the image's width and height. The syntax
+   * <b>imageMode(CORNERS)</b> uses the second and third parameters of
+   * <b>image()</b> to set the location of one corner of the image and
+   * uses the fourth and fifth parameters to set the opposite corner.
+   * Use <b>imageMode(CENTER)</b> to draw images centered at the given
+   * x and y position.
+   * <br><br>The parameter to <b>imageMode()</b> must be written in
+   * ALL CAPS because Processing syntax is case sensitive.
+   *
    * @webref image:loading_displaying
-   * @param mode either CORNER, CORNERS, or CENTER
-   * @see PApplet#loadImage(String, String)
-   * @see PImage
-   * @see PGraphics#image(PImage, float, float, float, float)
-   * @see PGraphics#background(float, float, float, float)
+   * @param mode Either CORNER, CORNERS, or CENTER
+   *
+   * @see processing.core.PApplet#loadImage(String, String)
+   * @see processing.core.PImage
+   * @see processing.core.PApplet#image(PImage, float, float, float, float)
+   * @see processing.core.PGraphics#background(float, float, float, float)
    */
   public void imageMode(int mode) {
     if (recorder != null) recorder.imageMode(mode);
@@ -10284,14 +10226,20 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from image.xml )
-   * 
-   * Displays images to the screen. The images must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the image. Processing currently works with GIF, JPEG, and Targa images. The color of an image may be modified with the <b>tint()</b> function and if a GIF has transparency, it will maintain its transparency. The <b>img</b> parameter specifies the image to display and the <b>x</b> and <b>y</b> parameters define the location of the image from its upper-left corner. The image is displayed at its original size unless the <b>width</b> and <b>height</b> parameters specify a different size. The <b>imageMode()</b> function changes the way the parameters work. A call to <b>imageMode(CORNERS)</b> will change the width and height parameters to define the x and y values of the opposite corner of the image.
-   * <br/> <br/>
-   * Starting with release 0124, when using the default (JAVA2D) renderer, 
-   * smooth() will also improve image quality of resized images.
-   * 
-   * ( end auto-generated )
+   * Displays images to the screen. The images must be in the sketch's "data"
+   * directory to load correctly. Select "Add file..." from the "Sketch" menu
+   * to add the image. Processing currently works with GIF, JPEG, and Targa
+   * images. The color of an image may be modified with the <b>tint()</b>
+   * function and if a GIF has transparency, it will maintain its transparency.
+   * The <b>img</b> parameter specifies the image to display and the <b>x</b>
+   * and <b>y</b> parameters define the location of the image from its
+   * upper-left corner. The image is displayed at its original size unless
+   * the <b>width</b> and <b>height</b> parameters specify a different size.
+   * The <b>imageMode()</b> function changes the way the parameters work.
+   * A call to <b>imageMode(CORNERS)</b> will change the width and height
+   * parameters to define the x and y values of the opposite corner of the
+   * image.
+   *
    * <h3>Advanced</h3>
    * Starting with release 0124, when using the default (JAVA2D) renderer,
    * smooth() will also improve image quality of resized images.
@@ -10302,12 +10250,13 @@ public class PApplet extends Applet
    * @param y y-coordinate of the image
    * @param c width to display the image
    * @param d height to display the image
-   * @see PApplet#loadImage(String, String)
-   * @see PImage
-   * @see PGraphics#imageMode(int)
-   * @see PGraphics#tint(float)
-   * @see PGraphics#background(float, float, float, float)
-   * @see PGraphics#alpha(int)
+   *
+   * @see processing.core.PApplet#loadImage(String, String)
+   * @see processing.core.PImage
+   * @see processing.core.PGraphics#imageMode(int)
+   * @see processing.core.PGraphics#tint(float)
+   * @see processing.core.PGraphics#background(float, float, float, float)
+   * @see processing.core.PGraphics#alpha(int)
    */
   public void image(PImage image, float x, float y, float c, float d) {
     if (recorder != null) recorder.image(image, x, y, c, d);
@@ -10320,7 +10269,6 @@ public class PApplet extends Applet
    * In this method, the  u, v coordinates are always based on image space
    * location, regardless of the current textureMode().
    */
-   /** ??? */
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
@@ -10330,13 +10278,22 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from shapeMode.xml )
-   * 
-   * Modifies the location from which shapes draw. The default mode is <b>shapeMode(CORNER)</b>, which specifies the location to be the upper left corner of the shape and uses the third and fourth parameters of <b>shape()</b> to specify the width and height. The syntax <b>shapeMode(CORNERS)</b> uses the first and second parameters of <b>shape()</b> to set the location of one corner and uses the third and fourth parameters to set the opposite corner. The syntax <b>shapeMode(CENTER)</b> draws the shape from its center point and uses the third and forth parameters of <b>shape()</b> to specify the width and height. The parameter must be written in "ALL CAPS" because Processing is a case sensitive language.
-   * 
-   * ( end auto-generated )
+   * Modifies the location from which shapes draw.
+   * The default mode is <b>shapeMode(CORNER)</b>, which specifies the
+   * location to be the upper left corner of the shape and uses the third
+   * and fourth parameters of <b>shape()</b> to specify the width and height.
+   * The syntax <b>shapeMode(CORNERS)</b> uses the first and second parameters
+   * of <b>shape()</b> to set the location of one corner and uses the third
+   * and fourth parameters to set the opposite corner.
+   * The syntax <b>shapeMode(CENTER)</b> draws the shape from its center point
+   * and uses the third and forth parameters of <b>shape()</b> to specify the
+   * width and height.
+   * The parameter must be written in "ALL CAPS" because Processing syntax
+   * is case sensitive.
+   *
+   * @param mode One of CORNER, CORNERS, CENTER
+   *
    * @webref shape:loading_displaying
-   * @param mode either CORNER, CORNERS, CENTER
    * @see PGraphics#shape(PShape)
    * @see PGraphics#rectMode(int)
    */
@@ -10362,19 +10319,30 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from shape.xml )
-   * 
-   * Displays shapes to the screen. The shapes must be in the sketch's "data" directory to load correctly. Select "Add file..." from the "Sketch" menu to add the shape. Processing currently works with SVG shapes only. The <b>sh</b> parameter specifies the shape to display and the <b>x</b> and <b>y</b> parameters define the location of the shape from its upper-left corner. The shape is displayed at its original size unless the <b>width</b> and <b>height</b> parameters specify a different size. The <b>shapeMode()</b> function changes the way the parameters work. A call to <b>shapeMode(CORNERS)</b>, for example, will change the width and height parameters to define the x and y values of the opposite corner of the shape.
-   * <br /><br />
-   * Note complex shapes may draw awkwardly with P2D, P3D, and OPENGL. Those renderers do not yet support shapes that have holes or complicated breaks. 
-   * 
-   * ( end auto-generated )
-   * @webref shape:loading_displaying
-   * @param shape the shape to display
+   * Displays shapes to the screen. The shapes must be in the sketch's "data"
+   * directory to load correctly. Select "Add file..." from the "Sketch" menu
+   * to add the shape.
+   * Processing currently works with SVG shapes only.
+   * The <b>sh</b> parameter specifies the shape to display and the <b>x</b>
+   * and <b>y</b> parameters define the location of the shape from its
+   * upper-left corner.
+   * The shape is displayed at its original size unless the <b>width</b>
+   * and <b>height</b> parameters specify a different size.
+   * The <b>shapeMode()</b> function changes the way the parameters work.
+   * A call to <b>shapeMode(CORNERS)</b>, for example, will change the width
+   * and height parameters to define the x and y values of the opposite corner
+   * of the shape.
+   * <br><br>
+   * Note complex shapes may draw awkwardly with P2D, P3D, and OPENGL. Those
+   * renderers do not yet support shapes that have holes or complicated breaks.
+   *
+   * @param shape
    * @param x x-coordinate of the shape
    * @param y y-coordinate of the shape
    * @param c width to display the shape
    * @param d height to display the shape
+   *
+   * @webref shape:loading_displaying
    * @see PShape
    * @see PApplet#loadShape(String)
    * @see PGraphics#shapeMode(int)
@@ -10385,6 +10353,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Sets the alignment of the text to one of LEFT, CENTER, or RIGHT.
+   * This will also reset the vertical text alignment to BASELINE.
+   */
   public void textAlign(int align) {
     if (recorder != null) recorder.textAlign(align);
     g.textAlign(align);
@@ -10392,23 +10364,9 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from textAlign.xml )
-   * 
-   * Sets the current alignment for drawing text. The parameters LEFT, CENTER, and RIGHT set the display characteristics of the letters in relation to the values for the <b>x</b> and <b>y</b> parameters of the <b>text()</b> function.
-   * <br/> <br/>
-   * In Processing 0125 and later, an optional second parameter can be used to vertically align the text. BASELINE is the default, and the vertical alignment will be reset to BASELINE if the second parameter is not used. The TOP and CENTER parameters are straightforward. The BOTTOM parameter offsets the line based on the current <b>textDescent()</b>. For multiple lines, the final line will be aligned to the bottom, with the previous lines appearing above it.
-   * <br/> <br/>
-   * When using <b>text()</b> with width and height parameters, BASELINE is ignored, and treated as TOP. (Otherwise, text would by default draw outside the box, since BASELINE is the default setting. BASELINE is not a useful drawing mode for text drawn in a rectangle.)
-   * <br/> <br/>
-   * The vertical alignment is based on the value of <b>textAscent()</b>, which many fonts do not specify correctly. It may be necessary to use a hack and offset by a few pixels by hand so that the offset looks correct. To do this as less of a hack, use some percentage of <b>textAscent()</b> or <b>textDescent()</b> so that the hack works even if you change the size of the font.
-   * 
-   * ( end auto-generated )
-   * @webref typography:attributes
-   * @param alignX horizontal alignment, either LEFT, CENTER, or RIGHT
-   * @param alignY vertical alignment, either TOP, BOTTOM, CENTER, or BASELINE
-   * @see PApplet#loadFont(String)
-   * @see PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * Sets the horizontal and vertical alignment of the text. The horizontal
+   * alignment can be one of LEFT, CENTER, or RIGHT. The vertical alignment
+   * can be TOP, BOTTOM, CENTER, or the BASELINE (the default).
    */
   public void textAlign(int alignX, int alignY) {
     if (recorder != null) recorder.textAlign(alignX, alignY);
@@ -10417,13 +10375,9 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from textAscent.xml )
-   * 
-   * Returns ascent of the current font at its current size. This information is useful for determining the height of the font above the baseline. For example, adding the <b>textAscent()</b> and <b>textDescent()</b> values will give you the total height of the line.
-   * 
-   * ( end auto-generated )
-   * @webref typography:metrics
-   * @see PGraphics#textDescent()
+   * Returns the ascent of the current font at the current size.
+   * This is a method, rather than a variable inside the PGraphics object
+   * because it requires calculation.
    */
   public float textAscent() {
     return g.textAscent();
@@ -10431,13 +10385,9 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from textDescent.xml )
-   * 
-   * Returns descent of the current font at its current size. This information is useful for determining the height of the font below the baseline. For example, adding the <b>textAscent()</b> and <b>textDescent()</b> values will give you the total height of the line.
-   * 
-   * ( end auto-generated )
-   * @webref typography:metrics
-   * @see PGraphics#textAscent()
+   * Returns the descent of the current font at the current size.
+   * This is a method, rather than a variable inside the PGraphics object
+   * because it requires calculation.
    */
   public float textDescent() {
     return g.textDescent();
@@ -10445,17 +10395,9 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from textFont.xml )
-   * 
-   * Sets the current font that will be drawn with the <b>text()</b> function. Fonts must be loaded with <b>loadFont()</b> before it can be used. This font will be used in all subsequent calls to the <b>text()</b> function. If no <b>size</b> parameter is input, the font will appear at its original size (the size it was created at with the "Create Font..." tool) until it is changed with <b>textSize()</b>. <br /> <br /> Because fonts are usually bitmaped, you should create fonts at the sizes that will be used most commonly. Using <b>textFont()</b> without the size parameter will result in the cleanest-looking text. <br /><br /> With the default (JAVA2D) and PDF renderers, it's also possible to enable the use of native fonts via the command <b>hint(ENABLE_NATIVE_FONTS)</b>. This will produce vector text in JAVA2D sketches and PDF output in cases where the vector data is available: when the font is still installed, or the font is created via the <b>createFont()</b> function (rather than the Create Font tool).
-   * 
-   * ( end auto-generated )
-   * @webref typography:loading_display
-   * @param which any variable of the type PFont
-   * @see PApplet#createFont(String, float, boolean)
-   * @see PApplet#loadFont(String)
-   * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
+   * Sets the current font. The font's size will be the "natural"
+   * size of this font (the size that was set when using "Create Font").
+   * The leading will also be reset.
    */
   public void textFont(PFont which) {
     if (recorder != null) recorder.textFont(which);
@@ -10464,7 +10406,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param size the size of the letters in units of pixels
+   * Useful function to set the font and size at the same time.
    */
   public void textFont(PFont which, float size) {
     if (recorder != null) recorder.textFont(which, size);
@@ -10473,17 +10415,9 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from textLeading.xml )
-   * 
-   * Sets the spacing between lines of text in units of pixels. This setting will be used in all subsequent calls to the <b>text()</b> function.
-   * 
-   * ( end auto-generated )
-   * @webref typography:attributes
-   * @param leading the sie in pixels for spacing between lines
-   * @see PApplet#loadFont(String)
-   * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
-   * @see PGraphics#textFont(PFont)
+   * Set the text leading to a specific value. If using a custom
+   * value for the text leading, you'll have to call textLeading()
+   * again after any calls to textSize().
    */
   public void textLeading(float leading) {
     if (recorder != null) recorder.textLeading(leading);
@@ -10492,24 +10426,10 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from textMode.xml )
-   * 
-   * Sets the way text draws to the screen. In the default configuration (the MODEL mode), it's possible to rotate, scale, and place letters in two and three dimensional space. 
-   * <br /><br />
-   * Changing to SCREEN mode draws letters directly to the front of the window and greatly increases rendering quality and speed when used with the P2D and P3D renderers. textMode(SCREEN) with OPENGL and JAVA2D (the default) renderers will generally be slower, though pixel accurate with P2D and P3D. With textMode(SCREEN), the letters draw at the actual size of the font (in pixels) and therefore calls to <b>textSize()</b> will not affect the size of the letters. To create a font at the size you desire, use the "Create font..." option in the Tools menu, or use the createFont() function. When using textMode(SCREEN), any z-coordinate passed to a text() command will be ignored, because your computer screen is...flat!
-   * <br /><br />
-   * The SHAPE mode draws text using the the glyph outlines of individual characters rather than as textures. This mode is only only supported with the PDF and OPENGL renderer settings. With the PDF renderer, you must call textMode(SHAPE) before any other drawing occurs. If the outlines are not available, then <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will be used instead.
-   * <br /><br />
-   * The textMode(SHAPE) option in OPENGL mode can be combined with beginRaw() to write vector-accurate text to 2D and 3D output files, for instance DXF or PDF. textMode(SHAPE) is not currently optimized for OPENGL, so if recording shape data, use textMode(MODEL) until you're ready to capture the geometry with beginRaw().
-   * 
-   * ( end auto-generated )
-   * @webref typography:attributes
-   * @param mode either MODEL, SCREEN, or SHAPE
-   * @see PApplet#loadFont(String)
-   * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
-   * @see PGraphics#textFont(PFont)
-   * @see PApplet#createFont(String, float, boolean)
+   * Sets the text rendering/placement to be either MODEL (the normal mode,
+   * where text bitmaps are used (or the native font, when available). 
+   * Or SHAPE, where text is rendered as actual vector data (much slower in
+   * some cases, faster in others). SCREEN mode has been removed for 2.0. 
    */
   public void textMode(int mode) {
     if (recorder != null) recorder.textMode(mode);
@@ -10518,17 +10438,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from textSize.xml )
-   * 
-   * Sets the current font size. This size will be used in all subsequent calls to the <b>text()</b> function. Font size is measured in units of pixels.
-   * 
-   * ( end auto-generated )
-   * @webref typography:attributes
-   * @param size the size of the letters in units of pixels
-   * @see PApplet#loadFont(String)
-   * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
-   * @see PGraphics#textFont(PFont)
+   * Sets the text size, also resets the value for the leading.
    */
   public void textSize(float size) {
     if (recorder != null) recorder.textSize(size);
@@ -10542,17 +10452,8 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from textWidth.xml )
-   * 
-   * Calculates and returns the width of any character or text string.
-   * 
-   * ( end auto-generated )
-   * @webref typography:attributes
-   * @param str
-   * @see PApplet#loadFont(String)
-   * @see PFont#PFont
-   * @see PGraphics#text(String, float, float, float, float, float)
-   * @see PGraphics#textFont(PFont)
+   * Return the width of a line of text. If the text has multiple
+   * lines, this returns the length of the longest line.
    */
   public float textWidth(String str) {
     return g.textWidth(str);
@@ -10560,7 +10461,6 @@ public class PApplet extends Applet
 
 
   /**
-   * ???
    * TODO not sure if this stays...
    */
   public float textWidth(char[] chars, int start, int length) {
@@ -10569,22 +10469,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from text.xml )
-   * 
-   * Draws text to the screen. Displays the information specified in the <b>data</b> or <b>stringdata</b> parameters on the screen in the position specified by the <b>x</b> and <b>y</b> parameters and the optional <b>z</b> parameter. A default font will be used unless a font is set with the <b>textFont()</b> function. Change the color of the text with the <b>fill()</b> function. The text displays in relation to the <b>textAlign()</b> function, which gives the option to draw to the left, right, and center of the coordinates. 
-   * <br/> <br/>
-   * The <b>width</b> and <b>height</b> parameters define a rectangular area to display within and may only be used with string data. For text drawn inside a rectangle, the coordinates are interpreted based on the current <b>rectMode()</b> setting.
-   * <br/> <br/>
-   * Use the <b>textMode()</b> function with the <b>SCREEN</b> parameter to display text in 2D at the surface of the window. 
-   * 
-   * ( end auto-generated )
-   * @webref typography:loading_displaying
-   * @param c the alphanumeric symbols to be displayed
-   * @see PGraphics#textAlign(int, int)
-   * @see PGraphics#textMode(int)
-   * @see PApplet#loadFont(String)
-   * @see PFont#PFont
-   * @see PGraphics#textFont(PFont)
+   * Write text where we just left off.
    */
   public void text(char c) {
     if (recorder != null) recorder.text(c);
@@ -10593,12 +10478,9 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
    * Draw a single character on screen.
    * Extremely slow when used with textMode(SCREEN) and Java 2D,
    * because loadPixels has to be called first and updatePixels last.
-   * @param x x-coordinate of text
-   * @param y y-coordinate of text
    */
   public void text(char c, float x, float y) {
     if (recorder != null) recorder.text(c, x, y);
@@ -10607,7 +10489,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param z z-coordinate of text
+   * Draw a single character on screen (with a z coordinate)
    */
   public void text(char c, float x, float y, float z) {
     if (recorder != null) recorder.text(c, x, y, z);
@@ -10616,7 +10498,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param str the alphanumeric symbols to be displayed
+   * Write text where we just left off.
    */
   public void text(String str) {
     if (recorder != null) recorder.text(str);
@@ -10625,7 +10507,6 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
    * Draw a chunk of text.
    * Newlines that are \n (Unix newline or linefeed char, ascii 10)
    * are honored, but \r (carriage return, Windows and Mac OS) are
@@ -10638,15 +10519,9 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
    * Method to draw text from an array of chars. This method will usually be
    * more efficient than drawing from a String object, because the String will
    * not be converted to a char array before drawing.
-   * @param chars letters to be displayed
-   * @param start ???
-   * @param stop ???
-   * @param x ???
-   * @param y ???
    */
   public void text(char[] chars, int start, int stop, float x, float y) {
     if (recorder != null) recorder.text(chars, start, stop, x, y);
@@ -10671,7 +10546,6 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
    * Draw text in a box that is constrained to a particular size.
    * The current rectMode() determines what the coordinates mean
    * (whether x1/y1/x2/y2 or x/y/w/h).
@@ -10683,11 +10557,6 @@ public class PApplet extends Applet
    * Newlines that are \n (Unix newline or linefeed char, ascii 10)
    * are honored, and \r (carriage return, Windows and Mac OS) are
    * ignored.
-   *
-   * @param x1 x-coordinate of text
-   * @param y1 y-coordinate of text
-   * @param x2 ???
-   * @param y2 ???
    */
   public void text(String str, float x1, float y1, float x2, float y2) {
     if (recorder != null) recorder.text(str, x1, y1, x2, y2);
@@ -10719,8 +10588,6 @@ public class PApplet extends Applet
    * Users who want more control should use their own nf() cmmand,
    * or if they want the long, ugly version of float,
    * use String.valueOf() to convert the float to a String first.
-   *
-   * @param num the alphanumeric symbols to be displayed
    */
   public void text(float num, float x, float y) {
     if (recorder != null) recorder.text(num, x, y);
@@ -10735,18 +10602,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from pushMatrix.xml )
-   * 
-   * Pushes the current transformation matrix onto the matrix stack. Understanding <b>pushMatrix()</b> and <b>popMatrix()</b> requires understanding the concept of a matrix stack. The <b>pushMatrix()</b> function saves the current coordinate system to the stack and <b>popMatrix()</b> restores the prior coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with the other transformation methods and may be embedded to control the scope of the transformations.
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#translate(float, float, float)
-   * @see PGraphics#rotate(float)
-   * @see PGraphics#rotateX(float)
-   * @see PGraphics#rotateY(float)
-   * @see PGraphics#rotateZ(float)
+   * Push a copy of the current transformation matrix onto the stack.
    */
   public void pushMatrix() {
     if (recorder != null) recorder.pushMatrix();
@@ -10755,13 +10611,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from popMatrix.xml )
-   * 
-   * Pops the current transformation matrix off the matrix stack. Understanding pushing and popping requires understanding the concept of a matrix stack. The <b>pushMatrix()</b> function saves the current coordinate system to the stack and <b>popMatrix()</b> restores the prior coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with the other transformation methods and may be embedded to control the scope of the transformations.
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @see PGraphics#pushMatrix()
+   * Replace the current transformation matrix with the top of the stack.
    */
   public void popMatrix() {
     if (recorder != null) recorder.popMatrix();
@@ -10770,21 +10620,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from translate.xml )
-   * 
-   * Specifies an amount to displace objects within the display window. The <b>x</b> parameter specifies left/right translation, the <b>y</b> parameter specifies up/down translation, and the <b>z</b> parameter specifies translations toward/away from the screen. Using this function with the <b>z</b> parameter requires using the P3D or OPENGL parameter in combination with size as shown in the above example. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>translate(50, 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 0)</b>. If <b>translate()</b> is called within <b>draw()</b>, the transformation is reset when the loop begins again. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b>.
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @param tx left/right translation
-   * @param ty up/down translation
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#rotate(float)
-   * @see PGraphics#rotateX(float)
-   * @see PGraphics#rotateY(float)
-   * @see PGraphics#rotateZ(float)
-   * @see PGraphics#scale(float, float, float)
+   * Translate in X and Y.
    */
   public void translate(float tx, float ty) {
     if (recorder != null) recorder.translate(tx, ty);
@@ -10793,7 +10629,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param tz forward/backward translation
+   * Translate in X, Y, and Z.
    */
   public void translate(float tx, float ty, float tz) {
     if (recorder != null) recorder.translate(tx, ty, tz);
@@ -10802,24 +10638,13 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from rotate.xml )
-   * 
-   * Rotates a shape the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to TWO_PI) or converted to radians with the <b>radians()</b> function. 
-   * <br/> <br/>
-   * Objects are always rotated around their relative position to the origin and positive numbers rotate objects in a clockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as <b>rotate(PI)</b>. All tranformations are reset when <b>draw()</b> begins again. 
-   * <br/> <br/>
-   * Technically, <b>rotate()</b> multiplies the current transformation matrix by a rotation matrix. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b>.
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @param angle angle of rotation specified in radians
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#rotateX(float)
-   * @see PGraphics#rotateY(float)
-   * @see PGraphics#rotateZ(float)
-   * @see PGraphics#scale(float, float, float)
-   * @see PApplet#radians(float)
+   * Two dimensional rotation.
+   *
+   * Same as rotateZ (this is identical to a 3D rotation along the z-axis)
+   * but included for clarity. It'd be weird for people drawing 2D graphics
+   * to be using rotateZ. And they might kick our a-- for the confusion.
+   *
+   * <A HREF="http://www.xkcd.com/c184.html">Additional background</A>.
    */
   public void rotate(float angle) {
     if (recorder != null) recorder.rotate(angle);
@@ -10828,20 +10653,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from rotateX.xml )
-   * 
-   * Rotates a shape around the x-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always rotated around their relative position to the origin and positive numbers rotate objects in a counterclockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotateX(PI/2)</b> and then <b>rotateX(PI/2)</b> is the same as <b>rotateX(PI)</b>. If <b>rotateX()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function requires passing P3D or OPENGL into the size() parameter as shown in the example above. 
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @param angle angle of rotation specified in radians
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#rotate(float)
-   * @see PGraphics#rotateY(float)
-   * @see PGraphics#rotateZ(float)
-   * @see PGraphics#scale(float, float, float)
-   * @see PGraphics#translate(float, float, float)
+   * Rotate around the X axis.
    */
   public void rotateX(float angle) {
     if (recorder != null) recorder.rotateX(angle);
@@ -10850,20 +10662,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from rotateY.xml )
-   * 
-   * Rotates a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always rotated around their relative position to the origin and positive numbers rotate objects in a counterclockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotateY(PI/2)</b> and then <b>rotateY(PI/2)</b> is the same as <b>rotateY(PI)</b>. If <b>rotateY()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function requires passing P3D or OPENGL into the size() parameter as shown in the example above. 
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @param angle angle of rotation specified in radians
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#rotate(float)
-   * @see PGraphics#rotateX(float)
-   * @see PGraphics#rotateZ(float)
-   * @see PGraphics#scale(float, float, float)
-   * @see PGraphics#translate(float, float, float)
+   * Rotate around the Y axis.
    */
   public void rotateY(float angle) {
     if (recorder != null) recorder.rotateY(angle);
@@ -10872,20 +10671,12 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from rotateZ.xml )
-   * 
-   * Rotates a shape around the z-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always rotated around their relative position to the origin and positive numbers rotate objects in a counterclockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>rotateZ(PI/2)</b> and then <b>rotateZ(PI/2)</b> is the same as <b>rotateZ(PI)</b>. If <b>rotateZ()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function requires passing P3D or OPENGL into the size() parameter as shown in the example above. 
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @param angle angle of rotation specified in radians
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#rotate(float)
-   * @see PGraphics#rotateX(float)
-   * @see PGraphics#rotateY(float)
-   * @see PGraphics#scale(float, float, float)
-   * @see PGraphics#translate(float, float, float)
+   * Rotate around the Z axis.
+   *
+   * The functions rotate() and rotateZ() are identical, it's just that it make
+   * sense to have rotate() and then rotateX() and rotateY() when using 3D;
+   * nor does it make sense to use a function called rotateZ() if you're only
+   * doing things in 2D. so we just decided to have them both be the same.
    */
   public void rotateZ(float angle) {
     if (recorder != null) recorder.rotateZ(angle);
@@ -10894,11 +10685,7 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
    * Rotate about a vector in space. Same as the glRotatef() function.
-   * @param vx ???
-   * @param vy ???
-   * @param vz ???
    */
   public void rotate(float angle, float vx, float vy, float vz) {
     if (recorder != null) recorder.rotate(angle, vx, vy, vz);
@@ -10907,20 +10694,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from scale.xml )
-   * 
-   * Increases or decreases the size of a shape by expanding and contracting vertices. Objects always scale from their relative origin to the coordinate system. Scale values are specified as decimal percentages. For example, the function call <b>scale(2.0)</b> increases the dimension of a shape by 200%. Transformations apply to everything that happens after and subsequent calls to the function multiply the effect. For example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the same as <b>scale(3.0)</b>. If <b>scale()</b> is called within <b>draw()</b>, the transformation is reset when the loop begins again. Using this fuction with the <b>z</b> parameter requires passing P3D or OPENGL into the size() parameter as shown in the example above. This function can be further controlled by <b>pushMatrix()</b> and <b>popMatrix()</b>.
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @param s percentage to scale the object
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#rotate(float)
-   * @see PGraphics#rotateX(float)
-   * @see PGraphics#rotateY(float)
-   * @see PGraphics#rotateZ(float)
-   * @see PGraphics#translate(float, float, float)
+   * Scale in all dimensions.
    */
   public void scale(float s) {
     if (recorder != null) recorder.scale(s);
@@ -10929,14 +10703,10 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
    * Scale in X and Y. Equivalent to scale(sx, sy, 1).
    *
    * Not recommended for use in 3D, because the z-dimension is just
    * scaled by 1, since there's no way to know what else to scale it by.
-   * 
-   * @param sx percentage to scale the object in the x-axis
-   * @param sy percentage to scale the objects in the y-axis
    */
   public void scale(float sx, float sy) {
     if (recorder != null) recorder.scale(sx, sy);
@@ -10945,9 +10715,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param x percentage to scale the object in the x-axis
-   * @param y percentage to scale the objects in the y-axis
-   * @param z percentage to scale the object in the z-axis
+   * Scale in X, Y, and Z.
    */
   public void scale(float x, float y, float z) {
     if (recorder != null) recorder.scale(x, y, z);
@@ -10956,21 +10724,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from shearX.xml )
-   * 
-   * Shears a shape around the x-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always sheared around their relative position to the origin and positive numbers shear objects in a clockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>shearX(PI/2)</b> and then <b>shearX(PI/2)</b> is the same as <b>shearX(PI)</b>. If <b>shearX()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function works in P2D or JAVA2D mode as shown in the example above.
-   * <br/> <br/>
-   * Technically, <b>shearX()</b> multiplies the current transformation matrix by a rotation matrix. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @param angle angle of shear specified in radians
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#shearY(float)
-   * @see PGraphics#scale(float, float, float)
-   * @see PGraphics#translate(float, float, float)
-   * @see PApplet#radians(float)
+   * Shear along X axis
    */
   public void shearX(float angle) {
     if (recorder != null) recorder.shearX(angle);
@@ -10979,21 +10733,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from shearY.xml )
-   * 
-   * Shears a shape around the y-axis the amount specified by the <b>angle</b> parameter. Angles should be specified in radians (values from 0 to PI*2) or converted to radians with the <b>radians()</b> function. Objects are always sheared around their relative position to the origin and positive numbers shear objects in a clockwise direction. Transformations apply to everything that happens after and subsequent calls to the function accumulates the effect. For example, calling <b>shearY(PI/2)</b> and then <b>shearY(PI/2)</b> is the same as <b>shearY(PI)</b>. If <b>shearY()</b> is called within the <b>draw()</b>, the transformation is reset when the loop begins again. This function works in P2D or JAVA2D mode as shown in the example above.
-   * <br/> <br/>
-   * Technically, <b>shearY()</b> multiplies the current transformation matrix by a rotation matrix. This function can be further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @param angle angle of shear specified in radians
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#shearX(float)
-   * @see PGraphics#scale(float, float, float)
-   * @see PGraphics#translate(float, float, float)
-   * @see PApplet#radians(float)
+   * Shear along Y axis
    */
   public void shearY(float angle) {
     if (recorder != null) recorder.shearY(angle);
@@ -11002,16 +10742,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from resetMatrix.xml )
-   * 
-   * Replaces the current matrix with the identity matrix. The equivalent function in OpenGL is glLoadIdentity(). 
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#applyMatrix(PMatrix)
-   * @see PGraphics#printMatrix()
+   * Set the current transformation matrix to identity.
    */
   public void resetMatrix() {
     if (recorder != null) recorder.resetMatrix();
@@ -11019,19 +10750,6 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * ( begin auto-generated from applyMatrix.xml )
-   * 
-   * Multiplies the current matrix by the one specified through the parameters. This is very slow because it will try to calculate the inverse of the transform, so avoid it whenever possible. The equivalent function in OpenGL is glMultMatrix().
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @source ???
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#resetMatrix()
-   * @see PGraphics#printMatrix()
-   */
   public void applyMatrix(PMatrix source) {
     if (recorder != null) recorder.applyMatrix(source);
     g.applyMatrix(source);
@@ -11045,12 +10763,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param n00 numbers which define the 4x4 matrix to be multiplied
-   * @param n01 numbers which define the 4x4 matrix to be multiplied
-   * @param n02 numbers which define the 4x4 matrix to be multiplied
-   * @param n10 numbers which define the 4x4 matrix to be multiplied
-   * @param n11 numbers which define the 4x4 matrix to be multiplied
-   * @param n12 numbers which define the 4x4 matrix to be multiplied
+   * Apply a 3x2 affine transformation matrix.
    */
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
@@ -11059,17 +10772,6 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * @param n13 numbers which define the 4x4 matrix to be multiplied
-   * @param n20 numbers which define the 4x4 matrix to be multiplied
-   * @param n21 numbers which define the 4x4 matrix to be multiplied
-   * @param n22 numbers which define the 4x4 matrix to be multiplied
-   * @param n23 numbers which define the 4x4 matrix to be multiplied
-   * @param n30 numbers which define the 4x4 matrix to be multiplied
-   * @param n31 numbers which define the 4x4 matrix to be multiplied
-   * @param n32 numbers which define the 4x4 matrix to be multiplied
-   * @param n33 numbers which define the 4x4 matrix to be multiplied
-   */
   public void applyMatrix(PMatrix3D source) {
     if (recorder != null) recorder.applyMatrix(source);
     g.applyMatrix(source);
@@ -11139,16 +10841,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from printMatrix.xml )
-   * 
-   * Prints the current matrix to the text window.
-   * 
-   * ( end auto-generated )
-   * @webref transform
-   * @see PGraphics#pushMatrix()
-   * @see PGraphics#popMatrix()
-   * @see PGraphics#resetMatrix()
-   * @see PGraphics#applyMatrix(PMatrix)
+   * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
     if (recorder != null) recorder.printMatrix();
@@ -11156,68 +10849,24 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from beginCamera.xml )
-   * 
-   * The <b>beginCamera()</b> and <b>endCamera()</b> functions enable advanced customization of the camera space. The functions are useful if you want to more control over camera movement, however for most users, the <b>camera()</b> function will be sufficient.<br /><br />The camera functions will replace any transformations (such as <b>rotate()</b> or <b>translate()</b>) that occur before them in <b>draw()</b>, but they will not automatically replace the camera transform itself. For this reason, camera functions should be placed at the beginning of <b>draw()</b> (so that transformations happen afterwards), and the <b>camera()</b> function can be used after <b>beginCamera()</b> if you want to reset the camera before applying transformations.<br /><br />This function sets the matrix mode to the camera matrix so calls such as <b>translate()</b>, <b>rotate()</b>, applyMatrix() and resetMatrix() affect the camera. <b>beginCamera()</b> should always be used with a following <b>endCamera()</b> and pairs of <b>beginCamera()</b> and <b>endCamera()</b> cannot be nested.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:camera
- * @see PGraphics#camera()
- * @see PGraphics#endCamera()
- * @see PGraphics#applyMatrix(PMatrix)
- * @see PGraphics#resetMatrix()
- * @see PGraphics#translate(float, float, float)
- * @see PGraphics#scale(float, float, float)
- */
   public void beginCamera() {
     if (recorder != null) recorder.beginCamera();
     g.beginCamera();
   }
 
 
-/**
-   * ( begin auto-generated from endCamera.xml )
-   * 
-   * The <b>beginCamera()</b> and <b>endCamera()</b> functions enable advanced customization of the camera space. Please see the reference for <b>beginCamera()</b> for a description of how the functions are used.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:camera
- * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
- */
   public void endCamera() {
     if (recorder != null) recorder.endCamera();
     g.endCamera();
   }
 
 
-/**
-   * ( begin auto-generated from camera.xml )
-   * 
-   * Sets the position of the camera through setting the eye position, the center of the scene, and which axis is facing upward. Moving the eye position and the direction it is pointing (the center of the scene) allows the images to be seen from different angles. The version without any parameters sets the camera to the default position, pointing to the center of the display window with the Y axis as up. The default values are camera(width/2.0, height/2.0, (height/2.0) / tan(PI*60.0 / 360.0), width/2.0, height/2.0, 0, 0, 1, 0). This function is similar to gluLookAt() in OpenGL, but it first clears the current camera settings.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:camera
- * @see PGraphics#endCamera()
- * @see PGraphics#frustum(float, float, float, float, float, float)
- */
   public void camera() {
     if (recorder != null) recorder.camera();
     g.camera();
   }
 
 
-/**
- * @param eyeX x-coordinate for the eye
- * @param eyeY y-coordinate for the eye
- * @param eyeZ z-coordinate for the eye
- * @param centerX x-coordinate for the center of the scene
- * @param centerY y-coordinate for the center of the scene
- * @param centerZ z-coordinate for the center of the scene
- * @param upX usually 0.0, 1.0, or -1.0
- * @param upY usually 0.0, 1.0, or -1.0
- * @param upZ usually 0.0, 1.0, or -1.0
- */
   public void camera(float eyeX, float eyeY, float eyeZ,
                      float centerX, float centerY, float centerZ,
                      float upX, float upY, float upZ) {
@@ -11226,41 +10875,18 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from printCamera.xml )
-   * 
-   * Prints the current camera matrix to the text window.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:camera
- * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
- */
   public void printCamera() {
     if (recorder != null) recorder.printCamera();
     g.printCamera();
   }
 
 
-/**
-   * ( begin auto-generated from ortho.xml )
-   * 
-   * Sets an orthographic projection and defines a parallel clipping volume. All objects with the same dimension appear the same size, regardless of whether they are near or far from the camera. The parameters to this function specify the clipping volume where left and right are the minimum and maximum x values, top and bottom are the minimum and maximum y values, and near and far are the minimum and maximum z values. If no parameters are given, the default is used: ortho(0, width, 0, height, -10, 10).
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:camera
- */
   public void ortho() {
     if (recorder != null) recorder.ortho();
     g.ortho();
   }
 
 
-/**
- * @param left left plane of the clipping volume
- * @param right right plane of the clipping volume
- * @param bottom bottom plane of the clipping volume
- * @param top top plane of the clipping volume
- */
   public void ortho(float left, float right,
                     float bottom, float top) {
     if (recorder != null) recorder.ortho(left, right, bottom, top);
@@ -11268,10 +10894,6 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param near maximum distance from the origin to the viewer
- * @param far maximum distance from the origin away from the viewer
- */
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
@@ -11280,49 +10902,18 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from perspective.xml )
-   * 
-   * Sets a perspective projection applying foreshortening, making distant objects appear smaller than closer ones. The parameters define a viewing volume with the shape of truncated pyramid. Objects near to the front of the volume appear their actual size, while farther objects appear smaller. This projection simulates the perspective of the world more accurately than orthographic projection. The version of perspective without parameters sets the default perspective and the version with four parameters allows the programmer to set the area precisely. The default values are: perspective(PI/3.0, width/height, cameraZ/10.0, cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:camera
- */
   public void perspective() {
     if (recorder != null) recorder.perspective();
     g.perspective();
   }
 
 
-/**
- * @param fovy field-of-view angle (in radians) for vertical direction
- * @param aspect ratio of width to height
- * @param zNear z-position of nearest clipping plane
- * @param zFar z-position of nearest farthest plane
- */
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
     if (recorder != null) recorder.perspective(fovy, aspect, zNear, zFar);
     g.perspective(fovy, aspect, zNear, zFar);
   }
 
 
-/**
-   * ( begin auto-generated from frustum.xml )
-   * 
-   * Sets a perspective matrix defined through the parameters. Works like glFrustum, except it wipes out the current perspective matrix rather than muliplying itself with it.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:camera
- * @param left left coordinate of the clipping plane
- * @param right right coordinate of the clipping plane
- * @param bottom bottom coordinate of the clipping plane
- * @param top top coordinate of the clipping plane
- * @param near near component of the clipping plane
- * @param far far component of the clipping plane
- * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
- * @see PGraphics#endCamera()
- * @see PGraphics#perspective(float, float, float, float)
- */
   public void frustum(float left, float right,
                       float bottom, float top,
                       float near, float far) {
@@ -11331,15 +10922,6 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from printProjection.xml )
-   * 
-   * Prints the current projection matrix to the text window.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:camera
- * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
- */
   public void printProjection() {
     if (recorder != null) recorder.printProjection();
     g.printProjection();
@@ -11347,16 +10929,9 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from screenX.xml )
-   * 
-   * Takes a three-dimensional X, Y, Z position and returns the X value for where it will appear on a (two-dimensional) screen.
-   * 
-   * ( end auto-generated )
-   * @webref lights_camera:coordinates
-   * @param x 3D x-coordinate to be mapped
-   * @param y 3D y-coordinate to be mapped
-   * @see PGraphics#screenY(float, float, float)
-   * @see PGraphics#screenZ(float, float, float)
+   * Given an x and y coordinate, returns the x position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
    */
   public float screenX(float x, float y) {
     return g.screenX(x, y);
@@ -11364,16 +10939,9 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from screenY.xml )
-   * 
-   * Takes a three-dimensional X, Y, Z position and returns the Y value for where it will appear on a (two-dimensional) screen.
-   * 
-   * ( end auto-generated )
-   * @webref lights_camera:coordinates
-   * @param x 3D x-coordinate to be mapped
-   * @param y 3D y-coordinate to be mapped
-   * @see PGraphics#screenX(float, float, float)
-   * @see PGraphics#screenZ(float, float, float)
+   * Given an x and y coordinate, returns the y position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
    */
   public float screenY(float x, float y) {
     return g.screenY(x, y);
@@ -11381,7 +10949,11 @@ public class PApplet extends Applet
 
 
   /**
-   * @param z 3D z-coordinate to be mapped
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns the x position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
    */
   public float screenX(float x, float y, float z) {
     return g.screenX(x, y, z);
@@ -11389,7 +10961,11 @@ public class PApplet extends Applet
 
 
   /**
-   * @param z 3D z-coordinate to be mapped
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns the y position of where
+   * that point would be placed on screen, once affected by translate(),
+   * scale(), or any other transformations.
    */
   public float screenY(float x, float y, float z) {
     return g.screenY(x, y, z);
@@ -11397,17 +10973,15 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from screenZ.xml )
-   * 
-   * Takes a three-dimensional X, Y, Z position and returns the Z value for where it will appear on a (two-dimensional) screen.
-   * 
-   * ( end auto-generated )
-   * @webref lights_camera:coordinates
-   * @param x 3D x-coordinate to be mapped
-   * @param y 3D y-coordinate to be mapped
-   * @param z 3D z-coordinate to be mapped
-   * @see PGraphics#screenX(float, float, float)
-   * @see PGraphics#screenY(float, float, float)
+   * Maps a three dimensional point to its placement on-screen.
+   * <P>
+   * Given an (x, y, z) coordinate, returns its z value.
+   * This value can be used to determine if an (x, y, z) coordinate
+   * is in front or in back of another (x, y, z) coordinate.
+   * The units are based on how the zbuffer is set up, and don't
+   * relate to anything "real". They're only useful for in
+   * comparison to another value obtained from screenZ(),
+   * or directly out of the zbuffer[].
    */
   public float screenZ(float x, float y, float z) {
     return g.screenZ(x, y, z);
@@ -11415,19 +10989,13 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from modelX.xml )
-   * 
-   * Returns the three-dimensional X, Y, Z position in model space. This returns the X value for a given coordinate based on the current set of transformations (scale, rotate, translate, etc.) The X value can be used to place an object in space relative to the location of the original point once the transformations are no longer in use. 
-   * <br/> <br/>
-   * In the example, the modelX(), modelY(), and modelZ() methods record the location of a box in space after being placed using a series of translate and rotate commands. After popMatrix() is called, those transformations no longer apply, but the (x, y, z) coordinate returned by the model functions is used to place another box in the same location.
-   * 
-   * ( end auto-generated )
-   * @webref lights_camera
-   * @param x 3D x-coordinate to be mapped
-   * @param y 3D y-coordinate to be mapped
-   * @param z 3D z-coordinate to be mapped
-   * @see PGraphics#modelY(float, float, float)
-   * @see PGraphics#modelZ(float, float, float)
+   * Returns the model space x value for an x, y, z coordinate.
+   * <P>
+   * This will give you a coordinate after it has been transformed
+   * by translate(), rotate(), and camera(), but not yet transformed
+   * by the projection matrix. For instance, his can be useful for
+   * figuring out how points in 3D space relate to the edge
+   * coordinates of a shape.
    */
   public float modelX(float x, float y, float z) {
     return g.modelX(x, y, z);
@@ -11435,19 +11003,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from modelY.xml )
-   * 
-   * Returns the three-dimensional X, Y, Z position in model space. This returns the Y value for a given coordinate based on the current set of transformations (scale, rotate, translate, etc.) The Y value can be used to place an object in space relative to the location of the original point once the transformations are no longer in use. 
-   * <br/> <br/>
-   * In the example, the modelX(), modelY(), and modelZ() methods record the location of a box in space after being placed using a series of translate and rotate commands. After popMatrix() is called, those transformations no longer apply, but the (x, y, z) coordinate returned by the model functions is used to place another box in the same location.
-   * 
-   * ( end auto-generated )
-   * @webref lights_camera
-   * @param x 3D x-coordinate to be mapped
-   * @param y 3D y-coordinate to be mapped
-   * @param z 3D z-coordinate to be mapped
-   * @see PGraphics#modelX(float, float, float)
-   * @see PGraphics#modelZ(float, float, float) 
+   * Returns the model space y value for an x, y, z coordinate.
    */
   public float modelY(float x, float y, float z) {
     return g.modelY(x, y, z);
@@ -11455,52 +11011,19 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from modelZ.xml )
-   * 
-   * Returns the three-dimensional X, Y, Z position in model space. This returns the Z value for a given coordinate based on the current set of transformations (scale, rotate, translate, etc.) The Z value can be used to place an object in space relative to the location of the original point once the transformations are no longer in use. 
-   * <br/> <br/>
-   * In the example, the modelX(), modelY(), and modelZ() methods record the location of a box in space after being placed using a series of translate and rotate commands. After popMatrix() is called, those transformations no longer apply, but the (x, y, z) coordinate returned by the model functions is used to place another box in the same location.
-   * 
-   * ( end auto-generated )
-   * @webref lights_camera
-   * @param x 3D x-coordinate to be mapped
-   * @param y 3D y-coordinate to be mapped
-   * @param z 3D z-coordinate to be mapped
-   * @see PGraphics#modelX(float, float, float)
-   * @see PGraphics#modelY(float, float, float)
+   * Returns the model space z value for an x, y, z coordinate.
    */
   public float modelZ(float x, float y, float z) {
     return g.modelZ(x, y, z);
   }
 
 
-/**
-   * ( begin auto-generated from pushStyle.xml )
-   * 
-   * The <b>pushStyle()</b> function saves the current style settings and <b>popStyle()</b> restores the prior settings. Note that these functions are always used together. They allow you to change the style settings and later return to what you had. When a new style is started with <b>pushStyle()</b>, it builds on the current style information. The <b>pushStyle()</b> and <b>popStyle()</b> functions can be embedded to provide more control (see the second example above for a demonstration.)
-   * <br /><br />
-   * The style information controlled by the following functions are included in the style:
-   * fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), emissive(), specular(), shininess(), ambient() 
-   * 
-   * ( end auto-generated )
- * @webref structure
- * @see PGraphics#popStyle()
- */
   public void pushStyle() {
     if (recorder != null) recorder.pushStyle();
     g.pushStyle();
   }
 
 
-/**
-   * ( begin auto-generated from popStyle.xml )
-   * 
-   * The <b>pushStyle()</b> function saves the current style settings and <b>popStyle()</b> restores the prior settings; these functions are always used together. They allow you to change the style settings and later return to what you had. When a new style is started with <b>pushStyle()</b>, it builds on the current style information. The <b>pushStyle()</b> and <b>popStyle()</b> functions can be embedded to provide more control (see the second example above for a demonstration.)
-   * 
-   * ( end auto-generated )
- * @webref structure
- * @see PGraphics#pushStyle()
- */
   public void popStyle() {
     if (recorder != null) recorder.popStyle();
     g.popStyle();
@@ -11513,65 +11036,18 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from strokeWeight.xml )
-   * 
-   * Sets the width of the stroke used for lines, points, and the border around shapes. All widths are set in units of pixels. 
-   * <br/> <br/>
-   * With P2D, P3D, and OPENGL, series of connected lines (such as the stroke around a polygon, triangle, or ellipse) produce unattractive results when strokeWeight is set (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>).
-   * <br/> <br/>
-   * When used with P3D, strokeWeight does not interpolate the Z-coordinates of the lines, which means that when rotated, these flat lines will disappear (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=956">Bug 956</a>). The OPENGL renderer setting does not share this problem because it always draws lines perpendicular to the screen.
-   * <br/> <br/>
-   * When using OPENGL, the minimum and maximum values for strokeWeight() are controlled by the graphics card and the operating system's OpenGL implementation. For instance, the weight may not go higher than 10. 
-   * 
-   * ( end auto-generated )
- * @webref shape:attributes
- * @param weight the weight (in pixels) of the stroke
- * @see PGraphics#stroke(int, float)
- * @see PGraphics#strokeJoin(int)
- * @see PGraphics#strokeCap(int)
- */
   public void strokeWeight(float weight) {
     if (recorder != null) recorder.strokeWeight(weight);
     g.strokeWeight(weight);
   }
 
 
-/**
-   * ( begin auto-generated from strokeJoin.xml )
-   * 
-   * Sets the style of the joints which connect line segments. These joints are either mitered, beveled, or rounded and specified with the corresponding parameters MITER, BEVEL, and ROUND. The default joint is MITER. 
-   * <br/> <br/>
-   * This function is not available with the P2D, P3D, or OPENGL renderers (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">see bug report</a>). More information about the renderers can be found in the <b>size()</b> reference.
-   * 
-   * ( end auto-generated )
- * @webref shape:attributes
- * @param join either MITER, BEVEL, ROUND
- * @see PGraphics#stroke(int, float)
- * @see PGraphics#strokeWeight(float)
- * @see PGraphics#strokeCap(int)
- */
   public void strokeJoin(int join) {
     if (recorder != null) recorder.strokeJoin(join);
     g.strokeJoin(join);
   }
 
 
-/**
-   * ( begin auto-generated from strokeCap.xml )
-   * 
-   * Sets the style for rendering line endings. These ends are either squared, extended, or rounded and specified with the corresponding parameters SQUARE, PROJECT, and ROUND. The default cap is ROUND. 
-   * <br/> <br/>
-   * This function is not available with the P2D, P3D, or OPENGL renderers (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">see bug report</a>). More information about the renderers can be found in the <b>size()</b> reference.
-   * 
-   * ( end auto-generated )
- * @webref shape:attributes
- * @param cap either SQUARE, PROJECT, or ROUND
- * @see PGraphics#stroke(int, float)
- * @see PGraphics#strokeWeight(float)
- * @see PGraphics#strokeJoin(int)
- * @see PApplet#size(int, int, String, String)
- */
   public void strokeCap(int cap) {
     if (recorder != null) recorder.strokeCap(cap);
     g.strokeCap(cap);
@@ -11579,12 +11055,11 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from noStroke.xml )
-   * 
-   * Disables drawing the stroke (outline). If both <b>noStroke()</b> and <b>noFill()</b> are called, nothing will be drawn to the screen.
-   * 
-   * ( end auto-generated )
+   * Disables drawing the stroke (outline). If both <b>noStroke()</b> and
+   * <b>noFill()</b> are called, no shapes will be drawn to the screen.
+   *
    * @webref color:setting
+   *
    * @see PGraphics#stroke(float, float, float, float)
    */
   public void noStroke() {
@@ -11594,22 +11069,10 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from stroke.xml )
-   * 
-   * Sets the color used to draw lines and borders around shapes. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255). 
-   * <br/> <br/>
-   * When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
-   * <br/> <br/>
-   * The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
-   * 
-   * ( end auto-generated )
-   * @webref color:setting
+   * Set the tint to either a grayscale or ARGB value.
+   * See notes attached to the fill() function.
    * @param rgb color value in hexadecimal notation
-   * @see PGraphics#noStroke()
-   * @see PGraphics#fill(int, float)
-   * @see PGraphics#tint(int, float)
-   * @see PGraphics#background(float, float, float, float)
-   * @see PGraphics#colorMode(int, float, float, float, float)
+   * (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
    */
   public void stroke(int rgb) {
     if (recorder != null) recorder.stroke(rgb);
@@ -11617,9 +11080,6 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param alpha opacity of the stroke
- */
   public void stroke(int rgb, float alpha) {
     if (recorder != null) recorder.stroke(rgb, alpha);
     g.stroke(rgb, alpha);
@@ -11627,6 +11087,7 @@ public class PApplet extends Applet
 
 
   /**
+   *
    * @param gray specifies a value between white and black
    */
   public void stroke(float gray) {
@@ -11641,11 +11102,6 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- */
   public void stroke(float x, float y, float z) {
     if (recorder != null) recorder.stroke(x, y, z);
     g.stroke(x, y, z);
@@ -11653,7 +11109,26 @@ public class PApplet extends Applet
 
 
   /**
-   * @param a opacity of the stroke
+   * Sets the color used to draw lines and borders around shapes. This color
+   * is either specified in terms of the RGB or HSB color depending on the
+   * current <b>colorMode()</b> (the default color space is RGB, with each
+   * value in the range from 0 to 255).
+   * <br><br>When using hexadecimal notation to specify a color, use "#" or
+   * "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six
+   * digits to specify a color (the way colors are specified in HTML and CSS).
+   * When using the hexadecimal notation starting with "0x", the hexadecimal
+   * value must be specified with eight characters; the first two characters
+   * define the alpha component and the remainder the red, green, and blue
+   * components.
+   * <br><br>The value for the parameter "gray" must be less than or equal
+   * to the current maximum value as specified by <b>colorMode()</b>.
+   * The default maximum value is 255.
+   *
+   * @webref color:setting
+   * @param alpha opacity of the stroke
+   * @param x red or hue value (depending on the current color mode)
+   * @param y green or saturation value (depending on the current color mode)
+   * @param z blue or brightness value (depending on the current color mode)
    */
   public void stroke(float x, float y, float z, float a) {
     if (recorder != null) recorder.stroke(x, y, z, a);
@@ -11662,15 +11137,11 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from noTint.xml )
-   * 
    * Removes the current fill value for displaying images and reverts to displaying images with their original hues.
-   * 
-   * ( end auto-generated )
+   *
    * @webref image:loading_displaying
-   * @usage web_application
-   * @see PGraphics#tint(float, float, float, float)
-   * @see PGraphics#image(PImage, float, float, float, float)
+   * @see processing.core.PGraphics#tint(float, float, float, float)
+   * @see processing.core.PGraphics#image(PImage, float, float, float, float)
    */
   public void noTint() {
     if (recorder != null) recorder.noTint();
@@ -11679,24 +11150,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from tint.xml )
-   * 
-   * Sets the fill value for displaying images. Images can be tinted to specified colors or made transparent by setting the alpha. 
-   * <br/> <br/>
-   * To make an image transparent, but not change it's color, use white as the tint color and specify an alpha value. For instance, tint(255, 128) will make an image 50% transparent (unless <b>colorMode()</b> has been used).
-   * <br/> <br/>
-   * When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
-   * <br/> <br/>
-   * The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
-   * <br/> <br/>
-   * The tint() method is also used to control the coloring of textures in 3D. 
-   * 
-   * ( end auto-generated )
-   * @webref image:loading_displaying
-   * @usage web_application
-   * @param rgb color value in hexadecimal notation
-   * @see PGraphics#noTint()
-   * @see PGraphics#image(PImage, float, float, float, float)
+   * Set the tint to either a grayscale or ARGB value.
    */
   public void tint(int rgb) {
     if (recorder != null) recorder.tint(rgb);
@@ -11706,6 +11160,7 @@ public class PApplet extends Applet
 
   /**
    * @param rgb color value in hexadecimal notation
+   * (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
    * @param alpha opacity of the image
    */
   public void tint(int rgb, float alpha) {
@@ -11729,11 +11184,6 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- */
   public void tint(float x, float y, float z) {
     if (recorder != null) recorder.tint(x, y, z);
     g.tint(x, y, z);
@@ -11741,7 +11191,33 @@ public class PApplet extends Applet
 
 
   /**
-   * @param z opacity of the image
+   * Sets the fill value for displaying images. Images can be tinted to
+   * specified colors or made transparent by setting the alpha.
+   * <br><br>To make an image transparent, but not change it's color,
+   * use white as the tint color and specify an alpha value. For instance,
+   * tint(255, 128) will make an image 50% transparent (unless
+   * <b>colorMode()</b> has been used).
+   *
+   * <br><br>When using hexadecimal notation to specify a color, use "#" or
+   * "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six
+   * digits to specify a color (the way colors are specified in HTML and CSS).
+   * When using the hexadecimal notation starting with "0x", the hexadecimal
+   * value must be specified with eight characters; the first two characters
+   * define the alpha component and the remainder the red, green, and blue
+   * components.
+   * <br><br>The value for the parameter "gray" must be less than or equal
+   * to the current maximum value as specified by <b>colorMode()</b>.
+   * The default maximum value is 255.
+   * <br><br>The tint() method is also used to control the coloring of
+   * textures in 3D.
+   *
+   * @webref image:loading_displaying
+   * @param x red or hue value
+   * @param y green or saturation value
+   * @param z blue or brightness value
+   *
+   * @see processing.core.PGraphics#noTint()
+   * @see processing.core.PGraphics#image(PImage, float, float, float, float)
    */
   public void tint(float x, float y, float z, float a) {
     if (recorder != null) recorder.tint(x, y, z, a);
@@ -11750,14 +11226,13 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from noFill.xml )
-   * 
-   * Disables filling geometry. If both <b>noStroke()</b> and <b>noFill()</b> are called, nothing will be drawn to the screen.
-   * 
-   * ( end auto-generated )
+   * Disables filling geometry. If both <b>noStroke()</b> and <b>noFill()</b>
+   * are called, no shapes will be drawn to the screen.
+   *
    * @webref color:setting
-   * @usage web_application
+   *
    * @see PGraphics#fill(float, float, float, float)
+   *
    */
   public void noFill() {
     if (recorder != null) recorder.noFill();
@@ -11766,25 +11241,8 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from fill.xml )
-   * 
-   * Sets the color used to fill shapes. For example, if you run <b>fill(204, 102, 0)</b>, all subsequent shapes will be filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255). 
-   * <br/> <br/>
-   * When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components. 
-   * <br/> <br/>
-   * The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
-   * <br/> <br/>
-   * To change the color of an image (or a texture), use tint().
-   * 
-   * ( end auto-generated )
-   * @webref color:setting
-   * @usage web_application
+   * Set the fill to either a grayscale value or an ARGB int.
    * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
-   * @see PGraphics#noFill()
-   * @see PGraphics#stroke(int, float)
-   * @see PGraphics#tint(int, float)
-   * @see PGraphics#background(float, float, float, float)
-   * @see PGraphics#colorMode(int, float, float, float, float)
    */
   public void fill(int rgb) {
     if (recorder != null) recorder.fill(rgb);
@@ -11792,9 +11250,6 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param alpha opacity of the fill
- */
   public void fill(int rgb, float alpha) {
     if (recorder != null) recorder.fill(rgb, alpha);
     g.fill(rgb, alpha);
@@ -11823,7 +11278,22 @@ public class PApplet extends Applet
 
 
   /**
-   * @param a opacity of the fill
+   * Sets the color used to fill shapes. For example, if you run <b>fill(204, 102, 0)</b>, all subsequent shapes will be filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current <b>colorMode()</b> (the default color space is RGB, with each value in the range from 0 to 255).
+   * <br><br>When using hexadecimal notation to specify a color, use "#" or "0x" before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six digits to specify a color (the way colors are specified in HTML and CSS). When using the hexadecimal notation starting with "0x", the hexadecimal value must be specified with eight characters; the first two characters define the alpha component and the remainder the red, green, and blue components.
+   * <br><br>The value for the parameter "gray" must be less than or equal to the current maximum value as specified by <b>colorMode()</b>. The default maximum value is 255.
+   * <br><br>To change the color of an image (or a texture), use tint().
+   *
+   * @webref color:setting
+   * @param x red or hue value
+   * @param y green or saturation value
+   * @param z blue or brightness value
+   * @param alpha opacity of the fill
+   *
+   * @see PGraphics#noFill()
+   * @see PGraphics#stroke(float)
+   * @see PGraphics#tint(float)
+   * @see PGraphics#background(float, float, float, float)
+   * @see PGraphics#colorMode(int, float, float, float, float)
    */
   public void fill(float x, float y, float z, float a) {
     if (recorder != null) recorder.fill(x, y, z, a);
@@ -11831,205 +11301,84 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from ambient.xml )
-   * 
-   * Sets the ambient reflectance for shapes drawn to the screen. This is combined with the ambient light component of environment. The color components set through the parameters define the reflectance. For example in the default color mode, setting v1=255, v2=126, v3=0, would cause all the red light to reflect and half of the green light to reflect. Used in combination with <b>emissive()</b>, <b>specular()</b>, and <b>shininess()</b> in setting the material properties of shapes.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param rgb ???
- * @see PGraphics#emissive(float, float, float)
- * @see PGraphics#specular(float, float, float)
- * @see PGraphics#shininess(float)
- */
   public void ambient(int rgb) {
     if (recorder != null) recorder.ambient(rgb);
     g.ambient(rgb);
   }
 
 
-/**
- * @param gray number specifying value between white and black
- */
   public void ambient(float gray) {
     if (recorder != null) recorder.ambient(gray);
     g.ambient(gray);
   }
 
 
-/**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- */
   public void ambient(float x, float y, float z) {
     if (recorder != null) recorder.ambient(x, y, z);
     g.ambient(x, y, z);
   }
 
 
-/**
-   * ( begin auto-generated from specular.xml )
-   * 
-   * Sets the specular color of the materials used for shapes drawn to the screen, which sets the color of hightlights. Specular refers to light which bounces off a surface in a perferred direction (rather than bouncing in all directions like a diffuse light). Used in combination with <b>emissive()</b>, <b>ambient()</b>, and <b>shininess()</b> in setting the material properties of shapes.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param rgb ???
- * @see PGraphics#emissive(float, float, float)
- * @see PGraphics#ambient(float, float, float)
- * @see PGraphics#shininess(float)
- */
   public void specular(int rgb) {
     if (recorder != null) recorder.specular(rgb);
     g.specular(rgb);
   }
 
 
-/**
- * gray number specifying value between white and black
- */
   public void specular(float gray) {
     if (recorder != null) recorder.specular(gray);
     g.specular(gray);
   }
 
 
-/**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- */
   public void specular(float x, float y, float z) {
     if (recorder != null) recorder.specular(x, y, z);
     g.specular(x, y, z);
   }
 
 
-/**
-   * ( begin auto-generated from shininess.xml )
-   * 
-   * Sets the amount of gloss in the surface of shapes. Used in combination with <b>ambient()</b>, <b>specular()</b>, and <b>emissive()</b> in setting the material properties of shapes.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param shine degree of shininess
- * @see PGraphics#emissive(float, float, float)
- * @see PGraphics#ambient(float, float, float)
- * @see PGraphics#specular(float, float, float)
- */
   public void shininess(float shine) {
     if (recorder != null) recorder.shininess(shine);
     g.shininess(shine);
   }
 
 
-/**
-   * ( begin auto-generated from emissive.xml )
-   * 
-   * Sets the emissive color of the material used for drawing shapes drawn to the screen. Used in combination with <b>ambient()</b>, <b>specular()</b>, and <b>shininess()</b> in setting the material properties of shapes.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param rgb ???
- * @see PGraphics#ambient(float, float, float)
- * @see PGraphics#specular(float, float, float)
- * @see PGraphics#shininess(float)
- */
   public void emissive(int rgb) {
     if (recorder != null) recorder.emissive(rgb);
     g.emissive(rgb);
   }
 
 
-/**
- * gray number specifying value between white and black
- */
   public void emissive(float gray) {
     if (recorder != null) recorder.emissive(gray);
     g.emissive(gray);
   }
 
 
-/**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- */
   public void emissive(float x, float y, float z) {
     if (recorder != null) recorder.emissive(x, y, z);
     g.emissive(x, y, z);
   }
 
 
-/**
-   * ( begin auto-generated from lights.xml )
-   * 
-   * Sets the default ambient light, directional light, falloff, and specular values. The defaults are ambientLight(128, 128, 128) and directionalLight(128, 128, 128, 0, 0, -1), lightFalloff(1, 0, 0), and lightSpecular(0, 0, 0). Lights need to be included in the draw() to remain persistent in a looping program. Placing them in the setup() of a looping program will cause them to only have an effect the first time through the loop.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- * @see PGraphics#directionalLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- * @see PGraphics#noLights()
- */
   public void lights() {
     if (recorder != null) recorder.lights();
     g.lights();
   }
 
 
-/**
-   * ( begin auto-generated from noLights.xml )
-   * 
-   * Disable all lighting. Lighting is turned off by default and enabled with the lights() method. This function can be used to disable lighting so that 2D geometry (which does not require lighting) can be drawn after a set of lighted 3D geometry.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @see PGraphics#lights()
- */
   public void noLights() {
     if (recorder != null) recorder.noLights();
     g.noLights();
   }
 
 
-/**
-   * ( begin auto-generated from ambientLight.xml )
-   * 
-   * Adds an ambient light. Ambient light doesn't come from a specific direction, the rays have light have bounced around so much that objects are evenly lit from all sides. Ambient lights are almost always used in combination with other types of lights. Lights need to be included in the <b>draw()</b> to remain persistent in a looping program. Placing them in the <b>setup()</b> of a looping program will cause them to only have an effect the first time through the loop. The effect of the parameters is determined by the current color mode.
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param red red or hue value
- * @param green green or hue value
- * @param blue blue or hue value
- * @see PGraphics#lights()
- * @see PGraphics#directionalLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- */
   public void ambientLight(float red, float green, float blue) {
     if (recorder != null) recorder.ambientLight(red, green, blue);
     g.ambientLight(red, green, blue);
   }
 
 
-/**
- * @param x x-coordinate of the light
- * @param y y-coordinate of the light
- * @param z z-coordinate of the light
- */
   public void ambientLight(float red, float green, float blue,
                            float x, float y, float z) {
     if (recorder != null) recorder.ambientLight(red, green, blue, x, y, z);
@@ -12037,25 +11386,6 @@ public class PApplet extends Applet
   }
 
 
-/**
-   * ( begin auto-generated from directionalLight.xml )
-   * 
-   * Adds a directional light. Directional light comes from one direction and is stronger when hitting a surface squarely and weaker if it hits at a a gentle angle. After hitting a surface, a directional lights scatters in all directions. Lights need to be included in the <b>draw()</b> to remain persistent in a looping program. Placing them in the <b>setup()</b> of a looping program will cause them to only have an effect the first time through the loop. The affect of the <b>v1</b>, <b>v2</b>, and <b>v3</b> parameters is determined by the current color mode. The <b>nx</b>, <b>ny</b>, and <b>nz</b> parameters specify the direction the light is facing. For example, setting <b>ny</b> to -1 will cause the geometry to be lit from below (the light is facing directly upward).
-   * 
-   * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param red red or hue value
- * @param green green or hue value
- * @param blue blue or hue value
- * @param nx direction along the x-axis
- * @param ny direction along the y-axis
- * @param nz direction along the z-axis
- * @see PGraphics#lights()
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- */
   public void directionalLight(float red, float green, float blue,
                                float nx, float ny, float nz) {
     if (recorder != null) recorder.directionalLight(red, green, blue, nx, ny, nz);
@@ -12092,17 +11422,70 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from background.xml )
-   * 
+   * Set the background to a gray or ARGB color.
+   * <p>
+   * For the main drawing surface, the alpha value will be ignored. However,
+   * alpha can be used on PGraphics objects from createGraphics(). This is
+   * the only way to set all the pixels partially transparent, for instance.
+   * <p>
+   * Note that background() should be called before any transformations occur,
+   * because some implementations may require the current transformation matrix
+   * to be identity before drawing.
+   *
+   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00)<br/>or any value of the color datatype
+   */
+  public void background(int rgb) {
+    if (recorder != null) recorder.background(rgb);
+    g.background(rgb);
+  }
+
+
+  /**
+   * See notes about alpha in background(x, y, z, a).
+   */
+  public void background(int rgb, float alpha) {
+    if (recorder != null) recorder.background(rgb, alpha);
+    g.background(rgb, alpha);
+  }
+
+
+  /**
+   * Set the background to a grayscale value, based on the
+   * current colorMode.
+   */
+  public void background(float gray) {
+    if (recorder != null) recorder.background(gray);
+    g.background(gray);
+  }
+
+
+  /**
+   * See notes about alpha in background(x, y, z, a).
+   * @param gray specifies a value between white and black
+   * @param alpha opacity of the background
+   */
+  public void background(float gray, float alpha) {
+    if (recorder != null) recorder.background(gray, alpha);
+    g.background(gray, alpha);
+  }
+
+
+  /**
+   * Set the background to an r, g, b or h, s, b value,
+   * based on the current colorMode.
+   */
+  public void background(float x, float y, float z) {
+    if (recorder != null) recorder.background(x, y, z);
+    g.background(x, y, z);
+  }
+
+
+  /**
    * The <b>background()</b> function sets the color used for the background of the Processing window. The default background is light gray. In the <b>draw()</b> function, the background color is used to clear the display window at the beginning of each frame.
-   * <br/> <br/>
-   * An image can also be used as the background for a sketch, however its width and height must be the same size as the sketch window. To resize an image 'b' to the size of the sketch window, use b.resize(width, height).
-   * <br/> <br/>
-   * Images used as background will ignore the current <b>tint()</b> setting.
-   * <br/> <br/>
-   * It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics()</b>.
-   * 
-   * ( end auto-generated )
+   * <br><br>An image can also be used as the background for a sketch, however its width and height must be the same size as the sketch window. To resize an image 'b' to the size of the sketch window, use b.resize(width, height).
+   * <br><br>Images used as background will ignore the current tint() setting.
+   * <br><br>It is not possible to use transparency (alpha) in background colors with the main drawing surface, however they will work properly with <b>createGraphics</b>.
+   *
    * <h3>Advanced</h3>
    * <p>Clear the background with a color that includes an alpha value. This can
    * only be used with objects created by createGraphics(), because the main
@@ -12114,57 +11497,15 @@ public class PApplet extends Applet
    * and draw a rectangle.</p>
    *
    * @webref color:setting
-   * @usage web_application
-   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00)<br/>or any value of the color datatype
+   * @param x red or hue value (depending on the current color mode)
+   * @param y green or saturation value (depending on the current color mode)
+   * @param z blue or brightness value (depending on the current color mode)
+   *
    * @see PGraphics#stroke(float)
    * @see PGraphics#fill(float)
    * @see PGraphics#tint(float)
    * @see PGraphics#colorMode(int)
    */
-  public void background(int rgb) {
-    if (recorder != null) recorder.background(rgb);
-    g.background(rgb);
-  }
-
-
-  /**
-   * @param alpha opacity of the background
-   */
-  public void background(int rgb, float alpha) {
-    if (recorder != null) recorder.background(rgb, alpha);
-    g.background(rgb, alpha);
-  }
-
-
-  /**
-   * @param gray specifies a value between white and black
-   */
-  public void background(float gray) {
-    if (recorder != null) recorder.background(gray);
-    g.background(gray);
-  }
-
-
-  public void background(float gray, float alpha) {
-    if (recorder != null) recorder.background(gray, alpha);
-    g.background(gray, alpha);
-  }
-
-
-  /**
-   * @param x red or hue value (depending on the current color mode)
-   * @param y green or saturation value (depending on the current color mode)
-   * @param z blue or brightness value (depending on the current color mode)
-   */
-  public void background(float x, float y, float z) {
-    if (recorder != null) recorder.background(x, y, z);
-    g.background(x, y, z);
-  }
-
-
-/**
- * @param a opacity of the background
- */
   public void background(float x, float y, float z, float a) {
     if (recorder != null) recorder.background(x, y, z, a);
     g.background(x, y, z, a);
@@ -12172,7 +11513,6 @@ public class PApplet extends Applet
 
 
   /**
-   * ???
    * Takes an RGB or ARGB image and sets it as the background.
    * The width and height of the image must be the same size as the sketch.
    * Use image.resize(width, height) to make short work of such a task.
@@ -12190,15 +11530,16 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @param mode Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+   * @param max range for all color elements
+   */
   public void colorMode(int mode) {
     if (recorder != null) recorder.colorMode(mode);
     g.colorMode(mode);
   }
 
 
-  /**
-   * @param max range for all color elements
-   */
   public void colorMode(int mode, float max) {
     if (recorder != null) recorder.colorMode(mode, max);
     g.colorMode(mode, max);
@@ -12206,9 +11547,13 @@ public class PApplet extends Applet
 
 
   /**
-   * @param maxX range for the red or hue depending on the current color mode
-   * @param maxY range for the green or saturation depending on the current color mode
-   * @param maxZ range for the blue or brightness depending on the current color mode
+   * Set the colorMode and the maximum values for (r, g, b)
+   * or (h, s, b).
+   * <P>
+   * Note that this doesn't set the maximum for the alpha value,
+   * which might be confusing if for instance you switched to
+   * <PRE>colorMode(HSB, 360, 100, 100);</PRE>
+   * because the alpha values were still between 0 and 255.
    */
   public void colorMode(int mode, float maxX, float maxY, float maxZ) {
     if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ);
@@ -12216,9 +11561,19 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param maxA range for the alpha
- */
+  /**
+   * Changes the way Processing interprets color data. By default, the parameters for <b>fill()</b>, <b>stroke()</b>, <b>background()</b>, and <b>color()</b> are defined by values between 0 and 255 using the RGB color model. The <b>colorMode()</b> function is used to change the numerical range used for specifying colors and to switch color systems. For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values are specified between 0 and 1. The limits for defining colors are altered by setting the parameters range1, range2, range3, and range 4.
+   *
+   * @webref color:setting
+   * @param maxX range for the red or hue depending on the current color mode
+   * @param maxY range for the green or saturation depending on the current color mode
+   * @param maxZ range for the blue or brightness depending on the current color mode
+   * @param maxA range for the alpha
+   *
+   * @see PGraphics#background(float)
+   * @see PGraphics#fill(float)
+   * @see PGraphics#stroke(float)
+   */
   public void colorMode(int mode,
                         float maxX, float maxY, float maxZ, float maxA) {
     if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ, maxA);
@@ -12227,20 +11582,10 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from alpha.xml )
-   * 
    * Extracts the alpha value from a color.
-   * 
-   * ( end auto-generated )
+   *
    * @webref color:creating_reading
-   * @usage web_application
    * @param what any value of the color datatype
-   * @see PGraphics#green(int)
-   * @see PGraphics#red(int)
-   * @see PGraphics#blue(int)
-   * @see PGraphics#hue(int)
-   * @see PGraphics#saturation(int)
-   * @see PGraphics#brightness(int)
    */
   public final float alpha(int what) {
     return g.alpha(what);
@@ -12248,14 +11593,11 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from red.xml )
-   * 
-   * Extracts the red value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br /><br />The red() function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br /><pre>float r1 = red(myColor);<br />float r2 = myColor &gt;&gt; 16 &amp; 0xFF;</pre>
-   * 
-   * ( end auto-generated )
+   * Extracts the red value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The red() function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = red(myColor);<br>float r2 = myColor &gt;&gt; 16 &amp; 0xFF;</pre>
+   *
    * @webref color:creating_reading
-   * @usage web_application
    * @param what any value of the color datatype
+   *
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#hue(int)
@@ -12269,14 +11611,11 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from green.xml )
-   * 
-   * Extracts the green value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br /><br />The <b>green()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br /><pre>float r1 = green(myColor);<br />float r2 = myColor &gt;&gt; 8 &amp; 0xFF;</pre>
-   * 
-   * ( end auto-generated )
+   * Extracts the green value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>green()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use the &gt;&gt; (right shift) operator with a bit mask. For example, the following two lines of code are equivalent:<br><pre>float r1 = green(myColor);<br>float r2 = myColor &gt;&gt; 8 &amp; 0xFF;</pre>
+   *
    * @webref color:creating_reading
-   * @usage web_application
    * @param what any value of the color datatype
+   *
    * @see PGraphics#red(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#hue(int)
@@ -12290,14 +11629,11 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from blue.xml )
-   * 
-   * Extracts the blue value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br /><br />The <b>blue()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use a bit mask to remove the other color components. For example, the following two lines of code are equivalent:<br /><pre>float r1 = blue(myColor);<br />float r2 = myColor &amp; 0xFF;</pre>
-   * 
-   * ( end auto-generated )
+   * Extracts the blue value from a color, scaled to match current <b>colorMode()</b>. This value is always returned as a  float so be careful not to assign it to an int value.<br><br>The <b>blue()</b> function is easy to use and undestand, but is slower than another technique. To achieve the same results when working in <b>colorMode(RGB, 255)</b>, but with greater speed, use a bit mask to remove the other color components. For example, the following two lines of code are equivalent:<br><pre>float r1 = blue(myColor);<br>float r2 = myColor &amp; 0xFF;</pre>
+   *
    * @webref color:creating_reading
-   * @usage web_application
    * @param what any value of the color datatype
+   *
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#hue(int)
@@ -12310,14 +11646,11 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from hue.xml )
-   * 
    * Extracts the hue value from a color.
-   * 
-   * ( end auto-generated )
+   *
    * @webref color:creating_reading
-   * @usage web_application
    * @param what any value of the color datatype
+   *
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -12330,14 +11663,11 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from saturation.xml )
-   * 
    * Extracts the saturation value from a color.
-   * 
-   * ( end auto-generated )
+   *
    * @webref color:creating_reading
-   * @usage web_application
    * @param what any value of the color datatype
+   *
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -12350,14 +11680,12 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from brightness.xml )
-   * 
    * Extracts the brightness value from a color.
-   * 
-   * ( end auto-generated )
+   *
+   *
    * @webref color:creating_reading
-   * @usage web_application
    * @param what any value of the color datatype
+   *
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -12370,16 +11698,13 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from lerpColor.xml )
-   * 
-   * Calculates a color or colors between two color at a specific increment. The <b>amt</b> parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is half-way in between, etc. 
-   * 
-   * ( end auto-generated )
+   * Calculates a color or colors between two color at a specific increment. The <b>amt</b> parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is half-way in between, etc.
+   *
    * @webref color:creating_reading
-   * @usage web_application
    * @param c1 interpolate from this color
    * @param c2 interpolate to this color
    * @param amt between 0.0 and 1.0
+   *
    * @see PGraphics#blendColor(int, int, int)
    * @see PGraphics#color(float, float, float, float)
    */
@@ -12389,11 +11714,8 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
    * Interpolate between two colors. Like lerp(), but for the
    * individual color components of a color supplied as an int value.
-   *
-   * @param mode ???
    */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
     return PGraphics.lerpColor(c1, c2, amt, mode);
@@ -12602,7 +11924,6 @@ public class PApplet extends Applet
 
 
   /**
-   * ???
    * Returns an ARGB "color" type (a packed 32 bit int with the color.
    * If the coordinate is outside the image, zero is returned
    * (black, but completely transparent).
@@ -12626,17 +11947,20 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate PImage_get.xml
-   * @webref pimaget:method
+   * Reads the color of any pixel or grabs a group of pixels. If no parameters are specified, the entire image is returned. Get the value of one pixel by specifying an x,y coordinate. Get a section of the display window by specifing an additional <b>width</b> and <b>height</b> parameter. If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. Even though you may have drawn a shape with <b>colorMode(HSB)</b>, the numbers returned will be in RGB.
+   * <br><br>Getting the color of a single pixel with <b>get(x, y)</b> is easy, but not as fast as grabbing the data directly from <b>pixels[]</b>. The equivalent statement to "get(x, y)" using <b>pixels[]</b> is "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before getting the values.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   *
+   * @webref
    * @brief Reads the color of any pixel or grabs a rectangle of pixels
-   * @usage web_application
    * @param x x-coordinate of the pixel
    * @param y y-coordinate of the pixel
    * @param w width of pixel rectangle to get
    * @param h height of pixel rectangle to get
-   * @see PImage#set(int, int, int)
-   * @see PImage#pixels
-   * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
+   *
+   * @see processing.core.PImage#set(int, int, int)
+   * @see processing.core.PImage#pixels
+   * @see processing.core.PImage#copy(PImage, int, int, int, int, int, int, int, int)
    */
   public PImage get(int x, int y, int w, int h) {
     return g.get(x, y, w, h);
@@ -12652,19 +11976,17 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate PImage_set.xml
+   * Changes the color of any pixel or writes an image directly into the display window. The <b>x</b> and <b>y</b> parameters specify the pixel to change and the <b>color</b> parameter specifies the color value. The color parameter is affected by the current color mode (the default is RGB values from 0 to 255). When setting an image, the x and y parameters define the coordinates for the upper-left corner of the image.
+   * <br><br>Setting the color of a single pixel with <b>set(x, y)</b> is easy, but not as fast as putting the data directly into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is "pixels[y*width+x] = #000000". You must call <b>loadPixels()</b> to load the display window data into the <b>pixels[]</b> array before setting the values and calling <b>updatePixels()</b> to update the window with any changes.
+   * <br><br>As of release 1.0, this function ignores <b>imageMode()</b>.
+   * <br><br>Due to what appears to be a bug in Apple's Java implementation, the point() and set() methods are extremely slow in some circumstances when used with the default renderer. Using P2D or P3D will fix the problem. Grouping many calls to point() or set() together can also help. (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
    * <h3>Advanced</h3>
    * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
-   * 
-   * @webref pimage:method
-   * @brief writes a color to any pixel or writes an image into another
-   * @usage web_application
+   *
+   * @webref image:pixels
    * @param x x-coordinate of the pixel
    * @param y y-coordinate of the pixel
    * @param c any value of the color datatype
-   * @see PImage#get(int, int, int, int)
-   * @see PImage#pixels
-   * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
    */
   public void set(int x, int y, int c) {
     if (recorder != null) recorder.set(x, y, c);
@@ -12673,12 +11995,9 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
    * Efficient method of drawing an image's pixels directly to this surface.
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
-   *
-   * @param src ???
    */
   public void set(int x, int y, PImage src) {
     if (recorder != null) recorder.set(x, y, src);
@@ -12687,7 +12006,6 @@ public class PApplet extends Applet
 
 
   /**
-   * ???
    * Set alpha channel for an image. Black colors in the source
    * image will make the destination image completely transparent,
    * and white will make things fully opaque. Gray values will
@@ -12700,10 +12018,7 @@ public class PApplet extends Applet
    * which will make the image into a "correct" grayscale by
    * performing a proper luminance-based conversion.
    *
-   * @generate PImage_mask.xml
-   * @webref pimage:pixels
-   * @usage web_application
-   * @param maskArray[] any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
+   * @param maskArray any array of Integer numbers used as the alpha channel, needs to be same length as the image's pixel array
    */
   public void mask(int maskArray[]) {
     if (recorder != null) recorder.mask(maskArray);
@@ -12712,7 +12027,15 @@ public class PApplet extends Applet
 
 
   /**
-   * @param maskImg any PImage object used as the alpha chanell for "img", needs to be same size as "img"
+   * Masks part of an image from displaying by loading another image and using it as an alpha channel.
+   *  This mask image should only contain grayscale data, but only the blue color channel is used.
+   *  The mask image needs to be the same size as the image to which it is applied.
+   *  In addition to using a mask image, an integer array containing the alpha channel data can be specified directly.
+   *  This method is useful for creating dynamically generated alpha masks.
+   *  This array must be of the same length as the target image's pixels array and should contain only grayscale data of values between 0-255.
+   * @webref
+   * @brief     Masks part of the image from displaying
+   * @param maskImg any PImage object used as the alpha channel for "img", needs to be same size as "img"
    */
   public void mask(PImage maskImg) {
     if (recorder != null) recorder.mask(maskImg);
@@ -12727,7 +12050,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate PImage_filter.xml
+   * Filters an image as defined by one of the following modes:<br><br>THRESHOLD - converts the image to black and white pixels depending if they are above or below the threshold defined by the level parameter. The level must be between 0.0 (black) and 1.0(white). If no level is specified, 0.5 is used.<br><br>GRAY - converts any colors in the image to grayscale equivalents<br><br>INVERT - sets each pixel to its inverse value<br><br>POSTERIZE - limits each channel of the image to the number of colors specified as the level parameter<br><br>BLUR - executes a Guassian blur with the level parameter specifying the extent of the blurring. If no level parameter is used, the blur is equivalent to Guassian blur of radius 1.<br><br>OPAQUE - sets the alpha channel to entirely opaque.<br><br>ERODE - reduces the light areas with the amount defined by the level parameter.<br><br>DILATE - increases the light areas with the amount defined by the level parameter
    * <h3>Advanced</h3>
    * Method to apply a variety of basic filters to this image.
    * <P>
@@ -12746,9 +12069,8 @@ public class PApplet extends Applet
    * Gaussian blur code contributed by
    * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
    *
-   * @webref pimage:pixels
+   * @webref
    * @brief Converts the image to grayscale or black and white
-   * @usage web_application
    * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
    * @param param in the range from 0 to 1
    */
@@ -12759,20 +12081,8 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate PImage_copy.xml
-   * @webref pimage:method
-   * @brief     Copies the entire image
-   * @usage web_application
-   * @param sx X coordinate of the source's upper left corner
-   * @param sy Y coordinate of the source's upper left corner
-   * @param sw source image width
-   * @param sh source image height
-   * @param dx X coordinate of the destination's upper left corner
-   * @param dy Y coordinate of the destination's upper left corner
-   * @param dw destination image width
-   * @param dh destination image height
-   * @see PGraphics#alpha(int)
-   * @see PImage#blend(PImage, int, int, int, int, int, int, int, int, int)
+   * Copy things from one area of this image
+   * to another area in the same image.
    */
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
@@ -12781,9 +12091,25 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param src an image variable referring to the source image.
- */
+  /**
+   * Copies a region of pixels from one image into another. If the source and destination regions aren't the same size, it will automatically resize source pixels to fit the specified target region. No alpha information is used in the process, however if the source image has an alpha channel set, it will be copied as well.
+   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
+   *
+   * @webref
+   * @brief     Copies the entire image
+   * @param sx X coordinate of the source's upper left corner
+   * @param sy Y coordinate of the source's upper left corner
+   * @param sw source image width
+   * @param sh source image height
+   * @param dx X coordinate of the destination's upper left corner
+   * @param dy Y coordinate of the destination's upper left corner
+   * @param dw destination image width
+   * @param dh destination image height
+   * @param src an image variable referring to the source image.
+   *
+   * @see processing.core.PGraphics#alpha(int)
+   * @see processing.core.PImage#blend(PImage, int, int, int, int, int, int, int, int, int)
+   */
   public void copy(PImage src,
                    int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
@@ -12793,8 +12119,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @generate blendColor.xml
-   * <h3>Advanced</h3>
+   * Blend two colors based on a particular mode.
    * <UL>
    * <LI>REPLACE - destination colour equals colour of source pixel: C = A.
    *     Sometimes called "Normal" or "Copy" in other software.
@@ -12856,14 +12181,6 @@ public class PApplet extends Applet
    * the same as <TT>(255*255)/255</TT>. But for real-time use the shifts
    * are preferrable, and the difference is insignificant for applications
    * built with Processing.</P>
-   *
-   * @webref color:creating_reading
-   * @usage web_application
-   * @param c1 the first color to blend
-   * @param c2 the second color to blend
-   * @param mode either BLEND, ADD, SUBTRACT, DARKEST, LIGHTEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, or BURN
-   * @see PImage#blend(PImage, int, int, int, int, int, int, int, int, int)
-   * @see PApplet#color(float, float, float, float)
    */
   static public int blendColor(int c1, int c2, int mode) {
     return PGraphics.blendColor(c1, c2, mode);
@@ -12883,49 +12200,25 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from PImage_blend.xml )
-   * 
-   * Blends a region of pixels into the image specified by the <b>img</b> parameter. These copies utilize full alpha channel support and a choice of the following modes to blend the colors of source pixels (A) with the ones of pixels in the destination image (B):<br />
-   * <br />
-   * BLEND - linear interpolation of colours: C = A*factor + B<br />
-   * <br />
-   * ADD - additive blending with white clip: C = min(A*factor + B, 255)<br />
-   * <br />
-   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br />
-   * <br />
-   * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br />
-   * <br />
-   * LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br />
-   * <br />
-   * DIFFERENCE - subtract colors from underlying image.<br />
-   * <br />
-   * EXCLUSION - similar to DIFFERENCE, but less extreme.<br />
-   * <br />
-   * MULTIPLY - Multiply the colors, result will always be darker.<br />
-   * <br />
-   * SCREEN - Opposite multiply, uses inverse values of the colors.<br />
-   * <br />
-   * OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values,
-   * and screens light values.<br />
-   * <br />
-   * HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br />
-   * <br />
-   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST. 
-   * Works like OVERLAY, but not as harsh.<br />
-   * <br />
-   * DODGE - Lightens light tones and increases contrast, ignores darks.
-   * Called "Color Dodge" in Illustrator and Photoshop.<br />
-   * <br />
-   * BURN - Darker areas are applied, increasing contrast, ignores lights.
-   * Called "Color Burn" in Illustrator and Photoshop.<br />
-   * <br />
-   * All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br />
-   * <br />
+   * Blends a region of pixels into the image specified by the <b>img</b> parameter. These copies utilize full alpha channel support and a choice of the following modes to blend the colors of source pixels (A) with the ones of pixels in the destination image (B):<br><br>
+   * BLEND - linear interpolation of colours: C = A*factor + B<br><br>
+   * ADD - additive blending with white clip: C = min(A*factor + B, 255)<br><br>
+   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 0)<br><br>
+   * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br><br>
+   * LIGHTEST - only the lightest colour succeeds: C = max(A*factor, B)<br><br>
+   * DIFFERENCE - subtract colors from underlying image.<br><br>
+   * EXCLUSION - similar to DIFFERENCE, but less extreme.<br><br>
+   * MULTIPLY - Multiply the colors, result will always be darker.<br><br>
+   * SCREEN - Opposite multiply, uses inverse values of the colors.<br><br>
+   * OVERLAY - A mix of MULTIPLY and SCREEN. Multiplies dark values, and screens light values.<br><br>
+   * HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br><br>
+   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST. Works like OVERLAY, but not as harsh.<br><br>
+   * DODGE - Lightens light tones and increases contrast, ignores darks. Called "Color Dodge" in Illustrator and Photoshop.<br><br>
+   * BURN - Darker areas are applied, increasing contrast, ignores lights. Called "Color Burn" in Illustrator and Photoshop.<br><br>
+   * All modes use the alpha information (highest byte) of source image pixels as the blending factor. If the source and destination regions are different sizes, the image will be automatically resized to match the destination size. If the <b>srcImg</b> parameter is not used, the display window is used as the source image.<br><br>
    * As of release 0149, this function ignores <b>imageMode()</b>.
-   * 
-   * ( end auto-generated )
    *
-   * @webref pimage:medthod
+   * @webref
    * @brief  Copies a pixel or rectangle of pixels using different blending modes
    * @param src an image variable referring to the source image
    * @param sx X coordinate of the source's upper left corner
@@ -12938,9 +12231,9 @@ public class PApplet extends Applet
    * @param dh destination image height
    * @param mode Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
    *
-   * @see PGraphics#alpha(int)
-   * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
-   * @see PImage#blendColor(int,int,int)
+   * @see processing.core.PGraphics#alpha(int)
+   * @see processing.core.PGraphics#copy(PImage, int, int, int, int, int, int, int, int)
+   * @see processing.core.PImage#blendColor(int,int,int)
    */
   public void blend(PImage src,
                     int sx, int sy, int sw, int sh,
