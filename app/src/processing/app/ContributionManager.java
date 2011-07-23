@@ -25,6 +25,8 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.CropImageFilter;
+import java.awt.image.FilteredImageSource;
 import java.io.*;
 import java.net.*;
 import java.text.*;
@@ -32,10 +34,12 @@ import java.util.*;
 import java.util.List;
 import java.util.zip.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.*;
 
 import processing.app.Contribution.ContributionInfo;
+import processing.app.Contribution.ContributionInfo.ContributionType;
 
 public class ContributionManager {
   
@@ -56,7 +60,6 @@ public class ContributionManager {
     + "libraries in the file we just downloaded.\n";
   
   static final String ANY_CATEGORY = "Any";
-
   
   JFrame dialog;
   
@@ -67,6 +70,8 @@ public class ContributionManager {
   ContributionListPanel contributionListPanel;
   
   JComboBox categoryChooser;
+  
+  Image[] contributionIcons;
   
   // the calling editor, so updates can be applied
   Editor editor;
@@ -102,6 +107,11 @@ public class ContributionManager {
     });
   }
   
+  /** Width of each contribution icon. */
+  static final int ICON_WIDTH = 25;
+  /** Height of each contribution icon. */
+  static final int ICON_HEIGHT = 20;
+  
   protected void showFrame(Editor editor) {
     this.editor = editor;
     
@@ -111,7 +121,7 @@ public class ContributionManager {
       dialog = new JFrame("Contribution Manager");
   
       Base.setIcon(dialog);
-  
+      
       createComponents();
   
       registerDisposeListeners();
@@ -125,8 +135,52 @@ public class ContributionManager {
     }
     
     dialog.setVisible(true);
+    
+    if (contributionIcons == null) {
+      try {
+        Image allButtons = ImageIO.read(Base.getLibStream("contributions.gif"));
+        int count = allButtons.getHeight(dialog) / ICON_HEIGHT;
+        contributionIcons = new Image[count];
+        contributionIcons[0]  = allButtons;
+        contributionIcons[1]  = allButtons;
+        contributionIcons[2]  = allButtons;
+        contributionIcons[3]  = allButtons;
+        
+        for (int i = 0; i < count; i++) {
+          Image image = dialog.createImage(new FilteredImageSource(allButtons.
+                                                                   getSource(),
+                                           new CropImageFilter(0, i * ICON_HEIGHT,
+                                                               ICON_WIDTH,
+                                                               ICON_HEIGHT)));
+          contributionIcons[i] = image;
+        }
+        
+        contributionListPanel.updateColors();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
   }
-
+  
+  public Image getContributionIcon(ContributionType type) {
+    
+    if (contributionIcons == null)
+      return null;
+      
+    switch (type) {
+    case LIBRARY:
+      return contributionIcons[0];
+    case TOOL:
+      return contributionIcons[1];
+    case MODE:
+      return contributionIcons[2];
+    case LIBRARY_COMPILATION:
+      return contributionIcons[3];
+    }
+    return null;
+  }
+  
   /**
    * Close the window after an OK or Cancel.
    */

@@ -197,7 +197,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   /**
    * Updates the colors of all library panels that are visible.
    */
-  private void updateColors() {
+  protected void updateColors() {
 
     int count = 0;
     synchronized (contributionPanelsByInfo) {
@@ -232,6 +232,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         }
         
         panel.updateHyperLinkStyles();
+        
+        panel.setIcon(contributionManager.getContributionIcon(entry.getKey()
+            .getType()));
       }
     }
   }
@@ -333,11 +336,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
     JTextPane headerLabel;
     
-    JTextPane versionLabel;
+    JPanel descriptionPanel;
+    
+    JPanel iconPanel;
     
     JLabel categoryLabel;
     
     JTextPane descriptionText;
+
+    JTextPane versionLabel;
 
     JProgressBar installProgressBar;
     
@@ -349,6 +356,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     private HyperlinkListener updateListner;
 
+    private Image icon;
     
     private ContributionPanel() {
       
@@ -399,6 +407,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       setExpandListener(this, expandPanelMouseListener);
     }
     
+    public void setIcon(Image icon) {
+      this.icon = icon;
+    }
+
     private void setExpandListener(Component component,
                                    MouseAdapter expandPanelMouseListener) {
 
@@ -410,7 +422,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         }
       }
     }
-        
+    
     public void setContributionInfo(final ContributionInfo info) {
       
       setFocusable(true);
@@ -433,7 +445,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
       StringBuilder description = new StringBuilder();
       description.append("<html><body>");
-      
       if (info.sentence != null)
         description.append(info.sentence);
       
@@ -445,35 +456,25 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
       
       if (info.isInstalled()) {
-        // Display the version number and upgrade link
-        StringBuilder versionText = new StringBuilder();
-        versionText.append("<html><body>");
-        versionText.append("Version ");
-        if (info.prettyVersion != null) {
-          versionText.append(info.prettyVersion);
-        } else {
-          versionText.append(info.version);
-        }
-        versionText.append(" installed.");
         if (info.hasUpdates()) {
-          final String afterClickText = versionText.toString();
-          versionText.append(" <a href=\"\">Click here to update to latest version.</a>");
+          StringBuilder versionText = new StringBuilder();
+          versionText.append("<html><body>");
+          versionText.append("<a href=\"\">Click here to update to latest version.</a>");
           versionLabel.removeHyperlinkListener(updateListner);
           updateListner = new HyperlinkListener() {
             
             public void hyperlinkUpdate(HyperlinkEvent e) {
               if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                versionLabel.setText(afterClickText);
+                versionLabel.setText("");
                 installContribution(info, info.link);
               }
             }
           };
           versionLabel.addHyperlinkListener(updateListner);
+          versionText.append("</body></html>");
+          versionLabel.setText(versionText.toString());
+          versionLabel.setVisible(true);
         }
-        versionText.append("</body></html>");
-        versionLabel.setText(versionText.toString());
-        versionLabel.setMargin(new Insets(0, 25, 10, 5));
-        versionLabel.setVisible(true);
         
         installOrRemoveButton.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent arg) {
@@ -630,9 +631,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
      * Create the widgets for the header panel which is visible when the library
      * panel is not clicked
      */
-    /**
-     * 
-     */
     private void addPaneComponents() {
       setFocusable(true);
       setLayout(new GridBagLayout());
@@ -662,31 +660,65 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       c = new GridBagConstraints();
       c.gridx = 0;
       c.gridy = 1;
+      c.weighty = 1;
       c.weightx = 1;
       c.gridwidth = 2;
       c.fill = GridBagConstraints.BOTH;
       c.anchor = GridBagConstraints.WEST;
-
-      descriptionText = new JTextPane();
-      descriptionText.setContentType("text/html");
-      descriptionText.setMargin(new Insets(0, 25, 10, 5));
-      setHtmlTextStyle(descriptionText, true);
-      add(descriptionText, c);
+      
+      descriptionPanel = new JPanel();
+      descriptionPanel.setOpaque(false);
+      descriptionPanel.setLayout(new GridBagLayout());
+      add(descriptionPanel, c);
       
       c = new GridBagConstraints();
       c.gridx = 0;
-      c.gridy = 2;
-      c.weightx = 1;
-      c.gridwidth = 2;
+      c.gridy = 0;
+      c.gridheight = 2;
       c.fill = GridBagConstraints.BOTH;
-      c.anchor = GridBagConstraints.WEST;
-
+      c.anchor = GridBagConstraints.CENTER;
+      
+      iconPanel = new JPanel() {
+        protected void paintComponent(Graphics g) {
+          if (icon != null) {
+            g.drawImage(icon, 0, 0, this);
+          }
+        };
+      };
+      iconPanel.setOpaque(false);
+      Dimension d = new Dimension(ContributionManager.ICON_WIDTH,
+                                  ContributionManager.ICON_HEIGHT);
+      iconPanel.setMinimumSize(d);
+      iconPanel.setPreferredSize(d);
+      
+      descriptionPanel.add(iconPanel, c);
+      
+      c = new GridBagConstraints();
+      c.gridx = 1;
+      c.gridy = 0;
+      c.weighty = 1;
+      c.weightx = 1;
+      c.fill = GridBagConstraints.BOTH;
+      c.anchor = GridBagConstraints.EAST;
+      
+      descriptionText = new JTextPane();
+      descriptionText.setContentType("text/html");
+      setHtmlTextStyle(descriptionText, true);
+      descriptionPanel.add(descriptionText, c);
+      
+      c = new GridBagConstraints();
+      c.gridx = 1;
+      c.gridy = 1;
+      c.weightx = 1;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.anchor = GridBagConstraints.EAST;
+      
       versionLabel = new JTextPane();
       versionLabel.setContentType("text/html");
       versionLabel.setVisible(false);
       versionLabel.setEditable(false);
       setHtmlTextStyle(versionLabel, false);
-      add(versionLabel, c);
+      descriptionPanel.add(versionLabel, c);
     }
     
     public void addProgressBarAndButton() {
