@@ -25,7 +25,7 @@ public class DirectivesEditor
     JCheckBox 	globalKeyEventsBox;
     JCheckBox 	pauseOnBlurBox;
     JTextField 	preloadField;
-    JCheckBox 	transparentBox;
+    //JCheckBox 	transparentBox;
 
 	private final static ArrayList<String> validKeys = new ArrayList<String>();
 	static {
@@ -76,7 +76,7 @@ public class DirectivesEditor
 	private void resetInterface ()
 	{
 		for ( JCheckBox b : new JCheckBox[] {
-			crispBox, globalKeyEventsBox, pauseOnBlurBox, transparentBox } )
+			crispBox, globalKeyEventsBox, pauseOnBlurBox /*, transparentBox*/ } )
 		{
 			b.setSelected(false);
 		}
@@ -108,8 +108,8 @@ public class DirectivesEditor
 			buffer.append( head + "pauseOnBlur=true" + toe );
 		if ( !preloadField.getText().trim().equals("") )
 			buffer.append( head + "preload=\""+preloadField.getText().trim()+"\"" + toe );
-		if ( transparentBox.isSelected() )
-			buffer.append( head + "transparent=true" + toe );
+		/*if ( transparentBox.isSelected() )
+			buffer.append( head + "transparent=true" + toe );*/
 		
 		Sketch sketch = editor.getSketch();
 		SketchCode code = sketch.getCode(0); // first tab
@@ -251,7 +251,7 @@ public class DirectivesEditor
 				break;
 			case TRANSPARENT:
 				v = value.toLowerCase().equals("true");
-				transparentBox.setSelected(v);
+				//transparentBox.setSelected(v);
 				break;
 		}
 	} 
@@ -301,7 +301,7 @@ public class DirectivesEditor
 	
 		// FONTS
 	
-	    label = new JLabel("\"font\": to load: (comma separated)");
+	    label = new JLabel("\"font\": to load (comma separated)");
 	    pane.add(label);
 		d = label.getPreferredSize();
 		label.setBounds(left, top, d.width, d.height);
@@ -371,13 +371,13 @@ public class DirectivesEditor
 		
 		// TRANSPARENT
 	
-		transparentBox =
+		/*transparentBox =
 	      new JCheckBox("\"transparent\": set applet background to be transparent");
 	    pane.add(transparentBox);
 		d = transparentBox.getPreferredSize();
 	    transparentBox.setBounds(left, top, d.width + 10, d.height);
 	    right = Math.max(right, left + d.width);
-	    top += d.height + GUI_BETWEEN;
+	    top += d.height + GUI_BETWEEN;*/
 	
 		// APPLY / OK
 		
