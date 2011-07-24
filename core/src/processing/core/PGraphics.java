@@ -5430,6 +5430,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 /**
+ * @nowebref
  * @param alpha opacity of the stroke
  */
   public void stroke(int rgb, float alpha) {
@@ -5439,6 +5440,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * @notWebref
    * @param gray specifies a value between white and black
    */
   public void stroke(float gray) {
@@ -5446,7 +5448,9 @@ public class PGraphics extends PImage implements PConstants {
     strokeFromCalc();
   }
 
-
+/**
+ * @notWebref
+ */
   public void stroke(float gray, float alpha) {
     colorCalc(gray, alpha);
     strokeFromCalc();
