@@ -5416,7 +5416,7 @@ public class PGraphics extends PImage implements PConstants {
    * current maximum value as specified by <b>colorMode()</b>. The default 
    * maximum value is 255.
    * ( end auto-generated )
-   * @webref color:setting
+   * @notWebref
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
    * @see PGraphics#fill(int, float)
@@ -5460,6 +5460,7 @@ public class PGraphics extends PImage implements PConstants {
  * @param x red or hue value (depending on current color mode)
  * @param y green or saturation value (depending on current color mode)
  * @param z blue or brightness value (depending on current color mode)
+ * @webref color:setting
  */
   public void stroke(float x, float y, float z) {
     colorCalc(x, y, z);
