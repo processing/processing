@@ -127,7 +127,6 @@ import java.util.HashMap;
  * @usage Web &amp; Application
  * @see PApplet#createGraphics(int, int, String)
  */
- /** ??? */
 public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
