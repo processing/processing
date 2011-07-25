@@ -1683,6 +1683,11 @@ public class Base {
   }
 
 
+  public File getSketchbookToolsFolder() {
+    return new File(sketchbookFolder, "tools");
+  }
+
+
   static protected File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;
     try {

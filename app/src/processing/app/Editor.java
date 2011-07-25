@@ -31,9 +31,7 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
-import java.net.*;
 import java.util.*;
-import java.util.zip.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -98,8 +96,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
   private final Stack<Integer> caretRedoStack = new Stack<Integer>();
 
   private FindReplace find;
+  JMenu toolsMenu;
   JMenu modeMenu;  
 
+  ArrayList<ToolContribution> coreTools;
+  ArrayList<ToolContribution> contribTools;
 
   protected Editor(final Base base, String path, int[] location, final Mode mode) {
     super("Processing");
@@ -451,7 +452,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menubar.add(fileMenu);
     menubar.add(buildEditMenu());
     menubar.add(buildSketchMenu());
-    menubar.add(buildToolsMenu());
+    rebuildToolList();
+    rebuildToolMenu();
+    menubar.add(getToolMenu());
     
     JMenu modeMenu = buildModeMenu();
     if (modeMenu != null) {
@@ -804,109 +807,51 @@ public abstract class Editor extends JFrame implements RunnerListener {
   abstract public void handleImportLibrary(String jarPath);
 
 
-  protected JMenu buildToolsMenu() {
-    JMenu menu = new JMenu("Tools");
-
-    addInternalTools(menu);
-    addTools(menu, base.getToolsFolder());
-    File sketchbookTools = new File(base.getSketchbookFolder(), "tools");
-    addTools(menu, sketchbookTools);
-
-    return menu;
+  public JMenu getToolMenu() {
+    if (toolsMenu == null) {
+      rebuildToolMenu();
+    }
+    return toolsMenu;
   }
 
 
-  protected void addTools(JMenu menu, File sourceFolder) {
+  protected void rebuildToolList() {
+    coreTools = ToolContribution.list(base.getToolsFolder());
+    contribTools = ToolContribution.list(base.getSketchbookToolsFolder());
+  }
+
+
+  protected void rebuildToolMenu() {
+    if (toolsMenu == null) {
+      toolsMenu = new JMenu("Tools");
+    } else {
+      toolsMenu.removeAll();
+    }
+    
+    rebuildToolList();
+    
+    addInternalTools(toolsMenu);
+    addTools(toolsMenu, coreTools);
+    addTools(toolsMenu, contribTools);
+  }
+
+
+  protected void addTools(JMenu menu, ArrayList<ToolContribution> tools) {
     HashMap<String, JMenuItem> toolItems = new HashMap<String, JMenuItem>();
 
-    File[] folders = sourceFolder.listFiles(new FileFilter() {
-      public boolean accept(File folder) {
-        if (folder.isDirectory()) {
-          //System.out.println("checking " + folder);
-          File subfolder = new File(folder, "tool");
-          return subfolder.exists();
+    for (final ToolContribution tool : tools) {
+      String title = tool.getMenuTitle();
+      JMenuItem item = new JMenuItem(title);
+      item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          SwingUtilities.invokeLater(tool);
+          //new Thread(tool).start();
         }
-        return false;
-      }
-    });
-
-    if (folders == null || folders.length == 0) {
-      return;
+      });
+      //menu.add(item);
+      toolItems.put(title, item);
     }
-
-    for (int i = 0; i < folders.length; i++) {
-      File toolDirectory = new File(folders[i], "tool");
-
-      try {
-        // add dir to classpath for .classes
-        //urlList.add(toolDirectory.toURL());
-
-        // add .jar files to classpath
-        File[] archives = toolDirectory.listFiles(new FilenameFilter() {
-          public boolean accept(File dir, String name) {
-            return (name.toLowerCase().endsWith(".jar") ||
-                    name.toLowerCase().endsWith(".zip"));
-          }
-        });
-
-        URL[] urlList = new URL[archives.length];
-        for (int j = 0; j < urlList.length; j++) {
-          urlList[j] = archives[j].toURI().toURL();
-        }
-        URLClassLoader loader = new URLClassLoader(urlList);
-
-        String className = null;
-        for (int j = 0; j < archives.length; j++) {
-          className = findClassInZipFile(folders[i].getName(), archives[j]);
-          if (className != null) break;
-        }
-
-        /*
-        // Alternatively, could use manifest files with special attributes:
-        // http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html
-        // Example code for loading from a manifest file:
-        // http://forums.sun.com/thread.jspa?messageID=3791501
-        File infoFile = new File(toolDirectory, "tool.txt");
-        if (!infoFile.exists()) continue;
-
-        String[] info = PApplet.loadStrings(infoFile);
-        //Main-Class: org.poo.shoe.AwesomerTool
-        //String className = folders[i].getName();
-        String className = null;
-        for (int k = 0; k < info.length; k++) {
-          if (info[k].startsWith(";")) continue;
-
-          String[] pieces = PApplet.splitTokens(info[k], ": ");
-          if (pieces.length == 2) {
-            if (pieces[0].equals("Main-Class")) {
-              className = pieces[1];
-            }
-          }
-        }
-        */
-        // If no class name found, just move on.
-        if (className == null) continue;
-
-        Class<?> toolClass = Class.forName(className, true, loader);
-        final Tool tool = (Tool) toolClass.newInstance();
-
-        tool.init(Editor.this);
-
-        String title = tool.getMenuTitle();
-        JMenuItem item = new JMenuItem(title);
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            SwingUtilities.invokeLater(tool);
-            //new Thread(tool).start();
-          }
-        });
-        //menu.add(item);
-        toolItems.put(title, item);
-
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
+    
     ArrayList<String> toolList = new ArrayList<String>(toolItems.keySet());
     if (toolList.size() == 0) return;
 
@@ -924,37 +869,6 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public JMenu buildModeMenu() {
     return null;
   }
-
-
-  protected String findClassInZipFile(String base, File file) {
-    // Class file to search for
-    String classFileName = "/" + base + ".class";
-
-    try {
-      ZipFile zipFile = new ZipFile(file);
-      Enumeration<?> entries = zipFile.entries();
-      while (entries.hasMoreElements()) {
-        ZipEntry entry = (ZipEntry) entries.nextElement();
-
-        if (!entry.isDirectory()) {
-          String name = entry.getName();
-          //System.out.println("entry: " + name);
-
-          if (name.endsWith(classFileName)) {
-            //int slash = name.lastIndexOf('/');
-            //String packageName = (slash == -1) ? "" : name.substring(0, slash);
-            // Remove .class and convert slashes to periods.
-            return name.substring(0, name.length() - 6).replace('/', '.');
-          }
-        }
-      }
-    } catch (IOException e) {
-      //System.err.println("Ignoring " + filename + " (" + e.getMessage() + ")");
-      e.printStackTrace();
-    }
-    return null;
-  }
-
 
   protected JMenuItem createToolMenuItem(String className) {
     try {
