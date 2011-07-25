@@ -100,21 +100,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   public void contributionAdded(ContributionInfo contributionInfo) {
     
-    if (setupProgressBar.isVisible()) {
-      setupProgressBar.setVisible(false);
-    }
+    setupProgressBar.setVisible(false);
     
     if (contributionPanelsByInfo.containsKey(contributionInfo)) {
       return;
     }
     
-    ContributionPanel newPanel = null;
-    if (contributionInfo.getType() == ContributionType.LIBRARY) {
-      newPanel = new ContributionPanel();
-      
-    } else if (contributionInfo.getType() == ContributionType.LIBRARY_COMPILATION) {
-      newPanel = new ContributionPanel();
-    }
+    ContributionPanel newPanel = new ContributionPanel();
     
     synchronized (contributionPanelsByInfo) {
       contributionPanelsByInfo.put(contributionInfo, newPanel);
