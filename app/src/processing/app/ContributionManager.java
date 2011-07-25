@@ -309,18 +309,21 @@ public class ContributionManager {
     ArrayList<Library> libraries = editor.getMode().contribLibraries;
     ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
 
+    // Remove libraries from the list that are part of a compilations
     for (LibraryCompilation compilation : compilations) {
       for (Library lib : compilation.libraries) {
         libraries.remove(lib);
       }
     }
     
+    ArrayList<Contribution> contributions = new ArrayList<Contribution>();
+    contributions.addAll(editor.contribTools);
+    contributions.addAll(libraries);
+    contributions.addAll(compilations);
+    
     ArrayList<ContributionInfo> infoList = new ArrayList<ContributionInfo>();
-    for (Library library : libraries) {
-      infoList.add(library.info);
-    }
-    for (LibraryCompilation compilation : compilations) {
-      infoList.add(compilation.info);
+    for (Contribution contribution : contributions) {
+      infoList.add(contribution.getInfo());
     }
     
     contributionListing.updateInstalledList(infoList);
@@ -372,19 +375,22 @@ public class ContributionManager {
 
       public void run() {
 
-        File libFile = downloader.getFile();
+        File contributionFile = downloader.getFile();
 
-        if (libFile != null) {
+        if (contributionFile != null) {
           installProgressMonitor.startTask("Installing",
                                            ProgressMonitor.UNKNOWN);
 
           Contribution contribution = null;
           switch (info.getType()) {
           case LIBRARY:
-            contribution = installLibrary(libFile, false);
+            contribution = installLibrary(contributionFile, false);
             break;
           case LIBRARY_COMPILATION:
-            contribution = installLibraryCompilation(libFile);
+            contribution = installLibraryCompilation(contributionFile);
+            break;
+          case TOOL:
+            contribution = installTool(contributionFile);
             break;
           }
           
@@ -531,6 +537,71 @@ public class ContributionManager {
     return fileName;
   }
   
+  protected ToolContribution installTool(File zippedToolFile) {
+    File tempDir = unzipFileToTemp(zippedToolFile);
+    
+    ArrayList<ToolContribution> discoveredTools = ToolContribution.list(tempDir);
+    if (discoveredTools.isEmpty()) {
+      // Sometimes tool authors place all their folders in the base
+      // directory of a zip file instead of in single folder as the
+      // guidelines suggest. If this is the case, we might be able to find the
+      // library by stepping up a directory and searching for libraries again.
+      discoveredTools = ToolContribution.list(tempDir.getParentFile());
+    }
+    
+    if (discoveredTools != null && discoveredTools.size() == 1) {
+      ToolContribution discoveredTool = discoveredTools.get(0);
+      return installTool(discoveredTool);
+    } else {
+      // Diagnose the problem and notify the user
+      if (discoveredTools == null || discoveredTools.isEmpty()) {
+        Base.showWarning(DISCOVERY_ERROR_TITLE,
+                         DISCOVERY_INTERNAL_ERROR_MESSAGE, null);
+      } else {
+        Base.showWarning("Too many tools",
+                         "We found more than one tool in the file we just\n"
+                       + "downloaded. That shouldn't happen, so we're going\n"
+                       + "to ignore this file.", null);
+      }
+    }
+    
+    return null;
+  }
+  
+  protected ToolContribution installTool(ToolContribution newTool) {
+    
+    ArrayList<ToolContribution> oldTools = editor.contribTools;
+    
+    String toolFolderName = newTool.folder.getName();
+    
+    File toolDestination = editor.getBase().getSketchbookToolsFolder();
+    File newToolDest = new File(toolDestination, toolFolderName);
+    
+    for (ToolContribution oldTool : oldTools) {
+      
+      // XXX: Handle other cases when installing libraries.
+      //   -What if a library by the same name is already installed?
+      //   -What if newLibDest exists, but isn't used by an existing library?
+      if (oldTool.folder.exists() && oldTool.folder.equals(newToolDest)) {
+        
+        if (!backupContribution(oldTool)) {
+          return null;
+        }
+      }
+    }
+    
+    // Move newLib to the sketchbook library folder
+    if (newTool.folder.renameTo(newToolDest)) {
+      return ToolContribution.getTool(newToolDest);
+    } else {
+      Base.showWarning("Trouble moving new tool to the sketchbook",
+                       "Could not move tool \"" + newTool.info.name + "\" to "
+                           + newToolDest.getAbsolutePath() + ".\n", null);
+    }
+    
+    return null;
+  }
+  
   protected Library installLibrary(File libFile, boolean confirmReplace) {
     File tempDir = unzipFileToTemp(libFile);
     
@@ -575,7 +646,6 @@ public class ContributionManager {
   }
 
   /**
-   * 
    * @param confirmReplace
    *          if true and the library is already installed, opens a prompt to
    *          ask the user if it's okay to replace the library. If false, the
@@ -639,30 +709,31 @@ public class ContributionManager {
   }
   
   public void refreshInstalled() {
-    editor.getMode().rebuildLibraryList();
     editor.getMode().rebuildImportMenu();
+    editor.rebuildToolMenu();
   }
 
   /**
    * Moves the given contribution to a backup folder.
    */
-  private boolean backupContribution(Contribution lib) {
+  private boolean backupContribution(Contribution contribution) {
     
     File backupFolder = null;
     
-    switch (lib.getInfo().getType()) {
+    switch (contribution.getInfo().getType()) {
     case LIBRARY:
     case LIBRARY_COMPILATION:
       backupFolder = createLibraryBackupFolder();
       break;
     case MODE:
     case TOOL:
+      backupFolder = createToolBackupFolder();
       break;
     }
     
     if (backupFolder == null) return false;
     
-    String libFolderName = lib.getFolder().getName();
+    String libFolderName = contribution.getFolder().getName();
     
     String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     final String backupName = prefix + "_" + libFolderName;
@@ -671,21 +742,17 @@ public class ContributionManager {
 //    try {
 //      FileUtils.moveDirectory(lib.folder, backupFolderForLib);
 //      return true;
-    if (lib.getFolder().renameTo(backupFolderForLib)) {
+    if (contribution.getFolder().renameTo(backupFolderForLib)) {
       return true;
     } else {
 //    } catch (IOException e) {
-      Base.showWarning("Trouble creating backup of old \"" + lib.getInfo().name + "\" library",
+      Base.showWarning("Trouble creating backup of old \"" + contribution.getInfo().name + "\" library",
                        "Could not move library to backup folder:\n"
                            + backupFolderForLib.getAbsolutePath(), null);
       return false;
     }
   }
 
-  /**
-   * @return false if there was an error creating the backup folder, true if it
-   *         already exists or was created successfully
-   */
   private File createLibraryBackupFolder() {
     
     File libraryBackupFolder = new File(editor.getBase()
@@ -704,6 +771,26 @@ public class ContributionManager {
     }
     
     return libraryBackupFolder;
+  }
+  
+  private File createToolBackupFolder() {
+    
+    File toolsBackupFolder = new File(editor.getBase()
+        .getSketchbookToolsFolder(), "old");
+
+    if (!toolsBackupFolder.exists() || !toolsBackupFolder.isDirectory()) {
+      if (!toolsBackupFolder.mkdirs()) {
+        Base.showWarning("Trouble creating folder to store old libraries in",
+                         "Could not create folder "
+                             + toolsBackupFolder.getAbsolutePath()
+                             + ".\n"
+                             + "That's gonna prevent us from replacing the library.",
+                         null);
+        return null;
+      }
+    }
+    
+    return toolsBackupFolder;
   }
 
   /**

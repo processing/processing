@@ -37,6 +37,7 @@ import processing.app.Contribution.ContributionInfo.Author;
 import processing.app.Contribution.ContributionInfo.ContributionType;
 import processing.app.Library.LibraryInfo;
 import processing.app.LibraryCompilation.LibraryCompilationInfo;
+import processing.app.ToolContribution.ToolInfo;
 
 public class ContributionListing {
   
@@ -141,21 +142,21 @@ public class ContributionListing {
     notifyChange(oldLib, newLib);
   }
   
-  public void addContribution(ContributionInfo libInfo) {
+  public void addContribution(ContributionInfo info) {
     
-    if (librariesByCategory.containsKey(libInfo.category)) {
-      List<ContributionInfo> list = librariesByCategory.get(libInfo.category);
-      list.add(libInfo);
+    if (librariesByCategory.containsKey(info.category)) {
+      List<ContributionInfo> list = librariesByCategory.get(info.category);
+      list.add(info);
       
       Collections.sort(list);
     } else {
-      ArrayList<ContributionInfo> libs = new ArrayList<ContributionInfo>();
-      libs.add(libInfo);
-      librariesByCategory.put(libInfo.category, libs);
+      ArrayList<ContributionInfo> list = new ArrayList<ContributionInfo>();
+      list.add(info);
+      librariesByCategory.put(info.category, list);
     }
-    allLibraries.add(libInfo);
+    allLibraries.add(info);
     
-    notifyAdd(libInfo);
+    notifyAdd(info);
     
     Collections.sort(allLibraries);
   }
@@ -361,7 +362,12 @@ public class ContributionListing {
    */
   private static class ContributionXmlParser extends DefaultHandler {
     
-    ArrayList<ContributionInfo> libraries;
+    final static String LIBRARY_TAG = "library";
+    final static String LIBRARY_COMPILATION_TAG = "librarycompilation";
+    final static String TOOL_TAG = "tool";
+    //final static String MODE_TAG = "mode";
+    
+    ArrayList<ContributionInfo> contributions;
     
     String currentCategoryName;
 
@@ -376,7 +382,7 @@ public class ContributionListing {
 
         InputSource input = new InputSource(new FileReader(xmlFile));
 
-        libraries = new ArrayList<ContributionInfo>();
+        contributions = new ArrayList<ContributionInfo>();
         sp.parse(input, this); // throws SAXException
 
       } catch (ParserConfigurationException e) {
@@ -393,12 +399,12 @@ public class ContributionListing {
                          "The list of libraries downloaded from Processing.org\n" +
                          "appears to be malformed. You can still install libraries\n" + 
                          "manually while we work on fixing this.", e);
-        libraries = null;
+        contributions = null;
       }
     }
 
     public ArrayList<ContributionInfo> getLibraries() {
-      return libraries;
+      return contributions;
     }
 
     @Override
@@ -408,11 +414,11 @@ public class ContributionListing {
       if ("category".equals(qName)) {
         currentCategoryName = attributes.getValue("name");
 
-      } else if ("library".equals(qName)) {
+      } else if (LIBRARY_TAG.equals(qName)) {
         currentInfo = new LibraryInfo();
         setCommonAttributes(attributes);
 
-      } else if ("librarycompilation".equals(qName)) {
+      }  else if (LIBRARY_COMPILATION_TAG.equals(qName)) {
         LibraryCompilationInfo compilationInfo = new LibraryCompilationInfo();
         String[] names = attributes.getValue("libraryNames").split(";");
         for (int i = 0; i < names.length; i++) {
@@ -422,6 +428,10 @@ public class ContributionListing {
         currentInfo = compilationInfo;
         setCommonAttributes(attributes);
         
+      } else if (TOOL_TAG.equals(qName)) {
+        currentInfo = new ToolInfo();
+        setCommonAttributes(attributes);
+
       } else if ("author".equals(qName)) {
         Author author = new Author();
         author.name = attributes.getValue("name");
@@ -454,8 +464,9 @@ public class ContributionListing {
     public void endElement(String uri, String localName, String qName)
         throws SAXException {
 
-      if ("library".equals(qName) || "librarycompilation".equals(qName)) {
-        libraries.add(currentInfo);
+      if (LIBRARY_TAG.equals(qName) || LIBRARY_COMPILATION_TAG.equals(qName)
+          || TOOL_TAG.equals(qName)) {
+        contributions.add(currentInfo);
         currentInfo = null;
       }
     }
