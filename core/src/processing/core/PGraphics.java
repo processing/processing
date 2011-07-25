@@ -3438,7 +3438,7 @@ public class PGraphics extends PImage implements PConstants {
    * will be used in all subsequent calls to the <b>text()</b> function.
    * ( end auto-generated )
    * @webref typography:attributes
-   * @param leading the sie in pixels for spacing between lines
+   * @param leading the size in pixels for spacing between lines
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float, float, float, float)
@@ -5655,7 +5655,7 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    * @webref color:setting
    * @usage web_application
-   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
+   * @param rgb ???
    * @see PGraphics#noFill()
    * @see PGraphics#stroke(int, float)
    * @see PGraphics#tint(int, float)
@@ -6082,6 +6082,8 @@ public class PGraphics extends PImage implements PConstants {
  * @param nx direction along the x axis
  * @param ny direction along the y axis
  * @param nz direction along the z axis
+ * @param angle angle of the spotlight cone
+ * @param concentration exponent determining the center bias of the cone
  * @see PGraphics#lights()
  * @see PGraphics#directionalLight(float, float, float, float, float, float)
  * @see PGraphics#pointLight(float, float, float, float, float, float)
@@ -6140,9 +6142,9 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
  * @webref lights_camera:lights
  * @usage web_application
- * @param red red or hue value (depending on current color mode)
- * @param green green or saturation value (depending on current color mode)
- * @param blue blue or brightness value (depending on current color mode)
+ * @param x red or hue value (depending on current color mode)
+ * @param y green or saturation value (depending on current color mode)
+ * @param z blue or brightness value (depending on current color mode)
  * @see PGraphics#lights()
  * @see PGraphics#ambientLight(float, float, float, float, float, float)
  * @see PGraphics#pointLight(float, float, float, float, float, float)

@@ -1323,7 +1323,9 @@ public class PApplet extends Applet
     size(iwidth, iheight, irenderer, null);
   }
 
-
+/**
+ * @param ipath ???
+ */
   public void size(final int iwidth, final int iheight,
                    String irenderer, String ipath) {
     // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
@@ -2883,7 +2885,7 @@ public class PApplet extends Applet
    * (This avoids the situation of trying to put single or double quotes
    * around different bits).
    *
-   * @param list of commands passed to the command line
+   * @param argv list of commands passed to the command line
    */
   static public Process open(String argv[]) {
     String[] params = null;
@@ -3118,6 +3120,7 @@ public class PApplet extends Applet
    * images without a background, use <b>createGraphics()</b>.
    * ( end auto-generated )
    * @webref output:image
+   * @param filename any sequence of letters and numbers
    * @see PApplet#saveFrame()
    * @see PApplet#createGraphics(int, int, String)
    */
@@ -3741,9 +3744,9 @@ public class PApplet extends Applet
    * Determines the smallest value in a sequence of numbers.
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a 
-   * @param b 
-   * @param c 
+   * @param a first number
+   * @param b second number
+   * @param c third number
    * @see PApplet#max(float, float, float)
    */
   static public final float min(float a, float b, float c) {
@@ -3771,10 +3774,6 @@ public class PApplet extends Applet
     return min;
   }
 
-
-  /**
-   * @param list int or float array
-   */
   static public final float min(float[] list) {
     if (list.length == 0) {
       throw new ArrayIndexOutOfBoundsException(ERROR_MIN_MAX);
@@ -4200,8 +4199,8 @@ public class PApplet extends Applet
    * integer, use the <b>int()</b> function.
    * ( end auto-generated )
    * @webref math:random
-   * @param howsmall 
-   * @param howbig 
+   * @param howsmall lower limit
+   * @param howbig upper limit
    * @see PApplet#randomSeed(long)
    * @see PApplet#noise(float, float, float)
    */
@@ -4220,7 +4219,7 @@ public class PApplet extends Applet
    * numbers each time the software is run.
    * ( end auto-generated )
    * @webref math:random
-   * @param what 
+   * @param what seed value
    * @see PApplet#random(float,float)
    * @see PApplet#noise(float, float, float)
    * @see PApplet#noiseSeed(long)
@@ -4507,37 +4506,14 @@ public class PApplet extends Applet
     return loadImage(filename, extension, null);
   }
 
-// ???
+/**
+ * @param params ???
+ */
   public PImage loadImage(String filename, Object params) {
     return loadImage(filename, null, params);
   }
 
 
-  // ???
-  /**
-   * Loads an image into a variable of type <b>PImage</b>. Four types of images ( <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, <b>.png</b>) images may be loaded. To load correctly, images must be located in the data directory of the current sketch. In most cases, load all images in <b>setup()</b> to preload them at the start of the program. Loading images inside <b>draw()</b> will reduce the speed of a program.
-   * <br><br>The <b>filename</b> parameter can also be a URL to a file found online. For security reasons, a Processing sketch found online can only download files from the same server from which it came. Getting around this restriction requires a <a href="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</a>.
-   * <br><br>The <b>extension</b> parameter is used to determine the image type in cases where the image filename does not end with a proper extension. Specify the extension as the second parameter to <b>loadImage()</b>, as shown in the third example on this page.
-   * <br><br>The <b>params</b> parameter is used to set an parameter object for the image, as might be used by specific renderers such as OPENGL2. Specify the extension as the third parameter to <b>loadImage()</b>, as shown in the fourth example on this page.
-   * <br><br>If an image is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console. The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadImage()</b> is null.<br><br>Depending on the type of error, a <b>PImage</b> object may still be returned, but the width and height of the image will be set to -1. This happens if bad image data is returned or cannot be decoded properly. Sometimes this happens with image URLs that produce a 403 error or that redirect to a password prompt, because <b>loadImage()</b> will attempt to interpret the HTML as image data.
-   *
-   * <h3>Advanced</h3>
-   * Identical to loadImage, but allows you to specify the type of
-   * image by its extension. Especially useful when downloading from
-   * CGI scripts.
-   * <br/> <br/>
-   * Use 'unknown' as the extension to pass off to the default
-   * image loader that handles gif, jpg, and png.
-   *
-   * @webref image:loading_displaying
-   * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform.
-   * @param extension the type of image to load, for example "png", "gif", "jpg"
-   *
-   * @see processing.core.PImage
-   * @see processing.core.PApplet#image(PImage, float, float, float, float)
-   * @see processing.core.PApplet#imageMode(int)
-   * @see processing.core.PApplet#background(float, float, float)
-   */
   public PImage loadImage(String filename, String extension, Object params) {
     if (extension == null) {
       String lower = filename.toLowerCase();
@@ -5018,20 +4994,7 @@ public class PApplet extends Applet
 
   // ???
   /**
-   * Loads vector shapes into a variable of type <b>PShape</b>. Currently, only SVG files may be loaded.
-   * To load correctly, the file must be located in the data directory of the current sketch.
-   * In most cases, <b>loadShape()</b> should be used inside <b>setup()</b> because loading shapes inside <b>draw()</b> will reduce the speed of a sketch.
-   * <br><br>
-   * The <b>filename</b> parameter can also be a URL to a file found online.
-   * For security reasons, a Processing sketch found online can only download files from the same server from which it came.
-   * Getting around this restriction requires a <a href="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</a>.
-   * <br><br>
-   * If a shape is not loaded successfully, the <b>null</b> value is returned and an error message will be printed to the console.
-   * The error message does not halt the program, however the null value may cause a NullPointerException if your code does not check whether the value returned from <b>loadShape()</b> is null.
-   *
-   * @webref shape:loading_displaying
-   * @see PShape
-   * @see PApplet#shape(PShape)
+   * @param params ???
    * @see PApplet#shapeMode(int)
    */
   public PShape loadShape(String filename, Object params) {
@@ -6172,7 +6135,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to write to
-   * @param buff array of bytes to be written
+   * @param buffer array of bytes to be written
    * @see PApplet#loadStrings(String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#saveStrings(String, String[])
@@ -6184,6 +6147,7 @@ public class PApplet extends Applet
   // ???
   /**
    * Saves bytes to a specific File location specified by the user.
+   * @param file ???
    */
   static public void saveBytes(File file, byte buffer[]) {
     File tempFile = null;
@@ -6446,8 +6410,8 @@ public class PApplet extends Applet
    * case insensitive.
    * ( end auto-generated )
  * @webref data:array_functions
- * @param what String[], int[], or float[]
- * @param count int
+ * @param what ???
+ * @param count number of elements to sort
  * @see PApplet#reverse(boolean[])
  */
   static public byte[] sort(byte[] what, int count) {
@@ -6457,12 +6421,10 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-// ???
   static public char[] sort(char what[]) {
     return sort(what, what.length);
   }
 
-// ???
   static public char[] sort(char[] what, int count) {
     char[] outgoing = new char[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -6470,12 +6432,10 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-// ???
   static public int[] sort(int what[]) {
     return sort(what, what.length);
   }
 
-// ???
   static public int[] sort(int[] what, int count) {
     int[] outgoing = new int[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -6483,12 +6443,10 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-// ???
   static public float[] sort(float what[]) {
     return sort(what, what.length);
   }
 
-// ???
   static public float[] sort(float[] what, int count) {
     float[] outgoing = new float[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -6496,12 +6454,10 @@ public class PApplet extends Applet
     return outgoing;
   }
 
-// ???
   static public String[] sort(String what[]) {
     return sort(what, what.length);
   }
 
-// ???
   static public String[] sort(String[] what, int count) {
     String[] outgoing = new String[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -6599,13 +6555,16 @@ public class PApplet extends Applet
    * items = (SomeClass[]) expand(originalArray)</em>.
    * ( end auto-generated )
    * @webref data:array_functions
-   * @param list[] boolean[], byte[], char[], int[], float[], String[], or an array of objects
+   * @param list boolean[], byte[], char[], int[], float[], String[], or an array of objects
    * @see PApplet#shorten(boolean[])
    */
   static public boolean[] expand(boolean list[]) {
     return expand(list, list.length << 1);
   }
   
+  /**
+   * @param newSize new size for the array
+   */
   static public boolean[] expand(boolean list[], int newSize) {
     boolean temp[] = new boolean[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
@@ -6663,6 +6622,9 @@ public class PApplet extends Applet
     return temp;
   }
 
+/**
+ * @param array ???
+ */
   static public Object expand(Object array) {
     return expand(array, Array.getLength(array) << 1);
   }
@@ -6743,7 +6705,7 @@ public class PApplet extends Applet
    * items = (SomeClass[]) shorten(originalArray)</em>.
    * ( end auto-generated )
   * @webref data:array_functions
-  * @param list boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+  * @param list ???
   * @see PApplet#append(byte[], byte)
   * @see PApplet#expand(boolean[])
   */
@@ -6790,7 +6752,7 @@ public class PApplet extends Applet
    * items = (SomeClass[]) splice(array1, array2, index)</em>.
    * ( end auto-generated )
  * @webref data:array_functions
- * @param list boolean[], byte[], char[], int[], float[], or String[], or an array of objects
+ * @param list ???
  * @param v value to be spliced in
  * @param index position in the array from which to insert data
  * @see PApplet#concat(boolean[], boolean[])
@@ -6815,6 +6777,10 @@ public class PApplet extends Applet
                      list.length - index);
     return outgoing;
   }
+  
+  /**
+   * @param list ???
+   */
 
   static final public byte[] splice(byte list[],
                                     byte v, int index) {
@@ -6958,7 +6924,7 @@ public class PApplet extends Applet
    * items = (SomeClass[]) subset(originalArray, 0, 4)</em>.
    * ( end auto-generated )
   * @webref data:array_functions
-  * @param list boolean[], byte, char[], int[], float[], String[] or an array of objects
+  * @param list ???
   * @param start position to begin
   * @param count number of values to extract
   * @see PApplet#splice(boolean[], boolean, int)
@@ -7111,7 +7077,7 @@ public class PApplet extends Applet
    * Reverses the order of an array.
    * ( end auto-generated )
   * @webref data:array_functions
-  * @param list[] booleans[], bytes[], chars[], ints[], floats[], or Strings[]
+  * @param list booleans[], bytes[], chars[], ints[], floats[], or Strings[]
   * @see PApplet#sort(String[], int)
   */
   static public boolean[] reverse(boolean list[]) {
@@ -7224,7 +7190,7 @@ public class PApplet extends Applet
    * <b>nf()</b> or <b>nfs()</b>.
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param str[] array of Strings
+   * @param str array of Strings
    * @param separator char or String to be placed between each item
    * @see PApplet#split(String, String)
    * @see PApplet#trim(String)
@@ -7235,10 +7201,6 @@ public class PApplet extends Applet
     return join(str, String.valueOf(separator));
   }
 
-
-  /**
-   * @param separator char or String to be placed between each item
-   */
   static public String join(String str[], String separator) {
     StringBuffer buffer = new StringBuffer();
     for (int i = 0; i < str.length; i++) {
@@ -8063,7 +8025,7 @@ public class PApplet extends Applet
    * whatever is apprioriate for that region.
    * ( end auto-generated )
  * @webref data:string_functions
- * @param num[] the number(s) to format
+ * @param num the number(s) to format
  * @see PApplet#nf(float, int, int)
  * @see PApplet#nfp(float, int, int)
  * @see PApplet#nfc(float, int)
@@ -8117,7 +8079,7 @@ public class PApplet extends Applet
    * should always be positive integers.
    * ( end auto-generated )
   * @webref data:string_functions
-  * @param num[] the number(s) to format
+  * @param num the number(s) to format
   * @param digits number of digits to pad with zeroes
   * @see PApplet#nf(float, int, int)
   * @see PApplet#nfp(float, int, int)
@@ -8348,7 +8310,7 @@ public class PApplet extends Applet
    * equivalent integer value.
    * ( end auto-generated )
   * @webref data:conversion
-  * @param what string
+  * @param what ???
   * @see PApplet#hex(int, int)
   * @see PApplet#binary(byte)
   * @see PApplet#unbinary(String)
@@ -8434,12 +8396,11 @@ public class PApplet extends Applet
    * integer value. For example, unbinary("00001000") will return 8.
    * ( end auto-generated )
   * @webref data:conversion
-  * @param what String
+  * @param what ???
   * @see PApplet#hex(int,int)
   * @see PApplet#binary(byte)
   */
-  // ???
-  static final public int unbinary(String what) {
+    static final public int unbinary(String what) {
     return Integer.parseInt(what, 2);
   }
 
@@ -9894,13 +9855,17 @@ public class PApplet extends Applet
   }
 
 
-/** ??? */
   public void rect(float a, float b, float c, float d, float r) {
     if (recorder != null) recorder.rect(a, b, c, d, r);
     g.rect(a, b, c, d, r);
   }
 
-
+/**
+ * @param tl ???
+ * @param tr ???
+ * @param br ???
+ * @param bl ???
+ */
   public void rect(float a, float b, float c, float d,
                    float tl, float tr, float br, float bl) {
     if (recorder != null) recorder.rect(a, b, c, d, tl, tr, br, bl);
@@ -10817,7 +10782,7 @@ public class PApplet extends Applet
    * Calculates and returns the width of any character or text string.
    * ( end auto-generated )
    * @webref typography:attributes
-   * @param str
+   * @param str ???
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float, float, float, float)
@@ -13302,7 +13267,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref pimage:pixels
    * @usage web_application
-   * @param maskArray[] any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
+   * @param maskArray any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
    */
   public void mask(int maskArray[]) {
     if (recorder != null) recorder.mask(maskArray);
