@@ -49,13 +49,37 @@ public class PVector implements Serializable {
    */
   private static final long serialVersionUID = -6717872085945400694L;
 
-  /** The x component of the vector. */
+  /** 
+   * ( begin auto-generated from PVector_x.xml )
+   * 
+   * The x component of the vector. This field (variable) can be used to both 
+   * get and set the value (see above example.)
+   * ( end auto-generated )
+   * @webref pvector:field
+   * @usage web_application
+   */
   public float x;
 
-  /** The y component of the vector. */
+  /** 
+   * ( begin auto-generated from PVector_y.xml )
+   * 
+   * The y component of the vector. This field (variable) can be used to both 
+   * get and set the value (see above example.)
+   * ( end auto-generated )
+   * @webref pvector:field
+   * @usage web_application
+   */
   public float y;
 
-  /** The z component of the vector. */
+  /** 
+   * ( begin auto-generated from PVector_z.xml )
+   * 
+   * The z component of the vector. This field (variable) can be used to both 
+   * get and set the value (see above example.)
+   * ( end auto-generated )
+   * @webref pvector:field
+   * @usage web_application
+   */
   public float z;
 
   /** Array so that this can be temporarily used in an array context */
@@ -102,12 +126,10 @@ public class PVector implements Serializable {
    * Sets the x, y, and z component of the vector using three separate 
    * variables, the data from a PVector, or the values from a float array.
    * ( end auto-generated )
-   * Set x, y, and z coordinates.
-   *
-   * @webref pvector
-   * @param x the x coordinate.
-   * @param y the y coordinate.
-   * @param z the z coordinate.
+   * @webref pvector:method
+   * @param x the x component of the vector
+   * @param y the y component of the vector
+   * @param z the z component of the vector
    */
   public void set(float x, float y, float z) {
     this.x = x;
@@ -117,9 +139,7 @@ public class PVector implements Serializable {
 
 
   /**
-   * Set x, y, and z coordinates from a Vector3D object.
-   *
-   * @param v the PVector object to be copied
+   * @param v any variable of type PVector
    */
   public void set(PVector v) {
     x = v.x;
@@ -144,14 +164,20 @@ public class PVector implements Serializable {
 
 
   /**
-   * Get a copy of this vector.
-   * @webref
+   * ( begin auto-generated from PVector_get.xml )
+   * 
+   * Gets a copy of the vector, returns a PVector object.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
    */
   public PVector get() {
     return new PVector(x, y, z);
   }
 
-
+/**
+ * @param target ???
+ */
   public float[] get(float[] target) {
     if (target == null) {
       return new float[] { x, y, z };
@@ -168,10 +194,13 @@ public class PVector implements Serializable {
 
 
   /**
-   * Calculate the magnitude (length) of the vector
-   *
-   * @webref
-   * @return the magnitude of the vector
+   * ( begin auto-generated from PVector_mag.xml )
+   * 
+   * Calculates the magnitude (length) of the vector and returns the result 
+   * as a float (this is simply the equation <em>sqrt(x*x + y*y + z*z)</em>.)
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
    */
   public float mag() {
     return (float) Math.sqrt(x*x + y*y + z*z);
@@ -190,7 +219,16 @@ public class PVector implements Serializable {
   }
 
   /**
-   * Add a vector to this vector
+   * ( begin auto-generated from PVector_add.xml )
+   * 
+   * Adds x, y, and z components to a vector, adds one vector to another, or 
+   * adds two independent vectors together. The version of the method that 
+   * adds two vectors together is a static method and returns a PVector, the 
+   * others have no return value -- they act directly on the vector. See the 
+   * examples for more context.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
    * @param v the vector to be added
    */
   public void add(PVector v) {
@@ -199,7 +237,11 @@ public class PVector implements Serializable {
     z += v.z;
   }
 
-
+/**
+ * @param x x component of the vector
+ * @param y y component of the vector
+ * @param z z component of the vector
+ */
   public void add(float x, float y, float z) {
     this.x += x;
     this.y += y;
@@ -211,7 +253,6 @@ public class PVector implements Serializable {
    * Add two vectors
    * @param v1 a vector
    * @param v2 another vector
-   * @return a new vector that is the sum of v1 and v2
    */
   static public PVector add(PVector v1, PVector v2) {
     return add(v1, v2, null);
@@ -220,10 +261,7 @@ public class PVector implements Serializable {
 
   /**
    * Add two vectors into a target vector
-   * @param v1 a vector
-   * @param v2 another vector
    * @param target the target vector (if null, a new vector will be created)
-   * @return a new vector that is the sum of v1 and v2
    */
   static public PVector add(PVector v1, PVector v2, PVector target) {
     if (target == null) {
@@ -236,8 +274,17 @@ public class PVector implements Serializable {
 
 
   /**
-   * Subtract a vector from this vector
-   * @param v the vector to be subtracted
+   * ( begin auto-generated from PVector_sub.xml )
+   * 
+   * Subtracts x, y, and z components from a vector, subtracts one vector 
+   * from another, or subtracts two independent vectors. The version of the 
+   * method that substracts two vectors is a static method and returns a 
+   * PVector, the others have no return value -- they act directly on the 
+   * vector. See the examples for more context.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
+   * @param v any variable of type PVector
    */
   public void sub(PVector v) {
     x -= v.x;
@@ -245,7 +292,11 @@ public class PVector implements Serializable {
     z -= v.z;
   }
 
-
+/**
+ * @param x the x component of the vector
+ * @param y the y component of the vector
+ * @param z the z component of the vector
+ */
   public void sub(float x, float y, float z) {
     this.x -= x;
     this.y -= y;
@@ -255,15 +306,16 @@ public class PVector implements Serializable {
 
   /**
    * Subtract one vector from another
-   * @param v1 a vector
-   * @param v2 another vector
-   * @return a new vector that is v1 - v2
+   * @param v1 the x, y, and z components of a PVector object
+   * @param v2 the x, y, and z components of a PVector object
    */
   static public PVector sub(PVector v1, PVector v2) {
     return sub(v1, v2, null);
   }
 
-
+/**
+ * @param target ???
+ */
   static public PVector sub(PVector v1, PVector v2, PVector target) {
     if (target == null) {
       target = new PVector(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
@@ -275,8 +327,13 @@ public class PVector implements Serializable {
 
 
   /**
-   * Multiply this vector by a scalar
-   * @param n the value to multiply by
+   * ( begin auto-generated from PVector_mult.xml )
+   * 
+   * Multiplies a vector by a scalar or multiplies one vector by another.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
+   * @param n the number to multiply with the vector
    */
   public void mult(float n) {
     x *= n;
@@ -286,10 +343,7 @@ public class PVector implements Serializable {
 
 
   /**
-   * Multiply a vector by a scalar
-   * @param v a vector
-   * @param n scalar
-   * @return a new vector that is v1 * n
+   * @param v the vector to multiply by the scalar
    */
   static public PVector mult(PVector v, float n) {
     return mult(v, n, null);
@@ -298,10 +352,7 @@ public class PVector implements Serializable {
 
   /**
    * Multiply a vector by a scalar, and write the result into a target PVector.
-   * @param v a vector
-   * @param n scalar
    * @param target PVector to store the result
-   * @return the target vector, now set to v1 * n
    */
   static public PVector mult(PVector v, float n, PVector target) {
     if (target == null) {
@@ -312,11 +363,6 @@ public class PVector implements Serializable {
     return target;
   }
 
-
-  /**
-   * Multiply each element of one vector by the elements of another vector.
-   * @param v the vector to multiply by
-   */
   public void mult(PVector v) {
     x *= v.x;
     y *= v.y;
@@ -325,21 +371,13 @@ public class PVector implements Serializable {
 
 
   /**
-   * Multiply each element of one vector by the individual elements of another
-   * vector, and return the result as a new PVector.
+   * @param v1 the x, y, and z components of a PVector 
+   * @param v2 the x, y, and z components of a PVector 
    */
   static public PVector mult(PVector v1, PVector v2) {
     return mult(v1, v2, null);
   }
 
-
-  /**
-   * Multiply each element of one vector by the individual elements of another
-   * vector, and write the result into a target vector.
-   * @param v1 the first vector
-   * @param v2 the second vector
-   * @param target PVector to store the result
-   */
   static public PVector mult(PVector v1, PVector v2, PVector target) {
     if (target == null) {
       target = new PVector(v1.x*v2.x, v1.y*v2.y, v1.z*v2.z);
@@ -351,7 +389,12 @@ public class PVector implements Serializable {
 
 
   /**
-   * Divide this vector by a scalar
+   * ( begin auto-generated from PVector_div.xml )
+   * 
+   * Divides a vector by a scalar or divides one vector by another.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
    * @param n the value to divide by
    */
   public void div(float n) {
@@ -363,15 +406,17 @@ public class PVector implements Serializable {
 
   /**
    * Divide a vector by a scalar and return the result in a new vector.
-   * @param v a vector
-   * @param n scalar
+   * @param v any variable of type PVector
+   * @param n the number to divide with the vector
    * @return a new vector that is v1 / n
    */
   static public PVector div(PVector v, float n) {
     return div(v, n, null);
   }
 
-
+/**
+ * @param target ???
+ */
   static public PVector div(PVector v, float n, PVector target) {
     if (target == null) {
       target = new PVector(v.x/n, v.y/n, v.z/n);
@@ -400,14 +445,6 @@ public class PVector implements Serializable {
     return div(v1, v2, null);
   }
 
-
-  /**
-   * Divide each element of one vector by the individual elements of another
-   * vector, and write the result into a target vector.
-   * @param v1 the first vector
-   * @param v2 the second vector
-   * @param target PVector to store the result
-   */
   static public PVector div(PVector v1, PVector v2, PVector target) {
     if (target == null) {
       target = new PVector(v1.x/v2.x, v1.y/v2.y, v1.z/v2.z);
@@ -419,9 +456,14 @@ public class PVector implements Serializable {
 
 
   /**
-   * Calculate the Euclidean distance between two points (considering a point as a vector object)
-   * @param v another vector
-   * @return the Euclidean distance between
+   * ( begin auto-generated from PVector_dist.xml )
+   * 
+   * Calculates the Euclidean distance between two points (considering a 
+   * point as a vector object).
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
+   * @param v the x, y, and z coordinates of a PVector
    */
   public float dist(PVector v) {
     float dx = x - v.x;
@@ -432,9 +474,8 @@ public class PVector implements Serializable {
 
 
   /**
-   * Calculate the Euclidean distance between two points (considering a point as a vector object)
-   * @param v1 a vector
-   * @param v2 another vector
+   * @param v1 ???
+   * @param v2 ???
    * @return the Euclidean distance between v1 and v2
    */
   static public float dist(PVector v1, PVector v2) {
@@ -446,26 +487,45 @@ public class PVector implements Serializable {
 
 
   /**
-   * Calculate the dot product with another vector
+   * ( begin auto-generated from PVector_dot.xml )
+   * 
+   * Calculates the dot product of two vectors.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
+   * @param v any variable of type PVector
    * @return the dot product
    */
   public float dot(PVector v) {
     return x*v.x + y*v.y + z*v.z;
   }
 
-
+/**
+ * @param x x component of the vector
+ * @param y y component of the vector
+ * @param z z component of the vector
+ */
   public float dot(float x, float y, float z) {
     return this.x*x + this.y*y + this.z*z;
   }
 
-
+/**
+ * @param v1 ???
+ * @param v2???
+ */
   static public float dot(PVector v1, PVector v2) {
     return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
   }
 
 
   /**
-   * Return a vector composed of the cross product between this and another.
+   * ( begin auto-generated from PVector_cross.xml )
+   * 
+   * Calculates and returns a vector composed of the cross product between 
+   * two vectors.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @param v the vector to calculate the cross product
    */
   public PVector cross(PVector v) {
     return cross(v, null);
@@ -473,8 +533,7 @@ public class PVector implements Serializable {
 
 
   /**
-   * Perform cross product between this and another vector, and store the
-   * result in 'target'. If target is null, a new vector is created.
+   * @param target ???
    */
   public PVector cross(PVector v, PVector target) {
     float crossX = y * v.z - v.y * z;
@@ -489,7 +548,10 @@ public class PVector implements Serializable {
     return target;
   }
 
-
+/**
+ * @param v1 ???
+ * @param v2 ???
+ */
   static public PVector cross(PVector v1, PVector v2, PVector target) {
     float crossX = v1.y * v2.z - v2.y * v1.z;
     float crossY = v1.z * v2.x - v2.z * v1.x;
@@ -505,7 +567,12 @@ public class PVector implements Serializable {
 
 
   /**
-   * Normalize the vector to length 1 (make it a unit vector)
+   * ( begin auto-generated from PVector_normalize.xml )
+   * 
+   * Normalize the vector to length 1 (make it a unit vector).
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
    */
   public void normalize() {
     float m = mag();
@@ -516,7 +583,6 @@ public class PVector implements Serializable {
 
 
   /**
-   * Normalize this vector, storing the result in another vector.
    * @param target Set to null to create a new vector
    * @return a new vector (if target was null), or target
    */
@@ -535,8 +601,13 @@ public class PVector implements Serializable {
 
 
   /**
-   * Limit the magnitude of this vector
-   * @param max the maximum length to limit this vector
+   * ( begin auto-generated from PVector_limit.xml )
+   * 
+   * Limit the magnitude of this vector to the value used for the <b>max</b> parameter.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
+   * @param max the maximum magnitude for the vector
    */
   public void limit(float max) {
     if (mag() > max) {
@@ -604,10 +675,14 @@ public class PVector implements Serializable {
 
 
   /**
-   * Calculate the angle between two vectors, using the dot product
-   * @param v1 a vector
-   * @param v2 another vector
-   * @return the angle between the vectors
+   * ( begin auto-generated from PVector_angleBetween.xml )
+   * 
+   * Calculates and returns the angle (in radians) between two vectors.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage web_application
+   * @param v1 the x, y, and z components of a PVector
+   * @param v2 the x, y, and z components of a PVector
    */
   static public float angleBetween(PVector v1, PVector v2) {
     double dot = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
@@ -635,9 +710,14 @@ public class PVector implements Serializable {
 
 
   /**
-   * Return a representation of this vector as a float array. This is only for
-   * temporary use. If used in any other fashion, the contents should be copied
-   * by using the get() command to copy into your own array.
+   * ( begin auto-generated from PVector_array.xml )
+   * 
+   * Return a representation of this vector as a float array. This is only 
+   * for temporary use. If used in any other fashion, the contents should be 
+   * copied by using the <b>PVector.get()</b> method to copy into your own array.
+   * ( end auto-generated )
+   * @webref pvector:method
+   * @usage: web_application
    */
   public float[] array() {
     if (array == null) {
