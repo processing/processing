@@ -7281,11 +7281,16 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("endText");
   }
 
-
+ /**
+  * @nowebref
+  */
   public void texture(PImage... images) {
     showMissingWarning("texture");
   }
 
+  /**
+  * @nowebref
+  */
   public void vertex(float... values) {
     showMissingWarning("vertex");
   }
