@@ -878,6 +878,7 @@ public class PImage implements PConstants, Cloneable {
    * ( end auto-generated )
    * @webref pimage:pixels
    * @usage web_application
+   * @brief Masks part of an image with another image as an alpha channel
    * @param maskArray[] any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
    */
   public void mask(int maskArray[]) {
