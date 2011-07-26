@@ -34,28 +34,31 @@ import javax.imageio.ImageIO;
 
 
 /**
- * Datatype for storing images. Processing can display <b>.gif</b>, <b>.jpg</b>, <b>.tga</b>, and <b>.png</b> images. Images may be displayed in 2D and 3D space.
- * Before an image is used, it must be loaded with the <b>loadImage()</b> function.
- * The <b>PImage</b> object contains fields for the <b>width</b> and <b>height</b> of the image,
- * as well as an array called <b>pixels[]</b> which contains the values for every pixel in the image.
- * A group of methods, described below, allow easy access to the image's pixels and alpha channel and simplify the process of compositing.
- * <br><br>Before using the <b>pixels[]</b> array, be sure to use the <b>loadPixels()</b> method on the image to make sure that the pixel data is properly loaded.
- * <br><br>To create a new image, use the <b>createImage()</b> function (do not use <b>new PImage()</b>).
- * <h3>Advanced</h3>
- *
- * Storage class for pixel data. This is the base class for most image and
- * pixel information, such as PGraphics and the video library classes.
- * <P>
- * Code for copying, resizing, scaling, and blending contributed
- * by <A HREF="http://www.toxi.co.uk">toxi</A>.
- * <P>
- *
+   * ( begin auto-generated from PImage.xml )
+   * 
+   * Datatype for storing images. Processing can display <b>.gif</b>, 
+   * <b>.jpg</b>, <b>.tga</b>, and <b>.png</b> images. Images may be 
+   * displayed in 2D and 3D space. Before an image is used, it must be loaded 
+   * with the <b>loadImage()</b> function. The <b>PImage</b> object contains 
+   * fields for the <b>width</b> and <b>height</b> of the image, as well as 
+   * an array called <b>pixels[]</b> which contains the values for every 
+   * pixel in the image. A group of methods, described below, allow easy 
+   * access to the image's pixels and alpha channel and simplify the process 
+   * of compositing. 
+   * <br/> <br/>
+   * Before using the <b>pixels[]</b> array, be sure to use the 
+   * <b>loadPixels()</b> method on the image to make sure that the pixel data 
+   * is properly loaded.
+   * <br/> <br/>
+   * To create a new image, use the <b>createImage()</b> function (do not use 
+   * <b>new PImage()</b>). 
+   * ( end auto-generated )
  * @webref image
  * @usage Web &amp; Application
  * @instanceName img any variable of type PImage
- * @see processing.core.PApplet#loadImage(String)
- * @see processing.core.PGraphics#imageMode(int)
- * @see processing.core.PApplet#createImage(int, int)
+ * @see PApplet#loadImage(String)
+ * @see PGraphics#imageMode(int)
+ * @see PApplet#createImage(int, int)
  */
 public class PImage implements PConstants, Cloneable {
 

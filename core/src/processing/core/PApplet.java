@@ -7248,17 +7248,38 @@ public class PApplet extends Applet
     return pieces;
   }
 
-   // ???
   /**
-   * Split a string into pieces along a specific character.
-   * Most commonly used to break up a String along a space or a tab
-   * character.
-   * <p>
-   * This operates differently than the others, where the
-   * single delimeter is the only breaking point, and consecutive
-   * delimeters will produce an empty string (""). This way,
-   * one can split on tab characters, but maintain the column
-   * alignments (of say an excel file) where there are empty columns.
+   * ( begin auto-generated from split.xml )
+   * 
+   * The split() function breaks a string into pieces using a character or 
+   * string as the divider. The <b>delim</b> parameter specifies the 
+   * character or characters that mark the boundaries between each piece. A 
+   * String[] array is returned that contains each of the pieces.
+   * <br/> <br/>
+   * If the result is a set of numbers, you can convert the String[] array to 
+   * to a float[] or int[] array using the datatype conversion functions 
+   * <b>int()</b> and <b>float()</b> (see example above).
+   * <br/> <br/> 
+   * The <b>splitTokens()</b> function works in a similar fashion, except 
+   * that it splits using a range of characters instead of a specific 
+   * character or sequence.
+   * <!-- /><br />
+   * This function uses regular expressions to determine how the <b>delim</b> 
+   * parameter divides the <b>str</b> parameter. Therefore, if you use 
+   * characters such parentheses and brackets that are used with regular 
+   * expressions as a part of the <b>delim</b> parameter, you'll need to put 
+   * two blackslashes (\\\\) in front of the character (see example above). 
+   * You can read more about <a 
+   * href="http://en.wikipedia.org/wiki/Regular_expression">regular 
+   * expressions</a> and <a 
+   * href="http://en.wikipedia.org/wiki/Escape_character">escape 
+   * characters</a> on Wikipedia.
+   * --> 
+   * ( end auto-generated )
+   * @webref data:string_functions
+   * @usage web_application
+   * @param what string to be split
+   * @param delim the character or String used to separate the data
    */
   static public String[] split(String what, char delim) {
     // do this so that the exception occurs inside the user's
@@ -7300,14 +7321,6 @@ public class PApplet extends Applet
     return splits;
   }
 
-
-   // ???
-  /**
-   * Split a String on a specific delimiter. Unlike Java's String.split()
-   * method, this does not parse the delimiter as a regexp because it's more
-   * confusing than necessary, and String.split() is always available for
-   * those who want regexp.
-   */
   static public String[] split(String what, String delim) {
     ArrayList<String> items = new ArrayList<String>();
     int index;
