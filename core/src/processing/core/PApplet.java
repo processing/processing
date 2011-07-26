@@ -2163,15 +2163,23 @@ public class PApplet extends Applet
    * If you override this or any function that takes a "MouseEvent e"
    * without calling its super.mouseXxxx() then mouseX, mouseY,
    * mousePressed, and mouseEvent will no longer be set.
+   * 
+   * @nowebref
    */
   public void mousePressed(MouseEvent e) {
     checkMouseEvent(e);
   }
 
+  /**
+   * @nowebref
+   */
   public void mouseReleased(MouseEvent e) {
     checkMouseEvent(e);
   }
 
+  /**
+   * @nowebref
+   */
   public void mouseClicked(MouseEvent e) {
     checkMouseEvent(e);
   }
@@ -2184,10 +2192,16 @@ public class PApplet extends Applet
     checkMouseEvent(e);
   }
 
+  /**
+   * @nowebref
+   */
   public void mouseDragged(MouseEvent e) {
     checkMouseEvent(e);
   }
 
+  /**
+   * @nowebref
+   */
   public void mouseMoved(MouseEvent e) {
     checkMouseEvent(e);
   }
@@ -2212,6 +2226,7 @@ public class PApplet extends Applet
    * @see PApplet#mouseX
    * @see PApplet#mouseY
    * @see PApplet#mousePressed
+   * @see PApplet#mouseButton
    * @see PApplet#mouseReleased()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
@@ -2228,6 +2243,7 @@ public class PApplet extends Applet
    * @see PApplet#mouseX
    * @see PApplet#mouseY
    * @see PApplet#mousePressed
+   * @see PApplet#mouseButton
    * @see PApplet#mousePressed()
    * @see PApplet#mouseMoved()
    * @see PApplet#mouseDragged()
@@ -2371,9 +2387,19 @@ public class PApplet extends Applet
    * key events will no longer be queued until the end of draw();
    * and the keyPressed(), keyReleased() and keyTyped() methods
    * will no longer be called.
+   *
+   * @nowebref
    */
   public void keyPressed(KeyEvent e) { checkKeyEvent(e); }
+  
+  /**
+   * @nowebref
+   */
   public void keyReleased(KeyEvent e) { checkKeyEvent(e); }
+  
+  /**
+   * @nowebref
+   */
   public void keyTyped(KeyEvent e) { checkKeyEvent(e); }
 
 
@@ -12064,7 +12090,6 @@ public class PApplet extends Applet
 
 
 /**
- * @nowebref
  * @param alpha opacity of the stroke
  */
   public void stroke(int rgb, float alpha) {
@@ -12074,7 +12099,6 @@ public class PApplet extends Applet
 
 
   /**
-   * @notWebref
    * @param gray specifies a value between white and black
    */
   public void stroke(float gray) {
@@ -12082,10 +12106,6 @@ public class PApplet extends Applet
     g.stroke(gray);
   }
 
-
-/**
- * @notWebref
- */
   public void stroke(float gray, float alpha) {
     if (recorder != null) recorder.stroke(gray, alpha);
     g.stroke(gray, alpha);
