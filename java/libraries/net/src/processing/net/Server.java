@@ -31,15 +31,11 @@ import java.lang.reflect.*;
 import java.net.*;
 
 /**
- * A server sends and receives data to and from its associated clients (other programs connected to it).
- * When a server is started, it begins listening for connections on the port specified by the <b>port</b> parameter.
- * Computers have many ports for transferring data and some are commonly used so be sure to not select one of these.
- * For example, web servers usually use port 80 and POP mail uses port 110.
- * 
- * @webref
+ * @generate Server.xml 
+ * @webref net
+ * @usage application
  * @brief The server class is used to create server objects which send and receives data to and from its associated clients (other programs connected to it). 
  * @instanceName server  	any variable of type Server
- * @usage  	Application
  */
 public class Server implements Runnable {
 
@@ -95,8 +91,8 @@ public class Server implements Runnable {
 
 
   /**
-   * Disconnect a particular client.
-   * @webref
+   * @generate Server_disconnect.xml
+   * @webref server:server
    * @param client the client to disconnect
    */
   public void disconnect(Client client) {
@@ -144,8 +140,9 @@ public class Server implements Runnable {
   int lastAvailable = -1;
 
   /**
-   * Returns the next client in line with a new message
-   * @webref
+   * @generate Server_available.xml
+   * @webref server
+   * @usage application
    */
   public Client available() {
     synchronized (clients) {
@@ -166,13 +163,14 @@ public class Server implements Runnable {
 
 
   /**
-   * Disconnects all clients and stops the server
-   * =advanced
+   * @generate Server_stop.xml
+   * <h3>Advanced</h3>
    * <p/>
    * Use this to shut down the server if you finish using it while your applet 
    * is still running. Otherwise, it will be automatically be shut down by the 
    * host PApplet using dispose(), which is identical. 
-   * @webref
+   * @webref server
+   * @usage application
    */
   public void stop() {
     dispose();
@@ -236,10 +234,8 @@ public class Server implements Runnable {
 
 
   /**
-   * Write a value to all the connected clients.
-   * See Client.write() for operational details.
-   * 
-   * @webref
+   * @generate Server_write.xml 
+   * @webref server
    * @brief Writes data to all connected clients
    * @param data data to write
    */
@@ -255,11 +251,6 @@ public class Server implements Runnable {
     }
   }
 
-
-  /**
-   * Write a byte array to all the connected clients.
-   * See Client.write() for operational details.
-   */
   public void write(byte data[]) {
     int index = 0;
     while (index < clientCount) {
@@ -272,11 +263,6 @@ public class Server implements Runnable {
     }
   }
 
-
-  /**
-   * Write a String to all the connected clients.
-   * See Client.write() for operational details.
-   */
   public void write(String data) {
     int index = 0;
     while (index < clientCount) {

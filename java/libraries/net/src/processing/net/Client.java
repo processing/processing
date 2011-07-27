@@ -31,12 +31,8 @@ import java.lang.reflect.*;
 import java.net.*;
 
 /**
- * A client connects to a server and sends data back and forth.
- * If anything goes wrong with the connection,
- * for example the host is not there or is listening on a different port,
- * an exception is thrown.
- * 
- * @webref
+ * @generate Client.xml 
+ * @webref net
  * @brief The client class is used to create client Objects which connect to a server to exchange data. 
  * @instanceName client any variable of type Client
  * @usage Application
@@ -126,17 +122,10 @@ public class Client implements Runnable {
 
 
   /**
-   * Disconnects from the server. Use to shut the connection when you're finished with the Client.
-   * =advanced
-   * Disconnect from the server and calls disconnectEvent(Client c)
-   * in the host PApplet.
-   * <P/>
-   * Use this to shut the connection if you're finished with it
-   * while your applet is still running. Otherwise, it will be
-   * automatically be shut down by the host PApplet
-   * (using dispose, which is identical)
-   * @webref
+   * @generate Client_stop.xml
+   * @webref client:client
    * @brief Disconnects from the server
+   * @usage application
    */
   public void stop() {
     dispose();
@@ -230,9 +219,10 @@ public class Client implements Runnable {
 
 
   /**
-   * Returns the IP address of the computer to which the Client is attached.
+   * @generate Client_ip.xml
+   * @webref client:client
+   * @usage application
    * @brief Returns the IP address of the machine as a String
-   * @webref
    */
   public String ip() {
     return socket.getInetAddress().getHostAddress();
@@ -240,8 +230,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Returns the number of bytes available. When any client has bytes available from the server, it returns the number of bytes.
-   * @webref
+   * @generate Client_available.xml
+   * @webref client:client
+   * @usage application
    * @brief Returns the number of bytes in the buffer waiting to be read
    */
   public int available() {
@@ -250,9 +241,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Empty the buffer, removes all the data stored there.
-   * 
-   * @webref
+   * @generate Client_clear.xml 
+   * @webref client:client
+   * @usage application
    * @brief Clears the buffer
    */
   public void clear() {
@@ -262,10 +253,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Returns a number between 0 and 255 for the next byte that's waiting in the buffer.
-   * Returns -1 if there is no byte, although this should be avoided by first cheacking <b>available()</b> to see if any data is available.
-   * 
-   * @webref
+   * @generate Client_read.xml
+   * @webref client:client
+   * @usage application
    * @brief Returns a value from the buffer
    */
   public int read() {
@@ -283,10 +273,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Returns the next byte in the buffer as a char.
-   * Returns -1, or 0xffff, if nothing is there.
-   * 
-   * @webref
+   * @generate Client_readChar.xml
+   * @webref client:client
+   * @usage application
    * @brief Returns the next byte in the buffer as a char
    */
   public char readChar() {
@@ -296,19 +285,15 @@ public class Client implements Runnable {
 
 
   /**
-   * Reads a group of bytes from the buffer.
-   * The version with no parameters returns a byte array of all data in the buffer.
-   * This is not efficient, but is easy to use.
-   * The version with the <b>byteBuffer</b> parameter is more memory and time efficient.
-   * It grabs the data in the buffer and puts it into the byte array passed in and returns an int value for the number of bytes read.
-   * If more bytes are available than can fit into the <b>byteBuffer</b>, only those that fit are read.
-   * =advanced
+   * @generate Client_readBytes.xml
+   * <h3>Advanced</h3>
    * Return a byte array of anything that's in the serial buffer.
    * Not particularly memory/speed efficient, because it creates
    * a byte array on each read, but it's easier to use than
    * readBytes(byte b[]) (see below).
    * 
-   * @webref
+   * @webref client:client
+   * @usage application
    * @brief Reads everything in the buffer
    */
   public byte[] readBytes() {
@@ -327,6 +312,7 @@ public class Client implements Runnable {
 
 
   /**
+   * <h3>Advanced</h3>
    * Grab whatever is in the serial buffer, and stuff it into a
    * byte buffer passed in by the user. This is more memory/time
    * efficient than readBytes() returning a byte[] array.
@@ -356,14 +342,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Reads from the port into a buffer of bytes up to and including a particular character.
-   * If the character isn't in the buffer, 'null' is returned.
-   * The version with no <b>byteBuffer</b> parameter returns a byte array of all data up to and including the <b>interesting</b> byte.
-   * This is not efficient, but is easy to use. The version with the <b>byteBuffer</b> parameter is more memory and time efficient.
-   * It grabs the data in the buffer and puts it into the byte array passed in and returns an int value for the number of bytes read.
-   * If the byte buffer is not large enough, -1 is returned and an error is printed to the message area. If nothing is in the buffer, 0 is returned.
-   * 
-   * @webref
+   * @generate Client_readBytesUntil.xml 
+   * @webref client:client
+   * @usage application
    * @brief Reads from the buffer of bytes up to and including a particular character
    * @param interesting character designated to mark the end of the data
    */
@@ -396,6 +377,7 @@ public class Client implements Runnable {
 
 
   /**
+   * <h3>Advanced</h3>
    * Reads from the serial port into a buffer of bytes until a
    * particular character. If the character isn't in the serial
    * buffer, then 'null' is returned.
@@ -442,13 +424,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Returns the all the data from the buffer as a String.
-   * This method assumes the incoming characters are ASCII.
-   * If you want to transfer Unicode data,
-   * first convert the String to a byte stream in the representation of your choice
-   * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
-   * 
-   * @webref
+   * @generate Client_readString.xml 
+   * @webref client:client
+   * @usage application
    * @brief Returns the buffer as a String
    */
   public String readString() {
@@ -458,14 +436,15 @@ public class Client implements Runnable {
 
 
   /**
-   * Combination of <b>readBytesUntil()</b> and <b>readString()</b>. Returns <b>null</b> if it doesn't find what you're looking for.
-   * =advanced
+   * @generate Client_readStringUntil.xml
+   * <h3>Advanced</h3>
    * <p/>
    * If you want to move Unicode data, you can first convert the
    * String to a byte stream in the representation of your choice
    * (i.e. UTF8 or two-byte Unicode data), and send it as a byte array.
    * 
-   * @webref
+   * @webref client:client
+   * @usage application
    * @brief Returns the buffer as a String up to and including a particular character
    * @param interesting character designated to mark the end of the data
    */
@@ -477,9 +456,9 @@ public class Client implements Runnable {
 
 
   /**
-   * Writes data to a server specified when constructing the client.
-   * 
-   * @webref
+   * @generate Client_write.xml 
+   * @webref client:client
+   * @usage application
    * @brief  	Writes bytes, chars, ints, bytes[], Strings
    * @param data data to write
    */
@@ -515,6 +494,7 @@ public class Client implements Runnable {
 
 
   /**
+   * <h3>Advanced</h3>
    * Write a String to the output. Note that this doesn't account
    * for Unicode (two bytes per char), nor will it send UTF8
    * characters.. It assumes that you mean to send a byte buffer
