@@ -3,18 +3,17 @@ package processing.app;
 import java.io.*;
 import java.util.*;
 
+import processing.app.contribution.*;
 import processing.core.*;
 
-public class Library extends Contribution {
+public class Library extends InstalledContribution {
   static final String[] platformNames = PConstants.platformNames;
 
-  protected File folder;          // /path/to/shortname
+  //protected File folder;          // /path/to/shortname
   protected File libraryFolder;   // shortname/library
   protected File examplesFolder;  // shortname/examples
   protected File referenceFile;   // shortname/reference/index.html
 
-  protected LibraryInfo info;
-  
   /** Subfolder for grouping libraries in a menu. */
   protected String group;
 
@@ -76,7 +75,7 @@ public class Library extends Contribution {
 
 
   public Library(File folder, String subfolder) {
-    this.folder = folder;
+    super(folder);
     this.group = subfolder;
 
     libraryFolder = new File(folder, "library");
@@ -86,13 +85,6 @@ public class Library extends Contribution {
     File exportSettings = new File(libraryFolder, "export.txt");
     HashMap<String,String> exportTable = Base.readSettings(exportSettings);
     
-    info = new LibraryInfo();
-    info.library = this;
-    readProperties(exportTable, info);
-    if (info.name == null) {
-      info.name = folder.getName();
-    }
-
     exportList = new HashMap<String, String[]>();
 
     // get the list of files just in the library root
@@ -248,16 +240,6 @@ public class Library extends Contribution {
   }
 
 
-  public ContributionInfo getInfo() {
-    return info;
-  }
-
-
-  public String getName() {
-    return info.name;
-  }
-
-
   public boolean hasExamples() {
     return examplesFolder.exists();
   }
@@ -270,11 +252,6 @@ public class Library extends Contribution {
 
   public String getGroup() {
     return group;
-  }
-  
-  
-  public File getFolder() {
-    return folder;
   }
   
   
@@ -457,23 +434,9 @@ public class Library extends Contribution {
       }
     }
   }
-  
-  public static class LibraryInfo extends ContributionInfo {
-    
-    protected Library library;
 
-    public ContributionType getType() {
-      return ContributionType.LIBRARY;
-    }
-    
-    public boolean isInstalled() {
-      return library != null;
-    }
-
-    public Contribution getContribution() {
-      return library;
-    }
-
+  public Type getType() {
+    return Type.LIBRARY;
   }
   
 }

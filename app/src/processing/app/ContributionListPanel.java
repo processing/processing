@@ -36,10 +36,8 @@ import java.awt.event.*;
 import java.awt.*;
 import java.net.*;
 
-import processing.app.Contribution.ContributionInfo;
-import processing.app.Contribution.ContributionInfo.Author;
-import processing.app.Contribution.ContributionInfo.ContributionType;
 import processing.app.ContributionListing.ContributionChangeListener;
+import processing.app.contribution.*;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
   
@@ -54,7 +52,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   JProgressBar setupProgressBar;
   
-  TreeMap<ContributionInfo, ContributionPanel> contributionPanelsByInfo;
+  TreeMap<Contribution, ContributionPanel> contributionPanelsByInfo;
   
   private static HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
     
@@ -83,7 +81,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       setBackground(UIManager.getColor("List.background"));
     }
     
-    contributionPanelsByInfo = new TreeMap<ContributionInfo, ContributionPanel>();
+    contributionPanelsByInfo = new TreeMap<Contribution, ContributionPanel>();
     
     GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -98,7 +96,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
   }
   
-  public void contributionAdded(ContributionInfo contributionInfo) {
+  public void contributionAdded(Contribution contributionInfo) {
     
     setupProgressBar.setVisible(false);
     
@@ -114,7 +112,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
     
     if (newPanel != null) {
-      newPanel.setContributionInfo(contributionInfo);
+      newPanel.setContribution(contributionInfo);
       
       add(newPanel);
       updatePanelOrdering();
@@ -124,7 +122,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   private void updatePanelOrdering() {
     int row = 0;
-    for (Entry<ContributionInfo, ContributionPanel> entry : contributionPanelsByInfo.entrySet()) {
+    for (Entry<Contribution, ContributionPanel> entry : contributionPanelsByInfo.entrySet()) {
       GridBagConstraints c = new GridBagConstraints();
       c.fill = GridBagConstraints.HORIZONTAL;
       c.weightx = 1;
@@ -135,7 +133,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
   }
 
-  public void contributionRemoved(ContributionInfo contributionInfo) {
+  public void contributionRemoved(Contribution contributionInfo) {
     
     synchronized (contributionPanelsByInfo) {
       ContributionPanel panel = contributionPanelsByInfo.get(contributionInfo);
@@ -147,13 +145,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     updateUI();
   }
   
-  public void contributionChanged(ContributionInfo oldInfo, ContributionInfo newInfo) {
+  public void contributionChanged(Contribution oldInfo, Contribution newInfo) {
     
     synchronized (contributionPanelsByInfo) {
       ContributionPanel panel = contributionPanelsByInfo.get(oldInfo);
       contributionPanelsByInfo.remove(oldInfo);
       
-      panel.setContributionInfo(newInfo);
+      panel.setContribution(newInfo);
       contributionPanelsByInfo.put(newInfo, panel);
       
       add(panel);
@@ -162,13 +160,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     updatePanelOrdering();
   }
   
-  public void filterLibraries(List<ContributionInfo> filteredContributions) {
+  public void filterLibraries(List<Contribution> filteredContributions) {
 
     synchronized (contributionPanelsByInfo) {
 
-      Set<ContributionInfo> hiddenPanels = new TreeSet(contributionPanelsByInfo.keySet());
+      Set<Contribution> hiddenPanels = new TreeSet(contributionPanelsByInfo.keySet());
       
-      for (ContributionInfo info : filteredContributions) {
+      for (Contribution info : filteredContributions) {
         
         ContributionPanel panel = contributionPanelsByInfo.get(info);
         if (panel != null) {
@@ -177,7 +175,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         }
       }
 
-      for (ContributionInfo info : hiddenPanels) {
+      for (Contribution info : hiddenPanels) {
         ContributionPanel panel = contributionPanelsByInfo.get(info);
         if (panel != null) {
           panel.setVisible(false);
@@ -211,7 +209,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     int count = 0;
     synchronized (contributionPanelsByInfo) {
-      for (Entry<ContributionInfo, ContributionPanel> entry : contributionPanelsByInfo.entrySet()) {
+      for (Entry<Contribution, ContributionPanel> entry : contributionPanelsByInfo.entrySet()) {
         ContributionPanel panel = entry.getValue();
         
         if (panel.isVisible() && panel.isSelected()) {
@@ -335,9 +333,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
     private static final int BUTTON_WIDTH = 100;
     
-    /** Should only be set through setContributionInfo(), otherwise UI components
+    /** Should only be set through setContribution(), otherwise UI components
      *  will not be updated. */
-    ContributionInfo info;
+    Contribution info;
     
     boolean alreadySelected;
     
@@ -390,26 +388,29 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
       installActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent arg) {
-          installContribution(info, info.link);
+          if (info instanceof AdvertisedContribution) {
+            installContribution((AdvertisedContribution) info);
+          }
         }
       };
       
       removeActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent arg) {
-          updateButton.setEnabled(false);
-          installOrRemoveButton.setEnabled(false);
-          
-          installProgressBar.setVisible(true);
-          contributionManager.removeContribution(info.getContribution(),
-                                                 new JProgressMonitor(installProgressBar) {
+          if (info.isInstalled() && info instanceof InstalledContribution) {
+            updateButton.setEnabled(false);
+            installOrRemoveButton.setEnabled(false);
             
-            public void finishedAction() {
-              // Finished uninstalling the library
-              resetInstallProgressBarState();
-              installOrRemoveButton.setEnabled(true);
-            }
-          });
-          
+            installProgressBar.setVisible(true);
+            contributionManager.removeContribution((InstalledContribution) info,
+                                                   new JProgressMonitor(installProgressBar) {
+              
+              public void finishedAction() {
+                // Finished uninstalling the library
+                resetInstallProgressBarState();
+                installOrRemoveButton.setEnabled(true);
+              }
+            });
+          }
         }
       };
       
@@ -551,7 +552,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           
           public void actionPerformed(ActionEvent e) {
             updateButton.setEnabled(false);
-            installContribution(info, info.link);
+            // XXX: There is a bug here. The advertised library will be 'replaced' instead
+            installContribution((AdvertisedContribution) contributionManager.contributionListing.getAdvertisedContribution(info));
           }
         });
         descriptionPanel.add(updateButton, c);
@@ -619,7 +621,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
     }
     
-    public void setContributionInfo(ContributionInfo info) {
+    public void setContribution(Contribution info) {
       
       this.info = info;
       
@@ -627,28 +629,28 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
       StringBuilder nameText = new StringBuilder();
       nameText.append("<html><body><b>");
-      if (info.url == null) {
-        nameText.append(info.name);
+      if (info.getUrl() == null) {
+        nameText.append(info.getName());
       } else {
-        nameText.append("<a href=\"" + info.url + "\">" + info.name + "</a>");
+        nameText.append("<a href=\"" + info.getUrl() + "\">" + info.getName() + "</a>");
       }
       nameText.append("</b>");
-      nameText.append(createAuthorString(info.authorList));
+      nameText.append(createAuthorString(info.getAuthorList()));
       nameText.append("</body></html>");
       headerText.setText(nameText.toString());
       
-      categoryLabel.setText("[" + info.category + "]");
+      categoryLabel.setText("[" + info.getCategory() + "]");
       
       StringBuilder description = new StringBuilder();
       description.append("<html><body>");
-      if (info.sentence != null)
-        description.append(info.sentence);
+      if (info.getSentence() != null)
+        description.append(info.getSentence());
       
       description.append("</body></html>");
       descriptionText.setText(description.toString());
       setAlignment(descriptionText, StyleConstants.ALIGN_JUSTIFIED);
       
-      if (info.hasUpdates()) {
+      if (contributionManager.hasUpdates(info)) {
         StringBuilder versionText = new StringBuilder();
         versionText.append("<html><body><i>");
         versionText.append("New version available!");
@@ -673,7 +675,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
     }
     
-    private void installContribution(ContributionInfo info, String url) {
+    private void installContribution(AdvertisedContribution info) {
+      
+      String url = info.link;
       installOrRemoveButton.setEnabled(false);
       
       try {
@@ -784,7 +788,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       //   hyperlink, it will be opened as the mouse is released.
       enableHyperlinks = alreadySelected;
       
-      updateButton.setVisible(isSelected() && info.hasUpdates());
+      updateButton.setVisible(isSelected() && contributionManager.hasUpdates(info));
       installOrRemoveButton.setVisible(isSelected());
       
       for (JTextPane textPane : htmlPanes) {
