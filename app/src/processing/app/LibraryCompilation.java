@@ -3,33 +3,22 @@ package processing.app;
 import java.io.*;
 import java.util.*;
 
-public class LibraryCompilation extends Contribution {
-  
-  File folder;
+import processing.app.contribution.*;
+
+public class LibraryCompilation extends InstalledContribution {
+
+  List<String> libraryNames;
   
   ArrayList<Library> libraries;
   
-  /** Properties for this library compilation. */
-  LibraryCompilationInfo info;
-  
   private LibraryCompilation(File folder) throws IOException {
     
-    this.folder = folder;
+    super(folder);
     
-    File propertiesFile = new File(folder, "properties.txt");
-    
-    info = new LibraryCompilationInfo();
-    info.compilation = this;
-    
-    HashMap<String,String> propertiesTable = Base.readSettings(propertiesFile);
-    readProperties(propertiesTable, info);
-    if (info.name == null) {
-      info.name = folder.getName();
-    }
+    libraryNames = toList(properties.get("libraryNames"));
     
     libraries = new ArrayList<Library>();
-    Library.list(folder, libraries, info.name);
-    
+    Library.list(folder, libraries, name);
   }
   
   /**
@@ -43,36 +32,27 @@ public class LibraryCompilation extends Contribution {
   private LibraryCompilation(ArrayList<Library> libraries)
       throws IllegalArgumentException {
     
+    super(null);
+    
     this.libraries = libraries;
     
     if (libraries == null || libraries.isEmpty()) {
       throw new IllegalArgumentException("No libraries given");
     }
     
-    folder = libraries.get(0).folder.getParentFile();
+    folder = libraries.get(0).getFolder().getParentFile();
     String group = libraries.get(0).group;
     for (Library lib : libraries) {
       if (!group.equals(lib.group)) {
         throw new IllegalArgumentException("Libraries are not all in the same group");
       }
       
-      if (!folder.equals(lib.folder.getParentFile())) {
+      if (!folder.equals(lib.getFolder().getParentFile())) {
         throw new IllegalArgumentException("Libraries do not all have the same parent folder");
       }
     }
     
-    File propertiesFile = new File(folder, "properties.txt");
-    
-    
-    info = new LibraryCompilationInfo();
-    info.compilation = this;
-    
-    HashMap<String,String> propertiesTable = Base.readSettings(propertiesFile);
-    readProperties(propertiesTable, info);
-    if (info.name == null) {
-      info.name = group;
-    }
-    
+    // XXX; Uhg, I wish we could just call super here. Should this constructor even exist?
   }
   
   public static ArrayList<LibraryCompilation> list(ArrayList<Library> libraries) {
@@ -114,33 +94,8 @@ public class LibraryCompilation extends Contribution {
     return null;
   }
   
-  ContributionInfo getInfo() {
-    return info;
-  }
-  
-  File getFolder() {
-    return folder;
-  }
-
-  public static class LibraryCompilationInfo extends ContributionInfo {
-    
-    protected LibraryCompilation compilation;
-    
-    protected List<String> libraryNames;
-
-    public ContributionType getType() {
-      return ContributionType.LIBRARY_COMPILATION;
-    }
-    
-    public boolean isInstalled() {
-      // TODO: Check that the right number of libraries are installed
-      return compilation != null;
-    }
-
-    public Contribution getContribution() {
-      return compilation;
-    }
-
+  public Type getType() {
+    return Type.LIBRARY_COMPILATION;
   }
   
 }

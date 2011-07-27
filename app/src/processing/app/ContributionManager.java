@@ -38,8 +38,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import processing.app.Contribution.ContributionInfo;
-import processing.app.Contribution.ContributionInfo.ContributionType;
+import processing.app.contribution.*;
 
 public class ContributionManager {
   
@@ -163,7 +162,7 @@ public class ContributionManager {
     }
   }
   
-  public Image getContributionIcon(ContributionType type) {
+  public Image getContributionIcon(Contribution.Type type) {
     
     if (contributionIcons == null)
       return null;
@@ -296,7 +295,7 @@ public class ContributionManager {
 
   public void filterLibraries(String category, List<String> filters) {
 
-    List<ContributionInfo> filteredLibraries = contributionListing
+    List<Contribution> filteredLibraries = contributionListing
         .getFilteredLibraryList(category, filters);
 
     contributionListPanel.filterLibraries(filteredLibraries);
@@ -316,14 +315,14 @@ public class ContributionManager {
       }
     }
     
-    ArrayList<Contribution> contributions = new ArrayList<Contribution>();
+    ArrayList<InstalledContribution> contributions = new ArrayList<InstalledContribution>();
     contributions.addAll(editor.contribTools);
     contributions.addAll(libraries);
     contributions.addAll(compilations);
     
-    ArrayList<ContributionInfo> infoList = new ArrayList<ContributionInfo>();
-    for (Contribution contribution : contributions) {
-      infoList.add(contribution.getInfo());
+    List<Contribution> infoList = new ArrayList<Contribution>();
+    for (InstalledContribution contribution : contributions) {
+      infoList.add(contribution);
     }
     
     contributionListing.updateInstalledList(infoList);
@@ -332,7 +331,7 @@ public class ContributionManager {
   /**
    * Non-blocking call to remove a contribution in a new thread.
    */
-  public void removeContribution(final Contribution contribution,
+  public void removeContribution(final InstalledContribution contribution,
                                  final JProgressMonitor pm) {
 
     new Thread(new Runnable() {
@@ -341,13 +340,13 @@ public class ContributionManager {
         pm.startTask("Removing", ProgressMonitor.UNKNOWN);
         if (contribution != null) {
           if (backupContribution(contribution)) {
-            ContributionInfo advertisedVersion = contributionListing
-                .getAdvertisedContribution(contribution.getInfo().name, contribution.getInfo().getType());
+            Contribution advertisedVersion = contributionListing
+                .getAdvertisedContribution(contribution.getName(), contribution.getType());
             
             if (advertisedVersion == null) {
-              contributionListing.removeContribution(contribution.getInfo());
+              contributionListing.removeContribution(contribution);
             } else {
-              contributionListing.replaceContribution(contribution.getInfo(), advertisedVersion);
+              contributionListing.replaceContribution(contribution, advertisedVersion);
             }
           }
         }
@@ -362,7 +361,7 @@ public class ContributionManager {
    * Non-blocking call to download and install a contribution in a new thread.
    */
   public void downloadAndInstall(URL url,
-                                 final ContributionInfo info,
+                                 final Contribution info,
                                  final JProgressMonitor downloadProgressMonitor,
                                  final JProgressMonitor installProgressMonitor) {
 
@@ -381,7 +380,7 @@ public class ContributionManager {
           installProgressMonitor.startTask("Installing",
                                            ProgressMonitor.UNKNOWN);
 
-          Contribution contribution = null;
+          InstalledContribution contribution = null;
           switch (info.getType()) {
           case LIBRARY:
             contribution = installLibrary(contributionFile, false);
@@ -395,8 +394,8 @@ public class ContributionManager {
           }
           
           if (contribution != null) {
-            contributionListing.getInformationFromAdvertised(contribution.getInfo());
-            contributionListing.replaceContribution(info, contribution.getInfo());
+            // XXX contributionListing.getInformationFromAdvertised(contribution); get the category at least
+            contributionListing.replaceContribution(info, contribution);
             refreshInstalled();
           }
           
@@ -422,7 +421,7 @@ public class ContributionManager {
       return null;
     }
       
-    String folderName = compilation.info.name;
+    String folderName = compilation.getName();
     
     File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
     File dest = new File(libraryDestination, folderName);
@@ -439,8 +438,7 @@ public class ContributionManager {
     if (!errorEncountered) {
       // Install it, return it
       if (parentDir.renameTo(dest)) {
-        compilation.folder = dest;
-        return compilation;
+        return LibraryCompilation.create(dest);
       }
     }
     
@@ -572,7 +570,7 @@ public class ContributionManager {
     
     ArrayList<ToolContribution> oldTools = editor.contribTools;
     
-    String toolFolderName = newTool.folder.getName();
+    String toolFolderName = newTool.getFolder().getName();
     
     File toolDestination = editor.getBase().getSketchbookToolsFolder();
     File newToolDest = new File(toolDestination, toolFolderName);
@@ -582,7 +580,7 @@ public class ContributionManager {
       // XXX: Handle other cases when installing libraries.
       //   -What if a library by the same name is already installed?
       //   -What if newLibDest exists, but isn't used by an existing library?
-      if (oldTool.folder.exists() && oldTool.folder.equals(newToolDest)) {
+      if (oldTool.getFolder().exists() && oldTool.getFolder().equals(newToolDest)) {
         
         if (!backupContribution(oldTool)) {
           return null;
@@ -591,11 +589,11 @@ public class ContributionManager {
     }
     
     // Move newLib to the sketchbook library folder
-    if (newTool.folder.renameTo(newToolDest)) {
+    if (newTool.getFolder().renameTo(newToolDest)) {
       return ToolContribution.getTool(newToolDest);
     } else {
       Base.showWarning("Trouble moving new tool to the sketchbook",
-                       "Could not move tool \"" + newTool.info.name + "\" to "
+                       "Could not move tool \"" + newTool.getName() + "\" to "
                            + newToolDest.getAbsolutePath() + ".\n", null);
     }
     
@@ -617,11 +615,7 @@ public class ContributionManager {
       
       if (discoveredLibs != null && discoveredLibs.size() == 1) {
         Library discoveredLib = discoveredLibs.get(0);
-        if (installLibrary(discoveredLib, confirmReplace)) {
-          return discoveredLib;
-        } else {
-          return null;
-        }
+        return installLibrary(discoveredLib, confirmReplace);
       } else {
         // Diagnose the problem and notify the user
         if (discoveredLibs == null) {
@@ -651,11 +645,11 @@ public class ContributionManager {
    *          ask the user if it's okay to replace the library. If false, the
    *          library is always replaced with the new copy.
    */
-  protected boolean installLibrary(Library newLib, boolean confirmReplace) {
+  protected Library installLibrary(Library newLib, boolean confirmReplace) {
     
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
     
-    String libFolderName = newLib.folder.getName();
+    String libFolderName = newLib.getFolder().getName();
     
     File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
     File newLibDest = new File(libraryDestination, libFolderName);
@@ -667,7 +661,7 @@ public class ContributionManager {
       // XXX: Handle other cases when installing libraries.
       //   -What if a library by the same name is already installed?
       //   -What if newLibDest exists, but isn't used by an existing library?
-      if (oldLib.folder.exists() && oldLib.folder.equals(newLibDest)) {
+      if (oldLib.getFolder().exists() && oldLib.getFolder().equals(newLibDest)) {
         
         int result = 0;
         if (confirmReplace) {
@@ -680,7 +674,7 @@ public class ContributionManager {
         }
         if (!confirmReplace || result == JOptionPane.YES_OPTION) {
           if (!backupContribution(oldLib)) {
-            return false;
+            return null;
           }
         } else {
           doInstall = false;
@@ -690,9 +684,8 @@ public class ContributionManager {
     
     if (doInstall) {
       // Move newLib to the sketchbook library folder
-      if (newLib.folder.renameTo(newLibDest)) {
-        newLib.folder = newLibDest;
-        return true;
+      if (newLib.getFolder().renameTo(newLibDest)) {
+        return new Library(newLibDest, null);
 //      try {
 //        FileUtils.copyDirectory(newLib.folder, libFolder);
 //        FileUtils.deleteQuietly(newLib.folder);
@@ -705,7 +698,7 @@ public class ContributionManager {
       }
     }
     
-    return false;
+    return null;
   }
   
   public void refreshInstalled() {
@@ -716,11 +709,11 @@ public class ContributionManager {
   /**
    * Moves the given contribution to a backup folder.
    */
-  private boolean backupContribution(Contribution contribution) {
+  private boolean backupContribution(InstalledContribution contribution) {
     
     File backupFolder = null;
     
-    switch (contribution.getInfo().getType()) {
+    switch (contribution.getType()) {
     case LIBRARY:
     case LIBRARY_COMPILATION:
       backupFolder = createLibraryBackupFolder();
@@ -746,7 +739,7 @@ public class ContributionManager {
       return true;
     } else {
 //    } catch (IOException e) {
-      Base.showWarning("Trouble creating backup of old \"" + contribution.getInfo().name + "\" library",
+      Base.showWarning("Trouble creating backup of old \"" + contribution.getName() + "\" library",
                        "Could not move library to backup folder:\n"
                            + backupFolderForLib.getAbsolutePath(), null);
       return false;
@@ -937,6 +930,13 @@ public class ContributionManager {
 
   public boolean hasAlreadyBeenOpened() {
     return dialog != null;
+  }
+
+  public boolean hasUpdates(Contribution info) {
+    if (contributionListing == null)
+      return false;
+    
+    return contributionListing.hasUpdates(info);
   }
   
 }
