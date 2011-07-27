@@ -33,8 +33,9 @@ import org.gstreamer.Buffer;
 import org.gstreamer.elements.*;
 
 /**
- * This class makes it possible to load movies and to play them back in many
- * ways including looping, pausing, and changing speed.
+ * @generate Movie.xml
+ * @webref video
+ * @usage application
  */
 public class Movie extends PImage implements PConstants {
   protected String filename;
@@ -209,11 +210,10 @@ public class Movie extends PImage implements PConstants {
   }  
   
   /**
-   * Set how often new frames are to be read from the movie. Does not actually
-   * set the speed of the movie playback, that's handled by the speed() method.
-   * 
-   * @param float ifps
-   * @see speed
+   * @generate Movie_frameRate.xml
+   * @webref movie
+   * @usage web_application 
+   * @param ifps speed of the movie in frames per second
    */
   public void frameRate(float ifps) {
     // We calculate the target ratio in the case both the 
@@ -252,11 +252,12 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * Set a multiplier for how fast/slow the movie should be run. The default is
-   * 1.0. speed(2) will play the movie at double speed (2x). speed(0.5) will
-   * play at half speed. speed(-1) will play backwards at regular speed.
-   * 
-   * @param float irate
+   * @generate Movie_speed.xml
+   
+   * @webref movie
+   
+   * @usage web_application 
+   * @param irate speed multiplier for movie playback
    */
   public void speed(float irate) {
     // If the frameRate() method is called continuously with very similar
@@ -269,9 +270,11 @@ public class Movie extends PImage implements PConstants {
   }
   
   /**
-   * Get the full length of this movie (in seconds).
-   * 
-   * @return float
+   * @generate Movie_duration.xml
+   
+   * @webref movie
+   
+   * @usage web_application
    */
   public float duration() {
     float sec = gplayer.queryDuration().toSeconds();
@@ -280,9 +283,11 @@ public class Movie extends PImage implements PConstants {
   }  
   
   /**
-   * Return the current time in seconds.
-   * 
-   * @return float
+   * @generate Movie_time.xml
+   
+   * @webref movie
+   
+   * @usage web_application 
    */
   public float time() {
     float sec = gplayer.queryPosition().toSeconds();
@@ -309,10 +314,12 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * Jump to a specific location (in seconds). The number is a float so
-   * fractions of seconds can be used.
-   * 
-   * @param float where
+   * @generate Movie_jump.xml
+   
+   * @webref movie
+   
+   * @usage web_application 
+   * @param where position to jump to specified in seconds
    */
   public void jump(float where) {
     if (playing) {
@@ -338,7 +345,7 @@ public class Movie extends PImage implements PConstants {
   /**
    * Jump to a specific frame.
    * 
-   * @param frame int
+   * @param frame ???
    */  
   public void jump(int frame) {
     float srcFramerate = getSourceFrameRate();
@@ -368,10 +375,11 @@ public class Movie extends PImage implements PConstants {
   }
   
   /**
-   * Return the true or false depending on whether there is a new frame ready to
-   * be read.
-   * 
-   * @return boolean
+   * @generate Movie_available.xml
+   
+   * @webref movie
+   
+   * @usage web_application 
    */
   public boolean available() {
     return available;
@@ -406,7 +414,11 @@ public class Movie extends PImage implements PConstants {
   }
   
   /**
-   * Begin playing the movie, with no repeat.
+   * @generate Movie_play.xml
+   
+   * @webref movie
+   
+   * @usage web_application
    */
   public void play() {
     if (!sinkReady) {
@@ -419,7 +431,11 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * Begin playing the movie, with repeat.
+   * @generate Movie_loop.xml
+   
+   * @webref movie
+   
+   * @usage web_application
    */
   public void loop() {    
     repeat = true;
@@ -427,14 +443,22 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * Shut off the repeating loop.
+   * @generate Movie_noLoop.xml
+   
+   * @webref movie
+   
+   * @usage web_application
    */
   public void noLoop() {
     repeat = false;
   }
 
   /**
-   * Pause the movie at its current time.
+   * @generate Movie_pause.xml
+   
+   * @webref movie
+   
+   * @usage web_application
    */
   public void pause() {
     playing = false;
@@ -443,7 +467,11 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * Stop the movie, and rewind.
+   * @generate Movie_stop.xml
+   
+   * @webref movie
+   
+   * @usage web_application
    */
   public void stop() {
     if (playing) {      
@@ -455,7 +483,11 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * Reads the current video frame.
+   * @generate Movie_read.xml
+   
+   * @webref movie
+   
+   * @usage web_application
    */
   public synchronized void read() {
     if (fps <= 0) {
