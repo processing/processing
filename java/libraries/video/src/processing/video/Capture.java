@@ -73,8 +73,15 @@ public class Capture extends PImage implements PConstants {
   protected int reqHeight;  
   
   /**
+   * @generate Capture.xml
+   * <h3>Advanced</h3>
    * Basic constructor: tries to auto-detect all the capture parameters,
    * with the exception of the resolution.
+   * @webref video
+   * @usage application
+   * @param parent typically use "this"
+   * @param requestWidth width of the frame
+   * @param requestHeight height of the frame
    */
   public Capture(PApplet parent, int requestWidth, int requestHeight) {
     super(requestWidth, requestHeight, RGB);
@@ -83,7 +90,9 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
+   * <h3>Advanced</h3>
    * Constructor that takes resolution and framerate indicated as a single number.
+   * @param frameRate number of frames to read per second
    */  
   public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate) {
     super(requestWidth, requestHeight, RGB);
@@ -92,8 +101,10 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
+   * <h3>Advanced</h3>
    * This constructor allows to specify the camera name. In Linux, for example, this
    * should be a string of the form /dev/video0, /dev/video1, etc.
+   * @param cameraName name of the camera
    */   
   public Capture(PApplet parent, int requestWidth, int requestHeight, String cameraName) {
     super(requestWidth, requestHeight, RGB);
@@ -102,6 +113,7 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
+   * <h3>Advanced</h3>
    * This constructor allows to specify the camera name and the desired framerate.
    */     
   public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
@@ -113,8 +125,10 @@ public class Capture extends PImage implements PConstants {
   }  
   
   /**
+   * <h3>Advanced</h3>
    * This constructor lets to indicate which source element to use (i.e.: v4l2src, 
    * osxvideosrc, dshowvideosrc, ksvideosrc, etc).
+   * @param sourceName ???
    */   
   public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
                    String sourceName, String cameraName) {
@@ -125,9 +139,12 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
+   * <h3>Advanced</h3>
    * This constructor accepts an arbitrary list of string properties for the source element.
    * The camera name could be one of these properties. The framerate must be specified
    * as a fraction string: 30/1, 15/2, etc.
+   * @param strPropNames ???
+   * @param strPropValues ???
    */    
   public Capture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
                    String sourceName, String[] strPropNames, String[] strPropValues) {
@@ -137,9 +154,12 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
+   * <h3>Advanced</h3>
    * This constructor accepts an arbitrary list of string properties for the source element,
    * as well as a list of integer properties. This could be useful if a camera cannot by
    * specified by name but by index. Framerate must be a fraction string: 30/1, 15/2, etc.
+   * @param intPropNames ???
+   * @param intPropValues ???
    */   
   public Capture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
                    String sourceName, String[] strPropNames, String[] strPropValues,
@@ -247,9 +267,9 @@ public class Capture extends PImage implements PConstants {
   }
   
   /**
-   * Returns "true" when a new video frame is available to read.
-   * 
-   * @return boolean
+   * @generate Capture_available.xml
+   * @webref capture
+   * @usage web_application
    */
   public boolean available() {
     return available;
@@ -286,7 +306,9 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
-   * Stops the capture pipeline.
+   * @generate Capture_stop.xml
+   * @webref capture
+   * @usage web_application
    */
   public void stop() {
     capturing = false;
@@ -294,11 +316,13 @@ public class Capture extends PImage implements PConstants {
   }  
   
   /**
-   * Reads the current video frame.
-   * 
+   * @generate Capture_read.xml
+   * <h3>Advanced</h3>
    * This method() and invokeEvent() are now synchronized, so that invokeEvent()
    * can't be called whilst we're busy reading. Problematic frame error
    * fixed by Charl P. Botha <charlbotha.com>
+   * @webref capture
+   * @usage web_application
    */
   public synchronized void read() {
     // We loadPixels() first to ensure that at least we always have a non-null
@@ -378,9 +402,9 @@ public class Capture extends PImage implements PConstants {
   }  
   
   /**
-   * Returns a list of available capture devices.
-   * 
-   * @return String[]
+   * @generate Capture_list.xml
+   * @webref capture
+   * @usage web_application
    */  
   static public String[] list() {
     if (PApplet.platform == LINUX) {
@@ -395,11 +419,11 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
+   * <h3>Advanced</h3>
    * Get a list of all available captures as a String array. i.e.
    * println(Capture.list()) will show you the goodies.
    * 
    * @param sourceName String
-   * @return String[]
    */
   static public String[] list(String sourceName) {
     return list(sourceName, devicePropertyName());
