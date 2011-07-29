@@ -816,8 +816,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   protected void rebuildToolList() {
-    coreTools = ToolContribution.list(base.getToolsFolder());
-    contribTools = ToolContribution.list(base.getSketchbookToolsFolder());
+    coreTools = ToolContribution.list(base.getToolsFolder(), true);
+    contribTools = ToolContribution.list(base.getSketchbookToolsFolder(), true);
   }
 
 
