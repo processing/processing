@@ -27,46 +27,54 @@ import java.util.*;
 
 import processing.app.*;
 
-public abstract class InstalledContribution extends AbstractContribution {
+public abstract class InstalledContribution implements Contribution {
 
+  protected String name;              // "pdf" or "PDF Export"
+  protected String category;          // "Sound"
+  protected List<Author> authorList;  // Ben Fry
+  protected String url;               // http://processing.org
+  protected String sentence;          // Write graphics to PDF files.
+  protected String paragraph;         // <paragraph length description for site>
+  protected int version;              // 102
+  protected int latestVersion;        // 103
+  protected String prettyVersion;     // "1.0.2"
+  
   protected File folder;
 
   protected HashMap<String, String> properties;
   
-  public InstalledContribution(File folder) {
+  public InstalledContribution(File folder, String propertiesFileName) {
     
     this.folder = folder;
     
-    if (folder != null) {
-      File propertiesFile = new File(folder, "contribution.properties");
-  
-      properties = Base.readSettings(propertiesFile);
-      category = "Unknown";
-  
-      name = properties.get("name");
-      if (name == null) {
-        name = folder.getName();
-      }
-  
-      String authors = properties.get("authorList");
-      authorList = new ArrayList<Author>();
-      for (String authorName : toList(authors)) {
-        Author author = new Author();
-        author.name = authorName.trim();
-  
-        authorList.add(author);
-      }
-  
-      url = properties.get("url");
-      sentence = properties.get("sentence");
-      paragraph = properties.get("paragraph");
-  
-      try {
-        version = Integer.parseInt(properties.get("version"));
-      } catch (NumberFormatException e) {
-      }
-      prettyVersion = properties.get("prettyVersion");
+    File propertiesFile = new File(folder, propertiesFileName);
+
+    properties = Base.readSettings(propertiesFile);
+    category = "Unknown";
+
+    name = properties.get("name");
+    if (name == null) {
+      name = folder.getName();
     }
+
+    String authors = properties.get("authorList");
+    authorList = new ArrayList<Author>();
+    for (String authorName : toList(authors)) {
+      Author author = new Author();
+      author.name = authorName.trim();
+
+      authorList.add(author);
+    }
+
+    url = properties.get("url");
+    sentence = properties.get("sentence");
+    paragraph = properties.get("paragraph");
+
+    try {
+      version = Integer.parseInt(properties.get("version"));
+    } catch (NumberFormatException e) {
+    }
+    prettyVersion = properties.get("prettyVersion");
   }
   
   public File getFolder() {
@@ -75,6 +83,57 @@ public abstract class InstalledContribution extends AbstractContribution {
   
   public boolean isInstalled() {
     return folder != null;
+  }
+  
+  public String getCategory() {
+    return category;
+  }
+  
+  public String getName() {
+    return name;
+  }
+  
+  public List<Author> getAuthorList() {
+    return new ArrayList<Author>(authorList);
+  }
+  
+  public String getUrl() {
+    return url;
+  }
+  
+  public String getSentence() {
+    return sentence;
+  }
+  
+  public String getParagraph() {
+    return paragraph;
+  }
+  
+  public int getVersion() {
+    return version;
+  }
+  
+  public int getLatestVersion() {
+    return latestVersion;
+  }
+  
+  public String getPrettyVersion() {
+    return prettyVersion;
+  }
+  
+  /**
+   * @param string semicolin separated list of strings
+   * @return List containing the trimmed elements from input string
+   */
+  static public List<String> toList(String string) {
+    List<String> list = new ArrayList<String>();
+    if (string != null) {
+      String[] listAsArray = string.split(";");
+      for (String element : listAsArray) {
+        list.add(element);
+      }
+    }
+    return list;
   }
   
 }

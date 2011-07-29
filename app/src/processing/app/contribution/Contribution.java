@@ -24,7 +24,7 @@ package processing.app.contribution;
 
 import java.util.List;
 
-public interface Contribution extends Comparable<Contribution> {
+public interface Contribution {
   // "Sound"
   String getCategory();
 

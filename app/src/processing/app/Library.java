@@ -72,10 +72,9 @@ public class Library extends InstalledContribution {
       return lc.endsWith(".jar") || lc.endsWith(".zip");
     }
   };
-
-
+  
   public Library(File folder, String subfolder) {
-    super(folder);
+    super(folder, "library.properties");
     this.group = subfolder;
 
     libraryFolder = new File(folder, "library");
