@@ -39,17 +39,24 @@ public class ContributionListing {
   
   ArrayList<ContributionChangeListener> listeners;
   
-  ArrayList<Contribution> advertisedContributions;
+  ArrayList<AdvertisedContribution> advertisedContributions;
   
   Map<String, List<Contribution>> librariesByCategory;
   
-  ArrayList<Contribution> allLibraries;
-  
+  ArrayList<Contribution> allContributions;
+
+  private Comparator<Contribution> contribComparator;
   
   public ContributionListing() {
     listeners = new ArrayList<ContributionChangeListener>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
-    allLibraries = new ArrayList<Contribution>();
+    allContributions = new ArrayList<Contribution>();
+    
+    contribComparator = new Comparator<Contribution>() {
+      public int compare(Contribution o1, Contribution o2) {
+        return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+      }
+    };
   }
 
 
@@ -57,12 +64,16 @@ public class ContributionListing {
     
     ContributionXmlParser xmlParser = new ContributionXmlParser(xmlFile);
     advertisedContributions = xmlParser.getLibraries();
-    for (Contribution info : advertisedContributions) {
-      addContribution(info);
+    for (Contribution contribution : advertisedContributions) {
+      addContribution(contribution);
     }
     
-    Collections.sort(allLibraries);
-    
+    Collections.sort(allContributions, contribComparator);
+
+  }
+  
+  public Comparator<? super Contribution> getComparator() {
+    return contribComparator;
   }
   
   /**
@@ -73,17 +84,11 @@ public class ContributionListing {
     
     for (Contribution contribution : installedContributions) {
       
-      boolean found = false;
-      for (Contribution existing : allLibraries) {
-        if (existing.getName().equals(contribution.getName())
-            && existing.getType() == contribution.getType()) {
-          replaceContribution(existing, contribution);
-          found = true;
-          break;
-        }
-      }
-      
-      if (!found) {
+      Contribution preexistingContribution = getContribution(contribution);
+
+      if (preexistingContribution != null) {
+        replaceContribution(preexistingContribution, contribution);
+      } else {
         addContribution(contribution);
       }
     }
@@ -107,55 +112,58 @@ public class ContributionListing {
       }
     }
     
-    for (int i = 0; i < allLibraries.size(); i++) {
-      if (allLibraries.get(i) == oldLib) {
-        allLibraries.set(i, newLib);
+    for (int i = 0; i < allContributions.size(); i++) {
+      if (allContributions.get(i) == oldLib) {
+        allContributions.set(i, newLib);
       }
     }
     
     notifyChange(oldLib, newLib);
   }
   
-  public void addContribution(Contribution info) {
+  public void addContribution(Contribution contribution) {
     
-    if (librariesByCategory.containsKey(info.getCategory())) {
-      List<Contribution> list = librariesByCategory.get(info.getCategory());
-      list.add(info);
+    if (librariesByCategory.containsKey(contribution.getCategory())) {
+      List<Contribution> list = librariesByCategory.get(contribution.getCategory());
+      list.add(contribution);
       
-      Collections.sort(list);
+      Collections.sort(list, contribComparator);
     } else {
       ArrayList<Contribution> list = new ArrayList<Contribution>();
-      list.add(info);
-      librariesByCategory.put(info.getCategory(), list);
+      list.add(contribution);
+      librariesByCategory.put(contribution.getCategory(), list);
     }
-    allLibraries.add(info);
+    allContributions.add(contribution);
     
-    notifyAdd(info);
+    notifyAdd(contribution);
     
-    Collections.sort(allLibraries);
+    Collections.sort(allContributions, contribComparator);
   }
   
   public void removeContribution(Contribution info) {
     if (librariesByCategory.containsKey(info.getCategory())) {
       librariesByCategory.get(info.getCategory()).remove(info);
     }
-    allLibraries.remove(info);
+    allContributions.remove(info);
     
     notifyRemove(info);
   }
   
-  // XXX: Could probably make this return AdvertisedContribution
-  public Contribution getAdvertisedContribution(Contribution info) {
-    return getAdvertisedContribution(info.getName(), info.getType());
+  public Contribution getContribution(Contribution contribution) {
+    for (Contribution preexistingContribution : allContributions) {
+      if (preexistingContribution.getName().equals(contribution.getName())
+          && preexistingContribution.getType() == contribution.getType()) {
+        return preexistingContribution;
+      }
+    }
+    return null;
   }
   
-  public Contribution getAdvertisedContribution(String contributionName,
-                                                Contribution.Type contributionType) {
-    
-    for (Contribution advertised : advertisedContributions) {
+  public AdvertisedContribution getAdvertisedContribution(Contribution info) {
+    for (AdvertisedContribution advertised : advertisedContributions) {
       
-      if (advertised.getType() == contributionType
-          && advertised.getName().equals(contributionName)) {
+      if (advertised.getType() == info.getType()
+          && advertised.getName().equals(info.getName())) {
         
         return advertised;
       }
@@ -170,18 +178,18 @@ public class ContributionListing {
   }
 
   public List<Contribution> getAllContributions() {
-    return new ArrayList<Contribution>(allLibraries);
+    return new ArrayList<Contribution>(allContributions);
   }
 
   public List<Contribution> getLibararies(String category) {
     ArrayList<Contribution> libinfos =
         new ArrayList<Contribution>(librariesByCategory.get(category));
-    Collections.sort(libinfos);
+    Collections.sort(libinfos, contribComparator);
     return libinfos;
   }
   
   public List<Contribution> getFilteredLibraryList(String category, List<String> filters) {
-    ArrayList<Contribution> filteredList = new ArrayList<Contribution>(allLibraries);
+    ArrayList<Contribution> filteredList = new ArrayList<Contribution>(allContributions);
     
     Iterator<Contribution> it = filteredList.iterator();
     while (it.hasNext()) {
@@ -239,15 +247,15 @@ public class ContributionListing {
  
   }
 
-  private void notifyRemove(Contribution Contribution) {
+  private void notifyRemove(Contribution contribution) {
     for (ContributionChangeListener listener : listeners) {
-      listener.contributionRemoved(Contribution);
+      listener.contributionRemoved(contribution);
     }
   }
   
-  private void notifyAdd(Contribution Contribution) {
+  private void notifyAdd(Contribution contribution) {
     for (ContributionChangeListener listener : listeners) {
-      listener.contributionAdded(Contribution);
+      listener.contributionAdded(contribution);
     }
   }
   
@@ -276,6 +284,28 @@ public class ContributionListing {
     new Thread(llf).start();
   }
   
+  public boolean hasUpdates() {
+    for (Contribution info : allContributions) {
+      if (hasUpdates(info)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  public boolean hasUpdates(Contribution contribution) {
+    if (contribution.isInstalled()) {
+      Contribution advertised = getAdvertisedContribution(contribution);
+      if (advertised == null)
+        return false;
+      
+      return advertised.getVersion() > contribution.getVersion();
+    }
+    
+    return false;
+  }
+
   public static interface ContributionChangeListener {
     
     public void contributionAdded(Contribution Contribution);
@@ -347,7 +377,7 @@ public class ContributionListing {
     final static String TOOL_TAG = "tool";
     //final static String MODE_TAG = "mode";
     
-    ArrayList<Contribution> contributions;
+    ArrayList<AdvertisedContribution> contributions;
     
     String currentCategoryName;
 
@@ -362,7 +392,7 @@ public class ContributionListing {
 
         InputSource input = new InputSource(new FileReader(xmlFile));
 
-        contributions = new ArrayList<Contribution>();
+        contributions = new ArrayList<AdvertisedContribution>();
         sp.parse(input, this); // throws SAXException
 
       } catch (ParserConfigurationException e) {
@@ -383,7 +413,7 @@ public class ContributionListing {
       }
     }
 
-    public ArrayList<Contribution> getLibraries() {
+    public ArrayList<AdvertisedContribution> getLibraries() {
       return contributions;
     }
 
@@ -401,7 +431,7 @@ public class ContributionListing {
       }  else if (LIBRARY_COMPILATION_TAG.equals(qName)) {
         currentInfo = new AdvertisedContribution(Type.LIBRARY_COMPILATION);
         String names = attributes.getValue("libraryNames");
-        currentInfo.libraryNames = AbstractContribution.toList(names);
+        currentInfo.libraryNames = InstalledContribution.toList(names);
         setCommonAttributes(attributes);
         
       } else if (TOOL_TAG.equals(qName)) {
@@ -465,27 +495,72 @@ public class ContributionListing {
           + exception.getMessage());
       throw (exception);
     }
-  }
-
-  public boolean hasUpdates() {
-    for (Contribution info : allLibraries) {
-      if (hasUpdates(info)) {
-        return true;
-      }
-    }
-    return false;
+    
   }
   
-  public boolean hasUpdates(Contribution contribution) {
-    if (contribution.isInstalled()) {
-      Contribution advertised = getAdvertisedContribution(contribution);
-      if (advertised == null)
-        return false;
-      
-      return advertised.getVersion() > contribution.getVersion();
+  static class AdvertisedContribution implements Contribution {
+    
+    protected String name;              // "pdf" or "PDF Export"
+    protected Type type;                // Library, tool, etc.
+    protected String category;          // "Sound"
+    protected List<Author> authorList;  // Ben Fry
+    protected String url;               // http://processing.org
+    protected String sentence;          // Write graphics to PDF files.
+    protected String paragraph;         // <paragraph length description for site>
+    protected int version;              // 102
+    protected int latestVersion;        // 103
+    protected String prettyVersion;     // "1.0.2"
+    protected List<String> libraryNames;// Non-null when type=library compilation
+    protected String link; // Direct link to download the file
+    
+    public AdvertisedContribution(Type type) {
+      this.type = type;
     }
     
-    return false;
+    public boolean isInstalled() {
+      return false;
+    }
+    
+    public Type getType() {
+      return type;
+    }
+    
+    public String getCategory() {
+      return category;
+    }
+    
+    public String getName() {
+      return name;
+    }
+    
+    public List<Author> getAuthorList() {
+      return new ArrayList<Author>(authorList);
+    }
+    
+    public String getUrl() {
+      return url;
+    }
+    
+    public String getSentence() {
+      return sentence;
+    }
+    
+    public String getParagraph() {
+      return paragraph;
+    }
+    
+    public int getVersion() {
+      return version;
+    }
+    
+    public int getLatestVersion() {
+      return latestVersion;
+    }
+    
+    public String getPrettyVersion() {
+      return prettyVersion;
+    }
+    
   }
-
+  
 }
