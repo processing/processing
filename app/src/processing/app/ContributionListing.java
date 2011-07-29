@@ -430,8 +430,6 @@ public class ContributionListing {
 
       }  else if (LIBRARY_COMPILATION_TAG.equals(qName)) {
         currentInfo = new AdvertisedContribution(Type.LIBRARY_COMPILATION);
-        String names = attributes.getValue("libraryNames");
-        currentInfo.libraryNames = InstalledContribution.toList(names);
         setCommonAttributes(attributes);
         
       } else if (TOOL_TAG.equals(qName)) {
@@ -500,18 +498,17 @@ public class ContributionListing {
   
   static class AdvertisedContribution implements Contribution {
     
-    protected String name;              // "pdf" or "PDF Export"
-    protected Type type;                // Library, tool, etc.
-    protected String category;          // "Sound"
-    protected List<Author> authorList;  // Ben Fry
-    protected String url;               // http://processing.org
-    protected String sentence;          // Write graphics to PDF files.
-    protected String paragraph;         // <paragraph length description for site>
-    protected int version;              // 102
-    protected int latestVersion;        // 103
-    protected String prettyVersion;     // "1.0.2"
-    protected List<String> libraryNames;// Non-null when type=library compilation
-    protected String link; // Direct link to download the file
+    protected String name;             // "pdf" or "PDF Export"
+    protected Type type;               // Library, tool, etc.
+    protected String category;         // "Sound"
+    protected List<Author> authorList; // Ben Fry
+    protected String url;              // http://processing.org
+    protected String sentence;         // Write graphics to PDF files.
+    protected String paragraph;        // <paragraph length description for site>
+    protected int version;             // 102
+    protected int latestVersion;       // 103
+    protected String prettyVersion;    // "1.0.2"
+    protected String link;             // Direct link to download the file
     
     public AdvertisedContribution(Type type) {
       this.type = type;
