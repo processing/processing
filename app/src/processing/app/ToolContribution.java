@@ -32,19 +32,21 @@ import processing.app.tools.Tool;
 
 public class ToolContribution extends InstalledContribution implements Tool {
   
+  String className;
+  
+  URLClassLoader loader;
+  
   Tool tool;
   
   static public ToolContribution getTool(File folder) {
-    try {
-      ToolContribution tool = new ToolContribution(folder);
-      if (tool.tool != null)
-        return tool;
-    } catch (Exception e) {
-    }
+    ToolContribution tool = new ToolContribution(folder);
+    if (tool.isValid())
+      return tool;
+    
     return null;
   }
   
-  private ToolContribution(File folder) throws Exception {
+  private ToolContribution(File folder) {
     super(folder, "tool.properties");
     
     File toolDirectory = new File(folder, "tool");
@@ -59,16 +61,19 @@ public class ToolContribution extends InstalledContribution implements Tool {
       }
     });
 
-    URL[] urlList = new URL[archives.length];
-    for (int j = 0; j < urlList.length; j++) {
-      urlList[j] = archives[j].toURI().toURL();
-    }
-    URLClassLoader loader = new URLClassLoader(urlList);
-
-    String className = null;
-    for (int j = 0; j < archives.length; j++) {
-      className = findClassInZipFile(folder.getName(), archives[j]);
-      if (className != null) break;
+    try {
+      URL[] urlList = new URL[archives.length];
+      for (int j = 0; j < urlList.length; j++) {
+          urlList[j] = archives[j].toURI().toURL();
+      }
+      loader = new URLClassLoader(urlList);
+  
+      for (int j = 0; j < archives.length; j++) {
+        className = findClassInZipFile(folder.getName(), archives[j]);
+        if (className != null) break;
+      }
+    } catch (MalformedURLException e) {
+      // Maybe log this
     }
 
     /*
@@ -94,14 +99,26 @@ public class ToolContribution extends InstalledContribution implements Tool {
       }
     }
     */
-    // If no class name found, just move on.
-    if (className == null) return;
-
+  }
+  
+  /**
+   * @return true if a Tool class of the expected name was found in this tool's
+   *         classpath
+   */
+  private boolean isValid() {
+    return className != null;
+  }
+  
+  /**
+   * Loads the tool, making it impossible (on Windows) to move the files in the
+   * classpath without restarting the PDE.
+   */
+  public void initializeToolClass() throws Exception {
     Class<?> toolClass = Class.forName(className, true, loader);
     tool = (Tool) toolClass.newInstance();
   }
   
-  protected String findClassInZipFile(String base, File file) {
+  static protected String findClassInZipFile(String base, File file) {
     // Class file to search for
     String classFileName = "/" + base + ".class";
 
@@ -132,13 +149,22 @@ public class ToolContribution extends InstalledContribution implements Tool {
     return null;
   }
   
-  static protected ArrayList<ToolContribution> list(File folder) {
+  /**
+   * Searches and returns a list of tools found in the immediate children of the
+   * given folder.
+   * @param doInitializeToolClass
+   *          true if tools should be initialized before they are returned.
+   *          Tools that failed to initialize for whatever reason are not
+   *          returned
+   */
+  static protected ArrayList<ToolContribution> list(File folder, boolean doInitializeToolClass) {
     ArrayList<ToolContribution> tools = new ArrayList<ToolContribution>();
-    list(folder, tools);
+    list(folder, tools, doInitializeToolClass);
     return tools;
   }
-  
-  static protected void list(File folder, ArrayList<ToolContribution> tools) {
+
+  static protected void list(File folder, ArrayList<ToolContribution> tools,
+                             boolean doInitializeToolClass) {
     
     File[] folders = folder.listFiles(new FileFilter() {
       public boolean accept(File folder) {
@@ -149,6 +175,16 @@ public class ToolContribution extends InstalledContribution implements Tool {
         }
         return false;
       }
+
+//      private boolean toolAlreadyExists(File folder) {
+//        boolean exists = true;
+//        for (ToolContribution contrib : tools) {
+//          if (contrib.getFolder().equals(folder)) {
+//            exists = false;
+//          }
+//        }
+//        return exists;
+//      }
     });
 
     if (folders == null || folders.length == 0) {
@@ -159,7 +195,12 @@ public class ToolContribution extends InstalledContribution implements Tool {
       try {
         final ToolContribution tool = getTool(folders[i]);
         if (tool != null) {
-          tools.add(tool);
+          try {
+            if (doInitializeToolClass)
+              tool.initializeToolClass();
+            tools.add(tool);
+          } catch (Exception e) {
+          }
         }
       } catch (Exception e) {
         e.printStackTrace();
