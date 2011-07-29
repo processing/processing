@@ -7,15 +7,11 @@ import processing.app.contribution.*;
 
 public class LibraryCompilation extends InstalledContribution {
 
-  List<String> libraryNames;
-  
   ArrayList<Library> libraries;
   
   private LibraryCompilation(File folder) throws IOException {
     
     super(folder, "compilation.properties");
-    
-    libraryNames = toList(properties.get("libraryNames"));
     
     libraries = new ArrayList<Library>();
     Library.list(folder, libraries, name);
