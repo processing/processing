@@ -45,7 +45,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
   }
   
   private ToolContribution(File folder) throws Exception {
-    super(folder);
+    super(folder, "tool.properties");
     
     File toolDirectory = new File(folder, "tool");
     // add dir to classpath for .classes

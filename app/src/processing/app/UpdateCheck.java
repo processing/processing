@@ -124,7 +124,7 @@ public class UpdateCheck {
         // should really be handled better).
         Thread.sleep(5 * 1000);
         if (!base.libraryManagerFrame.hasAlreadyBeenOpened() &&
-            base.libraryManagerFrame.contributionListing.hasUpdates()) {
+            base.libraryManagerFrame.contribListing.hasUpdates()) {
           promptToOpenContributionManager();
         }
       }

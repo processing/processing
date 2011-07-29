@@ -77,7 +77,7 @@ public class ContributionManager {
   
   String category;
   
-  ContributionListing contributionListing;
+  ContributionListing contribListing;
   
   /**
    * Initializes the contribution listing and fetches the advertised
@@ -86,17 +86,17 @@ public class ContributionManager {
    * showFrame is called in the middle of downloading.
    */
   public ContributionManager() {
-    contributionListing = new ContributionListing();
+    contribListing = new ContributionListing();
     
     contributionListPanel = new ContributionListPanel(this);
-    contributionListing.addContributionListener(contributionListPanel);
+    contribListing.addContributionListener(contributionListPanel);
     
     JProgressBar progressBar = contributionListPanel.getSetupProgressBar();
-    contributionListing.getAdvertisedContributions(new JProgressMonitor(progressBar) {
+    contribListing.getAdvertisedContributions(new JProgressMonitor(progressBar) {
 
       @Override
       public void finishedAction() {
-        synchronized (contributionListing) {
+        synchronized (contribListing) {
           updateContributionListing();
           updateCategoryChooser();
 
@@ -258,7 +258,7 @@ public class ContributionManager {
     
     ArrayList<String> categories;
     categoryChooser.removeAllItems();
-    categories = new ArrayList<String>(contributionListing.getCategories());
+    categories = new ArrayList<String>(contribListing.getCategories());
     Collections.sort(categories);
     categories.add(0, ANY_CATEGORY);
     for (String s : categories) {
@@ -295,7 +295,7 @@ public class ContributionManager {
 
   public void filterLibraries(String category, List<String> filters) {
 
-    List<Contribution> filteredLibraries = contributionListing
+    List<Contribution> filteredLibraries = contribListing
         .getFilteredLibraryList(category, filters);
 
     contributionListPanel.filterLibraries(filteredLibraries);
@@ -310,22 +310,21 @@ public class ContributionManager {
 
     // Remove libraries from the list that are part of a compilations
     for (LibraryCompilation compilation : compilations) {
-      for (Library lib : compilation.libraries) {
-        libraries.remove(lib);
+      Iterator<Library> it = libraries.iterator();
+      while (it.hasNext()) {
+        Library current = it.next();
+        if (compilation.getFolder().equals(current.getFolder().getParentFile())) {
+          it.remove();
+        }
       }
     }
     
-    ArrayList<InstalledContribution> contributions = new ArrayList<InstalledContribution>();
+    ArrayList<Contribution> contributions = new ArrayList<Contribution>();
     contributions.addAll(editor.contribTools);
     contributions.addAll(libraries);
     contributions.addAll(compilations);
     
-    List<Contribution> infoList = new ArrayList<Contribution>();
-    for (InstalledContribution contribution : contributions) {
-      infoList.add(contribution);
-    }
-    
-    contributionListing.updateInstalledList(infoList);
+    contribListing.updateInstalledList(contributions);
   }
  
   /**
@@ -340,13 +339,13 @@ public class ContributionManager {
         pm.startTask("Removing", ProgressMonitor.UNKNOWN);
         if (contribution != null) {
           if (backupContribution(contribution)) {
-            Contribution advertisedVersion = contributionListing
-                .getAdvertisedContribution(contribution.getName(), contribution.getType());
+            Contribution advertisedVersion = contribListing
+                .getAdvertisedContribution(contribution);
             
             if (advertisedVersion == null) {
-              contributionListing.removeContribution(contribution);
+              contribListing.removeContribution(contribution);
             } else {
-              contributionListing.replaceContribution(contribution, advertisedVersion);
+              contribListing.replaceContribution(contribution, advertisedVersion);
             }
           }
         }
@@ -395,7 +394,7 @@ public class ContributionManager {
           
           if (contribution != null) {
             // XXX contributionListing.getInformationFromAdvertised(contribution); get the category at least
-            contributionListing.replaceContribution(info, contribution);
+            contribListing.replaceContribution(info, contribution);
             refreshInstalled();
           }
           
@@ -931,12 +930,9 @@ public class ContributionManager {
   public boolean hasAlreadyBeenOpened() {
     return dialog != null;
   }
-
-  public boolean hasUpdates(Contribution info) {
-    if (contributionListing == null)
-      return false;
-    
-    return contributionListing.hasUpdates(info);
+  
+  public ContributionListing getListing() {
+    return contribListing;
   }
   
 }
