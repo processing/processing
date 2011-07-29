@@ -62,8 +62,6 @@ public class ContributionManager {
   
   JFrame dialog;
   
-  JProgressBar installProgressBar;
-  
   FilterField filterField;
   
   ContributionListPanel contributionListPanel;
@@ -360,7 +358,7 @@ public class ContributionManager {
    * Non-blocking call to download and install a contribution in a new thread.
    */
   public void downloadAndInstall(URL url,
-                                 final Contribution info,
+                                 final Contribution advertisedContribution,
                                  final JProgressMonitor downloadProgressMonitor,
                                  final JProgressMonitor installProgressMonitor) {
 
@@ -380,7 +378,7 @@ public class ContributionManager {
                                            ProgressMonitor.UNKNOWN);
 
           InstalledContribution contribution = null;
-          switch (info.getType()) {
+          switch (advertisedContribution.getType()) {
           case LIBRARY:
             contribution = installLibrary(contributionFile, false);
             break;
@@ -394,7 +392,7 @@ public class ContributionManager {
           
           if (contribution != null) {
             // XXX contributionListing.getInformationFromAdvertised(contribution); get the category at least
-            contribListing.replaceContribution(info, contribution);
+            contribListing.replaceContribution(advertisedContribution, contribution);
             refreshInstalled();
           }
           
@@ -537,13 +535,13 @@ public class ContributionManager {
   protected ToolContribution installTool(File zippedToolFile) {
     File tempDir = unzipFileToTemp(zippedToolFile);
     
-    ArrayList<ToolContribution> discoveredTools = ToolContribution.list(tempDir);
+    ArrayList<ToolContribution> discoveredTools = ToolContribution.list(tempDir, false);
     if (discoveredTools.isEmpty()) {
       // Sometimes tool authors place all their folders in the base
       // directory of a zip file instead of in single folder as the
       // guidelines suggest. If this is the case, we might be able to find the
       // library by stepping up a directory and searching for libraries again.
-      discoveredTools = ToolContribution.list(tempDir.getParentFile());
+      discoveredTools = ToolContribution.list(tempDir.getParentFile(), false);
     }
     
     if (discoveredTools != null && discoveredTools.size() == 1) {
@@ -576,9 +574,9 @@ public class ContributionManager {
     
     for (ToolContribution oldTool : oldTools) {
       
-      // XXX: Handle other cases when installing libraries.
+      // XXX: Handle other cases when installing tools.
       //   -What if a library by the same name is already installed?
-      //   -What if newLibDest exists, but isn't used by an existing library?
+      //   -What if newLibDest exists, but isn't used by an existing tools?
       if (oldTool.getFolder().exists() && oldTool.getFolder().equals(newToolDest)) {
         
         if (!backupContribution(oldTool)) {
@@ -589,7 +587,13 @@ public class ContributionManager {
     
     // Move newLib to the sketchbook library folder
     if (newTool.getFolder().renameTo(newToolDest)) {
-      return ToolContribution.getTool(newToolDest);
+      ToolContribution movedTool = ToolContribution.getTool(newToolDest);
+      try {
+        movedTool.initializeToolClass();
+        return newTool;
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     } else {
       Base.showWarning("Trouble moving new tool to the sketchbook",
                        "Could not move tool \"" + newTool.getName() + "\" to "
