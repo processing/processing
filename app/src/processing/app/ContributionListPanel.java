@@ -39,6 +39,7 @@ import java.net.*;
 import processing.app.ContributionListing.AdvertisedContribution;
 import processing.app.ContributionListing.ContributionChangeListener;
 import processing.app.contribution.*;
+import processing.app.contribution.Contribution.Type;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
   
@@ -378,7 +379,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
     JProgressBar installProgressBar;
     
-    JButton installOrRemoveButton;
+    JButton installRemoveButton;
 
     private HashSet<JTextPane> htmlPanes;
 
@@ -429,7 +430,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         public void actionPerformed(ActionEvent arg) {
           if (contrib.isInstalled() && contrib instanceof InstalledContribution) {
             updateButton.setEnabled(false);
-            installOrRemoveButton.setEnabled(false);
+            installRemoveButton.setEnabled(false);
             
             installProgressBar.setVisible(true);
             contribManager.removeContribution((InstalledContribution) contrib,
@@ -438,7 +439,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               public void finishedAction() {
                 // Finished uninstalling the library
                 resetInstallProgressBarState();
-                installOrRemoveButton.setEnabled(true);
+                installRemoveButton.setEnabled(true);
               }
             });
           }
@@ -619,21 +620,21 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
       rightPane.add(Box.createVerticalGlue());
       
-      installOrRemoveButton = new JButton(" ");
+      installRemoveButton = new JButton(" ");
     
-      Dimension installButtonDimensions = installOrRemoveButton.getPreferredSize();
+      Dimension installButtonDimensions = installRemoveButton.getPreferredSize();
       installButtonDimensions.width = BUTTON_WIDTH;
-      installOrRemoveButton.setPreferredSize(installButtonDimensions);
-      installOrRemoveButton.setMaximumSize(installButtonDimensions);
-      installOrRemoveButton.setMinimumSize(installButtonDimensions);
-      installOrRemoveButton.setOpaque(false);
-      rightPane.add(installOrRemoveButton);
-      installOrRemoveButton.setAlignmentX(CENTER_ALIGNMENT);
+      installRemoveButton.setPreferredSize(installButtonDimensions);
+      installRemoveButton.setMaximumSize(installButtonDimensions);
+      installRemoveButton.setMinimumSize(installButtonDimensions);
+      installRemoveButton.setOpaque(false);
+      rightPane.add(installRemoveButton);
+      installRemoveButton.setAlignmentX(CENTER_ALIGNMENT);
       
       // Set the minimum size of this pane to be the sum of the height of the
       // progress bar and install button
       d = installProgressBar.getPreferredSize();
-      Dimension d2 = installOrRemoveButton.getPreferredSize();
+      Dimension d2 = installRemoveButton.getPreferredSize();
       d.width = BUTTON_WIDTH;
       d.height = d.height+d2.height;
       rightPane.setMinimumSize(d);
@@ -675,14 +676,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       StringBuilder description = new StringBuilder();
       description.append("<html><body>");
       
-      if (ContributionManager.isFlaggedForDeletion(contrib)) {
+      boolean isFlagged = ContributionManager.isFlaggedForDeletion(contrib);
+      if (isFlagged) {
         description.append(DELETION_MESSAGE);
-        installOrRemoveButton.setText("Undo");
-        installOrRemoveButton.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            
-          }
-        });
       } else if (contrib.getSentence() != null) {
         description.append(contrib.getSentence());
       }
@@ -694,33 +690,37 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       if (contribManager.getListing().hasUpdates(contrib)) {
         StringBuilder versionText = new StringBuilder();
         versionText.append("<html><body><i>");
-        versionText.append("New version available!");
+        if (isFlagged) {
+          versionText.append("To finish an update, reinstall this contribution after the restart.");
+        } else {
+          versionText.append("New version available!");
+          if (ContributionManager.requiresRestart(contrib)) {
+            versionText.append(" To update, first remove the current version.");
+          }
+        }
         versionText.append("</i></body></html>");
         updateNotificationLabel.setText(versionText.toString());
         updateNotificationLabel.setVisible(true);
       } else {
         updateNotificationLabel.setText("");
         updateNotificationLabel.setVisible(false);
-        updateButton.setVisible(false);
       }
       
-      if (contrib.isInstalled()) {
-        if (ContributionManager.isFlaggedForDeletion(contrib)) {
-          installOrRemoveButton.removeActionListener(installActionListener);
-          installOrRemoveButton.removeActionListener(removeActionListener);
-          installOrRemoveButton.addActionListener(undoActionListener);
-          installOrRemoveButton.setText("Undo");
-        } else {
-          installOrRemoveButton.removeActionListener(installActionListener);
-          installOrRemoveButton.removeActionListener(undoActionListener);
-          installOrRemoveButton.addActionListener(removeActionListener);
-          installOrRemoveButton.setText("Remove");
-        }
+      if (isFlagged) {
+        installRemoveButton.removeActionListener(installActionListener);
+        installRemoveButton.removeActionListener(removeActionListener);
+        installRemoveButton.addActionListener(undoActionListener);
+        installRemoveButton.setText("Undo");
+      } else if (contrib.isInstalled()) {
+        installRemoveButton.removeActionListener(installActionListener);
+        installRemoveButton.removeActionListener(undoActionListener);
+        installRemoveButton.addActionListener(removeActionListener);
+        installRemoveButton.setText("Remove");
       } else {
-        installOrRemoveButton.removeActionListener(removeActionListener);
-        installOrRemoveButton.removeActionListener(undoActionListener);
-        installOrRemoveButton.addActionListener(installActionListener);
-        installOrRemoveButton.setText("Install");
+        installRemoveButton.removeActionListener(removeActionListener);
+        installRemoveButton.removeActionListener(undoActionListener);
+        installRemoveButton.addActionListener(installActionListener);
+        installRemoveButton.setText("Install");
       }
       
     }
@@ -728,7 +728,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     private void installContribution(AdvertisedContribution info) {
       
       String url = info.link;
-      installOrRemoveButton.setEnabled(false);
+      installRemoveButton.setEnabled(false);
       
       try {
         URL downloadUrl = new URL(url);
@@ -747,14 +747,14 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             public void finishedAction() {
               // Finished installing library
               resetInstallProgressBarState();
-              installOrRemoveButton.setEnabled(true);
+              installRemoveButton.setEnabled(true);
             }
           }
         );
         
       } catch (MalformedURLException e) {
         Base.showWarning(INSTALL_FAILURE_TITLE, MALFORMED_URL_MESSAGE, e);
-        installOrRemoveButton.setEnabled(true);
+        installRemoveButton.setEnabled(true);
       }
     }
     
@@ -837,10 +837,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       //   Why? Because otherwise if the user happened to click on what is now a
       //   hyperlink, it will be opened as the mouse is released.
       enableHyperlinks = alreadySelected;
-      
-      updateButton.setVisible(isSelected()
-          && contribManager.getListing().hasUpdates(contrib));
-      installOrRemoveButton.setVisible(isSelected());
+
+      if (contrib != null && !ContributionManager.requiresRestart(contrib)) {
+        updateButton.setVisible(isSelected()
+            && contribManager.getListing().hasUpdates(contrib));
+      }
+      installRemoveButton.setVisible(isSelected());
       
       for (JTextPane textPane : htmlPanes) {
         if (textPane instanceof JEditorPane) {
