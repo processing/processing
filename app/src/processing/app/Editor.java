@@ -38,7 +38,6 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
-
 /**
  * Main editor panel for the Processing Development Environment.
  */
@@ -773,11 +772,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     sketchMenu.add(mode.getImportMenu());
     
-    if (Base.ENABLE_LIBRARY_MANAGER) {
-      item = new JMenuItem("Install Library...");
+    if (Base.ENABLE_CONTRIBUTION_MANAGER) {
+      item = new JMenuItem("Manage Contributions...");
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          base.handleAddOrRemoveLibrary();
+          base.handleOpenContributionManager();
         }
       });
       sketchMenu.add(item);

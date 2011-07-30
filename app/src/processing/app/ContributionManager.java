@@ -42,19 +42,21 @@ import processing.app.contribution.*;
 
 public class ContributionManager {
   
-  private static final String DRAG_AND_DROP_SECONDARY =
+  static public final String DELETION_FLAG = "flagged_for_deletion";
+  
+  static private final String DRAG_AND_DROP_SECONDARY =
       ".plb files usually contain contributed libraries for <br>" +
       "Processing. Click “Yes” to install this library to your<br>" +
       "sketchbook. If you wish to add this file to your<br>" +
       "sketch instead, click “No” and use <i>Sketch &gt;<br>Add File...</i>";
   
-  private static final String DISCOVERY_ERROR_TITLE = "Trouble discovering libraries";
+  static private final String DISCOVERY_ERROR_TITLE = "Trouble discovering libraries";
   
-  private static final String DISCOVERY_INTERNAL_ERROR_MESSAGE =
+  static private final String DISCOVERY_INTERNAL_ERROR_MESSAGE =
         "An internal error occured while searching for libraries in the file.\n"
       + "This may be a one time error, so try again.";
   
-  private static final String DISCOVERY_NONE_FOUND_ERROR_MESSAGE =
+  static private final String DISCOVERY_NONE_FOUND_ERROR_MESSAGE =
       "Maybe it's just us, but it looks like there are no\n"
     + "libraries in the file we just downloaded.\n";
   
@@ -329,14 +331,21 @@ public class ContributionManager {
    * Non-blocking call to remove a contribution in a new thread.
    */
   public void removeContribution(final InstalledContribution contribution,
-                                 final JProgressMonitor pm) {
-
+                                 ProgressMonitor pm) {
+    if (contribution == null)
+      return;
+    
+    final ProgressMonitor progressMonitor = pm != null ? pm : new NullProgressMonitor();
+      
     new Thread(new Runnable() {
       
       public void run() {
-        pm.startTask("Removing", ProgressMonitor.UNKNOWN);
-        if (contribution != null) {
-          if (backupContribution(contribution)) {
+        progressMonitor.startTask("Removing", ProgressMonitor.UNKNOWN);
+        
+        switch (contribution.getType()) {
+        case LIBRARY:
+        case LIBRARY_COMPILATION:
+          if (backupContribution(contribution, true)) {
             Contribution advertisedVersion = contribListing
                 .getAdvertisedContribution(contribution);
             
@@ -346,9 +355,22 @@ public class ContributionManager {
               contribListing.replaceContribution(contribution, advertisedVersion);
             }
           }
+        case TOOL:
+        case MODE:
+          if (backupContribution(contribution, false)) {
+            try {
+              File d = new File(contribution.getFolder(), DELETION_FLAG);
+              
+              // Only returns false if the file already exists, in which case
+              // the contribution would have been deleted at start-up anyway
+              d.createNewFile();
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+          }
         }
         refreshInstalled();
-        pm.finished();
+        progressMonitor.finished();
       }
     }).start();
 
@@ -579,18 +601,19 @@ public class ContributionManager {
       //   -What if newLibDest exists, but isn't used by an existing tools?
       if (oldTool.getFolder().exists() && oldTool.getFolder().equals(newToolDest)) {
         
-        if (!backupContribution(oldTool)) {
+        // XXX: We can't replace stuff, soooooo.... do something different
+        if (!backupContribution(oldTool, false)) {
           return null;
         }
       }
     }
     
-    // Move newLib to the sketchbook library folder
+    // Move newTool to the sketchbook library folder
     if (newTool.getFolder().renameTo(newToolDest)) {
       ToolContribution movedTool = ToolContribution.getTool(newToolDest);
       try {
         movedTool.initializeToolClass();
-        return newTool;
+        return movedTool;
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -676,7 +699,7 @@ public class ContributionManager {
                  " in <i>libraries/old</i> before replacing it.");
         }
         if (!confirmReplace || result == JOptionPane.YES_OPTION) {
-          if (!backupContribution(oldLib)) {
+          if (!backupContribution(oldLib, true)) {
             return null;
           }
         } else {
@@ -711,8 +734,12 @@ public class ContributionManager {
 
   /**
    * Moves the given contribution to a backup folder.
+   * @param doDeleteOriginal
+   *          true if the file should be moved to the directory, false if it
+   *          should instead be copied, leaving the original in place
    */
-  private boolean backupContribution(InstalledContribution contribution) {
+  private boolean backupContribution(InstalledContribution contribution,
+                                     boolean doDeleteOriginal) {
     
     File backupFolder = null;
     
@@ -733,20 +760,29 @@ public class ContributionManager {
     
     String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     final String backupName = prefix + "_" + libFolderName;
-    File backupFolderForLib = getUniqueName(backupFolder, backupName);
+    File backupSubFolder = getUniqueName(backupFolder, backupName);
     
 //    try {
 //      FileUtils.moveDirectory(lib.folder, backupFolderForLib);
 //      return true;
-    if (contribution.getFolder().renameTo(backupFolderForLib)) {
-      return true;
+    
+    boolean success = false;
+    if (doDeleteOriginal) {
+      success = contribution.getFolder().renameTo(backupSubFolder);
     } else {
-//    } catch (IOException e) {
-      Base.showWarning("Trouble creating backup of old \"" + contribution.getName() + "\" library",
-                       "Could not move library to backup folder:\n"
-                           + backupFolderForLib.getAbsolutePath(), null);
-      return false;
+      try {
+        Base.copyDir(contribution.getFolder(), backupSubFolder);
+        success = true;
+      } catch (IOException e) {
+      }
     }
+//    } catch (IOException e) {
+    if (!success) {
+      Base.showWarning("Trouble creating backup of old \"" + contribution.getName() + "\" contribution",
+                       "Could not move contribution to backup folder:\n"
+                           + backupSubFolder.getAbsolutePath(), null);
+    }
+    return success;
   }
 
   private File createLibraryBackupFolder() {
