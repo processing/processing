@@ -42,9 +42,13 @@ import processing.app.contribution.*;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
   
-  public static final String INSTALL_FAILURE_TITLE = "Install Failed";
+  static public final String DELETION_MESSAGE = "<html><body><i>This tool has "
+      + "been flagged for deletion. Restart all instances of the editor to "
+      + "finalize the removal process.</i></body></html>";
+  
+  static public final String INSTALL_FAILURE_TITLE = "Install Failed";
 
-  public static final String MALFORMED_URL_MESSAGE =
+  static public final String MALFORMED_URL_MESSAGE =
                       "The link fetched from Processing.org is invalid.\n"
                     + "You can still intall this library manually by visiting\n"
                     + "the library's website.";
@@ -55,7 +59,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   TreeMap<Contribution, ContributionPanel> panelByContribution;
   
-  private static HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
+  static private HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
     
     public void hyperlinkUpdate(HyperlinkEvent e) {
     }
@@ -417,12 +421,20 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             
             installProgressBar.setVisible(true);
             contribManager.removeContribution((InstalledContribution) info,
-                                                   new JProgressMonitor(installProgressBar) {
+                                              new JProgressMonitor(installProgressBar) {
               
               public void finishedAction() {
                 // Finished uninstalling the library
                 resetInstallProgressBarState();
-                installOrRemoveButton.setEnabled(true);
+                
+                switch (info.getType()) {
+                case LIBRARY:
+                case LIBRARY_COMPILATION:
+                  installOrRemoveButton.setEnabled(true);
+                  break;
+                case TOOL:
+                  descriptionText.setText(DELETION_MESSAGE);
+                }
               }
             });
           }

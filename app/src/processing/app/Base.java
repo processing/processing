@@ -53,7 +53,7 @@ public class Base {
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
 //  static public boolean DEBUG = true;
-  static public boolean ENABLE_LIBRARY_MANAGER = false;
+  static public boolean ENABLE_CONTRIBUTION_MANAGER = false;
 
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
@@ -224,11 +224,21 @@ public class Base {
     modeList = new Mode[] { defaultMode, androidMode, javaScriptMode };
 //    modeList = new Mode[] { defaultMode, androidMode };
     
-    libraryManagerFrame = new ContributionManager();
-
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
-
+    
+    // Delete all tools that have been flagged for deletion before they are
+    // initialized by an editor.
+    for (ToolContribution contrib : ToolContribution
+        .list(getSketchbookToolsFolder(), false)) {
+      
+      if (new File(contrib.getFolder(), ContributionManager.DELETION_FLAG).exists()) {
+        removeDir(contrib.getFolder());
+      }
+    }
+    
+    libraryManagerFrame = new ContributionManager();
+    
     // Make sure ThinkDifferent has library examples too
     defaultMode.rebuildLibraryList();
 
@@ -1405,7 +1415,7 @@ public class Base {
   /**
    * Show the library installer window.
    */
-  public void handleAddOrRemoveLibrary() {
+  public void handleOpenContributionManager() {
     libraryManagerFrame.showFrame(activeEditor);
   }
   

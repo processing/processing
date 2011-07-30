@@ -194,13 +194,11 @@ public class ToolContribution extends InstalledContribution implements Tool {
     for (int i = 0; i < folders.length; i++) {
       try {
         final ToolContribution tool = getTool(folders[i]);
-        if (tool != null) {
-          try {
-            if (doInitializeToolClass)
-              tool.initializeToolClass();
-            tools.add(tool);
-          } catch (Exception e) {
-          }
+        try {
+          if (doInitializeToolClass)
+            tool.initializeToolClass();
+          tools.add(tool);
+        } catch (Exception e) {
         }
       } catch (Exception e) {
         e.printStackTrace();
