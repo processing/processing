@@ -41,7 +41,6 @@ import java.net.*;
 import processing.app.ContributionListing.AdvertisedContribution;
 import processing.app.ContributionListing.ContributionChangeListener;
 import processing.app.contribution.*;
-import processing.app.contribution.Contribution.Type;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
   
@@ -710,7 +709,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         nameText.append("<a href=\"" + contrib.getUrl() + "\">" + contrib.getName() + "</a>");
       }
       nameText.append("</b>");
-      nameText.append(createAuthorString(contrib.getAuthorList()));
+      String authorList = contrib.getAuthorList();
+      if (authorList != null && !authorList.isEmpty()) {
+        nameText.append(" by ");
+        nameText.append(toHtmlLinks(contrib.getAuthorList()));
+      }
       nameText.append("</body></html>");
       headerText.setText(nameText.toString());
       
@@ -812,39 +815,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
     }
     
-    private String createAuthorString(List<Author> authorList) {
-      StringBuilder authors = new StringBuilder();
-      
-      if (authorList != null && !authorList.isEmpty()) {
-        authors.append(" by ");
-        
-        for (int i = 0; i < authorList.size(); i++) {
-          Author author = authorList.get(i);
-          if (author.getUrl() == null) {
-            authors.append(author.getName());
-          } else {
-            authors.append("<a href=\"");
-            authors.append(author.getUrl());
-            authors.append("\">");
-            authors.append(author.getName());
-            authors.append("</a>");
-          }
-          if (i + 2 < authorList.size()) {
-            authors.append(", ");
-          } else if (i + 2 == authorList.size()) {
-            if (authorList.size() > 2) {
-              authors.append(", and ");
-            } else {
-              authors.append(" and ");
-            }
-          }
-        }
-        
-      }
-      
-      return authors.toString();
-    }
-
     void setHtmlTextStyle(JTextPane textPane) {
       
       textPane.setContentType("text/html");

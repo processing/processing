@@ -31,7 +31,7 @@ public abstract class InstalledContribution implements Contribution {
 
   protected String name;              // "pdf" or "PDF Export"
   protected String category;          // "Sound"
-  protected List<Author> authorList;  // Ben Fry
+  protected String authorList;  // Ben Fry
   protected String url;               // http://processing.org
   protected String sentence;          // Write graphics to PDF files.
   protected String paragraph;         // <paragraph length description for site>
@@ -57,11 +57,7 @@ public abstract class InstalledContribution implements Contribution {
       name = folder.getName();
     }
 
-    String authors = properties.get("authorList");
-    authorList = new ArrayList<Author>();
-    for (String authorText : toList(authors)) {
-      authorList.add(new Author(authorText));
-    }
+    authorList = properties.get("authorList");
 
     url = properties.get("url");
     sentence = properties.get("sentence");
@@ -90,8 +86,8 @@ public abstract class InstalledContribution implements Contribution {
     return name;
   }
   
-  public List<Author> getAuthorList() {
-    return new ArrayList<Author>(authorList);
+  public String getAuthorList() {
+    return authorList;
   }
   
   public String getUrl() {
@@ -116,21 +112,6 @@ public abstract class InstalledContribution implements Contribution {
   
   public String getPrettyVersion() {
     return prettyVersion;
-  }
-  
-  /**
-   * @param string semicolin separated list of strings
-   * @return List containing the trimmed elements from input string
-   */
-  static public List<String> toList(String string) {
-    List<String> list = new ArrayList<String>();
-    if (string != null) {
-      String[] listAsArray = string.split(";");
-      for (String element : listAsArray) {
-        list.add(element);
-      }
-    }
-    return list;
   }
   
 }

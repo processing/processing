@@ -22,8 +22,6 @@
 
 package processing.app.contribution;
 
-import java.util.List;
-
 public interface Contribution {
   // "Sound"
   String getCategory();
@@ -32,7 +30,7 @@ public interface Contribution {
   String getName();
 
   // "Ben Fry"
-  List<Author> getAuthorList();
+  String getAuthorList();
 
   // "http://processing.org"
   String getUrl();
