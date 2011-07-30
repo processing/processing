@@ -22,6 +22,9 @@
 
 package processing.app.contribution;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Author {
 
   String name;
@@ -32,12 +35,13 @@ public class Author {
     
     text = text.trim();
     name = "";
-    url = "";
     
-    if (isUrlSyntax(text)) {
-      // Use link syntax
-      name = getText(text).trim();
-      url = getUrl(text);
+    Pattern p = Pattern.compile("\\[(.*?)\\]\\((.*?)\\)");
+    Matcher m = p.matcher(text);
+
+    if (m.find()) {
+      name = m.group(1);
+      url = m.group(2);
     } else {
       name = text;
     }
@@ -55,22 +59,6 @@ public class Author {
 
   public String getUrl() {
     return url;
-  }
-  
-  static public boolean isUrlSyntax(String text) {
-    return text.matches("\\[.*\\]\\(.*\\)");
-  }
-  
-  static public String getText(String text) {
-    if (isUrlSyntax(text))
-      return text.substring(1, text.indexOf(']'));
-    return null;
-  }
-  
-  static public String getUrl(String text) {
-    if (isUrlSyntax(text))
-      return text.substring(text.indexOf('(') + 1, text.length() - 1).trim();
-    return null;
   }
   
 }

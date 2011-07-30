@@ -25,6 +25,8 @@ package processing.app;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -344,6 +346,46 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   public JProgressBar getSetupProgressBar() {
     return setupProgressBar;
+  }
+  
+  static public String sanitizeHtmlTags(String stringIn) {
+    stringIn = stringIn.replaceAll("<", "&lt;");
+    stringIn = stringIn.replaceAll(">", "&gt;");
+    return stringIn;
+  }
+  
+  /**
+   * This has a [link](http://example.com/) in [it](http://example.org/).
+   * 
+   * Becomes...
+   * 
+   * This has a <a href="http://example.com/">link</a> in <a
+   * href="http://example.org/">it</a>.
+   */
+  static public String toHtmlLinks(String stringIn) {
+    Pattern p = Pattern.compile("\\[(.*?)\\]\\((.*?)\\)");
+    Matcher m = p.matcher(stringIn);
+
+    StringBuilder sb = new StringBuilder();
+
+    int start = 0;
+    while (m.find(start)) {
+      sb.append(stringIn.substring(start, m.start()));
+
+      String text = m.group(1);
+      String url = m.group(2);
+
+      sb.append("<a href=\"");
+      sb.append(url);
+      sb.append("\">");
+      sb.append(text);
+      sb.append("</a>");
+
+      start = m.end();
+    }
+    sb.append(stringIn.substring(start));
+
+    return sb.toString();
   }
   
   /**
@@ -681,7 +723,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       if (isFlagged) {
         description.append(DELETION_MESSAGE);
       } else if (contrib.getSentence() != null) {
-        description.append(contrib.getSentence());
+        String sentence = sanitizeHtmlTags(contrib.getSentence());
+        sentence = toHtmlLinks(sentence);
+        description.append(sentence);
       }
       
       description.append("</body></html>");
