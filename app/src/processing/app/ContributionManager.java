@@ -368,9 +368,17 @@ public class ContributionManager {
 
   /**
    * Non-blocking call to download and install a contribution in a new thread.
+   * 
+   * @param url
+   *          Direct link to the contribution.
+   * @param toBeReplaced
+   *          The Contribution that will be replaced by this library being
+   *          installed (e.g. an advertised version of a contribution, or the
+   *          old version of a contribution that is being updated). Must not be
+   *          null.
    */
   public void downloadAndInstall(URL url,
-                                 final Contribution advertisedContribution,
+                                 final Contribution toBeReplaced,
                                  final JProgressMonitor downloadProgressMonitor,
                                  final JProgressMonitor installProgressMonitor) {
 
@@ -390,7 +398,7 @@ public class ContributionManager {
                                            ProgressMonitor.UNKNOWN);
 
           InstalledContribution contribution = null;
-          switch (advertisedContribution.getType()) {
+          switch (toBeReplaced.getType()) {
           case LIBRARY:
             contribution = installLibrary(contributionFile, false);
             break;
@@ -404,7 +412,7 @@ public class ContributionManager {
           
           if (contribution != null) {
             // XXX contributionListing.getInformationFromAdvertised(contribution); get the category at least
-            contribListing.replaceContribution(advertisedContribution, contribution);
+            contribListing.replaceContribution(toBeReplaced, contribution);
             refreshInstalled();
           }
           
