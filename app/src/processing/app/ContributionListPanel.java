@@ -584,8 +584,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           
           public void actionPerformed(ActionEvent e) {
             updateButton.setEnabled(false);
-            // XXX: There is a bug here. The advertised library will be 'replaced' instead
-            installContribution((AdvertisedContribution) contribManager.contribListing.getAdvertisedContribution(contrib));
+            String url = contribManager.getListing()
+                .getAdvertisedContribution(contrib).link;
+            installContribution(contrib, url);
           }
         });
         descriptionPanel.add(updateButton, c);
@@ -706,6 +707,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         updateNotificationLabel.setVisible(false);
       }
       
+      updateButton.setEnabled(true);
+      if (contrib != null && !ContributionManager.requiresRestart(contrib)) {
+        updateButton.setVisible(isSelected()
+            && contribManager.getListing().hasUpdates(contrib));
+      }
+      
       if (isFlagged) {
         installRemoveButton.removeActionListener(installActionListener);
         installRemoveButton.removeActionListener(removeActionListener);
@@ -726,8 +733,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
     
     private void installContribution(AdvertisedContribution info) {
+      installContribution(info, info.link);
+    }
+    
+    private void installContribution(Contribution toBeReplaced, String url) {
       
-      String url = info.link;
       installRemoveButton.setEnabled(false);
       
       try {
@@ -735,7 +745,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         installProgressBar.setVisible(true);
         
-        contribManager.downloadAndInstall(downloadUrl, info,
+        contribManager.downloadAndInstall(downloadUrl, toBeReplaced,
           new JProgressMonitor(installProgressBar) {
 
             public void finishedAction() {
