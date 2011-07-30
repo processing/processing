@@ -227,7 +227,6 @@ public class ContributionListing {
       // Return true and ignore everything else if the property is invalid.
       return true;
     }
-    // sdfikjfdslk Added filters properties for showing installed and upgrade 
     filter = ".*" + filter.toLowerCase() + ".*";
     
     if (filter.isEmpty()) {
@@ -235,7 +234,7 @@ public class ContributionListing {
     }
     
     for (Author author : info.getAuthorList()) {
-      if (author.name.toLowerCase().matches(filter)) {
+      if (author.getName().toLowerCase().matches(filter)) {
         return true;
       }
     }
@@ -437,9 +436,8 @@ public class ContributionListing {
         setCommonAttributes(attributes);
 
       } else if ("author".equals(qName)) {
-        Author author = new Author();
-        author.name = attributes.getValue("name");
-        author.url = attributes.getValue("url");
+        Author author = new Author(attributes.getValue("name"),
+                                   attributes.getValue("url"));
         currentInfo.authorList.add(author);
 
       } else if ("description".equals(qName)) {
