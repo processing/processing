@@ -42,9 +42,9 @@ import processing.app.contribution.*;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
   
-  static public final String DELETION_MESSAGE = "<html><body><i>This tool has "
+  static public final String DELETION_MESSAGE = "<i>This tool has "
       + "been flagged for deletion. Restart all instances of the editor to "
-      + "finalize the removal process.</i></body></html>";
+      + "finalize the removal process.</i>";
   
   static public final String INSTALL_FAILURE_TITLE = "Install Failed";
 
@@ -354,7 +354,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
     /** Should only be set through setContribution(), otherwise UI components
      *  will not be updated. */
-    Contribution info;
+    Contribution contrib;
     
     boolean alreadySelected;
     
@@ -386,6 +386,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     private ActionListener installActionListener;
     
+    private ActionListener undoActionListener;
+    
     private ContributionPanel() {
       
       htmlPanes = new HashSet<JTextPane>();
@@ -406,35 +408,37 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       };
       
       installActionListener = new ActionListener() {
-        public void actionPerformed(ActionEvent arg) {
-          if (info instanceof AdvertisedContribution) {
-            installContribution((AdvertisedContribution) info);
+        public void actionPerformed(ActionEvent e) {
+          if (contrib instanceof AdvertisedContribution) {
+            installContribution((AdvertisedContribution) contrib);
+          }
+        }
+      };
+      
+      undoActionListener = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (contrib instanceof InstalledContribution) {
+            InstalledContribution installed = (InstalledContribution) contrib;
+            ContributionManager.removeFlagForDeletion(installed);
+            contribManager.getListing().replaceContribution(contrib, contrib);
           }
         }
       };
       
       removeActionListener = new ActionListener() {
         public void actionPerformed(ActionEvent arg) {
-          if (info.isInstalled() && info instanceof InstalledContribution) {
+          if (contrib.isInstalled() && contrib instanceof InstalledContribution) {
             updateButton.setEnabled(false);
             installOrRemoveButton.setEnabled(false);
             
             installProgressBar.setVisible(true);
-            contribManager.removeContribution((InstalledContribution) info,
+            contribManager.removeContribution((InstalledContribution) contrib,
                                               new JProgressMonitor(installProgressBar) {
               
               public void finishedAction() {
                 // Finished uninstalling the library
                 resetInstallProgressBarState();
-                
-                switch (info.getType()) {
-                case LIBRARY:
-                case LIBRARY_COMPILATION:
-                  installOrRemoveButton.setEnabled(true);
-                  break;
-                case TOOL:
-                  descriptionText.setText(DELETION_MESSAGE);
-                }
+                installOrRemoveButton.setEnabled(true);
               }
             });
           }
@@ -515,7 +519,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         iconArea = new JPanel() {
           protected void paintComponent(Graphics g) {
-            Image icon = contribManager.getContributionIcon(info.getType());
+            Image icon = contribManager.getContributionIcon(contrib.getType());
             if (icon != null) {
               g.drawImage(icon, 0, 0, this);
             }
@@ -580,7 +584,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           public void actionPerformed(ActionEvent e) {
             updateButton.setEnabled(false);
             // XXX: There is a bug here. The advertised library will be 'replaced' instead
-            installContribution((AdvertisedContribution) contribManager.contribListing.getAdvertisedContribution(info));
+            installContribution((AdvertisedContribution) contribManager.contribListing.getAdvertisedContribution(contrib));
           }
         });
         descriptionPanel.add(updateButton, c);
@@ -648,36 +652,46 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
     }
     
-    public void setContribution(Contribution info) {
+    public void setContribution(Contribution contrib) {
       
-      this.info = info;
+      this.contrib = contrib;
       
       setFocusable(true);
 
       StringBuilder nameText = new StringBuilder();
       nameText.append("<html><body><b>");
-      if (info.getUrl() == null) {
-        nameText.append(info.getName());
+      if (contrib.getUrl() == null) {
+        nameText.append(contrib.getName());
       } else {
-        nameText.append("<a href=\"" + info.getUrl() + "\">" + info.getName() + "</a>");
+        nameText.append("<a href=\"" + contrib.getUrl() + "\">" + contrib.getName() + "</a>");
       }
       nameText.append("</b>");
-      nameText.append(createAuthorString(info.getAuthorList()));
+      nameText.append(createAuthorString(contrib.getAuthorList()));
       nameText.append("</body></html>");
       headerText.setText(nameText.toString());
       
-      categoryLabel.setText("[" + info.getCategory() + "]");
+      categoryLabel.setText("[" + contrib.getCategory() + "]");
       
       StringBuilder description = new StringBuilder();
       description.append("<html><body>");
-      if (info.getSentence() != null)
-        description.append(info.getSentence());
+      
+      if (ContributionManager.isFlaggedForDeletion(contrib)) {
+        description.append(DELETION_MESSAGE);
+        installOrRemoveButton.setText("Undo");
+        installOrRemoveButton.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            
+          }
+        });
+      } else if (contrib.getSentence() != null) {
+        description.append(contrib.getSentence());
+      }
       
       description.append("</body></html>");
       descriptionText.setText(description.toString());
       setAlignment(descriptionText, StyleConstants.ALIGN_JUSTIFIED);
       
-      if (contribManager.getListing().hasUpdates(info)) {
+      if (contribManager.getListing().hasUpdates(contrib)) {
         StringBuilder versionText = new StringBuilder();
         versionText.append("<html><body><i>");
         versionText.append("New version available!");
@@ -690,12 +704,21 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         updateButton.setVisible(false);
       }
       
-      if (info.isInstalled()) {
-        installOrRemoveButton.removeActionListener(installActionListener);
-        installOrRemoveButton.addActionListener(removeActionListener);
-        installOrRemoveButton.setText("Remove");
+      if (contrib.isInstalled()) {
+        if (ContributionManager.isFlaggedForDeletion(contrib)) {
+          installOrRemoveButton.removeActionListener(installActionListener);
+          installOrRemoveButton.removeActionListener(removeActionListener);
+          installOrRemoveButton.addActionListener(undoActionListener);
+          installOrRemoveButton.setText("Undo");
+        } else {
+          installOrRemoveButton.removeActionListener(installActionListener);
+          installOrRemoveButton.removeActionListener(undoActionListener);
+          installOrRemoveButton.addActionListener(removeActionListener);
+          installOrRemoveButton.setText("Remove");
+        }
       } else {
         installOrRemoveButton.removeActionListener(removeActionListener);
+        installOrRemoveButton.removeActionListener(undoActionListener);
         installOrRemoveButton.addActionListener(installActionListener);
         installOrRemoveButton.setText("Install");
       }
@@ -816,7 +839,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       enableHyperlinks = alreadySelected;
       
       updateButton.setVisible(isSelected()
-          && contribManager.getListing().hasUpdates(info));
+          && contribManager.getListing().hasUpdates(contrib));
       installOrRemoveButton.setVisible(isSelected());
       
       for (JTextPane textPane : htmlPanes) {

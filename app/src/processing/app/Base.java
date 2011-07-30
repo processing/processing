@@ -77,7 +77,7 @@ public class Base {
   Preferences preferencesFrame;
 
   // A single instance of the library manager window
-  ContributionManager libraryManagerFrame;
+  ContributionManager contributionManagerFrame;
 
   // set to true after the first time the menu is built.
   // so that the errors while building don't show up again.
@@ -232,12 +232,12 @@ public class Base {
     for (ToolContribution contrib : ToolContribution
         .list(getSketchbookToolsFolder(), false)) {
       
-      if (new File(contrib.getFolder(), ContributionManager.DELETION_FLAG).exists()) {
+      if (ContributionManager.isFlaggedForDeletion(contrib)) {
         removeDir(contrib.getFolder());
       }
     }
     
-    libraryManagerFrame = new ContributionManager();
+    contributionManagerFrame = new ContributionManager();
     
     // Make sure ThinkDifferent has library examples too
     defaultMode.rebuildLibraryList();
@@ -1416,12 +1416,12 @@ public class Base {
    * Show the library installer window.
    */
   public void handleOpenContributionManager() {
-    libraryManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.showFrame(activeEditor);
   }
   
   public void handleShowUpdates() {
-    libraryManagerFrame.showFrame(activeEditor);
-    libraryManagerFrame.setFilterText("has:updates");
+    contributionManagerFrame.showFrame(activeEditor);
+    contributionManagerFrame.setFilterText("has:updates");
   }
   
   /**
@@ -1429,7 +1429,7 @@ public class Base {
    * user. Returns the number of libraries installed.
    */
   public boolean handleConfirmAndInstallLibrary(File libFile) {
-    return libraryManagerFrame.confirmAndInstallLibrary(activeEditor, libFile) != null;
+    return contributionManagerFrame.confirmAndInstallLibrary(activeEditor, libFile) != null;
   }
 
   // ...................................................................
