@@ -59,11 +59,8 @@ public abstract class InstalledContribution implements Contribution {
 
     String authors = properties.get("authorList");
     authorList = new ArrayList<Author>();
-    for (String authorName : toList(authors)) {
-      Author author = new Author();
-      author.name = authorName.trim();
-
-      authorList.add(author);
+    for (String authorText : toList(authors)) {
+      authorList.add(new Author(authorText));
     }
 
     url = properties.get("url");
