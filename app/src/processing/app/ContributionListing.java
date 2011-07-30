@@ -233,10 +233,8 @@ public class ContributionListing {
       return true;
     }
     
-    for (Author author : info.getAuthorList()) {
-      if (author.getName().toLowerCase().matches(filter)) {
-        return true;
-      }
+    if (info.getAuthorList().toLowerCase().matches(filter)) {
+      return true;
     }
     
     return info.getSentence() != null && info.getSentence().toLowerCase().matches(filter)
@@ -435,12 +433,8 @@ public class ContributionListing {
         currentInfo = new AdvertisedContribution(Type.TOOL);
         setCommonAttributes(attributes);
 
-      } else if ("author".equals(qName)) {
-        Author author = new Author(attributes.getValue("name"),
-                                   attributes.getValue("url"));
-        currentInfo.authorList.add(author);
-
       } else if ("description".equals(qName)) {
+        currentInfo.authorList = attributes.getValue("authorList");
         currentInfo.sentence = attributes.getValue("sentence");
         currentInfo.paragraph = attributes.getValue("paragraph");
         
@@ -456,7 +450,6 @@ public class ContributionListing {
     }
     
     private void setCommonAttributes(Attributes attributes) {
-      currentInfo.authorList = new ArrayList<Author>();
       currentInfo.category = currentCategoryName;
       currentInfo.name = attributes.getValue("name");
       currentInfo.url = attributes.getValue("url");
@@ -499,7 +492,7 @@ public class ContributionListing {
     protected String name;             // "pdf" or "PDF Export"
     protected Type type;               // Library, tool, etc.
     protected String category;         // "Sound"
-    protected List<Author> authorList; // Ben Fry
+    protected String authorList;       // [Ben Fry](http://benfry.com/)
     protected String url;              // http://processing.org
     protected String sentence;         // Write graphics to PDF files.
     protected String paragraph;        // <paragraph length description for site>
@@ -528,8 +521,8 @@ public class ContributionListing {
       return name;
     }
     
-    public List<Author> getAuthorList() {
-      return new ArrayList<Author>(authorList);
+    public String getAuthorList() {
+      return authorList;
     }
     
     public String getUrl() {
