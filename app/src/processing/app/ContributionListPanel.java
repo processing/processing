@@ -731,13 +731,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         for (int i = 0; i < authorList.size(); i++) {
           Author author = authorList.get(i);
-          if (author.url == null) {
-            authors.append(author.name);
+          if (author.getUrl() == null) {
+            authors.append(author.getName());
           } else {
             authors.append("<a href=\"");
-            authors.append(author.url);
+            authors.append(author.getUrl());
             authors.append("\">");
-            authors.append(author.name);
+            authors.append(author.getName());
             authors.append("</a>");
           }
           if (i + 2 < authorList.size()) {
