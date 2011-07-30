@@ -39,6 +39,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import processing.app.contribution.*;
+import processing.app.contribution.Contribution.Type;
 
 public class ContributionManager {
   
@@ -338,25 +339,23 @@ public class ContributionManager {
       
       public void run() {
         progressMonitor.startTask("Removing", ProgressMonitor.UNKNOWN);
-        
-        switch (contribution.getType()) {
-        case LIBRARY:
-        case LIBRARY_COMPILATION:
-          if (backupContribution(contribution, true)) {
-            Contribution advertisedVersion = contribListing
-                .getAdvertisedContribution(contribution);
-            
-            if (advertisedVersion == null) {
-              contribListing.removeContribution(contribution);
-            } else {
-              contribListing.replaceContribution(contribution, advertisedVersion);
-            }
-          }
-        case TOOL:
-        case MODE:
+
+        if (ContributionManager.requiresRestart(contribution)) {
           if (backupContribution(contribution, false)) {
             if (flagForDeletion(contribution)) {
               contribListing.replaceContribution(contribution, contribution);
+            }
+          }
+        } else {
+          if (backupContribution(contribution, true)) {
+            Contribution advertisedVersion = contribListing
+                .getAdvertisedContribution(contribution);
+
+            if (advertisedVersion == null) {
+              contribListing.removeContribution(contribution);
+            } else {
+              contribListing.replaceContribution(contribution,
+                                                 advertisedVersion);
             }
           }
         }
@@ -740,6 +739,7 @@ public class ContributionManager {
       backupFolder = createLibraryBackupFolder();
       break;
     case MODE:
+      break;
     case TOOL:
       backupFolder = createToolBackupFolder();
       break;
@@ -987,6 +987,12 @@ public class ContributionManager {
       return new File(installed.getFolder(), DELETION_FLAG).exists();
     }
     return false;
+  }
+  
+  /** Returns true if the type of contribution requires the PDE to restart
+   * when being removed. */
+  static public boolean requiresRestart(Contribution contrib) {
+    return contrib.getType() == Type.TOOL || contrib.getType() == Type.MODE;
   }
   
 }
