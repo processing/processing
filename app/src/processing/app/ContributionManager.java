@@ -44,11 +44,8 @@ public class ContributionManager {
   
   static public final String DELETION_FLAG = "flagged_for_deletion";
   
-  static private final String DRAG_AND_DROP_SECONDARY =
-      ".plb files usually contain contributed libraries for <br>" +
-      "Processing. Click “Yes” to install this library to your<br>" +
-      "sketchbook. If you wish to add this file to your<br>" +
-      "sketch instead, click “No” and use <i>Sketch &gt;<br>Add File...</i>";
+  static private final String DOUBLE_CLICK_SECONDARY =
+      "Click “Yes” to install this library to your sketchbook...";
   
   static private final String DISCOVERY_ERROR_TITLE = "Trouble discovering libraries";
   
@@ -358,14 +355,8 @@ public class ContributionManager {
         case TOOL:
         case MODE:
           if (backupContribution(contribution, false)) {
-            try {
-              File d = new File(contribution.getFolder(), DELETION_FLAG);
-              
-              // Only returns false if the file already exists, in which case
-              // the contribution would have been deleted at start-up anyway
-              d.createNewFile();
-            } catch (IOException e) {
-              e.printStackTrace();
+            if (flagForDeletion(contribution)) {
+              contribListing.replaceContribution(contribution, contribution);
             }
           }
         }
@@ -469,7 +460,7 @@ public class ContributionManager {
     
     int result = Base.showYesNoQuestion(this.editor, "Install",
                              "Install libraries from " + libFile.getName() + "?",
-                             DRAG_AND_DROP_SECONDARY);
+                             DOUBLE_CLICK_SECONDARY);
     
     if (result == JOptionPane.YES_OPTION) {
       return installLibrary(libFile, true);
@@ -973,6 +964,29 @@ public class ContributionManager {
   
   public ContributionListing getListing() {
     return contribListing;
+  }
+  
+  static public boolean flagForDeletion(InstalledContribution contrib) {
+    // Only returns false if the file already exists, so we can
+    // ignore the return value.
+    try {
+      new File(contrib.getFolder(), DELETION_FLAG).createNewFile();
+      return true;
+    } catch (IOException e) {
+      return false;
+    }
+  }
+
+  static public boolean removeFlagForDeletion(InstalledContribution contrib) {
+    return new File(contrib.getFolder(), DELETION_FLAG).delete();
+  }
+  
+  static public boolean isFlaggedForDeletion(Contribution contrib) {
+    if (contrib instanceof InstalledContribution) {
+      InstalledContribution installed = (InstalledContribution) contrib;
+      return new File(installed.getFolder(), DELETION_FLAG).exists();
+    }
+    return false;
   }
   
 }
