@@ -4,6 +4,11 @@ X   re-upload with new version to include javac
 X HTML escapes for < and > not working properly
 X   http://code.google.com/p/processing/issues/detail?id=771
 
+_ library imports failing for libs that define the same packages in 1.5.1
+_   http://code.google.com/p/processing/issues/detail?id=725
+
+_ make application the correct one instead of applet
+
 _ renaming a normal tab to same name with ".java" fails with ".pde" version already exists
 _   http://code.google.com/p/processing/issues/detail?id=776
 
@@ -23,6 +28,9 @@ _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions
 _ sketch.isReadOnly returns false for examples coming from multiple modes
 _   http://code.google.com/p/processing/issues/detail?id=734
+
+_ need to get GLGraphics examples out of the video examples
+_   Examples > Video > GLGraphics
 
 http://support.microsoft.com/kb/184082
 http://msdn.microsoft.com/en-us/library/cc144175%28v=VS.85%29.aspx
