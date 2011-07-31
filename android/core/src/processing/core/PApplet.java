@@ -57,7 +57,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpEntity;
-import org.apache.http.entity.BufferedHttpEntity;
 import java.net.URI;
 
 
@@ -4049,8 +4048,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
         HttpClient httpclient = new DefaultHttpClient();
         HttpResponse response = (HttpResponse) httpclient.execute(httpRequest);
         HttpEntity entity = response.getEntity();
-        BufferedHttpEntity bufHttpEntity = new BufferedHttpEntity(entity); 
-        return bufHttpEntity.getContent();
+        return entity.getContent();
+        // can't use BufferedHttpEntity because it may try to allocate a byte
+        // buffer of the size of the download, bad when DL is 25 MB... [0200]
+//        BufferedHttpEntity bufHttpEntity = new BufferedHttpEntity(entity);   
+//        return bufHttpEntity.getContent();
 
       } catch (MalformedURLException mfue) {
         // not a url, that's fine

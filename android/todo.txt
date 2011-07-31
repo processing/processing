@@ -1,4 +1,6 @@
 0200 android
+X fix BufferedHttpEntity problem 
+X   was trying to allocate a byte buffer for entire size of HTTP file
 
 _ Android mode does not recognize library imports
 _   http://code.google.com/p/processing/issues/detail?id=766
