@@ -29,7 +29,7 @@ import java.io.PrintWriter;
 
 import processing.app.*;
 import processing.core.PApplet;
-import processing.core.PNode;
+import processing.core.XML;
 
 
 public class Manifest {
@@ -52,7 +52,7 @@ public class Manifest {
 //  private String packageName;
   
   /** the manifest data read from the file */
-  private PNode xml;
+  private XML xml;
 
 
 //  public Manifest(Editor editor) {
@@ -93,7 +93,7 @@ public class Manifest {
   static final String PERMISSION_PREFIX = "android.permission.";
   
   public String[] getPermissions() {
-    PNode[] elements = xml.getChildren("uses-permission");
+    XML[] elements = xml.getChildren("uses-permission");
     int count = elements.length;
     String[] names = new String[count];
     for (int i = 0; i < count; i++) {
@@ -105,7 +105,7 @@ public class Manifest {
   
   public void setPermissions(String[] names) {
     // just remove all the old ones
-    for (PNode kid : xml.getChildren("uses-permission")) {
+    for (XML kid : xml.getChildren("uses-permission")) {
       xml.removeChild(kid);
     }
     // ...and add the new kids back
@@ -113,7 +113,7 @@ public class Manifest {
 //      PNode newbie = new PNodeXML("uses-permission");
 //      newbie.setString("android:name", PERMISSION_PREFIX + name);
 //      xml.addChild(newbie);
-      PNode newbie = xml.addChild("uses-permission");
+      XML newbie = xml.addChild("uses-permission");
       newbie.setString("android:name", PERMISSION_PREFIX + name);
     }
     save();
@@ -121,11 +121,11 @@ public class Manifest {
 
 
   public void setClassName(String className) {
-    PNode[] kids = xml.getChildren("application/activity");
+    XML[] kids = xml.getChildren("application/activity");
     if (kids.length != 1) {
       Base.showWarning("Don't touch that", MULTIPLE_ACTIVITIES, null);
     }
-    PNode activity = kids[0];
+    XML activity = kids[0];
     String currentName = activity.getString("android:name");
     // only update if there are changes
     if (currentName == null || !currentName.equals(className)) {
@@ -195,7 +195,7 @@ public class Manifest {
     save(file);
     
     // load the copy from the build location and start messing with it
-    PNode mf = new PNode(new FileReader(file));
+    XML mf = new XML(new FileReader(file));
 
     // package name, or default
     String p = mf.getString("package").trim();
@@ -204,14 +204,14 @@ public class Manifest {
     }
 
     // app name and label, or the class name
-    PNode app = mf.getChild("application");
+    XML app = mf.getChild("application");
     String label = app.getString("android:label");
     if (label.length() == 0) {
       app.setString("android:label", className);
     }
     app.setString("android:debuggable", debug ? "true" : "false");
 
-    PNode activity = app.getChild("activity");
+    XML activity = app.getChild("activity");
     // the '.' prefix is just an alias for the full package name
     // http://developer.android.com/guide/topics/manifest/activity-element.html#name
     activity.setString("android:name", "." + className);  // this has to be right
@@ -231,7 +231,7 @@ public class Manifest {
     File manifestFile = getManifestFile();
     if (manifestFile.exists()) {
       try {
-        xml = new PNode(new FileReader(manifestFile));
+        xml = new XML(new FileReader(manifestFile));
       } catch (Exception e) {
         e.printStackTrace();
         System.err.println("Problem reading AndroidManifest.xml, creating a new version");
@@ -251,7 +251,7 @@ public class Manifest {
     if (xml == null) {
       writeBlankManifest(manifestFile);
       try {
-        xml = new PNode(new FileReader(manifestFile));
+        xml = new XML(new FileReader(manifestFile));
       } catch (FileNotFoundException e) {
         System.err.println("Could not read " + manifestFile.getAbsolutePath());
         e.printStackTrace();
