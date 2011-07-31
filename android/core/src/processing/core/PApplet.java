@@ -3597,7 +3597,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     } else if (extension.equals("svgz")) {
       try {
         InputStream input = new GZIPInputStream(createInput(filename));
-        PNode xml = new PNode(createReader(input));
+        XML xml = new XML(createReader(input));
         return new PShapeSVG(xml);
       } catch (IOException e) {
         e.printStackTrace();
@@ -3635,8 +3635,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   // NODE I/O (XML, JSON, etc.)
   
-  public PNode loadNode(String filename) {
-    return new PNode(this, filename);
+  public XML loadNode(String filename) {
+    return new XML(this, filename);
   }
   
   
