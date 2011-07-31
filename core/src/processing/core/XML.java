@@ -39,7 +39,7 @@ import processing.core.PApplet;
  * This is the base class used for the Processing XML library, 
  * representing a single node of an XML tree.
  */
-public class PNode implements Serializable {
+public class XML implements Serializable {
 
   /** The internal representation, a DOM node. */
   protected Node node;
@@ -48,13 +48,13 @@ public class PNode implements Serializable {
   protected String name;
   
   /** The parent element. */
-  protected PNode parent;
+  protected XML parent;
 
   /** Child elements, once loaded. */
-  protected PNode[] children;
+  protected XML[] children;
   
 
-  protected PNode() { }
+  protected XML() { }
   
   
   /**
@@ -62,7 +62,7 @@ public class PNode implements Serializable {
    * wraps exception handling, for more advanced exception handling,
    * use the constructor that takes a Reader or InputStream.
    */
-  public PNode(PApplet parent, String filename) {
+  public XML(PApplet parent, String filename) {
     this(parent.createReader(filename));
   }
 
@@ -72,7 +72,7 @@ public class PNode implements Serializable {
 //  }
 
 
-  public PNode(Reader reader) {
+  public XML(Reader reader) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 //      factory.setValidating(false);
@@ -123,7 +123,7 @@ public class PNode implements Serializable {
 
   // TODO is there a more efficient way of doing this? wow.
   // i.e. can we use one static document object for all PNodeXML objects?
-  public PNode(String name) {
+  public XML(String name) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       DocumentBuilder builder = factory.newDocumentBuilder();
@@ -147,7 +147,7 @@ public class PNode implements Serializable {
 //  }
 
   
-  protected PNode(PNode parent, Node node) {
+  protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
     
@@ -157,8 +157,8 @@ public class PNode implements Serializable {
   }
   
   
-  static public PNode parse(String xml) { 
-    return new PNode(new StringReader(xml));
+  static public XML parse(String xml) { 
+    return new XML(new StringReader(xml));
   }
 
 
@@ -166,7 +166,7 @@ public class PNode implements Serializable {
    * Returns the parent element. This method returns null for the root
    * element.
    */
-  public PNode getParent() {
+  public XML getParent() {
     return this.parent;
   }
 
@@ -197,9 +197,9 @@ public class PNode implements Serializable {
     if (children == null) {
       NodeList kids = node.getChildNodes();
       int childCount = kids.getLength();
-      children = new PNode[childCount];
+      children = new XML[childCount];
       for (int i = 0; i < childCount; i++) {
-        children[i] = new PNode(this, kids.item(i));
+        children[i] = new XML(this, kids.item(i));
       }
     }
   }
@@ -241,7 +241,7 @@ public class PNode implements Serializable {
   /**
    * Returns an array containing all the child elements.
    */
-  public PNode[] getChildren() {
+  public XML[] getChildren() {
 //    NodeList children = node.getChildNodes();
 //    int childCount = children.getLength();
 //    XMLElement[] kids = new XMLElement[childCount];
@@ -259,7 +259,7 @@ public class PNode implements Serializable {
    * Quick accessor for an element at a particular index.
    * @author processing.org
    */
-  public PNode getChild(int index) {
+  public XML getChild(int index) {
     checkChildren();
     return children[index];
   }
@@ -270,13 +270,13 @@ public class PNode implements Serializable {
    * @param name element name or path/to/element
    * @return the first matching element
    */
-  public PNode getChild(String name) {
+  public XML getChild(String name) {
     if (name.indexOf('/') != -1) {
       return getChildRecursive(PApplet.split(name, '/'), 0);
     }
     int childCount = getChildCount();
     for (int i = 0; i < childCount; i++) {
-      PNode kid = getChild(i);
+      XML kid = getChild(i);
       String kidName = kid.getName();
       if (kidName != null && kidName.equals(name)) {
         return kid;
@@ -293,10 +293,10 @@ public class PNode implements Serializable {
    * @return matching element or null if no match
    * @author processing.org
    */
-  protected PNode getChildRecursive(String[] items, int offset) {
+  protected XML getChildRecursive(String[] items, int offset) {
     // if it's a number, do an index instead
     if (Character.isDigit(items[offset].charAt(0))) {
-      PNode kid = getChild(Integer.parseInt(items[offset]));
+      XML kid = getChild(Integer.parseInt(items[offset]));
       if (offset == items.length-1) {
         return kid;
       } else {
@@ -305,7 +305,7 @@ public class PNode implements Serializable {
     }
     int childCount = getChildCount();
     for (int i = 0; i < childCount; i++) {
-      PNode kid = getChild(i);
+      XML kid = getChild(i);
       String kidName = kid.getName();
       if (kidName != null && kidName.equals(items[offset])) {
         if (offset == items.length-1) {
@@ -326,56 +326,56 @@ public class PNode implements Serializable {
    * @return array of child elements that match
    * @author processing.org
    */
-  public PNode[] getChildren(String name) {
+  public XML[] getChildren(String name) {
     if (name.indexOf('/') != -1) {
       return getChildrenRecursive(PApplet.split(name, '/'), 0);
     }
     // if it's a number, do an index instead
     // (returns a single element array, since this will be a single match
     if (Character.isDigit(name.charAt(0))) {
-      return new PNode[] { getChild(Integer.parseInt(name)) };
+      return new XML[] { getChild(Integer.parseInt(name)) };
     }
     int childCount = getChildCount();
-    PNode[] matches = new PNode[childCount];
+    XML[] matches = new XML[childCount];
     int matchCount = 0;
     for (int i = 0; i < childCount; i++) {
-      PNode kid = getChild(i);
+      XML kid = getChild(i);
       String kidName = kid.getName();
       if (kidName != null && kidName.equals(name)) {
         matches[matchCount++] = kid;
       }
     }
-    return (PNode[]) PApplet.subset(matches, 0, matchCount);
+    return (XML[]) PApplet.subset(matches, 0, matchCount);
   }
 
 
-  protected PNode[] getChildrenRecursive(String[] items, int offset) {
+  protected XML[] getChildrenRecursive(String[] items, int offset) {
     if (offset == items.length-1) {
       return getChildren(items[offset]);
     }
-    PNode[] matches = (PNode[]) getChildren(items[offset]);
-    PNode[] outgoing = new PNode[0];
+    XML[] matches = (XML[]) getChildren(items[offset]);
+    XML[] outgoing = new XML[0];
     for (int i = 0; i < matches.length; i++) {
-      PNode[] kidMatches = matches[i].getChildrenRecursive(items, offset+1);
-      outgoing = (PNode[]) PApplet.concat(outgoing, kidMatches);
+      XML[] kidMatches = matches[i].getChildrenRecursive(items, offset+1);
+      outgoing = (XML[]) PApplet.concat(outgoing, kidMatches);
     }
     return outgoing;
   }
   
   
-  public PNode addChild(String tag) {
+  public XML addChild(String tag) {
     Document document = node.getOwnerDocument();
     Node newChild = document.createElement(tag);
     node.appendChild(newChild);
-    PNode pn = new PNode(this, newChild);
+    XML pn = new XML(this, newChild);
     if (children != null) {
-      children = (PNode[]) PApplet.concat(children, new PNode[] { pn });
+      children = (XML[]) PApplet.concat(children, new XML[] { pn });
     }
     return pn;
   }
 
 
-  public void removeChild(PNode kid) {
+  public void removeChild(XML kid) {
     node.removeChild(kid.node);
     children = null;  // TODO not efficient
   }
