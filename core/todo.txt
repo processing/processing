@@ -1,6 +1,13 @@
 0200 core
 X remove textMode(SCREEN)
 _ enable smooth() by default
+_   better to learn noSmooth() later
+_   disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
+_ document how things are sometimes null in XML
+_   test xml examples to see if they break
+
+_ add resize().. make it call setSize().
+_   also needs to do a redraw if noLoop() has been called
 
 _ trimming text on URLs?
 _   http://code.google.com/p/processing/issues/detail?id=715
