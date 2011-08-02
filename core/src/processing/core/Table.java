@@ -26,8 +26,6 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
 
-//import com.benfry.util.StringIntPairs;
-
 import processing.core.PApplet;
 
 // function that will convert awful CSV to TSV.. or something else?
@@ -59,7 +57,6 @@ import processing.core.PApplet;
  */
 public class Table implements Iterable<TableRow> {
   protected int rowCount;
-//  protected int columnCount;
   
   protected boolean skipEmptyRows = true;
   protected boolean skipCommentLines = true;
@@ -522,6 +519,68 @@ public class Table implements Iterable<TableRow> {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
+  public void addColumn() {
+    addColumn(null, STRING);
+  }
+
+
+  public void addColumn(String title) {
+    addColumn(title, STRING);
+  }
+
+
+  public void addColumn(String title, int type) {
+    insertColumn(columns.length, title, type);    
+  }
+
+    
+  public void insertColumn(int index) {
+    insertColumn(index, null, STRING);
+  }
+
+
+  public void insertColumn(int index, String title) {
+    insertColumn(index, title, STRING);
+  }
+
+
+  public void insertColumn(int index, String title, int type) {
+    if (title != null && columnTitles == null) {
+      columnTitles = new String[columns.length];
+    }
+    if (columnTitles != null) {
+      columnTitles = PApplet.splice(columnTitles, title, index);
+    }
+    columnTypes = PApplet.splice(columnTypes, type, index);
+    
+    Object[] temp = new Object[columns.length + 1];
+    System.arraycopy(columns, 0, temp, 0, index);
+    System.arraycopy(columns, index, temp, index+1, (columns.length - index) + 1);
+    columns = temp;
+
+    switch (type) {
+      case INT: columns[index] = new int[rowCount]; break;
+      case LONG: columns[index] = new long[rowCount]; break;
+      case FLOAT: columns[index] = new float[rowCount]; break;
+      case DOUBLE: columns[index] = new double[rowCount]; break;
+      case STRING: columns[index] = new String[rowCount]; break;
+    }
+  }
+
+
+  public void removeColumn(String dead) {
+    removeColumn(getColumnIndex(dead));
+  }
+
+
+  public void removeColumn(int index) {
+    Object[] temp = new Object[columns.length + 1];
+    System.arraycopy(columns, 0, temp, 0, index);
+    System.arraycopy(columns, index+1, temp, index, (columns.length - index) + 1);
+    columns = temp;
+  }
+
+
   public int getColumnCount() {
     return columns.length;
   }
@@ -547,25 +606,62 @@ public class Table implements Iterable<TableRow> {
     }
   }
 
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  public void setColumnTitle(int col, String title) {
-    checkSize(0, col);
+
+  /**
+   * Remove the first row from the data set, and use it as the column titles.
+   */
+  public String[] removeTitleRow() {
+    String[] titles = getStringRow(0);
+    removeRow(0);
+    setColumnTitles(titles);
+    return titles;
+  }
+      
+
+  public void setColumnTitles(String[] titles) {
+    if (titles != null) {
+      checkColumn(titles.length - 1);
+    }
+    columnTitles = titles;
+    columnIndices = null;  // remove the cache
+  }
+
+  
+  public void setColumnTitle(int column, String title) {
+    checkColumn(column);
     if (columnTitles == null) {
       columnTitles = new String[getColumnCount()];
     }
-    columnTitles[col] = title;
-    if (columnIndices != null) {
-      columnIndices.put(title, col);
-    }
+    columnTitles[column] = title;
+    columnIndices = null;  // reset these fellas
   }
-  
-  
+
+
+  public String[] getColumnTitles() {
+    return columnTitles;
+  }
+
+
   public String getColumnTitle(int col) {
     return (columnTitles == null) ? null : columnTitles[col];
   }
 
 
   public int getColumnIndex(String name) {
+    return getColumnIndex(name, true);
+  }
+
+
+  /**
+   * Get the index of a column.
+   * @param name Name of the column.
+   * @param report Whether to print to System.err if the column wasn't found.
+   * @return index of the found column, or -1 if not found.
+   */
+  protected int getColumnIndex(String name, boolean report) {
     if (columnTitles == null) {
       System.err.println("Can't get column indices because no column titles are set.");
       return -1;
@@ -575,13 +671,14 @@ public class Table implements Iterable<TableRow> {
     if (columnIndices == null) {
       columnIndices = new HashMap<String, Integer>();
       for (int col = 0; col < columns.length; col++) {
-        //columnIndices.put(data[0][col], new Integer(col));
         columnIndices.put(columnTitles[col], col);
       }
     }
     Integer index = (Integer) columnIndices.get(name);
     if (index == null) {
-      System.err.println("No column named '" + name + "' was found.");
+      if (report) {
+        System.err.println("No column named '" + name + "' was found.");
+      }
       return -1;
     }
     return index.intValue();
@@ -590,118 +687,22 @@ public class Table implements Iterable<TableRow> {
   
   /**
    * Same as getColumnIndex(), but creates the column if it doesn't exist.
+   * Named this way to not conflict with checkColumn(), an internal function
+   * used to ensure that a columns exists, and also to denote that it returns
+   * an int for the column index.
    * @param title column title
-   * @return index of a new or existing column
+   * @return index of a new or previously existing column
    */
-  public int checkColumn(String title) {
-    int cols = getColumnCount();
-    if (columnTitles == null) {
-      setColumnTitle(cols, title);
-      return cols;
-      
-    } else {
-      if (columnIndices == null) {
-        columnIndices = new HashMap<String, Integer>();
-        for (int col = 0; col < columns.length; col++) {
-          columnIndices.put(columnTitles[col], col);
-        }
-      }
-      Integer index = (Integer) columnIndices.get(title);
-      if (index != null) {
-        return index.intValue();
-      }
-      //setColumnCount(cols + 1);
-      System.out.println("adding column " + title); 
-      setColumnTitle(cols, title);
-      return cols;
+  public int checkColumnIndex(String title) {
+    int index = getColumnIndex(title, false);
+    if (index != -1) {
+      return index;
     }
+    addColumn(title);
+    return getColumnCount() - 1;
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-  
-  protected RowIterator rowIterator;
-
-  public Iterator<TableRow> iterator() {
-    if (rowIterator == null) {
-      rowIterator = new RowIterator();
-    }
-    rowIterator.reset();
-    return rowIterator;
-  }
-
-
-  public Iterator<TableRow> createIterator() {
-    return new RowIterator();
-  }
-
-
-  class RowIterator implements Iterator<TableRow> {
-    int row;
-    TableRow tableRow = new TableRow() {
-      public String getString(int column) {
-        return Table.this.getString(row, column);
-      }
-
-      public String getString(String columnName) {
-        return Table.this.getString(row, columnName);
-      }
-
-      public int getInt(int column) {
-        return Table.this.getInt(row, column);
-      }
-
-      public int getInt(String columnName) {
-        return Table.this.getInt(row, columnName);
-      }
-
-      public long getLong(int column) {
-        return Table.this.getLong(row, column);
-      }
-
-      public long getLong(String columnName) {
-        return Table.this.getLong(row, columnName);
-      }
-
-      public float getFloat(int column) {
-        return Table.this.getFloat(row, column);
-      }
-
-      public float getFloat(String columnName) {
-        return Table.this.getFloat(row, columnName);
-      }    
-
-      public double getDouble(int column) {
-        return Table.this.getDouble(row, column);
-      }
-
-      public double getDouble(String columnName) {
-        return Table.this.getDouble(row, columnName);
-      }    
-    };
-
-    public void remove() {
-      removeRow(row);
-    }
-
-    public TableRow next() {
-      ++row;
-//      iteratorRow.setRow(row);
-//      return iteratorRow;
-      return tableRow;
-    }
-
-    public boolean hasNext() {
-      return row+1 < getRowCount();
-    }
-    
-    public void reset() {
-      row = -1;
-    }
-  }
-
-  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
@@ -733,6 +734,51 @@ public class Table implements Iterable<TableRow> {
 
   public void addRow(String[] columns) {
     setRow(getRowCount(), columns);
+  }
+
+
+  public void insertRow(int insert, String[] data) {
+    for (int col = 0; col < columns.length; col++) {
+      switch (columnTypes[col]) {
+        case INT: {
+          int[] intTemp = new int[rowCount+1];
+          System.arraycopy(columns[col], 0, intTemp, 0, insert);
+          System.arraycopy(columns[col], insert, intTemp, insert+1, (rowCount - insert) + 1);
+          columns[col] = intTemp;
+          break;
+        }
+        case LONG: {
+          long[] longTemp = new long[rowCount+1];
+          System.arraycopy(columns[col], 0, longTemp, 0, insert);
+          System.arraycopy(columns[col], insert, longTemp, insert+1, (rowCount - insert) + 1);
+          columns[col] = longTemp;
+          break;
+        }
+        case FLOAT: {
+          float[] floatTemp = new float[rowCount+1];
+          System.arraycopy(columns[col], 0, floatTemp, 0, insert);
+          System.arraycopy(columns[col], insert, floatTemp, insert+1, (rowCount - insert) + 1);
+          columns[col] = floatTemp;
+          break;
+        }
+        case DOUBLE: {
+          double[] doubleTemp = new double[rowCount+1];
+          System.arraycopy(columns[col], 0, doubleTemp, 0, insert);
+          System.arraycopy(columns[col], insert, doubleTemp, insert+1, (rowCount - insert) + 1);
+          columns[col] = doubleTemp;
+          break;
+        }
+        case STRING: {
+          String[] stringTemp = new String[rowCount+1];
+          System.arraycopy(columns[col], 0, stringTemp, 0, insert);
+          System.arraycopy(columns[col], insert, stringTemp, insert+1, (rowCount - insert) + 1);
+          columns[col] = stringTemp;
+          break;
+        }
+      }
+    }
+    setRow(insert, data);
+    rowCount++;
   }
 
 
@@ -828,143 +874,140 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void insertRow(int insert, String[] data) {
-    for (int col = 0; col < columns.length; col++) {
-      switch (columnTypes[col]) {
-        case INT: {
-          int[] intTemp = new int[rowCount+1];
-          System.arraycopy(columns[col], 0, intTemp, 0, insert);
-          System.arraycopy(columns[col], insert, intTemp, insert+1, (rowCount - insert) + 1);
-          columns[col] = intTemp;
-          break;
-        }
-        case LONG: {
-          long[] longTemp = new long[rowCount+1];
-          System.arraycopy(columns[col], 0, longTemp, 0, insert);
-          System.arraycopy(columns[col], insert, longTemp, insert+1, (rowCount - insert) + 1);
-          columns[col] = longTemp;
-          break;
-        }
-        case FLOAT: {
-          float[] floatTemp = new float[rowCount+1];
-          System.arraycopy(columns[col], 0, floatTemp, 0, insert);
-          System.arraycopy(columns[col], insert, floatTemp, insert+1, (rowCount - insert) + 1);
-          columns[col] = floatTemp;
-          break;
-        }
-        case DOUBLE: {
-          double[] doubleTemp = new double[rowCount+1];
-          System.arraycopy(columns[col], 0, doubleTemp, 0, insert);
-          System.arraycopy(columns[col], insert, doubleTemp, insert+1, (rowCount - insert) + 1);
-          columns[col] = doubleTemp;
-          break;
-        }
-        case STRING: {
-          String[] stringTemp = new String[rowCount+1];
-          System.arraycopy(columns[col], 0, stringTemp, 0, insert);
-          System.arraycopy(columns[col], insert, stringTemp, insert+1, (rowCount - insert) + 1);
-          columns[col] = stringTemp;
-          break;
-        }
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  protected RowIterator rowIterator;
+
+  /**
+   * Note that this one iterator instance is shared by any calls to iterate the
+   * rows of this table. This is very efficient, but not very thread-safe. If
+   * you want to iterate in a multi-threaded manner, use createIterator(). 
+   */
+  public Iterator<TableRow> iterator() {
+    if (rowIterator == null) {
+      rowIterator = new RowIterator();
+    }
+    rowIterator.reset();
+    return rowIterator;
+  }
+
+
+  public Iterator<TableRow> createIterator() {
+    return new RowIterator();
+  }
+
+
+  // temporary objects inside loop! garbage collection! argh! 
+//  public Iterator<TableRow> iterator() {
+//    return new RowIterator();
+//  }
+
+
+  class RowIterator implements Iterator<TableRow> {
+    int row;
+    TableRow tableRow = new TableRow() {
+      public String getString(int column) {
+        return Table.this.getString(row, column);
       }
+
+      public String getString(String columnName) {
+        return Table.this.getString(row, columnName);
+      }
+
+      public int getInt(int column) {
+        return Table.this.getInt(row, column);
+      }
+
+      public int getInt(String columnName) {
+        return Table.this.getInt(row, columnName);
+      }
+
+      public long getLong(int column) {
+        return Table.this.getLong(row, column);
+      }
+
+      public long getLong(String columnName) {
+        return Table.this.getLong(row, columnName);
+      }
+
+      public float getFloat(int column) {
+        return Table.this.getFloat(row, column);
+      }
+
+      public float getFloat(String columnName) {
+        return Table.this.getFloat(row, columnName);
+      }    
+
+      public double getDouble(int column) {
+        return Table.this.getDouble(row, column);
+      }
+
+      public double getDouble(String columnName) {
+        return Table.this.getDouble(row, columnName);
+      }    
+    };
+
+    public void remove() {
+      removeRow(row);
     }
-    setRow(insert, data);
-    rowCount++;
+
+    public TableRow next() {
+      ++row;
+//      iteratorRow.setRow(row);
+//      return iteratorRow;
+      return tableRow;
+    }
+
+    public boolean hasNext() {
+      return row+1 < getRowCount();
+    }
+    
+    public void reset() {
+      row = -1;
+    }
   }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-
-  public void setColumnName(int column, String what) {
-    checkSize(0, column);
-    if (columnTitles == null) {
-      columnTitles = new String[getColumnCount()];
+  
+  public int getInt(int row, int column) {
+    checkBounds(row, column);
+    if (columnTypes[column] == INT) {
+      int[] intData = (int[]) columns[column];
+      return intData[row]; 
     }
-    columnTitles[column] = what;
-    columnIndices = null;  // reset these fellas
-  }
-
-
-  public void addColumn() {
-    addColumn(null, STRING);
-  }
-
-
-  public void addColumn(String title) {
-    addColumn(title, STRING);
-  }
-
-
-  public void addColumn(String title, int type) {
-    insertColumn(columns.length, title, type);    
-  }
-
-    
-  public void insertColumn(int index) {
-    insertColumn(index, null, STRING);
-  }
-
-
-  public void insertColumn(int index, String title) {
-    insertColumn(index, title, STRING);
-  }
-
-
-  public void insertColumn(int index, String title, int type) {
-    if (title != null && columnTitles == null) {
-      columnTitles = new String[columns.length];
-    }
-    if (columnTitles != null) {
-      columnTitles = PApplet.splice(columnTitles, title, index);
-    }
-    columnTypes = PApplet.splice(columnTypes, type, index);
-    
-    Object[] temp = new Object[columns.length + 1];
-    System.arraycopy(columns, 0, temp, 0, index);
-    System.arraycopy(columns, index, temp, index+1, (columns.length - index) + 1);
-    columns = temp;
-
-    switch (type) {
-      case INT: columns[index] = new int[rowCount]; break;
-      case LONG: columns[index] = new long[rowCount]; break;
-      case FLOAT: columns[index] = new float[rowCount]; break;
-      case DOUBLE: columns[index] = new double[rowCount]; break;
-      case STRING: columns[index] = new String[rowCount]; break;
-    }
-  }
-
-
-  public void removeColumn(String dead) {
-    removeColumn(getColumnIndex(dead));
-  }
-
-
-  public void removeColumn(int index) {
-    Object[] temp = new Object[columns.length + 1];
-    System.arraycopy(columns, 0, temp, 0, index);
-    System.arraycopy(columns, index+1, temp, index, (columns.length - index) + 1);
-    columns = temp;
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  public String[] getStringColumn(String name) {
-    int col = getColumnIndex(name);
-    return (col == -1) ? null : getStringColumn(col);
+    String str = getString(row, column);
+    return (str == null || str.equals(missingString)) ? 
+      missingInt : PApplet.parseInt(str, missingInt);
   }
   
-
-  public String[] getStringColumn(int col) {
-    String[] outgoing = new String[rowCount];
-    for (int i = 0; i < rowCount; i++) {
-      outgoing[i] = getString(i, col);
-    }
-    return outgoing;
+  
+  public int getInt(int row, String columnName) {
+    return getInt(row, getColumnIndex(columnName));
   }
   
+  
+  public void setMissingInt(int value) {
+    missingInt = value;
+  }
+  
+  
+  public void setInt(int row, int column, int what) {
+    if (columnTypes[column] == STRING) {
+      setString(row, column, String.valueOf(what));
+
+    } else {
+      checkSize(row, column);
+      if (columnTypes[column] != INT) {
+        throw new IllegalArgumentException("Column " + column + " is not an int column.");
+      }
+      int[] intData = (int[]) columns[column];
+      intData[row] = what;
+    }
+  }
+
 
   public int[] getIntColumn(String name) {
     int col = getColumnIndex(name);
@@ -980,6 +1023,61 @@ public class Table implements Iterable<TableRow> {
     return outgoing;
   }
   
+  
+  public int[] getIntRow(int row) {
+    int[] outgoing = new int[columns.length];
+    for (int col = 0; col < columns.length; col++) {
+      outgoing[col] = getInt(row, col);
+    }
+    return outgoing;
+  }
+  
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public long getLong(int row, int column) {
+    checkBounds(row, column);
+    if (columnTypes[column] == LONG) {
+      long[] longData = (long[]) columns[column];
+      return longData[row]; 
+    }
+    String str = getString(row, column);
+    if (str == null || str.equals(missingString)) {
+      return missingLong;
+    }
+    try {
+      return Long.parseLong(str);
+    } catch (NumberFormatException nfe) {
+      return missingLong;
+    }
+  }
+
+  
+  public long getLong(int row, String columnName) {
+    return getLong(row, getColumnIndex(columnName));
+  }
+
+
+  public void setMissingLong(long value) {
+    missingLong = value;
+  }
+  
+
+  public void setLong(int row, int column, long what) {
+    if (columnTypes[column] == STRING) {
+      setString(row, column, String.valueOf(what));
+
+    } else {
+      checkSize(row, column);
+      if (columnTypes[column] != LONG) {
+        throw new IllegalArgumentException("Column " + column + " is not a 'long' column.");
+      }
+      long[] longData = (long[]) columns[column];
+      longData[row] = what;
+    }
+  }
+
 
   public long[] getLongColumn(String name) {
     int col = getColumnIndex(name);
@@ -994,8 +1092,64 @@ public class Table implements Iterable<TableRow> {
     }
     return outgoing;
   }
+  
+  
+  public long[] getLongRow(int row) {
+    long[] outgoing = new long[columns.length];
+    for (int col = 0; col < columns.length; col++) {
+      outgoing[col] = getLong(row, col);
+    }
+    return outgoing;
+  }
 
   
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  /**
+   * Get a float value from the specified row and column. If the value is null
+   * or not parseable as a float, the "missing" value is returned. By default, 
+   * this is Float.NaN, but can be controlled with setMissingFloat().
+   */
+  public float getFloat(int row, int column) {
+    checkBounds(row, column);
+    if (columnTypes[column] == FLOAT) {
+      float[] floatData = (float[]) columns[column];
+      return floatData[row]; 
+    }
+    String str = getString(row, column);
+    if (str == null || str.equals(missingString)) {
+      return missingFloat;
+    }
+    return PApplet.parseFloat(str, missingFloat);
+  }
+  
+
+  public float getFloat(int row, String columnName) {
+    return getFloat(row, getColumnIndex(columnName));
+  }
+
+  
+  public void setMissingFloat(float value) {
+    missingFloat = value;
+  }
+
+
+  public void setFloat(int row, int column, float what) {
+    if (columnTypes[column] == STRING) {
+      setString(row, column, String.valueOf(what));
+
+    } else {
+      checkSize(row, column);
+      if (columnTypes[column] != FLOAT) {
+        throw new IllegalArgumentException("Column " + column + " is not a float column.");
+      }
+      float[] longData = (float[]) columns[column];
+      longData[row] = what;
+    }
+  }
+
+
   public float[] getFloatColumn(String name) {
     int col = getColumnIndex(name);
     return (col == -1) ? null : getFloatColumn(col);
@@ -1009,8 +1163,63 @@ public class Table implements Iterable<TableRow> {
     }
     return outgoing;
   }
+  
+  
+  public float[] getFloatRow(int row) {
+    float[] outgoing = new float[columns.length];
+    for (int col = 0; col < columns.length; col++) {
+      outgoing[col] = getFloat(row, col);
+    }
+    return outgoing;
+  }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public double getDouble(int row, int column) {
+    checkBounds(row, column);
+    if (columnTypes[column] == DOUBLE) {
+      double[] doubleData = (double[]) columns[column];
+      return doubleData[row]; 
+    }
+    String str = getString(row, column);
+    if (str == null || str.equals(missingString)) {
+      return missingDouble;
+    }
+    try {
+      return Double.parseDouble(str);
+    } catch (NumberFormatException nfe) {
+      return missingDouble;
+    }
+  }
+
+
+  public double getDouble(int row, String columnName) {
+    return getDouble(row, getColumnIndex(columnName));
+  }
+
+  
+  public void setMissingDouble(double value) {
+    missingDouble = value;
+  }
+
+  
+  public void setDouble(int row, int column, double what) {
+    if (columnTypes[column] == STRING) {
+      setString(row, column, String.valueOf(what));
+
+    } else {
+      checkSize(row, column);
+      if (columnTypes[column] != DOUBLE) {
+        throw new IllegalArgumentException("Column " + column + " is not a 'double' column.");
+      }
+      double[] doubleData = (double[]) columns[column];
+      doubleData[row] = what;
+    }
+  }
+  
+  
   public double[] getDoubleColumn(String name) {
     int col = getColumnIndex(name);
     return (col == -1) ? null : getDoubleColumn(col);
@@ -1026,147 +1235,13 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  public void setMissingString(String value) {
-    missingString = value;
-  }
-
-
-  /**
-   * Get a String value from the table. If the row is longer than the table 
-   * @param row
-   * @param col
-   * @return
-   */
-  public String getString(int row, int col) {
-    if (row < 0 || row >= getRowCount()) {
-      throw new ArrayIndexOutOfBoundsException("Row " + row + " does not exist.");
+  public double[] getDoubleRow(int row) {
+    double[] outgoing = new double[columns.length];
+    for (int col = 0; col < columns.length; col++) {
+      outgoing[col] = getDouble(row, col);
     }
-    if (columnTypes[col] == STRING) {
-      String[] stringData = (String[]) columns[col];
-      return stringData[row];
-    } else {
-      return String.valueOf(Array.get(columns[col], row));
-    }
+    return outgoing;
   }
-
-
-  public String getString(int row, String columnName) {
-    return getString(row, getColumnIndex(columnName));
-  }
-
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  public void setMissingInt(int value) {
-    missingInt = value;
-  }
-  
-  
-  public int getInt(int row, int column) {
-    String str = getString(row, column);
-    return (str == null) ? missingInt : PApplet.parseInt(str, missingInt);
-  }
-  
-  
-  public int getInt(int row, String columnName) {
-    return getInt(row, getColumnIndex(columnName));
-  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-  
-  public void setMissingLong(long value) {
-    missingLong = value;
-  }
-
-  
-  public long getLong(int row, int column) {
-    String str = getString(row, column);
-    return (str == null) ? missingLong : Long.parseLong(str);
-  }
-
-  
-//  public long getLong(String rowName, int column) {
-//    return getLong(getRowIndex(rowName), column);
-//  }
-
-
-  public long getLong(int row, String columnName) {
-    return getLong(row, getColumnIndex(columnName));
-  }
-
-
-//  public long getLong(String rowName, String columnName) {
-//    return getLong(getRowIndex(rowName), getColumnIndex(columnName));
-//  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  public void setMissingFloat(float value) {
-    missingFloat = value;
-  }
-
-  
-  /**
-   * Get a float value from the specified row and column. If the value is null
-   * or not parseable as a float, the "missing" value is returned. By default, 
-   * this is Float.NaN, but can be controlled with setMissingFloat().
-   */
-  public float getFloat(int row, int column) {
-    String str = getString(row, column);
-    return (str == null) ? missingFloat : PApplet.parseFloat(str, missingFloat);
-  }
-  
-
-//  public float getFloat(String rowName, int column) {
-//    return getFloat(getRowIndex(rowName), column);
-//  }
-
-
-  public float getFloat(int row, String columnName) {
-    return getFloat(row, getColumnIndex(columnName));
-  }
-
-
-//  public float getFloat(String rowName, String columnName) {
-//    return getFloat(getRowIndex(rowName), getColumnIndex(columnName));
-//  }
-
-  
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  public void setMissingDouble(double value) {
-    missingDouble = value;
-  }
-
-  
-  public double getDouble(int row, int column) {
-    String str = getString(row, column);
-    return (str == null) ? missingDouble : Double.parseDouble(str);
-  }
-
-
-//  public double getDouble(String rowName, int column) {
-//    return getDouble(getRowIndex(rowName), column);
-//  }
-
-
-  public double getDouble(int row, String columnName) {
-    return getDouble(row, getColumnIndex(columnName));
-  }
-
-
-//  public double getDouble(String rowName, String columnName) {
-//    return getDouble(getRowIndex(rowName), getColumnIndex(columnName));
-//  }
 
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -1210,6 +1285,51 @@ public class Table implements Iterable<TableRow> {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+//  public void setObject(int row, int column, Object value) {
+//    if (value == null) {
+//      data[row][column] = null;
+//    } else if (value instanceof String) {
+//      setString(row, column, (String) value);
+//    } else if (value instanceof Float) { 
+//      setFloat(row, column, ((Float) value).floatValue());
+//    } else if (value instanceof Integer) { 
+//      setInt(row, column, ((Integer) value).intValue());
+//    } else {
+//      setString(row, column, value.toString());
+//    }
+//  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /**
+   * Get a String value from the table. If the row is longer than the table 
+   * @param row
+   * @param col
+   * @return
+   */
+  public String getString(int row, int col) {
+    checkBounds(row, col);
+    if (columnTypes[col] == STRING) {
+      String[] stringData = (String[]) columns[col];
+      return stringData[row];
+    } else {
+      return String.valueOf(Array.get(columns[col], row));
+    }
+  }
+
+
+  public String getString(int row, String columnName) {
+    return getString(row, getColumnIndex(columnName));
+  }
+  
+  
+  public void setMissingString(String value) {
+    missingString = value;
+  }
+  
+  
   public void setString(int row, int column, String what) {
     checkSize(row, column);
     if (columnTypes[column] != STRING) {
@@ -1226,31 +1346,30 @@ public class Table implements Iterable<TableRow> {
   }
 
   
-  public void setInt(int row, int column, int what) {
-    setString(row, column, PApplet.str(what));
+  public String[] getStringColumn(String name) {
+    int col = getColumnIndex(name);
+    return (col == -1) ? null : getStringColumn(col);
   }
+  
 
-
-  public void setFloat(int row, int column, float what) {
-    setString(row, column, PApplet.str(what));
+  public String[] getStringColumn(int col) {
+    String[] outgoing = new String[rowCount];
+    for (int i = 0; i < rowCount; i++) {
+      outgoing[i] = getString(i, col);
+    }
+    return outgoing;
   }
+  
+  
+  public String[] getStringRow(int row) {
+    String[] outgoing = new String[columns.length];
+    for (int col = 0; col < columns.length; col++) {
+      outgoing[col] = getString(row, col);
+    }
+    return outgoing;
+  }  
 
-
-//  public void setObject(int row, int column, Object value) {
-//    if (value == null) {
-//      data[row][column] = null;
-//    } else if (value instanceof String) {
-//      setString(row, column, (String) value);
-//    } else if (value instanceof Float) { 
-//      setFloat(row, column, ((Float) value).floatValue());
-//    } else if (value instanceof Integer) { 
-//      setInt(row, column, ((Integer) value).intValue());
-//    } else {
-//      setString(row, column, value.toString());
-//    }
-//  }
-
-
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
@@ -1374,23 +1493,34 @@ public class Table implements Iterable<TableRow> {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
   
-  // get lists of strings that match in either a row or a column 
-  
-
   /**
    * Return the row that contains the first String that matches.
    * @param what the String to match
    * @param column the column to search
    */
-  public int findString(String what, int column) {
-    if (what == null) {
-      for (int row = 0; row < rowCount; row++) {
-        if (data[row][column] == null) return row;
+  public int findRow(String what, int column) {
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      if (what == null) {
+        for (int row = 0; row < rowCount; row++) {
+          if (stringData[row] == null) return row;
+        }
+      } else {
+        for (int row = 0; row < rowCount; row++) {
+          if (stringData[row] != null && stringData[row].equals(what)) {
+            return row;
+          }
+        }
       }
-    } else {
+    } else {  // less efficient, includes conversion as necessary
       for (int row = 0; row < rowCount; row++) {
-        String value = data[row][column];
-        if (value != null && value.equals(what)) {
+        String str = getString(row, column);
+        if (str == null) {
+          if (what == null) {
+            return row;
+          }
+        } else if (str.equals(what)) {
           return row;
         }
       }
@@ -1404,29 +1534,45 @@ public class Table implements Iterable<TableRow> {
    * @param what the String to match
    * @param columnName the column to search
    */
-  public int findString(String what, String columnName) {
-    return findString(what, getColumnIndex(columnName));
+  public int findRow(String what, String columnName) {
+    return findRow(what, getColumnIndex(columnName));
   }
 
 
   /**
-   * Return a list of rows that contain the String passed in.
+   * Return a list of rows that contain the String passed in. If there are no
+   * matches, a zero length array will be returned (not a null array).
    * @param what the String to match
    * @param column the column to search
    */
-  public int[] findStrings(String what, int column) {
+  public int[] findRows(String what, int column) {
     int[] outgoing = new int[rowCount];
     int count = 0;
-    if (what == null) {
-      for (int row = 0; row < rowCount; row++) {
-        if (data[row][column] == null) {
-          outgoing[count++] = row;
+    
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      if (what == null) {
+        for (int row = 0; row < rowCount; row++) {
+          if (stringData[row] == null) {
+            outgoing[count++] = row;
+          }
+        }
+      } else {
+        for (int row = 0; row < rowCount; row++) {
+          if (stringData[row] != null && stringData[row].equals(what)) {
+            outgoing[count++] = row;
+          }
         }
       }
-    } else {
+    } else {  // less efficient, includes conversion as necessary
       for (int row = 0; row < rowCount; row++) {
-        String value = data[row][column];
-        if (value != null && value.equals(what)) {
+        String str = getString(row, column);
+        if (str == null) {
+          if (what == null) {
+            outgoing[count++] = row;
+          }
+        } else if (str.equals(what)) {
           outgoing[count++] = row;
         }
       }
@@ -1436,63 +1582,138 @@ public class Table implements Iterable<TableRow> {
   
   
   /**
-   * Return a list of rows that contain the String passed in.
+   * Return a list of rows that contain the String passed in. If there are no
+   * matches, a zero length array will be returned (not a null array).
    * @param what the String to match
    * @param columnName the column to search
    */
-  public int[] findStrings(String what, String columnName) {
-    return findStrings(what, getColumnIndex(columnName));
+  public int[] findRows(String what, String columnName) {
+    return findRows(what, getColumnIndex(columnName));
+  }
+  
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  /**
+   * Return the row that contains the first String that matches.
+   * @param what the String to match
+   * @param column the column to search
+   */
+  public int matchRow(String regexp, int column) {
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      for (int row = 0; row < rowCount; row++) {
+        if (stringData[row] != null && 
+            PApplet.match(stringData[row], regexp) != null) {
+          return row;
+        }
+      }
+    } else {  // less efficient, includes conversion as necessary
+      for (int row = 0; row < rowCount; row++) {
+        String str = getString(row, column);
+        if (str != null && 
+            PApplet.match(str, regexp) != null) {
+          return row;
+        }
+      }
+    }
+    return -1;
   }
   
   
   /**
-   * Return the column that contains the first String that matches in a row.
-   * @param row the row to search
+   * Return the row that contains the first String that matches.
    * @param what the String to match
+   * @param columnName the column to search
    */
-//  public int findString(int row, String what) {
-//    if (what == null) {
-//      for (int column = 0; column < columnCount; column++) {
-//        if (data[row][column] == null) return column;
-//      }
-//    } else {
-//      for (int column = 0; column < columnCount; column++) {
-//        String value = data[row][column];
-//        if (value != null && value.equals(what)) {
-//          return column;
-//        }
-//      }
-//    }
-//    return -1;
-//  }
+  public int matchRow(String what, String columnName) {
+    return matchRow(what, getColumnIndex(columnName));
+  }
 
 
   /**
-   * Return a list of columns that contain the String passed in.
-   * @param row the row to search
+   * Return a list of rows that contain the String passed in. If there are no
+   * matches, a zero length array will be returned (not a null array).
    * @param what the String to match
+   * @param column the column to search
    */
-//  public int[] findStrings(int row, String what) {
-//    int[] outgoing = new int[columnCount];
-//    int count = 0;
-//    if (what == null) {
-//      for (int column = 0; column < columnCount; column++) {
-//        if (data[row][column] == null) {
-//          outgoing[count++] = row;
-//        }
-//      }
-//    } else {
-//      for (int column = 0; column < columnCount; column++) {
-//        String value = data[row][column];
-//        if (value != null && value.equals(what)) {
-//          outgoing[count++] = column;
-//        }
-//      }
-//    }
-//    return PApplet.subset(outgoing, 0, count);
-//  }
+  public int[] matchRows(String regexp, int column) {
+    int[] outgoing = new int[rowCount];
+    int count = 0;
+    
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      for (int row = 0; row < rowCount; row++) {
+        if (stringData[row] != null && 
+            PApplet.match(stringData[row], regexp) != null) {
+          outgoing[count++] = row;
+        }
+      }
+    } else {  // less efficient, includes conversion as necessary
+      for (int row = 0; row < rowCount; row++) {
+        String str = getString(row, column);
+        if (str != null && 
+            PApplet.match(str, regexp) != null) {
+          outgoing[count++] = row;
+        }
+      }
+    }
+    return PApplet.subset(outgoing, 0, count);
+  }
   
+  
+  /**
+   * Return a list of rows that match the regex passed in. If there are no
+   * matches, a zero length array will be returned (not a null array).
+   * @param what the String to match
+   * @param columnName the column to search
+   */
+  public int[] matchRows(String what, String columnName) {
+    return matchRows(what, getColumnIndex(columnName));
+  }
+  
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  
+  /**
+   * Return a list of rows that contain the String passed in. If there are no
+   * matches, a zero length array will be returned (not a null array).
+   * @param what the String to match
+   * @param column the column to search
+   */
+  public void replaceAll(String regex, String replacement, int column) {
+    int[] outgoing = new int[rowCount];
+    int count = 0;
+    
+    checkBounds(-1, column);
+    if (columnTypes[column] == STRING) {
+      String[] stringData = (String[]) columns[column];
+      for (int row = 0; row < rowCount; row++) {
+        if (stringData[row] != null) {
+          stringData[row] = stringData[row].replaceAll(regex, replacement);
+        }
+      }
+    } else {
+      throw new IllegalArgumentException("replaceAll() can only be used on String columns");
+    }
+  }
+
+
+  /**
+   * Run String.replaceAll() on all entries in a column.  
+   * Only works with columns that are already String values.
+   * @param what the String to match
+   * @param columnName the column to search
+   */
+  public void replaceAll(String regex, String replacement, String columnName) {
+    replaceAll(regex, replacement, getColumnIndex(columnName));
+  }
+
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1511,22 +1732,25 @@ public class Table implements Iterable<TableRow> {
   
   
   protected void checkSize(int row, int col) {
-//    System.out.println("checking size to set row " + row + ", col " + col);
-//    if (rowCount == 0 && columns.length == 0) {
-//      rowCount = row + 1;
-//      columnCount = col + 1;
-//      data = new String[rowCount][columnCount];
-//    } else {
     checkRow(row);
     checkColumn(col);
-//    }
+  }
+  
+
+  protected void checkBounds(int row, int column) {
+    if (row < 0 || row >= rowCount) {
+      throw new ArrayIndexOutOfBoundsException("Row " + row + " does not exist.");
+    }
+    if (column < 0 || column >= columns.length) {
+      throw new ArrayIndexOutOfBoundsException("Column " + column + " does not exist.");
+    }
   }
 
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public Table subsetRows(int[] rowSubset) {
+  public Table createSubset(int[] rowSubset) {
     Table newbie = new Table();
     newbie.setColumnTitles(columnTitles);  // also sets columns.length
     newbie.columnTypes = columnTypes;
@@ -1535,129 +1759,19 @@ public class Table implements Iterable<TableRow> {
     for (int i = 0; i < rowSubset.length; i++) {
       int row = rowSubset[i];
       for (int col = 0; col < columns.length; col++) {
-        sdSLFKDJSKLJFD
+        switch (columnTypes[col]) {
+          case STRING: newbie.setString(i, col, getString(rowSubset[i], col)); break;
+          case INT: newbie.setInt(i, col, getInt(rowSubset[i], col)); break;
+          case LONG: newbie.setLong(i, col, getLong(rowSubset[i], col)); break;
+          case FLOAT: newbie.setFloat(i, col, getFloat(rowSubset[i], col)); break;
+          case DOUBLE: newbie.setDouble(i, col, getDouble(rowSubset[i], col)); break;
+        }
       }
     }
     return newbie;
   }
   
   
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-//  public void hasColumnTitles(boolean titles) {
-//    boolean titledAlready = (columnTitles != null);
-//    if (titles && !titledAlready) {
-//      
-//
-//    } else if (!titles && titledAlready) {
-//      // take the column titles and put them back
-//    }
-//    if (hasTitleRow != (titleRow != null)) {
-//      titleRow = hasTitleRow;
-//      if (titleRow) {
-//        // grab the titles and set them aside in another array
-//        
-//      }
-//    }
-//  }
-  
-
-  /*
-  public void hasTitles(boolean row, boolean column) {
-    if (row && column) {
-      columnTitles = PApplet.subset(removeRow(0), 1);
-      rowTitles = removeColumn(0);
-
-    } else if (column) {
-      columnTitles = removeRow(0);
-
-    } else if (row) {
-      rowTitles = removeColumn(0);
-    }
-  }
-  */
-
-
-  public void setColumnTitles(String[] titles) {
-    if (titles != null) {
-      // don't add any rows, (using 0 instead of -1 below would add row 0)
-      checkSize(-1, titles.length - 1);
-    }
-    columnTitles = titles;
-    columnIndices = null;  // remove the cache
-  }
-  
-  
-//  public void setRowTitles(String[] titles) {
-//    rowTitles = titles;
-//  }
-
-
-//  public void setTitles() {
-//    setTitles(0, 0);
-//  }
-  
-  
-//  public void setTitles(int row, int column) {
-//    columnTitleRow = 0;
-//    rowTitleColumn = 0;
-//  }
-  
-
-//  /**
-//   * Remove the first row and column from the data set, and use them as 
-//   * the column and row titles.
-//   */
-//  public void removeTitles() {
-//    columnTitles = PApplet.subset(removeRow(0), 1);
-//    rowTitles = removeColumn(0);
-//  }
-  
-  
-//  public void setTitleRow(int row) {
-//    columnTitles = PApplet.subset(removeRow(0), 1);
-//  }
-
-
-  /**
-   * Remove the first row from the data set, and use it as the column titles.
-   */
-  public String[] removeTitleRow() {
-    return removeTitleRow(0);
-  }
-  
-  
-  public String[] removeTitleRow(int row) {
-    columnTitles = removeRow(row);
-    columnIndices = null;
-    return columnTitles;
-  }
-
-
-//  public String[] removeTitleColumn() {
-//    return removeTitleColumn(0);
-//  }
-  
-  
-//  /**
-//   * Remove the specified column from the data set, and use it as the row titles.
-//   */
-//  public String[] removeTitleColumn(int column) {
-//    rowTitles = removeColumn(column);
-//    rowIndices = null;
-//    return rowTitles;
-//  }
-
-
-  public String[] getColumnTitles() {
-    return columnTitles;
-  }
-  
-  
-//  public String[] getRowTitles() {
-//    return rowTitles;
-//  }
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
