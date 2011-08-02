@@ -3,8 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011 Ben Fry and Casey Reas
-  Copyright (c) 2004-11 Ben Fry
+  Copyright (c) 2011- Ben Fry and Casey Reas
+  Copyright (c) 2006-2011 Ben Fry
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -44,6 +44,10 @@ import processing.core.PApplet;
 // todo: need a method to reset the row/column indices after add/remove
 // or just make sure that it's covered for all cases
 
+// no longer the case, ja?
+// <p>By default, empty rows are skipped and so are lines that start with the
+// # character. Using # at the beginning of a line indicates a comment.</p>
+
 
 /**
  * <p>Generic class for handling tabular data, typically from a CSV, TSV, or 
@@ -53,14 +57,12 @@ import processing.core.PApplet;
  * often with the data in quotes. TSV files use tabs as separators, and usually
  * don't bother with the quotes.</p> 
  * <p>File names should end with .csv if they're comma separated.</p>
- * <p>By default, empty rows are skipped and so are lines that start with the
- * # character. Using # at the beginning of a line indicates a comment.</p>
  */
 public class Table implements Iterable<Table.Row> {
   protected int rowCount;
   
-  protected boolean skipEmptyRows = true;
-  protected boolean skipCommentLines = true;
+//  protected boolean skipEmptyRows = true;
+//  protected boolean skipCommentLines = true;
   protected boolean commaSeparatedValues = false;
   protected boolean awfulCSV = false;
   
@@ -1059,7 +1061,7 @@ public class Table implements Iterable<Table.Row> {
 
   class RowIterator implements Iterator<Row> {
     int row;
-    TableRow tableRow = new TableRow() {
+    Row tableRow = new Row() {
       public String getString(int column) {
         return Table.this.getString(row, column);
       }
