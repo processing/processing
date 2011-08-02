@@ -4,6 +4,7 @@
   Part of the Processing project - http://processing.org
 
   Copyright (c) 2011 Ben Fry and Casey Reas
+  Copyright (c) 2004-11 Ben Fry
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -55,7 +56,7 @@ import processing.core.PApplet;
  * <p>By default, empty rows are skipped and so are lines that start with the
  * # character. Using # at the beginning of a line indicates a comment.</p>
  */
-public class Table implements Iterable<TableRow> {
+public class Table implements Iterable<Table.Row> {
   protected int rowCount;
   
   protected boolean skipEmptyRows = true;
@@ -104,6 +105,7 @@ public class Table implements Iterable<TableRow> {
    */
   public Table() {
     columns = new Object[0];
+    columnTypes = new int[0];
   }
 
   
@@ -599,13 +601,142 @@ public class Table implements Iterable<TableRow> {
       if (columnTitles != null) {
         columnTitles = PApplet.expand(columnTitles, newCount);
       }
-      if (columnTypes != null) {
-        columnTypes = PApplet.expand(columnTypes, newCount);
-      }
+//      if (columnTypes != null) {
+      columnTypes = PApplet.expand(columnTypes, newCount);
+//      }
       //columnCount = newCount; 
     }
   }
 
+
+  public void setColumnType(String columnName, String columnType) {
+    setColumnType(getColumnIndex(columnName), columnType);
+  }
+
+
+  /**
+   * Set the data type for a column so that using it is more efficient. 
+   * @param column the column to change
+   * @param columnType One of int, long, float, double, or String. 
+   */
+  public void setColumnType(int column, String columnType) {
+    int type = -1;
+    if (columnType.equals("String")) {
+      type = STRING;
+    } else if (columnType.equals("int")) {
+      type = INT;
+    } else if (columnType.equals("long")) {
+      type = LONG;
+    } else if (columnType.equals("float")) {
+      type = FLOAT;
+    } else if (columnType.equals("double")) {
+      type = DOUBLE;
+    } else {
+      throw new IllegalArgumentException("'" + columnType + "' is not a valid column type.");
+    }
+    setColumnType(column, type);
+  }
+  
+  
+  protected void setColumnType(String columnName, int newType) {
+    setColumnType(getColumnIndex(columnName), newType);
+  }
+  
+  
+  /**
+   * Sets the column type. If data already exists, then it'll be converted to 
+   * the new type. 
+   * @param column the column whose type should be changed
+   * @param newType something fresh, maybe try an int or a float for size?
+   */
+  protected void setColumnType(int column, int newType) {
+    switch (newType) {
+      case INT: {
+        int[] intData = new int[rowCount];
+        for (int row = 0; row < rowCount; row++) {
+          String s = getString(row, column);
+          intData[row] = PApplet.parseInt(s, missingInt);
+        }
+        columns[column] = intData;
+        break;
+      }
+      case LONG: {
+        long[] longData = new long[rowCount];
+        for (int row = 0; row < rowCount; row++) {
+          String s = getString(row, column);
+          try {
+            longData[row] = Long.parseLong(s);
+          } catch (NumberFormatException nfe) {
+            longData[row] = missingLong;
+          }
+        }
+        columns[column] = longData;
+        break;
+      }
+      case FLOAT: {
+        float[] floatData = new float[rowCount];
+        for (int row = 0; row < rowCount; row++) {
+          String s = getString(row, column);
+          floatData[row] = PApplet.parseFloat(s, missingFloat);
+        }
+        columns[column] = floatData;
+        break;
+      }
+      case DOUBLE: {
+        double[] doubleData = new double[rowCount];
+        for (int row = 0; row < rowCount; row++) {
+          String s = getString(row, column);
+          try {
+            doubleData[row] = Double.parseDouble(s);
+          } catch (NumberFormatException nfe) {
+            doubleData[row] = missingDouble;
+          }
+        }
+        columns[column] = doubleData;
+        break;
+      }
+      case STRING: {
+        if (columnTypes[column] != STRING) {
+          String[] stringData = new String[rowCount];
+          for (int row = 0; row < rowCount; row++) {
+            stringData[row] = getString(row, column);
+          }
+          columns[column] = stringData;
+        }
+        break;
+      }
+      default: {
+        throw new IllegalArgumentException("That's not a valid column type.");
+      }
+    }
+    columnTypes[column] = newType;
+  }
+  
+  
+  /**
+   * Set the entire table to a specific data type.
+   */
+  public void setTableType(String type) {
+    for (int col = 0; col < columns.length; col++) {
+      setColumnType(col, type);
+    }
+  }
+
+
+  /**
+   * Set the titles (and if a second column is present) the data types for
+   * this table based on a file loaded separately. 
+   * @param dictionary
+   */
+  public void setTableInfo(Table dictionary) {
+    setColumnTitles(dictionary.getStringColumn(0));
+    if (dictionary.getColumnCount() > 1) {
+      for (int i = 0; i < rowCount; i++) {
+        setColumnType(i, dictionary.getString(i, 1));
+      }
+    }
+  }
+  
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -840,41 +971,63 @@ public class Table implements Iterable<TableRow> {
   public void setRow(int row, String[] pieces) {
     checkSize(row, pieces.length - 1);
     for (int col = 0; col < columns.length; col++) {
-      switch (columnTypes[col]) {
+      setRowCol(row, col, pieces[col]);
+    }
+  }
+  
+  
+  protected void setRowCol(int row, int col, String piece) {
+    switch (columnTypes[col]) {
       case STRING:
         String[] stringData = (String[]) columns[col];
-        stringData[row] = pieces[col];
+        stringData[row] = piece;
         break;
       case INT:
         int[] intData = (int[]) columns[col];
-        intData[row] = PApplet.parseInt(pieces[col], missingInt);
+        intData[row] = PApplet.parseInt(piece, missingInt);
         break;
       case LONG:
         long[] longData = (long[]) columns[col];
         try {
-          longData[row] = Long.parseLong(pieces[col]);
+          longData[row] = Long.parseLong(piece);
         } catch (NumberFormatException nfe) {
           longData[row] = missingLong;
         }
         break;
       case FLOAT:
         float[] floatData = (float[]) columns[col];
-        floatData[row] = PApplet.parseFloat(pieces[col], missingFloat);
+        floatData[row] = PApplet.parseFloat(piece, missingFloat);
         break;
       case DOUBLE:
         double[] doubleData = (double[]) columns[col];
         try {
-          doubleData[row] = Double.parseDouble(pieces[col]);
+          doubleData[row] = Double.parseDouble(piece);
         } catch (NumberFormatException nfe) {
           doubleData[row] = missingDouble;
         }
         break;
-      }
+      default: 
+        throw new IllegalArgumentException("That's not a valid column type.");
     }
   }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  public interface Row {
+
+    public String getString(int column);
+    public String getString(String columnName);
+    public int getInt(int column);
+    public int getInt(String columnName);
+    public long getLong(int column);
+    public long getLong(String columnName);
+    public float getFloat(int column);
+    public float getFloat(String columnName);
+    public double getDouble(int column);
+    public double getDouble(String columnName);
+  }
 
   
   protected RowIterator rowIterator;
@@ -884,7 +1037,7 @@ public class Table implements Iterable<TableRow> {
    * rows of this table. This is very efficient, but not very thread-safe. If
    * you want to iterate in a multi-threaded manner, use createIterator(). 
    */
-  public Iterator<TableRow> iterator() {
+  public Iterator<Row> iterator() {
     if (rowIterator == null) {
       rowIterator = new RowIterator();
     }
@@ -893,7 +1046,7 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public Iterator<TableRow> createIterator() {
+  public Iterator<Row> createIterator() {
     return new RowIterator();
   }
 
@@ -904,7 +1057,7 @@ public class Table implements Iterable<TableRow> {
 //  }
 
 
-  class RowIterator implements Iterator<TableRow> {
+  class RowIterator implements Iterator<Row> {
     int row;
     TableRow tableRow = new TableRow() {
       public String getString(int column) {
@@ -952,7 +1105,7 @@ public class Table implements Iterable<TableRow> {
       removeRow(row);
     }
 
-    public TableRow next() {
+    public Row next() {
       ++row;
 //      iteratorRow.setRow(row);
 //      return iteratorRow;
