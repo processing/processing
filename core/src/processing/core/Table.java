@@ -97,6 +97,7 @@ public class Table implements Iterable<TableRow> {
    * Creates a new, empty table. Use addRow() to add additional rows.
    */
   public Table() {
+    columns = new Object[0];
   }
 
   
@@ -509,6 +510,9 @@ public class Table implements Iterable<TableRow> {
   }
 
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
   public int getColumnCount() {
     return columns.length;
   }
@@ -523,6 +527,7 @@ public class Table implements Iterable<TableRow> {
   public void setColumnCount(int newCount) {
     if (columns.length != newCount) {
       columns = (Object[]) PApplet.expand(columns, newCount);
+      
       if (columnTitles != null) {
         columnTitles = PApplet.expand(columnTitles, newCount);
       }
@@ -560,14 +565,14 @@ public class Table implements Iterable<TableRow> {
     // also update this array, but only if it exists. 
     if (columnIndices == null) {
       columnIndices = new HashMap<String, Integer>();
-      for (int col = 0; col < columnCount; col++) {
+      for (int col = 0; col < columns.length; col++) {
         //columnIndices.put(data[0][col], new Integer(col));
         columnIndices.put(columnTitles[col], col);
       }
     }
     Integer index = (Integer) columnIndices.get(name);
     if (index == null) {
-//      System.err.println("No column named '" + name + "' was found.");
+      System.err.println("No column named '" + name + "' was found.");
       return -1;
     }
     return index.intValue();
@@ -579,18 +584,16 @@ public class Table implements Iterable<TableRow> {
    * @param title column title
    * @return index of a new or existing column
    */
-  public int checkColumnIndex(String title) {
+  public int checkColumn(String title) {
     int cols = getColumnCount();
     if (columnTitles == null) {
-      //setColumnCount(cols + 1);
       setColumnTitle(cols, title);
       return cols;
       
     } else {
       if (columnIndices == null) {
         columnIndices = new HashMap<String, Integer>();
-        for (int col = 0; col < columnCount; col++) {
-          //columnIndices.put(data[0][col], new Integer(col));
+        for (int col = 0; col < columns.length; col++) {
           columnIndices.put(columnTitles[col], col);
         }
       }
@@ -724,15 +727,7 @@ public class Table implements Iterable<TableRow> {
 
 
   public void addRow(String[] columns) {
-    addRow();
-    setColumnCount(columns.length);
-    if (!typed) {
-      PApplet.arrayCopy(columns, data[rowCount-1]);
-    } else {
-      for (int i = 0; i < columns.length; i++) {
-        
-      }
-    }
+    setRow(getRowCount(), columns);
   }
 
 
@@ -947,12 +942,13 @@ public class Table implements Iterable<TableRow> {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   public void trim() {
-    for (int row = 0; row < rowCount; row++) {
-      for (int col = 0; col < columnCount; col++) {
-        if (data[row][col] != null) {
-          data[row][col] = PApplet.trim(data[row][col]);
+    for (int col = 0; col < columns.length; col++) {
+      String[] stringData = (String[]) columns[col];
+      for (int row = 0; row < rowCount; row++) {
+        if (stringData[row] != null) {
+          stringData[row] = PApplet.trim(stringData[row]);
         }
       }
     }
@@ -962,19 +958,56 @@ public class Table implements Iterable<TableRow> {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public void setStringRow(int row, String[] what) {
-    checkSize(row, what.length-1);
-    data[row] = what;
-  }
-  
-  
-  public String[] getStringRow(int row) {
-    String[] outgoing = new String[columnCount];
-    for (int i = 0; i < columnCount; i++) {
-      outgoing[i] = getString(row, i);
+  public void setRow(int row, String[] pieces) {
+    checkColumn(pieces.length - 1);
+    for (int col = 0; col < columns.length; col++) {
+      switch (columnTypes[col]) {
+      case STRING:
+        String[] stringData = (String[]) columns[col];
+        stringData[row] = pieces[col];
+        break;
+      case INT:
+        int[] intData = (int[]) columns[col];
+        intData[row] = PApplet.parseInt(pieces[col], missingInt);
+        break;
+      case LONG:
+        long[] longData = (long[]) columns[col];
+        try {
+          longData[row] = Long.parseLong(pieces[col]);
+        } catch (NumberFormatException nfe) {
+          longData[row] = missingLong;
+        }
+        break;
+      case FLOAT:
+        float[] floatData = (float[]) columns[col];
+        floatData[row] = PApplet.parseFloat(pieces[col], missingFloat);
+        break;
+      case DOUBLE:
+        double[] doubleData = (double[]) columns[col];
+        try {
+          doubleData[row] = Double.parseDouble(pieces[col]);
+        } catch (NumberFormatException nfe) {
+          doubleData[row] = missingDouble;
+        }
+        break;
+      }
     }
-    return outgoing;
   }
+    
+
+//  public void setStringRow(int row, String[] what) {
+//    checkSize(row, what.length-1);
+//    data[row] = what;
+//  }
+
+
+//  public String[] getStringRow(int row) {
+//    String[] outgoing = new String[columnCount];
+//    for (int i = 0; i < columnCount; i++) {
+//      outgoing[i] = getString(row, i);
+//    }
+//    return outgoing;
+//  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -1555,19 +1588,8 @@ public class Table implements Iterable<TableRow> {
 
 
   protected void checkColumn(int col) {
-    if (col >= columnCount) {
-//      if (expanding) {
-//        int dubble = columnCount << 1; 
-//        if (dubble > col) {
-//          // if big enough, just continue the doubling
-//          setColumnCount(dubble);
-//        } else {
-//          // just go arbitrarily large
-//          setColumnCount(col << 1);
-//        }
-//      } else {
+    if (col >= columns.length) {
       setColumnCount(col + 1);
-//      }
     }
   }
   
