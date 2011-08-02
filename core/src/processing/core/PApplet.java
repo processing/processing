@@ -9894,17 +9894,13 @@ public class PApplet extends Applet
   }
 
 
+/** ??? */
   public void rect(float a, float b, float c, float d, float r) {
     if (recorder != null) recorder.rect(a, b, c, d, r);
     g.rect(a, b, c, d, r);
   }
 
-/**
- * @param tl ???
- * @param tr ???
- * @param br ???
- * @param bl ???
- */
+
   public void rect(float a, float b, float c, float d,
                    float tl, float tr, float br, float bl) {
     if (recorder != null) recorder.rect(a, b, c, d, tl, tr, br, bl);
@@ -10734,7 +10730,7 @@ public class PApplet extends Applet
    * will be used in all subsequent calls to the <b>text()</b> function.
    * ( end auto-generated )
    * @webref typography:attributes
-   * @param leading the sie in pixels for spacing between lines
+   * @param leading the size in pixels for spacing between lines
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float, float, float, float)
@@ -10821,7 +10817,7 @@ public class PApplet extends Applet
    * Calculates and returns the width of any character or text string.
    * ( end auto-generated )
    * @webref typography:attributes
-   * @param str ???
+   * @param str
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float, float, float, float)
@@ -12090,6 +12086,7 @@ public class PApplet extends Applet
 
 
 /**
+ * @nowebref
  * @param alpha opacity of the stroke
  */
   public void stroke(int rgb, float alpha) {
@@ -12099,6 +12096,7 @@ public class PApplet extends Applet
 
 
   /**
+   * @notWebref
    * @param gray specifies a value between white and black
    */
   public void stroke(float gray) {
@@ -12106,6 +12104,10 @@ public class PApplet extends Applet
     g.stroke(gray);
   }
 
+
+/**
+ * @notWebref
+ */
   public void stroke(float gray, float alpha) {
     if (recorder != null) recorder.stroke(gray, alpha);
     g.stroke(gray, alpha);
@@ -12273,7 +12275,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref color:setting
    * @usage web_application
-   * @param rgb color value in hexadecimal notation (i.e. #FFCC00 or 0xFFFFCC00) or any value of the color datatype
+   * @param rgb ???
    * @see PGraphics#noFill()
    * @see PGraphics#stroke(int, float)
    * @see PGraphics#tint(int, float)
@@ -13065,12 +13067,18 @@ public class PApplet extends Applet
   }
 
 
+ /**
+  * @nowebref
+  */
   public void texture(PImage... images) {
     if (recorder != null) recorder.texture(images);
     g.texture(images);
   }
 
 
+  /**
+  * @nowebref
+  */
   public void vertex(float... values) {
     if (recorder != null) recorder.vertex(values);
     g.vertex(values);
@@ -13300,7 +13308,8 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref pimage:pixels
    * @usage web_application
-   * @param maskArray any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
+   * @brief Masks part of an image with another image as an alpha channel
+   * @param maskArray[] any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
    */
   public void mask(int maskArray[]) {
     if (recorder != null) recorder.mask(maskArray);
