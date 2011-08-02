@@ -6627,12 +6627,32 @@ public class PApplet extends Applet
     return temp;
   }
 
+  static public long[] expand(long list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public long[] expand(long list[], int newSize) {
+    long temp[] = new long[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
   static public float[] expand(float list[]) {
     return expand(list, list.length << 1);
   }
 
   static public float[] expand(float list[], int newSize) {
     float temp[] = new float[newSize];
+    System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
+    return temp;
+  }
+
+  static public double[] expand(double list[]) {
+    return expand(list, list.length << 1);
+  }
+
+  static public double[] expand(double list[], int newSize) {
+    double temp[] = new double[newSize];
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
