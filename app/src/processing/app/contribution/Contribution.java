@@ -29,7 +29,7 @@ public interface Contribution {
   // "pdf" or "PDF Export"
   String getName();
 
-  // "Ben Fry"
+  // "[Ben Fry](http://benfry.com/)"
   String getAuthorList();
 
   // "http://processing.org"
