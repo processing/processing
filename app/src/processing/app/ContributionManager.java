@@ -609,11 +609,8 @@ public class ContributionManager {
     // Move newTool to the sketchbook library folder
     if (newTool.getFolder().renameTo(newToolDest)) {
       ToolContribution movedTool = ToolContribution.getTool(newToolDest);
-      try {
-        movedTool.initializeToolClass();
+      if (movedTool.instantiateToolClass()) {
         return movedTool;
-      } catch (Exception e) {
-        e.printStackTrace();
       }
     } else {
       Base.showWarning("Trouble moving new tool to the sketchbook",

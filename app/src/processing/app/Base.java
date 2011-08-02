@@ -27,16 +27,14 @@ import java.awt.event.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.zip.*;
 
 import javax.swing.*;
 import javax.swing.tree.*;
 
+import processing.app.contribution.InstalledContribution;
 import processing.core.*;
-import processing.mode.android.AndroidMode;
-import processing.mode.javascript.JavaScriptMode;
-import processing.mode.java.*;
-
 
 /**
  * The base class for the main processing application.
@@ -93,9 +91,8 @@ public class Base {
   static public JMenu defaultFileMenu;
 
   private Mode defaultMode;
-//  private Mode androidMode;
-  private Mode[] modeList;
-//  private JMenu modeMenu;
+  private Mode[] coreModes;
+  private List<ModeContribution> contribModes;
 
   private JMenu sketchbookMenu;
 
@@ -110,8 +107,7 @@ public class Base {
         }
     });
   }
-
-
+  
   static private void createAndShowGUI(String[] args) {
     try {
       File versionFile = getContentFile("lib/version.txt");
@@ -216,26 +212,55 @@ public class Base {
   }
 
 
-  public Base(String[] args) {
-    // TODO this will be dynamically loading modes in no time
-    defaultMode = new JavaMode(this, getContentFile("modes/java"));
-    Mode androidMode = new AndroidMode(this, getContentFile("modes/android"));
-        Mode javaScriptMode = new JavaScriptMode(this, getContentFile("modes/javascript"));
-    modeList = new Mode[] { defaultMode, androidMode, javaScriptMode };
-//    modeList = new Mode[] { defaultMode, androidMode };
+  private void buildCoreModes() {
+        defaultMode = ModeContribution
+        .getCoreMode(this, "processing.mode.java.JavaMode",
+                     getContentFile("modes/java"));
+    Mode androidMode = ModeContribution
+        .getCoreMode(this, "processing.mode.android.AndroidMode",
+                     getContentFile("modes/android"));
+    Mode javaScriptMode = ModeContribution
+        .getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
+                     getContentFile("modes/javascript"));
     
+    coreModes = new Mode[] { defaultMode, androidMode, javaScriptMode };
+  }
+  
+  /** Instantiates and adds new contributed modes to the contribModes list. 
+   * Checks for duplicates so the same mode isn't instantiates twice. Does not
+   * remove modes because modes can't be removed once they are instantiated */
+  void rebuildContribModes() {
+    if (contribModes == null)
+      contribModes = new ArrayList<ModeContribution>();
+
+    ArrayList<ModeContribution> newContribs = ModeContribution
+        .list(this, getSketchbookModesFolder(), false);
+    for (ModeContribution contrib : newContribs) {
+      if (!contribModes.contains(contrib)) {
+        if (contrib.instantiateModeClass()) {
+          contribModes.add(contrib);
+        }
+      }
+    }
+  }
+  
+  public Base(String[] args) {
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
     
-    // Delete all tools that have been flagged for deletion before they are
-    // initialized by an editor.
-    for (ToolContribution contrib : ToolContribution
-        .list(getSketchbookToolsFolder(), false)) {
-      
+    // Delete all modes and tools that have been flagged for deletion before
+    // they are initialized by an editor.
+    ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
+    contribs.addAll(ModeContribution.list(this, getSketchbookModesFolder(), false));
+    contribs.addAll(ToolContribution.list(getSketchbookToolsFolder(), false));
+    for (InstalledContribution contrib : contribs) {
       if (ContributionManager.isFlaggedForDeletion(contrib)) {
         removeDir(contrib.getFolder());
       }
     }
+    
+    buildCoreModes();
+    rebuildContribModes();
     
     contributionManagerFrame = new ContributionManager();
     
@@ -326,7 +351,7 @@ public class Base {
 //      } catch (IllegalAccessException e) {
 //        e.printStackTrace();
 //      }
-      for (Mode m : modeList) {
+      for (Mode m : getModeList()) {
         if (m.getClass().getName().equals(lastMode)) {
           defaultMode = m;
         }
@@ -571,8 +596,13 @@ public class Base {
   }
 
 
-  public Mode[] getModeList() {
-    return modeList;
+  public ArrayList<Mode> getModeList() {
+    ArrayList<Mode> allModes = new ArrayList<Mode>();
+    allModes.addAll(Arrays.asList(coreModes));
+    for (ModeContribution contrib : contribModes) {
+      allModes.add(contrib.getMode());
+    }
+    return allModes;
   }
 
 
@@ -810,7 +840,7 @@ public class Base {
     //fd.setDirectory(getSketchbookPath());
 
     final ArrayList<String> extensions = new ArrayList<String>();
-    for (Mode mode : modeList) {
+    for (Mode mode : getModeList()) {
       extensions.add(mode.getDefaultExtension());
     }
 
@@ -917,14 +947,14 @@ public class Base {
 //      if (editors.size() == 0 && defaultFileMenu == null) {
       // if it's not mode[0] already, then don't go into an infinite loop
       // trying to recreate a window with the default mode.
-      if (nextMode == modeList[0]) {
+      if (nextMode == defaultMode) {
         Base.showError("Editor Problems",
                        "An error occurred while trying to change modes.\n" +
                        "We'll have to quit for now because it's an\n" +
                        "unfortunate bit of indigestion.",
                        null);
       } else {
-        editor = modeList[0].createEditor(this, path, location);
+        editor = defaultMode.createEditor(this, path, location);
       }
     }
 
@@ -945,7 +975,7 @@ public class Base {
 
 
   protected Mode findMode(String title) {
-    for (Mode mode : modeList) {
+    for (Mode mode : getModeList()) {
       if (mode.getTitle().equals(title)) {
         return mode;
       }
@@ -1124,7 +1154,7 @@ public class Base {
    */
   protected void rebuildSketchbookMenus() {
     rebuildSketchbookMenu();
-    for (Mode mode : modeList) {
+    for (Mode mode : getModeList()) {
       //mode.rebuildLibraryList();
       mode.rebuildImportMenu();  // calls rebuildLibraryList
       mode.rebuildToolbarMenu();
@@ -1343,7 +1373,7 @@ public class Base {
    * prefer that one over the others.
    */
   File checkSketchFolder(File subfolder, String item) {
-    for (Mode mode : modeList) {
+    for (Mode mode : getModeList()) {
       File entry = new File(subfolder, item + "." + mode.getDefaultExtension());
       // if a .pde file of the same prefix as the folder exists..
       if (entry.exists()) {
@@ -1696,7 +1726,11 @@ public class Base {
   public File getSketchbookToolsFolder() {
     return new File(sketchbookFolder, "tools");
   }
-
+  
+  public File getSketchbookModesFolder() {
+  //  return new File(getSketchbookFolder(), "libraries");
+    return new File(sketchbookFolder, "modes");
+  }
 
   static protected File getDefaultSketchbookFolder() {
     File sketchbookFolder = null;
