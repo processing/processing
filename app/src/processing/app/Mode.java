@@ -12,7 +12,6 @@ import javax.swing.tree.*;
 import processing.app.syntax.*;
 //import processing.app.tools.Tool;
 
-
 public abstract class Mode {
   protected Base base;
   
