@@ -23,6 +23,7 @@
 package processing.core;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 //import com.benfry.util.StringIntPairs;
@@ -31,6 +32,11 @@ import processing.core.PApplet;
 
 // function that will convert awful CSV to TSV.. or something else?
 //   maybe to write binary instead? then read the binary file once it's ok?
+
+// if loading from a File object (or PApplet is passed in and we can check online) 
+// then check the (probable) size of the file before loading
+
+// implement binary tables
 
 // no column max/min functions since it needs to be per-datatype
 // better to use float mx = max(float(getColumn(3)));
@@ -870,6 +876,16 @@ public class Table implements Iterable<TableRow> {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  public void setColumnName(int column, String what) {
+    checkSize(0, column);
+    if (columnTitles == null) {
+      columnTitles = new String[getColumnCount()];
+    }
+    columnTitles[column] = what;
+    columnIndices = null;  // reset these fellas
+  }
+
+
   public void addColumn() {
     addColumn(null, STRING);
   }
@@ -930,153 +946,8 @@ public class Table implements Iterable<TableRow> {
     System.arraycopy(columns, index+1, temp, index, (columns.length - index) + 1);
     columns = temp;
   }
-  
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  public String[] getUniqueEntries(String column) {
-    return getUniqueEntries(getColumnIndex(column));
-  }
-
-  
-  class HashMapSucks extends HashMap<String,Integer> {
-    void increment(String what) {
-      Integer value = get(what);
-      if (value == null) {
-        put(what, 1);
-      } else {
-        put(what, value + 1);
-      }
-    }
-    
-//    void check(String what) {
-//      if (get(what) == null) {
-//        put(what, new Object());
-//      }
-//    }
-  }
-  
-  
-  public String[] getUniqueEntries(int column) {
-    HashMap<String,Object> found = new HashMap<String, Object>();
-    for (int row = 0; row < getRowCount(); row++) {
-      String s = getString(row, column);
-      if (found.get(s) == null) {
-        found.put(s, new Object());
-      }
-    }
-    String[] outgoing = new String[found.size()];
-    found.keySet().toArray(outgoing);
-    return outgoing;
-//    for (int i = 0; i < outgoing.length; i++) {
-//      outgoing[i] = found.keySet().toArray(outgoing);
-//    }
-//    
-//    return sc.keys();
-  }
-
-
-  public HashMap<String,Integer> getStringCount(String columnName) {
-    return getStringCount(getColumnIndex(columnName));
-  }
-
-
-  public HashMap<String,Integer> getStringCount(int column) {
-    HashMapSucks outgoing = new HashMapSucks();
-    for (int row = 0; row < rowCount; row++) {
-      String entry = data[row][column];
-      if (entry != null) {
-        outgoing.increment(entry);
-      }
-    }
-    return outgoing;
-  }
-
-
-  /**
-   * Return an object that maps the String values in one column back to the 
-   * row from which they came. For instance, if the "name" of each row is 
-   * found in the first column, getColumnRowLookup(0) would return an object
-   * that would map each name back to its row. 
-   */
-  public HashMap<String,Integer> getLookup(int col) {
-    HashMap<String,Integer> outgoing = new HashMap<String, Integer>();
-    for (int row = 0; row < getRowCount(); row++) {
-      outgoing.put(getString(row, col), row);
-    }
-    return outgoing;
-  }
-  
-  
- //  public StringIntPairs getColumnRowLookup(int col) {
-//    StringIntPairs sc = new StringIntPairs();
-//    String[] column = getStringColumn(col);
-//    for (int i = 0; i < column.length; i++) {
-//      sc.set(column[i], i);
-//    }
-//    return sc;
-//  }
-
-
-//  public String[] getUniqueEntries(int column) {
-////    HashMap indices = new HashMap();
-////    for (int row = 0; row < rowCount; row++) {
-////      indices.put(data[row][column], this);  // 'this' is a dummy
-////    }
-//    StringIntPairs sc = getStringCount(column);
-//    return sc.keys();
-//  }
-//  
-//  
-//  public StringIntPairs getStringCount(String columnName) {
-//    return getStringCount(getColumnIndex(columnName));
-//  }
-//  
-//  
-//  public StringIntPairs getStringCount(int column) {
-//    StringIntPairs outgoing = new StringIntPairs();
-//    for (int row = 0; row < rowCount; row++) {
-//      String entry = data[row][column];
-//      if (entry != null) {
-//        outgoing.increment(entry);
-//      }
-//    }
-//    return outgoing;
-//  }
-//
-//  
-//  /**
-//   * Return an object that maps the String values in one column back to the 
-//   * row from which they came. For instance, if the "name" of each row is 
-//   * found in the first column, getColumnRowLookup(0) would return an object
-//   * that would map each name back to its row. 
-//   */
-//  public StringIntPairs getColumnRowLookup(int col) {
-//    StringIntPairs sc = new StringIntPairs();
-//    String[] column = getStringColumn(col);
-//    for (int i = 0; i < column.length; i++) {
-//      sc.set(column[i], i);
-//    }
-//    return sc;
-//  }
-
-
-  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
-
-  public void trim() {
-    for (int col = 0; col < columns.length; col++) {
-      String[] stringData = (String[]) columns[col];
-      for (int row = 0; row < rowCount; row++) {
-        if (stringData[row] != null) {
-          stringData[row] = PApplet.trim(stringData[row]);
-        }
-      }
-    }
-  }
-  
-  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1163,20 +1034,21 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public String getString(int row, int column) {
-    if (row >= getRowCount()) {
-      return null;
+  /**
+   * Get a String value from the table. If the row is longer than the table 
+   * @param row
+   * @param col
+   * @return
+   */
+  public String getString(int row, int col) {
+    if (row < 0 || row >= getRowCount()) {
+      throw new ArrayIndexOutOfBoundsException("Row " + row + " does not exist.");
     }
-    if (!typed) {
-      if (data[row] == null) {
-        return null;
-      }
-      if (column >= data[row].length) {
-        return null;
-      }
-      return data[row][column];
+    if (columnTypes[col] == STRING) {
+      String[] stringData = (String[]) columns[col];
+      return stringData[row];
     } else {
-      
+      return String.valueOf(Array.get(columns[col], row));
     }
   }
 
@@ -1338,34 +1210,13 @@ public class Table implements Iterable<TableRow> {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-//  public void setRowName(int row, String what) {
-//    checkSize(row, 0);
-//    if (rowTitles == null) {
-//      rowTitles = new String[getRowCount()];
-//    }
-//    //setString(row, 0, what);
-//    rowTitles[row] = what;
-//  }
-
-
-  public void setColumnName(int column, String what) {
-    checkSize(0, column);
-    if (columnTitles == null) {
-      columnTitles = new String[getColumnCount()];
-    }
-    columnTitles[column] = what;
-    if (columnIndices != null) {
-      columnIndices.put(what, column);
-    }
-  }
-
-
   public void setString(int row, int column, String what) {
     checkSize(row, column);
-    data[row][column] = what;
-//    if (swingModel != null) {
-//      swingModel.fireTableCellUpdated(row, column);
-//    }
+    if (columnTypes[column] != STRING) {
+      throw new IllegalArgumentException("Column " + column + " is not a String column.");
+    }
+    String[] stringData = (String[]) columns[column];
+    stringData[row] = what;
   }
 
 
@@ -1375,20 +1226,9 @@ public class Table implements Iterable<TableRow> {
   }
 
   
-//  public void setString(String rowName, int column, String what) {
-//    int row = getRowIndex(rowName);
-//    setString(row, column, what);
-//  }
-
-
   public void setInt(int row, int column, int what) {
     setString(row, column, PApplet.str(what));
   }
-
-
-//  public void setInt(String rowName, int column, int what) {
-//    setString(rowName, column, PApplet.str(what));
-//  }
 
 
   public void setFloat(int row, int column, float what) {
@@ -1396,24 +1236,19 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-//  public void setFloat(String rowName, int column, float what) {
-//    setString(rowName, column, PApplet.str(what));
+//  public void setObject(int row, int column, Object value) {
+//    if (value == null) {
+//      data[row][column] = null;
+//    } else if (value instanceof String) {
+//      setString(row, column, (String) value);
+//    } else if (value instanceof Float) { 
+//      setFloat(row, column, ((Float) value).floatValue());
+//    } else if (value instanceof Integer) { 
+//      setInt(row, column, ((Integer) value).intValue());
+//    } else {
+//      setString(row, column, value.toString());
+//    }
 //  }
-
-
-  public void setObject(int row, int column, Object value) {
-    if (value == null) {
-      data[row][column] = null;
-    } else if (value instanceof String) {
-      setString(row, column, (String) value);
-    } else if (value instanceof Float) { 
-      setFloat(row, column, ((Float) value).floatValue());
-    } else if (value instanceof Integer) { 
-      setInt(row, column, ((Integer) value).intValue());
-    } else {
-      setString(row, column, value.toString());
-    }
-  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -1464,7 +1299,7 @@ public class Table implements Iterable<TableRow> {
    */
   public float getMaxFloat() {
     boolean found = false;
-    float max = missingFloat;
+    float max = PConstants.MIN_FLOAT;
     for (int row = 0; row < getRowCount(); row++) {
       for (int col = 0; col < getColumnCount(); col++) {
         float value = getFloat(row, col);
@@ -1478,7 +1313,7 @@ public class Table implements Iterable<TableRow> {
         }
       }
     }
-    return max;
+    return found ? max : missingFloat;
   }
   
   
@@ -1823,4 +1658,184 @@ public class Table implements Iterable<TableRow> {
 //  public String[] getRowTitles() {
 //    return rowTitles;
 //  }
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public String[] getUniqueEntries(String column) {
+    return getUniqueEntries(getColumnIndex(column));
+  }
+
+  
+  class HashMapSucks extends HashMap<String,Integer> {
+    
+    void increment(String what) {
+      Integer value = get(what);
+      if (value == null) {
+        put(what, 1);
+      } else {
+        put(what, value + 1);
+      }
+    }
+    
+    void check(String what) {
+      if (get(what) == null) {
+        put(what, 0);
+      }
+    }
+  }
+  
+  
+  public String[] getUniqueEntries(int column) {
+    HashMapSucks found = new HashMapSucks();
+    for (int row = 0; row < getRowCount(); row++) {
+      found.check(getString(row, column));
+    }
+    String[] outgoing = new String[found.size()];
+    found.keySet().toArray(outgoing);
+    return outgoing;
+  }
+
+
+  public HashMap<String,Integer> getStringCount(String columnName) {
+    return getStringCount(getColumnIndex(columnName));
+  }
+
+
+  public HashMap<String,Integer> getStringCount(int column) {
+    HashMapSucks outgoing = new HashMapSucks();
+    for (int row = 0; row < rowCount; row++) {
+      String entry = getString(row, column);
+      if (entry != null) {
+        outgoing.increment(entry);
+      }
+    }
+    return outgoing;
+  }
+
+
+  /**
+   * Return an object that maps the String values in one column back to the 
+   * row from which they came. For instance, if the "name" of each row is 
+   * found in the first column, getColumnRowLookup(0) would return an object
+   * that would map each name back to its row. 
+   */
+  public HashMap<String,Integer> getRowLookup(int col) {
+    HashMap<String,Integer> outgoing = new HashMap<String, Integer>();
+    for (int row = 0; row < getRowCount(); row++) {
+      outgoing.put(getString(row, col), row);
+    }
+    return outgoing;
+  }
+
+
+  // incomplete, basically this is silly to write all this repetitive code when
+  // it can be implemented in ~3 lines of code...
+//  /**
+//   * Return an object that maps the data from one column to the data of found 
+//   * in another column.
+//   */
+//  public HashMap<?,?> getLookup(int col1, int col2) {
+//    HashMap outgoing = null;
+//
+//    switch (columnTypes[col1]) {
+//      case INT: {
+//        if (columnTypes[col2] == INT) {
+//          outgoing = new HashMap<Integer, Integer>();
+//          for (int row = 0; row < getRowCount(); row++) {
+//            outgoing.put(getInt(row, col1), getInt(row, col2));
+//          }
+//        } else if (columnTypes[col2] == LONG) {
+//          outgoing = new HashMap<Integer, Long>();
+//          for (int row = 0; row < getRowCount(); row++) {
+//            outgoing.put(getInt(row, col1), getLong(row, col2));
+//          }
+//        } else if (columnTypes[col2] == FLOAT) {
+//          outgoing = new HashMap<Integer, Float>();
+//          for (int row = 0; row < getRowCount(); row++) {
+//            outgoing.put(getInt(row, col1), getFloat(row, col2));
+//          }
+//        } else if (columnTypes[col2] == DOUBLE) {
+//          outgoing = new HashMap<Integer, Double>();
+//          for (int row = 0; row < getRowCount(); row++) {
+//            outgoing.put(getInt(row, col1), getDouble(row, col2));
+//          }
+//        } else if (columnTypes[col2] == STRING) {
+//          outgoing = new HashMap<Integer, String>();
+//          for (int row = 0; row < getRowCount(); row++) {
+//            outgoing.put(getInt(row, col1), getString(row, col2));
+//          }
+//        }
+//        break;
+//      }
+//    }
+//    return outgoing;
+//  }
+
+  
+ //  public StringIntPairs getColumnRowLookup(int col) {
+//    StringIntPairs sc = new StringIntPairs();
+//    String[] column = getStringColumn(col);
+//    for (int i = 0; i < column.length; i++) {
+//      sc.set(column[i], i);
+//    }
+//    return sc;
+//  }
+
+
+//  public String[] getUniqueEntries(int column) {
+////    HashMap indices = new HashMap();
+////    for (int row = 0; row < rowCount; row++) {
+////      indices.put(data[row][column], this);  // 'this' is a dummy
+////    }
+//    StringIntPairs sc = getStringCount(column);
+//    return sc.keys();
+//  }
+//  
+//  
+//  public StringIntPairs getStringCount(String columnName) {
+//    return getStringCount(getColumnIndex(columnName));
+//  }
+//  
+//  
+//  public StringIntPairs getStringCount(int column) {
+//    StringIntPairs outgoing = new StringIntPairs();
+//    for (int row = 0; row < rowCount; row++) {
+//      String entry = data[row][column];
+//      if (entry != null) {
+//        outgoing.increment(entry);
+//      }
+//    }
+//    return outgoing;
+//  }
+//
+//  
+//  /**
+//   * Return an object that maps the String values in one column back to the 
+//   * row from which they came. For instance, if the "name" of each row is 
+//   * found in the first column, getColumnRowLookup(0) would return an object
+//   * that would map each name back to its row. 
+//   */
+//  public StringIntPairs getColumnRowLookup(int col) {
+//    StringIntPairs sc = new StringIntPairs();
+//    String[] column = getStringColumn(col);
+//    for (int i = 0; i < column.length; i++) {
+//      sc.set(column[i], i);
+//    }
+//    return sc;
+//  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  public void trim() {
+    for (int col = 0; col < columns.length; col++) {
+      String[] stringData = (String[]) columns[col];
+      for (int row = 0; row < rowCount; row++) {
+        if (stringData[row] != null) {
+          stringData[row] = PApplet.trim(stringData[row]);
+        }
+      }
+    }
+  }
 }
