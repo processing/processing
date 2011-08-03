@@ -46,7 +46,7 @@ public class ContributionManager {
   static public final String DELETION_FLAG = "flagged_for_deletion";
   
   static private final String DOUBLE_CLICK_SECONDARY =
-      "Click “Yes” to install this library to your sketchbook...";
+      "Click â€œYesâ€ to install this library to your sketchbook...";
   
   static private final String DISCOVERY_ERROR_TITLE = "Trouble discovering libraries";
   
@@ -609,8 +609,11 @@ public class ContributionManager {
     // Move newTool to the sketchbook library folder
     if (newTool.getFolder().renameTo(newToolDest)) {
       ToolContribution movedTool = ToolContribution.getTool(newToolDest);
-      if (movedTool.instantiateToolClass()) {
+      try {
+        movedTool.initializeToolClass();
         return movedTool;
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     } else {
       Base.showWarning("Trouble moving new tool to the sketchbook",
@@ -689,7 +692,7 @@ public class ContributionManager {
           result = Base.showYesNoQuestion(editor, "Replace",
                  "Replace existing \"" + oldLib.getName() + "\" library?",
                  "An existing copy of the \"" + oldLib.getName() + "\" library<br>"+
-                 "has been found in your sketchbook. Clicking “Yes”<br>"+
+                 "has been found in your sketchbook. Clicking â€œYesâ€<br>"+
                  "will move the existing library to a backup folder<br>" +
                  " in <i>libraries/old</i> before replacing it.");
         }

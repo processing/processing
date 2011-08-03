@@ -110,19 +110,12 @@ public class ToolContribution extends InstalledContribution implements Tool {
   }
   
   /**
-   * Creates and instance of the Tool object. Warning: this makes it impossible
-   * (on Windows) to move the files in the tool's classpath without restarting
-   * the PDE.
+   * Loads the tool, making it impossible (on Windows) to move the files in the
+   * classpath without restarting the PDE.
    */
-  public boolean instantiateToolClass() {
-    try {
-      Class<?> toolClass = Class.forName(className, true, loader);
-      tool = (Tool) toolClass.newInstance();
-      return true;
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return false;
+  public void initializeToolClass() throws Exception {
+    Class<?> toolClass = Class.forName(className, true, loader);
+    tool = (Tool) toolClass.newInstance();
   }
   
   static protected String findClassInZipFile(String base, File file) {
@@ -171,7 +164,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
   }
 
   static protected void list(File folder, ArrayList<ToolContribution> tools,
-                             boolean instantiateToolClass) {
+                             boolean doInitializeToolClass) {
     
     File[] folders = folder.listFiles(new FileFilter() {
       public boolean accept(File folder) {
@@ -199,10 +192,16 @@ public class ToolContribution extends InstalledContribution implements Tool {
     }
     
     for (int i = 0; i < folders.length; i++) {
-      ToolContribution contrib = getTool(folders[i]);
-      if (!instantiateToolClass
-          || (instantiateToolClass && contrib.instantiateToolClass())) {
-        tools.add(contrib);
+      try {
+        final ToolContribution tool = getTool(folders[i]);
+        try {
+          if (doInitializeToolClass)
+            tool.initializeToolClass();
+          tools.add(tool);
+        } catch (Exception e) {
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
       }
     }
   }
