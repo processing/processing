@@ -1841,9 +1841,6 @@ public class Table implements Iterable<Table.Row> {
    * @param column the column to search
    */
   public void replaceAll(String regex, String replacement, int column) {
-    int[] outgoing = new int[rowCount];
-    int count = 0;
-    
     checkBounds(-1, column);
     if (columnTypes[column] == STRING) {
       String[] stringData = (String[]) columns[column];
@@ -1915,11 +1912,11 @@ public class Table implements Iterable<Table.Row> {
       int row = rowSubset[i];
       for (int col = 0; col < columns.length; col++) {
         switch (columnTypes[col]) {
-          case STRING: newbie.setString(i, col, getString(rowSubset[i], col)); break;
-          case INT: newbie.setInt(i, col, getInt(rowSubset[i], col)); break;
-          case LONG: newbie.setLong(i, col, getLong(rowSubset[i], col)); break;
-          case FLOAT: newbie.setFloat(i, col, getFloat(rowSubset[i], col)); break;
-          case DOUBLE: newbie.setDouble(i, col, getDouble(rowSubset[i], col)); break;
+          case STRING: newbie.setString(i, col, getString(row, col)); break;
+          case INT: newbie.setInt(i, col, getInt(row, col)); break;
+          case LONG: newbie.setLong(i, col, getLong(row, col)); break;
+          case FLOAT: newbie.setFloat(i, col, getFloat(row, col)); break;
+          case DOUBLE: newbie.setDouble(i, col, getDouble(row, col)); break;
         }
       }
     }
