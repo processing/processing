@@ -1,5 +1,7 @@
 0200 core
 X remove textMode(SCREEN)
+X added expand(long) and expand(double) because of Table
+
 _ enable smooth() by default
 _   better to learn noSmooth() later
 _   disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
