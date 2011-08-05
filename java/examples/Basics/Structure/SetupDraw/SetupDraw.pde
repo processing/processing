@@ -5,16 +5,15 @@
  * to write programs that change with time. 
  */
 
+float y = 100;
+
 // The statements in the setup() function 
 // execute once when the program begins
 void setup() {
-  size(200, 200);  // Size must be the first statement
+  size(640, 360);  // Size must be the first statement
   stroke(255);     // Set line drawing color to white
   frameRate(30);
 }
-
-float y = 100;
-
 // The statements in draw() are executed until the 
 // program is stopped. Each statement is executed in 
 // sequence and after the last line is read, the first 

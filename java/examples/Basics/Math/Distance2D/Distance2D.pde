@@ -9,7 +9,7 @@
 float max_distance;
 
 void setup() {
-  size(200, 200); 
+  size(640, 360); 
   smooth();
   noStroke();
   max_distance = dist(0, 0, width, height);
@@ -17,7 +17,7 @@ void setup() {
 
 void draw() 
 {
-  background(51);
+  background(0);
 
   for(int i = 0; i <= width; i += 20) {
     for(int j = 0; j <= height; j += 20) {

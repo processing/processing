@@ -11,8 +11,9 @@
 PGraphics pg;
 
 void setup() {
-  size(200, 200);
-  pg = createGraphics(80, 80, P2D);
+  size(640, 360);
+  smooth();
+  pg = createGraphics(400, 200, P2D);
 }
 
 void draw() {
@@ -23,11 +24,12 @@ void draw() {
   ellipse(mouseX, mouseY, 60, 60);
   
   pg.beginDraw();
-  pg.background(102);
+  pg.smooth();
+  pg.background(51);
   pg.noFill();
   pg.stroke(255);
-  pg.ellipse(mouseX-60, mouseY-60, 60, 60);
+  pg.ellipse(mouseX-120, mouseY-60, 60, 60);
   pg.endDraw();
   
-  image(pg, 60, 60); 
+  image(pg, 120, 60); 
 }

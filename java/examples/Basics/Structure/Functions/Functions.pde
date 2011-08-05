@@ -8,7 +8,7 @@
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   background(51);
   noStroke();
   smooth();
@@ -17,12 +17,12 @@ void setup()
 
 void draw() 
 {
-  drawTarget(68, 34, 200, 10);
-  drawTarget(152, 16, 100, 3);
-  drawTarget(100, 144, 80, 5);
+  drawTarget(width*0.25, height*0.4, 200, 4);
+  drawTarget(width*0.5, height*0.5, 300, 10);
+  drawTarget(width*0.75, height*0.3, 120, 6);
 }
 
-void drawTarget(int xloc, int yloc, int size, int num) 
+void drawTarget(float xloc, float yloc, int size, int num) 
 {
   float grayvalues = 255/num;
   float steps = size/num;

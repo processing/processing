@@ -33,8 +33,8 @@ void setup() {
 }
 
 void draw() {
-  background(255);
-  fill(0);
+  background(51);
+  fill(255);
   
   // Look at words one at a time
   String s = tokens[counter];

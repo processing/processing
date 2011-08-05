@@ -6,12 +6,11 @@
  
 float bx;
 float by;
-int bs = 75;
-boolean bover = false;
+int boxSize = 75;
+boolean overBox = false;
 boolean locked = false;
-float bdifx = 0.0; 
-float bdify = 0.0; 
-
+float xOffset = 0.0; 
+float yOffset = 0.0; 
 
 void setup() 
 {
@@ -26,9 +25,9 @@ void draw()
   background(0);
   
   // Test if the cursor is over the box 
-  if (mouseX > bx-bs && mouseX < bx+bs && 
-      mouseY > by-bs && mouseY < by+bs) {
-    bover = true;  
+  if (mouseX > bx-boxSize && mouseX < bx+boxSize && 
+      mouseY > by-boxSize && mouseY < by+boxSize) {
+    overBox = true;  
     if(!locked) { 
       stroke(255); 
       fill(153);
@@ -36,29 +35,29 @@ void draw()
   } else {
     stroke(153);
     fill(153);
-    bover = false;
+    overBox = false;
   }
   
   // Draw the box
-  rect(bx, by, bs, bs);
+  rect(bx, by, boxSize, boxSize);
 }
 
 void mousePressed() {
-  if(bover) { 
+  if(overBox) { 
     locked = true; 
     fill(255, 255, 255);
   } else {
     locked = false;
   }
-  bdifx = mouseX-bx; 
-  bdify = mouseY-by; 
+  xOffset = mouseX-bx; 
+  yOffset = mouseY-by; 
 
 }
 
 void mouseDragged() {
   if(locked) {
-    bx = mouseX-bdifx; 
-    by = mouseY-bdify; 
+    bx = mouseX-xOffset; 
+    by = mouseY-yOffset; 
   }
 }
 

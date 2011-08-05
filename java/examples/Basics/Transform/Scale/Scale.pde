@@ -11,16 +11,15 @@
 float a = 0.0;
 float s = 0.0;
 
-void setup()
-{
-  size(200,200);
+void setup() {
+  size(640, 360);
   noStroke();
   rectMode(CENTER);
   frameRate(30);
 }
 
-void draw()
-{
+void draw() {
+  
   background(102);
   
   a = a + 0.04;

@@ -12,10 +12,10 @@ SpinArm arm;
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   smooth();
   arm = new SpinArm(width/2, height/2, 0.01);
-  spots = new SpinSpots(width/2, height/2, -0.02, 33.0);
+  spots = new SpinSpots(width/2, height/2, -0.02, 90.0);
 }
 
 void draw() 
@@ -53,7 +53,7 @@ class SpinArm extends Spin
     translate(x, y);
     angle += speed;
     rotate(angle);
-    line(0, 0, 66, 0);
+    line(0, 0, 165, 0);
     popMatrix();
   }
 }

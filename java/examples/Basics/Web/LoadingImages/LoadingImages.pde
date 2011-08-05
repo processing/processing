@@ -12,16 +12,16 @@ PImage img;
 
 void setup() {
   size(640, 360);
-  img = loadImage("http://processing.org/img/processing_cover.gif");
+  img = loadImage("http://processing.org/img/processing.gif");
   noLoop();
 }
 
 void draw() {
   background(0);
   if (img != null) {
-    image(img, 0, 0);
-    image(img, 0, img.height);
-    image(img, 0, img.height * 2);
+    for (int i = 0; i < 5; i++) {
+      image(img, 0, img.height * i);
+    }
   }
 }
 

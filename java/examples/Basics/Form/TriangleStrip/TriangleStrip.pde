@@ -13,11 +13,6 @@ int x;
 int y;
 float outerRad;
 float innerRad;
-float px = 0; 
-float py = 0; 
-float angle = 0;
-float pts = 36;
-float rot = 360.0/pts;
 
 void setup() {
   size(640, 360);
@@ -30,10 +25,16 @@ void setup() {
 }
 
 void draw() {
+  background(204);
+  
+  int pts = int(map(mouseX, 0, width, 6, 60));
+  float rot = 180.0/pts;
+  float angle = 0;
+  
   beginShape(TRIANGLE_STRIP); 
-  for (int i = 0; i < pts; i++) {
-    px = x + cos(radians(angle)) * outerRad;
-    py = y + sin(radians(angle)) * outerRad;
+  for (int i = 0; i <= pts; i++) {
+    float px = x + cos(radians(angle)) * outerRad;
+    float py = y + sin(radians(angle)) * outerRad;
     angle += rot;
     vertex(px, py);
     px = x + cos(radians(angle)) * innerRad;

@@ -12,12 +12,11 @@ float zoff = 0.0;
 float zincrement = 0.02; 
 
 void setup() {
-  size(200,200);
+  size(640, 360);
   frameRate(30);
 }
 
 void draw() {
-  background(0);
   
   // Optional: adjust noise detail here
   // noiseDetail(8,0.65f);

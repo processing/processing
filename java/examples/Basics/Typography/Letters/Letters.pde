@@ -9,17 +9,16 @@ PFont fontA;
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   background(0);
   smooth();
-  // Load the font. Fonts must be placed within the data 
-  // directory of your sketch. A font must first be created
-  // using the 'Create Font...' option in the Tools menu.
-  fontA = loadFont("CourierNew36.vlw");
-  textAlign(CENTER);
+  
+  // Create the font
+  fontA = createFont("Courier", 42);
 
   // Set the font and its size (in units of pixels)
-  textFont(fontA, 32);
+  textFont(fontA);
+  textAlign(CENTER);
 
   // Only draw once
   noLoop();
@@ -32,13 +31,13 @@ void draw()
 
   // Set the left and top margin
   int margin = 6;
-  int gap = 30;
+  int gap = 60;
   translate(margin*1.5, margin*2);
 
   // Create a matrix of letterforms
   int counter = 0;
-  for(int i=0; i<margin; i++) {
-    for(int j=0; j<margin; j++) {
+  for(int i = 0; i < margin; i++) {
+    for(int j = 0; j < margin; j++) {
       char letter;
 
       // Select the letter
@@ -59,7 +58,7 @@ void draw()
       }
 
       // Draw the letter to the screen
-      text(letter, 15+j*gap, 20+i*gap);
+      text(letter, 15+j*gap*1.6, 20+i*gap);
 
       // Increment the counter
       counter++;

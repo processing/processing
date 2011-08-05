@@ -20,7 +20,7 @@ color black = color(0, 0, 0);
   
 void setup()
 {
-  size(640, 200, P2D);
+  size(640, 360);
   frameRate(24);
   clearscr();  
   w = new World();
