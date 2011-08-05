@@ -8,17 +8,14 @@
  */
  
 float x, y;
-float size = 40.0;
+float size = 80.0;
 
-void setup() 
-{
-  size(200,200);
+void setup() {
+  size(640, 360);
   noStroke();
-  frameRate(30);
 }
 
-void draw() 
-{
+void draw() {
   background(102);
   
   x = x + 0.8;

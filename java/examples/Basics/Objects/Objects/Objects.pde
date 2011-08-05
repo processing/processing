@@ -10,13 +10,13 @@ MRect r1, r2, r3, r4;
  
 void setup()
 {
-  size(200, 200);
+  size(640, 360);
   fill(255, 204);
   noStroke();
-  r1 = new MRect(1, 134.0, 0.532, 0.083*height, 10.0, 60.0);
-  r2 = new MRect(2, 44.0, 0.166, 0.332*height, 5.0, 50.0);
-  r3 = new MRect(2, 58.0, 0.332, 0.4482*height, 10.0, 35.0);
-  r4 = new MRect(1, 120.0, 0.0498, 0.913*height, 15.0, 60.0);
+  r1 = new MRect(1, 134.0, 0.532, 0.1*height, 10.0, 60.0);
+  r2 = new MRect(2, 44.0, 0.166, 0.3*height, 5.0, 50.0);
+  r3 = new MRect(2, 58.0, 0.332, 0.4*height, 10.0, 35.0);
+  r4 = new MRect(1, 120.0, 0.0498, 0.9*height, 15.0, 60.0);
 }
  
 void draw()

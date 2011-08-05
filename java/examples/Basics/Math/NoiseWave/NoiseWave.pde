@@ -12,8 +12,7 @@ float yoff = 0.0f;        // 2nd dimension of perlin noise
 float[] yvalues;          // Using an array to store height values for the wave (not entirely necessary)
 
 void setup() {
-  size(200,200);
-  frameRate(30);
+  size(640, 360);
   colorMode(RGB,255,255,255,100);
   smooth();
   w = width+16;
@@ -24,7 +23,6 @@ void draw() {
   background(0);
   calcWave();
   renderWave();
-
 }
 
 void calcWave() {

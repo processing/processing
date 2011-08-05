@@ -11,7 +11,7 @@ boolean direction;
 
 void setup()
 {
-  size(200, 200);
+  size(640, 360);
   colorMode(RGB, width);
   a = 0;
   b = width;

@@ -10,15 +10,17 @@
  */
  
 Animation animation1, animation2;
-float xpos, ypos;
+float xpos;
+float ypos;
 float drag = 30.0;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   background(255, 204, 0);
   frameRate(24);
   animation1 = new Animation("PT_Shifty_", 38);
   animation2 = new Animation("PT_Teddy_", 60);
+  ypos = height * 0.25;
 }
 
 void draw() { 

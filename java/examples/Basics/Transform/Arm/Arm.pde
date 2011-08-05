@@ -7,21 +7,23 @@
  * the same pushMatrix() and popMatrix() group.
 */
 
-float x = 50;
-float y = 100;
+float x, y;
 float angle1 = 0.0;
 float angle2 = 0.0;
-float segLength = 50;
+float segLength = 100;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   smooth(); 
-  strokeWeight(20.0);
-  stroke(0, 100);
+  strokeWeight(30);
+  stroke(255, 160);
+  
+  x = width * 0.3;
+  y = height * 0.5;
 }
 
 void draw() {
-  background(226);
+  background(0);
   
   angle1 = (mouseX/float(width) - 0.5) * -PI;
   angle2 = (mouseY/float(height) - 0.5) * PI;

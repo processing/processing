@@ -8,9 +8,8 @@ float xoff = 0.0;
 float xincrement = 0.01; 
 
 void setup() {
-  size(200,200);
+  size(640, 360);
   background(0);
-  frameRate(30);
   smooth();
   noStroke();
 }
@@ -31,7 +30,7 @@ void draw()
   
   // Draw the ellipse at the value produced by perlin noise
   fill(200);
-  ellipse(n,height/2,16,16);
+  ellipse(n,height/2, 64, 64);
 }
 
 

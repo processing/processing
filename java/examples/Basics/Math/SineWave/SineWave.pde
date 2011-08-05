@@ -5,7 +5,7 @@
  * Render a simple sine wave. 
  */
  
-int xspacing = 8;   // How far apart should each horizontal location be spaced
+int xspacing = 16;   // How far apart should each horizontal location be spaced
 int w;              // Width of entire wave
 
 float theta = 0.0;  // Start angle at 0
@@ -15,9 +15,7 @@ float dx;  // Value for incrementing X, a function of period and xspacing
 float[] yvalues;  // Using an array to store height values for the wave
 
 void setup() {
-  size(200,200);
-  frameRate(30);
-  colorMode(RGB,255,255,255,100);
+  size(640, 360);
   smooth();
   w = width+16;
   dx = (TWO_PI / period) * xspacing;
@@ -28,7 +26,6 @@ void draw() {
   background(0);
   calcWave();
   renderWave();
-
 }
 
 void calcWave() {
@@ -44,12 +41,11 @@ void calcWave() {
 }
 
 void renderWave() {
+  noStroke();
+  fill(255);
   // A simple way to draw the wave with an ellipse at each location
   for (int x = 0; x < yvalues.length; x++) {
-    noStroke();
-    fill(255,50);
-    ellipseMode(CENTER);
-    ellipse(x*xspacing,width/2+yvalues[x],16,16);
+    ellipse(x*xspacing, height/2+yvalues[x], 16, 16);
   }
 }
 

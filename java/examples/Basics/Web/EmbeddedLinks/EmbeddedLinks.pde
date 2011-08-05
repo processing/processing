@@ -9,7 +9,7 @@ boolean overLeftButton = false;
 boolean overRightButton = false;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
 }
 
 void draw() {

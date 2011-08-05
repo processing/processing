@@ -30,7 +30,7 @@ void setup()
   background(numChars/2);
   // Set a gray value for each key
   for(int i=0; i<numChars; i++) {
-    colors[i] = color(i, i, i);    
+    colors[i] = color(i);    
   }
 }
 

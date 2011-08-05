@@ -15,19 +15,20 @@ float theta_vel;
 float theta_acc;
 
 void setup() {
-  size(200, 200);
-  frameRate(30);
+  size(640, 360);
   smooth();
   
   // Initialize all values
-  r = 50;
+  r = height * 0.45;
   theta = 0;
   theta_vel = 0;
   theta_acc = 0.0001;
 }
 
 void draw() {
+  
   background(0);
+  
   // Translate the origin point to the center of the screen
   translate(width/2, height/2);
   
@@ -39,7 +40,7 @@ void draw() {
   ellipseMode(CENTER);
   noStroke();
   fill(200);
-  ellipse(x, y, 16, 16);
+  ellipse(x, y, 32, 32);
   
   // Apply acceleration and velocity to angle (r remains static in this example)
   theta_vel += theta_acc;
