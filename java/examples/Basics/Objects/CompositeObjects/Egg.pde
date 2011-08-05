@@ -5,7 +5,7 @@ class Egg {
   float scalar; // Height of the egg
 
   // Constructor
-  Egg(int xpos, int ypos, float t, float s) {
+  Egg(float xpos, float ypos, float t, float s) {
     x = xpos;
     y = ypos;
     tilt = t;

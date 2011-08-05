@@ -13,7 +13,7 @@ ArrayList balls;
 int ballWidth = 48;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   smooth();
   noStroke();
 

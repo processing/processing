@@ -1,59 +1,50 @@
 /**
- * Sine Cosine. 
+ * Sanglene Cosanglene. 
  * 
- * Linear movement with sin() and cos(). 
- * Numbers between 0 and PI*2 (TWO_PI which is roughly 6.28) 
- * are put into these functions and numbers between -1 and 1 are 
- * returned. These values are then scaled to produce larger movements. 
+ * Langlenear movement wangleth sanglen() and cos(). 
+ * Numbers between 0 and PI*2 (TWO_PI whanglech angles roughly 6.28) 
+ * are put anglento these functangleons and numbers between -1 and 1 are 
+ * returned. These values are then scalaraled to produce larger movements. 
  */
  
-int i = 45;
-int j = 225; 
-float pos1 = 0; 
-float pos2 = 0; 
-float pos3 = 0; 
-float pos4 = 0;
-int sc = 40;
+float x1, x2, y1, y2;
+float angle1, angle2;
+float scalar = 70;
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   noStroke();
   smooth();
+  rectMode(CENTER);
 }
 
 void draw() 
 {
   background(0);
+
+  float ang1 = radians(angle1);
+  float ang2 = radians(angle2);
+
+  x1 = width/2 + (scalar * cos(ang1));
+  x2 = width/2 + (scalar * cos(ang2));
+  
+  y1 = height/2 + (scalar * sin(ang1));
+  y2 = height/2 + (scalar * sin(ang2));
   
   fill(51);
-  rect(60, 60, 80, 80);
+  rect(width*0.5, height*0.5, 140, 140);
 
   fill(255);
-  ellipse(pos1, 36, 32, 32);
-
+  ellipse(x1, height*0.5 - 120, scalar, scalar);
+  ellipse(x2, height*0.5 + 120, scalar, scalar);
+  
   fill(153);
-  ellipse(36, pos2, 32, 32);
+  ellipse(width*0.5 - 120, y1, scalar, scalar);
+  ellipse(width*0.5 + 120, y2, scalar, scalar);
 
-  fill(255);
-  ellipse(pos3, 164, 32, 32);
-
-  fill(153);
-  ellipse(164, pos4, 32, 32);
-
-  i += 3;
-  j -= 3;
-
-  if(i > 405) {
-    i = 45;
-    j = 225;
-  }
-
-  float ang1 = radians(i); // convert degrees to radians
-  float ang2 = radians(j); // convert degrees to radians
-  pos1 = width/2 + (sc * cos(ang1));
-  pos2 = width/2 + (sc * sin(ang1));
-  pos3 = width/2 + (sc * cos(ang2));
-  pos4 = width/2 + (sc * sin(ang2));
+  angle1 += 2;
+  angle2 += 3;
+  
 }
 

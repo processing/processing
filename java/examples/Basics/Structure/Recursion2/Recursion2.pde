@@ -8,10 +8,10 @@
  
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   noStroke();
   smooth();
-  drawCircle(100, 100, 80, 8);
+  drawCircle(width*0.5, height*0.5, 160, 8);
 }
 
 void drawCircle(float x, float y, int radius, int level) 

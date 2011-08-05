@@ -5,18 +5,21 @@
  * speed and direction of the moving shapes. 
  */
  
+float xpos1;
+float xpos2;
+float xpos3;
+float xpos4;
 int thin = 8;
 int thick = 36;
-float xpos1 = 134.0;
-float xpos2 = 44.0;
-float xpos3 = 58.0;
-float xpos4 = 120.0;
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   noStroke();
-  frameRate(60);
+  xpos1 = width/2;
+  xpos2 = width/2;
+  xpos3 = width/2;
+  xpos4 = width/2;
 }
 
 void draw() 

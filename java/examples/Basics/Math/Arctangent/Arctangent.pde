@@ -6,18 +6,16 @@
  * to the cursor. 
  */
  
-Eye e1, e2, e3, e4, e5;
+Eye e1, e2, e3;
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   smooth();
   noStroke();
-  e1 = new Eye( 50,  16,  80);
-  e2 = new Eye( 64,  85,  40);  
-  e3 = new Eye( 90, 200, 120);
-  e4 = new Eye(150,  44,  40); 
-  e5 = new Eye(175, 120,  80);
+  e1 = new Eye( 190,  16, 120);
+  e2 = new Eye( 164, 185,  80);  
+  e3 = new Eye( 390, 200, 220);
 }
 
 void draw() 
@@ -27,35 +25,31 @@ void draw()
   e1.update(mouseX, mouseY);
   e2.update(mouseX, mouseY);
   e3.update(mouseX, mouseY);
-  e4.update(mouseX, mouseY);
-  e5.update(mouseX, mouseY);
 
   e1.display();
   e2.display();
   e3.display();
-  e4.display();
-  e5.display();
 }
 
 class Eye 
 {
-  int ex, ey;
+  int x, y;
   int size;
   float angle = 0.0;
   
-  Eye(int x, int y, int s) {
-    ex = x;
-    ey = y;
-    size = s;
+  Eye(int tx, int ty, int ts) {
+    x = tx;
+    y = ty;
+    size = ts;
  }
 
   void update(int mx, int my) {
-    angle = atan2(my-ey, mx-ex);
+    angle = atan2(my-y, mx-x);
   }
   
   void display() {
     pushMatrix();
-    translate(ex, ey);
+    translate(x, y);
     fill(255);
     ellipse(0, 0, size, size);
     rotate(angle);

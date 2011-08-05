@@ -2,7 +2,7 @@ class EggRing {
   Egg ovoid;
   Ring circle = new Ring();
 
-  EggRing(int x, int y, float t, float sp) {
+  EggRing(float x, float y, float t, float sp) {
     ovoid = new Egg(x, y, t, sp);
     circle.start(x, y - sp/2);
   }

@@ -13,7 +13,7 @@ void setup() {
 }
 
 void draw() {
-  if(mousePressed) {
+  if (mousePressed) {
     stroke(255);
   } else {
     stroke(0);

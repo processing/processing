@@ -8,19 +8,16 @@
 float increment = 0.02;
 
 void setup() {
-  size(200,200);
-  noLoop();
+  size(640, 360);
 }
 
 void draw() {
-  background(0);
-  
-  // Optional: adjust noise detail here
-  // noiseDetail(8,0.65f);
   
   loadPixels();
 
   float xoff = 0.0; // Start xoff at 0
+  float detail = map(mouseX, 0, width, 0.1, 0.6);
+  noiseDetail(8, detail);
   
   // For every x,y coordinate in a 2D space, calculate a noise value and produce a brightness value
   for (int x = 0; x < width; x++) {
@@ -30,7 +27,7 @@ void draw() {
       yoff += increment; // Increment yoff
       
       // Calculate noise and scale by 255
-      float bright = noise(xoff,yoff)*255;
+      float bright = noise(xoff, yoff) * 255;
 
       // Try using this line instead
       //float bright = random(0,255);
