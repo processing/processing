@@ -25,6 +25,9 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+//import java.lang.management.ManagementFactory;
+//import sun.jvmstat.monitor.*;
+import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -135,6 +138,13 @@ public class Base {
 
     // run static initialization that grabs all the prefs
     Preferences.init(null);
+    
+    String filename = args.length > 1 ? args[0] : null;
+    if (!(Preferences.get("server.port") == null)
+        && sendArgumentsToOtherInstance(filename, 1000)) {
+      return;
+    }
+    createSingleInstanceServer();
 
     // setup the theme coloring fun
 //    Theme.init();
@@ -161,12 +171,201 @@ public class Base {
                      "Could not create a place to store untitled sketches.\n" +
                      "That's gonna prevent us from continuing.", e);
     }
-
-//    System.out.println("about to create base...");
+    
+//  System.out.println("about to create base...");
     new Base(args);
-//    System.out.println("done creating base...");
+//  System.out.println("done creating base...");
+    
+//    String filename = args.length > 1 ? args[0] : null;
+//    if (Preferences.get("server.port") == null
+//        || !sendArgumentsToOtherInstance(filename, 1000)) {
+//      
+//      createSingleInstanceServer();
+//      new Base(args);
+//    }
+
+//    try {
+//      String vmName = ManagementFactory.getRuntimeMXBean().getName();
+//      MonitoredHost localhost = MonitoredHost.getMonitoredHost((String) null);
+//      VmIdentifier runningVmId = new VmIdentifier(vmName);
+//  
+//      if (Base.isOnlyInstance(localhost, runningVmId)) {
+//        Base.addNewPdeListener(localhost, runningVmId);
+//        
+//      System.out.println("about to create base...");
+//        new Base(args);
+//      System.out.println("done creating base...");
+//      } else {
+//        Base.sendArgumentsToOtherInstance(args, 500);
+//      }
+//    } catch (Exception e) {
+//    }
   }
 
+//  /** @return true if this is the only instance of this program, false otherwise */
+//  static private boolean isOnlyInstance(MonitoredHost localhost,
+//                                VmIdentifier runningVmId) throws Exception {
+//  
+//    // Search for another vm using the same fully-qualified class name for main
+//    for (Object lvmidObj : localhost.activeVms()) {
+//      if (lvmidObj instanceof Integer) {
+//        VmIdentifier otherVmId = new VmIdentifier(lvmidObj.toString());
+//        if (Base.isDifferentInstance(localhost, runningVmId, otherVmId)) {
+//          return false;
+//        }
+//      }
+//    }
+//  
+//    return true;
+//  }
+//
+//  /**
+//   * @return true if runningVmId and otherLocalVmId are two different instances
+//   *         of the same program
+//   */
+//  static private boolean isDifferentInstance(MonitoredHost monitoredHost,
+//                                     VmIdentifier runningVmId,
+//                                     VmIdentifier otherLocalVmId)
+//                                                              throws Exception {
+//  
+//    if (runningVmId.getLocalVmId() != otherLocalVmId.getLocalVmId()) {
+//      String runningProgram = getProgramName(monitoredHost, runningVmId);
+//      String otherProgram = getProgramName(monitoredHost, otherLocalVmId);
+//  
+//      return runningProgram.equals(otherProgram);
+//    }
+//  
+//    return false;
+//  }
+//
+//  /** @return how this program was initialized (e.g. may be a class or jar file) */
+//  static private String getProgramName(MonitoredHost host,
+//                                       VmIdentifier otherVmId)
+//                                                              throws Exception {
+//  
+//    MonitoredVm mvm = host.getMonitoredVm(otherVmId);
+//    String name = MonitoredVmUtil.commandLine(mvm);
+//    mvm.detach();
+//    
+//    if ("Unknown".equals(name)) {
+//      throw new Exception("Unable to determine command line");
+//    }
+//  
+//    return name.split(" ")[0];
+//  }
+//
+//  private static void addNewPdeListener(final MonitoredHost localhost,
+//                                        final VmIdentifier runningVmId)
+//                                                              throws Exception {
+//  
+//    final ServerSocket ss = new ServerSocket(0);
+//    ss.setSoTimeout(500);
+//    Preferences.set("server.port", "" + ss.getLocalPort());
+//  
+//    localhost.addHostListener(new HostListener() {
+//      public void vmStatusChanged(VmStatusChangeEvent arg) {
+//        for (final Object lvmidObj : arg.getStarted()) {
+//          if (lvmidObj instanceof Integer) {
+//            try {
+//              VmIdentifier otherVmId = new VmIdentifier(lvmidObj.toString());
+//              if (Base.isDifferentInstance(localhost, runningVmId, otherVmId)
+//                  && platform.base != null) {
+//                EventQueue.invokeLater(new Runnable() {
+//                  public void run() {
+//                    try {
+//                      Socket s = ss.accept();
+//                      BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+//                      String filename = br.readLine();
+//                      if (filename != null) {
+//                        platform.base.handleOpen(filename);
+//                        return;
+//                      }
+//                    } catch (IOException e) {
+//                    }
+//                    
+//                    platform.base.handleNew();
+//                  }
+//                });
+//              }
+//            } catch (Exception e) {
+//            }
+//          }
+//        }
+//      }
+//  
+//      public void disconnected(HostEvent arg) { }
+//    });
+//  }
+
+  private static void createSingleInstanceServer() {
+    try {
+      final ServerSocket ss = new ServerSocket(0, 0,
+                                               InetAddress.getByName(null));
+      Preferences.set("server.port", "" + ss.getLocalPort());
+      final String key = "" + Math.random();
+      Preferences.set("server.key", key);
+      Preferences.save();
+      
+      new Thread(new Runnable() {
+        
+        public void run() {
+          while (true) {
+            try {
+              Socket s = ss.accept();
+              BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+              String receivedKey = br.readLine();
+              if (key.equals(receivedKey)) {
+                String filename = br.readLine();
+                if (filename != null) {
+                  platform.base.handleOpen(filename);
+                } else {
+                  platform.base.handleNew();
+                }
+              }
+            } catch (IOException e) {
+            }
+          }
+        }
+      }).start();
+    } catch (IOException e) {
+    }
+  }
+  
+  static private boolean sendArgumentsToOtherInstance(String filename,
+                                                      long timeout) {
+    try {
+      int port = Integer.parseInt(Preferences.get("server.port"));
+      String key = Preferences.get("server.key");
+
+      long endTime = System.currentTimeMillis() + timeout;
+
+      Socket socket = null;
+      while (socket == null && System.currentTimeMillis() < endTime) {
+        try {
+          socket = new Socket(InetAddress.getByName(null), port);
+        } catch (Exception ioe) {
+          try {
+            Thread.sleep(50);
+          } catch (InterruptedException ie) {
+            Thread.yield();
+          }
+        }
+      }
+
+      if (socket != null) {
+        BufferedWriter bw = new BufferedWriter(
+                                new OutputStreamWriter(socket.getOutputStream()));
+        bw.write(key + "\n");
+        if (filename != null) {
+          bw.write(filename + "\n");
+        }
+        bw.close();
+        return true;
+      }
+    } catch (IOException e) {
+    }
+    return false;
+  }
 
   public static void setCommandLine() {
     commandLine = true;
@@ -243,7 +442,7 @@ public class Base {
       }
     }
   }
-  
+
   public Base(String[] args) {
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
@@ -1033,6 +1232,9 @@ public class Base {
         }
       }
 
+      Preferences.unset("server.port");
+      Preferences.unset("server.key");
+      
       // This will store the sketch count as zero
       editors.remove(editor);
       storeSketches();
