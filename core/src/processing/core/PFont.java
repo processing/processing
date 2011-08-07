@@ -53,6 +53,7 @@ import java.util.Set;
  *
  *   ^^^^^^^^^^^^^^ setWidth (width displaced by char)
  * </PRE>
+ * @webref typography
  */
 public class PFont implements PConstants {
 
