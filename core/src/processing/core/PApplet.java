@@ -266,6 +266,7 @@ public class PApplet extends Applet
    * around it and not be placed in the upper corner of the screen. On Mac OS 
    * X, the menu bar will remain present unless "Present" mode is used.
    * ( end auto-generated )
+   * @webref environment
    */
   public int screenWidth;
   
@@ -282,6 +283,7 @@ public class PApplet extends Applet
    * around it and not be placed in the upper corner of the screen. On Mac OS 
    * X, the menu bar will remain present unless "Present" mode is used.
    * ( end auto-generated )
+   * @webref environment
    */
   public int screenHeight;
 
