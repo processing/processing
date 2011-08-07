@@ -1700,7 +1700,7 @@ public class PImage implements PConstants, Cloneable {
    * As of release 0149, this function ignores <b>imageMode()</b>.
    * ( end auto-generated )
    *
-   * @webref pimage:method
+   * @webref image:pixels
    * @brief  Copies a pixel or rectangle of pixels using different blending modes
    * @param src an image variable referring to the source image
    * @param sx X coordinate of the source's upper left corner
