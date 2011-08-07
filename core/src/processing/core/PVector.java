@@ -41,6 +41,7 @@ import processing.core.PConstants;
  * new PVector object is not created with each operation.
  * <p>
  * Initially based on the Vector3D class by <a href="http://www.shiffman.net">Dan Shiffman</a>.
+ * @webref math
  */
 public class PVector implements Serializable {
 
