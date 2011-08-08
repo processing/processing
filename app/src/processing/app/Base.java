@@ -192,6 +192,9 @@ public class Base {
               Socket s = ss.accept();
               BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
               String receivedKey = br.readLine();
+              
+              if (platform.base == null) continue;
+              
               if (key.equals(receivedKey)) {
                 String filename = br.readLine();
                 if (filename != null) {
