@@ -60,6 +60,12 @@ public class ContributionManager {
   
   static final String ANY_CATEGORY = "Any";
   
+  /** Width of each contribution icon. */
+  static final int ICON_WIDTH = 25;
+
+  /** Height of each contribution icon. */
+  static final int ICON_HEIGHT = 20;
+
   JFrame dialog;
   
   FilterField filterField;
@@ -104,11 +110,6 @@ public class ContributionManager {
     });
   }
   
-  /** Width of each contribution icon. */
-  static final int ICON_WIDTH = 25;
-  /** Height of each contribution icon. */
-  static final int ICON_HEIGHT = 20;
-  
   protected void showFrame(Editor editor) {
     this.editor = editor;
     
@@ -136,7 +137,7 @@ public class ContributionManager {
     if (contributionIcons == null) {
       try {
         Image allButtons = ImageIO.read(Base.getLibStream("contributions.gif"));
-        int count = allButtons.getHeight(dialog) / ICON_HEIGHT;
+        int count = allButtons.getHeight(dialog) / ContributionManager.ICON_HEIGHT;
         contributionIcons = new Image[count];
         contributionIcons[0]  = allButtons;
         contributionIcons[1]  = allButtons;
@@ -144,11 +145,11 @@ public class ContributionManager {
         contributionIcons[3]  = allButtons;
         
         for (int i = 0; i < count; i++) {
-          Image image = dialog.createImage(new FilteredImageSource(allButtons.
-                                                                   getSource(),
-                                           new CropImageFilter(0, i * ICON_HEIGHT,
-                                                               ICON_WIDTH,
-                                                               ICON_HEIGHT)));
+          Image image = dialog.createImage(
+                            new FilteredImageSource(allButtons.getSource(),
+                            new CropImageFilter(0, i * ContributionManager.ICON_HEIGHT,
+                                                ContributionManager.ICON_WIDTH,
+                                                ContributionManager.ICON_HEIGHT)));
           contributionIcons[i] = image;
         }
         
@@ -239,7 +240,7 @@ public class ContributionManager {
       
       public void itemStateChanged(ItemEvent e) {
         category = (String) categoryChooser.getSelectedItem();
-        if (ANY_CATEGORY.equals(category)) {
+        if (ContributionManager.ANY_CATEGORY.equals(category)) {
           category = null;
         }
         
@@ -258,7 +259,7 @@ public class ContributionManager {
     categoryChooser.removeAllItems();
     categories = new ArrayList<String>(contribListing.getCategories());
     Collections.sort(categories);
-    categories.add(0, ANY_CATEGORY);
+    categories.add(0, ContributionManager.ANY_CATEGORY);
     for (String s : categories) {
       categoryChooser.addItem(s);
     }
@@ -342,7 +343,7 @@ public class ContributionManager {
 
         if (ContributionManager.requiresRestart(contribution)) {
           if (backupContribution(contribution, false)) {
-            if (flagForDeletion(contribution)) {
+            if (ContributionManager.flagForDeletion(contribution)) {
               contribListing.replaceContribution(contribution, contribution);
             }
           }
@@ -428,7 +429,7 @@ public class ContributionManager {
   }
   
   protected LibraryCompilation installLibraryCompilation(File f) {
-    File parentDir = unzipFileToTemp(f);
+    File parentDir = ContributionManager.unzipFileToTemp(f);
     
     LibraryCompilation compilation = LibraryCompilation.create(parentDir);
 
@@ -467,7 +468,7 @@ public class ContributionManager {
     
     int result = Base.showYesNoQuestion(this.editor, "Install",
                              "Install libraries from " + libFile.getName() + "?",
-                             DOUBLE_CLICK_SECONDARY);
+                             ContributionManager.DOUBLE_CLICK_SECONDARY);
     
     if (result == JOptionPane.YES_OPTION) {
       return installLibrary(libFile, true);
@@ -491,7 +492,7 @@ public class ContributionManager {
    */
   private static File unzipFileToTemp(File libFile) {
     
-    String fileName = getFileName(libFile);
+    String fileName = ContributionManager.getFileName(libFile);
     File tmpFolder = null;
     
     try {
@@ -504,7 +505,7 @@ public class ContributionManager {
            "so it won't be installed.", e);
     }
     
-    unzip(libFile, tmpFolder);
+    ContributionManager.unzip(libFile, tmpFolder);
     
     return tmpFolder;
   }
@@ -553,7 +554,7 @@ public class ContributionManager {
   }
   
   protected ToolContribution installTool(File zippedToolFile) {
-    File tempDir = unzipFileToTemp(zippedToolFile);
+    File tempDir = ContributionManager.unzipFileToTemp(zippedToolFile);
     
     ArrayList<ToolContribution> discoveredTools = ToolContribution.list(tempDir, false);
     if (discoveredTools.isEmpty()) {
@@ -625,7 +626,7 @@ public class ContributionManager {
   }
   
   protected Library installLibrary(File libFile, boolean confirmReplace) {
-    File tempDir = unzipFileToTemp(libFile);
+    File tempDir = ContributionManager.unzipFileToTemp(libFile);
     
     try {
       ArrayList<Library> discoveredLibs = Library.list(tempDir);
@@ -643,11 +644,13 @@ public class ContributionManager {
       } else {
         // Diagnose the problem and notify the user
         if (discoveredLibs == null) {
-          Base.showWarning(DISCOVERY_ERROR_TITLE,
-                           DISCOVERY_INTERNAL_ERROR_MESSAGE, null);
+          Base.showWarning(ContributionManager.DISCOVERY_ERROR_TITLE,
+                           ContributionManager.DISCOVERY_INTERNAL_ERROR_MESSAGE,
+                           null);
         } else if (discoveredLibs.isEmpty()) {
-          Base.showWarning(DISCOVERY_ERROR_TITLE,
-                           DISCOVERY_NONE_FOUND_ERROR_MESSAGE, null);
+          Base.showWarning(ContributionManager.DISCOVERY_ERROR_TITLE,
+                           ContributionManager.DISCOVERY_NONE_FOUND_ERROR_MESSAGE,
+                           null);
         } else {
           Base.showWarning("Too many libraries",
                            "We found more than one library in the library file\n"
@@ -656,7 +659,8 @@ public class ContributionManager {
         }
       }
     } catch (IOException ioe) {
-      Base.showWarning(DISCOVERY_ERROR_TITLE, DISCOVERY_INTERNAL_ERROR_MESSAGE,
+      Base.showWarning(ContributionManager.DISCOVERY_ERROR_TITLE,
+                       ContributionManager.DISCOVERY_INTERNAL_ERROR_MESSAGE,
                        ioe);
     }
     
@@ -759,7 +763,7 @@ public class ContributionManager {
     
     String prefix = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     final String backupName = prefix + "_" + libFolderName;
-    File backupSubFolder = getUniqueName(backupFolder, backupName);
+    File backupSubFolder = ContributionManager.getUniqueName(backupFolder, backupName);
     
 //    try {
 //      FileUtils.moveDirectory(lib.folder, backupFolderForLib);
@@ -859,7 +863,7 @@ public class ContributionManager {
           currentFile.mkdirs();
         } else {
           currentFile.createNewFile();
-          unzipEntry(zis, currentFile);
+          ContributionManager.unzipEntry(zis, currentFile);
         }
       }
     } catch (Exception e) {
@@ -978,7 +982,7 @@ public class ContributionManager {
     // Only returns false if the file already exists, so we can
     // ignore the return value.
     try {
-      new File(contrib.getFolder(), DELETION_FLAG).createNewFile();
+      new File(contrib.getFolder(), ContributionManager.DELETION_FLAG).createNewFile();
       return true;
     } catch (IOException e) {
       return false;
@@ -986,13 +990,13 @@ public class ContributionManager {
   }
 
   static public boolean removeFlagForDeletion(InstalledContribution contrib) {
-    return new File(contrib.getFolder(), DELETION_FLAG).delete();
+    return new File(contrib.getFolder(), ContributionManager.DELETION_FLAG).delete();
   }
   
   static public boolean isFlaggedForDeletion(Contribution contrib) {
     if (contrib instanceof InstalledContribution) {
       InstalledContribution installed = (InstalledContribution) contrib;
-      return new File(installed.getFolder(), DELETION_FLAG).exists();
+      return new File(installed.getFolder(), ContributionManager.DELETION_FLAG).exists();
     }
     return false;
   }
