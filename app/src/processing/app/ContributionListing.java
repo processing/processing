@@ -421,15 +421,15 @@ public class ContributionListing {
       if ("category".equals(qName)) {
         currentCategoryName = attributes.getValue("name");
 
-      } else if (LIBRARY_TAG.equals(qName)) {
+      } else if (ContributionXmlParser.LIBRARY_TAG.equals(qName)) {
         currentInfo = new AdvertisedContribution(Type.LIBRARY);
         setCommonAttributes(attributes);
 
-      }  else if (LIBRARY_COMPILATION_TAG.equals(qName)) {
+      }  else if (ContributionXmlParser.LIBRARY_COMPILATION_TAG.equals(qName)) {
         currentInfo = new AdvertisedContribution(Type.LIBRARY_COMPILATION);
         setCommonAttributes(attributes);
         
-      } else if (TOOL_TAG.equals(qName)) {
+      } else if (ContributionXmlParser.TOOL_TAG.equals(qName)) {
         currentInfo = new AdvertisedContribution(Type.TOOL);
         setCommonAttributes(attributes);
 
@@ -459,8 +459,9 @@ public class ContributionListing {
     public void endElement(String uri, String localName, String qName)
         throws SAXException {
 
-      if (LIBRARY_TAG.equals(qName) || LIBRARY_COMPILATION_TAG.equals(qName)
-          || TOOL_TAG.equals(qName)) {
+      if (ContributionXmlParser.LIBRARY_TAG.equals(qName)
+          || ContributionXmlParser.LIBRARY_COMPILATION_TAG.equals(qName)
+          || ContributionXmlParser.TOOL_TAG.equals(qName)) {
         contributions.add(currentInfo);
         currentInfo = null;
       }

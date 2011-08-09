@@ -616,7 +616,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         updateButton = new JButton("Update now");
         Dimension installButtonDimensions = updateButton.getPreferredSize();
-        installButtonDimensions.width = BUTTON_WIDTH;
+        installButtonDimensions.width = ContributionPanel.BUTTON_WIDTH;
         updateButton.setMinimumSize(installButtonDimensions);
         updateButton.setPreferredSize(installButtonDimensions);
         updateButton.setOpaque(false);
@@ -645,14 +645,14 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       JPanel rightPane = new JPanel();
       rightPane.setOpaque(false);
       rightPane.setLayout(new BoxLayout(rightPane, BoxLayout.Y_AXIS));
-      rightPane.setMinimumSize(new Dimension(BUTTON_WIDTH, 1));
+      rightPane.setMinimumSize(new Dimension(ContributionPanel.BUTTON_WIDTH, 1));
       add(rightPane, c);
       
       installProgressBar = new JProgressBar();
       installProgressBar.setStringPainted(true);
       resetInstallProgressBarState();
       Dimension d = installProgressBar.getPreferredSize();
-      d.width = BUTTON_WIDTH;
+      d.width = ContributionPanel.BUTTON_WIDTH;
       installProgressBar.setPreferredSize(d);
       installProgressBar.setMaximumSize(d);
       installProgressBar.setMinimumSize(d);
@@ -665,7 +665,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       installRemoveButton = new JButton(" ");
     
       Dimension installButtonDimensions = installRemoveButton.getPreferredSize();
-      installButtonDimensions.width = BUTTON_WIDTH;
+      installButtonDimensions.width = ContributionPanel.BUTTON_WIDTH;
       installRemoveButton.setPreferredSize(installButtonDimensions);
       installRemoveButton.setMaximumSize(installButtonDimensions);
       installRemoveButton.setMinimumSize(installButtonDimensions);
@@ -677,7 +677,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       // progress bar and install button
       d = installProgressBar.getPreferredSize();
       Dimension d2 = installRemoveButton.getPreferredSize();
-      d.width = BUTTON_WIDTH;
+      d.width = ContributionPanel.BUTTON_WIDTH;
       d.height = d.height+d2.height;
       rightPane.setMinimumSize(d);
       rightPane.setPreferredSize(d);
@@ -712,7 +712,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       String authorList = contrib.getAuthorList();
       if (authorList != null && !authorList.isEmpty()) {
         nameText.append(" by ");
-        nameText.append(toHtmlLinks(contrib.getAuthorList()));
+        nameText.append(ContributionListPanel.toHtmlLinks(contrib.getAuthorList()));
       }
       nameText.append("</body></html>");
       headerText.setText(nameText.toString());
@@ -724,10 +724,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
       boolean isFlagged = ContributionManager.isFlaggedForDeletion(contrib);
       if (isFlagged) {
-        description.append(DELETION_MESSAGE);
+        description.append(ContributionListPanel.DELETION_MESSAGE);
       } else if (contrib.getSentence() != null) {
-        String sentence = sanitizeHtmlTags(contrib.getSentence());
-        sentence = toHtmlLinks(sentence);
+        String sentence = ContributionListPanel.sanitizeHtmlTags(contrib.getSentence());
+        sentence = ContributionListPanel.toHtmlLinks(sentence);
         description.append(sentence);
       }
       
@@ -810,7 +810,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         );
         
       } catch (MalformedURLException e) {
-        Base.showWarning(INSTALL_FAILURE_TITLE, MALFORMED_URL_MESSAGE, e);
+        Base.showWarning(ContributionListPanel.INSTALL_FAILURE_TITLE,
+                         ContributionListPanel.MALFORMED_URL_MESSAGE, e);
         installRemoveButton.setEnabled(true);
       }
     }
@@ -872,13 +873,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         if (textPane instanceof JEditorPane) {
           JEditorPane editorPane = (JEditorPane) textPane;
           
-          editorPane.removeHyperlinkListener(nullHyperlinkListener);
+          editorPane.removeHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
           editorPane.removeHyperlinkListener(conditionalHyperlinkOpener);
           if (isSelected()) {
             editorPane.addHyperlinkListener(conditionalHyperlinkOpener);
             editorPane.setEditable(false);
           } else {
-            editorPane.addHyperlinkListener(nullHyperlinkListener);
+            editorPane.addHyperlinkListener(ContributionListPanel.nullHyperlinkListener);
             editorPane.setEditable(true);
           }
           
@@ -919,8 +920,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (doc instanceof HTMLDocument) {
             HTMLDocument html = (HTMLDocument) doc;
             StyleSheet stylesheet = html.getStyleSheet();
-            stylesheet.addRule("body {color:" + toHex(fg) + ";}");
-            stylesheet.addRule("a {color:" + toHex(fg) + "}");
+            stylesheet.addRule("body {color:" + ContributionListPanel.toHex(fg) + ";}");
+            stylesheet.addRule("a {color:" + ContributionListPanel.toHex(fg) + "}");
           }
         }
       }
