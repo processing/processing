@@ -211,37 +211,60 @@ public class ContributionListing {
     return filteredList;
   }
 
-  private boolean matches(Contribution info, String filter) {
+  public boolean matches(Contribution contrib, String filter) {
     
-    // Maybe this can be fancy some other time
-    if (filter.equals("has:update") || filter.equals("has:updates")) {
-      return hasUpdates(info);
+    int colon = filter.indexOf(":");
+    if (colon != -1) {
+      String isText = filter.substring(0, colon);
+      String property = filter.substring(colon + 1);
+      
+      // Chances are the person is still typing the property, so rather than
+      // make the list flash empty (because nothing contains "is:" or "has:",
+      // just return true.
+      if (!isProperty(property))
+        return true;
+      
+      if ("is".equals(isText) || "has".equals(isText)) {
+        return hasProperty(contrib, filter.substring(colon + 1));
+      } else  if ("not".equals(isText)) {
+        return !hasProperty(contrib, filter.substring(colon + 1));
+      }
     }
-    if (filter.equals("is:installed")) {
-      return info.isInstalled();
-    }
-    if (filter.equals("not:installed")) {
-      return !info.isInstalled();
-    }
-    if (filter.contains(":")) {
-      // Return true and ignore everything else if the property is invalid.
-      return true;
-    }
+    
     filter = ".*" + filter.toLowerCase() + ".*";
     
     if (filter.isEmpty()) {
       return true;
     }
     
-    if (info.getAuthorList().toLowerCase().matches(filter)) {
+    if (contrib.getAuthorList().toLowerCase().matches(filter)) {
       return true;
     }
     
-    return info.getSentence() != null && info.getSentence().toLowerCase().matches(filter)
-        || info.getParagraph() != null && info.getParagraph().toLowerCase().matches(filter)
-        || info.getCategory() != null && info.getCategory().toLowerCase().matches(filter)
-        || info.getName() != null && info.getName().toLowerCase().matches(filter);
+    return contrib.getSentence() != null && contrib.getSentence().toLowerCase().matches(filter)
+        || contrib.getParagraph() != null && contrib.getParagraph().toLowerCase().matches(filter)
+        || contrib.getCategory() != null && contrib.getCategory().toLowerCase().matches(filter)
+        || contrib.getName() != null && contrib.getName().toLowerCase().matches(filter);
  
+  }
+  
+  public boolean isProperty(String property) {
+    return property.startsWith("updat") || property.startsWith("upgrad")
+        || property.startsWith("instal") && !property.startsWith("installabl");
+  }
+
+  /** Returns true if the contribution fits the given property, false otherwise.
+   *  If the property is invalid, returns false. */
+  public boolean hasProperty(Contribution contrib, String property) {
+    // update, updates, updatable
+    if (property.startsWith("updat") || property.startsWith("upgrad")) {
+      return hasUpdates(contrib);
+    }
+    if (property.startsWith("instal") && !property.startsWith("installabl")) {
+      return contrib.isInstalled();
+    }
+
+    return false;
   }
 
   private void notifyRemove(Contribution contribution) {
