@@ -196,12 +196,16 @@ public class Base {
               if (platform.base == null) continue;
               
               if (key.equals(receivedKey)) {
-                String filename = br.readLine();
-                if (filename != null) {
-                  platform.base.handleOpen(filename);
-                } else {
-                  platform.base.handleNew();
-                }
+                final String filename = br.readLine();
+                SwingUtilities.invokeLater(new Runnable() {
+                  public void run() {
+                    if (filename != null) {
+                      platform.base.handleOpen(filename);
+                    } else {
+                      platform.base.handleNew();
+                    }
+                  };
+                });
               }
             } catch (IOException e) {
             }
