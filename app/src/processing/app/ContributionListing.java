@@ -377,20 +377,16 @@ public class ContributionListing {
     }
 
     public void run() {
-      downloader = new FileDownloader(url, dest, progressMonitor);
-      downloader.setPostOperation(new Runnable() {
-        
-        public void run() {
-          
-          File xmlFile = downloader.getFile();
-          if (xmlFile != null) {
-            hasDownloadedLatestList = true;
-            setAdvertisedList(xmlFile);
-          }
-        }
-      });
       
-      downloader.run();
+      try {
+        if (FileDownloader.downloadFile(url, dest, progressMonitor)) {
+          hasDownloadedLatestList = true;
+          setAdvertisedList(dest);
+        }
+      } catch (IOException ioe) {
+        System.err.println("An error occured when downloading the "
+            + "list of available contributions.");
+      }
     }
     
   }

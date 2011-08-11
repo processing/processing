@@ -380,54 +380,50 @@ public class ContributionManager {
    *          old version of a contribution that is being updated). Must not be
    *          null.
    */
-  public void downloadAndInstall(URL url,
+  public void downloadAndInstall(final URL url,
                                  final Contribution toBeReplaced,
                                  final JProgressMonitor downloadProgressMonitor,
                                  final JProgressMonitor installProgressMonitor) {
 
-    File libDest = getTemporaryFile(url);
-    
-    final FileDownloader downloader = new FileDownloader(url, libDest,
-                                                         downloadProgressMonitor);
+    final File libDest = getTemporaryFile(url);
 
-    downloader.setPostOperation(new Runnable() {
+    new Thread(new Runnable() {
 
       public void run() {
+        
+        try {
+          if (FileDownloader.downloadFile(url, libDest, downloadProgressMonitor)) {
 
-        File contributionFile = downloader.getFile();
+            installProgressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
 
-        if (contributionFile != null) {
-          installProgressMonitor.startTask("Installing",
-                                           ProgressMonitor.UNKNOWN);
-
-          InstalledContribution contribution = null;
-          switch (toBeReplaced.getType()) {
-          case LIBRARY:
-            contribution = installLibrary(contributionFile, false);
-            break;
-          case LIBRARY_COMPILATION:
-            contribution = installLibraryCompilation(contributionFile);
-            break;
-          case TOOL:
-            contribution = installTool(contributionFile);
-            break;
+            InstalledContribution contribution = null;
+            switch (toBeReplaced.getType()) {
+            case LIBRARY:
+              contribution = installLibrary(libDest, false);
+              break;
+            case LIBRARY_COMPILATION:
+              contribution = installLibraryCompilation(libDest);
+              break;
+            case TOOL:
+              contribution = installTool(libDest);
+              break;
+            }
+            
+            if (contribution != null) {
+              // XXX contributionListing.getInformationFromAdvertised(contribution); get the category at least
+              contribListing.replaceContribution(toBeReplaced, contribution);
+              refreshInstalled();
+            }
           }
-          
-          if (contribution != null) {
-            // XXX contributionListing.getInformationFromAdvertised(contribution); get the category at least
-            contribListing.replaceContribution(toBeReplaced, contribution);
-            refreshInstalled();
-          }
-          
+        } catch (IOException e) {
+          System.err.println("An error occured when downloading the contribution.");
         }
 
         dialog.pack();
-
         installProgressMonitor.finished();
       }
-    });
-
-    new Thread(downloader).start();
+    }).start();
+    
   }
   
   protected LibraryCompilation installLibraryCompilation(File f) {
