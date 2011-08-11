@@ -57,8 +57,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   ContributionManager contribManager;
   
-  JProgressBar setupProgressBar;
-  
   TreeMap<Contribution, ContributionPanel> panelByContribution;
   
   static private HyperlinkListener nullHyperlinkListener = new HyperlinkListener() {
@@ -97,11 +95,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     c.weighty = 1;
     c.anchor = GridBagConstraints.CENTER;
     
-    setupProgressBar = new JProgressBar();
-    setupProgressBar.setString("");
-    setupProgressBar.setStringPainted(true);
-    add(setupProgressBar, c);
-    
   }
   
   private void updatePanelOrdering() {
@@ -122,8 +115,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     SwingUtilities.invokeLater(new Runnable() {
 
       public void run() {
-        setupProgressBar.setVisible(false);
-        
         if (panelByContribution.containsKey(contribution)) {
           return;
         }
@@ -343,10 +334,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     return true;
   }
 
-  public JProgressBar getSetupProgressBar() {
-    return setupProgressBar;
-  }
-  
   static public String sanitizeHtmlTags(String stringIn) {
     stringIn = stringIn.replaceAll("<", "&lt;");
     stringIn = stringIn.replaceAll(">", "&gt;");
