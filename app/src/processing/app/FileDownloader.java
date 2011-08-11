@@ -31,111 +31,59 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class FileDownloader implements Runnable {
-  
-  URL url;
-
-  File dest;
-
-  ProgressMonitor progressMonitor;
-
-  Runnable post;
-
-  // The output of the downloaded file, null if the download is still in
-  // progress or the download failed.
-  File libFile;
+public class FileDownloader {
 
   /**
+   * Blocks until the file is downloaded or an error occurs. Returns true if the
+   * file was successfully downloaded, false otherwise
    * 
-   * @param url
-   *          URL of file to download
+   * @param source
+   *          the URL of the file to donwload
    * @param dest
-   *          An existing file that is the destination for the download
-   * @param progressMonitor
-   * @param post
-   *          object to run once download is complete, or null if nothing should
-   *          be run. The run method will be called even if the download failed.
-   */
-  public FileDownloader(URL url, File dest, ProgressMonitor progressMonitor) {
-    this.url = url;
-    this.dest = dest;
-    if (progressMonitor == null) {
-      this.progressMonitor = new NullProgressMonitor();
-    } else {
-      this.progressMonitor = progressMonitor;
-    }
-    post = null;
-    libFile = null;
-  }
-  
-  public void setPostOperation(Runnable post) {
-    this.post = post;
-  }
-
-  public void run() {
-    if (downloadFile(url, dest, progressMonitor)) {
-      libFile = dest;
-    }
-
-    if (post != null) {
-      post.run();
-    }
-    
-    progressMonitor.finished();
-  }
-
-  public File getFile() {
-    return libFile;
-  }
-
-  /**
-   * Returns true if the file was successfully downloaded, false otherwise
-   * 
+   *          the file on the local system where the file will be written. This
+   *          must be a file (not a directory), and must already exist.
    * @param progressMonitor
    * @throws FileNotFoundException
+   *           if an error occured downloading the file
+   * @return false if the ProgressMonitor requested a cancellation, false
+   *         otherwise
    */
-  protected boolean downloadFile(URL source, File dest,
-                                 ProgressMonitor progressMonitor) {
-    try {
-      URLConnection urlConn = source.openConnection();
-      urlConn.setConnectTimeout(1000);
-      urlConn.setReadTimeout(5000);
-  
-      // String expectedType1 = "application/x-zip-compressed";
-      // String expectedType2 = "application/zip";
-      // String type = urlConn.getContentType();
-      // if (expectedType1.equals(type) || expectedType2.equals(type)) {
-      // }
-  
-      int fileSize = urlConn.getContentLength();
-      progressMonitor.startTask("Downloading", fileSize);
-  
-      InputStream in = urlConn.getInputStream();
-      FileOutputStream out = new FileOutputStream(dest);
-  
-      byte[] b = new byte[256];
-      int bytesDownloaded = 0, len;
-      while (!progressMonitor.isCanceled() && (len = in.read(b)) != -1) {
-        out.write(b, 0, len);
-        bytesDownloaded += len;
-  
-        progressMonitor.setProgress(bytesDownloaded);
-      }
-      out.close();
-  
-      if (!progressMonitor.isCanceled()) {
-        return true;
-      }
-    } catch (IOException e) {
-      System.err.println("An error occured while downloading the file "
-          + source.toExternalForm());
-//      Base.showWarning("Trouble downloading file",
-//                       "An error occured while downloading the file:\n"
-//                           + e.getMessage(), e);
+  static public boolean downloadFile(URL source, File dest,
+                                     ProgressMonitor progressMonitor)
+                                                            throws IOException {
+
+    URLConnection urlConn = source.openConnection();
+    urlConn.setConnectTimeout(1000);
+    urlConn.setReadTimeout(5000);
+
+    // String expectedType1 = "application/x-zip-compressed";
+    // String expectedType2 = "application/zip";
+    // String type = urlConn.getContentType();
+    // if (expectedType1.equals(type) || expectedType2.equals(type)) {
+    // }
+
+    int fileSize = urlConn.getContentLength();
+    progressMonitor.startTask("Downloading", fileSize);
+
+    InputStream in = urlConn.getInputStream();
+    FileOutputStream out = new FileOutputStream(dest);
+
+    byte[] b = new byte[256];
+    int bytesDownloaded = 0, len;
+    while (!progressMonitor.isCanceled() && (len = in.read(b)) != -1) {
+      out.write(b, 0, len);
+      bytesDownloaded += len;
+
+      progressMonitor.setProgress(bytesDownloaded);
     }
+    out.close();
+
+    if (!progressMonitor.isCanceled()) {
+      return true;
+    }
+    progressMonitor.finished();
 
     return false;
   }
-
+  
 }
-
