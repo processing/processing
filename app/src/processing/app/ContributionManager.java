@@ -86,8 +86,7 @@ public class ContributionManager {
   /**
    * Initializes the contribution listing and fetches the advertised
    * contributions in a separate thread. This does not initialize any AWT
-   * components except for a single JProgressBar which is needed in case
-   * showFrame is called in the middle of downloading.
+   * components.
    */
   public ContributionManager() {
     contribListing = new ContributionListing();
@@ -100,17 +99,14 @@ public class ContributionManager {
     this.editor = editor;
     
     if (!contribListing.hasDownloadedLatestList()) {
-      JProgressBar progressBar = contributionListPanel.getSetupProgressBar();
-      contribListing.getAdvertisedContributions(new JProgressMonitor(progressBar) {
+      contribListing.getAdvertisedContributions(new AbstractProgressMonitor() {
+        public void startTask(String name, int maxValue) {
+        }
         
-        @Override
-        public void finishedAction() {
-          synchronized (contribListing) {
-            updateContributionListing();
-            updateCategoryChooser();
-  
-            progressBar.setVisible(false);
-          }
+        public void finished() {
+          super.finished();
+          updateContributionListing();
+          updateCategoryChooser();
         }
       });
     }
