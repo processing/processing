@@ -73,17 +73,8 @@ public class FileDownloader implements Runnable {
   }
 
   public void run() {
-    try {
-      if (downloadFile(url, dest, progressMonitor)) {
-        libFile = dest;
-      }
-    } catch (FileNotFoundException e) {
-      Base.showWarning("Trouble downloading file",
-                       "The file was not found on the server.\n", null);
-    } catch (IOException e) {
-      Base.showWarning("Trouble downloading file",
-                       "An error occured while downloading the file:\n"
-                           + e.getMessage(), e);
+    if (downloadFile(url, dest, progressMonitor)) {
+      libFile = dest;
     }
 
     if (post != null) {
@@ -104,37 +95,43 @@ public class FileDownloader implements Runnable {
    * @throws FileNotFoundException
    */
   protected boolean downloadFile(URL source, File dest,
-                                 ProgressMonitor progressMonitor)
-      throws IOException, FileNotFoundException {
-    
-    URLConnection urlConn = source.openConnection();
-    urlConn.setConnectTimeout(1000);
-    urlConn.setReadTimeout(5000);
-
-    // String expectedType1 = "application/x-zip-compressed";
-    // String expectedType2 = "application/zip";
-    // String type = urlConn.getContentType();
-    // if (expectedType1.equals(type) || expectedType2.equals(type)) {
-    // }
-
-    int fileSize = urlConn.getContentLength();
-    progressMonitor.startTask("Downloading", fileSize);
-
-    InputStream in = urlConn.getInputStream();
-    FileOutputStream out = new FileOutputStream(dest);
-
-    byte[] b = new byte[256];
-    int bytesDownloaded = 0, len;
-    while (!progressMonitor.isCanceled() && (len = in.read(b)) != -1) {
-      out.write(b, 0, len);
-      bytesDownloaded += len;
-
-      progressMonitor.setProgress(bytesDownloaded);
-    }
-    out.close();
-
-    if (!progressMonitor.isCanceled()) {
-      return true;
+                                 ProgressMonitor progressMonitor) {
+    try {
+      URLConnection urlConn = source.openConnection();
+      urlConn.setConnectTimeout(1000);
+      urlConn.setReadTimeout(5000);
+  
+      // String expectedType1 = "application/x-zip-compressed";
+      // String expectedType2 = "application/zip";
+      // String type = urlConn.getContentType();
+      // if (expectedType1.equals(type) || expectedType2.equals(type)) {
+      // }
+  
+      int fileSize = urlConn.getContentLength();
+      progressMonitor.startTask("Downloading", fileSize);
+  
+      InputStream in = urlConn.getInputStream();
+      FileOutputStream out = new FileOutputStream(dest);
+  
+      byte[] b = new byte[256];
+      int bytesDownloaded = 0, len;
+      while (!progressMonitor.isCanceled() && (len = in.read(b)) != -1) {
+        out.write(b, 0, len);
+        bytesDownloaded += len;
+  
+        progressMonitor.setProgress(bytesDownloaded);
+      }
+      out.close();
+  
+      if (!progressMonitor.isCanceled()) {
+        return true;
+      }
+    } catch (IOException e) {
+      System.err.println("An error occured while downloading the file "
+          + source.toExternalForm());
+//      Base.showWarning("Trouble downloading file",
+//                       "An error occured while downloading the file:\n"
+//                           + e.getMessage(), e);
     }
 
     return false;

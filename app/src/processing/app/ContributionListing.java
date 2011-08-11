@@ -45,25 +45,28 @@ public class ContributionListing {
   
   ArrayList<Contribution> allContributions;
 
-  private Comparator<Contribution> contribComparator;
+  boolean hasDownloadedLatestList;
+  
+  static Comparator<Contribution> contribComparator = new Comparator<Contribution>() {
+    public int compare(Contribution o1, Contribution o2) {
+      return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+    }
+  };
   
   public ContributionListing() {
     listeners = new ArrayList<ContributionChangeListener>();
+    advertisedContributions = new ArrayList<AdvertisedContribution>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
     allContributions = new ArrayList<Contribution>();
-    
-    contribComparator = new Comparator<Contribution>() {
-      public int compare(Contribution o1, Contribution o2) {
-        return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-      }
-    };
+    hasDownloadedLatestList = false;
   }
 
 
   public void setAdvertisedList(File xmlFile) {
     
     ContributionXmlParser xmlParser = new ContributionXmlParser(xmlFile);
-    advertisedContributions = xmlParser.getLibraries();
+    advertisedContributions.clear();
+    advertisedContributions.addAll(xmlParser.getLibraries());
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
@@ -325,6 +328,10 @@ public class ContributionListing {
     
     return false;
   }
+  
+  public boolean hasDownloadedLatestList() {
+    return hasDownloadedLatestList;
+  }
 
   public static interface ContributionChangeListener {
     
@@ -377,6 +384,7 @@ public class ContributionListing {
           
           File xmlFile = downloader.getFile();
           if (xmlFile != null) {
+            hasDownloadedLatestList = true;
             setAdvertisedList(xmlFile);
           }
         }
