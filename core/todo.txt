@@ -2,6 +2,9 @@
 X remove textMode(SCREEN)
 X added expand(long) and expand(double) because of Table
 
+_ PImage.save() with full path raises exception
+_   http://code.google.com/p/processing/issues/detail?id=808
+
 _ enable smooth() by default
 _   better to learn noSmooth() later
 _   disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing

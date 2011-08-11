@@ -127,6 +127,8 @@ public class Table implements Iterable<Table.Row> {
   
   
   public Table(BufferedReader reader) {
+    columns = new Object[0];
+    columnTypes = new int[0];
     try {
       boolean csv = peekCSV(reader);
       if (csv) {
