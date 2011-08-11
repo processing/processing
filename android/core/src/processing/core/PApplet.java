@@ -44,6 +44,7 @@ import android.net.Uri;
 import android.text.format.Time;
 import android.util.*;
 import android.view.SurfaceView;
+import android.view.View;
 import android.opengl.GLSurfaceView;
 import android.view.WindowManager;
 import android.os.Bundle;
@@ -447,6 +448,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       surfaceView = new SketchSurfaceView3D(this, sw, sh);
     }
     g = ((SketchSurfaceView) surfaceView).getGraphics();
+    
 //    surfaceView.setLayoutParams(new LayoutParams(sketchWidth(), sketchHeight()));
 
 //    layout.addView(surfaceView);
@@ -466,8 +468,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     if (sw == screenWidth && sh == screenHeight) {
       // If using the full screen, don't embed inside other layouts
-      window.setContentView(surfaceView);
-
+      window.setContentView(surfaceView);      
     } else {
       // If not using full screen, setup awkward view-inside-a-view so that
       // the sketch can be centered on screen. (If anyone has a more efficient
@@ -484,7 +485,30 @@ public class PApplet extends Activity implements PConstants, Runnable {
       overallLayout.addView(layout, lp);
       window.setContentView(overallLayout);
     }
-
+    
+    // Here we use Honeycomb API (11+) to hide (in reality, just make the status icons into small dots)
+    // the status bar. Since the core is still built against API 7 (2.1), we use introspection to get
+    // the setSystemUiVisibility() method from the view class. 
+    Method visibilityMethod = null;
+    try {
+      visibilityMethod = surfaceView.getClass().getMethod("setSystemUiVisibility", new Class[] { int.class});
+    } catch (NoSuchMethodException e) {
+      // Nothing to do. This means that we are running with a version of Android previous to Honeycomb.
+    }
+    if (visibilityMethod != null) {
+      try {        
+        // This is equivalent to calling:
+        //surfaceView.setSystemUiVisibility(View.STATUS_BAR_HIDDEN);
+        // The value of View.STATUS_BAR_HIDDEN is 1.
+        visibilityMethod.invoke(surfaceView, new Object[] { 1 });
+      } catch (InvocationTargetException e) {        
+      } catch (IllegalAccessException e) {        
+      }
+    }
+    window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);        
+    
+    
 //    layout.addView(surfaceView, lp);
 //    surfaceView.setLayoutParams(new LayoutParams(sketchWidth(), sketchHeight()));
 
@@ -611,7 +635,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return surfaceView.getHolder();
 //    return surfaceHolder;
   }
-
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -1807,7 +1830,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //        // (e.g. OpenGL has to wait for a peer to be on screen)
 //        return;
 //      }
-
+      
       g.beginDraw();
 
       long now = System.nanoTime();
