@@ -523,6 +523,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         headerText = new JTextPane();
         setHtmlTextStyle(headerText);
+        stripTextSelectionListeners(headerText);
         add(headerText, c);
       }
       
@@ -588,6 +589,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         descriptionText = new JTextPane();
         setHtmlTextStyle(descriptionText);
+        stripTextSelectionListeners(descriptionText);
         descriptionPanel.add(descriptionText, c);
       }
       
@@ -603,6 +605,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         updateNotificationLabel = new JTextPane();
         updateNotificationLabel.setVisible(false);
         setHtmlTextStyle(updateNotificationLabel);
+        stripTextSelectionListeners(updateNotificationLabel);
         descriptionPanel.add(updateNotificationLabel, c);
       }
       
@@ -834,6 +837,17 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       htmlPanes.add(textPane);
       
       textPane.setOpaque(false);
+    }
+
+    void stripTextSelectionListeners(JEditorPane editorPane) {
+      for (MouseListener l : editorPane.getMouseListeners()) {
+        String className = l.getClass().getName();
+        if (className.endsWith("MutableCaretEvent")
+            || className.endsWith("DragListener")
+            || className.endsWith("BasicCaret")) {
+          editorPane.removeMouseListener(l);
+        }
+      }
     }
     
     /**
