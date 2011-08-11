@@ -500,7 +500,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       setFocusable(true);
       setLayout(new GridBagLayout());
     
-      {
+      { // Header text area. The name of the contribution and its authors.
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -514,7 +514,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         add(headerText, c);
       }
       
-      {
+      { // The category label, which shows the names of the category in the
+        // upper left corner.
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -525,7 +526,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         add(categoryLabel, c);
       }
       
-      {
+      { // The bottom part of the panel which describes the contribution.
+        // All components in the description (e.g. icons, text) are placed in
+        // the descriptionPanel
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -539,8 +542,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         descriptionPanel.setOpaque(false);
         descriptionPanel.setLayout(new GridBagLayout());
         add(descriptionPanel, c);
-        
-        c = new GridBagConstraints();
+      }
+      
+      { // The left part of the description, used to draw the icon.
+        GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
         c.gridheight = 2;
@@ -564,7 +569,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         descriptionPanel.add(iconArea, c);
       }
       
-      {
+      { // The bottom right of the description, used to show text describing it
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -580,7 +585,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         descriptionPanel.add(descriptionText, c);
       }
       
-      {
+      { // A label below the description text showing notifications for when
+        // updates are available, or instructing the user to restart the PDE if
+        // necessary
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 1;
@@ -596,7 +603,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         descriptionPanel.add(updateNotificationLabel, c);
       }
       
-      {
+      { // An update button, shown in the description area, but only visible for
+        // contributions that do not require a restart.
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 2;
         c.gridy = 1;

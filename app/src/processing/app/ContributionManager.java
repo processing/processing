@@ -184,67 +184,91 @@ public class ContributionManager {
     dialog.dispose();
     editor = null;
   }
-
+  
+  /** Creates and arranges the Swing components in the dialog. */
   private void createComponents() {
     dialog.setResizable(true);
     
     Container pane = dialog.getContentPane();
     pane.setLayout(new GridBagLayout());
     
-    GridBagConstraints c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 0;
-    c.gridwidth = 2;
-    c.weightx = 1;
-    c.fill = GridBagConstraints.HORIZONTAL;
-    filterField = new FilterField();
+    { // The filter text area
+      GridBagConstraints c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 0;
+      c.gridwidth = 2;
+      c.weightx = 1;
+      c.fill = GridBagConstraints.HORIZONTAL;
+      filterField = new FilterField();
+
+      pane.add(filterField, c);
+    }
     
-    pane.add(filterField, c);
+    { // The scroll area containing the contribution listing.
+      GridBagConstraints c = new GridBagConstraints();
+      c.fill = GridBagConstraints.BOTH;
+      c.gridx = 0;
+      c.gridy = 1;
+      c.gridwidth = 2;
+      c.weighty = 1;
+      c.weightx = 1;
+
+      final JScrollPane scrollPane = new JScrollPane();
+      scrollPane.setPreferredSize(new Dimension(300, 300));
+      scrollPane.setViewportView(contributionListPanel);
+      scrollPane.getViewport().setOpaque(true);
+
+      scrollPane.getViewport().setBackground(contributionListPanel
+                                                 .getBackground());
+
+      scrollPane
+          .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      pane.add(scrollPane, c);
+      // pane.add(scrollPane, c);
+      scrollPane
+          .setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    }
     
-    c = new GridBagConstraints();
-    c.fill = GridBagConstraints.BOTH;
-    c.gridx = 0;
-    c.gridy = 1;
-    c.gridwidth = 2;
-    c.weighty = 1;
-    c.weightx = 1;
+    { // Shows "Category:"
+      GridBagConstraints c = new GridBagConstraints();
+      c.gridx = 0;
+      c.gridy = 2;
+      pane.add(new Label("Category:"), c);
+    }
     
-    final JScrollPane scrollPane = new JScrollPane();
-    scrollPane.setPreferredSize(new Dimension(300,300));
-    scrollPane.setViewportView(contributionListPanel);
-    scrollPane.getViewport().setOpaque(true);
-    
-    scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
-    
-    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-    pane.add(scrollPane, c);
-    //pane.add(scrollPane, c);
-    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    
-    c = new GridBagConstraints();
-    c.gridx = 0;
-    c.gridy = 2;
-    pane.add(new Label("Category:"), c);
-    
-    c = new GridBagConstraints();
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridx = 1;
-    c.gridy = 2;
-    
-    categoryChooser = new JComboBox();
-    updateCategoryChooser();
-    pane.add(categoryChooser, c);
-    categoryChooser.addItemListener(new ItemListener() {
-      
-      public void itemStateChanged(ItemEvent e) {
-        category = (String) categoryChooser.getSelectedItem();
-        if (ContributionManager.ANY_CATEGORY.equals(category)) {
-          category = null;
+    { // Combo box for selecting a category
+      GridBagConstraints c = new GridBagConstraints();
+      c.fill = GridBagConstraints.HORIZONTAL;
+      c.gridx = 1;
+      c.gridy = 2;
+
+      categoryChooser = new JComboBox();
+      updateCategoryChooser();
+      pane.add(categoryChooser, c);
+      categoryChooser.addItemListener(new ItemListener() {
+
+        public void itemStateChanged(ItemEvent e) {
+          category = (String) categoryChooser.getSelectedItem();
+          if (ContributionManager.ANY_CATEGORY.equals(category)) {
+            category = null;
+          }
+
+          filterLibraries(category, filterField.filters);
         }
-        
-        filterLibraries(category, filterField.filters);
-      }
-    });
+      });
+    }
+    
+    // {
+    // GridBagConstraints c = new GridBagConstraints();
+    // c.fill = GridBagConstraints.HORIZONTAL;
+    // c.gridx = 0;
+    // c.gridy = 3;
+    // c.gridwidth = 2;
+    // JLabel statusLabel = new JLabel("Hello there. This is some text.");
+    // statusLabel.setOpaque(true);
+    // statusLabel.setBackground(Color.black);
+    // pane.add(statusLabel, c);
+    // }
     
     dialog.setMinimumSize(new Dimension(550, 400));
   }
