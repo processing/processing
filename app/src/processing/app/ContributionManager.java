@@ -94,24 +94,26 @@ public class ContributionManager {
     
     contributionListPanel = new ContributionListPanel(this);
     contribListing.addContributionListener(contributionListPanel);
-    
-    JProgressBar progressBar = contributionListPanel.getSetupProgressBar();
-    contribListing.getAdvertisedContributions(new JProgressMonitor(progressBar) {
-
-      @Override
-      public void finishedAction() {
-        synchronized (contribListing) {
-          updateContributionListing();
-          updateCategoryChooser();
-
-          progressBar.setVisible(false);
-        }
-      }
-    });
   }
   
   protected void showFrame(Editor editor) {
     this.editor = editor;
+    
+    if (!contribListing.hasDownloadedLatestList()) {
+      JProgressBar progressBar = contributionListPanel.getSetupProgressBar();
+      contribListing.getAdvertisedContributions(new JProgressMonitor(progressBar) {
+        
+        @Override
+        public void finishedAction() {
+          synchronized (contribListing) {
+            updateContributionListing();
+            updateCategoryChooser();
+  
+            progressBar.setVisible(false);
+          }
+        }
+      });
+    }
     
     updateContributionListing();
     
