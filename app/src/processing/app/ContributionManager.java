@@ -48,15 +48,11 @@ public class ContributionManager {
   static private final String DOUBLE_CLICK_SECONDARY =
       "Click â€œYesâ€ to install this library to your sketchbook...";
   
-  static private final String DISCOVERY_ERROR_TITLE = "Trouble discovering libraries";
-  
   static private final String DISCOVERY_INTERNAL_ERROR_MESSAGE =
-        "An internal error occured while searching for libraries in the file.\n"
-      + "This may be a one time error, so try again.";
+        "An internal error occured while searching for contributions in the downloaded file.";
   
   static private final String DISCOVERY_NONE_FOUND_ERROR_MESSAGE =
-      "Maybe it's just us, but it looks like there are no\n"
-    + "libraries in the file we just downloaded.\n";
+      "Maybe it's just us, but it looks like there are no contributions in this file.";
   
   static final String ANY_CATEGORY = "Any";
   
@@ -478,13 +474,12 @@ public class ContributionManager {
   }
   
   protected LibraryCompilation installLibraryCompilation(File f) {
-    File parentDir = ContributionManager.unzipFileToTemp(f);
+    File parentDir = unzipFileToTemp(f);
     
     LibraryCompilation compilation = LibraryCompilation.create(parentDir);
 
     if (compilation == null) {
-      Base.showWarning(DISCOVERY_ERROR_TITLE,
-                       DISCOVERY_NONE_FOUND_ERROR_MESSAGE, null);
+      statusBar.setErrorMessage(DISCOVERY_NONE_FOUND_ERROR_MESSAGE);
       return null;
     }
       
@@ -539,7 +534,7 @@ public class ContributionManager {
    * @return the folder where the zips contents have been unzipped to (the
    *         subdirectory of the temp folder).
    */
-  private static File unzipFileToTemp(File libFile) {
+  File unzipFileToTemp(File libFile) {
     
     String fileName = ContributionManager.getFileName(libFile);
     File tmpFolder = null;
@@ -549,9 +544,7 @@ public class ContributionManager {
       tmpFolder = new File(tmpFolder, fileName);
       tmpFolder.mkdirs();
     } catch (IOException e) {
-      Base.showWarning("Trouble creating temporary folder",
-           "Could not create a place to store libary's uncompressed contents,\n" + 
-           "so it won't be installed.", e);
+      statusBar.setErrorMessage("Could not create temp folder to uncompressed zip file.");
     }
     
     ContributionManager.unzip(libFile, tmpFolder);
@@ -569,8 +562,7 @@ public class ContributionManager {
       
       return libFile;
     } catch (IOException e) {
-      Base.showWarning("Trouble creating temporary folder",
-                       "Could not create a place to store libraries being downloaded.\n", e);
+      statusBar.setErrorMessage("Could not create a temp folder for download.");
     }
     
     return null;
@@ -603,7 +595,7 @@ public class ContributionManager {
   }
   
   protected ToolContribution installTool(File zippedToolFile) {
-    File tempDir = ContributionManager.unzipFileToTemp(zippedToolFile);
+    File tempDir = unzipFileToTemp(zippedToolFile);
     
     ArrayList<ToolContribution> discoveredTools = ToolContribution.list(tempDir, false);
     if (discoveredTools.isEmpty()) {
@@ -620,13 +612,13 @@ public class ContributionManager {
     } else {
       // Diagnose the problem and notify the user
       if (discoveredTools == null || discoveredTools.isEmpty()) {
-        Base.showWarning(DISCOVERY_ERROR_TITLE,
-                         DISCOVERY_INTERNAL_ERROR_MESSAGE, null);
+        statusBar.setErrorMessage(DISCOVERY_INTERNAL_ERROR_MESSAGE);
       } else {
-        Base.showWarning("Too many tools",
-                         "We found more than one tool in the file we just\n"
-                       + "downloaded. That shouldn't happen, so we're going\n"
-                       + "to ignore this file.", null);
+        statusBar.setErrorMessage("There were multiple tools in the file, so we're ignoring it.");
+//        Base.showWarning("Too many tools",
+//                         "We found more than one tool in the file we just\n"
+//                       + "downloaded. That shouldn't happen, so we're going\n"
+//                       + "to ignore this file.", null);
       }
     }
     
@@ -666,16 +658,15 @@ public class ContributionManager {
         e.printStackTrace();
       }
     } else {
-      Base.showWarning("Trouble moving new tool to the sketchbook",
-                       "Could not move tool \"" + newTool.getName() + "\" to "
-                           + newToolDest.getAbsolutePath() + ".\n", null);
+      statusBar.setErrorMessage("Could not move tool \"" + newTool.getName()
+                                + "\" to sketchbook.");
     }
     
     return null;
   }
   
   protected Library installLibrary(File libFile, boolean confirmReplace) {
-    File tempDir = ContributionManager.unzipFileToTemp(libFile);
+    File tempDir = unzipFileToTemp(libFile);
     
     try {
       ArrayList<Library> discoveredLibs = Library.list(tempDir);
@@ -693,24 +684,19 @@ public class ContributionManager {
       } else {
         // Diagnose the problem and notify the user
         if (discoveredLibs == null) {
-          Base.showWarning(ContributionManager.DISCOVERY_ERROR_TITLE,
-                           ContributionManager.DISCOVERY_INTERNAL_ERROR_MESSAGE,
-                           null);
+          statusBar.setErrorMessage(ContributionManager.DISCOVERY_INTERNAL_ERROR_MESSAGE);
         } else if (discoveredLibs.isEmpty()) {
-          Base.showWarning(ContributionManager.DISCOVERY_ERROR_TITLE,
-                           ContributionManager.DISCOVERY_NONE_FOUND_ERROR_MESSAGE,
-                           null);
+          statusBar.setErrorMessage(ContributionManager.DISCOVERY_NONE_FOUND_ERROR_MESSAGE);
         } else {
-          Base.showWarning("Too many libraries",
-                           "We found more than one library in the library file\n"
-                         + "we just downloaded. That shouldn't happen, so we're\n"
-                         + "going to ignore this file.", null);
+          statusBar.setErrorMessage("There were multiple libraries in the file, so we're ignoring it.");
+//          Base.showWarning("Too many libraries",
+//                           "We found more than one library in the library file\n"
+//                         + "we just downloaded. That shouldn't happen, so we're\n"
+//                         + "going to ignore the file.", null);
         }
       }
     } catch (IOException ioe) {
-      Base.showWarning(ContributionManager.DISCOVERY_ERROR_TITLE,
-                       ContributionManager.DISCOVERY_INTERNAL_ERROR_MESSAGE,
-                       ioe);
+      statusBar.setErrorMessage(ContributionManager.DISCOVERY_INTERNAL_ERROR_MESSAGE);
     }
     
     return null;
@@ -769,9 +755,8 @@ public class ContributionManager {
 //        newLib.folder = libFolder;
 //      } catch (IOException e) {
       } else {
-        Base.showWarning("Trouble moving new library to the sketchbook",
-                         "Could not move library \"" + newLib.getName() + "\" to "
-                             + newLibDest.getAbsolutePath() + ".\n", null);
+        statusBar.setErrorMessage("Could not move library \""
+            + newLib.getName() + "\" to sketchbook.");
       }
     }
     
@@ -830,9 +815,10 @@ public class ContributionManager {
     }
 //    } catch (IOException e) {
     if (!success) {
-      Base.showWarning("Trouble creating backup of old \"" + contribution.getName() + "\" contribution",
-                       "Could not move contribution to backup folder:\n"
-                           + backupSubFolder.getAbsolutePath(), null);
+      statusBar.setErrorMessage("Could not move contribution to backup folder.");
+//      Base.showWarning("Trouble creating backup of old \"" + contribution.getName() + "\" contribution",
+//                       "Could not move contribution to backup folder:\n"
+//                           + backupSubFolder.getAbsolutePath(), null);
     }
     return success;
   }
@@ -844,12 +830,13 @@ public class ContributionManager {
 
     if (!libraryBackupFolder.exists() || !libraryBackupFolder.isDirectory()) {
       if (!libraryBackupFolder.mkdirs()) {
-        Base.showWarning("Trouble creating folder to store old libraries in",
-                         "Could not create folder "
-                             + libraryBackupFolder.getAbsolutePath()
-                             + ".\n"
-                             + "That's gonna prevent us from replacing the library.",
-                         null);
+        statusBar.setErrorMessage("Could not create backup folder for library.");
+//        Base.showWarning("Trouble creating folder to store old libraries in",
+//                         "Could not create folder "
+//                             + libraryBackupFolder.getAbsolutePath()
+//                             + ".\n"
+//                             + "That's gonna prevent us from replacing the library.",
+//                         null);
         return null;
       }
     }
@@ -864,12 +851,13 @@ public class ContributionManager {
 
     if (!toolsBackupFolder.exists() || !toolsBackupFolder.isDirectory()) {
       if (!toolsBackupFolder.mkdirs()) {
-        Base.showWarning("Trouble creating folder to store old libraries in",
-                         "Could not create folder "
-                             + toolsBackupFolder.getAbsolutePath()
-                             + ".\n"
-                             + "That's gonna prevent us from replacing the library.",
-                         null);
+        statusBar.setErrorMessage("Could not create backup folder for tool.");
+//        Base.showWarning("Trouble creating folder to store old libraries in",
+//                         "Could not create folder "
+//                             + toolsBackupFolder.getAbsolutePath()
+//                             + ".\n"
+//                             + "That's gonna prevent us from replacing the library.",
+//                         null);
         return null;
       }
     }
@@ -1060,6 +1048,15 @@ public class ContributionManager {
     
     String errorMessage;
     
+    StatusPanel() {
+      addMouseListener(new MouseAdapter() {
+        
+        public void mousePressed(MouseEvent e) {
+          clearErrorMessage();
+        }
+      });
+    }
+    
     @Override
     protected void paintComponent(Graphics g) {
       super.paintComponent(g);
@@ -1082,10 +1079,12 @@ public class ContributionManager {
     
     void setErrorMessage(String message) {
       errorMessage = message;
+      setVisible(true);
     }
     
     void clearErrorMessage() {
       errorMessage = null;
+      repaint();
     }
   }
   
