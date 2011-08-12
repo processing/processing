@@ -44,7 +44,6 @@ import android.net.Uri;
 import android.text.format.Time;
 import android.util.*;
 import android.view.SurfaceView;
-import android.view.View;
 import android.opengl.GLSurfaceView;
 import android.view.WindowManager;
 import android.os.Bundle;
@@ -486,6 +485,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       window.setContentView(overallLayout);
     }
     
+    /*
     // Here we use Honeycomb API (11+) to hide (in reality, just make the status icons into small dots)
     // the status bar. Since the core is still built against API 7 (2.1), we use introspection to get
     // the setSystemUiVisibility() method from the view class. 
@@ -507,6 +507,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
     window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);        
+    */
     
     
 //    layout.addView(surfaceView, lp);
@@ -554,9 +555,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 //    Looper.prepare();
     handler = new Handler();
-    println("calling loop()");
+//    println("calling loop()");
 //    Looper.loop();
-    println("done with loop() call, will continue...");
+//    println("done with loop() call, will continue...");
 
     start();
   }
