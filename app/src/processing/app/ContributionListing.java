@@ -26,6 +26,7 @@ package processing.app;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.parsers.*;
 
@@ -47,6 +48,8 @@ public class ContributionListing {
 
   boolean hasDownloadedLatestList;
   
+  ReentrantLock downloadingListingLock;
+  
   static Comparator<Contribution> contribComparator = new Comparator<Contribution>() {
     public int compare(Contribution o1, Contribution o2) {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
@@ -58,7 +61,7 @@ public class ContributionListing {
     advertisedContributions = new ArrayList<AdvertisedContribution>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
     allContributions = new ArrayList<Contribution>();
-    hasDownloadedLatestList = false;
+    downloadingListingLock = new ReentrantLock();
   }
 
 
@@ -299,12 +302,45 @@ public class ContributionListing {
   public ArrayList<ContributionChangeListener> getContributionListeners() {
     return new ArrayList<ContributionChangeListener>(listeners);
   }
-  
-  public void getAdvertisedContributions(ProgressMonitor pm) {
-  
-    final ContributionListFetcher llf = new ContributionListFetcher();
-    llf.setProgressMonitor(pm);
-    new Thread(llf).start();
+
+  /**
+   * Starts a new thread to download the advertised list of contributions. Only
+   * one instance will run at a time.
+   */
+  public Thread getAdvertisedContributions(ProgressMonitor pm) {
+    
+    final ProgressMonitor progressMonitor = (pm != null) ? pm : new NullProgressMonitor();
+    
+    Thread downloadThread = new Thread(new Runnable() {
+      
+      public void run() {
+        downloadingListingLock.lock();
+        
+        try {
+          File tmpFolder = Base.createTempFolder("libarylist", "download");
+    
+          File dest = new File(tmpFolder, "contributions.xml");
+          dest.setWritable(true);
+    
+          URL url = new URL("http://dl.dropbox.com/u/700641/generated/contributions.xml");
+    
+          try {
+            if (FileDownloader.downloadFile(url, dest, progressMonitor)) {
+              hasDownloadedLatestList = true;
+              setAdvertisedList(dest);
+            }
+          } catch (IOException ioe) {
+          }
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        
+        downloadingListingLock.unlock();
+      }
+    });
+    
+    downloadThread.start();
+    return downloadThread;
   }
   
   public boolean hasUpdates() {
@@ -343,54 +379,6 @@ public class ContributionListing {
     
   }
   
-  public class ContributionListFetcher implements Runnable {
-
-    File dest;
-    
-    URL url;
-    
-    FileDownloader downloader;
-    
-    Thread downloaderThread;
-    
-    ProgressMonitor progressMonitor;
-
-    public ContributionListFetcher() {
-      
-      progressMonitor = new NullProgressMonitor();
-      
-      try {
-        File tmpFolder = Base.createTempFolder("libarylist", "download");
-
-        dest = new File(tmpFolder, "contributions.xml");
-        dest.setWritable(true);
-
-        url = new URL("http://dl.dropbox.com/u/700641/generated/contributions.xml");
-
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    }
-    
-    public void setProgressMonitor(ProgressMonitor pm) {
-      progressMonitor = pm;
-    }
-
-    public void run() {
-      
-      try {
-        if (FileDownloader.downloadFile(url, dest, progressMonitor)) {
-          hasDownloadedLatestList = true;
-          setAdvertisedList(dest);
-        }
-      } catch (IOException ioe) {
-        System.err.println("An error occured when downloading the "
-            + "list of available contributions.");
-      }
-    }
-    
-  }
-
   /**
    * Class to parse the libraries xml file
    */
@@ -577,6 +565,10 @@ public class ContributionListing {
       return prettyVersion;
     }
     
+  }
+
+  public boolean isDownloadingListing() {
+    return downloadingListingLock.isLocked();
   }
   
 }
