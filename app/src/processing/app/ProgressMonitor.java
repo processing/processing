@@ -62,14 +62,30 @@ public interface ProgressMonitor {
   public void cancel();
   
   /**
+   * @return <code>true</code> if an error occured while completing the task
+   */
+  public boolean isError();
+  
+  /**
+   * @return an exception that caused the error, may be null.
+   */
+  public Exception getException();
+  
+  /**
+   * Indicates that an error occurred while performing the task. Exception may
+   * be null.
+   */
+  public void error(Exception e);
+  
+  /**
    * Returns true if this task is complete
    */
   public boolean isFinished();
   
   /**
-   * This is called when the current task is finished. This should not be called
-   * if the task was cancelled or an error occurred, leaving the task
-   * incomplete.
+   * This is called when the current task is finished. This should always be
+   * called when a task is finished, whether or not an error occurred or the
+   * task was cancelled.
    */
   public void finished();
   
@@ -78,7 +94,11 @@ public interface ProgressMonitor {
 abstract class AbstractProgressMonitor implements ProgressMonitor {
   boolean isCanceled = false;
 
+  boolean isError = false;
+  
   boolean isFinished = false;
+  
+  Exception exception;
   
   int progress = 0;
   
@@ -96,6 +116,19 @@ abstract class AbstractProgressMonitor implements ProgressMonitor {
 
   public void cancel() {
     isCanceled = true;
+  }
+  
+  public boolean isError() {
+    return isError;
+  }
+
+  public Exception getException() {
+    return exception;
+  }
+
+  public void error(Exception e) {
+    isError = true;
+    exception = e;
   }
   
   public boolean isFinished() {

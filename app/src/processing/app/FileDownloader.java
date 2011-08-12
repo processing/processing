@@ -45,45 +45,41 @@ public class FileDownloader {
    * @param progressMonitor
    * @throws FileNotFoundException
    *           if an error occurred downloading the file
-   * @return false if the ProgressMonitor requested a cancellation, false
-   *         otherwise
    */
-  static public boolean downloadFile(URL source, File dest,
-                                     ProgressMonitor progressMonitor)
-                                                            throws IOException {
+  static public void downloadFile(URL source, File dest,
+                                     ProgressMonitor progressMonitor) {
 
-    URLConnection urlConn = source.openConnection();
-    urlConn.setConnectTimeout(1000);
-    urlConn.setReadTimeout(5000);
-
-    // String expectedType1 = "application/x-zip-compressed";
-    // String expectedType2 = "application/zip";
-    // String type = urlConn.getContentType();
-    // if (expectedType1.equals(type) || expectedType2.equals(type)) {
-    // }
-
-    int fileSize = urlConn.getContentLength();
-    progressMonitor.startTask("Downloading", fileSize);
-
-    InputStream in = urlConn.getInputStream();
-    FileOutputStream out = new FileOutputStream(dest);
-
-    byte[] b = new byte[256];
-    int bytesDownloaded = 0, len;
-    while (!progressMonitor.isCanceled() && (len = in.read(b)) != -1) {
-      out.write(b, 0, len);
-      bytesDownloaded += len;
-
-      progressMonitor.setProgress(bytesDownloaded);
+    try {
+      URLConnection urlConn = source.openConnection();
+      urlConn.setConnectTimeout(1000);
+      urlConn.setReadTimeout(5000);
+  
+      // String expectedType1 = "application/x-zip-compressed";
+      // String expectedType2 = "application/zip";
+      // String type = urlConn.getContentType();
+      // if (expectedType1.equals(type) || expectedType2.equals(type)) {
+      // }
+  
+      int fileSize = urlConn.getContentLength();
+      progressMonitor.startTask("Downloading", fileSize);
+  
+      InputStream in = urlConn.getInputStream();
+      FileOutputStream out = new FileOutputStream(dest);
+  
+      byte[] b = new byte[256];
+      int bytesDownloaded = 0, len;
+      while (!progressMonitor.isCanceled() && (len = in.read(b)) != -1) {
+        out.write(b, 0, len);
+        bytesDownloaded += len;
+  
+        progressMonitor.setProgress(bytesDownloaded);
+      }
+      out.close();
+    } catch (IOException ioe) {
+      progressMonitor.error(ioe);
     }
-    out.close();
-
-    if (progressMonitor.isCanceled()) {
-      return false;
-    }
-
+    
     progressMonitor.finished();
-    return true;
   }
   
 }
