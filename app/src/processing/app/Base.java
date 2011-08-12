@@ -1787,6 +1787,10 @@ public class Base {
         sketchbookFolder.mkdirs();
       }
     }
+    
+    getSketchbookLibrariesFolder().mkdir();
+    getSketchbookToolsFolder().mkdir();
+    getSketchbookModesFolder().mkdir();
 //    System.err.println("sketchbook: " + sketchbookFolder);
   }
 
