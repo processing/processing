@@ -73,7 +73,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     this.contribManager = libraryManager;
     
     setLayout(new GridBagLayout());
-    setFocusable(true);
     setOpaque(true);
     
     if (Base.isLinux()) {
@@ -481,7 +480,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
       setBackground(ContributionListPanel.this.getBackground());
       setOpaque(true);
-      setFocusable(true);
       setSelected(false);
       
       setExpandListener(this, new MouseAdapter() {
@@ -497,7 +495,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
      * panel is not clicked
      */
     private void addPaneComponents() {
-      setFocusable(true);
       setLayout(new GridBagLayout());
     
       { // Header text area. The name of the contribution and its authors.
@@ -697,8 +694,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
       this.contrib = contrib;
       
-      setFocusable(true);
-
       StringBuilder nameText = new StringBuilder();
       nameText.append("<html><body><b>");
       if (contrib.getUrl() == null) {
