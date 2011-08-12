@@ -256,18 +256,33 @@ public class ContributionListing {
   
   public boolean isProperty(String property) {
     return property.startsWith("updat") || property.startsWith("upgrad")
-        || property.startsWith("instal") && !property.startsWith("installabl");
+        || property.startsWith("instal") && !property.startsWith("installabl")
+        || property.equals("tool") || property.startsWith("lib")
+        || property.equals("mode") || property.equals("compilation");
   }
 
   /** Returns true if the contribution fits the given property, false otherwise.
    *  If the property is invalid, returns false. */
   public boolean hasProperty(Contribution contrib, String property) {
-    // update, updates, updatable
+    // update, updates, updatable, upgrade
     if (property.startsWith("updat") || property.startsWith("upgrad")) {
       return hasUpdates(contrib);
     }
     if (property.startsWith("instal") && !property.startsWith("installabl")) {
       return contrib.isInstalled();
+    }
+    if (property.equals("tool")) {
+      return contrib.getType() == Contribution.Type.TOOL;
+    }
+    if (property.startsWith("lib")) {
+      return contrib.getType() == Contribution.Type.LIBRARY
+          || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
+    }
+    if (property.equals("mode")) {
+      return contrib.getType() == Contribution.Type.MODE;
+    }
+    if (property.equals("compilation")) {
+      return contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
     }
 
     return false;
