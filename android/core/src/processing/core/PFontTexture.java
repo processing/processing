@@ -127,7 +127,7 @@ class PFontTexture implements PConstants {
       h = PApplet.min(2 * textures[currentTex].glHeight, maxTexHeight);
       resize = true;
     } else {
-      h = PApplet.min(PGraphicsAndroid3D.maxTextureSize, 512, maxTexHeight / 4);
+      h = PApplet.min(PGraphicsAndroid3D.maxTextureSize, font.size * 2, maxTexHeight / 4);
       resize = false;
     }
     
