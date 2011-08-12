@@ -44,7 +44,7 @@ public class FileDownloader {
    *          must be a file (not a directory), and must already exist.
    * @param progressMonitor
    * @throws FileNotFoundException
-   *           if an error occured downloading the file
+   *           if an error occurred downloading the file
    * @return false if the ProgressMonitor requested a cancellation, false
    *         otherwise
    */
@@ -78,12 +78,12 @@ public class FileDownloader {
     }
     out.close();
 
-    if (!progressMonitor.isCanceled()) {
-      return true;
+    if (progressMonitor.isCanceled()) {
+      return false;
     }
-    progressMonitor.finished();
 
-    return false;
+    progressMonitor.finished();
+    return true;
   }
   
 }

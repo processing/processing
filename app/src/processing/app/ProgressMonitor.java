@@ -67,7 +67,9 @@ public interface ProgressMonitor {
   public boolean isFinished();
   
   /**
-   * This is called when the current task is finished
+   * This is called when the current task is finished. This should not be called
+   * if the task was cancelled or an error occurred, leaving the task
+   * incomplete.
    */
   public void finished();
   
