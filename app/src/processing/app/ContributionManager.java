@@ -36,6 +36,7 @@ import java.util.zip.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.*;
 
 import processing.app.contribution.*;
@@ -212,8 +213,8 @@ public class ContributionManager {
       c.gridwidth = 2;
       c.weighty = 1;
       c.weightx = 1;
-
-      final JScrollPane scrollPane = new JScrollPane();
+      
+      JScrollPane scrollPane = new JScrollPane();
       scrollPane.setPreferredSize(new Dimension(300, 300));
       scrollPane.setViewportView(contributionListPanel);
       scrollPane.getViewport().setOpaque(true);
