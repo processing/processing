@@ -36,7 +36,6 @@ import java.util.zip.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.*;
 
 import processing.app.contribution.*;
@@ -73,6 +72,8 @@ public class ContributionManager {
   
   ContributionListPanel contributionListPanel;
   
+  StatusPanel statusBar;
+  
   JComboBox categoryChooser;
   
   Image[] contributionIcons;
@@ -99,21 +100,6 @@ public class ContributionManager {
   protected void showFrame(Editor editor) {
     this.editor = editor;
     
-    if (!contribListing.hasDownloadedLatestList()) {
-      contribListing.getAdvertisedContributions(new AbstractProgressMonitor() {
-        public void startTask(String name, int maxValue) {
-        }
-        
-        public void finished() {
-          super.finished();
-          updateContributionListing();
-          updateCategoryChooser();
-        }
-      });
-    }
-    
-    updateContributionListing();
-    
     if (dialog == null) {
       dialog = new JFrame("Contribution Manager");
   
@@ -132,6 +118,37 @@ public class ContributionManager {
     }
     
     dialog.setVisible(true);
+    
+    if (!contribListing.hasDownloadedLatestList()) {
+      new Thread(new Runnable() {
+        
+        public void run() {
+          final Thread t = contribListing.getAdvertisedContributions(new AbstractProgressMonitor() {
+            public void startTask(String name, int maxValue) {
+            }
+            
+            public void finished() {
+              super.finished();
+              updateContributionListing();
+              updateCategoryChooser();
+            }
+          });
+          
+          synchronized (t) {
+            try {
+              t.join();
+            } catch (InterruptedException e) {
+            }
+          }
+          
+          if (!contribListing.hasDownloadedLatestList()) {
+            statusBar.setErrorMessage("An error occured when downloading the list of available contributions.");
+          }
+        }
+      }).start();
+    }
+    
+    updateContributionListing();
     
     if (contributionIcons == null) {
       try {
@@ -205,7 +222,7 @@ public class ContributionManager {
       pane.add(filterField, c);
     }
     
-    { // The scroll area containing the contribution listing.
+    { // The scroll area containing the contribution listing and the status bar.
       GridBagConstraints c = new GridBagConstraints();
       c.fill = GridBagConstraints.BOTH;
       c.gridx = 0;
@@ -214,20 +231,56 @@ public class ContributionManager {
       c.weighty = 1;
       c.weightx = 1;
       
-      JScrollPane scrollPane = new JScrollPane();
+      final JScrollPane scrollPane = new JScrollPane();
       scrollPane.setPreferredSize(new Dimension(300, 300));
       scrollPane.setViewportView(contributionListPanel);
       scrollPane.getViewport().setOpaque(true);
-
-      scrollPane.getViewport().setBackground(contributionListPanel
-                                                 .getBackground());
-
-      scrollPane
-          .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-      pane.add(scrollPane, c);
-      // pane.add(scrollPane, c);
-      scrollPane
-          .setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
+      scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      
+      statusBar = new StatusPanel();
+      statusBar.setBorder(BorderFactory.createEtchedBorder());
+      
+      final JLayeredPane layeredPane = new JLayeredPane();
+      layeredPane.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
+      layeredPane.add(statusBar, JLayeredPane.PALETTE_LAYER);
+      
+      layeredPane.addComponentListener(new ComponentAdapter() {
+        
+        void resizeLayers() {
+          scrollPane.setSize(layeredPane.getSize());
+          scrollPane.updateUI();
+        }
+        
+        public void componentShown(ComponentEvent e) {
+          resizeLayers();
+        }
+        
+        public void componentResized(ComponentEvent arg0) {
+          resizeLayers();
+        }
+      });
+      
+      final JViewport viewport = scrollPane.getViewport();
+      viewport.addComponentListener(new ComponentAdapter() {
+        void resizeLayers() {
+          statusBar.setLocation(0, viewport.getHeight() - 18);
+          
+          Dimension d = viewport.getSize();
+          d.height = 20;
+          d.width += 3;
+          statusBar.setSize(d);
+        }
+        public void componentShown(ComponentEvent e) {
+          resizeLayers();
+        }
+        public void componentResized(ComponentEvent e) {
+          resizeLayers();
+        }
+      });
+      
+      pane.add(layeredPane, c);
     }
     
     { // Shows "Category:"
@@ -258,18 +311,6 @@ public class ContributionManager {
         }
       });
     }
-    
-    // {
-    // GridBagConstraints c = new GridBagConstraints();
-    // c.fill = GridBagConstraints.HORIZONTAL;
-    // c.gridx = 0;
-    // c.gridy = 3;
-    // c.gridwidth = 2;
-    // JLabel statusLabel = new JLabel("Hello there. This is some text.");
-    // statusLabel.setOpaque(true);
-    // statusLabel.setBackground(Color.black);
-    // pane.add(statusLabel, c);
-    // }
     
     dialog.setMinimumSize(new Dimension(550, 400));
   }
@@ -437,7 +478,8 @@ public class ContributionManager {
             }
           }
         } catch (IOException e) {
-          System.err.println("An error occured when downloading the contribution.");
+          statusBar.setErrorMessage("An error occured when "
+              + "downloading the contribution.");
         }
 
         dialog.pack();
@@ -1024,6 +1066,39 @@ public class ContributionManager {
    * when being removed. */
   static public boolean requiresRestart(Contribution contrib) {
     return contrib.getType() == Type.TOOL || contrib.getType() == Type.MODE;
+  }
+
+  class StatusPanel extends JPanel {
+    
+    String errorMessage;
+    
+    @Override
+    protected void paintComponent(Graphics g) {
+      super.paintComponent(g);
+      
+      g.setFont(new Font("SansSerif", Font.PLAIN, 10));
+      int baseline = (getSize().height + g.getFontMetrics().getAscent()) / 2;
+      
+      if (contribListing.isDownloadingListing()) {
+        g.setColor(Color.black);
+        g.drawString("Downloading software listing...", 2, baseline);
+        setVisible(true);
+      } else if (errorMessage != null) {
+        g.setColor(Color.red);
+        g.drawString(errorMessage, 2, baseline);
+        setVisible(true);
+      } else {
+        setVisible(false);
+      }
+    }
+    
+    void setErrorMessage(String message) {
+      errorMessage = message;
+    }
+    
+    void clearErrorMessage() {
+      errorMessage = null;
+    }
   }
   
 }
