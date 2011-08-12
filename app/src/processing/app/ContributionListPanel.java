@@ -798,6 +798,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
               // Finished installing library
               resetInstallProgressBarState();
               installRemoveButton.setEnabled(true);
+              
+              if (isError()) {
+                contribManager.statusBar.setErrorMessage("An error occured when "
+                                               + "downloading the contribution.");
+              }
             }
           }
         );

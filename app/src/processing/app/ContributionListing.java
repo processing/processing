@@ -307,40 +307,41 @@ public class ContributionListing {
    * Starts a new thread to download the advertised list of contributions. Only
    * one instance will run at a time.
    */
-  public Thread getAdvertisedContributions(ProgressMonitor pm) {
+  public void getAdvertisedContributions(ProgressMonitor pm) {
     
     final ProgressMonitor progressMonitor = (pm != null) ? pm : new NullProgressMonitor();
     
-    Thread downloadThread = new Thread(new Runnable() {
+    new Thread(new Runnable() {
       
       public void run() {
         downloadingListingLock.lock();
         
+        File dest = null;
+        URL url = null;
         try {
           File tmpFolder = Base.createTempFolder("libarylist", "download");
+          dest = new File(tmpFolder, "contributions.xml");
     
-          File dest = new File(tmpFolder, "contributions.xml");
           dest.setWritable(true);
     
-          URL url = new URL("http://dl.dropbox.com/u/700641/generated/contributions.xml");
-    
-          try {
-            if (FileDownloader.downloadFile(url, dest, progressMonitor)) {
-              hasDownloadedLatestList = true;
-              setAdvertisedList(dest);
-            }
-          } catch (IOException ioe) {
-          }
+          url = new URL("http://dl.dropbox.com/u/700641/generated/contributions.xml");
+          
         } catch (IOException e) {
-          e.printStackTrace();
+          progressMonitor.error(e);
+          progressMonitor.finished();
+        }
+        
+        if (!progressMonitor.isFinished()) {
+          FileDownloader.downloadFile(url, dest, progressMonitor);
+          if (!progressMonitor.isCanceled() && !progressMonitor.isError()) {
+            hasDownloadedLatestList = true;
+            setAdvertisedList(dest);
+          }
         }
         
         downloadingListingLock.unlock();
       }
-    });
-    
-    downloadThread.start();
-    return downloadThread;
+    }).start();
   }
   
   public boolean hasUpdates() {

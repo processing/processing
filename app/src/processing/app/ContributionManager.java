@@ -120,32 +120,21 @@ public class ContributionManager {
     dialog.setVisible(true);
     
     if (!contribListing.hasDownloadedLatestList()) {
-      new Thread(new Runnable() {
-        
-        public void run() {
-          final Thread t = contribListing.getAdvertisedContributions(new AbstractProgressMonitor() {
-            public void startTask(String name, int maxValue) {
-            }
-            
-            public void finished() {
-              super.finished();
-              updateContributionListing();
-              updateCategoryChooser();
-            }
-          });
-          
-          synchronized (t) {
-            try {
-              t.join();
-            } catch (InterruptedException e) {
-            }
-          }
-          
-          if (!contribListing.hasDownloadedLatestList()) {
-            statusBar.setErrorMessage("An error occured when downloading the list of available contributions.");
+      contribListing.getAdvertisedContributions(new AbstractProgressMonitor() {
+        public void startTask(String name, int maxValue) {
+        }
+
+        public void finished() {
+          super.finished();
+
+          updateContributionListing();
+          updateCategoryChooser();
+          if (isError()) {
+            statusBar.setErrorMessage("An error occured when downloading " + 
+                                      "the list of available contributions.");
           }
         }
-      }).start();
+      });
     }
     
     updateContributionListing();
@@ -452,41 +441,40 @@ public class ContributionManager {
     new Thread(new Runnable() {
 
       public void run() {
+
+        FileDownloader.downloadFile(url, libDest, downloadProgressMonitor);
         
-        try {
-          if (FileDownloader.downloadFile(url, libDest, downloadProgressMonitor)) {
-
-            installProgressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
-
-            InstalledContribution contribution = null;
-            switch (toBeReplaced.getType()) {
-            case LIBRARY:
-              contribution = installLibrary(libDest, false);
-              break;
-            case LIBRARY_COMPILATION:
-              contribution = installLibraryCompilation(libDest);
-              break;
-            case TOOL:
-              contribution = installTool(libDest);
-              break;
-            }
-            
-            if (contribution != null) {
-              // XXX contributionListing.getInformationFromAdvertised(contribution); get the category at least
-              contribListing.replaceContribution(toBeReplaced, contribution);
-              refreshInstalled();
-            }
+        
+        if (!downloadProgressMonitor.isCanceled() && !downloadProgressMonitor.isError()) {
+          
+          installProgressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
+  
+          InstalledContribution contribution = null;
+          switch (toBeReplaced.getType()) {
+          case LIBRARY:
+            contribution = installLibrary(libDest, false);
+            break;
+          case LIBRARY_COMPILATION:
+            contribution = installLibraryCompilation(libDest);
+            break;
+          case TOOL:
+            contribution = installTool(libDest);
+            break;
           }
-        } catch (IOException e) {
-          statusBar.setErrorMessage("An error occured when "
-              + "downloading the contribution.");
+  
+          if (contribution != null) {
+            // XXX contributionListing.getInformationFromAdvertised(contribution);
+            // get the category at least
+            contribListing.replaceContribution(toBeReplaced, contribution);
+            refreshInstalled();
+          }
+  
+          dialog.pack();
+          installProgressMonitor.finished();
         }
-
-        dialog.pack();
-        installProgressMonitor.finished();
       }
     }).start();
-    
+
   }
   
   protected LibraryCompilation installLibraryCompilation(File f) {
