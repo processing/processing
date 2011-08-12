@@ -4,6 +4,8 @@ X added expand(long) and expand(double) because of Table
 
 _ PImage.save() with full path raises exception
 _   http://code.google.com/p/processing/issues/detail?id=808
+_ if save() returns boolean, does saveFrame()?
+_   also need to copy this over to android
 
 _ enable smooth() by default
 _   better to learn noSmooth() later
