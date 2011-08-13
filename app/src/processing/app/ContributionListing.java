@@ -346,7 +346,7 @@ public class ContributionListing {
         
         URL url = null;
         try {
-          url = new URL("http://dl.dropbox.com/u/700641/generated/contributions.xml");
+          url = new URL("http://processing.googlecode.com/svn/trunk/web/contrib_generate/contributions.xml");
         } catch (MalformedURLException e) {
           progressMonitor.error(e);
           progressMonitor.finished();
