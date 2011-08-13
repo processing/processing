@@ -159,12 +159,16 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       public void run() {
         synchronized (panelByContribution) {
           ContributionPanel panel = panelByContribution.get(oldContrib);
-          panelByContribution.remove(oldContrib);
-
-          panel.setContribution(newContrib);
-          panelByContribution.put(newContrib, panel);
-
-          updatePanelOrdering();
+          if (panel == null) {
+            contributionAdded(newContrib);
+          } else {
+            panelByContribution.remove(oldContrib);
+  
+            panel.setContribution(newContrib);
+            panelByContribution.put(newContrib, panel);
+  
+            updatePanelOrdering();
+          }
         }
       }
     });

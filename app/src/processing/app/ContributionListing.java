@@ -56,18 +56,28 @@ public class ContributionListing {
     }
   };
   
+  File listingFile;
+  
   public ContributionListing() {
     listeners = new ArrayList<ContributionChangeListener>();
     advertisedContributions = new ArrayList<AdvertisedContribution>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
     allContributions = new ArrayList<Contribution>();
     downloadingListingLock = new ReentrantLock();
+    
+    listingFile = Base.getSettingsFile("contributions.xml");
+    listingFile.setWritable(true);
+    if (listingFile.exists()) {
+      setAdvertisedList(listingFile);
+    }
   }
 
 
-  public void setAdvertisedList(File xmlFile) {
+  void setAdvertisedList(File xmlFile) {
     
-    ContributionXmlParser xmlParser = new ContributionXmlParser(xmlFile);
+    listingFile = xmlFile;
+    
+    ContributionXmlParser xmlParser = new ContributionXmlParser(listingFile);
     advertisedContributions.clear();
     advertisedContributions.addAll(xmlParser.getLibraries());
     for (Contribution contribution : advertisedContributions) {
@@ -307,6 +317,9 @@ public class ContributionListing {
   }
   
   public void addContributionListener(ContributionChangeListener listener) {
+    for (Contribution contrib : allContributions) {
+      listener.contributionAdded(contrib);
+    }
     listeners.add(listener);
   }
   
@@ -331,26 +344,19 @@ public class ContributionListing {
       public void run() {
         downloadingListingLock.lock();
         
-        File dest = null;
         URL url = null;
         try {
-          File tmpFolder = Base.createTempFolder("libarylist", "download");
-          dest = new File(tmpFolder, "contributions.xml");
-    
-          dest.setWritable(true);
-    
           url = new URL("http://dl.dropbox.com/u/700641/generated/contributions.xml");
-          
-        } catch (IOException e) {
+        } catch (MalformedURLException e) {
           progressMonitor.error(e);
           progressMonitor.finished();
         }
         
         if (!progressMonitor.isFinished()) {
-          FileDownloader.downloadFile(url, dest, progressMonitor);
+          FileDownloader.downloadFile(url, listingFile, progressMonitor);
           if (!progressMonitor.isCanceled() && !progressMonitor.isError()) {
             hasDownloadedLatestList = true;
-            setAdvertisedList(dest);
+            setAdvertisedList(listingFile);
           }
         }
         
