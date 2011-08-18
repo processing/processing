@@ -6,9 +6,9 @@
  * arrow keys.
  */
  
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSMovie movie;
+Movie movie;
 int newFrame = 0;
 PFont font;
 
@@ -19,14 +19,14 @@ void setup() {
   // in play mode is needed so at least one frame is read
   // and we can get duration, size and other information from
   // the video stream. 
-  movie = new GSMovie(this, "station.mov");
+  movie = new Movie(this, "station.mov");
   movie.play();
   
   font = loadFont("DejaVuSans-24.vlw");
   textFont(font, 24);
 }
 
-void movieEvent(GSMovie movie) {
+void movieEvent(Movie movie) {
   movie.read();
 }
 

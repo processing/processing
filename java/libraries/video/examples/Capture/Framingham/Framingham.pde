@@ -8,9 +8,9 @@
  */
 
 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSCapture video;
+Capture video;
 int column;
 int columnCount;
 int lastRow;
@@ -23,7 +23,7 @@ void setup() {
   size(640, 480, P3D);
 
   // Uses the default video input, see the reference if this causes an error
-  video = new GSCapture(this, 160, 120);
+  video = new Capture(this, 160, 120);
   video.start();  
   // Also try with other video sizes
   

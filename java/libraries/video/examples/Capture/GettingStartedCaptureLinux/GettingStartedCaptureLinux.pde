@@ -5,16 +5,16 @@
  * 
  * Reading and displaying an image from an attached Capture device. 
  */ 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSCapture cam;
+Capture cam;
 
 void setup() {
   size(640, 480);
 
 /*
   // List functionality still not ready on Linux
-  String[] cameras = GSCapture.list();
+  String[] cameras = Capture.list();
   
   if (cameras.length == 0)
   {
@@ -24,16 +24,16 @@ void setup() {
     println("Available cameras:");
     for (int i = 0; i < cameras.length; i++)
       println(cameras[i]);
-    cam = new GSCapture(this, 640, 480, cameras[0]);
+    cam = new Capture(this, 640, 480, cameras[0]);
   }
 
   However, different cameras can be selected by using their device file:
-  cam = new GSCapture(this, 640, 480, "/dev/video0");
-  cam = new GSCapture(this, 640, 480, "/dev/video1");
+  cam = new Capture(this, 640, 480, "/dev/video0");
+  cam = new Capture(this, 640, 480, "/dev/video1");
   etc.
   */
 
-  cam = new GSCapture(this, 640, 480);
+  cam = new Capture(this, 640, 480);
   cam.start();  
   
   /*

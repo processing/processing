@@ -6,11 +6,11 @@
  * 
  * Arrange the pixels from live video into the HSV Color Cone.
  */
-import processing.opengl.*;
-import codeanticode.gsvideo.*;
+ 
+import processing.video.*;
 import java.awt.Color;
 
-GSCapture video;
+Capture video;
 int count;
 boolean cheatScreen = true;
 
@@ -40,7 +40,7 @@ public void setup() {
   size(640, 480, P3D);
   //size(screen.width, screen.height, OPENGL);
 
-  video = new GSCapture(this, 160, 120);
+  video = new Capture(this, 160, 120);
   video.start();
   count = video.width * video.height;
 
@@ -133,7 +133,7 @@ void draw() {
 }
 
 
-void captureEvent(GSCapture c) {
+void captureEvent(Capture c) {
   c.read();
   c.loadPixels();
 }

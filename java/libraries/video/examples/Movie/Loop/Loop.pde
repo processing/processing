@@ -15,19 +15,19 @@
  * http://code.google.com/p/gstreamer-java/
  */
 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSMovie movie;
+Movie movie;
 
 void setup() {
   size(640, 480);
   background(0);
   // Load and play the video in a loop
-  movie = new GSMovie(this, "station.mov");
+  movie = new Movie(this, "station.mov");
   movie.loop();
 }
 
-void movieEvent(GSMovie movie) {
+void movieEvent(Movie movie) {
   movie.read();
 }
 

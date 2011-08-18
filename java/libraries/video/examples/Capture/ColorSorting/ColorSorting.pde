@@ -9,9 +9,9 @@
  */
  
  
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSCapture video;
+Capture video;
 boolean cheatScreen;
 
 Tuple[] captureColors;
@@ -27,7 +27,7 @@ public void setup() {
 
   noCursor();
   // Uses the default video input, see the reference if this causes an error
-  video = new GSCapture(this, 160, 120);
+  video = new Capture(this, 160, 120);
   video.start();  
   
   int count = (video.width * video.height) / (increment * increment);

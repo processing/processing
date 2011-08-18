@@ -8,18 +8,18 @@
  * in the current video frame pixels array. 
  */
 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
 int numPixels;
 int blockSize = 10;
-GSMovie myMovie;
+Movie myMovie;
 color myMovieColors[];
 
 void setup() {
   size(640, 480);
   noStroke();
   background(0);
-  myMovie = new GSMovie(this, "station.mov");
+  myMovie = new Movie(this, "station.mov");
   myMovie.loop();
   numPixels = width / blockSize;
   myMovieColors = new color[numPixels * numPixels];
@@ -27,7 +27,7 @@ void setup() {
 
 
 // Read new values from movie
-void movieEvent(GSMovie m) {
+void movieEvent(Movie m) {
   m.read();
   m.loadPixels();
   

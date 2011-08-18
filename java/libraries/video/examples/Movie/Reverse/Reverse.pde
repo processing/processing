@@ -13,19 +13,19 @@
  * 
  */
 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSMovie myMovie;
+Movie myMovie;
 boolean speedSet = false;
 
 public void setup() {
   size(320, 240);
   background(0);
-  myMovie = new GSMovie(this, "balloon.ogg");
+  myMovie = new Movie(this, "balloon.ogg");
   myMovie.play();
 }
 
-public void movieEvent(GSMovie myMovie) {
+public void movieEvent(Movie myMovie) {
   myMovie.read();  
 }
 
