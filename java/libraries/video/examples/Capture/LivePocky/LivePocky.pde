@@ -7,9 +7,9 @@
  * Unwrap each frame of live video into a single line of pixels.
  */
  
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSCapture video;
+Capture video;
 int count;
 int writeRow;
 int maxRows;
@@ -21,7 +21,7 @@ void setup() {
   size(600, 400);
 
   // Uses the default video input, see the reference if this causes an error
-  video = new GSCapture(this, 160, 120);
+  video = new Capture(this, 160, 120);
   video.start();
 
   maxRows = height * 2;
@@ -44,7 +44,7 @@ void draw() {
 }
 
 
-void captureEvent(GSCapture c) {
+void captureEvent(Capture c) {
   c.read();
   c.loadPixels();
   arraycopy(c.pixels, 0, buffer, writeRow * width, width);

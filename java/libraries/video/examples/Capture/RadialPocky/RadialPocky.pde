@@ -7,10 +7,9 @@
  * Unwrap each frame of live video into a single line of pixels along a circle
  */ 
   
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-
-GSCapture video;
+Capture video;
 int videoCount;
 int currentAngle;
 int pixelCount;
@@ -25,7 +24,7 @@ void setup() {
   size(600, 600); 
 
   // Uses the default video input, see the reference if this causes an error
-  video = new GSCapture(this, 160, 120);
+  video = new Capture(this, 160, 120);
   video.start();
   videoCount = video.width * video.height;
 

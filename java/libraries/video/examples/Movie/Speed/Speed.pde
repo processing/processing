@@ -6,21 +6,21 @@
  * 
  */
 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSMovie movie;
+Movie movie;
 
 public void setup() {
   size(320, 240);
   background(0);
-  movie = new GSMovie(this, "balloon.ogg");
+  movie = new Movie(this, "balloon.ogg");
   movie.loop();
   
   PFont font = loadFont("DejaVuSans-24.vlw");
   textFont(font, 24);
 }
 
-public void movieEvent(GSMovie movie) {
+public void movieEvent(Movie movie) {
   movie.read();  
 }
 

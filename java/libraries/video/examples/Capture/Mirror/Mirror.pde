@@ -7,7 +7,7 @@
  * Each pixel from the video source is drawn as a rectangle with rotation based on brightness.   
  */ 
  
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
 
 // Size of each cell in the grid
@@ -15,7 +15,7 @@ int cellSize = 20;
 // Number of columns and rows in our system
 int cols, rows;
 // Variable for capture device
-GSCapture video;
+Capture video;
 
 
 void setup() {
@@ -26,7 +26,7 @@ void setup() {
   colorMode(RGB, 255, 255, 255, 100);
 
   // Uses the default video input, see the reference if this causes an error
-  video = new GSCapture(this, width, height);
+  video = new Capture(this, width, height);
   video.start();
   
   background(0);

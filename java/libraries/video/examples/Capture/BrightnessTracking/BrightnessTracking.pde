@@ -8,14 +8,14 @@
  */
 
 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSCapture video;
+Capture video;
 
 void setup() {
   size(640, 480); // Change size to 320 x 240 if too slow at 640 x 480
   // Uses the default video input, see the reference if this causes an error
-  video = new GSCapture(this, width, height);
+  video = new Capture(this, width, height);
   video.start();  
   noStroke();
   smooth();
