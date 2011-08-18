@@ -76,7 +76,7 @@ public class Video implements PConstants {
   
   public static void init() {
     if (INSTANCES_COUNT == 0) {
-      PApplet.println("GSVideo version: " + VERSION_STRING);
+      PApplet.println("Video library version: " + VERSION_STRING);
       initImpl();
     }
     INSTANCES_COUNT++;
@@ -121,7 +121,7 @@ public class Video implements PConstants {
     
     String[] args = { "" };
     Gst.setUseDefaultContext(defaultGLibContext);
-    Gst.init("GSVideo", args);
+    Gst.init("Processing core video", args);
 
     addPlugins();
   }
