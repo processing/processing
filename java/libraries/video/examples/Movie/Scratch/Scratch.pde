@@ -6,9 +6,9 @@
  * the position in the movie file.
  */
  
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSMovie movie;
+Movie movie;
 
 void setup() {
   size(640, 480);
@@ -17,11 +17,11 @@ void setup() {
   // in play mode is needed so at least one frame is read
   // and we can get duration, size and other information from
   // the video stream. 
-  movie = new GSMovie(this, "station.mov");
+  movie = new Movie(this, "station.mov");
   movie.play();
 }
 
-void movieEvent(GSMovie movie) {
+void movieEvent(Movie movie) {
   movie.read();
 }
 
@@ -36,8 +36,8 @@ void draw() {
   // be smaller. My guess is that the smallest value should correspond
   // to the duration of a single frame (for instance 1/24 if the frame rate 
   // of the video file is 24fps). Setting even smaller values seem to lead
-  // to choppiness. This will become trickier once the GSMovie.speed()  
-  // and GSMovie.frameRate() methods become functional. 
+  // to choppiness. This will become trickier once the Movie.speed()  
+  // and Movie.frameRate() methods become functional. 
   if (0.1 < abs(t - movie.time())) {
     // The movie stream must be in play mode in order to jump to another
     // position along the stream. Otherwise it won't work.

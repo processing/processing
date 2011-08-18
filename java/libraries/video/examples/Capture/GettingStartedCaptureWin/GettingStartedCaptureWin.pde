@@ -5,14 +5,14 @@
  * 
  * Reading and displaying an image from an attached Capture device. 
  */ 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSCapture cam;
+Capture cam;
 
 void setup() {
   size(640, 480);
 
-  String[] cameras = GSCapture.list();
+  String[] cameras = Capture.list();
   
   if (cameras.length == 0)
   {
@@ -23,7 +23,7 @@ void setup() {
     for (int i = 0; i < cameras.length; i++) {
       println(cameras[i]);
     }
-    cam = new GSCapture(this, 640, 480, cameras[0]);
+    cam = new Capture(this, 640, 480, cameras[0]);
     cam.start();    
 
     /*

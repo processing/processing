@@ -12,19 +12,18 @@
  * Created December 2006. 
  * Updated June 2007 by fry.
  */
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSCapture video;
+Capture video;
 
 int videoSliceX;
 int drawPositionX;
-
 
 void setup() {
   size(600, 240);
   
   // Uses the default video input, see the reference if this causes an error
-  video = new GSCapture(this, 320, 240);
+  video = new Capture(this, 320, 240);
   video.start();
   
   videoSliceX = video.width / 2;

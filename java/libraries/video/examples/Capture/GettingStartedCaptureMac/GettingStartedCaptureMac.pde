@@ -5,9 +5,9 @@
  * 
  * Reading and displaying an image from an attached Capture device. 
  */ 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
-GSCapture cam;
+Capture cam;
 
 void setup() {
   size(640, 480);
@@ -15,7 +15,7 @@ void setup() {
   /*
   // List functionality hasn't been tested on Mac OSX. Uncomment this 
   // code to try it out.
-  String[] cameras = GSCapture.list();
+  String[] cameras = Capture.list();
   
   if (cameras.length == 0)
   {
@@ -25,10 +25,10 @@ void setup() {
     println("Available cameras:");
     for (int i = 0; i < cameras.length; i++)
       println(cameras[i]);
-    cam = new GSCapture(this, 320, 240, cameras[0]);
+    cam = new Capture(this, 320, 240, cameras[0]);
   }
   */
-  cam = new GSCapture(this, 640, 480);
+  cam = new Capture(this, 640, 480);
   cam.start();
   
   /*

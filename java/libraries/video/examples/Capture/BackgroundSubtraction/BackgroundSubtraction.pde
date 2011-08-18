@@ -9,17 +9,17 @@
  */
 
 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
 int numPixels;
 int[] backgroundPixels;
-GSCapture video;
+Capture video;
 
 void setup() {
   // Change size to 320 x 240 if too slow at 640 x 480
   size(640, 480); 
   
-  video = new GSCapture(this, width, height);
+  video = new Capture(this, width, height);
   video.start();  
   numPixels = video.width * video.height;
   // Create array to store the background image

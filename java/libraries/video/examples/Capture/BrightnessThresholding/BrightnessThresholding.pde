@@ -9,18 +9,18 @@
  */
 
 
-import codeanticode.gsvideo.*;
+import processing.video.*;
 
 color black = color(0);
 color white = color(255);
 int numPixels;
-GSCapture video;
+Capture video;
 
 void setup() {
   size(640, 480); // Change size to 320 x 240 if too slow at 640 x 480
   strokeWeight(5);
   // Uses the default video input, see the reference if this causes an error
-  video = new GSCapture(this, width, height);
+  video = new Capture(this, width, height);
   video.start();  
   numPixels = video.width * video.height;
   noCursor();
