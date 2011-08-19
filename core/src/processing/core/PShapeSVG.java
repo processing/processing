@@ -1696,7 +1696,7 @@ public class PShapeSVG extends PShape {
       // 1) scale by the 1.0/unitsPerEm
       // 2) scale up by a font size
       g.pushMatrix();
-      float s =  size / (float) face.unitsPerEm;
+      float s =  size / face.unitsPerEm;
       //System.out.println("scale is " + s);
       // swap y coord at the same time, since fonts have y=0 at baseline
       g.translate(x, y);
@@ -1704,7 +1704,7 @@ public class PShapeSVG extends PShape {
       char[] c = str.toCharArray();
       for (int i = 0; i < c.length; i++) {
         // call draw on each char (pulling it w/ the unicode table)
-        FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c[i]));
+        FontGlyph fg = unicodeGlyphs.get(new Character(c[i]));
         if (fg != null) {
           fg.draw(g);
           // add horizAdvX/unitsPerEm to the x coordinate along the way
@@ -1719,10 +1719,10 @@ public class PShapeSVG extends PShape {
 
     public void drawChar(PGraphics g, char c, float x, float y, float size) {
       g.pushMatrix();
-      float s =  size / (float) face.unitsPerEm;
+      float s =  size / face.unitsPerEm;
       g.translate(x, y);
       g.scale(s, -s);
-      FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c));
+      FontGlyph fg = unicodeGlyphs.get(new Character(c));
       if (fg != null) g.shape(fg);
       g.popMatrix();
     }
@@ -1733,7 +1733,7 @@ public class PShapeSVG extends PShape {
       char[] c = str.toCharArray();
       for (int i = 0; i < c.length; i++) {
         // call draw on each char (pulling it w/ the unicode table)
-        FontGlyph fg = (FontGlyph) unicodeGlyphs.get(new Character(c[i]));
+        FontGlyph fg = unicodeGlyphs.get(new Character(c[i]));
         if (fg != null) {
           w += (float) fg.horizAdvX / face.unitsPerEm;
         }

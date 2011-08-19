@@ -353,7 +353,7 @@ public class XML implements Serializable {
     if (offset == items.length-1) {
       return getChildren(items[offset]);
     }
-    XML[] matches = (XML[]) getChildren(items[offset]);
+    XML[] matches = getChildren(items[offset]);
     XML[] outgoing = new XML[0];
     for (int i = 0; i < matches.length; i++) {
       XML[] kidMatches = matches[i].getChildrenRecursive(items, offset+1);
