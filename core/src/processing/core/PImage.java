@@ -1839,8 +1839,8 @@ public class PImage implements PConstants, Cloneable {
     int dx = (int) (srcW / (float) destW * PRECISIONF);
     int dy = (int) (srcH / (float) destH * PRECISIONF);
 
-    srcXOffset = (int) (destX1 < 0 ? -destX1 * dx : srcX1 * PRECISIONF);
-    srcYOffset = (int) (destY1 < 0 ? -destY1 * dy : srcY1 * PRECISIONF);
+    srcXOffset = destX1 < 0 ? -destX1 * dx : srcX1 * PRECISIONF;
+    srcYOffset = destY1 < 0 ? -destY1 * dy : srcY1 * PRECISIONF;
 
     if (destX1 < 0) {
       destW += destX1;
