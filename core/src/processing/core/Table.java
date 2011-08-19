@@ -809,7 +809,7 @@ public class Table implements Iterable<Table.Row> {
         columnIndices.put(columnTitles[col], col);
       }
     }
-    Integer index = (Integer) columnIndices.get(name);
+    Integer index = columnIndices.get(name);
     if (index == null) {
       if (report) {
         System.err.println("No column named '" + name + "' was found.");

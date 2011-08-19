@@ -926,7 +926,7 @@ public class PApplet extends Applet
    * when moving between pages), though.
    */
   public void destroy() {
-    ((PApplet) this).dispose();
+    this.dispose();
   }
 
 
@@ -4054,7 +4054,7 @@ public class PApplet extends Applet
    * @see PApplet#ceil(float)
    */
   static public final int round(float what) {
-    return (int) Math.round(what);
+    return Math.round(what);
   }
 
 
@@ -4365,9 +4365,9 @@ public class PApplet extends Applet
     if (z<0) z=-z;
 
     int xi=(int)x, yi=(int)y, zi=(int)z;
-    float xf = (float)(x-xi);
-    float yf = (float)(y-yi);
-    float zf = (float)(z-zi);
+    float xf = x - xi;
+    float yf = y - yi;
+    float zf = z - zi;
     float rxf, ryf;
 
     float r=0;
@@ -7512,7 +7512,7 @@ public class PApplet extends Applet
     }
     String[][] matches = new String[results.size()][count];
     for (int i = 0; i < matches.length; i++) {
-      matches[i] = (String[]) results.get(i);
+      matches[i] = results.get(i);
     }
     return matches;
   }
@@ -7897,7 +7897,7 @@ public class PApplet extends Applet
    * Java's rules for upgrading values.
    */
   static final public float parseFloat(int what) {  // also handles byte
-    return (float)what;
+    return what;
   }
 
   static final public float parseFloat(String what) {

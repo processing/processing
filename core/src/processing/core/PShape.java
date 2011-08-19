@@ -1220,7 +1220,7 @@ public class PShape implements PConstants {
     if (source instanceof PMatrix2D) {
       applyMatrix((PMatrix2D) source);
     } else if (source instanceof PMatrix3D) {
-      applyMatrix((PMatrix3D) source);
+      applyMatrix(source);
     }
   }
 

@@ -1338,8 +1338,8 @@ public class PGraphics extends PImage implements PConstants {
                                  "using u and v coordinates with vertex()");
     }
     if (textureMode == IMAGE) {
-      u /= (float) textureImage.width;
-      v /= (float) textureImage.height;
+      u /= textureImage.width;
+      v /= textureImage.height;
     }
 
     textureU = u;
@@ -6615,10 +6615,10 @@ public class PGraphics extends PImage implements PConstants {
     calcRi = (argb >> 16) & 0xff;
     calcGi = (argb >> 8) & 0xff;
     calcBi = argb & 0xff;
-    calcA = (float)calcAi / 255.0f;
-    calcR = (float)calcRi / 255.0f;
-    calcG = (float)calcGi / 255.0f;
-    calcB = (float)calcBi / 255.0f;
+    calcA = calcAi / 255.0f;
+    calcR = calcRi / 255.0f;
+    calcG = calcGi / 255.0f;
+    calcB = calcBi / 255.0f;
     calcAlpha = (calcAi != 255);
   }
 
