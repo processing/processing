@@ -96,7 +96,7 @@ public class Table implements Iterable<Table.Row> {
   static final int DOUBLE = 4;
   static final int CATEGORICAL = 5;
 //  static final int TIME = 5;
-  public int[] columnTypes;  // !!!! not public for long
+  int[] columnTypes;
 
 //  int[][] intData;  // [column][row]
 //  long[][] longData;
@@ -319,13 +319,14 @@ public class Table implements Iterable<Table.Row> {
         output.writeInt(0);
       } else {
         hmb.write(output);
-        hmb.writeln(PApplet.createWriter(new File(columnTitles[col++] + ".categories")));
+        hmb.writeln(PApplet.createWriter(new File(columnTitles[col] + ".categories")));
 //        output.writeInt(hmb.size());
 //        for (Map.Entry<String,Integer> e : hmb.entrySet()) {
 //          output.writeUTF(e.getKey());
 //          output.writeInt(e.getValue());
 //        }
       }
+      col++;
     }
 
     output.flush();
@@ -859,7 +860,7 @@ public class Table implements Iterable<Table.Row> {
         throw new IllegalArgumentException("That's not a valid column type.");
       }
     }
-    System.out.println("new type is " + newType);
+//    System.out.println("new type is " + newType);
     columnTypes[column] = newType;
   }
   
