@@ -156,8 +156,8 @@ public class Video implements PConstants {
       if (localGStreamerPath.equals("")) {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "/gstreamer/linux";
-        gstreamerPluginsPath = path + "/gstreamer/linux/" + localPluginsFolder;
+        gstreamerBinPath = path + "/linux";
+        gstreamerPluginsPath = path + "/linux/" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
@@ -174,8 +174,8 @@ public class Video implements PConstants {
       if (localGStreamerPath.equals("")) {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "\\gstreamer\\win";
-        gstreamerPluginsPath = path + "\\gstreamer\\win\\" + localPluginsFolder;
+        gstreamerBinPath = path + "\\win";
+        gstreamerPluginsPath = path + "\\win\\" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "\\" + localPluginsFolder;
@@ -192,8 +192,8 @@ public class Video implements PConstants {
       if (localGStreamerPath.equals("")) {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "/gstreamer/macosx";
-        gstreamerPluginsPath = path + "/gstreamer/macosx/" + localPluginsFolder;
+        gstreamerBinPath = path + "/macosx";
+        gstreamerPluginsPath = path + "/macosx/" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
