@@ -23,6 +23,7 @@ import processing.core.*;
 
 import java.nio.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.lang.reflect.*;
 
 import org.gstreamer.*;
@@ -212,6 +213,19 @@ public class Capture extends PImage implements PConstants {
   public void dispose() {
     delete();
   }    
+  
+  /**
+   * Prints all the gstreamer elements currently used in the
+   * current pipeline instance.
+   * 
+   */    
+  public void printElements() {
+    List<Element> list = gpipeline.getElementsRecursive();
+    PApplet.println(list);
+    for (Element element : list) {
+      PApplet.println(element.toString());
+    }   
+  }  
   
   /**
    * Sets the object to use as destination for the frames read from the stream.

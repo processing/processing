@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.io.*;
 import java.net.URI;
 import java.nio.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.lang.reflect.*;
 
@@ -123,6 +124,19 @@ public class Movie extends PImage implements PConstants {
    */  
   public void dispose() {
     delete();
+  }
+  
+  /**
+   * Prints all the gstreamer elements currently used in the
+   * current player instance.
+   * 
+   */    
+  public void printElements() {
+    List<Element> list = gplayer.getElementsRecursive();
+    PApplet.println(list);
+    for (Element element : list) {
+      PApplet.println(element.toString());
+    }   
   }
   
   /**
