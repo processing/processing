@@ -32,6 +32,7 @@ import java.awt.event.*;
 import java.awt.print.*;
 import java.io.*;
 import java.util.*;
+import java.util.Timer;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -88,8 +89,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
   protected RedoAction redoAction;
   /** the currently selected tab's undo manager */
   private UndoManager undo;
-  // used internally, and only briefly
+  // used internally for every edit. Groups hotkey-event text manipulations and
+  // groups  multi-character inputs into a single undos.
   private CompoundEdit compoundEdit;
+  // timer to decide when to group characters into an undo
+  private Timer timer;
+  private TimerTask endUndoEvent;
+  // true if inserting text, false if removing text
+  private boolean isInserting;
   // maintain caret position during undo operations
   private final Stack<Integer> caretUndoStack = new Stack<Integer>();
   private final Stack<Integer> caretRedoStack = new Stack<Integer>();
@@ -144,6 +151,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
 
+    timer = new Timer();
+    
     buildMenuBar();
 
     Container contentPain = getContentPane();
@@ -213,6 +222,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // get shift down/up events so we can show the alt version of toolbar buttons
     textarea.addKeyListener(toolbar);
+    
+    // end an undo-chunk any time the caret moves unless it's when text is edited
+    textarea.addCaretListener(new CaretListener() {
+      
+      String lastText = textarea.getText();
+      
+      public void caretUpdate(CaretEvent e) {
+        String newText = textarea.getText();
+        if (lastText.equals(newText)) {
+          endTextEditHistory();
+        }
+        lastText = newText;
+      }
+    });
 
     pain.setTransferHandler(new FileDropHandler());
 
@@ -986,6 +1009,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
 
     public void actionPerformed(ActionEvent e) {
+      stopCompoundEdit();
+      
       try {
         final Integer caret = caretUndoStack.pop();
         caretRedoStack.push(caret);
@@ -1007,7 +1032,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
 
     protected void updateUndoState() {
-      if (undo.canUndo()) {
+      if (undo.canUndo() || compoundEdit != null && compoundEdit.isInProgress()) {
         this.setEnabled(true);
         undoItem.setEnabled(true);
         undoItem.setText(undo.getUndoPresentationName());
@@ -1035,6 +1060,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
 
     public void actionPerformed(ActionEvent e) {
+      stopCompoundEdit();
+      
       try {
         undo.redo();
       } catch (CannotRedoException ex) {
@@ -1276,6 +1303,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * single undo. Use stopCompoundEdit() once finished.
    */
   public void startCompoundEdit() {
+    stopCompoundEdit();
     compoundEdit = new CompoundEdit();
   }
 
@@ -1284,11 +1312,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * Use with startCompoundEdit() to group edit operations in a single undo.
    */
   public void stopCompoundEdit() {
-    compoundEdit.end();
-    undo.addEdit(compoundEdit);
-    undoAction.updateUndoState();
-    redoAction.updateRedoState();
-    compoundEdit = null;
+    if (compoundEdit != null) {
+      compoundEdit.end();
+      undo.addEdit(compoundEdit);
+      undoAction.updateUndoState();
+      redoAction.updateRedoState();
+      compoundEdit = null;
+    }
   }
 
 
@@ -1324,18 +1354,45 @@ public abstract class Editor extends JFrame implements RunnerListener {
       // set up this guy's own undo manager
 //      code.undo = new UndoManager();
 
+      document.addDocumentListener(new DocumentListener() {
+        
+        public void removeUpdate(DocumentEvent e) {
+          if (isInserting)
+            endTextEditHistory();
+          isInserting = false;
+        }
+        
+        public void insertUpdate(DocumentEvent e) {
+          if (!isInserting)
+            endTextEditHistory();
+          isInserting = true;
+        }
+        
+        public void changedUpdate(DocumentEvent e) {
+          endTextEditHistory();
+        }
+      });
+      
       // connect the undo listener to the editor
       document.addUndoableEditListener(new UndoableEditListener() {
+        
           public void undoableEditHappened(UndoableEditEvent e) {
-            if (compoundEdit != null) {
-              compoundEdit.addEdit(e.getEdit());
-            } else if (undo != null) {
-              caretUndoStack.push(textarea.getCaretPosition());
-              caretRedoStack.clear();
-              undo.addEdit(e.getEdit());
-              undoAction.updateUndoState();
-              redoAction.updateRedoState();
+            // if an edit is in progress, reset the timer
+            if (endUndoEvent != null) {
+              endUndoEvent.cancel();
+              endUndoEvent = null;
+              startTimerEvent();
             }
+            
+            // if this edit is just getting started, create a compound edit
+            if (compoundEdit == null) {
+              startCompoundEdit();
+              startTimerEvent();
+            }
+            
+            compoundEdit.addEdit(e.getEdit());
+            undoAction.updateUndoState();
+            redoAction.updateRedoState();
           }
         });
     }
@@ -1353,6 +1410,24 @@ public abstract class Editor extends JFrame implements RunnerListener {
     redoAction.updateRedoState();
   }
 
+  void startTimerEvent() {
+    endUndoEvent = new TimerTask() {
+      public void run() {
+        endTextEditHistory();
+      }
+    };
+    timer.schedule(endUndoEvent, 3000);
+    // let the gc eat the cancelled events
+    timer.purge();
+  }
+  
+  void endTextEditHistory() {
+    if (endUndoEvent != null) {
+      endUndoEvent.cancel();
+      endUndoEvent = null;
+    }
+    stopCompoundEdit();
+  }
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
