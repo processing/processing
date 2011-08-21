@@ -695,6 +695,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menu.add(item);
 
     menu.addSeparator();
+    
+    item = Base.newJMenuItem("Delete Selected Lines", 'D');
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleDeleteLines();
+        }
+      });
+    menu.add(item);
+    
+    menu.addSeparator();
 
     item = Base.newJMenuItem("Auto Format", 'T');
     item.addActionListener(new ActionListener() {
@@ -1471,6 +1481,18 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.selectAll();
   }
 
+  public void handleDeleteLines() {
+    int startLine = textarea.getSelectionStartLine();
+    int stopLine = textarea.getSelectionStopLine();
+    
+    int start = textarea.getLineStartOffset(startLine);
+    int end = textarea.getLineStopOffset(stopLine); 
+    
+    final String source = getText();
+    
+    textarea.select(start, (end == source.length() + 1) ? end - 1 : end);
+    textarea.setSelectedText("");
+  }
 
   public void handleAutoFormat() {
     final String source = getText();
