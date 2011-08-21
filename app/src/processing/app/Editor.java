@@ -230,7 +230,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       
       public void caretUpdate(CaretEvent e) {
         String newText = textarea.getText();
-        if (lastText.equals(newText)) {
+        if (lastText.equals(newText) && isDirectEdit()) {
           endTextEditHistory();
         }
         lastText = newText;
@@ -1367,14 +1367,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
       document.addDocumentListener(new DocumentListener() {
         
         public void removeUpdate(DocumentEvent e) {
-          if (isInserting)
+          if (isInserting && isDirectEdit()) {
             endTextEditHistory();
+          }
           isInserting = false;
         }
         
         public void insertUpdate(DocumentEvent e) {
-          if (!isInserting)
+          if (!isInserting && isDirectEdit()) {
             endTextEditHistory();
+          }
           isInserting = true;
         }
         
@@ -1418,6 +1420,14 @@ public abstract class Editor extends JFrame implements RunnerListener {
     this.undo = code.getUndo();
     undoAction.updateUndoState();
     redoAction.updateRedoState();
+  }
+
+  /**
+   * @return true if the text is being edited from direct input from typing and
+   *         not shortcuts that manipulate text
+   */
+  boolean isDirectEdit() {
+    return endUndoEvent != null;
   }
 
   void startTimerEvent() {
