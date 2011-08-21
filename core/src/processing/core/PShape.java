@@ -141,7 +141,7 @@ public class PShape implements PConstants {
   /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;
 
-  /** For primitive shapes in particular, parms like x/y/w/h or x1/y1/x2/y2. */
+  /** For primitive shapes in particular, params like x/y/w/h or x1/y1/x2/y2. */
   protected float[] params;
 
   protected int vertexCount;
@@ -152,6 +152,11 @@ public class PShape implements PConstants {
    */
   protected float[][] vertices;
 
+  
+  
+  
+  
+  
   static public final int VERTEX = 0;
   static public final int BEZIER_VERTEX = 1;
   static public final int QUAD_BEZIER_VERTEX = 2;
@@ -202,6 +207,101 @@ public class PShape implements PConstants {
 //  public float py;
 
 
+  int vertexCount2;
+  int indexCount;
+  protected float[] vertices2;
+  protected float[] colors;
+  protected float[] normals;
+  protected float[] texcoords0;
+  protected float[][] texcoords;
+  protected int[] indices; 
+
+  // At least here should be one child, the root shape is always of GROUP type,
+  // it holds the entire geometry but not the indices. Indices make not sense
+  // at the root level.
+  PShape selChild;
+  
+  protected void vertexCheck() {
+    int n = vertices2.length / 3;
+    if (vertexCount2 == n) {
+      float[] temp = new float[3 * (vertexCount2 << 1)];
+      System.arraycopy(vertices2, 0, temp, 0, vertexCount2);
+      vertices2 = temp;
+    }
+  }
+  
+  protected void indexCheck() {
+    if (indexCount == indices.length) {
+      float[] temp = new float[3 * (vertexCount2 << 1)];
+      System.arraycopy(vertices2, 0, temp, 0, vertexCount2);
+      vertices2 = temp;
+    }  
+  }
+
+  void selectChild(String name) {
+  }
+  
+  // Selects the 
+  void selectParent() {
+    
+    
+  }
+  
+  void addChild(String name) {
+  }
+  
+  void addVertex(float x, float y, float z, int rgba) {
+    addVertex(x, y, z, rgba, 0, 0, 0);
+    
+  }
+  
+  void addVertex(float x, float y, float z, int rgba, float nx, float ny, float nz) {
+    addVertex(x, y, z, rgba, nx, ny, nz, 0, 0);    
+  }
+  
+
+  // Add vertex method (single texture version)
+  void addVertex(float x, float y, float z, int rgba, float nx, float ny, float nz, float u, float v) {    
+    // Add data to flat arrays in root node
+    
+    // Add current vertex count, which is the index of the just added vertex, to the 
+    // index array of selected child.
+    //addIndex(vertexCount2);  
+    
+    vertexCount2++;
+  }
+  
+  // Add vertex method (multi-texture version)
+  void addVertex(float x, float y, float z, int rgba, float nx, float ny, float nz, float[] u, float[] v) {    
+  
+  }
+  
+
+  
+  
+  void setX(int i, float x) {
+    
+  
+  }
+
+  
+  void setColor(int i, int rgba) {
+    
+    
+  }
+
+  
+  
+  float getX(int i) {
+    return 0;  
+  }
+  
+  int getColor(int i) {
+    return 0;
+  }
+
+  
+  
   public PShape() {
     this.family = GROUP;
   }
@@ -542,6 +642,9 @@ public class PShape implements PConstants {
 
 
   protected void drawGeometry(PGraphics g) {
+    // get cache object using g.
+    
+    
     g.beginShape(primitive);
     if (style) {
       for (int i = 0; i < vertexCount; i++) {
