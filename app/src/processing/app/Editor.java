@@ -698,8 +698,26 @@ public abstract class Editor extends JFrame implements RunnerListener {
     
     item = Base.newJMenuItem("Delete Selected Lines", 'D');
     item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleDeleteLines();
+      }
+    });
+    menu.add(item);
+    
+    item = new JMenuItem("Move Selected Lines Up");
+    item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, Event.ALT_MASK));
+    item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          handleDeleteLines();
+          handleMoveLines(true);
+        }
+      });
+    menu.add(item);
+    
+    item = new JMenuItem("Move Selected Lines Down");
+    item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, Event.ALT_MASK));
+    item.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleMoveLines(false);
         }
       });
     menu.add(item);
@@ -1491,16 +1509,86 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.selectAll();
   }
 
+  /**
+   * @param moveUp
+   *          true to swap the selected lines with the line above, false to swap
+   *          with the line beneath
+   */
+  public void handleMoveLines(boolean moveUp) {
+    startCompoundEdit();
+    
+    int startLine = textarea.getSelectionStartLine();
+    int stopLine = textarea.getSelectionStopLine();
+    
+    // if more than one line is selected and none of the characters of the end
+    // line are selected, don't move that line
+    if (startLine != stopLine
+        && textarea.getSelectionStop() == textarea.getLineStartOffset(stopLine))
+      stopLine--;
+    
+    int replacedLine = moveUp ? startLine - 1 : stopLine + 1;
+    if (replacedLine < 0 || replacedLine >= textarea.getLineCount())
+      return;
+    
+    final String source = getText();
+    
+    int replaceStart = textarea.getLineStartOffset(replacedLine);
+    int replaceEnd = textarea.getLineStopOffset(replacedLine);
+    if (replaceEnd == source.length() + 1)
+      replaceEnd--;
+    
+    int selectionStart = textarea.getLineStartOffset(startLine);
+    int selectionEnd = textarea.getLineStopOffset(stopLine);
+    if (selectionEnd == source.length() + 1)
+      selectionEnd--;
+    
+    String replacedText = source.substring(replaceStart, replaceEnd);
+    String selectedText = source.substring(selectionStart, selectionEnd);
+    if (replacedLine == textarea.getLineCount() - 1) {
+      replacedText += "\n";
+      selectedText = selectedText.substring(0, selectedText.length() - 1);
+    } else if (stopLine == textarea.getLineCount() - 1) {
+      selectedText += "\n";
+      replacedText = replacedText.substring(0, replacedText.length() - 1);
+    }
+    
+    int newSelectionStart, newSelectionEnd;
+    if (moveUp) {
+      // Change the selection, then change the line above
+      textarea.select(selectionStart, selectionEnd);
+      textarea.setSelectedText(replacedText);
+      
+      textarea.select(replaceStart, replaceEnd);
+      textarea.setSelectedText(selectedText);
+      
+      newSelectionStart = textarea.getLineStartOffset(startLine - 1);
+      newSelectionEnd = textarea.getLineStopOffset(stopLine - 1) -  1; 
+    } else {
+      // Change the line beneath, then change the selection
+      textarea.select(replaceStart, replaceEnd);
+      textarea.setSelectedText(selectedText);
+      
+      textarea.select(selectionStart, selectionEnd);
+      textarea.setSelectedText(replacedText);
+    
+      newSelectionStart = textarea.getLineStartOffset(startLine + 1);
+      newSelectionEnd = textarea.getLineStopOffset(stopLine + 1) - 1; 
+    }
+    
+    textarea.select(newSelectionStart, newSelectionEnd);
+    stopCompoundEdit();
+  }
+
   public void handleDeleteLines() {
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
     
     int start = textarea.getLineStartOffset(startLine);
     int end = textarea.getLineStopOffset(stopLine); 
+    if (end == getText().length() + 1)
+      end--;
     
-    final String source = getText();
-    
-    textarea.select(start, (end == source.length() + 1) ? end - 1 : end);
+    textarea.select(start, end);
     textarea.setSelectedText("");
   }
 
