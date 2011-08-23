@@ -5077,10 +5077,50 @@ public class PApplet extends Applet
    * Creates an empty shape, with the specified size and parameters.
    * The actual type will depend on the renderer.
    */
+  /*
   public PShape createShape(int size, Object params) {
     return g.createShape(size, params);
   }
-
+  */
+  
+  
+  /*
+  public PShape createGroup(String name) {
+    PShape shape = new PShape(PShape.GROUP);
+    shape.setName(name);
+    shape.g = g;
+    return shape;
+  }
+  
+  public PShape createPrimitive(String name, int type) {
+    PShape shape = new PShape();
+    shape.family = PShape.PRIMITIVE;
+    shape.primitive = type;
+    shape.setName(name);
+    shape.g = g;
+    return shape;
+  }
+  
+  public PShape createShapePath(String name) {
+    PShape shape = new PShape();
+    shape.family = PShape.PATH;
+    shape.setName(name);
+    shape.g = g;
+    shape.vertexInit();
+    return shape;
+  }
+  
+  public PShape createGeometry(String name, int type) {
+    PShape shape = new PShape();
+    shape.family = PShape.GEOMETRY;
+    shape.primitive = type;
+    shape.setName(name);
+    shape.g = g;
+    shape.vertexInit();
+    return shape;
+  }
+  */
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -9567,9 +9607,9 @@ public class PApplet extends Applet
    * formatted vertex information.
    * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
    */
-  public void vertexFields(float[] v) {
-    if (recorder != null) recorder.vertexFields(v);
-    g.vertexFields(v);
+  public void vertex(float[] v) {
+    if (recorder != null) recorder.vertex(v);
+    g.vertex(v);
   }
 
 
@@ -13095,15 +13135,6 @@ public class PApplet extends Applet
   public void texture(PImage... images) {
     if (recorder != null) recorder.texture(images);
     g.texture(images);
-  }
-
-
-  /**
-  * @nowebref
-  */
-  public void vertex(float... values) {
-    if (recorder != null) recorder.vertex(values);
-    g.vertex(values);
   }
 
 
