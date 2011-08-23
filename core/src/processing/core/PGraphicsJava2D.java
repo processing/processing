@@ -370,6 +370,10 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     showDepthWarningXYZ("vertex");
   }
 
+  public void vertex(float[] v) {
+    vertex(v[X], v[Y]);
+  }
+  
 
   public void vertex(float x, float y, float u, float v) {
     showVariationWarning("vertex(x, y, u, v)");
