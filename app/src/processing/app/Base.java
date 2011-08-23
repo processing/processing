@@ -69,6 +69,23 @@ public class Base {
     platformIndices.put("linux", PConstants.LINUX);
   }
   static Platform platform;
+  
+  /** How many bits this machine is */
+  static int nativeBits;
+  static {
+    nativeBits = 32;  // perhaps start with 32
+    String bits = System.getProperty("sun.arch.data.model");
+    if (bits != null) {
+      if (bits.equals("64")) {
+        nativeBits = 64;
+      }
+    } else {
+      // if some other strange vm, maybe try this instead
+      if (System.getProperty("java.vm.name").contains("64")) {
+        nativeBits = 64;
+      }
+    }
+  }
 
   static private boolean commandLine;
 
@@ -1014,9 +1031,9 @@ public class Base {
           nextMode = findMode(modeTitle);
           if (nextMode == null) {
             final String msg =
-              "This sketch was last used in “" + modeTitle + "” mode,\n" +
+              "This sketch was last used in â€œ" + modeTitle + "â€� mode,\n" +
               "which does not appear to be installed. The sketch will\n" +
-              "be opened in “" + defaultMode.getTitle() + "” mode instead.";
+              "be opened in â€œ" + defaultMode.getTitle() + "â€� mode instead.";
             Base.showWarning("Depeche Mode", msg, null);
             nextMode = defaultMode;
           }
@@ -1585,6 +1602,47 @@ public class Base {
 
   static public String getPlatformName() {
     return PConstants.platformNames[PApplet.platform];
+  }
+
+  static public int getNativeBits() {
+    return nativeBits;
+  }
+  
+  static public String getPlatformVersionName() {
+    String version = System.getProperty("os.version");
+
+    if (version != null) {
+      
+      if (Base.isMacOS()) {
+        if (version.startsWith("10.0"))
+          return "cheetah";
+        if (version.startsWith("10.1"))
+          return "puma";
+        if (version.startsWith("10.2"))
+          return "jaguar";
+        if (version.startsWith("10.3"))
+          return "panther";
+        if (version.startsWith("10.4"))
+          return "tiger";
+        if (version.startsWith("10.5"))
+          return "leopard";
+        if (version.startsWith("10.6"))
+          return "snowleopard";
+        if (version.startsWith("10.7"))
+          return "lion";
+      }
+      
+      if (Base.isWindows()) {
+        if (version.startsWith("6.0"))
+          return "vista";
+        
+        // yes, windows 7 is really windows 6.1
+        if (version.startsWith("6.1"))
+          return "7";
+      }
+    }
+    
+    return "";
   }
 
   /*

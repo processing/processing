@@ -479,9 +479,31 @@ public class ContributionListing {
         currentInfo.version = Integer.parseInt(attributes.getValue("id"));
         currentInfo.prettyVersion = attributes.getValue("pretty");
 
-      } else if ("location".equals(qName)) {
-        currentInfo.link = attributes.getValue("url");
-
+      } else if ("download".equals(qName)) {
+        String link = null;
+        
+        String hostPlatform = Base.getPlatformName();
+        int nativeBits = Base.getNativeBits();
+        String hostVersion = Base.getPlatformVersionName();
+        
+        // Try macosx64.lion
+        if (!hostPlatform.isEmpty())
+          link = attributes.getValue(hostPlatform + nativeBits + "." + hostVersion);
+        // Try macosx.lion
+        if (link == null)
+          link = attributes.getValue(hostPlatform + "." + hostVersion);
+        // Try macosx64
+        if (link == null)
+          link = attributes.getValue(hostPlatform + nativeBits);
+        // Try macosx
+        if (link == null)
+          link = attributes.getValue(hostPlatform);
+        // Try "other"
+        if (link == null)
+          link = attributes.getValue("other");
+        
+        // If it's still null by this point, the library doesn't support this OS
+        currentInfo.link = link;
       }
       
     }

@@ -777,7 +777,13 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
     
     private void installContribution(AdvertisedContribution info) {
-      installContribution(info, info.link);
+      if (info.link == null) {
+        contribManager.statusBar.setErrorMessage("Your operating system "
+            + "doesn't appear to be supported. You should visit the "
+            + info.getType() + "'s library for more info.");
+      } else {
+        installContribution(info, info.link);
+      }
     }
     
     private void installContribution(Contribution toBeReplaced, String url) {

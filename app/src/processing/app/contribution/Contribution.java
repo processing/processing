@@ -53,6 +53,21 @@ public interface Contribution {
 
   public static enum Type {
     LIBRARY, LIBRARY_COMPILATION, TOOL, MODE;
+    
+    public String toString() {
+      switch (this) {
+      case LIBRARY:
+        return "library";
+      case LIBRARY_COMPILATION:
+        return "library compilation";
+      case TOOL:
+        return "tool";
+      case MODE:
+        return "mode";
+      }
+      
+      return "contribution";
+    };
   }
 
 }
