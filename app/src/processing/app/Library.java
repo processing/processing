@@ -35,23 +35,6 @@ public class Library extends InstalledContribution {
    */
   String nativeLibraryPath;
 
-  /** How many bits this machine is */
-  static int nativeBits;
-  static {
-    nativeBits = 32;  // perhaps start with 32
-    String bits = System.getProperty("sun.arch.data.model");
-    if (bits != null) {
-      if (bits.equals("64")) {
-        nativeBits = 64;
-      }
-    } else {
-      // if some other strange vm, maybe try this instead
-      if (System.getProperty("java.vm.name").contains("64")) {
-        nativeBits = 64;
-      }
-    }
-  }
-
   /** Filter to pull out just files and no directories, and to skip export.txt */
   static FilenameFilter standardFilter = new FilenameFilter() {
     public boolean accept(File dir, String name) {
@@ -108,7 +91,7 @@ public class Library extends InstalledContribution {
     }
     // check for bit-specific version, e.g. on windows, check if there
     // is a window32 or windows64 folder (on windows)
-    hostLibrary = new File(libraryFolder, hostPlatform + nativeBits);
+    hostLibrary = new File(libraryFolder, hostPlatform + Base.getNativeBits());
     if (hostLibrary.exists()) {
       nativeLibraryFolder = hostLibrary;
     }
