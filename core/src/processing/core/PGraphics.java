@@ -1255,13 +1255,12 @@ public class PGraphics extends PImage implements PConstants {
     vertexCount++;
   }
 
-
   /**
    * Used by renderer subclasses or PShape to efficiently pass in already
    * formatted vertex information.
    * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
    */
-  public void vertexFields(float[] v) {
+  public void vertex(float[] v) {
     vertexCheck();
     curveVertexCount = 0;
     float[] vertex = vertices[vertexCount];
@@ -7218,12 +7217,18 @@ public class PGraphics extends PImage implements PConstants {
     return null;
   }
 
-
+/*
   protected PShape createShape(int size, Object params) {
     showMissingWarning("createShape");
     return null;
   }
-
+  */
+/*
+  protected PShape createGroup(String name) {
+    showMissingWarning("createShape");
+    return null;
+  }
+  */
 
   public void screenBlend(int mode) {
     showMissingWarning("screenBlend");
@@ -7286,12 +7291,5 @@ public class PGraphics extends PImage implements PConstants {
   */
   public void texture(PImage... images) {
     showMissingWarning("texture");
-  }
-
-  /**
-  * @nowebref
-  */
-  public void vertex(float... values) {
-    showMissingWarning("vertex");
   }
 }
