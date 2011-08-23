@@ -48,6 +48,8 @@ import java.io.BufferedReader;
  * 
  */
 public class PShape3D extends PShape {
+  
+  
   protected PApplet papplet;      
   protected PGraphicsOpenGL ogl;
     
@@ -261,6 +263,20 @@ public class PShape3D extends PShape {
 
   // SHAPE RECORDING HACK
 
+  /** Current normal vector. */
+  protected float normalX, normalY, normalZ;    
+  /** Current UV values */
+  protected float textureU, textureV;  
+  protected float strokeR, strokeG, strokeB, strokeA;
+  protected float fillR, fillG, fillB, fillA;  
+  protected boolean tint;
+  protected int tintColor;
+  protected float tintR, tintG, tintB, tintA;
+
+  
+  
+  
+  
   public void beginRecord() {
     ogl.beginRecord(this);
   }
@@ -417,6 +433,504 @@ public class PShape3D extends PShape {
     ogl.restoreDrawingState();
   }
   
+  
+  
+  /*  
+  // Reference to the renderer of the main PApplet
+  PGraphics g;
+  
+  // Fill methods
+  
+  public void nofill() {
+    fill = false;
+  }
+     
+  public void fill(int rgb) {
+    g.colorCalc(rgb);
+    fillFromCalc();
+  }
+
+  public void fill(int rgb, float alpha) {
+    g.colorCalc(rgb, alpha);
+    fillFromCalc();
+  }
+
+  public void fill(float gray) {
+    g.colorCalc(gray);
+    fillFromCalc();    
+  }
+
+  public void fill(float gray, float alpha) {
+    g.colorCalc(gray, alpha);
+    fillFromCalc();    
+  }
+
+  public void fill(float x, float y, float z) {
+    g.colorCalc(x, y, z);
+    fillFromCalc();    
+  }
+
+  public void fill(float x, float y, float z, float a) {
+    g.colorCalc(x, y, z, a);
+    fillFromCalc();
+  }
+  
+  protected void fillFromCalc() {
+    fill = true;
+    fillColor = g.calcColor;
+    fillR = g.calcR;
+    fillG = g.calcG;
+    fillB = g.calcB;
+    fillA = g.calcA;    
+  }
+  
+  // Stroke methods
+  
+  public void noStroke() {
+    stroke = false; 
+  }  
+  
+  public void stroke(int rgb) {
+    g.colorCalc(rgb);
+    strokeFromCalc();
+  }
+
+  public void stroke(int rgb, float alpha) {
+    g.colorCalc(rgb, alpha);
+    strokeFromCalc();    
+  }
+
+  public void stroke(float gray) {
+    g.colorCalc(gray);
+    strokeFromCalc();    
+  }
+
+  public void stroke(float gray, float alpha) {
+    g.colorCalc(gray, alpha);
+    strokeFromCalc();    
+  }
+
+  public void stroke(float x, float y, float z) {
+    g.colorCalc(x, y, z);
+    strokeFromCalc();    
+  }
+
+  public void stroke(float x, float y, float z, float a) {
+    g.colorCalc(x, y, z, a);
+    strokeFromCalc();
+  }
+
+  protected void strokeFromCalc() {
+    stroke = true;
+    strokeColor = g.calcColor;
+    strokeR = g.calcR;
+    strokeG = g.calcG;
+    strokeB = g.calcB;
+    strokeA = g.calcA;    
+  }
+  
+  public void strokeWeight(float weight) {
+    strokeWeight = weight;
+  }
+  
+  public void strokeCap(int cap) {
+    strokeCap = cap;
+  }  
+  
+  public void strokeJoin(int join) {
+    strokeJoin = join;
+  }    
+  
+  // Tint methods
+
+  public void noTint() {
+    tint = false;
+  }
+  
+  public void tint(int rgb) {    
+    g.colorCalc(rgb);
+    tintFromCalc();
+  }
+
+  public void tint(int rgb, float alpha) {
+    g.colorCalc(rgb, alpha);
+    tintFromCalc();
+  }
+
+  public void tint(float gray) {
+    g.colorCalc(gray);
+    tintFromCalc();
+  }
+
+  public void tint(float gray, float alpha) {
+    g.colorCalc(gray, alpha);
+    tintFromCalc(); 
+  }
+
+  public void tint(float x, float y, float z) {
+    g.colorCalc(x, y, z);
+    tintFromCalc(); 
+  }
+
+  public void tint(float x, float y, float z, float a) {
+    g.colorCalc(x, y, z, a);
+    tintFromCalc();     
+  }
+
+  protected void tintFromCalc() {
+    tint = true;
+    tintColor = g.calcColor;
+    tintR = g.calcR;
+    tintG = g.calcG;
+    tintB = g.calcB;
+    tintA = g.calcA;
+  }  
+  
+  public void texture(PImage image) {
+    this.image = image;
+  }  
+  
+  public void normal(float nx, float ny, float nz) {
+    normalX = nx;
+    normalY = ny;
+    normalZ = nz;
+  }
+    
+  public void vertex(float x, float y) {
+    vertexCheck();
+    float[] vertex = vertices[vertexCount];
+    
+    vertex[X] = x;
+    vertex[Y] = y;
+    vertex[Z] = 0;
+    
+    if (family != PATH) {    
+      boolean textured = image != null;
+      if (fill || textured) {
+        if (!textured) {
+          vertex[R] = fillR;
+          vertex[G] = fillG;
+          vertex[B] = fillB;
+          vertex[A] = fillA;
+        } else {
+          if (tint) {
+            vertex[R] = tintR;
+            vertex[G] = tintG;
+            vertex[B] = tintB;
+            vertex[A] = tintA;
+          } else {
+            vertex[R] = 1;
+            vertex[G] = 1;
+            vertex[B] = 1;
+            vertex[A] = 1;
+          }
+        }
+      }
+
+      if (stroke) {
+        vertex[SR] = strokeR;
+        vertex[SG] = strokeG;
+        vertex[SB] = strokeB;
+        vertex[SA] = strokeA;
+        vertex[SW] = strokeWeight;
+      }
+
+      if (textured) {
+        vertex[U] = textureU;
+        vertex[V] = textureV;
+      }
+    }
+    
+    vertexCount++;    
+  }
+
+  public void vertex(float x, float y, float z) {
+  }
+  
+  public void vertex(float x, float y, float u, float v) {
+  }
+  
+  public void vertex(float x, float y, float z, float u, float v) {
+  }
+
+  public void curveVertex(float x, float y) {
+  }
+    
+  public void curveVertex(float x, float y, float z) {
+  }
+  
+  public void bezierVertex(float x2, float y2,
+                           float x3, float y3,
+                           float x4, float y4) {
+  }
+    
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {   
+  }
+  
+  protected void vertexCheck() {
+    if (vertexCount == vertices.length) {
+      float temp[][] = new float[vertexCount << 1][family == PATH ? 2 : VERTEX_FIELD_COUNT];
+      System.arraycopy(vertices, 0, temp, 0, vertexCount);
+      vertices = temp;
+    }        
+  }
+  
+  // Call it only after setting the shape family
+  protected void vertexInit() {
+    vertices = new float[PGraphics.DEFAULT_VERTICES][family == PATH ? 2 : VERTEX_FIELD_COUNT];    
+  }
+  
+  protected void vertexTexture(float u, float v) {
+    if (image == null) {
+      throw new RuntimeException("You must first call texture() before " +
+                                 "using u and v coordinates with vertex()");
+    }
+    if (g.textureMode == IMAGE) {
+      u /= image.width;
+      v /= image.height;
+    }
+
+    textureU = u;
+    textureV = v;
+
+    if (textureU < 0) textureU = 0;
+    else if (textureU > 1) textureU = 1;
+
+    if (textureV < 0) textureV = 0;
+    else if (textureV > 1) textureV = 1;
+  }  
+
+  protected int vertCount;  
+  protected float[] vertices2;
+  protected float[] colors;  
+  protected float[] normals;
+  protected float[] texcoords;
+  boolean vertModified;
+    
+  protected float[] tvertices2;  
+  protected float[] tnormals;
+  boolean tvertModified;
+    
+  protected int indexCount;
+  protected int[] indices;
+  boolean indexModified;
+  
+  protected int paramCount;
+  protected float[] params2;
+  boolean paramModified;
+  
+  protected PMatrix3D tmatrix;
+  protected boolean tmatModified;
+
+
+  public void draw2(PGraphics g) {
+    if (visible) {
+      pre(g);
+      drawImpl2(g);
+      post(g);
+    }
+  }
+  
+  public void drawImpl2(PGraphics g) {
+  
+  
+  }
+  
+  
+  protected void vertexCheck() {
+    int n = vertices2.length / 3;
+    if (vertCount == n) {
+      float[] vtemp = new float[3 * (vertCount << 1)];
+      System.arraycopy(vertices2, 0, vtemp, 0, vertCount);      
+      vertices2 = vtemp;
+      
+      float[] ctemp = new float[4 * (vertCount << 1)];
+      System.arraycopy(colors, 0, ctemp, 0, vertCount);      
+      colors = ctemp;
+
+      float[] ntemp = new float[3 * (vertCount << 1)];
+      System.arraycopy(normals, 0, ntemp, 0, vertCount);      
+      normals = ntemp;
+      
+      float[] tctemp = new float[2 * (vertCount << 1)];
+      System.arraycopy(texcoords, 0, tctemp, 0, vertCount);      
+      texcoords = ntemp;
+    }
+  }
+  
+  protected void indexCheck() {
+    if (indexCount == indices.length) {
+      int[] temp = new int[indexCount << 1];
+      System.arraycopy(indices, 0, temp, 0, indexCount);
+      indices = temp;
+    }  
+  }
+
+  
+  void addChild(String name) {
+  }
+  
+  
+  
+  void addVertex(float x, float y, float z, int rgba) {
+    addVertex(x, y, z, rgba, 0, 0, 0);
+  }
+  
+  void addVertex(float x, float y, float z, int rgba, float nx, float ny, float nz) {
+    addVertex(x, y, z, rgba, nx, ny, nz, 0, 0);    
+  }
+  
+
+  // Add vertex method (single texture version)
+  void addVertex(float x, float y, float z, int rgba, float nx, float ny, float nz, float u, float v) {    
+    // Add data to flat arrays in root node
+    vertexCheck();
+    
+    int idx = vertCount;
+    vertices2[3 * idx + 0] = x;
+    vertices2[3 * idx + 1] = y;
+    vertices2[3 * idx + 2] = z;
+
+    int a = (rgba >> 24) & 0xFF;
+    int r = (rgba >> 16) & 0xFF;
+    int g = (rgba >> 8) & 0xFF;
+    int b = (rgba  >> 0) & 0xFF;
+    
+    colors[4 * idx + 0] = r / 255.0f;
+    colors[4 * idx + 1] = g / 255.0f;
+    colors[4 * idx + 2] = b / 255.0f;
+    colors[4 * idx + 3] = a / 255.0f;
+
+    normals[3 * idx + 0] = nx;
+    normals[3 * idx + 1] = ny;
+    normals[3 * idx + 2] = nz;
+
+    texcoords[2 * idx + 0] = u;
+    texcoords[2 * idx + 1] = v;
+           
+    vertCount++;
+  }
+  
+  protected int update(int index0) {    
+    if (family == GROUP) {
+      index0 = updateGroup(index0);
+    } else if (family == PRIMITIVE) {
+      index0 = updateImpl(index0);
+    } else if (family == GEOMETRY) {
+      index0 = updateImpl(index0);
+    } else if (family == PATH) {
+      index0 = updateImpl(index0);
+    }
+    return index0;
+  }
+  
+  protected int updateGroup(int index0) {    
+    for (int i = 0; i < childCount; i++) {
+      index0 += children[i].update(index0);
+    }
+    return index0;
+  }
+
+  
+  
+  // This method is supposed to be called by the root shape when it is drawn, 
+  // which will provide the number of indices up to this shape.
+  protected int updateImpl(int index0) {
+    if ((family == PATH || family == PRIMITIVE) && paramModified) {
+      vertCount = 0;
+      // Evaluate parameters and add vertices
+      // ...
+      vertModified = true;
+    }
+    
+    index0 = updateIndex(index0);
+    updateVert();
+    
+    return index0;
+  }
+  
+  protected int updateIndex(int index0) {
+    if (indexCount == 0) {
+      // Calculate vertex indices depending on the geometry type and the root
+      
+      indexModified = true;
+    }
+    
+    return index0 + vertCount;
+  }
+  
+  protected void updateVert() {
+    if (vertModified || tmatModified) {
+      if (tvertices2 == null) {      
+        if (tmatrix == null) {
+          // When there is no transformation matrix,
+          // the array of transformed vertices is set
+          // as the original array, in order to save
+          // memory.
+          tvertices2 = vertices2;
+          tnormals = normals;
+        } else {
+          tvertices2 = new float[vertices2.length];
+          tnormals = new float[normals.length];
+        }
+      }
+              
+      if (tmatrix != null) {
+        // Apply the transformation matrix on all the vertices2
+        // and normals in order to obtain the transformed vertex
+        // coordinates and normals.
+        float x, y, z, nx, ny, nz;
+        PMatrix3D tm = tmatrix;
+        for (int i = 0; i < vertCount; i++) {
+          x = vertices2[3 * i + 0];
+          y = vertices2[3 * i + 1];
+          z = vertices2[3 * i + 2];
+          
+          tvertices2[3 * i + 0] = x * tm.m00 + y * tm.m01 + z * tm.m02 + tm.m03;
+          tvertices2[3 * i + 1] = x * tm.m10 + y * tm.m11 + z * tm.m12 + tm.m13;
+          tvertices2[3 * i + 2] = x * tm.m20 + y * tm.m21 + z * tm.m22 + tm.m23;
+
+          nx = normals[3 * i + 0];
+          ny = normals[3 * i + 1];
+          nz = normals[3 * i + 2];
+
+          tnormals[3 * i + 0] = nx * tm.m00 + ny * tm.m01 + nz * tm.m02 + tm.m03;
+          tnormals[3 * i + 1] = nx * tm.m10 + ny * tm.m11 + nz * tm.m12 + tm.m13;
+          tnormals[3 * i + 2] = nx * tm.m20 + ny * tm.m21 + nz * tm.m22 + tm.m23;
+        }
+      }
+      
+      tvertModified = true;      
+    }        
+  }
+  
+  
+  // When indices should be created.
+  //indexCheck();
+  //indices[indexCount] = idx;    
+  //indexCount++;
+  
+  void setX(int i, float x) {
+    
+  
+  }
+  
+  void setColor(int i, int rgba) {
+    
+    
+  }
+  
+  float getX(int i) {
+    return 0;  
+  }
+  
+  int getColor(int i) {
+    return 0;
+  }
+  */
+
   
   ////////////////////////////////////////////////////////////
 
