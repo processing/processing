@@ -2,6 +2,10 @@
 X remove textMode(SCREEN)
 X added expand(long) and expand(double) because of Table
 
+_ change how beginRecord() works.. passing around PApplet vs PGraphics is gross
+_   have to pass PApplet just to make the rendering work to both renderers
+_   should instead be a renderer that splits things out
+
 _ boolean sketchFullscreen() ? 
 _   for more options, just integrate the fs library?
 _   http://www.superduper.org/processing/fullscreen_api/

@@ -25,6 +25,7 @@ package processing.core;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.sql.*;
 import java.util.*;
 
 import processing.core.PApplet;
@@ -143,6 +144,62 @@ public class Table implements Iterable<Table.Row> {
       }
     } catch (IOException e) {
       e.printStackTrace();
+    }
+  }
+  
+  
+  public Table(ResultSet rs) {
+    this();
+    try {
+      ResultSetMetaData rsmd = rs.getMetaData();
+      
+      int columnCount = rsmd.getColumnCount();
+      setColumnCount(columnCount);
+      
+      for (int col = 0; col < columnCount; col++) {
+        setColumnTitle(col, rsmd.getColumnName(col + 1));
+        
+        int type = rsmd.getColumnType(col + 1);
+        switch (type) {  // TODO these aren't tested. nor are they complete.
+        case Types.INTEGER: 
+        case Types.TINYINT:
+        case Types.SMALLINT:
+          setColumnType(col, INT); 
+          break;
+        case Types.BIGINT: 
+          setColumnType(col, LONG); 
+          break;
+        case Types.FLOAT:
+          setColumnType(col, FLOAT); 
+          break;
+        case Types.DECIMAL: 
+        case Types.DOUBLE:  
+        case Types.REAL: 
+          setColumnType(col, DOUBLE); 
+          break;
+        }
+      }
+
+      while (rs.next()) {
+        for (int col = 0; col < columnCount; col++) {
+          switch (columnTypes[col]) {
+          case STRING: setString(rowCount, col, rs.getString(col+1)); break;
+          case INT: setInt(rowCount, col, rs.getInt(col+1)); break;
+          case LONG: setLong(rowCount, col, rs.getLong(col+1)); break;
+          case FLOAT: setFloat(rowCount, col, rs.getFloat(col+1)); break;
+          case DOUBLE: setDouble(rowCount, col, rs.getDouble(col+1)); break;
+          default: throw new IllegalArgumentException("column type " + columnTypes[col] + " not supported.");
+          }
+        }
+//        String[] row = new String[columnCount];
+//        for (int col = 0; col < columnCount; col++) {
+//          row[col] = rs.getString(col + 1);
+//        }
+//        addRow(row);
+      }
+
+    } catch (SQLException s) {
+      throw new RuntimeException(s);
     }
   }
   
@@ -1177,6 +1234,10 @@ public class Table implements Iterable<Table.Row> {
           doubleData[row] = missingDouble;
         }
         break;
+      case CATEGORICAL:
+        int[] indexData = (int[]) columns[col];
+        indexData[row] = columnCategories[col].index(piece);
+        break;
       default: 
         throw new IllegalArgumentException("That's not a valid column type.");
     }
@@ -1388,6 +1449,121 @@ public class Table implements Iterable<Table.Row> {
     public void reset() {
       row = -1;
     }
+  }
+
+
+  static public Iterator<Row> createIterator(final ResultSet rs) {
+    return new Iterator<Row>() {
+      boolean already; 
+
+      public boolean hasNext() {
+        already = true;
+        try {
+          return rs.next();
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      
+      
+      public Row next() {
+        if (!already) {
+          try {
+            rs.next();
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
+          }
+        } else {
+          already = false;
+        }
+
+        return new Row() {
+          public double getDouble(int column) {
+            try {
+              return rs.getDouble(column);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          public double getDouble(String columnName) {
+            try {
+              return rs.getDouble(columnName);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          public float getFloat(int column) {
+            try {
+              return rs.getFloat(column);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          public float getFloat(String columnName) {
+            try {
+              return rs.getFloat(columnName);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          public int getInt(int column) {
+            try {
+              return rs.getInt(column);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          public int getInt(String columnName) {
+            try {
+              return rs.getInt(columnName);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          public long getLong(int column) {
+            try {
+              return rs.getLong(column);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          public long getLong(String columnName) {
+            try {
+              return rs.getLong(columnName);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          public String getString(int column) {
+            try {
+              return rs.getString(column);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+
+          public String getString(String columnName) {
+            try {
+              return rs.getString(columnName);
+            } catch (SQLException e) {
+              throw new RuntimeException(e);
+            }
+          }
+        };
+      }
+
+      public void remove() {
+        throw new IllegalArgumentException("remove() not supported");
+      }
+    };
   }
 
 
