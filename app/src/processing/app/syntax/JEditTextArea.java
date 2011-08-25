@@ -819,6 +819,20 @@ public class JEditTextArea extends JComponent
       return lineElement.getStartOffset();
   }
 
+  public int getLineStartNonWhiteSpaceOffset(int line)
+  {
+    int offset = getLineStartOffset(line);
+    int length = getLineLength(line);
+    String str = getText(offset, length);
+
+    for(int i = 0; i < str.length(); i++) {
+      if(!Character.isWhitespace(str.charAt(i))) {
+        return offset + i;
+      }
+    }
+    return offset + length;
+  }
+  
   /**
    * Returns the end offset of the specified line.
    * @param line The line
@@ -833,6 +847,21 @@ public class JEditTextArea extends JComponent
       return -1;
     else
       return lineElement.getEndOffset();
+  }
+  
+  public int getLineStopNonWhiteSpaceOffset(int line)
+  {
+    int offset = getLineStopOffset(line);
+    int length = getLineLength(line);
+    String str = getText(offset - length - 1, length);
+
+    for(int i = 0; i < length; i++) {
+      if(!Character.isWhitespace(str.charAt(length - i - 1))) {
+        return offset - i;
+      }
+    }
+    
+    return offset - length;
   }
 
   /**
