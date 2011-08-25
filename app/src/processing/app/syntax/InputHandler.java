@@ -11,6 +11,9 @@ package processing.app.syntax;
 
 import javax.swing.text.*;
 import javax.swing.JPopupMenu;
+
+import processing.app.Preferences;
+
 import java.awt.event.*;
 import java.awt.Component;
 import java.util.*;
@@ -36,6 +39,16 @@ public abstract class InputHandler extends KeyAdapter
          * this property is not set.
          */
         public static final String SMART_HOME_END_PROPERTY = "InputHandler.homeEnd";
+        
+        /**
+         * If this PDE property is set to Boolean.TRUE, the home/end keys will
+         * go to the first/last non-whitespace character of the line. If already at
+         * the that character, the keypress will move the cursor to the actual
+         * start/end of the line.
+         * 
+         * SMART_HOME_END_PROPERTY takes precedence over this property.
+         */
+        public static final String CONTEXT_AWARE_HOME_END = "editor.keys.home_and_end_travel_smart";
 
         public static final ActionListener BACKSPACE = new backspace();
         public static final ActionListener BACKSPACE_WORD = new backspace_word();
@@ -580,8 +593,10 @@ public abstract class InputHandler extends KeyAdapter
 
                         int caret = textArea.getCaretPosition();
 
-                        int lastOfLine = textArea.getLineStopOffset(
-                                textArea.getCaretLine()) - 1;
+                        int caretLine = textArea.getCaretLine();
+                        
+                        int lastOfLine = textArea.getLineStopOffset(caretLine) - 1;
+                        int lastNonWhiteSpaceOfLine = textArea.getLineStopNonWhiteSpaceOffset(caretLine) - 1;
                         int lastVisibleLine = textArea.getFirstLine()
                                 + textArea.getVisibleLines();
                         if(lastVisibleLine >= textArea.getLineCount())
@@ -595,14 +610,20 @@ public abstract class InputHandler extends KeyAdapter
                         int lastVisible = textArea.getLineStopOffset(lastVisibleLine) - 1;
                         int lastDocument = textArea.getDocumentLength();
 
-                        if(caret == lastDocument)
+                        if(caret == lastDocument && !Preferences.getBoolean(CONTEXT_AWARE_HOME_END))
                         {
                                 textArea.getToolkit().beep();
                                 return;
                         }
                         else if(!Boolean.TRUE.equals(textArea.getClientProperty(
                                 SMART_HOME_END_PROPERTY)))
-                                caret = lastOfLine;
+                        {
+                                if (!Preferences.getBoolean(CONTEXT_AWARE_HOME_END)
+                                    || caret == lastNonWhiteSpaceOfLine)
+                                  caret = lastOfLine;
+                                else
+                                  caret = lastNonWhiteSpaceOfLine;
+                        }
                         else if(caret == lastVisible)
                                 caret = lastDocument;
                         else if(caret == lastOfLine)
@@ -655,21 +676,29 @@ public abstract class InputHandler extends KeyAdapter
 
                         int firstLine = textArea.getFirstLine();
 
-                        int firstOfLine = textArea.getLineStartOffset(
-                                textArea.getCaretLine());
+                        int caretLine = textArea.getCaretLine();
+                        
+                        int firstOfLine = textArea.getLineStartOffset(caretLine);
+                        int firstNonWhiteSpaceOfLine = textArea.getLineStartNonWhiteSpaceOffset(caretLine);
                         int firstVisibleLine = (firstLine == 0 ? 0 :
                                 firstLine + textArea.getElectricScroll());
                         int firstVisible = textArea.getLineStartOffset(
                                 firstVisibleLine);
 
-                        if(caret == 0)
+                        if(caret == 0 && !Preferences.getBoolean(CONTEXT_AWARE_HOME_END))
                         {
                                 textArea.getToolkit().beep();
                                 return;
                         }
                         else if(!Boolean.TRUE.equals(textArea.getClientProperty(
                                 SMART_HOME_END_PROPERTY)))
-                                caret = firstOfLine;
+                        {
+                                if (!Preferences.getBoolean(CONTEXT_AWARE_HOME_END)
+                                    || caret == firstNonWhiteSpaceOfLine)
+                                        caret = firstOfLine;
+                                else
+                                        caret = firstNonWhiteSpaceOfLine;
+                        }
                         else if(caret == firstVisible)
                                 caret = 0;
                         else if(caret == firstOfLine)
