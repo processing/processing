@@ -176,6 +176,7 @@ public class Video implements PConstants {
         String path = libPath.get();
         gstreamerBinPath = path + "\\win";
         gstreamerPluginsPath = path + "\\win\\" + localPluginsFolder;
+        PApplet.println("gstreamerBinPath: " + gstreamerBinPath);
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "\\" + localPluginsFolder;
