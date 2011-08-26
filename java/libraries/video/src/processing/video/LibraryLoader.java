@@ -36,7 +36,8 @@ public class LibraryLoader {
    
   // These dependencies correspond to gstreamer-winbuilds 0.10.6
   static final Object[][] WIN32_DEPENDENCIES = {
-      { "SDL", new String[] {}, false }, { "glew32", new String[] {}, false },
+      { "SDL", new String[] {}, false }, 
+	  { "glew32", new String[] {}, false },
       { "iconv-2", new String[] {}, false },
       { "liba52-0", new String[] {}, false },
       { "libbz2", new String[] {}, false },
@@ -110,9 +111,9 @@ public class LibraryLoader {
       { "gstcdda-0.10", new String[] {}, true },
       { "gstcontroller-0.10", new String[] {}, true },
       { "gstdataprotocol-0.10", new String[] {}, true },
-      { "gstfarsight-0.10", new String[] {}, true },
+      //{ "gstfarsight-0.10", new String[] {}, true },
       { "gstfft-0.10", new String[] {}, true },
-      { "gstgl-0.10", new String[] {}, true },
+      //{ "gstgl-0.10", new String[] {}, true },
       { "gstinterfaces-0.10", new String[] {}, true },
       { "gstnet-0.10", new String[] {}, true },
       { "gstnetbuffer-0.10", new String[] {}, true },
@@ -202,7 +203,7 @@ public class LibraryLoader {
         }
       } catch (Exception e) {
         if (reqLib)
-          throw new RuntimeException(String.format("can not load library %s",
+          throw new RuntimeException(String.format("can not load required library %s",
               name, e));
         else
           System.out.println(String.format("can not load library %s", name, e));

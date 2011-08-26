@@ -533,8 +533,10 @@ public class Capture extends PImage implements PConstants {
       initGStreamer(parent, requestWidth, requestHeight, "v4l2src", intPropNames, intPropValues,
           strPropNames, strPropValues, frameRate);
     } else if (PApplet.platform == WINDOWS) {
-      initGStreamer(parent, requestWidth, requestHeight, "ksvideosrc", intPropNames,
-           intPropValues, strPropNames, strPropValues, frameRate);
+      //initGStreamer(parent, requestWidth, requestHeight, "ksvideosrc", intPropNames,
+      //     intPropValues, strPropNames, strPropValues, frameRate);
+      initGStreamer(parent, requestWidth, requestHeight, "dshowvideosrc", intPropNames,
+    		        intPropValues, strPropNames, strPropValues, frameRate);    	
       //init(requestWidth, requestHeight, "dshowvideosrc", intPropNames,
       //    intPropValues, strPropNames, strPropValues, frameRate, addDecoder, null, "");
     } else if (PApplet.platform == MACOSX) {
