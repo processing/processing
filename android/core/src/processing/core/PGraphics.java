@@ -3136,6 +3136,8 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected void textLineImpl(char buffer[], int start, int stop,
                               float x, float y) {
+    System.out.println("PGraphics: Using inefficient font rendering.");
+    new Exception().printStackTrace(System.out);
     for (int index = start; index < stop; index++) {
       textCharImpl(buffer[index], x, y);
 
