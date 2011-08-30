@@ -456,7 +456,9 @@ public class PImage implements PConstants, Cloneable {
    * <b>updatePixels()</b>. Even if the renderer may not seem to use this 
    * function in the current Processing release, this will always be subject 
    * to change.
+   * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Call this when you want to mess with the pixels[] array.
    * <p/>
@@ -618,43 +620,6 @@ public class PImage implements PConstants, Cloneable {
 
   // GET/SET PIXELS
 
-
-  /**
-   * ???
-   * Returns an ARGB "color" type (a packed 32 bit int with the color.
-   * If the coordinate is outside the image, zero is returned
-   * (black, but completely transparent).
-   * <P>
-   * If the image is in RGB format (i.e. on a PVideo object),
-   * the value will get its high bits set, just to avoid cases where
-   * they haven't been set already.
-   * <P>
-   * If the image is in ALPHA format, this returns a white with its
-   * alpha value set.
-   * <P>
-   * This function is included primarily for beginners. It is quite
-   * slow because it has to check to see if the x, y that was provided
-   * is inside the bounds, and then has to check to see what image
-   * type it is. If you want things to be more efficient, access the
-   * pixels[] array directly.
-   */
-  public int get(int x, int y) {
-    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
-
-    switch (format) {
-      case RGB:
-        return pixels[y*width + x] | 0xff000000;
-
-      case ARGB:
-        return pixels[y*width + x];
-
-      case ALPHA:
-        return (pixels[y*width + x] << 24) | 0xffffff;
-    }
-    return 0;
-  }
-
-
   /**
    * ( begin auto-generated from PImage_get.xml )
    * 
@@ -676,17 +641,55 @@ public class PImage implements PConstants, Cloneable {
    * getting the values.
    * <br /><br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
    * ( end auto-generated )
-   * @webref pimage:method
+   *
+   * <h3>Advanced</h3>
+   * Returns an ARGB "color" type (a packed 32 bit int with the color.
+   * If the coordinate is outside the image, zero is returned
+   * (black, but completely transparent).
+   * <P>
+   * If the image is in RGB format (i.e. on a PVideo object),
+   * the value will get its high bits set, just to avoid cases where
+   * they haven't been set already.
+   * <P>
+   * If the image is in ALPHA format, this returns a white with its
+   * alpha value set.
+   * <P>
+   * This function is included primarily for beginners. It is quite
+   * slow because it has to check to see if the x, y that was provided
+   * is inside the bounds, and then has to check to see what image
+   * type it is. If you want things to be more efficient, access the
+   * pixels[] array directly.
+   * 
+   * @webref image:pixels
    * @brief Reads the color of any pixel or grabs a rectangle of pixels
    * @usage web_application
    * @param x x-coordinate of the pixel
    * @param y y-coordinate of the pixel
-   * @param w width of pixel rectangle to get
-   * @param h height of pixel rectangle to get
    * @see PImage#set(int, int, int)
    * @see PImage#pixels
    * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
+   */
+  public int get(int x, int y) {
+    if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
+
+    switch (format) {
+      case RGB:
+        return pixels[y*width + x] | 0xff000000;
+
+      case ARGB:
+        return pixels[y*width + x];
+
+      case ALPHA:
+        return (pixels[y*width + x] << 24) | 0xffffff;
+    }
+    return 0;
+  }
+
+  /**
+   * @param w width of pixel rectangle to get
+   * @param h height of pixel rectangle to get
    */
   public PImage get(int x, int y, int w, int h) {
     /*
@@ -763,11 +766,10 @@ public class PImage implements PConstants, Cloneable {
    * <b>updatePixels()</b> to update the window.
    * <br /><br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
-   * ( end auto-generated )
-   * <h3>Advanced</h3>
-   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
    * 
-   * @webref pimage:method
+   * ( end auto-generated )
+   * 
+   * @webref image:pixels
    * @brief writes a color to any pixel or writes an image into another
    * @usage web_application
    * @param x x-coordinate of the pixel
@@ -790,7 +792,7 @@ public class PImage implements PConstants, Cloneable {
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    *
-   * @param src ???
+   * @param src image to draw on screen
    */
   public void set(int x, int y, PImage src) {
     int sx = 0;
@@ -851,7 +853,22 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * ???
+   * ( begin auto-generated from PImage_mask.xml )
+   * 
+   * Masks part of an image from displaying by loading another image and 
+   * using it as an alpha channel. This mask image should only contain 
+   * grayscale data, but only the blue color channel is used. The mask image 
+   * needs to be the same size as the image to which it is applied.<br /><br 
+   * />In addition to using a mask image, an integer array containing the 
+   * alpha channel data can be specified directly. This method is useful for 
+   * creating dynamically generated alpha masks. This array must be of the 
+   * same length as the target image's pixels array and should contain only 
+   * grayscale data of values between 0-255.
+   * 
+   * ( end auto-generated )
+   *
+   * <h3>Advanced</h3>
+   *
    * Set alpha channel for an image. Black colors in the source
    * image will make the destination image completely transparent,
    * and white will make things fully opaque. Gray values will
@@ -864,19 +881,6 @@ public class PImage implements PConstants, Cloneable {
    * which will make the image into a "correct" grayscale by
    * performing a proper luminance-based conversion.
    *
-   * ( begin auto-generated from PImage_mask.xml )
-   * 
-   * Masks part of an image from displaying by loading another image and 
-   * using it as an alpha channel. This mask image should only contain 
-   * grayscale data, but only the blue color channel is used. The mask image 
-   * needs to be the same size as the image to which it is applied.<br /><br 
-   * />In addition to using a mask image, an integer array containing the 
-   * alpha channel data can be specified directly. This method is useful for 
-   * creating dynamically generated alpha masks. This array must be of the 
-   * same length as the target image's pixels array and should contain only 
-   * grayscale data of values between 0-255.
-   * ( end auto-generated )
-   * @webref pimage:pixels
    * @usage web_application
    * @brief Masks part of an image with another image as an alpha channel
    * @param maskArray[] any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
@@ -997,7 +1001,9 @@ public class PImage implements PConstants, Cloneable {
    * alpha channel to entirely opaque.<br /><br />ERODE - reduces the light 
    * areas with the amount defined by the level parameter.<br /><br />DILATE 
    * - increases the light areas with the amount defined by the level parameter
+   *
    * ( end auto-generated )
+   *
    * <h3>Advanced</h3>
    * Method to apply a variety of basic filters to this image.
    * <P>
@@ -1016,7 +1022,7 @@ public class PImage implements PConstants, Cloneable {
    * Gaussian blur code contributed by
    * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
    *
-   * @webref pimage:pixels
+   * @webref image:pixels
    * @brief Converts the image to grayscale or black and white
    * @usage web_application
    * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
@@ -1502,9 +1508,11 @@ public class PImage implements PConstants, Cloneable {
    * set, it will be copied as well.
    * <br /><br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
    * ( end auto-generated )
-   * @webref pimage:method
-   * @brief     Copies the entire image
+   * 
+   * @webref image:pixels
+   * @brief Copies the entire image
    * @usage web_application
    * @param sx X coordinate of the source's upper left corner
    * @param sy Y coordinate of the source's upper left corner
