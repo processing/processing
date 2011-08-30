@@ -4521,8 +4521,10 @@ public class PApplet extends Applet
    * Sometimes this happens with image URLs that produce a 403 error or that 
    * redirect to a password prompt, because <b>loadImage()</b> will attempt 
    * to interpret the HTML as image data.
+   * 
    * ( end auto-generated )
-   * @webref image:load_displaying
+   * 
+   * @webref image:loading_displaying
    * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
    * @param extension the type of image to load, for example "png", "gif", "jpg"
    * @see PImage#PImage
@@ -4534,9 +4536,9 @@ public class PApplet extends Applet
     return loadImage(filename, extension, null);
   }
 
-/**
- * @param params ???
- */
+  /**
+   * @param params ???
+   */
   public PImage loadImage(String filename, Object params) {
     return loadImage(filename, null, params);
   }
@@ -4642,7 +4644,7 @@ public class PApplet extends Applet
     return requestImage(filename, null, null);
   }
 
-/**
+  /**
    * ( begin auto-generated from requestImage.xml )
    * 
    * This function load images on a separate thread so that your sketch does 
@@ -4655,13 +4657,15 @@ public class PApplet extends Applet
    * <br/> <b>extension</b> parameter is used to determine the image type in 
    * cases where the image filename does not end with a proper extension. 
    * Specify the extension as the second parameter to <b>requestImage()</b>.
+   * 
    * ( end auto-generated )
- * @webref image:loading_displaying
- * @param filename name of the file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
- * @param extension the type of image to load, for example "png", "gif", "jpg"
- * @see PApplet#loadImage(String, String)
- * @see PImage#PImage
- */
+   * 
+   * @webref image:loading_displaying
+   * @param filename name of the file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
+   * @param extension the type of image to load, for example "png", "gif", "jpg"
+   * @see PApplet#loadImage(String, String)
+   * @see PImage#PImage
+   */
   public PImage requestImage(String filename, String extension) {
     return requestImage(filename, extension, null);
   }
@@ -9751,30 +9755,30 @@ public class PApplet extends Applet
 
 
 /**
-   * ( begin auto-generated from curveVertex.xml )
-   * 
-   * Specifies vertex coordinates for curves. This function may only be used 
-   * between <b>beginShape()</b> and <b>endShape()</b> and only when there is 
-   * no MODE parameter specified to <b>beginShape()</b>. The first and last 
-   * points in a series of <b>curveVertex()</b> lines will be used to guide 
-   * the beginning and end of a the curve. A minimum of four points is 
-   * required to draw a tiny curve between the second and third points. 
-   * Adding a fifth point with <b>curveVertex()</b> will draw the curve 
-   * between the second, third, and fourth points. The <b>curveVertex()</b> 
-   * function is an implementation of Catmull-Rom splines. Using the 3D 
-   * version of requires rendering with P3D or OPENGL (see the Environment 
-   * reference for more information).
-   * ( end auto-generated )
- * @webref shape:vertex
- * @param x the x-coordinate of the vertex
- * @param y the y-coordinate of the vertex
- * @param z the z-coordinate of the vertex
- * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
- * @see PGraphics#beginShape(int)
- * @see PGraphics#endShape(int)
- * @see PGraphics#vertex(float, float, float, float, float)
- * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
- */
+  * ( begin auto-generated from curveVertex.xml )
+  * 
+  * Text. Specifies vertex coordinates for curves. This function may only be used 
+  * between <b>beginShape()</b> and <b>endShape()</b> and only when there is 
+  * no MODE parameter specified to <b>beginShape()</b>. The first and last 
+  * points in a series of <b>curveVertex()</b> lines will be used to guide 
+  * the beginning and end of a the curve. A minimum of four points is 
+  * required to draw a tiny curve between the second and third points. 
+  * Adding a fifth point with <b>curveVertex()</b> will draw the curve 
+  * between the second, third, and fourth points. The <b>curveVertex()</b> 
+  * function is an implementation of Catmull-Rom splines. Using the 3D 
+  * version of requires rendering with P3D or OPENGL (see the Environment 
+  * reference for more information).
+  * ( end auto-generated )
+  * @webref shape:vertex
+  * @param x the x-coordinate of the vertex
+  * @param y the y-coordinate of the vertex
+  * @param z the z-coordinate of the vertex
+  * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+  * @see PGraphics#beginShape(int)
+  * @see PGraphics#endShape(int)
+  * @see PGraphics#vertex(float, float, float, float, float)
+  * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
+  */
   public void curveVertex(float x, float y, float z) {
     if (recorder != null) recorder.curveVertex(x, y, z);
     g.curveVertex(x, y, z);
@@ -10301,14 +10305,16 @@ public class PApplet extends Applet
   }
 
 
-  /*
+  /**
    * ( begin auto-generated from curvePoint.xml )
    * 
    * Evalutes the curve at point t for points a, b, c, d. The parameter t 
    * varies between 0 and 1, a and d are points on the curve, and b and c are 
    * the control points. This can be done once with the x coordinates and a 
    * second time with the y coordinates to get the location of a curve at t.
+   * 
    * ( end auto-generated )
+   * 
    * @webref shape:curves
    * @param a coordinate of first point on the curve
    * @param b coordinate of second point on the curve
@@ -10330,7 +10336,9 @@ public class PApplet extends Applet
    * Calculates the tangent of a point on a curve. There is a good definition 
    * of "tangent" at Wikipedia: <a 
    * href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Code thanks to Dave Bollinger (Bug #715)
    *
@@ -10340,10 +10348,10 @@ public class PApplet extends Applet
    * @param c coordinate of second control point
    * @param d coordinate of second point on the curve
    * @param t value between 0 and 1
-   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PGraphics#curveVertex(float, float)
-   * @see PGraphics#curvePoint(float, float, float, float, float)
-   * @see PGraphics#bezierTangent(float, float, float, float, float)
+   * @see curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see curveVertex(float, float)
+   * @see curvePoint(float, float, float, float, float)
+   * @see bezierTangent(float, float, float, float, float)
    */
   public float curveTangent(float a, float b, float c, float d, float t) {
     return g.curveTangent(a, b, c, d, t);
@@ -10762,8 +10770,10 @@ public class PApplet extends Applet
    * JAVA2D sketches and PDF output in cases where the vector data is 
    * available: when the font is still installed, or the font is created via 
    * the <b>createFont()</b> function (rather than the Create Font tool).
+   * 
    * ( end auto-generated )
-   * @webref typography:loading_display
+   * 
+   * @webref typography:loading_displaying
    * @param which any variable of the type PFont
    * @see PApplet#createFont(String, float, boolean)
    * @see PApplet#loadFont(String)
@@ -12334,10 +12344,12 @@ public class PApplet extends Applet
    * maximum value is 255.
    * <br/> <br/>
    * To change the color of an image (or a texture), use tint().
+   * 
    * ( end auto-generated )
+   * 
    * @webref color:setting
    * @usage web_application
-   * @param rgb ???
+   * @param rgb color variable or hex value
    * @see PGraphics#noFill()
    * @see PGraphics#stroke(int, float)
    * @see PGraphics#tint(int, float)
@@ -12537,7 +12549,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from lights.xml )
    * 
    * Sets the default ambient light, directional light, falloff, and specular 
@@ -12548,21 +12560,21 @@ public class PApplet extends Applet
    * looping program will cause them to only have an effect the first time 
    * through the loop.
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- * @see PGraphics#directionalLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- * @see PGraphics#noLights()
- */
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#directionalLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#noLights()
+   */
   public void lights() {
     if (recorder != null) recorder.lights();
     g.lights();
   }
 
 
-/**
+  /**
    * ( begin auto-generated from noLights.xml )
    * 
    * Disable all lighting. Lighting is turned off by default and enabled with 
@@ -12570,17 +12582,17 @@ public class PApplet extends Applet
    * that 2D geometry (which does not require lighting) can be drawn after a 
    * set of lighted 3D geometry.
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @see PGraphics#lights()
- */
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @see PGraphics#lights()
+   */
   public void noLights() {
     if (recorder != null) recorder.noLights();
     g.noLights();
   }
 
 
-/**
+  /**
    * ( begin auto-generated from ambientLight.xml )
    * 
    * Adds an ambient light. Ambient light doesn't come from a specific 
@@ -12592,27 +12604,27 @@ public class PApplet extends Applet
    * have an effect the first time through the loop. The effect of the 
    * parameters is determined by the current color mode.
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param red red or hue value (depending on current color mode)
- * @param green green or saturation value (depending on current color mode)
- * @param blue blue or brightness value (depending on current color mode)
- * @see PGraphics#lights()
- * @see PGraphics#directionalLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- */
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param red red or hue value (depending on current color mode)
+   * @param green green or saturation value (depending on current color mode)
+   * @param blue blue or brightness value (depending on current color mode)
+   * @see PGraphics#lights()
+   * @see PGraphics#directionalLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void ambientLight(float red, float green, float blue) {
     if (recorder != null) recorder.ambientLight(red, green, blue);
     g.ambientLight(red, green, blue);
   }
 
 
-/**
- * @param x x-coordinate of the light
- * @param y y-coordinate of the light
- * @param z z-coordinate of the light
- */
+  /**
+   * @param x x-coordinate of the light
+   * @param y y-coordinate of the light
+   * @param z z-coordinate of the light
+   */
   public void ambientLight(float red, float green, float blue,
                            float x, float y, float z) {
     if (recorder != null) recorder.ambientLight(red, green, blue, x, y, z);
@@ -12620,7 +12632,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from directionalLight.xml )
    * 
    * Adds a directional light. Directional light comes from one direction and 
@@ -12634,20 +12646,22 @@ public class PApplet extends Applet
    * mode. The <b>nx</b>, <b>ny</b>, and <b>nz</b> parameters specify the 
    * direction the light is facing. For example, setting <b>ny</b> to -1 will 
    * cause the geometry to be lit from below (the light is facing directly upward).
+   * 
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param red red or hue value (depending on current color mode)
- * @param green green or saturation value (depending on current color mode)
- * @param blue blue or brightness value (depending on current color mode)
- * @param nx direction along the x-axis
- * @param ny direction along the y-axis
- * @param nz direction along the z-axis
- * @see PGraphics#lights()
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- */
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param red red or hue value (depending on current color mode)
+   * @param green green or saturation value (depending on current color mode)
+   * @param blue blue or brightness value (depending on current color mode)
+   * @param nx direction along the x-axis
+   * @param ny direction along the y-axis
+   * @param nz direction along the z-axis
+   * @see PGraphics#lights()
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void directionalLight(float red, float green, float blue,
                                float nx, float ny, float nz) {
     if (recorder != null) recorder.directionalLight(red, green, blue, nx, ny, nz);
@@ -12655,6 +12669,32 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * ( begin auto-generated from pointLight.xml )
+   * 
+   * Adds a point light. Lights need to be included in the <b>draw()</b> to 
+   * remain persistent in a looping program. Placing them in the 
+   * <b>setup()</b> of a looping program will cause them to only have an 
+   * effect the first time through the loop. The affect of the <b>v1</b>, 
+   * <b>v2</b>, and <b>v3</b> parameters is determined by the current color 
+   * mode. The <b>x</b>, <b>y</b>, and <b>z</b> parameters set the position 
+   * of the light.
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param red red or hue value (depending on current color mode)
+   * @param green green or saturation value (depending on current color mode)
+   * @param blue blue or brightness value (depending on current color mode)
+   * @param x x-coordinate of the light
+   * @param y y-coordinate of the light
+   * @param z z-coordinate of the light
+   * @see PGraphics#lights()
+   * @see PGraphics#directionalLight(float, float, float, float, float, float)
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void pointLight(float red, float green, float blue,
                          float x, float y, float z) {
     if (recorder != null) recorder.pointLight(red, green, blue, x, y, z);
@@ -12662,6 +12702,39 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * ( begin auto-generated from spotLight.xml )
+   * 
+   * Adds a spot light. Lights need to be included in the <b>draw()</b> to 
+   * remain persistent in a looping program. Placing them in the 
+   * <b>setup()</b> of a looping program will cause them to only have an 
+   * effect the first time through the loop. The affect of the <b>v1</b>, 
+   * <b>v2</b>, and <b>v3</b> parameters is determined by the current color 
+   * mode. The <b>x</b>, <b>y</b>, and <b>z</b> parameters specify the 
+   * position of the light and <b>nx</b>, <b>ny</b>, <b>nz</b> specify the 
+   * direction or light. The <b>angle</b> parameter affects angle of the 
+   * spotlight cone.
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param red red or hue value (depending on current color mode)
+   * @param green green or saturation value (depending on current color mode)
+   * @param blue blue or brightness value (depending on current color mode)
+   * @param x x-coordinate of the light
+   * @param y y-coordinate of the light
+   * @param z z-coordinate of the light
+   * @param nx direction along the x axis
+   * @param ny direction along the y axis
+   * @param nz direction along the z axis
+   * @param angle angle of the spotlight cone
+   * @param concentration exponent determining the center bias of the cone
+   * @see PGraphics#lights()
+   * @see PGraphics#directionalLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   */
   public void spotLight(float red, float green, float blue,
                         float x, float y, float z,
                         float nx, float ny, float nz,
@@ -12671,12 +12744,64 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * ( begin auto-generated from lightFalloff.xml )
+   * 
+   * Sets the falloff rates for point lights, spot lights, and ambient 
+   * lights. The parameters are used to determine the falloff with the 
+   * following equation:<br /><br />d = distance from light position to 
+   * vertex position<br />falloff = 1 / (CONSTANT + d * LINEAR + (d*d) * 
+   * QUADRATIC)<br /><br />Like <b>fill()</b>, it affects only the elements 
+   * which are created after it in the code. The default value if 
+   * <b>LightFalloff(1.0, 0.0, 0.0)</b>. Thinking about an ambient light with 
+   * a falloff can be tricky. It is used, for example, if you wanted a region 
+   * of your scene to be lit ambiently one color and another region to be lit 
+   * ambiently by another color, you would use an ambient light with location 
+   * and falloff. You can think of it as a point light that doesn't care 
+   * which direction a surface is facing.
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param constant constant value or determining falloff
+   * @param linear linear value for determining falloff
+   * @param quadratic quadratic value for determining falloff
+   * @see PGraphics#lights()
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#lightSpecular(float, float, float)
+   */
   public void lightFalloff(float constant, float linear, float quadratic) {
     if (recorder != null) recorder.lightFalloff(constant, linear, quadratic);
     g.lightFalloff(constant, linear, quadratic);
   }
 
 
+  /**
+   * ( begin auto-generated from lightSpecular.xml )
+   * 
+   * Sets the specular color for lights. Like <b>fill()</b>, it affects only 
+   * the elements which are created after it in the code. Specular refers to 
+   * light which bounces off a surface in a perferred direction (rather than 
+   * bouncing in all directions like a diffuse light) and is used for 
+   * creating highlights. The specular quality of a light interacts with the 
+   * specular material qualities set through the <b>specular()</b> and 
+   * <b>shininess()</b> functions.
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param x red or hue value (depending on current color mode)
+   * @param y green or saturation value (depending on current color mode)
+   * @param z blue or brightness value (depending on current color mode)
+   * @see PGraphics#lights()
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void lightSpecular(float x, float y, float z) {
     if (recorder != null) recorder.lightSpecular(x, y, z);
     g.lightSpecular(x, y, z);
@@ -12787,6 +12912,27 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * ( begin auto-generated from colorMode.xml )
+   * 
+   * Changes the way Processing interprets color data. By default, the 
+   * parameters for <b>fill()</b>, <b>stroke()</b>, <b>background()</b>, and 
+   * <b>color()</b> are defined by values between 0 and 255 using the RGB 
+   * color model. The <b>colorMode()</b> function is used to change the 
+   * numerical range used for specifying colors and to switch color systems. 
+   * For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values 
+   * are specified between 0 and 1. The limits for defining colors are 
+   * altered by setting the parameters range1, range2, range3, and range 4. 
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref color:setting
+   * @usage web_application
+   * @param mode Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+   * @see PGraphics#background(float)
+   * @see PGraphics#fill(float)
+   * @see PGraphics#stroke(float)
+   */
   public void colorMode(int mode) {
     if (recorder != null) recorder.colorMode(mode);
     g.colorMode(mode);
@@ -13215,30 +13361,6 @@ public class PApplet extends Applet
 
 
   /**
-   * ???
-   * Returns an ARGB "color" type (a packed 32 bit int with the color.
-   * If the coordinate is outside the image, zero is returned
-   * (black, but completely transparent).
-   * <P>
-   * If the image is in RGB format (i.e. on a PVideo object),
-   * the value will get its high bits set, just to avoid cases where
-   * they haven't been set already.
-   * <P>
-   * If the image is in ALPHA format, this returns a white with its
-   * alpha value set.
-   * <P>
-   * This function is included primarily for beginners. It is quite
-   * slow because it has to check to see if the x, y that was provided
-   * is inside the bounds, and then has to check to see what image
-   * type it is. If you want things to be more efficient, access the
-   * pixels[] array directly.
-   */
-  public int get(int x, int y) {
-    return g.get(x, y);
-  }
-
-
-  /**
    * ( begin auto-generated from PImage_get.xml )
    * 
    * Reads the color of any pixel or grabs a group of pixels. If no 
@@ -13259,17 +13381,44 @@ public class PApplet extends Applet
    * getting the values.
    * <br /><br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
    * ( end auto-generated )
-   * @webref pimage:method
+   *
+   * <h3>Advanced</h3>
+   * Returns an ARGB "color" type (a packed 32 bit int with the color.
+   * If the coordinate is outside the image, zero is returned
+   * (black, but completely transparent).
+   * <P>
+   * If the image is in RGB format (i.e. on a PVideo object),
+   * the value will get its high bits set, just to avoid cases where
+   * they haven't been set already.
+   * <P>
+   * If the image is in ALPHA format, this returns a white with its
+   * alpha value set.
+   * <P>
+   * This function is included primarily for beginners. It is quite
+   * slow because it has to check to see if the x, y that was provided
+   * is inside the bounds, and then has to check to see what image
+   * type it is. If you want things to be more efficient, access the
+   * pixels[] array directly.
+   * 
+   * @webref image:pixels
    * @brief Reads the color of any pixel or grabs a rectangle of pixels
    * @usage web_application
    * @param x x-coordinate of the pixel
    * @param y y-coordinate of the pixel
-   * @param w width of pixel rectangle to get
-   * @param h height of pixel rectangle to get
    * @see PImage#set(int, int, int)
    * @see PImage#pixels
    * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
+   */
+  public int get(int x, int y) {
+    return g.get(x, y);
+  }
+
+
+  /**
+   * @param w width of pixel rectangle to get
+   * @param h height of pixel rectangle to get
    */
   public PImage get(int x, int y, int w, int h) {
     return g.get(x, y, w, h);
@@ -13299,11 +13448,10 @@ public class PApplet extends Applet
    * <b>updatePixels()</b> to update the window.
    * <br /><br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
-   * ( end auto-generated )
-   * <h3>Advanced</h3>
-   * <br><br>As of release 0149, this function ignores <b>imageMode()</b>.
    * 
-   * @webref pimage:method
+   * ( end auto-generated )
+   * 
+   * @webref image:pixels
    * @brief writes a color to any pixel or writes an image into another
    * @usage web_application
    * @param x x-coordinate of the pixel
@@ -13325,7 +13473,7 @@ public class PApplet extends Applet
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    *
-   * @param src ???
+   * @param src image to draw on screen
    */
   public void set(int x, int y, PImage src) {
     if (recorder != null) recorder.set(x, y, src);
@@ -13334,7 +13482,22 @@ public class PApplet extends Applet
 
 
   /**
-   * ???
+   * ( begin auto-generated from PImage_mask.xml )
+   * 
+   * Masks part of an image from displaying by loading another image and 
+   * using it as an alpha channel. This mask image should only contain 
+   * grayscale data, but only the blue color channel is used. The mask image 
+   * needs to be the same size as the image to which it is applied.<br /><br 
+   * />In addition to using a mask image, an integer array containing the 
+   * alpha channel data can be specified directly. This method is useful for 
+   * creating dynamically generated alpha masks. This array must be of the 
+   * same length as the target image's pixels array and should contain only 
+   * grayscale data of values between 0-255.
+   * 
+   * ( end auto-generated )
+   *
+   * <h3>Advanced</h3>
+   *
    * Set alpha channel for an image. Black colors in the source
    * image will make the destination image completely transparent,
    * and white will make things fully opaque. Gray values will
@@ -13347,19 +13510,6 @@ public class PApplet extends Applet
    * which will make the image into a "correct" grayscale by
    * performing a proper luminance-based conversion.
    *
-   * ( begin auto-generated from PImage_mask.xml )
-   * 
-   * Masks part of an image from displaying by loading another image and 
-   * using it as an alpha channel. This mask image should only contain 
-   * grayscale data, but only the blue color channel is used. The mask image 
-   * needs to be the same size as the image to which it is applied.<br /><br 
-   * />In addition to using a mask image, an integer array containing the 
-   * alpha channel data can be specified directly. This method is useful for 
-   * creating dynamically generated alpha masks. This array must be of the 
-   * same length as the target image's pixels array and should contain only 
-   * grayscale data of values between 0-255.
-   * ( end auto-generated )
-   * @webref pimage:pixels
    * @usage web_application
    * @brief Masks part of an image with another image as an alpha channel
    * @param maskArray[] any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
@@ -13402,7 +13552,9 @@ public class PApplet extends Applet
    * alpha channel to entirely opaque.<br /><br />ERODE - reduces the light 
    * areas with the amount defined by the level parameter.<br /><br />DILATE 
    * - increases the light areas with the amount defined by the level parameter
+   *
    * ( end auto-generated )
+   *
    * <h3>Advanced</h3>
    * Method to apply a variety of basic filters to this image.
    * <P>
@@ -13421,7 +13573,7 @@ public class PApplet extends Applet
    * Gaussian blur code contributed by
    * <A HREF="http://incubator.quasimondo.com">Mario Klingemann</A>
    *
-   * @webref pimage:pixels
+   * @webref image:pixels
    * @brief Converts the image to grayscale or black and white
    * @usage web_application
    * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
@@ -13443,9 +13595,11 @@ public class PApplet extends Applet
    * set, it will be copied as well.
    * <br /><br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
    * ( end auto-generated )
-   * @webref pimage:method
-   * @brief     Copies the entire image
+   * 
+   * @webref image:pixels
+   * @brief Copies the entire image
    * @usage web_application
    * @param sx X coordinate of the source's upper left corner
    * @param sy Y coordinate of the source's upper left corner

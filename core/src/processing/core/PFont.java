@@ -179,7 +179,9 @@ public class PFont implements PConstants {
    * computer, which is useful information to use with the 
    * <b>createFont()</b> function for dynamically converting fonts into a 
    * format to use with Processing. 
+   * 
    * ( end auto-generated )
+   *
    * @webref typography:pfont
    * @param font
    * @param smooth
@@ -810,9 +812,12 @@ public class PFont implements PConstants {
    * into <b>createFont()</b>, which allows Processing to dynamically format 
    * fonts. This function is meant as a tool for programming local 
    * applications and is not recommended for use in applets.
+   * 
    * ( end auto-generated )
+   * 
    * @webref pfont
    * @usage application
+   * @brief     Gets a list of the fonts installed on the system
    */
   static public String[] list() {
     loadFonts();
