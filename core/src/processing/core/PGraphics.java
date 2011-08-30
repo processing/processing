@@ -29,104 +29,105 @@ import java.util.HashMap;
 
 
 /**
-   * ( begin auto-generated from PGraphics.xml )
-   * 
-   * Main graphics and rendering context, as well as the base API 
-   * implementation for processing "core". Use this class if you need to draw 
-   * into an off-screen graphics buffer. A PGraphics object can be 
-   * constructed with the <b>createGraphics()</b> function. The 
-   * <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are 
-   * necessary to set up the buffer and to finalize it. The fields and 
-   * methods for this class are extensive; for a complete list visit the 
-   * developer's reference: http://dev.processing.org/reference/core/
-   * ( end auto-generated )
- * <h3>Advanced</h3>
- * Main graphics and rendering context, as well as the base API implementation.
- *
- * <h2>Subclassing and initializing PGraphics objects</h2>
- * Starting in release 0149, subclasses of PGraphics are handled differently.
- * The constructor for subclasses takes no parameters, instead a series of
- * functions are called by the hosting PApplet to specify its attributes.
- * <ul>
- * <li>setParent(PApplet) - is called to specify the parent PApplet.
- * <li>setPrimary(boolean) - called with true if this PGraphics will be the
- * primary drawing surface used by the sketch, or false if not.
- * <li>setPath(String) - called when the renderer needs a filename or output
- * path, such as with the PDF or DXF renderers.
- * <li>setSize(int, int) - this is called last, at which point it's safe for
- * the renderer to complete its initialization routine.
- * </ul>
- * The functions were broken out because of the growing number of parameters
- * such as these that might be used by a renderer, yet with the exception of
- * setSize(), it's not clear which will be necessary. So while the size could
- * be passed in to the constructor instead of a setSize() function, a function
- * would still be needed that would notify the renderer that it was time to
- * finish its initialization. Thus, setSize() simply does both.
- *
- * <h2>Know your rights: public vs. private methods</h2>
- * Methods that are protected are often subclassed by other renderers, however
- * they are not set 'public' because they shouldn't be part of the user-facing
- * public API accessible from PApplet. That is, we don't want sketches calling
- * textModeCheck() or vertexTexture() directly.
- *
- * <h2>Handling warnings and exceptions</h2>
- * Methods that are unavailable generally show a warning, unless their lack of
- * availability will soon cause another exception. For instance, if a method
- * like getMatrix() returns null because it is unavailable, an exception will
- * be thrown stating that the method is unavailable, rather than waiting for
- * the NullPointerException that will occur when the sketch tries to use that
- * method. As of release 0149, warnings will only be shown once, and exceptions
- * have been changed to warnings where possible.
- *
- * <h2>Using xxxxImpl() for subclassing smoothness</h2>
- * The xxxImpl() methods are generally renderer-specific handling for some
- * subset if tasks for a particular function (vague enough for you?) For
- * instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords
- * have been specified, and screen placement (independent of imageMode) has
- * been determined. There's no point in all renderers implementing the
- * <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled
- * by PGraphics, which then calls imageImpl() once all that is figured out.
- *
- * <h2>His brother PImage</h2>
- * PGraphics subclasses PImage so that it can be drawn and manipulated in a
- * similar fashion. As such, many methods are inherited from PGraphics,
- * though many are unavailable: for instance, resize() is not likely to be
- * implemented; the same goes for mask(), depending on the situation.
- *
- * <h2>What's in PGraphics, what ain't</h2>
- * For the benefit of subclasses, as much as possible has been placed inside
- * PGraphics. For instance, bezier interpolation code and implementations of
- * the strokeCap() method (that simply sets the strokeCap variable) are
- * handled here. Features that will vary widely between renderers are located
- * inside the subclasses themselves. For instance, all matrix handling code
- * is per-renderer: Java 2D uses its own AffineTransform, P2D uses a PMatrix2D,
- * and PGraphics3D needs to keep continually update forward and reverse
- * transformations. A proper (future) OpenGL implementation will have all its
- * matrix madness handled by the card. Lighting also falls under this
- * category, however the base material property settings (emissive, specular,
- * et al.) are handled in PGraphics because they use the standard colorMode()
- * logic. Subclasses should override methods like emissiveFromCalc(), which
- * is a point where a valid color has been defined internally, and can be
- * applied in some manner based on the calcXxxx values.
- *
- * <h2>What's in the PGraphics documentation, what ain't</h2>
- * Some things are noted here, some things are not. For public API, always
- * refer to the <a href="http://processing.org/reference">reference</A>
- * on Processing.org for proper explanations. <b>No attempt has been made to
- * keep the javadoc up to date or complete.</b> It's an enormous task for
- * which we simply do not have the time. That is, it's not something that
- * to be done once&mdash;it's a matter of keeping the multiple references
- * synchronized (to say nothing of the translation issues), while targeting
- * them for their separate audiences. Ouch.
- *
- * We're working right now on synchronizing the two references, so the website reference
- * is generated from the javadoc comments. Yay.
- *
- * @webref rendering
- * @instanceName graphics any object of the type PGraphics
- * @usage Web &amp; Application
- * @see PApplet#createGraphics(int, int, String)
- */
+  * ( begin auto-generated from PGraphics.xml )
+  * 
+  * Main graphics and rendering context, as well as the base API 
+  * implementation for processing "core". Use this class if you need to draw 
+  * into an off-screen graphics buffer. A PGraphics object can be 
+  * constructed with the <b>createGraphics()</b> function. The 
+  * <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are 
+  * necessary to set up the buffer and to finalize it. The fields and 
+  * methods for this class are extensive; for a complete list visit the 
+  * developer's reference: http://dev.processing.org/reference/core/
+  * ( end auto-generated )
+  *    
+  * <h3>Advanced</h3>
+  * Main graphics and rendering context, as well as the base API implementation.
+  *
+  * <h2>Subclassing and initializing PGraphics objects</h2>
+  * Starting in release 0149, subclasses of PGraphics are handled differently.
+  * The constructor for subclasses takes no parameters, instead a series of
+  * functions are called by the hosting PApplet to specify its attributes.
+  * <ul>
+  * <li>setParent(PApplet) - is called to specify the parent PApplet.
+  * <li>setPrimary(boolean) - called with true if this PGraphics will be the
+  * primary drawing surface used by the sketch, or false if not.
+  * <li>setPath(String) - called when the renderer needs a filename or output
+  * path, such as with the PDF or DXF renderers.
+  * <li>setSize(int, int) - this is called last, at which point it's safe for
+  * the renderer to complete its initialization routine.
+  * </ul>
+  * The functions were broken out because of the growing number of parameters
+  * such as these that might be used by a renderer, yet with the exception of
+  * setSize(), it's not clear which will be necessary. So while the size could
+  * be passed in to the constructor instead of a setSize() function, a function
+  * would still be needed that would notify the renderer that it was time to
+  * finish its initialization. Thus, setSize() simply does both.
+  *
+  * <h2>Know your rights: public vs. private methods</h2>
+  * Methods that are protected are often subclassed by other renderers, however
+  * they are not set 'public' because they shouldn't be part of the user-facing
+  * public API accessible from PApplet. That is, we don't want sketches calling
+  * textModeCheck() or vertexTexture() directly.
+  *
+  * <h2>Handling warnings and exceptions</h2>
+  * Methods that are unavailable generally show a warning, unless their lack of
+  * availability will soon cause another exception. For instance, if a method
+  * like getMatrix() returns null because it is unavailable, an exception will
+  * be thrown stating that the method is unavailable, rather than waiting for
+  * the NullPointerException that will occur when the sketch tries to use that
+  * method. As of release 0149, warnings will only be shown once, and exceptions
+  * have been changed to warnings where possible.
+  *
+  * <h2>Using xxxxImpl() for subclassing smoothness</h2>
+  * The xxxImpl() methods are generally renderer-specific handling for some
+  * subset if tasks for a particular function (vague enough for you?) For
+  * instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords
+  * have been specified, and screen placement (independent of imageMode) has
+  * been determined. There's no point in all renderers implementing the
+  * <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled
+  * by PGraphics, which then calls imageImpl() once all that is figured out.
+  *
+  * <h2>His brother PImage</h2>
+  * PGraphics subclasses PImage so that it can be drawn and manipulated in a
+  * similar fashion. As such, many methods are inherited from PGraphics,
+  * though many are unavailable: for instance, resize() is not likely to be
+  * implemented; the same goes for mask(), depending on the situation.
+  *
+  * <h2>What's in PGraphics, what ain't</h2>
+  * For the benefit of subclasses, as much as possible has been placed inside
+  * PGraphics. For instance, bezier interpolation code and implementations of
+  * the strokeCap() method (that simply sets the strokeCap variable) are
+  * handled here. Features that will vary widely between renderers are located
+  * inside the subclasses themselves. For instance, all matrix handling code
+  * is per-renderer: Java 2D uses its own AffineTransform, P2D uses a PMatrix2D,
+  * and PGraphics3D needs to keep continually update forward and reverse
+  * transformations. A proper (future) OpenGL implementation will have all its
+  * matrix madness handled by the card. Lighting also falls under this
+  * category, however the base material property settings (emissive, specular,
+  * et al.) are handled in PGraphics because they use the standard colorMode()
+  * logic. Subclasses should override methods like emissiveFromCalc(), which
+  * is a point where a valid color has been defined internally, and can be
+  * applied in some manner based on the calcXxxx values.
+  *
+  * <h2>What's in the PGraphics documentation, what ain't</h2>
+  * Some things are noted here, some things are not. For public API, always
+  * refer to the <a href="http://processing.org/reference">reference</A>
+  * on Processing.org for proper explanations. <b>No attempt has been made to
+  * keep the javadoc up to date or complete.</b> It's an enormous task for
+  * which we simply do not have the time. That is, it's not something that
+  * to be done once&mdash;it's a matter of keeping the multiple references
+  * synchronized (to say nothing of the translation issues), while targeting
+  * them for their separate audiences. Ouch.
+  *
+  * We're working right now on synchronizing the two references, so the website reference
+  * is generated from the javadoc comments. Yay.
+  *
+  * @webref rendering
+  * @instanceName graphics any object of the type PGraphics
+  * @usage Web &amp; Application
+  * @see PApplet#createGraphics(int, int, String)
+  */
 public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
@@ -1556,30 +1557,30 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 /**
-   * ( begin auto-generated from curveVertex.xml )
-   * 
-   * Specifies vertex coordinates for curves. This function may only be used 
-   * between <b>beginShape()</b> and <b>endShape()</b> and only when there is 
-   * no MODE parameter specified to <b>beginShape()</b>. The first and last 
-   * points in a series of <b>curveVertex()</b> lines will be used to guide 
-   * the beginning and end of a the curve. A minimum of four points is 
-   * required to draw a tiny curve between the second and third points. 
-   * Adding a fifth point with <b>curveVertex()</b> will draw the curve 
-   * between the second, third, and fourth points. The <b>curveVertex()</b> 
-   * function is an implementation of Catmull-Rom splines. Using the 3D 
-   * version of requires rendering with P3D or OPENGL (see the Environment 
-   * reference for more information).
-   * ( end auto-generated )
- * @webref shape:vertex
- * @param x the x-coordinate of the vertex
- * @param y the y-coordinate of the vertex
- * @param z the z-coordinate of the vertex
- * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
- * @see PGraphics#beginShape(int)
- * @see PGraphics#endShape(int)
- * @see PGraphics#vertex(float, float, float, float, float)
- * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
- */
+  * ( begin auto-generated from curveVertex.xml )
+  * 
+  * Text. Specifies vertex coordinates for curves. This function may only be used 
+  * between <b>beginShape()</b> and <b>endShape()</b> and only when there is 
+  * no MODE parameter specified to <b>beginShape()</b>. The first and last 
+  * points in a series of <b>curveVertex()</b> lines will be used to guide 
+  * the beginning and end of a the curve. A minimum of four points is 
+  * required to draw a tiny curve between the second and third points. 
+  * Adding a fifth point with <b>curveVertex()</b> will draw the curve 
+  * between the second, third, and fourth points. The <b>curveVertex()</b> 
+  * function is an implementation of Catmull-Rom splines. Using the 3D 
+  * version of requires rendering with P3D or OPENGL (see the Environment 
+  * reference for more information).
+  * ( end auto-generated )
+  * @webref shape:vertex
+  * @param x the x-coordinate of the vertex
+  * @param y the y-coordinate of the vertex
+  * @param z the z-coordinate of the vertex
+  * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+  * @see PGraphics#beginShape(int)
+  * @see PGraphics#endShape(int)
+  * @see PGraphics#vertex(float, float, float, float, float)
+  * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
+  */
   public void curveVertex(float x, float y, float z) {
     curveVertexCheck();
     float[] vertex = curveVertices[curveVertexCount];
@@ -2622,14 +2623,16 @@ public class PGraphics extends PImage implements PConstants {
 
   // CATMULL-ROM CURVE
 
-  /*
+  /**
    * ( begin auto-generated from curvePoint.xml )
    * 
    * Evalutes the curve at point t for points a, b, c, d. The parameter t 
    * varies between 0 and 1, a and d are points on the curve, and b and c are 
    * the control points. This can be done once with the x coordinates and a 
    * second time with the y coordinates to get the location of a curve at t.
+   * 
    * ( end auto-generated )
+   * 
    * @webref shape:curves
    * @param a coordinate of first point on the curve
    * @param b coordinate of second point on the curve
@@ -2661,7 +2664,9 @@ public class PGraphics extends PImage implements PConstants {
    * Calculates the tangent of a point on a curve. There is a good definition 
    * of "tangent" at Wikipedia: <a 
    * href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Code thanks to Dave Bollinger (Bug #715)
    *
@@ -2671,10 +2676,10 @@ public class PGraphics extends PImage implements PConstants {
    * @param c coordinate of second control point
    * @param d coordinate of second point on the curve
    * @param t value between 0 and 1
-   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see PGraphics#curveVertex(float, float)
-   * @see PGraphics#curvePoint(float, float, float, float, float)
-   * @see PGraphics#bezierTangent(float, float, float, float, float)
+   * @see curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see curveVertex(float, float)
+   * @see curvePoint(float, float, float, float, float)
+   * @see bezierTangent(float, float, float, float, float)
    */
   public float curveTangent(float a, float b, float c, float d, float t) {
     curveInitCheck();
@@ -3374,8 +3379,10 @@ public class PGraphics extends PImage implements PConstants {
    * JAVA2D sketches and PDF output in cases where the vector data is 
    * available: when the font is still installed, or the font is created via 
    * the <b>createFont()</b> function (rather than the Create Font tool).
+   * 
    * ( end auto-generated )
-   * @webref typography:loading_display
+   * 
+   * @webref typography:loading_displaying
    * @param which any variable of the type PFont
    * @see PApplet#createFont(String, float, boolean)
    * @see PApplet#loadFont(String)
@@ -5651,10 +5658,12 @@ public class PGraphics extends PImage implements PConstants {
    * maximum value is 255.
    * <br/> <br/>
    * To change the color of an image (or a texture), use tint().
+   * 
    * ( end auto-generated )
+   * 
    * @webref color:setting
    * @usage web_application
-   * @param rgb ???
+   * @param rgb color variable or hex value
    * @see PGraphics#noFill()
    * @see PGraphics#stroke(int, float)
    * @see PGraphics#tint(int, float)
@@ -5919,7 +5928,7 @@ public class PGraphics extends PImage implements PConstants {
   // class does not handle any details of settings lights. It does however
   // display warning messages that the functions are not available.
 
-/**
+  /**
    * ( begin auto-generated from lights.xml )
    * 
    * Sets the default ambient light, directional light, falloff, and specular 
@@ -5930,19 +5939,19 @@ public class PGraphics extends PImage implements PConstants {
    * looping program will cause them to only have an effect the first time 
    * through the loop.
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- * @see PGraphics#directionalLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- * @see PGraphics#noLights()
- */
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#directionalLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#noLights()
+   */
   public void lights() {
     showMethodWarning("lights");
   }
 
-/**
+  /**
    * ( begin auto-generated from noLights.xml )
    * 
    * Disable all lighting. Lighting is turned off by default and enabled with 
@@ -5950,15 +5959,15 @@ public class PGraphics extends PImage implements PConstants {
    * that 2D geometry (which does not require lighting) can be drawn after a 
    * set of lighted 3D geometry.
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @see PGraphics#lights()
- */
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @see PGraphics#lights()
+   */
   public void noLights() {
     showMethodWarning("noLights");
   }
 
-/**
+  /**
    * ( begin auto-generated from ambientLight.xml )
    * 
    * Adds an ambient light. Ambient light doesn't come from a specific 
@@ -5970,31 +5979,31 @@ public class PGraphics extends PImage implements PConstants {
    * have an effect the first time through the loop. The effect of the 
    * parameters is determined by the current color mode.
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param red red or hue value (depending on current color mode)
- * @param green green or saturation value (depending on current color mode)
- * @param blue blue or brightness value (depending on current color mode)
- * @see PGraphics#lights()
- * @see PGraphics#directionalLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- */
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param red red or hue value (depending on current color mode)
+   * @param green green or saturation value (depending on current color mode)
+   * @param blue blue or brightness value (depending on current color mode)
+   * @see PGraphics#lights()
+   * @see PGraphics#directionalLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void ambientLight(float red, float green, float blue) {
     showMethodWarning("ambientLight");
   }
 
-/**
- * @param x x-coordinate of the light
- * @param y y-coordinate of the light
- * @param z z-coordinate of the light
- */
+  /**
+   * @param x x-coordinate of the light
+   * @param y y-coordinate of the light
+   * @param z z-coordinate of the light
+   */
   public void ambientLight(float red, float green, float blue,
                            float x, float y, float z) {
     showMethodWarning("ambientLight");
   }
 
-/**
+  /**
    * ( begin auto-generated from directionalLight.xml )
    * 
    * Adds a directional light. Directional light comes from one direction and 
@@ -6008,26 +6017,28 @@ public class PGraphics extends PImage implements PConstants {
    * mode. The <b>nx</b>, <b>ny</b>, and <b>nz</b> parameters specify the 
    * direction the light is facing. For example, setting <b>ny</b> to -1 will 
    * cause the geometry to be lit from below (the light is facing directly upward).
+   * 
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param red red or hue value (depending on current color mode)
- * @param green green or saturation value (depending on current color mode)
- * @param blue blue or brightness value (depending on current color mode)
- * @param nx direction along the x-axis
- * @param ny direction along the y-axis
- * @param nz direction along the z-axis
- * @see PGraphics#lights()
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- */
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param red red or hue value (depending on current color mode)
+   * @param green green or saturation value (depending on current color mode)
+   * @param blue blue or brightness value (depending on current color mode)
+   * @param nx direction along the x-axis
+   * @param ny direction along the y-axis
+   * @param nz direction along the z-axis
+   * @see PGraphics#lights()
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void directionalLight(float red, float green, float blue,
                                float nx, float ny, float nz) {
     showMethodWarning("directionalLight");
   }
 
-/**
+  /**
    * ( begin auto-generated from pointLight.xml )
    * 
    * Adds a point light. Lights need to be included in the <b>draw()</b> to 
@@ -6037,27 +6048,28 @@ public class PGraphics extends PImage implements PConstants {
    * <b>v2</b>, and <b>v3</b> parameters is determined by the current color 
    * mode. The <b>x</b>, <b>y</b>, and <b>z</b> parameters set the position 
    * of the light.
+   * 
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param red red or hue value (depending on current color mode)
- * @param green green or saturation value (depending on current color mode)
- * @param blue blue or brightness value (depending on current color mode)
- * @param x x-coordinate of the light
- * @param y y-coordinate of the light
- * @param z z-coordinate of the light
- * @see PGraphics#lights()
- * @see PGraphics#directionalLight(float, float, float, float, float, float)
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- */
-
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param red red or hue value (depending on current color mode)
+   * @param green green or saturation value (depending on current color mode)
+   * @param blue blue or brightness value (depending on current color mode)
+   * @param x x-coordinate of the light
+   * @param y y-coordinate of the light
+   * @param z z-coordinate of the light
+   * @see PGraphics#lights()
+   * @see PGraphics#directionalLight(float, float, float, float, float, float)
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void pointLight(float red, float green, float blue,
                          float x, float y, float z) {
     showMethodWarning("pointLight");
   }
 
-/**
+  /**
    * ( begin auto-generated from spotLight.xml )
    * 
    * Adds a spot light. Lights need to be included in the <b>draw()</b> to 
@@ -6069,26 +6081,27 @@ public class PGraphics extends PImage implements PConstants {
    * position of the light and <b>nx</b>, <b>ny</b>, <b>nz</b> specify the 
    * direction or light. The <b>angle</b> parameter affects angle of the 
    * spotlight cone.
+   * 
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param red red or hue value (depending on current color mode)
- * @param green green or saturation value (depending on current color mode)
- * @param blue blue or brightness value (depending on current color mode)
- * @param x x-coordinate of the light
- * @param y y-coordinate of the light
- * @param z z-coordinate of the light
- * @param nx direction along the x axis
- * @param ny direction along the y axis
- * @param nz direction along the z axis
- * @param angle angle of the spotlight cone
- * @param concentration exponent determining the center bias of the cone
- * @see PGraphics#lights()
- * @see PGraphics#directionalLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- */
-
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param red red or hue value (depending on current color mode)
+   * @param green green or saturation value (depending on current color mode)
+   * @param blue blue or brightness value (depending on current color mode)
+   * @param x x-coordinate of the light
+   * @param y y-coordinate of the light
+   * @param z z-coordinate of the light
+   * @param nx direction along the x axis
+   * @param ny direction along the y axis
+   * @param nz direction along the z axis
+   * @param angle angle of the spotlight cone
+   * @param concentration exponent determining the center bias of the cone
+   * @see PGraphics#lights()
+   * @see PGraphics#directionalLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   */
   public void spotLight(float red, float green, float blue,
                         float x, float y, float z,
                         float nx, float ny, float nz,
@@ -6096,7 +6109,7 @@ public class PGraphics extends PImage implements PConstants {
     showMethodWarning("spotLight");
   }
 
-/**
+  /**
    * ( begin auto-generated from lightFalloff.xml )
    * 
    * Sets the falloff rates for point lights, spot lights, and ambient 
@@ -6111,24 +6124,25 @@ public class PGraphics extends PImage implements PConstants {
    * ambiently by another color, you would use an ambient light with location 
    * and falloff. You can think of it as a point light that doesn't care 
    * which direction a surface is facing.
+   * 
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param constant constant value or determining falloff
- * @param linear linear value for determining falloff
- * @param quadratic quadratic value for determining falloff
- * @see PGraphics#lights()
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- * @see PGraphics#lightSpecular(float, float, float)
- */
-
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param constant constant value or determining falloff
+   * @param linear linear value for determining falloff
+   * @param quadratic quadratic value for determining falloff
+   * @see PGraphics#lights()
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#lightSpecular(float, float, float)
+   */
   public void lightFalloff(float constant, float linear, float quadratic) {
     showMethodWarning("lightFalloff");
   }
   
-/**
+  /**
    * ( begin auto-generated from lightSpecular.xml )
    * 
    * Sets the specular color for lights. Like <b>fill()</b>, it affects only 
@@ -6138,18 +6152,19 @@ public class PGraphics extends PImage implements PConstants {
    * creating highlights. The specular quality of a light interacts with the 
    * specular material qualities set through the <b>specular()</b> and 
    * <b>shininess()</b> functions.
+   * 
    * ( end auto-generated )
- * @webref lights_camera:lights
- * @usage web_application
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- * @see PGraphics#lights()
- * @see PGraphics#ambientLight(float, float, float, float, float, float)
- * @see PGraphics#pointLight(float, float, float, float, float, float)
- * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
- */
-
+   * 
+   * @webref lights_camera:lights
+   * @usage web_application
+   * @param x red or hue value (depending on current color mode)
+   * @param y green or saturation value (depending on current color mode)
+   * @param z blue or brightness value (depending on current color mode)
+   * @see PGraphics#lights()
+   * @see PGraphics#ambientLight(float, float, float, float, float, float)
+   * @see PGraphics#pointLight(float, float, float, float, float, float)
+   * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void lightSpecular(float x, float y, float z) {
     showMethodWarning("lightSpecular");
   }
@@ -6395,7 +6410,9 @@ public class PGraphics extends PImage implements PConstants {
    * For example, calling <b>colorMode(RGB, 1.0)</b> will specify that values 
    * are specified between 0 and 1. The limits for defining colors are 
    * altered by setting the parameters range1, range2, range3, and range 4. 
+   * 
    * ( end auto-generated )
+   * 
    * @webref color:setting
    * @usage web_application
    * @param mode Either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
@@ -6403,7 +6420,6 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#fill(float)
    * @see PGraphics#stroke(float)
    */
-
   public void colorMode(int mode) {
     colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
   }
