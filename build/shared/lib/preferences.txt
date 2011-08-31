@@ -54,6 +54,17 @@ last.sketch.count=0
 # true if you want sketches to re-open when you next run processing
 last.sketch.restore=true
 
+# by default, contributions are moved to backup folders when
+# they are removed or replaced. The locations of the backup
+# folders are:
+#              sketchbook/libraries/old
+#              sketchbook/tools/old
+#              sketchbook/modes/old
+# true to backup contributions when "Remove" button is pressed
+contribution.backup.on_remove = true
+# true to backup contributions when installing a newer version
+# (for example, from a plb file)
+contribution.backup.on_install = true
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

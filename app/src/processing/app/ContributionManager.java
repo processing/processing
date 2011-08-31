@@ -390,14 +390,17 @@ public class ContributionManager {
       public void run() {
         progressMonitor.startTask("Removing", ProgressMonitor.UNKNOWN);
 
+        boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
         if (ContributionManager.requiresRestart(contribution)) {
-          if (backupContribution(contribution, false)) {
+          
+          if (!doBackup || (doBackup && backupContribution(contribution, false))) {
             if (ContributionManager.flagForDeletion(contribution)) {
               contribListing.replaceContribution(contribution, contribution);
             }
           }
         } else {
-          if (backupContribution(contribution, true)) {
+          if ((!doBackup && contribution.getFolder().delete())
+              || (doBackup && backupContribution(contribution, true))) {
             Contribution advertisedVersion = contribListing
                 .getAdvertisedContribution(contribution);
 
@@ -406,6 +409,12 @@ public class ContributionManager {
             } else {
               contribListing.replaceContribution(contribution,
                                                  advertisedVersion);
+            }
+          } else {
+            if (doBackup) {
+              
+            } else {
+              statusBar.setErrorMessage("Could not delete the contribution's files");
             }
           }
         }
@@ -709,8 +718,6 @@ public class ContributionManager {
     File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
     File newLibDest = new File(libraryDestination, libFolderName);
     
-    boolean doInstall = true;
-    
     for (Library oldLib : oldLibs) {
       
       // XXX: Handle other cases when installing libraries.
@@ -719,40 +726,51 @@ public class ContributionManager {
       if (oldLib.getFolder().exists() && oldLib.getFolder().equals(newLibDest)) {
         
         int result = 0;
+        boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
         if (confirmReplace) {
-          result = Base.showYesNoQuestion(editor, "Replace",
-                 "Replace existing \"" + oldLib.getName() + "\" library?",
-                 "An existing copy of the \"" + oldLib.getName() + "\" library<br>"+
-                 "has been found in your sketchbook. Clicking Ã¢â‚¬Å“YesÃ¢â‚¬Â�<br>"+
-                 "will move the existing library to a backup folder<br>" +
-                 " in <i>libraries/old</i> before replacing it.");
-        }
-        if (!confirmReplace || result == JOptionPane.YES_OPTION) {
-          if (!backupContribution(oldLib, true)) {
-            return null;
+          if (doBackup) {
+            result = Base.showYesNoQuestion(editor, "Replace",
+                   "Replace pre-existing \"" + oldLib.getName() + "\" library?",
+                   "A pre-existing copy of the \"" + oldLib.getName() + "\" library<br>"+
+                   "has been found in your sketchbook. Clicking “Yes”<br>"+
+                   "will move the existing library to a backup folder<br>" +
+                   " in <i>libraries/old</i> before replacing it.");
+            if (result != JOptionPane.YES_OPTION || !backupContribution(oldLib, true)) {
+              return null;
+            }
+          } else {
+            result = Base.showYesNoQuestion(editor, "Replace",
+                   "Replace pre-existing \"" + oldLib.getName() + "\" library?",
+                   "A pre-existing copy of the \"" + oldLib.getName() + "\" library<br>"+
+                   "has been found in your sketchbook. Clicking “Yes”<br>"+
+                   "will permanently delete this library and all of its contents<br>"+
+                   "before replacing it.");
+            if (result != JOptionPane.YES_OPTION || !oldLib.getFolder().delete()) {
+              return null;
+            }
           }
         } else {
-          doInstall = false;
+          if (doBackup && !backupContribution(oldLib, true)
+              || !doBackup && !oldLib.getFolder().delete()) {
+            return null;
+          }
         }
       }
     }
     
-    if (doInstall) {
-      // Move newLib to the sketchbook library folder
-      if (newLib.getFolder().renameTo(newLibDest)) {
-        return new Library(newLibDest, null);
+    // Move newLib to the sketchbook library folder
+    if (newLib.getFolder().renameTo(newLibDest)) {
+      return new Library(newLibDest, null);
 //      try {
 //        FileUtils.copyDirectory(newLib.folder, libFolder);
 //        FileUtils.deleteQuietly(newLib.folder);
 //        newLib.folder = libFolder;
 //      } catch (IOException e) {
-      } else {
-        statusBar.setErrorMessage("Could not move library \""
-            + newLib.getName() + "\" to sketchbook.");
-      }
+    } else {
+      statusBar.setErrorMessage("Could not move library \""
+          + newLib.getName() + "\" to sketchbook.");
+      return null;
     }
-    
-    return null;
   }
   
   public void refreshInstalled() {
