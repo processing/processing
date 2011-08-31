@@ -36,6 +36,7 @@ import javax.swing.text.html.*;
 
 import java.awt.event.*;
 import java.awt.*;
+import java.io.File;
 import java.net.*;
 
 import processing.app.ContributionListing.AdvertisedContribution;
@@ -411,6 +412,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     JProgressBar installProgressBar;
     
     JButton installRemoveButton;
+    
+    JPopupMenu contextMenu;
+    
+    JMenuItem openFolder;
 
     private HashSet<JTextPane> htmlPanes;
 
@@ -477,6 +482,17 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         }
       };
       
+      contextMenu = new JPopupMenu();
+      openFolder = new JMenuItem("Open Folder");
+      openFolder.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          if (contrib instanceof InstalledContribution) {
+            File folder = ((InstalledContribution) contrib).getFolder();
+            Base.openFolder(folder);
+          }
+        }
+      });
+      
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       
       addPaneComponents();
@@ -510,6 +526,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         c.anchor = GridBagConstraints.WEST;
         
         headerText = new JTextPane();
+        headerText.setInheritsPopupMenu(true);
         setHtmlTextStyle(headerText);
         stripTextSelectionListeners(headerText);
         add(headerText, c);
@@ -523,6 +540,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         c.anchor = GridBagConstraints.WEST;
         
         categoryLabel = new JLabel();
+        categoryLabel.setInheritsPopupMenu(true);
         categoryLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 7));
         add(categoryLabel, c);
       }
@@ -540,6 +558,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         c.anchor = GridBagConstraints.WEST;
         
         descriptionPanel = new JPanel();
+        descriptionPanel.setInheritsPopupMenu(true);
         descriptionPanel.setOpaque(false);
         descriptionPanel.setLayout(new GridBagLayout());
         add(descriptionPanel, c);
@@ -561,6 +580,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             }
           };
         };
+        iconArea.setInheritsPopupMenu(true);
         iconArea.setOpaque(false);
         Dimension d = new Dimension(ContributionManager.ICON_WIDTH,
                                     ContributionManager.ICON_HEIGHT);
@@ -581,6 +601,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         c.anchor = GridBagConstraints.EAST;
         
         descriptionText = new JTextPane();
+        descriptionText.setInheritsPopupMenu(true);
         setHtmlTextStyle(descriptionText);
         stripTextSelectionListeners(descriptionText);
         descriptionPanel.add(descriptionText, c);
@@ -598,6 +619,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         c.anchor = GridBagConstraints.EAST;
         
         updateNotificationLabel = new JTextPane();
+        updateNotificationLabel.setInheritsPopupMenu(true);
         updateNotificationLabel.setVisible(false);
         setHtmlTextStyle(updateNotificationLabel);
         stripTextSelectionListeners(updateNotificationLabel);
@@ -614,6 +636,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         c.anchor = GridBagConstraints.EAST;
         
         updateButton = new JButton("Update now");
+        updateButton.setInheritsPopupMenu(true);
         Dimension installButtonDimensions = updateButton.getPreferredSize();
         installButtonDimensions.width = ContributionPanel.BUTTON_WIDTH;
         updateButton.setMinimumSize(installButtonDimensions);
@@ -642,12 +665,14 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       c.fill = GridBagConstraints.VERTICAL;
       c.anchor = GridBagConstraints.NORTH;
       JPanel rightPane = new JPanel();
+      rightPane.setInheritsPopupMenu(true);
       rightPane.setOpaque(false);
       rightPane.setLayout(new BoxLayout(rightPane, BoxLayout.Y_AXIS));
       rightPane.setMinimumSize(new Dimension(ContributionPanel.BUTTON_WIDTH, 1));
       add(rightPane, c);
       
       installProgressBar = new JProgressBar();
+      installProgressBar.setInheritsPopupMenu(true);
       installProgressBar.setStringPainted(true);
       resetInstallProgressBarState();
       Dimension d = installProgressBar.getPreferredSize();
@@ -662,6 +687,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       rightPane.add(Box.createVerticalGlue());
       
       installRemoveButton = new JButton(" ");
+      installRemoveButton.setInheritsPopupMenu(true);
     
       Dimension installButtonDimensions = installRemoveButton.getPreferredSize();
       installButtonDimensions.width = ContributionPanel.BUTTON_WIDTH;
@@ -770,6 +796,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       } else {
         installRemoveButton.addActionListener(installActionListener);
         installRemoveButton.setText("Install");
+      }
+      
+      contextMenu.removeAll();
+      
+      if (contrib.isInstalled()) {
+        contextMenu.add(openFolder);
+        setComponentPopupMenu(contextMenu);
+      } else {
+        setComponentPopupMenu(null);
       }
       
     }
