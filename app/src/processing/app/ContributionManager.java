@@ -46,7 +46,7 @@ public class ContributionManager {
   static public final String DELETION_FLAG = "flagged_for_deletion";
   
   static private final String DOUBLE_CLICK_SECONDARY =
-      "Click â€œYesâ€ to install this library to your sketchbook...";
+      "Click Ã¢â‚¬Å“YesÃ¢â‚¬Â� to install this library to your sketchbook...";
   
   static private final String DISCOVERY_INTERNAL_ERROR_MESSAGE =
         "An internal error occured while searching for contributions in the downloaded file.";
@@ -615,10 +615,6 @@ public class ContributionManager {
         statusBar.setErrorMessage(DISCOVERY_INTERNAL_ERROR_MESSAGE);
       } else {
         statusBar.setErrorMessage("There were multiple tools in the file, so we're ignoring it.");
-//        Base.showWarning("Too many tools",
-//                         "We found more than one tool in the file we just\n"
-//                       + "downloaded. That shouldn't happen, so we're going\n"
-//                       + "to ignore this file.", null);
       }
     }
     
@@ -689,10 +685,6 @@ public class ContributionManager {
           statusBar.setErrorMessage(ContributionManager.DISCOVERY_NONE_FOUND_ERROR_MESSAGE);
         } else {
           statusBar.setErrorMessage("There were multiple libraries in the file, so we're ignoring it.");
-//          Base.showWarning("Too many libraries",
-//                           "We found more than one library in the library file\n"
-//                         + "we just downloaded. That shouldn't happen, so we're\n"
-//                         + "going to ignore the file.", null);
         }
       }
     } catch (IOException ioe) {
@@ -731,7 +723,7 @@ public class ContributionManager {
           result = Base.showYesNoQuestion(editor, "Replace",
                  "Replace existing \"" + oldLib.getName() + "\" library?",
                  "An existing copy of the \"" + oldLib.getName() + "\" library<br>"+
-                 "has been found in your sketchbook. Clicking â€œYesâ€<br>"+
+                 "has been found in your sketchbook. Clicking Ã¢â‚¬Å“YesÃ¢â‚¬Â�<br>"+
                  "will move the existing library to a backup folder<br>" +
                  " in <i>libraries/old</i> before replacing it.");
         }
@@ -816,9 +808,6 @@ public class ContributionManager {
 //    } catch (IOException e) {
     if (!success) {
       statusBar.setErrorMessage("Could not move contribution to backup folder.");
-//      Base.showWarning("Trouble creating backup of old \"" + contribution.getName() + "\" contribution",
-//                       "Could not move contribution to backup folder:\n"
-//                           + backupSubFolder.getAbsolutePath(), null);
     }
     return success;
   }
@@ -831,12 +820,6 @@ public class ContributionManager {
     if (!libraryBackupFolder.exists() || !libraryBackupFolder.isDirectory()) {
       if (!libraryBackupFolder.mkdirs()) {
         statusBar.setErrorMessage("Could not create backup folder for library.");
-//        Base.showWarning("Trouble creating folder to store old libraries in",
-//                         "Could not create folder "
-//                             + libraryBackupFolder.getAbsolutePath()
-//                             + ".\n"
-//                             + "That's gonna prevent us from replacing the library.",
-//                         null);
         return null;
       }
     }
@@ -852,12 +835,6 @@ public class ContributionManager {
     if (!toolsBackupFolder.exists() || !toolsBackupFolder.isDirectory()) {
       if (!toolsBackupFolder.mkdirs()) {
         statusBar.setErrorMessage("Could not create backup folder for tool.");
-//        Base.showWarning("Trouble creating folder to store old libraries in",
-//                         "Could not create folder "
-//                             + toolsBackupFolder.getAbsolutePath()
-//                             + ".\n"
-//                             + "That's gonna prevent us from replacing the library.",
-//                         null);
         return null;
       }
     }
