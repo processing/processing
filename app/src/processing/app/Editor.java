@@ -823,15 +823,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     sketchMenu.add(mode.getImportMenu());
     
-    if (Base.ENABLE_CONTRIBUTION_MANAGER) {
-      item = new JMenuItem("Manage Contributions...");
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          base.handleOpenContributionManager();
-        }
-      });
-      sketchMenu.add(item);
-    }
+    item = new JMenuItem("Manage Contributions...");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleOpenContributionManager();
+      }
+    });
+    sketchMenu.add(item);
   
     item = Base.newJMenuItem("Show Sketch Folder", 'K');
     item.addActionListener(new ActionListener() {
