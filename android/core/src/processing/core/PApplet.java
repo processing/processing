@@ -7215,6 +7215,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public void rect(float a, float b, float c, float d, float r) {
+    g.rect(a, b, c, d, r);
+  }
+
+
+  public void rect(float a, float b, float c, float d,
+                   float tl, float tr, float br, float bl) {
+    g.rect(a, b, c, d, tl, tr, br, bl);
+  }
+
+
   public void ellipseMode(int mode) {
     g.ellipseMode(mode);
   }
