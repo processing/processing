@@ -757,19 +757,17 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             && contribManager.getListing().hasUpdates(contrib));
       }
       
+      installRemoveButton.removeActionListener(installActionListener);
+      installRemoveButton.removeActionListener(removeActionListener);
+      installRemoveButton.removeActionListener(undoActionListener);
+      
       if (isFlagged) {
-        installRemoveButton.removeActionListener(installActionListener);
-        installRemoveButton.removeActionListener(removeActionListener);
         installRemoveButton.addActionListener(undoActionListener);
         installRemoveButton.setText("Undo");
       } else if (contrib.isInstalled()) {
-        installRemoveButton.removeActionListener(installActionListener);
-        installRemoveButton.removeActionListener(undoActionListener);
         installRemoveButton.addActionListener(removeActionListener);
         installRemoveButton.setText("Remove");
       } else {
-        installRemoveButton.removeActionListener(removeActionListener);
-        installRemoveButton.removeActionListener(undoActionListener);
         installRemoveButton.addActionListener(installActionListener);
         installRemoveButton.setText("Install");
       }
