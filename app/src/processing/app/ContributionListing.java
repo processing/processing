@@ -249,15 +249,8 @@ public class ContributionListing {
     
     filter = ".*" + filter.toLowerCase() + ".*";
     
-    if (filter.isEmpty()) {
-      return true;
-    }
-    
-    if (contrib.getAuthorList().toLowerCase().matches(filter)) {
-      return true;
-    }
-    
-    return contrib.getSentence() != null && contrib.getSentence().toLowerCase().matches(filter)
+    return contrib.getAuthorList() != null && contrib.getAuthorList().toLowerCase().matches(filter)
+        || contrib.getSentence() != null && contrib.getSentence().toLowerCase().matches(filter)
         || contrib.getParagraph() != null && contrib.getParagraph().toLowerCase().matches(filter)
         || contrib.getCategory() != null && contrib.getCategory().toLowerCase().matches(filter)
         || contrib.getName() != null && contrib.getName().toLowerCase().matches(filter);
