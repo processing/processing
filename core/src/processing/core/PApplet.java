@@ -265,6 +265,7 @@ public class PApplet extends Applet
    * instead of "Run". Otherwise the window will still have a frame border 
    * around it and not be placed in the upper corner of the screen. On Mac OS 
    * X, the menu bar will remain present unless "Present" mode is used.
+   * 
    * ( end auto-generated )
    * @webref environment
    */
@@ -282,6 +283,7 @@ public class PApplet extends Applet
    * instead of "Run". Otherwise the window will still have a frame border 
    * around it and not be placed in the upper corner of the screen. On Mac OS 
    * X, the menu bar will remain present unless "Present" mode is used.
+   * 
    * ( end auto-generated )
    * @webref environment
    */
@@ -353,6 +355,7 @@ public class PApplet extends Applet
    * been modified, the <b>updatePixels()</b> function must be run to update 
    * the changes. Without <b>loadPixels()</b>, running the code may (or will 
    * in future releases) result in a NullPointerException.
+   * 
    * ( end auto-generated )
    *
    * @webref image:pixels
@@ -372,6 +375,7 @@ public class PApplet extends Applet
    * example, the function call <b>size(320, 240)</b> sets the <b>width</b> 
    * variable to the value 320. The value of <b>width</b> is zero until 
    * <b>size()</b> is called.
+   * 
    * ( end auto-generated )
    * @webref environment
    */
@@ -385,6 +389,7 @@ public class PApplet extends Applet
    * example, the function call <b>size(320, 240)</b> sets the <b>height</b> 
    * variable to the value 240. The value of <b>height</b> is zero until 
    * <b>size()</b> is called.
+   * 
    * ( end auto-generated )
    * @webref environment
    * 
@@ -396,6 +401,7 @@ public class PApplet extends Applet
    * 
    * The system variable <b>mouseX</b> always contains the current horizontal 
    * coordinate of the mouse.
+   * 
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseY
@@ -414,6 +420,7 @@ public class PApplet extends Applet
    * 
    * The system variable <b>mouseY</b> always contains the current vertical 
    * coordinate of the mouse.
+   * 
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -447,6 +454,7 @@ public class PApplet extends Applet
    * <b>pmouseY</b> inside <b>draw()</b> if you want values relative to the 
    * previous frame. Use <b>pmouseX</b> and <b>pmouseY</b> inside the mouse 
    * functions if you want continuous response.
+   * 
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#pmouseY
@@ -462,6 +470,7 @@ public class PApplet extends Applet
    * of the mouse in the frame previous to the current frame. More detailed 
    * information about how <b>pmouseY</b> is updated inside of <b>draw()</b> 
    * and mouse events is explained in the reference for <a href="http://processing.org/reference/pmouseX.html"><b>pmouseX</b></a>.
+   * 
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#pmouseX
@@ -501,6 +510,7 @@ public class PApplet extends Applet
    * button is pressed. The value of the system variable <b>mouseButton</b> 
    * is either <b>LEFT</b>, <b>RIGHT</b>, or <b>CENTER</b> depending on which 
    * button is pressed.
+   * 
    * ( end auto-generated )
    * 
    * <h3>Advanced:</h3>
@@ -524,6 +534,7 @@ public class PApplet extends Applet
    * Variable storing if a mouse button is pressed. The value of the system 
    * variable <b>mousePressed</b> is true if a mouse button is pressed and 
    * false if a button is not pressed.
+   * 
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -549,6 +560,7 @@ public class PApplet extends Applet
    * commonly used on PCs and Unix and the RETURN key is used instead on 
    * Macintosh. Check for both ENTER and RETURN to make sure your program 
    * will work for all platforms.
+   * 
    * ( end auto-generated )
    * 
    * <h3>Advanced</h3>
@@ -587,6 +599,7 @@ public class PApplet extends Applet
    * shorter versions of Java's KeyEvent.VK_UP and KeyEvent.VK_DOWN. Other 
    * keyCode values can be found in the Java <a 
    * href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/KeyEvent.html">KeyEvent</a> reference.
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -609,6 +622,7 @@ public class PApplet extends Applet
    * 
    * The boolean system variable <b>keyPressed</b> is <b>true</b> if any key 
    * is pressed and <b>false</b> if no keys are pressed.
+   * 
    * ( end auto-generated )
    * @webref input:keyboard
    * @see PApplet#key
@@ -631,6 +645,7 @@ public class PApplet extends Applet
    * it is focused and "false" if not. This variable is often used when you 
    * want to warn people they need to click on or roll over an applet before 
    * it will work.
+   * 
    * ( end auto-generated )
    * @webref environment
    */
@@ -641,6 +656,7 @@ public class PApplet extends Applet
    * 
    * Confirms if a Processing program is running inside a web browser. This 
    * variable is "true" if the program is online and "false" if not.
+   * 
    * ( end auto-generated )
    * @webref environment
    */
@@ -660,6 +676,7 @@ public class PApplet extends Applet
    * of the software as it executes. The initial value is 10 fps and is 
    * updated with each frame. The value is averaged (integrated) over several 
    * frames. As such, this value won't be valid until after 5-10 frames.
+   * 
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
@@ -683,6 +700,7 @@ public class PApplet extends Applet
    * The system variable <b>frameCount</b> contains the number of frames 
    * displayed since the program started. Inside <b>setup()</b> the value is 
    * 0 and and after the first iteration of draw it is 1, etc.
+   * 
    * ( end auto-generated )
    * @webref environment
    * @see PApplet#frameRate(float)
@@ -1160,13 +1178,17 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from setup.xml )
    * 
-   * Called once when the program is started. Used to define initial 
-   * enviroment properties such as screen size, background color, loading 
-   * images, etc. before the <b>draw()</b> begins executing. Variables 
-   * declared within <b>setup()</b> are not accessible within other 
-   * functions, including<b>draw()</b>. There can only be one <b>setup()</b> 
-   * function for each program and it should not be called again after it's 
-   * initial execution.
+   * The <b>setup()</b> function is called once when the program starts. It's 
+   * used to define initial 
+   * enviroment properties such as screen size and background color and to 
+   * load media such as images
+   * and fonts as the program starts. There can only be one <b>setup()</b> 
+   * function for each program and 
+   * it shouldn't be called again after its initial execution. Note: 
+   * Variables declared within 
+   * <b>setup()</b> are not accessible within other functions, including 
+   * <b>draw()</b>. 
+   * 
    * ( end auto-generated )
  * @webref structure
  * @usage web_application
@@ -1194,6 +1216,7 @@ public class PApplet extends Applet
    * to process events such as <b>mousePressed()</b>. Sometimes, you might 
    * have an empty call to <b>draw()</b> in your program as shown in the 
    * above example. 
+   * 
    * ( end auto-generated )
  * @webref structure
  * @usage web_application
@@ -1226,81 +1249,59 @@ public class PApplet extends Applet
    * ( begin auto-generated from size.xml )
    * 
    * Defines the dimension of the display window in units of pixels. The 
-   * <b>size()</b> function <em>must</em> be the first line in 
-   * <b>setup()</b>. If <b>size()</b> is not called, the default size of the 
-   * window is 100x100 pixels. The system variables <b>width</b> and 
-   * <b>height</b> are set by the parameters passed to the <b>size()</b> 
-   * function. <br /> <br />
-   * not use variables as the parameters to <b>size()</b> command, because it 
-   * will cause problems when exporting your sketch. When variables are used, 
-   * the dimensions of your sketch cannot be determined during export. 
-   * Instead, employ numeric values in the <b>size()</b> statement, and then 
-   * use the built-in <b>width</b> and <b>height</b> variables inside your 
-   * program when you need the dimensions of the display window are needed. 
-   * <br /><br />
-   * size() command can only be used once inside a sketch, and cannot be used 
-   * for resizing. <br/> <br/>
-   * MODE parameters selects which rendering engine to use. For example, if 
-   * you will be drawing 3D shapes for the web use <b>P3D</b>, if you want to 
-   * export a program with OpenGL graphics acceleration use <b>OPENGL</b>. A 
-   * brief description of the four primary renderers follows:<br /><br />
-   * - The default renderer. This renderer supports two dimensional drawing 
-   * and provides higher image quality in overall, but generally slower than 
-   * P2D.<br /><br />
-   * (Processing 2D) - Fast 2D renderer, best used with pixel data, but not 
-   * as accurate as the JAVA2D default. <br /><br />
-   * (Processing 3D) - Fast 3D renderer for the web. Sacrifices rendering 
-   * quality for quick 3D drawing.<br /><br />
-   * - High speed 3D graphics renderer that makes use of OpenGL-compatible 
-   * graphics hardware is available. Keep in mind that OpenGL is not magic 
-   * pixie dust that makes any sketch faster (though it's close), so other 
-   * rendering options may produce better results depending on the nature of 
-   * your code. Also note that with OpenGL, all graphics are smoothed: the 
-   * smooth() and noSmooth() commands are ignored. <br /><br />
-   * - The PDF renderer draws 2D graphics directly to an Acrobat PDF file. 
-   * This produces excellent results when you need vector shapes for high 
-   * resolution output or printing. You must first use Import Library &rarr; 
-   * PDF to make use of the library. More information can be found in the PDF 
-   * library reference.
-   * you're manipulating pixels (using methods like get() or blend(), or 
-   * manipulating the pixels[] array), P2D and P3D will usually be faster 
-   * than the default (JAVA2D) setting, and often the OPENGL setting as well. 
-   * Similarly, when handling lots of images, or doing video playback, P2D 
-   * and P3D will tend to be faster.<br /><br />
-   * P2D, P3D, and OPENGL renderers do not support strokeCap() or 
-   * strokeJoin(), which can lead to ugly results when using strokeWeight(). 
-   * (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 
-   * 955</a>) <br /><br />
-   * the most elegant and accurate results when drawing in 2D, particularly 
-   * when using smooth(), use the JAVA2D renderer setting. It may be slower 
-   * than the others, but is the most complete, which is why it's the 
-   * default. Advanced users will want to switch to other renderers as they 
-   * learn the tradeoffs. <br /><br />
-   * graphics requires tradeoffs between speed, accuracy, and general 
-   * usefulness of the available features. None of the renderers are perfect, 
-   * so we provide multiple options so that you can decide what tradeoffs 
-   * make the most sense for your project. We'd prefer all of them to have 
-   * perfect visual accuracy, high performance, and support a wide range of 
-   * features, but that's simply not possible. <br /><br />
-   * maximum width and height is limited by your operating system, and is 
+   * <b>size()</b> function must be the first line in <b>setup()</b>. If 
+   * <b>size()</b> is not used, the default size of the window is 100x100 
+   * pixels. The system variables <b>width</b> and <b>height</b> are set by 
+   * the parameters passed to this function.<br />
+   * <br />
+   * Do not use variables as the parameters to <b>size()</b> function, 
+   * because it will cause problems when exporting your sketch. When 
+   * variables are used, the dimensions of your sketch cannot be determined 
+   * during export. Instead, employ numeric values in the <b>size()</b> 
+   * statement, and then use the built-in <b>width</b> and <b>height</b> 
+   * variables inside your program when the dimensions of the display window 
+   * are needed.<br />
+   * <br />
+   * The size() function can only be used once inside a sketch, and cannot be 
+   * used for resizing.<br/>
+   * <br/> <b>renderer</b> parameter selects which rendering engine to use. 
+   * For example, if you will be drawing 3D shapes, use <b>P3D</b>, if you 
+   * want to export images from a program as a PDF file use <b>PDF</b>. A 
+   * brief description of the three primary renderers follows:<br />
+   * <br />
+   * <b>P2D</b> (Processing 2D) - The default renderer that supports two 
+   * dimensional drawing.<br />
+   * <br />
+   * <b>P3D</b> (Processing 3D) - 3D graphics renderer that makes use of 
+   * OpenGL-compatible graphics hardware.<br />
+   * <br />
+   * <b>PDF</b> - The PDF renderer draws 2D graphics directly to an Acrobat 
+   * PDF file. This produces excellent results when you need vector shapes 
+   * for high resolution output or printing. You must first use Import 
+   * Library &rarr; PDF to make use of the library. More information can be 
+   * found in the PDF library reference.<br />
+   * <br />
+   * The P3D renderer doesn't support strokeCap() or strokeJoin(), which can 
+   * lead to ugly results when using strokeWeight(). (<a 
+   * href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>) 
+   * <br />
+   * <br />
+   * The maximum width and height is limited by your operating system, and is 
    * usually the width and height of your actual screen. On some machines it 
    * may simply be the number of pixels on your current screen, meaning that 
-   * a screen that's 800x600 could support size(1600, 300), since it's the 
-   * same number of pixels. This varies widely so you'll have to try 
-   * different rendering modes and sizes until you get what you're looking 
-   * for. If you need something larger, use <b>createGraphics</b> to create a 
-   * non-visible drawing surface.
-   * <br/> <br/>
+   * a screen of 800x600 could support size(1600, 300), since it's the same 
+   * number of pixels. This varies widely so you'll have to try different 
+   * rendering modes and sizes until you get what you're looking for. If you 
+   * need something larger, use <b>createGraphics</b> to create a non-visible 
+   * drawing surface.<br />
+   * <br />
    * Again, the size() method must be the first line of the code (or first 
    * item inside setup). Any code that appears before the size() command may 
    * run more than once, which can lead to confusing results.
+   * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
-   * Starts up and creates a two-dimensional drawing surface,
-   * or resizes the current drawing surface.
-   * <p>
-   * This should be the first thing called inside of setup().
-   * <p>
    * If using Java 1.3 or later, this will default to using
    * PGraphics2, the Java2D-based renderer. If using Java 1.1,
    * or if PGraphics2 is not available, then PGraphics will be used.
@@ -1310,7 +1311,7 @@ public class PApplet extends Applet
    * If called once a renderer has already been set, this will
    * use the previous renderer and simply resize it.
    *
-   * @webref structure
+   * @webref environment
    * @param iwidth width of the display window in units of pixels
    * @param iheight height of the display window in units of pixels
    */
@@ -1326,7 +1327,7 @@ public class PApplet extends Applet
   }
 
 /**
- * @param ipath ???
+ * @nowebref
  */
   public void size(final int iwidth, final int iheight,
                    String irenderer, String ipath) {
@@ -1373,26 +1374,26 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from createGraphics.xml )
    * 
-   * Oy2. Creates and returns a new <b>PGraphics</b> object of the types P2D, 
-   * P3D, and JAVA2D. Use this class if you need to draw into an off-screen 
-   * graphics buffer. It's not possible to use <b>createGraphics()</b> with 
-   * OPENGL, because it doesn't allow offscreen use. The PDF renderer 
-   * requires the filename parameter. The DXF renderer should not be used 
-   * with createGraphics(), it's only built for use with beginRaw() and endRaw().
-   * <br/> <br/>
-   * It's important to call any drawing commands between beginDraw() and 
-   * endDraw() statements. This is also true for any commands that affect 
-   * drawing, such as smooth() or colorMode().
+   * Creates and returns a new <b>PGraphics</b> object of the types P2D or 
+   * P3D. Use this class if you need to draw into an off-screen graphics 
+   * buffer. The PDF renderer requires the filename parameter. The DXF 
+   * renderer should not be used with <b>createGraphics()</b>, it's only 
+   * built for use with <b>beginRaw()</b> and <b>endRaw()</b>.
+   * <br /> <br />
+   * It's important to call any drawing functions between <b>beginDraw()</b> 
+   * and <b>endDraw()</b> statements. This is also true for any functions 
+   * that affect drawing, such as <b>smooth()</b> or <b>colorMode()</b>.
    * <br/> <br/>
    * Unlike the main drawing surface which is completely opaque, surfaces 
-   * created with createGraphics() can have transparency. This makes it 
-   * possible to draw into a graphics and maintain the alpha channel. By 
-   * using save() to write a PNG or TGA file, the transparency of the 
+   * created with <b>createGraphics()</b> can have transparency. This makes 
+   * it possible to draw into a graphics and maintain the alpha channel. By 
+   * using <b>save()</b> to write a PNG or TGA file, the transparency of the 
    * graphics object will be honored. Note that transparency levels are 
    * binary: pixels are either complete opaque or transparent. For the time 
    * being (as of release 1.2.1), this means that text characters will be 
    * opaque blocks. This will be fixed in a future release (<A 
    * HREF="http://code.google.com/p/processing/issues/detail?id=80">Issue 80</A>).
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Create an offscreen PGraphics object for drawing. This can be used
@@ -1620,6 +1621,7 @@ public class PApplet extends Applet
    * <br/> <br/>
    * Advanced users please note that createImage() should be used instead of 
    * the syntax <tt>new PImage()</tt>. 
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Preferred method of creating new PImage objects, ensures that a
@@ -1944,6 +1946,7 @@ public class PApplet extends Applet
    * flag that indicates an update is needed). 
    * <br/><br/> <b>redraw()</b> within <b>draw()</b> has no effect because 
    * <b>draw()</b> is continuously called anyway.
+   * 
    * ( end auto-generated )
  * @webref structure
  * @usage web_application
@@ -1972,6 +1975,7 @@ public class PApplet extends Applet
    * 
    * Causes Processing to continuously execute the code within <b>draw()</b>. 
    * If <b>noLoop()</b> is called, the code in <b>draw()</b> stops executing.
+   * 
    * ( end auto-generated )
  * @webref structure
  * @usage web_application
@@ -2002,6 +2006,7 @@ public class PApplet extends Applet
    * Note that if the sketch is resized, <b>redraw()</b> will be called to 
    * update the sketch, even after <b>noLoop()</b> has been specified. 
    * Otherwise, the sketch would enter an odd state until <b>loop()</b> was called.
+   * 
    * ( end auto-generated )
  * @webref structure
  * @usage web_application
@@ -2215,6 +2220,7 @@ public class PApplet extends Applet
    * The <b>mousePressed()</b> function is called once after every time a 
    * mouse button is pressed. The <b>mouseButton</b> variable (see the 
    * related reference entry) can be used to determine which button has been pressed.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    *
@@ -2240,6 +2246,7 @@ public class PApplet extends Applet
    * 
    * The <b>mouseReleased()</b> function is called every time a mouse button 
    * is released.
+   * 
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -2257,6 +2264,7 @@ public class PApplet extends Applet
    * 
    * The <b>mouseClicked()</b> function is called once after a mouse button 
    * has been pressed and then released.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * When the mouse is clicked, mousePressed() will be called,
@@ -2278,6 +2286,7 @@ public class PApplet extends Applet
    * 
    * The <b>mouseDragged()</b> function is called once every time the mouse 
    * moves and a mouse button is pressed.
+   * 
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -2294,6 +2303,7 @@ public class PApplet extends Applet
    * 
    * The <b>mouseMoved()</b> function is called every time the mouse moves 
    * and a mouse button is not pressed.
+   * 
    * ( end auto-generated )
    * @webref input:mouse
    * @see PApplet#mouseX
@@ -2425,6 +2435,7 @@ public class PApplet extends Applet
    * may cause multiple calls to keyPressed() (and keyReleased() as well). 
    * The rate of repeat is set by the operating system and how each computer 
    * is configured.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    *
@@ -2488,6 +2499,7 @@ public class PApplet extends Applet
    * The <b>keyReleased()</b> function is called once every time a key is 
    * released. The key that was released will be stored in the <b>key</b> 
    * variable. See <b>key</b> and <b>keyReleased</b> for more information.
+   * 
    * ( end auto-generated )
    * @webref input:keyboard
    * @see PApplet#key
@@ -2506,6 +2518,7 @@ public class PApplet extends Applet
    * Because of how operating systems handle key repeats, holding down a key 
    * will cause multiple calls to <b>keyTyped()</b>, the rate is set by the 
    * operating system and how each computer is configured. 
+   * 
    * ( end auto-generated )
    * @webref input:keyboard
    * @see PApplet#keyPressed
@@ -2550,6 +2563,7 @@ public class PApplet extends Applet
    * Returns the number of milliseconds (thousandths of a second) since 
    * starting an applet. This information is often used for timing animation 
    * sequences. 
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -2575,6 +2589,7 @@ public class PApplet extends Applet
    * 
    * Processing communicates with the clock on your computer. The 
    * <b>second()</b> function returns the current second as a value from 0 - 59.
+   * 
    * ( end auto-generated )
    * @webref input:time_date
    * @see PApplet#millis()
@@ -2593,6 +2608,7 @@ public class PApplet extends Applet
    * 
    * Processing communicates with the clock on your computer. The 
    * <b>minute()</b> function returns the current minute as a value from 0 - 59.
+   * 
    * ( end auto-generated )
    *
    * @webref input:time_date
@@ -2613,6 +2629,7 @@ public class PApplet extends Applet
    * 
    * Processing communicates with the clock on your computer. The 
    * <b>hour()</b> function returns the current hour as a value from 0 - 23.
+   * 
    * ( end auto-generated )
    * @webref input:time_date
    * @see PApplet#millis()
@@ -2632,6 +2649,7 @@ public class PApplet extends Applet
    * 
    * Processing communicates with the clock on your computer. The 
    * <b>day()</b> function returns the current day as a value from 1 - 31.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Get the current day of the month (1 through 31).
@@ -2656,6 +2674,7 @@ public class PApplet extends Applet
    * 
    * Processing communicates with the clock on your computer. The 
    * <b>month()</b> function returns the current month as a value from 1 - 12.
+   * 
    * ( end auto-generated )
    *
    * @webref input:time_date
@@ -2677,6 +2696,7 @@ public class PApplet extends Applet
    * Processing communicates with the clock on your computer. The 
    * <b>year()</b> function returns the current year as an integer (2003, 
    * 2004, 2005, etc).
+   * 
    * ( end auto-generated )
    * The <b>year()</b> function returns the current year as an integer (2003, 2004, 2005, etc).
    *
@@ -2706,6 +2726,7 @@ public class PApplet extends Applet
    * be achieved. For example, the function call <b>frameRate(30)</b> will 
    * attempt to refresh 30 times a second. It is recommended to set the frame 
    * rate within <b>setup()</b>. The default rate is 60 frames per second.
+   * 
    * ( end auto-generated )
    *  <h3>Advanced</h3>
    * Set a target frameRate. This will cause delay() to be called
@@ -2734,6 +2755,7 @@ public class PApplet extends Applet
    * <b>param()</b> function will only work in a web browser. The function 
    * should be called inside <b>setup()</b>, otherwise the applet may not yet 
    * be initialized and connected to its parent web browser.
+   * 
    * ( end auto-generated )
    *
    * @webref input:web
@@ -2758,6 +2780,7 @@ public class PApplet extends Applet
    * Displays message in the browser's status area. This is the text area in 
    * the lower left corner of the browser. The <b>status()</b> function will 
    * only work when the Processing program is running in a web browser.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Show status in the status bar of a web browser, or in the
@@ -2788,6 +2811,7 @@ public class PApplet extends Applet
    * 
    * Links to a webpage either in the same window or in a new window. The 
    * complete URL must be specified.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Link to an external page without all the muss.
@@ -2895,6 +2919,7 @@ public class PApplet extends Applet
    * Runtime.exec(), because the launcher command is prepended. Instead, the 
    * <b>exec(String[])</b> function is a shortcut for 
    * Runtime.getRuntime.exec(String[]). 
+   * 
    * ( end auto-generated )
    * @webref input:files
    * @param filename name of the file
@@ -3010,15 +3035,17 @@ public class PApplet extends Applet
    * Quits/stops/exits the program. Programs without a <b>draw()</b> function 
    * exit automatically after the last line has run, but programs with 
    * <b>draw()</b> run continuously until the program is manually stopped or 
-   * <b>exit()</b> is run. 
-   * <br/> <br/>
+   * <b>exit()</b> is run.<br />
+   * <br />
    * Rather than terminating immediately, <b>exit()</b> will cause the sketch 
    * to exit after <b>draw()</b> has completed (or after <b>setup()</b> 
-   * completes if called during the <b>setup()</b> method).
-   * <br/> <br/>
+   * completes if called during the <b>setup()</b> method).<br />
+   * <br />
    * For Java programmers, this is <em>not</em> the same as System.exit(). 
    * Further, System.exit() should not be used because closing out an 
-   * application while draw() is running may cause a crash (particularly with OpenGL).
+   * application while <b>draw()</b> is running may cause a crash 
+   * (particularly with P3D).
+   * 
    * ( end auto-generated )
    * @webref structure
    */
@@ -3146,6 +3173,7 @@ public class PApplet extends Applet
    * in a web browser.
    * <br/> images saved from the main drawing window will be opaque. To save 
    * images without a background, use <b>createGraphics()</b>.
+   * 
    * ( end auto-generated )
    * @webref output:image
    * @param filename any sequence of letters and numbers
@@ -3194,6 +3222,7 @@ public class PApplet extends Applet
    * <br/> <br/>
    * <br/> images saved from the main drawing window will be opaque. To save 
    * images without a background, use <b>createGraphics()</b>.
+   * 
    * ( end auto-generated )
    * @webref output:image
    * @see PApplet#save(String)
@@ -3276,6 +3305,7 @@ public class PApplet extends Applet
    * <br /> <br />
    * Setting or hiding the cursor generally does not work with "Present" mode 
    * (when running full-screen).
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Set a custom cursor to an image with a specific hotspot.
@@ -3327,6 +3357,7 @@ public class PApplet extends Applet
    * 
    * Hides the cursor from view. Will not work when running the program in a 
    * web browser or when running in full screen (Present) mode.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Hide the cursor by creating a transparent image
@@ -3372,6 +3403,7 @@ public class PApplet extends Applet
    * method from the object that's being printed.
    * Advanced users who want more useful output when calling print() on their 
    * own classes can add a toString() method to the class that returns a String.
+   * 
    * ( end auto-generated )
  * @webref output:text_area
  * @usage IDE
@@ -3433,6 +3465,7 @@ public class PApplet extends Applet
    * element of the array. This function can only print one dimensional 
    * arrays. For arrays with higher dimensions, the result will be closer to 
    * that of <b>print()</b>.
+   * 
    * ( end auto-generated )
  * @webref output:text_area
  * @usage IDE
@@ -3577,6 +3610,7 @@ public class PApplet extends Applet
    * 
    * Calculates the absolute value (magnitude) of a number. The absolute 
    * value of a number is always positive.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param n number to compute
@@ -3595,6 +3629,7 @@ public class PApplet extends Applet
    * Squares a number (multiplies a number by itself). The result is always a 
    * positive number, as multiplying two negative numbers always yields a 
    * positive result. For example, -1 * -1 = 1.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a number to square
@@ -3611,6 +3646,7 @@ public class PApplet extends Applet
    * always positive, even though there may be a valid negative root. The 
    * square root <b>s</b> of number <b>a</b> is such that <b>s*s = a</b>. It 
    * is the opposite of squaring.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a non-negative number
@@ -3626,6 +3662,7 @@ public class PApplet extends Applet
    * 
    * Calculates the natural logarithm (the base-<i>e</i> logarithm) of a 
    * number. This function expects the values greater than 0.0.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a number greater than 0.0
@@ -3639,6 +3676,7 @@ public class PApplet extends Applet
    * 
    * Returns Euler's number <i>e</i> (2.71828...) raised to the power of the 
    * <b>value</b> parameter.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a exponent to raise
@@ -3654,6 +3692,7 @@ public class PApplet extends Applet
    * efficient way of multiplying numbers by themselves (or their reciprocal) 
    * in large quantities. For example, <b>pow(3, 5)</b> is equivalent to the 
    * expression 3*3*3*3*3 and <b>pow(3, -5)</b> is equivalent to 1 / 3*3*3*3*3.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a base of the exponential expression
@@ -3668,6 +3707,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from max.xml )
    * 
    * Determines the largest value in a sequence of numbers.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a first number to compare
@@ -3770,6 +3810,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from min.xml )
    * 
    * Determines the smallest value in a sequence of numbers.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a first number
@@ -3842,6 +3883,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from constrain.xml )
    * 
    * Constrains a value to not exceed a maximum and minimum value.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param amt the value to constrain
@@ -3861,6 +3903,7 @@ public class PApplet extends Applet
    * Calculates the sine of an angle. This function expects the values of the 
    * <b>angle</b> parameter to be provided in radians (values from 0 to 
    * 6.28). Values are returned in the range -1 to 1.
+   * 
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
@@ -3878,6 +3921,7 @@ public class PApplet extends Applet
    * Calculates the cosine of an angle. This function expects the values of 
    * the <b>angle</b> parameter to be provided in radians (values from 0 to 
    * PI*2). Values are returned in the range -1 to 1.
+   * 
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
@@ -3896,6 +3940,7 @@ public class PApplet extends Applet
    * expects the values of the <b>angle</b> parameter to be provided in 
    * radians (values from 0 to PI*2). Values are returned in the range 
    * <b>infinity</b> to <b>-infinity</b>.
+   * 
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param angle an angle in radians
@@ -3913,6 +3958,7 @@ public class PApplet extends Applet
    * The inverse of <b>sin()</b>, returns the arc sine of a value. This 
    * function expects the values in the range of -1 to 1 and values are 
    * returned in the range <b>-PI/2</b> to <b>PI/2</b>.
+   * 
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param value the value whose arc sine is to be returned
@@ -3930,6 +3976,7 @@ public class PApplet extends Applet
    * The inverse of <b>cos()</b>, returns the arc cosine of a value. This 
    * function expects the values in the range of -1 to 1 and values are 
    * returned in the range <b>0</b> to <b>PI (3.1415927)</b>.
+   * 
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param value the value whose arc cosine is to be returned
@@ -3947,6 +3994,7 @@ public class PApplet extends Applet
    * The inverse of <b>tan()</b>, returns the arc tangent of a value. This 
    * function expects the values in the range of -Infinity to Infinity 
    * (exclusive) and values are returned in the range <b>-PI/2</b> to <b>PI/2 </b>.
+   * 
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param value -Infinity to Infinity (exclusive)
@@ -3968,6 +4016,7 @@ public class PApplet extends Applet
    * the position of the cursor.  Note: The y-coordinate of the point is the 
    * first parameter and the x-coordinate is the second due the the structure 
    * of calculating the tangent.
+   * 
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param a y-coordinate of the point
@@ -3986,6 +4035,7 @@ public class PApplet extends Applet
    * 360 degrees in a circle and 2*PI radians in a circle. For example, 
    * 90&deg; = PI/2 = 1.5707964. All trigonometric methods in Processing 
    * require their parameters to be specified in radians.
+   * 
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param radians radian value to convert to degrees
@@ -4003,6 +4053,7 @@ public class PApplet extends Applet
    * 360 degrees in a circle and 2*PI radians in a circle. For example, 
    * 90&deg; = PI/2 = 1.5707964. All trigonometric methods in Processing 
    * require their parameters to be specified in radians.
+   * 
    * ( end auto-generated )
    * @webref math:trigonometry
    * @param degrees degree value to convert to radians
@@ -4017,6 +4068,7 @@ public class PApplet extends Applet
    * 
    * Calculates the closest int value that is greater than or equal to the 
    * value of the parameter. For example, <b>ceil(9.03)</b> returns the value 10.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param what number to round up
@@ -4032,6 +4084,7 @@ public class PApplet extends Applet
    * 
    * Calculates the closest int value that is less than or equal to the value 
    * of the parameter.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param what number to round down
@@ -4047,6 +4100,7 @@ public class PApplet extends Applet
    * 
    * Calculates the integer closest to the <b>value</b> parameter. For 
    * example, <b>round(9.2)</b> returns the value 9.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param what number to round
@@ -4070,6 +4124,7 @@ public class PApplet extends Applet
    * algebra. Because it has no "start" position, the magnitude of a vector 
    * can be thought of as the distance from coordinate (0,0) to its (x,y) 
    * value. Therefore, mag() is a shortcut for writing "dist(0, 0, x, y)". 
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param a first value
@@ -4090,6 +4145,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from dist.xml )
    * 
    * Calculates the distance between two points.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param x1 x-coordinate of the first point
@@ -4112,6 +4168,7 @@ public class PApplet extends Applet
    * where 0.0 equal to the first point, 0.1 is very near the first point, 
    * 0.5 is half-way in between, etc. The lerp function is convenient for 
    * creating motion along a straight path and for drawing dotted lines.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param start first value
@@ -4133,6 +4190,7 @@ public class PApplet extends Applet
    * <br/> <br/>
    * Numbers outside the range are not clamped to 0 and 1, because
    * out-of-range values are often intentional and useful.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param value the incoming value to be converted
@@ -4155,6 +4213,7 @@ public class PApplet extends Applet
    * <br/> <br/>
    * Numbers outside the range are not clamped to 0 and 1, because
    * out-of-range values are often intentional and useful.
+   * 
    * ( end auto-generated )
    * @webref math:calculation
    * @param value the incoming value to be converted
@@ -4225,6 +4284,7 @@ public class PApplet extends Applet
    * call <b>random(-5, 10.2)</b> returns values starting at -5 up to (but 
    * not including) 10.2. To convert a floating-point random number to an 
    * integer, use the <b>int()</b> function.
+   * 
    * ( end auto-generated )
    * @webref math:random
    * @param howsmall lower limit
@@ -4245,6 +4305,7 @@ public class PApplet extends Applet
    * produces different results each time the program is run. Set the 
    * <b>value</b> parameter to a constant to return the same pseudo-random 
    * numbers each time the software is run.
+   * 
    * ( end auto-generated )
    * @webref math:random
    * @param what seed value
@@ -4334,6 +4395,7 @@ public class PApplet extends Applet
    * the smaller the difference between coordinates, the smoother the 
    * resulting noise sequence will be. Steps of 0.005-0.03 work best for most 
    * applications, but this will differ depending on use.
+   * 
    * ( end auto-generated )
    * 
    * @webref math:random
@@ -4443,6 +4505,7 @@ public class PApplet extends Applet
    * result in greater than 1.0 values returned by <b>noise()</b>.<br /><br 
    * />By changing these parameters, the signal created by the <b>noise()</b> 
    * function can be adapted to fit very specific needs and characteristics.
+   * 
    * ( end auto-generated )
    * @webref math:random
    * @param lod number of octaves to be used by the noise
@@ -4461,6 +4524,7 @@ public class PApplet extends Applet
    * produces different results each time the program is run. Set the 
    * <b>value</b> parameter to a constant to return the same pseudo-random 
    * numbers each time the software is run. 
+   * 
    * ( end auto-generated )
    * @webref math:random
    * @param what int
@@ -5012,6 +5076,7 @@ public class PApplet extends Applet
    * does not halt the program, however the null value may cause a 
    * NullPointerException if your code does not check whether the value 
    * returned from <b>loadShape()</b> is null.
+   * 
    * ( end auto-generated )
    * @webref shape:load_displaying
    * @param filename name of the file to load
@@ -5173,6 +5238,7 @@ public class PApplet extends Applet
    * be used with the JAVA2D (default) renderer setting. This can be helpful 
    * when many font sizes are needed, or when using any renderer based on 
    * JAVA2D, such as the PDF library. 
+   * 
    * ( end auto-generated )
   * @webref typography:loading_displaying
   * @param filename name of the font to load
@@ -5244,15 +5310,15 @@ public class PApplet extends Applet
    * This function creates a bitmapped version of a font in the same manner 
    * as the Create Font tool. It loads a font by name, and converts it to a 
    * series of images based on the size of the font. When possible, the 
-   * text() function will use a native font rather than the bitmapped version 
-   * created behind the scenes with createFont(). For instance, when using 
-   * the default renderer setting (JAVA2D), the actual native version of the 
-   * font will be employed by the sketch, improving drawing quality and 
-   * performance. With the P2D, P3D, and OPENGL renderer settings, the 
-   * bitmapped version will be used. While this can drastically improve speed 
-   * and appearance, results are poor when exporting if the sketch does not 
-   * include the .otf or .ttf file, and the requested font is not available 
-   * on the machine running the sketch. 
+   * <b>text()</b> function will use a native font rather than the bitmapped 
+   * version created behind the scenes with <b>createFont()</b>. For 
+   * instance, when using P2D, the actual native version of the font will be 
+   * employed by the sketch, improving drawing quality and performance. With 
+   * the P3D renderer, the bitmapped version will be used. While this can 
+   * drastically improve speed and appearance, results are poor when 
+   * exporting if the sketch does not include the .otf or .ttf file, and the 
+   * requested font is not available on the machine running the sketch. 
+   * 
    * ( end auto-generated )
    * @webref typography:loading_displaying
    * @param name name of the font to load
@@ -5339,6 +5405,7 @@ public class PApplet extends Applet
    * Opens a platform-specific file chooser dialog to select a file for 
    * input. This function returns the full path to the selected file as a 
    * <b>String</b>, or <b>null</b> if no selection.
+   * 
    * ( end auto-generated )
    * @webref input:files
    * @param prompt message you want the user to see in the file chooser
@@ -5367,6 +5434,7 @@ public class PApplet extends Applet
    * <b>String</b>, or <b>null</b> if no selection. If you select an existing 
    * file, that file will be replaced. Alternatively, you can navigate to a 
    * folder and create a new file to write to. 
+   * 
    * ( end auto-generated )
    * @webref output:files
    * @param prompt message you want the user to see in the file chooser
@@ -5413,6 +5481,7 @@ public class PApplet extends Applet
    * Opens a platform-specific file chooser dialog to select a folder for 
    * input. This function returns the full path to the selected folder as a 
    * <b>String</b>, or <b>null</b> if no selection.
+   * 
    * ( end auto-generated )
    * @webref input:files
    * @param prompt message you want the user to see in the file chooser
@@ -5475,6 +5544,7 @@ public class PApplet extends Applet
    * Processing API use UTF-8 encoding. In previous releases, the default 
    * encoding for your platform was used, which causes problems when files 
    * are moved to other platforms.
+   * 
    * ( end auto-generated )
    * @webref input:files
    * @param filename name of the file to be opened
@@ -5552,6 +5622,7 @@ public class PApplet extends Applet
    * Processing API use UTF-8 encoding. In previous releases, the default 
    * encoding for your platform was used, which causes problems when files 
    * are moved to other platforms.
+   * 
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to be created
@@ -5649,6 +5720,7 @@ public class PApplet extends Applet
    * If the file ends with <b>.gz</b>, the stream will automatically be gzip 
    * decompressed. If you don't want the automatic decompression, use the 
    * related function <b>createInputRaw()</b>.
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -5903,6 +5975,7 @@ public class PApplet extends Applet
    * files from the same server from which it came. Getting around this 
    * restriction requires a <A 
    * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</A>.
+   * 
    * ( end auto-generated )
    * @webref input:files
    * @param filename name of a file in the data folder or a URL.
@@ -5979,6 +6052,7 @@ public class PApplet extends Applet
    * Processing API use UTF-8 encoding. In previous releases, the default 
    * encoding for your platform was used, which causes problems when files 
    * are moved to other platforms.
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -6070,6 +6144,7 @@ public class PApplet extends Applet
    * <br /><br />
    * If the output filename ends with <b>.gz</b>, the output will be 
    * automatically GZIP compressed as it is written.
+   * 
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to open
@@ -6108,6 +6183,7 @@ public class PApplet extends Applet
    * object for greater control over the file location. (Note that unlike 
    * other api methods, this will not automatically compress or uncompress 
    * gzip files.)
+   * 
    * ( end auto-generated )
    * @webref output:files
    * @param targetFilename name of the file to write to
@@ -6204,6 +6280,7 @@ public class PApplet extends Applet
    * To save a file back to a server, see the <A 
    * HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to 
    * web</A> example.
+   * 
    * ( end auto-generated )
    * @webref output:files
    * @param filename name of the file to write to
@@ -6294,6 +6371,7 @@ public class PApplet extends Applet
    * Processing API use UTF-8 encoding. In previous releases, the default 
    * encoding for your platform was used, which causes problems when files 
    * are moved to other platforms.
+   * 
    * ( end auto-generated )
  * @webref output:files
  * @param filename filename for output
@@ -6480,6 +6558,7 @@ public class PApplet extends Applet
    * array and if count is the value 5, only the first five elements on the 
    * array will be sorted. As of release 0126, the alphabetical ordering is 
    * case insensitive.
+   * 
    * ( end auto-generated )
  * @webref data:array_functions
  * @param what ???
@@ -6556,6 +6635,7 @@ public class PApplet extends Applet
    * "arrayCopy(src, 0, dst, 0, src.length)". This function is far more 
    * efficient for copying array data than iterating through a <b>for</b> and 
    * copying each element.
+   * 
    * ( end auto-generated )
    * @webref data:array_functions
    * @param src the source array
@@ -6625,6 +6705,7 @@ public class PApplet extends Applet
    * When using an array of objects, the data returned from the function must 
    * be cast to the object array's data type. For example: <em>SomeClass[] 
    * items = (SomeClass[]) expand(originalArray)</em>.
+   * 
    * ( end auto-generated )
    * @webref data:array_functions
    * @param list boolean[], byte[], char[], int[], float[], String[], or an array of objects
@@ -6742,6 +6823,7 @@ public class PApplet extends Applet
    * When using an array of objects, the data returned from the function must 
    * be cast to the object array's data type. For example: <em>SomeClass[] 
    * items = (SomeClass[]) append(originalArray, element)</em>.
+   * 
    * ( end auto-generated )
    * @webref data:array_functions
    * @param b array to append
@@ -6795,6 +6877,7 @@ public class PApplet extends Applet
    * When using an array of objects, the data returned from the function must 
    * be cast to the object array's data type. For example: <em>SomeClass[] 
    * items = (SomeClass[]) shorten(originalArray)</em>.
+   * 
    * ( end auto-generated )
   * @webref data:array_functions
   * @param list ???
@@ -6842,6 +6925,7 @@ public class PApplet extends Applet
    * When using an array of objects, the data returned from the function must 
    * be cast to the object array's data type. For example: <em>SomeClass[] 
    * items = (SomeClass[]) splice(array1, array2, index)</em>.
+   * 
    * ( end auto-generated )
  * @webref data:array_functions
  * @param list ???
@@ -7014,6 +7098,7 @@ public class PApplet extends Applet
    * When using an array of objects, the data returned from the function must 
    * be cast to the object array's data type. For example: <em>SomeClass[] 
    * items = (SomeClass[]) subset(originalArray, 0, 4)</em>.
+   * 
    * ( end auto-generated )
   * @webref data:array_functions
   * @param list ???
@@ -7103,6 +7188,7 @@ public class PApplet extends Applet
    * When using an array of objects, the data returned from the function must 
    * be cast to the object array's data type. For example: <em>SomeClass[] 
    * items = (SomeClass[]) concat(array1, array2)</em>.
+   * 
    * ( end auto-generated )
   * @webref data:array_functions
   * @param a first array to concatenate
@@ -7167,6 +7253,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from reverse.xml )
    * 
    * Reverses the order of an array.
+   * 
    * ( end auto-generated )
   * @webref data:array_functions
   * @param list booleans[], bytes[], chars[], ints[], floats[], or Strings[]
@@ -7249,6 +7336,7 @@ public class PApplet extends Applet
    * Removes whitespace characters from the beginning and end of a String. In 
    * addition to standard whitespace characters such as space, carriage 
    * return, and tab, this function also removes the Unicode "nbsp" character.
+   * 
    * ( end auto-generated )
    * @webref data:string_functions
    * @param str any string
@@ -7280,6 +7368,7 @@ public class PApplet extends Applet
    * character(s) used for the <b>separator</b> parameter. To join arrays of 
    * ints or floats, it's necessary to first convert them to strings using 
    * <b>nf()</b> or <b>nfs()</b>.
+   * 
    * ( end auto-generated )
    * @webref data:string_functions
    * @param str array of Strings
@@ -7321,6 +7410,7 @@ public class PApplet extends Applet
    * carriage return (\\r), form feed (\\f), and space. To convert a String 
    * to an array of integers or floats, use the datatype conversion functions 
    * <b>int()</b> and <b>float()</b> to convert the array of Strings.
+   * 
    * ( end auto-generated )
    * @webref data:string_functions
    * @param what the string to be split
@@ -7367,6 +7457,7 @@ public class PApplet extends Applet
    * href="http://en.wikipedia.org/wiki/Escape_character">escape 
    * characters</a> on Wikipedia.
    * --> 
+   * 
    * ( end auto-generated )
    * @webref data:string_functions
    * @usage web_application
@@ -7479,6 +7570,7 @@ public class PApplet extends Applet
    * HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java 
    * Tutorial</A> on the topic. 
    * <br/> <br/>
+   * 
    * ( end auto-generated )
    * @webref data:string_functions
    * @param what the String to be searched
@@ -7529,6 +7621,7 @@ public class PApplet extends Applet
    * HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java 
    * Tutorial</A> on the topic. 
    * <br/> <br/>
+   * 
    * ( end auto-generated )
    * @webref data:string_functions
    * @param what the String to search inside
@@ -8095,6 +8188,7 @@ public class PApplet extends Applet
    * <em>remove</em> digits from a floating-point number, use the 
    * <b>int()</b>, <b>ceil()</b>, <b>floor()</b>, or <b>round()</b> 
    * functions.  
+   * 
    * ( end auto-generated )
  * @webref data:string_functions
  * @param num the number(s) to format
@@ -8128,6 +8222,7 @@ public class PApplet extends Applet
    * <br/> <br/>
    * For a non-US locale, this will insert periods instead of commas, or 
    * whatever is apprioriate for that region.
+   * 
    * ( end auto-generated )
  * @webref data:string_functions
  * @param num the number(s) to format
@@ -8182,6 +8277,7 @@ public class PApplet extends Applet
    * two versions, one for formatting floats and one for formatting ints. The 
    * values for the <b>digits</b>, <b>left</b>, and <b>right</b> parameters 
    * should always be positive integers.
+   * 
    * ( end auto-generated )
   * @webref data:string_functions
   * @param num the number(s) to format
@@ -8217,6 +8313,7 @@ public class PApplet extends Applet
    * front of negative numbers. There are two versions, one for formatting 
    * floats and one for formatting ints. The values for the <b>digits</b>, 
    * <b>left</b>, and <b>right</b> parameters should always be positive integers.
+   * 
    * ( end auto-generated )
   * @webref data:string_functions
   * @param num[] the number(s) to format
@@ -8371,6 +8468,7 @@ public class PApplet extends Applet
    * Note that the maximum number of digits is 8, because an int value can 
    * only represent up to 32 bits. Specifying more than eight digits will 
    * simply shorten the string to eight anyway.
+   * 
    * ( end auto-generated )
    * @webref data:conversion
    * @param what the value to convert
@@ -8413,6 +8511,7 @@ public class PApplet extends Applet
    * 
    * Converts a String representation of a hexadecimal number to its 
    * equivalent integer value.
+   * 
    * ( end auto-generated )
   * @webref data:conversion
   * @param what ???
@@ -8469,6 +8568,7 @@ public class PApplet extends Applet
    * Note that the maximum number of digits is 32, because an int value can 
    * only represent up to 32 bits. Specifying more than 32 digits will simply 
    * shorten the string to 32 anyway.
+   * 
    * ( end auto-generated )
   * @webref data:conversion
   * @param what value to convert
@@ -8499,6 +8599,7 @@ public class PApplet extends Applet
    * 
    * Converts a String representation of a binary number to its equivalent 
    * integer value. For example, unbinary("00001000") will return 8.
+   * 
    * ( end auto-generated )
   * @webref data:conversion
   * @param what ???
@@ -8528,6 +8629,7 @@ public class PApplet extends Applet
    * and therefore, the function call <b>color(255, 204, 0)</b> will return a 
    * bright yellow color. More about how colors are stored can be found in 
    * the reference for the <a href="color_datatype.html">color</a> datatype.
+   * 
    * ( end auto-generated )
    * @webref color:creating_reading
    * @param gray number specifying value between white and black
@@ -9162,6 +9264,7 @@ public class PApplet extends Applet
    * it has been called. For instance, if you call textFont() before 
    * beginRecord(), then that font will not be set for the file that you're 
    * recording to. 
+   * 
    * ( end auto-generated )
    * @webref output:files
    * @param renderer for example, PDF
@@ -9196,6 +9299,7 @@ public class PApplet extends Applet
    * 
    * Stops the recording process started by <b>beginRecord()</b> and closes 
    * the file.
+   * 
    * ( end auto-generated )
   * @webref output:files
   * @see PApplet#beginRecord(String, String)
@@ -9227,8 +9331,7 @@ public class PApplet extends Applet
    * When using <b>beginRaw()</b> and <b>endRaw()</b>, it's possible to write 
    * to either a 2D or 3D renderer. For instance, <b>beginRaw()</b> with the 
    * PDF library will write the geometry as flattened triangles and lines, 
-   * even if recording from a 3D renderer such as <b>P3D</b> or 
-   * <b>OPENGL</b>. 
+   * even if recording from the <b>P3D</b> renderer. 
    * <br /><br />
    * If you want a background to show up in your files, use <b>rect(0, 0, 
    * width, height)</b> after setting the <b>fill()</b> to the background 
@@ -9241,6 +9344,7 @@ public class PApplet extends Applet
    * <br /><br />
    * See examples in the reference for the <b>PDF</b> and <b>DXF</b> 
    * libraries for more information.
+   * 
    * ( end auto-generated )
    * @webref output:files
    * @param renderer for example, PDF or DXF
@@ -9279,6 +9383,7 @@ public class PApplet extends Applet
    * the <a 
    * href="http://www.processing.org/reference/beginRaw_.html"><b>beginRaw()</b></a> 
    * reference for details.
+   * 
    * ( end auto-generated )
    * @webref output:files
    * @see PApplet#beginRaw(String, String)
@@ -9314,6 +9419,7 @@ public class PApplet extends Applet
    * <b>updatePixels()</b>. Even if the renderer may not seem to use this 
    * function in the current Processing release, this will always be subject 
    * to change.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Override the g.pixels[] function to set the pixels[] array
@@ -9350,6 +9456,7 @@ public class PApplet extends Applet
    * <br/> <br/>
    * Currently, none of the renderers use the additional parameters to 
    * <b>updatePixels()</b>, however this may be implemented in the future. 
+   * 
    * ( end auto-generated )
    * @webref image:pixels
    * @param x1 x-coordinate of the upper-left corner
@@ -9387,7 +9494,7 @@ public class PApplet extends Applet
    * manner across renderers. Many options will often graduate to standard 
    * features instead of hints over time.
    * <br/> <br/>
-   * hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for OpenGL. This 
+   * hint(ENABLE_OPENGL_4X_SMOOTH) - Enable 4x anti-aliasing for P3D. This 
    * can help force anti-aliasing if it has not been enabled by the user. On 
    * some graphics cards, this can also be set by the graphics driver's 
    * control panel, however not all cards make this available. This hint must 
@@ -9396,10 +9503,10 @@ public class PApplet extends Applet
    * re-running the code that came before it again). 
    * <br/> <br/>
    * hint(DISABLE_OPENGL_2X_SMOOTH) - In Processing 1.0, Processing always 
-   * enables 2x smoothing when the OpenGL renderer is used. This hint 
-   * disables the default 2x smoothing and returns the smoothing behavior 
-   * found in earlier releases, where smooth() and noSmooth() could be used 
-   * to enable and disable smoothing, though the quality was inferior.
+   * enables 2x smoothing when the P3D renderer is used. This hint disables 
+   * the default 2x smoothing and returns the smoothing behavior found in 
+   * earlier releases, where smooth() and noSmooth() could be used to enable 
+   * and disable smoothing, though the quality was inferior.
    * <br/> <br/>
    * hint(ENABLE_NATIVE_FONTS) - Use the native version fonts when they are 
    * installed, rather than the bitmapped version from a .vlw file. This is 
@@ -9424,8 +9531,8 @@ public class PApplet extends Applet
    * lines in P3D and OPENGL. This can slow performance considerably, and the 
    * algorithm is not yet perfect. Restore the default with hint(DISABLE_DEPTH_SORT).
    * <br/> <br/>
-   * hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the OPENGL renderer 
-   * setting by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
+   * hint(DISABLE_OPENGL_ERROR_REPORT) - Speeds up the P3D renderer setting 
+   * by not checking for errors while running. Undo with hint(ENABLE_OPENGL_ERROR_REPORT).
    * <br/> <br/>
    * <!--hint(ENABLE_ACCURATE_TEXTURES) - Enables better texture accuracy for 
    * the P3D renderer. This option will do a better job of dealing with 
@@ -9436,6 +9543,7 @@ public class PApplet extends Applet
    * additional ENABLE/DISABLE constants to reset the default behavior. This 
    * prevents the double negatives, and also reinforces which hints can be 
    * enabled or disabled.
+   * 
    * ( end auto-generated )
    * @webref rendering
    * @param which name of the hint to be enabled or disabled
@@ -9485,10 +9593,12 @@ public class PApplet extends Applet
    * possible to use other shapes, such as <b>ellipse()</b> or <b>rect()</b> 
    * within <b>beginShape()</b>. 
    * <br/> <br/>
-   * The P2D, P3D, and OPENGL renderer settings allow stroke() and fill() 
-   * settings to be altered per-vertex, however the default JAVA2D renderer 
-   * does not. Settings such as strokeWeight(), strokeCap(), and strokeJoin() 
-   * cannot be changed while inside a beginShape()/endShape() block with any renderer.
+   * The P3D renderer settings allow <b>stroke()</b> and <b>fill()</b> 
+   * settings to be altered per-vertex, however the default P2D renderer does 
+   * not. Settings such as <b>strokeWeight()</b>, <b>strokeCap()</b>, and 
+   * <b>strokeJoin()</b> cannot be changed while inside a 
+   * <b>beginShape()</b>/<b>endShape()</b> block with any renderer.
+   * 
    * ( end auto-generated )
    * @webref shape:vertex
    * @param kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
@@ -9522,6 +9632,7 @@ public class PApplet extends Applet
    * attempts to automatically assign normals to shapes, but since that's 
    * imperfect, this is a better option when you want more control. This 
    * function is identical to glNormal3f() in OpenGL.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:lights
    * @param nx x direction
@@ -9547,6 +9658,7 @@ public class PApplet extends Applet
    * pixels, mapping the image onto the entire size of a quad would require 
    * the points (0,0) (0,100) (100,200) (0,200). The same mapping in 
    * NORMAL_SPACE is (0,0) (0,1) (1,1) (0,1).
+   * 
    * ( end auto-generated )
    * @webref shape:vertex
    * @param mode either IMAGE or NORMALIZED
@@ -9567,6 +9679,7 @@ public class PApplet extends Applet
    * <br/> <br/>
    * When textures are in use, the fill color is ignored. Instead, use tint() 
    * to specify the color of the texture as it is applied to the shape.
+   * 
    * ( end auto-generated )
    * @webref shape:vertex
    * @param image the texture to apply
@@ -9629,15 +9742,18 @@ public class PApplet extends Applet
    * All shapes are constructed by connecting a series of vertices. 
    * <b>vertex()</b> is used to specify the vertex coordinates for points, 
    * lines, triangles, quads, and polygons and is used exclusively within the 
-   * <b>beginShape()</b> and <b>endShape()</b> function. <br /><br />Drawing 
-   * a vertex in 3D using the <b>z</b> parameter requires the P3D or OPENGL 
-   * parameter in combination with size as shown in the above example.<br 
-   * /><br />This function is also used to map a texture onto the geometry. 
-   * The <b>texture()</b> function declares the texture to apply to the 
-   * geometry and the <b>u</b> and <b>v</b> coordinates set define the 
-   * mapping of this texture to the form. By default, the coordinates used 
-   * for <b>u</b> and <b>v</b> are specified in relation to the image's size 
-   * in pixels, but this relation can be changed with <b>textureMode()</b>.
+   * <b>beginShape()</b> and <b>endShape()</b> function.<br />
+   * <br />
+   * Drawing a vertex in 3D using the <b>z</b> parameter requires the P3D 
+   * parameter in combination with size as shown in the above example.<br />
+   * <br />
+   * This function is also used to map a texture onto the geometry. The 
+   * <b>texture()</b> function declares the texture to apply to the geometry 
+   * and the <b>u</b> and <b>v</b> coordinates set define the mapping of this 
+   * texture to the form. By default, the coordinates used for <b>u</b> and 
+   * <b>v</b> are specified in relation to the image's size in pixels, but 
+   * this relation can be changed with <b>textureMode()</b>.
+   * 
    * ( end auto-generated )
  * @webref shape:vertex
  * @param x x-coordinate of the vertex
@@ -9679,6 +9795,7 @@ public class PApplet extends Applet
    * <b>beginShape()</b> is written into the image buffer. The constant CLOSE 
    * as the value for the MODE parameter to close the shape (to connect the 
    * beginning and the end). 
+   * 
    * ( end auto-generated )
  * @webref shape:vertex
  * @param mode use CLOSE to close the shape
@@ -9709,8 +9826,9 @@ public class PApplet extends Applet
    * <b>vertex()</b> to set the first anchor point. This function must be 
    * used between <b>beginShape()</b> and <b>endShape()</b> and only when 
    * there is no MODE parameter specified to <b>beginShape()</b>. Using the 
-   * 3D version of requires rendering with P3D or OPENGL (see the Environment 
-   * reference for more information).
+   * 3D version requires rendering with P3D (see the Environment reference 
+   * for more information).
+   * 
    * ( end auto-generated )
  * @webref shape:vertex
  * @param x2 the x-coordinate of the 1st control point
@@ -9748,46 +9866,44 @@ public class PApplet extends Applet
   }
 
 
-  public void curveVertex(float x, float y) {
-    if (recorder != null) recorder.curveVertex(x, y);
-    g.curveVertex(x, y);
-  }
-
-
-/**
-  * ( begin auto-generated from curveVertex.xml )
-  * 
-  * Text. Specifies vertex coordinates for curves. This function may only be used 
-  * between <b>beginShape()</b> and <b>endShape()</b> and only when there is 
-  * no MODE parameter specified to <b>beginShape()</b>. The first and last 
-  * points in a series of <b>curveVertex()</b> lines will be used to guide 
-  * the beginning and end of a the curve. A minimum of four points is 
-  * required to draw a tiny curve between the second and third points. 
-  * Adding a fifth point with <b>curveVertex()</b> will draw the curve 
-  * between the second, third, and fourth points. The <b>curveVertex()</b> 
-  * function is an implementation of Catmull-Rom splines. Using the 3D 
-  * version of requires rendering with P3D or OPENGL (see the Environment 
-  * reference for more information).
-  * ( end auto-generated )
+ /**
+   * ( begin auto-generated from curveVertex.xml )
+   * 
+   * Specifies vertex coordinates for curves. This function may only be used 
+   * between <b>beginShape()</b> and <b>endShape()</b> and only when there is 
+   * no MODE parameter specified to <b>beginShape()</b>. The first and last 
+   * points in a series of <b>curveVertex()</b> lines will be used to guide 
+   * the beginning and end of a the curve. A minimum of four points is 
+   * required to draw a tiny curve between the second and third points. 
+   * Adding a fifth point with <b>curveVertex()</b> will draw the curve 
+   * between the second, third, and fourth points. The <b>curveVertex()</b> 
+   * function is an implementation of Catmull-Rom splines. Using the 3D 
+   * version requires rendering with P3D (see the Environment reference for 
+   * more information).
+   * 
+   * ( end auto-generated )
+  *
   * @webref shape:vertex
   * @param x the x-coordinate of the vertex
   * @param y the y-coordinate of the vertex
-  * @param z the z-coordinate of the vertex
   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
   * @see PGraphics#beginShape(int)
   * @see PGraphics#endShape(int)
   * @see PGraphics#vertex(float, float, float, float, float)
   * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
   */
-  public void curveVertex(float x, float y, float z) {
-    if (recorder != null) recorder.curveVertex(x, y, z);
-    g.curveVertex(x, y, z);
+  public void curveVertex(float x, float y) {
+    if (recorder != null) recorder.curveVertex(x, y);
+    g.curveVertex(x, y);
   }
 
 
-  public void point(float x, float y) {
-    if (recorder != null) recorder.point(x, y);
-    g.point(x, y);
+  /**
+   * @param z the z-coordinate of the vertex
+   */
+  public void curveVertex(float x, float y, float z) {
+    if (recorder != null) recorder.curveVertex(x, y, z);
+    g.curveVertex(x, y, z);
   }
 
 
@@ -9797,32 +9913,28 @@ public class PApplet extends Applet
    * Draws a point, a coordinate in space at the dimension of one pixel. The 
    * first parameter is the horizontal value for the point, the second value 
    * is the vertical value for the point, and the optional third value is the 
-   * depth value. Drawing this shape in 3D using the <b>z</b> parameter 
-   * requires the P3D or OPENGL parameter in combination with size as shown 
-   * in the above example. 
-   * <br/> <br/>
-   * Due to what appears to be a bug in Apple's Java implementation, the 
-   * point() and set() methods are extremely slow in some circumstances when 
-   * used with the default renderer. Using P2D or P3D will fix the problem. 
-   * Grouping many calls to point() or set() together can also help. (<a 
-   * href="http://dev.processing.org/bugs/show_bug.cgi?id=1094">Bug 1094</a>)
+   * depth value. Drawing this shape in 3D with the <b>z</b> parameter 
+   * requires the P3D parameter in combination with <b>size()</b> as shown in 
+   * the above example.
+   * 
    * ( end auto-generated )
    *
    * @webref shape:2d_primitives
    * @param x x-coordinate of the point
    * @param y y-coordinate of the point
+   */
+  public void point(float x, float y) {
+    if (recorder != null) recorder.point(x, y);
+    g.point(x, y);
+  }
+
+
+  /**
    * @param z z-coordinate of the point
-   * @see PGraphics#beginShape()
    */
   public void point(float x, float y, float z) {
     if (recorder != null) recorder.point(x, y, z);
     g.point(x, y, z);
-  }
-
-
-  public void line(float x1, float y1, float x2, float y2) {
-    if (recorder != null) recorder.line(x1, y1, x2, y2);
-    g.line(x1, y1, x2, y2);
   }
 
 
@@ -9836,21 +9948,29 @@ public class PApplet extends Applet
    * 2D lines are drawn with a width of one pixel by default, but this can be 
    * changed with the <b>strokeWeight()</b> function. The version with six 
    * parameters allows the line to be placed anywhere within XYZ space. 
-   * Drawing this shape in 3D using the <b>z</b> parameter requires the P3D 
-   * or OPENGL parameter in combination with size as shown in the above 
-   * example. 
+   * Drawing this shape in 3D with the <b>z</b> parameter requires the P3D 
+   * parameter in combination with <b>size()</b> as shown in the above example.
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param x1 x-coordinate of the first point
    * @param y1 y-coordinate of the first point
-   * @param z1 z-coordinate of the first point
    * @param x2 x-coordinate of the second point
    * @param y2 y-coordinate of the second point
-   * @param z2 z-coordinate of the second point
    * @see PGraphics#strokeWeight(float)
    * @see PGraphics#strokeJoin(int)
    * @see PGraphics#strokeCap(int)
    * @see PGraphics#beginShape()
+   */
+  public void line(float x1, float y1, float x2, float y2) {
+    if (recorder != null) recorder.line(x1, y1, x2, y2);
+    g.line(x1, y1, x2, y2);
+  }
+
+
+  /**
+   * @param z1 z-coordinate of the first point
+   * @param z2 z-coordinate of the second point
    */
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
@@ -9865,6 +9985,7 @@ public class PApplet extends Applet
    * A triangle is a plane created by connecting three points. The first two 
    * arguments specify the first point, the middle two arguments specify the 
    * second point, and the last two arguments specify the third point. 
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param x1 x-coordinate of the first point
@@ -9890,6 +10011,7 @@ public class PApplet extends Applet
    * ninety degrees. The first pair of parameters (x1,y1) sets the first 
    * vertex and the subsequent pairs should proceed clockwise or 
    * counter-clockwise around the defined shape.
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param x1 x-coordinate of the first corner
@@ -9908,7 +10030,7 @@ public class PApplet extends Applet
   }
 
 
- /**
+  /**
    * ( begin auto-generated from rectMode.xml )
    * 
    * Modifies the location from which rectangles draw. The default mode is 
@@ -9926,11 +10048,12 @@ public class PApplet extends Applet
    * parameter must be written in ALL CAPS because Processing is a case 
    * sensitive language. Note: In version 125, the mode named CENTER_RADIUS 
    * was shortened to RADIUS.
+   * 
    * ( end auto-generated )
-  * @webref shape:attributes
-  * @param mode either CORNER, CORNERS, CENTER, or RADIUS
-  * @see PGraphics#rect(float, float, float, float)
-  */
+   * @webref shape:attributes
+   * @param mode either CORNER, CORNERS, CENTER, or RADIUS
+   * @see PGraphics#rect(float, float, float, float)
+   */
   public void rectMode(int mode) {
     if (recorder != null) recorder.rectMode(mode);
     g.rectMode(mode);
@@ -9945,6 +10068,7 @@ public class PApplet extends Applet
    * the location of the upper-left corner, the third sets the width, and the 
    * fourth sets the height. These parameters may be changed with the 
    * <b>rectMode()</b> function. 
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param a x-coordinate of the rectangle
@@ -9960,7 +10084,6 @@ public class PApplet extends Applet
   }
 
 
-/** ??? */
   public void rect(float a, float b, float c, float d, float r) {
     if (recorder != null) recorder.rect(a, b, c, d, r);
     g.rect(a, b, c, d, r);
@@ -9987,6 +10110,7 @@ public class PApplet extends Applet
    * <b>ellipse()</b> to set two opposing corners of the ellipse's bounding 
    * box. The parameter must be written in "ALL CAPS" because Processing is a 
    * case sensitive language.
+   * 
    * ( end auto-generated )
    * @webref shape:attributes
    * @param mode either CENTER, RADIUS, CORNER, or CORNERS
@@ -10005,6 +10129,7 @@ public class PApplet extends Applet
    * <b>width</b> and <b>height</b> is a circle. The first two parameters set 
    * the location, the third sets the width, and the fourth sets the height. 
    * The origin may be changed with the <b>ellipseMode()</b> function. 
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param a x-coordinate of the ellipse
@@ -10027,6 +10152,7 @@ public class PApplet extends Applet
    * <b>height</b> parameters. The origin or the arc's ellipse may be changed 
    * with the <b>ellipseMode()</b> function. The <b>start</b> and <b>stop</b> 
    * parameters specify the angles at which to draw the arc. 
+   * 
    * ( end auto-generated )
    * @webref shape:2d_primitives
    * @param a x-coordinate of the arc's ellipse
@@ -10046,7 +10172,16 @@ public class PApplet extends Applet
 
 
   /**
+   * ( begin auto-generated from box.xml )
+   * 
+   * A box is an extruded rectangle. A box with equal dimension on all sides 
+   * is a cube.
+   * 
+   * ( end auto-generated )
+   * 
+   * @webref shape:3d_primitives
    * @param size dimension of the box in all dimensions, creates a cube
+   * @see PGraphics#sphere(float)
    */
   public void box(float size) {
     if (recorder != null) recorder.box(size);
@@ -10055,29 +10190,13 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from box.xml )
-   * 
-   * A box is an extruded rectangle. A box with equal dimension on all sides 
-   * is a cube.
-   * ( end auto-generated )
-   * @webref shape:3d_primitives
    * @param w dimension of the box in the x-dimension
    * @param h dimension of the box in the y-dimension
    * @param d dimension of the box in the z-dimension
-   * @see PGraphics#sphere(float)
    */
   public void box(float w, float h, float d) {
     if (recorder != null) recorder.box(w, h, d);
     g.box(w, h, d);
-  }
-
-
-  /**
-   * @param res number of segments (minimum 3) used per full circle revolution
-   */
-  public void sphereDetail(int res) {
-    if (recorder != null) recorder.sphereDetail(res);
-    g.sphereDetail(res);
   }
 
 
@@ -10096,15 +10215,25 @@ public class PApplet extends Applet
    * further away from the camera. To control the detail of the horizontal 
    * and vertical resolution independently, use the version of the functions 
    * with two parameters.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Code for sphereDetail() submitted by toxi [031031].
    * Code for enhanced u/v version from davbol [080801].
-   *
+   * 
+   * @param res number of segments (minimum 3) used per full circle revolution
    * @webref shape:3d_primitives
+   * @see PGraphics#sphere(float)
+   */
+  public void sphereDetail(int res) {
+    if (recorder != null) recorder.sphereDetail(res);
+    g.sphereDetail(res);
+  }
+
+
+  /**
    * @param ures number of segments used longitudinally per full circle revolutoin
    * @param vres number of segments used latitudinally from top to bottom
-   * @see PGraphics#sphere(float)
    */
   public void sphereDetail(int ures, int vres) {
     if (recorder != null) recorder.sphereDetail(ures, vres);
@@ -10116,6 +10245,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from sphere.xml )
    * 
    * A sphere is a hollow ball made from tessellated triangles.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * <P>
@@ -10155,6 +10285,7 @@ public class PApplet extends Applet
    * the control points. This can be done once with the x coordinates and a 
    * second time with the y coordinates to get the location of a bezier curve 
    * at t.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * For instance, to convert the following example:<PRE>
@@ -10198,6 +10329,7 @@ public class PApplet extends Applet
    * Calculates the tangent of a point on a Bezier curve. There is a good 
    * definition of "tangent" at Wikipedia: <a 
    * href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Code submitted by Dave Bollinger (davol) for release 0136.
@@ -10221,8 +10353,9 @@ public class PApplet extends Applet
    * ( begin auto-generated from bezierDetail.xml )
    * 
    * Sets the resolution at which Beziers display. The default value is 20. 
-   * This function is only useful when using the P3D or OPENGL renderer as 
-   * the default (JAVA2D) renderer does not use this information.
+   * This function is only useful when using the P3D renderer as the default 
+   * P2D renderer does not use this information.
+   * 
    * ( end auto-generated )
    * @webref shape:curves
    * @param detail resolution of the curves
@@ -10253,8 +10386,9 @@ public class PApplet extends Applet
    * anchor point and the last two parameters specify the other anchor point. 
    * The middle parameters specify the control points which define the shape 
    * of the curve. Bezier curves were developed by French engineer Pierre 
-   * Bezier. Using the 3D version of requires rendering with P3D or OPENGL 
-   * (see the Environment reference for more information).
+   * Bezier. Using the 3D version requires rendering with P3D (see the 
+   * Environment reference for more information).
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Draw a cubic bezier curve. The first and last points are
@@ -10348,10 +10482,10 @@ public class PApplet extends Applet
    * @param c coordinate of second control point
    * @param d coordinate of second point on the curve
    * @param t value between 0 and 1
-   * @see curve(float, float, float, float, float, float, float, float, float, float, float, float)
-   * @see curveVertex(float, float)
-   * @see curvePoint(float, float, float, float, float)
-   * @see bezierTangent(float, float, float, float, float)
+   * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#curveVertex(float, float)
+   * @see PGraphics#curvePoint(float, float, float, float, float)
+   * @see PGraphics#bezierTangent(float, float, float, float, float)
    */
   public float curveTangent(float a, float b, float c, float d, float t) {
     return g.curveTangent(a, b, c, d, t);
@@ -10362,8 +10496,9 @@ public class PApplet extends Applet
    * ( begin auto-generated from curveDetail.xml )
    * 
    * Sets the resolution at which curves display. The default value is 20. 
-   * This function is only useful when using the P3D or OPENGL renderer as 
-   * the default (JAVA2D) renderer does not use this information.
+   * This function is only useful when using the P3D renderer as the default 
+   * P2D renderer does not use this information.
+   * 
    * ( end auto-generated )
    * @webref shape:curves
    * @param detail resolution of the curves
@@ -10387,6 +10522,7 @@ public class PApplet extends Applet
    * and the value 1.0 connects all the points with straight lines. Values 
    * within the range -5.0 and 5.0 will deform the curves but will leave them 
    * recognizable and as values increase in magnitude, they will continue to deform.
+   * 
    * ( end auto-generated )
    * @webref shape:curves
    * @param tightness amount of deformation from the original vertices
@@ -10396,15 +10532,6 @@ public class PApplet extends Applet
   public void curveTightness(float tightness) {
     if (recorder != null) recorder.curveTightness(tightness);
     g.curveTightness(tightness);
-  }
-
-
-  public void curve(float x1, float y1,
-                    float x2, float y2,
-                    float x3, float y3,
-                    float x4, float y4) {
-    if (recorder != null) recorder.curve(x1, y1, x2, y2, x3, y3, x4, y4);
-    g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
   }
 
 
@@ -10418,8 +10545,9 @@ public class PApplet extends Applet
    * <b>curve()</b> functions together or using <b>curveVertex()</b>. An 
    * additional function called <b>curveTightness()</b> provides control for 
    * the visual quality of the curve. The <b>curve()</b> function is an 
-   * implementation of Catmull-Rom splines. Using the 3D version of requires 
-   * rendering with P3D or OPENGL (see the Environment reference for more information).
+   * implementation of Catmull-Rom splines. Using the 3D version requires 
+   * rendering with P3D (see the Environment reference for more information).
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -10439,20 +10567,31 @@ public class PApplet extends Applet
    * @webref shape:curves
    * @param x1 coordinates for the beginning control point
    * @param y1 coordinates for the beginning control point
-   * @param z1 coordinates for the beginning control point
    * @param x2 coordinates for the first point
    * @param y2 coordinates for the first point
-   * @param z2 coordinates for the first point
    * @param x3 coordinates for the second point
    * @param y3 coordinates for the second point
-   * @param z3 coordinates for the second point
    * @param x4 coordinates for the ending control point
    * @param y4 coordinates for the ending control point
-   * @param z4 coordinates for the ending control point
    * @see PGraphics#curveVertex(float, float)
    * @see PGraphics#curveTightness(float)
    * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
-   */
+   */  
+  public void curve(float x1, float y1,
+                    float x2, float y2,
+                    float x3, float y3,
+                    float x4, float y4) {
+    if (recorder != null) recorder.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+    g.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+  }
+
+
+   /**
+    * @param z1 coordinates for the beginning control point
+    * @param z2 coordinates for the first point
+    * @param z3 coordinates for the second point
+    * @param z4 coordinates for the ending control point
+    */
   public void curve(float x1, float y1, float z1,
                     float x2, float y2, float z2,
                     float x3, float y3, float z3,
@@ -10465,21 +10604,12 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from smooth.xml )
    * 
-   * Draws all geometry with smooth (anti-aliased) edges. This will slow down 
-   * the frame rate of the application, but will enhance the visual 
-   * refinement. 
-   * <br/><br/> that smooth() will also improve image quality of resized 
-   * images, and noSmooth() will disable image (and font) smoothing altogether.
-   * <br/><br/> in Processing 1.0, smoothing is always enabled with the 
-   * OPENGL renderer setting. The smooth() and noSmooth() methods are 
-   * ignored. See the hint() reference for information on disabling smoothing 
-   * with OpenGL.
-   * <br/><br/> the current release, smoothing is imperfect with the P2D and 
-   * P3D renderers. In some situations, drawing with smooth() will create <a 
-   * href="http://dev.processing.org/bugs/show_bug.cgi?id=200">small 
-   * hairlines inside filled shapes</a> or <a 
-   * href="http://dev.processing.org/bugs/show_bug.cgi?id=1000">inaccuracies 
-   * with shape depth</a> can cause odd visual artifacts at the edges of shapes.
+   * Draws all geometry with smooth (anti-aliased) edges. This will sometimes 
+   * slow down the frame rate of the application, but will enhance the visual 
+   * refinement. Note that <b>smooth()</b> will also improve image quality of 
+   * resized images, and <b>noSmooth()</b> will disable image (and font) 
+   * smoothing altogether.
+   * 
    * ( end auto-generated )
    * @webref shape:attributes
    * @see PGraphics#noSmooth()
@@ -10496,6 +10626,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from noSmooth.xml )
    * 
    * Draws all geometry with jagged (aliased) edges.
+   * 
    * ( end auto-generated )
    * @webref shape:attributes
    * @see PGraphics#smooth()
@@ -10516,10 +10647,12 @@ public class PApplet extends Applet
    * <b>imageMode(CORNERS)</b> uses the second and third parameters of 
    * <b>image()</b> to set the location of one corner of the image and uses 
    * the fourth and fifth parameters to set the opposite corner. Use 
-   * <b>imageMode(CENTER)</b> to draw images centered at the given x and y position.
-   * <br/> <br/>
+   * <b>imageMode(CENTER)</b> to draw images centered at the given x and y 
+   * position.<br />
+   * <br />
    * The parameter to <b>imageMode()</b> must be written in ALL CAPS because 
-   * Processing is a case sensitive language.
+   * Processing is a case-sensitive language.
+   * 
    * ( end auto-generated )
    * @webref image:loading_displaying
    * @param mode either CORNER, CORNERS, or CENTER
@@ -10546,19 +10679,20 @@ public class PApplet extends Applet
    * Displays images to the screen. The images must be in the sketch's "data" 
    * directory to load correctly. Select "Add file..." from the "Sketch" menu 
    * to add the image. Processing currently works with GIF, JPEG, and Targa 
-   * images. The color of an image may be modified with the <b>tint()</b> 
-   * function and if a GIF has transparency, it will maintain its 
-   * transparency. The <b>img</b> parameter specifies the image to display 
-   * and the <b>x</b> and <b>y</b> parameters define the location of the 
-   * image from its upper-left corner. The image is displayed at its original 
-   * size unless the <b>width</b> and <b>height</b> parameters specify a 
-   * different size. The <b>imageMode()</b> function changes the way the 
-   * parameters work. A call to <b>imageMode(CORNERS)</b> will change the 
-   * width and height parameters to define the x and y values of the opposite 
-   * corner of the image.
-   * <br/> <br/>
-   * Starting with release 0124, when using the default (JAVA2D) renderer, 
-   * smooth() will also improve image quality of resized images.
+   * images. The <b>img</b> parameter specifies the image to display and the 
+   * <b>x</b> and <b>y</b> parameters define the location of the image from 
+   * its upper-left corner. The image is displayed at its original size 
+   * unless the <b>width</b> and <b>height</b> parameters specify a different 
+   * size.<br />
+   * <br />
+   * The <b>imageMode()</b> function changes the way the parameters work. For 
+   * example, a call to <b>imageMode(CORNERS)</b> will change the 
+   * <b>width</b> and <b>height</b> parameters to define the x and y values 
+   * of the opposite corner of the image.<br />
+   * <br />
+   * The color of an image may be modified with the <b>tint()</b> function. 
+   * This function will maintain transparency for GIF and PNG images.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Starting with release 0124, when using the default (JAVA2D) renderer,
@@ -10587,8 +10721,9 @@ public class PApplet extends Applet
    * Draw an image(), also specifying u/v coordinates.
    * In this method, the  u, v coordinates are always based on image space
    * location, regardless of the current textureMode().
+   *
+   * @nowebref
    */
-   /** ??? */
   public void image(PImage image,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
@@ -10611,6 +10746,7 @@ public class PApplet extends Applet
    * the third and forth parameters of <b>shape()</b> to specify the width 
    * and height. The parameter must be written in "ALL CAPS" because 
    * Processing is a case sensitive language.
+   * 
    * ( end auto-generated )
    * @webref shape:loading_displaying
    * @param mode either CORNER, CORNERS, CENTER
@@ -10653,9 +10789,9 @@ public class PApplet extends Applet
    * height parameters to define the x and y values of the opposite corner of 
    * the shape.
    * <br /><br />
-   * Note complex shapes may draw awkwardly with P2D, P3D, and OPENGL. Those 
-   * renderers do not yet support shapes that have holes or complicated 
-   * breaks. 
+   * Note complex shapes may draw awkwardly with P3D. This renderer does not 
+   * yet support shapes that have holes or complicated breaks. 
+   * 
    * ( end auto-generated )
    * @webref shape:loading_displaying
    * @param shape the shape to display
@@ -10706,6 +10842,7 @@ public class PApplet extends Applet
    * correct. To do this as less of a hack, use some percentage of 
    * <b>textAscent()</b> or <b>textDescent()</b> so that the hack works even 
    * if you change the size of the font.
+   * 
    * ( end auto-generated )
    * @webref typography:attributes
    * @param alignX horizontal alignment, either LEFT, CENTER, or RIGHT
@@ -10727,6 +10864,7 @@ public class PApplet extends Applet
    * is useful for determining the height of the font above the baseline. For 
    * example, adding the <b>textAscent()</b> and <b>textDescent()</b> values 
    * will give you the total height of the line.
+   * 
    * ( end auto-generated )
    * @webref typography:metrics
    * @see PGraphics#textDescent()
@@ -10743,6 +10881,7 @@ public class PApplet extends Applet
    * information is useful for determining the height of the font below the 
    * baseline. For example, adding the <b>textAscent()</b> and 
    * <b>textDescent()</b> values will give you the total height of the line.
+   * 
    * ( end auto-generated )
    * @webref typography:metrics
    * @see PGraphics#textAscent()
@@ -10800,6 +10939,7 @@ public class PApplet extends Applet
    * 
    * Sets the spacing between lines of text in units of pixels. This setting 
    * will be used in all subsequent calls to the <b>text()</b> function.
+   * 
    * ( end auto-generated )
    * @webref typography:attributes
    * @param leading the size in pixels for spacing between lines
@@ -10817,36 +10957,27 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from textMode.xml )
    * 
-   * Sets the way text draws to the screen. In the default configuration (the 
-   * MODEL mode), it's possible to rotate, scale, and place letters in two 
-   * and three dimensional space. 
-   * <br /><br />
-   * Changing to SCREEN mode draws letters directly to the front of the 
-   * window and greatly increases rendering quality and speed when used with 
-   * the P2D and P3D renderers. textMode(SCREEN) with OPENGL and JAVA2D (the 
-   * default) renderers will generally be slower, though pixel accurate with 
-   * P2D and P3D. With textMode(SCREEN), the letters draw at the actual size 
-   * of the font (in pixels) and therefore calls to <b>textSize()</b> will 
-   * not affect the size of the letters. To create a font at the size you 
-   * desire, use the "Create font..." option in the Tools menu, or use the 
-   * createFont() function. When using textMode(SCREEN), any z-coordinate 
-   * passed to a text() command will be ignored, because your computer screen is...flat!
+   * Sets the way text draws to the screen. In the default configuration, the 
+   * MODEL mode, it's possible to rotate, scale, and place letters in two and 
+   * three dimensional space. 
    * <br /><br />
    * The SHAPE mode draws text using the the glyph outlines of individual 
-   * characters rather than as textures. This mode is only only supported 
-   * with the PDF and OPENGL renderer settings. With the PDF renderer, you 
-   * must call textMode(SHAPE) before any other drawing occurs. If the 
-   * outlines are not available, then <b>textMode(SHAPE)</b> will be ignored 
-   * and <b>textMode(MODEL)</b> will be used instead.
+   * characters rather than as textures. This mode is only supported with the 
+   * PDF and P3D renderer settings. With the PDF renderer, you must call 
+   * <b>textMode(SHAPE)</b> before any other drawing occurs. If the outlines 
+   * are not available, then <b>textMode(SHAPE)</b> will be ignored and 
+   * <b>textMode(MODEL)</b> will be used instead.
    * <br /><br />
-   * The textMode(SHAPE) option in OPENGL mode can be combined with 
-   * beginRaw() to write vector-accurate text to 2D and 3D output files, for 
-   * instance DXF or PDF. textMode(SHAPE) is not currently optimized for 
-   * OPENGL, so if recording shape data, use textMode(MODEL) until you're 
-   * ready to capture the geometry with beginRaw().
+   * The <b>textMode(SHAPE)</b> option in P3D can be combined with 
+   * <b>beginRaw()</b> to write vector-accurate text to 2D and 3D output 
+   * files, for instance DXF or PDF. The SHAPE mode is not currently 
+   * optimized for P3D, so if recording shape data, use 
+   * <b>textMode(MODEL)</b> until you're ready to capture the geometry with <b>beginRaw()</b>.
+   * 
    * ( end auto-generated )
+   * 
    * @webref typography:attributes
-   * @param mode either MODEL, SCREEN, or SHAPE
+   * @param mode either MODEL or SHAPE
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float, float, float, float)
@@ -10864,6 +10995,7 @@ public class PApplet extends Applet
    * 
    * Sets the current font size. This size will be used in all subsequent 
    * calls to the <b>text()</b> function. Font size is measured in units of pixels.
+   * 
    * ( end auto-generated )
    * @webref typography:attributes
    * @param size the size of the letters in units of pixels
@@ -10887,7 +11019,9 @@ public class PApplet extends Applet
    * ( begin auto-generated from textWidth.xml )
    * 
    * Calculates and returns the width of any character or text string.
+   * 
    * ( end auto-generated )
+   * 
    * @webref typography:attributes
    * @param str
    * @see PApplet#loadFont(String)
@@ -10901,8 +11035,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ???
-   * TODO not sure if this stays...
+   * @nowebref
    */
   public float textWidth(char[] chars, int start, int length) {
     return g.textWidth(chars, start, length);
@@ -10920,17 +11053,16 @@ public class PApplet extends Applet
    * with the <b>fill()</b> function. The text displays in relation to the 
    * <b>textAlign()</b> function, which gives the option to draw to the left, 
    * right, and center of the coordinates. 
-   * <br/> <br/>
-   * The <b>width</b> and <b>height</b> parameters define a rectangular area 
-   * to display within and may only be used with string data. For text drawn 
+   * <br /><br />
+   * The <b>x2</b> and <b>y2</b> parameters define a rectangular area to 
+   * display within and may only be used with string data. For text drawn 
    * inside a rectangle, the coordinates are interpreted based on the current 
    * <b>rectMode()</b> setting.
-   * <br/> <br/>
-   * Use the <b>textMode()</b> function with the <b>SCREEN</b> parameter to 
-   * display text in 2D at the surface of the window. 
+   * 
    * ( end auto-generated )
+   * 
    * @webref typography:loading_displaying
-   * @param c the alphanumeric symbols to be displayed
+   * @param c the alphanumeric character to be displayed
    * @see PGraphics#textAlign(int, int)
    * @see PGraphics#textMode(int)
    * @see PApplet#loadFont(String)
@@ -10948,6 +11080,7 @@ public class PApplet extends Applet
    * Draw a single character on screen.
    * Extremely slow when used with textMode(SCREEN) and Java 2D,
    * because loadPixels has to be called first and updatePixels last.
+   * 
    * @param x x-coordinate of text
    * @param y y-coordinate of text
    */
@@ -10993,11 +11126,9 @@ public class PApplet extends Applet
    * Method to draw text from an array of chars. This method will usually be
    * more efficient than drawing from a String object, because the String will
    * not be converted to a char array before drawing.
-   * @param chars letters to be displayed
-   * @param start ???
-   * @param stop ???
-   * @param x ???
-   * @param y ???
+   * @param chars the alphanumberic symbols to be displayed
+   * @param start array index to start writing characters
+   * @param stop array index to stop writing characters
    */
   public void text(char[] chars, int start, int stop, float x, float y) {
     if (recorder != null) recorder.text(chars, start, stop, x, y);
@@ -11035,10 +11166,10 @@ public class PApplet extends Applet
    * are honored, and \r (carriage return, Windows and Mac OS) are
    * ignored.
    *
-   * @param x1 x-coordinate of text
-   * @param y1 y-coordinate of text
-   * @param x2 ???
-   * @param y2 ???
+   * @param x1 by default, the x-coordinate of text, see rectMode() for more info
+   * @param y1 by default, the x-coordinate of text, see rectMode() for more info
+   * @param x2 by default, the width of the text box, see rectMode() for more info
+   * @param y2 by default, the height of the text box, see rectMode() for more info
    */
   public void text(String str, float x1, float y1, float x2, float y2) {
     if (recorder != null) recorder.text(str, x1, y1, x2, y2);
@@ -11096,6 +11227,7 @@ public class PApplet extends Applet
    * <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with 
    * the other transformation methods and may be embedded to control the 
    * scope of the transformations.
+   * 
    * ( end auto-generated )
    * @webref transform
    * @see PGraphics#popMatrix()
@@ -11121,6 +11253,7 @@ public class PApplet extends Applet
    * coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used 
    * in conjuction with the other transformation methods and may be embedded 
    * to control the scope of the transformations.
+   * 
    * ( end auto-generated )
    * @webref transform
    * @see PGraphics#pushMatrix()
@@ -11138,14 +11271,15 @@ public class PApplet extends Applet
    * <b>x</b> parameter specifies left/right translation, the <b>y</b> 
    * parameter specifies up/down translation, and the <b>z</b> parameter 
    * specifies translations toward/away from the screen. Using this function 
-   * with the <b>z</b> parameter requires using the P3D or OPENGL parameter 
-   * in combination with size as shown in the above example. Transformations 
+   * with the <b>z</b> parameter requires using P3D as a parameter in 
+   * combination with size as shown in the above example. Transformations 
    * apply to everything that happens after and subsequent calls to the 
    * function accumulates the effect. For example, calling <b>translate(50, 
    * 0)</b> and then <b>translate(20, 0)</b> is the same as <b>translate(70, 
    * 0)</b>. If <b>translate()</b> is called within <b>draw()</b>, the 
    * transformation is reset when the loop begins again. This function can be 
    * further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b>.
+   * 
    * ( end auto-generated )
    * @webref transform
    * @param tx left/right translation
@@ -11191,6 +11325,7 @@ public class PApplet extends Applet
    * Technically, <b>rotate()</b> multiplies the current transformation 
    * matrix by a rotation matrix. This function can be further controlled by 
    * the <b>pushMatrix()</b> and <b>popMatrix()</b>.
+   * 
    * ( end auto-generated )
    * @webref transform
    * @param angle angle of rotation specified in radians
@@ -11221,8 +11356,9 @@ public class PApplet extends Applet
    * calling <b>rotateX(PI/2)</b> and then <b>rotateX(PI/2)</b> is the same 
    * as <b>rotateX(PI)</b>. If <b>rotateX()</b> is called within the 
    * <b>draw()</b>, the transformation is reset when the loop begins again. 
-   * This function requires passing P3D or OPENGL into the size() parameter 
+   * This function requires using P3D as a third parameter to <b>size()</b> 
    * as shown in the example above. 
+   * 
    * ( end auto-generated )
    * @webref transform
    * @param angle angle of rotation specified in radians
@@ -11253,8 +11389,9 @@ public class PApplet extends Applet
    * calling <b>rotateY(PI/2)</b> and then <b>rotateY(PI/2)</b> is the same 
    * as <b>rotateY(PI)</b>. If <b>rotateY()</b> is called within the 
    * <b>draw()</b>, the transformation is reset when the loop begins again. 
-   * This function requires passing P3D or OPENGL into the size() parameter 
-   * as shown in the example above. 
+   * This function requires using P3D as a third parameter to <b>size()</b> 
+   * as shown in the examples above. 
+   * 
    * ( end auto-generated )
    * @webref transform
    * @param angle angle of rotation specified in radians
@@ -11285,8 +11422,9 @@ public class PApplet extends Applet
    * calling <b>rotateZ(PI/2)</b> and then <b>rotateZ(PI/2)</b> is the same 
    * as <b>rotateZ(PI)</b>. If <b>rotateZ()</b> is called within the 
    * <b>draw()</b>, the transformation is reset when the loop begins again. 
-   * This function requires passing P3D or OPENGL into the size() parameter 
-   * as shown in the example above. 
+   * This function requires using P3D as a third parameter to <b>size()</b> 
+   * as shown in the examples above. 
+   * 
    * ( end auto-generated )
    * @webref transform
    * @param angle angle of rotation specified in radians
@@ -11329,9 +11467,10 @@ public class PApplet extends Applet
    * example, calling <b>scale(2.0)</b> and then <b>scale(1.5)</b> is the 
    * same as <b>scale(3.0)</b>. If <b>scale()</b> is called within 
    * <b>draw()</b>, the transformation is reset when the loop begins again. 
-   * Using this fuction with the <b>z</b> parameter requires passing P3D or 
-   * OPENGL into the size() parameter as shown in the example above. This 
-   * function can be further controlled by <b>pushMatrix()</b> and <b>popMatrix()</b>.
+   * Using this fuction with the <b>z</b> parameter requires using P3D as a 
+   * parameter for <b>size()</b> as shown in the example above. This function 
+   * can be further controlled by <b>pushMatrix()</b> and <b>popMatrix()</b>.
+   * 
    * ( end auto-generated )
    * @webref transform
    * @param s percentage to scale the object
@@ -11388,12 +11527,12 @@ public class PApplet extends Applet
    * calls to the function accumulates the effect. For example, calling 
    * <b>shearX(PI/2)</b> and then <b>shearX(PI/2)</b> is the same as 
    * <b>shearX(PI)</b>. If <b>shearX()</b> is called within the 
-   * <b>draw()</b>, the transformation is reset when the loop begins again. 
-   * This function works in P2D or JAVA2D mode as shown in the example above.
+   * <b>draw()</b>, the transformation is reset when the loop begins again.
    * <br/> <br/>
    * Technically, <b>shearX()</b> multiplies the current transformation 
    * matrix by a rotation matrix. This function can be further controlled by 
    * the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
+   * 
    * ( end auto-generated )
    * @webref transform
    * @param angle angle of shear specified in radians
@@ -11422,12 +11561,12 @@ public class PApplet extends Applet
    * calls to the function accumulates the effect. For example, calling 
    * <b>shearY(PI/2)</b> and then <b>shearY(PI/2)</b> is the same as 
    * <b>shearY(PI)</b>. If <b>shearY()</b> is called within the 
-   * <b>draw()</b>, the transformation is reset when the loop begins again. 
-   * This function works in P2D or JAVA2D mode as shown in the example above.
+   * <b>draw()</b>, the transformation is reset when the loop begins again.
    * <br/> <br/>
    * Technically, <b>shearY()</b> multiplies the current transformation 
    * matrix by a rotation matrix. This function can be further controlled by 
    * the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
+   * 
    * ( end auto-generated )
    * @webref transform
    * @param angle angle of shear specified in radians
@@ -11449,6 +11588,7 @@ public class PApplet extends Applet
    * 
    * Replaces the current matrix with the identity matrix. The equivalent 
    * function in OpenGL is glLoadIdentity(). 
+   * 
    * ( end auto-generated )
    * @webref transform
    * @see PGraphics#pushMatrix()
@@ -11469,6 +11609,7 @@ public class PApplet extends Applet
    * parameters. This is very slow because it will try to calculate the 
    * inverse of the transform, so avoid it whenever possible. The equivalent 
    * function in OpenGL is glMultMatrix().
+   * 
    * ( end auto-generated )
    * @webref transform
    * @source ???
@@ -11584,6 +11725,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from printMatrix.xml )
    * 
    * Prints the current matrix to the text window.
+   * 
    * ( end auto-generated )
    * @webref transform
    * @see PGraphics#pushMatrix()
@@ -11616,6 +11758,7 @@ public class PApplet extends Applet
    * affect the camera. <b>beginCamera()</b> should always be used with a 
    * following <b>endCamera()</b> and pairs of <b>beginCamera()</b> and 
    * <b>endCamera()</b> cannot be nested.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:camera
  * @see PGraphics#camera()
@@ -11637,6 +11780,7 @@ public class PApplet extends Applet
    * The <b>beginCamera()</b> and <b>endCamera()</b> functions enable 
    * advanced customization of the camera space. Please see the reference for 
    * <b>beginCamera()</b> for a description of how the functions are used.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:camera
  * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
@@ -11659,6 +11803,7 @@ public class PApplet extends Applet
    * are camera(width/2.0, height/2.0, (height/2.0) / tan(PI*60.0 / 360.0), 
    * width/2.0, height/2.0, 0, 0, 1, 0). This function is similar to 
    * gluLookAt() in OpenGL, but it first clears the current camera settings.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:camera
  * @see PGraphics#endCamera()
@@ -11693,6 +11838,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from printCamera.xml )
    * 
    * Prints the current camera matrix to the text window.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:camera
  * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
@@ -11714,6 +11860,7 @@ public class PApplet extends Applet
    * y values, and near and far are the minimum and maximum z values. If no 
    * parameters are given, the default is used: ortho(0, width, 0, height, 
    * -10, 10).
+   * 
    * ( end auto-generated )
  * @webref lights_camera:camera
  */
@@ -11761,6 +11908,7 @@ public class PApplet extends Applet
    * four parameters allows the programmer to set the area precisely. The 
    * default values are: perspective(PI/3.0, width/height, cameraZ/10.0, 
    * cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
+   * 
    * ( end auto-generated )
  * @webref lights_camera:camera
  */
@@ -11788,6 +11936,7 @@ public class PApplet extends Applet
    * Sets a perspective matrix defined through the parameters. Works like 
    * glFrustum, except it wipes out the current perspective matrix rather 
    * than muliplying itself with it.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:camera
  * @param left left coordinate of the clipping plane
@@ -11812,6 +11961,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from printProjection.xml )
    * 
    * Prints the current projection matrix to the text window.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:camera
  * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
@@ -11827,6 +11977,7 @@ public class PApplet extends Applet
    * 
    * Takes a three-dimensional X, Y, Z position and returns the X value for 
    * where it will appear on a (two-dimensional) screen.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
@@ -11844,6 +11995,7 @@ public class PApplet extends Applet
    * 
    * Takes a three-dimensional X, Y, Z position and returns the Y value for 
    * where it will appear on a (two-dimensional) screen.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
@@ -11877,6 +12029,7 @@ public class PApplet extends Applet
    * 
    * Takes a three-dimensional X, Y, Z position and returns the Z value for 
    * where it will appear on a (two-dimensional) screen.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
@@ -11904,6 +12057,7 @@ public class PApplet extends Applet
    * translate and rotate commands. After popMatrix() is called, those 
    * transformations no longer apply, but the (x, y, z) coordinate returned 
    * by the model functions is used to place another box in the same location.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
@@ -11931,6 +12085,7 @@ public class PApplet extends Applet
    * translate and rotate commands. After popMatrix() is called, those 
    * transformations no longer apply, but the (x, y, z) coordinate returned 
    * by the model functions is used to place another box in the same location.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
@@ -11958,6 +12113,7 @@ public class PApplet extends Applet
    * translate and rotate commands. After popMatrix() is called, those 
    * transformations no longer apply, but the (x, y, z) coordinate returned 
    * by the model functions is used to place another box in the same location.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
@@ -11988,6 +12144,7 @@ public class PApplet extends Applet
    * imageMode(), rectMode(), ellipseMode(), shapeMode(), colorMode(), 
    * textAlign(), textFont(), textMode(), textSize(), textLeading(), 
    * emissive(), specular(), shininess(), ambient() 
+   * 
    * ( end auto-generated )
  * @webref structure
  * @see PGraphics#popStyle()
@@ -12008,6 +12165,7 @@ public class PApplet extends Applet
    * <b>pushStyle()</b>, it builds on the current style information. The 
    * <b>pushStyle()</b> and <b>popStyle()</b> functions can be embedded to 
    * provide more control (see the second example above for a demonstration.)
+   * 
    * ( end auto-generated )
  * @webref structure
  * @see PGraphics#pushStyle()
@@ -12030,21 +12188,15 @@ public class PApplet extends Applet
    * Sets the width of the stroke used for lines, points, and the border 
    * around shapes. All widths are set in units of pixels. 
    * <br/> <br/>
-   * With P2D, P3D, and OPENGL, series of connected lines (such as the stroke 
+   * When drawing with P3D, series of connected lines (such as the stroke 
    * around a polygon, triangle, or ellipse) produce unattractive results 
-   * when strokeWeight is set (<a 
-   * href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>).
-   * <br/> <br/>
-   * When used with P3D, strokeWeight does not interpolate the Z-coordinates 
-   * of the lines, which means that when rotated, these flat lines will 
-   * disappear (<a 
-   * href="http://dev.processing.org/bugs/show_bug.cgi?id=956">Bug 956</a>). 
-   * The OPENGL renderer setting does not share this problem because it 
-   * always draws lines perpendicular to the screen.
-   * <br/> <br/>
-   * When using OPENGL, the minimum and maximum values for strokeWeight() are 
-   * controlled by the graphics card and the operating system's OpenGL 
-   * implementation. For instance, the weight may not go higher than 10. 
+   * when a thick stroke weight is set (<a 
+   * href="http://code.google.com/p/processing/issues/detail?id=123">see bug 
+   * report</a>). With P3D, the minimum and maximum values for 
+   * <b>strokeWeight()</b> are controlled by the graphics card and the 
+   * operating system's OpenGL implementation. For instance, the thickness 
+   * may not go higher than 10 pixels. 
+   * 
    * ( end auto-generated )
  * @webref shape:attributes
  * @param weight the weight (in pixels) of the stroke
@@ -12066,10 +12218,11 @@ public class PApplet extends Applet
    * corresponding parameters MITER, BEVEL, and ROUND. The default joint is 
    * MITER. 
    * <br/> <br/>
-   * This function is not available with the P2D, P3D, or OPENGL renderers 
-   * (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">see bug 
+   * This function is not available with the P3D renderer, (<a 
+   * href="http://code.google.com/p/processing/issues/detail?id=123">see bug 
    * report</a>). More information about the renderers can be found in the 
    * <b>size()</b> reference.
+   * 
    * ( end auto-generated )
  * @webref shape:attributes
  * @param join either MITER, BEVEL, ROUND
@@ -12090,10 +12243,11 @@ public class PApplet extends Applet
    * squared, extended, or rounded and specified with the corresponding 
    * parameters SQUARE, PROJECT, and ROUND. The default cap is ROUND. 
    * <br/> <br/>
-   * This function is not available with the P2D, P3D, or OPENGL renderers 
-   * (<a href="http://dev.processing.org/bugs/show_bug.cgi?id=955">see bug 
+   * This function is not available with the P3D renderer (<a 
+   * href="http://code.google.com/p/processing/issues/detail?id=123">see bug 
    * report</a>). More information about the renderers can be found in the 
    * <b>size()</b> reference.
+   * 
    * ( end auto-generated )
  * @webref shape:attributes
  * @param cap either SQUARE, PROJECT, or ROUND
@@ -12113,6 +12267,7 @@ public class PApplet extends Applet
    * 
    * Disables drawing the stroke (outline). If both <b>noStroke()</b> and 
    * <b>noFill()</b> are called, nothing will be drawn to the screen.
+   * 
    * ( end auto-generated )
    * @webref color:setting
    * @see PGraphics#stroke(float, float, float, float)
@@ -12142,6 +12297,7 @@ public class PApplet extends Applet
    * The value for the parameter "gray" must be less than or equal to the 
    * current maximum value as specified by <b>colorMode()</b>. The default 
    * maximum value is 255.
+   * 
    * ( end auto-generated )
    * @notWebref
    * @param rgb color value in hexadecimal notation
@@ -12212,6 +12368,7 @@ public class PApplet extends Applet
    * 
    * Removes the current fill value for displaying images and reverts to 
    * displaying images with their original hues.
+   * 
    * ( end auto-generated )
    * @webref image:loading_displaying
    * @usage web_application
@@ -12248,6 +12405,7 @@ public class PApplet extends Applet
    * <br/> <br/>
    * The tint() method is also used to control the coloring of textures in 
    * 3D. 
+   * 
    * ( end auto-generated )
    * @webref image:loading_displaying
    * @usage web_application
@@ -12311,6 +12469,7 @@ public class PApplet extends Applet
    * 
    * Disables filling geometry. If both <b>noStroke()</b> and <b>noFill()</b> 
    * are called, nothing will be drawn to the screen.
+   * 
    * ( end auto-generated )
    * @webref color:setting
    * @usage web_application
@@ -12411,6 +12570,7 @@ public class PApplet extends Applet
    * cause all the red light to reflect and half of the green light to 
    * reflect. Used in combination with <b>emissive()</b>, <b>specular()</b>, 
    * and <b>shininess()</b> in setting the material properties of shapes.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:material_properties
  * @usage web_application
@@ -12454,6 +12614,7 @@ public class PApplet extends Applet
    * bouncing in all directions like a diffuse light). Used in combination 
    * with <b>emissive()</b>, <b>ambient()</b>, and <b>shininess()</b> in 
    * setting the material properties of shapes.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:material_properties
  * @usage web_application
@@ -12494,6 +12655,7 @@ public class PApplet extends Applet
    * Sets the amount of gloss in the surface of shapes. Used in combination 
    * with <b>ambient()</b>, <b>specular()</b>, and <b>emissive()</b> in 
    * setting the material properties of shapes.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:material_properties
  * @usage web_application
@@ -12515,6 +12677,7 @@ public class PApplet extends Applet
    * the screen. Used in combination with <b>ambient()</b>, 
    * <b>specular()</b>, and <b>shininess()</b> in setting the material 
    * properties of shapes.
+   * 
    * ( end auto-generated )
  * @webref lights_camera:material_properties
  * @usage web_application
@@ -12559,6 +12722,7 @@ public class PApplet extends Applet
    * remain persistent in a looping program. Placing them in the setup() of a 
    * looping program will cause them to only have an effect the first time 
    * through the loop.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:lights
    * @usage web_application
@@ -12581,6 +12745,7 @@ public class PApplet extends Applet
    * the lights() method. This function can be used to disable lighting so 
    * that 2D geometry (which does not require lighting) can be drawn after a 
    * set of lighted 3D geometry.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:lights
    * @usage web_application
@@ -12603,6 +12768,7 @@ public class PApplet extends Applet
    * them in the <b>setup()</b> of a looping program will cause them to only 
    * have an effect the first time through the loop. The effect of the 
    * parameters is determined by the current color mode.
+   * 
    * ( end auto-generated )
    * @webref lights_camera:lights
    * @usage web_application
@@ -12824,6 +12990,7 @@ public class PApplet extends Applet
    * <br/> <br/>
    * It is not possible to use transparency (alpha) in background colors with 
    * the main drawing surface, however they will work properly with <b>createGraphics()</b>.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * <p>Clear the background with a color that includes an alpha value. This can
@@ -12973,6 +13140,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from alpha.xml )
    * 
    * Extracts the alpha value from a color.
+   * 
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
@@ -13001,6 +13169,7 @@ public class PApplet extends Applet
    * mask. For example, the following two lines of code are equivalent:<br 
    * /><pre>float r1 = red(myColor);<br />float r2 = myColor &gt;&gt; 16 
    * &amp; 0xFF;</pre>
+   * 
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
@@ -13029,6 +13198,7 @@ public class PApplet extends Applet
    * operator with a bit mask. For example, the following two lines of code 
    * are equivalent:<br /><pre>float r1 = green(myColor);<br />float r2 = 
    * myColor &gt;&gt; 8 &amp; 0xFF;</pre>
+   * 
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
@@ -13057,6 +13227,7 @@ public class PApplet extends Applet
    * color components. For example, the following two lines of code are 
    * equivalent:<br /><pre>float r1 = blue(myColor);<br />float r2 = myColor 
    * &amp; 0xFF;</pre>
+   * 
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
@@ -13076,6 +13247,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from hue.xml )
    * 
    * Extracts the hue value from a color.
+   * 
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
@@ -13095,6 +13267,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from saturation.xml )
    * 
    * Extracts the saturation value from a color.
+   * 
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
@@ -13114,6 +13287,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from brightness.xml )
    * 
    * Extracts the brightness value from a color.
+   * 
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
@@ -13136,6 +13310,7 @@ public class PApplet extends Applet
    * The <b>amt</b> parameter is the amount to interpolate between the two 
    * values where 0.0 equal to the first point, 0.1 is very near the first 
    * point, 0.5 is half-way in between, etc. 
+   * 
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
@@ -13379,8 +13554,6 @@ public class PApplet extends Applet
    * "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to 
    * load the display window data into the <b>pixels[]</b> array before 
    * getting the values.
-   * <br /><br />
-   * As of release 0149, this function ignores <b>imageMode()</b>.
    * 
    * ( end auto-generated )
    *
@@ -13439,15 +13612,15 @@ public class PApplet extends Applet
    * Changes the color of any pixel or writes an image directly into the 
    * image. The <b>x</b> and <b>y</b> parameter specify the pixel or the 
    * upper-left corner of the image. The <b>color</b> parameter specifies the 
-   * color value.<br /><br />Setting the color of a single pixel with 
-   * <b>set(x, y)</b> is easy, but not as fast as putting the data directly 
-   * into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" 
-   * using <b>pixels[]</b> is "pixels[y*width+x] = #000000". Processing 
-   * requires calling <b>loadPixels()</b> to load the display window data 
-   * into the <b>pixels[]</b> array before getting the values and calling 
+   * color value.<br />
+   * <br />
+   * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but 
+   * not as fast as putting the data directly into <b>pixels[]</b>. The 
+   * equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is 
+   * "pixels[y*width+x] = #000000". Processing requires calling 
+   * <b>loadPixels()</b> to load the display window data into the 
+   * <b>pixels[]</b> array before getting the values and calling 
    * <b>updatePixels()</b> to update the window.
-   * <br /><br />
-   * As of release 0149, this function ignores <b>imageMode()</b>.
    * 
    * ( end auto-generated )
    * 
@@ -13487,9 +13660,10 @@ public class PApplet extends Applet
    * Masks part of an image from displaying by loading another image and 
    * using it as an alpha channel. This mask image should only contain 
    * grayscale data, but only the blue color channel is used. The mask image 
-   * needs to be the same size as the image to which it is applied.<br /><br 
-   * />In addition to using a mask image, an integer array containing the 
-   * alpha channel data can be specified directly. This method is useful for 
+   * needs to be the same size as the image to which it is applied.<br />
+   * <br />
+   * In addition to using a mask image, an integer array containing the alpha 
+   * channel data can be specified directly. This method is useful for 
    * creating dynamically generated alpha masks. This array must be of the 
    * same length as the target image's pixels array and should contain only 
    * grayscale data of values between 0-255.
@@ -13510,9 +13684,10 @@ public class PApplet extends Applet
    * which will make the image into a "correct" grayscale by
    * performing a proper luminance-based conversion.
    *
+   * @webref pimage:method
    * @usage web_application
    * @brief Masks part of an image with another image as an alpha channel
-   * @param maskArray[] any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
+   * @param maskArray array of integers used as the alpha channel, needs to be the same length as the image's pixel array
    */
   public void mask(int maskArray[]) {
     if (recorder != null) recorder.mask(maskArray);
@@ -13521,7 +13696,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param maskImg any PImage object used as the alpha chanell for "img", needs to be same size as "img"
+   * @param maskImg a PImage object used as the alpha channel for "img", must be same dimensions as "img"
    */
   public void mask(PImage maskImg) {
     if (recorder != null) recorder.mask(maskImg);
@@ -13542,17 +13717,26 @@ public class PApplet extends Applet
    * />THRESHOLD - converts the image to black and white pixels depending if 
    * they are above or below the threshold defined by the level parameter. 
    * The level must be between 0.0 (black) and 1.0(white). If no level is 
-   * specified, 0.5 is used.<br /><br />GRAY - converts any colors in the 
-   * image to grayscale equivalents<br /><br />INVERT - sets each pixel to 
-   * its inverse value<br /><br />POSTERIZE - limits each channel of the 
-   * image to the number of colors specified as the level parameter<br /><br 
-   * />BLUR - executes a Guassian blur with the level parameter specifying 
-   * the extent of the blurring. If no level parameter is used, the blur is 
-   * equivalent to Guassian blur of radius 1.<br /><br />OPAQUE - sets the 
-   * alpha channel to entirely opaque.<br /><br />ERODE - reduces the light 
-   * areas with the amount defined by the level parameter.<br /><br />DILATE 
-   * - increases the light areas with the amount defined by the level parameter
-   *
+   * specified, 0.5 is used.<br />
+   * <br />
+   * GRAY - converts any colors in the image to grayscale equivalents<br />
+   * <br />
+   * INVERT - sets each pixel to its inverse value<br />
+   * <br />
+   * POSTERIZE - limits each channel of the image to the number of colors 
+   * specified as the level parameter<br />
+   * <br />
+   * BLUR - executes a Guassian blur with the level parameter specifying the 
+   * extent of the blurring. If no level parameter is used, the blur is 
+   * equivalent to Guassian blur of radius 1<br />
+   * <br />
+   * OPAQUE - sets the alpha channel to entirely opaque<br />
+   * <br />
+   * ERODE - reduces the light areas with the amount defined by the level 
+   * parameter<br />
+   * <br />
+   * DILATE - increases the light areas with the amount defined by the level parameter
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -13636,6 +13820,7 @@ public class PApplet extends Applet
    * Blends two color values together based on the blending mode given as the 
    * <b>MODE</b> parameter. The possible modes are described in the reference 
    * for the <b>blend()</b> function.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * <UL>
@@ -13768,6 +13953,7 @@ public class PApplet extends Applet
    * display window is used as the source image.<br />
    * <br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
    * ( end auto-generated )
    *
    * @webref image:pixels
