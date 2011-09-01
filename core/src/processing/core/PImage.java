@@ -42,17 +42,16 @@ import javax.imageio.ImageIO;
    * with the <b>loadImage()</b> function. The <b>PImage</b> object contains 
    * fields for the <b>width</b> and <b>height</b> of the image, as well as 
    * an array called <b>pixels[]</b> which contains the values for every 
-   * pixel in the image. A group of methods, described below, allow easy 
-   * access to the image's pixels and alpha channel and simplify the process 
-   * of compositing. 
-   * <br/> <br/>
-   * Before using the <b>pixels[]</b> array, be sure to use the 
+   * pixel in the image. The methods described below allow easy access to the 
+   * image's pixels and alpha channel and simplify the process of compositing.<br/>
+   * <br/> using the <b>pixels[]</b> array, be sure to use the 
    * <b>loadPixels()</b> method on the image to make sure that the pixel data 
-   * is properly loaded.
-   * <br/> <br/>
-   * To create a new image, use the <b>createImage()</b> function (do not use 
-   * <b>new PImage()</b>). 
+   * is properly loaded.<br/>
+   * <br/> create a new image, use the <b>createImage()</b> function, do not 
+   * use the syntax <b>new PImage()</b>. 
+   * 
    * ( end auto-generated )
+   * 
  * @webref image
  * @usage Web &amp; Application
  * @instanceName img any variable of type PImage
@@ -84,6 +83,7 @@ public class PImage implements PConstants, Cloneable {
    * been modified, the <b>updatePixels()</b> function must be run to update 
    * the changes. Without <b>loadPixels()</b>, running the code may (or will 
    * in future releases) result in a NullPointerException.
+   * 
    * ( end auto-generated )
    * @webref image:pixels
    * @usage web_application
@@ -95,6 +95,7 @@ public class PImage implements PConstants, Cloneable {
    * ( begin auto-generated from PImage_width.xml )
    * 
    * The width of the image in units of pixels.
+   * 
    * ( end auto-generated )
    * @webref pimage:field
    * @usage web_application
@@ -105,6 +106,7 @@ public class PImage implements PConstants, Cloneable {
    * ( begin auto-generated from PImage_height.xml )
    * 
    * The height of the image in units of pixels.
+   * 
    * ( end auto-generated )
    * @webref pimage:field
    * @usage web_application
@@ -492,6 +494,7 @@ public class PImage implements PConstants, Cloneable {
    * <br/> <br/>
    * Currently, none of the renderers use the additional parameters to 
    * <b>updatePixels()</b>, however this may be implemented in the future. 
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Mark the pixels in this region as needing an update.
@@ -571,14 +574,15 @@ public class PImage implements PConstants, Cloneable {
    * Resize the image to a new width and height. To make the image scale 
    * proportionally, use 0 as the value for the <b>wide</b> or <b>high</b> 
    * parameter. For instance, to make the width of an image 150 pixels, and 
-   * change the height using the same proportion, use resize(150, 0).
-   * <br /> <br />
+   * change the height using the same proportion, use resize(150, 0).<br />
+   * <br />
    * Even though a PGraphics is technically a PImage, it is not possible to 
    * rescale the image data found in a PGraphics. (It's simply not possible 
    * to do this consistently across renderers: technically infeasible with 
-   * OpenGL, or what would it even do with PDF?) If you want to resize 
-   * PGraphics content, first get a copy of its image data using the get() 
-   * method, and call resize() on the PImage that is returned.
+   * P3D, or what would it even do with PDF?) If you want to resize PGraphics 
+   * content, first get a copy of its image data using the <b>get()</b> 
+   * method, and call <b>resize()</b> on the PImage that is returned.
+   * 
    * ( end auto-generated )
    * @webref pimage:method
    * @brief Changes the size of an image to a new width and height
@@ -639,8 +643,6 @@ public class PImage implements PConstants, Cloneable {
    * "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to 
    * load the display window data into the <b>pixels[]</b> array before 
    * getting the values.
-   * <br /><br />
-   * As of release 0149, this function ignores <b>imageMode()</b>.
    * 
    * ( end auto-generated )
    *
@@ -757,15 +759,15 @@ public class PImage implements PConstants, Cloneable {
    * Changes the color of any pixel or writes an image directly into the 
    * image. The <b>x</b> and <b>y</b> parameter specify the pixel or the 
    * upper-left corner of the image. The <b>color</b> parameter specifies the 
-   * color value.<br /><br />Setting the color of a single pixel with 
-   * <b>set(x, y)</b> is easy, but not as fast as putting the data directly 
-   * into <b>pixels[]</b>. The equivalent statement to "set(x, y, #000000)" 
-   * using <b>pixels[]</b> is "pixels[y*width+x] = #000000". Processing 
-   * requires calling <b>loadPixels()</b> to load the display window data 
-   * into the <b>pixels[]</b> array before getting the values and calling 
+   * color value.<br />
+   * <br />
+   * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but 
+   * not as fast as putting the data directly into <b>pixels[]</b>. The 
+   * equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is 
+   * "pixels[y*width+x] = #000000". Processing requires calling 
+   * <b>loadPixels()</b> to load the display window data into the 
+   * <b>pixels[]</b> array before getting the values and calling 
    * <b>updatePixels()</b> to update the window.
-   * <br /><br />
-   * As of release 0149, this function ignores <b>imageMode()</b>.
    * 
    * ( end auto-generated )
    * 
@@ -858,9 +860,10 @@ public class PImage implements PConstants, Cloneable {
    * Masks part of an image from displaying by loading another image and 
    * using it as an alpha channel. This mask image should only contain 
    * grayscale data, but only the blue color channel is used. The mask image 
-   * needs to be the same size as the image to which it is applied.<br /><br 
-   * />In addition to using a mask image, an integer array containing the 
-   * alpha channel data can be specified directly. This method is useful for 
+   * needs to be the same size as the image to which it is applied.<br />
+   * <br />
+   * In addition to using a mask image, an integer array containing the alpha 
+   * channel data can be specified directly. This method is useful for 
    * creating dynamically generated alpha masks. This array must be of the 
    * same length as the target image's pixels array and should contain only 
    * grayscale data of values between 0-255.
@@ -881,9 +884,10 @@ public class PImage implements PConstants, Cloneable {
    * which will make the image into a "correct" grayscale by
    * performing a proper luminance-based conversion.
    *
+   * @webref pimage:method
    * @usage web_application
    * @brief Masks part of an image with another image as an alpha channel
-   * @param maskArray[] any arry of Integer numbers used as the alpha channel, needs to be the same length as the image's pixel array
+   * @param maskArray array of integers used as the alpha channel, needs to be the same length as the image's pixel array
    */
   public void mask(int maskArray[]) {
     loadPixels();
@@ -901,7 +905,7 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * @param maskImg any PImage object used as the alpha chanell for "img", needs to be same size as "img"
+   * @param maskImg a PImage object used as the alpha channel for "img", must be same dimensions as "img"
    */
   public void mask(PImage maskImg) {
     maskImg.loadPixels();
@@ -991,17 +995,26 @@ public class PImage implements PConstants, Cloneable {
    * />THRESHOLD - converts the image to black and white pixels depending if 
    * they are above or below the threshold defined by the level parameter. 
    * The level must be between 0.0 (black) and 1.0(white). If no level is 
-   * specified, 0.5 is used.<br /><br />GRAY - converts any colors in the 
-   * image to grayscale equivalents<br /><br />INVERT - sets each pixel to 
-   * its inverse value<br /><br />POSTERIZE - limits each channel of the 
-   * image to the number of colors specified as the level parameter<br /><br 
-   * />BLUR - executes a Guassian blur with the level parameter specifying 
-   * the extent of the blurring. If no level parameter is used, the blur is 
-   * equivalent to Guassian blur of radius 1.<br /><br />OPAQUE - sets the 
-   * alpha channel to entirely opaque.<br /><br />ERODE - reduces the light 
-   * areas with the amount defined by the level parameter.<br /><br />DILATE 
-   * - increases the light areas with the amount defined by the level parameter
-   *
+   * specified, 0.5 is used.<br />
+   * <br />
+   * GRAY - converts any colors in the image to grayscale equivalents<br />
+   * <br />
+   * INVERT - sets each pixel to its inverse value<br />
+   * <br />
+   * POSTERIZE - limits each channel of the image to the number of colors 
+   * specified as the level parameter<br />
+   * <br />
+   * BLUR - executes a Guassian blur with the level parameter specifying the 
+   * extent of the blurring. If no level parameter is used, the blur is 
+   * equivalent to Guassian blur of radius 1<br />
+   * <br />
+   * OPAQUE - sets the alpha channel to entirely opaque<br />
+   * <br />
+   * ERODE - reduces the light areas with the amount defined by the level 
+   * parameter<br />
+   * <br />
+   * DILATE - increases the light areas with the amount defined by the level parameter
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -1553,6 +1566,7 @@ public class PImage implements PConstants, Cloneable {
    * Blends two color values together based on the blending mode given as the 
    * <b>MODE</b> parameter. The possible modes are described in the reference 
    * for the <b>blend()</b> function.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * <UL>
@@ -1706,6 +1720,7 @@ public class PImage implements PConstants, Cloneable {
    * display window is used as the source image.<br />
    * <br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
+   * 
    * ( end auto-generated )
    *
    * @webref image:pixels
@@ -2999,6 +3014,7 @@ public class PImage implements PConstants, Cloneable {
    * <b>createImage()</b> function so it is aware of the location of the 
    * program and can therefore save the file to the right place. See the 
    * <b>createImage()</b> reference for more information.
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * Save this image to disk.

@@ -170,6 +170,7 @@ public interface PConstants {
    * is the ratio of the circumference of a circle to its diameter. It is 
    * useful in combination with the trigonometric functions <b>sin()</b> and 
    * <b>cos()</b>. 
+   * 
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#HALF_PI
@@ -185,6 +186,7 @@ public interface PConstants {
    * 1.57079632679489661923. It is half the ratio of the circumference of a 
    * circle to its diameter. It is useful in combination with the 
    * trigonometric functions <b>sin()</b> and <b>cos()</b>. 
+   * 
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#PI
@@ -200,6 +202,7 @@ public interface PConstants {
    * one quarter the ratio of the circumference of a circle to its diameter. 
    * It is useful in combination with the trigonometric functions 
    * <b>sin()</b> and <b>cos()</b>. 
+   * 
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#PI
@@ -214,6 +217,7 @@ public interface PConstants {
    * It is twice the ratio of the circumference of a circle to its diameter. 
    * It is useful in combination with the trigonometric functions 
    * <b>sin()</b> and <b>cos()</b>. 
+   * 
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#PI
