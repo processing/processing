@@ -40,6 +40,7 @@ import processing.core.PApplet;
    * The <b>loadShape()</b> method supports SVG files created with Inkscape 
    * and Adobe Illustrator. It is not a full SVG implementation, but offers 
    * some straightforward support for handling vector data.
+   * 
    * ( end auto-generated )
  * <h3>Advanced</h3>
  *
@@ -108,6 +109,7 @@ public class PShape implements PConstants {
    * ( begin auto-generated from PShape_width.xml )
    * 
    * The width of the PShape document.
+   * 
    * ( end auto-generated )
    * @webref pshape:field
    * @usage web_application
@@ -118,6 +120,7 @@ public class PShape implements PConstants {
    * ( begin auto-generated from PShape_height.xml )
    * 
    * The height of the PShape document.
+   * 
    * ( end auto-generated )
    * @webref pshape:field
    * @usage web_application
@@ -208,7 +211,7 @@ public class PShape implements PConstants {
   }
 
 /**
- * @param family ???
+ * @nowebref
  */
   public PShape(int family) {
     this.family = family;
@@ -233,6 +236,7 @@ public class PShape implements PConstants {
    * The visibility of a shape is usually controlled by whatever program 
    * created the SVG file. For instance, this parameter is controlled by 
    * showing or hiding the shape in the layers palette in Adobe Illustrator.
+   * 
    * ( end auto-generated )
    * @webref pshape:method
    * @usage web_application
@@ -251,6 +255,7 @@ public class PShape implements PConstants {
    * The visibility of a shape is usually controlled by whatever program 
    * created the SVG file. For instance, this parameter is controlled by 
    * showing or hiding the shape in the layers palette in Adobe Illustrator.
+   * 
    * ( end auto-generated )
    * @webref pshape:mathod
    * @usage web_application
@@ -268,6 +273,7 @@ public class PShape implements PConstants {
    * Disables the shape's style data and uses Processing's current styles. 
    * Styles include attributes such as colors, stroke weight, and stroke 
    * joints. 
+   * 
    * ( end auto-generated )
    *  <h3>Advanced</h3>
    * Overrides this shape's style information and uses PGraphics styles and
@@ -292,6 +298,7 @@ public class PShape implements PConstants {
    * Enables the shape's style data and ignores Processing's current styles. 
    * Styles include attributes such as colors, stroke weight, and stroke 
    * joints. 
+   * 
    * ( end auto-generated )
    * @webref pshape:method
    * @usage web_application
@@ -746,6 +753,7 @@ public class PShape implements PConstants {
    * Extracts a child shape from a parent shape. Specify the name of the 
    * shape with the <b>target</b> parameter. The shape is returned as a 
    * <b>PShape</b> object, or <b>null</b> is returned if there is an error.
+   * 
    * ( end auto-generated )
    * @webref pshape:method
    * @usage web_application
@@ -1022,8 +1030,9 @@ public class PShape implements PConstants {
    * transformation is applied directly to the shape, it's not refreshed each 
    * time <b>draw()</b> is run. 
    * <br /><br />
-   * Using this method with the <b>z</b> parameter requires using the P3D or 
-   * OPENGL parameter in combination with size. 
+   * Using this method with the <b>z</b> parameter requires using the P3D 
+   * parameter in combination with size. 
+   * 
    * ( end auto-generated )
    * @webref pshape:method
    * @usage web_application
@@ -1058,8 +1067,9 @@ public class PShape implements PConstants {
    * same as <b>rotateX(PI)</b>. This transformation is applied directly to 
    * the shape, it's not refreshed each time <b>draw()</b> is run.  
    * <br /><br />
-   * This method requires a 3D renderer. You need to pass P3D or OPENGL as a 
-   * third parameter into the <b>size()</b> method as shown in the example above.
+   * This method requires a 3D renderer. You need to use P3D as a third 
+   * parameter for the <b>size()</b> function as shown in the example above.
+   * 
    * ( end auto-generated )
    * @webref pshape:method
    * @usage web_application
@@ -1084,8 +1094,9 @@ public class PShape implements PConstants {
    * same as <b>rotateY(PI)</b>. This transformation is applied directly to 
    * the shape, it's not refreshed each time <b>draw()</b> is run. 
    * <br /><br />
-   * This method requires a 3D renderer. You need to pass P3D or OPENGL as a 
-   * third parameter into the <b>size()</b> method as shown in the example above.
+   * This method requires a 3D renderer. You need to use P3D as a third 
+   * parameter for the <b>size()</b> function as shown in the example above.
+   * 
    * ( end auto-generated )
    * @webref pshape:method
    * @usage web_application
@@ -1111,8 +1122,9 @@ public class PShape implements PConstants {
    * same as <b>rotateZ(PI)</b>. This transformation is applied directly to 
    * the shape, it's not refreshed each time <b>draw()</b> is run. 
    * <br /><br />
-   * This method requires a 3D renderer. You need to pass P3D or OPENGL as a 
-   * third parameter into the <b>size()</b> method as shown in the example above.
+   * This method requires a 3D renderer. You need to use P3D as a third 
+   * parameter for the <b>size()</b> function as shown in the example above.
+   * 
    * ( end auto-generated )
    * @webref pshape:method
    * @usage web_application
@@ -1137,6 +1149,7 @@ public class PShape implements PConstants {
    * <b>rotate(HALF_PI)</b> and then <b>rotate(HALF_PI)</b> is the same as 
    * <b>rotate(PI)</b>. This transformation is applied directly to the shape, 
    * it's not refreshed each time <b>draw()</b> is run. 
+   * 
    * ( end auto-generated )
    * @webref pshape:method
    * @usage web_application
@@ -1149,9 +1162,7 @@ public class PShape implements PConstants {
   }
 
 /**
- * @param v0 ???
- * @param v1 ???
- * @param v2 ???
+ * @nowebref
  */
   public void rotate(float angle, float v0, float v1, float v2) {
     checkMatrix(3);
@@ -1173,8 +1184,9 @@ public class PShape implements PConstants {
    * <b>scale(3.0)</b>. This transformation is applied directly to the shape, 
    * it's not refreshed each time <b>draw()</b> is run. 
    * <br /><br />
-   * Using this fuction with the <b>z</b> parameter requires passing P3D or 
-   * OPENGL into the size() parameter.
+   * Using this method with the <b>z</b> parameter requires using the P3D 
+   * parameter in combination with size. 
+   * 
    * ( end auto-generated )
    * @webref pshape:method
    * @usage web_application
@@ -1210,8 +1222,10 @@ public class PShape implements PConstants {
    * 
    * Replaces the current matrix of a shape with the identity matrix. The 
    * equivalent function in OpenGL is glLoadIdentity(). 
+   * 
    * ( end auto-generated )
  * @webref pshape:method
+ * @brief Replaces the current matrix of a shape with the identity matrix
  * @usage web_application
  */
   public void resetMatrix() {
