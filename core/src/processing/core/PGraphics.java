@@ -37,8 +37,8 @@ import java.util.HashMap;
    * constructed with the <b>createGraphics()</b> function. The 
    * <b>beginDraw()</b> and <b>endDraw()</b> methods (see above example) are 
    * necessary to set up the buffer and to finalize it. The fields and 
-   * methods for this class are extensive; for a complete list visit the 
-   * developer's reference: http://dev.processing.org/reference/core/
+   * methods for this class are extensive. For a complete list, visit the <a 
+   * href="http://processing.googlecode.com/svn/trunk/processing/build/javadoc/core/">developer's reference.</a>
    * 
    * ( end auto-generated )
   *    
@@ -2494,8 +2494,8 @@ public class PGraphics extends PImage implements PConstants {
    * ( begin auto-generated from bezierTangent.xml )
    * 
    * Calculates the tangent of a point on a Bezier curve. There is a good 
-   * definition of "tangent" at Wikipedia: <a 
-   * href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * definition of <a href="http://en.wikipedia.org/wiki/Tangent" 
+   * target="new"><em>tangent</em> on Wikipedia</a>.
    * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
@@ -2683,9 +2683,9 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from curveTangent.xml )
    * 
-   * Calculates the tangent of a point on a curve. There is a good definition 
-   * of "tangent" at Wikipedia: <a 
-   * href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * Calculates the tangent of a point on a curve. There's a good definition 
+   * of <em><a href="http://en.wikipedia.org/wiki/Tangent" 
+   * target="new">tangent</em> on Wikipedia</a>.
    * 
    * ( end auto-generated )
    * 
@@ -4748,7 +4748,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * ( begin auto-generated from printMatrix.xml )
    * 
-   * Prints the current matrix to the text window.
+   * Prints the current matrix to the Console (the text window at the bottom 
+   * of Processing).
    * 
    * ( end auto-generated )
    * @webref transform
@@ -4856,7 +4857,8 @@ public class PGraphics extends PImage implements PConstants {
 /**
    * ( begin auto-generated from printCamera.xml )
    * 
-   * Prints the current camera matrix to the text window.
+   * Prints the current camera matrix to the Console (the text window at the 
+   * bottom of Processing).
    * 
    * ( end auto-generated )
  * @webref lights_camera:camera
@@ -4971,7 +4973,8 @@ public class PGraphics extends PImage implements PConstants {
 /**
    * ( begin auto-generated from printProjection.xml )
    * 
-   * Prints the current projection matrix to the text window.
+   * Prints the current projection matrix to the Console (the text window at 
+   * the bottom of Processing).
    * 
    * ( end auto-generated )
  * @webref lights_camera:camera
@@ -5356,8 +5359,8 @@ public class PGraphics extends PImage implements PConstants {
    * When drawing with P3D, series of connected lines (such as the stroke 
    * around a polygon, triangle, or ellipse) produce unattractive results 
    * when a thick stroke weight is set (<a 
-   * href="http://code.google.com/p/processing/issues/detail?id=123">see bug 
-   * report</a>). With P3D, the minimum and maximum values for 
+   * href="http://code.google.com/p/processing/issues/detail?id=123">see 
+   * Issue 123</a>). With P3D, the minimum and maximum values for 
    * <b>strokeWeight()</b> are controlled by the graphics card and the 
    * operating system's OpenGL implementation. For instance, the thickness 
    * may not go higher than 10 pixels. 
@@ -5382,8 +5385,8 @@ public class PGraphics extends PImage implements PConstants {
    * MITER. 
    * <br/> <br/>
    * This function is not available with the P3D renderer, (<a 
-   * href="http://code.google.com/p/processing/issues/detail?id=123">see bug 
-   * report</a>). More information about the renderers can be found in the 
+   * href="http://code.google.com/p/processing/issues/detail?id=123">see 
+   * Issue 123</a>). More information about the renderers can be found in the 
    * <b>size()</b> reference.
    * 
    * ( end auto-generated )
@@ -5405,8 +5408,8 @@ public class PGraphics extends PImage implements PConstants {
    * parameters SQUARE, PROJECT, and ROUND. The default cap is ROUND. 
    * <br/> <br/>
    * This function is not available with the P3D renderer (<a 
-   * href="http://code.google.com/p/processing/issues/detail?id=123">see bug 
-   * report</a>). More information about the renderers can be found in the 
+   * href="http://code.google.com/p/processing/issues/detail?id=123">see 
+   * Issue 123</a>). More information about the renderers can be found in the 
    * <b>size()</b> reference.
    * 
    * ( end auto-generated )
