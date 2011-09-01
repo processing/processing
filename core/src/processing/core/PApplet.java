@@ -442,7 +442,7 @@ public class PApplet extends Applet
    * You may find that <b>pmouseX</b> and <b>pmouseY</b> have different 
    * values inside <b>draw()</b> and inside events like <b>mousePressed()</b> 
    * and <b>mouseMoved()</b>. This is because they're used for different 
-   * roles, so don't mix them! Inside <b>draw()</b>, <b>pmouseX</b> and 
+   * roles, so don't mix them. Inside <b>draw()</b>, <b>pmouseX</b> and 
    * <b>pmouseY</b> update only once per frame (once per trip through your 
    * <b>draw()</b>). But, inside mouse events, they update each time the 
    * event is called. If they weren't separated, then the mouse would be read 
@@ -469,7 +469,7 @@ public class PApplet extends Applet
    * The system variable <b>pmouseY</b> always contains the vertical position 
    * of the mouse in the frame previous to the current frame. More detailed 
    * information about how <b>pmouseY</b> is updated inside of <b>draw()</b> 
-   * and mouse events is explained in the reference for <a href="http://processing.org/reference/pmouseX.html"><b>pmouseX</b></a>.
+   * and mouse events is explained in the reference for <b>pmouseX</b>.
    * 
    * ( end auto-generated )
    * @webref input:mouse
@@ -598,7 +598,7 @@ public class PApplet extends Applet
    * For users familiar with Java, the values for UP and DOWN are simply 
    * shorter versions of Java's KeyEvent.VK_UP and KeyEvent.VK_DOWN. Other 
    * keyCode values can be found in the Java <a 
-   * href="http://java.sun.com/j2se/1.4.2/docs/api/java/awt/event/KeyEvent.html">KeyEvent</a> reference.
+   * href="http://download.oracle.com/javase/6/docs/api/java/awt/event/KeyEvent.html">KeyEvent</a> reference.
    * 
    * ( end auto-generated )
    *
@@ -1283,8 +1283,8 @@ public class PApplet extends Applet
    * <br />
    * The P3D renderer doesn't support strokeCap() or strokeJoin(), which can 
    * lead to ugly results when using strokeWeight(). (<a 
-   * href="http://dev.processing.org/bugs/show_bug.cgi?id=955">Bug 955</a>) 
-   * <br />
+   * href="http://code.google.com/p/processing/issues/detail?id=123">Issue 
+   * 123</a>) <br />
    * <br />
    * The maximum width and height is limited by your operating system, and is 
    * usually the width and height of your actual screen. On some machines it 
@@ -1378,21 +1378,20 @@ public class PApplet extends Applet
    * P3D. Use this class if you need to draw into an off-screen graphics 
    * buffer. The PDF renderer requires the filename parameter. The DXF 
    * renderer should not be used with <b>createGraphics()</b>, it's only 
-   * built for use with <b>beginRaw()</b> and <b>endRaw()</b>.
-   * <br /> <br />
+   * built for use with <b>beginRaw()</b> and <b>endRaw()</b>.<br /> 
+   * <br />
    * It's important to call any drawing functions between <b>beginDraw()</b> 
    * and <b>endDraw()</b> statements. This is also true for any functions 
-   * that affect drawing, such as <b>smooth()</b> or <b>colorMode()</b>.
-   * <br/> <br/>
-   * Unlike the main drawing surface which is completely opaque, surfaces 
+   * that affect drawing, such as <b>smooth()</b> or <b>colorMode()</b>.<br/> 
+   * <br/> the main drawing surface which is completely opaque, surfaces 
    * created with <b>createGraphics()</b> can have transparency. This makes 
    * it possible to draw into a graphics and maintain the alpha channel. By 
    * using <b>save()</b> to write a PNG or TGA file, the transparency of the 
    * graphics object will be honored. Note that transparency levels are 
    * binary: pixels are either complete opaque or transparent. For the time 
-   * being (as of release 1.2.1), this means that text characters will be 
-   * opaque blocks. This will be fixed in a future release (<A 
-   * HREF="http://code.google.com/p/processing/issues/detail?id=80">Issue 80</A>).
+   * being, this means that text characters will be opaque blocks. This will 
+   * be fixed in a future release (<a 
+   * href="http://code.google.com/p/processing/issues/detail?id=80">Issue 80</a>).
    * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
@@ -3211,16 +3210,16 @@ public class PApplet extends Applet
    * sequences can be loaded into programs such as Apple's QuickTime software 
    * and made into movies. These files are saved to the sketch's folder, 
    * which may be opened by selecting "Show sketch folder" from the "Sketch" 
-   * menu. 
-   * <br/> <br/>
+   * menu.<br />
+   * <br />
    * It is not possible to use saveXxxxx() methods inside a web browser 
-   * unless the sketch is <A 
-   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. 
-   * To save a file back to a server, see the <A 
-   * HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to 
-   * web</A> example.
-   * <br/> <br/>
-   * <br/> images saved from the main drawing window will be opaque. To save 
+   * unless the sketch is <a 
+   * href="http://wiki.processing.org/w/Sign_an_Applet">signed applet</A>. To 
+   * save a file back to a server, see the <a 
+   * href="http://wiki.processing.org/w/Saving_files_to_a_web-server">save to 
+   * web</A> code snippet on the Processing Wiki.<br/>
+   * <br/ >
+   * All images saved from the main drawing window will be opaque. To save 
    * images without a background, use <b>createGraphics()</b>.
    * 
    * ( end auto-generated )
@@ -4560,26 +4559,23 @@ public class PApplet extends Applet
    * be loaded. To load correctly, images must be located in the data 
    * directory of the current sketch. In most cases, load all images in 
    * <b>setup()</b> to preload them at the start of the program. Loading 
-   * images inside <b>draw()</b> will reduce the speed of a program. 
-   * <br/> <br/>
-   * The <b>filename</b> parameter can also be a URL to a file found online. 
-   * For security reasons, a Processing sketch found online can only download 
-   * files from the same server from which it came. Getting around this 
-   * restriction requires a <A 
-   * HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
-   * <br/> <br/>
-   * The <b>extension</b> parameter is used to determine the image type in 
+   * images inside <b>draw()</b> will reduce the speed of a program.<br/> 
+   * <br/> <b>filename</b> parameter can also be a URL to a file found 
+   * online. For security reasons, a Processing sketch found online can only 
+   * download files from the same server from which it came. Getting around 
+   * this restriction requires a <a 
+   * href="http://wiki.processing.org/w/Sign_an_Applet">signed 
+   * applet</a>.<br/> 
+   * <br/> <b>extension</b> parameter is used to determine the image type in 
    * cases where the image filename does not end with a proper extension. 
    * Specify the extension as the second parameter to <b>loadImage()</b>, as 
-   * shown in the third example on this page.
-   * <br/> <br/>
-   * If an image is not loaded successfully, the <b>null</b> value is 
+   * shown in the third example on this page.<br/> 
+   * <br/> an image is not loaded successfully, the <b>null</b> value is 
    * returned and an error message will be printed to the console. The error 
    * message does not halt the program, however the null value may cause a 
    * NullPointerException if your code does not check whether the value 
-   * returned from <b>loadImage()</b> is null.
-   * <br/> <br/>
-   * Depending on the type of error, a <b>PImage</b> object may still be 
+   * returned from <b>loadImage()</b> is null.<br/> 
+   * <br/> on the type of error, a <b>PImage</b> object may still be 
    * returned, but the width and height of the image will be set to -1. This 
    * happens if bad image data is returned or cannot be decoded properly. 
    * Sometimes this happens with image URLs that produce a 403 error or that 
@@ -5063,17 +5059,16 @@ public class PApplet extends Applet
    * only SVG files may be loaded. To load correctly, the file must be 
    * located in the data directory of the current sketch. In most cases, 
    * <b>loadShape()</b> should be used inside <b>setup()</b> because loading 
-   * shapes inside <b>draw()</b> will reduce the speed of a sketch. 
-   * <br/> <br/>
-   * The <b>filename</b> parameter can also be a URL to a file found online. 
-   * For security reasons, a Processing sketch found online can only download 
-   * files from the same server from which it came. Getting around this 
-   * restriction requires a <A 
-   * HREF="http://processing.org/hacks/doku.php?id=hacks:signapplet">signed applet</A>.
-   * <br/> <br/>
-   * If a shape is not loaded successfully, the <b>null</b> value is returned 
-   * and an error message will be printed to the console. The error message 
-   * does not halt the program, however the null value may cause a 
+   * shapes inside <b>draw()</b> will reduce the speed of a sketch.<br/> 
+   * <br/> <b>filename</b> parameter can also be a URL to a file found 
+   * online. For security reasons, a Processing sketch found online can only 
+   * download files from the same server from which it came. Getting around 
+   * this restriction requires a <a 
+   * href="http://wiki.processing.org/w/Sign_an_Applet">signed 
+   * applet</a>.<br/> 
+   * <br/> a shape is not loaded successfully, the <b>null</b> value is 
+   * returned and an error message will be printed to the console. The error 
+   * message does not halt the program, however the null value may cause a 
    * NullPointerException if your code does not check whether the value 
    * returned from <b>loadShape()</b> is null.
    * 
@@ -5698,28 +5693,28 @@ public class PApplet extends Applet
    * The method is useful if you want to use the facilities provided by 
    * PApplet to easily open files from the data folder or from a URL, but 
    * want an InputStream object so that you can use other Java methods to 
-   * take more control of how the stream is read.
-   * <br /><br />
-   * If the requested item doesn't exist, null is returned. 
-   * <br /><br />
-   * In earlier releases, this method was called <b>openStream()</b>.
-   * <br /><br />
-   * If not online, this will also check to see if the user is asking for a 
-   * file whose name isn't properly capitalized. If capitalization is 
-   * different an error will be printed to the console. This helps prevent 
-   * issues that appear when a sketch is exported to the web, where case 
-   * sensitivity matters, as opposed to running from inside the Processing 
-   * Development Environment on Windows or Mac OS, where case sensitivity is 
-   * preserved but ignored.
-   * <br /><br />
+   * take more control of how the stream is read.<br />
+   * <br />
    * The filename passed in can be:<br />
-   * - A URL, for instance openStream("http://processing.org/");<br />
-   * - A file in the sketch's data folder<br />
-   * - The full path to a file to be opened locally (when running as an application)
-   * <br /><br />
+   * - A URL, for instance <b>openStream("http://processing.org/")</b><br />
+   * - A file in the sketch's <b>data</b> folder<br />
+   * - The full path to a file to be opened locally (when running as an 
+   * application)<br />
+   * <br />
+   * If the requested item doesn't exist, null is returned. If not online, 
+   * this will also check to see if the user is asking for a file whose name 
+   * isn't properly capitalized. If capitalization is different, an error 
+   * will be printed to the console. This helps prevent issues that appear 
+   * when a sketch is exported to the web, where case sensitivity matters, as 
+   * opposed to running from inside the Processing Development Environment on 
+   * Windows or Mac OS, where case sensitivity is preserved but ignored.<br />
+   * <br />
    * If the file ends with <b>.gz</b>, the stream will automatically be gzip 
    * decompressed. If you don't want the automatic decompression, use the 
    * related function <b>createInputRaw()</b>.
+   * <br />
+   * In earlier releases, this function was called <b>openStream()</b>.<br />
+   * <br />
    * 
    * ( end auto-generated )
    *
@@ -5968,13 +5963,14 @@ public class PApplet extends Applet
    * ( begin auto-generated from loadBytes.xml )
    * 
    * Reads the contents of a file or url and places it in a byte array. If a 
-   * file is specified, it must be located in the sketch's "data" directory/folder.
-   * <br/> <br/>
+   * file is specified, it must be located in the sketch's "data" 
+   * directory/folder.<br />
+   * <br />
    * The filename parameter can also be a URL to a file found online. For 
    * security reasons, a Processing sketch found online can only download 
    * files from the same server from which it came. Getting around this 
-   * restriction requires a <A 
-   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</A>.
+   * restriction requires a <a 
+   * href="http://wiki.processing.org/w/Sign_an_Applet">signed applet</a>.
    * 
    * ( end auto-generated )
    * @webref input:files
@@ -6034,14 +6030,14 @@ public class PApplet extends Applet
    * 
    * Reads the contents of a file or url and creates a String array of its 
    * individual lines. If a file is specified, it must be located in the 
-   * sketch's "data" directory/folder.
-   * <br/> <br/>
+   * sketch's "data" directory/folder.<br /> 
+   * <br />
    * The filename parameter can also be a URL to a file found online. For 
    * security reasons, a Processing sketch found online can only download 
    * files from the same server from which it came. Getting around this 
-   * restriction requires a <A 
-   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed applet</A>.
-   * <br/> <br/>
+   * restriction requires a <a 
+   * href="http://wiki.processing.org/w/Sign_an_Applet">signed applet</a>.
+   * <br />
    * If the file is not available or an error occurs, <b>null</b> will be 
    * returned and an error message will be printed to the console. The error 
    * message does not halt the program, however the null value may cause a 
@@ -6271,15 +6267,14 @@ public class PApplet extends Applet
    * Opposite of <b>loadBytes()</b>, will write an entire array of bytes to a 
    * file. The data is saved in binary format. This file is saved to the 
    * sketch's folder, which is opened by selecting "Show sketch folder" from 
-   * the "Sketch" menu.
-   * <br/> <br/>
-   * <br/> <br/>
+   * the "Sketch" menu.<br />
+   * <br />
    * It is not possible to use saveXxxxx() methods inside a web browser 
-   * unless the sketch is <A 
-   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. 
-   * To save a file back to a server, see the <A 
-   * HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to 
-   * web</A> example.
+   * unless the sketch is <a 
+   * href="http://wiki.processing.org/w/Sign_an_Applet">signed applet</A>. To 
+   * save a file back to a server, see the <a 
+   * href="http://wiki.processing.org/w/Saving_files_to_a_web-server">save to 
+   * web</A> code snippet on the Processing Wiki.
    * 
    * ( end auto-generated )
    * @webref output:files
@@ -6358,16 +6353,16 @@ public class PApplet extends Applet
    * 
    * Writes an array of strings to a file, one line per string. This file is 
    * saved to the sketch's folder, which is opened by selecting "Show sketch 
-   * folder" from the "Sketch" menu.
-   * <br/> <br/>
+   * folder" from the "Sketch" menu.<br />
+   * <br />
    * It is not possible to use saveXxxxx() methods inside a web browser 
-   * unless the sketch is <A 
-   * HREF="http://java.sun.com/developer/onlineTraining/Programming/JDCBook/signed.html">signed</A>. 
-   * To save a file back to a server, see the <A 
-   * HREF="http://processinghacks.com/hacks/savetoweb?s=http+post">save to 
-   * web</A> example.
-   * <br/> <br/>
-   * Starting with Processing release 0134, all files loaded and saved by the 
+   * unless the sketch is <a 
+   * href="http://wiki.processing.org/w/Sign_an_Applet">signed applet</A>. To 
+   * save a file back to a server, see the <a 
+   * href="http://wiki.processing.org/w/Saving_files_to_a_web-server">save to 
+   * web</A> code snippet on the Processing Wiki.<br/>
+   * <br/ >
+   * Starting with Processing 1.0, all files loaded and saved by the 
    * Processing API use UTF-8 encoding. In previous releases, the default 
    * encoding for your platform was used, which causes problems when files 
    * are moved to other platforms.
@@ -7553,8 +7548,8 @@ public class PApplet extends Applet
    * text, and return matching groups (elements found inside parentheses) as 
    * a String array. No match will return null. If no groups are specified in 
    * the regexp, but the sequence matches, an array of length one (with the 
-   * matched text as the first element of the array) will be returned.
-   * <br/> <br/>
+   * matched text as the first element of the array) will be returned.<br />
+   * <br />
    * To use the function, first check to see if the result is null. If the 
    * result is null, then the sequence did not match. If the sequence did 
    * match, an array is returned. 
@@ -7562,14 +7557,13 @@ public class PApplet extends Applet
    * then the contents of each will be returned in the array.  
    * Element [0] of a regexp match returns the entire matching string, and 
    * the match groups start at element [1] (the first group is [1], the 
-   * second [2], and so on).
-   * <br/> <br/>
-   * The syntax can be found in the reference for Java's <A 
-   * HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">Pattern</A> 
-   * class. For regular expression syntax, read the <A 
-   * HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java 
-   * Tutorial</A> on the topic. 
-   * <br/> <br/>
+   * second [2], and so on).<br />
+   * <br />
+   * The syntax can be found in the reference for Java's <a 
+   * href="http://download.oracle.com/javase/6/docs/api/">Pattern</a> class. 
+   * For regular expression syntax, read the <a 
+   * href="http://download.oracle.com/javase/tutorial/essential/regex/">Java 
+   * Tutorial</a> on the topic.
    * 
    * ( end auto-generated )
    * @webref data:string_functions
@@ -7599,28 +7593,28 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from matchAll.xml )
    * 
-   * The matchAll() function is used to apply a regular expression to a piece 
-   * of text, and return a list of matching groups (elements found inside 
-   * parentheses) as a two-dimensional String array. No matches will return 
-   * null. If no groups are specified in the regexp, but the sequence 
-   * matches, a two dimensional array is still returned, but the second 
-   * dimension is only of length one.
-   * <br/> <br/>
+   * This function is used to apply a regular expression to a piece of text, 
+   * and return a list of matching groups (elements found inside parentheses) 
+   * as a two-dimensional String array. No matches will return null. If no 
+   * groups are specified in the regexp, but the sequence matches, a two 
+   * dimensional array is still returned, but the second dimension is only of 
+   * length one.<br />
+   * <br />
    * To use the function, first check to see if the result is null. If the 
    * result is null, then the sequence did not match at all. If the sequence 
-   * did match, a 2D array is returned. 
-   * If there are groups (specified by sets of parentheses) in the regexp, 
-   * then the contents of each will be returned in the array.  
+   * did match, a 2D array is returned. If there are groups (specified by 
+   * sets of parentheses) in the regexp, then the contents of each will be 
+   * returned in the array.  
    * Assuming, a loop with counter variable i, element [i][0] of a regexp 
    * match returns the entire matching string, and the match groups start at 
-   * element [i][1] (the first group is [i][1], the second [i][2], and so on).
-   * <br/> <br/>
-   * The syntax can be found in the reference for Java's <A 
-   * HREF="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">Pattern</A> 
-   * class. For regular expression syntax, read the <A 
-   * HREF="http://java.sun.com/docs/books/tutorial/essential/regex/">Java 
-   * Tutorial</A> on the topic. 
-   * <br/> <br/>
+   * element [i][1] (the first group is [i][1], the second [i][2], and so 
+   * on).<br />
+   * <br />
+   * The syntax can be found in the reference for Java's <a 
+   * href="http://download.oracle.com/javase/6/docs/api/">Pattern</a> class. 
+   * For regular expression syntax, read the <a 
+   * href="http://download.oracle.com/javase/tutorial/essential/regex/">Java 
+   * Tutorial</a> on the topic.
    * 
    * ( end auto-generated )
    * @webref data:string_functions
@@ -9380,9 +9374,7 @@ public class PApplet extends Applet
    * ( begin auto-generated from endRaw.xml )
    * 
    * Complement to <b>beginRaw()</b>; they must always be used together. See 
-   * the <a 
-   * href="http://www.processing.org/reference/beginRaw_.html"><b>beginRaw()</b></a> 
-   * reference for details.
+   * the <b>beginRaw()</b> reference for details.
    * 
    * ( end auto-generated )
    * @webref output:files
@@ -10327,8 +10319,8 @@ public class PApplet extends Applet
    * ( begin auto-generated from bezierTangent.xml )
    * 
    * Calculates the tangent of a point on a Bezier curve. There is a good 
-   * definition of "tangent" at Wikipedia: <a 
-   * href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * definition of <a href="http://en.wikipedia.org/wiki/Tangent" 
+   * target="new"><em>tangent</em> on Wikipedia</a>.
    * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
@@ -10467,9 +10459,9 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from curveTangent.xml )
    * 
-   * Calculates the tangent of a point on a curve. There is a good definition 
-   * of "tangent" at Wikipedia: <a 
-   * href="http://en.wikipedia.org/wiki/Tangent" target="new">http://en.wikipedia.org/wiki/Tangent</a>
+   * Calculates the tangent of a point on a curve. There's a good definition 
+   * of <em><a href="http://en.wikipedia.org/wiki/Tangent" 
+   * target="new">tangent</em> on Wikipedia</a>.
    * 
    * ( end auto-generated )
    * 
@@ -11724,7 +11716,8 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from printMatrix.xml )
    * 
-   * Prints the current matrix to the text window.
+   * Prints the current matrix to the Console (the text window at the bottom 
+   * of Processing).
    * 
    * ( end auto-generated )
    * @webref transform
@@ -11837,7 +11830,8 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from printCamera.xml )
    * 
-   * Prints the current camera matrix to the text window.
+   * Prints the current camera matrix to the Console (the text window at the 
+   * bottom of Processing).
    * 
    * ( end auto-generated )
  * @webref lights_camera:camera
@@ -11960,7 +11954,8 @@ public class PApplet extends Applet
 /**
    * ( begin auto-generated from printProjection.xml )
    * 
-   * Prints the current projection matrix to the text window.
+   * Prints the current projection matrix to the Console (the text window at 
+   * the bottom of Processing).
    * 
    * ( end auto-generated )
  * @webref lights_camera:camera
@@ -12191,8 +12186,8 @@ public class PApplet extends Applet
    * When drawing with P3D, series of connected lines (such as the stroke 
    * around a polygon, triangle, or ellipse) produce unattractive results 
    * when a thick stroke weight is set (<a 
-   * href="http://code.google.com/p/processing/issues/detail?id=123">see bug 
-   * report</a>). With P3D, the minimum and maximum values for 
+   * href="http://code.google.com/p/processing/issues/detail?id=123">see 
+   * Issue 123</a>). With P3D, the minimum and maximum values for 
    * <b>strokeWeight()</b> are controlled by the graphics card and the 
    * operating system's OpenGL implementation. For instance, the thickness 
    * may not go higher than 10 pixels. 
@@ -12219,8 +12214,8 @@ public class PApplet extends Applet
    * MITER. 
    * <br/> <br/>
    * This function is not available with the P3D renderer, (<a 
-   * href="http://code.google.com/p/processing/issues/detail?id=123">see bug 
-   * report</a>). More information about the renderers can be found in the 
+   * href="http://code.google.com/p/processing/issues/detail?id=123">see 
+   * Issue 123</a>). More information about the renderers can be found in the 
    * <b>size()</b> reference.
    * 
    * ( end auto-generated )
@@ -12244,8 +12239,8 @@ public class PApplet extends Applet
    * parameters SQUARE, PROJECT, and ROUND. The default cap is ROUND. 
    * <br/> <br/>
    * This function is not available with the P3D renderer (<a 
-   * href="http://code.google.com/p/processing/issues/detail?id=123">see bug 
-   * report</a>). More information about the renderers can be found in the 
+   * href="http://code.google.com/p/processing/issues/detail?id=123">see 
+   * Issue 123</a>). More information about the renderers can be found in the 
    * <b>size()</b> reference.
    * 
    * ( end auto-generated )
