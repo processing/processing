@@ -131,20 +131,20 @@ dt > b
 code,
 pre
 {
-	font-size: 1.0em;
+	font-size: 1.4em;
 	color:#333333;
 }
 
 pre
 {
-	font-size: 1.0em;
+	font-size: 1.4em;
 }
 
 
 /* force the table-headers small .. */
 b
 {
-	font-size: 1.0em;
+	font-size: small;
 }
 
 
