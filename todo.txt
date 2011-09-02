@@ -7,6 +7,8 @@ X code to quit if multiple instances are running from peter
 X another problem with missing shearX/Y() in JAVA2D
 X   http://code.google.com/p/processing/issues/detail?id=784
 
+_ don't show library conflict warning until someone tries to build code
+_   too many people seem to think this is an error
 
 _ work on code to quit if multiple instances are running
 _   need to bring the other instance to front
