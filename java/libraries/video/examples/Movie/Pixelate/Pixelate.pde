@@ -1,7 +1,6 @@
 /**
  * Pixelate  
  * by Hernando Barragan.  
- * Built-in video library replaced with gsvideo by Andres Colubri
  * 
  * Load a QuickTime file and display the video signal 
  * using rectangles as pixels by reading the values stored 

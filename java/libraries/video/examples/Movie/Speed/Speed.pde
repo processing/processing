@@ -1,7 +1,7 @@
 /**
  * GSVideo movie speed example.
  *
- * Use the GSMovie.speed() method to change
+ * Use the Movie.speed() method to change
  * the playback speed.
  * 
  */

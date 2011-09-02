@@ -1,7 +1,7 @@
 /**
- * GSVideo movie reverse example.
+ * Reverse playback example.
  *
- * The GSMovie.speed() method allows to 
+ * The Movie.speed() method allows to 
  * change the playback speed. Use negative
  * values for backwards playback. Note that
  * not all video formats support backwards

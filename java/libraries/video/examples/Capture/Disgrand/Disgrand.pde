@@ -2,8 +2,6 @@
  * Disgrand
  * by Ben Fry. 
  *
- * GSVideo version by Andres Colubri.  
- * 
  * Example that sorts all colors from the incoming video
  * and arranges them into vertical bars.
  */

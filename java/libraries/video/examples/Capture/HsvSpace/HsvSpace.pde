@@ -2,8 +2,6 @@
  * HSV Space
  * by Ben Fry. 
  *
- * GSVideo version by Andres Colubri.  
- * 
  * Arrange the pixels from live video into the HSV Color Cone.
  */
  
