@@ -2,8 +2,6 @@
  * Brightness Thresholding 
  * by Golan Levin. 
  *
- * GSVideo version by Andres Colubri. 
- * 
  * Determines whether a test location (such as the cursor) is contained within
  * the silhouette of a dark object. 
  */

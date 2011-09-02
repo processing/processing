@@ -1,10 +1,9 @@
 /**
  * Getting Started with Capture.
  * 
- * GSVideo version by Andres Colubri. 
- * 
  * Reading and displaying an image from an attached Capture device. 
- */ 
+ */
+ 
 import processing.video.*;
 
 Capture cam;

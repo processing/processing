@@ -2,8 +2,6 @@
  * Frame Differencing 
  * by Golan Levin. 
  *
- * GSVideo version by Andres Colubri.  
- * 
  * Quantify the amount of movement in the video frame using frame-differencing.
  */ 
 

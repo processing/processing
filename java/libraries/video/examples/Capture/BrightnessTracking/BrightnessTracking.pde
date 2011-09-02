@@ -2,8 +2,6 @@
  * Brightness Tracking 
  * by Golan Levin. 
  *
- * GSVideo version by Andres Colubri.  
- * 
  * Tracks the brightest pixel in a live video signal. 
  */
 
