@@ -10,26 +10,26 @@ h1 { font-size: 145% }
 
 
 /* Table colors */
-.TableHeadingColor     { background: #CCCCFF } /* Dark mauve */
-.TableSubHeadingColor  { background: #EEEEFF } /* Light mauve */
+.TableHeadingColor     { background: #CCCCCC } /* Dark mauve */
+.TableSubHeadingColor  { background: #EEEEEE } /* Light mauve */
 .TableRowColor         { background: #FFFFFF } /* White */
 
 
 /* Font used in left-hand frame lists */
-.FrameTitleFont   { font-size: 90%; font-family: Helvetica, Arial, sans-serif }
-.FrameHeadingFont { font-size:  90%; font-family: Helvetica, Arial, sans-serif }
-.FrameItemFont    { font-size:  90%; font-family: Helvetica, Arial, sans-serif }
+.FrameTitleFont   { font-size: 90%; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif }
+.FrameHeadingFont { font-size:  90%; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif }
+.FrameItemFont    { font-size:  90%; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif }
 
 
 /* Navigation bar fonts and colors */
-.NavBarCell1    { background-color:#EEEEFF;} /* Light mauve */
+.NavBarCell1    { background-color:#EEEEEE;} /* Light mauve */
 .NavBarCell1Rev { background-color:#00008B;} /* Dark Blue */
 
-.NavBarFont1    { font-family: Arial, Helvetica, sans-serif; color:#000000;}
-.NavBarFont1Rev { font-family: Arial, Helvetica, sans-serif; color:#FFFFFF;}
+.NavBarFont1    { font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; color:#000000;}
+.NavBarFont1Rev { font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; color:#FFFFFF;}
 
-.NavBarCell2    { font-family: Arial, Helvetica, sans-serif; background-color:#FFFFFF;}
-.NavBarCell3    { font-family: Arial, Helvetica, sans-serif; background-color:#FFFFFF;}
+.NavBarCell2    { font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; background-color:#FFFFFF;}
+.NavBarCell3    { font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; background-color:#FFFFFF;}
 
 
 
@@ -37,6 +37,7 @@ h1 { font-size: 145% }
  * Processing - Styling
  *
  * fjenett - mail@florianjenett.de - 2005.08.14
+ * Updated by REAS 2011.09.02
  *
  */
 
@@ -51,26 +52,26 @@ h1 { font-size: 145% }
 .TableSubHeadingColor  { background: #EEEEFF } /* Light mauve */
 .TableRowColor         { background: #FFFFFF } /* White */
 
-
-/* Font used in left-hand frame lists */
-.FrameTitleFont   { 
-	font-size: 0.9em;
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif 
-}
-.FrameHeadingFont {
-	font-size: 0.9em;
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-	color: #5A5A46;
-}
-.FrameItemFont    {
-	font-size: 0.9em;
-	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif 
-}
-
+/**
+ * /* Font used in left-hand frame lists */
+ * .FrameTitleFont   { 
+ * 	font-size: 0.9em;
+ * 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif 
+ * }
+ * .FrameHeadingFont {
+ * 	font-size: 0.9em;
+ * 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+ * 	color: #5A5A46;
+ * }
+ * .FrameItemFont    {
+ * 	font-size: 0.9em;
+ * 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif 
+ * }
+ */
 
 /* Navigation bar fonts and colors */
-.NavBarCell1    { background-color:#CCCCBE;} /* Light */
-.NavBarCell1Rev { background-color:#5A5A46;} /* Dark */
+.NavBarCell1    { background-color:#CCCCCC;} /* Light */
+.NavBarCell1Rev { background-color:#5A5A5A;} /* Dark */
 
 .NavBarFont1    {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
@@ -97,7 +98,7 @@ html
 	
 h1, h2, h3, h4, h5, h6 {
 
-	color: #5A5A46; 
+	color: #5A5A5A; 
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; 
 	font-weight: normal;
 
