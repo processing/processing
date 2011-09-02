@@ -49,7 +49,7 @@ h1 { font-size: 120% }
 	background: #CCCCCC;
 	color: #5A5A5A;
  }
-.TableSubHeadingColor  { background: #EEEEFF } /* Gray */
+.TableSubHeadingColor  { background: #EEEEEE } /* Gray */
 .TableRowColor         { background: #FFFFFF } /* White */
 
 
@@ -144,7 +144,7 @@ pre
 /* force the table-headers small .. */
 b
 {
-	font-size: medium;
+	font-size: small;
 }
 
 
