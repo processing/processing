@@ -2,8 +2,6 @@
  * Framingham
  * by Ben Fry.
  *
- * GSVideo version by Andres Colubri.  
- *  
  * Show subsequent frames from video input as a grid. Also fun with movie files.
  */
 

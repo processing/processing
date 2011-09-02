@@ -2,7 +2,6 @@
  * ASCII Video
  * by Ben Fry. 
  *
- * GSVideo version by Andres Colubri. 
  * 
  * Text characters have been used to represent images since the earliest computers.
  * This sketch is a simple homage that re-interprets live video as ASCII text.

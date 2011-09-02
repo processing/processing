@@ -2,8 +2,6 @@
  * Mirror 
  * by Daniel Shiffman.  
  *
- * GSVideo version by Andres Colubri. 
- * 
  * Each pixel from the video source is drawn as a rectangle with rotation based on brightness.   
  */ 
  

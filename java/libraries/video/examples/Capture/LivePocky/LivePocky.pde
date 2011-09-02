@@ -2,8 +2,6 @@
  * Live Pocky
  * by Ben Fry. 
  *
- * GSVideo version by Andres Colubri.  
- * 
  * Unwrap each frame of live video into a single line of pixels.
  */
  

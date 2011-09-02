@@ -2,8 +2,6 @@
  * Simple Real-Time Slit-Scan Program. 
  * By Golan Levin.
  *
- * GSVideo version by Andres Colubri. 
- * 
  * This demonstration depends on the canvas height being equal 
  * to the video capture height. If you would prefer otherwise, 
  * consider using the image copy() function rather than the 

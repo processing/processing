@@ -2,8 +2,6 @@
  * Mirror 2 
  * by Daniel Shiffman. 
  *
- * GSVideo version by Andres Colubri.  
- * 
  * Each pixel from the video source is drawn as a rectangle with size based on brightness.  
  */
  

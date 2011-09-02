@@ -2,8 +2,6 @@
  * Background Subtraction 
  * by Golan Levin. 
  *
- * GSVideo version by Andres Colubri. 
- * 
  * Detect the presence of people and objects in the frame using a simple
  * background-subtraction technique. To initialize the background, press a key.
  */
