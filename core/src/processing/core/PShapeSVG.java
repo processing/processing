@@ -163,7 +163,7 @@ public class PShapeSVG extends PShape {
   public PShapeSVG(PApplet parent, String filename) {
     // this will grab the root document, starting <svg ...>
     // the xml version and initial comments are ignored
-    this(parent.loadNode(filename));
+    this(parent.loadXML(filename));
   }
 
 

@@ -5190,7 +5190,7 @@ public class PApplet extends Applet
 
 // ???
   // NODE I/O (XML, JSON, etc.)
-  public XML loadNode(String filename) {
+  public XML loadXML(String filename) {
     return new XML(this, filename);
   }
 
