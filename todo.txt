@@ -3,6 +3,14 @@ X update to java 6u26
 X   re-upload with new version to include javac
 X HTML escapes for < and > not working properly
 X   http://code.google.com/p/processing/issues/detail?id=771
+X code to quit if multiple instances are running from peter
+X another problem with missing shearX/Y() in JAVA2D
+X   http://code.google.com/p/processing/issues/detail?id=784
+
+
+_ work on code to quit if multiple instances are running
+_   need to bring the other instance to front
+_   and/or open a new window
 
 _ --bgcolor shouldn't be in main() unless 'present' is turned on
 _ also add option for FSEM or not
@@ -10,7 +18,7 @@ _ also add option for FSEM or not
 _ library imports failing for libs that define the same packages in 1.5.1
 _   http://code.google.com/p/processing/issues/detail?id=725
 
-_ make application the correct one instead of applet
+_ make application the default instead of applet
 
 _ renaming a normal tab to same name with ".java" fails with ".pde" version already exists
 _   http://code.google.com/p/processing/issues/detail?id=776

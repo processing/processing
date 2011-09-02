@@ -1878,8 +1878,8 @@ public class PGraphicsOpenGL extends PGraphics {
                                    "using u and v coordinates with vertex()");
       }
       if (textureMode == IMAGE) {
-        u /= (float) img.width;
-        v /= (float) img.height;
+        u /= img.width;
+        v /= img.height;
       }
 
       texturesU[t] = u;

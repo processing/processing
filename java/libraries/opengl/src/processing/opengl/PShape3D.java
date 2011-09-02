@@ -2111,7 +2111,7 @@ public class PShape3D extends PShape {
   
   
   protected void setColorImpl(float[] c) {
-    PShape3D p = (PShape3D)root;
+    PShape3D p = root;
     p.loadColors();
     for (int i = firstVertex; i <= lastVertex; i++) {
       p.set(i, c);
@@ -2150,7 +2150,7 @@ public class PShape3D extends PShape {
     
   
   protected void setNormalImpl(float[] n) {
-    PShape3D p = (PShape3D)root;
+    PShape3D p = root;
     p.loadNormals();
     for (int i = firstVertex; i <= lastVertex; i++) {
       p.set(i, n);
@@ -2166,9 +2166,9 @@ public class PShape3D extends PShape {
     // Expanding identical, contiguous shapes. Names are taken into account (two
     // shapes with different names are considered to be different, even though the
     // rest of their parameters are identical).
-    child0 = (PShape3D)childList.get(0);
+    child0 = childList.get(0);
     for (int i = 1; i < childList.size(); i++) {
-      child1 = (PShape3D)childList.get(i);
+      child1 = childList.get(i);
       if (child0.equalTo(child1, false)) {
         child0.lastVertex = child1.lastVertex;       // Extending child0.
         child0.lastIndex = child1.lastIndex;
@@ -2184,16 +2184,16 @@ public class PShape3D extends PShape {
       
     // Deleting superfluous shapes.
     for (int i = childList.size() - 1; i >= 0; i--) {
-      if (((PShape3D)childList.get(i)).lastVertex == -1) {
+      if (childList.get(i).lastVertex == -1) {
         childList.remove(i);
       }
     }
     
     // Making sure the names are unique.
     for (int i = 1; i < childList.size(); i++) {
-      child1 = (PShape3D)childList.get(i);
+      child1 = childList.get(i);
       for (int j = i - 1; j >= 0; j--) {
-        child0 = (PShape3D)childList.get(j);
+        child0 = childList.get(j);
         if (child1.name.equals(child0.name)) {
           int pos = child0.name.indexOf(':');
           if (-1 < pos) {
@@ -2288,7 +2288,7 @@ public class PShape3D extends PShape {
   public void setVertices(ArrayList<PVector> vertexList, int offset) {
     loadVertices();
     for (int i = firstVertex; i <= lastVertex; i++) {
-      PVector v = (PVector)vertexList.get(i - firstVertex + offset);
+      PVector v = vertexList.get(i - firstVertex + offset);
       set(i, v.x, v.y, v.z);
     }
     updateVertices();
@@ -2301,7 +2301,7 @@ public class PShape3D extends PShape {
   public void setColors(ArrayList<float[]> colorList, int offset) {
     loadColors();
     for (int i = firstVertex; i <= lastVertex; i++) {
-      float[] c = (float[])colorList.get(i - firstVertex + offset);
+      float[] c = colorList.get(i - firstVertex + offset);
       set(i, c);
     }
     updateColors();    
@@ -2315,7 +2315,7 @@ public class PShape3D extends PShape {
   public void setNormals(ArrayList<PVector> normalList, int offset) {
     loadNormals();
     for (int i = firstVertex; i <= lastVertex; i++) {
-      PVector n = (PVector)normalList.get(i - firstVertex + offset);
+      PVector n = normalList.get(i - firstVertex + offset);
       set(i, n.x, n.y, n.z);
     }
     updateNormals();    
@@ -2337,7 +2337,7 @@ public class PShape3D extends PShape {
   public void setTexcoords(int unit, ArrayList<PVector> tcoordList, int offset) {
     loadTexcoords(unit);
     for (int i = firstVertex; i <= lastVertex; i++) {
-      PVector tc = (PVector)tcoordList.get(i - firstVertex + offset);
+      PVector tc = tcoordList.get(i - firstVertex + offset);
       set(i, tc.x, tc.y);
     }
     updateTexcoords();     
@@ -2349,7 +2349,7 @@ public class PShape3D extends PShape {
     
     childCount = 0;
     for (int i = 0; i < who.size(); i++) {
-      PShape child = (PShape)who.get(i);
+      PShape child = who.get(i);
       addChild(child);   
     }
   }  
@@ -2599,7 +2599,7 @@ public class PShape3D extends PShape {
     indexBuffer = getGl().glMapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, GL.GL_WRITE_ONLY).asIntBuffer();
     
     for (int i = 0; i < indexCount; i++) {
-      indices[i] = (Integer)recordedIndices.get(i);
+      indices[i] = recordedIndices.get(i);
     }    
     indexBuffer.put(indices);    
     
@@ -3521,13 +3521,13 @@ public class PShape3D extends PShape {
     
     ogl.beginShapeRecorderImpl();    
     for (int i = 0; i < faces.size(); i++) {
-      OBJFace face = (OBJFace) faces.get(i);
+      OBJFace face = faces.get(i);
       
       // Getting current material.
       if (mtlIdxCur != face.matIdx) {
         mtlIdxCur = PApplet.max(0, face.matIdx); // To make sure that at least we get the default material.
         
-        mtl = (OBJMaterial) materials.get(mtlIdxCur);
+        mtl = materials.get(mtlIdxCur);
 
         // Setting colors.
         ogl.specular(mtl.ks.x * 255.0f, mtl.ks.y * 255.0f, mtl.ks.z * 255.0f);
@@ -3561,12 +3561,12 @@ public class PShape3D extends PShape {
         vert = norms = null;
         
         vertIdx = face.vertIdx.get(j).intValue() - 1;
-        vert = (PVector) vertices.get(vertIdx);
+        vert = vertices.get(vertIdx);
         
         if (j < face.normIdx.size()) {
           normIdx = face.normIdx.get(j).intValue() - 1;
           if (-1 < normIdx) {
-            norms = (PVector) normals.get(normIdx);  
+            norms = normals.get(normIdx);  
           }
         }
         
@@ -3578,7 +3578,7 @@ public class PShape3D extends PShape {
           if (j < face.texIdx.size()) {
             texIdx = face.texIdx.get(j).intValue() - 1;
             if (-1 < texIdx) {
-              tex = (PVector) textures.get(texIdx);  
+              tex = textures.get(texIdx);  
             }
           }
           
