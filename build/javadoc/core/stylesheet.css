@@ -141,13 +141,13 @@ pre
 	font-size: 1.2em;
 }
 
-/**
- * /* force the table-headers small .. */
- * b
- * {
- * 	font-size: small;
- * }
- */
+
+/* force the table-headers small .. */
+b
+{
+	font-size: small;
+}
+
 
 tr,
 td
