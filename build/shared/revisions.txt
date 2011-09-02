@@ -1,3 +1,36 @@
+PROCESSING 2.0a1 (REV 0200) - 2 September 2011
+
+First alpha release as we head toward 2.0. Please read the changes page 
+to learn about what's different: http://wiki.processing.org/w/Changes
+
+[ since we last spoke ] 
+
++ Lots of video work from Andres. 
+
++ Updated to Java 6u26 on Windows and Linux.
+
++ HTML escapes for < and > were not working properly
+  http://code.google.com/p/processing/issues/detail?id=771
+
++ Quit if multiple instances of Processing are running (see the Wiki).
+
++ Fixed another problem with missing shearX/Y() in JAVA2D
+  http://code.google.com/p/processing/issues/detail?id=784
+
++ Removed textMode(SCREEN).
+
++ Added expand(long) and expand(double) because of Table.
+
++ PImage.save() with full path raises exception
+  http://code.google.com/p/processing/issues/detail?id=808
+
++ Fix problem where loading data from an http:// stream would 
+  run out of memory on Android. 
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING REV 0199 - 27 June 2011
 
 Handful of bug fixes, primarly to deal with issues introduced in 0198. 
