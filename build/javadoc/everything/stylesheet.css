@@ -6,7 +6,7 @@
 body { background-color: #FFFFFF }
 
 /* Headings */
-h1 { font-size: 145% }
+h1 { font-size: 120% }
 
 
 /* Table colors */
@@ -14,12 +14,12 @@ h1 { font-size: 145% }
 .TableSubHeadingColor  { background: #EEEEEE } /* Light mauve */
 .TableRowColor         { background: #FFFFFF } /* White */
 
-
-/* Font used in left-hand frame lists */
-.FrameTitleFont   { font-size: 90%; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif }
-.FrameHeadingFont { font-size:  90%; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif }
-.FrameItemFont    { font-size:  90%; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif }
-
+/* 
+ * /* Font used in left-hand frame lists */
+ * .FrameTitleFont   { font-size: 90%; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif }
+ * .FrameHeadingFont { font-size:  90%; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif }
+ * .FrameItemFont    { font-size:  90%; font-family: Verdana, Geneva, Arial, Helvetica, sans-serif }
+ */
 
 /* Navigation bar fonts and colors */
 .NavBarCell1    { background-color:#EEEEEE;} /* Light mauve */
