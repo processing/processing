@@ -1305,12 +1305,12 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
   
 
-  public void skewX(float angle) {
+  public void shearX(float angle) {
     g2.shear(Math.tan(angle), 0);
   }
 
 
-  public void skewY(float angle) {
+  public void shearY(float angle) {
     g2.shear(0, Math.tan(angle));
   }
 

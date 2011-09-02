@@ -1,6 +1,8 @@
 0200 core
 X remove textMode(SCREEN)
 X added expand(long) and expand(double) because of Table
+X PImage.save() with full path raises exception
+X   http://code.google.com/p/processing/issues/detail?id=808
 
 _ change how beginRecord() works.. passing around PApplet vs PGraphics is gross
 _   have to pass PApplet just to make the rendering work to both renderers
@@ -11,12 +13,10 @@ _   for more options, just integrate the fs library?
 _   http://www.superduper.org/processing/fullscreen_api/
 _   https://github.com/kritzikratzi/jAppleMenuBar/blob/master/src/native/jAppleMenuBar.m
 
-_ update wiki re: PNode... also include notes about the changes
+X update wiki re: PNode... also include notes about the changes
 _ add note about textMode(SCREEN) to the wiki
 SCREEN was a super fast/efficient way of rendering text with P2D and P3D, but since they're going bye-bye and it's actually slower in the remaining renderers, it's going away.
 
-_ PImage.save() with full path raises exception
-_   http://code.google.com/p/processing/issues/detail?id=808
 _ if save() returns boolean, does saveFrame()?
 _   also need to copy this over to android
 
