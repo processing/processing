@@ -75,7 +75,7 @@ h1 { font-size: 120% }
 
 .NavBarFont1    {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-	color:#5A5A46;
+	color:#5A5A5A;
 }
 .NavBarFont1Rev {
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
@@ -91,7 +91,7 @@ h1 { font-size: 120% }
 body,
 html
 {
-	font-size: smaller;
+	font-size: small;
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 	color: #333333;
 }
@@ -144,7 +144,7 @@ pre
 /* force the table-headers small .. */
 b
 {
-	font-size: small;
+	font-size: medium;
 }
 
 
