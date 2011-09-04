@@ -358,9 +358,12 @@ public class PVector implements Serializable {
     return sub(v1, v2, null);
   }
 
-/**
- * @param target ???
- */
+  /**
+   * Subtract one vector from another and store in another vector
+   * @param v1 the x, y, and z components of a PVector object
+   * @param v2 the x, y, and z components of a PVector object
+   * @param target PVector to store the result
+   */
   static public PVector sub(PVector v1, PVector v2, PVector target) {
     if (target == null) {
       target = new PVector(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
@@ -426,6 +429,7 @@ public class PVector implements Serializable {
     return mult(v1, v2, null);
   }
 
+  
   static public PVector mult(PVector v1, PVector v2, PVector target) {
     if (target == null) {
       target = new PVector(v1.x*v2.x, v1.y*v2.y, v1.z*v2.z);
@@ -466,7 +470,10 @@ public class PVector implements Serializable {
   }
 
   /**
-   * @param target ???
+   * Divide a vector by a scalar and store the result in another vector.
+   * @param v any variable of type PVector
+   * @param n the number to divide with the vector
+   * @param target PVector to store the result
    */
   static public PVector div(PVector v, float n, PVector target) {
     if (target == null) {
