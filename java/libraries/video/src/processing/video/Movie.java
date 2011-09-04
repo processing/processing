@@ -34,7 +34,14 @@ import org.gstreamer.Buffer;
 import org.gstreamer.elements.*;
 
 /**
- * @generate Movie.xml
+   * ( begin auto-generated from Movie.xml )
+   * 
+   * Datatype for storing and playing movies in Apple's QuickTime format. 
+   * Movies must be located in the sketch's data directory or an accessible 
+   * place on the network to load without an error.
+   * 
+   * ( end auto-generated )
+ * 
  * @webref video
  * @usage application
  */
@@ -224,7 +231,13 @@ public class Movie extends PImage implements PConstants {
   }  
   
   /**
-   * @generate Movie_frameRate.xml
+   * ( begin auto-generated from Movie_frameRate.xml )
+   * 
+   * Sets how often frames are read from the movie. Setting the <b>fps</b> 
+   * parameter to 4, for example, will cause 4 frames to be read per second.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
    * @usage web_application 
    * @param ifps speed of the movie in frames per second
@@ -266,7 +279,15 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * @generate Movie_speed.xml
+   * ( begin auto-generated from Movie_speed.xml )
+   * 
+   * Sets the relative playback speed of the movie. The <b>rate</b> 
+   * parameters sets the speed where 2.0 will play the movie twice as fast, 
+   * 0.5 will play at half the speed, and -1 will play the movie in normal 
+   * speed in reverse.
+   * 
+   * ( end auto-generated )
+   * 
    
    * @webref movie
    
@@ -284,10 +305,14 @@ public class Movie extends PImage implements PConstants {
   }
   
   /**
-   * @generate Movie_duration.xml
-   
+   * ( begin auto-generated from Movie_duration.xml )
+   * 
+   * Returns the length of the movie in seconds. If the movie is 1 minute and 
+   * 20 seconds long the value returned will be 80.0.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application
    */
   public float duration() {
@@ -297,10 +322,14 @@ public class Movie extends PImage implements PConstants {
   }  
   
   /**
-   * @generate Movie_time.xml
-   
+   * ( begin auto-generated from Movie_time.xml )
+   * 
+   * Returns the location of the playback head in seconds. For example, if 
+   * the movie has been playing for 4 seconds, the number 4.0 will be returned.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application 
    */
   public float time() {
@@ -328,10 +357,15 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * @generate Movie_jump.xml
-   
+   * ( begin auto-generated from Movie_jump.xml )
+   * 
+   * Jumps to a specific location within a movie. The parameter <b>where</b> 
+   * is in terms of seconds. For example, if the movie is 12.2 seconds long, 
+   * calling <b>jump(6.1)</b> would go to the middle of the movie.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application 
    * @param where position to jump to specified in seconds
    */
@@ -389,10 +423,13 @@ public class Movie extends PImage implements PConstants {
   }
   
   /**
-   * @generate Movie_available.xml
-   
+   * ( begin auto-generated from Movie_available.xml )
+   * 
+   * Returns "true" when a new movie frame is available to read.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application 
    */
   public boolean available() {
@@ -428,10 +465,13 @@ public class Movie extends PImage implements PConstants {
   }
   
   /**
-   * @generate Movie_play.xml
-   
+   * ( begin auto-generated from Movie_play.xml )
+   * 
+   * Plays a movie one time and stops at the last frame.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application
    */
   public void play() {
@@ -445,10 +485,13 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * @generate Movie_loop.xml
-   
+   * ( begin auto-generated from Movie_loop.xml )
+   * 
+   * Plays a movie continuously, restarting it when it is over.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application
    */
   public void loop() {    
@@ -457,10 +500,14 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * @generate Movie_noLoop.xml
-   
+   * ( begin auto-generated from Movie_noLoop.xml )
+   * 
+   * If a movie is looping, calling noLoop() will cause it to play until the 
+   * end and then stop on the last frame.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application
    */
   public void noLoop() {
@@ -468,10 +515,14 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * @generate Movie_pause.xml
-   
+   * ( begin auto-generated from Movie_pause.xml )
+   * 
+   * Pauses a movie during playback. If a movie is started again with play(), 
+   * it will continue from where it was paused.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application
    */
   public void pause() {
@@ -481,10 +532,14 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * @generate Movie_stop.xml
-   
+   * ( begin auto-generated from Movie_stop.xml )
+   * 
+   * Stops a movie from continuing. The playback returns to the beginning so 
+   * when a movie is played, it will begin from the beginning.
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application
    */
   public void stop() {
@@ -497,10 +552,13 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * @generate Movie_read.xml
-   
+   * ( begin auto-generated from Movie_read.xml )
+   * 
+   * Reads the current frame of the movie. 
+   * 
+   * ( end auto-generated )
+   * 
    * @webref movie
-   
    * @usage web_application
    */
   public synchronized void read() {
