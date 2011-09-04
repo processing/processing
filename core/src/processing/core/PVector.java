@@ -489,7 +489,7 @@ public class PVector implements Serializable {
 
 
   /**
-   * Multiply each element of one vector by the individual elements of another
+   * Divide each element of one vector by the individual elements of another
    * vector, and return the result as a new PVector.
    */
   static public PVector div(PVector v1, PVector v2) {
