@@ -5583,11 +5583,13 @@ return width * (1 + ox) / 2.0f;
     lightSpecular[lightCount][1] = currentLightSpecular[1];
     lightSpecular[lightCount][2] = currentLightSpecular[2];
     lightSpecular[lightCount][3] = currentLightSpecular[3];
-
-    float invn = 1.0f / PApplet.dist(0, 0, 0, nx, ny, nz);
-    lightNormal[lightCount][0] = invn * nx;
-    lightNormal[lightCount][1] = invn * ny;
-    lightNormal[lightCount][2] = invn * nz;
+    
+    // In this case, the normal is used to indicate the direction
+    // of the light, with the w component equals to zero. See
+    // the comments in the lightDirection() method.
+    lightNormal[lightCount][0] = -nx;
+    lightNormal[lightCount][1] = -ny;
+    lightNormal[lightCount][2] = -nz;
     lightNormal[lightCount][3] = 0.0f;
 
     lightEnable(lightCount);
@@ -5753,15 +5755,13 @@ return width * (1 + ox) / 2.0f;
   }
     
   protected void lightDirection(int num) {
-    if (lightType[num] == DIRECTIONAL) {
-      // TODO this expects a fourth arg that will be set to 1
-      // this is why lightBuffer is length 4,
-      // and the [3] element set to 1 in the constructor.
-      // however this may be a source of problems since
-      // it seems a bit "hack"
+    if (lightType[num] == DIRECTIONAL) {      
+      // The w component of lightNormal[num] is zero, so the light is considered as
+      // a directional source because the position effectively becomes a direction
+      // in homogeneous coordinates:
+      // http://glprogramming.com/red/appendixf.html
       gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_POSITION, lightNormal[num], 0);
     } else { // spotlight
-      // this one only needs the 3 arg version
       gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_DIRECTION, lightNormal[num], 0);
     }
   }
