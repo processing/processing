@@ -543,6 +543,9 @@ public class PGraphicsOpenGL extends PGraphics {
   
   // Utility variables:
   
+  /** True if we are inside a beginDraw()/endDraw() block. */
+  protected boolean drawing = false;  
+  
   /** Used to make backups of current drawing state. */
   protected DrawingState drawState;
   
@@ -1115,8 +1118,12 @@ public class PGraphicsOpenGL extends PGraphics {
     return parent.isDisplayable();
   }
 
-
   public void beginDraw() {
+    if (drawing) {
+      System.err.println("P3D: Already called beginDraw().");
+      return;
+    }    
+    
     if (primarySurface && drawable != null) {
       // Call setRealized() after addNotify() has been called
       drawable.setRealized(parent.isDisplayable());
@@ -1260,12 +1267,19 @@ public class PGraphicsOpenGL extends PGraphics {
     gl.glClearColor(0, 0, 0, 0);
     gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);    
     
+    drawing = true;
+    
     report("bot beginDraw()");
   }
 
 
   public void endDraw() {
     report("top endDraw()");
+    
+    if (!drawing) {
+      System.err.println("P3D: Cannot call endDraw() before beginDraw().");
+      return;
+    }
     
     // Restoring previous viewport.
     gl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]); 
@@ -1301,6 +1315,8 @@ public class PGraphicsOpenGL extends PGraphics {
       
       ogl.restoreGLState();
     }    
+
+    drawing = false;    
     
     report("bot endDraw()");    
   }
@@ -1460,7 +1476,19 @@ public class PGraphicsOpenGL extends PGraphics {
     drawState.restore();
   }
   
+  // Utility function to get ready OpenGL for a specific
+  // operation, such as grabbing the contents of the color
+  // buffer.
+  protected void beginGLOp() {
+    detainContext();
+    getGLProfiles();
+  }
 
+  // Pairs-up with beginGLOp().
+  protected void endGLOp() {
+    releaseContext();
+  }  
+  
   //////////////////////////////////////////////////////////////  
   
   // SETTINGS
@@ -5940,8 +5968,14 @@ return width * (1 + ox) / 2.0f;
       pixels = new int[width * height];      
       pixelBuffer = IntBuffer.allocate(pixels.length);      
     }
+
+    boolean outsideDraw = primarySurface && !drawing;
+    if (outsideDraw) {
+      beginGLOp();      
+    }
     
     boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
+    
     if (notCurrent) {
       pushFramebuffer();
       setFramebuffer(offscreenFramebuffer);
@@ -6012,6 +6046,10 @@ return width * (1 + ox) / 2.0f;
       // Load texture.
       loadTextureImpl(POINT);           
       pixelsToTexture();
+    }
+    
+    if (outsideDraw) {
+      endGLOp();      
     }    
   }
 
@@ -6230,6 +6268,11 @@ return width * (1 + ox) / 2.0f;
     pixelBuffer.put(pixels);
     pixelBuffer.rewind();
     
+    boolean outsideDraw = primarySurface && !drawing;
+    if (outsideDraw) {
+      beginGLOp();      
+    }    
+    
     // Copying pixel buffer to screen texture...
     copyToTexture(pixelBuffer);
     
@@ -6250,6 +6293,10 @@ return width * (1 + ox) / 2.0f;
     if (notCurrent) {
       popFramebuffer();
     }    
+    
+    if (outsideDraw) {
+      endGLOp();      
+    }    
   }
     
   //////////////////////////////////////////////////////////////
@@ -6258,9 +6305,17 @@ return width * (1 + ox) / 2.0f;
   
   public void loadTexture() {
     if (primarySurface) {
+      if (!drawing) {
+        beginGLOp();      
+      }   
+      
       loadTextureImpl(POINT);      
       loadPixels();      
       pixelsToTexture();
+      
+      if (!drawing) {
+        endGLOp();      
+      }            
     }
   }
   
@@ -6284,6 +6339,11 @@ return width * (1 + ox) / 2.0f;
   
   // Draws wherever it is in the screen texture right now to the screen.
   public void updateTexture() {
+    boolean outsideDraw = primarySurface && !drawing;
+    if (outsideDraw) {
+      beginGLOp();      
+    }    
+    
     boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
     if (notCurrent) {
       pushFramebuffer();
@@ -6294,6 +6354,10 @@ return width * (1 + ox) / 2.0f;
     
     if (notCurrent) {
       popFramebuffer();
+    }
+    
+    if (outsideDraw) {
+      endGLOp();      
     }    
   }
   
@@ -6337,6 +6401,11 @@ return width * (1 + ox) / 2.0f;
       getsetBuffer = IntBuffer.allocate(1);      
     }
     
+    boolean outsideDraw = primarySurface && !drawing;
+    if (outsideDraw) {
+      beginGLOp();      
+    }       
+    
     boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
     if (notCurrent) {
       // If the surface is not primary and multisampling is on, then the framebuffer
@@ -6356,13 +6425,17 @@ return width * (1 + ox) / 2.0f;
 
     int getset = getsetBuffer.get(0);
     
+    if (outsideDraw) {
+      endGLOp();      
+    }    
+    
     if (BIG_ENDIAN) {
       return 0xff000000 | ((getset >> 8) & 0x00ffffff);
 
     } else {
       return 0xff000000 | ((getset << 16) & 0xff0000) | (getset & 0xff00)
           | ((getset >> 16) & 0xff);
-    }
+    }   
   }
 
   // public PImage get(int x, int y, int w, int h)
@@ -6422,6 +6495,11 @@ return width * (1 + ox) / 2.0f;
       getsetTexture = new PTexture(parent, 1, 1, new PTexture.Parameters(ARGB, POINT));
     }
     
+    boolean outsideDraw = primarySurface && !drawing;
+    if (outsideDraw) {
+      beginGLOp();      
+    }    
+    
     copyToTexture(getsetTexture, getsetBuffer, 0, 0, 1, 1);
     
     boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
@@ -6434,6 +6512,10 @@ return width * (1 + ox) / 2.0f;
     
     if (notCurrent) {
       popFramebuffer();
+    }
+    
+    if (outsideDraw) {
+      endGLOp();      
     }    
   }
 
@@ -6448,6 +6530,11 @@ return width * (1 + ox) / 2.0f;
       int w = source.width; 
       int h = source.height;
       
+      boolean outsideDraw = primarySurface && !drawing;
+      if (outsideDraw) {
+        beginGLOp();      
+      }        
+      
       boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
       if (notCurrent) {
         pushFramebuffer();
@@ -6460,6 +6547,10 @@ return width * (1 + ox) / 2.0f;
       
       if (notCurrent) {
         popFramebuffer();
+      }     
+      
+      if (outsideDraw) {
+        endGLOp();      
       }      
     }
   }  
