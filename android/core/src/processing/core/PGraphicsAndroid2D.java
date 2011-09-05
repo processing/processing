@@ -182,6 +182,10 @@ public class PGraphicsAndroid2D extends PGraphics {
 
 
   public void endDraw() {
+    // hm, mark pixels as changed, because this will instantly do a full
+    // copy of all the pixels to the surface.. so that's kind of a mess.
+    //updatePixels();
+    
 //    if (primarySurface) {
 //      if (canvas != null) {
 //        parent.getSurfaceHolder().unlockCanvasAndPost(canvas);
@@ -200,17 +204,17 @@ public class PGraphicsAndroid2D extends PGraphics {
           parent.getSurfaceHolder().unlockCanvasAndPost(screen);
         }
       }
-    }
-
-    // hm, mark pixels as changed, because this will instantly do a full
-    // copy of all the pixels to the surface.. so that's kind of a mess.
-    //updatePixels();
-
-    // TODO this is probably overkill for most tasks...
-    if (!primarySurface) {
+    } else {
+      // TODO this is probably overkill for most tasks...
       loadPixels();
     }
-    modified = true;
+
+    // Marking as modified, and then calling updatePixels() in
+    // the super class, which just sets the mx1, my1, mx2, my2
+    // coordinates of the modified area. This avoids doing the
+    // full copy of the pixels to the surface in this.updatePixels().
+    setModified();
+    super.updatePixels();
   }
 
 
