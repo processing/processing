@@ -1103,7 +1103,7 @@ public class PGraphicsOpenGL extends PGraphics {
     allocate();          
     detainContext();
       
-    getGLProfiles();
+    updateGLInterfaces();
     allocatePGLObjects();
     clearPGLFramebuffers();
     restorePGLObjects();
@@ -1135,7 +1135,7 @@ public class PGraphicsOpenGL extends PGraphics {
       detainContext();
     }
       
-    getGLProfiles();
+    updateGLInterfaces();
     
     if (!glParamsRead) {
       getGLParameters();  
@@ -1352,6 +1352,36 @@ public class PGraphicsOpenGL extends PGraphics {
     restorePGLObjects();
   }
   
+  public void updateGLInterfaces() {
+    gl = context.getGL();        
+    
+    if (pipeline == PROG_GL4) {
+      gl4p = gl.getGL4();
+      gl3p = gl4p;
+      gl2p = gl4p;        
+      gl2f = null;
+    } else if (pipeline == PROG_GL3) {     
+      gl4p = null;
+      gl3p = gl.getGL3();
+      gl2p = gl3p;
+      gl2f = null;        
+    } else if (pipeline == PROG_GL2) { 
+      gl4p = null;
+      gl3p = null;
+      gl2p = gl.getGL2ES2();
+      gl2f = null;        
+    } else if (pipeline == FIXED) {
+      gl4p = null;
+      gl3p = null;
+      gl2p = null;
+      gl2f = gl.getGL2ES1();
+    }
+    
+    try {
+      gl2x = gl.getGL2GL3();
+    } catch (GLException e) {}
+  }
+  
   
   protected void saveGLState() {
     saveGLMatrices();
@@ -1481,7 +1511,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // buffer.
   protected void beginGLOp() {
     detainContext();
-    getGLProfiles();
+    updateGLInterfaces();
   }
 
   // Pairs-up with beginGLOp().
@@ -7386,7 +7416,7 @@ return width * (1 + ox) / 2.0f;
     
     registerPGLObject(this);
     
-    getGLProfiles();
+    updateGLInterfaces();
     loadTextureImpl(BILINEAR);
     
     // In case of reinitialization (for example, when the smooth level
@@ -7440,39 +7470,8 @@ return width * (1 + ox) / 2.0f;
     capabilities = ogl.getCapabilities();
     drawable = null;    
     
-    getGLProfiles();
+    updateGLInterfaces();
   }  
-  
-  protected void getGLProfiles() {
-    gl = context.getGL();        
-    
-    if (pipeline == PROG_GL4) {
-      gl4p = gl.getGL4();
-      gl3p = gl4p;
-      gl2p = gl4p;        
-      gl2f = null;
-    } else if (pipeline == PROG_GL3) {     
-      gl4p = null;
-      gl3p = gl.getGL3();
-      gl2p = gl3p;
-      gl2f = null;        
-    } else if (pipeline == PROG_GL2) { 
-      gl4p = null;
-      gl3p = null;
-      gl2p = gl.getGL2ES2();
-      gl2f = null;        
-    } else if (pipeline == FIXED) {
-      gl4p = null;
-      gl3p = null;
-      gl2p = null;
-      gl2f = gl.getGL2ES1();
-    }
-    
-    try {
-      gl2x = gl.getGL2GL3();
-    } catch (GLException e) {}
-  }
-  
   
   protected void getGLParameters() {
     OPENGL_VENDOR = gl.glGetString(GL.GL_VENDOR);
