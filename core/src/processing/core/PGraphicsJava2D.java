@@ -177,7 +177,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     // hm, mark pixels as changed, because this will instantly do a full
     // copy of all the pixels to the surface.. so that's kind of a mess.
     //updatePixels();
-
+        
     if (primarySurface) {
       // don't copy the pixels/data elements of the buffered image directly, 
       // since it'll disable the nice speedy pipeline stuff, sending all drawing
@@ -188,9 +188,15 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       }
     } else {
       // TODO this is probably overkill for most tasks...
-      loadPixels();
+      loadPixels();      
     }
-    modified = true;
+    
+    // Marking as modified, and then calling updatePixels() in
+    // the super class, which just sets the mx1, my1, mx2, my2
+    // coordinates of the modified area. This avoids doing the
+    // full copy of the pixels to the surface in this.updatePixels().
+    setModified();
+    super.updatePixels();
   }
 
 
