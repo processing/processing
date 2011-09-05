@@ -37,7 +37,8 @@ class CA {
     for (int i = 0; i < cells.length; i++) {
       cells[i] = 0;
     }
-    cells[cells.length/2] = 1;    // We arbitrarily start with just the middle cell having a state of "1"
+    // We arbitrarily start with just the middle cell having a state of "1"
+    cells[cells.length/2] = 1;    
     generation = 0;
   }
 
@@ -69,7 +70,8 @@ class CA {
   }
   
   // Implementing the Wolfram rules
-  // Could be improved and made more concise, but here we can explicitly see what is going on for each case
+  // Could be improved and made more concise, but here we can 
+  // explicitly see what is going on for each case
   int rules (int a, int b, int c) {
     if (a == 1 && b == 1 && c == 1) return rules[0];
     if (a == 1 && b == 1 && c == 0) return rules[1];

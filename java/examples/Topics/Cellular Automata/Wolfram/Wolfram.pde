@@ -33,6 +33,3 @@ void mousePressed() {
   ca.randomize();
   ca.restart();
 }
-
-
-
