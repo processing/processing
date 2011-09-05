@@ -10,10 +10,9 @@ float x, y; // X and Y coordinates of text
 float hr, vr;  // horizontal and vertical radius of the text
 
 void setup() {
-  size(200, 200);
-  PFont font = loadFont("AmericanTypewriter-24.vlw");
-  textFont(font);
+  size(640, 360);
   textAlign(CENTER, CENTER);
+  textSize(48);
   hr = textWidth(message) / 2;
   vr = (textAscent() + textDescent()) / 2;
   noStroke();
@@ -22,7 +21,7 @@ void setup() {
 }
 
 void draw() {
-  // instead of clearing the background, fade it by drawing
+  // Instead of clearing the background, fade it by drawing
   // a semi-transparent rectangle on top
   fill(204, 120);
   rect(0, 0, width, height);

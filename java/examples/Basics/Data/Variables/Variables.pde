@@ -1,23 +1,25 @@
 /**
  * Variables. 
  * 
- * Variables are used for storing values. In this example, changing 
- * the values of variables 'a' and 'b' significantly change the composition. 
+ * Variables are used for storing values. In this example, change 
+ * the values of variables 'a' and 'b' to affect the composition. 
  */
  
-size(200, 200);
+size(640, 360);
 background(0);
 stroke(153);
+strokeWeight(2);
 
-int a = 20;
-int b = 50;
-int c = a*8;
-int d = a*9;
-int e = b-a;
-int f = b*2;
-int g = f+e;
+int a = 60;
+int b = 100;
+int c = 200;
+int d = 120;
 
-line(a, f, b, g);
-line(b, e, b, g);
-line(b, e, d, c);
-line(a, e, d-e, c);
+line(a, b, a+c, b);
+
+a += 100;
+b += 50;
+line(a, b, a+c, b);
+
+
+
