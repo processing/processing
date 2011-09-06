@@ -68,6 +68,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   protected ContributionPanel selectedPanel;
   
+  protected JPanel statusPlaceholder;
+  
   public ContributionListPanel(ContributionManager libraryManager) {
     super();
     
@@ -77,10 +79,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     setOpaque(true);
     
     if (Base.isLinux()) {
-      // Thanks to a bug with GNOME, getColor returns the wrong value for
-      // List.background. We'll just assume its white. The intersection
-      // of people using Linux and people using a weird inverted color theme
-      // should be small enough.
+      // Because of a bug with GNOME, getColor returns the wrong value for
+      // List.background. We'll just assume its white. The number of people
+      // using Linux and an inverted color theme should be small enough.
       setBackground(Color.white);
     } else {
       setBackground(UIManager.getColor("List.background"));
@@ -89,12 +90,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     panelByContribution = new TreeMap<Contribution, ContributionPanel>(
         contribManager.getListing().getComparator());
     
-    GridBagConstraints c = new GridBagConstraints();
-    c.fill = GridBagConstraints.HORIZONTAL;
-    c.weightx = 1;
-    c.weighty = 1;
-    c.anchor = GridBagConstraints.CENTER;
-    
+    statusPlaceholder = new JPanel();
+    statusPlaceholder.setVisible(false);
   }
   
   private void updatePanelOrdering() {
@@ -105,9 +102,19 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       c.weightx = 1;
       c.gridx = 0;
       c.gridy = row++;
+      c.anchor = GridBagConstraints.NORTH;
       
       add(entry.getValue(), c);
     }
+    
+    GridBagConstraints c = new GridBagConstraints();
+    c.fill = GridBagConstraints.BOTH;
+    c.weightx = 1;
+    c.weighty = 1;
+    c.gridx = 0;
+    c.gridy = row++;
+    c.anchor = GridBagConstraints.NORTH;
+    add(statusPlaceholder, c);
   }
 
   public void contributionAdded(final Contribution contribution) {
