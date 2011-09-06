@@ -1,8 +1,9 @@
 /*
- * @(#)QuickTimeMovieMakerMain.java  1.1.1  2011-01-09
- * 
+ * The majority of this code is 
  * Copyright © 2010-2011 Werner Randelshofer, Immensee, Switzerland.
  * All rights reserved.
+ * (However, he should not be held responsible for the current mess of a hack 
+ * that it has become.)
  * 
  * You may not use, copy or modify this file, except in compliance with the
  * license agreement you entered into with Werner Randelshofer.
@@ -40,6 +41,18 @@ import processing.app.Base;
 import processing.app.Editor;
 import processing.app.tools.Tool;
 
+
+// TODO [fry 2011-09-06]
+// + The dialog box is super ugly. It's a hacked up version of the previous
+//   interface, but it'll take a bit of time to clean it up.
+//   http://code.google.com/p/processing/issues/detail?id=836
+// + the None compressor seems to have bugs, so just disabled it instead.
+// + the 'pass through' option seems to be broken, it's been removed, and in
+//   its place is an option to use the same width and height as the original
+//   images. however, the code has not been refactored with the new name.
+// + when this new 'pass through' is set, there's some nastiness with how
+//   the 'final' width/height variables are passed to the movie maker.
+//   this is an easy fix but needs a couple minutes.
 
 /**
  * Hacked from Werner Randelshofer's QuickTimeWriter demo. The original version
@@ -102,8 +115,8 @@ public class MovieMakerTool extends JFrame implements Tool {
     prefs = Preferences.userNodeForPackage(MovieMakerTool.class);
     imageFolderField.setText(prefs.get("movie.imageFolder", ""));
     soundFileField.setText(prefs.get("movie.soundFile", ""));
-    widthField.setText("" + prefs.getInt("movie.width", 320));
-    heightField.setText("" + prefs.getInt("movie.height", 240));
+    widthField.setText("" + prefs.getInt("movie.width", 640));
+    heightField.setText("" + prefs.getInt("movie.height", 480));
     passThroughCheckBox.setSelected(prefs.getBoolean("movie.passThrough", false));
     String fps = "" + prefs.getDouble("movie.fps", 30);
     if (fps.endsWith(".0")) {
@@ -112,6 +125,13 @@ public class MovieMakerTool extends JFrame implements Tool {
     fpsField.setText(fps);
     compressionBox.setSelectedIndex(Math.max(0, Math.min(compressionBox.getItemCount() - 1, prefs.getInt("movie.compression", 1))));
 
+    passThroughCheckBox.addActionListener(new ActionListener() {      
+      public void actionPerformed(ActionEvent e) {
+        widthField.setEnabled(passThroughCheckBox.isSelected());
+        heightField.setEnabled(passThroughCheckBox.isSelected());
+      }
+    });
+    
 //    String streaming = prefs.get("movie.streaming", "fastStartCompressed");
 //    for (Enumeration<AbstractButton> i = streamingGroup.getElements(); i.hasMoreElements();) {
 //      AbstractButton btn = i.nextElement();
@@ -129,7 +149,7 @@ public class MovieMakerTool extends JFrame implements Tool {
     imageFolderHelpLabel = new JLabel();
     imageFolderField = new JTextField();
     chooseImageFolderButton = new JButton();
-    soundFileHelpLable = new JLabel();
+    soundFileHelpLabel = new JLabel();
     soundFileField = new JTextField();
     chooseSoundFileButton = new JButton();
     createMovieButton = new JButton();
@@ -184,7 +204,7 @@ public class MovieMakerTool extends JFrame implements Tool {
     chooseImageFolderButton.setText("Choose...");
     chooseImageFolderButton.addActionListener(formListener);
 
-    soundFileHelpLable.setText("Drag a sound file into the field below (.au, .aiff, .wav, .mp3):");
+    soundFileHelpLabel.setText("Drag a sound file into the field below (.au, .aiff, .wav, .mp3):");
     chooseSoundFileButton.setText("Choose...");
     chooseSoundFileButton.addActionListener(formListener);
 
@@ -208,7 +228,8 @@ public class MovieMakerTool extends JFrame implements Tool {
     compressionLabel.setFont(font);
     compressionLabel.setText("Compression:");
     compressionBox.setFont(font);
-    compressionBox.setModel(new DefaultComboBoxModel(new String[] { "None", "Animation", "JPEG", "PNG" }));
+    //compressionBox.setModel(new DefaultComboBoxModel(new String[] { "None", "Animation", "JPEG", "PNG" }));
+    compressionBox.setModel(new DefaultComboBoxModel(new String[] { "Animation", "JPEG", "PNG" }));
 
     fpsLabel.setFont(font);
     fpsLabel.setText("Frame Rate:");
@@ -273,7 +294,7 @@ public class MovieMakerTool extends JFrame implements Tool {
                                                                                                               .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                                                                                         .addComponent(aboutLabel, GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                                                                                                                         .addComponent(imageFolderHelpLabel)
-                                                                                                                        .addComponent(soundFileHelpLable)
+                                                                                                                        .addComponent(soundFileHelpLabel)
                                                                                                                         .addGroup(layout.createSequentialGroup()
                                                                                                                                   .addComponent(soundFileField, GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
                                                                                                                                   .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -285,15 +306,6 @@ public class MovieMakerTool extends JFrame implements Tool {
                                                                                                                                             .addComponent(chooseImageFolderButton))))
                                                                                                                                             .addGroup(layout.createSequentialGroup()
                                                                                                                                                       .addContainerGap())))
-                                                                                                                                                      /*.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                                                                                                                .addComponent(streamingLabel)
-                                                                                                                                                                .addGroup(layout.createSequentialGroup()
-                                                                                                                                                                          .addGap(21, 21, 21)
-                                                                                                                                                                          .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                                                                                                                                    .addComponent(fastStartRadio)
-                                                                                                                                                                                    .addComponent(noPreparationRadio)
-                                                                                                                                                                                    .addComponent(fastStartCompressedRadio))))))
-                                                                                                                                                                                    .addContainerGap())*/
     );
     layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -319,20 +331,12 @@ public class MovieMakerTool extends JFrame implements Tool {
                                                                     .addComponent(compressionLabel)
                                                                     .addComponent(passThroughCheckBox))
                                                                     .addGap(18, 18, 18)
-                                                                    .addComponent(soundFileHelpLable)
+                                                                    .addComponent(soundFileHelpLabel)
                                                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                                     .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                                                               .addComponent(soundFileField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                                               .addComponent(chooseSoundFileButton))
                                                                               .addGap(18, 18, 18)
-//                                                                              .addComponent(streamingLabel)
-//                                                                              .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-//                                                                              .addComponent(noPreparationRadio)
-//                                                                              .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-//                                                                              .addComponent(fastStartRadio)
-//                                                                              .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-//                                                                              .addComponent(fastStartCompressedRadio)
-//                                                                              .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 4, Short.MAX_VALUE)
                                                                               .addComponent(createMovieButton)
                                                                               .addContainerGap())
     );
@@ -395,6 +399,12 @@ public class MovieMakerTool extends JFrame implements Tool {
     }
   }
 
+  
+  // this is super naughty, and shouldn't be out here. it's a hack to get the
+  // ImageIcon width/height setting to work. there are better ways to do this
+  // given a bit of time. you know, time? the infinite but non-renewable resource?
+  int width, height;
+  
   private void createMovie(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMovie
     // ---------------------------------
     // Check input
@@ -408,7 +418,6 @@ public class MovieMakerTool extends JFrame implements Tool {
       return;
     }
 
-    final int width, height;
     final double fps;
     try {
       width = Integer.parseInt(widthField.getText());
@@ -425,16 +434,16 @@ public class MovieMakerTool extends JFrame implements Tool {
 
     final QuickTimeWriter.VideoFormat videoFormat;
     switch (compressionBox.getSelectedIndex()) {
-    case 0:
-      videoFormat = QuickTimeWriter.VideoFormat.RAW;
-      break;
-    case 1:
+//    case 0:
+//      videoFormat = QuickTimeWriter.VideoFormat.RAW;
+//      break;
+    case 0://1:
       videoFormat = QuickTimeWriter.VideoFormat.RLE;
       break;
-    case 2:
+    case 1://2:
       videoFormat = QuickTimeWriter.VideoFormat.JPG;
       break;
-    case 3:
+    case 2://3:
     default:
       videoFormat = QuickTimeWriter.VideoFormat.PNG;
       break;
@@ -449,7 +458,7 @@ public class MovieMakerTool extends JFrame implements Tool {
     prefs.putInt("movie.height", height);
     prefs.putDouble("movie.fps", fps);
     prefs.putInt("movie.compression", compressionBox.getSelectedIndex());
-//    prefs.putBoolean("movie.passThrough", passThroughCheckBox.isSelected());
+    prefs.putBoolean("movie.passThrough", passThroughCheckBox.isSelected());
 
 
     // ---------------------------------
@@ -502,9 +511,12 @@ public class MovieMakerTool extends JFrame implements Tool {
             Arrays.sort(imgFiles);
           }
 
-//          // Check on first image, if we can actually do pass through
-//          if (passThrough) {
-//          }
+          // Check on first image, if we can actually do pass through
+          if (passThrough) {
+            ImageIcon temp = new ImageIcon(imgFiles[0].getAbsolutePath());
+            width = temp.getIconWidth();
+            height = temp.getIconHeight();
+          }
 
           // Delete movie file if it already exists.
           if (movieFile.exists()) {
@@ -512,9 +524,9 @@ public class MovieMakerTool extends JFrame implements Tool {
           }
 
           if (imageFolder != null && soundFile != null) {
-            writeVideoAndAudio(movieFile, imgFiles, soundFile, width, height, fps, videoFormat, passThrough, streaming);
+            writeVideoAndAudio(movieFile, imgFiles, soundFile, width, height, fps, videoFormat, /*passThrough,*/ streaming);
           } else if (imageFolder != null) {
-            writeVideoOnlyVFR(movieFile, imgFiles, width, height, fps, videoFormat, passThrough, streaming);
+            writeVideoOnlyVFR(movieFile, imgFiles, width, height, fps, videoFormat, /*passThrough,*/ streaming);
           } else {
             writeAudioOnly(movieFile, soundFile, streaming);
 
@@ -551,7 +563,7 @@ public class MovieMakerTool extends JFrame implements Tool {
 //  }//GEN-LAST:event_streamingRadioPerformed
 
   /** variable frame rate. */
-  private void writeVideoOnlyVFR(File movieFile, File[] imgFiles, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, boolean passThrough, String streaming) throws IOException {
+  private void writeVideoOnlyVFR(File movieFile, File[] imgFiles, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, /*boolean passThrough,*/ String streaming) throws IOException {
     File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
     ProgressMonitor p = new ProgressMonitor(MovieMakerTool.this, "Creating " + movieFile.getName(), "Creating Output File...", 0, imgFiles.length);
     Graphics2D g = null;
@@ -568,7 +580,8 @@ public class MovieMakerTool extends JFrame implements Tool {
       qtOut.addVideoTrack(videoFormat, timeScale, width, height);
       qtOut.setSyncInterval(0, 30);
 
-      if (!passThrough) {
+      //if (!passThrough) {
+      if (true) {
         img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         data = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
         prevImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -582,7 +595,8 @@ public class MovieMakerTool extends JFrame implements Tool {
         p.setNote("Processing " + f.getName());
         p.setProgress(i);
 
-        if (passThrough) {
+        //if (passThrough) {
+        if (false) {
           qtOut.writeSample(0, f, duration);
         } else {
           BufferedImage fImg = ImageIO.read(f);
@@ -755,7 +769,7 @@ public class MovieMakerTool extends JFrame implements Tool {
     }
   }
 
-  private void writeVideoAndAudio(File movieFile, File[] imgFiles, File audioFile, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, boolean passThrough, String streaming) throws IOException {
+  private void writeVideoAndAudio(File movieFile, File[] imgFiles, File audioFile, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, /*boolean passThrough,*/ String streaming) throws IOException {
     File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
     ProgressMonitor p = new ProgressMonitor(MovieMakerTool.this, "Creating " + movieFile.getName(), "Creating Output File...", 0, imgFiles.length);
     AudioInputStream audioIn = null;
@@ -795,7 +809,8 @@ public class MovieMakerTool extends JFrame implements Tool {
       }
 
       // Create video buffer
-      if (!passThrough) {
+      //if (!passThrough) {
+      if (true) {
         imgBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         g = imgBuffer.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -834,7 +849,8 @@ public class MovieMakerTool extends JFrame implements Tool {
           // catch up with video time
           p.setProgress(imgIndex);
           p.setNote("Processing " + imgFiles[imgIndex].getName());
-          if (passThrough) {
+          //if (passThrough) {
+          if (false) {
             qtOut.writeSample(1, imgFiles[imgIndex], vsDuration);
           } else {
             BufferedImage fImg = ImageIO.read(imgFiles[imgIndex]);
@@ -908,7 +924,7 @@ public class MovieMakerTool extends JFrame implements Tool {
 //  private JRadioButton noPreparationRadio;
   private JCheckBox passThroughCheckBox;
   private JTextField soundFileField;
-  private JLabel soundFileHelpLable;
+  private JLabel soundFileHelpLabel;
 //  private ButtonGroup streamingGroup;
 //  private JLabel streamingLabel;
   private JTextField widthField;
