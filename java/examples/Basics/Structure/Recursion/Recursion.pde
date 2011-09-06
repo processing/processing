@@ -6,21 +6,18 @@
  * It continues to do this until the variable "level" is equal to 1. 
  */
  
-void setup() 
-{
+void setup() {
   size(640, 360);
   noStroke();
   smooth();
   noLoop();
 }
 
-void draw() 
-{
+void draw() {
   drawCircle(width/2, 280, 6);
 }
 
-void drawCircle(int x, int radius, int level) 
-{                    
+void drawCircle(int x, int radius, int level) {                    
   float tt = 126 * level/4.0;
   fill(tt);
   ellipse(x, height/2, radius*2, radius*2);      
