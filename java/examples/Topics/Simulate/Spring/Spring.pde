@@ -5,47 +5,47 @@
  */
  
 // Spring drawing constants for top bar
-int s_height = 16;     // Height
-int left = 50;         // Left position
-int right = 150;       // Right position
-int max = 100;         // Maximum Y value
-int min = 20;          // Minimum Y value
-boolean over = false;  // If mouse over
-boolean move = false;  // If mouse down and over
+int springHeight = 16;  // Height
+int left;               // Left position
+int right;              // Right position
+int max = 200;          // Maximum Y value
+int min = 100;          // Minimum Y value
+boolean over = false;   // If mouse over
+boolean move = false;   // If mouse down and over
 
 // Spring simulation constants
 float M = 0.8;   // Mass
 float K = 0.2;   // Spring constant
 float D = 0.92;  // Damping
-float R = 60;    // Rest position
+float R = 150;   // Rest position
 
 // Spring simulation variables
-float ps = 60.0; // Position
+float ps = R;    // Position
 float vs = 0.0;  // Velocity
 float as = 0;    // Acceleration
 float f = 0;     // Force
 
 
-void setup() 
-{
-  size(200, 200);
+void setup() {
+  size(640, 360);
   rectMode(CORNERS);
   noStroke();
+  left = width/2 - 100;
+  right = width/2 + 100;
 }
 
-void draw() 
-{
+void draw() {
   background(102);
   updateSpring();
   drawSpring();
 }
 
-void drawSpring() 
-{
+void drawSpring() {
+  
   // Draw base
   fill(0.2);
-  float b_width = 0.5 * ps + -8;
-  rect(width/2 - b_width, ps + s_height, width/2 + b_width, 150);
+  float baseWidth = 0.5 * ps + -8;
+  rect(width/2 - baseWidth, ps + springHeight, width/2 + baseWidth, height);
 
   // Set color and draw top bar
   if(over || move) { 
@@ -53,12 +53,11 @@ void drawSpring()
   } else { 
     fill(204);
   }
-  rect(left, ps, right, ps + s_height);
+  rect(left, ps, right, ps + springHeight);
 }
 
 
-void updateSpring()
-{
+void updateSpring() {
   // Update the spring position
   if(!move) {
     f = -K * (ps - R);    // f=-ky
@@ -71,7 +70,7 @@ void updateSpring()
   }
 
   // Test if mouse is over the top bar
-  if(mouseX > left && mouseX < right && mouseY > ps && mouseY < ps + s_height) {
+  if(mouseX > left && mouseX < right && mouseY > ps && mouseY < ps + springHeight) {
     over = true;
   } else {
     over = false;
@@ -79,9 +78,8 @@ void updateSpring()
   
   // Set and constrain the position of top bar
   if(move) {
-    ps = mouseY - s_height/2;
-    if (ps < min) { ps = min; } 
-    if (ps > max) { ps = max; }
+    ps = mouseY - springHeight/2;
+    ps = constrain(ps, min, max);
   }
 }
 
@@ -91,7 +89,6 @@ void mousePressed() {
   }
 }
 
-void mouseReleased()
-{
+void mouseReleased() {
   move = false;
 }

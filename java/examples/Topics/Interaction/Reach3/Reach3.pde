@@ -6,11 +6,11 @@
  * calculating the angles with atan2().
  */
 
-int numSegments = 6;
+int numSegments = 8;
 float[] x = new float[numSegments];
 float[] y = new float[numSegments];
 float[] angle = new float[numSegments];
-float segLength = 15;
+float segLength = 26;
 float targetX, targetY;
 
 float ballX = 50;
@@ -19,17 +19,17 @@ int ballXDirection = 1;
 int ballYDirection = -1;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   smooth(); 
   strokeWeight(20.0);
-  stroke(0, 100);
+  stroke(255, 100);
   noFill();
   x[x.length-1] = width/2;     // Set base x-coordinate
   y[x.length-1] = height;  // Set base y-coordinate
 }
 
 void draw() {
-  background(226);
+  background(0);
   
   strokeWeight(20);
   ballX = ballX + 1.0 * ballXDirection;

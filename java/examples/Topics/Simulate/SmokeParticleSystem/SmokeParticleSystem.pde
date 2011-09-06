@@ -11,7 +11,7 @@ Random generator;
 
 void setup() {
 
-  size(640, 200);
+  size(640, 360);
   colorMode(RGB, 255, 255, 255, 100);
 
   // Using a Java random number generator for Gaussian random numbers

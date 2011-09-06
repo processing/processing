@@ -7,21 +7,23 @@
  */
 
  
-float x = 100;
-float y = 100;
-float x2 = 100;
-float y2 = 100;
-float segLength = 30;
+float segLength = 80;
+float x, y, x2, y2;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   smooth(); 
   strokeWeight(20.0);
-  stroke(0, 100);
+  stroke(255, 100);
+  
+  x = width/2;
+  y = height/2;
+  x2 = x;
+  y2 = y;
 }
 
 void draw() {
-  background(226);
+  background(0);
   
   float dx = mouseX - x;
   float dy = mouseY - y;

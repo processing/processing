@@ -12,12 +12,12 @@ Spring[] springs = new Spring[num];
 
 void setup()
 {
-  size(200, 200);
+  size(640, 360);
   noStroke(); 
   smooth();
-  springs[0] = new Spring( 70, 160,  20, 0.98, 8.0, 0.1, springs, 0); 
-  springs[1] = new Spring(150, 110,  60, 0.95, 9.0, 0.1, springs, 1); 
-  springs[2] = new Spring( 40,  70, 120, 0.90, 9.9, 0.1, springs, 2);   
+  springs[0] = new Spring(240, 260,  40, 0.98, 8.0, 0.1, springs, 0); 
+  springs[1] = new Spring(320, 210, 120, 0.95, 9.0, 0.1, springs, 1); 
+  springs[2] = new Spring(180, 170, 200, 0.90, 9.9, 0.1, springs, 2);   
 }
 
 void draw() 
@@ -104,7 +104,7 @@ class Spring
     tempxpos = tempxpos + velx;           // Updated position 
 
     
-    if ((over() || move) && !otherOver() ) { 
+    if ((overEvent() || move) && !otherOver() ) { 
       over = true; 
     } else { 
       over = false; 
@@ -112,7 +112,7 @@ class Spring
   } 
   
   // Test to see if mouse is over this spring
-  boolean over() {
+  boolean overEvent() {
     float disX = tempxpos - mouseX;
     float disY = tempypos - mouseY;
     if (sqrt(sq(disX) + sq(disY)) < size/2 ) {

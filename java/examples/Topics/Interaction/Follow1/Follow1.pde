@@ -11,14 +11,14 @@ float angle1 = 0.0;
 float segLength = 50;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   smooth(); 
   strokeWeight(20.0);
-  stroke(0, 100);
+  stroke(255, 100);
 }
 
 void draw() {
-  background(226);
+  background(0);
   
   float dx = mouseX - x;
   float dy = mouseY - y;
