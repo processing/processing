@@ -694,6 +694,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     menu.add(item);
 
+    /*
     menu.addSeparator();
     
     item = Base.newJMenuItem("Delete Selected Lines", 'D');
@@ -721,6 +722,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
     menu.add(item);
+     */
     
     menu.addSeparator();
 
@@ -1508,11 +1510,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.selectAll();
   }
 
-  /**
-   * @param moveUp
-   *          true to swap the selected lines with the line above, false to swap
-   *          with the line beneath
-   */
+//  /**
+//   * @param moveUp
+//   *          true to swap the selected lines with the line above, false to swap
+//   *          with the line beneath
+//   */
+  /*
   public void handleMoveLines(boolean moveUp) {
     startCompoundEdit();
     
@@ -1577,7 +1580,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.select(newSelectionStart, newSelectionEnd);
     stopCompoundEdit();
   }
+  */
 
+  
+  /*
   public void handleDeleteLines() {
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
@@ -1590,6 +1596,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.select(start, end);
     textarea.setSelectedText("");
   }
+  */
+  
 
   public void handleAutoFormat() {
     final String source = getText();
