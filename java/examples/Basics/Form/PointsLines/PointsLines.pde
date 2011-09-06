@@ -1,8 +1,8 @@
 /**
  * Points and Lines. 
  * 
- * Constructing a simple dimensional form with lines and rectangles.
- * Changing the value of the variable 'd' scales the image.
+ * Points and lines can be used to draw basic geometry.
+ * Change the value of the variable 'd' to scale the form.
  * The four variables set the positions based on the value of 'd'. 
  */
  
