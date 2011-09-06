@@ -401,8 +401,15 @@ public class ContributionManager {
             }
           }
         } else {
-          if ((!doBackup && contribution.getFolder().delete())
-              || (doBackup && backupContribution(contribution, true))) {
+          boolean success = false;
+          if (doBackup) {
+            success = backupContribution(contribution, true);
+          } else {
+            Base.removeDir(contribution.getFolder());
+            success = !contribution.getFolder().exists();
+          }
+          
+          if (success) {
             Contribution advertisedVersion = contribListing
                 .getAdvertisedContribution(contribution);
 
