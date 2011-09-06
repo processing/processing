@@ -12,14 +12,14 @@ float[] y = new float[2];
 float segLength = 50;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   smooth(); 
   strokeWeight(20.0);
-  stroke(0, 100);
+  stroke(255, 100);
 }
 
 void draw() {
-  background(226);
+  background(0);
   dragSegment(0, mouseX, mouseY);
   dragSegment(1, x[0], y[0]);
 }

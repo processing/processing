@@ -31,7 +31,7 @@ void draw() {
 
 void mouseReleased()  {
   for(int i=0; i<num; i++) {
-    handles[i].release();
+    handles[i].releaseEvent();
   }
 }
 
@@ -71,8 +71,8 @@ class Handle {
     }
     
     if(otherslocked == false) {
-      over();
-      press();
+      overEvent();
+      pressEvent();
     }
     
     if(press) {
@@ -80,7 +80,7 @@ class Handle {
     }
   }
   
-  void over() {
+  void overEvent() {
     if(overRect(boxx, boxy, size, size)) {
       over = true;
     } else {
@@ -88,7 +88,7 @@ class Handle {
     }
   }
   
-  void press() {
+  void pressEvent() {
     if(over && mousePressed || locked) {
       press = true;
       locked = true;
@@ -97,7 +97,7 @@ class Handle {
     }
   }
   
-  void release() {
+  void releaseEvent() {
     locked = false;
   }
   
