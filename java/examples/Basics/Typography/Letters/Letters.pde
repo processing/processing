@@ -18,7 +18,7 @@ void setup()
 
   // Set the font and its size (in units of pixels)
   textFont(fontA);
-  textAlign(CENTER);
+  textAlign(CENTER, CENTER);
 
   // Only draw once
   noLoop();
@@ -32,7 +32,7 @@ void draw()
   // Set the left and top margin
   int margin = 6;
   int gap = 60;
-  translate(margin*1.5, margin*2);
+  translate(margin*10, margin*1.5);
 
   // Create a matrix of letterforms
   int counter = 0;
