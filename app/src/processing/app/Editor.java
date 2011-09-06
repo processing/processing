@@ -822,15 +822,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     sketchMenu.addSeparator();
 
     sketchMenu.add(mode.getImportMenu());
-    
-    item = new JMenuItem("Manage Contributions...");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        base.handleOpenContributionManager();
-      }
-    });
-    sketchMenu.add(item);
-  
+
     item = Base.newJMenuItem("Show Sketch Folder", 'K');
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -875,6 +867,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
     } else {
       toolsMenu.removeAll();
     }
+    
+    JMenuItem item = new JMenuItem("Manage Contributions...");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleOpenContributionManager();
+      }
+    });
+    toolsMenu.add(item);
+    toolsMenu.addSeparator();
     
     rebuildToolList();
     
