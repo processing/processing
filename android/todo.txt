@@ -1,6 +1,5 @@
-0200 android
-X fix BufferedHttpEntity problem 
-X   was trying to allocate a byte buffer for entire size of HTTP file
+0201 android
+
 
 _ remove 'processing.test' package--people are posting on the market w/ it
 _ Android mode does not recognize library imports

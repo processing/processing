@@ -1,16 +1,10 @@
-0200 pde
-X update to java 6u26
-X   re-upload with new version to include javac
-X HTML escapes for < and > not working properly
-X   http://code.google.com/p/processing/issues/detail?id=771
-X code to quit if multiple instances are running from peter
-X another problem with missing shearX/Y() in JAVA2D
-X   http://code.google.com/p/processing/issues/detail?id=784
+0201 pde
 X implement movie maker tool
 X   http://code.google.com/p/processing/issues/detail?id=836
+X add movie maker tool to the build scripts
 
-_ add movie maker tool to the build scripts
 _ move Movie Maker out to its own separate tool package
+_   http://code.google.com/p/processing/issues/detail?id=837
 
 _ don't show library conflict warning until someone tries to build code
 _   too many people seem to think this is an error
