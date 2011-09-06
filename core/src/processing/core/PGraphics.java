@@ -2372,6 +2372,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref shape:3d_primitives
    * @param r the radius of the sphere
+   * @see PGraphics#sphereDetail(int)
    */
   public void sphere(float r) {
     if ((sphereDetailU < 3) || (sphereDetailV < 2)) {

@@ -10262,6 +10262,7 @@ public class PApplet extends Applet
    *
    * @webref shape:3d_primitives
    * @param r the radius of the sphere
+   * @see PGraphics#sphereDetail(int)
    */
   public void sphere(float r) {
     if (recorder != null) recorder.sphere(r);
