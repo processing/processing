@@ -66,6 +66,8 @@ public class ContributionManager {
   
   FilterField filterField;
   
+  JScrollPane scrollPane;
+  
   ContributionListPanel contributionListPanel;
   
   StatusPanel statusBar;
@@ -216,7 +218,7 @@ public class ContributionManager {
       c.weighty = 1;
       c.weightx = 1;
       
-      final JScrollPane scrollPane = new JScrollPane();
+      scrollPane = new JScrollPane();
       scrollPane.setPreferredSize(new Dimension(300, 300));
       scrollPane.setViewportView(contributionListPanel);
       scrollPane.getViewport().setOpaque(true);
@@ -411,6 +413,7 @@ public class ContributionManager {
                                                  advertisedVersion);
             }
           } else {
+            // There was a failure backing up the folder
             if (doBackup) {
               
             } else {
@@ -1075,11 +1078,26 @@ public class ContributionManager {
     void setErrorMessage(String message) {
       errorMessage = message;
       setVisible(true);
+      
+      JPanel placeholder = ContributionManager.this.contributionListPanel.statusPlaceholder;
+      Dimension d = getPreferredSize();
+      if (Base.isWindows()) {
+        d.height += 5;
+        placeholder.setPreferredSize(d);
+      }
+      placeholder.setVisible(true);
+      
+//      Rectangle rect = scrollPane.getViewport().getViewRect();
+//      rect.x += d.height;
+//      scrollPane.getViewport().scrollRectToVisible(rect);
     }
     
     void clearErrorMessage() {
       errorMessage = null;
       repaint();
+      
+      ContributionManager.this.contributionListPanel.statusPlaceholder
+          .setVisible(false);
     }
   }
   
