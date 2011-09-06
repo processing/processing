@@ -6,13 +6,14 @@
  */
 
 String message = "tickle";
+PFont f;
 float x, y; // X and Y coordinates of text
 float hr, vr;  // horizontal and vertical radius of the text
 
 void setup() {
-  size(200, 200);
-  PFont font = loadFont("AmericanTypewriter-24.vlw");
-  textFont(font);
+  size(640, 360);
+  f = createFont("Courier New", 36);
+  textFont(f);
   textAlign(CENTER, CENTER);
   hr = textWidth(message) / 2;
   vr = (textAscent() + textDescent()) / 2;

@@ -16,7 +16,7 @@ int lastTime = 0;
 
 void setup() 
 {
-  size(640, 200);
+  size(640, 360);
   strokeWeight(12);
   smooth();
   background(204);

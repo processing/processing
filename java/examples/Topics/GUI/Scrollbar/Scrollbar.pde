@@ -10,20 +10,18 @@ PImage top, bottom;         // Two image to load
 int topWidth, bottomWidth;  // The width of the top and bottom images
 
 
-void setup()
-{
-  size(200, 200);
+void setup() {
+  size(640, 360);
   noStroke();
-  hs1 = new HScrollbar(0, 20, width, 10, 3*5+1);
-  hs2 = new HScrollbar(0, height-20, width, 10, 3*5+1);
+  hs1 = new HScrollbar(0, 20, width, 20, 3*5+1);
+  hs2 = new HScrollbar(0, height-20, width, 20, 3*5+1);
   top = loadImage("seedTop.jpg");
   topWidth = top.width;
   bottom = loadImage("seedBottom.jpg");
   bottomWidth = bottom.width;
 }
 
-void draw()
-{
+void draw() {
   background(255);
   
   // Get the position of the top scrollbar
@@ -45,8 +43,7 @@ void draw()
 }
 
 
-class HScrollbar
-{
+class HScrollbar {
   int swidth, sheight;    // width and height of bar
   int xpos, ypos;         // x and y position of bar
   float spos, newspos;    // x position of slider

@@ -8,8 +8,8 @@
  
 int rectX, rectY;      // Position of square button
 int circleX, circleY;  // Position of circle button
-int rectSize = 50;     // Diameter of rect
-int circleSize = 53;   // Diameter of circle
+int rectSize = 90;     // Diameter of rect
+int circleSize = 93;   // Diameter of circle
 color rectColor, circleColor, baseColor;
 color rectHighlight, circleHighlight;
 color currentColor;
@@ -18,7 +18,7 @@ boolean circleOver = false;
 
 void setup()
 {
-  size(200, 200);
+  size(640, 360);
   smooth();
   rectColor = color(0);
   rectHighlight = color(51);
