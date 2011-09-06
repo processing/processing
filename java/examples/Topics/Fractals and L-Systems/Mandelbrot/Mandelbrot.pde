@@ -5,18 +5,20 @@
  * Simple rendering of the Mandelbrot set.
  */
 
+
 // Establish a range of values on the complex plane
 // A different range will allow us to "zoom" in or out on the fractal
 // float xmin = -1.5; float ymin = -.1; float wh = 0.15;
-float xmin = -2.5; 
-float ymin = -2; 
-float wh = 4;
+float xmin = -3;
+float ymin = -1.25;
+float w = 5;
+float h = 2.5;
 
 size(640, 360);
 noLoop();
 background(255);
 
-// Make sure we can write to the pixels[] array. 
+// Make sure we can write to the pixels[] array.
 // Only need to do this once since we don't do any other drawing.
 loadPixels();
 
@@ -24,9 +26,9 @@ loadPixels();
 int maxiterations = 100;
 
 // x goes from xmin to xmax
-float xmax = xmin + wh;
+float xmax = xmin + w;
 // y goes from ymin to ymax
-float ymax = ymin + wh;
+float ymax = ymin + h;
 
 // Calculate amount we increment x,y for each pixel
 float dx = (xmax - xmin) / (width);
@@ -59,8 +61,8 @@ for (int j = 0; j < height; j++) {
     // We color each pixel based on how long it takes to get to infinity
     // If we never got there, let's pick the color black
     if (n == maxiterations) {
-      pixels[i+j*width] = 0;
-    } 
+      pixels[i+j*width] = color(0);
+    }
     else {
       // Gosh, we could make fancy colors here if we wanted
       pixels[i+j*width] = color(n*16 % 255);
