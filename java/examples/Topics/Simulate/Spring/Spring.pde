@@ -5,7 +5,7 @@
  */
  
 // Spring drawing constants for top bar
-int springHeight = 16;  // Height
+int springHeight = 32;  // Height
 int left;               // Left position
 int right;              // Right position
 int max = 200;          // Maximum Y value
