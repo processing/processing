@@ -1,3 +1,4 @@
+package processing.app.tools;
 /*
  * The majority of this code is 
  * Copyright © 2010-2011 Werner Randelshofer, Immensee, Switzerland.
