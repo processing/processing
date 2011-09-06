@@ -63,7 +63,7 @@ class Boid {
   // Takes a second argument, if true, it slows down as it approaches the target
   PVector steer(PVector target, boolean slowdown) {
     PVector steer;  // The steering vector
-    PVector desired = target.sub(target,loc);  // A vector pointing from the location to the target
+    PVector desired = PVector.sub(target,loc);  // A vector pointing from the location to the target
     float d = desired.mag(); // Distance from the target is the magnitude of the vector
     // If the distance is greater than 0, calc steering (otherwise return zero vector)
     if (d > 0) {
@@ -73,7 +73,7 @@ class Boid {
       if ((slowdown) && (d < 100.0)) desired.mult(maxspeed*(d/100.0)); // This damping is somewhat arbitrary
       else desired.mult(maxspeed);
       // Steering = Desired minus Velocity
-      steer = target.sub(desired,vel);
+      steer = PVector.sub(desired,vel);
       steer.limit(maxforce);  // Limit to maximum steering force
     } 
     else {

@@ -9,14 +9,14 @@
 
 Spring2D s1, s2;
 
-float gravity = 6.0;
+float gravity = 9.0;
 float mass = 2.0;
 
 void setup() 
 {
-  size(200, 200);
+  size(640, 360);
   smooth();
-  fill(0);
+  fill(255, 126);
   // Inputs: x, y, mass, gravity
   s1 = new Spring2D(0.0, width/2, mass, gravity);
   s2 = new Spring2D(0.0, width/2, mass, gravity);
@@ -24,7 +24,7 @@ void setup()
 
 void draw() 
 {
-  background(204);
+  background(0);
   s1.update(mouseX, mouseY);
   s1.display(mouseX, mouseY);
   s2.update(s1.x, s1.y);
@@ -36,7 +36,7 @@ class Spring2D {
   float x, y; // The x- and y-coordinates
   float gravity;
   float mass;
-  float radius = 20;
+  float radius = 30;
   float stiffness = 0.2;
   float damping = 0.7;
   

@@ -9,17 +9,17 @@
 
 float[] x = new float[20];
 float[] y = new float[20];
-float segLength = 9;
+float segLength = 18;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   smooth(); 
-  strokeWeight(5);
-  stroke(0, 100);
+  strokeWeight(9);
+  stroke(255, 100);
 }
 
 void draw() {
-  background(226);
+  background(0);
   dragSegment(0, mouseX, mouseY);
   for(int i=0; i<x.length-1; i++) {
     dragSegment(i+1, x[i], y[i]);
