@@ -18,7 +18,7 @@
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ */
 
 package processing.app;
 
@@ -31,24 +31,24 @@ import processing.app.contribution.*;
 import processing.app.tools.Tool;
 
 public class ToolContribution extends InstalledContribution implements Tool {
-  
+
   String className;
-  
+
   URLClassLoader loader;
-  
+
   Tool tool;
-  
+
   static public ToolContribution getTool(File folder) {
     ToolContribution tool = new ToolContribution(folder);
     if (tool.isValid())
       return tool;
-    
+
     return null;
   }
-  
+
   private ToolContribution(File folder) {
     super(folder, "tool.properties");
-    
+
     File toolDirectory = new File(folder, "tool");
     // add dir to classpath for .classes
     //urlList.add(toolDirectory.toURL());
@@ -57,17 +57,17 @@ public class ToolContribution extends InstalledContribution implements Tool {
     File[] archives = toolDirectory.listFiles(new FilenameFilter() {
       public boolean accept(File dir, String name) {
         return (name.toLowerCase().endsWith(".jar") ||
-                name.toLowerCase().endsWith(".zip"));
+            name.toLowerCase().endsWith(".zip"));
       }
     });
 
     try {
       URL[] urlList = new URL[archives.length];
       for (int j = 0; j < urlList.length; j++) {
-          urlList[j] = archives[j].toURI().toURL();
+        urlList[j] = archives[j].toURI().toURL();
       }
       loader = new URLClassLoader(urlList);
-  
+
       for (int j = 0; j < archives.length; j++) {
         className = findClassInZipFile(folder.getName(), archives[j]);
         if (className != null) break;
@@ -98,9 +98,9 @@ public class ToolContribution extends InstalledContribution implements Tool {
         }
       }
     }
-    */
+     */
   }
-  
+
   /**
    * @return true if a Tool class of the expected name was found in this tool's
    *         classpath
@@ -108,7 +108,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
   private boolean isValid() {
     return className != null;
   }
-  
+
   /**
    * Loads the tool, making it impossible (on Windows) to move the files in the
    * classpath without restarting the PDE.
@@ -117,7 +117,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
     Class<?> toolClass = Class.forName(className, true, loader);
     tool = (Tool) toolClass.newInstance();
   }
-  
+
   static protected String findClassInZipFile(String base, File file) {
     // Class file to search for
     String classFileName = "/" + base + ".class";
@@ -148,7 +148,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
     }
     return null;
   }
-  
+
   /**
    * Searches and returns a list of tools found in the immediate children of the
    * given folder.
@@ -165,7 +165,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
 
   static protected void list(File folder, ArrayList<ToolContribution> tools,
                              boolean doInitializeToolClass) {
-    
+
     File[] folders = folder.listFiles(new FileFilter() {
       public boolean accept(File folder) {
         if (folder.isDirectory()) {
@@ -190,7 +190,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
     if (folders == null || folders.length == 0) {
       return;
     }
-    
+
     for (int i = 0; i < folders.length; i++) {
       try {
         final ToolContribution tool = getTool(folders[i]);
@@ -205,7 +205,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
       }
     }
   }
-  
+
   public void init(Editor editor) {
     tool.init(editor);
   }
@@ -217,7 +217,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
   public String getMenuTitle() {
     return tool.getMenuTitle();
   }
-  
+
   public Type getType() {
     return Type.TOOL;
   }
