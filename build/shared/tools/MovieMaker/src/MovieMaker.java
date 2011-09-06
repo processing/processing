@@ -58,7 +58,7 @@ import processing.app.tools.Tool;
  * Hacked from Werner Randelshofer's QuickTimeWriter demo. The original version
  * can be found <a href="http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/">here</a>.
  */
-public class MovieMakerTool extends JFrame implements Tool {
+public class MovieMaker extends JFrame implements Tool {
   private JFileChooser imageFolderChooser;
   private JFileChooser soundFileChooser;
   private JFileChooser movieFileChooser;
@@ -66,7 +66,7 @@ public class MovieMakerTool extends JFrame implements Tool {
   
 //  private Editor editor;
 
-//MovieMakerTool m = new MovieMakerTool();
+//MovieMaker m = new MovieMaker();
 //m.setVisible(true);
 //m.pack();
 
@@ -112,7 +112,7 @@ public class MovieMakerTool extends JFrame implements Tool {
     }
 
     // Get Preferences
-    prefs = Preferences.userNodeForPackage(MovieMakerTool.class);
+    prefs = Preferences.userNodeForPackage(MovieMaker.class);
     imageFolderField.setText(prefs.get("movie.imageFolder", ""));
     soundFileField.setText(prefs.get("movie.soundFile", ""));
     widthField.setText("" + prefs.getInt("movie.width", 640));
@@ -350,22 +350,22 @@ public class MovieMakerTool extends JFrame implements Tool {
     FormListener() {}
     public void actionPerformed(java.awt.event.ActionEvent evt) {
       if (evt.getSource() == chooseImageFolderButton) {
-        MovieMakerTool.this.chooseImageFolder(evt);
+        MovieMaker.this.chooseImageFolder(evt);
       }
       else if (evt.getSource() == chooseSoundFileButton) {
-        MovieMakerTool.this.chooseSoundFile(evt);
+        MovieMaker.this.chooseSoundFile(evt);
       }
       else if (evt.getSource() == createMovieButton) {
-        MovieMakerTool.this.createMovie(evt);
+        MovieMaker.this.createMovie(evt);
       }
 //      else if (evt.getSource() == fastStartCompressedRadio) {
-//        MovieMakerTool.this.streamingRadioPerformed(evt);
+//        MovieMaker.this.streamingRadioPerformed(evt);
 //      }
 //      else if (evt.getSource() == fastStartRadio) {
-//        MovieMakerTool.this.streamingRadioPerformed(evt);
+//        MovieMaker.this.streamingRadioPerformed(evt);
 //      }
 //      else if (evt.getSource() == noPreparationRadio) {
-//        MovieMakerTool.this.streamingRadioPerformed(evt);
+//        MovieMaker.this.streamingRadioPerformed(evt);
 //      }
     }
   }
@@ -548,7 +548,7 @@ public class MovieMakerTool extends JFrame implements Tool {
         if (o instanceof Throwable) {
           Throwable t = (Throwable) o;
           t.printStackTrace();
-          JOptionPane.showMessageDialog(MovieMakerTool.this, "<html>Creating the QuickTime Movie failed.<br>" + (t.getMessage() == null ? t.toString() : t.getMessage()), "Sorry", JOptionPane.ERROR_MESSAGE);
+          JOptionPane.showMessageDialog(MovieMaker.this, "<html>Creating the QuickTime Movie failed.<br>" + (t.getMessage() == null ? t.toString() : t.getMessage()), "Sorry", JOptionPane.ERROR_MESSAGE);
         }
         createMovieButton.setEnabled(true);
       }
@@ -565,7 +565,7 @@ public class MovieMakerTool extends JFrame implements Tool {
   /** variable frame rate. */
   private void writeVideoOnlyVFR(File movieFile, File[] imgFiles, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, /*boolean passThrough,*/ String streaming) throws IOException {
     File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
-    ProgressMonitor p = new ProgressMonitor(MovieMakerTool.this, "Creating " + movieFile.getName(), "Creating Output File...", 0, imgFiles.length);
+    ProgressMonitor p = new ProgressMonitor(MovieMaker.this, "Creating " + movieFile.getName(), "Creating Output File...", 0, imgFiles.length);
     Graphics2D g = null;
     BufferedImage img = null;
     BufferedImage prevImg = null;
@@ -642,7 +642,7 @@ public class MovieMakerTool extends JFrame implements Tool {
   /*
     private void writeVideoOnlyFFR(File movieFile, File[] imgFiles, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, boolean passThrough, String streaming) throws IOException {
         File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
-        ProgressMonitor p = new ProgressMonitor(MovieMakerTool.this, "Creating " + movieFile.getName(), "Creating Output File...", 0, imgFiles.length);
+        ProgressMonitor p = new ProgressMonitor(MovieMaker.this, "Creating " + movieFile.getName(), "Creating Output File...", 0, imgFiles.length);
         Graphics2D g = null;
         BufferedImage imgBuffer = null;
         QuickTimeWriter qtOut = null;
@@ -702,7 +702,7 @@ public class MovieMakerTool extends JFrame implements Tool {
     File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
 
     int length = (int) Math.min(Integer.MAX_VALUE, audioFile.length()); // file length is used for a rough progress estimate. This will only work for uncompressed audio.
-    ProgressMonitor p = new ProgressMonitor(MovieMakerTool.this, "Creating " + movieFile.getName(), "Initializing...", 0, length);
+    ProgressMonitor p = new ProgressMonitor(MovieMaker.this, "Creating " + movieFile.getName(), "Initializing...", 0, length);
     AudioInputStream audioIn = null;
     QuickTimeWriter qtOut = null;
 
@@ -771,7 +771,7 @@ public class MovieMakerTool extends JFrame implements Tool {
 
   private void writeVideoAndAudio(File movieFile, File[] imgFiles, File audioFile, int width, int height, double fps, QuickTimeWriter.VideoFormat videoFormat, /*boolean passThrough,*/ String streaming) throws IOException {
     File tmpFile = streaming.equals("none") ? movieFile : new File(movieFile.getPath() + ".tmp");
-    ProgressMonitor p = new ProgressMonitor(MovieMakerTool.this, "Creating " + movieFile.getName(), "Creating Output File...", 0, imgFiles.length);
+    ProgressMonitor p = new ProgressMonitor(MovieMaker.this, "Creating " + movieFile.getName(), "Creating Output File...", 0, imgFiles.length);
     AudioInputStream audioIn = null;
     QuickTimeWriter qtOut = null;
     BufferedImage imgBuffer = null;
@@ -900,7 +900,7 @@ public class MovieMakerTool extends JFrame implements Tool {
   public static void main(String args[]) {
     java.awt.EventQueue.invokeLater(new Runnable() {
       public void run() {
-        MovieMakerTool m = new MovieMakerTool();
+        MovieMaker m = new MovieMaker();
         m.init(null);
         m.setVisible(true);
 //        m.pack();
