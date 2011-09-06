@@ -1,3 +1,12 @@
+0200 core
+X remove textMode(SCREEN)
+X added expand(long) and expand(double) because of Table
+X PImage.save() with full path raises exception
+X   http://code.google.com/p/processing/issues/detail?id=808
+X update wiki re: PNode... also include notes about the changes
+X add note about textMode(SCREEN) to the wiki
+
+
 0199 core
 X pnode: look more closely at json and xml compatibility
 X argh, dumb mistake that broke SVG loading with loadNode()

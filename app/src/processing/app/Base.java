@@ -44,9 +44,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 200;
+  static public final int REVISION = 201;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0200";
+  static public String VERSION_NAME = "0201";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   /** True if heavy debugging error/log messages are enabled */
@@ -68,7 +68,7 @@ public class Base {
     platformIndices.put("linux", PConstants.LINUX);
   }
   static Platform platform;
-  
+
   /** How many bits this machine is */
   static int nativeBits;
   static {
@@ -124,7 +124,7 @@ public class Base {
         }
     });
   }
-  
+
   static private void createAndShowGUI(String[] args) {
     try {
       File versionFile = getContentFile("lib/version.txt");
@@ -152,7 +152,7 @@ public class Base {
 
     // run static initialization that grabs all the prefs
     Preferences.init(null);
-    
+
     String filename = args.length > 1 ? args[0] : null;
     if (!(Preferences.get("server.port") == null)
         && sendArgumentsToOtherInstance(filename, 1000)) {
@@ -185,7 +185,7 @@ public class Base {
                      "Could not create a place to store untitled sketches.\n" +
                      "That's gonna prevent us from continuing.", e);
     }
-    
+
 //  System.out.println("about to create base...");
     new Base(args);
 //  System.out.println("done creating base...");
@@ -199,18 +199,18 @@ public class Base {
       final String key = "" + Math.random();
       Preferences.set("server.key", key);
       Preferences.save();
-      
+
       new Thread(new Runnable() {
-        
+
         public void run() {
           while (true) {
             try {
               Socket s = ss.accept();
               BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
               String receivedKey = br.readLine();
-              
+
               if (platform.base == null) continue;
-              
+
               if (key.equals(receivedKey)) {
                 final String filename = br.readLine();
                 SwingUtilities.invokeLater(new Runnable() {
@@ -231,7 +231,7 @@ public class Base {
     } catch (IOException e) {
     }
   }
-  
+
   static private boolean sendArgumentsToOtherInstance(String filename,
                                                       long timeout) {
     try {
@@ -322,11 +322,11 @@ public class Base {
     Mode javaScriptMode = ModeContribution
         .getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
                      getContentFile("modes/javascript"));
-    
+
     coreModes = new Mode[] { defaultMode, androidMode, javaScriptMode };
   }
-  
-  /** Instantiates and adds new contributed modes to the contribModes list. 
+
+  /** Instantiates and adds new contributed modes to the contribModes list.
    * Checks for duplicates so the same mode isn't instantiates twice. Does not
    * remove modes because modes can't be removed once they are instantiated */
   void rebuildContribModes() {
@@ -347,7 +347,7 @@ public class Base {
   public Base(String[] args) {
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
-    
+
     // Delete all modes and tools that have been flagged for deletion before
     // they are initialized by an editor.
     ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
@@ -358,12 +358,12 @@ public class Base {
         removeDir(contrib.getFolder());
       }
     }
-    
+
     buildCoreModes();
     rebuildContribModes();
-    
+
     contributionManagerFrame = new ContributionManager();
-    
+
     // Make sure ThinkDifferent has library examples too
     defaultMode.rebuildLibraryList();
 
@@ -1135,7 +1135,7 @@ public class Base {
 
       Preferences.unset("server.port");
       Preferences.unset("server.key");
-      
+
       // This will store the sketch count as zero
       editors.remove(editor);
       storeSketches();
@@ -1551,12 +1551,12 @@ public class Base {
   public void handleOpenContributionManager() {
     contributionManagerFrame.showFrame(activeEditor);
   }
-  
+
   public void handleShowUpdates() {
     contributionManagerFrame.showFrame(activeEditor);
     contributionManagerFrame.setFilterText("has:updates");
   }
-  
+
   /**
    * Installed the libraries in the given file after a confirmation from the
    * user. Returns the number of libraries installed.
@@ -1606,12 +1606,12 @@ public class Base {
   static public int getNativeBits() {
     return nativeBits;
   }
-  
+
   static public String getPlatformVersionName() {
     String version = System.getProperty("os.version");
 
     if (version != null) {
-      
+
       if (Base.isMacOS()) {
         if (version.startsWith("10.0"))
           return "cheetah";
@@ -1630,17 +1630,17 @@ public class Base {
         if (version.startsWith("10.7"))
           return "lion";
       }
-      
+
       if (Base.isWindows()) {
         if (version.startsWith("6.0"))
           return "vista";
-        
+
         // yes, windows 7 is really windows 6.1
         if (version.startsWith("6.1"))
           return "7";
       }
     }
-    
+
     return "";
   }
 
@@ -1844,7 +1844,7 @@ public class Base {
         sketchbookFolder.mkdirs();
       }
     }
-    
+
     getSketchbookLibrariesFolder().mkdir();
     getSketchbookToolsFolder().mkdir();
     getSketchbookModesFolder().mkdir();
@@ -1874,7 +1874,7 @@ public class Base {
   public File getSketchbookToolsFolder() {
     return new File(sketchbookFolder, "tools");
   }
-  
+
   public File getSketchbookModesFolder() {
   //  return new File(getSketchbookFolder(), "libraries");
     return new File(sketchbookFolder, "modes");

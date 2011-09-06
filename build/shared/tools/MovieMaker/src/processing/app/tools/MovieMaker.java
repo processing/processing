@@ -49,8 +49,7 @@ import processing.app.tools.Tool;
 //   http://code.google.com/p/processing/issues/detail?id=836
 // + the None compressor seems to have bugs, so just disabled it instead.
 // + the 'pass through' option seems to be broken, it's been removed, and in
-//   its place is an option to use the same width and height as the original
-//   images. however, the code has not been refactored with the new name.
+//   its place is an option to use the same width and height as the originals.
 // + when this new 'pass through' is set, there's some nastiness with how
 //   the 'final' width/height variables are passed to the movie maker.
 //   this is an easy fix but needs a couple minutes.
@@ -64,7 +63,7 @@ public class MovieMaker extends JFrame implements Tool {
   private JFileChooser soundFileChooser;
   private JFileChooser movieFileChooser;
   private Preferences prefs;
-  
+
 //  private Editor editor;
 
 //MovieMaker m = new MovieMaker();
@@ -75,13 +74,15 @@ public class MovieMaker extends JFrame implements Tool {
     return "Movie Maker";
   }
 
-  
+
   public void run() {
+//    System.out.println("calling run() for MovieMaker");
     setVisible(true);
   }
-  
+
 
   public void init(Editor editor) {
+//    System.out.println("calling init for MovieMaker");
 //    this.editor = editor;
     initComponents();
 
@@ -103,7 +104,7 @@ public class MovieMaker extends JFrame implements Tool {
       widthLabel,
       heightField,
       heightLabel,
-      passThroughCheckBox,
+      originalSizeCheckBox,
 //      noPreparationRadio,
 //      fastStartCompressedRadio,
 //      fastStartRadio
@@ -118,21 +119,21 @@ public class MovieMaker extends JFrame implements Tool {
     soundFileField.setText(prefs.get("movie.soundFile", ""));
     widthField.setText("" + prefs.getInt("movie.width", 640));
     heightField.setText("" + prefs.getInt("movie.height", 480));
-    passThroughCheckBox.setSelected(prefs.getBoolean("movie.passThrough", false));
+    originalSizeCheckBox.setSelected(prefs.getBoolean("movie.originalSize", false));
     String fps = "" + prefs.getDouble("movie.fps", 30);
     if (fps.endsWith(".0")) {
       fps = fps.substring(0, fps.length() - 2);
     }
     fpsField.setText(fps);
-    compressionBox.setSelectedIndex(Math.max(0, Math.min(compressionBox.getItemCount() - 1, prefs.getInt("movie.compression", 1))));
+    compressionBox.setSelectedIndex(Math.max(0, Math.min(compressionBox.getItemCount() - 1, prefs.getInt("movie.compression", 0))));
 
-    passThroughCheckBox.addActionListener(new ActionListener() {      
+    originalSizeCheckBox.addActionListener(new ActionListener() {      
       public void actionPerformed(ActionEvent e) {
-        widthField.setEnabled(passThroughCheckBox.isSelected());
-        heightField.setEnabled(passThroughCheckBox.isSelected());
+        widthField.setEnabled(originalSizeCheckBox.isSelected());
+        heightField.setEnabled(originalSizeCheckBox.isSelected());
       }
     });
-    
+
 //    String streaming = prefs.get("movie.streaming", "fastStartCompressed");
 //    for (Enumeration<AbstractButton> i = streamingGroup.getElements(); i.hasMoreElements();) {
 //      AbstractButton btn = i.nextElement();
@@ -141,11 +142,14 @@ public class MovieMaker extends JFrame implements Tool {
 //        break;
 //      }
 //    }
-        
+
+    // scoot everybody around
     pack();
+    // center the frame on screen
+    setLocationRelativeTo(null);
   }
 
-  
+
   private void initComponents() {
     imageFolderHelpLabel = new JLabel();
     imageFolderField = new JTextField();
@@ -162,7 +166,7 @@ public class MovieMaker extends JFrame implements Tool {
     compressionBox = new JComboBox();
     fpsLabel = new JLabel();
     fpsField = new JTextField();
-    passThroughCheckBox = new JCheckBox();
+    originalSizeCheckBox = new JCheckBox();
 //    streamingLabel = new JLabel();
 //    streamingGroup = new ButtonGroup();
 //    noPreparationRadio = new JRadioButton();
@@ -173,15 +177,15 @@ public class MovieMaker extends JFrame implements Tool {
 
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-          setVisible(false);
-        }
-      });
+      public void windowClosing(WindowEvent e) {
+        setVisible(false);
+      }
+    });
     Base.registerWindowCloseKeys(getRootPane(), new ActionListener() {
-        public void actionPerformed(ActionEvent actionEvent) {
-          setVisible(false);
-        }
-      });
+      public void actionPerformed(ActionEvent actionEvent) {
+        setVisible(false);
+      }
+    });
     setTitle("QuickTime Movie Maker");
 
     aboutLabel = 
@@ -199,7 +203,7 @@ public class MovieMaker extends JFrame implements Tool {
                  "<br>" +
                  "<font color=#808080>This code is based on QuickTime Movie Maker 1.5.1 2011-01-17.<br>" +
                  "Copyright © 2010-2011 Werner Randelshofer. All rights reserved.<br>" +
-                 "This software is licensed under Creative Commons Atribution 3.0.");
+      "This software is licensed under Creative Commons Atribution 3.0.");
 
     imageFolderHelpLabel.setText("Drag a folder with image files into the field below:");
     chooseImageFolderButton.setText("Choose...");
@@ -213,7 +217,7 @@ public class MovieMaker extends JFrame implements Tool {
     createMovieButton.addActionListener(formListener);
 
     Font font = new Font("Dialog", Font.PLAIN, 11);
-    
+
     widthLabel.setFont(font);
     widthLabel.setText("Width:");
     widthField.setColumns(4);
@@ -238,9 +242,9 @@ public class MovieMaker extends JFrame implements Tool {
     fpsField.setFont(font);
     fpsField.setText("30");
 
-    passThroughCheckBox.setFont(font);
-    passThroughCheckBox.setText("Same size as originals");
-    passThroughCheckBox.setToolTipText("Check this box if the folder contains already encoded video frames in the desired size.");
+    originalSizeCheckBox.setFont(font);
+    originalSizeCheckBox.setText("Same size as originals");
+    originalSizeCheckBox.setToolTipText("Check this box if the folder contains already encoded video frames in the desired size.");
 
 //        streamingLabel.setText("Prepare for Internet Streaming");
 //
@@ -282,7 +286,7 @@ public class MovieMaker extends JFrame implements Tool {
                                                                                           .addGap(1, 1, 1)
                                                                                           .addComponent(compressionBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                                                           .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                          .addComponent(passThroughCheckBox))
+                                                                                          .addComponent(originalSizeCheckBox))
                                                                                           .addGroup(layout.createSequentialGroup()
                                                                                                     .addComponent(widthField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                                                                     .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
@@ -330,7 +334,7 @@ public class MovieMaker extends JFrame implements Tool {
                                                                     .addComponent(fpsLabel)
                                                                     .addComponent(fpsField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                                     .addComponent(compressionLabel)
-                                                                    .addComponent(passThroughCheckBox))
+                                                                    .addComponent(originalSizeCheckBox))
                                                                     .addGap(18, 18, 18)
                                                                     .addComponent(soundFileHelpLabel)
                                                                     .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -400,12 +404,12 @@ public class MovieMaker extends JFrame implements Tool {
     }
   }
 
-  
+
   // this is super naughty, and shouldn't be out here. it's a hack to get the
   // ImageIcon width/height setting to work. there are better ways to do this
   // given a bit of time. you know, time? the infinite but non-renewable resource?
   int width, height;
-  
+
   private void createMovie(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMovie
     // ---------------------------------
     // Check input
@@ -459,7 +463,7 @@ public class MovieMaker extends JFrame implements Tool {
     prefs.putInt("movie.height", height);
     prefs.putDouble("movie.fps", fps);
     prefs.putInt("movie.compression", compressionBox.getSelectedIndex());
-    prefs.putBoolean("movie.passThrough", passThroughCheckBox.isSelected());
+    prefs.putBoolean("movie.originalSize", originalSizeCheckBox.isSelected());
 
 
     // ---------------------------------
@@ -487,7 +491,7 @@ public class MovieMaker extends JFrame implements Tool {
     prefs.put("movie.outputFile", movieFile.getPath());
     createMovieButton.setEnabled(false);
 
-    final boolean passThrough = passThroughCheckBox.isSelected();
+    final boolean originalSize = originalSizeCheckBox.isSelected();
 
     // ---------------------------------
     // Create the QuickTime movie
@@ -513,7 +517,7 @@ public class MovieMaker extends JFrame implements Tool {
           }
 
           // Check on first image, if we can actually do pass through
-          if (passThrough) {
+          if (originalSize) {
             ImageIcon temp = new ImageIcon(imgFiles[0].getAbsolutePath());
             width = temp.getIconWidth();
             height = temp.getIconHeight();
@@ -923,7 +927,7 @@ public class MovieMaker extends JFrame implements Tool {
   private JTextField imageFolderField;
   private JLabel imageFolderHelpLabel;
 //  private JRadioButton noPreparationRadio;
-  private JCheckBox passThroughCheckBox;
+  private JCheckBox originalSizeCheckBox;
   private JTextField soundFileField;
   private JLabel soundFileHelpLabel;
 //  private ButtonGroup streamingGroup;

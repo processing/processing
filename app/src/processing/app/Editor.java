@@ -894,7 +894,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
       String title = tool.getMenuTitle();
       JMenuItem item = new JMenuItem(title);
       item.addActionListener(new ActionListener() {
+        boolean inited;
+
         public void actionPerformed(ActionEvent e) {
+          if (!inited) {
+            tool.init(Editor.this);
+            inited = true;
+          }
           SwingUtilities.invokeLater(tool);
           //new Thread(tool).start();
         }
