@@ -83,6 +83,7 @@
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
     <subant buildpath="../android/core" target="clean"/>
+    <subant buildpath="shared/tools/MovieMaker" target="clean"/>
   </target>
   
   <target name="subprojects-build">
@@ -95,6 +96,7 @@
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
     <subant buildpath="../android/core" target="build"/>
+    <subant buildpath="shared/tools/MovieMaker" target="build"/>
   </target>
   
 
