@@ -10,6 +10,7 @@ X implement movie maker tool
 X   http://code.google.com/p/processing/issues/detail?id=836
 
 _ add movie maker tool to the build scripts
+_ move Movie Maker out to its own separate tool package
 
 _ don't show library conflict warning until someone tries to build code
 _   too many people seem to think this is an error
