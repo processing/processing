@@ -6,9 +6,16 @@ X   http://code.google.com/p/processing/issues/detail?id=771
 X code to quit if multiple instances are running from peter
 X another problem with missing shearX/Y() in JAVA2D
 X   http://code.google.com/p/processing/issues/detail?id=784
+X implement movie maker tool
+X   http://code.google.com/p/processing/issues/detail?id=836
+
+_ add movie maker tool to the build scripts
 
 _ don't show library conflict warning until someone tries to build code
 _   too many people seem to think this is an error
+
+_ bad tool brings down the environment
+_   http://code.google.com/p/processing/issues/detail?id=798
 
 _ work on code to quit if multiple instances are running
 _   need to bring the other instance to front

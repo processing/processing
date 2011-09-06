@@ -6,6 +6,8 @@ X   http://code.google.com/p/processing/issues/detail?id=808
 X update wiki re: PNode... also include notes about the changes
 X add note about textMode(SCREEN) to the wiki
 
+_ moviemaker built into core to write uncompressed frames? or PNG?
+
 _ change how beginRecord() works.. passing around PApplet vs PGraphics is gross
 _   have to pass PApplet just to make the rendering work to both renderers
 _   should instead be a renderer that splits things out
