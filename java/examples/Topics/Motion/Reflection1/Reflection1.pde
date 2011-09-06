@@ -16,7 +16,7 @@ float ellipseSpeed = 3.5;
 float velocityX, velocityY; 
 
 void setup(){
-  size(640, 240);
+  size(640, 360);
   frameRate(30);
   fill(128);
   smooth();

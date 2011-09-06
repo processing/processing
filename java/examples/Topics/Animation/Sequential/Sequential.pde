@@ -10,10 +10,9 @@ int numFrames = 12;  // The number of frames in the animation
 int frame = 0;
 PImage[] images = new PImage[numFrames];
     
-void setup()
-{
-  size(200, 200);
-  frameRate(30);
+void setup() {
+  size(640, 360);
+  frameRate(24);
   
   images[0]  = loadImage("PT_anim0000.gif");
   images[1]  = loadImage("PT_anim0001.gif"); 
@@ -39,8 +38,9 @@ void setup()
   //}
 } 
  
-void draw() 
-{ 
+void draw() { 
   frame = (frame+1) % numFrames;  // Use % to cycle through frames
-  image(images[frame], 50, 50);
+  image(images[frame], 10, 70);
+  image(images[(frame + 3) % numFrames], 220, 70);
+  image(images[(frame + 6) % numFrames], 430, 70);
 }

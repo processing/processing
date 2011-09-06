@@ -8,18 +8,16 @@
  
 Eye e1, e2, e3;
 
-void setup() 
-{
+void setup() {
   size(640, 360);
   smooth();
   noStroke();
-  e1 = new Eye( 190,  16, 120);
+  e1 = new Eye( 250,  16, 120);
   e2 = new Eye( 164, 185,  80);  
-  e3 = new Eye( 390, 200, 220);
+  e3 = new Eye( 420, 230, 220);
 }
 
-void draw() 
-{
+void draw() {
   background(102);
   
   e1.update(mouseX, mouseY);
@@ -31,8 +29,7 @@ void draw()
   e3.display();
 }
 
-class Eye 
-{
+class Eye {
   int x, y;
   int size;
   float angle = 0.0;

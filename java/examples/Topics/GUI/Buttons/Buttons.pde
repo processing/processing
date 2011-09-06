@@ -15,7 +15,7 @@ boolean locked = false;
 
 void setup()
 {
-  size(200, 200);
+  size(640, 360);
   smooth();
 
   color baseColor = color(102);
