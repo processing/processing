@@ -37,11 +37,12 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 
+
 /**
- * Hacked from Werner Randelshofer's QuickTimeWriter demo. 
+ * Hacked from Werner Randelshofer's QuickTimeWriter demo. The original version
+ * can be found <a href="http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/">here</a>.
  */
 public class MovieMakerTool extends javax.swing.JFrame {
-
     private JFileChooser imageFolderChooser;
     private JFileChooser soundFileChooser;
     private JFileChooser movieFileChooser;
@@ -138,7 +139,8 @@ public class MovieMakerTool extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("QuickTime Movie Maker");
 
-        aboutLabel.setText("<html><b>This is a demo for the QuickTimeWriter class.</b><br> QuickTimeWriter supports writing of audio and video data in a QuickTime Movie file using pure Java.<br> Copyright © 2010-2011 Werner Randelshofer. All rights reserved.<br> This software can be licensed under Creative Commons Atribution 3.0.");
+        aboutLabel.setText("<html><b>This is a demo for the QuickTimeWriter class.</b><br> " +
+        		"QuickTimeWriter supports writing of audio and video data in a QuickTime Movie file using pure Java.<br> Copyright © 2010-2011 Werner Randelshofer. All rights reserved.<br> This software can be licensed under Creative Commons Atribution 3.0.");
 
         imageFolderHelpLabel.setText("Drag a folder with image files into the field below:");
 
