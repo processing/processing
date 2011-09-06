@@ -51,18 +51,24 @@ class CA {
       int left = cells[i-1];   // Left neighbor state
       int me = cells[i];       // Current state
       int right = cells[i+1];  // Right neighbor state
-      nextgen[i] = rules(left,me,right); // Compute next generation state based on ruleset
+      nextgen[i] = executeRules(left,me,right); // Compute next generation state based on ruleset
     }
     // Copy the array into current value
-    cells = (int[]) nextgen.clone();
+    for (int i = 1; i < cells.length-1; i++) {
+      cells[i] = nextgen[i];
+    }
+    //cells = (int[]) nextgen.clone();
     generation++;
   }
   
   // This is the easy part, just draw the cells, fill 255 for '1', fill 0 for '0'
   void render() {
     for (int i = 0; i < cells.length; i++) {
-      if (cells[i] == 1) fill(255);
-      else               fill(0);
+      if (cells[i] == 1) {
+        fill(255);
+      } else { 
+        fill(0);
+      }
       noStroke();
       rect(i*scl,generation*scl, scl,scl);
     }
@@ -70,15 +76,15 @@ class CA {
   
   // Implementing the Wolfram rules
   // Could be improved and made more concise, but here we can explicitly see what is going on for each case
-  int rules (int a, int b, int c) {
-    if (a == 1 && b == 1 && c == 1) return rules[0];
-    if (a == 1 && b == 1 && c == 0) return rules[1];
-    if (a == 1 && b == 0 && c == 1) return rules[2];
-    if (a == 1 && b == 0 && c == 0) return rules[3];
-    if (a == 0 && b == 1 && c == 1) return rules[4];
-    if (a == 0 && b == 1 && c == 0) return rules[5];
-    if (a == 0 && b == 0 && c == 1) return rules[6];
-    if (a == 0 && b == 0 && c == 0) return rules[7];
+  int executeRules (int a, int b, int c) {
+    if (a == 1 && b == 1 && c == 1) { return rules[0]; }
+    if (a == 1 && b == 1 && c == 0) { return rules[1]; }
+    if (a == 1 && b == 0 && c == 1) { return rules[2]; }
+    if (a == 1 && b == 0 && c == 0) { return rules[3]; }
+    if (a == 0 && b == 1 && c == 1) { return rules[4]; }
+    if (a == 0 && b == 1 && c == 0) { return rules[5]; }
+    if (a == 0 && b == 0 && c == 1) { return rules[6]; }
+    if (a == 0 && b == 0 && c == 0) { return rules[7]; }
     return 0;
   }
   
@@ -91,4 +97,3 @@ class CA {
     }
   }
 }
-
