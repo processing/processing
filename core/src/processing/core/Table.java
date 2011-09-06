@@ -180,17 +180,19 @@ public class Table implements Iterable<Table.Row> {
         }
       }
 
+      int row = 0;
       while (rs.next()) {
         for (int col = 0; col < columnCount; col++) {
           switch (columnTypes[col]) {
-          case STRING: setString(rowCount, col, rs.getString(col+1)); break;
-          case INT: setInt(rowCount, col, rs.getInt(col+1)); break;
-          case LONG: setLong(rowCount, col, rs.getLong(col+1)); break;
-          case FLOAT: setFloat(rowCount, col, rs.getFloat(col+1)); break;
-          case DOUBLE: setDouble(rowCount, col, rs.getDouble(col+1)); break;
+          case STRING: setString(row, col, rs.getString(col+1)); break;
+          case INT: setInt(row, col, rs.getInt(col+1)); break;
+          case LONG: setLong(row, col, rs.getLong(col+1)); break;
+          case FLOAT: setFloat(row, col, rs.getFloat(col+1)); break;
+          case DOUBLE: setDouble(row, col, rs.getDouble(col+1)); break;
           default: throw new IllegalArgumentException("column type " + columnTypes[col] + " not supported.");
           }
         }
+        row++;
 //        String[] row = new String[columnCount];
 //        for (int col = 0; col < columnCount; col++) {
 //          row[col] = rs.getString(col + 1);
