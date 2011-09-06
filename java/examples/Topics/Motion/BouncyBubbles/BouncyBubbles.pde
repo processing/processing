@@ -14,11 +14,11 @@ Ball[] balls = new Ball[numBalls];
 
 void setup() 
 {
-  size(640, 200);
+  size(640, 360);
   noStroke();
   smooth();
   for (int i = 0; i < numBalls; i++) {
-    balls[i] = new Ball(random(width), random(height), random(20, 40), i, balls);
+    balls[i] = new Ball(random(width), random(height), random(30, 70), i, balls);
   }
 }
 

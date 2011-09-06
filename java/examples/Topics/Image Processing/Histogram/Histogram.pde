@@ -5,8 +5,7 @@
  * A histogram is the frequency distribution 
  * of the gray levels with the number of pure black values
  * displayed on the left and number of pure white values on the right. 
- * 
- * Updated 28 February, 2010.
+ *
  * Note that this sketch will behave differently on Android, 
  * since most images will no longer be full 24-bit color.
  */

@@ -8,8 +8,8 @@
  
 int rectX, rectY;      // Position of square button
 int circleX, circleY;  // Position of circle button
-int rectSize = 50;     // Diameter of rect
-int circleSize = 53;   // Diameter of circle
+int rectSize = 90;     // Diameter of rect
+int circleSize = 93;   // Diameter of circle
 
 color rectColor;
 color circleColor;
@@ -18,9 +18,8 @@ color baseColor;
 boolean rectOver = false;
 boolean circleOver = false;
 
-void setup()
-{
-  size(200, 200);
+void setup() {
+  size(640, 360);
   smooth();
   rectColor = color(0);
   circleColor = color(255);
@@ -32,8 +31,7 @@ void setup()
   ellipseMode(CENTER);
 }
 
-void draw()
-{
+void draw() {
   update(mouseX, mouseY);
 
   noStroke();
@@ -53,8 +51,7 @@ void draw()
   ellipse(circleX, circleY, circleSize, circleSize);
 }
 
-void update(int x, int y)
-{
+void update(int x, int y) {
   if( overCircle(circleX, circleY, circleSize) ) {
     circleOver = true;
     rectOver = false;
@@ -66,8 +63,7 @@ void update(int x, int y)
   }
 }
 
-boolean overRect(int x, int y, int width, int height) 
-{
+boolean overRect(int x, int y, int width, int height) {
   if (mouseX >= x && mouseX <= x+width && 
       mouseY >= y && mouseY <= y+height) {
     return true;
@@ -76,8 +72,7 @@ boolean overRect(int x, int y, int width, int height)
   }
 }
 
-boolean overCircle(int x, int y, int diameter) 
-{
+boolean overCircle(int x, int y, int diameter) {
   float disX = x - mouseX;
   float disY = y - mouseY;
   if(sqrt(sq(disX) + sq(disY)) < diameter/2 ) {

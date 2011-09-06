@@ -7,9 +7,8 @@
 Handle[] handles;
 int num;
 
-void setup()
-{
-  size(200, 200);
+void setup() {
+  size(640, 360);
   num = height/15;
   handles = new Handle[num];
   int hsize = 10;
@@ -18,8 +17,7 @@ void setup()
   }
 }
 
-void draw()
-{
+void draw() {
   background(153);
   
   for(int i=0; i<num; i++) {
@@ -31,15 +29,14 @@ void draw()
   rect(0, 0, width/2, height);
 }
 
-void mouseReleased() 
-{
+void mouseReleased()  {
   for(int i=0; i<num; i++) {
     handles[i].release();
   }
 }
 
-class Handle
-{
+class Handle {
+  
   int x, y;
   int boxx, boxy;
   int length;
@@ -50,8 +47,7 @@ class Handle
   boolean otherslocked = false;
   Handle[] others;
   
-  Handle(int ix, int iy, int il, int is, Handle[] o)
-  {
+  Handle(int ix, int iy, int il, int is, Handle[] o) {
     x = ix;
     y = iy;
     length = il;
@@ -61,8 +57,7 @@ class Handle
     others = o;
   }
   
-  void update() 
-  {
+  void update() {
     boxx = x+length;
     boxy = y - size/2;
     
@@ -85,8 +80,7 @@ class Handle
     }
   }
   
-  void over()
-  {
+  void over() {
     if(overRect(boxx, boxy, size, size)) {
       over = true;
     } else {
@@ -94,8 +88,7 @@ class Handle
     }
   }
   
-  void press()
-  {
+  void press() {
     if(over && mousePressed || locked) {
       press = true;
       locked = true;
@@ -104,13 +97,11 @@ class Handle
     }
   }
   
-  void release()
-  {
+  void release() {
     locked = false;
   }
   
-  void display() 
-  {
+  void display() {
     line(x, y, x+length, y);
     fill(255);
     stroke(0);
@@ -123,8 +114,7 @@ class Handle
   }
 }
 
-boolean overRect(int x, int y, int width, int height) 
-{
+boolean overRect(int x, int y, int width, int height) {
   if (mouseX >= x && mouseX <= x+width && 
       mouseY >= y && mouseY <= y+height) {
     return true;
@@ -133,7 +123,6 @@ boolean overRect(int x, int y, int width, int height)
   }
 }
 
-int lock(int val, int minv, int maxv) 
-{ 
+int lock(int val, int minv, int maxv) { 
   return  min(max(val, minv), maxv); 
 } 
