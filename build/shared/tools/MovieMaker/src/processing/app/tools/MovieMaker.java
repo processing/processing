@@ -119,7 +119,10 @@ public class MovieMaker extends JFrame implements Tool {
     soundFileField.setText(prefs.get("movie.soundFile", ""));
     widthField.setText("" + prefs.getInt("movie.width", 640));
     heightField.setText("" + prefs.getInt("movie.height", 480));
-    originalSizeCheckBox.setSelected(prefs.getBoolean("movie.originalSize", false));
+    boolean original = prefs.getBoolean("movie.originalSize", false);
+    originalSizeCheckBox.setSelected(original);
+    widthField.setEnabled(!original);
+    heightField.setEnabled(!original);
     String fps = "" + prefs.getDouble("movie.fps", 30);
     if (fps.endsWith(".0")) {
       fps = fps.substring(0, fps.length() - 2);
@@ -129,8 +132,9 @@ public class MovieMaker extends JFrame implements Tool {
 
     originalSizeCheckBox.addActionListener(new ActionListener() {      
       public void actionPerformed(ActionEvent e) {
-        widthField.setEnabled(originalSizeCheckBox.isSelected());
-        heightField.setEnabled(originalSizeCheckBox.isSelected());
+        boolean enabled = !originalSizeCheckBox.isSelected();
+        widthField.setEnabled(enabled);
+        heightField.setEnabled(enabled);
       }
     });
 
