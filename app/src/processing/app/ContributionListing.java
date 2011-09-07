@@ -417,7 +417,11 @@ public class ContributionListing {
       try {
         SAXParser sp = spf.newSAXParser(); // throws ParserConfigurationException
 
-        InputSource input = new InputSource(new FileReader(xmlFile));
+        InputStream inputStream= new FileInputStream(xmlFile);
+        Reader reader = new InputStreamReader(inputStream, "UTF-8");
+         
+        InputSource input = new InputSource(reader);
+        input.setEncoding("UTF-8");
 
         contributions = new ArrayList<AdvertisedContribution>();
         sp.parse(input, this); // throws SAXException
