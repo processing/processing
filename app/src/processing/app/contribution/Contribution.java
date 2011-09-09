@@ -68,6 +68,24 @@ public interface Contribution {
       
       return "contribution";
     };
+    
+    static public Type toType(String s) {
+      if (s != null) {
+        if ("library".equals(s.toLowerCase())) {
+          return LIBRARY;
+        }
+        if ("librarycompilation".equals(s.toLowerCase())) {
+          return LIBRARY_COMPILATION;
+        }
+        if ("tool".equals(s.toLowerCase())) {
+          return TOOL;
+        }
+        if ("mode".equals(s.toLowerCase())) {
+          return MODE;
+        }
+      }
+      return null;
+    }
   }
 
 }

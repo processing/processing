@@ -28,13 +28,9 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.xml.parsers.*;
-
-import org.xml.sax.*;
-import org.xml.sax.helpers.*;
-
 import processing.app.contribution.*;
 import processing.app.contribution.Contribution.Type;
+import processing.core.PApplet;
 
 public class ContributionListing {
   
@@ -65,7 +61,7 @@ public class ContributionListing {
     allContributions = new ArrayList<Contribution>();
     downloadingListingLock = new ReentrantLock();
     
-    listingFile = Base.getSettingsFile("contributions.xml");
+    listingFile = Base.getSettingsFile("contributions.txt");
     listingFile.setWritable(true);
     if (listingFile.exists()) {
       setAdvertisedList(listingFile);
@@ -73,13 +69,12 @@ public class ContributionListing {
   }
 
 
-  void setAdvertisedList(File xmlFile) {
+  void setAdvertisedList(File file) {
     
-    listingFile = xmlFile;
+    listingFile = file;
     
-    ContributionXmlParser xmlParser = new ContributionXmlParser(listingFile);
     advertisedContributions.clear();
-    advertisedContributions.addAll(xmlParser.getLibraries());
+    advertisedContributions.addAll(getLibraries(listingFile));
     for (Contribution contribution : advertisedContributions) {
       addContribution(contribution);
     }
@@ -339,7 +334,7 @@ public class ContributionListing {
         
         URL url = null;
         try {
-          url = new URL("http://processing.googlecode.com/svn/trunk/web/contrib_generate/contributions.xml");
+          url = new URL("http://processing.googlecode.com/svn/trunk/web/contrib_generate/contributions.txt");
         } catch (MalformedURLException e) {
           progressMonitor.error(e);
           progressMonitor.finished();
@@ -394,172 +389,102 @@ public class ContributionListing {
     
   }
   
-  /**
-   * Class to parse the libraries xml file
-   */
-  private static class ContributionXmlParser extends DefaultHandler {
+  public ArrayList<AdvertisedContribution> getLibraries(File f) {
+    ArrayList<AdvertisedContribution> outgoing = new ArrayList<AdvertisedContribution>();
     
-    final static String LIBRARY_TAG = "library";
-    final static String LIBRARY_COMPILATION_TAG = "librarycompilation";
-    final static String TOOL_TAG = "tool";
-    //final static String MODE_TAG = "mode";
-    
-    ArrayList<AdvertisedContribution> contributions;
-    
-    String currentCategoryName;
-
-    AdvertisedContribution currentInfo;
-
-    ContributionXmlParser(File xmlFile) {
-      SAXParserFactory spf = SAXParserFactory.newInstance();
-      spf.setValidating(false);
+    if (f != null && f.exists()) {
+      String lines[] = PApplet.loadStrings(f);
       
-      try {
-        SAXParser sp = spf.newSAXParser(); // throws ParserConfigurationException
+      int start = 0;
+      while (start < lines.length) {
+        // Only consider 'invalid' lines. These lines contain the type of
+        // software: library, tool, mode
+        if (!lines[start].contains("=")) {
+          String type = lines[start];
 
-        InputStream inputStream= new FileInputStream(xmlFile);
-        Reader reader = new InputStreamReader(inputStream, "UTF-8");
-         
-        InputSource input = new InputSource(reader);
-        input.setEncoding("UTF-8");
-
-        contributions = new ArrayList<AdvertisedContribution>();
-        sp.parse(input, this); // throws SAXException
-
-      } catch (ParserConfigurationException e) {
-        Base.showWarning("Error reading contributions list",
-                         "An internal error occured when preparing to read the list\n" +
-                             "of libraries. You can still install libraries manually while\n" +
-                             "we work on fixing this.", e);
-      } catch (IOException e) {
-        Base.showWarning("Error reading contributions list",
-                         "A error occured while reading the list of available libraries.\n" +
-                         "Try restarting the Contribution Manager.\n", e);
-      } catch (SAXException e) {
-        Base.showWarning("Error reading contributions list",
-                         "The list of libraries downloaded from Processing.org\n" +
-                         "appears to be malformed. You can still install libraries\n" + 
-                         "manually while we work on fixing this.", e);
-        contributions = null;
+          // Scan forward for the next blank line
+          int end = ++start;
+          while (end < lines.length && !lines[end].equals("")) {
+            end++;
+          }
+          
+          int length = end - start;
+          String strings[] = new String[length];
+          System.arraycopy(lines, start, strings, 0, length);
+          
+          HashMap<String,String> exports = new HashMap<String,String>();
+          Base.readSettings(strings, exports);
+          
+          Type kind = Contribution.Type.toType(type);
+          outgoing.add(new AdvertisedContribution(kind, exports));
+          
+          start = end + 1;
+        } else {
+          start++;
+        }
       }
     }
-
-    public ArrayList<AdvertisedContribution> getLibraries() {
-      return contributions;
-    }
-
-    @Override
-    public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) throws SAXException {
-
-      if ("category".equals(qName)) {
-        currentCategoryName = attributes.getValue("name");
-
-      } else if (ContributionXmlParser.LIBRARY_TAG.equals(qName)) {
-        currentInfo = new AdvertisedContribution(Type.LIBRARY);
-        setCommonAttributes(attributes);
-
-      }  else if (ContributionXmlParser.LIBRARY_COMPILATION_TAG.equals(qName)) {
-        currentInfo = new AdvertisedContribution(Type.LIBRARY_COMPILATION);
-        setCommonAttributes(attributes);
-        
-      } else if (ContributionXmlParser.TOOL_TAG.equals(qName)) {
-        currentInfo = new AdvertisedContribution(Type.TOOL);
-        setCommonAttributes(attributes);
-
-      } else if ("description".equals(qName)) {
-        currentInfo.authorList = attributes.getValue("authorList");
-        currentInfo.sentence = attributes.getValue("sentence");
-        currentInfo.paragraph = attributes.getValue("paragraph");
-        
-      } else if ("version".equals(qName)) {
-        currentInfo.version = Integer.parseInt(attributes.getValue("id"));
-        currentInfo.prettyVersion = attributes.getValue("pretty");
-
-      } else if ("download".equals(qName)) {
-        String link = null;
-        
-        String hostPlatform = Base.getPlatformName();
-        int nativeBits = Base.getNativeBits();
-        String hostVersion = Base.getPlatformVersionName();
-        
-        // Try macosx64.lion
-        if (!hostPlatform.isEmpty())
-          link = attributes.getValue(hostPlatform + nativeBits + "." + hostVersion);
-        // Try macosx.lion
-        if (link == null)
-          link = attributes.getValue(hostPlatform + "." + hostVersion);
-        // Try macosx64
-        if (link == null)
-          link = attributes.getValue(hostPlatform + nativeBits);
-        // Try macosx
-        if (link == null)
-          link = attributes.getValue(hostPlatform);
-        // Try "other"
-        if (link == null)
-          link = attributes.getValue("other");
-        
-        // If it's still null by this point, the library doesn't support this OS
-        currentInfo.link = link;
-      }
-      
-    }
     
-    private void setCommonAttributes(Attributes attributes) {
-      currentInfo.category = currentCategoryName;
-      currentInfo.name = attributes.getValue("name");
-      currentInfo.url = attributes.getValue("url");
-    }
-    
-    @Override
-    public void endElement(String uri, String localName, String qName)
-        throws SAXException {
-
-      if (ContributionXmlParser.LIBRARY_TAG.equals(qName)
-          || ContributionXmlParser.LIBRARY_COMPILATION_TAG.equals(qName)
-          || ContributionXmlParser.TOOL_TAG.equals(qName)) {
-        contributions.add(currentInfo);
-        currentInfo = null;
-      }
-    }
-
-    @Override
-    public void warning(SAXParseException exception) {
-      System.err.println("WARNING: line " + exception.getLineNumber() + ": "
-          + exception.getMessage());
-    }
-
-    @Override
-    public void error(SAXParseException exception) {
-      System.err.println("ERROR: line " + exception.getLineNumber() + ": "
-          + exception.getMessage());
-    }
-
-    @Override
-    public void fatalError(SAXParseException exception) throws SAXException {
-      System.err.println("FATAL: line " + exception.getLineNumber() + ": "
-          + exception.getMessage());
-      throw (exception);
-    }
-    
+    return outgoing;
   }
   
   static class AdvertisedContribution implements Contribution {
     
-    protected String name;             // "pdf" or "PDF Export"
-    protected Type type;               // Library, tool, etc.
-    protected String category;         // "Sound"
-    protected String authorList;       // [Ben Fry](http://benfry.com/)
-    protected String url;              // http://processing.org
-    protected String sentence;         // Write graphics to PDF files.
-    protected String paragraph;        // <paragraph length description for site>
-    protected int version;             // 102
-    protected int latestVersion;       // 103
-    protected String prettyVersion;    // "1.0.2"
-    protected String link;             // Direct link to download the file
+    protected final String name;             // "pdf" or "PDF Export"
+    protected final Type type;               // Library, tool, etc.
+    protected final String category;         // "Sound"
+    protected final String authorList;       // [Ben Fry](http://benfry.com/)
+    protected final String url;              // http://processing.org
+    protected final String sentence;         // Write graphics to PDF files.
+    protected final String paragraph;        // <paragraph length description for site>
+    protected final int version;             // 102
+    protected final String prettyVersion;    // "1.0.2"
+    protected final String link;             // Direct link to download the file
     
-    public AdvertisedContribution(Type type) {
+    public AdvertisedContribution(Type type, HashMap<String, String> exports) {
+      
       this.type = type;
+      name = exports.get("name");
+      category = exports.get("category");
+      authorList = exports.get("authorList");
+
+      url = exports.get("url");
+      sentence = exports.get("sentence");
+      paragraph = exports.get("paragraph");
+
+      int v = 0;
+      try {
+        v = Integer.parseInt(exports.get("version"));
+      } catch (NumberFormatException e) {
+      }
+      version = v;
+      
+      prettyVersion = exports.get("prettyVersion");
+      
+      String download = null;
+      
+      String hostPlatform = Base.getPlatformName();
+      int nativeBits = Base.getNativeBits();
+      String hostVersion = Base.getPlatformVersionName();
+      
+      // Try download.macosx64.lion
+      if (!hostPlatform.isEmpty())
+        download = exports.get("download." + hostPlatform + nativeBits + "." + hostVersion);
+      // Try download.macosx.lion
+      if (download == null)
+        download = exports.get("download." + hostPlatform + "." + hostVersion);
+      // Try download.macosx64
+      if (download == null)
+        download = exports.get("download." + hostPlatform + nativeBits);
+      // Try download.macosx
+      if (download == null)
+        download = exports.get("download." + hostPlatform);
+      // Try download
+      if (download == null)
+        download = exports.get("download");
+      
+      // If it's still null by this point, the library doesn't support this OS
+      this.link = download;
     }
     
     public boolean isInstalled() {
@@ -596,10 +521,6 @@ public class ContributionListing {
     
     public int getVersion() {
       return version;
-    }
-    
-    public int getLatestVersion() {
-      return latestVersion;
     }
     
     public String getPrettyVersion() {
