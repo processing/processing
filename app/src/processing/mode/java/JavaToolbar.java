@@ -72,7 +72,7 @@ public class JavaToolbar extends EditorToolbar {
     case NEW:    return !shift ? "New" : "New Editor Window";
     case OPEN:   return !shift ? "Open" : "Open in Another Window";
     case SAVE:   return "Save";
-    case EXPORT: return !shift ? "Export Applet" : "Export Application";
+    case EXPORT: return !shift ? "Export Application" : "Export Applet";
     }
     return null;
   }
