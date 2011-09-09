@@ -38,6 +38,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import processing.app.ContributionListing.AdvertisedContribution;
 import processing.app.contribution.*;
 import processing.app.contribution.Contribution.Type;
 
@@ -53,6 +54,9 @@ public class ContributionManager {
   
   static private final String DISCOVERY_NONE_FOUND_ERROR_MESSAGE =
       "Maybe it's just us, but it looks like there are no contributions in this file.";
+  
+  static private final String ERROR_OVERWRITING_PROPERTIES_MESSAGE =
+      "Error overwriting .properties file.";
   
   static final String ANY_CATEGORY = "Any";
   
@@ -447,7 +451,7 @@ public class ContributionManager {
    *          null.
    */
   public void downloadAndInstall(final URL url,
-                                 final Contribution toBeReplaced,
+                                 final AdvertisedContribution ad,
                                  final JProgressMonitor downloadProgressMonitor,
                                  final JProgressMonitor installProgressMonitor) {
 
@@ -465,22 +469,22 @@ public class ContributionManager {
           installProgressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
   
           InstalledContribution contribution = null;
-          switch (toBeReplaced.getType()) {
+          switch (ad.getType()) {
           case LIBRARY:
-            contribution = installLibrary(libDest, false);
+            contribution = installLibrary(libDest, ad, false);
             break;
           case LIBRARY_COMPILATION:
             contribution = installLibraryCompilation(libDest);
             break;
           case TOOL:
-            contribution = installTool(libDest);
+            contribution = installTool(libDest, ad);
             break;
           }
   
           if (contribution != null) {
             // XXX contributionListing.getInformationFromAdvertised(contribution);
             // get the category at least
-            contribListing.replaceContribution(toBeReplaced, contribution);
+            contribListing.replaceContribution(ad, contribution);
             refreshInstalled();
           }
   
@@ -534,7 +538,7 @@ public class ContributionManager {
                              ContributionManager.DOUBLE_CLICK_SECONDARY);
     
     if (result == JOptionPane.YES_OPTION) {
-      return installLibrary(libFile, true);
+      return installLibrary(libFile, null, true);
     }
     
     return null;
@@ -613,7 +617,9 @@ public class ContributionManager {
     return fileName;
   }
   
-  protected ToolContribution installTool(File zippedToolFile) {
+  protected ToolContribution installTool(File zippedToolFile,
+                                         AdvertisedContribution ad) {
+    
     File tempDir = unzipFileToTemp(zippedToolFile);
     
     ArrayList<ToolContribution> discoveredTools = ToolContribution.list(tempDir, false);
@@ -627,7 +633,13 @@ public class ContributionManager {
     
     if (discoveredTools != null && discoveredTools.size() == 1) {
       ToolContribution discoveredTool = discoveredTools.get(0);
-      return installTool(discoveredTool);
+      File propFile = new File(discoveredTool.getFolder(), "tool.properties");
+      
+      if (ad == null || writePropertiesFile(propFile, ad)) {
+        return installTool(discoveredTool);        
+      } else {
+        statusBar.setErrorMessage(ERROR_OVERWRITING_PROPERTIES_MESSAGE);
+      }
     } else {
       // Diagnose the problem and notify the user
       if (discoveredTools == null || discoveredTools.isEmpty()) {
@@ -680,7 +692,44 @@ public class ContributionManager {
     return null;
   }
   
-  protected Library installLibrary(File libFile, boolean confirmReplace) {
+  protected boolean writePropertiesFile(File propFile, AdvertisedContribution ad) {
+    try {
+      if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(propFile));
+        
+        bw.write("name=" + ad.getName() + "\n");
+        bw.write("category=" + ad.getCategory() + "\n");
+        bw.write("authorList=" + ad.getAuthorList() + "\n");
+        bw.write("url=" + ad.getUrl() + "\n");
+        bw.write("sentence=" + ad.getSentence() + "\n");
+        bw.write("paragraph=" + ad.getParagraph() + "\n");
+        bw.write("version=" + ad.getVersion() + "\n");
+        bw.write("prettyVersion=" + ad.getPrettyVersion() + "\n");
+        
+        bw.close();
+      }
+      return true;
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
+    }
+    
+    return false;
+  }
+  
+  /**
+   * @param libFile
+   *          a zip file containing the library to install
+   * @param ad
+   *          the advertised version of this library, if it was downloaded
+   *          through the Contribution Manager, or null. This is used to replace
+   *          the library.properties file in the zip
+   * @param confirmReplace
+   *          true to open a dialog asking the user to confirm removing/moving
+   *          the library when a library by the same name already exists
+   * @return
+   */
+  protected Library installLibrary(File libFile, AdvertisedContribution ad,
+                                   boolean confirmReplace) {
     File tempDir = unzipFileToTemp(libFile);
     
     try {
@@ -695,7 +744,13 @@ public class ContributionManager {
       
       if (discoveredLibs != null && discoveredLibs.size() == 1) {
         Library discoveredLib = discoveredLibs.get(0);
-        return installLibrary(discoveredLib, confirmReplace);
+        File propFile = new File(discoveredLib.getFolder(), "library.properties");
+        
+        if (ad == null || writePropertiesFile(propFile, ad)) {
+          return installLibrary(discoveredLib, confirmReplace);
+        } else {
+          statusBar.setErrorMessage(ERROR_OVERWRITING_PROPERTIES_MESSAGE);
+        }
       } else {
         // Diagnose the problem and notify the user
         if (discoveredLibs == null) {

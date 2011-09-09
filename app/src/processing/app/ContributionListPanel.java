@@ -654,9 +654,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           
           public void actionPerformed(ActionEvent e) {
             updateButton.setEnabled(false);
-            String url = contribManager.getListing()
-                .getAdvertisedContribution(contrib).link;
-            installContribution(contrib, url);
+            AdvertisedContribution ad = contribManager.getListing()
+                .getAdvertisedContribution(contrib);
+             String url = ad.link;
+            installContribution(ad, url);
           }
         });
         descriptionPanel.add(updateButton, c);
@@ -826,7 +827,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
     }
     
-    private void installContribution(Contribution toBeReplaced, String url) {
+    private void installContribution(AdvertisedContribution ad, String url) {
       
       installRemoveButton.setEnabled(false);
       
@@ -835,7 +836,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         installProgressBar.setVisible(true);
         
-        contribManager.downloadAndInstall(downloadUrl, toBeReplaced,
+        contribManager.downloadAndInstall(downloadUrl, ad,
           new JProgressMonitor(installProgressBar) {
 
             public void finishedAction() {
