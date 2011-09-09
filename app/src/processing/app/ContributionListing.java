@@ -46,6 +46,12 @@ public class ContributionListing {
   
   ReentrantLock downloadingListingLock;
   
+  static protected final String validCategories[] = {
+    "Sound", "Import / Export", "Simulation / Math", "Tools",
+    "Hardware Interface", "Typography / Geometry", "Animation",
+    "Graphic Interface", "Computer Vision / Video", "3D", "Compilation",
+    "Data / Protocols" };
+  
   static Comparator<Contribution> contribComparator = new Comparator<Contribution>() {
     public int compare(Contribution o1, Contribution o2) {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
@@ -389,6 +395,33 @@ public class ContributionListing {
     
   }
   
+  /**
+   * @return a lowercase string with all non-alphabetic characters removed
+   */
+  static protected String normalize(String s) {
+    return s.toLowerCase().replaceAll("^\\p{Lower}", "");
+  }
+  
+  /**
+   * @return the proper, valid name of this category to be displayed in the UI
+   *         (e.g. "Typography / Geometry"). "Unknown" if the category is
+   *         invalid.
+   */
+  static public String getCategory(String category) {
+    if (category != null) {
+      String normCatName = normalize(category);
+      
+      for (String validCatName : validCategories) {
+        String normValidCatName = normalize(validCatName);
+        if (normValidCatName.equals(normCatName)) {
+          return validCatName;
+        }
+      }
+    }
+    
+    return "Unknown";
+  }
+  
   public ArrayList<AdvertisedContribution> getLibraries(File f) {
     ArrayList<AdvertisedContribution> outgoing = new ArrayList<AdvertisedContribution>();
     
@@ -445,7 +478,7 @@ public class ContributionListing {
       
       this.type = type;
       name = exports.get("name");
-      category = exports.get("category");
+      category = ContributionListing.getCategory(exports.get("category"));
       authorList = exports.get("authorList");
 
       url = exports.get("url");

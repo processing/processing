@@ -50,9 +50,9 @@ public abstract class InstalledContribution implements Contribution {
     File propertiesFile = new File(folder, propertiesFileName);
 
     properties = Base.readSettings(propertiesFile);
-    category = "Unknown";
 
     name = properties.get("name");
+    category = ContributionListing.getCategory(properties.get("category"));
     if (name == null) {
       name = folder.getName();
     }
