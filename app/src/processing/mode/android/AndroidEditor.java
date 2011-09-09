@@ -113,22 +113,23 @@ public class AndroidEditor extends JavaEditor {
 
   
   public JMenu buildFileMenu() {
-    String exportTitle = AndroidToolbar.getTitle(AndroidToolbar.EXPORT, false);
-    JMenuItem exportProject = Base.newJMenuItem(exportTitle, 'E');
-    exportProject.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        handleExportProject();
-      }
-    });
-      
-    exportTitle = AndroidToolbar.getTitle(AndroidToolbar.EXPORT, true);
-    JMenuItem exportPackage = Base.newJMenuItemShift(exportTitle, 'E');
+    String exportPkgTitle = AndroidToolbar.getTitle(AndroidToolbar.EXPORT, false);
+    JMenuItem exportPackage = Base.newJMenuItemShift(exportPkgTitle, 'E');
     exportPackage.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleExportApplication();
       }
     });
-    return buildFileMenu(new JMenuItem[] { exportProject, exportPackage });
+    
+    String exportProjectTitle = AndroidToolbar.getTitle(AndroidToolbar.EXPORT, true);
+    JMenuItem exportProject = Base.newJMenuItem(exportProjectTitle, 'E');
+    exportProject.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleExportProject();
+      }
+    });
+
+    return buildFileMenu(new JMenuItem[] { exportPackage, exportProject});
   }
   
   

@@ -47,7 +47,14 @@ public class JavaEditor extends Editor {
 
   
   public JMenu buildFileMenu() {
-    String appletTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
+    String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
+    JMenuItem exportApplication = Base.newJMenuItemShift(appTitle, 'E');
+    exportApplication.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        handleExportApplication();
+      }
+    });
+    String appletTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, true);
     JMenuItem exportApplet = Base.newJMenuItem(appletTitle, 'E');
     exportApplet.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -55,14 +62,7 @@ public class JavaEditor extends Editor {
       }
     });
 
-    String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, true);
-    JMenuItem exportApplication = Base.newJMenuItemShift(appTitle, 'E');
-    exportApplication.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        handleExportApplication();
-      }
-    });
-    return buildFileMenu(new JMenuItem[] { exportApplet, exportApplication });
+    return buildFileMenu(new JMenuItem[] { exportApplication, exportApplet });
   }
   
   
