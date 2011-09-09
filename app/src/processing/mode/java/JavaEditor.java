@@ -17,14 +17,14 @@ public class JavaEditor extends Editor {
 
   // TODO this needs prefs to be applied when necessary
   PdeKeyListener listener;
-  
+
   // Runner associated with this editor window
   private Runner runtime;
 
-  
+
   protected JavaEditor(Base base, String path, int[] location, Mode mode) {
     super(base, path, location, mode);    
-    
+
     // hopefully these are no longer needed w/ swing
     // (har har har.. that was wishful thinking)
     listener = new PdeKeyListener(this, textarea);
@@ -32,30 +32,30 @@ public class JavaEditor extends Editor {
     jmode = (JavaMode) mode;
   }
 
-  
+
   public EditorToolbar createToolbar() {
     return new JavaToolbar(this, base);
   }
-  
-  
+
+
   public Formatter createFormatter() {
     return new AutoFormat();
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   public JMenu buildFileMenu() {
     String appTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, false);
-    JMenuItem exportApplication = Base.newJMenuItemShift(appTitle, 'E');
+    JMenuItem exportApplication = Base.newJMenuItem(appTitle, 'E');
     exportApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleExportApplication();
       }
     });
     String appletTitle = JavaToolbar.getTitle(JavaToolbar.EXPORT, true);
-    JMenuItem exportApplet = Base.newJMenuItem(appletTitle, 'E');
+    JMenuItem exportApplet = Base.newJMenuItemShift(appletTitle, 'E');
     exportApplet.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         handleExportApplet();
@@ -64,32 +64,32 @@ public class JavaEditor extends Editor {
 
     return buildFileMenu(new JMenuItem[] { exportApplication, exportApplet });
   }
-  
-  
+
+
   public JMenu buildSketchMenu() {
     JMenuItem runItem = Base.newJMenuItem(JavaToolbar.getTitle(JavaToolbar.RUN, false), 'R');
     runItem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleRun();
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        handleRun();
+      }
+    });
 
     JMenuItem presentItem = Base.newJMenuItemShift(JavaToolbar.getTitle(JavaToolbar.RUN, true), 'R');
     presentItem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handlePresent();
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        handlePresent();
+      }
+    });
 
     JMenuItem stopItem = new JMenuItem(JavaToolbar.getTitle(JavaToolbar.STOP, false));
     stopItem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          handleStop();
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        handleStop();
+      }
+    });
     return buildSketchMenu(new JMenuItem[] { runItem, presentItem, stopItem });
   }
-  
+
 
   public JMenu buildHelpMenu() {
     // To deal with a Mac OS X 10.5 bug, add an extra space after the name
@@ -102,39 +102,39 @@ public class JavaEditor extends Editor {
       menu.addSeparator();
       item = new JMenuItem("About Processing");
       item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            base.handleAbout();
-          }
-        });
+        public void actionPerformed(ActionEvent e) {
+          base.handleAbout();
+        }
+      });
       menu.add(item);
     }
 
     item = new JMenuItem("Environment");
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          showReference("environment" + File.separator + "index.html");
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        showReference("environment" + File.separator + "index.html");
+      }
+    });
     menu.add(item);
 
     item = new JMenuItem("Reference");
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          showReference("index.html");
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        showReference("index.html");
+      }
+    });
     menu.add(item);
 
     item = Base.newJMenuItemShift("Find in Reference", 'F');
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (textarea.isSelectionActive()) {
-            handleFindReference();
-          }
+      public void actionPerformed(ActionEvent e) {
+        if (textarea.isSelectionActive()) {
+          handleFindReference();
         }
-      });
+      }
+    });
     menu.add(item);
-    
+
     menu.addSeparator();
     item = new JMenuItem("Online");
     item.setEnabled(false);
@@ -142,48 +142,48 @@ public class JavaEditor extends Editor {
 
     item = new JMenuItem("Getting Started");
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://processing.org/learning/gettingstarted/");
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://processing.org/learning/gettingstarted/");
+      }
+    });
     menu.add(item);
 
     item = new JMenuItem("Troubleshooting");
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://wiki.processing.org/w/Troubleshooting");
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://wiki.processing.org/w/Troubleshooting");
+      }
+    });
     menu.add(item);
 
     item = new JMenuItem("Frequently Asked Questions");
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://wiki.processing.org/w/FAQ");
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://wiki.processing.org/w/FAQ");
+      }
+    });
     menu.add(item);
 
     item = new JMenuItem("Visit Processing.org");
     item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          Base.openURL("http://processing.org/");
-        }
-      });
+      public void actionPerformed(ActionEvent e) {
+        Base.openURL("http://processing.org/");
+      }
+    });
     menu.add(item);
 
     return menu;
   }    
-  
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   public String getCommentPrefix() {
     return "//";
   }
-  
-  
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -214,8 +214,8 @@ public class JavaEditor extends Editor {
       toolbar.deactivate(JavaToolbar.EXPORT);
     }
   }
-  
-  
+
+
 //  public void handleExportApplication() {
 //    toolbar.activate(Toolbar.EXPORT);
 //    try {
@@ -225,14 +225,14 @@ public class JavaEditor extends Editor {
 //    }
 //    toolbar.deactivate(Toolbar.EXPORT);
 //  }  
-  
+
 
   /**
    * Handler for Sketch &rarr; Export Application
    */
   public void handleExportApplication() {
     toolbar.activate(JavaToolbar.EXPORT);
-    
+
     if (handleExportCheckModified()) {
       statusNotice("Exporting application...");
       try {
@@ -250,8 +250,8 @@ public class JavaEditor extends Editor {
     }
     toolbar.deactivate(JavaToolbar.EXPORT);
   }
-  
-  
+
+
   protected boolean exportApplicationPrompt() throws IOException, SketchException {
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -486,8 +486,8 @@ public class JavaEditor extends Editor {
       }
     }).start();
   }
-  
-  
+
+
   public void handlePresent() {
     toolbar.activate(JavaToolbar.RUN);
 
@@ -525,8 +525,8 @@ public class JavaEditor extends Editor {
     // focus the PDE again after quitting presentation mode [toxi 030903]
     toFront();
   }
-  
-  
+
+
   public void handleSave() {
     toolbar.activate(JavaToolbar.SAVE);
     //handleStop();
@@ -542,8 +542,8 @@ public class JavaEditor extends Editor {
     toolbar.deactivate(JavaToolbar.SAVE);
     return result;
   }
-  
-  
+
+
   /**
    * Add import statements to the current tab for all of packages inside
    * the specified jar file.
@@ -558,7 +558,7 @@ public class JavaEditor extends Editor {
     if (mode.isDefaultExtension(sketch.getCurrentCode())) {
       sketch.setCurrentCode(0);
     }
-    
+
     // could also scan the text in the file to see if each import
     // statement is already in there, but if the user has the import
     // commented out, then this will be a problem.
@@ -575,15 +575,15 @@ public class JavaEditor extends Editor {
     setSelection(0, 0);  // scroll to start
     sketch.setModified(true);
   }
-  
-  
+
+
   public void statusError(String what) {
     super.statusError(what);
 //    new Exception("deactivating RUN").printStackTrace();
     toolbar.deactivate(JavaToolbar.RUN);
   }
 
-  
+
   /**
    * Deactivate the Run button. This is called by Runner to notify that the
    * sketch has stopped running, usually in response to an error (or maybe
@@ -598,8 +598,8 @@ public class JavaEditor extends Editor {
   public void deactivateExport() {
     toolbar.deactivate(JavaToolbar.EXPORT);
   }
-  
-  
+
+
   public void internalCloseRunner() {
     //jmode.handleStop();
     handleStop();
