@@ -2,6 +2,7 @@
 X implement movie maker tool
 X   http://code.google.com/p/processing/issues/detail?id=836
 X add movie maker tool to the build scripts
+X swap order of applet/application in the file menu
 
 _ move Movie Maker out to its own separate tool package
 _   http://code.google.com/p/processing/issues/detail?id=837
