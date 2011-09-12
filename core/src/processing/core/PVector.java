@@ -535,8 +535,8 @@ public class PVector implements Serializable {
 
 
   /**
-   * @param v1 ???
-   * @param v2 ???
+   * @param v1 any variable of type PVector
+   * @param v2 any variable of type PVector
    * @return the Euclidean distance between v1 and v2
    */
   static public float dist(PVector v1, PVector v2) {
@@ -574,8 +574,8 @@ public class PVector implements Serializable {
   }
 
   /**
-   * @param v1 ???
-   * @param v2 ???
+   * @param v1 any variable of type PVector
+   * @param v2 any variable of type PVector
    */
   static public float dot(PVector v1, PVector v2) {
     return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
@@ -600,7 +600,8 @@ public class PVector implements Serializable {
 
 
   /**
-   * @param target ???
+   * @param v any variable of type PVector
+   * @param target PVector to store the result
    */
   public PVector cross(PVector v, PVector target) {
     float crossX = y * v.z - v.y * z;
@@ -616,8 +617,9 @@ public class PVector implements Serializable {
   }
 
   /**
-   * @param v1 ???
-   * @param v2 ???
+   * @param v1 any variable of type PVector
+   * @param v2 any variable of type PVector
+   * @param target PVector to store the result
    */
   static public PVector cross(PVector v1, PVector v2, PVector target) {
     float crossX = v1.y * v2.z - v2.y * v1.z;
@@ -690,7 +692,7 @@ public class PVector implements Serializable {
   }
 
   /**
-   * Sets the magnitude of the vector to an arbitrary amount.
+   * @generate PVector.setMag.xml
    * @param len the new length for this vector
    */
   public void setMag(float len) {
