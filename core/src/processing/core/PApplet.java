@@ -1262,8 +1262,8 @@ public class PApplet extends Applet
    * variables inside your program when the dimensions of the display window 
    * are needed.<br />
    * <br />
-   * The size() function can only be used once inside a sketch, and cannot be 
-   * used for resizing.<br/>
+   * The <b>size()</b> function can only be used once inside a sketch, and 
+   * cannot be used for resizing.<br/>
    * <br/> <b>renderer</b> parameter selects which rendering engine to use. 
    * For example, if you will be drawing 3D shapes, use <b>P3D</b>, if you 
    * want to export images from a program as a PDF file use <b>PDF</b>. A 
@@ -1281,23 +1281,24 @@ public class PApplet extends Applet
    * Library &rarr; PDF to make use of the library. More information can be 
    * found in the PDF library reference.<br />
    * <br />
-   * The P3D renderer doesn't support strokeCap() or strokeJoin(), which can 
-   * lead to ugly results when using strokeWeight(). (<a 
+   * The P3D renderer doesn't support <b>strokeCap()</b> or 
+   * <b>strokeJoin()</b>, which can lead to ugly results when using 
+   * <b>strokeWeight()</b>. (<a 
    * href="http://code.google.com/p/processing/issues/detail?id=123">Issue 
    * 123</a>) <br />
    * <br />
    * The maximum width and height is limited by your operating system, and is 
    * usually the width and height of your actual screen. On some machines it 
    * may simply be the number of pixels on your current screen, meaning that 
-   * a screen of 800x600 could support size(1600, 300), since it's the same 
-   * number of pixels. This varies widely so you'll have to try different 
-   * rendering modes and sizes until you get what you're looking for. If you 
-   * need something larger, use <b>createGraphics</b> to create a non-visible 
-   * drawing surface.<br />
+   * a screen of 800x600 could support <b>size(1600, 300)</b>, since it's the 
+   * same number of pixels. This varies widely so you'll have to try 
+   * different rendering modes and sizes until you get what you're looking 
+   * for. If you need something larger, use <b>createGraphics</b> to create a 
+   * non-visible drawing surface.<br />
    * <br />
-   * Again, the size() method must be the first line of the code (or first 
-   * item inside setup). Any code that appears before the size() command may 
-   * run more than once, which can lead to confusing results.
+   * Again, the <b>size()</b> function must be the first line of the code (or 
+   * first item inside setup). Any code that appears before the <b>size()</b> 
+   * command may run more than once, which can lead to confusing results.
    * 
    * ( end auto-generated )
    * 
@@ -3038,7 +3039,7 @@ public class PApplet extends Applet
    * <br />
    * Rather than terminating immediately, <b>exit()</b> will cause the sketch 
    * to exit after <b>draw()</b> has completed (or after <b>setup()</b> 
-   * completes if called during the <b>setup()</b> method).<br />
+   * completes if called during the <b>setup()</b> function).<br />
    * <br />
    * For Java programmers, this is <em>not</em> the same as System.exit(). 
    * Further, System.exit() should not be used because closing out an 
@@ -3212,7 +3213,7 @@ public class PApplet extends Applet
    * which may be opened by selecting "Show sketch folder" from the "Sketch" 
    * menu.<br />
    * <br />
-   * It is not possible to use saveXxxxx() methods inside a web browser 
+   * It is not possible to use saveXxxxx() functions inside a web browser 
    * unless the sketch is <a 
    * href="http://wiki.processing.org/w/Sign_an_Applet">signed applet</A>. To 
    * save a file back to a server, see the <a 
@@ -3387,21 +3388,21 @@ public class PApplet extends Applet
    * helpful for looking at the data a program is producing. The companion 
    * function <b>println()</b> works like <b>print()</b>, but creates a new 
    * line of text for each call to the function. Individual elements can be 
-   * separated with quotes ("") and joined with the addition operator (+). 
-   * <br/><br/> with release 0125, to print the contents of an array, use 
-   * println(). 
-   * There's no sensible way to do a <b>print()</b> of an array, 
+   * separated with quotes ("") and joined with the addition operator (+).<br />
+   * <br />
+   * Beginning with release 0125, to print the contents of an array, use 
+   * println(). There's no sensible way to do a <b>print()</b> of an array, 
    * because there are too many possibilities for how to separate the data 
-   * (spaces, commas, etc). 
-   * If you want to print an array as a single line, use <b>join()</b>. 
-   * With join(), you can choose any delimiter you like and <b>print()</b> 
-   * the result. 
-   * <br/><br/> <b>print()</b> on an object will output <b>null</b>, a memory 
-   * location 
-   * that may look like "@10be08," or the result of the <b>toString()</b> 
-   * method from the object that's being printed.
-   * Advanced users who want more useful output when calling print() on their 
-   * own classes can add a toString() method to the class that returns a String.
+   * (spaces, commas, etc). If you want to print an array as a single line, 
+   * use <b>join()</b>. With <b>join()</b>, you can choose any delimiter you 
+   * like and <b>print()</b> the result.<br />
+   * <br />
+   * Using <b>print()</b> on an object will output <b>null</b>, a memory 
+   * location that may look like "@10be08," or the result of the 
+   * <b>toString()</b> method from the object that's being printed. Advanced 
+   * users who want more useful output when calling <b>print()</b> on their 
+   * own classes can add a <b>toString()</b> method to the class that returns 
+   * a String.
    * 
    * ( end auto-generated )
  * @webref output:text_area
@@ -4032,7 +4033,7 @@ public class PApplet extends Applet
    * Converts a radian measurement to its corresponding value in degrees. 
    * Radians and degrees are two ways of measuring the same thing. There are 
    * 360 degrees in a circle and 2*PI radians in a circle. For example, 
-   * 90&deg; = PI/2 = 1.5707964. All trigonometric methods in Processing 
+   * 90&deg; = PI/2 = 1.5707964. All trigonometric functions in Processing 
    * require their parameters to be specified in radians.
    * 
    * ( end auto-generated )
@@ -4050,7 +4051,7 @@ public class PApplet extends Applet
    * Converts a degree measurement to its corresponding value in radians. 
    * Radians and degrees are two ways of measuring the same thing. There are 
    * 360 degrees in a circle and 2*PI radians in a circle. For example, 
-   * 90&deg; = PI/2 = 1.5707964. All trigonometric methods in Processing 
+   * 90&deg; = PI/2 = 1.5707964. All trigonometric functions in Processing 
    * require their parameters to be specified in radians.
    * 
    * ( end auto-generated )
@@ -4483,10 +4484,6 @@ public class PApplet extends Applet
   // for different levels of detail. lower values will produce
   // smoother results as higher octaves are surpressed
 
-  public void noiseDetail(int lod) {
-    if (lod>0) perlin_octaves=lod;
-  }
-
   /**
    * ( begin auto-generated from noiseDetail.xml )
    * 
@@ -4510,6 +4507,13 @@ public class PApplet extends Applet
    * @param lod number of octaves to be used by the noise
    * @param falloff falloff factor for each octave
    * @see PApplet#noise(float, float, float)
+   */
+  public void noiseDetail(int lod) {
+    if (lod>0) perlin_octaves=lod;
+  }
+
+  /**
+   * @param falloff falloff factor for each octave
    */
   public void noiseDetail(int lod, float falloff) {
     if (lod>0) perlin_octaves=lod;
@@ -4546,11 +4550,6 @@ public class PApplet extends Applet
 
   protected String[] loadImageFormats;
 
-  public PImage loadImage(String filename) {
-    return loadImage(filename, null, null);
-  }
-
-
   /**
    * ( begin auto-generated from loadImage.xml )
    * 
@@ -4586,24 +4585,33 @@ public class PApplet extends Applet
    * 
    * @webref image:loading_displaying
    * @param filename name of file to load, can be .gif, .jpg, .tga, or a handful of other image types depending on your platform
-   * @param extension the type of image to load, for example "png", "gif", "jpg"
    * @see PImage#PImage
    * @see PGraphics#image(PImage, float, float, float, float)
    * @see PGraphics#imageMode(int)
    * @see PGraphics#background(float, float, float, float)
+   */
+  public PImage loadImage(String filename) {
+    return loadImage(filename, null, null);
+  }
+
+  /**
+   * @param extension the type of image to load, for example "png", "gif", "jpg"
    */
   public PImage loadImage(String filename, String extension) {
     return loadImage(filename, extension, null);
   }
 
   /**
+   * @nowebref
    * @param params ???
    */
   public PImage loadImage(String filename, Object params) {
     return loadImage(filename, null, params);
   }
 
-
+  /**
+   * @nowebref
+   */
   public PImage loadImage(String filename, String extension, Object params) {
     if (extension == null) {
       String lower = filename.toLowerCase();
@@ -5216,19 +5224,19 @@ public class PApplet extends Applet
    * fonts must be located in the data directory of the current sketch. To 
    * create a font to use with Processing, select "Create Font..." from the 
    * Tools menu. This will create a font in the format Processing requires 
-   * and also adds it to the current sketch's data directory. 
-   * <br/> <br/>
-   * Like <b>loadImage()</b> and other methods that load data, the 
+   * and also adds it to the current sketch's data directory.<br /> 
+   * <br />
+   * Like <b>loadImage()</b> and other functions that load data, the 
    * <b>loadFont()</b> function should not be used inside <b>draw()</b>, 
    * because it will slow down the sketch considerably, as the font will be 
-   * re-loaded from the disk (or network) on each frame.
-   * <br/> <br/>
+   * re-loaded from the disk (or network) on each frame.<br />
+   * <br />
    * For most renderers, Processing displays fonts using the .vlw font 
    * format, which uses images for each letter, rather than defining them 
    * through vector data. When <b>hint(ENABLE_NATIVE_FONTS)</b> is used with 
    * the JAVA2D renderer, the native version of a font will be used if it is 
-   * installed on the user's machine. 
-   * <br/> <br/>
+   * installed on the user's machine.<br /> 
+   * <br />
    * Using <b>createFont()</b> (instead of loadFont) enables vector data to 
    * be used with the JAVA2D (default) renderer setting. This can be helpful 
    * when many font sizes are needed, or when using any renderer based on 
@@ -5689,11 +5697,11 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from createInput.xml )
    * 
-   * This is a method for advanced programmers to open a Java InputStream. 
-   * The method is useful if you want to use the facilities provided by 
-   * PApplet to easily open files from the data folder or from a URL, but 
-   * want an InputStream object so that you can use other Java methods to 
-   * take more control of how the stream is read.<br />
+   * This is a function for advanced programmers to open a Java InputStream. 
+   * It's useful if you want to use the facilities provided by PApplet to 
+   * easily open files from the data folder or from a URL, but want an 
+   * InputStream object so that you can use other parts of Java to take more 
+   * control of how the stream is read.<br />
    * <br />
    * The filename passed in can be:<br />
    * - A URL, for instance <b>openStream("http://processing.org/")</b><br />
@@ -5939,7 +5947,9 @@ public class PApplet extends Applet
     return null;
   }
 
-
+  /**
+   * @nowebref
+   */
   static public InputStream createInput(File file) {
     if (file == null) {
       throw new IllegalArgumentException("File passed to createInput() was null");
@@ -5991,7 +6001,9 @@ public class PApplet extends Applet
     return null;
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   static public byte[] loadBytes(InputStream input) {
     try {
       BufferedInputStream bis = new BufferedInputStream(input);
@@ -6011,19 +6023,22 @@ public class PApplet extends Applet
     return null;
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   static public byte[] loadBytes(File file) {
     InputStream is = createInput(file);
     return loadBytes(is);
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   static public String[] loadStrings(File file) {
     InputStream is = createInput(file);
     if (is != null) return loadStrings(is);
     return null;
   }
-
 
   /**
    * ( begin auto-generated from loadStrings.xml )
@@ -6080,7 +6095,9 @@ public class PApplet extends Applet
     return null;
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   static public String[] loadStrings(InputStream input) {
     try {
       BufferedReader reader =
@@ -6133,8 +6150,8 @@ public class PApplet extends Applet
    * exception occurs, it will be printed to the console, and <b>null</b> 
    * will be returned.
    * <br /><br />
-   * This method is a convenience over the Java approach that requires you to 
-   * 1) create a FileOutputStream object, 2) determine the exact file 
+   * This function is a convenience over the Java approach that requires you 
+   * to 1) create a FileOutputStream object, 2) determine the exact file 
    * location, and 3) handle exceptions. Exceptions are handled internally by 
    * the function, which is more appropriate for "sketch" projects.
    * <br /><br />
@@ -6151,7 +6168,9 @@ public class PApplet extends Applet
     return createOutput(saveFile(filename));
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   static public OutputStream createOutput(File file) {
     try {
       createPath(file);  // make sure the path exists
@@ -6173,14 +6192,15 @@ public class PApplet extends Applet
    * 
    * Save the contents of a stream to a file in the sketch folder. This is 
    * basically <b>saveBytes(blah, loadBytes())</b>, but done more efficiently 
-   * (and with less confusing syntax).
-   * <br /><br />   
+   * (and with less confusing syntax).<br />
+   * <br />   
    * When using the <b>targetFile</b> parameter, it writes to a <b>File</b> 
    * object for greater control over the file location. (Note that unlike 
-   * other api methods, this will not automatically compress or uncompress 
+   * some other functions, this will not automatically compress or uncompress 
    * gzip files.)
    * 
    * ( end auto-generated )
+   * 
    * @webref output:files
    * @param targetFilename name of the file to write to
    * @param sourceLocation location to save the file
@@ -6190,7 +6210,6 @@ public class PApplet extends Applet
     return saveStream(saveFile(targetFilename), sourceLocation);
   }
 
-   // ???
   /**
    * Identical to the other saveStream(), but writes to a File
    * object, for greater control over the file location.
@@ -6204,12 +6223,16 @@ public class PApplet extends Applet
     return saveStream(targetFile, createInputRaw(sourceLocation));
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   public boolean saveStream(String targetFilename, InputStream sourceStream) {
     return saveStream(saveFile(targetFilename), sourceStream);
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   static public boolean saveStream(File targetFile, InputStream sourceStream) {
     File tempFile = null;
     try {
@@ -6245,7 +6268,9 @@ public class PApplet extends Applet
     }
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   static public void saveStream(OutputStream targetStream,
                                 InputStream sourceStream) throws IOException {
     BufferedInputStream bis = new BufferedInputStream(sourceStream, 16384);
@@ -6269,7 +6294,7 @@ public class PApplet extends Applet
    * sketch's folder, which is opened by selecting "Show sketch folder" from 
    * the "Sketch" menu.<br />
    * <br />
-   * It is not possible to use saveXxxxx() methods inside a web browser 
+   * It is not possible to use saveXxxxx() functions inside a web browser 
    * unless the sketch is <a 
    * href="http://wiki.processing.org/w/Sign_an_Applet">signed applet</A>. To 
    * save a file back to a server, see the <a 
@@ -6277,6 +6302,7 @@ public class PApplet extends Applet
    * web</A> code snippet on the Processing Wiki.
    * 
    * ( end auto-generated )
+   * 
    * @webref output:files
    * @param filename name of the file to write to
    * @param buffer array of bytes to be written
@@ -6355,7 +6381,7 @@ public class PApplet extends Applet
    * saved to the sketch's folder, which is opened by selecting "Show sketch 
    * folder" from the "Sketch" menu.<br />
    * <br />
-   * It is not possible to use saveXxxxx() methods inside a web browser 
+   * It is not possible to use saveXxxxx() functions inside a web browser 
    * unless the sketch is <a 
    * href="http://wiki.processing.org/w/Sign_an_Applet">signed applet</A>. To 
    * save a file back to a server, see the <a 
@@ -6539,11 +6565,7 @@ public class PApplet extends Applet
   // SORT
 
 
-  static public byte[] sort(byte what[]) {
-    return sort(what, what.length);
-  }
-
-/**
+  /**
    * ( begin auto-generated from sort.xml )
    * 
    * Sorts an array of numbers from smallest to largest and puts an array of 
@@ -6551,15 +6573,21 @@ public class PApplet extends Applet
    * re-ordered array is returned. The <b>count</b> parameter states the 
    * number of elements to sort. For example if there are 12 elements in an 
    * array and if count is the value 5, only the first five elements on the 
-   * array will be sorted. As of release 0126, the alphabetical ordering is 
-   * case insensitive.
+   * array will be sorted. <!--As of release 0126, the alphabetical ordering 
+   * is case insensitive.-->
    * 
    * ( end auto-generated )
- * @webref data:array_functions
- * @param what ???
- * @param count number of elements to sort
- * @see PApplet#reverse(boolean[])
- */
+   * @webref data:array_functions
+   * @param what array to sort
+   * @see PApplet#reverse(boolean[])
+   */
+  static public byte[] sort(byte what[]) {
+    return sort(what, what.length);
+  }
+
+  /**
+	* @param count number of elements to sort, starting from 0
+   */
   static public byte[] sort(byte[] what, int count) {
     byte[] outgoing = new byte[what.length];
     System.arraycopy(what, 0, outgoing, 0, what.length);
@@ -6703,7 +6731,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref data:array_functions
-   * @param list boolean[], byte[], char[], int[], float[], String[], or an array of objects
+   * @param list the array to expand
    * @see PApplet#shorten(boolean[])
    */
   static public boolean[] expand(boolean list[]) {
@@ -6789,10 +6817,11 @@ public class PApplet extends Applet
     System.arraycopy(list, 0, temp, 0, Math.min(newSize, list.length));
     return temp;
   }
-
-/**
- * @param array ???
- */
+ 
+ /**
+  * @nowebref
+  * @param array ???
+  */
   static public Object expand(Object array) {
     return expand(array, Array.getLength(array) << 1);
   }
@@ -9317,7 +9346,7 @@ public class PApplet extends Applet
    * <b>endRaw()</b> commands. These commands will grab the shape data just 
    * before it is rendered to the screen. At this stage, your entire scene is 
    * nothing but a long list of individual lines and triangles. This means 
-   * that a shape created with <b>sphere()</b> method will be made up of 
+   * that a shape created with <b>sphere()</b> function will be made up of 
    * hundreds of triangles, rather than a single object. Or that a 
    * multi-segment line shape (such as a curve) will be rendered as 
    * individual segments.
@@ -9427,11 +9456,7 @@ public class PApplet extends Applet
     pixels = g.pixels;
   }
 
-  public void updatePixels() {
-    g.updatePixels();
-  }
-
-  /**
+ /**
    * ( begin auto-generated from updatePixels.xml )
    * 
    * Updates the display window with the data in the <b>pixels[]</b> array. 
@@ -9451,12 +9476,19 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
    * @webref image:pixels
+   * @see PApplet#loadPixels()
+   * @see PApplet#pixels
+   */
+  public void updatePixels() {
+    g.updatePixels();
+  }
+
+  /**
+   * @nowebref
    * @param x1 x-coordinate of the upper-left corner
    * @param y1 y-coordinate of the upper-left corner
    * @param x2 width of the region
    * @param y2 height of the region
-   * @see PApplet#loadPixels()
-   * @see PApplet#pixels
    */
   public void updatePixels(int x1, int y1, int x2, int y2) {
     g.updatePixels(x1, y1, x2, y2);
@@ -9936,10 +9968,10 @@ public class PApplet extends Applet
    * Draws a line (a direct path between two points) to the screen. The 
    * version of <b>line()</b> with four parameters draws the line in 2D.  To 
    * color a line, use the <b>stroke()</b> function. A line cannot be filled, 
-   * therefore the <b>fill()</b> method will not affect the color of a line. 
-   * 2D lines are drawn with a width of one pixel by default, but this can be 
-   * changed with the <b>strokeWeight()</b> function. The version with six 
-   * parameters allows the line to be placed anywhere within XYZ space. 
+   * therefore the <b>fill()</b> function will not affect the color of a 
+   * line. 2D lines are drawn with a width of one pixel by default, but this 
+   * can be changed with the <b>strokeWeight()</b> function. The version with 
+   * six parameters allows the line to be placed anywhere within XYZ space. 
    * Drawing this shape in 3D with the <b>z</b> parameter requires the P3D 
    * parameter in combination with <b>size()</b> as shown in the above example.
    * 
@@ -10095,13 +10127,13 @@ public class PApplet extends Applet
    * The origin of the ellipse is modified by the <b>ellipseMode()</b> 
    * function. The default configuration is <b>ellipseMode(CENTER)</b>, which 
    * specifies the location of the ellipse as the center of the shape. The 
-   * RADIUS mode is the same, but the width and height parameters to 
+   * <b>RADIUS</b> mode is the same, but the width and height parameters to 
    * <b>ellipse()</b> specify the radius of the ellipse, rather than the 
-   * diameter. The CORNER mode draws the shape from the upper-left corner of 
-   * its bounding box. The CORNERS mode uses the four parameters to 
-   * <b>ellipse()</b> to set two opposing corners of the ellipse's bounding 
-   * box. The parameter must be written in "ALL CAPS" because Processing is a 
-   * case sensitive language.
+   * diameter. The <b>CORNER</b> mode draws the shape from the upper-left 
+   * corner of its bounding box. The <b>CORNERS</b> mode uses the four 
+   * parameters to <b>ellipse()</b> to set two opposing corners of the 
+   * ellipse's bounding box. The parameter must be written in ALL CAPS 
+   * because Processing is a case-sensitive language.
    * 
    * ( end auto-generated )
    * @webref shape:attributes
@@ -10951,20 +10983,21 @@ public class PApplet extends Applet
    * ( begin auto-generated from textMode.xml )
    * 
    * Sets the way text draws to the screen. In the default configuration, the 
-   * MODEL mode, it's possible to rotate, scale, and place letters in two and 
-   * three dimensional space. 
-   * <br /><br />
-   * The SHAPE mode draws text using the the glyph outlines of individual 
-   * characters rather than as textures. This mode is only supported with the 
-   * PDF and P3D renderer settings. With the PDF renderer, you must call 
-   * <b>textMode(SHAPE)</b> before any other drawing occurs. If the outlines 
-   * are not available, then <b>textMode(SHAPE)</b> will be ignored and 
-   * <b>textMode(MODEL)</b> will be used instead.
-   * <br /><br />
-   * The <b>textMode(SHAPE)</b> option in P3D can be combined with 
+   * <b>MODEL</b> mode, it's possible to rotate, scale, and place letters in 
+   * two and three dimensional space.<br />
+   * <br />
+   * The <b>SHAPE</b> mode draws text using the the glyph outlines of 
+   * individual characters rather than as textures. This mode is only 
+   * supported with the <b>PDF</b> and <b>P3D</b> renderer settings. With the 
+   * <b>PDF</b> renderer, you must call <b>textMode(SHAPE)</b> before any 
+   * other drawing occurs. If the outlines are not available, then 
+   * <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will 
+   * be used instead.<br />
+   * <br />
+   * The <b>textMode(SHAPE)</b> option in <b>P3D</b> can be combined with 
    * <b>beginRaw()</b> to write vector-accurate text to 2D and 3D output 
-   * files, for instance DXF or PDF. The SHAPE mode is not currently 
-   * optimized for P3D, so if recording shape data, use 
+   * files, for instance <b>DXF</b> or <b>PDF</b>. The <b>SHAPE</b> mode is 
+   * not currently optimized for <b>P3D</b>, so if recording shape data, use 
    * <b>textMode(MODEL)</b> until you're ready to capture the geometry with <b>beginRaw()</b>.
    * 
    * ( end auto-generated )
@@ -11218,7 +11251,7 @@ public class PApplet extends Applet
    * function saves the current coordinate system to the stack and 
    * <b>popMatrix()</b> restores the prior coordinate system. 
    * <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with 
-   * the other transformation methods and may be embedded to control the 
+   * the other transformation functions and may be embedded to control the 
    * scope of the transformations.
    * 
    * ( end auto-generated )
@@ -11244,8 +11277,8 @@ public class PApplet extends Applet
    * a matrix stack. The <b>pushMatrix()</b> function saves the current 
    * coordinate system to the stack and <b>popMatrix()</b> restores the prior 
    * coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used 
-   * in conjuction with the other transformation methods and may be embedded 
-   * to control the scope of the transformations.
+   * in conjuction with the other transformation functions and may be 
+   * embedded to control the scope of the transformations.
    * 
    * ( end auto-generated )
    * @webref transform
@@ -12048,11 +12081,12 @@ public class PApplet extends Applet
    * to place an object in space relative to the location of the original 
    * point once the transformations are no longer in use. 
    * <br/> <br/>
-   * In the example, the modelX(), modelY(), and modelZ() methods record the 
-   * location of a box in space after being placed using a series of 
-   * translate and rotate commands. After popMatrix() is called, those 
-   * transformations no longer apply, but the (x, y, z) coordinate returned 
-   * by the model functions is used to place another box in the same location.
+   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and 
+   * <b>modelZ()</b> functions record the location of a box in space after 
+   * being placed using a series of translate and rotate commands. After 
+   * popMatrix() is called, those transformations no longer apply, but the 
+   * (x, y, z) coordinate returned by the model functions is used to place 
+   * another box in the same location.
    * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
@@ -12074,13 +12108,14 @@ public class PApplet extends Applet
    * returns the Y value for a given coordinate based on the current set of 
    * transformations (scale, rotate, translate, etc.) The Y value can be used 
    * to place an object in space relative to the location of the original 
-   * point once the transformations are no longer in use. 
-   * <br/> <br/>
-   * In the example, the modelX(), modelY(), and modelZ() methods record the 
-   * location of a box in space after being placed using a series of 
-   * translate and rotate commands. After popMatrix() is called, those 
-   * transformations no longer apply, but the (x, y, z) coordinate returned 
-   * by the model functions is used to place another box in the same location.
+   * point once the transformations are no longer in use.<br /> 
+   * <br />
+   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and 
+   * <b>modelZ()</b> functions record the location of a box in space after 
+   * being placed using a series of translate and rotate commands. After 
+   * popMatrix() is called, those transformations no longer apply, but the 
+   * (x, y, z) coordinate returned by the model functions is used to place 
+   * another box in the same location.
    * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
@@ -12102,13 +12137,14 @@ public class PApplet extends Applet
    * returns the Z value for a given coordinate based on the current set of 
    * transformations (scale, rotate, translate, etc.) The Z value can be used 
    * to place an object in space relative to the location of the original 
-   * point once the transformations are no longer in use. 
-   * <br/> <br/>
-   * In the example, the modelX(), modelY(), and modelZ() methods record the 
-   * location of a box in space after being placed using a series of 
-   * translate and rotate commands. After popMatrix() is called, those 
-   * transformations no longer apply, but the (x, y, z) coordinate returned 
-   * by the model functions is used to place another box in the same location.
+   * point once the transformations are no longer in use.<br />
+   * <br />
+   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and 
+   * <b>modelZ()</b> functions record the location of a box in space after 
+   * being placed using a series of translate and rotate commands. After 
+   * popMatrix() is called, those transformations no longer apply, but the 
+   * (x, y, z) coordinate returned by the model functions is used to place 
+   * another box in the same location.
    * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
@@ -12381,26 +12417,27 @@ public class PApplet extends Applet
    * ( begin auto-generated from tint.xml )
    * 
    * Sets the fill value for displaying images. Images can be tinted to 
-   * specified colors or made transparent by setting the alpha. 
-   * <br/> <br/>
+   * specified colors or made transparent by setting the alpha.<br /> 
+   * <br />
    * To make an image transparent, but not change it's color, use white as 
    * the tint color and specify an alpha value. For instance, tint(255, 128) 
-   * will make an image 50% transparent (unless <b>colorMode()</b> has been used).
-   * <br/> <br/>
+   * will make an image 50% transparent (unless <b>colorMode()</b> has been 
+   * used).<br />
+   * <br />
    * When using hexadecimal notation to specify a color, use "#" or "0x" 
    * before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six 
    * digits to specify a color (the way colors are specified in HTML and 
    * CSS). When using the hexadecimal notation starting with "0x", the 
    * hexadecimal value must be specified with eight characters; the first two 
    * characters define the alpha component and the remainder the red, green, 
-   * and blue components. 
-   * <br/> <br/>
+   * and blue components.<br />
+   * <br />
    * The value for the parameter "gray" must be less than or equal to the 
    * current maximum value as specified by <b>colorMode()</b>. The default 
-   * maximum value is 255.
-   * <br/> <br/>
-   * The tint() method is also used to control the coloring of textures in 
-   * 3D. 
+   * maximum value is 255.<br /> 
+   * <br />
+   * The <b>tint()</b> function is also used to control the coloring of 
+   * textures in 3D. 
    * 
    * ( end auto-generated )
    * @webref image:loading_displaying
@@ -12738,9 +12775,9 @@ public class PApplet extends Applet
    * ( begin auto-generated from noLights.xml )
    * 
    * Disable all lighting. Lighting is turned off by default and enabled with 
-   * the lights() method. This function can be used to disable lighting so 
-   * that 2D geometry (which does not require lighting) can be drawn after a 
-   * set of lighted 3D geometry.
+   * the <b>lights()</b> function. This function can be used to disable 
+   * lighting so that 2D geometry (which does not require lighting) can be 
+   * drawn after a set of lighted 3D geometry.
    * 
    * ( end auto-generated )
    * @webref lights_camera:lights
@@ -13534,22 +13571,24 @@ public class PApplet extends Applet
   /**
    * ( begin auto-generated from PImage_get.xml )
    * 
-   * Reads the color of any pixel or grabs a group of pixels. If no 
-   * parameters are specified, the entire image is returned. Get the value of 
-   * one pixel by specifying an x,y coordinate. Get a section of the display 
-   * window by specifing an additional <b>width</b> and <b>height</b> 
-   * parameter. If the pixel requested is outside of the image window, black 
-   * is returned. The numbers returned are scaled according to the current 
-   * color ranges, but only RGB values are returned by this function. Even 
-   * though you may have drawn a shape with <b>colorMode(HSB)</b>, the 
-   * numbers returned will be in RGB.
-   * <br /><br />
+   * Reads the color of any pixel or grabs a section of an image. If no 
+   * parameters are specified, the entire image is returned. Use the <b>x</b> 
+   * and <b>y</b> parameters to get the value of one pixel. Get a section of 
+   * the display window by specifying an additional <b>width</b> and 
+   * <b>height</b> parameter. When getting an image, the <b>x</b> and 
+   * <b>y</b> parameters define the coordinates for the upper-left corner of 
+   * the image, regardless of the current <b>imageMode()</b>.<br />
+   * <br />
+   * If the pixel requested is outside of the image window, black is 
+   * returned. The numbers returned are scaled according to the current color 
+   * ranges, but only RGB values are returned by this function. For example, 
+   * even though you may have drawn a shape with <b>colorMode(HSB)</b>, the 
+   * numbers returned will be in RGB format.<br />
+   * <br />
    * Getting the color of a single pixel with <b>get(x, y)</b> is easy, but 
    * not as fast as grabbing the data directly from <b>pixels[]</b>. The 
-   * equivalent statement to "get(x, y)" using <b>pixels[]</b> is 
-   * "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to 
-   * load the display window data into the <b>pixels[]</b> array before 
-   * getting the values.
+   * equivalent statement to <b>get(x, y)</b> using <b>pixels[]</b> is 
+   * <b>pixels[y*width+x]</b>. See the reference for <b>pixels[]</b> for more information.
    * 
    * ( end auto-generated )
    *
@@ -13606,17 +13645,20 @@ public class PApplet extends Applet
    * ( begin auto-generated from PImage_set.xml )
    * 
    * Changes the color of any pixel or writes an image directly into the 
-   * image. The <b>x</b> and <b>y</b> parameter specify the pixel or the 
-   * upper-left corner of the image. The <b>color</b> parameter specifies the 
-   * color value.<br />
+   * display window.<br />
    * <br />
+   * The <b>x</b> and <b>y</b> parameters specify the pixel to change and the 
+   * <b>color</b> parameter specifies the color value. The color parameter is 
+   * affected by the current color mode (the default is RGB values from 0 to 
+   * 255). When setting an image, the <b>x</b> and <b>y</b> parameters define 
+   * the coordinates for the upper-left corner of the image, regardless of 
+   * the current <b>imageMode()</b>.
+   * <br /><br />
    * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but 
    * not as fast as putting the data directly into <b>pixels[]</b>. The 
-   * equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is 
-   * "pixels[y*width+x] = #000000". Processing requires calling 
-   * <b>loadPixels()</b> to load the display window data into the 
-   * <b>pixels[]</b> array before getting the values and calling 
-   * <b>updatePixels()</b> to update the window.
+   * equivalent statement to <b>set(x, y, #000000)</b> using <b>pixels[]</b> 
+   * is <b>pixels[y*width+x] = #000000</b>. See the reference for 
+   * <b>pixels[]</b> for more information.
    * 
    * ( end auto-generated )
    * 
