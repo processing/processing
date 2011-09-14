@@ -37,7 +37,7 @@ import processing.core.PApplet;
    * <b>PShape</b> object contain a group of methods, linked below, that can 
    * operate on the shape data. 
    * <br /><br />
-   * The <b>loadShape()</b> method supports SVG files created with Inkscape 
+   * The <b>loadShape()</b> function supports SVG files created with Inkscape 
    * and Adobe Illustrator. It is not a full SVG implementation, but offers 
    * some straightforward support for handling vector data.
    * 
