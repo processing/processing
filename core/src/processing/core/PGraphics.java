@@ -1741,10 +1741,10 @@ public class PGraphics extends PImage implements PConstants {
    * Draws a line (a direct path between two points) to the screen. The 
    * version of <b>line()</b> with four parameters draws the line in 2D.  To 
    * color a line, use the <b>stroke()</b> function. A line cannot be filled, 
-   * therefore the <b>fill()</b> method will not affect the color of a line. 
-   * 2D lines are drawn with a width of one pixel by default, but this can be 
-   * changed with the <b>strokeWeight()</b> function. The version with six 
-   * parameters allows the line to be placed anywhere within XYZ space. 
+   * therefore the <b>fill()</b> function will not affect the color of a 
+   * line. 2D lines are drawn with a width of one pixel by default, but this 
+   * can be changed with the <b>strokeWeight()</b> function. The version with 
+   * six parameters allows the line to be placed anywhere within XYZ space. 
    * Drawing this shape in 3D with the <b>z</b> parameter requires the P3D 
    * parameter in combination with <b>size()</b> as shown in the above example.
    * 
@@ -2033,13 +2033,13 @@ public class PGraphics extends PImage implements PConstants {
    * The origin of the ellipse is modified by the <b>ellipseMode()</b> 
    * function. The default configuration is <b>ellipseMode(CENTER)</b>, which 
    * specifies the location of the ellipse as the center of the shape. The 
-   * RADIUS mode is the same, but the width and height parameters to 
+   * <b>RADIUS</b> mode is the same, but the width and height parameters to 
    * <b>ellipse()</b> specify the radius of the ellipse, rather than the 
-   * diameter. The CORNER mode draws the shape from the upper-left corner of 
-   * its bounding box. The CORNERS mode uses the four parameters to 
-   * <b>ellipse()</b> to set two opposing corners of the ellipse's bounding 
-   * box. The parameter must be written in "ALL CAPS" because Processing is a 
-   * case sensitive language.
+   * diameter. The <b>CORNER</b> mode draws the shape from the upper-left 
+   * corner of its bounding box. The <b>CORNERS</b> mode uses the four 
+   * parameters to <b>ellipse()</b> to set two opposing corners of the 
+   * ellipse's bounding box. The parameter must be written in ALL CAPS 
+   * because Processing is a case-sensitive language.
    * 
    * ( end auto-generated )
    * @webref shape:attributes
@@ -3487,20 +3487,21 @@ public class PGraphics extends PImage implements PConstants {
    * ( begin auto-generated from textMode.xml )
    * 
    * Sets the way text draws to the screen. In the default configuration, the 
-   * MODEL mode, it's possible to rotate, scale, and place letters in two and 
-   * three dimensional space. 
-   * <br /><br />
-   * The SHAPE mode draws text using the the glyph outlines of individual 
-   * characters rather than as textures. This mode is only supported with the 
-   * PDF and P3D renderer settings. With the PDF renderer, you must call 
-   * <b>textMode(SHAPE)</b> before any other drawing occurs. If the outlines 
-   * are not available, then <b>textMode(SHAPE)</b> will be ignored and 
-   * <b>textMode(MODEL)</b> will be used instead.
-   * <br /><br />
-   * The <b>textMode(SHAPE)</b> option in P3D can be combined with 
+   * <b>MODEL</b> mode, it's possible to rotate, scale, and place letters in 
+   * two and three dimensional space.<br />
+   * <br />
+   * The <b>SHAPE</b> mode draws text using the the glyph outlines of 
+   * individual characters rather than as textures. This mode is only 
+   * supported with the <b>PDF</b> and <b>P3D</b> renderer settings. With the 
+   * <b>PDF</b> renderer, you must call <b>textMode(SHAPE)</b> before any 
+   * other drawing occurs. If the outlines are not available, then 
+   * <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will 
+   * be used instead.<br />
+   * <br />
+   * The <b>textMode(SHAPE)</b> option in <b>P3D</b> can be combined with 
    * <b>beginRaw()</b> to write vector-accurate text to 2D and 3D output 
-   * files, for instance DXF or PDF. The SHAPE mode is not currently 
-   * optimized for P3D, so if recording shape data, use 
+   * files, for instance <b>DXF</b> or <b>PDF</b>. The <b>SHAPE</b> mode is 
+   * not currently optimized for <b>P3D</b>, so if recording shape data, use 
    * <b>textMode(MODEL)</b> until you're ready to capture the geometry with <b>beginRaw()</b>.
    * 
    * ( end auto-generated )
@@ -4243,7 +4244,7 @@ public class PGraphics extends PImage implements PConstants {
    * function saves the current coordinate system to the stack and 
    * <b>popMatrix()</b> restores the prior coordinate system. 
    * <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with 
-   * the other transformation methods and may be embedded to control the 
+   * the other transformation functions and may be embedded to control the 
    * scope of the transformations.
    * 
    * ( end auto-generated )
@@ -4268,8 +4269,8 @@ public class PGraphics extends PImage implements PConstants {
    * a matrix stack. The <b>pushMatrix()</b> function saves the current 
    * coordinate system to the stack and <b>popMatrix()</b> restores the prior 
    * coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used 
-   * in conjuction with the other transformation methods and may be embedded 
-   * to control the scope of the transformations.
+   * in conjuction with the other transformation functions and may be 
+   * embedded to control the scope of the transformations.
    * 
    * ( end auto-generated )
    * @webref transform
@@ -5078,11 +5079,12 @@ public class PGraphics extends PImage implements PConstants {
    * to place an object in space relative to the location of the original 
    * point once the transformations are no longer in use. 
    * <br/> <br/>
-   * In the example, the modelX(), modelY(), and modelZ() methods record the 
-   * location of a box in space after being placed using a series of 
-   * translate and rotate commands. After popMatrix() is called, those 
-   * transformations no longer apply, but the (x, y, z) coordinate returned 
-   * by the model functions is used to place another box in the same location.
+   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and 
+   * <b>modelZ()</b> functions record the location of a box in space after 
+   * being placed using a series of translate and rotate commands. After 
+   * popMatrix() is called, those transformations no longer apply, but the 
+   * (x, y, z) coordinate returned by the model functions is used to place 
+   * another box in the same location.
    * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
@@ -5105,13 +5107,14 @@ public class PGraphics extends PImage implements PConstants {
    * returns the Y value for a given coordinate based on the current set of 
    * transformations (scale, rotate, translate, etc.) The Y value can be used 
    * to place an object in space relative to the location of the original 
-   * point once the transformations are no longer in use. 
-   * <br/> <br/>
-   * In the example, the modelX(), modelY(), and modelZ() methods record the 
-   * location of a box in space after being placed using a series of 
-   * translate and rotate commands. After popMatrix() is called, those 
-   * transformations no longer apply, but the (x, y, z) coordinate returned 
-   * by the model functions is used to place another box in the same location.
+   * point once the transformations are no longer in use.<br /> 
+   * <br />
+   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and 
+   * <b>modelZ()</b> functions record the location of a box in space after 
+   * being placed using a series of translate and rotate commands. After 
+   * popMatrix() is called, those transformations no longer apply, but the 
+   * (x, y, z) coordinate returned by the model functions is used to place 
+   * another box in the same location.
    * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
@@ -5134,13 +5137,14 @@ public class PGraphics extends PImage implements PConstants {
    * returns the Z value for a given coordinate based on the current set of 
    * transformations (scale, rotate, translate, etc.) The Z value can be used 
    * to place an object in space relative to the location of the original 
-   * point once the transformations are no longer in use. 
-   * <br/> <br/>
-   * In the example, the modelX(), modelY(), and modelZ() methods record the 
-   * location of a box in space after being placed using a series of 
-   * translate and rotate commands. After popMatrix() is called, those 
-   * transformations no longer apply, but the (x, y, z) coordinate returned 
-   * by the model functions is used to place another box in the same location.
+   * point once the transformations are no longer in use.<br />
+   * <br />
+   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and 
+   * <b>modelZ()</b> functions record the location of a box in space after 
+   * being placed using a series of translate and rotate commands. After 
+   * popMatrix() is called, those transformations no longer apply, but the 
+   * (x, y, z) coordinate returned by the model functions is used to place 
+   * another box in the same location.
    * 
    * ( end auto-generated )
    * @webref lights_camera:coordinates
@@ -5571,26 +5575,27 @@ public class PGraphics extends PImage implements PConstants {
    * ( begin auto-generated from tint.xml )
    * 
    * Sets the fill value for displaying images. Images can be tinted to 
-   * specified colors or made transparent by setting the alpha. 
-   * <br/> <br/>
+   * specified colors or made transparent by setting the alpha.<br /> 
+   * <br />
    * To make an image transparent, but not change it's color, use white as 
    * the tint color and specify an alpha value. For instance, tint(255, 128) 
-   * will make an image 50% transparent (unless <b>colorMode()</b> has been used).
-   * <br/> <br/>
+   * will make an image 50% transparent (unless <b>colorMode()</b> has been 
+   * used).<br />
+   * <br />
    * When using hexadecimal notation to specify a color, use "#" or "0x" 
    * before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six 
    * digits to specify a color (the way colors are specified in HTML and 
    * CSS). When using the hexadecimal notation starting with "0x", the 
    * hexadecimal value must be specified with eight characters; the first two 
    * characters define the alpha component and the remainder the red, green, 
-   * and blue components. 
-   * <br/> <br/>
+   * and blue components.<br />
+   * <br />
    * The value for the parameter "gray" must be less than or equal to the 
    * current maximum value as specified by <b>colorMode()</b>. The default 
-   * maximum value is 255.
-   * <br/> <br/>
-   * The tint() method is also used to control the coloring of textures in 
-   * 3D. 
+   * maximum value is 255.<br /> 
+   * <br />
+   * The <b>tint()</b> function is also used to control the coloring of 
+   * textures in 3D. 
    * 
    * ( end auto-generated )
    * @webref image:loading_displaying
@@ -6010,9 +6015,9 @@ public class PGraphics extends PImage implements PConstants {
    * ( begin auto-generated from noLights.xml )
    * 
    * Disable all lighting. Lighting is turned off by default and enabled with 
-   * the lights() method. This function can be used to disable lighting so 
-   * that 2D geometry (which does not require lighting) can be drawn after a 
-   * set of lighted 3D geometry.
+   * the <b>lights()</b> function. This function can be used to disable 
+   * lighting so that 2D geometry (which does not require lighting) can be 
+   * drawn after a set of lighted 3D geometry.
    * 
    * ( end auto-generated )
    * @webref lights_camera:lights

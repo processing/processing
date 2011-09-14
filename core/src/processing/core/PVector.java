@@ -692,7 +692,12 @@ public class PVector implements Serializable {
   }
 
   /**
-   * @generate PVector.setMag.xml
+   * ( begin auto-generated from PVector_setMag.xml )
+   * 
+   * Set the magnitude of this vector to the value used for the <b>len</b> parameter.
+   * 
+   * ( end auto-generated )
+   * 
    * @param len the new length for this vector
    */
   public void setMag(float len) {

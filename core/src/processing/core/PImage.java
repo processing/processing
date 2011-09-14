@@ -39,15 +39,15 @@ import javax.imageio.ImageIO;
    * Datatype for storing images. Processing can display <b>.gif</b>, 
    * <b>.jpg</b>, <b>.tga</b>, and <b>.png</b> images. Images may be 
    * displayed in 2D and 3D space. Before an image is used, it must be loaded 
-   * with the <b>loadImage()</b> function. The <b>PImage</b> object contains 
+   * with the <b>loadImage()</b> function. The <b>PImage</b> class contains 
    * fields for the <b>width</b> and <b>height</b> of the image, as well as 
-   * an array called <b>pixels[]</b> which contains the values for every 
-   * pixel in the image. The methods described below allow easy access to the 
+   * an array called <b>pixels[]</b> that contains the values for every pixel 
+   * in the image. The methods described below allow easy access to the 
    * image's pixels and alpha channel and simplify the process of compositing.<br/>
    * <br/> using the <b>pixels[]</b> array, be sure to use the 
    * <b>loadPixels()</b> method on the image to make sure that the pixel data 
    * is properly loaded.<br/>
-   * <br/> create a new image, use the <b>createImage()</b> function, do not 
+   * <br/> create a new image, use the <b>createImage()</b> function. Do not 
    * use the syntax <b>new PImage()</b>. 
    * 
    * ( end auto-generated )
@@ -627,22 +627,24 @@ public class PImage implements PConstants, Cloneable {
   /**
    * ( begin auto-generated from PImage_get.xml )
    * 
-   * Reads the color of any pixel or grabs a group of pixels. If no 
-   * parameters are specified, the entire image is returned. Get the value of 
-   * one pixel by specifying an x,y coordinate. Get a section of the display 
-   * window by specifing an additional <b>width</b> and <b>height</b> 
-   * parameter. If the pixel requested is outside of the image window, black 
-   * is returned. The numbers returned are scaled according to the current 
-   * color ranges, but only RGB values are returned by this function. Even 
-   * though you may have drawn a shape with <b>colorMode(HSB)</b>, the 
-   * numbers returned will be in RGB.
-   * <br /><br />
+   * Reads the color of any pixel or grabs a section of an image. If no 
+   * parameters are specified, the entire image is returned. Use the <b>x</b> 
+   * and <b>y</b> parameters to get the value of one pixel. Get a section of 
+   * the display window by specifying an additional <b>width</b> and 
+   * <b>height</b> parameter. When getting an image, the <b>x</b> and 
+   * <b>y</b> parameters define the coordinates for the upper-left corner of 
+   * the image, regardless of the current <b>imageMode()</b>.<br />
+   * <br />
+   * If the pixel requested is outside of the image window, black is 
+   * returned. The numbers returned are scaled according to the current color 
+   * ranges, but only RGB values are returned by this function. For example, 
+   * even though you may have drawn a shape with <b>colorMode(HSB)</b>, the 
+   * numbers returned will be in RGB format.<br />
+   * <br />
    * Getting the color of a single pixel with <b>get(x, y)</b> is easy, but 
    * not as fast as grabbing the data directly from <b>pixels[]</b>. The 
-   * equivalent statement to "get(x, y)" using <b>pixels[]</b> is 
-   * "pixels[y*width+x]". Processing requires calling <b>loadPixels()</b> to 
-   * load the display window data into the <b>pixels[]</b> array before 
-   * getting the values.
+   * equivalent statement to <b>get(x, y)</b> using <b>pixels[]</b> is 
+   * <b>pixels[y*width+x]</b>. See the reference for <b>pixels[]</b> for more information.
    * 
    * ( end auto-generated )
    *
@@ -757,17 +759,20 @@ public class PImage implements PConstants, Cloneable {
    * ( begin auto-generated from PImage_set.xml )
    * 
    * Changes the color of any pixel or writes an image directly into the 
-   * image. The <b>x</b> and <b>y</b> parameter specify the pixel or the 
-   * upper-left corner of the image. The <b>color</b> parameter specifies the 
-   * color value.<br />
+   * display window.<br />
    * <br />
+   * The <b>x</b> and <b>y</b> parameters specify the pixel to change and the 
+   * <b>color</b> parameter specifies the color value. The color parameter is 
+   * affected by the current color mode (the default is RGB values from 0 to 
+   * 255). When setting an image, the <b>x</b> and <b>y</b> parameters define 
+   * the coordinates for the upper-left corner of the image, regardless of 
+   * the current <b>imageMode()</b>.
+   * <br /><br />
    * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but 
    * not as fast as putting the data directly into <b>pixels[]</b>. The 
-   * equivalent statement to "set(x, y, #000000)" using <b>pixels[]</b> is 
-   * "pixels[y*width+x] = #000000". Processing requires calling 
-   * <b>loadPixels()</b> to load the display window data into the 
-   * <b>pixels[]</b> array before getting the values and calling 
-   * <b>updatePixels()</b> to update the window.
+   * equivalent statement to <b>set(x, y, #000000)</b> using <b>pixels[]</b> 
+   * is <b>pixels[y*width+x] = #000000</b>. See the reference for 
+   * <b>pixels[]</b> for more information.
    * 
    * ( end auto-generated )
    * 
