@@ -6,25 +6,29 @@
  * the same width and height as the program.
  */
  
-PImage bg;
-int a; 
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="moonwalk.jpg"; */ 
 
-void setup() 
-{
-  size(200,200);
-  frameRate(30);
+PImage bg;
+int y;
+
+void setup() {
+  size(640, 360);
   // The background image must be the same size as the parameters
-  // into the size() method. In this program, the size of "milan_rubbish.jpg"
-  // is 200 x 200 pixels.
-  bg = loadImage("milan_rubbish.jpg");
+  // into the size() method. In this program, the size of the image
+  // is 650 x 360 pixels.
+  bg = loadImage("moonwalk.jpg");
 }
 
-void draw() 
-{
+void draw() {
   background(bg);
-
-  a = (a + 1)%(width+32);
+  
   stroke(226, 204, 0);
-  line(0, a, width, a-26);
-  line(0, a-6, width, a-32);
+  line(0, y, width, y);
+  
+  y++;
+  if (y > height) {
+    y = 0; 
+  }
 }

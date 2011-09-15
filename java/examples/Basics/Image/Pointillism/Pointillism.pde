@@ -5,27 +5,23 @@
  * Mouse horizontal location controls size of dots. 
  * Creates a simple pointillist effect using ellipses colored
  * according to pixels in an image. 
- * 
- * Updated 27 February 2010.
  */
  
-PImage img;
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="moonwalk.jpg"; */ 
 
-int smallPoint = 2;
-int largePoint;
-int top, left;
+PImage img;
+int smallPoint, largePoint;
 
 void setup() {
-  size(200, 200);
-  img = loadImage("eames.jpg");
-  //img = loadImage("sunflower.jpg");  // an alternative image
+  size(640, 360);
+  img = loadImage("moonwalk.jpg");
+  smallPoint = 4;
+  largePoint = 40;
+  imageMode(CENTER);
   noStroke();
   background(255);
-  smooth();
-  largePoint = min(width, height) / 10;
-  // center the image on the screen
-  left = (width - img.width) / 2;
-  top = (height - img.height) / 2;
 }
 
 void draw() { 
@@ -34,5 +30,5 @@ void draw() {
   int y = int(random(img.height));
   color pix = img.get(x, y);
   fill(pix, 128);
-  ellipse(left + x, top + y, pointillize, pointillize);
+  ellipse(x, y, pointillize, pointillize);
 }
