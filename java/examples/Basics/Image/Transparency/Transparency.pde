@@ -6,21 +6,25 @@
  * by modifying the alpha value of the image with the tint() function. 
  */
 
-PImage a, b;
-float offset;
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="moonwalk.jpg"; */ 
+
+PImage img;
+float offset = 0;
+float easing = 0.05;
 
 void setup() {
-  size(200, 200);
-  a = loadImage("construct.jpg");  // Load an image into the program 
-  b = loadImage("wash.jpg");   // Load an image into the program 
+  size(640, 360);
+  img = loadImage("moonwalk.jpg");  // Load an image into the program 
 }
 
 void draw() { 
-  image(a, 0, 0);
-  float offsetTarget = map(mouseX, 0, width, -b.width/2 - width/2, 0);
-  offset += (offsetTarget-offset)*0.05; 
-  tint(255, 153);
-  image(b, offset, 20);
+  image(img, 0, 0);  // Display at full opacity
+  float dx = (mouseX-img.width/2) - offset;
+  offset += dx * easing; 
+  tint(255, 126);  // Display at half opacity
+  image(img, offset, 0);
 }
 
 

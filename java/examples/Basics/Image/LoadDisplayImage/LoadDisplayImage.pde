@@ -5,19 +5,22 @@
  * or any other size. 
  */
  
-PImage a;  // Declare variable "a" of type PImage
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="moonwalk.jpg"; */ 
+
+PImage img;  // Declare variable "a" of type PImage
 
 void setup() {
-  size(200, 200);
-  // The file "jelly.jpg" must be in the data folder
-  // of the current sketch to load successfully
-  a = loadImage("jelly.jpg");  // Load the image into the program  
-  noLoop();  // Makes draw() only run once
+  size(640, 360);
+  // The image file must be in the data folder of the current sketch 
+  // to load successfully
+  img = loadImage("moonwalk.jpg");  // Load the image into the program  
 }
 
 void draw() {
   // Displays the image at its actual size at point (0,0)
-  image(a, 0, 0); 
-  // Displays the image at point (100, 0) at half of its size
-  image(a, 100, 0, a.width/2, a.height/2);
+  image(img, 0, 0);
+  // Displays the image at point (0, height/2) at half of its size
+  image(img, 0, height/2, img.width/2, img.height/2);
 }
