@@ -5,20 +5,24 @@
  * in different parts of the image. The two images are blended
  * together using the mask() method of PImage. 
  */
- 
+
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="moonwalk.jpg,mask.jpg"; */ 
+
 PImage img;
-PImage maskImg;
+PImage imgMask;
 
 void setup() {
-  size(200, 200);
-  img = loadImage("test.jpg");
-  maskImg = loadImage("mask.jpg");
-  img.mask(maskImg);
+  size(640, 360);
+  img = loadImage("moonwalk.jpg");
+  imgMask = loadImage("mask.jpg");
+  img.mask(imgMask);
   imageMode(CENTER);
 }
 
 void draw() {
-  background(map(mouseX+mouseY, 0, width+height, 0, 255));
+  background(0, 102, 153);
   image(img, width/2, height/2);
   image(img, mouseX, mouseY);
 }
