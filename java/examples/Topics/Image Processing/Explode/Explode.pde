@@ -6,7 +6,11 @@
  * Maps pixels from a 2D image into 3D space. Pixel brightness controls 
  * translation along z axis. 
  */
- 
+
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="eames.jpg"; */ 
+
 PImage img;       // The source image
 int cellsize = 2; // Dimensions of each cell in the grid
 int columns, rows;   // Number of columns and rows in our system

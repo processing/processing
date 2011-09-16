@@ -9,7 +9,11 @@
  * Note that this sketch will behave differently on Android, 
  * since most images will no longer be full 24-bit color.
  */
- 
+
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="moon.jpg"; */ 
+
 size(200, 200);
 
 // Load an image from the data directory

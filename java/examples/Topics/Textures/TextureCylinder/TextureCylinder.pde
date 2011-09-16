@@ -1,9 +1,12 @@
 /**
- * Texture 3. 
+ * Texture Cylinder. 
  * 
  * Load an image and draw it onto a cylinder and a quad. 
  */
 
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="berlin-1.jpg"; */ 
 
 int tubeRes = 32;
 float[] tubeX = new float[tubeRes];

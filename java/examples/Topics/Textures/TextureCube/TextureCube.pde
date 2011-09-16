@@ -1,5 +1,5 @@
 /**
- * TexturedCube
+ * Texture Cube
  * by Dave Bollinger.
  * 
  * Drag mouse to rotate cube. Demonstrates use of u/v coords in 
@@ -7,13 +7,15 @@
  * the P3D renderer as you can see, but they look great using OPENGL.
 */
 
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="berlin-1.jpg"; */ 
 
 PImage tex;
 float rotx = PI/4;
 float roty = PI/4;
 
-void setup() 
-{
+void setup() {
   size(640, 360, P3D);
   tex = loadImage("berlin-1.jpg");
   textureMode(NORMALIZED);
@@ -21,8 +23,7 @@ void setup()
   stroke(color(44,48,32));
 }
 
-void draw() 
-{
+void draw() {
   background(0);
   noStroke();
   translate(width/2.0, height/2.0, -100);

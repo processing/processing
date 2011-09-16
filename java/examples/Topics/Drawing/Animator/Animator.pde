@@ -14,19 +14,18 @@ int currentFrame = 0;
 PImage[] frames = new PImage[24];
 int lastTime = 0;
 
-void setup() 
-{
+void setup() {
   size(640, 360);
   strokeWeight(12);
   smooth();
-  background(204);
+  background(0);
+  stroke(255);
   for (int i = 0; i < frames.length; i++) {
     frames[i] = get(); // Create a blank frame
   }
 }
 
-void draw() 
-{
+void draw() {
   int currentTime = millis();
   if (currentTime > lastTime+30) {
     nextFrame();
