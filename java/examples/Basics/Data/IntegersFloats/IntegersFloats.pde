@@ -11,16 +11,14 @@
 int a = 0;      // Create a variable "a" of the datatype "int"
 float b = 0.0;  // Create a variable "b" of the datatype "float"
 
-void setup()
-{
-  size(200, 200);
+void setup() {
+  size(640, 360);
   stroke(255);
   frameRate(30);
 }
 
-void draw()
-{
-  background(51);
+void draw() {
+  background(0);
   
   a = a + 1;
   b = b + 0.2; 

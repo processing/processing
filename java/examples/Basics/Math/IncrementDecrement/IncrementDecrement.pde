@@ -9,8 +9,7 @@ int a;
 int b;
 boolean direction;
 
-void setup()
-{
+void setup() {
   size(640, 360);
   colorMode(RGB, width);
   a = 0;
@@ -19,8 +18,7 @@ void setup()
   frameRate(30);
 }
 
-void draw()
-{
+void draw() {
   a++;
   if(a > width) {
     a = 0;

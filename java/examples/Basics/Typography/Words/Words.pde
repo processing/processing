@@ -5,35 +5,35 @@
  */
 
 
-int x = 30;
 PFont fontA;
   
-void setup() 
-{
-  size(200, 200);
-  background(102);
+void setup() {
+  size(640, 360);
 
-  // Load the font. Fonts must be placed within the data 
-  // directory of your sketch. Use Tools > Create Font 
-  // to create a distributable bitmap font. 
-  // For vector fonts, use the createFont() function. 
-  fontA = loadFont("Ziggurat-HTF-Black-32.vlw");
-
-  // Set the font and its size (in units of pixels)
-  textFont(fontA, 32);
-
-  // Only draw once
-  noLoop();
+  // Create the font
+  fontA = createFont("Mono", 24);
+  textFont(fontA, 24);
 }
 
 void draw() {
-  // Use fill() to change the value or color of the text
+  background(102);
+  textAlign(RIGHT);
+  drawType(width * 0.25);
+  textAlign(CENTER);
+  drawType(width * 0.5);
+  textAlign(LEFT);
+  drawType(width * 0.75);
+}
+
+void drawType(float x) {
+  line(x, 0, x, 65);
+  line(x, 220, x, height);
   fill(0);
-  text("ichi", x, 60);
+  text("ichi", x, 95);
   fill(51);
-  text("ni", x, 95);
+  text("ni", x, 130);
   fill(204);
-  text("san", x, 130);
+  text("san", x, 165);
   fill(255);
-  text("shi", x, 165);
+  text("shi", x, 210);
 }

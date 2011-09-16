@@ -8,7 +8,7 @@
  */
  
 float x, y;
-float size = 80.0;
+float dim = 80.0;
 
 void setup() {
   size(640, 360);
@@ -20,19 +20,18 @@ void draw() {
   
   x = x + 0.8;
   
-  if (x > width + size) {
-    x = -size;
+  if (x > width + dim) {
+    x = -dim;
   } 
   
-  translate(x, height/2-size/2);
+  translate(x, height/2-dim/2);
   fill(255);
-  rect(-size/2, -size/2, size, size);
+  rect(-dim/2, -dim/2, dim, dim);
   
-  // Transforms accumulate.
-  // Notice how this rect moves twice
-  // as fast as the other, but it has
-  // the same parameter for the x-axis value
-  translate(x, size);
+  // Transforms accumulate. Notice how this rect moves 
+  // twice as fast as the other, but it has the same 
+  // parameter for the x-axis value
+  translate(x, dim);
   fill(0);
-  rect(-size/2, -size/2, size, size);
+  rect(-dim/2, -dim/2, dim, dim);
 }

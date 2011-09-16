@@ -8,6 +8,10 @@
  * two new PShape objects by extracting the data from two states.
  */
 
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="usa-wikipedia.svg"; */ 
+
 PShape usa;
 PShape michigan;
 PShape ohio;
@@ -17,8 +21,6 @@ void setup() {
   usa = loadShape("usa-wikipedia.svg");
   michigan = usa.getChild("MI");
   ohio = usa.getChild("OH");
-  smooth();  // Improves the drawing quality of the SVG
-  noLoop();
 }
 
 void draw() {
@@ -33,7 +35,7 @@ void draw() {
   fill(0, 51, 102);
   noStroke();
   // Draw a single state
-  shape(michigan, -600, -180); // Go Blue!
+  shape(michigan, -600, -180); // Wolverines!
   
   // Disable the colors found in the SVG file
   ohio.disableStyle();
@@ -41,5 +43,5 @@ void draw() {
   fill(153, 0, 0);
   noStroke();
   // Draw a single state
-  shape(ohio, -600, -180);  // Boo Buckeyes!
+  shape(ohio, -600, -180);  // Buckeyes!
 }
