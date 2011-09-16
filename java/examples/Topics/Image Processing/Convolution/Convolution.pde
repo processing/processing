@@ -14,9 +14,9 @@
 PImage img;
 int w = 120;
 
-// It's possible to convolve the image with 
-// many different matrices to produce different effects.
-// This is a high-pass filter; it accentuates the edges. 
+// It's possible to convolve the image with many different 
+// matrices to produce different effects. This is a high-pass 
+// filter; it accentuates the edges. 
 float[][] matrix = { { -1, -1, -1 },
                      { -1,  9, -1 },
                      { -1, -1, -1 } }; 
@@ -30,14 +30,15 @@ void draw() {
   // We're only going to process a portion of the image
   // so let's set the whole image as the background first
   image(img, 0, 0);
-  // Where is the small rectangle we will process
+  
+  // Calculate the small rectangle we will process
   int xstart = constrain(mouseX - w/2, 0, img.width);
   int ystart = constrain(mouseY - w/2, 0, img.height);
   int xend = constrain(mouseX + w/2, 0, img.width);
   int yend = constrain(mouseY + w/2, 0, img.height);
   int matrixsize = 3;
   loadPixels();
-  // Begin our loop for every pixel
+  // Begin our loop for every pixel in the smaller image
   for (int x = xstart; x < xend; x++) {
     for (int y = ystart; y < yend; y++ ) {
       color c = convolution(x, y, matrix, matrixsize, img);

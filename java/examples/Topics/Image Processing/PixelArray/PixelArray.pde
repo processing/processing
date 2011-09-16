@@ -9,18 +9,18 @@
 
 // @pjs preload must be used to preload media if the program is 
 // running with Processing.js
-/* @pjs preload="moon.jpg"; */ 
+/* @pjs preload="sea.jpg"; */ 
 
 PImage img;
 int direction = 1;
 float signal;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   noFill();
   stroke(255);
   frameRate(30);
-  img = loadImage("ystone08.jpg");
+  img = loadImage("sea.jpg");
 }
 
 void draw() {

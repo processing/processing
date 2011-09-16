@@ -1,7 +1,9 @@
 /**
  * Blur. 
  * 
- * Bluring a grayscale image by processing it through a low-pass filter. 
+ * A low-pass filter blurs an image. This program analyzes every
+ * pixel in an image and blends it with the neighboring pixels
+ * to blur the image. 
  */
 
 // @pjs preload must be used to preload media if the program is 

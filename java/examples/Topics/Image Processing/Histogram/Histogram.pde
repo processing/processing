@@ -12,13 +12,13 @@
 
 // @pjs preload must be used to preload media if the program is 
 // running with Processing.js
-/* @pjs preload="moon.jpg"; */ 
+/* @pjs preload="frontier.jpg"; */ 
 
-size(200, 200);
+size(640, 360);
 
 // Load an image from the data directory
 // Load a different image by modifying the comments
-PImage img = loadImage("cdi01_g.jpg");
+PImage img = loadImage("frontier.jpg");
 image(img, 0, 0);
 int[] hist = new int[256];
 
@@ -36,7 +36,7 @@ int histMax = max(hist);
 stroke(255);
 // Draw half of the histogram (skip every second value)
 for (int i = 0; i < img.width; i += 2) {
-  // Map i (from 0..img.width-1) to a location in the histogram (0..255)
+  // Map i (from 0..img.width) to a location in the histogram (0..255)
   int which = int(map(i, 0, img.width, 0, 255));
   // Convert the histogram value to a location between 
   // the bottom and the top of the picture
