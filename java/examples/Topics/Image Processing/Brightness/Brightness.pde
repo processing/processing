@@ -2,20 +2,20 @@
  * Brightness
  * by Daniel Shiffman. 
  * 
- * Adjusts the brightness of part of the image
- * Pixels closer to the mouse will appear brighter. 
+ * This program adjusts the brightness of a part of the image by
+ * calculating the distance of each pixel to the mouse.
  */
 
 // @pjs preload must be used to preload media if the program is 
 // running with Processing.js
-/* @pjs preload="wires.jpg"; */ 
+/* @pjs preload="moon-wide.jpg"; */ 
 
 PImage img;
 
 void setup() {
-  size(200, 200);
+  size(640, 360);
   frameRate(30);
-  img = loadImage("wires.jpg");
+  img = loadImage("moon-wide.jpg");
   img.loadPixels();
   // Only need to load the pixels[] array once, because we're only
   // manipulating pixels[] inside draw(), not drawing shapes.
@@ -34,17 +34,17 @@ void draw() {
       //b = blue (img.pixels[loc]);
       // Calculate an amount to change brightness based on proximity to the mouse
       float maxdist = 50;//dist(0,0,width,height);
-      float d = dist(x,y,mouseX,mouseY);
+      float d = dist(x, y, mouseX, mouseY);
       float adjustbrightness = 255*(maxdist-d)/maxdist;
       r += adjustbrightness;
       //g += adjustbrightness;
       //b += adjustbrightness;
       // Constrain RGB to make sure they are within 0-255 color range
-      r = constrain(r,0,255);
-      //g = constrain(g,0,255);
-      //b = constrain(b,0,255);
+      r = constrain(r, 0, 255);
+      //g = constrain(g, 0, 255);
+      //b = constrain(b, 0, 255);
       // Make a new color and set pixel in the window
-      //color c = color(r,g,b);
+      //color c = color(r, g, b);
       color c = color(r);
       pixels[y*width + x] = c;
     }

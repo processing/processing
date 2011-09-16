@@ -1,13 +1,14 @@
 /**
  * Edge Detection. 
  * 
- * Exposing areas of contrast within an image 
- * by processing it through a high-pass filter. 
+ * A high-pass filter sharpens an image. This program analyzes every
+ * pixel in an image in relation to the neighboring pixels to sharpen 
+ * the image. 
  */
 
 // @pjs preload must be used to preload media if the program is 
 // running with Processing.js
-/* @pjs preload="house.jpg"; */
+/* @pjs preload="moon.jpg"; */
 
 float[][] kernel = {{ -1, -1, -1}, 
                     { -1,  9, -1}, 
@@ -16,8 +17,8 @@ float[][] kernel = {{ -1, -1, -1},
 PImage img;
 
 void setup() { 
-  size(200, 200);
-  img = loadImage("house.jpg"); // Load the original image
+  size(640, 360);
+  img = loadImage("moon.jpg"); // Load the original image
   noLoop();
 }
 
@@ -47,6 +48,6 @@ void draw() {
   }
   // State that there are changes to edgeImg.pixels[]
   edgeImg.updatePixels();
-  image(edgeImg, 100, 0); // Draw the new image
+  image(edgeImg, width/2, 0); // Draw the new image
 }
 
