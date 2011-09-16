@@ -5,7 +5,11 @@
  * Adjusts the brightness of part of the image
  * Pixels closer to the mouse will appear brighter. 
  */
- 
+
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="wires.jpg"; */ 
+
 PImage img;
 
 void setup() {

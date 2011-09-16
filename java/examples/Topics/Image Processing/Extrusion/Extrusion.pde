@@ -5,6 +5,10 @@
  * around the center.
  */
 
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="moon.jpg"; */ 
+
 PImage extrude;
 int[][] values;
 float angle = 0;
