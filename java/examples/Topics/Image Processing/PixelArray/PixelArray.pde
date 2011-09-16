@@ -6,7 +6,11 @@
  * This program sequentially reads the color of every pixel of an image
  * and displays this color to fill the window.  
  */
- 
+
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="moon.jpg"; */ 
+
 PImage img;
 int direction = 1;
 float signal;

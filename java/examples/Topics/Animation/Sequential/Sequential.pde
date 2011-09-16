@@ -1,11 +1,17 @@
 /**
  * Sequential
- * by James Patterson.  
+ * by James Paterson.  
  * 
  * Displaying a sequence of images creates the illusion of motion. 
  * Twelve images are loaded and each is displayed individually in a loop. 
  */
-  
+
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="PT_anim0000.gif, PT_anim0001.gif, PT_anim0002.gif, PT_anim0003.gif,
+PT_anim0004.gif, PT_anim0005.gif, PT_anim0006.gif, PT_anim0007.gif, PT_anim0008.gif,
+PT_anim0009.gif, PT_anim0010.gif, PT_anim0011.gif"; */ 
+
 int numFrames = 12;  // The number of frames in the animation
 int frame = 0;
 PImage[] images = new PImage[numFrames];
@@ -32,15 +38,20 @@ void setup() {
   // can create the filenames as the program runs.
   // The nf() command does number formatting, which will
   // ensure that the number is (in this case) 4 digits.
-  //for(int i=0; i<numFrames; i++) {
+  //for (int i = 0; i < numFrames; i++) {
   //  String imageName = "PT_anim" + nf(i, 4) + ".gif";
   //  images[i] = loadImage(imageName);
   //}
 } 
  
 void draw() { 
+  background(0);
   frame = (frame+1) % numFrames;  // Use % to cycle through frames
-  image(images[frame], 10, 70);
-  image(images[(frame + 3) % numFrames], 220, 70);
-  image(images[(frame + 6) % numFrames], 430, 70);
+  int offset = 0;
+  for (int x = -100; x < width; x += images[0].width) { 
+    image(images[(frame+offset) % numFrames], x, -20);
+    offset+=2;
+    image(images[(frame+offset) % numFrames], x, height/2);
+    offset+=2;
+  }
 }

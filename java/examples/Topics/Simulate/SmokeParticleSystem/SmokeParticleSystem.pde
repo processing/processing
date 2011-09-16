@@ -2,9 +2,13 @@
  * Smoke Particle System
  * by Daniel Shiffman.  
  * 
- * A basic smoke effect using a particle system. 
- * Each particle is rendered as an alpha masked image. 
+ * A basic smoke effect using a particle system. Each particle 
+ * is rendered as an alpha masked image. 
  */
+
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="texture.gif"; */  
 
 ParticleSystem ps;
 Random generator;

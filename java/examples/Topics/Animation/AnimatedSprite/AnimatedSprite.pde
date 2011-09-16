@@ -1,6 +1,6 @@
 /**
  * Animated Sprite (Shifty + Teddy)
- * by James Patterson. 
+ * by James Paterson. 
  * 
  * Press the mouse button to change animations.
  * Demonstrates loading, displaying, and animating GIF images.
@@ -8,8 +8,9 @@
  * animated GIFs, but would not allow as much control over 
  * the display sequence and rate of display. 
  */
- 
+
 Animation animation1, animation2;
+
 float xpos;
 float ypos;
 float drag = 30.0;
@@ -24,11 +25,8 @@ void setup() {
 }
 
 void draw() { 
-  float difx = mouseX - xpos;
-  if (abs(difx) > 1.0) {
-    xpos = xpos + difx/drag;
-    xpos = constrain(xpos, 0, width);
-  }
+  float dx = mouseX - xpos;
+  xpos = xpos + dx/drag;
 
   // Display the sprite at the position xpos, ypos
   if (mousePressed) {

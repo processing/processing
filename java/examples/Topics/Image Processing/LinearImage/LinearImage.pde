@@ -3,10 +3,12 @@
  * 
  * Click and drag mouse up and down to control the signal. 
  * Press and hold any key to watch the scanning. 
- *
- * Updated 28 February 2010.
  */
- 
+
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="moon.jpg"; */ 
+
 PImage img;
 int direction = 1;
 
