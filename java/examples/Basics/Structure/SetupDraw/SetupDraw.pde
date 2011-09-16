@@ -1,8 +1,8 @@
 /**
  * Setup and Draw. 
  * 
- * The draw() function creates a structure in which
- * to write programs that change with time. 
+ * The code inside the draw() function runs continuously
+ * from top to bottom until the program is stopped.  
  */
 
 float y = 100;

@@ -7,64 +7,46 @@
 
 PFont fontA;
 
-void setup() 
-{
+void setup() {
   size(640, 360);
   background(0);
   smooth();
-  
-  // Create the font
-  fontA = createFont("Courier", 42);
 
-  // Set the font and its size (in units of pixels)
+  // Create the font
+  fontA = createFont("Mono", 18);
+
+  // Set the font
   textFont(fontA);
   textAlign(CENTER, CENTER);
-
-  // Only draw once
-  noLoop();
 } 
 
-void draw() 
-{
-  // Set the gray value of the letters
-  fill(255);
+void draw() {
+  background(0);
 
   // Set the left and top margin
-  int margin = 6;
-  int gap = 60;
-  translate(margin*10, margin*1.5);
+  int margin = 10;
+  translate(margin*4, margin*4);
 
-  // Create a matrix of letterforms
-  int counter = 0;
-  for(int i = 0; i < margin; i++) {
-    for(int j = 0; j < margin; j++) {
-      char letter;
+  int gap = 46;
+  int counter = 35;
+  
+  for (int y = 0; y < height-gap; y += gap) {
+    for (int x = 0; x < width-gap; x += gap) {
 
-      // Select the letter
-      int count = 65+(i*margin)+j;
-      if(count <= 90) {
-        letter = char(65+counter);
-        if(letter == 'A' || letter == 'E' || letter == 'I' || 
-          letter == 'O' || letter == 'U') {
-          fill(204, 204, 0);
-        } 
-        else {
-          fill(255);
-        }
+      char letter = char(counter);
+      
+      if (letter == 'A' || letter == 'E' || letter == 'I' || letter == 'O' || letter == 'U') {
+        fill(255);
       } 
       else {
-        fill(153);
-        letter = char(48+counter);
+        fill(102);
       }
 
       // Draw the letter to the screen
-      text(letter, 15+j*gap*1.6, 20+i*gap);
+      text(letter, x, y);
 
       // Increment the counter
       counter++;
-      if(counter >= 26) {
-        counter = 0;
-      }
     }
   }
 }
