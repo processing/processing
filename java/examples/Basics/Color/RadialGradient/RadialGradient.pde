@@ -1,43 +1,36 @@
 /**
- * Inspired by Ira Greenberg's RadialGradient sketch,
- * but uses a different method for the gradients.
+ * Radial Gradient. 
+ * 
+ * Draws are series of concentric circles to create a gradient 
+ * from one color to another.
  */
 
-int dim = 40;
+int dim;
 
 void setup() {
   size(640, 360);
+  dim = width/2;
   background(0);
-  smooth();
+  colorMode(HSB, 360, 100, 100);
   noStroke();
   ellipseMode(RADIUS);
+  frameRate(1);
+}
 
-  // create a simple table of gradients
-  int rows = height / dim;
-  int cols = width / dim;
-
-  for (int row = 0; row < rows; row++) {
-    for (int col = 0; col < cols; col++) {
-      drawGradient(col*dim + dim/2, row*dim + dim/2);
-    }
-  }
+void draw() {
+  background(0);
+  for (int x = 0; x <= width; x+=dim) {
+    drawGradient(x, height/2);
+  } 
 }
 
 void drawGradient(float x, float y) {
-  int radius = dim/2 - 2;
-  float r1 = random(255);
-  float g1 = random(255);
-  float b1 = random(255);
-  float dr = (random(255) - r1) / radius;
-  float dg = (random(255) - g1) / radius;
-  float db = (random(255) - b1) / radius;
-  
+  int radius = dim/2;
+  float h = random(0, 360);
   for (int r = radius; r > 0; --r) {
-    fill(r1, g1, b1);
+    fill(h, 90, 90);
     ellipse(x, y, r, r);
-    r1 += dr;
-    g1 += dg;
-    b1 += db;
+    h = (h + 1) % 360;
   }
 }
 

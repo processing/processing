@@ -1,34 +1,37 @@
 /**
  * True/False. 
  * 
- * Boolean data is one bit of information. True or false. 
+ * A Boolean variable has only two possible values: true or false. 
  * It is common to use Booleans with control statements to 
  * determine the flow of a program. In this example, when the
  * boolean value "x" is true, vertical black lines are drawn and when
  * the boolean value "x" is false, horizontal gray lines are drawn. 
  */
  
-boolean x = false;
+boolean b = false;
 
-size(200, 200);
+size(640, 360);
 background(0);
-stroke(0);
+stroke(255);
 
-for (int i = 1; i < width; i += 2) 
-{
-  if (i < width/2) {
-    x = true;
+int d = 20;
+int middle = width/2;;
+
+for (int i = d; i <= width; i += d) {
+  
+  if (i < middle) {
+    b = true;
   } else {
-    x = false;
+    b = false;
   }
   
-  if (x) {
-    stroke(255);
-    line(i, 1, i, height-1);
+  if (b == true) {
+    // Vertical line
+    line(i, d, i, height-d);
   }
   
-  if (!x) {
-    stroke(126);
-    line(width/2 , i, width-2, i);
+  if (b == false) {
+    // Horizontal line
+    line(middle, i - middle + d, width-d, i - middle + d);
   }
 }

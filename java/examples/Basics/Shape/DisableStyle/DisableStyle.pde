@@ -8,6 +8,10 @@
  * method turns it back on.
  */
 
+// @pjs preload must be used to preload media if the program is 
+// running with Processing.js
+/* @pjs preload="bot1.svg"; */ 
+
 PShape bot;
 
 void setup() {

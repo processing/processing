@@ -50,7 +50,7 @@ class Eye {
     fill(255);
     ellipse(0, 0, size, size);
     rotate(angle);
-    fill(153);
+    fill(153, 204, 0);
     ellipse(size/4, 0, size/2, size/2);
     popMatrix();
   }

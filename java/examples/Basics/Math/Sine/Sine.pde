@@ -4,37 +4,29 @@
  * Smoothly scaling size with the sin() function. 
  */
  
-float diameter = 84.0; 
+float diameter; 
 float angle = 0;
 
-void setup() 
-{
+void setup() {
   size(640, 360);
+  diameter = height - 10;
   noStroke();
   smooth();
+  noStroke();
+  fill(255, 204, 0);
 }
 
-void draw() 
-{ 
-  background(153);
+void draw() {
   
-  translate(width * 0.3, height * 0.5);
-  
-  fill(255);
-  ellipse(0, 0, 16, 16);
-  
-  float angleOffset = 0;
-  fill(51);
+  background(0);
 
-  for (int i = 0; i < 5; i++) {
-    pushMatrix();
-    rotate(angleOffset + -45);
-    ellipse(-116, 0, diameter, diameter);
-    popMatrix();
-    angleOffset += TWO_PI/5;
-  }
-
-  diameter = 34 * sin(angle) + 168;
+  float d1 = 10 + (sin(angle) * diameter/2) + diameter/2;
+  float d2 = 10 + (sin(angle + PI/2) * diameter/2) + diameter/2;
+  float d3 = 10 + (sin(angle + PI) * diameter/2) + diameter/2;
+  
+  ellipse(0, height/2, d1, d1);
+  ellipse(width/2, height/2, d2, d2);
+  ellipse(width, height/2, d3, d3);
   
   angle += 0.02;
 }

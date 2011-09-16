@@ -9,7 +9,7 @@
 
 float[][] distances;
 float maxDistance;
-int spacer = 10;
+int spacer;
 
 void setup() {
   size(640, 360);
@@ -17,10 +17,11 @@ void setup() {
   distances = new float[width][height];
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x++) {
-      float dist = dist(width/2, height/2, x, y);
-      distances[x][y] = dist/maxDistance * 255;
+      float distance = dist(width/2, height/2, x, y);
+      distances[x][y] = distance/maxDistance * 255;
     }
   }
+  spacer = 10;
   noLoop();  // Run once and stop
 }
 
@@ -33,5 +34,6 @@ void draw() {
     }
   }
 }
+
 
 
