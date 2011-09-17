@@ -76,15 +76,18 @@ public class PImage implements PConstants, Cloneable {
    * display window. For example, if the image is 100x100 pixels, there will 
    * be 10000 values and if the window is 200x300 pixels, there will be 60000 
    * values. The <b>index</b> value defines the position of a value within 
-   * the array. For example, the statment <b>color b = pixels[230]</b> will 
+   * the array. For example, the statement <b>color b = pixels[230]</b> will 
    * set the variable <b>b</b> to be equal to the value at that location in 
-   * the array. <br /> <br /> Before accessing this array, the data must 
-   * loaded with the <b>loadPixels()</b> function. After the array data has 
-   * been modified, the <b>updatePixels()</b> function must be run to update 
-   * the changes. Without <b>loadPixels()</b>, running the code may (or will 
-   * in future releases) result in a NullPointerException.
+   * the array.<br />
+   * <br />
+   * Before accessing this array, the data must loaded with the 
+   * <b>loadPixels()</b> function. After the array data has been modified, 
+   * the <b>updatePixels()</b> function must be run to update the changes. 
+   * Without <b>loadPixels()</b>, running the code may (or will in future 
+   * releases) result in a NullPointerException.
    * 
    * ( end auto-generated )
+   * 
    * @webref image:pixels
    * @usage web_application
    * @brief     Array containing the color of every pixel in the image

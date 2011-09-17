@@ -348,13 +348,15 @@ public class PApplet extends Applet
    * display window. For example, if the image is 100x100 pixels, there will 
    * be 10000 values and if the window is 200x300 pixels, there will be 60000 
    * values. The <b>index</b> value defines the position of a value within 
-   * the array. For example, the statment <b>color b = pixels[230]</b> will 
+   * the array. For example, the statement <b>color b = pixels[230]</b> will 
    * set the variable <b>b</b> to be equal to the value at that location in 
-   * the array. <br /> <br /> Before accessing this array, the data must 
-   * loaded with the <b>loadPixels()</b> function. After the array data has 
-   * been modified, the <b>updatePixels()</b> function must be run to update 
-   * the changes. Without <b>loadPixels()</b>, running the code may (or will 
-   * in future releases) result in a NullPointerException.
+   * the array.<br />
+   * <br />
+   * Before accessing this array, the data must loaded with the 
+   * <b>loadPixels()</b> function. After the array data has been modified, 
+   * the <b>updatePixels()</b> function must be run to update the changes. 
+   * Without <b>loadPixels()</b>, running the code may (or will in future 
+   * releases) result in a NullPointerException.
    * 
    * ( end auto-generated )
    *
@@ -1602,12 +1604,6 @@ public class PApplet extends Applet
     }
   }
 
-
-  public PImage createImage(int wide, int high, int format) {
-    return createImage(wide, high, format, null);
-  }
-
-
   /**
    * ( begin auto-generated from createImage.xml )
    * 
@@ -1632,9 +1628,15 @@ public class PApplet extends Applet
    * @param wide width in pixels
    * @param high height in pixels
    * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
-   * @param params ???
    * @see PImage#PImage
    * @see PGraphics#PGraphics
+   */
+  public PImage createImage(int wide, int high, int format) {
+    return createImage(wide, high, format, null);
+  }
+
+  /**
+   * @nowebref
    */
   public PImage createImage(int wide, int high, int format, Object params) {
     PImage image = new PImage(wide, high, format);
@@ -4603,7 +4605,6 @@ public class PApplet extends Applet
 
   /**
    * @nowebref
-   * @param params ???
    */
   public PImage loadImage(String filename, Object params) {
     return loadImage(filename, null, params);
@@ -4740,7 +4741,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param params ???
+   * @nowebref
    */
   public PImage requestImage(String filename, String extension, Object params) {
     PImage vessel = createImage(0, 0, ARGB, params);
@@ -5092,10 +5093,8 @@ public class PApplet extends Applet
   }
 
 
-  // ???
   /**
-   * @param params ???
-   * @see PApplet#shapeMode(int)
+   * @nowebref
    */
   public PShape loadShape(String filename, Object params) {
     String extension;
@@ -5144,7 +5143,6 @@ public class PApplet extends Applet
   }
 
 
-   // ???
   /**
    * Creates an empty shape, with the specified size and parameters.
    * The actual type will depend on the renderer.
@@ -5196,7 +5194,6 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
-// ???
   // NODE I/O (XML, JSON, etc.)
   public XML loadXML(String filename) {
     return new XML(this, filename);
@@ -5551,8 +5548,6 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref input:files
    * @param filename name of the file to be opened
-   * @param file ???
-   * @param input ???
    * @see BufferedReader
    * @see PApplet#createWriter(String)
    * @see PrintWriter
@@ -5577,7 +5572,9 @@ public class PApplet extends Applet
   }
 
 
-  // ???
+  /**
+   * @nowebref
+   */
   static public BufferedReader createReader(File file) {
     try {
       InputStream is = new FileInputStream(file);
@@ -5599,8 +5596,8 @@ public class PApplet extends Applet
   }
 
 
-  // ???
   /**
+   * @nowebref
    * I want to read lines from a stream. If I have to type the
    * following lines any more I'm gonna send Sun my medical bills.
    */
@@ -5627,10 +5624,9 @@ public class PApplet extends Applet
    * are moved to other platforms.
    * 
    * ( end auto-generated )
+   *
    * @webref output:files
    * @param filename name of the file to be created
-   * @param file ???
-   * @param output ???
    * @see PrintWriter
    * @see PApplet#createReader
    * @see BufferedReader
@@ -5639,9 +5635,8 @@ public class PApplet extends Applet
     return createWriter(saveFile(filename));
   }
 
-
-  // ???
   /**
+   * @nowebref
    * I want to print lines to a file. I have RSI from typing these
    * eight lines of code so many times.
    */
@@ -5666,8 +5661,8 @@ public class PApplet extends Applet
     //return null;
   }
 
-  // ???
   /**
+   * @nowebref
    * I want to print lines to a file. Why am I always explaining myself?
    * It's the JavaSoft API engineers who need to explain themselves.
    */
@@ -6314,10 +6309,9 @@ public class PApplet extends Applet
     saveBytes(saveFile(filename), buffer);
   }
 
-  // ???
   /**
+   * @nowebref
    * Saves bytes to a specific File location specified by the user.
-   * @param file ???
    */
   static public void saveBytes(File file, byte buffer[]) {
     File tempFile = null;
@@ -6358,8 +6352,8 @@ public class PApplet extends Applet
     }
   }
 
-  // ???
   /**
+   * @nowebref
    * Spews a buffer of bytes to an OutputStream.
    */
   static public void saveBytes(OutputStream output, byte buffer[]) {
@@ -6374,7 +6368,7 @@ public class PApplet extends Applet
 
   //
 
-/**
+  /**
    * ( begin auto-generated from saveStrings.xml )
    * 
    * Writes an array of strings to a file, one line per string. This file is 
@@ -6394,18 +6388,20 @@ public class PApplet extends Applet
    * are moved to other platforms.
    * 
    * ( end auto-generated )
- * @webref output:files
- * @param filename filename for output
- * @param strings string array to be written
- * @see PApplet#loadStrings(String)
- * @see PApplet#loadBytes(String)
- * @see PApplet#saveBytes(String, byte[])
- */
+   * @webref output:files
+   * @param filename filename for output
+   * @param strings string array to be written
+   * @see PApplet#loadStrings(String)
+   * @see PApplet#loadBytes(String)
+   * @see PApplet#saveBytes(String, byte[])
+   */
   public void saveStrings(String filename, String strings[]) {
     saveStrings(saveFile(filename), strings);
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   static public void saveStrings(File file, String strings[]) {
     saveStrings(createOutput(file), strings);
     /*
@@ -6425,7 +6421,9 @@ public class PApplet extends Applet
     */
   }
 
-// ???
+  /**
+   * @nowebref
+   */
   static public void saveStrings(OutputStream output, String strings[]) {
     PrintWriter writer = createWriter(output);
     for (int i = 0; i < strings.length; i++) {
@@ -6673,7 +6671,6 @@ public class PApplet extends Applet
     System.arraycopy(src, srcPosition, dst, dstPosition, length);
   }
 
-   // ???
   /**
    * Convenience method for arraycopy().
    * Identical to <CODE>arraycopy(src, 0, dst, 0, length);</CODE>
@@ -6682,7 +6679,6 @@ public class PApplet extends Applet
     System.arraycopy(src, 0, dst, 0, length);
   }
 
-   // ???
   /**
    * Shortcut to copy the entire contents of
    * the source into the destination array.
@@ -6705,12 +6701,10 @@ public class PApplet extends Applet
   /**
    * @deprecated Use arrayCopy() instead.
    */
-   // ???
   static public void arraycopy(Object src, Object dst, int length) {
     System.arraycopy(src, 0, dst, 0, length);
   }
 
-   // ???
   /**
    * @deprecated Use arrayCopy() instead.
    */
@@ -6730,6 +6724,7 @@ public class PApplet extends Applet
    * items = (SomeClass[]) expand(originalArray)</em>.
    * 
    * ( end auto-generated )
+   * 
    * @webref data:array_functions
    * @param list the array to expand
    * @see PApplet#shorten(boolean[])
@@ -6820,7 +6815,6 @@ public class PApplet extends Applet
  
  /**
   * @nowebref
-  * @param array ???
   */
   static public Object expand(Object array) {
     return expand(array, Array.getLength(array) << 1);
@@ -6849,6 +6843,7 @@ public class PApplet extends Applet
    * items = (SomeClass[]) append(originalArray, element)</em>.
    * 
    * ( end auto-generated )
+   * 
    * @webref data:array_functions
    * @param b array to append
    * @param value new data for the array
@@ -6903,11 +6898,12 @@ public class PApplet extends Applet
    * items = (SomeClass[]) shorten(originalArray)</em>.
    * 
    * ( end auto-generated )
-  * @webref data:array_functions
-  * @param list ???
-  * @see PApplet#append(byte[], byte)
-  * @see PApplet#expand(boolean[])
-  */
+   * 
+   * @webref data:array_functions
+   * @param list array to shorten
+   * @see PApplet#append(byte[], byte)
+   * @see PApplet#expand(boolean[])
+   */
   static public boolean[] shorten(boolean list[]) {
     return subset(list, 0, list.length-1);
   }
@@ -6938,7 +6934,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from splice.xml )
    * 
    * Inserts a value or array of values into an existing array. The first two 
@@ -6951,13 +6947,13 @@ public class PApplet extends Applet
    * items = (SomeClass[]) splice(array1, array2, index)</em>.
    * 
    * ( end auto-generated )
- * @webref data:array_functions
- * @param list ???
- * @param v value to be spliced in
- * @param index position in the array from which to insert data
- * @see PApplet#concat(boolean[], boolean[])
- * @see PApplet#subset(boolean[], int, int)
- */
+   * @webref data:array_functions
+   * @param list array to splice into
+   * @param v value to be spliced in
+   * @param index position in the array from which to insert data
+   * @see PApplet#concat(boolean[], boolean[])
+   * @see PApplet#subset(boolean[], int, int)
+   */
   static final public boolean[] splice(boolean list[],
                                        boolean v, int index) {
     boolean outgoing[] = new boolean[list.length + 1];
@@ -6978,10 +6974,6 @@ public class PApplet extends Applet
     return outgoing;
   }
   
-  /**
-   * @param list ???
-   */
-
   static final public byte[] splice(byte list[],
                                     byte v, int index) {
     byte outgoing[] = new byte[list.length + 1];
@@ -7125,7 +7117,7 @@ public class PApplet extends Applet
    * 
    * ( end auto-generated )
   * @webref data:array_functions
-  * @param list ???
+  * @param list array to extract from
   * @param start position to begin
   * @param count number of values to extract
   * @see PApplet#splice(boolean[], boolean, int)
@@ -8536,12 +8528,13 @@ public class PApplet extends Applet
    * equivalent integer value.
    * 
    * ( end auto-generated )
-  * @webref data:conversion
-  * @param what ???
-  * @see PApplet#hex(int, int)
-  * @see PApplet#binary(byte)
-  * @see PApplet#unbinary(String)
-  */
+   * 
+   * @webref data:conversion
+   * @param what String to convert to an integer
+   * @see PApplet#hex(int, int)
+   * @see PApplet#binary(byte)
+   * @see PApplet#unbinary(String)
+   */
   static final public int unhex(String what) {
     // has to parse as a Long so that it'll work for numbers bigger than 2^31
     return (int) (Long.parseLong(what, 16));
@@ -8624,12 +8617,12 @@ public class PApplet extends Applet
    * integer value. For example, unbinary("00001000") will return 8.
    * 
    * ( end auto-generated )
-  * @webref data:conversion
-  * @param what ???
-  * @see PApplet#hex(int,int)
-  * @see PApplet#binary(byte)
-  */
-    static final public int unbinary(String what) {
+   * @webref data:conversion
+   * @param what String to convert to an integer
+   * @see PApplet#hex(int,int)
+   * @see PApplet#binary(byte)
+   */
+  static final public int unbinary(String what) {
     return Integer.parseInt(what, 2);
   }
 
@@ -8666,9 +8659,10 @@ public class PApplet extends Applet
     return g.color(gray);
   }
 
-/**
- * @param fgray ???
- */
+  /**
+   * @nowebref
+   * @param fgray number specifying value between white and black
+   */
   public final int color(float fgray) {
     if (g == null) {
       int gray = (int) fgray;
@@ -8698,9 +8692,9 @@ public class PApplet extends Applet
     return g.color(gray, alpha);
   }
 
-/**
- * @param falpha ???
- */
+  /**
+   * @nowebref
+   */
   public final int color(float fgray, float falpha) {
     if (g == null) {
       int gray = (int) fgray;
@@ -9289,6 +9283,7 @@ public class PApplet extends Applet
    * recording to. 
    * 
    * ( end auto-generated )
+   * 
    * @webref output:files
    * @param renderer for example, PDF
    * @param filename filename for output
@@ -9303,7 +9298,8 @@ public class PApplet extends Applet
 
 
   /**
-   * Begin recording (echoing) commands to the specified PGraphics object. ???
+   * @nowebref
+   * Begin recording (echoing) commands to the specified PGraphics object.
    */
   public void beginRecord(PGraphics recorder) {
     this.recorder = recorder;
@@ -9369,6 +9365,7 @@ public class PApplet extends Applet
    * libraries for more information.
    * 
    * ( end auto-generated )
+   * 
    * @webref output:files
    * @param renderer for example, PDF or DXF
    * @param filename filename for output
@@ -9385,6 +9382,7 @@ public class PApplet extends Applet
 
  
   /**
+   * @nowebref
    * Begin recording raw shape data to the specified renderer.
    *
    * This simply echoes to g.beginRaw(), but since is placed here (rather than
@@ -9393,7 +9391,6 @@ public class PApplet extends Applet
    * 
    * @param rawGraphics ???
    */
-
   public void beginRaw(PGraphics rawGraphics) {
     g.beginRaw(rawGraphics);
   }
@@ -9406,6 +9403,7 @@ public class PApplet extends Applet
    * the <b>beginRaw()</b> reference for details.
    * 
    * ( end auto-generated )
+   * 
    * @webref output:files
    * @see PApplet#beginRaw(String, String)
    */
@@ -10094,6 +10092,7 @@ public class PApplet extends Applet
    * <b>rectMode()</b> function. 
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:2d_primitives
    * @param a x-coordinate of the rectangle
    * @param b y-coordinate of the rectangle
@@ -11471,9 +11470,9 @@ public class PApplet extends Applet
   /**
    * <h3>Advanced</h3>
    * Rotate about a vector in space. Same as the glRotatef() function.
-   * @param vx ???
-   * @param vy ???
-   * @param vz ???
+   * @param vx 
+   * @param vy 
+   * @param vz 
    */
   public void rotate(float angle, float vx, float vy, float vz) {
     if (recorder != null) recorder.rotate(angle, vx, vy, vz);
@@ -11637,8 +11636,9 @@ public class PApplet extends Applet
    * function in OpenGL is glMultMatrix().
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
-   * @source ???
+   * @source
    * @see PGraphics#pushMatrix()
    * @see PGraphics#popMatrix()
    * @see PGraphics#resetMatrix()
@@ -12331,7 +12331,7 @@ public class PApplet extends Applet
    * maximum value is 255.
    * 
    * ( end auto-generated )
-   * @notWebref
+   * 
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
    * @see PGraphics#fill(int, float)
@@ -12345,10 +12345,9 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @nowebref
- * @param alpha opacity of the stroke
- */
+  /**
+   * @param alpha opacity of the stroke
+   */
   public void stroke(int rgb, float alpha) {
     if (recorder != null) recorder.stroke(rgb, alpha);
     g.stroke(rgb, alpha);
@@ -12356,7 +12355,6 @@ public class PApplet extends Applet
 
 
   /**
-   * @notWebref
    * @param gray specifies a value between white and black
    */
   public void stroke(float gray) {
@@ -12365,33 +12363,27 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @notWebref
- */
   public void stroke(float gray, float alpha) {
     if (recorder != null) recorder.stroke(gray, alpha);
     g.stroke(gray, alpha);
   }
 
 
-/**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- * @webref color:setting
- */
+  /**
+   * @param x red or hue value (depending on current color mode)
+   * @param y green or saturation value (depending on current color mode)
+   * @param z blue or brightness value (depending on current color mode)
+   * @webref color:setting
+   */
   public void stroke(float x, float y, float z) {
     if (recorder != null) recorder.stroke(x, y, z);
     g.stroke(x, y, z);
   }
 
 
-  /**
-   * @param a opacity of the stroke
-   */
-  public void stroke(float x, float y, float z, float a) {
-    if (recorder != null) recorder.stroke(x, y, z, a);
-    g.stroke(x, y, z, a);
+  public void stroke(float x, float y, float z, float alpha) {
+    if (recorder != null) recorder.stroke(x, y, z, alpha);
+    g.stroke(x, y, z, alpha);
   }
 
 
@@ -12638,7 +12630,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from specular.xml )
    * 
    * Sets the specular color of the materials used for shapes drawn to the 
@@ -12649,13 +12641,14 @@ public class PApplet extends Applet
    * setting the material properties of shapes.
    * 
    * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param rgb ???
- * @see PGraphics#emissive(float, float, float)
- * @see PGraphics#ambient(float, float, float)
- * @see PGraphics#shininess(float)
- */
+   * 
+   * @webref lights_camera:material_properties
+   * @usage web_application
+   * @param rgb color to set
+   * @see PGraphics#emissive(float, float, float)
+   * @see PGraphics#ambient(float, float, float)
+   * @see PGraphics#shininess(float)
+   */
   public void specular(int rgb) {
     if (recorder != null) recorder.specular(rgb);
     g.specular(rgb);
@@ -12712,33 +12705,34 @@ public class PApplet extends Applet
    * properties of shapes.
    * 
    * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param rgb ???
- * @see PGraphics#ambient(float, float, float)
- * @see PGraphics#specular(float, float, float)
- * @see PGraphics#shininess(float)
- */
+   * 
+   * @webref lights_camera:material_properties
+   * @usage web_application
+   * @param rgb color to set
+   * @see PGraphics#ambient(float, float, float)
+   * @see PGraphics#specular(float, float, float)
+   * @see PGraphics#shininess(float)
+   */
   public void emissive(int rgb) {
     if (recorder != null) recorder.emissive(rgb);
     g.emissive(rgb);
   }
 
 
-/**
- * gray number specifying value between white and black
- */
+  /**
+   * gray number specifying value between white and black
+   */
   public void emissive(float gray) {
     if (recorder != null) recorder.emissive(gray);
     g.emissive(gray);
   }
 
 
-/**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- */
+  /**
+   * @param x red or hue value (depending on current color mode)
+   * @param y green or saturation value (depending on current color mode)
+   * @param z blue or brightness value (depending on current color mode)
+   */
   public void emissive(float x, float y, float z) {
     if (recorder != null) recorder.emissive(x, y, z);
     g.emissive(x, y, z);
@@ -13084,9 +13078,9 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param a opacity of the background
- */
+  /**
+   * @param a opacity of the background
+   */
   public void background(float x, float y, float z, float a) {
     if (recorder != null) recorder.background(x, y, z, a);
     g.background(x, y, z, a);
@@ -13094,7 +13088,7 @@ public class PApplet extends Applet
 
 
   /**
-   * ???
+   * @param image PImage to set as background (must be same size as the program)
    * Takes an RGB or ARGB image and sets it as the background.
    * The width and height of the image must be the same size as the sketch.
    * Use image.resize(width, height) to make short work of such a task.
@@ -13359,11 +13353,9 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
+   * @nowebref
    * Interpolate between two colors. Like lerp(), but for the
    * individual color components of a color supplied as an int value.
-   *
-   * @param mode ???
    */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
     return PGraphics.lerpColor(c1, c2, amt, mode);
