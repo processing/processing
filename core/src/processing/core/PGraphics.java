@@ -1880,6 +1880,7 @@ public class PGraphics extends PImage implements PConstants {
    * <b>rectMode()</b> function. 
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:2d_primitives
    * @param a x-coordinate of the rectangle
    * @param b y-coordinate of the rectangle
@@ -4462,9 +4463,9 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * <h3>Advanced</h3>
    * Rotate about a vector in space. Same as the glRotatef() function.
-   * @param vx ???
-   * @param vy ???
-   * @param vz ???
+   * @param vx 
+   * @param vy 
+   * @param vz 
    */
   public void rotate(float angle, float vx, float vy, float vz) {
     showMissingWarning("rotate");
@@ -4625,8 +4626,9 @@ public class PGraphics extends PImage implements PConstants {
    * function in OpenGL is glMultMatrix().
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
-   * @source ???
+   * @source
    * @see PGraphics#pushMatrix()
    * @see PGraphics#popMatrix()
    * @see PGraphics#resetMatrix()
@@ -5472,7 +5474,7 @@ public class PGraphics extends PImage implements PConstants {
    * maximum value is 255.
    * 
    * ( end auto-generated )
-   * @notWebref
+   * 
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
    * @see PGraphics#fill(int, float)
@@ -5485,10 +5487,9 @@ public class PGraphics extends PImage implements PConstants {
     strokeFromCalc();
   }
 
-/**
- * @nowebref
- * @param alpha opacity of the stroke
- */
+  /**
+   * @param alpha opacity of the stroke
+   */
   public void stroke(int rgb, float alpha) {
     colorCalc(rgb, alpha);
     strokeFromCalc();
@@ -5496,7 +5497,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @notWebref
    * @param gray specifies a value between white and black
    */
   public void stroke(float gray) {
@@ -5504,31 +5504,24 @@ public class PGraphics extends PImage implements PConstants {
     strokeFromCalc();
   }
 
-/**
- * @notWebref
- */
   public void stroke(float gray, float alpha) {
     colorCalc(gray, alpha);
     strokeFromCalc();
   }
 
-/**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- * @webref color:setting
- */
+  /**
+   * @param x red or hue value (depending on current color mode)
+   * @param y green or saturation value (depending on current color mode)
+   * @param z blue or brightness value (depending on current color mode)
+   * @webref color:setting
+   */
   public void stroke(float x, float y, float z) {
     colorCalc(x, y, z);
     strokeFromCalc();
   }
 
-
-  /**
-   * @param a opacity of the stroke
-   */
-  public void stroke(float x, float y, float z, float a) {
-    colorCalc(x, y, z, a);
+  public void stroke(float x, float y, float z, float alpha) {
+    colorCalc(x, y, z, alpha);
     strokeFromCalc();
   }
 
@@ -5850,7 +5843,7 @@ public class PGraphics extends PImage implements PConstants {
     ambientB = calcB;
   }
 
-/**
+  /**
    * ( begin auto-generated from specular.xml )
    * 
    * Sets the specular color of the materials used for shapes drawn to the 
@@ -5861,13 +5854,14 @@ public class PGraphics extends PImage implements PConstants {
    * setting the material properties of shapes.
    * 
    * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param rgb ???
- * @see PGraphics#emissive(float, float, float)
- * @see PGraphics#ambient(float, float, float)
- * @see PGraphics#shininess(float)
- */
+   * 
+   * @webref lights_camera:material_properties
+   * @usage web_application
+   * @param rgb color to set
+   * @see PGraphics#emissive(float, float, float)
+   * @see PGraphics#ambient(float, float, float)
+   * @see PGraphics#shininess(float)
+   */
   public void specular(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
 //      specular((float) rgb);
@@ -5933,13 +5927,14 @@ public class PGraphics extends PImage implements PConstants {
    * properties of shapes.
    * 
    * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param rgb ???
- * @see PGraphics#ambient(float, float, float)
- * @see PGraphics#specular(float, float, float)
- * @see PGraphics#shininess(float)
- */
+   * 
+   * @webref lights_camera:material_properties
+   * @usage web_application
+   * @param rgb color to set
+   * @see PGraphics#ambient(float, float, float)
+   * @see PGraphics#specular(float, float, float)
+   * @see PGraphics#shininess(float)
+   */
   public void emissive(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
 //      emissive((float) rgb);
@@ -5952,19 +5947,19 @@ public class PGraphics extends PImage implements PConstants {
     emissiveFromCalc();
   }
 
-/**
- * gray number specifying value between white and black
- */
+  /**
+   * gray number specifying value between white and black
+   */
   public void emissive(float gray) {
     colorCalc(gray);
     emissiveFromCalc();
   }
 
-/**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
- */
+  /**
+   * @param x red or hue value (depending on current color mode)
+   * @param y green or saturation value (depending on current color mode)
+   * @param z blue or brightness value (depending on current color mode)
+   */
   public void emissive(float x, float y, float z) {
     colorCalc(x, y, z);
     emissiveFromCalc();
@@ -6347,9 +6342,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-/**
- * @param a opacity of the background
- */
+  /**
+   * @param a opacity of the background
+   */
   public void background(float x, float y, float z, float a) {
 //    if (format == RGB) {
 //      background(x, y, z);  // don't allow people to set alpha
@@ -6381,7 +6376,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * ???
+   * @param image PImage to set as background (must be same size as the program)
    * Takes an RGB or ARGB image and sets it as the background.
    * The width and height of the image must be the same size as the sketch.
    * Use image.resize(width, height) to make short work of such a task.
@@ -7045,11 +7040,9 @@ public class PGraphics extends PImage implements PConstants {
   static float[] lerpColorHSB2;
 
   /**
-   * <h3>Advanced</h3>
+   * @nowebref
    * Interpolate between two colors. Like lerp(), but for the
    * individual color components of a color supplied as an int value.
-   *
-   * @param mode ???
    */
   static public int lerpColor(int c1, int c2, float amt, int mode) {
     if (mode == RGB) {
