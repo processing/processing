@@ -111,18 +111,20 @@ _   http://www.json.org/java/
 _ remove unnecessary processing.xml.* code from android-core
 _   http://code.google.com/p/processing/issues/detail?id=214
 
-casey
- _ pdf fonts
-_   rewrite documentation about pdf fonts (errors with non-native fonts)
-_   figure out why font naming not working correctly
-_ add blendMode() to reference, remove blend()
-_ need documentation for quadraticVertex()
-_ docs for rect(x, y, w, h, r) and rect(x, y, w, h, tl, tr, br, bl)
-_ screen.width/height shouldn't be anywhere
-_ add docs for screenWidth and screenHeight 
-_ remove delay() documentation
-_ remove textMode(SCREEN) references
-_ find in reference for copy() goes to PVector (oog)
+casey [Moved to web/todo.txt 17 SEP 2011]
+o pdf fonts
+o   rewrite documentation about pdf fonts (errors with non-native fonts)
+o   figure out why font naming not working correctly
+o add blendMode() to reference, remove blend()
+o need documentation for quadraticVertex()
+o docs for rect(x, y, w, h, r) and rect(x, y, w, h, tl, tr, br, bl)
+o docs for new arc()
+o "Find in Reference" for copy() goes to PVector (oog)
+X screen.width/height shouldn't be anywhere
+X add docs for screenWidth and screenHeight 
+X remove delay() documentation
+X remove textMode(SCREEN) references
+
 
 2.0
 _ Abnormal high Java CPU usage at empty sketch with draw() 

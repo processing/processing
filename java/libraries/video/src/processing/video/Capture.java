@@ -355,7 +355,11 @@ public class Capture extends PImage implements PConstants {
   }  
   
   /** 
-   * @generate Capture_read.xml
+   * ( begin auto-generated from Capture_read.xml )
+   * 
+   * Reads the current video frame.
+   * 
+   * ( end auto-generated )
    * 
    * <h3>Advanced</h3>
    * This method() and invokeEvent() are now synchronized, so that invokeEvent()
