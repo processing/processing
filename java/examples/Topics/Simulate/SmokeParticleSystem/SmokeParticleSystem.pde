@@ -29,7 +29,6 @@ void setup() {
   img.mask(msk);
   ps = new ParticleSystem(0, new PVector(width/2, height-20), img);
 
-  smooth();
 }
 
 void draw() {

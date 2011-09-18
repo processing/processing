@@ -1,18 +1,20 @@
 /**
  * Words. 
  * 
- * The text() function is used for writing words to the screen. 
+ * The text() function is used for writing words to the screen.
+ * The letters can be aligned left, center, or right with the 
+ * textAlign() function. 
  */
 
+// The next line is needed if running in JavaScript Mode with Processing.js
+/* @pjs font="Georgia.ttf"; */
 
 PFont fontA;
   
 void setup() {
   size(640, 360);
-
   // Create the font
-  fontA = createFont("Mono", 24);
-  textFont(fontA, 24);
+  textFont(createFont("Georgia", 24));
 }
 
 void draw() {

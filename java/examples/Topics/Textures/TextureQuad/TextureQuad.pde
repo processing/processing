@@ -5,8 +5,7 @@
  * the texture image. The vertex() function maps the image to the geometry.
  */
 
-// @pjs preload must be used to preload media if the program is 
-// running with Processing.js
+// The next line is needed if running in JavaScript Mode with Processing.js
 /* @pjs preload="berlin-1.jpg"; */ 
 
 PImage img;
@@ -25,8 +24,8 @@ void draw() {
   beginShape();
   texture(img);
   vertex(-100, -100, 0, 0, 0);
-  vertex(100, -100, 0, 300, 0);
-  vertex(100, 100, 0, 300, 300);
-  vertex(-100, 100, 0, 0, 300);
+  vertex(100, -100, 0, img.width, 0);
+  vertex(100, 100, 0, img.width, img.height);
+  vertex(-100, 100, 0, 0, img.height);
   endShape();
 }

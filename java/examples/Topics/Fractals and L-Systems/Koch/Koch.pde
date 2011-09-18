@@ -14,7 +14,6 @@ void setup() {
   background(0);
   frameRate(1);  // Animate slowly
   k = new KochFractal();
-  smooth();
 }
 
 void draw() {

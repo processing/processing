@@ -14,7 +14,6 @@ float my[] = new float[num];
 
 void setup() {
   size(640, 360);
-  smooth();
   noStroke();
   fill(255, 153); 
 }

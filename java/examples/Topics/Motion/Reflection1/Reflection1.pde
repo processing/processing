@@ -19,7 +19,6 @@ void setup(){
   size(640, 360);
   frameRate(30);
   fill(128);
-  smooth();
   baseX1 = 0;
   baseY1 = height-150;
   baseX2 = width;

@@ -14,7 +14,6 @@ void setup()
 {
   size(640, 360);
   noStroke(); 
-  smooth();
   springs[0] = new Spring(240, 260,  40, 0.98, 8.0, 0.1, springs, 0); 
   springs[1] = new Spring(320, 210, 120, 0.95, 9.0, 0.1, springs, 1); 
   springs[2] = new Spring(180, 170, 200, 0.90, 9.9, 0.1, springs, 2);   

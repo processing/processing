@@ -17,7 +17,6 @@ float easing = 0.05;
 void setup() 
 {
   size(640, 360); 
-  smooth();
   noStroke();  
 }
 

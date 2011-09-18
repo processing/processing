@@ -5,18 +5,15 @@
  * setting the font, and then drawing the letters.
  */
 
-PFont fontA;
+// The next line is needed if running in JavaScript Mode with Processing.js
+/* @pjs font="Georgia.ttf"; */
 
 void setup() {
   size(640, 360);
   background(0);
-  smooth();
 
   // Create the font
-  fontA = createFont("Mono", 18);
-
-  // Set the font
-  textFont(fontA);
+  textFont(createFont("Georgia",24));
   textAlign(CENTER, CENTER);
 } 
 

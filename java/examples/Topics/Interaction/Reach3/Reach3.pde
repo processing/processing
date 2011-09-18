@@ -1,6 +1,6 @@
 /**
- * Reach 3. 
- * Based on code from Keith Peters (www.bit-101.com)
+ * Reach 3  
+ * based on code from Keith Peters.
  * 
  * The arm follows the position of the ball by
  * calculating the angles with atan2().
@@ -20,7 +20,6 @@ int ballYDirection = -1;
 
 void setup() {
   size(640, 360);
-  smooth(); 
   strokeWeight(20.0);
   stroke(255, 100);
   noFill();

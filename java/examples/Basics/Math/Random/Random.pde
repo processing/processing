@@ -7,7 +7,6 @@
 
 void setup() {
   size(640, 360);
-  smooth();
   background(0);
   strokeWeight(20);
   frameRate(2);

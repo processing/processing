@@ -10,7 +10,6 @@ Eye e1, e2, e3;
 
 void setup() {
   size(640, 360);
-  smooth();
   noStroke();
   e1 = new Eye( 250,  16, 120);
   e2 = new Eye( 164, 185,  80);  

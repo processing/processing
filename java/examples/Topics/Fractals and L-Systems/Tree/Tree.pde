@@ -12,7 +12,6 @@ float theta;
 
 void setup() {
   size(640, 360);
-  smooth();
 }
 
 void draw() {

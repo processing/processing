@@ -20,7 +20,6 @@ void setup()
   noStroke();
   frameRate(30);
   ellipseMode(RADIUS);
-  smooth();
   // Set the starting position of the shape
   xpos = width/2;
   ypos = height/2;

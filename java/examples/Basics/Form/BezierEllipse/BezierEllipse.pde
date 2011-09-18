@@ -19,7 +19,6 @@ color anchorPtCol = #BBBBBB;
 
 void setup(){
   size(640, 360);
-  smooth();
   setEllipse(pts, 65, 65);
   frameRate(1);
 }

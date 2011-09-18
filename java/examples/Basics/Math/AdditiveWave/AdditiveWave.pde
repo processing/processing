@@ -18,7 +18,6 @@ void setup() {
   size(640, 360);
   frameRate(30);
   colorMode(RGB, 255, 255, 255, 100);
-  smooth();
   w = width + 16;
 
   for (int i = 0; i < maxwaves; i++) {

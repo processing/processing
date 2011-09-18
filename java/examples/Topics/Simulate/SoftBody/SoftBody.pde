@@ -34,7 +34,6 @@ void setup() {
     frequency[i] = random(5, 12);
   }
   noStroke();
-  smooth();
   frameRate(30);
 }
 

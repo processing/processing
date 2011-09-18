@@ -9,11 +9,9 @@
 
 Spot sp1, sp2;
 
-void setup() 
-{
+void setup() {
   size(640, 360);
   background(204);
-  smooth();
   noLoop();
   // Run the constructor without parameters
   sp1 = new Spot();

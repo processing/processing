@@ -11,7 +11,6 @@ int angle = 0;
 void setup() {
   size(640, 360);
   background(102);
-  smooth();
   noStroke();
   fill(0, 102);
 }

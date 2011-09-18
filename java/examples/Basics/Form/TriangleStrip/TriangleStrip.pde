@@ -17,7 +17,6 @@ float innerRad;
 void setup() {
   size(640, 360);
   background(204);
-  smooth();
   x = width/2;
   y = height/2;
   outerRad = min(width, height) * 0.4;

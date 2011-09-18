@@ -14,7 +14,6 @@ void setup() {
   size(640, 360);
   background(176);
   noStroke();
-  smooth();
   int wideCount = width / unit;
   int highCount = height / unit;
   count = wideCount * highCount;

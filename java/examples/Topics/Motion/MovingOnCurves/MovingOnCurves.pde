@@ -21,7 +21,6 @@ void setup()
 {
   size(640, 360);
   noStroke();
-  smooth();
   distX = endX - beginX;
   distY = endY - beginY;
 }

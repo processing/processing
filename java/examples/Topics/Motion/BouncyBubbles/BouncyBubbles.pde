@@ -1,6 +1,6 @@
 /**
- * Bouncy Bubbles. 
- * Based on code from Keith Peters (www.bit-101.com). 
+ * Bouncy Bubbles  
+ * based on code from Keith Peters. 
  * 
  * Multiple-object collision.
  */
@@ -16,7 +16,6 @@ void setup()
 {
   size(640, 360);
   noStroke();
-  smooth();
   for (int i = 0; i < numBalls; i++) {
     balls[i] = new Ball(random(width), random(height), random(30, 70), i, balls);
   }
