@@ -9,7 +9,6 @@
 void setup() {
   size(640, 360);
   noStroke();
-  smooth();
   noLoop();
 }
 

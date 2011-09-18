@@ -14,7 +14,6 @@ float jitter;
 
 void setup() {
   size(640, 360);
-  smooth();
   noStroke();
   fill(255);
   rectMode(CENTER);

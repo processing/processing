@@ -1,6 +1,6 @@
 /**
- * Follow 1. 
- * Based on code from Keith Peters (www.bit-101.com). 
+ * Follow 1  
+ * based on code from Keith Peters. 
  * 
  * A line segment is pushed and pulled by the cursor.
  */
@@ -12,7 +12,6 @@ float segLength = 50;
 
 void setup() {
   size(640, 360);
-  smooth(); 
   strokeWeight(20.0);
   stroke(255, 100);
 }

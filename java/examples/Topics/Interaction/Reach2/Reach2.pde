@@ -1,6 +1,6 @@
 /**
- * Reach 2. 
- * Based on code from Keith Peters (www.bit-101.com)
+ * Reach 2  
+ * based on code from Keith Peters.
  * 
  * The arm follows the position of the mouse by
  * calculating the angles with atan2(). 
@@ -15,7 +15,6 @@ float targetX, targetY;
 
 void setup() {
   size(640, 360);
-  smooth(); 
   strokeWeight(20.0);
   stroke(255, 100);
   x[x.length-1] = width/2;     // Set base x-coordinate

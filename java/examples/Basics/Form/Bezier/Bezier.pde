@@ -11,7 +11,6 @@ void setup() {
   size(640, 360); 
   stroke(255);
   noFill();
-  smooth();
 }
 
 void draw() {

@@ -14,7 +14,6 @@ int ballWidth = 48;
 
 void setup() {
   size(640, 360);
-  smooth();
   noStroke();
 
   // Create an empty ArrayList

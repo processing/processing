@@ -7,8 +7,7 @@
  */
 
 
-// @pjs preload must be used to preload media if the program is 
-// running with Processing.js
+// The next line is needed if running in JavaScript Mode with Processing.js
 /* @pjs preload="moon-wide.jpg"; */ 
 
 PImage img;

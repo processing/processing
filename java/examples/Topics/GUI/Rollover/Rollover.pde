@@ -20,7 +20,6 @@ boolean circleOver = false;
 
 void setup() {
   size(640, 360);
-  smooth();
   rectColor = color(0);
   circleColor = color(255);
   baseColor = color(102);

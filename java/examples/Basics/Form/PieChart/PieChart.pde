@@ -14,7 +14,6 @@ float lastAngle = 0;
 void setup() {
   size(640, 360);
   background(100);
-  smooth();
   noStroke();
   diameter = min(width, height) * 0.75;
   noLoop();  // Run once and stop

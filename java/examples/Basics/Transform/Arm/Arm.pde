@@ -14,7 +14,6 @@ float segLength = 100;
 
 void setup() {
   size(640, 360);
-  smooth(); 
   strokeWeight(30);
   stroke(255, 160);
   

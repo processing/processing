@@ -9,7 +9,6 @@
  */
 
 size(640, 360);
-smooth(); 
 background(0);
 noStroke();
 

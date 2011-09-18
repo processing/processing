@@ -18,7 +18,6 @@ void setup() {
   for (int i = 0; i < 150; i++) {
     flock.addBoid(new Boid(new PVector(width/2,height/2), 3.0, 0.05));
   }
-  smooth();
 }
 
 void draw() {

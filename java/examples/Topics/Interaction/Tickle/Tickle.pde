@@ -5,16 +5,20 @@
  * Sometimes, it can be tickled off the screen.
  */
 
+// The next line is needed if running in JavaScript Mode with Processing.js
+/* @pjs font="Georgia.ttf"; */
+
 String message = "tickle";
-PFont f;
 float x, y; // X and Y coordinates of text
 float hr, vr;  // horizontal and vertical radius of the text
 
 void setup() {
   size(640, 360);
-  f = createFont("Courier New", 36);
-  textFont(f);
+  
+  // Create the font
+  textFont(createFont("Georgia", 36));
   textAlign(CENTER, CENTER);
+  
   hr = textWidth(message) / 2;
   vr = (textAscent() + textDescent()) / 2;
   noStroke();
@@ -23,16 +27,17 @@ void setup() {
 }
 
 void draw() {
-  // instead of clearing the background, fade it by drawing
+  // Instead of clearing the background, fade it by drawing
   // a semi-transparent rectangle on top
   fill(204, 120);
   rect(0, 0, width, height);
-  fill(0);
+  
   // If the cursor is over the text, change the position
   if (abs(mouseX - x) < hr &&
       abs(mouseY - y) < vr) {
     x += random(-5, 5);
     y += random(-5, 5);
   }
+  fill(0);
   text("tickle", x, y);
 }

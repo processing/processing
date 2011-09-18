@@ -13,13 +13,13 @@
  * http://en.wikipedia.org/wiki/Concordance_(publishing)
  */
 
+// The next line is needed if running in JavaScript Mode with Processing.js
+/* @pjs font="Georgia.ttf"; */
 
 HashMap words;  // HashMap object
 
 String[] tokens;  // Array of all words from input file
 int counter;
-
-PFont f;
 
 void setup() {
   size(640, 360);
@@ -29,7 +29,9 @@ void setup() {
   String[] lines = loadStrings("dracula.txt");
   String allText = join(lines, " ");
   tokens = splitTokens(allText, " ,.?!:;[]-");
-  f = createFont("Georgia", 36, true);  
+  
+  // Create the font
+  textFont(createFont("Georgia",24)); 
 }
 
 void draw() {
@@ -70,7 +72,7 @@ void draw() {
     if (w.count > 3) {
       // The size is the count
       int fsize = constrain(w.count, 0, 100);
-      textFont(f, fsize);
+      textSize(fsize);
       text(w.word, x, y);
       // Move along the x-axis
       x += textWidth(w.word + " ");

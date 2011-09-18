@@ -1,6 +1,6 @@
 /**
- * Follow 3. 
- * Based on code from Keith Peters (www.bit-101.com). 
+ * Follow 3  
+ * based on code from Keith Peters. 
  * 
  * A segmented line follows the mouse. The relative angle from
  * each segment to the next is calculated with atan2() and the
@@ -13,7 +13,6 @@ float segLength = 18;
 
 void setup() {
   size(640, 360);
-  smooth(); 
   strokeWeight(9);
   stroke(255, 100);
 }

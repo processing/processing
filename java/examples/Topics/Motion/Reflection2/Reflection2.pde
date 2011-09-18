@@ -15,7 +15,6 @@ float[] peakHeights = new float[segments+1];
 
 void setup(){
   size(640, 360);
-  smooth();
   orb = new Orb(50, 50, 3);
   velocity = new PVector(.5, 0);
 
