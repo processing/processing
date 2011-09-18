@@ -11007,6 +11007,7 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float, float, float, float)
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#beginRaw(PGraphics)
    * @see PApplet#createFont(String, float, boolean)
    */
   public void textMode(int mode) {
@@ -11766,7 +11767,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from beginCamera.xml )
    * 
    * The <b>beginCamera()</b> and <b>endCamera()</b> functions enable 
@@ -11787,21 +11788,22 @@ public class PApplet extends Applet
    * <b>endCamera()</b> cannot be nested.
    * 
    * ( end auto-generated )
- * @webref lights_camera:camera
- * @see PGraphics#camera()
- * @see PGraphics#endCamera()
- * @see PGraphics#applyMatrix(PMatrix)
- * @see PGraphics#resetMatrix()
- * @see PGraphics#translate(float, float, float)
- * @see PGraphics#scale(float, float, float)
- */
+   * 
+   * @webref lights_camera:camera
+   * @see PGraphics#camera()
+   * @see PGraphics#endCamera()
+   * @see PGraphics#applyMatrix(PMatrix)
+   * @see PGraphics#resetMatrix()
+   * @see PGraphics#translate(float, float, float)
+   * @see PGraphics#scale(float, float, float)
+   */
   public void beginCamera() {
     if (recorder != null) recorder.beginCamera();
     g.beginCamera();
   }
 
 
-/**
+  /**
    * ( begin auto-generated from endCamera.xml )
    * 
    * The <b>beginCamera()</b> and <b>endCamera()</b> functions enable 
@@ -11809,16 +11811,17 @@ public class PApplet extends Applet
    * <b>beginCamera()</b> for a description of how the functions are used.
    * 
    * ( end auto-generated )
- * @webref lights_camera:camera
- * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
- */
+   * 
+   * @webref lights_camera:camera
+   * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
+   */
   public void endCamera() {
     if (recorder != null) recorder.endCamera();
     g.endCamera();
   }
 
 
-/**
+  /**
    * ( begin auto-generated from camera.xml )
    * 
    * Sets the position of the camera through setting the eye position, the 
@@ -11827,15 +11830,16 @@ public class PApplet extends Applet
    * allows the images to be seen from different angles. The version without 
    * any parameters sets the camera to the default position, pointing to the 
    * center of the display window with the Y axis as up. The default values 
-   * are camera(width/2.0, height/2.0, (height/2.0) / tan(PI*60.0 / 360.0), 
-   * width/2.0, height/2.0, 0, 0, 1, 0). This function is similar to 
-   * gluLookAt() in OpenGL, but it first clears the current camera settings.
+   * are <b>camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 
+   * 180.0), width/2.0, height/2.0, 0, 0, 1, 0)</b>. This function is similar 
+   * to <b>gluLookAt()</b> in OpenGL, but it first clears the current camera settings.
    * 
    * ( end auto-generated )
- * @webref lights_camera:camera
- * @see PGraphics#endCamera()
- * @see PGraphics#frustum(float, float, float, float, float, float)
- */
+   * 
+   * @webref lights_camera:camera
+   * @see PGraphics#endCamera()
+   * @see PGraphics#frustum(float, float, float, float, float, float)
+   */
   public void camera() {
     if (recorder != null) recorder.camera();
     g.camera();
@@ -11877,7 +11881,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from ortho.xml )
    * 
    * Sets an orthographic projection and defines a parallel clipping volume. 
@@ -11890,20 +11894,21 @@ public class PApplet extends Applet
    * -10, 10).
    * 
    * ( end auto-generated )
- * @webref lights_camera:camera
- */
+   * 
+   * @webref lights_camera:camera
+   */
   public void ortho() {
     if (recorder != null) recorder.ortho();
     g.ortho();
   }
 
 
-/**
- * @param left left plane of the clipping volume
- * @param right right plane of the clipping volume
- * @param bottom bottom plane of the clipping volume
- * @param top top plane of the clipping volume
- */
+  /**
+   * @param left left plane of the clipping volume
+   * @param right right plane of the clipping volume
+   * @param bottom bottom plane of the clipping volume
+   * @param top top plane of the clipping volume
+   */
   public void ortho(float left, float right,
                     float bottom, float top) {
     if (recorder != null) recorder.ortho(left, right, bottom, top);
@@ -11911,10 +11916,10 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param near maximum distance from the origin to the viewer
- * @param far maximum distance from the origin away from the viewer
- */
+  /**
+   * @param near maximum distance from the origin to the viewer
+   * @param far maximum distance from the origin away from the viewer
+   */
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
@@ -11923,7 +11928,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from perspective.xml )
    * 
    * Sets a perspective projection applying foreshortening, making distant 
@@ -11938,27 +11943,28 @@ public class PApplet extends Applet
    * cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
    * 
    * ( end auto-generated )
- * @webref lights_camera:camera
- */
+   * 
+   * @webref lights_camera:camera
+   */
   public void perspective() {
     if (recorder != null) recorder.perspective();
     g.perspective();
   }
 
 
-/**
- * @param fovy field-of-view angle (in radians) for vertical direction
- * @param aspect ratio of width to height
- * @param zNear z-position of nearest clipping plane
- * @param zFar z-position of nearest farthest plane
- */
+  /**
+   * @param fovy field-of-view angle (in radians) for vertical direction
+   * @param aspect ratio of width to height
+   * @param zNear z-position of nearest clipping plane
+   * @param zFar z-position of nearest farthest plane
+   */
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
     if (recorder != null) recorder.perspective(fovy, aspect, zNear, zFar);
     g.perspective(fovy, aspect, zNear, zFar);
   }
 
 
-/**
+  /**
    * ( begin auto-generated from frustum.xml )
    * 
    * Sets a perspective matrix defined through the parameters. Works like 
@@ -11966,17 +11972,18 @@ public class PApplet extends Applet
    * than muliplying itself with it.
    * 
    * ( end auto-generated )
- * @webref lights_camera:camera
- * @param left left coordinate of the clipping plane
- * @param right right coordinate of the clipping plane
- * @param bottom bottom coordinate of the clipping plane
- * @param top top coordinate of the clipping plane
- * @param near near component of the clipping plane
- * @param far far component of the clipping plane
- * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
- * @see PGraphics#endCamera()
- * @see PGraphics#perspective(float, float, float, float)
- */
+   * 
+   * @webref lights_camera:camera
+   * @param left left coordinate of the clipping plane
+   * @param right right coordinate of the clipping plane
+   * @param bottom bottom coordinate of the clipping plane
+   * @param top top coordinate of the clipping plane
+   * @param near near component of the clipping plane
+   * @param far far component of the clipping plane
+   * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
+   * @see PGraphics#endCamera()
+   * @see PGraphics#perspective(float, float, float, float)
+   */
   public void frustum(float left, float right,
                       float bottom, float top,
                       float near, float far) {
@@ -11985,16 +11992,17 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from printProjection.xml )
    * 
    * Prints the current projection matrix to the Console (the text window at 
    * the bottom of Processing).
    * 
    * ( end auto-generated )
- * @webref lights_camera:camera
- * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
- */
+   * 
+   * @webref lights_camera:camera
+   * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
+   */
   public void printProjection() {
     if (recorder != null) recorder.printProjection();
     g.printProjection();
@@ -12008,6 +12016,7 @@ public class PApplet extends Applet
    * where it will appear on a (two-dimensional) screen.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12026,6 +12035,7 @@ public class PApplet extends Applet
    * where it will appear on a (two-dimensional) screen.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12060,6 +12070,7 @@ public class PApplet extends Applet
    * where it will appear on a (two-dimensional) screen.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12089,6 +12100,7 @@ public class PApplet extends Applet
    * another box in the same location.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12118,6 +12130,7 @@ public class PApplet extends Applet
    * another box in the same location.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12147,6 +12160,7 @@ public class PApplet extends Applet
    * another box in the same location.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12159,7 +12173,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from pushStyle.xml )
    * 
    * The <b>pushStyle()</b> function saves the current style settings and 
@@ -12178,16 +12192,17 @@ public class PApplet extends Applet
    * emissive(), specular(), shininess(), ambient() 
    * 
    * ( end auto-generated )
- * @webref structure
- * @see PGraphics#popStyle()
- */
+   * 
+   * @webref structure
+   * @see PGraphics#popStyle()
+   */
   public void pushStyle() {
     if (recorder != null) recorder.pushStyle();
     g.pushStyle();
   }
 
 
-/**
+  /**
    * ( begin auto-generated from popStyle.xml )
    * 
    * The <b>pushStyle()</b> function saves the current style settings and 
@@ -12199,9 +12214,10 @@ public class PApplet extends Applet
    * provide more control (see the second example above for a demonstration.)
    * 
    * ( end auto-generated )
- * @webref structure
- * @see PGraphics#pushStyle()
- */
+   * 
+   * @webref structure
+   * @see PGraphics#pushStyle()
+   */
   public void popStyle() {
     if (recorder != null) recorder.popStyle();
     g.popStyle();
@@ -12214,7 +12230,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from strokeWeight.xml )
    * 
    * Sets the width of the stroke used for lines, points, and the border 
@@ -12230,19 +12246,20 @@ public class PApplet extends Applet
    * may not go higher than 10 pixels. 
    * 
    * ( end auto-generated )
- * @webref shape:attributes
- * @param weight the weight (in pixels) of the stroke
- * @see PGraphics#stroke(int, float)
- * @see PGraphics#strokeJoin(int)
- * @see PGraphics#strokeCap(int)
- */
+   * 
+   * @webref shape:attributes
+   * @param weight the weight (in pixels) of the stroke
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#strokeJoin(int)
+   * @see PGraphics#strokeCap(int)
+   */
   public void strokeWeight(float weight) {
     if (recorder != null) recorder.strokeWeight(weight);
     g.strokeWeight(weight);
   }
 
 
-/**
+  /**
    * ( begin auto-generated from strokeJoin.xml )
    * 
    * Sets the style of the joints which connect line segments. These joints 
@@ -12256,19 +12273,20 @@ public class PApplet extends Applet
    * <b>size()</b> reference.
    * 
    * ( end auto-generated )
- * @webref shape:attributes
- * @param join either MITER, BEVEL, ROUND
- * @see PGraphics#stroke(int, float)
- * @see PGraphics#strokeWeight(float)
- * @see PGraphics#strokeCap(int)
- */
+   * 
+   * @webref shape:attributes
+   * @param join either MITER, BEVEL, ROUND
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#strokeWeight(float)
+   * @see PGraphics#strokeCap(int)
+   */
   public void strokeJoin(int join) {
     if (recorder != null) recorder.strokeJoin(join);
     g.strokeJoin(join);
   }
 
 
-/**
+  /**
    * ( begin auto-generated from strokeCap.xml )
    * 
    * Sets the style for rendering line endings. These ends are either 
@@ -12281,13 +12299,14 @@ public class PApplet extends Applet
    * <b>size()</b> reference.
    * 
    * ( end auto-generated )
- * @webref shape:attributes
- * @param cap either SQUARE, PROJECT, or ROUND
- * @see PGraphics#stroke(int, float)
- * @see PGraphics#strokeWeight(float)
- * @see PGraphics#strokeJoin(int)
- * @see PApplet#size(int, int, String, String)
- */
+   *
+   * @webref shape:attributes
+   * @param cap either SQUARE, PROJECT, or ROUND
+   * @see PGraphics#stroke(int, float)
+   * @see PGraphics#strokeWeight(float)
+   * @see PGraphics#strokeJoin(int)
+   * @see PApplet#size(int, int, String, String)
+   */
   public void strokeCap(int cap) {
     if (recorder != null) recorder.strokeCap(cap);
     g.strokeCap(cap);
@@ -12301,6 +12320,7 @@ public class PApplet extends Applet
    * <b>noFill()</b> are called, nothing will be drawn to the screen.
    * 
    * ( end auto-generated )
+   *
    * @webref color:setting
    * @see PGraphics#stroke(float, float, float, float)
    */

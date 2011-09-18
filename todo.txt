@@ -597,20 +597,20 @@ _   but don't do this with untitled, cuz it kinda stinks
 _   this is too weird--just put examples into individual zip files
 _   mark example files as untitled
 _   though will that require the sketch to be saved before export?
-_ find in reference issues
-_   if() and for() don't work, they look for for_.html instead of for.html
-_   XMLElement is not linked for find in ref
-_   the ? operator is not in find in ref (no ref page either?)
-_ update keywords generator script on the site
-_   perhaps move this closer to the dev process?
-_ move reference folder around so that it matches site organization
-_   otherwise several links break on the main faq page
-_ discuss i18n issues and proper system (?)
-_ look through 404 issues on the site
-_ TRIANGLE_STRIP not highlighted for "find in reference"
-_   nor is it listed on the reference page
-_   so students can't find the ref for it
-_   needs to link TRIANGLE_STRIP to the beginShape() reference
+o find in reference issues
+o   if() and for() don't work, they look for for_.html instead of for.html
+o   XMLElement is not linked for find in ref
+o   the ? operator is not in find in ref (no ref page either?)
+o update keywords generator script on the site
+o   perhaps move this closer to the dev process?
+o move reference folder around so that it matches site organization
+o   otherwise several links break on the main faq page
+o discuss i18n issues and proper system (?)
+o look through 404 issues on the site
+o TRIANGLE_STRIP not highlighted for "find in reference"
+o   nor is it listed on the reference page
+o   so students can't find the ref for it
+o   needs to link TRIANGLE_STRIP to the beginShape() reference
 
 
 libraries and classpaths [1.0]
