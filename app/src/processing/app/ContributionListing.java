@@ -446,7 +446,7 @@ public class ContributionListing {
           System.arraycopy(lines, start, strings, 0, length);
           
           HashMap<String,String> exports = new HashMap<String,String>();
-          Base.readSettings(strings, exports);
+          Base.readSettings(null, strings, exports);
           
           Type kind = Contribution.Type.toType(type);
           outgoing.add(new AdvertisedContribution(kind, exports));

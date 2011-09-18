@@ -2440,12 +2440,13 @@ public class Base {
     HashMap<String,String> outgoing = new HashMap<String,String>();
     if (inputFile.exists()) {
       String lines[] = PApplet.loadStrings(inputFile);
-      readSettings(lines, outgoing);
+      readSettings(inputFile.toString(), lines, outgoing);
     }
     return outgoing;
   }
   
-  static public void readSettings(String lines[], HashMap<String, String> exports) {
+  static public void readSettings(String fileName, String lines[],
+                                  HashMap<String, String> exports) {
     for (int i = 0; i < lines.length; i++) {
       int hash = lines[i].indexOf('#');
       String line = (hash == -1) ?
@@ -2454,8 +2455,8 @@ public class Base {
 
       int equals = line.indexOf('=');
       if (equals == -1) {
-        System.err.println("ignoring illegal line in properties file");
-        //System.err.println("ignoring illegal line in " + inputFile);
+        if (fileName != null)
+        System.err.println("ignoring illegal line in " + fileName);
         System.err.println("  " + line);
         continue;
       }
