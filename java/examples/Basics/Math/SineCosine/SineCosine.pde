@@ -14,7 +14,6 @@ float scalar = 70;
 void setup() {
   size(640, 360);
   noStroke();
-  smooth();
   rectMode(CENTER);
 }
 

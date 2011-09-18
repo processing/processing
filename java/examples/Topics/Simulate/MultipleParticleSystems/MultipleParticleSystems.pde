@@ -16,7 +16,6 @@ void setup() {
   size(640, 360);
   colorMode(RGB, 255, 255, 255, 100);
   psystems = new ArrayList();
-  smooth();
 }
 
 void draw() {

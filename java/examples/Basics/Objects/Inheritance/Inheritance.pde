@@ -10,16 +10,13 @@
 SpinSpots spots;
 SpinArm arm;
 
-void setup() 
-{
+void setup() {
   size(640, 360);
-  smooth();
   arm = new SpinArm(width/2, height/2, 0.01);
   spots = new SpinSpots(width/2, height/2, -0.02, 90.0);
 }
 
-void draw() 
-{
+void draw() {
   background(204);
   arm.update();
   arm.display();
@@ -27,8 +24,7 @@ void draw()
   spots.display();
 }
 
-class Spin 
-{
+class Spin {
   float x, y, speed;
   float angle = 0.0;
   Spin(float xpos, float ypos, float s) {
@@ -41,8 +37,7 @@ class Spin
   }
 }
 
-class SpinArm extends Spin 
-{
+class SpinArm extends Spin {
   SpinArm(float x, float y, float s) {
     super(x, y, s);
   }
@@ -58,8 +53,7 @@ class SpinArm extends Spin
   }
 }
 
-class SpinSpots extends Spin 
-{
+class SpinSpots extends Spin {
   float dim;
   SpinSpots(float x, float y, float s, float d) {
     super(x, y, s);

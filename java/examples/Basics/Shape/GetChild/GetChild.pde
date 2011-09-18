@@ -8,8 +8,7 @@
  * two new PShape objects by extracting the data from two states.
  */
 
-// @pjs preload must be used to preload media if the program is 
-// running with Processing.js
+// The next line is needed if running in JavaScript Mode with Processing.js
 /* @pjs preload="usa-wikipedia.svg"; */ 
 
 PShape usa;

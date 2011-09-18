@@ -17,7 +17,6 @@ int lastTime = 0;
 void setup() {
   size(640, 360);
   strokeWeight(12);
-  smooth();
   background(0);
   stroke(255);
   for (int i = 0; i < frames.length; i++) {

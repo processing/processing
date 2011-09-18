@@ -11,7 +11,6 @@ void setup() {
   size(640, 360);
   diameter = height - 10;
   noStroke();
-  smooth();
   noStroke();
   fill(255, 204, 0);
 }

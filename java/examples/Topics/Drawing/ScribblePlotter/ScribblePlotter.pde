@@ -39,7 +39,6 @@ void setup(){
 
 void makeRect(float[][]pts){
   stroke(255);
-  smooth();
   
   // Scribble variables, that get passed as arguments to the scribble function
   int steps = 100;

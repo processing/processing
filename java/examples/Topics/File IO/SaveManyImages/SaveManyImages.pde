@@ -13,7 +13,6 @@ float numFrames = 50;
 void setup() 
 {
   size(200, 200);
-  smooth();
   noStroke();
 }
 

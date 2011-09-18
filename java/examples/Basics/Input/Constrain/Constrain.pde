@@ -15,7 +15,6 @@ int inner = edge + radius;
 void setup() {
   size(640, 360);
   noStroke(); 
-  smooth();
   ellipseMode(RADIUS);
   rectMode(CORNERS);
 }

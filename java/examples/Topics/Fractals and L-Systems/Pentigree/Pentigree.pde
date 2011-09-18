@@ -10,7 +10,6 @@ PentigreeLSystem ps;
 
 void setup() {
   size(640, 360);
-  smooth();
   ps = new PentigreeLSystem();
   ps.simulate(3);
 }

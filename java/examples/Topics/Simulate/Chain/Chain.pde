@@ -15,7 +15,6 @@ float mass = 2.0;
 void setup() 
 {
   size(640, 360);
-  smooth();
   fill(255, 126);
   // Inputs: x, y, mass, gravity
   s1 = new Spring2D(0.0, width/2, mass, gravity);

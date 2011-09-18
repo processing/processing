@@ -10,8 +10,7 @@
  * since most images will no longer be full 24-bit color.
  */
 
-// @pjs preload must be used to preload media if the program is 
-// running with Processing.js
+// The next line is needed if running in JavaScript Mode with Processing.js
 /* @pjs preload="frontier.jpg"; */ 
 
 size(640, 360);

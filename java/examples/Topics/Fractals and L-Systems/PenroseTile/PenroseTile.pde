@@ -7,16 +7,13 @@
 
 PenroseLSystem ds;
 
-void setup() 
-{
+void setup() {
   size(640, 360);
-  smooth();
   ds = new PenroseLSystem();
   ds.simulate(4);
 }
 
-void draw() 
-{
+void draw() {
   background(0);
   ds.render();
 }

@@ -17,7 +17,6 @@ float clockDiameter;
 void setup() {
   size(640, 360);
   stroke(255);
-  smooth();
   
   int radius = min(width, height) / 2;
   secondsRadius = radius * 0.72;
