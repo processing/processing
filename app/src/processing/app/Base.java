@@ -1778,8 +1778,16 @@ public class Base {
    * Create a temporary folder by using the createTempFile() mechanism,
    * deleting the file it creates, and making a folder using the location
    * that was provided.
+   * 
+   * Unlike createTempFile(), there is no minimum size for prefix. If
+   * prefix is less than 3 characters, the remaining characters will be
+   * filled with underscores
    */
   static public File createTempFolder(String prefix, String suffix) throws IOException {
+    int fillChars = 3 - prefix.length();
+    for (int i = 0; i < fillChars; i++) {
+      prefix += '_';
+    }
     File folder = File.createTempFile(prefix, suffix);
     // Now delete that file and create a folder in its place
     folder.delete();
