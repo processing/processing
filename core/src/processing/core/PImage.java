@@ -56,8 +56,8 @@ import javax.imageio.ImageIO;
  * @usage Web &amp; Application
  * @instanceName img any variable of type PImage
  * @see PApplet#loadImage(String)
- * @see PGraphics#imageMode(int)
- * @see PApplet#createImage(int, int)
+ * @see PApplet#imageMode(int)
+ * @see PApplet#createImage(int, int, int)
  */
 public class PImage implements PConstants, Cloneable {
 
