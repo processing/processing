@@ -5082,7 +5082,8 @@ public class PApplet extends Applet
    * returned from <b>loadShape()</b> is null.
    * 
    * ( end auto-generated )
-   * @webref shape:load_displaying
+   * 
+   * @webref shape:loading_displaying
    * @param filename name of the file to load
    * @see PShape#PShape
    * @see PGraphics#shape(PShape, float, float, float, float)
