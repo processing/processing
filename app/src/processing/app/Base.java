@@ -34,6 +34,7 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
+import processing.app.contribution.Contribution;
 import processing.app.contribution.InstalledContribution;
 import processing.core.*;
 
@@ -90,10 +91,16 @@ public class Base {
 
   // A single instance of the preferences window
   Preferences preferencesFrame;
-
+  
   // A single instance of the library manager window
-  ContributionManager contributionManagerFrame;
-
+  ContributionManagerDialog libraryManagerFrame;
+  
+  ContributionManagerDialog toolManagerFrame;
+  
+  ContributionManagerDialog modeManagerFrame;
+  
+  ContributionManagerDialog updateManagerFrame;
+  
   // set to true after the first time the menu is built.
   // so that the errors while building don't show up again.
   boolean builtOnce;
@@ -362,8 +369,40 @@ public class Base {
     buildCoreModes();
     rebuildContribModes();
 
-    contributionManagerFrame = new ContributionManager();
-
+    libraryManagerFrame = new ContributionManagerDialog("Library Manager",
+                                                        new ContributionListing.Filter() {
+      
+      public boolean matches(Contribution contrib) {
+        return contrib.getType() == Contribution.Type.LIBRARY
+            || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
+      }
+    });
+    toolManagerFrame = new ContributionManagerDialog("Tool Manager",
+                                                     new ContributionListing.Filter() {
+      
+      public boolean matches(Contribution contrib) {
+        return contrib.getType() == Contribution.Type.TOOL;
+      }
+    });
+    modeManagerFrame = new ContributionManagerDialog("Mode Manager",
+                                                     new ContributionListing.Filter() {
+      
+      public boolean matches(Contribution contrib) {
+        return contrib.getType() == Contribution.Type.MODE;
+      }
+    });
+    updateManagerFrame = new ContributionManagerDialog("Update Manager",
+                                                       new ContributionListing.Filter() {
+      
+      public boolean matches(Contribution contrib) {
+        if (contrib instanceof InstalledContribution) {
+          return ContributionListing.getInstance().hasUpdates(contrib);
+        }
+        
+        return false;
+      }
+    });
+    
     // Make sure ThinkDifferent has library examples too
     defaultMode.rebuildLibraryList();
 
@@ -1548,13 +1587,27 @@ public class Base {
   /**
    * Show the library installer window.
    */
-  public void handleOpenContributionManager() {
-    contributionManagerFrame.showFrame(activeEditor);
+  public void handleOpenLibraryManager() {
+    libraryManagerFrame.showFrame(activeEditor);
+    // Contribution.Type.LIBRARY
+  }
+  
+  /**
+   * Show the tool installer window.
+   */
+  public void handleOpenToolManager() {
+    toolManagerFrame.showFrame(activeEditor);
+  }
+  
+  /**
+   * Show the mode installer window.
+   */
+  public void handleOpenModeManager() {
+    modeManagerFrame.showFrame(activeEditor);
   }
 
   public void handleShowUpdates() {
-    contributionManagerFrame.showFrame(activeEditor);
-    contributionManagerFrame.setFilterText("has:updates");
+    updateManagerFrame.showFrame(activeEditor);
   }
 
   /**
@@ -1562,7 +1615,7 @@ public class Base {
    * user. Returns the number of libraries installed.
    */
   public boolean handleConfirmAndInstallLibrary(File libFile) {
-    return contributionManagerFrame.confirmAndInstallLibrary(activeEditor, libFile) != null;
+    return ContributionManager.confirmAndInstallLibrary(activeEditor, libFile, null) != null;
   }
 
   // ...................................................................
@@ -1884,7 +1937,6 @@ public class Base {
   }
 
   public File getSketchbookModesFolder() {
-  //  return new File(getSketchbookFolder(), "libraries");
     return new File(sketchbookFolder, "modes");
   }
 
