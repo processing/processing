@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-11 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ import java.awt.*;
 import java.util.HashMap;
 
 
-/**
+  /**
    * ( begin auto-generated from PGraphics.xml )
    * 
    * Main graphics and rendering context, as well as the base API 
@@ -41,94 +41,94 @@ import java.util.HashMap;
    * href="http://processing.googlecode.com/svn/trunk/processing/build/javadoc/core/">developer's reference.</a>
    * 
    * ( end auto-generated )
-  *    
-  * <h3>Advanced</h3>
-  * Main graphics and rendering context, as well as the base API implementation.
-  *
-  * <h2>Subclassing and initializing PGraphics objects</h2>
-  * Starting in release 0149, subclasses of PGraphics are handled differently.
-  * The constructor for subclasses takes no parameters, instead a series of
-  * functions are called by the hosting PApplet to specify its attributes.
-  * <ul>
-  * <li>setParent(PApplet) - is called to specify the parent PApplet.
-  * <li>setPrimary(boolean) - called with true if this PGraphics will be the
-  * primary drawing surface used by the sketch, or false if not.
-  * <li>setPath(String) - called when the renderer needs a filename or output
-  * path, such as with the PDF or DXF renderers.
-  * <li>setSize(int, int) - this is called last, at which point it's safe for
-  * the renderer to complete its initialization routine.
-  * </ul>
-  * The functions were broken out because of the growing number of parameters
-  * such as these that might be used by a renderer, yet with the exception of
-  * setSize(), it's not clear which will be necessary. So while the size could
-  * be passed in to the constructor instead of a setSize() function, a function
-  * would still be needed that would notify the renderer that it was time to
-  * finish its initialization. Thus, setSize() simply does both.
-  *
-  * <h2>Know your rights: public vs. private methods</h2>
-  * Methods that are protected are often subclassed by other renderers, however
-  * they are not set 'public' because they shouldn't be part of the user-facing
-  * public API accessible from PApplet. That is, we don't want sketches calling
-  * textModeCheck() or vertexTexture() directly.
-  *
-  * <h2>Handling warnings and exceptions</h2>
-  * Methods that are unavailable generally show a warning, unless their lack of
-  * availability will soon cause another exception. For instance, if a method
-  * like getMatrix() returns null because it is unavailable, an exception will
-  * be thrown stating that the method is unavailable, rather than waiting for
-  * the NullPointerException that will occur when the sketch tries to use that
-  * method. As of release 0149, warnings will only be shown once, and exceptions
-  * have been changed to warnings where possible.
-  *
-  * <h2>Using xxxxImpl() for subclassing smoothness</h2>
-  * The xxxImpl() methods are generally renderer-specific handling for some
-  * subset if tasks for a particular function (vague enough for you?) For
-  * instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords
-  * have been specified, and screen placement (independent of imageMode) has
-  * been determined. There's no point in all renderers implementing the
-  * <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled
-  * by PGraphics, which then calls imageImpl() once all that is figured out.
-  *
-  * <h2>His brother PImage</h2>
-  * PGraphics subclasses PImage so that it can be drawn and manipulated in a
-  * similar fashion. As such, many methods are inherited from PGraphics,
-  * though many are unavailable: for instance, resize() is not likely to be
-  * implemented; the same goes for mask(), depending on the situation.
-  *
-  * <h2>What's in PGraphics, what ain't</h2>
-  * For the benefit of subclasses, as much as possible has been placed inside
-  * PGraphics. For instance, bezier interpolation code and implementations of
-  * the strokeCap() method (that simply sets the strokeCap variable) are
-  * handled here. Features that will vary widely between renderers are located
-  * inside the subclasses themselves. For instance, all matrix handling code
-  * is per-renderer: Java 2D uses its own AffineTransform, P2D uses a PMatrix2D,
-  * and PGraphics3D needs to keep continually update forward and reverse
-  * transformations. A proper (future) OpenGL implementation will have all its
-  * matrix madness handled by the card. Lighting also falls under this
-  * category, however the base material property settings (emissive, specular,
-  * et al.) are handled in PGraphics because they use the standard colorMode()
-  * logic. Subclasses should override methods like emissiveFromCalc(), which
-  * is a point where a valid color has been defined internally, and can be
-  * applied in some manner based on the calcXxxx values.
-  *
-  * <h2>What's in the PGraphics documentation, what ain't</h2>
-  * Some things are noted here, some things are not. For public API, always
-  * refer to the <a href="http://processing.org/reference">reference</A>
-  * on Processing.org for proper explanations. <b>No attempt has been made to
-  * keep the javadoc up to date or complete.</b> It's an enormous task for
-  * which we simply do not have the time. That is, it's not something that
-  * to be done once&mdash;it's a matter of keeping the multiple references
-  * synchronized (to say nothing of the translation issues), while targeting
-  * them for their separate audiences. Ouch.
-  *
-  * We're working right now on synchronizing the two references, so the website reference
-  * is generated from the javadoc comments. Yay.
-  *
-  * @webref rendering
-  * @instanceName graphics any object of the type PGraphics
-  * @usage Web &amp; Application
-  * @see PApplet#createGraphics(int, int, String)
-  */
+   *    
+   * <h3>Advanced</h3>
+   * Main graphics and rendering context, as well as the base API implementation.
+   *
+   * <h2>Subclassing and initializing PGraphics objects</h2>
+   * Starting in release 0149, subclasses of PGraphics are handled differently.
+   * The constructor for subclasses takes no parameters, instead a series of
+   * functions are called by the hosting PApplet to specify its attributes.
+   * <ul>
+   * <li>setParent(PApplet) - is called to specify the parent PApplet.
+   * <li>setPrimary(boolean) - called with true if this PGraphics will be the
+   * primary drawing surface used by the sketch, or false if not.
+   * <li>setPath(String) - called when the renderer needs a filename or output
+   * path, such as with the PDF or DXF renderers.
+   * <li>setSize(int, int) - this is called last, at which point it's safe for
+   * the renderer to complete its initialization routine.
+   * </ul>
+   * The functions were broken out because of the growing number of parameters
+   * such as these that might be used by a renderer, yet with the exception of
+   * setSize(), it's not clear which will be necessary. So while the size could
+   * be passed in to the constructor instead of a setSize() function, a function
+   * would still be needed that would notify the renderer that it was time to
+   * finish its initialization. Thus, setSize() simply does both.
+   *
+   * <h2>Know your rights: public vs. private methods</h2>
+   * Methods that are protected are often subclassed by other renderers, however
+   * they are not set 'public' because they shouldn't be part of the user-facing
+   * public API accessible from PApplet. That is, we don't want sketches calling
+   * textModeCheck() or vertexTexture() directly.
+   *
+   * <h2>Handling warnings and exceptions</h2>
+   * Methods that are unavailable generally show a warning, unless their lack of
+   * availability will soon cause another exception. For instance, if a method
+   * like getMatrix() returns null because it is unavailable, an exception will
+   * be thrown stating that the method is unavailable, rather than waiting for
+   * the NullPointerException that will occur when the sketch tries to use that
+   * method. As of release 0149, warnings will only be shown once, and exceptions
+   * have been changed to warnings where possible.
+   *
+   * <h2>Using xxxxImpl() for subclassing smoothness</h2>
+   * The xxxImpl() methods are generally renderer-specific handling for some
+   * subset if tasks for a particular function (vague enough for you?) For
+   * instance, imageImpl() handles drawing an image whose x/y/w/h and u/v coords
+   * have been specified, and screen placement (independent of imageMode) has
+   * been determined. There's no point in all renderers implementing the
+   * <tt>if (imageMode == BLAH)</tt> placement/sizing logic, so that's handled
+   * by PGraphics, which then calls imageImpl() once all that is figured out.
+   *
+   * <h2>His brother PImage</h2>
+   * PGraphics subclasses PImage so that it can be drawn and manipulated in a
+   * similar fashion. As such, many methods are inherited from PGraphics,
+   * though many are unavailable: for instance, resize() is not likely to be
+   * implemented; the same goes for mask(), depending on the situation.
+   *
+   * <h2>What's in PGraphics, what ain't</h2>
+   * For the benefit of subclasses, as much as possible has been placed inside
+   * PGraphics. For instance, bezier interpolation code and implementations of
+   * the strokeCap() method (that simply sets the strokeCap variable) are
+   * handled here. Features that will vary widely between renderers are located
+   * inside the subclasses themselves. For instance, all matrix handling code
+   * is per-renderer: Java 2D uses its own AffineTransform, P2D uses a PMatrix2D,
+   * and PGraphics3D needs to keep continually update forward and reverse
+   * transformations. A proper (future) OpenGL implementation will have all its
+   * matrix madness handled by the card. Lighting also falls under this
+   * category, however the base material property settings (emissive, specular,
+   * et al.) are handled in PGraphics because they use the standard colorMode()
+   * logic. Subclasses should override methods like emissiveFromCalc(), which
+   * is a point where a valid color has been defined internally, and can be
+   * applied in some manner based on the calcXxxx values.
+   *
+   * <h2>What's in the PGraphics documentation, what ain't</h2>
+   * Some things are noted here, some things are not. For public API, always
+   * refer to the <a href="http://processing.org/reference">reference</A>
+   * on Processing.org for proper explanations. <b>No attempt has been made to
+   * keep the javadoc up to date or complete.</b> It's an enormous task for
+   * which we simply do not have the time. That is, it's not something that
+   * to be done once&mdash;it's a matter of keeping the multiple references
+   * synchronized (to say nothing of the translation issues), while targeting
+   * them for their separate audiences. Ouch.
+   *
+   * We're working right now on synchronizing the two references, so the website reference
+   * is generated from the javadoc comments. Yay.
+   *
+   * @webref rendering
+   * @instanceName graphics any object of the type PGraphics
+   * @usage Web &amp; Application
+   * @see PApplet#createGraphics(int, int, String)
+   */
 public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
@@ -2124,8 +2124,8 @@ public class PGraphics extends PImage implements PConstants {
    * @param d height of the arc's ellipse
    * @param start angle to start the arc, specified in radians
    * @param stop angle to stop the arc, specified in radians
-   * @see PGraphics#ellipseMode(int)
-   * @see PGraphics#ellipse(float, float, float, float)
+   * @see PApplet#ellipseMode(int)
+   * @see PApplet#ellipse(float, float, float, float)
    */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
@@ -2285,6 +2285,7 @@ public class PGraphics extends PImage implements PConstants {
    * with two parameters.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Code for sphereDetail() submitted by toxi [031031].
    * Code for enhanced u/v version from davbol [080801].
@@ -2350,6 +2351,7 @@ public class PGraphics extends PImage implements PConstants {
    * A sphere is a hollow ball made from tessellated triangles.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * <P>
    * Implementation notes:
@@ -2455,6 +2457,7 @@ public class PGraphics extends PImage implements PConstants {
    * at t.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * For instance, to convert the following example:<PRE>
    * stroke(255, 102, 0);
@@ -2500,6 +2503,7 @@ public class PGraphics extends PImage implements PConstants {
    * target="new"><em>tangent</em> on Wikipedia</a>.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Code submitted by Dave Bollinger (davol) for release 0136.
    *
@@ -2542,6 +2546,7 @@ public class PGraphics extends PImage implements PConstants {
    * P2D renderer does not use this information.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:curves
    * @param detail resolution of the curves
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -2589,6 +2594,7 @@ public class PGraphics extends PImage implements PConstants {
    * Environment reference for more information).
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Draw a cubic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
@@ -2728,6 +2734,7 @@ public class PGraphics extends PImage implements PConstants {
    * P2D renderer does not use this information.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:curves
    * @param detail resolution of the curves
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -2752,6 +2759,7 @@ public class PGraphics extends PImage implements PConstants {
    * recognizable and as values increase in magnitude, they will continue to deform.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:curves
    * @param tightness amount of deformation from the original vertices
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -2937,6 +2945,7 @@ public class PGraphics extends PImage implements PConstants {
    * smoothing altogether.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:attributes
    * @see PGraphics#noSmooth()
    * @see PGraphics#hint(int)
@@ -2983,6 +2992,7 @@ public class PGraphics extends PImage implements PConstants {
    * Processing is a case-sensitive language.
    * 
    * ( end auto-generated )
+   * 
    * @webref image:loading_displaying
    * @param mode either CORNER, CORNERS, or CENTER
    * @see PApplet#loadImage(String, String)
@@ -3042,6 +3052,7 @@ public class PGraphics extends PImage implements PConstants {
    * This function will maintain transparency for GIF and PNG images.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Starting with release 0124, when using the default (JAVA2D) renderer,
    * smooth() will also improve image quality of resized images.
@@ -3193,6 +3204,7 @@ public class PGraphics extends PImage implements PConstants {
    * Processing is a case sensitive language.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:loading_displaying
    * @param mode either CORNER, CORNERS, CENTER
    * @see PGraphics#shape(PShape)
@@ -3258,6 +3270,7 @@ public class PGraphics extends PImage implements PConstants {
    * yet support shapes that have holes or complicated breaks. 
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:loading_displaying
    * @param shape the shape to display
    * @param x x-coordinate of the shape
@@ -3336,6 +3349,7 @@ public class PGraphics extends PImage implements PConstants {
    * if you change the size of the font.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:attributes
    * @param alignX horizontal alignment, either LEFT, CENTER, or RIGHT
    * @param alignY vertical alignment, either TOP, BOTTOM, CENTER, or BASELINE
@@ -3358,6 +3372,7 @@ public class PGraphics extends PImage implements PConstants {
    * will give you the total height of the line.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:metrics
    * @see PGraphics#textDescent()
    */
@@ -3378,6 +3393,7 @@ public class PGraphics extends PImage implements PConstants {
    * <b>textDescent()</b> values will give you the total height of the line.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:metrics
    * @see PGraphics#textAscent()
    */
@@ -3472,6 +3488,7 @@ public class PGraphics extends PImage implements PConstants {
    * will be used in all subsequent calls to the <b>text()</b> function.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:attributes
    * @param leading the size in pixels for spacing between lines
    * @see PApplet#loadFont(String)
@@ -3551,6 +3568,7 @@ public class PGraphics extends PImage implements PConstants {
    * calls to the <b>text()</b> function. Font size is measured in units of pixels.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:attributes
    * @param size the size of the letters in units of pixels
    * @see PApplet#loadFont(String)
@@ -4250,6 +4268,7 @@ public class PGraphics extends PImage implements PConstants {
    * scope of the transformations.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @see PGraphics#popMatrix()
    * @see PGraphics#translate(float, float, float)
@@ -4275,6 +4294,7 @@ public class PGraphics extends PImage implements PConstants {
    * embedded to control the scope of the transformations.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @see PGraphics#pushMatrix()
    */
@@ -4306,6 +4326,7 @@ public class PGraphics extends PImage implements PConstants {
    * further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b>.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param tx left/right translation
    * @param ty up/down translation
@@ -4350,6 +4371,7 @@ public class PGraphics extends PImage implements PConstants {
    * the <b>pushMatrix()</b> and <b>popMatrix()</b>.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -4382,6 +4404,7 @@ public class PGraphics extends PImage implements PConstants {
    * as shown in the example above. 
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -4414,6 +4437,7 @@ public class PGraphics extends PImage implements PConstants {
    * as shown in the examples above. 
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -4446,6 +4470,7 @@ public class PGraphics extends PImage implements PConstants {
    * as shown in the examples above. 
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -4490,6 +4515,7 @@ public class PGraphics extends PImage implements PConstants {
    * can be further controlled by <b>pushMatrix()</b> and <b>popMatrix()</b>.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param s percentage to scale the object
    * @see PGraphics#popMatrix()
@@ -4549,6 +4575,7 @@ public class PGraphics extends PImage implements PConstants {
    * the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of shear specified in radians
    * @see PGraphics#popMatrix()
@@ -4582,6 +4609,7 @@ public class PGraphics extends PImage implements PConstants {
    * the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of shear specified in radians
    * @see PGraphics#popMatrix()
@@ -4608,6 +4636,7 @@ public class PGraphics extends PImage implements PConstants {
    * function in OpenGL is glLoadIdentity(). 
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @see PGraphics#pushMatrix()
    * @see PGraphics#popMatrix()
@@ -4757,6 +4786,7 @@ public class PGraphics extends PImage implements PConstants {
    * of Processing).
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @see PGraphics#pushMatrix()
    * @see PGraphics#popMatrix()
@@ -5574,6 +5604,7 @@ public class PGraphics extends PImage implements PConstants {
    * displaying images with their original hues.
    * 
    * ( end auto-generated )
+   * 
    * @webref image:loading_displaying
    * @usage web_application
    * @see PGraphics#tint(float, float, float, float)
@@ -5611,6 +5642,7 @@ public class PGraphics extends PImage implements PConstants {
    * textures in 3D. 
    * 
    * ( end auto-generated )
+   * 
    * @webref image:loading_displaying
    * @usage web_application
    * @param rgb color value in hexadecimal notation
@@ -5695,6 +5727,7 @@ public class PGraphics extends PImage implements PConstants {
    * are called, nothing will be drawn to the screen.
    * 
    * ( end auto-generated )
+   * 
    * @webref color:setting
    * @usage web_application
    * @see PGraphics#fill(float, float, float, float)
@@ -5807,7 +5840,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // MATERIAL PROPERTIES
 
-/**
+  /**
    * ( begin auto-generated from ambient.xml )
    * 
    * Sets the ambient reflectance for shapes drawn to the screen. This is 
@@ -5819,13 +5852,14 @@ public class PGraphics extends PImage implements PConstants {
    * and <b>shininess()</b> in setting the material properties of shapes.
    * 
    * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param rgb any value of the color datatype
- * @see PGraphics#emissive(float, float, float)
- * @see PGraphics#specular(float, float, float)
- * @see PGraphics#shininess(float)
- */
+   * 
+   * @webref lights_camera:material_properties
+   * @usage web_application
+   * @param rgb any value of the color datatype
+   * @see PGraphics#emissive(float, float, float)
+   * @see PGraphics#specular(float, float, float)
+   * @see PGraphics#shininess(float)
+   */
   public void ambient(int rgb) {
 //    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
 //      ambient((float) rgb);
@@ -5919,7 +5953,7 @@ public class PGraphics extends PImage implements PConstants {
     specularB = calcB;
   }
 
-/**
+  /**
    * ( begin auto-generated from shininess.xml )
    * 
    * Sets the amount of gloss in the surface of shapes. Used in combination 
@@ -5927,18 +5961,19 @@ public class PGraphics extends PImage implements PConstants {
    * setting the material properties of shapes.
    * 
    * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param shine degree of shininess
- * @see PGraphics#emissive(float, float, float)
- * @see PGraphics#ambient(float, float, float)
- * @see PGraphics#specular(float, float, float)
- */
+   * 
+   * @webref lights_camera:material_properties
+   * @usage web_application
+   * @param shine degree of shininess
+   * @see PGraphics#emissive(float, float, float)
+   * @see PGraphics#ambient(float, float, float)
+   * @see PGraphics#specular(float, float, float)
+   */
   public void shininess(float shine) {
     shininess = shine;
   }
 
-/**
+  /**
    * ( begin auto-generated from emissive.xml )
    * 
    * Sets the emissive color of the material used for drawing shapes drawn to 
@@ -6014,6 +6049,7 @@ public class PGraphics extends PImage implements PConstants {
    * through the loop.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:lights
    * @usage web_application
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
@@ -6035,6 +6071,7 @@ public class PGraphics extends PImage implements PConstants {
    * drawn after a set of lighted 3D geometry.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:lights
    * @usage web_application
    * @see PGraphics#lights()
@@ -6056,6 +6093,7 @@ public class PGraphics extends PImage implements PConstants {
    * parameters is determined by the current color mode.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:lights
    * @usage web_application
    * @param red red or hue value (depending on current color mode)
@@ -6271,6 +6309,7 @@ public class PGraphics extends PImage implements PConstants {
    * the main drawing surface, however they will work properly with <b>createGraphics()</b>.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * <p>Clear the background with a color that includes an alpha value. This can
    * only be used with objects created by createGraphics(), because the main
@@ -6836,7 +6875,6 @@ public class PGraphics extends PImage implements PConstants {
 
   // Vee have veys of making the colors talk.
 
-
   /**
    * ( begin auto-generated from alpha.xml )
    * 
@@ -6874,6 +6912,7 @@ public class PGraphics extends PImage implements PConstants {
    * &amp; 0xFF;</pre>
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -6905,6 +6944,7 @@ public class PGraphics extends PImage implements PConstants {
    * myColor &gt;&gt; 8 &amp; 0xFF;</pre>
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -6936,6 +6976,7 @@ public class PGraphics extends PImage implements PConstants {
    * &amp; 0xFF;</pre>
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -7008,6 +7049,7 @@ public class PGraphics extends PImage implements PConstants {
    * Extracts the brightness value from a color.
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -7044,6 +7086,7 @@ public class PGraphics extends PImage implements PConstants {
    * point, 0.5 is half-way in between, etc. 
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param c1 interpolate from this color

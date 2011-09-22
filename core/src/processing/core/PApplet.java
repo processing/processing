@@ -10184,8 +10184,8 @@ public class PApplet extends Applet
    * @param d height of the arc's ellipse
    * @param start angle to start the arc, specified in radians
    * @param stop angle to stop the arc, specified in radians
-   * @see PGraphics#ellipseMode(int)
-   * @see PGraphics#ellipse(float, float, float, float)
+   * @see PApplet#ellipseMode(int)
+   * @see PApplet#ellipse(float, float, float, float)
    */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
@@ -10240,6 +10240,7 @@ public class PApplet extends Applet
    * with two parameters.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Code for sphereDetail() submitted by toxi [031031].
    * Code for enhanced u/v version from davbol [080801].
@@ -10270,6 +10271,7 @@ public class PApplet extends Applet
    * A sphere is a hollow ball made from tessellated triangles.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * <P>
    * Implementation notes:
@@ -10311,6 +10313,7 @@ public class PApplet extends Applet
    * at t.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * For instance, to convert the following example:<PRE>
    * stroke(255, 102, 0);
@@ -10355,6 +10358,7 @@ public class PApplet extends Applet
    * target="new"><em>tangent</em> on Wikipedia</a>.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Code submitted by Dave Bollinger (davol) for release 0136.
    *
@@ -10381,6 +10385,7 @@ public class PApplet extends Applet
    * P2D renderer does not use this information.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:curves
    * @param detail resolution of the curves
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -10414,6 +10419,7 @@ public class PApplet extends Applet
    * Environment reference for more information).
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Draw a cubic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
@@ -10524,6 +10530,7 @@ public class PApplet extends Applet
    * P2D renderer does not use this information.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:curves
    * @param detail resolution of the curves
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -10548,6 +10555,7 @@ public class PApplet extends Applet
    * recognizable and as values increase in magnitude, they will continue to deform.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:curves
    * @param tightness amount of deformation from the original vertices
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -10635,6 +10643,7 @@ public class PApplet extends Applet
    * smoothing altogether.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:attributes
    * @see PGraphics#noSmooth()
    * @see PGraphics#hint(int)
@@ -10678,6 +10687,7 @@ public class PApplet extends Applet
    * Processing is a case-sensitive language.
    * 
    * ( end auto-generated )
+   * 
    * @webref image:loading_displaying
    * @param mode either CORNER, CORNERS, or CENTER
    * @see PApplet#loadImage(String, String)
@@ -10718,6 +10728,7 @@ public class PApplet extends Applet
    * This function will maintain transparency for GIF and PNG images.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * Starting with release 0124, when using the default (JAVA2D) renderer,
    * smooth() will also improve image quality of resized images.
@@ -10772,6 +10783,7 @@ public class PApplet extends Applet
    * Processing is a case sensitive language.
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:loading_displaying
    * @param mode either CORNER, CORNERS, CENTER
    * @see PGraphics#shape(PShape)
@@ -10817,6 +10829,7 @@ public class PApplet extends Applet
    * yet support shapes that have holes or complicated breaks. 
    * 
    * ( end auto-generated )
+   * 
    * @webref shape:loading_displaying
    * @param shape the shape to display
    * @param x x-coordinate of the shape
@@ -10868,6 +10881,7 @@ public class PApplet extends Applet
    * if you change the size of the font.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:attributes
    * @param alignX horizontal alignment, either LEFT, CENTER, or RIGHT
    * @param alignY vertical alignment, either TOP, BOTTOM, CENTER, or BASELINE
@@ -10890,6 +10904,7 @@ public class PApplet extends Applet
    * will give you the total height of the line.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:metrics
    * @see PGraphics#textDescent()
    */
@@ -10907,6 +10922,7 @@ public class PApplet extends Applet
    * <b>textDescent()</b> values will give you the total height of the line.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:metrics
    * @see PGraphics#textAscent()
    */
@@ -10965,6 +10981,7 @@ public class PApplet extends Applet
    * will be used in all subsequent calls to the <b>text()</b> function.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:attributes
    * @param leading the size in pixels for spacing between lines
    * @see PApplet#loadFont(String)
@@ -11023,6 +11040,7 @@ public class PApplet extends Applet
    * calls to the <b>text()</b> function. Font size is measured in units of pixels.
    * 
    * ( end auto-generated )
+   * 
    * @webref typography:attributes
    * @param size the size of the letters in units of pixels
    * @see PApplet#loadFont(String)
@@ -11255,6 +11273,7 @@ public class PApplet extends Applet
    * scope of the transformations.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @see PGraphics#popMatrix()
    * @see PGraphics#translate(float, float, float)
@@ -11281,6 +11300,7 @@ public class PApplet extends Applet
    * embedded to control the scope of the transformations.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @see PGraphics#pushMatrix()
    */
@@ -11307,6 +11327,7 @@ public class PApplet extends Applet
    * further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b>.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param tx left/right translation
    * @param ty up/down translation
@@ -11353,6 +11374,7 @@ public class PApplet extends Applet
    * the <b>pushMatrix()</b> and <b>popMatrix()</b>.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -11386,6 +11408,7 @@ public class PApplet extends Applet
    * as shown in the example above. 
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -11419,6 +11442,7 @@ public class PApplet extends Applet
    * as shown in the examples above. 
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -11452,6 +11476,7 @@ public class PApplet extends Applet
    * as shown in the examples above. 
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -11498,6 +11523,7 @@ public class PApplet extends Applet
    * can be further controlled by <b>pushMatrix()</b> and <b>popMatrix()</b>.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param s percentage to scale the object
    * @see PGraphics#popMatrix()
@@ -11560,6 +11586,7 @@ public class PApplet extends Applet
    * the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of shear specified in radians
    * @see PGraphics#popMatrix()
@@ -11594,6 +11621,7 @@ public class PApplet extends Applet
    * the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @param angle angle of shear specified in radians
    * @see PGraphics#popMatrix()
@@ -11616,6 +11644,7 @@ public class PApplet extends Applet
    * function in OpenGL is glLoadIdentity(). 
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @see PGraphics#pushMatrix()
    * @see PGraphics#popMatrix()
@@ -11755,6 +11784,7 @@ public class PApplet extends Applet
    * of Processing).
    * 
    * ( end auto-generated )
+   * 
    * @webref transform
    * @see PGraphics#pushMatrix()
    * @see PGraphics#popMatrix()
@@ -12414,6 +12444,7 @@ public class PApplet extends Applet
    * displaying images with their original hues.
    * 
    * ( end auto-generated )
+   * 
    * @webref image:loading_displaying
    * @usage web_application
    * @see PGraphics#tint(float, float, float, float)
@@ -12452,6 +12483,7 @@ public class PApplet extends Applet
    * textures in 3D. 
    * 
    * ( end auto-generated )
+   * 
    * @webref image:loading_displaying
    * @usage web_application
    * @param rgb color value in hexadecimal notation
@@ -12516,6 +12548,7 @@ public class PApplet extends Applet
    * are called, nothing will be drawn to the screen.
    * 
    * ( end auto-generated )
+   * 
    * @webref color:setting
    * @usage web_application
    * @see PGraphics#fill(float, float, float, float)
@@ -12605,7 +12638,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from ambient.xml )
    * 
    * Sets the ambient reflectance for shapes drawn to the screen. This is 
@@ -12617,13 +12650,14 @@ public class PApplet extends Applet
    * and <b>shininess()</b> in setting the material properties of shapes.
    * 
    * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param rgb any value of the color datatype
- * @see PGraphics#emissive(float, float, float)
- * @see PGraphics#specular(float, float, float)
- * @see PGraphics#shininess(float)
- */
+   * 
+   * @webref lights_camera:material_properties
+   * @usage web_application
+   * @param rgb any value of the color datatype
+   * @see PGraphics#emissive(float, float, float)
+   * @see PGraphics#specular(float, float, float)
+   * @see PGraphics#shininess(float)
+   */
   public void ambient(int rgb) {
     if (recorder != null) recorder.ambient(rgb);
     g.ambient(rgb);
@@ -12695,7 +12729,7 @@ public class PApplet extends Applet
   }
 
 
-/**
+  /**
    * ( begin auto-generated from shininess.xml )
    * 
    * Sets the amount of gloss in the surface of shapes. Used in combination 
@@ -12703,20 +12737,21 @@ public class PApplet extends Applet
    * setting the material properties of shapes.
    * 
    * ( end auto-generated )
- * @webref lights_camera:material_properties
- * @usage web_application
- * @param shine degree of shininess
- * @see PGraphics#emissive(float, float, float)
- * @see PGraphics#ambient(float, float, float)
- * @see PGraphics#specular(float, float, float)
- */
+   * 
+   * @webref lights_camera:material_properties
+   * @usage web_application
+   * @param shine degree of shininess
+   * @see PGraphics#emissive(float, float, float)
+   * @see PGraphics#ambient(float, float, float)
+   * @see PGraphics#specular(float, float, float)
+   */
   public void shininess(float shine) {
     if (recorder != null) recorder.shininess(shine);
     g.shininess(shine);
   }
 
 
-/**
+  /**
    * ( begin auto-generated from emissive.xml )
    * 
    * Sets the emissive color of the material used for drawing shapes drawn to 
@@ -12771,6 +12806,7 @@ public class PApplet extends Applet
    * through the loop.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:lights
    * @usage web_application
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
@@ -12794,6 +12830,7 @@ public class PApplet extends Applet
    * drawn after a set of lighted 3D geometry.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:lights
    * @usage web_application
    * @see PGraphics#lights()
@@ -12817,6 +12854,7 @@ public class PApplet extends Applet
    * parameters is determined by the current color mode.
    * 
    * ( end auto-generated )
+   * 
    * @webref lights_camera:lights
    * @usage web_application
    * @param red red or hue value (depending on current color mode)
@@ -13039,6 +13077,7 @@ public class PApplet extends Applet
    * the main drawing surface, however they will work properly with <b>createGraphics()</b>.
    * 
    * ( end auto-generated )
+   * 
    * <h3>Advanced</h3>
    * <p>Clear the background with a color that includes an alpha value. This can
    * only be used with objects created by createGraphics(), because the main
@@ -13218,6 +13257,7 @@ public class PApplet extends Applet
    * &amp; 0xFF;</pre>
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -13247,6 +13287,7 @@ public class PApplet extends Applet
    * myColor &gt;&gt; 8 &amp; 0xFF;</pre>
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -13276,6 +13317,7 @@ public class PApplet extends Applet
    * &amp; 0xFF;</pre>
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -13336,6 +13378,7 @@ public class PApplet extends Applet
    * Extracts the brightness value from a color.
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -13359,6 +13402,7 @@ public class PApplet extends Applet
    * point, 0.5 is half-way in between, etc. 
    * 
    * ( end auto-generated )
+   * 
    * @webref color:creating_reading
    * @usage web_application
    * @param c1 interpolate from this color
