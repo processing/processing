@@ -74,21 +74,21 @@ public class JavaScriptEditor extends Editor
 
   public JMenu buildSketchMenu () 
   {
-	JMenuItem startServerItem = Base.newJMenuItem("Start server", 'R');
+	JMenuItem startServerItem = Base.newJMenuItem("Start Server", 'R');
     startServerItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStartServer();
         }
       });
 
-    JMenuItem stopServerItem = new JMenuItem("Stop server");
+    JMenuItem stopServerItem = new JMenuItem("Stop Server");
     stopServerItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           handleStopServer();
         }
       });
 
-	JMenuItem copyServerAddressItem = new JMenuItem("Copy server address");
+	JMenuItem copyServerAddressItem = new JMenuItem("Copy Server Address");
 	copyServerAddressItem.addActionListener(new ActionListener(){
 		public void actionPerformed(ActionEvent e) {
 			handleCopyServerAddress();
@@ -103,7 +103,7 @@ public class JavaScriptEditor extends Editor
 	// 	}
 	// );
 	
-	JMenuItem setServerPortItem = new JMenuItem("Set server port");
+	JMenuItem setServerPortItem = new JMenuItem("Set Server Port");
 	setServerPortItem.addActionListener(new ActionListener(){
 		public void actionPerformed (ActionEvent e) {
 			handleSetServerPort();
@@ -120,7 +120,7 @@ public class JavaScriptEditor extends Editor
     JMenu menu = new JMenu("JavaScript");    
     JMenuItem item;
 
-	item = new JMenuItem("Playback settings (directives)");
+	item = new JMenuItem("Playback Settings (Directives)");
 	item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 	      handleShowDirectivesEditor();
@@ -130,7 +130,7 @@ public class JavaScriptEditor extends Editor
 
     menu.addSeparator();
 
-	item = new JMenuItem("Start custom template");
+	item = new JMenuItem("Start Custom Template");
 	item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		  handleCreateCustomTemplate();
@@ -138,7 +138,7 @@ public class JavaScriptEditor extends Editor
 	});
 	menu.add(item);
 
-	item = new JMenuItem("Show custom template");
+	item = new JMenuItem("Show Custom Template");
 	item.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		  handleOpenCustomTemplateFolder();
