@@ -224,6 +224,15 @@ public abstract class Mode {
       importMenu.removeAll();
     }
 
+    JMenuItem addLib = new JMenuItem("Add Library...");
+    addLib.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleOpenLibraryManager();
+      }
+    });
+    importMenu.add(addLib);
+    importMenu.addSeparator();
+    
     rebuildLibraryList();
     
     ActionListener listener = new ActionListener() {
