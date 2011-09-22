@@ -13627,9 +13627,9 @@ public class PApplet extends Applet
    * @usage web_application
    * @param x x-coordinate of the pixel
    * @param y y-coordinate of the pixel
-   * @see PImage#set(int, int, int)
-   * @see PImage#pixels
-   * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
+   * @see PApplet#set(int, int, int)
+   * @see PApplet#pixels
+   * @see PApplet#copy(PImage, int, int, int, int, int, int, int, int)
    */
   public int get(int x, int y) {
     return g.get(x, y);
