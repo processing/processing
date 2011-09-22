@@ -1,50 +1,22 @@
-/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
-
-/*
- Part of the Processing project - http://processing.org
-
- Copyright (c) 2004-11 Ben Fry and Casey Reas
- Copyright (c) 2001-04 Massachusetts Institute of Technology
-
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software Foundation,
- Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-
 package processing.app;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.CropImageFilter;
-import java.awt.image.FilteredImageSource;
 import java.io.*;
-import java.net.*;
-import java.text.*;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 import java.util.zip.*;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JOptionPane;
 
 import processing.app.ContributionListing.AdvertisedContribution;
 import processing.app.contribution.*;
 import processing.app.contribution.Contribution.Type;
 
+interface ErrorWidget {
+  void setErrorMessage(String msg);
+}
+
 public class ContributionManager {
-  
-  static public final String DELETION_FLAG = "flagged_for_deletion";
   
   static private final String DOUBLE_CLICK_SECONDARY =
       "Click Ã¢â‚¬Å“YesÃ¢â‚¬Â� to install this library to your sketchbook...";
@@ -58,334 +30,21 @@ public class ContributionManager {
   static private final String ERROR_OVERWRITING_PROPERTIES_MESSAGE =
       "Error overwriting .properties file.";
   
-  static final String ANY_CATEGORY = "Any";
+  static public final String DELETION_FLAG = "flagged_for_deletion";
   
-  /** Width of each contribution icon. */
-  static final int ICON_WIDTH = 25;
+  static public final ContributionListing contribListing;
 
-  /** Height of each contribution icon. */
-  static final int ICON_HEIGHT = 20;
-
-  JFrame dialog;
-  
-  FilterField filterField;
-  
-  JScrollPane scrollPane;
-  
-  ContributionListPanel contributionListPanel;
-  
-  StatusPanel statusBar;
-  
-  JComboBox categoryChooser;
-  
-  Image[] contributionIcons;
-  
-  // the calling editor, so updates can be applied
-  Editor editor;
-  
-  String category;
-  
-  ContributionListing contribListing;
-  
-  /**
-   * Initializes the contribution listing and fetches the advertised
-   * contributions in a separate thread. This does not initialize any AWT
-   * components.
-   */
-  public ContributionManager() {
-    contribListing = new ContributionListing();
-    
-    contributionListPanel = new ContributionListPanel(this);
-    contribListing.addContributionListener(contributionListPanel);
+  static {
+    contribListing = ContributionListing.getInstance();
   }
   
-  protected void showFrame(Editor editor) {
-    this.editor = editor;
-    
-    if (dialog == null) {
-      dialog = new JFrame("Contribution Manager");
-  
-      Base.setIcon(dialog);
-      
-      createComponents();
-  
-      registerDisposeListeners();
-  
-      dialog.pack();
-      Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-      dialog.setLocation((screen.width - dialog.getWidth()) / 2,
-                         (screen.height - dialog.getHeight()) / 2);
-  
-      contributionListPanel.grabFocus();
-    }
-    
-    dialog.setVisible(true);
-    
-    if (!contribListing.hasDownloadedLatestList()) {
-      contribListing.getAdvertisedContributions(new AbstractProgressMonitor() {
-        public void startTask(String name, int maxValue) {
-        }
-
-        public void finished() {
-          super.finished();
-
-          updateContributionListing();
-          updateCategoryChooser();
-          if (isError()) {
-            statusBar.setErrorMessage("An error occured when downloading " + 
-                                      "the list of available contributions.");
-          }
-        }
-      });
-    }
-    
-    updateContributionListing();
-    
-    if (contributionIcons == null) {
-      try {
-        Image allButtons = ImageIO.read(Base.getLibStream("contributions.gif"));
-        int count = allButtons.getHeight(dialog) / ContributionManager.ICON_HEIGHT;
-        contributionIcons = new Image[count];
-        contributionIcons[0]  = allButtons;
-        contributionIcons[1]  = allButtons;
-        contributionIcons[2]  = allButtons;
-        contributionIcons[3]  = allButtons;
-        
-        for (int i = 0; i < count; i++) {
-          Image image = dialog.createImage(
-                            new FilteredImageSource(allButtons.getSource(),
-                            new CropImageFilter(0, i * ContributionManager.ICON_HEIGHT,
-                                                ContributionManager.ICON_WIDTH,
-                                                ContributionManager.ICON_HEIGHT)));
-          contributionIcons[i] = image;
-        }
-        
-        contributionListPanel.updateColors();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    }
-  }
-  
-  public Image getContributionIcon(Contribution.Type type) {
-    
-    if (contributionIcons == null)
-      return null;
-      
-    switch (type) {
-    case LIBRARY:
-      return contributionIcons[0];
-    case TOOL:
-      return contributionIcons[1];
-    case MODE:
-      return contributionIcons[2];
-    case LIBRARY_COMPILATION:
-      return contributionIcons[3];
-    }
-    return null;
-  }
-  
-  /**
-   * Close the window after an OK or Cancel.
-   */
-  protected void disposeFrame() {
-    dialog.dispose();
-    editor = null;
-  }
-  
-  /** Creates and arranges the Swing components in the dialog. */
-  private void createComponents() {
-    dialog.setResizable(true);
-    
-    Container pane = dialog.getContentPane();
-    pane.setLayout(new GridBagLayout());
-    
-    { // The filter text area
-      GridBagConstraints c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 0;
-      c.gridwidth = 2;
-      c.weightx = 1;
-      c.fill = GridBagConstraints.HORIZONTAL;
-      filterField = new FilterField();
-
-      pane.add(filterField, c);
-    }
-    
-    { // The scroll area containing the contribution listing and the status bar.
-      GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.BOTH;
-      c.gridx = 0;
-      c.gridy = 1;
-      c.gridwidth = 2;
-      c.weighty = 1;
-      c.weightx = 1;
-      
-      scrollPane = new JScrollPane();
-      scrollPane.setPreferredSize(new Dimension(300, 300));
-      scrollPane.setViewportView(contributionListPanel);
-      scrollPane.getViewport().setOpaque(true);
-      scrollPane.getViewport().setBackground(contributionListPanel.getBackground());
-      scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      
-      statusBar = new StatusPanel();
-      statusBar.setBorder(BorderFactory.createEtchedBorder());
-      
-      final JLayeredPane layeredPane = new JLayeredPane();
-      layeredPane.add(scrollPane, JLayeredPane.DEFAULT_LAYER);
-      layeredPane.add(statusBar, JLayeredPane.PALETTE_LAYER);
-      
-      layeredPane.addComponentListener(new ComponentAdapter() {
-        
-        void resizeLayers() {
-          scrollPane.setSize(layeredPane.getSize());
-          scrollPane.updateUI();
-        }
-        
-        public void componentShown(ComponentEvent e) {
-          resizeLayers();
-        }
-        
-        public void componentResized(ComponentEvent arg0) {
-          resizeLayers();
-        }
-      });
-      
-      final JViewport viewport = scrollPane.getViewport();
-      viewport.addComponentListener(new ComponentAdapter() {
-        void resizeLayers() {
-          statusBar.setLocation(0, viewport.getHeight() - 18);
-          
-          Dimension d = viewport.getSize();
-          d.height = 20;
-          d.width += 3;
-          statusBar.setSize(d);
-        }
-        public void componentShown(ComponentEvent e) {
-          resizeLayers();
-        }
-        public void componentResized(ComponentEvent e) {
-          resizeLayers();
-        }
-      });
-      
-      pane.add(layeredPane, c);
-    }
-    
-    { // Shows "Category:"
-      GridBagConstraints c = new GridBagConstraints();
-      c.gridx = 0;
-      c.gridy = 2;
-      pane.add(new Label("Category:"), c);
-    }
-    
-    { // Combo box for selecting a category
-      GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.gridx = 1;
-      c.gridy = 2;
-
-      categoryChooser = new JComboBox();
-      updateCategoryChooser();
-      pane.add(categoryChooser, c);
-      categoryChooser.addItemListener(new ItemListener() {
-
-        public void itemStateChanged(ItemEvent e) {
-          category = (String) categoryChooser.getSelectedItem();
-          if (ContributionManager.ANY_CATEGORY.equals(category)) {
-            category = null;
-          }
-
-          filterLibraries(category, filterField.filters);
-        }
-      });
-    }
-    
-    dialog.setMinimumSize(new Dimension(550, 400));
-  }
-
-  private void updateCategoryChooser() {
-    if (categoryChooser == null)
-      return;
-    
-    ArrayList<String> categories;
-    categoryChooser.removeAllItems();
-    categories = new ArrayList<String>(contribListing.getCategories());
-    Collections.sort(categories);
-    categories.add(0, ContributionManager.ANY_CATEGORY);
-    for (String s : categories) {
-      categoryChooser.addItem(s);
-    }
-  }
-
-  private void registerDisposeListeners() {
-    dialog.addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        disposeFrame();
-      }
-    });
-    ActionListener disposer = new ActionListener() {
-      public void actionPerformed(ActionEvent actionEvent) {
-        disposeFrame();
-      }
-    };
-    Base.registerWindowCloseKeys(dialog.getRootPane(), disposer);
-    
-    // handle window closing commands for ctrl/cmd-W or hitting ESC.
-    
-    dialog.getContentPane().addKeyListener(new KeyAdapter() {
-      public void keyPressed(KeyEvent e) {
-        //System.out.println(e);
-        KeyStroke wc = Base.WINDOW_CLOSE_KEYSTROKE;
-        if ((e.getKeyCode() == KeyEvent.VK_ESCAPE) ||
-            (KeyStroke.getKeyStrokeForEvent(e).equals(wc))) {
-          disposeFrame();
-        }
-      }
-    });
-  }
-
-  public void filterLibraries(String category, List<String> filters) {
-
-    List<Contribution> filteredLibraries = contribListing
-        .getFilteredLibraryList(category, filters);
-
-    contributionListPanel.filterLibraries(filteredLibraries);
-  }
-
-  protected void updateContributionListing() {
-    if (editor == null)
-      return;
-    
-    ArrayList<Library> libraries = editor.getMode().contribLibraries;
-    ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
-
-    // Remove libraries from the list that are part of a compilations
-    for (LibraryCompilation compilation : compilations) {
-      Iterator<Library> it = libraries.iterator();
-      while (it.hasNext()) {
-        Library current = it.next();
-        if (compilation.getFolder().equals(current.getFolder().getParentFile())) {
-          it.remove();
-        }
-      }
-    }
-    
-    ArrayList<Contribution> contributions = new ArrayList<Contribution>();
-    contributions.addAll(editor.contribTools);
-    contributions.addAll(libraries);
-    contributions.addAll(compilations);
-    
-    contribListing.updateInstalledList(contributions);
-  }
- 
   /**
    * Non-blocking call to remove a contribution in a new thread.
    */
-  public void removeContribution(final InstalledContribution contribution,
-                                 ProgressMonitor pm) {
+  static public void removeContribution(final Editor editor,
+                                 final InstalledContribution contribution,
+                                 final ProgressMonitor pm,
+                                 final ErrorWidget statusBar) {
     if (contribution == null)
       return;
     
@@ -399,7 +58,7 @@ public class ContributionManager {
         boolean doBackup = Preferences.getBoolean("contribution.backup.on_remove");
         if (ContributionManager.requiresRestart(contribution)) {
           
-          if (!doBackup || (doBackup && backupContribution(contribution, false))) {
+          if (!doBackup || (doBackup && backupContribution(editor, contribution, false, statusBar))) {
             if (ContributionManager.flagForDeletion(contribution)) {
               contribListing.replaceContribution(contribution, contribution);
             }
@@ -407,7 +66,7 @@ public class ContributionManager {
         } else {
           boolean success = false;
           if (doBackup) {
-            success = backupContribution(contribution, true);
+            success = backupContribution(editor, contribution, true, statusBar);
           } else {
             Base.removeDir(contribution.getFolder());
             success = !contribution.getFolder().exists();
@@ -432,7 +91,7 @@ public class ContributionManager {
             }
           }
         }
-        refreshInstalled();
+        refreshInstalled(editor);
         progressMonitor.finished();
       }
     }).start();
@@ -450,12 +109,14 @@ public class ContributionManager {
    *          old version of a contribution that is being updated). Must not be
    *          null.
    */
-  public void downloadAndInstall(final URL url,
+  static public void downloadAndInstall(final Editor editor,
+                                 final URL url,
                                  final AdvertisedContribution ad,
                                  final JProgressMonitor downloadProgressMonitor,
-                                 final JProgressMonitor installProgressMonitor) {
+                                 final JProgressMonitor installProgressMonitor,
+                                 final ErrorWidget statusBar) {
 
-    final File libDest = getTemporaryFile(url);
+    final File libDest = getTemporaryFile(url, statusBar);
 
     new Thread(new Runnable() {
 
@@ -471,13 +132,13 @@ public class ContributionManager {
           InstalledContribution contribution = null;
           switch (ad.getType()) {
           case LIBRARY:
-            contribution = installLibrary(libDest, ad, false);
+            contribution = installLibrary(editor, libDest, ad, false, statusBar);
             break;
           case LIBRARY_COMPILATION:
-            contribution = installLibraryCompilation(libDest);
+            contribution = installLibraryCompilation(editor, libDest, statusBar);
             break;
           case TOOL:
-            contribution = installTool(libDest, ad);
+            contribution = installTool(editor, libDest, ad, statusBar);
             break;
           }
   
@@ -485,10 +146,9 @@ public class ContributionManager {
             // XXX contributionListing.getInformationFromAdvertised(contribution);
             // get the category at least
             contribListing.replaceContribution(ad, contribution);
-            refreshInstalled();
+            refreshInstalled(editor);
           }
   
-          dialog.pack();
           installProgressMonitor.finished();
         }
       }
@@ -496,8 +156,10 @@ public class ContributionManager {
 
   }
   
-  protected LibraryCompilation installLibraryCompilation(File f) {
-    File parentDir = unzipFileToTemp(f);
+  static public LibraryCompilation installLibraryCompilation(Editor editor,
+                                                         File f,
+                                                         ErrorWidget statusBar) {
+    File parentDir = unzipFileToTemp(f, statusBar);
     
     LibraryCompilation compilation = LibraryCompilation.create(parentDir);
 
@@ -505,11 +167,10 @@ public class ContributionManager {
       statusBar.setErrorMessage(DISCOVERY_NONE_FOUND_ERROR_MESSAGE);
       return null;
     }
-      
+    
     String folderName = compilation.getName();
     
-    File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
-    File dest = new File(libraryDestination, folderName);
+    File dest = new File(editor.getBase().getSketchbookLibrariesFolder(), folderName);
     
     // XXX: Check for conflicts with other library names, etc.
     boolean errorEncountered = false;
@@ -530,15 +191,15 @@ public class ContributionManager {
     return null;
   }
   
-  public Library confirmAndInstallLibrary(Editor editor, File libFile) {
-    this.editor = editor;
+  static public Library confirmAndInstallLibrary(Editor editor, File libFile,
+                                          ErrorWidget statusBar) {
     
-    int result = Base.showYesNoQuestion(this.editor, "Install",
+    int result = Base.showYesNoQuestion(editor, "Install",
                              "Install libraries from " + libFile.getName() + "?",
                              ContributionManager.DOUBLE_CLICK_SECONDARY);
     
     if (result == JOptionPane.YES_OPTION) {
-      return installLibrary(libFile, null, true);
+      return installLibrary(editor, libFile, null, true, statusBar);
     }
     
     return null;
@@ -557,7 +218,8 @@ public class ContributionManager {
    * @return the folder where the zips contents have been unzipped to (the
    *         subdirectory of the temp folder).
    */
-  File unzipFileToTemp(File libFile) {
+  static public File unzipFileToTemp(File libFile,
+                       ErrorWidget statusBar) {
     
     String fileName = ContributionManager.getFileName(libFile);
     File tmpFolder = null;
@@ -575,7 +237,8 @@ public class ContributionManager {
     return tmpFolder;
   }
   
-  protected File getTemporaryFile(URL url) {
+  static public File getTemporaryFile(URL url,
+                                  ErrorWidget statusBar) {
     try {
       File tmpFolder = Base.createTempFolder("library", "download");
       
@@ -598,7 +261,7 @@ public class ContributionManager {
    *   "/path/to/helpfullib.zip" returns "helpfullib"
    *   "helpfullib-0.1.1.plb" returns "helpfullib-0.1.1"
    */
-  protected static String getFileName(File libFile) {
+  static public String getFileName(File libFile) {
     String path = libFile.getPath();
     int lastSeparator = path.lastIndexOf(File.separatorChar);
     
@@ -617,10 +280,12 @@ public class ContributionManager {
     return fileName;
   }
   
-  protected ToolContribution installTool(File zippedToolFile,
-                                         AdvertisedContribution ad) {
+  static public ToolContribution installTool(Editor editor,
+                                         File zippedToolFile,
+                                         AdvertisedContribution ad,
+                                         ErrorWidget statusBar) {
     
-    File tempDir = unzipFileToTemp(zippedToolFile);
+    File tempDir = unzipFileToTemp(zippedToolFile, statusBar);
     
     ArrayList<ToolContribution> discoveredTools = ToolContribution.list(tempDir, false);
     if (discoveredTools.isEmpty()) {
@@ -636,7 +301,7 @@ public class ContributionManager {
       File propFile = new File(discoveredTool.getFolder(), "tool.properties");
       
       if (ad == null || writePropertiesFile(propFile, ad)) {
-        return installTool(discoveredTool);        
+        return installTool(editor, discoveredTool, statusBar);        
       } else {
         statusBar.setErrorMessage(ERROR_OVERWRITING_PROPERTIES_MESSAGE);
       }
@@ -652,7 +317,9 @@ public class ContributionManager {
     return null;
   }
   
-  protected ToolContribution installTool(ToolContribution newTool) {
+  static public ToolContribution installTool(Editor editor,
+                                         ToolContribution newTool,
+                                         ErrorWidget statusBar) {
     
     ArrayList<ToolContribution> oldTools = editor.contribTools;
     
@@ -669,7 +336,7 @@ public class ContributionManager {
       if (oldTool.getFolder().exists() && oldTool.getFolder().equals(newToolDest)) {
         
         // XXX: We can't replace stuff, soooooo.... do something different
-        if (!backupContribution(oldTool, false)) {
+        if (!backupContribution(editor, oldTool, false, statusBar)) {
           return null;
         }
       }
@@ -692,7 +359,7 @@ public class ContributionManager {
     return null;
   }
   
-  protected boolean writePropertiesFile(File propFile, AdvertisedContribution ad) {
+  static public boolean writePropertiesFile(File propFile, AdvertisedContribution ad) {
     try {
       if (propFile.delete() && propFile.createNewFile() && propFile.setWritable(true)) {
         BufferedWriter bw = new BufferedWriter(new FileWriter(propFile));
@@ -728,9 +395,11 @@ public class ContributionManager {
    *          the library when a library by the same name already exists
    * @return
    */
-  protected Library installLibrary(File libFile, AdvertisedContribution ad,
-                                   boolean confirmReplace) {
-    File tempDir = unzipFileToTemp(libFile);
+  static public Library installLibrary(Editor editor, File libFile,
+                                   AdvertisedContribution ad,
+                                   boolean confirmReplace,
+                                   ErrorWidget statusBar) {
+    File tempDir = unzipFileToTemp(libFile, statusBar);
     
     try {
       ArrayList<Library> discoveredLibs = Library.list(tempDir);
@@ -747,7 +416,7 @@ public class ContributionManager {
         File propFile = new File(discoveredLib.getFolder(), "library.properties");
         
         if (ad == null || writePropertiesFile(propFile, ad)) {
-          return installLibrary(discoveredLib, confirmReplace);
+          return installLibrary(editor, discoveredLib, confirmReplace, statusBar);
         } else {
           statusBar.setErrorMessage(ERROR_OVERWRITING_PROPERTIES_MESSAGE);
         }
@@ -774,7 +443,8 @@ public class ContributionManager {
    *          ask the user if it's okay to replace the library. If false, the
    *          library is always replaced with the new copy.
    */
-  protected Library installLibrary(Library newLib, boolean confirmReplace) {
+  static public Library installLibrary(Editor editor, Library newLib,
+                                   boolean confirmReplace, ErrorWidget statusBar) {
     
     ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
     
@@ -800,7 +470,7 @@ public class ContributionManager {
                    "has been found in your sketchbook. Clicking “Yes”<br>"+
                    "will move the existing library to a backup folder<br>" +
                    " in <i>libraries/old</i> before replacing it.");
-            if (result != JOptionPane.YES_OPTION || !backupContribution(oldLib, true)) {
+            if (result != JOptionPane.YES_OPTION || !backupContribution(editor, oldLib, true, statusBar)) {
               return null;
             }
           } else {
@@ -815,7 +485,7 @@ public class ContributionManager {
             }
           }
         } else {
-          if (doBackup && !backupContribution(oldLib, true)
+          if (doBackup && !backupContribution(editor, oldLib, true, statusBar)
               || !doBackup && !oldLib.getFolder().delete()) {
             return null;
           }
@@ -838,7 +508,7 @@ public class ContributionManager {
     }
   }
   
-  public void refreshInstalled() {
+  static public void refreshInstalled(Editor editor) {
     editor.getMode().rebuildImportMenu();
     editor.rebuildToolMenu();
   }
@@ -849,20 +519,22 @@ public class ContributionManager {
    *          true if the file should be moved to the directory, false if it
    *          should instead be copied, leaving the original in place
    */
-  private boolean backupContribution(InstalledContribution contribution,
-                                     boolean doDeleteOriginal) {
+  static public boolean backupContribution(Editor editor,
+                                     InstalledContribution contribution,
+                                     boolean doDeleteOriginal,
+                                     ErrorWidget statusBar) {
     
     File backupFolder = null;
     
     switch (contribution.getType()) {
     case LIBRARY:
     case LIBRARY_COMPILATION:
-      backupFolder = createLibraryBackupFolder();
+      backupFolder = createLibraryBackupFolder(editor, statusBar);
       break;
     case MODE:
       break;
     case TOOL:
-      backupFolder = createToolBackupFolder();
+      backupFolder = createToolBackupFolder(editor, statusBar);
       break;
     }
     
@@ -895,36 +567,36 @@ public class ContributionManager {
     return success;
   }
 
-  private File createLibraryBackupFolder() {
+  static public File createBackupFolder(File backupFolder,
+                                  ErrorWidget logger,
+                                  String errorMessage) {
     
+    if (!backupFolder.exists() || !backupFolder.isDirectory()) {
+      if (!backupFolder.mkdirs()) {
+        logger.setErrorMessage(errorMessage);
+        return null;
+      }
+    }
+
+    return backupFolder;
+  }
+
+  static public File createLibraryBackupFolder(Editor editor, ErrorWidget logger) {
+
     File libraryBackupFolder = new File(editor.getBase()
         .getSketchbookLibrariesFolder(), "old");
+    return createBackupFolder(libraryBackupFolder, logger,
+                              "Could not create backup folder for library.");
+  }
 
-    if (!libraryBackupFolder.exists() || !libraryBackupFolder.isDirectory()) {
-      if (!libraryBackupFolder.mkdirs()) {
-        statusBar.setErrorMessage("Could not create backup folder for library.");
-        return null;
-      }
-    }
-    
-    return libraryBackupFolder;
+  static public File createToolBackupFolder(Editor editor, ErrorWidget logger) {
+
+    File libraryBackupFolder = new File(editor.getBase()
+        .getSketchbookToolsFolder(), "old");
+    return createBackupFolder(libraryBackupFolder, logger,
+                              "Could not create backup folder for tool.");
   }
   
-  private File createToolBackupFolder() {
-    
-    File toolsBackupFolder = new File(editor.getBase()
-        .getSketchbookToolsFolder(), "old");
-
-    if (!toolsBackupFolder.exists() || !toolsBackupFolder.isDirectory()) {
-      if (!toolsBackupFolder.mkdirs()) {
-        statusBar.setErrorMessage("Could not create backup folder for tool.");
-        return null;
-      }
-    }
-    
-    return toolsBackupFolder;
-  }
-
   /**
    * Returns a file in the parent folder that does not exist yet. If
    * parent/fileName already exists, this will look for parent/fileName(2)
@@ -978,101 +650,10 @@ public class ContributionManager {
     out.close();
   }
   
-  public void setFilterText(String filter) {
-    if (filter == null || filter.isEmpty()) {
-      filterField.setText("");
-      filterField.isShowingHint = true;
-    } else {
-      filterField.setText(filter);
-      filterField.isShowingHint = false;
-    }
-    filterField.applyFilter();
-    
-  }
-  
-  class FilterField extends JTextField {
-    
-    final static String filterHint = "Filter your search...";
-
-    boolean isShowingHint;
-    
-    List<String> filters;
-    
-    public FilterField () {
-      super(filterHint);
-      
-      isShowingHint = true;
-      
-      filters = new ArrayList<String>();
-      
-      addFocusListener(new FocusListener() {
-        
-        public void focusLost(FocusEvent focusEvent) {
-          if (filterField.getText().isEmpty()) {
-            isShowingHint = true;
-          }
-          
-          updateStyle();
-        }
-        
-        public void focusGained(FocusEvent focusEvent) {
-          if (isShowingHint) {
-            isShowingHint = false;
-            filterField.setText("");
-          }
-          
-          updateStyle();
-        }
-      });
-      
-      getDocument().addDocumentListener(new DocumentListener() {
-        
-        public void removeUpdate(DocumentEvent e) {
-          applyFilter();
-        }
-        
-        public void insertUpdate(DocumentEvent e) {
-          applyFilter();
-        }
-        
-        public void changedUpdate(DocumentEvent e) {
-          applyFilter();
-        }
-      });
-    }
-    
-    public void applyFilter() {
-      String filter = filterField.getFilterText();
-      filter = filter.toLowerCase();
-      
-      // Replace anything but 0-9, a-z, or : with a space
-      filter = filter.replaceAll("[^\\x30-\\x39^\\x61-\\x7a^\\x3a]", " ");
-      filters = Arrays.asList(filter.split(" "));
-      filterLibraries(category, filters);
-    }
-    
-    public String getFilterText() {
-      return isShowingHint ? "" : getText();
-    }
-
-    public void updateStyle() {
-      if (isShowingHint) {
-        filterField.setText(filterHint);
-        
-        // setForeground(UIManager.getColor("TextField.light")); // too light
-        setForeground(Color.gray);
-      } else {
-        setForeground(UIManager.getColor("TextField.foreground"));
-      }
-    }
-  }
-
-  public boolean hasAlreadyBeenOpened() {
-    return dialog != null;
-  }
-  
-  public ContributionListing getListing() {
-    return contribListing;
+  /** Returns true if the type of contribution requires the PDE to restart
+   * when being removed. */
+  static public boolean requiresRestart(Contribution contrib) {
+    return contrib.getType() == Type.TOOL || contrib.getType() == Type.MODE;
   }
   
   static public boolean flagForDeletion(InstalledContribution contrib) {
@@ -1097,99 +678,5 @@ public class ContributionManager {
     }
     return false;
   }
-  
-  /** Returns true if the type of contribution requires the PDE to restart
-   * when being removed. */
-  static public boolean requiresRestart(Contribution contrib) {
-    return contrib.getType() == Type.TOOL || contrib.getType() == Type.MODE;
-  }
-
-  class StatusPanel extends JPanel {
-    
-    String errorMessage;
-    
-    StatusPanel() {
-      addMouseListener(new MouseAdapter() {
-        
-        public void mousePressed(MouseEvent e) {
-          clearErrorMessage();
-        }
-      });
-    }
-    
-    @Override
-    protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
-      
-      g.setFont(new Font("SansSerif", Font.PLAIN, 10));
-      int baseline = (getSize().height + g.getFontMetrics().getAscent()) / 2;
-      
-      if (contribListing.isDownloadingListing()) {
-        g.setColor(Color.black);
-        g.drawString("Downloading software listing...", 2, baseline);
-        setVisible(true);
-      } else if (errorMessage != null) {
-        g.setColor(Color.red);
-        g.drawString(errorMessage, 2, baseline);
-        setVisible(true);
-      } else {
-        setVisible(false);
-      }
-    }
-    
-    void setErrorMessage(String message) {
-      errorMessage = message;
-      setVisible(true);
-      
-      JPanel placeholder = ContributionManager.this.contributionListPanel.statusPlaceholder;
-      Dimension d = getPreferredSize();
-      if (Base.isWindows()) {
-        d.height += 5;
-        placeholder.setPreferredSize(d);
-      }
-      placeholder.setVisible(true);
-      
-//      Rectangle rect = scrollPane.getViewport().getViewRect();
-//      rect.x += d.height;
-//      scrollPane.getViewport().scrollRectToVisible(rect);
-    }
-    
-    void clearErrorMessage() {
-      errorMessage = null;
-      repaint();
-      
-      ContributionManager.this.contributionListPanel.statusPlaceholder
-          .setVisible(false);
-    }
-  }
-  
-}
-
-abstract class JProgressMonitor extends AbstractProgressMonitor {
-  JProgressBar progressBar;
-  
-  public JProgressMonitor(JProgressBar progressBar) {
-    this.progressBar = progressBar;
-  }
-  
-  public void startTask(String name, int maxValue) {
-    isFinished = false;
-    progressBar.setString(name);
-    progressBar.setIndeterminate(maxValue == UNKNOWN);
-    progressBar.setMaximum(maxValue);
-  }
-  
-  public void setProgress(int value) {
-    super.setProgress(value);
-    progressBar.setValue(value);
-  }
-  
-  @Override
-  public void finished() {
-    super.finished();
-    finishedAction();
-  }
-
-  public abstract void finishedAction();
   
 }

@@ -363,6 +363,15 @@ public abstract class Editor extends JFrame implements RunnerListener {
         modeMenu.add(item);
       }
     }
+    
+    modeMenu.addSeparator();
+    JMenuItem addLib = new JMenuItem("Add Mode...");
+    addLib.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleOpenModeManager();
+      }
+    });
+    modeMenu.add(addLib);
   }
   
   
@@ -870,20 +879,20 @@ public abstract class Editor extends JFrame implements RunnerListener {
       toolsMenu.removeAll();
     }
     
-    JMenuItem item = new JMenuItem("Manage Contributions...");
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        base.handleOpenContributionManager();
-      }
-    });
-    toolsMenu.add(item);
-    toolsMenu.addSeparator();
-    
     rebuildToolList();
     
     addInternalTools(toolsMenu);
     addTools(toolsMenu, coreTools);
     addTools(toolsMenu, contribTools);
+    
+    toolsMenu.addSeparator();
+    JMenuItem item = new JMenuItem("Add Tool...");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        base.handleOpenToolManager();
+      }
+    });
+    toolsMenu.add(item);
   }
 
 

@@ -56,7 +56,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
                     + "You can still intall this library manually by visiting\n"
                     + "the library's website.";
   
-  ContributionManager contribManager;
+  ContributionManagerDialog contribManager;
   
   TreeMap<Contribution, ContributionPanel> panelByContribution;
   
@@ -70,10 +70,19 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
   
   protected JPanel statusPlaceholder;
   
-  public ContributionListPanel(ContributionManager libraryManager) {
+  ContributionListing.Filter permaFilter;
+  
+  ContributionListing contribListing;
+  
+  public ContributionListPanel(ContributionManagerDialog libraryManager,
+                               ContributionListing.Filter filter) {
+    
     super();
     
     this.contribManager = libraryManager;
+    this.permaFilter = filter;
+    
+    contribListing = ContributionListing.getInstance();
     
     setLayout(new GridBagLayout());
     setOpaque(true);
@@ -88,7 +97,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
     
     panelByContribution = new TreeMap<Contribution, ContributionPanel>(
-        contribManager.getListing().getComparator());
+        contribListing.getComparator());
     
     statusPlaceholder = new JPanel();
     statusPlaceholder.setVisible(false);
@@ -119,29 +128,31 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
   public void contributionAdded(final Contribution contribution) {
     
-    SwingUtilities.invokeLater(new Runnable() {
-
-      public void run() {
-        if (panelByContribution.containsKey(contribution)) {
-          return;
-        }
-        
-        ContributionPanel newPanel = new ContributionPanel();
-        
-        synchronized (panelByContribution) {
-          panelByContribution.put(contribution, newPanel);
-        }
-        
-        
-        if (newPanel != null) {
-          newPanel.setContribution(contribution);
+    if (permaFilter.matches(contribution)) {
+      SwingUtilities.invokeLater(new Runnable() {
+  
+        public void run() {
+          if (panelByContribution.containsKey(contribution)) {
+            return;
+          }
           
-          add(newPanel);
-          updatePanelOrdering();
-          updateColors();
+          ContributionPanel newPanel = new ContributionPanel();
+          
+          synchronized (panelByContribution) {
+            panelByContribution.put(contribution, newPanel);
+          }
+          
+          
+          if (newPanel != null) {
+            newPanel.setContribution(contribution);
+            
+            add(newPanel);
+            updatePanelOrdering();
+            updateColors();
+          }
         }
-      }
     });
+    }
   }
   
   public void contributionRemoved(final Contribution contribution) {
@@ -186,7 +197,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
     synchronized (panelByContribution) {
 
-      Set<Contribution> hiddenPanels = new TreeSet(contribManager.getListing().getComparator());
+      Set<Contribution> hiddenPanels = new TreeSet(contribListing.getComparator());
       hiddenPanels.addAll(panelByContribution.keySet());
       
       for (Contribution info : filteredContributions) {
@@ -464,7 +475,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (contrib instanceof InstalledContribution) {
             InstalledContribution installed = (InstalledContribution) contrib;
             ContributionManager.removeFlagForDeletion(installed);
-            contribManager.getListing().replaceContribution(contrib, contrib);
+            contribListing.replaceContribution(contrib, contrib);
           }
         }
       };
@@ -476,15 +487,17 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             installRemoveButton.setEnabled(false);
             
             installProgressBar.setVisible(true);
-            contribManager.removeContribution((InstalledContribution) contrib,
-                                              new JProgressMonitor(installProgressBar) {
-              
+            
+            ContributionManager.removeContribution(contribManager.editor,
+                                                   (InstalledContribution) contrib,
+                                                   new JProgressMonitor(installProgressBar) {
               public void finishedAction() {
                 // Finished uninstalling the library
                 resetInstallProgressBarState();
                 installRemoveButton.setEnabled(true);
               }
-            });
+            },
+            contribManager.statusBar);
           }
         }
       };
@@ -589,8 +602,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         };
         iconArea.setInheritsPopupMenu(true);
         iconArea.setOpaque(false);
-        Dimension d = new Dimension(ContributionManager.ICON_WIDTH,
-                                    ContributionManager.ICON_HEIGHT);
+        Dimension d = new Dimension(ContributionManagerDialog.ICON_WIDTH,
+                                    ContributionManagerDialog.ICON_HEIGHT);
         iconArea.setMinimumSize(d);
         iconArea.setPreferredSize(d);
         
@@ -654,7 +667,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           
           public void actionPerformed(ActionEvent e) {
             updateButton.setEnabled(false);
-            AdvertisedContribution ad = contribManager.getListing()
+            AdvertisedContribution ad = contribListing
                 .getAdvertisedContribution(contrib);
              String url = ad.link;
             installContribution(ad, url);
@@ -766,7 +779,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       descriptionText.setText(description.toString());
       setAlignment(descriptionText, StyleConstants.ALIGN_JUSTIFIED);
       
-      if (contribManager.getListing().hasUpdates(contrib)) {
+      if (contribListing.hasUpdates(contrib)) {
         StringBuilder versionText = new StringBuilder();
         versionText.append("<html><body><i>");
         if (isFlagged) {
@@ -788,7 +801,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       updateButton.setEnabled(true);
       if (contrib != null && !ContributionManager.requiresRestart(contrib)) {
         updateButton.setVisible(isSelected()
-            && contribManager.getListing().hasUpdates(contrib));
+            && contribListing.hasUpdates(contrib));
       }
       
       installRemoveButton.removeActionListener(installActionListener);
@@ -836,7 +849,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         installProgressBar.setVisible(true);
         
-        contribManager.downloadAndInstall(downloadUrl, ad,
+        ContributionManager.downloadAndInstall(contribManager.editor,
+                                          downloadUrl, ad,
           new JProgressMonitor(installProgressBar) {
 
             public void finishedAction() {
@@ -855,7 +869,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
                                                + "downloading the contribution.");
               }
             }
-          }
+          },
+          contribManager.statusBar
         );
         
       } catch (MalformedURLException e) {
@@ -925,7 +940,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
 
       if (contrib != null && !ContributionManager.requiresRestart(contrib)) {
         updateButton.setVisible(isSelected()
-            && contribManager.getListing().hasUpdates(contrib));
+            && contribListing.hasUpdates(contrib));
       }
       installRemoveButton.setVisible(isSelected());
       

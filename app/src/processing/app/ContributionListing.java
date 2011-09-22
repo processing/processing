@@ -60,7 +60,9 @@ public class ContributionListing {
   
   File listingFile;
   
-  public ContributionListing() {
+  static ContributionListing singleInstance;
+  
+  private ContributionListing() {
     listeners = new ArrayList<ContributionChangeListener>();
     advertisedContributions = new ArrayList<AdvertisedContribution>();
     librariesByCategory = new HashMap<String, List<Contribution>>();
@@ -73,7 +75,13 @@ public class ContributionListing {
       setAdvertisedList(listingFile);
     }
   }
+  
+  static public ContributionListing getInstance() {
+    if (singleInstance == null)
+      singleInstance = new ContributionListing();
 
+    return singleInstance;
+  }
 
   void setAdvertisedList(File file) {
     
@@ -564,6 +572,11 @@ public class ContributionListing {
 
   public boolean isDownloadingListing() {
     return downloadingListingLock.isLocked();
+  }
+  
+  static interface Filter {
+    
+    boolean matches(Contribution contrib);
   }
   
 }
