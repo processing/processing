@@ -300,6 +300,7 @@ public class PShape implements PConstants {
    * joints. 
    * 
    * ( end auto-generated )
+   * 
    * @webref pshape:method
    * @usage web_application
    * @brief Enables the shape's style data and ignores the Processing styles
@@ -1098,10 +1099,14 @@ public class PShape implements PConstants {
    * parameter for the <b>size()</b> function as shown in the example above.
    * 
    * ( end auto-generated )
+   * 
    * @webref pshape:method
    * @usage web_application
    * @brief Rotates the shape around the y-axis
    * @param angle angle of rotation specified in radians
+   * @see PShape#rotate(float)
+   * @see PShape#rotateX(float)
+   * @see PShape#rotateZ(float)
    */
   public void rotateY(float angle) {
     rotate(angle, 0, 1, 0);
