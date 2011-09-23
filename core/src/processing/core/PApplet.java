@@ -11113,6 +11113,7 @@ public class PApplet extends Applet
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#textFont(PFont)
+   * @see_external String
    */
   public void text(char c) {
     if (recorder != null) recorder.text(c);

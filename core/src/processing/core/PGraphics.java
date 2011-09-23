@@ -3690,6 +3690,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#textFont(PFont)
+   * @see_external String
    */
   public void text(char c) {
     text(c, textX, textY, textZ);

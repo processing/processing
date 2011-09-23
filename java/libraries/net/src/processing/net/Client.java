@@ -42,6 +42,7 @@ import java.net.*;
  * @brief The client class is used to create client Objects which connect to a server to exchange data. 
  * @instanceName client any variable of type Client
  * @usage Application
+ * @see_external LIB_net/clientEvent
  */
 public class Client implements Runnable {
 
