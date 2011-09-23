@@ -31,7 +31,7 @@ void setup() {
   tokens = splitTokens(allText, " ,.?!:;[]-");
   
   // Create the font
-  textFont(createFont("Georgia",24)); 
+  textFont(createFont("Georgia", 24)); 
 }
 
 void draw() {
