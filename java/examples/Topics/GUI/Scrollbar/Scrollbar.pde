@@ -3,43 +3,49 @@
  * 
  * Move the scrollbars left and right to change the positions of the images. 
  */
- 
-HScrollbar hs1, hs2;
 
-PImage top, bottom;         // Two image to load
-int topWidth, bottomWidth;  // The width of the top and bottom images
 
+// The next line is needed if running in JavaScript Mode with Processing.js
+/* @pjs preload="seedTop.jpg,seedBottom.jpg"; */ 
+
+
+HScrollbar hs1, hs2;  // Two scrollbars
+PImage img1, img2;  // Two image to load
 
 void setup() {
   size(640, 360);
   noStroke();
-  hs1 = new HScrollbar(0, height*0.33, width, 20, 3*5+1);
-  hs2 = new HScrollbar(0, height*0.66, width, 20, 3*5+1);
-  top = loadImage("seedTop.jpg");
-  topWidth = top.width;
-  bottom = loadImage("seedBottom.jpg");
-  bottomWidth = bottom.width;
+  
+  hs1 = new HScrollbar(0, height/2-8, width, 16, 16);
+  hs2 = new HScrollbar(0, height/2+8, width, 16, 16);
+  
+  // Load images
+  img1 = loadImage("seedTop.jpg");
+  img2 = loadImage("seedBottom.jpg");
 }
 
 void draw() {
   background(255);
   
-  // Get the position of the top scrollbar
-  // and convert to a value to display the top image 
-  float topPos = hs1.getPos()-width/2;
+  // Get the position of the img1 scrollbar
+  // and convert to a value to display the img1 image 
+  float img1Pos = hs1.getPos()-width/2;
   fill(255);
-  image(top, width/2-topWidth/2 + topPos*2, 0);
+  image(img1, width/2-img1.width/2 + img1Pos*1.5, 0);
   
-  // Get the position of the bottom scrollbar
-  // and convert to a value to display the bottom image
-  float bottomPos = hs2.getPos()-width/2;
+  // Get the position of the img2 scrollbar
+  // and convert to a value to display the img2 image
+  float img2Pos = hs2.getPos()-width/2;
   fill(255);
-  image(bottom, width/2-bottomWidth/2 + bottomPos*2, height/2);
+  image(img2, width/2-img2.width/2 + img2Pos*1.5, height/2);
  
   hs1.update();
   hs2.update();
   hs1.display();
   hs2.display();
+  
+  stroke(0);
+  line(0, height/2, width, height/2);
 }
 
 
@@ -93,7 +99,7 @@ class HScrollbar {
 
   boolean overEvent() {
     if(mouseX > xpos && mouseX < xpos+swidth &&
-    mouseY > ypos && mouseY < ypos+sheight) {
+       mouseY > ypos && mouseY < ypos+sheight) {
       return true;
     } else {
       return false;
@@ -101,6 +107,7 @@ class HScrollbar {
   }
 
   void display() {
+    noStroke();
     fill(204);
     rect(xpos, ypos, swidth, sheight);
     if(over || locked) {
