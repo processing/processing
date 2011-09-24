@@ -31,6 +31,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import processing.app.ContributionListing.Filter;
 import processing.app.contribution.*;
 
 public class ContributionManagerDialog {
@@ -39,7 +40,9 @@ public class ContributionManagerDialog {
   
   JFrame dialog;
   
-  private String title;
+  String title;
+  
+  Filter permaFilter;
   
   JComboBox categoryChooser;
   
@@ -62,6 +65,7 @@ public class ContributionManagerDialog {
                                    ContributionListing.Filter filter) {
     
     this.title = title;
+    this.permaFilter = filter;
     
     contribListing = ContributionListing.getInstance();
     
@@ -104,6 +108,8 @@ public class ContributionManagerDialog {
           if (isError()) {
             statusBar.setErrorMessage("An error occured when downloading " + 
                                       "the list of available contributions.");
+          } else {
+            statusBar.updateUI();
           }
         }
       });
@@ -136,8 +142,13 @@ public class ContributionManagerDialog {
       categorySelector.setLayout(new BoxLayout(categorySelector, BoxLayout.X_AXIS));
       pane.add(categorySelector, c);
       
-      categorySelector.add(new Label("Filter by Category:"));
+      categorySelector.add(Box.createHorizontalStrut(6));
 
+      JLabel categoryLabel = new JLabel("Filter by Category:");
+      categorySelector.add(categoryLabel);
+      
+      categorySelector.add(Box.createHorizontalStrut(5));
+      
       categoryChooser = new JComboBox();
       categoryChooser.setMaximumRowCount(20);
       updateCategoryChooser();
@@ -237,7 +248,7 @@ public class ContributionManagerDialog {
     
     ArrayList<String> categories;
     categoryChooser.removeAllItems();
-    categories = new ArrayList<String>(contribListing.getCategories());
+    categories = new ArrayList<String>(contribListing.getCategories(permaFilter));
     Collections.sort(categories);
     categories.add(0, ContributionManagerDialog.ANY_CATEGORY);
     for (String s : categories) {
