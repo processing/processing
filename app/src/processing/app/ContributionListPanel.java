@@ -705,9 +705,16 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       boolean isFlagged = ContributionManager.isFlaggedForDeletion(contrib);
       if (isFlagged) {
         description.append(ContributionListPanel.DELETION_MESSAGE);
-      } else if (contrib.getSentence() != null) {
-        String sentence = ContributionListPanel.sanitizeHtmlTags(contrib.getSentence());
-        sentence = ContributionListPanel.toHtmlLinks(sentence);
+      } else {
+        String sentence = contrib.getSentence();
+        
+        if (sentence == null || sentence.isEmpty()) {
+          sentence = "<i>Description unavailable.</i>";
+        } else {
+          sentence = ContributionListPanel.sanitizeHtmlTags(sentence);
+          sentence = ContributionListPanel.toHtmlLinks(sentence);
+        }
+        
         description.append(sentence);
       }
       
