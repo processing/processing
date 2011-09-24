@@ -127,22 +127,21 @@ public class ContributionManagerDialog {
     Container pane = dialog.getContentPane();
     pane.setLayout(new GridBagLayout());
     
-    { // Shows "Filter by Category"
+    { // Shows "Filter by Category" and the combo box for selecting a category
       GridBagConstraints c = new GridBagConstraints();
       c.gridx = 0;
       c.gridy = 0;
-      pane.add(new Label("Filter by Category:"), c);
-    }
-    
-    { // Combo box for selecting a category
-      GridBagConstraints c = new GridBagConstraints();
-      c.fill = GridBagConstraints.HORIZONTAL;
-      c.gridx = 1;
-      c.gridy = 0;
+      
+      JPanel categorySelector = new JPanel();
+      categorySelector.setLayout(new BoxLayout(categorySelector, BoxLayout.X_AXIS));
+      pane.add(categorySelector, c);
+      
+      categorySelector.add(new Label("Filter by Category:"));
 
       categoryChooser = new JComboBox();
+      categoryChooser.setMaximumRowCount(20);
       updateCategoryChooser();
-      pane.add(categoryChooser, c);
+      categorySelector.add(categoryChooser, c);
       categoryChooser.addItemListener(new ItemListener() {
 
         public void itemStateChanged(ItemEvent e) {
