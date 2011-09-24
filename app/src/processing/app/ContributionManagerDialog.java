@@ -333,6 +333,8 @@ public class ContributionManagerDialog {
       
       filters = new ArrayList<String>();
       
+      updateStyle();
+      
       addFocusListener(new FocusListener() {
         
         public void focusLost(FocusEvent focusEvent) {
@@ -385,10 +387,11 @@ public class ContributionManagerDialog {
 
     public void updateStyle() {
       if (isShowingHint) {
-        filterField.setText(filterHint);
+        setText(filterHint);
         
         // setForeground(UIManager.getColor("TextField.light")); // too light
         setForeground(Color.gray);
+        setFont(getFont().deriveFont(Font.ITALIC));
       } else {
         setForeground(UIManager.getColor("TextField.foreground"));
       }
