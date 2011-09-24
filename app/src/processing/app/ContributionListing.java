@@ -47,11 +47,10 @@ public class ContributionListing {
   ReentrantLock downloadingListingLock;
   
   static protected final String validCategories[] = {
-    "Sound", "Import / Export", "Simulation / Math", "Tools",
-    "Hardware Interface", "Typography / Geometry", "Animation",
-    "Graphic Interface", "Computer Vision / Video", "3D", "Compilation",
-    "Data / Protocols" };
-  
+    "3D", "Animation", "Compilations", "Data", "Geometry", "GUI", "Hardware",
+    "I/O", "Math", "Simulation", "Sound", "Utilities", "Typography",
+    "Video & Vision" };
+
   static Comparator<Contribution> contribComparator = new Comparator<Contribution>() {
     public int compare(Contribution o1, Contribution o2) {
       return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
@@ -412,22 +411,23 @@ public class ContributionListing {
   
   /**
    * @return the proper, valid name of this category to be displayed in the UI
-   *         (e.g. "Typography / Geometry"). "Unknown" if the category is
-   *         invalid.
+   *         (e.g. "Typography / Geometry"). "Unknown" if the category null.
    */
   static public String getCategory(String category) {
-    if (category != null) {
-      String normCatName = normalize(category);
-      
-      for (String validCatName : validCategories) {
-        String normValidCatName = normalize(validCatName);
-        if (normValidCatName.equals(normCatName)) {
-          return validCatName;
-        }
+    if (category == null) {
+      return "Unknown";
+    }
+    
+    String normCatName = normalize(category);
+    
+    for (String validCatName : validCategories) {
+      String normValidCatName = normalize(validCatName);
+      if (normValidCatName.equals(normCatName)) {
+        return validCatName;
       }
     }
     
-    return "Unknown";
+    return category;
   }
   
   public ArrayList<AdvertisedContribution> getLibraries(File f) {
