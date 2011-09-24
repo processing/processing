@@ -197,10 +197,22 @@ public class ContributionListing {
     return null;
   }
   
-  public Set<String> getCategories() {
-    return librariesByCategory.keySet();
+  public Set<String> getCategories(Filter filter) {
+    Set<String> ret = new HashSet<String>();
+    
+    Set<String> cats = librariesByCategory.keySet();
+    for (String cat : cats) {
+      for (Contribution contrib : librariesByCategory.get(cat)) {
+        if (filter.matches(contrib)) {
+          ret.add(cat);
+          break;
+        }
+      }
+    }
+    
+    return ret;
   }
-
+  
   public List<Contribution> getAllContributions() {
     return new ArrayList<Contribution>(allContributions);
   }
