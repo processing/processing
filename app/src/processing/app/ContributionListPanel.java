@@ -541,6 +541,9 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         headerText = new JTextPane();
         headerText.setInheritsPopupMenu(true);
+        Insets margin = headerText.getMargin();
+        margin.bottom = 0;
+        headerText.setMargin(margin);
         setHtmlTextStyle(headerText);
         stripTextSelectionListeners(headerText);
         add(headerText, c);
@@ -554,12 +557,11 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         c.weightx = 1;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.EAST;
+        c.anchor = GridBagConstraints.NORTHEAST;
         
         descriptionText = new JTextPane();
         descriptionText.setInheritsPopupMenu(true);
         setHtmlTextStyle(descriptionText);
-        stripTextSelectionListeners(descriptionText);
         add(descriptionText, c);
       }
       
@@ -815,18 +817,16 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     }
     
     void setHtmlTextStyle(JTextPane textPane) {
-      
       textPane.setContentType("text/html");
-      Font font = UIManager.getFont("Label.font");
-
       Document doc = textPane.getDocument();
       
       if (doc instanceof HTMLDocument) {
         HTMLDocument html = (HTMLDocument) doc;
         StyleSheet stylesheet = html.getStyleSheet();
         
-        stylesheet.addRule("body {font-family:"+font.getFamily()+";" + 
-                           "font-size:"+font.getSize()+"pt;}");
+        stylesheet.addRule("body {margin: 0; padding: 0;"
+            + "font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;"
+            + "font-size: 100%;" + "font-size: 0.9em;}");
       }
         
       htmlPanes.add(textPane);

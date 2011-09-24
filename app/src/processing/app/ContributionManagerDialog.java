@@ -25,13 +25,9 @@ package processing.app;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.CropImageFilter;
-import java.awt.image.FilteredImageSource;
-import java.io.*;
 import java.util.*;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -41,17 +37,11 @@ public class ContributionManagerDialog {
   
   static final String ANY_CATEGORY = "All";
   
-  /** Width of each contribution icon. */
-  static final int ICON_WIDTH = 25;
-
-  /** Height of each contribution icon. */
-  static final int ICON_HEIGHT = 20;
-
   JFrame dialog;
   
   private String title;
   
-  FilterField filterField;
+  JComboBox categoryChooser;
   
   JScrollPane scrollPane;
   
@@ -59,9 +49,7 @@ public class ContributionManagerDialog {
   
   StatusPanel statusBar;
   
-  JComboBox categoryChooser;
-  
-  Image[] contributionIcons;
+  FilterField filterField;
   
   // the calling editor, so updates can be applied
   Editor editor;
@@ -122,50 +110,6 @@ public class ContributionManagerDialog {
     }
     
     updateContributionListing();
-    
-    if (contributionIcons == null) {
-      try {
-        Image allButtons = ImageIO.read(Base.getLibStream("contributions.gif"));
-        int count = allButtons.getHeight(dialog) / ContributionManagerDialog.ICON_HEIGHT;
-        contributionIcons = new Image[count];
-        contributionIcons[0]  = allButtons;
-        contributionIcons[1]  = allButtons;
-        contributionIcons[2]  = allButtons;
-        contributionIcons[3]  = allButtons;
-        
-        for (int i = 0; i < count; i++) {
-          Image image = dialog.createImage(
-                            new FilteredImageSource(allButtons.getSource(),
-                            new CropImageFilter(0, i * ContributionManagerDialog.ICON_HEIGHT,
-                                                ContributionManagerDialog.ICON_WIDTH,
-                                                ContributionManagerDialog.ICON_HEIGHT)));
-          contributionIcons[i] = image;
-        }
-        
-        contributionListPanel.updateColors();
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    }
-  }
-  
-  public Image getContributionIcon(Contribution.Type type) {
-    
-    if (contributionIcons == null)
-      return null;
-      
-    switch (type) {
-    case LIBRARY:
-      return contributionIcons[0];
-    case TOOL:
-      return contributionIcons[1];
-    case MODE:
-      return contributionIcons[2];
-    case LIBRARY_COMPILATION:
-      return contributionIcons[3];
-    }
-    return null;
   }
   
   /**
@@ -183,16 +127,33 @@ public class ContributionManagerDialog {
     Container pane = dialog.getContentPane();
     pane.setLayout(new GridBagLayout());
     
-    { // The filter text area
+    { // Shows "Filter by Category"
       GridBagConstraints c = new GridBagConstraints();
       c.gridx = 0;
       c.gridy = 0;
-      c.gridwidth = 2;
-      c.weightx = 1;
+      pane.add(new Label("Filter by Category:"), c);
+    }
+    
+    { // Combo box for selecting a category
+      GridBagConstraints c = new GridBagConstraints();
       c.fill = GridBagConstraints.HORIZONTAL;
-      filterField = new FilterField();
+      c.gridx = 1;
+      c.gridy = 0;
 
-      pane.add(filterField, c);
+      categoryChooser = new JComboBox();
+      updateCategoryChooser();
+      pane.add(categoryChooser, c);
+      categoryChooser.addItemListener(new ItemListener() {
+
+        public void itemStateChanged(ItemEvent e) {
+          category = (String) categoryChooser.getSelectedItem();
+          if (ContributionManagerDialog.ANY_CATEGORY.equals(category)) {
+            category = null;
+          }
+
+          filterLibraries(category, filterField.filters);
+        }
+      });
     }
     
     { // The scroll area containing the contribution listing and the status bar.
@@ -256,36 +217,19 @@ public class ContributionManagerDialog {
       pane.add(layeredPane, c);
     }
     
-    { // Shows "Category:"
+    { // The filter text area
       GridBagConstraints c = new GridBagConstraints();
       c.gridx = 0;
       c.gridy = 2;
-      pane.add(new Label("Category:"), c);
-    }
-    
-    { // Combo box for selecting a category
-      GridBagConstraints c = new GridBagConstraints();
+      c.gridwidth = 2;
+      c.weightx = 1;
       c.fill = GridBagConstraints.HORIZONTAL;
-      c.gridx = 1;
-      c.gridy = 2;
+      filterField = new FilterField();
 
-      categoryChooser = new JComboBox();
-      updateCategoryChooser();
-      pane.add(categoryChooser, c);
-      categoryChooser.addItemListener(new ItemListener() {
-
-        public void itemStateChanged(ItemEvent e) {
-          category = (String) categoryChooser.getSelectedItem();
-          if (ContributionManagerDialog.ANY_CATEGORY.equals(category)) {
-            category = null;
-          }
-
-          filterLibraries(category, filterField.filters);
-        }
-      });
+      pane.add(filterField, c);
     }
     
-    dialog.setMinimumSize(new Dimension(550, 400));
+    dialog.setMinimumSize(new Dimension(450, 400));
   }
 
   private void updateCategoryChooser() {
