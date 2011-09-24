@@ -415,12 +415,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
     JTextPane headerText;
     
-    JPanel descriptionPanel;
-    
-    JLabel categoryLabel;
-    
-    JPanel iconArea;
-    
     JTextPane descriptionText;
 
     JTextPane updateNotificationLabel;
@@ -552,68 +546,10 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         add(headerText, c);
       }
       
-      { // The category label, which shows the names of the category in the
-        // upper left corner.
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
-        c.anchor = GridBagConstraints.WEST;
-        
-        categoryLabel = new JLabel();
-        categoryLabel.setInheritsPopupMenu(true);
-        categoryLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 7));
-        add(categoryLabel, c);
-      }
-      
-      { // The bottom part of the panel which describes the contribution.
-        // All components in the description (e.g. icons, text) are placed in
-        // the descriptionPanel
+      { // The bottom right of the description, used to show text describing it
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
-        c.weighty = 1;
-        c.weightx = 1;
-        c.gridwidth = 2;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.WEST;
-        
-        descriptionPanel = new JPanel();
-        descriptionPanel.setInheritsPopupMenu(true);
-        descriptionPanel.setOpaque(false);
-        descriptionPanel.setLayout(new GridBagLayout());
-        add(descriptionPanel, c);
-      }
-      
-      { // The left part of the description, used to draw the icon.
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridheight = 2;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.CENTER;
-        
-        iconArea = new JPanel() {
-          protected void paintComponent(Graphics g) {
-            Image icon = contribManager.getContributionIcon(contrib.getType());
-            if (icon != null) {
-              g.drawImage(icon, 0, 0, this);
-            }
-          };
-        };
-        iconArea.setInheritsPopupMenu(true);
-        iconArea.setOpaque(false);
-        Dimension d = new Dimension(ContributionManagerDialog.ICON_WIDTH,
-                                    ContributionManagerDialog.ICON_HEIGHT);
-        iconArea.setMinimumSize(d);
-        iconArea.setPreferredSize(d);
-        
-        descriptionPanel.add(iconArea, c);
-      }
-      
-      { // The bottom right of the description, used to show text describing it
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
         c.weighty = 1;
         c.weightx = 1;
         c.gridwidth = 2;
@@ -624,15 +560,15 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         descriptionText.setInheritsPopupMenu(true);
         setHtmlTextStyle(descriptionText);
         stripTextSelectionListeners(descriptionText);
-        descriptionPanel.add(descriptionText, c);
+        add(descriptionText, c);
       }
       
       { // A label below the description text showing notifications for when
         // updates are available, or instructing the user to restart the PDE if
         // necessary
         GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 1;
+        c.gridx = 0;
+        c.gridy = 2;
         c.weightx = 1;
         c.insets = new Insets(-5, 0, 0, 0);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -643,14 +579,14 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         updateNotificationLabel.setVisible(false);
         setHtmlTextStyle(updateNotificationLabel);
         stripTextSelectionListeners(updateNotificationLabel);
-        descriptionPanel.add(updateNotificationLabel, c);
+        add(updateNotificationLabel, c);
       }
       
       { // An update button, shown in the description area, but only visible for
         // contributions that do not require a restart.
         GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 1;
+        c.gridx = 1;
+        c.gridy = 2;
         c.weightx = 1;
         c.insets = new Insets(-5, 0, 0, 0);
         c.anchor = GridBagConstraints.EAST;
@@ -673,7 +609,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
             installContribution(ad, url);
           }
         });
-        descriptionPanel.add(updateButton, c);
+        add(updateButton, c);
       }
     }
 
@@ -760,8 +696,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       }
       nameText.append("</body></html>");
       headerText.setText(nameText.toString());
-      
-      categoryLabel.setText("[" + contrib.getCategory() + "]");
       
       StringBuilder description = new StringBuilder();
       description.append("<html><body>");
@@ -984,9 +918,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
     
     public void setForeground(Color fg) {
       super.setForeground(fg);
-      
-      if (categoryLabel != null)
-        categoryLabel.setForeground(fg);
       
       if (htmlPanes != null) {
         for (JTextPane pane : htmlPanes) {
