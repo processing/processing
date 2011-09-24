@@ -253,12 +253,21 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           count++;
           
         } else {
+          
           Border border = null;
-          if (Base.isMacOS() && panel.isVisible()) {
-            if (count % 2 == 1) {
-              border = UIManager.getBorder("List.evenRowBackgroundPainter");
+          if (panel.isVisible()) {
+            if (Base.isMacOS()) {
+              if (count % 2 == 1) {
+                border = UIManager.getBorder("List.evenRowBackgroundPainter");
+              } else {
+                border = UIManager.getBorder("List.oddRowBackgroundPainter");
+              }
             } else {
-              border = UIManager.getBorder("List.oddRowBackgroundPainter");
+              if (count % 2 == 1) {
+                panel.setBackground(new Color(241, 241, 241));
+              } else {
+                panel.setBackground(new Color(219, 224, 229));
+              }
             }
             count++;
           }
@@ -266,10 +275,8 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           if (border == null) {
             border = BorderFactory.createEmptyBorder(1, 1, 1, 1);
           }
-
           panel.setBorder(border);
 
-          panel.setBackground(ContributionListPanel.this.getBackground());
           panel.setForeground(UIManager.getColor("List.foreground"));
         }
       }
@@ -559,10 +566,31 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHEAST;
         
-        descriptionText = new JTextPane();
-        descriptionText.setInheritsPopupMenu(true);
-        setHtmlTextStyle(descriptionText);
-        add(descriptionText, c);
+        JPanel descriptionPanel = new JPanel(new GridBagLayout());
+        descriptionPanel.setInheritsPopupMenu(true);
+        descriptionPanel.setOpaque(false);
+        add(descriptionPanel, c);
+        
+        {
+          GridBagConstraints dc = new GridBagConstraints();
+          dc.fill = GridBagConstraints.HORIZONTAL;
+          dc.weightx = 1;
+          
+          descriptionText = new JTextPane();
+          descriptionText.setInheritsPopupMenu(true);
+          setHtmlTextStyle(descriptionText);
+          descriptionPanel.add(descriptionText, dc);
+        }
+        
+        int margin = 5;
+        if (Base.isMacOS()) {
+          margin = 15;
+        }
+        {
+          GridBagConstraints dc = new GridBagConstraints();
+          dc.gridx = 1;
+          descriptionPanel.add(Box.createHorizontalStrut(margin), dc);
+        }
       }
       
       { // A label below the description text showing notifications for when
@@ -720,7 +748,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
       
       description.append("</body></html>");
       descriptionText.setText(description.toString());
-      setAlignment(descriptionText, StyleConstants.ALIGN_JUSTIFIED);
       
       if (contribListing.hasUpdates(contrib)) {
         StringBuilder versionText = new StringBuilder();
@@ -833,7 +860,7 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
         
         stylesheet.addRule("body {margin: 0; padding: 0;"
             + "font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;"
-            + "font-size: 100%;" + "font-size: 0.9em;}");
+            + "font-size: 100%;" + "font-size: 0.95em;}");
       }
         
       htmlPanes.add(textPane);
@@ -850,16 +877,6 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           editorPane.removeMouseListener(l);
         }
       }
-    }
-    
-    /**
-     * @param align one of StyleConstants
-     */
-    void setAlignment(JTextPane textPane, int align) {
-      StyledDocument sdoc = textPane.getStyledDocument();
-      SimpleAttributeSet sa = new SimpleAttributeSet();
-      StyleConstants.setAlignment(sa, align);
-      sdoc.setParagraphAttributes(0, 1, sa, false);
     }
     
     protected void resetInstallProgressBarState() {
