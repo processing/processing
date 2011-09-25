@@ -1047,7 +1047,7 @@ public class PImage implements PConstants, Cloneable {
    * @brief Converts the image to grayscale or black and white
    * @usage web_application
    * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
-   * @param param in the range from 0 to 1
+   * @param param unique for each, see above
    */
   public void filter(int kind, float param) {
     loadPixels();

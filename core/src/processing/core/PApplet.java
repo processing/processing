@@ -10095,10 +10095,10 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * 
    * @webref shape:2d_primitives
-   * @param a x-coordinate of the rectangle
-   * @param b y-coordinate of the rectangle
-   * @param c width of the rectangle
-   * @param d height of the rectangle
+   * @param a x-coordinate of the rectangle by default
+   * @param b y-coordinate of the rectangle by default
+   * @param c width of the rectangle by default
+   * @param d height of the rectangle by default
    * @see PGraphics#rectMode(int)
    * @see PGraphics#quad(float, float, float, float, float, float, float, float)
    */
@@ -10108,12 +10108,21 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @param r radii for all four corners
+   */
   public void rect(float a, float b, float c, float d, float r) {
     if (recorder != null) recorder.rect(a, b, c, d, r);
     g.rect(a, b, c, d, r);
   }
 
 
+  /**
+   * @param tl radius for top-left corner
+   * @param tr radius for top-right corner
+   * @param br radius for bottom-right corner
+   * @param bl radius for bottom-left corner
+   */
   public void rect(float a, float b, float c, float d,
                    float tl, float tr, float br, float bl) {
     if (recorder != null) recorder.rect(a, b, c, d, tl, tr, br, bl);
@@ -13857,7 +13866,7 @@ public class PApplet extends Applet
    * @brief Converts the image to grayscale or black and white
    * @usage web_application
    * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
-   * @param param in the range from 0 to 1
+   * @param param unique for each, see above
    */
   public void filter(int kind, float param) {
     if (recorder != null) recorder.filter(kind, param);
@@ -14065,7 +14074,7 @@ public class PApplet extends Applet
    * @param dh destination image height
    * @param mode Either BLEND, ADD, SUBTRACT, LIGHTEST, DARKEST, DIFFERENCE, EXCLUSION, MULTIPLY, SCREEN, OVERLAY, HARD_LIGHT, SOFT_LIGHT, DODGE, BURN
    *
-   * @see PGraphics#alpha(int)
+   * @see PApplet#alpha(int)
    * @see PImage#copy(PImage, int, int, int, int, int, int, int, int)
    * @see PImage#blendColor(int,int,int)
    */

@@ -8,8 +8,6 @@
 
 // The next line is needed if running in JavaScript Mode with Processing.js
 /* @pjs font="Georgia.ttf"; */
-
-PFont fontA;
   
 void setup() {
   size(640, 360);
