@@ -1882,10 +1882,10 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    * 
    * @webref shape:2d_primitives
-   * @param a x-coordinate of the rectangle
-   * @param b y-coordinate of the rectangle
-   * @param c width of the rectangle
-   * @param d height of the rectangle
+   * @param a x-coordinate of the rectangle by default
+   * @param b y-coordinate of the rectangle by default
+   * @param c width of the rectangle by default
+   * @param d height of the rectangle by default
    * @see PGraphics#rectMode(int)
    * @see PGraphics#quad(float, float, float, float, float, float, float, float)
    */
@@ -1946,11 +1946,19 @@ public class PGraphics extends PImage implements PConstants {
 //    bezierVertex(cp1x, cp1y, cp2x, cp2y, x, y);
 //  }
 
+  /**
+   * @param r radii for all four corners
+   */
   public void rect(float a, float b, float c, float d, float r) {
     rect(a, b, c, d, r, r, r, r);
   }
 
-
+  /**
+   * @param tl radius for top-left corner
+   * @param tr radius for top-right corner
+   * @param br radius for bottom-right corner
+   * @param bl radius for bottom-left corner
+   */
   public void rect(float a, float b, float c, float d,
                    float tl, float tr, float br, float bl) {
     float hradius, vradius;

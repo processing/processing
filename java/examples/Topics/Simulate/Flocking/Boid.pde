@@ -11,7 +11,7 @@ class Boid {
 
     Boid(PVector l, float ms, float mf) {
     acc = new PVector(0,0);
-    vel = new PVector(random(-1,1),random(-1,1));
+    vel = new PVector(random(-1,1), random(-1,1));
     loc = l.get();
     r = 2.0;
     maxspeed = ms;
