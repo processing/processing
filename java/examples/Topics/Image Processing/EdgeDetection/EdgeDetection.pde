@@ -3,7 +3,7 @@
  * 
  * A high-pass filter sharpens an image. This program analyzes every
  * pixel in an image in relation to the neighboring pixels to sharpen 
- * the image. 
+ * the image. This example is currently not accurate in JavaScript mode.
  */
 
 // The next line is needed if running in JavaScript Mode with Processing.js
@@ -42,7 +42,7 @@ void draw() {
       }
       // For this pixel in the new image, set the gray value
       // based on the sum from the kernel
-      edgeImg.pixels[y*img.width + x] = color(sum);
+      edgeImg.pixels[y*img.width + x] = color(sum, sum, sum);
     }
   }
   // State that there are changes to edgeImg.pixels[]

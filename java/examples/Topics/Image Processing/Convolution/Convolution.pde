@@ -2,8 +2,9 @@
  * Convolution
  * by Daniel Shiffman.  
  * 
- * Applies a convolution matrix to a portion of an image.  
- * Move mouse to apply filter to different parts of the image. 
+ * Applies a convolution matrix to a portion of an image. Move mouse to 
+ * apply filter to different parts of the image. This example is currently
+ * not accurate in JavaScript mode.
  */
 
 
