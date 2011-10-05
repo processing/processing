@@ -77,6 +77,7 @@ public class Movie extends PImage implements PConstants {
   protected String copyMask;
   
   protected boolean firstFrame = true;
+  protected boolean seeking = false;  
   
   /**
    * Creates an instance of GSMovie loading the movie from filename.
@@ -353,7 +354,8 @@ public class Movie extends PImage implements PConstants {
    * @return int
    */
   public int frame() {
-    return (int)(time() * getSourceFrameRate());
+    double sec = gplayer.queryPosition().toSeconds() + gplayer.queryPosition().getNanoSeconds() * 1E-9;    
+    return (int)(Math.ceil(sec * getSourceFrameRate())) - 1;
   }
 
   /**
@@ -370,24 +372,22 @@ public class Movie extends PImage implements PConstants {
    * @param where position to jump to specified in seconds
    */
   public void jump(float where) {
-    if (playing) {
-      gplayer.pause();
-    }
+    if (seeking) return;
     
     boolean res;
-    long start = Video.secToNanoLong(where);
-    long stop = -1; // or whatever > new_pos
+    long pos = Video.secToNanoLong(where);
     
     res = gplayer.seek(1.0, Format.TIME, SeekFlags.FLUSH,
-                       SeekType.SET, start, SeekType.SET, stop);
+                       SeekType.SET, pos, SeekType.NONE, -1);
     
     if (!res) {
       System.err.println("Seek operation failed.");
     }    
-
-    if (playing) {
-      gplayer.play();
-    }    
+    
+    // Will wait until any async state change (seek) has completed    
+    seeking = true;
+    gplayer.getState();
+    seeking = false;
   }
 
   /**
@@ -399,7 +399,7 @@ public class Movie extends PImage implements PConstants {
     float srcFramerate = getSourceFrameRate();
     
     // The duration of a single frame:
-    float frameDuration = 1 / srcFramerate;
+    float frameDuration = 1.0f / srcFramerate;
     
     // We move to the middle of the frame by adding 0.5:
     float where = (frame + 0.5f) * frameDuration; 
@@ -419,7 +419,7 @@ public class Movie extends PImage implements PConstants {
    * @return boolean
    */  
   public boolean ready() {
-    return 0 < bufWidth && 0 < bufHeight && sinkReady;
+    return 0 < bufWidth && 0 < bufHeight && sinkReady && !seeking;
   }
   
   /**
@@ -475,6 +475,8 @@ public class Movie extends PImage implements PConstants {
    * @usage web_application
    */
   public void play() {
+    if (seeking) return;
+    
     if (!sinkReady) {
       initSink();
     }
@@ -494,7 +496,9 @@ public class Movie extends PImage implements PConstants {
    * @webref movie
    * @usage web_application
    */
-  public void loop() {    
+  public void loop() {
+    if (seeking) return;
+    
     repeat = true;
     play();
   }
@@ -511,6 +515,12 @@ public class Movie extends PImage implements PConstants {
    * @usage web_application
    */
   public void noLoop() {
+    if (seeking) return;
+    
+    if (!sinkReady) {
+      initSink();
+    }
+    
     repeat = false;
   }
 
@@ -526,6 +536,12 @@ public class Movie extends PImage implements PConstants {
    * @usage web_application
    */
   public void pause() {
+    if (seeking) return;
+    
+    if (!sinkReady) {
+      initSink();
+    }
+    
     playing = false;
     paused = true;
     gplayer.pause();    
@@ -543,6 +559,12 @@ public class Movie extends PImage implements PConstants {
    * @usage web_application
    */
   public void stop() {
+    if (seeking) return;
+    
+    if (!sinkReady) {
+      initSink();
+    }
+    
     if (playing) {      
       goToBeginning();
       playing = false;
@@ -617,21 +639,14 @@ public class Movie extends PImage implements PConstants {
    * Goes to the first frame of the movie.
    */
   public void goToBeginning() {
-    boolean res = gplayer.seek(ClockTime.fromNanos(0));
-    if (!res) {
-      System.err.println("Seek operation failed.");
-    }    
+    jump(0.0f);   
   }
 
   /**
    * Goes to the last frame of the movie.
    */
   public void goToEnd() {
-    long nanos = gplayer.queryDuration().getNanoSeconds();
-    boolean res = gplayer.seek(ClockTime.fromNanos(nanos));
-    if (!res) {
-      System.err.println("Seek operation failed.");
-    }
+    jump(duration());
   }
   
   /**
