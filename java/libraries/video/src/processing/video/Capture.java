@@ -50,6 +50,42 @@ import org.gstreamer.interfaces.Property;
  * @usage application
  */
 public class Capture extends PImage implements PConstants {
+  public static String capturePlugin;
+  public static String devicePropertyName;
+  public static String indexPropertyName;
+  // Default gstreamer capture plugin for each platform, and property names.
+  static {
+    if (PApplet.platform == MACOSX) {
+      if (Video.bitsJVM == 32) {
+        capturePlugin = "osxvideosrc";
+        // osxvideosrc has "device-name" and "device" properties, which both take a string
+        // value. The first should be the human-readable name of the video device (i.e.:
+        // "Display iSight") but it appears as only readable. The second can be written with
+        // the sequence grabber input device in format "sgname:input#", for example:
+        // "USB Video Class Video:0"
+        devicePropertyName = "device";
+        // osxvideosrc doesn't have an index property. 
+        indexPropertyName = "";
+      } else if (Video.bitsJVM == 64) {
+        capturePlugin = "qtkitvideosrc";
+        // qtkitvideosrc doesn't have a property to set the device name
+        devicePropertyName = "";         
+        indexPropertyName = "device-index";
+      }
+    } else if (PApplet.platform == WINDOWS) {
+      capturePlugin = "ksvideosrc";
+      devicePropertyName = "device-name";
+      indexPropertyName = "device-index";
+    } else if (PApplet.platform == LINUX) {
+      capturePlugin = "v4l2src";
+      // The "device" property in v4l2src expects the device location (/dev/video0, etc). 
+      // v4l2src has "device-name", which requires the human-readable name, but how to obtain
+      // in linux?.
+      devicePropertyName = "device";
+      indexPropertyName = "device-fd";
+    } else {}
+  }  
+  
   protected String source;
   
   protected boolean capturing = false;
@@ -93,8 +129,8 @@ public class Capture extends PImage implements PConstants {
    */
   public Capture(PApplet parent, int requestWidth, int requestHeight) {
     super(requestWidth, requestHeight, RGB);
-    initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
-                 new String[] {}, new String[] {}, "");
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+                  new String[] {}, new String[] {}, "");
   }
 
   /**
@@ -105,8 +141,8 @@ public class Capture extends PImage implements PConstants {
    */  
   public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate) {
     super(requestWidth, requestHeight, RGB);
-    initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
-                 new String[] {}, new String[] {}, frameRate + "/1");
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+        new String[] {}, new String[] {}, frameRate + "/1");
   }
 
   /**
@@ -118,73 +154,34 @@ public class Capture extends PImage implements PConstants {
    */   
   public Capture(PApplet parent, int requestWidth, int requestHeight, String cameraName) {
     super(requestWidth, requestHeight, RGB);
-    initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
-                 new String[] { devicePropertyName() }, new String[] { cameraName }, "");
+    if (devicePropertyName.equals("")) {
+      // For plugins without device name property, the name is casted as an index
+      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
+                    new String[] { indexPropertyName }, new int[] { PApplet.parseInt(cameraName) },
+                    new String[] { }, new String[] { }, "");          
+    } else {
+      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+                    new String[] { devicePropertyName }, new String[] { cameraName }, "");
+    }
   }
 
   /**
    * <h3>Advanced</h3>
    * This constructor allows to specify the camera name and the desired framerate.
    */     
-  public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
-                   String cameraName) {
+  public Capture(PApplet parent, int requestWidth, int requestHeight, String cameraName, int frameRate) {
     super(requestWidth, requestHeight, RGB);
-    initPlatform(parent, requestWidth, requestHeight, new String[] {}, new int[] {},
-                 new String[] { devicePropertyName() }, new String[] { cameraName }, 
-                 frameRate + "/1");
+    if (devicePropertyName.equals("")) {
+      // For plugins without device name property, the name is casted as an index
+      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
+                    new String[] { indexPropertyName }, new int[] { PApplet.parseInt(cameraName) },
+                    new String[] { }, new String[] { }, frameRate + "/1");          
+    } else {
+      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+          new String[] { devicePropertyName }, new String[] { cameraName }, frameRate + "/1");
+    }
   }  
   
-  /**
-   * <h3>Advanced</h3>
-   * This constructor lets to indicate which source element to use (i.e.: v4l2src, 
-   * osxvideosrc, dshowvideosrc, ksvideosrc, etc).
-   *
-   * @nowebref
-   * @param sourceName ???
-   */   
-  public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate, 
-                   String sourceName, String cameraName) {
-    super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, sourceName, new String[] {}, new int[] {}, 
-                  new String[] { devicePropertyName() }, new String[] { cameraName }, 
-                  frameRate + "/1");
-  }
-
-  /**
-   * <h3>Advanced</h3>
-   * This constructor accepts an arbitrary list of string properties for the source element.
-   * The camera name could be one of these properties. The framerate must be specified
-   * as a fraction string: 30/1, 15/2, etc.
-   *
-   * @nowebref
-   * @param strPropNames ???
-   * @param strPropValues ???
-   */    
-  public Capture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
-                   String sourceName, String[] strPropNames, String[] strPropValues) {
-    super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, sourceName, new String[] {}, new int[] {},
-                  strPropNames, strPropValues, frameRate);
-  }
-
-  /**
-   * <h3>Advanced</h3>
-   * This constructor accepts an arbitrary list of string properties for the source element,
-   * as well as a list of integer properties. This could be useful if a camera cannot by
-   * specified by name but by index. Framerate must be a fraction string: 30/1, 15/2, etc.
-   *
-   * @nowebref
-   * @param intPropNames ???
-   * @param intPropValues ???
-   */   
-  public Capture(PApplet parent, int requestWidth, int requestHeight, String frameRate,
-                   String sourceName, String[] strPropNames, String[] strPropValues,
-                   String[] intPropNames, int[] intPropValues) {
-    super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, sourceName, intPropNames, intPropValues,
-                  strPropNames, strPropValues, frameRate);
-  }
-
   /**
    * Releases the gstreamer resources associated to this capture object.
    * It shouldn't be used after this.
@@ -228,6 +225,17 @@ public class Capture extends PImage implements PConstants {
   public void dispose() {
     delete();
   }    
+  
+  /**
+   * Finalizer of the class.
+   */  
+  protected void finalize() throws Throwable {
+    try {
+      delete();
+    } finally {
+      super.finalize();
+    }
+  }   
   
   /**
    * Prints all the gstreamer elements currently used in the
@@ -350,6 +358,10 @@ public class Capture extends PImage implements PConstants {
    * @usage web_application
    */
   public void stop() {
+    if (!pipelineReady) {
+      initPipeline();
+    }
+    
     capturing = false;
     gpipeline.stop();
   }  
@@ -458,15 +470,7 @@ public class Capture extends PImage implements PConstants {
    * @usage web_application
    */  
   static public String[] list() {
-    if (PApplet.platform == LINUX) {
-      return list("v4l2src");
-    } else if (PApplet.platform == WINDOWS) {
-      return list("dshowvideosrc");
-    } else if (PApplet.platform == MACOSX) {
-      return list("osxvideosrc");
-    } else {
-      return null;
-    }
+    return list(capturePlugin);
   }
 
   /**
@@ -477,7 +481,7 @@ public class Capture extends PImage implements PConstants {
    * @param sourceName String
    */
   static public String[] list(String sourceName) {
-    return list(sourceName, devicePropertyName());
+    return list(sourceName, devicePropertyName);
   }
   
   static protected String[] list(String sourceName, String propertyName) {
@@ -560,29 +564,6 @@ public class Capture extends PImage implements PConstants {
   public String getSource() {
     return source;
   }    
-  
-  // Tries to guess the best correct source elements for each platform.
-  protected void initPlatform(PApplet parent, int requestWidth, int requestHeight,
-                              String[] intPropNames, int[] intPropValues, 
-                              String[] strPropNames, String[] strPropValues, 
-                              String frameRate) {
-    if (PApplet.platform == LINUX) {
-      initGStreamer(parent, requestWidth, requestHeight, "v4l2src", intPropNames, intPropValues,
-          strPropNames, strPropValues, frameRate);
-    } else if (PApplet.platform == WINDOWS) {
-      //initGStreamer(parent, requestWidth, requestHeight, "ksvideosrc", intPropNames,
-      //     intPropValues, strPropNames, strPropValues, frameRate);
-      initGStreamer(parent, requestWidth, requestHeight, "dshowvideosrc", intPropNames,
-    		        intPropValues, strPropNames, strPropValues, frameRate);    	
-      //init(requestWidth, requestHeight, "dshowvideosrc", intPropNames,
-      //    intPropValues, strPropNames, strPropValues, frameRate, addDecoder, null, "");
-    } else if (PApplet.platform == MACOSX) {
-      initGStreamer(parent, requestWidth, requestHeight, "osxvideosrc", intPropNames,
-          intPropValues, strPropNames, strPropValues, frameRate);
-    } else {
-      parent.die("Error: unrecognized platform.", null);
-    }
-  }
     
   // The main initialization here.
   protected void initGStreamer(PApplet parent, int requestWidth, int requestHeight, String sourceName,
@@ -817,23 +798,32 @@ public class Capture extends PImage implements PConstants {
               }
             }
           } else {
-            boolean sigleFrac = false;
+            boolean singleFrac = false;
             try {
               Fraction fr = str.getFraction("framerate");
               addFps(fr);
-              sigleFrac = true;
+              singleFrac = true;
             } catch (Exception e) { 
             }
             
-            if (!sigleFrac) { 
-              ValueList flist = str.getValueList("framerate");
-              // All the framerates are put together, but this is not
-              // entirely accurate since there might be some of them'
-              // that work only for certain resolutions.
-              for (int k = 0; k < flist.getSize(); k++) {
-                Fraction fr = flist.getFraction(k);
-                addFps(fr);
+            if (!singleFrac) {
+              ValueList flist = null;
+              
+              try {
+                flist = str.getValueList("framerate");
+              } catch (Exception e) { 
               }
+              
+              if (flist != null) {
+                // All the framerates are put together, but this is not
+                // entirely accurate since there might be some of them'
+                // that work only for certain resolutions.
+                for (int k = 0; k < flist.getSize(); k++) {
+                  Fraction fr = flist.getFraction(k);
+                  addFps(fr);
+                }              
+              }
+            
             }            
           }          
         }
@@ -859,32 +849,6 @@ public class Capture extends PImage implements PConstants {
     if (newFps) {
       suppFpsList.add(frstr);
     }      
-  }
-  
-  static protected String devicePropertyName() {
-    // TODO: Check the property names
-    if (PApplet.platform == LINUX) {
-      return "device"; // Is this correct?
-    } else if (PApplet.platform == WINDOWS) {
-      return "device-name";
-    } else if (PApplet.platform == MACOSX) {
-      return "device-name";
-    } else {
-      return "";
-    }
-  }
-  
-  static protected String indexPropertyName() {
-    // TODO: Check the property names
-    if (PApplet.platform == LINUX) {
-      return "device-index"; // Is this correct? Probably not.
-    } else if (PApplet.platform == WINDOWS) {
-      return "device-index";
-    } else if (PApplet.platform == MACOSX) {
-      return "device";
-    } else {
-      return "";
-    }
   }
   
   public synchronized void disposeBuffer(Object buf) {

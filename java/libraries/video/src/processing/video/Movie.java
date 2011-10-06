@@ -135,6 +135,17 @@ public class Movie extends PImage implements PConstants {
   }
   
   /**
+   * Finalizer of the class.
+   */  
+  protected void finalize() throws Throwable {
+    try {
+      delete();
+    } finally {
+      super.finalize();
+    }
+  }   
+  
+  /**
    * Prints all the gstreamer elements currently used in the
    * current player instance.
    * 
@@ -374,6 +385,10 @@ public class Movie extends PImage implements PConstants {
   public void jump(float where) {
     if (seeking) return;
     
+    if (!sinkReady) {
+      initSink();
+    }    
+    
     boolean res;
     long pos = Video.secToNanoLong(where);
     
@@ -384,7 +399,8 @@ public class Movie extends PImage implements PConstants {
       System.err.println("Seek operation failed.");
     }    
     
-    // Will wait until any async state change (seek) has completed    
+    // getState() will wait until any async state change 
+    // (like seek in this case) has completed    
     seeking = true;
     gplayer.getState();
     seeking = false;
