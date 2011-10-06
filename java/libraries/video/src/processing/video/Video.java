@@ -62,6 +62,11 @@ public class Video implements PConstants {
     } else {}
   }
   
+  protected static int bitsJVM;
+  static {
+    bitsJVM = PApplet.parseInt(System.getProperty("sun.arch.data.model"));
+  }  
+  
   // Default location of the local install of gstreamer. Suggested by Charles Bourasseau. 
   // When it is left as empty string, GSVideo will attempt to use the path from GSLibraryPath.get(),
   // otherwise it will use it as the path to the folder where the libgstreamer.dylib and other 
