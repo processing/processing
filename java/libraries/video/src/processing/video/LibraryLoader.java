@@ -34,135 +34,23 @@ public class LibraryLoader {
 
   private static LibraryLoader instance;
    
-  // These dependencies correspond to a trimmed version of gstreamer-winbuilds 0.10.7 Beta 4
-  static final Object[][] WIN32_DEPENDENCIES = {
-      { "iconv-2", new String[] {}, false },
-      { "libbz2", new String[] {}, false },
-      { "libogg-0", new String[] {}, false },
-      { "liboil-0.3-0", new String[] {}, false },
-      { "liborc-0.4-0", new String[] {}, false },
-      { "liborc-test-0.4-0", new String[] {}, false },
-      { "libtheora-0", new String[] {}, false },
-      { "libtheoradec-1", new String[] {}, false },
-      { "libtheoraenc-1", new String[] {}, false },
-      { "libvorbis-0", new String[] {}, false },
-      { "libvorbisenc-2", new String[] {}, false },
-      { "libvorbisfile-3", new String[] {}, false },
-      { "libwavpack-1", new String[] {}, false },
-      { "libx264-107", new String[] {}, false },
-      { "libxml2-2", new String[] {}, false },
-      { "pthreadGC2", new String[] {}, false },
-      { "xvidcore", new String[] {}, false },
-      { "z", new String[] {}, false },
-      { "avutil-gpl-50", new String[] {}, false },
-      { "avformat-gpl-52", new String[] {}, false },
-      { "avcodec-gpl-52", new String[] {}, false },
-      { "swscale-gpl-0", new String[] {}, false },
-      
+  static final Object[][] WINDOWS_DEPENDENCIES = {           
+      // glib libraries
       { "gio-2.0", new String[] {}, true },
       { "glib-2.0", new String[] {}, true },
       { "gmodule-2.0", new String[] {}, true },
       { "gobject-2.0", new String[] {}, true },
       { "gthread-2.0", new String[] {}, true },
 
+      // Core gstreamer libraries  
       { "gstapp-0.10", new String[] {}, true },
       { "gstaudio-0.10", new String[] {}, true },
       { "gstbase-0.10", new String[] {}, true },
-      { "gstcontroller-0.10", new String[] {}, true },
-      { "gstdataprotocol-0.10", new String[] {}, true },
-      { "gstfft-0.10", new String[] {}, true },
-      { "gstinterfaces-0.10", new String[] {}, true },
-      { "gstnetbuffer-0.10", new String[] {}, true },
-      { "gstpbutils-0.10", new String[] {}, true },
-      { "gstreamer-0.10", new String[] {}, true },
-      { "gstriff-0.10", new String[] {}, true },
-      { "gstrtp-0.10", new String[] {}, true },
-      { "gsttag-0.10", new String[] {}, true },
-      { "gstvideo-0.10", new String[] {}, true },
-      { "gstbasevideo-0.10", new String[] {}, true } };
-  
-  // Getting this done...
-  static final Object[][] WIN32_MINGW_DEPENDENCIES = {
-      //{ "SDL", new String[] {}, false }, 
-	  //{ "glew32", new String[] {}, false },
-      { "iconv-2", new String[] {}, false },
-      //{ "liba52-0", new String[] {}, false },
-      //{ "libbz2", new String[] {}, false },
-      { "libcairo-2", new String[] {}, false },
-      { "libcairo-gobject-2", new String[] {}, false },
-      //{ "libdca-0", new String[] {}, false },
-      //{ "libdvdcss-2", new String[] {}, false },
-      //{ "libdvdnav-4", new String[] {}, false },
-      //{ "libdvdnavmini-4", new String[] {}, false },
-      //{ "libdvdread-4", new String[] {}, false },
-      //{ "libfaac-0", new String[] {}, false },
-      //{ "libfaad-2", new String[] {}, false },
-      { "libfontconfig-1", new String[] {}, false },
-      { "libfreetype-6", new String[] {}, false },
-      //{ "libgcrypt-11", new String[] {}, false },
-      //{ "libgnutls-26", new String[] {}, false },
-      //{ "libgnutls-extra-26", new String[] {}, false },
-      //{ "libgnutls-openssl-26", new String[] {}, false },
-      //{ "libgpg-error-0", new String[] {}, false },
-      //{ "libid3tag-0", new String[] {}, false },
-      { "libjpeg-8", new String[] {}, false },
-      //{ "libmad-0", new String[] {}, false },
-      //{ "libmms-0", new String[] {}, false },
-      //{ "libmp3lame-0", new String[] {}, false },
-      //{ "libmpeg2-0", new String[] {}, false },
-      //{ "libmpeg2convert-0", new String[] {}, false },
-      //{ "libneon-27", new String[] {}, false },
-      //{ "libnice-0", new String[] {}, false },
-      { "libogg-0", new String[] {}, false },
-      //{ "liboil-0.3-0", new String[] {}, false },
-      //{ "libopenjpeg-2", new String[] {}, false },
-      { "libpango-1.0-0", new String[] {}, false },
-      { "libpangocairo-1.0-0", new String[] {}, false },
-      { "libpangoft2-1.0-0", new String[] {}, false },
-      { "libpangowin32-1.0-0", new String[] {}, false },
-      { "libpixman-1-0", new String[] {}, true },
-      { "libpng14-14", new String[] {}, false },
-      { "liborc-0.4-0", new String[] {}, false },
-      { "liborc-test-0.4-0", new String[] {}, false },
-      //{ "libschroedinger-1.0-0", new String[] {}, false },
-      //{ "libsoup-2.4-1", new String[] {}, false },
-      //{ "libspeex-1", new String[] {}, false },
-      { "libtheora-0", new String[] {}, false },
-      { "libtheoradec-1", new String[] {}, false },
-      { "libtheoraenc-1", new String[] {}, false },
-      { "libvorbis-0", new String[] {}, false },
-      { "libvorbisenc-2", new String[] {}, false },
-      { "libvorbisfile-3", new String[] {}, false },
-      { "libwavpack-1", new String[] {}, false },
-      //{ "libx264-107", new String[] {}, false },
-      { "libxml2-2", new String[] {}, false },
-      //{ "pthreadGC2", new String[] {}, false },
-      //{ "xvidcore", new String[] {}, false },
-      //{ "z", new String[] {}, false },
-      //{ "avutil-gpl-50", new String[] {}, false },
-      //{ "avformat-gpl-52", new String[] {}, false },
-      //{ "avcodec-gpl-52", new String[] {}, false },
-      //{ "swscale-gpl-0", new String[] {}, false },
-      //{ "libcelt-0", new String[] {}, false },      
-      { "libgdk_pixbuf-2.0-0", new String[] {}, false },
-      //{ "librsvg-2-2", new String[] {}, false },
-      //{ "libflac-8", new String[] {}, false },      
-      
-      { "gio-2.0", new String[] {}, true },
-      { "glib-2.0", new String[] {}, true },
-      { "gmodule-2.0", new String[] {}, true },
-      { "gobject-2.0", new String[] {}, true },
-      { "gthread-2.0", new String[] {}, true },
-
-      { "gstapp-0.10", new String[] {}, true },
-      { "gstaudio-0.10", new String[] {}, true },
-      { "gstbase-0.10", new String[] {}, true },
+      { "gstbasevideo-0.10", new String[] {}, true },
       { "gstcdda-0.10", new String[] {}, true },
       { "gstcontroller-0.10", new String[] {}, true },
       { "gstdataprotocol-0.10", new String[] {}, true },
-      //{ "gstfarsight-0.10", new String[] {}, true },
       { "gstfft-0.10", new String[] {}, true },
-      //{ "gstgl-0.10", new String[] {}, true },
       { "gstinterfaces-0.10", new String[] {}, true },
       { "gstnet-0.10", new String[] {}, true },
       { "gstnetbuffer-0.10", new String[] {}, true },
@@ -173,14 +61,30 @@ public class LibraryLoader {
       { "gstrtp-0.10", new String[] {}, true },
       { "gstrtsp-0.10", new String[] {}, true },
       { "gstsdp-0.10", new String[] {}, true },
+      { "gstsignalprocessor-0.10", new String[] {}, true },
       { "gsttag-0.10", new String[] {}, true },
       { "gstvideo-0.10", new String[] {}, true },
-      { "gstbasevideo-0.10", new String[] {}, true } };
-
+      
+      // External libraries
+      { "libiconv-2", new String[] {}, false },
+      { "libintl-8", new String[] {}, false },
+      { "libjpeg-8", new String[] {}, false },
+      { "libmp3lame-0", new String[] {}, false },
+      { "libogg-0", new String[] {}, false },
+      { "liborc-0.4-0", new String[] {}, false },
+      { "liborc-test-0.4-0", new String[] {}, false },
+      { "libpng14-14", new String[] {}, false },
+      { "libtheora-0", new String[] {}, false },
+      { "libtheoradec-1", new String[] {}, false },
+      { "libtheoraenc-1", new String[] {}, false },
+      { "libvorbis-0", new String[] {}, false },
+      { "libvorbisenc-2", new String[] {}, false },
+      { "libvorbisfile-3", new String[] {}, false },
+      { "libwavpack-1", new String[] {}, false },
+      { "libxml2-2", new String[] {}, false },
+      { "zlib1", new String[] {}, false } };
   
-  
-  
-  static final Object[][] OSX_DEPENDENCIES = {
+  static final Object[][] MACOSX_DEPENDENCIES = {
       { "gstbase-0.10", new String[] { "gstreamer-0.10" }, true },
       { "gstinterfaces-0.10", new String[] { "gstreamer-0.10" }, true },
       { "gstcontroller-0.10", new String[] { "gstreamer-0.10" }, true },
@@ -195,8 +99,9 @@ public class LibraryLoader {
       { "gstaudio-0.10", new String[] { "gstbase-0.10" }, true },
       { "gstvideo-0.10", new String[] { "gstbase-0.10" }, true }, };
 
-  static final Object[][] dependencies = Platform.isWindows() ? WIN32_DEPENDENCIES
-      : Platform.isMac() ? OSX_DEPENDENCIES : DEFAULT_DEPENDENCIES;
+  static final Object[][] dependencies = Platform.isWindows() ? WINDOWS_DEPENDENCIES
+                                                              : Platform.isMac() ? MACOSX_DEPENDENCIES 
+                                                                                 : DEFAULT_DEPENDENCIES;
 
   private static final Map<String, Object> loadedMap = new HashMap<String, Object>();
 
