@@ -36,9 +36,12 @@ public void draw() {
       // this is the reason for the if statement.
       speedSet = true;
       myMovie.goToEnd();
-      // -1 means backward playback at normal speed,
+      // -1 means backward playback at normal speed.
       myMovie.speed(-1.0);
+      // Setting to play again, since the movie stop
+      // playback once it reached the end.
+      myMovie.play();
     }
   }
   image(myMovie, 0, 0, width, height); 
-}  
+}   
