@@ -20,12 +20,8 @@
 package processing.video;
 
 import org.gstreamer.*;
-
-// TODO: update to latest gstreamer on windows, jmcvideo on mac, seeking in gspipeline, check sf tracker
-
 import processing.core.PApplet;
 import processing.core.PConstants;
-
 import java.io.File;
 import java.util.List;
 
@@ -43,7 +39,7 @@ public class Video implements PConstants {
   protected static boolean defaultGLibContext = false;
   
   // Priority is given to global install of GStreamer if this is set to true. 
-  public static boolean globalGStreamer = true;
+  public static boolean globalGStreamer = false;
  
   // Direct buffer pass enabled by default.
   public static boolean passDirectBuffer = true; 
@@ -56,7 +52,6 @@ public class Video implements PConstants {
       globalGStreamerPath = "/System/Library/Frameworks/GStreamer.framework/Versions/Current/lib";
     } else if (PApplet.platform == WINDOWS) {
       globalGStreamerPath = "";
-      //globalGStreamerPath = "C://Program Files (x86)//OSSBuild//GStreamer//v0.10.7//lib";
     } else if (PApplet.platform == LINUX) {
       globalGStreamerPath = "/usr/lib";
     } else {}
@@ -161,8 +156,8 @@ public class Video implements PConstants {
       if (localGStreamerPath.equals("")) {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "/linux";
-        gstreamerPluginsPath = path + "/linux/" + localPluginsFolder;
+        gstreamerBinPath = path + "/linux" + bitsJVM;
+        gstreamerPluginsPath = gstreamerBinPath + "/" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
@@ -179,8 +174,8 @@ public class Video implements PConstants {
       if (localGStreamerPath.equals("")) {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "\\win32";
-        gstreamerPluginsPath = path + "\\win32\\" + localPluginsFolder;
+        gstreamerBinPath = path + "\\windows" + bitsJVM;
+        gstreamerPluginsPath = gstreamerBinPath + "\\" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "\\" + localPluginsFolder;
@@ -197,8 +192,8 @@ public class Video implements PConstants {
       if (localGStreamerPath.equals("")) {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "/macosx";
-        gstreamerPluginsPath = path + "/macosx/" + localPluginsFolder;
+        gstreamerBinPath = path + "/macosx" + bitsJVM;
+        gstreamerPluginsPath = gstreamerBinPath + "/" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
@@ -207,6 +202,10 @@ public class Video implements PConstants {
   }
 
   protected static boolean lookForGlobalGStreamer() {    
+    LibraryPath libPath = new LibraryPath();
+    String locPath = libPath.get();
+    locPath = locPath.replace("/", System.getProperty("file.separator"));
+    
     String[] searchPaths = null;
     if (!globalGStreamerPath.equals("")) {
       searchPaths = new String[] {globalGStreamerPath};
@@ -218,9 +217,9 @@ public class Video implements PConstants {
       searchPaths = lpaths.split(pathsep);
     }
     
-    for (int i = 0; i < searchPaths.length; i++) {
+    for (int i = 0; i < searchPaths.length; i++) {      
       String path = searchPaths[i];
-      if (libgstreamerPresent(path, "libgstreamer")) {
+      if ((locPath.equals("") || path.indexOf(locPath) == -1) && libgstreamerPresent(path, "libgstreamer")) {
         globalGStreamerPath = path;
         return true;
       }      
