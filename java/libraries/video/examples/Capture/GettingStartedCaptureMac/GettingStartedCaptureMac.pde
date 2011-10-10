@@ -21,20 +21,21 @@ void setup() {
     for (int i = 0; i < cameras.length; i++) {
       println(cameras[i]);
     }
+    
     cam = new Capture(this, 320, 240, cameras[0]);
     cam.start();
-  }    
-  
-  // You can get the list of resolutions (width x height x fps)  
-  // supported capture device by calling the resolutions()
-  // method. It must be called after creating the capture 
-  // object. 
-  Resolution[] res = cam.resolutions();
-  println("Supported resolutions:");
-  for (int i = 0; i < res.length; i++) { 
-    println(res[i].width + "x" + res[i].height + ", " + 
-            res[i].fps + " (" + res[i].fpsString +")");  
-  }    
+    
+    // You can get the list of resolutions (width x height x fps)  
+    // supported capture device by calling the resolutions()
+    // method. It must be called after creating the capture 
+    // object. 
+    Resolution[] res = cam.resolutions();
+    println("Supported resolutions:");
+    for (int i = 0; i < res.length; i++) { 
+      println(res[i].width + "x" + res[i].height + ", " + 
+              res[i].fps + " (" + res[i].fpsString +")");  
+    }        
+  }      
 }
 
 void draw() {
