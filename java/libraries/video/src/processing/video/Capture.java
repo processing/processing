@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.lang.reflect.*;
 
 import org.gstreamer.*;
@@ -94,7 +93,8 @@ public class Capture extends PImage implements PConstants {
   protected Object copyHandler;
   
   protected boolean available;
-  protected boolean pipelineReady;   
+  protected boolean pipelineReady;
+  protected boolean newFrame;
   
   protected RGBDataAppSink rgbSink = null;
   protected int[] copyPixels = null;
@@ -329,6 +329,19 @@ public class Capture extends PImage implements PConstants {
   }
   
   /**
+   * Returns true if its called for the first time after a new
+   * frame has been read, and false afterwards until another frame
+   * is read.
+   * 
+   * @return boolean
+   */   
+  public boolean newFrame() {
+    boolean res = newFrame;
+    newFrame = false;
+    return res;
+  }
+  
+  /**
    * ( begin auto-generated from Capture_available.xml )
    * 
    * Returns "true" when a new video frame is available to read.
@@ -449,6 +462,7 @@ public class Capture extends PImage implements PConstants {
     }
     
     available = false;
+    newFrame = true;
   }
   
   /**
@@ -689,7 +703,8 @@ public class Capture extends PImage implements PConstants {
       Element.linkMany(gsource, conv, videofilter, rgbSink);    
     } 
     
-    pipelineReady = true;     
+    pipelineReady = true;
+    newFrame = false;
   }
   
   protected void initResAndFps() {
