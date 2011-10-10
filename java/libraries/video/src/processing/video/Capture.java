@@ -23,7 +23,10 @@ import processing.core.*;
 
 import java.nio.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.lang.reflect.*;
 
 import org.gstreamer.*;
@@ -103,8 +106,7 @@ public class Capture extends PImage implements PConstants {
   
   protected boolean firstFrame = true;
   
-  protected ArrayList<int[]> suppResList;
-  protected ArrayList<String> suppFpsList;
+  protected ArrayList<Resolution> resolutions;
   
   protected int reqWidth;
   protected int reqHeight;  
@@ -116,7 +118,8 @@ public class Capture extends PImage implements PConstants {
    */
   public Capture(PApplet parent, int requestWidth, int requestHeight) {
     super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
+                  new String[] {}, new int[] {},
                   new String[] {}, new String[] {}, "");
   }
 
@@ -128,8 +131,9 @@ public class Capture extends PImage implements PConstants {
    */  
   public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate) {
     super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
-        new String[] {}, new String[] {}, frameRate + "/1");
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
+                  new String[] {}, new int[] {},
+                  new String[] {}, new String[] {}, frameRate + "/1");
   }
 
   /**
@@ -147,7 +151,8 @@ public class Capture extends PImage implements PConstants {
                     new String[] { indexPropertyName }, new int[] { PApplet.parseInt(cameraName) },
                     new String[] { }, new String[] { }, "");          
     } else {
-      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
+                    new String[] {}, new int[] {},
                     new String[] { devicePropertyName }, new String[] { cameraName }, "");
     }
   }
@@ -168,6 +173,39 @@ public class Capture extends PImage implements PConstants {
           new String[] { devicePropertyName }, new String[] { cameraName }, frameRate + "/1");
     }
   }  
+  
+  /**
+   * <h3>Advanced</h3>
+   * This constructor allows to specify the camera name and the desired framerate.
+   */       
+  public Capture(PApplet parent, int requestWidth, int requestHeight, String sourceName, 
+                 HashMap<String, Object> properties, String frameRate) {
+    super(requestWidth, requestHeight, RGB);
+    
+   // ArrayList<String> 
+    
+    Iterator<String> it = properties.keySet().iterator();    
+    while (it.hasNext()) {
+      String key = (String) it.next();
+      Object prop = properties.get(key);
+      if (prop instanceof String) {
+           
+      } else if (prop instanceof Integer) {
+        
+      } else if (prop instanceof Float) {
+        
+      }      
+    }
+    
+    /*
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
+        new String[] { devicePropertyName }, new String[] { cameraName }, frameRate + "/1");
+    */
+    
+  }
+  
+  
+  
   
   /**
    * Releases the gstreamer resources associated to this capture object.
@@ -414,36 +452,19 @@ public class Capture extends PImage implements PConstants {
   }
   
   /**
-   * Returns a list with the resolutions supported by the capture device.
-   * Each element of the list is in turn an array of two int, first being
-   * the width and second the height.
+   * Returns a list with the resolutions supported by the capture device,
+   * including width, height and frame rate.
    * 
-   * @return int[][]
+   * @return Resolution[]
    */  
-  public int[][] resolutions() {
-    int n = suppResList.size();
-    int[][] res = new int[n][2];
+  public Resolution[] resolutions() {
+    int n = resolutions.size();
+    Resolution[] res = new Resolution[n];
     for (int i = 0; i < n; i++) {
-      int[] wh = (int[])suppResList.get(i);
-      res[i] = new int[] {wh[0], wh[1]};
+      res[i] = new Resolution((Resolution)resolutions.get(i));
     }
-    return res;
+    return res;        
   }
-
-  /**
-   * Returns a list with the framerates supported by the capture device,
-   * expressed as a string like: 30/1, 15/2, etc.
-   * 
-   * @return String[]
-   */  
-  public String[] framerates() {
-    int n = suppFpsList.size();
-    String[] res = new String[n];
-    for (int i = 0; i < n; i++) {
-      res[i] = (String)suppFpsList.get(i);
-    }
-    return res;
-  }  
   
   /**
    * ( begin auto-generated from Capture_list.xml )
@@ -576,8 +597,7 @@ public class Capture extends PImage implements PConstants {
     gsource = ElementFactory.make(sourceName, "Source");
 
     if (intPropNames.length != intPropValues.length) {
-      parent.die("Error: number of integer property names is different from number of values.",
-          null);
+      parent.die("Error: number of integer property names is different from number of values.", null);
     }
 
     for (int i = 0; i < intPropNames.length; i++) {
@@ -585,8 +605,7 @@ public class Capture extends PImage implements PConstants {
     }
 
     if (strPropNames.length != strPropValues.length) {
-      parent.die("Error: number of string property names is different from number of values.",
-        null);
+      parent.die("Error: number of string property names is different from number of values.", null);
     }
 
     for (int i = 0; i < strPropNames.length; i++) {
@@ -679,6 +698,7 @@ public class Capture extends PImage implements PConstants {
     // capture device.
     getSuppResAndFpsList();
     
+    /*
     boolean suppRes = !(0 < suppResList.size()); // Default value is true if resolution list empty.
     for (int i = 0; i < suppResList.size(); i++) {
       int[] wh = (int[])suppResList.get(i);
@@ -713,12 +733,12 @@ public class Capture extends PImage implements PConstants {
         String str = (String)suppFpsList.get(i);
         System.err.println(str);
       }
-    }    
+    }  
+    */  
   }
   
   protected void getSuppResAndFpsList() {
-    suppResList = new ArrayList<int[]>();
-    suppFpsList = new ArrayList<String>();
+    resolutions = new ArrayList<Resolution>(); 
    
     for (Element src : gpipeline.getSources()) {
       for (Pad pad : src.getPads()) {
@@ -731,114 +751,88 @@ public class Capture extends PImage implements PConstants {
           if (!str.hasIntField("width") || !str.hasIntField("height")) continue;
           
           int w = ((Integer)str.getValue("width")).intValue();
-          int h = ((Integer)str.getValue("height")).intValue();
-          
-          boolean newRes = true;
-          // Making sure we didn't add this resolution already. 
-          // Different caps could have same resolution.
-          for (int j = 0; j < suppResList.size(); j++) {
-            int[] wh = (int[])suppResList.get(j);
-            if (w == wh[0] && h == wh[1]) {
-              newRes = false;
-              break;
-            }
-          }
-          if (newRes) {
-            suppResList.add(new int[] {w, h});
-          }          
+          int h = ((Integer)str.getValue("height")).intValue();          
           
           if (PApplet.platform == WINDOWS) {
             // In Windows the getValueList() method doesn't seem to
             // return a valid list of fraction values, so working on
-            // the string representation of the caps structure.
-            String str2 = str.toString();
-            
-            int n0 = str2.indexOf("framerate=(fraction)");
-            if (-1 < n0) {
-              String temp = str2.substring(n0 + 20, str2.length());
-              int n1 = temp.indexOf("[");
-              int n2 = temp.indexOf("]");
-              if (-1 < n1 && -1 < n2) {
-                // A list of fractions enclosed between '[' and ']'
-                temp = temp.substring(n1 + 1, n2);  
-                String[] fractions = temp.split(",");
-                for (int k = 0; k < fractions.length; k++) {
-                  addFpsStr(fractions[k].trim());
-                }
-              } else {
-                // A single fraction
-                int n3 = temp.indexOf(",");
-                int n4 = temp.indexOf(";");
-                if (-1 < n3 || -1 < n4) {
-                  int n5 = -1;
-                  if (n3 == -1) {
-                    n5 = n4;
-                  } else if (n4 == -1) {
-                    n5 = n3;
-                  } else {
-                    n5 = PApplet.min(n3, n4);
-                  }
-                  
-                  temp = temp.substring(0, n5);
-                  addFpsStr(temp.trim());
-                }
-              }
-            }
+            // the string representation of the caps structure.            
+            getFpsFromString(str.toString(), w, h);
+
           } else {
-            boolean singleFrac = false;
-            try {
-              Fraction fr = str.getFraction("framerate");
-              addFps(fr);
-              singleFrac = true;
-            } catch (Exception e) { 
-            }
-            
-            if (!singleFrac) {
-              ValueList flist = null;
-              
-              try {
-                flist = str.getValueList("framerate");
-              } catch (Exception e) { 
-              }
-              
-              if (flist != null) {
-                // All the framerates are put together, but this is not
-                // entirely accurate since there might be some of them'
-                // that work only for certain resolutions.
-                for (int k = 0; k < flist.getSize(); k++) {
-                  Fraction fr = flist.getFraction(k);
-                  addFps(fr);
-                }              
-              }
-            
-            }            
+            getFpsFromStructure(str, w, h);
           }          
         }
       }
     }
-  }
+  }  
   
-  protected void addFps(Fraction fr) {
-    int frn = fr.numerator;
-    int frd = fr.denominator;
-    addFpsStr(frn + "/" + frd);
-  }
-  
-  protected void addFpsStr(String frstr) {
-    boolean newFps = true;
-    for (int j = 0; j < suppFpsList.size(); j++) {
-      String frstr0 = (String)suppFpsList.get(j);
-      if (frstr.equals(frstr0)) {
-        newFps = false;
-        break;
-      }
+  protected void getFpsFromString(String str, int w, int h) {    
+    int n0 = str.indexOf("framerate=(fraction)");
+    if (-1 < n0) {
+      String temp = str.substring(n0 + 20, str.length());
+      int n1 = temp.indexOf("[");
+      int n2 = temp.indexOf("]");
+      if (-1 < n1 && -1 < n2) {
+        // A list of fractions enclosed between '[' and ']'
+        temp = temp.substring(n1 + 1, n2);  
+        String[] fractions = temp.split(",");
+        for (int k = 0; k < fractions.length; k++) {
+          String fpsStr = fractions[k].trim(); 
+          resolutions.add(new Resolution(w, h, fpsStr));
+        }
+      } else {
+        // A single fraction
+        int n3 = temp.indexOf(",");
+        int n4 = temp.indexOf(";");
+        if (-1 < n3 || -1 < n4) {
+          int n5 = -1;
+          if (n3 == -1) {
+            n5 = n4;
+          } else if (n4 == -1) {
+            n5 = n3;
+          } else {
+            n5 = PApplet.min(n3, n4);
+          }
+          
+          temp = temp.substring(0, n5);
+          String fpsStr = temp.trim();                  
+          resolutions.add(new Resolution(w, h, fpsStr));
+        }
+      }    
     }
-    if (newFps) {
-      suppFpsList.add(frstr);
-    }      
+  }
+  
+  protected void getFpsFromStructure(Structure str, int w, int h) {
+    boolean singleFrac = false;
+    try {
+      Fraction fr = str.getFraction("framerate");
+      resolutions.add(new Resolution(w, h, fr.numerator, fr.denominator));              
+      singleFrac = true;
+    } catch (Exception e) { 
+    }
+    
+    if (!singleFrac) {
+      ValueList flist = null;
+      
+      try {
+        flist = str.getValueList("framerate");
+      } catch (Exception e) { 
+      }
+      
+      if (flist != null) {
+        // All the framerates are put together, but this is not
+        // entirely accurate since there might be some of them'
+        // that work only for certain resolutions.
+        for (int k = 0; k < flist.getSize(); k++) {
+          Fraction fr = flist.getFraction(k);
+          resolutions.add(new Resolution(w, h, fr.numerator, fr.denominator));
+        }              
+      }            
+    }    
   }
   
   public synchronized void disposeBuffer(Object buf) {
     ((Buffer)buf).dispose();
-  }   
+  }
 }

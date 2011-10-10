@@ -76,7 +76,6 @@ public class Video implements PConstants {
   
   public static void init() {
     if (INSTANCES_COUNT == 0) {
-      PApplet.println("Video library version: " + VERSION_STRING);
       initImpl();
     }
     INSTANCES_COUNT++;
