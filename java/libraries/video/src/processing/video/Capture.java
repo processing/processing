@@ -124,7 +124,7 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * <h3>Advanced</h3>
-   * Constructor that takes resolution and framerate indicated as a single number.
+   * Constructor that takes resolution and framerate.
    * 
    * @param frameRate number of frames to read per second
    */  
@@ -135,8 +135,7 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * <h3>Advanced</h3>
-   * This constructor allows to specify the camera name. In Linux, for example, this
-   * should be a string of the form /dev/video0, /dev/video1, etc.
+   * This constructor allows to specify resolution and camera name.
    * 
    * @param cameraName name of the camera
    */   
@@ -154,7 +153,7 @@ public class Capture extends PImage implements PConstants {
 
   /**
    * <h3>Advanced</h3>
-   * This constructor allows to specify the camera name and the desired framerate.
+   * This constructor allows to specify the camera name and the desired framerate, in addition to the resolution.
    */     
   public Capture(PApplet parent, int requestWidth, int requestHeight, String cameraName, int frameRate) {
     super(requestWidth, requestHeight, RGB);
@@ -234,7 +233,7 @@ public class Capture extends PImage implements PConstants {
   }   
     
   /**
-   * Returns true if the stream is already producing frames.
+   * Returns true if the capture device is already producing frames.
    * 
    * @return boolean
    */  
@@ -279,7 +278,7 @@ public class Capture extends PImage implements PConstants {
   }
   
   /**
-   * Starts the capture pipeline.
+   * Starts capturing frames from the selected device.
    */
   public void start() {
     boolean init = false;
@@ -380,6 +379,7 @@ public class Capture extends PImage implements PConstants {
   }
   
   /**
+   * <h3>Advanced</h3>
    * Returns the name of the source element used for capture.
    * 
    * @return String 
@@ -463,6 +463,7 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
+   * <h3>Advanced</h3>
    * Returns a list with the resolutions supported by the capture device,
    * including width, height and frame rate.
    * 
@@ -485,6 +486,7 @@ public class Capture extends PImage implements PConstants {
   }  
   
   /**
+   * <h3>Advanced</h3>
    * Prints all the gstreamer elements currently used in the
    * current pipeline instance.
    * 
