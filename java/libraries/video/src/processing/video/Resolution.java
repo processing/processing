@@ -50,6 +50,6 @@ public class Resolution {
   }  
   
   public String toString() {
-    return width + "x" + height + ", " + PApplet.nfc(fps, 2) + "fps (" + fpsString +")";    
+    return width + "x" + height + ", " + PApplet.nfc(fps, 2) + " fps (" + fpsString +")";    
   }
 }
