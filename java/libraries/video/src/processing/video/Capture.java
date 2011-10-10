@@ -473,11 +473,18 @@ public class Capture extends PImage implements PConstants {
    * @return Resolution[]
    */  
   public Resolution[] resolutions() {
-    int n = resolutions.size();
-    Resolution[] res = new Resolution[n];
-    for (int i = 0; i < n; i++) {
-      res[i] = new Resolution((Resolution)resolutions.get(i));
+    Resolution[] res;
+    
+    if (resolutions == null) {
+      res = new Resolution[0];
+    } else {
+      int n = resolutions.size();
+      res = new Resolution[n];
+      for (int i = 0; i < n; i++) {
+        res[i] = new Resolution((Resolution)resolutions.get(i));
+      }
     }
+    
     return res;        
   }
   
