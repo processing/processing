@@ -11,44 +11,30 @@ Capture cam;
 void setup() {
   size(640, 480);
 
-  /*
-  // List functionality hasn't been tested on Mac OSX. Uncomment this 
-  // code to try it out.
   String[] cameras = Capture.list();
   
-  if (cameras.length == 0)
-  {
+  if (cameras.length == 0) {
     println("There are no cameras available for capture.");
     exit();
   } else {
     println("Available cameras:");
-    for (int i = 0; i < cameras.length; i++)
+    for (int i = 0; i < cameras.length; i++) {
       println(cameras[i]);
+    }
     cam = new Capture(this, 320, 240, cameras[0]);
-  }
-  */
-  cam = new Capture(this, 640, 480);
-  cam.start();
+    cam.start();
+  }    
   
-  /*
-  // You can get the resolutions supported by the
-  // capture device using the resolutions() method.
-  // It must be called after creating the capture 
+  // You can get the list of resolutions (width x height x fps)  
+  // supported capture device by calling the resolutions()
+  // method. It must be called after creating the capture 
   // object. 
-  int[][] res = cam.resolutions();
-  for (int i = 0; i < res.length; i++) {
-    println(res[i][0] + "x" + res[i][1]);
-  } 
-  */
-  
-  /*
-  // You can also get the framerates supported by the
-  // capture device:
-  String[] fps = cam.framerates();
-  for (int i = 0; i < fps.length; i++) {
-    println(fps[i]);
-  } 
-  */  
+  Resolution[] res = cam.resolutions();
+  println("Supported resolutions:");
+  for (int i = 0; i < res.length; i++) { 
+    println(res[i].width + "x" + res[i].height + ", " + 
+            res[i].fps + " (" + res[i].fpsString +")");  
+  }    
 }
 
 void draw() {
