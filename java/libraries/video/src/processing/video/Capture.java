@@ -119,9 +119,7 @@ public class Capture extends PImage implements PConstants {
    */
   public Capture(PApplet parent, int requestWidth, int requestHeight) {
     super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
-                  new String[] {}, new int[] {},
-                  new String[] {}, new String[] {}, "");
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, null, "");
   }
 
   /**
@@ -132,9 +130,7 @@ public class Capture extends PImage implements PConstants {
    */  
   public Capture(PApplet parent, int requestWidth, int requestHeight, int frameRate) {
     super(requestWidth, requestHeight, RGB);
-    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
-                  new String[] {}, new int[] {},
-                  new String[] {}, new String[] {}, frameRate + "/1");
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, null, frameRate + "/1");
   }
 
   /**
@@ -146,16 +142,14 @@ public class Capture extends PImage implements PConstants {
    */   
   public Capture(PApplet parent, int requestWidth, int requestHeight, String cameraName) {
     super(requestWidth, requestHeight, RGB);
+    HashMap<String, Object> properties = new HashMap<String, Object>();
     if (devicePropertyName.equals("")) {
       // For plugins without device name property, the name is casted as an index
-      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
-                    new String[] { indexPropertyName }, new int[] { PApplet.parseInt(cameraName) },
-                    new String[] { }, new String[] { }, "");          
+      properties.put(indexPropertyName, PApplet.parseInt(cameraName));
     } else {
-      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
-                    new String[] {}, new int[] {},
-                    new String[] { devicePropertyName }, new String[] { cameraName }, "");
+      properties.put(devicePropertyName, cameraName);
     }
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, properties, "");
   }
 
   /**
@@ -164,45 +158,24 @@ public class Capture extends PImage implements PConstants {
    */     
   public Capture(PApplet parent, int requestWidth, int requestHeight, String cameraName, int frameRate) {
     super(requestWidth, requestHeight, RGB);
+    HashMap<String, Object> properties = new HashMap<String, Object>();
     if (devicePropertyName.equals("")) {
       // For plugins without device name property, the name is casted as an index
-      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, 
-                    new String[] { indexPropertyName }, new int[] { PApplet.parseInt(cameraName) },
-                    new String[] { }, new String[] { }, frameRate + "/1");          
+      properties.put(indexPropertyName, PApplet.parseInt(cameraName));
     } else {
-      initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
-          new String[] { devicePropertyName }, new String[] { cameraName }, frameRate + "/1");
+      properties.put(devicePropertyName, cameraName);
     }
+    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, properties, frameRate + "/1");
   }  
   
   /**
    * <h3>Advanced</h3>
-   * This constructor allows to specify the camera name and the desired framerate.
+   * This constructor allows to specify the source element, properties and desired framerate (in fraction form).
    */       
   public Capture(PApplet parent, int requestWidth, int requestHeight, String sourceName, 
                  HashMap<String, Object> properties, String frameRate) {
     super(requestWidth, requestHeight, RGB);
-    
-   // ArrayList<String> 
-    
-    Iterator<String> it = properties.keySet().iterator();    
-    while (it.hasNext()) {
-      String key = (String) it.next();
-      Object prop = properties.get(key);
-      if (prop instanceof String) {
-           
-      } else if (prop instanceof Integer) {
-        
-      } else if (prop instanceof Float) {
-        
-      }      
-    }
-    
-    /*
-    initGStreamer(parent, requestWidth, requestHeight, capturePlugin, new String[] {}, new int[] {},
-        new String[] { devicePropertyName }, new String[] { cameraName }, frameRate + "/1");
-    */
-    
+    initGStreamer(parent, requestWidth, requestHeight, sourceName, properties, frameRate);    
   }
   
   /**
@@ -622,8 +595,7 @@ public class Capture extends PImage implements PConstants {
     
   // The main initialization here.
   protected void initGStreamer(PApplet parent, int requestWidth, int requestHeight, String sourceName,
-                               String[] intPropNames, int[] intPropValues, 
-                               String[] strPropNames, String[] strPropValues, String frameRate) {
+                               HashMap<String, Object> properties, String frameRate) {
     this.parent = parent;
 
     Video.init();
@@ -642,22 +614,15 @@ public class Capture extends PImage implements PConstants {
     reqHeight = requestHeight;    
     
     gsource = ElementFactory.make(sourceName, "Source");
-
-    if (intPropNames.length != intPropValues.length) {
-      parent.die("Error: number of integer property names is different from number of values.", null);
+    
+    if (properties != null) {
+      Iterator<String> it = properties.keySet().iterator();    
+      while (it.hasNext()) {
+        String name = (String) it.next();
+        Object value = properties.get(name);
+        gsource.set(name, value);
+      }    
     }
-
-    for (int i = 0; i < intPropNames.length; i++) {
-      gsource.set(intPropNames[i], intPropValues[i]);
-    }
-
-    if (strPropNames.length != strPropValues.length) {
-      parent.die("Error: number of string property names is different from number of values.", null);
-    }
-
-    for (int i = 0; i < strPropNames.length; i++) {
-      gsource.set(strPropNames[i], strPropValues[i]);
-    }    
     
     bufWidth = bufHeight = 0;
     pipelineReady = false;    
