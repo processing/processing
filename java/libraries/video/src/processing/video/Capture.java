@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.io.File;
 import java.lang.reflect.*;
 
 import org.gstreamer.*;
@@ -503,7 +504,35 @@ public class Capture extends PImage implements PConstants {
    * @param sourceName String
    */
   static public String[] list(String sourceName) {
-    return list(sourceName, devicePropertyName);
+    String[] res;
+    try {
+      res = list(sourceName, devicePropertyName);
+    } catch (IllegalArgumentException e) {      
+      if (PApplet.platform == LINUX) {
+        // Linux hack to detect currently connected cameras
+        // by looking for device files named /dev/video0, 
+        // /dev/video1, etc.
+        ArrayList<String> devices = new ArrayList<String>();
+        String dir = "/dev";
+        File libPath = new File(dir);
+        String[] files = libPath.list();
+        if (files != null) {
+          for (int i = 0; i < files.length; i++) {
+            if (-1 < files[i].indexOf("video")) {
+              devices.add("/dev/" + files[i]);
+            }
+          }
+        }
+        res = new String[devices.size()];
+        for (int i = 0; i < res.length; i++) {
+          res[i] = (String)devices.get(i);
+        }
+      } else {      
+        System.err.println("The capture plugin doesn't support device query!");
+        res = new String[0];
+      }
+    }
+    return res;
   }
   
   static protected String[] list(String sourceName, String propertyName) {
