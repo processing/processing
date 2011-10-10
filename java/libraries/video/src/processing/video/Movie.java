@@ -147,63 +147,6 @@ public class Movie extends PImage implements PConstants {
   }   
   
   /**
-   * Prints all the gstreamer elements currently used in the
-   * current player instance.
-   * 
-   */    
-  public void printElements() {
-    List<Element> list = gplayer.getElementsRecursive();
-    PApplet.println(list);
-    for (Element element : list) {
-      PApplet.println(element.toString());
-    }   
-  }
-  
-  /**
-   * Sets the object to use as destination for the frames read from the stream.
-   * The color conversion mask is automatically set to the one required to
-   * copy the frames to OpenGL.
-   * 
-   * @param Object dest
-   */  
-  public void setPixelDest(Object dest) {
-    copyHandler = dest;      
-    if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-      copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";        
-    } else {
-      copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
-    }   
-  }  
-  
-  /**
-   * Sets the object to use as destination for the frames read from the stream.
-   * 
-   * @param Object dest
-   * @param String mask 
-   */    
-  public void setPixelDest(Object dest, String mask) {
-    copyHandler = dest;
-    copyMask = mask;
-  }  
-  
-  /**
-   * Uses a generic object as handler of the movie. This object should have a
-   * movieEvent method that receives a GSMovie argument. This method will
-   * be called upon a new frame read event. 
-   * 
-   */
-  public void setEventHandlerObject(Object obj) {
-    eventHandler = obj;
-
-    try {
-      movieEventMethod = eventHandler.getClass().getMethod("movieEvent",
-          new Class[] { Movie.class });
-    } catch (Exception e) {
-      // no such method, or an error.. which is fine, just ignore
-    }
-  }
-
-  /**
    * Get the width of the source video. Note: calling this method repeatedly
    * can slow down playback performance.
    * 
@@ -700,6 +643,63 @@ public class Movie extends PImage implements PConstants {
     return filename;
   }
   
+  /**
+   * Prints all the gstreamer elements currently used in the
+   * current player instance.
+   * 
+   */    
+  public void printElements() {
+    List<Element> list = gplayer.getElementsRecursive();
+    PApplet.println(list);
+    for (Element element : list) {
+      PApplet.println(element.toString());
+    }   
+  }
+  
+  /**
+   * Sets the object to use as destination for the frames read from the stream.
+   * The color conversion mask is automatically set to the one required to
+   * copy the frames to OpenGL.
+   * 
+   * @param Object dest
+   */  
+  public void setPixelDest(Object dest) {
+    copyHandler = dest;      
+    if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
+      copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";        
+    } else {
+      copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
+    }   
+  }  
+  
+  /**
+   * Sets the object to use as destination for the frames read from the stream.
+   * 
+   * @param Object dest
+   * @param String mask 
+   */    
+  public void setPixelDest(Object dest, String mask) {
+    copyHandler = dest;
+    copyMask = mask;
+  }  
+  
+  /**
+   * Uses a generic object as handler of the movie. This object should have a
+   * movieEvent method that receives a GSMovie argument. This method will
+   * be called upon a new frame read event. 
+   * 
+   */
+  public void setEventHandlerObject(Object obj) {
+    eventHandler = obj;
+
+    try {
+      movieEventMethod = eventHandler.getClass().getMethod("movieEvent",
+          new Class[] { Movie.class });
+    } catch (Exception e) {
+      // no such method, or an error.. which is fine, just ignore
+    }
+  }
+    
   protected void initGStreamer(PApplet parent, String filename) {
     this.parent = parent;
     gplayer = null;
