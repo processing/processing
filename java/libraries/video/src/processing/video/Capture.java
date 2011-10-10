@@ -56,22 +56,9 @@ public class Capture extends PImage implements PConstants {
   // Default gstreamer capture plugin for each platform, and property names.
   static {
     if (PApplet.platform == MACOSX) {
-      if (Video.bitsJVM == 32) {
-        capturePlugin = "osxvideosrc";
-        // osxvideosrc has "device-name" and "device" properties, which both take a string
-        // value. The first should be the human-readable name of the video device (i.e.:
-        // "Display iSight") but it appears as only readable. The second can be written with
-        // the sequence grabber input device in format "sgname:input#", for example:
-        // "USB Video Class Video:0"
-        devicePropertyName = "device";
-        // osxvideosrc doesn't have an index property. 
-        indexPropertyName = "";
-      } else if (Video.bitsJVM == 64) {
-        capturePlugin = "qtkitvideosrc";
-        // qtkitvideosrc doesn't have a property to set the device name
-        devicePropertyName = "";         
-        indexPropertyName = "device-index";
-      }
+      capturePlugin = "qtkitvideosrc";
+      devicePropertyName = "device-name"; 
+      indexPropertyName = "device-index";
     } else if (PApplet.platform == WINDOWS) {
       capturePlugin = "ksvideosrc";
       devicePropertyName = "device-name";
@@ -79,8 +66,8 @@ public class Capture extends PImage implements PConstants {
     } else if (PApplet.platform == LINUX) {
       capturePlugin = "v4l2src";
       // The "device" property in v4l2src expects the device location (/dev/video0, etc). 
-      // v4l2src has "device-name", which requires the human-readable name, but how to obtain
-      // in linux?.
+      // v4l2src has "device-name", which requires the human-readable name... but how 
+      // to query in linux?.
       devicePropertyName = "device";
       indexPropertyName = "device-fd";
     } else {}
@@ -469,7 +456,7 @@ public class Capture extends PImage implements PConstants {
    * @webref capture
    * @usage web_application
    */  
-  static public String[] list() {
+  static public String[] list() {    
     return list(capturePlugin);
   }
 
