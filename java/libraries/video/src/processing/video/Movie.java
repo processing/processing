@@ -67,6 +67,7 @@ public class Movie extends PImage implements PConstants {
   
   protected boolean available;  
   protected boolean sinkReady;
+  protected boolean newFrame;
   
   protected RGBDataAppSink rgbSink = null;
   protected int[] copyPixels = null;
@@ -439,6 +440,19 @@ public class Movie extends PImage implements PConstants {
   }
   
   /**
+   * Returns true if its called for the first time after a new
+   * frame has been read, and false afterwards until another frame
+   * is read.
+   * 
+   * @return boolean
+   */   
+  public boolean newFrame() {
+    boolean res = newFrame;
+    newFrame = false;
+    return res;
+  }  
+  
+  /**
    * ( begin auto-generated from Movie_available.xml )
    * 
    * Returns "true" when a new movie frame is available to read.
@@ -649,6 +663,7 @@ public class Movie extends PImage implements PConstants {
     }
     
     available = false;
+    newFrame = true;
   }
 
   /**
@@ -829,6 +844,7 @@ public class Movie extends PImage implements PConstants {
     });
     
     sinkReady = true;
+    newFrame = false;
   }
   
   protected synchronized void invokeEvent(int w, int h, IntBuffer buffer) {
