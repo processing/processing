@@ -33,7 +33,7 @@ void setup() {
     println("Supported resolutions:");
     for (int i = 0; i < res.length; i++) { 
       println(res[i].width + "x" + res[i].height + ", " + 
-              res[i].fps + "fps (" + res[i].fpsString +")");  
+              res[i].fps + " fps (" + res[i].fpsString +")");  
     }        
   }      
 }
