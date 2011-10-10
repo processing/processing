@@ -48,4 +48,8 @@ public class Resolution {
     this.fps = source.fps;
     this.fpsString = source.fpsString;
   }  
+  
+  public String toString() {
+    return width + "x" + height + ", " + PApplet.nfc(fps, 2) + " (" + fpsString +")";    
+  }
 }

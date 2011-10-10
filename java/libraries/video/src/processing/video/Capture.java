@@ -205,9 +205,6 @@ public class Capture extends PImage implements PConstants {
     
   }
   
-  
-  
-  
   /**
    * Releases the gstreamer resources associated to this capture object.
    * It shouldn't be used after this.
@@ -262,64 +259,7 @@ public class Capture extends PImage implements PConstants {
       super.finalize();
     }
   }   
-  
-  /**
-   * Prints all the gstreamer elements currently used in the
-   * current pipeline instance.
-   * 
-   */    
-  public void printElements() {
-    List<Element> list = gpipeline.getElementsRecursive();
-    PApplet.println(list);
-    for (Element element : list) {
-      PApplet.println(element.toString());
-    }   
-  }  
-  
-  /**
-   * Sets the object to use as destination for the frames read from the stream.
-   * The color conversion mask is automatically set to the one required to
-   * copy the frames to OpenGL.
-   * 
-   * @param Object dest
-   */  
-  public void setPixelDest(Object dest) {
-    copyHandler = dest;      
-    if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-      copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";        
-    } else {
-      copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
-    }   
-  }  
-  
-  /**
-   * Sets the object to use as destination for the frames read from the stream.
-   * 
-   * @param Object dest
-   * @param String mask 
-   */    
-  public void setPixelDest(Object dest, String mask) {
-    copyHandler = dest;
-    copyMask = mask;
-  }     
-  
-  /**
-   * Uses a generic object as handler of the movie. This object should have a
-   * movieEvent method that receives a GSMovie argument. This method will
-   * be called upon a new frame read event. 
-   * 
-   */
-  public void setEventHandlerObject(Object obj) {
-    eventHandler = obj;
-
-    try {
-      captureEventMethod = parent.getClass().getMethod("captureEvent",
-          new Class[] { Capture.class });
-    } catch (Exception e) {
-      // no such method, or an error.. which is fine, just ignore
-    }
-  }
-  
+    
   /**
    * Returns true if the stream is already producing frames.
    * 
@@ -343,6 +283,15 @@ public class Capture extends PImage implements PConstants {
   }
   
   /**
+   * Returns whether the device is capturing frames or not.
+   * 
+   * @return boolean
+   */
+  public boolean isCapturing() {
+    return capturing;  
+  }  
+  
+  /**
    * ( begin auto-generated from Capture_available.xml )
    * 
    * Returns "true" when a new video frame is available to read.
@@ -355,16 +304,6 @@ public class Capture extends PImage implements PConstants {
   public boolean available() {
     return available;
   }
-
-  /**
-   * Returns whether the device is capturing frames or not.
-   * 
-   * @return boolean
-   */
-  public boolean isCapturing() {
-    return capturing;  
-  }
-
   
   /**
    * Starts the capture pipeline.
@@ -382,7 +321,8 @@ public class Capture extends PImage implements PConstants {
     if (init) {
       // Resolution and FPS initialization needs to be done after the
       // pipeline is set to play.
-      initResAndFps();
+      getResolutions();
+      checkResolutions();
     }
   }
 
@@ -467,26 +407,13 @@ public class Capture extends PImage implements PConstants {
   }
   
   /**
-   * Returns a list with the resolutions supported by the capture device,
-   * including width, height and frame rate.
+   * Returns the name of the source element used for capture.
    * 
-   * @return Resolution[]
-   */  
-  public Resolution[] resolutions() {
-    Resolution[] res;
-    
-    if (resolutions == null) {
-      res = new Resolution[0];
-    } else {
-      int n = resolutions.size();
-      res = new Resolution[n];
-      for (int i = 0; i < n; i++) {
-        res[i] = new Resolution((Resolution)resolutions.get(i));
-      }
-    }
-    
-    return res;        
-  }
+   * @return String 
+   */
+  public String getSource() {
+    return source;
+  }   
   
   /**
    * ( begin auto-generated from Capture_list.xml )
@@ -563,6 +490,85 @@ public class Capture extends PImage implements PConstants {
   }
 
   /**
+   * Returns a list with the resolutions supported by the capture device,
+   * including width, height and frame rate.
+   * 
+   * @return Resolution[]
+   */  
+  public Resolution[] resolutions() {
+    Resolution[] res;
+    
+    if (resolutions == null) {
+      res = new Resolution[0];
+    } else {
+      int n = resolutions.size();
+      res = new Resolution[n];
+      for (int i = 0; i < n; i++) {
+        res[i] = new Resolution((Resolution)resolutions.get(i));
+      }
+    }
+    
+    return res;        
+  }  
+  
+  /**
+   * Prints all the gstreamer elements currently used in the
+   * current pipeline instance.
+   * 
+   */    
+  public void printElements() {
+    List<Element> list = gpipeline.getElementsRecursive();
+    PApplet.println(list);
+    for (Element element : list) {
+      PApplet.println(element.toString());
+    }   
+  }  
+  
+  /**
+   * Sets the object to use as destination for the frames read from the stream.
+   * The color conversion mask is automatically set to the one required to
+   * copy the frames to OpenGL.
+   * 
+   * @param Object dest
+   */  
+  public void setPixelDest(Object dest) {
+    copyHandler = dest;      
+    if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
+      copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";        
+    } else {
+      copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
+    }   
+  }  
+  
+  /**
+   * Sets the object to use as destination for the frames read from the stream.
+   * 
+   * @param Object dest
+   * @param String mask 
+   */    
+  public void setPixelDest(Object dest, String mask) {
+    copyHandler = dest;
+    copyMask = mask;
+  }     
+  
+  /**
+   * Uses a generic object as handler of the movie. This object should have a
+   * movieEvent method that receives a GSMovie argument. This method will
+   * be called upon a new frame read event. 
+   * 
+   */
+  public void setEventHandlerObject(Object obj) {
+    eventHandler = obj;
+
+    try {
+      captureEventMethod = parent.getClass().getMethod("captureEvent",
+          new Class[] { Capture.class });
+    } catch (Exception e) {
+      // no such method, or an error.. which is fine, just ignore
+    }
+  }
+    
+  /**
    * invokeEvent() and read() are synchronized so that they can not be
    * called simultaneously. when they were not synchronized, this caused
    * the infamous problematic frame crash.
@@ -613,15 +619,6 @@ public class Capture extends PImage implements PConstants {
       }
     }
   }  
-
-  /**
-   * Returns the name of the source element used for capture.
-   * 
-   * @return String 
-   */
-  public String getSource() {
-    return source;
-  }    
     
   // The main initialization here.
   protected void initGStreamer(PApplet parent, int requestWidth, int requestHeight, String sourceName,
@@ -743,52 +740,32 @@ public class Capture extends PImage implements PConstants {
     newFrame = false;
   }
   
-  protected void initResAndFps() {
-    // The pipeline needs to be in playing state to be able to
-    // report the supported resolutions and framerates of the 
-    // capture device.
-    getSuppResAndFpsList();
-    
-    /*
-    boolean suppRes = !(0 < suppResList.size()); // Default value is true if resolution list empty.
-    for (int i = 0; i < suppResList.size(); i++) {
-      int[] wh = (int[])suppResList.get(i);
-      if (reqWidth == wh[0] && reqHeight == wh[1]) {
+  protected void checkResolutions() {
+    boolean suppRes = false;
+    for (int i = 0; i < resolutions.size(); i++) {
+      Resolution res = (Resolution) resolutions.get(i);
+      if (reqWidth == res.width && reqHeight == res.height && 
+          fps.equals("") || fps.equals(res.fpsString)) {
         suppRes = true;
         break;
       }
     }
     
     if (!suppRes) {
-      System.err.println("The requested resolution of " + reqWidth + "x" + reqHeight + " is not supported by the capture device.");
+      String fpsStr = "";
+      if (!fps.equals("")) {
+        fpsStr = ", " + fps + "fps";
+      }      
+      System.err.println("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + " is not supported by selected the capture device.");
       System.err.println("Use one of the following resolutions instead:");
-      for (int i = 0; i < suppResList.size(); i++) {
-        int[] wh = (int[])suppResList.get(i);
-        System.err.println(wh[0] + "x" + wh[1]);
+      for (int i = 0; i < resolutions.size(); i++) {
+        Resolution res = (Resolution) resolutions.get(i);
+        System.err.println(res.toString());
       }
-    }
-    
-    boolean suppFps = !(0 < suppFpsList.size()); // Default value is true if fps list empty.
-    for (int i = 0; i < suppFpsList.size(); i++) {
-      String str = (String)suppFpsList.get(i);
-      if (fps.equals("") || fps.equals(str)) {
-        suppFps = true;
-        break;
-      }
-    }
-    
-    if (!suppFps) {
-      System.err.println("The requested framerate of " + fps + " is not supported by the capture device.");
-      System.err.println("Use one of the following framerates instead:");
-      for (int i = 0; i < suppFpsList.size(); i++) {
-        String str = (String)suppFpsList.get(i);
-        System.err.println(str);
-      }
-    }  
-    */  
+    }     
   }
   
-  protected void getSuppResAndFpsList() {
+  protected void getResolutions() {
     resolutions = new ArrayList<Resolution>(); 
    
     for (Element src : gpipeline.getSources()) {
