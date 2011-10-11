@@ -69,7 +69,6 @@ public class LibraryLoader {
       { "libiconv-2", new String[] {}, false },
       { "libintl-8", new String[] {}, false },
       { "libjpeg-8", new String[] {}, false },
-      { "libmp3lame-0", new String[] {}, false },
       { "libogg-0", new String[] {}, false },
       { "liborc-0.4-0", new String[] {}, false },
       { "liborc-test-0.4-0", new String[] {}, false },
@@ -80,7 +79,6 @@ public class LibraryLoader {
       { "libvorbis-0", new String[] {}, false },
       { "libvorbisenc-2", new String[] {}, false },
       { "libvorbisfile-3", new String[] {}, false },
-      { "libwavpack-1", new String[] {}, false },
       { "libxml2-2", new String[] {}, false },
       { "zlib1", new String[] {}, false } };
   
