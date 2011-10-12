@@ -162,9 +162,12 @@ public class ContributionListPanel extends JPanel implements Scrollable, Contrib
           ContributionPanel panel = panelByContribution.get(contribution);
           if (panel != null) {
             remove(panel);
+            panelByContribution.remove(contribution);
           }
         }
         
+        updatePanelOrdering();
+        updateColors();
         updateUI();
       }
     });
