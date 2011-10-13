@@ -37,6 +37,8 @@ public class ToolContribution extends InstalledContribution implements Tool {
   URLClassLoader loader;
 
   Tool tool;
+  
+  static String propertiesFileName = "tool.properties";
 
   static public ToolContribution getTool(File folder) {
     ToolContribution tool = new ToolContribution(folder);
@@ -47,7 +49,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
   }
 
   private ToolContribution(File folder) {
-    super(folder, "tool.properties");
+    super(folder, ToolContribution.propertiesFileName);
 
     File toolDirectory = new File(folder, "tool");
     // add dir to classpath for .classes

@@ -116,7 +116,7 @@ public class Base {
 
   private Mode defaultMode;
   private Mode[] coreModes;
-  private List<ModeContribution> contribModes;
+  List<ModeContribution> contribModes;
 
   private JMenu sketchbookMenu;
 
@@ -341,7 +341,7 @@ public class Base {
       contribModes = new ArrayList<ModeContribution>();
 
     ArrayList<ModeContribution> newContribs = ModeContribution
-        .list(this, getSketchbookModesFolder(), false);
+        .list(this, getSketchbookModesFolder());
     for (ModeContribution contrib : newContribs) {
       if (!contribModes.contains(contrib)) {
         if (contrib.instantiateModeClass()) {
@@ -358,7 +358,7 @@ public class Base {
     // Delete all modes and tools that have been flagged for deletion before
     // they are initialized by an editor.
     ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
-    contribs.addAll(ModeContribution.list(this, getSketchbookModesFolder(), false));
+    contribs.addAll(ModeContribution.list(this, getSketchbookModesFolder()));
     contribs.addAll(ToolContribution.list(getSketchbookToolsFolder(), false));
     for (InstalledContribution contrib : contribs) {
       if (ContributionManager.isFlaggedForDeletion(contrib)) {
@@ -1608,14 +1608,6 @@ public class Base {
 
   public void handleShowUpdates() {
     updateManagerFrame.showFrame(activeEditor);
-  }
-
-  /**
-   * Installed the libraries in the given file after a confirmation from the
-   * user. Returns the number of libraries installed.
-   */
-  public boolean handleConfirmAndInstallLibrary(File libFile) {
-    return ContributionManager.confirmAndInstallLibrary(activeEditor, libFile, null) != null;
   }
 
   // ...................................................................

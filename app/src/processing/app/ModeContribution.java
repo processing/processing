@@ -43,6 +43,8 @@ public class ModeContribution extends InstalledContribution {
   
   Mode mode;
   
+  static String propertiesFileName = "mode.properties";
+  
   static public Mode getCoreMode(Base base, String classname, File folder) {
     try {
       Class c = Class.forName(classname);
@@ -64,7 +66,7 @@ public class ModeContribution extends InstalledContribution {
   }
   
   private ModeContribution(Base base, File folder) {
-    super(folder, "mode.properties");
+    super(folder, ModeContribution.propertiesFileName);
     
     this.base = base;
     
@@ -135,18 +137,26 @@ public class ModeContribution extends InstalledContribution {
     return loader.equals(other.loader) && className.equals(other.className);
   }
   
-  static protected ArrayList<ModeContribution> list(Base base, File folder,
-                                                    boolean instantiateMode) {
+  static protected ArrayList<ModeContribution> list(Base base, File folder) {
     ArrayList<ModeContribution> modes = new ArrayList<ModeContribution>();
-    list(base, folder, modes, instantiateMode);
+    ArrayList<File> modeFolders = discover(folder);
+    
+    for (File potentialModeFolder : modeFolders) {
+      ModeContribution contrib = getContributedMode(base, potentialModeFolder);
+      if (contrib != null) {
+        modes.add(contrib);
+      }
+    }
     return modes;
   }
-
-  static protected void list(Base base, File folder,
-                             ArrayList<ModeContribution> modes,
-                             boolean instantiateModeClass) {
-    if (!folder.isDirectory())
-      return;
+  
+  static protected ArrayList<File> discover(File folder) {
+    ArrayList<File> modeFolders = new ArrayList<File>();
+    discover(folder, modeFolders);
+    return modeFolders;
+  }
+  
+  static protected void discover(File folder, ArrayList<File> modeFolders) {
   
     File[] folders = folder.listFiles(new FileFilter() {
       public boolean accept(File potentialModeFolder) {
@@ -160,14 +170,7 @@ public class ModeContribution extends InstalledContribution {
     }
     
     for (File potentialModeFolder : folders) {
-      ModeContribution contrib = getContributedMode(base, potentialModeFolder);
-      if (contrib != null) {
-        if (!instantiateModeClass
-            || (instantiateModeClass && contrib.instantiateModeClass())) {
-          modes.add(contrib);
-        }
-
-      }
+      modeFolders.add(potentialModeFolder);
     }
   }
 
