@@ -1660,43 +1660,6 @@ public class Base {
     return nativeBits;
   }
 
-  static public String getPlatformVersionName() {
-    String version = System.getProperty("os.version");
-
-    if (version != null) {
-
-      if (Base.isMacOS()) {
-        if (version.startsWith("10.0"))
-          return "cheetah";
-        if (version.startsWith("10.1"))
-          return "puma";
-        if (version.startsWith("10.2"))
-          return "jaguar";
-        if (version.startsWith("10.3"))
-          return "panther";
-        if (version.startsWith("10.4"))
-          return "tiger";
-        if (version.startsWith("10.5"))
-          return "leopard";
-        if (version.startsWith("10.6"))
-          return "snowleopard";
-        if (version.startsWith("10.7"))
-          return "lion";
-      }
-
-      if (Base.isWindows()) {
-        if (version.startsWith("6.0"))
-          return "vista";
-
-        // yes, windows 7 is really windows 6.1
-        if (version.startsWith("6.1"))
-          return "7";
-      }
-    }
-
-    return "";
-  }
-
   /*
   static public String getPlatformName() {
     String osname = System.getProperty("os.name");
