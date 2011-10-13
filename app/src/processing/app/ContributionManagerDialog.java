@@ -405,6 +405,7 @@ public class ContributionManagerDialog {
         setFont(getFont().deriveFont(Font.ITALIC));
       } else {
         setForeground(UIManager.getColor("TextField.foreground"));
+        setFont(getFont().deriveFont(Font.PLAIN));
       }
     }
   }
