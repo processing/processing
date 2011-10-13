@@ -344,6 +344,10 @@ public class ContributionManager {
       }
     }
     
+    if (newToolDest.exists()) {
+      newToolDest.delete();
+    }
+    
     // Move newTool to the sketchbook library folder
     if (newTool.getFolder().renameTo(newToolDest)) {
       ToolContribution movedTool = ToolContribution.getTool(newToolDest);
@@ -494,6 +498,10 @@ public class ContributionManager {
           }
         }
       }
+    }
+    
+    if (newLibDest.exists()) {
+      newLibDest.delete();
     }
     
     // Move newLib to the sketchbook library folder
