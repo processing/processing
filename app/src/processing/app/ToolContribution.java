@@ -158,13 +158,32 @@ public class ToolContribution extends InstalledContribution implements Tool {
    *          returned
    */
   static protected ArrayList<ToolContribution> list(File folder, boolean doInitializeToolClass) {
+    ArrayList<File> toolsFolders = ToolContribution.discover(folder);
+
     ArrayList<ToolContribution> tools = new ArrayList<ToolContribution>();
-    list(folder, tools, doInitializeToolClass);
+    for (File toolFolder : toolsFolders) {
+      final ToolContribution tool = ToolContribution.getTool(toolFolder);
+      if (tool != null) {
+        try {
+          if (doInitializeToolClass)
+            tool.initializeToolClass();
+
+          tools.add(tool);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    }
     return tools;
   }
 
-  static protected void list(File folder, ArrayList<ToolContribution> tools,
-                             boolean doInitializeToolClass) {
+  static protected ArrayList<File> discover(File folder) {
+    ArrayList<File> tools = new ArrayList<File>();
+    discover(folder, tools);
+    return tools;
+  }
+  
+  static protected void discover(File folder, ArrayList<File> toolFolders) {
 
     File[] folders = folder.listFiles(new FileFilter() {
       public boolean accept(File folder) {
@@ -187,21 +206,12 @@ public class ToolContribution extends InstalledContribution implements Tool {
 //      }
     });
 
-    if (folders == null || folders.length == 0) {
-      return;
-    }
-
-    for (int i = 0; i < folders.length; i++) {
-      try {
-        final ToolContribution tool = getTool(folders[i]);
-        if (tool != null) {
-          if (doInitializeToolClass) {
-            tool.initializeToolClass();
-          }
-          tools.add(tool);
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
+    if (folders != null) {
+      for (int i = 0; i < folders.length; i++) {
+        Tool tool = ToolContribution.getTool(folders[i]);
+        
+        if (tool != null)
+          toolFolders.add(folders[i]);
       }
     }
   }
