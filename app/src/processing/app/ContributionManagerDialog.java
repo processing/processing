@@ -294,8 +294,8 @@ public class ContributionManagerDialog {
   protected void updateContributionListing() {
     if (editor == null)
       return;
-    
-    ArrayList<Library> libraries = editor.getMode().contribLibraries;
+
+    ArrayList<Library> libraries = new ArrayList<Library>(editor.getMode().contribLibraries);
     ArrayList<LibraryCompilation> compilations = LibraryCompilation.list(libraries);
 
     // Remove libraries from the list that are part of a compilations
