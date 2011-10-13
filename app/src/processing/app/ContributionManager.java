@@ -18,18 +18,6 @@ interface ErrorWidget {
 
 public class ContributionManager {
   
-  static private final String DOUBLE_CLICK_SECONDARY =
-      "Click Ã¢â‚¬Å“YesÃ¢â‚¬Â� to install this library to your sketchbook...";
-  
-  static private final String DISCOVERY_INTERNAL_ERROR_MESSAGE =
-        "An internal error occured while searching for contributions in the downloaded file.";
-  
-  static private final String DISCOVERY_NONE_FOUND_ERROR_MESSAGE =
-      "Maybe it's just us, but it looks like there are no contributions in this file.";
-  
-  static private final String ERROR_OVERWRITING_PROPERTIES_MESSAGE =
-      "Error overwriting .properties file.";
-  
   static public final String DELETION_FLAG = "flagged_for_deletion";
   
   static public final ContributionListing contribListing;
@@ -130,21 +118,9 @@ public class ContributionManager {
           installProgressMonitor.startTask("Installing", ProgressMonitor.UNKNOWN);
   
           InstalledContribution contribution = null;
-          switch (ad.getType()) {
-          case LIBRARY:
-            contribution = installLibrary(editor, libDest, ad, false, statusBar);
-            break;
-          case LIBRARY_COMPILATION:
-            contribution = installLibraryCompilation(editor, libDest, statusBar);
-            break;
-          case TOOL:
-            contribution = installTool(editor, libDest, ad, statusBar);
-            break;
-          }
+          contribution = install(editor, libDest, ad, false, statusBar);
   
           if (contribution != null) {
-            // XXX contributionListing.getInformationFromAdvertised(contribution);
-            // get the category at least
             contribListing.replaceContribution(ad, contribution);
             refreshInstalled(editor);
           }
@@ -156,210 +132,247 @@ public class ContributionManager {
 
   }
   
-  static public LibraryCompilation installLibraryCompilation(Editor editor,
-                                                         File f,
-                                                         ErrorWidget statusBar) {
-    File parentDir = unzipFileToTemp(f, statusBar);
-    
-    LibraryCompilation compilation = LibraryCompilation.create(parentDir);
+  static public void refreshInstalled(Editor editor) {
+    editor.getMode().rebuildImportMenu();
+    editor.rebuildToolMenu();
+  }
 
-    if (compilation == null) {
-      statusBar.setErrorMessage(DISCOVERY_NONE_FOUND_ERROR_MESSAGE);
+  static ArrayList<File> discover(Type type, File tempDir) {
+    switch (type) {
+    case LIBRARY:
+      return Library.discover(tempDir);
+    case LIBRARY_COMPILATION:
+      // XXX Implement
       return null;
-    }
-    
-    String folderName = compilation.getName();
-    
-    File dest = new File(editor.getBase().getSketchbookLibrariesFolder(), folderName);
-    
-    // XXX: Check for conflicts with other library names, etc.
-    boolean errorEncountered = false;
-    if (dest.exists()) {
-      if (!dest.delete()) {
-        // Problem
-        errorEncountered = true;
-      }
-    }
-    
-    if (!errorEncountered) {
-      // Install it, return it
-      if (parentDir.renameTo(dest)) {
-        return LibraryCompilation.create(dest);
-      }
+    case TOOL:
+      return ToolContribution.discover(tempDir);
+    case MODE:
+      return ModeContribution.discover(tempDir);
     }
     
     return null;
   }
   
-  static public Library confirmAndInstallLibrary(Editor editor, File libFile,
-                                          ErrorWidget statusBar) {
-    
-    int result = Base.showYesNoQuestion(editor, "Install",
-                             "Install libraries from " + libFile.getName() + "?",
-                             ContributionManager.DOUBLE_CLICK_SECONDARY);
-    
-    if (result == JOptionPane.YES_OPTION) {
-      return installLibrary(editor, libFile, null, true, statusBar);
+  static String getPropertiesFileName(Type type) {
+    switch (type) {
+    case LIBRARY:
+      return Library.propertiesFileName;
+    case LIBRARY_COMPILATION:
+      return LibraryCompilation.propertiesFileName;
+    case TOOL:
+      return ToolContribution.propertiesFileName;
+    case MODE:
+      return ModeContribution.propertiesFileName;
     }
     
     return null;
+  }
+  
+  static InstalledContribution create(Base base, Type type, File folder) {
+    switch (type) {
+    case LIBRARY:
+      return new Library(folder, null);
+    case LIBRARY_COMPILATION:
+      return LibraryCompilation.create(folder);
+    case TOOL:
+      return ToolContribution.getTool(folder);
+    case MODE:
+      return ModeContribution.getContributedMode(base, folder);
+    }
+    
+    return null;
+  }
+  
+  static ArrayList<InstalledContribution> getContributions(Type type, Editor editor) {
+    ArrayList<InstalledContribution> contribs = new ArrayList<InstalledContribution>();
+    switch (type) {
+    case LIBRARY:
+      contribs.addAll(editor.getMode().contribLibraries);
+      break;
+    case LIBRARY_COMPILATION:
+      contribs.addAll(LibraryCompilation.list(editor.getMode().contribLibraries));
+      break;
+    case TOOL:
+      contribs.addAll(editor.contribTools);
+      break;
+    case MODE:
+      contribs.addAll(editor.getBase().contribModes);
+      break;
+    }
+    return contribs;
+  }
+  
+  static void initialize(InstalledContribution contribution) throws Exception {
+    if (contribution instanceof ToolContribution) {
+      ((ToolContribution) contribution).initializeToolClass();
+    } else if (contribution instanceof ModeContribution) {
+      ((ModeContribution) contribution).instantiateModeClass();
+    }
   }
 
   /**
-   * Creates a temporary folder and unzips a file to a subdirectory of the temp
-   * folder. The subdirectory is the only file of the tempo folder.
-   * 
-   * e.g. if the contents of foo.zip are /hello and /world, then the resulting
-   * files will be
-   *     /tmp/foo9432423uncompressed/foo/hello
-   *     /tmp/foo9432423uncompress/foo/world
-   * ...and "/tmp/id9432423uncompress/foo/" will be returned.
-   * 
-   * @return the folder where the zips contents have been unzipped to (the
-   *         subdirectory of the temp folder).
+   * @param libFile
+   *          a zip file containing the library to install
+   * @param ad
+   *          the advertised version of this library, if it was downloaded
+   *          through the Contribution Manager. This is used to check the type
+   *          of library being installed, and to replace the .properties file in
+   *          the zip
+   * @param confirmReplace
+   *          true to open a dialog asking the user to confirm removing/moving
+   *          the library when a library by the same name already exists
+   * @return
    */
-  static public File unzipFileToTemp(File libFile,
-                       ErrorWidget statusBar) {
+  static public InstalledContribution install(Editor editor, File libFile,
+                                              AdvertisedContribution ad,
+                                              boolean confirmReplace,
+                                              ErrorWidget statusBar) {
     
-    String fileName = ContributionManager.getFileName(libFile);
-    File tmpFolder = null;
+    File tempDir = ContributionManager.unzipFileToTemp(libFile, statusBar);
     
-    try {
-      tmpFolder = Base.createTempFolder(fileName, "uncompressed");
-      tmpFolder = new File(tmpFolder, fileName);
-      tmpFolder.mkdirs();
-    } catch (IOException e) {
-      statusBar.setErrorMessage("Could not create temp folder to uncompressed zip file.");
-    }
+    ArrayList<File> libfolders = ContributionManager.discover(ad.getType(), tempDir);
     
-    ContributionManager.unzip(libFile, tmpFolder);
-    
-    return tmpFolder;
-  }
-  
-  static public File getTemporaryFile(URL url,
-                                  ErrorWidget statusBar) {
-    try {
-      File tmpFolder = Base.createTempFolder("library", "download");
-      
-      String[] segments = url.getFile().split("/");
-      File libFile = new File(tmpFolder, segments[segments.length - 1]);
-      libFile.setWritable(true);
-      
-      return libFile;
-    } catch (IOException e) {
-      statusBar.setErrorMessage("Could not create a temp folder for download.");
-    }
-    
-    return null;
-  }
-
-  /**
-   * Returns the name of a file without its path or extension.
-   * 
-   * For example,
-   *   "/path/to/helpfullib.zip" returns "helpfullib"
-   *   "helpfullib-0.1.1.plb" returns "helpfullib-0.1.1"
-   */
-  static public String getFileName(File libFile) {
-    String path = libFile.getPath();
-    int lastSeparator = path.lastIndexOf(File.separatorChar);
-    
-    String fileName;
-    if (lastSeparator != -1) {
-      fileName = path.substring(lastSeparator + 1);
-    } else {
-      fileName = path;
-    }
-    
-    int lastDot = fileName.lastIndexOf('.');
-    if (lastDot != -1) {
-      return fileName.substring(0, lastDot);
-    }
-    
-    return fileName;
-  }
-  
-  static public ToolContribution installTool(Editor editor,
-                                         File zippedToolFile,
-                                         AdvertisedContribution ad,
-                                         ErrorWidget statusBar) {
-    
-    File tempDir = unzipFileToTemp(zippedToolFile, statusBar);
-    
-    ArrayList<File> toolFolders = ToolContribution.discover(tempDir);
-    if (toolFolders.isEmpty()) {
-      // Sometimes tool authors place all their folders in the base
+    if (libfolders.isEmpty()) {
+      // Sometimes library authors place all their folders in the base
       // directory of a zip file instead of in single folder as the
       // guidelines suggest. If this is the case, we might be able to find the
       // library by stepping up a directory and searching for libraries again.
-      toolFolders = ToolContribution.discover(tempDir.getParentFile());
+      libfolders = ContributionManager.discover(ad.getType(), tempDir.getParentFile());
     }
     
-    if (toolFolders != null && toolFolders.size() == 1) {
-      File toolFolder = toolFolders.get(0);
-      final ToolContribution tool = ToolContribution.getTool(toolFolder);
+    if (libfolders != null && libfolders.size() == 1) {
+      File libfolder = libfolders.get(0);
+      File propFile = new File(libfolder, getPropertiesFileName(ad.getType()));
       
-      File propFile = new File(tool.getFolder(), "tool.properties");
-      
-      if (ad == null || writePropertiesFile(propFile, ad)) {
-        return installTool(editor, tool, statusBar);        
+      if (writePropertiesFile(propFile, ad)) {
+        InstalledContribution newcontrib = ContributionManager.create(editor
+            .getBase(), ad.getType(), libfolder);
+        
+        return ContributionManager.installContribution(editor, newcontrib,
+                                                       confirmReplace,
+                                                       statusBar);
       } else {
-        statusBar.setErrorMessage(ERROR_OVERWRITING_PROPERTIES_MESSAGE);
+        statusBar.setErrorMessage("Error overwriting .properties file.");
       }
     } else {
       // Diagnose the problem and notify the user
-      if (toolFolders == null || toolFolders.isEmpty()) {
-        statusBar.setErrorMessage(DISCOVERY_INTERNAL_ERROR_MESSAGE);
+      if (libfolders == null) {
+        statusBar.setErrorMessage("An internal error occured while searching "
+            + "for contributions in the downloaded file.");
+      } else if (libfolders.isEmpty()) {
+        statusBar
+            .setErrorMessage("Maybe it's just us, but it looks like there "
+                + "are no contributions in the file for \"" + ad.getName()
+                + ".\"");
       } else {
-        statusBar.setErrorMessage("There were multiple tools in the file, so we're ignoring it.");
+        statusBar.setErrorMessage("There were multiple libraries in the file, "
+            + "so we're ignoring it.");
       }
     }
     
     return null;
   }
   
-  static public ToolContribution installTool(Editor editor,
-                                         ToolContribution newTool,
-                                         ErrorWidget statusBar) {
+  /**
+   * @param confirmReplace
+   *          if true and the library is already installed, opens a prompt to
+   *          ask the user if it's okay to replace the library. If false, the
+   *          library is always replaced with the new copy.
+   */
+  static public InstalledContribution installContribution(Editor editor, InstalledContribution newLib,
+                                                          boolean confirmReplace, ErrorWidget statusBar) {
     
-    ArrayList<ToolContribution> oldTools = editor.contribTools;
+    ArrayList<InstalledContribution> oldLibs = getContributions(newLib.getType(), editor);
     
-    String toolFolderName = newTool.getFolder().getName();
+    String libFolderName = newLib.getFolder().getName();
     
-    File toolDestination = editor.getBase().getSketchbookToolsFolder();
-    File newToolDest = new File(toolDestination, toolFolderName);
+    File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
+    File newLibDest = new File(libraryDestination, libFolderName);
     
-    for (ToolContribution oldTool : oldTools) {
+    for (InstalledContribution oldLib : oldLibs) {
       
-      // XXX: Handle other cases when installing tools.
+      // XXX: Handle other cases when installing libraries.
       //   -What if a library by the same name is already installed?
-      //   -What if newLibDest exists, but isn't used by an existing tools?
-      if (oldTool.getFolder().exists() && oldTool.getFolder().equals(newToolDest)) {
+      //   -What if newLibDest exists, but isn't used by an existing library?
+      if (oldLib.getFolder().exists() && oldLib.getFolder().equals(newLibDest)) {
         
-        // XXX: We can't replace stuff, soooooo.... do something different
-        if (!backupContribution(editor, oldTool, false, statusBar)) {
-          return null;
+        if (ContributionManager.requiresRestart(newLib)) {
+          // XXX: We can't replace stuff, soooooo.... do something different
+          if (!backupContribution(editor, oldLib, false, statusBar)) {
+            return null;
+          }
+        } else {
+          int result = 0;
+          boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
+          if (confirmReplace) {
+            if (doBackup) {
+              result = Base.showYesNoQuestion(editor, "Replace",
+                     "Replace pre-existing \"" + oldLib.getName() + "\" library?",
+                     "A pre-existing copy of the \"" + oldLib.getName() + "\" library<br>"+
+                     "has been found in your sketchbook. Clicking “Yes”<br>"+
+                     "will move the existing library to a backup folder<br>" +
+                     " in <i>libraries/old</i> before replacing it.");
+              if (result != JOptionPane.YES_OPTION || !backupContribution(editor, oldLib, true, statusBar)) {
+                return null;
+              }
+            } else {
+              result = Base.showYesNoQuestion(editor, "Replace",
+                     "Replace pre-existing \"" + oldLib.getName() + "\" library?",
+                     "A pre-existing copy of the \"" + oldLib.getName() + "\" library<br>"+
+                     "has been found in your sketchbook. Clicking “Yes”<br>"+
+                     "will permanently delete this library and all of its contents<br>"+
+                     "before replacing it.");
+              if (result != JOptionPane.YES_OPTION || !oldLib.getFolder().delete()) {
+                return null;
+              }
+            }
+          } else {
+            if (doBackup && !backupContribution(editor, oldLib, true, statusBar)
+                || !doBackup && !oldLib.getFolder().delete()) {
+              return null;
+            }
+          }
         }
       }
     }
     
-    if (newToolDest.exists()) {
-      newToolDest.delete();
+    if (newLibDest.exists()) {
+      Base.removeDir(newLibDest);
     }
     
-    // Move newTool to the sketchbook library folder
-    if (newTool.getFolder().renameTo(newToolDest)) {
-      ToolContribution movedTool = ToolContribution.getTool(newToolDest);
+    // Move newLib to the sketchbook library folder
+    if (newLib.getFolder().renameTo(newLibDest)) {
+      InstalledContribution contrib = ContributionManager.create(editor
+          .getBase(), newLib.getType(), newLibDest);
       try {
-        movedTool.initializeToolClass();
-        return movedTool;
+        initialize(contrib);
+        return contrib;
       } catch (Exception e) {
         e.printStackTrace();
       }
+      
+//      try {
+//        FileUtils.copyDirectory(newLib.folder, libFolder);
+//        FileUtils.deleteQuietly(newLib.folder);
+//        newLib.folder = libFolder;
+//      } catch (IOException e) {
     } else {
-      statusBar.setErrorMessage("Could not move tool \"" + newTool.getName()
-                                + "\" to sketchbook.");
+      String errorMsg = null;
+      switch (newLib.getType()) {
+      case LIBRARY:
+        errorMsg = "Could not move library \"" + newLib.getName()
+            + "\" to sketchbook.";
+        break;
+      case LIBRARY_COMPILATION:
+        break;
+      case TOOL:
+        errorMsg = "Could not move tool \"" + newLib.getName()
+            + "\" to sketchbook.";
+        break;
+      case MODE:
+        break;
+      }
+      statusBar.setErrorMessage(errorMsg);
     }
     
     return null;
@@ -387,141 +400,6 @@ public class ContributionManager {
     }
     
     return false;
-  }
-  
-  /**
-   * @param libFile
-   *          a zip file containing the library to install
-   * @param ad
-   *          the advertised version of this library, if it was downloaded
-   *          through the Contribution Manager, or null. This is used to replace
-   *          the library.properties file in the zip
-   * @param confirmReplace
-   *          true to open a dialog asking the user to confirm removing/moving
-   *          the library when a library by the same name already exists
-   * @return
-   */
-  static public Library installLibrary(Editor editor, File libFile,
-                                   AdvertisedContribution ad,
-                                   boolean confirmReplace,
-                                   ErrorWidget statusBar) {
-    File tempDir = unzipFileToTemp(libFile, statusBar);
-    
-    try {
-      ArrayList<File> libfolders = Library.discover(tempDir);
-      if (libfolders.isEmpty()) {
-        // Sometimes library authors place all their folders in the base
-        // directory of a zip file instead of in single folder as the
-        // guidelines suggest. If this is the case, we might be able to find the
-        // library by stepping up a directory and searching for libraries again.
-        libfolders = Library.discover(tempDir.getParentFile());
-      }
-      
-      if (libfolders != null && libfolders.size() == 1) {
-        File libfolder = libfolders.get(0);
-        File propFile = new File(libfolder, "library.properties");
-        
-        if (ad == null || writePropertiesFile(propFile, ad)) {
-          Library newlib = new Library(libfolder, null);
-          return installLibrary(editor, newlib, confirmReplace, statusBar);
-        } else {
-          statusBar.setErrorMessage(ERROR_OVERWRITING_PROPERTIES_MESSAGE);
-        }
-      } else {
-        // Diagnose the problem and notify the user
-        if (libfolders == null) {
-          statusBar.setErrorMessage(ContributionManager.DISCOVERY_INTERNAL_ERROR_MESSAGE);
-        } else if (libfolders.isEmpty()) {
-          statusBar.setErrorMessage(ContributionManager.DISCOVERY_NONE_FOUND_ERROR_MESSAGE);
-        } else {
-          statusBar.setErrorMessage("There were multiple libraries in the file, so we're ignoring it.");
-        }
-      }
-    } catch (IOException ioe) {
-      statusBar.setErrorMessage(ContributionManager.DISCOVERY_INTERNAL_ERROR_MESSAGE);
-    }
-    
-    return null;
-  }
-
-  /**
-   * @param confirmReplace
-   *          if true and the library is already installed, opens a prompt to
-   *          ask the user if it's okay to replace the library. If false, the
-   *          library is always replaced with the new copy.
-   */
-  static public Library installLibrary(Editor editor, Library newLib,
-                                   boolean confirmReplace, ErrorWidget statusBar) {
-    
-    ArrayList<Library> oldLibs = editor.getMode().contribLibraries;
-    
-    String libFolderName = newLib.getFolder().getName();
-    
-    File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
-    File newLibDest = new File(libraryDestination, libFolderName);
-    
-    for (Library oldLib : oldLibs) {
-      
-      // XXX: Handle other cases when installing libraries.
-      //   -What if a library by the same name is already installed?
-      //   -What if newLibDest exists, but isn't used by an existing library?
-      if (oldLib.getFolder().exists() && oldLib.getFolder().equals(newLibDest)) {
-        
-        int result = 0;
-        boolean doBackup = Preferences.getBoolean("contribution.backup.on_install");
-        if (confirmReplace) {
-          if (doBackup) {
-            result = Base.showYesNoQuestion(editor, "Replace",
-                   "Replace pre-existing \"" + oldLib.getName() + "\" library?",
-                   "A pre-existing copy of the \"" + oldLib.getName() + "\" library<br>"+
-                   "has been found in your sketchbook. Clicking “Yes”<br>"+
-                   "will move the existing library to a backup folder<br>" +
-                   " in <i>libraries/old</i> before replacing it.");
-            if (result != JOptionPane.YES_OPTION || !backupContribution(editor, oldLib, true, statusBar)) {
-              return null;
-            }
-          } else {
-            result = Base.showYesNoQuestion(editor, "Replace",
-                   "Replace pre-existing \"" + oldLib.getName() + "\" library?",
-                   "A pre-existing copy of the \"" + oldLib.getName() + "\" library<br>"+
-                   "has been found in your sketchbook. Clicking “Yes”<br>"+
-                   "will permanently delete this library and all of its contents<br>"+
-                   "before replacing it.");
-            if (result != JOptionPane.YES_OPTION || !oldLib.getFolder().delete()) {
-              return null;
-            }
-          }
-        } else {
-          if (doBackup && !backupContribution(editor, oldLib, true, statusBar)
-              || !doBackup && !oldLib.getFolder().delete()) {
-            return null;
-          }
-        }
-      }
-    }
-    
-    if (newLibDest.exists()) {
-      newLibDest.delete();
-    }
-    
-    // Move newLib to the sketchbook library folder
-    if (newLib.getFolder().renameTo(newLibDest)) {
-      return new Library(newLibDest, null);
-//      try {
-//        FileUtils.copyDirectory(newLib.folder, libFolder);
-//        FileUtils.deleteQuietly(newLib.folder);
-//        newLib.folder = libFolder;
-//      } catch (IOException e) {
-    } else {
-      statusBar.setErrorMessage("Could not move library \""
-          + newLib.getName() + "\" to sketchbook.");
-      return null;
-    }
-  }
-  
-  static public void refreshInstalled(Editor editor) {
-    editor.getMode().rebuildImportMenu();
-    editor.rebuildToolMenu();
   }
 
   /**
@@ -578,20 +456,6 @@ public class ContributionManager {
     return success;
   }
 
-  static public File createBackupFolder(File backupFolder,
-                                  ErrorWidget logger,
-                                  String errorMessage) {
-    
-    if (!backupFolder.exists() || !backupFolder.isDirectory()) {
-      if (!backupFolder.mkdirs()) {
-        logger.setErrorMessage(errorMessage);
-        return null;
-      }
-    }
-
-    return backupFolder;
-  }
-
   static public File createLibraryBackupFolder(Editor editor, ErrorWidget logger) {
 
     File libraryBackupFolder = new File(editor.getBase()
@@ -608,6 +472,20 @@ public class ContributionManager {
                               "Could not create backup folder for tool.");
   }
   
+  static private File createBackupFolder(File backupFolder,
+                                  ErrorWidget logger,
+                                  String errorMessage) {
+    
+    if (!backupFolder.exists() || !backupFolder.isDirectory()) {
+      if (!backupFolder.mkdirs()) {
+        logger.setErrorMessage(errorMessage);
+        return null;
+      }
+    }
+  
+    return backupFolder;
+  }
+
   /**
    * Returns a file in the parent folder that does not exist yet. If
    * parent/fileName already exists, this will look for parent/fileName(2)
@@ -629,6 +507,81 @@ public class ContributionManager {
     } while (backupFolderForLib.exists());
     
     return backupFolderForLib;
+  }
+
+  static public File getTemporaryFile(URL url,
+                                  ErrorWidget statusBar) {
+    try {
+      File tmpFolder = Base.createTempFolder("library", "download");
+      
+      String[] segments = url.getFile().split("/");
+      File libFile = new File(tmpFolder, segments[segments.length - 1]);
+      libFile.setWritable(true);
+      
+      return libFile;
+    } catch (IOException e) {
+      statusBar.setErrorMessage("Could not create a temp folder for download.");
+    }
+    
+    return null;
+  }
+
+  /**
+   * Creates a temporary folder and unzips a file to a subdirectory of the temp
+   * folder. The subdirectory is the only file of the tempo folder.
+   * 
+   * e.g. if the contents of foo.zip are /hello and /world, then the resulting
+   * files will be
+   *     /tmp/foo9432423uncompressed/foo/hello
+   *     /tmp/foo9432423uncompress/foo/world
+   * ...and "/tmp/id9432423uncompress/foo/" will be returned.
+   * 
+   * @return the folder where the zips contents have been unzipped to (the
+   *         subdirectory of the temp folder).
+   */
+  static public File unzipFileToTemp(File libFile,
+                       ErrorWidget statusBar) {
+    
+    String fileName = ContributionManager.getFileName(libFile);
+    File tmpFolder = null;
+    
+    try {
+      tmpFolder = Base.createTempFolder(fileName, "uncompressed");
+      tmpFolder = new File(tmpFolder, fileName);
+      tmpFolder.mkdirs();
+    } catch (IOException e) {
+      statusBar.setErrorMessage("Could not create temp folder to uncompressed zip file.");
+    }
+    
+    ContributionManager.unzip(libFile, tmpFolder);
+    
+    return tmpFolder;
+  }
+
+  /**
+   * Returns the name of a file without its path or extension.
+   * 
+   * For example,
+   *   "/path/to/helpfullib.zip" returns "helpfullib"
+   *   "helpfullib-0.1.1.plb" returns "helpfullib-0.1.1"
+   */
+  static public String getFileName(File libFile) {
+    String path = libFile.getPath();
+    int lastSeparator = path.lastIndexOf(File.separatorChar);
+    
+    String fileName;
+    if (lastSeparator != -1) {
+      fileName = path.substring(lastSeparator + 1);
+    } else {
+      fileName = path;
+    }
+    
+    int lastDot = fileName.lastIndexOf('.');
+    if (lastDot != -1) {
+      return fileName.substring(0, lastDot);
+    }
+    
+    return fileName;
   }
 
   public static void unzip(File zipFile, File dest) {

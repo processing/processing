@@ -34,6 +34,8 @@ public class Library extends InstalledContribution {
    * this might be the windows64 subfolder with the library.
    */
   String nativeLibraryPath;
+  
+  static String propertiesFileName = "library.properties";
 
   /** Filter to pull out just files and no directories, and to skip export.txt */
   static FilenameFilter standardFilter = new FilenameFilter() {
@@ -57,7 +59,7 @@ public class Library extends InstalledContribution {
   };
   
   public Library(File folder, String subfolder) {
-    super(folder, "library.properties");
+    super(folder, Library.propertiesFileName);
     this.group = subfolder;
 
     libraryFolder = new File(folder, "library");
@@ -369,13 +371,13 @@ public class Library extends InstalledContribution {
     }
   };
   
-  static protected ArrayList<File> discover(File folder) throws IOException {
+  static protected ArrayList<File> discover(File folder) {
     ArrayList<File> libraries = new ArrayList<File>();
     discover(folder, libraries);
     return libraries;
   }
   
-  static protected void discover(File folder, ArrayList<File> libraries) throws IOException {
+  static protected void discover(File folder, ArrayList<File> libraries) {
     String[] list = folder.list(junkFolderFilter);
 
     // if a bad folder or something like that, this might come back null
@@ -409,13 +411,13 @@ public class Library extends InstalledContribution {
     }
   }
 
-  static protected ArrayList<Library> list(File folder) throws IOException {
+  static protected ArrayList<Library> list(File folder) {
     ArrayList<Library> libraries = new ArrayList<Library>();
     list(folder, libraries);
     return libraries;
   }
 
-  static protected void list(File folder, ArrayList<Library> libraries) throws IOException {
+  static protected void list(File folder, ArrayList<Library> libraries) {
     ArrayList<File> librariesFolders = new ArrayList<File>();
     discover(folder, librariesFolders);
     
