@@ -514,30 +514,7 @@ public class ContributionListing {
       
       prettyVersion = exports.get("prettyVersion");
       
-      String download = null;
-      
-      String hostPlatform = Base.getPlatformName();
-      int nativeBits = Base.getNativeBits();
-      String hostVersion = Base.getPlatformVersionName();
-      
-      // Try download.macosx64.lion
-      if (!hostPlatform.isEmpty())
-        download = exports.get("download." + hostPlatform + nativeBits + "." + hostVersion);
-      // Try download.macosx.lion
-      if (download == null)
-        download = exports.get("download." + hostPlatform + "." + hostVersion);
-      // Try download.macosx64
-      if (download == null)
-        download = exports.get("download." + hostPlatform + nativeBits);
-      // Try download.macosx
-      if (download == null)
-        download = exports.get("download." + hostPlatform);
-      // Try download
-      if (download == null)
-        download = exports.get("download");
-      
-      // If it's still null by this point, the library doesn't support this OS
-      this.link = download;
+      this.link = exports.get("download");
     }
     
     public boolean isInstalled() {
