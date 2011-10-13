@@ -9,9 +9,11 @@ public class LibraryCompilation extends InstalledContribution {
 
   ArrayList<Library> libraries;
   
+  static String propertiesFileName = "compilation.properties";
+  
   private LibraryCompilation(File folder) throws IOException {
     
-    super(folder, "compilation.properties");
+    super(folder, LibraryCompilation.propertiesFileName);
     
     libraries = new ArrayList<Library>();
     ArrayList<File> librariesFolders = new ArrayList<File>();

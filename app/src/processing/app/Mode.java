@@ -117,21 +117,14 @@ public abstract class Mode {
     // reset the table mapping imports to libraries
     importToLibraryTable = new HashMap<String, Library>();
 
-    try {
-      coreLibraries = Library.list(librariesFolder);
-      contribLibraries = Library.list(base.getSketchbookLibrariesFolder());
-      
-      for (Library lib : coreLibraries) {
-        lib.addPackageList(importToLibraryTable);
-      }
-      for (Library lib : contribLibraries) {
-        lib.addPackageList(importToLibraryTable);
-      }
-      
-    } catch (IOException e) {
-      Base.showWarning("Unhappiness", 
-                       "An error occurred while loading libraries.\n" +
-                       "Not all the books will be in place.", e);
+    coreLibraries = Library.list(librariesFolder);
+    contribLibraries = Library.list(base.getSketchbookLibrariesFolder());
+    
+    for (Library lib : coreLibraries) {
+      lib.addPackageList(importToLibraryTable);
+    }
+    for (Library lib : contribLibraries) {
+      lib.addPackageList(importToLibraryTable);
     }
   }
   
