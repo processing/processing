@@ -14,7 +14,12 @@ public class LibraryCompilation extends InstalledContribution {
     super(folder, "compilation.properties");
     
     libraries = new ArrayList<Library>();
-    Library.list(folder, libraries, name);
+    ArrayList<File> librariesFolders = new ArrayList<File>();
+    Library.discover(folder, librariesFolders);
+    
+    for (File baseFolder : librariesFolders) {
+      libraries.add(new Library(baseFolder, name));
+    }
   }
   
   public static ArrayList<LibraryCompilation> list(ArrayList<Library> libraries) {

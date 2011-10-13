@@ -360,63 +360,86 @@ public class Library extends InstalledContribution {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
-  static protected ArrayList<Library> list(File folder) throws IOException {
-    ArrayList<Library> libraries = new ArrayList<Library>();
-    list(folder, libraries);
+  static protected FilenameFilter junkFolderFilter = new FilenameFilter() {
+    public boolean accept(File dir, String name) {
+      // skip .DS_Store files, .svn folders, etc
+      if (name.charAt(0) == '.') return false;
+      if (name.equals("CVS")) return false;
+      return (new File(dir, name).isDirectory());
+    }
+  };
+  
+  static protected ArrayList<File> discover(File folder) throws IOException {
+    ArrayList<File> libraries = new ArrayList<File>();
+    discover(folder, libraries);
     return libraries;
   }
-
-
-  static protected void list(File folder, ArrayList<Library> libraries) throws IOException {
-    list(folder, libraries, null);
-  }
   
-  
-  static protected void list(File folder, ArrayList<Library> libraries, String subfolder) throws IOException {
-    if (folder.isDirectory()) {
-      String[] list = folder.list(new FilenameFilter() {
-        public boolean accept(File dir, String name) {
-          // skip .DS_Store files, .svn folders, etc
-          if (name.charAt(0) == '.') return false;
-          if (name.equals("CVS")) return false;
-          return (new File(dir, name).isDirectory());
-        }
-      });
-      // if a bad folder or something like that, this might come back null
-      if (list != null) {
-        // alphabetize list, since it's not always alpha order
-        // replaced hella slow bubble sort with this feller for 0093
-        Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
+  static protected void discover(File folder, ArrayList<File> libraries) throws IOException {
+    String[] list = folder.list(junkFolderFilter);
 
-        for (String potentialName : list) {
-          File baseFolder = new File(folder, potentialName);
-          File libraryFolder = new File(baseFolder, "library");
-          File libraryJar = new File(libraryFolder, potentialName + ".jar");
-          // If a .jar file of the same prefix as the folder exists
-          // inside the 'library' subfolder of the sketch
-          if (libraryJar.exists()) {
-            String sanityCheck = Sketch.sanitizeName(potentialName);
-            if (sanityCheck.equals(potentialName)) {
-              libraries.add(new Library(baseFolder, subfolder));
+    // if a bad folder or something like that, this might come back null
+    if (list != null) {
+      // alphabetize list, since it's not always alpha order
+      // replaced hella slow bubble sort with this feller for 0093
+      Arrays.sort(list, String.CASE_INSENSITIVE_ORDER);
 
-            } else {
-              String mess =
-                "The library \"" + potentialName + "\" cannot be used.\n" +
-                "Library names must contain only basic letters and numbers.\n" +
-                "(ASCII only and no spaces, and it cannot start with a number)";
-              Base.showMessage("Ignoring bad library name", mess);
-              continue;
-            }
-          } else if (subfolder == null) {  // no library jar, maybe a subfolder?
-            // Add the recursive library folders back for toxi
-            // http://code.google.com/p/processing/issues/detail?id=578
-            list(new File(folder, potentialName), libraries, potentialName);
+      for (String potentialName : list) {
+        File baseFolder = new File(folder, potentialName);
+        File libraryFolder = new File(baseFolder, "library");
+        File libraryJar = new File(libraryFolder, potentialName + ".jar");
+        // If a .jar file of the same prefix as the folder exists
+        // inside the 'library' subfolder of the sketch
+        if (libraryJar.exists()) {
+          String sanityCheck = Sketch.sanitizeName(potentialName);
+          if (sanityCheck.equals(potentialName)) {
+            libraries.add(baseFolder);
+
+          } else {
+            String mess = "The library \""
+                + potentialName
+                + "\" cannot be used.\n"
+                + "Library names must contain only basic letters and numbers.\n"
+                + "(ASCII only and no spaces, and it cannot start with a number)";
+            Base.showMessage("Ignoring bad library name", mess);
+            continue;
           }
         }
       }
     }
   }
 
+  static protected ArrayList<Library> list(File folder) throws IOException {
+    ArrayList<Library> libraries = new ArrayList<Library>();
+    list(folder, libraries);
+    return libraries;
+  }
+
+  static protected void list(File folder, ArrayList<Library> libraries) throws IOException {
+    ArrayList<File> librariesFolders = new ArrayList<File>();
+    discover(folder, librariesFolders);
+    
+    for (File baseFolder : librariesFolders) {
+      libraries.add(new Library(baseFolder, null));
+    }
+    
+    String[] list = folder.list(junkFolderFilter);
+    if (list != null) {
+      for (String subfolderName : list) {
+        File subfolder = new File(folder, subfolderName);
+        
+        if (!libraries.contains(subfolder)) {
+          ArrayList<File> discoveredLibFolders = new ArrayList<File>();
+          discover(subfolder, discoveredLibFolders);
+          
+          for (File discoveredFolder : discoveredLibFolders) {
+            libraries.add(new Library(discoveredFolder, subfolderName));
+          }
+        }
+      }
+    }
+  }
+  
   public Type getType() {
     return Type.LIBRARY;
   }

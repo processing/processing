@@ -287,27 +287,29 @@ public class ContributionManager {
     
     File tempDir = unzipFileToTemp(zippedToolFile, statusBar);
     
-    ArrayList<ToolContribution> discoveredTools = ToolContribution.list(tempDir, false);
-    if (discoveredTools.isEmpty()) {
+    ArrayList<File> toolFolders = ToolContribution.discover(tempDir);
+    if (toolFolders.isEmpty()) {
       // Sometimes tool authors place all their folders in the base
       // directory of a zip file instead of in single folder as the
       // guidelines suggest. If this is the case, we might be able to find the
       // library by stepping up a directory and searching for libraries again.
-      discoveredTools = ToolContribution.list(tempDir.getParentFile(), false);
+      toolFolders = ToolContribution.discover(tempDir.getParentFile());
     }
     
-    if (discoveredTools != null && discoveredTools.size() == 1) {
-      ToolContribution discoveredTool = discoveredTools.get(0);
-      File propFile = new File(discoveredTool.getFolder(), "tool.properties");
+    if (toolFolders != null && toolFolders.size() == 1) {
+      File toolFolder = toolFolders.get(0);
+      final ToolContribution tool = ToolContribution.getTool(toolFolder);
+      
+      File propFile = new File(tool.getFolder(), "tool.properties");
       
       if (ad == null || writePropertiesFile(propFile, ad)) {
-        return installTool(editor, discoveredTool, statusBar);        
+        return installTool(editor, tool, statusBar);        
       } else {
         statusBar.setErrorMessage(ERROR_OVERWRITING_PROPERTIES_MESSAGE);
       }
     } else {
       // Diagnose the problem and notify the user
-      if (discoveredTools == null || discoveredTools.isEmpty()) {
+      if (toolFolders == null || toolFolders.isEmpty()) {
         statusBar.setErrorMessage(DISCOVERY_INTERNAL_ERROR_MESSAGE);
       } else {
         statusBar.setErrorMessage("There were multiple tools in the file, so we're ignoring it.");
@@ -402,29 +404,30 @@ public class ContributionManager {
     File tempDir = unzipFileToTemp(libFile, statusBar);
     
     try {
-      ArrayList<Library> discoveredLibs = Library.list(tempDir);
-      if (discoveredLibs.isEmpty()) {
+      ArrayList<File> libfolders = Library.discover(tempDir);
+      if (libfolders.isEmpty()) {
         // Sometimes library authors place all their folders in the base
         // directory of a zip file instead of in single folder as the
         // guidelines suggest. If this is the case, we might be able to find the
         // library by stepping up a directory and searching for libraries again.
-        discoveredLibs = Library.list(tempDir.getParentFile());
+        libfolders = Library.discover(tempDir.getParentFile());
       }
       
-      if (discoveredLibs != null && discoveredLibs.size() == 1) {
-        Library discoveredLib = discoveredLibs.get(0);
-        File propFile = new File(discoveredLib.getFolder(), "library.properties");
+      if (libfolders != null && libfolders.size() == 1) {
+        File libfolder = libfolders.get(0);
+        File propFile = new File(libfolder, "library.properties");
         
         if (ad == null || writePropertiesFile(propFile, ad)) {
-          return installLibrary(editor, discoveredLib, confirmReplace, statusBar);
+          Library newlib = new Library(libfolder, null);
+          return installLibrary(editor, newlib, confirmReplace, statusBar);
         } else {
           statusBar.setErrorMessage(ERROR_OVERWRITING_PROPERTIES_MESSAGE);
         }
       } else {
         // Diagnose the problem and notify the user
-        if (discoveredLibs == null) {
+        if (libfolders == null) {
           statusBar.setErrorMessage(ContributionManager.DISCOVERY_INTERNAL_ERROR_MESSAGE);
-        } else if (discoveredLibs.isEmpty()) {
+        } else if (libfolders.isEmpty()) {
           statusBar.setErrorMessage(ContributionManager.DISCOVERY_NONE_FOUND_ERROR_MESSAGE);
         } else {
           statusBar.setErrorMessage("There were multiple libraries in the file, so we're ignoring it.");
