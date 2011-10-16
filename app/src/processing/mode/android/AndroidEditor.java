@@ -117,7 +117,7 @@ public class AndroidEditor extends JavaEditor {
     JMenuItem exportPackage = Base.newJMenuItemShift(exportPkgTitle, 'E');
     exportPackage.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleExportApplication();
+        handleExportPackage();
       }
     });
     
