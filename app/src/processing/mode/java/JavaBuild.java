@@ -508,7 +508,7 @@ public class JavaBuild {
   
   
   protected int findErrorFile(int errorLine) {
-    for (int i = 1; i < sketch.getCodeCount(); i++) {
+    for (int i = sketch.getCodeCount() - 1; i > 0; i--) {
       SketchCode sc = sketch.getCode(i);
       if (sc.isExtension("pde") && (sc.getPreprocOffset() < errorLine)) {
         // keep looping until the errorLine is past the offset
@@ -1612,3 +1612,4 @@ public class JavaBuild {
     }
   }
 }
+
