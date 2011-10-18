@@ -295,25 +295,6 @@ public class Movie extends PImage implements PConstants {
   }
 
   /**
-   * Get the full length of this movie (in frames).
-   * 
-   * @return float
-   */
-  public long length() {
-    return (int)(duration() * getSourceFrameRate());
-  }  
-  
-  /**
-   * Return the current frame.
-   * 
-   * @return int
-   */
-  public int frame() {
-    double sec = gplayer.queryPosition().toSeconds() + gplayer.queryPosition().getNanoSeconds() * 1E-9;    
-    return (int)(Math.ceil(sec * getSourceFrameRate())) - 1;
-  }
-
-  /**
    * ( begin auto-generated from Movie_jump.xml )
    * 
    * Jumps to a specific location within a movie. The parameter <b>where</b> 
@@ -349,30 +330,7 @@ public class Movie extends PImage implements PConstants {
     gplayer.getState();
     seeking = false;
   }
-
-  /**
-   * Jump to a specific frame.
-   * 
-   * @param frame ???
-   */  
-  public void jump(int frame) {
-    float srcFramerate = getSourceFrameRate();
-    
-    // The duration of a single frame:
-    float frameDuration = 1.0f / srcFramerate;
-    
-    // We move to the middle of the frame by adding 0.5:
-    float where = (frame + 0.5f) * frameDuration; 
-    
-    // Taking into account border effects:
-    float diff = duration() - where;
-    if (diff < 0) {
-      where += diff - 0.25f * frameDuration;
-    }
-    
-    jump(where);
-  }  
-
+  
   /**
    * Returns true if the stream is already producing frames.
    * 
