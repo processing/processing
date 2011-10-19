@@ -49,7 +49,6 @@ import java.io.BufferedReader;
  */
 public class PShape3D extends PShape {
   
-  
   protected PApplet papplet;      
   protected PGraphicsOpenGL ogl;
     
@@ -259,6 +258,259 @@ public class PShape3D extends PShape {
     }
   }
 
+  ////////////////////////////////////////////////////////////
+  
+  // the new stuff  
+  static protected final int SIMPLE_POINT = 0;
+  static protected final int CURVE_POINT = 1;
+  static protected final int BEZIER_CONTROL_POINT = 2;
+  static protected final int BEZIER_ANCHOR_POINT = 3;
+  
+  // To use later
+  static public final int NURBS_CURVE = 4;
+  static public final int NURBS_SURFACE = 5;  
+  static protected final int NURBS2D_CONTROL_POINT = 4;
+  static protected final int NURBS3D_CONTROL_POINT = 5;
+  
+  protected int[] typeData;
+  protected float[] vertexData;  
+  protected float[] tcoordData;
+  protected float[] normalData;
+  protected float[] colorData;  // Fill color
+  protected float[] strokeData; // Stroke color+weight  
+  protected int dataSize;
+    
+  protected float[] currNormalData = { 0, 0, 1 };
+  protected float[] currColorData = { 0, 0, 0, 0 };
+  protected float[] currStrokeData = { 0, 0, 0, 0, 1 };
+  
+  protected boolean modified;
+  protected int mi0, mi1;    
+  
+  protected void dataCheck() {
+    if (dataSize == typeData.length) {
+      int newSize = dataSize << 1; // newSize = 2 * dataSize  
+        
+      expandTypeData(newSize);
+      expandVertexData(newSize);
+      expandTCoordData(newSize);      
+      expandNormalData(newSize);
+      expandColorData(newSize);
+      expandStrokeData(newSize);
+    }
+  }
+  
+  protected void expandTypeData(int n) {
+    int temp[] = new int[n];      
+    System.arraycopy(typeData, 0, temp, 0, dataSize);
+    typeData = temp;    
+  }
+  
+  protected void expandVertexData(int n) {
+    float temp[] = new float[3 * n];      
+    System.arraycopy(vertexData, 0, temp, 0, 3 * dataSize);
+    vertexData = temp;    
+  }
+  
+  protected void expandTCoordData(int n) {
+    float temp[] = new float[2 * n];      
+    System.arraycopy(tcoordData, 0, temp, 0, 2 * dataSize);
+    tcoordData = temp;    
+  }
+  
+  protected void expandNormalData(int n) {
+    float temp[] = new float[3 * n];      
+    System.arraycopy(normalData, 0, temp, 0, 3 * dataSize);
+    normalData = temp;    
+  }
+  
+  protected void expandColorData(int n){
+    float temp[] = new float[4 * n];      
+    System.arraycopy(colorData, 0, temp, 0, 4 * dataSize);
+    colorData = temp;  
+  }
+  
+  void expandStrokeData(int n) {
+    float temp[] = new float[5 * n];      
+    System.arraycopy(strokeData, 0, temp, 0, 5 * dataSize);
+    strokeData = temp;
+  }  
+  
+  public void addVertex(float x, float y) {
+    addVertex(x, y, 0, 0, 0);      
+  }
+  
+  public void addVertex(float x, float y, float z) {
+    addVertex(x, y, z, 0, 0);      
+  }
+  
+  public void addVertex(float x, float y, float z, float u, float v) {
+    if (family == NURBS_CURVE) {
+      addVertexImpl(x, y, z, u, v, NURBS2D_CONTROL_POINT);  
+    } else if (family == NURBS_CURVE) {
+      addVertexImpl(x, y, z, u, v, NURBS3D_CONTROL_POINT);
+    } else {
+      addVertexImpl(x, y, z, u, v, SIMPLE_POINT);
+    }
+  }
+
+  public void addCurveVertex(float x, float y) {
+    addCurveVertex(x, y, 0);
+  }  
+  
+  public void addCurveVertex(float x, float y, float z) {
+    addVertexImpl(x, y, 0, 0, 0, CURVE_POINT);
+  }
+    
+  public void addBezierVertex(float cx1, float cy1, float cx2, float cy2, float x, float y) {
+    addBezierVertex(cx1, cy1, 0, cx2, cy2, 0, x, y, 0);    
+  }  
+  
+  public void addBezierVertex(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z) {
+    addVertexImpl(cx1, cy1, cz1, 0, 0, BEZIER_CONTROL_POINT);
+    addVertexImpl(cx2, cy2, cz2, 0, 0, BEZIER_CONTROL_POINT);
+    addVertexImpl(x, y, z, 0, 0, BEZIER_ANCHOR_POINT);    
+  }
+  
+  protected void addVertexImpl(float x, float y, float z, float u, float v, int type) {
+    dataCheck();
+    
+    typeData[dataSize] = type;
+    
+    vertexData[3 * dataSize + 0] = x;
+    vertexData[3 * dataSize + 1] = y;
+    vertexData[3 * dataSize + 2] = z;
+    
+    tcoordData[2 * dataSize + 0] = u;
+    tcoordData[2 * dataSize + 1] = v;
+    
+    PApplet.arrayCopy(currNormalData, 0, normalData, 3 * dataSize, 3);
+    PApplet.arrayCopy(currColorData, 0, colorData, 4 * dataSize, 4);
+    PApplet.arrayCopy(currStrokeData, 0, strokeData, 5 * dataSize, 5);
+    
+    dataSize++;
+  }
+  
+  // Will be renamed to setNormal later (now conflicting with old API).
+  public void setNormVect(float nx, float ny, float nz) {
+    currNormalData[0] = nx;
+    currNormalData[1] = ny;
+    currNormalData[2] = nz;
+  }
+  
+  public void setFill(float r, float g, float b, float a) {
+    currColorData[0] = r;
+    currColorData[1] = g;
+    currColorData[2] = b;
+    currColorData[3] = a;
+  }
+  
+  public void setStroke(float r, float g, float b, float a) {
+    currStrokeData[0] = r;
+    currStrokeData[1] = g;
+    currStrokeData[2] = b;
+    currStrokeData[3] = a;    
+  }
+  
+  public void setWeight(float w) {
+    currStrokeData[4] = w;
+  }  
+    
+  // Will be renamed to getVertex later (now conflicting with old API).
+  public PVector getPVertex(int i) {
+    if (0 <= i && i < dataSize) {
+      return new PVector(vertexData[3 * i + 0], vertexData[3 * i + 1], vertexData[3 * i + 2]);      
+    } else {
+      System.err.println("Wrong index");
+      return null;
+    }
+  }
+  
+  public float[] getVertexes() {
+    return getVertexes(0, dataSize - 1);
+  }
+
+  public float[] getVertexes(int i0, int i1) {
+    return getVertexes(i0, i1, null);
+  }
+  
+  public float[] getVertexes(int i0, int i1, float[] data) {
+    if (0 <= i0 && i0 <= i1 && i1 - i0 < dataSize) {
+      int n = i1 - i0 + 1;
+      
+      if (data == null || data.length != 3 * n) {        
+        data = new float[3 * n];
+      }
+      
+      PApplet.arrayCopy(vertexData, 3 * i0, data, 0, 3 * n);
+    } else {
+      System.err.println("Wrong indexes");      
+    }
+    return data;
+  }  
+  
+  public void setVertex(int i, float x, float y, float z) {
+    if (0 <= i && i < dataSize) {
+      vertexData[3 * i + 0] = x; 
+      vertexData[3 * i + 1] = y; 
+      vertexData[3 * i + 2] = z;      
+    } else {
+      System.err.println("Wrong index");
+    }    
+  }
+  
+  public void setVertexes(float[] data) {
+    setVertexes(data, 0, dataSize - 1);
+  }  
+  
+  public void setVertexes(float[] data, int i0, int i1) {
+    if (data == null) {
+      System.err.println("null data");
+      return;
+    }
+      
+    if (0 <= i0 && i0 <= i1 && i1 - i0 < dataSize) {
+      int n = i1 - i0 + 1;
+      if (data.length == 3 * n) {        
+        PApplet.arrayCopy(data, 0, vertexData, 3 * i0, 3 * i1);  
+      } else {
+        System.err.println("Wrong array length");  
+      }      
+    } else {
+      System.err.println("Wrong indexes");
+    }
+  }
+  
+  public void updateGeometry() {
+    updateGeometry(0, dataSize - 1);
+  }
+  
+  public void updateGeometry(int i0, int i1) {
+    modified = true;
+    mi0 = i0;
+    mi1 = i1;
+  }
+  
+  // The huber-tessellator is here. It will be called automatically when
+  // rendering the shape.
+  public void tessellateGeometry() {
+    if (modified) {
+      
+      
+    }
+  }
+  
+  // Save geometry to DFX/OBJ/BIN (raw 3D coordinates), PDF (lighted (?), transformed, projected)  
+  // Flexible enough to other formats can be added easily later.
+  public void save(String filename) {
+    if (family == GROUP) {
+      // Put all child shapes together into a single file.
+    } else {
+      // ...
+    }
+  }
+  
+  
   ////////////////////////////////////////////////////////////
 
   // SHAPE RECORDING HACK
