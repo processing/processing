@@ -261,10 +261,11 @@ public class PShape3D extends PShape {
   ////////////////////////////////////////////////////////////
   
   // the new stuff  
-  static protected final int SIMPLE_POINT = 0;
-  static protected final int CURVE_POINT = 1;
-  static protected final int BEZIER_CONTROL_POINT = 2;
-  static protected final int BEZIER_ANCHOR_POINT = 3;
+  static protected final int GEOMETRY_POINT = 0;
+  static protected final int LINE_POINT = 1;
+  static protected final int CURVE_POINT = 2;
+  static protected final int BEZIER_CONTROL_POINT = 3;
+  static protected final int BEZIER_ANCHOR_POINT = 4;
   
   // To use later
   static public final int NURBS_CURVE = 4;
@@ -286,6 +287,34 @@ public class PShape3D extends PShape {
   
   protected boolean modified;
   protected int mi0, mi1;    
+  
+  
+  // These methods are just for initial debugging.
+  public void setFamily(int family) {
+    this.family = family;
+  }  
+  
+  public void setKind(int kind) {
+    this.kind = kind;
+  }  
+  
+  public void initData() {
+    dataSize = 0;
+
+    Parameters params = new Parameters();
+    params.drawMode = TRIANGLES;
+    params.updateMode = STATIC;
+    setParameters(params);
+    
+    typeData = new int[64];
+    vertexData = new float[3 * 64];  
+    tcoordData = new float[2 * 64];
+    normalData = new float[3 * 64];
+    colorData = new float[4 * 64];
+    strokeData = new float[5 * 64];
+    
+    textures = new PImage[0];
+  }
   
   protected void dataCheck() {
     if (dataSize == typeData.length) {
@@ -347,11 +376,13 @@ public class PShape3D extends PShape {
   public void addVertex(float x, float y, float z, float u, float v) {
     if (family == NURBS_CURVE) {
       addVertexImpl(x, y, z, u, v, NURBS2D_CONTROL_POINT);  
-    } else if (family == NURBS_CURVE) {
+    } else if (family == NURBS_SURFACE) {
       addVertexImpl(x, y, z, u, v, NURBS3D_CONTROL_POINT);
-    } else {
-      addVertexImpl(x, y, z, u, v, SIMPLE_POINT);
-    }
+    } else if (family == GEOMETRY){
+      addVertexImpl(x, y, z, u, v, GEOMETRY_POINT);
+    } else if (family == PATH){
+      addVertexImpl(x, y, z, u, v, LINE_POINT);
+    }    
   }
 
   public void addCurveVertex(float x, float y) {
@@ -496,7 +527,56 @@ public class PShape3D extends PShape {
   public void tessellateGeometry() {
     if (modified) {
       
+      // Check if buffers have been initialized. Create them if needed.
+      //if (dataSize != vertexCount) {        
+      //  setSize(dataSize);
+      //  allocate();        
+      //}
       
+      // tessellate user data in the modified region and put generated geometry
+      // inside arrays to copy to OpenGL. Use indices to optimize geometry utilization.
+      if (family == GEOMETRY) {
+        if (kind == POINTS) {
+          
+        } else if (kind == LINES) {
+          
+        } else if (kind == TRIANGLES) {
+          tesselateTriangles();
+          
+          
+        } else if (kind == TRIANGLE_FAN) {
+          
+        } else if (kind == TRIANGLE_STRIP) {
+          
+          
+          
+        } else if (kind == QUADS) {
+          
+        } else if (kind == QUAD_STRIP) {
+          
+        }
+      } else if (family == PRIMITIVE) {
+        if (kind == POINT) {
+        } else if (kind == LINE) {
+        } else if (kind == TRIANGLE) {
+        } else if (kind == QUAD) {
+        } else if (kind == RECT) {
+        } else if (kind == ELLIPSE) {
+        } else if (kind == ARC) {
+        } else if (kind == BOX) {
+        } else if (kind == SPHERE) {
+        }
+      } else if (family == PATH) {
+        
+      }
+      
+      
+      // Two options:
+      // each child shape contains its own VBOs, or only the root shape has the VBOs 
+      // holding the entire geometry of all the childs...
+      
+      // What about geometric transformations? Are they applied after tessellation and prior 
+      // to copy to GPU?
     }
   }
   
@@ -508,6 +588,96 @@ public class PShape3D extends PShape {
     } else {
       // ...
     }
+    
+    // 
+  }
+  
+  protected void tesselateTriangles() {
+    vertexCount = dataSize;
+    
+    vertices = new float[3 * dataSize];
+    PApplet.arrayCopy(vertexData, vertices, 3 * dataSize);
+    
+    texcoords = new float[2 * dataSize];
+    PApplet.arrayCopy(tcoordData, texcoords, 2 * dataSize);
+    
+    colors = new float[4 * dataSize];
+    PApplet.arrayCopy(colorData, colors, 4 * dataSize);
+    
+    normals = new float[3 * dataSize];
+    PApplet.arrayCopy(normalData, normals, 3 * dataSize);
+    
+    useIndices = true;
+    indexCount = vertexCount;    
+    indices = new int[indexCount];
+    for (int i = 0; i < indexCount; i++) {
+      indices[i] = i;
+    }
+    
+    glUsage = GL.GL_STATIC_DRAW;
+    
+    glVertexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);    
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, vertexCount * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    glColorBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glColorBufferID);
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, vertexCount * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+
+    glNormalBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glNormalBufferID);
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, vertexCount * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    
+    if (glTexCoordBufferID == null) {
+      glTexCoordBufferID = new int[PGraphicsOpenGL.MAX_TEXTURES];
+      java.util.Arrays.fill(glTexCoordBufferID, 0);      
+    }
+        
+    numTexBuffers = 1;
+    for (int i = 0; i < numTexBuffers; i++) {
+      glTexCoordBufferID[i] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glTexCoordBufferID[i]);
+      getGl().glBufferData(GL.GL_ARRAY_BUFFER, vertexCount * 2 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
+      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    }    
+    
+    glIndexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glIndexBufferID);    
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, indexCount * PGraphicsOpenGL.SIZEOF_INT, null, GL.GL_STATIC_DRAW);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);     
+    
+    
+    int offset = 0;
+    int size = vertexCount;
+    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glTexCoordBufferID[0]);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(texcoords));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glColorBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glNormalBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glIndexBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
+                            size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
   }
   
   
@@ -3325,8 +3495,40 @@ public class PShape3D extends PShape {
     }
   }
   
-
   protected void drawGeometry(PGraphics g) {
+    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glNormalBufferID);
+    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);    
+
+    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glColorBufferID);
+    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    
+    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);
+    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    
+    
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
+    // Here the vertex indices are understood as the range of indices.
+    int first = 0;
+    int last = indexCount;    
+    getGl().glDrawElements(glMode, last - first + 1, GL.GL_UNSIGNED_INT, first * PGraphicsOpenGL.SIZEOF_INT);      
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0); 
+    
+    
+    //getGl().glDrawArrays(glMode, 0, vertexCount);
+    
+    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
+    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);    
+  }
+  
+
+  protected void drawGeometry0(PGraphics g) {
     int numTextures;
     float pointSize;
 
