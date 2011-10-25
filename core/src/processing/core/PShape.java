@@ -93,7 +93,7 @@ public class PShape implements PConstants {
   protected int family;
 
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
-  protected int primitive;
+  protected int kind;
 
   protected PMatrix matrix;
 
@@ -497,10 +497,10 @@ public class PShape implements PConstants {
 
 
   protected void drawPrimitive(PGraphics g) {
-    if (primitive == POINT) {
+    if (kind == POINT) {
       g.point(params[0], params[1]);
 
-    } else if (primitive == LINE) {
+    } else if (kind == LINE) {
       if (params.length == 4) {  // 2D
         g.line(params[0], params[1],
                params[2], params[3]);
@@ -509,18 +509,18 @@ public class PShape implements PConstants {
                params[3], params[4], params[5]);
       }
 
-    } else if (primitive == TRIANGLE) {
+    } else if (kind == TRIANGLE) {
       g.triangle(params[0], params[1],
                  params[2], params[3],
                  params[4], params[5]);
 
-    } else if (primitive == QUAD) {
+    } else if (kind == QUAD) {
       g.quad(params[0], params[1],
              params[2], params[3],
              params[4], params[5],
              params[6], params[7]);
 
-    } else if (primitive == RECT) {
+    } else if (kind == RECT) {
       if (image != null) {
         g.imageMode(CORNER);
         g.image(image, params[0], params[1], params[2], params[3]);
@@ -529,22 +529,22 @@ public class PShape implements PConstants {
         g.rect(params[0], params[1], params[2], params[3]);
       }
 
-    } else if (primitive == ELLIPSE) {
+    } else if (kind == ELLIPSE) {
       g.ellipseMode(CORNER);
       g.ellipse(params[0], params[1], params[2], params[3]);
 
-    } else if (primitive == ARC) {
+    } else if (kind == ARC) {
       g.ellipseMode(CORNER);
       g.arc(params[0], params[1], params[2], params[3], params[4], params[5]);
 
-    } else if (primitive == BOX) {
+    } else if (kind == BOX) {
       if (params.length == 1) {
         g.box(params[0]);
       } else {
         g.box(params[0], params[1], params[2]);
       }
 
-    } else if (primitive == SPHERE) {
+    } else if (kind == SPHERE) {
       g.sphere(params[0]);
     }
   }
@@ -554,7 +554,7 @@ public class PShape implements PConstants {
     // get cache object using g.
     
     
-    g.beginShape(primitive);
+    g.beginShape(kind);
     if (style) {
       for (int i = 0; i < vertexCount; i++) {
         g.vertex(vertices[i]);
@@ -905,7 +905,7 @@ public class PShape implements PConstants {
 
 
   public int getPrimitive() {
-    return primitive;
+    return kind;
   }
 
 
