@@ -1,15 +1,33 @@
 0201 core
 o moviemaker built into core to write uncompressed frames? or PNG?
 X   doing this via a tool instead
+X on resize, call redraw() when noLoop() is used
+_   need to add this to the docs
+_ add loadStrings(BufferedReader)
+_   decide if we want to keep this (and/or others?)
+_   port to android
 
 _ change how beginRecord() works.. passing around PApplet vs PGraphics is gross
 _   have to pass PApplet just to make the rendering work to both renderers
 _   should instead be a renderer that splits things out
 
+sort out full screen issues
 _ boolean sketchFullscreen() ? 
 _   for more options, just integrate the fs library?
+_   let hansi know when it's integrated so he can update his library
+_   casey: I think we only want to most basic functionality, to go full screen across monitors.
 _   http://www.superduper.org/processing/fullscreen_api/
 _   https://github.com/kritzikratzi/jAppleMenuBar/blob/master/src/native/jAppleMenuBar.m
+_ detect when using full screen
+_   and if so, remove decoration and don't bother with bg present frame
+_   frame.setUndecorated(true);
+_   frame.setLocation(0,0);
+_   size(screen.width,screen,height); 
+_   this will help for exported applets that don't need 'present'
+_ add option to use full screen exclusive mode on present inside pde?
+_   override default setting of macosx (yes) and linux/win (no)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1043
+_   linux present mode isn't working properly
 
 _ if save() returns boolean, does saveFrame()?
 _   also need to copy this over to android
@@ -312,12 +330,6 @@ _ PApplet.main(new String[] { "classname" }) won't pass in args
 _   this means that no args are after passed to the class
 _   the fix would be to use the following as the call to main()
 _   PApplet.main(append(new String[] { "classname }, args));
-_ detect when using full screen
-_   and if so, remove decoration and don't bother with bg present frame
-_   frame.setUndecorated(true);
-_   frame.setLocation(0,0);
-_   size(screen.width,screen,height); 
-_   this will help for exported applets that don't need 'present'
 _ check for what else inside PApplet should be static
 _   maybe catch RuntimeExceptions in the called sub-functions
 _   that way more stuff can be static w/o losing useful error handling
