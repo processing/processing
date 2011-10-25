@@ -1151,7 +1151,7 @@ public class Table implements Iterable<Table.Row> {
 //          System.arraycopy(intData, 0, intTemp, 0, dead);
 //          System.arraycopy(intData, dead+1, intTemp, dead, (rowCount - dead) + 1);
           System.arraycopy(columns[col], 0, intTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, intTemp, dead, (rowCount - dead) + 1);
+          System.arraycopy(columns[col], dead+1, intTemp, dead, (rowCount - dead) - 1);
           columns[col] = intTemp;
           break;
         }
@@ -1161,7 +1161,7 @@ public class Table implements Iterable<Table.Row> {
 //          System.arraycopy(longData, 0, longTemp, 0, dead);
 //          System.arraycopy(longData, dead+1, longTemp, dead, (rowCount - dead) + 1);
           System.arraycopy(columns[col], 0, longTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, longTemp, dead, (rowCount - dead) + 1);
+          System.arraycopy(columns[col], dead+1, longTemp, dead, (rowCount - dead) - 1);
           columns[col] = longTemp;
           break;
         }
@@ -1171,7 +1171,7 @@ public class Table implements Iterable<Table.Row> {
 //          System.arraycopy(floatData, 0, floatTemp, 0, dead);
 //          System.arraycopy(floatData, dead+1, floatTemp, dead, (rowCount - dead) + 1);
           System.arraycopy(columns[col], 0, floatTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, floatTemp, dead, (rowCount - dead) + 1);
+          System.arraycopy(columns[col], dead+1, floatTemp, dead, (rowCount - dead) - 1);
           columns[col] = floatTemp;
           break;
         }
@@ -1181,14 +1181,14 @@ public class Table implements Iterable<Table.Row> {
 //          System.arraycopy(doubleData, 0, doubleTemp, 0, dead);
 //          System.arraycopy(doubleData, dead+1, doubleTemp, dead, (rowCount - dead) + 1);
           System.arraycopy(columns[col], 0, doubleTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, doubleTemp, dead, (rowCount - dead) + 1);
+          System.arraycopy(columns[col], dead+1, doubleTemp, dead, (rowCount - dead) - 1);
           columns[col] = doubleTemp;
           break;
         }
         case STRING: {
           String[] stringTemp = new String[rowCount-1];
           System.arraycopy(columns[col], 0, stringTemp, 0, dead);
-          System.arraycopy(columns[col], dead+1, stringTemp, dead, (rowCount - dead) + 1);
+          System.arraycopy(columns[col], dead+1, stringTemp, dead, (rowCount - dead) - 1);
           columns[col] = stringTemp;
         }
       }
