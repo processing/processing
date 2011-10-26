@@ -301,6 +301,10 @@ public class PShape3D extends PShape {
   public void initData() {
     dataSize = 0;
 
+    vertexCount = 0;
+    firstIndex = 0;
+    lastIndex = 0;
+    
     Parameters params = new Parameters();
     params.drawMode = TRIANGLES;
     params.updateMode = STATIC;
@@ -314,6 +318,8 @@ public class PShape3D extends PShape {
     strokeData = new float[5 * 64];
     
     textures = new PImage[0];
+    
+    root = this;
   }
   
   protected void dataCheck() {
@@ -613,6 +619,8 @@ public class PShape3D extends PShape {
     for (int i = 0; i < indexCount; i++) {
       indices[i] = i;
     }
+    firstIndex = 0;
+    lastIndex = indexCount - 1;
     
     if (parent == null) {    
       initBuffers(vertexCount, indexCount);            
@@ -641,9 +649,7 @@ public class PShape3D extends PShape {
   public void aggregate() {
     if (family == GROUP && parent == null) {
       // We recursively calculate the total number of vertices and indices.
-      vertexCount = 0;
-      indexCount = 0;
-      aggregateImpl();
+      aggregateImpl(false);
       
       // Now that we know, we can initialize the buffers with the correct size.
       initBuffers(vertexCount, indexCount);
@@ -653,38 +659,60 @@ public class PShape3D extends PShape {
     }
   }
   
-  protected int aggregateImpl() {    
-    if (family == GROUP) {
-      int tot = 0;
-      for (int i = 0; i < childCount; i++) {
-        PShape3D child = (PShape3D)children[i];
-        tot += child.aggregateImpl();
+  protected void aggregateImpl(boolean incFirst) {
+    if (parent != null) {
+      firstVertex = ((PShape3D)parent).lastVertex;
+      firstIndex = ((PShape3D)parent).lastIndex;      
+      if (incFirst) {
+        firstVertex++;
+        firstIndex++;        
       }
-      
-      // The vertex indices of all the shapes inside this group.
-      indices = new int[tot];
-      int pos = 0;
-      for (int i = 0; i < childCount; i++) {
-        PShape3D child = (PShape3D)children[i];
-        PApplet.arrayCopy(child.indices, 0, indices, pos, indices.length);
-        pos += indices.length;
-      }
-      
-      return tot;
     } else {
-      // Shape holding some geometry. 
+      firstVertex = 0;
+      firstIndex = 0;            
+    }
+    lastVertex = firstVertex;    
+    lastIndex = firstIndex;
+    
+    if (family == GROUP) {
+      vertexCount = 0;
+      indexCount = 0;
       
-      // Updating the indices in the shape according to the 
-      // global index calculated until now.
-      root.vertexCount += vertexCount;
-      for (int i = 0; i < indexCount; i++) {
-        indices[i] = root.indexCount + i;
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        child.aggregateImpl(0 < i);
       }
-      root.indexCount += indexCount;
-      // parent.indexCount += indexCount; ?
-      // parent.vertexCount += vertexCount; ?
       
-      return indexCount;
+      if (0 < childCount) {
+        PShape3D child = (PShape3D)children[0];
+        firstVertex = child.firstVertex;
+        firstIndex = child.firstIndex;                
+      } else {
+        firstVertex = lastVertex = -1;
+        firstIndex = lastIndex = -1;        
+      }
+      
+    } else {
+      // Shape holding some geometry.      
+      if (0 < vertexCount) {
+        lastVertex = firstVertex + vertexCount - 1;
+      }
+      if (0 < indexCount) {
+        // The indices are update to take into account all the previous 
+        // shapes in the hierarchy, as the entire geometry will be stored
+        // contiguously in a single VBO in the root node.
+        for (int i = 0; i < indexCount; i++) {
+          indices[i] += firstIndex;
+        }
+        lastIndex = indices[indexCount - 1];
+      }
+    }  
+    
+    if (parent != null) {
+      ((PShape3D)parent).lastVertex = lastVertex;
+      ((PShape3D)parent).vertexCount += vertexCount;
+      ((PShape3D)parent).lastIndex = lastIndex;             
+      ((PShape3D)parent).indexCount += indexCount;
     }    
   }
   
@@ -3530,13 +3558,32 @@ public class PShape3D extends PShape {
       }
     
       if (family == GROUP) {
-        init();
+        
+        boolean matrixBelow = false;
         for (int i = 0; i < childCount; i++) {
-          ((PShape3D)children[i]).draw(g);
+          if (((PShape3D)children[i]).hasMatrix()) {
+            matrixBelow = true;
+            break;
+          }
         }
-      
+        
+        if (matrixBelow) {
+          // Some child shape below this group has a non-null matrix
+          // transforamtion assigned to it, so the group cannot
+          // be drawn in a single render call.
+          //init();
+          for (int i = 0; i < childCount; i++) {
+            ((PShape3D)children[i]).draw(g);
+          }        
+        } else {
+          // None of the child shapes below this group has a matrix
+          // transformation applied to them, so we can render everything
+          // in a single block.
+          render(g);
+        }
+              
       } else {
-        drawGeometry(g);
+        render(g);
       }
     
       if (matrix != null) {
@@ -3545,7 +3592,25 @@ public class PShape3D extends PShape {
     }
   }
 
+  // Recursively checks if the there is a transformation
+  // matrix associated to this shape or any of its child 
+  // shapes.
+  protected boolean hasMatrix() {
+    if (matrix != null) {
+      return true;
+    }
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        if (child.hasMatrix()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
   
+  /*
   protected void pre(PGraphics g) {
     if (matrix != null) {
       g.pushMatrix();
@@ -3560,8 +3625,9 @@ public class PShape3D extends PShape {
       g.popMatrix();
     }
   }
+  */
   
-  
+  /*
   public void drawImpl(PGraphics g) {
     if (family == GROUP) {
       drawGroup(g);
@@ -3577,33 +3643,30 @@ public class PShape3D extends PShape {
       children[i].draw(g);
     }
   }
+*/  
   
-  protected void drawGeometry(PGraphics g) {
+  // Render the geometry stored in the root shape as VBOs, for the vertices 
+  // corresponding to this shape. Sometimes we can have root == this.
+  protected void render(PGraphics g) {
+    if (root == null) {
+      // Some error. Root should never be null. At least it should be this.
+      return; 
+    }
     getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glNormalBufferID);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glNormalBufferID);
     getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);    
 
     getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glColorBufferID);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glColorBufferID);
     getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
     
     getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glVertexBufferID);
     getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-    
-    
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glIndexBufferID);
-    // Here the vertex indices are understood as the range of indices.
-    int first = 0;
-    int last = indexCount;    
-    getGl().glDrawElements(GL.GL_TRIANGLES, last - first + 1, GL.GL_UNSIGNED_INT, first * PGraphicsOpenGL.SIZEOF_INT);      
+        
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glIndexBufferID);    
+    getGl().glDrawElements(GL.GL_TRIANGLES, lastIndex - firstIndex + 1, GL.GL_UNSIGNED_INT, firstIndex * PGraphicsOpenGL.SIZEOF_INT);      
     getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0); 
-    
-    
-    //getGl().glDrawArrays(glMode, 0, vertexCount);
-    
-    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     
     getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
     getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
@@ -3611,7 +3674,7 @@ public class PShape3D extends PShape {
   }
   
 
-  protected void drawGeometry0(PGraphics g) {
+  protected void drawGeometry(PGraphics g) {
     int numTextures;
     float pointSize;
 
