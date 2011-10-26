@@ -614,21 +614,94 @@ public class PShape3D extends PShape {
       indices[i] = i;
     }
     
-    glUsage = GL.GL_STATIC_DRAW;
+    if (parent == null) {    
+      initBuffers(vertexCount, indexCount);
+            
+      copyGeometry(0, vertexCount, vertices, texcoords, colors, normals, indices);
+      
+      //int offset = 0;
+      //int size = vertexCount;
+      
+
+    }
+  }
     
+  public void addShape(PShape3D child) {
+    if (family == GROUP) {
+      super.addChild(child);
+      child.updateRoot(root);
+    }
+  }
+  
+  private void updateRoot(PShape3D root) {
+    this.root = root;
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        child.updateRoot(root);
+      }
+    }
+  }
+  
+  public void aggregate() {
+    if (family == GROUP && parent == null) {
+      // We recursively calculate the total number of vertices and indices.
+      vertexCount = 0;
+      indexCount = 0;
+      aggregateImpl();
+      
+      // Now that we know, we can initialize the buffers with the correct size.
+      initBuffers(vertexCount, indexCount);
+    }
+  }
+  
+  protected int aggregateImpl() {    
+    if (family == GROUP) {
+      int tot = 0;
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        tot += child.aggregateImpl();
+      }
+      
+      // The vertex indices of all the shapes inside this group.
+      indices = new int[tot];
+      int pos = 0;
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        PApplet.arrayCopy(child.indices, 0, indices, pos, indices.length);
+        pos += indices.length;
+      }
+      
+      return tot;
+    } else {
+      // Shape holding some geometry. 
+      
+      // Updating the indices in the shape according to the 
+      // global index calculated until now.
+      root.vertexCount += vertexCount;
+      for (int i = 0; i < indexCount; i++) {
+        indices[i] = root.indexCount + i;
+      }
+      root.indexCount += indexCount;
+      
+      return indexCount;
+    }    
+  }
+  
+  protected void initBuffers(int nvert, int nind) {
     glVertexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, vertexCount * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
     glColorBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glColorBufferID);
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, vertexCount * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
 
     glNormalBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glNormalBufferID);
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, vertexCount * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
     
@@ -641,19 +714,18 @@ public class PShape3D extends PShape {
     for (int i = 0; i < numTexBuffers; i++) {
       glTexCoordBufferID[i] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
       getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glTexCoordBufferID[i]);
-      getGl().glBufferData(GL.GL_ARRAY_BUFFER, vertexCount * 2 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
+      getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 2 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
       getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     }    
     
     glIndexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glIndexBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, indexCount * PGraphicsOpenGL.SIZEOF_INT, null, GL.GL_STATIC_DRAW);    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);     
-    
-    
-    int offset = 0;
-    int size = vertexCount;
-    
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, GL.GL_STATIC_DRAW);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);         
+  }
+  
+  protected void copyGeometry(int offset, int size, float[] vertices, float[] texcoords, float[] colors, 
+                                                   float[] normals, int[] indices) {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);
     getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
                             3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
@@ -679,7 +751,6 @@ public class PShape3D extends PShape {
                             size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
   }
-  
   
   ////////////////////////////////////////////////////////////
 
@@ -3513,7 +3584,7 @@ public class PShape3D extends PShape {
     // Here the vertex indices are understood as the range of indices.
     int first = 0;
     int last = indexCount;    
-    getGl().glDrawElements(glMode, last - first + 1, GL.GL_UNSIGNED_INT, first * PGraphicsOpenGL.SIZEOF_INT);      
+    getGl().glDrawElements(GL.GL_TRIANGLES, last - first + 1, GL.GL_UNSIGNED_INT, first * PGraphicsOpenGL.SIZEOF_INT);      
     getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0); 
     
     
