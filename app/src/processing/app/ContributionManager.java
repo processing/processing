@@ -168,6 +168,19 @@ public class ContributionManager {
     return null;
   }
   
+  static File getSketchbookContribFolder(Base base, Type type) {
+    switch (type) {
+    case LIBRARY:
+    case LIBRARY_COMPILATION:
+      return base.getSketchbookLibrariesFolder();
+    case TOOL:
+      return base.getSketchbookToolsFolder();
+    case MODE:
+      return base.getSketchbookModesFolder();
+    }
+    return null;
+  }
+  
   static InstalledContribution create(Base base, Type type, File folder) {
     switch (type) {
     case LIBRARY:
@@ -286,17 +299,16 @@ public class ContributionManager {
     
     String libFolderName = newLib.getFolder().getName();
     
-    File libraryDestination = editor.getBase().getSketchbookLibrariesFolder();
+    File libraryDestination = ContributionManager
+        .getSketchbookContribFolder(editor.getBase(), newLib.getType());
     File newLibDest = new File(libraryDestination, libFolderName);
     
     for (InstalledContribution oldLib : oldLibs) {
       
-      // XXX: Handle other cases when installing libraries.
-      //   -What if a library by the same name is already installed?
-      //   -What if newLibDest exists, but isn't used by an existing library?
-      if (oldLib.getFolder().exists() && oldLib.getFolder().equals(newLibDest)) {
+      if ((oldLib.getFolder().exists() && oldLib.getFolder().equals(newLibDest))
+          || (oldLib.getId() != null && oldLib.getId().equals(newLib.getId()))) {
         
-        if (ContributionManager.requiresRestart(newLib)) {
+        if (ContributionManager.requiresRestart(oldLib)) {
           // XXX: We can't replace stuff, soooooo.... do something different
           if (!backupContribution(editor, oldLib, false, statusBar)) {
             return null;

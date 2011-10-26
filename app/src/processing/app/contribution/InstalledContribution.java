@@ -30,6 +30,7 @@ import processing.app.*;
 public abstract class InstalledContribution implements Contribution {
 
   protected String name;              // "pdf" or "PDF Export"
+  protected String id;              // 1
   protected String category;          // "Sound"
   protected String authorList;  // Ben Fry
   protected String url;               // http://processing.org
@@ -52,6 +53,7 @@ public abstract class InstalledContribution implements Contribution {
     properties = Base.readSettings(propertiesFile);
 
     name = properties.get("name");
+    id = properties.get("id");
     category = ContributionListing.getCategory(properties.get("category"));
     if (name == null) {
       name = folder.getName();
@@ -84,6 +86,10 @@ public abstract class InstalledContribution implements Contribution {
   
   public String getName() {
     return name;
+  }
+  
+  public String getId() {
+    return id;
   }
   
   public String getAuthorList() {
