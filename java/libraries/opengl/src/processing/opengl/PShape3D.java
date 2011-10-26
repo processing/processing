@@ -615,14 +615,8 @@ public class PShape3D extends PShape {
     }
     
     if (parent == null) {    
-      initBuffers(vertexCount, indexCount);
-            
+      initBuffers(vertexCount, indexCount);            
       copyGeometry(0, vertexCount, vertices, texcoords, colors, normals, indices);
-      
-      //int offset = 0;
-      //int size = vertexCount;
-      
-
     }
   }
     
@@ -643,6 +637,7 @@ public class PShape3D extends PShape {
     }
   }
   
+  protected int copyOffset;
   public void aggregate() {
     if (family == GROUP && parent == null) {
       // We recursively calculate the total number of vertices and indices.
@@ -652,6 +647,9 @@ public class PShape3D extends PShape {
       
       // Now that we know, we can initialize the buffers with the correct size.
       initBuffers(vertexCount, indexCount);
+      
+      copyOffset = 0;
+      copyGeometryToRoot();
     }
   }
   
@@ -683,6 +681,8 @@ public class PShape3D extends PShape {
         indices[i] = root.indexCount + i;
       }
       root.indexCount += indexCount;
+      // parent.indexCount += indexCount; ?
+      // parent.vertexCount += vertexCount; ?
       
       return indexCount;
     }    
@@ -722,6 +722,18 @@ public class PShape3D extends PShape {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glIndexBufferID);    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, GL.GL_STATIC_DRAW);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);         
+  }
+  
+  protected void copyGeometryToRoot() {
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        child.copyGeometryToRoot();
+      }    
+    } else {
+      root.copyGeometry(root.copyOffset, vertexCount, vertices, texcoords, colors, normals, indices);
+      root.copyOffset += vertexCount;
+    }
   }
   
   protected void copyGeometry(int offset, int size, float[] vertices, float[] texcoords, float[] colors, 
