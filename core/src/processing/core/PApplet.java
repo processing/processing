@@ -5056,7 +5056,18 @@ public class PApplet extends Applet
     return outgoing;
   }
 
+  //////////////////////////////////////////////////////////////
 
+  // SHAPE CREATION
+  
+  public PShape createGroup() {
+    return g.createGroup();
+  }  
+  
+  public PShape createGeometry(int kind) {
+    return g.createGeometry(kind);
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
