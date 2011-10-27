@@ -208,6 +208,7 @@ public class PShape3D extends PShape {
     
     root = this;
     parent = null;
+    updateElement = -1;
   }   
     
   public void setKind(int kind) {
@@ -1537,6 +1538,88 @@ public class PShape3D extends PShape {
 
   // load/update/set/get methods
  
+  public void loadTessVertices() {
+    loadTessVertices(firstVertex, lastVertex);
+  }
+  
+  public void loadTessVertices(int first, int last) {
+    if (last < first || first < firstVertex || lastVertex < last) {
+      PGraphics.showWarning("PShape3D: wrong vertex index");
+      updateElement = -1;
+      return;
+    }
+    
+    if (updateElement != -1) {
+      PGraphics.showWarning("PShape3D: can load only one type of data at the time");
+      return;
+    }
+        
+    if (root.isModified()) {
+      // Just re-creating everything. 
+      // Later we can do something a little more
+      // refined.
+      root.tessellate();
+      root.aggregate();        
+      root.setModified(false);
+    }
+        
+    updateElement = VERTICES;
+    firstUpdateIdx = first;
+    lastUpdateIdx = last;
+        
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glVertexBufferID);
+        
+    int offset = firstUpdateIdx * 3;
+    int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;    
+    //vertexBuffer = ogl.gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, offset, size, GL.GL_WRITE_ONLY).asFloatBuffer();    
+    vertexBuffer = getGl().glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY).asFloatBuffer();
+    
+    /*
+    if (vertexBuffer.hasArray()) {
+      vertices = vertexBuffer.array();
+    }
+    */
+    
+    if (vertices == null || vertices.length != vertexBuffer.capacity()) {
+      vertices = new float[vertexBuffer.capacity()];
+      vertexBuffer.position(0);
+      vertexBuffer.get(vertices);
+    }
+    
+    
+    // * Possible optimization:
+    // int offset = firstUpdateIdx * 3;
+    // int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;    
+    //vertexBuffer = gl.glMapBufferRange(GL.GL_ARRAY_BUFFER, offset, size, GL.GL_WRITE_ONLY).asFloatBuffer();
+    // if using this, the vertexBuffer.put(vertices) should be start at 0. I think.
+    // * Another optimization: use BufferData instead of Map to replace an ENTIRE buffer.
+  }  
+
+  
+  public void updateTessVertices() {
+    if (updateElement == VERTICES) {
+      int offset = firstUpdateIdx * 3;
+      int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;
+    
+      //if (root.autoBounds) { 
+      //  updateBounds(firstUpdateIdx, lastUpdateIdx);
+      //}
+        
+      vertexBuffer.position(0);
+      vertexBuffer.put(vertices, offset, size);
+      vertexBuffer.flip();      
+      
+      getGl().glUnmapBuffer(GL.GL_ARRAY_BUFFER);
+      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+      updateElement = -1;
+    } else {
+      PGraphics.showWarning("PShape3D: need to call loadTessVertices() first");
+    }
+  }
+
+  
+  
   
   public void loadVertices() {
     loadVertices(firstVertex, lastVertex);
@@ -1561,7 +1644,14 @@ public class PShape3D extends PShape {
         
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);
         
-    vertexBuffer = getGl().glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY).asFloatBuffer();
+    //vertexBuffer = getGl().glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY).asFloatBuffer();
+    //int offset = firstUpdateIdx * 3;
+    //int size = (lastUpdateIdx - firstUpdateIdx + 1) * 3;        
+    //vertexBuffer = getGl().glMapBufferRange(GL.GL_ARRAY_BUFFER, offset, size, GL.GL_WRITE_ONLY).asFloatBuffer();
+    //if (vertexBuffer.hasArray()) {
+    //  vertices = vertexBuffer.array();
+    //}
+    
     
     // * Possible optimization:
     // int offset = firstUpdateIdx * 3;
