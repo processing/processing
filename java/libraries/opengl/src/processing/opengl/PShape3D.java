@@ -159,6 +159,8 @@ public class PShape3D extends PShape {
   
   ////////////////////////////////////////////////////////////
 
+  public static final int DEFAULT_VERTICES = 512;
+  
   // Constructors.
 
   public PShape3D() {
@@ -183,10 +185,55 @@ public class PShape3D extends PShape {
     this.name = "root";
     this.root = this;
   }
+
+  public PShape3D(PApplet parent, int family) {
+    this.papplet = parent;
+    ogl = (PGraphicsOpenGL)parent.g;
+    ogl.registerPGLObject(this);    
+    
+    this.family = family;
+    
+    vertexCount = 0;
+    firstVertex = 0;
+    lastVertex = 0;
+    
+    indexCount = 0;
+    firstIndex = 0;
+    lastIndex = 0;
+        
+    Parameters params = new Parameters();
+    params.drawMode = TRIANGLES;
+    params.updateMode = DYNAMIC;
+    setParameters(params);  
+    
+    root = this;
+    parent = null;
+  }   
+    
+  public void setKind(int kind) {
+    this.kind = kind;
+    
+    if (kind != GEOMETRY) {
+      typeData = new int[64];
+      vertexData = new float[3 * DEFAULT_VERTICES];  
+      tcoordData = new float[2 * DEFAULT_VERTICES];
+      normalData = new float[3 * DEFAULT_VERTICES];
+      colorData = new float[4 * DEFAULT_VERTICES];
+      strokeData = new float[5 * DEFAULT_VERTICES];
+      
+      textures = new PImage[0];
+    }
+  }
   
+  
+  
+  
+  
+  /*
   public PShape3D(PApplet parent, int numVert) {
     this(parent, numVert, new Parameters()); 
-  }  
+  } 
+  */ 
   
   public PShape3D(PApplet parent, String filename, Parameters params) {
     this.papplet = parent;
@@ -289,21 +336,23 @@ public class PShape3D extends PShape {
   protected int mi0, mi1;    
   
   
+  /*
   // These methods are just for initial debugging.
   public void setFamily(int family) {
     this.family = family;
-  }  
-  
-  public void setKind(int kind) {
-    this.kind = kind;
   }  
   
   public void initData() {
     dataSize = 0;
 
     vertexCount = 0;
+    firstVertex = 0;
+    lastVertex = 0;
+    
+    indexCount = 0;
     firstIndex = 0;
     lastIndex = 0;
+    
     
     Parameters params = new Parameters();
     params.drawMode = TRIANGLES;
@@ -321,6 +370,7 @@ public class PShape3D extends PShape {
     
     root = this;
   }
+  */
   
   protected void dataCheck() {
     if (dataSize == typeData.length) {
@@ -426,6 +476,8 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(currStrokeData, 0, strokeData, 5 * dataSize, 5);
     
     dataSize++;
+    
+    modified = true;
   }
   
   // Will be renamed to setNormal later (now conflicting with old API).
@@ -491,6 +543,7 @@ public class PShape3D extends PShape {
       vertexData[3 * i + 0] = x; 
       vertexData[3 * i + 1] = y; 
       vertexData[3 * i + 2] = z;      
+      modified = true;
     } else {
       System.err.println("Wrong index");
     }    
@@ -512,12 +565,16 @@ public class PShape3D extends PShape {
         PApplet.arrayCopy(data, 0, vertexData, 3 * i0, 3 * i1);  
       } else {
         System.err.println("Wrong array length");  
-      }      
+      }
+      
+      modified = true;
     } else {
       System.err.println("Wrong indexes");
     }
   }
   
+  
+  /*
   public void updateGeometry() {
     updateGeometry(0, dataSize - 1);
   }
@@ -527,11 +584,31 @@ public class PShape3D extends PShape {
     mi0 = i0;
     mi1 = i1;
   }
+  */
+  
+  // Save geometry to DFX/OBJ/BIN (raw 3D coordinates), PDF (lighted (?), transformed, projected)  
+  // Flexible enough to other formats can be added easily later.
+  public void save(String filename) {
+    if (family == GROUP) {
+      // Put all child shapes together into a single file.
+    } else {
+      // ...
+    }
+    
+    // 
+  }  
+  
   
   // The huber-tessellator is here. It will be called automatically when
   // rendering the shape.
-  public void tessellateGeometry() {
-    if (modified) {
+  protected void tessellate() {
+    
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        child.tessellate();
+      }      
+    } else {    
       
       // Check if buffers have been initialized. Create them if needed.
       //if (dataSize != vertexCount) {        
@@ -577,29 +654,16 @@ public class PShape3D extends PShape {
       }
       
       
-      // Two options:
-      // each child shape contains its own VBOs, or only the root shape has the VBOs 
-      // holding the entire geometry of all the childs...
-      
-      // What about geometric transformations? Are they applied after tessellation and prior 
-      // to copy to GPU?
-    }
-  }
-  
-  // Save geometry to DFX/OBJ/BIN (raw 3D coordinates), PDF (lighted (?), transformed, projected)  
-  // Flexible enough to other formats can be added easily later.
-  public void save(String filename) {
-    if (family == GROUP) {
-      // Put all child shapes together into a single file.
-    } else {
-      // ...
-    }
-    
-    // 
+    }  
+      // What about geometric transformations? When they are static, could be applied
+      // once to avoid rendering the shape in batches.
+   
   }
   
   protected void tesselateTriangles() {
-    vertexCount = dataSize;
+    vertexCount = dataSize;    
+    firstVertex = 0;
+    lastVertex = vertexCount - 1;
     
     vertices = new float[3 * dataSize];
     PApplet.arrayCopy(vertexData, vertices, 3 * dataSize);
@@ -622,16 +686,21 @@ public class PShape3D extends PShape {
     firstIndex = 0;
     lastIndex = indexCount - 1;
     
+    /*
     if (parent == null) {    
       initBuffers(vertexCount, indexCount);            
       copyGeometry(0, vertexCount, vertices, texcoords, colors, normals, indices);
     }
+    */
   }
     
   public void addShape(PShape3D child) {
     if (family == GROUP) {
       super.addChild(child);
       child.updateRoot(root);
+      modified = true;
+    } else {
+      System.err.println("Cannot add child shape to non-group shape.");
     }
   }
   
@@ -646,14 +715,13 @@ public class PShape3D extends PShape {
   }
   
   protected int copyOffset;
-  public void aggregate() {
-    if (family == GROUP && parent == null) {
+  protected void aggregate() {
+    if (root == this && parent == null) {
       // We recursively calculate the total number of vertices and indices.
       aggregateImpl(false);
       
       // Now that we know, we can initialize the buffers with the correct size.
-      initBuffers(vertexCount, indexCount);
-      
+      initBuffers(vertexCount, indexCount);      
       copyOffset = 0;
       copyGeometryToRoot();
     }
@@ -3552,6 +3620,15 @@ public class PShape3D extends PShape {
   public void draw(PGraphics g) {
     if (visible) {
       
+      if (root.isModified()) {
+        // Just re-creating everything. 
+        // Later we can do something a little more
+        // refined.
+        root.tessellate();
+        root.aggregate();        
+        root.setModified(false);
+      }
+      
       if (matrix != null) {
         g.pushMatrix();
         g.applyMatrix(matrix);
@@ -3608,6 +3685,31 @@ public class PShape3D extends PShape {
       }
     }
     return false;
+  }
+  
+  protected boolean isModified() {
+    if (modified) {
+      return true;
+    }
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        if (child.isModified()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
+  protected void setModified(boolean value) {
+    modified = value;
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        child.setModified(value);
+      }
+    }    
   }
   
   /*

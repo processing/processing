@@ -1616,6 +1616,16 @@ public class PGraphicsOpenGL extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // VERTEX SHAPES
+  
+  public PShape createGroup() {
+    return new PShape3D(parent, PShape.GROUP);    
+  }
+  
+  public PShape createGeometry(int kind) {
+    PShape3D shape = new PShape3D(parent, PShape.GEOMETRY);
+    shape.setKind(kind);
+    return shape;
+  }
 
   // All picked up from either PGraphics or PGraphics3D
 
