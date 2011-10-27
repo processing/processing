@@ -3165,7 +3165,7 @@ public class PShape3D extends PShape {
   
   
   protected void setParameters(Parameters params) {
-    if (root != this) return; // Can be done only from the root shape.
+    //if (root != this) return; // Can be done only from the root shape.
     
     setDrawModeImpl(params.drawMode);
 
@@ -3765,10 +3765,13 @@ public class PShape3D extends PShape {
     getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glVertexBufferID);
     getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-        
+    
+    /*
     getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glIndexBufferID);    
     getGl().glDrawElements(GL.GL_TRIANGLES, lastIndex - firstIndex + 1, GL.GL_UNSIGNED_INT, firstIndex * PGraphicsOpenGL.SIZEOF_INT);      
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0); 
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    */
+    getGl().glDrawArrays(GL.GL_TRIANGLES, firstVertex, lastVertex - firstVertex + 1); 
     
     getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
     getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
