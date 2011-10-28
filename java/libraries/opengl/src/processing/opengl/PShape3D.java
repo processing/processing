@@ -610,51 +610,51 @@ public class PShape3D extends PShape {
         child.tessellate();
       }      
     } else {    
-      
-      // Check if buffers have been initialized. Create them if needed.
-      //if (dataSize != vertexCount) {        
-      //  setSize(dataSize);
-      //  allocate();        
-      //}
-      
-      // tessellate user data in the modified region and put generated geometry
-      // inside arrays to copy to OpenGL. Use indices to optimize geometry utilization.
-      if (family == GEOMETRY) {
-        if (kind == POINTS) {
-          
-        } else if (kind == LINES) {
-          
-        } else if (kind == TRIANGLES) {
-          tesselateTriangles();
-          
-          
-        } else if (kind == TRIANGLE_FAN) {
-          
-        } else if (kind == TRIANGLE_STRIP) {
-          
-          
-          
-        } else if (kind == QUADS) {
-          
-        } else if (kind == QUAD_STRIP) {
-          
-        }
-      } else if (family == PRIMITIVE) {
-        if (kind == POINT) {
-        } else if (kind == LINE) {
-        } else if (kind == TRIANGLE) {
-        } else if (kind == QUAD) {
-        } else if (kind == RECT) {
-        } else if (kind == ELLIPSE) {
-        } else if (kind == ARC) {
-        } else if (kind == BOX) {
-        } else if (kind == SPHERE) {
-        }
-      } else if (family == PATH) {
+      if (modified) {
+        // Check if buffers have been initialized. Create them if needed.
+        //if (dataSize != vertexCount) {        
+        //  setSize(dataSize);
+        //  allocate();        
+        //}
         
+        // tessellate user data in the modified region and put generated geometry
+        // inside arrays to copy to OpenGL. Use indices to optimize geometry utilization.
+        if (family == GEOMETRY) {
+          if (kind == POINTS) {
+            
+          } else if (kind == LINES) {
+            
+          } else if (kind == TRIANGLES) {
+            tesselateTriangles();
+            
+            
+          } else if (kind == TRIANGLE_FAN) {
+            
+          } else if (kind == TRIANGLE_STRIP) {
+            
+            
+            
+          } else if (kind == QUADS) {
+            
+          } else if (kind == QUAD_STRIP) {
+            
+          }
+        } else if (family == PRIMITIVE) {
+          if (kind == POINT) {
+          } else if (kind == LINE) {
+          } else if (kind == TRIANGLE) {
+          } else if (kind == QUAD) {
+          } else if (kind == RECT) {
+          } else if (kind == ELLIPSE) {
+          } else if (kind == ARC) {
+          } else if (kind == BOX) {
+          } else if (kind == SPHERE) {
+          }
+        } else if (family == PATH) {
+          
+        }      
+      
       }
-      
-      
     }  
       // What about geometric transformations? When they are static, could be applied
       // once to avoid rendering the shape in batches.
