@@ -335,6 +335,18 @@ public class PShape3D extends PShape {
   
   protected boolean modified;
   protected int mi0, mi1;    
+
+  protected int strokeVertexCount;
+  protected int firstStrokeVertex;
+  protected int lastStrokeVertex;
+  
+  protected int firstStrokeIndex;
+  protected int lastStrokeIndex;  
+  protected int[] strokeIndices;
+  
+  public int glStrokeVertexBufferID;
+  public int glStrokeColorBufferID;
+  public int glStrokeIndexBufferID;
   
   
   /*
@@ -625,7 +637,7 @@ public class PShape3D extends PShape {
           } else if (kind == LINES) {
             
           } else if (kind == TRIANGLES) {
-            tesselateTriangles();
+            tessellateTriangles();
             
             
           } else if (kind == TRIANGLE_FAN) {
@@ -661,7 +673,7 @@ public class PShape3D extends PShape {
    
   }
   
-  protected void tesselateTriangles() {
+  protected void tessellateTriangles() {
     vertexCount = dataSize;    
     firstVertex = 0;
     lastVertex = vertexCount - 1;
@@ -686,6 +698,19 @@ public class PShape3D extends PShape {
     }
     firstIndex = 0;
     lastIndex = indexCount - 1;
+    
+    // Check if this geometry is stroked.
+    boolean hasStroke = false;
+    for (int i = 0; i < dataSize; i++) {      
+      if (0 < strokeData[5 * i + 4]) {
+        hasStroke = true;
+        break;
+      }
+    }
+    
+    if (hasStroke) {
+      
+    }
     
     /*
     if (parent == null) {    
