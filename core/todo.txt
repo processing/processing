@@ -2,8 +2,10 @@
 o moviemaker built into core to write uncompressed frames? or PNG?
 X   doing this via a tool instead
 X on resize, call redraw() when noLoop() is used
-_   need to add this to the docs
-_ add loadStrings(BufferedReader)
+o   need to add this to the docs
+X   was already in the documentation..
+
+_ finish adding loadStrings(BufferedReader)
 _   decide if we want to keep this (and/or others?)
 _   port to android
 
