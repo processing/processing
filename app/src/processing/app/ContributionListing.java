@@ -28,8 +28,8 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-import processing.app.contribution.*;
-import processing.app.contribution.Contribution.Type;
+import processing.app.contrib.*;
+import processing.app.contrib.Contribution.Type;
 import processing.core.PApplet;
 
 public class ContributionListing {

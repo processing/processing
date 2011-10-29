@@ -31,7 +31,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
-import processing.app.contribution.InstalledContribution;
+import processing.app.contrib.InstalledContribution;
 
 public class ModeContribution extends InstalledContribution {
 

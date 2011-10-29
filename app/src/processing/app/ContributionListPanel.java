@@ -41,7 +41,7 @@ import java.net.*;
 
 import processing.app.ContributionListing.AdvertisedContribution;
 import processing.app.ContributionListing.ContributionChangeListener;
-import processing.app.contribution.*;
+import processing.app.contrib.*;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
   
