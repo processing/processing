@@ -37,7 +37,11 @@ public class Library extends InstalledContribution {
   
   static public final String propertiesFileName = "library.properties";
 
-  /** Filter to pull out just files and no directories, and to skip export.txt */
+  /** 
+   * Filter to pull out just files and none of the platform-specific 
+   * directories, and to skip export.txt. As of 2.0a2, other directories are
+   * included, because we need things like the 'plugins' subfolder w/ video. 
+   */
   static FilenameFilter standardFilter = new FilenameFilter() {
     public boolean accept(File dir, String name) {
       // skip .DS_Store files, .svn folders, etc
@@ -45,7 +49,19 @@ public class Library extends InstalledContribution {
       if (name.equals("CVS")) return false;
       if (name.equals("export.txt")) return false;
       File file = new File(dir, name);
-      return (!file.isDirectory());
+//      return (!file.isDirectory());
+      if (file.isDirectory()) {
+        if (name.equals("macosx")) return false;
+        if (name.equals("macosx32")) return false;
+        if (name.equals("macosx64")) return false;
+        if (name.equals("windows")) return false;
+        if (name.equals("windows32")) return false;
+        if (name.equals("windows64")) return false;
+        if (name.equals("linux")) return false;
+        if (name.equals("linux32")) return false;
+        if (name.equals("linux64")) return false;
+      }
+      return true;
     }
   };
 

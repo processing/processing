@@ -4,11 +4,24 @@ X   http://code.google.com/p/processing/issues/detail?id=836
 X add movie maker tool to the build scripts
 X swap order of applet/application in the file menu
 X update Quaqua to 7.4.2
+X make application the default instead of applet
+X subfolders of windows32 & friends aren't being included (gsvideo problem)
+
+_ add a preferences option for whether to run in 32 or 64-bit
+_   also make note of when library is not available (serial) with error msg
+_   gsvideo sometimes needs to run as 64 instead of 32
+
+_ Commenting via menu or shortcut does not set sketch to "need save"
+_   http://code.google.com/p/processing/issues/detail?id=860
+
+_ gstreamer has a million DLLs, so it's gross to have them in the main fldr
+_   how would launch4j deal with this?
 
 _ move Movie Maker out to its own separate tool package
 _   http://code.google.com/p/processing/issues/detail?id=837
 
-_ don't show library conflict warning until someone tries to build code
+_ don't show library conflict warning until someone tries to build 
+_   with code that actually calls on one of those packages
 _   too many people seem to think this is an error
 
 _ bad tool brings down the environment
@@ -23,8 +36,6 @@ _ also add option for FSEM or not
 
 _ library imports failing for libs that define the same packages in 1.5.1
 _   http://code.google.com/p/processing/issues/detail?id=725
-
-_ make application the default instead of applet
 
 _ renaming a normal tab to same name with ".java" fails with ".pde" version already exists
 _   http://code.google.com/p/processing/issues/detail?id=776
@@ -1255,10 +1266,6 @@ _ need to set dock icon title on osx
 
 PDE / Present 
 
-_ add option to use full screen exclusive mode on present inside pde?
-_   override default setting of macosx (yes) and linux/win (no)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1043
-_   linux present mode isn't working properly
 _ need to decide how to handle "stop" button in present mode
 _   http://dev.processing.org/bugs/show_bug.cgi?id=63
 _   when running externally, people need to write their own stop function
