@@ -3,7 +3,7 @@ package processing.app;
 import java.io.*;
 import java.util.*;
 
-import processing.app.contribution.*;
+import processing.app.contrib.*;
 import processing.core.*;
 
 public class Library extends InstalledContribution {

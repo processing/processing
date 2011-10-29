@@ -9,8 +9,8 @@ import java.util.zip.*;
 import javax.swing.JOptionPane;
 
 import processing.app.ContributionListing.AdvertisedContribution;
-import processing.app.contribution.*;
-import processing.app.contribution.Contribution.Type;
+import processing.app.contrib.*;
+import processing.app.contrib.Contribution.Type;
 
 interface ErrorWidget {
   void setErrorMessage(String msg);

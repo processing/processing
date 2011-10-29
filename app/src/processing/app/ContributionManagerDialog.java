@@ -32,7 +32,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import processing.app.ContributionListing.Filter;
-import processing.app.contribution.*;
+import processing.app.contrib.*;
 
 public class ContributionManagerDialog {
   
