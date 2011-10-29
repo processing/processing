@@ -34,8 +34,8 @@ import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
-import processing.app.contribution.Contribution;
-import processing.app.contribution.InstalledContribution;
+import processing.app.contrib.Contribution;
+import processing.app.contrib.InstalledContribution;
 import processing.core.*;
 
 /**

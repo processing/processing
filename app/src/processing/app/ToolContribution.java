@@ -27,7 +27,7 @@ import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
-import processing.app.contribution.*;
+import processing.app.contrib.*;
 import processing.app.tools.Tool;
 
 public class ToolContribution extends InstalledContribution implements Tool {
