@@ -59,7 +59,7 @@ public class AndroidToolbar extends EditorToolbar {
     case NEW:    return !shift ? "New" : "New Editor Window";
     case OPEN:   return !shift ? "Open" : "Open in Another Window";
     case SAVE:   return "Save";
-    case EXPORT: return !shift ? "Export Android Project" : "Export Signed Package";
+    case EXPORT: return !shift ? "Export Signed Package" : "Export Android Project";
     }
     return null;
   }
