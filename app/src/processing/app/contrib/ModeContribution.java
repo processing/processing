@@ -20,7 +20,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.contrib;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -31,7 +31,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
-import processing.app.contrib.InstalledContribution;
+import processing.app.Base;
+import processing.app.Mode;
 
 public class ModeContribution extends InstalledContribution {
 
@@ -137,7 +138,7 @@ public class ModeContribution extends InstalledContribution {
     return loader.equals(other.loader) && className.equals(other.className);
   }
   
-  static protected ArrayList<ModeContribution> list(Base base, File folder) {
+  static public ArrayList<ModeContribution> list(Base base, File folder) {
     ArrayList<ModeContribution> modes = new ArrayList<ModeContribution>();
     ArrayList<File> modeFolders = discover(folder);
     

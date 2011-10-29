@@ -42,8 +42,8 @@ public abstract class Mode {
   protected File librariesFolder;
   protected File referenceFolder;
 
-  protected ArrayList<Library> coreLibraries;
-  protected ArrayList<Library> contribLibraries;  
+  public ArrayList<Library> coreLibraries;
+  public ArrayList<Library> contribLibraries;  
 
   
   public Mode(Base base, File folder) {

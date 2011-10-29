@@ -20,7 +20,7 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-package processing.app;
+package processing.app.contrib;
 
 import java.util.*;
 import java.util.List;
@@ -39,9 +39,9 @@ import java.awt.*;
 import java.io.File;
 import java.net.*;
 
-import processing.app.ContributionListing.AdvertisedContribution;
-import processing.app.ContributionListing.ContributionChangeListener;
-import processing.app.contrib.*;
+import processing.app.Base;
+import processing.app.contrib.ContributionListing.AdvertisedContribution;
+import processing.app.contrib.ContributionListing.ContributionChangeListener;
 
 public class ContributionListPanel extends JPanel implements Scrollable, ContributionChangeListener {
   

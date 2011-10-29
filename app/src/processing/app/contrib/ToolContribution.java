@@ -20,15 +20,16 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package processing.app;
+package processing.app.contrib;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
 
-import processing.app.contrib.*;
+import processing.app.Editor;
 import processing.app.tools.Tool;
+
 
 public class ToolContribution extends InstalledContribution implements Tool {
 
@@ -159,7 +160,7 @@ public class ToolContribution extends InstalledContribution implements Tool {
    *          Tools that failed to initialize for whatever reason are not
    *          returned
    */
-  static protected ArrayList<ToolContribution> list(File folder, boolean doInitializeToolClass) {
+  public static ArrayList<ToolContribution> list(File folder, boolean doInitializeToolClass) {
     ArrayList<File> toolsFolders = ToolContribution.discover(folder);
 
     ArrayList<ToolContribution> tools = new ArrayList<ToolContribution>();

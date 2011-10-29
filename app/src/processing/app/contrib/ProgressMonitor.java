@@ -20,7 +20,7 @@
  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package processing.app;
+package processing.app.contrib;
 
 /**
  * The ProgressMonitor interface should be implemented by objects that observe

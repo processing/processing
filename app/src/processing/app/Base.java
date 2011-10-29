@@ -35,7 +35,12 @@ import javax.swing.*;
 import javax.swing.tree.*;
 
 import processing.app.contrib.Contribution;
+import processing.app.contrib.ContributionListing;
+import processing.app.contrib.ContributionManager;
+import processing.app.contrib.ContributionManagerDialog;
 import processing.app.contrib.InstalledContribution;
+import processing.app.contrib.ModeContribution;
+import processing.app.contrib.ToolContribution;
 import processing.core.*;
 
 /**
@@ -94,11 +99,8 @@ public class Base {
   
   // A single instance of the library manager window
   ContributionManagerDialog libraryManagerFrame;
-  
   ContributionManagerDialog toolManagerFrame;
-  
   ContributionManagerDialog modeManagerFrame;
-  
   ContributionManagerDialog updateManagerFrame;
   
   // set to true after the first time the menu is built.
@@ -116,7 +118,7 @@ public class Base {
 
   private Mode defaultMode;
   private Mode[] coreModes;
-  List<ModeContribution> contribModes;
+  public List<ModeContribution> contribModes;
 
   private JMenu sketchbookMenu;
 
@@ -320,15 +322,15 @@ public class Base {
 
 
   private void buildCoreModes() {
-        defaultMode = ModeContribution
-        .getCoreMode(this, "processing.mode.java.JavaMode",
-                     getContentFile("modes/java"));
-    Mode androidMode = ModeContribution
-        .getCoreMode(this, "processing.mode.android.AndroidMode",
-                     getContentFile("modes/android"));
-    Mode javaScriptMode = ModeContribution
-        .getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
-                     getContentFile("modes/javascript"));
+    defaultMode = 
+      ModeContribution.getCoreMode(this, "processing.mode.java.JavaMode",
+                                   getContentFile("modes/java"));
+    Mode androidMode = 
+      ModeContribution.getCoreMode(this, "processing.mode.android.AndroidMode",
+                                   getContentFile("modes/android"));
+    Mode javaScriptMode = 
+      ModeContribution.getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
+                                   getContentFile("modes/javascript"));
 
     coreModes = new Mode[] { defaultMode, androidMode, javaScriptMode };
   }
@@ -340,8 +342,8 @@ public class Base {
     if (contribModes == null)
       contribModes = new ArrayList<ModeContribution>();
 
-    ArrayList<ModeContribution> newContribs = ModeContribution
-        .list(this, getSketchbookModesFolder());
+    ArrayList<ModeContribution> newContribs = 
+      ModeContribution.list(this, getSketchbookModesFolder());
     for (ModeContribution contrib : newContribs) {
       if (!contribModes.contains(contrib)) {
         if (contrib.instantiateModeClass()) {
@@ -626,7 +628,7 @@ public class Base {
   static final int SHORTCUT_KEY_MASK =
     Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
   /** Command-W on Mac OS X, Ctrl-W on Windows and Linux */
-  static final KeyStroke WINDOW_CLOSE_KEYSTROKE =
+  public static final KeyStroke WINDOW_CLOSE_KEYSTROKE =
     KeyStroke.getKeyStroke('W', SHORTCUT_KEY_MASK);
   /** Command-Option on Mac OS X, Ctrl-Alt on Windows and Linux */
   static final int SHORTCUT_ALT_KEY_MASK = ActionEvent.ALT_MASK |

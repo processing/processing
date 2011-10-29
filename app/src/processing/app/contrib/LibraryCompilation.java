@@ -1,18 +1,17 @@
-package processing.app;
+package processing.app.contrib;
 
 import java.io.*;
 import java.util.*;
 
-import processing.app.contrib.*;
+import processing.app.Library;
+
 
 public class LibraryCompilation extends InstalledContribution {
-
   ArrayList<Library> libraries;
-  
   static String propertiesFileName = "compilation.properties";
   
-  private LibraryCompilation(File folder) throws IOException {
-    
+  
+  private LibraryCompilation(File folder) throws IOException {  
     super(folder, LibraryCompilation.propertiesFileName);
     
     libraries = new ArrayList<Library>();
@@ -23,6 +22,7 @@ public class LibraryCompilation extends InstalledContribution {
       libraries.add(new Library(baseFolder, name));
     }
   }
+  
   
   public static ArrayList<LibraryCompilation> list(ArrayList<Library> libraries) {
     HashMap<String, File> folderByGroup = new HashMap<String, File>();

@@ -22,6 +22,7 @@
 
 package processing.app;
 
+import processing.app.contrib.ToolContribution;
 import processing.app.syntax.*;
 import processing.app.tools.*;
 import processing.core.*;
@@ -106,7 +107,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   JMenu modeMenu;  
 
   ArrayList<ToolContribution> coreTools;
-  ArrayList<ToolContribution> contribTools;
+  public ArrayList<ToolContribution> contribTools;
 
   protected Editor(final Base base, String path, int[] location, final Mode mode) {
     super("Processing");
@@ -872,7 +873,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  protected void rebuildToolMenu() {
+  public void rebuildToolMenu() {
     if (toolsMenu == null) {
       toolsMenu = new JMenu("Tools");
     } else {
