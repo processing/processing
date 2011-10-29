@@ -498,7 +498,7 @@ public class Runner implements MessageConsumer {
 //    if (name.startsWith("java.lang.")) {
 //      name = name.substring(10);
     if (!handleCommonErrors(exceptionName, message, listener)) {
-      reportException(message, event.thread());
+      reportException(message, or, event.thread());
     }
     if (editor != null) {
       editor.deactivateRun();
@@ -557,8 +557,8 @@ public class Runner implements MessageConsumer {
   // TODO: This may be called more than one time per error in the VM,
   // presumably because exceptions might be wrapped inside others,
   // and this will fire for both.
-  protected void reportException(String message, ThreadReference thread) {
-    listener.statusError(findException(message, thread));
+  protected void reportException(String message, ObjectReference or, ThreadReference thread) {
+    listener.statusError(findException(message, or, thread));
   }
   
 
@@ -568,7 +568,7 @@ public class Runner implements MessageConsumer {
    * the location of the error, or if nothing is found, just return with a
    * RunnerException that wraps the error message itself.
    */
-  SketchException findException(String message, ThreadReference thread) {
+  SketchException findException(String message, ObjectReference or, ThreadReference thread) {
     try {
       // use to dump the stack for debugging
 //      for (StackFrame frame : thread.frames()) {
@@ -602,6 +602,30 @@ public class Runner implements MessageConsumer {
       // it's something that needs to be debugged separately.
       e.printStackTrace();
     }
+    //// before giving up, try to extract from the throwable object itself
+    //// since sometimes exceptions are re-thrown from a different context
+    try {
+      //// assume object reference is Throwable, get stack trace
+      Method method = ((ClassType) or.referenceType()).concreteMethodByName("getStackTrace", "()[Ljava/lang/StackTraceElement;");
+      ArrayReference result = (ArrayReference) or.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+      //// iterate through stack frames and pull filename and line number for each
+      for (Value val: result.getValues()) {
+        ObjectReference ref = (ObjectReference)val;
+        method = ((ClassType) ref.referenceType()).concreteMethodByName("getFileName", "()Ljava/lang/String;");
+        StringReference strref = (StringReference) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+        String filename = strref.value();
+        method = ((ClassType) ref.referenceType()).concreteMethodByName("getLineNumber", "()I");
+        IntegerValue intval = (IntegerValue) ref.invokeMethod(thread, method, new ArrayList<Value>(), ObjectReference.INVOKE_SINGLE_THREADED);
+        int lineNumber = intval.intValue() - 1;
+        SketchException rex = 
+          build.placeException(message, filename, lineNumber);
+        if (rex != null) {
+          return rex;
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }    
     // Give up, nothing found inside the pile of stack frames
     SketchException rex = new SketchException(message);
     // exception is being created /here/, so stack trace is not useful
