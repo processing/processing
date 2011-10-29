@@ -986,11 +986,23 @@ public class PApplet extends Applet
           //System.out.println(objects[i] + " " + args);
           methods[i].invoke(objects[i], oargs);
         } catch (Exception e) {
+          //// check for wrapped exception, get root exception
+          Throwable t;
           if (e instanceof InvocationTargetException) {
             InvocationTargetException ite = (InvocationTargetException) e;
-            ite.getTargetException().printStackTrace();
+            //ite.getTargetException().printStackTrace();
+            t = ite.getCause();
           } else {
-            e.printStackTrace();
+            //e.printStackTrace();
+            t = e;
+          }
+          //// check for RuntimeException, and allow to bubble up
+          if (t instanceof RuntimeException) {
+            //// re-throw exception  
+            throw (RuntimeException) t;
+          } else {
+            //// trap and print as usual
+            t.printStackTrace();
           }
         }
       }
