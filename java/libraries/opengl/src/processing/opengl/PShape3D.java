@@ -331,7 +331,7 @@ public class PShape3D extends PShape {
 
   protected float[] currNormalData = { 0, 0, 1 };
   protected float[] currColorData = { 0, 0, 0, 0 };
-  protected float[] currStrokeData = { 0, 0, 0, 0, 1 };
+  protected float[] currStrokeData = { 0, 0, 0, 1, 1 };
 
   protected boolean modified;
   protected int mi0, mi1;    
@@ -588,19 +588,7 @@ public class PShape3D extends PShape {
       System.err.println("Wrong indexes");
     }
   }
-
-
-  /*
-  public void updateGeometry() {
-    updateGeometry(0, dataSize - 1);
-  }
-
-  public void updateGeometry(int i0, int i1) {
-    modified = true;
-    mi0 = i0;
-    mi1 = i1;
-  }
-   */
+ 
 
   // Save geometry to DFX/OBJ/BIN (raw 3D coordinates), PDF (lighted (?), transformed, projected)  
   // Flexible enough to other formats can be added easily later.
@@ -728,7 +716,7 @@ public class PShape3D extends PShape {
       
       // Each stroke line has 4 vertices, defining 2 triangles, which
       // require 3 indices to specify their connectivities.
-      int nind = count * 2 * 3;
+      int nind = count * 3 * 2 * 3;
       strokeIndices = new int[nind]; 
       
       int vcount = 0;
@@ -742,49 +730,39 @@ public class PShape3D extends PShape {
             0 < strokeData[5 * i1 + 4] ||
             0 < strokeData[5 * i2 + 4]) {
           addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
-          addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;;
+          addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
           addStrokeLine(i2, i0, vcount, icount); vcount += 4; icount += 6;
         }
       }
       
-      
-    
-      
     }
-    
-    /*
-    if (parent == null) {    
-      initBuffers(vertexCount, indexCount);            
-      copyGeometry(0, vertexCount, vertices, texcoords, colors, normals, indices);
-    }
-    */
   }
     
   protected void addStrokeLine(int i0, int i1, int vcount, int icount) {
     PApplet.arrayCopy(vertexData, 3 * i0, strokeVertices, 3 * vcount, 3);    
     PApplet.arrayCopy(strokeData, 5 * i0, strokeColors, 4 * vcount, 4);
     strokeOffsets[vcount] = strokeData[5 * i0 + 4];    
-    strokeIndices[++icount] = vcount;    
-    vcount++;
+    strokeIndices[icount++] = vcount;
     
+    vcount++;    
     PApplet.arrayCopy(vertexData, 3 * i0, strokeVertices, 3 * vcount, 3);
     PApplet.arrayCopy(strokeData, 5 * i0, strokeColors, 4 * vcount, 4);
     strokeOffsets[vcount] = -strokeData[5 * i0 + 4];
-    strokeIndices[++icount] = vcount;
-    vcount++;
+    strokeIndices[icount++] = vcount;
     
+    vcount++;  
     PApplet.arrayCopy(vertexData, 3 * i1, strokeVertices, 3 * vcount, 3);
     PApplet.arrayCopy(strokeData, 5 * i1, strokeColors, 4 * vcount, 4);
     strokeOffsets[vcount] = strokeData[5 * i1 + 4];
-    strokeIndices[++icount] = vcount;
-    strokeIndices[++icount] = vcount;
-    strokeIndices[++icount] = vcount - 1;
-    vcount++;     
+    strokeIndices[icount++] = vcount;
+    strokeIndices[icount++] = vcount;
+    strokeIndices[icount++] = vcount - 1;
     
+    vcount++;  
     PApplet.arrayCopy(vertexData, 3 * i1, strokeVertices, 3 * vcount, 3);
     PApplet.arrayCopy(strokeData, 5 * i1, strokeColors, 4 * vcount, 4);
     strokeOffsets[vcount] = -strokeData[5 * i1 + 4];
-    strokeIndices[++icount] = vcount;
+    strokeIndices[icount++] = vcount;
   }
   
 
