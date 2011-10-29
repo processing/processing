@@ -1233,20 +1233,10 @@ public class JavaBuild {
     for (Library library : importedLibraries) {
       // add each item from the library folder / export list to the output
       for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) {
+//        System.out.println("export: " + exportFile);
         String exportName = exportFile.getName();
-//      String[] exportList = library.getExports(exportPlatform, exportBits);
-//      for (String item : exportList) {
-//      for (int i = 0; i < exportList.length; i++) {
-//        if (exportList[i].equals(".") ||
-//            exportList[i].equals("..")) continue;
-
-//        exportList[i] = PApplet.trim(exportList[i]);
-//        if (exportList[i].equals("")) continue;
-
-//        File exportFile = new File(libraryFolder, exportList[i]);
-//        File exportFile = new File(library.getLibraryPath(), )
         if (!exportFile.exists()) {
-          System.err.println("File " + exportFile.getName() + " does not exist");
+          System.err.println("File " + exportFile.getName() + " does not exist.");
 
         } else if (exportFile.isDirectory()) {
           //System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
@@ -1261,19 +1251,22 @@ public class JavaBuild {
 
         } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
                    exportFile.getName().toLowerCase().endsWith(".jar")) {
-          //packClassPathIntoZipFile(exportFile.getAbsolutePath(), zos);
-//          Base.copyFile(exportFile, new File(jarFolder, exportList[i]));
-//          jarListVector.add(exportList[i]);
           Base.copyFile(exportFile, new File(jarFolder, exportName));
           jarListVector.add(exportName);
 
-        } else if ((exportPlatform == PConstants.MACOSX) &&
-                   (exportFile.getName().toLowerCase().endsWith(".jnilib"))) {
-          // jnilib files can be placed in Contents/Resources/Java
+//        } else if ((exportPlatform == PConstants.MACOSX) &&
+//                   (exportFile.getName().toLowerCase().endsWith(".jnilib"))) {
+//          // jnilib files can be placed in Contents/Resources/Java
+//          Base.copyFile(exportFile, new File(jarFolder, exportName));
+//
+//        } else {
+//          // copy the file to the main directory.. prolly a .dll or something
+//          Base.copyFile(exportFile, new File(destFolder, exportName));
+//        }
+        } else if (exportPlatform == PConstants.MACOSX) {
           Base.copyFile(exportFile, new File(jarFolder, exportName));
-
+          
         } else {
-          // copy the file to the main directory.. prolly a .dll or something
           Base.copyFile(exportFile, new File(destFolder, exportName));
         }
       }
