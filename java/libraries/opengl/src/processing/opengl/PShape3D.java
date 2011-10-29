@@ -18,7 +18,7 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
-*/
+ */
 
 package processing.opengl;
 
@@ -48,38 +48,38 @@ import java.io.BufferedReader;
  * 
  */
 public class PShape3D extends PShape {
-  
+
   protected PApplet papplet;      
   protected PGraphicsOpenGL ogl;
-    
+
   // Element types handled by PShape3D (vertices, normals, color, texture coordinates).
   protected static final int VERTICES = 0;
   protected static final int NORMALS = 1;
   protected static final int COLORS = 2;
   protected static final int TEXCOORDS = 3; 
-    
+
   // ROOT shape properties:
-  
+
   // Number of texture buffers currently in use:
   protected int numTexBuffers;  
-  
+
   // STATIC, DYNAMIC, or STREAM
   // TODO: vertex, color, normal and texcoord data can potentially have 
   // different usage modes.
   public int glUsage;
-  
+
   // The OpenGL IDs for the different VBOs
   public int glVertexBufferID;
   public int glColorBufferID;
   public int glNormalBufferID;
   public int[] glTexCoordBufferID;
-  
+
   // The float buffers (directly allocated) used to put data into the VBOs
   protected FloatBuffer vertexBuffer;
   protected FloatBuffer colorBuffer;
   protected FloatBuffer normalBuffer;
   protected FloatBuffer texCoordBuffer; 
-  
+
   // Public arrays for setting/getting vertices, colors, normals, and 
   // texture coordinates when using loadVertices/updateVertices,
   // loadNormals/updateNormals, etc. This is modeled following the
@@ -89,28 +89,28 @@ public class PShape3D extends PShape {
   public float[] colors;
   public float[] normals;
   public float[] texcoords;
-  
+
   // Indexed mode, testing:
   protected int glIndexBufferID = 0;
   protected IntBuffer indexBuffer = null;
   protected int indexCount = 0;
   protected int[] indices;
   protected boolean useIndices;
-  
+
   // To put the texture coordinate values adjusted according to texture 
   // flipping mode, max UV range, etc.
   protected float[] convTexcoords;
   // The array of arrays holding the texture coordinates for all texture units.
   protected float[][] allTexcoords;
-  
+
   // Child PShape3D associated to each vertex in the model.
   protected PShape3D[] vertexChild;
 
   // Some utility arrays.    
   protected boolean[] texCoordSet;      
-    
+
   protected boolean autoBounds = true;
-  
+
   // For OBJ loading. Only used by the root shape.
   boolean readFromOBJ = false;
   ArrayList<PVector> objVertices; 
@@ -118,9 +118,9 @@ public class PShape3D extends PShape {
   ArrayList<PVector> objTexCoords;    
   ArrayList<OBJFace> objFaces;
   ArrayList<OBJMaterial> objMaterials;  
-  
+
   // GEOMETRY shape properties:
-  
+
   // Draw mode, point sprites and textures. 
   // Stroke weight is inherited from PShape.
   protected int glMode;
@@ -132,55 +132,55 @@ public class PShape3D extends PShape {
   protected float spriteDistAtt[] = { 1.0f, 0.0f, 0.0f };
   // Used in the drawGeometry() method.
   protected PTexture[] renderTextures;
-  
+
   // GROUP and GEOMETRY properties:
-  
+
   // The root group shape.
   protected PShape3D root;
-  
+
   // Element type, vertex indices and texture units being currently updated.
   protected int updateElement;
   protected int updateTexunit;
   protected int firstUpdateIdx;
   protected int lastUpdateIdx;  
-  
+
   // first and last vertex in the shape. For the root group shape, these are 0 and
   // vertexCount - 1.
   protected int firstVertex;
   protected int lastVertex;  
-    
+
   protected int firstIndex;
   protected int lastIndex;    
-  
+
   // Bounding box (defined for all shapes, group and geometry):
   public float xmin, xmax;
   public float ymin, ymax;
   public float zmin, zmax;  
-  
+
   ////////////////////////////////////////////////////////////
 
   public static final int DEFAULT_VERTICES = 512;
-  
+
   // Constructors.
 
   public PShape3D() {
     this.papplet = null;
     ogl = null;
-    
+
     glVertexBufferID = 0;
     glColorBufferID = 0;
     glNormalBufferID = 0;
     glTexCoordBufferID = null;
-    
+
     updateElement = -1;
   }
-  
+
   public PShape3D(PApplet parent) {
     this();
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
     ogl.registerPGLObject(this);
-    
+
     this.family = PShape.GROUP;
     this.name = "root";
     this.root = this;
@@ -190,30 +190,30 @@ public class PShape3D extends PShape {
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
     ogl.registerPGLObject(this);    
-    
+
     this.family = family;
-    
+
     vertexCount = 0;
     firstVertex = 0;
     lastVertex = 0;
-    
+
     indexCount = 0;
     firstIndex = 0;
     lastIndex = 0;
-        
+
     Parameters params = new Parameters();
     params.drawMode = TRIANGLES;
     params.updateMode = DYNAMIC;
     setParameters(params);  
-    
+
     root = this;
     parent = null;
     updateElement = -1;
   }   
-    
+
   public void setKind(int kind) {
     this.kind = kind;
-    
+
     if (kind != GEOMETRY) {
       typeData = new int[64];
       vertexData = new float[3 * DEFAULT_VERTICES];  
@@ -221,21 +221,21 @@ public class PShape3D extends PShape {
       normalData = new float[3 * DEFAULT_VERTICES];
       colorData = new float[4 * DEFAULT_VERTICES];
       strokeData = new float[5 * DEFAULT_VERTICES];
-      
+
       textures = new PImage[0];
     }
   }
-  
-  
-  
-  
-  
+
+
+
+
+
   /*
   public PShape3D(PApplet parent, int numVert) {
     this(parent, numVert, new Parameters()); 
   } 
-  */ 
-  
+   */ 
+
   public PShape3D(PApplet parent, String filename, Parameters params) {
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
@@ -248,18 +248,18 @@ public class PShape3D extends PShape {
     glColorBufferID = 0;
     glNormalBufferID = 0;
     glTexCoordBufferID = null;
-    
+
     updateElement = -1;
-    
+
     initShapeOBJ(filename, params);    
   }  
-  
-  
+
+
   public PShape3D(PApplet parent, int size, Parameters params) {
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
     ogl.registerPGLObject(this);
-    
+
     this.family = PShape.GROUP;
     this.name = "root";
     this.root = this;
@@ -267,36 +267,36 @@ public class PShape3D extends PShape {
     glColorBufferID = 0;
     glNormalBufferID = 0;
     glTexCoordBufferID = null;
-    
+
     updateElement = -1; 
-    
+
     initShape(size, params);
   }
-  
+
 
   public void delete() {
     if (root != this) return; // Can be done only from the root shape.    
     release();
     ogl.unregisterPGLObject(this);
   }
-  
-  
+
+
   public void backup() {
-    
+
   }
-  
+
   public void restore() {
     if (root != this) return; // Can be done only from the root shape.
-    
+
     // Loading/updating each piece of data so the arrays on the CPU-side 
     // are copied to the VBOs on the GPU.
-    
+
     loadVertices();
     updateVertices();
-    
+
     loadColors();
     updateColors();
-    
+
     loadNormals();
     updateNormals();
 
@@ -307,20 +307,20 @@ public class PShape3D extends PShape {
   }
 
   ////////////////////////////////////////////////////////////
-  
+
   // the new stuff  
   static protected final int GEOMETRY_POINT = 0;
   static protected final int LINE_POINT = 1;
   static protected final int CURVE_POINT = 2;
   static protected final int BEZIER_CONTROL_POINT = 3;
   static protected final int BEZIER_ANCHOR_POINT = 4;
-  
+
   // To use later
   static public final int NURBS_CURVE = 4;
   static public final int NURBS_SURFACE = 5;  
   static protected final int NURBS2D_CONTROL_POINT = 4;
   static protected final int NURBS3D_CONTROL_POINT = 5;
-  
+
   protected int[] typeData;
   protected float[] vertexData;  
   protected float[] tcoordData;
@@ -328,67 +328,70 @@ public class PShape3D extends PShape {
   protected float[] colorData;  // Fill color
   protected float[] strokeData; // Stroke color+weight  
   protected int dataSize;
-    
+
   protected float[] currNormalData = { 0, 0, 1 };
   protected float[] currColorData = { 0, 0, 0, 0 };
   protected float[] currStrokeData = { 0, 0, 0, 0, 1 };
-  
+
   protected boolean modified;
   protected int mi0, mi1;    
 
   protected int strokeVertexCount;
   protected int firstStrokeVertex;
   protected int lastStrokeVertex;
-  
+
   protected int firstStrokeIndex;
   protected int lastStrokeIndex;  
   protected int[] strokeIndices;
-  
+
   public int glStrokeVertexBufferID;
   public int glStrokeColorBufferID;
   public int glStrokeIndexBufferID;
-  
-  
+
+  public float[] strokeVertices;
+  public float[] strokeColors;
+  public float[] strokeOffsets;
+
   /*
   // These methods are just for initial debugging.
   public void setFamily(int family) {
     this.family = family;
   }  
-  
+
   public void initData() {
     dataSize = 0;
 
     vertexCount = 0;
     firstVertex = 0;
     lastVertex = 0;
-    
+
     indexCount = 0;
     firstIndex = 0;
     lastIndex = 0;
-    
-    
+
+
     Parameters params = new Parameters();
     params.drawMode = TRIANGLES;
     params.updateMode = STATIC;
     setParameters(params);
-    
+
     typeData = new int[64];
     vertexData = new float[3 * 64];  
     tcoordData = new float[2 * 64];
     normalData = new float[3 * 64];
     colorData = new float[4 * 64];
     strokeData = new float[5 * 64];
-    
+
     textures = new PImage[0];
-    
+
     root = this;
   }
-  */
-  
+   */
+
   protected void dataCheck() {
     if (dataSize == typeData.length) {
       int newSize = dataSize << 1; // newSize = 2 * dataSize  
-        
+
       expandTypeData(newSize);
       expandVertexData(newSize);
       expandTCoordData(newSize);      
@@ -397,51 +400,51 @@ public class PShape3D extends PShape {
       expandStrokeData(newSize);
     }
   }
-  
+
   protected void expandTypeData(int n) {
     int temp[] = new int[n];      
     System.arraycopy(typeData, 0, temp, 0, dataSize);
     typeData = temp;    
   }
-  
+
   protected void expandVertexData(int n) {
     float temp[] = new float[3 * n];      
     System.arraycopy(vertexData, 0, temp, 0, 3 * dataSize);
     vertexData = temp;    
   }
-  
+
   protected void expandTCoordData(int n) {
     float temp[] = new float[2 * n];      
     System.arraycopy(tcoordData, 0, temp, 0, 2 * dataSize);
     tcoordData = temp;    
   }
-  
+
   protected void expandNormalData(int n) {
     float temp[] = new float[3 * n];      
     System.arraycopy(normalData, 0, temp, 0, 3 * dataSize);
     normalData = temp;    
   }
-  
+
   protected void expandColorData(int n){
     float temp[] = new float[4 * n];      
     System.arraycopy(colorData, 0, temp, 0, 4 * dataSize);
     colorData = temp;  
   }
-  
+
   void expandStrokeData(int n) {
     float temp[] = new float[5 * n];      
     System.arraycopy(strokeData, 0, temp, 0, 5 * dataSize);
     strokeData = temp;
   }  
-  
+
   public void addVertex(float x, float y) {
     addVertex(x, y, 0, 0, 0);      
   }
-  
+
   public void addVertex(float x, float y, float z) {
     addVertex(x, y, z, 0, 0);      
   }
-  
+
   public void addVertex(float x, float y, float z, float u, float v) {
     if (family == NURBS_CURVE) {
       addVertexImpl(x, y, z, u, v, NURBS2D_CONTROL_POINT);  
@@ -457,67 +460,67 @@ public class PShape3D extends PShape {
   public void addCurveVertex(float x, float y) {
     addCurveVertex(x, y, 0);
   }  
-  
+
   public void addCurveVertex(float x, float y, float z) {
     addVertexImpl(x, y, 0, 0, 0, CURVE_POINT);
   }
-    
+
   public void addBezierVertex(float cx1, float cy1, float cx2, float cy2, float x, float y) {
     addBezierVertex(cx1, cy1, 0, cx2, cy2, 0, x, y, 0);    
   }  
-  
+
   public void addBezierVertex(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z) {
     addVertexImpl(cx1, cy1, cz1, 0, 0, BEZIER_CONTROL_POINT);
     addVertexImpl(cx2, cy2, cz2, 0, 0, BEZIER_CONTROL_POINT);
     addVertexImpl(x, y, z, 0, 0, BEZIER_ANCHOR_POINT);    
   }
-  
+
   protected void addVertexImpl(float x, float y, float z, float u, float v, int type) {
     dataCheck();
-    
+
     typeData[dataSize] = type;
-    
+
     vertexData[3 * dataSize + 0] = x;
     vertexData[3 * dataSize + 1] = y;
     vertexData[3 * dataSize + 2] = z;
-    
+
     tcoordData[2 * dataSize + 0] = u;
     tcoordData[2 * dataSize + 1] = v;
-    
+
     PApplet.arrayCopy(currNormalData, 0, normalData, 3 * dataSize, 3);
     PApplet.arrayCopy(currColorData, 0, colorData, 4 * dataSize, 4);
     PApplet.arrayCopy(currStrokeData, 0, strokeData, 5 * dataSize, 5);
-    
+
     dataSize++;
-    
+
     modified = true;
   }
-  
+
   // Will be renamed to setNormal later (now conflicting with old API).
   public void setNormVect(float nx, float ny, float nz) {
     currNormalData[0] = nx;
     currNormalData[1] = ny;
     currNormalData[2] = nz;
   }
-  
+
   public void setFill(float r, float g, float b, float a) {
     currColorData[0] = r;
     currColorData[1] = g;
     currColorData[2] = b;
     currColorData[3] = a;
   }
-  
+
   public void setStroke(float r, float g, float b, float a) {
     currStrokeData[0] = r;
     currStrokeData[1] = g;
     currStrokeData[2] = b;
     currStrokeData[3] = a;    
   }
-  
+
   public void setWeight(float w) {
     currStrokeData[4] = w;
   }  
-    
+
   // Will be renamed to getVertex later (now conflicting with old API).
   public PVector getPVertex(int i) {
     if (0 <= i && i < dataSize) {
@@ -527,7 +530,7 @@ public class PShape3D extends PShape {
       return null;
     }
   }
-  
+
   public float[] getVertexes() {
     return getVertexes(0, dataSize - 1);
   }
@@ -535,22 +538,22 @@ public class PShape3D extends PShape {
   public float[] getVertexes(int i0, int i1) {
     return getVertexes(i0, i1, null);
   }
-  
+
   public float[] getVertexes(int i0, int i1, float[] data) {
     if (0 <= i0 && i0 <= i1 && i1 - i0 < dataSize) {
       int n = i1 - i0 + 1;
-      
+
       if (data == null || data.length != 3 * n) {        
         data = new float[3 * n];
       }
-      
+
       PApplet.arrayCopy(vertexData, 3 * i0, data, 0, 3 * n);
     } else {
       System.err.println("Wrong indexes");      
     }
     return data;
   }  
-  
+
   public void setVertex(int i, float x, float y, float z) {
     if (0 <= i && i < dataSize) {
       vertexData[3 * i + 0] = x; 
@@ -561,17 +564,17 @@ public class PShape3D extends PShape {
       System.err.println("Wrong index");
     }    
   }
-  
+
   public void setVertexes(float[] data) {
     setVertexes(data, 0, dataSize - 1);
   }  
-  
+
   public void setVertexes(float[] data, int i0, int i1) {
     if (data == null) {
       System.err.println("null data");
       return;
     }
-      
+
     if (0 <= i0 && i0 <= i1 && i1 - i0 < dataSize) {
       int n = i1 - i0 + 1;
       if (data.length == 3 * n) {        
@@ -579,26 +582,26 @@ public class PShape3D extends PShape {
       } else {
         System.err.println("Wrong array length");  
       }
-      
+
       modified = true;
     } else {
       System.err.println("Wrong indexes");
     }
   }
-  
-  
+
+
   /*
   public void updateGeometry() {
     updateGeometry(0, dataSize - 1);
   }
-  
+
   public void updateGeometry(int i0, int i1) {
     modified = true;
     mi0 = i0;
     mi1 = i1;
   }
-  */
-  
+   */
+
   // Save geometry to DFX/OBJ/BIN (raw 3D coordinates), PDF (lighted (?), transformed, projected)  
   // Flexible enough to other formats can be added easily later.
   public void save(String filename) {
@@ -607,15 +610,15 @@ public class PShape3D extends PShape {
     } else {
       // ...
     }
-    
+
     // 
   }  
-  
-  
+
+
   // The huber-tessellator is here. It will be called automatically when
   // rendering the shape.
   protected void tessellate() {
-    
+
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D)children[i];
@@ -628,28 +631,28 @@ public class PShape3D extends PShape {
         //  setSize(dataSize);
         //  allocate();        
         //}
-        
+
         // tessellate user data in the modified region and put generated geometry
         // inside arrays to copy to OpenGL. Use indices to optimize geometry utilization.
         if (family == GEOMETRY) {
           if (kind == POINTS) {
-            
+
           } else if (kind == LINES) {
-            
+
           } else if (kind == TRIANGLES) {
             tessellateTriangles();
-            
-            
+
+
           } else if (kind == TRIANGLE_FAN) {
-            
+
           } else if (kind == TRIANGLE_STRIP) {
-            
-            
-            
+
+
+
           } else if (kind == QUADS) {
-            
+
           } else if (kind == QUAD_STRIP) {
-            
+
           }
         } else if (family == PRIMITIVE) {
           if (kind == POINT) {
@@ -663,33 +666,33 @@ public class PShape3D extends PShape {
           } else if (kind == SPHERE) {
           }
         } else if (family == PATH) {
-          
+
         }      
-      
+
       }
     }  
-      // What about geometric transformations? When they are static, could be applied
-      // once to avoid rendering the shape in batches.
-   
+    // What about geometric transformations? When they are static, could be applied
+    // once to avoid rendering the shape in batches.
+
   }
-  
+
   protected void tessellateTriangles() {
     vertexCount = dataSize;    
     firstVertex = 0;
     lastVertex = vertexCount - 1;
-    
+
     vertices = new float[3 * dataSize];
     PApplet.arrayCopy(vertexData, vertices, 3 * dataSize);
-    
+
     texcoords = new float[2 * dataSize];
     PApplet.arrayCopy(tcoordData, texcoords, 2 * dataSize);
-    
+
     colors = new float[4 * dataSize];
     PApplet.arrayCopy(colorData, colors, 4 * dataSize);
-    
+
     normals = new float[3 * dataSize];
     PApplet.arrayCopy(normalData, normals, 3 * dataSize);
-    
+
     useIndices = true;
     indexCount = vertexCount;    
     indices = new int[indexCount];
@@ -698,17 +701,54 @@ public class PShape3D extends PShape {
     }
     firstIndex = 0;
     lastIndex = indexCount - 1;
-    
-    // Check if this geometry is stroked.
-    boolean hasStroke = false;
-    for (int i = 0; i < dataSize; i++) {      
-      if (0 < strokeData[5 * i + 4]) {
-        hasStroke = true;
-        break;
-      }
+
+    // Count how many triangles in this shape
+    // are stroked.
+    int count = 0;
+    for (int tr = 0; tr < dataSize / 3; tr++) {
+      int i0 = 3 * tr + 0;
+      int i1 = 3 * tr + 1;
+      int i2 = 3 * tr + 2;
+      
+      if (0 < strokeData[5 * i0 + 4] || 
+          0 < strokeData[5 * i1 + 4] ||
+          0 < strokeData[5 * i2 + 4]) {
+        count++;
+      }      
     }
     
-    if (hasStroke) {
+    if (0 < count) {
+      // Each stroked triangle has 3 lines, one for each edge. 
+      // These lines are made up of 4 vertices defining the quad. 
+      // Each vertex has its own offset representing the stroke weight.
+      int nvert = count * 3 * 4;
+      strokeVertices = new float[3 * nvert];
+      strokeColors = new float[4 * nvert];
+      strokeOffsets = new float[nvert];
+      
+      // Each stroke line has 4 vertices, defining 2 triangles, which
+      // require 3 indices to specify their connectivities.
+      int nind = count * 2 * 3;
+      strokeIndices = new int[nind]; 
+      
+      int vcount = 0;
+      int icount = 0;
+      for (int tr = 0; tr < dataSize / 3; tr++) {
+        int i0 = 3 * tr + 0;
+        int i1 = 3 * tr + 1;
+        int i2 = 3 * tr + 2;        
+
+        if (0 < strokeData[5 * i0 + 4] || 
+            0 < strokeData[5 * i1 + 4] ||
+            0 < strokeData[5 * i2 + 4]) {
+          addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;;
+          addStrokeLine(i2, i0, vcount, icount); vcount += 4; icount += 6;
+        }
+      }
+      
+      
+    
       
     }
     
@@ -720,6 +760,35 @@ public class PShape3D extends PShape {
     */
   }
     
+  protected void addStrokeLine(int i0, int i1, int vcount, int icount) {
+    PApplet.arrayCopy(vertexData, 3 * i0, strokeVertices, 3 * vcount, 3);    
+    PApplet.arrayCopy(strokeData, 5 * i0, strokeColors, 4 * vcount, 4);
+    strokeOffsets[vcount] = strokeData[5 * i0 + 4];    
+    strokeIndices[++icount] = vcount;    
+    vcount++;
+    
+    PApplet.arrayCopy(vertexData, 3 * i0, strokeVertices, 3 * vcount, 3);
+    PApplet.arrayCopy(strokeData, 5 * i0, strokeColors, 4 * vcount, 4);
+    strokeOffsets[vcount] = -strokeData[5 * i0 + 4];
+    strokeIndices[++icount] = vcount;
+    vcount++;
+    
+    PApplet.arrayCopy(vertexData, 3 * i1, strokeVertices, 3 * vcount, 3);
+    PApplet.arrayCopy(strokeData, 5 * i1, strokeColors, 4 * vcount, 4);
+    strokeOffsets[vcount] = strokeData[5 * i1 + 4];
+    strokeIndices[++icount] = vcount;
+    strokeIndices[++icount] = vcount;
+    strokeIndices[++icount] = vcount - 1;
+    vcount++;     
+    
+    PApplet.arrayCopy(vertexData, 3 * i1, strokeVertices, 3 * vcount, 3);
+    PApplet.arrayCopy(strokeData, 5 * i1, strokeColors, 4 * vcount, 4);
+    strokeOffsets[vcount] = -strokeData[5 * i1 + 4];
+    strokeIndices[++icount] = vcount;
+  }
+  
+
+  
   public void addShape(PShape3D child) {
     if (family == GROUP) {
       super.addChild(child);
