@@ -35,7 +35,7 @@ public class Library extends InstalledContribution {
    */
   String nativeLibraryPath;
   
-  static String propertiesFileName = "library.properties";
+  static public final String propertiesFileName = "library.properties";
 
   /** Filter to pull out just files and no directories, and to skip export.txt */
   static FilenameFilter standardFilter = new FilenameFilter() {
@@ -371,13 +371,13 @@ public class Library extends InstalledContribution {
     }
   };
   
-  static protected ArrayList<File> discover(File folder) {
+  public static ArrayList<File> discover(File folder) {
     ArrayList<File> libraries = new ArrayList<File>();
     discover(folder, libraries);
     return libraries;
   }
   
-  static protected void discover(File folder, ArrayList<File> libraries) {
+  static public void discover(File folder, ArrayList<File> libraries) {
     String[] list = folder.list(junkFolderFilter);
 
     // if a bad folder or something like that, this might come back null
@@ -445,5 +445,4 @@ public class Library extends InstalledContribution {
   public Type getType() {
     return Type.LIBRARY;
   }
-  
 }

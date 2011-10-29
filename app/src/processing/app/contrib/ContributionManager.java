@@ -1,4 +1,4 @@
-package processing.app;
+package processing.app.contrib;
 
 import java.io.*;
 import java.net.URL;
@@ -8,9 +8,12 @@ import java.util.zip.*;
 
 import javax.swing.JOptionPane;
 
-import processing.app.ContributionListing.AdvertisedContribution;
-import processing.app.contrib.*;
+import processing.app.Base;
+import processing.app.Editor;
+import processing.app.Library;
+import processing.app.Preferences;
 import processing.app.contrib.Contribution.Type;
+import processing.app.contrib.ContributionListing.AdvertisedContribution;
 
 interface ErrorWidget {
   void setErrorMessage(String msg);
@@ -137,7 +140,7 @@ public class ContributionManager {
     editor.rebuildToolMenu();
   }
 
-  static ArrayList<File> discover(Type type, File tempDir) {
+  static ArrayList<File> discover(Contribution.Type type, File tempDir) {
     switch (type) {
     case LIBRARY:
       return Library.discover(tempDir);

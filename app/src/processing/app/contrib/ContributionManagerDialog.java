@@ -21,7 +21,7 @@
  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package processing.app;
+package processing.app.contrib;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -31,35 +31,29 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import processing.app.ContributionListing.Filter;
-import processing.app.contrib.*;
+import processing.app.Base;
+import processing.app.Editor;
+import processing.app.Library;
+import processing.app.contrib.ContributionListing.Filter;
 
 public class ContributionManagerDialog {
   
   static final String ANY_CATEGORY = "All";
   
   JFrame dialog;
-  
   String title;
-  
   Filter permaFilter;
-  
   JComboBox categoryChooser;
-  
   JScrollPane scrollPane;
-  
   ContributionListPanel contributionListPanel;
-  
   StatusPanel statusBar;
-  
   FilterField filterField;
   
   // the calling editor, so updates can be applied
   Editor editor;
-  
   String category;
-  
   ContributionListing contribListing;
+  
   
   public ContributionManagerDialog(String title,
                                    ContributionListing.Filter filter) {
@@ -73,7 +67,13 @@ public class ContributionManagerDialog {
     contribListing.addContributionListener(contributionListPanel);
   }
   
-  protected void showFrame(Editor editor) {
+  
+  public boolean hasUpdates() {
+    return contribListing.hasUpdates();
+  }
+  
+  
+  public void showFrame(Editor editor) {
     this.editor = editor;
     
     if (dialog == null) {

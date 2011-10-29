@@ -21,15 +21,14 @@
  Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-package processing.app;
+package processing.app.contrib;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-import processing.app.contrib.*;
-import processing.app.contrib.Contribution.Type;
+import processing.app.Base;
 import processing.core.PApplet;
 
 public class ContributionListing {
@@ -468,7 +467,7 @@ public class ContributionListing {
           HashMap<String,String> exports = new HashMap<String,String>();
           Base.readSettings(null, strings, exports);
           
-          Type kind = Contribution.Type.toType(type);
+          Contribution.Type kind = Contribution.Type.toType(type);
           outgoing.add(new AdvertisedContribution(kind, exports));
           
           start = end + 1;
@@ -563,7 +562,7 @@ public class ContributionListing {
     return downloadingListingLock.isLocked();
   }
   
-  static interface Filter {
+  public static interface Filter {
     
     boolean matches(Contribution contrib);
   }
