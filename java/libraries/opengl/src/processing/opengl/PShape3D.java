@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2011 Andres Colubri
   Copyright (c) 2010 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
@@ -226,8 +227,6 @@ public class PShape3D extends PShape {
       textures = new PImage[0];
     }
   }
-
-
 
 
 
@@ -4076,7 +4075,7 @@ public class PShape3D extends PShape {
       
       getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
       getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);      
-    }
+    }    
   }
   
 
