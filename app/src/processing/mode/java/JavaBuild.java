@@ -1163,7 +1163,7 @@ public class JavaBuild {
 
     /// create the main .jar file
 
-    HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
+//    HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
 
     FileOutputStream zipOutputFile =
       new FileOutputStream(new File(jarFolder, sketch.getName() + ".jar"));
@@ -1191,7 +1191,18 @@ public class JavaBuild {
     addClasses(zos, binFolder);
 
     // add the data folder to the main jar file
-    addDataFolder(zos);
+//    addDataFolder(zos);
+    // For 2.0a2, make the data folder a separate directory, rather than 
+    // packaging potentially large files into the JAR. On OS X, we have to hide
+    // the folder inside the .app package, while Linux and Windows will have a
+    // 'data' folder next to 'lib'.
+    if (sketch.hasDataFolder()) {
+      if (exportPlatform == PConstants.MACOSX) {
+        Base.copyDir(sketch.getDataFolder(),  new File(jarFolder, "data"));
+      } else {
+        Base.copyDir(sketch.getDataFolder(),  new File(destFolder, "data"));
+      }
+    }
 
     // add the contents of the code folder to the jar
     if (sketch.hasCodeFolder()) {
@@ -1210,7 +1221,7 @@ public class JavaBuild {
           cp += codeList[i] + File.pathSeparator;
         }
       }
-      packClassPathIntoZipFile(cp, zos, zipFileContents);
+//      packClassPathIntoZipFile(cp, zos, zipFileContents);  // this was double adding the code folder prior to 2.0a2
     }
 
     zos.flush();
@@ -1229,31 +1240,33 @@ public class JavaBuild {
 
 
     /// add contents of 'library' folders to the export
-
     for (Library library : importedLibraries) {
       // add each item from the library folder / export list to the output
       for (File exportFile : library.getApplicationExports(exportPlatform, exportBits)) {
 //        System.out.println("export: " + exportFile);
         String exportName = exportFile.getName();
         if (!exportFile.exists()) {
-          System.err.println("File " + exportFile.getName() + " does not exist.");
+          System.err.println(exportFile.getName() + 
+                             " is mentioned in export.txt, but it's " +
+                             "a big fat lie and does not exist.");
 
         } else if (exportFile.isDirectory()) {
           //System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
-          if (exportPlatform == PConstants.MACOSX) {
-            // For OS X, copy subfolders to Contents/Resources/Java
-            Base.copyDir(exportFile, new File(jarFolder, exportName));
-          } else {
-            // For other platforms, just copy the folder to the same directory
-            // as the application.
-            Base.copyDir(exportFile, new File(destFolder, exportName));
-          }
+//          if (exportPlatform == PConstants.MACOSX) {
+//            // For OS X, copy subfolders to Contents/Resources/Java
+          Base.copyDir(exportFile, new File(jarFolder, exportName));
+//          } else {
+//            // For other platforms, just copy the folder to the same directory
+//            // as the application.
+//            Base.copyDir(exportFile, new File(destFolder, exportName));
+//          }
 
         } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
                    exportFile.getName().toLowerCase().endsWith(".jar")) {
           Base.copyFile(exportFile, new File(jarFolder, exportName));
           jarListVector.add(exportName);
 
+          // old style, prior to 2.0a2
 //        } else if ((exportPlatform == PConstants.MACOSX) &&
 //                   (exportFile.getName().toLowerCase().endsWith(".jnilib"))) {
 //          // jnilib files can be placed in Contents/Resources/Java
@@ -1263,11 +1276,17 @@ public class JavaBuild {
 //          // copy the file to the main directory.. prolly a .dll or something
 //          Base.copyFile(exportFile, new File(destFolder, exportName));
 //        }
-        } else if (exportPlatform == PConstants.MACOSX) {
-          Base.copyFile(exportFile, new File(jarFolder, exportName));
-          
+
+          // first 2.0a2 attempt, until below...
+//        } else if (exportPlatform == PConstants.MACOSX) {
+//          Base.copyFile(exportFile, new File(jarFolder, exportName));
+//          
+//        } else {
+//          Base.copyFile(exportFile, new File(destFolder, exportName));
         } else {
-          Base.copyFile(exportFile, new File(destFolder, exportName));
+          // Starting with 2.0a2 put extra export files (DLLs, plugins folder, 
+          // anything else for libraries) inside lib or Contents/Resources/Java 
+          Base.copyFile(exportFile, new File(jarFolder, exportName));
         }
       }
     }
@@ -1371,7 +1390,7 @@ public class JavaBuild {
       // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
       //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
       pw.print("java " + Preferences.get("run.options") +
-               " -Djava.library.path=\"$APPDIR\"" +
+               " -Djava.library.path=\"$APPDIR:$APPDIR\\lib\"" +
                " -cp \"" + exportClassPath + "\"" +
                " " + sketch.getName() + "\n");
 
