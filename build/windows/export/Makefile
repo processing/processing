@@ -9,8 +9,8 @@ AOBJS = launcher.o
 
 application.exe: $(AOBJS)
 	$(LINK.cc) $(CXXFLAGS) -DEXPORT -o $@ $(AOBJS)
-	cp application.exe ../work/lib/export/
-	cp application.exe ../../shared/lib/export/
+	cp application.exe ../work/modes/java/application/template.exe
+	cp application.exe ../../../java/application/template.exe
 
 $(POBJS): Makefile 
 

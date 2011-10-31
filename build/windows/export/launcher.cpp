@@ -282,9 +282,9 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   strcat(outgoing_cmd_line, " ");
 
   // for 2.0a2, add the 'lib' folder to the java.library.path
-  strcat(outgoing_cmd_line, "-Djava.library.path=");
+  strcat(outgoing_cmd_line, "\"-Djava.library.path=");
   strcat(outgoing_cmd_line, exe_directory);
-  strcat(outgoing_cmd_line, "\\lib ");
+  strcat(outgoing_cmd_line, "\\lib\" ");
 
   // add the name of the class to execute and a space before the next arg
   strcat(outgoing_cmd_line, java_main_class);
@@ -310,6 +310,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 
   SHELLEXECUTEINFO ShExecInfo;
 
+  //MessageBox(NULL, executable, outgoing_cmd_line, MB_OK);
+
   // set up the execution info
   ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
   ShExecInfo.fMask = 0;
@@ -328,7 +330,6 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   }
 
   if (reinterpret_cast<int>(ShExecInfo.hInstApp) <= 32) {
-
     // some type of error occurred
     switch (reinterpret_cast<int>(ShExecInfo.hInstApp)) {
     case ERROR_FILE_NOT_FOUND:
