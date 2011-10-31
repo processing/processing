@@ -34,7 +34,6 @@ import java.util.List;
  * this library.
  */
 public class Video implements PConstants {
-  protected static String VERSION_STRING = "2.0";
   protected static long INSTANCES_COUNT = 0;
 
   protected static String gstreamerBinPath = "";
@@ -78,20 +77,20 @@ public class Video implements PConstants {
   static public final int VIDEO = 1;
   static public final int RAW = 2;
   
-  public static void init() {
+  static public void init() {
     if (INSTANCES_COUNT == 0) {
       initImpl();
     }
     INSTANCES_COUNT++;
   }
   
-  public static void restart() {
+  static public void restart() {
     removePlugins();
     Gst.deinit();
     initImpl();
   }
     
-  protected static void initImpl() {
+  static protected void initImpl() {
     if (PApplet.platform == LINUX) {
       // Linux only supports global gstreamer for now.
       globalGStreamer = true;         
@@ -102,6 +101,7 @@ public class Video implements PConstants {
       setMacOSXPath();
     }
 
+    PApplet.println("gstreamerBinPath: " + gstreamerBinPath);
     if (!gstreamerBinPath.equals("")) {
       System.setProperty("jna.library.path", gstreamerBinPath);
     }
@@ -129,7 +129,7 @@ public class Video implements PConstants {
     addPlugins();
   }
 
-  protected static void addPlugins() {
+  static protected void addPlugins() {
     if (!gstreamerPluginsPath.equals("")) {
       Registry reg = Registry.getDefault();
       boolean res;
@@ -140,7 +140,7 @@ public class Video implements PConstants {
     }       
   }
   
-  protected static void removePlugins() {
+  static protected void removePlugins() {
     Registry reg = Registry.getDefault();
     List<Plugin> list = reg.getPluginList();
     for (int i = 0; i < list.size(); i++) {
@@ -150,7 +150,7 @@ public class Video implements PConstants {
     }    
   }
   
-  protected static void setLinuxPath() {
+  static protected void setLinuxPath() {
     if (globalGStreamer && lookForGlobalGStreamer()) {
       gstreamerBinPath = "";
       gstreamerPluginsPath = "";
@@ -160,7 +160,7 @@ public class Video implements PConstants {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
         gstreamerBinPath = path + "/linux" + bitsJVM;
-        gstreamerPluginsPath = gstreamerBinPath + "/" + localPluginsFolder;
+        gstreamerPluginsPath = buildGStreamerBinPath(gstreamerBinPath, "/" + localPluginsFolder);
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
@@ -168,7 +168,7 @@ public class Video implements PConstants {
     }
   }
 
-  protected static void setWindowsPath() {
+  static protected void setWindowsPath() {
     if (globalGStreamer && lookForGlobalGStreamer()) {
       gstreamerBinPath = "";
       gstreamerPluginsPath = "";
@@ -178,7 +178,7 @@ public class Video implements PConstants {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
         gstreamerBinPath = path + "\\windows" + bitsJVM;
-        gstreamerPluginsPath = gstreamerBinPath + "\\" + localPluginsFolder;
+        gstreamerPluginsPath = buildGStreamerBinPath(gstreamerBinPath , "\\" + localPluginsFolder);
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "\\" + localPluginsFolder;
@@ -186,7 +186,7 @@ public class Video implements PConstants {
     }
   }
 
-  protected static void setMacOSXPath() {
+  static protected void setMacOSXPath() {
     if (globalGStreamer && lookForGlobalGStreamer()) {
       gstreamerBinPath = globalGStreamerPath;
       gstreamerPluginsPath = globalGStreamerPath + "/" + globalPluginsFolder;
@@ -194,8 +194,8 @@ public class Video implements PConstants {
       globalGStreamer = false;  
       if (localGStreamerPath.equals("")) {
         LibraryPath libPath = new LibraryPath();
-        String path = libPath.get();
-        gstreamerBinPath = path + "/macosx" + bitsJVM;
+        String path = libPath.get();        
+        gstreamerBinPath = buildGStreamerBinPath(path, "/macosx" + bitsJVM);
         gstreamerPluginsPath = gstreamerBinPath + "/" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
@@ -204,7 +204,7 @@ public class Video implements PConstants {
     }
   }
 
-  protected static boolean lookForGlobalGStreamer() {    
+  static protected boolean lookForGlobalGStreamer() {    
     LibraryPath libPath = new LibraryPath();
     String locPath = libPath.get();
     locPath = locPath.replace("/", System.getProperty("file.separator"));
@@ -230,7 +230,7 @@ public class Video implements PConstants {
     return false;
   }
   
-  protected static boolean libgstreamerPresent(String dir, String file) {
+  static protected boolean libgstreamerPresent(String dir, String file) {
     File libPath = new File(dir);
     String[] files = libPath.list();
     if (files != null) {
@@ -243,6 +243,16 @@ public class Video implements PConstants {
     return false;
   }
   
+  static protected String buildGStreamerBinPath(String base, String os) {        
+    File path = new File(base + os);
+    if (path.exists()) {
+      return base + os;	
+    } else {
+    	
+      return base;	
+    }
+  }
+  
   static protected float nanoSecToSecFrac(float nanosec) {
     for (int i = 0; i < 3; i++)
       nanosec /= 1E3;
@@ -252,5 +262,5 @@ public class Video implements PConstants {
   static protected long secToNanoLong(float sec) {
     Float f = new Float(sec * 1E9);
     return f.longValue();
-  }  
+  }
 }
