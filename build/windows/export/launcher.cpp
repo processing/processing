@@ -281,6 +281,11 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   strcpy(outgoing_cmd_line, java_args);
   strcat(outgoing_cmd_line, " ");
 
+  // for 2.0a2, add the 'lib' folder to the java.library.path
+  strcat(outgoing_cmd_line, "-Djava.library.path=");
+  strcat(outgoing_cmd_line, exe_directory);
+  strcat(outgoing_cmd_line, "\\lib ");
+
   // add the name of the class to execute and a space before the next arg
   strcat(outgoing_cmd_line, java_main_class);
   strcat(outgoing_cmd_line, " ");
@@ -295,9 +300,10 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // exe_directory is the name path to the current application
 
   if (local_jre_installed) {
-    strcpy(executable, exe_directory);
+    //strcpy(executable, exe_directory);
     // copy in the path for javaw, relative to launcher.exe
-    strcat(executable, "\\java\\bin\\javaw.exe");
+    //strcat(executable, "\\java\\bin\\javaw.exe");
+    sprintf(executable, "%s\\java\\bin\\javaw.exe", exe_directory);
   } else {
     strcpy(executable, "javaw.exe");
   }
