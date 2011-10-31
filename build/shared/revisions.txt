@@ -1,3 +1,19 @@
+PROCESSING 2.0a2 (REV 0201) - 31 October 2011
+
+Happy Halloween! I'll be dressing up as an ArrayIndexOutOfBoundsException.
+
+This release is primarily focused on the new video library and making it
+usable across platforms. It also has some changes for how applications 
+are exported, and a number of other bug fixes and tweaks.
+
+[ about those changes ]
+
+
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0a1 (REV 0200) - 2 September 2011
 
 First alpha release as we head toward 2.0. Please read the changes page 

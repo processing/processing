@@ -308,6 +308,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     strcpy(executable, "javaw.exe");
   }
 
+  /*
   SHELLEXECUTEINFO ShExecInfo;
 
   //MessageBox(NULL, executable, outgoing_cmd_line, MB_OK);
@@ -352,7 +353,44 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
       break;
     }
   }
+
   return 0;
+  */
+
+  PROCESS_INFORMATION pi;
+  memset(&pi, 0, sizeof(pi));
+	STARTUPINFO si;
+  memset(&si, 0, sizeof(si));
+  si.cb = sizeof(si);
+  int wait = 0;
+
+	DWORD dwExitCode = -1;
+	char cmdline[32768];
+  //executable;
+  //outgoing_cmd_line;
+  //exe_directory;
+  strcpy(cmdline, "\"");
+	strcat(cmdline, executable);
+	strcat(cmdline, "\" ");
+	strcat(cmdline, outgoing_cmd_line);
+
+	if (CreateProcess(NULL, cmdline, NULL, NULL,
+                    //TRUE, priority, NULL, NULL, 
+                    TRUE, 0, NULL, exe_directory, 
+                    &si, &pi)) {
+		if (wait) {
+			WaitForSingleObject(pi.hProcess, INFINITE);
+			GetExitCodeProcess(pi.hProcess, &dwExitCode);
+			//debug("Exit code:\t%d\n", dwExitCode);
+			//closeHandles();
+      char[128] big_trouble;
+      sprintf(big_trouble, "Sorry, could not launch. (Error %d)", dwExitCode);
+      MessageBox(NULL, big_trouble, "Apologies",  MB_OK);
+		} else {
+			dwExitCode = 0;
+		}
+	}
+	return dwExitCode;
 }
 
 

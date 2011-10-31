@@ -27,28 +27,17 @@
     <key>LSUIPresentationMode</key>
     <integer>@@lsuipresentationmode@@</integer>
 
-    <!-- make sure that applications open in 32-bit mode on Snow Leopard,
-	 otherwise video and most other native libraries will choke 
-	 http://developer.apple.com/mac/library/documentation/General/Reference/InfoPlistKeyReference/Articles/LaunchServicesKeys.html#//apple_ref/doc/uid/TP40009250-SW1 -->
-    <key>LSArchitecturePriority</key>
-    <array>
-      <string>i386</string>
-      <string>ppc</string>
-    </array> 
-
     <key>Java</key>
     <dict>
       <key>VMOptions</key>
       <string>@@vmoptions@@</string>
+
       <key>MainClass</key>
       <string>@@sketch@@</string>
+
       <key>JVMVersion</key>
-      <string>1.5*</string>
-      <key>JVMArchs</key>
-      <array>
-	<string>i386</string>
-	<string>ppc</string>
-      </array>
+      <string>1.6*</string>
+
       <key>ClassPath</key>
       <string>@@classpath@@</string>
 

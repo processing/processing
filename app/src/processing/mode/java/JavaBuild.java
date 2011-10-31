@@ -1325,6 +1325,16 @@ public class JavaBuild {
       runOptions += " -Xmx" +
         Preferences.get("run.options.memory.maximum") + "m";
     }
+    if (exportPlatform == PConstants.MACOSX) {
+      // If no bits specified (libs are all universal, or no native libs)
+      // then exportBits will be 0, and can be controlled via "Get Info".
+      // Otherwise, need to specify the bits as a VM option.
+      if (exportBits == 32) {
+        runOptions += " -d32";
+      } else if (exportBits == 64) {
+        runOptions += " -d64";
+      }
+    }
 
     /// macosx: write out Info.plist (template for classpath, etc)
 

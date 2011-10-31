@@ -69,21 +69,15 @@
       <key>MainClass</key>
       <string>processing.app.Base</string>
 
+      <!-- As of 2.0a2 we are now requiring Java 1.6 -->
       <key>JVMVersion</key>
-      <string>1.5+</string>
+      <string>1.6*</string>
 
       <key>ClassPath</key>
       <!-- In 0149, removed /System/Library/Java from the CLASSPATH because
            it can cause problems if users have installed weird files there.
            http://dev.processing.org/bugs/show_bug.cgi?id=1045 -->
       <string>$JAVAROOT/pde.jar:$JAVAROOT/core.jar:$JAVAROOT/ant.jar:$JAVAROOT/ant-launcher.jar:$JAVAROOT/antlr.jar:$JAVAROOT/ecj.jar:$JAVAROOT/jna.jar:$JAVAROOT/quaqua.jar</string>
-
-      <key>JVMArchs</key>  
-      <array>  
-        <!-- <string>x86_64</string> --> <!-- currently no 64 bit support -->
-        <string>i386</string>  
-        <string>ppc</string>  
-      </array>
 
       <!-- More properties can be found in http://developer.apple.com/releasenotes/Java/java141/system_properties/chapter_4_section_1.html#//apple_ref/doc/uid/TP30000285 -->
       <key>Properties</key>
