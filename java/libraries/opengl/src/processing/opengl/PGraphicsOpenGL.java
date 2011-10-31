@@ -159,6 +159,9 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected final int GL_VERTEX_BUFFER = 1;
   static protected final int GL_FRAME_BUFFER = 2;
   static protected final int GL_RENDER_BUFFER = 3;
+  static protected final int GLSL_PROGRAM = 4;
+  static protected final int GLSL_VERTEX_SHADER = 5;
+  static protected final int GLSL_FRAGMENT_SHADER = 6;
   
   static protected Set<PGraphicsOpenGL> pGraphicsOpenGLObjects = new HashSet<PGraphicsOpenGL>();
   static protected Set<PTexture> pTextureObjects = new HashSet<PTexture>();
@@ -168,7 +171,10 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected Set<Integer> glTextureObjects = new HashSet<Integer>();
   static protected Set<Integer> glVertexBuffers = new HashSet<Integer>();
   static protected Set<Integer> glFrameBuffers = new HashSet<Integer>();
-  static protected Set<Integer> glRenderBuffers = new HashSet<Integer>();  
+  static protected Set<Integer> glRenderBuffers = new HashSet<Integer>();    
+  static protected Set<Integer> glslPrograms = new HashSet<Integer>();
+  static protected Set<Integer> glslVertexShaders = new HashSet<Integer>();
+  static protected Set<Integer> glslFragmentShaders = new HashSet<Integer>();
   
   // ........................................................  
 
@@ -926,7 +932,16 @@ public class PGraphicsOpenGL extends PGraphics {
       gl.glGenRenderbuffers(1, temp, 0);
       id = temp[0];
       glRenderBuffers.add(id);
-    } 
+    } else if (type == GLSL_PROGRAM) {
+      id = gl2x.glCreateProgram();
+      glslPrograms.add(id);
+    } else if (type == GLSL_VERTEX_SHADER) {
+      id = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);
+      glslVertexShaders.add(id);
+    } else if (type == GLSL_FRAGMENT_SHADER) {
+      id = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);
+      glslFragmentShaders.add(id);
+    }
       
     return id;
   }
@@ -957,7 +972,22 @@ public class PGraphicsOpenGL extends PGraphics {
         gl.glDeleteRenderbuffers(1, temp, 0);
         glRenderBuffers.remove(id);
       }      
-    }
+    } else if (type == GLSL_PROGRAM) {
+      if (glslPrograms.contains(id)) {
+        gl2x.glDeleteProgram(id);
+        glslPrograms.remove(id);
+      }      
+    } else if (type == GLSL_VERTEX_SHADER) {
+      if (glslVertexShaders.contains(id)) {
+        gl2x.glDeleteShader(id);
+        glslVertexShaders.remove(id);
+      } 
+    } else if (type == GLSL_FRAGMENT_SHADER) {
+      if (glslFragmentShaders.contains(id)) {
+        gl2x.glDeleteShader(id);
+        glslFragmentShaders.remove(id);
+      } 
+    }    
   }  
 
   
@@ -1005,6 +1035,34 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       glRenderBuffers.clear();
     }
+        
+    if (!glslPrograms.isEmpty()) {
+      Object[] glids = glslPrograms.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        gl2x.glDeleteProgram(id);
+      }
+      glslPrograms.clear();
+    }
+    
+    if (!glslVertexShaders.isEmpty()) {
+      Object[] glids = glslVertexShaders.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        gl2x.glDeleteShader(id);
+      }
+      glslVertexShaders.clear();
+    }    
+    
+    if (!glslFragmentShaders.isEmpty()) {
+      Object[] glids = glslFragmentShaders.toArray();
+      for (int i = 0; i < glids.length; i++) {
+        int id = ((Integer)glids[i]).intValue();
+        gl2x.glDeleteShader(id);
+      }
+      glslFragmentShaders.clear();
+    }  
+    
   }
 
   //////////////////////////////////////////////////////////////
