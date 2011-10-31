@@ -101,8 +101,6 @@ public class Video implements PConstants {
       setMacOSXPath();
     }
 
-    System.out.println("gstreamerBinPath: " + gstreamerBinPath);
-    System.out.flush();
     if (!gstreamerBinPath.equals("")) {
       System.setProperty("jna.library.path", gstreamerBinPath);
     }
