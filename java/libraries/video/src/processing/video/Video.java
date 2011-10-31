@@ -101,7 +101,8 @@ public class Video implements PConstants {
       setMacOSXPath();
     }
 
-    PApplet.println("gstreamerBinPath: " + gstreamerBinPath);
+    System.out.println("gstreamerBinPath: " + gstreamerBinPath);
+    System.out.flush();
     if (!gstreamerBinPath.equals("")) {
       System.setProperty("jna.library.path", gstreamerBinPath);
     }
@@ -159,8 +160,8 @@ public class Video implements PConstants {
       if (localGStreamerPath.equals("")) {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "/linux" + bitsJVM;
-        gstreamerPluginsPath = buildGStreamerBinPath(gstreamerBinPath, "/" + localPluginsFolder);
+        gstreamerBinPath = buildGStreamerBinPath(path, "/linux" + bitsJVM);
+        gstreamerPluginsPath = gstreamerBinPath + "/" + localPluginsFolder;        
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "/" + localPluginsFolder;
@@ -177,8 +178,8 @@ public class Video implements PConstants {
       if (localGStreamerPath.equals("")) {
         LibraryPath libPath = new LibraryPath();
         String path = libPath.get();
-        gstreamerBinPath = path + "\\windows" + bitsJVM;
-        gstreamerPluginsPath = buildGStreamerBinPath(gstreamerBinPath , "\\" + localPluginsFolder);
+        gstreamerBinPath = buildGStreamerBinPath(path, "\\windows" + bitsJVM);
+        gstreamerPluginsPath = gstreamerBinPath + "\\" + localPluginsFolder;
       } else {
         gstreamerBinPath = localGStreamerPath;
         gstreamerPluginsPath = localGStreamerPath + "\\" + localPluginsFolder;

@@ -680,7 +680,7 @@ public class Movie extends PImage implements PConstants {
         // which is less fun, so this will crap out.
         file = new File(parent.dataPath(filename));
         if (file.exists()) {
-          gplayer = new PlayBin2("GSMovie Player");          
+          gplayer = new PlayBin2("Movie Player");          
           gplayer.setInputFile(file);
         }
       } catch (Exception e) {
@@ -693,23 +693,21 @@ public class Movie extends PImage implements PConstants {
         try {
           file = new File(filename);
           if (file.exists()) {
-            gplayer = new PlayBin2("GSMovie Player");            
+            gplayer = new PlayBin2("Movie Player");            
             gplayer.setInputFile(file);
           }
         } catch (Exception e) {
-          PApplet.println("Shit coming...");
           e.printStackTrace();
         }
       }
 
       // Network read...      
-      if (gplayer == null) {
+      if (gplayer == null && filename.startsWith("http://")) {
         try {
           PApplet.println("network read");
-          gplayer = new PlayBin2("GSMovie Player");            
+          gplayer = new PlayBin2("Movie Player");            
           gplayer.setURI(URI.create(filename));
         } catch (Exception e) {
-          PApplet.println("Shit coming...");
           e.printStackTrace();
         }      
       }
