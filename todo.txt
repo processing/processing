@@ -6,6 +6,10 @@ X swap order of applet/application in the file menu
 X update Quaqua to 7.4.2
 X make application the default instead of applet
 X subfolders of windows32 & friends aren't being included (gsvideo problem)
+X on Windows, move the exported DLLs et al inside 'lib'
+X   requires change to export/launcher.cpp to include the exe dir
+_   this will cause trouble with ...
+X change Linux script to handle the 'lib' dir as part of the lib path
 
 _ add a preferences option for whether to run in 32 or 64-bit
 _   also make note of when library is not available (serial) with error msg
