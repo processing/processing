@@ -310,12 +310,10 @@ public class Base {
     try {
       Class.forName("com.sun.jdi.VirtualMachine");
     } catch (ClassNotFoundException cnfe) {
-      //Base.showPlatforms();
-      //static public void showPlatforms() {
       Base.openURL("http://wiki.processing.org/w/Supported_Platforms");
-      Base.showError("Please install JDK 1.5 or later",
+      Base.showError("Please install JDK 1.6 or later",
                      "Processing requires a full JDK (not just a JRE)\n" +
-                     "to run. Please install JDK 1.5 or later.\n" +
+                     "to run. Please install JDK 1.6 or later.\n" +
                      "More information can be found in the reference.", cnfe);
     }
   }
@@ -373,7 +371,6 @@ public class Base {
 
     libraryManagerFrame = new ContributionManagerDialog("Library Manager",
                                                         new ContributionListing.Filter() {
-      
       public boolean matches(Contribution contrib) {
         return contrib.getType() == Contribution.Type.LIBRARY
             || contrib.getType() == Contribution.Type.LIBRARY_COMPILATION;
@@ -381,21 +378,18 @@ public class Base {
     });
     toolManagerFrame = new ContributionManagerDialog("Tool Manager",
                                                      new ContributionListing.Filter() {
-      
       public boolean matches(Contribution contrib) {
         return contrib.getType() == Contribution.Type.TOOL;
       }
     });
     modeManagerFrame = new ContributionManagerDialog("Mode Manager",
                                                      new ContributionListing.Filter() {
-      
       public boolean matches(Contribution contrib) {
         return contrib.getType() == Contribution.Type.MODE;
       }
     });
     updateManagerFrame = new ContributionManagerDialog("Update Manager",
                                                        new ContributionListing.Filter() {
-      
       public boolean matches(Contribution contrib) {
         if (contrib instanceof InstalledContribution) {
           return ContributionListing.getInstance().hasUpdates(contrib);
