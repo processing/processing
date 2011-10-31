@@ -39,6 +39,7 @@ class LibraryPath {
       int n0 = path.indexOf('/');
 
       int n1 = -1;
+      /*
       if (Platform.isWindows()) {
         n1 = path.indexOf("/lib/video.jar"); // location of video.jar in
                                                // exported apps.
@@ -52,9 +53,19 @@ class LibraryPath {
       } else if (Platform.isMac()) {
         // In Mac, getting the index of video.jar is enough in the case of sketches running from the PDE
         // as well as exported applications.
-        n1 = path.indexOf("video.jar");        
-      } else if (Platform.isLinux()) {
+        n1 = path.indexOf("video.jar");
+        */
+      
+        
+      if (Platform.isLinux()) {
         return "";
+      } else {
+        n1 = path.indexOf("video.jar");
+        if (Platform.isWindows()) {
+          // In Windows, path string starts with "jar file/C:/..."
+          // so the substring up to the first / is removed.
+          n0++;
+        }
       }
 
       if ((-1 < n0) && (-1 < n1)) {
