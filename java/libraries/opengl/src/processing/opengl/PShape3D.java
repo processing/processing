@@ -822,7 +822,7 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(normalData, 3 * i1, strokeNormals, 3 * vcount, 3);
     PApplet.arrayCopy(strokeData, 5 * i1, strokeColors, 4 * vcount, 4);
     PApplet.arrayCopy(vertexData, 3 * i0, strokeAttributes, 4 * vcount, 3); 
-    strokeAttributes[4 * vcount + 3] = strokeData[5 * i1 + 4];
+    strokeAttributes[4 * vcount + 3] = -strokeData[5 * i1 + 4];
     strokeIndices[icount++] = vcount;
     
     // Starting a new triangle re-using prev vertices.
@@ -834,7 +834,7 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(normalData, 3 * i1, strokeNormals, 3 * vcount, 3);
     PApplet.arrayCopy(strokeData, 5 * i1, strokeColors, 4 * vcount, 4);
     PApplet.arrayCopy(vertexData, 3 * i0, strokeAttributes, 4 * vcount, 3);
-    strokeAttributes[4 * vcount + 3] = -strokeData[5 * i1 + 4];
+    strokeAttributes[4 * vcount + 3] = +strokeData[5 * i1 + 4];
     strokeIndices[icount++] = vcount;
   }
   
@@ -867,7 +867,12 @@ public class PShape3D extends PShape {
   protected void aggregate() {
     if (root == this && parent == null) {
       // We recursively calculate the total number of vertices and indices.
-      aggregateImpl(false);
+      firstVertex = lastVertex = vertexCount = 0;
+      firstIndex = lastIndex = indexCount = 0;
+      
+      firstStrokeVertex = lastStrokeVertex = strokeVertexCount = 0;
+      firstStrokeIndex = lastStrokeIndex = strokeIndexCount = 0;      
+      aggregateImpl();
       
       // Now that we know, we can initialize the buffers with the correct size.
       initBuffers(vertexCount, indexCount);      
@@ -884,81 +889,96 @@ public class PShape3D extends PShape {
     }
   }
   
-  protected void aggregateImpl(boolean incFirst) {
-    if (parent != null) {
-      firstVertex = ((PShape3D)parent).lastVertex;
-      firstIndex = ((PShape3D)parent).lastIndex;
-      
-      firstStrokeVertex = ((PShape3D)parent).lastStrokeVertex;
-      firstStrokeIndex = ((PShape3D)parent).lastStrokeIndex;
-      
-      if (incFirst) {
-        firstVertex++;
-        firstIndex++;
-        
-        if (useStroke) {
-          firstStrokeVertex++;
-          firstStrokeIndex++;
-        }
-      }
-    } else {
-      firstVertex = 0;
-      firstIndex = 0;
-      
-      firstStrokeVertex = 0;
-      firstStrokeIndex = 0;              
-    }
-    lastVertex = firstVertex;    
-    lastIndex = firstIndex;
-
-    lastStrokeVertex = firstStrokeVertex;    
-    lastStrokeIndex = firstStrokeIndex;    
-    
+  // This method is very important, as it is responsible of
+  // generating the correct vertex and index values for each
+  // level of the shape hierarchy.
+  protected void aggregateImpl() {
     if (family == GROUP) {
-      vertexCount = 0;
-      indexCount = 0;
+      firstVertex = lastVertex = vertexCount = 0;
+      firstIndex = lastIndex = indexCount = 0;
       
+      firstStrokeVertex = lastStrokeVertex = strokeVertexCount = 0;
+      firstStrokeIndex = lastStrokeIndex = strokeIndexCount = 0;     
+      
+      boolean firstGeom = true;
+      boolean firstStroke = true;
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D)children[i];
-        child.aggregateImpl(0 < i);
-      }
-      
-      if (0 < childCount) {
-        PShape3D child = (PShape3D)children[0];
-        firstVertex = child.firstVertex;
-        firstIndex = child.firstIndex;  
+        child.aggregateImpl();
+
+        vertexCount += child.vertexCount;
+        indexCount += child.indexCount;
         
-        firstStrokeVertex = child.firstStrokeVertex;
-        firstStrokeIndex = child.firstStrokeIndex;          
-      } else {
-        firstVertex = lastVertex = -1;
-        firstIndex = lastIndex = -1;
-        
-        firstStrokeVertex = lastStrokeVertex = -1;
-        firstStrokeIndex = lastStrokeIndex = -1;        
+        strokeVertexCount += child.strokeVertexCount;
+        strokeIndexCount += child.strokeIndexCount;        
+
+        if (0 < child.vertexCount) {
+          if (firstGeom) {
+            firstVertex = child.firstVertex;
+            firstIndex = child.firstIndex;
+            firstGeom = false;
+          }
+
+          lastVertex = child.lastVertex;
+          lastIndex = child.lastIndex;          
+        }  
+
+        if (0 < child.strokeVertexCount) {
+          if (firstStroke) {
+            firstStrokeVertex = child.firstStrokeVertex;
+            firstStrokeIndex = child.firstStrokeIndex;
+            firstStroke = false;
+          }
+          
+          lastStrokeVertex = child.lastStrokeVertex;
+          lastStrokeIndex = child.lastStrokeIndex;
+        }         
       }
-      
+
       useStroke = 0 < strokeVertexCount && 0 < strokeIndexCount;      
     } else {
       // Shape holding some geometry.      
       if (0 < vertexCount) {
-        lastVertex = firstVertex + vertexCount - 1;
-      }
+        firstVertex = 0;
+        if (0 < root.lastVertex) {
+          firstVertex = root.lastVertex + 1; 
+        }
+        lastVertex = firstVertex + vertexCount - 1;        
+        root.lastVertex = lastVertex; 
+      }      
+      
       if (0 < indexCount) {
+        firstIndex = 0;
+        if (0 < root.lastIndex) {
+          firstIndex = root.lastIndex + 1; 
+        }
+        
         // The indices are update to take into account all the previous 
         // shapes in the hierarchy, as the entire geometry will be stored
         // contiguously in a single VBO in the root node.
         for (int i = 0; i < indexCount; i++) {
           indices[i] += firstVertex;
         }
-        lastIndex = firstIndex + indexCount - 1;
+        lastIndex = firstIndex + indexCount - 1;        
+        root.lastIndex = lastIndex; 
       }
       
       // Shape holding some stroke geometry.      
       if (0 < strokeVertexCount) {
+        firstStrokeVertex = 0;
+        if (0 < root.lastStrokeVertex) {
+          firstStrokeVertex = root.lastStrokeVertex + 1; 
+        }        
         lastStrokeVertex = firstStrokeVertex + strokeVertexCount - 1;
+        root.lastStrokeVertex = lastStrokeVertex;
       }
+      
       if (0 < strokeIndexCount) {
+        firstStrokeIndex = 0;
+        if (0 < root.lastStrokeIndex) {
+          firstStrokeIndex = root.lastStrokeIndex + 1; 
+        }        
+        
         // The indices are update to take into account all the previous 
         // shapes in the hierarchy, as the entire geometry will be stored
         // contiguously in a single VBO in the root node.
@@ -966,20 +986,9 @@ public class PShape3D extends PShape {
           strokeIndices[i] += firstStrokeVertex;
         }
         lastStrokeIndex = firstStrokeIndex + strokeIndexCount - 1;
-      }      
+        root.lastStrokeIndex = lastStrokeIndex;
+      }
     }  
-    
-    if (parent != null) {
-      ((PShape3D)parent).lastVertex = lastVertex;
-      ((PShape3D)parent).vertexCount += vertexCount;
-      ((PShape3D)parent).lastIndex = lastIndex;             
-      ((PShape3D)parent).indexCount += indexCount;
-      
-      ((PShape3D)parent).lastStrokeVertex = lastStrokeVertex;
-      ((PShape3D)parent).strokeVertexCount += strokeVertexCount;
-      ((PShape3D)parent).lastStrokeIndex = lastStrokeIndex;             
-      ((PShape3D)parent).strokeIndexCount += strokeIndexCount;      
-    }    
   }
   
   protected void initBuffers(int nvert, int nind) {
@@ -1098,8 +1107,7 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (useStroke) {
-        root.copyStrokeGeometry(root.strokeVertCopyOffset, strokeVertexCount, strokeVertices, strokeColors, 
-                                                                          strokeAttributes);        
+        root.copyStrokeGeometry(root.strokeVertCopyOffset, strokeVertexCount, strokeVertices, strokeColors, strokeAttributes);        
         root.strokeVertCopyOffset += strokeVertexCount;
         
         root.copyStrokeIndices(root.strokeIndCopyOffset, strokeIndexCount, strokeIndices);
