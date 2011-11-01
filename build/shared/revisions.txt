@@ -6,10 +6,47 @@ This release is primarily focused on the new video library and making it
 usable across platforms. It also has some changes for how applications 
 are exported, and a number of other bug fixes and tweaks.
 
-[ about those changes ]
+[ platforms ] 
 
-+ Serial on Mac OS X is currently only available for 32-bit. Hoping to have
-  a 64-bit version sometime soon. 
++ With this release, Java 1.6 is now required. We will no longer be 
+  supporting Java 1.5.
+
++ In perhaps related news, we are no longer supporting Mac OS X 10.5.
+  We have to support 10.6 and 10.7 across both 32- and 64-bit, and adding
+  yet another to that is simply not possible.
+
+[ 32- and 64-bit support is a nightmare ]
+
++ A great deal of effort is being put into supporting the emergence of
+  64-bit. Library support has changed significantly to get things working,
+  more on this coming soon.
+
++ Serial on Mac OS X and Windows is currently only available for 32-bit. 
+  Hoping someone can help us support a 64-bit version sometime soon. 
+
++ When exporting a 64-bit application for Windows, a .bat file is created,
+  because our .exe doesn't yet support 64-bit. Assuming you have a 64-bit
+  JVM installed, the .bat file should load things properly.
+
++ Because serial only supports 32-bit on OS X, exporting an application 
+  that uses serial will only create a application.macosx32 folder, which 
+  is a 32-bit app for Mac OS X. No application.macosx64 will be created, 
+  nor will a universal application.macosx folder. This is also the case 
+  for other libraries that have only 32- or 64-bit support. See earlier
+  note that 32- and 64-bit support is an f*ing nightmare.
+
+[ video ] 
+
++ The most significant change in this release is that the new video library
+  from Andres (based on his old gsvideo library) is nearing fully fucntional.
+
++ MovieMaker is going to be replaced by a Tool that allows you to sequence
+  a set of images together into a movie file. The tool currently has a GUI
+  bug that breaks it, but this will be fixed sometime soon.
+
+[ other changes ]
+
++ Application is now the default export (instead of Applet). 
 
 + Change to how dataPath() and dataFile() work. This is an undocumented
   function, but for those using it, here's the skinny: 
@@ -26,6 +63,14 @@ are exported, and a number of other bug fixes and tweaks.
   folder wrapped into the JAR file. To read data from the data folder that
   works with an applet, you should use other methods such as createInput(),
   createReader(), or loadStrings().
+
++ Additional library files included with application exports are now placed 
+  in the 'lib' folder on Linux and Windows, or buried inside the OS X app.
+  This helps prevent the unsightly mess of DLLs that were crowding the
+  root folder of exported applications on Windows and Linux.
+
++ If noLoop() has been called but a sketch is resized, redraw() will be 
+  called to update the screen.
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
