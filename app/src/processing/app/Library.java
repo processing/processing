@@ -73,7 +73,8 @@ public class Library extends InstalledContribution {
       return lc.endsWith(".jar") || lc.endsWith(".zip");
     }
   };
-  
+
+
   public Library(File folder, String subfolder) {
     super(folder, Library.propertiesFileName);
     this.group = subfolder;
@@ -122,35 +123,24 @@ public class Library extends InstalledContribution {
       String platformName32 = platformName + "32";
       String platformName64 = platformName + "64";
 
+      // First check for things like 'application.macosx=' or 'application.windows32' in the export.txt file.
+      // These will override anything in the platform-specific subfolders.
       String platformAll = exportTable.get("application." + platformName);
       String[] platformList = platformAll == null ? null : PApplet.splitTokens(platformAll, ", ");
-
       String platform32 = exportTable.get("application." + platformName + "32");
       String[] platformList32 = platform32 == null ? null : PApplet.splitTokens(platform32, ", ");
-
       String platform64 = exportTable.get("application." + platformName + "64");
       String[] platformList64 = platform64 == null ? null : PApplet.splitTokens(platform64, ", ");
 
+      // If nothing specified in the export.txt entries, look for the platform-specific folders.
       if (platformAll == null) {
         platformList = listPlatformEntries(libraryFolder, platformName, baseList);
-//        File folderAll = new File(libraryFolder, platformName);
-//        if (folderAll.exists()) {
-//          platformList = PApplet.concat(baseList, folderAll.list(standardFilter));
-//        }
       }
       if (platform32 == null) {
         platformList32 = listPlatformEntries(libraryFolder, platformName32, baseList);
-//        File folder32 = new File(libraryFolder, platformName32);
-//        if (folder32.exists()) {
-//          platformList32 = PApplet.concat(baseList, folder32.list(standardFilter));
-//        }
       }
       if (platform64 == null) {
         platformList64 = listPlatformEntries(libraryFolder, platformName64, baseList);
-//        File folder64 = new File(libraryFolder, platformName64);
-//        if (folder64.exists()) {
-//          platformList64 = PApplet.concat(baseList, folder64.list(standardFilter));
-//        }
       }
 
       if (platformList32 != null || platformList64 != null) {
@@ -354,6 +344,15 @@ public class Library extends InstalledContribution {
 
   public boolean hasMultipleArch(int platform) {
     return multipleArch[platform];
+  }
+  
+  
+  public boolean supportsArch(int platform, int bits) {
+    // If this is a universal library, or has no natives, then we're good.
+    if (multipleArch[platform] == false) {
+      return true;
+    }
+    return getApplicationExportList(platform, bits) != null; 
   }
 
 
