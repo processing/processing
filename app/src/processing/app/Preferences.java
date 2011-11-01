@@ -119,6 +119,8 @@ public class Preferences {
   JCheckBox checkUpdatesBox;
   JTextField fontSizeField;
   JCheckBox autoAssociateBox;
+  JRadioButton bitsThirtyTwoButton;
+  JRadioButton bitsSixtyFourButton;
 
 
   // the calling editor, so updates can be applied
@@ -360,7 +362,29 @@ public class Preferences {
       right = Math.max(right, left + d.width);
       top += d.height + GUI_BETWEEN;
     }
-
+    
+    
+    // Launch programs as [ ] 32-bit [ ] 64-bit (Mac OS X only)
+    
+    if (Base.isMacOS()) {
+      box = Box.createHorizontalBox();
+      label = new JLabel("Launch programs in  ");
+      box.add(label);
+      bitsThirtyTwoButton = new JRadioButton("32-bit mode  ");
+      box.add(bitsThirtyTwoButton);
+      bitsSixtyFourButton = new JRadioButton("64-bit mode");
+      box.add(bitsSixtyFourButton);
+      
+      ButtonGroup bg = new ButtonGroup();
+      bg.add(bitsThirtyTwoButton);
+      bg.add(bitsSixtyFourButton);
+      
+      pain.add(box);
+      d = box.getPreferredSize();
+      box.setBounds(left, top, d.width, d.height);
+      top += d.height + GUI_BETWEEN;
+    }
+    
 
     // More preferences are in the ...
 
@@ -546,6 +570,10 @@ public class Preferences {
     }
     */
 
+    if (Base.isMacOS()) {
+      set("run.options.bits", bitsThirtyTwoButton.isSelected() ? "32" : "64");
+    }
+
     String newSizeText = fontSizeField.getText();
     try {
       int newSize = Integer.parseInt(newSizeText.trim());
@@ -595,6 +623,18 @@ public class Preferences {
     memoryField.
       setText(get("run.options.memory.maximum"));
 
+    String bits = Preferences.get("run.options.bits");
+    if (bits.equals("32")) {
+      bitsThirtyTwoButton.setSelected(true);
+    } else if (bits.equals("64")) {
+      bitsSixtyFourButton.setSelected(true);
+    }
+    // in case we go back and support OS X 10.5...
+    if (System.getProperty("os.version").startsWith("10.5")) {
+      bitsSixtyFourButton.setSelected(true);
+      bitsThirtyTwoButton.setEnabled(false);
+    }
+    
     if (autoAssociateBox != null) {
       autoAssociateBox.
         setSelected(getBoolean("platform.auto_file_type_associations"));
@@ -604,6 +644,22 @@ public class Preferences {
   }
 
 
+  // Workaround for Apple bullsh*t caused by their not releasing a 32-bit 
+  // version of Java for Mac OS X 10.5.
+//  static public String checkBits() {
+//    String bits = Preferences.get("run.options.bits");
+//    if (bits == null) {
+//      if (System.getProperty("os.version").startsWith("10.5")) {
+//        bits = "64"; 
+//      } else {
+//        bits = "32";
+//      }
+//      Preferences.set("run.options.bits", bits);
+//    }
+//    return bits;
+//  }
+  
+  
   // .................................................................
 
 
