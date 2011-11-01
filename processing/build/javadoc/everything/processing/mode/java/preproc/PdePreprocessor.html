@@ -1,0 +1,550 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+PdePreprocessor
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PdePreprocessor";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../processing/mode/java/preproc/PdeEmitter.html" title="class in processing.mode.java.preproc"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.Mode.html" title="enum in processing.mode.java.preproc"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?processing/mode/java/preproc/PdePreprocessor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PdePreprocessor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+processing.mode.java.preproc</FONT>
+<BR>
+Class PdePreprocessor</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>processing.mode.java.preproc.PdePreprocessor</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../processing/mode/android/AndroidPreprocessor.html" title="class in processing.mode.android">AndroidPreprocessor</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>PdePreprocessor</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Class that orchestrates preprocessing p5 syntax into straight Java.
+ <P/>
+ <B>Current Preprocessor Subsitutions:</B>
+ <UL>
+ <LI>any function not specified as being protected or private will
+ be made 'public'. this means that <TT>void setup()</TT> becomes
+ <TT>public void setup()</TT>. This is important to note when
+ coding with core.jar outside of the PDE.
+ <LI><TT>compiler.substitute_floats</TT> (currently "substitute_f")
+ treat doubles as floats, i.e. 12.3 becomes 12.3f so that people
+ don't have to add f after their numbers all the time since it's
+ confusing for beginners.
+ <LI><TT>compiler.enhanced_casting</TT> byte(), char(), int(), float()
+ works for casting. this is basic in the current implementation, but
+ should be expanded as described above. color() works similarly to int(),
+ however there is also a *function* called color(r, g, b) in p5.
+ <LI><TT>compiler.color_datatype</TT> 'color' is aliased to 'int'
+ as a datatype to represent ARGB packed into a single int, commonly
+ used in p5 for pixels[] and other color operations. this is just a
+ search/replace type thing, and it can be used interchangeably with int.
+ <LI><TT>compiler.web_colors</TT> (currently "inline_web_colors")
+ color c = #cc0080; should unpack to 0xffcc0080 (the ff at the top is
+ so that the color is opaque), which is just an int.
+ </UL>
+ <B>Other preprocessor functionality</B>
+ <UL>
+ <LI>detects what 'mode' the program is in: static (no function
+ brackets at all, just assumes everything is in draw), active
+ (setup plus draw or loop), and java mode (full java support).
+ http://processing.org/reference/environment/
+ </UL>
+ <P/>
+ The PDE Preprocessor is based on the Java Grammar that comes with
+ ANTLR 2.7.2.  Moving it forward to a new version of the grammar
+ shouldn't be too difficult.
+ <P/>
+ Here's some info about the various files in this directory:
+ <P/>
+ <TT>java.g:</TT> this is the ANTLR grammar for Java 1.3/1.4 from the
+ ANTLR distribution.  It is in the public domain.  The only change to
+ this file from the original this file is the uncommenting of the
+ clauses required to support assert().
+ <P/>
+ <TT>java.tree.g:</TT> this describes the Abstract Syntax Tree (AST)
+ generated by java.g.  It is only here as a reference for coders hacking
+ on the preprocessor, it is not built or used at all.  Note that pde.g
+ overrides some of the java.g rules so that in PDE ASTs, there are a
+ few minor differences.  Also in the public domain.
+ <P/>
+ <TT>pde.g:</TT> this is the grammar and lexer for the PDE language
+ itself. It subclasses the java.g grammar and lexer.  There are a couple
+ of overrides to java.g that I hope to convince the ANTLR folks to fold
+ back into their grammar, but most of this file is highly specific to
+ PDE itself.
+ <TT>PdeEmitter.java:</TT> this class traverses the AST generated by
+ the PDE Recognizer, and emits it as Java code, doing any necessary
+ transformations along the way.  It is based on JavaEmitter.java,
+ available from antlr.org, written by Andy Tripp <atripp@comcast.net>,
+ who has given permission for it to be distributed under the GPL.
+ <P/>
+ <TT>ExtendedCommonASTWithHiddenTokens.java:</TT> this adds a necessary
+ initialize() method, as well as a number of methods to allow for XML
+ serialization of the parse tree in a such a way that the hidden tokens
+ are visible.  Much of the code is taken from the original
+ CommonASTWithHiddenTokens class.  I hope to convince the ANTLR folks
+ to fold these changes back into that class so that this file will be
+ unnecessary.
+ <P/>
+ <TT>TokenStreamCopyingHiddenTokenFilter.java:</TT> this class provides
+ TokenStreamHiddenTokenFilters with the concept of tokens which can be
+ copied so that they are seen by both the hidden token stream as well
+ as the parser itself.  This is useful when one wants to use an
+ existing parser (like the Java parser included with ANTLR) that throws
+ away some tokens to create a parse tree which can be used to spit out
+ a copy of the code with only minor modifications.  Partially derived
+ from ANTLR code.  I hope to convince the ANTLR folks to fold this
+ functionality back into ANTLR proper as well.
+ <P/>
+ <TT>whitespace_test.pde:</TT> a torture test to ensure that the
+ preprocessor is correctly preserving whitespace, comments, and other
+ hidden tokens correctly.  See the comments in the code for details about
+ how to run the test.
+ <P/>
+ All other files in this directory are generated at build time by ANTLR
+ itself.  The ANTLR manual goes into a fair amount of detail about the
+ what each type of file is for.
+ <P/>
+ 
+ Hacked to death in 2010 by
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.Mode.html" title="enum in processing.mode.java.preproc">PdePreprocessor.Mode</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#PdePreprocessor(java.lang.String)">PdePreprocessor</A></B>(java.lang.String&nbsp;sketchName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#PdePreprocessor(java.lang.String, int)">PdePreprocessor</A></B>(java.lang.String&nbsp;sketchName,
+                int&nbsp;tabSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#debugAST(antlr.collections.AST, boolean)">debugAST</A></B>(antlr.collections.AST&nbsp;ast,
+         boolean&nbsp;includeHidden)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#getCoreImports()">getCoreImports</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#getDefaultImports()">getDefaultImports</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#getFoundMain()">getFoundMain</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#setAdvClassName(java.lang.String)">setAdvClassName</A></B>(java.lang.String&nbsp;advClassName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#setFoundMain(boolean)">setFoundMain</A></B>(boolean&nbsp;foundMain)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#setMode(processing.mode.java.preproc.PdePreprocessor.Mode)">setMode</A></B>(<A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.Mode.html" title="enum in processing.mode.java.preproc">PdePreprocessor.Mode</A>&nbsp;mode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../processing/mode/java/preproc/PreprocessorResult.html" title="class in processing.mode.java.preproc">PreprocessorResult</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#write(java.io.Writer, java.lang.String)">write</A></B>(java.io.Writer&nbsp;out,
+      java.lang.String&nbsp;program)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../processing/mode/java/preproc/PreprocessorResult.html" title="class in processing.mode.java.preproc">PreprocessorResult</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.html#write(java.io.Writer, java.lang.String, java.lang.String[])">write</A></B>(java.io.Writer&nbsp;out,
+      java.lang.String&nbsp;program,
+      java.lang.String[]&nbsp;codeFolderPackages)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="PdePreprocessor(java.lang.String)"><!-- --></A><H3>
+PdePreprocessor</H3>
+<PRE>
+public <B>PdePreprocessor</B>(java.lang.String&nbsp;sketchName)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="PdePreprocessor(java.lang.String, int)"><!-- --></A><H3>
+PdePreprocessor</H3>
+<PRE>
+public <B>PdePreprocessor</B>(java.lang.String&nbsp;sketchName,
+                       int&nbsp;tabSize)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="setFoundMain(boolean)"><!-- --></A><H3>
+setFoundMain</H3>
+<PRE>
+public void <B>setFoundMain</B>(boolean&nbsp;foundMain)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFoundMain()"><!-- --></A><H3>
+getFoundMain</H3>
+<PRE>
+public boolean <B>getFoundMain</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAdvClassName(java.lang.String)"><!-- --></A><H3>
+setAdvClassName</H3>
+<PRE>
+public void <B>setAdvClassName</B>(java.lang.String&nbsp;advClassName)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMode(processing.mode.java.preproc.PdePreprocessor.Mode)"><!-- --></A><H3>
+setMode</H3>
+<PRE>
+public void <B>setMode</B>(<A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.Mode.html" title="enum in processing.mode.java.preproc">PdePreprocessor.Mode</A>&nbsp;mode)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(java.io.Writer, java.lang.String)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public <A HREF="../../../../processing/mode/java/preproc/PreprocessorResult.html" title="class in processing.mode.java.preproc">PreprocessorResult</A> <B>write</B>(java.io.Writer&nbsp;out,
+                                java.lang.String&nbsp;program)
+                         throws <A HREF="../../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A>,
+                                antlr.RecognitionException,
+                                antlr.TokenStreamException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></CODE>
+<DD><CODE>antlr.RecognitionException</CODE>
+<DD><CODE>antlr.TokenStreamException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(java.io.Writer, java.lang.String, java.lang.String[])"><!-- --></A><H3>
+write</H3>
+<PRE>
+public <A HREF="../../../../processing/mode/java/preproc/PreprocessorResult.html" title="class in processing.mode.java.preproc">PreprocessorResult</A> <B>write</B>(java.io.Writer&nbsp;out,
+                                java.lang.String&nbsp;program,
+                                java.lang.String[]&nbsp;codeFolderPackages)
+                         throws <A HREF="../../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A>,
+                                antlr.RecognitionException,
+                                antlr.TokenStreamException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></CODE>
+<DD><CODE>antlr.RecognitionException</CODE>
+<DD><CODE>antlr.TokenStreamException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCoreImports()"><!-- --></A><H3>
+getCoreImports</H3>
+<PRE>
+public java.lang.String[] <B>getCoreImports</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultImports()"><!-- --></A><H3>
+getDefaultImports</H3>
+<PRE>
+public java.lang.String[] <B>getDefaultImports</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="debugAST(antlr.collections.AST, boolean)"><!-- --></A><H3>
+debugAST</H3>
+<PRE>
+public void <B>debugAST</B>(antlr.collections.AST&nbsp;ast,
+                     boolean&nbsp;includeHidden)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../processing/mode/java/preproc/PdeEmitter.html" title="class in processing.mode.java.preproc"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../processing/mode/java/preproc/PdePreprocessor.Mode.html" title="enum in processing.mode.java.preproc"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?processing/mode/java/preproc/PdePreprocessor.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PdePreprocessor.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

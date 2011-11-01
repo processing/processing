@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<project name="Processing Video Library" default="build">
+  
+  <target name="clean" description="Clean the build directories">
+    <delete dir="bin" />
+    <delete file="library/video.jar" />
+  </target>
+  
+  <target name="compile" description="Compile sources">
+    <condition property="core-built">
+      <available file="../../../core/core.jar" />
+    </condition>
+    <fail unless="core-built" message="Please build the core library first and make sure it sits in ../../../core/core.jar" />
+
+    <mkdir dir="bin" />
+    <javac target="1.5" 
+	   srcdir="src" destdir="bin" 
+	   encoding="UTF-8"
+	   includeAntRuntime="false"
+	   classpath="../../../core/core.jar; library/gstreamer-java.jar; library/jna.jar" />
+  </target>
+  
+  <target name="build" depends="compile" description="Build video library">
+    <jar basedir="bin" destfile="library/video.jar" />
+  </target>
+</project>

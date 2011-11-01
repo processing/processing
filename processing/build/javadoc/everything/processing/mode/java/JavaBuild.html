@@ -1,0 +1,654 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+JavaBuild
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="JavaBuild";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../processing/mode/java/Compiler.html" title="class in processing.mode.java"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../processing/mode/java/JavaEditor.html" title="class in processing.mode.java"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?processing/mode/java/JavaBuild.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="JavaBuild.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+processing.mode.java</FONT>
+<BR>
+Class JavaBuild</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>processing.mode.java.JavaBuild</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>JavaBuild</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#PACKAGE_REGEX">PACKAGE_REGEX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#SIZE_REGEX">SIZE_REGEX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Regular expression for parsing the size() method.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#JavaBuild(processing.app.Sketch)">JavaBuild</A></B>(<A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#build()">build</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Run the build inside a temporary build folder.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#build(java.io.File, java.io.File)">build</A></B>(java.io.File&nbsp;srcFolder,
+      java.io.File&nbsp;binFolder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Preprocess and compile all the code for this sketch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#exportApplet(java.io.File)">exportApplet</A></B>(java.io.File&nbsp;appletFolder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Handle export to applet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.io.File</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#getBinFolder()">getBinFolder</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#getClassPath()">getClassPath</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Class path determined during build.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#getFoundMain()">getFoundMain</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether the preprocessor found a main() method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.ArrayList&lt;<A HREF="../../../processing/app/Library.html" title="class in processing.app">Library</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#getImportedLibraries()">getImportedLibraries</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the list of imported libraries.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#getJavaLibraryPath()">getJavaLibraryPath</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the java.library.path for this sketch (for all the native DLLs etc).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#getSketchClassName()">getSketchClassName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#getSketchPath()">getSketchPath</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Absolute path to the sketch folder.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.io.File</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#getSrcFolder()">getSrcFolder</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Path to the folder that will contain processed .java source files.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#placeException(java.lang.String, java.lang.String, int)">placeException</A></B>(java.lang.String&nbsp;message,
+               java.lang.String&nbsp;dotJavaFilename,
+               int&nbsp;dotJavaLine)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map an error from a set of processed .java files back to its location
+ in the actual sketch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#preprocess(java.io.File)">preprocess</A></B>(java.io.File&nbsp;srcFolder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Build all the code for this sketch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#preprocess(java.io.File, java.lang.String, processing.mode.java.preproc.PdePreprocessor)">preprocess</A></B>(java.io.File&nbsp;srcFolder,
+           java.lang.String&nbsp;packageName,
+           <A HREF="../../../processing/mode/java/preproc/PdePreprocessor.html" title="class in processing.mode.java.preproc">PdePreprocessor</A>&nbsp;preprocessor)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../processing/mode/java/JavaBuild.html#scrubComments(java.lang.String)">scrubComments</A></B>(java.lang.String&nbsp;what)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Replace all commented portions of a given String as spaces.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SIZE_REGEX"><!-- --></A><H3>
+SIZE_REGEX</H3>
+<PRE>
+public static final java.lang.String <B>SIZE_REGEX</B></PRE>
+<DL>
+<DD>Regular expression for parsing the size() method. This should match 
+ against any uses of the size() function, whether numbers or variables 
+ or whatever. This way, no warning is shown if size() isn't actually used 
+ in the sketch, which is the case especially for anyone who is cutting
+ and pasting from the reference.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#processing.mode.java.JavaBuild.SIZE_REGEX">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PACKAGE_REGEX"><!-- --></A><H3>
+PACKAGE_REGEX</H3>
+<PRE>
+public static final java.lang.String <B>PACKAGE_REGEX</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../constant-values.html#processing.mode.java.JavaBuild.PACKAGE_REGEX">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="JavaBuild(processing.app.Sketch)"><!-- --></A><H3>
+JavaBuild</H3>
+<PRE>
+public <B>JavaBuild</B>(<A HREF="../../../processing/app/Sketch.html" title="class in processing.app">Sketch</A>&nbsp;sketch)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="build()"><!-- --></A><H3>
+build</H3>
+<PRE>
+public java.lang.String <B>build</B>()
+                       throws <A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></PRE>
+<DL>
+<DD>Run the build inside a temporary build folder. Used for run/present.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>null if compilation failed, main class name if not
+<DT><B>Throws:</B>
+<DD><CODE>RunnerException</CODE>
+<DD><CODE><A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="build(java.io.File, java.io.File)"><!-- --></A><H3>
+build</H3>
+<PRE>
+public java.lang.String <B>build</B>(java.io.File&nbsp;srcFolder,
+                              java.io.File&nbsp;binFolder)
+                       throws <A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></PRE>
+<DL>
+<DD>Preprocess and compile all the code for this sketch.
+
+ In an advanced program, the returned class name could be different,
+ which is why the className is set based on the return value.
+ A compilation error will burp up a RunnerException.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>null if compilation failed, main class name if not
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSketchClassName()"><!-- --></A><H3>
+getSketchClassName</H3>
+<PRE>
+public java.lang.String <B>getSketchClassName</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="preprocess(java.io.File)"><!-- --></A><H3>
+preprocess</H3>
+<PRE>
+public java.lang.String <B>preprocess</B>(java.io.File&nbsp;srcFolder)
+                            throws <A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></PRE>
+<DL>
+<DD>Build all the code for this sketch.
+
+ In an advanced program, the returned class name could be different,
+ which is why the className is set based on the return value.
+ A compilation error will burp up a RunnerException.
+
+ Setting purty to 'true' will cause exception line numbers to be incorrect.
+ Unless you know the code compiles, you should first run the preprocessor
+ with purty set to false to make sure there are no errors, then once
+ successful, re-export with purty set to true.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>buildPath</CODE> - Location to copy all the .java files
+<DT><B>Returns:</B><DD>null if compilation failed, main class name if not
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="preprocess(java.io.File, java.lang.String, processing.mode.java.preproc.PdePreprocessor)"><!-- --></A><H3>
+preprocess</H3>
+<PRE>
+public java.lang.String <B>preprocess</B>(java.io.File&nbsp;srcFolder,
+                                   java.lang.String&nbsp;packageName,
+                                   <A HREF="../../../processing/mode/java/preproc/PdePreprocessor.html" title="class in processing.mode.java.preproc">PdePreprocessor</A>&nbsp;preprocessor)
+                            throws <A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>srcFolder</CODE> - location where the .java source files will be placed<DD><CODE>packageName</CODE> - null, or the package name that should be used as default<DD><CODE>preprocessor</CODE> - the preprocessor object ready to do the work
+<DT><B>Returns:</B><DD>main PApplet class name found during preprocess, or null if error
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSrcFolder()"><!-- --></A><H3>
+getSrcFolder</H3>
+<PRE>
+public java.io.File <B>getSrcFolder</B>()</PRE>
+<DL>
+<DD>Path to the folder that will contain processed .java source files. Not
+ the location for .pde files, since that can be obtained from the sketch.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBinFolder()"><!-- --></A><H3>
+getBinFolder</H3>
+<PRE>
+public java.io.File <B>getBinFolder</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSketchPath()"><!-- --></A><H3>
+getSketchPath</H3>
+<PRE>
+public java.lang.String <B>getSketchPath</B>()</PRE>
+<DL>
+<DD>Absolute path to the sketch folder. Used to set the working directry of
+ the sketch when running, i.e. so that saveFrame() goes to the right 
+ location when running from the PDE, instead of the same folder as the 
+ Processing.exe or the root of the user's home dir.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getClassPath()"><!-- --></A><H3>
+getClassPath</H3>
+<PRE>
+public java.lang.String <B>getClassPath</B>()</PRE>
+<DL>
+<DD>Class path determined during build.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getJavaLibraryPath()"><!-- --></A><H3>
+getJavaLibraryPath</H3>
+<PRE>
+public java.lang.String <B>getJavaLibraryPath</B>()</PRE>
+<DL>
+<DD>Return the java.library.path for this sketch (for all the native DLLs etc).
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFoundMain()"><!-- --></A><H3>
+getFoundMain</H3>
+<PRE>
+public boolean <B>getFoundMain</B>()</PRE>
+<DL>
+<DD>Whether the preprocessor found a main() method. If main() is found, then
+ it will be used to launch the sketch instead of PApplet.main().
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getImportedLibraries()"><!-- --></A><H3>
+getImportedLibraries</H3>
+<PRE>
+public java.util.ArrayList&lt;<A HREF="../../../processing/app/Library.html" title="class in processing.app">Library</A>&gt; <B>getImportedLibraries</B>()</PRE>
+<DL>
+<DD>Get the list of imported libraries. Used by external tools like Android mode.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>list of library folders connected to this sketch.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="placeException(java.lang.String, java.lang.String, int)"><!-- --></A><H3>
+placeException</H3>
+<PRE>
+public <A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A> <B>placeException</B>(java.lang.String&nbsp;message,
+                                      java.lang.String&nbsp;dotJavaFilename,
+                                      int&nbsp;dotJavaLine)</PRE>
+<DL>
+<DD>Map an error from a set of processed .java files back to its location
+ in the actual sketch.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>message</CODE> - The error message.<DD><CODE>filename</CODE> - The .java file where the exception was found.<DD><CODE>line</CODE> - Line number of the .java file for the exception (0-indexed!)
+<DT><B>Returns:</B><DD>A RunnerException to be sent to the editor, or null if it wasn't
+         possible to place the exception to the sketch code.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="exportApplet(java.io.File)"><!-- --></A><H3>
+exportApplet</H3>
+<PRE>
+public boolean <B>exportApplet</B>(java.io.File&nbsp;appletFolder)
+                     throws <A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A>,
+                            java.io.IOException</PRE>
+<DL>
+<DD>Handle export to applet.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../processing/app/SketchException.html" title="class in processing.app">SketchException</A></CODE>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="scrubComments(java.lang.String)"><!-- --></A><H3>
+scrubComments</H3>
+<PRE>
+public static java.lang.String <B>scrubComments</B>(java.lang.String&nbsp;what)</PRE>
+<DL>
+<DD>Replace all commented portions of a given String as spaces.
+ Utility function used here and in the preprocessor.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../processing/mode/java/Compiler.html" title="class in processing.mode.java"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../processing/mode/java/JavaEditor.html" title="class in processing.mode.java"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?processing/mode/java/JavaBuild.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="JavaBuild.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>
