@@ -23,7 +23,6 @@ X   If no bits specified (libs are all universal, or no native libs)
 X   then exportBits will be 0, and can be controlled via "Get Info".
 X   Otherwise, need to specify the bits as a VM option.
 
-
 _ make note of when library is not available (serial) with error msg
 _   i.e. if running in 64-bit mode on OS X, can't do serial
 
