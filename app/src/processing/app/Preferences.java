@@ -623,16 +623,18 @@ public class Preferences {
     memoryField.
       setText(get("run.options.memory.maximum"));
 
-    String bits = Preferences.get("run.options.bits");
-    if (bits.equals("32")) {
-      bitsThirtyTwoButton.setSelected(true);
-    } else if (bits.equals("64")) {
-      bitsSixtyFourButton.setSelected(true);
-    }
-    // in case we go back and support OS X 10.5...
-    if (System.getProperty("os.version").startsWith("10.5")) {
-      bitsSixtyFourButton.setSelected(true);
-      bitsThirtyTwoButton.setEnabled(false);
+    if (Base.isMacOS()) {
+      String bits = Preferences.get("run.options.bits");
+      if (bits.equals("32")) {
+        bitsThirtyTwoButton.setSelected(true);
+      } else if (bits.equals("64")) {
+        bitsSixtyFourButton.setSelected(true);
+      }
+      // in case we go back and support OS X 10.5...
+      if (System.getProperty("os.version").startsWith("10.5")) {
+        bitsSixtyFourButton.setSelected(true);
+        bitsThirtyTwoButton.setEnabled(false);
+      }
     }
     
     if (autoAssociateBox != null) {
