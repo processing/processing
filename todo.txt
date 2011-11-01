@@ -13,6 +13,8 @@ X change Linux script to handle the 'lib' dir as part of the lib path
 X changed Mac OS X launchers, also requiring Java 1.6.
 X write .bat file for windows64
 _   document that this is temporary / file a bug
+X gstreamer has a million DLLs, so it's gross to have them in the main fldr
+o   how would launch4j deal with this?
 
       // If no bits specified (libs are all universal, or no native libs)
       // then exportBits will be 0, and can be controlled via "Get Info".
@@ -24,9 +26,6 @@ _   gsvideo sometimes needs to run as 64 instead of 32
 
 _ Commenting via menu or shortcut does not set sketch to "need save"
 _   http://code.google.com/p/processing/issues/detail?id=860
-
-_ gstreamer has a million DLLs, so it's gross to have them in the main fldr
-_   how would launch4j deal with this?
 
 _ move Movie Maker out to its own separate tool package
 _   http://code.google.com/p/processing/issues/detail?id=837
