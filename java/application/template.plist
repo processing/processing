@@ -27,6 +27,11 @@
     <key>LSUIPresentationMode</key>
     <integer>@@lsuipresentationmode@@</integer>
 
+    <key>LSArchitecturePriority</key>
+    <array>
+      @@lsarchitecturepriority@@
+    </array>
+
     <key>Java</key>
     <dict>
       <key>VMOptions</key>

@@ -343,7 +343,6 @@
 	  tofile="macosx/work/Processing.app" />
 
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
-    <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub64" perm="ugo+x" />
     
     <copy todir="macosx/work/Processing.app/Contents/Resources/Java" flatten="true">
       <fileset refid="runtime.jars"/>
@@ -368,7 +367,6 @@
 
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
-    <chmod file="macosx/work/Processing.app/Contents/MacOS/JavaApplicationStub64" perm="ugo+x" />
 
     <replace file="macosx/work/Processing.app/Contents/Info.plist"
 	     token="VERSION" value="${version}" />
@@ -404,7 +402,6 @@
 
     <!-- The ant copy command does not preserve permissions. -->
     <chmod file="macosx/working_dir/Processing.app/Contents/MacOS/JavaApplicationStub" perm="ugo+x" />
-    <chmod file="macosx/working_dir/Processing.app/Contents/MacOS/JavaApplicationStub64" perm="ugo+x" />
 
     <!-- Pause briefly for the OS to catch up with the DMG changes. 
 	 This prevents "hdiutil: couldn't eject "disk3" - Resource busy"
