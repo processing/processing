@@ -1352,16 +1352,16 @@ public class JavaBuild {
       runOptions += " -Xmx" +
         Preferences.get("run.options.memory.maximum") + "m";
     }
-    if (exportPlatform == PConstants.MACOSX) {
-      // If no bits specified (libs are all universal, or no native libs)
-      // then exportBits will be 0, and can be controlled via "Get Info".
-      // Otherwise, need to specify the bits as a VM option.
-      if (exportBits == 32) {
-        runOptions += " -d32";
-      } else if (exportBits == 64) {
-        runOptions += " -d64";
-      }
-    }
+//    if (exportPlatform == PConstants.MACOSX) {
+//      // If no bits specified (libs are all universal, or no native libs)
+//      // then exportBits will be 0, and can be controlled via "Get Info".
+//      // Otherwise, need to specify the bits as a VM option.
+//      if (exportBits == 32) {
+//        runOptions += " -d32";
+//      } else if (exportBits == 64) {
+//        runOptions += " -d64";
+//      }      
+//    }
 
     /// macosx: write out Info.plist (template for classpath, etc)
 
@@ -1395,6 +1395,18 @@ public class JavaBuild {
             sb.replace(index, index + "@@lsuipresentationmode@@".length(),
                        Preferences.getBoolean("export.application.fullscreen") ? "4" : "0");
           }
+          while ((index = sb.indexOf("@@lsarchitecturepriority@@")) != -1) {
+            // More about this mess: http://support.apple.com/kb/TS2827
+            // First default to exportBits == 0 case
+            String arch = "<string>x86_64</string>\n      <string>i386</string>"; 
+            if (exportBits == 32) {
+              arch = "<string>i386</string>";
+            } else if (exportBits == 64) {
+              arch = "<string>x86_64</string>";
+            }
+            sb.replace(index, index + "@@lsarchitecturepriority@@".length(), arch);
+          }
+
           lines[i] = sb.toString();
         }
         // explicit newlines to avoid Windows CRLF
