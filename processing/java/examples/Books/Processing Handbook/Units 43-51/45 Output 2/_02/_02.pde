@@ -1,0 +1,6 @@
+println(nf(200, 10)); // Prints "0000000200"
+println(nf(40, 5)); // Prints "00040"
+println(nf(90, 3)); // Prints "090"
+println(nf(200.94, 10, 4)); // Prints "0000000200.9400"
+println(nf(40.2, 5, 3)); // Prints "00040.200"
+println(nf(9.012, 3, 5)); // Prints "009.01200"
