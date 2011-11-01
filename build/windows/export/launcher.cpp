@@ -1,7 +1,7 @@
 // -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*-
 
-// if this code looks shitty, that's because it is. people are likely to have
-// the durndest things in their CLASSPATH and QTJAVA environment variables. 
+// if this code looks shitty, that's because it is. people are likely 
+// to have the durndest things in their CLASSPATH environment variable. 
 // mostly because installers often mangle them without the user knowing. 
 // so who knows where and when the quotes will show up. the code below is 
 // based on a couple years of trial and error with processing releases.
@@ -11,6 +11,11 @@
 // Any elements of the PATH and CLASSPATH that don't exist (whether files
 // or directories) are also stripped out before being set.
 // (<A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=112">Bug 112</A>)
+
+// For revision 0201 (love that symmetry), the 'lib' folder was added to
+// the java.library.path, so that we can hide the pile of DLLs included
+// with some libraries (I'm looking at you, video), inside the lib folder.
+// QTJAVA mess was also excised, now that we're switching to gstreamer.
 
 // The size of all of the strings was made sort of ambiguously large, since
 // 1) nothing is hurt by allocating an extra few bytes temporarily and
@@ -35,6 +40,8 @@ char *scrubPath(char *incoming);
 char *mallocChars(int count);
 void removeQuotes(char *quoted);
 void removeTrailingSlash(char *slashed);
+
+#define DEBUG
 
 int STDCALL
 WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
@@ -73,18 +80,6 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
             exe_directory);
     MessageBox(NULL, app_classpath, "Folder Missing",  MB_OK);
     return 0;
-    /*
-    sprintf(app_classpath, 
-            "%s\\lib;"
-            "%s\\lib\\pde.jar;"
-            "%s\\lib\\core.jar;"
-            "%s\\lib\\jna.jar;"
-            "%s\\lib\\ecj.jar;"
-            "%s\\lib\\antlr.jar;",
-            exe_directory, 
-            exe_directory, exe_directory, 
-            exe_directory, exe_directory, exe_directory);
-    */
     
   } else {
     fgets(java_args, 511, argsfile);
@@ -94,9 +89,11 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     fgets(jar_list, 511, argsfile);
     removeLineEndings(jar_list);
 
-    //MessageBox(NULL, java_args, "args",  MB_OK);
-    //MessageBox(NULL, java_main_class, "class", MB_OK);
-    //MessageBox(NULL, jar_list, "jarlist", MB_OK);
+#ifdef DEBUG    
+    MessageBox(NULL, java_args, "args",  MB_OK);
+    MessageBox(NULL, java_main_class, "class", MB_OK);
+    MessageBox(NULL, jar_list, "jarlist", MB_OK);
+#endif
 
     app_classpath[0] = 0;
     char *jar = (char*) strtok(jar_list, ",");
@@ -120,8 +117,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   strcat(testpath, "\\java\\bin\\java.exe");
   FILE *fp = fopen(testpath, "rb");
   int local_jre_installed = (fp != NULL);
-  //char *rt_jar = (fp == NULL) ? "" : "java\\lib\\rt.jar;";
-  if (fp != NULL) fclose(fp); // argh! this was probably causing trouble
+  if (fp != NULL) fclose(fp);
 
   //const char *envClasspath = getenv("CLASSPATH");
   //char *env_classpath = (char *)malloc(16384 * sizeof(char));
@@ -129,100 +125,6 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // ignoring CLASSPATH for now, because it's not needed
   // and causes more trouble than it's worth [0060]
   //env_classpath[0] = 0;
-
-  /*
-  // keep this code around since may be re-enabled later
-  if (getenv("CLASSPATH") != NULL) {
-    strcpy(env_classpath, getenv("CLASSPATH"));
-    if (env_classpath[0] == '\"') {
-      // starting quote in classpath.. yech
-      env_classpath++;  // shitty.. i know..
-
-      int len = strlen(env_classpath);
-      if (env_classpath[len-1] == '\"') {
-        env_classpath[len-1] = 0;
-      } else {
-        // a starting quote but no ending quote.. ugh
-        // maybe throw an error
-      }
-    }
-    int last = strlen(env_classpath);
-    env_classpath[last++] = ';';
-    env_classpath[last] = 0;
-  } else {
-    env_classpath[0] = 0;
-  }
-  */
-
-  char *qtjava_path = (char *)malloc(16384 * sizeof(char));
-  qtjava_path[0] = 0;
-
-  if (getenv("QTJAVA") != NULL) {
-    //char *qtjava_temp = (char *)malloc(16384 * sizeof(char));
-    strcpy(qtjava_path, getenv("QTJAVA"));
-    removeQuotes(qtjava_path);
-
-    /*
-    //MessageBox(NULL, qtjava_temp, "QTJAVA", MB_OK);
-    if (qtjava_temp[0] == '\"') {  // has quotes
-      // remove quotes by subsetting string by two
-      int qtjava_repaired_length = strlen(qtjava_temp) - 2;
-      strncpy(qtjava_path, &qtjava_temp[1], qtjava_repaired_length);
-      // terminate the string since strncpy ain't gonna do it
-      qtjava_path[qtjava_repaired_length] = 0;
-      //MessageBox(NULL, qtjava_path, "QTJAVA", MB_OK);
-    } else {
-      strcpy(qtjava_path, getenv("QTJAVA"));
-    }
-    */
-
-    FILE *fp = fopen(qtjava_path, "rb");
-    if (fp != NULL) {
-      fclose(fp);  // found it, all set
-      strcat(qtjava_path, ";"); // add path separator
-      //MessageBox(NULL, "found 1", "msg", MB_OK);
-      //MessageBox(NULL, qtjava_path, "QTJAVA after strcat", MB_OK);
-    } else {
-      qtjava_path[0] = 0; // not a valid path
-    }
-    //} else {
-    //MessageBox(NULL, "no qtjava set", "mess", MB_OK);
-  }
-
-  if (qtjava_path[0] == 0) {  // not set yet
-    //if (getenv("WINDIR") == NULL) {
-    // uh-oh.. serious problem.. gonna have to report this
-    // but hopefully WINDIR is set on win98 too
-    //} else {
-
-    strcpy(qtjava_path, getenv("WINDIR"));
-    strcat(qtjava_path, "\\SYSTEM32\\QTJava.zip");
-
-    FILE *fp = fopen(qtjava_path, "rb");
-    if (fp != NULL) {
-      fclose(fp);  // found it, all set
-      strcat(qtjava_path, ";"); // add path separator
-      //MessageBox(NULL, "found 2", "msg", MB_OK);
-    } else {
-      qtjava_path[0] = 0; // not a valid path      
-    }
-  }
-
-  if (qtjava_path[0] == 0) {
-    strcpy(qtjava_path, getenv("WINDIR"));
-    strcat(qtjava_path, "\\SYSTEM\\QTJava.zip");
-    
-    fp = fopen(qtjava_path, "rb");
-    if (fp != NULL) {
-      fclose(fp);  // found it, all set
-      strcat(qtjava_path, ";"); // add path separator
-      //MessageBox(NULL, "found 3", "msg", MB_OK);
-    } else {
-      // doesn't seem to be installed, which is a problem.
-      // but the error will be reported by the pde
-      qtjava_path[0] = 0;
-    }
-  }
 
   // don't put quotes around contents of cp, even though %s might have 
   // spaces in it. don't put quotes in it, because it's setting the 
@@ -236,19 +138,18 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
     sprintf(local_jre, "%s\\java\\lib\\rt.jar;%s\\java\\lib\\tools.jar;", exe_directory, exe_directory);
     strcat(cp, local_jre);
   }
-  strcat(cp, qtjava_path);
 
   char *clean_cp = scrubPath(cp);
   //if (!SetEnvironmentVariable("CLASSPATH", cp)) {
   if (!SetEnvironmentVariable("CLASSPATH", clean_cp)) {
     MessageBox(NULL, "Could not set CLASSPATH environment variable",
                "Processing Error", MB_OK);
-    return 0;
+    return 1;
   }
 
-  //MessageBox(NULL, "2", "checking", MB_OK);
-
-  //char *env_path = (char *)malloc(strlen(getenv("PATH")) * sizeof(char));
+#ifdef DEBUG
+  MessageBox(NULL, "done with classpath cleaning", "2", MB_OK);
+#endif
 
   int env_path_length = strlen(getenv("PATH"));
   char *env_path = mallocChars(env_path_length);
@@ -300,18 +201,23 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   // exe_directory is the name path to the current application
 
   if (local_jre_installed) {
-    //strcpy(executable, exe_directory);
+    strcpy(executable, exe_directory);
     // copy in the path for javaw, relative to launcher.exe
-    //strcat(executable, "\\java\\bin\\javaw.exe");
-    sprintf(executable, "%s\\java\\bin\\javaw.exe", exe_directory);
+    strcat(executable, "\\java\\bin\\javaw.exe");
   } else {
+#ifdef DEBUG
+    strcpy(executable, "java.exe");
+#else
     strcpy(executable, "javaw.exe");
+#endif
   }
 
   /*
   SHELLEXECUTEINFO ShExecInfo;
 
-  //MessageBox(NULL, executable, outgoing_cmd_line, MB_OK);
+#ifdef DEBUG
+  MessageBox(NULL, outgoing_cmd_line, executable, MB_OK);
+#endif
 
   // set up the execution info
   ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
@@ -364,7 +270,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   si.cb = sizeof(si);
   int wait = 0;
 
-	DWORD dwExitCode = -1;
+	DWORD dwExitCode = (DWORD) -1;
 	char cmdline[32768];
   //executable;
   //outgoing_cmd_line;
@@ -383,8 +289,9 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 			GetExitCodeProcess(pi.hProcess, &dwExitCode);
 			//debug("Exit code:\t%d\n", dwExitCode);
 			//closeHandles();
-      char[128] big_trouble;
-      sprintf(big_trouble, "Sorry, could not launch. (Error %d)", dwExitCode);
+      char big_trouble[128];
+      sprintf(big_trouble, "Sorry, could not launch. (Error %d)", 
+              (int) dwExitCode);
       MessageBox(NULL, big_trouble, "Apologies",  MB_OK);
 		} else {
 			dwExitCode = 0;
