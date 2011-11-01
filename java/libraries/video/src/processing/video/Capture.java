@@ -438,7 +438,7 @@ public class Capture extends PImage implements PConstants {
         }
         res = new String[devices.size()];
         for (int i = 0; i < res.length; i++) {
-          res[i] = (String)devices.get(i);
+          res[i] = devices.get(i);
         }
       } else {      
         System.err.println("The capture plugin doesn't support device query!");
@@ -484,7 +484,7 @@ public class Capture extends PImage implements PConstants {
       int n = resolutions.size();
       res = new Resolution[n];
       for (int i = 0; i < n; i++) {
-        res[i] = new Resolution((Resolution)resolutions.get(i));
+        res[i] = new Resolution(resolutions.get(i));
       }
     }
     
@@ -626,7 +626,7 @@ public class Capture extends PImage implements PConstants {
     if (properties != null) {
       Iterator<String> it = properties.keySet().iterator();    
       while (it.hasNext()) {
-        String name = (String) it.next();
+        String name = it.next();
         Object value = properties.get(name);
         gsource.set(name, value);
       }    
@@ -716,7 +716,7 @@ public class Capture extends PImage implements PConstants {
   protected void checkResolutions() {
     boolean suppRes = false;
     for (int i = 0; i < resolutions.size(); i++) {
-      Resolution res = (Resolution) resolutions.get(i);
+      Resolution res = resolutions.get(i);
       if (reqWidth == res.width && reqHeight == res.height && 
           fps.equals("") || fps.equals(res.fpsString)) {
         suppRes = true;
@@ -732,7 +732,7 @@ public class Capture extends PImage implements PConstants {
       System.err.println("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + " is not supported by selected the capture device.");
       System.err.println("Use one of the following resolutions instead:");
       for (int i = 0; i < resolutions.size(); i++) {
-        Resolution res = (Resolution) resolutions.get(i);
+        Resolution res = resolutions.get(i);
         System.err.println(res.toString());
       }
     }     

@@ -11,6 +11,8 @@ X   requires change to export/launcher.cpp to include the exe dir
 _   this will cause trouble with ...
 X change Linux script to handle the 'lib' dir as part of the lib path
 X changed Mac OS X launchers, also requiring Java 1.6.
+X write .bat file for windows64
+_   document that this is temporary / file a bug
 
       // If no bits specified (libs are all universal, or no native libs)
       // then exportBits will be 0, and can be controlled via "Get Info".
