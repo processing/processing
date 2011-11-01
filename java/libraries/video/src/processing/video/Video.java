@@ -142,9 +142,7 @@ public class Video implements PConstants {
   static protected void removePlugins() {
     Registry reg = Registry.getDefault();
     List<Plugin> list = reg.getPluginList();
-    for (int i = 0; i < list.size(); i++) {
-      Plugin plg = (Plugin)list.get(i);
-
+    for (Plugin plg : list) {
       reg.removePlugin(plg);
     }    
   }
