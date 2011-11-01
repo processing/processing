@@ -474,7 +474,7 @@ public class PShader {
     }
 
     // Some error occurred...
-    ByteBuffer infoLog = ByteBuffer.allocate(1);
+    ByteBuffer infoLog = ByteBuffer.allocate(length);
     iVal.flip();
     
     ogl.gl.getGL2().glGetInfoLogARB(obj, length, iVal, infoLog);
