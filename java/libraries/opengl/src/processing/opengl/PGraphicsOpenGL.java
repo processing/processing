@@ -2360,7 +2360,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void endShapeRecorderImpl(PShape3D shape) {
     recordingShape = false;
     if (0 < recordedVertices.size() && shape != null) {
-      
+      /*
       shape.setVertices(recordedVertices);
       shape.setColors(recordedColors);
       shape.setNormals(recordedNormals);
@@ -2378,6 +2378,7 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int t = 0; t < recTexturesCount; t++) {        
         shape.setTexcoords(t, recordedTexCoords[t]);
       }
+      */
           
       // Releasing memory.
       recordedVertices.clear();
