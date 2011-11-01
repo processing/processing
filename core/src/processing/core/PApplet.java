@@ -6548,14 +6548,40 @@ public class PApplet extends Applet
 
     return sketchPath + File.separator + "data" + File.separator + where;
   }
-
-
+  
+  
   /**
    * Return a full path to an item in the data folder as a File object.
    * See the dataPath() method for more information.
    */
   public File dataFile(String where) {
     return new File(dataPath(where));
+  }
+
+
+  /** 
+   * On Windows and Linux, this is simply the data folder. On Mac OS X, this is
+   * the path to the data folder buried inside Contents/Resources/Java
+   */
+  public File inputFile(String where) {
+    // isAbsolute() could throw an access exception, but so will writing
+    // to the local disk using the sketch path, so this is safe here.
+    File why = new File(where);
+    if (why.isAbsolute()) return why;
+
+    String jarPath = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+    if (jarPath.contains("Contents/Resources/Java/")) {
+      File containingFolder = new File(jarPath).getParentFile();
+      File dataFolder = new File(containingFolder, "data");
+      return new File(dataFolder, where);
+    } 
+    // Windows, Linux, or when not using a Mac OS X .app file
+    return new File(sketchPath + File.separator + "data" + File.separator + where);
+  }
+  
+  
+  public String inputPath(String where) {
+    return inputFile(where).getAbsolutePath();
   }
 
 

@@ -1151,8 +1151,18 @@ public class JavaBuild {
     /// on windows, copy the exe file
 
     if (exportPlatform == PConstants.WINDOWS) {
-      Base.copyFile(mode.getContentFile("application/template.exe"),
-                    new File(destFolder, sketch.getName() + ".exe"));
+      if (exportBits == 64) {
+        // We don't yet have a 64-bit launcher, so this is a workaround for now. 
+        File batFile = new File(destFolder, sketch.getName() + ".bat");
+        PrintWriter writer = PApplet.createWriter(batFile);
+        writer.println("@echo off");
+        writer.println("java -Djava.ext.dirs=lib -Djava.library.path=lib " + sketch.getName());
+        writer.flush();
+        writer.close();
+      } else {
+        Base.copyFile(mode.getContentFile("application/template.exe"),
+                      new File(destFolder, sketch.getName() + ".exe"));
+      }
     }
 
 
