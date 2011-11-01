@@ -212,7 +212,6 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 #endif
   }
 
-  /*
   SHELLEXECUTEINFO ShExecInfo;
 
 #ifdef DEBUG
@@ -261,8 +260,8 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
   }
 
   return 0;
-  */
 
+  /*
   PROCESS_INFORMATION pi;
   memset(&pi, 0, sizeof(pi));
 	STARTUPINFO si;
@@ -298,6 +297,7 @@ WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
 		}
 	}
 	return dwExitCode;
+  */
 }
 
 
