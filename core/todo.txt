@@ -4,9 +4,10 @@ X   doing this via a tool instead
 X on resize, call redraw() when noLoop() is used
 o   need to add this to the docs
 X   was already in the documentation..
-X add inputPath()
+o add inputPath()
+X   remove inputPath()
 
-_ split dataPath() into inputPath() and outputPath()
+_ add inputPath() and outputPath() -> sketch folder or sd card
 
 _ finish adding loadStrings(BufferedReader)
 _   decide if we want to keep this (and/or others?)

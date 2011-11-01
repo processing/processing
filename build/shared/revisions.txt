@@ -8,7 +8,24 @@ are exported, and a number of other bug fixes and tweaks.
 
 [ about those changes ]
 
++ Serial on Mac OS X is currently only available for 32-bit. Hoping to have
+  a 64-bit version sometime soon. 
 
++ Change to how dataPath() and dataFile() work. This is an undocumented
+  function, but for those using it, here's the skinny: 
+
+  dataPath() is only available with applications, not applets or Android.
+  On Windows and Linux, this is simply the data folder, which is located
+  in the same directory as the EXE file and lib folders. On Mac OS X, this
+  is a path to the data folder buried inside Contents/Resources/Java.
+  For the latter point, that also means that the data folder should not be
+  considered writable. Use sketchPath() for now, or inputPath() and
+  outputPath() once they're available in the 2.0 release.
+
+  dataPath() is not supported with applets because applets have their data
+  folder wrapped into the JAR file. To read data from the data folder that
+  works with an applet, you should use other methods such as createInput(),
+  createReader(), or loadStrings().
 
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
