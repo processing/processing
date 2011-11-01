@@ -163,6 +163,12 @@ run.options.memory = false
 run.options.memory.initial = 64
 run.options.memory.maximum = 256
 
+# By default, Mac OS X 10.6 launches applications in 32-bit mode.
+# Changing this doesn't do anything on other platforms. On OS X 10.5,
+# only 64-bit is supported, because Apple didn't release a 32-bit 
+# version of Java 1.6 for OS X 10.5.
+run.options.bits.macosx = 32
+
 # example of increasing the memory size for applets run externally
 #run.options = -Xms128m -Xmx1024m
 
