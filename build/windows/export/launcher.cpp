@@ -41,7 +41,7 @@ char *mallocChars(int count);
 void removeQuotes(char *quoted);
 void removeTrailingSlash(char *slashed);
 
-#define DEBUG
+//#define DEBUG
 
 int STDCALL
 WinMain (HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmd, int nShow)
