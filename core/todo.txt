@@ -1,4 +1,5 @@
 0202 core
+_ video problem with P3D
 
 
 _ add inputPath() and outputPath() -> sketch folder or sd card
