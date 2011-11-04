@@ -1,6 +1,4 @@
-0201 android
-X lots of updates to PGraphics et al, especially on the 3D side
-X change export menu/key/toolbar ordering
+0202 android
 
 
 _ if a sketch asks for android mode but it's not available

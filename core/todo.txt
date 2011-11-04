@@ -1,11 +1,5 @@
-0201 core
-o moviemaker built into core to write uncompressed frames? or PNG?
-X   doing this via a tool instead
-X on resize, call redraw() when noLoop() is used
-o   need to add this to the docs
-X   was already in the documentation..
-o add inputPath()
-X   remove inputPath()
+0202 core
+
 
 _ add inputPath() and outputPath() -> sketch folder or sd card
 
