@@ -103,17 +103,20 @@ public class Library extends InstalledContribution {
     // for the host platform, need to figure out what's available
     File nativeLibraryFolder = libraryFolder;
     String hostPlatform = Base.getPlatformName();
+//    System.out.println("1 native lib folder now " + nativeLibraryFolder);
     // see if there's a 'windows', 'macosx', or 'linux' folder
     File hostLibrary = new File(libraryFolder, hostPlatform);
     if (hostLibrary.exists()) {
       nativeLibraryFolder = hostLibrary;
     }
+//    System.out.println("2 native lib folder now " + nativeLibraryFolder);
     // check for bit-specific version, e.g. on windows, check if there
     // is a window32 or windows64 folder (on windows)
     hostLibrary = new File(libraryFolder, hostPlatform + Base.getNativeBits());
     if (hostLibrary.exists()) {
       nativeLibraryFolder = hostLibrary;
     }
+//    System.out.println("3 native lib folder now " + nativeLibraryFolder);
     // save that folder for later use
     nativeLibraryPath = nativeLibraryFolder.getAbsolutePath();
 
