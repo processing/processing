@@ -2801,16 +2801,17 @@ public class PGraphicsOpenGL extends PGraphics {
     
     for (int j = start; j < stop; j++) {
       int i = faceOffset[j];
-        
+
       PImage[] images = faceTextures[j];
       if (1 < numTextures) {
+        
         for (int t = 0; t < numTextures; t++) {
           if (images[t] != null) {            
             PTexture tex = getTexture(images[t]); 
             if (tex == null) {
               break;
             }
-                          
+            PApplet.println("has texture");              
             gl.glEnable(tex.glTarget);            
             gl.glActiveTexture(GL.GL_TEXTURE0 + t);
             gl.glBindTexture(tex.glTarget, tex.glID);
@@ -2825,9 +2826,9 @@ public class PGraphicsOpenGL extends PGraphics {
             break;            
           }
         }
-      } else if (images[0] != null) {        
+      } else if (images[0] != null) {
         PTexture tex = getTexture(images[0]);        
-        if (tex != null) {      
+        if (tex != null) { 
           gl.glEnable(tex.glTarget);
           gl.glActiveTexture(GL.GL_TEXTURE0);
           gl.glBindTexture(tex.glTarget, tex.glID);   
@@ -3018,6 +3019,9 @@ public class PGraphicsOpenGL extends PGraphics {
               sy = -1.0f;
             }
 
+            
+            //PApplet.println("Adding texcoords " + cx  + " " +  sx + " " + uscale + " " + cy  + " " +  sy + " " + vscale);
+            
             // No multitexturing, so getting the texture coordinates
             // directly from the U, V fields in the vertices array.
             renderUa[0] = (cx + sx * a[U]) * uscale;
@@ -3027,7 +3031,7 @@ public class PGraphicsOpenGL extends PGraphics {
             renderVb[0] = (cy + sy * b[V]) * vscale;
 
             renderUc[0] = (cx + sx * c[U]) * uscale;
-            renderVc[0] = (cy + sy * c[V]) * vscale;
+            renderVc[0] = (cy + sy * c[V]) * vscale;            
           } else if (1 < tcount) {
             for (int t = 0; t < tcount; t++) {
               float uscale = 1.0f;
@@ -3092,7 +3096,7 @@ public class PGraphicsOpenGL extends PGraphics {
             normalArray[3 * n + 2] = a[NZ];
             for (int t = 0; t < tcount; t++) {
               texCoordArray[t][2 * n + 0] = renderUa[t];
-              texCoordArray[t][2 * n + 1] = renderVa[t];
+              texCoordArray[t][2 * n + 1] = renderVa[t]; 
             }
             n++;
           }
@@ -7128,6 +7132,9 @@ return width * (1 + ox) / 2.0f;
     if (tex == null) {
       tex = addTexture(img);
     } else if (img.isModified()) {
+      if (img.width != tex.width || img.height != tex.height) {
+        tex.init(img.width, img.height);
+      }
       updateTexture(img, tex);
     }
     return tex;
