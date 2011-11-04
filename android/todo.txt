@@ -1,5 +1,12 @@
 0202 android
+X fix problem with export menu, keys, toolbar being different
+X change default package name a bit
+X switch to SDK 8 (Android 2.2) as the minimum
+X update the project files for Android SDK Tools Revision 15 (now required)
 
+_ launching on emulator not working well
+_ Latest android sdk breaks processing - new build.xml output required
+_   http://code.google.com/p/processing/issues/detail?id=876
 
 _ if a sketch asks for android mode but it's not available
 _   (after a double-click)
