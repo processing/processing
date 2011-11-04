@@ -50,9 +50,9 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 201;
+  static public final int REVISION = 202;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0201";
+  static public String VERSION_NAME = "0202";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
   /** True if heavy debugging error/log messages are enabled */
@@ -96,13 +96,13 @@ public class Base {
 
   // A single instance of the preferences window
   Preferences preferencesFrame;
-  
+
   // A single instance of the library manager window
   ContributionManagerDialog libraryManagerFrame;
   ContributionManagerDialog toolManagerFrame;
   ContributionManagerDialog modeManagerFrame;
   ContributionManagerDialog updateManagerFrame;
-  
+
   // set to true after the first time the menu is built.
   // so that the errors while building don't show up again.
   boolean builtOnce;
@@ -320,13 +320,13 @@ public class Base {
 
 
   private void buildCoreModes() {
-    defaultMode = 
+    defaultMode =
       ModeContribution.getCoreMode(this, "processing.mode.java.JavaMode",
                                    getContentFile("modes/java"));
-    Mode androidMode = 
+    Mode androidMode =
       ModeContribution.getCoreMode(this, "processing.mode.android.AndroidMode",
                                    getContentFile("modes/android"));
-    Mode javaScriptMode = 
+    Mode javaScriptMode =
       ModeContribution.getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
                                    getContentFile("modes/javascript"));
 
@@ -340,7 +340,7 @@ public class Base {
     if (contribModes == null)
       contribModes = new ArrayList<ModeContribution>();
 
-    ArrayList<ModeContribution> newContribs = 
+    ArrayList<ModeContribution> newContribs =
       ModeContribution.list(this, getSketchbookModesFolder());
     for (ModeContribution contrib : newContribs) {
       if (!contribModes.contains(contrib)) {
@@ -394,11 +394,11 @@ public class Base {
         if (contrib instanceof InstalledContribution) {
           return ContributionListing.getInstance().hasUpdates(contrib);
         }
-        
+
         return false;
       }
     });
-    
+
     // Make sure ThinkDifferent has library examples too
     defaultMode.rebuildLibraryList();
 
@@ -1587,14 +1587,14 @@ public class Base {
     libraryManagerFrame.showFrame(activeEditor);
     // Contribution.Type.LIBRARY
   }
-  
+
   /**
    * Show the tool installer window.
    */
   public void handleOpenToolManager() {
     toolManagerFrame.showFrame(activeEditor);
   }
-  
+
   /**
    * Show the mode installer window.
    */
@@ -1645,6 +1645,9 @@ public class Base {
   }
 
   static public int getNativeBits() {
+    if (Base.isMacOS()) {
+      return Preferences.getInteger("run.options.bits");
+    }
     return nativeBits;
   }
 
@@ -1782,7 +1785,7 @@ public class Base {
    * Create a temporary folder by using the createTempFile() mechanism,
    * deleting the file it creates, and making a folder using the location
    * that was provided.
-   * 
+   *
    * Unlike createTempFile(), there is no minimum size for prefix. If
    * prefix is less than 3 characters, the remaining characters will be
    * filled with underscores
@@ -2455,7 +2458,7 @@ public class Base {
     }
     return outgoing;
   }
-  
+
   static public void readSettings(String fileName, String lines[],
                                   HashMap<String, String> exports) {
     for (int i = 0; i < lines.length; i++) {

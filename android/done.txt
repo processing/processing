@@ -1,3 +1,8 @@
+0201 android (2.0a2)
+X lots of updates to PGraphics et al, especially on the 3D side
+X change export menu/key/toolbar ordering
+
+
 0200 android
 X fix BufferedHttpEntity problem 
 X   was trying to allocate a byte buffer for entire size of HTTP file

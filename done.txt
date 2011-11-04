@@ -1,3 +1,29 @@
+0201 pde (2.0a2)
+X implement movie maker tool
+X   http://code.google.com/p/processing/issues/detail?id=836
+X add movie maker tool to the build scripts
+X swap order of applet/application in the file menu
+X update Quaqua to 7.4.2
+X make application the default instead of applet
+X subfolders of windows32 & friends aren't being included (gsvideo problem)
+X on Windows, move the exported DLLs et al inside 'lib'
+X   requires change to export/launcher.cpp to include the exe dir
+X change Linux script to handle the 'lib' dir as part of the lib path
+X changed Mac OS X launchers to use Java 1.6
++ Java 1.6 required for the PDE and for exported applications
+X write .bat file for windows64 application exports
+_   document that this is temporary / file a bug
+X gstreamer has a million DLLs, so it's gross to have them in the main fldr
+o   how would launch4j deal with this?
+X print a message in a console when trying to export a lib for unsupported arch
+X add a preferences option for whether to run in 32 or 64-bit
+X   gsvideo sometimes needs to run as 64 instead of 32
+X notes about bit depth
+X   If no bits specified (libs are all universal, or no native libs)
+X   then exportBits will be 0, and can be controlled via "Get Info".
+X   Otherwise, need to specify the bits as a VM option.
+
+
 0200 pde
 X update to java 6u26
 X   re-upload with new version to include javac
