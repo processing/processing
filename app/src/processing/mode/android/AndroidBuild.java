@@ -33,8 +33,8 @@ import processing.mode.java.JavaBuild;
 
 
 class AndroidBuild extends JavaBuild {
-  static final String basePackage = "processing.android.test";
-  static final String sdkVersion = "7";
+  static final String basePackage = "processing.changethispackage.beforesubmittingtothemarket";
+  static final String sdkVersion = "8";
   static final String sdkTarget = "android-" + sdkVersion;
 
 //  private final Editor editor;
@@ -129,12 +129,16 @@ class AndroidBuild extends JavaBuild {
       File tempManifest = new File(tmpFolder, "AndroidManifest.xml");
       manifest.writeBuild(tempManifest, sketchClassName, target.equals("debug"));
 
-      writeBuildProps(new File(tmpFolder, "build.properties"));
+      writeAntProps(new File(tmpFolder, "ant.properties"));
       buildFile = new File(tmpFolder, "build.xml");
       writeBuildXML(buildFile, sketch.getName());
-      writeDefaultProps(new File(tmpFolder, "default.properties"));
+      writeProjectProps(new File(tmpFolder, "project.properties"));
       writeLocalProps(new File(tmpFolder, "local.properties"));
       writeRes(new File(tmpFolder, "res"), sketchClassName);
+
+      File proguardSrc = new File(sdk.getSdkFolder(), "tools/lib/proguard.cfg");
+      File proguardDst = new File(tmpFolder, "proguard.cfg");
+      Base.copyFile(proguardSrc, proguardDst);
 
       final File libsFolder = mkdirs(tmpFolder, "libs");
       final File assetsFolder = mkdirs(tmpFolder, "assets");
@@ -242,14 +246,19 @@ class AndroidBuild extends JavaBuild {
   
   
   public File exportProject() throws IOException, SketchException {
-    File projectFolder = build("debug");
-    if (projectFolder == null) {
-      return null;
+//    File projectFolder = build("debug");
+//    if (projectFolder == null) {
+//      return null;
+//    }
+    // this will set debuggable to true in the .xml file
+    target = "debug";   
+    File projectFolder = createProject();
+    if (projectFolder != null) {
+      File exportFolder = createExportFolder();
+      Base.copyDir(projectFolder, exportFolder);
+      return exportFolder;
     }
-
-    File exportFolder = createExportFolder();
-    Base.copyDir(projectFolder, exportFolder);
-    return exportFolder;
+    return null;
   }
 
 
@@ -384,7 +393,7 @@ class AndroidBuild extends JavaBuild {
   }
 
     
-  private void writeBuildProps(final File file) {
+  private void writeAntProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("application-package=" + getPackageName());
     writer.flush();
@@ -394,26 +403,38 @@ class AndroidBuild extends JavaBuild {
   
   private void writeBuildXML(final File file, final String projectName) {
     final PrintWriter writer = PApplet.createWriter(file);
-    writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 
+
+    
     writer.println("<project name=\"" + projectName + "\" default=\"help\">");
-    writer.println("  <property file=\"local.properties\"/>");
-    writer.println("  <property file=\"build.properties\"/>");
-    writer.println("  <property file=\"default.properties\"/>");
+    
+    writer.println("  <loadproperties srcFile=\"local.properties\" />");
+    writer.println("  <property file=\"ant.properties\" />");
+    writer.println("  <loadproperties srcFile=\"project.properties\" />");
+    
+    writer.println("  <fail message=\"sdk.dir is missing. Make sure to generate local.properties using 'android update project'\" unless=\"sdk.dir\" />");
+    
+    writer.println("  <!-- version-tag: 1 -->");  // should this be 'custom' instead of 1?
+    writer.println("  <import file=\"${sdk.dir}/tools/ant/build.xml\" />");
 
-    writer.println("  <path id=\"android.antlibs\">");
-    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/anttasks.jar\" />");
-    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/sdklib.jar\" />");
-    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/androidprefs.jar\" />");
-    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/apkbuilder.jar\" />");
-    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/jarutils.jar\" />");
-    writer.println("  </path>");
-
-    writer.println("  <taskdef name=\"setup\"");
-    writer.println("           classname=\"com.android.ant.SetupTask\"");
-    writer.println("           classpathref=\"android.antlibs\" />");
-
-    writer.println("  <setup />");
+//    writer.println("  <property file=\"local.properties\"/>");
+//    writer.println("  <property file=\"build.properties\"/>");
+//    writer.println("  <property file=\"default.properties\"/>");
+//
+//    writer.println("  <path id=\"android.antlibs\">");
+//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/anttasks.jar\" />");
+//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/sdklib.jar\" />");
+//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/androidprefs.jar\" />");
+//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/apkbuilder.jar\" />");
+//    writer.println("    <pathelement path=\"${sdk.dir}/tools/lib/jarutils.jar\" />");
+//    writer.println("  </path>");
+//
+//    writer.println("  <taskdef name=\"setup\"");
+//    writer.println("           classname=\"com.android.ant.SetupTask\"");
+//    writer.println("           classpathref=\"android.antlibs\" />");
+//
+//    writer.println("  <setup />");
 
     writer.println("</project>");
     writer.flush();
@@ -421,7 +442,7 @@ class AndroidBuild extends JavaBuild {
   }
 
   
-  private void writeDefaultProps(final File file) {
+  private void writeProjectProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     //writer.println("target=Google Inc.:Google APIs:" + sdkVersion);
     writer.println("target=" + sdkTarget);

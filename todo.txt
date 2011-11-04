@@ -1,5 +1,8 @@
 0202 pde
 X fix problem with serial not loading on macosx
+X fix problem with popup menus on the toolbar disappearing immediately (osx)
+X   http://code.google.com/p/processing/issues/detail?id=846
+X   http://code.google.com/p/processing/issues/detail?id=887
 
 
 _ make note of when library is not available (serial) with error msg

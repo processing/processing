@@ -101,7 +101,7 @@ public class AndroidToolbar extends EditorToolbar {
       break;
 
     case EXPORT:
-      if (shift) {
+      if (!shift) {
         aeditor.handleExportPackage();
       } else {
         aeditor.handleExportProject();
