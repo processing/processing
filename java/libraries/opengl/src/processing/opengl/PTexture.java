@@ -238,12 +238,13 @@ public class PTexture implements PConstants {
   
   
   public void set(int[] pixels, int x, int y, int w, int h, int format) {
-    // TODO: Should we throw exceptions here or just a warning?
     if (pixels == null) {
-      throw new RuntimeException("PTexture: null pixels array");
+      System.err.println("PTexture: null pixels array");
+      return;
     }    
     if (pixels.length != w * h) {
-      throw new RuntimeException("PTexture: wrong length of pixels array");
+      System.err.println("PTexture: wrong length of pixels array");
+      return;
     }
     
     getGl().glEnable(glTarget);
