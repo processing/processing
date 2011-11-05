@@ -10,14 +10,16 @@ X remove 'processing.test' package--people are posting on the market w/ it
 X too many 'already exists' messages
 X   fix problem where creating a new AVD didn't update the device list
 X remove 'includeantruntime' warning
+X Android mode does not recognize library imports
+X   http://code.google.com/p/processing/issues/detail?id=766
+X "Date could not be parsed" error
+X   http://code.google.com/p/processing/issues/detail?id=864
 
 _ if a sketch asks for android mode but it's not available
 _   (after a double-click)
 _   you get the "is android installed"? dialog, then it re-opens again
 _   without closing the other
 
-_ Android mode does not recognize library imports
-_   http://code.google.com/p/processing/issues/detail?id=766
 _ usb host and nfc reader need other changes to the app hierarchy to work
 _   http://code.google.com/p/processing/issues/detail?id=767
 

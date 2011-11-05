@@ -104,11 +104,11 @@ class AndroidSDK {
           for (String line : lines) {
             String[] m = PApplet.match(line, "Valid from: .* until: (.*)");
             if (m != null) {
-              String timestamp = m[1];
+              String timestamp = m[1].trim();
               // "Sun Jan 22 11:09:08 EST 2012"
               // Hilariously, this is the format of Date.toString(), however 
               // it isn't the default for SimpleDateFormat or others. Yay!
-              DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+              DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
               try {
                 Date date = df.parse(timestamp);
                 long expireMillis = date.getTime();
