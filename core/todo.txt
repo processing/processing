@@ -1,4 +1,7 @@
 0202 core
+X Rounded rect() does not have a maximum length for corner radius
+X   http://code.google.com/p/processing/issues/detail?id=813
+
 _ video problem with P3D
 
 
