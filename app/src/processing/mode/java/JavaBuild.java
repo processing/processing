@@ -1288,8 +1288,8 @@ public class JavaBuild {
 //            Base.copyDir(exportFile, new File(destFolder, exportName));
 //          }
 
-        } else if (exportFile.getName().toLowerCase().endsWith(".zip") ||
-                   exportFile.getName().toLowerCase().endsWith(".jar")) {
+        } else if (exportName.toLowerCase().endsWith(".zip") ||
+                   exportName.toLowerCase().endsWith(".jar")) {
           Base.copyFile(exportFile, new File(jarFolder, exportName));
           jarListVector.add(exportName);
 

@@ -26,6 +26,9 @@ public class Library extends InstalledContribution {
   /** Applet exports (cross-platform by definition). */
   String[] appletExportList;
 
+  /** Android exports (single platform for now, may not exist). */
+  String[] androidExportList;
+
   /** True if there are separate 32/64 bit for the specified platform index. */
   boolean[] multipleArch = new boolean[platformNames.length];
 
@@ -60,6 +63,7 @@ public class Library extends InstalledContribution {
         if (name.equals("linux")) return false;
         if (name.equals("linux32")) return false;
         if (name.equals("linux64")) return false;
+        if (name.equals("android")) return false;
       }
       return true;
     }
@@ -98,6 +102,13 @@ public class Library extends InstalledContribution {
       appletExportList = PApplet.splitTokens(appletExportStr, ", ");
     } else {
       appletExportList = baseList;
+    }
+
+    String androidExportStr = exportTable.get("android");
+    if (androidExportStr != null) {
+      androidExportList = PApplet.splitTokens(androidExportStr, ", ");
+    } else {
+      androidExportList = baseList;
     }
 
     // for the host platform, need to figure out what's available
@@ -337,6 +348,11 @@ public class Library extends InstalledContribution {
       if (pieces != null) return pieces;
     }
     return exportList.get(platformName);
+  }
+  
+  
+  public File[] getAndroidExports() {
+    return wrapFiles(androidExportList);
   }
 
 
