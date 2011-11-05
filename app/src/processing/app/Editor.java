@@ -1705,6 +1705,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.select(textarea.getLineStartOffset(startLine),
                     textarea.getLineStopOffset(stopLine) - 1);
     stopCompoundEdit();
+    sketch.setModified(true);
   }
 
 
@@ -1758,6 +1759,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     textarea.select(textarea.getLineStartOffset(startLine),
                     textarea.getLineStopOffset(stopLine) - 1);
     stopCompoundEdit();
+    sketch.setModified(true);
   }
 
 
