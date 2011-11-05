@@ -33,7 +33,7 @@ import processing.mode.java.JavaBuild;
 
 
 class AndroidBuild extends JavaBuild {
-  static final String basePackage = "processing.changethispackage.beforesubmittingtothemarket";
+  static final String basePackage = "changethispackage.beforesubmitting.tothemarket";
   static final String sdkVersion = "8";
   static final String sdkTarget = "android-" + sdkVersion;
 

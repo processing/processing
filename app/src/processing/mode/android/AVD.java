@@ -103,6 +103,9 @@ public class AVD {
       list(sdk);
     }
     for (String avd : avdList) {
+      if (Base.DEBUG) {
+        System.out.println("AVD.exists() checking for " + name + " against " + avd);
+      }
       if (avd.equals(name)) {
         return true;
       }
@@ -131,6 +134,9 @@ public class AVD {
       "-s", DEFAULT_SKIN
     };
     
+    // Set the list to null so that exists() will check again
+    avdList = null;
+    
     final ProcessHelper p = new ProcessHelper(params);
     try {
       final ProcessResult createAvdResult = p.execute();
@@ -150,7 +156,7 @@ public class AVD {
       }
       //System.err.println(createAvdResult);
     } catch (final InterruptedException ie) { }
-
+    
     return false;
   }
 
