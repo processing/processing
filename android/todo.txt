@@ -3,17 +3,19 @@ X fix problem with export menu, keys, toolbar being different
 X change default package name a bit
 X switch to SDK 8 (Android 2.2) as the minimum
 X update the project files for Android SDK Tools Revision 15 (now required)
-
-_ launching on emulator not working well
-_ Latest android sdk breaks processing - new build.xml output required
-_   http://code.google.com/p/processing/issues/detail?id=876
+X launching on emulator not working well
+X Latest android sdk breaks processing - new build.xml output required
+X   http://code.google.com/p/processing/issues/detail?id=876
+X remove 'processing.test' package--people are posting on the market w/ it
+X too many 'already exists' messages
+X   fix problem where creating a new AVD didn't update the device list
+X remove 'includeantruntime' warning
 
 _ if a sketch asks for android mode but it's not available
 _   (after a double-click)
 _   you get the "is android installed"? dialog, then it re-opens again
 _   without closing the other
 
-_ remove 'processing.test' package--people are posting on the market w/ it
 _ Android mode does not recognize library imports
 _   http://code.google.com/p/processing/issues/detail?id=766
 _ usb host and nfc reader need other changes to the app hierarchy to work
@@ -25,7 +27,6 @@ _   the whole sketch.properties thing is yech
 _ /opt/android using version #s again? fix build script
 
 _ add INTERNET permissions to the android net examples
-_ too many 'already exists' messages
 
 _ go through all basics/topics examples
 _   remove those that don't make sense with android
