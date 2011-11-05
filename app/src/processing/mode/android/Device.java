@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import processing.app.Base;
 import processing.app.RunnerListener;
 import processing.app.exec.LineProcessor;
 import processing.app.exec.ProcessRegistry;
@@ -93,9 +94,21 @@ class Device implements DeviceProperties {
     if (!isAlive()) {
       return false;
     }
-    return adb("shell", "am", "start", "-e", "debug", "true", "-a",
-      "android.intent.action.MAIN", "-c", "android.intent.category.LAUNCHER",
-      "-n", packageName + "/." + className).succeeded();
+    ProcessResult pr = adb("shell", "am", "start", "-e", "debug", "true", 
+                           "-a", "android.intent.action.MAIN", 
+                           "-c", "android.intent.category.LAUNCHER",
+                           "-n", packageName + "/." + className);
+    if (Base.DEBUG) {
+      System.out.println(pr.toString());
+    }
+    // Sometimes this shows up on stdout, even though it returns 'success'
+    // Error type 2
+    // android.util.AndroidException: Can't connect to activity manager; is the system running?
+    if (pr.getStdout().contains("android.util.AndroidException")) {
+      System.err.println(pr.getStdout());
+      return false;
+    }
+    return pr.succeeded();
   }
 
   public boolean isEmulator() {
@@ -256,8 +269,7 @@ class Device implements DeviceProperties {
     listeners.remove(listener);
   }
 
-  private ProcessResult adb(final String... cmd) throws InterruptedException,
-      IOException {
+  private ProcessResult adb(final String... cmd) throws InterruptedException, IOException {
     final String[] adbCmd = generateAdbCommand(cmd);
     return AndroidSDK.runADB(adbCmd);
   }
