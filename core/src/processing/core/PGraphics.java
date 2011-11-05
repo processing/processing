@@ -1993,6 +1993,12 @@ public class PGraphics extends PImage implements PConstants {
       float temp = b; b = d; d = temp;
     }
 
+    float maxRounding = PApplet.min((c - a) / 2, (d - b) / 2);
+    if (tl > maxRounding) tl = maxRounding;
+    if (tr > maxRounding) tr = maxRounding;
+    if (br > maxRounding) br = maxRounding;
+    if (bl > maxRounding) bl = maxRounding;
+    
     rectImpl(a, b, c, d, tl, tr, br, bl);
   }
 
