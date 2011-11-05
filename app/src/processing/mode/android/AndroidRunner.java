@@ -55,7 +55,10 @@ public class AndroidRunner implements DeviceListener {
 //  final Device device = waitForDevice(deviceFuture, monitor);
     final Device device = waitForDevice(deviceFuture, listener);
     if (device == null || !device.isAlive()) {
-      listener.statusError("Device killed or disconnected.");
+      listener.statusError("Lost connection with device while launching. Try again.");
+      // Reset the server, in case that's the problem. Sometimes when 
+      // launching the emulator times out, the device list refuses to update.
+      Devices.killAdbServer();
       return;
     }
 
@@ -69,7 +72,8 @@ public class AndroidRunner implements DeviceListener {
 //  monitor.setNote("Installing sketch on " + device.getId());
     listener.statusNotice("Installing sketch on " + device.getId());
     if (!device.installApp(build.getPathForAPK(), listener)) {
-      listener.statusError("Device killed or disconnected.");
+      listener.statusError("Lost connection with device while installing. Try again.");
+      Devices.killAdbServer();  // see above
       return;
     }
 
