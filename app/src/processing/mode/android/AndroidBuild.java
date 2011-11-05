@@ -22,7 +22,6 @@
 package processing.mode.android;
 
 import java.io.*;
-import java.util.*;
 
 import org.apache.tools.ant.*;
 
@@ -589,50 +588,80 @@ class AndroidBuild extends JavaBuild {
    */
   private void copyLibraries(final File libsFolder, 
                              final File assetsFolder) throws IOException {
-    // Copy any libraries to the 'libs' folder
     for (Library library : getImportedLibraries()) {
-      File libraryFolder = new File(library.getPath());
-      // in the list is a File object that points the
-      // library sketch's "library" folder
-      final File exportSettings = new File(libraryFolder, "export.txt");
-      final HashMap<String, String> exportTable = 
-        Base.readSettings(exportSettings);
-      final String androidList = exportTable.get("android");
-      String exportList[] = null;
-      if (androidList != null) {
-        exportList = PApplet.splitTokens(androidList, ", ");
-      } else {
-        exportList = libraryFolder.list();
-      }
-      for (int i = 0; i < exportList.length; i++) {
-        exportList[i] = PApplet.trim(exportList[i]);
-        if (exportList[i].equals("") || exportList[i].equals(".")
-            || exportList[i].equals("..")) {
-          continue;
-        }
-
-        final File exportFile = new File(libraryFolder, exportList[i]);
+      // add each item from the library folder / export list to the output
+      for (File exportFile : library.getAndroidExports()) {
+        String exportName = exportFile.getName();
         if (!exportFile.exists()) {
-          System.err.println("File " + exportList[i] + " does not exist");
+          System.err.println(exportFile.getName() + 
+                             " is mentioned in export.txt, but it's " +
+                             "a big fat lie and does not exist.");
         } else if (exportFile.isDirectory()) {
-          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
+          Base.copyDir(exportFile, new File(assetsFolder, exportName));
+
+        } else if (exportName.toLowerCase().endsWith(".zip")) {
+          // As of r4 of the Android SDK, it looks like .zip files
+          // are ignored in the libs folder, so rename to .jar
+          System.err.println(".zip files are not allowed in Android libraries.");
+          System.err.println("Please rename " + exportFile.getName() + " to be a .jar file.");
+          String jarName = exportName.substring(0, exportName.length() - 4) + ".jar";
+          Base.copyFile(exportFile, new File(libsFolder, jarName));
+          
+        } else if (exportName.toLowerCase().endsWith(".jar")) {
+          Base.copyFile(exportFile, new File(libsFolder, exportName));
+          
         } else {
-          final String name = exportFile.getName();
-          final String lcname = name.toLowerCase();
-          if (lcname.endsWith(".zip") || lcname.endsWith(".jar")) {
-            // As of r4 of the Android SDK, it looks like .zip files
-            // are ignored in the libs folder, so rename to .jar
-            final String jarName = 
-              name.substring(0, name.length() - 4) + ".jar";
-            Base.copyFile(exportFile, new File(libsFolder, jarName));
-          } else {
-            // just copy other files over directly
-            Base.copyFile(exportFile, new File(assetsFolder, name));
-          }
+          Base.copyFile(exportFile, new File(assetsFolder, exportName));
         }
       }
     }
   }
+//  private void copyLibraries(final File libsFolder, 
+//                             final File assetsFolder) throws IOException {
+//    // Copy any libraries to the 'libs' folder
+//    for (Library library : getImportedLibraries()) {
+//      File libraryFolder = new File(library.getPath());
+//      // in the list is a File object that points the
+//      // library sketch's "library" folder
+//      final File exportSettings = new File(libraryFolder, "export.txt");
+//      final HashMap<String, String> exportTable = 
+//        Base.readSettings(exportSettings);
+//      final String androidList = exportTable.get("android");
+//      String exportList[] = null;
+//      if (androidList != null) {
+//        exportList = PApplet.splitTokens(androidList, ", ");
+//      } else {
+//        exportList = libraryFolder.list();
+//      }
+//      for (int i = 0; i < exportList.length; i++) {
+//        exportList[i] = PApplet.trim(exportList[i]);
+//        if (exportList[i].equals("") || exportList[i].equals(".")
+//            || exportList[i].equals("..")) {
+//          continue;
+//        }
+//
+//        final File exportFile = new File(libraryFolder, exportList[i]);
+//        if (!exportFile.exists()) {
+//          System.err.println("File " + exportList[i] + " does not exist");
+//        } else if (exportFile.isDirectory()) {
+//          System.err.println("Ignoring sub-folder \"" + exportList[i] + "\"");
+//        } else {
+//          final String name = exportFile.getName();
+//          final String lcname = name.toLowerCase();
+//          if (lcname.endsWith(".zip") || lcname.endsWith(".jar")) {
+//            // As of r4 of the Android SDK, it looks like .zip files
+//            // are ignored in the libs folder, so rename to .jar
+//            final String jarName = 
+//              name.substring(0, name.length() - 4) + ".jar";
+//            Base.copyFile(exportFile, new File(libsFolder, jarName));
+//          } else {
+//            // just copy other files over directly
+//            Base.copyFile(exportFile, new File(assetsFolder, name));
+//          }
+//        }
+//      }
+//    }
+//  }
   
   
   private void copyCodeFolder(final File libsFolder) throws IOException {

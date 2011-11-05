@@ -84,7 +84,7 @@ public class AndroidRunner implements DeviceListener {
     listener.statusNotice("Starting sketch on " + device.getId());
     if (startSketch(build, device)) {
       listener.statusNotice("Sketch launched on the "
-                            + (device.isEmulator() ? "emulator" : "phone") + ".");
+                            + (device.isEmulator() ? "emulator" : "device") + ".");
     } else {
       listener.statusError("Could not start the sketch.");
     }
@@ -174,7 +174,7 @@ public class AndroidRunner implements DeviceListener {
         listener.statusNotice("Starting sketch on " + device.getId());
         if (startSketch(build, device)) {
           listener.statusNotice("Sketch launched on the "
-              + (device.isEmulator() ? "emulator" : "phone") + ".");
+              + (device.isEmulator() ? "emulator" : "device") + ".");
         } else {
           listener.statusError("Could not start the sketch.");
         }
