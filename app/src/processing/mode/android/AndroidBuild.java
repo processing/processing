@@ -444,8 +444,11 @@ class AndroidBuild extends JavaBuild {
   
   private void writeProjectProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
-    //writer.println("target=Google Inc.:Google APIs:" + sdkVersion);
     writer.println("target=" + sdkTarget);
+    writer.println();
+    // http://stackoverflow.com/questions/4821043/includeantruntime-was-not-set-for-android-ant-script
+    writer.println("# Suppress the javac task warnings about \"includeAntRuntime\"");
+    writer.println("build.sysclasspath=last");
     writer.flush();
     writer.close();
   }
