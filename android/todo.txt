@@ -15,6 +15,7 @@ X   http://code.google.com/p/processing/issues/detail?id=766
 X "Date could not be parsed" error
 X   http://code.google.com/p/processing/issues/detail?id=864
 
+
 _ if a sketch asks for android mode but it's not available
 _   (after a double-click)
 _   you get the "is android installed"? dialog, then it re-opens again

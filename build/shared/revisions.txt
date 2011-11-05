@@ -1,3 +1,63 @@
+PROCESSING 2.0a3 (REV 0202) - 5 November 2011
+
+Some weekend bug fixing and regression repair for the recent alpha releases.
+
+Also several Android fixes to get things working again with more recent 
+updates from Google. You'll need to upgrade to this version of Processing 
+in order to continue using Android mode.
+
+[ environment ] 
+
++ Fix problem with serial not loading on Mac OS X.
+
++ Fix problem with popup menus on the toolbar disappearing immediately
+  when used on Mac OS X 10.7 (Lion).
+  http://code.google.com/p/processing/issues/detail?id=846
+  http://code.google.com/p/processing/issues/detail?id=887
+
++ Incorrect tab/line shown for preprocessor errors when more than 2 tabs
+  http://code.google.com/p/processing/issues/detail?id=873
+
++ Commenting via menu or shortcut does not set sketch to "need save"
+  http://code.google.com/p/processing/issues/detail?id=766
+
++ IDE Export Application button exports applet (fixed in 2.0a2)
+  http://code.google.com/p/processing/issues/detail?id=863
+
+[ core ] 
+
++ Fix for video frames not showing up in 3D.
+
++ Rounded rect() does not have a maximum length for corner radius
+  http://code.google.com/p/processing/issues/detail?id=813
+
+[ android ] 
+
++ Fix libraries when used with Android. Libraries can also specify
+  an Android version by including an 'android' subfolder.
+  http://code.google.com/p/processing/issues/detail?id=766
+
++ Fix problem with export menu, keys, toolbar being different.
+
++ Change default package name a bit.
+
++ Switch to SDK 8 (Android 2.2) as the minimum that we're supporting.
+  This allows us to rely on far more consistent OpenGL implementations.
+
++ Update the project files for Android SDK Tools Revision 15 (now required)
+  http://code.google.com/p/processing/issues/detail?id=876
+
++ Improve launching with the emulator.
+
++ Remove 'includeantruntime' warning during build.
+
++ "Date could not be parsed" error.
+  http://code.google.com/p/processing/issues/detail?id=864
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0a2 (REV 0201) - 31 October 2011
 
 Happy Halloween! I'll be dressing up as an ArrayIndexOutOfBoundsException.
