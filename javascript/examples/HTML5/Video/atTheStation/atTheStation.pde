@@ -24,7 +24,7 @@
      
      if ( video != null )
      {
-         PImage frame = getFrame(video);
+         PImage frame = video.getFrame();
          float br = 0;
          color px;
          for ( int ix = 0; ix < frame.width; ix += 7 )
@@ -53,9 +53,10 @@
  {
      if ( video != null )
      {
+         // this currently does not work for chrome with our  server
          video.currentTime = map(constrain(mouseX,0,width-10),0,width-10,0,video.duration);
-         wasDragged = true;
          video.pause();
+         wasDragged = true;
      }
  }
  
@@ -75,12 +76,6 @@
  void setVideo ( Video v )
  {
      video = v;
- }
- 
- /* copy video image to PImage */
- PImage getFrame ( Video v )
- {
-     return new PImage(v); // sub-optimal ..
  }
  
  /* make Processing understand the HTMLVideoElement */
