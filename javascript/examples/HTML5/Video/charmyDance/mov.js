@@ -20,6 +20,13 @@ function initVideos ( sketch ) {
 
     video['loop'] = true; // as "loop" is not supported by many browsers
     
+    // extending our HTMLVideoElement object to return a PImage
+    video['getFrame'] = function () {
+        var img = new sketch.PImage;
+        img.fromHTMLImageData(video);
+        return img;
+    };
+    
     // similar to tryFindSketch this creates a loop that
     // continues until the video becomes ready.
     (function( s, v ){

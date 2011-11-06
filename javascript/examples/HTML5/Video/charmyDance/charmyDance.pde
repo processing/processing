@@ -41,7 +41,7 @@
          
          timeLineEffects();
          
-         PImage frame = getFrame(video);
+         PImage frame = video.getFrame();
          PImage rgbImage = frame.get(frame.width/2,0,frame.width/2,frame.height);
          PImage maskImage = frame.get(0,0,frame.width/2,frame.height);
          rgbImage.mask(maskImage);
@@ -63,12 +63,6 @@
  {
      v.play();
      video = v;
- }
- 
- /* copy video image to PImage */
- PImage getFrame ( Video v )
- {
-     return new PImage(v); // sub-optimal ..
  }
  
  /* make Processing understand the HTMLVideoElement */

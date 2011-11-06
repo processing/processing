@@ -6,6 +6,13 @@ window.onload = function () {
         var sketch = Processing.instances[0];
         if ( sketch == undefined )
             return setTimeout(tryFindSketch, 200); // retry in 0.2 secs
+        
+        // extending our HTMLVideoElement object to return a PImage
+        video['getFrame'] = function () {
+            var img = new sketch.PImage;
+            img.fromHTMLImageData(video);
+            return img;
+        };
 
         (function( s, v ){
             var tryAddVideo = function () {
@@ -19,6 +26,8 @@ window.onload = function () {
         })( sketch, video );
     }
     
+    // looping currently not working in chrome as our internal server does
+    // not support http byte ranges
     addEvent(video,'ended',function(){
         if ( 'loop' in this && this.loop ) {
             this.currentTime = 0;

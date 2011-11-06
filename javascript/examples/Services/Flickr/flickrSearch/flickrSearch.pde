@@ -10,8 +10,6 @@
  HashMap<Integer,FImage> fImages;
  HashMap<Integer,PImage> images;
  
- PImage selectedImage;
- 
  int scrollY=0;
  int w75;
  
@@ -32,17 +30,13 @@
      {
          translate(0,scrollY);
          
-         PImage[] imgs = images.values();
-         for ( int i = 0; i < imgs.length; i++ )
+         Iterator imgs = images.values().iterator();
+         int i = 0;
+         while ( imgs.hasNext() )
          {
-             image(imgs[i], int(i%w75)*75, int(i/w75)*75);
-             
-             if ( selectedImage != null && selectedImage == imgs[i] )
-             {
-                 fill(255,50);
-                 noStroke();
-                 rect( int(i%w75)*75, int(i/w75)*75, 75,75 );
-             }
+             PImage img = imgs.next();
+             image(img, int(i%w75)*75, int(i/w75)*75);
+             i++;
          }
      }
      else
@@ -65,15 +59,8 @@
      pScrollY = scrollY;
  }
  
- void mouseMoved ()
- {
-     selectImage();
- }
- 
  void mouseDragged ()
  {
-     selectImage();
-     
      if ( images != null && images.size() > 0 )
      {
          int newScrollY = pScrollY + (mouseY-pressedY);
@@ -81,18 +68,6 @@
          {
              scrollY = newScrollY;
          }
-     }
- }
- 
- void selectImage ()
- {
-     int selectX = int(mouseX/75);
-     int selectY = int((mouseY + -scrollY) / 75);
-     int s = selectX + selectY*w75;
-     
-     if ( s >= 0 && s < images.size() )
-     {
-         selectedImage = images.values()[s];
      }
  }
  
@@ -109,7 +84,6 @@
      fImages = new HashMap<Integer,FImage>();
      
      scrollY = 0;
-     selectedFImage = null;
  }
  
  void newFlickrImage ( FImage fi )
