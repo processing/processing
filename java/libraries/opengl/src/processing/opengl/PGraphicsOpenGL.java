@@ -1819,6 +1819,8 @@ public class PGraphicsOpenGL extends PGraphics {
       // reset vertex, line and triangle information
       // every shape is rendered at endShape();
       vertexCount = 0;
+      curveVertexCount = 0;
+      
       pathCount = 0;
       faceCount = 0;
       
