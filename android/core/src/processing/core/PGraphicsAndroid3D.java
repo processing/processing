@@ -3255,9 +3255,70 @@ public class PGraphicsAndroid3D extends PGraphics {
   // public void arc(float a, float b, float c, float d,
   // float start, float stop)
 
-  // protected void arcImpl(float x, float y, float w, float h,
-  // float start, float stop)
+  //////////////////////////////////////////////////////////////
 
+  // ARC
+    
+  protected void arcImpl(float x, float y, float w, float h,
+                         float start, float stop) {
+    float hr = w / 2f;
+    float vr = h / 2f;
+
+    float centerX = x + hr;
+    float centerY = y + vr;
+
+    if (fill) {
+      // shut off stroke for a minute
+      boolean savedStroke = stroke;
+      stroke = false;
+
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape(TRIANGLE_FAN);
+      vertex(centerX, centerY);
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        // modulo won't make the value positive
+        if (ii < 0) ii += SINCOS_LENGTH;
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
+      }
+      // draw last point explicitly for accuracy
+      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      endShape();
+
+      stroke = savedStroke;
+    }
+
+    if (stroke) {
+      // Almost identical to above, but this uses a LINE_STRIP
+      // and doesn't include the first (center) vertex.
+
+      boolean savedFill = fill;
+      fill = false;
+
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      beginShape(); //LINE_STRIP);
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        if (ii < 0) ii += SINCOS_LENGTH;
+        vertex(centerX + cosLUT[ii] * hr,
+               centerY + sinLUT[ii] * vr);
+      }
+      // draw last point explicitly for accuracy
+      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
+      endShape();
+
+      fill = savedFill;
+    }
+  }
   //////////////////////////////////////////////////////////////
 
   // BOX
