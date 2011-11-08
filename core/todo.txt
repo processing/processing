@@ -1,7 +1,5 @@
-0202 core
-X Rounded rect() does not have a maximum length for corner radius
-X   http://code.google.com/p/processing/issues/detail?id=813
-A video problem with P3D
+0203 core
+
 
 _ add inputPath() and outputPath() -> sketch folder or sd card
 _   or should this just be a change to sketchPath() on Android?
