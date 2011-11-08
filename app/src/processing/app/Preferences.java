@@ -570,8 +570,17 @@ public class Preferences {
     }
     */
 
+    // If a change has been made between 32- and 64-bit, the libraries need
+    // to be reloaded so that their native paths are set correctly.
     if (Base.isMacOS()) {
-      set("run.options.bits", bitsThirtyTwoButton.isSelected() ? "32" : "64");
+      String oldBits = get("run.options.bits");
+      String newBits = bitsThirtyTwoButton.isSelected() ? "32" : "64";
+      if (!oldBits.equals(newBits)) {
+        set("run.options.bits", newBits);
+        for (Mode m : editor.base.getModeList()) {
+          m.rebuildLibraryList();
+        }
+      }
     }
 
     String newSizeText = fontSizeField.getText();
