@@ -1,19 +1,5 @@
-0202 android
-X fix problem with export menu, keys, toolbar being different
-X change default package name a bit
-X switch to SDK 8 (Android 2.2) as the minimum
-X update the project files for Android SDK Tools Revision 15 (now required)
-X launching on emulator not working well
-X Latest android sdk breaks processing - new build.xml output required
-X   http://code.google.com/p/processing/issues/detail?id=876
-X remove 'processing.test' package--people are posting on the market w/ it
-X too many 'already exists' messages
-X   fix problem where creating a new AVD didn't update the device list
-X remove 'includeantruntime' warning
-X Android mode does not recognize library imports
-X   http://code.google.com/p/processing/issues/detail?id=766
-X "Date could not be parsed" error
-X   http://code.google.com/p/processing/issues/detail?id=864
+0203 android
+X fix incessant "inefficient font rendering" message
 
 
 _ if a sketch asks for android mode but it's not available

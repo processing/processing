@@ -1146,6 +1146,8 @@ public class PGraphicsAndroid2D extends PGraphics {
                               float x, float y) {
     Typeface font = textFont.getTypeface();
     if (font == null) {
+      showWarning("Inefficient font rendering: use createFont() with a TTF/OTF instead of loadFont().");
+      //new Exception().printStackTrace(System.out);
       super.textLineImpl(buffer, start, stop, x, y);
       return;
     }
