@@ -1,3 +1,9 @@
+0202 core (2.0a3)
+X Rounded rect() does not have a maximum length for corner radius
+X   http://code.google.com/p/processing/issues/detail?id=813
+A video problem with P3D
+
+
 0201 core (2.0a2)
 o moviemaker built into core to write uncompressed frames? or PNG?
 X   doing this via a tool instead

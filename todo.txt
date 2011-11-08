@@ -1,16 +1,6 @@
-0202 pde
-X fix problem with serial not loading on macosx
-X fix problem with popup menus on the toolbar disappearing immediately (osx)
-X   http://code.google.com/p/processing/issues/detail?id=846
-X   http://code.google.com/p/processing/issues/detail?id=887
-X Incorrect tab/line shown for preprocessor errors when more than 2 tabs
-X   http://code.google.com/p/processing/issues/detail?id=873
-X Commenting via menu or shortcut does not set sketch to "need save"
-X   http://code.google.com/p/processing/issues/detail?id=766
+0203 pde
+X changing between 32- and 64- bit mode on OS X wasn't reloading library paths
 
-earlier
-X IDE Export Application button exports applet
-X   http://code.google.com/p/processing/issues/detail?id=863
 
 _ make note of when library is not available (serial) with error msg
 _   i.e. if running in 64-bit mode on OS X, can't do serial
