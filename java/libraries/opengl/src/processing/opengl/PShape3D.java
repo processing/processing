@@ -411,7 +411,7 @@ public class PShape3D extends PShape {
 
   protected void inputCheck() {
     if (inVertexCount == inVertexTypes.length) {
-      int newSize = inVertexCount << 1; // newSize = 2 * dataSize  
+      int newSize = inVertexCount << 1; // newSize = 2 * inVertexCount  
 
       expandTypeData(newSize);
       expandVertexData(newSize);
@@ -522,7 +522,7 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(currentNormal, 0, inNormals, 3 * inVertexCount, 3);
     PApplet.arrayCopy(currentColor, 0, inColors, 4 * inVertexCount, 4);
     PApplet.arrayCopy(currentStroke, 0, inStroke, 5 * inVertexCount, 5);
-
+    
     inVertexCount++;
 
     modified = true;
@@ -650,19 +650,17 @@ public class PShape3D extends PShape {
           if (kind == POINTS) {
 
           } else if (kind == LINES) {
-            tessellateLines();
-            
+            tessellateLines();            
           } else if (kind == TRIANGLES) {
             tessellateTriangles();
-
           } else if (kind == TRIANGLE_FAN) {
-
+            tessellateTriangleFan();
           } else if (kind == TRIANGLE_STRIP) {
-
+            tessellateTriangleStrip();
           } else if (kind == QUADS) {
-
+            tessellateQuads();
           } else if (kind == QUAD_STRIP) {
-
+            tessellateQuadStrip();
           } else if (kind == POLYGON) {
             
           }
@@ -688,6 +686,10 @@ public class PShape3D extends PShape {
 
   }
   
+  protected void tessellatePoints() {
+    
+  }
+  
   protected void tessellateLines() {
     vertexCount = 0;    
     firstVertex = 0;
@@ -695,12 +697,12 @@ public class PShape3D extends PShape {
     
     useStroke = true;
     
-    int count = inVertexCount / 2;
+    int lineCount = inVertexCount / 2;
     
     // Each stroked triangle has 3 lines, one for each edge. 
     // These lines are made up of 4 vertices defining the quad. 
     // Each vertex has its own offset representing the stroke weight.
-    int nvert = count * 4;
+    int nvert = lineCount * 4;
     strokeVertexCount = nvert; 
     strokeVertices = new float[3 * nvert];
     strokeColors = new float[4 * nvert];
@@ -709,13 +711,13 @@ public class PShape3D extends PShape {
     
     // Each stroke line has 4 vertices, defining 2 triangles, which
     // require 3 indices to specify their connectivities.
-    int nind = count * 2 * 3;
+    int nind = lineCount * 2 * 3;
     strokeIndexCount = nind;
     strokeIndices = new int[nind]; 
     
     int vcount = 0;
     int icount = 0;
-    for (int ln = 0; ln < inVertexCount / 2; ln++) {
+    for (int ln = 0; ln < lineCount; ln++) {
       int i0 = 2 * ln + 0;
       int i1 = 2 * ln + 1;
       addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6; 
@@ -723,22 +725,10 @@ public class PShape3D extends PShape {
   }
 
   protected void tessellateTriangles() {
-    vertexCount = inVertexCount;    
-    firstVertex = 0;
-    lastVertex = vertexCount - 1;
+    copyInDataToTessData();
 
-    vertices = new float[3 * inVertexCount];
-    PApplet.arrayCopy(inVertices, vertices, 3 * inVertexCount);
-
-    texcoords = new float[2 * inVertexCount];
-    PApplet.arrayCopy(inTexCoords, texcoords, 2 * inVertexCount);
-
-    colors = new float[4 * inVertexCount];
-    PApplet.arrayCopy(inColors, colors, 4 * inVertexCount);
-
-    normals = new float[3 * inVertexCount];
-    PApplet.arrayCopy(inNormals, normals, 3 * inVertexCount);
-
+    int triCount = vertexCount / 3;
+    
     useIndices = true;
     indexCount = vertexCount;    
     indices = new int[indexCount];
@@ -750,8 +740,8 @@ public class PShape3D extends PShape {
 
     // Count how many triangles in this shape
     // are stroked.
-    int count = 0;
-    for (int tr = 0; tr < inVertexCount / 3; tr++) {
+    int strokedCount = 0;
+    for (int tr = 0; tr < triCount; tr++) {
       int i0 = 3 * tr + 0;
       int i1 = 3 * tr + 1;
       int i2 = 3 * tr + 2;
@@ -759,16 +749,16 @@ public class PShape3D extends PShape {
       if (0 < inStroke[5 * i0 + 4] || 
           0 < inStroke[5 * i1 + 4] ||
           0 < inStroke[5 * i2 + 4]) {
-        count++;
+        strokedCount++;
       }      
     }
     
-    if (0 < count) {
+    if (0 < strokedCount) {
       useStroke = true;
       // Each stroked triangle has 3 lines, one for each edge. 
       // These lines are made up of 4 vertices defining the quad. 
       // Each vertex has its own offset representing the stroke weight.
-      int nvert = count * 3 * 4;
+      int nvert = strokedCount * 3 * 4;
       strokeVertexCount = nvert; 
       strokeVertices = new float[3 * nvert];
       strokeColors = new float[4 * nvert];
@@ -777,13 +767,13 @@ public class PShape3D extends PShape {
       
       // Each stroke line has 4 vertices, defining 2 triangles, which
       // require 3 indices to specify their connectivities.
-      int nind = count * 3 * 2 * 3;
+      int nind = strokedCount * 3 * 2 * 3;
       strokeIndexCount = nind;
       strokeIndices = new int[nind]; 
       
       int vcount = 0;
       int icount = 0;
-      for (int tr = 0; tr < inVertexCount / 3; tr++) {
+      for (int tr = 0; tr < triCount; tr++) {
         int i0 = 3 * tr + 0;
         int i1 = 3 * tr + 1;
         int i2 = 3 * tr + 2;        
@@ -802,6 +792,353 @@ public class PShape3D extends PShape {
     }
   }
     
+  protected void tessellateTriangleFan() {
+    copyInDataToTessData();
+    
+    int triCount = vertexCount - 2;
+    
+    useIndices = true;
+    // Each vertex, except the first and last, defines a triangle.
+    indexCount = 3 * triCount;    
+    indices = new int[indexCount];
+    int idx = 0;
+    for (int i = 1; i < vertexCount - 1; i++) {
+      indices[idx++] = 0;
+      indices[idx++] = i;
+      indices[idx++] = i + 1;
+    }
+    firstIndex = 0;
+    lastIndex = indexCount - 1;
+    
+    // Count how many triangles in this shape
+    // are stroked.
+    int strokedCount = 0;
+    for (int i = 1; i < vertexCount - 1; i++) {
+      int i0 = 0;
+      int i1 = i;
+      int i2 = i + 1;
+      
+      if (0 < inStroke[5 * i0 + 4] || 
+          0 < inStroke[5 * i1 + 4] ||
+          0 < inStroke[5 * i2 + 4]) {
+        strokedCount++;
+      }      
+    }    
+    
+    if (0 < strokedCount) {
+      useStroke = true;
+      // Each stroked triangle has 3 lines, one for each edge. 
+      // These lines are made up of 4 vertices defining the quad. 
+      // Each vertex has its own offset representing the stroke weight.
+      int nvert = strokedCount * 3 * 4;
+      strokeVertexCount = nvert; 
+      strokeVertices = new float[3 * nvert];
+      strokeColors = new float[4 * nvert];
+      strokeNormals = new float[3 * nvert];
+      strokeAttributes = new float[4 * nvert];
+      
+      // Each stroke line has 4 vertices, defining 2 triangles, which
+      // require 3 indices to specify their connectivities.
+      int nind = strokedCount * 3 * 2 * 3;
+      strokeIndexCount = nind;
+      strokeIndices = new int[nind]; 
+      
+      int vcount = 0;
+      int icount = 0;
+      for (int i = 1; i < vertexCount - 1; i++) {
+        int i0 = 0;
+        int i1 = i;
+        int i2 = i + 1;     
+
+        if (0 < inStroke[5 * i0 + 4] || 
+            0 < inStroke[5 * i1 + 4] ||
+            0 < inStroke[5 * i2 + 4]) {
+          addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i2, i0, vcount, icount); vcount += 4; icount += 6;
+        }
+      }
+    } else {
+      useStroke = false;
+    }
+  }
+  
+  protected void tessellateTriangleStrip() {
+    copyInDataToTessData();
+    
+    int triCount = vertexCount - 2;
+    
+    useIndices = true;
+    // Each vertex, except the first and last, defines a triangle.
+    indexCount = 3 * triCount;    
+    indices = new int[indexCount];
+    int idx = 0;
+    for (int i = 1; i < vertexCount - 1; i++) {
+      indices[idx++] = i;
+      if (i % 2 == 0) {
+        indices[idx++] = i - 1;  
+        indices[idx++] = i + 1;
+      } else {
+        indices[idx++] = i + 1;  
+        indices[idx++] = i - 1;
+      }
+    }
+    firstIndex = 0;
+    lastIndex = indexCount - 1;    
+    
+    // Count how many triangles in this shape
+    // are stroked.
+    int strokedCount = 0;
+    for (int i = 1; i < vertexCount - 1; i++) {
+      int i0 = i;
+      int i1, i2;
+      if (i % 2 == 0) {
+        i1 = i - 1;
+        i2 = i + 1;        
+      } else {
+        i1 = i + 1;
+        i2 = i - 1;        
+      }
+      
+      if (0 < inStroke[5 * i0 + 4] || 
+          0 < inStroke[5 * i1 + 4] ||
+          0 < inStroke[5 * i2 + 4]) {
+        strokedCount++;
+      }      
+    } 
+    
+    if (0 < strokedCount) {
+      useStroke = true;
+      // Each stroked triangle has 3 lines, one for each edge. 
+      // These lines are made up of 4 vertices defining the quad. 
+      // Each vertex has its own offset representing the stroke weight.
+      int nvert = strokedCount * 3 * 4;
+      strokeVertexCount = nvert; 
+      strokeVertices = new float[3 * nvert];
+      strokeColors = new float[4 * nvert];
+      strokeNormals = new float[3 * nvert];
+      strokeAttributes = new float[4 * nvert];
+      
+      // Each stroke line has 4 vertices, defining 2 triangles, which
+      // require 3 indices to specify their connectivities.
+      int nind = strokedCount * 3 * 2 * 3;
+      strokeIndexCount = nind;
+      strokeIndices = new int[nind]; 
+      
+      int vcount = 0;
+      int icount = 0;
+      for (int i = 1; i < vertexCount - 1; i++) {
+        int i0 = i;
+        int i1, i2;
+        if (i % 2 == 0) {
+          i1 = i - 1;
+          i2 = i + 1;        
+        } else {
+          i1 = i + 1;
+          i2 = i - 1;        
+        }  
+
+        if (0 < inStroke[5 * i0 + 4] || 
+            0 < inStroke[5 * i1 + 4] ||
+            0 < inStroke[5 * i2 + 4]) {
+          addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i2, i0, vcount, icount); vcount += 4; icount += 6;
+        }
+      }
+    } else {
+      useStroke = false;
+    }    
+  }
+
+  protected void tessellateQuads() {
+    copyInDataToTessData();
+
+    int quadCount = vertexCount / 4;
+    
+    useIndices = true;
+    indexCount = 6 * quadCount;    
+    indices = new int[indexCount];
+    int idx = 0;
+    for (int qd = 0; qd < quadCount; qd++) {      
+      int i0 = 4 * qd + 0;
+      int i1 = 4 * qd + 1;
+      int i2 = 4 * qd + 2;
+      int i3 = 4 * qd + 3;
+      
+      indices[idx++] = i0;
+      indices[idx++] = i1;
+      indices[idx++] = i3;
+      
+      indices[idx++] = i1;
+      indices[idx++] = i2;
+      indices[idx++] = i3;      
+    }
+    firstIndex = 0;
+    lastIndex = indexCount - 1;
+
+    // Count how many quads in this shape
+    // are stroked.
+    int strokedCount = 0;
+    for (int qd = 0; qd < quadCount; qd++) {
+      int i0 = 4 * qd + 0;
+      int i1 = 4 * qd + 1;
+      int i2 = 4 * qd + 2;
+      int i3 = 4 * qd + 3;
+      
+      if (0 < inStroke[5 * i0 + 4] || 
+          0 < inStroke[5 * i1 + 4] ||
+          0 < inStroke[5 * i2 + 4]||
+          0 < inStroke[5 * i3 + 4]) {
+        strokedCount++;
+      }      
+    }
+    
+    if (0 < strokedCount) {
+      useStroke = true;
+      // Each stroked quad has 4 lines, one for each edge. 
+      // These lines are made up of 4 vertices defining the quad. 
+      // Each vertex has its own offset representing the stroke weight.
+      int nvert = strokedCount * 4 * 4;
+      strokeVertexCount = nvert; 
+      strokeVertices = new float[3 * nvert];
+      strokeColors = new float[4 * nvert];
+      strokeNormals = new float[3 * nvert];
+      strokeAttributes = new float[4 * nvert];
+      
+      // Each stroke line has 4 vertices, defining 2 triangles, which
+      // require 3 indices to specify their connectivities.
+      int nind = strokedCount * 4 * 2 * 3;
+      strokeIndexCount = nind;
+      strokeIndices = new int[nind]; 
+      
+      int vcount = 0;
+      int icount = 0;
+      for (int qd = 0; qd < quadCount; qd++) {
+        int i0 = 4 * qd + 0;
+        int i1 = 4 * qd + 1;
+        int i2 = 4 * qd + 2;
+        int i3 = 4 * qd + 3;       
+
+        if (0 < inStroke[5 * i0 + 4] || 
+            0 < inStroke[5 * i1 + 4] ||
+            0 < inStroke[5 * i2 + 4]||
+            0 < inStroke[5 * i3 + 4]) {
+          addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i2, i3, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i3, i0, vcount, icount); vcount += 4; icount += 6;
+        }
+      }
+      
+    } else {
+      useStroke = false;
+    }
+  }
+  
+  protected void tessellateQuadStrip() {
+    copyInDataToTessData();
+
+    int quadCount = vertexCount / 2 - 1;
+    
+    useIndices = true;
+    indexCount = 6 * quadCount;    
+    indices = new int[indexCount];
+    int idx = 0;
+    for (int qd = 1; qd < vertexCount / 2; qd++) {
+      int i0 = 2 * (qd - 1);
+      int i1 = 2 * (qd - 1) + 1;
+      int i2 = 2 * qd + 1;
+      int i3 = 2 * qd;      
+      
+      indices[idx++] = i0;
+      indices[idx++] = i1;
+      indices[idx++] = i3;
+      
+      indices[idx++] = i1;
+      indices[idx++] = i2;
+      indices[idx++] = i3;      
+    }
+    firstIndex = 0;
+    lastIndex = indexCount - 1;
+
+    // Count how many quads in this shape
+    // are stroked.
+    int strokedCount = 0;
+    for (int qd = 1; qd < vertexCount / 2; qd++) {
+      int i0 = 2 * (qd - 1);
+      int i1 = 2 * (qd - 1) + 1;
+      int i2 = 2 * qd + 1;
+      int i3 = 2 * qd;
+      
+      if (0 < inStroke[5 * i0 + 4] || 
+          0 < inStroke[5 * i1 + 4] ||
+          0 < inStroke[5 * i2 + 4]||
+          0 < inStroke[5 * i3 + 4]) {
+        strokedCount++;
+      }      
+    }
+    
+    if (0 < strokedCount) {
+      useStroke = true;
+      // Each stroked quad has 4 lines, one for each edge. 
+      // These lines are made up of 4 vertices defining the quad. 
+      // Each vertex has its own offset representing the stroke weight.
+      int nvert = strokedCount * 4 * 4;
+      strokeVertexCount = nvert; 
+      strokeVertices = new float[3 * nvert];
+      strokeColors = new float[4 * nvert];
+      strokeNormals = new float[3 * nvert];
+      strokeAttributes = new float[4 * nvert];
+      
+      // Each stroke line has 4 vertices, defining 2 triangles, which
+      // require 3 indices to specify their connectivities.
+      int nind = strokedCount * 4 * 2 * 3;
+      strokeIndexCount = nind;
+      strokeIndices = new int[nind]; 
+      
+      int vcount = 0;
+      int icount = 0;
+      for (int qd = 1; qd < vertexCount / 2; qd++) {
+        int i0 = 2 * (qd - 1);
+        int i1 = 2 * (qd - 1) + 1;
+        int i2 = 2 * qd + 1;
+        int i3 = 2 * qd;     
+
+        if (0 < inStroke[5 * i0 + 4] || 
+            0 < inStroke[5 * i1 + 4] ||
+            0 < inStroke[5 * i2 + 4]||
+            0 < inStroke[5 * i3 + 4]) {
+          addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i2, i3, vcount, icount); vcount += 4; icount += 6;
+          addStrokeLine(i3, i0, vcount, icount); vcount += 4; icount += 6;
+        }
+      }
+      
+    } else {
+      useStroke = false;
+    }
+  }  
+  
+  protected void copyInDataToTessData() {
+    vertexCount = inVertexCount;    
+    firstVertex = 0;
+    lastVertex = vertexCount - 1;
+
+    vertices = new float[3 * inVertexCount];
+    PApplet.arrayCopy(inVertices, vertices, 3 * inVertexCount);
+
+    texcoords = new float[2 * inVertexCount];
+    PApplet.arrayCopy(inTexCoords, texcoords, 2 * inVertexCount);
+
+    colors = new float[4 * inVertexCount];
+    PApplet.arrayCopy(inColors, colors, 4 * inVertexCount);
+
+    normals = new float[3 * inVertexCount];
+    PApplet.arrayCopy(inNormals, normals, 3 * inVertexCount);    
+  }
+  
   // Adding the data that defines a quad starting at vertex i0 and
   // ending at i1.
   protected void addStrokeLine(int i0, int i1, int vcount, int icount) {
@@ -809,6 +1146,12 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(inNormals, 3 * i0, strokeNormals, 3 * vcount, 3);
     PApplet.arrayCopy(inStroke, 5 * i0, strokeColors, 4 * vcount, 4);    
     PApplet.arrayCopy(inVertices, 3 * i1, strokeAttributes, 4 * vcount, 3);
+
+    strokeColors[4 * vcount + 0] = inStroke[5 * i0 + 0];
+    strokeColors[4 * vcount + 1] = inStroke[5 * i0 + 1];
+    strokeColors[4 * vcount + 2] =  inStroke[5 * i0 + 2];
+    strokeColors[4 * vcount + 3] =  inStroke[5 * i0 + 3];
+    
     strokeAttributes[4 * vcount + 3] = inStroke[5 * i0 + 4];    
     strokeIndices[icount++] = vcount;
     
