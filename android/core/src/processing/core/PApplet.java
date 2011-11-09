@@ -43,6 +43,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.text.format.Time;
 import android.util.*;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.opengl.GLSurfaceView;
 import android.view.WindowManager;
@@ -176,6 +177,29 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /** Last reported pressure of the current motion event */
   public float motionPressure;
 
+  /** Last reported positions and pressures for all pointers */
+  protected int numPointers;
+  protected int pnumPointers;
+  
+  protected float[] ppointersX = {0};
+  protected float[] ppointersY = {0};
+  protected float[] ppointersPressure = {0};
+  
+  protected float[] pointersX = {0};
+  protected float[] pointersY = {0};
+  protected float[] pointersPressure = {0};
+  
+  protected int downMillis;
+  protected float downX, downY;
+  protected boolean gesture1 = false;
+  protected boolean gesture2 = true;
+  
+  protected final int MIN_SWIPE_LENGTH = 150;       // Minimum length (in pixels) of a swipe event 
+  protected final int MAX_SWIPE_DURATION = 2000;    // Maximum duration (in millis) of a swipe event
+  protected final int MAX_TAP_DISP = 20;            // Maximum displacement (in pixels) during a tap event 
+  protected final int MAX_TAP_DURATION = 1000;      // Maximum duration (in millis) of a tap event
+  
+  
   /**
    * Previous x/y position of the mouse. This will be a different value
    * when inside a mouse handler (like the mouseMoved() method) versus
@@ -1955,9 +1979,44 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   class PMotionEvent {
     int action;
-    float motionX, motionY;
-    float motionPressure;
-    int mouseX, mouseY;
+    int numPointers;
+    float[] motionX, motionY;
+    float[] motionPressure;
+    int[] mouseX, mouseY;
+    
+    void setAction (int action) {
+      this.action = action;
+    }
+    
+    void setNumPointers(int n) {
+      numPointers = n;
+      motionX = new float[n]; 
+      motionY = new float[n];
+      motionPressure = new float[n];
+      mouseX = new int[n]; 
+      mouseY = new int[n];
+    }
+    
+    void setPointers(MotionEvent event) {
+      for (int ptIdx = 0; ptIdx < numPointers; ptIdx++) {
+        motionX[ptIdx] = event.getX(ptIdx);
+        motionY[ptIdx] = event.getY(ptIdx);
+        motionPressure[ptIdx] = event.getPressure(ptIdx);  // should this be constrained?
+        mouseX[ptIdx] = (int) motionX[ptIdx];  //event.getRawX();
+        mouseY[ptIdx] = (int) motionY[ptIdx];  //event.getRawY();      
+      }      
+    }
+    
+    // Sets the pointers for the historical event histIdx
+    void setPointers(MotionEvent event, int hisIdx) {
+      for (int ptIdx = 0; ptIdx < numPointers; ptIdx++) {
+        motionX[ptIdx] = event.getHistoricalX(ptIdx, hisIdx);
+        motionY[ptIdx] = event.getHistoricalY(ptIdx, hisIdx);
+        motionPressure[ptIdx] = event.getHistoricalPressure(ptIdx, hisIdx);  // should this be constrained?
+        mouseX[ptIdx] = (int) motionX[ptIdx];  //event.getRawX();
+        mouseY[ptIdx] = (int) motionY[ptIdx];  //event.getRawY();      
+      }      
+    }
   }
 
   Object motionLock = new Object();
@@ -1992,28 +2051,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
       // this will be the last event in the list
       PMotionEvent pme = motionEventQueue[motionEventCount + historyCount];
-      pme.action = event.getAction();
-      pme.motionX = event.getX();
-      pme.motionY = event.getY();
-      pme.motionPressure = event.getPressure();  // should this be constrained?
-      pme.mouseX = (int) pme.motionX;  //event.getRawX();
-      pme.mouseY = (int) pme.motionY;  //event.getRawY();
+      pme.setAction(event.getAction());
+      pme.setNumPointers(event.getPointerCount());
+      pme.setPointers(event);
 
       // historical events happen before the 'current' values
       if (pme.action == MotionEvent.ACTION_MOVE && historyCount > 0) {
-//        float rawOffsetX = pme.mouseX - pme.motionX;
-//        float rawOffsetY = pme.mouseY - pme.motionY;
-
         for (int i = 0; i < historyCount; i++) {
           PMotionEvent hist = motionEventQueue[motionEventCount++];
-          hist.action = pme.action;
-          hist.motionX = event.getHistoricalX(i);
-          hist.motionY = event.getHistoricalY(i);
-          hist.motionPressure = event.getHistoricalPressure(i);
-//          hist.mouseX = (int) (hist.motionX + rawOffsetX);
-//          hist.mouseY = (int) (hist.motionY + rawOffsetY);
-          hist.mouseX = (int) hist.motionX;
-          hist.mouseY = (int) hist.motionY;
+          hist.setAction(event.getAction());
+          hist.setNumPointers(event.getPointerCount());
+          pme.setPointers(event, i);
         }
       }
 
@@ -2043,15 +2091,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   protected void handleMotionEvent(PMotionEvent pme) {
     pmotionX = emotionX;
     pmotionY = emotionY;
-    motionX = pme.motionX;
-    motionY = pme.motionY;
-    motionPressure = pme.motionPressure;
+    motionX = pme.motionX[0];
+    motionY = pme.motionY[0];
+    motionPressure = pme.motionPressure[0];
 
     // replace previous mouseX/Y with the last from the event handlers
     pmouseX = emouseX;
     pmouseY = emouseY;
-    mouseX = pme.mouseX;
-    mouseY = pme.mouseY;
+    mouseX = pme.mouseX[0];
+    mouseY = pme.mouseY[0];
 
     // this used to only be called on mouseMoved and mouseDragged
     // change it back if people run into trouble
@@ -2069,23 +2117,117 @@ public class PApplet extends Activity implements PConstants, Runnable {
       firstMotion = false;
     }
 
-    switch (pme.action) {
-    case MotionEvent.ACTION_DOWN:
-      mousePressed = true;
-      mousePressed();
-      break;
-    case MotionEvent.ACTION_UP:
-      mousePressed = false;
-      mouseReleased();
-      break;
-    case MotionEvent.ACTION_MOVE:
-      if (mousePressed) {
-        mouseDragged();
-      } else {
-        mouseMoved();
-      }
-      break;
+    if (ppointersX.length < numPointers) {
+      ppointersX = new float[numPointers];
+      ppointersY = new float[numPointers];
+      ppointersPressure = new float[numPointers];
+    }    
+    arrayCopy(pointersX, ppointersX);
+    arrayCopy(pointersY, ppointersY);
+    arrayCopy(pointersPressure, ppointersPressure);
+        
+    numPointers = pme.numPointers;
+    if (pointersX.length < numPointers) {
+      pointersX = new float[numPointers];
+      pointersY = new float[numPointers];
+      pointersPressure = new float[numPointers];
     }
+    arrayCopy(pme.motionX, pointersX);
+    arrayCopy(pme.motionY, pointersY);
+    arrayCopy(pme.motionPressure, pointersPressure);
+
+    // Triggering the appropriate event methods
+    if (pme.action == MotionEvent.ACTION_DOWN || (!mousePressed && numPointers == 1)) {
+      // First pointer is down
+      mousePressed = true;
+      gesture1 = true;
+      gesture2 = false;
+      downMillis = millis();
+      downX = pointersX[0];
+      downY = pointersY[0]; 
+      
+      mousePressed();
+      pressEvent();
+      
+    } else if ((pme.action == MotionEvent.ACTION_POINTER_DOWN  && numPointers == 2) || 
+               (pme.action == MotionEvent.ACTION_POINTER_2_DOWN) || // 2.3 seems to use this action constant (supposedly deprecated) instead of ACTION_POINTER_DOWN
+               (pnumPointers == 1 && numPointers == 2)) {           // 2.1 just uses MOVE as the action constant, so the only way to know we have a new pointer is to compare the counters.
+      
+      // An additional pointer is down (we keep track of multitouch only for 2 pointers)
+      gesture1 = false;
+      gesture2 = true;   
+      
+    } else if ((pme.action == MotionEvent.ACTION_POINTER_UP && numPointers == 2) || 
+               (pme.action == MotionEvent.ACTION_POINTER_2_UP) || // 2.1 doesn't use the ACTION_POINTER_UP constant, but this one, apparently deprecated in newer versions of the SDK.
+               (gesture2 && numPointers < 2)) {                   // Sometimes it seems that it doesn't generate the up event.
+      // A previously detected pointer is up
+      
+      gesture2 = false; // Not doing a 2-pointer gesture anymore, but neither a 1-pointer.
+      
+    } else if (pme.action == MotionEvent.ACTION_MOVE) {
+      // Pointer motion
+      
+      if (gesture1) {
+        if (mousePressed) {
+          mouseDragged();
+          dragEvent();
+        } else {
+          mouseMoved();
+          moveEvent();
+        }        
+      } else if (gesture2) {
+        float d0 = PApplet.dist(ppointersX[0], ppointersY[0], ppointersX[1], ppointersY[1]); 
+        float d1 = PApplet.dist(pointersX[0], pointersY[0], pointersX[1], pointersY[1]);
+        
+        float centerX = 0.5f * (pointersX[0] + pointersX[1]);
+        float centerY = 0.5f * (pointersY[0] + pointersY[1]);
+        
+        zoomEvent(centerX, centerY, d0, d1);
+      }
+
+    } else if (pme.action == MotionEvent.ACTION_UP) {
+      // Final pointer is up
+      mousePressed = false;
+      gesture1 = gesture2 = false;
+      
+      float upX = pointersX[0];
+      float upY = pointersY[0];   
+      float gestureLength = PApplet.dist(downX, downY, upX, upY);
+      
+      int upMillis = millis();      
+      int gestureTime = upMillis - downMillis;
+      
+      if (gesture1) {
+        
+        // First, lets determine if this 1-pointer event is a tap 
+        boolean tap = gestureLength <= MAX_TAP_DISP && gestureTime <= MAX_TAP_DURATION;
+        if (tap) {
+          mouseClicked();
+          tapEvent(downX, downY);          
+        } else if (MIN_SWIPE_LENGTH <= gestureLength && gestureTime <= MAX_SWIPE_DURATION) {
+          swipeEvent(downX, downY, upX, upY);
+        } else {
+          mouseReleased();
+          releaseEvent();          
+        }
+        
+      } else {
+        mouseReleased();
+        releaseEvent();
+      }
+       
+    } else if (pme.action == MotionEvent.ACTION_CANCEL) {
+      // Current gesture is canceled.
+      gesture1 = gesture2 = false;
+      mousePressed = false;
+      
+      mouseReleased();
+      releaseEvent();       
+    } else {
+      //System.out.println("Unknown MotionEvent action: " + action);
+    }
+
+    pnumPointers = numPointers;
 
     if (pme.action == MotionEvent.ACTION_MOVE) {
       emotionX = motionX;
@@ -2117,13 +2259,19 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void mouseReleased() { }
 
-//  public void mouseClicked() { }
+  public void mouseClicked() { }
 
   public void mouseDragged() { }
 
   public void mouseMoved() { }
-
-
+  
+  public void pressEvent() { }
+  public void dragEvent() { }
+  public void moveEvent() { }
+  public void releaseEvent() { }
+  public void zoomEvent(float x, float y, float d0, float d1) { }
+  public void tapEvent(float x, float y) { }
+  public void swipeEvent(float x0, float y0, float x1, float y1) { }  
 
   //////////////////////////////////////////////////////////////
 
