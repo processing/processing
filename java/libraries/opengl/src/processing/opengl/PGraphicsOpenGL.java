@@ -190,6 +190,9 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Aspect ratio of camera's view. */
   public float cameraAspect;
   
+  /** Distance between the camera eye and and aim point. */
+  protected float cameraDepth; 
+  
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
   
@@ -620,6 +623,7 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraNear = cameraZ / 10.0f;
     cameraFar = cameraZ * 10.0f;
     cameraAspect = (float) width / (float) height;
+    cameraDepth = cameraZ; // eye is at (cameraX, cameraY, cameraZ), aiming at (cameraX, cameraY, 0)
     
     // set this flag so that beginDraw() will do an update to the camera.
     sizeChanged = true;    
@@ -4992,7 +4996,8 @@ return width * (1 + ox) / 2.0f;
       z1 /= mag;
       z2 /= mag;
     }
-
+    cameraDepth = mag; 
+    
     // Calculating Y vector
     float y0 = upX;
     float y1 = upY;
@@ -5104,17 +5109,16 @@ return width * (1 + ox) / 2.0f;
    * orthographic projection.
    */
   public void ortho() {
-    ortho(0, width, 0, height, cameraNear, cameraFar);
+    ortho(0, width, 0, height, -500, 500);
   }
 
   /**
    * Calls ortho() with the specified size of the viewing volume along
-   * the X and Z directions. The near and far clipping planes are taken
-   * from the current camera configuration.
+   * the X and Z directions.
    */  
   public void ortho(float left, float right, 
                     float bottom, float top) {
-    ortho(left, right, bottom, top, cameraNear, cameraFar);
+    ortho(left, right, bottom, top, -500, 500);
   }  
   
   /**
@@ -5128,12 +5132,15 @@ return width * (1 + ox) / 2.0f;
    */
   public void ortho(float left, float right, 
                     float bottom, float top,
-                    float near, float far) {
+                    float near, float far) {    
     left -= width/2;
     right -= width/2;
     
     bottom -= height/2;
     top -= height/2;
+    
+    near += cameraDepth;
+    far += cameraDepth;
     
     float x = 2.0f / (right - left);
     float y = 2.0f / (top - bottom);
