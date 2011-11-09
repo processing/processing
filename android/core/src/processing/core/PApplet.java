@@ -2061,10 +2061,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
           PMotionEvent hist = motionEventQueue[motionEventCount++];
           hist.setAction(event.getAction());
           hist.setNumPointers(event.getPointerCount());
-          pme.setPointers(event, i);
+          hist.setPointers(event, i);
         }
       }
-
+      
       // now step over the last one that we used to assign 'pme'
       // if historyCount is 0, this just steps over the last
       motionEventCount++;
@@ -2159,7 +2159,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       
     } else if ((pme.action == MotionEvent.ACTION_POINTER_UP && numPointers == 2) || 
                (pme.action == MotionEvent.ACTION_POINTER_2_UP) || // 2.1 doesn't use the ACTION_POINTER_UP constant, but this one, apparently deprecated in newer versions of the SDK.
-               (twoPointerGesture && numPointers < 2)) {                   // Sometimes it seems that it doesn't generate the up event.
+               (twoPointerGesture && numPointers < 2)) {          // Sometimes it seems that it doesn't generate the up event.
       // A previously detected pointer is up
       
       twoPointerGesture = false; // Not doing a 2-pointer gesture anymore, but neither a 1-pointer.
@@ -2179,10 +2179,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
         float d0 = PApplet.dist(ppointersX[0], ppointersY[0], ppointersX[1], ppointersY[1]); 
         float d1 = PApplet.dist(pointersX[0], pointersY[0], pointersX[1], pointersY[1]);
         
-        float centerX = 0.5f * (pointersX[0] + pointersX[1]);
-        float centerY = 0.5f * (pointersY[0] + pointersY[1]);
-        
-        zoomEvent(centerX, centerY, d0, d1);
+        if (0 < d0 && 0 < d1) {
+          float centerX = 0.5f * (pointersX[0] + pointersX[1]);
+          float centerY = 0.5f * (pointersY[0] + pointersY[1]);
+          
+          zoomEvent(centerX, centerY, d0, d1);
+        }
       }
 
     } else if (pme.action == MotionEvent.ACTION_UP) {
