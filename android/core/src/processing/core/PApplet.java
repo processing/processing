@@ -191,8 +191,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   
   protected int downMillis;
   protected float downX, downY;
-  protected boolean gesture1 = false;
-  protected boolean gesture2 = true;
+  protected boolean onePointerGesture = false;
+  protected boolean twoPointerGesture = true;
   
   protected final int MIN_SWIPE_LENGTH = 150;       // Minimum length (in pixels) of a swipe event 
   protected final int MAX_SWIPE_DURATION = 2000;    // Maximum duration (in millis) of a swipe event
@@ -2140,8 +2140,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (pme.action == MotionEvent.ACTION_DOWN || (!mousePressed && numPointers == 1)) {
       // First pointer is down
       mousePressed = true;
-      gesture1 = true;
-      gesture2 = false;
+      onePointerGesture = true;
+      twoPointerGesture = false;
       downMillis = millis();
       downX = pointersX[0];
       downY = pointersY[0]; 
@@ -2154,20 +2154,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
                (pnumPointers == 1 && numPointers == 2)) {           // 2.1 just uses MOVE as the action constant, so the only way to know we have a new pointer is to compare the counters.
       
       // An additional pointer is down (we keep track of multitouch only for 2 pointers)
-      gesture1 = false;
-      gesture2 = true;   
+      onePointerGesture = false;
+      twoPointerGesture = true;   
       
     } else if ((pme.action == MotionEvent.ACTION_POINTER_UP && numPointers == 2) || 
                (pme.action == MotionEvent.ACTION_POINTER_2_UP) || // 2.1 doesn't use the ACTION_POINTER_UP constant, but this one, apparently deprecated in newer versions of the SDK.
-               (gesture2 && numPointers < 2)) {                   // Sometimes it seems that it doesn't generate the up event.
+               (twoPointerGesture && numPointers < 2)) {                   // Sometimes it seems that it doesn't generate the up event.
       // A previously detected pointer is up
       
-      gesture2 = false; // Not doing a 2-pointer gesture anymore, but neither a 1-pointer.
+      twoPointerGesture = false; // Not doing a 2-pointer gesture anymore, but neither a 1-pointer.
       
     } else if (pme.action == MotionEvent.ACTION_MOVE) {
       // Pointer motion
       
-      if (gesture1) {
+      if (onePointerGesture) {
         if (mousePressed) {
           mouseDragged();
           dragEvent();
@@ -2175,7 +2175,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
           mouseMoved();
           moveEvent();
         }        
-      } else if (gesture2) {
+      } else if (twoPointerGesture) {
         float d0 = PApplet.dist(ppointersX[0], ppointersY[0], ppointersX[1], ppointersY[1]); 
         float d1 = PApplet.dist(pointersX[0], pointersY[0], pointersX[1], pointersY[1]);
         
@@ -2188,7 +2188,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
     } else if (pme.action == MotionEvent.ACTION_UP) {
       // Final pointer is up
       mousePressed = false;
-      gesture1 = gesture2 = false;
       
       float upX = pointersX[0];
       float upY = pointersY[0];   
@@ -2197,7 +2196,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       int upMillis = millis();      
       int gestureTime = upMillis - downMillis;
       
-      if (gesture1) {
+      if (onePointerGesture) {
         
         // First, lets determine if this 1-pointer event is a tap 
         boolean tap = gestureLength <= MAX_TAP_DISP && gestureTime <= MAX_TAP_DURATION;
@@ -2215,10 +2214,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
         mouseReleased();
         releaseEvent();
       }
-       
+      
+      onePointerGesture = twoPointerGesture = false;       
     } else if (pme.action == MotionEvent.ACTION_CANCEL) {
       // Current gesture is canceled.
-      gesture1 = gesture2 = false;
+      onePointerGesture = twoPointerGesture = false;
       mousePressed = false;
       
       mouseReleased();
