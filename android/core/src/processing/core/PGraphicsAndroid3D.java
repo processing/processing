@@ -127,6 +127,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** Aspect ratio of camera's view. */
   public float cameraAspect;
   
+  /** Distance between the camera eye and and aim point. */
+  protected float cameraDepth;   
+  
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
   
@@ -4536,6 +4539,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       z1 /= mag;
       z2 /= mag;
     }
+    cameraDepth = mag;
 
     // Calculating Y vector
     float y0 = upX;
@@ -4648,17 +4652,16 @@ public class PGraphicsAndroid3D extends PGraphics {
    * orthographic projection.
    */
   public void ortho() {
-    ortho(0, width, 0, height, cameraNear, cameraFar);
+    ortho(0, width, 0, height, -500, 500);
   }
 
   /**
    * Calls ortho() with the specified size of the viewing volume along
-   * the X and Z directions. The near and far clipping planes are taken
-   * from the current camera configuration.
+   * the X and Z directions.
    */  
   public void ortho(float left, float right, 
                     float bottom, float top) {
-    ortho(left, right, bottom, top, cameraNear, cameraFar);
+    ortho(left, right, bottom, top, -500, 500);
   }  
   
   /**
@@ -4678,6 +4681,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     bottom -= height/2;
     top -= height/2;
+    
+    near += cameraDepth;
+    far += cameraDepth;    
     
     float x = 2.0f / (right - left);
     float y = 2.0f / (top - bottom);
