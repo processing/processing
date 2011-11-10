@@ -1,9 +1,4 @@
-0203 core
-X fix strange build issue with video capture breakage on OS X
-A Multiple calls to curve() connect subsequent curves with lines in P3D/OPENGL
-A   http://code.google.com/p/processing/issues/detail?id=865
-A Arc not drawn in P3D and OpenGL mode (2.0a2)
-A   http://code.google.com/p/processing/issues/detail?id=890
+0204 core
 
 
 _ add inputPath() and outputPath() -> sketch folder or sd card

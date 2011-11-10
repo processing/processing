@@ -1,5 +1,4 @@
-0203 pde
-X changing between 32- and 64- bit mode on OS X wasn't reloading library paths
+0204 pde
 
 
 _ update to Java 6u29 for Linux and Windows (OS X now updated)

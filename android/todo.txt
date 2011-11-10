@@ -1,6 +1,4 @@
-0203 android
-X fix incessant "inefficient font rendering" message
-X fix build.xml to point at the correct SDK version
+0204 android 
 
 
 _ if a sketch asks for android mode but it's not available

@@ -1,3 +1,7 @@
+0203 pde (2.0a4)
+X changing between 32- and 64- bit mode on OS X wasn't reloading library paths
+
+
 0202 pde (2.0a3)
 X fix problem with serial not loading on macosx
 X fix problem with popup menus on the toolbar disappearing immediately (osx)
