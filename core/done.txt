@@ -1,3 +1,13 @@
+0203 core (2.0a4)
+X Capture.list() Fails Mac OSX 10.6 Processing 2.0a3
+X   fix strange build issue with video capture breakage on OS X
+X   http://code.google.com/p/processing/issues/detail?id=892
+A Multiple calls to curve() connect subsequent curves with lines in P3D/OPENGL
+A   http://code.google.com/p/processing/issues/detail?id=865
+A Arc not drawn in P3D and OpenGL mode (2.0a2)
+A   http://code.google.com/p/processing/issues/detail?id=890
+
+
 0202 core (2.0a3)
 X Rounded rect() does not have a maximum length for corner radius
 X   http://code.google.com/p/processing/issues/detail?id=813
