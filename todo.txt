@@ -2,6 +2,8 @@
 X changing between 32- and 64- bit mode on OS X wasn't reloading library paths
 
 
+_ update to Java 6u29 for Linux and Windows (OS X now updated)
+
 _ make note of when library is not available (serial) with error msg
 _   i.e. if running in 64-bit mode on OS X, can't do serial
 

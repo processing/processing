@@ -1,4 +1,5 @@
 0203 core
+X fix strange build issue with video capture breakage on OS X
 
 
 _ add inputPath() and outputPath() -> sketch folder or sd card
