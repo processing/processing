@@ -1,3 +1,8 @@
+0203 android (2.0a4)
+X fix incessant "inefficient font rendering" message
+X fix build.xml to point at the correct SDK version
+
+
 0202 android (2.0a3)
 X fix problem with export menu, keys, toolbar being different
 X change default package name a bit
