@@ -16,6 +16,14 @@ Chicago a little longer. A handful of bug fixes here:
   messages when natives aren't available for the platform--just an
   UnsatisfiedLinkError when you try to run. Will fix.)
 
+[ andres' bug victims ] 
+
++ Multiple calls to curve() connect subsequent curves with lines in P3D/OPENGL
+  http://code.google.com/p/processing/issues/detail?id=865
+
++ Arc not drawn in P3D and OpenGL mode (2.0a2)
+  http://code.google.com/p/processing/issues/detail?id=890
+
 
 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 
