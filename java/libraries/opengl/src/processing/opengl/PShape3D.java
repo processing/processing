@@ -725,6 +725,18 @@ public class PShape3D extends PShape {
 
   }
   
+  static final protected float sinLUT[];
+  static final protected float cosLUT[];
+  static final protected float SINCOS_PRECISION = 0.5f;
+  static final protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
+  static {
+    sinLUT = new float[SINCOS_LENGTH];
+    cosLUT = new float[SINCOS_LENGTH];
+    for (int i = 0; i < SINCOS_LENGTH; i++) {
+      sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
+      cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
+    }
+  }  
   protected void tessellatePoints() {
     vertexCount = 0;    
     firstVertex = 0;
@@ -734,29 +746,64 @@ public class PShape3D extends PShape {
     
     hasPoints = true;
     
-    // Each point is a separate triangle fan...
+    // The following code is for the ROUND caps. 
+    // Each point generates a separate triangle fan. 
+    // The number of triangles of each fan depends on the
+    // stroke weight of the point.
+    int nvertTot = 0;
+    int nindTot = 0;
+    for (int i = 0; i < inVertexCount; i++) {
+      float w = inStroke[5 * i + 4];
+      int perim = PApplet.max(6, (int) (TWO_PI * w / 20));
+      // Number of points along the perimeter plus the center point.
+      nvertTot += perim + 1; 
+      nindTot += 3 * (perim - 1);
+    }
     
-    int nvert = inVertexCount * 10 + 1;
-    pointVertexCount = nvert; 
-    pointVertices = new float[3 * nvert];
-    pointColors = new float[4 * nvert];
-    pointNormals = new float[3 * nvert];
-    pointAttributes = new float[2 * nvert];
+    pointVertexCount = nvertTot; 
+    pointVertices = new float[3 * nvertTot];
+    pointColors = new float[4 * nvertTot];
+    pointNormals = new float[3 * nvertTot];
+    pointAttributes = new float[2 * nvertTot];
     
-    int triCount = pointVertexCount - 2;
+    pointIndexCount = nindTot;    
+    pointIndices = new int[nindTot];    
     
-    pointIndexCount = 3 * triCount;    
-    pointIndices = new int[pointIndexCount];
-    int idx = 0;
-    for (int i = 1; i < pointVertexCount - 1; i++) {
-      pointIndices[idx++] = 0;
-      pointIndices[idx++] = i;
-      pointIndices[idx++] = i + 1;
+    int vertIdx = 0;
+    int indIdx = 0;
+    int attribIdx = 0;
+    for (int i = 0; i < inVertexCount; i++) {
+      float w = inStroke[5 * i + 4];
+      int perim = PApplet.max(6, (int) (TWO_PI * w / 20));
+      int nvert = perim + 1;
+      
+      for (int k = 0; k < nvert; k++) {
+        PApplet.arrayCopy(inVertices, 3 * i, pointVertices, 3 * vertIdx, 3);
+        PApplet.arrayCopy(inStroke, 5 * i, pointNormals, 4 * vertIdx, 4);
+        PApplet.arrayCopy(inNormals, 3 * i, pointColors, 3 * vertIdx, 3);      
+        vertIdx++; 
+      }       
+      
+      pointAttributes[2 * attribIdx + 0] = 0;
+      pointAttributes[2 * attribIdx + 1] = 0;
+      attribIdx++;
+      float val = 0;
+      float inc = (float) SINCOS_LENGTH / perim;      
+      for (int k = 0; k < perim; k++) {
+        pointAttributes[2 * attribIdx + 0] = cosLUT[(int) val] * w/2;
+        pointAttributes[2 * attribIdx + 1] = sinLUT[(int) val] * w/2;
+        val = (val + inc) % SINCOS_LENGTH;                
+        attribIdx++;           
+      }
+      
+      for (int k = 1; k < nvert - 1; k++) {
+        pointIndices[indIdx++] = 0;
+        pointIndices[indIdx++] = i;
+        pointIndices[indIdx++] = i + 1;
+      }      
     }
     firstPointIndex = 0;
     lastPointIndex = pointIndexCount - 1;
-    
-    
   }
   
   protected void tessellateLines() {
