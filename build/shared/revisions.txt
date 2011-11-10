@@ -1,3 +1,25 @@
+PROCESSING 2.0a4 (REV 0203) - 10 November 2011
+
+This is just a quick release so that I can procrastinate on packing for
+Chicago a little longer. A handful of bug fixes here:
+
++ Video capture was broken in 2.0a3 on OS X due to an issue with the build 
+  process. Should be all set now.
+
++ Fixed incessant "inefficient font rendering" debug message on Android.
+
++ Fixed android/code/build.xml to point at the correct SDK version.
+
++ Changing between 32- and 64- bit mode on OS X wasn't properly reloading
+  library paths. Now it should pick up the necessary 32- and 64-bit version
+  of a library that's needed. (However there are still no useful error
+  messages when natives aren't available for the platform--just an
+  UnsatisfiedLinkError when you try to run. Will fix.)
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0a3 (REV 0202) - 5 November 2011
 
 Some weekend bug fixing and regression repair for the recent alpha releases.
