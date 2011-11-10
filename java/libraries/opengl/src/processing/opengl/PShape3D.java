@@ -210,12 +210,19 @@ public class PShape3D extends PShape {
     params.updateMode = DYNAMIC;
     setParameters(params);  
 
-    if (strokeRenderShader == null) {
-      strokeRenderShader = new PShader(parent);
-      strokeRenderShader.loadVertexShaderSource(strokeRenderVertShader);
-      strokeRenderShader.loadFragmentShaderSource(strokeRenderFragShader);
-      strokeRenderShader.setup();
+    if (strokeShader == null) {
+      strokeShader = new PShader(parent);
+      strokeShader.loadVertexShaderSource(strokeShaderVert);
+      strokeShader.loadFragmentShaderSource(strokeShaderFrag);
+      strokeShader.setup();
     }
+
+    if (pointShader == null) {
+      pointShader = new PShader(parent);
+      pointShader.loadVertexShaderSource(pointShaderVert);
+      pointShader.loadFragmentShaderSource(pointShaderFrag);
+      pointShader.setup();
+    }    
     
     root = this;
     parent = null;
@@ -345,7 +352,7 @@ public class PShape3D extends PShape {
   protected boolean modified;
   protected int mi0, mi1;    
 
-  boolean useStroke;
+  protected boolean isStroked;
   
   protected int strokeVertexCount;
   protected int firstStrokeVertex;
@@ -367,47 +374,79 @@ public class PShape3D extends PShape {
   public float[] strokeNormals;
   public float[] strokeAttributes;
 
-  static protected String strokeRenderVertShader = 
-  "attribute vec4 attribs;\n" +   
-  "uniform vec4 viewport;\n" +
-  "vec3 clipToWindow(vec4 clip, vec4 viewport) {\n" +
-  "  vec3 post_div = clip.xyz / clip.w;\n" +
-  "  vec2 xypos = (post_div.xy + vec2(1.0, 1.0)) * 0.5 * viewport.zw;\n" +
-  "  return vec3(xypos, post_div.z * 0.5 + 0.5);\n" +
-  "}\n" +
-  "void main() {\n" +
-  "  vec4 pos_p = gl_Vertex;\n" +
-  "  vec4 pos_q = vec4(attribs.xyz, 1);\n" +
+  protected boolean hasPoints;
   
-  "  vec4 v_p = gl_ModelViewMatrix * pos_p;\n" +
-  "  v_p.xyz = v_p.xyz * 0.99;\n" +   
-  "  vec4 clip_p = gl_ProjectionMatrix * v_p;\n" + 
+  protected int pointVertexCount;
+  protected int firstPointVertex;
+  protected int lastPointVertex;
 
-  "  vec4 v_q = gl_ModelViewMatrix * pos_q;\n" +
-  "  v_q.xyz = v_q.xyz * 0.99;\n" +   
-  "  vec4 clip_q = gl_ProjectionMatrix * v_q;\n" + 
-    
-  "  vec3 window_p = clipToWindow(clip_p, viewport);\n" + 
-  "  vec3 window_q = clipToWindow(clip_q, viewport);\n" + 
-    
-  "  vec3 tangent = window_q - window_p;\n" +
-  "  float segment_length = length(tangent.xy);\n" +  
-  "  vec2 perp = normalize(vec2(-tangent.y, tangent.x));\n" +
-    
-  "  float thickness = attribs.w;\n" +
-  "  vec2 window_offset = perp * thickness;\n" +
-   
-  "  gl_Position.xy = clip_p.xy + window_offset.xy;\n" +
-  "  gl_Position.zw = clip_p.zw;\n" +
-  "  gl_FrontColor = gl_Color;\n" +
-  "}";
+  protected int pointIndexCount;
+  protected int firstPointIndex;
+  protected int lastPointIndex;  
+  protected int[] pointIndices;
+
+  public int glPointVertexBufferID;
+  public int glPointColorBufferID;
+  public int glPointNormalBufferID;
+  public int glPointAttribBufferID;
+  public int glPointIndexBufferID;
   
-  static protected String strokeRenderFragShader =
-  "void main() {\n" +  
-  " gl_FragColor = gl_Color;\n" +
-  "}";
+  public float[] pointVertices;
+  public float[] pointColors;
+  public float[] pointNormals;
+  public float[] pointAttributes;  
   
-  static protected PShader strokeRenderShader;
+  
+  static protected String strokeShaderVert = 
+    "attribute vec4 attribs;\n" +   
+    "uniform vec4 viewport;\n" +
+    "vec3 clipToWindow(vec4 clip, vec4 viewport) {\n" +
+    "  vec3 post_div = clip.xyz / clip.w;\n" +
+    "  vec2 xypos = (post_div.xy + vec2(1.0, 1.0)) * 0.5 * viewport.zw;\n" +
+    "  return vec3(xypos, post_div.z * 0.5 + 0.5);\n" +
+    "}\n" +
+    "void main() {\n" +
+    "  vec4 pos_p = gl_Vertex;\n" +
+    "  vec4 pos_q = vec4(attribs.xyz, 1);\n" +  
+    "  vec4 v_p = gl_ModelViewMatrix * pos_p;\n" +
+    "  v_p.xyz = v_p.xyz * 0.99;\n" +   
+    "  vec4 clip_p = gl_ProjectionMatrix * v_p;\n" + 
+    "  vec4 v_q = gl_ModelViewMatrix * pos_q;\n" +
+    "  v_q.xyz = v_q.xyz * 0.99;\n" +   
+    "  vec4 clip_q = gl_ProjectionMatrix * v_q;\n" + 
+    "  vec3 window_p = clipToWindow(clip_p, viewport);\n" + 
+    "  vec3 window_q = clipToWindow(clip_q, viewport);\n" + 
+    "  vec3 tangent = window_q - window_p;\n" +
+    "  float segment_length = length(tangent.xy);\n" +  
+    "  vec2 perp = normalize(vec2(-tangent.y, tangent.x));\n" +
+    "  float thickness = attribs.w;\n" +
+    "  vec2 window_offset = perp * thickness;\n" +
+    "  gl_Position.xy = clip_p.xy + window_offset.xy;\n" +
+    "  gl_Position.zw = clip_p.zw;\n" +
+    "  gl_FrontColor = gl_Color;\n" +
+    "}";
+  
+  static protected String strokeShaderFrag =
+    "void main() {\n" +  
+    " gl_FragColor = gl_Color;\n" +
+    "}";
+  
+  static protected String pointShaderVert = 
+    "attribute vec2 vertDisp;\n" + 
+    "void main() {\n" +
+    "  vec4 pos = gl_ModelViewMatrix * gl_Vertex;\n" +
+    "  pos.xy += vertDisp.xy;\n" +
+    "  gl_Position = gl_ProjectionMatrix * pos;\n" +  
+    "  gl_FrontColor = gl_Color;\n" +
+    "}";
+
+  static protected String pointShaderFrag =
+    "void main() {\n" +  
+    " gl_FragColor = gl_Color;\n" +
+    "}";
+  
+  static protected PShader strokeShader;
+  static protected PShader pointShader;
 
   protected void inputCheck() {
     if (inVertexCount == inVertexTypes.length) {
@@ -648,7 +687,7 @@ public class PShape3D extends PShape {
       if (modified) {
         if (family == GEOMETRY) {
           if (kind == POINTS) {
-
+            tessellatePoints();
           } else if (kind == LINES) {
             tessellateLines();            
           } else if (kind == TRIANGLES) {
@@ -687,6 +726,36 @@ public class PShape3D extends PShape {
   }
   
   protected void tessellatePoints() {
+    vertexCount = 0;    
+    firstVertex = 0;
+    lastVertex = 0;
+    
+    isStroked = false;
+    
+    hasPoints = true;
+    
+    // Each point is a separate triangle fan...
+    
+    int nvert = inVertexCount * 10 + 1;
+    pointVertexCount = nvert; 
+    pointVertices = new float[3 * nvert];
+    pointColors = new float[4 * nvert];
+    pointNormals = new float[3 * nvert];
+    pointAttributes = new float[2 * nvert];
+    
+    int triCount = pointVertexCount - 2;
+    
+    pointIndexCount = 3 * triCount;    
+    pointIndices = new int[pointIndexCount];
+    int idx = 0;
+    for (int i = 1; i < pointVertexCount - 1; i++) {
+      pointIndices[idx++] = 0;
+      pointIndices[idx++] = i;
+      pointIndices[idx++] = i + 1;
+    }
+    firstPointIndex = 0;
+    lastPointIndex = pointIndexCount - 1;
+    
     
   }
   
@@ -695,12 +764,11 @@ public class PShape3D extends PShape {
     firstVertex = 0;
     lastVertex = 0;
     
-    useStroke = true;
+    isStroked = true;
     
     int lineCount = inVertexCount / 2;
     
-    // Each stroked triangle has 3 lines, one for each edge. 
-    // These lines are made up of 4 vertices defining the quad. 
+    // Lines are made up of 4 vertices defining the quad. 
     // Each vertex has its own offset representing the stroke weight.
     int nvert = lineCount * 4;
     strokeVertexCount = nvert; 
@@ -754,7 +822,8 @@ public class PShape3D extends PShape {
     }
     
     if (0 < strokedCount) {
-      useStroke = true;
+      isStroked = true;
+      
       // Each stroked triangle has 3 lines, one for each edge. 
       // These lines are made up of 4 vertices defining the quad. 
       // Each vertex has its own offset representing the stroke weight.
@@ -788,7 +857,7 @@ public class PShape3D extends PShape {
       }
       
     } else {
-      useStroke = false;
+      isStroked = false;
     }
   }
     
@@ -826,7 +895,8 @@ public class PShape3D extends PShape {
     }    
     
     if (0 < strokedCount) {
-      useStroke = true;
+      isStroked = true;
+      
       // Each stroked triangle has 3 lines, one for each edge. 
       // These lines are made up of 4 vertices defining the quad. 
       // Each vertex has its own offset representing the stroke weight.
@@ -859,7 +929,7 @@ public class PShape3D extends PShape {
         }
       }
     } else {
-      useStroke = false;
+      isStroked = false;
     }
   }
   
@@ -908,7 +978,8 @@ public class PShape3D extends PShape {
     } 
     
     if (0 < strokedCount) {
-      useStroke = true;
+      isStroked = true;
+      
       // Each stroked triangle has 3 lines, one for each edge. 
       // These lines are made up of 4 vertices defining the quad. 
       // Each vertex has its own offset representing the stroke weight.
@@ -947,7 +1018,7 @@ public class PShape3D extends PShape {
         }
       }
     } else {
-      useStroke = false;
+      isStroked = false;
     }    
   }
 
@@ -995,7 +1066,8 @@ public class PShape3D extends PShape {
     }
     
     if (0 < strokedCount) {
-      useStroke = true;
+      isStroked = true;
+      
       // Each stroked quad has 4 lines, one for each edge. 
       // These lines are made up of 4 vertices defining the quad. 
       // Each vertex has its own offset representing the stroke weight.
@@ -1032,7 +1104,7 @@ public class PShape3D extends PShape {
       }
       
     } else {
-      useStroke = false;
+      isStroked = false;
     }
   }
   
@@ -1080,7 +1152,8 @@ public class PShape3D extends PShape {
     }
     
     if (0 < strokedCount) {
-      useStroke = true;
+      isStroked = true;
+      
       // Each stroked quad has 4 lines, one for each edge. 
       // These lines are made up of 4 vertices defining the quad. 
       // Each vertex has its own offset representing the stroke weight.
@@ -1117,7 +1190,7 @@ public class PShape3D extends PShape {
       }
       
     } else {
-      useStroke = false;
+      isStroked = false;
     }
   }  
   
@@ -1210,12 +1283,16 @@ public class PShape3D extends PShape {
   protected int copyIndOffset;
   protected int strokeVertCopyOffset;
   protected int strokeIndCopyOffset;
+  protected int pointVertCopyOffset;
+  protected int pointIndCopyOffset;
   
   protected int lastVertexOffset;
   protected int lastIndexOffset;  
   protected int lastStrokeVertexOffset;
-  protected int lastStrokeIndexOffset;  
-  
+  protected int lastStrokeIndexOffset;    
+  protected int lastPointVertexOffset;
+  protected int lastPointIndexOffset;  
+
   protected void aggregate() {
     if (root == this && parent == null) {
       // We recursively calculate the total number of vertices and indices.
@@ -1225,6 +1302,9 @@ public class PShape3D extends PShape {
       lastStrokeVertexOffset = 0;
       lastStrokeIndexOffset = 0;
 
+      lastPointVertexOffset = 0;
+      lastPointIndexOffset = 0;      
+      
       aggregateImpl();
       
       // Now that we know, we can initialize the buffers with the correct size.
@@ -1241,6 +1321,13 @@ public class PShape3D extends PShape {
         strokeIndCopyOffset = 0;
         copyStrokeGeometryToRoot();
       }
+      
+      if (0 < pointVertexCount && 0 < pointIndexCount) {   
+        initPointBuffers(pointVertexCount, pointIndexCount);
+        pointVertCopyOffset = 0;
+        pointIndCopyOffset = 0;
+        copyPointGeometryToRoot();
+      }      
     }
   }
   
@@ -1255,8 +1342,12 @@ public class PShape3D extends PShape {
       firstStrokeVertex = lastStrokeVertex = strokeVertexCount = 0;
       firstStrokeIndex = lastStrokeIndex = strokeIndexCount = 0;     
       
+      firstPointVertex = lastPointVertex = pointVertexCount = 0;
+      firstPointIndex = lastPointIndex = pointIndexCount = 0;       
+      
       boolean firstGeom = true;
       boolean firstStroke = true;
+      boolean firstPoint = true;
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D)children[i];
         child.aggregateImpl();
@@ -1267,6 +1358,9 @@ public class PShape3D extends PShape {
         strokeVertexCount += child.strokeVertexCount;
         strokeIndexCount += child.strokeIndexCount;        
 
+        pointVertexCount += child.pointVertexCount;
+        pointIndexCount += child.pointIndexCount;          
+        
         if (0 < child.vertexCount) {
           if (firstGeom) {
             firstVertex = child.firstVertex;
@@ -1287,12 +1381,24 @@ public class PShape3D extends PShape {
           
           lastStrokeVertex = child.lastStrokeVertex;
           lastStrokeIndex = child.lastStrokeIndex;
-        }         
+        }
+        
+        if (0 < child.pointVertexCount) {
+          if (firstPoint) {
+            firstPointVertex = child.firstPointVertex;
+            firstPointIndex = child.firstPointIndex;
+            firstPoint = false;
+          }
+          
+          lastPointVertex = child.lastPointVertex;
+          lastPointIndex = child.lastPointIndex;
+        }           
       }
 
-      useStroke = 0 < strokeVertexCount && 0 < strokeIndexCount;      
+      isStroked = 0 < strokeVertexCount && 0 < strokeIndexCount; 
+      hasPoints = 0 < pointVertexCount && 0 < pointIndexCount;
     } else {
-      // Shape holding some geometry.      
+      // Shape holding some filled geometry ----------------------------------------      
       if (0 < vertexCount) {
         firstVertex = 0;
         if (0 < root.lastVertexOffset) {
@@ -1318,7 +1424,7 @@ public class PShape3D extends PShape {
         root.lastIndexOffset = lastIndex; 
       }
       
-      // Shape holding some stroke geometry.      
+      // Shape holding some stroke geometry ----------------------------------------      
       if (0 < strokeVertexCount) {
         firstStrokeVertex = 0;
         if (0 < root.lastStrokeVertexOffset) {
@@ -1343,6 +1449,32 @@ public class PShape3D extends PShape {
         lastStrokeIndex = firstStrokeIndex + strokeIndexCount - 1;
         root.lastStrokeIndexOffset = lastStrokeIndex;
       }
+      
+      // Shape holding some point geometry ----------------------------------------      
+      if (0 < pointVertexCount) {
+        firstPointVertex = 0;
+        if (0 < root.lastPointVertexOffset) {
+          firstPointVertex = root.lastPointVertexOffset + 1; 
+        }        
+        lastPointVertex = firstPointVertex + pointVertexCount - 1;
+        root.lastPointVertexOffset = lastPointVertex;
+      }
+      
+      if (0 < pointIndexCount) {
+        firstPointIndex = 0;
+        if (0 < root.lastPointIndexOffset) {
+          firstPointIndex = root.lastPointIndexOffset + 1; 
+        }        
+        
+        // The indices are update to take into account all the previous 
+        // shapes in the hierarchy, as the entire geometry will be stored
+        // contiguously in a single VBO in the root node.
+        for (int i = 0; i < pointIndexCount; i++) {
+          pointIndices[i] += firstPointVertex;
+        }
+        lastPointIndex = firstPointIndex + pointIndexCount - 1;
+        root.lastPointIndexOffset = lastPointIndex;
+      }      
     }  
   }
   
@@ -1409,6 +1541,33 @@ public class PShape3D extends PShape {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);         
   }
   
+  protected void initPointBuffers(int nvert, int nind) {
+    glPointVertexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);    
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    glPointNormalBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);    
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    glPointColorBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+    glPointAttribBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);   
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    glPointIndexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);    
+    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glUsage);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);         
+  }  
+  
   protected void copyGeometryToRoot() {
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -1463,7 +1622,7 @@ public class PShape3D extends PShape {
         child.copyStrokeGeometryToRoot();
       }    
     } else {
-      if (useStroke) {
+      if (isStroked) {
         root.copyStrokeGeometry(root.strokeVertCopyOffset, strokeVertexCount, strokeVertices, strokeColors, strokeNormals, strokeAttributes);        
         root.strokeVertCopyOffset += strokeVertexCount;
         
@@ -1501,6 +1660,52 @@ public class PShape3D extends PShape {
                             size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
   }
+  
+  protected void copyPointGeometryToRoot() {
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        child.copyPointGeometryToRoot();
+      }    
+    } else {
+      if (hasPoints) {
+        root.copyPointGeometry(root.pointVertCopyOffset, pointVertexCount, pointVertices, pointColors, pointNormals, pointAttributes);        
+        root.pointVertCopyOffset += pointVertexCount;
+        
+        root.copyPointIndices(root.pointIndCopyOffset, pointIndexCount, pointIndices);
+        root.pointIndCopyOffset += pointIndexCount;        
+      }
+    }
+  }
+  
+  protected void copyPointGeometry(int offset, int size, float[] vertices, float[] colors, float[] normals, float[] attribs) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+  }  
+
+  protected void copyPointIndices(int offset, int size, int[] indices) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
+                            size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
+  }  
   
   ////////////////////////////////////////////////////////////
 
@@ -2221,7 +2426,7 @@ public class PShape3D extends PShape {
   public void loadStrokeVertices() {
     tessCheck();
 
-    if (!useStroke) return;
+    if (!isStroked) return;
     
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glStrokeVertexBufferID);    
     FloatBuffer mbuf = getGl().glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY).asFloatBuffer();    
@@ -2239,7 +2444,7 @@ public class PShape3D extends PShape {
   }  
   
   public void updateStrokeVertices() {
-    if (!useStroke) return;
+    if (!isStroked) return;
     
     int offset = 3 * firstStrokeVertex;
     int size = 3 * strokeVertexCount;
@@ -4423,68 +4628,84 @@ public class PShape3D extends PShape {
       // Some error. Root should never be null. At least it should be this.
       return; 
     }
-       
+    
     if (0 < vertexCount && 0 < indexCount) { 
-      getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
-      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glNormalBufferID);
-      getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);    
-
-      getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
-      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glColorBufferID);
-      getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
-      
-      getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
-      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glVertexBufferID);
-      getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);    
-      
-      getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glIndexBufferID);    
-      getGl().glDrawElements(GL.GL_TRIANGLES, lastIndex - firstIndex + 1, GL.GL_UNSIGNED_INT, firstIndex * PGraphicsOpenGL.SIZEOF_INT);      
-      getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);    
-      
-      getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
-      getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
-      getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);    
+      renderFill();
     }
     
-    if (useStroke) {
-      strokeRenderShader.start();
-      
-      getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
-      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glStrokeNormalBufferID);
-      getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);
-            
-      getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
-      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glStrokeColorBufferID);
-      getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
-      
-      getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
-      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glStrokeVertexBufferID);
-      getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-      
-      int[] viewport = {0, 0, 0, 0};
-      getGl().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-      strokeRenderShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
-              
-      int attribsID = strokeRenderShader.getAttribLocation("attribs");     
-      ogl.gl2x.glEnableVertexAttribArray(attribsID);
-      getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glStrokeAttribBufferID);      
-      ogl.gl2x.glVertexAttribPointer(attribsID, 4, GL.GL_FLOAT, false, 0, 0);      
-      
-      getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glStrokeIndexBufferID);    
-      getGl().glDrawElements(GL.GL_TRIANGLES, lastStrokeIndex - firstStrokeIndex + 1, GL.GL_UNSIGNED_INT, firstStrokeIndex * PGraphicsOpenGL.SIZEOF_INT);
-      getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-      
-      ogl.gl2x.glDisableVertexAttribArray(attribsID);
-      
-      getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
-      getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
-      getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
-      
-      strokeRenderShader.stop();
+    if (isStroked) {
+      renderStroke();    
+    }    
+    
+    if (hasPoints) {
+      renderPoints();
     }    
   }
   
+  protected void renderFill() {
+    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glNormalBufferID);
+    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);    
 
+    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glColorBufferID);
+    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    
+    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glVertexBufferID);
+    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);    
+    
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glIndexBufferID);    
+    getGl().glDrawElements(GL.GL_TRIANGLES, lastIndex - firstIndex + 1, GL.GL_UNSIGNED_INT, firstIndex * PGraphicsOpenGL.SIZEOF_INT);      
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);    
+    
+    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
+    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);     
+  }
+
+  protected void renderStroke() {
+    strokeShader.start();
+    
+    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glStrokeNormalBufferID);
+    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);
+          
+    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glStrokeColorBufferID);
+    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    
+    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glStrokeVertexBufferID);
+    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    
+    int[] viewport = {0, 0, 0, 0};
+    getGl().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+    strokeShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
+            
+    int attribsID = strokeShader.getAttribLocation("attribs");     
+    ogl.gl2x.glEnableVertexAttribArray(attribsID);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glStrokeAttribBufferID);      
+    ogl.gl2x.glVertexAttribPointer(attribsID, 4, GL.GL_FLOAT, false, 0, 0);      
+    
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glStrokeIndexBufferID);    
+    getGl().glDrawElements(GL.GL_TRIANGLES, lastStrokeIndex - firstStrokeIndex + 1, GL.GL_UNSIGNED_INT, firstStrokeIndex * PGraphicsOpenGL.SIZEOF_INT);
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    
+    ogl.gl2x.glDisableVertexAttribArray(attribsID);
+    
+    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
+    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    
+    strokeShader.stop();    
+  }  
+    
+  protected void renderPoints() {
+    
+  }  
+
+  
   protected void drawGeometry(PGraphics g) {
     int numTextures;
     float pointSize;
