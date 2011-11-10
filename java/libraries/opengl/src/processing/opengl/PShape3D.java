@@ -725,6 +725,7 @@ public class PShape3D extends PShape {
 
   }
   
+  static final protected int MIN_ACCURACY = 6; 
   static final protected float sinLUT[];
   static final protected float cosLUT[];
   static final protected float SINCOS_PRECISION = 0.5f;
@@ -746,7 +747,9 @@ public class PShape3D extends PShape {
     
     hasPoints = true;
     
-    // The following code is for the ROUND caps. 
+    // The following code is for the ROUND caps only.
+    
+    
     // Each point generates a separate triangle fan. 
     // The number of triangles of each fan depends on the
     // stroke weight of the point.
@@ -754,10 +757,11 @@ public class PShape3D extends PShape {
     int nindTot = 0;
     for (int i = 0; i < inVertexCount; i++) {
       float w = inStroke[5 * i + 4];
-      int perim = PApplet.max(6, (int) (TWO_PI * w / 20));
+      int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * w / 20));
       // Number of points along the perimeter plus the center point.
-      nvertTot += perim + 1; 
-      nindTot += 3 * (perim - 1);
+      int nvert = perim + 1;
+      nvertTot += nvert; 
+      nindTot += 3 * (nvert - 1);
     }
     
     pointVertexCount = nvertTot; 
@@ -772,18 +776,25 @@ public class PShape3D extends PShape {
     int vertIdx = 0;
     int indIdx = 0;
     int attribIdx = 0;
+    int vert0 = 0;
     for (int i = 0; i < inVertexCount; i++) {
+      // Creating the triangle fan for each input vertex.
       float w = inStroke[5 * i + 4];
-      int perim = PApplet.max(6, (int) (TWO_PI * w / 20));
+      int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * w / 20));
       int nvert = perim + 1;
       
+      // All the tessellated vertices are identical to the center point
       for (int k = 0; k < nvert; k++) {
         PApplet.arrayCopy(inVertices, 3 * i, pointVertices, 3 * vertIdx, 3);
-        PApplet.arrayCopy(inStroke, 5 * i, pointNormals, 4 * vertIdx, 4);
-        PApplet.arrayCopy(inNormals, 3 * i, pointColors, 3 * vertIdx, 3);      
+        PApplet.arrayCopy(inStroke, 5 * i, pointColors, 4 * vertIdx, 4);
+        PApplet.arrayCopy(inNormals, 3 * i, pointNormals, 3 * vertIdx, 3);      
         vertIdx++; 
       }       
       
+      // The attributes for each tessellated vertex are the displacement along
+      // the circle perimeter. The point shader will read these attributes and
+      // displace the vertices in screen coordinates to the circles are always
+      // camera facing (bilboards)
       pointAttributes[2 * attribIdx + 0] = 0;
       pointAttributes[2 * attribIdx + 1] = 0;
       attribIdx++;
@@ -796,12 +807,24 @@ public class PShape3D extends PShape {
         attribIdx++;           
       }
       
+      // Adding vert0 to take into account the triangles of all
+      // the preceding points.
       for (int k = 1; k < nvert - 1; k++) {
-        pointIndices[indIdx++] = 0;
-        pointIndices[indIdx++] = i;
-        pointIndices[indIdx++] = i + 1;
-      }      
+        pointIndices[indIdx++] = vert0 + 0;
+        pointIndices[indIdx++] = vert0 + k;
+        pointIndices[indIdx++] = vert0 + k + 1;
+      }
+      // Final triangle between the last and first point:
+      pointIndices[indIdx++] = vert0 + 0;
+      pointIndices[indIdx++] = vert0 + 1;
+      pointIndices[indIdx++] = vert0 + nvert - 1;      
+      
+      vert0 = vertIdx;
     }
+    
+    PApplet.println(vertIdx + " " + attribIdx + " " + pointVertexCount);
+    PApplet.println(indIdx + " " + pointIndexCount);
+    
     firstPointIndex = 0;
     lastPointIndex = pointIndexCount - 1;
   }
@@ -4749,7 +4772,36 @@ public class PShape3D extends PShape {
   }  
     
   protected void renderPoints() {
+    pointShader.start();
     
+    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointNormalBufferID);
+    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);
+          
+    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointColorBufferID);
+    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    
+    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointVertexBufferID);
+    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+            
+    int attribsID = pointShader.getAttribLocation("vertDisp");     
+    ogl.gl2x.glEnableVertexAttribArray(attribsID);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointAttribBufferID);      
+    ogl.gl2x.glVertexAttribPointer(attribsID, 2, GL.GL_FLOAT, false, 0, 0);      
+    
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);    
+    getGl().glDrawElements(GL.GL_TRIANGLES, lastPointIndex - firstPointIndex + 1, GL.GL_UNSIGNED_INT, firstPointIndex * PGraphicsOpenGL.SIZEOF_INT);
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    
+    ogl.gl2x.glDisableVertexAttribArray(attribsID);
+    
+    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
+    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    
+    pointShader.stop();    
   }  
 
   
