@@ -115,7 +115,7 @@ class Devices {
         return null;
       }
     } else {
-      System.out.println("Emulator is " + emuController.getState() + 
+      System.out.println("Emulator is " + emuController.getState() +
                          ", which is not expected.");
     }
 //    System.out.println("and now we're out");
@@ -126,7 +126,8 @@ class Devices {
       //      System.err.println("AndroidEnvironment: emulatorcontroller state is "
       //          + emuController.getState());
       if (emuController.getState() == State.NOT_RUNNING) {
-        System.err.println("Ouch. Emulator got killed, I think.");
+        System.err.println("Error while starting the emulator. (" +
+                           emuController.getState() + ")");
         return null;
       }
       emu = find(true);
