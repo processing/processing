@@ -1,6 +1,9 @@
 0204 android 
-X fix problem with android emulator launching on Windows
+X Android emulator not launching on Windows with 2.0 alpha releases
+X   http://code.google.com/p/processing/issues/detail?id=899
+X /opt/android using version #s again? fix build script (earlier)
 
+_ don't let the ... ?
 
 _ if a sketch asks for android mode but it's not available
 _   (after a double-click)
@@ -12,8 +15,6 @@ _   http://code.google.com/p/processing/issues/detail?id=767
 
 _ don't let the examples get overwritten with other mode stuff
 _   the whole sketch.properties thing is yech
-
-_ /opt/android using version #s again? fix build script
 
 _ add INTERNET permissions to the android net examples
 

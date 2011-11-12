@@ -5,30 +5,24 @@ import java.util.concurrent.CountDownLatch;
 
 import processing.app.Base;
 import processing.app.Preferences;
-import processing.app.exec.LineProcessor;
-import processing.app.exec.ProcessHelper;
-import processing.app.exec.ProcessRegistry;
-import processing.app.exec.ProcessResult;
-import processing.app.exec.StreamPump;
+import processing.app.exec.*;
+
 import processing.core.PApplet;
+
 
 class EmulatorController {
   public static enum State {
     NOT_RUNNING, WAITING_FOR_BOOT, RUNNING
   }
 
-  public static EmulatorController getInstance() {
-    return INSTANCE;
-  }
-
-  private static final EmulatorController INSTANCE = new EmulatorController();
-
   private volatile State state = State.NOT_RUNNING;
+
 
   public State getState() {
     return state;
   }
 
+  
   private void setState(final State state) {
     if (processing.app.Base.DEBUG) {
       //System.out.println("Emulator state: " + state);
@@ -36,6 +30,7 @@ class EmulatorController {
     }
     this.state = state;
   }
+  
 
   /**
    * Blocks until emulator is running, or some catastrophe happens.
@@ -163,4 +158,16 @@ class EmulatorController {
       System.err.println("Interrupted while waiting for emulator to launch.");
     }
   }
+
+  
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  
+  // whoever called them "design patterns" certainly wasn't a f*king designer.
+  
+  public static EmulatorController getInstance() {
+    return INSTANCE;
+  }
+
+  private static final EmulatorController INSTANCE = new EmulatorController();
 }
