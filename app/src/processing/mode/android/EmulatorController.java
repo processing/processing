@@ -2,9 +2,13 @@ package processing.mode.android;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+
+import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.exec.LineProcessor;
+import processing.app.exec.ProcessHelper;
 import processing.app.exec.ProcessRegistry;
+import processing.app.exec.ProcessResult;
 import processing.app.exec.StreamPump;
 import processing.core.PApplet;
 
@@ -57,10 +61,13 @@ class EmulatorController {
       "-no-boot-anim"
     };
     //System.err.println("EmulatorController: Launching emulator");
-    //System.out.println(processing.core.PApplet.join(cmd, " "));
+    if (Base.DEBUG) {
+      System.out.println(processing.core.PApplet.join(cmd, " "));
+    }
+    //ProcessResult adbResult = new ProcessHelper(adbCmd).execute();
     final Process p = Runtime.getRuntime().exec(cmd);
     ProcessRegistry.watch(p);
-    new StreamPump(p.getInputStream(), "emulator: ").addTarget(System.out).start();
+//    new StreamPump(p.getInputStream(), "emulator: ").addTarget(System.out).start();
 
     // if we've gotten this far, then we've at least succeeded in finding and
     // beginning execution of the emulator, so we are now officially "Launched"
@@ -121,8 +128,9 @@ class EmulatorController {
             }
           }
           System.err.println("EmulatorController: Emulator never booted. " + state);
-        } catch (final Exception e) {
-          System.err.println("While waiting for emulator to boot " + e);
+        } catch (Exception e) {
+          System.err.println("Exception while waiting for emulator to boot:");
+          e.printStackTrace();
           p.destroy();
         } finally {
           latch.countDown();
@@ -132,24 +140,23 @@ class EmulatorController {
     new Thread(new Runnable() {
       public void run() {
         try {
-          try {
-            p.waitFor();
-            //            final int result = p.waitFor();
-            //            System.err
-            //                .println("Emulator process exited "
-            //                    + ((result == 0) ? "normally" : " with status " + result)
-            //                    + ".");
-          } catch (final InterruptedException e) {
-            System.err.println("Emulator was interrupted.");
-          } finally {
-            p.destroy();
-            ProcessRegistry.unwatch(p);
+          final int result = p.waitFor();
+          // On Windows (as of SDK tools 15), emulator.exe process will terminate
+          // immediately, even though the emulator itself is launching correctly.
+          // However on OS X and Linux the process will stay open.
+          if (result != 0) {
+            System.err.println("Emulator process exited with status " + result + ".");
+            setState(State.NOT_RUNNING);
           }
-        } finally {
+        } catch (InterruptedException e) {
+          System.err.println("Emulator was interrupted.");
           setState(State.NOT_RUNNING);
+        } finally {
+          p.destroy();
+          ProcessRegistry.unwatch(p);
         }
       }
-    }, "EmulatorController: Process manager").start();
+    }, "EmulatorController: emulator process waitFor()").start();
     try {
       latch.await();
     } catch (final InterruptedException drop) {
