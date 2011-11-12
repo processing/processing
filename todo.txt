@@ -1,4 +1,6 @@
 0204 pde
+X Doc comments not being properly terminated in export of applet
+X   http://code.google.com/p/processing/issues/detail?id=877
 
 
 _ update to Java 6u29 for Linux and Windows (OS X now updated)
