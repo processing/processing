@@ -122,22 +122,22 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   // broken out because of subclassing for opengl
   protected void allocate() {
-//    System.out.println("PGraphicsJava2D allocate() " + width + " " + height);
-//    System.out.println("allocate " + Thread.currentThread().getName());
-
     // Tried this with RGB instead of ARGB for the primarySurface version, 
     // but didn't see any performance difference (OS X 10.6, Java 6u24).
     // For 0196, also attempted RGB instead of ARGB, but that causes 
     // strange things to happen with blending.
-    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+//    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     if (primarySurface) {
-//      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-//      offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+      // Needs to be RGB otherwise there's a major performance hit [0204]
+      // http://code.google.com/p/processing/issues/detail?id=729
+      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
       offscreen = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) offscreen.getGraphics();
     } else {
-//      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-      // if the buffer's offscreen anyway, no need for the extra offscreen buffer
+      // Since this buffer's offscreen anyway, no need for the extra offscreen 
+      // buffer. However, unlike the primary surface, this feller needs to be 
+      // ARGB so that blending ("alpha" compositing) will work properly. 
+      image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       g2 = (Graphics2D) image.getGraphics();
     }
 
