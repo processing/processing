@@ -84,7 +84,7 @@ public class Runner implements MessageConsumer {
 //  private String appletClassName;
 
 
-  public Runner(JavaBuild build, RunnerListener listener) {
+  public Runner(JavaBuild build, RunnerListener listener) throws SketchException {
     this.listener = listener;
 //    this.sketch = sketch;
     this.build = build;
@@ -93,6 +93,14 @@ public class Runner implements MessageConsumer {
       this.editor = (Editor) listener;
 //    } else {
 //      System.out.println("actually it's a " + listener.getClass().getName());
+    }
+
+    // Make sure all the imported libraries will actually run with this setup.
+    int bits = Base.getNativeBits();
+    for (Library library : build.getImportedLibraries()) {
+      if (!library.supportsArch(PApplet.platform, bits)) {
+        throw new SketchException(library.getName() + " does not run in " + bits + "-bit mode.");
+      }
     }
   }
 
@@ -281,7 +289,7 @@ public class Runner implements MessageConsumer {
         "java -Xrunjdwp:transport=dt_shmem,address=" + addr + ",suspend=y ";
     } else if (Base.isMacOS()) {
       commandArgs =
-        "java -d" + Preferences.get("run.options.bits") +  
+        "java -d" + Base.getNativeBits() + //Preferences.get("run.options.bits") +  
         " -Xrunjdwp:transport=dt_socket,address=" + addr + ",suspend=y ";
     }
 

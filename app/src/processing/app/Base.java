@@ -1644,6 +1644,12 @@ public class Base {
     return PConstants.platformNames[PApplet.platform];
   }
 
+
+  /**
+   * Return whether sketches will run as 32- or 64-bits. On Linux and Windows, 
+   * this is the bit depth of the machine, while on OS X it's determined by the
+   * setting from preferences, since both 32- and 64-bit are supported.
+   */
   static public int getNativeBits() {
     if (Base.isMacOS()) {
       return Preferences.getInteger("run.options.bits");
