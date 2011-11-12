@@ -94,7 +94,7 @@ class Devices {
     }
 //    System.out.println("no emu found");
 
-    final EmulatorController emuController = EmulatorController.getInstance();
+    EmulatorController emuController = EmulatorController.getInstance();
 //    System.out.println("checking emulator state");
     if (emuController.getState() == State.NOT_RUNNING) {
       try {
