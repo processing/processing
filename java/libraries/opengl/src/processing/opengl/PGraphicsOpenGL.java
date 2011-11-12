@@ -2816,8 +2816,7 @@ public class PGraphicsOpenGL extends PGraphics {
             PTexture tex = getTexture(images[t]); 
             if (tex == null) {
               break;
-            }
-            PApplet.println("has texture");              
+            }              
             gl.glEnable(tex.glTarget);            
             gl.glActiveTexture(GL.GL_TEXTURE0 + t);
             gl.glBindTexture(tex.glTarget, tex.glID);
@@ -6403,7 +6402,7 @@ return width * (1 + ox) / 2.0f;
 
   public void updatePixels() {
     // flip vertically (opengl stores images upside down),
-
+    
     int index = 0;
     int yindex = (height - 1) * width;
     for (int y = 0; y < height / 2; y++) {
@@ -6436,9 +6435,9 @@ return width * (1 + ox) / 2.0f;
       }
       yindex -= width * 2;
     }
-
+    
+    pixelBuffer.rewind();    
     pixelBuffer.put(pixels);
-    pixelBuffer.rewind();
     
     boolean outsideDraw = primarySurface && !drawing;
     if (outsideDraw) {
@@ -6495,7 +6494,7 @@ return width * (1 + ox) / 2.0f;
     if (width == 0 || height == 0) return;
     if (texture == null) {
       PTexture.Parameters params = PTexture.newParameters(ARGB, sampling);
-      texture = new PTexture(parent, width, height, params);
+      texture = new PTexture(parent, width, height, params);      
       texture.setFlippedY(true);
       this.setCache(ogl, texture);
       this.setParams(ogl, params);
@@ -6696,8 +6695,7 @@ return width * (1 + ox) / 2.0f;
    * 
    */
   public void set(int x, int y, PImage source) {
-    // We can safely assume that the PImage has a valid associated texture.
-    PTexture tex = (PTexture)source.getCache(ogl);
+    PTexture tex = getTexture(source);
     if (tex != null) {
       int w = source.width; 
       int h = source.height;
@@ -6715,7 +6713,7 @@ return width * (1 + ox) / 2.0f;
       
       // The crop region and draw rectangle are given like this to take into account
       // inverted y-axis in Processin with respect to OpenGL.
-      drawTexture(tex, 0, h, w, -h, x, height - y, w, h);
+      drawTexture(tex, 0, 0, w, h, x, height - y, w, -h);
       
       if (notCurrent) {
         popFramebuffer();
@@ -7382,7 +7380,8 @@ return width * (1 + ox) / 2.0f;
   /** 
    * Utility function to copy buffer to texture.
    */
-  protected void copyToTexture(PTexture tex, IntBuffer buffer, int x, int y, int w, int h) {
+  protected void copyToTexture(PTexture tex, IntBuffer buffer, int x, int y, int w, int h) {    
+    buffer.rewind();
     gl.glEnable(tex.glTarget);
     gl.glBindTexture(tex.glTarget, tex.glID);    
     gl.glTexSubImage2D(tex.glTarget, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
