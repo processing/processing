@@ -1,4 +1,5 @@
 0204 android 
+X fix problem with android emulator launching on Windows
 
 
 _ if a sketch asks for android mode but it's not available
