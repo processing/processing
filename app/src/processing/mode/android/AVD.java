@@ -12,12 +12,12 @@ import processing.core.PApplet;
 public class AVD {
   static private final String AVD_CREATE_PRIMARY =
     "An error occurred while running “android create avd”";
-  
-  static private final String AVD_CREATE_SECONDARY = 
+
+  static private final String AVD_CREATE_SECONDARY =
     "The default Android emulator could not be set up. Make sure<br>" +
     "that the Android SDK is installed properly, and that the<br>" +
     "Android and Google APIs are installed for level " + AndroidBuild.sdkVersion + ".<br>" +
-    "(Between you and me, occasionally, this error is a red herring,<br>" + 
+    "(Between you and me, occasionally, this error is a red herring,<br>" +
     "and your sketch may be launching shortly.)";
 
   static private final String AVD_LOAD_PRIMARY =
@@ -27,11 +27,11 @@ public class AVD {
     "or that the Processing AVD should be deleted (it will<br>" +
     "automatically re-created the next time you run Processing).<br>" +
     "Open the Android SDK manager to check for any errors.";
-  
-  static private final String AVD_TARGET_PRIMARY = 
+
+  static private final String AVD_TARGET_PRIMARY =
     "The Google APIs are not installed properly";
   static private final String AVD_TARGET_SECONDARY =
-    "Please re-read the installation instructions for Processing<br>" + 
+    "Please re-read the installation instructions for Processing<br>" +
     "found at http://android.processing.org and try again.";
 
   static final String DEFAULT_SKIN = "WVGA800";
@@ -48,7 +48,7 @@ public class AVD {
             "Processing-0" + Base.REVISION,
             "Google Inc.:Google APIs:" + AndroidBuild.sdkVersion);
             //AndroidBuild.sdkTarget);
-  
+
   static ArrayList<String> avdList;
   static ArrayList<String> badList;
 //  static ArrayList<String> skinList;
@@ -112,7 +112,7 @@ public class AVD {
     }
     return false;
   }
-  
+
 
   /** Return true if this AVD was on the bad list. */
   protected boolean badness() {
@@ -133,10 +133,10 @@ public class AVD {
       "-c", "64M",
       "-s", DEFAULT_SKIN
     };
-    
+
     // Set the list to null so that exists() will check again
     avdList = null;
-    
+
     final ProcessHelper p = new ProcessHelper(params);
     try {
       final ProcessResult createAvdResult = p.execute();
@@ -156,7 +156,7 @@ public class AVD {
       }
       //System.err.println(createAvdResult);
     } catch (final InterruptedException ie) { }
-    
+
     return false;
   }
 
