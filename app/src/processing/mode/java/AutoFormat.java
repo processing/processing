@@ -53,7 +53,8 @@ public class AutoFormat implements Formatter {
   private boolean EOF;
   private boolean a_flg, e_flg, if_flg, s_flag, q_flg;
   private boolean s_if_flg[];
-  private int pos, lineNumber;
+  private int pos;
+//  private int lineNumber;
   private int s_level[];
   private int c_level;
   private int sp_flg[][];
@@ -82,7 +83,7 @@ public class AutoFormat implements Formatter {
       buf.append(c = next());
       while ((c != '/')) {
         if (c == '\n') {
-          lineNumber++;
+//          lineNumber++;
           writeIndentedComment();
           s_flag = true;
         }
@@ -192,7 +193,7 @@ public class AutoFormat implements Formatter {
       buf.append(c);
       c = next();
     }
-    lineNumber++;
+//    lineNumber++;
     writeIndentedLine();
     s_flag = true;
   }
@@ -298,7 +299,7 @@ public class AutoFormat implements Formatter {
     if (c == '\n') {
       // eat it
       next();
-      lineNumber++;
+//      lineNumber++;
       tabs = savedTabs;
       return true;
     }
@@ -332,7 +333,7 @@ public class AutoFormat implements Formatter {
     result.setLength(0);
     indentValue = Preferences.getInteger("editor.tabs.size");
 
-    lineNumber = 0;
+//    lineNumber = 0;
     q_flg = e_flg = a_flg = if_flg = false;
     s_flag = true;
     c_level = if_lev = level = paren = 0;
@@ -349,7 +350,7 @@ public class AutoFormat implements Formatter {
     s_tabs = new int[20][10];
     pos = -1;
     chars = cleanText.toCharArray();
-    lineNumber = 1;
+//    lineNumber = 1;
 
     EOF = false; // set in next() when EOF
 
@@ -385,7 +386,7 @@ public class AutoFormat implements Formatter {
         break;
 
       case '\n':
-        lineNumber++;
+//        lineNumber++;
         if (EOF) {
           break;
         }
@@ -499,7 +500,7 @@ public class AutoFormat implements Formatter {
             buf.append(cc = next());
           }
           if (cc == '\n') {
-            lineNumber++;
+//            lineNumber++;
             writeIndentedLine();
             s_flag = true;
           }
