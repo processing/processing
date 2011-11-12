@@ -2,7 +2,12 @@
 X Abnormal high Java CPU usage at empty sketch with draw() 
 X   http://code.google.com/p/processing/issues/detail?id=729
 X   https://forum.processing.org/topic/absurd-java-cpu-usage-at-empty-sketch-with-draw
+X "Framingham" example has BufferOverflowException
+X   http://code.google.com/p/processing/issues/detail?id=900
 
+
+_ consider using BufferStrategy to improve performance
+_   there are more improvements to be made ala issue #729
 
 _ add inputPath() and outputPath() -> sketch folder or sd card
 _   or should this just be a change to sketchPath() on Android?

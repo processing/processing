@@ -1,12 +1,9 @@
 0204 pde
 X Doc comments not being properly terminated in export of applet
 X   http://code.google.com/p/processing/issues/detail?id=877
-
-
-_ update to Java 6u29 for Linux and Windows (OS X now updated)
-
-_ make note of when library is not available (serial) with error msg
-_   i.e. if running in 64-bit mode on OS X, can't do serial
+X make note of when library is not available (serial) with error msg
+X   i.e. if running in 64-bit mode on OS X, can't do serial
+X update to Java 6u29 for Linux and Windows (OS X now updated)
 
 _ Commenting via menu or shortcut does not set sketch to "need save"
 _   http://code.google.com/p/processing/issues/detail?id=860
