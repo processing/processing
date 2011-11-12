@@ -755,7 +755,6 @@ public class JavaBuild {
       // regex would fix this too, please submit one if that's your thing.)
       // http://code.google.com/p/processing/issues/detail?id=877
       found = found.substring(0, found.indexOf("*/"));
-      System.out.println(found);
       String[] pieces = PApplet.split(found, '\n');
       for (String line : pieces) {
         // if this line starts with * characters, remove 'em
