@@ -45,11 +45,9 @@ class Devices {
     System.out.flush();
     try {
       AndroidSDK.runADB("kill-server");
-      //      System.err.println("OK.");
     } catch (final Exception e) {
-      System.err.println("failed.");
-      System.err.println();
-      e.printStackTrace(System.err);
+      System.err.println("Devices.killAdbServer() failed.");
+      e.printStackTrace();
     }
   }
 
@@ -60,23 +58,17 @@ class Devices {
     }
 //    killAdbServer();
     Runtime.getRuntime().addShutdownHook(
-      new Thread("AndroidEnvironment Shutdown") {
-        @Override
+      new Thread("processing.mode.android.Devices Shutdown") {
         public void run() {
-          shutdown();
+          //System.out.println("Shutting down Devices");
+          //System.out.flush();
+          for (Device device : new ArrayList<Device>(devices.values())) {
+            device.shutdown();
+          }
+          // Don't do this, it'll just make Eclipse and others freak out.
+          //killAdbServer();
         }
       });
-  }
-
-
-  private void shutdown() {
-//    System.out.println("Shutting down Devices");
-//    System.out.flush();
-    for (Device device : new ArrayList<Device>(devices.values())) {
-      device.shutdown();
-    }
-    // Don't do this, it'll just make Eclipse and others freak out.
-//    killAdbServer();
   }
 
 
