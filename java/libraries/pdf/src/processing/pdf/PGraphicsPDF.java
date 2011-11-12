@@ -635,10 +635,9 @@ public class PGraphicsPDF extends PGraphicsJava2D {
    * List the fonts known to the PDF renderer. This is like PFont.list(),
    * however not all those fonts are available by default.
    */
-  @SuppressWarnings("unchecked")
   static public String[] listFonts() {
     if (fontList == null) {
-      HashMap<?,?> map = getMapper().getAliases();
+      HashMap<?, ?> map = getMapper().getAliases();
 //      Set entries = map.entrySet();
 //      fontList = new String[entries.size()];
       fontList = new String[map.size()];
