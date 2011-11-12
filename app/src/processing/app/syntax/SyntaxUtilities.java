@@ -124,36 +124,30 @@ public class SyntaxUtilities
   public static int paintSyntaxLine(Segment line, Token tokens,
                                     SyntaxStyle[] styles,
                                     TabExpander expander, Graphics gfx,
-                                    int x, int y)
-  {
+                                    int x, int y) {
     Font defaultFont = gfx.getFont();
     Color defaultColor = gfx.getColor();
 
-    int offset = 0;
-    for(;;)
-      {
-        byte id = tokens.id;
-        if(id == Token.END)
-          break;
+    for (;;) {
+      byte id = tokens.id;
+      if(id == Token.END)
+        break;
 
-        int length = tokens.length;
-        if(id == Token.NULL)
-          {
-            if(!defaultColor.equals(gfx.getColor()))
-              gfx.setColor(defaultColor);
-            if(!defaultFont.equals(gfx.getFont()))
-              gfx.setFont(defaultFont);
-          }
-        else
-          styles[id].setGraphicsFlags(gfx,defaultFont);
-
-        line.count = length;
-        x = Utilities.drawTabbedText(line,x,y,gfx,expander,0);
-        line.offset += length;
-        offset += length;
-
-        tokens = tokens.next;
+      int length = tokens.length;
+      if (id == Token.NULL) {
+        if(!defaultColor.equals(gfx.getColor()))
+          gfx.setColor(defaultColor);
+        if(!defaultFont.equals(gfx.getFont()))
+          gfx.setFont(defaultFont);
+      } else {
+        styles[id].setGraphicsFlags(gfx,defaultFont);
       }
+      line.count = length;
+      x = Utilities.drawTabbedText(line,x,y,gfx,expander,0);
+      line.offset += length;
+
+      tokens = tokens.next;
+    }
 
     return x;
   }

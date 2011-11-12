@@ -1236,7 +1236,7 @@ public class JavaBuild {
       String includes = Base.contentsToClassPath(sketch.getCodeFolder());
       // Use tokens to get rid of extra blanks, which causes huge exports
       String[] codeList = PApplet.splitTokens(includes, File.pathSeparator);
-      String cp = "";
+//      String cp = "";
       for (int i = 0; i < codeList.length; i++) {
         if (codeList[i].toLowerCase().endsWith(".jar") ||
             codeList[i].toLowerCase().endsWith(".zip")) {
@@ -1245,7 +1245,7 @@ public class JavaBuild {
           Base.copyFile(exportFile, new File(jarFolder, exportFilename));
           jarListVector.add(exportFilename);
         } else {
-          cp += codeList[i] + File.pathSeparator;
+//          cp += codeList[i] + File.pathSeparator;
         }
       }
 //      packClassPathIntoZipFile(cp, zos, zipFileContents);  // this was double adding the code folder prior to 2.0a2

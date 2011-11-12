@@ -3482,7 +3482,7 @@ return width * (1 + ox) / 2.0f;
     int vc = shapeLast - shapeFirst;
     int count = 2 * vc; // complex polygon detection
 
-    for (int m = 0, v = vc - 1; vc > 2;) {
+    for (int v = vc - 1; vc > 2;) {
       boolean snip = true;
 
       // if we start over again, is a complex polygon
@@ -3553,8 +3553,6 @@ return width * (1 + ox) / 2.0f;
 
       if (snip) {
         addTriangle(vertexOrder[u], vertexOrder[v], vertexOrder[w]);
-
-        m++;
 
         // remove v from remaining polygon
         for (int s = v, t = v + 1; t < vc; s++, t++) {

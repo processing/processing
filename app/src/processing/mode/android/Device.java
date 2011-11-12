@@ -19,12 +19,15 @@ import processing.core.PApplet;
 import processing.mode.android.LogEntry.Severity;
 
 
-class Device implements DeviceProperties {
+class Device {
   private final Devices env;
   private final String id;
   private final Set<Integer> activeProcesses = new HashSet<Integer>();
   private final Set<DeviceListener> listeners = 
     Collections.synchronizedSet(new HashSet<DeviceListener>());
+  
+//  public static final String APP_STARTED = "android.device.app.started";
+//  public static final String APP_ENDED = "android.device.app.ended";
 
   // mutable state
   private Process logcat;
