@@ -236,7 +236,6 @@ public class PApplet extends Applet
    * inside setup() is a joke, since it's long since the AWT has been invoked.
    */
   static public boolean useQuartz = true;
-  //static public String useQuartz = "true";
 
   /**
    * Modifier flags for the shortcut key used to trigger menus.
@@ -973,11 +972,11 @@ public class PApplet extends Applet
     int count;
     Object objects[];
     Method methods[];
-
+    Object[] convArgs = new Object[] { };
 
     // convenience version for no args
     public void handle() {
-      handle(new Object[] { });
+      handle(convArgs);
     }
 
     public void handle(Object oargs[]) {
