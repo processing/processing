@@ -1,4 +1,7 @@
 0204 core
+X Abnormal high Java CPU usage at empty sketch with draw() 
+X   http://code.google.com/p/processing/issues/detail?id=729
+X   https://forum.processing.org/topic/absurd-java-cpu-usage-at-empty-sketch-with-draw
 
 
 _ add inputPath() and outputPath() -> sketch folder or sd card
@@ -147,9 +150,6 @@ X remove textMode(SCREEN) references
 
 
 2.0
-_ Abnormal high Java CPU usage at empty sketch with draw() 
-_   http://code.google.com/p/processing/issues/detail?id=729
-_   https://forum.processing.org/topic/absurd-java-cpu-usage-at-empty-sketch-with-draw
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
 _ text using textMode(SCREEN) not displayed in Processing 1.5.1
 _   http://code.google.com/p/processing/issues/detail?id=741
