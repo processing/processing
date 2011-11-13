@@ -25,7 +25,8 @@ public abstract class Mode {
 //  protected Tool formatter;
   
   // maps imported packages to their library folder
-  protected HashMap<String, Library> importToLibraryTable;
+//  protected HashMap<String, Library> importToLibraryTable;
+  protected HashMap<String, ArrayList<Library>> importToLibraryTable;
 
   // these menus are shared so that they needn't be rebuilt for all windows
   // each time a sketch is created, renamed, or moved.
@@ -115,7 +116,8 @@ public abstract class Mode {
 //    System.out.println("rebuildLibraryList()");
 
     // reset the table mapping imports to libraries
-    importToLibraryTable = new HashMap<String, Library>();
+//    importToLibraryTable = new HashMap<String, Library>();
+    importToLibraryTable = new HashMap<String, ArrayList<Library>>();
 
     coreLibraries = Library.list(librariesFolder);
     contribLibraries = Library.list(base.getSketchbookLibrariesFolder());
@@ -129,8 +131,28 @@ public abstract class Mode {
   }
   
   
-  public Library getLibrary(String name) {
-    return importToLibraryTable.get(name);
+  public Library getLibrary(String pkgName) throws SketchException {
+    ArrayList<Library> libraries = importToLibraryTable.get(pkgName);
+    if (libraries == null) {
+      return null;
+
+    } else if (libraries.size() > 1) {
+      String primary = "More than one library is competing for this sketch.";
+      String secondary = "The import " + pkgName + " points to multiple libraries:<br>";      
+      for (Library library : libraries) {
+        String location = library.getPath();
+        if (location.startsWith(getLibrariesFolder().getAbsolutePath())) {
+          location = "part of Processing";
+        }
+        secondary += "<b>" + library.getName() + "</b> (" + location + ")<br>";
+      }
+      secondary += "Extra libraries need to be removed before this sketch can be used."; 
+      Base.showWarningTiered("Duplicate Library Problem", primary, secondary, null);
+      throw new SketchException("Duplicate libraries found for " + pkgName + ".");
+    
+    } else {
+      return libraries.get(0);
+    }
   }
 
   
