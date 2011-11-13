@@ -706,8 +706,7 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected void defaultSettings() {  // ignore
 //    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
-
-    noSmooth();  // 0149
+    smooth();  // 2.0a5
 
     colorMode(RGB, 255);
     fill(255);
@@ -721,9 +720,6 @@ public class PGraphics extends PImage implements PConstants {
 
     // init shape stuff
     shape = 0;
-
-    // init matrices (must do before lights)
-    //matrixStackDepth = 0;
 
     rectMode(CORNER);
     ellipseMode(DIAMETER);

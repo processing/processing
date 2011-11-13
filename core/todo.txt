@@ -4,6 +4,23 @@ X   http://code.google.com/p/processing/issues/detail?id=729
 X   https://forum.processing.org/topic/absurd-java-cpu-usage-at-empty-sketch-with-draw
 X "Framingham" example has BufferOverflowException
 X   http://code.google.com/p/processing/issues/detail?id=900
+X enable smooth() by default
+X   better to learn noSmooth() later
+
+earlier
+o text using textMode(SCREEN) not displayed in Processing 1.5.1
+o   http://code.google.com/p/processing/issues/detail?id=741
+X remove textMode(SCREEN)
+o   is it possible to do decent vlw text with JAVA2D and OPENGL?
+o optimize textMode(MODEL) with textMode(SCREEN)
+o   in PGraphics and PGraphics3, check to see if matrix is within epsilon
+o   of one of the rotation matrices (many fewer steps) 
+o   if identity, or just translate, or a rotate, make OBJECT into SCREEN
+o textMode(SCREEN) needs to be faster
+o   need flat image implementation that takes no transforms
+o   along with 90, 180 and 270 versions of it as well
+o   tie to glDrawPixels.. how to clear matrix properly for that?
+X   maybe just disable this for JAVA2D cuz it's silly?
 
 
 _ consider using BufferStrategy to improve performance
@@ -42,9 +59,7 @@ _   linux present mode isn't working properly
 _ if save() returns boolean, does saveFrame()?
 _   also need to copy this over to android
 
-_ enable smooth() by default
-_   better to learn noSmooth() later
-_   disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
+_ disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
 _ document how things are sometimes null in XML
 _   test xml examples to see if they break
 
@@ -156,8 +171,6 @@ X remove textMode(SCREEN) references
 
 2.0
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
-_ text using textMode(SCREEN) not displayed in Processing 1.5.1
-_   http://code.google.com/p/processing/issues/detail?id=741
 _ thread() causes weird flickering
 _   http://code.google.com/p/processing/issues/detail?id=742
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
@@ -271,12 +284,12 @@ _   http://code.google.com/p/processing/issues/detail?id=233
 _ provide a way to clear the PGraphics with plain alpha
 _ add breakShape to the public API 
 _   or handle differently in general.. nested beginPath() calls?
-_ remove textMode(SCREEN)
-_   is it possible to do decent vlw text with JAVA2D and OPENGL?
 
 _ smooth() not working with applets an createGraphics(JAVA2D)
 _   but works fine with applications
 _   need an example of this
+_   this might be a problem of the offscreen surface as RGB not RGBA
+_     but that's been changed in more recent releases
 
 looping/events
 _ key and mouse events delivered out of order
@@ -403,10 +416,6 @@ X   also puts up a weird error message about translate() in 2D mode
 _ make screen space fonts use get/set as well?
 _   too much to debug on their own
 _   unfortunately tint not set with setImpl, but...
-_ optimize textMode(MODEL) with textMode(SCREEN)
-_   in PGraphics and PGraphics3, check to see if matrix is within epsilon
-_   of one of the rotation matrices (many fewer steps) 
-_   if identity, or just translate, or a rotate, make OBJECT into SCREEN
 _ not having kerning really blows
 _   could this be pulled from the OpenType font stuff? 
 _   it could be placed at the end of the file
@@ -440,11 +449,6 @@ CORE / PGraphicsJava2D
 
 _ some optimizations from zach
 _   http://processing.org/discourse/yabb_beta/YaBB.cgi?board=os_core_pde;action=display;num=1121670787
-_ textMode(SCREEN) needs to be faster
-_   need flat image implementation that takes no transforms
-_   along with 90, 180 and 270 versions of it as well
-_   tie to glDrawPixels.. how to clear matrix properly for that?
-_   maybe just disable this for JAVA2D cuz it's silly?
 _ catch sun.dc.pr.PRException?
 _   http://code.google.com/p/processing/issues/detail?id=39
 

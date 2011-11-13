@@ -663,9 +663,7 @@ public class PGraphics extends PImage implements PConstants {
    * This is currently called by checkSettings(), during beginDraw().
    */
   protected void defaultSettings() {  // ignore
-//    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
-
-    noSmooth();  // 0149
+    smooth();  // 2.0a5
 
     colorMode(RGB, 255);
     fill(255);
