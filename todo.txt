@@ -5,10 +5,17 @@ X make note of when library is not available (serial) with error msg
 X   i.e. if running in 64-bit mode on OS X, can't do serial
 X update to Java 6u29 for Linux and Windows (OS X now updated)
 
-_ Commenting via menu or shortcut does not set sketch to "need save"
-_   http://code.google.com/p/processing/issues/detail?id=860
+fixed in 2.0a3
+X Commenting via menu or shortcut does not set sketch to "need save"
+X   http://code.google.com/p/processing/issues/detail?id=860
 
-_ move Movie Maker out to its own separate tool package
+fixed in 2.0a4
+X is there a better way to handle the data folder for apps?
+X   rather than adding it to the main zip file?
+X   otherwise ppl are copying really large files into a jar...
+
+
+_ move Movie Maker out to its own separate tool package (with separate build)
 _   http://code.google.com/p/processing/issues/detail?id=837
 
 _ don't show library conflict warning until someone tries to build 
@@ -30,12 +37,6 @@ _   http://code.google.com/p/processing/issues/detail?id=725
 
 _ renaming a normal tab to same name with ".java" fails with ".pde" version already exists
 _   http://code.google.com/p/processing/issues/detail?id=776
-
-./configure --disable-werror --target=i686-pc-mingw32
-./configure --disable-werror --target=i686-pc-mingw32 --host=i686-pc-darwin
-./configure --disable-werror --target=i686-pc-mingw32 --host=i686-apple-darwin10
-works: CXX='g++ -m32' CC='gcc -m32' CFLAGS=-m32 CXXFLAGS=-m32 LDFLAGS=-m32 ./configure --disable-werror --target=i686-pc-mingw32
-CXX='g++ -m32' CC='gcc -m32' CFLAGS=-m32 CXXFLAGS=-m32 LDFLAGS=-m32 ./configure --disable-werror --target=i686-pc-mingw32 --with-gnu-ld
 
 _ casey: recent sketches is a yes, window menu could go either way
 window menu:
@@ -65,12 +66,9 @@ _ problem with startup on vista 64
 _   try this with windows 7 64-bit (install on laptop?)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1246
 
-_ switch to a non-modified version of the launcher exe
-_   move the launcher to jsmooth or something like that?
-
-_ is there a better way to handle the data folder for apps?
-_   rather than adding it to the main zip file?
-_   otherwise ppl are copying really large files into a jar...
+_ switch to a non-modified version of launch4j
+_ switch the exported launcher to use launch4j as well? 
+X   figured out how to do Intel build for OS X
 
 decisions
 _ kill external editor (for all its quirks) in favor of command line? 
