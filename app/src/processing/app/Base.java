@@ -162,37 +162,36 @@ public class Base {
     Preferences.init(null);
 
 //    String filename = args.length > 1 ? args[0] : null;
-    if (SingleInstance.exists(args)) {
-      return;
-    }
-    SingleInstance.createServer(platform);
+    if (!SingleInstance.exists(args)) {
+      SingleInstance.createServer(platform);
 
-    // Set the look and feel before opening the window
-    try {
-      platform.setLookAndFeel();
-    } catch (Exception e) {
-      String mess = e.getMessage();
-      if (mess.indexOf("ch.randelshofer.quaqua.QuaquaLookAndFeel") == -1) {
-        System.err.println("Non-fatal error while setting the Look & Feel.");
-        System.err.println("The error message follows, however Processing should run fine.");
-        System.err.println(mess);
+      // Set the look and feel before opening the window
+      try {
+        platform.setLookAndFeel();
+      } catch (Exception e) {
+        String mess = e.getMessage();
+        if (mess.indexOf("ch.randelshofer.quaqua.QuaquaLookAndFeel") == -1) {
+          System.err.println("Non-fatal error while setting the Look & Feel.");
+          System.err.println("The error message follows, however Processing should run fine.");
+          System.err.println(mess);
+        }
       }
-    }
 
-    // Create a location for untitled sketches
-    try {
-      untitledFolder = Base.createTempFolder("untitled", "sketches");
-      untitledFolder.deleteOnExit();
-    } catch (IOException e) {
-      //e.printStackTrace();
-      Base.showError("Trouble without a name",
-                     "Could not create a place to store untitled sketches.\n" +
-                     "That's gonna prevent us from continuing.", e);
-    }
+      // Create a location for untitled sketches
+      try {
+        untitledFolder = Base.createTempFolder("untitled", "sketches");
+        untitledFolder.deleteOnExit();
+      } catch (IOException e) {
+        //e.printStackTrace();
+        Base.showError("Trouble without a name",
+                       "Could not create a place to store untitled sketches.\n" +
+                       "That's gonna prevent us from continuing.", e);
+      }
 
 //  System.out.println("about to create base...");
-    new Base(args);
+      new Base(args);
 //  System.out.println("done creating base...");
+    }
   }
 
 

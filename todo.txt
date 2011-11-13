@@ -7,9 +7,10 @@ X update to Java 6u29 for Linux and Windows (OS X now updated)
 X don't show library conflict warning until someone tries to build 
 X   with code that actually calls on one of those packages
 X   too many people seem to think this is an error
-_ work on code to quit if multiple instances are running
-_   need to bring the other instance to front
-_   and/or open a new window
+X work on code to quit if multiple instances are running
+X   need to bring the other instance to front
+X   and/or open a new window
+X fix bug with 'base' not getting set in the Mac OS X platform class
 
 fixed in 2.0a3
 X Commenting via menu or shortcut does not set sketch to "need save"
@@ -27,16 +28,7 @@ X write quicktime uncompressed (w/o qtjava)
 X   wrapped into the new moviemaker tool
 X   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
 
-
-_ move Movie Maker out to its own separate tool package (with separate build)
-_   http://code.google.com/p/processing/issues/detail?id=837
-
-_ bad tool brings down the environment
-_   http://code.google.com/p/processing/issues/detail?id=798
-
-_ --bgcolor shouldn't be in main() unless 'present' is turned on
-_ also add option for FSEM or not
-
+maybe fixed
 _ library imports failing for libs that define the same packages in 1.5.1
 _   http://code.google.com/p/processing/issues/detail?id=725
 
@@ -48,6 +40,16 @@ window menu:
 http://code.google.com/p/processing/issues/detail?id=545
 recent sketches:
 http://code.google.com/p/processing/issues/detail?id=188
+
+
+_ move Movie Maker out to its own separate tool package (with separate build)
+_   http://code.google.com/p/processing/issues/detail?id=837
+
+_ bad tool brings down the environment
+_   http://code.google.com/p/processing/issues/detail?id=798
+
+_ --bgcolor shouldn't be in main() unless 'present' is turned on
+_ also add option for FSEM or not
 
 _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions

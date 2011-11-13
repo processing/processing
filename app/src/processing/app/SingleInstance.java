@@ -71,20 +71,29 @@ public class SingleInstance {
               Socket s = ss.accept();  // blocks (sleeps) until connection
               final BufferedReader reader = PApplet.createReader(s.getInputStream());
               String receivedKey = reader.readLine();
+              if (Base.DEBUG) {
+                System.out.println("key is " + key + ", received is " + receivedKey);
+                System.out.println("platform base is " + platform.base);
+                System.out.flush();
+              }
 
               if (platform.base != null) {
                 if (key.equals(receivedKey)) {
                   SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                       try {
+                        if (Base.DEBUG) System.out.println("about to read line");
                         String filename = reader.readLine();
                         if (filename != null) {
+                          if (Base.DEBUG) System.out.println("calling open with " + filename);
                           platform.base.handleOpen(filename);
                           // see if there is more than one file that was passed in 
                           while ((filename = reader.readLine()) != null) {
+                            if (Base.DEBUG) System.out.println("continuing to call open with " + filename);
                             platform.base.handleOpen(filename);
                           }
                         } else {
+                          if (Base.DEBUG) System.out.println("opening new empty sketch");
                           platform.base.handleNew();
                         }
                       } catch (IOException e) {
@@ -92,6 +101,8 @@ public class SingleInstance {
                       }
                     }
                   });
+                } else {
+                  if (Base.DEBUG) System.out.println("keys do not match");
                 }
               }
             } catch (IOException e) {
