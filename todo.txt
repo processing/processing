@@ -7,6 +7,9 @@ X update to Java 6u29 for Linux and Windows (OS X now updated)
 X don't show library conflict warning until someone tries to build 
 X   with code that actually calls on one of those packages
 X   too many people seem to think this is an error
+_ work on code to quit if multiple instances are running
+_   need to bring the other instance to front
+_   and/or open a new window
 
 fixed in 2.0a3
 X Commenting via menu or shortcut does not set sketch to "need save"
@@ -17,16 +20,19 @@ X is there a better way to handle the data folder for apps?
 X   rather than adding it to the main zip file?
 X   otherwise ppl are copying really large files into a jar...
 
+fixed earlier
+A need to get GLGraphics examples out of the video examples
+A   Examples > Video > GLGraphics
+X write quicktime uncompressed (w/o qtjava)
+X   wrapped into the new moviemaker tool
+X   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
+
 
 _ move Movie Maker out to its own separate tool package (with separate build)
 _   http://code.google.com/p/processing/issues/detail?id=837
 
 _ bad tool brings down the environment
 _   http://code.google.com/p/processing/issues/detail?id=798
-
-_ work on code to quit if multiple instances are running
-_   need to bring the other instance to front
-_   and/or open a new window
 
 _ --bgcolor shouldn't be in main() unless 'present' is turned on
 _ also add option for FSEM or not
@@ -47,9 +53,6 @@ _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions
 _ sketch.isReadOnly returns false for examples coming from multiple modes
 _   http://code.google.com/p/processing/issues/detail?id=734
-
-_ need to get GLGraphics examples out of the video examples
-_   Examples > Video > GLGraphics
 
 http://support.microsoft.com/kb/184082
 http://msdn.microsoft.com/en-us/library/cc144175%28v=VS.85%29.aspx
@@ -87,9 +90,6 @@ _ handleFindReference in Editor.java should be public for alternative modes (?)
 _   http://code.google.com/p/processing/issues/detail?id=713
 _ play button (and others) no longer highlighting
 _   http://code.google.com/p/processing/issues/detail?id=688
-
-_ write quicktime uncompressed (w/o qtjava)
-_   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
 
 frequent requests/projects
 _ nurbs or other architecture stuff

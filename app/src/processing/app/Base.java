@@ -25,7 +25,6 @@ package processing.app;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -162,15 +161,11 @@ public class Base {
     // run static initialization that grabs all the prefs
     Preferences.init(null);
 
-    String filename = args.length > 1 ? args[0] : null;
-    if (!(Preferences.get("server.port") == null)
-        && sendArgumentsToOtherInstance(filename, 1000)) {
+//    String filename = args.length > 1 ? args[0] : null;
+    if (SingleInstance.exists(args)) {
       return;
     }
-    createSingleInstanceServer();
-
-    // setup the theme coloring fun
-//    Theme.init();
+    SingleInstance.createServer(platform);
 
     // Set the look and feel before opening the window
     try {
@@ -200,82 +195,6 @@ public class Base {
 //  System.out.println("done creating base...");
   }
 
-  private static void createSingleInstanceServer() {
-    try {
-      final ServerSocket ss = new ServerSocket(0, 0,
-                                               InetAddress.getByName(null));
-      Preferences.set("server.port", "" + ss.getLocalPort());
-      final String key = "" + Math.random();
-      Preferences.set("server.key", key);
-      Preferences.save();
-
-      new Thread(new Runnable() {
-
-        public void run() {
-          while (true) {
-            try {
-              Socket s = ss.accept();
-              BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-              String receivedKey = br.readLine();
-
-              if (platform.base == null) continue;
-
-              if (key.equals(receivedKey)) {
-                final String filename = br.readLine();
-                SwingUtilities.invokeLater(new Runnable() {
-                  public void run() {
-                    if (filename != null) {
-                      platform.base.handleOpen(filename);
-                    } else {
-                      platform.base.handleNew();
-                    }
-                  };
-                });
-              }
-            } catch (IOException e) {
-            }
-          }
-        }
-      }).start();
-    } catch (IOException e) {
-    }
-  }
-
-  static private boolean sendArgumentsToOtherInstance(String filename,
-                                                      long timeout) {
-    try {
-      int port = Integer.parseInt(Preferences.get("server.port"));
-      String key = Preferences.get("server.key");
-
-      long endTime = System.currentTimeMillis() + timeout;
-
-      Socket socket = null;
-      while (socket == null && System.currentTimeMillis() < endTime) {
-        try {
-          socket = new Socket(InetAddress.getByName(null), port);
-        } catch (Exception ioe) {
-          try {
-            Thread.sleep(50);
-          } catch (InterruptedException ie) {
-            Thread.yield();
-          }
-        }
-      }
-
-      if (socket != null) {
-        BufferedWriter bw = new BufferedWriter(
-                                new OutputStreamWriter(socket.getOutputStream()));
-        bw.write(key + "\n");
-        if (filename != null) {
-          bw.write(filename + "\n");
-        }
-        bw.close();
-        return true;
-      }
-    } catch (IOException e) {
-    }
-    return false;
-  }
 
   public static void setCommandLine() {
     commandLine = true;
