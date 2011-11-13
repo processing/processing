@@ -22,6 +22,7 @@ o   along with 90, 180 and 270 versions of it as well
 o   tie to glDrawPixels.. how to clear matrix properly for that?
 X   maybe just disable this for JAVA2D cuz it's silly?
 
+_ add() to add things to lists, sum() for the math (sum is used less after all)
 
 _ consider using BufferStrategy to improve performance
 _   there are more improvements to be made ala issue #729

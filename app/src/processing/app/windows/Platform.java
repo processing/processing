@@ -54,7 +54,6 @@ public class Platform extends processing.app.Platform {
 
   public void init(Base base) {
     super.init(base);
-
     checkAssociations();
     //checkQuickTime();
     checkPath();

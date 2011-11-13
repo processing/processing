@@ -51,6 +51,7 @@ public class Platform extends processing.app.Platform {
 
 
   public void init(Base base) {
+    super.init(base);
     System.setProperty("apple.laf.useScreenMenuBar", "true");
     ThinkDifferent.init(base);
     /*
