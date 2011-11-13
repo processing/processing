@@ -4,6 +4,9 @@ X   http://code.google.com/p/processing/issues/detail?id=877
 X make note of when library is not available (serial) with error msg
 X   i.e. if running in 64-bit mode on OS X, can't do serial
 X update to Java 6u29 for Linux and Windows (OS X now updated)
+X don't show library conflict warning until someone tries to build 
+X   with code that actually calls on one of those packages
+X   too many people seem to think this is an error
 
 fixed in 2.0a3
 X Commenting via menu or shortcut does not set sketch to "need save"
@@ -17,10 +20,6 @@ X   otherwise ppl are copying really large files into a jar...
 
 _ move Movie Maker out to its own separate tool package (with separate build)
 _   http://code.google.com/p/processing/issues/detail?id=837
-
-_ don't show library conflict warning until someone tries to build 
-_   with code that actually calls on one of those packages
-_   too many people seem to think this is an error
 
 _ bad tool brings down the environment
 _   http://code.google.com/p/processing/issues/detail?id=798
