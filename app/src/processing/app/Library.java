@@ -219,27 +219,33 @@ public class Library extends InstalledContribution {
    * imports to specific libraries.
    * @param importToLibraryTable mapping from package names to Library objects
    */
-  public void addPackageList(HashMap<String,Library> importToLibraryTable) {
+//  public void addPackageList(HashMap<String,Library> importToLibraryTable) {
+  public void addPackageList(HashMap<String,ArrayList<Library>> importToLibraryTable) {
 //    PApplet.println(packages);
     for (String pkg : packageList) {
-      //    pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
-      Library library = importToLibraryTable.get(pkg);
-      if (library != null) {
-        if (!packageWarningMap.containsKey(pkg)) {
-          packageWarningMap.put(pkg, null);
+//          pw.println(pkg + "\t" + libraryFolder.getAbsolutePath());
+//      PApplet.println(pkg + "\t" + getName());
+//      Library library = importToLibraryTable.get(pkg);
+      ArrayList<Library> libraries = importToLibraryTable.get(pkg);
+      if (libraries == null) {
+        libraries = new ArrayList<Library>();
+        importToLibraryTable.put(pkg, libraries);
+      } else {
+        if (Base.DEBUG) {
           System.err.println("The library found in");
           System.err.println(getPath());
           System.err.println("conflicts with");
-          System.err.println(library.getPath());
-          System.err.println("which already defines the package " + pkg);
+          for (Library library : libraries) {
+            System.err.println(library.getPath());
+          }
+          System.err.println("which already define(s) the package " + pkg);
           System.err.println("If you have a line in your sketch that reads");
           System.err.println("import " + pkg + ".*;");
           System.err.println("Then you'll need to first remove one of those libraries.");
           System.err.println();
         }
-      } else {
-        importToLibraryTable.put(pkg, this);
       }
+      libraries.add(this);
     }
   }
 
