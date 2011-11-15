@@ -604,6 +604,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // INIT/ALLOCATE/FINISH
   
   public PGraphicsOpenGL() {
+    glu = new GLU();
   }
   
 
@@ -6427,12 +6428,9 @@ return width * (1 + ox) / 2.0f;
     if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
       int err = gl.glGetError();
       if (err != 0) {
-        // TODO: error message without using GLU?
-        // Open Source re-implementation of gluErrorString here:
-        // http://code.google.com/p/glues/source/browse/trunk/glues/source/glues_error.c
-        //String errString = GLU.gluErrorString(err);
-        //String msg = "OpenGL error " + err + " at " + where + ": " + errString;
-        //PGraphics.showWarning(msg);
+        String errString = glu.gluErrorString(err);
+        String msg = "OpenGL error " + err + " at " + where + ": " + errString;
+        PGraphics.showWarning(msg);
       }
     }
   }
