@@ -28,6 +28,7 @@ import java.util.HashMap;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.EditorState;
 import processing.app.Mode;
 import processing.app.RunnerListener;
 import processing.app.Sketch;
@@ -44,8 +45,8 @@ public class JavaMode extends Mode {
 //  static public String librariesClassPath;
 
   
-  public Editor createEditor(Base base, String path, int[] location) {
-    return new JavaEditor(base, path, location, this);
+  public Editor createEditor(Base base, String path, EditorState state) {
+    return new JavaEditor(base, path, state, this);
   }
 
 
