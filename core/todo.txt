@@ -6,6 +6,8 @@ X "Framingham" example has BufferOverflowException
 X   http://code.google.com/p/processing/issues/detail?id=900
 X enable smooth() by default
 X   better to learn noSmooth() later
+X repeatedly calling texture() with new image raises memory error
+X   http://code.google.com/p/processing/issues/detail?id=806
 
 earlier
 o text using textMode(SCREEN) not displayed in Processing 1.5.1

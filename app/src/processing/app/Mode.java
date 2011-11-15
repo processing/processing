@@ -94,7 +94,8 @@ public abstract class Mode {
   /**
    * Create a new editor associated with this mode. 
    */
-  abstract public Editor createEditor(Base base, String path, int[] location);
+  abstract public Editor createEditor(Base base, String path, EditorState state);
+  //abstract public Editor createEditor(Base base, String path, int[] location);
   
 
   public File getExamplesFolder() {

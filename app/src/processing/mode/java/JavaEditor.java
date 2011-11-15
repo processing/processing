@@ -22,8 +22,8 @@ public class JavaEditor extends Editor {
   private Runner runtime;
 
 
-  protected JavaEditor(Base base, String path, int[] location, Mode mode) {
-    super(base, path, location, mode);    
+  protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
+    super(base, path, state, mode);    
 
     // hopefully these are no longer needed w/ swing
     // (har har har.. that was wishful thinking)

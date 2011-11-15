@@ -10,6 +10,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import processing.app.Base;
+import processing.app.EditorState;
 import processing.app.Settings;
 import processing.app.Editor;
 import processing.app.EditorToolbar;
@@ -34,9 +35,9 @@ public class JavaScriptEditor extends Editor
   // tapping into Java mode might not be wanted?
   processing.mode.java.PdeKeyListener listener;
 
-  protected JavaScriptEditor ( Base base, String path, int[] location, Mode mode ) 
+  protected JavaScriptEditor ( Base base, String path, EditorState state, Mode mode ) 
   {
-    super(base, path, location, mode);
+    super(base, path, state, mode);
 
 	listener = new processing.mode.java.PdeKeyListener(this,textarea);
 	

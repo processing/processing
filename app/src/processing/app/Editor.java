@@ -45,6 +45,7 @@ import javax.swing.undo.*;
  */
 public abstract class Editor extends JFrame implements RunnerListener {
   protected Base base;
+  protected EditorState state;
   protected Mode mode;
 
   // otherwise, if the window is resized with the message label
@@ -109,9 +110,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
   ArrayList<ToolContribution> coreTools;
   public ArrayList<ToolContribution> contribTools;
 
-  protected Editor(final Base base, String path, int[] location, final Mode mode) {
-    super("Processing");
+
+//  protected Editor(final Base base, String path, int[] location, final Mode mode) {
+  protected Editor(final Base base, String path, EditorState state, final Mode mode) {
+    super("Processing", state.checkConfig());
     this.base = base;
+    this.state = state;
     this.mode = mode;
     
     Base.setIcon(this);  // TODO should this be per-mode?
@@ -244,7 +248,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     pack();
 
     // Set the window bounds and the divider location before setting it visible
-    setPlacement(location);
+//    setPlacement(location);
+    state.apply(this);
 
     // Set the minimum size for the editor window
     setMinimumSize(new Dimension(Preferences.getInteger("editor.window.width.min"),
@@ -393,28 +398,38 @@ public abstract class Editor extends JFrame implements RunnerListener {
   abstract public Formatter createFormatter();
 
 
-  protected void setPlacement(int[] location) {
-    setBounds(location[0], location[1], location[2], location[3]);
-    if (location[4] != 0) {
-      splitPane.setDividerLocation(location[4]);
-    }
+//  protected void setPlacement(int[] location) {
+//    setBounds(location[0], location[1], location[2], location[3]);
+//    if (location[4] != 0) {
+//      splitPane.setDividerLocation(location[4]);
+//    }
+//  }
+//
+//
+//  protected int[] getPlacement() {
+//    int[] location = new int[5];
+//
+//    // Get the dimensions of the Frame
+//    Rectangle bounds = getBounds();
+//    location[0] = bounds.x;
+//    location[1] = bounds.y;
+//    location[2] = bounds.width;
+//    location[3] = bounds.height;
+//
+//    // Get the current placement of the divider
+//    location[4] = splitPane.getDividerLocation();
+//
+//    return location;
+//  }
+  
+  
+  protected void setDividerLocation(int pos) {
+    splitPane.setDividerLocation(pos);
   }
-
-
-  protected int[] getPlacement() {
-    int[] location = new int[5];
-
-    // Get the dimensions of the Frame
-    Rectangle bounds = getBounds();
-    location[0] = bounds.x;
-    location[1] = bounds.y;
-    location[2] = bounds.width;
-    location[3] = bounds.height;
-
-    // Get the current placement of the divider
-    location[4] = splitPane.getDividerLocation();
-
-    return location;
+  
+  
+  protected int getDividerLocation() {
+    return splitPane.getDividerLocation();
   }
 
 
@@ -2004,7 +2019,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     // Store information on who's open and running
     // (in case there's a crash or something that can't be recovered)
-    base.storeSketches();
+//    base.storeSketches();
     Preferences.save();
 
     // opening was successful

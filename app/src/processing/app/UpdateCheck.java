@@ -132,11 +132,11 @@ public class UpdateCheck {
     }
   }
 
-  protected boolean promptToVisitDownloadPage() {
-    
+
+  protected boolean promptToVisitDownloadPage() {  
     String prompt =
-        "A new version of Processing is available,\n" +
-            "would you like to visit the Processing download page?";
+      "A new version of Processing is available,\n" +
+      "would you like to visit the Processing download page?";
     
     Object[] options = { "Yes", "No" };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
@@ -155,11 +155,11 @@ public class UpdateCheck {
     return false;
   }
   
+  
   protected boolean promptToOpenContributionManager() {
-    
     String contributionPrompt =
-        "There are updates available for some of the installed contributions,\n" +
-            "would you like to open the the Contribution Manager now?";
+      "There are updates available for some of the installed contributions,\n" +
+      "would you like to open the the Contribution Manager now?";
     
     Object[] options = { "Yes", "No" };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
@@ -177,7 +177,8 @@ public class UpdateCheck {
     
     return false;
   }
-  
+
+
   protected int readInt(String filename) throws Exception {
     URL url = new URL(filename);
     InputStream stream = url.openStream();
