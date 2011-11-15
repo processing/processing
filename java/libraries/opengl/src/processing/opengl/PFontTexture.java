@@ -66,16 +66,10 @@ class PFontTexture implements PConstants {
     this.font = font;    
     ogl = (PGraphicsOpenGL)parent.g;
     
-    // Although PFontTexture is not strictly a GL object, since it doesn't directly
-    // contains any native OpenGL resources, it does contains a list of textures 
-    // that don't depend on any PImage, so it is registered so in the case of a refresh
-    // event the textures are re-initialized with the correct data. 
-    ogl.registerPGLObject(this);
-    
     initTexture(maxw, maxh);
   }    
   
-  
+  /*
   public void delete() {
     for (int i = 0; i < textures.length; i++) {
       textures[i].delete();
@@ -102,12 +96,14 @@ class PFontTexture implements PConstants {
       textures[tinfo.texIndex].unbind();
     }   
   }
-
+*/
+  
   protected void allocate() {    
     // Nothing to do here: the font textures will allocate
     // themselves.
   }
    
+  
   protected void initTexture(int w, int h) {
     maxTexWidth = w;
     maxTexHeight = h;
@@ -155,7 +151,6 @@ class PFontTexture implements PConstants {
       PTexture tex0 = textures[currentTex];
       tex.put(tex0);
       textures[currentTex] = tex;
-      tex0.delete();
     } else {
       // Adding new texture to the list.
       PTexture[] temp = textures;
