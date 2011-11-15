@@ -52,6 +52,8 @@ import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.glu.GLU;
+
 import processing.core.PApplet;
 
 /**
@@ -108,6 +110,8 @@ public class PGraphicsOpenGL extends PGraphics {
   
   /** GL4 programmable pipeline, not backwards compatible with GL2 fixed */
   public GL4 gl4p;
+  
+  public GLU glu;
   
   /** Selected GL profile */
   protected GLProfile profile;
