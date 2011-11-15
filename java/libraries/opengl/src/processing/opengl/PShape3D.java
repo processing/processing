@@ -26,6 +26,9 @@ package processing.opengl;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GL2ES1;
+import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUtessellator;
+import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -604,6 +607,14 @@ public class PShape3D extends PShape {
     currentStroke[4] = w;
   }  
 
+  public void setClosed() {
+    
+  }
+  
+  public void setOpen() {
+    
+  }  
+  
   // Will be renamed to getVertex later (now conflicting with old API).
   public PVector getPVertex(int i) {
     if (0 <= i && i < inVertexCount) {
@@ -713,7 +724,7 @@ public class PShape3D extends PShape {
           } else if (kind == QUAD_STRIP) {
             tessellateQuadStrip();
           } else if (kind == POLYGON) {
-            
+            tessellatePolygon();
           }
         } else if (family == PRIMITIVE) {
           if (kind == POINT) {
@@ -1275,6 +1286,178 @@ public class PShape3D extends PShape {
       isStroked = false;
     }
   }  
+  
+  protected void tessellatePolygon() {
+    //GLU glu = ogl.glu;
+    GLUtessellator tobj;   
+    
+    tobj = GLU.gluNewTess();
+    TessCallback tessCallback;
+    
+    tessCallback = new TessCallback();
+    GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
+    GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
+    GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
+    GLU.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
+    GLU.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
+  
+    float coords[] = new float[6];
+    
+    GLU.gluTessBeginPolygon(tobj, null);
+    
+    GLU.gluTessBeginContour(tobj);
+    
+    // Set winding rule (?)
+    //int rule = iter.getWindingRule();
+    //switch(rule) {
+    //case PathIterator.WIND_EVEN_ODD:
+    //  glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_ODD);
+    //  break;
+    //case PathIterator.WIND_NON_ZERO:
+    //  glu.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_NONZERO);
+    // break;
+    //}    
+    
+    
+    // Now, iterate over all input coords and sent to GLU tessellator..
+    for (int i = 0; i < inVertexCount; i++) {
+      // "unfortunately the tesselator won't work properly unless a
+      // new array of doubles is allocated for each point. that bites ass,
+      // but also just reaffirms that in order to make things fast,
+      // display lists will be the way to go." -- Ben Fry :)
+      double[] vertex = new double[] { inVertices[3 * i + 0], inVertices[3 * i + 1], inVertices[3 * i + 2] };
+      GLU.gluTessVertex(tobj, vertex, 0, vertex);
+      //GLU.gluTessNormal(tobj, inNormals[3 * i + 0], inNormals[3 * i + 1], inNormals[3 * i + 2] );
+      //GLU.gluTessProperty(arg0, arg1, arg2);
+    }
+    
+    GLU.gluTessEndContour(tobj);
+    
+    
+    
+    GLU.gluTessEndPolygon(tobj);
+    
+  }
+  
+  
+  public class TessInfo {
+    public int tessShape;
+    public int tessCount;
+    public float[] tessPoints;
+    
+    public TessInfo() {
+  //    tessShape = shape;
+      tessCount = vertexCount;
+      tessPoints = new float[vertexCount * 2];
+      for (int i = 0; i < vertexCount; i++) {
+    //    tessPoints[i*2 + 0] = vertices[i][X];
+    //    tessPoints[i*2 + 1] = vertices[i][Y];
+      }
+    }    
+  }
+  public ArrayList<TessInfo> tessInfo = new ArrayList<TessInfo>();
+  public boolean tessInfoEnabled = false;
+  
+  public void tessInfoReset() {
+    tessInfo.clear();
+  }
+
+  
+  
+  public class TessCallback extends GLUtessellatorCallbackAdapter {
+    public void begin(int type) {
+      switch (type) {
+      case GL.GL_TRIANGLE_FAN: beginShape(TRIANGLE_FAN); break;
+      case GL.GL_TRIANGLE_STRIP: beginShape(TRIANGLE_STRIP); break;
+      case GL.GL_TRIANGLES: beginShape(TRIANGLES); break;
+      }
+    }
+
+    public void end() {
+      if (tessInfoEnabled) {
+        tessInfo.add(new TessInfo());
+      }
+      
+      //gl.glEnd();
+      endShape();
+    }
+
+    /*
+    public void edge(boolean e) {
+      PGraphicsOpenGL.this.edge(e);
+    }
+    */
+
+    public void vertex(Object data) {
+      if (data instanceof double[]) {
+        double[] d = (double[]) data;
+        if (d.length != 3) {
+          throw new RuntimeException("TessCallback vertex() data " +
+                                     "isn't length 3");
+        }
+
+        //PGraphicsOpenGL.this.vertex((float) d[0], (float) d[1], (float) d[2]);
+
+      } else {
+        throw new RuntimeException("TessCallback vertex() data not understood");
+      }
+    }
+
+    public void error(int errnum) {
+      //String estring = glu.gluErrorString(errnum);
+      //PGraphics.showWarning("Tessellation Error: " + estring);
+    }
+    
+    
+    /**
+     * Implementation of the GLU_TESS_COMBINE callback.
+     * @param coords is the 3-vector of the new vertex
+     * @param data is the vertex data to be combined, up to four elements.
+     * This is useful when mixing colors together or any other
+     * user data that was passed in to gluTessVertex.
+     * @param weight is an array of weights, one for each element of "data"
+     * that should be linearly combined for new values.
+     * @param outData is the set of new values of "data" after being
+     * put back together based on the weights. it's passed back as a
+     * single element Object[] array because that's the closest
+     * that Java gets to a pointer.
+     */
+    public void combine(double[] coords, Object[] data,
+                        float[] weight, Object[] outData) {
+      //System.out.println("coords.length = " + coords.length);
+      //System.out.println("data.length = " + data.length);
+      //System.out.println("weight.length = " + weight.length);
+      //for (int i = 0; i < data.length; i++) {
+      //System.out.println(i + " " + data[i].getClass().getName() + " " + weight[i]);
+      //}
+
+      double[] vertex = new double[coords.length];
+      vertex[0] = coords[0];
+      vertex[1] = coords[1];
+      vertex[2] = coords[2];
+      //System.out.println("combine " +
+      //                 vertex[0] + " " + vertex[1] + " " + vertex[2]);
+
+      // this is just 3, so nothing interesting to bother combining
+      //System.out.println("data length " + ((double[]) data[0]).length);
+
+      // not gonna bother doing any combining,
+      // since no user data is being passed in.
+      /*
+      for (int i = 3; i < 6; i++) {
+        vertex[i] =
+          weight[0] * ((double[]) data[0])[i] +
+          weight[1] * ((double[]) data[1])[i] +
+          weight[2] * ((double[]) data[2])[i] +
+          weight[3] * ((double[]) data[3])[i];
+      }
+      */
+      outData[0] = vertex;
+    }
+  }  
+  
+  
+  
   
   protected void copyInDataToTessData() {
     vertexCount = inVertexCount;    
