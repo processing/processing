@@ -166,6 +166,7 @@ public class PShape3D extends PShape {
   ////////////////////////////////////////////////////////////
 
   public static final int DEFAULT_VERTICES = 512;
+  public static final int DEFAULT_INDICES = 512;
 
   // Constructors.
 
@@ -226,7 +227,8 @@ public class PShape3D extends PShape {
       pointShader.setup();
     }    
     
-    if (tobj == null) {
+    //if (tobj == null) {
+    if (family != GROUP) {
       tobj = GLU.gluNewTess();
       TessCallback tessCallback;
     
@@ -237,6 +239,7 @@ public class PShape3D extends PShape {
       GLU.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
       GLU.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
     }
+    //}
     
     isSolid = true;
     isClosed = true;    
@@ -484,7 +487,7 @@ public class PShape3D extends PShape {
   static protected PShader strokeShader;
   static protected PShader pointShader;
 
-  static protected GLUtessellator tobj;
+  protected GLUtessellator tobj;
   
   protected void inputCheck() {
     if (inVertexCount == inVertexTypes.length) {
@@ -507,14 +510,15 @@ public class PShape3D extends PShape {
       expandTessTexCoord(newSize);      
       expandTessNormal(newSize);
       expandTessColor(newSize);
+    }    
+  }
+  
+  protected void indexCheck() {
+    if (indexCount == indices.length) {
+      int newSize = indexCount << 1;
       
-      /*
-      float temp[][] = new float[(vertexCount << 1)][VERTEX_FIELD_COUNT];
-      System.arraycopy(vertices, 0, temp, 0, vertexCount);
-      vertices = temp;
-      */
+      expandIndex(newSize);
     }
-    
   }
   
   protected void updateTesselation() {
@@ -565,19 +569,33 @@ public class PShape3D extends PShape {
   }  
 
   protected void expandTessVertex(int n) {
-    
+    float temp[] = new float[3 * n];      
+    System.arraycopy(vertices, 0, temp, 0, 3 * vertexCount);
+    vertices = temp;       
   }
   
   protected void expandTessTexCoord(int n) {
-    
+    float temp[] = new float[2 * n];      
+    System.arraycopy(texcoords, 0, temp, 0, 2 * vertexCount);
+    texcoords = temp;
   }
   
   protected void expandTessNormal(int n) {
-    
+    float temp[] = new float[3 * n];      
+    System.arraycopy(normals, 0, temp, 0, 3 * vertexCount);
+    normals = temp;       
   }
   
   protected void expandTessColor(int n) {
-    
+    float temp[] = new float[4 * n];      
+    System.arraycopy(colors, 0, temp, 0, 4 * vertexCount);
+    colors = temp;
+  }
+  
+  protected void expandIndex(int n) {
+    int temp[] = new int[n];      
+    System.arraycopy(indices, 0, temp, 0, indexCount);
+    indices = temp;
   }
   
   // Explicitly set vertex connectivities
@@ -676,6 +694,14 @@ public class PShape3D extends PShape {
   public void setClosed(boolean closed) {
     isClosed = closed;
   }
+  
+  public void beginContour() {
+    
+  }
+  
+  public void endContour() {
+    
+  }  
   
   // Will be renamed to getVertex later (now conflicting with old API).
   public PVector getPVertex(int i) {
@@ -1351,6 +1377,14 @@ public class PShape3D extends PShape {
   
   protected void tessellatePolygon() {
     vertexCount = 0;     
+    useIndices = true;
+    indexCount = 0; 
+    
+    vertices = new float[3 * DEFAULT_VERTICES];  
+    texcoords = new float[2 * DEFAULT_VERTICES];
+    normals = new float[3 * DEFAULT_VERTICES];
+    colors = new float[4 * DEFAULT_VERTICES];
+    indices = new int[DEFAULT_INDICES];
     
     GLU.gluTessBeginPolygon(tobj, null);
     
@@ -1366,6 +1400,7 @@ public class PShape3D extends PShape {
     
     // Now, iterate over all input data and send to GLU tessellator..
     for (int i = 0; i < inVertexCount; i++) {
+      // Vertex data includes coordinates, colors, normals and texture coordinates.
       double[] vertex = new double[] { inVertices[3 * i + 0], inVertices[3 * i + 1], inVertices[3 * i + 2],
                                        inColors[4 * i + 0], inColors[4 * i + 1], inColors[4 * i + 2], inColors[4 * i + 3],
                                        inNormals[3 * i + 0], inNormals[3 * i + 1], inNormals[3 * i + 2],
@@ -1379,26 +1414,68 @@ public class PShape3D extends PShape {
            
     firstVertex = 0;
     lastVertex = vertexCount - 1;    
+    
+    firstIndex = 0;
+    lastIndex = indexCount - 1;
+    
+    // Stroke stuff...
   }
   
   protected class TessCallback extends GLUtessellatorCallbackAdapter {
+    protected int tessFirst;
+    protected int tessCount;
+    protected int tessType;
+    
     public void begin(int type) {
+      tessFirst = vertexCount;
+      tessCount = 0;
+      
       switch (type) {
       case GL.GL_TRIANGLE_FAN: 
-        beginShape(TRIANGLE_FAN); 
+        tessType = TRIANGLE_FAN;
         break;
       case GL.GL_TRIANGLE_STRIP: 
-        beginShape(TRIANGLE_STRIP); 
+        tessType = TRIANGLE_STRIP;
         break;
       case GL.GL_TRIANGLES: 
-        beginShape(TRIANGLES); 
+        tessType = TRIANGLES;
         break;
       }
     }
 
     public void end() {
-
-      endShape();
+      switch (tessType) {
+      case TRIANGLE_FAN: 
+        for (int i = 1; i < tessCount - 1; i++) {
+          addIndex(0);
+          addIndex(i);
+          addIndex(i + 1);
+        }       
+        break;
+      case TRIANGLE_STRIP: 
+        for (int i = 1; i < tessCount - 1; i++) {
+          addIndex(i);
+          if (i % 2 == 0) {
+            addIndex(i - 1);
+            addIndex(i + 1);
+          } else {
+            addIndex(i + 1);
+            addIndex(i - 1);
+          }
+        }        
+        break;
+      case TRIANGLES: 
+        for (int i = 0; i < tessCount; i++) {
+          addIndex(i);          
+        }
+        break;
+      }
+    }
+    
+    protected void addIndex(int tessIdx) {
+      indexCheck();
+      indices[indexCount] = tessFirst + tessIdx;
+      indexCount++;      
     }
 
     public void vertex(Object data) {
@@ -1417,21 +1494,21 @@ public class PShape3D extends PShape {
         vertices[3 * vertexCount + 2] = (float) d[2];
         
         // vertex color
-        float r = (float) d[3];
-        float g = (float) d[4];
-        float b = (float) d[5];
-        float a = (float) d[6];
+        colors[4 * vertexCount + 0] = (float) d[3];
+        colors[4 * vertexCount + 1] = (float) d[4];
+        colors[4 * vertexCount + 2] = (float) d[5];
+        colors[4 * vertexCount + 3] = (float) d[6];
         
         // vertex normal
-        float nx = (float) d[7];
-        float ny = (float) d[8];
-        float nz = (float) d[9];
+        normals[3 * vertexCount + 0] = (float) d[7];
+        normals[3 * vertexCount + 1] = (float) d[8];
+        normals[4 * vertexCount + 2] = (float) d[9];
 
         // texture coordinates
-        float s = (float) d[10];
-        float t = (float) d[11];
-
-        
+        texcoords[2 * vertexCount + 0] = (float) d[10];
+        texcoords[2 * vertexCount + 1] = (float) d[11];
+  
+        tessCount++;
         vertexCount++;
       } else {
         throw new RuntimeException("TessCallback vertex() data not understood");
@@ -1442,7 +1519,6 @@ public class PShape3D extends PShape {
       String estring = ogl.glu.gluErrorString(errnum);
       PGraphics.showWarning("Tessellation Error: " + estring);
     }
-    
     
     /**
      * Implementation of the GLU_TESS_COMBINE callback.
@@ -1460,7 +1536,7 @@ public class PShape3D extends PShape {
     public void combine(double[] coords, Object[] data,
                         float[] weight, Object[] outData) {
       
-      double[] vertex = new double[coords.length];
+      double[] vertex = new double[12];
       vertex[0] = coords[0];
       vertex[1] = coords[1];
       vertex[2] = coords[2];
@@ -1483,12 +1559,11 @@ public class PShape3D extends PShape {
       double len = Math.sqrt(sum);      
       vertex[7] /= len; 
       vertex[8] /= len;
-      vertex[9] /= len;       
+      vertex[9] /= len;  
+      
+      outData[0] = vertex;
     }
   }  
-  
-  
-  
   
   protected void copyInDataToTessData() {
     vertexCount = inVertexCount;    
