@@ -28,6 +28,7 @@ import processing.core.*;
 import java.nio.*;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -155,6 +156,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // OpenGL resources:
   
+  /*
   static protected final int GL_TEXTURE_OBJECT = 0;
   static protected final int GL_VERTEX_BUFFER = 1;
   static protected final int GL_FRAME_BUFFER = 2;
@@ -175,6 +177,16 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected Set<Integer> glslPrograms = new HashSet<Integer>();
   static protected Set<Integer> glslVertexShaders = new HashSet<Integer>();
   static protected Set<Integer> glslFragmentShaders = new HashSet<Integer>();
+  */
+  
+  
+  static protected HashMap<Integer, Boolean> glTextureObjects = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glVertexBuffers = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glFrameBuffers = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glRenderBuffers = new HashMap<Integer, Boolean>();    
+  static protected HashMap<Integer, Boolean> glslPrograms = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glslVertexShaders = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glslFragmentShaders = new HashMap<Integer, Boolean>();
   
   // ........................................................  
 
@@ -728,6 +740,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   
+  /*
   public void delete() {
     if (primarySurface) {
       PGraphics.showWarning("You cannot delete the primary rendering surface!");
@@ -744,12 +757,13 @@ public class PGraphicsOpenGL extends PGraphics {
       unregisterPGLObject(this);
     }
   }
+  */
   
   
   public void dispose() { // PGraphics    
     super.dispose();
     detainContext();
-    deleteAllGLResources();
+    deleteFinalizedGLResources();
     releaseContext();
     GLProfile.shutdown();
   }
@@ -758,6 +772,323 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // RESOURCE HANDLING
   
+  
+  // Texture Objects -------------------------------------------
+  
+  protected int createTextureObject() {
+    deleteFinalizedTextureObjects();
+    
+    int[] temp = new int[1];
+    gl.glGenTextures(1, temp, 0);
+    int idx = temp[0];
+    
+    if (glTextureObjects.containsKey(idx)) {
+      System.err.println("Adding same texture twice");
+    } else {    
+      glTextureObjects.put(idx, false);
+    }
+    
+    return idx;
+  }
+  
+  // This is synchronized because it is called from the GC thread.
+  synchronized protected void finalizeTextureObject(int idx) {
+    if (glTextureObjects.containsKey(idx)) {
+      glTextureObjects.put(idx, true);
+    } else {
+      System.err.println("Trying to finalize non-existing texture");
+    }
+  }
+  
+  protected void deleteFinalizedTextureObjects() {
+    Set<Integer> finalized = new HashSet<Integer>();
+    
+    for (Integer idx : glTextureObjects.keySet()) {
+      if (glTextureObjects.get(idx)) {
+        finalized.add(idx);
+        int id = idx.intValue();
+        int[] temp = { id };
+        gl.glDeleteTextures(1, temp, 0);        
+      }
+    }
+    
+    for (Integer idx : finalized) {
+      glTextureObjects.remove(idx);  
+    }
+  }
+  
+  // Vertex Buffer Objects ----------------------------------------------
+    
+  protected int createVertexBufferObject() {
+    deleteFinalizedVertexBufferObjects();
+    
+    int[] temp = new int[1];
+    gl.glGenBuffers(1, temp, 0);
+    int idx = temp[0];
+    
+    if (glVertexBuffers.containsKey(idx)) {
+      System.err.println("Adding same VBO twice");
+    } else {    
+      glVertexBuffers.put(idx, false);
+    }
+    
+    return idx;
+  }
+  
+  // This is synchronized because it is called from the GC thread.
+  synchronized protected void finalizeVertexBufferObject(int idx) {
+    if (glVertexBuffers.containsKey(idx)) {
+      glVertexBuffers.put(idx, true);
+    } else {
+      System.err.println("Trying to finalize non-existing VBO");
+    }
+  }
+  
+  protected void deleteFinalizedVertexBufferObjects() {
+    Set<Integer> finalized = new HashSet<Integer>();
+    
+    for (Integer idx : glVertexBuffers.keySet()) {
+      if (glVertexBuffers.get(idx)) {
+        finalized.add(idx);
+        int id = idx.intValue();
+        int[] temp = { id };
+        gl.glDeleteBuffers(1, temp, 0);        
+      }
+    }
+    
+    for (Integer idx : finalized) {
+      glVertexBuffers.remove(idx);  
+    }
+  }
+  
+  // FrameBuffer Objects -----------------------------------------
+
+  protected int createFrameBufferObject() {
+    deleteFinalizedFrameBufferObjects();
+    
+    int[] temp = new int[1];
+    gl.glGenFramebuffers(1, temp, 0);
+    int idx = temp[0];
+    
+    if (glFrameBuffers.containsKey(idx)) {
+      System.err.println("Adding same FBO twice");
+    } else {    
+      glFrameBuffers.put(idx, false);
+    }
+    
+    return idx;
+  }
+  
+  // This is synchronized because it is called from the GC thread.
+  synchronized protected void finalizeFrameBufferObject(int idx) {
+    if (glFrameBuffers.containsKey(idx)) {
+      glFrameBuffers.put(idx, true);
+    } else {
+      System.err.println("Trying to finalize non-existing FBO");
+    }
+  }
+  
+  protected void deleteFinalizedFrameBufferObjects() {
+    Set<Integer> finalized = new HashSet<Integer>();
+    
+    for (Integer idx : glFrameBuffers.keySet()) {
+      if (glFrameBuffers.get(idx)) {
+        finalized.add(idx);
+        int id = idx.intValue();
+        int[] temp = { id };
+        gl.glDeleteFramebuffers(1, temp, 0);       
+      }
+    }
+    
+    for (Integer idx : finalized) {
+      glFrameBuffers.remove(idx);  
+    }
+  }
+
+  // RenderBuffer Objects -----------------------------------------------
+  
+  protected int createRenderBufferObject() {
+    deleteFinalizedRenderBufferObjects();
+    
+    int[] temp = new int[1];
+    gl.glGenRenderbuffers(1, temp, 0);
+    int idx = temp[0];
+    
+    if (glRenderBuffers.containsKey(idx)) {
+      System.err.println("Adding same renderbuffer twice");
+    } else {    
+      glRenderBuffers.put(idx, false);
+    }
+    
+    return idx;
+  }
+  
+  // This is synchronized because it is called from the GC thread.
+  synchronized protected void finalizeRenderBufferObject(int idx) {
+    if (glRenderBuffers.containsKey(idx)) {
+      glRenderBuffers.put(idx, true);
+    } else {
+      System.err.println("Trying to finalize non-existing renderbuffer");
+    }
+  }
+  
+  protected void deleteFinalizedRenderBufferObjects() {
+    Set<Integer> finalized = new HashSet<Integer>();
+    
+    for (Integer idx : glRenderBuffers.keySet()) {
+      if (glRenderBuffers.get(idx)) {
+        finalized.add(idx);
+        int id = idx.intValue();
+        int[] temp = { id };
+        gl.glDeleteRenderbuffers(1, temp, 0);       
+      }
+    }
+    
+    for (Integer idx : finalized) {
+      glRenderBuffers.remove(idx);  
+    }
+  }
+  
+  // GLSL Program Objects -----------------------------------------------
+  
+  protected int createGLSLProgramObject() {
+    deleteFinalizedGLSLProgramObjects();
+    
+    int idx = gl2x.glCreateProgram();
+    
+    if (glslPrograms.containsKey(idx)) {
+      System.err.println("Adding same glsl program twice");
+    } else {    
+      glslPrograms.put(idx, false);
+    }
+    
+    return idx;
+  }
+  
+  // This is synchronized because it is called from the GC thread.
+  synchronized protected void finalizeGLSLProgramObject(int idx) {
+    if (glslPrograms.containsKey(idx)) {
+      glslPrograms.put(idx, true);
+    } else {
+      System.err.println("Trying to finalize non-existing glsl program");
+    }
+  }
+  
+  protected void deleteFinalizedGLSLProgramObjects() {
+    Set<Integer> finalized = new HashSet<Integer>();
+    
+    for (Integer idx : glslPrograms.keySet()) {
+      if (glslPrograms.get(idx)) {
+        finalized.add(idx);
+        int id = idx.intValue();
+        gl2x.glDeleteProgram(id);        
+      }
+    }
+    
+    for (Integer idx : finalized) {
+      glslPrograms.remove(idx);  
+    }
+  }
+
+  // GLSL Vertex Shader Objects -----------------------------------------------
+  
+  protected int createGLSLVertShaderObject() {
+    deleteFinalizedGLSLVertShaderObjects();
+    
+    int idx = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);
+    
+    if (glslVertexShaders.containsKey(idx)) {
+      System.err.println("Adding same glsl vertex shader twice");
+    } else {    
+      glslVertexShaders.put(idx, false);
+    }
+    
+    return idx;
+  }
+  
+  // This is synchronized because it is called from the GC thread.
+  synchronized protected void finalizeGLSLVertShaderObject(int idx) {
+    if (glslVertexShaders.containsKey(idx)) {
+      glslVertexShaders.put(idx, true);
+    } else {
+      System.err.println("Trying to finalize non-existing glsl vertex shader");
+    }
+  }
+  
+  protected void deleteFinalizedGLSLVertShaderObjects() {
+    Set<Integer> finalized = new HashSet<Integer>();
+    
+    for (Integer idx : glslVertexShaders.keySet()) {
+      if (glslVertexShaders.get(idx)) {
+        finalized.add(idx);
+        int id = idx.intValue();
+        gl2x.glDeleteShader(id);      
+      }
+    }
+    
+    for (Integer idx : finalized) {
+      glslVertexShaders.remove(idx);  
+    }
+  }
+  
+  // GLSL Fragment Shader Objects -----------------------------------------------
+    
+  
+  protected int createGLSLFragShaderObject() {
+    deleteFinalizedGLSLFragShaderObjects();
+    
+    int idx = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);
+    
+    if (glslFragmentShaders.containsKey(idx)) {
+      System.err.println("Adding same glsl fragment shader twice");
+    } else {    
+      glslFragmentShaders.put(idx, false);
+    }
+    
+    return idx;
+  }
+  
+  // This is synchronized because it is called from the GC thread.
+  synchronized protected void finalizeGLSLFragShaderObject(int idx) {
+    if (glslFragmentShaders.containsKey(idx)) {
+      glslFragmentShaders.put(idx, true);
+    } else {
+      System.err.println("Trying to finalize non-existing glsl fragment shader");
+    }
+  }
+  
+  protected void deleteFinalizedGLSLFragShaderObjects() {
+    Set<Integer> finalized = new HashSet<Integer>();
+    
+    for (Integer idx : glslFragmentShaders.keySet()) {
+      if (glslFragmentShaders.get(idx)) {
+        finalized.add(idx);
+        int id = idx.intValue();
+        gl2x.glDeleteShader(id);      
+      }
+    }
+    
+    for (Integer idx : finalized) {
+      glslFragmentShaders.remove(idx);  
+    }
+  }  
+  
+  
+  protected void deleteFinalizedGLResources() {
+    deleteFinalizedTextureObjects();
+    deleteFinalizedVertexBufferObjects();
+    deleteFinalizedFrameBufferObjects();
+    deleteFinalizedRenderBufferObjects();
+    deleteFinalizedGLSLProgramObjects();
+    deleteFinalizedGLSLVertShaderObjects();
+    deleteFinalizedGLSLFragShaderObjects();
+  }
+  
+  
+  
+  
+  
+  /*
   protected void allocatePGLObjects() {
     // Note: it is important that allocation / backup / restoration are don
     // in the order below (0: PGraphicsOpenGL, 1: PTexture objects, 2: PFramebuffer 
@@ -1068,7 +1399,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }  
     
   }
-
+*/
+  
+  
   //////////////////////////////////////////////////////////////
 
   // FRAMEBUFFERS
@@ -1157,7 +1490,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * the current OpenGL objects remain valid afterward.
    */  
   public void restartContext() {
-    backupPGLObjects();
+    //backupPGLObjects();
       
     releaseContext();
     context.destroy();
@@ -1165,10 +1498,10 @@ public class PGraphicsOpenGL extends PGraphics {
     allocate();          
     detainContext();
       
-    updateGLInterfaces();
-    allocatePGLObjects();
-    clearPGLFramebuffers();
-    restorePGLObjects();
+    updateGLInterfaces();    
+//    allocatePGLObjects();
+//    clearPGLFramebuffers();
+//    restorePGLObjects();
   }  
 
   
@@ -1272,7 +1605,6 @@ public class PGraphicsOpenGL extends PGraphics {
         // corresponds to the old window size.
         this.removeCache(ogl);
         this.removeParams(ogl);
-        texture.delete();
         texture = null;
         loadTexture();
       }      
@@ -1380,6 +1712,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     drawing = false;    
     
+    //deleteFinalizedGLResources();    
+    
     report("bot endDraw()");    
   }
 
@@ -1399,6 +1733,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   
+  /*
   public void allocateGL() {
     allocatePGLObjects();    
   }
@@ -1413,6 +1748,7 @@ public class PGraphicsOpenGL extends PGraphics {
     clearPGLFramebuffers();
     restorePGLObjects();
   }
+  */
   
   public void updateGLInterfaces() {
     gl = context.getGL();        
@@ -7558,7 +7894,7 @@ return width * (1 + ox) / 2.0f;
     capabilities = ogl.getCapabilities();
     drawable = null;
     
-    registerPGLObject(this);
+    //registerPGLObject(this);
     
     updateGLInterfaces();
     loadTextureImpl(BILINEAR);
@@ -7567,11 +7903,11 @@ return width * (1 + ox) / 2.0f;
     // is changed), we make sure that all the OpenGL resources associated
     // to the surface are released by calling delete().
     if (offscreenFramebuffer != null) {
-      offscreenFramebuffer.delete();
+      //offscreenFramebuffer.delete();
       offscreenFramebuffer = null;
     }
     if (offscreenFramebufferMultisample != null) {
-      offscreenFramebufferMultisample.delete();
+      //offscreenFramebufferMultisample.delete();
       offscreenFramebufferMultisample = null;
     }
     
