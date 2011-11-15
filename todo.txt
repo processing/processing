@@ -11,6 +11,10 @@ X work on code to quit if multiple instances are running
 X   need to bring the other instance to front
 X   and/or open a new window
 X fix bug with 'base' not getting set in the Mac OS X platform class
+X add EditorState class, device-aware placement
+X   get rid of restore sketch feature
+_   remove pref for restoring sketches
+_   implement recent sketches menu
 
 fixed in 2.0a3
 X Commenting via menu or shortcut does not set sketch to "need save"
@@ -26,11 +30,12 @@ A need to get GLGraphics examples out of the video examples
 A   Examples > Video > GLGraphics
 X write quicktime uncompressed (w/o qtjava)
 X   wrapped into the new moviemaker tool
-X   http://www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java/
+X   www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java
+X library imports failing for libs that define the same packages in 1.5.1
+X   http://code.google.com/p/processing/issues/detail?id=725
+X Closing applet window in Processing 1.5 causes serial crash
+X   http://code.google.com/p/processing/issues/detail?id=635
 
-maybe fixed
-_ library imports failing for libs that define the same packages in 1.5.1
-_   http://code.google.com/p/processing/issues/detail?id=725
 
 _ renaming a normal tab to same name with ".java" fails with ".pde" version already exists
 _   http://code.google.com/p/processing/issues/detail?id=776
@@ -40,7 +45,6 @@ window menu:
 http://code.google.com/p/processing/issues/detail?id=545
 recent sketches:
 http://code.google.com/p/processing/issues/detail?id=188
-
 
 _ move Movie Maker out to its own separate tool package (with separate build)
 _   http://code.google.com/p/processing/issues/detail?id=837
@@ -179,9 +183,6 @@ _ add === for String.equals()
 _   might be problematic since it might be opposite the javascript meaning
 _   jer: it's a decent time to start talking abt references/vars
 
-
-_ Closing applet window in Processing 1.5 causes serial crash
-_   http://code.google.com/p/processing/issues/detail?id=635
 
 _ Export reports "Could not copy source file" (even though it works)
 _   http://code.google.com/p/processing/issues/detail?id=638

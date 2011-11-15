@@ -54,10 +54,11 @@ public class Base {
   static public String VERSION_NAME = "0204";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
+  
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
   //static public boolean DEBUG = true;
-
+  
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
   static {
@@ -109,7 +110,7 @@ public class Base {
   // Location for untitled items
   static File untitledFolder;
 
-  java.util.List<Editor> editors =
+  List<Editor> editors =
     Collections.synchronizedList(new ArrayList<Editor>());
   protected Editor activeEditor;
   // a lone file menu to be used when all sketch windows are closed
@@ -329,8 +330,9 @@ public class Base {
 //    // Get the sketchbook path, and make sure it's set properly
 //    determineSketchbookFolder();
 
-    // Check if there were previously opened sketches to be restored
-    boolean opened = restoreSketches();
+//    // Check if there were previously opened sketches to be restored
+//    boolean opened = restoreSketches();
+    boolean opened = false;
 
     // Check if any files were passed in on the command line
     for (int i = 0; i < args.length; i++) {
@@ -388,7 +390,7 @@ public class Base {
    * The complement to "storePreferences", this is called when the
    * application is first launched.
    */
-  protected boolean restoreSketches() {
+  protected void restoreSketches() {
     String lastMode = Preferences.get("last.sketch.mode");
     if (DEBUG) {
       System.out.println("setting mode to " + lastMode);
@@ -411,107 +413,105 @@ public class Base {
       }
     }
 
-    if (DEBUG) {
-      System.out.println("default mode set to " + defaultMode.getClass().getName());
-    }
+    log("default mode set to " + defaultMode.getClass().getName());
 
-    if (!Preferences.getBoolean("last.sketch.restore")) {
-      return false;
-    }
-
-    // figure out window placement
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    boolean windowPositionValid = true;
-
-    if (Preferences.get("last.screen.height") != null) {
-      // if screen size has changed, the window coordinates no longer
-      // make sense, so don't use them unless they're identical
-      int screenW = Preferences.getInteger("last.screen.width");
-      int screenH = Preferences.getInteger("last.screen.height");
-
-      if ((screen.width != screenW) || (screen.height != screenH)) {
-        windowPositionValid = false;
-      }
-      /*
-      int windowX = Preferences.getInteger("last.window.x");
-      int windowY = Preferences.getInteger("last.window.y");
-      if ((windowX < 0) || (windowY < 0) ||
-          (windowX > screenW) || (windowY > screenH)) {
-        windowPositionValid = false;
-      }
-      */
-    } else {
-      windowPositionValid = false;
-    }
-
-    // Iterate through all sketches that were open last time p5 was running.
-    // If !windowPositionValid, then ignore the coordinates found for each.
-
-    // Save the sketch path and window placement for each open sketch
-    int count = Preferences.getInteger("last.sketch.count");
-    int opened = 0;
-    for (int i = 0; i < count; i++) {
-      String path = Preferences.get("last.sketch" + i + ".path");
-      int[] location;
-      if (windowPositionValid) {
-        String locationStr = Preferences.get("last.sketch" + i + ".location");
-        location = PApplet.parseInt(PApplet.split(locationStr, ','));
-      } else {
-        location = nextEditorLocation();
-      }
-      // If file did not exist, null will be returned for the Editor
-      if (handleOpen(path, location) != null) {
-        opened++;
-      }
-    }
-    return (opened > 0);
+//    if (Preferences.getBoolean("last.sketch.restore")) {
+//      return false;
+//    }
+//
+//    // figure out window placement
+//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+//    boolean windowPositionValid = true;
+//
+//    if (Preferences.get("last.screen.height") != null) {
+//      // if screen size has changed, the window coordinates no longer
+//      // make sense, so don't use them unless they're identical
+//      int screenW = Preferences.getInteger("last.screen.width");
+//      int screenH = Preferences.getInteger("last.screen.height");
+//
+//      if ((screen.width != screenW) || (screen.height != screenH)) {
+//        windowPositionValid = false;
+//      }
+//      /*
+//      int windowX = Preferences.getInteger("last.window.x");
+//      int windowY = Preferences.getInteger("last.window.y");
+//      if ((windowX < 0) || (windowY < 0) ||
+//          (windowX > screenW) || (windowY > screenH)) {
+//        windowPositionValid = false;
+//      }
+//      */
+//    } else {
+//      windowPositionValid = false;
+//    }
+//
+//    // Iterate through all sketches that were open last time p5 was running.
+//    // If !windowPositionValid, then ignore the coordinates found for each.
+//
+//    // Save the sketch path and window placement for each open sketch
+//    int count = Preferences.getInteger("last.sketch.count");
+//    int opened = 0;
+//    for (int i = 0; i < count; i++) {
+//      String path = Preferences.get("last.sketch" + i + ".path");
+//      int[] location;
+//      if (windowPositionValid) {
+//        String locationStr = Preferences.get("last.sketch" + i + ".location");
+//        location = PApplet.parseInt(PApplet.split(locationStr, ','));
+//      } else {
+//        location = nextEditorLocation();
+//      }
+//      // If file did not exist, null will be returned for the Editor
+//      if (handleOpen(path, location) != null) {
+//        opened++;
+//      }
+//    }
+//    return (opened > 0);
   }
 
 
-  /**
-   * Store list of sketches that are currently open.
-   * Called when the application is quitting and documents are still open.
-   */
-  protected void storeSketches() {
-    // Save the width and height of the screen
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    Preferences.setInteger("last.screen.width", screen.width);
-    Preferences.setInteger("last.screen.height", screen.height);
-
-    String untitledPath = untitledFolder.getAbsolutePath();
-
-    // Save the sketch path and window placement for each open sketch
-    int index = 0;
-    for (Editor editor : editors) {
-      String path = editor.getSketch().getMainFilePath();
-      // In case of a crash, save untitled sketches if they contain changes.
-      // (Added this for release 0158, may not be a good idea.)
-      if (path.startsWith(untitledPath) &&
-          !editor.getSketch().isModified()) {
-        continue;
-      }
-      Preferences.set("last.sketch" + index + ".path", path);
-
-      int[] location = editor.getPlacement();
-      String locationStr = PApplet.join(PApplet.str(location), ",");
-      Preferences.set("last.sketch" + index + ".location", locationStr);
-      index++;
-    }
-    Preferences.setInteger("last.sketch.count", index);
-    Preferences.set("last.sketch.mode", defaultMode.getClass().getName());
-  }
-
-
-  // If a sketch is untitled on quit, may need to store the new name
-  // rather than the location from the temp folder.
-  protected void storeSketchPath(Editor editor, int index) {
-    String path = editor.getSketch().getMainFilePath();
-    String untitledPath = untitledFolder.getAbsolutePath();
-    if (path.startsWith(untitledPath)) {
-      path = "";
-    }
-    Preferences.set("last.sketch" + index + ".path", path);
-  }
+//  /**
+//   * Store list of sketches that are currently open.
+//   * Called when the application is quitting and documents are still open.
+//   */
+//  protected void storeSketches() {
+//    // Save the width and height of the screen
+//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+//    Preferences.setInteger("last.screen.width", screen.width);
+//    Preferences.setInteger("last.screen.height", screen.height);
+//
+//    String untitledPath = untitledFolder.getAbsolutePath();
+//
+//    // Save the sketch path and window placement for each open sketch
+//    int index = 0;
+//    for (Editor editor : editors) {
+//      String path = editor.getSketch().getMainFilePath();
+//      // In case of a crash, save untitled sketches if they contain changes.
+//      // (Added this for release 0158, may not be a good idea.)
+//      if (path.startsWith(untitledPath) &&
+//          !editor.getSketch().isModified()) {
+//        continue;
+//      }
+//      Preferences.set("last.sketch" + index + ".path", path);
+//
+//      int[] location = editor.getPlacement();
+//      String locationStr = PApplet.join(PApplet.str(location), ",");
+//      Preferences.set("last.sketch" + index + ".location", locationStr);
+//      index++;
+//    }
+//    Preferences.setInteger("last.sketch.count", index);
+//    Preferences.set("last.sketch.mode", defaultMode.getClass().getName());
+//  }
+//
+//
+//  // If a sketch is untitled on quit, may need to store the new name
+//  // rather than the location from the temp folder.
+//  protected void storeSketchPath(Editor editor, int index) {
+//    String path = editor.getSketch().getMainFilePath();
+//    String untitledPath = untitledFolder.getAbsolutePath();
+//    if (path.startsWith(untitledPath)) {
+//      path = "";
+//    }
+//    Preferences.set("last.sketch" + index + ".path", path);
+//  }
 
 
   /*
@@ -635,12 +635,15 @@ public class Base {
 //        writer.flush();
 //        writer.close();
 
-        // close this sketch
-        int[] where = activeEditor.getPlacement();
+//        // close this sketch
+////        int[] where = activeEditor.getPlacement();
+//        Rectangle bounds = activeEditor.getBounds();
+//        int divider = activeEditor.getDividerLocation();
+        EditorState state = activeEditor.state;
         handleClose(activeEditor, true);
 
         // re-open the sketch
-        Editor editor = handleOpen(mainPath, where);
+        Editor editor = handleOpen(mainPath, state);
         if (editor != null) {
           editor.untitled = untitled;
         }
@@ -674,52 +677,50 @@ public class Base {
   }
 
 
-  protected int[] nextEditorLocation() {
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    int defaultWidth = Preferences.getInteger("editor.window.width.default");
-    int defaultHeight = Preferences.getInteger("editor.window.height.default");
-
-//    if (activeEditor == null) {
-    if (editors.size() == 0) {
-//      System.out.println("active editor is " + activeEditor);
-      // If no current active editor, use default placement
-      return new int[] {
-          (screen.width - defaultWidth) / 2,
-          (screen.height - defaultHeight) / 2,
-          defaultWidth, defaultHeight, 0
-      };
-
-    } else {
-      // With a currently active editor, open the new window
-      // using the same dimensions, but offset slightly.
-      synchronized (editors) {
-        final int OVER = 50;
-        // In release 0160, don't
-        //location = activeEditor.getPlacement();
-        Editor lastOpened = editors.get(editors.size() - 1);
-        int[] location = lastOpened.getPlacement();
-        // Just in case the bounds for that window are bad
-        location[0] += OVER;
-        location[1] += OVER;
-
-        if (location[0] == OVER ||
-            location[2] == OVER ||
-            location[0] + location[2] > screen.width ||
-            location[1] + location[3] > screen.height) {
-          // Warp the next window to a randomish location on screen.
-          return new int[] {
-              (int) (Math.random() * (screen.width - defaultWidth)),
-              (int) (Math.random() * (screen.height - defaultHeight)),
-              defaultWidth, defaultHeight, 0
-          };
-        }
-
-        return location;
-      }
-    }
-  }
-
-
+//  protected int[] nextEditorLocation() {
+//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+//    int defaultWidth = Preferences.getInteger("editor.window.width.default");
+//    int defaultHeight = Preferences.getInteger("editor.window.height.default");
+//
+////    if (activeEditor == null) {
+//    if (editors.size() == 0) {
+////      System.out.println("active editor is " + activeEditor);
+//      // If no current active editor, use default placement
+//      return new int[] {
+//          (screen.width - defaultWidth) / 2,
+//          (screen.height - defaultHeight) / 2,
+//          defaultWidth, defaultHeight, 0
+//      };
+//
+//    } else {
+//      // With a currently active editor, open the new window
+//      // using the same dimensions, but offset slightly.
+//      synchronized (editors) {
+//        final int OVER = 50;
+//        Editor lastOpened = editors.get(editors.size() - 1);
+//        int[] location = lastOpened.getPlacement();
+//        // Just in case the bounds for that window are bad
+//        location[0] += OVER;
+//        location[1] += OVER;
+//
+//        if (location[0] == OVER ||
+//            location[2] == OVER ||
+//            location[0] + location[2] > screen.width ||
+//            location[1] + location[3] > screen.height) {
+//          // Warp the next window to a randomish location on screen.
+//          return new int[] {
+//              (int) (Math.random() * (screen.width - defaultWidth)),
+//              (int) (Math.random() * (screen.height - defaultHeight)),
+//              defaultWidth, defaultHeight, 0
+//          };
+//        }
+//
+//        return location;
+//      }
+//    }
+//  }
+  
+  
   /**
    * Return the same mode as the active editor, or the default mode, which
    * begins as Java/Standard, but is updated with the last mode used.
@@ -930,11 +931,14 @@ public class Base {
    *         can be set by the caller
    */
   public Editor handleOpen(String path) {
-    return handleOpen(path, nextEditorLocation());
+    //return handleOpen(path, nextEditorLocation());
+    return handleOpen(path, new EditorState(editors));
   }
 
 
-  protected Editor handleOpen(String path, int[] location) {
+//  protected Editor handleOpen(String path, int[] location) {
+//  protected Editor handleOpen(String path, Rectangle bounds, int divider) {
+  protected Editor handleOpen(String path, EditorState state) {
 //    System.err.println("entering handleOpen " + path);
 
     File file = new File(path);
@@ -983,9 +987,9 @@ public class Base {
           nextMode = findMode(modeTitle);
           if (nextMode == null) {
             final String msg =
-              "This sketch was last used in â€œ" + modeTitle + "â€� mode,\n" +
+              "This sketch was last used in “" + modeTitle + "” mode,\n" +
               "which does not appear to be installed. The sketch will\n" +
-              "be opened in â€œ" + defaultMode.getTitle() + "â€� mode instead.";
+              "be opened in “" + defaultMode.getTitle() + "” mode instead.";
             Base.showWarning("Depeche Mode", msg, null);
             nextMode = defaultMode;
           }
@@ -994,7 +998,8 @@ public class Base {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    Editor editor = nextMode.createEditor(this, path, location);
+//    Editor.State state = new Editor.State(editors);
+    Editor editor = nextMode.createEditor(this, path, state);
     if (editor == null) {
       // if it's the last editor window
 //      if (editors.size() == 0 && defaultFileMenu == null) {
@@ -1007,7 +1012,7 @@ public class Base {
                        "unfortunate bit of indigestion.",
                        null);
       } else {
-        editor = defaultMode.createEditor(this, path, location);
+        editor = defaultMode.createEditor(this, path, state);
       }
     }
 
@@ -1091,7 +1096,7 @@ public class Base {
 
       // This will store the sketch count as zero
       editors.remove(editor);
-      storeSketches();
+//      storeSketches();
 
       // Save out the current prefs state
       Preferences.save();
@@ -1144,7 +1149,7 @@ public class Base {
   public boolean handleQuit() {
     // If quit is canceled, this will be replaced anyway
     // by a later handleQuit() that is not canceled.
-    storeSketches();
+//    storeSketches();
 
     if (handleQuitEach()) {
       // make sure running sketches close before quitting
@@ -1170,14 +1175,17 @@ public class Base {
    * @return false if canceled along the way
    */
   protected boolean handleQuitEach() {
-    int index = 0;
+//    int index = 0;
     for (Editor editor : editors) {
-      if (editor.checkModified()) {
-        // Update to the new/final sketch path for this fella
-        storeSketchPath(editor, index);
-        index++;
-
-      } else {
+//      if (editor.checkModified()) {
+//        // Update to the new/final sketch path for this fella
+//        storeSketchPath(editor, index);
+//        index++;
+//
+//      } else {
+//        return false;
+//      }
+      if (!editor.checkModified()) {
         return false;
       }
     }
@@ -1676,8 +1684,7 @@ public class Base {
 
   /**
    * Convenience method to get a File object for the specified filename inside
-   * the settings folder.
-   * For now, only used by Preferences to get the preferences.txt file.
+   * the settings folder. Used to get preferences and recent sketch files.
    * @param filename A file inside the settings folder.
    * @return filename wrapped as a File object inside the settings folder
    */
@@ -2786,5 +2793,10 @@ public class Base {
         }
       }
     }
+  }
+  
+  
+  static public void log(String message) {
+    if (DEBUG) System.out.println(message);
   }
 }

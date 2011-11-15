@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import processing.app.Base;
 import processing.app.Editor;
+import processing.app.EditorState;
 import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchException;
@@ -24,9 +25,9 @@ public class JavaScriptMode extends Mode
 	private JavaScriptEditor jsEditor;
 
   // create a new editor with the mode
-  public Editor createEditor( Base base, String path, int[] location )
+  public Editor createEditor( Base base, String path, EditorState state )
   {
-	jsEditor = new JavaScriptEditor( base, path, location, this );
+	jsEditor = new JavaScriptEditor( base, path, state, this );
     return jsEditor;
   }
 

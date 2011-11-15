@@ -29,12 +29,10 @@ import java.io.IOException;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import processing.app.Base;
-import processing.app.EditorToolbar;
-import processing.app.Mode;
-import processing.app.SketchException;
-import processing.core.PApplet;
+import processing.app.*;
 import processing.mode.java.JavaEditor;
+
+import processing.core.PApplet;
 
 // http://dl.google.com/android/repository/repository.xml
 // http://dl.google.com/android/android-sdk_r3-mac.zip
@@ -59,8 +57,8 @@ public class AndroidEditor extends JavaEditor {
   
   
   
-  protected AndroidEditor(Base base, String path, int[] location, Mode mode) throws Exception {
-    super(base, path, location, mode);
+  protected AndroidEditor(Base base, String path, EditorState state, Mode mode) throws Exception {
+    super(base, path, state, mode);
     amode = (AndroidMode) mode;
 
 //    try {
