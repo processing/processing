@@ -91,21 +91,25 @@ public class PTexture implements PConstants {
     this.parent = parent;
        
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerPGLObject(this);
     
     glID = 0;
     
     init(width, height, (Parameters)params);
   } 
 
-
-  public void delete() {
-    release();
-    img = null;
-    ogl.unregisterPGLObject(this);
-  }
+  
+  protected void finalize() throws Throwable {
+    try {
+      if (glID != 0) {
+        ogl.finalizeTextureObject(glID);
+      }
+    } finally {
+      super.finalize();
+    }
+  }  
   
   
+  /*
   public void backup() {
     if (img != null) {
       img.loadPixels();
@@ -124,6 +128,7 @@ public class PTexture implements PConstants {
       set(img.pixels);
     }    
   }
+  */
 
   ////////////////////////////////////////////////////////////
   
@@ -167,14 +172,15 @@ public class PTexture implements PConstants {
 
 
   public void resize(int wide, int high) {
+    // Marking the texture object as finalized so it is deleted
+    // when creating the new texture.
+    release();
+    
     // Creating new texture with the appropriate size.
     PTexture tex = new PTexture(parent, wide, high, getParameters());
     
     // Copying the contents of this texture into tex.
     tex.set(this);
-    
-    // Releasing the opengl resources associated to "this".
-    this.delete();
     
     // Now, overwriting "this" with tex.
     copyObject(tex);
@@ -708,7 +714,9 @@ public class PTexture implements PConstants {
     release(); // Just in the case this object is being re-allocated.
     
     getGl().glEnable(glTarget);
-    glID = ogl.createGLResource(PGraphicsOpenGL.GL_TEXTURE_OBJECT);
+    
+    glID = ogl.createTextureObject();
+    
     getGl().glBindTexture(glTarget, glID);
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
     getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
@@ -733,13 +741,13 @@ public class PTexture implements PConstants {
   
   
   /**
-   * Deletes the opengl texture object.
+   * Marks the texture object for deletion.
    */
-  protected void release() {
-    if (glID != 0) {
-      ogl.deleteGLResource(glID, PGraphicsOpenGL.GL_TEXTURE_OBJECT);
+  protected void release() {    
+    if (glID != 0) {      
+      ogl.finalizeTextureObject(glID);
       glID = 0;
-    }
+    }    
   }
 
   

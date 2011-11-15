@@ -182,7 +182,7 @@ public class PShape3D extends PShape {
     this();
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerPGLObject(this);
+    //ogl.registerPGLObject(this);
 
     this.family = PShape.GROUP;
     this.name = "root";
@@ -192,7 +192,7 @@ public class PShape3D extends PShape {
   public PShape3D(PApplet parent, int family) {
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerPGLObject(this);    
+    //ogl.registerPGLObject(this);    
 
     this.family = family;
 
@@ -254,7 +254,7 @@ public class PShape3D extends PShape {
   public PShape3D(PApplet parent, String filename, Parameters params) {
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerPGLObject(this);
+    //ogl.registerPGLObject(this);
 
     this.family = PShape.GROUP;
     this.name = "root";
@@ -273,7 +273,7 @@ public class PShape3D extends PShape {
   public PShape3D(PApplet parent, int size, Parameters params) {
     this.papplet = parent;
     ogl = (PGraphicsOpenGL)parent.g;
-    ogl.registerPGLObject(this);
+    //ogl.registerPGLObject(this);
 
     this.family = PShape.GROUP;
     this.name = "root";
@@ -289,6 +289,7 @@ public class PShape3D extends PShape {
   }
 
 
+  /*
   public void delete() {
     if (root != this) return; // Can be done only from the root shape.    
     release();
@@ -320,6 +321,18 @@ public class PShape3D extends PShape {
       updateTexcoords();
     }
   }
+  */
+  
+  
+  protected void finalize() throws Throwable {
+    try {
+      release();   
+    } finally {
+      super.finalize();
+    }
+  }  
+  
+  
 
   ////////////////////////////////////////////////////////////
 
@@ -587,7 +600,7 @@ public class PShape3D extends PShape {
     currentStroke[3] = a;    
   }
 
-  public void setWeight(float w) {
+  public void setStrokeWeight(float w) {
     currentStroke[4] = w;
   }  
 
@@ -1548,17 +1561,17 @@ public class PShape3D extends PShape {
   }
   
   protected void initBuffers(int nvert, int nind) {
-    glVertexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glVertexBufferID = ogl.createVertexBufferObject();    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
-    glColorBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    glColorBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glColorBufferID);
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
 
-    glNormalBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    glNormalBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glNormalBufferID);
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
@@ -1571,67 +1584,67 @@ public class PShape3D extends PShape {
         
     numTexBuffers = 1;
     for (int i = 0; i < numTexBuffers; i++) {
-      glTexCoordBufferID[i] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      glTexCoordBufferID[i] = ogl.createVertexBufferObject();
       getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glTexCoordBufferID[i]);
       getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 2 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
       getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     }    
     
-    glIndexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glIndexBufferID = ogl.createVertexBufferObject();    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glIndexBufferID);    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);         
   }
   
   protected void initStrokeBuffers(int nvert, int nind) {
-    glStrokeVertexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glStrokeVertexBufferID = ogl.createVertexBufferObject();    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glStrokeVertexBufferID);    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
-    glStrokeNormalBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glStrokeNormalBufferID = ogl.createVertexBufferObject();    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glStrokeNormalBufferID);    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     
-    glStrokeColorBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    glStrokeColorBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glStrokeColorBufferID);
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
-    glStrokeAttribBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    glStrokeAttribBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glStrokeAttribBufferID);   
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     
-    glStrokeIndexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glStrokeIndexBufferID = ogl.createVertexBufferObject();    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glStrokeIndexBufferID);    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);         
   }
   
   protected void initPointBuffers(int nvert, int nind) {
-    glPointVertexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glPointVertexBufferID = ogl.createVertexBufferObject();    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
-    glPointNormalBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glPointNormalBufferID = ogl.createVertexBufferObject();    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 3 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     
-    glPointColorBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    glPointColorBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
-    glPointAttribBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    glPointAttribBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);   
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nvert * 4 * PGraphicsOpenGL.SIZEOF_FLOAT, null, glUsage);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     
-    glPointIndexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glPointIndexBufferID = ogl.createVertexBufferObject();    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glUsage);    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);         
@@ -3495,7 +3508,7 @@ public class PShape3D extends PShape {
     return 0;
   }
   
-  
+  /*
   public void setStrokeWeight(float sw) {
     if (family == GROUP) {
       init();
@@ -3513,7 +3526,7 @@ public class PShape3D extends PShape {
       ((PShape3D)children[idx]).setStrokeWeight(sw);
     }
   }  
-  
+  */
   
   public float getMaxSpriteSize() {
     if (family == GROUP) {
@@ -4135,7 +4148,8 @@ public class PShape3D extends PShape {
   public void initIndices(int n) {
     indexCount = n;
     
-    glIndexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    //glIndexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glIndexBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glIndexBufferID);    
     final int bufferSize = indexCount * PGraphicsOpenGL.SIZEOF_INT;
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, null, GL.GL_STATIC_DRAW);    
@@ -4314,7 +4328,8 @@ public class PShape3D extends PShape {
   
   
   protected void createVertexBuffer() {    
-    glVertexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    //glVertexBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);    
+    glVertexBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glVertexBufferID);    
     final int bufferSize = vertexCount * 3 * PGraphicsOpenGL.SIZEOF_FLOAT;
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, null, glUsage);    
@@ -4331,7 +4346,8 @@ public class PShape3D extends PShape {
   
   
   protected void createColorBuffer() {
-    glColorBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    //glColorBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    glColorBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glColorBufferID);
     final int bufferSize = vertexCount * 4 * PGraphicsOpenGL.SIZEOF_FLOAT;    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, FloatBuffer.wrap(colors), glUsage);    
@@ -4345,7 +4361,8 @@ public class PShape3D extends PShape {
 
   
   protected void createNormalBuffer() {
-    glNormalBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    //glNormalBufferID = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+    glNormalBufferID = ogl.createVertexBufferObject();
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glNormalBufferID);
     final int bufferSize = vertexCount * 3 * PGraphicsOpenGL.SIZEOF_FLOAT;    
     getGl().glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, null, glUsage);
@@ -4368,7 +4385,8 @@ public class PShape3D extends PShape {
     }
     
     for (int i = 0; i < numTexBuffers; i++) {
-      glTexCoordBufferID[i] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      //glTexCoordBufferID[i] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      glTexCoordBufferID[i] = ogl.createVertexBufferObject();
       getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glTexCoordBufferID[i]);
       final int bufferSize = vertexCount * 2 * PGraphicsOpenGL.SIZEOF_FLOAT;
       getGl().glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, null, glUsage);
@@ -4382,7 +4400,8 @@ public class PShape3D extends PShape {
       int t = numTexBuffers + i;
       deleteTexCoordBuffer(t);
       
-      glTexCoordBufferID[t] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      //glTexCoordBufferID[t] = ogl.createGLResource(PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      glTexCoordBufferID[t] = ogl.createVertexBufferObject();      
       getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glTexCoordBufferID[t]);    
       final int bufferSize = vertexCount * 2 * PGraphicsOpenGL.SIZEOF_FLOAT;
       getGl().glBufferData(GL.GL_ARRAY_BUFFER, bufferSize, null, glUsage);
@@ -4421,7 +4440,7 @@ public class PShape3D extends PShape {
   
   protected void deleteVertexBuffer() {
     if (glVertexBufferID != 0) {    
-      ogl.deleteGLResource(glVertexBufferID, PGraphicsOpenGL.GL_VERTEX_BUFFER);   
+      ogl.finalizeVertexBufferObject(glVertexBufferID);   
       glVertexBufferID = 0;
     }
   }  
@@ -4429,7 +4448,8 @@ public class PShape3D extends PShape {
 
   protected void deleteColorBuffer() {
     if (glColorBufferID != 0) {
-      ogl.deleteGLResource(glColorBufferID, PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      ogl.finalizeVertexBufferObject(glColorBufferID);
+      //ogl.deleteGLResource(glColorBufferID, PGraphicsOpenGL.GL_VERTEX_BUFFER);
       glColorBufferID = 0;
     }
   }
@@ -4437,7 +4457,8 @@ public class PShape3D extends PShape {
   
   protected void deleteNormalBuffer() {
     if (glNormalBufferID != 0) {
-      ogl.deleteGLResource(glNormalBufferID, PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      //ogl.deleteGLResource(glNormalBufferID, PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      ogl.finalizeVertexBufferObject(glNormalBufferID);
       glNormalBufferID = 0;
     }
   }  
@@ -4445,14 +4466,15 @@ public class PShape3D extends PShape {
   
   protected void deleteIndexBuffer() {
     if (glIndexBufferID != 0) {
-      ogl.deleteGLResource(glIndexBufferID, PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      ogl.finalizeVertexBufferObject(glIndexBufferID);
+      //ogl.deleteGLResource(glIndexBufferID, PGraphicsOpenGL.GL_VERTEX_BUFFER);
       glIndexBufferID = 0;    
     }
   }
   
   
   protected void deleteTexCoordBuffer() {
-    if (glTexCoordBufferID != null) {
+    if (glTexCoordBufferID != null) {      
       for (int i = 0; i < glTexCoordBufferID.length; i++) { 
         deleteTexCoordBuffer(i);    
       }
@@ -4462,7 +4484,8 @@ public class PShape3D extends PShape {
   
   protected void deleteTexCoordBuffer(int idx) {  
     if (glTexCoordBufferID[idx] != 0) {
-      ogl.deleteGLResource(glTexCoordBufferID[idx], PGraphicsOpenGL.GL_VERTEX_BUFFER);
+      ogl.finalizeVertexBufferObject(glTexCoordBufferID[idx]);
+      //ogl.deleteGLResource(glTexCoordBufferID[idx], PGraphicsOpenGL.GL_VERTEX_BUFFER);
       glTexCoordBufferID[idx] = 0;
     }
   }

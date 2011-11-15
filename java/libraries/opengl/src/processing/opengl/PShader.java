@@ -57,9 +57,7 @@ public class PShader {
     ogl = (PGraphicsOpenGL) parent.g;
     gl = ogl.gl2x; 
     
-    ogl.createGLResource(PGraphicsOpenGL.GLSL_PROGRAM);
-    
-    programObject = ogl.createGLResource(PGraphicsOpenGL.GLSL_PROGRAM);  
+    programObject = ogl.createGLSLProgramObject();  
     vertexShader = 0;
     //geometryShader = 0;
     fragmentShader = 0;
@@ -84,9 +82,23 @@ public class PShader {
     setup();
   }
   
-  public void delete() {
-    release();    
+  
+  protected void finalize() throws Throwable {
+    try {
+      if (vertexShader != 0) {
+        ogl.finalizeGLSLVertShaderObject(vertexShader);
+      }
+      if (fragmentShader != 0) {
+        ogl.finalizeGLSLFragShaderObject(fragmentShader);
+      }
+      if (programObject != 0) {
+        ogl.finalizeGLSLProgramObject(programObject);
+      }
+    } finally {
+      super.finalize();
+    }
   }
+  
 
   /**
    * Loads and compiles the vertex shader contained in file.
@@ -436,7 +448,7 @@ public class PShader {
    * @param filename the shader's filename, used to print error log information
    */
   private void attachVertexShader(String shaderSource, String file) {
-    vertexShader = ogl.createGLResource(PGraphicsOpenGL.GLSL_VERTEX_SHADER);  
+    vertexShader = ogl.createGLSLVertShaderObject();
     
     gl.glShaderSource(vertexShader, 1, new String[] { shaderSource },
         (int[]) null, 0);
@@ -450,7 +462,7 @@ public class PShader {
    * @param filename the shader's filename, used to print error log information
    */
   private void attachFragmentShader(String shaderSource, String file) {
-    fragmentShader = ogl.createGLResource(PGraphicsOpenGL.GLSL_FRAGMENT_SHADER);
+    fragmentShader = ogl.createGLSLFragShaderObject();
     
     gl.glShaderSource(fragmentShader, 1, new String[] { shaderSource },
         (int[]) null, 0);
@@ -487,17 +499,17 @@ public class PShader {
 
   protected void release() {
     if (vertexShader != 0) {
-      ogl.deleteGLResource(vertexShader, PGraphicsOpenGL.GLSL_VERTEX_SHADER);
+      ogl.finalizeGLSLVertShaderObject(vertexShader);
       vertexShader = 0;
     }
     if (fragmentShader != 0) {
-      ogl.deleteGLResource(fragmentShader, PGraphicsOpenGL.GLSL_FRAGMENT_SHADER);
+      ogl.finalizeGLSLFragShaderObject(fragmentShader);
       fragmentShader = 0;
     }
     if (programObject != 0) {
-      ogl.deleteGLResource(fragmentShader, PGraphicsOpenGL.GLSL_PROGRAM);
+      ogl.finalizeGLSLProgramObject(programObject);
       programObject = 0;
-    }    
+    }
   }
   
   /*
