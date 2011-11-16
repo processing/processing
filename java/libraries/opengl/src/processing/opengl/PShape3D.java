@@ -227,7 +227,6 @@ public class PShape3D extends PShape {
       pointShader.setup();
     }    
     
-    //if (tobj == null) {
     if (family != GROUP) {
       tobj = GLU.gluNewTess();
       TessCallback tessCallback;
@@ -239,10 +238,10 @@ public class PShape3D extends PShape {
       GLU.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
       GLU.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
     }
-    //}
     
-    isSolid = true;
+    isSolid = false;
     isClosed = true;    
+    addBreak = false;
     
     root = this;
     parent = null;
@@ -361,9 +360,10 @@ public class PShape3D extends PShape {
   static protected final int GEOMETRY_POINT = 0;
   static protected final int LINE_POINT = 1;
   static protected final int CURVE_POINT = 2;
-  static protected final int BEZIER_CONTROL_POINT = 3;
+  static protected final int BEZIER_CONTROL_POINT = 3;  
   static protected final int BEZIER_ANCHOR_POINT = 4;
-
+  static protected final int BREAK_POINT = 5;
+  
   // To use later
   static public final int NURBS_CURVE = 4;
   static public final int NURBS_SURFACE = 5;  
@@ -386,6 +386,7 @@ public class PShape3D extends PShape {
   protected int mi0, mi1;    
 
   // For polygons
+  protected boolean addBreak;
   protected boolean isSolid;
   protected boolean isClosed;
   
@@ -644,8 +645,13 @@ public class PShape3D extends PShape {
   protected void addVertexImpl(float x, float y, float z, float u, float v, int type) {
     inputCheck();
 
-    inVertexTypes[inVertexCount] = type;
-
+    if (addBreak) {
+      inVertexTypes[inVertexCount] = BREAK_POINT;
+      addBreak = false;
+    } else {
+      inVertexTypes[inVertexCount] = type;
+    }
+    
     inVertices[3 * inVertexCount + 0] = x;
     inVertices[3 * inVertexCount + 1] = y;
     inVertices[3 * inVertexCount + 2] = z;
@@ -669,6 +675,10 @@ public class PShape3D extends PShape {
     currentNormal[2] = nz;
   }
 
+  public void setNoFill() {
+    setFill(0, 0, 0, 0);   
+  }
+    
   public void setFill(float r, float g, float b, float a) {
     currentColor[0] = r;
     currentColor[1] = g;
@@ -676,6 +686,10 @@ public class PShape3D extends PShape {
     currentColor[3] = a;
   }
 
+  public void setNoStroke() {
+    setStroke(0, 0, 0, 0);   
+  }  
+  
   public void setStroke(float r, float g, float b, float a) {
     currentStroke[0] = r;
     currentStroke[1] = g;
@@ -687,6 +701,14 @@ public class PShape3D extends PShape {
     currentStroke[4] = w;
   }  
 
+  public void setStrokeJoin(int join) {
+    
+  }
+  
+  public void setStrokeCap(int join) {
+    
+  }  
+  
   public void setSolid(boolean solid) {
     isSolid = solid;
   }
@@ -695,13 +717,9 @@ public class PShape3D extends PShape {
     isClosed = closed;
   }
   
-  public void beginContour() {
-    
+  public void addContour() {
+    addBreak = true;
   }
-  
-  public void endContour() {
-    
-  }  
   
   // Will be renamed to getVertex later (now conflicting with old API).
   public PVector getPVertex(int i) {
@@ -969,7 +987,7 @@ public class PShape3D extends PShape {
     for (int ln = 0; ln < lineCount; ln++) {
       int i0 = 2 * ln + 0;
       int i1 = 2 * ln + 1;
-      addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6; 
+      addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
     }    
   }
 
@@ -1389,17 +1407,23 @@ public class PShape3D extends PShape {
     GLU.gluTessBeginPolygon(tobj, null);
     
     if (isSolid) {
-      // Using ODD winding rule to generate polygon with holes.
-      GLU.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_ODD);
-    } else {
       // Using NONZERO winding rule for solid polygons.
-      GLU.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_NONZERO);
+      GLU.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_NONZERO);      
+    } else {
+      // Using ODD winding rule to generate polygon with holes.
+      GLU.gluTessProperty(tobj, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_ODD);      
     }
-    
-    GLU.gluTessBeginContour(tobj);
+
+    GLU.gluTessBeginContour(tobj);    
     
     // Now, iterate over all input data and send to GLU tessellator..
     for (int i = 0; i < inVertexCount; i++) {
+      boolean breakPt = inVertexTypes[i] == BREAK_POINT;      
+      if (breakPt) {
+        GLU.gluTessEndContour(tobj);  
+        GLU.gluTessBeginContour(tobj);
+      }
+      
       // Vertex data includes coordinates, colors, normals and texture coordinates.
       double[] vertex = new double[] { inVertices[3 * i + 0], inVertices[3 * i + 1], inVertices[3 * i + 2],
                                        inColors[4 * i + 0], inColors[4 * i + 1], inColors[4 * i + 2], inColors[4 * i + 3],
@@ -1417,8 +1441,74 @@ public class PShape3D extends PShape {
     
     firstIndex = 0;
     lastIndex = indexCount - 1;
+
+    // Count many how many line segments in the perimeter
+    // of this polygon are stroked.
+    int lineCount = 0;
+    int lnCount = inVertexCount;
+    if (!isClosed) {
+      lnCount--;
+    }
+    int contour0 = 0;
+    for (int ln = 0; ln < lnCount; ln++) {
+      int i0 = ln;
+      int i1 = ln + 1;
+      if (inVertexTypes[i0] == BREAK_POINT) {
+        contour0 = i0;
+      }
+      if ((i1 == lnCount || inVertexTypes[i1] == BREAK_POINT) && isClosed) {
+        // Make line with the first vertex of the current contour.
+        i0 = contour0;
+        i1 = ln;
+      }
+      
+      if (inVertexTypes[i1] != BREAK_POINT &&
+          (0 < inStroke[5 * i0 + 4] || 
+           0 < inStroke[5 * i1 + 4])) {
+        lineCount++;
+      }      
+    }
     
-    // Stroke stuff...
+    if (0 < lineCount) {
+      isStroked = true;
+
+      // Lines are made up of 4 vertices defining the quad. 
+      // Each vertex has its own offset representing the stroke weight.
+      int nvert = lineCount * 4;
+      strokeVertexCount = nvert; 
+      strokeVertices = new float[3 * nvert];
+      strokeColors = new float[4 * nvert];
+      strokeNormals = new float[3 * nvert];
+      strokeAttributes = new float[4 * nvert];
+      
+      // Each stroke line has 4 vertices, defining 2 triangles, which
+      // require 3 indices to specify their connectivities.
+      int nind = lineCount * 2 * 3;
+      strokeIndexCount = nind;
+      strokeIndices = new int[nind]; 
+      
+      int vcount = 0;
+      int icount = 0;
+      contour0 = 0;
+      for (int ln = 0; ln < lnCount; ln++) {
+        int i0 = ln;
+        int i1 = ln + 1;
+        if (inVertexTypes[i0] == BREAK_POINT) {
+          contour0 = i0;
+        }
+        if ((i1 == lnCount || inVertexTypes[i1] == BREAK_POINT) && isClosed) {
+          // Make line with the first vertex of the current contour.
+          i0 = contour0;
+          i1 = ln;
+        }
+        
+        if (inVertexTypes[i1] != BREAK_POINT &&
+            (0 < inStroke[5 * i0 + 4] || 
+             0 < inStroke[5 * i1 + 4])) {
+          addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+        }      
+      }    
+    }  
   }
   
   protected class TessCallback extends GLUtessellatorCallbackAdapter {
@@ -1564,6 +1654,16 @@ public class PShape3D extends PShape {
       outData[0] = vertex;
     }
   }  
+  
+  protected int numBreaks() {
+    int count = 0;
+    for (int i = 0; i < inVertexCount; i++) {
+      if (inVertexTypes[i] == BREAK_POINT) {
+        count++;
+      }
+    }
+    return count;
+  }
   
   protected void copyInDataToTessData() {
     vertexCount = inVertexCount;    
