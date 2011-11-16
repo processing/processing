@@ -2024,6 +2024,12 @@ public class PGraphicsOpenGL extends PGraphics {
     return new PShape3D(parent, PShape.GROUP);    
   }
   
+  public PShape createGeometry() {
+    PShape3D shape = new PShape3D(parent, PShape.GEOMETRY);
+    shape.setKind(POLYGON);
+    return shape;
+  }  
+  
   public PShape createGeometry(int kind) {
     PShape3D shape = new PShape3D(parent, PShape.GEOMETRY);
     shape.setKind(kind);
