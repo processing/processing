@@ -33,6 +33,7 @@ import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
+import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
 
@@ -251,7 +252,7 @@ public class PShape3D extends PShape {
   public void setKind(int kind) {
     this.kind = kind;
 
-    if (kind != GEOMETRY) {
+    if (family == GEOMETRY) {
       inVertexTypes = new int[64];
       inVertices = new float[3 * DEFAULT_VERTICES];  
       inTexCoords = new float[2 * DEFAULT_VERTICES];
@@ -360,9 +361,9 @@ public class PShape3D extends PShape {
   static protected final int GEOMETRY_POINT = 0;
   static protected final int LINE_POINT = 1;
   static protected final int CURVE_POINT = 2;
-  static protected final int BEZIER_CONTROL_POINT = 3;  
-  static protected final int BEZIER_ANCHOR_POINT = 4;
-  static protected final int BREAK_POINT = 5;
+  static protected final int BEZIER_POINT = 3;  
+  //static protected final int BEZIER_ANCHOR_POINT = 4;
+  static protected final int BREAK_POINT = 4;
   
   // To use later
   static public final int NURBS_CURVE = 4;
@@ -433,6 +434,41 @@ public class PShape3D extends PShape {
   public float[] pointColors;
   public float[] pointNormals;
   public float[] pointAttributes;  
+  
+  
+  // ........................................................
+
+  protected boolean bezierInited = false;
+  public int bezierDetail = 20;
+
+  // used by both curve and bezier, so just init here
+  protected PMatrix3D bezierBasisMatrix =
+    new PMatrix3D(-1,  3, -3,  1,
+                   3, -6,  3,  0,
+                  -3,  3,  0,  0,
+                   1,  0,  0,  0);
+
+  //protected PMatrix3D bezierForwardMatrix;
+  protected PMatrix3D bezierDrawMatrix;
+
+  // ........................................................
+
+  protected boolean curveInited = false;
+  protected int curveDetail = 20;
+  public float curveTightness = 0;
+  // catmull-rom basis matrix, perhaps with optional s parameter
+  protected PMatrix3D curveBasisMatrix;
+  protected PMatrix3D curveDrawMatrix;
+
+  protected PMatrix3D bezierBasisInverse;
+  protected PMatrix3D curveToBezierMatrix;
+
+  // ........................................................
+
+  // spline vertices
+
+  protected float curveVertices[][];
+  protected int curveVertexCount;
   
   
   
@@ -599,6 +635,144 @@ public class PShape3D extends PShape {
     indices = temp;
   }
   
+  // Curve stuff -------------------------------------------
+  protected void curveVertexCheck() {
+    
+    if (kind != POLYGON) {
+      throw new RuntimeException("You must use createGeometry() or " +
+                                 "createGeometry(POLYGON) before curveVertex()");
+    }
+    
+    // to improve code init time, allocate on first use.
+    if (curveVertices == null) {
+      curveVertices = new float[128][3];
+    }
+
+    if (curveVertexCount == curveVertices.length) {
+      // Can't use PApplet.expand() cuz it doesn't do the copy properly
+      float[][] temp = new float[curveVertexCount << 1][3];
+      System.arraycopy(curveVertices, 0, temp, 0, curveVertexCount);
+      curveVertices = temp;
+    }
+    curveInitCheck();
+  }
+  
+  protected void curveInitCheck() {
+    if (!curveInited) {
+      curveInit();
+    }
+  }
+  
+  protected void curveInit() {
+    // allocate only if/when used to save startup time
+    if (curveDrawMatrix == null) {
+      curveBasisMatrix = new PMatrix3D();
+      curveDrawMatrix = new PMatrix3D();
+      curveInited = true;
+    }
+
+    float s = curveTightness;
+    curveBasisMatrix.set((s-1)/2f, (s+3)/2f,  (-3-s)/2f, (1-s)/2f,
+                         (1-s),    (-5-s)/2f, (s+2),     (s-1)/2f,
+                         (s-1)/2f, 0,         (1-s)/2f,  0,
+                         0,        1,         0,         0);
+
+    //setup_spline_forward(segments, curveForwardMatrix);
+    splineForward(curveDetail, curveDrawMatrix);
+
+    if (bezierBasisInverse == null) {
+      bezierBasisInverse = bezierBasisMatrix.get();
+      bezierBasisInverse.invert();
+      curveToBezierMatrix = new PMatrix3D();
+    }
+
+    // TODO only needed for PGraphicsJava2D? if so, move it there
+    // actually, it's generally useful for other renderers, so keep it
+    // or hide the implementation elsewhere.
+    curveToBezierMatrix.set(curveBasisMatrix);
+    curveToBezierMatrix.preApply(bezierBasisInverse);
+
+    // multiply the basis and forward diff matrices together
+    // saves much time since this needn't be done for each curve
+    curveDrawMatrix.apply(curveBasisMatrix);
+  }  
+  
+  protected void splineForward(int segments, PMatrix3D matrix) {
+    float f  = 1.0f / segments;
+    float ff = f * f;
+    float fff = ff * f;
+
+    matrix.set(0,     0,    0, 1,
+               fff,   ff,   f, 0,
+               6*fff, 2*ff, 0, 0,
+               6*fff, 0,    0, 0);
+  }
+  
+  /**
+   * Handle emitting a specific segment of Catmull-Rom curve. This can be
+   * overridden by subclasses that need more efficient rendering options.
+   */
+  protected void curveVertexSegment(float x1, float y1, float z1,
+                                    float x2, float y2, float z2,
+                                    float x3, float y3, float z3,
+                                    float x4, float y4, float z4) {
+    float x0 = x2;
+    float y0 = y2;
+    float z0 = z2;
+
+    PMatrix3D draw = curveDrawMatrix;
+
+    float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
+    float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
+    float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
+
+    float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
+    float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
+    float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
+
+    // vertex() will reset splineVertexCount, so save it
+    int savedCount = curveVertexCount;
+
+    float zplot1 = draw.m10*z1 + draw.m11*z2 + draw.m12*z3 + draw.m13*z4;
+    float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
+    float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
+
+    addVertexImpl(x0, y0, z0, 0, 0, CURVE_POINT);
+    for (int j = 0; j < curveDetail; j++) {
+      x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
+      addVertexImpl(x0, y0, z0, 0, 0, CURVE_POINT);
+    }
+    curveVertexCount = savedCount;
+  }  
+
+
+  protected void bezierInitCheck() {
+    if (!bezierInited) {
+      bezierInit();
+    }
+  }
+
+  protected void bezierInit() {
+    // overkill to be broken out, but better parity with the curve stuff below
+    setBezierDetail(bezierDetail);
+    bezierInited = true;
+  }  
+  
+  protected void bezierVertexCheck() {
+    if (kind != POLYGON) {
+      throw new RuntimeException("createGeometry() or createGeometry(POLYGON) " +
+                                 "must be used before addBezierVertex() or addQuadraticVertex()");
+    }
+    if (inVertexCount == 0) {
+      throw new RuntimeException("addVertex() must be used at least once" +
+                                 "before addBezierVertex() or addQuadraticVertex()");
+    }
+  }  
+  
+  // -------------------------------------------------------
+  
   // Explicitly set vertex connectivities
   public void addTriangle(int i0, int i1, int i2) {
     // blah blah blah
@@ -624,23 +798,118 @@ public class PShape3D extends PShape {
     }    
   }
 
+  public void setCurveDetail(int detail) {
+    curveDetail = detail;
+    curveInit();
+  }
+  
+  public void setCurveTightness(float tightness) {
+    curveTightness = tightness;
+    curveInit();
+  }  
+  
   public void addCurveVertex(float x, float y) {
     addCurveVertex(x, y, 0);
   }  
 
   public void addCurveVertex(float x, float y, float z) {
-    addVertexImpl(x, y, 0, 0, 0, CURVE_POINT);
+    //addVertexImpl(x, y, 0, 0, 0, CURVE_POINT);
+    
+    curveVertexCheck();
+    float[] vertex = curveVertices[curveVertexCount];
+    vertex[X] = x;
+    vertex[Y] = y;
+    vertex[Z] = z;
+    curveVertexCount++;
+
+    // draw a segment if there are enough points
+    if (curveVertexCount > 3) {
+      curveVertexSegment(curveVertices[curveVertexCount-4][X],
+                         curveVertices[curveVertexCount-4][Y],
+                         curveVertices[curveVertexCount-4][Z],
+                         curveVertices[curveVertexCount-3][X],
+                         curveVertices[curveVertexCount-3][Y],
+                         curveVertices[curveVertexCount-3][Z],
+                         curveVertices[curveVertexCount-2][X],
+                         curveVertices[curveVertexCount-2][Y],
+                         curveVertices[curveVertexCount-2][Z],
+                         curveVertices[curveVertexCount-1][X],
+                         curveVertices[curveVertexCount-1][Y],
+                         curveVertices[curveVertexCount-1][Z]);
+    }
+    
   }
+  
+  public void setBezierDetail(int detail) {
+    bezierDetail = detail;
+
+    if (bezierDrawMatrix == null) {
+      bezierDrawMatrix = new PMatrix3D();
+    }
+
+    // setup matrix for forward differencing to speed up drawing
+    splineForward(detail, bezierDrawMatrix);
+
+    // multiply the basis and forward diff matrices together
+    // saves much time since this needn't be done for each curve
+    //mult_spline_matrix(bezierForwardMatrix, bezier_basis, bezierDrawMatrix, 4);
+    //bezierDrawMatrix.set(bezierForwardMatrix);
+    bezierDrawMatrix.apply(bezierBasisMatrix);
+  }  
 
   public void addBezierVertex(float cx1, float cy1, float cx2, float cy2, float x, float y) {
     addBezierVertex(cx1, cy1, 0, cx2, cy2, 0, x, y, 0);    
   }  
 
-  public void addBezierVertex(float cx1, float cy1, float cz1, float cx2, float cy2, float cz2, float x, float y, float z) {
+  public void addBezierVertex(float x2, float y2, float z2,
+                              float x3, float y3, float z3,
+                              float x4, float y4, float z4) {
+    bezierInitCheck();
+    bezierVertexCheck();
+    PMatrix3D draw = bezierDrawMatrix;
+
+    //float[] prev = inVertices[vertexCount-1];
+    float x1 = inVertices[3 * (inVertexCount - 1) + 0];
+    float y1 = inVertices[3 * (inVertexCount - 1) + 1];
+    float z1 = inVertices[3 * (inVertexCount - 1) + 2];
+
+    float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
+    float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
+    float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
+
+    float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
+    float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
+    float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
+
+    float zplot1 = draw.m10*z1 + draw.m11*z2 + draw.m12*z3 + draw.m13*z4;
+    float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
+    float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
+
+    for (int j = 0; j < bezierDetail; j++) {
+      x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
+      addVertexImpl(x1, y1, z1, 0, 0, BEZIER_POINT);
+    }    
+    
+    /*
     addVertexImpl(cx1, cy1, cz1, 0, 0, BEZIER_CONTROL_POINT);
     addVertexImpl(cx2, cy2, cz2, 0, 0, BEZIER_CONTROL_POINT);
-    addVertexImpl(x, y, z, 0, 0, BEZIER_ANCHOR_POINT);    
+    addVertexImpl(x, y, z, 0, 0, BEZIER_ANCHOR_POINT);
+    */
   }
+  
+  public void addQuadraticVertex(float cx, float cy, float cz,
+                              float x3, float y3, float z3) {
+    float x1 = inVertices[3 * (inVertexCount - 1) + 0];
+    float y1 = inVertices[3 * (inVertexCount - 1) + 1];
+    float z1 = inVertices[3 * (inVertexCount - 1) + 2];
+
+    addBezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
+                    x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
+                    x3, y3, z3);
+  }
+  
 
   protected void addVertexImpl(float x, float y, float z, float u, float v, int type) {
     inputCheck();
@@ -1706,11 +1975,14 @@ public class PShape3D extends PShape {
       double[] vert1 = (double[])data[1];
       double[] vert2 = (double[])data[2];
       double[] vert3 = (double[])data[3];
-      for (int i = 3; i < 12; i++) {
-        vertex[i] = weight[0] * vert0[i] +
-                    weight[1] * vert1[i] +
-                    weight[2] * vert2[i] +
-                    weight[3] * vert3[i];
+      if (vert0 != null && vert1 != null && 
+          vert2 != null && vert3 != null) {
+        for (int i = 3; i < 12; i++) {
+          vertex[i] = weight[0] * vert0[i] +
+                      weight[1] * vert1[i] +
+                      weight[2] * vert2[i] +
+                      weight[3] * vert3[i];
+        }        
       }
       
       // Normalizing normal vector, since the weighted 
