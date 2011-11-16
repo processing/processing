@@ -702,11 +702,11 @@ public class PShape3D extends PShape {
   }  
 
   public void setStrokeJoin(int join) {
-    
+    strokeJoin = join;    
   }
   
-  public void setStrokeCap(int join) {
-    
+  public void setStrokeCap(int cap) {
+    strokeCap = cap;        
   }  
   
   public void setSolid(boolean solid) {
@@ -876,9 +876,14 @@ public class PShape3D extends PShape {
     
     hasPoints = true;
     
-    // The following code is for the ROUND caps only.
-    
-    
+    if (strokeCap == ROUND) {
+      tessellateRoundPoints();
+    } else {
+      tessellateSquarePoints();
+    }
+  }
+  
+  protected void tessellateRoundPoints() {
     // Each point generates a separate triangle fan. 
     // The number of triangles of each fan depends on the
     // stroke weight of the point.
@@ -922,7 +927,7 @@ public class PShape3D extends PShape {
       
       // The attributes for each tessellated vertex are the displacement along
       // the circle perimeter. The point shader will read these attributes and
-      // displace the vertices in screen coordinates to the circles are always
+      // displace the vertices in screen coordinates so the circles are always
       // camera facing (bilboards)
       pointAttributes[2 * attribIdx + 0] = 0;
       pointAttributes[2 * attribIdx + 1] = 0;
@@ -951,11 +956,77 @@ public class PShape3D extends PShape {
       vert0 = vertIdx;
     }
     
-    PApplet.println(vertIdx + " " + attribIdx + " " + pointVertexCount);
-    PApplet.println(indIdx + " " + pointIndexCount);
+    firstPointIndex = 0;
+    lastPointIndex = pointIndexCount - 1;    
+  }
+  
+  static final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1}};
+  protected void tessellateSquarePoints() {
+    // Each point generates a separate quad.
+    int quadCount = inVertexCount;
+    
+    // Each quad is formed by 5 vertices, the center one
+    // is the input vertex, and the other 4 define the 
+    // corners (so, a triangle fan again).
+    int nvertTot = 5 * quadCount;
+    // So the quad is formed by 4 triangles, each requires
+    // 3 indices.
+    int nindTot = 12 * quadCount;
+    
+    pointVertexCount = nvertTot; 
+    pointVertices = new float[3 * nvertTot];
+    pointColors = new float[4 * nvertTot];
+    pointNormals = new float[3 * nvertTot];
+    pointAttributes = new float[2 * nvertTot];
+    
+    pointIndexCount = nindTot;    
+    pointIndices = new int[nindTot];    
+    
+    int vertIdx = 0;
+    int indIdx = 0;
+    int attribIdx = 0;
+    int vert0 = 0;    
+    for (int i = 0; i < inVertexCount; i++) {
+      int nvert = 5;
+      
+      for (int k = 0; k < nvert; k++) {
+        PApplet.arrayCopy(inVertices, 3 * i, pointVertices, 3 * vertIdx, 3);
+        PApplet.arrayCopy(inStroke, 5 * i, pointColors, 4 * vertIdx, 4);
+        PApplet.arrayCopy(inNormals, 3 * i, pointNormals, 3 * vertIdx, 3);      
+        vertIdx++; 
+      }      
+      
+      // The attributes for each tessellated vertex are the displacement along
+      // the quad corners. The point shader will read these attributes and
+      // displace the vertices in screen coordinates so the quads are always
+      // camera facing (bilboards)
+      pointAttributes[2 * attribIdx + 0] = 0;
+      pointAttributes[2 * attribIdx + 1] = 0;
+      attribIdx++;
+      float w = inStroke[5 * i + 4];
+      for (int k = 0; k < 4; k++) {
+        pointAttributes[2 * attribIdx + 0] = QUAD_SIGNS[k][0] * w/2;
+        pointAttributes[2 * attribIdx + 1] = QUAD_SIGNS[k][1] * w/2;               
+        attribIdx++;           
+      }
+      
+      // Adding vert0 to take into account the triangles of all
+      // the preceding points.
+      for (int k = 1; k < nvert - 1; k++) {
+        pointIndices[indIdx++] = vert0 + 0;
+        pointIndices[indIdx++] = vert0 + k;
+        pointIndices[indIdx++] = vert0 + k + 1;
+      }
+      // Final triangle between the last and first point:
+      pointIndices[indIdx++] = vert0 + 0;
+      pointIndices[indIdx++] = vert0 + 1;
+      pointIndices[indIdx++] = vert0 + nvert - 1;  
+      
+      vert0 = vertIdx;      
+    }
     
     firstPointIndex = 0;
-    lastPointIndex = pointIndexCount - 1;
+    lastPointIndex = pointIndexCount - 1;    
   }
   
   protected void tessellateLines() {
