@@ -7364,6 +7364,11 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("createGroup");
     return null;
   }  
+
+  public PShape createGeometry() {
+    showMissingWarning("createGeometry");
+    return null;
+  }  
   
   public PShape createGeometry(int kind) {
     showMissingWarning("createGeometry");
