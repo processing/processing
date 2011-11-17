@@ -1021,6 +1021,12 @@ public class PShape3D extends PShape {
     }
   }
   
+  public void setSphereRadius(float radius) {
+    if (params != null) {
+      params[0] = radius;
+      modified = true;
+    }
+  }
   
   // done with primitives -----------------------------------------------
   
@@ -2099,8 +2105,79 @@ public class PShape3D extends PShape {
   }
   
   protected void tessellateSphere() {
+    float r = params[0];
+    int nu = 30;
+    int nv = 30;
     
+    float startLat = -90;
+    float startLon = 0.0f;
+
+    float latInc = 180.0f / nu;
+    float lonInc = 360.0f / nv;
+
+    float u,  v;
+    float phi1,  phi2;
+    float theta1,  theta2;
+    PVector p0 = new PVector();
+    PVector p1 = new PVector();
+    PVector p2 = new PVector();
+
+    for (int col = 0; col < nu; col++) {
+      phi1 = (startLon + col * lonInc) * DEG_TO_RAD;
+      phi2 = (startLon + (col + 1) * lonInc) * DEG_TO_RAD;
+      for (int row = 0; row < nv; row++) {
+        theta1 = (startLat + row * latInc) * DEG_TO_RAD;
+        theta2 = (startLat + (row + 1) * latInc) * DEG_TO_RAD;
+
+        p0.x = PApplet.cos(phi1) * PApplet.cos(theta1);
+        p0.y = PApplet.sin(theta1);            
+        p0.z = PApplet.sin(phi1) * PApplet.cos(theta1);
+
+        p1.x = PApplet.cos(phi1) * PApplet.cos(theta2);
+        p1.y = PApplet.sin(theta2);            
+        p1.z = PApplet.sin(phi1) * PApplet.cos(theta2);
+
+        p2.x = PApplet.cos(phi2) * PApplet.cos(theta2);
+        p2.y = PApplet.sin(theta2);            
+        p2.z = PApplet.sin(phi2) * PApplet.cos(theta2);
+
+        normal(p0.x,  p0.y,  p0.z);     
+        u = PApplet.map(phi1, TWO_PI, 0, 0, 1);
+        v = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+        addVertex(r * p0.x,  r * p0.y,  r * p0.z,  u,  v);
+   
+        normal(p1.x,  p1.y,  p1.z);
+        u = PApplet.map(phi1, TWO_PI, 0, 0, 1);
+        v = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
+        addVertex(r * p1.x,  r * p1.y,  r * p1.z,  u,  v);
+
+        normal(p2.x,  p2.y,  p2.z);
+        u = PApplet.map(phi2, TWO_PI, 0, 0, 1);
+        v = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);      
+        addVertex(r * p2.x,  r * p2.y,  r * p2.z,  u,  v);
+
+        p1.x = PApplet.cos(phi2) * PApplet.cos(theta1);
+        p1.y = PApplet.sin(theta1);            
+        p1.z = PApplet.sin(phi2) * PApplet.cos(theta1);
+
+        normal(p0.x,  p0.y,  p0.z);
+        u = PApplet.map(phi1, TWO_PI, 0, 0, 1);
+        v = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);      
+        addVertex(r * p0.x,  r * p0.y,  r * p0.z,  u,  v);
+
+        normal(p2.x,  p2.y,  p2.z);
+        u = PApplet.map(phi2, TWO_PI, 0, 0, 1);
+        v = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);            
+        addVertex(r * p2.x,  r * p2.y,  r * p2.z,  u,  v);
+
+        normal(p1.x,  p1.y,  p1.z);
+        u = PApplet.map(phi2, TWO_PI, 0, 0, 1);
+        v = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);            
+        addVertex(r * p1.x,  r * p1.y,  r * p1.z,  u,  v);
+      }
+    }
     
+    tessellateTriangles();
   }
   
   protected void copyInDataToTessData() {
