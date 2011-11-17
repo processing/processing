@@ -268,7 +268,7 @@ public class PShape3D extends PShape {
         if (kind == BOX) {
           params = new float[1];
         } else if (kind == SPHERE) {
-          params = new float[1];
+          params = new float[3];
         }
       }      
     }
@@ -1025,6 +1025,17 @@ public class PShape3D extends PShape {
     if (params != null) {
       params[0] = radius;
       modified = true;
+    }
+  }
+  
+  public void setSphereDetail(int res) {
+    setSphereDetail(res, res);
+  }
+  
+  public void setSphereDetail(int ures, int vres) {
+    if (params != null) {
+      params[1] = ures;
+      params[2] = vres;
     }
   }
   
@@ -2106,8 +2117,8 @@ public class PShape3D extends PShape {
   
   protected void tessellateSphere() {
     float r = params[0];
-    int nu = 30;
-    int nv = 30;
+    int nu = (int)params[1];
+    int nv = (int)params[2];
     
     float startLat = -90;
     float startLon = 0.0f;
@@ -2115,12 +2126,13 @@ public class PShape3D extends PShape {
     float latInc = 180.0f / nu;
     float lonInc = 360.0f / nv;
 
-    float u,  v;
     float phi1,  phi2;
     float theta1,  theta2;
-    PVector p0 = new PVector();
-    PVector p1 = new PVector();
-    PVector p2 = new PVector();
+    float x0, y0, z0;
+    float x1, y1, z1;
+    float x2, y2, z2;
+    float x3, y3, z3;
+    float u1, v1, u2, v2, v3;
 
     for (int col = 0; col < nu; col++) {
       phi1 = (startLon + col * lonInc) * DEG_TO_RAD;
@@ -2129,51 +2141,45 @@ public class PShape3D extends PShape {
         theta1 = (startLat + row * latInc) * DEG_TO_RAD;
         theta2 = (startLat + (row + 1) * latInc) * DEG_TO_RAD;
 
-        p0.x = PApplet.cos(phi1) * PApplet.cos(theta1);
-        p0.y = PApplet.sin(theta1);            
-        p0.z = PApplet.sin(phi1) * PApplet.cos(theta1);
+        x0 = PApplet.cos(phi1) * PApplet.cos(theta1);
+        x1 = PApplet.cos(phi1) * PApplet.cos(theta2);
+        x2 = PApplet.cos(phi2) * PApplet.cos(theta2);
+        
+        y0 = PApplet.sin(theta1);
+        y1 = PApplet.sin(theta2);
+        y2 = PApplet.sin(theta2);
+        
+        z0 = PApplet.sin(phi1) * PApplet.cos(theta1);
+        z1 = PApplet.sin(phi1) * PApplet.cos(theta2);
+        z2 = PApplet.sin(phi2) * PApplet.cos(theta2);
 
-        p1.x = PApplet.cos(phi1) * PApplet.cos(theta2);
-        p1.y = PApplet.sin(theta2);            
-        p1.z = PApplet.sin(phi1) * PApplet.cos(theta2);
-
-        p2.x = PApplet.cos(phi2) * PApplet.cos(theta2);
-        p2.y = PApplet.sin(theta2);            
-        p2.z = PApplet.sin(phi2) * PApplet.cos(theta2);
-
-        normal(p0.x,  p0.y,  p0.z);     
-        u = PApplet.map(phi1, TWO_PI, 0, 0, 1);
-        v = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
-        addVertex(r * p0.x,  r * p0.y,  r * p0.z,  u,  v);
+        x3 = PApplet.cos(phi2) * PApplet.cos(theta1);
+        y3 = PApplet.sin(theta1);            
+        z3 = PApplet.sin(phi2) * PApplet.cos(theta1);
+        
+        u1 = PApplet.map(phi1, TWO_PI, 0, 0, 1); 
+        u2 = PApplet.map(phi2, TWO_PI, 0, 0, 1);
+        v1 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+        v2 = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
+        v3 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+        
+        setNormal(x0, y0, z0);     
+        addVertex(r * x0, r * y0, r * z0, u1, v1);
    
-        normal(p1.x,  p1.y,  p1.z);
-        u = PApplet.map(phi1, TWO_PI, 0, 0, 1);
-        v = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
-        addVertex(r * p1.x,  r * p1.y,  r * p1.z,  u,  v);
+        setNormal(x1, y1, z1);
+        addVertex(r * x1,  r * y1,  r * z1, u1, v2);
 
-        normal(p2.x,  p2.y,  p2.z);
-        u = PApplet.map(phi2, TWO_PI, 0, 0, 1);
-        v = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);      
-        addVertex(r * p2.x,  r * p2.y,  r * p2.z,  u,  v);
+        setNormal(x2, y2, z2);
+        addVertex(r * x2, r * y2, r * z2, u2, v2);
 
-        p1.x = PApplet.cos(phi2) * PApplet.cos(theta1);
-        p1.y = PApplet.sin(theta1);            
-        p1.z = PApplet.sin(phi2) * PApplet.cos(theta1);
+        setNormal(x0, y0, z0);    
+        addVertex(r * x0, r * y0, r * z0, u1, v1);
 
-        normal(p0.x,  p0.y,  p0.z);
-        u = PApplet.map(phi1, TWO_PI, 0, 0, 1);
-        v = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);      
-        addVertex(r * p0.x,  r * p0.y,  r * p0.z,  u,  v);
-
-        normal(p2.x,  p2.y,  p2.z);
-        u = PApplet.map(phi2, TWO_PI, 0, 0, 1);
-        v = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);            
-        addVertex(r * p2.x,  r * p2.y,  r * p2.z,  u,  v);
-
-        normal(p1.x,  p1.y,  p1.z);
-        u = PApplet.map(phi2, TWO_PI, 0, 0, 1);
-        v = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);            
-        addVertex(r * p1.x,  r * p1.y,  r * p1.z,  u,  v);
+        setNormal(x2, y2, z2);
+        addVertex(r * x2, r * y2, r * z2, u2, v2);
+        
+        setNormal(x3,  y3,  z3);
+        addVertex(r * x3,  r * y3,  r * z3,  u2,  v3);
       }
     }
     
@@ -2697,19 +2703,14 @@ public class PShape3D extends PShape {
 
   // SHAPE RECORDING HACK
 
-  /** Current normal vector. */
+  /*
   protected float normalX, normalY, normalZ;    
-  /** Current UV values */
   protected float textureU, textureV;  
   protected float strokeR, strokeG, strokeB, strokeA;
   protected float fillR, fillG, fillB, fillA;  
   protected boolean tint;
   protected int tintColor;
   protected float tintR, tintG, tintB, tintA;
-
-  
-  
-  
   
   public void beginRecord() {
     ogl.beginRecord(this);
@@ -2865,9 +2866,8 @@ public class PShape3D extends PShape {
     ogl.saveDrawingState();
     ogl.stroke(x, y, z, a);
     ogl.restoreDrawingState();
-  }
-  
-  
+  }  
+  */
   
   /*  
   // Reference to the renderer of the main PApplet
