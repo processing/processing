@@ -42,6 +42,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.io.BufferedReader;
 
@@ -252,7 +253,7 @@ public class PShape3D extends PShape {
   public void setKind(int kind) {
     this.kind = kind;
 
-    if (family == GEOMETRY) {
+    if (family == GEOMETRY || family == PRIMITIVE) {
       inVertexTypes = new int[64];
       inVertices = new float[3 * DEFAULT_VERTICES];  
       inTexCoords = new float[2 * DEFAULT_VERTICES];
@@ -260,7 +261,16 @@ public class PShape3D extends PShape {
       inColors = new float[4 * DEFAULT_VERTICES];
       inStroke = new float[5 * DEFAULT_VERTICES];
 
-      textures = new PImage[0];
+      textures = new PImage[1];
+      textures[0] = null;
+      
+      if (family == PRIMITIVE) {
+        if (kind == BOX) {
+          params = new float[1];
+        } else if (kind == SPHERE) {
+          params = new float[1];
+        }
+      }      
     }
   }
 
@@ -773,6 +783,18 @@ public class PShape3D extends PShape {
   
   // -------------------------------------------------------
   
+  public void setTexture(PImage tex) {
+    if (family != GROUP) {
+      textures[0] = tex;  
+    }
+  }
+  
+  public void setNoTexture() {
+    if (family != GROUP) {
+      textures[0] = null;  
+    }
+  }  
+  
   // Explicitly set vertex connectivities
   public void addTriangle(int i0, int i1, int i2) {
     // blah blah blah
@@ -791,7 +813,7 @@ public class PShape3D extends PShape {
       addVertexImpl(x, y, z, u, v, NURBS2D_CONTROL_POINT);  
     } else if (family == NURBS_SURFACE) {
       addVertexImpl(x, y, z, u, v, NURBS3D_CONTROL_POINT);
-    } else if (family == GEOMETRY){
+    } else if (family == GEOMETRY || family == PRIMITIVE){
       addVertexImpl(x, y, z, u, v, GEOMETRY_POINT);
     } else if (family == PATH){
       addVertexImpl(x, y, z, u, v, LINE_POINT);
@@ -938,7 +960,7 @@ public class PShape3D extends PShape {
   }
 
   // Will be renamed to setNormal later (now conflicting with old API).
-  public void setNormVect(float nx, float ny, float nz) {
+  public void setNormal(float nx, float ny, float nz) {
     currentNormal[0] = nx;
     currentNormal[1] = ny;
     currentNormal[2] = nz;
@@ -990,10 +1012,23 @@ public class PShape3D extends PShape {
     addBreak = true;
   }
   
+  // Some primitives ---------------------------------------------------
+  
+  public void setBoxSize(float size) {
+    if (params != null) {
+      params[0] = size;
+      modified = true;
+    }
+  }
+  
+  
+  // done with primitives -----------------------------------------------
+  
   // Will be renamed to getVertex later (now conflicting with old API).
-  public PVector getPVertex(int i) {
+  public float[] getVertex(int i) {
     if (0 <= i && i < inVertexCount) {
-      return new PVector(inVertices[3 * i + 0], inVertices[3 * i + 1], inVertices[3 * i + 2]);      
+      //return new PVector(inVertices[3 * i + 0], inVertices[3 * i + 1], inVertices[3 * i + 2]);
+      return new float[] {inVertices[3 * i + 0], inVertices[3 * i + 1], inVertices[3 * i + 2]};
     } else {
       System.err.println("Wrong index");
       return null;
@@ -1110,10 +1145,11 @@ public class PShape3D extends PShape {
           } else if (kind == ELLIPSE) {
           } else if (kind == ARC) {
           } else if (kind == BOX) {
+            tessellateBox();            
           } else if (kind == SPHERE) {
+            tessellateSphere();
           }
         } else if (family == PATH) {
-
         }      
 
       }
@@ -2006,6 +2042,65 @@ public class PShape3D extends PShape {
       }
     }
     return count;
+  }
+  
+  protected void tessellateBox() {
+    float w = params[0];
+    float h = params[0];
+    float d = params[0];
+        
+    float x1 = -w/2f; float x2 = w/2f;
+    float y1 = -h/2f; float y2 = h/2f;
+    float z1 = -d/2f; float z2 = d/2f;
+
+    // front
+    setNormal(0, 0, 1);
+    addVertex(x1, y1, z1, 0, 0);
+    addVertex(x2, y1, z1, 1, 0);
+    addVertex(x2, y2, z1, 1, 1);
+    addVertex(x1, y2, z1, 0, 1);
+
+    // right
+    setNormal(1, 0, 0);
+    addVertex(x2, y1, z1, 0, 0);
+    addVertex(x2, y1, z2, 1, 0);
+    addVertex(x2, y2, z2, 1, 1);
+    addVertex(x2, y2, z1, 0, 1);
+
+    // back
+    setNormal(0, 0, -1);
+    addVertex(x2, y1, z2, 0, 0);
+    addVertex(x1, y1, z2, 1, 0);
+    addVertex(x1, y2, z2, 1, 1);
+    addVertex(x2, y2, z2, 0, 1);
+
+    // left
+    setNormal(-1, 0, 0);
+    addVertex(x1, y1, z2, 0, 0);
+    addVertex(x1, y1, z1, 1, 0);
+    addVertex(x1, y2, z1, 1, 1);
+    addVertex(x1, y2, z2, 0, 1);
+
+    // top
+    setNormal(0, 1, 0);
+    addVertex(x1, y1, z2, 0, 0);
+    addVertex(x2, y1, z2, 1, 0);
+    addVertex(x2, y1, z1, 1, 1);
+    addVertex(x1, y1, z1, 0, 1);
+
+    // bottom
+    setNormal(0, -1, 0);
+    addVertex(x1, y2, z1, 0, 0);
+    addVertex(x2, y2, z1, 1, 0);
+    addVertex(x2, y2, z2, 1, 1);
+    addVertex(x1, y2, z2, 0, 1);
+
+    tessellateQuads();      
+  }
+  
+  protected void tessellateSphere() {
+    
+    
   }
   
   protected void copyInDataToTessData() {
@@ -4069,7 +4164,7 @@ public class PShape3D extends PShape {
     else return -1;
   }  
   
-  
+  /*
   public void setTexture(PImage tex) {
     if (family == GROUP) {
       init();
@@ -4171,7 +4266,7 @@ public class PShape3D extends PShape {
       ((PShape3D)children[idx]).setTexture(tex);    
     }
   }
- 
+ */
   
   protected void setTextureImpl(PImage tex, int unit) {
     if (unit < 0 || PGraphicsOpenGL.maxTextureUnits <= unit) {
@@ -4204,7 +4299,7 @@ public class PShape3D extends PShape {
     }    
   }
    
-  
+  /*
   public PImage[] getTexture() {
     if (family == GROUP) {
       init();
@@ -4221,7 +4316,7 @@ public class PShape3D extends PShape {
     }
     return null;
   }
-  
+  */
   
   public float getStrokeWeight() {
     if (family == GROUP) {
@@ -4363,7 +4458,7 @@ public class PShape3D extends PShape {
     spriteDistAtt[2] = 0;
   }
   
-  
+  /*
   public void setColor(int c) {
     setColor(rgba(c));
   }    
@@ -4450,6 +4545,7 @@ public class PShape3D extends PShape {
     }
     p.updateNormals();
   }  
+  */
   
   // Optimizes the array list containing children shapes so that shapes with identical
   // parameters are removed. Also, making sure that the names are unique.
@@ -5233,7 +5329,7 @@ public class PShape3D extends PShape {
 
   // These methods are not available in PShape3D.  
   
-  
+  /*
   public float[] getVertex(int index) {
     PGraphics.showMethodWarning("getVertex");
     return null;
@@ -5274,7 +5370,7 @@ public class PShape3D extends PShape {
     PGraphics.showMethodWarning("getVertexCode");
     return 0;    
   }
-  
+  */
   ///////////////////////////////////////////////////////////    
   
   // Style handling
@@ -5341,11 +5437,25 @@ public class PShape3D extends PShape {
             break;
           }
         }
+
+        HashSet<PImage> textures = getTextures();
+        boolean diffTexBelow = 1 < textures.size();
+
+        for (int i = 0; i < childCount; i++) {
+          if (((PShape3D)children[i]).hasMatrix()) {
+            matrixBelow = true;
+            break;
+          }
+        }        
         
-        if (matrixBelow) {
+        if (matrixBelow || diffTexBelow) {
           // Some child shape below this group has a non-null matrix
-          // transforamtion assigned to it, so the group cannot
+          // transformation assigned to it, so the group cannot
           // be drawn in a single render call.
+          // Or, some child shapes below this group use different
+          // texture maps, so they cannot rendered in a single call
+          // either.
+          
           //init();
           for (int i = 0; i < childCount; i++) {
             ((PShape3D)children[i]).draw(g);
@@ -5354,11 +5464,16 @@ public class PShape3D extends PShape {
           // None of the child shapes below this group has a matrix
           // transformation applied to them, so we can render everything
           // in a single block.
-          render(g);
+          // And all have the same texture applied to them.
+          PImage tex = null;
+          if (textures.size() == 1) {
+            tex = (PImage)textures.toArray()[0];
+          }
+          render(g, tex);
         }
               
       } else {
-        render(g);
+        render(g, textures[0]);
       }
     
       if (matrix != null) {
@@ -5384,6 +5499,25 @@ public class PShape3D extends PShape {
     }
     return false;
   }
+  
+  protected HashSet<PImage> getTextures() {
+    HashSet<PImage> texSet = new HashSet<PImage>();
+    
+    if (family == GROUP) {
+      
+      HashSet<PImage> childSet = null;
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        childSet = child.getTextures();
+        texSet.addAll(childSet);
+      }
+      
+    } else {
+      texSet.add(textures[0]);
+    }
+    
+    return texSet;    
+  }  
   
   protected boolean isModified() {
     if (modified) {
@@ -5447,14 +5581,14 @@ public class PShape3D extends PShape {
   
   // Render the geometry stored in the root shape as VBOs, for the vertices 
   // corresponding to this shape. Sometimes we can have root == this.
-  protected void render(PGraphics g) {
+  protected void render(PGraphics g, PImage texture) {
     if (root == null) {
       // Some error. Root should never be null. At least it should be this.
       return; 
     }
     
     if (0 < vertexCount && 0 < indexCount) { 
-      renderFill();
+      renderFill(texture);
     }
     
     if (isStroked) {
@@ -5466,7 +5600,7 @@ public class PShape3D extends PShape {
     }    
   }
   
-  protected void renderFill() {
+  protected void renderFill(PImage textureImage) {
     getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glNormalBufferID);
     getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);    
@@ -5478,12 +5612,33 @@ public class PShape3D extends PShape {
     getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glVertexBufferID);
     getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);    
+
+    getGl().glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glTexCoordBufferID[0]);
+    getGl().glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);    
+    
+    PTexture tex = null;
+    if (textureImage != null) {
+      tex = ogl.getTexture(textureImage);
+      if (tex != null) {
+        getGl().glEnable(tex.glTarget);
+        getGl().glActiveTexture(GL.GL_TEXTURE0);
+        getGl().glBindTexture(tex.glTarget, tex.glID);
+      }
+    }
     
     getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glIndexBufferID);    
     getGl().glDrawElements(GL.GL_TRIANGLES, lastIndex - firstIndex + 1, GL.GL_UNSIGNED_INT, firstIndex * PGraphicsOpenGL.SIZEOF_INT);      
     getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);    
     
+    if (tex != null) {
+      getGl().glActiveTexture(GL.GL_TEXTURE0);
+      getGl().glBindTexture(tex.glTarget, 0);
+      getGl().glDisable(tex.glTarget);
+    } 
+    
     getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
+    getGl().glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
     getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
     getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);     
   }

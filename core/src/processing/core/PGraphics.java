@@ -27,7 +27,6 @@ package processing.core;
 import java.awt.*;
 import java.util.HashMap;
 
-
   /**
    * ( begin auto-generated from PGraphics.xml )
    *
@@ -7375,6 +7374,10 @@ public class PGraphics extends PImage implements PConstants {
     return null;
   }
   
+  public PShape createPrimitive(int kind) {
+    showMissingWarning("createPrimitive");
+    return null;
+  }  
   
   protected String[] getSupportedShapeFormats() {
     showMissingWarning("getSupportedShapeFormats");
