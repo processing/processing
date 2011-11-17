@@ -2036,6 +2036,12 @@ public class PGraphicsOpenGL extends PGraphics {
     return shape;
   }
 
+  public PShape createPrimitive(int kind) {
+    PShape3D shape = new PShape3D(parent, PShape.PRIMITIVE);
+    shape.setKind(kind);
+    return shape;
+  }
+  
   // All picked up from either PGraphics or PGraphics3D
 
   // public void beginShape()
