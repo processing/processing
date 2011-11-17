@@ -13550,8 +13550,18 @@ public class PApplet extends Applet
   }
 
 
+  public PShape createGeometry() {
+    return g.createGeometry();
+  }
+
+
   public PShape createGeometry(int kind) {
     return g.createGeometry(kind);
+  }
+
+
+  public PShape createPrimitive(int kind) {
+    return g.createPrimitive(kind);
   }
 
 
