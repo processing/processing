@@ -36,6 +36,7 @@ import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
+import processing.opengl.PGraphicsOpenGL.PTessellator;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -269,6 +270,8 @@ public class PShape3D extends PShape {
           params = new float[1];
         } else if (kind == SPHERE) {
           params = new float[3];
+          params[1] = 20;
+          params[2] = 20;
         }
       }      
     }
@@ -381,6 +384,10 @@ public class PShape3D extends PShape {
   static protected final int NURBS2D_CONTROL_POINT = 4;
   static protected final int NURBS3D_CONTROL_POINT = 5;
 
+  protected float[] currentNormal = { 0, 0, 1 };
+  protected float[] currentColor = { 0, 0, 0, 0 };
+  protected float[] currentStroke = { 0, 0, 0, 1, 1 };  
+  
   protected int[] inVertexTypes;
   protected float[] inVertices;  
   protected float[] inTexCoords;
@@ -388,10 +395,6 @@ public class PShape3D extends PShape {
   protected float[] inColors;  // Fill color
   protected float[] inStroke; // Stroke color+weight  
   protected int inVertexCount;
-
-  protected float[] currentNormal = { 0, 0, 1 };
-  protected float[] currentColor = { 0, 0, 0, 0 };
-  protected float[] currentStroke = { 0, 0, 0, 1, 1 };
 
   protected boolean modified;
   protected int mi0, mi1;    
@@ -1123,6 +1126,8 @@ public class PShape3D extends PShape {
     // 
   }  
 
+  protected PTessellator ptess;
+  
 
   // The huber-tessellator is here. Called automatically when
   // rendering the shape.
@@ -1985,7 +1990,7 @@ public class PShape3D extends PShape {
         // vertex normal
         normals[3 * vertexCount + 0] = (float) d[7];
         normals[3 * vertexCount + 1] = (float) d[8];
-        normals[4 * vertexCount + 2] = (float) d[9];
+        normals[3 * vertexCount + 2] = (float) d[9];
 
         // texture coordinates
         texcoords[2 * vertexCount + 0] = (float) d[10];
