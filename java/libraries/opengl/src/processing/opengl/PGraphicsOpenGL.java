@@ -8905,6 +8905,8 @@ return width * (1 + ox) / 2.0f;
                               float g, float b, float a,
                               float nx, float ny, float nz, 
                               float u, float v) {
+      fillVertexCheck();
+      
       // vertex coordinates
       fillVertices[3 * fillVertexCount + 0] = x;
       fillVertices[3 * fillVertexCount + 1] = y;
@@ -8963,7 +8965,7 @@ return width * (1 + ox) / 2.0f;
       float temp[] = new float[2 * n];      
       System.arraycopy(pointAttributes, 0, temp, 0, 4 * pointVertexCount);
       pointAttributes = temp;      
-    }    
+    }
     
     public void addPointIndices(int count) {
       if (lastPointIndex + count >= pointIndices.length) {
@@ -8982,6 +8984,64 @@ return width * (1 + ox) / 2.0f;
       System.arraycopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;        
     }
+    
+    public void addLineVertices(int count) {
+      if (lastLineVertex + count >= lineVertices.length / 3) {
+        int newSize = lastLineVertex + count;
+        
+        expandLineVertices(newSize);
+        expandLineColors(newSize);
+        expandLineNormals(newSize);
+        expandLineAttributes(newSize);
+      }
+      
+      lineVertexCount += count;      
+      firstLineVertex = lastLineVertex + 1;
+      lastLineVertex = lineVertexCount - 1;
+    }
+
+    public void expandLineVertices(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(lineVertices, 0, temp, 0, 3 * lineVertexCount);
+      lineVertices = temp;  
+    }
+    
+    public void expandLineColors(int n) {
+      float temp[] = new float[4 * n];      
+      System.arraycopy(lineColors, 0, temp, 0, 4 * lineVertexCount);
+      lineColors = temp;      
+    }
+    
+    public void expandLineNormals(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(lineNormals, 0, temp, 0, 4 * lineVertexCount);
+      lineNormals = temp;      
+    }
+    
+    public void expandLineAttributes(int n) {
+      float temp[] = new float[2 * n];      
+      System.arraycopy(lineAttributes, 0, temp, 0, 4 * lineVertexCount);
+      lineAttributes = temp;      
+    }      
+    
+    public void addLineIndices(int count) {
+      if (lastLineIndex + count >= lineIndices.length) {
+        int newSize = lastLineIndex + count;
+        
+        expandLineIndices(newSize);
+      }
+     
+      lineIndexCount += count;      
+      firstLineIndex = lastLineIndex + 1;
+      lastLineIndex = lineIndexCount - 1;   
+    }   
+    
+    public void expandLineIndices(int n) {
+      int temp[] = new int[n];      
+      System.arraycopy(lineIndices, 0, temp, 0, lineIndexCount);
+      lineIndices = temp;        
+    }
+    
   }
   
   static protected class PTessellator {
@@ -8997,7 +9057,8 @@ return width * (1 + ox) / 2.0f;
         sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
         cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
       }
-    }    
+    }  
+    static final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1}};
     
     public GLUtessellator gluTess;
     PInGeometry inGeo; 
@@ -9030,7 +9091,7 @@ return width * (1 + ox) / 2.0f;
       if (cap == ROUND) {
         tessellateRoundPoints();
       } else {
-        //tessellateSquarePoints();
+        tessellateSquarePoints();
       }
     }    
 
@@ -9101,8 +9162,123 @@ return width * (1 + ox) / 2.0f;
       }
     }
     
+    protected void tessellateSquarePoints() {
+      // Each point generates a separate quad.
+      int quadCount = inGeo.lastVertex - inGeo.firstVertex + 1;
+      
+      // Each quad is formed by 5 vertices, the center one
+      // is the input vertex, and the other 4 define the 
+      // corners (so, a triangle fan again).
+      int nvertTot = 5 * quadCount;
+      // So the quad is formed by 4 triangles, each requires
+      // 3 indices.
+      int nindTot = 12 * quadCount;
+      
+      int vertIdx = 3 * tessGeo.pointVertexCount;
+      int attribIdx = 2 * tessGeo.pointVertexCount;
+      int indIdx = tessGeo.pointIndexCount;      
+      int vert0 = tessGeo.pointVertexCount;      
+      tessGeo.addPointVertices(nvertTot);
+      tessGeo.addPointIndices(nindTot);
+      for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
+        int nvert = 5;
+        
+        for (int k = 0; k < nvert; k++) {
+          PApplet.arrayCopy(inGeo.vertices, 3 * i, tessGeo.pointVertices, 3 * vertIdx, 3);
+          PApplet.arrayCopy(inGeo.normals, 3 * i, tessGeo.pointNormals, 3 * vertIdx, 3);
+          PApplet.arrayCopy(inGeo.strokes, 5 * i, tessGeo.pointColors, 4 * vertIdx, 4);                
+          vertIdx++; 
+        }       
+        
+        // The attributes for each tessellated vertex are the displacement along
+        // the quad corners. The point shader will read these attributes and
+        // displace the vertices in screen coordinates so the quads are always
+        // camera facing (bilboards)
+        tessGeo.pointAttributes[2 * attribIdx + 0] = 0;
+        tessGeo.pointAttributes[2 * attribIdx + 1] = 0;
+        attribIdx++;
+        float w = inGeo.strokes[5 * i + 4];
+        for (int k = 0; k < 4; k++) {
+          tessGeo.pointAttributes[2 * attribIdx + 0] = QUAD_SIGNS[k][0] * w/2;
+          tessGeo.pointAttributes[2 * attribIdx + 1] = QUAD_SIGNS[k][1] * w/2;               
+          attribIdx++;           
+        }
+        
+        // Adding vert0 to take into account the triangles of all
+        // the preceding points.
+        for (int k = 1; k < nvert - 1; k++) {
+          tessGeo.pointIndices[indIdx++] = vert0 + 0;
+          tessGeo.pointIndices[indIdx++] = vert0 + k;
+          tessGeo.pointIndices[indIdx++] = vert0 + k + 1;
+        }
+        // Final triangle between the last and first point:
+        tessGeo.pointIndices[indIdx++] = vert0 + 0;
+        tessGeo.pointIndices[indIdx++] = vert0 + 1;
+        tessGeo.pointIndices[indIdx++] = vert0 + nvert - 1;  
+        
+        vert0 = vertIdx;      
+      }
+    }
     
+    protected void tessellateLines() {      
+      int lineCount = (inGeo.lastVertex - inGeo.firstVertex + 1) / 2;
+      // Lines are made up of 4 vertices defining the quad. 
+      // Each vertex has its own offset representing the stroke weight.
+      int nvert = lineCount * 4;
+      // Each stroke line has 4 vertices, defining 2 triangles, which
+      // require 3 indices to specify their connectivities.
+      int nind = lineCount * 2 * 3;
+
+      int vcount = tessGeo.lineVertexCount;
+      int icount = tessGeo.lineIndexCount;
+      int vert0 = inGeo.firstVertex;
+      tessGeo.addLineVertices(nvert);
+      tessGeo.addLineIndices(nind);
+      for (int ln = 0; ln < lineCount; ln++) {
+        int i0 = vert0 + 2 * ln + 0;
+        int i1 = vert0 + 2 * ln + 1;
+        addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+      }    
+    }
     
+    // Adding the data that defines a quad starting at vertex i0 and
+    // ending at i1.
+    protected void addStrokeLine(int i0, int i1, int vcount, int icount) {
+      PApplet.arrayCopy(inGeo.vertices, 3 * i0, tessGeo.lineVertices, 3 * vcount, 3);
+      PApplet.arrayCopy(inGeo.normals, 3 * i0, tessGeo.lineNormals, 3 * vcount, 3);
+      PApplet.arrayCopy(inGeo.strokes, 5 * i0, tessGeo.lineColors, 4 * vcount, 4);    
+      PApplet.arrayCopy(inGeo.vertices, 3 * i1, tessGeo.lineAttributes, 4 * vcount, 3);
+      tessGeo.lineAttributes[4 * vcount + 3] = +inGeo.strokes[5 * i0 + 4];    
+      tessGeo.lineIndices[icount++] = vcount;
+      
+      vcount++;    
+      PApplet.arrayCopy(inGeo.vertices, 3 * i0, tessGeo.lineVertices, 3 * vcount, 3);
+      PApplet.arrayCopy(inGeo.normals, 3 * i0, tessGeo.lineNormals, 3 * vcount, 3);
+      PApplet.arrayCopy(inGeo.strokes, 5 * i0, tessGeo.lineColors, 4 * vcount, 4);
+      PApplet.arrayCopy(inGeo.vertices, 3 * i1, tessGeo.lineAttributes, 4 * vcount, 3);
+      tessGeo.lineAttributes[4 * vcount + 3] = -inGeo.strokes[5 * i0 + 4];
+      tessGeo.lineIndices[icount++] = vcount;
+      
+      vcount++;  
+      PApplet.arrayCopy(inGeo.vertices, 3 * i1, tessGeo.lineVertices, 3 * vcount, 3);
+      PApplet.arrayCopy(inGeo.normals, 3 * i1, tessGeo.lineNormals, 3 * vcount, 3);
+      PApplet.arrayCopy(inGeo.strokes, 5 * i1, tessGeo.lineColors, 4 * vcount, 4);
+      PApplet.arrayCopy(inGeo.vertices, 3 * i0, tessGeo.lineAttributes, 4 * vcount, 3); 
+      tessGeo.lineAttributes[4 * vcount + 3] = -inGeo.strokes[5 * i1 + 4];
+      tessGeo.lineIndices[icount++] = vcount;
+      
+      // Starting a new triangle re-using prev vertices.
+      tessGeo.lineIndices[icount++] = vcount;
+      tessGeo.lineIndices[icount++] = vcount - 1;
+      
+      vcount++;
+      PApplet.arrayCopy(inGeo.vertices, 3 * i1, tessGeo.lineVertices, 3 * vcount, 3);
+      PApplet.arrayCopy(inGeo.normals, 3 * i1, tessGeo.lineNormals, 3 * vcount, 3);
+      PApplet.arrayCopy(inGeo.strokes, 5 * i1, tessGeo.lineColors, 4 * vcount, 4);
+      PApplet.arrayCopy(inGeo.vertices, 3 * i0, tessGeo.lineAttributes, 4 * vcount, 3);
+      tessGeo.lineAttributes[4 * vcount + 3] = +inGeo.strokes[5 * i1 + 4];
+      tessGeo.lineIndices[icount++] = vcount;
+    }
     
     public class GLUTessCallback extends GLUtessellatorCallbackAdapter {
       protected int tessFirst;
