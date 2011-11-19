@@ -53,8 +53,11 @@ import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUtessellator;
+import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
+import processing.opengl.PShape3D.TessCallback;
 
 /**
  * New OpenGL renderer for Processing, entirely based on OpenGL 2.x 
@@ -8743,4 +8746,491 @@ return width * (1 + ox) / 2.0f;
       current[3] *= sx;  current[7] *= sy;  current[11] *= sz;      
     }
   }  
+  
+  protected class PInGeometry {
+    public PInGeometry() {
+      vertexCount = firstVertex = lastVertex = 0;
+      vertices = new float[3 * DEFAULT_VERTICES];
+      colors = new float[4 * DEFAULT_VERTICES];      
+      normals = new float[3 * DEFAULT_VERTICES];
+      texcoords = new float[2 * DEFAULT_VERTICES];
+      strokes = new float[5 * DEFAULT_VERTICES];
+    }
+    
+    public int vertexCount;
+    
+    // Range of vertices that will be processed by the 
+    // tessellator.
+    public int firstVertex;
+    public int lastVertex;    
+    
+    public float[] vertices;  
+    public float[] colors;
+    public float[] normals;
+    public float[] texcoords;
+    public float[] strokes;    
+  }
+  
+  protected class PTessGeometry {
+    public PTessGeometry() {
+      fillVertexCount = firstFillVertex = lastFillVertex = 0;      
+      fillVertices = new float[0];
+      fillColors = new float[0];
+      fillNormals = new float[0];
+      fillTexcoords = new float[0];
+      
+      fillIndexCount = firstFillIndex = lastFillIndex = 0;      
+      fillIndices = new int[0];  
+      
+      lineVertexCount = firstLineVertex = lastLineVertex = 0;    
+      lineVertices = new float[0];
+      lineColors = new float[0];
+      lineNormals = new float[0];
+      lineAttributes = new float[0];
+      
+      lineIndexCount = firstLineIndex = lastLineIndex = 0;  
+      lineIndices = new int[0];       
+      
+      pointVertexCount = firstPointVertex = lastPointVertex = 0;    
+      pointVertices = new float[0];
+      pointColors = new float[0];
+      pointNormals = new float[0];
+      pointAttributes = new float[0];
+
+      pointIndexCount = firstPointIndex = lastPointIndex = 0;  
+      pointIndices = new int[0];      
+    }
+    
+    // Tessellated fill data
+    public int fillVertexCount;
+    
+    // Range of vertices that were generated during last
+    // call to the tessellator.
+    public int firstFillVertex;
+    public int lastFillVertex;
+    
+    public float[] fillVertices;
+    public float[] fillColors;
+    public float[] fillNormals;
+    public float[] fillTexcoords;
+
+    public int fillIndexCount;
+    public int firstFillIndex;
+    public int lastFillIndex;    
+    public int[] fillIndices;
+    
+    // Tessellated line data    
+    public int lineVertexCount;
+    public int firstLineVertex;
+    public int lastLineVertex;    
+    public float[] lineVertices;
+    public float[] lineColors;
+    public float[] lineNormals;
+    public float[] lineAttributes;    
+    
+    public int lineIndexCount;
+    public int firstLineIndex;
+    public int lastLineIndex;  
+    public int[] lineIndices;  
+    
+    // Tessellated point data
+    public int pointVertexCount;
+    public int firstPointVertex;
+    public int lastPointVertex;    
+    public float[] pointVertices;
+    public float[] pointColors;
+    public float[] pointNormals;
+    public float[] pointAttributes;  
+
+    public int pointIndexCount;
+    public int firstPointIndex;
+    public int lastPointIndex;  
+    public int[] pointIndices;
+    
+    public void fillIndexCheck() {
+      if (fillIndexCount == fillIndices.length) {
+        int newSize = fillIndexCount << 1;
+        expandFillIndices(newSize);
+      }
+    }    
+    
+    public void expandFillIndices(int n) {
+      int temp[] = new int[n];      
+      System.arraycopy(fillIndices, 0, temp, 0, fillIndexCount);
+      fillIndices = temp;      
+    }
+    
+    public void addFillIndex(int idx) {
+      fillIndexCheck();
+      fillIndices[fillIndexCount] = idx;
+      fillIndexCount++;
+    }
+    
+    public void fillVertexCheck() {
+      if (fillVertexCount == fillVertices.length / 3) {
+        int newSize = fillVertexCount << 1;
+      
+        expandFillVertices(newSize);
+        expandFillColors(newSize);              
+        expandFillNormals(newSize);
+        expandFillTexcoords(newSize);                
+      }
+    }
+    
+    protected void expandFillVertices(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(fillVertices, 0, temp, 0, 3 * fillVertexCount);
+      fillVertices = temp;       
+    }
+
+    protected void expandFillColors(int n) {
+      float temp[] = new float[4 * n];      
+      System.arraycopy(fillColors, 0, temp, 0, 4 * fillVertexCount);
+      fillColors = temp;
+    }
+    
+    protected void expandFillNormals(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(fillNormals, 0, temp, 0, 3 * fillVertexCount);
+      fillNormals = temp;       
+    }
+    
+    protected void expandFillTexcoords(int n) {
+      float temp[] = new float[2 * n];      
+      System.arraycopy(fillTexcoords, 0, temp, 0, 2 * fillVertexCount);
+      fillTexcoords = temp;
+    }
+    
+    public void addFillVertex(float x, float y, float z, float r, 
+                              float g, float b, float a,
+                              float nx, float ny, float nz, 
+                              float u, float v) {
+      // vertex coordinates
+      fillVertices[3 * fillVertexCount + 0] = x;
+      fillVertices[3 * fillVertexCount + 1] = y;
+      fillVertices[3 * fillVertexCount + 2] = z;
+      
+      // vertex color
+      fillColors[4 * fillVertexCount + 0] = r;
+      fillColors[4 * fillVertexCount + 1] = g;
+      fillColors[4 * fillVertexCount + 2] = b;
+      fillColors[4 * fillVertexCount + 3] = a;
+      
+      // vertex normal
+      fillNormals[3 * fillVertexCount + 0] = nx;
+      fillNormals[3 * fillVertexCount + 1] = ny;
+      fillNormals[3 * fillVertexCount + 2] = nz;
+
+      // texture coordinates
+      fillTexcoords[2 * fillVertexCount + 0] = u;
+      fillTexcoords[2 * fillVertexCount + 1] = v;      
+    }
+    
+    public void addPointVertices(int count) {
+      if (lastPointVertex + count >= pointVertices.length / 3) {
+        int newSize = lastPointVertex + count;
+        
+        expandPointVertices(newSize);
+        expandPointColors(newSize);
+        expandPointNormals(newSize);
+        expandPointAttributes(newSize);
+      }
+      
+      pointVertexCount += count;      
+      firstPointVertex = lastPointVertex + 1;
+      lastPointVertex = pointVertexCount - 1;
+    }
+
+    public void expandPointVertices(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(pointVertices, 0, temp, 0, 3 * pointVertexCount);
+      pointVertices = temp;  
+    }
+    
+    public void expandPointColors(int n) {
+      float temp[] = new float[4 * n];      
+      System.arraycopy(pointColors, 0, temp, 0, 4 * pointVertexCount);
+      pointColors = temp;      
+    }
+    
+    public void expandPointNormals(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(pointNormals, 0, temp, 0, 4 * pointVertexCount);
+      pointNormals = temp;      
+    }
+    
+    public void expandPointAttributes(int n) {
+      float temp[] = new float[2 * n];      
+      System.arraycopy(pointAttributes, 0, temp, 0, 4 * pointVertexCount);
+      pointAttributes = temp;      
+    }    
+    
+    public void addPointIndices(int count) {
+      if (lastPointIndex + count >= pointIndices.length) {
+        int newSize = lastPointIndex + count;
+        
+        expandPointIndices(newSize);
+      }
+     
+      pointIndexCount += count;      
+      firstPointIndex = lastPointIndex + 1;
+      lastPointIndex = pointIndexCount - 1;   
+    }   
+    
+    public void expandPointIndices(int n) {
+      int temp[] = new int[n];      
+      System.arraycopy(pointIndices, 0, temp, 0, pointIndexCount);
+      pointIndices = temp;        
+    }
+  }
+  
+  static protected class PTessellator {
+    static final protected int MIN_ACCURACY = 6; 
+    static final protected float sinLUT[];
+    static final protected float cosLUT[];
+    static final protected float SINCOS_PRECISION = 0.5f;
+    static final protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
+    static {
+      sinLUT = new float[SINCOS_LENGTH];
+      cosLUT = new float[SINCOS_LENGTH];
+      for (int i = 0; i < SINCOS_LENGTH; i++) {
+        sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
+        cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
+      }
+    }    
+    
+    public GLUtessellator gluTess;
+    PInGeometry inGeo; 
+    PTessGeometry tessGeo;
+    GLU glu;
+    
+    public PTessellator() {
+      glu = new GLU();
+      
+      gluTess = GLU.gluNewTess();
+      GLUTessCallback tessCallback;
+    
+      tessCallback = new GLUTessCallback();
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_BEGIN, tessCallback);
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_END, tessCallback);
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_VERTEX, tessCallback);
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_COMBINE, tessCallback);
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_ERROR, tessCallback);        
+    }
+    
+    public void setInGeometry(PInGeometry in) {
+      this.inGeo = in;
+    }
+
+    public void setTessGeometry(PTessGeometry tess) {
+      this.tessGeo = tess;
+    }
+        
+    public void tessellatePoints(int cap) {
+      if (cap == ROUND) {
+        tessellateRoundPoints();
+      } else {
+        //tessellateSquarePoints();
+      }
+    }    
+
+    protected void tessellateRoundPoints() {
+      // Each point generates a separate triangle fan. 
+      // The number of triangles of each fan depends on the
+      // stroke weight of the point.
+      int nvertTot = 0;
+      int nindTot = 0;
+      for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
+        float w = inGeo.strokes[5 * i + 4];
+        int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * w / 20));
+        // Number of points along the perimeter plus the center point.
+        int nvert = perim + 1;
+        nvertTot += nvert; 
+        nindTot += 3 * (nvert - 1);
+      }
+      
+      int vertIdx = 3 * tessGeo.pointVertexCount;
+      int attribIdx = 2 * tessGeo.pointVertexCount;
+      int indIdx = tessGeo.pointIndexCount;      
+      int vert0 = tessGeo.pointVertexCount;      
+      tessGeo.addPointVertices(nvertTot);
+      tessGeo.addPointIndices(nindTot);
+      for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
+        // Creating the triangle fan for each input vertex.
+        float w = inGeo.strokes[5 * i + 4];
+        int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * w / 20));
+        int nvert = perim + 1;
+        
+        // All the tessellated vertices are identical to the center point
+        for (int k = 0; k < nvert; k++) {
+          PApplet.arrayCopy(inGeo.vertices, 3 * i, tessGeo.pointVertices, 3 * vertIdx, 3);
+          PApplet.arrayCopy(inGeo.normals, 3 * i, tessGeo.pointNormals, 3 * vertIdx, 3);
+          PApplet.arrayCopy(inGeo.strokes, 5 * i, tessGeo.pointColors, 4 * vertIdx, 4);                
+          vertIdx++; 
+        }       
+        
+        // The attributes for each tessellated vertex are the displacement along
+        // the circle perimeter. The point shader will read these attributes and
+        // displace the vertices in screen coordinates so the circles are always
+        // camera facing (bilboards)
+        tessGeo.pointAttributes[2 * attribIdx + 0] = 0;
+        tessGeo.pointAttributes[2 * attribIdx + 1] = 0;
+        attribIdx++;
+        float val = 0;
+        float inc = (float) SINCOS_LENGTH / perim;      
+        for (int k = 0; k < perim; k++) {
+          tessGeo.pointAttributes[2 * attribIdx + 0] = cosLUT[(int) val] * w/2;
+          tessGeo.pointAttributes[2 * attribIdx + 1] = sinLUT[(int) val] * w/2;
+          val = (val + inc) % SINCOS_LENGTH;                
+          attribIdx++;           
+        }
+        
+        // Adding vert0 to take into account the triangles of all
+        // the preceding points.
+        for (int k = 1; k < nvert - 1; k++) {
+          tessGeo.pointIndices[indIdx++] = vert0 + 0;
+          tessGeo.pointIndices[indIdx++] = vert0 + k;
+          tessGeo.pointIndices[indIdx++] = vert0 + k + 1;
+        }
+        // Final triangle between the last and first point:
+        tessGeo.pointIndices[indIdx++] = vert0 + 0;
+        tessGeo.pointIndices[indIdx++] = vert0 + 1;
+        tessGeo.pointIndices[indIdx++] = vert0 + nvert - 1;      
+        
+        vert0 = vertIdx;
+      }
+    }
+    
+    
+    
+    
+    public class GLUTessCallback extends GLUtessellatorCallbackAdapter {
+      protected int tessFirst;
+      protected int tessCount;
+      protected int tessType;
+      
+      public void begin(int type) {
+        tessFirst = tessGeo.fillVertexCount;
+        tessCount = 0;
+        
+        switch (type) {
+        case GL.GL_TRIANGLE_FAN: 
+          tessType = TRIANGLE_FAN;
+          break;
+        case GL.GL_TRIANGLE_STRIP: 
+          tessType = TRIANGLE_STRIP;
+          break;
+        case GL.GL_TRIANGLES: 
+          tessType = TRIANGLES;
+          break;
+        }
+      }
+
+      public void end() {
+        switch (tessType) {
+        case TRIANGLE_FAN: 
+          for (int i = 1; i < tessCount - 1; i++) {
+            addIndex(0);
+            addIndex(i);
+            addIndex(i + 1);
+          }       
+          break;
+        case TRIANGLE_STRIP: 
+          for (int i = 1; i < tessCount - 1; i++) {
+            addIndex(i);
+            if (i % 2 == 0) {
+              addIndex(i - 1);
+              addIndex(i + 1);
+            } else {
+              addIndex(i + 1);
+              addIndex(i - 1);
+            }
+          }        
+          break;
+        case TRIANGLES: 
+          for (int i = 0; i < tessCount; i++) {
+            addIndex(i);          
+          }
+          break;
+        }
+      }
+      
+      protected void addIndex(int tessIdx) {
+        tessGeo.addFillIndex(tessFirst + tessIdx);
+      }
+
+      public void vertex(Object data) {
+        if (data instanceof double[]) {
+          double[] d = (double[]) data;
+          if (d.length < 12) {
+            throw new RuntimeException("TessCallback vertex() data " +
+                                       "isn't length 12");
+          }
+          
+          tessGeo.addFillVertex((float) d[0], (float) d[1], (float) d[2],
+                                (float) d[3], (float) d[4], (float) d[5], (float) d[6],
+                                (float) d[7], (float) d[8], (float) d[9],
+                                (float) d[10], (float) d[11]);
+
+          tessCount++;
+          tessGeo.fillVertexCount++;
+        } else {
+          throw new RuntimeException("TessCallback vertex() data not understood");
+        }
+      }
+
+      public void error(int errnum) {
+        String estring = glu.gluErrorString(errnum);
+        PGraphics.showWarning("Tessellation Error: " + estring);
+      }
+      
+      /**
+       * Implementation of the GLU_TESS_COMBINE callback.
+       * @param coords is the 3-vector of the new vertex
+       * @param data is the vertex data to be combined, up to four elements.
+       * This is useful when mixing colors together or any other
+       * user data that was passed in to gluTessVertex.
+       * @param weight is an array of weights, one for each element of "data"
+       * that should be linearly combined for new values.
+       * @param outData is the set of new values of "data" after being
+       * put back together based on the weights. it's passed back as a
+       * single element Object[] array because that's the closest
+       * that Java gets to a pointer.
+       */
+      public void combine(double[] coords, Object[] data,
+                          float[] weight, Object[] outData) {
+        
+        double[] vertex = new double[12];
+        vertex[0] = coords[0];
+        vertex[1] = coords[1];
+        vertex[2] = coords[2];
+
+        double[] vert0 = (double[])data[0];
+        double[] vert1 = (double[])data[1];
+        double[] vert2 = (double[])data[2];
+        double[] vert3 = (double[])data[3];
+        if (vert0 != null && vert1 != null && 
+            vert2 != null && vert3 != null) {
+          for (int i = 3; i < 12; i++) {
+            vertex[i] = weight[0] * vert0[i] +
+                        weight[1] * vert1[i] +
+                        weight[2] * vert2[i] +
+                        weight[3] * vert3[i];
+          }        
+        }
+        
+        // Normalizing normal vector, since the weighted 
+        // combination of normal vectors is not necessarily 
+        // normal.
+        double sum = vertex[7] * vertex[7] + vertex[8] * vertex[8] + vertex[9] * vertex[9];
+        double len = Math.sqrt(sum);      
+        vertex[7] /= len; 
+        vertex[8] /= len;
+        vertex[9] /= len;  
+        
+        outData[0] = vertex;
+      }
+    }    
+  }
+  
 }
