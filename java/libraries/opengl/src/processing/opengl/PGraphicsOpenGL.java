@@ -8750,6 +8750,7 @@ return width * (1 + ox) / 2.0f;
   protected class PInGeometry {
     public PInGeometry() {
       vertexCount = firstVertex = lastVertex = 0;
+      codes = new int[DEFAULT_VERTICES];
       vertices = new float[3 * DEFAULT_VERTICES];
       colors = new float[4 * DEFAULT_VERTICES];      
       normals = new float[3 * DEFAULT_VERTICES];
@@ -8764,6 +8765,7 @@ return width * (1 + ox) / 2.0f;
     public int firstVertex;
     public int lastVertex;    
     
+    public int[] codes;
     public float[] vertices;  
     public float[] colors;
     public float[] normals;
@@ -9042,6 +9044,32 @@ return width * (1 + ox) / 2.0f;
       lineIndices = temp;        
     }
     
+    public void addFillVertices(int count) {
+      if (firstFillVertex + count >= fillVertices.length / 3) {
+        int newSize = firstFillVertex + count;
+        
+        expandFillVertices(newSize);
+        expandFillColors(newSize);
+        expandFillNormals(newSize);
+        expandFillTexcoords(newSize);
+      }
+      
+      fillVertexCount += count;      
+      firstFillVertex = lastFillVertex + 1;
+      lastFillVertex = fillVertexCount - 1;
+    }
+    
+    public void addFillIndices(int count) {
+      if (lastFillIndex + count >= fillIndices.length) {
+        int newSize = lastFillIndex + count;
+        
+        expandFillIndices(newSize);
+      }
+     
+      fillIndexCount += count;      
+      firstFillIndex = lastFillIndex + 1;
+      lastFillIndex = fillIndexCount - 1;   
+    }   
   }
   
   static protected class PTessellator {
@@ -9058,7 +9086,7 @@ return width * (1 + ox) / 2.0f;
         cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
       }
     }  
-    static final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1}};
+    static final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
     
     public GLUtessellator gluTess;
     PInGeometry inGeo; 
@@ -9220,7 +9248,7 @@ return width * (1 + ox) / 2.0f;
       }
     }
     
-    protected void tessellateLines() {      
+    public void tessellateLines() {      
       int lineCount = (inGeo.lastVertex - inGeo.firstVertex + 1) / 2;
       // Lines are made up of 4 vertices defining the quad. 
       // Each vertex has its own offset representing the stroke weight.
@@ -9240,6 +9268,453 @@ return width * (1 + ox) / 2.0f;
         addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
       }    
     }
+
+    public void tessellateTriangles() {
+      copyInGeoToTessGeo();
+
+      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
+      int triCount = nvertFill / 3;
+      
+      tessGeo.addFillIndices(nvertFill);
+      int idx0 = tessGeo.firstFillIndex;
+      for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
+        tessGeo.fillIndices[idx0 + i] = i;
+      }
+
+      // Count how many triangles in this shape
+      // are stroked.
+      int strokedCount = 0;
+      int vert0 = inGeo.firstVertex;
+      for (int tr = 0; tr < triCount; tr++) {
+        int i0 = vert0 + 3 * tr + 0;
+        int i1 = vert0 + 3 * tr + 1;
+        int i2 = vert0 + 3 * tr + 2;
+        
+        if (0 < inGeo.strokes[5 * i0 + 4] || 
+            0 < inGeo.strokes[5 * i1 + 4] ||
+            0 < inGeo.strokes[5 * i2 + 4]) {
+          strokedCount++;
+        }      
+      }
+      
+      if (0 < strokedCount) {        
+        // Each stroked triangle has 3 lines, one for each edge. 
+        // These lines are made up of 4 vertices defining the quad. 
+        // Each vertex has its own offset representing the stroke weight.
+        int nvertLine = strokedCount * 3 * 4;
+        tessGeo.addLineVertices(nvertLine);
+        
+        // Each stroke line has 4 vertices, defining 2 triangles, which
+        // require 3 indices to specify their connectivities.
+        int nind = strokedCount * 3 * 2 * 3;
+        tessGeo.addLineIndices(nind);
+        
+        int vcount = tessGeo.lineVertexCount;
+        int icount = tessGeo.lineIndexCount;
+        vert0 = inGeo.firstVertex;
+        for (int tr = 0; tr < triCount; tr++) {
+          int i0 = vert0 + 3 * tr + 0;
+          int i1 = vert0 + 3 * tr + 1;
+          int i2 = vert0 + 3 * tr + 2;        
+
+          if (0 < inGeo.strokes[5 * i0 + 4] || 
+              0 < inGeo.strokes[5 * i1 + 4] ||
+              0 < inGeo.strokes[5 * i2 + 4]) {
+            addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i2, i0, vcount, icount); vcount += 4; icount += 6;
+          }
+        }
+        
+      }
+    }
+
+    public void tessellateTriangleFan() {
+      copyInGeoToTessGeo();
+      
+      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
+      int triCount = nvertFill - 2;
+      
+      tessGeo.addFillIndices(3 * triCount);
+      int idx = tessGeo.firstFillIndex;
+      for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
+        tessGeo.fillIndices[idx++] = inGeo.firstVertex;
+        tessGeo.fillIndices[idx++] = i;
+        tessGeo.fillIndices[idx++] = i + 1;
+      }
+      
+      // Count how many triangles in this shape
+      // are stroked.
+      int strokedCount = 0;
+      for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
+        int i0 = inGeo.firstVertex;
+        int i1 = i;
+        int i2 = i + 1;
+        
+        if (0 < inGeo.strokes[5 * i0 + 4] || 
+            0 < inGeo.strokes[5 * i1 + 4] ||
+            0 < inGeo.strokes[5 * i2 + 4]) {
+          strokedCount++;
+        }      
+      }    
+      
+      if (0 < strokedCount) {        
+        // Each stroked triangle has 3 lines, one for each edge. 
+        // These lines are made up of 4 vertices defining the quad. 
+        // Each vertex has its own offset representing the stroke weight.
+        int nvertLine = strokedCount * 3 * 4;
+        tessGeo.addLineVertices(nvertLine);
+        
+        // Each stroke line has 4 vertices, defining 2 triangles, which
+        // require 3 indices to specify their connectivities.
+        int nind = strokedCount * 3 * 2 * 3;
+        tessGeo.addLineIndices(nind); 
+        
+        int vcount = tessGeo.firstLineVertex;
+        int icount = tessGeo.firstLineIndex;
+        for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
+          int i0 = inGeo.firstVertex;
+          int i1 = i;
+          int i2 = i + 1;     
+
+          if (0 < inGeo.strokes[5 * i0 + 4] || 
+              0 < inGeo.strokes[5 * i1 + 4] ||
+              0 < inGeo.strokes[5 * i2 + 4]) {
+            addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i2, i0, vcount, icount); vcount += 4; icount += 6;
+          }
+        }
+      }
+    }
+    
+    
+    public void tessellateTriangleStrip() {
+      copyInGeoToTessGeo();
+      
+      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
+      int triCount = nvertFill - 2;
+      
+      // Each vertex, except the first and last, defines a triangle.
+      tessGeo.addFillIndices(3 * triCount);
+      int idx = tessGeo.firstFillIndex;
+      for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
+        tessGeo.fillIndices[idx++] = i;
+        if (i % 2 == 0) {
+          tessGeo.fillIndices[idx++] = i - 1;  
+          tessGeo.fillIndices[idx++] = i + 1;
+        } else {
+          tessGeo.fillIndices[idx++] = i + 1;  
+          tessGeo.fillIndices[idx++] = i - 1;
+        }
+      }      
+      
+      // Count how many triangles in this shape
+      // are stroked.
+      int strokedCount = 0;
+      for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
+        int i0 = i;
+        int i1, i2;
+        if (i % 2 == 0) {
+          i1 = i - 1;
+          i2 = i + 1;        
+        } else {
+          i1 = i + 1;
+          i2 = i - 1;        
+        }
+        
+        if (0 < inGeo.strokes[5 * i0 + 4] || 
+            0 < inGeo.strokes[5 * i1 + 4] ||
+            0 < inGeo.strokes[5 * i2 + 4]) {
+          strokedCount++;
+        }      
+      } 
+      
+      if (0 < strokedCount) {
+        // Each stroked triangle has 3 lines, one for each edge. 
+        // These lines are made up of 4 vertices defining the quad. 
+        // Each vertex has its own offset representing the stroke weight.
+        int nvertLine = strokedCount * 3 * 4;
+        tessGeo.addLineVertices(nvertLine);
+        
+        // Each stroke line has 4 vertices, defining 2 triangles, which
+        // require 3 indices to specify their connectivities.
+        int nind = strokedCount * 3 * 2 * 3;
+        tessGeo.addLineIndices(nind); 
+        
+        int vcount = tessGeo.firstLineVertex;
+        int icount = tessGeo.firstLineIndex;
+        for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
+          int i0 = i;
+          int i1, i2;
+          if (i % 2 == 0) {
+            i1 = i - 1;
+            i2 = i + 1;        
+          } else {
+            i1 = i + 1;
+            i2 = i - 1;        
+          }  
+
+          if (0 < inGeo.strokes[5 * i0 + 4] || 
+              0 < inGeo.strokes[5 * i1 + 4] ||
+              0 < inGeo.strokes[5 * i2 + 4]) {
+            addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i2, i0, vcount, icount); vcount += 4; icount += 6;
+          }
+        }
+      }
+    }
+
+    public void tessellateQuads() {
+      copyInGeoToTessGeo();
+
+      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
+      int quadCount = nvertFill / 4;
+      
+      tessGeo.addFillIndices(6 * quadCount);
+      int idx = tessGeo.firstFillIndex;
+      int vert0 = inGeo.firstVertex;
+      for (int qd = 0; qd < quadCount; qd++) {        
+        int i0 = vert0 + 4 * qd + 0;
+        int i1 = vert0 + 4 * qd + 1;
+        int i2 = vert0 + 4 * qd + 2;
+        int i3 = vert0 + 4 * qd + 3;
+        
+        tessGeo.fillIndices[idx++] = i0;
+        tessGeo.fillIndices[idx++] = i1;
+        tessGeo.fillIndices[idx++] = i3;
+        
+        tessGeo.fillIndices[idx++] = i1;
+        tessGeo.fillIndices[idx++] = i2;
+        tessGeo.fillIndices[idx++] = i3;
+      }      
+      
+      // Count how many quads in this shape
+      // are stroked.
+      int strokedCount = 0;
+      for (int qd = 0; qd < quadCount; qd++) {
+        int i0 = vert0 + 4 * qd + 0;
+        int i1 = vert0 + 4 * qd + 1;
+        int i2 = vert0 + 4 * qd + 2;
+        int i3 = vert0 + 4 * qd + 3;
+        
+        if (0 < inGeo.strokes[5 * i0 + 4] || 
+            0 < inGeo.strokes[5 * i1 + 4] ||
+            0 < inGeo.strokes[5 * i2 + 4]||
+            0 < inGeo.strokes[5 * i3 + 4]) {
+          strokedCount++;
+        }      
+      }
+      
+      if (0 < strokedCount) {
+        // Each stroked quad has 4 lines, one for each edge. 
+        // These lines are made up of 4 vertices defining the quad. 
+        // Each vertex has its own offset representing the stroke weight.
+        int nvertLine = strokedCount * 4 * 4;
+        tessGeo.addLineVertices(nvertLine);
+        
+        // Each stroke line has 4 vertices, defining 2 triangles, which
+        // require 3 indices to specify their connectivities.
+        int nind = strokedCount * 4 * 2 * 3;
+        tessGeo.addLineIndices(nind); 
+        
+        int vcount = tessGeo.firstLineVertex;
+        int icount = tessGeo.firstLineIndex;
+        for (int qd = 0; qd < quadCount; qd++) {
+          int i0 = vert0 + 4 * qd + 0;
+          int i1 = vert0 + 4 * qd + 1;
+          int i2 = vert0 + 4 * qd + 2;
+          int i3 = vert0 + 4 * qd + 3;    
+
+          if (0 < inGeo.strokes[5 * i0 + 4] || 
+              0 < inGeo.strokes[5 * i1 + 4] ||
+              0 < inGeo.strokes[5 * i2 + 4]||
+              0 < inGeo.strokes[5 * i3 + 4]) {
+            addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i2, i3, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i3, i0, vcount, icount); vcount += 4; icount += 6;
+          }
+        }
+        
+      }
+    }
+    
+    
+    public void tessellateQuadStrip() {
+      copyInGeoToTessGeo();
+
+      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
+      int quadCount = nvertFill / 2 - 1;
+      
+      tessGeo.addFillIndices(6 * quadCount);
+      int idx = tessGeo.firstFillIndex;
+      int vert0 = inGeo.firstVertex;
+      for (int qd = 1; qd < nvertFill / 2; qd++) {        
+        int i0 = vert0 + 2 * (qd - 1);
+        int i1 = vert0 + 2 * (qd - 1) + 1;
+        int i2 = vert0 + 2 * qd + 1;
+        int i3 = vert0 + 2 * qd;      
+        
+        tessGeo.fillIndices[idx++] = i0;
+        tessGeo.fillIndices[idx++] = i1;
+        tessGeo.fillIndices[idx++] = i3;
+        
+        tessGeo.fillIndices[idx++] = i1;
+        tessGeo.fillIndices[idx++] = i2;
+        tessGeo.fillIndices[idx++] = i3;
+      }      
+ 
+      // Count how many quads in this shape
+      // are stroked.
+      int strokedCount = 0;
+      for (int qd = 1; qd < nvertFill / 2; qd++) {
+        int i0 = vert0 + 2 * (qd - 1);
+        int i1 = vert0 + 2 * (qd - 1) + 1;
+        int i2 = vert0 + 2 * qd + 1;
+        int i3 = vert0 + 2 * qd;
+        
+        if (0 < inGeo.strokes[5 * i0 + 4] || 
+            0 < inGeo.strokes[5 * i1 + 4] ||
+            0 < inGeo.strokes[5 * i2 + 4]||
+            0 < inGeo.strokes[5 * i3 + 4]) {
+          strokedCount++;
+        }      
+      }
+      
+      if (0 < strokedCount) {
+        // Each stroked quad has 4 lines, one for each edge. 
+        // These lines are made up of 4 vertices defining the quad. 
+        // Each vertex has its own offset representing the stroke weight.
+        int nvertLine = strokedCount * 4 * 4;
+        tessGeo.addLineVertices(nvertLine);
+        
+        // Each stroke line has 4 vertices, defining 2 triangles, which
+        // require 3 indices to specify their connectivities.
+        int nind = strokedCount * 4 * 2 * 3;
+        tessGeo.addLineIndices(nind); 
+        
+        int vcount = tessGeo.firstLineVertex;
+        int icount = tessGeo.firstLineIndex;
+        for (int qd = 1; qd < nvertFill / 2; qd++) {
+          int i0 = vert0 + 2 * (qd - 1);
+          int i1 = vert0 + 2 * (qd - 1) + 1;
+          int i2 = vert0 + 2 * qd + 1;
+          int i3 = vert0 + 2 * qd;     
+
+          if (0 < inGeo.strokes[5 * i0 + 4] || 
+              0 < inGeo.strokes[5 * i1 + 4] ||
+              0 < inGeo.strokes[5 * i2 + 4]||
+              0 < inGeo.strokes[5 * i3 + 4]) {
+            addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i2, i3, vcount, icount); vcount += 4; icount += 6;
+            addStrokeLine(i3, i0, vcount, icount); vcount += 4; icount += 6;
+          }
+        }
+        
+      }
+    }  
+    
+    public void tessellatePolygon(boolean solid, boolean closed) {
+      GLU.gluTessBeginPolygon(gluTess, null);
+      
+      if (solid) {
+        // Using NONZERO winding rule for solid polygons.
+        GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_NONZERO);      
+      } else {
+        // Using ODD winding rule to generate polygon with holes.
+        GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_ODD);      
+      }
+
+      GLU.gluTessBeginContour(gluTess);    
+      
+      // Now, iterate over all input data and send to GLU tessellator..
+      for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
+        boolean breakPt = inGeo.codes[i] == PShape.BREAK;      
+        if (breakPt) {
+          GLU.gluTessEndContour(gluTess);  
+          GLU.gluTessBeginContour(gluTess);
+        }
+        
+        // Vertex data includes coordinates, colors, normals and texture coordinates.
+        double[] vertex = new double[] { inGeo.vertices[3 * i + 0], inGeo.vertices[3 * i + 1], inGeo.vertices[3 * i + 2],
+                                         inGeo.colors[4 * i + 0], inGeo.colors[4 * i + 1], inGeo.colors[4 * i + 2], inGeo.colors[4 * i + 3],
+                                         inGeo.normals[3 * i + 0], inGeo.normals[3 * i + 1], inGeo.normals[3 * i + 2],
+                                         inGeo.texcoords[2 * i + 0], inGeo.texcoords[2 * i + 1] };
+        GLU.gluTessVertex(gluTess, vertex, 0, vertex);
+      }
+      
+      GLU.gluTessEndContour(gluTess);
+      
+      GLU.gluTessEndPolygon(gluTess); 
+
+      // Count many how many line segments in the perimeter
+      // of this polygon are stroked.
+      int vert0 = inGeo.firstVertex;
+      int lineCount = 0;
+      int lnCount = inGeo.lastVertex - inGeo.firstVertex;
+      if (!closed) {
+        lnCount--;
+      }
+      int contour0 = 0;
+      for (int ln = 0; ln < lnCount; ln++) {
+        int i0 = vert0 + ln;
+        int i1 = vert0 + ln + 1;
+        if (inGeo.codes[i0] == PShape.BREAK) {
+          contour0 = i0;
+        }
+        if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {
+          // Make line with the first vertex of the current contour.
+          i0 = contour0;
+          i1 = vert0 + ln;
+        }
+        
+        if (inGeo.codes[i1] != PShape.BREAK &&
+            (0 < inGeo.strokes[5 * i0 + 4] || 
+             0 < inGeo.strokes[5 * i1 + 4])) {
+          lineCount++;
+        }      
+      }
+      
+      if (0 < lineCount) {
+        // Lines are made up of 4 vertices defining the quad. 
+        // Each vertex has its own offset representing the stroke weight.
+        int nvertLine = lineCount * 4;
+        tessGeo.addLineVertices(nvertLine);
+        
+        // Each stroke line has 4 vertices, defining 2 triangles, which
+        // require 3 indices to specify their connectivities.
+        int nind = lineCount * 2 * 3;
+        tessGeo.addLineIndices(nind);  
+        
+        int vcount = tessGeo.firstLineVertex;
+        int icount = tessGeo.firstLineIndex;
+        contour0 = 0;
+        for (int ln = 0; ln < lnCount; ln++) {
+          int i0 = vert0 + ln;
+          int i1 = vert0 + ln + 1;
+          if (inGeo.codes[i0] == PShape.BREAK) {
+            contour0 = i0;
+          }
+          if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {
+            // Make line with the first vertex of the current contour.
+            i0 = contour0;
+            i1 = vert0 + ln;
+          }
+          
+          if (inGeo.codes[i1] != PShape.BREAK &&
+              (0 < inGeo.strokes[5 * i0 + 4] || 
+               0 < inGeo.strokes[5 * i1 + 4])) {
+            addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+          }      
+        }    
+      }  
+    }
+    
+    
+    
     
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
@@ -9279,6 +9754,19 @@ return width * (1 + ox) / 2.0f;
       tessGeo.lineAttributes[4 * vcount + 3] = +inGeo.strokes[5 * i1 + 4];
       tessGeo.lineIndices[icount++] = vcount;
     }
+    
+    protected void copyInGeoToTessGeo() {
+      int i0 = inGeo.firstVertex;
+      int i1 = inGeo.lastVertex;
+      int nvert = i1 - i0 + 1;
+      
+      tessGeo.addFillVertices(nvert);
+      
+      PApplet.arrayCopy(inGeo.vertices, 3 * i0, tessGeo.fillVertices, 3 * tessGeo.firstFillVertex, 3 * nvert);
+      PApplet.arrayCopy(inGeo.colors, 4 * i0, tessGeo.fillColors, 4 * tessGeo.firstFillVertex, 4 * nvert);
+      PApplet.arrayCopy(inGeo.normals, 3 * i0, tessGeo.fillNormals, 3 * tessGeo.firstFillVertex, 3 * nvert);
+      PApplet.arrayCopy(inGeo.texcoords, 2 * i0, tessGeo.fillTexcoords, 2 * tessGeo.firstFillVertex, 2 * nvert);
+    }    
     
     public class GLUTessCallback extends GLUtessellatorCallbackAdapter {
       protected int tessFirst;
