@@ -57,7 +57,6 @@ import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
-import processing.opengl.PShape3D.TessCallback;
 
 /**
  * New OpenGL renderer for Processing, entirely based on OpenGL 2.x 
@@ -601,13 +600,87 @@ public class PGraphicsOpenGL extends PGraphics {
    
   /** Size of a float (in bytes). */
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
+
+  // ........................................................
+
+  // The new stuff (shaders, tessellator, etc)    
+
+  public PTessellator tessellator;
+  
+  static protected String lineShaderVert = 
+    "attribute vec4 attribs;\n" +   
+    "uniform vec4 viewport;\n" +
+    "vec3 clipToWindow(vec4 clip, vec4 viewport) {\n" +
+    "  vec3 post_div = clip.xyz / clip.w;\n" +
+    "  vec2 xypos = (post_div.xy + vec2(1.0, 1.0)) * 0.5 * viewport.zw;\n" +
+    "  return vec3(xypos, post_div.z * 0.5 + 0.5);\n" +
+    "}\n" +
+    "void main() {\n" +
+    "  vec4 pos_p = gl_Vertex;\n" +
+    "  vec4 pos_q = vec4(attribs.xyz, 1);\n" +  
+    "  vec4 v_p = gl_ModelViewMatrix * pos_p;\n" +
+    "  v_p.xyz = v_p.xyz * 0.99;\n" +   
+    "  vec4 clip_p = gl_ProjectionMatrix * v_p;\n" + 
+    "  vec4 v_q = gl_ModelViewMatrix * pos_q;\n" +
+    "  v_q.xyz = v_q.xyz * 0.99;\n" +   
+    "  vec4 clip_q = gl_ProjectionMatrix * v_q;\n" + 
+    "  vec3 window_p = clipToWindow(clip_p, viewport);\n" + 
+    "  vec3 window_q = clipToWindow(clip_q, viewport);\n" + 
+    "  vec3 tangent = window_q - window_p;\n" +
+    "  float segment_length = length(tangent.xy);\n" +  
+    "  vec2 perp = normalize(vec2(-tangent.y, tangent.x));\n" +
+    "  float thickness = attribs.w;\n" +
+    "  vec2 window_offset = perp * thickness;\n" +
+    "  gl_Position.xy = clip_p.xy + window_offset.xy;\n" +
+    "  gl_Position.zw = clip_p.zw;\n" +
+    "  gl_FrontColor = gl_Color;\n" +
+    "}";
+  
+  static protected String lineShaderFrag =
+    "void main() {\n" +  
+    " gl_FragColor = gl_Color;\n" +
+    "}";
+  
+  static protected String pointShaderVert = 
+    "attribute vec2 vertDisp;\n" + 
+    "void main() {\n" +
+    "  vec4 pos = gl_ModelViewMatrix * gl_Vertex;\n" +
+    "  pos.xy += vertDisp.xy;\n" +
+    "  gl_Position = gl_ProjectionMatrix * pos;\n" +  
+    "  gl_FrontColor = gl_Color;\n" +
+    "}";
+
+  static protected String pointShaderFrag =
+    "void main() {\n" +  
+    " gl_FragColor = gl_Color;\n" +
+    "}";
+  
+  static protected PShader lineShader;
+  static protected PShader pointShader;
   
   //////////////////////////////////////////////////////////////
-
+  
+  
   // INIT/ALLOCATE/FINISH
   
   public PGraphicsOpenGL() {
     glu = new GLU();
+    tessellator = new PTessellator();
+    
+    if (lineShader == null) {
+      lineShader = new PShader(parent);
+      lineShader.loadVertexShaderSource(lineShaderVert);
+      lineShader.loadFragmentShaderSource(lineShaderFrag);
+      lineShader.setup();
+    }
+
+    if (pointShader == null) {
+      pointShader = new PShader(parent);
+      pointShader.loadVertexShaderSource(pointShaderVert);
+      pointShader.loadFragmentShaderSource(pointShaderFrag);
+      pointShader.setup();
+    }    
+        
   }
   
 
@@ -2050,23 +2123,24 @@ public class PGraphicsOpenGL extends PGraphics {
   // public void beginShape()
 
   public PShape beginRecord() {
-    if (recordingShape) {
-      System.err.println("OPENGL2: Already recording.");
-      return recordedShape;
-    } else {
-      if (USE_GEO_BUFFER) {        
-        if (geoBuffer != null && 0 < geoBuffer.vertCount) {
-          geoBuffer.pre();    
-          geoBuffer.render();
-          geoBuffer.post();
-        }
-        if (geoBuffer == null) geoBuffer = new GeometryBuffer();
-      }
-      
-      recordedShape = new PShape3D(parent);
-      beginShapeRecorderImpl();
-      return recordedShape;
-    }
+//    if (recordingShape) {
+//      System.err.println("OPENGL2: Already recording.");
+//      return recordedShape;
+//    } else {
+//      if (USE_GEO_BUFFER) {        
+//        if (geoBuffer != null && 0 < geoBuffer.vertCount) {
+//          geoBuffer.pre();    
+//          geoBuffer.render();
+//          geoBuffer.post();
+//        }
+//        if (geoBuffer == null) geoBuffer = new GeometryBuffer();
+//      }
+//      
+//      recordedShape = new PShape3D(parent);
+//      beginShapeRecorderImpl();
+//      return recordedShape;
+//    }
+    return null;
   }
   
   public void beginRecord(PShape3D shape) {
@@ -2673,22 +2747,22 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public void endRecord() {
-    if (recordingShape) {
-      if (USE_GEO_BUFFER && 0 < geoBuffer.vertCount) {
-        // Recording remaining geometry.
-        geoBuffer.record();
-        geoBuffer.init(TRIANGLES); // To set counters to zero.
-      }
-      
-      if (0 < recordedVertices.size()) {
-        recordedShape.initShape(recordedVertices.size());
-      }
-            
-      endShapeRecorderImpl(recordedShape);
-      recordedShape = null;
-    } else {
-      System.err.println("OPENGL2: Start recording with beginRecord().");
-    }    
+//    if (recordingShape) {
+//      if (USE_GEO_BUFFER && 0 < geoBuffer.vertCount) {
+//        // Recording remaining geometry.
+//        geoBuffer.record();
+//        geoBuffer.init(TRIANGLES); // To set counters to zero.
+//      }
+//      
+//      if (0 < recordedVertices.size()) {
+//        recordedShape.initShape(recordedVertices.size());
+//      }
+//            
+//      endShapeRecorderImpl(recordedShape);
+//      recordedShape = null;
+//    } else {
+//      System.err.println("OPENGL2: Start recording with beginRecord().");
+//    }    
   }  
   
   protected PShape3D endShapeRecorder() {
@@ -2961,40 +3035,25 @@ public class PGraphicsOpenGL extends PGraphics {
       if (sw > 0) {
         gl2f.glLineWidth(sw);
         
-        if (sw0 != sw && recordingShape) {
-          // Add new vertex group.
-
-          int n0 = recordedVertices.size();
-          // The final index is n0 + pathLength[j] and not n0 + pathLength[j] -1 
-          // because of the first point added before the loop (see below).
-          int n1 = n0 + pathLength[j];
-          /*
-          
-          // Not grouping the consecutive lines with same stroke solves issue 579
-          // http://code.google.com/p/processing/issues/detail?id=579
-          // but also increases the inefficiency of line drawing. 
-          
-          // Identifying where this group should end (when stroke length
-          // changes).
-          for (int k = j + 1; k < stop; k++) {
-            int i1 = pathOffset[k];
-            float sw1 = vertices[lines[i1][VERTEX1]][SW];
-            if (sw != sw1) {
-              break;
-            }
-            n1 += pathLength[k] + 1;
-          }
-          */
-          
-          String name = "shape";
-          if (mergeRecShapes) {
-            name = "shape";  
-          } else {
-            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;  
-          }          
-          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, LINE_STRIP, sw, null);
-          recordedChildren.add(child);
-        }
+//        if (sw0 != sw && recordingShape) {
+//          // Add new vertex group.
+//
+//          int n0 = recordedVertices.size();
+//          // The final index is n0 + pathLength[j] and not n0 + pathLength[j] -1 
+//          // because of the first point added before the loop (see below).
+//          int n1 = n0 + pathLength[j];
+//          
+//
+//          
+//          String name = "shape";
+//          if (mergeRecShapes) {
+//            name = "shape";  
+//          } else {
+//            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;  
+//          }          
+//          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, LINE_STRIP, sw, null);
+//          recordedChildren.add(child);
+//        }
 
         // Division by three needed because each int element in the buffer is
         // used to store three coordinates.
@@ -3214,23 +3273,23 @@ public class PGraphicsOpenGL extends PGraphics {
       if (USE_GEO_BUFFER) {
         
         if (recordingShape) {
-          recTexturesCount = PApplet.max(recTexturesCount, tcount);
-          
-          int i0 = recordedIndices.size() + geoBuffer.idxCount;
-          int i1 = i0 + 3 * faceLength[j] - 1;
-          
-          int n0 = recordedVertices.size() + geoBuffer.vertCount;
-          int n1 = n0 + faceMaxIndex[j] - faceMinIndex[j];                
-                       
-          String name = "shape";
-          if (mergeRecShapes) {
-            name = "shape";  
-          } else {
-            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
-          }
-          
-          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, i0, i1, TRIANGLES, 0, images);
-          recordedChildren.add(child);
+//          recTexturesCount = PApplet.max(recTexturesCount, tcount);
+//          
+//          int i0 = recordedIndices.size() + geoBuffer.idxCount;
+//          int i1 = i0 + 3 * faceLength[j] - 1;
+//          
+//          int n0 = recordedVertices.size() + geoBuffer.vertCount;
+//          int n1 = n0 + faceMaxIndex[j] - faceMinIndex[j];                
+//                       
+//          String name = "shape";
+//          if (mergeRecShapes) {
+//            name = "shape";  
+//          } else {
+//            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
+//          }
+//          
+//          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, i0, i1, TRIANGLES, 0, images);
+//          recordedChildren.add(child);
         }          
         
         if (GEO_BUFFER_ACCUM_ALL) {
@@ -3287,19 +3346,19 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       } else {
         if (recordingShape) {
-          recTexturesCount = PApplet.max(recTexturesCount, tcount);
-          
-          int n0 = recordedVertices.size();
-          int n1 = n0 + 3 * faceLength[j] - 1;
-          
-          String name = "shape";
-          if (mergeRecShapes) {
-            name = "shape";  
-          } else {
-            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
-          }
-          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, TRIANGLES, 0, images);
-          recordedChildren.add(child);
+//          recTexturesCount = PApplet.max(recTexturesCount, tcount);
+//          
+//          int n0 = recordedVertices.size();
+//          int n1 = n0 + 3 * faceLength[j] - 1;
+//          
+//          String name = "shape";
+//          if (mergeRecShapes) {
+//            name = "shape";  
+//          } else {
+//            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
+//          }
+//          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, TRIANGLES, 0, images);
+//          recordedChildren.add(child);
         }         
         
         // Division by three needed because each int element in the buffer is used
@@ -7519,12 +7578,14 @@ return width * (1 + ox) / 2.0f;
     
   
   protected PShape loadShape(String filename, Object params) {
-    return new PShape3D(parent, filename, (PShape3D.Parameters)params);
+    return null;
+    //return new PShape3D(parent, filename, (PShape3D.Parameters)params);
   }
   
   
   protected PShape createShape(int size, Object params) {
-    return new PShape3D(parent, size, (PShape3D.Parameters)params);
+    return null;
+    //return new PShape3D(parent, size, (PShape3D.Parameters)params);
   }
   
   
@@ -8747,15 +8808,17 @@ return width * (1 + ox) / 2.0f;
     }
   }  
   
-  protected class PInGeometry {
+  public PInGeometry newInGeometry() {
+    return new PInGeometry(); 
+  }
+  
+  protected PTessGeometry newTessGeometry() {
+    return new PTessGeometry();
+  }
+  
+  public class PInGeometry {
     public PInGeometry() {
-      vertexCount = firstVertex = lastVertex = 0;
-      codes = new int[DEFAULT_VERTICES];
-      vertices = new float[3 * DEFAULT_VERTICES];
-      colors = new float[4 * DEFAULT_VERTICES];      
-      normals = new float[3 * DEFAULT_VERTICES];
-      texcoords = new float[2 * DEFAULT_VERTICES];
-      strokes = new float[5 * DEFAULT_VERTICES];
+      allocate();
     }
     
     public int vertexCount;
@@ -8770,37 +8833,109 @@ return width * (1 + ox) / 2.0f;
     public float[] colors;
     public float[] normals;
     public float[] texcoords;
-    public float[] strokes;    
+    public float[] strokes;
+    
+    public void reset() {
+      vertexCount = firstVertex = lastVertex = 0;
+    }
+    
+    public void allocate() {      
+      codes = new int[DEFAULT_VERTICES];
+      vertices = new float[3 * DEFAULT_VERTICES];
+      colors = new float[4 * DEFAULT_VERTICES];      
+      normals = new float[3 * DEFAULT_VERTICES];
+      texcoords = new float[2 * DEFAULT_VERTICES];
+      strokes = new float[5 * DEFAULT_VERTICES];
+      reset();
+    }
+    
+    public void dispose() {
+      codes = null;
+      vertices = null;
+      colors = null;      
+      normals = null;
+      texcoords = null;
+      strokes = null;      
+    }
+    
+    public float getlastVertexX() {
+      return vertices[3 * (vertexCount - 1) + 0];  
+    }
+    
+    public float getlastVertexY() {
+      return vertices[3 * (vertexCount - 1) + 1];
+    }    
+    
+    public float getlastVertexZ() {
+      return vertices[3 * (vertexCount - 1) + 2];
+    }
+    
+    public void addVertex(float[] vertex, float[] color, float[] normal, float[] texcoord, float[] stroke, int code) {
+      vertexCheck();
+
+      codes[vertexCount] = code;      
+      PApplet.arrayCopy(vertex, 0, vertices, 3 * vertexCount, 3);
+      PApplet.arrayCopy(color, 0, colors, 4 * vertexCount, 4);
+      PApplet.arrayCopy(normal, 0, normals, 3 * vertexCount, 3);
+      PApplet.arrayCopy(texcoord, 0, normals, 3 * vertexCount, 3);      
+      PApplet.arrayCopy(stroke, 0, strokes, 5 * vertexCount, 5);
+            
+      vertexCount++;      
+    }
+    
+    public void vertexCheck() {
+      if (vertexCount == vertices.length / 3) {
+        int newSize = vertexCount << 1; // newSize = 2 * vertexCount  
+
+        expandCodes(newSize);
+        expandVertices(newSize);
+        expandColors(newSize);
+        expandNormals(newSize);
+        expandTexcoords(newSize);      
+        expandStrokes(newSize);
+      }
+    }  
+    
+    protected void expandCodes(int n) {
+      int temp[] = new int[n];      
+      System.arraycopy(codes, 0, temp, 0, vertexCount);
+      codes = temp;    
+    }
+
+    protected void expandVertices(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(vertices, 0, temp, 0, 3 * vertexCount);
+      vertices = temp;    
+    }
+
+    protected void expandColors(int n){
+      float temp[] = new float[4 * n];      
+      System.arraycopy(colors, 0, temp, 0, 4 * vertexCount);
+      colors = temp;  
+    }
+
+    protected void expandNormals(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(normals, 0, temp, 0, 3 * vertexCount);
+      normals = temp;    
+    }    
+    
+    protected void expandTexcoords(int n) {
+      float temp[] = new float[2 * n];      
+      System.arraycopy(texcoords, 0, temp, 0, 2 * vertexCount);
+      texcoords = temp;    
+    }
+        
+    protected void expandStrokes(int n) {
+      float temp[] = new float[5 * n];      
+      System.arraycopy(strokes, 0, temp, 0, 5 * vertexCount);
+      strokes = temp;
+    }      
   }
   
-  protected class PTessGeometry {
+  public class PTessGeometry {
     public PTessGeometry() {
-      fillVertexCount = firstFillVertex = lastFillVertex = 0;      
-      fillVertices = new float[0];
-      fillColors = new float[0];
-      fillNormals = new float[0];
-      fillTexcoords = new float[0];
-      
-      fillIndexCount = firstFillIndex = lastFillIndex = 0;      
-      fillIndices = new int[0];  
-      
-      lineVertexCount = firstLineVertex = lastLineVertex = 0;    
-      lineVertices = new float[0];
-      lineColors = new float[0];
-      lineNormals = new float[0];
-      lineAttributes = new float[0];
-      
-      lineIndexCount = firstLineIndex = lastLineIndex = 0;  
-      lineIndices = new int[0];       
-      
-      pointVertexCount = firstPointVertex = lastPointVertex = 0;    
-      pointVertices = new float[0];
-      pointColors = new float[0];
-      pointNormals = new float[0];
-      pointAttributes = new float[0];
-
-      pointIndexCount = firstPointIndex = lastPointIndex = 0;  
-      pointIndices = new int[0];      
+      allocate();      
     }
     
     // Tessellated fill data
@@ -8848,6 +8983,175 @@ return width * (1 + ox) / 2.0f;
     public int firstPointIndex;
     public int lastPointIndex;  
     public int[] pointIndices;
+    
+    public void reset() {
+      firstFillVertex = lastFillVertex = fillVertexCount = 0;
+      firstFillIndex = lastFillIndex = fillIndexCount = 0;
+      
+      firstLineVertex = lastLineVertex = lineVertexCount = 0;
+      firstLineIndex = lastLineIndex = lineIndexCount = 0;     
+      
+      firstPointVertex = lastPointVertex = pointVertexCount = 0;
+      firstPointIndex = lastPointIndex = pointIndexCount = 0;         
+    }
+      
+    public void allocate() {     
+      fillVertices = new float[0];
+      fillColors = new float[0];
+      fillNormals = new float[0];
+      fillTexcoords = new float[0];
+      fillIndices = new int[0];  
+      
+      lineVertices = new float[0];
+      lineColors = new float[0];
+      lineNormals = new float[0];
+      lineAttributes = new float[0];
+      lineIndices = new int[0];       
+      
+      pointVertices = new float[0];
+      pointColors = new float[0];
+      pointNormals = new float[0];
+      pointAttributes = new float[0];
+      pointIndices = new int[0];
+      
+      reset();
+    }
+    
+    public void dipose() {
+      fillVertices = null;
+      fillColors = null;
+      fillNormals = null;
+      fillTexcoords = null;
+      fillIndices = null;  
+      
+      lineVertices = null;
+      lineColors = null;
+      lineNormals = null;
+      lineAttributes = null;
+      lineIndices = null;       
+      
+      pointVertices = null;
+      pointColors = null;
+      pointNormals = null;
+      pointAttributes = null;
+      pointIndices = null;
+    }
+    
+    public void addCounts(PTessGeometry other) {
+      fillVertexCount += other.fillVertexCount;
+      fillIndexCount += other.fillIndexCount;
+      
+      lineVertexCount += other.lineVertexCount;
+      lineIndexCount += other.lineIndexCount;        
+
+      pointVertexCount += other.pointVertexCount;
+      pointIndexCount += other.pointIndexCount;          
+    }
+    
+    public void setFirstFill(PTessGeometry other) {
+      firstFillVertex = other.firstFillVertex;
+      firstFillIndex = other.firstFillIndex;
+    }
+    
+    public void setLastFill(PTessGeometry other) {
+      lastFillVertex = other.lastFillVertex;
+      lastFillIndex = other.lastFillIndex;      
+    }
+
+    public void setFirstLine(PTessGeometry other) {
+      firstLineVertex = other.firstLineVertex;
+      firstLineIndex = other.firstLineIndex;
+    }
+    
+    public void setLastLine(PTessGeometry other) {
+      lastLineVertex = other.lastLineVertex;
+      lastLineIndex = other.lastLineIndex;      
+    }  
+
+    public void setFirstPoint(PTessGeometry other) {
+      firstPointVertex = other.firstPointVertex;
+      firstPointIndex = other.firstPointIndex;
+    }
+    
+    public void setLastPoint(PTessGeometry other) {
+      lastPointVertex = other.lastPointVertex;
+      lastPointIndex = other.lastPointIndex;      
+    }    
+    
+    public int setFillVertex(int offset) {
+      firstFillVertex = 0;        
+      if (0 < offset) {
+        firstFillVertex = offset + 1; 
+      }      
+      lastFillVertex = firstFillVertex + fillVertexCount - 1;      
+      return lastFillVertex; 
+    }
+    
+    public int setFillIndex(int offset) {
+      firstFillIndex = 0;
+      if (0 < offset) {
+        firstFillIndex = offset + 1; 
+      }
+      
+      // The indices are update to take into account all the previous 
+      // shapes in the hierarchy, as the entire geometry will be stored
+      // contiguously in a single VBO in the root node.
+      for (int i = 0; i < fillIndexCount; i++) {
+        fillIndices[i] += firstFillVertex;
+      }
+      lastFillIndex = firstFillIndex + fillIndexCount - 1;        
+      return lastFillIndex; 
+    }
+    
+    public int setLineVertex(int offset) {
+      firstLineVertex = 0;
+      if (0 < offset) {
+        firstLineVertex = offset + 1; 
+      }        
+      lastLineVertex = firstLineVertex + lineVertexCount - 1;
+      return lastLineVertex;      
+    }
+    
+    public int setLineIndex(int offset) {      
+      firstLineIndex = 0;
+      if (0 < offset) {
+        firstLineIndex = offset + 1; 
+      }        
+      
+      // The indices are update to take into account all the previous 
+      // shapes in the hierarchy, as the entire geometry will be stored
+      // contiguously in a single VBO in the root node.
+      for (int i = 0; i < lineIndexCount; i++) {
+        lineIndices[i] += firstLineVertex;
+      }
+      lastLineIndex = firstLineIndex + lineIndexCount - 1;
+      return lastLineIndex;      
+    }
+    
+    public int setPointVertex(int offset) {
+      firstPointVertex = 0;
+      if (0 < offset) {
+        firstPointVertex = offset + 1; 
+      }        
+      lastPointVertex = firstPointVertex + pointVertexCount - 1;
+      return lastPointVertex;      
+    }
+    
+    public int setPointIndex(int offset) { 
+      firstPointIndex = 0;
+      if (0 < offset) {
+        firstPointIndex = offset + 1; 
+      }        
+      
+      // The indices are update to take into account all the previous 
+      // shapes in the hierarchy, as the entire geometry will be stored
+      // contiguously in a single VBO in the root node.
+      for (int i = 0; i < pointIndexCount; i++) {
+        pointIndices[i] += firstPointVertex;
+      }
+      lastPointIndex = firstPointIndex + pointIndexCount - 1;
+      return lastPointIndex;
+    }
     
     public void fillIndexCheck() {
       if (fillIndexCount == fillIndices.length) {
@@ -9072,21 +9376,21 @@ return width * (1 + ox) / 2.0f;
     }   
   }
   
-  static protected class PTessellator {
-    static final protected int MIN_ACCURACY = 6; 
-    static final protected float sinLUT[];
-    static final protected float cosLUT[];
-    static final protected float SINCOS_PRECISION = 0.5f;
-    static final protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
-    static {
-      sinLUT = new float[SINCOS_LENGTH];
-      cosLUT = new float[SINCOS_LENGTH];
-      for (int i = 0; i < SINCOS_LENGTH; i++) {
-        sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
-        cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
-      }
-    }  
-    static final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
+  public class PTessellator {
+    final protected int MIN_ACCURACY = 6; 
+    final protected float sinLUT[];
+    final protected float cosLUT[];
+    final protected float SINCOS_PRECISION = 0.5f;
+    final protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
+//    static {
+//      sinLUT = new float[SINCOS_LENGTH];
+//      cosLUT = new float[SINCOS_LENGTH];
+//      for (int i = 0; i < SINCOS_LENGTH; i++) {
+//        sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
+//        cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
+//      }      
+//    }  
+    final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
     
     public GLUtessellator gluTess;
     PInGeometry inGeo; 
@@ -9094,6 +9398,13 @@ return width * (1 + ox) / 2.0f;
     GLU glu;
     
     public PTessellator() {
+      sinLUT = new float[SINCOS_LENGTH];
+      cosLUT = new float[SINCOS_LENGTH];
+      for (int i = 0; i < SINCOS_LENGTH; i++) {
+        sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
+        cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
+      }
+      
       glu = new GLU();
       
       gluTess = GLU.gluNewTess();
@@ -9106,7 +9417,7 @@ return width * (1 + ox) / 2.0f;
       GLU.gluTessCallback(gluTess, GLU.GLU_TESS_COMBINE, tessCallback);
       GLU.gluTessCallback(gluTess, GLU.GLU_TESS_ERROR, tessCallback);        
     }
-    
+
     public void setInGeometry(PInGeometry in) {
       this.inGeo = in;
     }
