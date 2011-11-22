@@ -999,6 +999,26 @@ public class PShape3D extends PShape {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
   }    
 
+  public void addShape(PShape3D child) {
+    if (family == GROUP) {
+      super.addChild(child);
+      child.updateRoot(root);
+      modified = true;
+    } else {
+      System.err.println("Cannot add child shape to non-group shape.");
+    }
+  }
+  
+  private void updateRoot(PShape3D root) {
+    this.root = root;
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        child.updateRoot(root);
+      }
+    }
+  }  
+  
   
   ///////////////////////////////////////////////////////////  
   
