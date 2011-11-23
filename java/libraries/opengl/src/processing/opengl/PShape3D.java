@@ -182,14 +182,10 @@ public class PShape3D extends PShape {
     this.root = this;
     this.parent = null;
     this.modified = false;
-  }
-  
-  public void setKind(int kind) {
-    this.kind = kind;
     
+    tess = ogl.newTessGeometry();
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
-      in = ogl.newInGeometry();
-      tess = ogl.newTessGeometry();
+      in = ogl.newInGeometry();      
       
       if (family == PRIMITIVE) {
         if (kind == BOX) {
@@ -202,7 +198,11 @@ public class PShape3D extends PShape {
           params[2] = 20;
         }
       }        
-    }
+    }    
+  }
+  
+  public void setKind(int kind) {
+    this.kind = kind;
   }
   
   
@@ -246,7 +246,7 @@ public class PShape3D extends PShape {
     vertex(x, y, 0, 0, 0);      
   }
 
-  public void addVertex(float x, float y, float z) {
+  public void vertex(float x, float y, float z) {
     vertex(x, y, z, 0, 0);      
   }
 
@@ -255,7 +255,7 @@ public class PShape3D extends PShape {
   }  
   
   protected void vertexImpl(float x, float y, float z, float u, float v, int type) {
-    if (family != GEOMETRY || family != PATH) {      
+    if (family != GEOMETRY && family != PATH) {      
       System.err.println("Cannot add vertices to GROUP of PRIMITIVE shape");
       return;
     }
@@ -277,6 +277,7 @@ public class PShape3D extends PShape {
     
     in.addVertex(currentVertex, currentColor, currentNormal, currentTexcoord, currentStroke, code);
     
+    root.modified = true;
     modified = true;  
   }
   
@@ -1003,7 +1004,9 @@ public class PShape3D extends PShape {
     if (family == GROUP) {
       super.addChild(child);
       child.updateRoot(root);
+      root.modified = true;
       modified = true;
+      child.modified = true;
     } else {
       System.err.println("Cannot add child shape to non-group shape.");
     }
