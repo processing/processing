@@ -416,7 +416,7 @@ public class PGraphics extends PImage implements PConstants {
   protected float vertices[][] =
     new float[DEFAULT_VERTICES][VERTEX_FIELD_COUNT];
   protected int vertexCount; // total number of vertices
-
+  
   // ........................................................
 
   protected boolean bezierInited = false;

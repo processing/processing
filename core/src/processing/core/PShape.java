@@ -155,7 +155,7 @@ public class PShape implements PConstants {
    * two variables.
    */
   protected float[][] vertices;
-
+  
   protected PShape parent;
   protected int childCount;
   protected PShape[] children;  
@@ -246,6 +246,7 @@ public class PShape implements PConstants {
     return visible;
   }
 
+  
   /**
    * ( begin auto-generated from PShape_setVisible.xml )
    * 
@@ -1332,5 +1333,4 @@ public class PShape implements PConstants {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
 }
