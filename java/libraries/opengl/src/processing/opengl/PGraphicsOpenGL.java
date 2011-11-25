@@ -605,6 +605,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // The new stuff (shaders, tessellator, etc)    
 
+  protected PInGeometry in;
+  protected PTessGeometry tess;
+  
   public static final int DEFAULT_TESS_VERTICES = 512;
   public static final int DEFAULT_TESS_INDICES = 1024;
   
@@ -661,6 +664,8 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected PShader lineShader;
   static protected PShader pointShader;
   
+  protected int multisampleLevel = 2;
+  
   //////////////////////////////////////////////////////////////
   
   
@@ -669,6 +674,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public PGraphicsOpenGL() {
     glu = new GLU();
     tessellator = new PTessellator();
+    in = newInGeometry();
+    tess = newTessGeometry();
   }
   
 
@@ -2042,8 +2049,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public void hint(int which) {
     // make note of whether these are set, if they are,
     // then will prevent the new renderer exception from being thrown.
-    boolean opengl2X = !hints[DISABLE_OPENGL_2X_SMOOTH];
-    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];
+//    boolean opengl2X = !hints[DISABLE_OPENGL_2X_SMOOTH];
+//    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];
     super.hint(which);    
 
     if (which == DISABLE_DEPTH_TEST) {
@@ -2060,35 +2067,35 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (which == ENABLE_DEPTH_MASK) {
       gl.glDepthMask(true);      
       
-    } else if (which == DISABLE_OPENGL_2X_SMOOTH) {
-      if (opengl2X) {
-        if (primarySurface) {
-          restartContext();          
-          throw new PApplet.RendererChangeException();
-        } else {
-          initOffscreen();
-        }
-      }
-
-    } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
-      if (!opengl2X) {
-        if (primarySurface) {
-          restartContext();          
-          throw new PApplet.RendererChangeException();
-        } else {
-          initOffscreen();
-        }
-      }
-
-    } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
-      if (!opengl4X) {
-        if (primarySurface) {
-          restartContext();          
-          throw new PApplet.RendererChangeException();
-        } else {
-          initOffscreen();
-        }
-      }
+//    } else if (which == DISABLE_OPENGL_2X_SMOOTH) {
+//      if (opengl2X) {
+//        if (primarySurface) {
+//          restartContext();          
+//          throw new PApplet.RendererChangeException();
+//        } else {
+//          initOffscreen();
+//        }
+//      }
+//
+//    } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
+//      if (!opengl2X) {
+//        if (primarySurface) {
+//          restartContext();          
+//          throw new PApplet.RendererChangeException();
+//        } else {
+//          initOffscreen();
+//        }
+//      }
+//
+//    } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
+//      if (!opengl4X) {
+//        if (primarySurface) {
+//          restartContext();          
+//          throw new PApplet.RendererChangeException();
+//        } else {
+//          initOffscreen();
+//        }
+//      }
     }
 
   }
@@ -2240,7 +2247,8 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public void beginShape(int kind) {
-    shape = kind;
+//  in.reset();
+      shape = kind;
 
     if (hints[ENABLE_DEPTH_SORT]) {
       // TODO:
@@ -2502,6 +2510,31 @@ public class PGraphicsOpenGL extends PGraphics {
   // public void endShape()
 
   public void endShape(int mode) {
+//    tessellator.setInGeometry(in);
+//    tessellator.setTessGeometry(tess);
+//    
+//
+//      if (shape == POINTS) {
+//        tessellator.tessellatePoints(strokeCap);    
+//      } else if (shape == LINES) {
+//        tessellator.tessellateLines();    
+//      } else if (shape == TRIANGLES) {
+//        tessellator.tessellateTriangles();
+//      } else if (shape == TRIANGLE_FAN) {
+//        tessellator.tessellateTriangleFan();
+//      } else if (shape == TRIANGLE_STRIP) {
+//        tessellator.tessellateTriangleStrip();
+//      } else if (shape == QUADS) {
+//        tessellator.tessellateQuads();
+//      } else if (shape == QUAD_STRIP) {
+//        tessellator.tessellateQuadStrip();
+//      } else if (shape == POLYGON) {
+//        tessellator.tessellatePolygon(false, mode == CLOSE);
+//      }
+//
+//     flush();
+    
+    
     shapeLast = vertexCount;
 
     // don't try to draw if there are no vertices
@@ -4283,26 +4316,55 @@ return width * (1 + ox) / 2.0f;
   //////////////////////////////////////////////////////////////
 
   // SMOOTH
-
   public void smooth() {
+    smooth(2);
+  }
+  
+  
+  public void smooth(int level) {
     smooth = true;
-    if (hints[DISABLE_OPENGL_2X_SMOOTH]) {
+    
+    if (level != multisampleLevel) {
+      multisampleLevel = level;
+      if (primarySurface) {
+        restartContext();          
+//        throw new PApplet.RendererChangeException();
+      } else {
+        initOffscreen();
+      }
+    }
+    
+    if (level < 2) {
       gl2f.glEnable(GL2.GL_MULTISAMPLE);
       gl2f.glEnable(GL2.GL_POINT_SMOOTH);
       gl2f.glEnable(GL2.GL_LINE_SMOOTH);
-      gl2f.glEnable(GL2.GL_POLYGON_SMOOTH);
+      gl2f.glEnable(GL2.GL_POLYGON_SMOOTH);      
     }
+    
+    int[] temp = { 0 };
+    gl.glGetIntegerv(GL.GL_SAMPLES, temp, 0);
+    multisampleLevel = temp[0];
+    PApplet.println("Effective multisampling level: " + multisampleLevel);    
   }
 
   
   public void noSmooth() {
     smooth = false;
-    if (hints[DISABLE_OPENGL_2X_SMOOTH]) {
-      gl2f.glDisable(GL2.GL_MULTISAMPLE);
-      gl2f.glDisable(GL2.GL_POINT_SMOOTH);
-      gl2f.glDisable(GL.GL_LINE_SMOOTH);
-      gl2f.glDisable(GL2.GL_POLYGON_SMOOTH);
+    
+    if (1 < multisampleLevel) {
+      multisampleLevel = 0;
+      if (primarySurface) {
+        restartContext();          
+        throw new PApplet.RendererChangeException();
+      } else {
+        initOffscreen();
+      }      
     }
+    
+    gl2f.glDisable(GL2.GL_MULTISAMPLE);
+    gl2f.glDisable(GL2.GL_POINT_SMOOTH);
+    gl2f.glDisable(GL.GL_LINE_SMOOTH);
+    gl2f.glDisable(GL2.GL_POLYGON_SMOOTH);
   }   
   
   //////////////////////////////////////////////////////////////
@@ -7943,12 +8005,10 @@ return width * (1 + ox) / 2.0f;
     }
     
     capabilities = new GLCapabilities(profile);
-    if (!hints[DISABLE_OPENGL_2X_SMOOTH]) {
+    if (1 < multisampleLevel) {
       capabilities.setSampleBuffers(true);
-      capabilities.setNumSamples(2);
-    } else if (hints[ENABLE_OPENGL_4X_SMOOTH]) {
-      capabilities.setSampleBuffers(true);
-      capabilities.setNumSamples(4);
+      capabilities.setNumSamples(multisampleLevel);
+      PApplet.println("Requested multisample level: " + capabilities.getNumSamples());
     } else {
       capabilities.setSampleBuffers(false);
     }
@@ -7991,18 +8051,13 @@ return width * (1 + ox) / 2.0f;
       offscreenFramebufferMultisample = null;
     }
     
-    boolean opengl2X = !hints[DISABLE_OPENGL_2X_SMOOTH];
-    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];    
+//    boolean opengl2X = !hints[DISABLE_OPENGL_2X_SMOOTH];
+//    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];    
         
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
-    if (PGraphicsOpenGL.fboMultisampleSupported && gl2x != null && (opengl2X || opengl4X)) {
-      int nsamples = 1;
-      if (opengl2X) {
-        nsamples = 2;
-      } else if (opengl4X) {
-        nsamples = 4;
-      } 
+    if (PGraphicsOpenGL.fboMultisampleSupported && gl2x != null && 1 < multisampleLevel) {
+      int nsamples = multisampleLevel;
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, nsamples, 0, 
                                                          offscreenDepthBits, offscreenStencilBits, 
                                                          offscreenDepthBits == 24 && offscreenStencilBits == 8, false);

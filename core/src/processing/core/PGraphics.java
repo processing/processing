@@ -2964,6 +2964,10 @@ public class PGraphics extends PImage implements PConstants {
     smooth = true;
   }
 
+  public void smooth(int level) {
+    smooth = true;
+  }  
+  
   /**
    * ( begin auto-generated from noSmooth.xml )
    *
