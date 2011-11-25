@@ -531,9 +531,9 @@ public interface PConstants {
   // hints - hint values are positive for the alternate version,
   // negative of the same value returns to the normal/default state
 
-  static final int DISABLE_OPENGL_2X_SMOOTH    =  1;
-  static final int ENABLE_OPENGL_2X_SMOOTH     = -1;
-  static final int ENABLE_OPENGL_4X_SMOOTH     =  2;
+//  static final int DISABLE_OPENGL_2X_SMOOTH    =  1;
+//  static final int ENABLE_OPENGL_2X_SMOOTH     = -1;
+//  static final int ENABLE_OPENGL_4X_SMOOTH     =  2;
 
   static final int ENABLE_NATIVE_FONTS         =  3;
   static final int DISABLE_NATIVE_FONTS         = -3;
