@@ -10713,6 +10713,12 @@ public class PApplet extends Applet
   }
 
 
+  public void smooth(int level) {
+    if (recorder != null) recorder.smooth(level);
+    g.smooth(level);
+  }
+
+
   /**
    * ( begin auto-generated from noSmooth.xml )
    *
