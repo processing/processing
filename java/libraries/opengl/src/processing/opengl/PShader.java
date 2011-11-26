@@ -85,15 +85,7 @@ public class PShader {
   
   protected void finalize() throws Throwable {
     try {
-      if (vertexShader != 0) {
-        ogl.finalizeGLSLVertShaderObject(vertexShader);
-      }
-      if (fragmentShader != 0) {
-        ogl.finalizeGLSLFragShaderObject(fragmentShader);
-      }
-      if (programObject != 0) {
-        ogl.finalizeGLSLProgramObject(programObject);
-      }
+      release();
     } finally {
       super.finalize();
     }

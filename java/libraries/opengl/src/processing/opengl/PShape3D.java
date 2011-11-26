@@ -33,9 +33,9 @@ import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
-import processing.opengl.PGraphicsOpenGL.PInGeometry;
-import processing.opengl.PGraphicsOpenGL.PTessGeometry;
-import processing.opengl.PGraphicsOpenGL.PTessellator;
+import processing.opengl.PGraphicsOpenGL.InGeometry;
+import processing.opengl.PGraphicsOpenGL.TessGeometry;
+import processing.opengl.PGraphicsOpenGL.Tessellator;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -58,9 +58,9 @@ import java.io.BufferedReader;
 
 public class PShape3D extends PShape {
   protected PGraphicsOpenGL ogl;
-  protected PInGeometry in;
-  protected PTessGeometry tess;
-  protected PTessellator tessellator;
+  protected InGeometry in;
+  protected TessGeometry tess;
+  protected Tessellator tessellator;
   protected PShape3D root;
   protected PImage texture;
   
@@ -801,7 +801,7 @@ public class PShape3D extends PShape {
         root.copyFillGeometry(root.fillVertCopyOffset, tess.fillVertexCount, 
                               tess.fillVertices, tess.fillColors, 
                               tess.fillNormals, tess.fillTexcoords, tess.fillIndices);
-        root.fillVertCopyOffset += vertexCount;
+        root.fillVertCopyOffset += tess.fillVertexCount;
       
         root.copyFillIndices(root.fillIndCopyOffset, tess.fillIndexCount, tess.fillIndices);
         root.fillIndCopyOffset += tess.fillIndexCount;
