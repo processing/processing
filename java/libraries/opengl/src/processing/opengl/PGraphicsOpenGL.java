@@ -605,13 +605,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // The new stuff (shaders, tessellator, etc)    
 
-  protected PInGeometry in;
-  protected PTessGeometry tess;
+  protected InGeometry in;
+  protected TessGeometry tess;
   
   public static final int DEFAULT_TESS_VERTICES = 512;
   public static final int DEFAULT_TESS_INDICES = 1024;
   
-  public PTessellator tessellator;
+  public Tessellator tessellator;
   
   static protected String lineShaderVert = 
     "attribute vec4 attribs;\n" +   
@@ -664,8 +664,6 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected PShader lineShader;
   static protected PShader pointShader;
   
-  protected int multisampleLevel = 2;
-  
   //////////////////////////////////////////////////////////////
   
   
@@ -673,7 +671,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public PGraphicsOpenGL() {
     glu = new GLU();
-    tessellator = new PTessellator();
+    tessellator = new Tessellator();
     in = newInGeometry();
     tess = newTessGeometry();
   }
@@ -1552,6 +1550,21 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+  protected void releaseResources() {
+    if (texture != null) {
+      texture.release();
+      texture = null;
+    }
+    if (lineShader != null) {
+      lineShader.release();
+      lineShader = null;
+    }
+    if (pointShader != null) {
+      pointShader.release();
+      pointShader = null;
+    }
+  }
+  
 
   /**
    * Release the context, otherwise the AWT lock on X11 will not be released
@@ -1568,6 +1581,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void restartContext() {
     //backupPGLObjects();
       
+    releaseResources();
     releaseContext();
     context.destroy();
     context = null;
@@ -4321,11 +4335,11 @@ return width * (1 + ox) / 2.0f;
   }
   
   
-  public void smooth(int level) {
+  public void smooth(int antialias) {
     smooth = true;
     
-    if (level != multisampleLevel) {
-      multisampleLevel = level;
+    if (this.antialias  != antialias) {
+      this.antialias = antialias;
       if (primarySurface) {
         restartContext();          
 //        throw new PApplet.RendererChangeException();
@@ -4334,7 +4348,7 @@ return width * (1 + ox) / 2.0f;
       }
     }
     
-    if (level < 2) {
+    if (antialias < 2) {
       gl2f.glEnable(GL2.GL_MULTISAMPLE);
       gl2f.glEnable(GL2.GL_POINT_SMOOTH);
       gl2f.glEnable(GL2.GL_LINE_SMOOTH);
@@ -4343,19 +4357,19 @@ return width * (1 + ox) / 2.0f;
     
     int[] temp = { 0 };
     gl.glGetIntegerv(GL.GL_SAMPLES, temp, 0);
-    multisampleLevel = temp[0];
-    PApplet.println("Effective multisampling level: " + multisampleLevel);    
+    antialias = temp[0];
+    PApplet.println("Effective multisampling level: " + antialias);    
   }
 
   
   public void noSmooth() {
     smooth = false;
     
-    if (1 < multisampleLevel) {
-      multisampleLevel = 0;
+    if (1 < antialias) {
+      antialias = 0;
       if (primarySurface) {
         restartContext();          
-        throw new PApplet.RendererChangeException();
+        //throw new PApplet.RendererChangeException();
       } else {
         initOffscreen();
       }      
@@ -8005,9 +8019,9 @@ return width * (1 + ox) / 2.0f;
     }
     
     capabilities = new GLCapabilities(profile);
-    if (1 < multisampleLevel) {
+    if (1 < antialias) {
       capabilities.setSampleBuffers(true);
-      capabilities.setNumSamples(multisampleLevel);
+      capabilities.setNumSamples(antialias);
       PApplet.println("Requested multisample level: " + capabilities.getNumSamples());
     } else {
       capabilities.setSampleBuffers(false);
@@ -8056,8 +8070,8 @@ return width * (1 + ox) / 2.0f;
         
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
-    if (PGraphicsOpenGL.fboMultisampleSupported && gl2x != null && 1 < multisampleLevel) {
-      int nsamples = multisampleLevel;
+    if (PGraphicsOpenGL.fboMultisampleSupported && gl2x != null && 1 < antialias) {
+      int nsamples = antialias;
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, nsamples, 0, 
                                                          offscreenDepthBits, offscreenStencilBits, 
                                                          offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
@@ -8865,16 +8879,16 @@ return width * (1 + ox) / 2.0f;
     }
   }  
   
-  public PInGeometry newInGeometry() {
-    return new PInGeometry(); 
+  public InGeometry newInGeometry() {
+    return new InGeometry(); 
   }
   
-  protected PTessGeometry newTessGeometry() {
-    return new PTessGeometry();
+  protected TessGeometry newTessGeometry() {
+    return new TessGeometry();
   }
   
-  public class PInGeometry {
-    public PInGeometry() {
+  public class InGeometry {
+    public InGeometry() {
       allocate();
     }
     
@@ -8991,8 +9005,8 @@ return width * (1 + ox) / 2.0f;
     }      
   }
   
-  public class PTessGeometry {
-    public PTessGeometry() {
+  public class TessGeometry {
+    public TessGeometry() {
       allocate();      
     }
     
@@ -9095,7 +9109,7 @@ return width * (1 + ox) / 2.0f;
       pointIndices = null;
     }
     
-    public void addCounts(PTessGeometry other) {
+    public void addCounts(TessGeometry other) {
       fillVertexCount += other.fillVertexCount;
       fillIndexCount += other.fillIndexCount;
       
@@ -9106,32 +9120,32 @@ return width * (1 + ox) / 2.0f;
       pointIndexCount += other.pointIndexCount;          
     }
     
-    public void setFirstFill(PTessGeometry other) {
+    public void setFirstFill(TessGeometry other) {
       firstFillVertex = other.firstFillVertex;
       firstFillIndex = other.firstFillIndex;
     }
     
-    public void setLastFill(PTessGeometry other) {
+    public void setLastFill(TessGeometry other) {
       lastFillVertex = other.lastFillVertex;
       lastFillIndex = other.lastFillIndex;      
     }
 
-    public void setFirstLine(PTessGeometry other) {
+    public void setFirstLine(TessGeometry other) {
       firstLineVertex = other.firstLineVertex;
       firstLineIndex = other.firstLineIndex;
     }
     
-    public void setLastLine(PTessGeometry other) {
+    public void setLastLine(TessGeometry other) {
       lastLineVertex = other.lastLineVertex;
       lastLineIndex = other.lastLineIndex;      
     }  
 
-    public void setFirstPoint(PTessGeometry other) {
+    public void setFirstPoint(TessGeometry other) {
       firstPointVertex = other.firstPointVertex;
       firstPointIndex = other.firstPointIndex;
     }
     
-    public void setLastPoint(PTessGeometry other) {
+    public void setLastPoint(TessGeometry other) {
       lastPointVertex = other.lastPointVertex;
       lastPointIndex = other.lastPointIndex;      
     }    
@@ -9434,7 +9448,7 @@ return width * (1 + ox) / 2.0f;
     }   
   }
   
-  public class PTessellator {
+  public class Tessellator {
     final protected int MIN_ACCURACY = 6; 
     final protected float sinLUT[];
     final protected float cosLUT[];
@@ -9451,11 +9465,11 @@ return width * (1 + ox) / 2.0f;
     final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
     
     public GLUtessellator gluTess;
-    PInGeometry inGeo; 
-    PTessGeometry tessGeo;
+    InGeometry inGeo; 
+    TessGeometry tessGeo;
     GLU glu;
     
-    public PTessellator() {
+    public Tessellator() {
       sinLUT = new float[SINCOS_LENGTH];
       cosLUT = new float[SINCOS_LENGTH];
       for (int i = 0; i < SINCOS_LENGTH; i++) {
@@ -9476,11 +9490,11 @@ return width * (1 + ox) / 2.0f;
       GLU.gluTessCallback(gluTess, GLU.GLU_TESS_ERROR, tessCallback);        
     }
 
-    public void setInGeometry(PInGeometry in) {
+    public void setInGeometry(InGeometry in) {
       this.inGeo = in;
     }
 
-    public void setTessGeometry(PTessGeometry tess) {
+    public void setTessGeometry(TessGeometry tess) {
       this.tessGeo = tess;
     }
         
