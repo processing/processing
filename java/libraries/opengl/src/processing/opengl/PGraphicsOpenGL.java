@@ -354,7 +354,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected FloatBuffer vertexBuffer;
   protected FloatBuffer colorBuffer;
   protected FloatBuffer normalBuffer;
-  protected FloatBuffer[] texCoordBuffer;
+  protected FloatBuffer texCoordBuffer;
+  protected IntBuffer indexBuffer;
 
   /** Arrays used to put vertex data into the buffers. */
   protected float[] vertexArray;
@@ -779,10 +780,16 @@ public class PGraphicsOpenGL extends PGraphics {
       nbb.order(ByteOrder.nativeOrder());
       normalBuffer = nbb.asFloatBuffer();
 
-      texCoordBuffer = new FloatBuffer[MAX_TEXTURES];
+      //texCoordBuffer = new FloatBuffer[MAX_TEXTURES];
       ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_FLOAT);
       tbb.order(ByteOrder.nativeOrder());
-      texCoordBuffer[0] = tbb.asFloatBuffer();
+      texCoordBuffer = tbb.asFloatBuffer();
+      
+      ByteBuffer ibb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * SIZEOF_INT);
+      ibb.order(ByteOrder.nativeOrder());
+      indexBuffer = ibb.asIntBuffer();
+      
+       
             
       vertexArray = new float[DEFAULT_BUFFER_SIZE * 3];
       colorArray = new float[DEFAULT_BUFFER_SIZE * 4];      
@@ -1664,21 +1671,15 @@ public class PGraphicsOpenGL extends PGraphics {
       ogl.disableLights();
     }     
     
-    vertexBuffer.rewind();
-    colorBuffer.rewind();
-    normalBuffer.rewind();
-    for (int t = 0; t < numTexBuffers; t++) { 
-      texCoordBuffer[t].rewind();
-    }
  
-    if (USE_GEO_BUFFER) {
-      if (geoBuffer == null) geoBuffer = new GeometryBuffer();     
-      if (GEO_BUFFER_ACCUM_ALL) { 
-        geoBuffer.init(TRIANGLES);
-      }
-      GEO_BUFFER_COUNT = 0;
-      GEO_BUFFER_SIZE = 0;
-    }    
+//    if (USE_GEO_BUFFER) {
+//      if (geoBuffer == null) geoBuffer = new GeometryBuffer();     
+//      if (GEO_BUFFER_ACCUM_ALL) { 
+//        geoBuffer.init(TRIANGLES);
+//      }
+//      GEO_BUFFER_COUNT = 0;
+//      GEO_BUFFER_SIZE = 0;
+//    }    
     
     // Each frame starts with textures disabled.
     noTexture();
@@ -2528,38 +2529,38 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   protected void addTexBuffers(int more) {
-    int size = texCoordBuffer[numTexBuffers - 1].capacity();
-    for (int i = 0; i < more; i++) {
-      ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_FLOAT);
-      tbb.order(ByteOrder.nativeOrder());
-      texCoordBuffer[numTexBuffers + i] = tbb.asFloatBuffer();    
-    }
-    
-    texCoordArray = new float[numTexBuffers + more][size];
-
-    // Adding room for additional texture units to the U, V and vertex texture arrays.
-    // However, we need to preserve the information already stored in them, that's why
-    // the temporal arrays and the copy.
-    size = vertexTex.length;
-    float tempu[][] = new float[size][numTexBuffers + more];
-    float tempv[][] = new float[size][numTexBuffers + more];
-    PImage tempi[][] = new PImage[size][numTexBuffers + more];
-    
-    for (int i = 0; i < size; i++) {
-      PApplet.arrayCopy(vertexU[i], 0, tempu[i], 0, numTexBuffers);
-      PApplet.arrayCopy(vertexV[i], 0, tempv[i], 0, numTexBuffers);
-      PApplet.arrayCopy(vertexTex[i], 0, tempi[i], 0, numTexBuffers);  
-    }
-    
-    vertexU = tempu;
-    vertexV = tempv;
-    vertexTex = tempi;
-    
-    numTexBuffers += more;
-
-    // This avoid multi-texturing issues when running the sketch in
-    // static mode (textures after the first not displayed at all).
-    gl.glActiveTexture(GL.GL_TEXTURE0 + numTexBuffers - 1); 
+//    int size = texCoordBuffer[numTexBuffers - 1].capacity();
+//    for (int i = 0; i < more; i++) {
+//      ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_FLOAT);
+//      tbb.order(ByteOrder.nativeOrder());
+//      texCoordBuffer[numTexBuffers + i] = tbb.asFloatBuffer();    
+//    }
+//    
+//    texCoordArray = new float[numTexBuffers + more][size];
+//
+//    // Adding room for additional texture units to the U, V and vertex texture arrays.
+//    // However, we need to preserve the information already stored in them, that's why
+//    // the temporal arrays and the copy.
+//    size = vertexTex.length;
+//    float tempu[][] = new float[size][numTexBuffers + more];
+//    float tempv[][] = new float[size][numTexBuffers + more];
+//    PImage tempi[][] = new PImage[size][numTexBuffers + more];
+//    
+//    for (int i = 0; i < size; i++) {
+//      PApplet.arrayCopy(vertexU[i], 0, tempu[i], 0, numTexBuffers);
+//      PApplet.arrayCopy(vertexV[i], 0, tempv[i], 0, numTexBuffers);
+//      PApplet.arrayCopy(vertexTex[i], 0, tempi[i], 0, numTexBuffers);  
+//    }
+//    
+//    vertexU = tempu;
+//    vertexV = tempv;
+//    vertexTex = tempi;
+//    
+//    numTexBuffers += more;
+//
+//    // This avoid multi-texturing issues when running the sketch in
+//    // static mode (textures after the first not displayed at all).
+//    gl.glActiveTexture(GL.GL_TEXTURE0 + numTexBuffers - 1); 
   }
 
   protected void setTextureData(int ntex) {
@@ -2657,11 +2658,134 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   protected void flushTess() {
+    boolean hasFill = 0 < tess.fillVertexCount && 0 < tess.fillIndexCount;
+    boolean hasLines = 0 < tess.lineVertexCount && 0 < tess.lineIndexCount; 
+    boolean hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;    
+    
+    if (hasFill) { 
+      renderFill(textureImage);
+    }
+    
+    if (hasLines) {
+      renderLines();    
+    }    
+    
+    if (hasPoints) {
+      renderPoints();
+    }    
     
     
     tess.reset();
   }
   
+  protected void renderFill(PImage textureImage) {
+    checkRenderBuffers();
+    
+    vertexBuffer.rewind();
+    vertexBuffer.put(tess.fillVertices, 0, 3 * tess.fillVertexCount);    
+    vertexBuffer.position(0);
+    
+    colorBuffer.rewind();
+    colorBuffer.put(tess.fillColors, 0, 4 * tess.fillVertexCount);
+    colorBuffer.position(0);
+    
+    normalBuffer.rewind();
+    normalBuffer.put(tess.fillNormals, 0, 3 * tess.fillVertexCount);
+    normalBuffer.position(0);
+
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);    
+    
+    PTexture tex = null;
+    if (textureImage != null) {
+      tex = ogl.getTexture(textureImage);
+      if (tex != null) {
+        gl2f.glEnable(tex.glTarget);
+        gl2f.glActiveTexture(GL.GL_TEXTURE0);
+        gl2f.glBindTexture(tex.glTarget, tex.glID);
+      }
+      texCoordBuffer.rewind();
+      texCoordBuffer.put(tess.fillTexcoords, 0, 2 * tess.fillVertexCount);
+      texCoordBuffer.position(0);
+    }    
+    
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
+    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);
+    if (tex != null) {    
+      gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texCoordBuffer);
+    }
+    
+    indexBuffer.rewind();
+    indexBuffer.put(tess.fillIndices);
+    indexBuffer.position(0);
+    //gl2x.glDrawRangeElements(GL.GL_TRIANGLES, 0, tess.lastFillIndex, tess.fillIndexCount, GL.GL_UNSIGNED_BYTE, indexBuffer);    
+    //gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_BYTE, indexBuffer);
+    
+    PApplet.println("Drawing " + tess.fillIndexCount + " vertices: ");
+    PApplet.println(tess.fillIndices);
+    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(tess.fillIndices));
+    
+    
+//    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.lastFillIndex - tess.firstFillIndex + 1, GL.GL_UNSIGNED_INT, 
+//                           tess.firstFillIndex * PGraphicsOpenGL.SIZEOF_INT);
+//   
+//    GL_QUADS, 24, GL_UNSIGNED_BYTE
+//    gl2f.glDrawElements(arg0, arg1, GL.GL_UNSIGNED_INT, );    
+    //gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * faceLength[j]);
+    
+    
+    if (tex != null) {
+      gl2f.glActiveTexture(GL.GL_TEXTURE0);
+      gl2f.glBindTexture(tex.glTarget, 0);
+      gl2f.glDisable(tex.glTarget);
+      
+      gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+    }     
+    
+    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);  
+  }
+  
+  protected void checkRenderBuffers() {
+    if (vertexBuffer.capacity() / 3 < tess.fillVertexCount) {    
+      int newSize = tess.fillVertexCount;
+      
+      ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
+      vbb.order(ByteOrder.nativeOrder());
+      vertexBuffer = vbb.asFloatBuffer();
+
+      ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_FLOAT);
+      cbb.order(ByteOrder.nativeOrder());
+      colorBuffer = cbb.asFloatBuffer();
+
+      ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
+      nbb.order(ByteOrder.nativeOrder());
+      normalBuffer = nbb.asFloatBuffer();
+     
+      ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
+      tbb.order(ByteOrder.nativeOrder());
+      texCoordBuffer = tbb.asFloatBuffer();     
+    }
+    
+    if (indexBuffer.capacity() < tess.fillIndexCount) {
+      int newSize = tess.fillIndexCount;
+      
+      ByteBuffer ibb = ByteBuffer.allocateDirect(newSize * SIZEOF_INT);
+      ibb.order(ByteOrder.nativeOrder());
+      indexBuffer = ibb.asIntBuffer();
+    }
+  }
+  
+  protected void renderLines() {
+    //gl2x.glVertexAttribPointer(arg0, arg1, arg2, arg3, arg4, buffer);
+  }
+
+  protected void renderPoints() {
+    
+  }  
   
   protected void endShapeStroke(int mode) {
     switch (shape) {
@@ -3481,7 +3605,7 @@ public class PGraphicsOpenGL extends PGraphics {
         colorBuffer.position(0);
         normalBuffer.position(0);
         for (int t = 0; t < tcount; t++) {
-          texCoordBuffer[t].position(0);
+          //texCoordBuffer[t].position(0);
         }
 
         int n = 0;
@@ -3698,14 +3822,14 @@ public class PGraphicsOpenGL extends PGraphics {
           colorBuffer.put(colorArray);
           normalBuffer.put(normalArray);
           for (int t = 0; t < tcount; t++) {
-            texCoordBuffer[t].put(texCoordArray[t]);
+            //texCoordBuffer[t].put(texCoordArray[t]);
           }
 
           vertexBuffer.position(0);
           colorBuffer.position(0);
           normalBuffer.position(0);
           for (int t = 0; t < tcount; t++) {
-            texCoordBuffer[t].position(0);
+            //texCoordBuffer[t].position(0);
           }
           
           gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
@@ -3713,7 +3837,7 @@ public class PGraphicsOpenGL extends PGraphics {
           gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);
           for (int t = 0; t < tcount; t++) {
             gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);
-            gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texCoordBuffer[t]);          
+            //gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texCoordBuffer[t]);          
           }
           gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * faceLength[j]);
         }        
@@ -4107,7 +4231,7 @@ return width * (1 + ox) / 2.0f;
     for (int t = 0; t < numTexBuffers; t++) {    
       ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
       tbb.order(ByteOrder.nativeOrder());
-      texCoordBuffer[t] = tbb.asFloatBuffer(); 
+      //texCoordBuffer[t] = tbb.asFloatBuffer(); 
     }    
     
     vertexArray = new float[newSize * 3];
