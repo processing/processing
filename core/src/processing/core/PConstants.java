@@ -57,6 +57,13 @@ public interface PConstants {
 
   static public final int EDGE = 12;
 
+  // shapes
+  
+  static public final int VERTEX = 0;  
+  static public final int BEZIER_VERTEX = 1;  
+  static public final int QUAD_BEZIER_VERTEX = 2;  
+  static public final int CURVE_VERTEX = 3;
+  static public final int BREAK = 4;  
 
   // stroke
 
