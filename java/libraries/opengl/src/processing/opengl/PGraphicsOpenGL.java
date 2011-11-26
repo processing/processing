@@ -607,6 +607,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected InGeometry in;
   protected TessGeometry tess;
+
+  protected float[] currentVertex = { 0, 0, 0 };
+  protected float[] currentColor = { 0, 0, 0, 0 };  
+  protected float[] currentNormal = { 0, 0, 1 };
+  protected float[] currentTexcoord = { 0, 0 };
+  protected float[] currentStroke = { 0, 0, 0, 1, 1 };  
+  
   
   public static final int DEFAULT_TESS_VERTICES = 512;
   public static final int DEFAULT_TESS_INDICES = 1024;
@@ -2114,10 +2121,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   }
 
-  
   //////////////////////////////////////////////////////////////
 
-  // VERTEX SHAPES
+  // SHAPE CREATORS
+  
   
   public PShape createGroup() {
     return new PShape3D(parent, PShape.GROUP);    
@@ -2139,7 +2146,13 @@ public class PGraphicsOpenGL extends PGraphics {
     PShape3D shape = new PShape3D(parent, PShape.PRIMITIVE);
     shape.setKind(kind);
     return shape;
-  }
+  }  
+  
+  //////////////////////////////////////////////////////////////
+
+  // VERTEX SHAPES
+  
+
   
   // All picked up from either PGraphics or PGraphics3D
 
@@ -2166,143 +2179,144 @@ public class PGraphicsOpenGL extends PGraphics {
     return null;
   }
   
-  public void beginRecord(PShape3D shape) {
-    if (recordingShape) {
-      System.err.println("OPENGL2: Already recording.");
-    } else {
-      if (USE_GEO_BUFFER) {        
-        if (geoBuffer != null && 0 < geoBuffer.vertCount) {
-          geoBuffer.pre();    
-          geoBuffer.render();
-          geoBuffer.post();
-        }
-        if (geoBuffer == null) geoBuffer = new GeometryBuffer();
-      }      
+//  public void beginRecord(PShape3D shape) {
+//    if (recordingShape) {
+//      System.err.println("OPENGL2: Already recording.");
+//    } else {
+//      if (USE_GEO_BUFFER) {        
+//        if (geoBuffer != null && 0 < geoBuffer.vertCount) {
+//          geoBuffer.pre();    
+//          geoBuffer.render();
+//          geoBuffer.post();
+//        }
+//        if (geoBuffer == null) geoBuffer = new GeometryBuffer();
+//      }      
+//
+//      recordedShape = shape;
+//      beginShapeRecorderImpl();
+//    }    
+//  }
+//  
+//  public boolean isRecordingShape() {
+//    return recordingShape;
+//  }  
+//  
+//  protected void beginShapeRecorder() {
+//    beginShapeRecorder(POLYGON);
+//  }
+//
+//  protected void beginShapeRecorder(int kind) {
+//    beginShapeRecorderImpl();
+//    beginShape(kind);
+//  }
+//
+//  protected void beginShapesRecorder() {
+//    if (recordingShape) {
+//      System.err
+//          .println("Already recording shapes. Recording cannot be nested");
+//    } else {
+//      beginShapeRecorderImpl();
+//    }
+//  }
 
-      recordedShape = shape;
-      beginShapeRecorderImpl();
-    }    
+//  @SuppressWarnings("unchecked")
+//  protected void beginShapeRecorderImpl() {
+//    recordingShape = true;  
+//    
+//    recShapeName = "";
+//    
+//    if (recordedVertices == null) {
+//      recordedVertices = new ArrayList<PVector>(vertexBuffer.capacity() / 3);  
+//    } else {
+//      recordedVertices.ensureCapacity(vertexBuffer.capacity() / 3);
+//    }
+//    
+//    if (recordedColors == null) { 
+//      recordedColors = new ArrayList<float[]>(colorBuffer.capacity() / 4);
+//    } else {
+//      recordedColors.ensureCapacity(colorBuffer.capacity() / 4);
+//    }
+//    
+//    if (recordedNormals == null) {
+//      recordedNormals = new ArrayList<PVector>(normalBuffer.capacity() / 3);
+//    } else {
+//      recordedNormals.ensureCapacity(normalBuffer.capacity() / 3);
+//    }
+//    
+//    int size = texCoordBuffer[0].capacity() / 2;
+//    if (recordedTexCoords == null) {      
+//      recordedTexCoords = new ArrayList[MAX_TEXTURES];
+//      // We need to initialize all the buffers for recording of texture coordinates,
+//      // since we don't know in advance the number of texture units that will be used
+//      // in this recording.
+//      for (int t = 0; t < maxTextureUnits; t++) {
+//        recordedTexCoords[t] = new ArrayList<PVector>(size);  
+//      }  
+//    } else {
+//      for (int t = 0; t < maxTextureUnits; t++) {
+//        recordedTexCoords[t].ensureCapacity(size);  
+//      }      
+//    }
+//    
+//    if (USE_GEO_BUFFER) {
+//      if (recordedIndices == null) {
+//        recordedIndices = new ArrayList<Integer>(vertexBuffer.capacity() / 3);  
+//      } else {
+//        recordedIndices.ensureCapacity(vertexBuffer.capacity() / 3);
+//      }
+//    } else{
+//      recordedIndices = null;
+//    }
+//    
+//    recTexturesCount = 0;
+//    
+//    recordedChildren = new ArrayList<PShape3D>(PApplet.max(DEFAULT_PATHS, DEFAULT_FACES));
+//  }
+
+  public void beginShape(int kind) {  
+    shape = kind;
+
+    in.reset();
+    
+//    if (hints[ENABLE_DEPTH_SORT]) {
+//      // TODO:
+//      // Implement depth sorting with vertex arrays.
+//
+//      // continue with previous vertex, line and triangle count
+//      // all shapes are rendered at endDraw();
+//      shapeFirst = vertexCount;
+//      shapeLast = 0;
+//
+//    } else {
+//      // reset vertex, line and triangle information
+//      // every shape is rendered at endShape();
+//      vertexCount = 0;
+//      curveVertexCount = 0;
+//      
+//      pathCount = 0;
+//      faceCount = 0;
+//      
+//      pointCount = 0;
+//      lineCount = 0;      
+//      triangleCount = 0;
+//    }
+//
+//    shapeTextures = 0;
+//    noTexture();
   }
   
-  public boolean isRecordingShape() {
-    return recordingShape;
-  }  
-  
-  protected void beginShapeRecorder() {
-    beginShapeRecorder(POLYGON);
-  }
-
-  protected void beginShapeRecorder(int kind) {
-    beginShapeRecorderImpl();
-    beginShape(kind);
-  }
-
-  protected void beginShapesRecorder() {
-    if (recordingShape) {
-      System.err
-          .println("Already recording shapes. Recording cannot be nested");
-    } else {
-      beginShapeRecorderImpl();
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  protected void beginShapeRecorderImpl() {
-    recordingShape = true;  
-    
-    recShapeName = "";
-    
-    if (recordedVertices == null) {
-      recordedVertices = new ArrayList<PVector>(vertexBuffer.capacity() / 3);  
-    } else {
-      recordedVertices.ensureCapacity(vertexBuffer.capacity() / 3);
-    }
-    
-    if (recordedColors == null) { 
-      recordedColors = new ArrayList<float[]>(colorBuffer.capacity() / 4);
-    } else {
-      recordedColors.ensureCapacity(colorBuffer.capacity() / 4);
-    }
-    
-    if (recordedNormals == null) {
-      recordedNormals = new ArrayList<PVector>(normalBuffer.capacity() / 3);
-    } else {
-      recordedNormals.ensureCapacity(normalBuffer.capacity() / 3);
-    }
-    
-    int size = texCoordBuffer[0].capacity() / 2;
-    if (recordedTexCoords == null) {      
-      recordedTexCoords = new ArrayList[MAX_TEXTURES];
-      // We need to initialize all the buffers for recording of texture coordinates,
-      // since we don't know in advance the number of texture units that will be used
-      // in this recording.
-      for (int t = 0; t < maxTextureUnits; t++) {
-        recordedTexCoords[t] = new ArrayList<PVector>(size);  
-      }  
-    } else {
-      for (int t = 0; t < maxTextureUnits; t++) {
-        recordedTexCoords[t].ensureCapacity(size);  
-      }      
-    }
-    
-    if (USE_GEO_BUFFER) {
-      if (recordedIndices == null) {
-        recordedIndices = new ArrayList<Integer>(vertexBuffer.capacity() / 3);  
-      } else {
-        recordedIndices.ensureCapacity(vertexBuffer.capacity() / 3);
-      }
-    } else{
-      recordedIndices = null;
-    }
-    
-    recTexturesCount = 0;
-    
-    recordedChildren = new ArrayList<PShape3D>(PApplet.max(DEFAULT_PATHS, DEFAULT_FACES));
-  }
-
-  public void beginShape(int kind) {
-//  in.reset();
-      shape = kind;
-
-    if (hints[ENABLE_DEPTH_SORT]) {
-      // TODO:
-      // Implement depth sorting with vertex arrays.
-
-      // continue with previous vertex, line and triangle count
-      // all shapes are rendered at endDraw();
-      shapeFirst = vertexCount;
-      shapeLast = 0;
-
-    } else {
-      // reset vertex, line and triangle information
-      // every shape is rendered at endShape();
-      vertexCount = 0;
-      curveVertexCount = 0;
-      
-      pathCount = 0;
-      faceCount = 0;
-      
-      pointCount = 0;
-      lineCount = 0;      
-      triangleCount = 0;
-    }
-
-    shapeTextures = 0;
-    noTexture();
-  }
-  
-  public void mergeShapes(boolean val) {
-    // Setting this parameter to true has the result of A3D trying to
-    // set unique names to each shape being created between beginRecord/endRecord.
-    // In this way, even if two shapes have all of their parameters identical (mode,
-    // textures, etc), but their names are different, then they will be recorded in
-    // separate child shapes in the recorded shape.
-    mergeRecShapes = val;
-  }
-  
-  public void shapeName(String name) {
-    recShapeName = name;
-  }
+//  public void mergeShapes(boolean val) {
+//    // Setting this parameter to true has the result of A3D trying to
+//    // set unique names to each shape being created between beginRecord/endRecord.
+//    // In this way, even if two shapes have all of their parameters identical (mode,
+//    // textures, etc), but their names are different, then they will be recorded in
+//    // separate child shapes in the recorded shape.
+//    mergeRecShapes = val;
+//  }
+//  
+//  public void shapeName(String name) {
+//    recShapeName = name;
+//  }
 
   // public void edge(boolean e)
   // public void normal(float nx, float ny, float nz)
@@ -2311,88 +2325,128 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public void texture(PImage image) {
     super.texture(image);
-    textureImages[0] = image;
-    java.util.Arrays.fill(textureImages, 1, maxTextureUnits, null);
-    numTextures = 1;
-    shapeTextures++;
+//    textureImages[0] = image;
+//    java.util.Arrays.fill(textureImages, 1, maxTextureUnits, null);
+//    numTextures = 1;
+//    shapeTextures++;
   }
   
   
-  public void texture(PImage... images) {
-    int len = images.length;
-    if (len <= maxTextureUnits) {
-      super.texture(images[0]);
-      PApplet.arrayCopy(images, 0, textureImages, 0, len);
-      java.util.Arrays.fill(textureImages, len, maxTextureUnits, null);
-      numTextures = len;
-      if (numTexBuffers < len) {
-        addTexBuffers(len - numTexBuffers);
-      }
-      shapeTextures += len;
-    } else {
-      System.err.println("OPENGL2: insufficient texture units.");
-    }    
-  }
+//  public void texture(PImage... images) {
+//    int len = images.length;
+//    if (len <= maxTextureUnits) {
+//      super.texture(images[0]);
+//      PApplet.arrayCopy(images, 0, textureImages, 0, len);
+//      java.util.Arrays.fill(textureImages, len, maxTextureUnits, null);
+//      numTextures = len;
+//      if (numTexBuffers < len) {
+//        addTexBuffers(len - numTexBuffers);
+//      }
+//      shapeTextures += len;
+//    } else {
+//      System.err.println("OPENGL2: insufficient texture units.");
+//    }    
+//  }
   
      
   public void noTexture() {
     super.noTexture();    
-    numTextures = 0;
-    clearTextures();
-    clearTextures0();
+//    numTextures = 0;
+//    clearTextures();
+//    clearTextures0();
   }
   
   
-  public void vertex(float x, float y, float u, float v) {
-    vertexTexture(u, v, 0);
-    vertex(x, y);
-    int n = vertexCount - 1;
-    for (int i = 0; i < numTextures; i++) {
-      vertexTex[n][i] = textureImages[i];
-      vertexU[n][i] = texturesU[0];
-      vertexV[n][i] = texturesV[0];        
-    }
-  }  
-    
-  
-  public void vertex(float x, float y, float z, float u, float v) {  
-    vertexTexture(u, v, 0);
-    vertex(x, y, z);  
-    int n = vertexCount - 1;
-    for (int i = 0; i < numTextures; i++) {
-      vertexTex[n][i] = textureImages[i];
-      vertexU[n][i] = texturesU[0];
-      vertexV[n][i] = texturesV[0];        
-    }    
+  public void vertex(float x, float y) {
+    vertex(x, y, 0, 0, 0);
   }
 
+  public void vertex(float x, float y, float u, float v) {
+    vertex(x, y, 0, u, v); 
+  }    
   
-  public void vertex(float... values) {
-    int len = values.length;
-    if (len < 2) {
-      System.err.println("OPENGL2: call vertex() with at least 2 parameters.");      
-      return;
+  public void vertex(float x, float y, float z) {
+    vertex(x, y, z, 0, 0);      
+  }  
+  
+  public void vertex(float x, float y, float z, float u, float v) {  
+    currentVertex[0] = x;
+    currentVertex[1] = y;
+    currentVertex[2] = z;    
+    
+    boolean textured = textureImage != null;
+    if (fill || textured) {
+      if (!textured) {
+        currentColor[0] = fillR;
+        currentColor[1] = fillG;
+        currentColor[2] = fillB;
+        currentColor[3] = fillA;
+      } else {
+        if (tint) {
+          currentColor[0] = tintR;
+          currentColor[1] = tintG;
+          currentColor[2] = tintB;
+          currentColor[3] = tintA;
+        } else {
+          currentColor[0] = 1;
+          currentColor[1] = 1;
+          currentColor[2] = 1;
+          currentColor[3] = 1;
+        }
+      }
     }
     
-    int dim = len % 2 == 0 ? 2 : 3; 
-    int nuv = (len - dim) / 2;
-    if (nuv <= maxTextureUnits) {
-      float u, v;
-      for (int t = 0; t < nuv; t++) {
-        u = values[dim + 2 * t];
-        v = values[dim + 2 * t + 1];
-        vertexTexture(u, v, t);  
-      }       
-      if (dim == 2) {
-        vertex(values[0], values[1]);
-      } else {
-        vertex(values[0], values[1], values[2]);
-      }        
-      setTextureData(nuv);      
+    currentNormal[0] = normalX;
+    currentNormal[1] = normalY;
+    currentNormal[2] = normalZ;    
+
+    currentTexcoord[0] = u;
+    currentTexcoord[1] = v;    
+
+    if (stroke) {
+      currentStroke[0] = strokeR;
+      currentStroke[1] = strokeG;
+      currentStroke[2] = strokeB;
+      currentStroke[3] = strokeA;
+      currentStroke[4] = strokeWeight;
     } else {
-      System.err.println("OPENGL2: insufficient texture units.");
-    }      
+      currentStroke[0] = 0;
+      currentStroke[1] = 0;
+      currentStroke[2] = 0;
+      currentStroke[3] = 0;
+      currentStroke[4] = 0;      
+    }
+        
+    in.addVertex(currentVertex, currentColor, currentNormal, currentTexcoord, currentStroke, VERTEX);
   }
+  
+  
+//  public void vertex(float... values) {
+//    int len = values.length;
+//    if (len < 2) {
+//      System.err.println("OPENGL2: call vertex() with at least 2 parameters.");      
+//      return;
+//    }
+//    
+//    int dim = len % 2 == 0 ? 2 : 3; 
+//    int nuv = (len - dim) / 2;
+//    if (nuv <= maxTextureUnits) {
+//      float u, v;
+//      for (int t = 0; t < nuv; t++) {
+//        u = values[dim + 2 * t];
+//        v = values[dim + 2 * t + 1];
+//        vertexTexture(u, v, t);  
+//      }       
+//      if (dim == 2) {
+//        vertex(values[0], values[1]);
+//      } else {
+//        vertex(values[0], values[1], values[2]);
+//      }        
+//      setTextureData(nuv);      
+//    } else {
+//      System.err.println("OPENGL2: insufficient texture units.");
+//    }      
+//  }
   
   
   protected void vertexCheck() {
@@ -2524,85 +2578,91 @@ public class PGraphicsOpenGL extends PGraphics {
   // public void endShape()
 
   public void endShape(int mode) {
-//    tessellator.setInGeometry(in);
-//    tessellator.setTessGeometry(tess);
-//    
+    tessellator.setInGeometry(in);
+    tessellator.setTessGeometry(tess);
+
+    if (shape == POINTS) {
+      tessellator.tessellatePoints(strokeCap);    
+    } else if (shape == LINES) {
+      tessellator.tessellateLines();    
+    } else if (shape == TRIANGLES) {
+      tessellator.tessellateTriangles();
+    } else if (shape == TRIANGLE_FAN) {
+      tessellator.tessellateTriangleFan();
+    } else if (shape == TRIANGLE_STRIP) {
+      tessellator.tessellateTriangleStrip();
+    } else if (shape == QUADS) {
+      tessellator.tessellateQuads();
+    } else if (shape == QUAD_STRIP) {
+      tessellator.tessellateQuadStrip();
+    } else if (shape == POLYGON) {
+      tessellator.tessellatePolygon(false, mode == CLOSE);
+    }
+
+    flushTess();
+    
+    
+//    shapeLast = vertexCount;
 //
-//      if (shape == POINTS) {
-//        tessellator.tessellatePoints(strokeCap);    
-//      } else if (shape == LINES) {
-//        tessellator.tessellateLines();    
-//      } else if (shape == TRIANGLES) {
-//        tessellator.tessellateTriangles();
-//      } else if (shape == TRIANGLE_FAN) {
-//        tessellator.tessellateTriangleFan();
-//      } else if (shape == TRIANGLE_STRIP) {
-//        tessellator.tessellateTriangleStrip();
-//      } else if (shape == QUADS) {
-//        tessellator.tessellateQuads();
-//      } else if (shape == QUAD_STRIP) {
-//        tessellator.tessellateQuadStrip();
-//      } else if (shape == POLYGON) {
-//        tessellator.tessellatePolygon(false, mode == CLOSE);
+//    // don't try to draw if there are no vertices
+//    // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
+//    if (vertexCount == 0) {
+//      shape = 0;
+//      return;
+//    }
+//
+//    if (stroke) {
+//      endShapeStroke(mode);
+//    }
+//
+//    if (fill || 0 < shapeTextures) {
+//      endShapeFill();
+//    }
+//
+//    // render shape and fill here if not saving the shapes for later
+//    // if true, the shapes will be rendered on endDraw
+//    if (!hints[ENABLE_DEPTH_SORT]) {
+//      if (fill || 0 < shapeTextures) {
+//        renderTriangles(0, faceCount);
+//        if (raw != null) {
+//          //rawTriangles(0, triangleCount);
+//        }
+//        
+//        vertexCount = 0;
+//        triangleCount = 0;
+//        shapeTextures = 0;
 //      }
+//      
+//      if (stroke) {
+//        if (pointCount > 0) {
+//          renderPoints(0, pointCount);
+//          if (raw != null) {
+//            //renderPoints(0, pointCount);
+//          }          
+//          pointCount = 0;
+//        }
+//        
+//        renderLines(0, pathCount);
+//        if (raw != null) {
+//          // rawLines(0, lineCount);
+//        }
+//        lineCount = 0;
+//      }
+//      
+//      pathCount = 0;
+//      faceCount = 0;
+//    }
 //
-//     flush();
-    
-    
-    shapeLast = vertexCount;
-
-    // don't try to draw if there are no vertices
-    // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
-    if (vertexCount == 0) {
-      shape = 0;
-      return;
-    }
-
-    if (stroke) {
-      endShapeStroke(mode);
-    }
-
-    if (fill || 0 < shapeTextures) {
-      endShapeFill();
-    }
-
-    // render shape and fill here if not saving the shapes for later
-    // if true, the shapes will be rendered on endDraw
-    if (!hints[ENABLE_DEPTH_SORT]) {
-      if (fill || 0 < shapeTextures) {
-        renderTriangles(0, faceCount);
-        if (raw != null) {
-          //rawTriangles(0, triangleCount);
-        }
-        
-        vertexCount = 0;
-        triangleCount = 0;
-        shapeTextures = 0;
-      }
-      
-      if (stroke) {
-        if (pointCount > 0) {
-          renderPoints(0, pointCount);
-          if (raw != null) {
-            //renderPoints(0, pointCount);
-          }          
-          pointCount = 0;
-        }
-        
-        renderLines(0, pathCount);
-        if (raw != null) {
-          // rawLines(0, lineCount);
-        }
-        lineCount = 0;
-      }
-      
-      pathCount = 0;
-      faceCount = 0;
-    }
-
-    shape = 0;
+//    shape = 0;
   }
 
+  protected void flushTess() {
+    
+    
+    tess.reset();
+  }
+  
+  
   protected void endShapeStroke(int mode) {
     switch (shape) {
     case POINTS: {

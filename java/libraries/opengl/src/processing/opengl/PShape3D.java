@@ -243,7 +243,7 @@ public class PShape3D extends PShape {
   }
 
   public void vertex(float x, float y) {
-    vertex(x, y, 0, 0, 0);      
+    vertex(x, y, 0, 0, 0);   
   }
 
   public void vertex(float x, float y, float z) {
@@ -1271,7 +1271,7 @@ public class PShape3D extends PShape {
     
     if (hasPoints) {
       renderPoints();
-    }    
+    }
   }
   
   protected void renderFill(PImage textureImage) {

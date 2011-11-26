@@ -160,11 +160,7 @@ public class PShape implements PConstants {
   protected int childCount;
   protected PShape[] children;  
   
-  static public final int VERTEX = 0;
-  static public final int BEZIER_VERTEX = 1;
-  static public final int QUAD_BEZIER_VERTEX = 2;
-  static public final int CURVE_VERTEX = 3;
-  static public final int BREAK = 4;
+
   /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEX calls. */
   protected int vertexCodeCount;
   protected int[] vertexCodes;
