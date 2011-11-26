@@ -872,6 +872,11 @@ public class PApplet extends Applet
   }
 
 
+  public int sketchAntiAlias() {
+    return 2;
+  }
+
+
   public int sketchWidth() {
     return DEFAULT_WIDTH;
   }
@@ -1559,6 +1564,7 @@ public class PApplet extends Applet
       pg.setParent(this);
       pg.setPrimary(iprimary);
       if (ipath != null) pg.setPath(ipath);
+      pg.setAntiAlias(sketchAntiAlias());
       pg.setSize(iwidth, iheight);
 
       // everything worked, return it

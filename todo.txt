@@ -40,6 +40,9 @@ X   http://code.google.com/p/processing/issues/detail?id=635
 _ renaming a normal tab to same name with ".java" fails with ".pde" version already exists
 _   http://code.google.com/p/processing/issues/detail?id=776
 
+_ undo seems to not be going to the right location
+_   http://code.google.com/p/processing/issues/detail?id=668
+
 _ casey: recent sketches is a yes, window menu could go either way
 window menu:
 http://code.google.com/p/processing/issues/detail?id=545
