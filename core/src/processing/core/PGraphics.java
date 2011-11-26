@@ -145,7 +145,10 @@ public class PGraphics extends PImage implements PConstants {
   public int pixelCount;
 
   /// true if smoothing is enabled (read-only)
-  public boolean smooth = false;
+  public boolean smooth;
+
+  /// the anti-aliasing level for renderers that support it
+  protected int antialias;
 
   // ........................................................
 
@@ -596,6 +599,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  public void setAntiAlias(int samples) {  // ignore
+    this.antialias = samples;
+  }
+  
+  
   /**
    * The final step in setting up a renderer, set its size of this renderer.
    * This was formerly handled by the constructor, but instead it's been broken
@@ -705,7 +713,13 @@ public class PGraphics extends PImage implements PConstants {
    */
   protected void defaultSettings() {  // ignore
 //    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
-    smooth();  // 2.0a5
+    
+    //smooth();  // 2.0a5
+    if (antialias > 0) {  // 2.0a5
+      smooth();
+    } else {
+      noSmooth();
+    }
 
     colorMode(RGB, 255);
     fill(255);

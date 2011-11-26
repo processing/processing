@@ -7,6 +7,9 @@ X smooth() is now the default
 
 _ don't let the ... ?
 
+_ focus handling note:
+_   http://android-developers.blogspot.com/2011/11/making-android-games-that-play-nice.html
+
 _ if a sketch asks for android mode but it's not available
 _   (after a double-click)
 _   you get the "is android installed"? dialog, then it re-opens again

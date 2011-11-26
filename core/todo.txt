@@ -8,6 +8,7 @@ X enable smooth() by default
 X   better to learn noSmooth() later
 X repeatedly calling texture() with new image raises memory error
 X   http://code.google.com/p/processing/issues/detail?id=806
+X adding anti-alias methods so that FSAA can set up properly
 
 earlier
 o text using textMode(SCREEN) not displayed in Processing 1.5.1
@@ -23,6 +24,11 @@ o   need flat image implementation that takes no transforms
 o   along with 90, 180 and 270 versions of it as well
 o   tie to glDrawPixels.. how to clear matrix properly for that?
 X   maybe just disable this for JAVA2D cuz it's silly?
+
+_ Wishlist for the new XML class in Processing 2.0
+_   http://code.google.com/p/processing/issues/detail?id=904
+
+_ add loadTable().. 
 
 _ add() to add things to lists, sum() for the math (sum is used less after all)
 

@@ -803,11 +803,27 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   public void smooth() {
     smooth = true;
+    
+    if (antialias == 0) {
+      antialias = 2;  // change back to bicubic
+    }
+    
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-//                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                        antialias == 1 ? 
+                        RenderingHints.VALUE_INTERPOLATION_BILINEAR :
                         RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+  }
+
+
+  public void smooth(int antialias) {
+    this.antialias = antialias;
+    if (antialias == 0) {
+      noSmooth();
+    } else {
+      smooth();
+    }
   }
 
 
