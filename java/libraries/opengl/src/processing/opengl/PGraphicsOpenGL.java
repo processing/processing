@@ -2770,7 +2770,7 @@ public class PGraphicsOpenGL extends PGraphics {
     lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
             
     int attribsID = lineShader.getAttribLocation("attribs");     
-    ogl.gl2x.glEnableVertexAttribArray(attribsID);
+    gl2x.glEnableVertexAttribArray(attribsID);
     gl2x.glVertexAttribPointer(attribsID, 4, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.lineAttributes));
     
     gl2f.glDrawElements(GL.GL_TRIANGLES, tess.lineIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.lineIndices));
@@ -2800,7 +2800,11 @@ public class PGraphicsOpenGL extends PGraphics {
     normalBuffer.rewind();
     normalBuffer.put(tess.pointNormals, 0, 3 * tess.pointVertexCount);
     normalBuffer.position(0);
-            
+    
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);  
+        
     int attribsID = pointShader.getAttribLocation("vertDisp");     
     gl2x.glEnableVertexAttribArray(attribsID);
     gl2x.glVertexAttribPointer(attribsID, 2, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.pointAttributes));
