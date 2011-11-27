@@ -2679,7 +2679,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   protected void renderFill(PImage textureImage) {
-    checkRenderBuffers();
+    checkVertexBuffers(tess.fillVertexCount);
     
     vertexBuffer.rewind();
     vertexBuffer.put(tess.fillVertices, 0, 3 * tess.fillVertexCount);    
@@ -2717,24 +2717,18 @@ public class PGraphicsOpenGL extends PGraphics {
       gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texCoordBuffer);
     }
     
-    indexBuffer.rewind();
-    indexBuffer.put(tess.fillIndices);
-    indexBuffer.position(0);
-    //gl2x.glDrawRangeElements(GL.GL_TRIANGLES, 0, tess.lastFillIndex, tess.fillIndexCount, GL.GL_UNSIGNED_BYTE, indexBuffer);    
-    //gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_BYTE, indexBuffer);
+    // What is faster?
     
-    PApplet.println("Drawing " + tess.fillIndexCount + " vertices: ");
-    PApplet.println(tess.fillIndices);
-    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(tess.fillIndices));
-    
-    
-//    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.lastFillIndex - tess.firstFillIndex + 1, GL.GL_UNSIGNED_INT, 
-//                           tess.firstFillIndex * PGraphicsOpenGL.SIZEOF_INT);
-//   
-//    GL_QUADS, 24, GL_UNSIGNED_BYTE
-//    gl2f.glDrawElements(arg0, arg1, GL.GL_UNSIGNED_INT, );    
-    //gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * faceLength[j]);
-    
+    // 1) wrapping the float array:
+    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.fillIndices));
+
+    // or:
+    //2) copying the float array to a pre-existing direct buffer:
+    //checkIndexBuffers(tess.fillIndexCount);
+    //indexBuffer.rewind();
+    //indexBuffer.put(tess.fillIndices);
+    //indexBuffer.position(0);
+    //gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_INT, indexBuffer);
     
     if (tex != null) {
       gl2f.glActiveTexture(GL.GL_TEXTURE0);
@@ -2748,44 +2742,107 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
     gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);  
   }
-  
-  protected void checkRenderBuffers() {
-    if (vertexBuffer.capacity() / 3 < tess.fillVertexCount) {    
-      int newSize = tess.fillVertexCount;
-      
-      ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
-      vbb.order(ByteOrder.nativeOrder());
-      vertexBuffer = vbb.asFloatBuffer();
 
-      ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_FLOAT);
-      cbb.order(ByteOrder.nativeOrder());
-      colorBuffer = cbb.asFloatBuffer();
-
-      ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
-      nbb.order(ByteOrder.nativeOrder());
-      normalBuffer = nbb.asFloatBuffer();
-     
-      ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
-      tbb.order(ByteOrder.nativeOrder());
-      texCoordBuffer = tbb.asFloatBuffer();     
-    }
-    
-    if (indexBuffer.capacity() < tess.fillIndexCount) {
-      int newSize = tess.fillIndexCount;
-      
-      ByteBuffer ibb = ByteBuffer.allocateDirect(newSize * SIZEOF_INT);
-      ibb.order(ByteOrder.nativeOrder());
-      indexBuffer = ibb.asIntBuffer();
-    }
-  }
   
   protected void renderLines() {
-    //gl2x.glVertexAttribPointer(arg0, arg1, arg2, arg3, arg4, buffer);
+    checkVertexBuffers(tess.lineVertexCount);
+    
+    lineShader.start();
+    
+    vertexBuffer.rewind();
+    vertexBuffer.put(tess.lineVertices, 0, 3 * tess.lineVertexCount);    
+    vertexBuffer.position(0);
+    
+    colorBuffer.rewind();
+    colorBuffer.put(tess.lineColors, 0, 4 * tess.lineVertexCount);
+    colorBuffer.position(0);
+    
+    normalBuffer.rewind();
+    normalBuffer.put(tess.lineNormals, 0, 3 * tess.lineVertexCount);
+    normalBuffer.position(0);
+
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);  
+    
+    int[] viewport = {0, 0, 0, 0};
+    gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+    lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
+            
+    int attribsID = lineShader.getAttribLocation("attribs");     
+    ogl.gl2x.glEnableVertexAttribArray(attribsID);
+    gl2x.glVertexAttribPointer(attribsID, 4, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.lineAttributes));
+    
+    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.lineIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.lineIndices));
+    
+    gl2x.glDisableVertexAttribArray(attribsID);
+    
+    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);  
+    
+    lineShader.stop();
   }
 
   protected void renderPoints() {
+    checkVertexBuffers(tess.pointVertexCount);
     
+    pointShader.start();
+    
+    vertexBuffer.rewind();
+    vertexBuffer.put(tess.pointVertices, 0, 3 * tess.pointVertexCount);    
+    vertexBuffer.position(0);
+    
+    colorBuffer.rewind();
+    colorBuffer.put(tess.pointColors, 0, 4 * tess.pointVertexCount);
+    colorBuffer.position(0);
+    
+    normalBuffer.rewind();
+    normalBuffer.put(tess.pointNormals, 0, 3 * tess.pointVertexCount);
+    normalBuffer.position(0);
+            
+    int attribsID = pointShader.getAttribLocation("vertDisp");     
+    gl2x.glEnableVertexAttribArray(attribsID);
+    gl2x.glVertexAttribPointer(attribsID, 2, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.pointAttributes));
+    
+    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.pointIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.pointIndices));
+    
+    gl2x.glDisableVertexAttribArray(attribsID);
+    
+    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    
+    pointShader.stop();      
   }  
+  
+  protected void checkVertexBuffers(int n) {
+    if (vertexBuffer.capacity() / 3 < n) {    
+      ByteBuffer vbb = ByteBuffer.allocateDirect(n * 3 * SIZEOF_FLOAT);
+      vbb.order(ByteOrder.nativeOrder());
+      vertexBuffer = vbb.asFloatBuffer();
+
+      ByteBuffer cbb = ByteBuffer.allocateDirect(n * 4 * SIZEOF_FLOAT);
+      cbb.order(ByteOrder.nativeOrder());
+      colorBuffer = cbb.asFloatBuffer();
+
+      ByteBuffer nbb = ByteBuffer.allocateDirect(n * 3 * SIZEOF_FLOAT);
+      nbb.order(ByteOrder.nativeOrder());
+      normalBuffer = nbb.asFloatBuffer();
+     
+      ByteBuffer tbb = ByteBuffer.allocateDirect(n * 2 * SIZEOF_FLOAT);
+      tbb.order(ByteOrder.nativeOrder());
+      texCoordBuffer = tbb.asFloatBuffer();     
+    }
+  }  
+  
+  protected void checkIndexBuffers(int n) {
+    if (indexBuffer.capacity() < n) {
+      ByteBuffer ibb = ByteBuffer.allocateDirect(n * SIZEOF_INT);
+      ibb.order(ByteOrder.nativeOrder());
+      indexBuffer = ibb.asIntBuffer();
+    }    
+  }
   
   protected void endShapeStroke(int mode) {
     switch (shape) {
