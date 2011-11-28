@@ -1782,6 +1782,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public void endDraw() {
     report("top endDraw()");
     
+    //flushTess();
+    
     if (!drawing) {
       System.err.println("P3D: Cannot call endDraw() before beginDraw().");
       return;
@@ -2371,9 +2373,14 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   public void vertex(float x, float y, float z, float u, float v) {  
+    float[] mm = modelviewStack.current;
+    
     currentVertex[0] = x;
     currentVertex[1] = y;
     currentVertex[2] = z;    
+//    currentVertex[0] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
+//    currentVertex[1] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
+//    currentVertex[2] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
     
     boolean textured = textureImage != null;
     if (fill || textured) {
@@ -2400,7 +2407,10 @@ public class PGraphicsOpenGL extends PGraphics {
     currentNormal[0] = normalX;
     currentNormal[1] = normalY;
     currentNormal[2] = normalZ;    
-
+//    currentNormal[0] = normalX + mm[12];
+//    currentNormal[1] = normalY + mm[13];
+//    currentNormal[2] = normalZ + mm[14];    
+    
     currentTexcoord[0] = u;
     currentTexcoord[1] = v;    
 
@@ -2599,6 +2609,8 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (shape == POLYGON) {
       tessellator.tessellatePolygon(false, mode == CLOSE);
     }
+    
+    
 
     flushTess();
     
@@ -4989,10 +5001,10 @@ return width * (1 + ox) / 2.0f;
   }
 
   public void translate(float tx, float ty, float tz) {
-    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
-      geoBuffer.stack.translate(tx, ty, tz);
-      if (!UPDATE_GL_MATRIX_STACK) return;
-    }    
+//    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+//      geoBuffer.stack.translate(tx, ty, tz);
+//      if (!UPDATE_GL_MATRIX_STACK) return;
+//    }    
     
     gl2f.glTranslatef(tx, ty, tz);
     if (usingGLMatrixStack) {
@@ -8398,7 +8410,8 @@ return width * (1 + ox) / 2.0f;
 
     blendEqSupported = true;   
     
-    usingGLMatrixStack = !matrixGetSupported;
+    //usingGLMatrixStack = !matrixGetSupported;
+    usingGLMatrixStack = true;
     
     int temp[] = new int[2];    
           
@@ -9508,6 +9521,33 @@ return width * (1 + ox) / 2.0f;
       }
     }
     
+    public void addFillVertices(int count) {
+      if (fillVertexCount + count >= fillVertices.length / 3) {
+        int newSize = fillVertexCount + count;
+        
+        expandFillVertices(newSize);
+        expandFillColors(newSize);
+        expandFillNormals(newSize);
+        expandFillTexcoords(newSize);
+      }
+                  
+      firstFillVertex = fillVertexCount;
+      fillVertexCount += count;
+      lastFillVertex = fillVertexCount - 1;
+    }
+    
+    public void addFillIndices(int count) {
+      if (fillIndexCount + count >= fillIndices.length) {
+        int newSize = fillIndexCount + count;
+        
+        expandFillIndices(newSize);
+      }
+     
+      firstFillIndex = fillIndexCount;
+      fillIndexCount += count;            
+      lastFillIndex = fillIndexCount - 1;   
+    }     
+    
     protected void expandFillVertices(int n) {
       float temp[] = new float[3 * n];      
       System.arraycopy(fillVertices, 0, temp, 0, 3 * fillVertexCount);
@@ -9559,66 +9599,9 @@ return width * (1 + ox) / 2.0f;
       fillTexcoords[2 * fillVertexCount + 1] = v;      
     }
     
-    public void addPointVertices(int count) {
-      if (lastPointVertex + count >= pointVertices.length / 3) {
-        int newSize = lastPointVertex + count;
-        
-        expandPointVertices(newSize);
-        expandPointColors(newSize);
-        expandPointNormals(newSize);
-        expandPointAttributes(newSize);
-      }
-      
-      firstPointVertex = pointVertexCount;
-      pointVertexCount += count;      
-      lastPointVertex = pointVertexCount - 1;
-    }
-
-    public void expandPointVertices(int n) {
-      float temp[] = new float[3 * n];      
-      System.arraycopy(pointVertices, 0, temp, 0, 3 * pointVertexCount);
-      pointVertices = temp;  
-    }
-    
-    public void expandPointColors(int n) {
-      float temp[] = new float[4 * n];      
-      System.arraycopy(pointColors, 0, temp, 0, 4 * pointVertexCount);
-      pointColors = temp;      
-    }
-    
-    public void expandPointNormals(int n) {
-      float temp[] = new float[3 * n];      
-      System.arraycopy(pointNormals, 0, temp, 0, 4 * pointVertexCount);
-      pointNormals = temp;      
-    }
-    
-    public void expandPointAttributes(int n) {
-      float temp[] = new float[2 * n];      
-      System.arraycopy(pointAttributes, 0, temp, 0, 4 * pointVertexCount);
-      pointAttributes = temp;      
-    }
-    
-    public void addPointIndices(int count) {
-      if (lastPointIndex + count >= pointIndices.length) {
-        int newSize = lastPointIndex + count;
-        
-        expandPointIndices(newSize);
-      }
-     
-      firstPointIndex = pointIndexCount;
-      pointIndexCount += count;      
-      lastPointIndex = pointIndexCount - 1;   
-    }   
-    
-    public void expandPointIndices(int n) {
-      int temp[] = new int[n];      
-      System.arraycopy(pointIndices, 0, temp, 0, pointIndexCount);
-      pointIndices = temp;        
-    }
-    
     public void addLineVertices(int count) {
-      if (lastLineVertex + count >= lineVertices.length / 3) {
-        int newSize = lastLineVertex + count;
+      if (lineVertexCount + count >= lineVertices.length / 3) {
+        int newSize = lineVertexCount + count;
         
         expandLineVertices(newSize);
         expandLineColors(newSize);
@@ -9645,7 +9628,7 @@ return width * (1 + ox) / 2.0f;
     
     public void expandLineNormals(int n) {
       float temp[] = new float[3 * n];      
-      System.arraycopy(lineNormals, 0, temp, 0, 4 * lineVertexCount);
+      System.arraycopy(lineNormals, 0, temp, 0, 3 * lineVertexCount);
       lineNormals = temp;      
     }
     
@@ -9656,8 +9639,8 @@ return width * (1 + ox) / 2.0f;
     }      
     
     public void addLineIndices(int count) {
-      if (lastLineIndex + count >= lineIndices.length) {
-        int newSize = lastLineIndex + count;
+      if (lineIndexCount + count >= lineIndices.length) {
+        int newSize = lineIndexCount + count;
         
         expandLineIndices(newSize);
       }
@@ -9673,32 +9656,62 @@ return width * (1 + ox) / 2.0f;
       lineIndices = temp;        
     }
     
-    public void addFillVertices(int count) {
-      if (firstFillVertex + count >= fillVertices.length / 3) {
-        int newSize = firstFillVertex + count;
+    public void addPointVertices(int count) {
+      if (pointVertexCount + count >= pointVertices.length / 3) {
+        int newSize = pointVertexCount + count;
         
-        expandFillVertices(newSize);
-        expandFillColors(newSize);
-        expandFillNormals(newSize);
-        expandFillTexcoords(newSize);
+        expandPointVertices(newSize);
+        expandPointColors(newSize);
+        expandPointNormals(newSize);
+        expandPointAttributes(newSize);
       }
-                  
-      firstFillVertex = fillVertexCount;
-      fillVertexCount += count;
-      lastFillVertex = fillVertexCount - 1;
+      
+      firstPointVertex = pointVertexCount;
+      pointVertexCount += count;      
+      lastPointVertex = pointVertexCount - 1;
+    }
+
+    public void expandPointVertices(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(pointVertices, 0, temp, 0, 3 * pointVertexCount);
+      pointVertices = temp;  
     }
     
-    public void addFillIndices(int count) {
-      if (lastFillIndex + count >= fillIndices.length) {
-        int newSize = lastFillIndex + count;
+    public void expandPointColors(int n) {
+      float temp[] = new float[4 * n];      
+      System.arraycopy(pointColors, 0, temp, 0, 4 * pointVertexCount);
+      pointColors = temp;      
+    }
+    
+    public void expandPointNormals(int n) {
+      float temp[] = new float[3 * n];      
+      System.arraycopy(pointNormals, 0, temp, 0, 3 * pointVertexCount);
+      pointNormals = temp;      
+    }
+    
+    public void expandPointAttributes(int n) {
+      float temp[] = new float[2 * n];      
+      System.arraycopy(pointAttributes, 0, temp, 0, 2 * pointVertexCount);
+      pointAttributes = temp;      
+    }
+    
+    public void addPointIndices(int count) {
+      if (pointIndexCount + count >= pointIndices.length) {
+        int newSize = pointIndexCount + count;
         
-        expandFillIndices(newSize);
+        expandPointIndices(newSize);
       }
      
-      firstFillIndex = fillIndexCount;
-      fillIndexCount += count;            
-      lastFillIndex = fillIndexCount - 1;   
+      firstPointIndex = pointIndexCount;
+      pointIndexCount += count;      
+      lastPointIndex = pointIndexCount - 1;   
     }   
+    
+    public void expandPointIndices(int n) {
+      int temp[] = new int[n];      
+      System.arraycopy(pointIndices, 0, temp, 0, pointIndexCount);
+      pointIndices = temp;        
+    }    
   }
   
   public class Tessellator {
@@ -9779,7 +9792,7 @@ return width * (1 + ox) / 2.0f;
       int vertIdx = 3 * tessGeo.firstPointVertex;
       int attribIdx = 2 * tessGeo.firstPointVertex;
       int indIdx = tessGeo.firstPointIndex;      
-      int vert0 = tessGeo.firstPointVertex;      
+      int firstVert = tessGeo.firstPointVertex;      
       for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
         // Creating the triangle fan for each input vertex.
         float w = inGeo.strokes[5 * i + 4];
@@ -9813,16 +9826,16 @@ return width * (1 + ox) / 2.0f;
         // Adding vert0 to take into account the triangles of all
         // the preceding points.
         for (int k = 1; k < nvert - 1; k++) {
-          tessGeo.pointIndices[indIdx++] = vert0 + 0;
-          tessGeo.pointIndices[indIdx++] = vert0 + k;
-          tessGeo.pointIndices[indIdx++] = vert0 + k + 1;
+          tessGeo.pointIndices[indIdx++] = firstVert + 0;
+          tessGeo.pointIndices[indIdx++] = firstVert + k;
+          tessGeo.pointIndices[indIdx++] = firstVert + k + 1;
         }
         // Final triangle between the last and first point:
-        tessGeo.pointIndices[indIdx++] = vert0 + 0;
-        tessGeo.pointIndices[indIdx++] = vert0 + 1;
-        tessGeo.pointIndices[indIdx++] = vert0 + nvert - 1;      
+        tessGeo.pointIndices[indIdx++] = firstVert + 0;
+        tessGeo.pointIndices[indIdx++] = firstVert + 1;
+        tessGeo.pointIndices[indIdx++] = firstVert + nvert - 1;      
         
-        vert0 = vertIdx;
+        firstVert = vertIdx;
       }
     }
     
@@ -9843,7 +9856,7 @@ return width * (1 + ox) / 2.0f;
       int vertIdx = 3 * tessGeo.firstPointVertex;
       int attribIdx = 2 * tessGeo.firstPointVertex;
       int indIdx = tessGeo.firstPointIndex;      
-      int vert0 = tessGeo.firstPointVertex;      
+      int firstVert = tessGeo.firstPointVertex;      
       for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
         int nvert = 5;
         
@@ -9868,19 +9881,19 @@ return width * (1 + ox) / 2.0f;
           attribIdx++;           
         }
         
-        // Adding vert0 to take into account the triangles of all
+        // Adding firstVert to take into account the triangles of all
         // the preceding points.
         for (int k = 1; k < nvert - 1; k++) {
-          tessGeo.pointIndices[indIdx++] = vert0 + 0;
-          tessGeo.pointIndices[indIdx++] = vert0 + k;
-          tessGeo.pointIndices[indIdx++] = vert0 + k + 1;
+          tessGeo.pointIndices[indIdx++] = firstVert + 0;
+          tessGeo.pointIndices[indIdx++] = firstVert + k;
+          tessGeo.pointIndices[indIdx++] = firstVert + k + 1;
         }
         // Final triangle between the last and first point:
-        tessGeo.pointIndices[indIdx++] = vert0 + 0;
-        tessGeo.pointIndices[indIdx++] = vert0 + 1;
-        tessGeo.pointIndices[indIdx++] = vert0 + nvert - 1;  
+        tessGeo.pointIndices[indIdx++] = firstVert + 0;
+        tessGeo.pointIndices[indIdx++] = firstVert + 1;
+        tessGeo.pointIndices[indIdx++] = firstVert + nvert - 1;  
         
-        vert0 = vertIdx;      
+        firstVert = vertIdx;      
       }
     }
     
@@ -9893,14 +9906,14 @@ return width * (1 + ox) / 2.0f;
       // require 3 indices to specify their connectivities.
       int nind = lineCount * 2 * 3;
 
-      int vcount = tessGeo.lineVertexCount;
-      int icount = tessGeo.lineIndexCount;
-      int vert0 = inGeo.firstVertex;
       tessGeo.addLineVertices(nvert);
-      tessGeo.addLineIndices(nind);
+      tessGeo.addLineIndices(nind);      
+      int vcount = tessGeo.firstLineVertex;
+      int icount = tessGeo.firstLineIndex;
+      int first = inGeo.firstVertex;
       for (int ln = 0; ln < lineCount; ln++) {
-        int i0 = vert0 + 2 * ln + 0;
-        int i1 = vert0 + 2 * ln + 1;
+        int i0 = first + 2 * ln + 0;
+        int i1 = first + 2 * ln + 1;
         addStrokeLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
       }    
     }
@@ -9913,18 +9926,19 @@ return width * (1 + ox) / 2.0f;
       
       tessGeo.addFillIndices(nvertFill);
       int idx0 = tessGeo.firstFillIndex;
+      int offset = tessGeo.firstFillVertex;
       for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
-        tessGeo.fillIndices[idx0 + i] = i;
+        tessGeo.fillIndices[idx0 + i] = offset + i;
       }
 
       // Count how many triangles in this shape
       // are stroked.
-      int strokedCount = 0;
-      int vert0 = inGeo.firstVertex;
+      int strokedCount = 0;      
+      int first = inGeo.firstVertex;
       for (int tr = 0; tr < triCount; tr++) {
-        int i0 = vert0 + 3 * tr + 0;
-        int i1 = vert0 + 3 * tr + 1;
-        int i2 = vert0 + 3 * tr + 2;
+        int i0 = first + 3 * tr + 0;
+        int i1 = first + 3 * tr + 1;
+        int i2 = first + 3 * tr + 2;
         
         if (0 < inGeo.strokes[5 * i0 + 4] || 
             0 < inGeo.strokes[5 * i1 + 4] ||
@@ -9948,9 +9962,9 @@ return width * (1 + ox) / 2.0f;
         int vcount = tessGeo.firstLineVertex;
         int icount = tessGeo.firstLineIndex;
         for (int tr = 0; tr < triCount; tr++) {
-          int i0 = vert0 + 3 * tr + 0;
-          int i1 = vert0 + 3 * tr + 1;
-          int i2 = vert0 + 3 * tr + 2;        
+          int i0 = first + 3 * tr + 0;
+          int i1 = first + 3 * tr + 1;
+          int i2 = first + 3 * tr + 2;        
 
           if (0 < inGeo.strokes[5 * i0 + 4] || 
               0 < inGeo.strokes[5 * i1 + 4] ||
@@ -9972,10 +9986,11 @@ return width * (1 + ox) / 2.0f;
       
       tessGeo.addFillIndices(3 * triCount);
       int idx = tessGeo.firstFillIndex;
+      int offset = tessGeo.firstFillVertex; 
       for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
-        tessGeo.fillIndices[idx++] = inGeo.firstVertex;
-        tessGeo.fillIndices[idx++] = i;
-        tessGeo.fillIndices[idx++] = i + 1;
+        tessGeo.fillIndices[idx++] = offset + inGeo.firstVertex;
+        tessGeo.fillIndices[idx++] = offset + i;
+        tessGeo.fillIndices[idx++] = offset + i + 1;
       }
       
       // Count how many triangles in this shape
@@ -10033,14 +10048,15 @@ return width * (1 + ox) / 2.0f;
       // Each vertex, except the first and last, defines a triangle.
       tessGeo.addFillIndices(3 * triCount);
       int idx = tessGeo.firstFillIndex;
+      int offset = tessGeo.firstFillVertex;
       for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
-        tessGeo.fillIndices[idx++] = i;
+        tessGeo.fillIndices[idx++] = offset + i;
         if (i % 2 == 0) {
-          tessGeo.fillIndices[idx++] = i - 1;  
-          tessGeo.fillIndices[idx++] = i + 1;
+          tessGeo.fillIndices[idx++] = offset + i - 1;  
+          tessGeo.fillIndices[idx++] = offset + i + 1;
         } else {
-          tessGeo.fillIndices[idx++] = i + 1;  
-          tessGeo.fillIndices[idx++] = i - 1;
+          tessGeo.fillIndices[idx++] = offset + i + 1;  
+          tessGeo.fillIndices[idx++] = offset + i - 1;
         }
       }      
       
@@ -10109,12 +10125,12 @@ return width * (1 + ox) / 2.0f;
       
       tessGeo.addFillIndices(6 * quadCount);
       int idx = tessGeo.firstFillIndex;
-      int vert0 = inGeo.firstVertex;
+      int offset = tessGeo.firstFillVertex; 
       for (int qd = 0; qd < quadCount; qd++) {        
-        int i0 = vert0 + 4 * qd + 0;
-        int i1 = vert0 + 4 * qd + 1;
-        int i2 = vert0 + 4 * qd + 2;
-        int i3 = vert0 + 4 * qd + 3;
+        int i0 = offset + 4 * qd + 0;
+        int i1 = offset + 4 * qd + 1;
+        int i2 = offset + 4 * qd + 2;
+        int i3 = offset + 4 * qd + 3;
         
         tessGeo.fillIndices[idx++] = i0;
         tessGeo.fillIndices[idx++] = i1;
@@ -10129,10 +10145,10 @@ return width * (1 + ox) / 2.0f;
       // are stroked.
       int strokedCount = 0;
       for (int qd = 0; qd < quadCount; qd++) {
-        int i0 = vert0 + 4 * qd + 0;
-        int i1 = vert0 + 4 * qd + 1;
-        int i2 = vert0 + 4 * qd + 2;
-        int i3 = vert0 + 4 * qd + 3;
+        int i0 = 4 * qd + 0;
+        int i1 = 4 * qd + 1;
+        int i2 = 4 * qd + 2;
+        int i3 = 4 * qd + 3;
         
         if (0 < inGeo.strokes[5 * i0 + 4] || 
             0 < inGeo.strokes[5 * i1 + 4] ||
@@ -10157,10 +10173,10 @@ return width * (1 + ox) / 2.0f;
         int vcount = tessGeo.firstLineVertex;
         int icount = tessGeo.firstLineIndex;
         for (int qd = 0; qd < quadCount; qd++) {
-          int i0 = vert0 + 4 * qd + 0;
-          int i1 = vert0 + 4 * qd + 1;
-          int i2 = vert0 + 4 * qd + 2;
-          int i3 = vert0 + 4 * qd + 3;    
+          int i0 = 4 * qd + 0;
+          int i1 = 4 * qd + 1;
+          int i2 = 4 * qd + 2;
+          int i3 = 4 * qd + 3;    
 
           if (0 < inGeo.strokes[5 * i0 + 4] || 
               0 < inGeo.strokes[5 * i1 + 4] ||
@@ -10185,12 +10201,12 @@ return width * (1 + ox) / 2.0f;
       
       tessGeo.addFillIndices(6 * quadCount);
       int idx = tessGeo.firstFillIndex;
-      int vert0 = inGeo.firstVertex;
+      int offset = tessGeo.firstFillVertex; 
       for (int qd = 1; qd < nvertFill / 2; qd++) {        
-        int i0 = vert0 + 2 * (qd - 1);
-        int i1 = vert0 + 2 * (qd - 1) + 1;
-        int i2 = vert0 + 2 * qd + 1;
-        int i3 = vert0 + 2 * qd;      
+        int i0 = offset + 2 * (qd - 1);
+        int i1 = offset + 2 * (qd - 1) + 1;
+        int i2 = offset + 2 * qd + 1;
+        int i3 = offset + 2 * qd;      
         
         tessGeo.fillIndices[idx++] = i0;
         tessGeo.fillIndices[idx++] = i1;
@@ -10204,11 +10220,12 @@ return width * (1 + ox) / 2.0f;
       // Count how many quads in this shape
       // are stroked.
       int strokedCount = 0;
+      int first = inGeo.firstVertex;
       for (int qd = 1; qd < nvertFill / 2; qd++) {
-        int i0 = vert0 + 2 * (qd - 1);
-        int i1 = vert0 + 2 * (qd - 1) + 1;
-        int i2 = vert0 + 2 * qd + 1;
-        int i3 = vert0 + 2 * qd;
+        int i0 = first + 2 * (qd - 1);
+        int i1 = first + 2 * (qd - 1) + 1;
+        int i2 = first + 2 * qd + 1;
+        int i3 = first + 2 * qd;
         
         if (0 < inGeo.strokes[5 * i0 + 4] || 
             0 < inGeo.strokes[5 * i1 + 4] ||
@@ -10233,10 +10250,10 @@ return width * (1 + ox) / 2.0f;
         int vcount = tessGeo.firstLineVertex;
         int icount = tessGeo.firstLineIndex;
         for (int qd = 1; qd < nvertFill / 2; qd++) {
-          int i0 = vert0 + 2 * (qd - 1);
-          int i1 = vert0 + 2 * (qd - 1) + 1;
-          int i2 = vert0 + 2 * qd + 1;
-          int i3 = vert0 + 2 * qd;     
+          int i0 = first + 2 * (qd - 1);
+          int i1 = first + 2 * (qd - 1) + 1;
+          int i2 = first + 2 * qd + 1;
+          int i3 = first + 2 * qd;     
 
           if (0 < inGeo.strokes[5 * i0 + 4] || 
               0 < inGeo.strokes[5 * i1 + 4] ||
@@ -10286,24 +10303,24 @@ return width * (1 + ox) / 2.0f;
       GLU.gluTessEndPolygon(gluTess); 
 
       // Count many how many line segments in the perimeter
-      // of this polygon are stroked.
-      int vert0 = inGeo.firstVertex;
+      // of this polygon are stroked.      
       int lineCount = 0;
       int lnCount = inGeo.lastVertex - inGeo.firstVertex + 1;
+      int offset = tessGeo.firstFillVertex; 
       if (!closed) {
         lnCount--;
       }
       int contour0 = 0;
       for (int ln = 0; ln < lnCount; ln++) {
-        int i0 = vert0 + ln;
-        int i1 = vert0 + ln + 1;
+        int i0 = offset + ln;
+        int i1 = offset + ln + 1;
         if (inGeo.codes[i0] == PShape.BREAK) {
           contour0 = i0;
         }
         if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {
           // Make line with the first vertex of the current contour.
           i0 = contour0;
-          i1 = vert0 + ln;
+          i1 = offset + ln;
         }
         
         if (inGeo.codes[i1] != PShape.BREAK &&
@@ -10328,15 +10345,15 @@ return width * (1 + ox) / 2.0f;
         int icount = tessGeo.firstLineIndex;
         contour0 = 0;
         for (int ln = 0; ln < lnCount; ln++) {
-          int i0 = vert0 + ln;
-          int i1 = vert0 + ln + 1;
+          int i0 = offset + ln;
+          int i1 = offset + ln + 1;
           if (inGeo.codes[i0] == PShape.BREAK) {
             contour0 = i0;
           }
           if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {
             // Make line with the first vertex of the current contour.
             i0 = contour0;
-            i1 = vert0 + ln;
+            i1 = offset + ln;
           }
           
           if (inGeo.codes[i1] != PShape.BREAK &&
