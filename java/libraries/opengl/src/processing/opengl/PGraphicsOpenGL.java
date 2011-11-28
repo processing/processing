@@ -3,7 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-08 Ben Fry and Casey Reas
+  Copyright (c) 2011 Andres Colubri
+  Copyright (c) 2004-10 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,7 +27,6 @@ package processing.opengl;
 import processing.core.*;
 
 import java.nio.*;
-import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -158,33 +158,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static public String OPENGL_VERSION;  
   static public String OPENGL_EXTENSIONS;
   
-  // ........................................................
-
-  // OpenGL resources:
-  
-  /*
-  static protected final int GL_TEXTURE_OBJECT = 0;
-  static protected final int GL_VERTEX_BUFFER = 1;
-  static protected final int GL_FRAME_BUFFER = 2;
-  static protected final int GL_RENDER_BUFFER = 3;
-  static protected final int GLSL_PROGRAM = 4;
-  static protected final int GLSL_VERTEX_SHADER = 5;
-  static protected final int GLSL_FRAGMENT_SHADER = 6;
-  
-  static protected Set<PGraphicsOpenGL> pGraphicsOpenGLObjects = new HashSet<PGraphicsOpenGL>();
-  static protected Set<PTexture> pTextureObjects = new HashSet<PTexture>();
-  static protected Set<PFramebuffer> pFramebufferObjects = new HashSet<PFramebuffer>();
-  static protected Set<PShape3D> pShape3DObjects = new HashSet<PShape3D>();
-  static protected Set<PFontTexture> pFontTextureObjects = new HashSet<PFontTexture>();  
-  static protected Set<Integer> glTextureObjects = new HashSet<Integer>();
-  static protected Set<Integer> glVertexBuffers = new HashSet<Integer>();
-  static protected Set<Integer> glFrameBuffers = new HashSet<Integer>();
-  static protected Set<Integer> glRenderBuffers = new HashSet<Integer>();    
-  static protected Set<Integer> glslPrograms = new HashSet<Integer>();
-  static protected Set<Integer> glslVertexShaders = new HashSet<Integer>();
-  static protected Set<Integer> glslFragmentShaders = new HashSet<Integer>();
-  */
-  
+  // ........................................................  
   
   static protected HashMap<Integer, Boolean> glTextureObjects = new HashMap<Integer, Boolean>();
   static protected HashMap<Integer, Boolean> glVertexBuffers = new HashMap<Integer, Boolean>();
@@ -249,7 +223,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean modelviewUpdated;
   protected boolean projectionUpdated;
 
-  protected int matrixMode = MODELVIEW;
+  //protected int matrixMode = MODELVIEW;
   
   protected boolean matricesAllocated = false;
   
@@ -322,164 +296,15 @@ public class PGraphicsOpenGL extends PGraphics {
  
   protected boolean lightsAllocated = false;
 
-  // ........................................................
-
-  // Geometry:
-
-  /** Line & triangle fields (note that these overlap). */
-  static protected final int VERTEX1 = 0;
-  static protected final int VERTEX2 = 1;
-  static protected final int VERTEX3 = 2; // (triangles only)
-  static protected final int POINT_FIELD_COUNT = 1;
-  static protected final int LINE_FIELD_COUNT = 2;
-  static protected final int TRIANGLE_FIELD_COUNT = 3;
-
-  /** Points. */
-  public static final int DEFAULT_POINTS = 512;
-  protected int pointCount;
-  protected int[][] points = new int[DEFAULT_POINTS][POINT_FIELD_COUNT];
-
-  /** Lines. */
-  public static final int DEFAULT_LINES = 512;
-  protected int lineCount;
-  protected int[][] lines = new int[DEFAULT_LINES][LINE_FIELD_COUNT];
-
-  /** Triangles. */
-  public static final int DEFAULT_TRIANGLES = 256;
-  protected int triangleCount;
-  protected int[][] triangles = new int[DEFAULT_TRIANGLES][TRIANGLE_FIELD_COUNT];
-
   /** Vertex, color, texture coordinate and normal buffers. */
   public static final int DEFAULT_BUFFER_SIZE = 512;
   protected FloatBuffer vertexBuffer;
   protected FloatBuffer colorBuffer;
   protected FloatBuffer normalBuffer;
-  protected FloatBuffer texCoordBuffer;
+  protected FloatBuffer texcoordBuffer;
   protected IntBuffer indexBuffer;
 
-  /** Arrays used to put vertex data into the buffers. */
-  protected float[] vertexArray;
-  protected float[] colorArray;
-  protected float[] normalArray;
-  protected float[][] texCoordArray;
-
-  protected boolean geometryAllocated = false;  
-  
-  // ........................................................
-  
-  // Shapes:
-  
-  /** Position of first vertex of current shape in vertices array. */
-  protected int shapeFirst;
-
-  /** 
-   * I think vertex_end is actually the last vertex in the current shape
-   * and is separate from vertexCount for occasions where drawing happens
-   * on endDraw() with all the triangles being depth sorted.
-   */
-  protected int shapeLast;
-
-  /** 
-   * Used for sorting points when triangulating a polygon
-   * warning - maximum number of vertices for a polygon is DEFAULT_VERTICES
-   */
-  protected int vertexOrder[] = new int[DEFAULT_VERTICES];  
-  
-  // ........................................................
-
-  // Lines:
-  
-  public static final int DEFAULT_PATHS = 64;
-  
-  /** 
-   * This is done to keep track of start/stop information for lines in the
-   * line array, so that lines can be shown as a single path, rather than just
-   * individual segments. 
-   */
-  protected int pathCount;
-  protected int[] pathOffset = new int[DEFAULT_PATHS];
-  protected int[] pathLength = new int[DEFAULT_PATHS];
-  
-  // ........................................................
-
-  // Faces:
-  
-  public static final int DEFAULT_FACES = 64;
-    
-  /** 
-   * And this is done to keep track of start/stop information for textured
-   * triangles in the triangle array, so that a range of triangles with the
-   * same texture applied to them are correctly textured during the
-   * rendering stage.
-   */
-  protected int faceCount;
-  protected int[] faceOffset = new int[DEFAULT_FACES];
-  protected int[] faceLength = new int[DEFAULT_FACES];
-  protected int[] faceMinIndex = new int[DEFAULT_FACES];
-  protected int[] faceMaxIndex = new int[DEFAULT_FACES];
-  protected PImage[][] faceTextures = new PImage[DEFAULT_FACES][MAX_TEXTURES];  
-  
-  // Testing geometry buffer for now (but it already rocks) ...
-  public GeometryBuffer geoBuffer;
-  public boolean USE_GEO_BUFFER = false;
-  public boolean GEO_BUFFER_ACCUM_ALL = true;
-  public boolean UPDATE_GEO_BUFFER_MATRIX_STACK = true;
-  public boolean UPDATE_GL_MATRIX_STACK = true;
-  
-  public int GEO_BUFFER_COUNT;
-  public float GEO_BUFFER_SIZE;
-  public int GEO_BUFFER_MAXSIZE = 0;
-  
-  // ........................................................
-
-  // Texturing:  
-  
-  /** 
-   * Hard-coded maximum number of texture units to use, although the actual maximum,
-   * maxTextureUnits, is calculated as the minimum between this value and the current
-   * value for the OpenGL GL_MAX_TEXTURE_UNITS constant.
-   */
-  public static final int MAX_TEXTURES = 2;
-  
-  /** Number of textures currently in use. */
-  protected int numTextures;
-  
-  /** Number of textures used by a shape. */
-  protected int shapeTextures;
-  
-  /** Number of currently initialized texture buffers. */
-  protected int numTexBuffers;
-  
-  /** Blending mode used by the texture combiner. */
-  protected int texBlendMode;
-  
-  /** Array used in the renderTriangles method to store the textures in use. */
-  protected PTexture[] renderTextures = new PTexture[MAX_TEXTURES];
-  
-  /** Current texture images. */
-  protected PImage[] textureImages = new PImage[MAX_TEXTURES];
-  
-  /** Used to detect changes in the current texture images. */
-  protected PImage[] textureImages0 = new PImage[MAX_TEXTURES];
-  
-  /** Current texture UV coordinates. */
-  protected float[] texturesU = new float[MAX_TEXTURES];
-  protected float[] texturesV = new float[MAX_TEXTURES];
-  
-  /** Texture UV coordinates for all vertices. */
-  protected float[][] vertexU = new float[DEFAULT_VERTICES][1];
-  protected float[][] vertexV = new float[DEFAULT_VERTICES][1];
-  
-  /** Texture images assigned to each vertex. */
-  protected PImage[][] vertexTex = new PImage[DEFAULT_VERTICES][1];
-  
-  /** UV arrays used in renderTriangles(). */
-  protected float[] renderUa = new float[MAX_TEXTURES];
-  protected float[] renderVa = new float[MAX_TEXTURES];
-  protected float[] renderUb = new float[MAX_TEXTURES];
-  protected float[] renderVb = new float[MAX_TEXTURES];
-  protected float[] renderUc = new float[MAX_TEXTURES];
-  protected float[] renderVc = new float[MAX_TEXTURES];  
+  protected boolean geometryAllocated = false;      
   
   // ........................................................
   
@@ -531,22 +356,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** These are public so they can be changed by advanced users. */
   public int offscreenDepthBits = 24;
   public int offscreenStencilBits = 8;
-  
-  // ........................................................
-
-  // Shape recording:
-  
-  protected boolean recordingShape;
-  protected int recTexturesCount = 0;
-  protected boolean mergeRecShapes = false;  
-  protected String recShapeName; // Used to set name of shape during recording.  
-  protected PShape3D recordedShape = null;
-  protected ArrayList<PVector> recordedVertices = null;
-  protected ArrayList<float[]> recordedColors = null;
-  protected ArrayList<PVector> recordedNormals = null;
-  protected ArrayList<PVector>[] recordedTexCoords = null;
-  protected ArrayList<PShape3D> recordedChildren = null;  
-  protected ArrayList<Integer> recordedIndices = null;
   
   // ........................................................
   
@@ -783,20 +592,11 @@ public class PGraphicsOpenGL extends PGraphics {
       //texCoordBuffer = new FloatBuffer[MAX_TEXTURES];
       ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_FLOAT);
       tbb.order(ByteOrder.nativeOrder());
-      texCoordBuffer = tbb.asFloatBuffer();
+      texcoordBuffer = tbb.asFloatBuffer();
       
       ByteBuffer ibb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * SIZEOF_INT);
       ibb.order(ByteOrder.nativeOrder());
       indexBuffer = ibb.asIntBuffer();
-      
-       
-            
-      vertexArray = new float[DEFAULT_BUFFER_SIZE * 3];
-      colorArray = new float[DEFAULT_BUFFER_SIZE * 4];      
-      normalArray = new float[DEFAULT_BUFFER_SIZE * 3];
-      texCoordArray = new float[1][DEFAULT_BUFFER_SIZE * 2];
-      
-      numTexBuffers = 1;
       
       geometryAllocated = true;
     }      
@@ -827,26 +627,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
   }
 
-  
-  /*
-  public void delete() {
-    if (primarySurface) {
-      PGraphics.showWarning("You cannot delete the primary rendering surface!");
-    } else {
-      super.delete();
-      if (offscreenFramebuffer != null) {
-        offscreenFramebuffer.delete();
-        offscreenFramebuffer = null;
-      }
-      if (offscreenFramebufferMultisample != null) {
-        offscreenFramebufferMultisample.delete();
-        offscreenFramebufferMultisample = null;
-      }      
-      unregisterPGLObject(this);
-    }
-  }
-  */
-  
   
   public void dispose() { // PGraphics    
     super.dispose();
@@ -1171,324 +951,7 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedGLSLVertShaderObjects();
     deleteFinalizedGLSLFragShaderObjects();
   }
-  
-  
-  
-  
-  
-  /*
-  protected void allocatePGLObjects() {
-    // Note: it is important that allocation / backup / restoration are don
-    // in the order below (0: PGraphicsOpenGL, 1: PTexture objects, 2: PFramebuffer 
-    // objects, etc.) since both PFramebuffers and PShape3Ds might need a valid PTexture 
-    // for their re-allocation.
-    // The case of PGraphicsOpenGL is special, the list is only stores offscreen surfaces
-    // in order to call allocate() upon context re-creation. allocate() for non-primary
-    // surfaces ends up just updating the context associated to them.     
     
-    if (!pGraphicsOpenGLObjects.isEmpty()) {
-      Object[] globjs = pGraphicsOpenGLObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PGraphicsOpenGL obj = (PGraphicsOpenGL)globjs[i];
-        obj.allocate();
-      }  
-    }      
-    
-    if (!pTextureObjects.isEmpty()) {
-      Object[] globjs = pTextureObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PTexture obj = (PTexture)globjs[i];
-        obj.allocate();
-      }  
-    }      
-      
-    if (!pFramebufferObjects.isEmpty()) {
-      Object[] globjs = pFramebufferObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PFramebuffer obj = (PFramebuffer)globjs[i];
-        obj.allocate();
-      }  
-    }   
-    
-    if (!pShape3DObjects.isEmpty()) {
-      Object[] globjs = pShape3DObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PShape3D obj = (PShape3D)globjs[i];
-        obj.allocate();
-      }  
-    }     
-    
-    if (!pFontTextureObjects.isEmpty()) {
-      Object[] globjs = pFontTextureObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PFontTexture obj = (PFontTexture)globjs[i];
-        obj.allocate();
-      }  
-    }
-  }
-  
-  protected void backupPGLObjects() {
-    if (!pTextureObjects.isEmpty()) {
-      Object[] globjs = pTextureObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PTexture obj = (PTexture)globjs[i];
-        obj.backup();
-      }  
-    }      
-      
-    if (!pFramebufferObjects.isEmpty()) {
-      Object[] globjs = pFramebufferObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PFramebuffer obj = (PFramebuffer)globjs[i];
-        obj.backup();
-      }  
-    }   
-    
-    if (!pShape3DObjects.isEmpty()) {
-      Object[] globjs = pShape3DObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PShape3D obj = (PShape3D)globjs[i];
-        obj.backup();
-      }  
-    }     
-    
-    if (!pFontTextureObjects.isEmpty()) {
-      Object[] globjs = pFontTextureObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PFontTexture obj = (PFontTexture)globjs[i];
-        obj.backup();
-      }  
-    }
-  }  
-  
-  protected void clearPGLFramebuffers() {
-    if (!pFramebufferObjects.isEmpty()) {
-      Object[] globjs = pFramebufferObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PFramebuffer obj = (PFramebuffer)globjs[i];
-        obj.clear();
-      }  
-    }     
-  }
-  
-  protected void restorePGLObjects() {
-    if (!pTextureObjects.isEmpty()) {
-      Object[] globjs = pTextureObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PTexture obj = (PTexture)globjs[i];
-        obj.restore();
-      }  
-    }      
-      
-    if (!pFramebufferObjects.isEmpty()) {
-      Object[] globjs = pFramebufferObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PFramebuffer obj = (PFramebuffer)globjs[i];
-        obj.restore();
-      }  
-    }   
-    
-    if (!pShape3DObjects.isEmpty()) {
-      Object[] globjs = pShape3DObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PShape3D obj = (PShape3D)globjs[i];
-        obj.restore();
-      }  
-    }     
-    
-    if (!pFontTextureObjects.isEmpty()) {
-      Object[] globjs = pFontTextureObjects.toArray();
-      for (int i = 0; i < globjs.length; i++) {
-        PFontTexture obj = (PFontTexture)globjs[i];
-        obj.restore();
-      }  
-    }  
-  }
-  
-  protected void registerPGLObject(Object obj) {
-    if (obj instanceof PGraphicsOpenGL) {
-      pGraphicsOpenGLObjects.add((PGraphicsOpenGL)obj);
-    } else if (obj instanceof PTexture) {
-      pTextureObjects.add((PTexture)obj);
-    } else if (obj instanceof PFramebuffer) {
-      pFramebufferObjects.add((PFramebuffer)obj);
-    } else if (obj instanceof PShape3D) {
-      pShape3DObjects.add((PShape3D)obj);
-    } else if (obj instanceof PFontTexture) {
-      pFontTextureObjects.add((PFontTexture)obj);
-    }    
-  }
-
-  protected void unregisterPGLObject(Object obj) {
-    if (obj instanceof PGraphicsOpenGL) {
-      pGraphicsOpenGLObjects.remove(obj);
-    } else if (obj instanceof PTexture) {
-      pTextureObjects.remove(obj);
-    } else if (obj instanceof PFramebuffer) {
-      pFramebufferObjects.remove(obj);
-    } else if (obj instanceof PShape3D) {
-      pShape3DObjects.remove(obj);
-    } else if (obj instanceof PFontTexture) {
-      pFontTextureObjects.remove(obj);
-    }
-  }
-  
-  protected int createGLResource(int type) {
-    int id = 0;
-    if (type == GL_TEXTURE_OBJECT) {
-      int[] temp = new int[1];
-      gl.glGenTextures(1, temp, 0);
-      id = temp[0];
-      glTextureObjects.add(id);      
-    } else if (type == GL_VERTEX_BUFFER) {
-      int[] temp = new int[1];
-      gl.glGenBuffers(1, temp, 0);
-      id = temp[0];
-      glVertexBuffers.add(id);
-    } else if (type == GL_FRAME_BUFFER) {
-      int[] temp = new int[1];
-      gl.glGenFramebuffers(1, temp, 0);
-      id = temp[0];
-      glFrameBuffers.add(id);    
-    } else if (type == GL_RENDER_BUFFER) {
-      int[] temp = new int[1];
-      gl.glGenRenderbuffers(1, temp, 0);
-      id = temp[0];
-      glRenderBuffers.add(id);
-    } else if (type == GLSL_PROGRAM) {
-      id = gl2x.glCreateProgram();
-      glslPrograms.add(id);
-    } else if (type == GLSL_VERTEX_SHADER) {
-      id = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);
-      glslVertexShaders.add(id);
-    } else if (type == GLSL_FRAGMENT_SHADER) {
-      id = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);
-      glslFragmentShaders.add(id);
-    }
-      
-    return id;
-  }
-  
-  
-  protected void deleteGLResource(int id, int type) {
-    if (type == GL_TEXTURE_OBJECT) {
-      if (glTextureObjects.contains(id)) {
-        int[] temp = { id };
-        gl.glDeleteTextures(1, temp, 0);
-        glTextureObjects.remove(id);
-      }
-    } else if (type == GL_VERTEX_BUFFER) {
-      if (glVertexBuffers.contains(id)) {
-        int[] temp = { id };
-        gl.glDeleteBuffers(1, temp, 0);
-        glVertexBuffers.remove(id);
-      }
-    } else if (type == GL_FRAME_BUFFER) {
-      if (glFrameBuffers.contains(id)) {
-        int[] temp = { id };
-        gl.glDeleteFramebuffers(1, temp, 0);
-        glFrameBuffers.remove(id);
-      }
-    } else if (type == GL_RENDER_BUFFER) {
-      if (glRenderBuffers.contains(id)) {
-        int[] temp = { id };
-        gl.glDeleteRenderbuffers(1, temp, 0);
-        glRenderBuffers.remove(id);
-      }      
-    } else if (type == GLSL_PROGRAM) {
-      if (glslPrograms.contains(id)) {
-        gl2x.glDeleteProgram(id);
-        glslPrograms.remove(id);
-      }      
-    } else if (type == GLSL_VERTEX_SHADER) {
-      if (glslVertexShaders.contains(id)) {
-        gl2x.glDeleteShader(id);
-        glslVertexShaders.remove(id);
-      } 
-    } else if (type == GLSL_FRAGMENT_SHADER) {
-      if (glslFragmentShaders.contains(id)) {
-        gl2x.glDeleteShader(id);
-        glslFragmentShaders.remove(id);
-      } 
-    }    
-  }  
-
-  
-  protected void deleteAllGLResources() {
-    super.delete();
-    
-    // Releasing any remaining OpenGL resources.
-    
-    if (!glTextureObjects.isEmpty()) {
-      Object[] glids = glTextureObjects.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        int[] temp = { id };
-        gl.glDeleteTextures(1, temp, 0);
-      }
-      glTextureObjects.clear();
-    }
-    
-    if (!glVertexBuffers.isEmpty()) {
-      Object[] glids = glVertexBuffers.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        int[] temp = { id };
-        gl.glDeleteBuffers(1, temp, 0);
-      }
-      glVertexBuffers.clear();
-    }
-    
-    if (!glFrameBuffers.isEmpty()) {
-      Object[] glids = glFrameBuffers.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        int[] temp = { id };
-        gl.glDeleteFramebuffers(1, temp, 0);
-      }
-      glFrameBuffers.clear();
-    }
-    
-    if (!glRenderBuffers.isEmpty()) {
-      Object[] glids = glRenderBuffers.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        int[] temp = { id };
-        gl.glDeleteRenderbuffers(1, temp, 0);
-      }
-      glRenderBuffers.clear();
-    }
-        
-    if (!glslPrograms.isEmpty()) {
-      Object[] glids = glslPrograms.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        gl2x.glDeleteProgram(id);
-      }
-      glslPrograms.clear();
-    }
-    
-    if (!glslVertexShaders.isEmpty()) {
-      Object[] glids = glslVertexShaders.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        gl2x.glDeleteShader(id);
-      }
-      glslVertexShaders.clear();
-    }    
-    
-    if (!glslFragmentShaders.isEmpty()) {
-      Object[] glids = glslFragmentShaders.toArray();
-      for (int i = 0; i < glids.length; i++) {
-        int id = ((Integer)glids[i]).intValue();
-        gl2x.glDeleteShader(id);
-      }
-      glslFragmentShaders.clear();
-    }  
-    
-  }
-*/
-  
   
   //////////////////////////////////////////////////////////////
 
@@ -1671,21 +1134,11 @@ public class PGraphicsOpenGL extends PGraphics {
       ogl.disableLights();
     }     
     
- 
-//    if (USE_GEO_BUFFER) {
-//      if (geoBuffer == null) geoBuffer = new GeometryBuffer();     
-//      if (GEO_BUFFER_ACCUM_ALL) { 
-//        geoBuffer.init(TRIANGLES);
-//      }
-//      GEO_BUFFER_COUNT = 0;
-//      GEO_BUFFER_SIZE = 0;
-//    }    
-    
     // Each frame starts with textures disabled.
     noTexture();
         
     // Screen blend is needed for alpha (i.e. fonts) to work.
-    screenBlend(BLEND);
+    blendMode(BLEND);
     
     // Default texture blending:
     textureBlend(BLEND);
@@ -1751,7 +1204,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     setSurfaceParams();
     
-    shapeFirst = 0;
+    //shapeFirst = 0;
     
     // The current normal vector is set to zero.
     normalX = normalY = normalZ = 0;
@@ -1792,14 +1245,6 @@ public class PGraphicsOpenGL extends PGraphics {
     // Restoring previous viewport.
     gl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]); 
 
-    if (USE_GEO_BUFFER) {
-      if (GEO_BUFFER_ACCUM_ALL && geoBuffer != null && 0 < geoBuffer.vertCount) {
-        geoBuffer.pre();  
-        geoBuffer.render();
-        geoBuffer.post();
-      }
-    }
-    
     if (hints[ENABLE_DEPTH_SORT]) {
       flush();
     }    
@@ -1921,7 +1366,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
         
     // Restoring blending.
-    screenBlend(screenBlendMode);
+    blendMode(screenBlendMode);
     
     // Restoring fill
     if (fill) {
@@ -2089,37 +1534,7 @@ public class PGraphicsOpenGL extends PGraphics {
       gl.glDepthMask(false);
 
     } else if (which == ENABLE_DEPTH_MASK) {
-      gl.glDepthMask(true);      
-      
-//    } else if (which == DISABLE_OPENGL_2X_SMOOTH) {
-//      if (opengl2X) {
-//        if (primarySurface) {
-//          restartContext();          
-//          throw new PApplet.RendererChangeException();
-//        } else {
-//          initOffscreen();
-//        }
-//      }
-//
-//    } else if (which == ENABLE_OPENGL_2X_SMOOTH) {
-//      if (!opengl2X) {
-//        if (primarySurface) {
-//          restartContext();          
-//          throw new PApplet.RendererChangeException();
-//        } else {
-//          initOffscreen();
-//        }
-//      }
-//
-//    } else if (which == ENABLE_OPENGL_4X_SMOOTH) {
-//      if (!opengl4X) {
-//        if (primarySurface) {
-//          restartContext();          
-//          throw new PApplet.RendererChangeException();
-//        } else {
-//          initOffscreen();
-//        }
-//      }
+      gl.glDepthMask(true);            
     }
 
   }
@@ -2156,209 +1571,11 @@ public class PGraphicsOpenGL extends PGraphics {
   // VERTEX SHAPES
   
 
-  
-  // All picked up from either PGraphics or PGraphics3D
-
-  // public void beginShape()
-
-  public PShape beginRecord() {
-//    if (recordingShape) {
-//      System.err.println("OPENGL2: Already recording.");
-//      return recordedShape;
-//    } else {
-//      if (USE_GEO_BUFFER) {        
-//        if (geoBuffer != null && 0 < geoBuffer.vertCount) {
-//          geoBuffer.pre();    
-//          geoBuffer.render();
-//          geoBuffer.post();
-//        }
-//        if (geoBuffer == null) geoBuffer = new GeometryBuffer();
-//      }
-//      
-//      recordedShape = new PShape3D(parent);
-//      beginShapeRecorderImpl();
-//      return recordedShape;
-//    }
-    return null;
-  }
-  
-//  public void beginRecord(PShape3D shape) {
-//    if (recordingShape) {
-//      System.err.println("OPENGL2: Already recording.");
-//    } else {
-//      if (USE_GEO_BUFFER) {        
-//        if (geoBuffer != null && 0 < geoBuffer.vertCount) {
-//          geoBuffer.pre();    
-//          geoBuffer.render();
-//          geoBuffer.post();
-//        }
-//        if (geoBuffer == null) geoBuffer = new GeometryBuffer();
-//      }      
-//
-//      recordedShape = shape;
-//      beginShapeRecorderImpl();
-//    }    
-//  }
-//  
-//  public boolean isRecordingShape() {
-//    return recordingShape;
-//  }  
-//  
-//  protected void beginShapeRecorder() {
-//    beginShapeRecorder(POLYGON);
-//  }
-//
-//  protected void beginShapeRecorder(int kind) {
-//    beginShapeRecorderImpl();
-//    beginShape(kind);
-//  }
-//
-//  protected void beginShapesRecorder() {
-//    if (recordingShape) {
-//      System.err
-//          .println("Already recording shapes. Recording cannot be nested");
-//    } else {
-//      beginShapeRecorderImpl();
-//    }
-//  }
-
-//  @SuppressWarnings("unchecked")
-//  protected void beginShapeRecorderImpl() {
-//    recordingShape = true;  
-//    
-//    recShapeName = "";
-//    
-//    if (recordedVertices == null) {
-//      recordedVertices = new ArrayList<PVector>(vertexBuffer.capacity() / 3);  
-//    } else {
-//      recordedVertices.ensureCapacity(vertexBuffer.capacity() / 3);
-//    }
-//    
-//    if (recordedColors == null) { 
-//      recordedColors = new ArrayList<float[]>(colorBuffer.capacity() / 4);
-//    } else {
-//      recordedColors.ensureCapacity(colorBuffer.capacity() / 4);
-//    }
-//    
-//    if (recordedNormals == null) {
-//      recordedNormals = new ArrayList<PVector>(normalBuffer.capacity() / 3);
-//    } else {
-//      recordedNormals.ensureCapacity(normalBuffer.capacity() / 3);
-//    }
-//    
-//    int size = texCoordBuffer[0].capacity() / 2;
-//    if (recordedTexCoords == null) {      
-//      recordedTexCoords = new ArrayList[MAX_TEXTURES];
-//      // We need to initialize all the buffers for recording of texture coordinates,
-//      // since we don't know in advance the number of texture units that will be used
-//      // in this recording.
-//      for (int t = 0; t < maxTextureUnits; t++) {
-//        recordedTexCoords[t] = new ArrayList<PVector>(size);  
-//      }  
-//    } else {
-//      for (int t = 0; t < maxTextureUnits; t++) {
-//        recordedTexCoords[t].ensureCapacity(size);  
-//      }      
-//    }
-//    
-//    if (USE_GEO_BUFFER) {
-//      if (recordedIndices == null) {
-//        recordedIndices = new ArrayList<Integer>(vertexBuffer.capacity() / 3);  
-//      } else {
-//        recordedIndices.ensureCapacity(vertexBuffer.capacity() / 3);
-//      }
-//    } else{
-//      recordedIndices = null;
-//    }
-//    
-//    recTexturesCount = 0;
-//    
-//    recordedChildren = new ArrayList<PShape3D>(PApplet.max(DEFAULT_PATHS, DEFAULT_FACES));
-//  }
-
   public void beginShape(int kind) {  
     shape = kind;
     
     in.reset();
-    
-//    if (hints[ENABLE_DEPTH_SORT]) {
-//      // TODO:
-//      // Implement depth sorting with vertex arrays.
-//
-//      // continue with previous vertex, line and triangle count
-//      // all shapes are rendered at endDraw();
-//      shapeFirst = vertexCount;
-//      shapeLast = 0;
-//
-//    } else {
-//      // reset vertex, line and triangle information
-//      // every shape is rendered at endShape();
-//      vertexCount = 0;
-//      curveVertexCount = 0;
-//      
-//      pathCount = 0;
-//      faceCount = 0;
-//      
-//      pointCount = 0;
-//      lineCount = 0;      
-//      triangleCount = 0;
-//    }
-//
-//    shapeTextures = 0;
-//    noTexture();
   }
-  
-//  public void mergeShapes(boolean val) {
-//    // Setting this parameter to true has the result of A3D trying to
-//    // set unique names to each shape being created between beginRecord/endRecord.
-//    // In this way, even if two shapes have all of their parameters identical (mode,
-//    // textures, etc), but their names are different, then they will be recorded in
-//    // separate child shapes in the recorded shape.
-//    mergeRecShapes = val;
-//  }
-//  
-//  public void shapeName(String name) {
-//    recShapeName = name;
-//  }
-
-  // public void edge(boolean e)
-  // public void normal(float nx, float ny, float nz)
-  // public void textureMode(int mode)
-
-  
-  public void texture(PImage image) {
-    super.texture(image);
-//    textureImages[0] = image;
-//    java.util.Arrays.fill(textureImages, 1, maxTextureUnits, null);
-//    numTextures = 1;
-//    shapeTextures++;
-  }
-  
-  
-//  public void texture(PImage... images) {
-//    int len = images.length;
-//    if (len <= maxTextureUnits) {
-//      super.texture(images[0]);
-//      PApplet.arrayCopy(images, 0, textureImages, 0, len);
-//      java.util.Arrays.fill(textureImages, len, maxTextureUnits, null);
-//      numTextures = len;
-//      if (numTexBuffers < len) {
-//        addTexBuffers(len - numTexBuffers);
-//      }
-//      shapeTextures += len;
-//    } else {
-//      System.err.println("OPENGL2: insufficient texture units.");
-//    }    
-//  }
-  
-     
-  public void noTexture() {
-    super.noTexture();    
-//    numTextures = 0;
-//    clearTextures();
-//    clearTextures0();
-  }
-  
   
   public void vertex(float x, float y) {
     vertex(x, y, 0, 0, 0);
@@ -2431,163 +1648,6 @@ public class PGraphicsOpenGL extends PGraphics {
     in.addVertex(currentVertex, currentColor, currentNormal, currentTexcoord, currentStroke, VERTEX);
   }
   
-  
-//  public void vertex(float... values) {
-//    int len = values.length;
-//    if (len < 2) {
-//      System.err.println("OPENGL2: call vertex() with at least 2 parameters.");      
-//      return;
-//    }
-//    
-//    int dim = len % 2 == 0 ? 2 : 3; 
-//    int nuv = (len - dim) / 2;
-//    if (nuv <= maxTextureUnits) {
-//      float u, v;
-//      for (int t = 0; t < nuv; t++) {
-//        u = values[dim + 2 * t];
-//        v = values[dim + 2 * t + 1];
-//        vertexTexture(u, v, t);  
-//      }       
-//      if (dim == 2) {
-//        vertex(values[0], values[1]);
-//      } else {
-//        vertex(values[0], values[1], values[2]);
-//      }        
-//      setTextureData(nuv);      
-//    } else {
-//      System.err.println("OPENGL2: insufficient texture units.");
-//    }      
-//  }
-  
-  
-  protected void vertexCheck() {
-    super.vertexCheck();
-    
-    if (vertexCount == vertexTex.length) {
-      float tempu[][];
-      float tempv[][];
-      PImage tempi[][];
-      
-      tempu = new float[vertexCount << 1][numTexBuffers];
-      tempv = new float[vertexCount << 1][numTexBuffers];
-      tempi = new PImage[vertexCount << 1][numTexBuffers];
-      
-      for (int i = 0; i < vertexCount; i++) {
-        PApplet.arrayCopy(vertexU[i], 0, tempu[i], 0, numTexBuffers);
-        PApplet.arrayCopy(vertexV[i], 0, tempv[i], 0, numTexBuffers);
-        PApplet.arrayCopy(vertexTex[i], 0, tempi[i], 0, numTexBuffers);  
-      }
-      
-      vertexU = tempu;
-      vertexV = tempv;
-      vertexTex = tempi;
-    }
-  }
-
-  protected void clearTextures() {
-    java.util.Arrays.fill(textureImages, null);
-  }
- 
-  protected void clearTextures0() {
-    java.util.Arrays.fill(textureImages0, null);
-  }
-  
-  protected boolean diffFromTextures0(PImage[] images) {
-    if (1 < numTextures) {
-      for (int i = 0; i < numTextures; i++) {
-        if (textureImages0[i] != images[i]) {
-          return true;
-        }
-      }
-      return false;
-    } else if (0 < numTextures) {
-      return textureImages0[0] != images[0];
-    } else {
-      return textureImages0[0] != null;
-    }
-  }
-  
-  protected void setTextures0(PImage[] images) {
-    if (1 < numTextures) {
-      PApplet.arrayCopy(images, 0, textureImages0, 0, numTextures);
-    } else if (0 < numTextures) { 
-      textureImages0[0] = images[0];
-    } else {
-      textureImages0[0] = null;
-    }
-  }
-  
-  protected void vertexTexture(float u, float v, int t) {
-    if (t == 0) {
-      super.vertexTexture(u, v);
-      texturesU[0] = textureU; 
-      texturesV[0] = textureV;
-    } else {
-      PImage img = textureImages[t];
-      if (img == null) {
-        throw new RuntimeException("You must first call texture() before " +
-                                   "using u and v coordinates with vertex()");
-      }
-      if (textureMode == IMAGE) {
-        u /= img.width;
-        v /= img.height;
-      }
-
-      texturesU[t] = u;
-      texturesV[t] = v;
-    }    
-  }  
-  
-  protected void addTexBuffers(int more) {
-//    int size = texCoordBuffer[numTexBuffers - 1].capacity();
-//    for (int i = 0; i < more; i++) {
-//      ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_FLOAT);
-//      tbb.order(ByteOrder.nativeOrder());
-//      texCoordBuffer[numTexBuffers + i] = tbb.asFloatBuffer();    
-//    }
-//    
-//    texCoordArray = new float[numTexBuffers + more][size];
-//
-//    // Adding room for additional texture units to the U, V and vertex texture arrays.
-//    // However, we need to preserve the information already stored in them, that's why
-//    // the temporal arrays and the copy.
-//    size = vertexTex.length;
-//    float tempu[][] = new float[size][numTexBuffers + more];
-//    float tempv[][] = new float[size][numTexBuffers + more];
-//    PImage tempi[][] = new PImage[size][numTexBuffers + more];
-//    
-//    for (int i = 0; i < size; i++) {
-//      PApplet.arrayCopy(vertexU[i], 0, tempu[i], 0, numTexBuffers);
-//      PApplet.arrayCopy(vertexV[i], 0, tempv[i], 0, numTexBuffers);
-//      PApplet.arrayCopy(vertexTex[i], 0, tempi[i], 0, numTexBuffers);  
-//    }
-//    
-//    vertexU = tempu;
-//    vertexV = tempv;
-//    vertexTex = tempi;
-//    
-//    numTexBuffers += more;
-//
-//    // This avoid multi-texturing issues when running the sketch in
-//    // static mode (textures after the first not displayed at all).
-//    gl.glActiveTexture(GL.GL_TEXTURE0 + numTexBuffers - 1); 
-  }
-
-  protected void setTextureData(int ntex) {
-    if (numTexBuffers < ntex) {
-      addTexBuffers(ntex - numTexBuffers);
-    }
-    
-    int n = vertexCount - 1;
-    PApplet.arrayCopy(texturesU, 0, vertexU[n], 0, ntex);
-    PApplet.arrayCopy(texturesV, 0, vertexV[n], 0, ntex);
-    PApplet.arrayCopy(textureImages, 0, vertexTex[n], 0, ntex); 
-  }
-  
-  // public void breakShape()
-
-  // public void endShape()
-
   public void endShape(int mode) {
     tessellator.setInGeometry(in);
     tessellator.setTessGeometry(tess);
@@ -2613,60 +1673,6 @@ public class PGraphicsOpenGL extends PGraphics {
     
 
     flushTess();
-    
-    
-//    shapeLast = vertexCount;
-//
-//    // don't try to draw if there are no vertices
-//    // (fixes a bug in LINE_LOOP that re-adds a nonexistent vertex)
-//    if (vertexCount == 0) {
-//      shape = 0;
-//      return;
-//    }
-//
-//    if (stroke) {
-//      endShapeStroke(mode);
-//    }
-//
-//    if (fill || 0 < shapeTextures) {
-//      endShapeFill();
-//    }
-//
-//    // render shape and fill here if not saving the shapes for later
-//    // if true, the shapes will be rendered on endDraw
-//    if (!hints[ENABLE_DEPTH_SORT]) {
-//      if (fill || 0 < shapeTextures) {
-//        renderTriangles(0, faceCount);
-//        if (raw != null) {
-//          //rawTriangles(0, triangleCount);
-//        }
-//        
-//        vertexCount = 0;
-//        triangleCount = 0;
-//        shapeTextures = 0;
-//      }
-//      
-//      if (stroke) {
-//        if (pointCount > 0) {
-//          renderPoints(0, pointCount);
-//          if (raw != null) {
-//            //renderPoints(0, pointCount);
-//          }          
-//          pointCount = 0;
-//        }
-//        
-//        renderLines(0, pathCount);
-//        if (raw != null) {
-//          // rawLines(0, lineCount);
-//        }
-//        lineCount = 0;
-//      }
-//      
-//      pathCount = 0;
-//      faceCount = 0;
-//    }
-//
-//    shape = 0;
   }
 
   protected void flushTess() {
@@ -2717,16 +1723,16 @@ public class PGraphicsOpenGL extends PGraphics {
         gl2f.glActiveTexture(GL.GL_TEXTURE0);
         gl2f.glBindTexture(tex.glTarget, tex.glID);
       }
-      texCoordBuffer.rewind();
-      texCoordBuffer.put(tess.fillTexcoords, 0, 2 * tess.fillVertexCount);
-      texCoordBuffer.position(0);
+      texcoordBuffer.rewind();
+      texcoordBuffer.put(tess.fillTexcoords, 0, 2 * tess.fillVertexCount);
+      texcoordBuffer.position(0);
     }    
     
     gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
     gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
     gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);
     if (tex != null) {    
-      gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texCoordBuffer);
+      gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texcoordBuffer);
     }
     
     // What is faster?
@@ -2856,7 +1862,7 @@ public class PGraphicsOpenGL extends PGraphics {
      
       ByteBuffer tbb = ByteBuffer.allocateDirect(n * 2 * SIZEOF_FLOAT);
       tbb.order(ByteOrder.nativeOrder());
-      texCoordBuffer = tbb.asFloatBuffer();     
+      texcoordBuffer = tbb.asFloatBuffer();     
     }
   }  
   
@@ -2868,281 +1874,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
   }
   
-  protected void endShapeStroke(int mode) {
-    switch (shape) {
-    case POINTS: {
-      int stop = shapeLast;
-      for (int i = shapeFirst; i < stop; i++) {
-        addPoint(i);
-        //addLineBreak(); // total overkill for points
-        //addLine(i, i);
-      }
-    }
-      break;
-
-    case LINES: {
-      // store index of first vertex
-      int first = lineCount;
-      int stop = shapeLast - 1;
-      // increment = (shape == LINES) ? 2 : 1;
-
-      // for LINE_STRIP and LINE_LOOP, make this all one path
-      if (shape != LINES)
-        addLineBreak();
-
-      for (int i = shapeFirst; i < stop; i += 2) {
-        // for LINES, make a new path for each segment
-        if (shape == LINES)
-          addLineBreak();
-        addLine(i, i + 1);
-      }
-
-      // for LINE_LOOP, close the loop with a final segment
-      // if (shape == LINE_LOOP) {
-      if (mode == CLOSE) {
-        addLine(stop, lines[first][VERTEX1]);
-      }
-    }
-      break;
-
-    case TRIANGLES: {
-      for (int i = shapeFirst; i < shapeLast - 2; i += 3) {
-        addLineBreak();
-        // counter = i - vertex_start;
-        addLine(i + 0, i + 1);
-        addLine(i + 1, i + 2);
-        addLine(i + 2, i + 0);
-      }
-    }
-      break;
-
-    case TRIANGLE_STRIP: {
-      // first draw all vertices as a line strip
-      int stop = shapeLast - 1;
-
-      addLineBreak();
-      for (int i = shapeFirst; i < stop; i++) {
-        // counter = i - vertex_start;
-        addLine(i, i + 1);
-      }
-
-      // then draw from vertex (n) to (n+2)
-      stop = shapeLast - 2;
-      for (int i = shapeFirst; i < stop; i++) {
-        addLineBreak();
-        addLine(i, i + 2);
-      }
-    }
-      break;
-
-    case TRIANGLE_FAN: {
-      // this just draws a series of line segments
-      // from the center to each exterior point
-      for (int i = shapeFirst + 1; i < shapeLast; i++) {
-        addLineBreak();
-        addLine(shapeFirst, i);
-      }
-
-      // then a single line loop around the outside.
-      addLineBreak();
-      for (int i = shapeFirst + 1; i < shapeLast - 1; i++) {
-        addLine(i, i + 1);
-      }
-      // closing the loop
-      addLine(shapeLast - 1, shapeFirst + 1);
-    }
-      break;
-
-    case QUADS: {
-      for (int i = shapeFirst; i < shapeLast; i += 4) {
-        addLineBreak();
-        // counter = i - vertex_start;
-        addLine(i + 0, i + 1);
-        addLine(i + 1, i + 2);
-        addLine(i + 2, i + 3);
-        addLine(i + 3, i + 0);
-      }
-    }
-      break;
-
-    case QUAD_STRIP: {
-      for (int i = shapeFirst; i < shapeLast - 3; i += 2) {
-        addLineBreak();
-        addLine(i + 0, i + 2);
-        addLine(i + 2, i + 3);
-        addLine(i + 3, i + 1);
-        addLine(i + 1, i + 0);
-      }
-    }
-      break;
-
-    case POLYGON: {
-      // store index of first vertex
-      int stop = shapeLast - 1;
-
-      addLineBreak();
-      for (int i = shapeFirst; i < stop; i++) {
-        addLine(i, i + 1);
-      }
-      if (mode == CLOSE) {
-        // draw the last line connecting back to the first point in poly
-        addLine(stop, shapeFirst); // lines[first][VERTEX1]);
-      }
-    }
-      break;
-    }
-  }
-
-  protected void endShapeFill() {
-    switch (shape) {
-    case TRIANGLE_FAN: {
-      int stop = shapeLast - 1;
-      for (int i = shapeFirst + 1; i < stop; i++) {
-        addTriangle(shapeFirst, i, i + 1);
-      }
-    }
-      break;
-
-    case TRIANGLES: {
-      int stop = shapeLast - 2;
-      for (int i = shapeFirst; i < stop; i += 3) {
-        // have to switch between clockwise/counter-clockwise
-        // otherwise the feller is backwards and renderer won't draw
-        if ((i % 2) == 0) {
-          addTriangle(i, i + 2, i + 1);
-        } else {
-          addTriangle(i, i + 1, i + 2);
-        }
-      }
-    }
-      break;
-
-    case TRIANGLE_STRIP: {
-      int stop = shapeLast - 2;
-      for (int i = shapeFirst; i < stop; i++) {
-        // have to switch between clockwise/counter-clockwise
-        // otherwise the feller is backwards and renderer won't draw
-        if ((i % 2) == 0) {
-          addTriangle(i, i + 2, i + 1);
-        } else {
-          addTriangle(i, i + 1, i + 2);
-        }
-      }
-    }
-      break;
-
-    case QUADS: {
-      int stop = vertexCount - 3;
-      for (int i = shapeFirst; i < stop; i += 4) {
-        // first triangle
-        addTriangle(i, i + 1, i + 2);
-        // second triangle
-        addTriangle(i, i + 2, i + 3);
-      }
-    }
-      break;
-
-    case QUAD_STRIP: {
-      int stop = vertexCount - 3;
-      for (int i = shapeFirst; i < stop; i += 2) {
-        // first triangle
-        addTriangle(i + 0, i + 2, i + 1);
-        // second triangle
-        addTriangle(i + 2, i + 3, i + 1);
-      }
-    }
-      break;
-
-    case POLYGON: {
-      addPolygonTriangles();
-    }
-      break;
-    }
-  }
-
-  public void endRecord() {
-//    if (recordingShape) {
-//      if (USE_GEO_BUFFER && 0 < geoBuffer.vertCount) {
-//        // Recording remaining geometry.
-//        geoBuffer.record();
-//        geoBuffer.init(TRIANGLES); // To set counters to zero.
-//      }
-//      
-//      if (0 < recordedVertices.size()) {
-//        recordedShape.initShape(recordedVertices.size());
-//      }
-//            
-//      endShapeRecorderImpl(recordedShape);
-//      recordedShape = null;
-//    } else {
-//      System.err.println("OPENGL2: Start recording with beginRecord().");
-//    }    
-  }  
-  
-  protected PShape3D endShapeRecorder() {
-    return endShapeRecorder(OPEN);
-  }
-
-  protected PShape3D endShapeRecorder(int mode) {
-    endShape(mode);
-    PShape3D shape = null;
-    if (0 < recordedVertices.size()) {
-      shape = new PShape3D(parent, recordedVertices.size());
-    }
-    endShapeRecorderImpl(shape);
-    return shape;
-  }
-
-  protected PShape3D endShapesRecorder() {
-    if (recordingShape) {
-      PShape3D shape = null;
-      if (0 < recordedVertices.size()) {
-        shape = new PShape3D(parent, recordedVertices.size());
-      }
-      endShapeRecorderImpl(shape);
-      return shape;
-    } else {
-      System.err.println("OPENGL2: Start recording with beginShapesRecorder().");
-      return null;
-    }
-  }
-
-  protected void endShapeRecorderImpl(PShape3D shape) {
-    recordingShape = false;
-    if (0 < recordedVertices.size() && shape != null) {
-      /*
-      shape.setVertices(recordedVertices);
-      shape.setColors(recordedColors);
-      shape.setNormals(recordedNormals);
-      
-      if (recordedIndices != null) {
-        shape.initIndices(recordedIndices.size());
-        shape.setIndices(recordedIndices);
-      }
-      
-      // We set children first because they contain the textures...
-      shape.optimizeChildren(recordedChildren); // (we make sure that there are not superfluous shapes)
-      shape.setChildren(recordedChildren);
-            
-      // ... and then the texture coordinates.
-      for (int t = 0; t < recTexturesCount; t++) {        
-        shape.setTexcoords(t, recordedTexCoords[t]);
-      }
-      */
-          
-      // Releasing memory.
-      recordedVertices.clear();
-      recordedColors.clear();
-      recordedNormals.clear();
-      for (int t = 0; t < maxTextureUnits; t++) {
-        recordedTexCoords[t].clear();
-      }
-      if (recordedIndices != null) {
-        recordedIndices.clear();
-      }      
-      recordedChildren.clear();
-    }
-  }
 
   //////////////////////////////////////////////////////////////
 
@@ -3225,1103 +1956,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // float x2, float y2, float z2,
   // float x3, float y3, float z3,
   // float x4, float y4, float z4)
-
-  //////////////////////////////////////////////////////////////
-
-  // POINTS
-
-  protected void addPoint(int a) {
-    if (pointCount == points.length) {
-      int[][] temp = new int[pointCount << 1][POINT_FIELD_COUNT];
-      System.arraycopy(points, 0, temp, 0, pointCount);
-      points = temp;
-    }
-    points[pointCount][VERTEX1] = a;
-    //points[pointCount][STROKE_MODE] = strokeCap | strokeJoin;
-    //points[pointCount][STROKE_COLOR] = strokeColor;
-    //points[pointCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
-    pointCount++;
-  }  
   
-  protected void renderPoints(int start, int stop) {
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-
-    // Division by three needed because each int element in the buffer is used
-    // to store three coordinates.
-    int size = 3 * (stop - start);
-    while (vertexBuffer.capacity() / 3 < size) {
-      expandBuffers();
-    }
-    
-    float sw = vertices[points[start][VERTEX1]][SW];
-    if (sw > 0) {
-      gl2f.glPointSize(sw); // can only be set outside glBegin/glEnd
-
-      vertexBuffer.position(0);
-      colorBuffer.position(0);
-
-      int n = 0;
-      for (int i = start; i < stop; i++) {
-        float[] a = vertices[points[i][VERTEX1]];
-        vertexArray[3 * n + 0] = a[X];
-        vertexArray[3 * n + 1] = a[Y];
-        vertexArray[3 * n + 2] = a[Z];
-        colorArray[4 * n + 0] = a[SR];
-        colorArray[4 * n + 1] = a[SG];
-        colorArray[4 * n + 2] = a[SB];
-        colorArray[4 * n + 3] = a[SA];
-        n++;
-      }
-
-      vertexBuffer.put(vertexArray);
-      colorBuffer.put(colorArray);
-
-      vertexBuffer.position(0);
-      colorBuffer.position(0);
-
-      gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
-      gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-      gl2f.glDrawArrays(GL.GL_POINTS, start, stop - start);
-    }
-
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-  }
-
-  // protected void rawPoints(int start, int stop) // PGraphics3D
-  
-  //////////////////////////////////////////////////////////////
-
-  // LINES
-
-  /**
-   * Begin a new section of stroked geometry.
-   */
-  protected void addLineBreak() {
-    if (pathCount == pathOffset.length) {
-      pathOffset = PApplet.expand(pathOffset);
-      pathLength = PApplet.expand(pathLength);
-    }
-    pathOffset[pathCount] = lineCount;
-    pathLength[pathCount] = 0;
-    pathCount++;
-  }
-
-  /**
-   * Add this line.
-   */
-  protected void addLine(int a, int b) {
-    if (lineCount == lines.length) {
-      int temp[][] = new int[lineCount << 1][LINE_FIELD_COUNT];
-      PApplet.arrayCopy(lines, 0, temp, 0, lineCount);
-      lines = temp;
-    }
-    lines[lineCount][VERTEX1] = a;
-    lines[lineCount][VERTEX2] = b;
-
-    // lines[lineCount][STROKE_MODE] = strokeCap | strokeJoin;
-    // lines[lineCount][STROKE_WEIGHT] = (int) (strokeWeight + 0.5f); // hmm
-    lineCount++;
-
-    // mark this piece as being part of the current path
-    pathLength[pathCount - 1]++;
-  }
-
-  /**
-   * In the current implementation, start and stop are ignored (in OpenGL). This
-   * will obviously have to be revisited if/when proper depth sorting is
-   * implemented.
-   */
-  protected void renderLines(int start, int stop) {
-    report("render_lines in");
-
-    float sw0 = 0;
-
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-
-    for (int j = start; j < stop; j++) {
-      int i = pathOffset[j];
-      float sw = vertices[lines[i][VERTEX1]][SW];
-      // report("render_lines 1");
-      // stroke weight zero will cause a gl error
-      if (sw > 0) {
-        gl2f.glLineWidth(sw);
-        
-//        if (sw0 != sw && recordingShape) {
-//          // Add new vertex group.
-//
-//          int n0 = recordedVertices.size();
-//          // The final index is n0 + pathLength[j] and not n0 + pathLength[j] -1 
-//          // because of the first point added before the loop (see below).
-//          int n1 = n0 + pathLength[j];
-//          
-//
-//          
-//          String name = "shape";
-//          if (mergeRecShapes) {
-//            name = "shape";  
-//          } else {
-//            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;  
-//          }          
-//          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, LINE_STRIP, sw, null);
-//          recordedChildren.add(child);
-//        }
-
-        // Division by three needed because each int element in the buffer is
-        // used to store three coordinates.
-        int size = 3 * (pathLength[j] + 1);
-        while (vertexBuffer.capacity() / 3 < size) {
-          expandBuffers();
-        }
-
-        vertexBuffer.position(0);
-        colorBuffer.position(0);
-
-        int n = 0;
-
-        // always draw a first point
-        float a[] = vertices[lines[i][VERTEX1]];
-        if (recordingShape) {
-          recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
-          recordedColors.add(new float[] { a[SR], a[SG], a[SB], a[SA] });
-          recordedNormals.add(new PVector(0, 0, 0));
-          // We need to add texture coordinate values for all the recorded vertices and all
-          // texture units because even if this part of the recording doesn't use textures,
-          // a subsequent (previous) portion might (did), and when setting the texture coordinates
-          // for a shape we need to provide coordinates for the whole shape.
-          for (int t = 0; t < maxTextureUnits; t++) {
-            recordedTexCoords[t].add(new PVector(0, 0, 0));
-          }          
-        } else {
-          vertexArray[3 * n + 0] = a[X];
-          vertexArray[3 * n + 1] = a[Y];
-          vertexArray[3 * n + 2] = a[Z];
-          colorArray[4 * n + 0] = a[SR];
-          colorArray[4 * n + 1] = a[SG];
-          colorArray[4 * n + 2] = a[SB];
-          colorArray[4 * n + 3] = a[SA];
-          n++;
-        }
-
-        // on this and subsequent lines, only draw the second point
-        for (int k = 0; k < pathLength[j]; k++) {
-          float b[] = vertices[lines[i][VERTEX2]];
-
-          if (recordingShape) {
-            recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
-            recordedColors.add(new float[] { b[SR], b[SG], b[SB], b[SA] });
-            recordedNormals.add(new PVector(0, 0, 0));
-            for (int t = 0; t < maxTextureUnits; t++) {
-              recordedTexCoords[t].add(new PVector(0, 0, 0));
-            }
-          } else {
-            vertexArray[3 * n + 0] = b[X];
-            vertexArray[3 * n + 1] = b[Y];
-            vertexArray[3 * n + 2] = b[Z];
-            colorArray[4 * n + 0] = b[SR];
-            colorArray[4 * n + 1] = b[SG];
-            colorArray[4 * n + 2] = b[SB];
-            colorArray[4 * n + 3] = b[SA];
-            n++;
-          }
-
-          i++;
-        }
-
-        if (!recordingShape) {
-          vertexBuffer.put(vertexArray);
-          colorBuffer.put(colorArray);
-
-          vertexBuffer.position(0);
-          colorBuffer.position(0);
-
-          gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
-          gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-          gl2f.glDrawArrays(GL.GL_LINE_STRIP, 0, pathLength[j] + 1);
-        }
-
-      }
-      //sw0 = sw;
-    }
-
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);    
-    report("render_lines out");
-
-  }
-
-  // protected void rawLines(int start, int stop)
-
-  //////////////////////////////////////////////////////////////
-
-  // TRIANGLES
-
-  /**
-   * Add the triangle.
-   */
-  protected void addTriangle(int a, int b, int c) {
-    if (triangleCount == triangles.length) {
-      int temp[][] = new int[triangleCount << 1][TRIANGLE_FIELD_COUNT];
-      PApplet.arrayCopy(triangles, 0, temp, 0, triangleCount);
-      triangles = temp;
-    }
-
-    triangles[triangleCount][VERTEX1] = a;
-    triangles[triangleCount][VERTEX2] = b;
-    triangles[triangleCount][VERTEX3] = c;
-
-    int mini = PApplet.min(a, b, c);
-    int maxi = PApplet.max(a, b, c);
-      
-    PImage[] images;
-    images = vertexTex[a];    
-    
-    boolean firstFace = triangleCount == 0;
-    if (diffFromTextures0(images) || firstFace) {
-      // A new face starts at the first triangle or when the texture changes.
-      addNewFace(firstFace, images);
-      faceMinIndex[faceCount - 1] = mini;      
-      faceMaxIndex[faceCount - 1] = maxi;
-    } else {
-      // mark this triangle as being part of the current face.
-      faceLength[faceCount - 1]++;      
-      faceMinIndex[faceCount - 1] = PApplet.min(faceMinIndex[faceCount - 1], mini);
-      faceMaxIndex[faceCount - 1] = PApplet.max(faceMaxIndex[faceCount - 1], maxi);
-    }
-    triangleCount++;
-    setTextures0(images);
-  }
-
-  // New "face" starts. A face is just a range of consecutive triangles
-  // with the same textures applied to them (they could be null).
-  protected void addNewFace(boolean firstFace, PImage[] images) {
-    if (faceCount == faceOffset.length) {
-      faceOffset = PApplet.expand(faceOffset);
-      faceLength = PApplet.expand(faceLength);
-      faceMinIndex = PApplet.expand(faceMinIndex);
-      faceMaxIndex = PApplet.expand(faceMaxIndex);
-      
-      PImage tempi[][] = new PImage[faceCount << 1][MAX_TEXTURES];
-      PApplet.arrayCopy(faceTextures, 0, tempi, 0, faceCount);
-      faceTextures = tempi;
-    }
-    faceOffset[faceCount] = firstFace ? 0 : triangleCount;
-    faceLength[faceCount] = 1;
-      
-    PImage p[] = faceTextures[faceCount];
-    if (1 < numTextures) {
-      PApplet.arrayCopy(images, 0, p, 0, numTextures);
-    } if (0 < numTextures) {
-      p[0] = images[0];
-    } else {
-      // No textures in use, but images[0] might be non null because of a
-      // previous textured shape.
-      p[0] = null;
-    }
-    java.util.Arrays.fill(p, numTextures, maxTextureUnits, null);
-    
-    faceCount++;
-  }
-   
-  protected void renderTriangles(int start, int stop) {
-    report("render_triangles in");    
-
-    int tcount = 0;
-    
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-    
-    for (int j = start; j < stop; j++) {
-      int i = faceOffset[j];
-
-      PImage[] images = faceTextures[j];
-      if (1 < numTextures) {
-        
-        for (int t = 0; t < numTextures; t++) {
-          if (images[t] != null) {            
-            PTexture tex = getTexture(images[t]); 
-            if (tex == null) {
-              break;
-            }              
-            gl.glEnable(tex.glTarget);            
-            gl.glActiveTexture(GL.GL_TEXTURE0 + t);
-            gl.glBindTexture(tex.glTarget, tex.glID);
-            renderTextures[tcount] = tex;
-            
-            tcount++;
-          } else {
-            // If there is a null texture image at some point in the
-            // list, all subsequent images are ignored. This situation
-            // corresponds to a wrong texture specification by
-            // the user, anyways.
-            break;            
-          }
-        }
-      } else if (images[0] != null) {
-        PTexture tex = getTexture(images[0]);        
-        if (tex != null) { 
-          gl.glEnable(tex.glTarget);
-          gl.glActiveTexture(GL.GL_TEXTURE0);
-          gl.glBindTexture(tex.glTarget, tex.glID);   
-          renderTextures[0] = tex;
-          tcount = 1;
-        }
-      }
-        
-      if (0 < tcount) {
-        if (numTexBuffers < tcount) {
-          addTexBuffers(tcount - numTexBuffers);
-        }                
-        for (int t = 0; t < tcount; t++) {
-          gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
-          gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-        }
-        if (1 < tcount) {
-          setupTextureBlend(renderTextures, tcount);
-        }
-      }
-      
-      if (USE_GEO_BUFFER) {
-        
-        if (recordingShape) {
-//          recTexturesCount = PApplet.max(recTexturesCount, tcount);
-//          
-//          int i0 = recordedIndices.size() + geoBuffer.idxCount;
-//          int i1 = i0 + 3 * faceLength[j] - 1;
-//          
-//          int n0 = recordedVertices.size() + geoBuffer.vertCount;
-//          int n1 = n0 + faceMaxIndex[j] - faceMinIndex[j];                
-//                       
-//          String name = "shape";
-//          if (mergeRecShapes) {
-//            name = "shape";  
-//          } else {
-//            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
-//          }
-//          
-//          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, i0, i1, TRIANGLES, 0, images);
-//          recordedChildren.add(child);
-        }          
-        
-        if (GEO_BUFFER_ACCUM_ALL) {
-          if (geoBuffer.newTextures(renderTextures, tcount)) {
-            // Accumulation, but texture changed.
-            if (0 < geoBuffer.vertCount) {
-              // Rendering accumulated so far and reinitializing buffer.
-              
-              if (recordingShape) {
-                geoBuffer.record();
-              } else {
-                geoBuffer.render();
-              }
-              
-              GEO_BUFFER_COUNT++;              
-              geoBuffer.init(TRIANGLES, renderTextures, tcount);    
-            } else {
-              // No geometry accumulated yet, setting textures just in case.
-              geoBuffer.setTextures(renderTextures, tcount);  
-            }
-          }
-        } else {
-          // No accumulation, each shape is sent in a separate buffer.
-          if (geoBuffer.newTextures(renderTextures, tcount)) {
-            geoBuffer.init(TRIANGLES, renderTextures, tcount);
-          }
-        }
-        
-        geoBuffer.add(triangles, i, i + faceLength[j] - 1, vertices, faceMinIndex[j], faceMaxIndex[j]);
-        
-        if (GEO_BUFFER_ACCUM_ALL) { 
-          if (0 < GEO_BUFFER_MAXSIZE && GEO_BUFFER_MAXSIZE < geoBuffer.vertCount) {
-            // Accumulation, but maximum buffer size reached.
-            
-            if (recordingShape) {
-              geoBuffer.record();
-            } else {
-              geoBuffer.render();
-            }
-            
-            GEO_BUFFER_COUNT++;
-            geoBuffer.init(TRIANGLES, renderTextures, tcount);
-          }        
-        } else {
-          
-          if (recordingShape) {
-            geoBuffer.record();
-          } else {
-            geoBuffer.render();
-          }
-          
-          GEO_BUFFER_COUNT++;
-          geoBuffer.init(TRIANGLES);
-        }
-      } else {
-        if (recordingShape) {
-//          recTexturesCount = PApplet.max(recTexturesCount, tcount);
-//          
-//          int n0 = recordedVertices.size();
-//          int n1 = n0 + 3 * faceLength[j] - 1;
-//          
-//          String name = "shape";
-//          if (mergeRecShapes) {
-//            name = "shape";  
-//          } else {
-//            name = recShapeName.equals("") ? "shape:" + recordedChildren.size() : recShapeName;
-//          }
-//          PShape3D child = (PShape3D)PShape3D.createChild(name, n0, n1, TRIANGLES, 0, images);
-//          recordedChildren.add(child);
-        }         
-        
-        // Division by three needed because each int element in the buffer is used
-        // to store three coordinates.
-        int size = 3 * faceLength[j];
-        while (vertexBuffer.capacity() / 3 < size) { 
-          expandBuffers();
-        }
-
-        vertexBuffer.position(0);
-        colorBuffer.position(0);
-        normalBuffer.position(0);
-        for (int t = 0; t < tcount; t++) {
-          //texCoordBuffer[t].position(0);
-        }
-
-        int n = 0;
-        for (int k = 0; k < faceLength[j]; k++) {
-          int na = triangles[i][VERTEX1];
-          int nb = triangles[i][VERTEX2];
-          int nc = triangles[i][VERTEX3];
-          float a[] = vertices[na];
-          float b[] = vertices[nb];
-          float c[] = vertices[nc];
-          
-          if (autoNormal && (a[HAS_NORMAL] == 0 || b[HAS_NORMAL] == 0 || c[HAS_NORMAL] == 0)) {
-            // Ok, some of the vertices defining the current triangle have not been
-            // assigned a normal, and the automatic normal calculation is enabled, so 
-            // we generate the normal for all the vertices of this triangle.
-            
-            // Assuming CW vertex ordering, so the outside direction for this triangle
-            // should be given by the cross product (b - a) x (b - c):
-            float x1 = b[X] - a[X]; 
-            float y1 = b[Y] - a[Y];
-            float z1 = b[Z] - a[Z]; 
-            
-            float x2 = b[X] - c[X]; 
-            float y2 = b[Y] - c[Y];
-            float z2 = b[Z] - c[Z]; 
-              
-            float cx = y1 * z2 - y2 * z1;
-            float cy = z1 * x2 - z2 * x1;
-            float cz = x1 * y2 - x2 * y1;          
-            
-            float norm = PApplet.sqrt(cx * cx + cy * cy + cz * cz);
-            
-            cx /= norm;
-            cy /= norm;
-            cz /= norm;
-            
-            // Same normal vector assigned to the three vertices:
-            a[NX] = b[NX] = c[NX] = cx;
-            a[NY] = b[NY] = c[NY] = cy;
-            a[NZ] = b[NZ] = c[NZ] = cz;
-            
-            a[HAS_NORMAL] = b[HAS_NORMAL] = c[HAS_NORMAL] = 1;
-          }
-          
-          if (tcount == 1) {
-            float uscale = 1.0f;
-            float vscale = 1.0f;
-            float cx = 0.0f;
-            float sx = +1.0f;
-            float cy = 0.0f;
-            float sy = +1.0f;
-            
-            PTexture tex = renderTextures[0];
-            uscale *= tex.getMaxTexCoordU();
-            vscale *= tex.getMaxTexCoordV();
-
-            if (tex.isFlippedX()) {
-              cx = 1.0f;
-              sx = -1.0f;
-            }
-
-            if (tex.isFlippedY()) {
-              cy = 1.0f;
-              sy = -1.0f;
-            }
-
-            
-            //PApplet.println("Adding texcoords " + cx  + " " +  sx + " " + uscale + " " + cy  + " " +  sy + " " + vscale);
-            
-            // No multitexturing, so getting the texture coordinates
-            // directly from the U, V fields in the vertices array.
-            renderUa[0] = (cx + sx * a[U]) * uscale;
-            renderVa[0] = (cy + sy * a[V]) * vscale;
-            
-            renderUb[0] = (cx + sx * b[U]) * uscale;
-            renderVb[0] = (cy + sy * b[V]) * vscale;
-
-            renderUc[0] = (cx + sx * c[U]) * uscale;
-            renderVc[0] = (cy + sy * c[V]) * vscale;            
-          } else if (1 < tcount) {
-            for (int t = 0; t < tcount; t++) {
-              float uscale = 1.0f;
-              float vscale = 1.0f;
-              float cx = 0.0f;
-              float sx = +1.0f;
-              float cy = 0.0f;
-              float sy = +1.0f;
-
-              PTexture tex = renderTextures[t];
-              uscale *= tex.getMaxTexCoordU();
-              vscale *= tex.getMaxTexCoordV();
-
-              if (tex.isFlippedX()) {
-                cx = 1.0f;
-                sx = -1.0f;
-              }
-
-              if (tex.isFlippedY()) {
-                cy = 1.0f;
-                sy = -1.0f;
-              }
-
-              // The texture coordinates are obtained from the vertexU, vertexV
-              // arrays that store multitexture U, V coordinates.
-              renderUa[t] = (cx + sx * vertexU[na][t]) * uscale;
-              renderVa[t] = (cy + sy * vertexV[na][t]) * vscale;
-
-              renderUb[t] = (cx + sx * vertexU[nb][t]) * uscale;
-              renderVb[t] = (cy + sy * vertexV[nb][t]) * vscale;
-
-              renderUc[t] = (cx + sx * vertexU[nc][t]) * uscale;
-              renderVc[t] = (cy + sy * vertexV[nc][t]) * vscale;
-            }
-          }
-          
-          // Adding vertex A.
-          if (recordingShape) {
-            recordedVertices.add(new PVector(a[X], a[Y], a[Z]));
-            recordedColors.add(new float[] { a[R], a[G], a[B], a[A] });
-            recordedNormals.add(new PVector(a[NX], a[NY], a[NZ]));
-            for (int t = 0; t < tcount; t++) {
-              recordedTexCoords[t].add(new PVector(vertexU[na][t], vertexV[na][t], 0.0f));
-            }
-            // We need to add texture coordinate values for all the recorded vertices and all
-            // texture units because even if this part of the recording doesn't use textures,
-            // a subsequent (previous) portion might (did), and when setting the texture coordinates
-            // for a shape we need to provide coordinates for the whole shape.          
-            for (int t = tcount; t < maxTextureUnits; t++) {
-              recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
-            }
-          } else {
-            vertexArray[3 * n + 0] = a[X];
-            vertexArray[3 * n + 1] = a[Y];
-            vertexArray[3 * n + 2] = a[Z];
-            colorArray[4 * n + 0] = a[R];
-            colorArray[4 * n + 1] = a[G];
-            colorArray[4 * n + 2] = a[B];
-            colorArray[4 * n + 3] = a[A];
-            normalArray[3 * n + 0] = a[NX];
-            normalArray[3 * n + 1] = a[NY];
-            normalArray[3 * n + 2] = a[NZ];
-            for (int t = 0; t < tcount; t++) {
-              texCoordArray[t][2 * n + 0] = renderUa[t];
-              texCoordArray[t][2 * n + 1] = renderVa[t]; 
-            }
-            n++;
-          }
-
-          // Adding vertex B.
-          if (recordingShape) {
-            recordedVertices.add(new PVector(b[X], b[Y], b[Z]));
-            recordedColors.add(new float[] { b[R], b[G], b[B], b[A] });
-            recordedNormals.add(new PVector(b[NX], b[NY], b[NZ]));
-            for (int t = 0; t < tcount; t++) {
-              recordedTexCoords[t].add(new PVector(vertexU[nb][t], vertexV[nb][t], 0.0f));
-            }
-            // Idem to comment in section corresponding to vertex A.          
-            for (int t = tcount; t < maxTextureUnits; t++) {
-              recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
-            }
-          } else {
-            vertexArray[3 * n + 0] = b[X];
-            vertexArray[3 * n + 1] = b[Y];
-            vertexArray[3 * n + 2] = b[Z];
-            colorArray[4 * n + 0] = b[R];
-            colorArray[4 * n + 1] = b[G];
-            colorArray[4 * n + 2] = b[B];
-            colorArray[4 * n + 3] = b[A];
-            normalArray[3 * n + 0] = b[NX];
-            normalArray[3 * n + 1] = b[NY];
-            normalArray[3 * n + 2] = b[NZ];
-            for (int t = 0; t < tcount; t++) {
-              texCoordArray[t][2 * n + 0] = renderUb[t];
-              texCoordArray[t][2 * n + 1] = renderVb[t];
-            }
-            n++;
-          }
-
-          // Adding vertex C.
-          if (recordingShape) {
-            recordedVertices.add(new PVector(c[X], c[Y], c[Z]));
-            recordedColors.add(new float[] { c[R], c[G], c[B], c[A] });
-            recordedNormals.add(new PVector(c[NX], c[NY], c[NZ]));
-            for (int t = 0; t < tcount; t++) {
-              recordedTexCoords[t].add(new PVector(vertexU[nc][t], vertexV[nc][t], 0.0f));
-            }
-            // Idem to comment in section corresponding to vertex A.          
-            for (int t = tcount; t < maxTextureUnits; t++) {
-              recordedTexCoords[t].add(new PVector(0.0f, 0.0f, 0.0f));
-            }
-          } else {
-            vertexArray[3 * n + 0] = c[X];
-            vertexArray[3 * n + 1] = c[Y];
-            vertexArray[3 * n + 2] = c[Z];
-            colorArray[4 * n + 0] = c[R];
-            colorArray[4 * n + 1] = c[G];
-            colorArray[4 * n + 2] = c[B];
-            colorArray[4 * n + 3] = c[A];
-            normalArray[3 * n + 0] = c[NX];
-            normalArray[3 * n + 1] = c[NY];
-            normalArray[3 * n + 2] = c[NZ];
-            for (int t = 0; t < tcount; t++) {
-              texCoordArray[t][2 * n + 0] = renderUc[t];
-              texCoordArray[t][2 * n + 1] = renderVc[t];
-            }
-            n++;
-          }
-
-          i++;
-        }
-        
-        if (!recordingShape) {
-          vertexBuffer.put(vertexArray);
-          colorBuffer.put(colorArray);
-          normalBuffer.put(normalArray);
-          for (int t = 0; t < tcount; t++) {
-            //texCoordBuffer[t].put(texCoordArray[t]);
-          }
-
-          vertexBuffer.position(0);
-          colorBuffer.position(0);
-          normalBuffer.position(0);
-          for (int t = 0; t < tcount; t++) {
-            //texCoordBuffer[t].position(0);
-          }
-          
-          gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
-          gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-          gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);
-          for (int t = 0; t < tcount; t++) {
-            gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);
-            //gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texCoordBuffer[t]);          
-          }
-          gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, 3 * faceLength[j]);
-        }        
-      }
-
-            
-      if (0 < tcount) {
-        if (1 < tcount) {
-          cleanupTextureBlend(tcount);
-        }
-        for (int t = 0; t < tcount; t++) {
-          PTexture tex = renderTextures[t];          
-          gl.glActiveTexture(GL.GL_TEXTURE0 + t);
-          gl.glBindTexture(tex.glTarget, 0);
-        }
-        
-
-        // Disable the texture targets at the end in a separate loop, otherwise the 
-        // textures are not properly unbound. Example: we have multitexturing, with 
-        // two 2D textures. If the glDisable() call is in the previous loop, then the
-        // 2D texture target is disabled in the first iteration, which invalidates the
-        // glBindTexture in the second iteration.
-        for (int t = 0; t < tcount; t++) {
-          PTexture tex = renderTextures[t];
-          gl.glDisable(tex.glTarget);          
-        }        
-
-        
-        for (int t = 0; t < tcount; t++) {
-          gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
-          gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-        }
-        
-      }
-    }
-
-    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-
-    report("render_triangles out");
-  }
-
-  protected void endShapeModelToCamera(int start, int stop) {
-    for (int i = start; i < stop; i++) {
-      float vertex[] = vertices[i];
-
-      vertex[VX] =
-        modelview.m00*vertex[X] + modelview.m01*vertex[Y] +
-        modelview.m02*vertex[Z] + modelview.m03;
-      vertex[VY] =
-        modelview.m10*vertex[X] + modelview.m11*vertex[Y] +
-        modelview.m12*vertex[Z] + modelview.m13;
-      vertex[VZ] =
-        modelview.m20*vertex[X] + modelview.m21*vertex[Y] +
-        modelview.m22*vertex[Z] + modelview.m23;
-      vertex[VW] =
-        modelview.m30*vertex[X] + modelview.m31*vertex[Y] +
-        modelview.m32*vertex[Z] + modelview.m33;
-
-      // normalize
-      if (vertex[VW] != 0 && vertex[VW] != 1) {
-        vertex[VX] /= vertex[VW];
-        vertex[VY] /= vertex[VW];
-        vertex[VZ] /= vertex[VW];
-      }
-      vertex[VW] = 1;
-    }    
-  }
-  
-  protected void rawTriangles(int start, int stop) {
-    raw.colorMode(RGB, 1);
-    raw.noStroke();
-    raw.beginShape(TRIANGLES);
-
-    //y = -1 * y; // To take into account Processsing's inverted Y axis with
-    // respect to OpenGL.
-
-    if (!modelviewUpdated) {
-      getModelviewMatrix();      
-    }
-
-    if (!projectionUpdated) {
-      getProjectionMatrix();      
-    }
-
-    /*
-float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
-float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
-float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
-float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
-
-float ox = glprojection[0] * ax + glprojection[4] * ay + glprojection[8] * az + glprojection[12] * aw;
-float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
-
-if (ow != 0) {
-ox /= ow;
-}
-return width * (1 + ox) / 2.0f;
-*/
-
-    
-    for (int i = start; i < stop; i++) {
-      float a[] = vertices[triangles[i][VERTEX1]];
-      float b[] = vertices[triangles[i][VERTEX2]];
-      float c[] = vertices[triangles[i][VERTEX3]];
-
-      
-      float ar = 255;
-      float ag = 255;
-      float ab = 255;
-      float br = 255;
-      float bg = 255;
-      float bb = 255;
-      float cr = 255;
-      float cg = 255;
-      float cb = 255;
-      
-      /*
-       // How to do OpenGL lights on software...?
-      float ar = clamp(triangleColors[i][0][TRI_DIFFUSE_R] + triangleColors[i][0][TRI_SPECULAR_R]);
-      float ag = clamp(triangleColors[i][0][TRI_DIFFUSE_G] + triangleColors[i][0][TRI_SPECULAR_G]);
-      float ab = clamp(triangleColors[i][0][TRI_DIFFUSE_B] + triangleColors[i][0][TRI_SPECULAR_B]);
-      float br = clamp(triangleColors[i][1][TRI_DIFFUSE_R] + triangleColors[i][1][TRI_SPECULAR_R]);
-      float bg = clamp(triangleColors[i][1][TRI_DIFFUSE_G] + triangleColors[i][1][TRI_SPECULAR_G]);
-      float bb = clamp(triangleColors[i][1][TRI_DIFFUSE_B] + triangleColors[i][1][TRI_SPECULAR_B]);
-      float cr = clamp(triangleColors[i][2][TRI_DIFFUSE_R] + triangleColors[i][2][TRI_SPECULAR_R]);
-      float cg = clamp(triangleColors[i][2][TRI_DIFFUSE_G] + triangleColors[i][2][TRI_SPECULAR_G]);
-      float cb = clamp(triangleColors[i][2][TRI_DIFFUSE_B] + triangleColors[i][2][TRI_SPECULAR_B]);
-      */
-
-      //int tex = triangles[i][TEXTURE_INDEX];
-      //PImage texImage = (tex > -1) ? textures[tex] : null;
-      PImage texImage = null;
-      if (texImage != null) {
-        if (raw.is3D()) {
-          if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
-            raw.fill(ar, ag, ab, a[A]);
-            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW], a[U], a[V]);
-            raw.fill(br, bg, bb, b[A]);
-            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW], b[U], b[V]);
-            raw.fill(cr, cg, cb, c[A]);
-            raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW], c[U], c[V]);
-          }
-        } else if (raw.is2D()) {
-          raw.fill(ar, ag, ab, a[A]);
-          raw.vertex(a[TX], a[TY], a[U], a[V]);
-          raw.fill(br, bg, bb, b[A]);
-          raw.vertex(b[TX], b[TY], b[U], b[V]);
-          raw.fill(cr, cg, cb, c[A]);
-          raw.vertex(c[TX], c[TY], c[U], c[V]);
-        }
-      } else {  // no texture
-        if (raw.is3D()) {
-          if ((a[VW] != 0) && (b[VW] != 0) && (c[VW] != 0)) {
-            raw.fill(ar, ag, ab, a[A]);
-            raw.vertex(a[VX] / a[VW], a[VY] / a[VW], a[VZ] / a[VW]);
-            raw.fill(br, bg, bb, b[A]);
-            raw.vertex(b[VX] / b[VW], b[VY] / b[VW], b[VZ] / b[VW]);
-            raw.fill(cr, cg, cb, c[A]);
-            raw.vertex(c[VX] / c[VW], c[VY] / c[VW], c[VZ] / c[VW]);
-          }
-        } else if (raw.is2D()) {
-          raw.fill(ar, ag, ab, a[A]);
-          raw.vertex(a[TX], a[TY]);
-          raw.fill(br, bg, bb, b[A]);
-          raw.vertex(b[TX], b[TY]);
-          raw.fill(cr, cg, cb, c[A]);
-          raw.vertex(c[TX], c[TY]);
-        }
-      }
-    }
-
-    raw.endShape();
-  }
-  
-  
-  // protected void rawTriangles(int start, int stop) // PGraphics3D
-
-  /**
-   * TODO: replace with better algorithm, using the glu tesellator code from
-   * PGraphicsOpenGL
-   * Triangulate the current polygon. <BR>
-   * <BR>
-   * Simple ear clipping polygon triangulation adapted from code by John W.
-   * Ratcliff (jratcliff at verant.com). Presumably <A
-   * HREF="http://www.flipcode.org/cgi-bin/fcarticles.cgi?show=63943">this</A>
-   * bit of code from the web.
-   */
-  protected void addPolygonTriangles() {
-    if (vertexOrder.length != vertices.length) {
-      int[] temp = new int[vertices.length];
-      // since vertex_start may not be zero, might need to keep old stuff around
-      PApplet.arrayCopy(vertexOrder, temp, vertexCount);
-      vertexOrder = temp;
-    }
-
-    // this clipping algorithm only works in 2D, so in cases where a
-    // polygon is drawn perpendicular to the z-axis, the area will be zero,
-    // and triangulation will fail. as such, when the area calculates to
-    // zero, figure out whether x or y is empty, and calculate based on the
-    // two dimensions that actually contain information.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=111
-    int d1 = X;
-    int d2 = Y;
-    // this brings up the nastier point that there may be cases where
-    // a polygon is irregular in space and will throw off the
-    // clockwise/counterclockwise calculation. for instance, if clockwise
-    // relative to x and z, but counter relative to y and z or something
-    // like that.. will wait to see if this is in fact a problem before
-    // hurting my head on the math.
-
-    /*
-     * // trying to track down bug #774 for (int i = vertex_start; i <
-     * vertex_end; i++) { if (i > vertex_start) { if (vertices[i-1][MX] ==
-     * vertices[i][MX] && vertices[i-1][MY] == vertices[i][MY]) {
-     * System.out.print("**** " ); } } System.out.println(i + " " +
-     * vertices[i][MX] + " " + vertices[i][MY]); } System.out.println();
-     */
-
-    // first we check if the polygon goes clockwise or counterclockwise
-    float area = 0;
-    for (int p = shapeLast - 1, q = shapeFirst; q < shapeLast; p = q++) {
-      area += (vertices[q][d1] * vertices[p][d2] - vertices[p][d1]
-          * vertices[q][d2]);
-    }
-    // rather than checking for the perpendicular case first, only do it
-    // when the area calculates to zero. checking for perpendicular would be
-    // a needless waste of time for the 99% case.
-    if (area == 0) {
-      // figure out which dimension is the perpendicular axis
-      boolean foundValidX = false;
-      boolean foundValidY = false;
-
-      for (int i = shapeFirst; i < shapeLast; i++) {
-        for (int j = i; j < shapeLast; j++) {
-          if (vertices[i][X] != vertices[j][X])
-            foundValidX = true;
-          if (vertices[i][Y] != vertices[j][Y])
-            foundValidY = true;
-        }
-      }
-
-      if (foundValidX) {
-        // d1 = MX; // already the case
-        d2 = Z;
-      } else if (foundValidY) {
-        // ermm.. which is the proper order for cw/ccw here?
-        d1 = Y;
-        d2 = Z;
-      } else {
-        // screw it, this polygon is just f-ed up
-        return;
-      }
-
-      // re-calculate the area, with what should be good values
-      for (int p = shapeLast - 1, q = shapeFirst; q < shapeLast; p = q++) {
-        area += (vertices[q][d1] * vertices[p][d2] - vertices[p][d1]
-            * vertices[q][d2]);
-      }
-    }
-
-    // don't allow polygons to come back and meet themselves,
-    // otherwise it will anger the triangulator
-    // http://dev.processing.org/bugs/show_bug.cgi?id=97
-    float vfirst[] = vertices[shapeFirst];
-    float vlast[] = vertices[shapeLast - 1];
-    if ((PApplet.abs(vfirst[X] - vlast[X]) < EPSILON)
-        && (PApplet.abs(vfirst[Y] - vlast[Y]) < EPSILON)
-        && (PApplet.abs(vfirst[Z] - vlast[Z]) < EPSILON)) {
-      shapeLast--;
-    }
-
-    // then sort the vertices so they are always in a counterclockwise order
-    int j = 0;
-    if (area > 0) {
-      for (int i = shapeFirst; i < shapeLast; i++) {
-        j = i - shapeFirst;
-        vertexOrder[j] = i;
-      }
-    } else {
-      for (int i = shapeFirst; i < shapeLast; i++) {
-        j = i - shapeFirst;
-        vertexOrder[j] = (shapeLast - 1) - j;
-      }
-    }
-
-    // remove vc-2 Vertices, creating 1 triangle every time
-    int vc = shapeLast - shapeFirst;
-    int count = 2 * vc; // complex polygon detection
-
-    for (int v = vc - 1; vc > 2;) {
-      boolean snip = true;
-
-      // if we start over again, is a complex polygon
-      if (0 >= (count--)) {
-        break; // triangulation failed
-      }
-
-      // get 3 consecutive vertices <u,v,w>
-      int u = v;
-      if (vc <= u)
-        u = 0; // previous
-      v = u + 1;
-      if (vc <= v)
-        v = 0; // current
-      int w = v + 1;
-      if (vc <= w)
-        w = 0; // next
-
-      // Upgrade values to doubles, and multiply by 10 so that we can have
-      // some better accuracy as we tessellate. This seems to have negligible
-      // speed differences on Windows and Intel Macs, but causes a 50% speed
-      // drop for PPC Macs with the bug's example code that draws ~200 points
-      // in a concave polygon. Apple has abandoned PPC so we may as well too.
-      // http://dev.processing.org/bugs/show_bug.cgi?id=774
-
-      // triangle A B C
-      double Ax = -10 * vertices[vertexOrder[u]][d1];
-      double Ay = 10 * vertices[vertexOrder[u]][d2];
-      double Bx = -10 * vertices[vertexOrder[v]][d1];
-      double By = 10 * vertices[vertexOrder[v]][d2];
-      double Cx = -10 * vertices[vertexOrder[w]][d1];
-      double Cy = 10 * vertices[vertexOrder[w]][d2];
-
-      // first we check if <u,v,w> continues going ccw
-      if (EPSILON > (((Bx - Ax) * (Cy - Ay)) - ((By - Ay) * (Cx - Ax)))) {
-        continue;
-      }
-
-      for (int p = 0; p < vc; p++) {
-        if ((p == u) || (p == v) || (p == w)) {
-          continue;
-        }
-
-        double Px = -10 * vertices[vertexOrder[p]][d1];
-        double Py = 10 * vertices[vertexOrder[p]][d2];
-
-        double ax = Cx - Bx;
-        double ay = Cy - By;
-        double bx = Ax - Cx;
-        double by = Ay - Cy;
-        double cx = Bx - Ax;
-        double cy = By - Ay;
-        double apx = Px - Ax;
-        double apy = Py - Ay;
-        double bpx = Px - Bx;
-        double bpy = Py - By;
-        double cpx = Px - Cx;
-        double cpy = Py - Cy;
-
-        double aCROSSbp = ax * bpy - ay * bpx;
-        double cCROSSap = cx * apy - cy * apx;
-        double bCROSScp = bx * cpy - by * cpx;
-
-        if ((aCROSSbp >= 0.0) && (bCROSScp >= 0.0) && (cCROSSap >= 0.0)) {
-          snip = false;
-        }
-      }
-
-      if (snip) {
-        addTriangle(vertexOrder[u], vertexOrder[v], vertexOrder[w]);
-
-        // remove v from remaining polygon
-        for (int s = v, t = v + 1; t < vc; s++, t++) {
-          vertexOrder[s] = vertexOrder[t];
-        }
-        vc--;
-
-        // reset error detection counter
-        count = 2 * vc;
-      }
-    }
-  }
-
-  protected void expandBuffers() {
-    int newSize = vertexBuffer.capacity() / 3 << 1;
-
-    ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
-    vbb.order(ByteOrder.nativeOrder());
-    vertexBuffer = vbb.asFloatBuffer();
-
-    ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_FLOAT);
-    cbb.order(ByteOrder.nativeOrder());
-    colorBuffer = cbb.asFloatBuffer();
-
-    ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
-    nbb.order(ByteOrder.nativeOrder());
-    normalBuffer = nbb.asFloatBuffer();
-
-    for (int t = 0; t < numTexBuffers; t++) {    
-      ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
-      tbb.order(ByteOrder.nativeOrder());
-      //texCoordBuffer[t] = tbb.asFloatBuffer(); 
-    }    
-    
-    vertexArray = new float[newSize * 3];
-    colorArray = new float[newSize * 4];
-    normalArray = new float[newSize * 3];
-    for (int t = 0; t < numTexBuffers; t++) { 
-      texCoordArray[t] = new float[newSize * 2];
-    }
-  }
 
   //////////////////////////////////////////////////////////////
 
@@ -4729,7 +2364,7 @@ return width * (1 + ox) / 2.0f;
         renderTextModel();
         
         // Restoring current blend mode.
-        screenBlend(screenBlendMode);        
+        blendMode(screenBlendMode);        
         
         gl.glBindTexture(GL.GL_TEXTURE_2D, 0);   
         gl.glDisable(GL.GL_TEXTURE_2D);      
@@ -4797,7 +2432,7 @@ return width * (1 + ox) / 2.0f;
     }
     
     // Restoring current blend mode.
-    screenBlend(screenBlendMode);
+    blendMode(screenBlendMode);
     
     gl.glBindTexture(GL.GL_TEXTURE_2D, 0);   
     gl.glDisable(GL.GL_TEXTURE_2D);    
@@ -4958,37 +2593,27 @@ return width * (1 + ox) / 2.0f;
   // MATRIX STACK
 
   public void pushMatrix() {
-    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
-      geoBuffer.stack.push();
-      if (!UPDATE_GL_MATRIX_STACK) return;
-    }    
+//    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+//      geoBuffer.stack.push();
+//      if (!UPDATE_GL_MATRIX_STACK) return;
+//    }    
     
     gl2f.glPushMatrix();  
     if (usingGLMatrixStack) {
-      if (matrixMode == PROJECTION) {
-        projectionStack.push();         
-      } else {          
-        modelviewStack.push();
-      }
+      modelviewStack.push();
     }        
   }
 
   
   public void popMatrix() {
-    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
-      geoBuffer.stack.pop();
-      if (!UPDATE_GL_MATRIX_STACK) return;
-    }    
+//    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
+//      geoBuffer.stack.pop();
+//      if (!UPDATE_GL_MATRIX_STACK) return;
+//    }    
         
     gl2f.glPopMatrix();
     if (usingGLMatrixStack) {
-      if (matrixMode == PROJECTION) {
-        projectionStack.pop(); 
-        projectionUpdated = false;        
-      } else {          
-        modelviewStack.pop(); 
-        modelviewUpdated = false;
-      }
+      modelviewStack.pop(); 
     }    
   }
   
@@ -5001,20 +2626,10 @@ return width * (1 + ox) / 2.0f;
   }
 
   public void translate(float tx, float ty, float tz) {
-//    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
-//      geoBuffer.stack.translate(tx, ty, tz);
-//      if (!UPDATE_GL_MATRIX_STACK) return;
-//    }    
-    
     gl2f.glTranslatef(tx, ty, tz);
     if (usingGLMatrixStack) {
-      if (matrixMode == PROJECTION) {
-        projectionStack.translate(tx, ty, tz);
-        projectionUpdated = false;        
-      } else {          
-        modelviewStack.translate(tx, ty, tz); 
-        modelviewUpdated = false;
-      }
+      modelviewStack.translate(tx, ty, tz); 
+      modelviewUpdated = false;
     }    
   }
 
@@ -5045,20 +2660,10 @@ return width * (1 + ox) / 2.0f;
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {      
-      geoBuffer.stack.rotate(angle, v0, v1, v2); 
-      if (!UPDATE_GL_MATRIX_STACK) return;
-    }
-    
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     if (usingGLMatrixStack) {
-      if (matrixMode == PROJECTION) {
-        projectionStack.rotate(angle, v0, v1, v2);
-        projectionUpdated = false;        
-      } else {          
-        modelviewStack.rotate(angle, v0, v1, v2); 
-        modelviewUpdated = false;
-      }
+      modelviewStack.rotate(angle, v0, v1, v2); 
+      modelviewUpdated = false;
     }    
   }
 
@@ -5080,23 +2685,13 @@ return width * (1 + ox) / 2.0f;
    * Scale in three dimensions.
    */
   public void scale(float sx, float sy, float sz) {
-    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
-      geoBuffer.stack.scale(sx, sy, sz);
-      if (!UPDATE_GL_MATRIX_STACK) return;
-    }    
-        
     if (manipulatingCamera) {
       scalingDuringCamManip = true;
     }
     gl2f.glScalef(sx, sy, sz);
     if (usingGLMatrixStack) {
-      if (matrixMode == PROJECTION) {
-        projectionStack.scale(sx, sy, sz);
-        projectionUpdated = false;        
-      } else {          
-        modelviewStack.scale(sx, sy, sz); 
-        modelviewUpdated = false;
-      }
+      modelviewStack.scale(sx, sy, sz); 
+      modelviewUpdated = false;
     }    
   }
 
@@ -5114,29 +2709,13 @@ return width * (1 + ox) / 2.0f;
 
   // MATRIX MORE!
 
-  public void matrixMode(int mode) {    
-    if (mode == PROJECTION) {
-      gl2f.glMatrixMode(GL2.GL_PROJECTION);
-      matrixMode = PROJECTION;
-    } else if (mode == MODELVIEW) {
-      gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-      matrixMode = MODELVIEW;
-    } else {
-      System.err.println("OPENGL2: incorrect matrix mode.");
-    }
-  }
     
   public void resetMatrix() {
     gl2f.glLoadIdentity();
     
     if (usingGLMatrixStack) {
-      if (matrixMode == PROJECTION) {
-        projectionStack.setIdentity();
-        projectionUpdated = false;
-      } else {          
-        modelviewStack.setIdentity(); 
-        modelviewUpdated = false;
-      }
+      modelviewStack.setIdentity(); 
+      modelviewUpdated = false;
     }      
   }
 
@@ -5193,13 +2772,8 @@ return width * (1 + ox) / 2.0f;
     gl2f.glMultMatrixf(gltemp, 0);
 
     if (usingGLMatrixStack) {
-      if (matrixMode == PROJECTION) {
-        projectionStack.mult(gltemp);
-        projectionUpdated = false;
-      } else {
-        modelviewStack.mult(gltemp);
-        modelviewUpdated = false;   
-      }
+      modelviewStack.mult(gltemp);
+      modelviewUpdated = false;   
     }
     
     // TODO: add inverse calculation!
@@ -5294,17 +2868,10 @@ return width * (1 + ox) / 2.0f;
   // MATRIX GET/SET/PRINT
 
   public PMatrix getMatrix() {
-    if (matrixMode == PROJECTION) {
-      if (!projectionUpdated) {
-        getProjectionMatrix();      
-      }      
-      return projection.get();
-    } else {      
-      if (!modelviewUpdated) {
-        getModelviewMatrix();    
-      }
-      return modelview.get();  
-    } 
+    if (!modelviewUpdated) {
+      getModelviewMatrix();    
+    }
+    return modelview.get();      
   }
 
   // public PMatrix2D getMatrix(PMatrix2D target)
@@ -5313,17 +2880,10 @@ return width * (1 + ox) / 2.0f;
     if (target == null) {
       target = new PMatrix3D();
     }
-    if (matrixMode == PROJECTION) {
-      if (!projectionUpdated) {
-        getProjectionMatrix();      
-      }        
-      target.set(projection);
-    } else {
-      if (!modelviewUpdated) {
-        getModelviewMatrix();    
-      }
-      target.set(modelview);
+    if (!modelviewUpdated) {
+      getModelviewMatrix();    
     }
+    target.set(modelview);
     return target;
   }
 
@@ -5348,17 +2908,10 @@ return width * (1 + ox) / 2.0f;
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {
-    if (matrixMode == PROJECTION) {
-      if (!projectionUpdated) {
-        getProjectionMatrix();      
-      }       
-      projection.print();
-    } else {
-      if (!modelviewUpdated) {
-        getModelviewMatrix();    
-      }      
-      modelview.print();  
-    } 
+    if (!modelviewUpdated) {
+      getModelviewMatrix();    
+    }      
+    modelview.print();      
   }
 
   /*
@@ -5403,9 +2956,7 @@ return width * (1 + ox) / 2.0f;
     copyPMatrixToGLArray(projection, glprojection);
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glLoadMatrixf(glprojection, 0);
-    if (matrixMode == MODELVIEW) { 
-      gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    }    
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     if (usingGLMatrixStack) {
       projectionStack.set(glprojection);
     }
@@ -5418,9 +2969,7 @@ return width * (1 + ox) / 2.0f;
     
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glLoadMatrixf(glprojection, 0);
-    if (matrixMode == MODELVIEW) { 
-      gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    }    
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     if (usingGLMatrixStack) {
       projectionStack.set(glprojection);
     }
@@ -7575,7 +5124,7 @@ return width * (1 + ox) / 2.0f;
    * Reference article about blending modes:
    * http://www.pegtop.net/delphi/articles/blendmodes/
    */
-  public void screenBlend(int mode) {    
+  public void blendMode(int mode) {    
     screenBlendMode = mode;
     gl.glEnable(GL.GL_BLEND);
     
@@ -7628,282 +5177,6 @@ return width * (1 + ox) / 2.0f;
     // non-linear blending equations.
   }
 
-  
-  public void textureBlend(int mode) {
-    texBlendMode = mode;
-  }
-
-  
-  // Some useful info about multitexturing with combiners:
-  // http://www.opengl.org/wiki/Texture_Combiners
-  // http://www.khronos.org/opengles/sdk/1.1/docs/man/glTexEnv.xml
-  // http://techconficio.ca/Blog/files/OpenGL_ES_multiTex_example.html
-  // The GL_DOT3_RGB parameter can be used to implement bump mapping with 
-  // the fixed pipeline of GLES 1.1:
-  // http://iphone-3d-programming.labs.oreilly.com/ch08.html
-  // http://nehe.gamedev.net/data/articles/article.asp?article=20
-  // http://www.paulsprojects.net/tutorials/simplebump/simplebump.html
-  // I 'll try to put this functionality in later.  
-  // This post explains how to use texture crossbar to properly apply
-  // geometry lighting and tinting to the result of the texure combination.
-  // http://www.imgtec.com/forum/forum_posts.asp?TID=701
-  protected void setupTextureBlend(PTexture[] textures, int num) {
-    if (2 < num) {
-      PGraphics.showWarning("OPENGL2: multitexture blending currently supports only two textures.");
-      return;
-    }
-
-    if (!texenvCrossbarSupported) {
-      PGraphics.showWarning("OPENGL2: Texture environment crossbar not supported, so the textures won't be affected by tint or light.");
-      // Without texture environment crossbar we have to use the first sampler just to read the first texture,
-      // and the second to do the mixing, in this way we don't have a way to modulate the output of the
-      // texture mixing with the pixel tint or lighting.
-      if (texBlendMode == REPLACE) {
-        // Texture 0:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
-        // Simply sample the texture:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
-        // Texture 1:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
-        // Sample the texture, replacing the previous one.
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
-      } else if (texBlendMode == BLEND) {
-        // Texture 0:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
-        // Texture 1:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-        // Interpolate RGB with RGB...
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_INTERPOLATE);   
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_RGB, GL2.GL_TEXTURE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC2_RGB, GL2.GL_TEXTURE);           
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_RGB, GL2.GL_SRC_COLOR);
-        // ...using ALPHA of tex1 as interpolation factor.
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND2_RGB, GL2.GL_ONE_MINUS_SRC_ALPHA);
-        // Interpolate ALPHA with ALPHA...
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_INTERPOLATE); 
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_PREVIOUS);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC2_ALPHA, GL2.GL_TEXTURE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);
-        // ...using ALPHA of tex1 as interpolation factor.
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND2_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);   
-      } else if (texBlendMode == MULTIPLY) {
-        // Texture 0:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
-        // Simply sample the texture.
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
-        // Texture 1:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
-        // Combine this texture with the previous one.
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-        // Modulate (multiply) RGB with RGB:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_MODULATE);   
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_RGB, GL2.GL_TEXTURE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_RGB, GL2.GL_SRC_COLOR);
-        // Modulate (multiply) ALPHA with ALPHA:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_MODULATE);  
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_PREVIOUS);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);      
-      } else if (texBlendMode == ADD) {
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
-        // Add RGB with RGB:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_ADD);    
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_RGB, GL2.GL_TEXTURE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_RGB, GL2.GL_SRC_COLOR);
-        // Add ALPHA with ALPHA:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_ADD);    
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_PREVIOUS);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);      
-      } else if (texBlendMode == SUBTRACT) {
-        // Texture 0:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
-        // Texture 1:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE1);
-        gl2f.glBindTexture(textures[1].glTarget, textures[1].glID);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-        // Subtract RGB with RGB:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_SUBTRACT);    
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_RGB, GL2.GL_TEXTURE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_RGB, GL2.GL_SRC_COLOR);
-        // Subtract ALPHA with ALPHA:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_ADD);    
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_PREVIOUS);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);      
-      } else {
-        PGraphics.showWarning("OPENGL2: This blend mode is currently unsupported in multitexture mode.");
-      }
-    } else {
-      // With texture environment crossbar we can do the texture mixing in the first sampler,
-      // and the modulation with the pixel color (which includes tint and light) in the second,
-      // as explained here:
-      // http://www.imgtec.com/forum/forum_posts.asp?TID=701
-      if (texBlendMode == REPLACE) {
-        // Sampler 0:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);         
-        // Replace using texture 1:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-        // Replace RGB:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_REPLACE);   
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-        // Replace ALPHA with ALPHA:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_REPLACE);  
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
-        // Sampler 1:
-        modulateWithPrimaryColor(1, textures[1]);
-      } else if (texBlendMode == BLEND) {
-        // Sampler 0: interpolation between textures 0 and 1 using alpha of 1.
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-        // Interpolate RGB with RGB...
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_INTERPOLATE);   
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_TEXTURE0);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_RGB, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC2_RGB, GL2.GL_TEXTURE1);           
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_RGB, GL2.GL_SRC_COLOR);
-        // ...using ALPHA of tex1 as interpolation factor.
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND2_RGB, GL2.GL_ONE_MINUS_SRC_ALPHA);
-        // Interpolate ALPHA with ALPHA...
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_INTERPOLATE); 
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_TEXTURE0);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC2_ALPHA, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);
-        // ...using ALPHA of tex1 as interpolation factor.
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND2_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
-        // Sampler 1:
-        modulateWithPrimaryColor(1, textures[1]);        
-      } else if (texBlendMode == MULTIPLY) {
-        // Sampler 0:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);        
-        // Modulate (multiply) texture 0 with texture 1.
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-        // Modulate RGB with RGB:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_MODULATE);   
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_TEXTURE0);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_RGB, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_RGB, GL2.GL_SRC_COLOR);
-        // Modulate ALPHA with ALPHA:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_MODULATE);  
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_TEXTURE0);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);      
-        // Sampler 1:
-        modulateWithPrimaryColor(1, textures[1]);  
-      } else if (texBlendMode == ADD) {
-        // Sampler 0:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);        
-        // Add texture 0 to texture 1:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_ADD);    
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_TEXTURE0);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_RGB, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_RGB, GL2.GL_SRC_COLOR);
-        // Add ALPHA with ALPHA:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_ADD);    
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_TEXTURE0);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);        
-        // Sampler 1:
-        modulateWithPrimaryColor(1, textures[1]);                
-      } else if (texBlendMode == SUBTRACT) {
-        // Sampler 0:
-        gl2f.glActiveTexture(GL2.GL_TEXTURE0);
-        gl2f.glBindTexture(textures[0].glTarget, textures[0].glID);        
-        // Substract texture 1 from texture 0:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-        // Subtract RGB with RGB:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_SUBTRACT);    
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_TEXTURE0);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_RGB, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_RGB, GL2.GL_SRC_COLOR);
-        // Subtract ALPHA with ALPHA:
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_SUBTRACT);    
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_TEXTURE0);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_ALPHA, GL2.GL_TEXTURE1);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);
-        gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_ALPHA, GL2.GL_SRC_ALPHA);      
-        // Sampler 1:
-        modulateWithPrimaryColor(1, textures[1]);
-      } else {
-        PGraphics.showWarning("OPENGL2: This blend mode is currently unsupported in multitexture mode.");
-      }      
-    }
-    
-    // The result of the texture combination will replace the current content of the color buffer.
-    //gl2f.glDisable(GL.GL_BLEND);
-    screenBlend(REPLACE);
-  }  
-
-  
-  protected void modulateWithPrimaryColor(int unit, PTexture tex) {
-    gl2f.glActiveTexture(GL2.GL_TEXTURE0 + unit);
-    gl2f.glBindTexture(tex.glTarget, tex.glID);
-    // Interpolate RGB of previous color (result of blending in sampler 0) with RGB
-    // of primary color (tinted and lit from pixel)...
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_COMBINE);
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, GL2.GL_MODULATE);
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, GL2.GL_PREVIOUS);
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC1_RGB, GL2.GL_PRIMARY_COLOR);
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_RGB, GL2.GL_SRC_COLOR);
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND1_RGB, GL2.GL_SRC_COLOR);
-    // Resulting ALPHA is that of mixed textures...
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_ALPHA, GL2.GL_REPLACE);
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_ALPHA, GL2.GL_PREVIOUS);
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_OPERAND0_ALPHA, GL2.GL_SRC_ALPHA);            
-  }
-  
-  
-  protected void cleanupTextureBlend(int num) {
-    for (int i = 0; i < num; i++) {
-      gl2f.glActiveTexture(GL2.GL_TEXTURE0 + i);
-      gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
-    }
-    // Re-enabling blending.
-    screenBlend(screenBlendMode);
-  }  
 
   //////////////////////////////////////////////////////////////
 
@@ -8034,7 +5307,7 @@ return width * (1 + ox) / 2.0f;
     gl.glBindTexture(target, 0);
     gl.glDisable(target);
     
-    screenBlend(screenBlendMode);
+    blendMode(screenBlendMode);
   }  
   
   protected void drawTexture(int w, int h, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
@@ -8427,7 +5700,7 @@ return width * (1 + ox) / 2.0f;
     // The maximum number of texture units only makes sense in the
     // fixed pipeline.
     gl.glGetIntegerv(GL2.GL_MAX_TEXTURE_UNITS, temp, 0);
-    maxTextureUnits = PApplet.min(MAX_TEXTURES, temp[0]);
+    maxTextureUnits = temp[0];
     
     glParamsRead = true;
   }
@@ -8436,475 +5709,7 @@ return width * (1 + ox) / 2.0f;
   //////////////////////////////////////////////////////////////
   
   // UTILITY INNER CLASSES    
-  
-  protected class GeometryBuffer {
-    int mode;    
-    int idxCount;
-    int vertCount;
-    int texCount;
-    int[] indicesArray;
-    float[] verticesArray;
-    float[] normalsArray;
-    float[] colorsArray;
-    float[][] texcoordsArray;
-    PTexture[] texturesArray;
-    int minVertIndex;
-    int maxVertIndex;
-    int size;
     
-    // The GeometryBuffer has its own stack (for now at least) because
-    // OpenGL stack contains the contribution of the camera placement, whereas
-    // for transforming the vertices don't need it.
-    GLMatrixStack stack;
-    
-    IntBuffer indicesBuffer;
-    FloatBuffer verticesBuffer;
-    FloatBuffer normalsBuffer;
-    FloatBuffer colorsBuffer;
-    FloatBuffer[] texcoordsBuffer;
-    
-    int allocTexStorage;
-    
-    GeometryBuffer() {
-      ByteBuffer ibb = ByteBuffer.allocateDirect(DEFAULT_TRIANGLES * SIZEOF_INT);
-      ibb.order(ByteOrder.nativeOrder());
-      indicesBuffer = ibb.asIntBuffer();
-            
-      ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_FLOAT);
-      vbb.order(ByteOrder.nativeOrder());
-      verticesBuffer = vbb.asFloatBuffer();
-
-      ByteBuffer cbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 4 * SIZEOF_FLOAT);
-      cbb.order(ByteOrder.nativeOrder());
-      colorsBuffer = cbb.asFloatBuffer();
-
-      ByteBuffer nbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_FLOAT);
-      nbb.order(ByteOrder.nativeOrder());
-      normalsBuffer = nbb.asFloatBuffer();      
-      
-      texcoordsBuffer = new FloatBuffer[MAX_TEXTURES];
-      ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_FLOAT);
-      tbb.order(ByteOrder.nativeOrder());
-      texcoordsBuffer[0] = tbb.asFloatBuffer();    
-      
-      indicesArray = new int[DEFAULT_TRIANGLES];
-      verticesArray = new float[DEFAULT_BUFFER_SIZE * 3];
-      colorsArray = new float[DEFAULT_BUFFER_SIZE * 4];      
-      normalsArray = new float[DEFAULT_BUFFER_SIZE * 3];
-      texcoordsArray = new float[1][DEFAULT_BUFFER_SIZE * 2];    
-      
-      texturesArray = new PTexture[MAX_TEXTURES];
-      
-      allocTexStorage = 1;
-      
-      stack = new GLMatrixStack();
-      
-      idxCount = 0;
-      vertCount = 0;
-      texCount = 0;
-    }
-    
-    void init(int mode) {
-      init(mode, null, 0);
-    }
-    
-    void init(int mode, PTexture[] textures, int tc) {
-      setTextures(textures, tc);
-      
-      indicesBuffer.rewind();
-      verticesBuffer.rewind();
-      colorsBuffer.rewind();
-      normalsBuffer.rewind();
-      for (int t = 0; t < texCount; t++) {
-        texcoordsBuffer[t].rewind();
-      }
-      
-      idxCount = 0;
-      vertCount = 0;   
-            
-      minVertIndex = 100000; 
-      maxVertIndex = 0;
-      
-      stack.setIdentity();
-    }
-    
-    boolean newTextures(PTexture[] textures, int tc) {
-      if (tc == texCount) {
-        for (int i = 0; i < texCount; i++) {
-          if (textures[i] != texturesArray[i]) {
-            return true;
-          }
-        }
-        return false;
-      }
-      return true;
-    }
-    
-    void setTextures(PTexture[] textures, int tc) {
-      if (textures == null || tc == 0) {
-        texCount = 0;
-      } else {
-        texCount = tc;
-        PApplet.arrayCopy(textures, texturesArray, tc);
-      }
-      
-      if (allocTexStorage < texCount) {
-        int more = texCount - allocTexStorage;
-        
-        int size = texcoordsBuffer[allocTexStorage - 1].capacity();
-        for (int i = 0; i < more; i++) {
-          ByteBuffer tbb = ByteBuffer.allocateDirect(size * SIZEOF_FLOAT);
-          tbb.order(ByteOrder.nativeOrder());
-          texcoordsBuffer[allocTexStorage + i] = tbb.asFloatBuffer();    
-        }
-        
-        texcoordsArray = new float[allocTexStorage + more][size];
-        
-        allocTexStorage += more;          
-      }     
-    }
-    
-    void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1) {
-      add(indices, i0, i1, vertices, v0, v1, stack.current);
-    }
-    
-    void add(int[][] indices, int i0, int i1, float[][] vertices, int v0, int v1, float[] mm) {      
-      int gcount = i1 - i0 + 1;
-      int vcount = v1 - v0 + 1;
- 
-      int k = 0;
-      IntBuffer indicesBuffer0 = indicesBuffer;
-      while (indicesBuffer.capacity() < idxCount + 3 * gcount) {
-        int newSize = indicesBuffer.capacity() << 1;
-                
-        ByteBuffer ibb = ByteBuffer.allocateDirect(newSize * SIZEOF_INT);
-        ibb.order(ByteOrder.nativeOrder());
-        indicesBuffer = ibb.asIntBuffer();
-        
-        indicesArray = new int[newSize];
-        k++;
-      }
-      if (0 < k) {
-        indicesBuffer0.position(0);
-        indicesBuffer.position(0);
-        indicesBuffer.put(indicesBuffer0);
-        indicesBuffer.position(idxCount);
-        indicesBuffer0 = null;
-      }
-      
-      
-      k = 0;
-      FloatBuffer verticesBuffer0 = verticesBuffer;
-      FloatBuffer colorsBuffer0 = colorsBuffer;
-      FloatBuffer normalsBuffer0 = normalsBuffer;
-      FloatBuffer[] texcoordsBuffer0 = new FloatBuffer[texCount];
-      for (int t = 0; t < texCount; t++) {
-        texcoordsBuffer0[t] = texcoordsBuffer[t];
-      }
-      while (verticesBuffer.capacity() / 3 < vertCount + vcount) {
-        int newSize = verticesBuffer.capacity() / 3 << 1;
-        
-        // The data already in the buffers cannot be discarded, copy it back to the new resized buffers!!!!!!              
-        ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
-        vbb.order(ByteOrder.nativeOrder());
-        verticesBuffer = vbb.asFloatBuffer();
-          
-        ByteBuffer cbb = ByteBuffer.allocateDirect(newSize * 4 * SIZEOF_FLOAT);
-        cbb.order(ByteOrder.nativeOrder());
-        colorsBuffer = cbb.asFloatBuffer();
-                
-        ByteBuffer nbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
-        nbb.order(ByteOrder.nativeOrder());
-        normalsBuffer = nbb.asFloatBuffer();
-        
-        for (int t = 0; t < texCount; t++) {
-           
-          ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
-          tbb.order(ByteOrder.nativeOrder());
-          texcoordsBuffer[t] = tbb.asFloatBuffer();
-        }
-        
-        verticesArray = new float[newSize * 3];
-        colorsArray = new float[newSize * 4];
-        normalsArray = new float[newSize * 3];
-        for (int t = 0; t < texCount; t++) { 
-          texcoordsArray[t] = new float[newSize * 2];
-        }
-        
-        k++;
-      }
-      
-      if (0 < k) {
-        // To avoid moving the buffer position to far forward when increasing
-        // the size several consecutive times.
-        verticesBuffer0.position(0);
-        verticesBuffer.position(0);
-        verticesBuffer.put(verticesBuffer0);
-        verticesBuffer0 = null;
-        verticesBuffer.position(3 * vertCount);
-               
-        colorsBuffer0.position(0);
-        colorsBuffer.position(0);
-        colorsBuffer.put(colorsBuffer0);
-        colorsBuffer0 = null;
-        colorsBuffer.position(4 * vertCount);
-        
-        normalsBuffer0.position(0);
-        normalsBuffer.position(0);
-        normalsBuffer.put(normalsBuffer0);
-        normalsBuffer0 = null; 
-        normalsBuffer.position(3 * vertCount);
-        
-        for (int t = 0; t < texCount; t++) {
-          texcoordsBuffer0[t].position(0);
-          texcoordsBuffer[t].position(0);
-          texcoordsBuffer[t].put(texcoordsBuffer0[t]);
-          texcoordsBuffer0[t] = null;
-          texcoordsBuffer[t].position(3 * vertCount);
-        }       
-      }          
-      
-      int ni = 0;
-      for (int i = i0; i <= i1; i++) {
-        indicesArray[ni++] = vertCount + indices[i][VERTEX1] - v0;
-        indicesArray[ni++] = vertCount + indices[i][VERTEX2] - v0;
-        indicesArray[ni++] = vertCount + indices[i][VERTEX3] - v0;
-      }
-      
-      minVertIndex = vertCount;
-      maxVertIndex = vertCount + v1 - v0;      
-      
-      int nv = 0;
-      int nn = 0;
-      int nc = 0;
-      int nt = 0;
-      float x, y, z;
-      float nx, ny, nz;
-      float[] vert;
-      for (int i = v0; i <= v1; i++) {
-        vert = vertices[i];
-                
-        x = vert[X];
-        y = vert[Y];
-        z = vert[Z];
-        
-        nx = vert[NX];
-        ny = vert[NY];
-        nz = vert[NZ];
-        
-        if (mm == null) {
-          verticesArray[nv++] = x;
-          verticesArray[nv++] = y;
-          verticesArray[nv++] = z;
-          
-          normalsArray[nn++] = nx;
-          normalsArray[nn++] = ny;
-          normalsArray[nn++] = nz; 
-        } else {         
-          verticesArray[nv++] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
-          verticesArray[nv++] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
-          verticesArray[nv++] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
-          
-          normalsArray[nn++] = nx + mm[12];
-          normalsArray[nn++] = ny + mm[13];
-          normalsArray[nn++] = nz + mm[14];
-        }
-        
-        colorsArray[nc++] = vert[R];
-        colorsArray[nc++] = vert[G];
-        colorsArray[nc++] = vert[B];
-        colorsArray[nc++] = vert[A];        
-        
-        if (0 < texCount) {
-          float[] vertU = vertexU[i];
-          float[] vertV = vertexV[i];
-          for (int t = 0; t < texCount; t++) {            
-            float uscale = 1.0f;
-            float vscale = 1.0f;
-            float cx = 0.0f;
-            float sx = +1.0f;
-            float cy = 0.0f;
-            float sy = +1.0f;
-            
-            PTexture tex = texturesArray[t];
-            uscale *= tex.getMaxTexCoordU();
-            vscale *= tex.getMaxTexCoordV();
-
-            if (tex.isFlippedX()) {
-              cx = 1.0f;
-              sx = -1.0f;
-            }
-
-            if (tex.isFlippedY()) {
-              cy = 1.0f;
-              sy = -1.0f;
-            } 
-            
-            texcoordsArray[t][nt++] = (cx + sx * vertU[t]) * uscale;
-            texcoordsArray[t][nt++] = (cy + sy * vertV[t]) * vscale;
-          }
-        }
-      }
-      
-      indicesBuffer.put(indicesArray, 0, 3 * gcount);
-      verticesBuffer.put(verticesArray, 0, 3 * vcount);
-      normalsBuffer.put(normalsArray, 0, 3 * vcount);
-      colorsBuffer.put(colorsArray, 0, 4 * vcount);
-      for (int t = 0; t < texCount; t++) {
-        texcoordsBuffer[t].put(texcoordsArray[t], 0, 2 * vcount);
-      }
-      
-      idxCount += 3 * gcount;
-      vertCount += vcount;
-      GEO_BUFFER_SIZE += vcount;
-    }
-    
-    void pre() {
-      gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-      gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-      gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-      if (0 < texCount) {
-        for (int t = 0; t < texCount; t++) {
-          PTexture tex = texturesArray[t];
-          gl.glEnable(tex.glTarget);
-          gl.glActiveTexture(GL.GL_TEXTURE0 + t);
-          gl.glBindTexture(tex.glTarget, tex.glID);        
-          gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
-          gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-        }
-      }
-    }
-    
-    void post() {
-      if (0 < texCount) {
-        for (int t = 0; t < texCount; t++) {
-          PTexture tex = texturesArray[t];
-          gl.glActiveTexture(GL.GL_TEXTURE0 + t);
-          gl.glBindTexture(tex.glTarget, 0);        
-          gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);        
-          gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-        }
-        for (int t = 0; t < texCount; t++) {
-          PTexture tex = texturesArray[t];
-          gl.glDisable(tex.glTarget);
-        }
-      }    
-      gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-      gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-      gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);      
-    }
-    
-    void render() {
-      // Note for my future self: Since this geometry already contains the
-      // geometric transformations that were applied at the moment of drawing,
-      // the current modelview should be reset to the camera state.
-      // In this way, the transformations can be stored in the matrix stack of
-      // the buffer but also being applied in order to affect other geometry
-      // that is not accumulated (PShape3D, for instance).
-      
-      if (GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK && UPDATE_GL_MATRIX_STACK) {
-        pushMatrix();
-        
-        // we need to set the modelview matrix to the camera state
-        // to eliminate the transformations that are duplicated in GL's
-        // modelview and the vertices.
-        // In the finished code handling general scenarios, using the camera
-        // matrix might not be enough (maybe we need to save the current modelview
-        // matrix at the moment of applying the transformation to the vertices of 
-        // the buffer), not sure though.
-        // It is also worth noting that these calculations makes the accumulation
-        // method slower under certain scenarios (lots of geometry buffers sent per
-        // frame and lots of geometric tranformations)... This is to say that in the
-        // limit whe the accumulator doesn't actually accumulate because the buffer
-        // is sent at each beginShape/endShape call, then this additional modelview
-        // stack manipulation takes away around 10-12 fps 
-        gltemp[0] = camera.m00;
-        gltemp[1] = camera.m10;
-        gltemp[2] = camera.m20;
-        gltemp[3] = camera.m30;
-
-        gltemp[4] = camera.m01;
-        gltemp[5] = camera.m11;
-        gltemp[6] = camera.m21;
-        gltemp[7] = camera.m31;
-
-        gltemp[8] = camera.m02;
-        gltemp[9] = camera.m12;
-        gltemp[10] = camera.m22;
-        gltemp[11] = camera.m32;
-
-        gltemp[12] = camera.m03;
-        gltemp[13] = camera.m13;
-        gltemp[14] = camera.m23;
-        gltemp[15] = camera.m33;
-        gl2f.glLoadMatrixf(gltemp, 0);      
-      }
-      
-      indicesBuffer.position(0);
-      verticesBuffer.position(0);
-      colorsBuffer.position(0);
-      normalsBuffer.position(0);
-      for (int t = 0; t < texCount; t++) {
-        texcoordsBuffer[t].position(0);
-      }
-      
-      gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, verticesBuffer);
-      gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorsBuffer);
-      gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalsBuffer);
-      for (int t = 0; t < texCount; t++) {
-        gl2f.glClientActiveTexture(GL.GL_TEXTURE0 + t);
-        gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texcoordsBuffer[t]);          
-      }
-      
-      gl2f.glDrawElements(GL.GL_TRIANGLES, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);      
-      
-      if (GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK && UPDATE_GL_MATRIX_STACK) {
-        popMatrix();
-      }
-      
-      // Using glDrawRangeElements doesn't make any difference:
-      //gl2x.glDrawRangeElements(GL.GL_TRIANGLES, minVertIndex, maxVertIndex, idxCount, GL2.GL_UNSIGNED_INT, indicesBuffer);    
-    } 
-    
-    void record() {
-      indicesBuffer.position(0);
-      verticesBuffer.position(0);
-      colorsBuffer.position(0);
-      normalsBuffer.position(0);
-      for (int t = 0; t < texCount; t++) {
-        texcoordsBuffer[t].position(0);
-      }      
-
-      int v0 = recordedVertices.size();
-      Integer idx;
-      for (int i = 0; i < idxCount; i++) {
-        idx = new Integer(v0 + indicesBuffer.get());
-        recordedIndices.add(idx);
-        //System.out.println(idx);
-      }      
-      
-      PVector v;
-      float[] c;
-      for (int i = 0; i < vertCount; i++) {
-        v = new PVector(verticesBuffer.get(), verticesBuffer.get(), verticesBuffer.get());
-        recordedVertices.add(v);
-        
-        v = new PVector(normalsBuffer.get(), normalsBuffer.get(), normalsBuffer.get());
-        recordedNormals.add(v);
-        
-        c = new float[4];
-        c[0] = colorsBuffer.get(); c[1] = colorsBuffer.get(); 
-        c[2] = colorsBuffer.get(); c[3] = colorsBuffer.get(); 
-        recordedColors.add(c);
-        
-        for (int t = 0; t < texCount; t++) {
-          v = new PVector(texcoordsBuffer[t].get(), texcoordsBuffer[t].get(), 0);          
-          recordedTexCoords[t].add(v);          
-        }           
-      }
-    }
-  }
-  
   /**
    *  This class encapsulates the drawing state in Processing.
    */  
@@ -8935,7 +5740,7 @@ return width * (1 + ox) / 2.0f;
       auto0 = autoNormal;
       stroke0 = stroke;      
       cMode0 = colorMode; 
-      merge0 = mergeRecShapes;
+      //merge0 = mergeRecShapes;
       
       // Saving current colors.
       specularR0 = specularR;
@@ -8978,7 +5783,7 @@ return width * (1 + ox) / 2.0f;
       colorMode = cMode0;
       autoNormal = auto0;
       stroke = stroke0;
-      mergeRecShapes = merge0;
+      //mergeRecShapes = merge0;
       
       // Restore colors
       calcR = specularR0;

@@ -7421,7 +7421,7 @@ public class PGraphics extends PImage implements PConstants {
   }
   */
 
-  public void screenBlend(int mode) {
+  public void blendMode(int mode) {
     showMissingWarning("screenBlend");
   }
 
