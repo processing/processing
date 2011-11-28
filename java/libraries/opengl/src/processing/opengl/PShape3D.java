@@ -99,7 +99,7 @@ public class PShape3D extends PShape {
   
   // For polygons
   protected boolean modified;
-  protected boolean addBreak;
+  protected boolean breakShape;
   protected boolean isSolid;
   protected boolean isClosed;
   
@@ -239,7 +239,7 @@ public class PShape3D extends PShape {
   }  
   
   public void breakShape() {
-    addBreak = true;  
+    breakShape = true;  
   }
 
   public void vertex(float x, float y) {
@@ -268,9 +268,9 @@ public class PShape3D extends PShape {
     currentTexcoord[1] = v;
         
     int code;
-    if (addBreak) {
+    if (breakShape) {
       code = BREAK;
-      addBreak = false;
+      breakShape = false;
     } else {
       code = type;
     }    
@@ -1303,14 +1303,16 @@ public class PShape3D extends PShape {
     
     getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glFillIndexBufferID);    
     getGl().glDrawElements(GL.GL_TRIANGLES, tess.lastFillIndex - tess.firstFillIndex + 1, GL.GL_UNSIGNED_INT, 
-                           tess.firstFillIndex * PGraphicsOpenGL.SIZEOF_INT);      
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);    
+                           tess.firstFillIndex * PGraphicsOpenGL.SIZEOF_INT);              
     
     if (tex != null) {
       getGl().glActiveTexture(GL.GL_TEXTURE0);
       getGl().glBindTexture(tex.glTarget, 0);
       getGl().glDisable(tex.glTarget);
     } 
+    
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     
     getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
     getGl().glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
@@ -1319,7 +1321,7 @@ public class PShape3D extends PShape {
   }
 
   protected void renderLines() {
-    ogl.lineShader.start();
+    PGraphicsOpenGL.lineShader.start();
     
     getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineNormalBufferID);
@@ -1335,9 +1337,9 @@ public class PShape3D extends PShape {
     
     int[] viewport = {0, 0, 0, 0};
     getGl().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-    ogl.lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
+    PGraphicsOpenGL.lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
             
-    int attribsID = ogl.lineShader.getAttribLocation("attribs");     
+    int attribsID = PGraphicsOpenGL.lineShader.getAttribLocation("attribs");     
     ogl.gl2x.glEnableVertexAttribArray(attribsID);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineAttribBufferID);      
     ogl.gl2x.glVertexAttribPointer(attribsID, 4, GL.GL_FLOAT, false, 0, 0);      
@@ -1345,19 +1347,21 @@ public class PShape3D extends PShape {
     getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glLineIndexBufferID);    
     getGl().glDrawElements(GL.GL_TRIANGLES, tess.lastLineIndex - tess.firstLineIndex + 1, GL.GL_UNSIGNED_INT, 
                            tess.firstLineIndex * PGraphicsOpenGL.SIZEOF_INT);
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
     
     ogl.gl2x.glDisableVertexAttribArray(attribsID);
+    
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
     getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
     getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
     getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
     
-    ogl.lineShader.stop();    
+    PGraphicsOpenGL.lineShader.stop();    
   }  
     
   protected void renderPoints() {
-    ogl.pointShader.start();
+    PGraphicsOpenGL.pointShader.start();
     
     getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointNormalBufferID);
@@ -1371,7 +1375,7 @@ public class PShape3D extends PShape {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointVertexBufferID);
     getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
             
-    int attribsID = ogl.pointShader.getAttribLocation("vertDisp");     
+    int attribsID = PGraphicsOpenGL.pointShader.getAttribLocation("vertDisp");     
     ogl.gl2x.glEnableVertexAttribArray(attribsID);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointAttribBufferID);      
     ogl.gl2x.glVertexAttribPointer(attribsID, 2, GL.GL_FLOAT, false, 0, 0);      
@@ -1379,15 +1383,17 @@ public class PShape3D extends PShape {
     getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);    
     getGl().glDrawElements(GL.GL_TRIANGLES, tess.lastPointIndex - tess.firstPointIndex + 1, GL.GL_UNSIGNED_INT, 
                            tess.firstPointIndex * PGraphicsOpenGL.SIZEOF_INT);
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
     
     ogl.gl2x.glDisableVertexAttribArray(attribsID);
+    
+    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
     getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
     getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
     getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
     
-    ogl.pointShader.stop();    
+    PGraphicsOpenGL.pointShader.stop();    
   }  
   
   

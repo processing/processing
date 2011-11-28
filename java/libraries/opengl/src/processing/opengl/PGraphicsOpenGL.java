@@ -227,9 +227,14 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected boolean matricesAllocated = false;
   
-  static protected boolean usingGLMatrixStack;
-  static protected GLMatrixStack modelviewStack;
-  static protected GLMatrixStack projectionStack;
+  /** Camera and model transformation (translate/rotate/scale) matrix stack **/
+  static protected GLMatrixStack modelviewStack;  
+  
+  /** Projection (ortho/perspective) matrix stack **/
+  static protected GLMatrixStack projectionStack; 
+  
+  /** Model transformation (translate/rotate/scale) matrix stack **/
+  static protected GLMatrixStack transformStack;
 
   // ........................................................
 
@@ -423,7 +428,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected float[] currentNormal = { 0, 0, 1 };
   protected float[] currentTexcoord = { 0, 0 };
   protected float[] currentStroke = { 0, 0, 0, 1, 1 };  
-  
+
+  protected boolean breakShape;  
   
   public static final int DEFAULT_TESS_VERTICES = 512;
   public static final int DEFAULT_TESS_INDICES = 1024;
@@ -1086,6 +1092,9 @@ public class PGraphicsOpenGL extends PGraphics {
       ogl.disableLights();
     }     
     
+    in.reset();
+    tess.reset();
+    
     // Each frame starts with textures disabled.
     noTexture();
         
@@ -1187,7 +1196,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void endDraw() {
     report("top endDraw()");
     
-    //flushTess();
+    flushTess();
     
     if (!drawing) {
       System.err.println("P3D: Cannot call endDraw() before beginDraw().");
@@ -1448,14 +1457,15 @@ public class PGraphicsOpenGL extends PGraphics {
       setFramebuffer(screenFramebuffer);
     }    
     
-    if (usingGLMatrixStack) {
-      if (modelviewStack == null) {
-        modelviewStack = new GLMatrixStack();
-      }
-      if (projectionStack == null) {
-        projectionStack = new GLMatrixStack();
-      }      
-    }     
+    if (modelviewStack == null) {
+      modelviewStack = new GLMatrixStack();
+    }
+    if (projectionStack == null) {
+      projectionStack = new GLMatrixStack();
+    }
+    if (transformStack == null) {
+      transformStack = new GLMatrixStack();
+    }      
     
     // easiest for beginners
     textureMode(IMAGE);
@@ -1529,6 +1539,10 @@ public class PGraphicsOpenGL extends PGraphics {
     in.reset();
   }
   
+  public void breakShape() {
+    breakShape = true;
+  }
+  
   public void vertex(float x, float y) {
     vertex(x, y, 0, 0, 0);
   }
@@ -1542,14 +1556,14 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   public void vertex(float x, float y, float z, float u, float v) {  
-    float[] mm = modelviewStack.current;
+    float[] mm = transformStack.current;
     
-    currentVertex[0] = x;
-    currentVertex[1] = y;
-    currentVertex[2] = z;    
-//    currentVertex[0] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
-//    currentVertex[1] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
-//    currentVertex[2] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
+//    currentVertex[0] = x;
+//    currentVertex[1] = y;
+//    currentVertex[2] = z;    
+    currentVertex[0] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
+    currentVertex[1] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
+    currentVertex[2] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
     
     boolean textured = textureImage != null;
     if (fill || textured) {
@@ -1573,12 +1587,12 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
-    currentNormal[0] = normalX;
-    currentNormal[1] = normalY;
-    currentNormal[2] = normalZ;    
-//    currentNormal[0] = normalX + mm[12];
-//    currentNormal[1] = normalY + mm[13];
-//    currentNormal[2] = normalZ + mm[14];    
+//    currentNormal[0] = normalX;
+//    currentNormal[1] = normalY;
+//    currentNormal[2] = normalZ;    
+    currentNormal[0] = normalX + mm[12];
+    currentNormal[1] = normalY + mm[13];
+    currentNormal[2] = normalZ + mm[14];    
     
     currentTexcoord[0] = u;
     currentTexcoord[1] = v;    
@@ -1596,8 +1610,16 @@ public class PGraphicsOpenGL extends PGraphics {
       currentStroke[3] = 0;
       currentStroke[4] = 0;      
     }
+    
+    int code;
+    if (breakShape) {
+      code = BREAK;
+      breakShape = false;
+    } else {
+      code = VERTEX;
+    }    
         
-    in.addVertex(currentVertex, currentColor, currentNormal, currentTexcoord, currentStroke, VERTEX);
+    in.addVertex(currentVertex, currentColor, currentNormal, currentTexcoord, currentStroke, code);
   }
   
   public void endShape(int mode) {
@@ -1621,10 +1643,8 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (shape == POLYGON) {
       tessellator.tessellatePolygon(false, mode == CLOSE);
     }
-    
-    
 
-    flushTess();
+    //flushTess();
   }
 
   protected void flushTess() {
@@ -1632,18 +1652,45 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean hasLines = 0 < tess.lineVertexCount && 0 < tess.lineIndexCount; 
     boolean hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;    
     
-    if (hasFill) { 
-      renderFill(textureImage);
+    if (hasFill || hasLines || hasPoints) {   
+      gl2f.glPushMatrix();
+      
+      // Note for my future self: Since this geometry already contains the
+      // geometric transformations that were applied at the moment of drawing,
+      // the current modelview should be reset to the camera state.
+      // In this way, the transformations can be stored in the matrix stack of
+      // the buffer but also being applied in order to affect other geometry
+      // that is not accumulated (PShape3D, for instance).      
+      
+      // we need to set the modelview matrix to the camera state
+      // to eliminate the transformations that are duplicated in GL's
+      // modelview and the vertices.
+      // In the finished code handling general scenarios, using the camera
+      // matrix might not be enough (maybe we need to save the current modelview
+      // matrix at the moment of applying the transformation to the vertices of 
+      // the buffer), not sure though.
+      // It is also worth noting that these calculations makes the accumulation
+      // method slower under certain scenarios (lots of geometry buffers sent per
+      // frame and lots of geometric tranformations)... This is to say that in the
+      // limit whe the accumulator doesn't actually accumulate because the buffer
+      // is sent at each beginShape/endShape call, then this additional modelview
+      // stack manipulation takes away around 10-12 fps       
+      gl2f.glLoadMatrixf(pcamera, 0);
+      
+      if (hasFill) { 
+        renderFill(textureImage);
+      }
+      
+      if (hasLines) {
+        renderLines();    
+      }    
+      
+      if (hasPoints) {
+        renderPoints();
+      }    
+      
+      gl2f.glPopMatrix();
     }
-    
-    if (hasLines) {
-      renderLines();    
-    }    
-    
-    if (hasPoints) {
-      renderPoints();
-    }    
-    
     
     tess.reset();
   }
@@ -2544,30 +2591,20 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // MATRIX STACK
 
+  
   public void pushMatrix() {
-//    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
-//      geoBuffer.stack.push();
-//      if (!UPDATE_GL_MATRIX_STACK) return;
-//    }    
-    
     gl2f.glPushMatrix();  
-    if (usingGLMatrixStack) {
-      modelviewStack.push();
-    }        
+    modelviewStack.push();
+    transformStack.push();
   }
 
   
   public void popMatrix() {
-//    if (USE_GEO_BUFFER && GEO_BUFFER_ACCUM_ALL && UPDATE_GEO_BUFFER_MATRIX_STACK) {
-//      geoBuffer.stack.pop();
-//      if (!UPDATE_GL_MATRIX_STACK) return;
-//    }    
-        
     gl2f.glPopMatrix();
-    if (usingGLMatrixStack) {
-      modelviewStack.pop(); 
-    }    
+    modelviewStack.pop();
+    transformStack.pop();
   }
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -2579,10 +2616,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void translate(float tx, float ty, float tz) {
     gl2f.glTranslatef(tx, ty, tz);
-    if (usingGLMatrixStack) {
-      modelviewStack.translate(tx, ty, tz); 
-      modelviewUpdated = false;
-    }    
+    modelviewStack.translate(tx, ty, tz);
+    transformStack.translate(tx, ty, tz);
+    modelviewUpdated = false;
   }
 
   /**
@@ -2613,10 +2649,9 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public void rotate(float angle, float v0, float v1, float v2) {
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
-    if (usingGLMatrixStack) {
-      modelviewStack.rotate(angle, v0, v1, v2); 
-      modelviewUpdated = false;
-    }    
+    modelviewStack.rotate(angle, v0, v1, v2);
+    transformStack.rotate(angle, v0, v1, v2);
+    modelviewUpdated = false;
   }
 
   /**
@@ -2641,10 +2676,9 @@ public class PGraphicsOpenGL extends PGraphics {
       scalingDuringCamManip = true;
     }
     gl2f.glScalef(sx, sy, sz);
-    if (usingGLMatrixStack) {
-      modelviewStack.scale(sx, sy, sz); 
-      modelviewUpdated = false;
-    }    
+    modelviewStack.scale(sx, sy, sz);
+    transformStack.scale(sx, sy, sz);
+    modelviewUpdated = false;
   }
 
   public void shearX(float angle) {
@@ -2663,12 +2697,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
     
   public void resetMatrix() {
-    gl2f.glLoadIdentity();
-    
-    if (usingGLMatrixStack) {
-      modelviewStack.setIdentity(); 
-      modelviewUpdated = false;
-    }      
+    gl2f.glLoadIdentity();    
+    modelviewStack.setIdentity();
+    transformStack.setIdentity();
+    modelviewUpdated = false;
   }
 
   public void applyMatrix(PMatrix2D source) {
@@ -2723,10 +2755,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
     gl2f.glMultMatrixf(gltemp, 0);
 
-    if (usingGLMatrixStack) {
-      modelviewStack.mult(gltemp);
-      modelviewUpdated = false;   
-    }
+    modelviewStack.mult(gltemp);
+    transformStack.mult(gltemp);
+    modelviewUpdated = false;   
     
     // TODO: add inverse calculation!
   }
@@ -2743,9 +2774,8 @@ public class PGraphicsOpenGL extends PGraphics {
       copyPMatrixToGLArray(modelviewInv, glmodelviewInv);
     }
     gl2f.glLoadMatrixf(glmodelview, 0);
-    if (usingGLMatrixStack) {
-      modelviewStack.set(glmodelview);
-    }
+    modelviewStack.set(glmodelview);
+    transformStack.set(glmodelview);
     modelviewUpdated = true;
   }
 
@@ -2756,9 +2786,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     copyPMatrixToGLArray(camera, glmodelview);
     gl2f.glLoadMatrixf(glmodelview, 0);
-    if (usingGLMatrixStack) {
-      modelviewStack.set(glmodelview);
-    }
+    modelviewStack.set(glmodelview);    
     scalingDuringCamManip = true; // Assuming general transformation.
     modelviewUpdated = true;
   }
@@ -2895,11 +2923,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // PROJECTION
   
   protected void getProjectionMatrix() {
-    if (usingGLMatrixStack) {
-      projectionStack.get(glprojection);
-    } else {
-      gl2f.glGetFloatv(GL2.GL_PROJECTION_MATRIX, glprojection, 0);
-    }
+    projectionStack.get(glprojection);
     copyGLArrayToPMatrix(glprojection, projection);
     projectionUpdated = true;
   }
@@ -2909,9 +2933,7 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glLoadMatrixf(glprojection, 0);
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    if (usingGLMatrixStack) {
-      projectionStack.set(glprojection);
-    }
+    projectionStack.set(glprojection);
     projectionUpdated = true;
   }
   
@@ -2922,9 +2944,7 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glLoadMatrixf(glprojection, 0);
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    if (usingGLMatrixStack) {
-      projectionStack.set(glprojection);
-    }
+    projectionStack.set(glprojection);
     projectionUpdated = true;    
   }
   
@@ -3027,11 +3047,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   protected void getModelviewMatrix() {
-    if (usingGLMatrixStack) {
-      modelviewStack.get(glmodelview);
-    } else {
-      gl2f.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, glmodelview, 0);
-    }
+    modelviewStack.get(glmodelview);
     copyGLArrayToPMatrix(glmodelview, modelview);
     modelviewUpdated = true;
   }
@@ -3318,9 +3334,8 @@ public class PGraphicsOpenGL extends PGraphics {
   
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     gl2f.glLoadMatrixf(glmodelview, 0);
-    if (usingGLMatrixStack) {
-      modelviewStack.set(glmodelview);
-    }
+    modelviewStack.set(glmodelview);
+    transformStack.setIdentity();
     copyGLArrayToPMatrix(glmodelview, modelview);
     modelviewUpdated = true;
 
@@ -3340,9 +3355,8 @@ public class PGraphicsOpenGL extends PGraphics {
     
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     gl2f.glLoadMatrixf(glmodelview, 0);
-    if (usingGLMatrixStack) {
-      modelviewStack.set(glmodelview);
-    }
+    modelviewStack.set(glmodelview);
+    transformStack.setIdentity();
     copyGLArrayToPMatrix(glmodelview, modelview);
     modelviewUpdated = true;    
   }
@@ -5635,9 +5649,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     blendEqSupported = true;   
     
-    //usingGLMatrixStack = !matrixGetSupported;
-    usingGLMatrixStack = true;
-    
     int temp[] = new int[2];    
           
     gl.glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, temp, 0);
@@ -7063,21 +7074,22 @@ public class PGraphicsOpenGL extends PGraphics {
       // of this polygon are stroked.      
       int lineCount = 0;
       int lnCount = inGeo.lastVertex - inGeo.firstVertex + 1;
-      int offset = tessGeo.firstFillVertex; 
+      //int offset = tessGeo.firstFillVertex;
+      int first = inGeo.firstVertex;
       if (!closed) {
         lnCount--;
       }
-      int contour0 = 0;
+      int contour0 = first;
       for (int ln = 0; ln < lnCount; ln++) {
-        int i0 = offset + ln;
-        int i1 = offset + ln + 1;
+        int i0 = first + ln;
+        int i1 = first + ln + 1;
         if (inGeo.codes[i0] == PShape.BREAK) {
           contour0 = i0;
         }
         if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {
-          // Make line with the first vertex of the current contour.
+          // Draw line with the first vertex of the current contour.
           i0 = contour0;
-          i1 = offset + ln;
+          i1 = first + ln;
         }
         
         if (inGeo.codes[i1] != PShape.BREAK &&
@@ -7100,17 +7112,17 @@ public class PGraphicsOpenGL extends PGraphics {
         
         int vcount = tessGeo.firstLineVertex;
         int icount = tessGeo.firstLineIndex;
-        contour0 = 0;
+        contour0 = first;
         for (int ln = 0; ln < lnCount; ln++) {
-          int i0 = offset + ln;
-          int i1 = offset + ln + 1;
+          int i0 = first + ln;
+          int i1 = first + ln + 1;
           if (inGeo.codes[i0] == PShape.BREAK) {
             contour0 = i0;
           }
           if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {
-            // Make line with the first vertex of the current contour.
+            // Draw line with the first vertex of the current contour.
             i0 = contour0;
-            i1 = offset + ln;
+            i1 = first + ln;
           }
           
           if (inGeo.codes[i1] != PShape.BREAK &&
