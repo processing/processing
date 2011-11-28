@@ -2276,7 +2276,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void beginShape(int kind) {  
     shape = kind;
-
+    
     in.reset();
     
 //    if (hints[ENABLE_DEPTH_SORT]) {
@@ -2765,6 +2765,10 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
     gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);  
     
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
+    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);    
+    
     int[] viewport = {0, 0, 0, 0};
     gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
     lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
@@ -2805,6 +2809,10 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
     gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);  
         
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
+    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);    
+    
     int attribsID = pointShader.getAttribLocation("vertDisp");     
     gl2x.glEnableVertexAttribArray(attribsID);
     gl2x.glVertexAttribPointer(attribsID, 2, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.pointAttributes));
