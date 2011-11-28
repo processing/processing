@@ -13577,9 +13577,9 @@ public class PApplet extends Applet
   }
 
 
-  public void screenBlend(int mode) {
-    if (recorder != null) recorder.screenBlend(mode);
-    g.screenBlend(mode);
+  public void blendMode(int mode) {
+    if (recorder != null) recorder.blendMode(mode);
+    g.blendMode(mode);
   }
 
 
