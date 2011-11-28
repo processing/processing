@@ -430,54 +430,6 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public Tessellator tessellator;
   
-  static protected String lineShaderVert = 
-    "attribute vec4 attribs;\n" +   
-    "uniform vec4 viewport;\n" +
-    "vec3 clipToWindow(vec4 clip, vec4 viewport) {\n" +
-    "  vec3 post_div = clip.xyz / clip.w;\n" +
-    "  vec2 xypos = (post_div.xy + vec2(1.0, 1.0)) * 0.5 * viewport.zw;\n" +
-    "  return vec3(xypos, post_div.z * 0.5 + 0.5);\n" +
-    "}\n" +
-    "void main() {\n" +
-    "  vec4 pos_p = gl_Vertex;\n" +
-    "  vec4 pos_q = vec4(attribs.xyz, 1);\n" +  
-    "  vec4 v_p = gl_ModelViewMatrix * pos_p;\n" +
-    "  v_p.xyz = v_p.xyz * 0.99;\n" +   
-    "  vec4 clip_p = gl_ProjectionMatrix * v_p;\n" + 
-    "  vec4 v_q = gl_ModelViewMatrix * pos_q;\n" +
-    "  v_q.xyz = v_q.xyz * 0.99;\n" +   
-    "  vec4 clip_q = gl_ProjectionMatrix * v_q;\n" + 
-    "  vec3 window_p = clipToWindow(clip_p, viewport);\n" + 
-    "  vec3 window_q = clipToWindow(clip_q, viewport);\n" + 
-    "  vec3 tangent = window_q - window_p;\n" +
-    "  float segment_length = length(tangent.xy);\n" +  
-    "  vec2 perp = normalize(vec2(-tangent.y, tangent.x));\n" +
-    "  float thickness = attribs.w;\n" +
-    "  vec2 window_offset = perp * thickness;\n" +
-    "  gl_Position.xy = clip_p.xy + window_offset.xy;\n" +
-    "  gl_Position.zw = clip_p.zw;\n" +
-    "  gl_FrontColor = gl_Color;\n" +
-    "}";
-  
-  static protected String lineShaderFrag =
-    "void main() {\n" +  
-    " gl_FragColor = gl_Color;\n" +
-    "}";
-  
-  static protected String pointShaderVert = 
-    "attribute vec2 vertDisp;\n" + 
-    "void main() {\n" +
-    "  vec4 pos = gl_ModelViewMatrix * gl_Vertex;\n" +
-    "  pos.xy += vertDisp.xy;\n" +
-    "  gl_Position = gl_ProjectionMatrix * pos;\n" +  
-    "  gl_FrontColor = gl_Color;\n" +
-    "}";
-
-  static protected String pointShaderFrag =
-    "void main() {\n" +  
-    " gl_FragColor = gl_Color;\n" +
-    "}";
-  
   static protected PShader lineShader;
   static protected PShader pointShader;
   
@@ -1108,16 +1060,16 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     if (lineShader == null) {
-      lineShader = new PShader(parent);
-      lineShader.loadVertexShaderSource(lineShaderVert);
-      lineShader.loadFragmentShaderSource(lineShaderFrag);
+      lineShader = new PShader(parent);      
+      lineShader.loadVertexShader(PGraphicsOpenGL.class.getResource("LineShaderVert.glsl"));
+      lineShader.loadFragmentShader(PGraphicsOpenGL.class.getResource("LineShaderFrag.glsl"));
       lineShader.setup();
     }
 
     if (pointShader == null) {
       pointShader = new PShader(parent);
-      pointShader.loadVertexShaderSource(pointShaderVert);
-      pointShader.loadFragmentShaderSource(pointShaderFrag);
+      pointShader.loadVertexShader(PGraphicsOpenGL.class.getResource("PointShaderVert.glsl"));
+      pointShader.loadFragmentShader(PGraphicsOpenGL.class.getResource("PointShaderFrag.glsl"));
       pointShader.setup();
     }    
     
