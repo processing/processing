@@ -204,6 +204,18 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected float[] pprojection;
   
+  /** Model transformation (translate/rotate/scale) matrix
+   * This relationship hold:
+   *  
+   * modelviewStack.current = pcamera * transform
+   * 
+   * or:
+   * 
+   * transform = pcameraInv * modelviewStack.current
+   * 
+   */  
+  protected float[] transform;
+  
   protected float[] gltemp;
   
   // PMatrix3D version for use in Processing.
@@ -230,14 +242,6 @@ public class PGraphicsOpenGL extends PGraphics {
   
   /** Projection (ortho/perspective) matrix stack **/
   static protected GLMatrixStack projectionStack; 
-  
-  /** Model transformation (translate/rotate/scale) matrix stack
-   * This relationship hold:
-   *  
-   * modelviewStack.current = pcamera * transformStack.current   
-   * 
-   */
-  static protected GLMatrixStack transformStack;
 
   // ........................................................
 
@@ -516,6 +520,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pcamera = new float[16];
       pcameraInv = new float[16];
       pprojection = new float[16];
+      transform = new float[16];
       gltemp = new float[16];
       
       projection = new PMatrix3D();
@@ -1474,9 +1479,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (projectionStack == null) {
       projectionStack = new GLMatrixStack();
     }
-    if (transformStack == null) {
-      transformStack = new GLMatrixStack();
-    }      
     
     // easiest for beginners
     textureMode(IMAGE);
@@ -1626,6 +1628,10 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setInGeometry(in);
     tessellator.setTessGeometry(tess);
 
+    if (flushMode == FLUSH_WHEN_FULL) {
+      getTransformMatrix();      
+    }
+    
     if (shape == POINTS) {
       tessellator.tessellatePoints(strokeCap);    
     } else if (shape == LINES) {
@@ -2594,14 +2600,12 @@ public class PGraphicsOpenGL extends PGraphics {
   public void pushMatrix() {
     gl2f.glPushMatrix();  
     modelviewStack.push();
-    transformStack.push();
   }
 
   
   public void popMatrix() {
     gl2f.glPopMatrix();
     modelviewStack.pop();
-    transformStack.pop();
   }
   
   
@@ -2620,7 +2624,6 @@ public class PGraphicsOpenGL extends PGraphics {
     
     gl2f.glTranslatef(tx, ty, tz);
     modelviewStack.translate(tx, ty, tz);
-    transformStack.translate(tx, ty, tz);
     modelviewUpdated = false;
   }
 
@@ -2657,7 +2660,6 @@ public class PGraphicsOpenGL extends PGraphics {
     
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     modelviewStack.rotate(angle, v0, v1, v2);
-    transformStack.rotate(angle, v0, v1, v2);
     modelviewUpdated = false;
   }
 
@@ -2688,7 +2690,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     gl2f.glScalef(sx, sy, sz);
     modelviewStack.scale(sx, sy, sz);
-    transformStack.scale(sx, sy, sz);
     modelviewUpdated = false;
   }
 
@@ -2716,7 +2717,6 @@ public class PGraphicsOpenGL extends PGraphics {
   public void resetMatrix() {
     gl2f.glLoadIdentity();    
     modelviewStack.setIdentity();
-    transformStack.setIdentity();
     modelviewUpdated = false;
   }
 
@@ -2776,7 +2776,6 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glMultMatrixf(gltemp, 0);
 
     modelviewStack.mult(gltemp);
-    transformStack.mult(gltemp);
     modelviewUpdated = false;   
   }
 
@@ -2793,12 +2792,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     gl2f.glLoadMatrixf(glmodelview, 0);
     modelviewStack.set(glmodelview);
-
-    // Since modelview = camera * transform, we then
-    // transform = camera_inv * modelview 
-    transformStack.set(pcameraInv);
-    transformStack.mult(glmodelview);
-    
     modelviewUpdated = true;
   }
 
@@ -3045,11 +3038,6 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glLoadMatrixf(glmodelview, 0);
     modelviewStack.set(glmodelview);    
     
-    // While we modify the camera, the transformations are still not
-    // stored in the cametera matrices, so we need them in the 
-    // transform stack.
-    transformStack.set(glmodelview);
-    
     scalingDuringCamManip = true; // Assuming general transformation.
     modelviewUpdated = false;
   }  
@@ -3085,10 +3073,6 @@ public class PGraphicsOpenGL extends PGraphics {
     copyGLArrayToPMatrix(pcamera, camera);
     copyGLArrayToPMatrix(pcameraInv, cameraInv);
 
-    // All camera transformations are already set in the
-    // modelview stack and camera matrices.
-    transformStack.setIdentity();
-    
     // all done
     manipulatingCamera = false;
     scalingDuringCamManip = false;
@@ -3100,6 +3084,33 @@ public class PGraphicsOpenGL extends PGraphics {
     modelviewUpdated = true;
   }
 
+  protected void getTransformMatrix() {
+    // transform = pcameraInv * modelviewStack.current
+    float[] mv = modelviewStack.current;
+    float[] ic = pcameraInv;
+    float[] tr = transform;
+    
+    tr[ 0] = ic[0] * mv[ 0] + ic[4] * mv[ 1] + ic[ 8] * mv[ 2] + ic[12] * mv[ 3];
+    tr[ 4] = ic[0] * mv[ 4] + ic[4] * mv[ 5] + ic[ 8] * mv[ 6] + ic[12] * mv[ 7];
+    tr[ 8] = ic[0] * mv[ 8] + ic[4] * mv[ 9] + ic[ 8] * mv[10] + ic[12] * mv[11];
+    tr[12] = ic[0] * mv[12] + ic[4] * mv[13] + ic[ 8] * mv[14] + ic[12] * mv[15];
+
+    tr[ 1] = ic[1] * mv[ 0] + ic[5] * mv[ 1] + ic[ 9] * mv[ 2] + ic[13] * mv[ 3];
+    tr[ 5] = ic[1] * mv[ 4] + ic[5] * mv[ 5] + ic[ 9] * mv[ 6] + ic[13] * mv[ 7];
+    tr[ 9] = ic[1] * mv[ 8] + ic[5] * mv[ 9] + ic[ 9] * mv[10] + ic[13] * mv[11];
+    tr[13] = ic[1] * mv[12] + ic[5] * mv[13] + ic[ 9] * mv[14] + ic[13] * mv[15];
+
+    tr[ 2] = ic[2] * mv[ 0] + ic[6] * mv[ 1] + ic[10] * mv[ 2] + ic[14] * mv[ 3];
+    tr[ 6] = ic[2] * mv[ 4] + ic[6] * mv[ 5] + ic[10] * mv[ 6] + ic[14] * mv[ 7];
+    tr[10] = ic[2] * mv[ 8] + ic[6] * mv[ 9] + ic[10] * mv[10] + ic[14] * mv[11];
+    tr[14] = ic[2] * mv[12] + ic[6] * mv[13] + ic[10] * mv[14] + ic[14] * mv[15];
+
+    tr[ 3] = ic[3] * mv[ 0] + ic[7] * mv[ 1] + ic[11] * mv[ 2] + ic[15] * mv[ 3];
+    tr[ 7] = ic[3] * mv[ 4] + ic[7] * mv[ 5] + ic[11] * mv[ 6] + ic[15] * mv[ 7];
+    tr[11] = ic[3] * mv[ 8] + ic[7] * mv[ 9] + ic[11] * mv[10] + ic[15] * mv[11];
+    tr[15] = ic[3] * mv[12] + ic[7] * mv[13] + ic[11] * mv[14] + ic[15] * mv[15];
+  }  
+  
   // Calculates the inverse of the modelview matrix.
   // From Matrix4<Real> Matrix4<Real>::Inverse in 
   // http://www.geometrictools.com/LibMathematics/Algebra/Wm5Matrix4.inl
@@ -3383,7 +3394,6 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     gl2f.glLoadMatrixf(glmodelview, 0);
     modelviewStack.set(glmodelview);
-    transformStack.setIdentity();
     copyGLArrayToPMatrix(glmodelview, modelview);
     modelviewUpdated = true;
 
@@ -3404,7 +3414,6 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     gl2f.glLoadMatrixf(glmodelview, 0);
     modelviewStack.set(glmodelview);
-    transformStack.setIdentity();
     copyGLArrayToPMatrix(glmodelview, modelview);
     modelviewUpdated = true;    
   }
@@ -6506,7 +6515,7 @@ public class PGraphicsOpenGL extends PGraphics {
       fillVertexCheck();
       
       if (flushMode == FLUSH_WHEN_FULL) {
-        float[] mm = transformStack.current;
+        float[] mm = transform;
         
         fillVertices[3 * fillVertexCount + 0] = x * mm[0] + y * mm[4] + z * mm[ 8] + mm[12];
         fillVertices[3 * fillVertexCount + 1] = x * mm[1] + y * mm[5] + z * mm[ 9] + mm[13];
@@ -6542,7 +6551,7 @@ public class PGraphicsOpenGL extends PGraphics {
       addFillVertices(nvert);
       
       if (flushMode == FLUSH_WHEN_FULL) {
-        float[] mm = transformStack.current;
+        float[] mm = transform;
         for (int i = 0; i < nvert; i++) {
           int inIdx = i0 + i;
           int tessIdx = firstFillVertex + i;
@@ -6574,7 +6583,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx) {
       if (flushMode == FLUSH_WHEN_FULL) {
-        float[] mm = transformStack.current;
+        float[] mm = transform;
         
         float x0 = in.vertices[3 * inIdx0 + 0];
         float y0 = in.vertices[3 * inIdx0 + 1];
@@ -6610,7 +6619,7 @@ public class PGraphicsOpenGL extends PGraphics {
         
     public void putPointVertex(InGeometry in, int inIdx, int tessIdx) {
       if (flushMode == FLUSH_WHEN_FULL) {
-        float[] mm = transformStack.current;
+        float[] mm = transform;
         
         float x = in.vertices[3 * inIdx + 0];
         float y = in.vertices[3 * inIdx + 1];
