@@ -32,19 +32,13 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
-import processing.core.PVector;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
-import java.io.BufferedReader;
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -54,6 +48,12 @@ import java.io.BufferedReader;
  * and OBJReader from Ahmet Kizilay (http://www.openprocessing.org/visuals/?visualID=191). 
  * By Andres Colubri
  * 
+ * 
+ * Other formats to consider:
+ * AMF: http://en.wikipedia.org/wiki/Additive_Manufacturing_File_Format
+ * STL: http://en.wikipedia.org/wiki/STL_(file_format)
+ * OFF: http://en.wikipedia.org/wiki/STL_(file_format)
+ * DXF: http://en.wikipedia.org/wiki/AutoCAD_DXF
  */
 
 public class PShape3D extends PShape {
