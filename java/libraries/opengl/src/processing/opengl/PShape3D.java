@@ -183,7 +183,7 @@ public class PShape3D extends PShape {
     this.parent = null;
     this.modified = false;
     
-    tess = ogl.newTessGeometry();
+    tess = ogl.newTessGeometry(RETAINED);    
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
       in = ogl.newInGeometry();      
       
