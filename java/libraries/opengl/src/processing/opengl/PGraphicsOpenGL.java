@@ -68,22 +68,22 @@ public class PGraphicsOpenGL extends PGraphics {
   // JOGL2 objects:
   
   /** 
-   * How the OPENGL2 renderer handles the different OpenGL profiles? Basically,
-   * OPENGL2 has two pipeline modes: fixed or programmable. In the fixed mode,
+   * How the P3D renderer handles the different OpenGL profiles? Basically,
+   * P3D has two pipeline modes: fixed or programmable. In the fixed mode,
    * only the gl and gl2f objects are available. The gl2f object contains the 
    * intersection between OpenGL 2.x desktop and OpenGL 1.1 embedded, and in this
-   * way it ensures the functionality parity between the OPENGL2 render (PC/MAC)
+   * way it ensures the functionality parity between the P3D render (PC/MAC)
    * and A3D (Android) in the fixed pipeline mode.
    * In the programmable mode, there further options: GL2, GL3 and GL4. 
    * GL2 corresponds to the basic programmable profile that results from the common 
    * functionality between OpenGL 3.0 desktop and OpenGL 2.0 embedded. As said just 
-   * before, since OPENGL2 and A3D aim at feature parity as much as possible, this is
-   * the only programmable-pipeline GL object that the OPENGL2 renderer uses.
+   * before, since P3D and A3D aim at feature parity as much as possible, this is
+   * the only programmable-pipeline GL object that the P3D renderer uses.
    * The gl3 and gl4 objects will be available when the pipeline mode is PROG_GL3 or
-   * PROG_GL4, respectively. Although OPENGL2 doens't make any use of these objects,
+   * PROG_GL4, respectively. Although P3D doens't make any use of these objects,
    * they are part of the API nonetheless for users (or libraries) requiring advanced 
    * functionality introduced with OpenGL 3 or OpenGL 4.
-   * By default, OPENGL2 tries to auto-select the pipeline mode by with the following 
+   * By default, P3D tries to auto-select the pipeline mode by with the following 
    * priority order: PROG_GL4, PROG_GL3, PROG_GL2, FIXED. In all the programmable modes, 
    * the gl2p object is always available. This auto-selection can be optionally
    * overridden when creating the renderer object, so that a specific mode is set. 
@@ -223,8 +223,6 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean modelviewUpdated;
   protected boolean projectionUpdated;
 
-  //protected int matrixMode = MODELVIEW;
-  
   protected boolean matricesAllocated = false;
   
   /** Camera and model transformation (translate/rotate/scale) matrix stack **/
@@ -233,7 +231,12 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Projection (ortho/perspective) matrix stack **/
   static protected GLMatrixStack projectionStack; 
   
-  /** Model transformation (translate/rotate/scale) matrix stack **/
+  /** Model transformation (translate/rotate/scale) matrix stack
+   * This relationship hold:
+   *  
+   * modelviewStack.current = pcamera * transformStack.current   
+   * 
+   */
   static protected GLMatrixStack transformStack;
 
   // ........................................................
@@ -431,9 +434,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected boolean breakShape;  
   
-//  public static int flushMode = FLUSH_WHEN_FULL;
+  public static int flushMode = FLUSH_WHEN_FULL;
 //  public static int flushMode = FLUSH_END_SHAPE;
-  public static int flushMode = FLUSH_AFTER_TRANSFORMATION;
+//  public static int flushMode = FLUSH_AFTER_TRANSFORMATION;
   
   public static final int MAXIMUM_TESS_VERTICES = 1000000;
  
@@ -938,7 +941,7 @@ public class PGraphicsOpenGL extends PGraphics {
       currentFramebuffer = fbStack.pop();
       currentFramebuffer.bind();
     } catch (EmptyStackException e) {
-      PGraphics.showWarning("OPENGL2: Empty framebuffer stack");
+      PGraphics.showWarning(": Empty framebuffer stack");
     }
   }
   
@@ -1177,7 +1180,7 @@ public class PGraphicsOpenGL extends PGraphics {
     normalX = normalY = normalZ = 0;
     
     if (primarySurface) {
-      // This instance of PGraphicsOpenGL2 is the primary (onscreen) drawing surface.    
+      // This instance of PGraphicsOpenGL is the primary (onscreen) drawing surface.    
       // Nothing else needs setup here.      
     } else {
       pushFramebuffer();
@@ -1486,10 +1489,6 @@ public class PGraphicsOpenGL extends PGraphics {
   // HINTS
 
   public void hint(int which) {
-    // make note of whether these are set, if they are,
-    // then will prevent the new renderer exception from being thrown.
-//    boolean opengl2X = !hints[DISABLE_OPENGL_2X_SMOOTH];
-//    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];
     super.hint(which);    
 
     if (which == DISABLE_DEPTH_TEST) {
@@ -1539,29 +1538,22 @@ public class PGraphicsOpenGL extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // VERTEX SHAPES
-  
 
-  public void beginShape(int kind) {  
-    shape = kind;
-    
-    in.reset();
-  }
-  
-  public void breakShape() {
-    breakShape = true;
-  }
   
   public void vertex(float x, float y) {
     vertex(x, y, 0, 0, 0);
   }
 
+  
   public void vertex(float x, float y, float u, float v) {
     vertex(x, y, 0, u, v); 
   }    
   
+  
   public void vertex(float x, float y, float z) {
     vertex(x, y, z, 0, 0);      
   }  
+  
   
   public void vertex(float x, float y, float z, float u, float v) {  
     currentVertex[0] = x;
@@ -1622,6 +1614,14 @@ public class PGraphicsOpenGL extends PGraphics {
     in.addVertex(currentVertex, currentColor, currentNormal, currentTexcoord, currentStroke, code);
   }
   
+  
+  public void beginShape(int kind) {  
+    shape = kind;
+ 
+    in.reset();
+  }
+    
+  
   public void endShape(int mode) {
     tessellator.setInGeometry(in);
     tessellator.setTessGeometry(tess);
@@ -1649,6 +1649,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+
+  public void breakShape() {
+    breakShape = true;
+  }  
+  
+  
   //////////////////////////////////////////////////////////////
 
   // RENDERING
@@ -1656,6 +1662,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // protected void render()
 
   // protected void sort()  
+  
   
   public void flush() {
     boolean hasFill = 0 < tess.fillVertexCount && 0 < tess.fillIndexCount;
@@ -1668,23 +1675,22 @@ public class PGraphicsOpenGL extends PGraphics {
         gl2f.glPushMatrix();
    
         // The geometric transformations have been applied already to the 
-        // tessellated geometry, so we reset the modelview matrix to be
-        // camera to avoid applying the model transformations twice.
+        // tessellated geometry, so we reset the modelview matrix to the
+        // camera stage to avoid applying the model transformations twice.
         gl2f.glLoadMatrixf(pcamera, 0);
       }
       
-      
-      if (hasFill) { 
-        renderFill(textureImage);
-      }
-      
+      if (hasPoints) {
+        renderPoints();
+      } 
+
       if (hasLines) {
         renderLines();    
       }    
-      
-      if (hasPoints) {
-        renderPoints();
-      }    
+            
+      if (hasFill) { 
+        renderFill(textureImage);
+      }
       
       if (flushMode == FLUSH_WHEN_FULL) {
         gl2f.glPopMatrix();
@@ -1693,6 +1699,93 @@ public class PGraphicsOpenGL extends PGraphics {
     
     tess.reset();
   }
+  
+
+  protected void renderPoints() {
+    checkVertexBuffers(tess.pointVertexCount);
+    
+    pointShader.start();
+    
+    vertexBuffer.rewind();
+    vertexBuffer.put(tess.pointVertices, 0, 3 * tess.pointVertexCount);    
+    vertexBuffer.position(0);
+    
+    colorBuffer.rewind();
+    colorBuffer.put(tess.pointColors, 0, 4 * tess.pointVertexCount);
+    colorBuffer.position(0);
+    
+    normalBuffer.rewind();
+    normalBuffer.put(tess.pointNormals, 0, 3 * tess.pointVertexCount);
+    normalBuffer.position(0);
+    
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);  
+        
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
+    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);    
+    
+    int attribsID = pointShader.getAttribLocation("vertDisp");     
+    gl2x.glEnableVertexAttribArray(attribsID);
+    gl2x.glVertexAttribPointer(attribsID, 2, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.pointAttributes));
+    
+    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.pointIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.pointIndices));
+    
+    gl2x.glDisableVertexAttribArray(attribsID);
+    
+    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    
+    pointShader.stop();      
+  }  
+  
+
+  protected void renderLines() {
+    checkVertexBuffers(tess.lineVertexCount);
+    
+    lineShader.start();
+    
+    vertexBuffer.rewind();
+    vertexBuffer.put(tess.lineVertices, 0, 3 * tess.lineVertexCount);    
+    vertexBuffer.position(0);
+    
+    colorBuffer.rewind();
+    colorBuffer.put(tess.lineColors, 0, 4 * tess.lineVertexCount);
+    colorBuffer.position(0);
+    
+    normalBuffer.rewind();
+    normalBuffer.put(tess.lineNormals, 0, 3 * tess.lineVertexCount);
+    normalBuffer.position(0);
+
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);  
+    
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
+    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);    
+    
+    int[] viewport = {0, 0, 0, 0};
+    gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+    lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
+            
+    int attribsID = lineShader.getAttribLocation("attribs");     
+    gl2x.glEnableVertexAttribArray(attribsID);
+    gl2x.glVertexAttribPointer(attribsID, 4, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.lineAttributes));
+    
+    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.lineIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.lineIndices));
+    
+    gl2x.glDisableVertexAttribArray(attribsID);
+    
+    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);  
+    
+    lineShader.stop();
+  }
+
   
   protected void renderFill(PImage textureImage) {
     checkVertexBuffers(tess.fillVertexCount);
@@ -1758,91 +1851,7 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
     gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);  
   }
-
   
-  protected void renderLines() {
-    checkVertexBuffers(tess.lineVertexCount);
-    
-    lineShader.start();
-    
-    vertexBuffer.rewind();
-    vertexBuffer.put(tess.lineVertices, 0, 3 * tess.lineVertexCount);    
-    vertexBuffer.position(0);
-    
-    colorBuffer.rewind();
-    colorBuffer.put(tess.lineColors, 0, 4 * tess.lineVertexCount);
-    colorBuffer.position(0);
-    
-    normalBuffer.rewind();
-    normalBuffer.put(tess.lineNormals, 0, 3 * tess.lineVertexCount);
-    normalBuffer.position(0);
-
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
-    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);  
-    
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
-    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);    
-    
-    int[] viewport = {0, 0, 0, 0};
-    gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-    lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
-            
-    int attribsID = lineShader.getAttribLocation("attribs");     
-    gl2x.glEnableVertexAttribArray(attribsID);
-    gl2x.glVertexAttribPointer(attribsID, 4, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.lineAttributes));
-    
-    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.lineIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.lineIndices));
-    
-    gl2x.glDisableVertexAttribArray(attribsID);
-    
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
-    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);  
-    
-    lineShader.stop();
-  }
-
-  protected void renderPoints() {
-    checkVertexBuffers(tess.pointVertexCount);
-    
-    pointShader.start();
-    
-    vertexBuffer.rewind();
-    vertexBuffer.put(tess.pointVertices, 0, 3 * tess.pointVertexCount);    
-    vertexBuffer.position(0);
-    
-    colorBuffer.rewind();
-    colorBuffer.put(tess.pointColors, 0, 4 * tess.pointVertexCount);
-    colorBuffer.position(0);
-    
-    normalBuffer.rewind();
-    normalBuffer.put(tess.pointNormals, 0, 3 * tess.pointVertexCount);
-    normalBuffer.position(0);
-    
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
-    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);  
-        
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
-    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);    
-    
-    int attribsID = pointShader.getAttribLocation("vertDisp");     
-    gl2x.glEnableVertexAttribArray(attribsID);
-    gl2x.glVertexAttribPointer(attribsID, 2, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.pointAttributes));
-    
-    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.pointIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.pointIndices));
-    
-    gl2x.glDisableVertexAttribArray(attribsID);
-    
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
-    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-    
-    pointShader.stop();      
-  }  
   
   protected void checkVertexBuffers(int n) {
     if (vertexBuffer.capacity() / 3 < n) {    
@@ -1863,6 +1872,7 @@ public class PGraphicsOpenGL extends PGraphics {
       texcoordBuffer = tbb.asFloatBuffer();     
     }
   }  
+  
   
   protected void checkIndexBuffers(int n) {
     if (indexBuffer.capacity() < n) {
@@ -2684,12 +2694,18 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void shearX(float angle) {
     float t = (float) Math.tan(angle);
-    applyMatrix(1, t, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    applyMatrix(1, t, 0, 0, 
+                0, 1, 0, 0, 
+                0, 0, 1, 0, 
+                0, 0, 0, 1);
   }
 
   public void shearY(float angle) {
     float t = (float) Math.tan(angle);
-    applyMatrix(1, 0, 0, 0, t, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+    applyMatrix(1, 0, 0, 0, 
+                t, 1, 0, 0, 
+                0, 0, 1, 0, 
+                0, 0, 0, 1);
   }
 
   //////////////////////////////////////////////////////////////
@@ -2737,18 +2753,18 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     }
     
-    gltemp[0] = n00;
-    gltemp[1] = n10;
-    gltemp[2] = n20;
-    gltemp[3] = n30;
+    gltemp[ 0] = n00;
+    gltemp[ 1] = n10;
+    gltemp[ 2] = n20;
+    gltemp[ 3] = n30;
 
-    gltemp[4] = n01;
-    gltemp[5] = n11;
-    gltemp[6] = n21;
-    gltemp[7] = n31;
+    gltemp[ 4] = n01;
+    gltemp[ 5] = n11;
+    gltemp[ 6] = n21;
+    gltemp[ 7] = n31;
 
-    gltemp[8] = n02;
-    gltemp[9] = n12;
+    gltemp[ 8] = n02;
+    gltemp[ 9] = n12;
     gltemp[10] = n22;
     gltemp[11] = n32;
 
@@ -2762,8 +2778,6 @@ public class PGraphicsOpenGL extends PGraphics {
     modelviewStack.mult(gltemp);
     transformStack.mult(gltemp);
     modelviewUpdated = false;   
-    
-    // TODO: add inverse calculation!
   }
 
   public void updateModelview() {
@@ -2773,45 +2787,39 @@ public class PGraphicsOpenGL extends PGraphics {
   public void updateModelview(boolean calcInv) {
     copyPMatrixToGLArray(modelview, glmodelview);
     if (calcInv) {
-        calculateModelviewInverse();
+      calculateModelviewInverse();
     } else {
       copyPMatrixToGLArray(modelviewInv, glmodelviewInv);
     }
     gl2f.glLoadMatrixf(glmodelview, 0);
     modelviewStack.set(glmodelview);
-    transformStack.set(glmodelview);
+
+    // Since modelview = camera * transform, we then
+    // transform = camera_inv * modelview 
+    transformStack.set(pcameraInv);
+    transformStack.mult(glmodelview);
+    
     modelviewUpdated = true;
   }
 
-  public void updateCamera() {
-    if (!manipulatingCamera) {
-      throw new RuntimeException("Cannot call updateCamera() "
-          + "without first calling beginCamera()");
-    }    
-    copyPMatrixToGLArray(camera, glmodelview);
-    gl2f.glLoadMatrixf(glmodelview, 0);
-    modelviewStack.set(glmodelview);    
-    scalingDuringCamManip = true; // Assuming general transformation.
-    modelviewUpdated = true;
-  }
   
   // This method is needed to copy a PMatrix3D into a  opengl array.
   // The PMatrix3D.get(float[]) is not useful, because PMatrix3D assumes
   // row-major ordering of the elements of the float array, and opengl
   // uses column-major ordering.
   protected void copyPMatrixToGLArray(PMatrix3D src, float[] dest) {
-    dest[0] = src.m00;
-    dest[1] = src.m10;
-    dest[2] = src.m20;
-    dest[3] = src.m30;
+    dest[ 0] = src.m00;
+    dest[ 1] = src.m10;
+    dest[ 2] = src.m20;
+    dest[ 3] = src.m30;
 
-    dest[4] = src.m01;
-    dest[5] = src.m11;
-    dest[6] = src.m21;
-    dest[7] = src.m31;
+    dest[ 4] = src.m01;
+    dest[ 5] = src.m11;
+    dest[ 6] = src.m21;
+    dest[ 7] = src.m31;
     
-    dest[8] = src.m02;
-    dest[9] = src.m12;
+    dest[ 8] = src.m02;
+    dest[ 9] = src.m12;
     dest[10] = src.m22;
     dest[11] = src.m32;
 
@@ -2932,6 +2940,20 @@ public class PGraphicsOpenGL extends PGraphics {
     projectionUpdated = true;
   }
   
+  public void pushProjection() {
+    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    gl2f.glPushMatrix();
+    projectionStack.push();
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+  }
+  
+  public void popProjection() {
+    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    gl2f.glPopMatrix();
+    projectionStack.pop();
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);    
+  }
+    
   public void updateProjection() {
     copyPMatrixToGLArray(projection, glprojection);
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
@@ -3014,6 +3036,24 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+  public void updateCamera() {
+    if (!manipulatingCamera) {
+      throw new RuntimeException("Cannot call updateCamera() "
+          + "without first calling beginCamera()");
+    }    
+    copyPMatrixToGLArray(camera, glmodelview);
+    gl2f.glLoadMatrixf(glmodelview, 0);
+    modelviewStack.set(glmodelview);    
+    
+    // While we modify the camera, the transformations are still not
+    // stored in the cametera matrices, so we need them in the 
+    // transform stack.
+    transformStack.set(glmodelview);
+    
+    scalingDuringCamManip = true; // Assuming general transformation.
+    modelviewUpdated = false;
+  }  
+  
   /**
    * Record the current settings into the camera matrix, and set the matrix mode
    * back to the current transformation matrix.
@@ -3045,6 +3085,10 @@ public class PGraphicsOpenGL extends PGraphics {
     copyGLArrayToPMatrix(pcamera, camera);
     copyGLArrayToPMatrix(pcameraInv, cameraInv);
 
+    // All camera transformations are already set in the
+    // modelview stack and camera matrices.
+    transformStack.setIdentity();
+    
     // all done
     manipulatingCamera = false;
     scalingDuringCamManip = false;
@@ -3063,58 +3107,58 @@ public class PGraphicsOpenGL extends PGraphics {
     float[] m = glmodelview;
     float[] inv = glmodelviewInv; 
     
-    float a0 = m[0] * m[5] - m[1] * m[4];
-    float a1 = m[0] * m[6] - m[2] * m[4];
-    float a2 = m[0] * m[7] - m[3] * m[4];
-    float a3 = m[1] * m[6] - m[2] * m[5];
-    float a4 = m[1] * m[7] - m[3] * m[5];
-    float a5 = m[2] * m[7] - m[3] * m[6];
-    float b0 = m[8] * m[13] - m[ 9] * m[12];
-    float b1 = m[8] * m[14] - m[10] * m[12];
-    float b2 = m[8] * m[15] - m[11] * m[12];
-    float b3 = m[9] * m[14] - m[10] * m[13];
-    float b4 = m[9] * m[15] - m[11] * m[13];
+    float a0 = m[ 0] * m[ 5] - m[ 1] * m[ 4];
+    float a1 = m[ 0] * m[ 6] - m[ 2] * m[ 4];
+    float a2 = m[ 0] * m[ 7] - m[ 3] * m[ 4];
+    float a3 = m[ 1] * m[ 6] - m[ 2] * m[ 5];
+    float a4 = m[ 1] * m[ 7] - m[ 3] * m[ 5];
+    float a5 = m[ 2] * m[ 7] - m[ 3] * m[ 6];
+    float b0 = m[ 8] * m[13] - m[ 9] * m[12];
+    float b1 = m[ 8] * m[14] - m[10] * m[12];
+    float b2 = m[ 8] * m[15] - m[11] * m[12];
+    float b3 = m[ 9] * m[14] - m[10] * m[13];
+    float b4 = m[ 9] * m[15] - m[11] * m[13];
     float b5 = m[10] * m[15] - m[11] * m[14];
 
     float det = a0 * b5 - a1 * b4 + a2 * b3 + a3 * b2 - a4 * b1 + a5 * b0;
     
     if (PApplet.abs(det) > 0)  {
-        inv[0] = + m[5] * b5 - m[6] * b4 + m[7] * b3;
-        inv[4] = - m[4] * b5 + m[6] * b2 - m[7] * b1;
-        inv[8] = + m[4] * b4 - m[5] * b2 + m[7] * b0;
-        inv[12] = - m[4] * b3 + m[5] * b1 - m[6] * b0;
-        inv[1] = - m[1] * b5 + m[2] * b4 - m[3] * b3;
-        inv[5] = + m[0] * b5 - m[2] * b2 + m[3] * b1;
-        inv[ 9] = - m[0] * b4 + m[1] * b2 - m[3] * b0;
-        inv[13] = + m[0] * b3 - m[1] * b1 + m[2] * b0;
-        inv[2] = + m[13] * a5 - m[14] * a4 + m[15] * a3;
-        inv[6] = - m[12] * a5 + m[14] * a2 - m[15] * a1;
-        inv[10] = + m[12] * a4 - m[13] * a2 + m[15] * a0;
-        inv[14] = - m[12] * a3 + m[13] * a1 - m[14] * a0;
-        inv[3] = - m[9] * a5 + m[10] * a4 - m[11] * a3;
-        inv[7] = + m[8] * a5 - m[10] * a2 + m[11] * a1;
-        inv[11] = - m[8] * a4 + m[ 9] * a2 - m[11] * a0;
-        inv[15] = + m[8] * a3 - m[ 9] * a1 + m[10] * a0;
+      inv[ 0] = + m[ 5] * b5 - m[ 6] * b4 + m[ 7] * b3;
+      inv[ 4] = - m[ 4] * b5 + m[ 6] * b2 - m[ 7] * b1;
+      inv[ 8] = + m[ 4] * b4 - m[ 5] * b2 + m[ 7] * b0;
+      inv[12] = - m[ 4] * b3 + m[ 5] * b1 - m[ 6] * b0;
+      inv[ 1] = - m[ 1] * b5 + m[ 2] * b4 - m[ 3] * b3;
+      inv[ 5] = + m[ 0] * b5 - m[ 2] * b2 + m[ 3] * b1;
+      inv[ 9] = - m[ 0] * b4 + m[ 1] * b2 - m[ 3] * b0;
+      inv[13] = + m[ 0] * b3 - m[ 1] * b1 + m[ 2] * b0;
+      inv[ 2] = + m[13] * a5 - m[14] * a4 + m[15] * a3;
+      inv[ 6] = - m[12] * a5 + m[14] * a2 - m[15] * a1;
+      inv[10] = + m[12] * a4 - m[13] * a2 + m[15] * a0;
+      inv[14] = - m[12] * a3 + m[13] * a1 - m[14] * a0;
+      inv[ 3] = - m[ 9] * a5 + m[10] * a4 - m[11] * a3;
+      inv[ 7] = + m[ 8] * a5 - m[10] * a2 + m[11] * a1;
+      inv[11] = - m[ 8] * a4 + m[ 9] * a2 - m[11] * a0;
+      inv[15] = + m[ 8] * a3 - m[ 9] * a1 + m[10] * a0;
 
-        float invDet = 1.0f / det;
-        inv[0] *= invDet;
-        inv[1] *= invDet;
-        inv[2] *= invDet;
-        inv[3] *= invDet;
-        inv[4] *= invDet;
-        inv[5] *= invDet;
-        inv[6] *= invDet;
-        inv[7] *= invDet;
-        inv[8] *= invDet;
-        inv[9] *= invDet;
-        inv[10] *= invDet;
-        inv[11] *= invDet;
-        inv[12] *= invDet;
-        inv[13] *= invDet;
-        inv[14] *= invDet;
-        inv[15] *= invDet;
-        
-        copyGLArrayToPMatrix(inv, modelviewInv);
+      float invDet = 1.0f / det;
+      inv[0] *= invDet;
+      inv[1] *= invDet;
+      inv[2] *= invDet;
+      inv[3] *= invDet;
+      inv[4] *= invDet;
+      inv[5] *= invDet;
+      inv[6] *= invDet;
+      inv[7] *= invDet;
+      inv[8] *= invDet;
+      inv[9] *= invDet;
+      inv[10] *= invDet;
+      inv[11] *= invDet;
+      inv[12] *= invDet;
+      inv[13] *= invDet;
+      inv[14] *= invDet;
+      inv[15] *= invDet;
+      
+      copyGLArrayToPMatrix(inv, modelviewInv);      
     }
   }
 
@@ -3768,7 +3812,7 @@ public class PGraphicsOpenGL extends PGraphics {
     super.fillFromCalc();
     calcColorBuffer();
     
-    // OPENGL2 uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
+    // P3D uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
     // for all vertices are taken from the glColor/color buffer settings and we don't
     // need this:
     //gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE, colorFloats, 0);
@@ -5116,21 +5160,21 @@ public class PGraphicsOpenGL extends PGraphics {
         gl.glBlendEquation(GL2.GL_MAX);
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
       } else {
-        PGraphics.showWarning("OPENGL2: This blend mode is currently unsupported.");
+        PGraphics.showWarning("P3D: This blend mode is currently unsupported.");
       }
     } else if (mode == DARKEST) {
       if (blendEqSupported) { 
         gl.glBlendEquation(GL2.GL_MIN);      
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
       } else {
-        PGraphics.showWarning("OPENGL2: This blend mode is currently unsupported.");  
+        PGraphics.showWarning("P3D: This blend mode is currently unsupported.");  
       }
     } else if (mode == DIFFERENCE) {
       if (blendEqSupported) {
         gl.glBlendEquation(GL.GL_FUNC_REVERSE_SUBTRACT);
         gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
       } else {
-        PGraphics.showWarning("OPENGL2: This blend mode is currently unsupported.");
+        PGraphics.showWarning("P3D: This blend mode is currently unsupported.");
       }       
     } else if (mode == EXCLUSION) {
       if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
@@ -5446,7 +5490,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   /**
    * This static method can be called by applications that use
-   * Processing+OPENGL2 inside their own GUI, so they can initialize
+   * Processing+P3D inside their own GUI, so they can initialize
    * JOGL2 before anything else.
    * According to the JOGL2 documentation, applications shall call 
    * GLProfile.initSingleton() ASAP, before any other UI invocation.
@@ -5573,9 +5617,6 @@ public class PGraphicsOpenGL extends PGraphics {
       offscreenFramebufferMultisample = null;
     }
     
-//    boolean opengl2X = !hints[DISABLE_OPENGL_2X_SMOOTH];
-//    boolean opengl4X = hints[ENABLE_OPENGL_4X_SMOOTH];    
-        
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
     if (PGraphicsOpenGL.fboMultisampleSupported && gl2x != null && 1 < antialias) {
@@ -5832,13 +5873,13 @@ public class PGraphicsOpenGL extends PGraphics {
         float[] mat = matrixStack.pop();
         PApplet.arrayCopy(mat, current);
       } catch (EmptyStackException e) {
-        PGraphics.showWarning("OPENGL2: Empty modelview stack");
+        PGraphics.showWarning("P3D: Empty modelview stack");
       }
     }
 
     public void mult(float[] mat) {
-      mult(mat[0], mat[4], mat[8], mat[12],
-           mat[1], mat[5], mat[9], mat[13],
+      mult(mat[0], mat[4], mat[ 8], mat[12],
+           mat[1], mat[5], mat[ 9], mat[13],
            mat[2], mat[6], mat[10], mat[14],
            mat[3], mat[7], mat[11], mat[15]);
     }
@@ -5847,28 +5888,28 @@ public class PGraphicsOpenGL extends PGraphics {
                      float n1, float n5, float n9, float n13,
                      float n2, float n6, float n10, float n14,
                      float n3, float n7, float n11, float n15) {
-      float r0 = current[0]*n0 + current[4]*n1 + current[8]*n2 + current[12]*n3;
-      float r4 = current[0]*n4 + current[4]*n5 + current[8]*n6 + current[12]*n7;
-      float r8 = current[0]*n8 + current[4]*n9 + current[8]*n10 + current[12]*n11;
-      float r12 = current[0]*n12 + current[4]*n13 + current[8]*n14 + current[12]*n15;
+      float r0  = current[0] *  n0 + current[4] *  n1 + current[ 8] *  n2 + current[12] *  n3;
+      float r4  = current[0] *  n4 + current[4] *  n5 + current[ 8] *  n6 + current[12] *  n7;
+      float r8  = current[0] *  n8 + current[4] *  n9 + current[ 8] * n10 + current[12] * n11;
+      float r12 = current[0] * n12 + current[4] * n13 + current[ 8] * n14 + current[12] * n15;
 
-      float r1 = current[1]*n0 + current[5]*n1 + current[9]*n2 + current[13]*n3;
-      float r5 = current[1]*n4 + current[5]*n5 + current[9]*n6 + current[13]*n7;
-      float r9 = current[1]*n8 + current[5]*n9 + current[9]*n10 + current[13]*n11;
-      float r13 = current[1]*n12 + current[5]*n13 + current[9]*n14 + current[13]*n15;
+      float r1  = current[1] *  n0 + current[5] *  n1 + current[ 9] *  n2 + current[13] *  n3;
+      float r5  = current[1] *  n4 + current[5] *  n5 + current[ 9] *  n6 + current[13] *  n7;
+      float r9  = current[1] *  n8 + current[5] *  n9 + current[ 9] * n10 + current[13] * n11;
+      float r13 = current[1] * n12 + current[5] * n13 + current[ 9] * n14 + current[13] * n15;
 
-      float r2 = current[2]*n0 + current[6]*n1 + current[10]*n2 + current[14]*n3;
-      float r6 = current[2]*n4 + current[6]*n5 + current[10]*n6 + current[14]*n7;
-      float r10 = current[2]*n8 + current[6]*n9 + current[10]*n10 + current[14]*n11;
-      float r14 = current[2]*n12 + current[6]*n13 + current[10]*n14 + current[14]*n15;
+      float r2  = current[2] *  n0 + current[6] *  n1 + current[10] *  n2 + current[14] *  n3;
+      float r6  = current[2] *  n4 + current[6] *  n5 + current[10] *  n6 + current[14] *  n7;
+      float r10 = current[2] *  n8 + current[6] *  n9 + current[10] * n10 + current[14] * n11;
+      float r14 = current[2] * n12 + current[6] * n13 + current[10] * n14 + current[14] * n15;
 
-      float r3 = current[3]*n0 + current[7]*n1 + current[11]*n2 + current[15]*n3;
-      float r7 = current[3]*n4 + current[7]*n5 + current[11]*n6 + current[15]*n7;
-      float r11 = current[3]*n8 + current[7]*n9 + current[11]*n10 + current[15]*n11;
-      float r15 = current[3]*n12 + current[7]*n13 + current[11]*n14 + current[15]*n15;
+      float r3  = current[3] *  n0 + current[7] *  n1 + current[11] *  n2 + current[15] *  n3;
+      float r7  = current[3] *  n4 + current[7] *  n5 + current[11] *  n6 + current[15] *  n7;
+      float r11 = current[3] *  n8 + current[7] *  n9 + current[11] * n10 + current[15] * n11;
+      float r15 = current[3] * n12 + current[7] * n13 + current[11] * n14 + current[15] * n15;
 
-      current[0] = r0; current[4] = r4; current[8] = r8; current[12] = r12;
-      current[1] = r1; current[5] = r5; current[9] = r9; current[13] = r13;
+      current[0] = r0; current[4] = r4; current[ 8] =  r8; current[12] = r12;
+      current[1] = r1; current[5] = r5; current[ 9] =  r9; current[13] = r13;
       current[2] = r2; current[6] = r6; current[10] = r10; current[14] = r14;
       current[3] = r3; current[7] = r7; current[11] = r11; current[15] = r15;      
     }
@@ -5885,17 +5926,17 @@ public class PGraphicsOpenGL extends PGraphics {
                     float n1, float n5, float n9, float n13,
                     float n2, float n6, float n10, float n14,
                     float n3, float n7, float n11, float n15) {
-      current[0] = n0; current[4] = n4; current[8] = n8; current[12] = n12;
-      current[1] = n1; current[5] = n5; current[9] = n9; current[13] = n13;
+      current[0] = n0; current[4] = n4; current[ 8] = n8;  current[12] = n12;
+      current[1] = n1; current[5] = n5; current[ 9] = n9;  current[13] = n13;
       current[2] = n2; current[6] = n6; current[10] = n10; current[14] = n14;
       current[3] = n3; current[7] = n7; current[11] = n11; current[15] = n15;      
     }
     
     public void translate(float tx, float ty, float tz) {
-      current[12] += tx*current[0] + ty*current[4] + tz*current[8];
-      current[13] += tx*current[1] + ty*current[5] + tz*current[9];
-      current[14] += tx*current[2] + ty*current[6] + tz*current[10];
-      current[15] += tx*current[3] + ty*current[7] + tz*current[11];      
+      current[12] += tx * current[0] + ty * current[4] + tz * current[ 8];
+      current[13] += tx * current[1] + ty * current[5] + tz * current[ 9];
+      current[14] += tx * current[2] + ty * current[6] + tz * current[10];
+      current[15] += tx * current[3] + ty * current[7] + tz * current[11];      
     }
 
     public void rotate(float angle, float rx, float ry, float rz) {
@@ -5903,15 +5944,15 @@ public class PGraphicsOpenGL extends PGraphics {
       float s = PApplet.sin(angle);
       float t = 1.0f - c;
       
-      mult((t*rx*rx) + c, (t*rx*ry) - (s*rz), (t*rx*rz) + (s*ry), 0,
-           (t*rx*ry) + (s*rz), (t*ry*ry) + c, (t*ry*rz) - (s*rx), 0,
-           (t*rx*rz) - (s*ry), (t*ry*rz) + (s*rx), (t*rz*rz) + c, 0,
-           0, 0, 0, 1);
+      mult((t*rx*rx) + c     , (t*rx*ry) - (s*rz), (t*rx*rz) + (s*ry), 0,
+           (t*rx*ry) + (s*rz),      (t*ry*ry) + c, (t*ry*rz) - (s*rx), 0,
+           (t*rx*rz) - (s*ry), (t*ry*rz) + (s*rx),      (t*rz*rz) + c, 0,
+                            0,                  0,                  0, 1);
     }
     
     public void scale(float sx, float sy, float sz) {
-      current[0] *= sx;  current[4] *= sy;  current[8] *= sz;
-      current[1] *= sx;  current[5] *= sy;  current[9] *= sz;
+      current[0] *= sx;  current[4] *= sy;  current[ 8] *= sz;
+      current[1] *= sx;  current[5] *= sy;  current[ 9] *= sz;
       current[2] *= sx;  current[6] *= sy;  current[10] *= sz;
       current[3] *= sx;  current[7] *= sy;  current[11] *= sz;      
     }
@@ -6467,12 +6508,12 @@ public class PGraphicsOpenGL extends PGraphics {
       if (flushMode == FLUSH_WHEN_FULL) {
         float[] mm = transformStack.current;
         
-        fillVertices[3 * fillVertexCount + 0] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
-        fillVertices[3 * fillVertexCount + 1] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
+        fillVertices[3 * fillVertexCount + 0] = x * mm[0] + y * mm[4] + z * mm[ 8] + mm[12];
+        fillVertices[3 * fillVertexCount + 1] = x * mm[1] + y * mm[5] + z * mm[ 9] + mm[13];
         fillVertices[3 * fillVertexCount + 2] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
         
-        fillNormals[3 * fillVertexCount + 0] = nx * mm[0] + ny * mm[4] + nz * mm[8] + mm[12];
-        fillNormals[3 * fillVertexCount + 1] = nx * mm[1] + ny * mm[5] + nz * mm[9] + mm[13];
+        fillNormals[3 * fillVertexCount + 0] = nx * mm[0] + ny * mm[4] + nz * mm[ 8] + mm[12];
+        fillNormals[3 * fillVertexCount + 1] = nx * mm[1] + ny * mm[5] + nz * mm[ 9] + mm[13];
         fillNormals[3 * fillVertexCount + 2] = nx * mm[2] + ny * mm[6] + nz * mm[10] + mm[14];
       } else {
         fillVertices[3 * fillVertexCount + 0] = x;
@@ -6514,12 +6555,12 @@ public class PGraphicsOpenGL extends PGraphics {
           float ny = in.normals[3 * inIdx + 1];
           float nz = in.normals[3 * inIdx + 2];
           
-          fillVertices[3 * tessIdx + 0] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
-          fillVertices[3 * tessIdx + 1] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
+          fillVertices[3 * tessIdx + 0] = x * mm[0] + y * mm[4] + z * mm[ 8] + mm[12];
+          fillVertices[3 * tessIdx + 1] = x * mm[1] + y * mm[5] + z * mm[ 9] + mm[13];
           fillVertices[3 * tessIdx + 2] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
           
-          fillNormals[3 * tessIdx + 0] = nx * mm[0] + ny * mm[4] + nz * mm[8] + mm[12];
-          fillNormals[3 * tessIdx + 1] = nx * mm[1] + ny * mm[5] + nz * mm[9] + mm[13];
+          fillNormals[3 * tessIdx + 0] = nx * mm[0] + ny * mm[4] + nz * mm[ 8] + mm[12];
+          fillNormals[3 * tessIdx + 1] = nx * mm[1] + ny * mm[5] + nz * mm[ 9] + mm[13];
           fillNormals[3 * tessIdx + 2] = nx * mm[2] + ny * mm[6] + nz * mm[10] + mm[14];          
         }        
       } else {
@@ -6543,20 +6584,20 @@ public class PGraphicsOpenGL extends PGraphics {
         float ny = in.normals[3 * inIdx0 + 1];
         float nz = in.normals[3 * inIdx0 + 2];
         
-        lineVertices[3 * tessIdx + 0] = x0 * mm[0] + y0 * mm[4] + z0 * mm[8] + mm[12];
-        lineVertices[3 * tessIdx + 1] = x0 * mm[1] + y0 * mm[5] + z0 * mm[9] + mm[13];
+        lineVertices[3 * tessIdx + 0] = x0 * mm[0] + y0 * mm[4] + z0 * mm[ 8] + mm[12];
+        lineVertices[3 * tessIdx + 1] = x0 * mm[1] + y0 * mm[5] + z0 * mm[ 9] + mm[13];
         lineVertices[3 * tessIdx + 2] = x0 * mm[2] + y0 * mm[6] + z0 * mm[10] + mm[14];
         
-        lineNormals[3 * tessIdx + 0] = nx * mm[0] + ny * mm[4] + nz * mm[8] + mm[12];
-        lineNormals[3 * tessIdx + 1] = nx * mm[1] + ny * mm[5] + nz * mm[9] + mm[13];
+        lineNormals[3 * tessIdx + 0] = nx * mm[0] + ny * mm[4] + nz * mm[ 8] + mm[12];
+        lineNormals[3 * tessIdx + 1] = nx * mm[1] + ny * mm[5] + nz * mm[ 9] + mm[13];
         lineNormals[3 * tessIdx + 2] = nx * mm[2] + ny * mm[6] + nz * mm[10] + mm[14];
         
         float x1 = in.vertices[3 * inIdx1 + 0];
         float y1 = in.vertices[3 * inIdx1 + 1];
         float z1 = in.vertices[3 * inIdx1 + 2];
 
-        lineAttributes[4 * tessIdx + 0] = x1 * mm[0] + y1 * mm[4] + z1 * mm[8] + mm[12];
-        lineAttributes[4 * tessIdx + 1] = x1 * mm[1] + y1 * mm[5] + z1 * mm[9] + mm[13];
+        lineAttributes[4 * tessIdx + 0] = x1 * mm[0] + y1 * mm[4] + z1 * mm[ 8] + mm[12];
+        lineAttributes[4 * tessIdx + 1] = x1 * mm[1] + y1 * mm[5] + z1 * mm[ 9] + mm[13];
         lineAttributes[4 * tessIdx + 2] = x1 * mm[2] + y1 * mm[6] + z1 * mm[10] + mm[14];        
       } else {
         System.arraycopy(in.vertices, 3 * inIdx0, lineVertices, 3 * tessIdx, 3);
@@ -6579,12 +6620,12 @@ public class PGraphicsOpenGL extends PGraphics {
         float ny = in.normals[3 * inIdx + 1];
         float nz = in.normals[3 * inIdx + 2];
         
-        pointVertices[3 * tessIdx + 0] = x * mm[0] + y * mm[4] + z * mm[8] + mm[12];
-        pointVertices[3 * tessIdx + 1] = x * mm[1] + y * mm[5] + z * mm[9] + mm[13];
+        pointVertices[3 * tessIdx + 0] = x * mm[0] + y * mm[4] + z * mm[ 8] + mm[12];
+        pointVertices[3 * tessIdx + 1] = x * mm[1] + y * mm[5] + z * mm[ 9] + mm[13];
         pointVertices[3 * tessIdx + 2] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
         
-        pointNormals[3 * tessIdx + 0] = nx * mm[0] + ny * mm[4] + nz * mm[8] + mm[12];
-        pointNormals[3 * tessIdx + 1] = nx * mm[1] + ny * mm[5] + nz * mm[9] + mm[13];
+        pointNormals[3 * tessIdx + 0] = nx * mm[0] + ny * mm[4] + nz * mm[ 8] + mm[12];
+        pointNormals[3 * tessIdx + 1] = nx * mm[1] + ny * mm[5] + nz * mm[ 9] + mm[13];
         pointNormals[3 * tessIdx + 2] = nx * mm[2] + ny * mm[6] + nz * mm[10] + mm[14];           
       } else {
         System.arraycopy(in.vertices, 3 * inIdx, pointVertices, 3 * tessIdx, 3);
@@ -7388,7 +7429,9 @@ public class PGraphicsOpenGL extends PGraphics {
         // Normalizing normal vector, since the weighted 
         // combination of normal vectors is not necessarily 
         // normal.
-        double sum = vertex[7] * vertex[7] + vertex[8] * vertex[8] + vertex[9] * vertex[9];
+        double sum = vertex[7] * vertex[7] + 
+                     vertex[8] * vertex[8] + 
+                     vertex[9] * vertex[9];
         double len = Math.sqrt(sum);      
         vertex[7] /= len; 
         vertex[8] /= len;
