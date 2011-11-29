@@ -1534,7 +1534,7 @@ public class PGraphics extends PImage implements PConstants {
   }
 
   /**
-   * @param cx the z-coordinate of the control point
+   * @param cz the z-coordinate of the control point
    * @param z3 the z-coordinate of the anchor point
    */
   public void quadraticVertex(float cx, float cy, float cz,
