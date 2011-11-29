@@ -102,7 +102,7 @@ public class PdeKeywords extends TokenMarker {
    */
   public void addColoring(String keyword, String coloring) {
     if (keywordColoring == null) {
-      keywordColoring = new KeywordMap(true);
+      keywordColoring = new KeywordMap(false);
     }
     // text will be KEYWORD or LITERAL
     boolean isKey = (coloring.charAt(0) == 'K');
