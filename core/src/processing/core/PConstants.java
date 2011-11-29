@@ -38,7 +38,10 @@ import java.awt.event.KeyEvent;
  * @usage Web &amp; Application
  */
 public interface PConstants {
-  // flush modes (in P3D)
+  // render & flush modes (in P3D)
+  
+  static public final int IMMEDIATE = 0;
+  static public final int RETAINED = 1;  
   
   static public final int FLUSH_END_SHAPE = 0;
   static public final int FLUSH_WHEN_FULL = 1;  

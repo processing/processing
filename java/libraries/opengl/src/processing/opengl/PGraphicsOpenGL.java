@@ -442,7 +442,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //  public static int flushMode = FLUSH_END_SHAPE;
 //  public static int flushMode = FLUSH_AFTER_TRANSFORMATION;
   
-  public static final int MAXIMUM_TESS_VERTICES = 1000000;
+  public static final int MAX_TESS_VERTICES = 1000000;
  
   public static final int DEFAULT_TESS_VERTICES = 512;
   public static final int DEFAULT_TESS_INDICES = 1024;
@@ -461,7 +461,7 @@ public class PGraphicsOpenGL extends PGraphics {
     glu = new GLU();
     tessellator = new Tessellator();
     in = newInGeometry();
-    tess = newTessGeometry();
+    tess = newTessGeometry(IMMEDIATE);
   }
   
 
@@ -1650,9 +1650,9 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellator.tessellatePolygon(false, mode == CLOSE);
     }
 
-    if (flushMode == FLUSH_END_SHAPE) {
+    if (flushMode == FLUSH_END_SHAPE || (flushMode == FLUSH_WHEN_FULL && tess.isFull())) {
       flush();
-    }
+    }    
   }
 
 
@@ -1671,18 +1671,17 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   public void flush() {
+    boolean hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;
+    boolean hasLines = 0 < tess.lineVertexCount && 0 < tess.lineIndexCount;
     boolean hasFill = 0 < tess.fillVertexCount && 0 < tess.fillIndexCount;
-    boolean hasLines = 0 < tess.lineVertexCount && 0 < tess.lineIndexCount; 
-    boolean hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;    
     
-    if (hasFill || hasLines || hasPoints) {
+    if (hasPoints || hasLines || hasFill) {
       
-      if (flushMode == FLUSH_WHEN_FULL) {      
-        gl2f.glPushMatrix();
-   
+      if (flushMode == FLUSH_WHEN_FULL) {
         // The geometric transformations have been applied already to the 
         // tessellated geometry, so we reset the modelview matrix to the
-        // camera stage to avoid applying the model transformations twice.
+        // camera stage to avoid applying the model transformations twice.        
+        gl2f.glPushMatrix();
         gl2f.glLoadMatrixf(pcamera, 0);
       }
       
@@ -2715,6 +2714,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
     
   public void resetMatrix() {
+    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
+      flush();
+    }
+    
     gl2f.glLoadIdentity();    
     modelviewStack.setIdentity();
     modelviewUpdated = false;
@@ -2784,6 +2787,10 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   public void updateModelview(boolean calcInv) {
+    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
+      flush();
+    }
+    
     copyPMatrixToGLArray(modelview, glmodelview);
     if (calcInv) {
       calculateModelviewInverse();
@@ -5971,8 +5978,8 @@ public class PGraphicsOpenGL extends PGraphics {
     return new InGeometry(); 
   }
   
-  protected TessGeometry newTessGeometry() {
-    return new TessGeometry();
+  protected TessGeometry newTessGeometry(int mode) {
+    return new TessGeometry(mode);
   }
   
   public class InGeometry {
@@ -6094,6 +6101,8 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   public class TessGeometry {
+    int renderMode;
+    
     // Tessellated fill data
     public int fillVertexCount;
     
@@ -6140,7 +6149,8 @@ public class PGraphicsOpenGL extends PGraphics {
     public int lastPointIndex;  
     public int[] pointIndices;
 
-    public TessGeometry() {
+    public TessGeometry(int mode) {
+      renderMode = mode;
       allocate();      
     }    
     
@@ -6195,6 +6205,10 @@ public class PGraphicsOpenGL extends PGraphics {
       pointNormals = null;
       pointAttributes = null;
       pointIndices = null;
+    }
+    
+    public boolean isFull() {
+      return MAX_TESS_VERTICES <= fillVertexCount + lineVertexCount + pointVertexCount;
     }
     
     public void addCounts(TessGeometry other) {
@@ -6514,7 +6528,7 @@ public class PGraphicsOpenGL extends PGraphics {
                               float u, float v) {
       fillVertexCheck();
       
-      if (flushMode == FLUSH_WHEN_FULL) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         float[] mm = transform;
         
         fillVertices[3 * fillVertexCount + 0] = x * mm[0] + y * mm[4] + z * mm[ 8] + mm[12];
@@ -6550,7 +6564,7 @@ public class PGraphicsOpenGL extends PGraphics {
       
       addFillVertices(nvert);
       
-      if (flushMode == FLUSH_WHEN_FULL) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         float[] mm = transform;
         for (int i = 0; i < nvert; i++) {
           int inIdx = i0 + i;
@@ -6582,7 +6596,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }     
     
     public void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx) {
-      if (flushMode == FLUSH_WHEN_FULL) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         float[] mm = transform;
         
         float x0 = in.vertices[3 * inIdx0 + 0];
@@ -6618,7 +6632,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
         
     public void putPointVertex(InGeometry in, int inIdx, int tessIdx) {
-      if (flushMode == FLUSH_WHEN_FULL) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
         float[] mm = transform;
         
         float x = in.vertices[3 * inIdx + 0];
