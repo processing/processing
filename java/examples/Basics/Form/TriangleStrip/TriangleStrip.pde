@@ -2,11 +2,9 @@
  * TRIANGLE_STRIP Mode
  * by Ira Greenberg. 
  * 
- * Generate a closed ring using vertex() 
- * function and beginShape(TRIANGLE_STRIP)
- * mode. outerRad and innerRad variables 
- * control ring's outer/inner radii respectively.
- * Trig functions generate ring.
+ * Generate a closed ring using the vertex() function and 
+ * beginShape(TRIANGLE_STRIP) mode. The outerRad and innerRad 
+ * variables control ring's radii respectively.
  */
 
 int x;
