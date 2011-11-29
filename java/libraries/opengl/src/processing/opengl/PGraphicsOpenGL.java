@@ -438,12 +438,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected boolean breakShape;  
   
-  public static int flushMode = FLUSH_WHEN_FULL;
+//  public static int flushMode = FLUSH_WHEN_FULL;
 //  public static int flushMode = FLUSH_END_SHAPE;
-//  public static int flushMode = FLUSH_AFTER_TRANSFORMATION;
+  public static int flushMode = FLUSH_AFTER_TRANSFORMATION;
   
   public static final int MAX_TESS_VERTICES = 1000000;
  
+  public static final int DEFAULT_IN_VERTICES = 512;
   public static final int DEFAULT_TESS_VERTICES = 512;
   public static final int DEFAULT_TESS_INDICES = 1024;
   
@@ -1670,7 +1671,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // protected void sort()  
   
   
-  public void flush() {
+  public void flush() {    
     boolean hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;
     boolean hasLines = 0 < tess.lineVertexCount && 0 < tess.lineIndexCount;
     boolean hasFill = 0 < tess.fillVertexCount && 0 < tess.fillIndexCount;
@@ -1684,6 +1685,8 @@ public class PGraphicsOpenGL extends PGraphics {
         gl2f.glPushMatrix();
         gl2f.glLoadMatrixf(pcamera, 0);
       }
+      
+      PApplet.println("Flushing geometry: " + tess.lineVertexCount);
       
       if (hasPoints) {
         renderPoints();
@@ -3063,6 +3066,8 @@ public class PGraphicsOpenGL extends PGraphics {
           + "without first calling beginCamera()");
     }
 
+    flush(); 
+    
     getModelviewMatrix();
 
     if (scalingDuringCamManip) {
@@ -3323,7 +3328,9 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public void camera(float eyeX, float eyeY, float eyeZ, 
                      float centerX, float centerY, float centerZ, 
-                     float upX, float upY, float upZ) {          
+                     float upX, float upY, float upZ) {
+    flush();
+    
     // Calculating Z vector
     float z0 = eyeX - centerX;
     float z1 = eyeY - centerY;
@@ -3466,7 +3473,9 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public void ortho(float left, float right, 
                     float bottom, float top,
-                    float near, float far) {    
+                    float near, float far) {
+    flush();
+    
     left -= width/2;
     right -= width/2;
     
@@ -3558,6 +3567,8 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public void frustum(float left, float right, float bottom, float top,
       float znear, float zfar) {
+    flush();
+    
     float temp, temp2, temp3, temp4;
     temp = 2.0f * znear;
     temp2 = right - left;
@@ -6006,12 +6017,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void allocate() {      
-      codes = new int[DEFAULT_VERTICES];
-      vertices = new float[3 * DEFAULT_VERTICES];
-      colors = new float[4 * DEFAULT_VERTICES];      
-      normals = new float[3 * DEFAULT_VERTICES];
-      texcoords = new float[2 * DEFAULT_VERTICES];
-      strokes = new float[5 * DEFAULT_VERTICES];
+      codes = new int[DEFAULT_IN_VERTICES];
+      vertices = new float[3 * DEFAULT_IN_VERTICES];
+      colors = new float[4 * DEFAULT_IN_VERTICES];      
+      normals = new float[3 * DEFAULT_IN_VERTICES];
+      texcoords = new float[2 * DEFAULT_IN_VERTICES];
+      strokes = new float[5 * DEFAULT_IN_VERTICES];
       reset();
     }
     
@@ -6166,23 +6177,23 @@ public class PGraphicsOpenGL extends PGraphics {
     }
       
     public void allocate() {     
-      fillVertices = new float[0];
-      fillColors = new float[0];
-      fillNormals = new float[0];
-      fillTexcoords = new float[0];
-      fillIndices = new int[0];  
+      fillVertices = new float[3 * DEFAULT_TESS_VERTICES];
+      fillColors = new float[4 * DEFAULT_TESS_VERTICES];
+      fillNormals = new float[3 * DEFAULT_TESS_VERTICES];
+      fillTexcoords = new float[2 * DEFAULT_TESS_VERTICES];
+      fillIndices = new int[DEFAULT_TESS_VERTICES];  
       
-      lineVertices = new float[0];
-      lineColors = new float[0];
-      lineNormals = new float[0];
-      lineAttributes = new float[0];
-      lineIndices = new int[0];       
+      lineVertices = new float[3 * DEFAULT_TESS_VERTICES];
+      lineColors = new float[4 * DEFAULT_TESS_VERTICES];
+      lineNormals = new float[3 * DEFAULT_TESS_VERTICES];
+      lineAttributes = new float[4 * DEFAULT_TESS_VERTICES];
+      lineIndices = new int[DEFAULT_TESS_VERTICES];       
       
-      pointVertices = new float[0];
-      pointColors = new float[0];
-      pointNormals = new float[0];
-      pointAttributes = new float[0];
-      pointIndices = new int[0];
+      pointVertices = new float[3 * DEFAULT_TESS_VERTICES];
+      pointColors = new float[4 * DEFAULT_TESS_VERTICES];
+      pointNormals = new float[3 * DEFAULT_TESS_VERTICES];
+      pointAttributes = new float[2 * DEFAULT_TESS_VERTICES];
+      pointIndices = new int[DEFAULT_TESS_VERTICES];
       
       reset();
     }
@@ -6329,7 +6340,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void fillIndexCheck() {
       if (fillIndexCount == fillIndices.length) {
-        int newSize = fillIndexCount == 0 ? DEFAULT_TESS_INDICES : fillIndexCount << 1;
+        int newSize = fillIndexCount << 1;
         expandFillIndices(newSize);
       }
     }    
@@ -6348,7 +6359,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void fillVertexCheck() {
       if (fillVertexCount == fillVertices.length / 3) {
-        int newSize = fillVertexCount == 0 ? DEFAULT_TESS_VERTICES : fillVertexCount << 1; 
+        int newSize = fillVertexCount << 1; 
       
         expandFillVertices(newSize);
         expandFillColors(newSize);              
@@ -6359,8 +6370,8 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addFillVertices(int count) {
       if (fillVertexCount + count >= fillVertices.length / 3) {
-        int newSize = fillVertexCount + count;
-        
+        int newSize = expandSize(fillVertexCount, fillVertexCount + count); 
+                
         expandFillVertices(newSize);
         expandFillColors(newSize);
         expandFillNormals(newSize);
@@ -6374,7 +6385,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addFillIndices(int count) {
       if (fillIndexCount + count >= fillIndices.length) {
-        int newSize = fillIndexCount + count;
+        int newSize = expandSize(fillIndexCount, fillIndexCount + count);    
         
         expandFillIndices(newSize);
       }
@@ -6410,7 +6421,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addLineVertices(int count) {
       if (lineVertexCount + count >= lineVertices.length / 3) {
-        int newSize = lineVertexCount + count;
+        int newSize = expandSize(lineVertexCount, lineVertexCount + count);
         
         expandLineVertices(newSize);
         expandLineColors(newSize);
@@ -6449,7 +6460,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addLineIndices(int count) {
       if (lineIndexCount + count >= lineIndices.length) {
-        int newSize = lineIndexCount + count;
+        int newSize = expandSize(lineIndexCount, lineIndexCount + count);
         
         expandLineIndices(newSize);
       }
@@ -6467,7 +6478,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addPointVertices(int count) {
       if (pointVertexCount + count >= pointVertices.length / 3) {
-        int newSize = pointVertexCount + count;
+        int newSize = expandSize(pointVertexCount, pointVertexCount + count);
         
         expandPointVertices(newSize);
         expandPointColors(newSize);
@@ -6506,7 +6517,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addPointIndices(int count) {
       if (pointIndexCount + count >= pointIndices.length) {
-        int newSize = pointIndexCount + count;
+        int newSize = expandSize(pointIndexCount, pointIndexCount + count);
         
         expandPointIndices(newSize);
       }
@@ -6656,7 +6667,15 @@ public class PGraphicsOpenGL extends PGraphics {
       }      
       
       System.arraycopy(in.strokes, 5 * inIdx, pointColors, 4 * tessIdx, 4);
-    }    
+    }
+    
+    public int expandSize(int currSize, int newMinSize) {
+      int newSize = currSize; 
+      while (newSize < newMinSize) {
+        newSize = newSize << 1;
+      }
+      return newSize;
+    }
   }
   
   public class Tessellator {
