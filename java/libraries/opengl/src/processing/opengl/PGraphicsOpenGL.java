@@ -438,9 +438,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected boolean breakShape;  
   
-//  public static int flushMode = FLUSH_WHEN_FULL;
+  public static int flushMode = FLUSH_WHEN_FULL;
 //  public static int flushMode = FLUSH_END_SHAPE;
-  public static int flushMode = FLUSH_AFTER_TRANSFORMATION;
+//  public static int flushMode = FLUSH_AFTER_TRANSFORMATION;
   
   public static final int MAX_TESS_VERTICES = 1000000;
  
@@ -1603,7 +1603,7 @@ public class PGraphicsOpenGL extends PGraphics {
       currentStroke[1] = 0;
       currentStroke[2] = 0;
       currentStroke[3] = 0;
-      currentStroke[4] = 0;      
+      currentStroke[4] = 0;
     }
     
     int code;
@@ -1620,7 +1620,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public void beginShape(int kind) {  
     shape = kind;
- 
+
     in.reset();
   }
     
@@ -1686,7 +1686,7 @@ public class PGraphicsOpenGL extends PGraphics {
         gl2f.glLoadMatrixf(pcamera, 0);
       }
       
-      PApplet.println("Flushing geometry: " + tess.lineVertexCount);
+      //PApplet.println("Flushing geometry: " + tess.lineVertexCount);
       
       if (hasPoints) {
         renderPoints();
@@ -7330,17 +7330,17 @@ public class PGraphicsOpenGL extends PGraphics {
     // ending at i1.
     protected void addLine(int i0, int i1, int vcount, int icount) {
       tessGeo.putLineVertex(inGeo, i0, i1, vcount);
-      tessGeo.lineAttributes[4 * vcount + 3] = +inGeo.strokes[5 * i0 + 4];    
+      tessGeo.lineAttributes[4 * vcount + 3] = +0.5f * inGeo.strokes[5 * i0 + 4];    
       tessGeo.lineIndices[icount++] = vcount;
       
       vcount++;
       tessGeo.putLineVertex(inGeo, i0, i1, vcount);
-      tessGeo.lineAttributes[4 * vcount + 3] = -inGeo.strokes[5 * i0 + 4];
+      tessGeo.lineAttributes[4 * vcount + 3] = -0.5f * inGeo.strokes[5 * i0 + 4];
       tessGeo.lineIndices[icount++] = vcount;
       
       vcount++;
       tessGeo.putLineVertex(inGeo, i1, i0, vcount);
-      tessGeo.lineAttributes[4 * vcount + 3] = -inGeo.strokes[5 * i1 + 4];
+      tessGeo.lineAttributes[4 * vcount + 3] = -0.5f * inGeo.strokes[5 * i1 + 4];
       tessGeo.lineIndices[icount++] = vcount;
       
       // Starting a new triangle re-using prev vertices.
@@ -7349,7 +7349,7 @@ public class PGraphicsOpenGL extends PGraphics {
       
       vcount++;
       tessGeo.putLineVertex(inGeo, i1, i0, vcount);      
-      tessGeo.lineAttributes[4 * vcount + 3] = +inGeo.strokes[5 * i1 + 4];
+      tessGeo.lineAttributes[4 * vcount + 3] = +0.5f * inGeo.strokes[5 * i1 + 4];
       tessGeo.lineIndices[icount++] = vcount;
     }
     
