@@ -251,8 +251,6 @@ start	KEYWORD2
 stop	KEYWORD2
 breakShape	KEYWORD2
 createPath	KEYWORD2
-#dataFile	KEYWORD2
-#dataPath	KEYWORD2
 float	KEYWORD2	floatconvert_
 int	KEYWORD2	intconvert_
 loadMatrix	KEYWORD2
