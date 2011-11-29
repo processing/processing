@@ -9841,6 +9841,7 @@ public class PApplet extends Applet
  * @see PGraphics#beginShape(int)
  * @see PGraphics#endShape(int)
  * @see PGraphics#bezierVertex(float, float, float, float, float, float, float, float, float)
+ * @see PGraphics#quadraticVertex(float, float, float, float, float, float)
  * @see PGraphics#curveVertex(float, float, float)
  * @see PGraphics#texture(PImage)
  */
@@ -9919,6 +9920,7 @@ public class PApplet extends Applet
  * @param z4 the z-coordinate of the anchor point
  * @see PGraphics#curveVertex(float, float, float)
  * @see PGraphics#vertex(float, float, float, float, float)
+ * @see PGraphics#quadraticVertex(float, float, float, float, float, float)
  * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
  */
   public void bezierVertex(float x2, float y2, float z2,
@@ -9929,6 +9931,17 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @webref shape:vertex
+   * @param cx the x-coordinate of the control point
+   * @param cy the y-coordinate of the control point
+   * @param x3 the x-coordinate of the anchor point
+   * @param y3 the y-coordinate of the anchor point
+   * @see PGraphics#curveVertex(float, float, float)
+   * @see PGraphics#vertex(float, float, float, float, float)
+   * @see PGraphics#bezierVertex(float, float, float, float, float, float)
+   * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
+   */
   public void quadraticVertex(float cx, float cy,
                               float x3, float y3) {
     if (recorder != null) recorder.quadraticVertex(cx, cy, x3, y3);
@@ -9936,6 +9949,10 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @param cx the z-coordinate of the control point
+   * @param z3 the z-coordinate of the anchor point
+   */
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
     if (recorder != null) recorder.quadraticVertex(cx, cy, cz, x3, y3, z3);
@@ -9968,6 +9985,7 @@ public class PApplet extends Applet
   * @see PGraphics#endShape(int)
   * @see PGraphics#vertex(float, float, float, float, float)
   * @see PGraphics#bezier(float, float, float, float, float, float, float, float, float, float, float, float)
+  * @see PGraphics#quadraticVertex(float, float, float, float, float, float)
   */
   public void curveVertex(float x, float y) {
     if (recorder != null) recorder.curveVertex(x, y);
