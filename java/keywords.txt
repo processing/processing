@@ -106,8 +106,8 @@ OPENGL	LITERAL2
 ORTHOGRAPHIC	LITERAL2
 OVERLAY	LITERAL2
 PAL	LITERAL2
-P2D	LITERAL2
-P3D	LITERAL2
+P2D	LITERAL2	size_
+P3D	LITERAL2	size_
 PERSPECTIVE	LITERAL2
 PI	LITERAL2
 PIXEL_CENTER	LITERAL2
@@ -116,8 +116,8 @@ POINTS	LITERAL2
 POSTERIZE	LITERAL2
 PROBLEM	LITERAL2	
 PROJECT	LITERAL2
-QUAD_STRIP	LITERAL2
-QUADS	LITERAL2		
+QUAD_STRIP	LITERAL2	beginShape_
+QUADS	LITERAL2	beginShape_
 QUARTER_PI	LITERAL2	
 RAD_TO_DEG	LITERAL2
 RADIUS	LITERAL2
@@ -144,9 +144,9 @@ THIRD_PI	LITERAL2
 THRESHOLD	LITERAL2
 TIFF	LITERAL2
 TOP	LITERAL2
-TRIANGLE_FAN	LITERAL2
-TRIANGLES	LITERAL2	
-TRIANGLE_STRIP	LITERAL2	
+TRIANGLE_FAN	LITERAL2	beginShape_
+TRIANGLES	LITERAL2	beginShape_
+TRIANGLE_STRIP	LITERAL2	beginShape_
 TUNER	LITERAL2
 TWO	LITERAL2
 TWO_PI	LITERAL2
@@ -165,75 +165,94 @@ Class	KEYWORD1
 Double	KEYWORD1	
 Float	KEYWORD1	
 Integer	KEYWORD1	
-HashMap	KEYWORD1	
-String	KEYWORD1	
+HashMap	KEYWORD1	HashMap
+String	KEYWORD1	String
 StringBuffer	KEYWORD1	
 Thread	KEYWORD1		
 abstract	KEYWORD1
 assert	KEYWORD1
-boolean	KEYWORD1
-break	KEYWORD1
-byte	KEYWORD1
-catch	KEYWORD1
-char	KEYWORD1	
-class	KEYWORD1	
-continue	KEYWORD1	
-default	KEYWORD1	
+boolean	KEYWORD1	boolean
+break	KEYWORD1	break
+byte	KEYWORD1	byte
+catch	KEYWORD1	catch
+char	KEYWORD1	char
+class	KEYWORD1	class
+continue	KEYWORD1	continue
+default	KEYWORD1	default
 do	KEYWORD1	
 double	KEYWORD1
-else	KEYWORD1
+else	KEYWORD1	else
 enum	KEYWORD1	
-extends	KEYWORD1
-false	KEYWORD1
-final	KEYWORD1	
+extends	KEYWORD1	extends
+false	KEYWORD1	false
+final	KEYWORD1	final
 finally	KEYWORD1
-for	KEYWORD1
-float 	KEYWORD1
-if	KEYWORD1
-implements	KEYWORD1
-import	KEYWORD1		
+for	KEYWORD1	for
+float 	KEYWORD1	float
+if	KEYWORD1	if
+implements	KEYWORD1	implements
+import	KEYWORD1	import
 instanceof	KEYWORD1
-int	KEYWORD1	
+int	KEYWORD1	int
 interface	KEYWORD1	
-long	KEYWORD1	
+long	KEYWORD1	long
 native	KEYWORD1
-new	KEYWORD1
+new	KEYWORD1	new
 null	KEYWORD1	
 package	KEYWORD1	
-private	KEYWORD1	
+private	KEYWORD1	private
 protected	KEYWORD1	
-public	KEYWORD1	
-return	KEYWORD1	
+public	KEYWORD1	public
+return	KEYWORD1	return
 short	KEYWORD1	
-static	KEYWORD1
+static	KEYWORD1	static
 strictfp	KEYWORD1
-super	KEYWORD1	
-switch	KEYWORD1	
+super	KEYWORD1	super
+switch	KEYWORD1	width
 synchronized	KEYWORD1
-this	KEYWORD1	
+this	KEYWORD1	this
 throw	KEYWORD1	
 throws	KEYWORD1	
 transient	KEYWORD1
-true	KEYWORD1	
-try	KEYWORD1	
-void	KEYWORD1	
+true	KEYWORD1	true
+try	KEYWORD1	try
+void	KEYWORD1	void
 volatile	KEYWORD1
-while	KEYWORD1	
+while	KEYWORD1	while
 
 # Depricated API
 
-arraycopy	KEYWORD2	arraycopy_
+arraycopy	KEYWORD2	arrayCopy_
 openStream	KEYWORD2	openStream_
 
 
 # KEYWORD2 specifies methods and functions
+# These items are a part of Processing but are not included in the reference
 
-cache	KEYWORD2		
+cache	KEYWORD2
+start	KEYWORD2
+stop	KEYWORD2
+breakShape	KEYWORD2
+createPath	KEYWORD2
+dataFile	KEYWORD2
+dataPath	KEYWORD2
+loadMatrix	KEYWORD2
+noHint	KEYWORD2
+parseBoolean	KEYWORD2
+parseByte	KEYWORD2
+parseChar	KEYWORD2
+parseFloat	KEYWORD2
+parseInt	KEYWORD2
+saveFile	KEYWORD2
+savePath	KEYWORD2
+sketchFile	KEYWORD2
+sketchPath	KEYWORD2
+
+# Parts of Java, the files in the "include" folder
 
 
 # THE TEXT ABOVE IS HAND-WRITTEN AND FOUND IN THE FILE "keywords_base.txt"
 # THE TEXT BELOW IS AUTO-GENERATED
-
 
 abs	KEYWORD2	abs_
 acos	KEYWORD2	acos_
@@ -347,7 +366,6 @@ floor	KEYWORD2	floor_
 focusGained	KEYWORD3	focusGained_
 focusLost	KEYWORD3	focusLost_
 focused	LITERAL2	focused
-for	KEYWORD1	for_
 frameCount	LITERAL2	frameCount
 frameRate	KEYWORD2	frameRate_
 frameRate	LITERAL2	frameRate
@@ -615,6 +633,7 @@ textSize	KEYWORD2	textSize_
 texture	KEYWORD2	texture_
 textureMode	KEYWORD2	textureMode_
 textWidth	KEYWORD2	textWidth_
+THIRD_PI	KEYWORD2	
 this	KEYWORD1	this
 tint	KEYWORD2	tint_
 translate	KEYWORD2	translate_
