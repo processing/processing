@@ -38,7 +38,14 @@ import java.awt.event.KeyEvent;
  * @usage Web &amp; Application
  */
 public interface PConstants {
-
+  // flush modes (in P3D)
+  
+  static public final int FLUSH_END_SHAPE = 0;
+  static public final int FLUSH_WHEN_FULL = 1;  
+  static public final int FLUSH_AFTER_TRANSFORMATION = 2;
+  
+  // vertex fields
+  
   static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)
   static public final int Y = 1;
   static public final int Z = 2;
