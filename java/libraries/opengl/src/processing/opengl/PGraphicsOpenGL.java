@@ -188,35 +188,19 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
   
-  protected boolean scalingDuringCamManip;  
-  
   // ........................................................
 
   // Projection, modelview matrices:
   
   // Array version for use with OpenGL
   protected float[] glmodelview;
-  protected float[] glmodelviewInv;
-  protected float[] glprojection;
-
-  protected float[] pcamera;
+  protected float[] pcamera;  
+  protected float[] glprojection;  
+  protected float[] glmodelviewInv;  
   protected float[] pcameraInv;
-  
-  protected float[] pprojection;
-  
-  /** Model transformation (translate/rotate/scale) matrix
-   * This relationship hold:
-   *  
-   * modelviewStack.current = pcamera * transform
-   * 
-   * or:
-   * 
-   * transform = pcameraInv * modelviewStack.current
-   * 
-   */  
-  protected float[] transform;
-  
+  protected float[] pprojection;  
   protected float[] gltemp;
+  
   
   // PMatrix3D version for use in Processing.
   public PMatrix3D modelview;
@@ -238,10 +222,10 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean matricesAllocated = false;
   
   /** Camera and model transformation (translate/rotate/scale) matrix stack **/
-  static protected GLMatrixStack modelviewStack;  
+  protected ModelviewStack modelviewStack;  
   
   /** Projection (ortho/perspective) matrix stack **/
-  static protected GLMatrixStack projectionStack; 
+  protected ProjectionStack projectionStack;
 
   // ........................................................
 
@@ -441,6 +425,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public static int flushMode = FLUSH_WHEN_FULL;
 //  public static int flushMode = FLUSH_END_SHAPE;
 //  public static int flushMode = FLUSH_AFTER_TRANSFORMATION;
+ 
+  public static final int MIN_ARRAYCOPY_SIZE = 3;
   
   public static final int MAX_TESS_VERTICES = 1000000;
  
@@ -448,7 +434,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public static final int DEFAULT_TESS_VERTICES = 512;
   public static final int DEFAULT_TESS_INDICES = 1024;
   
-  public Tessellator tessellator;
+  protected Tessellator tessellator;
   
   static protected PShader lineShader;
   static protected PShader pointShader;
@@ -520,8 +506,7 @@ public class PGraphicsOpenGL extends PGraphics {
       glmodelviewInv = new float[16];
       pcamera = new float[16];
       pcameraInv = new float[16];
-      pprojection = new float[16];
-      transform = new float[16];
+      pprojection = new float[16];      
       gltemp = new float[16];
       
       projection = new PMatrix3D();
@@ -1115,10 +1100,7 @@ public class PGraphicsOpenGL extends PGraphics {
         
     // Screen blend is needed for alpha (i.e. fonts) to work.
     blendMode(BLEND);
-    
-    // Default texture blending:
-    textureBlend(BLEND);
-    
+       
     // this is necessary for 3D drawing
     if (hints[DISABLE_DEPTH_TEST]) {
       gl.glDisable(GL.GL_DEPTH_TEST);
@@ -1465,7 +1447,7 @@ public class PGraphicsOpenGL extends PGraphics {
     super.defaultSettings();
 
     manipulatingCamera = false;
-    scalingDuringCamManip = false;
+    //scalingDuringCamManip = false;
         
     if (fbStack == null) {
       fbStack = new Stack<PFramebuffer>();
@@ -1475,10 +1457,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     if (modelviewStack == null) {
-      modelviewStack = new GLMatrixStack();
+      modelviewStack = new ModelviewStack();
     }
     if (projectionStack == null) {
-      projectionStack = new GLMatrixStack();
+      projectionStack = new ProjectionStack();
     }
     
     // easiest for beginners
@@ -1556,56 +1538,43 @@ public class PGraphicsOpenGL extends PGraphics {
   public void vertex(float x, float y, float z) {
     vertex(x, y, z, 0, 0);      
   }  
+
   
-  
-  public void vertex(float x, float y, float z, float u, float v) {  
-    currentVertex[0] = x;
-    currentVertex[1] = y;
-    currentVertex[2] = z;      
-    
+  public void vertex(float x, float y, float z, float u, float v) {
     boolean textured = textureImage != null;
+    float fR, fG, fB, fA;
+    fR = fG = fB = fA = 0;
     if (fill || textured) {
       if (!textured) {
-        currentColor[0] = fillR;
-        currentColor[1] = fillG;
-        currentColor[2] = fillB;
-        currentColor[3] = fillA;
+        fR = fillR;
+        fG = fillG;
+        fB = fillB;
+        fA = fillA;
       } else {
         if (tint) {
-          currentColor[0] = tintR;
-          currentColor[1] = tintG;
-          currentColor[2] = tintB;
-          currentColor[3] = tintA;
+          fR = tintR;
+          fG = tintG;
+          fB = tintB;
+          fA = tintA;
         } else {
-          currentColor[0] = 1;
-          currentColor[1] = 1;
-          currentColor[2] = 1;
-          currentColor[3] = 1;
+          fR = 1;
+          fG = 1;
+          fB = 1;
+          fA = 1;
         }
       }
     }
     
-    currentNormal[0] = normalX;
-    currentNormal[1] = normalY;
-    currentNormal[2] = normalZ;    
-    
-    currentTexcoord[0] = u;
-    currentTexcoord[1] = v;    
-
+    float sR, sG, sB, sA, sW;
+    sR = sG = sB = sA = sW = 0;
     if (stroke) {
-      currentStroke[0] = strokeR;
-      currentStroke[1] = strokeG;
-      currentStroke[2] = strokeB;
-      currentStroke[3] = strokeA;
-      currentStroke[4] = strokeWeight;
-    } else {
-      currentStroke[0] = 0;
-      currentStroke[1] = 0;
-      currentStroke[2] = 0;
-      currentStroke[3] = 0;
-      currentStroke[4] = 0;
-    }
-    
+      sR = strokeR;
+      sG = strokeG;
+      sB = strokeB;
+      sA = strokeA;
+      sW = strokeWeight;
+    }    
+
     int code;
     if (breakShape) {
       code = BREAK;
@@ -1614,9 +1583,14 @@ public class PGraphicsOpenGL extends PGraphics {
       code = VERTEX;
     }    
         
-    in.addVertex(currentVertex, currentColor, currentNormal, currentTexcoord, currentStroke, code);
-  }
-  
+    in.addVertex(x, y, z, 
+                 fR, fG, fB, fA, 
+                 normalX, normalY, normalZ,
+                 u, v, 
+                 sR, sG, sB, sA, sW, 
+                 code);    
+  }  
+   
   
   public void beginShape(int kind) {  
     shape = kind;
@@ -1628,10 +1602,6 @@ public class PGraphicsOpenGL extends PGraphics {
   public void endShape(int mode) {
     tessellator.setInGeometry(in);
     tessellator.setTessGeometry(tess);
-
-    if (flushMode == FLUSH_WHEN_FULL) {
-      getTransformMatrix();      
-    }
     
     if (shape == POINTS) {
       tessellator.tessellatePoints(strokeCap);    
@@ -1686,8 +1656,6 @@ public class PGraphicsOpenGL extends PGraphics {
         gl2f.glLoadMatrixf(pcamera, 0);
       }
       
-      //PApplet.println("Flushing geometry: " + tess.lineVertexCount);
-      
       if (hasPoints) {
         renderPoints();
       } 
@@ -1709,7 +1677,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
 
-  protected void renderPoints() {
+  protected void renderPoints() {    
     checkVertexBuffers(tess.pointVertexCount);
     
     pointShader.start();
@@ -2606,6 +2574,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void popMatrix() {
+    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
+      flush();
+    }
+    
     gl2f.glPopMatrix();
     modelviewStack.pop();
   }
@@ -2686,10 +2658,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
       flush();
     }    
-    
-    if (manipulatingCamera) {
-      scalingDuringCamManip = true;
-    }
+
     gl2f.glScalef(sx, sy, sz);
     modelviewStack.scale(sx, sy, sz);
     modelviewUpdated = false;
@@ -2759,29 +2728,17 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     }
     
-    gltemp[ 0] = n00;
-    gltemp[ 1] = n10;
-    gltemp[ 2] = n20;
-    gltemp[ 3] = n30;
-
-    gltemp[ 4] = n01;
-    gltemp[ 5] = n11;
-    gltemp[ 6] = n21;
-    gltemp[ 7] = n31;
-
-    gltemp[ 8] = n02;
-    gltemp[ 9] = n12;
-    gltemp[10] = n22;
-    gltemp[11] = n32;
-
-    gltemp[12] = n03;
-    gltemp[13] = n13;
-    gltemp[14] = n23;
-    gltemp[15] = n33;
+    gltemp[ 0] = n00; gltemp[ 4] = n01; gltemp[ 8] = n02; gltemp[12] = n03;
+    gltemp[ 1] = n10; gltemp[ 5] = n11; gltemp[ 9] = n12; gltemp[13] = n13;
+    gltemp[ 2] = n20; gltemp[ 6] = n21; gltemp[10] = n22; gltemp[14] = n23;
+    gltemp[ 3] = n30; gltemp[ 7] = n31; gltemp[11] = n32; gltemp[15] = n33;
 
     gl2f.glMultMatrixf(gltemp, 0);
 
-    modelviewStack.mult(gltemp);
+    modelviewStack.mult(n00, n01, n02, n03,
+                        n10, n11, n12, n13,
+                        n20, n21, n22, n23,
+                        n30, n31, n32, n33);
     modelviewUpdated = false;   
   }
 
@@ -2794,14 +2751,16 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     }
     
-    copyPMatrixToGLArray(modelview, glmodelview);
     if (calcInv) {
-      calculateModelviewInverse();
-    } else {
-      copyPMatrixToGLArray(modelviewInv, glmodelviewInv);
+      modelviewInv.set(modelview);
+      modelviewInv.invert();
     }
+    
+    copyPMatrixToGLArray(modelview, glmodelview);
+    copyPMatrixToGLArray(modelviewInv, glmodelviewInv);
     gl2f.glLoadMatrixf(glmodelview, 0);
-    modelviewStack.set(glmodelview);
+    
+    modelviewStack.set(modelview);
     modelviewUpdated = true;
   }
 
@@ -2811,52 +2770,24 @@ public class PGraphicsOpenGL extends PGraphics {
   // row-major ordering of the elements of the float array, and opengl
   // uses column-major ordering.
   protected void copyPMatrixToGLArray(PMatrix3D src, float[] dest) {
-    dest[ 0] = src.m00;
-    dest[ 1] = src.m10;
-    dest[ 2] = src.m20;
-    dest[ 3] = src.m30;
-
-    dest[ 4] = src.m01;
-    dest[ 5] = src.m11;
-    dest[ 6] = src.m21;
-    dest[ 7] = src.m31;
-    
-    dest[ 8] = src.m02;
-    dest[ 9] = src.m12;
-    dest[10] = src.m22;
-    dest[11] = src.m32;
-
-    dest[12] = src.m03;
-    dest[13] = src.m13;
-    dest[14] = src.m23;
-    dest[15] = src.m33;
+    dest[ 0] = src.m00; dest[ 4] = src.m01; dest[ 8] = src.m02; dest[12] = src.m03;
+    dest[ 1] = src.m10; dest[ 5] = src.m11; dest[ 9] = src.m12; dest[13] = src.m13;
+    dest[ 2] = src.m20; dest[ 6] = src.m21; dest[10] = src.m22; dest[14] = src.m23;
+    dest[ 3] = src.m30; dest[ 7] = src.m31; dest[11] = src.m32; dest[15] = src.m33;
   }
 
+  
   // This method is needed to copy an opengl array into a  PMatrix3D.
   // The PMatrix3D.set(float[]) is not useful, because PMatrix3D assumes
   // row-major ordering of the elements of the float array, and opengl
   // uses column-major ordering.  
   protected void copyGLArrayToPMatrix(float[] src, PMatrix3D dest) {
-    dest.m00 = src[0];
-    dest.m10 = src[1];
-    dest.m20 = src[2];
-    dest.m30 = src[3];
-
-    dest.m01 = src[4];
-    dest.m11 = src[5];
-    dest.m21 = src[6];
-    dest.m31 = src[7];
-    
-    dest.m02 = src[8];
-    dest.m12 = src[9];
-    dest.m22 = src[10];
-    dest.m32 = src[11];
-
-    dest.m03 = src[12];
-    dest.m13 = src[13];
-    dest.m23 = src[14];
-    dest.m33 = src[15];
+    dest.m00 = src[ 0]; dest.m01 = src[ 4]; dest.m02 = src[ 8]; dest.m03 = src[12]; 
+    dest.m10 = src[ 1]; dest.m11 = src[ 5]; dest.m12 = src[ 9]; dest.m13 = src[13];
+    dest.m20 = src[ 2]; dest.m21 = src[ 6]; dest.m22 = src[10]; dest.m23 = src[14];
+    dest.m30 = src[ 3]; dest.m31 = src[ 7]; dest.m32 = src[11]; dest.m33 = src[15];
   }  
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -2937,12 +2868,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // PROJECTION
   
-  protected void getProjectionMatrix() {
-    projectionStack.get(glprojection);
-    copyGLArrayToPMatrix(glprojection, projection);
-    projectionUpdated = true;
-  }
-  
   public void pushProjection() {
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glPushMatrix();
@@ -2950,14 +2875,27 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
   }
   
+  public void multProjection(PMatrix3D mat) {
+    projection.apply(mat);
+  }
+
+  public void setProjection(PMatrix3D mat) {
+    projection.set(mat);
+  }
+    
   public void popProjection() {
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glPopMatrix();
     projectionStack.pop();
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);    
   }
-    
-  public void updateProjection() {
+
+  protected void getProjectionMatrix() {
+    projectionStack.get(projection);
+    projectionUpdated = true;
+  }  
+  
+  protected void updateProjection() {
     copyPMatrixToGLArray(projection, glprojection);
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glLoadMatrixf(glprojection, 0);
@@ -2966,7 +2904,7 @@ public class PGraphicsOpenGL extends PGraphics {
     projectionUpdated = true;
   }
   
-  public void restoreProjection() {
+  protected void restoreProjection() {
     PApplet.arrayCopy(pprojection, glprojection);
     copyGLArrayToPMatrix(pprojection, projection);
     
@@ -3035,8 +2973,9 @@ public class PGraphicsOpenGL extends PGraphics {
           + "before endCamera()");
     } else {
       manipulatingCamera = true;
-      scalingDuringCamManip = false;
-    }
+      //scalingDuringCamManip = false;
+      modelviewStack.resetTransform();
+    }    
   }
 
   public void updateCamera() {
@@ -3044,12 +2983,14 @@ public class PGraphicsOpenGL extends PGraphics {
       throw new RuntimeException("Cannot call updateCamera() "
           + "without first calling beginCamera()");
     }    
-    copyPMatrixToGLArray(camera, glmodelview);
-    gl2f.glLoadMatrixf(glmodelview, 0);
-    modelviewStack.set(glmodelview);    
+    modelviewStack.setCamera(camera);    
     
-    scalingDuringCamManip = true; // Assuming general transformation.
+//    scalingDuringCamManip = true; // Assuming general transformation.
     modelviewUpdated = false;
+    
+    flush(); // ??
+    copyPMatrixToGLArray(camera, glmodelview);
+    gl2f.glLoadMatrixf(glmodelview, 0);    
   }  
   
   /**
@@ -3065,172 +3006,34 @@ public class PGraphicsOpenGL extends PGraphics {
       throw new RuntimeException("Cannot call endCamera() "
           + "without first calling beginCamera()");
     }
-
-    flush(); 
     
     getModelviewMatrix();
 
-    if (scalingDuringCamManip) {
-      // General inversion Rotation+Translation+Scaling
-      calculateModelviewInverse();
-    } else {
-      // Inverse calculation for Rotation+Translation matrix only.
-      calculateModelviewInvNoScaling();
-    }
+    modelviewInv.set(modelview);
+    modelviewInv.invert();    
 
+    camera.set(modelview);
+    
     // Copying modelview matrix after camera transformations to the camera
     // matrices.
+    // DO WE NEED ALL THESE GUYS?
     PApplet.arrayCopy(glmodelview, pcamera);
+
+    
     PApplet.arrayCopy(glmodelviewInv, pcameraInv);
     copyGLArrayToPMatrix(pcamera, camera);
     copyGLArrayToPMatrix(pcameraInv, cameraInv);
 
     // all done
     manipulatingCamera = false;
-    scalingDuringCamManip = false;
+    //scalingDuringCamManip = false;
   }
 
   protected void getModelviewMatrix() {
-    modelviewStack.get(glmodelview);
-    copyGLArrayToPMatrix(glmodelview, modelview);
+    modelviewStack.get(modelview);
     modelviewUpdated = true;
   }
 
-  protected void getTransformMatrix() {
-    // transform = pcameraInv * modelviewStack.current
-    float[] mv = modelviewStack.current;
-    float[] ic = pcameraInv;
-    float[] tr = transform;
-    
-    tr[ 0] = ic[0] * mv[ 0] + ic[4] * mv[ 1] + ic[ 8] * mv[ 2] + ic[12] * mv[ 3];
-    tr[ 4] = ic[0] * mv[ 4] + ic[4] * mv[ 5] + ic[ 8] * mv[ 6] + ic[12] * mv[ 7];
-    tr[ 8] = ic[0] * mv[ 8] + ic[4] * mv[ 9] + ic[ 8] * mv[10] + ic[12] * mv[11];
-    tr[12] = ic[0] * mv[12] + ic[4] * mv[13] + ic[ 8] * mv[14] + ic[12] * mv[15];
-
-    tr[ 1] = ic[1] * mv[ 0] + ic[5] * mv[ 1] + ic[ 9] * mv[ 2] + ic[13] * mv[ 3];
-    tr[ 5] = ic[1] * mv[ 4] + ic[5] * mv[ 5] + ic[ 9] * mv[ 6] + ic[13] * mv[ 7];
-    tr[ 9] = ic[1] * mv[ 8] + ic[5] * mv[ 9] + ic[ 9] * mv[10] + ic[13] * mv[11];
-    tr[13] = ic[1] * mv[12] + ic[5] * mv[13] + ic[ 9] * mv[14] + ic[13] * mv[15];
-
-    tr[ 2] = ic[2] * mv[ 0] + ic[6] * mv[ 1] + ic[10] * mv[ 2] + ic[14] * mv[ 3];
-    tr[ 6] = ic[2] * mv[ 4] + ic[6] * mv[ 5] + ic[10] * mv[ 6] + ic[14] * mv[ 7];
-    tr[10] = ic[2] * mv[ 8] + ic[6] * mv[ 9] + ic[10] * mv[10] + ic[14] * mv[11];
-    tr[14] = ic[2] * mv[12] + ic[6] * mv[13] + ic[10] * mv[14] + ic[14] * mv[15];
-
-    tr[ 3] = ic[3] * mv[ 0] + ic[7] * mv[ 1] + ic[11] * mv[ 2] + ic[15] * mv[ 3];
-    tr[ 7] = ic[3] * mv[ 4] + ic[7] * mv[ 5] + ic[11] * mv[ 6] + ic[15] * mv[ 7];
-    tr[11] = ic[3] * mv[ 8] + ic[7] * mv[ 9] + ic[11] * mv[10] + ic[15] * mv[11];
-    tr[15] = ic[3] * mv[12] + ic[7] * mv[13] + ic[11] * mv[14] + ic[15] * mv[15];
-  }  
-  
-  // Calculates the inverse of the modelview matrix.
-  // From Matrix4<Real> Matrix4<Real>::Inverse in 
-  // http://www.geometrictools.com/LibMathematics/Algebra/Wm5Matrix4.inl
-  protected void calculateModelviewInverse() {
-    float[] m = glmodelview;
-    float[] inv = glmodelviewInv; 
-    
-    float a0 = m[ 0] * m[ 5] - m[ 1] * m[ 4];
-    float a1 = m[ 0] * m[ 6] - m[ 2] * m[ 4];
-    float a2 = m[ 0] * m[ 7] - m[ 3] * m[ 4];
-    float a3 = m[ 1] * m[ 6] - m[ 2] * m[ 5];
-    float a4 = m[ 1] * m[ 7] - m[ 3] * m[ 5];
-    float a5 = m[ 2] * m[ 7] - m[ 3] * m[ 6];
-    float b0 = m[ 8] * m[13] - m[ 9] * m[12];
-    float b1 = m[ 8] * m[14] - m[10] * m[12];
-    float b2 = m[ 8] * m[15] - m[11] * m[12];
-    float b3 = m[ 9] * m[14] - m[10] * m[13];
-    float b4 = m[ 9] * m[15] - m[11] * m[13];
-    float b5 = m[10] * m[15] - m[11] * m[14];
-
-    float det = a0 * b5 - a1 * b4 + a2 * b3 + a3 * b2 - a4 * b1 + a5 * b0;
-    
-    if (PApplet.abs(det) > 0)  {
-      inv[ 0] = + m[ 5] * b5 - m[ 6] * b4 + m[ 7] * b3;
-      inv[ 4] = - m[ 4] * b5 + m[ 6] * b2 - m[ 7] * b1;
-      inv[ 8] = + m[ 4] * b4 - m[ 5] * b2 + m[ 7] * b0;
-      inv[12] = - m[ 4] * b3 + m[ 5] * b1 - m[ 6] * b0;
-      inv[ 1] = - m[ 1] * b5 + m[ 2] * b4 - m[ 3] * b3;
-      inv[ 5] = + m[ 0] * b5 - m[ 2] * b2 + m[ 3] * b1;
-      inv[ 9] = - m[ 0] * b4 + m[ 1] * b2 - m[ 3] * b0;
-      inv[13] = + m[ 0] * b3 - m[ 1] * b1 + m[ 2] * b0;
-      inv[ 2] = + m[13] * a5 - m[14] * a4 + m[15] * a3;
-      inv[ 6] = - m[12] * a5 + m[14] * a2 - m[15] * a1;
-      inv[10] = + m[12] * a4 - m[13] * a2 + m[15] * a0;
-      inv[14] = - m[12] * a3 + m[13] * a1 - m[14] * a0;
-      inv[ 3] = - m[ 9] * a5 + m[10] * a4 - m[11] * a3;
-      inv[ 7] = + m[ 8] * a5 - m[10] * a2 + m[11] * a1;
-      inv[11] = - m[ 8] * a4 + m[ 9] * a2 - m[11] * a0;
-      inv[15] = + m[ 8] * a3 - m[ 9] * a1 + m[10] * a0;
-
-      float invDet = 1.0f / det;
-      inv[0] *= invDet;
-      inv[1] *= invDet;
-      inv[2] *= invDet;
-      inv[3] *= invDet;
-      inv[4] *= invDet;
-      inv[5] *= invDet;
-      inv[6] *= invDet;
-      inv[7] *= invDet;
-      inv[8] *= invDet;
-      inv[9] *= invDet;
-      inv[10] *= invDet;
-      inv[11] *= invDet;
-      inv[12] *= invDet;
-      inv[13] *= invDet;
-      inv[14] *= invDet;
-      inv[15] *= invDet;
-      
-      copyGLArrayToPMatrix(inv, modelviewInv);      
-    }
-  }
-
-  // Calculates the inverse of the modelview matrix, assuming that no scaling
-  // transformation was applied, only translations and rotations.
-  // Here is the derivation of the formula:
-  // http://www-graphics.stanford.edu/courses/cs248-98-fall/Final/q4.html
-  protected void calculateModelviewInvNoScaling() {
-    float[] m = glmodelview;
-    float[] inv = glmodelviewInv; 
-    
-    float ux = m[0];
-    float uy = m[1];
-    float uz = m[2];
-
-    float vx = m[4];
-    float vy = m[5];
-    float vz = m[6];
-
-    float wx = m[8];
-    float wy = m[9];
-    float wz = m[10];
-
-    float tx = m[12];
-    float ty = m[13];
-    float tz = m[14];
-
-    inv[0] = ux;
-    inv[1] = vx;
-    inv[2] = wx;
-    inv[3] = 0.0f;
-
-    inv[4] = uy;
-    inv[5] = vy;
-    inv[6] = wy;
-    inv[7] = 0.0f;
-
-    inv[8] = uz;
-    inv[9] = vz;
-    inv[10] = wz;
-    inv[11] = 0;
-
-    inv[12] = -(ux * tx + uy * ty + uz * tz);
-    inv[13] = -(vx * tx + vy * ty + vz * tz);
-    inv[14] = -(wx * tx + wy * ty + wz * tz);
-    inv[15] = 1.0f;
-    
-    copyGLArrayToPMatrix(inv, modelviewInv);
-  }
 
   /**
    * Set camera to the default settings.
@@ -3407,11 +3210,13 @@ public class PGraphicsOpenGL extends PGraphics {
   
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     gl2f.glLoadMatrixf(glmodelview, 0);
-    modelviewStack.set(glmodelview);
-    copyGLArrayToPMatrix(glmodelview, modelview);
+    
+    copyGLArrayToPMatrix(glmodelview, modelview);    
+    modelviewStack.setCamera(modelview);    
     modelviewUpdated = true;
 
-    calculateModelviewInvNoScaling();
+    modelviewInv.set(modelview);
+    modelviewInv.invert();    
     
     PApplet.arrayCopy(glmodelview, pcamera);
     PApplet.arrayCopy(glmodelviewInv, pcameraInv);
@@ -3419,18 +3224,6 @@ public class PGraphicsOpenGL extends PGraphics {
     copyGLArrayToPMatrix(pcameraInv, cameraInv);        
   }
 
-  public void restoreCamera() {
-    PApplet.arrayCopy(pcamera, glmodelview);
-    PApplet.arrayCopy(pcameraInv, glmodelviewInv);
-    copyGLArrayToPMatrix(pcamera, camera);
-    copyGLArrayToPMatrix(pcameraInv, cameraInv);
-    
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glLoadMatrixf(glmodelview, 0);
-    modelviewStack.set(glmodelview);
-    copyGLArrayToPMatrix(glmodelview, modelview);
-    modelviewUpdated = true;    
-  }
   
   /**
    * Print the current camera matrix.
@@ -3441,6 +3234,22 @@ public class PGraphicsOpenGL extends PGraphics {
     temp.print();
   }
 
+  
+  protected void restoreCamera() {
+    PApplet.arrayCopy(pcamera, glmodelview);
+    PApplet.arrayCopy(pcameraInv, glmodelviewInv);
+    copyGLArrayToPMatrix(pcamera, camera);
+    copyGLArrayToPMatrix(pcameraInv, cameraInv);
+    
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    gl2f.glLoadMatrixf(glmodelview, 0);
+    
+    copyGLArrayToPMatrix(glmodelview, modelview);
+    modelviewStack.setCamera(modelview);
+    modelviewUpdated = true;    
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // PROJECTION
@@ -3599,6 +3408,8 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glLoadMatrixf(glprojection, 0);
     copyGLArrayToPMatrix(glprojection, projection);
     projectionUpdated = true;
+    
+    projectionStack.set(projection);
     
     PApplet.arrayCopy(glprojection, pprojection);
     
@@ -5867,38 +5678,72 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
   }
   
-  
-  /**
-   *  This class encapsulates a static matrix stack that can be used
-   *  to mirror the changes in OpenGL matrices.
-   */
-  protected class GLMatrixStack {
-    protected Stack<float[]> matrixStack;
-    protected float[] current;
+  protected class ModelviewStack {
+    protected Stack<PMatrix3D> stack;
+    protected PMatrix3D modelview;
+    protected PMatrix3D camera;
+    protected PMatrix3D cameraInv;
+    protected PMatrix3D transform;
     
-    public GLMatrixStack() {
-      matrixStack = new Stack<float[]>();
-      current = new float[16];
+    public ModelviewStack() {
+      stack = new Stack<PMatrix3D>();
+      camera = new PMatrix3D();
+      cameraInv = new PMatrix3D();
+      transform = new PMatrix3D();
+      modelview = new PMatrix3D();      
       setIdentity();
     }
     
+    public void setCamera(float[] mat) {      
+      camera.set(mat[0], mat[4], mat[ 8], mat[12],
+                 mat[1], mat[5], mat[ 9], mat[13],
+                 mat[2], mat[6], mat[10], mat[14],
+                 mat[3], mat[7], mat[11], mat[15]); 
+      cameraInv.set(camera);
+      cameraInv.invert();
+      transform.reset();
+      modelview.set(camera);      
+    }    
+    
+    public void setCamera(float m00, float m01, float m02, float m03,
+                          float m10, float m11, float m12, float m13,
+                          float m20, float m21, float m22, float m23,
+                          float m30, float m31, float m32, float m33) {
+      camera.set(m00, m01, m02, m03,
+                 m10, m11, m12, m13,
+                 m20, m21, m22, m23,
+                 m30, m31, m32, m33);
+      cameraInv.set(camera);
+      cameraInv.invert();
+      transform.reset();
+      modelview.set(camera);   
+    }
+    
+    
+    public void setCamera(PMatrix3D cam) {
+      camera.set(cam);
+      cameraInv.set(cam);
+      cameraInv.invert();
+      transform.reset();
+      modelview.set(cam);      
+    }
+    
     public void setIdentity() {
-      set(1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0,
-          0, 0, 0, 1);
+      camera.reset();
+      cameraInv.reset();
+      transform.reset();
+      modelview.reset();
     }
     
     public void push() {
-      float[] mat = new float[16];
-      PApplet.arrayCopy(current, mat);
-      matrixStack.push(mat);
+      PMatrix3D mat = new PMatrix3D(transform);
+      stack.push(mat);
     }
     
     public void pop() {
       try {
-        float[] mat = matrixStack.pop();
-        PApplet.arrayCopy(mat, current);
+        PMatrix3D mat = stack.pop();
+        transform.set(mat);
       } catch (EmptyStackException e) {
         PGraphics.showWarning("P3D: Empty modelview stack");
       }
@@ -5911,79 +5756,192 @@ public class PGraphicsOpenGL extends PGraphics {
            mat[3], mat[7], mat[11], mat[15]);
     }
     
-    public void mult(float n0, float n4, float n8, float n12,
-                     float n1, float n5, float n9, float n13,
-                     float n2, float n6, float n10, float n14,
-                     float n3, float n7, float n11, float n15) {
-      float r0  = current[0] *  n0 + current[4] *  n1 + current[ 8] *  n2 + current[12] *  n3;
-      float r4  = current[0] *  n4 + current[4] *  n5 + current[ 8] *  n6 + current[12] *  n7;
-      float r8  = current[0] *  n8 + current[4] *  n9 + current[ 8] * n10 + current[12] * n11;
-      float r12 = current[0] * n12 + current[4] * n13 + current[ 8] * n14 + current[12] * n15;
-
-      float r1  = current[1] *  n0 + current[5] *  n1 + current[ 9] *  n2 + current[13] *  n3;
-      float r5  = current[1] *  n4 + current[5] *  n5 + current[ 9] *  n6 + current[13] *  n7;
-      float r9  = current[1] *  n8 + current[5] *  n9 + current[ 9] * n10 + current[13] * n11;
-      float r13 = current[1] * n12 + current[5] * n13 + current[ 9] * n14 + current[13] * n15;
-
-      float r2  = current[2] *  n0 + current[6] *  n1 + current[10] *  n2 + current[14] *  n3;
-      float r6  = current[2] *  n4 + current[6] *  n5 + current[10] *  n6 + current[14] *  n7;
-      float r10 = current[2] *  n8 + current[6] *  n9 + current[10] * n10 + current[14] * n11;
-      float r14 = current[2] * n12 + current[6] * n13 + current[10] * n14 + current[14] * n15;
-
-      float r3  = current[3] *  n0 + current[7] *  n1 + current[11] *  n2 + current[15] *  n3;
-      float r7  = current[3] *  n4 + current[7] *  n5 + current[11] *  n6 + current[15] *  n7;
-      float r11 = current[3] *  n8 + current[7] *  n9 + current[11] * n10 + current[15] * n11;
-      float r15 = current[3] * n12 + current[7] * n13 + current[11] * n14 + current[15] * n15;
-
-      current[0] = r0; current[4] = r4; current[ 8] =  r8; current[12] = r12;
-      current[1] = r1; current[5] = r5; current[ 9] =  r9; current[13] = r13;
-      current[2] = r2; current[6] = r6; current[10] = r10; current[14] = r14;
-      current[3] = r3; current[7] = r7; current[11] = r11; current[15] = r15;      
+    public void mult(float n00, float n01, float n02, float n03,
+                     float n10, float n11, float n12, float n13,
+                     float n20, float n21, float n22, float n23,
+                     float n30, float n31, float n32, float n33) {
+      transform.apply(n00, n01, n02, n03,
+                      n10, n11, n12, n13,
+                      n20, n21, n22, n23,
+                      n30, n31, n32, n33);
     }
+    
+    public void mult(PMatrix3D mat) {
+      transform.apply(mat);
+    }    
     
     public void get(float[] mat) {
-      PApplet.arrayCopy(current, mat);  
+      modelview.apply(transform);
+      
+      mat[0] = modelview.m00; mat[4] = modelview.m01; mat[ 8] = modelview.m02; mat[12] = modelview.m03;
+      mat[1] = modelview.m10; mat[5] = modelview.m11; mat[ 9] = modelview.m12; mat[13] = modelview.m13;
+      mat[2] = modelview.m20; mat[6] = modelview.m21; mat[10] = modelview.m22; mat[14] = modelview.m23;
+      mat[3] = modelview.m30; mat[7] = modelview.m31; mat[11] = modelview.m32; mat[15] = modelview.m33;
     }
 
-    public void set(float[] mat) {
-      PApplet.arrayCopy(mat, current);
+    public void get(PMatrix3D mat) {
+      modelview.apply(transform);
+      mat.set(modelview);      
     }
     
-    public void set(float n0, float n4, float n8, float n12,
-                    float n1, float n5, float n9, float n13,
-                    float n2, float n6, float n10, float n14,
-                    float n3, float n7, float n11, float n15) {
-      current[0] = n0; current[4] = n4; current[ 8] = n8;  current[12] = n12;
-      current[1] = n1; current[5] = n5; current[ 9] = n9;  current[13] = n13;
-      current[2] = n2; current[6] = n6; current[10] = n10; current[14] = n14;
-      current[3] = n3; current[7] = n7; current[11] = n11; current[15] = n15;      
+    public void set(float[] mat) {      
+      modelview.set(mat[0], mat[4], mat[ 8], mat[12],
+                    mat[1], mat[5], mat[ 9], mat[13],
+                    mat[2], mat[6], mat[10], mat[14],
+                    mat[3], mat[7], mat[11], mat[15]); 
+      updateTransform();
     }
+    
+    public void set(float m00, float m01, float m02, float m03,
+                    float m10, float m11, float m12, float m13,
+                    float m20, float m21, float m22, float m23,
+                    float m30, float m31, float m32, float m33) {
+      modelview.set(m00, m01, m02, m03,
+                  m10, m11, m12, m13,
+                  m20, m21, m22, m23,
+                  m30, m31, m32, m33);
+      updateTransform();
+    }
+    
+    public void set(PMatrix3D mat) {
+      modelview.set(mat.m00, mat.m01, mat.m02, mat.m03,
+                    mat.m10, mat.m11, mat.m12, mat.m13,
+                    mat.m20, mat.m21, mat.m22, mat.m23,
+                    mat.m30, mat.m31, mat.m32, mat.m33);
+      updateTransform();
+    }    
     
     public void translate(float tx, float ty, float tz) {
-      current[12] += tx * current[0] + ty * current[4] + tz * current[ 8];
-      current[13] += tx * current[1] + ty * current[5] + tz * current[ 9];
-      current[14] += tx * current[2] + ty * current[6] + tz * current[10];
-      current[15] += tx * current[3] + ty * current[7] + tz * current[11];      
+      transform.translate(tx, ty, tz);
     }
 
     public void rotate(float angle, float rx, float ry, float rz) {
-      float c = PApplet.cos(angle);
-      float s = PApplet.sin(angle);
-      float t = 1.0f - c;
-      
-      mult((t*rx*rx) + c     , (t*rx*ry) - (s*rz), (t*rx*rz) + (s*ry), 0,
-           (t*rx*ry) + (s*rz),      (t*ry*ry) + c, (t*ry*rz) - (s*rx), 0,
-           (t*rx*rz) - (s*ry), (t*ry*rz) + (s*rx),      (t*rz*rz) + c, 0,
-                            0,                  0,                  0, 1);
+      transform.rotate(angle, rx, ry, rz);
     }
     
     public void scale(float sx, float sy, float sz) {
-      current[0] *= sx;  current[4] *= sy;  current[ 8] *= sz;
-      current[1] *= sx;  current[5] *= sy;  current[ 9] *= sz;
-      current[2] *= sx;  current[6] *= sy;  current[10] *= sz;
-      current[3] *= sx;  current[7] *= sy;  current[11] *= sz;      
+      transform.scale(sx, sy, sz);
+    }
+
+    public PMatrix3D getTransform() {
+      return transform;
+    }
+    
+    public PMatrix3D getCamera() {
+      return camera;
+    }
+    
+    public PMatrix3D getCameraInv() {
+      return cameraInv;
+    }    
+
+    public void resetTransform() {
+      transform.reset();
+    }    
+    
+    // It updates the transform matrix given the 
+    // current camera and modelview. Since they are related
+    // by:
+    // modelview = camera * transform
+    // then:
+    // transform = cameraInv * modelview
+    protected void updateTransform() {
+      transform.set(cameraInv);
+      transform.apply(modelview);      
     }
   }  
+
+  protected class ProjectionStack {
+    protected Stack<PMatrix3D> stack;
+    protected PMatrix3D projection;
+    
+    public ProjectionStack() {
+      stack = new Stack<PMatrix3D>();
+      projection = new PMatrix3D();
+      setIdentity();
+    }
+    
+    public void setIdentity() {
+      set(1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1);
+    }
+    
+    public void push() {
+      PMatrix3D mat = new PMatrix3D(projection);
+      stack.push(mat);
+    }
+    
+    public void pop() {
+      try {
+        PMatrix3D mat = stack.pop();
+        projection.set(mat);
+      } catch (EmptyStackException e) {
+        PGraphics.showWarning("P3D: Empty projection stack");
+      }
+    }
+
+    public void mult(float[] mat) {
+      mult(mat[0], mat[4], mat[ 8], mat[12],
+           mat[1], mat[5], mat[ 9], mat[13],
+           mat[2], mat[6], mat[10], mat[14],
+           mat[3], mat[7], mat[11], mat[15]);
+    }
+    
+    public void mult(float n00, float n01, float n02, float n03,
+                     float n10, float n11, float n12, float n13,
+                     float n20, float n21, float n22, float n23,
+                     float n30, float n31, float n32, float n33) {
+      projection.apply(n00, n01, n02, n03,
+                    n10, n11, n12, n13,
+                    n20, n21, n22, n23,
+                    n30, n31, n32, n33);
+    }
+    
+    public void mult(PMatrix3D mat) {
+      projection.apply(mat);
+    }    
+    
+    public void get(float[] mat) {
+      mat[0] = projection.m00; mat[4] = projection.m01; mat[ 8] = projection.m02; mat[12] = projection.m03;
+      mat[1] = projection.m10; mat[5] = projection.m11; mat[ 9] = projection.m12; mat[13] = projection.m13;
+      mat[2] = projection.m20; mat[6] = projection.m21; mat[10] = projection.m22; mat[14] = projection.m23;
+      mat[3] = projection.m30; mat[7] = projection.m31; mat[11] = projection.m32; mat[15] = projection.m33;
+    }
+
+    public void get(PMatrix3D mat) {
+      mat.set(projection);      
+    }
+    
+    public void set(float[] mat) {
+      projection.set(mat[0], mat[4], mat[ 8], mat[12],
+                  mat[1], mat[5], mat[ 9], mat[13],
+                  mat[2], mat[6], mat[10], mat[14],
+                  mat[3], mat[7], mat[11], mat[15]); 
+    }
+    
+    public void set(float m00, float m01, float m02, float m03,
+                    float m10, float m11, float m12, float m13,
+                    float m20, float m21, float m22, float m23,
+                    float m30, float m31, float m32, float m33) {
+      projection.set(m00, m01, m02, m03,
+                  m10, m11, m12, m13,
+                  m20, m21, m22, m23,
+                  m30, m31, m32, m33);      
+    }
+    
+    public void set(PMatrix3D mat) {
+      projection.set(mat.m00, mat.m01, mat.m02, mat.m03,
+                  mat.m10, mat.m11, mat.m12, mat.m13,
+                  mat.m20, mat.m21, mat.m22, mat.m23,
+                  mat.m30, mat.m31, mat.m32, mat.m33);     
+    }
+  }  
+
+  
+  
+  
   
   public InGeometry newInGeometry() {
     return new InGeometry(); 
@@ -6050,7 +6008,8 @@ public class PGraphicsOpenGL extends PGraphics {
     public void addVertex(float[] vertex, float[] color, float[] normal, float[] texcoord, float[] stroke, int code) {
       vertexCheck();
 
-      codes[vertexCount] = code;      
+      codes[vertexCount] = code;  
+      
       PApplet.arrayCopy(vertex, 0, vertices, 3 * vertexCount, 3);
       PApplet.arrayCopy(color, 0, colors, 4 * vertexCount, 4);
       PApplet.arrayCopy(normal, 0, normals, 3 * vertexCount, 3);
@@ -6061,9 +6020,51 @@ public class PGraphicsOpenGL extends PGraphics {
       vertexCount++;      
     }
     
+    public void addVertex(float x, float y, float z, 
+                          float r, float g, float b, float a,
+                          float nx, float ny, float nz,
+                          float u, float v,
+                          float sr, float sg, float sb, float sa, float sw, 
+                          int code) {
+      vertexCheck();
+      int index;
+
+      codes[vertexCount] = code;      
+      
+      index = 3 * vertexCount;
+      vertices[index++] = x;
+      vertices[index++] = y;
+      vertices[index  ] = z;
+
+      index = 4 * vertexCount;
+      colors[index++] = r;
+      colors[index++] = g;
+      colors[index++] = b;
+      colors[index  ] = a;
+      
+      index = 3 * vertexCount;
+      normals[index++] = nx;
+      normals[index++] = ny;
+      normals[index  ] = ny;      
+      
+      index = 2 * vertexCount;
+      texcoords[index++] = u;
+      texcoords[index  ] = v;
+
+      index = 5 * vertexCount;
+      strokes[index++] = sr;
+      strokes[index++] = sg;
+      strokes[index++] = sb;
+      strokes[index++] = sa;
+      strokes[index  ] = sw;
+      
+      lastVertex = vertexCount; 
+      vertexCount++;             
+    }
+        
     public void vertexCheck() {
       if (vertexCount == vertices.length / 3) {
-        int newSize = vertexCount << 1; // newSize = 2 * vertexCount  
+        int newSize = vertexCount << 1;  
 
         expandCodes(newSize);
         expandVertices(newSize);
@@ -6076,37 +6077,37 @@ public class PGraphicsOpenGL extends PGraphics {
     
     protected void expandCodes(int n) {
       int temp[] = new int[n];      
-      System.arraycopy(codes, 0, temp, 0, vertexCount);
+      PApplet.arrayCopy(codes, 0, temp, 0, vertexCount);
       codes = temp;    
     }
 
     protected void expandVertices(int n) {
       float temp[] = new float[3 * n];      
-      System.arraycopy(vertices, 0, temp, 0, 3 * vertexCount);
+      PApplet.arrayCopy(vertices, 0, temp, 0, 3 * vertexCount);
       vertices = temp;    
     }
 
     protected void expandColors(int n){
       float temp[] = new float[4 * n];      
-      System.arraycopy(colors, 0, temp, 0, 4 * vertexCount);
+      PApplet.arrayCopy(colors, 0, temp, 0, 4 * vertexCount);
       colors = temp;  
     }
 
     protected void expandNormals(int n) {
       float temp[] = new float[3 * n];      
-      System.arraycopy(normals, 0, temp, 0, 3 * vertexCount);
+      PApplet.arrayCopy(normals, 0, temp, 0, 3 * vertexCount);
       normals = temp;    
     }    
     
     protected void expandTexcoords(int n) {
       float temp[] = new float[2 * n];      
-      System.arraycopy(texcoords, 0, temp, 0, 2 * vertexCount);
+      PApplet.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
       texcoords = temp;    
     }
         
     protected void expandStrokes(int n) {
       float temp[] = new float[5 * n];      
-      System.arraycopy(strokes, 0, temp, 0, 5 * vertexCount);
+      PApplet.arrayCopy(strokes, 0, temp, 0, 5 * vertexCount);
       strokes = temp;
     }      
   }
@@ -6347,7 +6348,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void expandFillIndices(int n) {
       int temp[] = new int[n];      
-      System.arraycopy(fillIndices, 0, temp, 0, fillIndexCount);
+      PApplet.arrayCopy(fillIndices, 0, temp, 0, fillIndexCount);
       fillIndices = temp;      
     }
     
@@ -6397,25 +6398,25 @@ public class PGraphicsOpenGL extends PGraphics {
     
     protected void expandFillVertices(int n) {
       float temp[] = new float[3 * n];      
-      System.arraycopy(fillVertices, 0, temp, 0, 3 * fillVertexCount);
+      PApplet.arrayCopy(fillVertices, 0, temp, 0, 3 * fillVertexCount);
       fillVertices = temp;       
     }
 
     protected void expandFillColors(int n) {
       float temp[] = new float[4 * n];      
-      System.arraycopy(fillColors, 0, temp, 0, 4 * fillVertexCount);
+      PApplet.arrayCopy(fillColors, 0, temp, 0, 4 * fillVertexCount);
       fillColors = temp;
     }
     
     protected void expandFillNormals(int n) {
       float temp[] = new float[3 * n];      
-      System.arraycopy(fillNormals, 0, temp, 0, 3 * fillVertexCount);
+      PApplet.arrayCopy(fillNormals, 0, temp, 0, 3 * fillVertexCount);
       fillNormals = temp;       
     }
     
     protected void expandFillTexcoords(int n) {
       float temp[] = new float[2 * n];      
-      System.arraycopy(fillTexcoords, 0, temp, 0, 2 * fillVertexCount);
+      PApplet.arrayCopy(fillTexcoords, 0, temp, 0, 2 * fillVertexCount);
       fillTexcoords = temp;
     }
     
@@ -6436,25 +6437,25 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public void expandLineVertices(int n) {
       float temp[] = new float[3 * n];      
-      System.arraycopy(lineVertices, 0, temp, 0, 3 * lineVertexCount);
+      PApplet.arrayCopy(lineVertices, 0, temp, 0, 3 * lineVertexCount);
       lineVertices = temp;  
     }
     
     public void expandLineColors(int n) {
       float temp[] = new float[4 * n];      
-      System.arraycopy(lineColors, 0, temp, 0, 4 * lineVertexCount);
+      PApplet.arrayCopy(lineColors, 0, temp, 0, 4 * lineVertexCount);
       lineColors = temp;      
     }
     
     public void expandLineNormals(int n) {
       float temp[] = new float[3 * n];      
-      System.arraycopy(lineNormals, 0, temp, 0, 3 * lineVertexCount);
+      PApplet.arrayCopy(lineNormals, 0, temp, 0, 3 * lineVertexCount);
       lineNormals = temp;      
     }
     
     public void expandLineAttributes(int n) {
       float temp[] = new float[4 * n];      
-      System.arraycopy(lineAttributes, 0, temp, 0, 4 * lineVertexCount);
+      PApplet.arrayCopy(lineAttributes, 0, temp, 0, 4 * lineVertexCount);
       lineAttributes = temp;      
     }      
     
@@ -6472,7 +6473,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void expandLineIndices(int n) {
       int temp[] = new int[n];      
-      System.arraycopy(lineIndices, 0, temp, 0, lineIndexCount);
+      PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;        
     }
     
@@ -6493,25 +6494,25 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public void expandPointVertices(int n) {
       float temp[] = new float[3 * n];      
-      System.arraycopy(pointVertices, 0, temp, 0, 3 * pointVertexCount);
+      PApplet.arrayCopy(pointVertices, 0, temp, 0, 3 * pointVertexCount);
       pointVertices = temp;  
     }
     
     public void expandPointColors(int n) {
       float temp[] = new float[4 * n];      
-      System.arraycopy(pointColors, 0, temp, 0, 4 * pointVertexCount);
+      PApplet.arrayCopy(pointColors, 0, temp, 0, 4 * pointVertexCount);
       pointColors = temp;      
     }
     
     public void expandPointNormals(int n) {
       float temp[] = new float[3 * n];      
-      System.arraycopy(pointNormals, 0, temp, 0, 3 * pointVertexCount);
+      PApplet.arrayCopy(pointNormals, 0, temp, 0, 3 * pointVertexCount);
       pointNormals = temp;      
     }
     
     public void expandPointAttributes(int n) {
       float temp[] = new float[2 * n];      
-      System.arraycopy(pointAttributes, 0, temp, 0, 2 * pointVertexCount);
+      PApplet.arrayCopy(pointAttributes, 0, temp, 0, 2 * pointVertexCount);
       pointAttributes = temp;      
     }
     
@@ -6529,7 +6530,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void expandPointIndices(int n) {
       int temp[] = new int[n];      
-      System.arraycopy(pointIndices, 0, temp, 0, pointIndexCount);
+      PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;        
     }
     
@@ -6538,37 +6539,45 @@ public class PGraphicsOpenGL extends PGraphics {
                               float nx, float ny, float nz, 
                               float u, float v) {
       fillVertexCheck();
+      int index;
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        float[] mm = transform;
+        PMatrix3D tr = modelviewStack.getTransform();
         
-        fillVertices[3 * fillVertexCount + 0] = x * mm[0] + y * mm[4] + z * mm[ 8] + mm[12];
-        fillVertices[3 * fillVertexCount + 1] = x * mm[1] + y * mm[5] + z * mm[ 9] + mm[13];
-        fillVertices[3 * fillVertexCount + 2] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
+        index = 3 * fillVertexCount;
+        fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
+        fillVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
+        fillVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
         
-        fillNormals[3 * fillVertexCount + 0] = nx * mm[0] + ny * mm[4] + nz * mm[ 8] + mm[12];
-        fillNormals[3 * fillVertexCount + 1] = nx * mm[1] + ny * mm[5] + nz * mm[ 9] + mm[13];
-        fillNormals[3 * fillVertexCount + 2] = nx * mm[2] + ny * mm[6] + nz * mm[10] + mm[14];
+        index = 3 * fillVertexCount;
+        fillNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02 + tr.m03;
+        fillNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12 + tr.m13;
+        fillNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22 + tr.m23;
       } else {
-        fillVertices[3 * fillVertexCount + 0] = x;
-        fillVertices[3 * fillVertexCount + 1] = y;
-        fillVertices[3 * fillVertexCount + 2] = z;
+        index = 3 * fillVertexCount;
+        fillVertices[index++] = x;
+        fillVertices[index++] = y;
+        fillVertices[index  ] = z;
 
-        fillNormals[3 * fillVertexCount + 0] = nx;
-        fillNormals[3 * fillVertexCount + 1] = ny;
-        fillNormals[3 * fillVertexCount + 2] = nz;        
+        index = 3 * fillVertexCount;
+        fillNormals[index++] = nx;
+        fillNormals[index++] = ny;
+        fillNormals[index  ] = nz;        
       }
       
-      fillColors[4 * fillVertexCount + 0] = r;
-      fillColors[4 * fillVertexCount + 1] = g;
-      fillColors[4 * fillVertexCount + 2] = b;
-      fillColors[4 * fillVertexCount + 3] = a;
+      index = 4 * fillVertexCount;
+      fillColors[index++] = r;
+      fillColors[index++] = g;
+      fillColors[index++] = b;
+      fillColors[index  ] = a;
       
-      fillTexcoords[2 * fillVertexCount + 0] = u;
-      fillTexcoords[2 * fillVertexCount + 1] = v;      
+      index = 2 * fillVertexCount;
+      fillTexcoords[index++] = u;
+      fillTexcoords[index  ] = v;      
     }    
 
     public void addFillVertices(InGeometry in) {
+      int index;
       int i0 = in.firstVertex;
       int i1 = in.lastVertex;
       int nvert = i1 - i0 + 1;
@@ -6576,97 +6585,210 @@ public class PGraphicsOpenGL extends PGraphics {
       addFillVertices(nvert);
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        float[] mm = transform;
+        PMatrix3D tr = modelviewStack.getTransform();
+        
         for (int i = 0; i < nvert; i++) {
           int inIdx = i0 + i;
           int tessIdx = firstFillVertex + i;
           
-          float x = in.vertices[3 * inIdx + 0];
-          float y = in.vertices[3 * inIdx + 1];
-          float z = in.vertices[3 * inIdx + 2];
+          index = 3 * inIdx;
+          float x = in.vertices[index++];
+          float y = in.vertices[index++];
+          float z = in.vertices[index  ];
           
-          float nx = in.normals[3 * inIdx + 0];
-          float ny = in.normals[3 * inIdx + 1];
-          float nz = in.normals[3 * inIdx + 2];
+          index = 3 * inIdx;
+          float nx = in.normals[index++];
+          float ny = in.normals[index++];
+          float nz = in.normals[index  ];
           
-          fillVertices[3 * tessIdx + 0] = x * mm[0] + y * mm[4] + z * mm[ 8] + mm[12];
-          fillVertices[3 * tessIdx + 1] = x * mm[1] + y * mm[5] + z * mm[ 9] + mm[13];
-          fillVertices[3 * tessIdx + 2] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
+          index = 3 * tessIdx;
+          fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
+          fillVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
+          fillVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
           
-          fillNormals[3 * tessIdx + 0] = nx * mm[0] + ny * mm[4] + nz * mm[ 8] + mm[12];
-          fillNormals[3 * tessIdx + 1] = nx * mm[1] + ny * mm[5] + nz * mm[ 9] + mm[13];
-          fillNormals[3 * tessIdx + 2] = nx * mm[2] + ny * mm[6] + nz * mm[10] + mm[14];          
+          index = 3 * tessIdx;
+          fillNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02 + tr.m03;
+          fillNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12 + tr.m13;
+          fillNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22 + tr.m23;
         }        
       } else {
-        PApplet.arrayCopy(in.vertices, 3 * i0, fillVertices, 3 * firstFillVertex, 3 * nvert);
-        PApplet.arrayCopy(in.normals, 3 * i0, fillNormals, 3 * firstFillVertex, 3 * nvert);        
+        if (nvert < MIN_ARRAYCOPY_SIZE) {
+          // Copying elements one by one instead of using arrayCopy is more efficient for
+          // few vertices...
+          for (int i = 0; i < nvert; i++) {
+            int inIdx = i0 + i;
+            int tessIdx = firstFillVertex + i;
+
+            index = 3 * inIdx;
+            float x = in.vertices[index++];
+            float y = in.vertices[index++];
+            float z = in.vertices[index  ];
+            
+            index = 3 * inIdx;
+            float nx = in.normals[index++];
+            float ny = in.normals[index++];
+            float nz = in.normals[index  ];
+            
+            index = 3 * tessIdx;
+            fillVertices[index++] = x;
+            fillVertices[index++] = y;
+            fillVertices[index  ] = z;
+            
+            index = 3 * tessIdx;
+            fillNormals[index++] = nx;
+            fillNormals[index++] = ny;
+            fillNormals[index  ] = nz;            
+          }     
+        } else {          
+          PApplet.arrayCopy(in.vertices, 3 * i0, fillVertices, 3 * firstFillVertex, 3 * nvert);
+          PApplet.arrayCopy(in.normals, 3 * i0, fillNormals, 3 * firstFillVertex, 3 * nvert);                  
+        }
       }
-              
-      PApplet.arrayCopy(in.colors, 4 * i0, fillColors, 4 * firstFillVertex, 4 * nvert);      
-      PApplet.arrayCopy(in.texcoords, 2 * i0, fillTexcoords, 2 * firstFillVertex, 2 * nvert);
+        
+      if (nvert < MIN_ARRAYCOPY_SIZE) {
+        for (int i = 0; i < nvert; i++) {
+          int inIdx = i0 + i;
+          int tessIdx = firstFillVertex + i;
+
+          index = 4 * inIdx;
+          float r = in.colors[index++];
+          float g = in.colors[index++];
+          float b = in.colors[index++];
+          float a = in.colors[index  ];
+          
+          index = 2 * inIdx;
+          float u = in.texcoords[index++];
+          float v = in.texcoords[index  ];
+          
+          index = 4 * tessIdx;
+          fillColors[index++] = r;
+          fillColors[index++] = g;
+          fillColors[index++] = b;
+          fillColors[index  ] = a;
+          
+          index = 2 * tessIdx;
+          fillNormals[index++] = u;
+          fillNormals[index  ] = v;            
+        }
+      } else {
+        PApplet.arrayCopy(in.colors, 4 * i0, fillColors, 4 * firstFillVertex, 4 * nvert);      
+        PApplet.arrayCopy(in.texcoords, 2 * i0, fillTexcoords, 2 * firstFillVertex, 2 * nvert);
+      }
     }     
     
     public void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx) {
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        float[] mm = transform;
-        
-        float x0 = in.vertices[3 * inIdx0 + 0];
-        float y0 = in.vertices[3 * inIdx0 + 1];
-        float z0 = in.vertices[3 * inIdx0 + 2];
-        
-        float nx = in.normals[3 * inIdx0 + 0];
-        float ny = in.normals[3 * inIdx0 + 1];
-        float nz = in.normals[3 * inIdx0 + 2];
-        
-        lineVertices[3 * tessIdx + 0] = x0 * mm[0] + y0 * mm[4] + z0 * mm[ 8] + mm[12];
-        lineVertices[3 * tessIdx + 1] = x0 * mm[1] + y0 * mm[5] + z0 * mm[ 9] + mm[13];
-        lineVertices[3 * tessIdx + 2] = x0 * mm[2] + y0 * mm[6] + z0 * mm[10] + mm[14];
-        
-        lineNormals[3 * tessIdx + 0] = nx * mm[0] + ny * mm[4] + nz * mm[ 8] + mm[12];
-        lineNormals[3 * tessIdx + 1] = nx * mm[1] + ny * mm[5] + nz * mm[ 9] + mm[13];
-        lineNormals[3 * tessIdx + 2] = nx * mm[2] + ny * mm[6] + nz * mm[10] + mm[14];
-        
-        float x1 = in.vertices[3 * inIdx1 + 0];
-        float y1 = in.vertices[3 * inIdx1 + 1];
-        float z1 = in.vertices[3 * inIdx1 + 2];
+      int index;
 
-        lineAttributes[4 * tessIdx + 0] = x1 * mm[0] + y1 * mm[4] + z1 * mm[ 8] + mm[12];
-        lineAttributes[4 * tessIdx + 1] = x1 * mm[1] + y1 * mm[5] + z1 * mm[ 9] + mm[13];
-        lineAttributes[4 * tessIdx + 2] = x1 * mm[2] + y1 * mm[6] + z1 * mm[10] + mm[14];        
+      index = 3 * inIdx0;
+      float x0 = in.vertices[index++];
+      float y0 = in.vertices[index++];
+      float z0 = in.vertices[index  ];
+      
+      index = 3 * inIdx0;
+      float nx = in.normals[index++];
+      float ny = in.normals[index++];
+      float nz = in.normals[index  ];      
+
+      index = 3 * inIdx1;
+      float x1 = in.vertices[index++];
+      float y1 = in.vertices[index++];
+      float z1 = in.vertices[index  ];        
+      
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
+        PMatrix3D tr = modelviewStack.getTransform();
+        
+        index = 3 * tessIdx;
+        lineVertices[index++] = x0 * tr.m00 + y0 * tr.m01 + z0 * tr.m02 + tr.m03;
+        lineVertices[index++] = x0 * tr.m10 + y0 * tr.m11 + z0 * tr.m12 + tr.m13;
+        lineVertices[index  ] = x0 * tr.m20 + y0 * tr.m21 + z0 * tr.m22 + tr.m23;
+        
+        index = 3 * tessIdx;
+        lineNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02 + tr.m03;
+        lineNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12 + tr.m13;
+        lineNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22 + tr.m23;
+
+        index = 4 * tessIdx;
+        lineAttributes[index++] = x1 * tr.m00 + y1 * tr.m01 + z1 * tr.m02 + tr.m03;
+        lineAttributes[index++] = x1 * tr.m10 + y1 * tr.m11 + z1 * tr.m12 + tr.m13;
+        lineAttributes[index  ] = x1 * tr.m20 + y1 * tr.m21 + z1 * tr.m22 + tr.m23;        
       } else {
-        System.arraycopy(in.vertices, 3 * inIdx0, lineVertices, 3 * tessIdx, 3);
-        System.arraycopy(in.normals, 3 * inIdx0, lineNormals, 3 * tessIdx, 3); 
-        System.arraycopy(in.vertices, 3 * inIdx1, lineAttributes, 4 * tessIdx, 3);
+        index = 3 * tessIdx;
+        lineVertices[index++] = x0;
+        lineVertices[index++] = y0;
+        lineVertices[index  ] = z0;
+        
+        index = 3 * tessIdx;
+        lineNormals[index++] = nx;
+        lineNormals[index++] = ny;
+        lineNormals[index  ] = nz;
+
+        index = 4 * tessIdx;
+        lineAttributes[index++] = x1;
+        lineAttributes[index++] = y1;
+        lineAttributes[index  ] = z1;
       }      
       
-      System.arraycopy(in.strokes, 5 * inIdx0, lineColors, 4 * tessIdx, 4);    
+      index = 5 * inIdx0;
+      float r = in.strokes[index++];
+      float g = in.strokes[index++];
+      float b = in.strokes[index++];
+      float a = in.strokes[index  ];
+      
+      index = 4 * tessIdx;
+      lineColors[index++] = r;
+      lineColors[index++] = g;
+      lineColors[index++] = b;
+      lineColors[index  ] = a;
     }
         
     public void putPointVertex(InGeometry in, int inIdx, int tessIdx) {
+      int index;
+
+      index = 3 * inIdx;
+      float x = in.vertices[index++];
+      float y = in.vertices[index++];
+      float z = in.vertices[index ];
+      
+      index = 3 * inIdx;
+      float nx = in.normals[index++];
+      float ny = in.normals[index++];
+      float nz = in.normals[index  ];      
+      
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        float[] mm = transform;
+        PMatrix3D tr = modelviewStack.getTransform();
+
+        index = 3 * tessIdx;
+        pointVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
+        pointVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
+        pointVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
         
-        float x = in.vertices[3 * inIdx + 0];
-        float y = in.vertices[3 * inIdx + 1];
-        float z = in.vertices[3 * inIdx + 2];
-        
-        float nx = in.normals[3 * inIdx + 0];
-        float ny = in.normals[3 * inIdx + 1];
-        float nz = in.normals[3 * inIdx + 2];
-        
-        pointVertices[3 * tessIdx + 0] = x * mm[0] + y * mm[4] + z * mm[ 8] + mm[12];
-        pointVertices[3 * tessIdx + 1] = x * mm[1] + y * mm[5] + z * mm[ 9] + mm[13];
-        pointVertices[3 * tessIdx + 2] = x * mm[2] + y * mm[6] + z * mm[10] + mm[14];
-        
-        pointNormals[3 * tessIdx + 0] = nx * mm[0] + ny * mm[4] + nz * mm[ 8] + mm[12];
-        pointNormals[3 * tessIdx + 1] = nx * mm[1] + ny * mm[5] + nz * mm[ 9] + mm[13];
-        pointNormals[3 * tessIdx + 2] = nx * mm[2] + ny * mm[6] + nz * mm[10] + mm[14];           
+        index = 3 * tessIdx;
+        pointNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02 + tr.m03;
+        pointNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12 + tr.m13;
+        pointNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22 + tr.m23;
       } else {
-        System.arraycopy(in.vertices, 3 * inIdx, pointVertices, 3 * tessIdx, 3);
-        System.arraycopy(in.normals, 3 * inIdx, pointNormals, 3 * tessIdx, 3);        
+        index = 3 * tessIdx;
+        pointVertices[index++] = x;
+        pointVertices[index++] = y;
+        pointVertices[index  ] = z;
+        
+        index = 3 * tessIdx;
+        pointNormals[index++] = nx;
+        pointNormals[index++] = ny;
+        pointNormals[index  ] = nz;        
       }      
       
-      System.arraycopy(in.strokes, 5 * inIdx, pointColors, 4 * tessIdx, 4);
+      index = 5 * inIdx;
+      float r = in.strokes[index++];
+      float g = in.strokes[index++];
+      float b = in.strokes[index++];
+      float a = in.strokes[index  ];
+      
+      index = 4 * tessIdx;
+      pointColors[index++] = r;
+      pointColors[index++] = g;
+      pointColors[index++] = b;
+      pointColors[index  ] = a;      
     }
     
     public int expandSize(int currSize, int newMinSize) {
@@ -6875,7 +6997,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int i0 = first + 2 * ln + 0;
         int i1 = first + 2 * ln + 1;
         addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
-      }    
+      }
     }
 
     public void tessellateTriangles() {
