@@ -431,7 +431,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public static final int MAX_TESS_VERTICES = 1000000;
  
   public static final int DEFAULT_IN_VERTICES = 512;
-  public static final int DEFAULT_TESS_VERTICES = 512;
+  public static final int DEFAULT_TESS_VERTICES = 64;
   public static final int DEFAULT_TESS_INDICES = 1024;
   
   protected Tessellator tessellator;
@@ -6370,8 +6370,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void addFillVertices(int count) {
-      if (fillVertexCount + count >= fillVertices.length / 3) {
-        int newSize = expandSize(fillVertexCount, fillVertexCount + count); 
+      int oldSize = fillVertices.length / 3;
+      if (fillVertexCount + count >= oldSize) {
+        int newSize = expandSize(oldSize, fillVertexCount + count); 
                 
         expandFillVertices(newSize);
         expandFillColors(newSize);
@@ -6385,8 +6386,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void addFillIndices(int count) {
-      if (fillIndexCount + count >= fillIndices.length) {
-        int newSize = expandSize(fillIndexCount, fillIndexCount + count);    
+      int oldSize = fillIndices.length;
+      if (fillIndexCount + count >= oldSize) {
+        int newSize = expandSize(oldSize, fillIndexCount + count);    
         
         expandFillIndices(newSize);
       }
@@ -6421,8 +6423,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void addLineVertices(int count) {
-      if (lineVertexCount + count >= lineVertices.length / 3) {
-        int newSize = expandSize(lineVertexCount, lineVertexCount + count);
+      int oldSize = lineVertices.length / 3;
+      if (lineVertexCount + count >= oldSize) {
+        int newSize = expandSize(oldSize, lineVertexCount + count);
         
         expandLineVertices(newSize);
         expandLineColors(newSize);
@@ -6460,8 +6463,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }      
     
     public void addLineIndices(int count) {
-      if (lineIndexCount + count >= lineIndices.length) {
-        int newSize = expandSize(lineIndexCount, lineIndexCount + count);
+      int oldSize = lineIndices.length;
+      if (lineIndexCount + count >= oldSize) {
+        int newSize = expandSize(oldSize, lineIndexCount + count);
         
         expandLineIndices(newSize);
       }
@@ -6478,8 +6482,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void addPointVertices(int count) {
-      if (pointVertexCount + count >= pointVertices.length / 3) {
-        int newSize = expandSize(pointVertexCount, pointVertexCount + count);
+      int oldSize = pointVertices.length / 3;
+      if (pointVertexCount + count >= oldSize) {
+        int newSize = expandSize(oldSize, pointVertexCount + count);
         
         expandPointVertices(newSize);
         expandPointColors(newSize);
@@ -6517,8 +6522,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void addPointIndices(int count) {
-      if (pointIndexCount + count >= pointIndices.length) {
-        int newSize = expandSize(pointIndexCount, pointIndexCount + count);
+      int oldSize = pointIndices.length;
+      if (pointIndexCount + count >= oldSize) {
+        int newSize = expandSize(oldSize, pointIndexCount + count);
         
         expandPointIndices(newSize);
       }
