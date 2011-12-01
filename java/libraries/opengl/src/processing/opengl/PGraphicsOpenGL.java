@@ -408,6 +408,35 @@ public class PGraphicsOpenGL extends PGraphics {
   protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
 
   // ........................................................
+  
+  // Bezier and Catmull-Rom curves  
+
+  protected boolean bezierInited = false;
+  public int bezierDetail = 20;
+  protected PMatrix3D bezierDrawMatrix;  
+
+  protected boolean curveInited = false;
+  protected int curveDetail = 20;
+  public float curveTightness = 0;
+  
+  // catmull-rom basis matrix, perhaps with optional s parameter
+  protected PMatrix3D curveBasisMatrix;
+  protected PMatrix3D curveDrawMatrix;
+
+  protected PMatrix3D bezierBasisInverse;
+  protected PMatrix3D curveToBezierMatrix;
+
+  protected float curveVertices[][];
+  protected int curveVertexCount;  
+
+  // used by both curve and bezier, so just init here
+  protected PMatrix3D bezierBasisMatrix =
+    new PMatrix3D(-1,  3, -3,  1,
+                   3, -6,  3,  0,
+                  -3,  3,  0,  0,
+                   1,  0,  0,  0);   
+  
+  // ........................................................
 
   // The new stuff (shaders, tessellator, etc)    
 
@@ -1541,6 +1570,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void vertex(float x, float y, float z, float u, float v) {
+    vertexImpl(x, y, z, u, v, VERTEX);   
+  }  
+  
+  protected void vertexImpl(float x, float y, float z, float u, float v, int code) {
     boolean textured = textureImage != null;
     float fR, fG, fB, fA;
     fR = fG = fB = fA = 0;
@@ -1575,12 +1608,9 @@ public class PGraphicsOpenGL extends PGraphics {
       sW = strokeWeight;
     }    
 
-    int code;
     if (breakShape) {
       code = BREAK;
       breakShape = false;
-    } else {
-      code = VERTEX;
     }    
         
     in.addVertex(x, y, z, 
@@ -1588,8 +1618,8 @@ public class PGraphicsOpenGL extends PGraphics {
                  normalX, normalY, normalZ,
                  u, v, 
                  sR, sG, sB, sA, sW, 
-                 code);    
-  }  
+                 code);     
+  }
    
   
   public void beginShape(int kind) {  
@@ -1913,33 +1943,262 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // BEZIER CURVE VERTICES
 
-  // TODO it seem there are no evaluators in OpenGL ES
+  public void bezierDetail(int detail) {
+    bezierDetail = detail;
 
-  // protected void bezierVertexCheck();
-  // public void bezierVertex(float x2, float y2,
-  // float x3, float y3,
-  // float x4, float y4)
-  // public void bezierVertex(float x2, float y2, float z2,
-  // float x3, float y3, float z3,
-  // float x4, float y4, float z4)
+    if (bezierDrawMatrix == null) {
+      bezierDrawMatrix = new PMatrix3D();
+    }
+
+    // setup matrix for forward differencing to speed up drawing
+    ogl.splineForward(detail, bezierDrawMatrix);
+
+    // multiply the basis and forward diff matrices together
+    // saves much time since this needn't be done for each curve
+    bezierDrawMatrix.apply(ogl.bezierBasisMatrix);
+  }  
+  
+  public void bezierVertex(float x2, float y2,
+                           float x3, float y3,
+                           float x4, float y4) {
+    bezierVertex(x2, y2, 0, 
+                 x3, y3, 0, 
+                 x4, y4, 0); 
+  }
+  
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {
+    bezierInitCheck();
+    bezierVertexCheck();
+    PMatrix3D draw = bezierDrawMatrix;
+
+    float x1 = in.getlastVertexX();
+    float y1 = in.getlastVertexY();
+    float z1 = in.getlastVertexZ();
+
+    float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
+    float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
+    float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
+
+    float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
+    float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
+    float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
+
+    float zplot1 = draw.m10*z1 + draw.m11*z2 + draw.m12*z3 + draw.m13*z4;
+    float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
+    float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
+
+    for (int j = 0; j < bezierDetail; j++) {
+      x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
+      vertexImpl(x1, y1, z1, 0, 0, BEZIER_VERTEX);
+    }    
+  }
+  
+  public void quadraticVertex(float cx, float cy,
+                              float x3, float y3) {
+    quadraticVertex(cx, cy, 0,
+                    x3, y3, 0);
+  }
+  
+  public void quadraticVertex(float cx, float cy, float cz,
+                              float x3, float y3, float z3) {
+    float x1 = in.getlastVertexX();
+    float y1 = in.getlastVertexY();
+    float z1 = in.getlastVertexZ();
+
+    bezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
+                 x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
+                 x3, y3, z3);
+  }
+
+  protected void bezierInitCheck() {
+    if (!bezierInited) {
+      bezierInit();
+    }
+  }
+
+  protected void bezierInit() {
+    // overkill to be broken out, but better parity with the curve stuff below
+    bezierDetail(bezierDetail);
+    bezierInited = true;
+  }  
+  
+  protected void bezierVertexCheck() {
+    if (shape != POLYGON) {
+      throw new RuntimeException("beginShape() or beginShape(POLYGON) " +
+                                 "must be used before bezierVertex() or quadraticVertex()");
+    }
+    if (in.vertexCount == 0) {
+      throw new RuntimeException("vertex() must be used at least once" +
+                                 "before bezierVertex() or quadraticVertex()");
+    }
+  }    
 
   //////////////////////////////////////////////////////////////
 
-  // CATMULL-ROM CURVE VERTICES
+  // CATMULL-ROM CURVE VERTICES    
 
-  // TODO it seem there are no evaluators in OpenGL ES
+  public void curveDetail(int detail) {
+    curveDetail = detail;
+    curveInit();
+  }
+  
+  public void curveTightness(float tightness) {
+    curveTightness = tightness;
+    curveInit();
+  }  
+  
+  public void curveVertex(float x, float y) {
+    curveVertex(x, y, 0);
+  }  
 
-  // protected void curveVertexCheck();
-  // public void curveVertex(float x, float y)
-  // public void curveVertex(float x, float y, float z)
-  // protected void curveVertexSegment(float x1, float y1,
-  // float x2, float y2,
-  // float x3, float y3,
-  // float x4, float y4)
-  // protected void curveVertexSegment(float x1, float y1, float z1,
-  // float x2, float y2, float z2,
-  // float x3, float y3, float z3,
-  // float x4, float y4, float z4)
+  public void curveVertex(float x, float y, float z) {
+    curveVertexCheck();
+    float[] vertex = curveVertices[curveVertexCount];
+    vertex[X] = x;
+    vertex[Y] = y;
+    vertex[Z] = z;
+    curveVertexCount++;
+
+    // draw a segment if there are enough points
+    if (curveVertexCount > 3) {
+      curveVertexSegment(curveVertices[curveVertexCount-4][X],
+                         curveVertices[curveVertexCount-4][Y],
+                         curveVertices[curveVertexCount-4][Z],
+                         curveVertices[curveVertexCount-3][X],
+                         curveVertices[curveVertexCount-3][Y],
+                         curveVertices[curveVertexCount-3][Z],
+                         curveVertices[curveVertexCount-2][X],
+                         curveVertices[curveVertexCount-2][Y],
+                         curveVertices[curveVertexCount-2][Z],
+                         curveVertices[curveVertexCount-1][X],
+                         curveVertices[curveVertexCount-1][Y],
+                         curveVertices[curveVertexCount-1][Z]);
+    }
+    
+  }
+  
+
+  protected void curveVertexCheck() {    
+    if (shape != POLYGON) {
+      throw new RuntimeException("You must use createGeometry() or " +
+                                 "createGeometry(POLYGON) before curveVertex()");
+    }
+    
+    // to improve code init time, allocate on first use.
+    if (curveVertices == null) {
+      curveVertices = new float[128][3];
+    }
+
+    if (curveVertexCount == curveVertices.length) {
+      // Can't use PApplet.expand() cuz it doesn't do the copy properly
+      float[][] temp = new float[curveVertexCount << 1][3];
+      System.arraycopy(curveVertices, 0, temp, 0, curveVertexCount);
+      curveVertices = temp;
+    }
+    curveInitCheck();
+  }
+  
+  protected void curveInitCheck() {
+    if (!curveInited) {
+      curveInit();
+    }
+  }
+  
+  protected void curveInit() {
+    // allocate only if/when used to save startup time
+    if (curveDrawMatrix == null) {
+      curveBasisMatrix = new PMatrix3D();
+      curveDrawMatrix = new PMatrix3D();
+      curveInited = true;
+    }
+
+    float s = curveTightness;
+    curveBasisMatrix.set((s-1)/2f, (s+3)/2f,  (-3-s)/2f, (1-s)/2f,
+                         (1-s),    (-5-s)/2f, (s+2),     (s-1)/2f,
+                         (s-1)/2f, 0,         (1-s)/2f,  0,
+                         0,        1,         0,         0);
+
+    ogl.splineForward(curveDetail, curveDrawMatrix);
+
+    if (bezierBasisInverse == null) {
+      bezierBasisInverse = ogl.bezierBasisMatrix.get();
+      bezierBasisInverse.invert();
+      curveToBezierMatrix = new PMatrix3D();
+    }
+
+    // TODO only needed for PGraphicsJava2D? if so, move it there
+    // actually, it's generally useful for other renderers, so keep it
+    // or hide the implementation elsewhere.
+    curveToBezierMatrix.set(curveBasisMatrix);
+    curveToBezierMatrix.preApply(bezierBasisInverse);
+
+    // multiply the basis and forward diff matrices together
+    // saves much time since this needn't be done for each curve
+    curveDrawMatrix.apply(curveBasisMatrix);
+  }  
+  
+  /**
+   * Handle emitting a specific segment of Catmull-Rom curve. This can be
+   * overridden by subclasses that need more efficient rendering options.
+   */
+  protected void curveVertexSegment(float x1, float y1, float z1,
+                                    float x2, float y2, float z2,
+                                    float x3, float y3, float z3,
+                                    float x4, float y4, float z4) {
+    float x0 = x2;
+    float y0 = y2;
+    float z0 = z2;
+
+    PMatrix3D draw = curveDrawMatrix;
+
+    float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
+    float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
+    float xplot3 = draw.m30*x1 + draw.m31*x2 + draw.m32*x3 + draw.m33*x4;
+
+    float yplot1 = draw.m10*y1 + draw.m11*y2 + draw.m12*y3 + draw.m13*y4;
+    float yplot2 = draw.m20*y1 + draw.m21*y2 + draw.m22*y3 + draw.m23*y4;
+    float yplot3 = draw.m30*y1 + draw.m31*y2 + draw.m32*y3 + draw.m33*y4;
+
+    float zplot1 = draw.m10*z1 + draw.m11*z2 + draw.m12*z3 + draw.m13*z4;
+    float zplot2 = draw.m20*z1 + draw.m21*z2 + draw.m22*z3 + draw.m23*z4;
+    float zplot3 = draw.m30*z1 + draw.m31*z2 + draw.m32*z3 + draw.m33*z4;
+
+    vertexImpl(x0, y0, z0, 0, 0, CURVE_VERTEX);
+    for (int j = 0; j < curveDetail; j++) {
+      x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
+      y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
+      z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
+      vertexImpl(x0, y0, z0, 0, 0, CURVE_VERTEX);
+    }
+  }  
+
+  //////////////////////////////////////////////////////////////
+
+  // SPLINE UTILITY FUNCTIONS (used by both Bezier and Catmull-Rom)
+
+  /**
+   * Setup forward-differencing matrix to be used for speedy
+   * curve rendering. It's based on using a specific number
+   * of curve segments and just doing incremental adds for each
+   * vertex of the segment, rather than running the mathematically
+   * expensive cubic equation.
+   * @param segments number of curve segments to use when drawing
+   * @param matrix target object for the new matrix
+   */
+  protected void splineForward(int segments, PMatrix3D matrix) {
+    float f  = 1.0f / segments;
+    float ff = f * f;
+    float fff = ff * f;
+
+    matrix.set(0,     0,    0, 1,
+               fff,   ff,   f, 0,
+               6*fff, 2*ff, 0, 0,
+               6*fff, 0,    0, 0);
+  }  
   
 
   //////////////////////////////////////////////////////////////
