@@ -58,6 +58,7 @@ public class PShader {
     gl = ogl.gl2x; 
     
     programObject = ogl.createGLSLProgramObject();  
+    
     vertexShader = 0;
     //geometryShader = 0;
     fragmentShader = 0;
