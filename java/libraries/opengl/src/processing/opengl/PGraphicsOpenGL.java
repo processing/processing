@@ -468,6 +468,8 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected PShader lineShader;
   static protected PShader pointShader;
   
+  protected PImage textureImage0;
+  
   //////////////////////////////////////////////////////////////
   
   
@@ -807,9 +809,11 @@ public class PGraphicsOpenGL extends PGraphics {
   // GLSL Program Objects -----------------------------------------------
   
   protected int createGLSLProgramObject() {
-    deleteFinalizedGLSLProgramObjects();
     
-    int idx = gl2x.glCreateProgram();
+    ogl.report("before delete");
+    deleteFinalizedGLSLProgramObjects();
+        
+    int idx = gl2x.glCreateProgram();    
     
     if (glslPrograms.containsKey(idx)) {
       System.err.println("Adding same glsl program twice");
@@ -836,7 +840,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glslPrograms.get(idx)) {
         finalized.add(idx);
         int id = idx.intValue();
-        gl2x.glDeleteProgram(id);        
+        gl2x.glDeleteProgram(id);       
       }
     }
     
@@ -1046,6 +1050,8 @@ public class PGraphicsOpenGL extends PGraphics {
     //backupPGLObjects();
       
     releaseResources();
+    deleteFinalizedGLResources();
+    
     releaseContext();
     context.destroy();
     context = null;
@@ -1553,6 +1559,65 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // VERTEX SHAPES
 
+  public void beginShape(int kind) {  
+    shape = kind;
+    in.reset();
+        
+    breakShape = false;
+    
+    textureImage0 = textureImage;
+    noTexture();
+  }
+    
+  
+  public void endShape(int mode) {
+    tessellator.setInGeometry(in);
+    tessellator.setTessGeometry(tess);
+    
+    if (shape == POINTS) {
+      tessellator.tessellatePoints(strokeCap);    
+    } else if (shape == LINES) {
+      tessellator.tessellateLines();    
+    } else if (shape == TRIANGLES) {
+      tessellator.tessellateTriangles();
+    } else if (shape == TRIANGLE_FAN) {
+      tessellator.tessellateTriangleFan();
+    } else if (shape == TRIANGLE_STRIP) {
+      tessellator.tessellateTriangleStrip();
+    } else if (shape == QUADS) {
+      tessellator.tessellateQuads();
+    } else if (shape == QUAD_STRIP) {
+      tessellator.tessellateQuadStrip();
+    } else if (shape == POLYGON) {
+      tessellator.tessellatePolygon(false, mode == CLOSE);
+    }
+
+    if (flushMode == FLUSH_END_SHAPE || (flushMode == FLUSH_WHEN_FULL && tess.isFull())) {
+      flush();
+    }    
+  }
+
+  public void texture(PImage image) {
+    if (image != textureImage0 && (flushMode == FLUSH_WHEN_FULL || (flushMode == FLUSH_AFTER_TRANSFORMATION))) {
+      textureImage = textureImage0;
+      flush();     
+    }    
+    super.texture(image);
+  }
+  
+  public void noTexture() {
+    if (null != textureImage0 && (flushMode == FLUSH_WHEN_FULL || (flushMode == FLUSH_AFTER_TRANSFORMATION))) {
+      textureImage = textureImage0;
+      flush();     
+    }        
+    super.noTexture();
+  }
+  
+  public void breakShape() {
+    breakShape = true;
+  }  
+  
+  
   
   public void vertex(float x, float y) {
     vertex(x, y, 0, 0, 0);
@@ -1612,7 +1677,12 @@ public class PGraphicsOpenGL extends PGraphics {
       code = BREAK;
       breakShape = false;
     }    
-        
+            
+    if (textured && textureMode == IMAGE) {
+      u /= textureImage.width;
+      v /= textureImage.height;
+    }
+    
     in.addVertex(x, y, z, 
                  fR, fG, fB, fA, 
                  normalX, normalY, normalZ,
@@ -1621,46 +1691,6 @@ public class PGraphicsOpenGL extends PGraphics {
                  code);     
   }
    
-  
-  public void beginShape(int kind) {  
-    shape = kind;
-
-    in.reset();
-  }
-    
-  
-  public void endShape(int mode) {
-    tessellator.setInGeometry(in);
-    tessellator.setTessGeometry(tess);
-    
-    if (shape == POINTS) {
-      tessellator.tessellatePoints(strokeCap);    
-    } else if (shape == LINES) {
-      tessellator.tessellateLines();    
-    } else if (shape == TRIANGLES) {
-      tessellator.tessellateTriangles();
-    } else if (shape == TRIANGLE_FAN) {
-      tessellator.tessellateTriangleFan();
-    } else if (shape == TRIANGLE_STRIP) {
-      tessellator.tessellateTriangleStrip();
-    } else if (shape == QUADS) {
-      tessellator.tessellateQuads();
-    } else if (shape == QUAD_STRIP) {
-      tessellator.tessellateQuadStrip();
-    } else if (shape == POLYGON) {
-      tessellator.tessellatePolygon(false, mode == CLOSE);
-    }
-
-    if (flushMode == FLUSH_END_SHAPE || (flushMode == FLUSH_WHEN_FULL && tess.isFull())) {
-      flush();
-    }    
-  }
-
-
-  public void breakShape() {
-    breakShape = true;
-  }  
-  
   
   //////////////////////////////////////////////////////////////
 
@@ -1823,6 +1853,8 @@ public class PGraphicsOpenGL extends PGraphics {
       texcoordBuffer.rewind();
       texcoordBuffer.put(tess.fillTexcoords, 0, 2 * tess.fillVertexCount);
       texcoordBuffer.position(0);
+      
+      gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);      
     }    
     
     gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
@@ -1836,14 +1868,14 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // 1) wrapping the float array:
     gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.fillIndices));
-
+    
     // or:
     //2) copying the float array to a pre-existing direct buffer:
-    //checkIndexBuffers(tess.fillIndexCount);
-    //indexBuffer.rewind();
-    //indexBuffer.put(tess.fillIndices);
-    //indexBuffer.position(0);
-    //gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_INT, indexBuffer);
+//    checkIndexBuffers(tess.fillIndexCount);
+//    indexBuffer.rewind();
+//    indexBuffer.put(tess.fillIndices, 0, tess.fillIndexCount);
+//    indexBuffer.position(0);    
+//    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_INT, indexBuffer);
     
     if (tex != null) {
       gl2f.glActiveTexture(GL.GL_TEXTURE0);
