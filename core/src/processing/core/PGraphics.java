@@ -7492,11 +7492,4 @@ public class PGraphics extends PImage implements PConstants {
   public void endText() {
     showMissingWarning("endText");
   }
-
- /**
-  * @nowebref
-  */
-  public void texture(PImage... images) {
-    showMissingWarning("texture");
-  }
 }

@@ -11,7 +11,7 @@ void main() {
   vec4 pos_p = gl_Vertex;
   vec4 pos_q = vec4(attribs.xyz, 1);  
   vec4 v_p = gl_ModelViewMatrix * pos_p;
-  v_p.xyz = v_p.xyz * 0.99;   
+  //v_p.xyz = v_p.xyz * 0.99;   
   
   vec4 clip_p = gl_ProjectionMatrix * v_p; 
   vec4 v_q = gl_ModelViewMatrix * pos_q;
