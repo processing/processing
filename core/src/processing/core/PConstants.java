@@ -45,7 +45,6 @@ public interface PConstants {
   
   static public final int FLUSH_END_SHAPE = 0;
   static public final int FLUSH_WHEN_FULL = 1;  
-  static public final int FLUSH_AFTER_TRANSFORMATION = 2;
   
   // vertex fields
   
@@ -370,7 +369,10 @@ public interface PConstants {
   static public final int LINE_LOOP     = 51;
   static public final int POINT_SPRITES = 52;
 
-
+  static public final int NON_STROKED_SHAPE = 60;
+  static public final int STROKED_SHAPE     = 61;
+  
+  
   // shape closing modes
 
   static final int OPEN = 1;

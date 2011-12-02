@@ -13648,15 +13648,6 @@ public class PApplet extends Applet
   }
 
 
- /**
-  * @nowebref
-  */
-  public void texture(PImage... images) {
-    if (recorder != null) recorder.texture(images);
-    g.texture(images);
-  }
-
-
   public void delete() {
     if (recorder != null) recorder.delete();
     g.delete();

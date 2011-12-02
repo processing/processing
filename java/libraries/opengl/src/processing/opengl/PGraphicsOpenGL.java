@@ -453,7 +453,6 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public static int flushMode = FLUSH_WHEN_FULL;
 //  public static int flushMode = FLUSH_END_SHAPE;
-//  public static int flushMode = FLUSH_AFTER_TRANSFORMATION;
  
   public static final int MIN_ARRAYCOPY_SIZE = 3;
   
@@ -468,7 +467,12 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected PShader lineShader;
   static protected PShader pointShader;
   
+  protected boolean twoDimensionalDrawing;
+  int shapeType0, shapeType;
   protected PImage textureImage0;
+  
+  
+
   
   //////////////////////////////////////////////////////////////
   
@@ -1221,6 +1225,9 @@ public class PGraphicsOpenGL extends PGraphics {
     
     drawing = true;
     
+    twoDimensionalDrawing = true;
+    shapeType0 = shapeType = -1;
+    
     report("bot beginDraw()");
   }
 
@@ -1228,7 +1235,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void endDraw() {
     report("top endDraw()");
     
-    if (flushMode == FLUSH_WHEN_FULL || flushMode == FLUSH_AFTER_TRANSFORMATION) {
+    if (flushMode == FLUSH_WHEN_FULL) {
       flush();
       // TODO: Implement depth sorting (http://code.google.com/p/processing/issues/detail?id=51)      
       //if (hints[ENABLE_DEPTH_SORT]) {
@@ -1558,9 +1565,28 @@ public class PGraphicsOpenGL extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // VERTEX SHAPES
-
-  public void beginShape(int kind) {  
+  
+  public void beginShape(int kind) {
+    shapeType0 = shapeType;
     shape = kind;
+    
+    if (shape == LINES) {
+      shapeType = LINES; 
+    } else if (shape == POINTS) {
+      shapeType = POINTS;
+    } else if (!stroke) {
+      shapeType = NON_STROKED_SHAPE;
+    } else {
+      shapeType = STROKED_SHAPE;
+    }
+      
+    
+   if (flushMode == FLUSH_WHEN_FULL && twoDimensionalDrawing && shapeType != shapeType0) {
+     // Flushing geometry because it is not possible to ensure depth-buffer consistency if 
+     // drawing the points, lines, and fill geometry as sepearate buffers.
+     flush();
+   }
+   
     in.reset();
         
     breakShape = false;
@@ -1570,7 +1596,21 @@ public class PGraphicsOpenGL extends PGraphics {
   }
     
   
+  protected boolean threeDimensionalShape(int shape) {
+    return shape != LINES && shape != POINTS;
+  }
+  
+  
   public void endShape(int mode) {
+    
+    
+    
+    if (textureImage0 != null && textureImage == null && flushMode == FLUSH_WHEN_FULL) {
+      textureImage = textureImage0;
+      flush();
+      textureImage = null;      
+    }
+    
     tessellator.setInGeometry(in);
     tessellator.setTessGeometry(tess);
     
@@ -1598,7 +1638,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public void texture(PImage image) {
-    if (image != textureImage0 && (flushMode == FLUSH_WHEN_FULL || (flushMode == FLUSH_AFTER_TRANSFORMATION))) {
+    if (image != textureImage0 && flushMode == FLUSH_WHEN_FULL) {
       textureImage = textureImage0;
       flush();     
     }    
@@ -1606,7 +1646,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   public void noTexture() {
-    if (null != textureImage0 && (flushMode == FLUSH_WHEN_FULL || (flushMode == FLUSH_AFTER_TRANSFORMATION))) {
+    if (null != textureImage0 && flushMode == FLUSH_WHEN_FULL) {
       textureImage = textureImage0;
       flush();     
     }        
@@ -1682,6 +1722,8 @@ public class PGraphicsOpenGL extends PGraphics {
       u /= textureImage.width;
       v /= textureImage.height;
     }
+        
+    twoDimensionalDrawing &= z == 0;
     
     in.addVertex(x, y, z, 
                  fR, fG, fB, fA, 
@@ -1715,6 +1757,11 @@ public class PGraphicsOpenGL extends PGraphics {
         gl2f.glPushMatrix();
         gl2f.glLoadMatrixf(pcamera, 0);
       }
+
+      if (hasFill) { 
+        renderFill(textureImage);
+      }
+      
       
       if (hasPoints) {
         renderPoints();
@@ -1724,9 +1771,6 @@ public class PGraphicsOpenGL extends PGraphics {
         renderLines();    
       }    
             
-      if (hasFill) { 
-        renderFill(textureImage);
-      }
       
       if (flushMode == FLUSH_WHEN_FULL) {
         gl2f.glPopMatrix();
@@ -2865,10 +2909,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void popMatrix() {
-    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
-      flush();
-    }
-    
     gl2f.glPopMatrix();
     modelviewStack.pop();
   }
@@ -2883,10 +2923,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public void translate(float tx, float ty, float tz) {
-    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
-      flush();
-    }
-    
     gl2f.glTranslatef(tx, ty, tz);
     modelviewStack.translate(tx, ty, tz);
     modelviewUpdated = false;
@@ -2919,10 +2955,6 @@ public class PGraphicsOpenGL extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
-    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
-      flush();
-    }
-    
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     modelviewStack.rotate(angle, v0, v1, v2);
     modelviewUpdated = false;
@@ -2946,10 +2978,6 @@ public class PGraphicsOpenGL extends PGraphics {
    * Scale in three dimensions.
    */
   public void scale(float sx, float sy, float sz) {
-    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
-      flush();
-    }    
-
     gl2f.glScalef(sx, sy, sz);
     modelviewStack.scale(sx, sy, sz);
     modelviewUpdated = false;
@@ -2977,10 +3005,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     
   public void resetMatrix() {
-    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
-      flush();
-    }
-    
     gl2f.glLoadIdentity();    
     modelviewStack.setIdentity();
     modelviewUpdated = false;
@@ -3015,10 +3039,6 @@ public class PGraphicsOpenGL extends PGraphics {
                           float n10, float n11, float n12, float n13, 
                           float n20, float n21, float n22, float n23, 
                           float n30, float n31, float n32, float n33) {
-    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
-      flush();
-    }
-    
     gltemp[ 0] = n00; gltemp[ 4] = n01; gltemp[ 8] = n02; gltemp[12] = n03;
     gltemp[ 1] = n10; gltemp[ 5] = n11; gltemp[ 9] = n12; gltemp[13] = n13;
     gltemp[ 2] = n20; gltemp[ 6] = n21; gltemp[10] = n22; gltemp[14] = n23;
@@ -3038,10 +3058,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   public void updateModelview(boolean calcInv) {
-    if (flushMode == FLUSH_AFTER_TRANSFORMATION) {
-      flush();
-    }
-    
     if (calcInv) {
       modelviewInv.set(modelview);
       modelviewInv.invert();
