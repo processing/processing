@@ -6394,6 +6394,10 @@ public class PGraphicsOpenGL extends PGraphics {
     public float[] normals;
     public float[] texcoords;
     public float[] strokes;
+        
+    // For later, to be used by libraries...
+    //public float[][] mtexcoords;
+    //public float[][] attributes;
 
     public InGeometry() {
       allocate();
@@ -6569,6 +6573,9 @@ public class PGraphicsOpenGL extends PGraphics {
     public float[] fillNormals;
     public float[] fillTexcoords;
 
+    //public float[][] fillMTexcoords;
+    //public float[][] fillAttributes;
+    
     public int fillIndexCount;
     public int firstFillIndex;
     public int lastFillIndex;    
