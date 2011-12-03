@@ -1803,8 +1803,12 @@ public class PGraphicsOpenGL extends PGraphics {
         gl2f.glLoadMatrixf(pcamera, 0);
       }
 
-      if (hasFill) { 
-        renderFill(textureImage);
+      if (hasFill) {
+        if (twoDimensionalDrawing && textureImage != null && stroke) {
+          renderStrokedFill(textureImage);  
+        } else {        
+          renderFill(textureImage);
+        }
       }
       
       
@@ -1957,7 +1961,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // What is faster?
     
     // 1) wrapping the float array:
-    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.fillIndices));
+    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.fillIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.fillIndices));    
     
     // or:
     //2) copying the float array to a pre-existing direct buffer:
@@ -1980,6 +1984,69 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);  
   }
   
+  
+  protected void renderStrokedFill(PImage textureImage) {
+    checkVertexBuffers(tess.fillVertexCount);
+    
+    vertexBuffer.rewind();
+    vertexBuffer.put(tess.fillVertices, 0, 3 * tess.fillVertexCount);    
+    vertexBuffer.position(0);
+    
+    colorBuffer.rewind();
+    colorBuffer.put(tess.fillColors, 0, 4 * tess.fillVertexCount);
+    colorBuffer.position(0);
+    
+    normalBuffer.rewind();
+    normalBuffer.put(tess.fillNormals, 0, 3 * tess.fillVertexCount);
+    normalBuffer.position(0);
+
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);    
+    
+    PTexture tex = null;
+    if (textureImage != null) {
+      tex = ogl.getTexture(textureImage);
+      if (tex != null) {
+        gl2f.glEnable(tex.glTarget);
+        gl2f.glActiveTexture(GL.GL_TEXTURE0);
+        gl2f.glBindTexture(tex.glTarget, tex.glID);
+      }
+      texcoordBuffer.rewind();
+      texcoordBuffer.put(tess.fillTexcoords, 0, 2 * tess.fillVertexCount);
+      texcoordBuffer.position(0);
+      
+      gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);      
+    }    
+    
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
+    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);
+    if (tex != null) {
+      gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texcoordBuffer);
+    }
+    
+    // Drawing the fill geometry.
+    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.firstLineIndex, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.fillIndices));
+
+    if (tex != null) {
+      gl2f.glActiveTexture(GL.GL_TEXTURE0);
+      gl2f.glBindTexture(tex.glTarget, 0);
+      gl2f.glDisable(tex.glTarget);
+      
+      gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+    }
+
+    // Drawing the stroked lines without texture.
+    int offset = tess.firstLineIndex;
+    int count = tess.lastLineIndex - tess.firstLineIndex + 1;
+    gl2f.glDrawElements(GL.GL_TRIANGLES, count, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.fillIndices, offset, count));
+    
+    
+    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);      
+  }
   
   protected void checkVertexBuffers(int n) {
     if (vertexBuffer.capacity() / 3 < n) {    
@@ -7343,8 +7410,9 @@ public class PGraphicsOpenGL extends PGraphics {
 //        }
 
         
-        
+        tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
         tessellatePath(path);
+        tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;
       }  
     }
 
@@ -7398,8 +7466,7 @@ public class PGraphicsOpenGL extends PGraphics {
           vertex = new double[] { coords[0], coords[1], 0,
             strokeRed, strokeGreen, strokeBlue, strokeAlpha,
             0, 0, 1,
-            0, 0 };
-          
+            0, 0 };          
           
           GLU.gluTessVertex(gluTess, vertex, 0, vertex);
           lastX = coords[0];
