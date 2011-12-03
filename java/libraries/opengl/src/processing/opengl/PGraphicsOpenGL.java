@@ -26,6 +26,10 @@ package processing.opengl;
 
 import processing.core.*;
 
+import java.awt.BasicStroke;
+import java.awt.Shape;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
 import java.nio.*;
 import java.util.EmptyStackException;
 import java.util.HashMap;
@@ -184,6 +188,9 @@ public class PGraphicsOpenGL extends PGraphics {
   
   /** Distance between the camera eye and and aim point. */
   protected float cameraDepth; 
+  
+  protected float cameraAxisX, cameraAxisY, cameraAxisZ;
+  protected float cameraCenterX, cameraCenterY, cameraCenterZ;  
   
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
@@ -463,16 +470,31 @@ public class PGraphicsOpenGL extends PGraphics {
   public static final int DEFAULT_TESS_INDICES = 1024;
   
   protected Tessellator tessellator;
+  protected Tessellator2D tessellator2D;
   
   static protected PShader lineShader;
   static protected PShader pointShader;
   
   protected boolean twoDimensionalDrawing;
+  protected boolean firstVert;
+  protected float camVertProj0;     
   int shapeType0, shapeType;
   protected PImage textureImage0;
   
   
+  static public float FLOAT_EPS = Float.MIN_VALUE;
+  
+  // Calculation of the Machine Epsilon for float precision. From:
+  // http://en.wikipedia.org/wiki/Machine_epsilon#Approximation_using_Java
+  static {
+    float eps = 1.0f;
 
+    do {
+      eps /= 2.0f;
+    } while ((float)(1.0 + (eps / 2.0)) != 1.0);
+   
+    FLOAT_EPS = eps;
+  }  
   
   //////////////////////////////////////////////////////////////
   
@@ -482,6 +504,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public PGraphicsOpenGL() {
     glu = new GLU();
     tessellator = new Tessellator();
+    tessellator2D = new Tessellator2D();
     in = newInGeometry();
     tess = newTessGeometry(IMMEDIATE);
   }
@@ -1227,6 +1250,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     twoDimensionalDrawing = true;
     shapeType0 = shapeType = -1;
+    firstVert = true;    
     
     report("bot beginDraw()");
   }
@@ -1567,25 +1591,25 @@ public class PGraphicsOpenGL extends PGraphics {
   // VERTEX SHAPES
   
   public void beginShape(int kind) {
-    shapeType0 = shapeType;
+    //shapeType0 = shapeType;
     shape = kind;
     
-    if (shape == LINES) {
-      shapeType = LINES; 
-    } else if (shape == POINTS) {
-      shapeType = POINTS;
-    } else if (!stroke) {
-      shapeType = NON_STROKED_SHAPE;
-    } else {
-      shapeType = STROKED_SHAPE;
-    }
-      
-    
-   if (flushMode == FLUSH_WHEN_FULL && twoDimensionalDrawing && shapeType != shapeType0) {
-     // Flushing geometry because it is not possible to ensure depth-buffer consistency if 
-     // drawing the points, lines, and fill geometry as sepearate buffers.
-     flush();
-   }
+//    if (shape == LINES) {
+//      shapeType = LINES; 
+//    } else if (shape == POINTS) {
+//      shapeType = POINTS;
+//    } else if (!stroke) {
+//      shapeType = NON_STROKED_SHAPE;
+//    } else {
+//      shapeType = STROKED_SHAPE;
+//    }
+//      
+//    
+//   if (flushMode == FLUSH_WHEN_FULL && twoDimensionalDrawing && shapeType != shapeType0) {
+//     // Flushing geometry because it is not possible to ensure depth-buffer consistency if 
+//     // drawing the points, lines, and fill geometry as separate buffers.
+//     flush();
+//   }
    
     in.reset();
         
@@ -1602,17 +1626,23 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   public void endShape(int mode) {
-    
-    
-    
     if (textureImage0 != null && textureImage == null && flushMode == FLUSH_WHEN_FULL) {
       textureImage = textureImage0;
       flush();
       textureImage = null;      
     }
     
-    tessellator.setInGeometry(in);
-    tessellator.setTessGeometry(tess);
+//    tessellator.setInGeometry(in);
+//    tessellator.setTessGeometry(tess);
+
+    tessellator2D.setInGeometry(in);
+    tessellator2D.setTessGeometry(tess);
+    tessellator2D.setFill(fill);
+    tessellator2D.setStroke(stroke);
+    tessellator2D.setStrokeWeight(10);
+    tessellator2D.setStrokeCap(ROUND);
+    tessellator2D.setStrokeJoin(ROUND);
+    tessellator2D.setStrokeColor(0, 0, 1, 1);
     
     if (shape == POINTS) {
       tessellator.tessellatePoints(strokeCap);    
@@ -1629,10 +1659,12 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (shape == QUAD_STRIP) {
       tessellator.tessellateQuadStrip();
     } else if (shape == POLYGON) {
-      tessellator.tessellatePolygon(false, mode == CLOSE);
+      tessellator2D.tessellatePolygon(false, mode == CLOSE);
     }
 
-    if (flushMode == FLUSH_END_SHAPE || (flushMode == FLUSH_WHEN_FULL && tess.isFull())) {
+    if (flushMode == FLUSH_END_SHAPE || 
+        (flushMode == FLUSH_WHEN_FULL && tess.isFull()) ||
+        (flushMode == FLUSH_WHEN_FULL && twoDimensionalDrawing && textureImage != null && stroke)) {
       flush();
     }    
   }
@@ -1722,8 +1754,21 @@ public class PGraphicsOpenGL extends PGraphics {
       u /= textureImage.width;
       v /= textureImage.height;
     }
-        
-    twoDimensionalDrawing &= z == 0;
+
+    // Calculating the projection of the vertex on the vector going from the
+    // view center to the camera position. If all vertices have the same
+    // projection, means that they are contained in the same plane perpendicular
+    // to the camera.
+    float dot = (x - cameraCenterX) * cameraAxisX + 
+                (y - cameraCenterY) * cameraAxisY +
+                (z - cameraCenterZ) * cameraAxisZ;
+    
+    if (firstVert) {
+      twoDimensionalDrawing = true;
+    } else {
+      twoDimensionalDrawing &= PApplet.abs(camVertProj0 - dot) < FLOAT_EPS;  
+    }
+    camVertProj0 = dot;    
     
     in.addVertex(x, y, z, 
                  fR, fG, fB, fA, 
@@ -1778,6 +1823,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     tess.reset();
+    firstVert = true;    
   }
   
 
@@ -3451,7 +3497,16 @@ public class PGraphicsOpenGL extends PGraphics {
       z1 /= mag;
       z2 /= mag;
     }
-    cameraDepth = mag; 
+    cameraDepth = mag;
+    
+    // This information is used to determine if input points
+    // are contained in the camera plane.
+    cameraAxisX = z0;
+    cameraAxisY = z1;
+    cameraAxisZ = z2;
+    cameraCenterX = centerX;
+    cameraCenterY = centerY;
+    cameraCenterZ = centerZ;
     
     // Calculating Y vector
     float y0 = upX;
@@ -6299,6 +6354,18 @@ public class PGraphicsOpenGL extends PGraphics {
       texcoords = null;
       strokes = null;      
     }
+
+    public float getVertexX(int idx) {
+      return vertices[3 * idx + 0];  
+    }
+    
+    public float getVertexY(int idx) {
+      return vertices[3 * idx + 1];
+    }    
+    
+    public float getVertexZ(int idx) {
+      return vertices[3 * idx + 2];
+    }    
     
     public float getlastVertexX() {
       return vertices[3 * (vertexCount - 1) + 0];  
@@ -6887,6 +6954,8 @@ public class PGraphicsOpenGL extends PGraphics {
       index = 2 * fillVertexCount;
       fillTexcoords[index++] = u;
       fillTexcoords[index  ] = v;      
+      
+      fillVertexCount++;
     }    
 
     public void addFillVertices(InGeometry in) {
@@ -7112,35 +7181,416 @@ public class PGraphicsOpenGL extends PGraphics {
       return newSize;
     }
   }
+
+  final static protected int MIN_ACCURACY = 6; 
+  final static protected float sinLUT[];
+  final static protected float cosLUT[];
+  final static protected float SINCOS_PRECISION = 0.5f;
+  final static protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
+  static {
+    sinLUT = new float[SINCOS_LENGTH];
+    cosLUT = new float[SINCOS_LENGTH];
+    for (int i = 0; i < SINCOS_LENGTH; i++) {
+      sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
+      cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
+    }      
+  }  
+  final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
+
+  public class Tessellator2D {
+    public GLUtessellator gluTess;
+    InGeometry inGeo; 
+    TessGeometry tessGeo;
+    GLU glu;
+    
+    boolean fill;
+    boolean stroke;
+    float strokeWeight;
+    int strokeJoin;
+    int strokeCap;
+    float strokeRed, strokeGreen, strokeBlue, strokeAlpha;
+    int bezierDetail = 20;
+    
+    public Tessellator2D() {
+      glu = new GLU();
+      
+      gluTess = GLU.gluNewTess();
+      GLUTessCallback tessCallback;
+    
+      tessCallback = new GLUTessCallback();
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_BEGIN, tessCallback);
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_END, tessCallback);
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_VERTEX, tessCallback);
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_COMBINE, tessCallback);
+      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_ERROR, tessCallback);        
+    }
+    
+    public void setInGeometry(InGeometry in) {
+      this.inGeo = in;
+    }
+
+    public void setTessGeometry(TessGeometry tess) {
+      this.tessGeo = tess;
+    }
+    
+    public void setFill(boolean fill) {
+      this.fill = fill;
+    }
+    
+    
+    public void setStroke(boolean stroke) {
+      this.stroke = stroke;
+    }
+    
+    public void setStrokeWeight(float weight) {
+      this.strokeWeight = weight;
+    }
+    
+    public void setStrokeJoin(int strokeJoin) { 
+      this.strokeJoin = strokeJoin;
+    }
+    
+    public void setStrokeCap(int strokeCap) { 
+      this.strokeCap = strokeCap;
+    }
+    
+    public void setStrokeColor(float r, float g, float b, float a) {
+      this.strokeRed = r;
+      this.strokeGreen = g; 
+      this.strokeBlue = b;
+      this.strokeAlpha = a;  
+    }
+    
+    public void tessellatePolygon(boolean solid, boolean closed) {
+      if (fill) {
+        GLU.gluTessBeginPolygon(gluTess, null);
+        
+        if (solid) {
+          // Using NONZERO winding rule for solid polygons.
+          GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_NONZERO);      
+        } else {
+          // Using ODD winding rule to generate polygon with holes.
+          GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_ODD);      
+        }
+
+        GLU.gluTessBeginContour(gluTess);    
+        
+        // Now, iterate over all input data and send to GLU tessellator..
+        for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
+          boolean breakPt = inGeo.codes[i] == PShape.BREAK;      
+          if (breakPt) {
+            GLU.gluTessEndContour(gluTess);  
+            GLU.gluTessBeginContour(gluTess);
+          }
+          
+          // Vertex data includes coordinates, colors, normals and texture coordinates.
+          double[] vertex = new double[] { inGeo.vertices[3 * i + 0], inGeo.vertices[3 * i + 1], inGeo.vertices[3 * i + 2],
+                                           inGeo.colors[4 * i + 0], inGeo.colors[4 * i + 1], inGeo.colors[4 * i + 2], inGeo.colors[4 * i + 3],
+                                           inGeo.normals[3 * i + 0], inGeo.normals[3 * i + 1], inGeo.normals[3 * i + 2],
+                                           inGeo.texcoords[2 * i + 0], inGeo.texcoords[2 * i + 1] };
+          GLU.gluTessVertex(gluTess, vertex, 0, vertex);
+        }
+        
+        GLU.gluTessEndContour(gluTess);
+        
+        GLU.gluTessEndPolygon(gluTess); 
+      }
+            
+      if (stroke) {          
+        GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
+
+        path.moveTo(inGeo.vertices[3 * inGeo.firstVertex + 0], inGeo.vertices[3 * inGeo.firstVertex + 1]);
+        for (int i = inGeo.firstVertex + 1; i <= inGeo.lastVertex; i++) {
+          path.lineTo(inGeo.vertices[3 * i + 0], inGeo.vertices[3 * i + 1]);
+        }
+        path.closePath();
+        
+        
+//        int lnCount = inGeo.lastVertex - inGeo.firstVertex + 1;
+//        int first = inGeo.firstVertex;
+//        if (!closed) {
+//          lnCount--;
+//        }
+//        
+//        int contour0 = first;
+//        
+//        path.moveTo(inGeo.vertices[3 * first + 0], inGeo.vertices[3 * first + 1]);
+//        for (int ln = 0; ln < lnCount; ln++) {
+//          int i0 = first + ln;
+//          int i1 = first + ln + 1;
+//          if (inGeo.codes[i0] == PShape.BREAK) {
+//            contour0 = i0;
+//          }
+//          
+//          if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {
+//            // Draw line with the first vertex of the current contour.
+//            //i0 = contour0;
+//            //i1 = first + ln;
+//            i1 = contour0;            
+//          }
+//          
+//          if (inGeo.codes[i1] != PShape.BREAK &&
+//              (0 < inGeo.strokes[5 * i0 + 4] || 
+//               0 < inGeo.strokes[5 * i1 + 4])) {
+//            path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
+//            //addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+//            //path.lineTo(x[i1], y[i1]);            
+//          }
+//          
+//          if (inGeo.codes[i1] == PShape.BREAK) {
+//            path.moveTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
+//          }
+//        }
+
+        
+        
+        tessellatePath(path);
+      }  
+    }
+
+    public void tessellatePath(GeneralPath path) {
+      // AWT implementation for Android?
+      // http://hi-android.info/src/java/awt/Shape.java.html
+      // http://hi-android.info/src/java/awt/geom/GeneralPath.java.html
+      // http://hi-android.info/src/java/awt/geom/PathIterator.java.html
+      //
+      // http://stackoverflow.com/questions/3897775/using-awt-with-android
+        
+      BasicStroke bs;
+      int bstrokeCap = strokeCap == ROUND ? BasicStroke.CAP_ROUND :
+                       strokeCap == PROJECT ? BasicStroke.CAP_SQUARE :
+                       BasicStroke.CAP_BUTT;
+      int bstrokeJoin = strokeJoin == ROUND ? BasicStroke.JOIN_ROUND :
+                        strokeJoin == BEVEL ? BasicStroke.JOIN_BEVEL :
+                        BasicStroke.JOIN_MITER;              
+      bs = new BasicStroke(strokeWeight, bstrokeCap, bstrokeJoin);      
+            
+      // Make the outline of the stroke from the path
+      Shape sh = bs.createStrokedShape(path);
+      
+      
+      GLU.gluTessBeginPolygon(gluTess, null);
+      
+      float lastX = 0;
+      float lastY = 0;
+      double[] vertex;
+      float[] coords = new float[6];
+      
+      PathIterator iter = sh.getPathIterator(null); // ,5) add a number on here to simplify verts
+      int rule = iter.getWindingRule();
+      switch(rule) {
+      case PathIterator.WIND_EVEN_ODD:
+        GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_ODD);
+        break;
+      case PathIterator.WIND_NON_ZERO:
+        GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_NONZERO);
+        break;
+      }
+      
+      while (!iter.isDone()) {
+        
+        switch (iter.currentSegment(coords)) {
+   
+        case PathIterator.SEG_MOVETO:   // 1 point (2 vars) in coords
+          GLU.gluTessBeginContour(gluTess);
+   
+        case PathIterator.SEG_LINETO:   // 1 point
+          vertex = new double[] { coords[0], coords[1], 0,
+            strokeRed, strokeGreen, strokeBlue, strokeAlpha,
+            0, 0, 1,
+            0, 0 };
+          
+          
+          GLU.gluTessVertex(gluTess, vertex, 0, vertex);
+          lastX = coords[0];
+          lastY = coords[1];
+          break;
+   
+        case PathIterator.SEG_QUADTO:   // 2 points
+          for (int i = 1; i < bezierDetail; i++) {
+            float t = (float)i / (float)bezierDetail;
+            vertex = new double[] { 
+              bezierPoint(lastX, coords[0], coords[2], coords[2], t),
+              bezierPoint(lastY, coords[1], coords[3], coords[3], t), 
+              0, 
+              strokeRed, strokeGreen, strokeBlue, strokeAlpha,
+              0, 0, 1,
+              0, 0 };
+            GLU.gluTessVertex(gluTess, vertex, 0, vertex);
+          }
+          lastX = coords[2];
+          lastY = coords[3];
+          break;
+   
+        case PathIterator.SEG_CUBICTO:  // 3 points
+          for (int i = 1; i < bezierDetail; i++) {
+            float t = (float)i / (float)bezierDetail;
+            vertex = new double[] { 
+              bezierPoint(lastX, coords[0], coords[2], coords[4], t),
+              bezierPoint(lastY, coords[1], coords[3], coords[5], t), 
+              0, 
+              strokeRed, strokeGreen, strokeBlue, strokeAlpha,
+              0, 0, 1,
+              0, 0 };
+            GLU.gluTessVertex(gluTess, vertex, 0, vertex);
+          }
+          lastX = coords[4];
+          lastY = coords[5];
+          break;
+   
+        case PathIterator.SEG_CLOSE:
+          GLU.gluTessEndContour(gluTess);
+          break;
+        }
+        iter.next();
+      }
+      GLU.gluTessEndPolygon(gluTess);      
+    }
+    
+    
+    public class GLUTessCallback extends GLUtessellatorCallbackAdapter {
+      protected int tessFirst;
+      protected int tessCount;
+      protected int tessType;
+      
+      public void begin(int type) {
+        tessFirst = tessGeo.fillVertexCount;
+        tessCount = 0;
+        
+        switch (type) {
+        case GL.GL_TRIANGLE_FAN: 
+          tessType = TRIANGLE_FAN;
+          break;
+        case GL.GL_TRIANGLE_STRIP: 
+          tessType = TRIANGLE_STRIP;
+          break;
+        case GL.GL_TRIANGLES: 
+          tessType = TRIANGLES;
+          break;
+        }
+      }
+
+      public void end() {
+        switch (tessType) {
+        case TRIANGLE_FAN: 
+          for (int i = 1; i < tessCount - 1; i++) {
+            addIndex(0);
+            addIndex(i);
+            addIndex(i + 1);
+          }       
+          break;
+        case TRIANGLE_STRIP: 
+          for (int i = 1; i < tessCount - 1; i++) {
+            addIndex(i);
+            if (i % 2 == 0) {
+              addIndex(i - 1);
+              addIndex(i + 1);
+            } else {
+              addIndex(i + 1);
+              addIndex(i - 1);
+            }
+          }        
+          break;
+        case TRIANGLES: 
+          for (int i = 0; i < tessCount; i++) {
+            addIndex(i);          
+          }
+          break;
+        }
+      }
+      
+      protected void addIndex(int tessIdx) {
+        tessGeo.addFillIndex(tessFirst + tessIdx);
+      }
+
+      public void vertex(Object data) {
+        if (data instanceof double[]) {
+          double[] d = (double[]) data;
+          if (d.length < 12) {
+            throw new RuntimeException("TessCallback vertex() data " +
+                                       "isn't length 12");
+          }
+          
+          tessGeo.addFillVertex((float) d[0], (float) d[1], (float) d[2],
+                                (float) d[3], (float) d[4], (float) d[5], (float) d[6],
+                                (float) d[7], (float) d[8], (float) d[9],
+                                (float) d[10], (float) d[11]);
+
+          tessCount++;
+        } else {
+          throw new RuntimeException("TessCallback vertex() data not understood");
+        }
+      }
+
+      public void error(int errnum) {
+        String estring = glu.gluErrorString(errnum);
+        PGraphics.showWarning("Tessellation Error: " + estring);
+      }
+      
+      /**
+       * Implementation of the GLU_TESS_COMBINE callback.
+       * @param coords is the 3-vector of the new vertex
+       * @param data is the vertex data to be combined, up to four elements.
+       * This is useful when mixing colors together or any other
+       * user data that was passed in to gluTessVertex.
+       * @param weight is an array of weights, one for each element of "data"
+       * that should be linearly combined for new values.
+       * @param outData is the set of new values of "data" after being
+       * put back together based on the weights. it's passed back as a
+       * single element Object[] array because that's the closest
+       * that Java gets to a pointer.
+       */
+      public void combine(double[] coords, Object[] data,
+                          float[] weight, Object[] outData) {
+        
+        double[] vertex = new double[12];
+        vertex[0] = coords[0];
+        vertex[1] = coords[1];
+        vertex[2] = coords[2];
+
+        for (int i = 3; i < 12; i++) {
+          vertex[i] = 0;
+          for (int j = 0; j < 4; j++) {
+            double[] vertData = (double[])data[j];
+            if (vertData != null) {
+              vertex[i] += weight[j] * vertData[i];
+            }
+          }
+        }
+        
+        // Normalizing normal vector, since the weighted 
+        // combination of normal vectors is not necessarily 
+        // normal.
+        double sum = vertex[7] * vertex[7] + 
+                     vertex[8] * vertex[8] + 
+                     vertex[9] * vertex[9];
+        double len = Math.sqrt(sum);      
+        vertex[7] /= len; 
+        vertex[8] /= len;
+        vertex[9] /= len;  
+        
+        outData[0] = vertex;
+      }
+    }    
+    
+
+  }  
   
   public class Tessellator {
-    final protected int MIN_ACCURACY = 6; 
-    final protected float sinLUT[];
-    final protected float cosLUT[];
-    final protected float SINCOS_PRECISION = 0.5f;
-    final protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
-//    static {
-//      sinLUT = new float[SINCOS_LENGTH];
-//      cosLUT = new float[SINCOS_LENGTH];
-//      for (int i = 0; i < SINCOS_LENGTH; i++) {
-//        sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
-//        cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
-//      }      
-//    }  
-    final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
-    
     public GLUtessellator gluTess;
     InGeometry inGeo; 
     TessGeometry tessGeo;
     GLU glu;
     
     public Tessellator() {
+      /*
       sinLUT = new float[SINCOS_LENGTH];
       cosLUT = new float[SINCOS_LENGTH];
       for (int i = 0; i < SINCOS_LENGTH; i++) {
         sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
         cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
       }
+      */
       
       glu = new GLU();
       
@@ -7857,7 +8307,6 @@ public class PGraphicsOpenGL extends PGraphics {
                                 (float) d[10], (float) d[11]);
 
           tessCount++;
-          tessGeo.fillVertexCount++;
         } else {
           throw new RuntimeException("TessCallback vertex() data not understood");
         }
