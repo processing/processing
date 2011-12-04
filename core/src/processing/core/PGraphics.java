@@ -7393,23 +7393,13 @@ public class PGraphics extends PImage implements PConstants {
 
   // New API:
 
-  public PShape createGroup() {
-    showMissingWarning("createGroup");
+  public PShape createShape() {
+    showMissingWarning("createShape");
     return null;
   }  
 
-  public PShape createGeometry() {
-    showMissingWarning("createGeometry");
-    return null;
-  }  
-  
-  public PShape createGeometry(int kind) {
-    showMissingWarning("createGeometry");
-    return null;
-  }
-  
-  public PShape createPrimitive(int kind) {
-    showMissingWarning("createPrimitive");
+  public PShape createShape(int type) {
+    showMissingWarning("createShape");
     return null;
   }  
   

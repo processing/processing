@@ -1554,27 +1554,46 @@ public class PGraphicsOpenGL extends PGraphics {
   // SHAPE CREATORS
   
   
-  public PShape createGroup() {
-    return new PShape3D(parent, PShape.GROUP);    
+  public PShape createShape() {
+    return createShape(POLYGON);
   }
   
-  public PShape createGeometry() {
-    PShape3D shape = new PShape3D(parent, PShape.GEOMETRY);
-    shape.setKind(POLYGON);
-    return shape;
-  }  
-  
-  public PShape createGeometry(int kind) {
-    PShape3D shape = new PShape3D(parent, PShape.GEOMETRY);
-    shape.setKind(kind);
+  public PShape createShape(int type) {
+    PShape3D shape;
+    if (type == PShape.GROUP) {
+      shape = new PShape3D(parent, PShape.GROUP);
+    } else if (type == POINTS) {
+      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape.setKind(POINTS);
+    } else if (type == LINES) {
+      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape.setKind(LINES);
+    } else if (type == TRIANGLES) {
+      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape.setKind(TRIANGLES);
+    } else if (type == TRIANGLE_FAN) {
+      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape.setKind(TRIANGLE_FAN);
+    } else if (type == TRIANGLE_STRIP) {      
+      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape.setKind(TRIANGLE_STRIP);
+    } else if (type == QUADS) {
+      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape.setKind(QUADS);
+    } else if (type == QUAD_STRIP) {
+      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape.setKind(QUAD_STRIP);
+    } else if (type == POLYGON) {
+      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape.setKind(POLYGON);
+    } else if (type == SPHERE) {
+      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape.setKind(SPHERE);          
+    } else {
+      shape = null;
+    }
     return shape;
   }
-
-  public PShape createPrimitive(int kind) {
-    PShape3D shape = new PShape3D(parent, PShape.PRIMITIVE);
-    shape.setKind(kind);
-    return shape;
-  }  
   
   //////////////////////////////////////////////////////////////
 
