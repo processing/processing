@@ -675,9 +675,11 @@ public class PShape3D extends PShape {
         tessellator.setInGeometry(in);
         tessellator.setTessGeometry(tess);
         
+        
+        
         if (family == GEOMETRY) {
           if (kind == POINTS) {
-            tessellator.tessellatePoints(strokeCap);    
+            tessellator.tessellatePoints();    
           } else if (kind == LINES) {
             tessellator.tessellateLines();    
           } else if (kind == TRIANGLES) {
