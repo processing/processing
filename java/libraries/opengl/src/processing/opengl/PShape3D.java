@@ -69,6 +69,8 @@ public class PShape3D extends PShape {
   
   protected PImage texture;
   
+  protected boolean is3D;
+  
   // ........................................................
   
   // OpenGL buffers  
@@ -183,6 +185,7 @@ public class PShape3D extends PShape {
     this.root = this;
     this.parent = null;
     this.modified = false;
+    this.is3D = true;
     
     tess = ogl.newTessGeometry(RETAINED);    
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
@@ -205,6 +208,14 @@ public class PShape3D extends PShape {
   public void setKind(int kind) {
     this.kind = kind;
   }
+  
+  public void set2D() {
+    is3D = false;
+  }
+  
+  public void set3D() {
+    is3D = true;
+  }  
   
   public void setMode(int mode) {
     if (mode == STATIC) {
@@ -328,6 +339,10 @@ public class PShape3D extends PShape {
   public void strokeCap(int cap) {
     strokeCap = cap;        
   }    
+  
+  public void end() {
+    // ?
+  }
   
   ///////////////////////////////////////////////////////////  
   
@@ -1285,8 +1300,16 @@ public class PShape3D extends PShape {
         texSet.addAll(childSet);
       }
       
-    } else {
-      texSet.add(texture);
+    } else {      
+      if (!is3D) {
+        // if is stroked and textured:
+        // texSet.add(texture); for the textured fill
+        // texSet.add(null);    for the stroke
+        // else
+        texSet.add(texture);
+      } else {
+        texSet.add(texture);
+      }      
     }
     
     return texSet;    
