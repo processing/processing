@@ -2786,13 +2786,14 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
     // Init opengl state for text rendering...
-    gl.glEnable(GL.GL_TEXTURE_2D);
+//    gl.glEnable(GL.GL_TEXTURE_2D);
+//    
+//    if (screenBlendMode != BLEND) {
+//      gl.glEnable(GL.GL_BLEND);
+//      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
+//      gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+//    }    
     
-    if (screenBlendMode != BLEND) {
-      gl.glEnable(GL.GL_BLEND);
-      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-      gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-    }    
     
     textTex = (PFontTexture)textFont.getCache(ogl);     
     if (textTex == null) {
@@ -2801,43 +2802,43 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     textTex.setFirstTexture();
 
-    // Setting the current fill color as the font color.
-    setFillColor();
-    
-    if (textMode == MODEL) {
-      if (textVertexBuffer == null) {
-        allocateTextModel();
-      }
-      
-      // Setting Z axis as the normal to the text geometry      
-      setDefNormals(0, 0, 1);
-      
-      if (!textBlockMode) {
-        // Resetting vertex count when we are not defining a 
-        // block of text.
-        textVertexCount = 0;
-      }
-    }
+//    // Setting the current fill color as the font color.
+//    setFillColor();
+//    
+//    if (textMode == MODEL) {
+//      if (textVertexBuffer == null) {
+//        allocateTextModel();
+//      }
+//      
+//      // Setting Z axis as the normal to the text geometry      
+//      setDefNormals(0, 0, 1);
+//      
+//      if (!textBlockMode) {
+//        // Resetting vertex count when we are not defining a 
+//        // block of text.
+//        textVertexCount = 0;
+//      }
+//    }
     
     super.textLineImpl(buffer, start, stop, x, y);
 
-    if (textMode == MODEL && 0 < textVertexCount) {
-      if (!textBlockMode) {
-        // Pushing text geometry to the GPU.
-        renderTextModel();
-      } else {
-        // We don't push any geometry here because we will
-        // do it when endText is called. For now we just 
-        // save the current texture.
-        textBlockTex = textTex.currentTex;
-      }
-    }
-    
-    // Restoring current blend mode.
-    blendMode(screenBlendMode);
-    
-    gl.glBindTexture(GL.GL_TEXTURE_2D, 0);   
-    gl.glDisable(GL.GL_TEXTURE_2D);    
+//    if (textMode == MODEL && 0 < textVertexCount) {
+//      if (!textBlockMode) {
+//        // Pushing text geometry to the GPU.
+//        renderTextModel();
+//      } else {
+//        // We don't push any geometry here because we will
+//        // do it when endText is called. For now we just 
+//        // save the current texture.
+//        textBlockTex = textTex.currentTex;
+//      }
+//    }
+//    
+//    // Restoring current blend mode.
+//    blendMode(screenBlendMode);
+//    
+//    gl.glBindTexture(GL.GL_TEXTURE_2D, 0);   
+//    gl.glDisable(GL.GL_TEXTURE_2D);    
   }
 
   protected void textCharImpl(char ch, float x, float y) {
@@ -2867,25 +2868,24 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  protected void textCharModelImpl(PFontTexture.TextureInfo info, float x1, float y1,
-      float x2, float y2) {
-    if ((textTex.currentTex != info.texIndex) || 
-        (textBlockMode && textBlockTex != info.texIndex)) {
-      if (0 < textVertexCount) {
-        // Current texture changes (the font is so large that needs more than one texture).
-        // So rendering all we got until now, and reseting vertex counter.
-        renderTextModel();        
-        textVertexCount = 0;
-      }
-      textTex.setTexture(info.texIndex);
-    }   
-
-    // Division by three needed because each int element in the buffer is used
-    // to store three coordinates.
-    if (textVertexBuffer.capacity() / 3 < textVertexCount + 6) {
-      expandTextBuffers();
-    }    
+  protected void textCharModelImpl(PFontTexture.TextureInfo info, float x0, float y0,
+      float x1, float y1) {
+    PImage tex = textTex.getTexture(info.texIndex);
     
+    int mode0 = textureMode;
+    noStroke();
+    textureMode(NORMAL);
+    beginShape(QUADS);
+    texture(tex);
+    normal(0, 0, 1);
+    vertex(x0, y0, info.u0, info.v0);
+    vertex(x1, y0, info.u1, info.v0);
+    vertex(x1, y1, info.u1, info.v1);
+    vertex(x0, y1, info.u0, info.v1);
+    endShape();
+    textureMode(mode0);
+    
+/*
     int n = textVertexCount;
     textVertexArray[3 * n + 0] = x1;
     textVertexArray[3 * n + 1] = y1;
@@ -2928,8 +2928,7 @@ public class PGraphicsOpenGL extends PGraphics {
     textTexCoordArray[2 * n + 0] = info.u1;
     textTexCoordArray[2 * n + 1] = info.v1;
     n++;
-    
-    textVertexCount = n;
+*/
   }
 
   protected void textCharScreenImpl(PFontTexture.TextureInfo info, int xx, int yy,
