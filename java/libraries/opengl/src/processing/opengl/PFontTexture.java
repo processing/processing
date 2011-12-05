@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2011 Andres Colubri
   Copyright (c) 2004-08 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
@@ -184,24 +185,22 @@ class PFontTexture implements PConstants {
   public void setFirstTexture() {
     setTexture(0);
   }
-  
+ 
   
   public void setTexture(int idx) {
     if (0 <= idx && idx < textures.length) {      
       currentTex = idx;
-      textures[currentTex].bind();
     }
   }
-
+    
   
   public PImage getTexture(int idx) {
     if (0 <= idx && idx < images.length) {      
-      currentTex = idx;
-      return images[currentTex];       
+      return images[idx];       
     }  
-    return null;
-    
+    return null;    
   }
+  
   
   // Add all the current glyphs to opengl texture.
   public void addAllGlyphsToTexture() {
@@ -310,13 +309,9 @@ class PFontTexture implements PConstants {
       lastTex = 0;
     }
     
-    // We assume GL_TEXTURE_2D is enabled at this point.
-    // We reset texture when it was resized because even the
-    // texture index didn't change, the texture is a new one
-    // in fact, so we need to rebind.
     if (currentTex != lastTex || resized) {
-      setTexture(lastTex);
-    }
+      currentTex = idx;            
+    }    
       
     TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY, w, h, rgba);
     offsetX += w;
@@ -341,6 +336,7 @@ class PFontTexture implements PConstants {
     public float v0, v1;
     public int[] pixels;
 
+    
     public TextureInfo(int tidx, int cropX, int cropY, int cropW, int cropH, int[] pix) {
       texIndex = tidx;      
       crop = new int[4];
@@ -356,6 +352,7 @@ class PFontTexture implements PConstants {
       updateTex();
     }
 
+    
     void updateUV() {
       width = textures[texIndex].glWidth;
       height = textures[texIndex].glHeight;      
@@ -365,8 +362,11 @@ class PFontTexture implements PConstants {
       v1 = v0 - (float)crop[3] / (float)height;  
     }
     
+    
     void updateTex() {
-      textures[texIndex].setTexels(offsetX, crop[0] - 1, crop[1] + crop[3] - 1, crop[2] + 2, -crop[3] + 2, pixels);
+      textures[texIndex].bind();
+      textures[texIndex].setTexels(offsetX, crop[0] - 1, crop[1] + crop[3] - 1, crop[2] + 2, -crop[3] + 2, pixels);      
+      textures[texIndex].unbind();      
     }
   }
 }
