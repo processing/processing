@@ -313,7 +313,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   // Blending:
   
-  protected int screenBlendMode;  
+  protected int blendMode;  
   
   // ........................................................
 
@@ -1370,7 +1370,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
         
     // Restoring blending.
-    blendMode(screenBlendMode);
+    blendMode(blendMode);
     
     // Restoring fill
     if (fill) {
@@ -1610,7 +1610,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     tessellator.setInGeometry(in);
     tessellator.setTessGeometry(tess);
-    tessellator.setFill(fill);
+    tessellator.setFill(fill || textureImage != null);
     tessellator.setStroke(stroke);
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
@@ -1702,7 +1702,7 @@ public class PGraphicsOpenGL extends PGraphics {
         fG = fillG;
         fB = fillB;
         fA = fillA;
-      } else {
+      } else {       
         if (tint) {
           fR = tintR;
           fG = tintG;
@@ -1735,6 +1735,11 @@ public class PGraphicsOpenGL extends PGraphics {
     if (textured && textureMode == IMAGE) {
       u /= textureImage.width;
       v /= textureImage.height;
+      
+      PTexture tex = getTexture(textureImage);
+      if (tex.isFlippedY()) {
+        v = 1 - v;
+      }      
     }
 
     drawing2D &= PApplet.abs(z) < FLOAT_EPS;  
@@ -1784,7 +1789,6 @@ public class PGraphicsOpenGL extends PGraphics {
           // buffers.
           renderFill(textureImage);
         }
-        PApplet.println("Flushing");
       }
       
       
@@ -2748,18 +2752,20 @@ public class PGraphicsOpenGL extends PGraphics {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
     }    
+    textTex.setFirstTexture();
     
     // Saving style parameters modified by text rendering.
-    int mode0 = textureMode;
-    boolean stroke0 = stroke;
-    float nX0 = normalX;
-    float nY0 = normalY;
-    float nZ0 = normalZ;
-    boolean tint0 = tint;
-    float tR0 = tintR;
-    float tG0 = tintG;
-    float tB0 = tintB;
-    float tA0 = tintA;
+    int savedTextureMode = textureMode;
+    boolean savedStroke = stroke;
+    float savedNormalX = normalX;
+    float savedNormalY = normalY;
+    float savedNormalZ = normalZ;
+    boolean savedTint = tint;
+    float savedTintR = tintR;
+    float savedTintG = tintG;
+    float savedTintB = tintB;
+    float savedTintA = tintA;
+    int savedBlendMode = blendMode;
     
     // Setting style used in text rendering.
     textureMode = NORMAL;    
@@ -2772,20 +2778,22 @@ public class PGraphicsOpenGL extends PGraphics {
     tintG = fillG;
     tintB = fillB;
     tintA = fillA;
+    blendMode(BLEND);
     
     super.textLineImpl(buffer, start, stop, x, y);
        
     // Restoring original style.
-    textureMode  = mode0;
-    stroke = stroke0;
-    normalX = nX0;
-    normalY = nY0;
-    normalZ = nZ0;
-    tint = tint0;
-    tintR = tR0;
-    tintG = tG0;
-    tintB = tB0;
-    tintA = tA0;
+    textureMode  = savedTextureMode;
+    stroke = savedStroke;
+    normalX = savedNormalX;
+    normalY = savedNormalY;
+    normalZ = savedNormalZ;
+    tint = savedTint;
+    tintR = savedTintR;
+    tintG = savedTintG;
+    tintB = savedTintB;
+    tintA = savedTintA;
+    blendMode(savedBlendMode);
   }
 
   protected void textCharImpl(char ch, float x, float y) {
@@ -2820,6 +2828,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void textCharModelImpl(PFontTexture.TextureInfo info, float x0, float y0,
       float x1, float y1) {
+//    if (textTex.currentTex != info.texIndex) {
+//      textTex.setTexture(info.texIndex);
+//    }       
+    
     PImage tex = textTex.getTexture(info.texIndex);
     
     beginShape(QUADS);
@@ -5234,7 +5246,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * http://www.pegtop.net/delphi/articles/blendmodes/
    */
   public void blendMode(int mode) {    
-    screenBlendMode = mode;
+    blendMode = mode;
     gl.glEnable(GL.GL_BLEND);
     
     if (mode == REPLACE) {
@@ -5416,7 +5428,7 @@ public class PGraphicsOpenGL extends PGraphics {
     gl.glBindTexture(target, 0);
     gl.glDisable(target);
     
-    blendMode(screenBlendMode);
+    blendMode(blendMode);
   }  
   
   protected void drawTexture(int w, int h, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {

@@ -486,8 +486,8 @@ public class PShader {
         
     byte[] infoBytes = new byte[length];
     infoLog.get(infoBytes);
-    System.err.println(title);
-    System.err.println(new String(infoBytes));
+    System.out.println(title);
+    System.out.println(new String(infoBytes));
   }
 
   protected void release() {
