@@ -304,9 +304,15 @@ public class PShape3D extends PShape {
     currentVertex[0] = x;
     currentVertex[1] = y;
     currentVertex[2] = z;    
-    
+
+    if (texture != null) {
+      PTexture tex = ogl.getTexture(texture);
+      if (tex.isFlippedY()) {
+        v = 1 - v;
+      }            
+    }    
     currentTexcoord[0] = u;
-    currentTexcoord[1] = v;
+    currentTexcoord[1] = v;    
         
     if (breakShape) {
       code = BREAK;
