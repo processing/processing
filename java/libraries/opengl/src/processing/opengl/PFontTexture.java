@@ -145,10 +145,8 @@ class PFontTexture implements PConstants {
     if (textures == null) {
       textures = new PTexture[1];
       textures[0] = tex;
-      images = new PImage[1];
-      images[0] = new PImage(tex.width, tex.height, ARGB);
-      images[0].setCache(ogl, tex);
-      
+      images = new PImage[1];      
+      images[0] = PTexture.wrap(ogl, tex); 
       currentTex = 0;     
     } else if (resize) {
       // Replacing old smaller texture with larger one.
@@ -163,18 +161,16 @@ class PFontTexture implements PConstants {
       images[currentTex].height = tex.height;
     } else {
       // Adding new texture to the list.
-      PTexture[] temp = textures;
+      PTexture[] tempTex = textures;
       textures = new PTexture[textures.length + 1];
-      PApplet.arrayCopy(temp, textures, temp.length);
-      textures[temp.length] = tex;
+      PApplet.arrayCopy(tempTex, textures, tempTex.length);
+      textures[tempTex.length] = tex;
       currentTex = textures.length - 1;
             
-      PImage[] temp2 = images;
+      PImage[] tempImg = images;
       images = new PImage[textures.length + 1];
-      PApplet.arrayCopy(temp2, images, temp2.length);
-      
-      images[temp.length] = new PImage(tex.width, tex.height, ARGB);
-      images[temp.length].setCache(ogl, tex);
+      PApplet.arrayCopy(tempImg, images, tempImg.length);      
+      images[tempImg.length] = PTexture.wrap(ogl, tex);
     }
     lastTex = currentTex;
     

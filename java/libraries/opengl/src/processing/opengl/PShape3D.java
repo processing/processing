@@ -43,7 +43,7 @@ import java.nio.IntBuffer;
 import java.util.HashSet;
 
 // TODO: check shape in 2D mode (and handling in renderFill), and group shape mixing 2D and 2D child shapes. 
-
+//       PShape3D.text() ?
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
