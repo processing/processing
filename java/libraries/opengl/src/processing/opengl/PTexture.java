@@ -98,6 +98,17 @@ public class PTexture implements PConstants {
   } 
 
   
+  static public PImage wrap(PGraphicsOpenGL ogl, PTexture tex) {
+    // We don't use the PImage(int width, int height, int mode) constructor to
+    // avoid initializing the pixels array.
+    PImage img = new PImage();
+    img.width = tex.width; 
+    img.height = tex.height;
+    img.format = ARGB;    
+    img.setCache(ogl, tex);
+    return img;
+  }
+  
   protected void finalize() throws Throwable {
     try {
       if (glID != 0) {
