@@ -321,18 +321,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
   /** Font texture of currently selected font. */
   PFontTexture textTex;
-  
-  /** Buffers and array to draw text quads. */
-  protected FloatBuffer textVertexBuffer = null;
-  protected FloatBuffer textTexCoordBuffer = null;
-  protected float[] textVertexArray = null;
-  protected float[] textTexCoordArray = null;  
-  protected int textVertexCount = 0;    
 
-  /** Used in the text block method. */
-  protected boolean textBlockMode = false;
-  protected int textBlockTex;
-  
   // .......................................................
   
   // Utility textured quad:
@@ -1217,10 +1206,9 @@ public class PGraphicsOpenGL extends PGraphics {
     
     setSurfaceParams();
     
-    //shapeFirst = 0;
-    
-    // The current normal vector is set to zero.
-    normalX = normalY = normalZ = 0;
+    // The current normal vector is set to be parallel to the Z axis.
+    normalX = normalY = 0; 
+    normalZ = 0;
     
     if (primarySurface) {
       // This instance of PGraphicsOpenGL is the primary (onscreen) drawing surface.    
@@ -1786,10 +1774,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (hasFill) {
         if (drawing2D && textureImage != null && tess.isStroked) {
+          // If the shape is stroked and texture in 2D mode, we need to 
+          // first render the textured fill geometry, and then the non-textured
+          // stroke geometry. This is done in the next call.
           renderStrokedFill(textureImage);  
         } else {        
+          // Normal fill rendering. Also valid in the case of 2D drawing,
+          // since the fill and stroke geometry are all stored in the fill
+          // buffers.
           renderFill(textureImage);
         }
+        PApplet.println("Flushing");
       }
       
       
@@ -2736,43 +2731,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // protected float textWidthImpl(char buffer[], int start, int stop)
 
-  //////////////////////////////////////////////////////////////
-
-  // TEXT BLOCK
-
-  public void beginText() {
-    if (textMode == MODEL) {
-      textBlockMode = true;  
-      textVertexCount = 0;
-    }
-  }
-
-  
-  public void endText() {
-    if (textBlockMode) {
-      textBlockMode = false;
-      
-      if (0 < textVertexCount) {
-        // Now we render all the text that has been pushed between 
-        // beginText/endText.
-        
-        if (screenBlendMode != BLEND) {
-          gl.glEnable(GL.GL_BLEND);
-          if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-          gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-        }    
-        
-        textTex.setTexture(textBlockTex);
-        renderTextModel();
-        
-        // Restoring current blend mode.
-        blendMode(screenBlendMode);        
-        
-        gl.glBindTexture(GL.GL_TEXTURE_2D, 0);   
-        gl.glDisable(GL.GL_TEXTURE_2D);      
-      }
-    }
-  }  
   
   //////////////////////////////////////////////////////////////
 
@@ -2785,60 +2743,49 @@ public class PGraphicsOpenGL extends PGraphics {
    * Implementation of actual drawing for a line of text.
    */
   protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
-    // Init opengl state for text rendering...
-//    gl.glEnable(GL.GL_TEXTURE_2D);
-//    
-//    if (screenBlendMode != BLEND) {
-//      gl.glEnable(GL.GL_BLEND);
-//      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-//      gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-//    }    
-    
-    
     textTex = (PFontTexture)textFont.getCache(ogl);     
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
     }    
-    textTex.setFirstTexture();
-
-//    // Setting the current fill color as the font color.
-//    setFillColor();
-//    
-//    if (textMode == MODEL) {
-//      if (textVertexBuffer == null) {
-//        allocateTextModel();
-//      }
-//      
-//      // Setting Z axis as the normal to the text geometry      
-//      setDefNormals(0, 0, 1);
-//      
-//      if (!textBlockMode) {
-//        // Resetting vertex count when we are not defining a 
-//        // block of text.
-//        textVertexCount = 0;
-//      }
-//    }
+    
+    // Saving style parameters modified by text rendering.
+    int mode0 = textureMode;
+    boolean stroke0 = stroke;
+    float nX0 = normalX;
+    float nY0 = normalY;
+    float nZ0 = normalZ;
+    boolean tint0 = tint;
+    float tR0 = tintR;
+    float tG0 = tintG;
+    float tB0 = tintB;
+    float tA0 = tintA;
+    
+    // Setting style used in text rendering.
+    textureMode = NORMAL;    
+    stroke = false;    
+    normalX = 0;
+    normalY = 0;
+    normalZ = 1;    
+    tint = true;
+    tintR = fillR;
+    tintG = fillG;
+    tintB = fillB;
+    tintA = fillA;
     
     super.textLineImpl(buffer, start, stop, x, y);
-
-//    if (textMode == MODEL && 0 < textVertexCount) {
-//      if (!textBlockMode) {
-//        // Pushing text geometry to the GPU.
-//        renderTextModel();
-//      } else {
-//        // We don't push any geometry here because we will
-//        // do it when endText is called. For now we just 
-//        // save the current texture.
-//        textBlockTex = textTex.currentTex;
-//      }
-//    }
-//    
-//    // Restoring current blend mode.
-//    blendMode(screenBlendMode);
-//    
-//    gl.glBindTexture(GL.GL_TEXTURE_2D, 0);   
-//    gl.glDisable(GL.GL_TEXTURE_2D);    
+       
+    // Restoring original style.
+    textureMode  = mode0;
+    stroke = stroke0;
+    normalX = nX0;
+    normalY = nY0;
+    normalZ = nZ0;
+    tint = tint0;
+    tintR = tR0;
+    tintG = tG0;
+    tintB = tB0;
+    tintA = tA0;
   }
 
   protected void textCharImpl(char ch, float x, float y) {
@@ -2865,129 +2812,25 @@ public class PGraphicsOpenGL extends PGraphics {
 
         textCharModelImpl(tinfo, x1, y1, x2, y2);
       } 
+    } else {
+      System.err.println("Unsupported text mode. Only MODEL works at this time.");
     }
   }
+
 
   protected void textCharModelImpl(PFontTexture.TextureInfo info, float x0, float y0,
       float x1, float y1) {
     PImage tex = textTex.getTexture(info.texIndex);
     
-    int mode0 = textureMode;
-    noStroke();
-    textureMode(NORMAL);
     beginShape(QUADS);
-    texture(tex);
-    normal(0, 0, 1);
+    texture(tex);    
     vertex(x0, y0, info.u0, info.v0);
     vertex(x1, y0, info.u1, info.v0);
     vertex(x1, y1, info.u1, info.v1);
     vertex(x0, y1, info.u0, info.v1);
     endShape();
-    textureMode(mode0);
-    
-/*
-    int n = textVertexCount;
-    textVertexArray[3 * n + 0] = x1;
-    textVertexArray[3 * n + 1] = y1;
-    textVertexArray[3 * n + 2] = 0;
-    textTexCoordArray[2 * n + 0] = info.u0;
-    textTexCoordArray[2 * n + 1] = info.v0;
-    n++;    
-    
-    textVertexArray[3 * n + 0] = x2;
-    textVertexArray[3 * n + 1] = y2;
-    textVertexArray[3 * n + 2] = 0;        
-    textTexCoordArray[2 * n + 0] = info.u1;
-    textTexCoordArray[2 * n + 1] = info.v1;
-    n++;
-    
-    textVertexArray[3 * n + 0] = x1;
-    textVertexArray[3 * n + 1] = y2;
-    textVertexArray[3 * n + 2] = 0;
-    textTexCoordArray[2 * n + 0] = info.u0;
-    textTexCoordArray[2 * n + 1] = info.v1;
-    n++;
-
-    textVertexArray[3 * n + 0] = x1;
-    textVertexArray[3 * n + 1] = y1;
-    textVertexArray[3 * n + 2] = 0;
-    textTexCoordArray[2 * n + 0] = info.u0;
-    textTexCoordArray[2 * n + 1] = info.v0;
-    n++;    
-    
-    textVertexArray[3 * n + 0] = x2;
-    textVertexArray[3 * n + 1] = y1;
-    textVertexArray[3 * n + 2] = 0;
-    textTexCoordArray[2 * n + 0] = info.u1;
-    textTexCoordArray[2 * n + 1] = info.v0;
-    n++;
-    
-    textVertexArray[3 * n + 0] = x2;
-    textVertexArray[3 * n + 1] = y2;
-    textVertexArray[3 * n + 2] = 0;
-    textTexCoordArray[2 * n + 0] = info.u1;
-    textTexCoordArray[2 * n + 1] = info.v1;
-    n++;
-*/
   }
-
-  protected void textCharScreenImpl(PFontTexture.TextureInfo info, int xx, int yy,
-      int w0, int h0) {
-    if (textTex.currentTex != info.texIndex) {
-      textTex.setTexture(info.texIndex);
-    }
-    
-    drawTexture(info.width, info.height, info.crop, xx, height - (yy + h0), w0, h0);
-  }
-
-  protected void allocateTextModel() {  
-    ByteBuffer vbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 3 * SIZEOF_FLOAT);
-    vbb.order(ByteOrder.nativeOrder());
-    textVertexBuffer = vbb.asFloatBuffer();
-
-    ByteBuffer tbb = ByteBuffer.allocateDirect(DEFAULT_BUFFER_SIZE * 2 * SIZEOF_FLOAT);
-    tbb.order(ByteOrder.nativeOrder());
-    textTexCoordBuffer = tbb.asFloatBuffer();      
-            
-    textVertexArray = new float[DEFAULT_BUFFER_SIZE * 3];
-    textTexCoordArray = new float[DEFAULT_BUFFER_SIZE * 2];
-  }
-
-  protected void renderTextModel() {  
-    textVertexBuffer.position(0);    
-    textTexCoordBuffer.position(0);
-            
-    textVertexBuffer.put(textVertexArray);
-    textTexCoordBuffer.put(textTexCoordArray);
-    
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-
-    textVertexBuffer.position(0);
-    textTexCoordBuffer.position(0);
-    
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, textVertexBuffer);
-    gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, textTexCoordBuffer);
-    gl2f.glDrawArrays(GL.GL_TRIANGLES, 0, textVertexCount);
-
-    gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
-  }  
   
-  protected void expandTextBuffers() {
-    int newSize = textVertexBuffer.capacity() / 3 << 1;
-
-    ByteBuffer vbb = ByteBuffer.allocateDirect(newSize * 3 * SIZEOF_FLOAT);
-    vbb.order(ByteOrder.nativeOrder());
-    textVertexBuffer = vbb.asFloatBuffer();
-
-    ByteBuffer tbb = ByteBuffer.allocateDirect(newSize * 2 * SIZEOF_FLOAT);
-    tbb.order(ByteOrder.nativeOrder());
-    textTexCoordBuffer = tbb.asFloatBuffer();
-
-    textVertexArray = new float[newSize * 3];
-    textTexCoordArray = new float[newSize * 2];
-  }
   
   //////////////////////////////////////////////////////////////
 
