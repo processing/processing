@@ -27,6 +27,7 @@ import java.util.HashMap;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
+import processing.core.PImage;
 
 /**
  * All the infrastructure needed for optimized font rendering 
@@ -56,6 +57,7 @@ class PFontTexture implements PConstants {
   protected int offsetY;
   protected int lineHeight;
   protected PTexture[] textures = null;
+  protected PImage[] images = null;
   protected int currentTex;
   protected int lastTex; 
   protected TextureInfo[] glyphTexinfos; 
@@ -143,6 +145,10 @@ class PFontTexture implements PConstants {
     if (textures == null) {
       textures = new PTexture[1];
       textures[0] = tex;
+      images = new PImage[1];
+      images[0] = new PImage(tex.width, tex.height, ARGB);
+      images[0].setCache(ogl, tex);
+      
       currentTex = 0;     
     } else if (resize) {
       // Replacing old smaller texture with larger one.
@@ -151,6 +157,10 @@ class PFontTexture implements PConstants {
       PTexture tex0 = textures[currentTex];
       tex.put(tex0);
       textures[currentTex] = tex;
+      
+      images[currentTex].setCache(ogl, tex);
+      images[currentTex].width = tex.width;
+      images[currentTex].height = tex.height;
     } else {
       // Adding new texture to the list.
       PTexture[] temp = textures;
@@ -158,6 +168,13 @@ class PFontTexture implements PConstants {
       PApplet.arrayCopy(temp, textures, temp.length);
       textures[temp.length] = tex;
       currentTex = textures.length - 1;
+            
+      PImage[] temp2 = images;
+      images = new PImage[textures.length + 1];
+      PApplet.arrayCopy(temp2, images, temp2.length);
+      
+      images[temp.length] = new PImage(tex.width, tex.height, ARGB);
+      images[temp.length].setCache(ogl, tex);
     }
     lastTex = currentTex;
     
@@ -180,6 +197,15 @@ class PFontTexture implements PConstants {
     }
   }
 
+  
+  public PImage getTexture(int idx) {
+    if (0 <= idx && idx < images.length) {      
+      currentTex = idx;
+      return images[currentTex];       
+    }  
+    return null;
+    
+  }
   
   // Add all the current glyphs to opengl texture.
   public void addAllGlyphsToTexture() {

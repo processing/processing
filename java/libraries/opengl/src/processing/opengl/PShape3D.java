@@ -32,6 +32,7 @@ import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
+import processing.core.PStyle;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
@@ -40,6 +41,9 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashSet;
+
+// TODO: check shape in 2D mode (and handling in renderFill), and group shape mixing 2D and 2D child shapes. 
+
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -155,6 +159,22 @@ public class PShape3D extends PShape {
 
   protected float curveVertices[][];
   protected int curveVertexCount;  
+  
+  // ........................................................
+
+  // Fill color
+
+  /** true if fill() is enabled, (read-only) */
+  public boolean fill;
+
+  /** fill that was last set (read-only) */
+  public int fillColor = 0xffFFFFFF;
+
+  protected boolean fillAlpha;
+  protected float fillR, fillG, fillB, fillA;
+  protected int fillRi, fillGi, fillBi, fillAi;
+  
+  
   
   
   public PShape3D(PApplet parent, int family) {
@@ -305,28 +325,9 @@ public class PShape3D extends PShape {
     currentNormal[2] = nz;
   }
 
-  public void noFill() {
-    fill(0, 0, 0, 0);   
-  }
-    
-  public void fill(float r, float g, float b, float a) {
-    currentColor[0] = r;
-    currentColor[1] = g;
-    currentColor[2] = b;
-    currentColor[3] = a;
-  }
+  
   
 
-  public void stroke(float r, float g, float b, float a) {
-    currentStroke[0] = r;
-    currentStroke[1] = g;
-    currentStroke[2] = b;
-    currentStroke[3] = a;    
-  }
-
-  public void noStroke() {
-    stroke(0, 0, 0, 0);   
-  }   
   
   public void strokeWeight(float w) {
     currentStroke[4] = w;
@@ -343,6 +344,316 @@ public class PShape3D extends PShape {
   public void end() {
     // ?
   }
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // FILL COLOR
+
+/*
+  public void noFill() {
+    fill = false;
+  }
+
+  public void fill(int rgb) {
+    colorCalc(rgb);
+    fillFromCalc();
+  }
+
+  public void fill(int rgb, float alpha) {
+    colorCalc(rgb, alpha);
+    fillFromCalc();
+  }
+
+  public void fill(float gray) {
+    colorCalc(gray);
+    fillFromCalc();
+  }
+
+  public void fill(float gray, float alpha) {
+    colorCalc(gray, alpha);
+    fillFromCalc();
+  }
+
+  public void fill(float x, float y, float z) {
+    colorCalc(x, y, z);
+    fillFromCalc();
+  }
+
+  public void fill(float x, float y, float z, float a) {
+    colorCalc(x, y, z, a);
+    fillFromCalc();
+  }
+
+  protected void fillFromCalc() {
+    fill = true;
+    fillR = calcR;
+    fillG = calcG;
+    fillB = calcB;
+    fillA = calcA;
+    fillRi = calcRi;
+    fillGi = calcGi;
+    fillBi = calcBi;
+    fillAi = calcAi;
+    fillColor = calcColor;
+    fillAlpha = calcAlpha;
+  }
+  */
+  
+  public void noFill() {
+    fill(0, 0, 0, 0);   
+  }
+    
+  public void fill(float r, float g, float b, float a) {
+    currentColor[0] = r;
+    currentColor[1] = g;
+    currentColor[2] = b;
+    currentColor[3] = a;
+  }
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // STROKE CAP/JOIN/WEIGHT
+
+/*
+  public void strokeWeight(float weight) {
+    strokeWeight = weight;
+  }
+
+  public void strokeJoin(int join) {
+    strokeJoin = join;
+  }
+
+
+  public void strokeCap(int cap) {
+    strokeCap = cap;
+  }
+  
+  */
+  
+  //////////////////////////////////////////////////////////////
+
+  // STROKE COLOR 
+  
+  
+  public void stroke(float r, float g, float b, float a) {
+    currentStroke[0] = r;
+    currentStroke[1] = g;
+    currentStroke[2] = b;
+    currentStroke[3] = a;    
+  }
+
+  public void noStroke() {
+    stroke(0, 0, 0, 0);   
+  }   
+
+/*  
+  public void noStroke() {
+    stroke = false;
+  }
+  
+  public void stroke(int rgb) {
+    colorCalc(rgb);
+    strokeFromCalc();
+  }
+
+  public void stroke(int rgb, float alpha) {
+    colorCalc(rgb, alpha);
+    strokeFromCalc();
+  }
+
+  public void stroke(float gray) {
+    colorCalc(gray);
+    strokeFromCalc();
+  }
+
+  public void stroke(float gray, float alpha) {
+    colorCalc(gray, alpha);
+    strokeFromCalc();
+  }
+
+  public void stroke(float x, float y, float z) {
+    colorCalc(x, y, z);
+    strokeFromCalc();
+  }
+
+  public void stroke(float x, float y, float z, float alpha) {
+    colorCalc(x, y, z, alpha);
+    strokeFromCalc();
+  }
+  
+  protected void strokeFromCalc() {
+    stroke = true;
+    strokeR = calcR;
+    strokeG = calcG;
+    strokeB = calcB;
+    strokeA = calcA;
+    strokeRi = calcRi;
+    strokeGi = calcGi;
+    strokeBi = calcBi;
+    strokeAi = calcAi;
+    strokeColor = calcColor;
+    strokeAlpha = calcAlpha;
+  }
+  
+*/  
+  
+  /*
+  public void imageMode(int mode) {
+    if ((mode == CORNER) || (mode == CORNERS) || (mode == CENTER)) {
+      imageMode = mode;
+    } else {
+      String msg =
+        "imageMode() only works with CORNER, CORNERS, or CENTER";
+      throw new RuntimeException(msg);
+    }
+  } 
+  */ 
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // STYLE
+
+/*
+  public void pushStyle() {
+    if (styleStackDepth == styleStack.length) {
+      styleStack = (PStyle[]) PApplet.expand(styleStack);
+    }
+    if (styleStack[styleStackDepth] == null) {
+      styleStack[styleStackDepth] = new PStyle();
+    }
+    PStyle s = styleStack[styleStackDepth++];
+    getStyle(s);
+  }
+
+
+  public void popStyle() {
+    if (styleStackDepth == 0) {
+      throw new RuntimeException("Too many popStyle() without enough pushStyle()");
+    }
+    styleStackDepth--;
+    style(styleStack[styleStackDepth]);
+  }
+
+
+  public void style(PStyle s) {
+    //  if (s.smooth) {
+    //    smooth();
+    //  } else {
+    //    noSmooth();
+    //  }
+
+    imageMode(s.imageMode);
+    rectMode(s.rectMode);
+    ellipseMode(s.ellipseMode);
+    shapeMode(s.shapeMode);
+
+    if (s.tint) {
+      tint(s.tintColor);
+    } else {
+      noTint();
+    }
+    if (s.fill) {
+      fill(s.fillColor);
+    } else {
+      noFill();
+    }
+    if (s.stroke) {
+      stroke(s.strokeColor);
+    } else {
+      noStroke();
+    }
+    strokeWeight(s.strokeWeight);
+    strokeCap(s.strokeCap);
+    strokeJoin(s.strokeJoin);
+
+    // Set the colorMode() for the material properties.
+    // TODO this is really inefficient, need to just have a material() method,
+    // but this has the least impact to the API.
+    colorMode(RGB, 1);
+    ambient(s.ambientR, s.ambientG, s.ambientB);
+    emissive(s.emissiveR, s.emissiveG, s.emissiveB);
+    specular(s.specularR, s.specularG, s.specularB);
+    shininess(s.shininess);
+
+    //  material(s.ambientR, s.ambientG, s.ambientB,
+    //           s.emissiveR, s.emissiveG, s.emissiveB,
+    //           s.specularR, s.specularG, s.specularB,
+    //           s.shininess);
+
+    // Set this after the material properties.
+    colorMode(s.colorMode,
+              s.colorModeX, s.colorModeY, s.colorModeZ, s.colorModeA);
+
+    // This is a bit asymmetric, since there's no way to do "noFont()",
+    // and a null textFont will produce an error (since usually that means that
+    // the font couldn't load properly). So in some cases, the font won't be
+    // 'cleared' to null, even though that's technically correct.
+    if (s.textFont != null) {
+      textFont(s.textFont, s.textSize);
+      textLeading(s.textLeading);
+    }
+    // These don't require a font to be set.
+    textAlign(s.textAlign, s.textAlignY);
+    textMode(s.textMode);
+  }
+
+
+  public PStyle getStyle() {  // ignore
+    return getStyle(null);
+  }
+
+
+  public PStyle getStyle(PStyle s) {  // ignore
+    if (s == null) {
+      s = new PStyle();
+    }
+
+    s.imageMode = imageMode;
+    s.rectMode = rectMode;
+    s.ellipseMode = ellipseMode;
+    s.shapeMode = shapeMode;
+
+    s.colorMode = colorMode;
+    s.colorModeX = colorModeX;
+    s.colorModeY = colorModeY;
+    s.colorModeZ = colorModeZ;
+    s.colorModeA = colorModeA;
+
+    s.tint = tint;
+    s.tintColor = tintColor;
+    s.fill = fill;
+    s.fillColor = fillColor;
+    s.stroke = stroke;
+    s.strokeColor = strokeColor;
+    s.strokeWeight = strokeWeight;
+    s.strokeCap = strokeCap;
+    s.strokeJoin = strokeJoin;
+
+    s.ambientR = ambientR;
+    s.ambientG = ambientG;
+    s.ambientB = ambientB;
+    s.specularR = specularR;
+    s.specularG = specularG;
+    s.specularB = specularB;
+    s.emissiveR = emissiveR;
+    s.emissiveG = emissiveG;
+    s.emissiveB = emissiveB;
+    s.shininess = shininess;
+
+    s.textFont = textFont;
+    s.textAlign = textAlign;
+    s.textAlignY = textAlignY;
+    s.textMode = textMode;
+    s.textSize = textSize;
+    s.textLeading = textLeading;
+
+    return s;
+  }
+*/
+  
   
   ///////////////////////////////////////////////////////////  
   
