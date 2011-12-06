@@ -167,6 +167,38 @@ public class PShape implements PConstants {
   /** True if this is a closed path. */
   protected boolean close;
 
+  
+  // ........................................................
+
+  // internal color for setting/calculating
+  protected float calcR, calcG, calcB, calcA;
+  protected int calcRi, calcGi, calcBi, calcAi;
+  protected int calcColor;
+  protected boolean calcAlpha;  
+
+  /** The current colorMode */
+  public int colorMode; // = RGB;
+
+  /** Max value for red (or hue) set by colorMode */
+  public float colorModeX; // = 255;
+
+  /** Max value for green (or saturation) set by colorMode */
+  public float colorModeY; // = 255;
+
+  /** Max value for blue (or value) set by colorMode */
+  public float colorModeZ; // = 255;
+
+  /** Max value for alpha set by colorMode */
+  public float colorModeA; // = 255;
+
+  /** True if colors are not in the range 0..1 */
+  boolean colorModeScale; // = true;
+
+  /** True if colorMode(RGB, 255) */
+  boolean colorModeDefault; // = true;
+  
+  
+  
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
 
@@ -1329,4 +1361,176 @@ public class PShape implements PConstants {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  public void colorMode(int mode) {
+    colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
+  }
+
+  /**
+   * @param max range for all color elements
+   */
+  public void colorMode(int mode, float max) {
+    colorMode(mode, max, max, max, max);
+  }
+
+
+  /**
+   * @param maxX range for the red or hue depending on the current color mode
+   * @param maxY range for the green or saturation depending on the current color mode
+   * @param maxZ range for the blue or brightness depending on the current color mode
+   */
+  public void colorMode(int mode, float maxX, float maxY, float maxZ) {
+    colorMode(mode, maxX, maxY, maxZ, colorModeA);
+  }
+
+/**
+ * @param maxA range for the alpha
+ */
+  public void colorMode(int mode,
+                        float maxX, float maxY, float maxZ, float maxA) {
+    colorMode = mode;
+
+    colorModeX = maxX;  // still needs to be set for hsb
+    colorModeY = maxY;
+    colorModeZ = maxZ;
+    colorModeA = maxA;
+
+    // if color max values are all 1, then no need to scale
+    colorModeScale =
+      ((maxA != 1) || (maxX != maxY) || (maxY != maxZ) || (maxZ != maxA));
+
+    // if color is rgb/0..255 this will make it easier for the
+    // red() green() etc functions
+    colorModeDefault = (colorMode == RGB) &&
+      (colorModeA == 255) && (colorModeX == 255) &&
+      (colorModeY == 255) && (colorModeZ == 255);
+  }
+  
+  
+  protected void colorCalc(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+      colorCalc((float) rgb);
+
+    } else {
+      colorCalcARGB(rgb, colorModeA);
+    }
+  }
+
+
+  protected void colorCalc(int rgb, float alpha) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      colorCalc((float) rgb, alpha);
+
+    } else {
+      colorCalcARGB(rgb, alpha);
+    }
+  }
+
+
+  protected void colorCalc(float gray) {
+    colorCalc(gray, colorModeA);
+  }
+
+
+  protected void colorCalc(float gray, float alpha) {
+    if (gray > colorModeX) gray = colorModeX;
+    if (alpha > colorModeA) alpha = colorModeA;
+
+    if (gray < 0) gray = 0;
+    if (alpha < 0) alpha = 0;
+
+    calcR = colorModeScale ? (gray / colorModeX) : gray;
+    calcG = calcR;
+    calcB = calcR;
+    calcA = colorModeScale ? (alpha / colorModeA) : alpha;
+
+    calcRi = (int)(calcR*255); calcGi = (int)(calcG*255);
+    calcBi = (int)(calcB*255); calcAi = (int)(calcA*255);
+    calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
+    calcAlpha = (calcAi != 255);
+  }
+
+
+  protected void colorCalc(float x, float y, float z) {
+    colorCalc(x, y, z, colorModeA);
+  }
+
+
+  protected void colorCalc(float x, float y, float z, float a) {
+    if (x > colorModeX) x = colorModeX;
+    if (y > colorModeY) y = colorModeY;
+    if (z > colorModeZ) z = colorModeZ;
+    if (a > colorModeA) a = colorModeA;
+
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    if (z < 0) z = 0;
+    if (a < 0) a = 0;
+
+    switch (colorMode) {
+    case RGB:
+      if (colorModeScale) {
+        calcR = x / colorModeX;
+        calcG = y / colorModeY;
+        calcB = z / colorModeZ;
+        calcA = a / colorModeA;
+      } else {
+        calcR = x; calcG = y; calcB = z; calcA = a;
+      }
+      break;
+
+    case HSB:
+      x /= colorModeX; // h
+      y /= colorModeY; // s
+      z /= colorModeZ; // b
+
+      calcA = colorModeScale ? (a/colorModeA) : a;
+
+      if (y == 0) {  // saturation == 0
+        calcR = calcG = calcB = z;
+
+      } else {
+        float which = (x - (int)x) * 6.0f;
+        float f = which - (int)which;
+        float p = z * (1.0f - y);
+        float q = z * (1.0f - y * f);
+        float t = z * (1.0f - (y * (1.0f - f)));
+
+        switch ((int)which) {
+        case 0: calcR = z; calcG = t; calcB = p; break;
+        case 1: calcR = q; calcG = z; calcB = p; break;
+        case 2: calcR = p; calcG = z; calcB = t; break;
+        case 3: calcR = p; calcG = q; calcB = z; break;
+        case 4: calcR = t; calcG = p; calcB = z; break;
+        case 5: calcR = z; calcG = p; calcB = q; break;
+        }
+      }
+      break;
+    }
+    calcRi = (int)(255*calcR); calcGi = (int)(255*calcG);
+    calcBi = (int)(255*calcB); calcAi = (int)(255*calcA);
+    calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
+    calcAlpha = (calcAi != 255);
+  }
+
+
+  protected void colorCalcARGB(int argb, float alpha) {
+    if (alpha == colorModeA) {
+      calcAi = (argb >> 24) & 0xff;
+      calcColor = argb;
+    } else {
+      calcAi = (int) (((argb >> 24) & 0xff) * (alpha / colorModeA));
+      calcColor = (calcAi << 24) | (argb & 0xFFFFFF);
+    }
+    calcRi = (argb >> 16) & 0xff;
+    calcGi = (argb >> 8) & 0xff;
+    calcBi = argb & 0xff;
+    calcA = calcAi / 255.0f;
+    calcR = calcRi / 255.0f;
+    calcG = calcGi / 255.0f;
+    calcB = calcBi / 255.0f;
+    calcAlpha = (calcAi != 255);
+  }
+  
 }
