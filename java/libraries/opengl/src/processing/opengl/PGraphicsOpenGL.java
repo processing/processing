@@ -1641,6 +1641,10 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellator.tessellatePolygon(false, mode == CLOSE);
     }
 
+    if (mode == TEXT) {
+      
+    }
+    
     if (flushMode == FLUSH_END_SHAPE || 
         (flushMode == FLUSH_WHEN_FULL && tess.isFull()) ||
         (flushMode == FLUSH_WHEN_FULL && drawing2D && textureImage != null && stroke)) {
@@ -2777,8 +2781,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tintR = fillR;
     tintG = fillG;
     tintB = fillB;
-    tintA = fillA;
-    blendMode(BLEND);
+    tintA = fillA;        
     
     super.textLineImpl(buffer, start, stop, x, y);
        
@@ -2793,6 +2796,11 @@ public class PGraphicsOpenGL extends PGraphics {
     tintG = savedTintG;
     tintB = savedTintB;
     tintA = savedTintA;
+    
+    // Note that if the user is using a blending mode different from
+    // BLEND, and has a bunch of continuous text rendering, the performance
+    // won't be optimal because at the end of each text() call the geometry
+    // will be flushed when restoring the user's blend.
     blendMode(savedBlendMode);
   }
 
@@ -2840,7 +2848,7 @@ public class PGraphicsOpenGL extends PGraphics {
     vertex(x1, y0, info.u1, info.v0);
     vertex(x1, y1, info.u1, info.v1);
     vertex(x0, y1, info.u0, info.v1);
-    endShape();
+    endShape(TEXT);
   }
   
   
@@ -5245,57 +5253,63 @@ public class PGraphicsOpenGL extends PGraphics {
    * Reference article about blending modes:
    * http://www.pegtop.net/delphi/articles/blendmodes/
    */
-  public void blendMode(int mode) {    
-    blendMode = mode;
-    gl.glEnable(GL.GL_BLEND);
+  public void blendMode(int mode) {
+    if (blendMode != mode) {
+      // Flushing any remaining geometry that uses a different blending
+      // mode.
+      flush();
     
-    if (mode == REPLACE) {
-      // This is equivalent to disable blending.
-      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-      gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
-    } else if (mode == BLEND) {
-      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-      gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-    } else if (mode == ADD) {
-      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-      gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
-    } else if (mode == SUBTRACT) {
-      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-      gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ZERO); 
-    } else if (mode == LIGHTEST) {
-      if (blendEqSupported) { 
-        gl.glBlendEquation(GL2.GL_MAX);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
-      } else {
-        PGraphics.showWarning("P3D: This blend mode is currently unsupported.");
-      }
-    } else if (mode == DARKEST) {
-      if (blendEqSupported) { 
-        gl.glBlendEquation(GL2.GL_MIN);      
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
-      } else {
-        PGraphics.showWarning("P3D: This blend mode is currently unsupported.");  
-      }
-    } else if (mode == DIFFERENCE) {
-      if (blendEqSupported) {
-        gl.glBlendEquation(GL.GL_FUNC_REVERSE_SUBTRACT);
-        gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
-      } else {
-        PGraphics.showWarning("P3D: This blend mode is currently unsupported.");
-      }       
-    } else if (mode == EXCLUSION) {
-      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-      gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE_MINUS_SRC_COLOR);
-    } else if (mode == MULTIPLY) {
-      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);      
-      gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_SRC_COLOR);
-    } else if (mode == SCREEN) {
-      if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-      gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE);
-    }  
-    // HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be implemented
-    // in fixed-function pipeline because they require conditional blending and
-    // non-linear blending equations.
+      blendMode = mode;
+      gl.glEnable(GL.GL_BLEND);
+      
+      if (mode == REPLACE) {
+        // This is equivalent to disable blending.
+        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
+        gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
+      } else if (mode == BLEND) {
+        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+      } else if (mode == ADD) {
+        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
+      } else if (mode == SUBTRACT) {
+        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
+        gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ZERO); 
+      } else if (mode == LIGHTEST) {
+        if (blendEqSupported) { 
+          gl.glBlendEquation(GL2.GL_MAX);
+          gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
+        } else {
+          PGraphics.showWarning("P3D: This blend mode is currently unsupported.");
+        }
+      } else if (mode == DARKEST) {
+        if (blendEqSupported) { 
+          gl.glBlendEquation(GL2.GL_MIN);      
+          gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
+        } else {
+          PGraphics.showWarning("P3D: This blend mode is currently unsupported.");  
+        }
+      } else if (mode == DIFFERENCE) {
+        if (blendEqSupported) {
+          gl.glBlendEquation(GL.GL_FUNC_REVERSE_SUBTRACT);
+          gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
+        } else {
+          PGraphics.showWarning("P3D: This blend mode is currently unsupported.");
+        }       
+      } else if (mode == EXCLUSION) {
+        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
+        gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE_MINUS_SRC_COLOR);
+      } else if (mode == MULTIPLY) {
+        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);      
+        gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_SRC_COLOR);
+      } else if (mode == SCREEN) {
+        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
+        gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE);
+      }  
+      // HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be implemented
+      // in fixed-function pipeline because they require conditional blending and
+      // non-linear blending equations.
+    }
   }
 
 

@@ -23,15 +23,16 @@ void draw() {
   
   tint(255, 255);
   image(pic1, 0, 0, pic1.width, pic1.height);
-
-  screenBlend(selMode);  
+  
+  blendMode(selMode);  
   tint(255, picAlpha);
   image(pic2, 0, 0, pic2.width, pic2.height);
     
-  screenBlend(REPLACE);  
+  blendMode(REPLACE);    
   fill(200, 50, 50);
   rect(0, height - 50, map(picAlpha, 0, 255, 0, width), 50);
-  fill(255);  
+  fill(255);
+
   text("Selected blend mode: " + name + ". Click to move to next", 10, pic1.height + 30);
   text("Drag this bar to change alpha of image", 10, height - 18);
 }
