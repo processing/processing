@@ -8005,31 +8005,34 @@ public class PGraphicsOpenGL extends PGraphics {
           }
           
           int contour0 = first;
-          
           path.moveTo(inGeo.vertices[3 * first + 0], inGeo.vertices[3 * first + 1]);
           for (int ln = 0; ln < lnCount; ln++) {
             int i0 = first + ln;
             int i1 = first + ln + 1;
             if (inGeo.codes[i0] == PShape.BREAK) {
               contour0 = i0;
+              path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
+            }            
+            
+            boolean close = false;
+            if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {              
+              i0 = contour0;
+              path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
+              i1 = first + ln;
+              close = true;
             }
             
-            if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {
-              i1 = contour0;            
-              path.closePath();
-            }
-            
-            if (inGeo.codes[i1] != PShape.BREAK &&
-                (0 < inGeo.strokes[5 * i0 + 4] || 
-                 0 < inGeo.strokes[5 * i1 + 4])) {
+            if (inGeo.codes[i1] != PShape.BREAK) {
               path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-            }
-            
-            if (inGeo.codes[i1] == PShape.BREAK) {
+            } else {
               path.moveTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
             }
+            
+            if (close) {
+              path.closePath();              
+            }
           }
-                    
+          
           // saving the region in the fill geometry that corresponds to the tessellated
           // stroked lines, this is used during rendering when the fill geometry is textured
           // (lines are never textured).

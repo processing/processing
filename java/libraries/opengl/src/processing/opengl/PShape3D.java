@@ -269,11 +269,6 @@ public class PShape3D extends PShape {
   }
   
   
-  public void closed(boolean closed) {
-    isClosed = closed;
-  }  
-  
-  
   public void breakShape() {
     breakShape = true;  
   }
@@ -371,7 +366,11 @@ public class PShape3D extends PShape {
 
   
   public void end() {
-    // ?
+    end(OPEN);
+  }  
+
+  public void end(int mode) {
+    isClosed = mode == CLOSE;
   }  
   
   //////////////////////////////////////////////////////////////
