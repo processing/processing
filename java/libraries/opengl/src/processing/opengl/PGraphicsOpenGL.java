@@ -5819,7 +5819,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     glParamsRead = true;
   }
-  
+    
   
   //////////////////////////////////////////////////////////////
   
@@ -6207,10 +6207,6 @@ public class PGraphicsOpenGL extends PGraphics {
                   mat.m30, mat.m31, mat.m32, mat.m33);     
     }
   }  
-
-  
-  
-  
   
   public InGeometry newInGeometry() {
     return new InGeometry(); 
