@@ -448,7 +448,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean breakShape;  
   
   public static int flushMode = FLUSH_WHEN_FULL;
-//  public static int flushMode = FLUSH_END_SHAPE;
+//  public static int flushMode = FLUSH_AFTER_SHAPE;
  
   public static final int MIN_ARRAYCOPY_SIZE = 3;
   
@@ -633,7 +633,13 @@ public class PGraphicsOpenGL extends PGraphics {
     releaseContext();
     GLProfile.shutdown();
   }
+  
 
+  // Only for debuggin purposes.
+  public void setFlushMode(int mode) {
+    PGraphicsOpenGL.flushMode = mode;    
+  }
+  
   //////////////////////////////////////////////////////////////
 
   // RESOURCE HANDLING
@@ -1082,6 +1088,7 @@ public class PGraphicsOpenGL extends PGraphics {
     return parent.isDisplayable();
   }
 
+  
   public void beginDraw() {
     if (drawing) {
       System.err.println("P3D: Already called beginDraw().");
@@ -1238,6 +1245,7 @@ public class PGraphicsOpenGL extends PGraphics {
     report("top endDraw()");
     
     if (flushMode == FLUSH_WHEN_FULL) {
+      // Flushing any remaining geometry.
       flush();
       // TODO: Implement depth sorting (http://code.google.com/p/processing/issues/detail?id=51)      
       //if (hints[ENABLE_DEPTH_SORT]) {
@@ -1252,7 +1260,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // Restoring previous viewport.
     gl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]); 
-     
+    
     if (primarySurface) {
       // glFlush should be called only once, since it is an expensive
       // operation. Thus, only the main renderer (the primary surface)
@@ -1263,7 +1271,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (drawable != null) {
         drawable.swapBuffers();
         releaseContext();
-      }      
+      }
     } else {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
@@ -1280,6 +1288,7 @@ public class PGraphicsOpenGL extends PGraphics {
     report("bot endDraw()");    
   }
 
+  
   public GL beginGL() {
     saveGLState();
     // OpenGL is using Processing defaults at this point,
@@ -1475,10 +1484,12 @@ public class PGraphicsOpenGL extends PGraphics {
     updateGLInterfaces();
   }
 
+  
   // Pairs-up with beginGLOp().
   protected void endGLOp() {
     releaseContext();
-  }  
+  }
+  
   
   //////////////////////////////////////////////////////////////  
   
@@ -1645,9 +1656,12 @@ public class PGraphicsOpenGL extends PGraphics {
       
     }
     
-    if (flushMode == FLUSH_END_SHAPE || 
+    if (flushMode == FLUSH_AFTER_SHAPE || 
         (flushMode == FLUSH_WHEN_FULL && tess.isFull()) ||
         (flushMode == FLUSH_WHEN_FULL && drawing2D && textureImage != null && stroke)) {
+      // Flushing this current shape either because we are in the flush-after-shape,
+      // or the tess buffer is full or... we are in 2D mode and the shape is textured
+      // and stroked, so we need to rendering right away to avoid depth-sorting issues.
       flush();
     }    
   }
@@ -1655,7 +1669,10 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public void texture(PImage image) {
     if (image != textureImage0 && flushMode == FLUSH_WHEN_FULL) {
-      textureImage = textureImage0;
+      // Changing the texture image, so we need to flush the
+      // tessellated geometry accumulated until now, so that
+      // textures are not mixed.
+      textureImage = textureImage0;      
       flush();     
     }    
     super.texture(image);
@@ -1664,6 +1681,9 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public void noTexture() {
     if (null != textureImage0 && flushMode == FLUSH_WHEN_FULL) {
+      // Changing the texture image, so we need to flush the
+      // tessellated geometry accumulated until now, so that
+      // textures are not mixed.      
       textureImage = textureImage0;
       flush();     
     }        
@@ -2643,7 +2663,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void smooth(int antialias) {
     smooth = true;
     
-    if (this.antialias  != antialias) {
+    if (this.antialias != antialias) {
       this.antialias = antialias;
       if (primarySurface) {
         restartContext();          
@@ -3260,7 +3280,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //    scalingDuringCamManip = true; // Assuming general transformation.
     modelviewUpdated = false;
     
-    flush(); // ??
+    flush(); // TODO: need to revise the projection/modelview matrix stack.
     copyPMatrixToGLArray(camera, glmodelview);
     gl2f.glLoadMatrixf(glmodelview, 0);    
   }  
@@ -3404,6 +3424,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void camera(float eyeX, float eyeY, float eyeZ, 
                      float centerX, float centerY, float centerZ, 
                      float upX, float upY, float upZ) {
+    // Flushing geometry with a different camera configuration.
     flush();
     
     // Calculating Z vector
@@ -3564,6 +3585,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void ortho(float left, float right, 
                     float bottom, float top,
                     float near, float far) {
+    // Flushing geometry with a different perspective configuration.
     flush();
     
     left -= width/2;
@@ -3657,6 +3679,7 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public void frustum(float left, float right, float bottom, float top,
       float znear, float zfar) {
+    // Flushing geometry with a different perspective configuration.
     flush();
     
     float temp, temp2, temp3, temp4;
@@ -4164,9 +4187,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * an (x, y, z) position for situations where the falloff distance is used.
    */
   public void ambientLight(float r, float g, float b, float x, float y, float z) {
-    if (!lights) {
-      enableLighting();
-    }
+    enableLighting();
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
@@ -4198,9 +4219,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void directionalLight(float r, float g, float b, float nx, float ny,
       float nz) {
-    if (!lights) {
-      enableLighting();
-    }    
+    enableLighting();
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
@@ -4239,9 +4258,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public void pointLight(float r, float g, float b, float x, float y, float z) {
-    if (!lights) {
-      enableLighting();
-    }    
+    enableLighting();   
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
@@ -4277,9 +4294,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void spotLight(float r, float g, float b, float x, float y, float z,
       float nx, float ny, float nz, float angle, float concentration) {
-    if (!lights) {
-      enableLighting();
-    }    
+    enableLighting();  
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
     }
@@ -4359,13 +4374,23 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   protected void enableLighting() {
-    lights = true;
-    gl2f.glEnable(GL2.GL_LIGHTING);
+    if (!lights) {
+      // Flushing non-lit geometry.
+      flush();
+      
+      lights = true;
+      gl2f.glEnable(GL2.GL_LIGHTING);
+    }
   }
 
   protected void disableLighting() {
-    lights = false;
-    gl2f.glDisable(GL2.GL_LIGHTING);
+    if (lights) {
+      // Flushing lit geometry.
+      flush();
+      
+      lights = false;
+      gl2f.glDisable(GL2.GL_LIGHTING);
+    }
   }
     
   protected void lightAmbient(int num) {    
