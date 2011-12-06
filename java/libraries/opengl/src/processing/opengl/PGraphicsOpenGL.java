@@ -8060,18 +8060,18 @@ public class PGraphicsOpenGL extends PGraphics {
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
     protected void addLine(int i0, int i1, int vcount, int icount) {
-      tessGeo.putLineVertex(inGeo, i0, i1, vcount, strokeRed, strokeGreen, strokeBlue, strokeAlpha);
-      //tessGeo.lineAttributes[4 * vcount + 3] = +0.5f * inGeo.strokes[5 * i0 + 4];    
+      tessGeo.putLineVertex(inGeo, i0, i1, vcount);
+   
       tessGeo.lineAttributes[4 * vcount + 3] = +strokeWeight;
       tessGeo.lineIndices[icount++] = vcount;
       
       vcount++;
-      tessGeo.putLineVertex(inGeo, i0, i1, vcount, strokeRed, strokeGreen, strokeBlue, strokeAlpha);
+      tessGeo.putLineVertex(inGeo, i0, i1, vcount);
       tessGeo.lineAttributes[4 * vcount + 3] = -strokeWeight;
       tessGeo.lineIndices[icount++] = vcount;
       
       vcount++;
-      tessGeo.putLineVertex(inGeo, i1, i0, vcount, strokeRed, strokeGreen, strokeBlue, strokeAlpha);
+      tessGeo.putLineVertex(inGeo, i1, i0, vcount);
       tessGeo.lineAttributes[4 * vcount + 3] = -strokeWeight;
       tessGeo.lineIndices[icount++] = vcount;
       
@@ -8080,7 +8080,7 @@ public class PGraphicsOpenGL extends PGraphics {
       tessGeo.lineIndices[icount++] = vcount - 1;
       
       vcount++;
-      tessGeo.putLineVertex(inGeo, i1, i0, vcount, strokeRed, strokeGreen, strokeBlue, strokeAlpha);      
+      tessGeo.putLineVertex(inGeo, i1, i0, vcount);      
       tessGeo.lineAttributes[4 * vcount + 3] = +strokeWeight;
       tessGeo.lineIndices[icount++] = vcount;
     }
