@@ -179,7 +179,7 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Camera field of view. */
   public float cameraFOV;
 
-  /** Position of the camera. */
+  /** Default position of the camera. */
   public float cameraX, cameraY, cameraZ;
   /** Distance of the near and far planes. */
   public float cameraNear, cameraFar;
@@ -189,8 +189,8 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Distance between the camera eye and and aim point. */
   protected float cameraDepth; 
   
-  protected float cameraAxisX, cameraAxisY, cameraAxisZ;
-  protected float cameraCenterX, cameraCenterY, cameraCenterZ;  
+  /** Actual position of the camera. */
+  protected float cameraEyeX, cameraEyeY, cameraEyeZ; 
   
   /** Flag to indicate that we are inside beginCamera/endCamera block. */
   protected boolean manipulatingCamera;
@@ -385,7 +385,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean resized = false;
   
   /** Stores previous viewport dimensions. */
-  protected int[] viewport = {0, 0, 0, 0};
+  protected int[] savedViewport = {0, 0, 0, 0};
   
   // ........................................................
 
@@ -462,6 +462,8 @@ public class PGraphicsOpenGL extends PGraphics {
   
   static protected PShader lineShader;
   static protected PShader pointShader;
+  static protected int lineAttribsID;
+  static protected int pointAttribsID;
   
   protected boolean drawing2D;
   protected PImage textureImage0;  
@@ -1116,20 +1118,6 @@ public class PGraphicsOpenGL extends PGraphics {
       defaultSettings();
     }    
     
-    if (lineShader == null) {
-      lineShader = new PShader(parent);      
-      lineShader.loadVertexShader(PGraphicsOpenGL.class.getResource("LineShaderVert.glsl"));
-      lineShader.loadFragmentShader(PGraphicsOpenGL.class.getResource("LineShaderFrag.glsl"));
-      lineShader.setup();
-    }
-
-    if (pointShader == null) {
-      pointShader = new PShader(parent);
-      pointShader.loadVertexShader(PGraphicsOpenGL.class.getResource("PointShaderVert.glsl"));
-      pointShader.loadFragmentShader(PGraphicsOpenGL.class.getResource("PointShaderFrag.glsl"));
-      pointShader.setup();
-    }    
-    
     // We are ready to go!
     
     report("top beginDraw()");    
@@ -1168,7 +1156,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     // setup opengl viewport.    
-    gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+    gl.glGetIntegerv(GL.GL_VIEWPORT, savedViewport, 0);
     gl.glViewport(0, 0, width, height);  
     if (resized) {
       // To avoid having garbage in the screen after a resize,
@@ -1259,7 +1247,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     // Restoring previous viewport.
-    gl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]); 
+    gl.glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]); 
     
     if (primarySurface) {
       // glFlush should be called only once, since it is an expensive
@@ -1837,7 +1825,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void renderPoints() {    
     checkVertexBuffers(tess.pointVertexCount);
     
-    pointShader.start();
+    startPointShader();
     
     vertexBuffer.rewind();
     vertexBuffer.put(tess.pointVertices, 0, 3 * tess.pointVertexCount);    
@@ -1859,26 +1847,21 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
     gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);    
     
-    int attribsID = pointShader.getAttribLocation("vertDisp");     
-    gl2x.glEnableVertexAttribArray(attribsID);
-    gl2x.glVertexAttribPointer(attribsID, 2, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.pointAttributes));
-    
+    setupPointShader(tess.pointAttributes);
+
     gl2f.glDrawElements(GL.GL_TRIANGLES, tess.pointIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.pointIndices));
-    
-    gl2x.glDisableVertexAttribArray(attribsID);
     
     gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
     gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
     gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
     
-    pointShader.stop();      
+    stopPointShader();
   }  
-  
-
+    
   protected void renderLines() {
     checkVertexBuffers(tess.lineVertexCount);
     
-    lineShader.start();
+    startLineShader();
     
     vertexBuffer.rewind();
     vertexBuffer.put(tess.lineVertices, 0, 3 * tess.lineVertexCount);    
@@ -1900,23 +1883,15 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
     gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);    
     
-    int[] viewport = {0, 0, 0, 0};
-    gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-    lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
-            
-    int attribsID = lineShader.getAttribLocation("attribs");     
-    gl2x.glEnableVertexAttribArray(attribsID);
-    gl2x.glVertexAttribPointer(attribsID, 4, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.lineAttributes));
+    setupLineShader(tess.lineAttributes);
     
     gl2f.glDrawElements(GL.GL_TRIANGLES, tess.lineIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.lineIndices));
-    
-    gl2x.glDisableVertexAttribArray(attribsID);
     
     gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
     gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
     gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);  
     
-    lineShader.stop();
+    stopLineShader();
   }
 
   
@@ -2080,6 +2055,95 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
   }
   
+  
+  protected void startLineShader() {
+    if (lineShader == null) {
+      lineShader = new PShader(parent);      
+      lineShader.loadVertexShader(PGraphicsOpenGL.class.getResource("LineShaderVert.glsl"));
+      lineShader.loadFragmentShader(PGraphicsOpenGL.class.getResource("LineShaderFrag.glsl"));
+      lineShader.setup();
+    }
+    
+    lineShader.start();
+  }
+
+  
+  protected void setupLineShader(float[] attribs) {
+    int[] viewport = {0, 0, 0, 0};
+    gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
+    lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
+    
+    lineShader.setIntUniform("lights", lightCount);           
+        
+    lineShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
+    
+    lineAttribsID = lineShader.getAttribLocation("attribs");     
+    gl2x.glEnableVertexAttribArray(lineAttribsID);
+    gl2x.glVertexAttribPointer(lineAttribsID, 4, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(tess.lineAttributes));        
+  }
+  
+  
+  protected void setupLineShader(int attrBufID) {
+    int[] viewport = {0, 0, 0, 0};
+    gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
+    lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
+    
+    lineShader.setIntUniform("lights", lightCount);           
+        
+    lineShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
+    
+    lineAttribsID = lineShader.getAttribLocation("attribs");     
+    gl2x.glEnableVertexAttribArray(lineAttribsID);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);      
+    gl2x.glVertexAttribPointer(lineAttribsID, 4, GL.GL_FLOAT, false, 0, 0);          
+  }
+  
+  
+  protected void stopLineShader() {
+    gl2x.glDisableVertexAttribArray(lineAttribsID);
+    lineShader.stop();
+  }  
+  
+  
+  protected void startPointShader() {
+    if (pointShader == null) {
+      pointShader = new PShader(parent);
+      pointShader.loadVertexShader(PGraphicsOpenGL.class.getResource("PointShaderVert.glsl"));
+      pointShader.loadFragmentShader(PGraphicsOpenGL.class.getResource("PointShaderFrag.glsl"));
+      pointShader.setup();
+    }    
+    
+    pointShader.start();    
+  }
+  
+  
+  protected void setupPointShader(float[] attribs) {
+    pointShader.setIntUniform("lights", lightCount);           
+    
+    pointShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
+    
+    pointAttribsID = pointShader.getAttribLocation("vertDisp");     
+    gl2x.glEnableVertexAttribArray(pointAttribsID);
+    gl2x.glVertexAttribPointer(pointAttribsID, 2, GL.GL_FLOAT, false, 0, FloatBuffer.wrap(attribs));
+  }
+  
+  
+  protected void setupPointShader(int attrBufID) {
+    pointShader.setIntUniform("lights", lightCount);           
+    
+    pointShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
+    
+    pointAttribsID = PGraphicsOpenGL.pointShader.getAttribLocation("vertDisp");     
+    gl2x.glEnableVertexAttribArray(pointAttribsID);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);      
+    ogl.gl2x.glVertexAttribPointer(pointAttribsID, 2, GL.GL_FLOAT, false, 0, 0);      
+  }
+  
+  
+  protected void stopPointShader() {
+    gl2x.glDisableVertexAttribArray(pointAttribsID);
+    pointShader.stop();  
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -3437,16 +3501,10 @@ public class PGraphicsOpenGL extends PGraphics {
       z1 /= mag;
       z2 /= mag;
     }
+    cameraEyeX = eyeX;
+    cameraEyeY = eyeY;
+    cameraEyeZ = eyeZ;
     cameraDepth = mag;
-    
-    // This information is used to determine if input points
-    // are contained in the camera plane.
-    cameraAxisX = z0;
-    cameraAxisY = z1;
-    cameraAxisZ = z2;
-    cameraCenterX = centerX;
-    cameraCenterY = centerY;
-    cameraCenterZ = centerZ;
     
     // Calculating Y vector
     float y0 = upX;
