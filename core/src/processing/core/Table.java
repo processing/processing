@@ -741,15 +741,26 @@ public class Table implements Iterable<Table.Row> {
     }
     if (columnTitles != null) {
       columnTitles = PApplet.splice(columnTitles, title, index);
+      columnIndices = null;
     }
     columnTypes = PApplet.splice(columnTypes, type, index);
     
-    columnCategories = (HashMapBlows[]) 
-      PApplet.splice(columnCategories, new HashMapBlows(), index);
+//    columnCategories = (HashMapBlows[]) 
+//      PApplet.splice(columnCategories, new HashMapBlows(), index);
+    HashMapBlows[] catTemp = new HashMapBlows[columns.length + 1];
+    // Faster than arrayCopy for a dozen or so entries
+    for (int i = 0; i < index; i++) {
+      catTemp[i] = columnCategories[i];
+    }
+    catTemp[index] = new HashMapBlows();
+    for (int i = index; i < columns.length; i++) {
+      catTemp[i+1] = columnCategories[i];
+    }
+    columnCategories = catTemp;
     
     Object[] temp = new Object[columns.length + 1];
     System.arraycopy(columns, 0, temp, 0, index);
-    System.arraycopy(columns, index, temp, index+1, (columns.length - index) + 1);
+    System.arraycopy(columns, index, temp, index+1, columns.length - index);
     columns = temp;
 
     switch (type) {
