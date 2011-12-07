@@ -62,7 +62,7 @@ vec4 calculateLight(int i) {
 	specular = gl_FrontMaterial.specular * gl_LightSource[i].specular * pow(NdotHV, gl_FrontMaterial.shininess);
   }
 	  
-  return NdotL * diffuse + ambient + specular;
+  return NdotL * diffuse + ambient;
 }  
 
 void main() {
@@ -70,14 +70,15 @@ void main() {
   pos.xy += vertDisp.xy;
   gl_Position = gl_ProjectionMatrix * pos;
   
-  gl_FrontColor = vec4(0, 0, 0, 0);
+  vec4 color = vec4(0, 0, 0, 0);
   vec4 globalAmbient = gl_Color * gl_LightModel.ambient;  
   if (lights == 0) {  
-    gl_FrontColor = gl_Color;
+    color = gl_Color;
   }  
   for (int i = 0; i < lights; i++) {
     vec4 light = calculateLight(i);
-    gl_FrontColor += light;  
+    color += light;  
   }
-  gl_FrontColor += globalAmbient;
+  color = clamp(color, 0.0, 1.0);
+  gl_FrontColor = color; 
 }
