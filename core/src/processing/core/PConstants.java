@@ -43,7 +43,7 @@ public interface PConstants {
   static public final int IMMEDIATE = 0;
   static public final int RETAINED = 1;  
   
-  static public final int FLUSH_END_SHAPE = 0;
+  static public final int FLUSH_AFTER_SHAPE = 0;
   static public final int FLUSH_WHEN_FULL = 1;  
   
   // vertex fields

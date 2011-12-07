@@ -3260,6 +3260,10 @@ public class PGraphics extends PImage implements PConstants {
 
   public void shape(PShape shape) {
     if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      // Flushing any remaining geometry generated in the immediate mode
+      // to avoid depth-sorting issues.
+      flush(); 
+      
       if (shapeMode == CENTER) {
         pushMatrix();
         translate(-shape.getWidth()/2, -shape.getHeight()/2);
@@ -3279,6 +3283,8 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void shape(PShape shape, float x, float y) {
     if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      flush(); 
+      
       pushMatrix();
 
       if (shapeMode == CENTER) {
@@ -3326,6 +3332,8 @@ public class PGraphics extends PImage implements PConstants {
    */
   public void shape(PShape shape, float x, float y, float c, float d) {
     if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      flush();
+      
       pushMatrix();
 
       if (shapeMode == CENTER) {
