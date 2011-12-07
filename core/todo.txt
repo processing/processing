@@ -9,6 +9,7 @@ X   better to learn noSmooth() later
 X repeatedly calling texture() with new image raises memory error
 X   http://code.google.com/p/processing/issues/detail?id=806
 X adding anti-alias methods so that FSAA can set up properly
+X several bug fixes inside Table as they relate to inserting/adding columns
 
 earlier
 o text using textMode(SCREEN) not displayed in Processing 1.5.1
@@ -25,10 +26,19 @@ o   along with 90, 180 and 270 versions of it as well
 o   tie to glDrawPixels.. how to clear matrix properly for that?
 X   maybe just disable this for JAVA2D cuz it's silly?
 
+_ urlEncode() and urlDecode()
+
+_ pause()/resume() need to work on the desktop side as well
+
 _ Wishlist for the new XML class in Processing 2.0
 _   http://code.google.com/p/processing/issues/detail?id=904
 
 _ add loadTable().. 
+
+_ delay() remove or no? (keep adding it back...)
+
+_ do we need an option to disable XML whitespace?
+_   should this be the default to be more like old XML?
 
 _ add() to add things to lists, sum() for the math (sum is used less after all)
 
