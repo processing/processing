@@ -118,7 +118,7 @@ public class PShader {
       shaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
       attachVertexShader(shaderSource, url.getFile());
     } catch (IOException e) {
-      System.err.println("Cannot load file " + url.getFile());
+      PGraphics.showException("Cannot load shader " + url.getFile());
     }
   }
 
@@ -147,7 +147,7 @@ public class PShader {
       shaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
       attachFragmentShader(shaderSource, url.getFile());
     } catch (IOException e) {
-      System.err.println("Cannot load file " + url.getFile());
+      PGraphics.showException("Cannot load shader " + url.getFile());
     }
   }
   
@@ -173,7 +173,7 @@ public class PShader {
    */
   public void start() {
     if (!initialized) {
-      System.err.println("This shader is not properly initialized. Call the setup() method first");
+      PGraphics.showWarning("This shader is not properly initialized. Call the setup() method first");
     }
     
     // TODO:

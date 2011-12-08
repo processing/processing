@@ -291,7 +291,7 @@ public class PShape3D extends PShape {
   
   protected void vertexImpl(float x, float y, float z, float u, float v, int code) {
     if (family != GEOMETRY && family != PATH) {      
-      System.err.println("Cannot add vertices to GROUP of PRIMITIVE shape");
+      PGraphics.showWarning("Cannot add vertices to GROUP of PRIMITIVE shape");
       return;
     }
 
@@ -1249,7 +1249,7 @@ public class PShape3D extends PShape {
       modified = true;
       child.modified = true;
     } else {
-      System.err.println("Cannot add child shape to non-group shape.");
+      PGraphics.showWarning("Cannot add child shape to non-group shape.");
     }
   }
   
