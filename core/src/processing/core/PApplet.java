@@ -6615,6 +6615,29 @@ public class PApplet extends Applet
 
   //////////////////////////////////////////////////////////////
 
+  // URL ENCODING
+  
+  static public String urlEncode(String what) {
+    try {
+      return URLEncoder.encode(what, "UTF-8");
+    } catch (UnsupportedEncodingException e) {  // oh c'mon 
+      return null;
+    }
+  }
+
+  
+  static public String urlDecode(String what) {
+    try {
+      return URLDecoder.decode(what, "UTF-8");
+    } catch (UnsupportedEncodingException e) {  // safe per the JDK source
+      return null;
+    }
+  }
+  
+
+  
+  //////////////////////////////////////////////////////////////
+
   // SORT
 
 

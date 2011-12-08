@@ -25,6 +25,8 @@ package processing.core;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
 import android.content.*;
 import android.content.pm.ActivityInfo;
 import android.content.res.AssetManager;
@@ -34,6 +36,8 @@ import android.graphics.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.*;
@@ -4825,6 +4829,29 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
 
+  //////////////////////////////////////////////////////////////
+
+  // URL ENCODING
+  
+  static public String urlEncode(String what) {
+    try {
+      return URLEncoder.encode(what, "UTF-8");
+    } catch (UnsupportedEncodingException e) {  // oh c'mon 
+      return null;
+    }
+  }
+
+  
+  static public String urlDecode(String what) {
+    try {
+      return URLDecoder.decode(what, "UTF-8");
+    } catch (UnsupportedEncodingException e) {  // safe per the JDK source
+      return null;
+    }
+  }
+  
+
+  
   //////////////////////////////////////////////////////////////
 
   // SORT
