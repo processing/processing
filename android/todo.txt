@@ -5,7 +5,7 @@ X   http://code.google.com/p/processing/issues/detail?id=769
 X /opt/android using version #s again? fix build script (earlier)
 X smooth() is now the default
 
-_ don't let the ... ?
+_ lack of registerXxx() implementation is breaking pre() and post() in particles
 
 _ focus handling note:
 _   http://android-developers.blogspot.com/2011/11/making-android-games-that-play-nice.html

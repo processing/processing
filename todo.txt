@@ -38,6 +38,7 @@ X   http://code.google.com/p/processing/issues/detail?id=725
 X Closing applet window in Processing 1.5 causes serial crash
 X   http://code.google.com/p/processing/issues/detail?id=635
 
+_ "import processing.xml" throws a missing library error
 
 _ renaming a normal tab to same name with ".java" fails with ".pde" version already exists
 _   http://code.google.com/p/processing/issues/detail?id=776
