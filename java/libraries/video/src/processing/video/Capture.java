@@ -194,7 +194,7 @@ public class Capture extends PImage implements PConstants {
           gpipeline.stop();
         }
       } catch (IllegalStateException e) {
-        System.err.println("error when deleting player, maybe some native resource is already disposed"); 
+        PGraphics.showWarning("Error when deleting player, maybe some native resource is already disposed"); 
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -441,7 +441,7 @@ public class Capture extends PImage implements PConstants {
           res[i] = devices.get(i);
         }
       } else {      
-        System.err.println("The capture plugin doesn't support device query!");
+        PGraphics.showWarning("The capture plugin doesn't support device query!");
         res = new String[0];
       }
     }
@@ -729,11 +729,11 @@ public class Capture extends PImage implements PConstants {
       if (!fps.equals("")) {
         fpsStr = ", " + fps + "fps";
       }      
-      System.err.println("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + " is not supported by selected the capture device.");
-      System.err.println("Use one of the following resolutions instead:");
+      PGraphics.showWarning("The requested resolution of " + reqWidth + "x" + reqHeight + fpsStr + " is not supported by selected the capture device.");
+      PGraphics.showWarning("Use one of the following resolutions instead:");
       for (int i = 0; i < resolutions.size(); i++) {
         Resolution res = resolutions.get(i);
-        System.err.println(res.toString());
+        PGraphics.showWarning(res.toString());
       }
     }     
   }
