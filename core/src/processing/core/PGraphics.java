@@ -1405,7 +1405,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
+  public void clip(float a, float b, float c, float d) {
+    showMissingWarning("clip");
+  }
 
+  public void noClip() {
+    showMissingWarning("noClip");
+  }
+  
   //////////////////////////////////////////////////////////////
 
   // CURVE/BEZIER VERTEX HANDLING

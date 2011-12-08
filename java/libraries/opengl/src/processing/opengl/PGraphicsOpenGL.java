@@ -466,7 +466,9 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected int pointAttribsID;
   
   protected boolean drawing2D;
-  protected PImage textureImage0;  
+  protected PImage textureImage0;
+  
+  protected boolean clip = false;
     
   static public float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
@@ -657,7 +659,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int idx = temp[0];
     
     if (glTextureObjects.containsKey(idx)) {
-      System.err.println("Adding same texture twice");
+      showWarning("Adding same texture twice");
     } else {    
       glTextureObjects.put(idx, false);
     }
@@ -670,7 +672,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (glTextureObjects.containsKey(idx)) {
       glTextureObjects.put(idx, true);
     } else {
-      System.err.println("Trying to finalize non-existing texture");
+      showWarning("Trying to finalize non-existing texture");
     }
   }
   
@@ -701,7 +703,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int idx = temp[0];
     
     if (glVertexBuffers.containsKey(idx)) {
-      System.err.println("Adding same VBO twice");
+      showWarning("Adding same VBO twice");
     } else {    
       glVertexBuffers.put(idx, false);
     }
@@ -714,7 +716,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (glVertexBuffers.containsKey(idx)) {
       glVertexBuffers.put(idx, true);
     } else {
-      System.err.println("Trying to finalize non-existing VBO");
+      showWarning("Trying to finalize non-existing VBO");
     }
   }
   
@@ -745,7 +747,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int idx = temp[0];
     
     if (glFrameBuffers.containsKey(idx)) {
-      System.err.println("Adding same FBO twice");
+      showWarning("Adding same FBO twice");
     } else {    
       glFrameBuffers.put(idx, false);
     }
@@ -758,7 +760,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (glFrameBuffers.containsKey(idx)) {
       glFrameBuffers.put(idx, true);
     } else {
-      System.err.println("Trying to finalize non-existing FBO");
+      showWarning("Trying to finalize non-existing FBO");
     }
   }
   
@@ -789,7 +791,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int idx = temp[0];
     
     if (glRenderBuffers.containsKey(idx)) {
-      System.err.println("Adding same renderbuffer twice");
+      showWarning("Adding same renderbuffer twice");
     } else {    
       glRenderBuffers.put(idx, false);
     }
@@ -802,7 +804,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (glRenderBuffers.containsKey(idx)) {
       glRenderBuffers.put(idx, true);
     } else {
-      System.err.println("Trying to finalize non-existing renderbuffer");
+      showWarning("Trying to finalize non-existing renderbuffer");
     }
   }
   
@@ -833,7 +835,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int idx = gl2x.glCreateProgram();    
     
     if (glslPrograms.containsKey(idx)) {
-      System.err.println("Adding same glsl program twice");
+      showWarning("Adding same glsl program twice");
     } else {    
       glslPrograms.put(idx, false);
     }
@@ -846,7 +848,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (glslPrograms.containsKey(idx)) {
       glslPrograms.put(idx, true);
     } else {
-      System.err.println("Trying to finalize non-existing glsl program");
+      showWarning("Trying to finalize non-existing glsl program");
     }
   }
   
@@ -874,7 +876,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int idx = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);
     
     if (glslVertexShaders.containsKey(idx)) {
-      System.err.println("Adding same glsl vertex shader twice");
+      showWarning("Adding same glsl vertex shader twice");
     } else {    
       glslVertexShaders.put(idx, false);
     }
@@ -887,7 +889,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (glslVertexShaders.containsKey(idx)) {
       glslVertexShaders.put(idx, true);
     } else {
-      System.err.println("Trying to finalize non-existing glsl vertex shader");
+      showWarning("Trying to finalize non-existing glsl vertex shader");
     }
   }
   
@@ -916,7 +918,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int idx = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);
     
     if (glslFragmentShaders.containsKey(idx)) {
-      System.err.println("Adding same glsl fragment shader twice");
+      showWarning("Adding same glsl fragment shader twice");
     } else {    
       glslFragmentShaders.put(idx, false);
     }
@@ -929,7 +931,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (glslFragmentShaders.containsKey(idx)) {
       glslFragmentShaders.put(idx, true);
     } else {
-      System.err.println("Trying to finalize non-existing glsl fragment shader");
+      showWarning("Trying to finalize non-existing glsl fragment shader");
     }
   }
   
@@ -1093,7 +1095,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public void beginDraw() {
     if (drawing) {
-      System.err.println("P3D: Already called beginDraw().");
+      showWarning("P3D: Already called beginDraw().");
       return;
     }    
     
@@ -1242,7 +1244,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     if (!drawing) {
-      System.err.println("P3D: Cannot call endDraw() before beginDraw().");
+      showWarning("P3D: Cannot call endDraw() before beginDraw().");
       return;
     }
     
@@ -1639,10 +1641,6 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (shape == POLYGON) {
       tessellator.tessellatePolygon(false, mode == CLOSE);
     }
-
-    if (mode == TEXT) {
-      
-    }
     
     if (flushMode == FLUSH_AFTER_SHAPE || 
         (flushMode == FLUSH_WHEN_FULL && tess.isFull()) ||
@@ -1764,6 +1762,60 @@ public class PGraphicsOpenGL extends PGraphics {
                  code);     
   }
    
+  
+  public void clip(float a, float b, float c, float d) {        
+    if (imageMode == CORNER) {
+      if (c < 0) {  // reset a negative width
+        a += c; c = -c;
+      }
+      if (d < 0) {  // reset a negative height
+        b += d; d = -d;
+      }
+
+      clipImpl(a, b, a + c, b + d);
+
+    } else if (imageMode == CORNERS) {
+      if (c < a) {  // reverse because x2 < x1
+        float temp = a; a = c; c = temp;
+      }
+      if (d < b) {  // reverse because y2 < y1
+        float temp = b; b = d; d = temp;
+      }
+
+      clipImpl(a, b, c, d);
+      
+    } else if (imageMode == CENTER) {
+      // c and d are width/height
+      if (c < 0) c = -c;
+      if (d < 0) d = -d;
+      float x1 = a - c/2;
+      float y1 = b - d/2;
+
+      clipImpl(x1, y1, x1 + c, y1 + d);
+    }  
+  }
+
+  
+  protected void clipImpl(float x1, float y1, float x2, float y2) {
+    flush();
+    gl.glEnable(GL.GL_SCISSOR_TEST);
+    
+    float h = y2 - y1;
+    gl.glScissor((int)x1, (int)(height - y1 - h), (int)(x2 - x1), (int)h);
+    
+    clip = true;
+  }
+
+  
+  public void noClip() {
+    if (clip) {
+      flush();
+      gl.glDisable(GL.GL_SCISSOR_TEST);
+      
+      clip = false;
+    }
+  }  
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -2922,10 +2974,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void textCharModelImpl(PFontTexture.TextureInfo info, float x0, float y0,
       float x1, float y1) {
-//    if (textTex.currentTex != info.texIndex) {
-//      textTex.setTexture(info.texIndex);
-//    }       
-    
     PImage tex = textTex.getTexture(info.texIndex);
     
     beginShape(QUADS);
@@ -2934,7 +2982,7 @@ public class PGraphicsOpenGL extends PGraphics {
     vertex(x1, y0, info.u1, info.v0);
     vertex(x1, y1, info.u1, info.v1);
     vertex(x0, y1, info.u0, info.v1);
-    endShape(TEXT);
+    endShape();
   }
   
   

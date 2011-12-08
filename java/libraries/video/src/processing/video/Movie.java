@@ -108,7 +108,7 @@ public class Movie extends PImage implements PConstants {
           gplayer.stop();
         }
       } catch (IllegalStateException e) {
-        System.err.println("error when deleting player, maybe some native resource is already disposed"); 
+        PGraphics.showWarning("error when deleting player, maybe some native resource is already disposed"); 
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -230,7 +230,7 @@ public class Movie extends PImage implements PConstants {
                        SeekType.SET, start, SeekType.SET, stop);
               
     if (!res) {
-      System.err.println("Seek operation failed.");
+      PGraphics.showWarning("Seek operation failed.");
     }
     
     if (playing) {
@@ -327,7 +327,7 @@ public class Movie extends PImage implements PConstants {
                        SeekType.SET, pos, SeekType.NONE, -1);
     
     if (!res) {
-      System.err.println("Seek operation failed.");
+      PGraphics.showWarning("Seek operation failed.");
     }    
     
     // getState() will wait until any async state change 

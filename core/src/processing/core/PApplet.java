@@ -9908,6 +9908,18 @@ public class PApplet extends Applet
   }
 
 
+  public void clip(float a, float b, float c, float d) {
+    if (recorder != null) recorder.clip(a, b, c, d);
+    g.clip(a, b, c, d);
+  }
+
+
+  public void noClip() {
+    if (recorder != null) recorder.noClip();
+    g.noClip();
+  }
+
+
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {

@@ -27,6 +27,7 @@ import javax.media.opengl.GL2;
 import java.nio.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.core.PImage;
 
 /**
@@ -256,11 +257,11 @@ public class PTexture implements PConstants {
   
   public void set(int[] pixels, int x, int y, int w, int h, int format) {
     if (pixels == null) {
-      System.err.println("PTexture: null pixels array");
+      PGraphics.showWarning("The pixels array is null.");
       return;
     }    
     if (pixels.length != w * h) {
-      System.err.println("PTexture: wrong length of pixels array");
+      PGraphics.showWarning("The pixels array has the wrong length. It should be " + w * h);
       return;
     }
     
