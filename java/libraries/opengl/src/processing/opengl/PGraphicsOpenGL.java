@@ -2813,7 +2813,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // public void textMode(int mode)
 
-  // protected boolean textModeCheck(int mode)
+  protected boolean textModeCheck(int mode) {
+    return mode == MODEL;
+  }
 
   // public void textSize(float size)
 
@@ -2912,8 +2914,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
         textCharModelImpl(tinfo, x1, y1, x2, y2);
       } 
-    } else {
-      System.err.println("Unsupported text mode. Only MODEL works at this time.");
     }
   }
 
