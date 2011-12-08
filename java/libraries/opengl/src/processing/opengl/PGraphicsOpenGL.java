@@ -2746,8 +2746,10 @@ public class PGraphicsOpenGL extends PGraphics {
     
     int[] temp = { 0 };
     gl.glGetIntegerv(GL.GL_SAMPLES, temp, 0);
-    antialias = temp[0];
-    PApplet.println("Effective multisampling level: " + antialias);    
+    if (antialias != temp[0]) {
+      antialias = temp[0];
+      PApplet.println("Effective multisampling level: " + antialias);
+    }
   }
 
   
@@ -5773,12 +5775,12 @@ public class PGraphicsOpenGL extends PGraphics {
     if (profile == null) {
       parent.die("Cannot get a valid OpenGL profile");
     }
-    
+
     capabilities = new GLCapabilities(profile);
     if (1 < antialias) {
       capabilities.setSampleBuffers(true);
       capabilities.setNumSamples(antialias);
-      PApplet.println("Requested multisample level: " + capabilities.getNumSamples());
+//      PApplet.println("Requested multisample level: " + capabilities.getNumSamples());
     } else {
       capabilities.setSampleBuffers(false);
     }
