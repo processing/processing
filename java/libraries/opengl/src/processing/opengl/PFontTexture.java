@@ -176,7 +176,7 @@ class PFontTexture implements PConstants {
     lastTex = currentTex;
     
     // Make sure that the current texture is bound.
-    tex.bind();
+    //tex.bind();
     
     return resize;
   }
@@ -196,11 +196,16 @@ class PFontTexture implements PConstants {
   
   public PImage getTexture(int idx) {
     if (0 <= idx && idx < images.length) {      
-      return images[idx];       
+      return images[idx];
     }  
     return null;    
   }
   
+  
+  public PImage getCurrentTexture() {
+    return getTexture(currentTex);    
+  }
+
   
   // Add all the current glyphs to opengl texture.
   public void addAllGlyphsToTexture() {
