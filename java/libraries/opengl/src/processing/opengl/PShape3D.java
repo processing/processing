@@ -145,8 +145,8 @@ public class PShape3D extends PShape {
   protected boolean tint;
   protected float tintR, tintG, tintB, tintA;
   
-  protected int textureMode = IMAGE;
-    
+  protected int textureMode;
+  
   // ........................................................
   
   // Bezier and Catmull-Rom curves  
@@ -201,23 +201,12 @@ public class PShape3D extends PShape {
     this.parent = null;
     this.modified = false;
     
-    colorMode(RGB, 255);
+    textureMode = ogl.textureMode;
+    colorMode(ogl.colorMode, ogl.colorModeX, ogl.colorModeY, ogl.colorModeZ, ogl.colorModeA);
     
     tess = ogl.newTessGeometry(RETAINED);    
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
       in = ogl.newInGeometry();      
-      
-      if (family == PRIMITIVE) {
-        if (kind == BOX) {
-          params = new float[1];
-          params[0] = 0;
-        } else if (kind == SPHERE) {
-          params = new float[3];
-          params[0] = 0;
-          params[1] = 20;
-          params[2] = 20;
-        }
-      }        
     }    
   }
   
@@ -373,6 +362,10 @@ public class PShape3D extends PShape {
     isClosed = mode == CLOSE;
   }  
   
+  public void setParams(float[] source) {
+    super.setParams(source);
+  }
+
   //////////////////////////////////////////////////////////////
 
   // STROKE CAP/JOIN/WEIGHT
@@ -440,12 +433,7 @@ public class PShape3D extends PShape {
     fillColor = calcColor;
   }
 
-  
-  public void textureMode(int mode) {
-    this.textureMode = mode;
-  }
-  
-  
+    
   //////////////////////////////////////////////////////////////
 
   // STROKE COLOR 
@@ -859,13 +847,13 @@ public class PShape3D extends PShape {
             tessellator.tessellatePoints();    
           } else if (kind == LINES) {
             tessellator.tessellateLines();    
-          } else if (kind == TRIANGLES) {
+          } else if (kind == TRIANGLE || kind == TRIANGLES) {
             tessellator.tessellateTriangles();
           } else if (kind == TRIANGLE_FAN) {
             tessellator.tessellateTriangleFan();
           } else if (kind == TRIANGLE_STRIP) {
             tessellator.tessellateTriangleStrip();
-          } else if (kind == QUADS) {
+          } else if (kind == QUAD || kind == QUADS) {
             tessellator.tessellateQuads();
           } else if (kind == QUAD_STRIP) {
             tessellator.tessellateQuadStrip();
@@ -874,24 +862,262 @@ public class PShape3D extends PShape {
           }
         } else if (family == PRIMITIVE) {
           if (kind == POINT) {
+            tessellatePoint();
           } else if (kind == LINE) {
+            tessellateLine(); 
           } else if (kind == TRIANGLE) {
+            tessellateTriangle();            
           } else if (kind == QUAD) {
+            tessellateQuad();            
           } else if (kind == RECT) {
+            tessellateRect();
           } else if (kind == ELLIPSE) {
+            tessellateEllipse();
           } else if (kind == ARC) {
+            tessellateArc();
           } else if (kind == BOX) {
-            //tessellateBox();            
+            tessellateBox();            
           } else if (kind == SPHERE) {
-            //tessellateSphere();
+            tessellateSphere();
           }
         } else if (family == PATH) {
+          // TODO: Determine if this is necessary, since it is 
+          // equivalent to use POLYGON with fill disabled.
         }
         
       }
     }
     
     modified = false;
+  }
+
+  
+  protected void tessellatePoint() {
+    
+  }
+  
+  
+  protected void tessellateLine() {
+    
+  }
+  
+  
+  protected void tessellateTriangle() {
+    
+  }
+  
+  
+  protected void tessellateQuad() {
+    
+  }  
+  
+  
+  protected void tessellateRect() {
+    
+  }
+  
+  
+  protected void tessellateEllipse() {
+    
+    /*
+    float radiusH = w / 2;
+    float radiusV = h / 2;
+
+    float centerX = x + radiusH;
+    float centerY = y + radiusV;
+
+    float sx1 = screenX(x, y);
+    float sy1 = screenY(x, y);
+    float sx2 = screenX(x + w, y + h);
+    float sy2 = screenY(x + w, y + h);
+
+    if (fill) {
+      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20);
+      if (accuracy < 6)
+        accuracy = 6;
+
+      float inc = (float) SINCOS_LENGTH / accuracy;
+      float val = 0;
+
+      boolean strokeSaved = stroke;
+      stroke = false;
+      boolean smoothSaved = smooth;
+      if (smooth && stroke) {
+        smooth = false;
+      }
+
+      beginShape(TRIANGLE_FAN);
+      normal(0, 0, 1);
+      vertex(centerX, centerY);
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * radiusH, centerY
+            + sinLUT[(int) val] * radiusV);
+        val = (val + inc) % SINCOS_LENGTH;
+      }
+      // back to the beginning
+      vertex(centerX + cosLUT[0] * radiusH, centerY + sinLUT[0] * radiusV);
+      endShape();
+
+      stroke = strokeSaved;
+      smooth = smoothSaved;
+    }
+
+    if (stroke) {
+      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
+      if (accuracy < 6)
+        accuracy = 6;
+
+      float inc = (float) SINCOS_LENGTH / accuracy;
+      float val = 0;
+
+      boolean savedFill = fill;
+      fill = false;
+
+      val = 0;
+      beginShape();
+      for (int i = 0; i < accuracy; i++) {
+        vertex(centerX + cosLUT[(int) val] * radiusH, centerY
+            + sinLUT[(int) val] * radiusV);
+        val = (val + inc) % SINCOS_LENGTH;
+      }
+      endShape(CLOSE);
+
+      fill = savedFill;
+    }
+    
+    */
+  }
+  
+  
+  protected void tessellateArc() {
+    
+  }
+  
+  
+  protected void tessellateBox() {
+    float w = params[0];
+    float h = params[1];
+    float d = params[2];
+        
+    float x1 = -w/2f; float x2 = w/2f;
+    float y1 = -h/2f; float y2 = h/2f;
+    float z1 = -d/2f; float z2 = d/2f;
+
+    // front
+    normal(0, 0, 1);
+    vertex(x1, y1, z1, 0, 0);
+    vertex(x2, y1, z1, 1, 0);
+    vertex(x2, y2, z1, 1, 1);
+    vertex(x1, y2, z1, 0, 1);
+
+    // right
+    normal(1, 0, 0);
+    vertex(x2, y1, z1, 0, 0);
+    vertex(x2, y1, z2, 1, 0);
+    vertex(x2, y2, z2, 1, 1);
+    vertex(x2, y2, z1, 0, 1);
+
+    // back
+    normal(0, 0, -1);
+    vertex(x2, y1, z2, 0, 0);
+    vertex(x1, y1, z2, 1, 0);
+    vertex(x1, y2, z2, 1, 1);
+    vertex(x2, y2, z2, 0, 1);
+
+    // left
+    normal(-1, 0, 0);
+    vertex(x1, y1, z2, 0, 0);
+    vertex(x1, y1, z1, 1, 0);
+    vertex(x1, y2, z1, 1, 1);
+    vertex(x1, y2, z2, 0, 1);
+
+    // top
+    normal(0, 1, 0);
+    vertex(x1, y1, z2, 0, 0);
+    vertex(x2, y1, z2, 1, 0);
+    vertex(x2, y1, z1, 1, 1);
+    vertex(x1, y1, z1, 0, 1);
+
+    // bottom
+    normal(0, -1, 0);
+    vertex(x1, y2, z1, 0, 0);
+    vertex(x2, y2, z1, 1, 0);
+    vertex(x2, y2, z2, 1, 1);
+    vertex(x1, y2, z2, 0, 1);
+
+    tessellator.tessellateQuads();      
+  }
+  
+  
+  protected void tessellateSphere() {
+    float r = params[0];
+    int nu = ogl.sphereDetailU;
+    int nv = ogl.sphereDetailV;
+    
+    float startLat = -90;
+    float startLon = 0.0f;
+
+    float latInc = 180.0f / nu;
+    float lonInc = 360.0f / nv;
+
+    float phi1,  phi2;
+    float theta1,  theta2;
+    float x0, y0, z0;
+    float x1, y1, z1;
+    float x2, y2, z2;
+    float x3, y3, z3;
+    float u1, v1, u2, v2, v3;
+
+    for (int col = 0; col < nu; col++) {
+      phi1 = (startLon + col * lonInc) * DEG_TO_RAD;
+      phi2 = (startLon + (col + 1) * lonInc) * DEG_TO_RAD;
+      for (int row = 0; row < nv; row++) {
+        theta1 = (startLat + row * latInc) * DEG_TO_RAD;
+        theta2 = (startLat + (row + 1) * latInc) * DEG_TO_RAD;
+
+        x0 = PApplet.cos(phi1) * PApplet.cos(theta1);
+        x1 = PApplet.cos(phi1) * PApplet.cos(theta2);
+        x2 = PApplet.cos(phi2) * PApplet.cos(theta2);
+        
+        y0 = PApplet.sin(theta1);
+        y1 = PApplet.sin(theta2);
+        y2 = PApplet.sin(theta2);
+        
+        z0 = PApplet.sin(phi1) * PApplet.cos(theta1);
+        z1 = PApplet.sin(phi1) * PApplet.cos(theta2);
+        z2 = PApplet.sin(phi2) * PApplet.cos(theta2);
+
+        x3 = PApplet.cos(phi2) * PApplet.cos(theta1);
+        y3 = PApplet.sin(theta1);            
+        z3 = PApplet.sin(phi2) * PApplet.cos(theta1);
+        
+        u1 = PApplet.map(phi1, TWO_PI, 0, 0, 1); 
+        u2 = PApplet.map(phi2, TWO_PI, 0, 0, 1);
+        v1 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+        v2 = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
+        v3 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+        
+        normal(x0, y0, z0);     
+        vertex(r * x0, r * y0, r * z0, u1, v1);
+   
+        normal(x1, y1, z1);
+        vertex(r * x1,  r * y1,  r * z1, u1, v2);
+
+        normal(x2, y2, z2);
+        vertex(r * x2, r * y2, r * z2, u2, v2);
+
+        normal(x0, y0, z0);    
+        vertex(r * x0, r * y0, r * z0, u1, v1);
+
+        normal(x2, y2, z2);
+        vertex(r * x2, r * y2, r * z2, u2, v2);
+        
+        normal(x3,  y3,  z3);
+        vertex(r * x3,  r * y3,  r * z3,  u2,  v3);
+      }
+    }
+    
+    tessellator.tessellateTriangles();
   }
   
   

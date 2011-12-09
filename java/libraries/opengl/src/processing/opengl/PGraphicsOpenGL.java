@@ -59,6 +59,7 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
+import javax.xml.soap.Text;
 
 import processing.core.PApplet;
 
@@ -1548,7 +1549,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   public PShape createShape(int type) {
-    PShape3D shape;
+    PShape3D shape = null;
     if (type == PShape.GROUP) {
       shape = new PShape3D(parent, PShape.GROUP);
     } else if (type == POINTS) {
@@ -1574,13 +1575,84 @@ public class PGraphicsOpenGL extends PGraphics {
       shape.setKind(QUAD_STRIP);
     } else if (type == POLYGON) {
       shape = new PShape3D(parent, PShape.GEOMETRY);
-      shape.setKind(POLYGON);
-    } else if (type == SPHERE) {
+      shape.setKind(POLYGON);      
+    }
+    return shape;
+  }
+  
+  public PShape createShape(int kind, float... p) {
+    PShape3D shape = null;
+    int len = p.length;
+    
+    if (kind == POINT) {
+      if (len != 2) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape.setKind(POINT);      
+    } else if (kind == LINE) {
+      if (len != 4) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape.setKind(LINE);
+    } else if (kind == TRIANGLE) {
+      if (len != 6) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape.setKind(TRIANGLE);
+    } else if (kind == QUAD) {
+      if (len != 8) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape.setKind(QUAD);
+    } else if (kind == RECT) {
+      if (len != 4 && len != 5 && len != 8) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }      
+      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape.setKind(RECT);  
+    } else if (kind == ELLIPSE) {
+      if (len != 4) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }      
+      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape.setKind(ELLIPSE);          
+    } else if (kind == ARC) {
+      if (len != 6) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }      
+      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape.setKind(ARC);
+    } else if (kind == BOX) {
+      if (len != 1 && len != 3) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }           
+      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape.setKind(BOX);          
+    } else if (kind == SPHERE) {
+      if (len != 1) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
       shape = new PShape3D(parent, PShape.PRIMITIVE);
       shape.setKind(SPHERE);          
-    } else {
-      shape = null;
     }
+    
+    if (shape != null) {
+      shape.setParams(p);
+    }
+    
     return shape;
   }
   
@@ -1609,38 +1681,7 @@ public class PGraphicsOpenGL extends PGraphics {
       textureImage = null;      
     }
 
-    tessellator.setInGeometry(in);
-    tessellator.setTessGeometry(tess);
-    tessellator.setFill(fill || textureImage != null);
-    tessellator.setStroke(stroke);
-    tessellator.setStrokeWeight(strokeWeight);
-    tessellator.setStrokeCap(strokeCap);
-    tessellator.setStrokeJoin(strokeJoin);
-    tessellator.setStrokeColor(strokeR, strokeG, strokeB, strokeA);
-    
-    if (drawing2D) {
-      tessellator.set2D();
-    } else {
-      tessellator.set3D();
-    }
-    
-    if (shape == POINTS) {
-      tessellator.tessellatePoints();    
-    } else if (shape == LINES) {
-      tessellator.tessellateLines();    
-    } else if (shape == TRIANGLES) {
-      tessellator.tessellateTriangles();
-    } else if (shape == TRIANGLE_FAN) {
-      tessellator.tessellateTriangleFan();
-    } else if (shape == TRIANGLE_STRIP) {
-      tessellator.tessellateTriangleStrip();
-    } else if (shape == QUADS) {
-      tessellator.tessellateQuads();
-    } else if (shape == QUAD_STRIP) {
-      tessellator.tessellateQuadStrip();
-    } else if (shape == POLYGON) {
-      tessellator.tessellatePolygon(false, mode == CLOSE);
-    }
+    tessellate(mode);
     
     if (flushMode == FLUSH_AFTER_SHAPE || 
         (flushMode == FLUSH_WHEN_FULL && tess.isFull()) ||
@@ -1825,6 +1866,40 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // protected void sort()  
   
+  protected void tessellate(int mode) {
+    tessellator.setInGeometry(in);
+    tessellator.setTessGeometry(tess);
+    tessellator.setFill(fill || textureImage != null);
+    tessellator.setStroke(stroke);
+    tessellator.setStrokeWeight(strokeWeight);
+    tessellator.setStrokeCap(strokeCap);
+    tessellator.setStrokeJoin(strokeJoin);
+    tessellator.setStrokeColor(strokeR, strokeG, strokeB, strokeA);
+    
+    if (drawing2D) {
+      tessellator.set2D();
+    } else {
+      tessellator.set3D();
+    }
+    
+    if (shape == POINTS) {
+      tessellator.tessellatePoints();    
+    } else if (shape == LINES) {
+      tessellator.tessellateLines();    
+    } else if (shape == TRIANGLE || shape == TRIANGLES) {
+      tessellator.tessellateTriangles();
+    } else if (shape == TRIANGLE_FAN) {
+      tessellator.tessellateTriangleFan();
+    } else if (shape == TRIANGLE_STRIP) {
+      tessellator.tessellateTriangleStrip();
+    } else if (shape == QUAD || shape == QUADS) {
+      tessellator.tessellateQuads();
+    } else if (shape == QUAD_STRIP) {
+      tessellator.tessellateQuadStrip();
+    } else if (shape == POLYGON) {
+      tessellator.tessellatePolygon(false, mode == CLOSE);
+    }    
+  }
   
   public void flush() {    
     boolean hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;
@@ -2613,7 +2688,8 @@ public class PGraphicsOpenGL extends PGraphics {
       fill = savedFill;
     }
   }
-
+  
+  
   // public void ellipse(float a, float b, float c, float d)
 
   // public void arc(float a, float b, float c, float d,
@@ -2923,6 +2999,8 @@ public class PGraphicsOpenGL extends PGraphics {
     tintB = fillB;
     tintA = fillA;        
     
+    blendMode(BLEND);
+    
     super.textLineImpl(buffer, start, stop, x, y);
        
     // Restoring original style.
@@ -2974,7 +3052,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void textCharModelImpl(PFontTexture.TextureInfo info, float x0, float y0,
       float x1, float y1) {
-    PImage tex = textTex.getTexture(info.texIndex);
+    if (textTex.currentTex != info.texIndex) {
+      textTex.setTexture(info.texIndex);
+    }    
+    PImage tex = textTex.getCurrentTexture();
     
     beginShape(QUADS);
     texture(tex);    
@@ -5388,6 +5469,7 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public void blendMode(int mode) {
     if (blendMode != mode) {
+      PApplet.println("Setting blend mode " + mode);
       // Flushing any remaining geometry that uses a different blending
       // mode.
       flush();
