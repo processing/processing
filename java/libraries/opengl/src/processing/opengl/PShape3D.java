@@ -145,8 +145,6 @@ public class PShape3D extends PShape {
   protected boolean tint;
   protected float tintR, tintG, tintB, tintA;
   
-  protected int textureMode;
-  
   // ........................................................
   
   // Bezier and Catmull-Rom curves  
@@ -169,8 +167,15 @@ public class PShape3D extends PShape {
   protected float curveVertices[][];
   protected int curveVertexCount;  
   
-
+  // ........................................................
   
+  // Modes inherited from renderer  
+  
+  protected int textureMode;
+  protected int rectMode;
+  protected int ellipseMode;
+  protected int shapeMode;
+  protected int imageMode;
   
   public PShape3D(PApplet parent, int family) {
     ogl = (PGraphicsOpenGL)parent.g;
@@ -206,8 +211,13 @@ public class PShape3D extends PShape {
       in = ogl.newInGeometry();      
     }
     
-    // Texture and color modes are retrieved from the current values in the renderer.
-    textureMode = ogl.textureMode;
+    // Modes are retrieved from the current values in the renderer.
+    textureMode = ogl.textureMode;    
+    rectMode = ogl.rectMode;
+    ellipseMode = ogl.ellipseMode;
+    shapeMode = ogl.shapeMode;
+    imageMode = ogl.imageMode;    
+    
     colorMode(ogl.colorMode, ogl.colorModeX, ogl.colorModeY, ogl.colorModeZ, ogl.colorModeA);
     
     // Initial values for fill, stroke and tint colors are also imported from the renderer.
@@ -216,22 +226,24 @@ public class PShape3D extends PShape {
     // generated at rendering time, by which the color configuration of the renderer might
     // have changed.
     fill = ogl.fill;
-    fillR = ((ogl.fillColor >> 24) & 0xFF) / 255.0f;    
-    fillG = ((ogl.fillColor >> 16) & 0xFF) / 255.0f; 
-    fillB = ((ogl.fillColor >>  8) & 0xFF) / 255.0f;
-    fillA = ((ogl.fillColor >>  0) & 0xFF) / 255.0f;
+    fillR = ((ogl.fillColor >> 16) & 0xFF) / 255.0f;    
+    fillG = ((ogl.fillColor >>  8) & 0xFF) / 255.0f; 
+    fillB = ((ogl.fillColor >>  0) & 0xFF) / 255.0f;
+    fillA = ((ogl.fillColor >> 24) & 0xFF) / 255.0f;
       
-    stroke = ogl.stroke;  
-    strokeR = ((ogl.strokeColor >> 24) & 0xFF) / 255.0f;    
-    strokeG = ((ogl.strokeColor >> 16) & 0xFF) / 255.0f; 
-    strokeB = ((ogl.strokeColor >>  8) & 0xFF) / 255.0f;
-    strokeA = ((ogl.strokeColor >>  0) & 0xFF) / 255.0f;
+    stroke = ogl.stroke;      
+    strokeR = ((ogl.strokeColor >> 16) & 0xFF) / 255.0f;    
+    strokeG = ((ogl.strokeColor >>  8) & 0xFF) / 255.0f; 
+    strokeB = ((ogl.strokeColor >>  0) & 0xFF) / 255.0f;
+    strokeA = ((ogl.strokeColor >> 24) & 0xFF) / 255.0f;
 
+    strokeWeight = ogl.strokeWeight;    
+    
     tint = ogl.tint;  
-    tintR = ((ogl.tintColor >> 24) & 0xFF) / 255.0f;    
-    tintG = ((ogl.tintColor >> 16) & 0xFF) / 255.0f; 
-    tintB = ((ogl.tintColor >>  8) & 0xFF) / 255.0f;
-    tintA = ((ogl.tintColor >>  0) & 0xFF) / 255.0f;
+    tintR = ((ogl.tintColor >> 16) & 0xFF) / 255.0f;    
+    tintG = ((ogl.tintColor >>  8) & 0xFF) / 255.0f; 
+    tintB = ((ogl.tintColor >>  0) & 0xFF) / 255.0f;
+    tintA = ((ogl.tintColor >> 24) & 0xFF) / 255.0f;
     
     normalX = normalY = 0; 
     normalZ = 1;
@@ -306,8 +318,8 @@ public class PShape3D extends PShape {
   
   
   protected void vertexImpl(float x, float y, float z, float u, float v, int code) {
-    if (family != GEOMETRY && family != PATH) {      
-      PGraphics.showWarning("Cannot add vertices to GROUP of PRIMITIVE shape");
+    if (family == GROUP) {      
+      PGraphics.showWarning("Cannot add vertices to GROUP shape");
       return;
     }
 
@@ -391,6 +403,8 @@ public class PShape3D extends PShape {
   
   public void setParams(float[] source) {
     super.setParams(source);
+    root.modified = true;
+    modified = true;      
   }
 
   //////////////////////////////////////////////////////////////
@@ -951,74 +965,17 @@ public class PShape3D extends PShape {
   
   
   protected void tessellateEllipse() {
+    float a = params[0];
+    float b = params[1];
+    float c = params[2];
+    float d = params[3];    
+
+    in.generateEllipse(ellipseMode, a, b, c, d,
+                       fill, fillR, fillG, fillB, fillA, 
+                       stroke, strokeR, strokeG, strokeB, strokeA,
+                       strokeWeight);
     
-    /*
-    float radiusH = w / 2;
-    float radiusV = h / 2;
-
-    float centerX = x + radiusH;
-    float centerY = y + radiusV;
-
-    float sx1 = screenX(x, y);
-    float sy1 = screenY(x, y);
-    float sx2 = screenX(x + w, y + h);
-    float sy2 = screenY(x + w, y + h);
-
-    if (fill) {
-      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20);
-      if (accuracy < 6)
-        accuracy = 6;
-
-      float inc = (float) SINCOS_LENGTH / accuracy;
-      float val = 0;
-
-      boolean strokeSaved = stroke;
-      stroke = false;
-      boolean smoothSaved = smooth;
-      if (smooth && stroke) {
-        smooth = false;
-      }
-
-      beginShape(TRIANGLE_FAN);
-      normal(0, 0, 1);
-      vertex(centerX, centerY);
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * radiusH, centerY
-            + sinLUT[(int) val] * radiusV);
-        val = (val + inc) % SINCOS_LENGTH;
-      }
-      // back to the beginning
-      vertex(centerX + cosLUT[0] * radiusH, centerY + sinLUT[0] * radiusV);
-      endShape();
-
-      stroke = strokeSaved;
-      smooth = smoothSaved;
-    }
-
-    if (stroke) {
-      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
-      if (accuracy < 6)
-        accuracy = 6;
-
-      float inc = (float) SINCOS_LENGTH / accuracy;
-      float val = 0;
-
-      boolean savedFill = fill;
-      fill = false;
-
-      val = 0;
-      beginShape();
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * radiusH, centerY
-            + sinLUT[(int) val] * radiusV);
-        val = (val + inc) % SINCOS_LENGTH;
-      }
-      endShape(CLOSE);
-
-      fill = savedFill;
-    }
-    
-    */
+    tessellator.tessellateTriangleFan(); 
   }
   
   
@@ -1028,6 +985,7 @@ public class PShape3D extends PShape {
   
   
   protected void tessellateBox() {
+    // TODO: move to InGeometry
     float w = params[0];
     float h = params[1];
     float d = params[2];
@@ -1084,6 +1042,7 @@ public class PShape3D extends PShape {
   
   
   protected void tessellateSphere() {
+    // TODO: move to InGeometry
     float r = params[0];
     int nu = ogl.sphereDetailU;
     int nv = ogl.sphereDetailV;
