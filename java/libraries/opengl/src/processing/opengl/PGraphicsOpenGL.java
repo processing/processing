@@ -1903,7 +1903,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke) in.addQuadStripEdges();
       tessellator.tessellateQuadStrip();
     } else if (shape == POLYGON) {
-      if (stroke) in.addPolygonEdges();
+      if (stroke) in.addPolygonEdges(mode == CLOSE);
       tessellator.tessellatePolygon(false, mode == CLOSE);
     }    
   }
@@ -6675,31 +6675,146 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     public void addTrianglesEdges() {
-      for (int i = firstVertex; i <= lastVertex / 3; i++) {
-        addEdge(3 * i + 0, 3 * i + 1,  true, false);
-        addEdge(3 * i + 1, 3 * i + 2, false, false);
-        addEdge(3 * i + 2, 3 * i + 0, false,  true);
+      for (int i = 0; i <= (lastVertex - firstVertex + 1) / 3; i++) {
+        int i0 = 3 * i + 0;
+        int i1 = 3 * i + 1;
+        int i2 = 3 * i + 2;
+        
+        addEdge(i0, i1,  true, false);
+        addEdge(i1, i2, false, false);
+        addEdge(i2, i0, false,  true);
       }
     }
 
-    public void addTriangleFanEdges() {
-      
+    public void addTriangleFanEdges() {      
+      for (int i = firstVertex + 1; i < lastVertex; i++) {
+        int i0 = firstVertex;
+        int i1 = i;
+        int i2 = i + 1;
+        
+        addEdge(i0, i1,  true, false);
+        addEdge(i1, i2, false, false);
+        addEdge(i2, i0, false,  true);        
+      }
     }
     
     public void addTriangleStripEdges() {
-      
+      for (int i = firstVertex + 1; i < lastVertex; i++) {
+        int i0 = i;
+        int i1, i2;
+        if (i % 2 == 0) {
+          i1 = i - 1;
+          i2 = i + 1;        
+        } else {
+          i1 = i + 1;
+          i2 = i - 1;        
+        }
+        
+        addEdge(i0, i1,  true, false);
+        addEdge(i1, i2, false, false);
+        addEdge(i2, i0, false,  true);        
+      }
     }
     
     public void addQuadsEdges() {
-      
+      for (int i = 0; i <= (lastVertex - firstVertex + 1) / 4; i++) {
+        int i0 = 4 * i + 0;
+        int i1 = 4 * i + 1;
+        int i2 = 4 * i + 2;
+        int i3 = 4 * i + 3;
+        
+        addEdge(i0, i1,  true, false);
+        addEdge(i1, i2, false, false);
+        addEdge(i2, i3, false,  false);
+        addEdge(i3, i0, false,  true);
+      }        
     }      
       
     public void addQuadStripEdges() {
-      
+      for (int qd = 1; qd < (lastVertex - firstVertex + 1) / 2; qd++) {
+        int i0 = firstVertex + 2 * (qd - 1);
+        int i1 = firstVertex + 2 * (qd - 1) + 1;
+        int i2 = firstVertex + 2 * qd + 1;
+        int i3 = firstVertex + 2 * qd;     
+
+        addEdge(i0, i1,  true, false);
+        addEdge(i1, i2, false, false);
+        addEdge(i2, i3, false,  false);
+        addEdge(i3, i0, false,  true);
+      }
     }
     
-    public void addPolygonEdges() {
+    public void addPolygonEdges(boolean closed) {
+      // Count number of edge segments in the perimeter.      
+      int edgeCount = 0;
+      int lnMax = lastVertex - firstVertex + 1;
+      int first = firstVertex;      
+      int contour0 = first;
+      if (!closed) lnMax--;
+      for (int ln = 0; ln < lnMax; ln++) {
+        int i = first + ln + 1;
+        if ((i == lnMax || codes[i] == PShape.BREAK) && closed) {
+          i = first + ln;
+        }            
+        if (codes[i] != PShape.BREAK) {
+          edgeCount++;
+        }      
+      }
       
+      if (0 < edgeCount) {
+        boolean begin = true;
+        contour0 = first;
+        for (int ln = 0; ln < lnMax; ln++) {
+          int i0 = first + ln;
+          int i1 = first + ln + 1;
+          if (codes[i0] == PShape.BREAK) contour0 = i0;
+          if (i1 == lnMax || codes[i1] == PShape.BREAK) {
+            // We are at the end of a contour. 
+            if (closed) {
+              // Draw line to the first vertex of the current contour,
+              // if the polygon is closed.
+              i0 = first + ln;
+              i1 = contour0;            
+              addEdge(i0, i1, begin, true);
+            } else if (codes[i1] != PShape.BREAK) {
+              addEdge(i0, i1, begin, false);
+            }
+            // We might start a new contour in the next iteration.
+            begin = true;            
+          } else if (codes[i1] != PShape.BREAK) {
+            addEdge(i0, i1, begin, false);
+          }
+        }    
+      }
+      
+/*      
+      path.moveTo(inGeo.vertices[3 * first + 0], inGeo.vertices[3 * first + 1]);
+      for (int ln = 0; ln < lnCount; ln++) {
+        int i0 = first + ln;
+        int i1 = first + ln + 1;
+        if (inGeo.codes[i0] == PShape.BREAK) {
+          contour0 = i0;
+          path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
+        }            
+        
+        boolean close = false;
+        if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {              
+          i0 = contour0;
+          path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
+          i1 = first + ln;
+          close = true;
+        }
+        
+        if (inGeo.codes[i1] != PShape.BREAK) {
+          path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
+        } else {
+          path.moveTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
+        }
+        
+        if (close) {
+          path.closePath();              
+        }
+  */      
     }    
   }
   
@@ -7839,12 +7954,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void tessellateTriangles() {
-      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
-      
       if (fill) {
         tessGeo.addFillVertices(inGeo);
-        
-        tessGeo.addFillIndices(nvertFill);
+
+        tessGeo.addFillIndices(inGeo.lastVertex - inGeo.firstVertex + 1);
         int idx0 = tessGeo.firstFillIndex;
         int offset = tessGeo.firstFillVertex;
         for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
@@ -7859,14 +7972,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void tessellateTriangleFan() {
-      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
-      
       if (fill) {
         tessGeo.addFillVertices(inGeo);
-        
-        int triCount = nvertFill - 2;
-        
-        tessGeo.addFillIndices(3 * triCount);
+
+        tessGeo.addFillIndices(3 * (inGeo.lastVertex - inGeo.firstVertex - 1));
         int idx = tessGeo.firstFillIndex;
         int offset = tessGeo.firstFillVertex; 
         for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
@@ -7878,47 +7987,7 @@ public class PGraphicsOpenGL extends PGraphics {
       
       if (stroke) {
         tessGeo.isStroked = true;
-        
-        if (is3D) {
-          int strokeCount = nvertFill - 1;
-          // Each stroked triangle has 3 lines, one for each edge. 
-          // These lines are made up of 4 vertices defining the quad. 
-          // Each vertex has its own offset representing the stroke weight.
-          int nvertLine = strokeCount * 3 * 4;
-          tessGeo.addLineVertices(nvertLine);
-          
-          // Each stroke line has 4 vertices, defining 2 triangles, which
-          // require 3 indices to specify their connectivities.
-          int nind = strokeCount * 3 * 2 * 3;
-          tessGeo.addLineIndices(nind); 
-          
-          int vcount = tessGeo.firstLineVertex;
-          int icount = tessGeo.firstLineIndex;
-          for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
-            int i0 = inGeo.firstVertex;
-            int i1 = i;
-            int i2 = i + 1;     
-
-            addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
-            addLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
-            addLine(i2, i0, vcount, icount); vcount += 4; icount += 6;
-          }
-        } else {
-          GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-          for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
-            int i0 = inGeo.firstVertex;
-            int i1 = i;
-            int i2 = i + 1;     
-            
-            path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-            path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-            path.lineTo(inGeo.vertices[3 * i2 + 0], inGeo.vertices[3 * i2 + 1]);
-            path.closePath();            
-          }                    
-          tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-          tessellatePath(path);
-          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;            
-        }
+        tessellateEdges();
       }
     }
     
@@ -7945,74 +8014,19 @@ public class PGraphicsOpenGL extends PGraphics {
             tessGeo.fillIndices[idx++] = offset + i - 1;
           }
         }              
-      }
-      
+      }      
       
       if (stroke) {
         tessGeo.isStroked = true;
-        
-        if (is3D) {
-          int strokeCount = nvertFill - 1;
-        
-          // Each stroked triangle has 3 lines, one for each edge. 
-          // These lines are made up of 4 vertices defining the quad. 
-          // Each vertex has its own offset representing the stroke weight.
-          int nvertLine = strokeCount * 3 * 4;
-          tessGeo.addLineVertices(nvertLine);
-          
-          // Each stroke line has 4 vertices, defining 2 triangles, which
-          // require 3 indices to specify their connectivities.
-          int nind = strokeCount * 3 * 2 * 3;
-          tessGeo.addLineIndices(nind); 
-          
-          int vcount = tessGeo.firstLineVertex;
-          int icount = tessGeo.firstLineIndex;
-          for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
-            int i0 = i;
-            int i1, i2;
-            if (i % 2 == 0) {
-              i1 = i - 1;
-              i2 = i + 1;        
-            } else {
-              i1 = i + 1;
-              i2 = i - 1;        
-            }  
-           
-            addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
-            addLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
-            addLine(i2, i0, vcount, icount); vcount += 4; icount += 6;
-          }                    
-        } else {
-          GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-          for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
-            int i0 = i;
-            int i1, i2;
-            if (i % 2 == 0) {
-              i1 = i - 1;
-              i2 = i + 1;        
-            } else {
-              i1 = i + 1;
-              i2 = i - 1;        
-            }     
-            
-            path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-            path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-            path.lineTo(inGeo.vertices[3 * i2 + 0], inGeo.vertices[3 * i2 + 1]);
-            path.closePath();            
-          }                    
-          tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-          tessellatePath(path);
-          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;           
-        }
+        tessellateEdges();
       }
     }
 
     public void tessellateQuads() {
-      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
-      int quadCount = nvertFill / 4;
-      
       if (fill) {
         tessGeo.addFillVertices(inGeo);
+      
+        int quadCount = (inGeo.lastVertex - inGeo.firstVertex + 1) / 4;
         
         tessGeo.addFillIndices(6 * quadCount);
         int idx = tessGeo.firstFillIndex;
@@ -8035,60 +8049,16 @@ public class PGraphicsOpenGL extends PGraphics {
       
       if (stroke) {
         tessGeo.isStroked = true;
-        
-        if (is3D) {
-          // Each stroked quad has 4 lines, one for each edge. 
-          // These lines are made up of 4 vertices defining the quad. 
-          // Each vertex has its own offset representing the stroke weight.
-          int nvertLine = quadCount * 4 * 4;
-          tessGeo.addLineVertices(nvertLine);
-          
-          // Each stroke line has 4 vertices, defining 2 triangles, which
-          // require 3 indices to specify their connectivities.
-          int nind = quadCount * 4 * 2 * 3;
-          tessGeo.addLineIndices(nind); 
-          
-          int vcount = tessGeo.firstLineVertex;
-          int icount = tessGeo.firstLineIndex;
-          for (int qd = 0; qd < quadCount; qd++) {
-            int i0 = 4 * qd + 0;
-            int i1 = 4 * qd + 1;
-            int i2 = 4 * qd + 2;
-            int i3 = 4 * qd + 3;    
-
-            addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
-            addLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
-            addLine(i2, i3, vcount, icount); vcount += 4; icount += 6;
-            addLine(i3, i0, vcount, icount); vcount += 4; icount += 6;            
-          }          
-        } else {
-          GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-          for (int qd = 0; qd < quadCount; qd++) {
-            int i0 = 4 * qd + 0;
-            int i1 = 4 * qd + 1;
-            int i2 = 4 * qd + 2;
-            int i3 = 4 * qd + 3;    
-
-            path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-            path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-            path.lineTo(inGeo.vertices[3 * i2 + 0], inGeo.vertices[3 * i2 + 1]);
-            path.lineTo(inGeo.vertices[3 * i3 + 0], inGeo.vertices[3 * i3 + 1]);
-            path.closePath();
-          }           
-          tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-          tessellatePath(path);
-          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;               
-        }
+        tessellateEdges();
       }
     }
     
     
     public void tessellateQuadStrip() {
-      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
-      
       if (fill) {
         tessGeo.addFillVertices(inGeo);
-        
+      
+        int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
         int quadCount = nvertFill / 2 - 1;
         
         tessGeo.addFillIndices(6 * quadCount);
@@ -8112,54 +8082,7 @@ public class PGraphicsOpenGL extends PGraphics {
  
       if (stroke) {
         tessGeo.isStroked = true;
-        
-        if (is3D) {
-          int strokeCount = nvertFill / 2 - 1;
-          int first = inGeo.firstVertex;
-
-          // Each stroked quad has 4 lines, one for each edge. 
-          // These lines are made up of 4 vertices defining the quad. 
-          // Each vertex has its own offset representing the stroke weight.
-          int nvertLine = strokeCount * 4 * 4;
-          tessGeo.addLineVertices(nvertLine);
-          
-          // Each stroke line has 4 vertices, defining 2 triangles, which
-          // require 3 indices to specify their connectivities.
-          int nind = strokeCount * 4 * 2 * 3;
-          tessGeo.addLineIndices(nind); 
-          
-          int vcount = tessGeo.firstLineVertex;
-          int icount = tessGeo.firstLineIndex;
-          for (int qd = 1; qd < nvertFill / 2; qd++) {
-            int i0 = first + 2 * (qd - 1);
-            int i1 = first + 2 * (qd - 1) + 1;
-            int i2 = first + 2 * qd + 1;
-            int i3 = first + 2 * qd;     
-
-            addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
-            addLine(i1, i2, vcount, icount); vcount += 4; icount += 6;
-            addLine(i2, i3, vcount, icount); vcount += 4; icount += 6;
-            addLine(i3, i0, vcount, icount); vcount += 4; icount += 6;
-          }          
-        } else {
-          GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-          int first = inGeo.firstVertex;
-          for (int qd = 1; qd < nvertFill / 2; qd++) {
-            int i0 = first + 2 * (qd - 1);
-            int i1 = first + 2 * (qd - 1) + 1;
-            int i2 = first + 2 * qd + 1;
-            int i3 = first + 2 * qd;     
-
-            path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-            path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-            path.lineTo(inGeo.vertices[3 * i2 + 0], inGeo.vertices[3 * i2 + 1]);
-            path.lineTo(inGeo.vertices[3 * i3 + 0], inGeo.vertices[3 * i3 + 1]);
-            path.closePath();            
-          }
-          tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-          tessellatePath(path);
-          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;           
-        }
+        tessellateEdges();
       }
     }  
     
@@ -8200,113 +8123,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (stroke) {
         tessGeo.isStroked = true;
-        
-        // Tessellation of stroked line is done differently in 3D or 2D mode.
-        // When we are in 3D, the z-buffer is enough to determine visibility of
-        // shapes, so we can render fill, line, and point geometry in separate
-        // buffers and the visual result would be correct.
-        // But in 2D, because all the shapes are contained in the Z=0 plane
-        // we need to render the geometry in exactly the same order it has
-        // been drawn by the user. So fill and line geometry are both stored
-        // in the fill arrays. The line geometry is tessellated using the path
-        // shape generated with the AWT utilities.
-        
-        if (is3D) {
-          // Count number of line segments in the perimeter.      
-          int lineCount = 0;
-          int lnCount = inGeo.lastVertex - inGeo.firstVertex + 1;
-          //int offset = tessGeo.firstFillVertex;
-          int first = inGeo.firstVertex;
-          if (!closed) {
-            lnCount--;
-          }
-          int contour0 = first;
-          for (int ln = 0; ln < lnCount; ln++) {
-            int i = first + ln + 1;
-            if ((i == lnCount || inGeo.codes[i] == PShape.BREAK) && closed) {
-              i = first + ln;
-            }            
-            if (inGeo.codes[i] != PShape.BREAK) {
-              lineCount++;
-            }      
-          }
-          
-          if (0 < lineCount) {
-            // Lines are made up of 4 vertices defining the quad. 
-            // Each vertex has its own offset representing the stroke weight.
-            int nvertLine = lineCount * 4;
-            tessGeo.addLineVertices(nvertLine);
-            
-            // Each stroke line has 4 vertices, defining 2 triangles, which
-            // require 3 indices to specify their connectivities.
-            int nind = lineCount * 2 * 3;
-            tessGeo.addLineIndices(nind);  
-            
-            int vcount = tessGeo.firstLineVertex;
-            int icount = tessGeo.firstLineIndex;
-            contour0 = first;
-            for (int ln = 0; ln < lnCount; ln++) {
-              int i0 = first + ln;
-              int i1 = first + ln + 1;
-              if (inGeo.codes[i0] == PShape.BREAK) {
-                contour0 = i0;
-              }
-              if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {
-                // Draw line with the first vertex of the current contour.
-                i0 = contour0;
-                i1 = first + ln;
-              }
-              
-              if (inGeo.codes[i1] != PShape.BREAK) {
-                addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
-              }      
-            }    
-          }  
-        } else {
-          GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-
-          int lnCount = inGeo.lastVertex - inGeo.firstVertex + 1;
-          int first = inGeo.firstVertex;
-          if (!closed) {
-            lnCount--;
-          }
-          
-          int contour0 = first;
-          path.moveTo(inGeo.vertices[3 * first + 0], inGeo.vertices[3 * first + 1]);
-          for (int ln = 0; ln < lnCount; ln++) {
-            int i0 = first + ln;
-            int i1 = first + ln + 1;
-            if (inGeo.codes[i0] == PShape.BREAK) {
-              contour0 = i0;
-              path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-            }            
-            
-            boolean close = false;
-            if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {              
-              i0 = contour0;
-              path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-              i1 = first + ln;
-              close = true;
-            }
-            
-            if (inGeo.codes[i1] != PShape.BREAK) {
-              path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-            } else {
-              path.moveTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-            }
-            
-            if (close) {
-              path.closePath();              
-            }
-          }
-          
-          // saving the region in the fill geometry that corresponds to the tessellated
-          // stroked lines, this is used during rendering when the fill geometry is textured
-          // (lines are never textured).
-          tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-          tessellatePath(path);
-          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;      
-        }
+        tessellateEdges();
       }  
     }
     
@@ -8337,6 +8154,47 @@ public class PGraphicsOpenGL extends PGraphics {
       tessGeo.lineAttributes[4 * vcount + 3] = +strokeWeight;
       tessGeo.lineIndices[icount++] = vcount;
     }
+    
+    public void tessellateEdges() {
+      // Tessellation of stroked line is done differently in 3D or 2D mode.
+      // When we are in 3D, the z-buffer is enough to determine visibility of
+      // shapes, so we can render fill, line, and point geometry in separate
+      // buffers and the visual result would be correct.
+      // But in 2D, because all the shapes are contained in the Z=0 plane
+      // we need to render the geometry in exactly the same order it has
+      // been drawn by the user. So fill and line geometry are both stored
+      // in the fill arrays. The line geometry is tessellated using the path
+      // shape generated with the AWT utilities.      
+      if (is3D) {
+        tessGeo.addLineVertices(in.getNumLineVertices());
+        tessGeo.addLineIndices(in.getNumLineIndices());
+        int vcount = tessGeo.firstLineVertex;
+        int icount = tessGeo.firstLineIndex;          
+        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+          int[] edge = in.edges[i];
+          addLine(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
+        }                    
+      } else {
+        GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);          
+        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+          int[] edge = in.edges[i];
+          if (startEdge(edge[2])) path.moveTo(inGeo.getVertexX(edge[0]), inGeo.getVertexY(edge[0])); 
+          path.lineTo(inGeo.getVertexX(edge[1]), inGeo.getVertexY(edge[1]));
+          if (endEdge(edge[2])) path.closePath();
+        }          
+        tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
+        tessellatePath(path);
+        tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;          
+      }      
+    }
+    
+    public boolean startEdge(int edge) {
+      return edge % 2 != 0;
+    }
+    
+    public boolean endEdge(int edge) {
+      return 1 < edge;
+    }       
     
     // Tessellates the path given as parameter. This will work only in 2D mode.
     // By Tom Carden, and Karl D.D. Willis:
@@ -8564,37 +8422,5 @@ public class PGraphicsOpenGL extends PGraphics {
         outData[0] = vertex;
       }
     }
-    
-    public void tessellateEdges() {
-      if (is3D) {
-        tessGeo.addLineVertices(in.getNumLineVertices());
-        tessGeo.addLineIndices(in.getNumLineIndices());
-        int vcount = tessGeo.firstLineVertex;
-        int icount = tessGeo.firstLineIndex;          
-        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-          int[] edge = in.edges[i];
-          addLine(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
-        }                    
-      } else {
-        GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);          
-        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-          int[] edge = in.edges[i];
-          if (startEdge(edge[2])) path.moveTo(inGeo.getVertexX(edge[0]), inGeo.getVertexY(edge[0])); 
-          path.lineTo(inGeo.getVertexX(edge[1]), inGeo.getVertexY(edge[1]));
-          if (endEdge(edge[2])) path.closePath();
-        }          
-        tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-        tessellatePath(path);
-        tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;          
-      }      
-    }
-    
-    public boolean startEdge(int edge) {
-      return edge % 2 != 0;
-    }
-    
-    public boolean endEdge(int edge) {
-      return 1 < edge;
-    }        
   }
 }

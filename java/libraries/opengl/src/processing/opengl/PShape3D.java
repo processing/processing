@@ -890,7 +890,7 @@ public class PShape3D extends PShape {
             if (stroke) in.addQuadStripEdges();
             tessellator.tessellateQuadStrip();
           } else if (kind == POLYGON) {
-            if (stroke) in.addPolygonEdges();
+            if (stroke) in.addPolygonEdges(isClosed);
             tessellator.tessellatePolygon(isSolid, isClosed);
           }
         } else if (family == PRIMITIVE) {
