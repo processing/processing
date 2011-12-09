@@ -59,7 +59,6 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
-import javax.xml.soap.Text;
 
 import processing.core.PApplet;
 
@@ -471,6 +470,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected PImage textureImage0;
   
   protected boolean clip = false;
+  
+  protected boolean defaultEdges = false;
     
   static public float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
@@ -1667,6 +1668,8 @@ public class PGraphicsOpenGL extends PGraphics {
     in.reset();
         
     breakShape = false;    
+    defaultEdges = true;
+    
     textureImage0 = textureImage;
     // The superclass method is called to avoid an early flush.
     super.noTexture();
@@ -1888,22 +1891,22 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (shape == LINES) {
       tessellator.tessellateLines();    
     } else if (shape == TRIANGLE || shape == TRIANGLES) {
-      if (stroke) in.addTrianglesEdges();
+      if (stroke && defaultEdges) in.addTrianglesEdges();
       tessellator.tessellateTriangles();
     } else if (shape == TRIANGLE_FAN) {
-      if (stroke) in.addTriangleFanEdges();
+      if (stroke && defaultEdges) in.addTriangleFanEdges();
       tessellator.tessellateTriangleFan();
     } else if (shape == TRIANGLE_STRIP) {
-      if (stroke) in.addTriangleStripEdges();
+      if (stroke && defaultEdges) in.addTriangleStripEdges();
       tessellator.tessellateTriangleStrip();
     } else if (shape == QUAD || shape == QUADS) {
-      if (stroke) in.addQuadsEdges();
+      if (stroke && defaultEdges) in.addQuadsEdges();
       tessellator.tessellateQuads();
     } else if (shape == QUAD_STRIP) {
-      if (stroke) in.addQuadStripEdges();
+      if (stroke && defaultEdges) in.addQuadStripEdges();
       tessellator.tessellateQuadStrip();
     } else if (shape == POLYGON) {
-      if (stroke) in.addPolygonEdges(mode == CLOSE);
+      if (stroke && defaultEdges) in.addPolygonEdges(mode == CLOSE);
       tessellator.tessellatePolygon(false, mode == CLOSE);
     }    
   }
@@ -2629,71 +2632,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // public void ellipseMode(int mode)
 
-  protected void ellipseImpl(float x, float y, float w, float h) {
-    float radiusH = w / 2;
-    float radiusV = h / 2;
-
-    float centerX = x + radiusH;
-    float centerY = y + radiusV;
-
-    float sx1 = screenX(x, y);
-    float sy1 = screenY(x, y);
-    float sx2 = screenX(x + w, y + h);
-    float sy2 = screenY(x + w, y + h);
-
-    if (fill) {
-      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20);
-      if (accuracy < 6)
-        accuracy = 6;
-
-      float inc = (float) SINCOS_LENGTH / accuracy;
-      float val = 0;
-
-      boolean strokeSaved = stroke;
-      stroke = false;
-      boolean smoothSaved = smooth;
-      if (smooth && stroke) {
-        smooth = false;
-      }
-
-      beginShape(TRIANGLE_FAN);
-      normal(0, 0, 1);
-      vertex(centerX, centerY);
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * radiusH, centerY
-            + sinLUT[(int) val] * radiusV);
-        val = (val + inc) % SINCOS_LENGTH;
-      }
-      // back to the beginning
-      vertex(centerX + cosLUT[0] * radiusH, centerY + sinLUT[0] * radiusV);
-      endShape();
-
-      stroke = strokeSaved;
-      smooth = smoothSaved;
-    }
-
-    if (stroke) {
-      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 8);
-      if (accuracy < 6)
-        accuracy = 6;
-
-      float inc = (float) SINCOS_LENGTH / accuracy;
-      float val = 0;
-
-      boolean savedFill = fill;
-      fill = false;
-
-      val = 0;
-      beginShape();
-      for (int i = 0; i < accuracy; i++) {
-        vertex(centerX + cosLUT[(int) val] * radiusH, centerY
-            + sinLUT[(int) val] * radiusV);
-        val = (val + inc) % SINCOS_LENGTH;
-      }
-      endShape(CLOSE);
-
-      fill = savedFill;
-    }
+  
+  public void ellipse(float a, float b, float c, float d) {
+     beginShape(TRIANGLE_FAN); 
+     defaultEdges = false;
+     in.generateEllipse(ellipseMode, a, b, c, d, 
+                        fill, fillR, fillG, fillB, fillA, 
+                        stroke, strokeR, strokeG, strokeB, strokeA,
+                        strokeWeight);
+     endShape();
   }
   
   
@@ -6456,7 +6403,11 @@ public class PGraphicsOpenGL extends PGraphics {
     public int edgeCount;
     
     // Range of vertices that will be processed by the 
-    // tessellator.
+    // tessellator. They can be used in combination with the
+    // edges array to have the tessellator using only a specific
+    // range of vertices to generate fill geometry, while the
+    // line geometry will be read from the edge vertices, which
+    // could be completely different.    
     public int firstVertex;
     public int lastVertex;    
 
@@ -6530,7 +6481,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return vertices[3 * (vertexCount - 1) + 2];
     }
     
-    public void addVertex(float[] vertex, float[] color, float[] normal, float[] texcoord, float[] stroke, int code) {
+    public int addVertex(float[] vertex, float[] color, float[] normal, float[] texcoord, float[] stroke, int code) {
       vertexCheck();
 
       codes[vertexCount] = code;  
@@ -6542,15 +6493,42 @@ public class PGraphicsOpenGL extends PGraphics {
       PApplet.arrayCopy(stroke, 0, strokes, 5 * vertexCount, 5);
             
       lastVertex = vertexCount; 
-      vertexCount++;      
+      vertexCount++; 
+      
+      return lastVertex;
     }
     
-    public void addVertex(float x, float y, float z, 
-                          float r, float g, float b, float a,
-                          float nx, float ny, float nz,
-                          float u, float v,
-                          float sr, float sg, float sb, float sa, float sw, 
-                          int code) {
+    public int addVertex(float x, float y, 
+                         float r, float g, float b, float a,
+                         float u, float v,
+                         float sr, float sg, float sb, float sa, float sw, 
+                         int code) {
+      return addVertex(x, y, 0, 
+                       r, g, b, a, 
+                       0, 0, 1, 
+                       u, v, 
+                       sr, sg, sb, sa, sw, 
+                       code);      
+    }
+
+    public int addVertex(float x, float y, 
+                         float r, float g, float b, float a,
+                         float sr, float sg, float sb, float sa, float sw, 
+                         int code) {
+      return addVertex(x, y, 0, 
+                       r, g, b, a, 
+                       0, 0, 1, 
+                       0, 0, 
+                       sr, sg, sb, sa, sw, 
+                       code);   
+    }    
+    
+    public int addVertex(float x, float y, float z, 
+                         float r, float g, float b, float a,
+                         float nx, float ny, float nz,
+                         float u, float v,
+                         float sr, float sg, float sb, float sa, float sw, 
+                         int code) {
       vertexCheck();
       int index;
 
@@ -6584,7 +6562,9 @@ public class PGraphicsOpenGL extends PGraphics {
       strokes[index  ] = sw;
       
       lastVertex = vertexCount; 
-      vertexCount++;             
+      vertexCount++;
+      
+      return lastVertex; 
     }
         
     public void vertexCheck() {
@@ -6599,12 +6579,8 @@ public class PGraphicsOpenGL extends PGraphics {
         expandStrokes(newSize);
       }
     }  
-
-    public void addEdge(int i, int j) {
-      addEdge(i, j, false, false);
-    }
     
-    public void addEdge(int i, int j, boolean start, boolean end) {
+    public int addEdge(int i, int j, boolean start, boolean end) {
       edgeCheck();
       
       int[] edge = edges[edgeCount];
@@ -6620,6 +6596,8 @@ public class PGraphicsOpenGL extends PGraphics {
       
       lastEdge = edgeCount; 
       edgeCount++;
+      
+      return lastEdge;
     }
     
     public void edgeCheck() {
@@ -6786,36 +6764,89 @@ public class PGraphicsOpenGL extends PGraphics {
           }
         }    
       }
-      
-/*      
-      path.moveTo(inGeo.vertices[3 * first + 0], inGeo.vertices[3 * first + 1]);
-      for (int ln = 0; ln < lnCount; ln++) {
-        int i0 = first + ln;
-        int i1 = first + ln + 1;
-        if (inGeo.codes[i0] == PShape.BREAK) {
-          contour0 = i0;
-          path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-        }            
-        
-        boolean close = false;
-        if ((i1 == lnCount || inGeo.codes[i1] == PShape.BREAK) && closed) {              
-          i0 = contour0;
-          path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-          i1 = first + ln;
-          close = true;
-        }
-        
-        if (inGeo.codes[i1] != PShape.BREAK) {
-          path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-        } else {
-          path.moveTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-        }
-        
-        if (close) {
-          path.closePath();              
-        }
-  */      
     }    
+    
+    // Primitive generation
+    
+    public void generateEllipse(int ellipseMode, float a, float b, float c, float d, 
+                                boolean fill, float fillR, float fillG, float fillB, float fillA, 
+                                boolean stroke, float strokeR, float strokeG, float strokeB, float strokeA,
+                                float strokeWeight) {      
+      float x = a;
+      float y = b;
+      float w = c;
+      float h = d;
+
+      if (ellipseMode == CORNERS) {
+        w = c - a;
+        h = d - b;
+
+      } else if (ellipseMode == RADIUS) {
+        x = a - c;
+        y = b - d;
+        w = c * 2;
+        h = d * 2;
+
+      } else if (ellipseMode == DIAMETER) {
+        x = a - c/2f;
+        y = b - d/2f;
+      }
+
+      if (w < 0) {  // undo negative width
+        x += w;
+        w = -w;
+      }
+
+      if (h < 0) {  // undo negative height
+        y += h;
+        h = -h;
+      }
+      
+      float radiusH = w / 2;
+      float radiusV = h / 2;
+
+      float centerX = x + radiusH;
+      float centerY = y + radiusV;
+
+      float sx1 = screenX(x, y);
+      float sy1 = screenY(x, y);
+      float sx2 = screenX(x + w, y + h);
+      float sy2 = screenY(x + w, y + h);
+
+      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20);
+      if (accuracy < 6) {
+        accuracy = 6;
+      }      
+      float inc = (float) PGraphicsOpenGL.SINCOS_LENGTH / accuracy;
+      
+      if (fill) {
+        addVertex(centerX, centerY, 
+                  fillR, fillG, fillB, fillA, strokeR, strokeG, strokeB, strokeA, strokeWeight, VERTEX);
+      }
+      int idx0, pidx, idx;
+      idx0 = pidx = idx = 0;
+      float val = 0;
+      for (int i = 0; i < accuracy; i++) {
+        idx = addVertex(centerX + PGraphicsOpenGL.cosLUT[(int) val] * radiusH, 
+                        centerY + PGraphicsOpenGL.sinLUT[(int) val] * radiusV, 
+                        fillR, fillG, fillB, fillA, strokeR, strokeG, strokeB, strokeA, strokeWeight, VERTEX);
+        val = (val + inc) % PGraphicsOpenGL.SINCOS_LENGTH;
+        
+        if (0 < i) {
+          if (stroke) addEdge(pidx, idx, i == 1, false);
+        } else {
+          idx0 = idx;  
+        }
+        
+        pidx = idx;
+      }
+      // Back to the beginning
+      addVertex(centerX + PGraphicsOpenGL.cosLUT[0] * radiusH, 
+                centerY + PGraphicsOpenGL.sinLUT[0] * radiusV, 
+                fillR, fillG, fillB, fillA, strokeR, strokeG, strokeB, strokeA, strokeWeight, VERTEX);
+      if (stroke) addEdge(idx, idx0, false, true);
+    }
+    
   }
   
   public class TessGeometry {
@@ -8166,18 +8197,18 @@ public class PGraphicsOpenGL extends PGraphics {
       // in the fill arrays. The line geometry is tessellated using the path
       // shape generated with the AWT utilities.      
       if (is3D) {
-        tessGeo.addLineVertices(in.getNumLineVertices());
-        tessGeo.addLineIndices(in.getNumLineIndices());
+        tessGeo.addLineVertices(inGeo.getNumLineVertices());
+        tessGeo.addLineIndices(inGeo.getNumLineIndices());
         int vcount = tessGeo.firstLineVertex;
         int icount = tessGeo.firstLineIndex;          
-        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-          int[] edge = in.edges[i];
+        for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
+          int[] edge = inGeo.edges[i];
           addLine(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
         }                    
       } else {
         GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);          
-        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-          int[] edge = in.edges[i];
+        for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
+          int[] edge = inGeo.edges[i];
           if (startEdge(edge[2])) path.moveTo(inGeo.getVertexX(edge[0]), inGeo.getVertexY(edge[0])); 
           path.lineTo(inGeo.getVertexX(edge[1]), inGeo.getVertexY(edge[1]));
           if (endEdge(edge[2])) path.closePath();
