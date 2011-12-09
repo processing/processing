@@ -201,13 +201,40 @@ public class PShape3D extends PShape {
     this.parent = null;
     this.modified = false;
     
-    textureMode = ogl.textureMode;
-    colorMode(ogl.colorMode, ogl.colorModeX, ogl.colorModeY, ogl.colorModeZ, ogl.colorModeA);
-    
     tess = ogl.newTessGeometry(RETAINED);    
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
       in = ogl.newInGeometry();      
-    }    
+    }
+    
+    // Texture and color modes are retrieved from the current values in the renderer.
+    textureMode = ogl.textureMode;
+    colorMode(ogl.colorMode, ogl.colorModeX, ogl.colorModeY, ogl.colorModeZ, ogl.colorModeA);
+    
+    // Initial values for fill, stroke and tint colors are also imported from the renderer.
+    // This is particular relevant for primitive shapes, since is not possible to set 
+    // their color separately when creating them, and their input vertices are actually
+    // generated at rendering time, by which the color configuration of the renderer might
+    // have changed.
+    fill = ogl.fill;
+    fillR = ((ogl.fillColor >> 24) & 0xFF) / 255.0f;    
+    fillG = ((ogl.fillColor >> 16) & 0xFF) / 255.0f; 
+    fillB = ((ogl.fillColor >>  8) & 0xFF) / 255.0f;
+    fillA = ((ogl.fillColor >>  0) & 0xFF) / 255.0f;
+      
+    stroke = ogl.stroke;  
+    strokeR = ((ogl.strokeColor >> 24) & 0xFF) / 255.0f;    
+    strokeG = ((ogl.strokeColor >> 16) & 0xFF) / 255.0f; 
+    strokeB = ((ogl.strokeColor >>  8) & 0xFF) / 255.0f;
+    strokeA = ((ogl.strokeColor >>  0) & 0xFF) / 255.0f;
+
+    tint = ogl.tint;  
+    tintR = ((ogl.tintColor >> 24) & 0xFF) / 255.0f;    
+    tintG = ((ogl.tintColor >> 16) & 0xFF) / 255.0f; 
+    tintB = ((ogl.tintColor >>  8) & 0xFF) / 255.0f;
+    tintA = ((ogl.tintColor >>  0) & 0xFF) / 255.0f;
+    
+    normalX = normalY = 0; 
+    normalZ = 1;
   }
   
   
@@ -848,16 +875,22 @@ public class PShape3D extends PShape {
           } else if (kind == LINES) {
             tessellator.tessellateLines();    
           } else if (kind == TRIANGLE || kind == TRIANGLES) {
+            if (stroke) in.addTrianglesEdges();
             tessellator.tessellateTriangles();
           } else if (kind == TRIANGLE_FAN) {
+            if (stroke) in.addTriangleFanEdges();
             tessellator.tessellateTriangleFan();
           } else if (kind == TRIANGLE_STRIP) {
+            if (stroke) in.addTriangleStripEdges();
             tessellator.tessellateTriangleStrip();
           } else if (kind == QUAD || kind == QUADS) {
+            if (stroke) in.addQuadsEdges();
             tessellator.tessellateQuads();
           } else if (kind == QUAD_STRIP) {
+            if (stroke) in.addQuadStripEdges();
             tessellator.tessellateQuadStrip();
           } else if (kind == POLYGON) {
+            if (stroke) in.addPolygonEdges();
             tessellator.tessellatePolygon(isSolid, isClosed);
           }
         } else if (family == PRIMITIVE) {
@@ -1044,7 +1077,8 @@ public class PShape3D extends PShape {
     vertex(x2, y2, z1, 1, 0);
     vertex(x2, y2, z2, 1, 1);
     vertex(x1, y2, z2, 0, 1);
-
+    
+    if (stroke) in.addQuadsEdges(); 
     tessellator.tessellateQuads();      
   }
   
@@ -1117,6 +1151,7 @@ public class PShape3D extends PShape {
       }
     }
     
+    if (stroke) in.addTrianglesEdges();
     tessellator.tessellateTriangles();
   }
   
