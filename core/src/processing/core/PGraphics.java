@@ -7418,6 +7418,11 @@ public class PGraphics extends PImage implements PConstants {
     return null;
   }  
   
+  public PShape createShape(int kind, float... p) {
+    showMissingWarning("createShape");
+    return null;    
+  }
+  
   protected String[] getSupportedShapeFormats() {
     showMissingWarning("getSupportedShapeFormats");
     return null;

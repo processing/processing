@@ -13620,6 +13620,11 @@ public class PApplet extends Applet
   }
 
 
+  public PShape createShape(int kind, float... p) {
+    return g.createShape(kind, p);
+  }
+
+
   public void blendMode(int mode) {
     if (recorder != null) recorder.blendMode(mode);
     g.blendMode(mode);

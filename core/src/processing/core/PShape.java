@@ -951,6 +951,17 @@ public class PShape implements PConstants {
     return target;
   }
 
+  
+  public void setParams(float[] source) {
+    if (params == null) {
+      params = new float[source.length];  
+    }    
+    if (source.length != params.length) {
+      PGraphics.showWarning("Wrong number of parameters");
+      return;
+    }
+    PApplet.arrayCopy(source, params);
+  }  
 
   public float getParam(int index) {
     return params[index];
