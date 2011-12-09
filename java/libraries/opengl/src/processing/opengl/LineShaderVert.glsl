@@ -78,15 +78,14 @@ void main() {
   vec4 pos_p = gl_Vertex;
   vec4 pos_q = vec4(attribs.xyz, 1);  
   vec4 v_p = gl_ModelViewMatrix * pos_p;
-  
-  vec4 clip_p = gl_ProjectionMatrix * v_p; 
-  vec4 v_q = gl_ModelViewMatrix * pos_q;
-  
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the polys.
   // Discussed here:
-  // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848  
-  v_p.xyz = v_p.xyz * 0.99;   
+  // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848    
+  v_p.xyz = v_p.xyz * 0.99;
+  
+  vec4 clip_p = gl_ProjectionMatrix * v_p; 
+  vec4 v_q = gl_ModelViewMatrix * pos_q;
   v_q.xyz = v_q.xyz * 0.99;
   
   vec4 clip_q = gl_ProjectionMatrix * v_q; 
