@@ -2119,40 +2119,49 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
 
-  protected void renderPoints() {    
-//    checkVertexBuffers(tess.pointVertexCount);
-//    
-//    startPointShader();
-//    
-//    vertexBuffer.rewind();
-//    vertexBuffer.put(tess.pointVertices, 0, 3 * tess.pointVertexCount);    
-//    vertexBuffer.position(0);
-//    
-//    colorBuffer.rewind();
-//    colorBuffer.put(tess.pointColors, 0, 4 * tess.pointVertexCount);
-//    colorBuffer.position(0);
-//    
-//    normalBuffer.rewind();
-//    normalBuffer.put(tess.pointNormals, 0, 3 * tess.pointVertexCount);
-//    normalBuffer.position(0);
-//    
-//    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
-//    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
-//    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);  
-//        
-//    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
-//    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-//    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);    
-//    
-//    setupPointShader(tess.pointAttributes);
-//
-//    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.pointIndexCount, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.pointIndices));
-//    
-//    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
-//    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-//    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-//    
-//    stopPointShader();
+  protected void renderPoints() {
+    if (!pointVBOsCreated) {
+      createPointBuffers();
+      pointVBOsCreated = true;
+    }
+    
+    startPointShader();
+    
+    int size = tess.pointVertexCount;
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                         FloatBuffer.wrap(tess.pointNormals));    
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
+          
+    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                         FloatBuffer.wrap(tess.pointColors));    
+    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);            
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                         FloatBuffer.wrap(tess.pointVertices));       
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    
+    setupPointShader(glPointAttribBufferID, tess.pointAttributes, size);
+    
+    size = tess.pointIndexCount;
+    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+    gl2f.glBufferSubData(GL.GL_ELEMENT_ARRAY_BUFFER, 0, size * PGraphicsOpenGL.SIZEOF_INT, 
+                         IntBuffer.wrap(tess.pointIndices));        
+    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);
+    
+    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    
+    stopPointShader();
   }  
     
   protected void renderLines() {
@@ -2197,60 +2206,8 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
     gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
     
-    stopLineShader();    
-
-    
-    
-//    if (glLineNormalBufferID == -1) {
-//      glLineNormalBufferID = createVertexBufferObject();
-//      glLineColorBufferID = createVertexBufferObject();
-//      glLineVertexBufferID = createVertexBufferObject();
-//      glLineAttribBufferID = createVertexBufferObject();
-//      glLineIndexBufferID = createVertexBufferObject();
-//    }
-//    
-//    int offset = 0;
-//    int size = tess.lineVertexCount;    
-//
-//    
-//    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-//    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-//                         3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.lineNormals));    
-//    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
-//          
-//    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
-//    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-//                         4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.lineColors));    
-//    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);
-//    
-//    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);            
-//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-//    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-//                         3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.lineVertices));
-//    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);    
-//    
-//    startLineShader();
-//    
-//    setupLineShader(glLineAttribBufferID);
-//    
-//    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);    
-//    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
-//                         size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tess.lineIndices));    
-//    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.lastLineIndex - tess.firstLineIndex + 1, GL.GL_UNSIGNED_INT, 
-//                           tess.firstLineIndex * PGraphicsOpenGL.SIZEOF_INT);
-//    
-//    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
-//    
-//    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
-//    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-//    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);  
-//    
-//    stopLineShader();
+    stopLineShader();
   }  
-  
   
     
   protected void renderFill(PImage textureImage) {
