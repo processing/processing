@@ -2274,66 +2274,73 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   protected void renderStrokedFill(PImage textureImage) {
-//    checkVertexBuffers(tess.fillVertexCount);
-//    
-//    vertexBuffer.rewind();
-//    vertexBuffer.put(tess.fillVertices, 0, 3 * tess.fillVertexCount);    
-//    vertexBuffer.position(0);
-//    
-//    colorBuffer.rewind();
-//    colorBuffer.put(tess.fillColors, 0, 4 * tess.fillVertexCount);
-//    colorBuffer.position(0);
-//    
-//    normalBuffer.rewind();
-//    normalBuffer.put(tess.fillNormals, 0, 3 * tess.fillVertexCount);
-//    normalBuffer.position(0);
-//
-//    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
-//    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);    
-//    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);    
-//    
-//    PTexture tex = null;
-//    if (textureImage != null) {
-//      tex = ogl.getTexture(textureImage);
-//      if (tex != null) {
-//        gl2f.glEnable(tex.glTarget);
-//        gl2f.glActiveTexture(GL.GL_TEXTURE0);
-//        gl2f.glBindTexture(tex.glTarget, tex.glID);
-//      }
-//      texcoordBuffer.rewind();
-//      texcoordBuffer.put(tess.fillTexcoords, 0, 2 * tess.fillVertexCount);
-//      texcoordBuffer.position(0);
-//      
-//      gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);      
-//    }    
-//    
-//    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBuffer);
-//    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, colorBuffer);
-//    gl2f.glNormalPointer(GL.GL_FLOAT, 0, normalBuffer);
-//    if (tex != null) {
-//      gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, texcoordBuffer);
-//    }
-//    
-//    // Drawing the fill geometry.
-//    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.firstLineIndex, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.fillIndices));
-//
-//    if (tex != null) {
-//      gl2f.glActiveTexture(GL.GL_TEXTURE0);
-//      gl2f.glBindTexture(tex.glTarget, 0);
-//      gl2f.glDisable(tex.glTarget);
-//      
-//      gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-//    }
-//
-//    // Drawing the stroked lines without texture.
-//    int offset = tess.firstLineIndex;
-//    int count = tess.lastLineIndex - tess.firstLineIndex + 1;
-//    gl2f.glDrawElements(GL.GL_TRIANGLES, count, GL.GL_UNSIGNED_INT, IntBuffer.wrap(tess.fillIndices, offset, count));
-//    
-//    
-//    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
-//    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-//    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);      
+    if (!fillVBOsCreated) {
+      createFillBuffers();
+      fillVBOsCreated = true;
+    }    
+
+    int size = tess.fillVertexCount;
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                         FloatBuffer.wrap(tess.fillNormals));
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
+
+    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);    
+    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                         FloatBuffer.wrap(tess.fillColors));
+    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);    
+    
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);
+    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                         FloatBuffer.wrap(tess.fillVertices));
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+
+    PTexture tex = null;
+    if (textureImage != null) {
+      tex = ogl.getTexture(textureImage);
+      if (tex != null) {
+        gl2f.glEnable(tex.glTarget);
+        gl2f.glActiveTexture(GL.GL_TEXTURE0);
+        gl2f.glBindTexture(tex.glTarget, tex.glID);
+      }
+      
+      gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+      gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+      gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                           FloatBuffer.wrap(tess.fillTexcoords));  
+      gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
+    }        
+    
+    // Draw the textured fill geometry (reaches up to the tess.firstLineIndex - 1 vertex).
+    size = tess.firstLineIndex;
+    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
+    gl2f.glBufferSubData(GL.GL_ELEMENT_ARRAY_BUFFER, 0, size * SIZEOF_INT, 
+                         IntBuffer.wrap(tess.fillIndices, 0, size));
+    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.firstLineIndex, GL.GL_UNSIGNED_INT, 0);        
+    
+    if (tex != null) {
+      gl2f.glActiveTexture(GL.GL_TEXTURE0);
+      gl2f.glBindTexture(tex.glTarget, 0);
+      gl2f.glDisable(tex.glTarget);
+      gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+    }     
+
+    // Drawing the stroked lines without texture.
+    int offset = tess.firstLineIndex;
+    size = tess.lastLineIndex - tess.firstLineIndex + 1;
+    gl2f.glBufferSubData(GL.GL_ELEMENT_ARRAY_BUFFER, 0, size * SIZEOF_INT, 
+                         IntBuffer.wrap(tess.fillIndices, offset, size));
+    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);        
+
+    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
+    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);    
   }
 
   
@@ -6803,7 +6810,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     public void addTrianglesEdges() {
-      for (int i = 0; i <= (lastVertex - firstVertex + 1) / 3; i++) {
+      for (int i = 0; i < (lastVertex - firstVertex + 1) / 3; i++) {
         int i0 = 3 * i + 0;
         int i1 = 3 * i + 1;
         int i2 = 3 * i + 2;
@@ -6845,7 +6852,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void addQuadsEdges() {
-      for (int i = 0; i <= (lastVertex - firstVertex + 1) / 4; i++) {
+      for (int i = 0; i < (lastVertex - firstVertex + 1) / 4; i++) {
         int i0 = 4 * i + 0;
         int i1 = 4 * i + 1;
         int i2 = 4 * i + 2;
@@ -7652,6 +7659,62 @@ public class PGraphicsOpenGL extends PGraphics {
       putLineVertex(in, inIdx0, inIdx1, tessIdx, r, g, b, a);
     }    
     
+    
+    public void putLineVertexIntoFill(InGeometry in, int inIdx, float dispX, float dispY, int tessIdx, 
+                                      float sr, float sg, float sb, float sa) {
+      int index;
+
+      index = 3 * inIdx;
+      float x = in.vertices[index++] + dispX;
+      float y = in.vertices[index++] + dispY;
+      float z = in.vertices[index  ];
+      
+      index = 3 * inIdx;
+      float nx = in.normals[index++];
+      float ny = in.normals[index++];
+      float nz = in.normals[index  ];      
+      
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
+        PMatrix3D tr = modelviewStack.getTransform();
+        
+        index = 3 * tessIdx;
+        fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
+        fillVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
+        fillVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
+        
+        index = 3 * tessIdx;
+        fillNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
+        fillNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
+        fillNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
+      } else {
+        index = 3 * tessIdx;
+        fillVertices[index++] = x;
+        fillVertices[index++] = y;
+        fillVertices[index  ] = z;
+        
+        index = 3 * tessIdx;
+        fillNormals[index++] = nx;
+        fillNormals[index++] = ny;
+        fillNormals[index  ] = nz;
+      }      
+      
+      index = 4 * tessIdx;
+      fillColors[index++] = sr;
+      fillColors[index++] = sg;
+      fillColors[index++] = sb;
+      fillColors[index  ] = sa;
+    }    
+    
+    
+    public void putLineVertexIntoFill(InGeometry in, int inIdx, float dx, float dy, int tessIdx) {      
+      int index = 5 * inIdx;
+      float r = in.strokes[index++];
+      float g = in.strokes[index++];
+      float b = in.strokes[index++];
+      float a = in.strokes[index  ];
+      putLineVertexIntoFill(in, inIdx, dx, dy, tessIdx, r, g, b, a);
+    }
+    
     public void putPointVertex(InGeometry in, int inIdx, int tessIdx) {
       int index;
 
@@ -8312,11 +8375,44 @@ public class PGraphicsOpenGL extends PGraphics {
         tessellateEdges();
       }  
     }
-    
-    // TODO: add line data to fill... 
-//    protected void addLine(int i0, int i1, int vcount, int icount) {
-//      
-//    }
+     
+    protected void addLineToFill(int i0, int i1, int vcount, int icount) {
+      int index; 
+          
+      index = 3 * i0;
+      float x0 = in.vertices[index++];
+      float y0 = in.vertices[index++];
+      
+      index = 3 * i1;
+      float x1 = in.vertices[index++];
+      float y1 = in.vertices[index++];      
+      
+      float dx = x1 - x0;
+      float dy = y1 - y0;
+      float len = PApplet.sqrt(dx * dx + dy * dy);
+
+      float linePerpX = -dy * (strokeWeight / len);
+      float linePerpY =  dx * (strokeWeight / len);
+      
+      tessGeo.putLineVertexIntoFill(inGeo, i0, +linePerpX, +linePerpY, vcount);
+      tessGeo.fillIndices[icount++] = vcount;
+      
+      vcount++;
+      tessGeo.putLineVertexIntoFill(inGeo, i0, -linePerpX, -linePerpY, vcount);
+      tessGeo.fillIndices[icount++] = vcount;
+      
+      vcount++;
+      tessGeo.putLineVertexIntoFill(inGeo, i1, +linePerpX, +linePerpY, vcount);
+      tessGeo.fillIndices[icount++] = vcount;
+      
+      // Starting a new triangle re-using prev vertices.
+      tessGeo.fillIndices[icount++] = vcount;
+      tessGeo.fillIndices[icount++] = vcount - 1;
+      
+      vcount++;
+      tessGeo.putLineVertexIntoFill(inGeo, i1, -linePerpX, -linePerpY, vcount);      
+      tessGeo.fillIndices[icount++] = vcount;  
+    }
     
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
@@ -8364,18 +8460,33 @@ public class PGraphicsOpenGL extends PGraphics {
         for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
           int[] edge = inGeo.edges[i];
           addLine(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
-        }                    
+        }
       } else {
-        GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);          
+        tessGeo.firstLineIndex = tessGeo.fillIndexCount;
+        tessGeo.addFillVertices(inGeo.getNumLineVertices());
+        tessGeo.addFillIndices(inGeo.getNumLineIndices());
+        tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1; 
+        int vcount = tessGeo.firstFillVertex;
+        int icount = tessGeo.firstFillIndex;          
         for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
           int[] edge = inGeo.edges[i];
-          if (startEdge(edge[2])) path.moveTo(inGeo.getVertexX(edge[0]), inGeo.getVertexY(edge[0])); 
-          path.lineTo(inGeo.getVertexX(edge[1]), inGeo.getVertexY(edge[1]));
-          if (endEdge(edge[2])) path.closePath();
-        }          
-        tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-        tessellatePath(path);
-        tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;          
+          addLineToFill(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
+        }     
+
+        // Not using the fancy path tessellation in 2D because it slows down things
+        // significantly (it also calls the GLU tessellator).
+        // It generates the right caps and joins, though.
+        
+//        GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);          
+//        for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
+//          int[] edge = inGeo.edges[i];
+//          if (startEdge(edge[2])) path.moveTo(inGeo.getVertexX(edge[0]), inGeo.getVertexY(edge[0])); 
+//          path.lineTo(inGeo.getVertexX(edge[1]), inGeo.getVertexY(edge[1]));
+//          if (endEdge(edge[2])) path.closePath();
+//        }        
+//        tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
+//        tessellatePath(path);
+//        tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;          
       }      
     }
     
