@@ -460,7 +460,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected float[] currentTexcoord = { 0, 0 };
   protected float[] currentStroke = { 0, 0, 0, 1, 1 };  
 
-  protected boolean breakShape;  
+  protected boolean openContour = false;
+  protected boolean breakShape = false;  
   
   public static int flushMode = FLUSH_WHEN_FULL;
 //  public static int flushMode = FLUSH_AFTER_SHAPE;
@@ -1882,7 +1883,21 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   
-  public void breakShape() {
+  public void beginContour() {
+    if (openContour) {
+      showWarning("P3D: Already called beginContour().");
+      return;
+    }    
+    openContour = true;
+  }
+  
+  
+  public void endContour() {
+    if (!openContour) {
+      showWarning("P3D: Need to call beginContour() first.");
+      return;      
+    }
+    openContour = false;
     breakShape = true;
   }  
   
