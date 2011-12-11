@@ -46,6 +46,24 @@ import java.util.HashSet;
 // TODO: check shape in 2D mode (and handling in renderFill), and group shape mixing 2D and 2D child shapes. 
 //       PShape3D.text() ?
 
+
+// Notes about geometry update in PShape3D.
+// 1) Flush mechanism for data update in PShape3D?
+// only do copy to tess arrays, and mark updated shapes.
+// When drawing, put all modified data in large array and
+// copy to VBO using single glBufferSubData() call.
+// 2) What about fill called on a GROUP shape? shoud apply
+// color change to all child shapes. Probably yes.
+// 3) translate, scale, rotate, and applyMatrix could
+//    work in a similar way as update color, since they are
+//    transformations that apply on all tesselated geometry
+//    at once. So calculate matrix transformation and apply
+//    on x,y,z coordinates (as it is done in the tessellator),
+//    copy to tess arrays, and then copy to VBO when appropriate.
+// 4) Under this scenario, map/unmap methods are only required
+//    for advanced use/libraries (custom modification of complex
+//    meshes and patches for example).
+
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
  * texture coordinates (also per vertex). All this data is stored in Vertex Buffer Objects
@@ -462,7 +480,7 @@ public class PShape3D extends PShape {
 
   public void noFill() {
     fill = false;
-    
+    // What to do here? re-tessellate or change alpha to 0?
   }
 
   public void fill(int rgb) {
@@ -502,12 +520,14 @@ public class PShape3D extends PShape {
     fillB = calcB;
     fillA = calcA;
     fillColor = calcColor;
-    if (shapeEnded) {
-      updateFillColor();  
-    }
+    updateFillColor();  
   }
 
   protected void updateFillColor() {
+    if (!shapeEnded || tess.fillVertexCount == 0) {
+      return;
+    }
+      
     updateTesselation();
     
     int offset = root.fillVertOffset.get(this);
@@ -583,7 +603,58 @@ public class PShape3D extends PShape {
     strokeB = calcB;
     strokeA = calcA;
     strokeColor = calcColor;
+    updateStrokeColor();  
   }
+
+  protected void updateStrokeColor() {
+    if (shapeEnded) {
+      updateTesselation();
+      
+      if (0 < tess.lineVertexCount) {
+        int offset = root.lineVertOffset.get(this);
+        int size = tess.lineVertexCount;
+        
+        // We resuse the tess array to avoid creating a new one.
+        float[] colors = tess.lineColors;
+        int index;
+        for (int i = 0; i < size; i++) {
+          index = 4 * i;
+          colors[index++] = strokeR;
+          colors[index++] = strokeG;
+          colors[index++] = strokeB;
+          colors[index  ] = strokeA;
+        }
+        
+        getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineColorBufferID);
+        getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                                4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));    
+        
+      }
+      
+      if (0 < tess.pointVertexCount) {
+        int offset = root.pointVertOffset.get(this);
+        int size = tess.pointVertexCount;
+        
+        // We resuse the tess array to avoid creating a new one.
+        float[] colors = tess.pointColors;
+        int index;
+        for (int i = 0; i < size; i++) {
+          index = 4 * i;
+          colors[index++] = strokeR;
+          colors[index++] = strokeG;
+          colors[index++] = strokeB;
+          colors[index  ] = strokeA;
+        }
+        
+        getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointColorBufferID);
+        getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                                4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));            
+      }            
+    }    
+    
+    
+    
+  }  
   
   
   ///////////////////////////////////////////////////////////  
@@ -1323,6 +1394,7 @@ public class PShape3D extends PShape {
                               tess.fillNormals, tess.fillTexcoords, tess.fillIndices);
         root.fillVertCopyOffset += tess.fillVertexCount;
       
+        root.fillIndOffset.put(this, root.fillIndCopyOffset);
         root.copyFillIndices(root.fillIndCopyOffset, tess.fillIndexCount, tess.fillIndices);
         root.fillIndCopyOffset += tess.fillIndexCount;
       }
@@ -1394,10 +1466,12 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (hasLines) {
+        lineVertOffset.put(this, root.lineVertCopyOffset);
         root.copyLineGeometry(root.lineVertCopyOffset, tess.lineVertexCount, 
                               tess.lineVertices, tess.lineColors, tess.lineNormals, tess.lineAttributes);        
         root.lineVertCopyOffset += tess.lineVertexCount;
         
+        root.lineIndOffset.put(this, root.lineIndCopyOffset);
         root.copyLineIndices(root.lineIndCopyOffset, tess.lineIndexCount, tess.lineIndices);
         root.lineIndCopyOffset += tess.lineIndexCount;        
       }
@@ -1468,10 +1542,12 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (hasPoints) {
+        pointVertOffset.put(this, root.pointVertCopyOffset);
         root.copyPointGeometry(root.pointVertCopyOffset, tess.pointVertexCount, 
                                tess.pointVertices, tess.pointColors, tess.pointNormals, tess.pointAttributes);        
         root.pointVertCopyOffset += tess.pointVertexCount;
         
+        pointIndOffset.put(this, root.pointIndCopyOffset);
         root.copyPointIndices(root.pointIndCopyOffset, tess.pointIndexCount, tess.pointIndices);
         root.pointIndCopyOffset += tess.pointIndexCount;        
       }
