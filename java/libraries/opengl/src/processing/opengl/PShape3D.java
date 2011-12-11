@@ -123,6 +123,7 @@ public class PShape3D extends PShape {
   
   protected boolean openContour = false;
   protected boolean breakShape = false;
+  protected boolean shapeEnded = false;
   
   protected boolean hasFill;
   protected boolean hasLines;
@@ -413,14 +414,18 @@ public class PShape3D extends PShape {
     end(OPEN);
   }  
 
-  public void end(int mode) {
-    isClosed = mode == CLOSE;
+  public void end(int mode) {    
+    isClosed = mode == CLOSE;    
+    root.modified = true;
+    modified = true;
+    shapeEnded = true;
   }  
   
   public void setParams(float[] source) {
     super.setParams(source);
     root.modified = true;
-    modified = true;      
+    modified = true;
+    shapeEnded = true;
   }
 
   //////////////////////////////////////////////////////////////
@@ -889,7 +894,7 @@ public class PShape3D extends PShape {
         child.tessellate();
       }      
     } else {   
-      if (modified) {
+      if (modified && shapeEnded) {
         tessellator.setInGeometry(in);
         tessellator.setTessGeometry(tess);
         tessellator.setFill(fill || texture != null);
