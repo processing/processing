@@ -40,6 +40,7 @@ import processing.opengl.PGraphicsOpenGL.Tessellator;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 import java.util.HashSet;
 
 // TODO: check shape in 2D mode (and handling in renderFill), and group shape mixing 2D and 2D child shapes. 
@@ -97,14 +98,21 @@ public class PShape3D extends PShape {
 
   // ........................................................
   
-  // Offsets for geometry aggregation.
-
+  // Offsets for geometry aggregation and update.
+  
   protected int fillVertCopyOffset;
   protected int fillIndCopyOffset;
   protected int lineVertCopyOffset;
   protected int lineIndCopyOffset;
   protected int pointVertCopyOffset;
   protected int pointIndCopyOffset;
+
+  protected HashMap<PShape3D, Integer> fillVertOffset;
+  protected HashMap<PShape3D, Integer> fillIndOffset;
+  protected HashMap<PShape3D, Integer> lineVertOffset;
+  protected HashMap<PShape3D, Integer> lineIndOffset;  
+  protected HashMap<PShape3D, Integer> pointVertOffset;
+  protected HashMap<PShape3D, Integer> pointIndOffset;  
   
   protected int lastFillVertexOffset;
   protected int lastFillIndexOffset;  
@@ -454,6 +462,7 @@ public class PShape3D extends PShape {
 
   public void noFill() {
     fill = false;
+    
   }
 
   public void fill(int rgb) {
@@ -493,8 +502,33 @@ public class PShape3D extends PShape {
     fillB = calcB;
     fillA = calcA;
     fillColor = calcColor;
+    if (shapeEnded) {
+      updateFillColor();  
+    }
   }
 
+  protected void updateFillColor() {
+    updateTesselation();
+    
+    int offset = root.fillVertOffset.get(this);
+    int size = tess.fillVertexCount;
+    
+    // We resuse the tess array to avoid creating a new one.
+    float[] colors = tess.fillColors;
+    int index;
+    for (int i = 0; i < size; i++) {
+      index = 4 * i;
+      colors[index++] = fillR;
+      colors[index++] = fillG;
+      colors[index++] = fillB;
+      colors[index  ] = fillA;
+    }
+    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillColorBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));    
+  }
+  
     
   //////////////////////////////////////////////////////////////
 
@@ -1152,7 +1186,9 @@ public class PShape3D extends PShape {
       
       // Now that we know, we can initialize the buffers with the correct size.
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {   
-        initFillBuffers(tess.fillVertexCount, tess.fillIndexCount);      
+        initFillBuffers(tess.fillVertexCount, tess.fillIndexCount);          
+        fillVertOffset = new HashMap<PShape3D, Integer>();
+        fillIndOffset = new HashMap<PShape3D, Integer>();
         fillVertCopyOffset = 0;
         fillIndCopyOffset = 0;
         copyFillGeometryToRoot();
@@ -1160,6 +1196,8 @@ public class PShape3D extends PShape {
       
       if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {   
         initLineBuffers(tess.lineVertexCount, tess.lineIndexCount);
+        lineVertOffset = new HashMap<PShape3D, Integer>();
+        lineIndOffset = new HashMap<PShape3D, Integer>();        
         lineVertCopyOffset = 0;
         lineIndCopyOffset = 0;
         copyLineGeometryToRoot();
@@ -1167,6 +1205,8 @@ public class PShape3D extends PShape {
       
       if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {   
         initPointBuffers(tess.pointVertexCount, tess.pointIndexCount);
+        pointVertOffset = new HashMap<PShape3D, Integer>();
+        pointIndOffset = new HashMap<PShape3D, Integer>();        
         pointVertCopyOffset = 0;
         pointIndCopyOffset = 0;
         copyPointGeometryToRoot();
@@ -1276,7 +1316,8 @@ public class PShape3D extends PShape {
         child.copyFillGeometryToRoot();
       }    
     } else {
-      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) { 
+      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {        
+        root.fillVertOffset.put(this, root.fillVertCopyOffset);
         root.copyFillGeometry(root.fillVertCopyOffset, tess.fillVertexCount, 
                               tess.fillVertices, tess.fillColors, 
                               tess.fillNormals, tess.fillTexcoords, tess.fillIndices);
