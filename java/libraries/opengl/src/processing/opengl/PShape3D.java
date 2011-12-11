@@ -118,9 +118,11 @@ public class PShape3D extends PShape {
   // Drawing/rendering state
   
   protected boolean modified;
-  protected boolean breakShape;  
   protected boolean isSolid;
   protected boolean isClosed;
+  
+  protected boolean openContour = false;
+  protected boolean breakShape = false;
   
   protected boolean hasFill;
   protected boolean hasLines;
@@ -297,7 +299,21 @@ public class PShape3D extends PShape {
   }
   
   
-  public void breakShape() {
+  public void beginContour() {
+    if (openContour) {
+      PGraphics.showWarning("P3D: Already called beginContour().");
+      return;
+    }    
+    openContour = true;    
+  }
+  
+  
+  public void endContour() {
+    if (!openContour) {
+      PGraphics.showWarning("P3D: Need to call beginContour() first.");
+      return;      
+    }
+    openContour = false;    
     breakShape = true;  
   }
 
