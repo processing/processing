@@ -1,4 +1,4 @@
-PShape3D circle;
+PShape circle;
   
 public void setup() {
   size(400, 400, P3D);
@@ -7,7 +7,7 @@ public void setup() {
   fill(255, 0, 0);
   stroke(0, 0, 255);  
   strokeWeight(3);
-  circle = (PShape3D) createShape(ELLIPSE, 0, 0, 100, 100);  
+  circle = createShape(ELLIPSE, 0, 0, 100, 100);  
 } 
 
 public void draw () {	  
@@ -17,7 +17,6 @@ public void draw () {
     circle.fill(map(mouseX, 0, width, 255, 0), 0, 0);
     circle.stroke(0, 0, map(mouseY, 0, height, 255, 0));
   }
-  
   
   translate(mouseX, mouseY);
   shape(circle);  

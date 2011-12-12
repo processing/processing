@@ -1,7 +1,7 @@
 size(100, 100, P3D);
 smooth();
 
-PShape3D obj = (PShape3D)createShape();
+PShape obj = createShape();
 obj.noFill();
 obj.stroke(0);
 obj.strokeWeight(1);
