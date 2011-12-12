@@ -1,6 +1,6 @@
 size(100, 100, P3D);
 
-PShape3D obj = (PShape3D)createShape(POLYGON);
+PShape obj = createShape(POLYGON);
 obj.fill(0, 255, 0, 255);
 obj.stroke(0, 0, 255, 255);
 obj.strokeWeight(5);

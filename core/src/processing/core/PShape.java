@@ -197,7 +197,8 @@ public class PShape implements PConstants {
   /** True if colorMode(RGB, 255) */
   boolean colorModeDefault; // = true;
   
-  
+  /** To mark the shape dirty upon changes in its geometry **/
+  public boolean modified;
   
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
@@ -389,7 +390,161 @@ public class PShape implements PConstants {
   public boolean is3D() {
     return false;
   }
+  
+  
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Drawing methods  
+  
+  public void texture(PImage tex) {
+  }
+  
+  public void noTexture() {
+  }  
+    
+  public void solid(boolean solid) {
+  }
+  
+  public void beginContour() {
+  }
+    
+  public void endContour() {
+  }
+  
+  public void vertex(float x, float y) { 
+  }
 
+  
+  public void vertex(float x, float y, float z) {
+  }
+
+  public void vertex(float x, float y, float z, float u, float v) {
+  }  
+  
+  public void normal(float nx, float ny, float nz) {
+  }
+
+  public void end() {
+  }  
+
+  public void end(int mode) {    
+  }    
+  
+  //////////////////////////////////////////////////////////////
+
+  // STROKE CAP/JOIN/WEIGHT
+
+  
+  public void strokeWeight(float weight) {
+  }
+
+  public void strokeJoin(int join) {
+  }
+
+  public void strokeCap(int cap) {
+  }  
+  
+  //////////////////////////////////////////////////////////////
+
+  // FILL COLOR
+
+  public void noFill() {
+  }
+
+  public void fill(int rgb) {
+  }
+
+  public void fill(int rgb, float alpha) {
+  }
+
+  public void fill(float gray) {
+  }
+
+  public void fill(float gray, float alpha) {
+  }
+
+  public void fill(float x, float y, float z) {
+  }
+
+  public void fill(float x, float y, float z, float a) {
+  }  
+  
+  //////////////////////////////////////////////////////////////
+
+  // STROKE COLOR 
+  
+  
+  public void noStroke() {
+  }  
+  
+  public void stroke(int rgb) {
+  }  
+  
+  public void stroke(int rgb, float alpha) {
+  }
+  
+  public void stroke(float gray) {
+  }
+  
+  public void stroke(float gray, float alpha) {
+  }
+
+  public void stroke(float x, float y, float z) {
+  }
+  
+  public void stroke(float x, float y, float z, float alpha) {
+  }
+
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Bezier curves   
+  
+  
+  public void bezierDetail(int detail) {
+  }  
+  
+  public void bezierVertex(float x2, float y2,
+                           float x3, float y3,
+                           float x4, float y4) {
+  }
+  
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {
+  }
+  
+  public void quadraticVertex(float cx, float cy,
+                              float x3, float y3) {
+  }  
+  
+  public void quadraticVertex(float cx, float cy, float cz,
+                              float x3, float y3, float z3) {
+  }
+  
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Catmull-Rom curves
+
+  public void curveDetail(int detail) {
+  }
+  
+  public void curveTightness(float tightness) {
+  }  
+  
+  public void curveVertex(float x, float y) {
+  }  
+
+  public void curveVertex(float x, float y, float z) {
+  }
+  
+  
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -915,13 +1070,11 @@ public class PShape implements PConstants {
     return -1;
   }
 
-
-//  public PShape createGroup() {
-//    PShape group = new PShape();
-//    group.kind = GROUP;
-//    addChild(group);
-//    return group;
-//  }
+  public void addShape(PShape child) {    
+  }
+  
+  public void updateRoot(PShape root) {    
+  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
