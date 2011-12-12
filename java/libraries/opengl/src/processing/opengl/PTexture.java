@@ -24,6 +24,8 @@ package processing.opengl;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
+import javax.media.opengl.GLContext;
+
 import java.nio.*;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -37,11 +39,11 @@ import processing.core.PImage;
  */
 public class PTexture implements PConstants { 
   public int width, height;
-    
+      
   protected PApplet parent;      // The Processing applet
   protected PGraphicsOpenGL ogl; // The main renderer
-  protected PImage img;          // The parent image
-
+  protected GLContext context;   // The context that created this texture.
+  
   // These are public but use at your own risk!
   public int glID; 
   public int glTarget;
@@ -92,23 +94,13 @@ public class PTexture implements PConstants {
     this.parent = parent;
        
     ogl = (PGraphicsOpenGL)parent.g;
+    context = ogl.getContext();
     
     glID = 0;
     
     init(width, height, (Parameters)params);
   } 
 
-  
-  static public PImage wrap(PGraphicsOpenGL ogl, PTexture tex) {
-    // We don't use the PImage(int width, int height, int mode) constructor to
-    // avoid initializing the pixels array.
-    PImage img = new PImage();
-    img.width = tex.width; 
-    img.height = tex.height;
-    img.format = ARGB;    
-    img.setCache(ogl, tex);
-    return img;
-  }
   
   protected void finalize() throws Throwable {
     try {
@@ -119,28 +111,8 @@ public class PTexture implements PConstants {
       super.finalize();
     }
   }  
-  
-  
-  /*
-  public void backup() {
-    if (img != null) {
-      img.loadPixels();
-      if (img.pixels != null && (img instanceof PGraphicsOpenGL)) {
-        // When img is an offscreen renderer, the loadPixels() call above 
-        // already takes care of copying the contents of the color buffer 
-        // to  the pixels array.
-        get(img.pixels);
-      }
-    }        
-  }
 
   
-  public void restore() {    
-    if (img != null && img.pixels != null) {
-      set(img.pixels);
-    }    
-  }
-  */
 
   ////////////////////////////////////////////////////////////
   
@@ -257,6 +229,7 @@ public class PTexture implements PConstants {
   
   public void set(int[] pixels, int x, int y, int w, int h, int format) {
     if (pixels == null) {
+      pixels = null;
       PGraphics.showWarning("The pixels array is null.");
       return;
     }    
@@ -938,11 +911,7 @@ public class PTexture implements PConstants {
   /////////////////////////////////////////////////////////////////////////// 
 
   // Utilities 
-  
-  protected void setImage(PImage img) {
-    this.img = img;
-  }
-  
+    
   protected GL getGl() {
     return ogl.gl;
   }  

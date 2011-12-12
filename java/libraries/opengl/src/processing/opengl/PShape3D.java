@@ -297,13 +297,80 @@ public class PShape3D extends PShape {
   
   protected void finalize() throws Throwable {
     try {
-      release();   
+      finalizeFillBuffers();  
+      finalizeLineBuffers();
+      finalizePointBuffers();
     } finally {
       super.finalize();
     }
   }
   
+  protected void finalizeFillBuffers() {
+    if (glFillVertexBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glFillVertexBufferID);   
+    }    
+    
+    if (glFillColorBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glFillColorBufferID);   
+    }    
+
+    if (glFillNormalBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glFillNormalBufferID);   
+    }     
+
+    if (glFillTexCoordBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glFillTexCoordBufferID);   
+    }    
+    
+    if (glFillIndexBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glFillIndexBufferID);   
+    }   
+  }
   
+  protected void finalizeLineBuffers() {
+    if (glLineVertexBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glLineVertexBufferID);   
+    }    
+    
+    if (glLineColorBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glLineColorBufferID);   
+    }    
+
+    if (glLineNormalBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glLineNormalBufferID);   
+    }     
+
+    if (glLineAttribBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glLineAttribBufferID);   
+    }    
+    
+    if (glLineIndexBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glLineIndexBufferID);   
+    }  
+  }  
+  
+  protected void finalizePointBuffers() {
+    if (glPointVertexBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glPointVertexBufferID);   
+    }    
+    
+    if (glPointColorBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glPointColorBufferID);   
+    }    
+
+    if (glPointNormalBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glPointNormalBufferID);   
+    }     
+
+    if (glPointAttribBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glPointAttribBufferID);   
+    }    
+    
+    if (glPointIndexBufferID != 0) {    
+      ogl.finalizeVertexBufferObject(glPointIndexBufferID);   
+    }  
+  }
+    
   ///////////////////////////////////////////////////////////  
   
   //
@@ -1622,81 +1689,81 @@ public class PShape3D extends PShape {
   
   protected void deleteFillBuffers() {
     if (glFillVertexBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glFillVertexBufferID);   
+      ogl.deleteVertexBufferObject(glFillVertexBufferID);   
       glFillVertexBufferID = 0;
     }    
     
     if (glFillColorBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glFillColorBufferID);   
+      ogl.deleteVertexBufferObject(glFillColorBufferID);   
       glFillColorBufferID = 0;
     }    
 
     if (glFillNormalBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glFillNormalBufferID);   
+      ogl.deleteVertexBufferObject(glFillNormalBufferID);   
       glFillNormalBufferID = 0;
     }     
 
     if (glFillTexCoordBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glFillTexCoordBufferID);   
+      ogl.deleteVertexBufferObject(glFillTexCoordBufferID);   
       glFillTexCoordBufferID = 0;
     }    
     
     if (glFillIndexBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glFillIndexBufferID);   
+      ogl.deleteVertexBufferObject(glFillIndexBufferID);   
       glFillIndexBufferID = 0;
     }   
   }
   
   protected void deleteLineBuffers() {
     if (glLineVertexBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glLineVertexBufferID);   
+      ogl.deleteVertexBufferObject(glLineVertexBufferID);   
       glLineVertexBufferID = 0;
     }    
     
     if (glLineColorBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glLineColorBufferID);   
+      ogl.deleteVertexBufferObject(glLineColorBufferID);   
       glLineColorBufferID = 0;
     }    
 
     if (glLineNormalBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glLineNormalBufferID);   
+      ogl.deleteVertexBufferObject(glLineNormalBufferID);   
       glLineNormalBufferID = 0;
     }     
 
     if (glLineAttribBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glLineAttribBufferID);   
+      ogl.deleteVertexBufferObject(glLineAttribBufferID);   
       glLineAttribBufferID = 0;
     }    
     
     if (glLineIndexBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glLineIndexBufferID);   
+      ogl.deleteVertexBufferObject(glLineIndexBufferID);   
       glLineIndexBufferID = 0;
     }  
   }  
   
   protected void deletePointBuffers() {
     if (glPointVertexBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glPointVertexBufferID);   
+      ogl.deleteVertexBufferObject(glPointVertexBufferID);   
       glPointVertexBufferID = 0;
     }    
     
     if (glPointColorBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glPointColorBufferID);   
+      ogl.deleteVertexBufferObject(glPointColorBufferID);   
       glPointColorBufferID = 0;
     }    
 
     if (glPointNormalBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glPointNormalBufferID);   
+      ogl.deleteVertexBufferObject(glPointNormalBufferID);   
       glPointNormalBufferID = 0;
     }     
 
     if (glPointAttribBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glPointAttribBufferID);   
+      ogl.deleteVertexBufferObject(glPointAttribBufferID);   
       glPointAttribBufferID = 0;
     }    
     
     if (glPointIndexBufferID != 0) {    
-      ogl.finalizeVertexBufferObject(glPointIndexBufferID);   
+      ogl.deleteVertexBufferObject(glPointIndexBufferID);   
       glPointIndexBufferID = 0;
     }  
   }
