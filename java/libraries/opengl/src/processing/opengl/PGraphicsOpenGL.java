@@ -8529,8 +8529,8 @@ public class PGraphicsOpenGL extends PGraphics {
       float dy = y1 - y0;
       float len = PApplet.sqrt(dx * dx + dy * dy);
 
-      float linePerpX = -dy * (strokeWeight / len);
-      float linePerpY =  dx * (strokeWeight / len);
+      float linePerpX = -dy * (0.5f * strokeWeight / len);
+      float linePerpY =  dx * (0.5f * strokeWeight / len);
       
       tessGeo.putLineVertexIntoFill(inGeo, i0, +linePerpX, +linePerpY, vcount);
       tessGeo.fillIndices[icount++] = vcount;
