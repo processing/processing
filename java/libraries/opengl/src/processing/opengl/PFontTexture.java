@@ -25,6 +25,9 @@
 package processing.opengl;
 
 import java.util.HashMap;
+
+import javax.media.opengl.GLContext;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -50,6 +53,7 @@ import processing.core.PImage;
 class PFontTexture implements PConstants {
   protected PApplet parent;
   protected PGraphicsOpenGL ogl;
+  protected GLContext context;
   protected PFont font;
 
   protected int maxTexWidth;
@@ -68,38 +72,11 @@ class PFontTexture implements PConstants {
     this.parent = parent;
     this.font = font;    
     ogl = (PGraphicsOpenGL)parent.g;
+    context = ogl.getContext();
     
     initTexture(maxw, maxh);
   }    
   
-  /*
-  public void delete() {
-    for (int i = 0; i < textures.length; i++) {
-      textures[i].delete();
-    }
-    ogl.unregisterPGLObject(this);
-  }
-  
-  
-  public void backup() {    
-    // Nothing to do here: the font textures will backup
-    // themselves.
-  }
-  
-  
-  public void restore() {
-    // Restoration we have to do explicitly because the font
-    // textures don't have a backing PImage object, so the
-    // updateTex() method is in charge of updating each appropriate
-    // section of the font textures. 
-    for (int i = 0; i < PApplet.min(font.getGlyphCount(), glyphTexinfos.length); i++) {
-      TextureInfo tinfo = glyphTexinfos[i];
-      textures[tinfo.texIndex].bind();
-      tinfo.updateTex();
-      textures[tinfo.texIndex].unbind();
-    }   
-  }
-*/
   
   protected void allocate() {    
     // Nothing to do here: the font textures will allocate
@@ -147,7 +124,7 @@ class PFontTexture implements PConstants {
       textures = new PTexture[1];
       textures[0] = tex;
       images = new PImage[1];      
-      images[0] = PTexture.wrap(ogl, tex); 
+      images[0] = ogl.wrapTexture(tex); 
       currentTex = 0;     
     } else if (resize) {
       // Replacing old smaller texture with larger one.
@@ -171,7 +148,7 @@ class PFontTexture implements PConstants {
       PImage[] tempImg = images;
       images = new PImage[textures.length + 1];
       PApplet.arrayCopy(tempImg, images, tempImg.length);      
-      images[tempImg.length] = PTexture.wrap(ogl, tex);
+      images[tempImg.length] = ogl.wrapTexture(tex);
     }
     lastTex = currentTex;
     

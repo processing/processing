@@ -86,7 +86,15 @@ public class PShader {
   
   protected void finalize() throws Throwable {
     try {
-      release();
+      if (vertexShader != 0) {
+        ogl.finalizeGLSLVertShaderObject(vertexShader);
+      }
+      if (fragmentShader != 0) {
+        ogl.finalizeGLSLFragShaderObject(fragmentShader);
+      }
+      if (programObject != 0) {
+        ogl.finalizeGLSLProgramObject(programObject);
+      }
     } finally {
       super.finalize();
     }
@@ -492,15 +500,15 @@ public class PShader {
 
   protected void release() {
     if (vertexShader != 0) {
-      ogl.finalizeGLSLVertShaderObject(vertexShader);
+      ogl.deleteGLSLVertShaderObject(vertexShader);
       vertexShader = 0;
     }
     if (fragmentShader != 0) {
-      ogl.finalizeGLSLFragShaderObject(fragmentShader);
+      ogl.deleteGLSLFragShaderObject(fragmentShader);
       fragmentShader = 0;
     }
     if (programObject != 0) {
-      ogl.finalizeGLSLProgramObject(programObject);
+      ogl.deleteGLSLProgramObject(programObject);
       programObject = 0;
     }
   }
