@@ -9881,6 +9881,18 @@ public class PApplet extends Applet
   }
 
 
+  public void beginContour() {
+    if (recorder != null) recorder.beginContour();
+    g.beginContour();
+  }
+
+
+  public void endContour() {
+    if (recorder != null) recorder.endContour();
+    g.endContour();
+  }
+
+
   public void endShape() {
     if (recorder != null) recorder.endShape();
     g.endShape();
