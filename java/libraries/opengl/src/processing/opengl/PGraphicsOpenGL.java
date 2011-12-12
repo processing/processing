@@ -670,21 +670,37 @@ public class PGraphicsOpenGL extends PGraphics {
     
     int[] temp = new int[1];
     gl.glGenTextures(1, temp, 0);
-    int idx = temp[0];
+    int id = temp[0];
     
-    if (glTextureObjects.containsKey(idx)) {
+    if (glTextureObjects.containsKey(id)) {
       showWarning("Adding same texture twice");
     } else {    
-      glTextureObjects.put(idx, false);
+      glTextureObjects.put(id, false);
     }
     
-    return idx;
+    return id;
+  }
+  
+  protected void deleteTextureObject(int id) {
+    if (glTextureObjects.containsKey(id)) {
+      int[] temp = { id };
+      gl.glDeleteTextures(1, temp, 0);      
+      glTextureObjects.remove(id); 
+    }
+  }  
+  
+  protected void deleteAllTextureObjects() {
+    for (Integer id : glTextureObjects.keySet()) {
+      int[] temp = { id.intValue() };
+      gl.glDeleteTextures(1, temp, 0);
+    }
+    glTextureObjects.clear();
   }
   
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeTextureObject(int idx) {
-    if (glTextureObjects.containsKey(idx)) {
-      glTextureObjects.put(idx, true);
+  synchronized protected void finalizeTextureObject(int id) {
+    if (glTextureObjects.containsKey(id)) {
+      glTextureObjects.put(id, true);
     } else {
       showWarning("Trying to finalize non-existing texture");
     }
@@ -693,17 +709,16 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteFinalizedTextureObjects() {
     Set<Integer> finalized = new HashSet<Integer>();
     
-    for (Integer idx : glTextureObjects.keySet()) {
-      if (glTextureObjects.get(idx)) {
-        finalized.add(idx);
-        int id = idx.intValue();
-        int[] temp = { id };
+    for (Integer id : glTextureObjects.keySet()) {
+      if (glTextureObjects.get(id)) {
+        finalized.add(id);
+        int[] temp = { id.intValue() };
         gl.glDeleteTextures(1, temp, 0);        
       }
     }
     
-    for (Integer idx : finalized) {
-      glTextureObjects.remove(idx);  
+    for (Integer id : finalized) {
+      glTextureObjects.remove(id);  
     }
   }
   
@@ -732,6 +747,14 @@ public class PGraphicsOpenGL extends PGraphics {
       glVertexBuffers.remove(id); 
     }
   }
+  
+  protected void deleteAllVertexBufferObjects() {
+    for (Integer id : glVertexBuffers.keySet()) {
+      int[] temp = { id.intValue() };
+      gl.glDeleteBuffers(1, temp, 0);
+    }
+    glVertexBuffers.clear();
+  }  
   
   // This is synchronized because it is called from the GC thread.
   synchronized protected void finalizeVertexBufferObject(int id) {
@@ -765,21 +788,37 @@ public class PGraphicsOpenGL extends PGraphics {
     
     int[] temp = new int[1];
     gl.glGenFramebuffers(1, temp, 0);
-    int idx = temp[0];
+    int id = temp[0];
     
-    if (glFrameBuffers.containsKey(idx)) {
+    if (glFrameBuffers.containsKey(id)) {
       showWarning("Adding same FBO twice");
     } else {    
-      glFrameBuffers.put(idx, false);
+      glFrameBuffers.put(id, false);
     }
     
-    return idx;
+    return id;
   }
   
+  protected void deleteFrameBufferObject(int id) {
+    if (glFrameBuffers.containsKey(id)) {
+      int[] temp = { id };
+      gl.glDeleteFramebuffers(1, temp, 0);      
+      glFrameBuffers.remove(id); 
+    }
+  }  
+  
+  protected void deleteAllFrameBufferObjects() {
+    for (Integer id : glFrameBuffers.keySet()) {
+      int[] temp = { id.intValue() };
+      gl.glDeleteFramebuffers(1, temp, 0);
+    }
+    glFrameBuffers.clear();
+  }   
+  
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeFrameBufferObject(int idx) {
-    if (glFrameBuffers.containsKey(idx)) {
-      glFrameBuffers.put(idx, true);
+  synchronized protected void finalizeFrameBufferObject(int id) {
+    if (glFrameBuffers.containsKey(id)) {
+      glFrameBuffers.put(id, true);
     } else {
       showWarning("Trying to finalize non-existing FBO");
     }
@@ -788,17 +827,16 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteFinalizedFrameBufferObjects() {
     Set<Integer> finalized = new HashSet<Integer>();
     
-    for (Integer idx : glFrameBuffers.keySet()) {
-      if (glFrameBuffers.get(idx)) {
-        finalized.add(idx);
-        int id = idx.intValue();
-        int[] temp = { id };
+    for (Integer id : glFrameBuffers.keySet()) {
+      if (glFrameBuffers.get(id)) {
+        finalized.add(id);
+        int[] temp = { id.intValue() };
         gl.glDeleteFramebuffers(1, temp, 0);       
       }
     }
     
-    for (Integer idx : finalized) {
-      glFrameBuffers.remove(idx);  
+    for (Integer id : finalized) {
+      glFrameBuffers.remove(id);  
     }
   }
 
@@ -809,21 +847,37 @@ public class PGraphicsOpenGL extends PGraphics {
     
     int[] temp = new int[1];
     gl.glGenRenderbuffers(1, temp, 0);
-    int idx = temp[0];
+    int id = temp[0];
     
-    if (glRenderBuffers.containsKey(idx)) {
+    if (glRenderBuffers.containsKey(id)) {
       showWarning("Adding same renderbuffer twice");
     } else {    
-      glRenderBuffers.put(idx, false);
+      glRenderBuffers.put(id, false);
     }
     
-    return idx;
+    return id;
   }
   
+  protected void deleteRenderBufferObject(int id) {
+    if (glRenderBuffers.containsKey(id)) {
+      int[] temp = { id };
+      gl.glDeleteRenderbuffers(1, temp, 0);      
+      glRenderBuffers.remove(id); 
+    }
+  }   
+  
+  protected void deleteAllRenderBufferObjects() {
+    for (Integer id : glRenderBuffers.keySet()) {
+      int[] temp = { id.intValue() };
+      gl.glDeleteRenderbuffers(1, temp, 0);
+    }
+    glRenderBuffers.clear();
+  }     
+  
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeRenderBufferObject(int idx) {
-    if (glRenderBuffers.containsKey(idx)) {
-      glRenderBuffers.put(idx, true);
+  synchronized protected void finalizeRenderBufferObject(int id) {
+    if (glRenderBuffers.containsKey(id)) {
+      glRenderBuffers.put(id, true);
     } else {
       showWarning("Trying to finalize non-existing renderbuffer");
     }
@@ -832,17 +886,16 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteFinalizedRenderBufferObjects() {
     Set<Integer> finalized = new HashSet<Integer>();
     
-    for (Integer idx : glRenderBuffers.keySet()) {
-      if (glRenderBuffers.get(idx)) {
-        finalized.add(idx);
-        int id = idx.intValue();
-        int[] temp = { id };
+    for (Integer id : glRenderBuffers.keySet()) {
+      if (glRenderBuffers.get(id)) {
+        finalized.add(id);
+        int[] temp = { id.intValue() };
         gl.glDeleteRenderbuffers(1, temp, 0);       
       }
     }
     
-    for (Integer idx : finalized) {
-      glRenderBuffers.remove(idx);  
+    for (Integer id : finalized) {
+      glRenderBuffers.remove(id);  
     }
   }
   
@@ -853,21 +906,35 @@ public class PGraphicsOpenGL extends PGraphics {
     ogl.report("before delete");
     deleteFinalizedGLSLProgramObjects();
         
-    int idx = gl2x.glCreateProgram();    
+    int id = gl2x.glCreateProgram();    
     
-    if (glslPrograms.containsKey(idx)) {
+    if (glslPrograms.containsKey(id)) {
       showWarning("Adding same glsl program twice");
     } else {    
-      glslPrograms.put(idx, false);
+      glslPrograms.put(id, false);
     }
     
-    return idx;
+    return id;
   }
   
+  protected void deleteGLSLProgramObject(int id) {
+    if (glslPrograms.containsKey(id)) {
+      gl2x.glDeleteProgram(id);      
+      glslPrograms.remove(id); 
+    }
+  }     
+  
+  protected void deleteAllGLSLProgramObjects() {
+    for (Integer id : glslPrograms.keySet()) {
+      gl2x.glDeleteProgram(id); 
+    }
+    glslPrograms.clear();
+  }    
+  
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeGLSLProgramObject(int idx) {
-    if (glslPrograms.containsKey(idx)) {
-      glslPrograms.put(idx, true);
+  synchronized protected void finalizeGLSLProgramObject(int id) {
+    if (glslPrograms.containsKey(id)) {
+      glslPrograms.put(id, true);
     } else {
       showWarning("Trying to finalize non-existing glsl program");
     }
@@ -876,16 +943,15 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteFinalizedGLSLProgramObjects() {
     Set<Integer> finalized = new HashSet<Integer>();
     
-    for (Integer idx : glslPrograms.keySet()) {
-      if (glslPrograms.get(idx)) {
-        finalized.add(idx);
-        int id = idx.intValue();
-        gl2x.glDeleteProgram(id);       
+    for (Integer id : glslPrograms.keySet()) {
+      if (glslPrograms.get(id)) {
+        finalized.add(id);
+        gl2x.glDeleteProgram(id.intValue());       
       }
     }
     
-    for (Integer idx : finalized) {
-      glslPrograms.remove(idx);  
+    for (Integer id : finalized) {
+      glslPrograms.remove(id);  
     }
   }
 
@@ -894,21 +960,35 @@ public class PGraphicsOpenGL extends PGraphics {
   protected int createGLSLVertShaderObject() {
     deleteFinalizedGLSLVertShaderObjects();
     
-    int idx = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);
+    int id = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);
     
-    if (glslVertexShaders.containsKey(idx)) {
+    if (glslVertexShaders.containsKey(id)) {
       showWarning("Adding same glsl vertex shader twice");
     } else {    
-      glslVertexShaders.put(idx, false);
+      glslVertexShaders.put(id, false);
     }
     
-    return idx;
+    return id;
   }
   
+  protected void deleteGLSLVertShaderObject(int id) {
+    if (glslVertexShaders.containsKey(id)) {
+      gl2x.glDeleteShader(id);      
+      glslVertexShaders.remove(id); 
+    }
+  }    
+  
+  protected void deleteAllGLSLVertShaderObjects() {
+    for (Integer id : glslVertexShaders.keySet()) {
+      gl2x.glDeleteShader(id); 
+    }
+    glslVertexShaders.clear();
+  }     
+  
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeGLSLVertShaderObject(int idx) {
-    if (glslVertexShaders.containsKey(idx)) {
-      glslVertexShaders.put(idx, true);
+  synchronized protected void finalizeGLSLVertShaderObject(int id) {
+    if (glslVertexShaders.containsKey(id)) {
+      glslVertexShaders.put(id, true);
     } else {
       showWarning("Trying to finalize non-existing glsl vertex shader");
     }
@@ -917,16 +997,15 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteFinalizedGLSLVertShaderObjects() {
     Set<Integer> finalized = new HashSet<Integer>();
     
-    for (Integer idx : glslVertexShaders.keySet()) {
-      if (glslVertexShaders.get(idx)) {
-        finalized.add(idx);
-        int id = idx.intValue();
-        gl2x.glDeleteShader(id);      
+    for (Integer id : glslVertexShaders.keySet()) {
+      if (glslVertexShaders.get(id)) {
+        finalized.add(id);
+        gl2x.glDeleteShader(id.intValue());      
       }
     }
     
-    for (Integer idx : finalized) {
-      glslVertexShaders.remove(idx);  
+    for (Integer id : finalized) {
+      glslVertexShaders.remove(id);  
     }
   }
   
@@ -936,21 +1015,35 @@ public class PGraphicsOpenGL extends PGraphics {
   protected int createGLSLFragShaderObject() {
     deleteFinalizedGLSLFragShaderObjects();
     
-    int idx = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);
+    int id = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);
     
-    if (glslFragmentShaders.containsKey(idx)) {
+    if (glslFragmentShaders.containsKey(id)) {
       showWarning("Adding same glsl fragment shader twice");
     } else {    
-      glslFragmentShaders.put(idx, false);
+      glslFragmentShaders.put(id, false);
     }
     
-    return idx;
+    return id;
   }
   
+  protected void deleteGLSLFragShaderObject(int id) {
+    if (glslFragmentShaders.containsKey(id)) {
+      gl2x.glDeleteShader(id);      
+      glslFragmentShaders.remove(id); 
+    }
+  }     
+  
+  protected void deleteAllGLSLFragShaderObjects() {
+    for (Integer id : glslFragmentShaders.keySet()) {
+      gl2x.glDeleteShader(id); 
+    }
+    glslFragmentShaders.clear();
+  }    
+  
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeGLSLFragShaderObject(int idx) {
-    if (glslFragmentShaders.containsKey(idx)) {
-      glslFragmentShaders.put(idx, true);
+  synchronized protected void finalizeGLSLFragShaderObject(int id) {
+    if (glslFragmentShaders.containsKey(id)) {
+      glslFragmentShaders.put(id, true);
     } else {
       showWarning("Trying to finalize non-existing glsl fragment shader");
     }
@@ -959,16 +1052,15 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteFinalizedGLSLFragShaderObjects() {
     Set<Integer> finalized = new HashSet<Integer>();
     
-    for (Integer idx : glslFragmentShaders.keySet()) {
-      if (glslFragmentShaders.get(idx)) {
-        finalized.add(idx);
-        int id = idx.intValue();
-        gl2x.glDeleteShader(id);      
+    for (Integer id : glslFragmentShaders.keySet()) {
+      if (glslFragmentShaders.get(id)) {
+        finalized.add(id);
+        gl2x.glDeleteShader(id.intValue());      
       }
     }
     
-    for (Integer idx : finalized) {
-      glslFragmentShaders.remove(idx);  
+    for (Integer id : finalized) {
+      glslFragmentShaders.remove(id);  
     }
   }  
   
@@ -983,6 +1075,15 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedGLSLFragShaderObjects();
   }
     
+  protected void deleteAllGLResources() {
+    deleteAllTextureObjects();
+    deleteAllVertexBufferObjects();
+    deleteAllFrameBufferObjects();
+    deleteAllRenderBufferObjects();
+    deleteAllGLSLProgramObjects();
+    deleteAllGLSLVertShaderObjects();
+    deleteAllGLSLFragShaderObjects();    
+  }
   
   //////////////////////////////////////////////////////////////
 
@@ -1059,6 +1160,8 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   protected void releaseResources() {
+    // First, releasing the resources used by
+    // renderer itself.
     if (texture != null) {
       texture.release();
       texture = null;
@@ -1085,7 +1188,11 @@ public class PGraphicsOpenGL extends PGraphics {
     if (pointVBOsCreated) {
       releasePointBuffers();
       pointVBOsCreated = false;
-    }    
+    }
+    
+    // Now, releasing the remaining resources 
+    // (from user's objects).
+    deleteAllGLResources();    
   }
   
 
@@ -1102,14 +1209,8 @@ public class PGraphicsOpenGL extends PGraphics {
    * the current OpenGL objects remain valid afterward.
    */  
   public void restartContext() {
-    //backupPGLObjects();
-    
-    // This releases the objects holding OpenGL resources
-    // that are used by this renderer, so they are recreated
-    // later... but what TODO with the objects such as PImages
-    // or PShapes that might have been created by the user?
-    releaseResources();
-    deleteFinalizedGLResources();
+    releaseResources();    
+    //deleteFinalizedGLResources();
     
     releaseContext();
     context.destroy();
@@ -1118,9 +1219,6 @@ public class PGraphicsOpenGL extends PGraphics {
     detainContext();
       
     updateGLInterfaces();    
-//    allocatePGLObjects();
-//    clearPGLFramebuffers();
-//    restorePGLObjects();
   }  
 
   protected void createFillBuffers() {
@@ -1440,8 +1538,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     drawing = false;    
     
-    //deleteFinalizedGLResources();    
-    
     report("bot endDraw()");    
   }
 
@@ -1459,25 +1555,8 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public void endGL() {
     restoreGLState();
-  }  
-  
-  
-  /*
-  public void allocateGL() {
-    allocatePGLObjects();    
   }
   
-  
-  public void backupGL() {
-    backupPGLObjects();
-  }  
-  
-  
-  public void restoreGL() {
-    clearPGLFramebuffers();
-    restorePGLObjects();
-  }
-  */
   
   public void updateGLInterfaces() {
     gl = context.getGL();        
@@ -3100,7 +3179,16 @@ public class PGraphicsOpenGL extends PGraphics {
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
-    }    
+    } else {
+      if (context.hashCode() != textTex.context.hashCode()) {
+        for (int i = 0; i < textTex.textures.length; i++) {
+          textTex.textures[i].glID = 0; // To avoid finalization (texture objects were already deleted when context changed).
+          textTex.textures[i] = null;
+        }
+        textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
+        textFont.setCache(this, textTex);
+      }
+    }
     textTex.setFirstTexture();
     
     // Saving style parameters modified by text rendering.
@@ -5274,7 +5362,6 @@ public class PGraphicsOpenGL extends PGraphics {
       texture.setFlippedY(true);
       this.setCache(ogl, texture);
       this.setParams(ogl, params);
-      texture.setImage(this);
       
       texCrop = new int[4];
       texCrop[0] = 0;
@@ -5713,11 +5800,26 @@ public class PGraphicsOpenGL extends PGraphics {
     PTexture tex = (PTexture)img.getCache(ogl);
     if (tex == null) {
       tex = addTexture(img);
-    } else if (img.isModified()) {
-      if (img.width != tex.width || img.height != tex.height) {
-        tex.init(img.width, img.height);
+    } else {       
+      if (context.hashCode() != tex.context.hashCode()) {
+        // The texture was created with a different context. We need
+        // to recreate it. First, we make sure that the old GL id
+        // is not used to delete the texture object (it was already
+        // deleted when the context changed).
+        tex.glID = 0;
+        tex = addTexture(img);
+        // TODO: apply this mechanism to all the Processing objects using
+        // GL resources (PShape, PShader, PFramebuffer). They will probably 
+        // need the cache thingy as well.
       }
-      updateTexture(img, tex);
+      
+      if (img.isModified()) {
+        if (img.width != tex.width || img.height != tex.height) {
+          tex.init(img.width, img.height);
+        }
+        updateTexture(img, tex);        
+      }
+      
     }
     return tex;
   }
@@ -5735,11 +5837,23 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     PTexture tex = new PTexture(img.parent, img.width, img.height, params);
     img.loadPixels();    
-    tex.set(img.pixels);
+    if (img.pixels != null) tex.set(img.pixels);
     img.setCache(ogl, tex);
-    tex.setImage(img); // The parent image so the texture can regenerate itself upon re-allocation.
     return tex;
   }
+  
+  protected PImage wrapTexture(PTexture tex) {
+    // We don't use the PImage(int width, int height, int mode) constructor to
+    // avoid initializing the pixels array.
+    PImage img = new PImage();
+    img.parent = parent;
+    img.width = tex.width; 
+    img.height = tex.height;
+    img.format = ARGB;    
+    img.setCache(ogl, tex);
+    return img;
+  }
+    
   
   
   protected void updateTexture(PImage img, PTexture tex) {    

@@ -151,42 +151,22 @@ public class PFramebuffer implements PConstants {
       backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, POINT));       
     }
   }
-    
-  /*
-  public void delete() {
-    release();
-    for (int i = 0; i < numColorBuffers; i++) {
-      colorBufferTex[i] = null;  
-    }
-    ogl.unregisterPGLObject(this);
-  }
-  
-  public void backup() {
-  }
-  
-  public void restore() {    
-    setColorBuffers(colorBufferTex.clone(), colorBufferTex.length);
-  }  
-  */
+
   
   protected void finalize() throws Throwable {
     try {
       if (glFboID != 0) {
         ogl.finalizeFrameBufferObject(glFboID);
-      }
-      
+      }      
       if (glDepthBufferID != 0) {
         ogl.finalizeRenderBufferObject(glDepthBufferID);
-      }
-      
+      }      
       if (glStencilBufferID != 0) {
         ogl.finalizeRenderBufferObject(glStencilBufferID);
       }
-            
       if (glColorBufferMultisampleID != 0) {
         ogl.finalizeRenderBufferObject(glColorBufferMultisampleID);
       }
-
       if (glDepthStencilBufferID != 0) {
         ogl.finalizeRenderBufferObject(glDepthStencilBufferID);
       }      
