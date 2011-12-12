@@ -1304,7 +1304,10 @@ public class PGraphicsOpenGL extends PGraphics {
     super.noTexture();
         
     // Screen blend is needed for alpha (i.e. fonts) to work.
-    blendMode(BLEND);
+    // Using setDefaultBlend() instead of blendMode() because
+    // the latter will set the blend mode only if it is different
+    // from current.
+    setDefaultBlend();
        
     // this is necessary for 3D drawing
     if (hints[DISABLE_DEPTH_TEST]) {
@@ -5652,7 +5655,14 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-
+  protected void setDefaultBlend() {
+    blendMode = BLEND;
+    gl.glEnable(GL.GL_BLEND);
+    if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
+    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);    
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // SAVE
@@ -5991,8 +6001,8 @@ public class PGraphicsOpenGL extends PGraphics {
     
     profile = null;      
     
-    //profile = GLProfile.getDefault();
-    profile = GLProfile.get(GLProfile.GL2ES1);
+    profile = GLProfile.getDefault();
+    //profile = GLProfile.get(GLProfile.GL2ES1);    
     //profile = GLProfile.get(GLProfile.GL4bc);
     //profile = GLProfile.getMaxProgrammable();    
     pipeline = FIXED;
@@ -6035,7 +6045,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (1 < antialias) {
       capabilities.setSampleBuffers(true);
       capabilities.setNumSamples(antialias);
-//      PApplet.println("Requested multisample level: " + capabilities.getNumSamples());
     } else {
       capabilities.setSampleBuffers(false);
     }
