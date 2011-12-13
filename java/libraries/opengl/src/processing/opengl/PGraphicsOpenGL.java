@@ -5879,11 +5879,13 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   
-  /** Utility function to render texture. */
+  /** Utility function to render texture wihtout blend. */
   protected void drawTexture(int target, int id, int tw, int th, int[] crop, int x, int y, int w, int h) {
     gl.glEnable(target);
-    gl.glBindTexture(target, id);    
-    gl.glDisable(GL.GL_BLEND);    
+    gl.glBindTexture(target, id);
+    
+    int savedBlendMode = blendMode;
+    blendMode(REPLACE); 
     
     // The texels of the texture replace the color of wherever is on the screen.
     gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);       
@@ -5897,7 +5899,7 @@ public class PGraphicsOpenGL extends PGraphics {
     gl.glBindTexture(target, 0);
     gl.glDisable(target);
     
-    blendMode(blendMode);
+    blendMode(savedBlendMode);
   }  
   
   protected void drawTexture(int w, int h, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
