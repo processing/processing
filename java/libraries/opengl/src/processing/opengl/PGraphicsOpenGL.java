@@ -4152,9 +4152,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public float screenX(float x, float y, float z) {
-    y = -1 * y; // To take into account Processsing's inverted Y axis with
-                // respect to OpenGL.
-
     if (!modelviewUpdated) {
       getModelviewMatrix();      
     }
@@ -4178,9 +4175,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public float screenY(float x, float y, float z) {
-    y = -1 * y; // To take into account Processsing's inverted Y axis with
-                // respect to OpenGL.
-    
     if (!modelviewUpdated) {
       getModelviewMatrix();
     }
@@ -4204,9 +4198,6 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public float screenZ(float x, float y, float z) {
-    y = -1 * y; // To take into account Processsing's inverted Y axis with
-                // respect to OpenGL.
-    
     if (!modelviewUpdated) {
       getModelviewMatrix();      
     }
