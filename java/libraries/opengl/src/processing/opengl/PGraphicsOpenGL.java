@@ -1408,18 +1408,18 @@ public class PGraphicsOpenGL extends PGraphics {
     setDefaultBlend();
        
     // this is necessary for 3D drawing
-    if (hints[DISABLE_DEPTH_TEST]) {
-      gl.glDisable(GL.GL_DEPTH_TEST);
+    if (hintEnabled(ENABLE_DEPTH_TEST)) {
+      gl.glEnable(GL.GL_DEPTH_TEST);      
     } else {
-      gl.glEnable(GL.GL_DEPTH_TEST);
+      gl.glDisable(GL.GL_DEPTH_TEST);
     }
     // use <= since that's what processing.core does
     gl.glDepthFunc(GL.GL_LEQUAL);
 
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
+    if (hintEnabled(ENABLE_DEPTH_MASK)) {
+      gl.glDepthMask(true);        
     } else {
-      gl.glDepthMask(true);
+      gl.glDepthMask(false);
     }
 
     // setup opengl viewport.    
@@ -1601,17 +1601,18 @@ public class PGraphicsOpenGL extends PGraphics {
     restoreGLMatrices();
     
     // Restoring hints.
-    if (hints[DISABLE_DEPTH_TEST]) {
+    if (hintEnabled(DISABLE_DEPTH_TEST)) {
+      gl.glEnable(GL.GL_DEPTH_TEST);
+    } else {
       gl.glDisable(GL.GL_DEPTH_TEST);
       gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
-    } else {
-      gl.glEnable(GL.GL_DEPTH_TEST);
+      gl.glClear(GL.GL_DEPTH_BUFFER_BIT);      
     }
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
+    
+    if (hintEnabled(ENABLE_DEPTH_MASK)) {
+      gl.glDepthMask(true);        
     } else {
-      gl.glDepthMask(true);
+      gl.glDepthMask(false);
     }
         
     // Restoring blending.
@@ -4953,7 +4954,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * throw an GL_INVALID_OPERATION error.
    */
   public void report(String where) {
-    if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
+    if (hintEnabled(ENABLE_OPENGL_ERROR_REPORT)) {
       int err = gl.glGetError();
       if (err != 0) {
         String errString = glu.gluErrorString(err);
@@ -5954,10 +5955,10 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
     gl2f.glPopMatrix();
     
-    if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);  
+    if (hintEnabled(ENABLE_DEPTH_MASK)) {
+      gl.glDepthMask(true);        
     } else {
-      gl.glDepthMask(true);
+      gl.glDepthMask(false);
     }    
   }
   

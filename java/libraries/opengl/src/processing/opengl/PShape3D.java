@@ -49,11 +49,11 @@ import java.util.HashSet;
 
 // Notes about geometry update in PShape3D.
 // 1) Flush mechanism for data update in PShape3D?
-// only do copy to tess arrays, and mark updated shapes.
-// When drawing, put all modified data in large array and
-// copy to VBO using single glBufferSubData() call.
+//    only do copy to tess arrays, and mark updated shapes.
+//    When drawing, put all modified data in large array and
+//    copy to VBO using single glBufferSubData() call.
 // 2) What about fill called on a GROUP shape? shoud apply
-// color change to all child shapes. Probably yes.
+//    color change to all child shapes. Probably yes.
 // 3) translate, scale, rotate, and applyMatrix could
 //    work in a similar way as update color, since they are
 //    transformations that apply on all tesselated geometry
@@ -1355,6 +1355,8 @@ public class PShape3D extends PShape {
   }
   
   
+  // TODO: implement smarter update logic so that transformed contiguous shapes
+  // are copied to the root VBO in a single call.
   protected void updateGeometry() {
     if (root == this && parent == null) {
       fillVertCopyOffset = 0;
