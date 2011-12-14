@@ -30,6 +30,8 @@ import javax.media.opengl.GL2ES1;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
+import processing.core.PMatrix;
+import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PStyle;
@@ -750,14 +752,15 @@ public class PShape3D extends PShape {
   // Geometric transformations
   
   public void translate(float tx, float ty) {
-    checkMatrix(2);
-    matrix.translate(tx, ty);
+    // TODO: implement for geometry shapes.
+    super.translate(tx, ty);
   }
-  
-  
   
   public void translate(float tx, float ty, float tz) {
     if (family == GROUP) {
+      // TODO: make sure that for group shapes, just applying the
+      // gl transformation is efficient enought (might depend on
+      // how much geometry is inside the group).
       super.translate(tx, ty, tz);
     } else {
       checkMatrix(3);
@@ -768,6 +771,111 @@ public class PShape3D extends PShape {
       matrix = null;      
     }    
   }
+  
+  
+  public void rotate(float angle) {
+    // TODO: implement for geometry shapes.
+    super.rotate(angle);
+  }
+  
+  public void rotate(float angle, float v0, float v1, float v2) {
+    if (family == GROUP) {
+      super.rotate(angle, v0, v1, v2);
+    } else {
+      checkMatrix(3);
+      matrix.rotate(angle, v0, v1, v2);
+      tess.applyMatrix((PMatrix3D) matrix);
+      transformed = true;
+      // So the transformation is not applied again when drawing
+      matrix = null;            
+    }
+  }
+  
+  public void scale(float s) {
+    // TODO: implement for geometry shapes.
+    super.scale(s);
+  }
+
+
+  public void scale(float x, float y) {
+    // TODO: implement for geometry shapes.
+    super.scale(x, y);
+  }
+
+
+  public void scale(float x, float y, float z) {
+    if (family == GROUP) {
+      super.scale(x, y, z);
+    } else {
+      checkMatrix(3);
+      matrix.scale(x, y, z);
+      tess.applyMatrix((PMatrix3D) matrix);
+      transformed = true;
+      // So the transformation is not applied again when drawing
+      matrix = null;            
+    }    
+  }  
+  
+  
+  public void resetMatrix() {
+    // What to do in the case of geometry shapes?
+    // In order to properly reset the transformation,
+    // we need to have the last matrix applied, calculate
+    // the inverse and apply on the tess object... TODO
+    checkMatrix(2);
+    matrix.reset();
+  }
+
+
+  public void applyMatrix(PMatrix source) {
+    super.applyMatrix(source);
+  }
+
+
+  public void applyMatrix(PMatrix2D source) {
+    super.applyMatrix(source);
+  }
+
+
+  public void applyMatrix(float n00, float n01, float n02,
+                          float n10, float n11, float n12) {
+    super.applyMatrix(n00, n01, n02,
+                      n10, n11, n12);
+  }
+
+
+  public void apply(PMatrix3D source) {
+    // TODO: implement for geometry shapes.
+    applyMatrix(source.m00, source.m01, source.m02, source.m03,
+                source.m10, source.m11, source.m12, source.m13,
+                source.m20, source.m21, source.m22, source.m23,
+                source.m30, source.m31, source.m32, source.m33);
+  }
+
+
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
+    if (family == GROUP) {
+      super.applyMatrix(n00, n01, n02, n03,
+                        n10, n11, n12, n13,
+                        n20, n21, n22, n23,
+                        n30, n31, n32, n33);
+    } else {
+      checkMatrix(3);
+      matrix.apply(n00, n01, n02, n03,
+                   n10, n11, n12, n13,
+                   n20, n21, n22, n23,
+                   n30, n31, n32, n33);   
+      tess.applyMatrix((PMatrix3D) matrix);
+      transformed = true;
+      // So the transformation is not applied again when drawing
+      matrix = null;      
+    }
+  }
+  
+  
   
   
   ///////////////////////////////////////////////////////////  
