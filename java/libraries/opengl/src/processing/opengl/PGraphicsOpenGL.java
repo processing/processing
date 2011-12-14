@@ -7914,6 +7914,101 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       return newSize;
     }
+    
+    public void applyMatrix(PMatrix2D tr) {
+      
+    }
+    
+    public void applyMatrix(PMatrix3D tr) {
+      if (0 < fillVertexCount) {
+        int index;
+          
+        for (int i = 0; i < fillVertexCount; i++) {
+          index = 3 * i;
+          float x = fillVertices[index++];
+          float y = fillVertices[index++];
+          float z = fillVertices[index  ];
+        
+          index = 3 * i;
+          float nx = fillNormals[index++];
+          float ny = fillNormals[index++];
+          float nz = fillNormals[index  ];
+
+          index = 3 * i;
+          fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
+          fillVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
+          fillVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
+        
+          index = 3 * i;
+          fillNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
+          fillNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
+          fillNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;          
+        }
+      }
+
+      if (0 < lineVertexCount) {
+        int index;
+        
+        for (int i = 0; i < lineVertexCount; i++) {
+          index = 3 * i;
+          float x = lineVertices[index++];
+          float y = lineVertices[index++];
+          float z = lineVertices[index  ];
+        
+          index = 3 * i;
+          float nx = lineNormals[index++];
+          float ny = lineNormals[index++];
+          float nz = lineNormals[index  ];
+
+          index = 4 * i;
+          float xa = lineAttributes[index++];
+          float ya = lineAttributes[index++];
+          float za = lineAttributes[index  ];
+                    
+          index = 3 * i;
+          lineVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
+          lineVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
+          lineVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
+        
+          index = 3 * i;
+          lineNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
+          lineNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
+          lineNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
+          
+          index = 4 * i;
+          lineAttributes[index++] = xa * tr.m00 + ya * tr.m01 + za * tr.m02 + tr.m03;
+          lineAttributes[index++] = xa * tr.m10 + ya * tr.m11 + za * tr.m12 + tr.m13;
+          lineAttributes[index  ] = xa * tr.m20 + ya * tr.m21 + za * tr.m22 + tr.m23;              
+        }   
+      }      
+      
+      if (0 < pointVertexCount) {
+        int index;
+       
+        for (int i = 0; i < pointVertexCount; i++) {
+          index = 3 * i;
+          float x = pointVertices[index++];
+          float y = pointVertices[index++];
+          float z = pointVertices[index  ];
+        
+          index = 3 * i;
+          float nx = pointNormals[index++];
+          float ny = pointNormals[index++];
+          float nz = pointNormals[index  ];
+                    
+          index = 3 * i;
+          pointVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
+          pointVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
+          pointVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
+          
+          index = 3 * i;
+          pointNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
+          pointNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
+          pointNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
+        } 
+      }
+      
+    }    
   }
 
   final static protected int MIN_ACCURACY = 6; 
