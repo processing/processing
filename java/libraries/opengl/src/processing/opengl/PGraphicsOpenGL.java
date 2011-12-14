@@ -1768,18 +1768,31 @@ public class PGraphicsOpenGL extends PGraphics {
     super.hint(which);    
 
     if (which == DISABLE_DEPTH_TEST) {
+      flush();
       gl.glDisable(GL.GL_DEPTH_TEST);
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 
     } else if (which == ENABLE_DEPTH_TEST) {
+      flush();
       gl.glEnable(GL.GL_DEPTH_TEST);
 
     } else if (which == DISABLE_DEPTH_MASK) {
+      flush();
       gl.glDepthMask(false);
 
     } else if (which == ENABLE_DEPTH_MASK) {
-      gl.glDepthMask(true);            
+      flush();
+      gl.glDepthMask(true);
+      
+    } else if (which == DISABLE_ACCURATE_2D) {
+      flush();
+      setFlushMode(FLUSH_WHEN_FULL);
+      
+    } else if (which == ENABLE_ACCURATE_2D) {
+      flush();
+      setFlushMode(FLUSH_AFTER_SHAPE);
+      
     }
 
   }
@@ -2197,22 +2210,20 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
       
-      
       if (hasPoints) {
         renderPoints();
       } 
 
       if (hasLines) {
-        renderLines();    
+        renderLines();
       }    
             
-      
       if (flushMode == FLUSH_WHEN_FULL) {
         gl2f.glPopMatrix();
       }
     }
     
-    tess.reset();   
+    tess.reset();     
   }
   
 
