@@ -554,26 +554,27 @@ public interface PConstants {
 //  static final int ENABLE_OPENGL_2X_SMOOTH     = -1;
 //  static final int ENABLE_OPENGL_4X_SMOOTH     =  2;
 
-  static final int DISABLE_NATIVE_FONTS        =  1;
-  static final int ENABLE_NATIVE_FONTS         = -1;
-
-  static final int DISABLE_DEPTH_TEST          =  2;
-  static final int ENABLE_DEPTH_TEST           = -2;
-
+  
+  static final int ENABLE_NATIVE_FONTS         =  1;
+  static final int DISABLE_NATIVE_FONTS        = -1;
+  
+  static final int ENABLE_DEPTH_TEST           =  2;
+  static final int DISABLE_DEPTH_TEST          = -2;
+    
   static final int ENABLE_DEPTH_SORT           =  3;
   static final int DISABLE_DEPTH_SORT          = -3;
-
-  static final int DISABLE_OPENGL_ERROR_REPORT =  4;
-  static final int ENABLE_OPENGL_ERROR_REPORT  = -4;
-
+  
+  static final int ENABLE_OPENGL_ERROR_REPORT  =  4;
+  static final int DISABLE_OPENGL_ERROR_REPORT = -4;
+  
   static final int ENABLE_ACCURATE_TEXTURES    =  5;
   static final int DISABLE_ACCURATE_TEXTURES   = -5;
 
-  static final int DISABLE_DEPTH_MASK          =  6;
   static final int ENABLE_DEPTH_MASK           = -6;
+  static final int DISABLE_DEPTH_MASK          =  6;  
 
-  static final int DISABLE_ACCURATE_2D         =  7;
-  static final int ENABLE_ACCURATE_2D          = -7;  
+  static final int ENABLE_ACCURATE_2D          =  7;
+  static final int DISABLE_ACCURATE_2D         = -7;    
   
   static final int HINT_COUNT                  =  8;
 
