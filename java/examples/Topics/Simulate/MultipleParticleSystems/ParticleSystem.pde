@@ -2,29 +2,25 @@
 
 class ParticleSystem {
 
-  ArrayList particles;    // An arraylist for all the particles
-  PVector origin;        // An origin point for where particles are birthed
+  ArrayList<Particle> particles;    // An arraylist for all the particles
+  PVector origin;                   // An origin point for where particles are birthed
 
   ParticleSystem(int num, PVector v) {
-    particles = new ArrayList();              // Initialize the arraylist
+    particles = new ArrayList<Particle>();   // Initialize the arraylist
     origin = v.get();                        // Store the origin point
     for (int i = 0; i < num; i++) {
-      // We have a 50% chance of adding each kind of particle
-      if (random(1) < 0.5) {
-        particles.add(new CrazyParticle(origin)); 
-      } else {
-        particles.add(new Particle(origin)); 
-      }
+      particles.add(new Particle(origin));    // Add "num" amount of particles to the arraylist
     }
   }
 
   void run() {
-    // Cycle through the ArrayList backwards b/c we are deleting
-    for (int i = particles.size()-1; i >= 0; i--) {
-      Particle p = (Particle) particles.get(i);
+    // Cycle through the ArrayList using Iterator we are deleting
+    Iterator<Particle> it = particles.iterator();
+    while (it.hasNext()) {
+      Particle p = it.next();
       p.run();
-      if (p.dead()) {
-        particles.remove(i);
+      if (p.isDead()) {
+        it.remove();
       }
     }
   }
@@ -41,11 +37,9 @@ class ParticleSystem {
   boolean dead() {
     if (particles.isEmpty()) {
       return true;
-    } 
-    else {
+    } else {
       return false;
     }
   }
 
 }
-

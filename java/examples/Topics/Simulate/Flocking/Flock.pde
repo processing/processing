@@ -1,15 +1,14 @@
 // The Flock (a list of Boid objects)
 
 class Flock {
-  ArrayList boids; // An arraylist for all the boids
+  ArrayList<Boid> boids; // An ArrayList for all the boids
 
   Flock() {
-    boids = new ArrayList(); // Initialize the arraylist
+    boids = new ArrayList<Boid>(); // Initialize the ArrayList
   }
 
   void run() {
-    for (int i = 0; i < boids.size(); i++) {
-      Boid b = (Boid) boids.get(i);  
+    for (Boid b : boids) {
       b.run(boids);  // Passing the entire list of boids to each boid individually
     }
   }
