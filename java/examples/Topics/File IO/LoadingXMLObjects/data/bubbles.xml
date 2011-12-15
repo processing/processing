@@ -1,0 +1,1 @@
+<?xml version="1.0"?><bubbles>  <bubble>    <diameter>40</diameter>    <color red="75" green="255" blue="0"/>  </bubble>  <bubble>    <diameter>20</diameter>    <color red="255" green="75" blue="25"/>  </bubble>  <bubble>    <diameter>80</diameter>    <color red="100" green="150" blue="200"/>  </bubble></bubbles>
