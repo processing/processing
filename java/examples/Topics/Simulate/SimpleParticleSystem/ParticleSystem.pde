@@ -2,49 +2,26 @@
 // An ArrayList is used to manage the list of Particles 
 
 class ParticleSystem {
+  ArrayList<Particle> particles;
+  PVector origin;
 
-  ArrayList particles;    // An arraylist for all the particles
-  PVector origin;        // An origin point for where particles are born
-
-  ParticleSystem(int num, PVector v) {
-    particles = new ArrayList();              // Initialize the arraylist
-    origin = v.get();                        // Store the origin point
-    for (int i = 0; i < num; i++) {
-      particles.add(new Particle(origin));    // Add "num" amount of particles to the arraylist
-    }
-  }
-
-  void run() {
-    // Cycle through the ArrayList backwards b/c we are deleting
-    for (int i = particles.size()-1; i >= 0; i--) {
-      Particle p = (Particle) particles.get(i);
-      p.run();
-      if (p.dead()) {
-        particles.remove(i);
-      }
-    }
+  ParticleSystem(PVector location) {
+    origin = location.get();
+    particles = new ArrayList<Particle>();
   }
 
   void addParticle() {
     particles.add(new Particle(origin));
   }
-  
-    void addParticle(float x, float y) {
-    particles.add(new Particle(new PVector(x,y)));
-  }
 
-  void addParticle(Particle p) {
-    particles.add(p);
-  }
-
-  // A method to test if the particle system still has particles
-  boolean dead() {
-    if (particles.isEmpty()) {
-      return true;
-    } else {
-      return false;
+  void run() {
+    Iterator<Particle> it = particles.iterator();
+    while (it.hasNext()) {
+      Particle p = it.next();
+      p.run();
+      if (p.isDead()) {
+        it.remove(); 
+      }
     }
   }
-
 }
-

@@ -3,12 +3,12 @@
 
 class ParticleSystem {
 
-  ArrayList particles;    // An arraylist for all the particles
+  ArrayList<Particle> particles;    // An arraylist for all the particles
   PVector origin;        // An origin point for where particles are birthed
   PImage img;
   
   ParticleSystem(int num, PVector v, PImage img_) {
-    particles = new ArrayList();              // Initialize the arraylist
+    particles = new ArrayList<Particle>();              // Initialize the arraylist
     origin = v.get();                        // Store the origin point
     img = img_;
     for (int i = 0; i < num; i++) {
@@ -17,21 +17,21 @@ class ParticleSystem {
   }
 
   void run() {
-    // Cycle through the ArrayList backwards b/c we are deleting
-    for (int i = particles.size()-1; i >= 0; i--) {
-      Particle p = (Particle) particles.get(i);
+    Iterator<Particle> it = particles.iterator();
+    while (it.hasNext()) {
+      Particle p = it.next();
       p.run();
       if (p.dead()) {
-        particles.remove(i);
+        it.remove();
       }
     }
   }
   
   // Method to add a force vector to all particles currently in the system
-  void add_force(PVector dir) {
-    for (int i = particles.size()-1; i >= 0; i--) {
-      Particle p = (Particle) particles.get(i);
-      p.add_force(dir);
+  void applyForce(PVector dir) {
+    // Enhanced loop!!!
+    for (Particle p: particles) {
+      p.applyForce(dir);
     }
   
   }  
@@ -54,4 +54,5 @@ class ParticleSystem {
   }
 
 }
+
 

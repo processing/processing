@@ -9,34 +9,32 @@
  * with Particles and CrazyParticles (a subclass of Particle)
  * Note use of Inheritance and Polymorphism here. 
  */
- 
-ArrayList psystems;
+
+ArrayList<ParticleSystem> systems;
 
 void setup() {
   size(640, 360);
-  colorMode(RGB, 255, 255, 255, 100);
-  psystems = new ArrayList();
+  systems = new ArrayList<ParticleSystem>();
+  smooth();
 }
 
 void draw() {
   background(0);
-
-  // Cycle through all particle systems, run them and delete old ones
-  for (int i = psystems.size()-1; i >= 0; i--) {
-    ParticleSystem psys = (ParticleSystem) psystems.get(i);
-    psys.run();
-    if (psys.dead()) {
-      psystems.remove(i);
-    }
+  for (ParticleSystem ps: systems) {
+    ps.run();
+    ps.addParticle();
   }
 
+  if (systems.isEmpty()) {
+    fill(255);
+    textAlign(CENTER);
+    text("click mouse to add particle systems", width/2, height/2);
+  }
 }
 
-// When the mouse is pressed, add a new particle system
 void mousePressed() {
-  psystems.add(new ParticleSystem(int(random(5,25)),new PVector(mouseX,mouseY)));
+  systems.add(new ParticleSystem(1, new PVector(mouseX, mouseY)));
 }
-
 
 
 
