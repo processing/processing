@@ -8425,17 +8425,28 @@ public class PGraphicsOpenGL extends PGraphics {
             addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
           }          
         } else {          
-          GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
+          tessGeo.firstLineIndex = tessGeo.fillIndexCount;
+          tessGeo.addFillVertices(inGeo.getNumLineVertices());
+          tessGeo.addFillIndices(inGeo.getNumLineIndices());
+          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1; 
+          int vcount = tessGeo.firstFillVertex;
+          int icount = tessGeo.firstFillIndex;           
           for (int ln = 0; ln < lineCount; ln++) {
             int i0 = first + 2 * ln + 0;
-            int i1 = first + 2 * ln + 1;
-            path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-            path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-            path.closePath();
-          }
-          tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-          tessellatePath(path);
-          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;              
+            int i1 = first + 2 * ln + 1;            
+            addLineToFill(i0, i1, vcount, icount); vcount += 4; icount += 6;
+          }    
+//          GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
+//          for (int ln = 0; ln < lineCount; ln++) {
+//            int i0 = first + 2 * ln + 0;
+//            int i1 = first + 2 * ln + 1;
+//            path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
+//            path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
+//            path.closePath();
+//          }
+//          tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
+//          tessellatePath(path);
+//          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;          
         }
       }  
     }
