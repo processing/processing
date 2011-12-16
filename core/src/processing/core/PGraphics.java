@@ -3504,7 +3504,7 @@ public class PGraphics extends PImage implements PConstants {
   public void textFont(PFont which) {
     if (which != null) {
       textFont = which;
-      if (hintEnabled(ENABLE_NATIVE_FONTS)) {
+      if (hints[ENABLE_NATIVE_FONTS]) {
         //if (which.font == null) {
         which.findFont();
         //}
