@@ -1414,8 +1414,9 @@ public class PGraphicsOpenGL extends PGraphics {
       gl.glDisable(GL.GL_DEPTH_TEST);
     }
     // use <= since that's what processing.core does
-    gl.glDepthFunc(GL.GL_LEQUAL);
-
+    //gl.glDepthFunc(GL.GL_LEQUAL);
+    gl.glDepthFunc(GL.GL_LESS);
+    
     if (hintEnabled(ENABLE_DEPTH_MASK)) {
       gl.glDepthMask(true);        
     } else {
@@ -1490,7 +1491,7 @@ public class PGraphicsOpenGL extends PGraphics {
     gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);    
     
     drawing = true;    
-    drawing2D = true;   
+    drawing2D = false;   
     
     report("bot beginDraw()");
   }
@@ -2196,7 +2197,7 @@ public class PGraphicsOpenGL extends PGraphics {
         gl2f.glPushMatrix();
         gl2f.glLoadMatrixf(pcamera, 0);
       }
-
+      
       if (hasFill) {
         if (drawing2D && textureImage != null && tess.isStroked) {
           // If the shape is stroked and texture in 2D mode, we need to 
@@ -2209,6 +2210,7 @@ public class PGraphicsOpenGL extends PGraphics {
           // buffers.
           renderFill(textureImage);
         }
+        PApplet.println("flush fill");
       }
       
       if (hasPoints) {
@@ -2217,8 +2219,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (hasLines) {
         renderLines();
-      }    
-            
+        PApplet.println("flush lines");
+      }          
+      
       if (flushMode == FLUSH_WHEN_FULL) {
         gl2f.glPopMatrix();
       }
@@ -8112,7 +8115,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
 
     protected void tessellateRoundPoints() {
-      if (stroke) {
+      int nInVert = inGeo.lastVertex - inGeo.firstVertex + 1;
+      
+      if (stroke && 1 <= nInVert) {
         tessGeo.isStroked = true;
         
         if (is3D) {
@@ -8265,12 +8270,14 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     protected void tessellateSquarePoints() {
-      if (stroke) {
+      int nInVert = inGeo.lastVertex - inGeo.firstVertex + 1;
+      
+      if (stroke && 1 <= nInVert) {
         tessGeo.isStroked = true;
         
         if (is3D) {
           // Each point generates a separate quad.
-          int quadCount = inGeo.lastVertex - inGeo.firstVertex + 1;
+          int quadCount = nInVert;
           
           // Each quad is formed by 5 vertices, the center one
           // is the input vertex, and the other 4 define the 
@@ -8325,7 +8332,7 @@ public class PGraphicsOpenGL extends PGraphics {
           // Same as in 3D, but the geometry is stored in the fill arrays
                     
           // Each point generates a separate quad.
-          int quadCount = inGeo.lastVertex - inGeo.firstVertex + 1;
+          int quadCount = nInVert;
           
           // Each quad is formed by 5 vertices, the center one
           // is the input vertex, and the other 4 define the 
@@ -8401,11 +8408,13 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
-    public void tessellateLines() {      
-      if (stroke) {
+    public void tessellateLines() {
+      int nInVert = inGeo.lastVertex - inGeo.firstVertex + 1;
+      
+      if (stroke && 2 <= nInVert) {
         tessGeo.isStroked = true;
         
-        int lineCount = (inGeo.lastVertex - inGeo.firstVertex + 1) / 2;
+        int lineCount = nInVert / 2;
         int first = inGeo.firstVertex;
         if (is3D) {
           // Lines are made up of 4 vertices defining the quad. 
@@ -8452,10 +8461,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void tessellateTriangles() {
-      if (fill) {
+      int nInVert = inGeo.lastVertex - inGeo.firstVertex + 1;
+      
+      if (fill && 3 <= nInVert) {
         tessGeo.addFillVertices(inGeo);
 
-        tessGeo.addFillIndices(inGeo.lastVertex - inGeo.firstVertex + 1);
+        tessGeo.addFillIndices(nInVert);
         int idx0 = tessGeo.firstFillIndex;
         int offset = tessGeo.firstFillVertex;
         for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
@@ -8470,10 +8481,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void tessellateTriangleFan() {
-      if (fill) {
+      int nInVert = inGeo.lastVertex - inGeo.firstVertex + 1;
+      
+      if (fill && 3 <= nInVert) {
         tessGeo.addFillVertices(inGeo);
 
-        tessGeo.addFillIndices(3 * (inGeo.lastVertex - inGeo.firstVertex - 1));
+        tessGeo.addFillIndices(3 * (nInVert - 2));
         int idx = tessGeo.firstFillIndex;
         int offset = tessGeo.firstFillVertex; 
         for (int i = inGeo.firstVertex + 1; i < inGeo.lastVertex; i++) {
@@ -8491,12 +8504,12 @@ public class PGraphicsOpenGL extends PGraphics {
     
     
     public void tessellateTriangleStrip() {
-      int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
+      int nInVert = inGeo.lastVertex - inGeo.firstVertex + 1;
       
-      if (fill) {
+      if (fill && 3 <= nInVert) {
         tessGeo.addFillVertices(inGeo);
                 
-        int triCount = nvertFill - 2;
+        int triCount = nInVert - 2;
         
         // Each vertex, except the first and last, defines a triangle.
         tessGeo.addFillIndices(3 * triCount);
@@ -8521,10 +8534,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void tessellateQuads() {
-      if (fill) {
+      int nInVert = inGeo.lastVertex - inGeo.firstVertex + 1;
+      
+      if (fill && 4 <= nInVert) {
         tessGeo.addFillVertices(inGeo);
       
-        int quadCount = (inGeo.lastVertex - inGeo.firstVertex + 1) / 4;
+        int quadCount = nInVert / 4;
         
         tessGeo.addFillIndices(6 * quadCount);
         int idx = tessGeo.firstFillIndex;
@@ -8553,16 +8568,17 @@ public class PGraphicsOpenGL extends PGraphics {
     
     
     public void tessellateQuadStrip() {
-      if (fill) {
-        tessGeo.addFillVertices(inGeo);
+      int nInVert = inGeo.lastVertex - inGeo.firstVertex + 1;
       
-        int nvertFill = inGeo.lastVertex - inGeo.firstVertex + 1;
-        int quadCount = nvertFill / 2 - 1;
+      if (fill && 4 <= nInVert) {
+        tessGeo.addFillVertices(inGeo);
+        
+        int quadCount = nInVert / 2 - 1;
         
         tessGeo.addFillIndices(6 * quadCount);
         int idx = tessGeo.firstFillIndex;
         int offset = tessGeo.firstFillVertex; 
-        for (int qd = 1; qd < nvertFill / 2; qd++) {        
+        for (int qd = 1; qd < nInVert / 2; qd++) {        
           int i0 = offset + 2 * (qd - 1);
           int i1 = offset + 2 * (qd - 1) + 1;
           int i2 = offset + 2 * qd + 1;
@@ -8585,7 +8601,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }  
     
     public void tessellatePolygon(boolean solid, boolean closed) {
-      if (fill) {
+      int nInVert = inGeo.lastVertex - inGeo.firstVertex + 1;
+      
+      if (fill && 3 <= nInVert) {
         GLU.gluTessBeginPolygon(gluTess, null);
         
         if (solid) {
