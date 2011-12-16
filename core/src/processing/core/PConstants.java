@@ -41,10 +41,10 @@ public interface PConstants {
   // render & flush modes (in P3D)
   
   static public final int IMMEDIATE = 0;
-  static public final int RETAINED = 1;  
+  static public final int RETAINED  = 1;  
   
-  static public final int FLUSH_AFTER_SHAPE = 0;
-  static public final int FLUSH_WHEN_FULL = 1;  
+  static public final int FLUSH_CONTINUOUSLY = 0;
+  static public final int FLUSH_WHEN_FULL    = 1;  
   
   // vertex fields
   
@@ -550,31 +550,26 @@ public interface PConstants {
   // hints - hint values are positive for the alternate version,
   // negative of the same value returns to the normal/default state
 
-//  static final int DISABLE_OPENGL_2X_SMOOTH    =  1;
-//  static final int ENABLE_OPENGL_2X_SMOOTH     = -1;
-//  static final int ENABLE_OPENGL_4X_SMOOTH     =  2;
-
-  
   static final int ENABLE_NATIVE_FONTS         =  1;
   static final int DISABLE_NATIVE_FONTS        = -1;
   
-  static final int ENABLE_DEPTH_TEST           =  2;
-  static final int DISABLE_DEPTH_TEST          = -2;
-    
+  static final int DISABLE_DEPTH_TEST          =  2;
+  static final int ENABLE_DEPTH_TEST           = -2;
+      
   static final int ENABLE_DEPTH_SORT           =  3;
   static final int DISABLE_DEPTH_SORT          = -3;
   
-  static final int ENABLE_OPENGL_ERROR_REPORT  =  4;
-  static final int DISABLE_OPENGL_ERROR_REPORT = -4;
+  static final int DISABLE_OPENGL_ERROR_REPORT =  4;
+  static final int ENABLE_OPENGL_ERROR_REPORT  = -4;
   
   static final int ENABLE_ACCURATE_TEXTURES    =  5;
   static final int DISABLE_ACCURATE_TEXTURES   = -5;
 
+  static final int DISABLE_DEPTH_MASK          =  6;
   static final int ENABLE_DEPTH_MASK           = -6;
-  static final int DISABLE_DEPTH_MASK          =  6;  
 
   static final int ENABLE_ACCURATE_2D          =  7;
-  static final int DISABLE_ACCURATE_2D         = -7;    
+  static final int DISABLE_ACCURATE_2D         = -7;
   
   static final int HINT_COUNT                  =  8;
 
