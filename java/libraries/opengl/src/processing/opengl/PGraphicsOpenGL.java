@@ -1408,21 +1408,26 @@ public class PGraphicsOpenGL extends PGraphics {
     setDefaultBlend();
        
     // this is necessary for 3D drawing
-    if (hintEnabled(ENABLE_DEPTH_TEST)) {
-      gl.glEnable(GL.GL_DEPTH_TEST);      
+    if (hints[DISABLE_DEPTH_TEST]) {
+      gl.glDisable(GL.GL_DEPTH_TEST);           
     } else {
-      gl.glDisable(GL.GL_DEPTH_TEST);
+      gl.glEnable(GL.GL_DEPTH_TEST); 
     }
     // use <= since that's what processing.core does
-    //gl.glDepthFunc(GL.GL_LEQUAL);
-    gl.glDepthFunc(GL.GL_LESS);
+    gl.glDepthFunc(GL.GL_LEQUAL);
     
-    if (hintEnabled(ENABLE_DEPTH_MASK)) {
-      gl.glDepthMask(true);        
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);             
     } else {
-      gl.glDepthMask(false);
+      gl.glDepthMask(true); 
     }
 
+    if (hints[ENABLE_ACCURATE_2D]) {
+      flushMode = FLUSH_CONTINUOUSLY;
+    } else {
+      flushMode = FLUSH_WHEN_FULL;
+    }
+    
     // setup opengl viewport.    
     gl.glGetIntegerv(GL.GL_VIEWPORT, savedViewport, 0);
     gl.glViewport(0, 0, width, height);  
@@ -1491,7 +1496,7 @@ public class PGraphicsOpenGL extends PGraphics {
     gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);    
     
     drawing = true;    
-    drawing2D = false;   
+    drawing2D = true;   
     
     report("bot beginDraw()");
   }
@@ -1602,18 +1607,18 @@ public class PGraphicsOpenGL extends PGraphics {
     restoreGLMatrices();
     
     // Restoring hints.
-    if (hintEnabled(DISABLE_DEPTH_TEST)) {
-      gl.glEnable(GL.GL_DEPTH_TEST);
-    } else {
+    if (hints[DISABLE_DEPTH_TEST]) {
       gl.glDisable(GL.GL_DEPTH_TEST);
       gl.glClearColor(0, 0, 0, 0);
       gl.glClear(GL.GL_DEPTH_BUFFER_BIT);      
+    } else {
+      gl.glEnable(GL.GL_DEPTH_TEST);      
     }
     
-    if (hintEnabled(ENABLE_DEPTH_MASK)) {
-      gl.glDepthMask(true);        
+    if (hints[DISABLE_DEPTH_MASK]) {
+      gl.glDepthMask(false);             
     } else {
-      gl.glDepthMask(false);
+      gl.glDepthMask(true);  
     }
         
     // Restoring blending.
@@ -1793,7 +1798,7 @@ public class PGraphicsOpenGL extends PGraphics {
       
     } else if (which == ENABLE_ACCURATE_2D) {
       flush();
-      setFlushMode(FLUSH_AFTER_SHAPE);
+      setFlushMode(FLUSH_CONTINUOUSLY);
       
     }
 
@@ -1945,7 +1950,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     tessellate(mode);
     
-    if (flushMode == FLUSH_AFTER_SHAPE || 
+    if (flushMode == FLUSH_CONTINUOUSLY || 
         (flushMode == FLUSH_WHEN_FULL && tess.isFull()) ||
         (flushMode == FLUSH_WHEN_FULL && drawing2D && textureImage != null && stroke)) {
       // Flushing this current shape either because we are in the flush-after-shape,
@@ -2210,7 +2215,6 @@ public class PGraphicsOpenGL extends PGraphics {
           // buffers.
           renderFill(textureImage);
         }
-        PApplet.println("flush fill");
       }
       
       if (hasPoints) {
@@ -2219,7 +2223,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (hasLines) {
         renderLines();
-        PApplet.println("flush lines");
       }          
       
       if (flushMode == FLUSH_WHEN_FULL) {
@@ -4957,7 +4960,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * throw an GL_INVALID_OPERATION error.
    */
   public void report(String where) {
-    if (hintEnabled(ENABLE_OPENGL_ERROR_REPORT)) {
+    if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
       int err = gl.glGetError();
       if (err != 0) {
         String errString = glu.gluErrorString(err);
