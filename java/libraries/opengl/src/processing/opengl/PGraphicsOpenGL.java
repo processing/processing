@@ -191,6 +191,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   // ........................................................  
   
+  static protected HashMap<Integer, Boolean> glVertexArrays = new HashMap<Integer, Boolean>();
   static protected HashMap<Integer, Boolean> glTextureObjects = new HashMap<Integer, Boolean>();
   static protected HashMap<Integer, Boolean> glVertexBuffers = new HashMap<Integer, Boolean>();
   static protected HashMap<Integer, Boolean> glFrameBuffers = new HashMap<Integer, Boolean>();
@@ -666,6 +667,65 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // RESOURCE HANDLING
   
+  // Vertex Array Objects --------------------------------------
+  
+  protected int createVertexArrayObject() {
+    deleteFinalizedVertexArrayObjects();
+    
+    int[] temp = new int[1];
+    gl2x.glGenVertexArrays(1, temp, 0);
+    int id = temp[0];
+    
+    if (glVertexArrays.containsKey(id)) {
+      showWarning("Adding same VAO twice");
+    } else {    
+      glVertexArrays.put(id, false);
+    }
+    
+    return id;
+  }
+  
+  protected void deleteVertexArrayObject(int id) {
+    if (glVertexArrays.containsKey(id)) {
+      int[] temp = { id };
+      gl2x.glDeleteVertexArrays(1, temp, 0);      
+      glVertexArrays.remove(id); 
+    }
+  }
+  
+  protected void deleteAllVertexArrayObjects() {
+    for (Integer id : glVertexArrays.keySet()) {
+      int[] temp = { id.intValue() };
+      gl2x.glDeleteVertexArrays(1, temp, 0);
+    }
+    glVertexArrays.clear();
+  }  
+  
+  // This is synchronized because it is called from the GC thread.
+  synchronized protected void finalizeVertexArrayObject(int id) {
+    if (glVertexArrays.containsKey(id)) {
+      glVertexArrays.put(id, true);
+    } else {
+      showWarning("Trying to finalize non-existing VAO");
+    }
+  }
+  
+  protected void deleteFinalizedVertexArrayObjects() {
+    Set<Integer> finalized = new HashSet<Integer>();
+    
+    for (Integer id : glVertexArrays.keySet()) {
+      if (glVertexArrays.get(id)) {
+        finalized.add(id);
+        int[] temp = { id.intValue() };
+        gl2x.glDeleteVertexArrays(1, temp, 0);        
+      }
+    }
+    
+    for (Integer id : finalized) {
+      glVertexArrays.remove(id);  
+    }
+  }
+
   
   // Texture Objects -------------------------------------------
   
@@ -2329,7 +2389,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float[] vertices = tess.fillVertices;
     int[] indices = tess.fillIndices;
     
-    //gl2f.glGenVertexArrays(arg0, arg1);
+    
     //gl2f.glBindVertexArray
     
     //gl2x.glVertexAttribPointer(arg0)
@@ -7189,6 +7249,16 @@ public class PGraphicsOpenGL extends PGraphics {
     
   }
   
+  // The big issue with TessGeometry is that for immediate mode, it is better to have the data stored in a singke
+  // interleaved array:
+  // float[] data = { x0, y0, z0, r0, g0, b0, a0, nx0, ny0, nz0, u0, v0, x1, y1, z1, r1, g1, b1, a1, nx1, ny1, nz1, u1, v1... 
+  // because coords, colors, normals, etc. are always set at the same time, whereas for retained mode, and specially if the
+  // user creates a PShape which later wants to manipulate by only changing coordinates or color, it is better to have
+  // the data separated as it is currently done:
+  // float[] vertices = { x0, y0, z0, x1, y1, z1...
+  // float[] colors   = { r0, g0, b0, a0, r1, g1, b1, a1...
+  // float[] normals  = { nx0, ny0, nz0, nx1, ny1, nz1...
+  // float[] texcoords= { u0, v0, u1, v1...
   public class TessGeometry {
     int renderMode;
     
@@ -7205,8 +7275,20 @@ public class PGraphicsOpenGL extends PGraphics {
     public float[] fillNormals;
     public float[] fillTexcoords;
 
-    //public float[][] fillMTexcoords;
-    //public float[][] fillAttributes;
+    
+    // The structure of fillData is as follows:
+    // 1) 3 floats (4 * 3 = 12 bytes) for the xyz coordinates of the vertex
+    // 2) 4 floats  (4 * 4 = 16 bytes) for the rgba coordinates of the vertex
+    // 3) 3 floats (4 * 3 = 12 bytes) for the xyz coordinates of the normal
+    // 4) 2 floats (4 * 2 = 8 bytes) for the uv texture coordinates
+    // Since up to here we have 12 + 16 + 12 + 8 = 48 bytes, and it is better make it 
+    // a multiple of 32, then we allocate 16 bytes more for two more texture coordinates
+    // to make for a total of 64 bytes per vertex.
+    // TessGeometry should allow to set how many bytes per vertex, being the number 
+    // at last 64 and a multiple of 32. This would be useful for libraries than need
+    // to add additional custom attributes for each vertex.     
+    public float[] fillData;
+    
     
     public int fillIndexCount;
     public int firstFillIndex;
@@ -7221,6 +7303,18 @@ public class PGraphicsOpenGL extends PGraphics {
     public float[] lineColors;
     public float[] lineNormals;
     public float[] lineAttributes;    
+    
+    
+    // Likewise:
+    // 3 floats (xyz) 12 byes
+    // 4 floats (rgba) 16 bytes
+    // 3 floats (nxyz) 12 bytes
+    // 4 floats (xyzw) 16 bytes
+    // 12 + 16 + 12 + 16 = 24 + 32 = 56 bytes.
+    // We add padding of 8 bytes to reach 64, which can be
+    // used for textured lines (an additional uv float pair per vertex).
+    public float[] lineData;
+    
     
     public int lineIndexCount;
     public int firstLineIndex;
