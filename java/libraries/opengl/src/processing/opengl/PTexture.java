@@ -716,7 +716,6 @@ public class PTexture implements PConstants {
     // Once OpenGL knows the size of the new texture, we make sure it doesn't
     // contain any garbage in the region of interest (0, 0, width, height):
     int[] texels = new int[width * height];
-    java.util.Arrays.fill(texels, 0, width * height, 0x00000000); 
     setTexels(0, 0, width, height, texels); 
     texels = null;
     
