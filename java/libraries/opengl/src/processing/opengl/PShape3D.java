@@ -1395,6 +1395,11 @@ public class PShape3D extends PShape {
     int nu = ogl.sphereDetailU;
     int nv = ogl.sphereDetailV;
     
+    if ((nu < 3) || (nv < 2)) {
+      nu = nv = 30;
+    }
+ 
+    
     float startLat = -90;
     float startLon = 0.0f;
 
