@@ -456,6 +456,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected InGeometry in;
   protected TessGeometry tess;
+  protected TexturingState texState;
 
   protected float[] currentVertex = { 0, 0, 0 };
   protected float[] currentColor = { 0, 0, 0, 0 };  
@@ -476,9 +477,10 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public static final int DEFAULT_IN_VERTICES = 512;
   public static final int DEFAULT_IN_EDGES = 1024;
+  public static final int DEFAULT_IN_TEXTURES = 64;
   public static final int DEFAULT_TESS_VERTICES = 64;
   public static final int DEFAULT_TESS_INDICES = 1024;
-  
+    
   protected Tessellator tessellator;
   
   static protected PShader lineShader;
@@ -520,6 +522,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     in = newInGeometry();
     tess = newTessGeometry(IMMEDIATE);
+    texState = newTexturingState();
     
     glFillVertexBufferID = 0;
     glFillColorBufferID = 0;
@@ -1460,8 +1463,11 @@ public class PGraphicsOpenGL extends PGraphics {
       ogl.disableLights();
     }     
     
+    // TODO: rename in/tess to inGeo/tessGeo.
+    // And inGeo/tessGeo in Tessellator class to in/tess.
     in.reset();
     tess.reset();
+    texState.reset();
     
     // Each frame starts with textures disabled. 
     super.noTexture();
@@ -2006,6 +2012,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void endShape(int mode) {
+    /*
+    // Disabled for now. This should be controlled by an additional hint...
     if (textureImage0 != null && textureImage == null && flushMode == FLUSH_WHEN_FULL) {
       // The previous shape had a texture and this one doesn't. So we need to flush
       // the textured geometry.
@@ -2013,6 +2021,7 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
       textureImage = null;      
     }
+    */
 
     tessellate(mode);
     
@@ -2028,25 +2037,29 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void texture(PImage image) {
+    /*
     if (image != textureImage0 && flushMode == FLUSH_WHEN_FULL) {
       // Changing the texture image, so we need to flush the
       // tessellated geometry accumulated until now, so that
       // textures are not mixed.
       textureImage = textureImage0;      
       flush();     
-    }    
+    } 
+    */   
     super.texture(image);
   }
   
   
   public void noTexture() {
+    /*
     if (null != textureImage0 && flushMode == FLUSH_WHEN_FULL) {
       // Changing the texture image, so we need to flush the
       // tessellated geometry accumulated until now, so that
       // textures are not mixed.      
       textureImage = textureImage0;
       flush();     
-    }        
+    } 
+    */       
     super.noTexture();
   }
   
@@ -2228,6 +2241,8 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       tessellator.set3D();
     }
+        
+    int first = tess.fillIndexCount;
     
     if (shape == POINTS) {
       tessellator.tessellatePoints();    
@@ -2251,7 +2266,16 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (shape == POLYGON) {
       if (stroke && defaultEdges) in.addPolygonEdges(mode == CLOSE);
       tessellator.tessellatePolygon(false, mode == CLOSE);
-    }    
+    }
+    
+    int last = tess.lastFillIndex;    
+    if (textureImage0 != textureImage || texState.count == 0) {
+      texState.addTexture(textureImage, first, last);
+      //PApplet.println("Adding texture image " + textureImage + " " + first + " - " + last);
+    } else {
+      texState.setLastIndex(last);
+      //PApplet.println("updating last " + texState.firstVertex[texState.count] + " - " + last);
+    }
   }
   
   public void flush() {    
@@ -2296,7 +2320,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
-    tess.reset();     
+    tess.reset();  
+    texState.reset();
   }
   
 
@@ -2436,48 +2461,82 @@ public class PGraphicsOpenGL extends PGraphics {
       fillVBOsCreated = true;
     }    
 
-    int size = tess.fillVertexCount;
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillNormals, 0, 3 * size), vboMode);
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
-
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
     gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    
+    int size = tess.fillVertexCount;
+
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);   
+    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillVertices, 0, 3 * size), vboMode);
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    
     gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
     gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillColors, 0, 4 * size), vboMode);
     gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);    
     
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);   
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillVertices, 0, 3 * size), vboMode);
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillNormals, 0, 3 * size), vboMode);
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
 
-    PTexture tex = null;
-    if (textureImage != null) {
-      tex = ogl.getTexture(textureImage);
-      if (tex != null) {
-        gl2f.glEnable(tex.glTarget);
-        gl2f.glActiveTexture(GL.GL_TEXTURE0);
-        gl2f.glBindTexture(tex.glTarget, tex.glID);
-      }
-      
+    if (texState.hasTexture) {
       gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
       gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
       gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillTexcoords, 0, 2 * size), vboMode);
       gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
-    }        
+    }  
+      
+    //size = tess.fillIndexCount;
+    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);      
+      
+    //PApplet.println("Rendering " + texState.count + " tex groups");
+    for (int i = 0; i < texState.count; i++) {
+      PImage img = texState.textures[i];
+      PTexture tex;
+      
+      if (img != null) {
+        tex = ogl.getTexture(img);
+        if (tex != null) {          
+          gl2f.glEnable(tex.glTarget);
+          gl2f.glActiveTexture(GL.GL_TEXTURE0);
+          gl2f.glBindTexture(tex.glTarget, tex.glID);
+        }
+        // TODO: disable last texture target if current texture is null.
+      }
+              
+      int offset = texState.firstIndex[i];
+      size = texState.lastIndex[i] - texState.firstIndex[i] + 1;
+      //PApplet.println("rendering " + i + ": " + offset + " " + size);
+      gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tess.fillIndices, offset, size), vboMode);
+      gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);        
+    }  
     
-    size = tess.fillIndexCount;
-    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tess.fillIndices, 0, size), vboMode);
-    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);        
-    
-    if (tex != null) {
-      gl2f.glActiveTexture(GL.GL_TEXTURE0);
-      gl2f.glBindTexture(tex.glTarget, 0);
-      gl2f.glDisable(tex.glTarget);
+    if (texState.hasTexture) {
+      PTexture tex0 = null;
+      for (int i = 0; i < texState.count; i++) {
+        PImage img = texState.textures[i];
+        if (img != null) {
+          PTexture tex = ogl.getTexture(img);
+          if (tex0 != tex) {        
+            gl2f.glDisable(tex.glTarget);
+            tex0 = tex;
+          }        
+        }
+      }
+      if (tex0 != null) {
+        gl2f.glActiveTexture(GL.GL_TEXTURE0);
+        gl2f.glBindTexture(tex0.glTarget, 0);
+      }        
       gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-    }     
+    }
+    
+//    } else {
+//      size = tess.fillIndexCount;
+//      gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
+//      gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tess.fillIndices, 0, size), vboMode);
+//      gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);        
+//    
+//    }
     
     gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
     gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
@@ -6796,6 +6855,87 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected TessGeometry newTessGeometry(int mode) {
     return new TessGeometry(mode);
+  }
+  
+  protected TexturingState newTexturingState() {
+    return new TexturingState();
+  }
+  
+  public class TexturingState {
+    int count;
+    PImage[] textures;
+    int[] firstIndex;
+    int[] lastIndex;
+    boolean hasTexture;
+    
+    public TexturingState() {
+      allocate();
+    }
+    
+    public void allocate() {
+      textures = new PImage[DEFAULT_IN_TEXTURES];
+      firstIndex = new int[DEFAULT_IN_TEXTURES];
+      lastIndex = new int[DEFAULT_IN_TEXTURES];
+      count = 0;
+      hasTexture = false;
+    }
+    
+    public void reset() {
+      java.util.Arrays.fill(textures, 0, count, null);
+      count = 0;
+      hasTexture = false;
+    }
+    
+    public void dispose() {
+      textures = null;
+      firstIndex = null;
+      lastIndex = null;      
+    }
+    
+    public void addTexture(PImage img, int first, int last) {
+      textureCheck();
+      
+      textures[count] = img;
+      firstIndex[count] = first;
+      lastIndex[count] = last;
+      
+      // At least one non-null texture since last reset.
+      hasTexture |= img != null;
+      
+      count++;
+    }
+    
+    public void setLastIndex(int last) {
+      lastIndex[count - 1] = last;
+    }
+    
+    public void textureCheck() {
+      if (count == textures.length) {
+        int newSize = count << 1;  
+
+        expandTextures(newSize);
+        expandFirstIndex(newSize);
+        expandLastIndex(newSize);
+      }
+    }
+    
+    public void expandTextures(int n) {
+      PImage[] temp = new PImage[n];      
+      PApplet.arrayCopy(textures, 0, temp, 0, count);
+      textures = temp;          
+    }
+        
+    public void expandFirstIndex(int n) {
+      int[] temp = new int[n];      
+      PApplet.arrayCopy(firstIndex, 0, temp, 0, count);
+      firstIndex = temp;      
+    }
+    
+    public void expandLastIndex(int n) {
+      int[] temp = new int[n];      
+      PApplet.arrayCopy(lastIndex, 0, temp, 0, count);
+      lastIndex = temp;      
+    }    
   }
   
   public class InGeometry {
