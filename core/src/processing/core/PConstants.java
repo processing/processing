@@ -570,8 +570,11 @@ public interface PConstants {
 
   static final int ENABLE_ACCURATE_2D          =  7;
   static final int DISABLE_ACCURATE_2D         = -7;
-  
-  static final int HINT_COUNT                  =  8;
+
+  static final int DISABLE_TEXTURE_CACHE       =  8;
+  static final int ENABLE_TEXTURE_CACHE        = -8;
+    
+  static final int HINT_COUNT                  =  9;
 
   // Rendering pipeline modes
 
