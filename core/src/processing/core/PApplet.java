@@ -1210,8 +1210,10 @@ public class PApplet extends Applet
    * ( end auto-generated )
  * @webref structure
  * @usage web_application
- * @see PApplet#loop()
  * @see PApplet#size(int, int)
+ * @see PApplet#loop()
+ * @see PApplet#noLoop()
+ * @see PApplet#draw()
  */
   public void setup() {
   }
@@ -1241,6 +1243,8 @@ public class PApplet extends Applet
  * @see PApplet#setup()
  * @see PApplet#loop()
  * @see PApplet#noLoop()
+ * @see PApplet#redraw()
+ * @see PApplet#frameRate()
  */
   public void draw() {
     // if no draw method, then shut things down
@@ -1969,8 +1973,10 @@ public class PApplet extends Applet
    * ( end auto-generated )
  * @webref structure
  * @usage web_application
- * @see PApplet#noLoop()
+ * @see PApplet#draw()
  * @see PApplet#loop()
+ * @see PApplet#noLoop()
+ * @see PApplet#frameRate()
  */
   synchronized public void redraw() {
     if (!looping) {
@@ -1999,6 +2005,8 @@ public class PApplet extends Applet
  * @webref structure
  * @usage web_application
  * @see PApplet#noLoop()
+ * @see PApplet#redraw()
+ * @see PApplet#draw()
  */
   synchronized public void loop() {
     if (!looping) {
@@ -2760,6 +2768,11 @@ public class PApplet extends Applet
    * maximum speed.
    * @webref environment
    * @param newRateTarget number of frames per second
+   * @see PApplet#setup()
+   * @see PApplet#draw()
+   * @see PApplet#loop()
+   * @see PApplet#noLoop()
+   * @see PApplet#redraw()
    */
   public void frameRate(float newRateTarget) {
     frameRateTarget = newRateTarget;
@@ -6742,6 +6755,7 @@ public class PApplet extends Applet
    * @param dst the destination array of the same data type as the source array
    * @param dstPosition starting position in the destination array
    * @param length number of array elements to be copied
+   * @see PApplet#concat(boolean[], boolean[])
    */
   static public void arrayCopy(Object src, int srcPosition,
                                Object dst, int dstPosition,
@@ -7288,6 +7302,7 @@ public class PApplet extends Applet
   * @param a first array to concatenate
   * @param b second array to concatenate
   * @see PApplet#splice(boolean[], boolean, int)
+  * @see PApplet#arrayCopy(Object, int, Object, int, int)
   */
   static public boolean[] concat(boolean a[], boolean b[]) {
     boolean c[] = new boolean[a.length + b.length];
@@ -8667,8 +8682,9 @@ public class PApplet extends Applet
   * @webref data:conversion
   * @param what value to convert
   * @param digits number of digits to return
-  * @see PApplet#unhex(String)
   * @see PApplet#unbinary(String)
+  * @see PApplet#hex(int,int)
+  * @see PApplet#unhex(String)
   */
   static final public String binary(int what, int digits) {
     String stuff = Integer.toBinaryString(what);
@@ -8697,8 +8713,9 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref data:conversion
    * @param what String to convert to an integer
-   * @see PApplet#hex(int,int)
    * @see PApplet#binary(byte)
+   * @see PApplet#hex(int,int)
+   * @see PApplet#unhex(String)
    */
   static final public int unbinary(String what) {
     return Integer.parseInt(what, 2);
@@ -10267,6 +10284,7 @@ public class PApplet extends Applet
    * @webref shape:attributes
    * @param mode either CENTER, RADIUS, CORNER, or CORNERS
    * @see PApplet#ellipse(float, float, float, float)
+   * @see PApplet#arc(float, float, float, float, float, float)
    */
   public void ellipseMode(int mode) {
     if (recorder != null) recorder.ellipseMode(mode);
@@ -10289,6 +10307,7 @@ public class PApplet extends Applet
    * @param c width of the ellipse
    * @param d height of the ellipse
    * @see PApplet#ellipseMode(int)
+   * @see PApplet#arc(float, float, float, float, float, float)
    */
   public void ellipse(float a, float b, float c, float d) {
     if (recorder != null) recorder.ellipse(a, b, c, d);
@@ -10313,8 +10332,8 @@ public class PApplet extends Applet
    * @param d height of the arc's ellipse
    * @param start angle to start the arc, specified in radians
    * @param stop angle to stop the arc, specified in radians
-   * @see PApplet#ellipseMode(int)
    * @see PApplet#ellipse(float, float, float, float)
+   * @see PApplet#ellipseMode(int)
    */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
@@ -11248,6 +11267,8 @@ public class PApplet extends Applet
    * @see PFont#PFont
    * @see PGraphics#textFont(PFont)
    * @see_external String
+   * @see PGraphics#rectMode(int)
+   * @see PGraphics#fill(int, float)
    */
   public void text(char c) {
     if (recorder != null) recorder.text(c);
@@ -12835,8 +12856,9 @@ public class PApplet extends Applet
    * @webref lights_camera:material_properties
    * @usage web_application
    * @param rgb color to set
-   * @see PGraphics#emissive(float, float, float)
+   * @see PGraphics#lightSpecular(float, float, float)
    * @see PGraphics#ambient(float, float, float)
+   * @see PGraphics#emissive(float, float, float)
    * @see PGraphics#shininess(float)
    */
   public void specular(int rgb) {
@@ -13184,6 +13206,7 @@ public class PApplet extends Applet
    * @param x red or hue value (depending on current color mode)
    * @param y green or saturation value (depending on current color mode)
    * @param z blue or brightness value (depending on current color mode)
+   * @see PGraphics#specular(float, float, float)
    * @see PGraphics#lights()
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
    * @see PGraphics#pointLight(float, float, float, float, float, float)
@@ -13367,8 +13390,8 @@ public class PApplet extends Applet
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
-   * @see PGraphics#green(int)
    * @see PGraphics#red(int)
+   * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
@@ -13399,10 +13422,11 @@ public class PApplet extends Applet
    * @param what any value of the color datatype
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
-   * @ref rightshift
+   * @see_external rightshift
    */
   public final float red(int what) {
     return g.red(what);
@@ -13429,10 +13453,11 @@ public class PApplet extends Applet
    * @param what any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
-   * @ref rightshift
+   * @see_external rightshift
    */
   public final float green(int what) {
     return g.green(what);
@@ -13459,9 +13484,11 @@ public class PApplet extends Applet
    * @param what any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
+   * @see_external rightshift
    */
   public final float blue(int what) {
     return g.blue(what);
@@ -13480,6 +13507,7 @@ public class PApplet extends Applet
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
    */
@@ -13500,6 +13528,7 @@ public class PApplet extends Applet
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#brightness(int)
    */
@@ -13521,6 +13550,7 @@ public class PApplet extends Applet
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    */
