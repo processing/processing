@@ -2102,6 +2102,7 @@ public class PGraphics extends PImage implements PConstants {
    * @webref shape:attributes
    * @param mode either CENTER, RADIUS, CORNER, or CORNERS
    * @see PApplet#ellipse(float, float, float, float)
+   * @see PApplet#arc(float, float, float, float, float, float)
    */
   public void ellipseMode(int mode) {
     ellipseMode = mode;
@@ -2123,6 +2124,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param c width of the ellipse
    * @param d height of the ellipse
    * @see PApplet#ellipseMode(int)
+   * @see PApplet#arc(float, float, float, float, float, float)
    */
   public void ellipse(float a, float b, float c, float d) {
     float x = a;
@@ -2180,8 +2182,8 @@ public class PGraphics extends PImage implements PConstants {
    * @param d height of the arc's ellipse
    * @param start angle to start the arc, specified in radians
    * @param stop angle to stop the arc, specified in radians
-   * @see PApplet#ellipseMode(int)
    * @see PApplet#ellipse(float, float, float, float)
+   * @see PApplet#ellipseMode(int)
    */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
@@ -3758,6 +3760,8 @@ public class PGraphics extends PImage implements PConstants {
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#textFont(PFont)
+   * @see PGraphics#rectMode(int)
+   * @see PGraphics#fill(int, float)
    * @see_external String
    */
   public void text(char c) {
@@ -5981,8 +5985,9 @@ public class PGraphics extends PImage implements PConstants {
    * @webref lights_camera:material_properties
    * @usage web_application
    * @param rgb color to set
-   * @see PGraphics#emissive(float, float, float)
+   * @see PGraphics#lightSpecular(float, float, float)
    * @see PGraphics#ambient(float, float, float)
+   * @see PGraphics#emissive(float, float, float)
    * @see PGraphics#shininess(float)
    */
   public void specular(int rgb) {
@@ -6344,6 +6349,7 @@ public class PGraphics extends PImage implements PConstants {
    * @param x red or hue value (depending on current color mode)
    * @param y green or saturation value (depending on current color mode)
    * @param z blue or brightness value (depending on current color mode)
+   * @see PGraphics#specular(float, float, float)
    * @see PGraphics#lights()
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
    * @see PGraphics#pointLight(float, float, float, float, float, float)
@@ -6953,8 +6959,8 @@ public class PGraphics extends PImage implements PConstants {
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
-   * @see PGraphics#green(int)
    * @see PGraphics#red(int)
+   * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
@@ -6987,10 +6993,11 @@ public class PGraphics extends PImage implements PConstants {
    * @param what any value of the color datatype
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
-   * @ref rightshift
+   * @see_external rightshift
    */
   public final float red(int what) {
     float c = (what >> 16) & 0xff;
@@ -7019,10 +7026,11 @@ public class PGraphics extends PImage implements PConstants {
    * @param what any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
-   * @ref rightshift
+   * @see_external rightshift
    */
   public final float green(int what) {
     float c = (what >> 8) & 0xff;
@@ -7051,9 +7059,11 @@ public class PGraphics extends PImage implements PConstants {
    * @param what any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
+   * @see_external rightshift
    */
   public final float blue(int what) {
     float c = (what) & 0xff;
@@ -7074,6 +7084,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
    */
@@ -7099,6 +7110,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#brightness(int)
    */
@@ -7125,6 +7137,7 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
+   * @see PGraphics#alpha(int)
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    */
