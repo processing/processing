@@ -456,7 +456,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected InGeometry in;
   protected TessGeometry tess;
-  protected TexturingState texState;
+  protected TexState texState;
 
   protected float[] currentVertex = { 0, 0, 0 };
   protected float[] currentColor = { 0, 0, 0, 0 };  
@@ -488,7 +488,6 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected int lineAttribsID;
   static protected int pointAttribsID;
   
-  protected boolean drawing2D;
   protected PImage textureImage0;
   
   protected boolean clip = false;
@@ -522,7 +521,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     in = newInGeometry();
     tess = newTessGeometry(IMMEDIATE);
-    texState = newTexturingState();
+    texState = newTexState();
     
     glFillVertexBufferID = 0;
     glFillColorBufferID = 0;
@@ -738,7 +737,6 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] temp = new int[1];
     gl.glGenTextures(1, temp, 0);
     int id = temp[0];
-    PApplet.println("Created texture object: " + id);
     
     if (glTextureObjects.containsKey(id)) {
       showWarning("Adding same texture twice");
@@ -1566,8 +1564,7 @@ public class PGraphicsOpenGL extends PGraphics {
     gl.glClearColor(0, 0, 0, 0);
     gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);    
     
-    drawing = true;    
-    drawing2D = true;   
+    drawing = true;
     
     report("bot beginDraw()");
   }
@@ -2026,8 +2023,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellate(mode);
     
     if (flushMode == FLUSH_CONTINUOUSLY || 
-        (flushMode == FLUSH_WHEN_FULL && tess.isFull()) ||
-        (flushMode == FLUSH_WHEN_FULL && drawing2D && textureImage != null && stroke)) {
+        (flushMode == FLUSH_WHEN_FULL && tess.isFull())) {
       // Flushing this current shape either because we are in the flush-after-shape,
       // or the tess buffer is full or... we are in 2D mode and the shape is textured
       // and stroked, so we need to rendering right away to avoid depth-sorting issues.
@@ -2152,8 +2148,6 @@ public class PGraphicsOpenGL extends PGraphics {
         v = 1 - v;
       }      
     }
-
-    drawing2D &= PApplet.abs(z) < FLOAT_EPS;  
     
     in.addVertex(x, y, z, 
                  fR, fG, fB, fA, 
@@ -2236,12 +2230,6 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeJoin(strokeJoin);
     tessellator.setStrokeColor(strokeR, strokeG, strokeB, strokeA);
     
-    if (drawing2D) {
-      tessellator.set2D();
-    } else {
-      tessellator.set3D();
-    }
-        
     int first = tess.fillIndexCount;
     
     if (shape == POINTS) {
@@ -2268,13 +2256,11 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellator.tessellatePolygon(false, mode == CLOSE);
     }
     
-    int last = tess.lastFillIndex;    
+    int last = tess.lastFillIndex;        
     if (textureImage0 != textureImage || texState.count == 0) {
       texState.addTexture(textureImage, first, last);
-      //PApplet.println("Adding texture image " + textureImage + " " + first + " - " + last);
     } else {
       texState.setLastIndex(last);
-      //PApplet.println("updating last " + texState.firstVertex[texState.count] + " - " + last);
     }
   }
   
@@ -2294,17 +2280,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       
       if (hasFill) {
-        if (drawing2D && textureImage != null && tess.isStroked) {
-          // If the shape is stroked and texture in 2D mode, we need to 
-          // first render the textured fill geometry, and then the non-textured
-          // stroke geometry. This is done in the next call.
-          renderStrokedFill(textureImage);  
-        } else {        
-          // Normal fill rendering. Also valid in the case of 2D drawing,
-          // since the fill and stroke geometry are all stored in the fill
-          // buffers.
-          renderFill(textureImage);
-        }
+        renderFill(textureImage);
       }
       
       if (hasPoints) {
@@ -2333,21 +2309,23 @@ public class PGraphicsOpenGL extends PGraphics {
     
     startPointShader();
     
-    int size = tess.pointVertexCount;
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.pointNormals, 0, 3 * size), vboMode);    
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
-          
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
     gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.pointColors, 0, 4 * size), vboMode);    
-    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
     
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);            
+    int size = tess.pointVertexCount;
+
     gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
     gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.pointVertices, 0, 3 * size), vboMode);     
     gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.pointColors, 0, 4 * size), vboMode);    
+    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);
+        
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.pointNormals, 0, 3 * size), vboMode);    
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
     
     setupPointShader(glPointAttribBufferID, tess.pointAttributes, size);
     
@@ -2374,21 +2352,23 @@ public class PGraphicsOpenGL extends PGraphics {
     
     startLineShader();
     
-    int size = tess.lineVertexCount;
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.lineNormals, 0, 3 * size), vboMode);
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
-          
+    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
     gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
+    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    
+    int size = tess.lineVertexCount;
+    
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
+    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.lineVertices, 0, 3 * size), vboMode);
+    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    
     gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
     gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.lineColors, 0, 4 * size), vboMode);
     gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);
     
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);            
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.lineVertices, 0, 3 * size), vboMode);
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
+    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.lineNormals, 0, 3 * size), vboMode);
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
     
     setupLineShader(glLineAttribBufferID, tess.lineAttributes, size);
     
@@ -2407,53 +2387,6 @@ public class PGraphicsOpenGL extends PGraphics {
     stopLineShader();
   }  
   
-  protected void renderFill0(PImage textureImage) {
-    float[] colors = tess.fillColors;
-    float[] normals = tess.fillNormals;
-    float[] texcoords = tess.fillTexcoords;
-    float[] vertices = tess.fillVertices;
-    int[] indices = tess.fillIndices;
-    
-    
-    //gl2f.glBindVertexArray
-    
-    //gl2x.glVertexAttribPointer(arg0)
-    //gl2.glVertexAttribPointer(arg0)
-    
-    PTexture tex = null;
-    if (textureImage != null) {
-      tex = ogl.getTexture(textureImage);
-      if (tex != null) {
-        gl2f.glEnable(tex.glTarget);
-        gl2f.glActiveTexture(GL.GL_TEXTURE0);
-        gl2f.glBindTexture(tex.glTarget, tex.glID);
-      } 
-    }         
-    
-    int size = tess.fillIndexCount;
-    gl2.glBegin(GL.GL_TRIANGLES);
-    for (int tr = 0; tr < size / 3; tr++) {
-            
-      for (int pt = 0; pt < 3; pt++) {
-        int i = indices[3 * tr + pt];
-        gl2.glColor4f(colors[4 * i + 0], colors[4 * i + 1], colors[4 * i + 2], colors[4 * i + 3]);
-        gl2.glNormal3f(normals[3 * i + 0], normals[3 * i + 1], normals[3 * i + 2]);
-        if (tex != null) {
-          gl2.glTexCoord2f(texcoords[2 * i + 0], texcoords[2 * i + 1]);          
-        }
-        gl2.glVertex3f(vertices[3 * i + 0], vertices[3 * i + 1], vertices[3 * i + 2]);        
-      }
-      
-      
-    }    
-    gl2.glEnd();
-    
-    if (tex != null) {
-      gl2f.glActiveTexture(GL.GL_TEXTURE0);
-      gl2f.glBindTexture(tex.glTarget, 0);
-      gl2f.glDisable(tex.glTarget);
-    }       
-  }
   
   protected void renderFill(PImage textureImage) {
     if (!fillVBOsCreated) {
@@ -2485,11 +2418,10 @@ public class PGraphicsOpenGL extends PGraphics {
       gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillTexcoords, 0, 2 * size), vboMode);
       gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
     }  
-      
-    //size = tess.fillIndexCount;
+    
     gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);      
       
-    //PApplet.println("Rendering " + texState.count + " tex groups");
+    PTexture tex0 = null;
     for (int i = 0; i < texState.count; i++) {
       PImage img = texState.textures[i];
       PTexture tex;
@@ -2500,19 +2432,21 @@ public class PGraphicsOpenGL extends PGraphics {
           gl2f.glEnable(tex.glTarget);
           gl2f.glActiveTexture(GL.GL_TEXTURE0);
           gl2f.glBindTexture(tex.glTarget, tex.glID);
+          tex0 = tex;
         }
-        // TODO: disable last texture target if current texture is null.
+        if (tex == null && tex0 != null) {
+          gl2f.glDisable(tex0.glTarget);
+        }
       }
               
       int offset = texState.firstIndex[i];
       size = texState.lastIndex[i] - texState.firstIndex[i] + 1;
-      //PApplet.println("rendering " + i + ": " + offset + " " + size);
       gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tess.fillIndices, offset, size), vboMode);
       gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);        
     }  
     
     if (texState.hasTexture) {
-      PTexture tex0 = null;
+      tex0 = null;
       for (int i = 0; i < texState.count; i++) {
         PImage img = texState.textures[i];
         if (img != null) {
@@ -2530,79 +2464,6 @@ public class PGraphicsOpenGL extends PGraphics {
       gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
     }
     
-//    } else {
-//      size = tess.fillIndexCount;
-//      gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-//      gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tess.fillIndices, 0, size), vboMode);
-//      gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);        
-//    
-//    }
-    
-    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-    
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
-    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);    
-  }
-  
-  
-  protected void renderStrokedFill(PImage textureImage) {
-    if (!fillVBOsCreated) {
-      createFillBuffers();
-      fillVBOsCreated = true;
-    }    
-
-    int size = tess.fillVertexCount;
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillNormals, 0, 3 * size), vboMode);
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
-
-    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);    
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillColors, 0, 4 * size), vboMode);
-    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);    
-    
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillVertices, 0, 3 * size), vboMode);
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-
-    PTexture tex = null;
-    if (textureImage != null) {
-      tex = ogl.getTexture(textureImage);
-      if (tex != null) {
-        gl2f.glEnable(tex.glTarget);
-        gl2f.glActiveTexture(GL.GL_TEXTURE0);
-        gl2f.glBindTexture(tex.glTarget, tex.glID);
-      }
-      
-      gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-      gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-      gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tess.fillTexcoords, 0, 2 * size), vboMode); 
-      gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
-    }        
-    
-    // Draw the textured fill geometry (reaches up to the tess.firstLineIndex - 1 vertex).
-    size = tess.firstLineIndex;
-    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tess.fillIndices, 0, size), vboMode);
-    gl2f.glDrawElements(GL.GL_TRIANGLES, tess.firstLineIndex, GL.GL_UNSIGNED_INT, 0);        
-    
-    if (tex != null) {
-      gl2f.glActiveTexture(GL.GL_TEXTURE0);
-      gl2f.glBindTexture(tex.glTarget, 0);
-      gl2f.glDisable(tex.glTarget);
-      gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-    }     
-
-    // Drawing the stroked lines without texture.
-    int offset = tess.firstLineIndex;
-    size = tess.lastLineIndex - tess.firstLineIndex + 1;
-    gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tess.fillIndices, offset, size), vboMode);
-    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);        
-
     gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
     gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     
@@ -3484,8 +3345,6 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glTranslatef(tx, ty, tz);
     modelviewStack.translate(tx, ty, tz);
     modelviewUpdated = false;
-    
-    drawing2D &= PApplet.abs(tz) < FLOAT_EPS;
   }
 
   /**
@@ -3518,8 +3377,6 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     modelviewStack.rotate(angle, v0, v1, v2);
     modelviewUpdated = false;
-    
-    drawing2D &= PApplet.abs(v0) < FLOAT_EPS && PApplet.abs(v1) < FLOAT_EPS;
   }
 
   /**
@@ -3612,10 +3469,7 @@ public class PGraphicsOpenGL extends PGraphics {
                         n10, n11, n12, n13,
                         n20, n21, n22, n23,
                         n30, n31, n32, n33);
-    modelviewUpdated = false;
-    
-    drawing2D = false;
-    // drawing2D &= drawing2D(); // could use this?
+    modelviewUpdated = false;    
   }
 
   public void updateModelview() {
@@ -6857,18 +6711,18 @@ public class PGraphicsOpenGL extends PGraphics {
     return new TessGeometry(mode);
   }
   
-  protected TexturingState newTexturingState() {
-    return new TexturingState();
+  protected TexState newTexState() {
+    return new TexState();
   }
   
-  public class TexturingState {
+  public class TexState {
     int count;
     PImage[] textures;
     int[] firstIndex;
     int[] lastIndex;
     boolean hasTexture;
     
-    public TexturingState() {
+    public TexState() {
       allocate();
     }
     
@@ -8315,8 +8169,6 @@ public class PGraphicsOpenGL extends PGraphics {
     float strokeRed, strokeGreen, strokeBlue, strokeAlpha;
     int bezierDetil = 20;
     
-    boolean is3D;
-    
     public Tessellator() {
       glu = new GLU();
       
@@ -8331,7 +8183,6 @@ public class PGraphicsOpenGL extends PGraphics {
       GLU.gluTessCallback(gluTess, GLU.GLU_TESS_ERROR, tessCallback);    
       
       bezierDetil = 20;
-      is3D = true;
     }
 
     public void setInGeometry(InGeometry in) {
@@ -8340,14 +8191,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public void setTessGeometry(TessGeometry tess) {
       this.tessGeo = tess;
-    }
-    
-    public void set2D() {
-      is3D = false;  
-    }    
-    
-    public void set3D() {
-      is3D = true;  
     }
     
     public void setFill(boolean fill) {
@@ -8391,152 +8234,66 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke && 1 <= nInVert) {
         tessGeo.isStroked = true;
         
-        if (is3D) {
-          // Each point generates a separate triangle fan. 
-          // The number of triangles of each fan depends on the
-          // stroke weight of the point.
-          int nvertTot = 0;
-          int nindTot = 0;
-          for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
-            int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
-            // Number of points along the perimeter plus the center point.
-            int nvert = perim + 1;
-            nvertTot += nvert; 
-            nindTot += 3 * (nvert - 1);
-          }
-          
-          tessGeo.addPointVertices(nvertTot);
-          tessGeo.addPointIndices(nindTot);
-          int vertIdx = 3 * tessGeo.firstPointVertex;
-          int attribIdx = 2 * tessGeo.firstPointVertex;
-          int indIdx = tessGeo.firstPointIndex;      
-          int firstVert = tessGeo.firstPointVertex;      
-          for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
-            // Creating the triangle fan for each input vertex.
-            int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
-            int nvert = perim + 1;
-            
-            // All the tessellated vertices are identical to the center point
-            for (int k = 0; k < nvert; k++) {
-              tessGeo.putPointVertex(inGeo, i, vertIdx);
-              vertIdx++; 
-            }       
-            
-            // The attributes for each tessellated vertex are the displacement along
-            // the circle perimeter. The point shader will read these attributes and
-            // displace the vertices in screen coordinates so the circles are always
-            // camera facing (bilboards)
-            tessGeo.pointAttributes[2 * attribIdx + 0] = 0;
-            tessGeo.pointAttributes[2 * attribIdx + 1] = 0;
-            attribIdx++;
-            float val = 0;
-            float inc = (float) SINCOS_LENGTH / perim;      
-            for (int k = 0; k < perim; k++) {
-              tessGeo.pointAttributes[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
-              tessGeo.pointAttributes[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
-              val = (val + inc) % SINCOS_LENGTH;                
-              attribIdx++;           
-            }
-            
-            // Adding vert0 to take into account the triangles of all
-            // the preceding points.
-            for (int k = 1; k < nvert - 1; k++) {
-              tessGeo.pointIndices[indIdx++] = firstVert + 0;
-              tessGeo.pointIndices[indIdx++] = firstVert + k;
-              tessGeo.pointIndices[indIdx++] = firstVert + k + 1;
-            }
-            // Final triangle between the last and first point:
-            tessGeo.pointIndices[indIdx++] = firstVert + 0;
-            tessGeo.pointIndices[indIdx++] = firstVert + 1;
-            tessGeo.pointIndices[indIdx++] = firstVert + nvert - 1;      
-            
-            firstVert = vertIdx;
-          }          
-        } else {
-          // Same as in 3D, but the geometry is stored in the fill arrays
-          
-          // Each point generates a separate triangle fan. 
-          // The number of triangles of each fan depends on the
-          // stroke weight of the point.
-          int nvertTot = 0;
-          int nindTot = 0;
-          for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
-            int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
-            // Number of points along the perimeter plus the center point.
-            int nvert = perim + 1;
-            nvertTot += nvert; 
-            nindTot += 3 * (nvert - 1);
-          }
-          
-          PMatrix3D tr = modelviewStack.getTransform();
-          
-          tessGeo.addFillVertices(nvertTot);
-          tessGeo.addFillIndices(nindTot);
-          int vertIdx = 3 * tessGeo.firstFillVertex;
-          int indIdx = tessGeo.firstFillIndex;      
-          int firstVert = tessGeo.firstFillVertex;      
-          for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
-            // Creating the triangle fan for each input vertex.
-            int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
-            int nvert = perim + 1;
-            
-            // Center point (assuming z = 0).
-            float x0 = inGeo.vertices[3 * i + 0];
-            float y0 = inGeo.vertices[3 * i + 1];            
-            
-            tessGeo.fillVertices[3 * vertIdx + 0] = x0 * tr.m00 + y0 * tr.m01 + tr.m03;
-            tessGeo.fillVertices[3 * vertIdx + 1] = x0 * tr.m10 + y0 * tr.m11 + tr.m13;
-            tessGeo.fillVertices[3 * vertIdx + 2] = 0;            
-            tessGeo.fillColors[4 * vertIdx + 0] = strokeRed; 
-            tessGeo.fillColors[4 * vertIdx + 1] = strokeGreen;
-            tessGeo.fillColors[4 * vertIdx + 2] = strokeBlue;
-            tessGeo.fillColors[4 * vertIdx + 3] = strokeAlpha;            
-            tessGeo.fillNormals[3 * vertIdx + 0] = 0;            
-            tessGeo.fillNormals[3 * vertIdx + 1] = 0;
-            tessGeo.fillNormals[3 * vertIdx + 2] = 1;
-            tessGeo.fillTexcoords[2 * vertIdx + 0] = 0;            
-            tessGeo.fillTexcoords[2 * vertIdx + 1] = 0;            
-            vertIdx++;
-                        
-            float val = 0;
-            float inc = (float) SINCOS_LENGTH / perim;      
-            for (int k = 0; k < perim; k++) {
-              float x1 = x0 + 0.5f * cosLUT[(int) val] * strokeWeight;
-              float y1 = y0 + 0.5f * sinLUT[(int) val] * strokeWeight;
-              
-              tessGeo.fillVertices[3 * vertIdx + 0] = x1 * tr.m00 + y1 * tr.m01 + tr.m03;
-              tessGeo.fillVertices[3 * vertIdx + 1] = x1 * tr.m10 + y1 * tr.m11 + tr.m13;
-              tessGeo.fillVertices[3 * vertIdx + 2] = 0;
-              val = (val + inc) % SINCOS_LENGTH;
-              
-              tessGeo.fillColors[4 * vertIdx + 0] = strokeRed; 
-              tessGeo.fillColors[4 * vertIdx + 1] = strokeGreen;
-              tessGeo.fillColors[4 * vertIdx + 2] = strokeBlue;
-              tessGeo.fillColors[4 * vertIdx + 3] = strokeAlpha;            
-              tessGeo.fillNormals[3 * vertIdx + 0] = 0;            
-              tessGeo.fillNormals[3 * vertIdx + 1] = 0;
-              tessGeo.fillNormals[3 * vertIdx + 2] = 1;
-              tessGeo.fillTexcoords[2 * vertIdx + 0] = 0;            
-              tessGeo.fillTexcoords[2 * vertIdx + 1] = 0;
-              
-              vertIdx++;           
-            }
-            
-            // Adding vert0 to take into account the triangles of all
-            // the preceding points.
-            for (int k = 1; k < nvert - 1; k++) {
-              tessGeo.fillIndices[indIdx++] = firstVert + 0;
-              tessGeo.fillIndices[indIdx++] = firstVert + k;
-              tessGeo.fillIndices[indIdx++] = firstVert + k + 1;
-            }
-            // Final triangle between the last and first point:
-            tessGeo.fillIndices[indIdx++] = firstVert + 0;
-            tessGeo.fillIndices[indIdx++] = firstVert + 1;
-            tessGeo.fillIndices[indIdx++] = firstVert + nvert - 1;      
-            
-            firstVert = vertIdx;
-          }          
+        // Each point generates a separate triangle fan. 
+        // The number of triangles of each fan depends on the
+        // stroke weight of the point.
+        int nvertTot = 0;
+        int nindTot = 0;
+        for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
+          int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
+          // Number of points along the perimeter plus the center point.
+          int nvert = perim + 1;
+          nvertTot += nvert; 
+          nindTot += 3 * (nvert - 1);
         }
+        
+        tessGeo.addPointVertices(nvertTot);
+        tessGeo.addPointIndices(nindTot);
+        int vertIdx = 3 * tessGeo.firstPointVertex;
+        int attribIdx = 2 * tessGeo.firstPointVertex;
+        int indIdx = tessGeo.firstPointIndex;      
+        int firstVert = tessGeo.firstPointVertex;      
+        for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
+          // Creating the triangle fan for each input vertex.
+          int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
+          int nvert = perim + 1;
+          
+          // All the tessellated vertices are identical to the center point
+          for (int k = 0; k < nvert; k++) {
+            tessGeo.putPointVertex(inGeo, i, vertIdx);
+            vertIdx++; 
+          }       
+          
+          // The attributes for each tessellated vertex are the displacement along
+          // the circle perimeter. The point shader will read these attributes and
+          // displace the vertices in screen coordinates so the circles are always
+          // camera facing (bilboards)
+          tessGeo.pointAttributes[2 * attribIdx + 0] = 0;
+          tessGeo.pointAttributes[2 * attribIdx + 1] = 0;
+          attribIdx++;
+          float val = 0;
+          float inc = (float) SINCOS_LENGTH / perim;      
+          for (int k = 0; k < perim; k++) {
+            tessGeo.pointAttributes[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
+            tessGeo.pointAttributes[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
+            val = (val + inc) % SINCOS_LENGTH;                
+            attribIdx++;           
+          }
+          
+          // Adding vert0 to take into account the triangles of all
+          // the preceding points.
+          for (int k = 1; k < nvert - 1; k++) {
+            tessGeo.pointIndices[indIdx++] = firstVert + 0;
+            tessGeo.pointIndices[indIdx++] = firstVert + k;
+            tessGeo.pointIndices[indIdx++] = firstVert + k + 1;
+          }
+          // Final triangle between the last and first point:
+          tessGeo.pointIndices[indIdx++] = firstVert + 0;
+          tessGeo.pointIndices[indIdx++] = firstVert + 1;
+          tessGeo.pointIndices[indIdx++] = firstVert + nvert - 1;      
+          
+          firstVert = vertIdx;
+        } 
       }
     }
     
@@ -8546,135 +8303,57 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke && 1 <= nInVert) {
         tessGeo.isStroked = true;
         
-        if (is3D) {
-          // Each point generates a separate quad.
-          int quadCount = nInVert;
+        // Each point generates a separate quad.
+        int quadCount = nInVert;
+        
+        // Each quad is formed by 5 vertices, the center one
+        // is the input vertex, and the other 4 define the 
+        // corners (so, a triangle fan again).
+        int nvertTot = 5 * quadCount;
+        // So the quad is formed by 4 triangles, each requires
+        // 3 indices.
+        int nindTot = 12 * quadCount;
+        
+        tessGeo.addPointVertices(nvertTot);
+        tessGeo.addPointIndices(nindTot);
+        int vertIdx = 3 * tessGeo.firstPointVertex;
+        int attribIdx = 2 * tessGeo.firstPointVertex;
+        int indIdx = tessGeo.firstPointIndex;      
+        int firstVert = tessGeo.firstPointVertex;      
+        for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
+          int nvert = 5;
           
-          // Each quad is formed by 5 vertices, the center one
-          // is the input vertex, and the other 4 define the 
-          // corners (so, a triangle fan again).
-          int nvertTot = 5 * quadCount;
-          // So the quad is formed by 4 triangles, each requires
-          // 3 indices.
-          int nindTot = 12 * quadCount;
+          for (int k = 0; k < nvert; k++) {
+            tessGeo.putPointVertex(inGeo, i, vertIdx);
+            vertIdx++; 
+          }       
           
-          tessGeo.addPointVertices(nvertTot);
-          tessGeo.addPointIndices(nindTot);
-          int vertIdx = 3 * tessGeo.firstPointVertex;
-          int attribIdx = 2 * tessGeo.firstPointVertex;
-          int indIdx = tessGeo.firstPointIndex;      
-          int firstVert = tessGeo.firstPointVertex;      
-          for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
-            int nvert = 5;
-            
-            for (int k = 0; k < nvert; k++) {
-              tessGeo.putPointVertex(inGeo, i, vertIdx);
-              vertIdx++; 
-            }       
-            
-            // The attributes for each tessellated vertex are the displacement along
-            // the quad corners. The point shader will read these attributes and
-            // displace the vertices in screen coordinates so the quads are always
-            // camera facing (bilboards)
-            tessGeo.pointAttributes[2 * attribIdx + 0] = 0;
-            tessGeo.pointAttributes[2 * attribIdx + 1] = 0;
-            attribIdx++;            
-            for (int k = 0; k < 4; k++) {
-              tessGeo.pointAttributes[2 * attribIdx + 0] = 0.5f * QUAD_SIGNS[k][0] * strokeWeight;
-              tessGeo.pointAttributes[2 * attribIdx + 1] = 0.5f * QUAD_SIGNS[k][1] * strokeWeight;               
-              attribIdx++;           
-            }
-            
-            // Adding firstVert to take into account the triangles of all
-            // the preceding points.
-            for (int k = 1; k < nvert - 1; k++) {
-              tessGeo.pointIndices[indIdx++] = firstVert + 0;
-              tessGeo.pointIndices[indIdx++] = firstVert + k;
-              tessGeo.pointIndices[indIdx++] = firstVert + k + 1;
-            }
-            // Final triangle between the last and first point:
+          // The attributes for each tessellated vertex are the displacement along
+          // the quad corners. The point shader will read these attributes and
+          // displace the vertices in screen coordinates so the quads are always
+          // camera facing (bilboards)
+          tessGeo.pointAttributes[2 * attribIdx + 0] = 0;
+          tessGeo.pointAttributes[2 * attribIdx + 1] = 0;
+          attribIdx++;            
+          for (int k = 0; k < 4; k++) {
+            tessGeo.pointAttributes[2 * attribIdx + 0] = 0.5f * QUAD_SIGNS[k][0] * strokeWeight;
+            tessGeo.pointAttributes[2 * attribIdx + 1] = 0.5f * QUAD_SIGNS[k][1] * strokeWeight;               
+            attribIdx++;           
+          }
+          
+          // Adding firstVert to take into account the triangles of all
+          // the preceding points.
+          for (int k = 1; k < nvert - 1; k++) {
             tessGeo.pointIndices[indIdx++] = firstVert + 0;
-            tessGeo.pointIndices[indIdx++] = firstVert + 1;
-            tessGeo.pointIndices[indIdx++] = firstVert + nvert - 1;  
-            
-            firstVert = vertIdx;      
-          }    
-        } else {
-          // Same as in 3D, but the geometry is stored in the fill arrays
-                    
-          // Each point generates a separate quad.
-          int quadCount = nInVert;
+            tessGeo.pointIndices[indIdx++] = firstVert + k;
+            tessGeo.pointIndices[indIdx++] = firstVert + k + 1;
+          }
+          // Final triangle between the last and first point:
+          tessGeo.pointIndices[indIdx++] = firstVert + 0;
+          tessGeo.pointIndices[indIdx++] = firstVert + 1;
+          tessGeo.pointIndices[indIdx++] = firstVert + nvert - 1;  
           
-          // Each quad is formed by 5 vertices, the center one
-          // is the input vertex, and the other 4 define the 
-          // corners (so, a triangle fan again).
-          int nvertTot = 5 * quadCount;
-          // So the quad is formed by 4 triangles, each requires
-          // 3 indices.
-          int nindTot = 12 * quadCount;
-          
-          PMatrix3D tr = modelviewStack.getTransform();
-          
-          tessGeo.addFillVertices(nvertTot);
-          tessGeo.addFillIndices(nindTot);
-          int vertIdx = 3 * tessGeo.firstFillVertex;
-          int indIdx = tessGeo.firstFillIndex;      
-          int firstVert = tessGeo.firstFillVertex;      
-          for (int i = inGeo.firstVertex; i <= inGeo.lastVertex; i++) {
-            int nvert = 5;
-            
-            // Center point (assuming z = 0).
-            float x0 = inGeo.vertices[3 * i + 0];
-            float y0 = inGeo.vertices[3 * i + 1];       
-            
-            tessGeo.fillVertices[3 * vertIdx + 0] = x0 * tr.m00 + y0 * tr.m01 + tr.m03;
-            tessGeo.fillVertices[3 * vertIdx + 1] = x0 * tr.m10 + y0 * tr.m11 + tr.m13;
-            tessGeo.fillVertices[3 * vertIdx + 2] = 0;            
-            tessGeo.fillColors[4 * vertIdx + 0] = strokeRed; 
-            tessGeo.fillColors[4 * vertIdx + 1] = strokeGreen;
-            tessGeo.fillColors[4 * vertIdx + 2] = strokeBlue;
-            tessGeo.fillColors[4 * vertIdx + 3] = strokeAlpha;            
-            tessGeo.fillNormals[3 * vertIdx + 0] = 0;            
-            tessGeo.fillNormals[3 * vertIdx + 1] = 0;
-            tessGeo.fillNormals[3 * vertIdx + 2] = 1;
-            tessGeo.fillTexcoords[2 * vertIdx + 0] = 0;            
-            tessGeo.fillTexcoords[2 * vertIdx + 1] = 0;            
-            vertIdx++;
-           
-            for (int k = 0; k < 4; k++) {
-              float x1 = x0 + 0.5f * QUAD_SIGNS[k][0] * strokeWeight;
-              float y1 = y0 + 0.5f * QUAD_SIGNS[k][1] * strokeWeight;               
-              
-              tessGeo.fillVertices[3 * vertIdx + 0] = x1 * tr.m00 + y1 * tr.m01 + tr.m03;
-              tessGeo.fillVertices[3 * vertIdx + 1] = x1 * tr.m10 + y1 * tr.m11 + tr.m13;
-              tessGeo.fillVertices[3 * vertIdx + 2] = 0;            
-              tessGeo.fillColors[4 * vertIdx + 0] = strokeRed; 
-              tessGeo.fillColors[4 * vertIdx + 1] = strokeGreen;
-              tessGeo.fillColors[4 * vertIdx + 2] = strokeBlue;
-              tessGeo.fillColors[4 * vertIdx + 3] = strokeAlpha;            
-              tessGeo.fillNormals[3 * vertIdx + 0] = 0;            
-              tessGeo.fillNormals[3 * vertIdx + 1] = 0;
-              tessGeo.fillNormals[3 * vertIdx + 2] = 1;
-              tessGeo.fillTexcoords[2 * vertIdx + 0] = 0;            
-              tessGeo.fillTexcoords[2 * vertIdx + 1] = 0;  
-              
-              vertIdx++;           
-            }
-            
-            // Adding firstVert to take into account the triangles of all
-            // the preceding points.
-            for (int k = 1; k < nvert - 1; k++) {
-              tessGeo.fillIndices[indIdx++] = firstVert + 0;
-              tessGeo.fillIndices[indIdx++] = firstVert + k;
-              tessGeo.fillIndices[indIdx++] = firstVert + k + 1;
-            }
-            // Final triangle between the last and first point:
-            tessGeo.fillIndices[indIdx++] = firstVert + 0;
-            tessGeo.fillIndices[indIdx++] = firstVert + 1;
-            tessGeo.fillIndices[indIdx++] = firstVert + nvert - 1;  
-            
-            firstVert = vertIdx;      
-          }          
+          firstVert = vertIdx;
         }
       }
     }
@@ -8687,46 +8366,22 @@ public class PGraphicsOpenGL extends PGraphics {
         
         int lineCount = nInVert / 2;
         int first = inGeo.firstVertex;
-        if (is3D) {
-          // Lines are made up of 4 vertices defining the quad. 
-          // Each vertex has its own offset representing the stroke weight.
-          int nvert = lineCount * 4;
-          // Each stroke line has 4 vertices, defining 2 triangles, which
-          // require 3 indices to specify their connectivities.
-          int nind = lineCount * 2 * 3;
 
-          tessGeo.addLineVertices(nvert);
-          tessGeo.addLineIndices(nind);      
-          int vcount = tessGeo.firstLineVertex;
-          int icount = tessGeo.firstLineIndex;
-          for (int ln = 0; ln < lineCount; ln++) {
-            int i0 = first + 2 * ln + 0;
-            int i1 = first + 2 * ln + 1;
-            addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
-          }          
-        } else {          
-          tessGeo.firstLineIndex = tessGeo.fillIndexCount;
-          tessGeo.addFillVertices(inGeo.getNumLineVertices());
-          tessGeo.addFillIndices(inGeo.getNumLineIndices());
-          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1; 
-          int vcount = tessGeo.firstFillVertex;
-          int icount = tessGeo.firstFillIndex;           
-          for (int ln = 0; ln < lineCount; ln++) {
-            int i0 = first + 2 * ln + 0;
-            int i1 = first + 2 * ln + 1;            
-            addLineToFill(i0, i1, vcount, icount); vcount += 4; icount += 6;
-          }    
-//          GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);
-//          for (int ln = 0; ln < lineCount; ln++) {
-//            int i0 = first + 2 * ln + 0;
-//            int i1 = first + 2 * ln + 1;
-//            path.moveTo(inGeo.vertices[3 * i0 + 0], inGeo.vertices[3 * i0 + 1]);
-//            path.lineTo(inGeo.vertices[3 * i1 + 0], inGeo.vertices[3 * i1 + 1]);
-//            path.closePath();
-//          }
-//          tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-//          tessellatePath(path);
-//          tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;          
+        // Lines are made up of 4 vertices defining the quad. 
+        // Each vertex has its own offset representing the stroke weight.
+        int nvert = lineCount * 4;
+        // Each stroke line has 4 vertices, defining 2 triangles, which
+        // require 3 indices to specify their connectivities.
+        int nind = lineCount * 2 * 3;
+
+        tessGeo.addLineVertices(nvert);
+        tessGeo.addLineIndices(nind);      
+        int vcount = tessGeo.firstLineVertex;
+        int icount = tessGeo.firstLineIndex;
+        for (int ln = 0; ln < lineCount; ln++) {
+          int i0 = first + 2 * ln + 0;
+          int i1 = first + 2 * ln + 1;
+          addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
         }
       }  
     }
@@ -8981,51 +8636,14 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void tessellateEdges() {
-      // Tessellation of stroked line is done differently in 3D or 2D mode.
-      // When we are in 3D, the z-buffer is enough to determine visibility of
-      // shapes, so we can render fill, line, and point geometry in separate
-      // buffers and the visual result would be correct.
-      // But in 2D, because all the shapes are contained in the Z=0 plane
-      // we need to render the geometry in exactly the same order it has
-      // been drawn by the user. So fill and line geometry are both stored
-      // in the fill arrays. The line geometry is tessellated using the path
-      // shape generated with the AWT utilities.      
-      if (is3D) {
-        tessGeo.addLineVertices(inGeo.getNumLineVertices());
-        tessGeo.addLineIndices(inGeo.getNumLineIndices());
-        int vcount = tessGeo.firstLineVertex;
-        int icount = tessGeo.firstLineIndex;          
-        for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
-          int[] edge = inGeo.edges[i];
-          addLine(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
-        }
-      } else {
-        tessGeo.firstLineIndex = tessGeo.fillIndexCount;
-        tessGeo.addFillVertices(inGeo.getNumLineVertices());
-        tessGeo.addFillIndices(inGeo.getNumLineIndices());
-        tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1; 
-        int vcount = tessGeo.firstFillVertex;
-        int icount = tessGeo.firstFillIndex;          
-        for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
-          int[] edge = inGeo.edges[i];
-          addLineToFill(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
-        }     
-
-        // Not using the fancy path tessellation in 2D because it slows down things
-        // significantly (it also calls the GLU tessellator).
-        // It generates the right caps and joins, though.
-        
-//        GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);          
-//        for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
-//          int[] edge = inGeo.edges[i];
-//          if (startEdge(edge[2])) path.moveTo(inGeo.getVertexX(edge[0]), inGeo.getVertexY(edge[0])); 
-//          path.lineTo(inGeo.getVertexX(edge[1]), inGeo.getVertexY(edge[1]));
-//          if (endEdge(edge[2])) path.closePath();
-//        }        
-//        tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-//        tessellatePath(path);
-//        tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;          
-      }      
+      tessGeo.addLineVertices(inGeo.getNumLineVertices());
+      tessGeo.addLineIndices(inGeo.getNumLineIndices());
+      int vcount = tessGeo.firstLineVertex;
+      int icount = tessGeo.firstLineIndex;          
+      for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
+        int[] edge = inGeo.edges[i];
+        addLine(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
+      }    
     }
     
     public boolean startEdge(int edge) {
@@ -9034,107 +8652,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public boolean endEdge(int edge) {
       return 1 < edge;
-    }       
-    
-    // Tessellates the path given as parameter. This will work only in 2D mode.
-    // By Tom Carden, and Karl D.D. Willis:
-    // http://wiki.processing.org/w/Stroke_attributes_in_OpenGL
-    public void tessellatePath(GeneralPath path) {
-      // AWT implementation for Android?
-      // http://hi-android.info/src/java/awt/Shape.java.html
-      // http://hi-android.info/src/java/awt/geom/GeneralPath.java.html
-      // http://hi-android.info/src/java/awt/geom/PathIterator.java.html
-      // and:
-      // http://stackoverflow.com/questions/3897775/using-awt-with-android
-        
-      BasicStroke bs;
-      int bstrokeCap = strokeCap == ROUND ? BasicStroke.CAP_ROUND :
-                       strokeCap == PROJECT ? BasicStroke.CAP_SQUARE :
-                       BasicStroke.CAP_BUTT;
-      int bstrokeJoin = strokeJoin == ROUND ? BasicStroke.JOIN_ROUND :
-                        strokeJoin == BEVEL ? BasicStroke.JOIN_BEVEL :
-                        BasicStroke.JOIN_MITER;              
-      bs = new BasicStroke(strokeWeight, bstrokeCap, bstrokeJoin);      
-            
-      // Make the outline of the stroke from the path
-      Shape sh = bs.createStrokedShape(path);
-      
-      GLU.gluTessBeginPolygon(gluTess, null);
-      
-      float lastX = 0;
-      float lastY = 0;
-      double[] vertex;
-      float[] coords = new float[6];
-      
-      PathIterator iter = sh.getPathIterator(null); // ,5) add a number on here to simplify verts
-      int rule = iter.getWindingRule();
-      switch(rule) {
-      case PathIterator.WIND_EVEN_ODD:
-        GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_ODD);
-        break;
-      case PathIterator.WIND_NON_ZERO:
-        GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_NONZERO);
-        break;
-      }
-      
-      while (!iter.isDone()) {
-        
-        switch (iter.currentSegment(coords)) {
-   
-        case PathIterator.SEG_MOVETO:   // 1 point (2 vars) in coords
-          GLU.gluTessBeginContour(gluTess);
-   
-        case PathIterator.SEG_LINETO:   // 1 point
-          vertex = new double[] { coords[0], coords[1], 0,
-            strokeRed, strokeGreen, strokeBlue, strokeAlpha,
-            0, 0, 1,
-            0, 0 };          
-          
-          GLU.gluTessVertex(gluTess, vertex, 0, vertex);
-          lastX = coords[0];
-          lastY = coords[1];
-          break;
-   
-        case PathIterator.SEG_QUADTO:   // 2 points
-          for (int i = 1; i < bezierDetail; i++) {
-            float t = (float)i / (float)bezierDetail;
-            vertex = new double[] { 
-              bezierPoint(lastX, coords[0], coords[2], coords[2], t),
-              bezierPoint(lastY, coords[1], coords[3], coords[3], t), 
-              0, 
-              strokeRed, strokeGreen, strokeBlue, strokeAlpha,
-              0, 0, 1,
-              0, 0 };
-            GLU.gluTessVertex(gluTess, vertex, 0, vertex);
-          }
-          lastX = coords[2];
-          lastY = coords[3];
-          break;
-   
-        case PathIterator.SEG_CUBICTO:  // 3 points
-          for (int i = 1; i < bezierDetail; i++) {
-            float t = (float)i / (float)bezierDetail;
-            vertex = new double[] { 
-              bezierPoint(lastX, coords[0], coords[2], coords[4], t),
-              bezierPoint(lastY, coords[1], coords[3], coords[5], t), 
-              0, 
-              strokeRed, strokeGreen, strokeBlue, strokeAlpha,
-              0, 0, 1,
-              0, 0 };
-            GLU.gluTessVertex(gluTess, vertex, 0, vertex);
-          }
-          lastX = coords[4];
-          lastY = coords[5];
-          break;
-   
-        case PathIterator.SEG_CLOSE:
-          GLU.gluTessEndContour(gluTess);
-          break;
-        }
-        iter.next();
-      }
-      GLU.gluTessEndPolygon(gluTess);      
-    }
+    }    
     
     public class GLUTessCallback extends GLUtessellatorCallbackAdapter {
       protected int tessFirst;
