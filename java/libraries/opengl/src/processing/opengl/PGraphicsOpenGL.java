@@ -4896,6 +4896,9 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   protected void backgroundImpl() {
+    tessGeo.reset();  
+    texState.reset();
+    
     gl.glClearColor(0, 0, 0, 0);
     gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 
@@ -5015,6 +5018,8 @@ public class PGraphicsOpenGL extends PGraphics {
   // LOAD/UPDATE PIXELS
 
   public void loadPixels() {
+    flush();
+    
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];      
       pixelBuffer = IntBuffer.allocate(pixels.length);      
@@ -5031,9 +5036,10 @@ public class PGraphicsOpenGL extends PGraphics {
       pushFramebuffer();
       setFramebuffer(offscreenFramebuffer);
     }
-    
+        
     pixelBuffer.rewind();
-    gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);
+    if (primarySurface) gl2x.glReadBuffer(GL.GL_FRONT);
+    gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);    
     
     if (notCurrent) {
       popFramebuffer();
@@ -5091,7 +5097,7 @@ public class PGraphicsOpenGL extends PGraphics {
               | (pixels[index] & 0xff00) | ((pixels[index] >> 16) & 0xff);
         }
       }
-    }
+    }    
     
     if (primarySurface) {
       // Load texture.
@@ -5389,6 +5395,8 @@ public class PGraphicsOpenGL extends PGraphics {
   
   // Draws wherever it is in the screen texture right now to the screen.
   public void updateTexture() {
+    flush();
+    
     boolean outsideDraw = primarySurface && !drawing;
     if (outsideDraw) {
       beginGLOp();      
@@ -5447,6 +5455,8 @@ public class PGraphicsOpenGL extends PGraphics {
   // GET/SET
   
   public int get(int x, int y) {
+    flush();
+    
     if (getsetBuffer == null) {
       getsetBuffer = IntBuffer.allocate(1);      
     }
@@ -5467,6 +5477,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
      
     getsetBuffer.rewind();
+    if (primarySurface) gl2x.glReadBuffer(GL.GL_FRONT); 
     gl.glReadPixels(x, height - y - 1, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
 
     if (notCurrent) {
@@ -5491,8 +5502,9 @@ public class PGraphicsOpenGL extends PGraphics {
   // public PImage get(int x, int y, int w, int h)
 
   protected PImage getImpl(int x, int y, int w, int h) {
+    flush();
+    
     PImage newbie = parent.createImage(w, h, ARGB);
-    PTexture newbieTex = addTexture(newbie);
 
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);    
     
@@ -5503,25 +5515,27 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
 
     newbieBuffer.rewind();
+    if (primarySurface) gl2x.glReadBuffer(GL.GL_FRONT);
     gl.glReadPixels(x, height - y - h, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
 
     if (notCurrent) {
       popFramebuffer();
     }    
     
-    copyToTexture(newbieTex, newbieBuffer, 0, 0, w, h);
     newbie.loadPixels();
-    newbieTex.setFlippedY(true);
-    newbieTex.get(newbie.pixels);
-    
+    newbieBuffer.get(newbie.pixels);
+    nativeToJavaARGB(newbie);
     return newbie;
   }
-
+  
   public PImage get() {
     return get(0, 0, width, height);
   }
 
+  // TODO: doesn't appear to work
   public void set(int x, int y, int argb) {
+    flush();
+    
     int getset = 0;
 
     if (BIG_ENDIAN) {
@@ -5574,6 +5588,8 @@ public class PGraphicsOpenGL extends PGraphics {
    * 
    */
   public void set(int x, int y, PImage source) {
+    flush();
+    
     PTexture tex = getTexture(source);
     if (tex != null) {
       int w = source.width; 
@@ -5870,8 +5886,6 @@ public class PGraphicsOpenGL extends PGraphics {
     return img;
   }
     
-  
-  
   protected void updateTexture(PImage img, PTexture tex) {    
     if (tex != null) {
       int x = img.getModifiedX1();
@@ -5975,6 +5989,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
   }
   
+  // TODO: re-implement using built-in quads.
   protected void allocateTexQuad() {  
     ByteBuffer vbb = ByteBuffer.allocateDirect(4 * 3 * SIZEOF_FLOAT);
     vbb.order(ByteOrder.nativeOrder());
