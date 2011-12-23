@@ -2253,7 +2253,7 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellator.tessellateQuadStrip();
     } else if (shape == POLYGON) {
       if (stroke && defaultEdges) inGeo.addPolygonEdges(mode == CLOSE);
-      tessellator.tessellatePolygon(false, mode == CLOSE);
+      tessellator.tessellatePolygon(false, mode == CLOSE);      
     }
     
     int last = tessGeo.lastFillIndex;        
@@ -7548,6 +7548,7 @@ public class PGraphicsOpenGL extends PGraphics {
       fillIndexCheck();
       fillIndices[fillIndexCount] = idx;
       fillIndexCount++;
+      lastFillIndex = fillIndexCount - 1;
     }
     
     public void fillVertexCheck() {
@@ -8545,6 +8546,8 @@ public class PGraphicsOpenGL extends PGraphics {
       int nInVert = in.lastVertex - in.firstVertex + 1;
       
       if (fill && 3 <= nInVert) {
+        //PApplet.println("rendering poly with " + nInVert + " vertices. Solid: " + solid);
+        //PApplet.println("last fill index at start: " + tess.lastFillIndex);
         GLU.gluTessBeginPolygon(gluTess, null);
         
         if (solid) {
@@ -8576,6 +8579,9 @@ public class PGraphicsOpenGL extends PGraphics {
         GLU.gluTessEndContour(gluTess);
         
         GLU.gluTessEndPolygon(gluTess);
+        
+        //PApplet.println("last fill index at end: " + tess.lastFillIndex);        
+        //PApplet.println("done");
       }
 
       if (stroke) {
@@ -8732,10 +8738,11 @@ public class PGraphicsOpenGL extends PGraphics {
                                        "isn't length 12");
           }
           
-          tess.addFillVertex((float) d[0], (float) d[1], (float) d[2],
-                                (float) d[3], (float) d[4], (float) d[5], (float) d[6],
-                                (float) d[7], (float) d[8], (float) d[9],
-                                (float) d[10], (float) d[11]);
+          //PApplet.println("Adding vertex with coords " + d[ 0] + ", " + d[ 1] + ", " + d[2]);
+          tess.addFillVertex((float) d[ 0], (float) d[ 1], (float) d[2],
+                             (float) d[ 3], (float) d[ 4], (float) d[5], (float) d[6],
+                             (float) d[ 7], (float) d[ 8], (float) d[9],
+                             (float) d[10], (float) d[11]);
 
           tessCount++;
         } else {
