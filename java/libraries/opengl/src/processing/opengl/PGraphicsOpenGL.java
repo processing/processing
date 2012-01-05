@@ -26,10 +26,6 @@ package processing.opengl;
 
 import processing.core.*;
 
-import java.awt.BasicStroke;
-import java.awt.Shape;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.PathIterator;
 import java.nio.*;
 import java.util.EmptyStackException;
 import java.util.HashMap;
@@ -138,7 +134,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // ........................................................  
   
-  // OpenGL id's of all the VBOs used in immediate rendering  
+  // VBOs for immediate rendering:  
   
   public int glFillVertexBufferID;
   public int glFillColorBufferID;
@@ -191,13 +187,15 @@ public class PGraphicsOpenGL extends PGraphics {
   
   // ........................................................  
   
-  static protected HashMap<Integer, Boolean> glVertexArrays = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glTextureObjects = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glVertexBuffers = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glFrameBuffers = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glRenderBuffers = new HashMap<Integer, Boolean>();    
-  static protected HashMap<Integer, Boolean> glslPrograms = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glslVertexShaders = new HashMap<Integer, Boolean>();
+  // GL objects:
+  
+  static protected HashMap<Integer, Boolean> glVertexArrays      = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glTextureObjects    = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glVertexBuffers     = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glFrameBuffers      = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glRenderBuffers     = new HashMap<Integer, Boolean>();    
+  static protected HashMap<Integer, Boolean> glslPrograms        = new HashMap<Integer, Boolean>();
+  static protected HashMap<Integer, Boolean> glslVertexShaders   = new HashMap<Integer, Boolean>();
   static protected HashMap<Integer, Boolean> glslFragmentShaders = new HashMap<Integer, Boolean>();
   
   // ........................................................  
@@ -225,25 +223,24 @@ public class PGraphicsOpenGL extends PGraphics {
   
   // ........................................................
 
-  // Projection, modelview matrices:
+  // Projection, camera, geometry, and modelview matrices.
+  // The modelview combines the camera and geometry matrices as 
+  // follows:
+  // modelview = camera * geometry
+  // so:
+  // geometry = cameraInv * modelview
   
-  // Array version for use with OpenGL
-  protected float[] glmodelview;
-  protected float[] pcamera;  
-  protected float[] glprojection;  
-  protected float[] glmodelviewInv;  
-  protected float[] pcameraInv;
-  protected float[] pprojection;  
-  protected float[] gltemp;
-  
-  
-  // PMatrix3D version for use in Processing.
-  public PMatrix3D modelview;
-  public PMatrix3D modelviewInv;
-  public PMatrix3D projection;
+  protected float[] glMatrix;  
 
+  public PMatrix3D projection;  
+  
   public PMatrix3D camera;
   public PMatrix3D cameraInv;
+  
+  public PMatrix3D geometry;
+  public PMatrix3D modelview;
+  
+  protected boolean matricesAllocated = false;
   
   /** 
    * Marks when changes to the size have occurred, so that the camera 
@@ -251,16 +248,11 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   protected boolean sizeChanged;  
   
-  protected boolean modelviewUpdated;
-  protected boolean projectionUpdated;
-
-  protected boolean matricesAllocated = false;
+  /** Modelview matrix stack **/
+  protected Stack<PMatrix3D> modelviewStack;  
   
-  /** Camera and model transformation (translate/rotate/scale) matrix stack **/
-  protected ModelviewStack modelviewStack;  
-  
-  /** Projection (ortho/perspective) matrix stack **/
-  protected ProjectionStack projectionStack;
+  /** Projection matrix stack **/
+  protected Stack<PMatrix3D> projectionStack;
 
   // ........................................................
 
@@ -591,20 +583,12 @@ public class PGraphicsOpenGL extends PGraphics {
     super.allocate();
     
     if (!matricesAllocated) {
-      glprojection = new float[16];
-      glmodelview = new float[16];
-      glmodelviewInv = new float[16];
-      pcamera = new float[16];
-      pcameraInv = new float[16];
-      pprojection = new float[16];      
-      gltemp = new float[16];
-      
+      glMatrix = new float[16];
       projection = new PMatrix3D();
-      modelview = new PMatrix3D();
-      modelviewInv = new PMatrix3D();
       camera = new PMatrix3D();
       cameraInv = new PMatrix3D();
-      
+      geometry = new PMatrix3D();
+      modelview = new PMatrix3D();      
       matricesAllocated = true;
     }
 
@@ -660,10 +644,11 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
 
-  // Only for debuggin purposes.
+  // Only for debugging purposes.
   public void setFlushMode(int mode) {
     PGraphicsOpenGL.flushMode = mode;    
   }
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -1227,7 +1212,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void releaseResources() {
     // First, releasing the resources used by
-    // renderer itself.
+    // the renderer itself.
     if (texture != null) {
       texture.release();
       texture = null;
@@ -1461,8 +1446,6 @@ public class PGraphicsOpenGL extends PGraphics {
       ogl.disableLights();
     }     
     
-    // TODO: rename in/tess to inGeo/tessGeo.
-    // And inGeo/tessGeo in Tessellator class to in/tess.
     inGeo.reset();
     tessGeo.reset();
     texState.reset();
@@ -1523,15 +1506,19 @@ public class PGraphicsOpenGL extends PGraphics {
       // own projection, they'll need to fix it after resize anyway.
       // this helps the people who haven't set up their own projection.
       perspective();
+      
       // clear the flag
       sizeChanged = false;
     } else {
-      // The pcamera and pprojection arrays, saved when calling camera() and frustrum()
+      // The camera and projection matrices, saved when calling camera() and frustrum()
       // are set as the current modelview and projection matrices. This is done to
       // remove any additional modelview transformation (and less likely, projection
       // transformations) applied by the user after setting the camera and/or projection      
-      restoreCamera();
-      restoreProjection();
+      loadCamera();
+      modelview.set(camera);
+      geometry.reset();
+      
+      loadProjection();
     }
       
     noLights();
@@ -1814,7 +1801,6 @@ public class PGraphicsOpenGL extends PGraphics {
     super.defaultSettings();
 
     manipulatingCamera = false;
-    //scalingDuringCamManip = false;
         
     if (fbStack == null) {
       fbStack = new Stack<PFramebuffer>();
@@ -1824,10 +1810,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     if (modelviewStack == null) {
-      modelviewStack = new ModelviewStack();
+      modelviewStack = new Stack<PMatrix3D>();
     }
     if (projectionStack == null) {
-      projectionStack = new ProjectionStack();
+      projectionStack = new Stack<PMatrix3D>();
     }
     
     // easiest for beginners
@@ -2272,11 +2258,11 @@ public class PGraphicsOpenGL extends PGraphics {
     if (hasPoints || hasLines || hasFill) {
       
       if (flushMode == FLUSH_WHEN_FULL) {
-        // The geometric transformations have been applied already to the 
-        // tessellated geometry, so we reset the modelview matrix to the
+        // The geometry transformations have been applied already to the 
+        // tessellated vertices, so we reset the modelview matrix to the
         // camera stage to avoid applying the model transformations twice.        
-        gl2f.glPushMatrix();
-        gl2f.glLoadMatrixf(pcamera, 0);
+        gl2f.glPushMatrix();        
+        loadCamera();
       }
       
       if (hasFill) {
@@ -3322,14 +3308,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void pushMatrix() {
-    gl2f.glPushMatrix();  
-    modelviewStack.push();
+    gl2f.glPushMatrix();
+    modelviewStack.push(new PMatrix3D(modelview));    
   }
 
   
   public void popMatrix() {
     gl2f.glPopMatrix();
-    modelviewStack.pop();
+    PMatrix3D mat = modelviewStack.pop();
+    modelview.set(mat);
+    geometry.set(cameraInv);
+    geometry.apply(modelview);
   }
   
   
@@ -3337,16 +3326,19 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // MATRIX TRANSFORMATIONS
 
+  
   public void translate(float tx, float ty) {
     translate(tx, ty, 0);
   }
 
+  
   public void translate(float tx, float ty, float tz) {
     gl2f.glTranslatef(tx, ty, tz);
-    modelviewStack.translate(tx, ty, tz);
-    modelviewUpdated = false;
+    modelview.translate(tx, ty, tz);    
+    geometry.translate(tx, ty, tz);
   }
 
+  
   /**
    * Two dimensional rotation. Same as rotateZ (this is identical to a 3D
    * rotation along the z-axis) but included for clarity -- it'd be weird for
@@ -3357,28 +3349,51 @@ public class PGraphicsOpenGL extends PGraphics {
     rotateZ(angle);
   }
 
+  
   public void rotateX(float angle) {
     rotate(angle, 1, 0, 0);
   }
 
+  
   public void rotateY(float angle) {
     rotate(angle, 0, 1, 0);
   }
 
+  
   public void rotateZ(float angle) {
     rotate(angle, 0, 0, 1);
   }
 
+  
   /**
    * Rotate around an arbitrary vector, similar to glRotate(), except that it
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
-    modelviewStack.rotate(angle, v0, v1, v2);
-    modelviewUpdated = false;
+    
+    // Here we calculate the elements of the rotation instead of calculating rotate on
+    // the modelview and geometry matrices separately to save some computation.
+    float c = PApplet.cos(angle);
+    float s = PApplet.sin(angle);
+    float t = 1.0f - c;
+
+    float n00 = (t*v0*v0) + c;      float n01 = (t*v0*v1) - (s*v2); float n02 = (t*v0*v2) + (s*v1);
+    float n10 = (t*v0*v1) + (s*v2); float n11 = (t*v1*v1) + c;      float n12 = (t*v1*v2) - (s*v0);
+    float n20 = (t*v0*v2) - (s*v1); float n21 = (t*v1*v2) + (s*v0); float n22 = (t*v2*v2) + c;     
+    
+    modelview.apply(n00, n01, n02, 0, 
+                    n10, n11, n12, 0,
+                    n20, n21, n22, 0,
+                      0,   0,   0, 1);
+    
+    geometry.apply(n00, n01, n02, 0, 
+                   n10, n11, n12, 0,
+                   n20, n21, n22, 0,
+                     0,   0,   0, 1);
   }
 
+  
   /**
    * Same as scale(s, s, s).
    */
@@ -3386,6 +3401,7 @@ public class PGraphicsOpenGL extends PGraphics {
     scale(s, s, s);
   }
 
+  
   /**
    * Same as scale(sx, sy, 1).
    */
@@ -3393,15 +3409,17 @@ public class PGraphicsOpenGL extends PGraphics {
     scale(sx, sy, 1);
   }
 
+  
   /**
    * Scale in three dimensions.
    */
   public void scale(float sx, float sy, float sz) {
     gl2f.glScalef(sx, sy, sz);
-    modelviewStack.scale(sx, sy, sz);
-    modelviewUpdated = false;
+    modelview.scale(sx, sy, sz);
+    geometry.scale(sx, sy, sz);
   }
 
+  
   public void shearX(float angle) {
     float t = (float) Math.tan(angle);
     applyMatrix(1, t, 0, 0, 
@@ -3410,6 +3428,7 @@ public class PGraphicsOpenGL extends PGraphics {
                 0, 0, 0, 1);
   }
 
+  
   public void shearY(float angle) {
     float t = (float) Math.tan(angle);
     applyMatrix(1, 0, 0, 0, 
@@ -3418,6 +3437,7 @@ public class PGraphicsOpenGL extends PGraphics {
                 0, 0, 0, 1);
   }
 
+  
   //////////////////////////////////////////////////////////////
 
   // MATRIX MORE!
@@ -3425,15 +3445,17 @@ public class PGraphicsOpenGL extends PGraphics {
     
   public void resetMatrix() {
     gl2f.glLoadIdentity();    
-    modelviewStack.setIdentity();
-    modelviewUpdated = false;
+    modelview.reset();
+    geometry.reset();
   }
+  
 
   public void applyMatrix(PMatrix2D source) {
     applyMatrix(source.m00, source.m01, source.m02, 
                 source.m10, source.m11, source.m12);
   }
 
+  
   public void applyMatrix(float n00, float n01, float n02, 
                           float n10, float n11, float n12) {
     applyMatrix(n00, n01, n02, 0, 
@@ -3442,6 +3464,7 @@ public class PGraphicsOpenGL extends PGraphics {
                 0,   0,   0,   1);
   }
 
+  
   public void applyMatrix(PMatrix3D source) {
     applyMatrix(source.m00, source.m01, source.m02, source.m03, 
                 source.m10, source.m11, source.m12, source.m13, 
@@ -3449,69 +3472,61 @@ public class PGraphicsOpenGL extends PGraphics {
                 source.m30, source.m31, source.m32, source.m33);
   }
 
+  
   /**
    * Apply a 4x4 transformation matrix to the modelview stack using
-   * glMultMatrix(). This call will be slow because it will try to calculate the
-   * inverse of the transform. So avoid it whenever possible.
+   * glMultMatrix().
    */
   public void applyMatrix(float n00, float n01, float n02, float n03,
                           float n10, float n11, float n12, float n13, 
                           float n20, float n21, float n22, float n23, 
                           float n30, float n31, float n32, float n33) {
-    gltemp[ 0] = n00; gltemp[ 4] = n01; gltemp[ 8] = n02; gltemp[12] = n03;
-    gltemp[ 1] = n10; gltemp[ 5] = n11; gltemp[ 9] = n12; gltemp[13] = n13;
-    gltemp[ 2] = n20; gltemp[ 6] = n21; gltemp[10] = n22; gltemp[14] = n23;
-    gltemp[ 3] = n30; gltemp[ 7] = n31; gltemp[11] = n32; gltemp[15] = n33;
-
-    gl2f.glMultMatrixf(gltemp, 0);
-
-    modelviewStack.mult(n00, n01, n02, n03,
-                        n10, n11, n12, n13,
-                        n20, n21, n22, n23,
-                        n30, n31, n32, n33);
-    modelviewUpdated = false;    
-  }
-
-  public void updateModelview() {
-    updateModelview(true);
-  }
-  
-  public void updateModelview(boolean calcInv) {
-    if (calcInv) {
-      modelviewInv.set(modelview);
-      modelviewInv.invert();
-    }
     
-    copyPMatrixToGLArray(modelview, glmodelview);
-    copyPMatrixToGLArray(modelviewInv, glmodelviewInv);
-    gl2f.glLoadMatrixf(glmodelview, 0);
+    glMatrix[ 0] = n00; glMatrix[ 4] = n01; glMatrix[ 8] = n02; glMatrix[12] = n03;
+    glMatrix[ 1] = n10; glMatrix[ 5] = n11; glMatrix[ 9] = n12; glMatrix[13] = n13;
+    glMatrix[ 2] = n20; glMatrix[ 6] = n21; glMatrix[10] = n22; glMatrix[14] = n23;
+    glMatrix[ 3] = n30; glMatrix[ 7] = n31; glMatrix[11] = n32; glMatrix[15] = n33;
+
+    gl2f.glMultMatrixf(glMatrix, 0);
+
+    modelview.apply(n00, n01, n02, n03,
+                    n10, n11, n12, n13,
+                    n20, n21, n22, n23,
+                    n30, n31, n32, n33);
+
+    geometry.apply(n00, n01, n02, n03,
+                   n10, n11, n12, n13,
+                   n20, n21, n22, n23,
+                   n30, n31, n32, n33);    
+  }
+
+  
+  protected void loadProjection() {
+    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    loadMatrix(projection);
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);    
+  }
+  
+  
+  protected void loadCamera() {
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    loadMatrix(camera);
+  }
+  
+  
+  protected void loadModelview() {
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    loadMatrix(modelview);  
+  }
+  
+  
+  protected void loadMatrix(PMatrix3D pMatrix) {
+    glMatrix[ 0] = pMatrix.m00; glMatrix[ 4] = pMatrix.m01; glMatrix[ 8] = pMatrix.m02; glMatrix[12] = pMatrix.m03;
+    glMatrix[ 1] = pMatrix.m10; glMatrix[ 5] = pMatrix.m11; glMatrix[ 9] = pMatrix.m12; glMatrix[13] = pMatrix.m13;
+    glMatrix[ 2] = pMatrix.m20; glMatrix[ 6] = pMatrix.m21; glMatrix[10] = pMatrix.m22; glMatrix[14] = pMatrix.m23;
+    glMatrix[ 3] = pMatrix.m30; glMatrix[ 7] = pMatrix.m31; glMatrix[11] = pMatrix.m32; glMatrix[15] = pMatrix.m33;
     
-    modelviewStack.set(modelview);
-    modelviewUpdated = true;
-  }
-
-  
-  // This method is needed to copy a PMatrix3D into a  opengl array.
-  // The PMatrix3D.get(float[]) is not useful, because PMatrix3D assumes
-  // row-major ordering of the elements of the float array, and opengl
-  // uses column-major ordering.
-  protected void copyPMatrixToGLArray(PMatrix3D src, float[] dest) {
-    dest[ 0] = src.m00; dest[ 4] = src.m01; dest[ 8] = src.m02; dest[12] = src.m03;
-    dest[ 1] = src.m10; dest[ 5] = src.m11; dest[ 9] = src.m12; dest[13] = src.m13;
-    dest[ 2] = src.m20; dest[ 6] = src.m21; dest[10] = src.m22; dest[14] = src.m23;
-    dest[ 3] = src.m30; dest[ 7] = src.m31; dest[11] = src.m32; dest[15] = src.m33;
-  }
-
-  
-  // This method is needed to copy an opengl array into a  PMatrix3D.
-  // The PMatrix3D.set(float[]) is not useful, because PMatrix3D assumes
-  // row-major ordering of the elements of the float array, and opengl
-  // uses column-major ordering.  
-  protected void copyGLArrayToPMatrix(float[] src, PMatrix3D dest) {
-    dest.m00 = src[ 0]; dest.m01 = src[ 4]; dest.m02 = src[ 8]; dest.m03 = src[12]; 
-    dest.m10 = src[ 1]; dest.m11 = src[ 5]; dest.m12 = src[ 9]; dest.m13 = src[13];
-    dest.m20 = src[ 2]; dest.m21 = src[ 6]; dest.m22 = src[10]; dest.m23 = src[14];
-    dest.m30 = src[ 3]; dest.m31 = src[ 7]; dest.m32 = src[11]; dest.m33 = src[15];
+    gl2f.glLoadMatrixf(glMatrix, 0);
   }  
   
   
@@ -3520,9 +3535,6 @@ public class PGraphicsOpenGL extends PGraphics {
   // MATRIX GET/SET/PRINT
 
   public PMatrix getMatrix() {
-    if (!modelviewUpdated) {
-      getModelviewMatrix();    
-    }
     return modelview.get();      
   }
 
@@ -3532,9 +3544,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (target == null) {
       target = new PMatrix3D();
     }
-    if (!modelviewUpdated) {
-      getModelviewMatrix();    
-    }
     target.set(modelview);
     return target;
   }
@@ -3542,7 +3551,6 @@ public class PGraphicsOpenGL extends PGraphics {
   // public void setMatrix(PMatrix source)
 
   public void setMatrix(PMatrix2D source) {
-    // not efficient, but at least handles the inverse stuff.
     resetMatrix();
     applyMatrix(source);
   }
@@ -3551,7 +3559,6 @@ public class PGraphicsOpenGL extends PGraphics {
    * Set the current transformation to the contents of the specified source.
    */
   public void setMatrix(PMatrix3D source) {
-    // not efficient, but at least handles the inverse stuff.
     resetMatrix();
     applyMatrix(source);
   }
@@ -3559,90 +3566,43 @@ public class PGraphicsOpenGL extends PGraphics {
   /**
    * Print the current model (or "transformation") matrix.
    */
-  public void printMatrix() {
-    if (!modelviewUpdated) {
-      getModelviewMatrix();    
-    }      
+  public void printMatrix() {      
     modelview.print();      
   }
-
-  /*
-   * This function checks if the modelview matrix is set up to likely be drawing
-   * in 2D. It merely checks if the non-translational piece of the matrix is
-   * unity. If this is to be used, it should be coupled with a check that the
-   * raw vertex coordinates lie in the z=0 plane. Mainly useful for applying
-   * sub-pixel shifts to avoid 2d artifacts in the screen plane. Added by
-   * ewjordan 6/13/07
-   * 
-   * TODO need to invert the logic here so that we can simply return the value,
-   * rather than calculating true/false and returning it.
-   */
-   protected boolean drawing2D() { 
-     if (modelview.m00 != 1.0f || modelview.m11 != 1.0f || modelview.m22 != 1.0f || // check scale 
-         modelview.m01 != 0.0f || modelview.m02 != 0.0f || // check rotational pieces 
-         modelview.m10 != 0.0f || modelview.m12 != 0.0f || 
-         modelview.m20 != 0.0f || modelview.m21 != 0.0f || !((camera.m23 - modelview.m23) <= EPSILON && 
-         (camera.m23-modelview.m23) >= -EPSILON)) { // check for z-translation 
-       // Something about the modelview matrix indicates 3d drawing 
-       // (or rotated 2d, in which case 2d subpixel fixes probably aren't needed) 
-       return false; 
-     } else { 
-       //The matrix is mapping z=0 vertices to the screen plane, 
-       // which means it's likely that 2D drawing is happening. 
-       return true; 
-     } 
-   }
   
   //////////////////////////////////////////////////////////////
 
   // PROJECTION
   
+  
   public void pushProjection() {
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glPushMatrix();
-    projectionStack.push();
+    projectionStack.push(new PMatrix3D(projection));
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);
   }
   
-  public void multProjection(PMatrix3D mat) {
-    projection.apply(mat);
-  }
-
-  public void setProjection(PMatrix3D mat) {
-    projection.set(mat);
-  }
-    
+  
   public void popProjection() {
     gl2f.glMatrixMode(GL2.GL_PROJECTION);
     gl2f.glPopMatrix();
-    projectionStack.pop();
+    PMatrix3D mat = projectionStack.pop();
+    projection.set(mat);        
     gl2f.glMatrixMode(GL2.GL_MODELVIEW);    
   }
 
-  protected void getProjectionMatrix() {
-    projectionStack.get(projection);
-    projectionUpdated = true;
+  
+  public void applyProjection(PMatrix3D mat) {
+    projection.apply(mat);
+    loadProjection();
+  }
+
+  
+  public void setProjection(PMatrix3D mat) {
+    projection.set(mat);
+    loadProjection();
   }  
   
-  protected void updateProjection() {
-    copyPMatrixToGLArray(projection, glprojection);
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glLoadMatrixf(glprojection, 0);
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    projectionStack.set(glprojection);
-    projectionUpdated = true;
-  }
-  
-  protected void restoreProjection() {
-    PApplet.arrayCopy(pprojection, glprojection);
-    copyGLArrayToPMatrix(pprojection, projection);
-    
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glLoadMatrixf(glprojection, 0);
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    projectionStack.set(glprojection);
-    projectionUpdated = true;    
-  }
   
   //////////////////////////////////////////////////////////////
 
@@ -3666,7 +3626,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * hands of those bad intentions.
    * <P>
    * begin/endCamera clauses do not automatically reset the camera transform
-   * matrix. That's because we set up a nice default camera transform int
+   * matrix. That's because we set up a nice default camera transform in
    * setup(), and we expect it to hold through draw(). So we don't reset the
    * camera transform matrix at the top of draw(). That means that an
    * innocuous-looking clause like
@@ -3702,25 +3662,9 @@ public class PGraphicsOpenGL extends PGraphics {
           + "before endCamera()");
     } else {
       manipulatingCamera = true;
-      //scalingDuringCamManip = false;
-      modelviewStack.resetTransform();
     }    
   }
-
-  public void updateCamera() {
-    if (!manipulatingCamera) {
-      throw new RuntimeException("Cannot call updateCamera() "
-          + "without first calling beginCamera()");
-    }    
-    modelviewStack.setCamera(camera);    
-    
-//    scalingDuringCamManip = true; // Assuming general transformation.
-    modelviewUpdated = false;
-    
-    flush(); // TODO: need to revise the projection/modelview matrix stack.
-    copyPMatrixToGLArray(camera, glmodelview);
-    gl2f.glLoadMatrixf(glmodelview, 0);    
-  }  
+  
   
   /**
    * Record the current settings into the camera matrix, and set the matrix mode
@@ -3736,31 +3680,14 @@ public class PGraphicsOpenGL extends PGraphics {
           + "without first calling beginCamera()");
     }
     
-    getModelviewMatrix();
-
-    modelviewInv.set(modelview);
-    modelviewInv.invert();    
-
     camera.set(modelview);
+    cameraInv.set(camera);
+    cameraInv.invert();
     
-    // Copying modelview matrix after camera transformations to the camera
-    // matrices.
-    // DO WE NEED ALL THESE GUYS?
-    PApplet.arrayCopy(glmodelview, pcamera);
-
-    
-    PApplet.arrayCopy(glmodelviewInv, pcameraInv);
-    copyGLArrayToPMatrix(pcamera, camera);
-    copyGLArrayToPMatrix(pcameraInv, cameraInv);
-
+    geometry.reset();
+  
     // all done
     manipulatingCamera = false;
-    //scalingDuringCamManip = false;
-  }
-
-  protected void getModelviewMatrix() {
-    modelviewStack.get(modelview);
-    modelviewUpdated = true;
   }
 
 
@@ -3802,6 +3729,7 @@ public class PGraphicsOpenGL extends PGraphics {
     camera(cameraX, cameraY, cameraZ, cameraX, cameraY, 0, 0, 1, 0);
   }
 
+  
   /**
    * More flexible method for dealing with camera().
    * <P>
@@ -3910,82 +3838,38 @@ public class PGraphicsOpenGL extends PGraphics {
       y2 /= mag;
     }
 
-    float[] m = glmodelview;
-    m[0] = x0;
-    m[1] = y0;
-    m[2] = z0;
-    m[3] = 0.0f;
-
-    m[4] = x1;
-    m[5] = y1;
-    m[6] = z1;
-    m[7] = 0.0f;
-
-    m[8] = x2;
-    m[9] = y2;
-    m[10] = z2;
-    m[11] = 0;
+    modelview.set(x0, x1, x2, 0,
+                  y0, y1, y2, 0,
+                  z0, z1, z2, 0,
+                   0,  0,  0,  1);
     
-    m[12] = 0.0f;
-    m[13] = 0.0f;
-    m[14] = 0.0f;
-    m[15] = 1.0f;
-
-    // Translating to the eye position, followed by a translation of height units along the Y axis.
-    // The last one is needed to properly invert coordinate axis of OpenGL so it matches Processing's.
     float tx = -eyeX;
     float ty = -eyeY;
     float tz = -eyeZ;
-    m[12] += tx * m[0] + ty * m[4] + tz * m[8];
-    m[13] += tx * m[1] + ty * m[5] + tz * m[9];
-    m[14] += tx * m[2] + ty * m[6] + tz * m[10];
-    m[15] += tx * m[3] + ty * m[7] + tz * m[11];        
+    modelview.translate(tx, ty, tz);
   
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glLoadMatrixf(glmodelview, 0);
+    loadModelview();
     
-    copyGLArrayToPMatrix(glmodelview, modelview);    
-    modelviewStack.setCamera(modelview);    
-    modelviewUpdated = true;
-
-    modelviewInv.set(modelview);
-    modelviewInv.invert();    
+    camera.set(modelview);
+    cameraInv.set(camera);
+    cameraInv.invert();
     
-    PApplet.arrayCopy(glmodelview, pcamera);
-    PApplet.arrayCopy(glmodelviewInv, pcameraInv);
-    copyGLArrayToPMatrix(pcamera, camera);
-    copyGLArrayToPMatrix(pcameraInv, cameraInv);        
+    geometry.reset();
   }
-
+  
   
   /**
    * Print the current camera matrix.
    */
   public void printCamera() {
-    PMatrix3D temp = new PMatrix3D();
-    copyGLArrayToPMatrix(pcamera, temp);
-    temp.print();
-  }
-
-  
-  protected void restoreCamera() {
-    PApplet.arrayCopy(pcamera, glmodelview);
-    PApplet.arrayCopy(pcameraInv, glmodelviewInv);
-    copyGLArrayToPMatrix(pcamera, camera);
-    copyGLArrayToPMatrix(pcameraInv, cameraInv);
-    
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glLoadMatrixf(glmodelview, 0);
-    
-    copyGLArrayToPMatrix(glmodelview, modelview);
-    modelviewStack.setCamera(modelview);
-    modelviewUpdated = true;    
+    camera.print();
   }
   
   
   //////////////////////////////////////////////////////////////
 
   // PROJECTION
+  
   
   /**
    * Calls ortho() with the proper parameters for Processing's standard
@@ -3995,6 +3879,7 @@ public class PGraphicsOpenGL extends PGraphics {
     ortho(0, width, 0, height, -500, 500);
   }
 
+  
   /**
    * Calls ortho() with the specified size of the viewing volume along
    * the X and Z directions.
@@ -4003,6 +3888,7 @@ public class PGraphicsOpenGL extends PGraphics {
                     float bottom, float top) {
     ortho(left, right, bottom, top, -500, 500);
   }  
+  
   
   /**
    * Sets orthographic projection. The left, right, bottom and top
@@ -4035,38 +3921,17 @@ public class PGraphicsOpenGL extends PGraphics {
     float tx = -(right + left) / (right - left);
     float ty = -(top + bottom) / (top - bottom);
     float tz = -(far + near) / (far - near);
-
-    glprojection[0] = x;
-    glprojection[1] = 0.0f;
-    glprojection[2] = 0.0f;
-    glprojection[3] = 0.0f;
-
-    glprojection[4] = 0.0f;
-    glprojection[5] = -y; // The minus here inverts the Y axis in order to use Processing's convention
-    glprojection[6] = 0.0f;
-    glprojection[7] = 0.0f;
-
-    glprojection[8] = 0;
-    glprojection[9] = 0;
-    glprojection[10] = z;
-    glprojection[11] = 0.0f;
-
-    glprojection[12] = tx;
-    glprojection[13] = ty;
-    glprojection[14] = tz;
-    glprojection[15] = 1.0f;
-
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glLoadMatrixf(glprojection, 0);
-    copyGLArrayToPMatrix(glprojection, projection);
-    projectionUpdated = true;
     
-    // The matrix mode is always MODELVIEW, because the user will be doing
-    // geometrical transformations all the time, projection transformations 
-    // only a few times.
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    // The minus sign is needed to invert the Y axis.
+    projection.set(x,  0, 0, tx,
+                   0, -y, 0, ty,
+                   0,  0, z, tz,
+                   0,  0, 0,  1);
+    
+    loadProjection();
   }
 
+  
   /**
    * Calls perspective() with Processing's standard coordinate projection.
    * <P>
@@ -4091,6 +3956,7 @@ public class PGraphicsOpenGL extends PGraphics {
     perspective(cameraFOV, cameraAspect, cameraNear, cameraFar);
   }
 
+  
   /**
    * Similar to gluPerspective(). Implementation based on Mesa's glu.c
    */
@@ -4102,6 +3968,7 @@ public class PGraphicsOpenGL extends PGraphics {
     frustum(xmin, xmax, ymin, ymax, zNear, zFar);
   }
 
+  
   /**
    * Same as glFrustum(), except that it wipes out (rather than multiplies
    * against) the current perspective matrix.
@@ -4109,7 +3976,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * Implementation based on the explanation in the OpenGL blue book.
    */
   public void frustum(float left, float right, float bottom, float top,
-      float znear, float zfar) {
+                      float znear, float zfar) {
     // Flushing geometry with a different perspective configuration.
     flush();
     
@@ -4118,126 +3985,80 @@ public class PGraphicsOpenGL extends PGraphics {
     temp2 = right - left;
     temp3 = top - bottom;
     temp4 = zfar - znear;
+
+    // The minus sign in the temp / temp3 term is to invert the Y axis.
+    projection.set(temp / temp2,              0,  (right + left) / temp2,                      0,
+                              0,  -temp / temp3,  (top + bottom) / temp3,                      0,
+                              0,              0, (-zfar - znear) / temp4, (-temp * zfar) / temp4,
+                              0,              0,                      -1,                      1);
     
-    glprojection[0] = temp / temp2;
-    glprojection[1] = 0.0f;
-    glprojection[2] = 0.0f;
-    glprojection[3] = 0.0f;
-    glprojection[4] = 0.0f;
-    
-    // The minus here inverts the Y axis in order to use Processing's convention:
-    glprojection[5] = -temp / temp3; 
-    
-    glprojection[6] = 0.0f;
-    glprojection[7] = 0.0f;
-    glprojection[8] = (right + left) / temp2;
-    glprojection[9] = (top + bottom) / temp3;
-    glprojection[10] = (-zfar - znear) / temp4;
-    glprojection[11] = -1.0f;
-    glprojection[12] = 0.0f;
-    glprojection[13] = 0.0f;
-    glprojection[14] = (-temp * zfar) / temp4;
-    glprojection[15] = 0.0f;
-    
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glLoadMatrixf(glprojection, 0);
-    copyGLArrayToPMatrix(glprojection, projection);
-    projectionUpdated = true;
-    
-    projectionStack.set(projection);
-    
-    PApplet.arrayCopy(glprojection, pprojection);
-    
-    // The matrix mode is always MODELVIEW, because the user will be doing
-    // geometrical transformations all the time, projection transformations 
-    // only a few times.
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    loadProjection();
   }
 
+  
   /**
    * Print the current projection matrix.
    */
   public void printProjection() {
-    if (!projectionUpdated) {
-      getProjectionMatrix();      
-    }    
     projection.print();
-  }
+  }  
+  
   
   //////////////////////////////////////////////////////////////
 
   // SCREEN AND MODEL COORDS
 
+  
   public float screenX(float x, float y) {
     return screenX(x, y, 0);
   }
 
+  
   public float screenY(float x, float y) {
     return screenY(x, y, 0);
   }
+  
 
-  public float screenX(float x, float y, float z) {
-    if (!modelviewUpdated) {
-      getModelviewMatrix();      
-    }
+  public float screenX(float x, float y, float z) {    
+    float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
+    float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
+    float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
+    float aw = modelview.m30 * x + modelview.m31 * y + modelview.m32 * z + modelview.m33;
 
-    if (!projectionUpdated) {
-      getProjectionMatrix();      
-    }
+    float ox = projection.m00 * ax + projection.m01 * ay + projection.m02 * az + projection.m03 * aw;
+    float ow = projection.m30 * ax + projection.m31 * ay + projection.m32 * az + projection.m33 * aw;
         
-    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
-    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
-    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
-    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
-
-    float ox = glprojection[0] * ax + glprojection[4] * ay + glprojection[8] * az + glprojection[12] * aw;
-    float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
-
     if (ow != 0) {
       ox /= ow;
     }
     return width * (1 + ox) / 2.0f;
   }
 
-  public float screenY(float x, float y, float z) {
-    if (!modelviewUpdated) {
-      getModelviewMatrix();
-    }
-
-    if (!projectionUpdated) {
-      getProjectionMatrix();      
-    }
+  
+  public float screenY(float x, float y, float z) {        
+    float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
+    float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
+    float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
+    float aw = modelview.m30 * x + modelview.m31 * y + modelview.m32 * z + modelview.m33;
+    
+    float oy = projection.m10 * ax + projection.m11 * ay + projection.m12 * az + projection.m13 * aw;
+    float ow = projection.m30 * ax + projection.m31 * ay + projection.m32 * az + projection.m33 * aw;
         
-    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
-    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
-    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
-    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
-
-    float oy = glprojection[1] * ax + glprojection[5] * ay + glprojection[9] * az + glprojection[13] * aw;
-    float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
-
     if (ow != 0) {
       oy /= ow;
     }
     return height * (1 + oy) / 2.0f;
   }
 
+  
   public float screenZ(float x, float y, float z) {
-    if (!modelviewUpdated) {
-      getModelviewMatrix();      
-    }
-
-    if (!projectionUpdated) {
-      getProjectionMatrix();      
-    }
+    float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
+    float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
+    float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
+    float aw = modelview.m30 * x + modelview.m31 * y + modelview.m32 * z + modelview.m33;
     
-    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
-    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
-    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
-    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
-
-    float oz = glprojection[2] * ax + glprojection[6] * ay + glprojection[10] * az + glprojection[14] * aw;
-    float ow = glprojection[3] * ax + glprojection[7] * ay + glprojection[11] * az + glprojection[15] * aw;
+    float oz = projection.m20 * ax + projection.m21 * ay + projection.m22 * az + projection.m23 * aw;
+    float ow = projection.m30 * ax + projection.m31 * ay + projection.m32 * az + projection.m33 * aw;    
 
     if (ow != 0) {
       oz /= ow;
@@ -4245,50 +4066,41 @@ public class PGraphicsOpenGL extends PGraphics {
     return (oz + 1) / 2.0f;
   }
 
+  
   public float modelX(float x, float y, float z) {
-    if (!modelviewUpdated) {
-      getModelviewMatrix();
-    }
-
-    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
-    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
-    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
-    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
-
-    float ox = pcameraInv[0] * ax + pcameraInv[4] * ay + pcameraInv[8] * az + pcameraInv[12] * aw;
-    float ow = pcameraInv[3] * ax + pcameraInv[7] * ay + pcameraInv[11] * az + pcameraInv[15] * aw;
-
+    float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
+    float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
+    float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
+    float aw = modelview.m30 * x + modelview.m31 * y + modelview.m32 * z + modelview.m33;
+    
+    float ox = cameraInv.m00 * ax + cameraInv.m01 * ay + cameraInv.m02 * az + cameraInv.m03 * aw;
+    float ow = cameraInv.m30 * ax + cameraInv.m31 * ay + cameraInv.m32 * az + cameraInv.m33 * aw;    
+    
     return (ow != 0) ? ox / ow : ox;
   }
 
+  
   public float modelY(float x, float y, float z) {
-    if (!modelviewUpdated) {
-      getModelviewMatrix();
-    }
-
-    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
-    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
-    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
-    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
-
-    float oy = pcameraInv[1] * ax + pcameraInv[5] * ay + pcameraInv[9] * az + pcameraInv[13] * aw;
-    float ow = pcameraInv[3] * ax + pcameraInv[7] * ay + pcameraInv[11] * az + pcameraInv[15] * aw;
+    float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
+    float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
+    float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
+    float aw = modelview.m30 * x + modelview.m31 * y + modelview.m32 * z + modelview.m33;
+    
+    float oy = cameraInv.m10 * ax + cameraInv.m11 * ay + cameraInv.m12 * az + cameraInv.m13 * aw;
+    float ow = cameraInv.m30 * ax + cameraInv.m31 * ay + cameraInv.m32 * az + cameraInv.m33 * aw;
 
     return (ow != 0) ? oy / ow : oy;
   }
 
+  
   public float modelZ(float x, float y, float z) {
-    if (!modelviewUpdated) {
-      getModelviewMatrix();
-    }
-
-    float ax = glmodelview[0] * x + glmodelview[4] * y + glmodelview[8] * z + glmodelview[12];
-    float ay = glmodelview[1] * x + glmodelview[5] * y + glmodelview[9] * z  + glmodelview[13];
-    float az = glmodelview[2] * x + glmodelview[6] * y + glmodelview[10] * z + glmodelview[14];
-    float aw = glmodelview[3] * x + glmodelview[7] * y + glmodelview[11] * z + glmodelview[15];
-
-    float oz = pcameraInv[2] * ax + pcameraInv[6] * ay + pcameraInv[10] * az + pcameraInv[14] * aw;
-    float ow = pcameraInv[3] * ax + pcameraInv[7] * ay + pcameraInv[11] * az + pcameraInv[15] * aw;
+    float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
+    float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
+    float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
+    float aw = modelview.m30 * x + modelview.m31 * y + modelview.m32 * z + modelview.m33;
+    
+    float oz = cameraInv.m20 * ax + cameraInv.m21 * ay + cameraInv.m22 * az + cameraInv.m23 * aw;
+    float ow = cameraInv.m30 * ax + cameraInv.m31 * ay + cameraInv.m32 * az + cameraInv.m33 * aw;
 
     return (ow != 0) ? oz / ow : oz;
   }
@@ -6456,268 +6268,7 @@ public class PGraphicsOpenGL extends PGraphics {
       shininess(shininess0);  
     }    
   }
-  
-  protected class ModelviewStack {
-    protected Stack<PMatrix3D> stack;
-    protected PMatrix3D modelview;
-    protected PMatrix3D camera;
-    protected PMatrix3D cameraInv;
-    protected PMatrix3D transform;
     
-    public ModelviewStack() {
-      stack = new Stack<PMatrix3D>();
-      camera = new PMatrix3D();
-      cameraInv = new PMatrix3D();
-      transform = new PMatrix3D();
-      modelview = new PMatrix3D();      
-      setIdentity();
-    }
-    
-    public void setCamera(float[] mat) {      
-      camera.set(mat[0], mat[4], mat[ 8], mat[12],
-                 mat[1], mat[5], mat[ 9], mat[13],
-                 mat[2], mat[6], mat[10], mat[14],
-                 mat[3], mat[7], mat[11], mat[15]); 
-      cameraInv.set(camera);
-      cameraInv.invert();
-      transform.reset();
-      modelview.set(camera);      
-    }    
-    
-    public void setCamera(float m00, float m01, float m02, float m03,
-                          float m10, float m11, float m12, float m13,
-                          float m20, float m21, float m22, float m23,
-                          float m30, float m31, float m32, float m33) {
-      camera.set(m00, m01, m02, m03,
-                 m10, m11, m12, m13,
-                 m20, m21, m22, m23,
-                 m30, m31, m32, m33);
-      cameraInv.set(camera);
-      cameraInv.invert();
-      transform.reset();
-      modelview.set(camera);   
-    }
-    
-    
-    public void setCamera(PMatrix3D cam) {
-      camera.set(cam);
-      cameraInv.set(cam);
-      cameraInv.invert();
-      transform.reset();
-      modelview.set(cam);      
-    }
-    
-    public void setIdentity() {
-      camera.reset();
-      cameraInv.reset();
-      transform.reset();
-      modelview.reset();
-    }
-    
-    public void push() {
-      PMatrix3D mat = new PMatrix3D(transform);
-      stack.push(mat);
-    }
-    
-    public void pop() {
-      try {
-        PMatrix3D mat = stack.pop();
-        transform.set(mat);
-      } catch (EmptyStackException e) {
-        PGraphics.showWarning("P3D: Empty modelview stack");
-      }
-    }
-
-    public void mult(float[] mat) {
-      mult(mat[0], mat[4], mat[ 8], mat[12],
-           mat[1], mat[5], mat[ 9], mat[13],
-           mat[2], mat[6], mat[10], mat[14],
-           mat[3], mat[7], mat[11], mat[15]);
-    }
-    
-    public void mult(float n00, float n01, float n02, float n03,
-                     float n10, float n11, float n12, float n13,
-                     float n20, float n21, float n22, float n23,
-                     float n30, float n31, float n32, float n33) {
-      transform.apply(n00, n01, n02, n03,
-                      n10, n11, n12, n13,
-                      n20, n21, n22, n23,
-                      n30, n31, n32, n33);
-    }
-    
-    public void mult(PMatrix3D mat) {
-      transform.apply(mat);
-    }    
-    
-    public void get(float[] mat) {
-      modelview.apply(transform);
-      
-      mat[0] = modelview.m00; mat[4] = modelview.m01; mat[ 8] = modelview.m02; mat[12] = modelview.m03;
-      mat[1] = modelview.m10; mat[5] = modelview.m11; mat[ 9] = modelview.m12; mat[13] = modelview.m13;
-      mat[2] = modelview.m20; mat[6] = modelview.m21; mat[10] = modelview.m22; mat[14] = modelview.m23;
-      mat[3] = modelview.m30; mat[7] = modelview.m31; mat[11] = modelview.m32; mat[15] = modelview.m33;
-    }
-
-    public void get(PMatrix3D mat) {
-      modelview.apply(transform);
-      mat.set(modelview);      
-    }
-    
-    public void set(float[] mat) {      
-      modelview.set(mat[0], mat[4], mat[ 8], mat[12],
-                    mat[1], mat[5], mat[ 9], mat[13],
-                    mat[2], mat[6], mat[10], mat[14],
-                    mat[3], mat[7], mat[11], mat[15]); 
-      updateTransform();
-    }
-    
-    public void set(float m00, float m01, float m02, float m03,
-                    float m10, float m11, float m12, float m13,
-                    float m20, float m21, float m22, float m23,
-                    float m30, float m31, float m32, float m33) {
-      modelview.set(m00, m01, m02, m03,
-                  m10, m11, m12, m13,
-                  m20, m21, m22, m23,
-                  m30, m31, m32, m33);
-      updateTransform();
-    }
-    
-    public void set(PMatrix3D mat) {
-      modelview.set(mat.m00, mat.m01, mat.m02, mat.m03,
-                    mat.m10, mat.m11, mat.m12, mat.m13,
-                    mat.m20, mat.m21, mat.m22, mat.m23,
-                    mat.m30, mat.m31, mat.m32, mat.m33);
-      updateTransform();
-    }    
-    
-    public void translate(float tx, float ty, float tz) {
-      transform.translate(tx, ty, tz);
-    }
-
-    public void rotate(float angle, float rx, float ry, float rz) {
-      transform.rotate(angle, rx, ry, rz);
-    }
-    
-    public void scale(float sx, float sy, float sz) {
-      transform.scale(sx, sy, sz);
-    }
-
-    public PMatrix3D getTransform() {
-      return transform;
-    }
-    
-    public PMatrix3D getCamera() {
-      return camera;
-    }
-    
-    public PMatrix3D getCameraInv() {
-      return cameraInv;
-    }    
-
-    public void resetTransform() {
-      transform.reset();
-    }    
-    
-    // It updates the transform matrix given the 
-    // current camera and modelview. Since they are related
-    // by:
-    // modelview = camera * transform
-    // then:
-    // transform = cameraInv * modelview
-    protected void updateTransform() {
-      transform.set(cameraInv);
-      transform.apply(modelview);      
-    }
-  }  
-
-  protected class ProjectionStack {
-    protected Stack<PMatrix3D> stack;
-    protected PMatrix3D projection;
-    
-    public ProjectionStack() {
-      stack = new Stack<PMatrix3D>();
-      projection = new PMatrix3D();
-      setIdentity();
-    }
-    
-    public void setIdentity() {
-      set(1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0,
-          0, 0, 0, 1);
-    }
-    
-    public void push() {
-      PMatrix3D mat = new PMatrix3D(projection);
-      stack.push(mat);
-    }
-    
-    public void pop() {
-      try {
-        PMatrix3D mat = stack.pop();
-        projection.set(mat);
-      } catch (EmptyStackException e) {
-        PGraphics.showWarning("P3D: Empty projection stack");
-      }
-    }
-
-    public void mult(float[] mat) {
-      mult(mat[0], mat[4], mat[ 8], mat[12],
-           mat[1], mat[5], mat[ 9], mat[13],
-           mat[2], mat[6], mat[10], mat[14],
-           mat[3], mat[7], mat[11], mat[15]);
-    }
-    
-    public void mult(float n00, float n01, float n02, float n03,
-                     float n10, float n11, float n12, float n13,
-                     float n20, float n21, float n22, float n23,
-                     float n30, float n31, float n32, float n33) {
-      projection.apply(n00, n01, n02, n03,
-                    n10, n11, n12, n13,
-                    n20, n21, n22, n23,
-                    n30, n31, n32, n33);
-    }
-    
-    public void mult(PMatrix3D mat) {
-      projection.apply(mat);
-    }    
-    
-    public void get(float[] mat) {
-      mat[0] = projection.m00; mat[4] = projection.m01; mat[ 8] = projection.m02; mat[12] = projection.m03;
-      mat[1] = projection.m10; mat[5] = projection.m11; mat[ 9] = projection.m12; mat[13] = projection.m13;
-      mat[2] = projection.m20; mat[6] = projection.m21; mat[10] = projection.m22; mat[14] = projection.m23;
-      mat[3] = projection.m30; mat[7] = projection.m31; mat[11] = projection.m32; mat[15] = projection.m33;
-    }
-
-    public void get(PMatrix3D mat) {
-      mat.set(projection);      
-    }
-    
-    public void set(float[] mat) {
-      projection.set(mat[0], mat[4], mat[ 8], mat[12],
-                  mat[1], mat[5], mat[ 9], mat[13],
-                  mat[2], mat[6], mat[10], mat[14],
-                  mat[3], mat[7], mat[11], mat[15]); 
-    }
-    
-    public void set(float m00, float m01, float m02, float m03,
-                    float m10, float m11, float m12, float m13,
-                    float m20, float m21, float m22, float m23,
-                    float m30, float m31, float m32, float m33) {
-      projection.set(m00, m01, m02, m03,
-                  m10, m11, m12, m13,
-                  m20, m21, m22, m23,
-                  m30, m31, m32, m33);      
-    }
-    
-    public void set(PMatrix3D mat) {
-      projection.set(mat.m00, mat.m01, mat.m02, mat.m03,
-                  mat.m10, mat.m11, mat.m12, mat.m13,
-                  mat.m20, mat.m21, mat.m22, mat.m23,
-                  mat.m30, mat.m31, mat.m32, mat.m33);     
-    }
-  }  
-  
   public InGeometry newInGeometry() {
     return new InGeometry(); 
   }
@@ -7741,7 +7292,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int index;
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D tr = modelviewStack.getTransform();
+        PMatrix3D tr = geometry;
         
         index = 3 * fillVertexCount;
         fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
@@ -7786,7 +7337,7 @@ public class PGraphicsOpenGL extends PGraphics {
       addFillVertices(nvert);
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D tr = modelviewStack.getTransform();
+        PMatrix3D tr = geometry;
         
         for (int i = 0; i < nvert; i++) {
           int inIdx = i0 + i;
@@ -7897,7 +7448,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float z1 = in.vertices[index  ];        
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D tr = modelviewStack.getTransform();
+        PMatrix3D tr = geometry;
         
         index = 3 * tessIdx;
         lineVertices[index++] = x0 * tr.m00 + y0 * tr.m01 + z0 * tr.m02 + tr.m03;
@@ -7962,7 +7513,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float nz = in.normals[index  ];      
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D tr = modelviewStack.getTransform();
+        PMatrix3D tr = geometry;
         
         index = 3 * tessIdx;
         fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
@@ -8016,7 +7567,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float nz = in.normals[index  ];      
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D tr = modelviewStack.getTransform();
+        PMatrix3D tr = geometry;
 
         index = 3 * tessIdx;
         pointVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
