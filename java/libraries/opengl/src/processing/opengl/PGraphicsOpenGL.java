@@ -2257,7 +2257,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     if (hasPoints || hasLines || hasFill) {
       
-      if (flushMode == FLUSH_WHEN_FULL) {
+      if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         // The geometry transformations have been applied already to the 
         // tessellated vertices, so we reset the modelview matrix to the
         // camera stage to avoid applying the model transformations twice.        
@@ -2277,7 +2277,7 @@ public class PGraphicsOpenGL extends PGraphics {
         renderLines();
       }          
       
-      if (flushMode == FLUSH_WHEN_FULL) {
+      if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         gl2f.glPopMatrix();
       }
     }
@@ -3314,6 +3314,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void popMatrix() {
+    if (hints[DISABLE_TRANSFORM_CACHE]) {
+      flush();  
+    }
+    
     gl2f.glPopMatrix();
     PMatrix3D mat = modelviewStack.pop();
     modelview.set(mat);
@@ -3333,6 +3337,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void translate(float tx, float ty, float tz) {
+    if (hints[DISABLE_TRANSFORM_CACHE]) {
+      flush();  
+    }
+    
     gl2f.glTranslatef(tx, ty, tz);
     modelview.translate(tx, ty, tz);    
     geometry.translate(tx, ty, tz);
@@ -3370,6 +3378,10 @@ public class PGraphicsOpenGL extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
+    if (hints[DISABLE_TRANSFORM_CACHE]) {
+      flush();  
+    }
+           
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
     
     // Here we calculate the elements of the rotation instead of calculating rotate on
@@ -3414,6 +3426,10 @@ public class PGraphicsOpenGL extends PGraphics {
    * Scale in three dimensions.
    */
   public void scale(float sx, float sy, float sz) {
+    if (hints[DISABLE_TRANSFORM_CACHE]) {
+      flush();  
+    }
+    
     gl2f.glScalef(sx, sy, sz);
     modelview.scale(sx, sy, sz);
     geometry.scale(sx, sy, sz);
@@ -3481,6 +3497,9 @@ public class PGraphicsOpenGL extends PGraphics {
                           float n10, float n11, float n12, float n13, 
                           float n20, float n21, float n22, float n23, 
                           float n30, float n31, float n32, float n33) {
+    if (hints[DISABLE_TRANSFORM_CACHE]) {
+      flush();  
+    }    
     
     glMatrix[ 0] = n00; glMatrix[ 4] = n01; glMatrix[ 8] = n02; glMatrix[12] = n03;
     glMatrix[ 1] = n10; glMatrix[ 5] = n11; glMatrix[ 9] = n12; glMatrix[13] = n13;
@@ -6809,46 +6828,17 @@ public class PGraphicsOpenGL extends PGraphics {
     
   }
   
-  // The big issue with TessGeometry is that for immediate mode, it is better to have the data stored in a singke
-  // interleaved array:
-  // float[] data = { x0, y0, z0, r0, g0, b0, a0, nx0, ny0, nz0, u0, v0, x1, y1, z1, r1, g1, b1, a1, nx1, ny1, nz1, u1, v1... 
-  // because coords, colors, normals, etc. are always set at the same time, whereas for retained mode, and specially if the
-  // user creates a PShape which later wants to manipulate by only changing coordinates or color, it is better to have
-  // the data separated as it is currently done:
-  // float[] vertices = { x0, y0, z0, x1, y1, z1...
-  // float[] colors   = { r0, g0, b0, a0, r1, g1, b1, a1...
-  // float[] normals  = { nx0, ny0, nz0, nx1, ny1, nz1...
-  // float[] texcoords= { u0, v0, u1, v1...
   public class TessGeometry {
     int renderMode;
     
     // Tessellated fill data
     public int fillVertexCount;
-    
-    // Range of vertices that were generated during last
-    // call to the tessellator.
     public int firstFillVertex;
-    public int lastFillVertex;
-    
+    public int lastFillVertex;    
     public float[] fillVertices;
     public float[] fillColors;
     public float[] fillNormals;
     public float[] fillTexcoords;
-
-    
-    // The structure of fillData is as follows:
-    // 1) 3 floats (4 * 3 = 12 bytes) for the xyz coordinates of the vertex
-    // 2) 4 floats  (4 * 4 = 16 bytes) for the rgba coordinates of the vertex
-    // 3) 3 floats (4 * 3 = 12 bytes) for the xyz coordinates of the normal
-    // 4) 2 floats (4 * 2 = 8 bytes) for the uv texture coordinates
-    // Since up to here we have 12 + 16 + 12 + 8 = 48 bytes, and it is better make it 
-    // a multiple of 32, then we allocate 16 bytes more for two more texture coordinates
-    // to make for a total of 64 bytes per vertex.
-    // TessGeometry should allow to set how many bytes per vertex, being the number 
-    // at last 64 and a multiple of 32. This would be useful for libraries than need
-    // to add additional custom attributes for each vertex.     
-    public float[] fillData;
-    
     
     public int fillIndexCount;
     public int firstFillIndex;
@@ -6863,18 +6853,6 @@ public class PGraphicsOpenGL extends PGraphics {
     public float[] lineColors;
     public float[] lineNormals;
     public float[] lineAttributes;    
-    
-    
-    // Likewise:
-    // 3 floats (xyz) 12 byes
-    // 4 floats (rgba) 16 bytes
-    // 3 floats (nxyz) 12 bytes
-    // 4 floats (xyzw) 16 bytes
-    // 12 + 16 + 12 + 16 = 24 + 32 = 56 bytes.
-    // We add padding of 8 bytes to reach 64, which can be
-    // used for textured lines (an additional uv float pair per vertex).
-    public float[] lineData;
-    
     
     public int lineIndexCount;
     public int firstLineIndex;
@@ -7291,7 +7269,7 @@ public class PGraphicsOpenGL extends PGraphics {
       fillVertexCheck();
       int index;
       
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         PMatrix3D tr = geometry;
         
         index = 3 * fillVertexCount;
@@ -7336,7 +7314,7 @@ public class PGraphicsOpenGL extends PGraphics {
       
       addFillVertices(nvert);
       
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         PMatrix3D tr = geometry;
         
         for (int i = 0; i < nvert; i++) {
@@ -7447,7 +7425,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float y1 = in.vertices[index++];
       float z1 = in.vertices[index  ];        
       
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         PMatrix3D tr = geometry;
         
         index = 3 * tessIdx;
@@ -7495,63 +7473,8 @@ public class PGraphicsOpenGL extends PGraphics {
       float b = in.strokes[index++];
       float a = in.strokes[index  ];
       putLineVertex(in, inIdx0, inIdx1, tessIdx, r, g, b, a);
-    }    
+    }        
     
-    
-    public void putLineVertexIntoFill(InGeometry in, int inIdx, float dispX, float dispY, int tessIdx, 
-                                      float sr, float sg, float sb, float sa) {
-      int index;
-
-      index = 3 * inIdx;
-      float x = in.vertices[index++] + dispX;
-      float y = in.vertices[index++] + dispY;
-      float z = in.vertices[index  ];
-      
-      index = 3 * inIdx;
-      float nx = in.normals[index++];
-      float ny = in.normals[index++];
-      float nz = in.normals[index  ];      
-      
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
-        PMatrix3D tr = geometry;
-        
-        index = 3 * tessIdx;
-        fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
-        fillVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
-        fillVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
-        
-        index = 3 * tessIdx;
-        fillNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
-        fillNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
-        fillNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
-      } else {
-        index = 3 * tessIdx;
-        fillVertices[index++] = x;
-        fillVertices[index++] = y;
-        fillVertices[index  ] = z;
-        
-        index = 3 * tessIdx;
-        fillNormals[index++] = nx;
-        fillNormals[index++] = ny;
-        fillNormals[index  ] = nz;
-      }      
-      
-      index = 4 * tessIdx;
-      fillColors[index++] = sr;
-      fillColors[index++] = sg;
-      fillColors[index++] = sb;
-      fillColors[index  ] = sa;
-    }    
-    
-    
-    public void putLineVertexIntoFill(InGeometry in, int inIdx, float dx, float dy, int tessIdx) {      
-      int index = 5 * inIdx;
-      float r = in.strokes[index++];
-      float g = in.strokes[index++];
-      float b = in.strokes[index++];
-      float a = in.strokes[index  ];
-      putLineVertexIntoFill(in, inIdx, dx, dy, tessIdx, r, g, b, a);
-    }
     
     public void putPointVertex(InGeometry in, int inIdx, int tessIdx) {
       int index;
@@ -7566,7 +7489,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float ny = in.normals[index++];
       float nz = in.normals[index  ];      
       
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL) {
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         PMatrix3D tr = geometry;
 
         index = 3 * tessIdx;
@@ -8097,8 +8020,6 @@ public class PGraphicsOpenGL extends PGraphics {
       int nInVert = in.lastVertex - in.firstVertex + 1;
       
       if (fill && 3 <= nInVert) {
-        //PApplet.println("rendering poly with " + nInVert + " vertices. Solid: " + solid);
-        //PApplet.println("last fill index at start: " + tess.lastFillIndex);
         GLU.gluTessBeginPolygon(gluTess, null);
         
         if (solid) {
@@ -8130,9 +8051,6 @@ public class PGraphicsOpenGL extends PGraphics {
         GLU.gluTessEndContour(gluTess);
         
         GLU.gluTessEndPolygon(gluTess);
-        
-        //PApplet.println("last fill index at end: " + tess.lastFillIndex);        
-        //PApplet.println("done");
       }
 
       if (stroke) {
@@ -8140,44 +8058,7 @@ public class PGraphicsOpenGL extends PGraphics {
         tessellateEdges();
       }  
     }
-     
-    protected void addLineToFill(int i0, int i1, int vcount, int icount) {
-      int index; 
-          
-      index = 3 * i0;
-      float x0 = inGeo.vertices[index++];
-      float y0 = inGeo.vertices[index++];
-      
-      index = 3 * i1;
-      float x1 = inGeo.vertices[index++];
-      float y1 = inGeo.vertices[index++];      
-      
-      float dx = x1 - x0;
-      float dy = y1 - y0;
-      float len = PApplet.sqrt(dx * dx + dy * dy);
 
-      float linePerpX = -dy * (0.5f * strokeWeight / len);
-      float linePerpY =  dx * (0.5f * strokeWeight / len);
-      
-      tess.putLineVertexIntoFill(in, i0, +linePerpX, +linePerpY, vcount);
-      tess.fillIndices[icount++] = vcount;
-      
-      vcount++;
-      tess.putLineVertexIntoFill(in, i0, -linePerpX, -linePerpY, vcount);
-      tess.fillIndices[icount++] = vcount;
-      
-      vcount++;
-      tess.putLineVertexIntoFill(in, i1, +linePerpX, +linePerpY, vcount);
-      tess.fillIndices[icount++] = vcount;
-      
-      // Starting a new triangle re-using prev vertices.
-      tess.fillIndices[icount++] = vcount;
-      tess.fillIndices[icount++] = vcount - 1;
-      
-      vcount++;
-      tess.putLineVertexIntoFill(in, i1, -linePerpX, -linePerpY, vcount);      
-      tess.fillIndices[icount++] = vcount;  
-    }
     
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.

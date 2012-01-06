@@ -573,8 +573,11 @@ public interface PConstants {
 
   static final int DISABLE_TEXTURE_CACHE       =  8;
   static final int ENABLE_TEXTURE_CACHE        = -8;
-    
-  static final int HINT_COUNT                  =  9;
+
+  static final int DISABLE_TRANSFORM_CACHE     =  9;
+  static final int ENABLE_TRANSFORM_CACHE      = -9;  
+  
+  static final int HINT_COUNT                  =  10;
 
   // Rendering pipeline modes
 
