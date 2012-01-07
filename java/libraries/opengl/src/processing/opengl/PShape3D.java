@@ -45,16 +45,12 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.HashSet;
 
-// TODO: check shape in 2D mode (and handling in renderFill), and group shape mixing 2D and 2D child shapes. 
-//       PShape3D.text() ?
-
-
 // Notes about geometry update in PShape3D.
 // 1) Flush mechanism for data update in PShape3D?
 //    only do copy to tess arrays, and mark updated shapes.
 //    When drawing, put all modified data in large array and
 //    copy to VBO using single glBufferSubData() call.
-// 2) What about fill called on a GROUP shape? shoud apply
+// 2) What about fill called on a GROUP shape? should apply
 //    color change to all child shapes. Probably yes.
 // 3) translate, scale, rotate, and applyMatrix could
 //    work in a similar way as update color, since they are
@@ -145,8 +141,29 @@ public class PShape3D extends PShape {
   
   // Drawing/rendering state
   
-  protected boolean modified;
+  protected boolean tessellated;
+  
   protected boolean transformed;
+  
+  boolean modifiedFillVertices;
+  boolean modifiedFillColors;
+  boolean modifiedFillNormals;
+  boolean modifiedFillTexCoords;  
+  
+  boolean modifiedLineVertices;
+  boolean modifiedLineColors;
+  boolean modifiedLineNormals;
+  boolean modifiedLineAttributes;  
+
+  boolean modifiedPointVertices;
+  boolean modifiedPointColors;
+  boolean modifiedPointNormals;
+  boolean modifiedPointAttributes;  
+
+  
+  public static final int DEFAULT_CACHE_SIZE = 1024;
+  
+  
   protected boolean isSolid;
   protected boolean isClosed;
   
@@ -236,7 +253,7 @@ public class PShape3D extends PShape {
     this.family = family;    
     this.root = this;
     this.parent = null;
-    this.modified = false;
+    this.tessellated = false;
     
     tess = ogl.newTessGeometry(RETAINED);    
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
@@ -298,14 +315,18 @@ public class PShape3D extends PShape {
   }
   
   public void addShape(PShape child) {
-    if (family == GROUP) {
-      super.addChild(child);
-      child.updateRoot(root);
-      root.modified = true;
-      modified = true;
-      child.modified = true;
+    if (child instanceof PShape3D) {
+      if (family == GROUP) {
+        super.addChild(child);
+        child.updateRoot(root);
+        root.tessellated = false;
+        tessellated = false;
+        ((PShape3D)child).tessellated = false;
+      } else {
+        PGraphics.showWarning("Cannot add child shape to non-group shape.");
+      }
     } else {
-      PGraphics.showWarning("Cannot add child shape to non-group shape.");
+      PGraphics.showWarning("Shape must be 3D to be added to the group.");
     }
   }  
   
@@ -515,8 +536,8 @@ public class PShape3D extends PShape {
                  sR, sG, sB, sA, sW, 
                  code);    
     
-    root.modified = true;
-    modified = true;  
+    root.tessellated = false;
+    tessellated = false;  
   }
   
   
@@ -533,15 +554,15 @@ public class PShape3D extends PShape {
 
   public void end(int mode) {    
     isClosed = mode == CLOSE;    
-    root.modified = true;
-    modified = true;
+    root.tessellated = false;
+    tessellated = false;
     shapeEnded = true;
   }  
   
   public void setParams(float[] source) {
     super.setParams(source);
-    root.modified = true;
-    modified = true;
+    root.tessellated = false;
+    tessellated = false;
     shapeEnded = true;
   }
 
@@ -621,10 +642,7 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    int offset = root.fillVertOffset.get(this);
     int size = tess.fillVertexCount;
-    
-    // We resuse the tess array to avoid creating a new one.
     float[] colors = tess.fillColors;
     int index;
     for (int i = 0; i < size; i++) {
@@ -634,10 +652,8 @@ public class PShape3D extends PShape {
       colors[index++] = fillB;
       colors[index  ] = fillA;
     }
-    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillColorBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));    
+    modifiedFillColors = true;
+    modified = true;   
   }
   
     
@@ -759,14 +775,29 @@ public class PShape3D extends PShape {
   public void translate(float tx, float ty, float tz) {
     if (family == GROUP) {
       // TODO: make sure that for group shapes, just applying the
-      // gl transformation is efficient enought (might depend on
+      // gl transformation is efficient enough (might depend on
       // how much geometry is inside the group).
       super.translate(tx, ty, tz);
     } else {
       checkMatrix(3);
       matrix.translate(tx, ty, tz);
       tess.applyMatrix((PMatrix3D) matrix);
-      transformed = true;
+      
+      modified = true;      
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+        modifiedFillNormals = true; 
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineNormals = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;
+        modifiedPointNormals = true;        
+      }
+      
       // So the transformation is not applied again when drawing
       matrix = null;      
     }    
@@ -1205,7 +1236,7 @@ public class PShape3D extends PShape {
   // Construction methods  
   
   protected void updateTesselation() {
-    if (root.modified) {
+    if (!root.tessellated) {
       root.tessellate();
       root.aggregate();        
     }
@@ -1220,7 +1251,7 @@ public class PShape3D extends PShape {
         child.tessellate();
       }      
     } else {   
-      if (modified && shapeEnded) {
+      if (!tessellated && shapeEnded) {
         tessellator.setInGeometry(in);
         tessellator.setTessGeometry(tess);
         tessellator.setFill(fill || texture != null);
@@ -1282,7 +1313,7 @@ public class PShape3D extends PShape {
       }
     }
     
-    modified = false;
+    tessellated = true;
     transformed = false;
   }
 
@@ -1468,14 +1499,33 @@ public class PShape3D extends PShape {
   }
   
   
-  // TODO: implement smarter update logic so that transformed contiguous shapes
-  // are copied to the root VBO in a single call.
   protected void updateGeometry() {
     if (root == this && parent == null) {
       fillVertCopyOffset = 0;
       lineVertCopyOffset = 0;
-      pointVertCopyOffset = 0;
+      pointVertCopyOffset = 0;      
       updateRootGeometry();
+      
+      // Copying remaining data in caches.
+      if (root.fillVerticesCache != null && root.fillVerticesCache.hasData()) {
+        root.copyFillVertices(root.fillVerticesCache.offset, root.fillVerticesCache.size, root.fillVerticesCache.data);
+        root.fillVerticesCache.reset();
+      }
+      
+      if (root.fillColorsCache != null && root.fillColorsCache.hasData()) {
+        root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.data);
+        root.fillColorsCache.reset();
+      }
+      
+      if (root.fillNormalsCache != null && root.fillNormalsCache.hasData()) {
+        root.copyFillNormals(root.fillNormalsCache.offset, root.fillNormalsCache.size, root.fillNormalsCache.data);
+        root.fillNormalsCache.reset();
+      }
+      
+      if (root.fillTexCoordsCache != null && root.fillTexCoordsCache.hasData()) {
+        root.copyFillTexCoords(root.fillTexCoordsCache.offset, root.fillTexCoordsCache.size, root.fillTexCoordsCache.data);
+        root.fillTexCoordsCache.reset();
+      }
     }
   }
   
@@ -1639,6 +1689,56 @@ public class PShape3D extends PShape {
   }
   
   
+  protected class VertexCache {
+    int ncoords;
+    int offset;
+    int size;    
+    float[] data;
+    
+    VertexCache(int ncoords) {
+      this.ncoords = ncoords;
+      this.data = new float[ncoords * DEFAULT_CACHE_SIZE];
+      this.offset = 0;
+      this.size = 0;      
+    }
+    
+    void reset() {
+      offset = 0;
+      size = 0;
+    }    
+    
+    void add(int newOffset, int newSize, float[] newData) {
+      if (size == 0) {
+        offset = newOffset;
+      }
+      
+      if (data.length / ncoords == size + newSize) {
+        expand(size + newSize);
+      }
+      
+      PApplet.arrayCopy(newData, 0, data, ncoords * size, ncoords * newSize);
+      
+      size += newSize;
+    } 
+    
+    void expand(int n) {
+      float temp[] = new float[ncoords * n];      
+      PApplet.arrayCopy(data, 0, temp, 0, ncoords * size);
+      data = temp;      
+    }
+    
+    boolean hasData() {
+      return 0 < size;
+    }
+    
+  }
+  
+  VertexCache fillVerticesCache;
+  VertexCache fillColorsCache;
+  VertexCache fillNormalsCache;
+  VertexCache fillTexCoordsCache;
+  
+  
   protected void updateRootGeometry() {
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -1646,27 +1746,101 @@ public class PShape3D extends PShape {
         child.updateRootGeometry();
       }    
     } else {
-      if (transformed) {
-        if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {
-          root.copyFillGeometry(root.fillVertCopyOffset, tess.fillVertexCount, 
-                                tess.fillVertices, tess.fillColors, tess.fillNormals, tess.fillTexcoords);
+ 
+      if (0 < tess.fillVertexCount) {          
+        if (modifiedFillVertices) {
+          if (root.fillVerticesCache == null) { 
+            root.fillVerticesCache = new VertexCache(3);
+          }            
+          root.fillVerticesCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillVertices);
+          modifiedFillVertices = false;
+        } else if (root.fillVerticesCache != null && root.fillVerticesCache.hasData()) {
+          root.copyFillVertices(root.fillVerticesCache.offset, root.fillVerticesCache.size, root.fillVerticesCache.data);
+          root.fillVerticesCache.reset();
         }
         
-        if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {
-          root.copyLineGeometry(root.lineVertCopyOffset, tess.lineVertexCount, 
-                                tess.lineVertices, tess.lineColors, tess.lineNormals, tess.lineAttributes);        
+        if (modifiedFillColors) {
+          if (root.fillColorsCache == null) { 
+            root.fillColorsCache = new VertexCache(4);
+          }            
+          root.fillColorsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillColors);
+          modifiedFillColors = false;            
+        } else if (root.fillColorsCache != null && root.fillColorsCache.hasData()) {
+          root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.data);
+          root.fillColorsCache.reset();
         }
         
-        if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {
-          root.copyPointGeometry(root.pointVertCopyOffset, tess.pointVertexCount, 
-                                 tess.pointVertices, tess.pointColors, tess.pointNormals, tess.pointAttributes);
+        if (modifiedFillNormals) {
+          if (root.fillNormalsCache == null) { 
+            root.fillNormalsCache = new VertexCache(3);
+          }            
+          root.fillNormalsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillNormals);            
+          modifiedFillNormals = false;            
+        } else if (root.fillNormalsCache != null && root.fillNormalsCache.hasData()) {
+          root.copyFillNormals(root.fillNormalsCache.offset, root.fillNormalsCache.size, root.fillNormalsCache.data);
+          root.fillNormalsCache.reset();
         }
         
-        transformed = false;
-      }
+        if (modifiedFillTexCoords) {
+          if (root.fillTexCoordsCache == null) { 
+            root.fillTexCoordsCache = new VertexCache(2);
+          }            
+          root.fillTexCoordsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillTexcoords);            
+          modifiedFillTexCoords = false;
+        } else if (root.fillTexCoordsCache != null && root.fillTexCoordsCache.hasData()) {
+          root.copyFillTexCoords(root.fillTexCoordsCache.offset, root.fillTexCoordsCache.size, root.fillTexCoordsCache.data);
+          root.fillTexCoordsCache.reset();
+        } 
+      }  
+      
+        /*
+        if (0 < tess.lineVertexCount) {          
+          if (modifiedLineVertices) {
+            root.copyLineVertices(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineVertices);            
+            modifiedLineVertices = false;
+          }
+          if (modifiedLineColors) {
+            root.copyLineColors(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineColors);
+            modifiedLineColors = false;
+          }          
+          if (modifiedLineNormals) {
+            root.copyLineNormals(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineNormals);
+            modifiedLineNormals = false;
+          }          
+          if (modifiedLineAttributes) {
+            root.copyLineAttributes(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineAttributes);
+            modifiedLineAttributes = false;
+          }           
+        }
+        */
+        
+        /*
+        if (0 < tess.pointVertexCount) {          
+          if (modifiedPointVertices) {
+            root.copyPointVertices(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointVertices);
+            modifiedPointVertices = false;
+          }
+          if (modifiedPointColors) {
+            root.copyPointColors(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointColors);
+            modifiedPointColors = false;
+          }
+          if (modifiedPointNormals) {
+            root.copyPointNormals(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointNormals);
+            modifiedPointNormals = false;
+          }
+          if (modifiedPointAttributes) {
+            root.copyPointAttributes(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointAttributes);
+            modifiedPointAttributes = false;
+          }          
+        }
+        */
+        
+ 
+      
       root.fillVertCopyOffset += tess.fillVertexCount;
       root.lineVertCopyOffset += tess.lineVertexCount;
       root.pointVertCopyOffset += tess.pointVertexCount;
+      modified = false;
     }
   }
     
@@ -1690,8 +1864,36 @@ public class PShape3D extends PShape {
     getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
                             2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(texcoords));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }
+  
+  protected void copyFillVertices(int offset, int size, float[] vertices) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+  }
+  
+  protected void copyFillColors(int offset, int size, float[] colors) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+  }  
+  
+  protected void copyFillNormals(int offset, int size, float[] normals) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+  }  
+
+  protected void copyFillTexCoords(int offset, int size, float[] texcoords) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(texcoords));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+  }   
   
   
   protected void copyFillIndices(int offset, int size, int[] indices) {
@@ -2060,6 +2262,7 @@ public class PShape3D extends PShape {
     return texSet;    
   }  
   
+  /*
   protected boolean isModified() {
     if (modified) {
       return true;
@@ -2084,6 +2287,7 @@ public class PShape3D extends PShape {
       }
     }    
   }
+  */
   
   // Render the geometry stored in the root shape as VBOs, for the vertices 
   // corresponding to this shape. Sometimes we can have root == this.
