@@ -160,10 +160,23 @@ public class PShape3D extends PShape {
   boolean modifiedPointNormals;
   boolean modifiedPointAttributes;  
 
+  protected VertexCache fillVerticesCache;
+  protected VertexCache fillColorsCache;
+  protected VertexCache fillNormalsCache;
+  protected VertexCache fillTexCoordsCache;  
+  
+  protected VertexCache lineVerticesCache;
+  protected VertexCache lineColorsCache;
+  protected VertexCache lineNormalsCache;
+  protected VertexCache lineAttributesCache;  
+
+  protected VertexCache pointVerticesCache;
+  protected VertexCache pointColorsCache;
+  protected VertexCache pointNormalsCache;
+  protected VertexCache pointAttributesCache;  
   
   public static final int DEFAULT_CACHE_SIZE = 1024;
-  
-  
+    
   protected boolean isSolid;
   protected boolean isClosed;
   
@@ -1501,12 +1514,14 @@ public class PShape3D extends PShape {
   
   protected void updateGeometry() {
     if (root == this && parent == null) {
+      // Initializing offsets
       fillVertCopyOffset = 0;
       lineVertCopyOffset = 0;
-      pointVertCopyOffset = 0;      
+      pointVertCopyOffset = 0;
+      
       updateRootGeometry();
       
-      // Copying remaining data in caches.
+      // Copying any data remaining in the caches
       if (root.fillVerticesCache != null && root.fillVerticesCache.hasData()) {
         root.copyFillVertices(root.fillVerticesCache.offset, root.fillVerticesCache.size, root.fillVerticesCache.data);
         root.fillVerticesCache.reset();
@@ -1526,6 +1541,46 @@ public class PShape3D extends PShape {
         root.copyFillTexCoords(root.fillTexCoordsCache.offset, root.fillTexCoordsCache.size, root.fillTexCoordsCache.data);
         root.fillTexCoordsCache.reset();
       }
+      
+      if (root.lineVerticesCache != null && root.lineVerticesCache.hasData()) {
+        root.copyLineVertices(root.lineVerticesCache.offset, root.lineVerticesCache.size, root.lineVerticesCache.data);
+        root.lineVerticesCache.reset();
+      }
+      
+      if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
+        root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.data);
+        root.lineColorsCache.reset();
+      }
+      
+      if (root.lineNormalsCache != null && root.lineNormalsCache.hasData()) {
+        root.copyLineNormals(root.lineNormalsCache.offset, root.lineNormalsCache.size, root.lineNormalsCache.data);
+        root.lineNormalsCache.reset();
+      }
+      
+      if (root.lineAttributesCache != null && root.lineAttributesCache.hasData()) {
+        root.copyLineAttributes(root.lineAttributesCache.offset, root.lineAttributesCache.size, root.lineAttributesCache.data);
+        root.lineAttributesCache.reset();
+      }      
+    
+     if (root.pointVerticesCache != null && root.pointVerticesCache.hasData()) {
+        root.copyPointVertices(root.pointVerticesCache.offset, root.pointVerticesCache.size, root.pointVerticesCache.data);
+        root.pointVerticesCache.reset();
+      }
+      
+      if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
+        root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.data);
+        root.pointColorsCache.reset();
+      }
+      
+      if (root.pointNormalsCache != null && root.pointNormalsCache.hasData()) {
+        root.copyPointNormals(root.pointNormalsCache.offset, root.pointNormalsCache.size, root.pointNormalsCache.data);
+        root.pointNormalsCache.reset();
+      }
+      
+      if (root.pointAttributesCache != null && root.pointAttributesCache.hasData()) {
+        root.copyPointAttributes(root.pointAttributesCache.offset, root.pointAttributesCache.size, root.pointAttributesCache.data);
+        root.pointAttributesCache.reset();
+      }        
     }
   }
   
@@ -1688,57 +1743,6 @@ public class PShape3D extends PShape {
     }
   }
   
-  
-  protected class VertexCache {
-    int ncoords;
-    int offset;
-    int size;    
-    float[] data;
-    
-    VertexCache(int ncoords) {
-      this.ncoords = ncoords;
-      this.data = new float[ncoords * DEFAULT_CACHE_SIZE];
-      this.offset = 0;
-      this.size = 0;      
-    }
-    
-    void reset() {
-      offset = 0;
-      size = 0;
-    }    
-    
-    void add(int newOffset, int newSize, float[] newData) {
-      if (size == 0) {
-        offset = newOffset;
-      }
-      
-      if (data.length / ncoords == size + newSize) {
-        expand(size + newSize);
-      }
-      
-      PApplet.arrayCopy(newData, 0, data, ncoords * size, ncoords * newSize);
-      
-      size += newSize;
-    } 
-    
-    void expand(int n) {
-      float temp[] = new float[ncoords * n];      
-      PApplet.arrayCopy(data, 0, temp, 0, ncoords * size);
-      data = temp;      
-    }
-    
-    boolean hasData() {
-      return 0 < size;
-    }
-    
-  }
-  
-  VertexCache fillVerticesCache;
-  VertexCache fillColorsCache;
-  VertexCache fillNormalsCache;
-  VertexCache fillTexCoordsCache;
-  
-  
   protected void updateRootGeometry() {
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -1747,7 +1751,7 @@ public class PShape3D extends PShape {
       }    
     } else {
  
-      if (0 < tess.fillVertexCount) {          
+      if (0 < tess.fillVertexCount) {    
         if (modifiedFillVertices) {
           if (root.fillVerticesCache == null) { 
             root.fillVerticesCache = new VertexCache(3);
@@ -1791,51 +1795,99 @@ public class PShape3D extends PShape {
           root.copyFillTexCoords(root.fillTexCoordsCache.offset, root.fillTexCoordsCache.size, root.fillTexCoordsCache.data);
           root.fillTexCoordsCache.reset();
         } 
-      }  
+      } 
       
-        /*
-        if (0 < tess.lineVertexCount) {          
-          if (modifiedLineVertices) {
-            root.copyLineVertices(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineVertices);            
-            modifiedLineVertices = false;
-          }
-          if (modifiedLineColors) {
-            root.copyLineColors(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineColors);
-            modifiedLineColors = false;
-          }          
-          if (modifiedLineNormals) {
-            root.copyLineNormals(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineNormals);
-            modifiedLineNormals = false;
-          }          
-          if (modifiedLineAttributes) {
-            root.copyLineAttributes(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineAttributes);
-            modifiedLineAttributes = false;
-          }           
+      if (0 < tess.lineVertexCount) {
+        if (modifiedLineVertices) {
+          if (root.lineVerticesCache == null) { 
+            root.lineVerticesCache = new VertexCache(3);
+          }            
+          root.lineVerticesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineVertices);
+          modifiedLineVertices = false;
+        } else if (root.lineVerticesCache != null && root.lineVerticesCache.hasData()) {
+          root.copyLineVertices(root.lineVerticesCache.offset, root.lineVerticesCache.size, root.lineVerticesCache.data);
+          root.lineVerticesCache.reset();
         }
-        */
         
-        /*
-        if (0 < tess.pointVertexCount) {          
-          if (modifiedPointVertices) {
-            root.copyPointVertices(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointVertices);
-            modifiedPointVertices = false;
-          }
-          if (modifiedPointColors) {
-            root.copyPointColors(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointColors);
-            modifiedPointColors = false;
-          }
-          if (modifiedPointNormals) {
-            root.copyPointNormals(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointNormals);
-            modifiedPointNormals = false;
-          }
-          if (modifiedPointAttributes) {
-            root.copyPointAttributes(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointAttributes);
-            modifiedPointAttributes = false;
-          }          
+        if (modifiedLineColors) {
+          if (root.lineColorsCache == null) { 
+            root.lineColorsCache = new VertexCache(4);
+          }            
+          root.lineColorsCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineColors);
+          modifiedLineColors = false;            
+        } else if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
+          root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.data);
+          root.lineColorsCache.reset();
         }
-        */
         
- 
+        if (modifiedLineNormals) {
+          if (root.lineNormalsCache == null) { 
+            root.lineNormalsCache = new VertexCache(3);
+          }            
+          root.lineNormalsCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineNormals);            
+          modifiedLineNormals = false;
+        } else if (root.lineNormalsCache != null && root.lineNormalsCache.hasData()) {
+          root.copyLineNormals(root.lineNormalsCache.offset, root.lineNormalsCache.size, root.lineNormalsCache.data);
+          root.lineNormalsCache.reset();
+        }
+        
+        if (modifiedLineAttributes) {
+          if (root.lineAttributesCache == null) { 
+            root.lineAttributesCache = new VertexCache(4);
+          }            
+          root.lineAttributesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineAttributes);            
+          modifiedLineAttributes = false;
+        } else if (root.lineAttributesCache != null && root.lineAttributesCache.hasData()) {
+          root.copyLineAttributes(root.lineAttributesCache.offset, root.lineAttributesCache.size, root.lineAttributesCache.data);
+          root.lineAttributesCache.reset();
+        }      
+      }
+
+      if (0 < tess.pointVertexCount) {
+        if (modifiedPointVertices) {
+          if (root.pointVerticesCache == null) { 
+            root.pointVerticesCache = new VertexCache(3);
+          }            
+          root.pointVerticesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointVertices);
+          modifiedPointVertices = false;
+        } else if (root.pointVerticesCache != null && root.pointVerticesCache.hasData()) {
+          root.copyPointVertices(root.pointVerticesCache.offset, root.pointVerticesCache.size, root.pointVerticesCache.data);
+          root.pointVerticesCache.reset();
+        }
+        
+        if (modifiedPointColors) {
+          if (root.pointColorsCache == null) { 
+            root.pointColorsCache = new VertexCache(4);
+          }            
+          root.pointColorsCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointColors);
+          modifiedPointColors = false;            
+        } else if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
+          root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.data);
+          root.pointColorsCache.reset();
+        }
+        
+        if (modifiedPointNormals) {
+          if (root.pointNormalsCache == null) { 
+            root.pointNormalsCache = new VertexCache(3);
+          }            
+          root.pointNormalsCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointNormals);            
+          modifiedPointNormals = false;
+        } else if (root.pointNormalsCache != null && root.pointNormalsCache.hasData()) {
+          root.copyPointNormals(root.pointNormalsCache.offset, root.pointNormalsCache.size, root.pointNormalsCache.data);
+          root.pointNormalsCache.reset();
+        }
+        
+        if (modifiedPointAttributes) {
+          if (root.pointAttributesCache == null) { 
+            root.pointAttributesCache = new VertexCache(3);
+          }            
+          root.pointAttributesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointAttributes);            
+          modifiedPointAttributes = false;
+        } else if (root.pointAttributesCache != null && root.pointAttributesCache.hasData()) {
+          root.copyPointAttributes(root.pointAttributesCache.offset, root.pointAttributesCache.size, root.pointAttributesCache.data);
+          root.pointAttributesCache.reset();
+        }        
+      }
       
       root.fillVertCopyOffset += tess.fillVertexCount;
       root.lineVertCopyOffset += tess.lineVertexCount;
@@ -1866,6 +1918,7 @@ public class PShape3D extends PShape {
     
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }
+
   
   protected void copyFillVertices(int offset, int size, float[] vertices) {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);
@@ -1874,12 +1927,14 @@ public class PShape3D extends PShape {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }
   
+  
   protected void copyFillColors(int offset, int size, float[] colors) {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
     getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
                             4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }  
+  
   
   protected void copyFillNormals(int offset, int size, float[] normals) {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
@@ -1888,6 +1943,7 @@ public class PShape3D extends PShape {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }  
 
+  
   protected void copyFillTexCoords(int offset, int size, float[] texcoords) {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
     getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
@@ -1972,6 +2028,38 @@ public class PShape3D extends PShape {
   }    
   
   
+  protected void copyLineVertices(int offset, int size, float[] vertices) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+  }     
+  
+  
+  protected void copyLineColors(int offset, int size, float[] colors) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+  }
+  
+  
+  protected void copyLineNormals(int offset, int size, float[] normals) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+  }
+
+  
+  protected void copyLineAttributes(int offset, int size, float[] attribs) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+  }
+  
+  
   protected void copyLineIndices(int offset, int size, int[] indices) {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineIndexBufferID);
     getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
@@ -2047,6 +2135,38 @@ public class PShape3D extends PShape {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }  
 
+
+  protected void copyPointVertices(int offset, int size, float[] vertices) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+  }
+    
+    
+  protected void copyPointColors(int offset, int size, float[] colors) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+  }
+    
+  
+  protected void copyPointNormals(int offset, int size, float[] normals) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+  }
+
+    
+  protected void copyPointAttributes(int offset, int size, float[] attribs) {
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));    
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+  }
+  
   
   protected void copyPointIndices(int offset, int size, int[] indices) {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);
@@ -2421,6 +2541,55 @@ public class PShape3D extends PShape {
     getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);     
   }
   
+  ///////////////////////////////////////////////////////////  
+  
+  // 
+  
+  // Internal class to store a cache of vertex data used to copy data
+  // to the VBOs with fewer calls.
+  protected class VertexCache {
+    int ncoords;
+    int offset;
+    int size;    
+    float[] data;
+    
+    VertexCache(int ncoords) {
+      this.ncoords = ncoords;
+      this.data = new float[ncoords * DEFAULT_CACHE_SIZE];
+      this.offset = 0;
+      this.size = 0;      
+    }
+    
+    void reset() {
+      offset = 0;
+      size = 0;
+    }    
+    
+    void add(int newOffset, int newSize, float[] newData) {
+      if (size == 0) {
+        offset = newOffset;
+      }
+      
+      if (data.length / ncoords == size + newSize) {
+        expand(size + newSize);
+      }
+      
+      PApplet.arrayCopy(newData, 0, data, ncoords * size, ncoords * newSize);
+      
+      size += newSize;
+    } 
+    
+    void expand(int n) {
+      float temp[] = new float[ncoords * n];      
+      PApplet.arrayCopy(data, 0, temp, 0, ncoords * size);
+      data = temp;      
+    }
+    
+    boolean hasData() {
+      return 0 < size;
+    }
+    
+  }  
   
   ///////////////////////////////////////////////////////////  
   
