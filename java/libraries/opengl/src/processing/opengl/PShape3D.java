@@ -123,13 +123,6 @@ public class PShape3D extends PShape {
   protected int pointVertCopyOffset;
   protected int pointIndCopyOffset;
 
-  protected HashMap<PShape3D, Integer> fillVertOffset;
-  protected HashMap<PShape3D, Integer> fillIndOffset;
-  protected HashMap<PShape3D, Integer> lineVertOffset;
-  protected HashMap<PShape3D, Integer> lineIndOffset;  
-  protected HashMap<PShape3D, Integer> pointVertOffset;
-  protected HashMap<PShape3D, Integer> pointIndOffset;  
-  
   protected int lastFillVertexOffset;
   protected int lastFillIndexOffset;  
   protected int lastLineVertexOffset;
@@ -731,10 +724,7 @@ public class PShape3D extends PShape {
       updateTesselation();
       
       if (0 < tess.lineVertexCount) {
-        int offset = root.lineVertOffset.get(this);
         int size = tess.lineVertexCount;
-        
-        // We resuse the tess array to avoid creating a new one.
         float[] colors = tess.lineColors;
         int index;
         for (int i = 0; i < size; i++) {
@@ -744,18 +734,12 @@ public class PShape3D extends PShape {
           colors[index++] = strokeB;
           colors[index  ] = strokeA;
         }
-        
-        getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineColorBufferID);
-        getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                                4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));    
-        
+        modifiedLineColors = true;
+        modified = true;         
       }
       
       if (0 < tess.pointVertexCount) {
-        int offset = root.pointVertOffset.get(this);
         int size = tess.pointVertexCount;
-        
-        // We resuse the tess array to avoid creating a new one.
         float[] colors = tess.pointColors;
         int index;
         for (int i = 0; i < size; i++) {
@@ -765,10 +749,8 @@ public class PShape3D extends PShape {
           colors[index++] = strokeB;
           colors[index  ] = strokeA;
         }
-        
-        getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointColorBufferID);
-        getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                                4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));            
+        modifiedPointColors = true;
+        modified = true;            
       }            
     }    
   }  
@@ -1601,8 +1583,6 @@ public class PShape3D extends PShape {
       // Now that we know, we can initialize the buffers with the correct size.
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {   
         initFillBuffers(tess.fillVertexCount, tess.fillIndexCount);          
-        fillVertOffset = new HashMap<PShape3D, Integer>();
-        fillIndOffset = new HashMap<PShape3D, Integer>();
         fillVertCopyOffset = 0;
         fillIndCopyOffset = 0;
         copyFillGeometryToRoot();
@@ -1610,8 +1590,6 @@ public class PShape3D extends PShape {
       
       if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {   
         initLineBuffers(tess.lineVertexCount, tess.lineIndexCount);
-        lineVertOffset = new HashMap<PShape3D, Integer>();
-        lineIndOffset = new HashMap<PShape3D, Integer>();        
         lineVertCopyOffset = 0;
         lineIndCopyOffset = 0;
         copyLineGeometryToRoot();
@@ -1619,8 +1597,6 @@ public class PShape3D extends PShape {
       
       if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {   
         initPointBuffers(tess.pointVertexCount, tess.pointIndexCount);
-        pointVertOffset = new HashMap<PShape3D, Integer>();
-        pointIndOffset = new HashMap<PShape3D, Integer>();        
         pointVertCopyOffset = 0;
         pointIndCopyOffset = 0;
         copyPointGeometryToRoot();
@@ -1731,12 +1707,10 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {        
-        root.fillVertOffset.put(this, root.fillVertCopyOffset);
         root.copyFillGeometry(root.fillVertCopyOffset, tess.fillVertexCount, 
                               tess.fillVertices, tess.fillColors, tess.fillNormals, tess.fillTexcoords);
         root.fillVertCopyOffset += tess.fillVertexCount;
       
-        root.fillIndOffset.put(this, root.fillIndCopyOffset);
         root.copyFillIndices(root.fillIndCopyOffset, tess.fillIndexCount, tess.fillIndices);
         root.fillIndCopyOffset += tess.fillIndexCount;
       }
@@ -1993,12 +1967,10 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (hasLines) {
-        lineVertOffset.put(this, root.lineVertCopyOffset);
         root.copyLineGeometry(root.lineVertCopyOffset, tess.lineVertexCount, 
                               tess.lineVertices, tess.lineColors, tess.lineNormals, tess.lineAttributes);        
         root.lineVertCopyOffset += tess.lineVertexCount;
         
-        root.lineIndOffset.put(this, root.lineIndCopyOffset);
         root.copyLineIndices(root.lineIndCopyOffset, tess.lineIndexCount, tess.lineIndices);
         root.lineIndCopyOffset += tess.lineIndexCount;        
       }
@@ -2101,12 +2073,10 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (hasPoints) {
-        root.pointVertOffset.put(this, root.pointVertCopyOffset);
         root.copyPointGeometry(root.pointVertCopyOffset, tess.pointVertexCount, 
                                tess.pointVertices, tess.pointColors, tess.pointNormals, tess.pointAttributes);        
         root.pointVertCopyOffset += tess.pointVertexCount;
         
-        root.pointIndOffset.put(this, root.pointIndCopyOffset);
         root.copyPointIndices(root.pointIndCopyOffset, tess.pointIndexCount, tess.pointIndices);
         root.pointIndCopyOffset += tess.pointIndexCount;        
       }
