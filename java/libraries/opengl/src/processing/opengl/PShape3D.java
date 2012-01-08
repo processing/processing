@@ -598,7 +598,8 @@ public class PShape3D extends PShape {
 
   public void noFill() {
     fill = false;
-    // What to do here? re-tessellate or change alpha to 0?
+    colorCalc(0, 0);
+    fillFromCalc();
   }
 
   public void fill(int rgb) {
@@ -670,6 +671,8 @@ public class PShape3D extends PShape {
   
   public void noStroke() {
     stroke = false;
+    colorCalc(0, 0);
+    strokeFromCalc();
   }
   
   
