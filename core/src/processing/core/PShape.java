@@ -141,6 +141,9 @@ public class PShape implements PConstants {
 
   protected boolean fill;
   protected int fillColor;
+
+  protected boolean tint;
+  protected int tintColor;  
   
   /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;
@@ -477,7 +480,6 @@ public class PShape implements PConstants {
 
   // STROKE COLOR 
   
-  
   public void noStroke() {
   }  
   
@@ -498,6 +500,32 @@ public class PShape implements PConstants {
   
   public void stroke(float x, float y, float z, float alpha) {
   }
+  
+  //////////////////////////////////////////////////////////////
+
+  // TINT COLOR 
+  
+  
+  public void noTint() {
+  }  
+  
+  public void tint(int rgb) {
+  }  
+  
+  public void tint(int rgb, float alpha) {
+  }
+  
+  public void tint(float gray) {
+  }
+  
+  public void tint(float gray, float alpha) {
+  }
+
+  public void tint(float x, float y, float z) {
+  }
+  
+  public void tint(float x, float y, float z, float alpha) {
+  }  
 
   ///////////////////////////////////////////////////////////  
   
