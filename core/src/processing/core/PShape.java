@@ -1106,6 +1106,13 @@ public class PShape implements PConstants {
   public void updateRoot(PShape root) {    
   }
 
+  protected void modified() {
+    modified = true;
+    if (parent != null) {
+      parent.modified();
+    }
+  }
+  
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
