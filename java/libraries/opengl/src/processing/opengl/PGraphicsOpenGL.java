@@ -4468,8 +4468,7 @@ public class PGraphicsOpenGL extends PGraphics {
     lightCount++;
   }
 
-  public void directionalLight(float r, float g, float b, float nx, float ny,
-      float nz) {
+  public void directionalLight(float r, float g, float b, float nx, float ny, float nz) {
     enableLighting();
     if (lightCount == MAX_LIGHTS) {
       throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
@@ -4492,9 +4491,9 @@ public class PGraphicsOpenGL extends PGraphics {
     // In this case, the normal is used to indicate the direction
     // of the light, with the w component equals to zero. See
     // the comments in the lightDirection() method.
-    lightNormal[lightCount][0] = -nx;
-    lightNormal[lightCount][1] = -ny;
-    lightNormal[lightCount][2] = -nz;
+    lightNormal[lightCount][0] = nx;
+    lightNormal[lightCount][1] = ny;
+    lightNormal[lightCount][2] = nz;
     lightNormal[lightCount][3] = 0.0f;
 
     lightEnable(lightCount);
