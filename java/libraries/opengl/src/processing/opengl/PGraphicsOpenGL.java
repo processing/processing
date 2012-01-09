@@ -462,7 +462,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public static int flushMode = FLUSH_WHEN_FULL;
 //  public static int flushMode = FLUSH_AFTER_SHAPE;
  
-  public static final int MIN_ARRAYCOPY_SIZE = 3;
+  public static final int MIN_ARRAYCOPY_SIZE = 2;
   
   public static final int MAX_TESS_VERTICES = 1000000;
   public static final int MAX_TESS_INDICES  = 3000000; 
@@ -2482,9 +2482,8 @@ public class PGraphicsOpenGL extends PGraphics {
     
     lineAttribsID = lineShader.getAttribLocation("attribs");     
     gl2x.glEnableVertexAttribArray(lineAttribsID);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);      
-    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                         FloatBuffer.wrap(attribs));    
+    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);          
+    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 4 * nvert), vboMode); 
     gl2x.glVertexAttribPointer(lineAttribsID, 4, GL.GL_FLOAT, false, 0, 0);        
   }
   
@@ -2531,8 +2530,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pointAttribsID = PGraphicsOpenGL.pointShader.getAttribLocation("vertDisp");     
     gl2x.glEnableVertexAttribArray(pointAttribsID);
     gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);
-    gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, 2 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                         FloatBuffer.wrap(attribs));    
+    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 2 * nvert), vboMode);       
     ogl.gl2x.glVertexAttribPointer(pointAttribsID, 2, GL.GL_FLOAT, false, 0, 0);      
   }
   
@@ -7342,7 +7340,7 @@ public class PGraphicsOpenGL extends PGraphics {
           fillNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
         }        
       } else {
-        if (nvert < MIN_ARRAYCOPY_SIZE) {
+        if (nvert <= MIN_ARRAYCOPY_SIZE) {
           // Copying elements one by one instead of using arrayCopy is more efficient for
           // few vertices...
           for (int i = 0; i < nvert; i++) {
@@ -7375,7 +7373,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
         
-      if (nvert < MIN_ARRAYCOPY_SIZE) {
+      if (nvert <= MIN_ARRAYCOPY_SIZE) {
         for (int i = 0; i < nvert; i++) {
           int inIdx = i0 + i;
           int tessIdx = firstFillVertex + i;
@@ -7397,8 +7395,8 @@ public class PGraphicsOpenGL extends PGraphics {
           fillColors[index  ] = a;
           
           index = 2 * tessIdx;
-          fillNormals[index++] = u;
-          fillNormals[index  ] = v;            
+          fillTexcoords[index++] = u;
+          fillTexcoords[index  ] = v;            
         }
       } else {
         PApplet.arrayCopy(in.colors, 4 * i0, fillColors, 4 * firstFillVertex, 4 * nvert);      
