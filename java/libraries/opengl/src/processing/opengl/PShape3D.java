@@ -654,7 +654,7 @@ public class PShape3D extends PShape {
   }
 
   protected void updateFillColor() {
-    if (!shapeEnded || tess.fillVertexCount == 0) {
+    if (!shapeEnded || tess.fillVertexCount == 0 || texture != null) {
       return;
     }
       
@@ -769,6 +769,77 @@ public class PShape3D extends PShape {
     }    
   }  
 
+ 
+  //////////////////////////////////////////////////////////////
+
+  // TINT COLOR 
+  
+  public void noTint() {
+    tint = false;
+    colorCalc(0, 0);
+    tintFromCalc();    
+  }  
+  
+  public void tint(int rgb) {
+    colorCalc(rgb);
+    tintFromCalc();    
+  }  
+  
+  public void tint(int rgb, float alpha) {
+    colorCalc(rgb, alpha);
+    tintFromCalc();
+  }
+  
+  public void tint(float gray) {
+    colorCalc(gray);
+    tintFromCalc();    
+  }
+  
+  public void tint(float gray, float alpha) {
+    colorCalc(gray, alpha);
+    tintFromCalc();    
+  }
+
+  public void tint(float x, float y, float z) {
+    colorCalc(x, y, z);
+    tintFromCalc();    
+  }
+  
+  public void tint(float x, float y, float z, float alpha) {
+    colorCalc(x, y, z, alpha);
+    tintFromCalc();    
+  }  
+  
+  protected void tintFromCalc() {
+    tint = true;
+    tintR = calcR;
+    tintG = calcG;
+    tintB = calcB;
+    tintA = calcA;
+    tintColor = calcColor;
+    updateTintColor();  
+  }  
+  
+  protected void updateTintColor() {    
+    if (!shapeEnded || tess.fillVertexCount == 0 || texture == null) {
+      return;
+    }
+      
+    updateTesselation();
+    
+    int size = tess.fillVertexCount;
+    float[] colors = tess.fillColors;
+    int index;
+    for (int i = 0; i < size; i++) {
+      index = 4 * i;
+      colors[index++] = tintR;
+      colors[index++] = tintG;
+      colors[index++] = tintB;
+      colors[index  ] = tintA;
+    }
+    modifiedFillColors = true;
+    modified = true;  
+  }
   
   ///////////////////////////////////////////////////////////  
   
@@ -2004,7 +2075,7 @@ public class PShape3D extends PShape {
   protected void copyFillGeometry(int offset, int size, 
                                   float[] vertices, float[] colors, 
                                   float[] normals, float[] texcoords) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
     getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
                             3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
     
@@ -2025,7 +2096,7 @@ public class PShape3D extends PShape {
 
   
   protected void copyFillVertices(int offset, int size, float[] vertices) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
     getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
                             3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
@@ -2035,7 +2106,7 @@ public class PShape3D extends PShape {
   protected void copyFillColors(int offset, int size, float[] colors) {
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
     getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));      
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }  
   
@@ -2528,14 +2599,15 @@ public class PShape3D extends PShape {
     ogl.startPointShader();
     
     getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);
+    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointNormalBufferID);
     getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);
-          
-    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+              
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointColorBufferID);
     getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
     
-    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointVertexBufferID);
     getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
     
@@ -2560,14 +2632,15 @@ public class PShape3D extends PShape {
     ogl.startLineShader();
     
     getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);
+    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineNormalBufferID);
     getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);
-          
-    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+              
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineColorBufferID);
     getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
-    
-    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
+                    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineVertexBufferID);
     getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
     
@@ -2590,18 +2663,19 @@ public class PShape3D extends PShape {
   
   protected void renderFill(PImage textureImage) {
     getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);
+    getGl().glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillNormalBufferID);
     getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);    
-
-    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillColorBufferID);
     getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
     
-    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);            
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillVertexBufferID);
     getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);    
-
-    getGl().glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+    
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillTexCoordBufferID);
     getGl().glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);    
     
@@ -2669,7 +2743,34 @@ public class PShape3D extends PShape {
         expand(newSize);
       }
       
-      PApplet.arrayCopy(newData, 0, data, ncoords * size, ncoords * dataSize);
+      if (dataSize <= PGraphicsOpenGL.MIN_ARRAYCOPY_SIZE) {
+        // Copying elements one by one instead of using arrayCopy is more efficient for
+        // few vertices...
+        for (int i = 0; i < dataSize; i++) {
+          int srcIndex = ncoords * i;
+          int destIndex = ncoords * (size + i);
+          
+          if (ncoords == 2) {
+            data[destIndex++] = newData[srcIndex++];
+            data[destIndex  ] = newData[srcIndex  ];
+          } else if (ncoords == 3) {
+            data[destIndex++] = newData[srcIndex++];
+            data[destIndex++] = newData[srcIndex++];
+            data[destIndex  ] = newData[srcIndex  ];
+          } else if (ncoords == 4) {
+            data[destIndex++] = newData[srcIndex++];
+            data[destIndex++] = newData[srcIndex++];
+            data[destIndex++] = newData[srcIndex++];
+            data[destIndex  ] = newData[srcIndex  ];            
+          } else {
+            for (int j = 0; j < ncoords; j++) {
+              data[destIndex++] = newData[srcIndex++];
+            }            
+          }
+        }
+      } else {
+        PApplet.arrayCopy(newData, 0, data, ncoords * size, ncoords * dataSize);
+      }
       
       size += dataSize;
     } 
