@@ -416,6 +416,8 @@ public class PShape implements PConstants {
   public void vertex(float x, float y) { 
   }
 
+  public void vertex(float x, float y, float u, float v) { 
+  }
   
   public void vertex(float x, float y, float z) {
   }
@@ -1211,6 +1213,14 @@ public class PShape implements PConstants {
   //   these each call matrix.translate, etc
   // if matrix is null when one is called,
   //   it is created and set to identity
+  
+  public void center(float cx, float cy) {
+    
+  }
+  
+  public void center(float cx, float cy, float cz) {
+    
+  }
 
 /**
    * ( begin auto-generated from PShape_translate.xml )

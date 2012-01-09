@@ -429,6 +429,11 @@ public class PShape3D extends PShape {
   // Drawing methods  
   
   
+  public void textureMode(int mode) {
+    textureMode = mode;
+  }
+
+  
   public void texture(PImage tex) {
     texture = tex;  
   }
@@ -467,6 +472,11 @@ public class PShape3D extends PShape {
     vertex(x, y, 0, 0, 0);   
   }
 
+  
+  public void vertex(float x, float y, float u, float v) {
+    vertex(x, y, 0, u, v); 
+  }      
+  
   
   public void vertex(float x, float y, float z) {
     vertex(x, y, z, 0, 0);      
@@ -765,9 +775,85 @@ public class PShape3D extends PShape {
   
   // Geometric transformations
   
+  public void center(float cx, float cy) {
+    if (family == GROUP) {
+//      for (int i = 0; i < childCount; i++) {
+//        PShape3D child = (PShape3D) children[i];        
+//        child.center(cx, cy);
+//      }      
+    } else {
+      tess.center(cx, cy);
+      
+      modified = true; 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;    
+      }      
+    }
+  }
+
+  public void center(float cx, float cy, float cz) {
+    if (family == GROUP) {
+//      for (int i = 0; i < childCount; i++) {
+//        PShape3D child = (PShape3D) children[i];        
+//        child.center(cx, cy, cz);
+//      }   
+      
+      // calculate current center of all child shapes
+      // translate to the new center.
+      
+    } else {
+      tess.center(cx, cy, cz);
+      
+      modified = true; 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;        
+      }      
+    }
+  }  
+  
   public void translate(float tx, float ty) {
-    // TODO: implement for geometry shapes.
-    super.translate(tx, ty);
+    if (family == GROUP) {
+      // TODO: make sure that for group shapes, just applying the
+      // gl transformation is efficient enough (might depend on
+      // how much geometry is inside the group).
+      super.translate(tx, ty);
+    } else {
+      checkMatrix(2);
+      matrix.translate(tx, ty);
+      tess.applyMatrix((PMatrix2D) matrix);
+      
+      modified = true; 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+        modifiedFillNormals = true; 
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineNormals = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;
+        modifiedPointNormals = true;        
+      }
+      
+      // So the transformation is not applied again when drawing
+      matrix = null;      
+    }    
   }
   
   public void translate(float tx, float ty, float tz) {
@@ -781,7 +867,7 @@ public class PShape3D extends PShape {
       matrix.translate(tx, ty, tz);
       tess.applyMatrix((PMatrix3D) matrix);
       
-      modified = true;      
+      modified = true; 
       if (0 < tess.fillVertexCount) {
         modifiedFillVertices = true;  
         modifiedFillNormals = true; 
@@ -2543,7 +2629,7 @@ public class PShape3D extends PShape {
         offset = newOffset;
       }
       
-      if (data.length / ncoords == size + newSize) {
+      if (data.length / ncoords <= size + newSize) {
         expand(size + newSize);
       }
       
