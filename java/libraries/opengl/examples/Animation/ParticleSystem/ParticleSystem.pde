@@ -1,27 +1,98 @@
-PShape system;
-  
+PShape particles;
+PImage sprite;  
+
+int npartTotal = 1000;
+int npartPerFrame = 10;
+float speed = 1.0;
+float gravity = 0.05;
+float partSize = 20;
+
+int partLifetime;
+PVector velocities[];
+int lifetimes[];  
+
 void setup() {
-  size(500, 500, P3D);
-    
-  system = createShape(PShape.GROUP);
-    
-  for (int i = 0; i < 10; i++) {
-    PShape pt = createShape(POINT);
-    pt.strokeWeight(20);
-    pt.stroke(random(255), random(255), random(255));
-    pt.vertex(random(width), random(height));
-    system.addShape(pt);
-    pt.end();
+  size(640, 480, P3D);
+  frameRate(120);
+
+  particles = createShape(PShape.GROUP);
+  sprite = loadImage("sprite.png");
+
+  for (int n = 0; n < npartTotal; n++) {
+    PShape part = createShape(QUAD);
+    part.noStroke();
+    part.texture(sprite);
+    part.vertex(-partSize/2, -partSize/2, 0, 0);
+    part.vertex(+partSize/2, -partSize/2, sprite.width, 0);
+    part.vertex(+partSize/2, +partSize/2, sprite.width, sprite.height);
+    part.vertex(-partSize/2, +partSize/2, 0, sprite.height);
+    part.end();    
+    particles.addShape(part);
   }
+
+  partLifetime = npartTotal / npartPerFrame;
+  initVelocities();
+  initLifetimes(); 
+
+  // Writing to the depth buffer is disabled to avoid rendering
+  // artifacts due to the fact that the particles are semi-transparent
+  // but not z-sorted.
+  hint(DISABLE_DEPTH_MASK);
 } 
 
-public void draw () {
-  background(255);
+void draw () {
+  background(0);
 
-  shape(system);
-    
-  for (int i = 0; i < system.getChildCount(); i++) {
-    PShape pt = system.getChild(i);
-     pt.translate(random(-5, 5), random(-5, 5), random(-5, 5));
+  for (int n = 0; n < particles.getChildCount(); n++) {
+    PShape part = particles.getChild(n);
+
+    lifetimes[n]++;
+    if (lifetimes[n] == partLifetime) {
+      lifetimes[n] = 0;
+    }      
+
+    if (0 <= lifetimes[n]) {
+      if (lifetimes[n] == 0) {
+        // Re-spawn dead particle
+        part.center(mouseX, mouseY);
+        float a = random(0, TWO_PI);
+        float s = random(0.5 * speed, 0.5 * speed);
+        velocities[n].x = s * cos(a);
+        velocities[n].y = s * sin(a);
+      } 
+      else {
+        part.translate(velocities[n].x, velocities[n].y);
+        velocities[n].y += gravity;
+      }
+
+      float a = 1.0 - float(lifetimes[n]) / partLifetime;
+      part.fill(255, a * 255);
+    } else {
+      part.fill(0, 0);
+    }
+  }
+
+  shape(particles);
+  
+  if (frameCount % 10 == 0) println(frameRate);
+}
+
+void initVelocities() {
+  velocities = new PVector[npartTotal];
+  for (int n = 0; n < velocities.length; n++) {
+    velocities[n] = new PVector();
   }
 }
+
+void initLifetimes() {
+  // Initializing particles with negative lifetimes so they are added
+  // progressively into the screen during the first frames of the sketch   
+  lifetimes = new int[npartTotal];
+  int t = -1;
+  for (int n = 0; n < lifetimes.length; n++) {    
+    if (n % npartPerFrame == 0) {
+      t++;
+    }
+    lifetimes[n] = -t;
+  }
+} 

@@ -7534,8 +7534,208 @@ public class PGraphicsOpenGL extends PGraphics {
       return newSize;
     }
     
-    public void applyMatrix(PMatrix2D tr) {
+    public void center(float cx, float cy) {
+      int index;
       
+      // Computing current center
+      float cx0 = 0;
+      float cy0 = 0;
+      for (int i = 0; i < fillVertexCount; i++) {
+        index = 3 * i;
+        cx0 += fillVertices[index++];
+        cy0 += fillVertices[index  ];
+      }
+      for (int i = 0; i < lineVertexCount; i++) {
+        index = 3 * i;
+        cx0 += lineVertices[index++];
+        cy0 += lineVertices[index  ];        
+      }
+      for (int i = 0; i < pointVertexCount; i++) {
+        index = 3 * i;
+        cx0 += pointVertices[index++];
+        cy0 += pointVertices[index  ];          
+      }      
+      int nt = fillVertexCount + lineVertexCount + pointVertexCount;
+      if (0 < nt) { 
+        cx0 /= nt;
+        cy0 /= nt;
+      }
+
+      float tx = cx - cx0;
+      float ty = cy - cy0;
+      
+      if (0 < fillVertexCount) {
+        for (int i = 0; i < fillVertexCount; i++) {
+          index = 3 * i;
+          fillVertices[index++] += tx;
+          fillVertices[index  ] += ty;
+        }        
+      }
+      
+      if (0 < lineVertexCount) {
+        for (int i = 0; i < lineVertexCount; i++) {
+          index = 3 * i;
+          lineVertices[index++] += tx;
+          lineVertices[index  ] += ty;
+          
+          index = 4 * i;
+          lineAttributes[index++] += tx;
+          lineAttributes[index  ] += ty;           
+        }
+      }
+      
+      if (0 < pointVertexCount) {
+        for (int i = 0; i < pointVertexCount; i++) {
+          index = 3 * i;
+          pointVertices[index++] += tx;
+          pointVertices[index  ] += ty;
+        }        
+      }      
+    }
+    
+    public void center(float cx, float cy, float cz) {
+      int index;
+      
+      // Computing current center
+      float cx0 = 0;
+      float cy0 = 0;
+      float cz0 = 0;      
+      for (int i = 0; i < fillVertexCount; i++) {
+        index = 3 * i;
+        cx0 += fillVertices[index++];
+        cy0 += fillVertices[index++];
+        cz0 += fillVertices[index  ];
+      }
+      for (int i = 0; i < lineVertexCount; i++) {
+        index = 3 * i;
+        cx0 += lineVertices[index++];
+        cy0 += lineVertices[index++];
+        cz0 += lineVertices[index  ];        
+      }
+      for (int i = 0; i < pointVertexCount; i++) {
+        index = 3 * i;
+        cx0 += pointVertices[index++];
+        cy0 += pointVertices[index++];
+        cz0 += pointVertices[index  ];          
+      }      
+      int nt = fillVertexCount + lineVertexCount + pointVertexCount;
+      if (0 < nt) { 
+        cx0 /= nt;
+        cy0 /= nt;
+        cz0 /= nt;
+      }
+
+      float tx = cx - cx0;
+      float ty = cy - cy0;
+      float tz = cz - cz0;      
+      
+      if (0 < fillVertexCount) {
+        for (int i = 0; i < fillVertexCount; i++) {
+          index = 3 * i;
+          fillVertices[index++] += tx;
+          fillVertices[index++] += ty;
+          fillVertices[index  ] += tz;
+        }        
+      }
+      
+      if (0 < lineVertexCount) {
+        for (int i = 0; i < lineVertexCount; i++) {
+          index = 3 * i;
+          lineVertices[index++] += tx;
+          lineVertices[index++] += ty;
+          lineVertices[index  ] += tz;
+          
+          index = 4 * i;
+          lineAttributes[index++] += tx;
+          lineAttributes[index++] += ty;
+          lineAttributes[index  ] += tz;           
+        }
+      }
+      
+      if (0 < pointVertexCount) {
+        for (int i = 0; i < pointVertexCount; i++) {
+          index = 3 * i;
+          pointVertices[index++] += tx;
+          pointVertices[index++] += ty;
+          pointVertices[index  ] += tz;
+        }        
+      }
+    }
+    
+    public void applyMatrix(PMatrix2D tr) {
+      if (0 < fillVertexCount) {
+        int index;
+          
+        for (int i = 0; i < fillVertexCount; i++) {
+          index = 3 * i;
+          float x = fillVertices[index++];
+          float y = fillVertices[index  ];
+        
+          index = 3 * i;
+          float nx = fillNormals[index++];
+          float ny = fillNormals[index  ];
+
+          index = 3 * i;
+          fillVertices[index++] = x * tr.m00 + y * tr.m01 + tr.m02;
+          fillVertices[index  ] = x * tr.m10 + y * tr.m11 + tr.m12;
+        
+          index = 3 * i;
+          fillNormals[index++] = nx * tr.m00 + ny * tr.m01;
+          fillNormals[index  ] = nx * tr.m10 + ny * tr.m11;          
+        }
+      }
+
+      if (0 < lineVertexCount) {
+        int index;
+        
+        for (int i = 0; i < lineVertexCount; i++) {
+          index = 3 * i;
+          float x = lineVertices[index++];
+          float y = lineVertices[index  ];
+        
+          index = 3 * i;
+          float nx = lineNormals[index++];
+          float ny = lineNormals[index  ];
+
+          index = 4 * i;
+          float xa = lineAttributes[index++];
+          float ya = lineAttributes[index  ];
+                    
+          index = 3 * i;
+          lineVertices[index++] = x * tr.m00 + y * tr.m01 + tr.m02;
+          lineVertices[index  ] = x * tr.m10 + y * tr.m11 + tr.m12;
+        
+          index = 3 * i;
+          lineNormals[index++] = nx * tr.m00 + ny * tr.m01;
+          lineNormals[index  ] = nx * tr.m10 + ny * tr.m11;
+          
+          index = 4 * i;
+          lineAttributes[index++] = xa * tr.m00 + ya * tr.m01 + tr.m02;
+          lineAttributes[index  ] = xa * tr.m10 + ya * tr.m11 + tr.m12;              
+        }   
+      }      
+      
+      if (0 < pointVertexCount) {
+        int index;
+       
+        for (int i = 0; i < pointVertexCount; i++) {
+          index = 3 * i;
+          float x = pointVertices[index++];
+          float y = pointVertices[index  ];
+        
+          index = 3 * i;
+          float nx = pointNormals[index++];
+          float ny = pointNormals[index  ];
+                    
+          index = 3 * i;
+          pointVertices[index++] = x * tr.m00 + y * tr.m01 + tr.m02;
+          pointVertices[index  ] = x * tr.m10 + y * tr.m11 + tr.m12;
+          
+          index = 3 * i;
+          pointNormals[index++] = nx * tr.m00 + ny * tr.m01;
+          pointNormals[index  ] = nx * tr.m10 + ny * tr.m11;
+        } 
+      }       
     }
     
     public void applyMatrix(PMatrix3D tr) {
@@ -7625,8 +7825,7 @@ public class PGraphicsOpenGL extends PGraphics {
           pointNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
           pointNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
         } 
-      }
-      
+      }      
     }    
   }
 
