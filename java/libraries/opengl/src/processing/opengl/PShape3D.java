@@ -663,8 +663,12 @@ public class PShape3D extends PShape {
 
   public void noFill() {
     fill = false;
-    colorCalc(0, 0);
-    fillFromCalc();
+    fillR = 0;
+    fillG = 0;
+    fillB = 0;
+    fillA = 0;
+    fillColor = 0x0;
+    updateFillColor();
   }
 
   public void fill(int rgb) {
@@ -736,8 +740,12 @@ public class PShape3D extends PShape {
   
   public void noStroke() {
     stroke = false;
-    colorCalc(0, 0);
-    strokeFromCalc();
+    strokeR = 0;
+    strokeG = 0;
+    strokeB = 0;
+    strokeA = 0;
+    strokeColor = 0x0;
+    updateStrokeColor();  
   }
   
   
@@ -830,8 +838,12 @@ public class PShape3D extends PShape {
   
   public void noTint() {
     tint = false;
-    colorCalc(0, 0);
-    tintFromCalc();    
+    tintR = 0;
+    tintG = 0;
+    tintB = 0;
+    tintA = 0;
+    tintColor = 0x0;
+    updateTintColor();   
   }  
   
   public void tint(int rgb) {
@@ -2594,7 +2606,7 @@ public class PShape3D extends PShape {
       renderPoints();
     }
     
-    if (hasLines) {
+    if (hasLines) {    
       renderLines();    
     }    
     
