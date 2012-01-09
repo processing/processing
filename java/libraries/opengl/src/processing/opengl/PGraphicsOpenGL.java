@@ -7935,8 +7935,8 @@ public class PGraphicsOpenGL extends PGraphics {
         
         tess.addPointVertices(nvertTot);
         tess.addPointIndices(nindTot);
-        int vertIdx = 3 * tess.firstPointVertex;
-        int attribIdx = 2 * tess.firstPointVertex;
+        int vertIdx = tess.firstPointVertex;
+        int attribIdx = tess.firstPointVertex;
         int indIdx = tess.firstPointIndex;      
         int firstVert = tess.firstPointVertex;      
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
@@ -8002,8 +8002,8 @@ public class PGraphicsOpenGL extends PGraphics {
         
         tess.addPointVertices(nvertTot);
         tess.addPointIndices(nindTot);
-        int vertIdx = 3 * tess.firstPointVertex;
-        int attribIdx = 2 * tess.firstPointVertex;
+        int vertIdx = tess.firstPointVertex;
+        int attribIdx = tess.firstPointVertex;
         int indIdx = tess.firstPointIndex;      
         int firstVert = tess.firstPointVertex;      
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
