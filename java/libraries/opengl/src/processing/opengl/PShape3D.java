@@ -42,7 +42,6 @@ import processing.opengl.PGraphicsOpenGL.Tessellator;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.HashMap;
 import java.util.HashSet;
 
 // Notes about geometry update in PShape3D.
@@ -168,7 +167,7 @@ public class PShape3D extends PShape {
   protected VertexCache pointNormalsCache;
   protected VertexCache pointAttributesCache;  
   
-  public static final int DEFAULT_CACHE_SIZE = 1024;
+  public static final int DEFAULT_CACHE_SIZE = 128;
     
   protected boolean isSolid;
   protected boolean isClosed;
@@ -180,6 +179,8 @@ public class PShape3D extends PShape {
   protected boolean hasFill;
   protected boolean hasLines;
   protected boolean hasPoints;
+  
+  protected boolean applyMatrix;
   
   // ........................................................
   
@@ -830,9 +831,11 @@ public class PShape3D extends PShape {
       // TODO: make sure that for group shapes, just applying the
       // gl transformation is efficient enough (might depend on
       // how much geometry is inside the group).
+      applyMatrix = true;
       super.translate(tx, ty);
     } else {
       checkMatrix(2);
+      matrix.reset();
       matrix.translate(tx, ty);
       tess.applyMatrix((PMatrix2D) matrix);
       
@@ -852,7 +855,8 @@ public class PShape3D extends PShape {
       }
       
       // So the transformation is not applied again when drawing
-      matrix = null;      
+      applyMatrix = false;
+      //matrix = null;      
     }    
   }
   
@@ -861,6 +865,7 @@ public class PShape3D extends PShape {
       // TODO: make sure that for group shapes, just applying the
       // gl transformation is efficient enough (might depend on
       // how much geometry is inside the group).
+      applyMatrix = true;
       super.translate(tx, ty, tz);
     } else {
       checkMatrix(3);
@@ -883,7 +888,8 @@ public class PShape3D extends PShape {
       }
       
       // So the transformation is not applied again when drawing
-      matrix = null;      
+      applyMatrix = false;
+      //matrix = null;      
     }    
   }
   
@@ -895,14 +901,32 @@ public class PShape3D extends PShape {
   
   public void rotate(float angle, float v0, float v1, float v2) {
     if (family == GROUP) {
+      applyMatrix = true;
       super.rotate(angle, v0, v1, v2);
     } else {
       checkMatrix(3);
+      matrix.reset();
       matrix.rotate(angle, v0, v1, v2);
       tess.applyMatrix((PMatrix3D) matrix);
-      transformed = true;
+            
+      modified = true; 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+        modifiedFillNormals = true; 
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineNormals = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;
+        modifiedPointNormals = true;        
+      }
+      
       // So the transformation is not applied again when drawing
-      matrix = null;            
+      applyMatrix = true;
+      //matrix = null;      
     }
   }
   
@@ -920,14 +944,31 @@ public class PShape3D extends PShape {
 
   public void scale(float x, float y, float z) {
     if (family == GROUP) {
+      applyMatrix = true;
       super.scale(x, y, z);
     } else {
       checkMatrix(3);
       matrix.scale(x, y, z);
       tess.applyMatrix((PMatrix3D) matrix);
-      transformed = true;
+      
+      modified = true; 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+        modifiedFillNormals = true; 
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineNormals = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;
+        modifiedPointNormals = true;        
+      }
+      
       // So the transformation is not applied again when drawing
-      matrix = null;            
+      //matrix = null;
+      applyMatrix = false;
     }    
   }  
   
@@ -2346,7 +2387,7 @@ public class PShape3D extends PShape {
       updateTesselation();
       updateGeometry();
       
-      if (matrix != null) {
+      if (matrix != null && applyMatrix) {
         g.pushMatrix();
         g.applyMatrix(matrix);
       }
@@ -2363,13 +2404,6 @@ public class PShape3D extends PShape {
 
         HashSet<PImage> textures = getTextures();
         boolean diffTexBelow = 1 < textures.size();
-
-        for (int i = 0; i < childCount; i++) {
-          if (((PShape3D) children[i]).hasMatrix()) {
-            matrixBelow = true;
-            break;
-          }
-        }        
         
         if (matrixBelow || diffTexBelow) {
           // Some child shape below this group has a non-null matrix
@@ -2408,7 +2442,7 @@ public class PShape3D extends PShape {
   // matrix associated to this shape or any of its child 
   // shapes.
   protected boolean hasMatrix() {
-    if (matrix != null) {
+    if (matrix != null && applyMatrix) {
       return true;
     }
     if (family == GROUP) {
@@ -2624,18 +2658,20 @@ public class PShape3D extends PShape {
       size = 0;
     }    
     
-    void add(int newOffset, int newSize, float[] newData) {
+    void add(int dataOffset, int dataSize, float[] newData) {      
       if (size == 0) {
-        offset = newOffset;
+        offset = dataOffset;
       }
       
-      if (data.length / ncoords <= size + newSize) {
-        expand(size + newSize);
+      int oldSize = data.length / ncoords;
+      if (size + dataSize >= oldSize) {
+        int newSize = expandSize(oldSize, size + dataSize);        
+        expand(newSize);
       }
       
-      PApplet.arrayCopy(newData, 0, data, ncoords * size, ncoords * newSize);
+      PApplet.arrayCopy(newData, 0, data, ncoords * size, ncoords * dataSize);
       
-      size += newSize;
+      size += dataSize;
     } 
     
     void expand(int n) {
@@ -2643,6 +2679,14 @@ public class PShape3D extends PShape {
       PApplet.arrayCopy(data, 0, temp, 0, ncoords * size);
       data = temp;      
     }
+    
+    int expandSize(int currSize, int newMinSize) {
+      int newSize = currSize; 
+      while (newSize < newMinSize) {
+        newSize = newSize << 1;
+      }
+      return newSize;
+    }    
     
     boolean hasData() {
       return 0 < size;

@@ -467,11 +467,11 @@ public class PGraphicsOpenGL extends PGraphics {
   public static final int MAX_TESS_VERTICES = 1000000;
   public static final int MAX_TESS_INDICES  = 3000000; 
   
-  public static final int DEFAULT_IN_VERTICES = 512;
-  public static final int DEFAULT_IN_EDGES = 1024;
+  public static final int DEFAULT_IN_VERTICES = 64;
+  public static final int DEFAULT_IN_EDGES = 128;
   public static final int DEFAULT_IN_TEXTURES = 64;
   public static final int DEFAULT_TESS_VERTICES = 64;
-  public static final int DEFAULT_TESS_INDICES = 1024;
+  public static final int DEFAULT_TESS_INDICES = 128;
     
   protected Tessellator tessellator;
   
