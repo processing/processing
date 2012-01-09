@@ -1,19 +1,23 @@
 PShape particles;
 PImage sprite;  
 
-int npartTotal = 1000;
-int npartPerFrame = 10;
+int npartTotal = 10000;
+int npartPerFrame = 25;
 float speed = 1.0;
 float gravity = 0.05;
 float partSize = 20;
 
 int partLifetime;
 PVector velocities[];
-int lifetimes[];  
+int lifetimes[];
+
+int fcount, lastm;
+float frate;
+int fint = 3;
 
 void setup() {
   size(640, 480, P3D);
-  frameRate(120);
+  frameRate(240);
 
   particles = createShape(PShape.GROUP);
   sprite = loadImage("sprite.png");
@@ -52,29 +56,35 @@ void draw () {
     }      
 
     if (0 <= lifetimes[n]) {
+      float opacity = 1.0 - float(lifetimes[n]) / partLifetime;
+      part.tint(255, opacity * 255);
+      
       if (lifetimes[n] == 0) {
         // Re-spawn dead particle
         part.center(mouseX, mouseY);
-        float a = random(0, TWO_PI);
+        float angle = random(0, TWO_PI);
         float s = random(0.5 * speed, 0.5 * speed);
-        velocities[n].x = s * cos(a);
-        velocities[n].y = s * sin(a);
-      } 
-      else {
+        velocities[n].x = s * cos(angle);
+        velocities[n].y = s * sin(angle);
+      } else {
         part.translate(velocities[n].x, velocities[n].y);
         velocities[n].y += gravity;
       }
-
-      float a = 1.0 - float(lifetimes[n]) / partLifetime;
-      part.fill(255, a * 255);
     } else {
-      part.fill(0, 0);
+      part.tint(0, 0);
     }
   }
 
   shape(particles);
   
-  if (frameCount % 10 == 0) println(frameRate);
+  fcount += 1;
+  int m = millis();
+  if (m - lastm > 1000 * fint) {
+    frate = float(fcount) / fint;
+    fcount = 0;
+    lastm = m;
+    println("fps: " + frate); 
+  } 
 }
 
 void initVelocities() {
