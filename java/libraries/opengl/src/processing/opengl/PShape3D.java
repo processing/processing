@@ -87,6 +87,7 @@ public class PShape3D extends PShape {
   protected TessGeometry tess;
   protected Tessellator tessellator;
   
+  protected HashSet<PImage> textures;
   protected PImage texture;
   
   // ........................................................
@@ -135,8 +136,6 @@ public class PShape3D extends PShape {
   
   protected boolean tessellated;
   
-  protected boolean transformed;
-  
   boolean modifiedFillVertices;
   boolean modifiedFillColors;
   boolean modifiedFillNormals;
@@ -181,6 +180,7 @@ public class PShape3D extends PShape {
   protected boolean hasPoints;
   
   protected boolean applyMatrix;
+  protected boolean childHasMatrix;
   
   // ........................................................
   
@@ -431,19 +431,73 @@ public class PShape3D extends PShape {
   
   
   public void textureMode(int mode) {
-    textureMode = mode;
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.textureMode(mode);        
+      }         
+    } else {    
+      textureMode = mode;
+    }
   }
 
   
   public void texture(PImage tex) {
-    texture = tex;  
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.texture(tex);        
+      }      
+    } else {
+      if (texture != null && parent != null) {
+        ((PShape3D)parent).removeTexture(texture);
+      }
+      texture = tex;
+      if (parent != null) {
+        ((PShape3D)parent).addTexture(texture);
+      }
+    }        
+  }
+
+  
+  public void noTexture() {
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.noTexture();        
+      }
+    } else {
+      if (texture != null && parent != null) {
+        ((PShape3D)parent).removeTexture(texture);
+      }
+      texture = null;
+    }
+  }  
+
+  
+  protected void addTexture(PImage tex) {
+    if (textures == null) {
+      textures = new HashSet<PImage>();      
+    }
+    textures.add(tex);
+    if (parent != null) {
+      ((PShape3D)parent).addTexture(tex);
+    }   
   }
   
   
-  public void noTexture() {
-    texture = null;
-  }  
-    
+  protected void removeTexture(PImage tex) {
+    if (textures != null) {
+      // If it already has a texture, we need to remove from 
+      // the parent (if no other child shape has it :-P)
+      // .... 
+      textures.remove(tex);
+      if (textures.size() == 0) {
+        textures = null;
+      }
+    }
+  }
+  
   
   public void solid(boolean solid) {
     isSolid = solid;
@@ -671,7 +725,7 @@ public class PShape3D extends PShape {
       colors[index  ] = fillA;
     }
     modifiedFillColors = true;
-    modified = true;   
+    modified();   
   }
   
     
@@ -749,7 +803,7 @@ public class PShape3D extends PShape {
           colors[index  ] = strokeA;
         }
         modifiedLineColors = true;
-        modified = true;         
+        modified();         
       }
       
       if (0 < tess.pointVertexCount) {
@@ -764,7 +818,7 @@ public class PShape3D extends PShape {
           colors[index  ] = strokeA;
         }
         modifiedPointColors = true;
-        modified = true;            
+        modified();            
       }            
     }    
   }  
@@ -838,7 +892,7 @@ public class PShape3D extends PShape {
       colors[index  ] = tintA;
     }
     modifiedFillColors = true;
-    modified = true;  
+    modified();  
   }
   
   ///////////////////////////////////////////////////////////  
@@ -856,7 +910,7 @@ public class PShape3D extends PShape {
     } else {
       tess.center(cx, cy);
       
-      modified = true; 
+      modified(); 
       if (0 < tess.fillVertexCount) {
         modifiedFillVertices = true;
       }        
@@ -883,7 +937,7 @@ public class PShape3D extends PShape {
     } else {
       tess.center(cx, cy, cz);
       
-      modified = true; 
+      modified(); 
       if (0 < tess.fillVertexCount) {
         modifiedFillVertices = true;  
       }        
@@ -902,6 +956,7 @@ public class PShape3D extends PShape {
       // TODO: make sure that for group shapes, just applying the
       // gl transformation is efficient enough (might depend on
       // how much geometry is inside the group).
+      childHasMatrix();
       applyMatrix = true;
       super.translate(tx, ty);
     } else {
@@ -909,8 +964,8 @@ public class PShape3D extends PShape {
       matrix.reset();
       matrix.translate(tx, ty);
       tess.applyMatrix((PMatrix2D) matrix);
-      
-      modified = true; 
+       
+      modified();
       if (0 < tess.fillVertexCount) {
         modifiedFillVertices = true;  
         modifiedFillNormals = true; 
@@ -926,8 +981,7 @@ public class PShape3D extends PShape {
       }
       
       // So the transformation is not applied again when drawing
-      applyMatrix = false;
-      //matrix = null;      
+      applyMatrix = false; 
     }    
   }
   
@@ -936,6 +990,7 @@ public class PShape3D extends PShape {
       // TODO: make sure that for group shapes, just applying the
       // gl transformation is efficient enough (might depend on
       // how much geometry is inside the group).
+      childHasMatrix();
       applyMatrix = true;
       super.translate(tx, ty, tz);
     } else {
@@ -943,7 +998,7 @@ public class PShape3D extends PShape {
       matrix.translate(tx, ty, tz);
       tess.applyMatrix((PMatrix3D) matrix);
       
-      modified = true; 
+      modified(); 
       if (0 < tess.fillVertexCount) {
         modifiedFillVertices = true;  
         modifiedFillNormals = true; 
@@ -960,7 +1015,6 @@ public class PShape3D extends PShape {
       
       // So the transformation is not applied again when drawing
       applyMatrix = false;
-      //matrix = null;      
     }    
   }
   
@@ -972,6 +1026,7 @@ public class PShape3D extends PShape {
   
   public void rotate(float angle, float v0, float v1, float v2) {
     if (family == GROUP) {
+      childHasMatrix();
       applyMatrix = true;
       super.rotate(angle, v0, v1, v2);
     } else {
@@ -980,7 +1035,7 @@ public class PShape3D extends PShape {
       matrix.rotate(angle, v0, v1, v2);
       tess.applyMatrix((PMatrix3D) matrix);
             
-      modified = true; 
+      modified(); 
       if (0 < tess.fillVertexCount) {
         modifiedFillVertices = true;  
         modifiedFillNormals = true; 
@@ -996,8 +1051,7 @@ public class PShape3D extends PShape {
       }
       
       // So the transformation is not applied again when drawing
-      applyMatrix = true;
-      //matrix = null;      
+      applyMatrix = true;   
     }
   }
   
@@ -1015,6 +1069,7 @@ public class PShape3D extends PShape {
 
   public void scale(float x, float y, float z) {
     if (family == GROUP) {
+      childHasMatrix();
       applyMatrix = true;
       super.scale(x, y, z);
     } else {
@@ -1022,7 +1077,7 @@ public class PShape3D extends PShape {
       matrix.scale(x, y, z);
       tess.applyMatrix((PMatrix3D) matrix);
       
-      modified = true; 
+      modified(); 
       if (0 < tess.fillVertexCount) {
         modifiedFillVertices = true;  
         modifiedFillNormals = true; 
@@ -1038,7 +1093,6 @@ public class PShape3D extends PShape {
       }
       
       // So the transformation is not applied again when drawing
-      //matrix = null;
       applyMatrix = false;
     }    
   }  
@@ -1085,6 +1139,8 @@ public class PShape3D extends PShape {
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
     if (family == GROUP) {
+      childHasMatrix();
+      applyMatrix = true;
       super.applyMatrix(n00, n01, n02, n03,
                         n10, n11, n12, n13,
                         n20, n21, n22, n23,
@@ -1096,14 +1152,34 @@ public class PShape3D extends PShape {
                    n20, n21, n22, n23,
                    n30, n31, n32, n33);   
       tess.applyMatrix((PMatrix3D) matrix);
-      transformed = true;
+      
+      modified(); 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+        modifiedFillNormals = true; 
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineNormals = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;
+        modifiedPointNormals = true;        
+      }
+      
       // So the transformation is not applied again when drawing
-      matrix = null;      
+      applyMatrix = false;     
     }
   }
   
   
-  
+  protected void childHasMatrix() {
+    childHasMatrix = true;
+    if (parent != null) {
+      ((PShape3D)parent).childHasMatrix();
+    }
+  }
   
   ///////////////////////////////////////////////////////////  
   
@@ -1506,11 +1582,14 @@ public class PShape3D extends PShape {
           // equivalent to use POLYGON with fill disabled.
         }
         
+        if (texture != null && parent != null) {
+          ((PShape3D)parent).addTexture(texture);
+        }        
       }
     }
     
     tessellated = true;
-    transformed = false;
+    modified = false;
   }
 
   
@@ -1696,7 +1775,7 @@ public class PShape3D extends PShape {
   
   
   protected void updateGeometry() {
-    if (root == this && parent == null) {
+    if (root == this && parent == null && modified) {
       // Initializing offsets
       fillVertCopyOffset = 0;
       lineVertCopyOffset = 0;
@@ -1922,8 +2001,8 @@ public class PShape3D extends PShape {
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D) children[i];        
-        child.updateRootGeometry();
-      }    
+        child.updateRootGeometry();        
+      } 
     } else {
  
       if (0 < tess.fillVertexCount) {    
@@ -2066,9 +2145,10 @@ public class PShape3D extends PShape {
       
       root.fillVertCopyOffset += tess.fillVertexCount;
       root.lineVertCopyOffset += tess.lineVertexCount;
-      root.pointVertCopyOffset += tess.pointVertexCount;
-      modified = false;
+      root.pointVertCopyOffset += tess.pointVertexCount;      
     }
+    
+    modified = false;
   }
     
   
@@ -2455,7 +2535,7 @@ public class PShape3D extends PShape {
   public void draw(PGraphics g) {
     if (visible) {
       
-      updateTesselation();
+      updateTesselation();      
       updateGeometry();
       
       if (matrix != null && applyMatrix) {
@@ -2465,16 +2545,8 @@ public class PShape3D extends PShape {
     
       if (family == GROUP) {
         
-        boolean matrixBelow = false;
-        for (int i = 0; i < childCount; i++) {
-          if (((PShape3D) children[i]).hasMatrix()) {
-            matrixBelow = true;
-            break;
-          }
-        }
-
-        HashSet<PImage> textures = getTextures();
-        boolean diffTexBelow = 1 < textures.size();
+        boolean matrixBelow = childHasMatrix;
+        boolean diffTexBelow = textures != null && 1 < textures.size();
         
         if (matrixBelow || diffTexBelow) {
           // Some child shape below this group has a non-null matrix
@@ -2491,9 +2563,9 @@ public class PShape3D extends PShape {
           // None of the child shapes below this group has a matrix
           // transformation applied to them, so we can render everything
           // in a single block.
-          // And all have the same texture applied to them.
+          // And all have the same texture applied to them.          
           PImage tex = null;
-          if (textures.size() == 1) {
+          if (textures != null && textures.size() == 1) {
             tex = (PImage)textures.toArray()[0];
           }
           render(tex);
@@ -2509,69 +2581,6 @@ public class PShape3D extends PShape {
     }
   }
 
-  // Recursively checks if the there is a transformation
-  // matrix associated to this shape or any of its child 
-  // shapes.
-  protected boolean hasMatrix() {
-    if (matrix != null && applyMatrix) {
-      return true;
-    }
-    if (family == GROUP) {
-      for (int i = 0; i < childCount; i++) {
-        PShape3D child = (PShape3D) children[i];
-        if (child.hasMatrix()) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-  
-  protected HashSet<PImage> getTextures() {
-    HashSet<PImage> texSet = new HashSet<PImage>();
-    
-    if (family == GROUP) {
-      
-      HashSet<PImage> childSet = null;
-      for (int i = 0; i < childCount; i++) {
-        PShape3D child = (PShape3D) children[i];
-        childSet = child.getTextures();
-        texSet.addAll(childSet);
-      }
-      
-    } else {      
-      texSet.add(texture);
-    }
-    
-    return texSet;    
-  }  
-  
-  /*
-  protected boolean isModified() {
-    if (modified) {
-      return true;
-    }
-    if (family == GROUP) {
-      for (int i = 0; i < childCount; i++) {
-        PShape3D child = (PShape3D) children[i];
-        if (child.isModified()) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-  
-  protected void setModified(boolean value) {
-    modified = value;
-    if (family == GROUP) {
-      for (int i = 0; i < childCount; i++) {
-        PShape3D child = (PShape3D) children[i];
-        child.setModified(value);
-      }
-    }    
-  }
-  */
   
   // Render the geometry stored in the root shape as VBOs, for the vertices 
   // corresponding to this shape. Sometimes we can have root == this.
