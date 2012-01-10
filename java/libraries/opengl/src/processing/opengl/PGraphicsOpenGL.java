@@ -212,7 +212,7 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Aspect ratio of camera's view. */
   public float cameraAspect;
   
-  /** Distance between the camera eye and and aim point. */
+  /** Distance between the camera eye and aim point. */
   protected float cameraDepth; 
   
   /** Actual position of the camera. */
