@@ -82,6 +82,7 @@ void drawParticle(PVector center, float opacity) {
   noStroke();
   tint(255, opacity * 255);
   texture(sprite);
+  normal(0, 0, 1);
   vertex(center.x - partSize/2, center.y - partSize/2, 0, 0);
   vertex(center.x + partSize/2, center.y - partSize/2, sprite.width, 0);
   vertex(center.x + partSize/2, center.y + partSize/2, sprite.width, sprite.height);
