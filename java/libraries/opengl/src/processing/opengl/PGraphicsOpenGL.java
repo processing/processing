@@ -1994,6 +1994,8 @@ public class PGraphicsOpenGL extends PGraphics {
     textureImage0 = textureImage;
     // The superclass method is called to avoid an early flush.
     super.noTexture();
+    
+    normalMode = NORMAL_MODE_AUTO;
   }
 
   
@@ -2219,27 +2221,34 @@ public class PGraphicsOpenGL extends PGraphics {
     int first = tessGeo.fillIndexCount;
     
     if (shape == POINTS) {
+      if (normalMode == NORMAL_MODE_AUTO) inGeo.calcPointsNormals();
       tessellator.tessellatePoints();    
     } else if (shape == LINES) {
+      if (normalMode == NORMAL_MODE_AUTO) inGeo.calcLinesNormals();
       tessellator.tessellateLines();    
     } else if (shape == TRIANGLE || shape == TRIANGLES) {
       if (stroke && defaultEdges) inGeo.addTrianglesEdges();
+      if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTrianglesNormals();
       tessellator.tessellateTriangles();
     } else if (shape == TRIANGLE_FAN) {
       if (stroke && defaultEdges) inGeo.addTriangleFanEdges();
+      if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTriangleFanNormals();
       tessellator.tessellateTriangleFan();
     } else if (shape == TRIANGLE_STRIP) {
-      if (stroke && defaultEdges) inGeo.addTriangleStripEdges();
+      if (stroke && defaultEdges) inGeo.addTriangleStripEdges();      
+      if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTriangleStripNormals();      
       tessellator.tessellateTriangleStrip();
     } else if (shape == QUAD || shape == QUADS) {
       if (stroke && defaultEdges) inGeo.addQuadsEdges();
+      if (normalMode == NORMAL_MODE_AUTO) inGeo.calcQuadsNormals();
       tessellator.tessellateQuads();
     } else if (shape == QUAD_STRIP) {
       if (stroke && defaultEdges) inGeo.addQuadStripEdges();
+      if (normalMode == NORMAL_MODE_AUTO) inGeo.calcQuadStripNormals();
       tessellator.tessellateQuadStrip();
     } else if (shape == POLYGON) {
       if (stroke && defaultEdges) inGeo.addPolygonEdges(mode == CLOSE);
-      tessellator.tessellatePolygon(false, mode == CLOSE);      
+      tessellator.tessellatePolygon(false, mode == CLOSE, normalMode == NORMAL_MODE_AUTO);      
     }
     
     int last = tessGeo.lastFillIndex;        
@@ -6627,6 +6636,18 @@ public class PGraphicsOpenGL extends PGraphics {
     public int getNumLineIndices() {      
       return 6 *(lastEdge - firstEdge + 1);
     }    
+
+    public void calcPointsNormals() {
+      
+    }    
+    
+    public void calcLinesNormals() {
+      
+    }
+    
+    public void calcTrianglesNormals() {
+      
+    }    
     
     public void addTrianglesEdges() {
       for (int i = 0; i < (lastVertex - firstVertex + 1) / 3; i++) {
@@ -6640,6 +6661,10 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    public void calcTriangleFanNormals() {
+      
+    }
+    
     public void addTriangleFanEdges() {      
       for (int i = firstVertex + 1; i < lastVertex; i++) {
         int i0 = firstVertex;
@@ -6650,6 +6675,10 @@ public class PGraphicsOpenGL extends PGraphics {
         addEdge(i1, i2, false, false);
         addEdge(i2, i0, false,  true);        
       }
+    }
+    
+    public void calcTriangleStripNormals() {
+      
     }
     
     public void addTriangleStripEdges() {
@@ -6670,6 +6699,18 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
+    public void calcQuadsNormals() {
+      for (int i = 0; i < (lastVertex - firstVertex + 1) / 4; i++) {
+        int i0 = 4 * i + 0;
+        int i1 = 4 * i + 1;
+        int i2 = 4 * i + 2;
+        int i3 = 4 * i + 3;
+        
+        
+        
+      }
+    }
+    
     public void addQuadsEdges() {
       for (int i = 0; i < (lastVertex - firstVertex + 1) / 4; i++) {
         int i0 = 4 * i + 0;
@@ -6683,6 +6724,10 @@ public class PGraphicsOpenGL extends PGraphics {
         addEdge(i3, i0, false,  true);
       }        
     }      
+    
+    public void calcQuadStripNormals() {
+      
+    }
       
     public void addQuadStripEdges() {
       for (int qd = 1; qd < (lastVertex - firstVertex + 1) / 2; qd++) {
@@ -7846,6 +7891,7 @@ public class PGraphicsOpenGL extends PGraphics {
     TessGeometry tess;
     GLU glu;
     GLUtessellator gluTess;
+    GLUTessCallback tessCallback;
     
     boolean fill;
     boolean stroke;
@@ -7859,7 +7905,6 @@ public class PGraphicsOpenGL extends PGraphics {
       glu = new GLU();
       
       gluTess = GLU.gluNewTess();
-      GLUTessCallback tessCallback;
     
       tessCallback = new GLUTessCallback();
       GLU.gluTessCallback(gluTess, GLU.GLU_TESS_BEGIN, tessCallback);
@@ -8212,8 +8257,10 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }  
     
-    public void tessellatePolygon(boolean solid, boolean closed) {
+    public void tessellatePolygon(boolean solid, boolean closed, boolean calcNormals) {
       int nInVert = in.lastVertex - in.firstVertex + 1;
+      
+      tessCallback.calcNormals = calcNormals;
       
       if (fill && 3 <= nInVert) {
         GLU.gluTessBeginPolygon(gluTess, null);
@@ -8304,6 +8351,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     public class GLUTessCallback extends GLUtessellatorCallbackAdapter {
+      public boolean calcNormals;
       protected int tessFirst;
       protected int tessCount;
       protected int tessType;
@@ -8332,6 +8380,7 @@ public class PGraphicsOpenGL extends PGraphics {
             addIndex(0);
             addIndex(i);
             addIndex(i + 1);
+            if (calcNormals) calcFanNormal(0, i, i + 1, i == tessCount - 2);
           }       
           break;
         case TRIANGLE_STRIP: 
@@ -8340,16 +8389,27 @@ public class PGraphicsOpenGL extends PGraphics {
             if (i % 2 == 0) {
               addIndex(i - 1);
               addIndex(i + 1);
+              if (calcNormals) calcStripNormal(i, i - 1, i + 1, i == tessCount - 2);
             } else {
               addIndex(i + 1);
               addIndex(i - 1);
+              if (calcNormals) calcStripNormal(i, i + 1, i - 1, i == tessCount - 2);
             }
+            
           }        
           break;
         case TRIANGLES: 
           for (int i = 0; i < tessCount; i++) {
             addIndex(i);          
           }
+          if (calcNormals) {
+            for (int tr = 0; tr < tessCount / 3; tr++) {
+              int i0 = 3 * tr + 0;
+              int i1 = 3 * tr + 1;
+              int i2 = 3 * tr + 2;
+              calcTriNormal(i0, i1, i2);
+            }
+          }            
           break;
         }
       }
@@ -8357,16 +8417,26 @@ public class PGraphicsOpenGL extends PGraphics {
       protected void addIndex(int tessIdx) {
         tess.addFillIndex(tessFirst + tessIdx);
       }
-
+      
+      protected void calcFanNormal(int tessIdx0, int tessIdx1, int tessIdx2, boolean last) {
+        
+      }
+      
+      protected void calcStripNormal(int tessIdx0, int tessIdx1, int tessIdx2, boolean last) {
+        
+      }
+      
+      protected void calcTriNormal(int tessIdx0, int tessIdx1, int tessIdx2) {
+        
+      }
+      
       public void vertex(Object data) {
         if (data instanceof double[]) {
           double[] d = (double[]) data;
           if (d.length < 12) {
-            throw new RuntimeException("TessCallback vertex() data " +
-                                       "isn't length 12");
+            throw new RuntimeException("TessCallback vertex() data is not of length 12");
           }
           
-          //PApplet.println("Adding vertex with coords " + d[ 0] + ", " + d[ 1] + ", " + d[2]);
           tess.addFillVertex((float) d[ 0], (float) d[ 1], (float) d[2],
                              (float) d[ 3], (float) d[ 4], (float) d[5], (float) d[6],
                              (float) d[ 7], (float) d[ 8], (float) d[9],

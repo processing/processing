@@ -188,6 +188,16 @@ public class PShape3D extends PShape {
   
   protected float normalX, normalY, normalZ;
 
+  // normal calculated per triangle
+  static protected final int NORMAL_MODE_AUTO = 0;
+  // one normal manually specified per shape
+  static protected final int NORMAL_MODE_SHAPE = 1;
+  // normals specified for each shape vertex
+  static protected final int NORMAL_MODE_VERTEX = 2;
+
+  // Current mode for normals, one of AUTO, SHAPE, or VERTEX
+  protected int normalMode;
+  
   // ........................................................
 
   // Fill, stroke and tint colors
@@ -303,6 +313,8 @@ public class PShape3D extends PShape {
     
     normalX = normalY = 0; 
     normalZ = 1;
+    
+    normalMode = NORMAL_MODE_AUTO;
   }
   
   
@@ -616,6 +628,16 @@ public class PShape3D extends PShape {
     normalX = nx;
     normalY = ny;
     normalZ = nz;
+    
+    // if drawing a shape and the normal hasn't been set yet,
+    // then we need to set the normals for each vertex so far
+    if (normalMode == NORMAL_MODE_AUTO) {
+      // One normal per begin/end shape
+      normalMode = NORMAL_MODE_SHAPE;
+    } else if (normalMode == NORMAL_MODE_SHAPE) {
+      // a separate normal for each vertex
+      normalMode = NORMAL_MODE_VERTEX;
+    } 
   }
 
   
@@ -1547,27 +1569,34 @@ public class PShape3D extends PShape {
         
         if (family == GEOMETRY) {
           if (kind == POINTS) {
+            if (normalMode == NORMAL_MODE_AUTO) in.calcPointsNormals();
             tessellator.tessellatePoints();    
           } else if (kind == LINES) {
+            if (normalMode == NORMAL_MODE_AUTO) in.calcLinesNormals();
             tessellator.tessellateLines();    
           } else if (kind == TRIANGLE || kind == TRIANGLES) {
             if (stroke) in.addTrianglesEdges();
+            if (normalMode == NORMAL_MODE_AUTO) in.calcTrianglesNormals();
             tessellator.tessellateTriangles();
           } else if (kind == TRIANGLE_FAN) {
             if (stroke) in.addTriangleFanEdges();
+            if (normalMode == NORMAL_MODE_AUTO) in.calcTriangleFanNormals();
             tessellator.tessellateTriangleFan();
-          } else if (kind == TRIANGLE_STRIP) {
+          } else if (kind == TRIANGLE_STRIP) {            
             if (stroke) in.addTriangleStripEdges();
+            if (normalMode == NORMAL_MODE_AUTO) in.calcTriangleStripNormals();
             tessellator.tessellateTriangleStrip();
-          } else if (kind == QUAD || kind == QUADS) {
+          } else if (kind == QUAD || kind == QUADS) {            
             if (stroke) in.addQuadsEdges();
+            if (normalMode == NORMAL_MODE_AUTO) in.calcQuadsNormals();
             tessellator.tessellateQuads();
           } else if (kind == QUAD_STRIP) {
             if (stroke) in.addQuadStripEdges();
+            if (normalMode == NORMAL_MODE_AUTO) in.calcQuadStripNormals();
             tessellator.tessellateQuadStrip();
           } else if (kind == POLYGON) {
             if (stroke) in.addPolygonEdges(isClosed);
-            tessellator.tessellatePolygon(isSolid, isClosed);
+            tessellator.tessellatePolygon(isSolid, isClosed, normalMode == NORMAL_MODE_AUTO);
           }
         } else if (family == PRIMITIVE) {
           if (kind == POINT) {
