@@ -1,4 +1,4 @@
-// Status: Wrong rendering
+// Status: Fixed
 
 /** 
  * Ortho vs Perspective. 
@@ -29,11 +29,11 @@ void draw()
  
   if(mousePressed) {
     float fov = PI/3.0; 
-    float cameraZ = (height/2.0) / tan(PI * fov / 360.0); 
+    float cameraZ = (height/2.0) / tan(fov/2.0); 
     perspective(fov, float(width)/float(height), 
                 cameraZ/2.0, cameraZ*2.0); 
   } else {
-    ortho(-width/2, width/2, -height/2, height/2, -10, 10); 
+    ortho(0, width, 0, height, -200, +200);
   }
   
   translate(width/2, height/2, 0);
@@ -41,4 +41,3 @@ void draw()
   rotateY(PI/3); 
   box(160); 
 }
-

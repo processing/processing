@@ -1,5 +1,4 @@
-// Status: Renders with issues
-// Problem: Lights don't work
+// Status: Fixed
 
 /**
  * Move Eye. 
