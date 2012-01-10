@@ -7836,6 +7836,29 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
+    public int getCenter(PVector v) {
+      int index;
+      for (int i = 0; i < fillVertexCount; i++) {
+        index = 3 * i;
+        v.x += fillVertices[index++];
+        v.y += fillVertices[index++];
+        v.z += fillVertices[index  ];
+      }
+      for (int i = 0; i < lineVertexCount; i++) {
+        index = 3 * i;
+        v.x += lineVertices[index++];
+        v.y += lineVertices[index++];
+        v.z += lineVertices[index  ];        
+      }
+      for (int i = 0; i < pointVertexCount; i++) {
+        index = 3 * i;
+        v.x += pointVertices[index++];
+        v.y += pointVertices[index++];
+        v.z += pointVertices[index  ];          
+      }      
+      return fillVertexCount + lineVertexCount + pointVertexCount;
+    }
+    
     public void applyMatrix(PMatrix2D tr) {
       if (0 < fillVertexCount) {
         int index;
