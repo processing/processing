@@ -24,7 +24,9 @@ void draw(){
   fill(182, 62, 29);
   noStroke();
   // Add basic light setup
-  lights();
+  ambientLight(100, 100, 100);
+  directionalLight(255, 255, 255, 0, 1, 0);
+  
   translate(width/2, height*1.2, -380);
   // Tip tower to see inside
   rotateX(radians(-45));
@@ -56,4 +58,3 @@ void draw(){
     }
   }
 }
-
