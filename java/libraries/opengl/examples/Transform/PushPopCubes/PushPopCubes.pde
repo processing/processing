@@ -104,36 +104,42 @@ class Cube {
     
     // Front face
     beginShape(QUADS);
+    normal(1, 0, 0);
     vertex(-w/2 + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
     vertex(w + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
     vertex(w + shiftX, h + shiftY, -d/2 + shiftZ); 
     vertex(-w/2 + shiftX, h + shiftY, -d/2 + shiftZ); 
 
     // Back face
+    normal(-1, 0, 0);
     vertex(-w/2 + shiftX, -h/2 + shiftY, d + shiftZ); 
     vertex(w + shiftX, -h/2 + shiftY, d + shiftZ); 
     vertex(w + shiftX, h + shiftY, d + shiftZ); 
     vertex(-w/2 + shiftX, h + shiftY, d + shiftZ);
 
     // Left face
+    normal(0, -1, 0);
     vertex(-w/2 + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
     vertex(-w/2 + shiftX, -h/2 + shiftY, d + shiftZ); 
     vertex(-w/2 + shiftX, h + shiftY, d + shiftZ); 
     vertex(-w/2 + shiftX, h + shiftY, -d/2 + shiftZ); 
 
     // Right face
+    normal(0, 1, 0);
     vertex(w + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
     vertex(w + shiftX, -h/2 + shiftY, d + shiftZ); 
     vertex(w + shiftX, h + shiftY, d + shiftZ); 
     vertex(w + shiftX, h + shiftY, -d/2 + shiftZ); 
 
     // Top face
+    normal(0, 0, 1);
     vertex(-w/2 + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
     vertex(w + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
     vertex(w + shiftX, -h/2 + shiftY, d + shiftZ); 
     vertex(-w/2 + shiftX, -h/2 + shiftY, d + shiftZ); 
 
     // Bottom face
+    normal(0, 0, -1);
     vertex(-w/2 + shiftX, h + shiftY, -d/2 + shiftZ); 
     vertex(w + shiftX, h + shiftY, -d/2 + shiftZ); 
     vertex(w + shiftX, h + shiftY, d + shiftZ); 
@@ -141,4 +147,3 @@ class Cube {
     endShape(); 
   }
 }
-
