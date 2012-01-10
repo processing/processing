@@ -6646,7 +6646,58 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void calcTrianglesNormals() {
-      
+      for (int i = 0; i < (lastVertex - firstVertex + 1) / 3; i++) {
+        int i0 = 3 * i + 0;
+        int i1 = 3 * i + 1;
+        int i2 = 3 * i + 2;
+        int index;
+        
+        index = 3 * i0;
+        float x0 = vertices[index++];
+        float y0 = vertices[index++];
+        float z0 = vertices[index  ];
+
+        index = 3 * i1;
+        float x1 = vertices[index++];
+        float y1 = vertices[index++];
+        float z1 = vertices[index  ];
+
+        index = 3 * i2;
+        float x2 = vertices[index++];
+        float y2 = vertices[index++];
+        float z2 = vertices[index  ];
+        
+        float v12x = x2 - x1;
+        float v12y = y2 - y1;
+        float v12z = z2 - z1;
+        
+        float v10x = x0 - x1;
+        float v10y = y0 - y1;
+        float v10z = z0 - z1;
+        
+        float nx = v12y * v10z - v10y * v12z;
+        float ny = v12z * v10x - v10z * v12x;
+        float nz = v12x * v10y - v10x * v12y;
+        float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
+        nx /= d;
+        ny /= d;
+        nz /= d;
+        
+        index = 3 * i0;
+        normals[index++] = nx;
+        normals[index++] = ny;
+        normals[index  ] = nz;
+
+        index = 3 * i1;
+        normals[index++] = nx;
+        normals[index++] = ny;
+        normals[index  ] = nz;
+
+        index = 3 * i2;
+        normals[index++] = nx;
+        normals[index++] = ny;
+        normals[index  ] = nz;
+      }      
     }    
     
     public void addTrianglesEdges() {
