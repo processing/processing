@@ -35,6 +35,7 @@ import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PStyle;
+import processing.core.PVector;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
@@ -55,6 +56,9 @@ import java.util.HashSet;
 // 3) Under this scenario, map/unmap methods are only required
 //    for advanced use/libraries (custom modification of complex
 //    meshes and patches for example).
+// 4) Change the transformation logic, so the matrix is applied 
+//    on the values stored in the vertex cache and not on the
+//    tessellated vertices.
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -456,10 +460,11 @@ public class PShape3D extends PShape {
         child.texture(tex);        
       }      
     } else {
-      if (texture != null && parent != null) {
-        ((PShape3D)parent).removeTexture(texture);
-      }
+      PImage tex0 = texture;
       texture = tex;
+      if (tex0 != tex && parent != null) {
+        ((PShape3D)parent).removeTexture(tex);
+      }      
       if (parent != null) {
         ((PShape3D)parent).addTexture(texture);
       }
@@ -474,10 +479,11 @@ public class PShape3D extends PShape {
         child.noTexture();        
       }
     } else {
-      if (texture != null && parent != null) {
-        ((PShape3D)parent).removeTexture(texture);
-      }
+      PImage tex0 = texture;
       texture = null;
+      if (tex0 != null && parent != null) {
+        ((PShape3D)parent).removeTexture(tex0);
+      }      
     }
   }  
 
@@ -495,13 +501,31 @@ public class PShape3D extends PShape {
   
   protected void removeTexture(PImage tex) {
     if (textures != null) {
-      // If it already has a texture, we need to remove from 
-      // the parent (if no other child shape has it :-P)
-      // .... 
-      textures.remove(tex);
-      if (textures.size() == 0) {
-        textures = null;
+      boolean childHasIt = false;
+      
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        if (child.hasTexture(tex)) {
+          childHasIt = true;
+          break;
+        }
       }
+      
+      if (!childHasIt) {
+        textures.remove(tex);
+        if (textures.size() == 0) {
+          textures = null;
+        }
+      }
+    }
+  }
+  
+  
+  protected boolean hasTexture(PImage tex) {
+    if (family == GROUP) {
+      return textures != null && textures.contains(tex);  
+    } else {
+      return texture == tex;
     }
   }
   
@@ -1150,63 +1174,71 @@ public class PShape3D extends PShape {
   // Geometric transformations
   
   
+  protected int updateCenter(PVector vec, int count) {
+    if (family == GROUP) {
+      count = updateCenter(vec, count); 
+    } else {      
+      count += tess.getCenter(vec);      
+    }
+    return count;
+  }
+  
+  
   public void center(float cx, float cy) {
     if (family == GROUP) {
-//      for (int i = 0; i < childCount; i++) {
-//        PShape3D child = (PShape3D) children[i];        
-//        child.center(cx, cy);
-//      }      
+      PVector center = new PVector();
+            
+      int count = updateCenter(center, 0);
+      center.x /= count;   
+      center.y /= count;
+      
+      float tx = cx - center.x;
+      float ty = cy - center.y;      
+      
+      childHasMatrix();
+      applyMatrix = true;
+      super.translate(tx, ty);
     } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
+      PVector vec = new PVector();
+      int count = tess.getCenter(vec);
+      vec.x /= count;
+      vec.y /= count;
       
-      tess.center(cx, cy);
+      float tx = cx - vec.x;
+      float ty = cy - vec.y;
       
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;    
-      }      
+      translate(tx, ty);   
     }
   }
 
   public void center(float cx, float cy, float cz) {
     if (family == GROUP) {
-//      for (int i = 0; i < childCount; i++) {
-//        PShape3D child = (PShape3D) children[i];        
-//        child.center(cx, cy, cz);
-//      }   
+      PVector center0 = new PVector();
       
-      // calculate current center of all child shapes
-      // translate to the new center.
+      int count = updateCenter(center0, 0);
+      center0.x /= count;   
+      center0.y /= count;
+      center0.z /= count;
       
+      float tx = cx - center0.x;
+      float ty = cy - center0.y;
+      float tz = cz - center0.z;
+      
+      childHasMatrix();
+      applyMatrix = true;
+      super.translate(tx, ty, tz);
     } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
+      PVector vec = new PVector();
+      int count = tess.getCenter(vec);
+      vec.x /= count;
+      vec.y /= count;
+      vec.z /= count;
       
-      tess.center(cx, cy, cz);
+      float tx = cx - vec.x;
+      float ty = cy - vec.y;
+      float tz = cz - vec.z;
       
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;        
-      }      
+      translate(tx, ty, tz); 
     }
   }  
   
@@ -1256,8 +1288,9 @@ public class PShape3D extends PShape {
         PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
         return;
       }
-      
+
       checkMatrix(3);
+      matrix.reset();
       matrix.translate(tx, ty, tz);
       tess.applyMatrix((PMatrix3D) matrix);
       
@@ -1367,6 +1400,7 @@ public class PShape3D extends PShape {
       }
       
       checkMatrix(2);
+      matrix.reset();
       matrix.scale(s);
       tess.applyMatrix((PMatrix2D) matrix);
       
@@ -1403,6 +1437,7 @@ public class PShape3D extends PShape {
       }
       
       checkMatrix(2);
+      matrix.reset();
       matrix.scale(x, y);
       tess.applyMatrix((PMatrix2D) matrix);
       
@@ -1439,6 +1474,7 @@ public class PShape3D extends PShape {
       }
       
       checkMatrix(3);
+      matrix.reset();
       matrix.scale(x, y, z);
       tess.applyMatrix((PMatrix3D) matrix);
       
@@ -1487,6 +1523,7 @@ public class PShape3D extends PShape {
       }
       
       checkMatrix(2);
+      matrix.reset();
       matrix.apply(n00, n01, n02,
                    n10, n11, n12);   
       tess.applyMatrix((PMatrix2D) matrix);
@@ -1538,6 +1575,7 @@ public class PShape3D extends PShape {
       }
       
       checkMatrix(3);
+      matrix.reset();
       matrix.apply(n00, n01, n02, n03,
                    n10, n11, n12, n13,
                    n20, n21, n22, n23,
@@ -1566,12 +1604,13 @@ public class PShape3D extends PShape {
   
   
   public void resetMatrix() {
+    // TODO
     // What to do in the case of geometry shapes?
     // In order to properly reset the transformation,
     // we need to have the last matrix applied, calculate
-    // the inverse and apply on the tess object... TODO
-    checkMatrix(2);
-    matrix.reset();
+    // the inverse and apply on the tess object... 
+    //checkMatrix(2);
+    //matrix.reset();
   }
   
   
@@ -2420,6 +2459,7 @@ public class PShape3D extends PShape {
           if (root.fillVerticesCache == null) { 
             root.fillVerticesCache = new VertexCache(3);
           }            
+          
           root.fillVerticesCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillVertices);
           modifiedFillVertices = false;
         } else if (root.fillVerticesCache != null && root.fillVerticesCache.hasData()) {
@@ -2555,7 +2595,7 @@ public class PShape3D extends PShape {
       
       root.fillVertCopyOffset += tess.fillVertexCount;
       root.lineVertCopyOffset += tess.lineVertexCount;
-      root.pointVertCopyOffset += tess.pointVertexCount;      
+      root.pointVertCopyOffset += tess.pointVertexCount;
     }
     
     modified = false;
@@ -3155,7 +3195,7 @@ public class PShape3D extends PShape {
       size = 0;
     }    
     
-    void add(int dataOffset, int dataSize, float[] newData) {      
+    void add(int dataOffset, int dataSize, float[] newData) {
       if (size == 0) {
         offset = dataOffset;
       }
@@ -3197,6 +3237,69 @@ public class PShape3D extends PShape {
       
       size += dataSize;
     } 
+    
+    void add(int dataOffset, int dataSize, float[] newData, PMatrix tr) {
+      
+      if (tr instanceof PMatrix2D) {
+        add(dataOffset, dataSize, newData, (PMatrix2D)tr);  
+      } else if (tr instanceof PMatrix3D) {
+        add(dataOffset, dataSize, newData, (PMatrix3D)tr);
+      }
+    }
+    
+    void add(int dataOffset, int dataSize, float[] newData, PMatrix2D tr) {
+      if (size == 0) {
+        offset = dataOffset;
+      }
+      
+      int oldSize = data.length / ncoords;
+      if (size + dataSize >= oldSize) {
+        int newSize = expandSize(oldSize, size + dataSize);        
+        expand(newSize);
+      }
+      
+      if (2 <= ncoords) {
+        for (int i = 0; i < dataSize; i++) {
+          int srcIndex = ncoords * i;
+          float x = newData[srcIndex++];
+          float y = newData[srcIndex  ];
+
+          int destIndex = ncoords * (size + i); 
+          data[destIndex++] = x * tr.m00 + y * tr.m01 + tr.m02;
+          data[destIndex  ] = x * tr.m10 + y * tr.m11 + tr.m12;
+        }        
+      }
+      
+      size += dataSize;
+    }
+    
+    void add(int dataOffset, int dataSize, float[] newData, PMatrix3D tr) {
+      if (size == 0) {
+        offset = dataOffset;
+      }
+      
+      int oldSize = data.length / ncoords;
+      if (size + dataSize >= oldSize) {
+        int newSize = expandSize(oldSize, size + dataSize);        
+        expand(newSize);
+      }
+      
+      if (3 <= ncoords) {
+        for (int i = 0; i < dataSize; i++) {
+          int srcIndex = ncoords * i;
+          float x = newData[srcIndex++];
+          float y = newData[srcIndex++];
+          float z = newData[srcIndex++];
+
+          int destIndex = ncoords * (size + i); 
+          data[destIndex++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
+          data[destIndex++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
+          data[destIndex  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
+        }          
+      }      
+      
+      size += dataSize;
+    }
     
     void expand(int n) {
       float temp[] = new float[ncoords * n];      
