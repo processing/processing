@@ -6565,6 +6565,56 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }  
     
+    public void calcTriangleNormal(int i0, int i1, int i2) {
+      int index;
+      
+      index = 3 * i0;
+      float x0 = vertices[index++];
+      float y0 = vertices[index++];
+      float z0 = vertices[index  ];
+
+      index = 3 * i1;
+      float x1 = vertices[index++];
+      float y1 = vertices[index++];
+      float z1 = vertices[index  ];
+
+      index = 3 * i2;
+      float x2 = vertices[index++];
+      float y2 = vertices[index++];
+      float z2 = vertices[index  ];
+      
+      float v12x = x2 - x1;
+      float v12y = y2 - y1;
+      float v12z = z2 - z1;
+      
+      float v10x = x0 - x1;
+      float v10y = y0 - y1;
+      float v10z = z0 - z1;
+      
+      float nx = v12y * v10z - v10y * v12z;
+      float ny = v12z * v10x - v10z * v12x;
+      float nz = v12x * v10y - v10x * v12y;
+      float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
+      nx /= d;
+      ny /= d;
+      nz /= d;
+      
+      index = 3 * i0;
+      normals[index++] = nx;
+      normals[index++] = ny;
+      normals[index  ] = nz;
+
+      index = 3 * i1;
+      normals[index++] = nx;
+      normals[index++] = ny;
+      normals[index  ] = nz;
+
+      index = 3 * i2;
+      normals[index++] = nx;
+      normals[index++] = ny;
+      normals[index  ] = nz;      
+    }
+        
     public int addEdge(int i, int j, boolean start, boolean end) {
       edgeCheck();
       
@@ -6638,65 +6688,20 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
 
     public void calcPointsNormals() {
-      
+      // TODO 
     }    
     
     public void calcLinesNormals() {
-      
+      // TODO
     }
-    
+        
     public void calcTrianglesNormals() {
       for (int i = 0; i < (lastVertex - firstVertex + 1) / 3; i++) {
         int i0 = 3 * i + 0;
         int i1 = 3 * i + 1;
         int i2 = 3 * i + 2;
-        int index;
         
-        index = 3 * i0;
-        float x0 = vertices[index++];
-        float y0 = vertices[index++];
-        float z0 = vertices[index  ];
-
-        index = 3 * i1;
-        float x1 = vertices[index++];
-        float y1 = vertices[index++];
-        float z1 = vertices[index  ];
-
-        index = 3 * i2;
-        float x2 = vertices[index++];
-        float y2 = vertices[index++];
-        float z2 = vertices[index  ];
-        
-        float v12x = x2 - x1;
-        float v12y = y2 - y1;
-        float v12z = z2 - z1;
-        
-        float v10x = x0 - x1;
-        float v10y = y0 - y1;
-        float v10z = z0 - z1;
-        
-        float nx = v12y * v10z - v10y * v12z;
-        float ny = v12z * v10x - v10z * v12x;
-        float nz = v12x * v10y - v10x * v12y;
-        float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
-        nx /= d;
-        ny /= d;
-        nz /= d;
-        
-        index = 3 * i0;
-        normals[index++] = nx;
-        normals[index++] = ny;
-        normals[index  ] = nz;
-
-        index = 3 * i1;
-        normals[index++] = nx;
-        normals[index++] = ny;
-        normals[index  ] = nz;
-
-        index = 3 * i2;
-        normals[index++] = nx;
-        normals[index++] = ny;
-        normals[index  ] = nz;
+        calcTriangleNormal(i0, i1, i2);
       }      
     }    
     
@@ -6713,7 +6718,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void calcTriangleFanNormals() {
-      
+      for (int i = firstVertex + 1; i < lastVertex; i++) {
+        int i0 = firstVertex;
+        int i1 = i;
+        int i2 = i + 1;
+        
+        calcTriangleNormal(i0, i1, i2);
+      }
     }
     
     public void addTriangleFanEdges() {      
@@ -6729,7 +6740,18 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void calcTriangleStripNormals() {
-      
+      for (int i = firstVertex + 1; i < lastVertex; i++) {
+        int i1 = i;
+        int i0, i2;
+        if (i % 2 == 0) {
+          i0 = i + 1;
+          i2 = i - 1;                  
+        } else {
+          i0 = i - 1;
+          i2 = i + 1;             
+        }
+        calcTriangleNormal(i0, i1, i2);
+      }      
     }
     
     public void addTriangleStripEdges() {
@@ -6757,8 +6779,8 @@ public class PGraphicsOpenGL extends PGraphics {
         int i2 = 4 * i + 2;
         int i3 = 4 * i + 3;
         
-        
-        
+        calcTriangleNormal(i0, i1, i2);
+        calcTriangleNormal(i2, i3, i0);
       }
     }
     
@@ -6777,7 +6799,15 @@ public class PGraphicsOpenGL extends PGraphics {
     }      
     
     public void calcQuadStripNormals() {
-      
+      for (int qd = 1; qd < (lastVertex - firstVertex + 1) / 2; qd++) {
+        int i0 = firstVertex + 2 * (qd - 1);
+        int i1 = firstVertex + 2 * (qd - 1) + 1;
+        int i2 = firstVertex + 2 * qd + 1;
+        int i3 = firstVertex + 2 * qd;     
+
+        calcTriangleNormal(i0, i1, i3);
+        calcTriangleNormal(i3, i2, i0);
+      }
     }
       
     public void addQuadStripEdges() {
@@ -7171,6 +7201,57 @@ public class PGraphicsOpenGL extends PGraphics {
       fillIndices[fillIndexCount] = idx;
       fillIndexCount++;
       lastFillIndex = fillIndexCount - 1;
+    }
+
+    public void calcFillNormal(int i0, int i1, int i2) {
+      int index;
+      
+      index = 3 * i0;
+      float x0 = fillVertices[index++];
+      float y0 = fillVertices[index++];
+      float z0 = fillVertices[index  ];
+
+      index = 3 * i1;
+      float x1 = fillVertices[index++];
+      float y1 = fillVertices[index++];
+      float z1 = fillVertices[index  ];
+
+      index = 3 * i2;
+      float x2 = fillVertices[index++];
+      float y2 = fillVertices[index++];
+      float z2 = fillVertices[index  ];
+      
+      float v12x = x2 - x1;
+      float v12y = y2 - y1;
+      float v12z = z2 - z1;
+      
+      float v10x = x0 - x1;
+      float v10y = y0 - y1;
+      float v10z = z0 - z1;
+      
+      float nx = v12y * v10z - v10y * v12z;
+      float ny = v12z * v10x - v10z * v12x;
+      float nz = v12x * v10y - v10x * v12y;
+      float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
+      nx /= d;
+      ny /= d;
+      nz /= d;
+      
+      index = 3 * i0;
+      fillNormals[index++] = nx;
+      fillNormals[index++] = ny;
+      fillNormals[index  ] = nz;
+
+      index = 3 * i1;
+      fillNormals[index++] = nx;
+      fillNormals[index++] = ny;
+      fillNormals[index  ] = nz;
+
+      index = 3 * i2;
+      fillNormals[index++] = nx;
+      fillNormals[index++] = ny;
+      fillNormals[index  ] = nz;      
+      
     }
     
     public void fillVertexCheck() {
@@ -8431,7 +8512,7 @@ public class PGraphicsOpenGL extends PGraphics {
             addIndex(0);
             addIndex(i);
             addIndex(i + 1);
-            if (calcNormals) calcFanNormal(0, i, i + 1, i == tessCount - 2);
+            if (calcNormals) calcTriNormal(0, i, i + 1);
           }       
           break;
         case TRIANGLE_STRIP: 
@@ -8440,13 +8521,12 @@ public class PGraphicsOpenGL extends PGraphics {
             if (i % 2 == 0) {
               addIndex(i - 1);
               addIndex(i + 1);
-              if (calcNormals) calcStripNormal(i, i - 1, i + 1, i == tessCount - 2);
+              if (calcNormals) calcTriNormal(i + 1, i, i - 1);
             } else {
               addIndex(i + 1);
               addIndex(i - 1);
-              if (calcNormals) calcStripNormal(i, i + 1, i - 1, i == tessCount - 2);
-            }
-            
+              if (calcNormals) calcTriNormal(i - 1, i, i + 1);
+            }            
           }        
           break;
         case TRIANGLES: 
@@ -8469,16 +8549,8 @@ public class PGraphicsOpenGL extends PGraphics {
         tess.addFillIndex(tessFirst + tessIdx);
       }
       
-      protected void calcFanNormal(int tessIdx0, int tessIdx1, int tessIdx2, boolean last) {
-        
-      }
-      
-      protected void calcStripNormal(int tessIdx0, int tessIdx1, int tessIdx2, boolean last) {
-        
-      }
-      
       protected void calcTriNormal(int tessIdx0, int tessIdx1, int tessIdx2) {
-        
+        tess.calcFillNormal(tessFirst + tessIdx0, tessFirst + tessIdx1, tessFirst + tessIdx2);
       }
       
       public void vertex(Object data) {
