@@ -45,19 +45,14 @@ import java.nio.IntBuffer;
 import java.util.HashSet;
 
 // Notes about geometry update in PShape3D.
-// 1) Flush mechanism for data update in PShape3D?
-//    only do copy to tess arrays, and mark updated shapes.
-//    When drawing, put all modified data in large array and
-//    copy to VBO using single glBufferSubData() call.
+// 1) When applying a transformation on a group shape
+//    check if it is more efficient to apply as a gl
+//    transformation on all the childs, instead of 
+//    propagating the transformation downwards in order
+//    to calculate the transformation matrices.
 // 2) What about fill called on a GROUP shape? should apply
 //    color change to all child shapes. Probably yes.
-// 3) translate, scale, rotate, and applyMatrix could
-//    work in a similar way as update color, since they are
-//    transformations that apply on all tesselated geometry
-//    at once. So calculate matrix transformation and apply
-//    on x,y,z coordinates (as it is done in the tessellator),
-//    copy to tess arrays, and then copy to VBO when appropriate.
-// 4) Under this scenario, map/unmap methods are only required
+// 3) Under this scenario, map/unmap methods are only required
 //    for advanced use/libraries (custom modification of complex
 //    meshes and patches for example).
 
@@ -333,7 +328,7 @@ public class PShape3D extends PShape {
     }
   }
   
-  public void addShape(PShape child) {
+  public void addChild(PShape child) {
     if (child instanceof PShape3D) {
       if (family == GROUP) {
         super.addChild(child);
@@ -512,11 +507,23 @@ public class PShape3D extends PShape {
   
   
   public void solid(boolean solid) {
-    isSolid = solid;
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.solid(solid);
+      }
+    } else {
+      isSolid = solid;  
+    }    
   }
   
   
   public void beginContour() {
+    if (family == GROUP) {      
+      PGraphics.showWarning("Cannot begin contour in GROUP shapes");
+      return;
+    }
+    
     if (openContour) {
       PGraphics.showWarning("P3D: Already called beginContour().");
       return;
@@ -526,6 +533,11 @@ public class PShape3D extends PShape {
   
   
   public void endContour() {
+    if (family == GROUP) {      
+      PGraphics.showWarning("Cannot end contour in GROUP shapes");
+      return;
+    }
+    
     if (!openContour) {
       PGraphics.showWarning("P3D: Need to call beginContour() first.");
       return;      
@@ -610,8 +622,6 @@ public class PShape3D extends PShape {
       breakShape = false;
     }    
     
-    //in.addVertex(currentVertex, currentColor, currentNormal, currentTexcoord, currentStroke, code);
-    
     in.addVertex(x, y, z, 
                  fR, fG, fB, fA, 
                  normalX, normalY, normalZ,
@@ -625,6 +635,11 @@ public class PShape3D extends PShape {
   
   
   public void normal(float nx, float ny, float nz) {
+    if (family == GROUP) {      
+      PGraphics.showWarning("Cannot set normal in GROUP shape");
+      return;
+    }
+    
     normalX = nx;
     normalY = ny;
     normalZ = nz;
@@ -645,14 +660,26 @@ public class PShape3D extends PShape {
     end(OPEN);
   }  
 
-  public void end(int mode) {    
+  
+  public void end(int mode) { 
+    if (family == GROUP) {      
+      PGraphics.showWarning("Cannot end GROUP shape");
+      return;
+    }
+    
     isClosed = mode == CLOSE;    
     root.tessellated = false;
     tessellated = false;
     shapeEnded = true;
   }  
   
+  
   public void setParams(float[] source) {
+    if (family != PRIMITIVE) {      
+      PGraphics.showWarning("Parameters can only be set to PRIMITIVE shapes");
+      return;
+    }
+    
     super.setParams(source);
     root.tessellated = false;
     tessellated = false;
@@ -665,17 +692,38 @@ public class PShape3D extends PShape {
 
   
   public void strokeWeight(float weight) {
-    strokeWeight = weight;
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.strokeWeight(weight);
+      }
+    } else {
+      strokeWeight = weight;
+    }    
   }
 
 
   public void strokeJoin(int join) {
-    strokeJoin = join;
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.strokeJoin(join);
+      }
+    } else {
+      strokeJoin = join;
+    }        
   }
 
 
   public void strokeCap(int cap) {
-    strokeCap = cap;
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.strokeCap(cap);
+      }
+    } else {
+      strokeCap = cap;
+    }    
   }
     
   
@@ -683,45 +731,102 @@ public class PShape3D extends PShape {
 
   // FILL COLOR
 
+  
   public void noFill() {
-    fill = false;
-    fillR = 0;
-    fillG = 0;
-    fillB = 0;
-    fillA = 0;
-    fillColor = 0x0;
-    updateFillColor();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.noFill();        
+      }      
+    } else {
+      fill = false;
+      fillR = 0;
+      fillG = 0;
+      fillB = 0;
+      fillA = 0;
+      fillColor = 0x0;
+      updateFillColor();      
+    }
   }
 
+  
   public void fill(int rgb) {
-    colorCalc(rgb);
-    fillFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.fill(rgb);        
+      }      
+    } else {
+      colorCalc(rgb);
+      fillFromCalc();        
+    }
   }
 
+  
   public void fill(int rgb, float alpha) {
-    colorCalc(rgb, alpha);
-    fillFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.fill(rgb, alpha);        
+      }      
+    } else {
+      colorCalc(rgb, alpha);
+      fillFromCalc();
+    }    
   }
 
+  
   public void fill(float gray) {
-    colorCalc(gray);
-    fillFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.fill(gray);        
+      }      
+    } else {
+      colorCalc(gray);
+      fillFromCalc();      
+    }
   }
 
+  
   public void fill(float gray, float alpha) {
-    colorCalc(gray, alpha);
-    fillFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.fill(gray, alpha);        
+      }      
+    } else {
+      colorCalc(gray, alpha);
+      fillFromCalc();
+    }    
   }
 
+  
   public void fill(float x, float y, float z) {
-    colorCalc(x, y, z);
-    fillFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.fill(x, y, z);        
+      }      
+    } else {
+      colorCalc(x, y, z);
+      fillFromCalc();
+    }    
   }
 
+  
   public void fill(float x, float y, float z, float a) {
-    colorCalc(x, y, z, a);
-    fillFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.fill(x, y, z, a);        
+      }      
+    } else {
+      colorCalc(x, y, z, a);
+      fillFromCalc();
+    }    
   }
+  
 
   protected void fillFromCalc() {
     fill = true;
@@ -733,6 +838,7 @@ public class PShape3D extends PShape {
     updateFillColor();  
   }
 
+  
   protected void updateFillColor() {
     if (!shapeEnded || tess.fillVertexCount == 0 || texture != null) {
       return;
@@ -761,49 +867,98 @@ public class PShape3D extends PShape {
   
   
   public void noStroke() {
-    stroke = false;
-    strokeR = 0;
-    strokeG = 0;
-    strokeB = 0;
-    strokeA = 0;
-    strokeColor = 0x0;
-    updateStrokeColor();  
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.noStroke();        
+      }      
+    } else {
+      stroke = false;
+      strokeR = 0;
+      strokeG = 0;
+      strokeB = 0;
+      strokeA = 0;
+      strokeColor = 0x0;
+      updateStrokeColor();      
+    }  
   }
   
   
   public void stroke(int rgb) {
-    colorCalc(rgb);
-    strokeFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.stroke(rgb);        
+      }      
+    } else {
+      colorCalc(rgb);
+      strokeFromCalc();
+    }    
   }
   
   
   public void stroke(int rgb, float alpha) {
-    colorCalc(rgb, alpha);
-    strokeFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.stroke(rgb, alpha);        
+      }      
+    } else {
+      colorCalc(rgb, alpha);
+      strokeFromCalc();      
+    }
   }
 
   
   public void stroke(float gray) {
-    colorCalc(gray);
-    strokeFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.stroke(gray);        
+      }      
+    } else {
+      colorCalc(gray);
+      strokeFromCalc();
+    }    
   }
 
   
   public void stroke(float gray, float alpha) {
-    colorCalc(gray, alpha);
-    strokeFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.stroke(gray, alpha);        
+      }      
+    } else {
+      colorCalc(gray, alpha);
+      strokeFromCalc();      
+    }
   }
 
   
   public void stroke(float x, float y, float z) {
-    colorCalc(x, y, z);
-    strokeFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.stroke(x, y, z);        
+      }      
+    } else {
+      colorCalc(x, y, z);
+      strokeFromCalc();      
+    }
   }
 
   
   public void stroke(float x, float y, float z, float alpha) {
-    colorCalc(x, y, z, alpha);
-    strokeFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.stroke(x, y, z, alpha);        
+      }      
+    } else {
+      colorCalc(x, y, z, alpha);
+      strokeFromCalc();      
+    }
   }
   
   
@@ -817,6 +972,7 @@ public class PShape3D extends PShape {
     updateStrokeColor();  
   }
 
+  
   protected void updateStrokeColor() {
     if (shapeEnded) {
       updateTesselation();
@@ -858,45 +1014,102 @@ public class PShape3D extends PShape {
 
   // TINT COLOR 
   
+  
   public void noTint() {
-    tint = false;
-    tintR = 0;
-    tintG = 0;
-    tintB = 0;
-    tintA = 0;
-    tintColor = 0x0;
-    updateTintColor();   
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.noTint();        
+      }      
+    } else {
+      tint = false;
+      tintR = 0;
+      tintG = 0;
+      tintB = 0;
+      tintA = 0;
+      tintColor = 0x0;
+      updateTintColor();      
+    }   
   }  
+  
   
   public void tint(int rgb) {
-    colorCalc(rgb);
-    tintFromCalc();    
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.tint(rgb);        
+      }      
+    } else {
+      colorCalc(rgb);
+      tintFromCalc();      
+    }
   }  
+  
   
   public void tint(int rgb, float alpha) {
-    colorCalc(rgb, alpha);
-    tintFromCalc();
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.tint(rgb, alpha);        
+      }      
+    } else {
+      colorCalc(rgb, alpha);
+      tintFromCalc();      
+    }
   }
+  
   
   public void tint(float gray) {
-    colorCalc(gray);
-    tintFromCalc();    
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.tint(gray);        
+      }      
+    } else {
+      colorCalc(gray);
+      tintFromCalc();      
+    }    
   }
+  
   
   public void tint(float gray, float alpha) {
-    colorCalc(gray, alpha);
-    tintFromCalc();    
-  }
-
-  public void tint(float x, float y, float z) {
-    colorCalc(x, y, z);
-    tintFromCalc();    
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.tint(gray, alpha);        
+      }      
+    } else {
+      colorCalc(gray, alpha);
+      tintFromCalc();      
+    }    
   }
   
+
+  public void tint(float x, float y, float z) {
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.tint(x, y, z);        
+      }      
+    } else {
+      colorCalc(x, y, z);
+      tintFromCalc();      
+    }    
+  }
+  
+  
   public void tint(float x, float y, float z, float alpha) {
-    colorCalc(x, y, z, alpha);
-    tintFromCalc();    
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];        
+        child.tint(x, y, z, alpha);        
+      }      
+    } else {
+      colorCalc(x, y, z, alpha);
+      tintFromCalc();      
+    }        
   }  
+  
   
   protected void tintFromCalc() {
     tint = true;
@@ -907,6 +1120,7 @@ public class PShape3D extends PShape {
     tintColor = calcColor;
     updateTintColor();  
   }  
+  
   
   protected void updateTintColor() {    
     if (!shapeEnded || tess.fillVertexCount == 0 || texture == null) {
@@ -935,6 +1149,7 @@ public class PShape3D extends PShape {
   
   // Geometric transformations
   
+  
   public void center(float cx, float cy) {
     if (family == GROUP) {
 //      for (int i = 0; i < childCount; i++) {
@@ -942,6 +1157,11 @@ public class PShape3D extends PShape {
 //        child.center(cx, cy);
 //      }      
     } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
       tess.center(cx, cy);
       
       modified(); 
@@ -969,6 +1189,11 @@ public class PShape3D extends PShape {
       // translate to the new center.
       
     } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
       tess.center(cx, cy, cz);
       
       modified(); 
@@ -987,13 +1212,15 @@ public class PShape3D extends PShape {
   
   public void translate(float tx, float ty) {
     if (family == GROUP) {
-      // TODO: make sure that for group shapes, just applying the
-      // gl transformation is efficient enough (might depend on
-      // how much geometry is inside the group).
       childHasMatrix();
       applyMatrix = true;
       super.translate(tx, ty);
     } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
       checkMatrix(2);
       matrix.reset();
       matrix.translate(tx, ty);
@@ -1021,13 +1248,15 @@ public class PShape3D extends PShape {
   
   public void translate(float tx, float ty, float tz) {
     if (family == GROUP) {
-      // TODO: make sure that for group shapes, just applying the
-      // gl transformation is efficient enough (might depend on
-      // how much geometry is inside the group).
       childHasMatrix();
       applyMatrix = true;
       super.translate(tx, ty, tz);
     } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
       checkMatrix(3);
       matrix.translate(tx, ty, tz);
       tess.applyMatrix((PMatrix3D) matrix);
@@ -1054,8 +1283,40 @@ public class PShape3D extends PShape {
   
   
   public void rotate(float angle) {
-    // TODO: implement for geometry shapes.
-    super.rotate(angle);
+    if (family == GROUP) {
+      childHasMatrix();
+      applyMatrix = true;
+      super.rotate(angle);
+    } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
+      checkMatrix(2);
+      matrix.reset();
+      matrix.rotate(angle);
+      tess.applyMatrix((PMatrix2D) matrix);
+            
+      modified(); 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+        modifiedFillNormals = true; 
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineNormals = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;
+        modifiedPointNormals = true;        
+      }
+      
+      // So the transformation is not applied again when drawing
+      applyMatrix = false;   
+    }
+
   }
   
   public void rotate(float angle, float v0, float v1, float v2) {
@@ -1064,6 +1325,11 @@ public class PShape3D extends PShape {
       applyMatrix = true;
       super.rotate(angle, v0, v1, v2);
     } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
       checkMatrix(3);
       matrix.reset();
       matrix.rotate(angle, v0, v1, v2);
@@ -1085,19 +1351,79 @@ public class PShape3D extends PShape {
       }
       
       // So the transformation is not applied again when drawing
-      applyMatrix = true;   
+      applyMatrix = false;   
     }
   }
   
   public void scale(float s) {
-    // TODO: implement for geometry shapes.
-    super.scale(s);
+    if (family == GROUP) {
+      childHasMatrix();
+      applyMatrix = true;
+      super.scale(s);
+    } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
+      checkMatrix(2);
+      matrix.scale(s);
+      tess.applyMatrix((PMatrix2D) matrix);
+      
+      modified(); 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+        modifiedFillNormals = true; 
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineNormals = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;
+        modifiedPointNormals = true;        
+      }
+      
+      // So the transformation is not applied again when drawing
+      applyMatrix = false;
+    }
   }
 
 
   public void scale(float x, float y) {
-    // TODO: implement for geometry shapes.
-    super.scale(x, y);
+    if (family == GROUP) {
+      childHasMatrix();
+      applyMatrix = true;
+      super.scale(x, y);
+    } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
+      checkMatrix(2);
+      matrix.scale(x, y);
+      tess.applyMatrix((PMatrix2D) matrix);
+      
+      modified(); 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+        modifiedFillNormals = true; 
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineNormals = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;
+        modifiedPointNormals = true;        
+      }
+      
+      // So the transformation is not applied again when drawing
+      applyMatrix = false;
+    }
   }
 
 
@@ -1107,6 +1433,11 @@ public class PShape3D extends PShape {
       applyMatrix = true;
       super.scale(x, y, z);
     } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
       checkMatrix(3);
       matrix.scale(x, y, z);
       tess.applyMatrix((PMatrix3D) matrix);
@@ -1131,16 +1462,6 @@ public class PShape3D extends PShape {
     }    
   }  
   
-  
-  public void resetMatrix() {
-    // What to do in the case of geometry shapes?
-    // In order to properly reset the transformation,
-    // we need to have the last matrix applied, calculate
-    // the inverse and apply on the tess object... TODO
-    checkMatrix(2);
-    matrix.reset();
-  }
-
 
   public void applyMatrix(PMatrix source) {
     super.applyMatrix(source);
@@ -1154,13 +1475,44 @@ public class PShape3D extends PShape {
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    super.applyMatrix(n00, n01, n02,
-                      n10, n11, n12);
+    if (family == GROUP) {
+      childHasMatrix();
+      applyMatrix = true;
+      super.applyMatrix(n00, n01, n02,
+                        n10, n11, n12);
+    } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
+      checkMatrix(2);
+      matrix.apply(n00, n01, n02,
+                   n10, n11, n12);   
+      tess.applyMatrix((PMatrix2D) matrix);
+      
+      modified(); 
+      if (0 < tess.fillVertexCount) {
+        modifiedFillVertices = true;  
+        modifiedFillNormals = true; 
+      }        
+      if (0 < tess.lineVertexCount) {
+        modifiedLineVertices = true;
+        modifiedLineNormals = true;
+        modifiedLineAttributes = true;
+      }
+      if (0 < tess.pointVertexCount) {
+        modifiedPointVertices = true;
+        modifiedPointNormals = true;        
+      }
+      
+      // So the transformation is not applied again when drawing
+      applyMatrix = false;     
+    }
   }
 
 
   public void apply(PMatrix3D source) {
-    // TODO: implement for geometry shapes.
     applyMatrix(source.m00, source.m01, source.m02, source.m03,
                 source.m10, source.m11, source.m12, source.m13,
                 source.m20, source.m21, source.m22, source.m23,
@@ -1180,6 +1532,11 @@ public class PShape3D extends PShape {
                         n20, n21, n22, n23,
                         n30, n31, n32, n33);
     } else {
+      if (!shapeEnded) {
+        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
+        return;
+      }
+      
       checkMatrix(3);
       matrix.apply(n00, n01, n02, n03,
                    n10, n11, n12, n13,
@@ -1205,6 +1562,16 @@ public class PShape3D extends PShape {
       // So the transformation is not applied again when drawing
       applyMatrix = false;     
     }
+  }
+  
+  
+  public void resetMatrix() {
+    // What to do in the case of geometry shapes?
+    // In order to properly reset the transformation,
+    // we need to have the last matrix applied, calculate
+    // the inverse and apply on the tess object... TODO
+    checkMatrix(2);
+    matrix.reset();
   }
   
   
@@ -1541,6 +1908,7 @@ public class PShape3D extends PShape {
   
   // Construction methods  
   
+  
   protected void updateTesselation() {
     if (!root.tessellated) {
       root.tessellate();
@@ -1550,7 +1918,6 @@ public class PShape3D extends PShape {
  
   
   protected void tessellate() {
-
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D) children[i];
@@ -1887,6 +2254,7 @@ public class PShape3D extends PShape {
     }
   }
   
+  
   protected void aggregate() {
     if (root == this && parent == null) {
       // We recursively calculate the total number of vertices and indices.
@@ -2037,6 +2405,7 @@ public class PShape3D extends PShape {
       }
     }
   }
+  
   
   protected void updateRootGeometry() {
     if (family == GROUP) {
@@ -2481,6 +2850,7 @@ public class PShape3D extends PShape {
     deletePointBuffers();
   }  
   
+  
   protected void deleteFillBuffers() {
     if (glFillVertexBufferID != 0) {    
       ogl.deleteVertexBufferObject(glFillVertexBufferID);   
@@ -2508,6 +2878,7 @@ public class PShape3D extends PShape {
     }   
   }
   
+  
   protected void deleteLineBuffers() {
     if (glLineVertexBufferID != 0) {    
       ogl.deleteVertexBufferObject(glLineVertexBufferID);   
@@ -2534,6 +2905,7 @@ public class PShape3D extends PShape {
       glLineIndexBufferID = 0;
     }  
   }  
+  
   
   protected void deletePointBuffers() {
     if (glPointVertexBufferID != 0) {    
@@ -2567,6 +2939,7 @@ public class PShape3D extends PShape {
   //
   
   // Rendering methods
+  
   
   public void draw() {
     draw(ogl);
