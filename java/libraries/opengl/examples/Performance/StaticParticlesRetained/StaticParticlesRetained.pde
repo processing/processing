@@ -24,12 +24,13 @@ void setup() {
     part.noStroke();
     part.tint(255);
     part.texture(sprite);
+    part.normal(0, 0, 1);
     part.vertex(cx - partSize/2, cy - partSize/2, cz, 0, 0);
     part.vertex(cx + partSize/2, cy - partSize/2, cz, sprite.width, 0);
     part.vertex(cx + partSize/2, cy + partSize/2, cz, sprite.width, sprite.height);
     part.vertex(cx - partSize/2, cy + partSize/2, cz, 0, sprite.height);    
     part.end();    
-    particles.addShape(part);
+    particles.addChild(part);
   }
 
   // Writing to the depth buffer is disabled to avoid rendering

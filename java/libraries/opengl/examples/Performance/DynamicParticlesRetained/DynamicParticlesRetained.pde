@@ -26,12 +26,13 @@ void setup() {
     PShape part = createShape(QUAD);
     part.noStroke();
     part.texture(sprite);
+    part.normal(0, 0, 1);
     part.vertex(-partSize/2, -partSize/2, 0, 0);
     part.vertex(+partSize/2, -partSize/2, sprite.width, 0);
     part.vertex(+partSize/2, +partSize/2, sprite.width, sprite.height);
     part.vertex(-partSize/2, +partSize/2, 0, sprite.height);
     part.end();    
-    particles.addShape(part);
+    particles.addChild(part);
   }
 
   partLifetime = npartTotal / npartPerFrame;
