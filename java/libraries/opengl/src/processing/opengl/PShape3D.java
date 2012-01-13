@@ -40,10 +40,13 @@ import processing.opengl.PGraphicsOpenGL.InGeometry;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
 
+import java.io.BufferedReader;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
 
 // Notes about geometry update in PShape3D.
 // 1) When applying a transformation on a group shape
@@ -3330,6 +3333,398 @@ public class PShape3D extends PShape {
   protected GL2ES1 getGl() {
     return ogl.gl2f;
   }  
+  
+  ///////////////////////////////////////////////////////////////////////////   
+  
+  // OBJ loading
+  
+  
+  protected BufferedReader getBufferedReader(String filename) {
+    //BufferedReader retval = papplet.createReader(filename);
+    BufferedReader retval = null;
+    if (retval != null) {
+      return retval;
+    } else {
+      PApplet.println("Could not find this file " + filename);
+      return null;
+    }
+  }
+  
+  
+  protected void parseOBJ(BufferedReader reader, ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
+    Hashtable<String, Integer> mtlTable  = new Hashtable<String, Integer>();
+    int mtlIdxCur = -1;
+    boolean readv, readvn, readvt;
+    try {
+      // Parse the line.
+      
+      readv = readvn = readvt = false;
+      String line;
+      String gname = "object";
+      while ((line = reader.readLine()) != null) {
+        
+        // The below patch/hack comes from Carlos Tomas Marti and is a
+        // fix for single backslashes in Rhino obj files
+        
+        // BEGINNING OF RHINO OBJ FILES HACK
+        // Statements can be broken in multiple lines using '\' at the
+        // end of a line.
+        // In regular expressions, the backslash is also an escape
+        // character.
+        // The regular expression \\ matches a single backslash. This
+        // regular expression as a Java string, becomes "\\\\".
+        // That's right: 4 backslashes to match a single one.
+        while (line.contains("\\")) {
+          line = line.split("\\\\")[0];
+          final String s = reader.readLine();
+          if (s != null)
+            line += s;
+        }
+        // END OF RHINO OBJ FILES HACK
+        
+        String[] elements = line.split("\\s+");        
+        // if not a blank line, process the line.
+        if (elements.length > 0) {
+          if (elements[0].equals("v")) {
+            // vertex
+            PVector tempv = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue(), Float.valueOf(elements[3]).floatValue());
+            vertices.add(tempv);
+            readv = true;
+          } else if (elements[0].equals("vn")) {
+            // normal
+            PVector tempn = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue(), Float.valueOf(elements[3]).floatValue());
+            normals.add(tempn);
+            readvn = true;
+          } else if (elements[0].equals("vt")) {
+            // uv
+            PVector tempv = new PVector(Float.valueOf(elements[1]).floatValue(), Float.valueOf(elements[2]).floatValue());
+            textures.add(tempv);
+            readvt = true;
+          } else if (elements[0].equals("o")) {
+            // Object name is ignored, for now.
+          } else if (elements[0].equals("mtllib")) {
+            if (elements[1] != null) {
+              parseMTL(getBufferedReader(elements[1]), materials, mtlTable); 
+            }
+          } else if (elements[0].equals("g")) {            
+            gname = elements[1];
+          } else if (elements[0].equals("usemtl")) {
+            // Getting index of current active material (will be applied on all subsequent faces)..
+            if (elements[1] != null) {
+              String mtlname = elements[1];
+              if (mtlTable.containsKey(mtlname)) {
+                Integer tempInt = mtlTable.get(mtlname);
+                mtlIdxCur = tempInt.intValue();
+              } else {
+                mtlIdxCur = -1;                
+              }
+            }
+          } else if (elements[0].equals("f")) {
+            // Face setting
+            OBJFace face = new OBJFace();
+            face.matIdx = mtlIdxCur; 
+            face.name = gname;
+            
+            for (int i = 1; i < elements.length; i++) {
+              String seg = elements[i];
+
+              if (seg.indexOf("/") > 0) {
+                String[] forder = seg.split("/");
+
+                if (forder.length > 2) {
+                  // Getting vertex and texture and normal indexes.
+                  if (forder[0].length() > 0 && readv) {
+                    face.vertIdx.add(Integer.valueOf(forder[0]));
+                  }
+
+                  if (forder[1].length() > 0 && readvt) {
+                    face.texIdx.add(Integer.valueOf(forder[1]));
+                  }
+
+                  if (forder[2].length() > 0 && readvn) {
+                    face.normIdx.add(Integer.valueOf(forder[2]));
+                  }
+                } else if (forder.length > 1) {
+                  // Getting vertex and texture/normal indexes.
+                  if (forder[0].length() > 0 && readv) {
+                    face.vertIdx.add(Integer.valueOf(forder[0]));
+                  }
+ 
+                  if (forder[1].length() > 0) {
+                    if (readvt) {
+                      face.texIdx.add(Integer.valueOf(forder[1]));  
+                    } else  if (readvn) {
+                      face.normIdx.add(Integer.valueOf(forder[1]));
+                    }
+                    
+                  }
+                  
+                } else if (forder.length > 0) {
+                  // Getting vertex index only.
+                  if (forder[0].length() > 0 && readv) {
+                    face.vertIdx.add(Integer.valueOf(forder[0]));
+                  }
+                }
+              } else {
+                // Getting vertex index only.
+                if (seg.length() > 0 && readv) {
+                  face.vertIdx.add(Integer.valueOf(seg));
+                }
+              }
+            }
+           
+            faces.add(face);
+            
+          }
+        }
+      }
+
+      if (materials.size() == 0) {
+        // No materials definition so far. Adding one default material.
+        OBJMaterial defMtl = new OBJMaterial(); 
+        materials.add(defMtl);
+      }      
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  
+  protected void parseMTL(BufferedReader reader, ArrayList<OBJMaterial> materials, Hashtable<String, Integer> materialsHash) {
+    try {
+      String line;
+      OBJMaterial currentMtl = null;
+      while ((line = reader.readLine()) != null) {
+        // Parse the line
+        line = line.trim();
+
+        String elements[] = line.split("\\s+");
+
+        if (elements.length > 0) {
+          // Extract the material data.
+
+          if (elements[0].equals("newmtl")) {
+            // Starting new material.
+            String mtlname = elements[1];
+            currentMtl = new OBJMaterial(mtlname);
+            materialsHash.put(mtlname, new Integer(materials.size()));
+            materials.add(currentMtl);
+          } else if (elements[0].equals("map_Kd") && elements.length > 1) {
+            // Loading texture map.
+            String texname = elements[1];
+            //currentMtl.kdMap = papplet.loadImage(texname);
+            currentMtl.kdMap = null;
+          } else if (elements[0].equals("Ka") && elements.length > 3) {
+            // The ambient color of the material
+            currentMtl.ka.x = Float.valueOf(elements[1]).floatValue();
+            currentMtl.ka.y = Float.valueOf(elements[2]).floatValue();
+            currentMtl.ka.z = Float.valueOf(elements[3]).floatValue();
+          } else if (elements[0].equals("Kd") && elements.length > 3) {
+            // The diffuse color of the material
+            currentMtl.kd.x = Float.valueOf(elements[1]).floatValue();
+            currentMtl.kd.y = Float.valueOf(elements[2]).floatValue();
+            currentMtl.kd.z = Float.valueOf(elements[3]).floatValue();
+          } else if (elements[0].equals("Ks") && elements.length > 3) {
+            // The specular color weighted by the specular coefficient
+            currentMtl.ks.x = Float.valueOf(elements[1]).floatValue();
+            currentMtl.ks.y = Float.valueOf(elements[2]).floatValue();
+            currentMtl.ks.z = Float.valueOf(elements[3]).floatValue();
+          } else if ((elements[0].equals("d") || elements[0].equals("Tr")) && elements.length > 1) {
+            // Reading the alpha transparency.
+            currentMtl.d = Float.valueOf(elements[1]).floatValue();
+          } else if (elements[0].equals("Ns") && elements.length > 1) {
+            // The specular component of the Phong shading model
+            currentMtl.ns = Float.valueOf(elements[1]).floatValue();
+          } 
+          
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }    
+  }
+  
+  protected void recordOBJ() {
+//    recordOBJ(objVertices, objNormal, objTexCoords, objFaces, objMaterials);
+//    objVertices = null; 
+//    objNormal = null; 
+//    objTexCoords = null;    
+//    objFaces = null;
+//    objMaterials = null;    
+//    
+//    readFromOBJ = false;
+  }
+  
+  protected void recordOBJ(ArrayList<PVector> vertices, ArrayList<PVector> normals, ArrayList<PVector> textures, ArrayList<OBJFace> faces, ArrayList<OBJMaterial> materials) {
+    int mtlIdxCur = -1;
+    OBJMaterial mtl = null;
+    
+    ogl.saveDrawingState();
+    
+    // The recorded shapes are not merged, they are grouped
+    // according to the group names found in the OBJ file.    
+    //ogl.mergeRecShapes = false;
+    
+    // Using RGB mode for coloring.
+    ogl.colorMode = RGB;
+    
+    // Strokes are not used to draw the model.
+    ogl.stroke = false;    
+    
+    // Normals are automatically computed if not specified in the OBJ file.
+    ogl.autoNormal(true);
+    
+    // Using normal mode for texture coordinates (i.e.: normalized between 0 and 1).
+    ogl.textureMode = NORMAL;    
+    
+    //ogl.beginShapeRecorderImpl();    
+    for (int i = 0; i < faces.size(); i++) {
+      OBJFace face = faces.get(i);
+      
+      // Getting current material.
+      if (mtlIdxCur != face.matIdx) {
+        mtlIdxCur = PApplet.max(0, face.matIdx); // To make sure that at least we get the default material.
+        
+        mtl = materials.get(mtlIdxCur);
+
+        // Setting colors.
+        ogl.specular(mtl.ks.x * 255.0f, mtl.ks.y * 255.0f, mtl.ks.z * 255.0f);
+        ogl.ambient(mtl.ka.x * 255.0f, mtl.ka.y * 255.0f, mtl.ka.z * 255.0f);
+        if (ogl.fill) {
+          ogl.fill(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);  
+        }        
+        ogl.shininess(mtl.ns);
+        
+        if (ogl.tint && mtl.kdMap != null) {
+          // If current material is textured, then tinting the texture using the diffuse color.
+          ogl.tint(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);
+        }
+      }
+
+      // Recording current face.
+      if (face.vertIdx.size() == 3) {
+        ogl.beginShape(TRIANGLES); // Face is a triangle, so using appropriate shape kind.
+      } else if (face.vertIdx.size() == 4) {
+        ogl.beginShape(QUADS);        // Face is a quad, so using appropriate shape kind.
+      } else {
+        ogl.beginShape();  
+      }      
+      
+      ogl.shapeName(face.name);
+      
+      for (int j = 0; j < face.vertIdx.size(); j++){
+        int vertIdx, normIdx;
+        PVector vert, norms;
+
+        vert = norms = null;
+        
+        vertIdx = face.vertIdx.get(j).intValue() - 1;
+        vert = vertices.get(vertIdx);
+        
+        if (j < face.normIdx.size()) {
+          normIdx = face.normIdx.get(j).intValue() - 1;
+          if (-1 < normIdx) {
+            norms = normals.get(normIdx);  
+          }
+        }
+        
+        if (mtl != null && mtl.kdMap != null) {
+          // This face is textured.
+          int texIdx;
+          PVector tex = null; 
+          
+          if (j < face.texIdx.size()) {
+            texIdx = face.texIdx.get(j).intValue() - 1;
+            if (-1 < texIdx) {
+              tex = textures.get(texIdx);  
+            }
+          }
+          
+          PTexture texMtl = (PTexture)mtl.kdMap.getCache(ogl);
+          if (texMtl != null) {     
+            // Texture orientation in Processing is inverted.
+            texMtl.setFlippedY(true);          
+          }
+          ogl.texture(mtl.kdMap);
+          if (norms != null) {
+            ogl.normal(norms.x, norms.y, norms.z);
+          }
+          if (tex != null) {
+            ogl.vertex(vert.x, vert.y, vert.z, tex.x, tex.y);  
+          } else {
+            ogl.vertex(vert.x, vert.y, vert.z);
+          }
+        } else {
+          // This face is not textured.
+          if (norms != null) {
+            ogl.normal(norms.x, norms.y, norms.z);
+          }
+          ogl.vertex(vert.x, vert.y, vert.z);          
+        }
+      } 
+      ogl.endShape(CLOSE);
+    }
+    
+    // Allocate space for the geometry that the triangulator has generated from the OBJ model.
+    //setSize(ogl.recordedVertices.size());
+//    allocate();
+//    initChildrenData();
+//    updateElement = -1;
+    
+    width = height = depth = 0;
+//    xmin = ymin = zmin = 10000;
+//    xmax = ymax = zmax = -10000;
+    
+    //ogl.endShapeRecorderImpl(this);
+    //ogl.endShapeRecorderImpl(null);
+    
+    ogl.restoreDrawingState();    
+  }
+  
+
+  protected class OBJFace {
+    ArrayList<Integer> vertIdx;
+    ArrayList<Integer> texIdx;
+    ArrayList<Integer> normIdx;
+    int matIdx;
+    String name;
+    
+    OBJFace() {
+      vertIdx = new ArrayList<Integer>();
+      texIdx = new ArrayList<Integer>();
+      normIdx = new ArrayList<Integer>();
+      matIdx = -1;
+      name = "";
+    }
+  }
+
+  protected class OBJMaterial {
+    String name;
+    PVector ka;
+    PVector kd;
+    PVector ks;
+    float d;
+    float ns;
+    PImage kdMap;
+    
+    OBJMaterial() {
+      this("default");
+    }
+    
+    OBJMaterial(String name) {
+      this.name = name;
+      ka = new PVector(0.5f, 0.5f, 0.5f);
+      kd = new PVector(0.5f, 0.5f, 0.5f);
+      ks = new PVector(0.5f, 0.5f, 0.5f);
+      d = 1.0f;
+      ns = 0.0f;
+      kdMap = null;
+    }    
+  }
+
+  
+  
 }
 
 
