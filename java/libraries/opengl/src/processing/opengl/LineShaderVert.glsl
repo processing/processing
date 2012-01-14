@@ -82,11 +82,11 @@ void main() {
   // to avoid depth-fighting with the polys.
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848    
-  v_p.xyz = v_p.xyz * 0.99;
+  //v_p.xyz = v_p.xyz * 0.99;
   
   vec4 clip_p = gl_ProjectionMatrix * v_p; 
   vec4 v_q = gl_ModelViewMatrix * pos_q;
-  v_q.xyz = v_q.xyz * 0.99;
+  //v_q.xyz = v_q.xyz * 0.99;
   
   vec4 clip_q = gl_ProjectionMatrix * v_q; 
   vec3 window_p = clipToWindow(clip_p, viewport); 
