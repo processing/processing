@@ -223,22 +223,14 @@ public class PGraphicsOpenGL extends PGraphics {
   
   // ........................................................
 
-  // Projection, camera, geometry, and modelview matrices.
-  // The modelview combines the camera and geometry matrices as 
-  // follows:
-  // modelview = camera * geometry
-  // so:
-  // geometry = cameraInv * modelview
-  
-  protected float[] glMatrix;  
-
-  public PMatrix3D projection;  
-  
+  // Projection, camera, and modelview matrices.
+  public PMatrix3D projection;    
   public PMatrix3D camera;
-  public PMatrix3D cameraInv;
-  
-  public PMatrix3D geometry;
+  public PMatrix3D cameraInv;  
   public PMatrix3D modelview;
+  
+  // Temporary array to copy the PMatrices to OpenGL.
+  protected float[] glMatrix;
   
   protected boolean matricesAllocated = false;
   
@@ -587,7 +579,6 @@ public class PGraphicsOpenGL extends PGraphics {
       projection = new PMatrix3D();
       camera = new PMatrix3D();
       cameraInv = new PMatrix3D();
-      geometry = new PMatrix3D();
       modelview = new PMatrix3D();      
       matricesAllocated = true;
     }
@@ -1515,9 +1506,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // remove any additional modelview transformation (and less likely, projection
       // transformations) applied by the user after setting the camera and/or projection      
       loadCamera();
-      modelview.set(camera);
-      geometry.reset();
-      
+      modelview.set(camera);      
       loadProjection();
     }
       
@@ -2270,8 +2259,9 @@ public class PGraphicsOpenGL extends PGraphics {
         // The geometry transformations have been applied already to the 
         // tessellated vertices, so we reset the modelview matrix to the
         // camera stage to avoid applying the model transformations twice.        
-        gl2f.glPushMatrix();        
-        loadCamera();
+        gl2f.glPushMatrix();
+        gl2f.glLoadIdentity();
+        //loadCamera();
       }
       
       if (hasFill) {
@@ -3323,13 +3313,10 @@ public class PGraphicsOpenGL extends PGraphics {
   public void popMatrix() {
     if (hints[DISABLE_TRANSFORM_CACHE]) {
       flush();  
-    }
-    
+    }    
     gl2f.glPopMatrix();
     PMatrix3D mat = modelviewStack.pop();
     modelview.set(mat);
-    geometry.set(cameraInv);
-    geometry.apply(modelview);
   }
   
   
@@ -3350,7 +3337,6 @@ public class PGraphicsOpenGL extends PGraphics {
     
     gl2f.glTranslatef(tx, ty, tz);
     modelview.translate(tx, ty, tz);    
-    geometry.translate(tx, ty, tz);
   }
 
   
@@ -3390,26 +3376,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
            
     gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
-    
-    // Here we calculate the elements of the rotation instead of calculating rotate on
-    // the modelview and geometry matrices separately to save some computation.
-    float c = PApplet.cos(angle);
-    float s = PApplet.sin(angle);
-    float t = 1.0f - c;
-
-    float n00 = (t*v0*v0) + c;      float n01 = (t*v0*v1) - (s*v2); float n02 = (t*v0*v2) + (s*v1);
-    float n10 = (t*v0*v1) + (s*v2); float n11 = (t*v1*v1) + c;      float n12 = (t*v1*v2) - (s*v0);
-    float n20 = (t*v0*v2) - (s*v1); float n21 = (t*v1*v2) + (s*v0); float n22 = (t*v2*v2) + c;     
-    
-    modelview.apply(n00, n01, n02, 0, 
-                    n10, n11, n12, 0,
-                    n20, n21, n22, 0,
-                      0,   0,   0, 1);
-    
-    geometry.apply(n00, n01, n02, 0, 
-                   n10, n11, n12, 0,
-                   n20, n21, n22, 0,
-                     0,   0,   0, 1);
+    modelview.rotate(angle, v0, v1, v2);
   }
 
   
@@ -3439,7 +3406,6 @@ public class PGraphicsOpenGL extends PGraphics {
     
     gl2f.glScalef(sx, sy, sz);
     modelview.scale(sx, sy, sz);
-    geometry.scale(sx, sy, sz);
   }
 
   
@@ -3469,7 +3435,6 @@ public class PGraphicsOpenGL extends PGraphics {
   public void resetMatrix() {
     gl2f.glLoadIdentity();    
     modelview.reset();
-    geometry.reset();
   }
   
 
@@ -3519,11 +3484,6 @@ public class PGraphicsOpenGL extends PGraphics {
                     n10, n11, n12, n13,
                     n20, n21, n22, n23,
                     n30, n31, n32, n33);
-
-    geometry.apply(n00, n01, n02, n03,
-                   n10, n11, n12, n13,
-                   n20, n21, n22, n23,
-                   n30, n31, n32, n33);    
   }
 
   
@@ -3710,8 +3670,6 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraInv.set(camera);
     cameraInv.invert();
     
-    geometry.reset();
-  
     // all done
     manipulatingCamera = false;
   }
@@ -3815,8 +3773,9 @@ public class PGraphicsOpenGL extends PGraphics {
   public void camera(float eyeX, float eyeY, float eyeZ, 
                      float centerX, float centerY, float centerZ, 
                      float upX, float upY, float upZ) {
-    // Flushing geometry with a different camera configuration.
-    flush();
+    if (hints[DISABLE_TRANSFORM_CACHE]) {
+      flush();  
+    }
     
     // Calculating Z vector
     float z0 = eyeX - centerX;
@@ -3879,10 +3838,8 @@ public class PGraphicsOpenGL extends PGraphics {
     camera.set(modelview);
     cameraInv.set(camera);
     cameraInv.invert();
-    
-    geometry.reset();
   }
-  
+    
   
   /**
    * Print the current camera matrix.
@@ -7444,7 +7401,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int index;
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D tr = geometry;
+        PMatrix3D tr = modelview;
         
         index = 3 * fillVertexCount;
         fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
@@ -7489,7 +7446,7 @@ public class PGraphicsOpenGL extends PGraphics {
       addFillVertices(nvert);
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D tr = geometry;
+        PMatrix3D tr = modelview;
         
         for (int i = 0; i < nvert; i++) {
           int inIdx = i0 + i;
@@ -7600,7 +7557,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float z1 = in.vertices[index  ];        
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D tr = geometry;
+        PMatrix3D tr = modelview;
         
         index = 3 * tessIdx;
         lineVertices[index++] = x0 * tr.m00 + y0 * tr.m01 + z0 * tr.m02 + tr.m03;
@@ -7664,8 +7621,8 @@ public class PGraphicsOpenGL extends PGraphics {
       float nz = in.normals[index  ];      
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D tr = geometry;
-
+        PMatrix3D tr = modelview;
+        
         index = 3 * tessIdx;
         pointVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
         pointVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
