@@ -440,7 +440,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected InGeometry inGeo;
   protected TessGeometry tessGeo;
-  protected TexState texState;
+  protected TexCache texCache;
 
   protected float[] currentVertex = { 0, 0, 0 };
   protected float[] currentColor = { 0, 0, 0, 0 };  
@@ -505,7 +505,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     inGeo = newInGeometry();
     tessGeo = newTessGeometry(IMMEDIATE);
-    texState = newTexState();
+    texCache = newTexCache();
     
     glFillVertexBufferID = 0;
     glFillColorBufferID = 0;
@@ -1439,7 +1439,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     inGeo.reset();
     tessGeo.reset();
-    texState.reset();
+    texCache.reset();
     
     // Each frame starts with textures disabled. 
     super.noTexture();
@@ -2241,10 +2241,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     int last = tessGeo.lastFillIndex;        
-    if (textureImage0 != textureImage || texState.count == 0) {
-      texState.addTexture(textureImage, first, last);
+    if (textureImage0 != textureImage || texCache.count == 0) {
+      texCache.addTexture(textureImage, first, last);
     } else {
-      texState.setLastIndex(last);
+      texCache.setLastIndex(last);
     }
   }
   
@@ -2256,16 +2256,15 @@ public class PGraphicsOpenGL extends PGraphics {
     if (hasPoints || hasLines || hasFill) {
       
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        // The geometry transformations have been applied already to the 
-        // tessellated vertices, so we reset the modelview matrix to the
-        // camera stage to avoid applying the model transformations twice.        
+        // The modelview transformation has been applied already to the 
+        // tessellated vertices, so we set the OpenGL modelview matrix as
+        // the identity to avoid applying the model transformations twice.        
         gl2f.glPushMatrix();
         gl2f.glLoadIdentity();
-        //loadCamera();
       }
       
       if (hasFill) {
-        renderFill(textureImage);
+        renderFill();
       }
       
       if (hasPoints) {
@@ -2282,7 +2281,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     tessGeo.reset();  
-    texState.reset();
+    texCache.reset();
   }
   
 
@@ -2373,7 +2372,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   
-  protected void renderFill(PImage textureImage) {
+  protected void renderFill() {
     if (!fillVBOsCreated) {
       createFillBuffers();
       fillVBOsCreated = true;
@@ -2397,7 +2396,7 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillNormals, 0, 3 * size), vboMode);
     gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
 
-    if (texState.hasTexture) {
+    if (texCache.hasTexture) {
       gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
       gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
       gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillTexcoords, 0, 2 * size), vboMode);
@@ -2407,9 +2406,9 @@ public class PGraphicsOpenGL extends PGraphics {
     gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);      
       
     PTexture tex0 = null;
-    for (int i = 0; i < texState.count; i++) {
-      PImage img = texState.textures[i];
-      PTexture tex;
+    for (int i = 0; i < texCache.count; i++) {
+      PImage img = texCache.textures[i];
+      PTexture tex = null;
       
       if (img != null) {
         tex = ogl.getTexture(img);
@@ -2418,22 +2417,22 @@ public class PGraphicsOpenGL extends PGraphics {
           gl2f.glActiveTexture(GL.GL_TEXTURE0);
           gl2f.glBindTexture(tex.glTarget, tex.glID);
           tex0 = tex;
-        }
-        if (tex == null && tex0 != null) {
-          gl2f.glDisable(tex0.glTarget);
-        }
+        }        
+      }
+      if (tex == null && tex0 != null) {
+        gl2f.glDisable(tex0.glTarget);
       }
               
-      int offset = texState.firstIndex[i];
-      size = texState.lastIndex[i] - texState.firstIndex[i] + 1;
+      int offset = texCache.firstIndex[i];
+      size = texCache.lastIndex[i] - texCache.firstIndex[i] + 1;
       gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tessGeo.fillIndices, offset, size), vboMode);
       gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);        
     }  
     
-    if (texState.hasTexture) {
+    if (texCache.hasTexture) {
       tex0 = null;
-      for (int i = 0; i < texState.count; i++) {
-        PImage img = texState.textures[i];
+      for (int i = 0; i < texCache.count; i++) {
+        PImage img = texCache.textures[i];
         if (img != null) {
           PTexture tex = ogl.getTexture(img);
           if (tex0 != tex) {        
@@ -4691,7 +4690,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void backgroundImpl() {
     tessGeo.reset();  
-    texState.reset();
+    texCache.reset();
     
     gl.glClearColor(0, 0, 0, 0);
     gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
@@ -6259,18 +6258,18 @@ public class PGraphicsOpenGL extends PGraphics {
     return new TessGeometry(mode);
   }
   
-  protected TexState newTexState() {
-    return new TexState();
+  protected TexCache newTexCache() {
+    return new TexCache();
   }
   
-  public class TexState {
+  public class TexCache {
     int count;
     PImage[] textures;
     int[] firstIndex;
     int[] lastIndex;
     boolean hasTexture;
     
-    public TexState() {
+    public TexCache() {
       allocate();
     }
     
