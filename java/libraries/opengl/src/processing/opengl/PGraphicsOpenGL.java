@@ -69,7 +69,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public GL4 gl4p;
  */
   
-  protected PGLJava pgl;
+  protected PGL pgl;
   
   
   
@@ -352,11 +352,11 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
 
-  /** Size of an int (in bytes). */
-  protected static final int SIZEOF_INT = Integer.SIZE / 8;
-   
-  /** Size of a float (in bytes). */
-  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
+//  /** Size of an int (in bytes). */
+//  protected static final int SIZEOF_INT = Integer.SIZE / 8;
+//   
+//  /** Size of a float (in bytes). */
+//  protected static final int SIZEOF_FLOAT = Float.SIZE / 8;
 
   // ........................................................
   
@@ -431,7 +431,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected boolean defaultEdges = false;
   
-  protected int vboMode = PGLJava.STATIC_DRAW;
+  protected int vboMode = PGL.STATIC_DRAW;
     
   static public float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
@@ -452,7 +452,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // INIT/ALLOCATE/FINISH
   
   public PGraphicsOpenGL() {
-    pgl = new PGLJava();
+    pgl = new PGL();
     
     tessellator = new Tessellator();
     
@@ -1498,7 +1498,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     // use <= since that's what processing.core does
     //gl.glDepthFunc(GL.GL_LEQUAL);
-    pgl.setDepthFunc(PGLJava.LESS_OR_EQUAL);
+    pgl.setDepthFunc(PGL.LESS_OR_EQUAL);
     
     if (hints[DISABLE_DEPTH_MASK]) {
       //gl.glDepthMask(false);
@@ -1561,7 +1561,7 @@ public class PGraphicsOpenGL extends PGraphics {
     lightSpecular(0, 0, 0);
 
     // because y is flipped
-    pgl.setFrontFace(PGLJava.CLOCKWISE);
+    pgl.setFrontFace(PGL.CLOCKWISE);
     //gl.glFrontFace(GL.GL_CW);
     
     setSurfaceParams();
@@ -1778,9 +1778,9 @@ public class PGraphicsOpenGL extends PGraphics {
     // defaults (plus these cannot be changed through the API
     // so they should remain constant anyways):
     //gl.glFrontFace(GL.GL_CW);    
-    pgl.setFrontFace(PGLJava.CLOCKWISE);
+    pgl.setFrontFace(PGL.CLOCKWISE);
     //gl.glDepthFunc(GL.GL_LEQUAL);
-    pgl.setDepthFunc(PGLJava.LESS_OR_EQUAL);
+    pgl.setDepthFunc(PGL.LESS_OR_EQUAL);
     
     setSurfaceParams();
   }  
@@ -2038,7 +2038,7 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
       textureImage = null;      
     }
-
+    
     tessellate(mode);
     
     if (flushMode == FLUSH_CONTINUOUSLY || 
@@ -2059,7 +2059,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // textures are not mixed.
       textureImage = textureImage0;      
       flush();     
-    }  
+    }
     super.texture(image);
   }
   
@@ -2159,11 +2159,14 @@ public class PGraphicsOpenGL extends PGraphics {
     if (textured && textureMode == IMAGE) {
       u /= textureImage.width;
       v /= textureImage.height;
-      
-      PTexture tex = getTexture(textureImage);
-      if (tex.isFlippedY()) {
-        v = 1 - v;
-      }      
+
+      // TODO: GL texture shouldn't be retrieved
+      // until rendering. So how to know if it
+      // is flipped?
+//      PTexture tex = getTexture(textureImage);
+//      if (tex.isFlippedY()) {
+//        v = 1 - v;
+//      }
     }
     
     inGeo.addVertex(x, y, z, 
@@ -2657,7 +2660,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   protected void setupLineShader(int attrBufID, float[] attribs, int nvert) {
-    int[] viewport = {0, 0, 0, 0};    
+    //int[] viewport = {0, 0, 0, 0};    
     //gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
     lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
     
@@ -2679,7 +2682,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   protected void setupLineShader(int attrBufID) {
-    int[] viewport = {0, 0, 0, 0};
+    //int[] viewport = {0, 0, 0, 0};
     //gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
     lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
     
@@ -5092,7 +5095,7 @@ public class PGraphicsOpenGL extends PGraphics {
         
     pixelBuffer.rewind();
     if (primarySurface) {
-      pgl.setReadBuffer(PGLJava.FRONT);
+      pgl.setReadBuffer(PGL.FRONT);
 //      gl2x.glReadBuffer(GL.GL_FRONT);
     }
     pgl.readPixels(pixelBuffer, 0, 0, width, height);    
@@ -5537,7 +5540,7 @@ public class PGraphicsOpenGL extends PGraphics {
     getsetBuffer.rewind();
     if (primarySurface) {
 //      gl2x.glReadBuffer(GL.GL_FRONT);
-      pgl.setReadBuffer(PGLJava.FRONT);
+      pgl.setReadBuffer(PGL.FRONT);
     }
     //gl.glReadPixels(x, height - y - 1, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
     pgl.readPixels(getsetBuffer, x, height - y - 1, 1, 1);
@@ -5579,7 +5582,7 @@ public class PGraphicsOpenGL extends PGraphics {
     newbieBuffer.rewind();
     if (primarySurface) {
 //      gl2x.glReadBuffer(GL.GL_FRONT);
-      pgl.setReadBuffer(PGLJava.FRONT);
+      pgl.setReadBuffer(PGL.FRONT);
     }
 //    gl.glReadPixels(x, height - y - h, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
     pgl.readPixels(newbieBuffer, x, height - y - h, w, h);
@@ -5795,7 +5798,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (mode == REPLACE) {
         // This is equivalent to disable blending.
         if (blendEqSupported) {
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+          pgl.setBlendEquation(PGL.BLEND_EQ_ADD);
           //gl.glBlendEquation(GL.GL_FUNC_ADD);
         }
         //gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
@@ -5803,21 +5806,21 @@ public class PGraphicsOpenGL extends PGraphics {
       } else if (mode == BLEND) {
         if (blendEqSupported) {
           //gl.glBlendEquation(GL.GL_FUNC_ADD);
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+          pgl.setBlendEquation(PGL.BLEND_EQ_ADD);
         }
         //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         pgl.setDefaultBlend();
       } else if (mode == ADD) {
         if (blendEqSupported) {
           //gl.glBlendEquation(GL.GL_FUNC_ADD);
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+          pgl.setBlendEquation(PGL.BLEND_EQ_ADD);
         }
         //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
         pgl.setAdditiveBlend();
       } else if (mode == SUBTRACT) {
         if (blendEqSupported) {
           //gl.glBlendEquation(GL.GL_FUNC_ADD);
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+          pgl.setBlendEquation(PGL.BLEND_EQ_ADD);
         }
         //gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ZERO);
         pgl.setSubstractiveBlend();
@@ -5825,7 +5828,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (blendEqSupported) { 
           //gl.glBlendEquation(GL2.GL_MAX);
           //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_MAX);
+          pgl.setBlendEquation(PGL.BLEND_EQ_MAX);
           pgl.setLightestBlend();
         } else {
           PGraphics.showWarning("P3D: This blend mode is currently unsupported.");
@@ -5834,7 +5837,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (blendEqSupported) { 
           //gl.glBlendEquation(GL2.GL_MIN);      
           //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_MIN);
+          pgl.setBlendEquation(PGL.BLEND_EQ_MIN);
           pgl.setDarkestBlend();
         } else {
           PGraphics.showWarning("P3D: This blend mode is currently unsupported.");  
@@ -5843,7 +5846,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (blendEqSupported) {
           //gl.glBlendEquation(GL.GL_FUNC_REVERSE_SUBTRACT);
           //gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_REVERSE_SUBTRACT);
+          pgl.setBlendEquation(PGL.BLEND_EQ_REVERSE_SUBTRACT);
           pgl.setDifferenceBlend();
           
         } else {
@@ -5852,21 +5855,21 @@ public class PGraphicsOpenGL extends PGraphics {
       } else if (mode == EXCLUSION) {
         if (blendEqSupported) {
           //gl.glBlendEquation(GL.GL_FUNC_ADD);
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+          pgl.setBlendEquation(PGL.BLEND_EQ_ADD);
         }
         //gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE_MINUS_SRC_COLOR);
         pgl.setExclussionBlend();
       } else if (mode == MULTIPLY) {
         if (blendEqSupported) {
           //gl.glBlendEquation(GL.GL_FUNC_ADD);
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+          pgl.setBlendEquation(PGL.BLEND_EQ_ADD);
         }
         //gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_SRC_COLOR);
         pgl.setMultiplyBlend();
       } else if (mode == SCREEN) {
         if (blendEqSupported) {
           //gl.glBlendEquation(GL.GL_FUNC_ADD);
-          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+          pgl.setBlendEquation(PGL.BLEND_EQ_ADD);
         }
 //        gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE);
         pgl.setScreenBlend();
@@ -5883,7 +5886,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.enableBlend();
     if (blendEqSupported) {
       //gl.glBlendEquation(GL.GL_FUNC_ADD);
-      pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+      pgl.setBlendEquation(PGL.BLEND_EQ_ADD);
     }
     //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
     pgl.setDefaultBlend();
@@ -5939,7 +5942,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public PTexture getTexture(PImage img) {
     PTexture tex = (PTexture)img.getCache(ogl);
     if (tex == null) {
-      tex = addTexture(img);
+      tex = addTexture(img);      
     } else {       
       if (context.hashCode() != tex.context.hashCode()) {
         // The texture was created with a different context. We need
@@ -5975,7 +5978,7 @@ public class PGraphicsOpenGL extends PGraphics {
       params = PTexture.newParameters();
       img.setParams(ogl, params);
     }
-    PTexture tex = new PTexture(img.parent, img.width, img.height, params);
+    PTexture tex = new PTexture(img.parent, img.width, img.height, params);    
     img.loadPixels();    
     if (img.pixels != null) tex.set(img.pixels);
     img.setCache(ogl, tex);
@@ -6038,7 +6041,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // The texels of the texture replace the color of wherever is on the screen.
 //    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);       
-    pgl.setTexEnvironmentMode(PGLJava.REPLACE);
+    pgl.setTexEnvironmentMode(PGL.REPLACE);
     
     
     drawTexture(tw, th, crop, x, y, w, h);
@@ -6046,7 +6049,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
     // with the current fragment color.
 //    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);        
-    pgl.setTexEnvironmentMode(PGLJava.MODULATE);
+    pgl.setTexEnvironmentMode(PGL.MODULATE);
     
 //    gl.glBindTexture(target, 0);
 //    gl.glDisable(target);    
@@ -6188,7 +6191,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // The default shade model is GL_SMOOTH, but we set
     // here just in case...
     //gl2f.glShadeModel(GL2.GL_SMOOTH);
-    pgl.setShadeModel(PGLJava.SMOOTH);
+    pgl.setShadeModel(PGL.SMOOTH);
     
     
     // The ambient and diffuse components for each vertex are taken
@@ -6298,7 +6301,7 @@ public class PGraphicsOpenGL extends PGraphics {
     //profile = GLProfile.get(GLProfile.GL2ES1);    
     //profile = GLProfile.get(GLProfile.GL4bc);
     //profile = GLProfile.getMaxProgrammable();    
-    pgl.pipeline = PGLJava.FIXED; 
+    pgl.pipeline = PGL.FIXED; 
 
     /*
     // Profile auto-selection disabled for the time being.

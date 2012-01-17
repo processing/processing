@@ -39,7 +39,7 @@ import processing.core.PConstants;
 public class PFramebuffer implements PConstants {  
   protected PApplet parent;
   protected PGraphicsOpenGL ogl;
-  protected PGLJava pgl;
+  protected PGL pgl;
   
   public int glFboID;
   public int glDepthBufferID;
@@ -453,7 +453,7 @@ public class PFramebuffer implements PConstants {
 //        getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, GL.GL_DEPTH24_STENCIL8, width, height);
         pgl.setRenderbufferNumSamples(nsamples, width, height);
       } else {
-        pgl.setRenderbufferStorage(PGLJava.DEPTH_24BIT_STENCIL_8BIT, width, height);
+        pgl.setRenderbufferStorage(PGL.DEPTH_24BIT_STENCIL_8BIT, width, height);
 //        getGl().glRenderbufferStorage(GL.GL_RENDERBUFFER, GL.GL_DEPTH24_STENCIL8, width, height);
       }
       
@@ -482,13 +482,13 @@ public class PFramebuffer implements PConstants {
       //getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glDepthBufferID);
       pgl.bindRenderbuffer(glDepthBufferID);
 
-      int glConst = PGLJava.DEPTH_16BIT;
+      int glConst = PGL.DEPTH_16BIT;
       if (depthBits == 16) {
-        glConst = PGLJava.DEPTH_16BIT; 
+        glConst = PGL.DEPTH_16BIT; 
       } else if (depthBits == 24) {
-        glConst = PGLJava.DEPTH_24BIT;
+        glConst = PGL.DEPTH_24BIT;
       } else if (depthBits == 32) {
-        glConst = PGLJava.DEPTH_32BIT;              
+        glConst = PGL.DEPTH_32BIT;              
       }
       
       if (multisample) { 
@@ -522,13 +522,13 @@ public class PFramebuffer implements PConstants {
 //      getGl().glBindRenderbuffer(GL.GL_RENDERBUFFER, glStencilBufferID);
       pgl.bindRenderbuffer(glStencilBufferID);
 
-      int glConst = PGLJava.STENCIL_1BIT;
+      int glConst = PGL.STENCIL_1BIT;
       if (stencilBits == 1) {
-        glConst = PGLJava.STENCIL_1BIT; 
+        glConst = PGL.STENCIL_1BIT; 
       } else if (stencilBits == 4) {
-        glConst = PGLJava.STENCIL_4BIT;
+        glConst = PGL.STENCIL_4BIT;
       } else if (stencilBits == 8) {
-        glConst = PGLJava.STENCIL_8BIT;              
+        glConst = PGL.STENCIL_8BIT;              
       }
       if (multisample) { 
 //        getGl2().glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, nsamples, glConst, width, height);
@@ -573,17 +573,17 @@ public class PFramebuffer implements PConstants {
   public boolean validateFbo() {
 //    int status = getGl().glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
     int status = pgl.getFramebufferStatus();
-    if (status == PGLJava.FRAMEBUFFER_COMPLETE) {
+    if (status == PGL.FRAMEBUFFER_COMPLETE) {
       return true;
-    } else if (status == PGLJava.FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+    } else if (status == PGL.FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
       throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT (" + Integer.toHexString(status) + ")");
-    } else if (status == PGLJava.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+    } else if (status == PGL.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
       throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT (" + Integer.toHexString(status) + ")");
-    } else if (status == PGLJava.FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
+    } else if (status == PGL.FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
       throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS (" + Integer.toHexString(status) + ")");      
-    } else if (status == PGLJava.FRAMEBUFFER_INCOMPLETE_FORMATS) {
+    } else if (status == PGL.FRAMEBUFFER_INCOMPLETE_FORMATS) {
       throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_FORMATS (" + Integer.toHexString(status) + ")");
-    } else if (status == PGLJava.FRAMEBUFFER_UNSUPPORTED) {
+    } else if (status == PGL.FRAMEBUFFER_UNSUPPORTED) {
       throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_UNSUPPORTED" + Integer.toHexString(status));      
     } else {
       throw new RuntimeException("PFramebuffer: unknown framebuffer error (" + Integer.toHexString(status) + ")");

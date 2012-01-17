@@ -74,7 +74,7 @@ import java.util.Hashtable;
 
 public class PShape3D extends PShape {
   protected PGraphicsOpenGL ogl;
-  protected PGLJava pgl;
+  protected PGL pgl;
 
   protected PShape3D root;  
   protected int glMode;
@@ -243,7 +243,7 @@ public class PShape3D extends PShape {
     ogl = (PGraphicsOpenGL)parent.g;
     pgl = ogl.pgl;
     
-    glMode = PGLJava.STATIC_DRAW;
+    glMode = PGL.STATIC_DRAW;
     
     glFillVertexBufferID = 0;
     glFillColorBufferID = 0;
@@ -322,11 +322,11 @@ public class PShape3D extends PShape {
   
   public void setMode(int mode) {
     if (mode == STATIC) {
-      glMode = PGLJava.STATIC_DRAW;
+      glMode = PGL.STATIC_DRAW;
     } else if (mode == DYNAMIC) {
-      glMode = PGLJava.DYNAMIC_DRAW;
+      glMode = PGL.DYNAMIC_DRAW;
     } else if (mode == STREAM) {
-      glMode = PGLJava.STREAM_DRAW;
+      glMode = PGL.STREAM_DRAW;
     }
   }
   
@@ -623,10 +623,13 @@ public class PShape3D extends PShape {
       u /= texture.width;
       v /= texture.height;
       
-      PTexture tex = ogl.getTexture(texture);
-      if (tex.isFlippedY()) {
-        v = 1 - v;
-      }            
+      // TODO: GL texture shouldn't be retrieved
+      // until rendering. So how to know if it
+      // is flipped?      
+//      PTexture tex = ogl.getTexture(texture);
+//      if (tex.isFlippedY()) {
+//        v = 1 - v;
+//      }            
     }
         
     float sR, sG, sB, sA, sW;
@@ -2716,9 +2719,9 @@ public class PShape3D extends PShape {
 //                            size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
 //    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
-    pgl.bindIndexBuffer(glFillTexCoordBufferID);
+    pgl.bindIndexBuffer(glFillIndexBufferID);
     pgl.copyIndexBufferSubData(indices, offset, size, glMode); 
-    pgl.unbindVertexBuffer();
+    pgl.unbindIndexBuffer();
   }
   
   
@@ -3318,7 +3321,7 @@ public class PShape3D extends PShape {
     pgl.enableTexCoordArrays();
     
     
-    pgl.bindVertexBuffer(root.glFillColorBufferID);
+    pgl.bindVertexBuffer(root.glFillVertexBufferID);
     pgl.setVertexFormat(3, 0, 0);      
 //    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillColorBufferID);
 //    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);      

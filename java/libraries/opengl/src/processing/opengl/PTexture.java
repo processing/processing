@@ -22,6 +22,7 @@
 
 package processing.opengl;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GLContext;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -38,7 +39,7 @@ public class PTexture implements PConstants {
       
   protected PApplet parent;      // The Processing applet
   protected PGraphicsOpenGL ogl; // The main renderer
-  protected PGLJava pgl;         // The interface between Processing and OpenGL.
+  protected PGL pgl;         // The interface between Processing and OpenGL.
   protected GLContext context;   // The context that created this texture.
   
   // These are public but use at your own risk!
@@ -95,8 +96,8 @@ public class PTexture implements PConstants {
     context = ogl.getContext();
     
     glID = 0;
-    
-    init(width, height, (Parameters)params);
+     
+    init(width, height, (Parameters)params);    
   } 
 
   
@@ -149,7 +150,7 @@ public class PTexture implements PConstants {
   public void init(int width, int height, Parameters params)  {
     setParameters(params);
     setSize(width, height);
-    allocate();
+    allocate();    
   } 
 
 
@@ -264,7 +265,7 @@ public class PTexture implements PConstants {
 //    getGl().glBindTexture(glTarget, 0);
 //    getGl().glDisable(glTarget);
     pgl.bindTexture(glTarget, 0);
-    pgl.enableTexturing(glTarget);        
+    pgl.disableTexturing(glTarget);        
   }  
   
   
@@ -707,7 +708,7 @@ public class PTexture implements PConstants {
 //    getGl().glEnable(glTarget);
     pgl.enableTexturing(glTarget);
     
-    glID = ogl.createTextureObject();
+    glID = ogl.createTextureObject();    
     
     //getGl().glBindTexture(glTarget, glID);
 //    getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
@@ -719,12 +720,11 @@ public class PTexture implements PConstants {
     pgl.setTexMagFilter(glTarget, glMagFilter);
     pgl.setTexWrapS(glTarget, glWrapS);
     pgl.setTexWrapT(glTarget, glWrapT);
-    
-    
+            
     // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
     // from w/h in the case that the GPU doesn't support NPOT textures)
-    //getGl().glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
-    pgl.initTex(glFormat, glFormat, glWidth, glHeight);
+//    pgl.gl.glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
+    pgl.initTex(glTarget, glFormat, glWidth, glHeight);
     
     // Once OpenGL knows the size of the new texture, we make sure it doesn't
     // contain any garbage in the region of interest (0, 0, width, height):
@@ -830,35 +830,35 @@ public class PTexture implements PConstants {
   public Parameters getParameters() {
     Parameters res = new Parameters();
     
-    if (glTarget == PGLJava.TEXTURE_2D)  {
+    if (glTarget == PGL.TEXTURE_2D)  {
         res.target = TEXTURE2D;
     }
     
-    if (glFormat == PGLJava.RGB)  {
+    if (glFormat == PGL.RGB)  {
       res.format = RGB;
-    } else  if (glFormat == PGLJava.RGBA) {
+    } else  if (glFormat == PGL.RGBA) {
       res.format = ARGB;
-    } else  if (glFormat == PGLJava.ALPHA) {
+    } else  if (glFormat == PGL.ALPHA) {
       res.format = ALPHA;
     }
     
-    if (glMinFilter == PGLJava.NEAREST)  {
+    if (glMinFilter == PGL.NEAREST)  {
       res.sampling = POINT;
-    } else if (glMinFilter == PGLJava.LINEAR)  {
+    } else if (glMinFilter == PGL.LINEAR)  {
       res.sampling = BILINEAR;
-    } else if (glMinFilter == PGLJava.LINEAR_MIPMAP_LINEAR) {
+    } else if (glMinFilter == PGL.LINEAR_MIPMAP_LINEAR) {
       res.sampling = TRILINEAR;
     }
 
-    if (glWrapS == PGLJava.CLAMP_TO_EDGE) {
+    if (glWrapS == PGL.CLAMP_TO_EDGE) {
       res.wrapU = CLAMP;  
-    } else if (glWrapS == PGLJava.REPEAT) {
+    } else if (glWrapS == PGL.REPEAT) {
       res.wrapU = REPEAT;
     }
 
-    if (glWrapT == PGLJava.CLAMP_TO_EDGE) {
+    if (glWrapT == PGL.CLAMP_TO_EDGE) {
       res.wrapV = CLAMP;  
-    } else if (glWrapT == PGLJava.REPEAT) {
+    } else if (glWrapT == PGL.REPEAT) {
       res.wrapV = REPEAT;
     }
     
@@ -873,51 +873,51 @@ public class PTexture implements PConstants {
    */   
   protected void setParameters(Parameters params) {    
     if (params.target == TEXTURE2D)  {
-        glTarget = PGLJava.TEXTURE_2D;
+        glTarget = PGL.TEXTURE_2D;
     } else {
       throw new RuntimeException("OPENGL2: Unknown texture target");     
     }
     
     if (params.format == RGB)  {
-      glFormat = PGLJava.RGB;
+      glFormat = PGL.RGB;
     } else  if (params.format == ARGB) {
-      glFormat = PGLJava.RGBA;
+      glFormat = PGL.RGBA;
     } else  if (params.format == ALPHA) {
-      glFormat = PGLJava.ALPHA;
+      glFormat = PGL.ALPHA;
     } else {
       throw new RuntimeException("OPENGL2: Unknown texture format");     
     }
     
     if (params.sampling == POINT) {
-      glMagFilter = PGLJava.NEAREST;
-      glMinFilter = PGLJava.NEAREST;
+      glMagFilter = PGL.NEAREST;
+      glMinFilter = PGL.NEAREST;
     } else if (params.sampling == BILINEAR)  {
-      glMagFilter = PGLJava.LINEAR;
-      glMinFilter = PGLJava.LINEAR;
+      glMagFilter = PGL.LINEAR;
+      glMinFilter = PGL.LINEAR;
     } else if (params.sampling == TRILINEAR)  {
-      glMagFilter = PGLJava.LINEAR;
-      glMinFilter = PGLJava.LINEAR_MIPMAP_LINEAR;      
+      glMagFilter = PGL.LINEAR;
+      glMinFilter = PGL.LINEAR_MIPMAP_LINEAR;      
     } else {
       throw new RuntimeException("OPENGL2: Unknown texture filtering mode");     
     }
     
     if (params.wrapU == CLAMP) {
-      glWrapS = PGLJava.CLAMP_TO_EDGE;  
+      glWrapS = PGL.CLAMP_TO_EDGE;  
     } else if (params.wrapU == REPEAT)  {
-      glWrapS = PGLJava.REPEAT;
+      glWrapS = PGL.REPEAT;
     } else {
       throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
     }
     
     if (params.wrapV == CLAMP) {
-      glWrapT = PGLJava.CLAMP_TO_EDGE;  
+      glWrapT = PGL.CLAMP_TO_EDGE;  
     } else if (params.wrapV == REPEAT)  {
-      glWrapT = PGLJava.REPEAT;
+      glWrapT = PGL.REPEAT;
     } else {
       throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
     }
     
-    usingMipmaps = glMinFilter == PGLJava.LINEAR_MIPMAP_LINEAR;
+    usingMipmaps = glMinFilter == PGL.LINEAR_MIPMAP_LINEAR;
     
     flippedX = false;
     flippedY = false;    
