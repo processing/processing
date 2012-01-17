@@ -1,3 +1,26 @@
+/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+
+/*
+  Part of the Processing project - http://processing.org
+
+  Copyright (c) 2011 Andres Colubri
+  Copyright (c) 2010 Ben Fry and Casey Reas
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License version 2.1 as published by the Free Software Foundation.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General
+  Public License along with this library; if not, write to the
+  Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+  Boston, MA  02111-1307  USA
+ */
+
 package processing.opengl;
 
 import java.nio.Buffer;
@@ -78,6 +101,7 @@ public class PGL {
   public static final int CLAMP_TO_EDGE = GL.GL_CLAMP_TO_EDGE;
   public static final int REPEAT        = GL.GL_REPEAT;
   
+  public static final int RGBA8 = GL.GL_RGBA8;  
   public static final int DEPTH_24BIT_STENCIL_8BIT = GL.GL_DEPTH24_STENCIL8;
   
   public static final int DEPTH_16BIT = GL.GL_DEPTH_COMPONENT16;
@@ -892,11 +916,11 @@ public class PGL {
   }
 
   public void bindRenderbuffer(int id) {
-    gl.glBindRenderbuffer(GL.GL_RENDERBUFFER,id);
+    gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, id);
   }
     
-  public void setRenderbufferNumSamples(int samples, int w, int h) {
-    gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, samples, GL.GL_RGBA8, w, h);
+  public void setRenderbufferNumSamples(int samples, int format, int w, int h) {
+    gl2x.glRenderbufferStorageMultisample(GL.GL_RENDERBUFFER, samples, format, w, h);
   }
   
   public void setRenderbufferStorage(int format, int w, int h) {

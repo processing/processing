@@ -3,6 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
+  Copyright (c) 2011 Andres Colubri
   Copyright (c) 2010 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
@@ -22,7 +23,6 @@
 
 package processing.opengl;
 
-import javax.media.opengl.GL;
 import javax.media.opengl.GLContext;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -37,10 +37,10 @@ import processing.core.PImage;
 public class PTexture implements PConstants { 
   public int width, height;
       
-  protected PApplet parent;      // The Processing applet
-  protected PGraphicsOpenGL ogl; // The main renderer
-  protected PGL pgl;         // The interface between Processing and OpenGL.
-  protected GLContext context;   // The context that created this texture.
+  protected PApplet parent;           // The Processing applet
+  protected PGraphicsOpenGL renderer; // The main renderer
+  protected PGL pgl;                  // The interface between Processing and OpenGL.
+  protected GLContext context;        // The context that created this texture.
   
   // These are public but use at your own risk!
   public int glID; 
@@ -91,9 +91,9 @@ public class PTexture implements PConstants {
   public PTexture(PApplet parent, int width, int height, Object params) { 
     this.parent = parent;
        
-    ogl = (PGraphicsOpenGL)parent.g;
-    pgl = ogl.pgl;
-    context = ogl.getContext();
+    renderer = (PGraphicsOpenGL)parent.g;
+    pgl = renderer.pgl;
+    context = renderer.getContext();
     
     glID = 0;
      
@@ -104,7 +104,7 @@ public class PTexture implements PConstants {
   protected void finalize() throws Throwable {
     try {
       if (glID != 0) {
-        ogl.finalizeTextureObject(glID);
+        renderer.finalizeTextureObject(glID);
       }
     } finally {
       super.finalize();
@@ -190,13 +190,13 @@ public class PTexture implements PConstants {
 
   
   public void set(PImage img) {
-    PTexture tex = (PTexture)img.getCache(ogl);
+    PTexture tex = (PTexture)img.getCache(renderer);
     set(tex);
   }
   
   
   public void set(PImage img, int x, int y, int w, int h) {
-    PTexture tex = (PTexture)img.getCache(ogl);
+    PTexture tex = (PTexture)img.getCache(renderer);
     set(tex, x, y, w, h);
   }
   
@@ -239,8 +239,6 @@ public class PTexture implements PConstants {
     
     pgl.enableTexturing(glTarget);
     pgl.bindTexture(glTarget, glID);
-//    getGl().glEnable(glTarget);
-//    getGl().glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
       if (PGraphicsOpenGL.mipmapGeneration) {
@@ -262,8 +260,6 @@ public class PTexture implements PConstants {
       rgbaPixels = null;
     }
 
-//    getGl().glBindTexture(glTarget, 0);
-//    getGl().glDisable(glTarget);
     pgl.bindTexture(glTarget, 0);
     pgl.disableTexturing(glTarget);        
   }  
@@ -294,18 +290,18 @@ public class PTexture implements PConstants {
       // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
       // from the current draw buffer (which is the color buffer of the FBO).
       tempFbo.setColorBuffer(this);
-      ogl.pushFramebuffer();
-      ogl.setFramebuffer(tempFbo);
+      renderer.pushFramebuffer();
+      renderer.setFramebuffer(tempFbo);
       tempFbo.readPixels();
-      ogl.popFramebuffer();
+      renderer.popFramebuffer();
     } else {
       // Here we don't have FBOs, so the method above is of no use. What we do instead is
       // to draw the texture to the screen framebuffer, and then grab the pixels from there.      
-      ogl.pushFramebuffer();
-      ogl.setFramebuffer(tempFbo);
-      ogl.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
+      renderer.pushFramebuffer();
+      renderer.setFramebuffer(tempFbo);
+      renderer.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
       tempFbo.readPixels();
-      ogl.popFramebuffer();
+      renderer.popFramebuffer();
     }
     
     if (tempPixels == null) {
@@ -408,15 +404,11 @@ public class PTexture implements PConstants {
   public void bind() {
     pgl.enableTexturing(glTarget);
     pgl.bindTexture(glTarget, glID);
-//    getGl().glEnable(glTarget);
-//    getGl().glBindTexture(glTarget, glID);
   }
   
   public void unbind() {
     pgl.enableTexturing(glTarget);
     pgl.unbindTexture(glTarget);    
-//    getGl().glEnable(glTarget);
-//    getGl().glBindTexture(glTarget, 0);    
   }  
   
   ////////////////////////////////////////////////////////////     
@@ -705,16 +697,10 @@ public class PTexture implements PConstants {
   protected void allocate() {
     release(); // Just in the case this object is being re-allocated.
     
-//    getGl().glEnable(glTarget);
     pgl.enableTexturing(glTarget);
     
-    glID = ogl.createTextureObject();    
+    glID = renderer.createTextureObject();    
     
-    //getGl().glBindTexture(glTarget, glID);
-//    getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MIN_FILTER, glMinFilter);
-//    getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_MAG_FILTER, glMagFilter);
-//    getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_S, glWrapS);
-//    getGl().glTexParameteri(glTarget, GL.GL_TEXTURE_WRAP_T, glWrapT);    
     pgl.bindTexture(glTarget, glID);
     pgl.setTexMinFilter(glTarget, glMinFilter);
     pgl.setTexMagFilter(glTarget, glMagFilter);
@@ -723,7 +709,6 @@ public class PTexture implements PConstants {
             
     // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
     // from w/h in the case that the GPU doesn't support NPOT textures)
-//    pgl.gl.glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
     pgl.initTex(glTarget, glFormat, glWidth, glHeight);
     
     // Once OpenGL knows the size of the new texture, we make sure it doesn't
@@ -732,8 +717,6 @@ public class PTexture implements PConstants {
     setTexels(0, 0, width, height, texels); 
     texels = null;
     
-//    getGl().glBindTexture(glTarget, 0);
-//    getGl().glDisable(glTarget);     
     pgl.unbindTexture(glTarget);
     pgl.disableTexturing(glTarget);
   }
@@ -744,7 +727,7 @@ public class PTexture implements PConstants {
    */
   protected void release() {    
     if (glID != 0) {      
-      ogl.finalizeTextureObject(glID);
+      renderer.finalizeTextureObject(glID);
       glID = 0;
     }    
   }
@@ -770,19 +753,19 @@ public class PTexture implements PConstants {
     tempFbo.disableDepthTest();
     
     // FBO copy:
-    ogl.pushFramebuffer();
-    ogl.setFramebuffer(tempFbo);
+    renderer.pushFramebuffer();
+    renderer.setFramebuffer(tempFbo);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      ogl.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
+      renderer.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
     } else {
       // Rendering tex into "this" but without scaling so the contents 
       // of the source texture fall in the corresponding texels of the
       // destination.
-      ogl.drawTexture(tex, x, y, w, h, x, y, w, h);
+      renderer.drawTexture(tex, x, y, w, h, x, y, w, h);
     }
-    ogl.popFramebuffer();
+    renderer.popFramebuffer();
   }  
   
   protected void setTexels(int x, int y, int w, int h, int[] pix) {
@@ -803,7 +786,7 @@ public class PTexture implements PConstants {
     height = src.height;
     
     parent = src.parent;
-    ogl = src.ogl;
+    renderer = src.renderer;
     
     glID = src.glID;
     glTarget = src.glTarget;
@@ -923,13 +906,6 @@ public class PTexture implements PConstants {
     flippedY = false;    
   } 
 
-  /////////////////////////////////////////////////////////////////////////// 
-
-  // Utilities 
-    
-//  protected GL getGl() {
-//    return ogl.pgl.gl;
-//  }  
 
   /////////////////////////////////////////////////////////////////////////// 
 
