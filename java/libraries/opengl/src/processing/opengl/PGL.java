@@ -24,6 +24,7 @@
 package processing.opengl;
 
 import java.nio.Buffer;
+
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -65,6 +66,9 @@ import processing.core.PApplet;
  * (GL3, GL4, and not GL3bc, GL4bc) so no fixed mode calls are possible under this mode. 
  */
 public class PGL {
+  /** Size of a short (in bytes). */
+  static final int SIZEOF_SHORT = Short.SIZE / 8;
+  
   /** Size of an int (in bytes). */
   static final int SIZEOF_INT = Integer.SIZE / 8;
    
@@ -117,6 +121,8 @@ public class PGL {
   public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
   public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = GL.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS;      
   public static final int FRAMEBUFFER_INCOMPLETE_FORMATS            = GL.GL_FRAMEBUFFER_INCOMPLETE_FORMATS;
+  public static final int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        = -1;
+  public static final int FRAMEBUFFER_INCOMPLETE_READ_BUFFER        = -1;    
   public static final int FRAMEBUFFER_UNSUPPORTED                   = GL.GL_FRAMEBUFFER_UNSUPPORTED;
     
   public static final int STATIC_DRAW  = GL.GL_STATIC_DRAW;
@@ -548,7 +554,7 @@ public class PGL {
   }
   
   public void setNormalFormat(int size, int stride, long offset) {
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
+    gl2f.glNormalPointer(GL.GL_FLOAT, stride, offset);
   }
   
   public void setTexCoordFormat(int size, int stride, long offset) {
