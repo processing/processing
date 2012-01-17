@@ -24,12 +24,8 @@
 package processing.opengl;
 
 import processing.core.*;
-
-import javax.media.opengl.*;
-
 import java.io.IOException;
 import java.net.URL;
-import java.nio.*;
 
 /**
  * This class encapsulates a glsl shader. Based in the code by JohnG
@@ -38,7 +34,7 @@ import java.nio.*;
 public class PShader {
   protected PApplet parent;
   protected PGraphicsOpenGL ogl; 
-  protected GL2GL3 gl;
+  protected PGLJava pgl;
   
   protected int programObject;
   protected int vertexShader;
@@ -55,7 +51,7 @@ public class PShader {
   public PShader(PApplet parent) {
     this.parent = parent;
     ogl = (PGraphicsOpenGL) parent.g;
-    gl = ogl.gl2x; 
+    pgl = ogl.pgl;
     
     programObject = ogl.createGLSLProgramObject();  
     
@@ -163,8 +159,10 @@ public class PShader {
    * Links the shader program and validates it.
    */
   public void setup() {
-    gl.glLinkProgram(programObject);
-    gl.glValidateProgram(programObject);
+//    gl.glLinkProgram(programObject);
+//    gl.glValidateProgram(programObject);
+    pgl.linkProgram(programObject);
+    pgl.validateProgram(programObject);
     checkLogInfo("GLSL program validation: ", programObject);
     initialized = true;
   }
@@ -189,14 +187,16 @@ public class PShader {
     // textures.
     // gl.glUniform1iARB(loc, unit); 
     
-    ogl.gl.getGL2().glUseProgramObjectARB(programObject);
+    //ogl.gl.getGL2().glUseProgramObjectARB(programObject);
+    pgl.startProgram(programObject);
   }
 
   /**
    * Stops the execution of the shader program.
    */
   public void stop() {
-    ogl.gl.getGL2().glUseProgramObjectARB(0);
+    //ogl.gl.getGL2().glUseProgramObjectARB(0);
+    pgl.stopProgram();
   }    
   
   /**
@@ -206,7 +206,8 @@ public class PShader {
    * @return int
    */
   public int getAttribLocation(String name) {
-    return (gl.glGetAttribLocation(programObject, name));
+//    return gl.glGetAttribLocation(programObject, name);
+    return pgl.getAttribLocation(programObject, name);
   }
 
   /**
@@ -216,7 +217,8 @@ public class PShader {
    * @return int
    */
   public int getUniformLocation(String name) {
-    return (gl.glGetUniformLocation(programObject, name));
+//    return gl.glGetUniformLocation(programObject, name);
+    return pgl.getUniformLocation(programObject, name);
   }
 
   /**
@@ -228,7 +230,10 @@ public class PShader {
    */  
   public void setTexUniform(String name, int unit) {
     int loc = getUniformLocation(name);
-    if (-1 < loc) gl.glUniform1i(loc, unit); 
+    if (-1 < loc) {
+//      gl.glUniform1i(loc, unit);
+      pgl.setIntUniform(loc, unit);
+    }
   }  
   
   /**
@@ -261,7 +266,10 @@ public class PShader {
    */  
   public void setIntUniform(String name, int x) {
     int loc = getUniformLocation(name);
-    if (-1 < loc)  gl.glUniform1i(loc, x); 
+    if (-1 < loc) {
+//      gl.glUniform1i(loc, x);
+      pgl.setIntUniform(loc, x);
+    }
   }
 
   /**
@@ -272,7 +280,10 @@ public class PShader {
    */    
   public void setFloatUniform(String name, float x) {
     int loc = getUniformLocation(name);
-    if (-1 < loc)  gl.glUniform1f(loc, x);  
+    if (-1 < loc) {
+      //gl.glUniform1f(loc, x);
+      pgl.setFloatUniform(loc, x);
+    }
   }
 
   /**
@@ -284,7 +295,10 @@ public class PShader {
    */    
   public void setVecUniform(String name, float x, float y) {
     int loc = getUniformLocation(name);    
-    if (-1 < loc) gl.glUniform2f(loc, x, y);
+    if (-1 < loc) {
+//      gl.glUniform2f(loc, x, y);
+      pgl.setFloatUniform(loc, x, y);
+    }
   }  
 
   /**
@@ -297,7 +311,10 @@ public class PShader {
    */    
   public void setVecUniform(String name, float x, float y, float z) {
     int loc = getUniformLocation(name);
-    if (-1 < loc) gl.glUniform3f(loc, x, y, z);
+    if (-1 < loc) {
+//      gl.glUniform3f(loc, x, y, z);
+      pgl.setFloatUniform(loc, x, y, z);
+    }
   }  
   
   /**
@@ -311,7 +328,10 @@ public class PShader {
    */    
   public void setVecUniform(String name, float x, float y, float z, float w) {
     int loc = getUniformLocation(name);
-    if (-1 < loc) gl.glUniform4f(loc, x, y, z, w);
+    if (-1 < loc) {
+//      gl.glUniform4f(loc, x, y, z, w);
+      pgl.setFloatUniform(loc, x, y, z, w);
+    }
   }  
   
   /**
@@ -325,12 +345,9 @@ public class PShader {
                                          float m10, float m11) {
     int loc = getUniformLocation(name);
     if (-1 < loc)  {
-      float[] mat = new float[4];
-      mat[0] = m00;
-      mat[1] = m10;
-      mat[4] = m01;
-      mat[5] = m11;      
-      gl.glUniformMatrix2fv(loc, 1, false, mat, 0);
+      pgl.setMatUniform(loc, m00, m01, 
+                             m10, m11);    
+      //gl.glUniformMatrix2fv(loc, 1, false, mat, 0);
     }
   }  
   
@@ -346,17 +363,9 @@ public class PShader {
                                          float m20, float m21, float m22) {
     int loc = getUniformLocation(name);
     if (-1 < loc)  {
-      float[] mat = new float[9];
-      mat[0] = m00;
-      mat[1] = m10;
-      mat[2] = m20;
-      mat[4] = m01;
-      mat[5] = m11;
-      mat[6] = m21;
-      mat[8] = m02;
-      mat[9] = m12;
-      mat[10] =m22;          
-      gl.glUniformMatrix3fv(loc, 1, false, mat, 0);    
+      pgl.setMatUniform(loc, m00, m01, m02, 
+                             m10, m11, m12, 
+                             m20, m21, m22);     
     }
   }
   
@@ -373,24 +382,10 @@ public class PShader {
                                          float m30, float m31, float m32, float m33) {
     int loc = getUniformLocation(name);
     if (-1 < loc)  {
-      float[] mat = new float[16];      
-      mat[0] = m00;
-      mat[1] = m10;
-      mat[2] = m20;
-      mat[3] = m30;
-      mat[4] = m01;
-      mat[5] = m11;
-      mat[6] = m21;
-      mat[7] = m31;
-      mat[8] = m02;
-      mat[9] = m12;
-      mat[10] = m22;
-      mat[11] = m32;
-      mat[12] = m03;
-      mat[13] = m13;
-      mat[14] = m23;
-      mat[15] = m33;
-      gl.glUniformMatrix4fv(loc, 1, false, mat, 0);    
+      pgl.setMatUniform(loc, m00, m01, m02, m03, 
+                             m10, m11, m12, m13, 
+                             m20, m21, m22, m23, 
+                             m30, m31, m32, m33); 
     }
   }  
   
@@ -402,7 +397,10 @@ public class PShader {
    */          
   public void setFloatAttribute(String name, float x) {
     int loc = getAttribLocation(name);
-    if (-1 < loc)  gl.glVertexAttrib1f(loc, x);    
+    if (-1 < loc) {
+//      gl.glVertexAttrib1f(loc, x);
+      pgl.setFloatAttrib(loc, x);
+    }
   }
 
   /**
@@ -414,7 +412,10 @@ public class PShader {
    */
   public void setVecAttribute(String name, float x, float y) {
     int loc = getAttribLocation(name);
-    if (-1 < loc)  gl.glVertexAttrib2f(loc, x, y);
+    if (-1 < loc) {
+//      gl.glVertexAttrib2f(loc, x, y);
+      pgl.setFloatAttrib(loc, x, y);
+    }
   }  
 
   /**
@@ -427,7 +428,10 @@ public class PShader {
    */               
   public void setVecAttribute(String name, float x, float y, float z) {
     int loc = getAttribLocation(name);
-    if (-1 < loc)  gl.glVertexAttrib3f(loc, x, y, z);    
+    if (-1 < loc) {
+//      gl.glVertexAttrib3f(loc, x, y, z);
+      pgl.setFloatAttrib(loc, x, y, z);
+    }
   }  
   
   /**
@@ -441,7 +445,10 @@ public class PShader {
    */                 
   public void setVecAttribute(String name, float x, float y, float z, float w) {
     int loc = getAttribLocation(name);
-    if (-1 < loc)  gl.glVertexAttrib4f(loc, x, y, z, w);
+    if (-1 < loc) {
+//      gl.glVertexAttrib4f(loc, x, y, z, w);
+      pgl.setFloatAttrib(loc, x, y, z, w);
+    }
   }
 
   /**
@@ -451,11 +458,14 @@ public class PShader {
   private void attachVertexShader(String shaderSource, String file) {
     vertexShader = ogl.createGLSLVertShaderObject();
     
-    gl.glShaderSource(vertexShader, 1, new String[] { shaderSource },
-        (int[]) null, 0);
-    gl.glCompileShader(vertexShader);
+//    gl.glShaderSource(vertexShader, 1, new String[] { shaderSource }, (int[]) null, 0);
+//    gl.glCompileShader(vertexShader);
+    pgl.setShaderSource(vertexShader, shaderSource);
+    pgl.compileShader(vertexShader);
+    
     checkLogInfo("Vertex shader " + file + " compilation: ", vertexShader);
-    ogl.gl.getGL2().glAttachObjectARB(programObject, vertexShader);
+//    ogl.gl.getGL2().glAttachObjectARB(programObject, vertexShader);    
+    pgl.attachShader(programObject, vertexShader);    
   }  
       
   /**
@@ -465,37 +475,26 @@ public class PShader {
   private void attachFragmentShader(String shaderSource, String file) {
     fragmentShader = ogl.createGLSLFragShaderObject();
     
-    gl.glShaderSource(fragmentShader, 1, new String[] { shaderSource },
-        (int[]) null, 0);
-    gl.glCompileShader(fragmentShader);
+//    gl.glShaderSource(fragmentShader, 1, new String[] { shaderSource }, (int[]) null, 0);
+//    gl.glCompileShader(fragmentShader);
+    pgl.setShaderSource(fragmentShader, shaderSource);
+    pgl.compileShader(fragmentShader);
+    
     checkLogInfo("Fragment shader " + file + " compilation: ", fragmentShader);
-    ogl.gl.getGL2().glAttachObjectARB(programObject, fragmentShader);
+//    ogl.gl.getGL2().glAttachObjectARB(programObject, fragmentShader);
+    pgl.attachShader(programObject, fragmentShader);
   }
     
   /**
    * @invisible Check the log error for the opengl object obj. Prints error
    *            message if needed.
    */
-  protected void checkLogInfo(String title, int obj) {
-    IntBuffer iVal = IntBuffer.allocate(1);
-    ogl.gl.getGL2().glGetObjectParameterivARB(obj, GL2.GL_OBJECT_INFO_LOG_LENGTH_ARB, iVal);
-
-    int length = iVal.get();
-
-    if (length <= 1) {
-      return;
+  protected void checkLogInfo(String title, int obj) {    
+    String log = pgl.getShaderLog(obj);    
+    if (!log.equals("")) {
+      System.out.println(title);
+      System.out.println(log);
     }
-
-    // Some error occurred...
-    ByteBuffer infoLog = ByteBuffer.allocate(length);
-    iVal.flip();
-    
-    ogl.gl.getGL2().glGetInfoLogARB(obj, length, iVal, infoLog);
-        
-    byte[] infoBytes = new byte[length];
-    infoLog.get(infoBytes);
-    System.out.println(title);
-    System.out.println(new String(infoBytes));
   }
 
   protected void release() {
