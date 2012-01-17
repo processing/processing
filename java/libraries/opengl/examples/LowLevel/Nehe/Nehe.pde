@@ -133,8 +133,9 @@ public void draw() {
 
   PGraphicsOpenGL pgl = (PGraphicsOpenGL)g;
   GL gl = pgl.beginGL();
+  GL2 gl2 = gl.getGL2();
 
-  pgl.gl2f.glShadeModel(GL2.GL_SMOOTH);
+  gl2.glShadeModel(GL2.GL_SMOOTH);
   gl.glClearColor(0, 0, 0, 0);
 
   if (depthTest) {
@@ -151,13 +152,13 @@ public void draw() {
 
   // lighting
   gl.glEnable(GL2.GL_LIGHT0);
-  pgl.gl2f.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightAmbBfr);
-  pgl.gl2f.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lightDifBfr);
-  pgl.gl2f.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPosBfr);
+  gl2.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightAmbBfr);
+  gl2.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lightDifBfr);
+  gl2.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPosBfr);
 
   // blending
   gl.glEnable(GL2.GL_COLOR_MATERIAL);
-  pgl.gl2f.glColor4f(1.0f, 1.0f, 1.0f, transparency);
+  gl2.glColor4f(1.0f, 1.0f, 1.0f, transparency);
   if (selBlend == 0) {
     gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
   } 
@@ -167,13 +168,13 @@ public void draw() {
 
   gl.glViewport(0, 0, width, height);
   // setup projection matrix
-  pgl.gl2f.glMatrixMode(GL2.GL_PROJECTION);
-  pgl.gl2f.glLoadIdentity();
+  gl2.glMatrixMode(GL2.GL_PROJECTION);
+  gl2.glLoadIdentity();
   glu.gluPerspective(45.0f, (float)width / (float)height, 1.0f, 100.0f);    
 
   gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-  pgl.gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-  pgl.gl2f.glLoadIdentity(); 
+  gl2.glMatrixMode(GL2.GL_MODELVIEW);
+  gl2.glLoadIdentity(); 
 
   // update lighting
   if (lighting) {
@@ -193,28 +194,28 @@ public void draw() {
     gl.glEnable(GL.GL_CULL_FACE);
   }
 
-  pgl.gl2f.glTranslatef(0, 0, -6);
-  pgl.gl2f.glRotatef(xRot, 1, 0, 0);
-  pgl.gl2f.glRotatef(yRot, 0, 1, 0);
+  gl2.glTranslatef(0, 0, -6);
+  gl2.glRotatef(xRot, 1, 0, 0);
+  gl2.glRotatef(yRot, 0, 1, 0);
 
   if (texturing) {
     gl.glEnable(GL.GL_TEXTURE_2D);
     gl.glBindTexture(GL.GL_TEXTURE_2D, texturesBuffer.get(selFilter));
   }
-  pgl.gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-  pgl.gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-  if (texturing) pgl.gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+  gl2.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+  gl2.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+  if (texturing) gl2.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
   for (int i = 0; i < 6; i++) // draw each face
   {
-    pgl.gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, cubeVertexBfr[i]);
-    if (texturing) pgl.gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, cubeTextureBfr[i]);
-    pgl.gl2f.glNormalPointer(GL.GL_FLOAT, 0, cubeNormalBfr[i]);
-    pgl.gl2f.glDrawArrays(GL.GL_TRIANGLE_FAN, 0, 4);
+    gl2.glVertexPointer(3, GL.GL_FLOAT, 0, cubeVertexBfr[i]);
+    if (texturing) gl2.glTexCoordPointer(2, GL.GL_FLOAT, 0, cubeTextureBfr[i]);
+    gl2.glNormalPointer(GL.GL_FLOAT, 0, cubeNormalBfr[i]);
+    gl2.glDrawArrays(GL.GL_TRIANGLE_FAN, 0, 4);
   }
-  pgl.gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-  pgl.gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+  gl2.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+  gl2.glDisableClientState(GL2.GL_NORMAL_ARRAY);
   if (texturing) {
-    pgl.gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+    gl2.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
     gl.glDisable(GL.GL_TEXTURE_2D);
   }
 
@@ -232,4 +233,3 @@ void makeRGBTexture(GL gl, GLUgl2 glu, Texture img, int target, boolean mipmappe
     gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, img.getPixels());
   }
 }
-
