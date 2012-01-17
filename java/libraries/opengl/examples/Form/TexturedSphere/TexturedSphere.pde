@@ -28,6 +28,7 @@ int SINCOS_LENGTH = int(360.0 / SINCOS_PRECISION);
 
 void setup() {
   size(1024, 768, P3D);  
+  smooth();
   texmap = loadImage("world32k.jpg");    
   initializeSphere(sDetail);
 }
@@ -43,8 +44,7 @@ void renderGlobe() {
   pushMatrix();
   noFill();
   stroke(255,200);
-  strokeWeight(2);
-  smooth();
+  strokeWeight(2);  
   popMatrix();
   lights();    
   pushMatrix();

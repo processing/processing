@@ -52,7 +52,7 @@ import processing.core.PImage;
  */
 class PFontTexture implements PConstants {
   protected PApplet parent;
-  protected PGraphicsOpenGL ogl;
+  protected PGraphicsOpenGL renderer;
   protected GLContext context;
   protected PFont font;
 
@@ -71,8 +71,8 @@ class PFontTexture implements PConstants {
   public PFontTexture(PApplet parent, PFont font, int maxw, int maxh) {
     this.parent = parent;
     this.font = font;    
-    ogl = (PGraphicsOpenGL)parent.g;
-    context = ogl.getContext();
+    renderer = (PGraphicsOpenGL)parent.g;
+    context = renderer.getContext();
     
     initTexture(maxw, maxh);
   }    
@@ -124,7 +124,7 @@ class PFontTexture implements PConstants {
       textures = new PTexture[1];
       textures[0] = tex;
       images = new PImage[1];      
-      images[0] = ogl.wrapTexture(tex); 
+      images[0] = renderer.wrapTexture(tex); 
       currentTex = 0;     
     } else if (resize) {
       // Replacing old smaller texture with larger one.
@@ -134,7 +134,7 @@ class PFontTexture implements PConstants {
       tex.put(tex0);
       textures[currentTex] = tex;
       
-      images[currentTex].setCache(ogl, tex);
+      images[currentTex].setCache(renderer, tex);
       images[currentTex].width = tex.width;
       images[currentTex].height = tex.height;
     } else {
@@ -148,7 +148,7 @@ class PFontTexture implements PConstants {
       PImage[] tempImg = images;
       images = new PImage[textures.length + 1];
       PApplet.arrayCopy(tempImg, images, tempImg.length);      
-      images[tempImg.length] = ogl.wrapTexture(tex);
+      images[tempImg.length] = renderer.wrapTexture(tex);
     }
     lastTex = currentTex;
     
