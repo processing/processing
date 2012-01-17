@@ -2041,13 +2041,10 @@ public class PGraphicsOpenGL extends PGraphics {
       u /= textureImage.width;
       v /= textureImage.height;
 
-      // TODO: GL texture shouldn't be retrieved
-      // until rendering. So how to know if it
-      // is flipped?
-//      PTexture tex = getTexture(textureImage);
-//      if (tex.isFlippedY()) {
-//        v = 1 - v;
-//      }
+      PTexture tex = queryTexture(textureImage);
+      if (tex != null && tex.isFlippedY()) {
+        v = 1 - v;
+      }
     }
     
     inGeo.addVertex(x, y, z, 
@@ -5639,6 +5636,18 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     return tex;
   }
+
+  
+  /**
+   * This utility method returns the texture associated to the image,
+   * but it doesn't create a new texture if the image has no texture.
+   * @param img the image to have a texture metadata associated to it
+   */      
+  protected PTexture queryTexture(PImage img) {
+    PTexture tex = (PTexture)img.getCache(renderer);
+    return tex;
+  }
+  
   
   /**
    * This utility method creates a texture for the provided image, and adds it
