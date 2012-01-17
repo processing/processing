@@ -623,13 +623,10 @@ public class PShape3D extends PShape {
       u /= texture.width;
       v /= texture.height;
       
-      // TODO: GL texture shouldn't be retrieved
-      // until rendering. So how to know if it
-      // is flipped?      
-//      PTexture tex = ogl.getTexture(texture);
-//      if (tex.isFlippedY()) {
-//        v = 1 - v;
-//      }            
+      PTexture tex = renderer.queryTexture(texture);
+      if (tex != null && tex.isFlippedY()) {
+        v = 1 - v;
+      }          
     }
         
     float sR, sG, sB, sA, sW;
