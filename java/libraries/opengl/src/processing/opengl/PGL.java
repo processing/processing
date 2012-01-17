@@ -41,39 +41,42 @@ import processing.core.PApplet;
  * Note that the programmable mode uses the non-backward compatible GL objects
  * (GL3, GL4, and not GL3bc, GL4bc) so no fixed mode calls are possible under this mode. 
  */
-public class PGLJava {
+public class PGL {
   /** Size of an int (in bytes). */
   static final int SIZEOF_INT = Integer.SIZE / 8;
    
   /** Size of a float (in bytes). */
   static final int SIZEOF_FLOAT = Float.SIZE / 8;
 
-  public static final int LESS = GL.GL_LESS;
-  public static final int LESS_OR_EQUAL = GL.GL_LEQUAL;
+  public static final int LESS              = GL.GL_LESS;
+  public static final int LESS_OR_EQUAL     = GL.GL_LEQUAL;
   public static final int COUNTER_CLOCKWISE = GL.GL_CCW;
-  public static final int CLOCKWISE = GL.GL_CW;  
-  public static final int FRONT = GL.GL_FRONT;
-  public static final int BACK = GL.GL_BACK;
-  public static final int BLEND_EQ_ADD = GL.GL_FUNC_ADD;
-  public static final int BLEND_EQ_MIN = GL2.GL_MIN;
-  public static final int BLEND_EQ_MAX = GL2.GL_MAX;
+  public static final int CLOCKWISE         = GL.GL_CW;  
+  public static final int FRONT             = GL.GL_FRONT;
+  public static final int BACK              = GL.GL_BACK;
+  
+  public static final int BLEND_EQ_ADD              = GL.GL_FUNC_ADD;
+  public static final int BLEND_EQ_MIN              = GL2.GL_MIN;
+  public static final int BLEND_EQ_MAX              = GL2.GL_MAX;
   public static final int BLEND_EQ_REVERSE_SUBTRACT = GL.GL_FUNC_REVERSE_SUBTRACT;
-  public static final int REPLACE = GL2.GL_REPLACE;
+  
+  public static final int REPLACE  = GL2.GL_REPLACE;
   public static final int MODULATE = GL2.GL_MODULATE;
-  public static final int FLAT = GL2.GL_FLAT;
+  
+  public static final int FLAT   = GL2.GL_FLAT;
   public static final int SMOOTH = GL2.GL_SMOOTH;
   
   public static final int TEXTURE_2D = GL.GL_TEXTURE_2D;
-  public static final int RGB = GL.GL_RGB;
-  public static final int RGBA = GL.GL_RGBA;
-  public static final int ALPHA = GL.GL_ALPHA;
+  public static final int RGB        = GL.GL_RGB;
+  public static final int RGBA       = GL.GL_RGBA;
+  public static final int ALPHA      = GL.GL_ALPHA;
   
-  public static final int NEAREST = GL.GL_NEAREST;
-  public static final int LINEAR = GL.GL_LINEAR;
+  public static final int NEAREST              = GL.GL_NEAREST;
+  public static final int LINEAR               = GL.GL_LINEAR;
   public static final int LINEAR_MIPMAP_LINEAR = GL.GL_LINEAR_MIPMAP_LINEAR;
   
   public static final int CLAMP_TO_EDGE = GL.GL_CLAMP_TO_EDGE;
-  public static final int REPEAT = GL.GL_REPEAT;
+  public static final int REPEAT        = GL.GL_REPEAT;
   
   public static final int DEPTH_24BIT_STENCIL_8BIT = GL.GL_DEPTH24_STENCIL8;
   
@@ -85,16 +88,16 @@ public class PGLJava {
   public static final int STENCIL_4BIT = GL.GL_STENCIL_INDEX4;
   public static final int STENCIL_8BIT = GL.GL_STENCIL_INDEX8;   
   
-  public static final int FRAMEBUFFER_COMPLETE = GL.GL_FRAMEBUFFER_COMPLETE;    
-  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT = GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+  public static final int FRAMEBUFFER_COMPLETE                      = GL.GL_FRAMEBUFFER_COMPLETE;    
+  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
   public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS = GL.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS;      
-  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS = GL.GL_FRAMEBUFFER_INCOMPLETE_FORMATS;
-  public static final int FRAMEBUFFER_UNSUPPORTED = GL.GL_FRAMEBUFFER_UNSUPPORTED;
+  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = GL.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS;      
+  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS            = GL.GL_FRAMEBUFFER_INCOMPLETE_FORMATS;
+  public static final int FRAMEBUFFER_UNSUPPORTED                   = GL.GL_FRAMEBUFFER_UNSUPPORTED;
     
-  public static final int STATIC_DRAW = GL.GL_STATIC_DRAW;
+  public static final int STATIC_DRAW  = GL.GL_STATIC_DRAW;
   public static final int DYNAMIC_DRAW = GL.GL_DYNAMIC_DRAW;
-  public static final int STREAM_DRAW = GL2.GL_STREAM_DRAW;
+  public static final int STREAM_DRAW  = GL2.GL_STREAM_DRAW;
   
   // Rendering pipeline modes
   public static final int FIXED    = 0;
@@ -128,7 +131,7 @@ public class PGLJava {
   
   public GLU glu;
   
-  public PGLJava() {    
+  public PGL() {    
     glu = new GLU();
   }
   
@@ -294,149 +297,160 @@ public class PGLJava {
   public void enableColorMaterial() {
     gl2f.glEnable(GL2.GL_COLOR_MATERIAL);    
   }
+
+  public void disableColorMaterial() {
+    gl2f.glDisable(GL2.GL_COLOR_MATERIAL);    
+  }  
   
   public void enableNormalization() {
     gl2f.glEnable(GL2.GL_NORMALIZE);  
   }
+
+  public void disableNormalization() {
+    gl2f.glDisable(GL2.GL_NORMALIZE);  
+  }  
   
   public void enableRescaleNormals() {
     gl2f.glEnable(GL2.GL_RESCALE_NORMAL);
   }
+
+  public void disableRescaleNormals() {
+    gl2f.glDisable(GL2.GL_RESCALE_NORMAL);
+  }  
   
-  
-  void genVertexArray(int[] id) {
+  public void genVertexArray(int[] id) {
     gl2x.glGenVertexArrays(1, id, 0);  
   }
   
-  void delVertexArray(int[] id) {
+  public void delVertexArray(int[] id) {
     gl2x.glDeleteVertexArrays(1, id, 0);
   }
   
-  void genTexture(int[] id) {
+  public void genTexture(int[] id) {
     gl.glGenTextures(1, id, 0);
   }
 
-  void delTexture(int[] id) {
+  public void delTexture(int[] id) {
     gl.glDeleteTextures(1, id, 0);
   }  
   
-  void genBuffer(int[] id) {
+  public void genBuffer(int[] id) {
     gl.glGenBuffers(1, id, 0);  
   }
   
-  void delBuffer(int[] id) {
+  public void delBuffer(int[] id) {
     gl.glDeleteBuffers(1, id, 0);  
   }
   
-  void genFramebuffer(int[] id) {
+  public void genFramebuffer(int[] id) {
     gl.glGenFramebuffers(1, id, 0);    
   }
   
-  void delFramebuffer(int[] id) {
+  public void delFramebuffer(int[] id) {
     gl.glDeleteFramebuffers(1, id, 0);    
   }
   
-  void genRenderbuffer(int[] id) {
+  public void genRenderbuffer(int[] id) {
     gl.glGenRenderbuffers(1, id, 0);    
   }
   
-  void delRenderbuffer(int[] id) {
+  public void delRenderbuffer(int[] id) {
     gl.glGenRenderbuffers(1, id, 0);    
   }
   
-  void genProgram(int[] id) {
+  public void genProgram(int[] id) {
     id[0] = gl2x.glCreateProgram();    
   }
   
-  void delProgram(int[] id) {
+  public void delProgram(int[] id) {
     gl2x.glDeleteProgram(id[0]);  
   }
   
-  void genVertexShader(int[] id) {
+  public void genVertexShader(int[] id) {
     id[0] = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);    
   }
   
-  void delVertexShader(int[] id) {
+  public void delVertexShader(int[] id) {
     gl2x.glDeleteShader(id[0]);    
   }
   
-  void genFragmentShader(int[] id) {
+  public void genFragmentShader(int[] id) {
     id[0] = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);    
   }
   
-  void delFragmentShader(int[] id) {
+  public void delFragmentShader(int[] id) {
     gl2x.glDeleteShader(id[0]);    
   }  
   
-  void bindVertexBuffer(int id) {
+  public void bindVertexBuffer(int id) {
     gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, id);
   }
   
-  void initVertexBuffer(int size, int mode) {
+  public void initVertexBuffer(int size, int mode) {
     gl2f.glBufferData(GL.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, null, mode);  
   }
   
-  void copyVertexBufferData(float[] data, int size, int mode) {
+  public void copyVertexBufferData(float[] data, int size, int mode) {
     gl2f.glBufferData(GL.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size), mode);     
   }
   
-  void copyVertexBufferData(float[] data, int offset, int size, int mode) {
+  public void copyVertexBufferData(float[] data, int offset, int size, int mode) {
     gl2f.glBufferData(GL.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, offset, size), mode);     
   }  
   
-  void copyVertexBufferSubData(float[] data, int offset, int size, int mode) {
+  public void copyVertexBufferSubData(float[] data, int offset, int size, int mode) {
     gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size));    
   }
   
-  void setVertexFormat(int size, int stride, long offset) {
+  public void setVertexFormat(int size, int stride, long offset) {
     gl2f.glVertexPointer(size, GL.GL_FLOAT, stride, offset);
   }
   
-  void setColorFormat(int size, int stride, long offset) {
+  public void setColorFormat(int size, int stride, long offset) {
     gl2f.glColorPointer(size, GL.GL_FLOAT, stride, offset);
   }
   
-  void setNormalFormat(int size, int stride, long offset) {
+  public void setNormalFormat(int size, int stride, long offset) {
     gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
   }
   
-  void setTexCoordFormat(int size, int stride, long offset) {
+  public void setTexCoordFormat(int size, int stride, long offset) {
     gl2f.glTexCoordPointer(size, GL.GL_FLOAT, stride, offset);
   }
   
-  void unbindVertexBuffer() {
+  public void unbindVertexBuffer() {
     gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }
   
-  void bindIndexBuffer(int id) {
+  public void bindIndexBuffer(int id) {
     gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, id);
   }
   
-  void initIndexBuffer(int size, int mode) {
+  public void initIndexBuffer(int size, int mode) {
     gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_INT, null, mode);  
   }
   
-  void copyIndexBufferData(int[] data, int size, int mode) {
+  public void copyIndexBufferData(int[] data, int size, int mode) {
     gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_INT, IntBuffer.wrap(data, 0, size), mode);     
   }
   
-  void copyIndexBufferData(int[] data, int offset, int size, int mode) {
+  public void copyIndexBufferData(int[] data, int offset, int size, int mode) {
     gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_INT, IntBuffer.wrap(data, offset, size), mode);     
   }
 
-  void copyIndexBufferSubData(int[] data, int offset, int size, int mode) {
+  public void copyIndexBufferSubData(int[] data, int offset, int size, int mode) {
     gl2f.glBufferSubData(GL.GL_ELEMENT_ARRAY_BUFFER, offset * SIZEOF_INT, size * SIZEOF_INT, IntBuffer.wrap(data, 0, size));
   }  
   
-  void renderIndexBuffer(int size) {
+  public void renderIndexBuffer(int size) {
     gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);
   }
 
-  void renderIndexBuffer(int offset, int size) {
-    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, offset * PGraphicsOpenGL.SIZEOF_INT);    
+  public void renderIndexBuffer(int offset, int size) {
+    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, offset * SIZEOF_INT);    
   }
     
-  void unbindIndexBuffer() {
+  public void unbindIndexBuffer() {
     gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
   
@@ -445,7 +459,7 @@ public class PGLJava {
   }
 
   public void disableDepthTest() {
-    gl.glEnable(GL.GL_DEPTH_TEST);
+    gl.glDisable(GL.GL_DEPTH_TEST);
   }  
   
   public void enableDepthMask() {

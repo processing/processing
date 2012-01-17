@@ -34,7 +34,7 @@ import java.net.URL;
 public class PShader {
   protected PApplet parent;
   protected PGraphicsOpenGL ogl; 
-  protected PGLJava pgl;
+  protected PGL pgl;
   
   protected int programObject;
   protected int vertexShader;
