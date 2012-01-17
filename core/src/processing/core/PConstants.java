@@ -579,12 +579,6 @@ public interface PConstants {
   
   static final int HINT_COUNT                  =  10;
 
-  // Rendering pipeline modes
-
-  static final int FIXED    = 0;
-  static final int PROG_GL2 = 1;
-  static final int PROG_GL3 = 2;
-  static final int PROG_GL4 = 3;
 
   // error messages
 
