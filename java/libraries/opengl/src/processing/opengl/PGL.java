@@ -159,6 +159,41 @@ public class PGL {
     glu = new GLU();
   }
   
+  void update(GLContext context) {
+    gl = context.getGL();       
+    
+    if (pipeline == PROG_GL4) {
+      gl4p = gl.getGL4();
+      gl3p = gl4p;
+      gl2p = gl4p;        
+      gl2f = null;
+    } else if (pipeline == PROG_GL3) {     
+      gl4p = null;
+      gl3p = gl.getGL3();
+      gl2p = gl3p;
+      gl2f = null;        
+    } else if (pipeline == PROG_GL2) { 
+      gl4p = null;
+      gl3p = null;
+      gl2p = gl.getGL2ES2();
+      gl2f = null;        
+    } else if (pipeline == FIXED) {
+      gl4p = null;
+      gl3p = null;
+      gl2p = null;
+      gl2f = gl.getGL2ES1();
+      gl2 = gl.getGL2();
+    }
+    
+    try {
+      gl2x = gl.getGL2GL3();
+    } catch (GLException e) {}    
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Caps query
+  
   public String getVendorString() {
     return gl.glGetString(GL.GL_VENDOR);  
   }
@@ -267,6 +302,14 @@ public class PGL {
     return temp[0];    
   }  
   
+  public void getNumSamples(int[] num) {
+    gl.glGetIntegerv(GL.GL_SAMPLES, num, 0);    
+  }  
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Render control 
+  
   public void flush() {
     gl.glFlush();
   }  
@@ -275,36 +318,9 @@ public class PGL {
     gl.glFinish();
   }
   
-  void update(GLContext context) {
-    gl = context.getGL();       
-    
-    if (pipeline == PROG_GL4) {
-      gl4p = gl.getGL4();
-      gl3p = gl4p;
-      gl2p = gl4p;        
-      gl2f = null;
-    } else if (pipeline == PROG_GL3) {     
-      gl4p = null;
-      gl3p = gl.getGL3();
-      gl2p = gl3p;
-      gl2f = null;        
-    } else if (pipeline == PROG_GL2) { 
-      gl4p = null;
-      gl3p = null;
-      gl2p = gl.getGL2ES2();
-      gl2f = null;        
-    } else if (pipeline == FIXED) {
-      gl4p = null;
-      gl3p = null;
-      gl2p = null;
-      gl2f = gl.getGL2ES1();
-      gl2 = gl.getGL2();
-    }
-    
-    try {
-      gl2x = gl.getGL2GL3();
-    } catch (GLException e) {}    
-  }
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Error  
   
   public int getError() {
     return gl.glGetError();
@@ -313,10 +329,70 @@ public class PGL {
   public String getErrorString(int err) {
     return glu.gluErrorString(err);
   }
+
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Rendering options
+  
+  public void enableDepthTest() {
+    gl.glEnable(GL.GL_DEPTH_TEST);
+  }
+
+  public void disableDepthTest() {
+    gl.glDisable(GL.GL_DEPTH_TEST);
+  }  
+  
+  public void enableDepthMask() {
+    gl.glDepthMask(true);    
+  }
+  
+  public void disableDepthMask() {
+    gl.glDepthMask(false);    
+  }  
+  
+  public void setDepthFunc(int func) {
+    gl.glDepthFunc(func);  
+  }  
   
   public void setShadeModel(int model) {
     gl2f.glShadeModel(model);
   }
+  
+  public void setFrontFace(int mode) {
+    gl.glFrontFace(mode);
+  }
+  
+  public void enableMultisample() {
+    gl2f.glEnable(GL2.GL_MULTISAMPLE);  
+  }
+  
+  public void disableMultisample() {
+    gl2f.glDisable(GL2.GL_MULTISAMPLE);  
+  }
+
+  public void enablePointSmooth() {
+    gl2f.glEnable(GL2.GL_POINT_SMOOTH);  
+  }
+  
+  public void disablePointSmooth() {
+    gl2f.glDisable(GL2.GL_POINT_SMOOTH);  
+  }
+
+  public void enableLineSmooth() {
+    gl2f.glEnable(GL2.GL_LINE_SMOOTH);  
+  }
+  
+  public void disableLineSmooth() {
+    gl2f.glDisable(GL2.GL_LINE_SMOOTH);  
+  }  
+  
+  public void enablePolygonSmooth() {
+    gl2f.glEnable(GL2.GL_POLYGON_SMOOTH);  
+  }
+  
+  public void disablePolygonSmooth() {
+    gl2f.glDisable(GL2.GL_POLYGON_SMOOTH);
+  }    
   
   public void enableColorMaterial() {
     gl2f.glEnable(GL2.GL_COLOR_MATERIAL);    
@@ -342,6 +418,11 @@ public class PGL {
     gl2f.glDisable(GL2.GL_RESCALE_NORMAL);
   }  
   
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Vertex arrays    
+  
   public void genVertexArray(int[] id) {
     gl2x.glGenVertexArrays(1, id, 0);  
   }
@@ -349,6 +430,10 @@ public class PGL {
   public void delVertexArray(int[] id) {
     gl2x.glDeleteVertexArrays(1, id, 0);
   }
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Textures     
   
   public void genTexture(int[] id) {
     gl.glGenTextures(1, id, 0);
@@ -358,6 +443,74 @@ public class PGL {
     gl.glDeleteTextures(1, id, 0);
   }  
   
+  public void enableTexturing(int target) {
+    gl2f.glEnable(target);
+  }
+  
+  public void setActiveTexUnit(int tu) {
+    gl2f.glActiveTexture(GL.GL_TEXTURE0 + tu);
+  }
+  
+  public void bindTexture(int target, int id) {
+    gl2f.glBindTexture(target, id);
+  }
+
+  public void unbindTexture(int target) {
+    gl2f.glBindTexture(target, 0);
+  }  
+  
+  public void disableTexturing(int target) {
+    gl2f.glDisable(target);
+  }    
+  
+  public void initTex(int target, int format, int w, int h) {
+    gl.glTexImage2D(target, 0, format, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
+  }
+  
+  public void copyTexSubImage(Buffer image, int target, int x, int y, int w, int h) {
+    gl.glTexSubImage2D(target, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, image);
+  }
+
+  public void copyTexSubPixels(int[] pixels, int target, int x, int y, int w, int h) {
+    gl.glTexSubImage2D(target, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pixels));
+  }  
+  
+  public void copyTexImage(Buffer image, int target, int format, int w, int h) {
+    gl.glTexImage2D(target, 0, format, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, image);
+  }
+  
+  public void setTexEnvironmentMode(int mode) {
+    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, mode);   
+  }
+  
+  public void enableTexMipmapGen(int target) {
+    gl.glTexParameteri(target, GL2.GL_GENERATE_MIPMAP, GL.GL_TRUE);
+  }
+
+  public void disableTexMipmapGen(int target) {
+    gl.glTexParameteri(target, GL2.GL_GENERATE_MIPMAP, GL.GL_FALSE);
+  }  
+  
+  public void setTexMinFilter(int target, int filter) {
+    gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, filter); 
+  }
+  
+  public void setTexMagFilter(int target, int filter) {
+    gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, filter);
+  }
+  
+  public void setTexWrapS(int target, int wrap) {
+    gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S, wrap);
+  }
+  
+  public void setTexWrapT(int target, int wrap) {
+    gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_T, wrap); 
+  }  
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Vertex Buffers
+
   public void genBuffer(int[] id) {
     gl.glGenBuffers(1, id, 0);  
   }
@@ -365,47 +518,7 @@ public class PGL {
   public void delBuffer(int[] id) {
     gl.glDeleteBuffers(1, id, 0);  
   }
-  
-  public void genFramebuffer(int[] id) {
-    gl.glGenFramebuffers(1, id, 0);    
-  }
-  
-  public void delFramebuffer(int[] id) {
-    gl.glDeleteFramebuffers(1, id, 0);    
-  }
-  
-  public void genRenderbuffer(int[] id) {
-    gl.glGenRenderbuffers(1, id, 0);    
-  }
-  
-  public void delRenderbuffer(int[] id) {
-    gl.glGenRenderbuffers(1, id, 0);    
-  }
-  
-  public void genProgram(int[] id) {
-    id[0] = gl2x.glCreateProgram();    
-  }
-  
-  public void delProgram(int[] id) {
-    gl2x.glDeleteProgram(id[0]);  
-  }
-  
-  public void genVertexShader(int[] id) {
-    id[0] = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);    
-  }
-  
-  public void delVertexShader(int[] id) {
-    gl2x.glDeleteShader(id[0]);    
-  }
-  
-  public void genFragmentShader(int[] id) {
-    id[0] = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);    
-  }
-  
-  public void delFragmentShader(int[] id) {
-    gl2x.glDeleteShader(id[0]);    
-  }  
-  
+
   public void bindVertexBuffer(int id) {
     gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, id);
   }
@@ -478,158 +591,6 @@ public class PGL {
     gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
   
-  public void enableDepthTest() {
-    gl.glEnable(GL.GL_DEPTH_TEST);
-  }
-
-  public void disableDepthTest() {
-    gl.glDisable(GL.GL_DEPTH_TEST);
-  }  
-  
-  public void enableDepthMask() {
-    gl.glDepthMask(true);    
-  }
-  
-  public void disableDepthMask() {
-    gl.glDepthMask(false);    
-  }  
-  
-  public void setDepthFunc(int func) {
-    gl.glDepthFunc(func);  
-  }
-  
-  public void getNumSamples(int[] num) {
-    gl.glGetIntegerv(GL.GL_SAMPLES, num, 0);    
-  }
-  
-  public void getViweport(int[] viewport) {
-    gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
-  }
-  
-  public void setViewport(int[] viewport) {
-    gl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-  }
-  
-  public void setFrontFace(int mode) {
-    gl.glFrontFace(mode);
-  }
-  
-  public void enableMultisample() {
-    gl2f.glEnable(GL2.GL_MULTISAMPLE);  
-  }
-  
-  public void disableMultisample() {
-    gl2f.glDisable(GL2.GL_MULTISAMPLE);  
-  }
-
-  public void enablePointSmooth() {
-    gl2f.glEnable(GL2.GL_POINT_SMOOTH);  
-  }
-  
-  public void disablePointSmooth() {
-    gl2f.glDisable(GL2.GL_POINT_SMOOTH);  
-  }
-
-  public void enableLineSmooth() {
-    gl2f.glEnable(GL2.GL_LINE_SMOOTH);  
-  }
-  
-  public void disableLineSmooth() {
-    gl2f.glDisable(GL2.GL_LINE_SMOOTH);  
-  }  
-  
-  public void enablePolygonSmooth() {
-    gl2f.glEnable(GL2.GL_POLYGON_SMOOTH);  
-  }
-  
-  public void disablePolygonSmooth() {
-    gl2f.glDisable(GL2.GL_POLYGON_SMOOTH);
-  }  
-  
-  public void setDrawBuffer(int buf) {
-    gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0 + buf);
-  }
-  
-  public void setClearColor(float r, float g, float b, float a) {
-    gl.glClearColor(r, g, b, a);    
-  }
-  
-  public void clearDepthBuffer() {
-    gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
-  }
-    
-  public void clearStencilBuffer() {
-    gl.glClear(GL.GL_STENCIL_BUFFER_BIT);
-  }
-
-  public void clearDepthAndStencilBuffers() {
-    gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
-  }
-  
-  public void clearColorBuffer() {
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-  } 
-
-  public void clearAllBuffers() {
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT); 
-  }  
-  
-  public void enableClipping() {
-    gl.glEnable(GL.GL_SCISSOR_TEST);
-  }
-
-  public void disableClipping() {
-    gl.glDisable(GL.GL_SCISSOR_TEST);
-  }  
-  
-  public void setClipRect(int x, int y, int w, int h) {
-    gl.glScissor(x, y, w, h);
-  }
-
-  public void setNormal(float nx, float ny, float nz) {
-    gl2f.glNormal3f(nx, ny, nz);    
-  }
-  
-  public void setProjectionMode() {
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-  }
-  
-  public void setModelviewMode() {
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-  }
-    
-  public void pushMatrix() {
-    gl2f.glPushMatrix();  
-  }
-
-  public void popMatrix() {
-    gl2f.glPopMatrix();  
-  }  
-  
-  public void loadIdentity() {
-    gl2f.glLoadIdentity();    
-  }
-  
-  public void multMatrix(float[] mat) {
-    gl2f.glMultMatrixf(mat, 0);
-  }
-
-  public void loadMatrix(float[] mat) {
-    gl2f.glLoadMatrixf(mat, 0);
-  }    
-  
-  public void translate(float tx, float ty, float tz) {
-    gl2f.glTranslatef(tx, ty, tz);  
-  }
-  
-  public void rotate(float angle, float vx, float vy, float vz) {
-    gl2f.glRotatef(PApplet.degrees(angle), vx, vy, vz);    
-  }
-  
-  public void scale(float sx, float sy, float sz) {
-    gl2f.glScalef(sx, sy, sz);
-  }
-  
   public void enableVertexArrays() {
     gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);    
   }
@@ -662,26 +623,6 @@ public class PGL {
     gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);  
   }    
   
-  public void enableTexturing(int target) {
-    gl2f.glEnable(target);
-  }
-  
-  public void setActiveTexUnit(int tu) {
-    gl2f.glActiveTexture(GL.GL_TEXTURE0 + tu);
-  }
-  
-  public void bindTexture(int target, int id) {
-    gl2f.glBindTexture(target, id);
-  }
-
-  public void unbindTexture(int target) {
-    gl2f.glBindTexture(target, 0);
-  }  
-  
-  public void disableTexturing(int target) {
-    gl2f.glDisable(target);
-  }  
-  
   public void enableAttribsArray(int loc) {
     gl2x.glEnableVertexAttribArray(loc);
   }
@@ -692,203 +633,26 @@ public class PGL {
 
   public void disableAttribsArray(int loc) {
     gl2x.glDisableVertexAttribArray(loc);
-  }
-  
-  public void setColor(float r, float g, float b, float a) {
-    gl2f.glColor4f(r, g, b, a);
-  }
-  
-  public void setMaterialAmbient(float[] color) {
-    gl2f.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, color, 0);
-  }
-  
-  public void setMaterialSpecular(float[] color) {
-    gl2f.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, color, 0);
-  }
-
-  public void setMaterialEmission(float[] color) {
-    gl2f.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_EMISSION, color, 0);
   }  
   
-  public void setMaterialShininess(float shine) {
-    gl2f.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, shine);
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Framebuffers, renderbuffers  
+  
+  public void genFramebuffer(int[] id) {
+    gl.glGenFramebuffers(1, id, 0);    
   }
   
-  public void enableLighting() {
-    gl2f.glEnable(GL2.GL_LIGHTING);
+  public void delFramebuffer(int[] id) {
+    gl.glDeleteFramebuffers(1, id, 0);    
   }
   
-  public void disableLighting() {
-    gl2f.glDisable(GL2.GL_LIGHTING);
-  }  
-
-  public void setTwoSidedLightModel() {
-    gl2f.glLightModelf(GL2.GL_LIGHT_MODEL_TWO_SIDE, 0);
+  public void genRenderbuffer(int[] id) {
+    gl.glGenRenderbuffers(1, id, 0);    
   }
   
-  public void setDefaultAmbientLight(float[] color) {
-    gl2f.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, color, 0);
-  }  
-  
-  public void enableLight(int light) {
-    gl2f.glEnable(GL2.GL_LIGHT0 + light);
-  }
-
-  public void disableLight(int light) {
-    gl2f.glDisable(GL2.GL_LIGHT0 + light);
-  }  
-
-  public void setLightPosition(int light, float[] pos) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_POSITION, pos, 0);
-  }
-  
-  public void setAmbientLight(int light, float[] color) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_AMBIENT, color, 0);
-  }
-    
-  public void setDiffuseLight(int light, float[] color) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_DIFFUSE, color, 0);
-  }
-
-  public void setSpecularLight(int light, float[] color) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_SPECULAR, color, 0);
-  }
-  
-  public void setLightDirection(int light, float[] dir) {
-    // The w component of lightNormal[num] is zero, so the light is considered as
-    // a directional source because the position effectively becomes a direction
-    // in homogeneous coordinates:
-    // http://glprogramming.com/red/appendixf.html 
-    dir[3] = 0;
-    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_POSITION, dir, 0);    
-  }
-    
-  public void setSpotLightCutoff(int light, float cutoff) {
-    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_SPOT_CUTOFF, cutoff);  
-  }
-  
-  public void setSpotLightExponent(int light, float exp) {
-    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_SPOT_EXPONENT, exp);      
-  }
-  
-  public void setSpotLightDirection(int light, float[] dir) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_POSITION, dir, 0);
-  }
-  
-  public void setLightConstantAttenuation(int light, float attn) {
-    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_CONSTANT_ATTENUATION, attn);  
-  }
-  
-  public void setLightLinearAttenuation(int light, float attn) {
-    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_LINEAR_ATTENUATION, attn);  
-  }
-  
-  public void setLightQuadraticAttenuation(int light, float attn) {
-    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_QUADRATIC_ATTENUATION, attn);  
-  }
-  
-  public void setReadBuffer(int buf) {
-    gl2x.glReadBuffer(buf);
-  }
-  
-  public void readPixels(Buffer buffer, int x, int y, int w, int h) {
-    gl.glReadPixels(x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
-  }
-  
-  public void enableBlend() {
-    gl.glEnable(GL.GL_BLEND);
-  }
-  
-  public void setBlendEquation(int eq) {
-    gl.glBlendEquation(eq);
-  }
-  
-  public void setReplaceBlend() {
-    gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
-  }
-  
-  public void setDefaultBlend() {
-    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-  }
-  
-  public void setAdditiveBlend() {
-    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-  }
-  
-  public void setSubstractiveBlend() {
-    gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ZERO);
-  }
-  
-  public void setLightestBlend() {
-    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
-  }
-  
-  public void setDarkestBlend() {
-    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
-  }
-  
-  public void setDifferenceBlend() {
-    gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
-  }
-  
-  public void setExclussionBlend() {
-    gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE_MINUS_SRC_COLOR);
-  }
-  
-  public void setMultiplyBlend() {
-    gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_SRC_COLOR);
-  }
-  
-  public void setScreenBlend() {
-    gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE);
-  }
-  
-  public void initTex(int target, int format, int w, int h) {
-    gl.glTexImage2D(target, 0, format, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, null);
-  }
-  
-  public void copyTexSubImage(Buffer image, int target, int x, int y, int w, int h) {
-    gl.glTexSubImage2D(target, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, image);
-  }
-
-  public void copyTexSubPixels(int[] pixels, int target, int x, int y, int w, int h) {
-    gl.glTexSubImage2D(target, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pixels));
-  }  
-  
-  public void copyTexImage(Buffer image, int target, int format, int w, int h) {
-    gl.glTexImage2D(target, 0, format, w, h, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, image);
-  }
-  
-  public void setTexEnvironmentMode(int mode) {
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, mode);   
-  }
-  
-  public void enableTexMipmapGen(int target) {
-    gl.glTexParameteri(target, GL2.GL_GENERATE_MIPMAP, GL.GL_TRUE);
-  }
-
-  public void disableTexMipmapGen(int target) {
-    gl.glTexParameteri(target, GL2.GL_GENERATE_MIPMAP, GL.GL_FALSE);
-  }  
-  
-  public void setTexMinFilter(int target, int filter) {
-    gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, filter); 
-  }
-  
-  public void setTexMagFilter(int target, int filter) {
-    gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, filter);
-  }
-  
-  public void setTexWrapS(int target, int wrap) {
-    gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S, wrap);
-  }
-  
-  public void setTexWrapT(int target, int wrap) {
-    gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_T, wrap); 
-  }
-  
-  public void setOrthographicProjection(float left, float right, float bottom, float top, float near, float far) {
-    gl2f.glOrthof(left, right, bottom, top, near, far);
+  public void delRenderbuffer(int[] id) {
+    gl.glGenRenderbuffers(1, id, 0);    
   }
   
   public void bindFramebuffer(int id) {
@@ -941,8 +705,36 @@ public class PGL {
   
   public int getFramebufferStatus() {
     return gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
+  }  
+
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Shaders  
+  
+  public void genProgram(int[] id) {
+    id[0] = gl2x.glCreateProgram();    
   }
   
+  public void delProgram(int[] id) {
+    gl2x.glDeleteProgram(id[0]);  
+  }
+  
+  public void genVertexShader(int[] id) {
+    id[0] = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);    
+  }
+  
+  public void delVertexShader(int[] id) {
+    gl2x.glDeleteShader(id[0]);    
+  }
+  
+  public void genFragmentShader(int[] id) {
+    id[0] = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);    
+  }
+  
+  public void delFragmentShader(int[] id) {
+    gl2x.glDeleteShader(id[0]);    
+  }  
+
   public void linkProgram(int prog) {
     gl2.glLinkProgram(prog);  
   }
@@ -1066,5 +858,277 @@ public class PGL {
     return new String(infoBytes);
   }
   
+  /////////////////////////////////////////////////////////////////////////////////
   
+  // Viewport  
+    
+  public void getViweport(int[] viewport) {
+    gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
+  }
+  
+  public void setViewport(int[] viewport) {
+    gl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Clipping (scissor test)
+  
+  public void enableClipping() {
+    gl.glEnable(GL.GL_SCISSOR_TEST);
+  }
+
+  public void disableClipping() {
+    gl.glDisable(GL.GL_SCISSOR_TEST);
+  }  
+  
+  public void setClipRect(int x, int y, int w, int h) {
+    gl.glScissor(x, y, w, h);
+  }
+  
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Matrices, transformations
+  
+  public void setProjectionMode() {
+    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+  }
+  
+  public void setModelviewMode() {
+    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+  }
+    
+  public void pushMatrix() {
+    gl2f.glPushMatrix();  
+  }
+
+  public void popMatrix() {
+    gl2f.glPopMatrix();  
+  }  
+  
+  public void loadIdentity() {
+    gl2f.glLoadIdentity();    
+  }
+  
+  public void multMatrix(float[] mat) {
+    gl2f.glMultMatrixf(mat, 0);
+  }
+
+  public void loadMatrix(float[] mat) {
+    gl2f.glLoadMatrixf(mat, 0);
+  }    
+  
+  public void translate(float tx, float ty, float tz) {
+    gl2f.glTranslatef(tx, ty, tz);  
+  }
+  
+  public void rotate(float angle, float vx, float vy, float vz) {
+    gl2f.glRotatef(PApplet.degrees(angle), vx, vy, vz);    
+  }
+  
+  public void scale(float sx, float sy, float sz) {
+    gl2f.glScalef(sx, sy, sz);
+  }  
+  
+  public void setOrthographicProjection(float left, float right, float bottom, float top, float near, float far) {
+    gl2f.glOrthof(left, right, bottom, top, near, far);
+  }  
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Materials
+  
+  public void setMaterialAmbient(float[] color) {
+    gl2f.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, color, 0);
+  }
+  
+  public void setMaterialSpecular(float[] color) {
+    gl2f.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, color, 0);
+  }
+
+  public void setMaterialEmission(float[] color) {
+    gl2f.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_EMISSION, color, 0);
+  }  
+  
+  public void setMaterialShininess(float shine) {
+    gl2f.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, shine);
+  }
+  
+  public void setColor(float r, float g, float b, float a) {
+    gl2f.glColor4f(r, g, b, a);
+  }  
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Lights
+  
+  public void enableLighting() {
+    gl2f.glEnable(GL2.GL_LIGHTING);
+  }
+  
+  public void disableLighting() {
+    gl2f.glDisable(GL2.GL_LIGHTING);
+  }  
+
+  public void setTwoSidedLightModel() {
+    gl2f.glLightModelf(GL2.GL_LIGHT_MODEL_TWO_SIDE, 0);
+  }
+  
+  public void setDefaultAmbientLight(float[] color) {
+    gl2f.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, color, 0);
+  }  
+  
+  public void enableLight(int light) {
+    gl2f.glEnable(GL2.GL_LIGHT0 + light);
+  }
+
+  public void disableLight(int light) {
+    gl2f.glDisable(GL2.GL_LIGHT0 + light);
+  }  
+
+  public void setLightPosition(int light, float[] pos) {
+    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_POSITION, pos, 0);
+  }
+  
+  public void setAmbientLight(int light, float[] color) {
+    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_AMBIENT, color, 0);
+  }
+    
+  public void setDiffuseLight(int light, float[] color) {
+    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_DIFFUSE, color, 0);
+  }
+
+  public void setSpecularLight(int light, float[] color) {
+    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_SPECULAR, color, 0);
+  }
+  
+  public void setLightDirection(int light, float[] dir) {
+    // The w component of lightNormal[num] is zero, so the light is considered as
+    // a directional source because the position effectively becomes a direction
+    // in homogeneous coordinates:
+    // http://glprogramming.com/red/appendixf.html 
+    dir[3] = 0;
+    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_POSITION, dir, 0);    
+  }
+    
+  public void setSpotLightCutoff(int light, float cutoff) {
+    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_SPOT_CUTOFF, cutoff);  
+  }
+  
+  public void setSpotLightExponent(int light, float exp) {
+    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_SPOT_EXPONENT, exp);      
+  }
+  
+  public void setSpotLightDirection(int light, float[] dir) {
+    gl2f.glLightfv(GL2.GL_LIGHT0 + light, GL2.GL_POSITION, dir, 0);
+  }
+  
+  public void setLightConstantAttenuation(int light, float attn) {
+    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_CONSTANT_ATTENUATION, attn);  
+  }
+  
+  public void setLightLinearAttenuation(int light, float attn) {
+    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_LINEAR_ATTENUATION, attn);  
+  }
+  
+  public void setLightQuadraticAttenuation(int light, float attn) {
+    gl2f.glLightf(GL2.GL_LIGHT0 + light, GL2.GL_QUADRATIC_ATTENUATION, attn);  
+  }
+
+  public void setNormal(float nx, float ny, float nz) {
+    gl2f.glNormal3f(nx, ny, nz);    
+  }  
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Blending  
+  
+  public void enableBlend() {
+    gl.glEnable(GL.GL_BLEND);
+  }
+  
+  public void setBlendEquation(int eq) {
+    gl.glBlendEquation(eq);
+  }
+  
+  public void setReplaceBlend() {
+    gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
+  }
+  
+  public void setDefaultBlend() {
+    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+  }
+  
+  public void setAdditiveBlend() {
+    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+  }
+  
+  public void setSubstractiveBlend() {
+    gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ZERO);
+  }
+  
+  public void setLightestBlend() {
+    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
+  }
+  
+  public void setDarkestBlend() {
+    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
+  }
+  
+  public void setDifferenceBlend() {
+    gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
+  }
+  
+  public void setExclussionBlend() {
+    gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE_MINUS_SRC_COLOR);
+  }
+  
+  public void setMultiplyBlend() {
+    gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_SRC_COLOR);
+  }
+  
+  public void setScreenBlend() {
+    gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE);
+  }  
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Pixels  
+  
+  public void setReadBuffer(int buf) {
+    gl2x.glReadBuffer(buf);
+  }
+  
+  public void readPixels(Buffer buffer, int x, int y, int w, int h) {
+    gl.glReadPixels(x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+  } 
+  
+  public void setDrawBuffer(int buf) {
+    gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0 + buf);
+  }
+  
+  public void setClearColor(float r, float g, float b, float a) {
+    gl.glClearColor(r, g, b, a);    
+  }
+  
+  public void clearDepthBuffer() {
+    gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+  }
+    
+  public void clearStencilBuffer() {
+    gl.glClear(GL.GL_STENCIL_BUFFER_BIT);
+  }
+
+  public void clearDepthAndStencilBuffers() {
+    gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
+  }
+  
+  public void clearColorBuffer() {
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+  } 
+
+  public void clearAllBuffers() {
+    gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT); 
+  }  
 }
