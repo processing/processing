@@ -40,16 +40,9 @@ import javax.media.nativewindow.awt.AWTGraphicsConfiguration;
 import javax.media.nativewindow.awt.AWTGraphicsDevice;
 import javax.media.nativewindow.awt.AWTGraphicsScreen;
 import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GL2ES1;
-import javax.media.opengl.GL2ES2;
-import javax.media.opengl.GL2GL3;
-import javax.media.opengl.GL3;
-import javax.media.opengl.GL4;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
 import javax.media.opengl.GLDrawableFactory;
-import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.glu.GLU;
@@ -65,57 +58,20 @@ import processing.core.PApplet;
  * 
  */
 public class PGraphicsOpenGL extends PGraphics {
-  // JOGL2 objects:
-  
-  /** 
-   * How the P3D renderer handles the different OpenGL profiles? Basically,
-   * P3D has two pipeline modes: fixed or programmable. In the fixed mode,
-   * only the gl and gl2f objects are available. The gl2f object contains the 
-   * intersection between OpenGL 2.x desktop and OpenGL 1.1 embedded, and in this
-   * way it ensures the functionality parity between the P3D render (PC/MAC)
-   * and A3D (Android) in the fixed pipeline mode.
-   * In the programmable mode, there further options: GL2, GL3 and GL4. 
-   * GL2 corresponds to the basic programmable profile that results from the common 
-   * functionality between OpenGL 3.0 desktop and OpenGL 2.0 embedded. As said just 
-   * before, since P3D and A3D aim at feature parity as much as possible, this is
-   * the only programmable-pipeline GL object that the P3D renderer uses.
-   * The gl3 and gl4 objects will be available when the pipeline mode is PROG_GL3 or
-   * PROG_GL4, respectively. Although P3D doens't make any use of these objects,
-   * they are part of the API nonetheless for users (or libraries) requiring advanced 
-   * functionality introduced with OpenGL 3 or OpenGL 4.
-   * By default, P3D tries to auto-select the pipeline mode by with the following 
-   * priority order: PROG_GL4, PROG_GL3, PROG_GL2, FIXED. In all the programmable modes, 
-   * the gl2p object is always available. This auto-selection can be optionally
-   * overridden when creating the renderer object, so that a specific mode is set. 
-   * Note that the programmable mode uses the non-backward compatible GL objects
-   * (GL3, GL4, and not GL3bc, GL4bc) so no fixed mode calls are possible under this mode. 
-   */
-  
-  /** Pipeline mode: FIXED, PROG_GL2, PROG_GL3 or PROG_GL4 */
-  public int pipeline;
-  
-  /** Basic GL functionality, common to all profiles */
-  public GL gl;
-  
+  /*
+  public int pipeline;  
+  public GL gl;  
   public GL2 gl2;
-  
-  /** Advanced GL functionality (usually, things available as extensions in JOGL1).
-   * This profile is the intersection between GL 2.0 and GL 3.0 */
   public GL2GL3 gl2x;
-  
-  /** Fixed GL pipeline, with the functionality common to the GL2 desktop and GLES 1.1 profiles */
   public GL2ES1 gl2f;
-  
-  /** Basic programmable GL pipeline: intersection of desktop GL3, GL2 and embedded ES2 profile */
   public GL2ES2 gl2p;
-  
-  /** GL3 programmable pipeline, not backwards compatible with GL2 fixed */
   public GL3 gl3p;
-  
-  /** GL4 programmable pipeline, not backwards compatible with GL2 fixed */
   public GL4 gl4p;
+ */
   
-  public GLU glu;
+  protected PGLJava pgl;
+  
+  
   
   /** Selected GL profile */
   protected GLProfile profile;
@@ -128,6 +84,8 @@ public class PGraphicsOpenGL extends PGraphics {
   
   /** The rendering context (holds rendering state info) */
   protected GLContext context;
+  
+  
   
   /** The PApplet renderer. For the primary surface, pgl == this. */
   protected PGraphicsOpenGL ogl;
@@ -324,12 +282,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Font texture of currently selected font. */
   PFontTexture textTex;
 
-  // .......................................................
-  
-  // Utility textured quad:
-  
-  static protected FloatBuffer quadVertexBuffer = null;
-  static protected FloatBuffer quadTexCoordBuffer = null;  
   
   // .......................................................
   
@@ -388,6 +340,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   /** Stores previous viewport dimensions. */
   protected int[] savedViewport = {0, 0, 0, 0};
+  protected int[] viewport = {0, 0, 0, 0};
   
   // ........................................................
 
@@ -469,8 +422,8 @@ public class PGraphicsOpenGL extends PGraphics {
   
   static protected PShader lineShader;
   static protected PShader pointShader;
-  static protected int lineAttribsID;
-  static protected int pointAttribsID;
+  static protected int lineAttribsLoc;
+  static protected int pointAttribsLoc;
   
   protected PImage textureImage0;
   
@@ -478,7 +431,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected boolean defaultEdges = false;
   
-  protected int vboMode = GL.GL_STATIC_DRAW;
+  protected int vboMode = PGLJava.STATIC_DRAW;
     
   static public float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
@@ -499,7 +452,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // INIT/ALLOCATE/FINISH
   
   public PGraphicsOpenGL() {
-    glu = new GLU();
+    pgl = new PGLJava();
     
     tessellator = new Tessellator();
     
@@ -651,7 +604,8 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedVertexArrayObjects();
     
     int[] temp = new int[1];
-    gl2x.glGenVertexArrays(1, temp, 0);
+    pgl.genVertexArray(temp);
+    //gl2x.glGenVertexArrays(1, temp, 0);
     int id = temp[0];
     
     if (glVertexArrays.containsKey(id)) {
@@ -666,7 +620,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteVertexArrayObject(int id) {
     if (glVertexArrays.containsKey(id)) {
       int[] temp = { id };
-      gl2x.glDeleteVertexArrays(1, temp, 0);      
+      pgl.delVertexArray(temp);
+      //gl2x.glDeleteVertexArrays(1, temp, 0);      
       glVertexArrays.remove(id); 
     }
   }
@@ -674,7 +629,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteAllVertexArrayObjects() {
     for (Integer id : glVertexArrays.keySet()) {
       int[] temp = { id.intValue() };
-      gl2x.glDeleteVertexArrays(1, temp, 0);
+      pgl.delVertexArray(temp);
+      //gl2x.glDeleteVertexArrays(1, temp, 0);
     }
     glVertexArrays.clear();
   }  
@@ -695,7 +651,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glVertexArrays.get(id)) {
         finalized.add(id);
         int[] temp = { id.intValue() };
-        gl2x.glDeleteVertexArrays(1, temp, 0);        
+        //gl2x.glDeleteVertexArrays(1, temp, 0);
+        pgl.delVertexArray(temp);
       }
     }
     
@@ -711,7 +668,8 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedTextureObjects();
     
     int[] temp = new int[1];
-    gl.glGenTextures(1, temp, 0);
+    //gl.glGenTextures(1, temp, 0);
+    pgl.genTexture(temp);
     int id = temp[0];
     
     if (glTextureObjects.containsKey(id)) {
@@ -726,7 +684,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteTextureObject(int id) {
     if (glTextureObjects.containsKey(id)) {
       int[] temp = { id };
-      gl.glDeleteTextures(1, temp, 0);      
+      pgl.delTexture(temp);
+      //gl.glDeleteTextures(1, temp, 0);      
       glTextureObjects.remove(id); 
     }
   }  
@@ -734,7 +693,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteAllTextureObjects() {
     for (Integer id : glTextureObjects.keySet()) {
       int[] temp = { id.intValue() };
-      gl.glDeleteTextures(1, temp, 0);
+      //gl.glDeleteTextures(1, temp, 0);
+      pgl.delTexture(temp);
     }
     glTextureObjects.clear();
   }
@@ -755,7 +715,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glTextureObjects.get(id)) {
         finalized.add(id);
         int[] temp = { id.intValue() };
-        gl.glDeleteTextures(1, temp, 0);        
+        //gl.glDeleteTextures(1, temp, 0);
+        pgl.delTexture(temp);
       }
     }
     
@@ -770,7 +731,8 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedVertexBufferObjects();
     
     int[] temp = new int[1];
-    gl.glGenBuffers(1, temp, 0);
+    //gl.glGenBuffers(1, temp, 0);
+    pgl.genBuffer(temp);
     int id = temp[0];
     
     if (glVertexBuffers.containsKey(id)) {
@@ -785,7 +747,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteVertexBufferObject(int id) {
     if (glVertexBuffers.containsKey(id)) {
       int[] temp = { id };
-      gl.glDeleteBuffers(1, temp, 0);      
+      //gl.glDeleteBuffers(1, temp, 0);
+      pgl.delBuffer(temp);
       glVertexBuffers.remove(id); 
     }
   }
@@ -793,7 +756,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteAllVertexBufferObjects() {
     for (Integer id : glVertexBuffers.keySet()) {
       int[] temp = { id.intValue() };
-      gl.glDeleteBuffers(1, temp, 0);
+      //gl.glDeleteBuffers(1, temp, 0);
+      pgl.delBuffer(temp);
     }
     glVertexBuffers.clear();
   }  
@@ -814,7 +778,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glVertexBuffers.get(id)) {
         finalized.add(id);
         int[] temp = { id.intValue() };
-        gl.glDeleteBuffers(1, temp, 0);        
+        //gl.glDeleteBuffers(1, temp, 0);  
+        pgl.delBuffer(temp);
       }
     }
     
@@ -829,7 +794,8 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedFrameBufferObjects();
     
     int[] temp = new int[1];
-    gl.glGenFramebuffers(1, temp, 0);
+    //gl.glGenFramebuffers(1, temp, 0);
+    pgl.genFramebuffer(temp);
     int id = temp[0];
     
     if (glFrameBuffers.containsKey(id)) {
@@ -844,7 +810,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteFrameBufferObject(int id) {
     if (glFrameBuffers.containsKey(id)) {
       int[] temp = { id };
-      gl.glDeleteFramebuffers(1, temp, 0);      
+      //gl.glDeleteFramebuffers(1, temp, 0);
+      pgl.delFramebuffer(temp);
       glFrameBuffers.remove(id); 
     }
   }  
@@ -852,7 +819,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteAllFrameBufferObjects() {
     for (Integer id : glFrameBuffers.keySet()) {
       int[] temp = { id.intValue() };
-      gl.glDeleteFramebuffers(1, temp, 0);
+      //gl.glDeleteFramebuffers(1, temp, 0);
+      pgl.delFramebuffer(temp);
     }
     glFrameBuffers.clear();
   }   
@@ -873,7 +841,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glFrameBuffers.get(id)) {
         finalized.add(id);
         int[] temp = { id.intValue() };
-        gl.glDeleteFramebuffers(1, temp, 0);       
+        //gl.glDeleteFramebuffers(1, temp, 0);
+        pgl.delFramebuffer(temp);
       }
     }
     
@@ -888,7 +857,8 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedRenderBufferObjects();
     
     int[] temp = new int[1];
-    gl.glGenRenderbuffers(1, temp, 0);
+    //gl.glGenRenderbuffers(1, temp, 0);
+    pgl.genRenderbuffer(temp);
     int id = temp[0];
     
     if (glRenderBuffers.containsKey(id)) {
@@ -903,7 +873,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteRenderBufferObject(int id) {
     if (glRenderBuffers.containsKey(id)) {
       int[] temp = { id };
-      gl.glDeleteRenderbuffers(1, temp, 0);      
+      //gl.glDeleteRenderbuffers(1, temp, 0);
+      pgl.delRenderbuffer(temp);
       glRenderBuffers.remove(id); 
     }
   }   
@@ -911,7 +882,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void deleteAllRenderBufferObjects() {
     for (Integer id : glRenderBuffers.keySet()) {
       int[] temp = { id.intValue() };
-      gl.glDeleteRenderbuffers(1, temp, 0);
+      //gl.glDeleteRenderbuffers(1, temp, 0);
+      pgl.delRenderbuffer(temp);
     }
     glRenderBuffers.clear();
   }     
@@ -932,7 +904,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (glRenderBuffers.get(id)) {
         finalized.add(id);
         int[] temp = { id.intValue() };
-        gl.glDeleteRenderbuffers(1, temp, 0);       
+        //gl.glDeleteRenderbuffers(1, temp, 0);
+        pgl.delRenderbuffer(temp);
       }
     }
     
@@ -948,7 +921,10 @@ public class PGraphicsOpenGL extends PGraphics {
     ogl.report("before delete");
     deleteFinalizedGLSLProgramObjects();
         
-    int id = gl2x.glCreateProgram();    
+    int[] temp = new int[1];
+    //int id = gl2x.glCreateProgram();
+    pgl.genProgram(temp);
+    int id = temp[0];
     
     if (glslPrograms.containsKey(id)) {
       showWarning("Adding same glsl program twice");
@@ -961,14 +937,18 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deleteGLSLProgramObject(int id) {
     if (glslPrograms.containsKey(id)) {
-      gl2x.glDeleteProgram(id);      
+      int[] temp = { id };
+      pgl.delProgram(temp);
+      //gl2x.glDeleteProgram(id);      
       glslPrograms.remove(id); 
     }
   }     
   
   protected void deleteAllGLSLProgramObjects() {
     for (Integer id : glslPrograms.keySet()) {
-      gl2x.glDeleteProgram(id); 
+      int[] temp = { id.intValue() };
+      //gl2x.glDeleteProgram(id);
+      pgl.delProgram(temp);
     }
     glslPrograms.clear();
   }    
@@ -988,7 +968,9 @@ public class PGraphicsOpenGL extends PGraphics {
     for (Integer id : glslPrograms.keySet()) {
       if (glslPrograms.get(id)) {
         finalized.add(id);
-        gl2x.glDeleteProgram(id.intValue());       
+        int[] temp = { id.intValue() };
+        //gl2x.glDeleteProgram(id.intValue());
+        pgl.delProgram(temp);
       }
     }
     
@@ -1002,7 +984,10 @@ public class PGraphicsOpenGL extends PGraphics {
   protected int createGLSLVertShaderObject() {
     deleteFinalizedGLSLVertShaderObjects();
     
-    int id = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);
+    int[] temp = new int[1];
+    //int id = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);
+    pgl.genVertexShader(temp);
+    int id = temp[0];    
     
     if (glslVertexShaders.containsKey(id)) {
       showWarning("Adding same glsl vertex shader twice");
@@ -1015,14 +1000,18 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deleteGLSLVertShaderObject(int id) {
     if (glslVertexShaders.containsKey(id)) {
-      gl2x.glDeleteShader(id);      
+      int[] temp = { id };
+      pgl.delVertexShader(temp);
+      //gl2x.glDeleteShader(id);      
       glslVertexShaders.remove(id); 
     }
   }    
   
   protected void deleteAllGLSLVertShaderObjects() {
     for (Integer id : glslVertexShaders.keySet()) {
-      gl2x.glDeleteShader(id); 
+      int[] temp = { id.intValue() };
+      //gl2x.glDeleteShader(id);
+      pgl.delVertexShader(temp);
     }
     glslVertexShaders.clear();
   }     
@@ -1042,7 +1031,9 @@ public class PGraphicsOpenGL extends PGraphics {
     for (Integer id : glslVertexShaders.keySet()) {
       if (glslVertexShaders.get(id)) {
         finalized.add(id);
-        gl2x.glDeleteShader(id.intValue());      
+        int[] temp = { id.intValue() };
+        //gl2x.glDeleteShader(id.intValue());
+        pgl.delVertexShader(temp);
       }
     }
     
@@ -1057,7 +1048,10 @@ public class PGraphicsOpenGL extends PGraphics {
   protected int createGLSLFragShaderObject() {
     deleteFinalizedGLSLFragShaderObjects();
     
-    int id = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);
+    int[] temp = new int[1];
+    //int id = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);
+    pgl.genFragmentShader(temp);
+    int id = temp[0];        
     
     if (glslFragmentShaders.containsKey(id)) {
       showWarning("Adding same glsl fragment shader twice");
@@ -1070,14 +1064,18 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deleteGLSLFragShaderObject(int id) {
     if (glslFragmentShaders.containsKey(id)) {
-      gl2x.glDeleteShader(id);      
+      int[] temp = { id };
+      //gl2x.glDeleteShader(id);      
+      pgl.delFragmentShader(temp);
       glslFragmentShaders.remove(id); 
     }
   }     
   
   protected void deleteAllGLSLFragShaderObjects() {
     for (Integer id : glslFragmentShaders.keySet()) {
-      gl2x.glDeleteShader(id); 
+      int[] temp = { id.intValue() };
+      pgl.delFragmentShader(temp);
+      //gl2x.glDeleteShader(id); 
     }
     glslFragmentShaders.clear();
   }    
@@ -1097,7 +1095,9 @@ public class PGraphicsOpenGL extends PGraphics {
     for (Integer id : glslFragmentShaders.keySet()) {
       if (glslFragmentShaders.get(id)) {
         finalized.add(id);
-        gl2x.glDeleteShader(id.intValue());      
+        int[] temp = { id.intValue() };
+        //gl2x.glDeleteShader(id.intValue());
+        pgl.delFragmentShader(temp);
       }
     }
     
@@ -1252,39 +1252,51 @@ public class PGraphicsOpenGL extends PGraphics {
    */  
   public void restartContext() {
     releaseResources();    
-    //deleteFinalizedGLResources();
     
     releaseContext();
     context.destroy();
     context = null;
+    
     allocate();          
-    detainContext();
-      
+    detainContext();      
     updateGLInterfaces();    
   }  
 
   protected void createFillBuffers() {
     glFillVertexBufferID = createVertexBufferObject();    
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);    
-            
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * SIZEOF_FLOAT, null, vboMode);
+    pgl.bindVertexBuffer(glFillVertexBufferID);
+    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
+                
     glFillColorBufferID = createVertexBufferObject();
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);    
-        
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * MAX_TESS_VERTICES * SIZEOF_FLOAT, null, vboMode);    
+    pgl.bindVertexBuffer(glFillColorBufferID);
+    pgl.initVertexBuffer(4 * MAX_TESS_VERTICES, vboMode);
+    
     glFillNormalBufferID = createVertexBufferObject();
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * SIZEOF_FLOAT, null, vboMode);
+    pgl.bindVertexBuffer(glFillNormalBufferID);
+    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);    
     
     glFillTexCoordBufferID = createVertexBufferObject();
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * MAX_TESS_VERTICES * SIZEOF_FLOAT, null, vboMode);
+    pgl.bindVertexBuffer(glFillTexCoordBufferID);
+    pgl.initVertexBuffer(2 * MAX_TESS_VERTICES, vboMode);    
+    
+    pgl.unbindVertexBuffer();
     
     glFillIndexBufferID = createVertexBufferObject();    
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillIndexBufferID);    
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, MAX_TESS_INDICES * PGraphicsOpenGL.SIZEOF_INT, null, vboMode);
-    
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);        
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillIndexBufferID);    
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, MAX_TESS_INDICES * SIZEOF_INT, null, vboMode);
+    pgl.bindIndexBuffer(glFillIndexBufferID);
+    pgl.initIndexBuffer(MAX_TESS_INDICES, vboMode);
+
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindIndexBuffer();
   }
   
   protected void releaseFillBuffers() {
@@ -1306,26 +1318,39 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void createLineBuffers() {
     glLineVertexBufferID = createVertexBufferObject();    
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);    
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);    
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);    
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    pgl.bindVertexBuffer(glLineVertexBufferID);
+    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
     
     glLineColorBufferID = createVertexBufferObject();
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
-
-    glLineNormalBufferID = createVertexBufferObject();    
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);    
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    pgl.bindVertexBuffer(glLineColorBufferID);
+    pgl.initVertexBuffer(4 * MAX_TESS_VERTICES, vboMode);
     
+    glLineNormalBufferID = createVertexBufferObject();    
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);    
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    pgl.bindVertexBuffer(glLineNormalBufferID);
+    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
+        
     glLineAttribBufferID = createVertexBufferObject();
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineAttribBufferID);   
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineAttribBufferID);   
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    pgl.bindVertexBuffer(glLineAttribBufferID);
+    pgl.initVertexBuffer(4 * MAX_TESS_VERTICES, vboMode);
+    
+    pgl.unbindVertexBuffer();
     
     glLineIndexBufferID = createVertexBufferObject();    
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineIndexBufferID);    
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, MAX_TESS_INDICES * PGraphicsOpenGL.SIZEOF_INT, null, vboMode);
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineIndexBufferID);    
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, MAX_TESS_INDICES * PGraphicsOpenGL.SIZEOF_INT, null, vboMode);
+    pgl.bindIndexBuffer(glLineIndexBufferID);
+    pgl.initIndexBuffer(MAX_TESS_INDICES, vboMode);    
     
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);      
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindIndexBuffer();
   }  
   
   protected void releaseLineBuffers() {
@@ -1347,26 +1372,39 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void createPointBuffers() {
     glPointVertexBufferID = createVertexBufferObject();    
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);    
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);    
-
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);    
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);    
+    pgl.bindVertexBuffer(glPointVertexBufferID);
+    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
+    
     glPointColorBufferID = createVertexBufferObject();
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);    
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);    
+    pgl.bindVertexBuffer(glPointColorBufferID);
+    pgl.initVertexBuffer(4 * MAX_TESS_VERTICES, vboMode);    
     
     glPointNormalBufferID = createVertexBufferObject();    
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);    
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);    
-
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);    
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);    
+    pgl.bindVertexBuffer(glPointNormalBufferID);
+    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
+    
     glPointAttribBufferID = createVertexBufferObject();
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);   
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);   
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * MAX_TESS_VERTICES * PGraphicsOpenGL.SIZEOF_FLOAT, null, vboMode);
+    pgl.bindVertexBuffer(glPointAttribBufferID);
+    pgl.initVertexBuffer(2 * MAX_TESS_VERTICES, vboMode);    
+    
+    pgl.unbindVertexBuffer();
     
     glPointIndexBufferID = createVertexBufferObject();    
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);    
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, MAX_TESS_INDICES * PGraphicsOpenGL.SIZEOF_INT, null, vboMode);
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);    
+    //gl2f.glBufferData(GL.GL_ARRAY_BUFFER, MAX_TESS_INDICES * PGraphicsOpenGL.SIZEOF_INT, null, vboMode);
+    pgl.bindIndexBuffer(glPointIndexBufferID);
+    pgl.initIndexBuffer(MAX_TESS_INDICES, vboMode);       
     
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0); 
+    pgl.unbindIndexBuffer();
   }  
   
   protected void releasePointBuffers() {
@@ -1452,17 +1490,22 @@ public class PGraphicsOpenGL extends PGraphics {
        
     // this is necessary for 3D drawing
     if (hints[DISABLE_DEPTH_TEST]) {
-      gl.glDisable(GL.GL_DEPTH_TEST);           
+      pgl.disableDepthTest();
+      //gl.glDisable(GL.GL_DEPTH_TEST);           
     } else {
-      gl.glEnable(GL.GL_DEPTH_TEST); 
+      //gl.glEnable(GL.GL_DEPTH_TEST);
+      pgl.enableDepthTest();
     }
     // use <= since that's what processing.core does
-    gl.glDepthFunc(GL.GL_LEQUAL);
+    //gl.glDepthFunc(GL.GL_LEQUAL);
+    pgl.setDepthFunc(PGLJava.LESS_OR_EQUAL);
     
     if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);             
+      //gl.glDepthMask(false);
+      pgl.disableDepthMask();
     } else {
-      gl.glDepthMask(true); 
+      //gl.glDepthMask(true);
+      pgl.enableDepthMask();
     }
 
     if (hints[ENABLE_ACCURATE_2D]) {
@@ -1472,8 +1515,11 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     // setup opengl viewport.    
-    gl.glGetIntegerv(GL.GL_VIEWPORT, savedViewport, 0);
-    gl.glViewport(0, 0, width, height);  
+    pgl.getViweport(savedViewport);
+    //gl.glGetIntegerv(GL.GL_VIEWPORT, savedViewport, 0);
+    viewport[0] = 0; viewport[1] = 0; viewport[2] = width; viewport[3] = height;
+    //gl.glViewport(0, 0, width, height);
+    pgl.setViewport(viewport);
     if (resized) {
       // To avoid having garbage in the screen after a resize,
       // in the case background is not called in draw().
@@ -1515,7 +1561,8 @@ public class PGraphicsOpenGL extends PGraphics {
     lightSpecular(0, 0, 0);
 
     // because y is flipped
-    gl.glFrontFace(GL.GL_CW);
+    pgl.setFrontFace(PGLJava.CLOCKWISE);
+    //gl.glFrontFace(GL.GL_CW);
     
     setSurfaceParams();
     
@@ -1529,16 +1576,19 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       pushFramebuffer();
       if (offscreenMultisample) {
-        setFramebuffer(offscreenFramebufferMultisample);        
-        gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
+        setFramebuffer(offscreenFramebufferMultisample);   
+        //gl2x.glDrawBuffer(GL.GL_COLOR_ATTACHMENT0);
+        pgl.setDrawBuffer(0);
       } else {
         setFramebuffer(offscreenFramebuffer);
       }
     }
     
     // Clear depth and stencil buffers.
-    gl.glClearColor(0, 0, 0, 0);
-    gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);    
+    pgl.setClearColor(0, 0, 0, 0);
+    pgl.clearDepthAndStencilBuffers();
+    //gl.glClearColor(0, 0, 0, 0);
+    //gl.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);    
     
     drawing = true;
     
@@ -1564,14 +1614,16 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     // Restoring previous viewport.
-    gl.glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]); 
+    //gl.glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]);
+    pgl.setViewport(savedViewport);
     
     if (primarySurface) {
       // glFlush should be called only once, since it is an expensive
       // operation. Thus, only the main renderer (the primary surface)
       // should call it at the end of draw, and none of the offscreen 
       // renderers...
-      gl.glFlush();
+      //gl.glFlush();
+      pgl.flush();
       
       if (drawable != null) {
         drawable.swapBuffers();
@@ -1599,7 +1651,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // The user is free to change anything she wants, endGL will
     // try to do its best to restore things to the Processing
     // settings valid at the time of calling beginGL().
-    return gl; // which one to return?
+    return pgl.gl;
   }
 
   
@@ -1609,34 +1661,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   public void updateGLInterfaces() {
-    gl = context.getGL();        
-    
-    if (pipeline == PROG_GL4) {
-      gl4p = gl.getGL4();
-      gl3p = gl4p;
-      gl2p = gl4p;        
-      gl2f = null;
-    } else if (pipeline == PROG_GL3) {     
-      gl4p = null;
-      gl3p = gl.getGL3();
-      gl2p = gl3p;
-      gl2f = null;        
-    } else if (pipeline == PROG_GL2) { 
-      gl4p = null;
-      gl3p = null;
-      gl2p = gl.getGL2ES2();
-      gl2f = null;        
-    } else if (pipeline == FIXED) {
-      gl4p = null;
-      gl3p = null;
-      gl2p = null;
-      gl2f = gl.getGL2ES1();
-      gl2 = gl.getGL2();
-    }
-    
-    try {
-      gl2x = gl.getGL2GL3();
-    } catch (GLException e) {}
+    pgl.update(context);
   }
   
   
@@ -1645,25 +1670,32 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   
-  protected void restoreGLState() {    
+  protected void restoreGLState() {        
     // Restoring viewport.
-    gl.glViewport(0, 0, width, height);
+    pgl.setViewport(viewport);
+    //gl.glViewport(0, 0, width, height);
 
     restoreGLMatrices();
     
     // Restoring hints.
     if (hints[DISABLE_DEPTH_TEST]) {
-      gl.glDisable(GL.GL_DEPTH_TEST);
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL.GL_DEPTH_BUFFER_BIT);      
+      pgl.disableDepthTest();
+      pgl.setClearColor(0, 0, 0, 0);
+      pgl.clearDepthBuffer();
+//      gl.glDisable(GL.GL_DEPTH_TEST);
+//      gl.glClearColor(0, 0, 0, 0);
+//      gl.glClear(GL.GL_DEPTH_BUFFER_BIT);      
     } else {
-      gl.glEnable(GL.GL_DEPTH_TEST);      
+      //gl.glEnable(GL.GL_DEPTH_TEST);
+      pgl.enableDepthTest();
     }
     
     if (hints[DISABLE_DEPTH_MASK]) {
-      gl.glDepthMask(false);             
+      //gl.glDepthMask(false);
+      pgl.disableDepthMask();
     } else {
-      gl.glDepthMask(true);  
+      //gl.glDepthMask(true);
+      pgl.enableDepthMask();
     }
         
     // Restoring blending.
@@ -1745,9 +1777,11 @@ public class PGraphicsOpenGL extends PGraphics {
     // but we want to make sure they return to the Processing
     // defaults (plus these cannot be changed through the API
     // so they should remain constant anyways):
-    gl.glFrontFace(GL.GL_CW);    
-    gl.glDepthFunc(GL.GL_LEQUAL);
-
+    //gl.glFrontFace(GL.GL_CW);    
+    pgl.setFrontFace(PGLJava.CLOCKWISE);
+    //gl.glDepthFunc(GL.GL_LEQUAL);
+    pgl.setDepthFunc(PGLJava.LESS_OR_EQUAL);
+    
     setSurfaceParams();
   }  
   
@@ -1820,21 +1854,27 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (which == DISABLE_DEPTH_TEST) {
       flush();
-      gl.glDisable(GL.GL_DEPTH_TEST);
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+      pgl.disableDepthTest();
+      pgl.setClearColor(0, 0, 0, 0);
+      pgl.clearDepthBuffer();      
+//      gl.glDisable(GL.GL_DEPTH_TEST);
+//      gl.glClearColor(0, 0, 0, 0);
+//      gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 
     } else if (which == ENABLE_DEPTH_TEST) {
       flush();
-      gl.glEnable(GL.GL_DEPTH_TEST);
+      //gl.glEnable(GL.GL_DEPTH_TEST);
+      pgl.enableDepthTest();
 
     } else if (which == DISABLE_DEPTH_MASK) {
       flush();
-      gl.glDepthMask(false);
+      //gl.glDepthMask(false);
+      pgl.disableDepthMask();
 
     } else if (which == ENABLE_DEPTH_MASK) {
       flush();
-      gl.glDepthMask(true);
+      //gl.glDepthMask(true);
+      pgl.enableDepthMask();
       
     } else if (which == DISABLE_ACCURATE_2D) {
       flush();
@@ -2170,10 +2210,12 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void clipImpl(float x1, float y1, float x2, float y2) {
     flush();
-    gl.glEnable(GL.GL_SCISSOR_TEST);
+//    gl.glEnable(GL.GL_SCISSOR_TEST);
+    pgl.enableClipping();
     
     float h = y2 - y1;
-    gl.glScissor((int)x1, (int)(height - y1 - h), (int)(x2 - x1), (int)h);
+//    gl.glScissor((int)x1, (int)(height - y1 - h), (int)(x2 - x1), (int)h);
+    pgl.setClipRect((int)x1, (int)(height - y1 - h), (int)(x2 - x1), (int)h);
     
     clip = true;
   }
@@ -2182,7 +2224,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public void noClip() {
     if (clip) {
       flush();
-      gl.glDisable(GL.GL_SCISSOR_TEST);
+      //gl.glDisable(GL.GL_SCISSOR_TEST);
+      pgl.disableClipping();
       
       clip = false;
     }
@@ -2259,8 +2302,10 @@ public class PGraphicsOpenGL extends PGraphics {
         // The modelview transformation has been applied already to the 
         // tessellated vertices, so we set the OpenGL modelview matrix as
         // the identity to avoid applying the model transformations twice.        
-        gl2f.glPushMatrix();
-        gl2f.glLoadIdentity();
+        //gl2f.glPushMatrix();
+        //gl2f.glLoadIdentity();
+        pgl.pushMatrix();
+        pgl.loadIdentity();
       }
       
       if (hasFill) {
@@ -2276,7 +2321,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }          
       
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        gl2f.glPopMatrix();
+        //gl2f.glPopMatrix();
+        pgl.popMatrix();
       }
     }
     
@@ -2293,37 +2339,57 @@ public class PGraphicsOpenGL extends PGraphics {
     
     startPointShader();
     
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    pgl.enableVertexArrays();
+    pgl.enableColorArrays();
+    pgl.enableNormalArrays();    
+//    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+//    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
+//    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
     
     int size = tessGeo.pointVertexCount;
-
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.pointVertices, 0, 3 * size), vboMode);     
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.pointColors, 0, 4 * size), vboMode);    
-    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);
-        
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.pointNormals, 0, 3 * size), vboMode);    
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
+   
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.pointVertices, 0, 3 * size), vboMode);     
+//    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    pgl.bindVertexBuffer(glPointVertexBufferID);
+    pgl.copyVertexBufferData(tessGeo.pointVertices, 3 * size, vboMode);
+    pgl.setVertexFormat(3, 0, 0); 
+    
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.pointColors, 0, 4 * size), vboMode);    
+//    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    pgl.bindVertexBuffer(glPointColorBufferID);
+    pgl.copyVertexBufferData(tessGeo.pointColors, 4 * size, vboMode);    
+    pgl.setColorFormat(4, 0, 0);
+    
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.pointNormals, 0, 3 * size), vboMode);    
+//    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
+    pgl.bindVertexBuffer(glPointNormalBufferID);
+    pgl.copyVertexBufferData(tessGeo.pointNormals, 3 * size, vboMode);    
+    pgl.setNormalFormat(3, 0, 0);
     
     setupPointShader(glPointAttribBufferID, tessGeo.pointAttributes, size);
     
     size = tessGeo.pointIndexCount;
-    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tessGeo.pointIndices, 0, size), vboMode);     
-    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);
+//    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+//    gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tessGeo.pointIndices, 0, size), vboMode);     
+//    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);
+    pgl.bindIndexBuffer(glPointIndexBufferID);
+    pgl.copyIndexBufferData(tessGeo.pointIndices, size, vboMode);
+    pgl.renderIndexBuffer(size);
+        
+    pgl.unbindIndexBuffer();
+    pgl.unbindVertexBuffer();
+    //gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
-    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
-    
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+//    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+//    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+//    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    pgl.disableVertexArrays();
+    pgl.disableColorArrays();
+    pgl.disableNormalArrays();    
     
     stopPointShader();
   }  
@@ -2336,37 +2402,58 @@ public class PGraphicsOpenGL extends PGraphics {
     
     startLineShader();
     
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+//    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+//    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
+//    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    pgl.enableVertexArrays();
+    pgl.enableColorArrays();
+    pgl.enableNormalArrays(); 
     
     int size = tessGeo.lineVertexCount;
     
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.lineVertices, 0, 3 * size), vboMode);
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.lineVertices, 0, 3 * size), vboMode);
+//    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);    
+    pgl.bindVertexBuffer(glLineVertexBufferID);
+    pgl.copyVertexBufferData(tessGeo.lineVertices, 3 * size, vboMode);
+    pgl.setVertexFormat(3, 0, 0);     
     
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.lineColors, 0, 4 * size), vboMode);
-    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.lineColors, 0, 4 * size), vboMode);
+//    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    pgl.bindVertexBuffer(glLineColorBufferID);
+    pgl.copyVertexBufferData(tessGeo.lineColors, 4 * size, vboMode);    
+    pgl.setColorFormat(4, 0, 0);    
     
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.lineNormals, 0, 3 * size), vboMode);
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.lineNormals, 0, 3 * size), vboMode);
+//    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);    
+    pgl.bindVertexBuffer(glLineNormalBufferID);
+    pgl.copyVertexBufferData(tessGeo.lineNormals, 3 * size, vboMode);    
+    pgl.setNormalFormat(3, 0, 0);    
     
     setupLineShader(glLineAttribBufferID, tessGeo.lineAttributes, size);
     
     size = tessGeo.lineIndexCount;
-    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tessGeo.lineIndices, 0, size), vboMode);
-    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);
+//    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
+//    gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tessGeo.lineIndices, 0, size), vboMode);
+//    gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);
+    pgl.bindIndexBuffer(glLineIndexBufferID);
+    pgl.copyIndexBufferData(tessGeo.lineIndices, size, vboMode);
+    pgl.renderIndexBuffer(size);    
     
-    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
     
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+//    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    pgl.unbindIndexBuffer();
+    pgl.unbindVertexBuffer();
+    
+//    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);
+//    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+//    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    pgl.disableVertexArrays();
+    pgl.disableColorArrays();
+    pgl.disableNormalArrays();
     
     stopLineShader();
   }  
@@ -2378,33 +2465,51 @@ public class PGraphicsOpenGL extends PGraphics {
       fillVBOsCreated = true;
     }    
 
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+//    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+//    gl2f.glEnableClientState(GL2.GL_COLOR_ARRAY);
+//    gl2f.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+    pgl.enableVertexArrays();
+    pgl.enableColorArrays();
+    pgl.enableNormalArrays();    
     
     int size = tessGeo.fillVertexCount;
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);   
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillVertices, 0, 3 * size), vboMode);
+//    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);    
+    pgl.bindVertexBuffer(glFillVertexBufferID);
+    pgl.copyVertexBufferData(tessGeo.fillVertices, 3 * size, vboMode);
+    pgl.setVertexFormat(3, 0, 0);
 
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);   
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillVertices, 0, 3 * size), vboMode);
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillColors, 0, 4 * size), vboMode);
+//    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);        
+    pgl.bindVertexBuffer(glFillColorBufferID);
+    pgl.copyVertexBufferData(tessGeo.fillColors, 4 * size, vboMode);    
+    pgl.setColorFormat(4, 0, 0);    
     
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillColors, 0, 4 * size), vboMode);
-    gl2f.glColorPointer(4, GL.GL_FLOAT, 0, 0);    
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillNormals, 0, 3 * size), vboMode);
+//    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
+    pgl.bindVertexBuffer(glFillNormalBufferID);
+    pgl.copyVertexBufferData(tessGeo.fillNormals, 3 * size, vboMode);    
+    pgl.setNormalFormat(3, 0, 0);
     
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillNormals, 0, 3 * size), vboMode);
-    gl2f.glNormalPointer(GL.GL_FLOAT, 0, 0);
-
     if (texCache.hasTexture) {
-      gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-      gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-      gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillTexcoords, 0, 2 * size), vboMode);
-      gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0); 
+//      gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+//      gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+//      gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(tessGeo.fillTexcoords, 0, 2 * size), vboMode);
+//      gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);      
+      pgl.enableTexCoordArrays();
+      pgl.bindVertexBuffer(glFillTexCoordBufferID);
+      pgl.copyVertexBufferData(tessGeo.fillTexcoords, 2 * size, vboMode);    
+      pgl.setTexCoordFormat(2, 0, 0);            
     }  
     
-    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);      
-      
+    //gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);      
+    pgl.bindIndexBuffer(glFillIndexBufferID);  
+    
+    pgl.setActiveTexUnit(0);
+    
     PTexture tex0 = null;
     for (int i = 0; i < texCache.count; i++) {
       PImage img = texCache.textures[i];
@@ -2413,49 +2518,131 @@ public class PGraphicsOpenGL extends PGraphics {
       if (img != null) {
         tex = ogl.getTexture(img);
         if (tex != null) {          
-          gl2f.glEnable(tex.glTarget);
-          gl2f.glActiveTexture(GL.GL_TEXTURE0);
-          gl2f.glBindTexture(tex.glTarget, tex.glID);
+//          gl2f.glEnable(tex.glTarget);
+//          gl2f.glActiveTexture(GL.GL_TEXTURE0);
+//          gl2f.glBindTexture(tex.glTarget, tex.glID);          
+          tex.bind();          
+//          pgl.enableTexturing(tex.glTarget);
+//          pgl.bindTexture(tex.glTarget, tex.glID);          
           tex0 = tex;
         }        
       }
       if (tex == null && tex0 != null) {
-        gl2f.glDisable(tex0.glTarget);
+        //gl2f.glDisable(tex0.glTarget);
+        tex0.unbind();
+        pgl.disableTexturing(tex0.glTarget);
       }
               
       int offset = texCache.firstIndex[i];
       size = texCache.lastIndex[i] - texCache.firstIndex[i] + 1;
-      gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tessGeo.fillIndices, offset, size), vboMode);
-      gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);        
+      pgl.copyIndexBufferData(tessGeo.fillIndices, offset, size, vboMode);
+      pgl.renderIndexBuffer(size);      
+      //gl2f.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(tessGeo.fillIndices, offset, size), vboMode);
+      //gl2f.glDrawElements(GL.GL_TRIANGLES, size, GL.GL_UNSIGNED_INT, 0);
     }  
     
     if (texCache.hasTexture) {
-      tex0 = null;
+      //tex0 = null;
+      
+      // Unbinding all the textures in the cache.      
       for (int i = 0; i < texCache.count; i++) {
         PImage img = texCache.textures[i];
         if (img != null) {
           PTexture tex = ogl.getTexture(img);
-          if (tex0 != tex) {        
-            gl2f.glDisable(tex.glTarget);
-            tex0 = tex;
-          }        
+          if (tex != null) {
+            tex.unbind();  
+          }
+          
+          //if (tex0 != tex) {        
+            //gl2f.glDisable(tex.glTarget);
+            //pgl.disableTexturing(tex.glTarget);
+            //tex0 = tex;
+            
+          //}        
         }
       }
-      if (tex0 != null) {
-        gl2f.glActiveTexture(GL.GL_TEXTURE0);
-        gl2f.glBindTexture(tex0.glTarget, 0);
-      }        
-      gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+//      if (tex0 != null) {
+//        gl2f.glActiveTexture(GL.GL_TEXTURE0);
+//        gl2f.glBindTexture(tex0.glTarget, 0);
+//      }  
+      // Disabling texturing for each of the targets used
+      // by textures in the cache.
+      for (int i = 0; i < texCache.count; i++) {
+        PImage img = texCache.textures[i];
+        if (img != null) {
+          PTexture tex = ogl.getTexture(img);
+          if (tex != null) {
+            pgl.disableTexturing(tex.glTarget);
+          }          
+          //if (tex0 != tex) {        
+            //gl2f.glDisable(tex.glTarget);
+            //pgl.disableTexturing(tex.glTarget);
+            //tex0 = tex;
+            
+          //}        
+        }
+      }
+      
+      //gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+      pgl.disableTexCoordArrays();
     }
     
-    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+//    gl2f.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindIndexBuffer();
+    pgl.unbindVertexBuffer();    
     
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
-    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);    
+//    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
+//    gl2f.glDisableClientState(GL2.GL_COLOR_ARRAY);
+//    gl2f.glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    pgl.disableVertexArrays();
+    pgl.disableColorArrays();
+    pgl.disableNormalArrays();    
   }
+ 
+  // Utility function to render current tessellated geometry, under the assumption that
+  // the texture is already bound.
+  protected void renderTexFill() {
+    if (!fillVBOsCreated) {
+      createFillBuffers();
+      fillVBOsCreated = true;
+    }    
 
+    pgl.enableVertexArrays();
+    pgl.enableColorArrays();
+    pgl.enableNormalArrays();    
+    pgl.enableTexCoordArrays();
+    
+    int size = tessGeo.fillVertexCount;   
+    pgl.bindVertexBuffer(glFillVertexBufferID);
+    pgl.copyVertexBufferData(tessGeo.fillVertices, 3 * size, vboMode);
+    pgl.setVertexFormat(3, 0, 0);
+       
+    pgl.bindVertexBuffer(glFillColorBufferID);
+    pgl.copyVertexBufferData(tessGeo.fillColors, 4 * size, vboMode);    
+    pgl.setColorFormat(4, 0, 0);    
+    
+    pgl.bindVertexBuffer(glFillNormalBufferID);
+    pgl.copyVertexBufferData(tessGeo.fillNormals, 3 * size, vboMode);    
+    pgl.setNormalFormat(3, 0, 0);
+      
+    pgl.bindVertexBuffer(glFillTexCoordBufferID);
+    pgl.copyVertexBufferData(tessGeo.fillTexcoords, 2 * size, vboMode);    
+    pgl.setTexCoordFormat(2, 0, 0);            
+
+    size = tessGeo.fillIndexCount;
+    pgl.bindIndexBuffer(glFillIndexBufferID);
+    pgl.copyIndexBufferData(tessGeo.fillIndices, size, vboMode);
+    pgl.renderIndexBuffer(size);      
+  
+    pgl.unbindIndexBuffer();
+    pgl.unbindVertexBuffer();    
+    
+    pgl.disableTexCoordArrays();
+    pgl.disableVertexArrays();
+    pgl.disableColorArrays();
+    pgl.disableNormalArrays();  
+  }
   
   protected void startLineShader() {
     if (lineShader == null) {
@@ -2470,40 +2657,49 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   protected void setupLineShader(int attrBufID, float[] attribs, int nvert) {
-    int[] viewport = {0, 0, 0, 0};
-    gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
+    int[] viewport = {0, 0, 0, 0};    
+    //gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
     lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
     
     lineShader.setIntUniform("lights", lightCount);           
         
     lineShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
     
-    lineAttribsID = lineShader.getAttribLocation("attribs");     
-    gl2x.glEnableVertexAttribArray(lineAttribsID);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);          
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 4 * nvert), vboMode); 
-    gl2x.glVertexAttribPointer(lineAttribsID, 4, GL.GL_FLOAT, false, 0, 0);        
+    lineAttribsLoc = lineShader.getAttribLocation("attribs");
+        
+//    gl2x.glEnableVertexAttribArray(lineAttribsLoc);
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);          
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 4 * nvert), vboMode); 
+//    gl2x.glVertexAttribPointer(lineAttribsLoc, 4, GL.GL_FLOAT, false, 0, 0);    
+    pgl.enableAttribsArray(lineAttribsLoc);
+    pgl.bindVertexBuffer(attrBufID);
+    pgl.copyVertexBufferData(attribs, 4 * nvert, vboMode);
+    pgl.setAttribsFormat(lineAttribsLoc, 4, 0, 0);
   }
   
   
   protected void setupLineShader(int attrBufID) {
     int[] viewport = {0, 0, 0, 0};
-    gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
+    //gl2f.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);    
     lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
     
     lineShader.setIntUniform("lights", lightCount);           
         
     lineShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
     
-    lineAttribsID = lineShader.getAttribLocation("attribs");     
-    gl2x.glEnableVertexAttribArray(lineAttribsID);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);      
-    gl2x.glVertexAttribPointer(lineAttribsID, 4, GL.GL_FLOAT, false, 0, 0);          
+    lineAttribsLoc = lineShader.getAttribLocation("attribs");     
+    //gl2x.glEnableVertexAttribArray(lineAttribsID);
+    //gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);      
+    //gl2x.glVertexAttribPointer(lineAttribsID, 4, GL.GL_FLOAT, false, 0, 0);    
+    pgl.enableAttribsArray(lineAttribsLoc);
+    pgl.bindVertexBuffer(attrBufID);
+    pgl.setAttribsFormat(lineAttribsLoc, 4, 0, 0);    
   }
   
   
   protected void stopLineShader() {
-    gl2x.glDisableVertexAttribArray(lineAttribsID);
+    //gl2x.glDisableVertexAttribArray(lineAttribsLoc);
+    pgl.disableAttribsArray(lineAttribsLoc);
     lineShader.stop();
   }  
   
@@ -2525,11 +2721,15 @@ public class PGraphicsOpenGL extends PGraphics {
     
     pointShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
     
-    pointAttribsID = PGraphicsOpenGL.pointShader.getAttribLocation("vertDisp");     
-    gl2x.glEnableVertexAttribArray(pointAttribsID);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);
-    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 2 * nvert), vboMode);       
-    ogl.gl2x.glVertexAttribPointer(pointAttribsID, 2, GL.GL_FLOAT, false, 0, 0);      
+    pointAttribsLoc = PGraphicsOpenGL.pointShader.getAttribLocation("vertDisp");     
+//    gl2x.glEnableVertexAttribArray(pointAttribsID);
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);
+//    gl2f.glBufferData(GL.GL_ARRAY_BUFFER, 2 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 2 * nvert), vboMode);       
+//    ogl.gl2x.glVertexAttribPointer(pointAttribsID, 2, GL.GL_FLOAT, false, 0, 0);
+    pgl.enableAttribsArray(pointAttribsLoc);
+    pgl.bindVertexBuffer(attrBufID);
+    pgl.copyVertexBufferData(attribs, 2 * nvert, vboMode);
+    pgl.setAttribsFormat(pointAttribsLoc, 2, 0, 0);    
   }
   
   
@@ -2538,15 +2738,19 @@ public class PGraphicsOpenGL extends PGraphics {
     
     pointShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
     
-    pointAttribsID = PGraphicsOpenGL.pointShader.getAttribLocation("vertDisp");     
-    gl2x.glEnableVertexAttribArray(pointAttribsID);
-    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);      
-    ogl.gl2x.glVertexAttribPointer(pointAttribsID, 2, GL.GL_FLOAT, false, 0, 0);      
+    pointAttribsLoc = PGraphicsOpenGL.pointShader.getAttribLocation("vertDisp");     
+//    gl2x.glEnableVertexAttribArray(pointAttribsID);
+//    gl2f.glBindBuffer(GL.GL_ARRAY_BUFFER, attrBufID);      
+//    ogl.gl2x.glVertexAttribPointer(pointAttribsID, 2, GL.GL_FLOAT, false, 0, 0);      
+    pgl.enableAttribsArray(pointAttribsLoc);
+    pgl.bindVertexBuffer(attrBufID);
+    pgl.setAttribsFormat(pointAttribsLoc, 2, 0, 0);      
   }
   
   
   protected void stopPointShader() {
-    gl2x.glDisableVertexAttribArray(pointAttribsID);
+    //gl2x.glDisableVertexAttribArray(pointAttribsID);
+    pgl.disableAttribsArray(pointAttribsLoc);
     pointShader.stop();  
   }
 
@@ -3088,17 +3292,21 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     int[] temp = { 0 };
-    gl.glGetIntegerv(GL.GL_SAMPLES, temp, 0);
+    pgl.getNumSamples(temp);    
     if (antialias != temp[0]) {
       antialias = temp[0];
       PApplet.println("Effective multisampling level: " + antialias);
     }
     
     if (antialias < 2) {
-      gl2f.glEnable(GL2.GL_MULTISAMPLE);
-      gl2f.glEnable(GL2.GL_POINT_SMOOTH);
-      gl2f.glEnable(GL2.GL_LINE_SMOOTH);
-      gl2f.glEnable(GL2.GL_POLYGON_SMOOTH);      
+      pgl.enableMultisample();
+      pgl.enablePointSmooth();
+      pgl.enableLineSmooth();
+      pgl.enablePolygonSmooth();
+//      gl2f.glEnable(GL2.GL_MULTISAMPLE);
+//      gl2f.glEnable(GL2.GL_POINT_SMOOTH);
+//      gl2f.glEnable(GL2.GL_LINE_SMOOTH);
+//      gl2f.glEnable(GL2.GL_POLYGON_SMOOTH);      
     }    
   }
 
@@ -3116,10 +3324,14 @@ public class PGraphicsOpenGL extends PGraphics {
       }      
     }
     
-    gl2f.glDisable(GL2.GL_MULTISAMPLE);
-    gl2f.glDisable(GL2.GL_POINT_SMOOTH);
-    gl2f.glDisable(GL.GL_LINE_SMOOTH);
-    gl2f.glDisable(GL2.GL_POLYGON_SMOOTH);
+//    gl2f.glDisable(GL2.GL_MULTISAMPLE);
+//    gl2f.glDisable(GL2.GL_POINT_SMOOTH);
+//    gl2f.glDisable(GL.GL_LINE_SMOOTH);
+//    gl2f.glDisable(GL2.GL_POLYGON_SMOOTH);
+    pgl.disableMultisample();
+    pgl.disablePointSmooth();
+    pgl.disableLineSmooth();
+    pgl.disablePolygonSmooth();    
   }   
   
   //////////////////////////////////////////////////////////////
@@ -3304,7 +3516,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void pushMatrix() {
-    gl2f.glPushMatrix();
+    //gl2f.glPushMatrix();
+    pgl.pushMatrix();
     modelviewStack.push(new PMatrix3D(modelview));    
   }
 
@@ -3313,7 +3526,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (hints[DISABLE_TRANSFORM_CACHE]) {
       flush();  
     }    
-    gl2f.glPopMatrix();
+    //gl2f.glPopMatrix();
+    pgl.popMatrix();
     PMatrix3D mat = modelviewStack.pop();
     modelview.set(mat);
   }
@@ -3334,7 +3548,8 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();  
     }
     
-    gl2f.glTranslatef(tx, ty, tz);
+    //gl2f.glTranslatef(tx, ty, tz);
+    pgl.translate(tx, ty, tz);
     modelview.translate(tx, ty, tz);    
   }
 
@@ -3374,7 +3589,8 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();  
     }
            
-    gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
+    //gl2f.glRotatef(PApplet.degrees(angle), v0, v1, v2);
+    pgl.rotate(angle, v0, v1, v2);
     modelview.rotate(angle, v0, v1, v2);
   }
 
@@ -3403,7 +3619,8 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();  
     }
     
-    gl2f.glScalef(sx, sy, sz);
+    //gl2f.glScalef(sx, sy, sz);
+    pgl.scale(sx, sy, sz);
     modelview.scale(sx, sy, sz);
   }
 
@@ -3432,7 +3649,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     
   public void resetMatrix() {
-    gl2f.glLoadIdentity();    
+    //gl2f.glLoadIdentity();
+    pgl.loadIdentity();
     modelview.reset();
   }
   
@@ -3477,7 +3695,8 @@ public class PGraphicsOpenGL extends PGraphics {
     glMatrix[ 2] = n20; glMatrix[ 6] = n21; glMatrix[10] = n22; glMatrix[14] = n23;
     glMatrix[ 3] = n30; glMatrix[ 7] = n31; glMatrix[11] = n32; glMatrix[15] = n33;
 
-    gl2f.glMultMatrixf(glMatrix, 0);
+    //gl2f.glMultMatrixf(glMatrix, 0);
+    pgl.multMatrix(glMatrix);
 
     modelview.apply(n00, n01, n02, n03,
                     n10, n11, n12, n13,
@@ -3487,20 +3706,24 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   protected void loadProjection() {
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    pgl.setProjectionMode();    
+    //gl2f.glMatrixMode(GL2.GL_PROJECTION);
     loadMatrix(projection);
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);    
+    //gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    pgl.setModelviewMode();
   }
   
   
   protected void loadCamera() {
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    //gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    pgl.setModelviewMode();
     loadMatrix(camera);
   }
   
   
   protected void loadModelview() {
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    //gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    pgl.setModelviewMode();
     loadMatrix(modelview);  
   }
   
@@ -3511,7 +3734,8 @@ public class PGraphicsOpenGL extends PGraphics {
     glMatrix[ 2] = pMatrix.m20; glMatrix[ 6] = pMatrix.m21; glMatrix[10] = pMatrix.m22; glMatrix[14] = pMatrix.m23;
     glMatrix[ 3] = pMatrix.m30; glMatrix[ 7] = pMatrix.m31; glMatrix[11] = pMatrix.m32; glMatrix[15] = pMatrix.m33;
     
-    gl2f.glLoadMatrixf(glMatrix, 0);
+    //gl2f.glLoadMatrixf(glMatrix, 0);
+    pgl.loadMatrix(glMatrix);
   }  
   
   
@@ -3561,19 +3785,25 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   public void pushProjection() {
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPushMatrix();
+    pgl.setProjectionMode();
+    pgl.pushMatrix();
+    //gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    //gl2f.glPushMatrix();
     projectionStack.push(new PMatrix3D(projection));
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    //gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    pgl.setModelviewMode();
   }
   
   
   public void popProjection() {
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPopMatrix();
+    //gl2f.glMatrixMode(GL2.GL_PROJECTION);
+    pgl.setProjectionMode();
+    pgl.popMatrix();
+    //gl2f.glPopMatrix();
     PMatrix3D mat = projectionStack.pop();
     projection.set(mat);        
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);    
+    //gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+    pgl.setModelviewMode();
   }
 
   
@@ -4173,11 +4403,13 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   protected void setFillColor() {
-    gl2f.glColor4f(fillR, fillG, fillB, fillA);
+    pgl.setColor(fillR, fillG, fillB, fillA);
+    //gl2f.glColor4f(fillR, fillG, fillB, fillA);
   } 
   
   protected void setTintColor() {
-    gl2f.glColor4f(tintR, tintG, tintB, tintA);
+    pgl.setColor(tintR, tintG, tintB, tintA);
+    //gl2f.glColor4f(tintR, tintG, tintB, tintA);
   }
   
   //////////////////////////////////////////////////////////////
@@ -4208,7 +4440,10 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // OPENGL uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
     // for all vertices are taken from the glColor/color buffer settings.    
-    gl2f.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, colorFloats, 0);
+    //gl2f.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_AMBIENT, colorFloats, 0);
+    
+    pgl.setMaterialAmbient(colorFloats);
+    
   }
 
   // public void specular(int rgb) {
@@ -4232,12 +4467,14 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void specularFromCalc() {
     super.specularFromCalc();
     calcColorBuffer();
-    gl2f.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, colorFloats, 0);
+    //gl2f.glMaterialfv(GL.GL_FRONT_AND_BACK, GL2.GL_SPECULAR, colorFloats, 0);    
+    pgl.setMaterialSpecular(colorFloats);
   }
 
   public void shininess(float shine) {
     super.shininess(shine);
-    gl2f.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, shine);
+    //gl2f.glMaterialf(GL.GL_FRONT_AND_BACK, GL2.GL_SHININESS, shine);    
+    pgl.setMaterialShininess(shine);
   }
 
   // public void emissive(int rgb) {
@@ -4261,7 +4498,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void emissiveFromCalc() {
     super.emissiveFromCalc();
     calcColorBuffer();
-    gl2f.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_EMISSION, colorFloats, 0);
+    //gl2f.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_EMISSION, colorFloats, 0);
+    pgl.setMaterialEmission(colorFloats);
   } 
   
   //////////////////////////////////////////////////////////////
@@ -4594,7 +4832,8 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
       
       lights = true;
-      gl2f.glEnable(GL2.GL_LIGHTING);
+      //gl2f.glEnable(GL2.GL_LIGHTING);
+      pgl.enableLighting();
     }
   }
 
@@ -4604,79 +4843,94 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
       
       lights = false;
-      gl2f.glDisable(GL2.GL_LIGHTING);
+      //gl2f.glDisable(GL2.GL_LIGHTING);
+      pgl.disableLighting();
     }
   }
     
   protected void lightAmbient(int num) {    
-    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_AMBIENT, lightDiffuse[num], 0);
+    //gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_AMBIENT, lightDiffuse[num], 0);    
+    pgl.setAmbientLight(num, lightDiffuse[num]);
+    
   }
 
   protected void lightNoAmbient(int num) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_AMBIENT, zeroLight, 0);
+    //gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_AMBIENT, zeroLight, 0);
+    pgl.setAmbientLight(num, zeroLight);
   }
   
   protected void lightNoSpot(int num) {
-    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_CUTOFF, 180);
-    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_EXPONENT, 0);
+    pgl.setSpotLightCutoff(num, 180);
+    pgl.setSpotLightExponent(num, 0);    
+//    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_CUTOFF, 180);
+//    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_EXPONENT, 0);
   }
 
   protected void lightDiffuse(int num) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_DIFFUSE, lightDiffuse[num], 0);
+    pgl.setDiffuseLight(num, lightDiffuse[num]);
+//    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_DIFFUSE, lightDiffuse[num], 0);
   }
 
   protected void lightNoDiffuse(int num) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_DIFFUSE, zeroLight, 0);
+    //gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_DIFFUSE, zeroLight, 0);
+    pgl.setDiffuseLight(num, zeroLight);
   }
     
   protected void lightDirection(int num) {
     if (lightType[num] == DIRECTIONAL) {      
-      // The w component of lightNormal[num] is zero, so the light is considered as
-      // a directional source because the position effectively becomes a direction
-      // in homogeneous coordinates:
-      // http://glprogramming.com/red/appendixf.html
-      gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_POSITION, lightNormal[num], 0);
+//      gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_POSITION, lightNormal[num], 0);
+      pgl.setLightDirection(num, lightNormal[num]);
+      
     } else { // spotlight
-      gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_DIRECTION, lightNormal[num], 0);
+      pgl.setSpotLightDirection(num, lightNormal[num]);      
+      //gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_DIRECTION, lightNormal[num], 0);
     }
   }
 
   protected void lightEnable(int num) {
-    gl2f.glEnable(GL2.GL_LIGHT0 + num);
+//    gl2f.glEnable(GL2.GL_LIGHT0 + num);
+    pgl.enableLight(num);
   }
 
   protected void lightDisable(int num) {
-    gl2f.glDisable(GL2.GL_LIGHT0 + num);
+    //gl2f.glDisable(GL2.GL_LIGHT0 + num);
+    pgl.disableLight(num);
   }
 
   protected void lightFalloff(int num) {
-    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_CONSTANT_ATTENUATION,
-        lightFalloffConstant[num]);
-    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_LINEAR_ATTENUATION,
-        lightFalloffLinear[num]);
-    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_QUADRATIC_ATTENUATION,
-        lightFalloffQuadratic[num]);
+    pgl.setLightConstantAttenuation(num, lightFalloffConstant[num]);
+    pgl.setLightLinearAttenuation(num, lightFalloffLinear[num]);
+    pgl.setLightQuadraticAttenuation(num, lightFalloffQuadratic[num]);
+    
+//    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_CONSTANT_ATTENUATION, lightFalloffConstant[num]);
+//    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_LINEAR_ATTENUATION, lightFalloffLinear[num]);
+//    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_QUADRATIC_ATTENUATION, lightFalloffQuadratic[num]);
   }
 
   protected void lightPosition(int num) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_POSITION, lightPosition[num], 0);
+    pgl.setLightPosition(num, lightPosition[num]);
+//    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_POSITION, lightPosition[num], 0);
   }
 
   protected void lightSpecular(int num) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_SPECULAR, lightSpecular[num], 0);
+    pgl.setSpecularLight(num, lightSpecular[num]);
+//    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_SPECULAR, lightSpecular[num], 0);
   }
 
   protected void lightNoSpecular(int num) {
-    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_SPECULAR, zeroLight, 0);
+//    gl2f.glLightfv(GL2.GL_LIGHT0 + num, GL2.GL_SPECULAR, zeroLight, 0);
+    pgl.setSpecularLight(num, zeroLight);
   }
   
   protected void lightSpotAngle(int num) {
-    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_CUTOFF, lightSpotAngle[num]);
+    pgl.setSpotLightCutoff(num, lightSpotAngle[num]);
+    //gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_CUTOFF, lightSpotAngle[num]);
+    
   }
 
   protected void lightSpotConcentration(int num) {
-    gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_EXPONENT,
-        lightSpotConcentration[num]);
+    pgl.setSpotLightExponent(num, lightSpotConcentration[num]);    
+    //gl2f.glLightf(GL2.GL_LIGHT0 + num, GL2.GL_SPOT_EXPONENT, lightSpotConcentration[num]);
   }  
   
   //////////////////////////////////////////////////////////////
@@ -4692,11 +4946,15 @@ public class PGraphicsOpenGL extends PGraphics {
     tessGeo.reset();  
     texCache.reset();
     
-    gl.glClearColor(0, 0, 0, 0);
-    gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+    pgl.setClearColor(0, 0, 0, 0);
+    pgl.clearDepthBuffer();
+    //gl.glClearColor(0, 0, 0, 0);
+    //gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 
-    gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+    //gl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
+    //gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+    pgl.setClearColor(backgroundR, backgroundG, backgroundB, 1);
+    pgl.clearColorBuffer();    
   }  
   
   //////////////////////////////////////////////////////////////
@@ -4764,9 +5022,11 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public void report(String where) {
     if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
-      int err = gl.glGetError();
+      //int err = gl.glGetError();
+      int err = pgl.getError();
       if (err != 0) {
-        String errString = glu.gluErrorString(err);
+        //String errString = glu.gluErrorString(err);
+        String errString = pgl.getErrorString(err);
         String msg = "OpenGL error " + err + " at " + where + ": " + errString;
         PGraphics.showWarning(msg);
       }
@@ -4831,8 +5091,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
         
     pixelBuffer.rewind();
-    if (primarySurface) gl2x.glReadBuffer(GL.GL_FRONT);
-    gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer);    
+    if (primarySurface) {
+      pgl.setReadBuffer(PGLJava.FRONT);
+//      gl2x.glReadBuffer(GL.GL_FRONT);
+    }
+    pgl.readPixels(pixelBuffer, 0, 0, width, height);    
+//    gl.glReadPixels(0, 0, width, height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, pixelBuffer); 
     
     if (notCurrent) {
       popFramebuffer();
@@ -5223,7 +5487,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void copyFrameToTexture() {
     // Make sure that the execution off all the openGL commands is 
     // finished before loading the texture. 
-    gl.glFinish(); 
+    //gl.glFinish(); 
+    pgl.finish();
     loadTexture();    
   }
   
@@ -5270,8 +5535,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
      
     getsetBuffer.rewind();
-    if (primarySurface) gl2x.glReadBuffer(GL.GL_FRONT); 
-    gl.glReadPixels(x, height - y - 1, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
+    if (primarySurface) {
+//      gl2x.glReadBuffer(GL.GL_FRONT);
+      pgl.setReadBuffer(PGLJava.FRONT);
+    }
+    //gl.glReadPixels(x, height - y - 1, 1, 1, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getsetBuffer);
+    pgl.readPixels(getsetBuffer, x, height - y - 1, 1, 1);
 
     if (notCurrent) {
       popFramebuffer();
@@ -5308,8 +5577,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
 
     newbieBuffer.rewind();
-    if (primarySurface) gl2x.glReadBuffer(GL.GL_FRONT);
-    gl.glReadPixels(x, height - y - h, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
+    if (primarySurface) {
+//      gl2x.glReadBuffer(GL.GL_FRONT);
+      pgl.setReadBuffer(PGLJava.FRONT);
+    }
+//    gl.glReadPixels(x, height - y - h, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, newbieBuffer);
+    pgl.readPixels(newbieBuffer, x, height - y - h, w, h);
 
     if (notCurrent) {
       popFramebuffer();
@@ -5515,51 +5788,88 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     
       blendMode = mode;
-      gl.glEnable(GL.GL_BLEND);
+//      gl.glEnable(GL.GL_BLEND);
+      pgl.enableBlend();
+      
       
       if (mode == REPLACE) {
         // This is equivalent to disable blending.
-        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-        gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
+        if (blendEqSupported) {
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+          //gl.glBlendEquation(GL.GL_FUNC_ADD);
+        }
+        //gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
+        pgl.setReplaceBlend();        
       } else if (mode == BLEND) {
-        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        if (blendEqSupported) {
+          //gl.glBlendEquation(GL.GL_FUNC_ADD);
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+        }
+        //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        pgl.setDefaultBlend();
       } else if (mode == ADD) {
-        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
+        if (blendEqSupported) {
+          //gl.glBlendEquation(GL.GL_FUNC_ADD);
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+        }
+        //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE);
+        pgl.setAdditiveBlend();
       } else if (mode == SUBTRACT) {
-        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-        gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ZERO); 
+        if (blendEqSupported) {
+          //gl.glBlendEquation(GL.GL_FUNC_ADD);
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+        }
+        //gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ZERO);
+        pgl.setSubstractiveBlend();
       } else if (mode == LIGHTEST) {
         if (blendEqSupported) { 
-          gl.glBlendEquation(GL2.GL_MAX);
-          gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
+          //gl.glBlendEquation(GL2.GL_MAX);
+          //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_MAX);
+          pgl.setLightestBlend();
         } else {
           PGraphics.showWarning("P3D: This blend mode is currently unsupported.");
         }
       } else if (mode == DARKEST) {
         if (blendEqSupported) { 
-          gl.glBlendEquation(GL2.GL_MIN);      
-          gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
+          //gl.glBlendEquation(GL2.GL_MIN);      
+          //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_DST_ALPHA);
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_MIN);
+          pgl.setDarkestBlend();
         } else {
           PGraphics.showWarning("P3D: This blend mode is currently unsupported.");  
         }
       } else if (mode == DIFFERENCE) {
         if (blendEqSupported) {
-          gl.glBlendEquation(GL.GL_FUNC_REVERSE_SUBTRACT);
-          gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
+          //gl.glBlendEquation(GL.GL_FUNC_REVERSE_SUBTRACT);
+          //gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE);
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_REVERSE_SUBTRACT);
+          pgl.setDifferenceBlend();
+          
         } else {
           PGraphics.showWarning("P3D: This blend mode is currently unsupported.");
         }       
       } else if (mode == EXCLUSION) {
-        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-        gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE_MINUS_SRC_COLOR);
+        if (blendEqSupported) {
+          //gl.glBlendEquation(GL.GL_FUNC_ADD);
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+        }
+        //gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE_MINUS_SRC_COLOR);
+        pgl.setExclussionBlend();
       } else if (mode == MULTIPLY) {
-        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);      
-        gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_SRC_COLOR);
+        if (blendEqSupported) {
+          //gl.glBlendEquation(GL.GL_FUNC_ADD);
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+        }
+        //gl.glBlendFunc(GL.GL_DST_COLOR, GL.GL_SRC_COLOR);
+        pgl.setMultiplyBlend();
       } else if (mode == SCREEN) {
-        if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-        gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE);
+        if (blendEqSupported) {
+          //gl.glBlendEquation(GL.GL_FUNC_ADD);
+          pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+        }
+//        gl.glBlendFunc(GL.GL_ONE_MINUS_DST_COLOR, GL.GL_ONE);
+        pgl.setScreenBlend();
       }  
       // HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be implemented
       // in fixed-function pipeline because they require conditional blending and
@@ -5569,9 +5879,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void setDefaultBlend() {
     blendMode = BLEND;
-    gl.glEnable(GL.GL_BLEND);
-    if (blendEqSupported) gl.glBlendEquation(GL.GL_FUNC_ADD);
-    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);    
+    //gl.glEnable(GL.GL_BLEND);
+    pgl.enableBlend();
+    if (blendEqSupported) {
+      //gl.glBlendEquation(GL.GL_FUNC_ADD);
+      pgl.setBlendEquation(PGLJava.BLEND_EQ_ADD);
+    }
+    //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+    pgl.setDefaultBlend();
   }
   
   
@@ -5711,25 +6026,32 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   
-  /** Utility function to render texture wihtout blend. */
+  /** Utility function to render texture without blend. */
   protected void drawTexture(int target, int id, int tw, int th, int[] crop, int x, int y, int w, int h) {
-    gl.glEnable(target);
-    gl.glBindTexture(target, id);
+//    gl.glEnable(target);
+//    gl.glBindTexture(target, id);
+    pgl.enableTexturing(target);
+    pgl.bindTexture(target, id);
     
     int savedBlendMode = blendMode;
     blendMode(REPLACE); 
     
     // The texels of the texture replace the color of wherever is on the screen.
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);       
+//    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);       
+    pgl.setTexEnvironmentMode(PGLJava.REPLACE);
+    
     
     drawTexture(tw, th, crop, x, y, w, h);
     
     // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
     // with the current fragment color.
-    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);        
+//    gl2f.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);        
+    pgl.setTexEnvironmentMode(PGLJava.MODULATE);
     
-    gl.glBindTexture(target, 0);
-    gl.glDisable(target);
+//    gl.glBindTexture(target, 0);
+//    gl.glDisable(target);    
+    pgl.unbindTexture(target);
+    pgl.disableTexturing(target);
     
     blendMode(savedBlendMode);
   }  
@@ -5747,20 +6069,21 @@ public class PGraphicsOpenGL extends PGraphics {
    * in OpenGL ES. 
    */
   protected void drawTexture(int tw, int th, int[] crop, int x, int y, int w, int h) {
-    gl.glDepthMask(false);
-
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPushMatrix();
-    gl2f.glLoadIdentity();
+    flush();
     
-    gl2f.glOrthof(0, width, 0, height, -1, 1);
-    
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glPushMatrix();
-    gl2f.glLoadIdentity();      
+    pgl.disableDepthMask();
 
-    gl2f.glTranslatef(x, y, 0);
-    gl2f.glScalef(w, h, 1);
+    pgl.setProjectionMode();
+    pgl.pushMatrix();
+    pgl.loadIdentity();
+    pgl.setOrthographicProjection(0, width, 0, height, -1, 1);
+    
+    pgl.setModelviewMode();
+    pgl.pushMatrix();
+    pgl.loadIdentity();
+
+    pgl.translate(x, y, 0);
+    pgl.scale(w, h, 1);
     // Rendering the quad with the appropriate texture coordinates needed for the
     // specified crop region
     float s0 = (float)crop[0] / tw;
@@ -5770,65 +6093,70 @@ public class PGraphicsOpenGL extends PGraphics {
     drawTexQuad(s0, t0, s1, t1);
 
     // Restoring matrices.
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPopMatrix();
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glPopMatrix();
+    pgl.setProjectionMode();
+    pgl.popMatrix();
+    pgl.setModelviewMode();
+    pgl.popMatrix();
     
     if (hintEnabled(ENABLE_DEPTH_MASK)) {
-      gl.glDepthMask(true);        
-    } else {
-      gl.glDepthMask(false);
-    }    
-  }
-  
-  // TODO: re-implement using built-in quads.
-  protected void allocateTexQuad() {  
-    ByteBuffer vbb = ByteBuffer.allocateDirect(4 * 3 * SIZEOF_FLOAT);
-    vbb.order(ByteOrder.nativeOrder());
-    quadVertexBuffer = vbb.asFloatBuffer();
-
-    ByteBuffer tbb = ByteBuffer.allocateDirect(4 * 2 * SIZEOF_FLOAT);
-    tbb.order(ByteOrder.nativeOrder());
-    quadTexCoordBuffer = tbb.asFloatBuffer();
+      pgl.enableDepthMask();
+    }       
     
-    quadVertexBuffer.position(0);       
-    quadVertexBuffer.put(new float[] {0, 0, 0, 
-                                      0, 1, 0, 
-                                      1, 0, 0,                        
-                                      1, 1, 0});
+    
+//    gl.glDepthMask(false);
+//
+//    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+//    gl2f.glPushMatrix();
+//    gl2f.glLoadIdentity();
+//    
+//    gl2f.glOrthof(0, width, 0, height, -1, 1);
+//    
+//    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+//    gl2f.glPushMatrix();
+//    gl2f.glLoadIdentity();      
+//
+//    gl2f.glTranslatef(x, y, 0);
+//    gl2f.glScalef(w, h, 1);
+//    // Rendering the quad with the appropriate texture coordinates needed for the
+//    // specified crop region
+//    float s0 = (float)crop[0] / tw;
+//    float s1 = (float)(crop[0] + crop[2]) / tw;    
+//    float t0 = (float)crop[1] / th;
+//    float t1 = (float)(crop[1] + crop[3]) / th;
+//    drawTexQuad(s0, t0, s1, t1);
+//
+//    // Restoring matrices.
+//    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+//    gl2f.glPopMatrix();
+//    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+//    gl2f.glPopMatrix();
+//    
+//    if (hintEnabled(ENABLE_DEPTH_MASK)) {
+//      gl.glDepthMask(true);        
+//    } else {
+//      gl.glDepthMask(false);
+//    }    
   }
   
-  protected void drawTexQuad() { 
+  
+  protected void drawTexQuad() {
     drawTexQuad(0, 0, 1, 1);
   }
   
   /** 
    * Pushes a normalized (1x1) textured quad to the GPU.
    */
-  protected void drawTexQuad(float u0, float v0, float u1, float v1) {  
-    if (quadVertexBuffer == null) {
-      allocateTexQuad();
-    }
-    
-    quadTexCoordBuffer.position(0);
-    quadTexCoordBuffer.put(new float[] {u0, v0, 
-                                        u0, v1, 
-                                        u1, v0, 
-                                        u1, v1});
-    
-    gl2f.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    gl2f.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-
-    quadVertexBuffer.position(0);
-    quadTexCoordBuffer.position(0);
-    
-    gl2f.glVertexPointer(3, GL.GL_FLOAT, 0, quadVertexBuffer);
-    gl2f.glTexCoordPointer(2, GL.GL_FLOAT, 0, quadTexCoordBuffer);
-    gl2f.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
-
-    gl2f.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-    gl2f.glDisableClientState(GL2.GL_VERTEX_ARRAY);    
+  protected void drawTexQuad(float u0, float v0, float u1, float v1) {
+    // TODO: need to test...
+    stroke = false;
+    beginShape(QUAD);
+    vertex(0, 0, u0, v0);
+    vertex(1, 0, u1, v0);
+    vertex(1, 1, u1, v1);
+    vertex(0, 1, u0, v1);
+    endShape();
+    tessellate(OPEN);    
+    renderTexFill();   
   }  
   
   
@@ -5837,11 +6165,19 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   protected void copyToTexture(PTexture tex, IntBuffer buffer, int x, int y, int w, int h) {    
     buffer.rewind();
-    gl.glEnable(tex.glTarget);
-    gl.glBindTexture(tex.glTarget, tex.glID);    
-    gl.glTexSubImage2D(tex.glTarget, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
-    gl.glBindTexture(tex.glTarget, 0);
-    gl.glDisable(tex.glTarget);
+    
+    pgl.enableTexturing(tex.glTarget);
+    pgl.bindTexture(tex.glTarget, tex.glID);    
+    pgl.copyTexSubImage(buffer, tex.glTarget, x, y, w, h);
+    pgl.bindTexture(tex.glTarget, 0);
+    pgl.disableTexturing(tex.glTarget);
+    
+    
+//    gl.glEnable(tex.glTarget);
+//    gl.glBindTexture(tex.glTarget, tex.glID);    
+//    gl.glTexSubImage2D(tex.glTarget, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buffer);
+//    gl.glBindTexture(tex.glTarget, 0);
+//    gl.glDisable(tex.glTarget);
   }   
 
   //////////////////////////////////////////////////////////////
@@ -5851,44 +6187,60 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void setSurfaceParams() {
     // The default shade model is GL_SMOOTH, but we set
     // here just in case...
-    gl2f.glShadeModel(GL2.GL_SMOOTH);    
+    //gl2f.glShadeModel(GL2.GL_SMOOTH);
+    pgl.setShadeModel(PGLJava.SMOOTH);
+    
     
     // The ambient and diffuse components for each vertex are taken
     // from the glColor/color buffer setting:
-    gl2f.glEnable(GL2.GL_COLOR_MATERIAL);
+//    gl2f.glEnable(GL2.GL_COLOR_MATERIAL);
+    pgl.enableColorMaterial();
+    
     // For a quick overview of how the lighting model works in OpenGL
     // see this page:
     // http://www.sjbaker.org/steve/omniv/opengl_lighting.html
     
     // Some normal related settings:
-    gl2f.glEnable(GL2.GL_NORMALIZE);
-    gl2f.glEnable(GL2.GL_RESCALE_NORMAL);
+    pgl.enableNormalization();
+    pgl.enableRescaleNormals();    
+//    gl2f.glEnable(GL2.GL_NORMALIZE);
+//    gl2f.glEnable(GL2.GL_RESCALE_NORMAL);
     
     // Light model defaults:
     // The default opengl ambient light is (0.2, 0.2, 0.2), so
     // here we set our own default value.
-    gl2f.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, baseLight, 0);
-    gl2f.glLightModelf(GL2.GL_LIGHT_MODEL_TWO_SIDE, 0);    
+    pgl.setTwoSidedLightModel();
+    pgl.setDefaultAmbientLight(baseLight);    
+//    gl2f.glLightModelf(GL2.GL_LIGHT_MODEL_TWO_SIDE, 0);
+//    gl2f.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, baseLight, 0);        
   }  
   
   protected void saveGLMatrices() {
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPushMatrix();
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glPushMatrix();      
+    pgl.setProjectionMode();
+    pgl.pushMatrix();
+    pgl.setModelviewMode();
+    pgl.pushMatrix();    
+//    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+//    gl2f.glPushMatrix();
+//    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+//    gl2f.glPushMatrix();      
   }
 
   protected void restoreGLMatrices() {
-    // Restoring matrices.
-    gl2f.glMatrixMode(GL2.GL_PROJECTION);
-    gl2f.glPopMatrix();
-    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
-    gl2f.glPopMatrix();    
+    pgl.setProjectionMode();
+    pgl.popMatrix();
+    pgl.setModelviewMode();
+    pgl.popMatrix();
+//    gl2f.glMatrixMode(GL2.GL_PROJECTION);
+//    gl2f.glPopMatrix();
+//    gl2f.glMatrixMode(GL2.GL_MODELVIEW);
+//    gl2f.glPopMatrix();    
   }  
   
     
   protected void setDefNormals(float nx, float ny, float nz) { 
-    gl2f.glNormal3f(nx, ny, nz);
+    pgl.setNormal(nx, ny, nz);  
+//    gl2f.glNormal3f(nx, ny, nz);
   }
   
   //////////////////////////////////////////////////////////////
@@ -5942,10 +6294,11 @@ public class PGraphicsOpenGL extends PGraphics {
     profile = null;      
     
     profile = GLProfile.getDefault();
+    
     //profile = GLProfile.get(GLProfile.GL2ES1);    
     //profile = GLProfile.get(GLProfile.GL4bc);
     //profile = GLProfile.getMaxProgrammable();    
-    pipeline = FIXED;
+    pgl.pipeline = PGLJava.FIXED; 
 
     /*
     // Profile auto-selection disabled for the time being.
@@ -6029,7 +6382,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
-    if (PGraphicsOpenGL.fboMultisampleSupported && gl2x != null && 1 < antialias) {
+    if (PGraphicsOpenGL.fboMultisampleSupported && pgl.gl2x != null && 1 < antialias) {
       int nsamples = antialias;
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, nsamples, 0, 
                                                          offscreenDepthBits, offscreenStencilBits, 
@@ -6062,63 +6415,28 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   protected void getGLParameters() {
-    OPENGL_VENDOR = gl.glGetString(GL.GL_VENDOR);
-    OPENGL_RENDERER = gl.glGetString(GL.GL_RENDERER);
-    OPENGL_VERSION = gl.glGetString(GL.GL_VERSION);
-
-    // Better way to check for extensions and related functions (taken from jMonkeyEngine):
-    // renderbufferStorageMultisample = gl.isExtensionAvailable("GL_EXT_framebuffer_multisample") && 
-    //                                  gl.isFunctionAvailable("glRenderbufferStorageMultisample");    
-    // For more details on GL properties initialiation in jMonkey using JOGL2, take a look at:
-    // http://code.google.com/p/jmonkeyengine/source/browse/branches/jme3/src/jogl2/com/jme3/renderer/jogl/JoglRenderer.java
+//    OPENGL_VENDOR = gl.glGetString(GL.GL_VENDOR);
+//    OPENGL_RENDERER = gl.glGetString(GL.GL_RENDERER);
+//    OPENGL_VERSION = gl.glGetString(GL.GL_VERSION);
+//  OPENGL_EXTENSIONS = gl.glGetString(GL.GL_EXTENSIONS);
+    OPENGL_VENDOR = pgl.getVendorString();  
+    OPENGL_RENDERER = pgl.getRendererString();
+    OPENGL_VERSION = pgl.getVersionString();    
+    OPENGL_EXTENSIONS = pgl.getExtensionsString();
+  
+    npotTexSupported = pgl.isNpotTexSupported();
+    mipmapGeneration = pgl.hasMipmapGeneration();
+    matrixGetSupported = pgl.isMatrixGetSupported();
+    texenvCrossbarSupported = pgl.isTexenvCrossbarSupported();
+    vboSupported = pgl.isVboSupported();
+    fboSupported = pgl.isFboSupported();
+    fboMultisampleSupported = pgl.isFboMultisampleSupported();
+    blendEqSupported = pgl.isBlendEqSupported(); 
     
-    npotTexSupported = false;
-    mipmapGeneration = false;
-    matrixGetSupported = false;
-    texenvCrossbarSupported = false;
-    vboSupported = false;
-    fboSupported = false;
-    fboMultisampleSupported = false;
-    OPENGL_EXTENSIONS = gl.glGetString(GL.GL_EXTENSIONS);      
-    if (-1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two")) {
-      npotTexSupported = true;
-    }
-    if (-1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap")) {
-      mipmapGeneration = true;
-    }
-    if (-1 < OPENGL_EXTENSIONS.indexOf("matrix_get")) {
-      matrixGetSupported = true;
-    }
-    if (-1 < OPENGL_EXTENSIONS.indexOf("texture_env_crossbar")) {
-      texenvCrossbarSupported = true;
-    }
-    if (-1 < OPENGL_EXTENSIONS.indexOf("vertex_buffer_object")) {
-      vboSupported = true;
-    }
-    if (-1 < OPENGL_EXTENSIONS.indexOf("framebuffer_object")) {
-      fboSupported = true;
-    }
-    if (-1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample")) {
-      fboMultisampleSupported = true;
-    }    
-
-    blendEqSupported = true;   
-    
-    int temp[] = new int[2];    
-          
-    gl.glGetIntegerv(GL.GL_MAX_TEXTURE_SIZE, temp, 0);
-    maxTextureSize = temp[0];
-
-    gl.glGetIntegerv(GL.GL_ALIASED_LINE_WIDTH_RANGE, temp, 0);
-    maxLineWidth  = temp[1];        
-    
-    gl.glGetIntegerv(GL.GL_ALIASED_POINT_SIZE_RANGE, temp, 0);
-    maxPointSize = temp[1];        
-    
-    // The maximum number of texture units only makes sense in the
-    // fixed pipeline.
-    gl.glGetIntegerv(GL2.GL_MAX_TEXTURE_UNITS, temp, 0);
-    maxTextureUnits = temp[0];
+    maxTextureSize = pgl.getMaxTexureSize();  
+    maxLineWidth = pgl.getMaxAliasedLineWidth();        
+    maxPointSize = pgl.getMaxAliasedPointSize();        
+    maxTextureUnits = pgl.getMaxTextureUnits();
     
     glParamsRead = true;
   }

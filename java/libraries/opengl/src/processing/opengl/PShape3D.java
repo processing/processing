@@ -23,10 +23,6 @@
 
 package processing.opengl;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GL2ES1;
-
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
@@ -34,16 +30,13 @@ import processing.core.PMatrix;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
-import processing.core.PStyle;
 import processing.core.PVector;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
 
 import java.io.BufferedReader;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -81,6 +74,7 @@ import java.util.Hashtable;
 
 public class PShape3D extends PShape {
   protected PGraphicsOpenGL ogl;
+  protected PGLJava pgl;
 
   protected PShape3D root;  
   protected int glMode;
@@ -247,8 +241,9 @@ public class PShape3D extends PShape {
   
   public PShape3D(PApplet parent, int family) {
     ogl = (PGraphicsOpenGL)parent.g;
+    pgl = ogl.pgl;
     
-    glMode = GL.GL_STATIC_DRAW;
+    glMode = PGLJava.STATIC_DRAW;
     
     glFillVertexBufferID = 0;
     glFillColorBufferID = 0;
@@ -327,11 +322,11 @@ public class PShape3D extends PShape {
   
   public void setMode(int mode) {
     if (mode == STATIC) {
-      glMode = GL.GL_STATIC_DRAW;
+      glMode = PGLJava.STATIC_DRAW;
     } else if (mode == DYNAMIC) {
-      glMode = GL.GL_DYNAMIC_DRAW;
+      glMode = PGLJava.DYNAMIC_DRAW;
     } else if (mode == STREAM) {
-      glMode = GL2.GL_STREAM_COPY;
+      glMode = PGLJava.STREAM_DRAW;
     }
   }
   
@@ -1889,6 +1884,7 @@ public class PShape3D extends PShape {
   
   
   public FloatBuffer mapFillVertices() {
+    /*
     ByteBuffer bb;
     
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillVertexBufferID);
@@ -1898,16 +1894,21 @@ public class PShape3D extends PShape {
       bb = ogl.gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, 3 * tess.firstFillVertex, 3 * tess.fillVertexCount, GL2.GL_READ_WRITE);  
     }
     return bb.asFloatBuffer();
+    */
+    return null;
   }
   
   public void unmapFillVertices() {
+  /*
     getGl().glUnmapBuffer(GL.GL_ARRAY_BUFFER);
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
+    */
   }
   
 
 
   public FloatBuffer mapLineVertices() {
+    /*
     ByteBuffer bb;
     
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineVertexBufferID);
@@ -1917,16 +1918,21 @@ public class PShape3D extends PShape {
       bb = ogl.gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, 3 * tess.firstLineVertex, 3 * tess.lineVertexCount, GL2.GL_READ_WRITE);  
     }
     return bb.asFloatBuffer();
+    */
+    return null;
   }
   
   public void unmapLineVertices() {
+    /*
     getGl().glUnmapBuffer(GL.GL_ARRAY_BUFFER);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    */   
   }
   
   
   
   public FloatBuffer mapLineAttributes() {
+    /*
     ByteBuffer bb;
     
     getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineAttribBufferID);
@@ -1936,11 +1942,15 @@ public class PShape3D extends PShape {
       bb = ogl.gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, 3 * tess.firstLineVertex, 3 * tess.lineVertexCount, GL2.GL_READ_WRITE);  
     }
     return bb.asFloatBuffer();
+    */
+    return null;
   }
   
   public void unmapLineAttributes() {
+    /*
     getGl().glUnmapBuffer(GL.GL_ARRAY_BUFFER);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
+    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    */   
   }  
   
   
@@ -2406,27 +2416,41 @@ public class PShape3D extends PShape {
 
   
   protected void initFillBuffers(int nvert, int nind) {
-    glFillVertexBufferID = ogl.createVertexBufferObject();    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
+    glFillVertexBufferID = ogl.createVertexBufferObject();  
+    pgl.bindVertexBuffer(glFillVertexBufferID);
+    pgl.initVertexBuffer(3 * nvert, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
     
     glFillColorBufferID = ogl.createVertexBufferObject();
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
-
+    pgl.bindVertexBuffer(glFillColorBufferID);
+    pgl.initVertexBuffer(4 * nvert, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);   
+    
     glFillNormalBufferID = ogl.createVertexBufferObject();
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
+    pgl.bindVertexBuffer(glFillNormalBufferID);
+    pgl.initVertexBuffer(3 * nvert, glMode);     
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
     
     glFillTexCoordBufferID = ogl.createVertexBufferObject();
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 2 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
+    pgl.bindVertexBuffer(glFillTexCoordBufferID);
+    pgl.initVertexBuffer(2 * nvert, glMode);  
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 2 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
     
-    glFillIndexBufferID = ogl.createVertexBufferObject();    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillIndexBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glMode);
+    pgl.unbindVertexBuffer();
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    glFillIndexBufferID = ogl.createVertexBufferObject();  
+    pgl.bindIndexBuffer(glFillIndexBufferID);
+    pgl.initIndexBuffer(nind, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillIndexBufferID);    
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glMode);
+    
+    pgl.unbindIndexBuffer();  
   }  
   
   
@@ -2608,88 +2632,131 @@ public class PShape3D extends PShape {
   protected void copyFillGeometry(int offset, int size, 
                                   float[] vertices, float[] colors, 
                                   float[] normals, float[] texcoords) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+    pgl.bindVertexBuffer(glFillVertexBufferID);
+    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));   
+    pgl.bindVertexBuffer(glFillColorBufferID);
+    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));   
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+    pgl.bindVertexBuffer(glFillNormalBufferID);
+    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(texcoords));
+    pgl.bindVertexBuffer(glFillTexCoordBufferID);
+    pgl.copyVertexBufferSubData(texcoords, 2 * offset, 2 * size, glMode);     
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(texcoords));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindVertexBuffer();    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }
 
   
   protected void copyFillVertices(int offset, int size, float[] vertices) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillVertexBufferID);    
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    pgl.bindVertexBuffer(glFillVertexBufferID);
+    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);      
+    pgl.unbindVertexBuffer();
   }
   
   
   protected void copyFillColors(int offset, int size, float[] colors) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));      
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillColorBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));      
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    pgl.bindVertexBuffer(glFillColorBufferID);
+    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);     
+    pgl.unbindVertexBuffer();
   }  
   
   
   protected void copyFillNormals(int offset, int size, float[] normals) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    
+    pgl.bindVertexBuffer(glFillNormalBufferID);
+    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);    
+    pgl.unbindVertexBuffer();
   }  
 
   
   protected void copyFillTexCoords(int offset, int size, float[] texcoords) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(texcoords));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(texcoords));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+     
+    pgl.bindVertexBuffer(glFillTexCoordBufferID);
+    pgl.copyVertexBufferSubData(texcoords, 2 * offset, 2 * size, glMode);      
+    pgl.unbindVertexBuffer();
   }   
   
   
   protected void copyFillIndices(int offset, int size, int[] indices) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillIndexBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
-                            size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glFillIndexBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
+//                            size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    pgl.bindIndexBuffer(glFillTexCoordBufferID);
+    pgl.copyIndexBufferSubData(indices, offset, size, glMode); 
+    pgl.unbindVertexBuffer();
   }
   
   
   protected void initLineBuffers(int nvert, int nind) {
     glLineVertexBufferID = ogl.createVertexBufferObject();    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
+    pgl.bindVertexBuffer(glLineVertexBufferID);
+    pgl.initVertexBuffer(3 * nvert, glMode);   
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);    
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
     
     glLineColorBufferID = ogl.createVertexBufferObject();
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
+    pgl.bindVertexBuffer(glLineColorBufferID);
+    pgl.initVertexBuffer(4 * nvert, glMode);       
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
 
     glLineNormalBufferID = ogl.createVertexBufferObject();    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
+    pgl.bindVertexBuffer(glLineNormalBufferID);
+    pgl.initVertexBuffer(3 * nvert, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);    
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
     
     glLineAttribBufferID = ogl.createVertexBufferObject();
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineAttribBufferID);   
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
+    pgl.bindVertexBuffer(glLineAttribBufferID);
+    pgl.initVertexBuffer(4 * nvert, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineAttribBufferID);   
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
+    
+    pgl.unbindVertexBuffer();    
     
     glLineIndexBufferID = ogl.createVertexBufferObject();    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineIndexBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glMode);
+    pgl.bindIndexBuffer(glLineIndexBufferID);
+    pgl.initIndexBuffer(nind, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineIndexBufferID);    
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glMode);
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);         
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindIndexBuffer();
   }
   
   
@@ -2714,88 +2781,130 @@ public class PShape3D extends PShape {
   
   protected void copyLineGeometry(int offset, int size, 
                                   float[] vertices, float[] colors, float[] normals, float[] attribs) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+    pgl.bindVertexBuffer(glLineVertexBufferID);
+    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);     
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
 
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+    pgl.bindVertexBuffer(glLineColorBufferID);
+    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+    pgl.bindVertexBuffer(glLineNormalBufferID);
+    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineAttribBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));
+    pgl.bindVertexBuffer(glLineAttribBufferID);
+    pgl.copyVertexBufferSubData(attribs, 4 * offset, 4 * size, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindVertexBuffer();
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }    
   
   
   protected void copyLineVertices(int offset, int size, float[] vertices) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineVertexBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    pgl.bindVertexBuffer(glLineVertexBufferID);
+    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);    
+    pgl.unbindVertexBuffer();
   }     
   
   
   protected void copyLineColors(int offset, int size, float[] colors) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineColorBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    pgl.bindVertexBuffer(glLineColorBufferID);
+    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);     
+    pgl.unbindVertexBuffer();
   }
   
   
   protected void copyLineNormals(int offset, int size, float[] normals) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineNormalBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+    pgl.bindVertexBuffer(glLineNormalBufferID);
+    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);    
+    pgl.unbindVertexBuffer();
   }
 
   
   protected void copyLineAttributes(int offset, int size, float[] attribs) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineAttribBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    pgl.bindVertexBuffer(glLineAttribBufferID);
+    pgl.copyVertexBufferSubData(attribs, 4 * offset, 4 * size, glMode);    
+    pgl.unbindVertexBuffer();
   }
   
   
   protected void copyLineIndices(int offset, int size, int[] indices) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineIndexBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
-                            size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glLineIndexBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
+//                            size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
+
+    pgl.bindIndexBuffer(glLineIndexBufferID);
+    pgl.copyIndexBufferSubData(indices, offset, size, glMode);    
+    pgl.unbindIndexBuffer();
   }  
   
 
   protected void initPointBuffers(int nvert, int nind) {
-    glPointVertexBufferID = ogl.createVertexBufferObject();    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
+    glPointVertexBufferID = ogl.createVertexBufferObject();
+    pgl.bindVertexBuffer(glPointVertexBufferID);
+    pgl.initVertexBuffer(3 * nvert, glMode);   
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);    
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
 
     glPointColorBufferID = ogl.createVertexBufferObject();
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
+    pgl.bindVertexBuffer(glPointColorBufferID);
+    pgl.initVertexBuffer(4 * nvert, glMode);     
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 4 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
     
     glPointNormalBufferID = ogl.createVertexBufferObject();    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
+    pgl.bindVertexBuffer(glPointNormalBufferID);
+    pgl.initVertexBuffer(3 * nvert, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);    
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 3 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);    
 
     glPointAttribBufferID = ogl.createVertexBufferObject();
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);   
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 2 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
+    pgl.bindVertexBuffer(glPointAttribBufferID);
+    pgl.initVertexBuffer(2 * nvert, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);   
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, 2 * nvert * PGraphicsOpenGL.SIZEOF_FLOAT, null, glMode);
+      
+    pgl.unbindVertexBuffer();
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);      
+        
+    glPointIndexBufferID = ogl.createVertexBufferObject();
+    pgl.bindIndexBuffer(glPointIndexBufferID);
+    pgl.initIndexBuffer(nind, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);    
+//    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glMode);    
     
-    glPointIndexBufferID = ogl.createVertexBufferObject();    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);    
-    getGl().glBufferData(GL.GL_ARRAY_BUFFER, nind * PGraphicsOpenGL.SIZEOF_INT, null, glMode);
-    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);         
+    pgl.unbindIndexBuffer();
   }  
   
   
@@ -2820,63 +2929,92 @@ public class PShape3D extends PShape {
   
   protected void copyPointGeometry(int offset, int size, 
                                    float[] vertices, float[] colors, float[] normals, float[] attribs) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+    pgl.bindVertexBuffer(glPointVertexBufferID);
+    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
 
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+    pgl.bindVertexBuffer(glPointColorBufferID);
+    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+    pgl.bindVertexBuffer(glPointNormalBufferID);
+    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));
+    pgl.bindVertexBuffer(glPointAttribBufferID);
+    pgl.copyVertexBufferSubData(attribs, 2 * offset, 2 * size, glMode);     
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindVertexBuffer();    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
   }  
 
 
   protected void copyPointVertices(int offset, int size, float[] vertices) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    pgl.bindVertexBuffer(glPointVertexBufferID);
+    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);    
+    pgl.unbindVertexBuffer();
   }
     
     
   protected void copyPointColors(int offset, int size, float[] colors) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointColorBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 4 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            4 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    pgl.bindVertexBuffer(glPointColorBufferID);
+    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);     
+    pgl.unbindVertexBuffer();
   }
     
   
   protected void copyPointNormals(int offset, int size, float[] normals) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 3 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            3 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    
+    pgl.bindVertexBuffer(glPointNormalBufferID);
+    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);      
+    pgl.unbindVertexBuffer();
   }
 
     
   protected void copyPointAttributes(int offset, int size, float[] attribs) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
-                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, 2 * offset * PGraphicsOpenGL.SIZEOF_FLOAT, 
+//                            2 * size * PGraphicsOpenGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs));    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+    pgl.bindVertexBuffer(glPointAttribBufferID);
+    pgl.copyVertexBufferSubData(attribs, 2 * offset, 2 * size, glMode);  
+    pgl.unbindVertexBuffer();
   }
   
   
   protected void copyPointIndices(int offset, int size, int[] indices) {
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);
-    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
-                            size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, glPointIndexBufferID);
+//    getGl().glBufferSubData(GL.GL_ARRAY_BUFFER, offset * PGraphicsOpenGL.SIZEOF_INT, 
+//                            size * PGraphicsOpenGL.SIZEOF_INT, IntBuffer.wrap(indices));
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
+    
+    pgl.bindIndexBuffer(glPointIndexBufferID);
+    pgl.copyIndexBufferSubData(indices, offset, size, glMode);    
+    pgl.unbindIndexBuffer();    
   }    
 
   
@@ -3064,31 +3202,53 @@ public class PShape3D extends PShape {
   protected void renderPoints() {
     ogl.startPointShader();
     
-    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
-    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
-    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);
+    pgl.enableVertexArrays();
+    pgl.enableColorArrays();
+    pgl.enableNormalArrays();
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointNormalBufferID);
-    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);
-              
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointColorBufferID);
-    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
+//    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+//    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+//    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);
+        
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointVertexBufferID);
-    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    pgl.bindVertexBuffer(root.glPointVertexBufferID);
+    pgl.setVertexFormat(3, 0, 0); 
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointVertexBufferID);
+//    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+                  
+    pgl.bindVertexBuffer(root.glPointColorBufferID);    
+    pgl.setColorFormat(4, 0, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointColorBufferID);
+//    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    
+    pgl.bindVertexBuffer(root.glPointNormalBufferID);    
+    pgl.setNormalFormat(3, 0, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glPointNormalBufferID);
+//    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);
     
     ogl.setupPointShader(root.glPointAttribBufferID);
     
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);    
-    getGl().glDrawElements(GL.GL_TRIANGLES, tess.lastPointIndex - tess.firstPointIndex + 1, GL.GL_UNSIGNED_INT, 
-                           tess.firstPointIndex * PGraphicsOpenGL.SIZEOF_INT);
-        
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+    int offset = tess.firstPointIndex;
+    int size =  tess.lastPointIndex - tess.firstPointIndex + 1;
+    pgl.bindIndexBuffer(root.glPointIndexBufferID);
+    pgl.renderIndexBuffer(offset, size);
     
-    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
-    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
-    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
+//    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);    
+//    getGl().glDrawElements(GL.GL_TRIANGLES, tess.lastPointIndex - tess.firstPointIndex + 1, GL.GL_UNSIGNED_INT, 
+//                           tess.firstPointIndex * PGraphicsOpenGL.SIZEOF_INT);
+        
+//    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindIndexBuffer();
+    pgl.unbindVertexBuffer();    
+    
+    pgl.disableVertexArrays();
+    pgl.disableColorArrays();
+    pgl.disableNormalArrays();  
+    
+//    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
+//    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
+//    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
     
     ogl.stopPointShader();
   }  
@@ -3097,81 +3257,132 @@ public class PShape3D extends PShape {
   protected void renderLines() {
     ogl.startLineShader();
     
-    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
-    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
-    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);
+//    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+//    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+//    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);    
+    pgl.enableVertexArrays();
+    pgl.enableColorArrays();
+    pgl.enableNormalArrays();     
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineNormalBufferID);
-    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);
-              
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineColorBufferID);
-    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
-                    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineVertexBufferID);
-    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+    pgl.bindVertexBuffer(root.glLineVertexBufferID);
+    pgl.setVertexFormat(3, 0, 0);  
     
-    ogl.setupLineShader(root.glLineAttribBufferID);
+    pgl.bindVertexBuffer(root.glLineColorBufferID);    
+    pgl.setColorFormat(4, 0, 0);      
     
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glLineIndexBufferID);    
-    getGl().glDrawElements(GL.GL_TRIANGLES, tess.lastLineIndex - tess.firstLineIndex + 1, GL.GL_UNSIGNED_INT, 
-                           tess.firstLineIndex * PGraphicsOpenGL.SIZEOF_INT);
+    pgl.bindVertexBuffer(root.glLineNormalBufferID);    
+    pgl.setNormalFormat(3, 0, 0);      
     
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineNormalBufferID);
+//    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineColorBufferID);
+//    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);                    
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineVertexBufferID);
+//    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);
     
-    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
-    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
-    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    ogl.setupLineShader(root.glLineAttribBufferID);    
+    
+    int offset = tess.firstLineIndex;
+    int size =  tess.lastLineIndex - tess.firstLineIndex + 1;
+    pgl.bindIndexBuffer(root.glLineIndexBufferID);
+    pgl.renderIndexBuffer(offset, size);
+    
+//    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glLineIndexBufferID);    
+//    getGl().glDrawElements(GL.GL_TRIANGLES, tess.lastLineIndex - tess.firstLineIndex + 1, GL.GL_UNSIGNED_INT, 
+//                           tess.firstLineIndex * PGraphicsOpenGL.SIZEOF_INT);
+    
+//    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindIndexBuffer();
+    pgl.unbindVertexBuffer();    
+    
+//    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
+//    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
+//    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    pgl.disableVertexArrays();
+    pgl.disableColorArrays();
+    pgl.disableNormalArrays();    
     
     ogl.stopLineShader();    
   }  
   
   
   protected void renderFill(PImage textureImage) {
-    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
-    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
-    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);
-    getGl().glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+//    getGl().glEnableClientState(GL2.GL_NORMAL_ARRAY);
+//    getGl().glEnableClientState(GL2.GL_COLOR_ARRAY);
+//    getGl().glEnableClientState(GL2.GL_VERTEX_ARRAY);
+//    getGl().glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+    pgl.enableVertexArrays();
+    pgl.enableColorArrays();
+    pgl.enableNormalArrays(); 
+    pgl.enableTexCoordArrays();
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillNormalBufferID);
-    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);    
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillColorBufferID);
-    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);
+    pgl.bindVertexBuffer(root.glFillColorBufferID);
+    pgl.setVertexFormat(3, 0, 0);      
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillColorBufferID);
+//    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);      
+
+    pgl.bindVertexBuffer(root.glFillColorBufferID);    
+    pgl.setColorFormat(4, 0, 0);           
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillColorBufferID);
+//    getGl().glColorPointer(4, GL.GL_FLOAT, 0, 0);    
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillVertexBufferID);
-    getGl().glVertexPointer(3, GL.GL_FLOAT, 0, 0);    
+    pgl.bindVertexBuffer(root.glFillNormalBufferID);    
+    pgl.setNormalFormat(3, 0, 0);     
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillNormalBufferID);
+//    getGl().glNormalPointer(GL.GL_FLOAT, 0, 0);    
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillTexCoordBufferID);
-    getGl().glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);    
+    pgl.bindVertexBuffer(root.glFillTexCoordBufferID);    
+    pgl.setTexCoordFormat(2, 0, 0);      
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillTexCoordBufferID);
+//    getGl().glTexCoordPointer(2, GL.GL_FLOAT, 0, 0);    
     
     PTexture tex = null;
     if (textureImage != null) {
       tex = ogl.getTexture(textureImage);
       if (tex != null) {
-        getGl().glEnable(tex.glTarget);
-        getGl().glActiveTexture(GL.GL_TEXTURE0);
-        getGl().glBindTexture(tex.glTarget, tex.glID);
+        pgl.enableTexturing(tex.glTarget);
+        pgl.setActiveTexUnit(0);
+        pgl.bindTexture(tex.glTarget, tex.glID);        
+//        getGl().glEnable(tex.glTarget);
+//        getGl().glActiveTexture(GL.GL_TEXTURE0);
+//        getGl().glBindTexture(tex.glTarget, tex.glID);
       }
     }
     
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glFillIndexBufferID);    
-    getGl().glDrawElements(GL.GL_TRIANGLES, tess.lastFillIndex - tess.firstFillIndex + 1, GL.GL_UNSIGNED_INT, 
-                           tess.firstFillIndex * PGraphicsOpenGL.SIZEOF_INT);              
+    int offset = tess.firstFillIndex;
+    int size =  tess.lastFillIndex - tess.firstFillIndex + 1;
+    pgl.bindIndexBuffer(root.glFillIndexBufferID);
+    pgl.renderIndexBuffer(offset, size);
+    
+//    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, root.glFillIndexBufferID);    
+//    getGl().glDrawElements(GL.GL_TRIANGLES, tess.lastFillIndex - tess.firstFillIndex + 1, GL.GL_UNSIGNED_INT, 
+//                           tess.firstFillIndex * PGraphicsOpenGL.SIZEOF_INT);              
     
     if (tex != null) {
-      getGl().glActiveTexture(GL.GL_TEXTURE0);
-      getGl().glBindTexture(tex.glTarget, 0);
-      getGl().glDisable(tex.glTarget);
+      pgl.unbindTexture(tex.glTarget); 
+      pgl.disableTexturing(tex.glTarget);
+//      
+//      getGl().glActiveTexture(GL.GL_TEXTURE0);
+//      getGl().glBindTexture(tex.glTarget, 0);
+//      getGl().glDisable(tex.glTarget);
     } 
     
-    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    pgl.unbindIndexBuffer();
+    pgl.unbindVertexBuffer();    
     
-    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
-    getGl().glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
-    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);     
+//    getGl().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+//    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+    
+//    getGl().glDisableClientState(GL2.GL_VERTEX_ARRAY);
+//    getGl().glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
+//    getGl().glDisableClientState(GL2.GL_COLOR_ARRAY);
+//    getGl().glDisableClientState(GL2.GL_NORMAL_ARRAY);
+    pgl.disableVertexArrays();
+    pgl.disableColorArrays();
+    pgl.disableNormalArrays(); 
+    pgl.disableTexCoordArrays();    
   }
   
   ///////////////////////////////////////////////////////////  
@@ -3330,9 +3541,9 @@ public class PShape3D extends PShape {
   
   // Utilities methods  
   
-  protected GL2ES1 getGl() {
-    return ogl.gl2f;
-  }  
+//  protected GL2ES1 getGl() {
+//    return ogl.gl2f;
+//  }  
   
   ///////////////////////////////////////////////////////////////////////////   
   
