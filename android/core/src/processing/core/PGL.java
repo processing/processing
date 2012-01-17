@@ -24,15 +24,10 @@
 package processing.core;
 
 import java.nio.Buffer;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import javax.microedition.khronos.opengles.*;
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
 import android.opengl.GLU;
 
 import processing.core.PApplet;
