@@ -1065,7 +1065,7 @@ public class PGL {
   }
   
   public void setAdditiveBlend() {
-    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
   }
   
   public void setSubstractiveBlend() {
