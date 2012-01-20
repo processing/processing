@@ -24,6 +24,7 @@
 attribute vec4 attribs;   
 uniform vec4 viewport;
 
+uniform int perspective;
 uniform vec4 eye;
 uniform int lights;
 
@@ -32,6 +33,11 @@ vec3 clipToWindow(vec4 clip, vec4 viewport) {
   vec2 xypos = (post_div.xy + vec2(1.0, 1.0)) * 0.5 * viewport.zw;
   return vec3(xypos, post_div.z * 0.5 + 0.5);
 }
+  
+vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
+  vec2 xypos = (window / viewport.zw) * 2.0;
+  return vec4(xypos, 0.0, 0.0) * clip_w;
+}  
   
 // From the "Directional Lights I & II" tutorials from lighthouse 3D: 
 // http://www.lighthouse3d.com/tutorials/glsl-tutorial/directional-lights-i/
@@ -97,9 +103,20 @@ void main() {
   vec2 perp = normalize(vec2(-tangent.y, tangent.x));
   float thickness = attribs.w;
   vec2 window_offset = perp * thickness;
-  
-  gl_Position.xy = clip_p.xy + window_offset.xy;
-  gl_Position.zw = clip_p.zw;
+
+/*  
+  if (0 < perspective) {
+    // Perspective correction (lines will look thiner as they move away 
+    // from the view position).  
+    gl_Position.xy = clip_p.xy + window_offset.xy;
+    gl_Position.zw = clip_p.zw;
+  } else {
+  */
+    // No perspective correction.	
+    float clip_p_w = clip_p.w;
+    vec4 offset_p = windowToClipVector(window_offset, viewport, clip_p_w);
+    gl_Position = clip_p + offset_p;
+  //}  
   
   vec4 color = vec4(0, 0, 0, 0);
   vec4 globalAmbient = gl_Color * gl_LightModel.ambient;  
