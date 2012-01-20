@@ -3795,7 +3795,7 @@ public class PGraphicsOpenGL extends PGraphics {
     modelview.set(x0, x1, x2, 0,
                   y0, y1, y2, 0,
                   z0, z1, z2, 0,
-                   0,  0,  0,  1);
+                   0,  0,  0, 1);
     
     float tx = -eyeX;
     float ty = -eyeY;
@@ -3971,7 +3971,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
 
-  public float screenX(float x, float y, float z) {    
+  public float screenX(float x, float y, float z) {
     float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
     float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
     float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
@@ -3983,7 +3983,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (ow != 0) {
       ox /= ow;
     }
-    return width * (1 + ox) / 2.0f;
+    float sx = width * (1 + ox) / 2.0f;
+    return sx;
   }
 
   
@@ -3998,12 +3999,15 @@ public class PGraphicsOpenGL extends PGraphics {
         
     if (ow != 0) {
       oy /= ow;
-    }
-    return height * (1 + oy) / 2.0f;
+    }    
+    float sy = height * (1 + oy) / 2.0f;
+    // Inverting result because of Processing' inverted Y axis.
+    sy = height - sy;
+    return sy;
   }
 
   
-  public float screenZ(float x, float y, float z) {
+  public float screenZ(float x, float y, float z) {   
     float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
     float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
     float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
@@ -4015,7 +4019,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (ow != 0) {
       oz /= ow;
     }
-    return (oz + 1) / 2.0f;
+    float sz = (oz + 1) / 2.0f;
+    return sz;
   }
 
   
