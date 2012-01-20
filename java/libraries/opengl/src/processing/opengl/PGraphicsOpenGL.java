@@ -4001,7 +4001,7 @@ public class PGraphicsOpenGL extends PGraphics {
       oy /= ow;
     }    
     float sy = height * (1 + oy) / 2.0f;
-    // Inverting result because of Processing' inverted Y axis.
+    // Turning value upside down because of Processing's inverted Y axis.
     sy = height - sy;
     return sy;
   }
