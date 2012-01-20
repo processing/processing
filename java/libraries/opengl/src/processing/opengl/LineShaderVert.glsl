@@ -104,19 +104,17 @@ void main() {
   float thickness = attribs.w;
   vec2 window_offset = perp * thickness;
 
-/*  
   if (0 < perspective) {
     // Perspective correction (lines will look thiner as they move away 
     // from the view position).  
     gl_Position.xy = clip_p.xy + window_offset.xy;
     gl_Position.zw = clip_p.zw;
   } else {
-  */
     // No perspective correction.	
     float clip_p_w = clip_p.w;
     vec4 offset_p = windowToClipVector(window_offset, viewport, clip_p_w);
     gl_Position = clip_p + offset_p;
-  //}  
+  }  
   
   vec4 color = vec4(0, 0, 0, 0);
   vec4 globalAmbient = gl_Color * gl_LightModel.ambient;  

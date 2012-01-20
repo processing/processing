@@ -1413,7 +1413,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     if (hints[ENABLE_ACCURATE_2D]) {
-      flushMode = FLUSH_CONTINUOUSLY;
+      flushMode = FLUSH_CONTINUOUSLY;      
     } else {
       flushMode = FLUSH_WHEN_FULL;
     }
@@ -1737,8 +1737,14 @@ public class PGraphicsOpenGL extends PGraphics {
   // HINTS
 
   public void hint(int which) {
-    super.hint(which);    
+    boolean oldValue = hints[which];
+    super.hint(which);
+    boolean newValue = hints[which];
 
+    if (oldValue == newValue) {
+      return;
+    }
+    
     if (which == DISABLE_DEPTH_TEST) {
       flush();
       pgl.disableDepthTest();
@@ -1767,6 +1773,17 @@ public class PGraphicsOpenGL extends PGraphics {
       
     } else if (which == DISABLE_TEXTURE_CACHE) {
       flush();
+      
+    } else if (which == DISABLE_PERSPECTIVE_CORRECTED_LINES) {
+      if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
+        flush();
+      }
+      
+    } else if (which == ENABLE_PERSPECTIVE_CORRECTED_LINES &&
+               0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
+      if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
+        flush();
+      }      
       
     }
 
@@ -2442,6 +2459,12 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void setupLineShader(int attrBufID, float[] attribs, int nvert) {
     lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
     
+    if (hints[ENABLE_PERSPECTIVE_CORRECTED_LINES]) {
+      lineShader.setIntUniform("perspective", 1);
+    } else {
+      lineShader.setIntUniform("perspective", 0);
+    }
+    
     lineShader.setIntUniform("lights", lightCount);           
         
     lineShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
@@ -2457,6 +2480,12 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void setupLineShader(int attrBufID) {
     lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
+
+    if (hints[ENABLE_PERSPECTIVE_CORRECTED_LINES]) {
+      lineShader.setIntUniform("perspective", 1);
+    } else {
+      lineShader.setIntUniform("perspective", 0);
+    }    
     
     lineShader.setIntUniform("lights", lightCount);           
         
