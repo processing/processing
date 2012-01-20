@@ -36,7 +36,9 @@ import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
 
 import java.io.BufferedReader;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -1863,96 +1865,328 @@ public class PShape3D extends PShape {
   
   //
   
-  // Methods to access tessellated data. Intended to use by libraries.
+  // Methods to access tessellated data.
   
   
   public int firstFillVertex() {
+    updateTesselation();
     return tess.firstFillVertex;  
   }
   
   public int lastFillVertex() {
+    updateTesselation();
     return tess.lastFillVertex;
   }
 
+  public int fillVertexCount() {
+    updateTesselation();
+    return tess.fillVertexCount;
+  }
+  
+  public int firstFillIndex() {
+    updateTesselation();
+    return tess.firstFillIndex;  
+  }
+  
+  public int lastFillIndex() {
+    updateTesselation();
+    return tess.lastFillIndex;
+  }  
+    
+  public int fillIndexCount() {
+    updateTesselation();
+    return tess.fillIndexCount;
+  }
+  
+  public float[] fillVertices() {
+    updateTesselation();
+    return tess.fillVertices;
+  }
+  
+  public float[] fillColors() {
+    updateTesselation();
+    return tess.fillColors;
+  }  
+  
+  public float[] fillNormals() {
+    updateTesselation();
+    return tess.fillNormals;
+  }  
+  
+  public float[] fillTexCoords() {
+    updateTesselation();
+    return tess.fillTexcoords;
+  }  
+  
+  public int[] fillIndices() {
+    updateTesselation();
+    return tess.fillIndices;
+  }
+    
   public int firstLineVertex() {
+    updateTesselation();
     return tess.firstLineVertex;  
   }
   
   public int lastLineVertex() {
+    updateTesselation();
     return tess.lastLineVertex;
   }
   
+  public int lineVertexCount() {
+    updateTesselation();
+    return tess.lineVertexCount;
+  }  
   
-  public FloatBuffer mapFillVertices() {
-    /*
-    ByteBuffer bb;
+  public int firstLineIndex() {
+    updateTesselation();
+    return tess.firstLineIndex;  
+  }
+  
+  public int lastLineIndex() {
+    updateTesselation();
+    return tess.lastLineIndex;
+  }
+
+  public int lineIndexCount() {
+    updateTesselation();
+    return tess.lineIndexCount;
+  }
     
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glFillVertexBufferID);
-    if (root == this) {            
-      bb = getGl().glMapBuffer(GL.GL_ARRAY_BUFFER, GL2.GL_READ_WRITE);
-    } else {
-      bb = ogl.gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, 3 * tess.firstFillVertex, 3 * tess.fillVertexCount, GL2.GL_READ_WRITE);  
-    }
-    return bb.asFloatBuffer();
-    */
-    return null;
+  public float[] lineVertices() {
+    updateTesselation();
+    return tess.lineVertices;
+  }
+  
+  public float[] lineColors() {
+    updateTesselation();
+    return tess.lineColors;
+  }  
+  
+  public float[] lineNormals() {
+    updateTesselation();
+    return tess.lineNormals;
+  }  
+  
+  public float[] lineAttributes() {
+    updateTesselation();
+    return tess.lineAttributes;
+  }  
+  
+  public int[] lineIndices() {
+    updateTesselation();
+    return tess.lineIndices;
+  }  
+  
+  public int firstPointVertex() {
+    updateTesselation();
+    return tess.firstPointVertex;  
+  }
+  
+  public int lastPointVertex() {
+    updateTesselation();
+    return tess.lastPointVertex;
+  }
+  
+  public int pointVertexCount() {
+    updateTesselation();
+    return tess.pointVertexCount;
+  }    
+  
+  public int firstPointIndex() {
+    updateTesselation();
+    return tess.firstPointIndex;  
+  }
+  
+  public int lastPointIndex() {
+    updateTesselation();
+    return tess.lastPointIndex;
+  }  
+  
+  public int pointIndexCount() {
+    updateTesselation();
+    return tess.pointIndexCount;
+  }  
+  
+  public float[] pointVertices() {
+    updateTesselation();
+    return tess.pointVertices;
+  }
+  
+  public float[] pointColors() {
+    updateTesselation();
+    return tess.pointColors;
+  }  
+  
+  public float[] pointNormals() {
+    updateTesselation();
+    return tess.pointNormals;
+  }  
+  
+  public float[] pointAttributes() {
+    updateTesselation();
+    return tess.pointAttributes;
+  }  
+  
+  public int[] pointIndices() {
+    updateTesselation();
+    return tess.pointIndices;
+  }   
+  
+  public FloatBuffer mapFillVertices() {        
+    return mapVertexImpl(root.glFillVertexBufferID, 3 * tess.firstFillVertex, 3 * tess.fillVertexCount).asFloatBuffer();
   }
   
   public void unmapFillVertices() {
-  /*
-    getGl().glUnmapBuffer(GL.GL_ARRAY_BUFFER);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);   
-    */
+    unmapVertexImpl();
   }
   
-
-
-  public FloatBuffer mapLineVertices() {
-    /*
-    ByteBuffer bb;
-    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineVertexBufferID);
-    if (root == this) {            
-      bb = getGl().glMapBuffer(GL.GL_ARRAY_BUFFER, GL2.GL_READ_WRITE);
-    } else {
-      bb = ogl.gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, 3 * tess.firstLineVertex, 3 * tess.lineVertexCount, GL2.GL_READ_WRITE);  
-    }
-    return bb.asFloatBuffer();
-    */
-    return null;
+  public FloatBuffer mapFillColors() {        
+    return mapVertexImpl(root.glFillColorBufferID, 4 * tess.firstFillVertex, 4 * tess.fillVertexCount).asFloatBuffer();
+  }
+  
+  public void unmapFillColors() {
+    unmapVertexImpl();
+  }
+  
+  public FloatBuffer mapFillNormals() {        
+    return mapVertexImpl(root.glFillNormalBufferID, 3 * tess.firstFillVertex, 3 * tess.fillVertexCount).asFloatBuffer();
+  }
+  
+  public void unmapFillNormals() {
+    unmapVertexImpl();
+  }
+  
+  public FloatBuffer mapFillTexCoords() {        
+    return mapVertexImpl(root.glFillTexCoordBufferID, 2 * tess.firstFillVertex, 2 * tess.fillVertexCount).asFloatBuffer();
+  }
+  
+  public void unmapFillTexCoords() {
+    unmapVertexImpl();
+  }
+  
+  public IntBuffer mapFillIndices() {        
+    return mapIndexImpl(root.glFillIndexBufferID, tess.firstFillIndex, tess.fillIndexCount).asIntBuffer();
+  }
+  
+  public void unmapFillIndices() {
+    unmapIndexImpl();
+  }
+  
+  public FloatBuffer mapLineVertices() {        
+    return mapVertexImpl(root.glLineVertexBufferID, 3 * tess.firstLineVertex, 3 * tess.lineVertexCount).asFloatBuffer();
   }
   
   public void unmapLineVertices() {
-    /*
-    getGl().glUnmapBuffer(GL.GL_ARRAY_BUFFER);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-    */   
+    unmapVertexImpl();
   }
   
+  public FloatBuffer mapLineColors() {        
+    return mapVertexImpl(root.glLineColorBufferID, 4 * tess.firstLineVertex, 4 * tess.lineVertexCount).asFloatBuffer();
+  }
   
+  public void unmapLineColors() {
+    unmapVertexImpl();
+  }
   
-  public FloatBuffer mapLineAttributes() {
-    /*
-    ByteBuffer bb;
-    
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, root.glLineAttribBufferID);
-    if (root == this) {            
-      bb = getGl().glMapBuffer(GL.GL_ARRAY_BUFFER, GL2.GL_READ_WRITE);
-    } else {
-      bb = ogl.gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, 3 * tess.firstLineVertex, 3 * tess.lineVertexCount, GL2.GL_READ_WRITE);  
-    }
-    return bb.asFloatBuffer();
-    */
-    return null;
+  public FloatBuffer mapLineNormals() {        
+    return mapVertexImpl(root.glLineNormalBufferID, 3 * tess.firstLineVertex, 3 * tess.lineVertexCount).asFloatBuffer();
+  }
+  
+  public void unmapLineNormals() {
+    unmapVertexImpl();
+  }
+  
+  public FloatBuffer mapLineAttributes() {        
+    return mapVertexImpl(root.glLineAttribBufferID, 2 * tess.firstLineVertex, 2 * tess.lineVertexCount).asFloatBuffer();
   }
   
   public void unmapLineAttributes() {
-    /*
-    getGl().glUnmapBuffer(GL.GL_ARRAY_BUFFER);
-    getGl().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-    */   
-  }  
+    unmapVertexImpl();
+  }
   
+  public IntBuffer mapLineIndices() {        
+    return mapIndexImpl(root.glLineIndexBufferID, tess.firstLineIndex, tess.lineIndexCount).asIntBuffer();
+  }
+  
+  public void unmapLineIndices() {
+    unmapIndexImpl();
+  }
+  
+  public FloatBuffer mapPointVertices() {        
+    return mapVertexImpl(root.glPointVertexBufferID, 3 * tess.firstPointVertex, 3 * tess.pointVertexCount).asFloatBuffer();
+  }
+  
+  public void unmapPointVertices() {
+    unmapVertexImpl();
+  }
+  
+  public FloatBuffer mapPointColors() {        
+    return mapVertexImpl(root.glPointColorBufferID, 4 * tess.firstPointVertex, 4 * tess.pointVertexCount).asFloatBuffer();
+  }
+  
+  public void unmapPointColors() {
+    unmapVertexImpl();
+  }
+  
+  public FloatBuffer mapPointNormals() {        
+    return mapVertexImpl(root.glPointNormalBufferID, 3 * tess.firstPointVertex, 3 * tess.pointVertexCount).asFloatBuffer();
+  }
+  
+  public void unmapPointNormals() {
+    unmapVertexImpl();
+  }
+  
+  public FloatBuffer mapPointAttributes() {        
+    return mapVertexImpl(root.glPointAttribBufferID, 2 * tess.firstPointVertex, 2 * tess.pointVertexCount).asFloatBuffer();
+  }
+  
+  public void unmapPointAttributes() {
+    unmapVertexImpl();
+  }
+  
+  public IntBuffer mapPointIndices() {        
+    return mapIndexImpl(root.glPointIndexBufferID, tess.firstPointIndex, tess.pointIndexCount).asIntBuffer();
+  }
+  
+  public void unmapPointIndices() {
+    unmapIndexImpl();
+  }
+  
+  protected ByteBuffer mapVertexImpl(int id, int offset, int count) {
+    updateTesselation();
+    pgl.bindVertexBuffer(id);
+    ByteBuffer bb;
+    if (root == this) {            
+      bb = pgl.mapVertexBuffer();  
+    } else {
+      bb = pgl.mapVertexBufferRange(offset, count); 
+    }
+    return bb;
+  }
+  
+  protected void unmapVertexImpl() {
+    pgl.unmapVertexBuffer();
+    pgl.unbindVertexBuffer();    
+  }
+  
+  protected ByteBuffer mapIndexImpl(int id, int offset, int count) {
+    updateTesselation();
+    pgl.bindIndexBuffer(id);
+    ByteBuffer bb;
+    if (root == this) {            
+      bb = pgl.mapIndexBuffer();  
+    } else {
+      bb = pgl.mapIndexBufferRange(offset, count); 
+    }
+    return bb;
+  }
+  
+  protected void unmapIndexImpl() {
+    pgl.unmapIndexBuffer();
+    pgl.unbindIndexBuffer();    
+  }
+
   
   ///////////////////////////////////////////////////////////  
   

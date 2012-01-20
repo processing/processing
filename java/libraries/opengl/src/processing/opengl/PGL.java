@@ -641,6 +641,30 @@ public class PGL {
     gl2x.glDisableVertexAttribArray(loc);
   }  
   
+  public ByteBuffer mapVertexBuffer() {  
+    return gl2f.glMapBuffer(GL.GL_ARRAY_BUFFER, GL2.GL_READ_WRITE);
+  }
+  
+  public ByteBuffer mapVertexBufferRange(int offset, int length) {
+    return gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, offset, length, GL2.GL_READ_WRITE);    
+  }
+  
+  public void unmapVertexBuffer() {
+    gl2f.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
+  }
+
+  public ByteBuffer mapIndexBuffer() {  
+    return gl2f.glMapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, GL2.GL_READ_WRITE);
+  }
+  
+  public ByteBuffer mapIndexBufferRange(int offset, int length) {
+    return gl2x.glMapBufferRange(GL.GL_ELEMENT_ARRAY_BUFFER, offset, length, GL2.GL_READ_WRITE);    
+  }
+  
+  public void unmapIndexBuffer() {
+    gl2f.glUnmapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER);
+  }  
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Framebuffers, renderbuffers  
