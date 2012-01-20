@@ -24,6 +24,7 @@
 package processing.core;
 
 import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -626,6 +627,34 @@ public class PGL {
   public void disableAttribsArray(int loc) {
     //gl2x.glDisableVertexAttribArray(loc);
   }  
+  
+  public ByteBuffer mapVertexBuffer() {  
+    //return gl2f.glMapBuffer(GL.GL_ARRAY_BUFFER, GL2.GL_READ_WRITE);
+    return null;
+  }
+  
+  public ByteBuffer mapVertexBufferRange(int offset, int length) {
+    //return gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, offset, length, GL2.GL_READ_WRITE);
+    return null;
+  }
+  
+  public void unmapVertexBuffer() {
+    //gl2f.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
+  }
+
+  public ByteBuffer mapIndexBuffer() {  
+    //return gl2f.glMapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, GL2.GL_READ_WRITE);
+    return null;
+  }
+  
+  public ByteBuffer mapIndexBufferRange(int offset, int length) {
+    //return gl2x.glMapBufferRange(GL.GL_ELEMENT_ARRAY_BUFFER, offset, length, GL2.GL_READ_WRITE);
+    return null;
+  }
+  
+  public void unmapIndexBuffer() {
+    //gl2f.glUnmapBuffer(GL.GL_ELEMENT_ARRAY_BUFFER);
+  }    
   
   /////////////////////////////////////////////////////////////////////////////////
   
