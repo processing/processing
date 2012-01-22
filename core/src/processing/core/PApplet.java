@@ -13652,6 +13652,14 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * Return true if this renderer does rendering through OpenGL. Defaults to false.
+   */  
+  public boolean isGL() {
+    return g.isGL();
+  }
+
+
   public PShape createShape() {
     return g.createShape();
   }

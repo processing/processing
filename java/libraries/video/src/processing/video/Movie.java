@@ -66,10 +66,7 @@ public class Movie extends PImage implements PConstants {
   protected PlayBin2 gplayer;
   
   protected Method movieEventMethod;
-  protected Method copyBufferMethod;  
-  
   protected Object eventHandler;
-  protected Object copyHandler;
   
   protected boolean available;  
   protected boolean sinkReady;
@@ -78,13 +75,17 @@ public class Movie extends PImage implements PConstants {
   protected RGBDataAppSink rgbSink = null;
   protected int[] copyPixels = null;
   
-  protected BufferDataAppSink natSink = null;
-  protected Buffer natBuffer = null;
-  protected boolean copyBufferMode = false;
-  protected String copyMask;
-  
   protected boolean firstFrame = true;
   protected boolean seeking = false;  
+  
+  protected boolean useBufferSink = false;
+  protected boolean useGLSink = true;  
+  protected Object bufferSink;
+  protected Method sinkCopyMethod;
+  protected Method sinkSetMethod;
+  protected String copyMask;    
+  protected Buffer natBuffer = null;
+  protected BufferDataAppSink natSink = null;  
   
   /**
    * Creates an instance of GSMovie loading the movie from filename.
@@ -531,29 +532,36 @@ public class Movie extends PImage implements PConstants {
     // pixels array, even if without any valid image inside.
     loadPixels();
     
-    if (copyBufferMode) {
-      // The native buffer from gstreamer is copies to the destination object.
-      if (natBuffer == null || copyBufferMethod == null) {
+    if (useBufferSink) { // The native buffer from gstreamer is copied to the buffer sink.
+      if (natBuffer == null) {         
         return;
-      }    
-      
+      }
+    
       if (firstFrame) {
-        super.init(bufWidth, bufHeight, RGB);
+        super.init(bufWidth, bufHeight, ARGB);
         loadPixels();
         firstFrame = false;
+      }      
+      
+      if (bufferSink == null) {
+        Object cache = getCache(parent.g);
+        if (cache == null) {
+          return;
+        }        
+        setBufferSink(cache);        
+        getSinkMethods();
       }
       
-      IntBuffer rgbBuffer = natBuffer.getByteBuffer().asIntBuffer();
+      ByteBuffer byteBuffer = natBuffer.getByteBuffer();
+      
       try {
-        copyBufferMethod.invoke(copyHandler, new Object[] { natBuffer, rgbBuffer, bufWidth, bufHeight });
+        sinkCopyMethod.invoke(bufferSink, new Object[] { natBuffer, byteBuffer, bufWidth, bufHeight });
       } catch (Exception e) {
         e.printStackTrace();
       }
       
       natBuffer = null;      
-    } else {
-      // Normal operation mode: the pixels just read from gstreamer
-      // are copied to the pixels array. 
+    } else { // The pixels just read from gstreamer are copied to the pixels array. 
       if (copyPixels == null) {
         return;
       }    
@@ -619,33 +627,6 @@ public class Movie extends PImage implements PConstants {
       PApplet.println(element.toString());
     }   
   }
-  
-  /**
-   * Sets the object to use as destination for the frames read from the stream.
-   * The color conversion mask is automatically set to the one required to
-   * copy the frames to OpenGL.
-   * 
-   * @param Object dest
-   */  
-  public void setPixelDest(Object dest) {
-    copyHandler = dest;      
-    if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-      copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";        
-    } else {
-      copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
-    }   
-  }  
-  
-  /**
-   * Sets the object to use as destination for the frames read from the stream.
-   * 
-   * @param Object dest
-   * @param String mask 
-   */    
-  public void setPixelDest(Object dest, String mask) {
-    copyHandler = dest;
-    copyMask = mask;
-  }  
   
   /**
    * Uses a generic object as handler of the movie. This object should have a
@@ -741,44 +722,31 @@ public class Movie extends PImage implements PConstants {
   }
   
   protected void initSink() {
-    if (copyHandler != null) {      
-      try {      
-        copyBufferMethod = copyHandler.getClass().getMethod("addPixelsToBuffer",
-            new Class[] { Object.class, IntBuffer.class, int.class, int.class });
-        copyBufferMode = true;            
-      } catch (Exception e) {
-        // no such method, or an error.. which is fine, just ignore
-        copyBufferMode = false;
-      }
-      
-      if (copyBufferMode) {
-        
-        try {            
-          Method meth = copyHandler.getClass().getMethod("setPixelSource", new Class[] { Object.class});
-          meth.invoke(copyHandler, new Object[] { this });            
-        } catch (Exception e) {
-          copyBufferMode = false;
-        }
-        
-        if (copyBufferMode) {
-          natSink = new BufferDataAppSink("nat", copyMask,
-              new BufferDataAppSink.Listener() {
-                public void bufferFrame(int w, int h, Buffer buffer) {
-                  invokeEvent(w, h, buffer);
-                }
-              });
-        
-          natSink.setAutoDisposeBuffer(false);
-          gplayer.setVideoSink(natSink);
-          // The setVideoSink() method sets the videoSink as a property of the PlayBin,
-          // which increments the refcount of the videoSink element. Disposing here once
-          // to decrement the refcount.
-          natSink.dispose();                    
-        }
-      }
-    }
+    if (bufferSink != null || (useGLSink && parent.g.isGL())) {
+      useBufferSink = true;
     
-    if (!copyBufferMode) {
+      if (bufferSink != null) {
+        getSinkMethods();        
+      }  
+      
+      if (copyMask == null || copyMask.equals("")) { 
+        initCopyMask();
+      }
+    
+      natSink = new BufferDataAppSink("nat", copyMask,
+          new BufferDataAppSink.Listener() {
+            public void bufferFrame(int w, int h, Buffer buffer) {
+              invokeEvent(w, h, buffer);
+            }
+          });
+    
+      natSink.setAutoDisposeBuffer(false);
+      gplayer.setVideoSink(natSink);
+      // The setVideoSink() method sets the videoSink as a property of the PlayBin,
+      // which increments the refcount of the videoSink element. Disposing here once
+      // to decrement the refcount.
+      natSink.dispose();        
+    } else {
       rgbSink = new RGBDataAppSink("rgb", 
         new RGBDataAppSink.Listener() {
           public void rgbFrame(int w, int h, IntBuffer buffer) {
@@ -860,10 +828,6 @@ public class Movie extends PImage implements PConstants {
     }
   }
   
-  public synchronized void disposeBuffer(Object buf) {
-    ((Buffer)buf).dispose();
-  }
-  
   protected void eosEvent() {    
     if (repeat) {
       goToBeginning();
@@ -871,4 +835,68 @@ public class Movie extends PImage implements PConstants {
       playing = false;
     }
   }  
+  
+  ////////////////////////////////////////////////////////////
+  
+  // Buffer source interface. 
+
+  /**
+   * Disables automatic use of hardware acceleration to play video for OpenGL-based 
+   * renderers.
+   * 
+   */   
+  public void noGL() {
+    useGLSink = false;
+  }  
+  
+  /**
+   * Sets the object to use as destination for the frames read from the stream.
+   * The color conversion mask is automatically set to the one required to
+   * copy the frames to OpenGL.
+   * 
+   * @param Object dest
+   */  
+  public void setBufferSink(Object sink) {
+    bufferSink = sink;
+    initCopyMask();
+  }  
+  
+  /**
+   * Sets the object to use as destination for the frames read from the stream.
+   * 
+   * @param Object dest
+   * @param String mask 
+   */    
+  public void setBufferSink(Object sink, String mask) {
+    bufferSink = sink;
+    copyMask = mask;
+  }  
+  
+  public synchronized void disposeBuffer(Object buf) {
+    ((Buffer)buf).dispose();
+  }
+
+  protected void getSinkMethods() {
+    try {      
+      sinkCopyMethod = bufferSink.getClass().getMethod("copyBufferFromSource",
+          new Class[] { Object.class, ByteBuffer.class, int.class, int.class });         
+    } catch (Exception e) {
+      throw new RuntimeException("Movie: provided sink object doesn't have a copyBufferFromSource method.");
+    }
+    
+    try {            
+      sinkSetMethod = bufferSink.getClass().getMethod("setBufferSource", new Class[] { Object.class });
+      sinkSetMethod.invoke(bufferSink, new Object[] { this });            
+    } catch (Exception e) {
+      throw new RuntimeException("Movie: provided sink object doesn't have a setBufferSource method.");
+    }    
+  }
+  
+  protected void initCopyMask() {
+    if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
+      copyMask = "red_mask=(int)0xFF000000, green_mask=(int)0xFF0000, blue_mask=(int)0xFF00";        
+    } else {
+      copyMask = "red_mask=(int)0xFF, green_mask=(int)0xFF00, blue_mask=(int)0xFF0000";
+    }       
+  }
 }
