@@ -7427,6 +7427,14 @@ public class PGraphics extends PImage implements PConstants {
     return false;
   }
 
+  
+  /**
+   * Return true if this renderer does rendering through OpenGL. Defaults to false.
+   */  
+  public boolean isGL() {
+    return false;
+  }    
+
   //////////////////////////////////////////////////////////////
 
   // New API:

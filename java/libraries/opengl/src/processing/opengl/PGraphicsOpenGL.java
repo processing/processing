@@ -3188,7 +3188,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * Implementation of actual drawing for a line of text.
    */
   protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
-    textTex = (PFontTexture)textFont.getCache(renderer);     
+    textTex = (PFontTexture)textFont.getCache(renderer);        
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
@@ -3201,7 +3201,7 @@ public class PGraphicsOpenGL extends PGraphics {
         textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
         textFont.setCache(this, textTex);
       }
-    }
+    }    
     textTex.setFirstTexture();
     
     // Saving style parameters modified by text rendering.
@@ -3232,7 +3232,7 @@ public class PGraphicsOpenGL extends PGraphics {
     blendMode(BLEND);
     
     super.textLineImpl(buffer, start, stop, x, y);
-       
+    
     // Restoring original style.
     textureMode  = savedTextureMode;
     stroke = savedStroke;
@@ -4795,6 +4795,11 @@ public class PGraphicsOpenGL extends PGraphics {
   public boolean is3D() {
     return true;
   }  
+
+  
+  public boolean isGL() {
+    return true;
+  }  
   
 
   //////////////////////////////////////////////////////////////
@@ -5666,7 +5671,10 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         updateTexture(img, tex);        
       }
-      
+            
+      if (tex.hasBuffers()) {
+        tex.bufferUpdate();
+      }      
     }
     return tex;
   }
@@ -5844,7 +5852,7 @@ public class PGraphicsOpenGL extends PGraphics {
     buffer.rewind();    
     pgl.enableTexturing(tex.glTarget);
     pgl.bindTexture(tex.glTarget, tex.glID);    
-    pgl.copyTexSubImage(buffer, tex.glTarget, x, y, w, h);
+    pgl.copyTexSubImage(buffer, tex.glTarget, 0, x, y, w, h);
     pgl.bindTexture(tex.glTarget, 0);
     pgl.disableTexturing(tex.glTarget);
   }   
