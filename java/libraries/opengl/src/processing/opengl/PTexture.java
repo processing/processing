@@ -23,6 +23,12 @@
 
 package processing.opengl;
 
+import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+
 import javax.media.opengl.GLContext;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -62,6 +68,11 @@ public class PTexture implements PConstants {
 
   protected int[] tempPixels = null;
   protected PFramebuffer tempFbo = null;
+  
+  protected Object bufferSource;
+  protected LinkedList<BufferData> bufferCache = null;
+  protected Method disposeBufferMethod;
+  public static final int MAX_BUFFER_CACHE_SIZE = 3;  
   
   ////////////////////////////////////////////////////////////
   
@@ -246,7 +257,7 @@ public class PTexture implements PConstants {
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);        
         pgl.enableTexMipmapGen(glTarget);
-        setTexels(x, y, w, h, rgbaPixels);
+        setTexels(rgbaPixels, x, y, w, h);
         rgbaPixels = null;
       } else {
         // TODO: Manual mipmap generation.
@@ -256,7 +267,7 @@ public class PTexture implements PConstants {
     } else {
       int[] rgbaPixels = new int[w * h];
       convertToRGBA(pixels, rgbaPixels, format, w, h);
-      setTexels(x, y, w, h, rgbaPixels);
+      setTexels(rgbaPixels, x, y, w, h);
       rgbaPixels = null;
     }
 
@@ -410,6 +421,73 @@ public class PTexture implements PConstants {
     pgl.enableTexturing(glTarget);
     pgl.unbindTexture(glTarget);    
   }  
+  
+  ////////////////////////////////////////////////////////////
+  
+  // Buffer sink interface.
+  
+  
+  public void setBufferSource(Object source) {
+    bufferSource = source;
+    getSourceMethods();
+  }    
+  
+  
+  public void copyBufferFromSource(Object natRef, ByteBuffer byteBuf, int w, int h) {
+    if (bufferCache == null) {
+      bufferCache = new LinkedList<BufferData>();
+    }
+    
+    if (bufferCache.size() + 1 <= MAX_BUFFER_CACHE_SIZE) {
+      bufferCache.add(new BufferData(natRef, byteBuf.asIntBuffer(), w, h));
+    } else {            
+      // The buffer cache reached the maximum size, so we just dispose the new buffer.
+      try {
+        disposeBufferMethod.invoke(bufferSource, new Object[] { natRef });
+      } catch (Exception e) {
+        e.printStackTrace();
+      }  
+    }
+  }
+  
+  
+  public boolean hasBuffers() {
+    return bufferSource != null && bufferCache != null && 0 < bufferCache.size();
+  }  
+  
+  
+  protected boolean bufferUpdate() {
+    BufferData data = null;
+    try {
+      data = bufferCache.remove(0);
+    } catch (NoSuchElementException ex) {
+      PGraphics.showWarning("PTexture: don't have pixel data to copy to texture");
+    }
+    
+    if (data != null) {
+      if ((data.w != width) || (data.h != height)) {
+        init(data.w, data.h);
+      }
+      bind();      
+      setTexels(data.rgbBuf, 0, 0, width, height);
+      unbind();
+      
+      data.dispose();
+      
+      return true;        
+    } else {
+      return false;
+    }    
+  }
+ 
+  
+  protected void getSourceMethods() {
+    try {
+      disposeBufferMethod = bufferSource.getClass().getMethod("disposeBuffer", new Class[] { Object.class });
+    } catch (Exception e) {
+      throw new RuntimeException("PTexture: provided source object doesn't have a disposeBuffer method.");
+    }        
+  }
   
   ////////////////////////////////////////////////////////////     
  
@@ -714,7 +792,7 @@ public class PTexture implements PConstants {
     // Once OpenGL knows the size of the new texture, we make sure it doesn't
     // contain any garbage in the region of interest (0, 0, width, height):
     int[] texels = new int[width * height];
-    setTexels(0, 0, width, height, texels); 
+    setTexels(texels, 0, 0, width, height); 
     texels = null;
     
     pgl.unbindTexture(glTarget);
@@ -768,13 +846,20 @@ public class PTexture implements PConstants {
     renderer.popFramebuffer();
   }  
   
-  protected void setTexels(int x, int y, int w, int h, int[] pix) {
-    setTexels(0, x, y, w, h, pix);
+  protected void setTexels(int[] pix, int x, int y, int w, int h) {
+    setTexels(pix, 0, x, y, w, h);
   }
   
-  protected void setTexels(int level, int x, int y, int w, int h, int[] pix) {
-    //getGl().glTexSubImage2D(glTarget, 0, x, y, w, h, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
-    pgl.copyTexSubPixels(pix, glTarget, x, y, w, h);
+  protected void setTexels(int[] pix, int level, int x, int y, int w, int h) {
+    pgl.copyTexSubImage(pix, glTarget, level, x, y, w, h);
+  }
+
+  protected void setTexels(IntBuffer buffer, int x, int y, int w, int h) {
+    setTexels(buffer, 0, x, y, w, h);
+  }  
+  
+  protected void setTexels(IntBuffer buffer, int level, int x, int y, int w, int h) {
+    pgl.copyTexSubImage(buffer, glTarget, level, x, y, w, h);
   }
   
   protected void copyObject(PTexture src) {
@@ -1014,4 +1099,34 @@ public class PTexture implements PConstants {
       this.wrapV = src.wrapV;      
     }    
   }
+  
+  /**
+   * This class stores a buffer copied from the buffer source.
+   *
+   */
+  protected class BufferData {    
+    int w, h;
+    // Native buffer object.
+    Object natBuf;
+    // Buffer viewed as int.
+    IntBuffer rgbBuf;
+    
+    BufferData(Object nat, IntBuffer rgb, int w, int h) {
+      natBuf = nat;
+      rgbBuf = rgb;
+      this.w = w;
+      this.h = h;
+    }
+    
+    void dispose() {
+      try {
+        // Disposing the native buffer.
+        disposeBufferMethod.invoke(bufferSource, new Object[] { natBuf });
+        natBuf = null;       
+        rgbBuf = null;
+      } catch (Exception e) {
+        e.printStackTrace();
+      }      
+    }
+  }      
 }
