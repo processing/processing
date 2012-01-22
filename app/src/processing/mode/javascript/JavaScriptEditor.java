@@ -449,12 +449,13 @@ public class JavaScriptEditor extends Editor
    *  export to folder, start server, open in default browser.
    */
   public void handleStartServer ()
-  {
+  {	
+	System.out.println();
 	statusEmpty();
+	System.out.println();
+	
 	if ( !handleExport( false ) ) return;
-
 	File serverRoot = getExportFolder();
-
 	// if server hung or something else went wrong .. stop it.
 	if ( jsServer != null && 
 		 (!jsServer.isRunning() || !jsServer.getRoot().equals(serverRoot)) )
