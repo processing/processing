@@ -521,7 +521,7 @@ public class PFramebuffer implements PConstants {
   protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {
     pgl.enableTexturing(gltarget);
     pgl.bindTexture(gltarget, glid);    
-    pgl.copyTexSubImage(buffer, gltarget, 0, 0, width, height);
+    pgl.copyTexSubImage(buffer, gltarget, 0, 0, 0, width, height);
     pgl.unbindTexture(gltarget);
     pgl.disableTexturing(gltarget);    
   }  
