@@ -459,18 +459,18 @@ public class PGL {
   public void initTex(int target, int format, int w, int h) {
     gl.glTexImage2D(target, 0, format, w, h, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
   }
+
+  public void copyTexImage(Buffer image, int target, int format, int level, int w, int h) {
+    gl.glTexImage2D(target, level, format, w, h, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, image);
+  } 
   
-  public void copyTexSubImage(Buffer image, int target, int x, int y, int w, int h) {
+  public void copyTexSubImage(Buffer image, int target, int level, int x, int y, int w, int h) {
     gl.glTexSubImage2D(target, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, image);
   }
 
-  public void copyTexSubPixels(int[] pixels, int target, int x, int y, int w, int h) {
-    gl.glTexSubImage2D(target, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(pixels));
+  public void copyTexSubImage(int[] pixels, int target, int level, int x, int y, int w, int h) {
+    gl.glTexSubImage2D(target, level, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(pixels));
   }  
-  
-  public void copyTexImage(Buffer image, int target, int format, int w, int h) {
-    gl.glTexImage2D(target, 0, format, w, h, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, image);
-  }
   
   public void setTexEnvironmentMode(int mode) {
     //gl.glTexEnvi(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, mode);   
