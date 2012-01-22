@@ -104,7 +104,7 @@ public class JavaScriptBuild
    * you have more than one sketch each will need a separate builder.
    */
   protected Sketch sketch;
-  
+
   protected Mode mode;
   
   protected File binFolder;
@@ -208,14 +208,18 @@ public class JavaScriptBuild
         // renderer
 
       } catch (NumberFormatException e) {
-        // found a reference to size, but it didn't seem to contain numbers
-        final String message =
-          "The size of this applet could not automatically be\n" +
-          "determined from your code. You'll have to edit the\n" +
-          "HTML file to set the size of the applet.\n" +
-          "Use only numeric values (not variables) for the size()\n" +
-          "command. See the size() reference for an explanation.";
-        Base.showWarning("Could not find applet size", message, null);
+		if ( ((JavaScriptMode)mode).showSizeWarning ) {
+   	    	// found a reference to size, but it didn't seem to contain numbers
+	        final String message =
+	          "The size of this applet could not automatically be\n" +
+	          "determined from your code. You'll have to edit the\n" +
+	          "HTML file to set the size of the applet.\n" +
+	          "Use only numeric values (not variables) for the size()\n" +
+	          "command. See the size() reference for an explanation.";
+	        Base.showWarning("Could not find applet size", message, null);
+			// warn only once ..
+			((JavaScriptMode)mode).showSizeWarning = false;
+		}
       }
     }  // else no size() command found, defaults will be used
 
