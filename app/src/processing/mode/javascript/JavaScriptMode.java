@@ -22,6 +22,8 @@ import processing.mode.java.JavaMode;
  */
 public class JavaScriptMode extends Mode
 {
+	public boolean showSizeWarning = true;
+	
 	private JavaScriptEditor jsEditor;
 
   // create a new editor with the mode
