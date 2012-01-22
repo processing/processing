@@ -160,7 +160,9 @@ class JavaScriptServer implements HttpConstants, Runnable
 			{
 				server.close();
 			}
-		} catch ( Exception e ) {;}
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean isRunning ()
@@ -203,7 +205,7 @@ class JavaScriptServer implements HttpConstants, Runnable
 			if ( server != null )
 			{
 				inited = true;
-	
+				
 		        while ( thread != null )
 				{
 					Socket s = server.accept();
