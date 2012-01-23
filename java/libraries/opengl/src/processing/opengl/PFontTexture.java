@@ -24,14 +24,11 @@
 
 package processing.opengl;
 
-import java.util.HashMap;
-
-import javax.media.opengl.GLContext;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PImage;
+import java.util.HashMap;
 
 /**
  * All the infrastructure needed for optimized font rendering 
@@ -52,8 +49,9 @@ import processing.core.PImage;
  */
 class PFontTexture implements PConstants {
   protected PApplet parent;
-  protected PGraphicsOpenGL renderer;
-  protected GLContext context;
+  protected PGraphicsOpenGL pg;
+  protected PGL pgl;             
+  protected PGL.Context context;
   protected PFont font;
 
   protected int maxTexWidth;
@@ -71,8 +69,9 @@ class PFontTexture implements PConstants {
   public PFontTexture(PApplet parent, PFont font, int maxw, int maxh) {
     this.parent = parent;
     this.font = font;    
-    renderer = (PGraphicsOpenGL)parent.g;
-    context = renderer.getContext();
+    pg = (PGraphicsOpenGL)parent.g;
+    pgl = pg.pgl;
+    context = pgl.getContext();
     
     initTexture(maxw, maxh);
   }    
@@ -124,7 +123,7 @@ class PFontTexture implements PConstants {
       textures = new PTexture[1];
       textures[0] = tex;
       images = new PImage[1];      
-      images[0] = renderer.wrapTexture(tex); 
+      images[0] = pg.wrapTexture(tex); 
       currentTex = 0;     
     } else if (resize) {
       // Replacing old smaller texture with larger one.
@@ -134,7 +133,7 @@ class PFontTexture implements PConstants {
       tex.put(tex0);
       textures[currentTex] = tex;
       
-      images[currentTex].setCache(renderer, tex);
+      images[currentTex].setCache(pg, tex);
       images[currentTex].width = tex.width;
       images[currentTex].height = tex.height;
     } else {
@@ -148,7 +147,7 @@ class PFontTexture implements PConstants {
       PImage[] tempImg = images;
       images = new PImage[textures.length + 1];
       PApplet.arrayCopy(tempImg, images, tempImg.length);      
-      images[tempImg.length] = renderer.wrapTexture(tex);
+      images[tempImg.length] = pg.wrapTexture(tex);
     }
     lastTex = currentTex;
     
