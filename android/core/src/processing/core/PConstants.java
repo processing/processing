@@ -36,7 +36,16 @@ import android.view.KeyEvent;
  * FILE_TYPE_TIFF. We'll do this as long as we can get away with it.
  */
 public interface PConstants {
+  // render & flush modes (in P3D)
+  
+  static public final int IMMEDIATE = 0;
+  static public final int RETAINED  = 1;  
+  
+  static public final int FLUSH_CONTINUOUSLY = 0;
+  static public final int FLUSH_WHEN_FULL    = 1;   
 
+  // vertex fields
+  
   static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)
   static public final int Y = 1;
   static public final int Z = 2;
@@ -155,6 +164,14 @@ public interface PConstants {
   /** Smallest possible (negative) integer value */
   static final int MIN_INT = Integer.MIN_VALUE;
 
+  
+  // shapes
+  
+  static public final int VERTEX = 0;  
+  static public final int BEZIER_VERTEX = 1;  
+  static public final int QUAD_BEZIER_VERTEX = 2;  
+  static public final int CURVE_VERTEX = 3;
+  static public final int BREAK = 4;    
 
   // useful goodness
 
@@ -393,7 +410,8 @@ public interface PConstants {
   public static final int STATIC = 0;
   /**  Dynamic usage mode for PShape3D (vertices will be updated after creation). */
   public static final int DYNAMIC = 1;    
-  
+  /**  Dynamic usage mode for PShape3D (vertices will be updated at every frame). */
+  public static final int STREAM = 2;  
 
   // stroke modes
 
@@ -471,28 +489,37 @@ public interface PConstants {
   // hints - hint values are positive for the alternate version,
   // negative of the same value returns to the normal/default state
 
-  static final int DISABLE_OPENGL_2X_SMOOTH    =  1;
-  static final int ENABLE_OPENGL_2X_SMOOTH     = -1;
-  static final int ENABLE_OPENGL_4X_SMOOTH     =  2;
-
-  static final int ENABLE_NATIVE_FONTS         =  3;
-
-  static final int DISABLE_DEPTH_TEST          =  4;
-  static final int ENABLE_DEPTH_TEST           = -4;
-
-  static final int ENABLE_DEPTH_SORT           =  5;
-  static final int DISABLE_DEPTH_SORT          = -5;
-
-  static final int DISABLE_OPENGL_ERROR_REPORT =  6;
-  static final int ENABLE_OPENGL_ERROR_REPORT  = -6;
-
-  static final int ENABLE_ACCURATE_TEXTURES    =  7;
-  static final int DISABLE_ACCURATE_TEXTURES   = -7;
-
-  static final int DISABLE_DEPTH_MASK          =  8;
-  static final int ENABLE_DEPTH_MASK           = -8;
+  static final int ENABLE_NATIVE_FONTS                 =  1;
+  static final int DISABLE_NATIVE_FONTS                = -1;
   
-  static final int HINT_COUNT                  = 10;
+  static final int DISABLE_DEPTH_TEST                  =  2;
+  static final int ENABLE_DEPTH_TEST                   = -2;
+      
+  static final int ENABLE_DEPTH_SORT                   =  3;
+  static final int DISABLE_DEPTH_SORT                  = -3;
+  
+  static final int DISABLE_OPENGL_ERROR_REPORT         =  4;
+  static final int ENABLE_OPENGL_ERROR_REPORT          = -4;
+  
+  static final int ENABLE_ACCURATE_TEXTURES            =  5;
+  static final int DISABLE_ACCURATE_TEXTURES           = -5;
+
+  static final int DISABLE_DEPTH_MASK                  =  6;
+  static final int ENABLE_DEPTH_MASK                   = -6;
+
+  static final int ENABLE_ACCURATE_2D                  =  7;
+  static final int DISABLE_ACCURATE_2D                 = -7;
+
+  static final int DISABLE_TEXTURE_CACHE               =  8;
+  static final int ENABLE_TEXTURE_CACHE                = -8;
+
+  static final int DISABLE_TRANSFORM_CACHE             =  9;
+  static final int ENABLE_TRANSFORM_CACHE              = -9;  
+
+  static final int ENABLE_PERSPECTIVE_CORRECTED_LINES  =  10;
+  static final int DISABLE_PERSPECTIVE_CORRECTED_LINES = -10;  
+  
+  static final int HINT_COUNT                  =  11;
 
 
   // error messages
@@ -513,6 +540,6 @@ public interface PConstants {
   
   // Some currently missing GLES constants.
   
-  static final int GL_MIN_EXT = 0x8007;
-  static final int GL_MAX_EXT = 0x8008;
+//  static final int GL_MIN_EXT = 0x8007;
+//  static final int GL_MAX_EXT = 0x8008;
 }

@@ -24,19 +24,33 @@
 package processing.core;
 
 import java.util.HashMap;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 
 /**
  * All the infrastructure needed for optimized font rendering 
- * in OpenGL.
+ * in OpenGL. Basically, this special class is needed because
+ * fonts in Processing are handled by a separate PImage for each
+ * gyph. For performance reasons, all these glyphs should be 
+ * stored in a single OpenGL texture (otherwise, rendering a 
+ * string of text would involve binding and unbinding several
+ * textures. 
+ * PFontTexture manages the correspondence between individual 
+ * glyphs and the large OpenGL texture containing them. Also,
+ * in the case that the font size is very large, one single 
+ * OpenGL texture might not be enough to store all the glyphs,
+ * so PFontTexture also takes care of spreading a single font
+ * over several textures.
  * By Andres Colubri
  * 
  */
 class PFontTexture implements PConstants {
   protected PApplet parent;
-  protected PGraphicsAndroid3D a3d;
+  protected PGraphicsAndroid3D renderer;
+  protected PGL pgl;             
+  protected PGL.Context context; 
   protected PFont font;
 
   protected int maxTexWidth;
@@ -45,6 +59,7 @@ class PFontTexture implements PConstants {
   protected int offsetY;
   protected int lineHeight;
   protected PTexture[] textures = null;
+  protected PImage[] images = null;
   protected int currentTex;
   protected int lastTex; 
   protected TextureInfo[] glyphTexinfos; 
@@ -52,50 +67,20 @@ class PFontTexture implements PConstants {
   
   public PFontTexture(PApplet parent, PFont font, int maxw, int maxh) {
     this.parent = parent;
-    this.font = font;
-    a3d = (PGraphicsAndroid3D)parent.g;
-    
-    // Although PFontTexture is not strictly a GL object, since it doesn't directly
-    // contains any native OpenGL resources, it does contains a list of textures 
-    // that don't depend on any PImage, so it is registered so in the case of a refresh
-    // event the textures are re-initialized with the correct data. 
-    a3d.registerPGLObject(this);    
+    this.font = font;    
+    renderer = (PGraphicsAndroid3D)parent.g;
+    pgl = renderer.pgl;
+    context = pgl.getContext();
     
     initTexture(maxw, maxh);
   }    
   
   
-  public void delete() {
-    for (int i = 0; i < textures.length; i++) {
-      textures[i].delete();
-    }
-    a3d.unregisterPGLObject(this);
-  }
-  
-  public void backup() {    
-    // Nothing to do here: the font textures will backup
-    // themselves.
-  }
-  
-  
-  public void restore() {
-    // Restoration we have to do explicitly because the font
-    // textures don't have a backing PImage object, so the
-    // updateTex() method is in charge of updating each appropriate
-    // section of the font textures. 
-    for (int i = 0; i < PApplet.min(font.getGlyphCount(), glyphTexinfos.length); i++) {
-      TextureInfo tinfo = glyphTexinfos[i];
-      textures[tinfo.texIndex].bind();
-      tinfo.updateTex();
-      textures[tinfo.texIndex].unbind();
-    }   
-  }
-
   protected void allocate() {    
     // Nothing to do here: the font textures will allocate
     // themselves.
   }
-  
+   
   
   protected void initTexture(int w, int h) {
     maxTexWidth = w;
@@ -127,7 +112,7 @@ class PFontTexture implements PConstants {
       h = PApplet.min(2 * textures[currentTex].glHeight, maxTexHeight);
       resize = true;
     } else {
-      h = PApplet.min(PGraphicsAndroid3D.maxTextureSize, font.size * 2, maxTexHeight / 4);
+      h = PApplet.min(PGraphicsAndroid3D.maxTextureSize, 512, maxTexHeight / 4);
       resize = false;
     }
     
@@ -136,6 +121,8 @@ class PFontTexture implements PConstants {
     if (textures == null) {
       textures = new PTexture[1];
       textures[0] = tex;
+      images = new PImage[1];      
+      images[0] = renderer.wrapTexture(tex); 
       currentTex = 0;     
     } else if (resize) {
       // Replacing old smaller texture with larger one.
@@ -144,19 +131,27 @@ class PFontTexture implements PConstants {
       PTexture tex0 = textures[currentTex];
       tex.put(tex0);
       textures[currentTex] = tex;
-      tex0.delete();
+      
+      images[currentTex].setCache(renderer, tex);
+      images[currentTex].width = tex.width;
+      images[currentTex].height = tex.height;
     } else {
       // Adding new texture to the list.
-      PTexture[] temp = textures;
+      PTexture[] tempTex = textures;
       textures = new PTexture[textures.length + 1];
-      PApplet.arrayCopy(temp, textures, temp.length);
-      textures[temp.length] = tex;
+      PApplet.arrayCopy(tempTex, textures, tempTex.length);
+      textures[tempTex.length] = tex;
       currentTex = textures.length - 1;
+            
+      PImage[] tempImg = images;
+      images = new PImage[textures.length + 1];
+      PApplet.arrayCopy(tempImg, images, tempImg.length);      
+      images[tempImg.length] = renderer.wrapTexture(tex);
     }
     lastTex = currentTex;
     
     // Make sure that the current texture is bound.
-    tex.bind();
+    //tex.bind();
     
     return resize;
   }
@@ -165,13 +160,25 @@ class PFontTexture implements PConstants {
   public void setFirstTexture() {
     setTexture(0);
   }
-  
+ 
   
   public void setTexture(int idx) {
     if (0 <= idx && idx < textures.length) {      
       currentTex = idx;
-      textures[currentTex].bind();
     }
+  }
+    
+  
+  public PImage getTexture(int idx) {
+    if (0 <= idx && idx < images.length) {      
+      return images[idx];
+    }  
+    return null;    
+  }
+  
+  
+  public PImage getCurrentTexture() {
+    return getTexture(currentTex);    
   }
 
   
@@ -190,8 +197,7 @@ class PFontTexture implements PConstants {
       TextureInfo tinfo = glyphTexinfos[i];
       if (tinfo != null && tinfo.texIndex == currentTex) { 
         tinfo.updateUV();
-      }
-      
+      }      
     }
   }
   
@@ -211,8 +217,7 @@ class PFontTexture implements PConstants {
     return glyphTexinfos[n];
   }  
   
-  
-  // It was inside PFont.Glyph
+
   // Adds this glyph to the opengl texture in PFont.
   protected void addToTexture(int idx, PFont.Glyph glyph) {
     // We add one pixel to avoid issues when sampling the font texture at fractional
@@ -225,7 +230,7 @@ class PFontTexture implements PConstants {
     // bilinear sampling.
     int w = 1 + glyph.width + 1;
     int h = 1 + glyph.height + 1;
-    
+      
     // Converting the pixels array from the PImage into a valid RGBA array for OpenGL.    
     int[] rgba = new int[w * h];
     int t = 0;
@@ -254,7 +259,7 @@ class PFontTexture implements PConstants {
       java.util.Arrays.fill(rgba, (h - 1) * w, h * w, 0x00FFFFFF); // Set the last row to blank pixels.
     }
     
-    // Is there room for this glyph on the current line?
+    // Is there room for this glyph in the current line?
     if (offsetX + w > textures[currentTex].glWidth) {
       // No room, go to the next line:
       offsetX = 0;
@@ -265,7 +270,7 @@ class PFontTexture implements PConstants {
     
     boolean resized = false;
     if (offsetY + lineHeight > textures[currentTex].glHeight) {    
-      // We run out of space in the current texture, we add a new texture:
+      // We run out of space in the current texture, so we add a new texture:
       resized = addTexture();
       if (resized) {
         // Because the current texture has been resized, we need to 
@@ -284,14 +289,10 @@ class PFontTexture implements PConstants {
       lastTex = 0;
     }
     
-    // We assume GL_TEXTURE_2D is enabled at this point.
-    // We reset texture when it was resized because even the
-    // texture index didn't change, the texture is a new one
-    // in fact, so we need to rebind.
     if (currentTex != lastTex || resized) {
-      setTexture(lastTex);
-    }
-    
+      currentTex = idx;            
+    }    
+      
     TextureInfo tinfo = new TextureInfo(currentTex, offsetX, offsetY, w, h, rgba);
     offsetX += w;
  
@@ -315,6 +316,7 @@ class PFontTexture implements PConstants {
     public float v0, v1;
     public int[] pixels;
 
+    
     public TextureInfo(int tidx, int cropX, int cropY, int cropW, int cropH, int[] pix) {
       texIndex = tidx;      
       crop = new int[4];
@@ -330,6 +332,7 @@ class PFontTexture implements PConstants {
       updateTex();
     }
 
+    
     void updateUV() {
       width = textures[texIndex].glWidth;
       height = textures[texIndex].glHeight;      
@@ -339,8 +342,11 @@ class PFontTexture implements PConstants {
       v1 = v0 - (float)crop[3] / (float)height;  
     }
     
+    
     void updateTex() {
-      textures[texIndex].setTexels(offsetX, crop[0] - 1, crop[1] + crop[3] - 1, crop[2] + 2, -crop[3] + 2, pixels);
-    }    
+      textures[texIndex].bind();
+      textures[texIndex].setTexels(pixels, 0, crop[0] - 1, crop[1] + crop[3] - 1, crop[2] + 2, -crop[3] + 2);      
+      textures[texIndex].unbind();      
+    }
   }
 }

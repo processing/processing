@@ -830,11 +830,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
           val[5] = parseInt(list[5]);
         }
         
-        setEGLConfigChooser(g3.getConfigChooser(val[0], val[1], val[2], val[3], val[4], val[5]));  
+        setEGLConfigChooser(g3.pgl.getConfigChooser(val[0], val[1], val[2], val[3], val[4], val[5]));  
       }
       
       // The renderer can be set only once.      
-      setRenderer(g3.getRenderer());
+      setRenderer(g3.pgl.getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
       setFocusable(true);
