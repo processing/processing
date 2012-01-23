@@ -1099,13 +1099,12 @@ public class PShape implements PConstants {
     }
     return -1;
   }
-
-  public void addShape(PShape child) {    
-  }
+  
   
   public void updateRoot(PShape root) {    
   }
 
+  
   protected void modified() {
     modified = true;
     if (parent != null) {
@@ -1123,7 +1122,7 @@ public class PShape implements PConstants {
   }
 
 
-  public int getPrimitive() {
+  public int getKind() {
     return kind;
   }
 
@@ -1141,7 +1140,12 @@ public class PShape implements PConstants {
     return target;
   }
 
+
+  public float getParam(int index) {
+    return params[index];
+  }
   
+
   public void setParams(float[] source) {
     if (params == null) {
       params = new float[source.length];  
@@ -1152,12 +1156,8 @@ public class PShape implements PConstants {
     }
     PApplet.arrayCopy(source, params);
   }  
-
-  public float getParam(int index) {
-    return params[index];
-  }
-
-
+  
+  
   public int getVertexCount() {
     return vertexCount;
   }
