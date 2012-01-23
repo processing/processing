@@ -24,7 +24,15 @@
 
 package processing.opengl;
 
-import processing.core.*;
+import processing.core.PApplet;
+import processing.core.PFont;
+import processing.core.PGraphics;
+import processing.core.PImage;
+import processing.core.PMatrix;
+import processing.core.PMatrix2D;
+import processing.core.PMatrix3D;
+import processing.core.PShape;
+import processing.core.PVector;
 
 import java.nio.*;
 import java.util.EmptyStackException;
@@ -33,23 +41,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.media.nativewindow.GraphicsConfigurationFactory;
-import javax.media.nativewindow.NativeWindow;
-import javax.media.nativewindow.NativeWindowFactory;
-import javax.media.nativewindow.awt.AWTGraphicsConfiguration;
-import javax.media.nativewindow.awt.AWTGraphicsDevice;
-import javax.media.nativewindow.awt.AWTGraphicsScreen;
+// Needed to return the GL object in beginGL()
 import javax.media.opengl.GL;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLDrawable;
-import javax.media.opengl.GLDrawableFactory;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUtessellator;
-import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
-
-import processing.core.PApplet;
 
 /**
  * New OpenGL renderer for Processing, entirely based on OpenGL 2.x 
@@ -61,20 +54,8 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Interface between Processing and OpenGL */
   protected PGL pgl;
   
-  /** Selected GL profile */
-  protected GLProfile profile;
-  
-  /** The capabilities of the OpenGL rendering surface */
-  protected GLCapabilities capabilities;  
-  
-  /** The rendering surface */
-  protected GLDrawable drawable;   
-  
-  /** The rendering context (holds rendering state info) */
-  protected GLContext context;
-  
-  /** The PApplet renderer. For the primary surface, renderer == this. */
-  protected PGraphicsOpenGL renderer;
+  /** The PApplet renderer. For the primary surface, pg == this. */
+  protected PGraphicsOpenGL pg;
 
   // ........................................................  
   
@@ -432,7 +413,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // INIT/ALLOCATE/FINISH
   
   public PGraphicsOpenGL() {
-    pgl = new PGL();
+    pgl = new PGL(this);
     
     tessellator = new Tessellator();
     
@@ -534,20 +515,28 @@ public class PGraphicsOpenGL extends PGraphics {
     
     if (primarySurface) {
       // Allocation of the main renderer, which mainly involves initializing OpenGL.
-      if (context == null) {
-        initPrimary();      
-      } else {
+//      if (context == null) {
+//        initPrimary();      
+//      } else {
+//        reapplySettings();
+//      }
+      
+      if (pgl.initialized) {
         reapplySettings();
       }      
     } else {      
       // Allocation of an offscreen renderer.
-      if (context == null) {
-        initOffscreen();
-      } else {
-        // Updating OpenGL context associated to this offscreen
-        // surface, to take into account a context recreation situation.
+//      if (context == null) {
+//        initOffscreen();
+//      } else {
+//        // Updating OpenGL context associated to this offscreen
+//        // surface, to take into account a context recreation situation.
+//        updateOffscreenContext();
+//        reapplySettings();
+//      }
+      if (pgl.initialized) {
         updateOffscreenContext();
-        reapplySettings();
+        reapplySettings();        
       }
     }    
   }
@@ -555,10 +544,10 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public void dispose() { // PGraphics    
     super.dispose();
-    detainContext();
+    pgl.detainContext();
     deleteFinalizedGLResources();
-    releaseContext();
-    GLProfile.shutdown();
+    pgl.releaseContext();
+    PGL.shutdown();    
   }
   
 
@@ -871,8 +860,6 @@ public class PGraphicsOpenGL extends PGraphics {
   // GLSL Program Objects -----------------------------------------------
   
   protected int createGLSLProgramObject() {
-    
-    renderer.report("before delete");
     deleteFinalizedGLSLProgramObjects();
         
     int[] temp = new int[1];
@@ -1098,50 +1085,20 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // FRAME RENDERING
   
-  /**
-   * Get the current context, for use by libraries that need to talk to it.
-   */
-  public GLContext getContext() {
-    return context;
-  }
-
-
-  /**
-   * Get the current capabilities.
-   */
-  public GLCapabilities getCapabilities() {
-    return capabilities;
-  }  
-
-  
-  /**
-   * Get the current profile.
-   */  
-  public GLProfile getProfile() {
-    return profile;
-  }
+//  public GLContext getContext() {
+//    return context;
+//  }
+//  public GLCapabilities getCapabilities() {
+//    return capabilities;
+//  }  
+//  public GLProfile getProfile() {
+//    return profile;
+//  }
+//  public GLDrawable getDrawable() {
+//    return drawable;
+//  }
   
   
-  /**
-   * Get the current drawable.
-   */  
-  public GLDrawable getDrawable() {
-    return drawable;
-  }
-  
-  
-  /**
-   * Make the OpenGL rendering context current for this thread.
-   */
-  protected void detainContext() {
-    try {
-      while (context.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT) {
-        Thread.sleep(10);
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-  }
 
   protected void releaseResources() {
     // First, releasing the resources used by
@@ -1179,15 +1136,6 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteAllGLResources();    
   }
   
-
-  /**
-   * Release the context, otherwise the AWT lock on X11 will not be released
-   */
-  protected void releaseContext() {
-    context.release();
-  }
-
-  
   /**
    * Destroys current OpenGL context and creates a new one, making sure that all
    * the current OpenGL objects remain valid afterward.
@@ -1195,12 +1143,10 @@ public class PGraphicsOpenGL extends PGraphics {
   public void restartContext() {
     releaseResources();    
     
-    releaseContext();
-    context.destroy();
-    context = null;
-    
-    allocate();          
-    detainContext();      
+    pgl.releaseContext();
+    pgl.destroyContext();
+    restartSurface();    
+    pgl.detainContext();      
     updateGLInterfaces();    
   }  
 
@@ -1340,7 +1286,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * returns the value of PApplet.isDisplayable() (inherited from Component).
    */
   public boolean canDraw() {
-    return parent.isDisplayable();
+    return pgl.canDraw();
   }
 
   
@@ -1350,15 +1296,27 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }    
     
-    if (primarySurface && drawable != null) {
-      // Call setRealized() after addNotify() has been called
-      drawable.setRealized(parent.isDisplayable());
-      if (parent.isDisplayable()) {
-        drawable.setRealized(true);
+    if (primarySurface) {
+      if (!pgl.initialized) {
+        initPrimary();
+      }      
+      boolean res = pgl.beginOnscreenDraw();
+      if (!res) return;
+      pgl.detainContext();      
+    } else {
+      if (!pgl.initialized) {
+        initOffscreen();
+      }     
+      
+      pushFramebuffer();
+      if (offscreenMultisample) {
+        setFramebuffer(offscreenFramebufferMultisample);   
+        pgl.setDrawBuffer(0);
       } else {
-        return;  // Should have called canDraw() anyway
-      }
-      detainContext();
+        setFramebuffer(offscreenFramebuffer);
+      }      
+      
+      pgl.beginOffscreenDraw();
     }
       
     updateGLInterfaces();
@@ -1376,12 +1334,12 @@ public class PGraphicsOpenGL extends PGraphics {
     report("top beginDraw()");    
     
     if (!primarySurface) {
-      renderer.saveGLState();
+      pg.saveGLState();
             
       // Disabling all lights, so the offscreen renderer can set completely
       // new light configuration (otherwise some light configuration from the 
       // primary renderer might stay).
-      renderer.disableLights();
+      pg.disableLights();
     }     
     
     inGeo.reset();
@@ -1429,8 +1387,8 @@ public class PGraphicsOpenGL extends PGraphics {
       if (texture != null) {
         // The screen texture should be deleted because it 
         // corresponds to the old window size.
-        this.removeCache(renderer);
-        this.removeParams(renderer);
+        this.removeCache(pg);
+        this.removeParams(pg);
         texture = null;
         loadTexture();
       }      
@@ -1471,6 +1429,8 @@ public class PGraphicsOpenGL extends PGraphics {
     normalX = normalY = 0; 
     normalZ = 0;
     
+    
+    /*
     if (primarySurface) {
       // This instance of PGraphicsOpenGL is the primary (onscreen) drawing surface.    
       // Nothing else needs setup here.      
@@ -1483,6 +1443,8 @@ public class PGraphicsOpenGL extends PGraphics {
         setFramebuffer(offscreenFramebuffer);
       }
     }
+    */
+    
     
     // Clear depth and stencil buffers.
     pgl.setClearColor(0, 0, 0, 0);
@@ -1519,19 +1481,18 @@ public class PGraphicsOpenGL extends PGraphics {
       // operation. Thus, only the main renderer (the primary surface)
       // should call it at the end of draw, and none of the offscreen 
       // renderers...
-      pgl.flush();
-      
-      if (drawable != null) {
-        drawable.swapBuffers();
-        releaseContext();
-      }
+      pgl.endOnscreenDraw();
+      pgl.flush();                  
+      pgl.releaseContext();
     } else {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
       }
       popFramebuffer();
       
-      renderer.restoreGLState();
+      pgl.endOffscreenDraw();
+      
+      pg.restoreGLState();
     }    
 
     drawing = false;    
@@ -1557,7 +1518,11 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   public void updateGLInterfaces() {
-    pgl.update(context);
+    if (primarySurface) {
+      pgl.updateGLPrimary();  
+    } else {
+      pgl.updateOffscreen(pg.pgl);
+    }
   }
   
   
@@ -1689,14 +1654,14 @@ public class PGraphicsOpenGL extends PGraphics {
   // operation, such as grabbing the contents of the color
   // buffer.
   protected void beginGLOp() {
-    detainContext();
+    pgl.detainContext();
     updateGLInterfaces();
   }
 
   
   // Pairs-up with beginGLOp().
   protected void endGLOp() {
-    releaseContext();
+    pgl.releaseContext();
   }
   
   
@@ -1779,8 +1744,7 @@ public class PGraphicsOpenGL extends PGraphics {
         flush();
       }
       
-    } else if (which == ENABLE_PERSPECTIVE_CORRECTED_LINES &&
-               0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
+    } else if (which == ENABLE_PERSPECTIVE_CORRECTED_LINES) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         flush();
       }      
@@ -2349,7 +2313,7 @@ public class PGraphicsOpenGL extends PGraphics {
       PTexture tex = null;
       
       if (img != null) {
-        tex = renderer.getTexture(img);
+        tex = pg.getTexture(img);
         if (tex != null) {                   
           tex.bind();          
           tex0 = tex;
@@ -2371,7 +2335,7 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int i = 0; i < texCache.count; i++) {
         PImage img = texCache.textures[i];
         if (img != null) {
-          PTexture tex = renderer.getTexture(img);
+          PTexture tex = pg.getTexture(img);
           if (tex != null) {
             tex.unbind();  
           }
@@ -2382,7 +2346,7 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int i = 0; i < texCache.count; i++) {
         PImage img = texCache.textures[i];
         if (img != null) {
-          PTexture tex = renderer.getTexture(img);
+          PTexture tex = pg.getTexture(img);
           if (tex != null) {
             pgl.disableTexturing(tex.glTarget);
           }          
@@ -2611,11 +2575,11 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     // setup matrix for forward differencing to speed up drawing
-    renderer.splineForward(detail, bezierDrawMatrix);
+    pg.splineForward(detail, bezierDrawMatrix);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
-    bezierDrawMatrix.apply(renderer.bezierBasisMatrix);
+    bezierDrawMatrix.apply(pg.bezierBasisMatrix);
   }  
   
   public void bezierVertex(float x2, float y2,
@@ -2782,10 +2746,10 @@ public class PGraphicsOpenGL extends PGraphics {
                          (s-1)/2f, 0,         (1-s)/2f,  0,
                          0,        1,         0,         0);
 
-    renderer.splineForward(curveDetail, curveDrawMatrix);
+    pg.splineForward(curveDetail, curveDrawMatrix);
 
     if (bezierBasisInverse == null) {
-      bezierBasisInverse = renderer.bezierBasisMatrix.get();
+      bezierBasisInverse = pg.bezierBasisMatrix.get();
       bezierBasisInverse.invert();
       curveToBezierMatrix = new PMatrix3D();
     }
@@ -3188,12 +3152,12 @@ public class PGraphicsOpenGL extends PGraphics {
    * Implementation of actual drawing for a line of text.
    */
   protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
-    textTex = (PFontTexture)textFont.getCache(renderer);        
+    textTex = (PFontTexture)textFont.getCache(pg);        
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
     } else {
-      if (context.hashCode() != textTex.context.hashCode()) {
+      if (!pgl.contextIsCurrent(textTex.context)) {
         for (int i = 0; i < textTex.textures.length; i++) {
           textTex.textures[i].glID = 0; // To avoid finalization (texture objects were already deleted when context changed).
           textTex.textures[i] = null;
@@ -5181,8 +5145,8 @@ public class PGraphicsOpenGL extends PGraphics {
       PTexture.Parameters params = PTexture.newParameters(ARGB, sampling);
       texture = new PTexture(parent, width, height, params);      
       texture.setFlippedY(true);
-      this.setCache(renderer, texture);
-      this.setParams(renderer, params);
+      this.setCache(pg, texture);
+      this.setParams(pg, params);
       
       texCrop = new int[4];
       texCrop[0] = 0;
@@ -5649,11 +5613,11 @@ public class PGraphicsOpenGL extends PGraphics {
    * @param img the image to have a texture metadata associated to it
    */  
   public PTexture getTexture(PImage img) {
-    PTexture tex = (PTexture)img.getCache(renderer);
+    PTexture tex = (PTexture)img.getCache(pg);
     if (tex == null) {
       tex = addTexture(img);      
     } else {       
-      if (context.hashCode() != tex.context.hashCode()) {
+      if (!pgl.contextIsCurrent(tex.context)) {  
         // The texture was created with a different context. We need
         // to recreate it. First, we make sure that the old GL id
         // is not used to delete the texture object (it was already
@@ -5686,7 +5650,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * @param img the image to have a texture metadata associated to it
    */      
   protected PTexture queryTexture(PImage img) {
-    PTexture tex = (PTexture)img.getCache(renderer);
+    PTexture tex = (PTexture)img.getCache(pg);
     return tex;
   }
   
@@ -5697,15 +5661,15 @@ public class PGraphicsOpenGL extends PGraphics {
    * @param img the image to have a texture metadata associated to it
    */
   protected PTexture addTexture(PImage img) {
-    PTexture.Parameters params = (PTexture.Parameters)img.getParams(renderer);
+    PTexture.Parameters params = (PTexture.Parameters)img.getParams(pg);
     if (params == null) {
       params = PTexture.newParameters();
-      img.setParams(renderer, params);
+      img.setParams(pg, params);
     }
     PTexture tex = new PTexture(img.parent, img.width, img.height, params);    
     img.loadPixels();    
     if (img.pixels != null) tex.set(img.pixels);
-    img.setCache(renderer, tex);
+    img.setCache(pg, tex);
     return tex;
   }
   
@@ -5717,7 +5681,7 @@ public class PGraphicsOpenGL extends PGraphics {
     img.width = tex.width; 
     img.height = tex.height;
     img.format = ARGB;    
-    img.setCache(renderer, tex);
+    img.setCache(pg, tex);
     return img;
   }
     
@@ -5910,120 +5874,31 @@ public class PGraphicsOpenGL extends PGraphics {
   // INITIALIZATION ROUTINES    
   
   static public void init() {
-    init(true);
+    PGL.startup(true);
   }
 
-  /**
-   * This static method can be called by applications that use
-   * Processing+P3D inside their own GUI, so they can initialize
-   * JOGL2 before anything else.
-   * According to the JOGL2 documentation, applications shall call 
-   * GLProfile.initSingleton() ASAP, before any other UI invocation.
-   * In case applications are able to initialize JOGL before any other 
-   * UI action, hey shall invoke this method with beforeUI=true and 
-   * benefit from fast native multithreading support on all platforms 
-   * if possible. 
-   *
-   */
+
   static public void init(boolean beforeUI) {
-    try {
-      GLProfile.initSingleton(beforeUI);
-    } catch (Exception e) {
-      e.printStackTrace();
+    PGL.startup(beforeUI);
+  }
+    
+  protected void restartSurface() {
+    if (primarySurface) {
+      initPrimary();
+    } else {
+      initOffscreen();
     }    
   }
-    
+  
   protected void initPrimary() {
-    if (parent.online) {
-      // RCP Application (Applet's, Webstart, Netbeans, ..) using JOGL may not 
-      // be able to initialize JOGL before the first UI action, so initSingleton()
-      // is called with its argument set to false.
-      GLProfile.initSingleton(false);
-    } else {
-      if (PApplet.platform == LINUX) {
-        // Special case for Linux, since the multithreading issues described for
-        // example here:
-        // http://forum.jogamp.org/QtJambi-JOGL-Ubuntu-Lucid-td909554.html
-        // have not been solved yet (at least for stable release b32 of JOGL2).
-        GLProfile.initSingleton(false);
-      } else { 
-        GLProfile.initSingleton(true);
-      }
-    }
-    
-    renderer = this;
-    
-    profile = null;      
-    
-    profile = GLProfile.getDefault();
-    
-    //profile = GLProfile.get(GLProfile.GL2ES1);    
-    //profile = GLProfile.get(GLProfile.GL4bc);
-    //profile = GLProfile.getMaxProgrammable();    
-    pgl.pipeline = PGL.FIXED; 
-
-    /*
-    // Profile auto-selection disabled for the time being.
-    // TODO: Implement programmable pipeline :-)
-    try {
-      profile = GLProfile.get(GLProfile.GL4);
-      pipeline = PROG_GL4;
-    } catch (GLException e) {}   
-    
-    if (profile == null) {
-      try {
-        profile = GLProfile.get(GLProfile.GL3);
-        pipeline = PROG_GL3;
-      } catch (GLException e) {}           
-    }
-    
-    if (profile == null) {
-      try {
-        profile = GLProfile.get(GLProfile.GL2ES2);
-        pipeline = PROG_GL2;
-      } catch (GLException e) {}           
-    }
-
-    if (profile == null) {
-      try {
-        profile = GLProfile.get(GLProfile.GL2ES1);
-        pipeline = FIXED;
-      } catch (GLException e) {}
-    }
-    */      
-          
-    if (profile == null) {
-      parent.die("Cannot get a valid OpenGL profile");
-    }
-
-    capabilities = new GLCapabilities(profile);
-    if (1 < antialias) {
-      capabilities.setSampleBuffers(true);
-      capabilities.setNumSamples(antialias);
-    } else {
-      capabilities.setSampleBuffers(false);
-    }
-
-    // Getting the native window:
-    // http://www.java-gaming.org/index.php/topic,21559.0.html
-    AWTGraphicsScreen screen = (AWTGraphicsScreen)AWTGraphicsScreen.createDefault();
-    AWTGraphicsConfiguration config = (AWTGraphicsConfiguration)GraphicsConfigurationFactory
-        .getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(capabilities, capabilities, null, screen);
-    NativeWindow win = NativeWindowFactory.getNativeWindow(parent, config);    
-    
-    // With the native window we get the drawable and context:
-    GLDrawableFactory factory = GLDrawableFactory.getFactory(profile);
-    drawable = factory.createGLDrawable(win);
-    context = drawable.createContext(null);    
+    pgl.initPrimary(antialias);
+    pg = this;
   }
   
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
-    renderer = (PGraphicsOpenGL)parent.g;
-    
-    context = renderer.getContext();
-    capabilities = renderer.getCapabilities();
-    drawable = null;
+    pg = (PGraphicsOpenGL)parent.g;
+    pgl.initOffscreen(pg.pgl);
     
     updateGLInterfaces();
     loadTextureImpl(BILINEAR);
@@ -6040,18 +5915,14 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
-    if (PGraphicsOpenGL.fboMultisampleSupported && pgl.gl2x != null && 1 < antialias) {
+    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < antialias) {
       int nsamples = antialias;
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, nsamples, 0, 
                                                          offscreenDepthBits, offscreenStencilBits, 
                                                          offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
       
-      
-      
       offscreenFramebufferMultisample.clear();
       offscreenMultisample = true;
-      
-      renderer.report("after cleaning fbm");
       
       // The offscreen framebuffer where the multisampled image is finally drawn to doesn't
       // need depth and stencil buffers since they are part of the multisampled framebuffer.
@@ -6072,10 +5943,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   protected void updateOffscreenContext() {
-    context = renderer.getContext();
-    capabilities = renderer.getCapabilities();
-    drawable = null;    
-    
+    pgl.updateOffscreen(pg.pgl);
     updateGLInterfaces();
   }  
   
@@ -7979,9 +7847,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public class Tessellator {    
     InGeometry in; 
     TessGeometry tess;
-    GLU glu;
-    GLUtessellator gluTess;
-    GLUTessCallback tessCallback;
+    PGL.Tessellator gluTess;
+    TessellatorCallback callback;
     
     boolean fill;
     boolean stroke;
@@ -7992,17 +7859,8 @@ public class PGraphicsOpenGL extends PGraphics {
     int bezierDetil = 20;
     
     public Tessellator() {
-      glu = new GLU();
-      
-      gluTess = GLU.gluNewTess();
-    
-      tessCallback = new GLUTessCallback();
-      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_BEGIN, tessCallback);
-      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_END, tessCallback);
-      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_VERTEX, tessCallback);
-      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_COMBINE, tessCallback);
-      GLU.gluTessCallback(gluTess, GLU.GLU_TESS_ERROR, tessCallback);    
-      
+      callback = new TessellatorCallback();
+      gluTess = pgl.createTessellator(callback);
       bezierDetil = 20;
     }
 
@@ -8350,27 +8208,27 @@ public class PGraphicsOpenGL extends PGraphics {
     public void tessellatePolygon(boolean solid, boolean closed, boolean calcNormals) {
       int nInVert = in.lastVertex - in.firstVertex + 1;
       
-      tessCallback.calcNormals = calcNormals;
+      callback.calcNormals = calcNormals;
       
       if (fill && 3 <= nInVert) {
-        GLU.gluTessBeginPolygon(gluTess, null);
+        gluTess.beginPolygon();
         
         if (solid) {
           // Using NONZERO winding rule for solid polygons.
-          GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_NONZERO);      
+          gluTess.setWindingRule(PGL.TESS_WINDING_NONZERO);          
         } else {
           // Using ODD winding rule to generate polygon with holes.
-          GLU.gluTessProperty(gluTess, GLU.GLU_TESS_WINDING_RULE, GLU.GLU_TESS_WINDING_ODD);      
+          gluTess.setWindingRule(PGL.TESS_WINDING_ODD);
         }
 
-        GLU.gluTessBeginContour(gluTess);    
+        gluTess.beginContour();    
         
         // Now, iterate over all input data and send to GLU tessellator..
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
           boolean breakPt = in.codes[i] == PShape.BREAK;      
           if (breakPt) {
-            GLU.gluTessEndContour(gluTess);  
-            GLU.gluTessBeginContour(gluTess);
+            gluTess.endContour();
+            gluTess.beginContour();
           }
           
           // Vertex data includes coordinates, colors, normals and texture coordinates.
@@ -8378,18 +8236,17 @@ public class PGraphicsOpenGL extends PGraphics {
                                            in.colors[4 * i + 0], in.colors[4 * i + 1], in.colors[4 * i + 2], in.colors[4 * i + 3],
                                            in.normals[3 * i + 0], in.normals[3 * i + 1], in.normals[3 * i + 2],
                                            in.texcoords[2 * i + 0], in.texcoords[2 * i + 1] };
-          GLU.gluTessVertex(gluTess, vertex, 0, vertex);
-        }
+          gluTess.addVertex(vertex);
+        }        
+        gluTess.endContour();
         
-        GLU.gluTessEndContour(gluTess);
-        
-        GLU.gluTessEndPolygon(gluTess);
+        gluTess.endPolygon();
       }
 
       if (stroke) {
         tess.isStroked = true;
         tessellateEdges();
-      }  
+      }
     }
 
     
@@ -8440,7 +8297,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return 1 < edge;
     }    
     
-    public class GLUTessCallback extends GLUtessellatorCallbackAdapter {
+    public class TessellatorCallback implements PGL.TessellatorCallback {
       public boolean calcNormals;
       protected int tessFirst;
       protected int tessCount;
@@ -8451,13 +8308,13 @@ public class PGraphicsOpenGL extends PGraphics {
         tessCount = 0;
         
         switch (type) {
-        case GL.GL_TRIANGLE_FAN: 
+        case PGL.TRIANGLE_FAN: 
           tessType = TRIANGLE_FAN;
           break;
-        case GL.GL_TRIANGLE_STRIP: 
+        case PGL.TRIANGLE_STRIP: 
           tessType = TRIANGLE_STRIP;
           break;
-        case GL.GL_TRIANGLES: 
+        case PGL.TRIANGLES: 
           tessType = TRIANGLES;
           break;
         }
@@ -8530,7 +8387,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       public void error(int errnum) {
-        String estring = glu.gluErrorString(errnum);
+        String estring = pgl.getErrorString(errnum);
         PGraphics.showWarning("Tessellation Error: " + estring);
       }
       

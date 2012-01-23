@@ -33,7 +33,7 @@ import java.net.URL;
  */
 public class PShader {
   protected PApplet parent;
-  protected PGraphicsOpenGL renderer; 
+  protected PGraphicsOpenGL pg; 
   protected PGL pgl;
   
   protected int programObject;
@@ -48,10 +48,10 @@ public class PShader {
    */
   public PShader(PApplet parent) {
     this.parent = parent;
-    renderer = (PGraphicsOpenGL) parent.g;
-    pgl = renderer.pgl;
+    pg = (PGraphicsOpenGL) parent.g;
+    pgl = pg.pgl;
     
-    programObject = renderer.createGLSLProgramObject();  
+    programObject = pg.createGLSLProgramObject();  
     
     vertexShader = 0;
     fragmentShader = 0;
@@ -76,13 +76,13 @@ public class PShader {
   protected void finalize() throws Throwable {
     try {
       if (vertexShader != 0) {
-        renderer.finalizeGLSLVertShaderObject(vertexShader);
+        pg.finalizeGLSLVertShaderObject(vertexShader);
       }
       if (fragmentShader != 0) {
-        renderer.finalizeGLSLFragShaderObject(fragmentShader);
+        pg.finalizeGLSLFragShaderObject(fragmentShader);
       }
       if (programObject != 0) {
-        renderer.finalizeGLSLProgramObject(programObject);
+        pg.finalizeGLSLProgramObject(programObject);
       }
     } finally {
       super.finalize();
@@ -432,7 +432,7 @@ public class PShader {
    * @param filename the shader's filename, used to print error log information
    */
   private void attachVertexShader(String shaderSource, String file) {
-    vertexShader = renderer.createGLSLVertShaderObject();
+    vertexShader = pg.createGLSLVertShaderObject();
     
     pgl.setShaderSource(vertexShader, shaderSource);
     pgl.compileShader(vertexShader);
@@ -446,7 +446,7 @@ public class PShader {
    * @param filename the shader's filename, used to print error log information
    */
   private void attachFragmentShader(String shaderSource, String file) {
-    fragmentShader = renderer.createGLSLFragShaderObject();
+    fragmentShader = pg.createGLSLFragShaderObject();
     
     pgl.setShaderSource(fragmentShader, shaderSource);
     pgl.compileShader(fragmentShader);
@@ -469,15 +469,15 @@ public class PShader {
 
   protected void release() {
     if (vertexShader != 0) {
-      renderer.deleteGLSLVertShaderObject(vertexShader);
+      pg.deleteGLSLVertShaderObject(vertexShader);
       vertexShader = 0;
     }
     if (fragmentShader != 0) {
-      renderer.deleteGLSLFragShaderObject(fragmentShader);
+      pg.deleteGLSLFragShaderObject(fragmentShader);
       fragmentShader = 0;
     }
     if (programObject != 0) {
-      renderer.deleteGLSLProgramObject(programObject);
+      pg.deleteGLSLProgramObject(programObject);
       programObject = 0;
     }
   }
