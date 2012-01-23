@@ -29,6 +29,12 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import javax.media.nativewindow.GraphicsConfigurationFactory;
+import javax.media.nativewindow.NativeWindow;
+import javax.media.nativewindow.NativeWindowFactory;
+import javax.media.nativewindow.awt.AWTGraphicsConfiguration;
+import javax.media.nativewindow.awt.AWTGraphicsDevice;
+import javax.media.nativewindow.awt.AWTGraphicsScreen;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
 import javax.media.opengl.GL2ES1;
@@ -36,11 +42,18 @@ import javax.media.opengl.GL2ES2;
 import javax.media.opengl.GL2GL3;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GL4;
+import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
+import javax.media.opengl.GLDrawable;
+import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLException;
+import javax.media.opengl.GLProfile;
 import javax.media.opengl.glu.GLU;
+import javax.media.opengl.glu.GLUtessellator;
+import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 
 /** 
  * How the P3D renderer handles the different OpenGL profiles? Basically,
@@ -129,6 +142,13 @@ public class PGL {
   public static final int DYNAMIC_DRAW = GL.GL_DYNAMIC_DRAW;
   public static final int STREAM_DRAW  = GL2.GL_STREAM_DRAW;
   
+  public static final int TRIANGLE_FAN   = GL.GL_TRIANGLE_FAN;
+  public static final int TRIANGLE_STRIP = GL.GL_TRIANGLE_STRIP;
+  public static final int TRIANGLES      = GL.GL_TRIANGLES;  
+  
+  public static final int TESS_WINDING_NONZERO = GLU.GLU_TESS_WINDING_NONZERO;
+  public static final int TESS_WINDING_ODD = GLU.GLU_TESS_WINDING_ODD;
+  
   // Rendering pipeline modes
   public static final int FIXED    = 0;
   public static final int PROG_GL2 = 1;
@@ -161,11 +181,53 @@ public class PGL {
   
   public GLU glu;
   
-  public PGL() {    
+  /** Selected GL profile */
+  public GLProfile profile;
+  
+  /** The capabilities of the OpenGL rendering surface */
+  public GLCapabilities capabilities;  
+  
+  /** The rendering surface */
+  public GLDrawable drawable;   
+  
+  /** The rendering context (holds rendering state info) */
+  public GLContext context;  
+  
+  public PGraphicsOpenGL pg;
+  
+  public boolean initialized;
+  
+  public PGL(PGraphicsOpenGL pg) {
+    this.pg = pg;
     glu = new GLU();
+    initialized = false;
   }
   
-  void update(GLContext context) {
+  /**
+   * This static method can be called by applications that use
+   * Processing+P3D inside their own GUI, so they can initialize
+   * JOGL2 before anything else.
+   * According to the JOGL2 documentation, applications shall call 
+   * GLProfile.initSingleton() ASAP, before any other UI invocation.
+   * In case applications are able to initialize JOGL before any other 
+   * UI action, hey shall invoke this method with beforeUI=true and 
+   * benefit from fast native multithreading support on all platforms 
+   * if possible. 
+   *
+   */  
+  static public void startup(boolean beforeUI) {
+    try {
+      GLProfile.initSingleton(beforeUI);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }      
+  }
+  
+  static public void shutdown() {
+    GLProfile.shutdown();    
+  }
+  
+  public void updateGLPrimary() {
     gl = context.getGL();       
     
     if (pipeline == PROG_GL4) {
@@ -194,6 +256,173 @@ public class PGL {
     try {
       gl2x = gl.getGL2GL3();
     } catch (GLException e) {}    
+  }
+  
+  public void updateGLOffscreen(PGL primary) {
+    gl   = primary.gl;       
+    gl4p = primary.gl4p;
+    gl3p = primary.gl3p;
+    gl2p = primary.gl2p;        
+    gl2f = primary.gl2f;
+  }
+  
+  
+  public void initPrimary(int antialias) {
+    if (pg.parent.online) {
+      // RCP Application (Applet's, Webstart, Netbeans, ..) using JOGL may not 
+      // be able to initialize JOGL before the first UI action, so initSingleton()
+      // is called with its argument set to false.
+      GLProfile.initSingleton(false);
+    } else {
+      if (PApplet.platform == PConstants.LINUX) {
+        // Special case for Linux, since the multithreading issues described for
+        // example here:
+        // http://forum.jogamp.org/QtJambi-JOGL-Ubuntu-Lucid-td909554.html
+        // have not been solved yet (at least for stable release b32 of JOGL2).
+        GLProfile.initSingleton(false);
+      } else { 
+        GLProfile.initSingleton(true);
+      }
+    }
+    
+    profile = null;      
+    
+    profile = GLProfile.getDefault();
+    
+    //profile = GLProfile.get(GLProfile.GL2ES1);    
+    //profile = GLProfile.get(GLProfile.GL4bc);
+    //profile = GLProfile.getMaxProgrammable();    
+    pipeline = PGL.FIXED; 
+
+    /*
+    // Profile auto-selection disabled for the time being.
+    // TODO: Implement programmable pipeline :-)
+    try {
+      profile = GLProfile.get(GLProfile.GL4);
+      pipeline = PROG_GL4;
+    } catch (GLException e) {}   
+    
+    if (profile == null) {
+      try {
+        profile = GLProfile.get(GLProfile.GL3);
+        pipeline = PROG_GL3;
+      } catch (GLException e) {}           
+    }
+    
+    if (profile == null) {
+      try {
+        profile = GLProfile.get(GLProfile.GL2ES2);
+        pipeline = PROG_GL2;
+      } catch (GLException e) {}           
+    }
+
+    if (profile == null) {
+      try {
+        profile = GLProfile.get(GLProfile.GL2ES1);
+        pipeline = FIXED;
+      } catch (GLException e) {}
+    }
+    */      
+          
+    if (profile == null) {
+      pg.parent.die("Cannot get a valid OpenGL profile");
+    }
+
+    capabilities = new GLCapabilities(profile);
+    if (1 < antialias) {
+      capabilities.setSampleBuffers(true);
+      capabilities.setNumSamples(antialias);
+    } else {
+      capabilities.setSampleBuffers(false);
+    }
+
+    // Getting the native window:
+    // http://www.java-gaming.org/index.php/topic,21559.0.html
+    AWTGraphicsScreen screen = (AWTGraphicsScreen)AWTGraphicsScreen.createDefault();
+    AWTGraphicsConfiguration config = (AWTGraphicsConfiguration)GraphicsConfigurationFactory
+        .getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(capabilities, capabilities, null, screen);
+    NativeWindow win = NativeWindowFactory.getNativeWindow(pg.parent, config);    
+    
+    // With the native window we get the drawable and context:
+    GLDrawableFactory factory = GLDrawableFactory.getFactory(profile);
+    drawable = factory.createGLDrawable(win);
+    context = drawable.createContext(null);
+    
+    initialized = true;
+  }
+  
+  public void initOffscreen(PGL primary) {
+    context = primary.context;
+    capabilities = primary.capabilities;
+    drawable = null;
+    initialized = true;
+  }  
+    
+  public void updateOffscreen(PGL primary) {
+    context = primary.context;
+    capabilities = primary.capabilities;
+    drawable = null;    
+  }  
+  
+  /**
+   * Make the OpenGL rendering context current for this thread.
+   */
+  protected void detainContext() {
+    try {
+      while (context.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT) {
+        Thread.sleep(10);
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }  
+  }
+  
+  /**
+   * Release the context, otherwise the AWT lock on X11 will not be released
+   */
+  public void releaseContext() {
+    context.release();
+  }  
+  
+  public void destroyContext() {
+    context.destroy();
+    context = null;    
+  }
+  
+  public boolean contextIsCurrent(Context other) {
+    return other.same(context);
+  }
+  
+  public boolean beginOnscreenDraw() {
+    if (drawable != null) {
+      // Call setRealized() after addNotify() has been called
+      drawable.setRealized(pg.parent.isDisplayable());
+      if (pg.parent.isDisplayable()) {
+        drawable.setRealized(true);
+        return true;
+      } else {
+        return false;  // Should have called canDraw() anyway
+      }
+    }
+    return false;
+  }
+  
+  public void endOnscreenDraw() {
+    if (drawable != null) {
+      drawable.swapBuffers();        
+    }    
+  }
+  
+  public void beginOffscreenDraw() {
+
+  }
+  
+  public void endOffscreenDraw() {
+    
+  }
+  
+  public boolean canDraw() {
+    return pg.parent.isDisplayable();    
   }
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -326,7 +555,7 @@ public class PGL {
   
   /////////////////////////////////////////////////////////////////////////////////
   
-  // Error  
+  // Errors
   
   public int getError() {
     return gl.glGetError();
@@ -1160,5 +1389,107 @@ public class PGL {
 
   public void clearAllBuffers() {
     gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT); 
+  }
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Context interface  
+  
+  public Context getContext() {
+    return new Context(context);
+  }
+  
+  public class Context {
+    protected GLContext context;
+    
+    Context(GLContext context) {
+      this.context = context;
+    }
+    
+    boolean same(GLContext context) {
+      return this.context.hashCode() == context.hashCode();  
+    }
   }  
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Tessellator interface
+    
+  public Tessellator createTessellator(TessellatorCallback callback) {
+    return new Tessellator(callback);
+  }
+  
+  public class Tessellator {
+    protected GLUtessellator tess;
+    protected TessellatorCallback callback;
+    protected GLUCallback gluCallback;
+    
+    public Tessellator(TessellatorCallback callback) {
+      this.callback = callback;
+      tess = GLU.gluNewTess();
+      gluCallback = new GLUCallback();
+      
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_BEGIN, gluCallback);
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_END, gluCallback);
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_VERTEX, gluCallback);
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_COMBINE, gluCallback);
+      GLU.gluTessCallback(tess, GLU.GLU_TESS_ERROR, gluCallback);      
+    }
+    
+    public void beginPolygon() {
+      GLU.gluTessBeginPolygon(tess, null);      
+    }
+    
+    public void endPolygon() {
+      GLU.gluTessEndPolygon(tess);
+    }
+    
+    public void setWindingRule(int rule) {
+      GLU.gluTessProperty(tess, GLU.GLU_TESS_WINDING_RULE, rule);  
+    }
+    
+    public void beginContour() {
+      GLU.gluTessBeginContour(tess);  
+    }
+    
+    public void endContour() {
+      GLU.gluTessEndContour(tess);
+    }
+    
+    public void addVertex(double[] v) {
+      GLU.gluTessVertex(tess, v, 0, v);  
+    }
+    
+    protected class GLUCallback extends GLUtessellatorCallbackAdapter {
+      public void begin(int type) {
+        callback.begin(type);
+      }
+      
+      public void end() {
+        callback.end();
+      }
+      
+      public void vertex(Object data) {
+        callback.vertex(data);
+      }
+      
+      public void combine(double[] coords, Object[] data,
+                          float[] weight, Object[] outData) {
+        callback.combine(coords, data, weight, outData);
+      }
+      
+      public void error(int errnum) {
+        callback.error(errnum);
+      }
+    }
+  }
+
+  public interface TessellatorCallback  {
+    public void begin(int type);
+    public void end();
+    public void vertex(Object data);
+    public void combine(double[] coords, Object[] data,
+                        float[] weight, Object[] outData);
+    public void error(int errnum);    
+  }      
 }
