@@ -27,11 +27,14 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-
+import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.*;
+import android.opengl.GLSurfaceView.EGLConfigChooser;
+import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
 
-import processing.core.PApplet;
 
 /** 
  * How the P3D renderer handles the different OpenGL profiles? Basically,
@@ -119,6 +122,13 @@ public class PGL {
   public static final int STATIC_DRAW  = GL11.GL_STATIC_DRAW;
   public static final int DYNAMIC_DRAW = GL11.GL_DYNAMIC_DRAW;
   public static final int STREAM_DRAW  = -1;
+    
+  public static final int TRIANGLE_FAN   = GL11.GL_TRIANGLE_FAN;
+  public static final int TRIANGLE_STRIP = GL10.GL_TRIANGLE_STRIP;
+  public static final int TRIANGLES      = GL10.GL_TRIANGLES;  
+  
+  public static final int TESS_WINDING_NONZERO = -1;
+  public static final int TESS_WINDING_ODD     = -1;  
   
   // Rendering pipeline modes
   public static final int FIXED    = 0;
@@ -134,32 +144,282 @@ public class PGL {
   public GL11Ext gl11x;
   public GL11ExtensionPack gl11xp;
   public GLU glu; 
+
+  public AndroidRenderer renderer;
   
-  public PGL() {    
+  public PGraphicsAndroid3D pg;
+  
+  public boolean initialized;
+  
+  public PGL(PGraphicsAndroid3D pg) {
+    this.pg = pg;
+    renderer = new AndroidRenderer();
     glu = new GLU();
+    initialized = false;
   }
   
-  void update(GL10 gl10) {
-    gl = gl10;       
-    
-    try {
-      gl11 = (GL11) gl;
-    } catch (ClassCastException cce) {
-      gl11 = null;
-    }
-
-    try {
-      gl11x = (GL11Ext) gl;
-    } catch (ClassCastException cce) {
-      gl11x = null;
-    }
-
-    try {
-      gl11xp = (GL11ExtensionPack) gl;
-    } catch (ClassCastException cce) {
-      gl11xp = null;
-    }   
+  public AndroidRenderer getRenderer() {
+    return renderer;
   }
+  
+  public AndroidConfigChooser getConfigChooser(int r, int g, int b, int a, int d, int s) {
+    AndroidConfigChooser configChooser = new AndroidConfigChooser(r, g, b, a, d, s);
+    return configChooser;
+  }  
+    
+  /**
+   * This static method can be called by applications that use
+   * Processing+P3D inside their own GUI, so they can initialize
+   * JOGL2 before anything else.
+   * According to the JOGL2 documentation, applications shall call 
+   * GLProfile.initSingleton() ASAP, before any other UI invocation.
+   * In case applications are able to initialize JOGL before any other 
+   * UI action, hey shall invoke this method with beforeUI=true and 
+   * benefit from fast native multithreading support on all platforms 
+   * if possible. 
+   *
+   */  
+  static public void startup(boolean beforeUI) {    
+  }
+  
+  static public void shutdown() {
+  }  
+  
+  public void updateGLPrimary() {
+    
+  }
+
+  public void updateGLOffscreen(PGL primary) {
+    gl = primary.gl;       
+    gl11 = primary.gl11;
+    gl11x = primary.gl11x;
+    gl11xp = primary.gl11xp;
+  }  
+  
+  
+  public void initPrimary(int antialias) {
+    /*
+    
+    offscreenTexCrop = new int[4];
+    offscreenTexCrop[0] = 0;
+    offscreenTexCrop[1] = 0;
+    offscreenTexCrop[2] = width;
+    offscreenTexCrop[3] = height;      
+
+    offscreenImages = new PImage[2];
+    offscreenParams = new PTexture.Parameters[2];
+    if (primarySurface) {
+      // Nearest filtering is used for the primary surface, otherwise some 
+      // artifacts appear (diagonal line when blending, for instance). This
+      // might deserve further examination.
+      offscreenParams[0] = new PTexture.Parameters(ARGB, POINT);
+      offscreenParams[1] = new PTexture.Parameters(ARGB, POINT);
+      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);          
+    } else {
+      // Linear filtering is needed to keep decent image quality when rendering 
+      // texture at a size different from its original resolution. This is expected
+      // to happen for offscreen rendering.
+      offscreenParams[0] = new PTexture.Parameters(ARGB, BILINEAR);
+      offscreenParams[1] = new PTexture.Parameters(ARGB, BILINEAR);      
+      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);                
+    }
+    
+    offscreenTextures = new PTexture[2];
+    offscreenTextures[0] = addTexture(offscreenImages[0]);
+    offscreenTextures[1] = addTexture(offscreenImages[1]);
+    
+    // Drawing textures are marked as flipped along Y to ensure they are properly
+    // rendered by Processing, which has inverted Y axis with respect to
+    // OpenGL.
+    offscreenTextures[0].setFlippedY(true);
+    offscreenTextures[1].setFlippedY(true);
+
+    offscreenIndex = 0;
+
+    offscreenFramebuffer = new PFramebuffer(parent, offscreenTextures[0].glWidth, offscreenTextures[0].glHeight,
+                                            1, 1, offscreenDepthBits, offscreenStencilBits, false);
+    
+    // The image texture points to the current offscreen texture.
+    texture = offscreenTextures[offscreenIndex]; 
+    this.setCache(a3d, offscreenTextures[offscreenIndex]);
+    this.setParams(a3d, offscreenParams[offscreenIndex]);       
+    
+    */
+    
+    initialized = true;
+  }
+  
+  public void initOffscreen(PGL primary) {
+    
+    /*
+    offscreenTexCrop = new int[4];
+    offscreenTexCrop[0] = 0;
+    offscreenTexCrop[1] = 0;
+    offscreenTexCrop[2] = width;
+    offscreenTexCrop[3] = height;      
+
+    offscreenImages = new PImage[2];
+    offscreenParams = new PTexture.Parameters[2];
+    if (primarySurface) {
+      // Nearest filtering is used for the primary surface, otherwise some 
+      // artifacts appear (diagonal line when blending, for instance). This
+      // might deserve further examination.
+      offscreenParams[0] = new PTexture.Parameters(ARGB, POINT);
+      offscreenParams[1] = new PTexture.Parameters(ARGB, POINT);
+      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);          
+    } else {
+      // Linear filtering is needed to keep decent image quality when rendering 
+      // texture at a size different from its original resolution. This is expected
+      // to happen for offscreen rendering.
+      offscreenParams[0] = new PTexture.Parameters(ARGB, BILINEAR);
+      offscreenParams[1] = new PTexture.Parameters(ARGB, BILINEAR);      
+      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
+      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);                
+    }
+    
+    offscreenTextures = new PTexture[2];
+    offscreenTextures[0] = addTexture(offscreenImages[0]);
+    offscreenTextures[1] = addTexture(offscreenImages[1]);
+    
+    // Drawing textures are marked as flipped along Y to ensure they are properly
+    // rendered by Processing, which has inverted Y axis with respect to
+    // OpenGL.
+    offscreenTextures[0].setFlippedY(true);
+    offscreenTextures[1].setFlippedY(true);
+
+    offscreenIndex = 0;
+
+    offscreenFramebuffer = new PFramebuffer(parent, offscreenTextures[0].glWidth, offscreenTextures[0].glHeight,
+                                            1, 1, offscreenDepthBits, offscreenStencilBits, false);
+    
+    // The image texture points to the current offscreen texture.
+    texture = offscreenTextures[offscreenIndex]; 
+    this.setCache(a3d, offscreenTextures[offscreenIndex]);
+    this.setParams(a3d, offscreenParams[offscreenIndex]);         
+    */
+    
+    
+    initialized = true;
+  }
+  
+  public void updateOffscreen(PGL primary) {    
+  }
+  
+  protected void detainContext() {    
+  }
+  
+  public void releaseContext() {    
+  }
+  
+  public void destroyContext() {   
+  }
+  
+  public boolean contextIsCurrent(Context other) {
+    return other.same(/*context*/);
+  }  
+  
+  public boolean beginOnscreenDraw() {
+    /*
+    if (clearColorBuffer) {
+      // Simplest scenario: clear mode means we clear both the color and depth buffers.
+      // No need for saving front color buffer, etc.
+      gl.glClearColor(0, 0, 0, 0);
+      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);        
+    } else {
+      // We need to save the color buffer after finishing with the rendering of this frame,
+      // to use is as the background for the next frame (I call this "incremental rendering"). 
+     
+      if (fboSupported) {
+        if (offscreenFramebuffer != null) {
+          // Setting the framebuffer corresponding to this surface.
+          pushFramebuffer();
+          setFramebuffer(offscreenFramebuffer);
+          // Setting the current front color buffer.
+          offscreenFramebuffer.setColorBuffer(offscreenTextures[offscreenIndex]);
+          
+          // Drawing contents of back color buffer as background.
+          gl.glClearColor(0, 0, 0, 0);
+          if (parent.frameCount == 0) {
+            // No need to draw back color buffer because we are in the first frame ever.
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);  
+          } else {
+            gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+            // Render previous draw texture as background.      
+            drawOffscreenTexture((offscreenIndex + 1) % 2);        
+          }
+        }
+      } else {
+        if (texture != null) { 
+          gl.glClearColor(0, 0, 0, 0);
+          gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+          if (0 < parent.frameCount) {
+            drawTexture();
+          }
+        }
+      }
+    }    
+     */
+    
+    return true;
+  }
+  
+  public void endOnscreenDraw() {
+    /*
+      if (!clearColorBuffer0) {
+        // We are in the primary surface, and no clear mode, this means that the current
+        // contents of the front buffer needs to be used in the next frame as the background
+        // for incremental rendering. Depending on whether or not FBOs are supported,
+        // one of the two following paths is selected.
+        if (fboSupported) {
+          if (offscreenFramebuffer != null) {
+            // Restoring screen buffer.
+            popFramebuffer();
+            
+            // Only the primary surface in clear mode will write the contents of the
+            // offscreen framebuffer to the screen.
+            gl.glClearColor(0, 0, 0, 0);
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+      
+            // Render current draw texture to screen.
+            drawOffscreenTexture(offscreenIndex);
+        
+            swapOffscreenIndex();
+          }
+        } else {
+          if (texture != null) {
+            copyFrameToTexture();
+          }
+        }
+      } 
+     */
+  }
+  
+  
+  public void beginOffscreenDraw() {
+    /*
+    // Drawing contents of back color buffer as background.
+    gl.glClearColor(0, 0, 0, 0);
+    if (clearColorBuffer || parent.frameCount == 0) {
+      // No need to draw back color buffer.
+      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);  
+    } else {
+      gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+      // Render previous draw texture as background.      
+      drawOffscreenTexture((offscreenIndex + 1) % 2);        
+    } 
+    */ 
+  }
+  
+  public void endOffscreenDraw() {
+    //swapOffscreenIndex(); 
+  }  
+  
+  public boolean canDraw() {
+    return true;    
+  }  
   
   ///////////////////////////////////////////////////////////////////////////////////
   
@@ -320,7 +580,7 @@ public class PGL {
   }
   
   public String getErrorString(int err) {
-    return glu.gluErrorString(err);
+    return GLU.gluErrorString(err);
   }
 
   /////////////////////////////////////////////////////////////////////////////////
@@ -1163,5 +1423,344 @@ public class PGL {
 
   public void clearAllBuffers() {
     gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT | GL10.GL_STENCIL_BUFFER_BIT); 
-  }  
+  }
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Context interface  
+  
+  public Context getContext() {
+    return new Context(/*context*/);
+  }
+  
+  public class Context {
+    //protected GLContext context;
+    
+    Context(/*GLContext context*/) {
+      //this.context = context;
+    }
+    
+    boolean same(/*GLContext context*/) {
+      //return this.context.hashCode() == context.hashCode();
+      return true;
+    }
+  }   
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Tessellator interface
+    
+  public Tessellator createTessellator(TessellatorCallback callback) {
+    return new Tessellator(callback);
+  }
+  
+  public class Tessellator {
+    //protected GLUtessellator tess;
+    protected TessellatorCallback callback;
+    //protected GLUCallback gluCallback;
+    
+    public Tessellator(TessellatorCallback callback) {
+      this.callback = callback;
+      //tess = GLU.gluNewTess();
+      //gluCallback = new GLUCallback();
+      
+      //GLU.gluTessCallback(tess, GLU.GLU_TESS_BEGIN, gluCallback);
+      //GLU.gluTessCallback(tess, GLU.GLU_TESS_END, gluCallback);
+      //GLU.gluTessCallback(tess, GLU.GLU_TESS_VERTEX, gluCallback);
+      //GLU.gluTessCallback(tess, GLU.GLU_TESS_COMBINE, gluCallback);
+      //GLU.gluTessCallback(tess, GLU.GLU_TESS_ERROR, gluCallback);      
+    }
+    
+    public void beginPolygon() {
+      //GLU.gluTessBeginPolygon(tess, null);      
+    }
+    
+    public void endPolygon() {
+      //GLU.gluTessEndPolygon(tess);
+    }
+    
+    public void setWindingRule(int rule) {
+      //GLU.gluTessProperty(tess, GLU.GLU_TESS_WINDING_RULE, rule);  
+    }
+    
+    public void beginContour() {
+      //GLU.gluTessBeginContour(tess);  
+    }
+    
+    public void endContour() {
+      //GLU.gluTessEndContour(tess);
+    }
+    
+    public void addVertex(double[] v) {
+      //GLU.gluTessVertex(tess, v, 0, v);  
+    }
+    
+    /*
+    protected class GLUCallback extends GLUtessellatorCallbackAdapter {
+      public void begin(int type) {
+        callback.begin(type);
+      }
+      
+      public void end() {
+        callback.end();
+      }
+      
+      public void vertex(Object data) {
+        callback.vertex(data);
+      }
+      
+      public void combine(double[] coords, Object[] data,
+                          float[] weight, Object[] outData) {
+        callback.combine(coords, data, weight, outData);
+      }
+      
+      public void error(int errnum) {
+        callback.error(errnum);
+      }
+    }
+    */
+  }
+
+  public interface TessellatorCallback  {
+    public void begin(int type);
+    public void end();
+    public void vertex(Object data);
+    public void combine(double[] coords, Object[] data,
+                        float[] weight, Object[] outData);
+    public void error(int errnum);    
+  }      
+  
+  /////////////////////////////////////////////////////////////////////////////////
+  
+  // Android Renderer   
+  
+  public class AndroidRenderer implements Renderer {
+    public AndroidRenderer() {
+    }
+
+    public void onDrawFrame(GL10 igl) {
+      gl = igl;
+
+      try {
+        gl11 = (GL11) gl;
+      } catch (ClassCastException cce) {
+        gl11 = null;
+      }
+
+      try {
+        gl11x = (GL11Ext) gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }
+
+      try {
+        gl11xp = (GL11ExtensionPack) gl;
+      } catch (ClassCastException cce) {
+        gl11xp = null;
+      }
+      
+      pg.parent.handleDraw();
+    }
+
+    public void onSurfaceChanged(GL10 igl, int iwidth, int iheight) {
+      gl = igl;
+      // PGL2JNILib.init(iwidth, iheight);
+
+      try {
+        gl11 = (GL11) gl;
+      } catch (ClassCastException cce) {
+        gl11 = null;
+      }
+
+      try {
+        gl11x = (GL11Ext) gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }
+
+      try {
+        gl11xp = (GL11ExtensionPack) gl;
+      } catch (ClassCastException cce) {
+        gl11xp = null;
+      }
+      
+      pg.setSize(iwidth, iheight);
+    }
+
+    public void onSurfaceCreated(GL10 igl, EGLConfig config) {
+      gl = igl;
+      
+      try {
+        gl11 = (GL11) gl;
+      } catch (ClassCastException cce) {
+        gl11 = null;
+      }
+
+      try {
+        gl11x = (GL11Ext) gl;
+      } catch (ClassCastException cce) {
+        gl11x = null;
+      }
+
+      try {
+        gl11xp = (GL11ExtensionPack) gl;
+      } catch (ClassCastException cce) {
+        gl11xp = null;
+      }
+    }    
+  }
+
+  //////////////////////////////////////////////////////////////
+
+  // CONFIG CHOOSER
+
+  public class AndroidConfigChooser implements EGLConfigChooser {
+    // Desired size (in bits) for the rgba color, depth and stencil buffers.
+    public int redTarget;
+    public int greenTarget;
+    public int blueTarget;
+    public int alphaTarget;
+    public int depthTarget;
+    public int stencilTarget;
+    
+    // Actual rgba color, depth and stencil sizes (in bits) supported by the device.
+    public int redBits;
+    public int greenBits;
+    public int blueBits;
+    public int alphaBits;
+    public int depthBits;
+    public int stencilBits;
+    public int[] tempValue = new int[1];
+
+    /*
+     * This EGL config specification is used to specify 2.0 rendering. We use a
+     * minimum size of 4 bits for red/green/blue, but will perform actual
+     * matching in chooseConfig() below.
+     */
+    private int EGL_OPENGL_ES_BIT = 0x01; // EGL 1.x attribute value for
+                                                 // GL_RENDERABLE_TYPE.
+//    private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
+                                                  // GL_RENDERABLE_TYPE.
+    private int[] configAttribsGL = { EGL10.EGL_RED_SIZE, 4,
+        EGL10.EGL_GREEN_SIZE, 4, EGL10.EGL_BLUE_SIZE, 4,
+        EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+        EGL10.EGL_NONE };
+
+    public AndroidConfigChooser(int r, int g, int b, int a, int d, int s) {
+      redTarget = r;
+      greenTarget = g;
+      blueTarget = b;
+      alphaTarget = a;
+      depthTarget = d;
+      stencilTarget = s;
+    }
+
+    public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+
+      // Get the number of minimally matching EGL configurations
+      int[] num_config = new int[1];
+      egl.eglChooseConfig(display, configAttribsGL, null, 0, num_config);
+
+      int numConfigs = num_config[0];
+
+      if (numConfigs <= 0) {
+        throw new IllegalArgumentException("No EGL configs match configSpec");
+      }
+
+      // Allocate then read the array of minimally matching EGL configs
+      EGLConfig[] configs = new EGLConfig[numConfigs];
+      egl.eglChooseConfig(display, configAttribsGL, configs, numConfigs,
+          num_config);
+
+      if (PApplet.DEBUG) {
+        for (EGLConfig config : configs) {
+          String configStr = "A3D - selected EGL config : "
+            + printConfig(egl, display, config);
+          System.out.println(configStr);
+        }
+      }
+
+      // Now return the configuration that best matches the target one.
+      return chooseBestConfig(egl, display, configs);
+    }
+
+    public EGLConfig chooseBestConfig(EGL10 egl, EGLDisplay display,
+        EGLConfig[] configs) {
+      EGLConfig bestConfig = null;
+      float bestScore = 1000;
+      
+      for (EGLConfig config : configs) {
+        int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
+        int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
+
+        int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
+        int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
+        int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
+        int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
+
+        float score = 0.20f * PApplet.abs(r - redTarget) + 
+                      0.20f * PApplet.abs(g - greenTarget) + 
+                      0.20f * PApplet.abs(b - blueTarget) +
+                      0.15f * PApplet.abs(a - blueTarget) +
+                      0.15f * PApplet.abs(d - depthTarget) +
+                      0.10f * PApplet.abs(s - stencilTarget);
+                      
+        if (score < bestScore) {
+          // We look for the config closest to the target config.
+          // Closeness is measured by the score function defined above:
+          // we give more weight to the RGB components, followed by the 
+          // alpha, depth and finally stencil bits.
+          bestConfig = config;
+          bestScore = score;
+
+          redBits = r;
+          greenBits = g;
+          blueBits = b;
+          alphaBits = a;
+          depthBits = d;
+          stencilBits = s;
+          
+          pg.offscreenDepthBits = d;
+          pg.offscreenStencilBits = s;
+        }
+      }
+      
+      if (PApplet.DEBUG) {
+        String configStr = "A3D - selected EGL config : "
+          + printConfig(egl, display, bestConfig);
+        System.out.println(configStr);
+      }
+      return bestConfig;
+    }
+
+    protected String printConfig(EGL10 egl, EGLDisplay display, EGLConfig config) {
+      int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
+      int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
+      int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
+      int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
+      int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
+      int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
+      int type = findConfigAttrib(egl, display, config, EGL10.EGL_RENDERABLE_TYPE, 0);
+      int nat = findConfigAttrib(egl, display, config, EGL10.EGL_NATIVE_RENDERABLE, 0);
+      int bufSize = findConfigAttrib(egl, display, config, EGL10.EGL_BUFFER_SIZE, 0);
+      int bufSurf = findConfigAttrib(egl, display, config, EGL10.EGL_RENDER_BUFFER, 0);
+
+      return String.format("EGLConfig rgba=%d%d%d%d depth=%d stencil=%d", r,g,b,a,d,s) 
+        + " type=" + type 
+        + " native=" + nat 
+        + " buffer size=" + bufSize 
+        + " buffer surface=" + bufSurf + 
+        String.format(" caveat=0x%04x", findConfigAttrib(egl, display, config, EGL10.EGL_CONFIG_CAVEAT, 0));
+    }
+
+    protected int findConfigAttrib(EGL10 egl, EGLDisplay display,
+      EGLConfig config, int attribute, int defaultValue) {
+      if (egl.eglGetConfigAttrib(display, config, attribute, tempValue)) {
+        return tempValue[0];
+      }
+      return defaultValue;
+    }
+
+  }
+  
 }

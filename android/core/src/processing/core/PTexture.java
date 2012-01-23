@@ -25,29 +25,23 @@ package processing.core;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-
-import javax.microedition.khronos.opengles.*;
-import javax.microedition.khronos.egl.EGL10;
-
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.opengl.GLUtils;
-
-import java.nio.*;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 /**
  * This class wraps an OpenGL texture.
  * By Andres Colubri
  * 
  */
-@SuppressWarnings("unused")
 public class PTexture implements PConstants { 
   public int width, height;
-    
-  protected PApplet parent;         // The Processing applet
-  protected PGraphicsAndroid3D a3d; // The main renderer
-  protected PImage img;             // The parent image
-
+      
+  protected PApplet parent;           // The Processing applet
+  protected PGraphicsAndroid3D renderer; // The main renderer
+  protected PGL pgl;                  // The interface between Processing and OpenGL.
+  protected PGL.Context context;        // The context that created this texture.
+  
+  // These are public but use at your own risk!
   public int glID; 
   public int glTarget;
   public int glFormat;
@@ -67,6 +61,11 @@ public class PTexture implements PConstants {
 
   protected int[] tempPixels = null;
   protected PFramebuffer tempFbo = null;
+  
+  protected Object bufferSource;
+  protected LinkedList<BufferData> bufferCache = null;
+  protected Method disposeBufferMethod;
+  public static final int MAX_BUFFER_CACHE_SIZE = 3;  
   
   ////////////////////////////////////////////////////////////
   
@@ -93,46 +92,31 @@ public class PTexture implements PConstants {
    * @param height int 
    * @param params Parameters       
    */  
-  public PTexture(PApplet parent, int width, int height, Parameters params) { 
+  public PTexture(PApplet parent, int width, int height, Object params) { 
     this.parent = parent;
-    this.width = width;
-    this.height = height;
        
-    a3d = (PGraphicsAndroid3D)parent.g;
-    a3d.registerPGLObject(this);
+    renderer = (PGraphicsAndroid3D)parent.g;
+    pgl = renderer.pgl;
+    context = pgl.getContext();
     
     glID = 0;
-    
-    init(width, height, (Parameters)params);       
+     
+    init(width, height, (Parameters)params);    
   } 
 
-
-  public void delete() {    
-    release();
-    img = null;
-    a3d.unregisterPGLObject(this);
-  }
   
-  
-  public void backup() {
-    if (img != null) {
-      img.loadPixels();
-      if (img.pixels != null && (img instanceof PGraphicsAndroid3D)) {
-        // When img is an offscreen renderer, the loadPixels() call above 
-        // already takes care of copying the contents of the color buffer 
-        // to  the pixels array.
-        get(img.pixels);
+  protected void finalize() throws Throwable {
+    try {
+      if (glID != 0) {
+        renderer.finalizeTextureObject(glID);
       }
-    }        
-  }
+    } finally {
+      super.finalize();
+    }
+  }  
 
   
-  public void restore() {    
-    if (img != null && img.pixels != null) {
-      set(img.pixels);
-    }    
-  }  
-  
+
   ////////////////////////////////////////////////////////////
   
   // Init, resize methods
@@ -154,7 +138,7 @@ public class PTexture implements PConstants {
     } else {
       // Just built-in default parameters otherwise:
       params = new Parameters();
-    }    
+    }
     init(width, height, params);
   }
   
@@ -170,19 +154,20 @@ public class PTexture implements PConstants {
   public void init(int width, int height, Parameters params)  {
     setParameters(params);
     setSize(width, height);
-    allocate();
+    allocate();    
   } 
 
 
   public void resize(int wide, int high) {
+    // Marking the texture object as finalized so it is deleted
+    // when creating the new texture.
+    release();
+    
     // Creating new texture with the appropriate size.
     PTexture tex = new PTexture(parent, wide, high, getParameters());
     
     // Copying the contents of this texture into tex.
     tex.set(this);
-    
-    // Releasing the opengl resources associated to "this".
-    this.delete();
     
     // Now, overwriting "this" with tex.
     copyObject(tex);
@@ -209,13 +194,13 @@ public class PTexture implements PConstants {
 
   
   public void set(PImage img) {
-    PTexture tex = (PTexture)img.getCache(a3d);
+    PTexture tex = (PTexture)img.getCache(renderer);
     set(tex);
   }
   
   
   public void set(PImage img, int x, int y, int w, int h) {
-    PTexture tex = (PTexture)img.getCache(a3d);
+    PTexture tex = (PTexture)img.getCache(renderer);
     set(tex, x, y, w, h);
   }
   
@@ -246,86 +231,43 @@ public class PTexture implements PConstants {
   
   
   public void set(int[] pixels, int x, int y, int w, int h, int format) {
-    // TODO: Should we throw exceptions here or just a warning?
     if (pixels == null) {
-      throw new RuntimeException("PTexture: null pixels array");
+      pixels = null;
+      PGraphics.showWarning("The pixels array is null.");
+      return;
     }    
     if (pixels.length != w * h) {
-      throw new RuntimeException("PTexture: wrong length of pixels array");
+      PGraphics.showWarning("The pixels array has the wrong length. It should be " + w * h);
+      return;
     }
     
-    getGl().glEnable(glTarget);
-    getGl().glBindTexture(glTarget, glID);
+    pgl.enableTexturing(glTarget);
+    pgl.bindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
-      if (a3d.gl11 != null && PGraphicsAndroid3D.mipmapGeneration) {
+      if (PGraphicsAndroid3D.mipmapGeneration) {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
-        convertToRGBA(pixels, rgbaPixels, format, w, h);
-        getGl().glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_GENERATE_MIPMAP, GL11.GL_TRUE);
-        setTexels(x, y, w, h, rgbaPixels);
+        convertToRGBA(pixels, rgbaPixels, format, w, h);        
+        pgl.enableTexMipmapGen(glTarget);
+        setTexels(rgbaPixels, x, y, w, h);
         rgbaPixels = null;
       } else {
-        // Manual mipmap generation.
-        if (w != width || h != height) {
-          System.err.println("Sorry but I don't know how to generate mipmaps for a subregion.");
-          return;
-        }
-        
-        // Code by Mike Miller obtained from here:
-        // http://insanitydesign.com/wp/2009/08/01/android-opengl-es-mipmaps/
-        int w0 = glWidth;
-        int h0 = glHeight;        
-        int[] argbPixels = new int[w0 * h0];
-        convertToARGB(pixels, argbPixels, format);
-        int level = 0;
-        int denom = 1;
-        
-        // We create a Bitmap because then we use its built-in filtered downsampling
-        // functionality.
-        Bitmap bitmap = Bitmap.createBitmap(w0, h0, Config.ARGB_8888);
-        bitmap.setPixels(argbPixels, 0, w0, 0, 0, w0, h0);
-              
-        while (w0 >= 1 || h0 >= 1) {
-          //First of all, generate the texture from our bitmap and set it to the according level
-          GLUtils.texImage2D(glTarget, level, bitmap, 0);
-          
-          // We are done.
-          if (w0 == 1 && h0 == 1) {
-            break;
-          }
- 
-          // Increase the mipmap level
-          level++;
-          denom *= 2;
- 
-          // Downsampling bitmap. We must eventually arrive to the 1x1 level,
-          // and if the width and height are different, there will be a few 1D
-          // texture levels just before. 
-          // This update formula also allows for NPOT resolutions.
-          w0 = PApplet.max(1, PApplet.floor((float)glWidth / denom));
-          h0 = PApplet.max(1, PApplet.floor((float)glHeight / denom));
-          Bitmap bitmap2 = Bitmap.createScaledBitmap(bitmap, w0, h0, true);
- 
-          // Clean up
-          bitmap.recycle();
-          bitmap = bitmap2;
-          bitmap2 = null;          
-        }
-        argbPixels = null;
-        bitmap = null;
-      }
+        // TODO: Manual mipmap generation.
+        // Open source implementation of gluBuild2DMipmaps here:
+        // http://code.google.com/p/glues/source/browse/trunk/glues/source/glues_mipmap.c
+      }      
     } else {
       int[] rgbaPixels = new int[w * h];
       convertToRGBA(pixels, rgbaPixels, format, w, h);
-      setTexels(x, y, w, h, rgbaPixels);
+      setTexels(rgbaPixels, x, y, w, h);
       rgbaPixels = null;
     }
 
-    getGl().glBindTexture(glTarget, 0);
-    getGl().glDisable(glTarget);
+    pgl.bindTexture(glTarget, 0);
+    pgl.disableTexturing(glTarget);        
   }  
-
+  
   
   ////////////////////////////////////////////////////////////
   
@@ -352,18 +294,18 @@ public class PTexture implements PConstants {
       // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
       // from the current draw buffer (which is the color buffer of the FBO).
       tempFbo.setColorBuffer(this);
-      a3d.pushFramebuffer();
-      a3d.setFramebuffer(tempFbo);
+      renderer.pushFramebuffer();
+      renderer.setFramebuffer(tempFbo);
       tempFbo.readPixels();
-      a3d.popFramebuffer();
+      renderer.popFramebuffer();
     } else {
       // Here we don't have FBOs, so the method above is of no use. What we do instead is
       // to draw the texture to the screen framebuffer, and then grab the pixels from there.      
-      a3d.pushFramebuffer();
-      a3d.setFramebuffer(tempFbo);
-      a3d.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
+      renderer.pushFramebuffer();
+      renderer.setFramebuffer(tempFbo);
+      renderer.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
       tempFbo.readPixels();
-      a3d.popFramebuffer();
+      renderer.popFramebuffer();
     }
     
     if (tempPixels == null) {
@@ -396,8 +338,7 @@ public class PTexture implements PConstants {
   ////////////////////////////////////////////////////////////     
  
   // Get OpenGL parameters
-  
-    
+      
   /**
    * Returns true or false whether or not the texture is using mipmaps.
    * @return boolean
@@ -459,21 +400,88 @@ public class PTexture implements PConstants {
   public void setFlippedY(boolean v) {
     flippedY = v;
   }
-    
+
   ////////////////////////////////////////////////////////////     
   
   // Bind/unbind  
   
   public void bind() {
-    getGl().glEnable(glTarget);
-    getGl().glBindTexture(glTarget, glID);
+    pgl.enableTexturing(glTarget);
+    pgl.bindTexture(glTarget, glID);
   }
   
   public void unbind() {
-    getGl().glEnable(glTarget);
-    getGl().glBindTexture(glTarget, 0);    
+    pgl.enableTexturing(glTarget);
+    pgl.unbindTexture(glTarget);    
+  }  
+  
+  ////////////////////////////////////////////////////////////
+  
+  // Buffer sink interface.
+  
+  
+  public void setBufferSource(Object source) {
+    bufferSource = source;
+    getSourceMethods();
   }    
+  
+  
+  public void copyBufferFromSource(Object natRef, ByteBuffer byteBuf, int w, int h) {
+    if (bufferCache == null) {
+      bufferCache = new LinkedList<BufferData>();
+    }
     
+    if (bufferCache.size() + 1 <= MAX_BUFFER_CACHE_SIZE) {
+      bufferCache.add(new BufferData(natRef, byteBuf.asIntBuffer(), w, h));
+    } else {            
+      // The buffer cache reached the maximum size, so we just dispose the new buffer.
+      try {
+        disposeBufferMethod.invoke(bufferSource, new Object[] { natRef });
+      } catch (Exception e) {
+        e.printStackTrace();
+      }  
+    }
+  }
+  
+  
+  public boolean hasBuffers() {
+    return bufferSource != null && bufferCache != null && 0 < bufferCache.size();
+  }  
+  
+  
+  protected boolean bufferUpdate() {
+    BufferData data = null;
+    try {
+      data = bufferCache.remove(0);
+    } catch (NoSuchElementException ex) {
+      PGraphics.showWarning("PTexture: don't have pixel data to copy to texture");
+    }
+    
+    if (data != null) {
+      if ((data.w != width) || (data.h != height)) {
+        init(data.w, data.h);
+      }
+      bind();      
+      setTexels(data.rgbBuf, 0, 0, width, height);
+      unbind();
+      
+      data.dispose();
+      
+      return true;        
+    } else {
+      return false;
+    }    
+  }
+ 
+  
+  protected void getSourceMethods() {
+    try {
+      disposeBufferMethod = bufferSource.getClass().getMethod("disposeBuffer", new Class[] { Object.class });
+    } catch (Exception e) {
+      throw new RuntimeException("PTexture: provided source object doesn't have a disposeBuffer method.");
+    }        
+  }
+  
   ////////////////////////////////////////////////////////////     
  
   // Utilities 
@@ -579,36 +587,6 @@ public class PTexture implements PConstants {
           tIntArray[i] = (pixel << 8) | ((pixel >> 24) & 0xFF);
         }
         break;
-                 
-      case YUV420:
-        
-        // YUV420 to RGBA conversion.
-        int frameSize = w * h;
-        for (int j = 0, yp = 0; j < h; j++) {       
-          int uvp = frameSize + (j >> 1) * w, u = 0, v = 0;
-          for (int i = 0; i < w; i++, yp++) {
-            int y = (0xFF & ((int) intArray[yp])) - 16;
-            if (y < 0) y = 0;
-            if ((i & 1) == 0) {
-              v = (0xFF & intArray[uvp++]) - 128;
-              u = (0xFF & intArray[uvp++]) - 128;
-            }
-
-            int y1192 = 1192 * y;
-            int r = (y1192 + 1634 * v);
-            int g = (y1192 - 833 * v - 400 * u);
-            int b = (y1192 + 2066 * u);
-
-            if (r < 0) r = 0; else if (r > 262143) r = 262143;
-            if (g < 0) g = 0; else if (g > 262143) g = 262143;
-            if (b < 0) b = 0; else if (b > 262143) b = 262143;
-
-            // Output is RGBA:
-            tIntArray[yp] = ((r << 6) & 0xFF000000) | ((g >> 2) & 0xFF0000) | ((b >> 10) & 0xFF00) | 0xFF;
-          }
-        }        
-        
-        break;        
       }
       
     } else {  
@@ -652,35 +630,6 @@ public class PTexture implements PConstants {
         }
         break;
         
-      case YUV420:
-        
-        // YUV420 to ABGR conversion.
-        int frameSize = w * h;
-        for (int j = 0, yp = 0; j < h; j++) {       
-          int uvp = frameSize + (j >> 1) * w, u = 0, v = 0;
-          for (int i = 0; i < w; i++, yp++) {
-            int y = (0xFF & ((int) intArray[yp])) - 16;
-            if (y < 0) y = 0;
-            if ((i & 1) == 0) {
-              v = (0xFF & intArray[uvp++]) - 128;
-              u = (0xFF & intArray[uvp++]) - 128;
-            }
-
-            int y1192 = 1192 * y;
-            int r = (y1192 + 1634 * v);
-            int g = (y1192 - 833 * v - 400 * u);
-            int b = (y1192 + 2066 * u);
-
-            if (r < 0) r = 0; else if (r > 262143) r = 262143;
-            if (g < 0) g = 0; else if (g > 262143) g = 262143;
-            if (b < 0) b = 0; else if (b > 262143) b = 262143;
-
-            // Output is ABGR:
-            tIntArray[yp] = 0xFF000000 | ((b << 6) & 0xFF0000) | ((g >> 2) & 0xFF00) | ((r >> 10) & 0xFF);
-          }
-        }        
-        
-        break;
       }
         
     }
@@ -735,36 +684,6 @@ public class PTexture implements PConstants {
       
       break;
                
-    case YUV420:
-      
-      // YUV420 to ARGB conversion.
-      int frameSize = width * height;
-      for (int j = 0, yp = 0, yt = 0; j < height; j++) {       
-        int uvp = frameSize + (j >> 1) * width, u = 0, v = 0;
-        for (int i = 0; i < width; i++, yp++) {
-          int y = (0xFF & ((int) intArray[yp])) - 16;
-          if (y < 0) y = 0;
-          if ((i & 1) == 0) {
-            v = (0xFF & intArray[uvp++]) - 128;
-            u = (0xFF & intArray[uvp++]) - 128;
-          }
-
-          int y1192 = 1192 * y;
-          int r = (y1192 + 1634 * v);
-          int g = (y1192 - 833 * v - 400 * u);
-          int b = (y1192 + 2066 * u);
-
-          if (r < 0) r = 0; else if (r > 262143) r = 262143;
-          if (g < 0) g = 0; else if (g > 262143) g = 262143;
-          if (b < 0) b = 0; else if (b > 262143) b = 262143;
-
-          // Output is ARGB:
-          tIntArray[yt++] = 0xFF000000 | ((r << 6) & 0xFF0000) | ((g >> 2) & 0xFF00) | ((b >> 10) & 0xFF);
-        }
-        yt += glWidth - width;
-      }        
-      
-      break;        
     }
 
   }
@@ -813,8 +732,8 @@ public class PTexture implements PConstants {
   ///////////////////////////////////////////////////////////  
 
   // Allocate/release texture.    
- 
 
+  
   protected void setSize(int w, int h) {
     width = w;
     height = h;
@@ -832,56 +751,56 @@ public class PTexture implements PConstants {
       throw new RuntimeException("Image width and height cannot be" +
                                  " larger than " + PGraphicsAndroid3D.maxTextureSize +
                                  " with this graphics card.");
-    }    
+    }
     
     // If non-power-of-two textures are not supported, and the specified width or height
     // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
     // is chosen to be the next power of two, and this quotient will give the appropriate
     // maximum texture coordinate value given this situation.
-    maxTexCoordU = (float)w / glWidth;
-    maxTexCoordV = (float)h / glHeight;  
+    maxTexCoordU = (float)width / glWidth;
+    maxTexCoordV = (float)height / glHeight;    
   }
   
-    
+  
   /**
-   * Creates the opengl texture object.
+   * Allocates the opengl texture object. 
    */
   protected void allocate() {
-    release(); // Just in the case this object is being re-initialized.
-     
-    getGl().glEnable(glTarget);
-    glID = a3d.createGLResource(PGraphicsAndroid3D.GL_TEXTURE_OBJECT);     
-    getGl().glBindTexture(glTarget, glID);
-    getGl().glTexParameterf(glTarget, GL10.GL_TEXTURE_MIN_FILTER, glMinFilter);
-    getGl().glTexParameterf(glTarget, GL10.GL_TEXTURE_MAG_FILTER, glMagFilter);
-    getGl().glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_S, glWrapS);
-    getGl().glTexParameterf(glTarget, GL10.GL_TEXTURE_WRAP_T, glWrapT);
-     
- // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
+    release(); // Just in the case this object is being re-allocated.
+    
+    pgl.enableTexturing(glTarget);
+    
+    glID = renderer.createTextureObject();    
+    
+    pgl.bindTexture(glTarget, glID);
+    pgl.setTexMinFilter(glTarget, glMinFilter);
+    pgl.setTexMagFilter(glTarget, glMagFilter);
+    pgl.setTexWrapS(glTarget, glWrapS);
+    pgl.setTexWrapT(glTarget, glWrapT);
+            
+    // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
     // from w/h in the case that the GPU doesn't support NPOT textures)
-    getGl().glTexImage2D(glTarget, 0, glFormat,  glWidth,  glHeight, 0, GL10.GL_RGBA, 
-                         GL10.GL_UNSIGNED_BYTE, null);
-
+    pgl.initTex(glTarget, glFormat, glWidth, glHeight);
+    
     // Once OpenGL knows the size of the new texture, we make sure it doesn't
-    // contain any garbage in the region of interest (0, 0, w, h):
+    // contain any garbage in the region of interest (0, 0, width, height):
     int[] texels = new int[width * height];
-    java.util.Arrays.fill(texels, 0, width * height, 0x00000000); 
-    setTexels(0, 0, width, height, texels); 
+    setTexels(texels, 0, 0, width, height); 
     texels = null;
     
-    getGl().glBindTexture(glTarget, 0);
-    getGl().glDisable(glTarget);
+    pgl.unbindTexture(glTarget);
+    pgl.disableTexturing(glTarget);
   }
-
-    
+  
+  
   /**
-   * Deletes the opengl texture object.
+   * Marks the texture object for deletion.
    */
-  protected void release() {
-    if (glID != 0) {
-      a3d.deleteGLResource(glID, PGraphicsAndroid3D.GL_TEXTURE_OBJECT);
+  protected void release() {    
+    if (glID != 0) {      
+      renderer.finalizeTextureObject(glID);
       glID = 0;
-    }
+    }    
   }
 
   
@@ -905,27 +824,35 @@ public class PTexture implements PConstants {
     tempFbo.disableDepthTest();
     
     // FBO copy:
-    a3d.pushFramebuffer();
-    a3d.setFramebuffer(tempFbo);
+    renderer.pushFramebuffer();
+    renderer.setFramebuffer(tempFbo);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      a3d.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
+      renderer.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
     } else {
       // Rendering tex into "this" but without scaling so the contents 
       // of the source texture fall in the corresponding texels of the
       // destination.
-      a3d.drawTexture(tex, x, y, w, h, x, y, w, h);
+      renderer.drawTexture(tex, x, y, w, h, x, y, w, h);
     }
-    a3d.popFramebuffer();
+    renderer.popFramebuffer();
   }  
   
-  protected void setTexels(int x, int y, int w, int h, int[] pix) {
-    setTexels(0, x, y, w, h, pix);
+  protected void setTexels(int[] pix, int x, int y, int w, int h) {
+    setTexels(pix, 0, x, y, w, h);
   }
   
-  protected void setTexels(int level, int x, int y, int w, int h, int[] pix) {
-    getGl().glTexSubImage2D(glTarget, 0, x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
+  protected void setTexels(int[] pix, int level, int x, int y, int w, int h) {
+    pgl.copyTexSubImage(pix, glTarget, level, x, y, w, h);
+  }
+
+  protected void setTexels(IntBuffer buffer, int x, int y, int w, int h) {
+    setTexels(buffer, 0, x, y, w, h);
+  }  
+  
+  protected void setTexels(IntBuffer buffer, int level, int x, int y, int w, int h) {
+    pgl.copyTexSubImage(buffer, glTarget, level, x, y, w, h);
   }
   
   protected void copyObject(PTexture src) {
@@ -937,7 +864,7 @@ public class PTexture implements PConstants {
     height = src.height;
     
     parent = src.parent;
-    a3d = src.a3d;
+    renderer = src.renderer;
     
     glID = src.glID;
     glTarget = src.glTarget;
@@ -964,35 +891,35 @@ public class PTexture implements PConstants {
   public Parameters getParameters() {
     Parameters res = new Parameters();
     
-    if ( glTarget == GL10.GL_TEXTURE_2D )  {
+    if (glTarget == PGL.TEXTURE_2D)  {
         res.target = TEXTURE2D;
     }
     
-    if (glFormat == GL10.GL_RGB)  {
+    if (glFormat == PGL.RGB)  {
       res.format = RGB;
-    } else  if (glFormat == GL10.GL_RGBA) {
+    } else  if (glFormat == PGL.RGBA) {
       res.format = ARGB;
-    } else  if (glFormat == GL10.GL_ALPHA) {
+    } else  if (glFormat == PGL.ALPHA) {
       res.format = ALPHA;
     }
     
-    if (glMinFilter == GL10.GL_NEAREST)  {
+    if (glMinFilter == PGL.NEAREST)  {
       res.sampling = POINT;
-    } else if (glMinFilter == GL10.GL_LINEAR)  {
+    } else if (glMinFilter == PGL.LINEAR)  {
       res.sampling = BILINEAR;
-    } else if (glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR) {
+    } else if (glMinFilter == PGL.LINEAR_MIPMAP_LINEAR) {
       res.sampling = TRILINEAR;
     }
 
-    if (glWrapS == GL10.GL_CLAMP_TO_EDGE) {
+    if (glWrapS == PGL.CLAMP_TO_EDGE) {
       res.wrapU = CLAMP;  
-    } else if (glWrapS == GL10.GL_REPEAT) {
+    } else if (glWrapS == PGL.REPEAT) {
       res.wrapU = REPEAT;
     }
 
-    if (glWrapT == GL10.GL_CLAMP_TO_EDGE) {
+    if (glWrapT == PGL.CLAMP_TO_EDGE) {
       res.wrapV = CLAMP;  
-    } else if (glWrapT == GL10.GL_REPEAT) {
+    } else if (glWrapT == PGL.REPEAT) {
       res.wrapV = REPEAT;
     }
     
@@ -1007,66 +934,57 @@ public class PTexture implements PConstants {
    */   
   protected void setParameters(Parameters params) {    
     if (params.target == TEXTURE2D)  {
-        glTarget = GL10.GL_TEXTURE_2D;
+        glTarget = PGL.TEXTURE_2D;
     } else {
-      throw new RuntimeException("A3D: Unknown texture target");     
+      throw new RuntimeException("OPENGL2: Unknown texture target");     
     }
     
     if (params.format == RGB)  {
-      glFormat = GL10.GL_RGB;
+      glFormat = PGL.RGB;
     } else  if (params.format == ARGB) {
-      glFormat = GL10.GL_RGBA;
+      glFormat = PGL.RGBA;
     } else  if (params.format == ALPHA) {
-      glFormat = GL10.GL_ALPHA;
+      glFormat = PGL.ALPHA;
     } else {
-      throw new RuntimeException("A3D: Unknown texture format");     
+      throw new RuntimeException("OPENGL2: Unknown texture format");     
     }
     
     if (params.sampling == POINT) {
-      glMagFilter = GL10.GL_NEAREST;
-      glMinFilter = GL10.GL_NEAREST;
+      glMagFilter = PGL.NEAREST;
+      glMinFilter = PGL.NEAREST;
     } else if (params.sampling == BILINEAR)  {
-      glMagFilter = GL10.GL_LINEAR;
-      glMinFilter = GL10.GL_LINEAR;
+      glMagFilter = PGL.LINEAR;
+      glMinFilter = PGL.LINEAR;
     } else if (params.sampling == TRILINEAR)  {
-      glMagFilter = GL10.GL_LINEAR;
-      glMinFilter = GL10.GL_LINEAR_MIPMAP_LINEAR;      
+      glMagFilter = PGL.LINEAR;
+      glMinFilter = PGL.LINEAR_MIPMAP_LINEAR;      
     } else {
-      throw new RuntimeException("A3D: Unknown texture filtering mode");     
+      throw new RuntimeException("OPENGL2: Unknown texture filtering mode");     
     }
     
     if (params.wrapU == CLAMP) {
-      glWrapS = GL10.GL_CLAMP_TO_EDGE;  
+      glWrapS = PGL.CLAMP_TO_EDGE;  
     } else if (params.wrapU == REPEAT)  {
-      glWrapS = GL10.GL_REPEAT;
+      glWrapS = PGL.REPEAT;
     } else {
-      throw new RuntimeException("A3D: Unknown wrapping mode");     
+      throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
     }
     
     if (params.wrapV == CLAMP) {
-      glWrapT = GL10.GL_CLAMP_TO_EDGE;  
+      glWrapT = PGL.CLAMP_TO_EDGE;  
     } else if (params.wrapV == REPEAT)  {
-      glWrapT = GL10.GL_REPEAT;
+      glWrapT = PGL.REPEAT;
     } else {
-      throw new RuntimeException("A3D: Unknown wrapping mode");     
+      throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
     }
     
-    usingMipmaps = glMinFilter == GL10.GL_LINEAR_MIPMAP_LINEAR;
+    usingMipmaps = glMinFilter == PGL.LINEAR_MIPMAP_LINEAR;
     
     flippedX = false;
     flippedY = false;    
   } 
 
-  /////////////////////////////////////////////////////////////////////////// 
 
-  // Utilities 
-  
-  
-  protected GL10 getGl() {
-    return a3d.gl;
-  }  
-  
-  
   /////////////////////////////////////////////////////////////////////////// 
 
   // Parameters object  
@@ -1174,4 +1092,34 @@ public class PTexture implements PConstants {
       this.wrapV = src.wrapV;      
     }    
   }
+  
+  /**
+   * This class stores a buffer copied from the buffer source.
+   *
+   */
+  protected class BufferData {    
+    int w, h;
+    // Native buffer object.
+    Object natBuf;
+    // Buffer viewed as int.
+    IntBuffer rgbBuf;
+    
+    BufferData(Object nat, IntBuffer rgb, int w, int h) {
+      natBuf = nat;
+      rgbBuf = rgb;
+      this.w = w;
+      this.h = h;
+    }
+    
+    void dispose() {
+      try {
+        // Disposing the native buffer.
+        disposeBufferMethod.invoke(bufferSource, new Object[] { natBuf });
+        natBuf = null;       
+        rgbBuf = null;
+      } catch (Exception e) {
+        e.printStackTrace();
+      }      
+    }
+  }      
 }

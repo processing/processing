@@ -23,14 +23,11 @@
 package processing.core;
 
 import java.nio.IntBuffer;
-import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11ExtensionPack;
-
 
 /**
  * Encapsulates a Frame Buffer Object for offscreen rendering.
  * When created with onscreen == true, it represents the normal
- * framebuffer. Needed by the stack mechanism in A3D to return
+ * framebuffer. Needed by the stack mechanism in OPENGL2 to return
  * to onscreen rendering after a sequence of pushFramebuffer calls.
  * It transparently handles the situations when the FBO extension is
  * not available.
@@ -38,57 +35,56 @@ import javax.microedition.khronos.opengles.GL11ExtensionPack;
  * By Andres Colubri.
  */
 public class PFramebuffer implements PConstants {  
-  protected PApplet parent;  
-  protected PGraphicsAndroid3D a3d;
+  protected PApplet parent;
+  protected PGraphicsAndroid3D renderer;
+  protected PGL pgl;
   
   public int glFboID;
   public int glDepthBufferID;
   public int glStencilBufferID;
+  public int glDepthStencilBufferID;
+  public int glColorBufferMultisampleID;
   public int width;
   public int height;
-  
+
   protected int depthBits;
   protected int stencilBits;
+  protected boolean combinedDepthStencil;
+  
+  protected boolean multisample;
+  protected int nsamples;
   
   protected int numColorBuffers;
-  protected int[] colorBufferAttchPoints;
   protected PTexture[] colorBufferTex;
 
   protected boolean screenFb;
   protected boolean noDepth;
-  protected boolean fboMode;
+  protected boolean fboMode;  
    
   protected PTexture backupTexture;
   protected IntBuffer pixelBuffer;
 
-  PFramebuffer(PApplet parent) {
-    this(parent, 0, 0, false);
-  }  
-  
   PFramebuffer(PApplet parent, int w, int h) {
-    this(parent, w, h, 1, 1, 0, 0, false);
-  }
+    this(parent, w, h, 1, 1, 0, 0, false, false);
+  }  
   
   PFramebuffer(PApplet parent, int w, int h, boolean screen) {    
-    this(parent, w, h, 1, 1, 0, 0, screen);
-  }  
-  
-  PFramebuffer(PApplet parent, int w, int h, int samples, int colorBuffers, 
-               int depthBits, int stencilBits, boolean screen) {    
-    this.parent = parent;
-    a3d = (PGraphicsAndroid3D)parent.g;
+    this(parent, w, h, 1, 1, 0, 0, false, screen);
+  }
 
-    // We need gl11 extension pack at least to bind a zero (screen) buffer.    
-    if (a3d.gl11xp == null) {
-      throw new RuntimeException("PFramebuffer: OpenGL ES 1.1 Extension Pack required");
-    }    
-    
-    a3d.registerPGLObject(this);
+  PFramebuffer(PApplet parent, int w, int h, int samples, int colorBuffers, 
+               int depthBits, int stencilBits, boolean combinedDepthStencil, 
+               boolean screen) {
+    this.parent = parent;
+    renderer = (PGraphicsAndroid3D)parent.g;
+    pgl = renderer.pgl;
     
     glFboID = 0;
     glDepthBufferID = 0;
     glStencilBufferID = 0;
-    
+    glDepthStencilBufferID = 0;    
+    glColorBufferMultisampleID = 0;
+        
     fboMode = PGraphicsAndroid3D.fboSupported;
     
     if (screen) {
@@ -99,22 +95,38 @@ public class PFramebuffer implements PConstants {
     }
     
     width = w;
-    height = h;    
+    height = h;
     
+    if (1 < samples) {
+      multisample = true;
+      nsamples = samples;      
+    } else {
+      multisample = false;
+      nsamples = 1;      
+    }
+        
     numColorBuffers = colorBuffers;
-    colorBufferAttchPoints = new int[numColorBuffers];
     colorBufferTex = new PTexture[numColorBuffers];
     for (int i = 0; i < numColorBuffers; i++) {
-      colorBufferAttchPoints[i] = GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i; 
       colorBufferTex[i] = null;
     }    
     
     if (depthBits < 1 && stencilBits < 1) {
       this.depthBits = 0;
       this.stencilBits = 0;
+      this.combinedDepthStencil = false;
     } else {
-      this.depthBits = depthBits;
-      this.stencilBits = stencilBits;        
+      if (combinedDepthStencil) {
+        // When combined depth/stencil format is required, the depth and stencil bits
+        // are overriden and the 24/8 combination for a 32 bits surface is used. 
+        this.depthBits = 24;
+        this.stencilBits = 8;
+        this.combinedDepthStencil = true;        
+      } else {
+        this.depthBits = depthBits;
+        this.stencilBits = stencilBits;
+        this.combinedDepthStencil = false;        
+      }
     }
     
     screenFb = screen;
@@ -130,43 +142,64 @@ public class PFramebuffer implements PConstants {
       // buffer to the texture bound as color buffer to this PFramebuffer object and then drawing 
       // the backup texture back on the screen.
       backupTexture = new PTexture(parent, width, height, new PTexture.Parameters(ARGB, POINT));       
-    }  
-  }
-
-  public void delete() {
-    release();
-    for (int i = 0; i < numColorBuffers; i++) {
-      colorBufferTex[i] = null;  
     }
-    a3d.unregisterPGLObject(this);
   }
 
-  public void backup() {
-  }
   
-  public void restore() {    
-    setColorBuffers(colorBufferTex.clone(), colorBufferTex.length);
-  }    
+  protected void finalize() throws Throwable {
+    try {
+      if (glFboID != 0) {
+        renderer.finalizeFrameBufferObject(glFboID);
+      }      
+      if (glDepthBufferID != 0) {
+        renderer.finalizeRenderBufferObject(glDepthBufferID);
+      }      
+      if (glStencilBufferID != 0) {
+        renderer.finalizeRenderBufferObject(glStencilBufferID);
+      }
+      if (glColorBufferMultisampleID != 0) {
+        renderer.finalizeRenderBufferObject(glColorBufferMultisampleID);
+      }
+      if (glDepthStencilBufferID != 0) {
+        renderer.finalizeRenderBufferObject(glDepthStencilBufferID);
+      }      
+    } finally {
+      super.finalize();
+    }
+  }  
   
   public void clear() {
-    a3d.pushFramebuffer();
-    a3d.setFramebuffer(this);
-    getGl().glClearColor(0f, 0f, 0f, 0.0f);
-    getGl().glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT | GL10.GL_STENCIL_BUFFER_BIT);    
-    a3d.popFramebuffer();    
-  }  
+    renderer.pushFramebuffer();
+    renderer.setFramebuffer(this);
+    pgl.setClearColor(0, 0, 0, 0);
+    pgl.clearAllBuffers();
+    renderer.popFramebuffer();    
+  }
+  
+  public void copy(PFramebuffer dest) {
+    pgl.bindReadFramebuffer(this.glFboID);
+    pgl.bindWriteFramebuffer(dest.glFboID);    
+    pgl.copyFramebuffer(this.width, this.height, dest.width, dest.height);
+  }
   
   public void bind() {
     if (screenFb) {
       if (PGraphicsAndroid3D.fboSupported) {
-        getGlx().glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, 0);
+        pgl.bindFramebuffer(0);
       }
     } else if (fboMode) {
-      getGlx().glBindFramebufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, glFboID);  
+      pgl.bindFramebuffer(glFboID);
     } else {
       backupScreen();
+      
+      if (0 < numColorBuffers) {
+        // Drawing the current contents of the first color buffer to emulate
+        // front-back buffer swap.
+        renderer.drawTexture(colorBufferTex[0].glTarget, colorBufferTex[0].glID, width, height, 0, 0, width, height, 0, 0, width, height);
+      }
+      
       if (noDepth) {
-        getGl().glDisable(GL10.GL_DEPTH_TEST); 
+        pgl.disableDepthTest();
       }
     }
   }
@@ -178,10 +211,10 @@ public class PFramebuffer implements PConstants {
   public void finish() {
     if (noDepth) {
       // No need to clear depth buffer because depth testing was disabled.
-      if (a3d.hints[DISABLE_DEPTH_TEST]) {
-        getGl().glDisable(GL10.GL_DEPTH_TEST);
+      if (renderer.hintEnabled(DISABLE_DEPTH_TEST)) {
+        pgl.disableDepthTest();
       } else {
-        getGl().glEnable(GL10.GL_DEPTH_TEST);
+        pgl.enableDepthTest();
       }        
     }
     
@@ -196,28 +229,31 @@ public class PFramebuffer implements PConstants {
         // after this offscreen render.
         // A consequence of this behavior is that all the offscreen rendering when
         // no FBOs are available should be done before any onscreen drawing.
-        getGl().glClearColor(0, 0, 0, 0);
-        getGl().glClear(GL10.GL_DEPTH_BUFFER_BIT);
+        pgl.setClearColor(0, 0, 0, 0);
+        pgl.clearDepthBuffer();
       }
     }
   }
     
   // Saves content of the screen into the backup texture.
   public void backupScreen() {  
-    if (pixelBuffer == null) createPixelBuffer();
-    getGl().glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);    
+    if (pixelBuffer == null) createPixelBuffer();    
+    pixelBuffer.rewind();
+    pgl.readPixels(pixelBuffer, 0, 0, width, height);
+    
     copyToTexture(pixelBuffer, backupTexture.glID, backupTexture.glTarget);
   }
 
   // Draws the contents of the backup texture to the screen.
   public void restoreBackup() {
-    a3d.drawTexture(backupTexture, 0, 0, width, height, 0, 0, width, height);
+    renderer.drawTexture(backupTexture, 0, 0, width, height, 0, 0, width, height);
   }
   
   // Copies current content of screen to color buffers.
   public void copyToColorBuffers() {
     if (pixelBuffer == null) createPixelBuffer();
-    getGl().glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+    pixelBuffer.rewind();
+    pgl.readPixels(pixelBuffer, 0, 0, width, height);
     for (int i = 0; i < numColorBuffers; i++) {
       copyToTexture(pixelBuffer, colorBufferTex[i].glID, colorBufferTex[i].glTarget);
     }
@@ -225,7 +261,8 @@ public class PFramebuffer implements PConstants {
   
   public void readPixels() {
     if (pixelBuffer == null) createPixelBuffer();
-    getGl().glReadPixels(0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, pixelBuffer);
+    pixelBuffer.rewind();
+    pgl.readPixels(pixelBuffer, 0, 0, width, height);
   }
   
   public void getPixels(int[] pixels) {
@@ -249,14 +286,14 @@ public class PFramebuffer implements PConstants {
   
   ///////////////////////////////////////////////////////////  
 
-  // Color buffer setters.  
+  // Color buffer setters.
   
   
   public void setColorBuffer(PTexture tex) {
     setColorBuffers(new PTexture[] { tex }, 1);
   }
-
   
+
   public void setColorBuffers(PTexture[] textures) {
     setColorBuffers(textures, textures.length);
   }
@@ -264,91 +301,136 @@ public class PFramebuffer implements PConstants {
   
   public void setColorBuffers(PTexture[] textures, int n) {
     if (screenFb) return;
-    
+
     if (numColorBuffers != PApplet.min(n, textures.length)) {
       throw new RuntimeException("Wrong number of textures to set the color buffers.");
-    }    
-    
+    }
+        
     for (int i = 0; i < numColorBuffers; i++) {
       colorBufferTex[i] = textures[i];
-    }     
-    
+    }
+      
     if (fboMode) {
-      a3d.pushFramebuffer();
-      a3d.setFramebuffer(this);
+      renderer.pushFramebuffer();
+      renderer.setFramebuffer(this);
 
       // Making sure nothing is attached.
       for (int i = 0; i < numColorBuffers; i++) {
-        getGlx().glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, 
-                                           GL11ExtensionPack.GL_COLOR_ATTACHMENT0_OES + i, 
-                                           GL10.GL_TEXTURE_2D, 0, 0);      
+        pgl.cleanFramebufferTexture(i);
       }
 
       for (int i = 0; i < numColorBuffers; i++) {
-        getGlx().glFramebufferTexture2DOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES, colorBufferAttchPoints[i],
-                                           colorBufferTex[i].glTarget, colorBufferTex[i].glID, 0);
+        pgl.setFramebufferTexture(i, colorBufferTex[i].glTarget, colorBufferTex[i].glID);        
       }
 
       validateFbo();
 
-      a3d.popFramebuffer();
+      renderer.popFramebuffer();
     }
-  }
+  }  
   
   
   ///////////////////////////////////////////////////////////  
 
-  // Allocate/release framebuffer.  
+  // Allocate/release framebuffer.   
   
   
   protected void allocate() {
-    release(); // Just in the case this object is being re-initialized.
-        
+    release(); // Just in the case this object is being re-allocated.    
+    
     if (screenFb) {
       glFboID = 0;
     } else if (fboMode) {
-      glFboID = a3d.createGLResource(PGraphicsAndroid3D.GL_FRAME_BUFFER); 
+      //glFboID = ogl.createGLResource(PGraphicsAndroid3D.GL_FRAME_BUFFER); 
+      glFboID = renderer.createFrameBufferObject();
     }  else {
       glFboID = 0;
     }
     
-    // create the rest of the stuff...   
-    if (0 < depthBits) {
-      createDepthBuffer();
+    // create the rest of the stuff...
+    if (multisample) {
+      createColorBufferMultisample();
     }
-    if (0 < stencilBits) {
-      createStencilBuffer();
-    }           
+   
+    if (combinedDepthStencil) {
+      createCombinedDepthStencilBuffer();
+    } else {
+      if (0 < depthBits) {
+        createDepthBuffer();
+      }
+      if (0 < stencilBits) {
+        createStencilBuffer();
+      }      
+    }    
   }
+  
   
   protected void release() {
-    deleteFbo();
-    deleteDepthBuffer();    
-    deleteStencilBuffer();
-  }
-
-  
-  protected void deleteFbo() {
     if (glFboID != 0) {
-      a3d.deleteGLResource(glFboID, PGraphicsAndroid3D.GL_FRAME_BUFFER);
+      renderer.finalizeFrameBufferObject(glFboID);
       glFboID = 0;
-    }    
-  }
-  
-  
-  protected void deleteDepthBuffer() {
+    }
     if (glDepthBufferID != 0) {
-      a3d.deleteGLResource(glDepthBufferID, PGraphicsAndroid3D.GL_RENDER_BUFFER);
+      renderer.finalizeRenderBufferObject(glDepthBufferID);
       glDepthBufferID = 0;
-    }    
+    }
+    if (glStencilBufferID != 0) {
+      renderer.finalizeRenderBufferObject(glStencilBufferID);
+      glStencilBufferID = 0;
+    }
+    if (glColorBufferMultisampleID != 0) {
+      renderer.finalizeRenderBufferObject(glColorBufferMultisampleID);
+      glColorBufferMultisampleID = 0;
+    }
+    if (glDepthStencilBufferID != 0) {
+      renderer.finalizeRenderBufferObject(glDepthStencilBufferID);
+      glDepthStencilBufferID = 0;
+    }     
   }
   
   
-  protected void deleteStencilBuffer() {
-    if (glStencilBufferID != 0) {
-      a3d.deleteGLResource(glStencilBufferID, PGraphicsAndroid3D.GL_RENDER_BUFFER);
-      glStencilBufferID = 0;
-    }     
+  protected void createColorBufferMultisample() {
+    if (screenFb) return;
+    
+    if (fboMode) {
+      renderer.pushFramebuffer();
+      renderer.setFramebuffer(this);      
+
+      glColorBufferMultisampleID = renderer.createRenderBufferObject();
+      pgl.bindRenderbuffer(glColorBufferMultisampleID);
+      pgl.setRenderbufferNumSamples(nsamples, PGL.RGBA8, width, height);
+      pgl.setRenderbufferColorAttachment(glColorBufferMultisampleID);
+      
+      renderer.popFramebuffer();      
+    }
+  }
+  
+  
+  protected void createCombinedDepthStencilBuffer() {
+    if (screenFb) return;
+    
+    if (width == 0 || height == 0) {
+      throw new RuntimeException("PFramebuffer: size undefined.");
+    }
+    
+    if (fboMode) {    
+      renderer.pushFramebuffer();
+      renderer.setFramebuffer(this);
+      
+      glDepthStencilBufferID = renderer.createRenderBufferObject();
+      pgl.bindRenderbuffer(glDepthStencilBufferID);      
+      
+      if (multisample) { 
+        pgl.setRenderbufferNumSamples(nsamples, PGL.DEPTH_24BIT_STENCIL_8BIT, width, height);
+      } else {
+        pgl.setRenderbufferStorage(PGL.DEPTH_24BIT_STENCIL_8BIT, width, height);
+      }
+      
+      pgl.setRenderbufferDepthAttachment(glDepthStencilBufferID);
+      pgl.setRenderbufferStencilAttachment(glDepthStencilBufferID);
+      
+      renderer.popFramebuffer();  
+    }    
   }
   
   
@@ -360,30 +442,34 @@ public class PFramebuffer implements PConstants {
     }
     
     if (fboMode) {
-      a3d.pushFramebuffer();
-      a3d.setFramebuffer(this);
+      renderer.pushFramebuffer();
+      renderer.setFramebuffer(this);
 
-      glDepthBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_RENDER_BUFFER);
-      getGlx().glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
+      glDepthBufferID = renderer.createRenderBufferObject();
+      pgl.bindRenderbuffer(glDepthBufferID);
 
-      int glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT16;
+      int glConst = PGL.DEPTH_16BIT;
       if (depthBits == 16) {
-        glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT16; 
+        glConst = PGL.DEPTH_16BIT; 
       } else if (depthBits == 24) {
-        glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT24;
+        glConst = PGL.DEPTH_24BIT;
       } else if (depthBits == 32) {
-        glConst = GL11ExtensionPack.GL_DEPTH_COMPONENT32;              
+        glConst = PGL.DEPTH_32BIT;              
       }
-      getGlx().glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
+      
+      if (multisample) { 
+        pgl.setRenderbufferNumSamples(nsamples, glConst, width, height);
+      } else {
+        pgl.setRenderbufferStorage(glConst, width, height);
+      }                    
 
-      getGlx().glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,            
-                                            GL11ExtensionPack.GL_DEPTH_ATTACHMENT_OES,
-                                            GL11ExtensionPack.GL_RENDERBUFFER_OES, glDepthBufferID);
+      pgl.setRenderbufferDepthAttachment(glDepthBufferID);
 
-      a3d.popFramebuffer();
+      renderer.popFramebuffer();
     }
   }
     
+  
   protected void createStencilBuffer() {
     if (screenFb) return;
     
@@ -392,76 +478,67 @@ public class PFramebuffer implements PConstants {
     }
 
     if (fboMode) {    
-      a3d.pushFramebuffer();
-      a3d.setFramebuffer(this);
+      renderer.pushFramebuffer();
+      renderer.setFramebuffer(this);
 
-      glStencilBufferID = a3d.createGLResource(PGraphicsAndroid3D.GL_RENDER_BUFFER);
-      getGlx().glBindRenderbufferOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
+      glStencilBufferID = renderer.createRenderBufferObject();
+      pgl.bindRenderbuffer(glStencilBufferID);
 
-      int glConst = GL11ExtensionPack.GL_STENCIL_INDEX1_OES;
+      int glConst = PGL.STENCIL_1BIT;
       if (stencilBits == 1) {
-        glConst = GL11ExtensionPack.GL_STENCIL_INDEX1_OES; 
+        glConst = PGL.STENCIL_1BIT; 
       } else if (stencilBits == 4) {
-        glConst = GL11ExtensionPack.GL_STENCIL_INDEX4_OES;
+        glConst = PGL.STENCIL_4BIT;
       } else if (stencilBits == 8) {
-        glConst = GL11ExtensionPack.GL_STENCIL_INDEX8_OES;              
+        glConst = PGL.STENCIL_8BIT;              
       }
-      getGlx().glRenderbufferStorageOES(GL11ExtensionPack.GL_RENDERBUFFER_OES, glConst, width, height);              
+      if (multisample) { 
+        pgl.setRenderbufferNumSamples(nsamples, glConst, width, height);
+      } else {      
+        pgl.setRenderbufferStorage(glConst, width, height);
+      }
+      
+      pgl.setRenderbufferStencilAttachment(glStencilBufferID);
 
-      getGlx().glFramebufferRenderbufferOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES,
-                                            GL11ExtensionPack.GL_STENCIL_ATTACHMENT_OES,
-                                            GL11ExtensionPack.GL_RENDERBUFFER_OES, glStencilBufferID);
-
-      a3d.popFramebuffer();
+      renderer.popFramebuffer();
     }
-  }
+  }  
+  
   
   protected void createPixelBuffer() {
     pixelBuffer = IntBuffer.allocate(width * height);
     pixelBuffer.rewind();     
-  }
+  }  
   
   ///////////////////////////////////////////////////////////  
 
   // Utilities.  
-
+  
   // Internal copy to texture method.
   protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {
-    getGl().glEnable(gltarget);
-    getGl().glBindTexture(gltarget, glid);    
-    getGl().glTexSubImage2D(gltarget, 0, 0, 0, width, height, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, buffer);
-    getGl().glBindTexture(gltarget, 0);
-    getGl().glDisable(gltarget);
-  }
-    
+    pgl.enableTexturing(gltarget);
+    pgl.bindTexture(gltarget, glid);    
+    pgl.copyTexSubImage(buffer, gltarget, 0, 0, 0, width, height);
+    pgl.unbindTexture(gltarget);
+    pgl.disableTexturing(gltarget);    
+  }  
+  
   public boolean validateFbo() {
-    int status = getGlx().glCheckFramebufferStatusOES(GL11ExtensionPack.GL_FRAMEBUFFER_OES);        
-    if (status == GL11ExtensionPack.GL_FRAMEBUFFER_COMPLETE_OES) {
+    int status = pgl.getFramebufferStatus();
+    if (status == PGL.FRAMEBUFFER_COMPLETE) {
       return true;
-    } else if (status == GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_OES (" + Integer.toHexString(status) + ")");
-    } else if (status == GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_OES (" + Integer.toHexString(status) + ")");
-    } else if (status == GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_OES (" + Integer.toHexString(status) + ")");      
-    } else if (status == GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES (" + Integer.toHexString(status) + ")");      
-    } else if (status == GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_OES) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_OES (" + Integer.toHexString(status) + ")");      
-    } else if (status == GL11ExtensionPack.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_OES) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_OES (" + Integer.toHexString(status) + ")");      
-    } else if (status == GL11ExtensionPack.GL_FRAMEBUFFER_UNSUPPORTED_OES) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_UNSUPPORTED_OES" + Integer.toHexString(status));      
+    } else if (status == PGL.FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT (" + Integer.toHexString(status) + ")");
+    } else if (status == PGL.FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT (" + Integer.toHexString(status) + ")");
+    } else if (status == PGL.FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS (" + Integer.toHexString(status) + ")");      
+    } else if (status == PGL.FRAMEBUFFER_INCOMPLETE_FORMATS) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_FORMATS (" + Integer.toHexString(status) + ")");
+    } else if (status == PGL.FRAMEBUFFER_UNSUPPORTED) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_UNSUPPORTED" + Integer.toHexString(status));      
     } else {
       throw new RuntimeException("PFramebuffer: unknown framebuffer error (" + Integer.toHexString(status) + ")");
     }
   }
-  
-  protected GL10 getGl() {
-    return a3d.gl;
-  }
-  
-  protected GL11ExtensionPack getGlx() {
-    return a3d.gl11xp;    
-  }   
 }
