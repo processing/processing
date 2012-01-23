@@ -126,6 +126,9 @@ public class PGraphics extends PImage implements PConstants {
   /// true if smoothing is enabled (read-only)
   public boolean smooth = false;
 
+  /// the anti-aliasing level for renderers that support it
+  protected int antialias;  
+  
   // ........................................................
 
   /// true if defaults() has been called a first time
@@ -482,6 +485,19 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
+  /// normal calculated per triangle
+  static protected final int NORMAL_MODE_AUTO = 0;
+  /// one normal manually specified per shape
+  static protected final int NORMAL_MODE_SHAPE = 1;
+  /// normals specified for each shape vertex
+  static protected final int NORMAL_MODE_VERTEX = 2;
+
+  /// Current mode for normals, one of AUTO, SHAPE, or VERTEX
+  protected int normalMode;
+
+  /// Keep track of how many calls to normal, to determine the mode.
+  //protected int normalCount;
+
   protected boolean autoNormal;
 
   /** Current normal vector. */
@@ -806,7 +822,15 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
-
+  
+  public boolean hintEnabled(int which) {
+    if (which > 0) {
+      return hints[which];
+    } else {
+      return hints[-which];
+    }
+  }
+  
 
   //////////////////////////////////////////////////////////////
 

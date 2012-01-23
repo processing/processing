@@ -441,6 +441,14 @@ public class PFont implements PConstants {
     return name;
   }
 
+  
+  /**
+   * Return size of this font.
+   */
+  public int getSize() {
+    return size;
+  }
+  
 
   public String getPostScriptName() {
     return psname;

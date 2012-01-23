@@ -68,7 +68,7 @@ public class PShape implements PConstants {
   protected int family;
 
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
-  protected int primitive;
+  protected int kind;
 
   protected PMatrix matrix;
 
@@ -106,6 +106,9 @@ public class PShape implements PConstants {
   protected boolean fill;
   protected int fillColor;
 
+  protected boolean tint;
+  protected int tintColor;
+
   /** Temporary toggle for whether styles should be honored. */
   protected boolean style = true;
 
@@ -125,11 +128,6 @@ public class PShape implements PConstants {
   static public final int QUAD_BEZIER_VERTEX = 2;
   static public final int CURVE_VERTEX = 3;
   static public final int BREAK = 4;
-  /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEX calls. */
-  protected int vertexCodeCount;
-  protected int[] vertexCodes;
-  /** True if this is a closed path. */
-  protected boolean close;
 
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
@@ -137,6 +135,46 @@ public class PShape implements PConstants {
   protected PShape parent;
   protected int childCount;
   protected PShape[] children;
+  
+
+  /** Array of VERTEX, BEZIER_VERTEX, and CURVE_VERTEX calls. */
+  protected int vertexCodeCount;
+  protected int[] vertexCodes;
+  /** True if this is a closed path. */
+  protected boolean close;
+
+  
+  // ........................................................
+
+  // internal color for setting/calculating
+  protected float calcR, calcG, calcB, calcA;
+  protected int calcRi, calcGi, calcBi, calcAi;
+  protected int calcColor;
+  protected boolean calcAlpha;  
+
+  /** The current colorMode */
+  public int colorMode; // = RGB;
+
+  /** Max value for red (or hue) set by colorMode */
+  public float colorModeX; // = 255;
+
+  /** Max value for green (or saturation) set by colorMode */
+  public float colorModeY; // = 255;
+
+  /** Max value for blue (or value) set by colorMode */
+  public float colorModeZ; // = 255;
+
+  /** Max value for alpha set by colorMode */
+  public float colorModeA; // = 255;
+
+  /** True if colors are not in the range 0..1 */
+  boolean colorModeScale; // = true;
+
+  /** True if colorMode(RGB, 255) */
+  boolean colorModeDefault; // = true;
+  
+  /** To mark the shape dirty upon changes in its geometry **/
+  public boolean modified; 
 
   // POINTS, LINES, xLINE_STRIP, xLINE_LOOP
   // TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN
@@ -293,6 +331,185 @@ public class PShape implements PConstants {
     return false;
   }
 
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Drawing methods  
+  
+  public void texture(PImage tex) {
+  }
+  
+  public void noTexture() {
+  }  
+    
+  public void solid(boolean solid) {
+  }
+  
+  public void beginContour() {
+  }
+    
+  public void endContour() {
+  }
+  
+  public void vertex(float x, float y) { 
+  }
+
+  public void vertex(float x, float y, float u, float v) { 
+  }
+  
+  public void vertex(float x, float y, float z) {
+  }
+
+  public void vertex(float x, float y, float z, float u, float v) {
+  }  
+  
+  public void normal(float nx, float ny, float nz) {
+  }
+
+  public void end() {
+  }  
+
+  public void end(int mode) {    
+  }    
+  
+  //////////////////////////////////////////////////////////////
+
+  // STROKE CAP/JOIN/WEIGHT
+
+  
+  public void strokeWeight(float weight) {
+  }
+
+  public void strokeJoin(int join) {
+  }
+
+  public void strokeCap(int cap) {
+  }  
+  
+  //////////////////////////////////////////////////////////////
+
+  // FILL COLOR
+
+  public void noFill() {
+  }
+
+  public void fill(int rgb) {
+  }
+
+  public void fill(int rgb, float alpha) {
+  }
+
+  public void fill(float gray) {
+  }
+
+  public void fill(float gray, float alpha) {
+  }
+
+  public void fill(float x, float y, float z) {
+  }
+
+  public void fill(float x, float y, float z, float a) {
+  }  
+  
+  //////////////////////////////////////////////////////////////
+
+  // STROKE COLOR 
+  
+  public void noStroke() {
+  }  
+  
+  public void stroke(int rgb) {
+  }  
+  
+  public void stroke(int rgb, float alpha) {
+  }
+  
+  public void stroke(float gray) {
+  }
+  
+  public void stroke(float gray, float alpha) {
+  }
+
+  public void stroke(float x, float y, float z) {
+  }
+  
+  public void stroke(float x, float y, float z, float alpha) {
+  }
+  
+  //////////////////////////////////////////////////////////////
+
+  // TINT COLOR 
+  
+  
+  public void noTint() {
+  }  
+  
+  public void tint(int rgb) {
+  }  
+  
+  public void tint(int rgb, float alpha) {
+  }
+  
+  public void tint(float gray) {
+  }
+  
+  public void tint(float gray, float alpha) {
+  }
+
+  public void tint(float x, float y, float z) {
+  }
+  
+  public void tint(float x, float y, float z, float alpha) {
+  }  
+
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Bezier curves   
+  
+  
+  public void bezierDetail(int detail) {
+  }  
+  
+  public void bezierVertex(float x2, float y2,
+                           float x3, float y3,
+                           float x4, float y4) {
+  }
+  
+  public void bezierVertex(float x2, float y2, float z2,
+                           float x3, float y3, float z3,
+                           float x4, float y4, float z4) {
+  }
+  
+  public void quadraticVertex(float cx, float cy,
+                              float x3, float y3) {
+  }  
+  
+  public void quadraticVertex(float cx, float cy, float cz,
+                              float x3, float y3, float z3) {
+  }
+  
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Catmull-Rom curves
+
+  public void curveDetail(int detail) {
+  }
+  
+  public void curveTightness(float tightness) {
+  }  
+  
+  public void curveVertex(float x, float y) {
+  }  
+
+  public void curveVertex(float x, float y, float z) {
+  }
+  
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -429,10 +646,10 @@ public class PShape implements PConstants {
 
 
   protected void drawPrimitive(PGraphics g) {
-    if (primitive == POINT) {
+    if (kind == POINT) {
       g.point(params[0], params[1]);
 
-    } else if (primitive == LINE) {
+    } else if (kind == LINE) {
       if (params.length == 4) {  // 2D
         g.line(params[0], params[1],
                params[2], params[3]);
@@ -441,18 +658,18 @@ public class PShape implements PConstants {
                params[3], params[4], params[5]);
       }
 
-    } else if (primitive == TRIANGLE) {
+    } else if (kind == TRIANGLE) {
       g.triangle(params[0], params[1],
                  params[2], params[3],
                  params[4], params[5]);
 
-    } else if (primitive == QUAD) {
+    } else if (kind == QUAD) {
       g.quad(params[0], params[1],
              params[2], params[3],
              params[4], params[5],
              params[6], params[7]);
 
-    } else if (primitive == RECT) {
+    } else if (kind == RECT) {
       if (image != null) {
         g.imageMode(CORNER);
         g.image(image, params[0], params[1], params[2], params[3]);
@@ -461,29 +678,29 @@ public class PShape implements PConstants {
         g.rect(params[0], params[1], params[2], params[3]);
       }
 
-    } else if (primitive == ELLIPSE) {
+    } else if (kind == ELLIPSE) {
       g.ellipseMode(CORNER);
       g.ellipse(params[0], params[1], params[2], params[3]);
 
-    } else if (primitive == ARC) {
+    } else if (kind == ARC) {
       g.ellipseMode(CORNER);
       g.arc(params[0], params[1], params[2], params[3], params[4], params[5]);
 
-    } else if (primitive == BOX) {
+    } else if (kind == BOX) {
       if (params.length == 1) {
         g.box(params[0]);
       } else {
         g.box(params[0], params[1], params[2]);
       }
 
-    } else if (primitive == SPHERE) {
+    } else if (kind == SPHERE) {
       g.sphere(params[0]);
     }
   }
 
 
   protected void drawGeometry(PGraphics g) {
-    g.beginShape(primitive);
+    g.beginShape(kind);
     if (style) {
       for (int i = 0; i < vertexCount; i++) {
         g.vertex(vertices[i]);
@@ -814,13 +1031,17 @@ public class PShape implements PConstants {
   }
 
 
-//  public PShape createGroup() {
-//    PShape group = new PShape();
-//    group.kind = GROUP;
-//    addChild(group);
-//    return group;
-//  }
+  public void updateRoot(PShape root) {    
+  }
 
+  
+  protected void modified() {
+    modified = true;
+    if (parent != null) {
+      parent.modified();
+    }
+  }
+  
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -831,8 +1052,8 @@ public class PShape implements PConstants {
   }
 
 
-  public int getPrimitive() {
-    return primitive;
+  public int getKind() {
+    return kind;
   }
 
 
@@ -854,6 +1075,18 @@ public class PShape implements PConstants {
     return params[index];
   }
 
+  
+  public void setParams(float[] source) {
+    if (params == null) {
+      params = new float[source.length];  
+    }    
+    if (source.length != params.length) {
+      PGraphics.showWarning("Wrong number of parameters");
+      return;
+    }
+    PApplet.arrayCopy(source, params);
+  }    
+  
 
   public int getVertexCount() {
     return vertexCount;
@@ -1173,4 +1406,178 @@ public class PShape implements PConstants {
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+  
+  public void colorMode(int mode) {
+    colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
+  }
+
+  /**
+   * @param max range for all color elements
+   */
+  public void colorMode(int mode, float max) {
+    colorMode(mode, max, max, max, max);
+  }
+
+
+  /**
+   * @param maxX range for the red or hue depending on the current color mode
+   * @param maxY range for the green or saturation depending on the current color mode
+   * @param maxZ range for the blue or brightness depending on the current color mode
+   */
+  public void colorMode(int mode, float maxX, float maxY, float maxZ) {
+    colorMode(mode, maxX, maxY, maxZ, colorModeA);
+  }
+
+/**
+ * @param maxA range for the alpha
+ */
+  public void colorMode(int mode,
+                        float maxX, float maxY, float maxZ, float maxA) {
+    colorMode = mode;
+
+    colorModeX = maxX;  // still needs to be set for hsb
+    colorModeY = maxY;
+    colorModeZ = maxZ;
+    colorModeA = maxA;
+
+    // if color max values are all 1, then no need to scale
+    colorModeScale =
+      ((maxA != 1) || (maxX != maxY) || (maxY != maxZ) || (maxZ != maxA));
+
+    // if color is rgb/0..255 this will make it easier for the
+    // red() green() etc functions
+    colorModeDefault = (colorMode == RGB) &&
+      (colorModeA == 255) && (colorModeX == 255) &&
+      (colorModeY == 255) && (colorModeZ == 255);
+  }
+  
+  
+  protected void colorCalc(int rgb) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {
+      colorCalc((float) rgb);
+
+    } else {
+      colorCalcARGB(rgb, colorModeA);
+    }
+  }
+
+
+  protected void colorCalc(int rgb, float alpha) {
+    if (((rgb & 0xff000000) == 0) && (rgb <= colorModeX)) {  // see above
+      colorCalc((float) rgb, alpha);
+
+    } else {
+      colorCalcARGB(rgb, alpha);
+    }
+  }
+
+
+  protected void colorCalc(float gray) {
+    colorCalc(gray, colorModeA);
+  }
+
+
+  protected void colorCalc(float gray, float alpha) {
+    if (gray > colorModeX) gray = colorModeX;
+    if (alpha > colorModeA) alpha = colorModeA;
+
+    if (gray < 0) gray = 0;
+    if (alpha < 0) alpha = 0;
+
+    calcR = colorModeScale ? (gray / colorModeX) : gray;
+    calcG = calcR;
+    calcB = calcR;
+    calcA = colorModeScale ? (alpha / colorModeA) : alpha;
+
+    calcRi = (int)(calcR*255); calcGi = (int)(calcG*255);
+    calcBi = (int)(calcB*255); calcAi = (int)(calcA*255);
+    calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
+    calcAlpha = (calcAi != 255);
+  }
+
+
+  protected void colorCalc(float x, float y, float z) {
+    colorCalc(x, y, z, colorModeA);
+  }
+
+
+  protected void colorCalc(float x, float y, float z, float a) {
+    if (x > colorModeX) x = colorModeX;
+    if (y > colorModeY) y = colorModeY;
+    if (z > colorModeZ) z = colorModeZ;
+    if (a > colorModeA) a = colorModeA;
+
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    if (z < 0) z = 0;
+    if (a < 0) a = 0;
+
+    switch (colorMode) {
+    case RGB:
+      if (colorModeScale) {
+        calcR = x / colorModeX;
+        calcG = y / colorModeY;
+        calcB = z / colorModeZ;
+        calcA = a / colorModeA;
+      } else {
+        calcR = x; calcG = y; calcB = z; calcA = a;
+      }
+      break;
+
+    case HSB:
+      x /= colorModeX; // h
+      y /= colorModeY; // s
+      z /= colorModeZ; // b
+
+      calcA = colorModeScale ? (a/colorModeA) : a;
+
+      if (y == 0) {  // saturation == 0
+        calcR = calcG = calcB = z;
+
+      } else {
+        float which = (x - (int)x) * 6.0f;
+        float f = which - (int)which;
+        float p = z * (1.0f - y);
+        float q = z * (1.0f - y * f);
+        float t = z * (1.0f - (y * (1.0f - f)));
+
+        switch ((int)which) {
+        case 0: calcR = z; calcG = t; calcB = p; break;
+        case 1: calcR = q; calcG = z; calcB = p; break;
+        case 2: calcR = p; calcG = z; calcB = t; break;
+        case 3: calcR = p; calcG = q; calcB = z; break;
+        case 4: calcR = t; calcG = p; calcB = z; break;
+        case 5: calcR = z; calcG = p; calcB = q; break;
+        }
+      }
+      break;
+    }
+    calcRi = (int)(255*calcR); calcGi = (int)(255*calcG);
+    calcBi = (int)(255*calcB); calcAi = (int)(255*calcA);
+    calcColor = (calcAi << 24) | (calcRi << 16) | (calcGi << 8) | calcBi;
+    calcAlpha = (calcAi != 255);
+  }
+
+
+  protected void colorCalcARGB(int argb, float alpha) {
+    if (alpha == colorModeA) {
+      calcAi = (argb >> 24) & 0xff;
+      calcColor = argb;
+    } else {
+      calcAi = (int) (((argb >> 24) & 0xff) * (alpha / colorModeA));
+      calcColor = (calcAi << 24) | (argb & 0xFFFFFF);
+    }
+    calcRi = (argb >> 16) & 0xff;
+    calcGi = (argb >> 8) & 0xff;
+    calcBi = argb & 0xff;
+    calcA = calcAi / 255.0f;
+    calcR = calcRi / 255.0f;
+    calcG = calcGi / 255.0f;
+    calcB = calcBi / 255.0f;
+    calcAlpha = (calcAi != 255);
+  }
+   
+  
 }

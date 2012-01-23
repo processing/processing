@@ -406,7 +406,7 @@ public class PShapeSVG extends PShape {
 
 
   protected void parseLine() {
-    primitive = LINE;
+    kind = LINE;
     family = PRIMITIVE;
     params = new float[] {
       getFloatWithUnit(element, "x1"),
@@ -422,7 +422,7 @@ public class PShapeSVG extends PShape {
    * @param circle true if this is a circle and not an ellipse
    */
   protected void parseEllipse(boolean circle) {
-    primitive = ELLIPSE;
+    kind = ELLIPSE;
     family = PRIMITIVE;
     params = new float[4];
 
@@ -445,7 +445,7 @@ public class PShapeSVG extends PShape {
 
 
   protected void parseRect() {
-    primitive = RECT;
+    kind = RECT;
     family = PRIMITIVE;
     params = new float[] {
       getFloatWithUnit(element, "x"),
@@ -480,7 +480,7 @@ public class PShapeSVG extends PShape {
 
   protected void parsePath() {
     family = PATH;
-    primitive = 0;
+    kind = 0;
 
     String pathData = element.getString("d");
     if (pathData == null || PApplet.trim(pathData).length() == 0) {
