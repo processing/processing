@@ -66,14 +66,6 @@ public interface PConstants {
 
   static public final int EDGE = 12;
 
-  // shapes
-  
-  static public final int VERTEX = 0;  
-  static public final int BEZIER_VERTEX = 1;  
-  static public final int QUAD_BEZIER_VERTEX = 2;  
-  static public final int CURVE_VERTEX = 3;
-  static public final int BREAK = 4;  
-
   // stroke
 
   /** stroke argb values */
@@ -84,7 +76,6 @@ public interface PConstants {
 
   /** stroke weight */
   static public final int SW = 17;
-
 
   // transformations (2D and 3D)
 
@@ -176,7 +167,14 @@ public interface PConstants {
   /** Smallest possible (negative) integer value */
   static final int MIN_INT = Integer.MIN_VALUE;
 
-
+  // shapes
+  
+  static public final int VERTEX = 0;  
+  static public final int BEZIER_VERTEX = 1;  
+  static public final int QUAD_BEZIER_VERTEX = 2;  
+  static public final int CURVE_VERTEX = 3;
+  static public final int BREAK = 4;  
+ 
   // useful goodness
 
   /**
