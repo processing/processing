@@ -1671,9 +1671,9 @@ public class PGraphicsOpenGL extends PGraphics {
   // HINTS
 
   public void hint(int which) {
-    boolean oldValue = hints[which];
+    boolean oldValue = which > 0 ? hints[which] : hints[-which];
     super.hint(which);
-    boolean newValue = hints[which];
+    boolean newValue = which > 0 ? hints[which] : hints[-which];
 
     if (oldValue == newValue) {
       return;
