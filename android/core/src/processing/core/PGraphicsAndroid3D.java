@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Stack;
 import javax.microedition.khronos.opengles.*;
+import android.opengl.GLSurfaceView;
 
 
 // drawPixels is missing...calls to glDrawPixels are commented out
@@ -1138,7 +1139,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.destroyContext();
     restartSurface();    
     pgl.detainContext();      
-    updateGLInterfaces();    
+    updatePGL();    
   }  
 
   protected void createFillBuffers() {
@@ -1281,6 +1282,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   
+  public void requestDraw() {    
+    pgl.requestDraw();
+  }  
+  
+  
   public void beginDraw() {
     if (drawing) {
       showWarning("P3D: Already called beginDraw().");
@@ -1290,9 +1296,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (primarySurface) {
       if (!pgl.initialized) {
         initPrimary();
-      }      
-      boolean res = pgl.beginOnscreenDraw();
-      if (!res) return;
+      } 
+      
+      if (!pgl.initOnscreenDraw()) {
+        return;
+      }
       pgl.detainContext();      
     } else {
       if (!pgl.initialized) {
@@ -1306,11 +1314,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       } else {
         setFramebuffer(offscreenFramebuffer);
       } 
-      
-      pgl.beginOffscreenDraw();
     }
       
-    updateGLInterfaces();
+    updatePGL();
     
     if (!glParamsRead) {
       getGLParameters();  
@@ -1420,26 +1426,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     normalX = normalY = 0; 
     normalZ = 0;
     
-    
-    /*
-    if (primarySurface) {
-      // This instance of PGraphicsOpenGL is the primary (onscreen) drawing surface.    
-      // Nothing else needs setup here.      
-    } else {
-      pushFramebuffer();
-      if (offscreenMultisample) {
-        setFramebuffer(offscreenFramebufferMultisample);   
-        pgl.setDrawBuffer(0);
-      } else {
-        setFramebuffer(offscreenFramebuffer);
-      }
-    }
-    */
-    
-    
     // Clear depth and stencil buffers.
     pgl.setClearColor(0, 0, 0, 0);
     pgl.clearDepthAndStencilBuffers();
+    
+    if (primarySurface) {
+      pgl.beginOnscreenDraw();  
+    } else {
+      pgl.beginOffscreenDraw();  
+    }
     
     drawing = true;
     
@@ -1508,9 +1503,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   
-  public void updateGLInterfaces() {
+  public void updatePGL() {
     if (primarySurface) {
-      pgl.updateGLPrimary();  
+      pgl.updatePrimary();  
     } else {
       pgl.updateOffscreen(pg.pgl);
     }
@@ -1646,7 +1641,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // buffer.
   protected void beginGLOp() {
     pgl.detainContext();
-    updateGLInterfaces();
+    updatePGL();
   }
 
   
@@ -5882,16 +5877,16 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected void initPrimary() {
-    pgl.initPrimary(antialias);
+    pgl.initPrimarySurface(antialias);
     pg = this;
   }
   
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
     pg = (PGraphicsAndroid3D)parent.g;
-    pgl.initOffscreen(pg.pgl);
+    pgl.initOffscreenSurface(pg.pgl);
     
-    updateGLInterfaces();
+    updatePGL();
     loadTextureImpl(BILINEAR);
     
     // In case of reinitialization (for example, when the smooth level
@@ -5936,8 +5931,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected void updateOffscreenContext() {
-    pgl.updateOffscreen(pg.pgl);
-    updateGLInterfaces();
+    pgl.updateOffscreenSurface(pg.pgl);
+    updatePGL();
   }  
   
   protected void getGLParameters() {
@@ -6762,7 +6757,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public int fillIndexCount;
     public int firstFillIndex;
     public int lastFillIndex;    
-    public int[] fillIndices;
+    public short[] fillIndices;
     
     // Tessellated line data    
     public int lineVertexCount;
@@ -6776,7 +6771,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public int lineIndexCount;
     public int firstLineIndex;
     public int lastLineIndex;  
-    public int[] lineIndices;  
+    public short[] lineIndices;  
     
     // Tessellated point data
     public int pointVertexCount;
@@ -6790,7 +6785,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public int pointIndexCount;
     public int firstPointIndex;
     public int lastPointIndex;  
-    public int[] pointIndices;
+    public short[] pointIndices;
     
     public boolean isStroked;
 
@@ -6817,19 +6812,19 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillColors = new float[4 * DEFAULT_TESS_VERTICES];
       fillNormals = new float[3 * DEFAULT_TESS_VERTICES];
       fillTexcoords = new float[2 * DEFAULT_TESS_VERTICES];
-      fillIndices = new int[DEFAULT_TESS_VERTICES];  
+      fillIndices = new short[DEFAULT_TESS_VERTICES];  
       
       lineVertices = new float[3 * DEFAULT_TESS_VERTICES];
       lineColors = new float[4 * DEFAULT_TESS_VERTICES];
       lineNormals = new float[3 * DEFAULT_TESS_VERTICES];
       lineAttributes = new float[4 * DEFAULT_TESS_VERTICES];
-      lineIndices = new int[DEFAULT_TESS_VERTICES];       
+      lineIndices = new short[DEFAULT_TESS_VERTICES];       
       
       pointVertices = new float[3 * DEFAULT_TESS_VERTICES];
       pointColors = new float[4 * DEFAULT_TESS_VERTICES];
       pointNormals = new float[3 * DEFAULT_TESS_VERTICES];
       pointAttributes = new float[2 * DEFAULT_TESS_VERTICES];
-      pointIndices = new int[DEFAULT_TESS_VERTICES];
+      pointIndices = new short[DEFAULT_TESS_VERTICES];
       
       reset();
     }
@@ -6987,14 +6982,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
     
     public void expandFillIndices(int n) {
-      int temp[] = new int[n];      
+      short temp[] = new short[n];      
       PApplet.arrayCopy(fillIndices, 0, temp, 0, fillIndexCount);
       fillIndices = temp;      
     }
     
     public void addFillIndex(int idx) {
       fillIndexCheck();
-      fillIndices[fillIndexCount] = idx;
+      fillIndices[fillIndexCount] = (short)idx;
       fillIndexCount++;
       lastFillIndex = fillIndexCount - 1;
     }
@@ -7168,7 +7163,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }   
     
     public void expandLineIndices(int n) {
-      int temp[] = new int[n];      
+      short temp[] = new short[n];      
       PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;        
     }
@@ -7227,7 +7222,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }   
     
     public void expandPointIndices(int n) {
-      int temp[] = new int[n];      
+      short temp[] = new short[n];      
       PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;        
     }
@@ -7955,14 +7950,14 @@ public class PGraphicsAndroid3D extends PGraphics {
           // Adding vert0 to take into account the triangles of all
           // the preceding points.
           for (int k = 1; k < nvert - 1; k++) {
-            tess.pointIndices[indIdx++] = firstVert + 0;
-            tess.pointIndices[indIdx++] = firstVert + k;
-            tess.pointIndices[indIdx++] = firstVert + k + 1;
+            tess.pointIndices[indIdx++] = (short)(firstVert + 0);
+            tess.pointIndices[indIdx++] = (short)(firstVert + k);
+            tess.pointIndices[indIdx++] = (short)(firstVert + k + 1);
           }
           // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = firstVert + 0;
-          tess.pointIndices[indIdx++] = firstVert + 1;
-          tess.pointIndices[indIdx++] = firstVert + nvert - 1;      
+          tess.pointIndices[indIdx++] = (short)(firstVert + 0);
+          tess.pointIndices[indIdx++] = (short)(firstVert + 1);
+          tess.pointIndices[indIdx++] = (short)(firstVert + nvert - 1);      
           
           firstVert = vertIdx;
         } 
@@ -8016,14 +8011,14 @@ public class PGraphicsAndroid3D extends PGraphics {
           // Adding firstVert to take into account the triangles of all
           // the preceding points.
           for (int k = 1; k < nvert - 1; k++) {
-            tess.pointIndices[indIdx++] = firstVert + 0;
-            tess.pointIndices[indIdx++] = firstVert + k;
-            tess.pointIndices[indIdx++] = firstVert + k + 1;
+            tess.pointIndices[indIdx++] = (short)(firstVert + 0);
+            tess.pointIndices[indIdx++] = (short)(firstVert + k);
+            tess.pointIndices[indIdx++] = (short)(firstVert + k + 1);
           }
           // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = firstVert + 0;
-          tess.pointIndices[indIdx++] = firstVert + 1;
-          tess.pointIndices[indIdx++] = firstVert + nvert - 1;  
+          tess.pointIndices[indIdx++] = (short)(firstVert + 0);
+          tess.pointIndices[indIdx++] = (short)(firstVert + 1);
+          tess.pointIndices[indIdx++] = (short)(firstVert + nvert - 1);  
           
           firstVert = vertIdx;
         }
@@ -8068,7 +8063,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         int idx0 = tess.firstFillIndex;
         int offset = tess.firstFillVertex;
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-          tess.fillIndices[idx0 + i] = offset + i;
+          tess.fillIndices[idx0 + i] = (short)(offset + i);
         }        
       }
 
@@ -8088,9 +8083,9 @@ public class PGraphicsAndroid3D extends PGraphics {
         int idx = tess.firstFillIndex;
         int offset = tess.firstFillVertex; 
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          tess.fillIndices[idx++] = offset + in.firstVertex;
-          tess.fillIndices[idx++] = offset + i;
-          tess.fillIndices[idx++] = offset + i + 1;
+          tess.fillIndices[idx++] = (short)(offset + in.firstVertex);
+          tess.fillIndices[idx++] = (short)(offset + i);
+          tess.fillIndices[idx++] = (short)(offset + i + 1);
         }
       }
       
@@ -8114,13 +8109,13 @@ public class PGraphicsAndroid3D extends PGraphics {
         int idx = tess.firstFillIndex;
         int offset = tess.firstFillVertex;
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          tess.fillIndices[idx++] = offset + i;
+          tess.fillIndices[idx++] = (short)(offset + i);
           if (i % 2 == 0) {
-            tess.fillIndices[idx++] = offset + i - 1;  
-            tess.fillIndices[idx++] = offset + i + 1;
+            tess.fillIndices[idx++] = (short)(offset + i - 1);  
+            tess.fillIndices[idx++] = (short)(offset + i + 1);
           } else {
-            tess.fillIndices[idx++] = offset + i + 1;  
-            tess.fillIndices[idx++] = offset + i - 1;
+            tess.fillIndices[idx++] = (short)(offset + i + 1);  
+            tess.fillIndices[idx++] = (short)(offset + i - 1);
           }
         }              
       }      
@@ -8148,13 +8143,13 @@ public class PGraphicsAndroid3D extends PGraphics {
           int i2 = offset + 4 * qd + 2;
           int i3 = offset + 4 * qd + 3;
           
-          tess.fillIndices[idx++] = i0;
-          tess.fillIndices[idx++] = i1;
-          tess.fillIndices[idx++] = i3;
+          tess.fillIndices[idx++] = (short)i0;
+          tess.fillIndices[idx++] = (short)i1;
+          tess.fillIndices[idx++] = (short)i3;
           
-          tess.fillIndices[idx++] = i1;
-          tess.fillIndices[idx++] = i2;
-          tess.fillIndices[idx++] = i3;
+          tess.fillIndices[idx++] = (short)i1;
+          tess.fillIndices[idx++] = (short)i2;
+          tess.fillIndices[idx++] = (short)i3;
         }              
       }
       
@@ -8182,13 +8177,13 @@ public class PGraphicsAndroid3D extends PGraphics {
           int i2 = offset + 2 * qd + 1;
           int i3 = offset + 2 * qd;      
           
-          tess.fillIndices[idx++] = i0;
-          tess.fillIndices[idx++] = i1;
-          tess.fillIndices[idx++] = i3;
+          tess.fillIndices[idx++] = (short)i0;
+          tess.fillIndices[idx++] = (short)i1;
+          tess.fillIndices[idx++] = (short)i3;
           
-          tess.fillIndices[idx++] = i1;
-          tess.fillIndices[idx++] = i2;
-          tess.fillIndices[idx++] = i3;
+          tess.fillIndices[idx++] = (short)i1;
+          tess.fillIndices[idx++] = (short)i2;
+          tess.fillIndices[idx++] = (short)i3;
         }              
       }
  
@@ -8249,26 +8244,26 @@ public class PGraphicsAndroid3D extends PGraphics {
       tess.putLineVertex(in, i0, i1, vcount);
    
       tess.lineAttributes[4 * vcount + 3] = +strokeWeight;
-      tess.lineIndices[icount++] = vcount;
+      tess.lineIndices[icount++] = (short)vcount;
       
       vcount++;
       tess.putLineVertex(in, i0, i1, vcount);
       tess.lineAttributes[4 * vcount + 3] = -strokeWeight;
-      tess.lineIndices[icount++] = vcount;
+      tess.lineIndices[icount++] = (short)vcount;
       
       vcount++;
       tess.putLineVertex(in, i1, i0, vcount);
       tess.lineAttributes[4 * vcount + 3] = -strokeWeight;
-      tess.lineIndices[icount++] = vcount;
+      tess.lineIndices[icount++] = (short)vcount;
       
       // Starting a new triangle re-using prev vertices.
-      tess.lineIndices[icount++] = vcount;
-      tess.lineIndices[icount++] = vcount - 1;
+      tess.lineIndices[icount++] = (short)vcount;
+      tess.lineIndices[icount++] = (short)(vcount - 1);
       
       vcount++;
       tess.putLineVertex(in, i1, i0, vcount);      
       tess.lineAttributes[4 * vcount + 3] = +strokeWeight;
-      tess.lineIndices[icount++] = vcount;
+      tess.lineIndices[icount++] = (short)vcount;
     }
     
     public void tessellateEdges() {

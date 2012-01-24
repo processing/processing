@@ -1121,7 +1121,7 @@ public class PGraphics extends PImage implements PConstants {
    * formatted vertex information.
    * @param v vertex parameters, as a float array of length VERTEX_FIELD_COUNT
    */
-  public void vertexFields(float[] v) {
+  public void vertex(float[] v) {
     vertexCheck();
     curveVertexCount = 0;
     float[] vertex = vertices[vertexCount];
@@ -5108,90 +5108,45 @@ public class PGraphics extends PImage implements PConstants {
   public boolean is3D() {
     return false;
   }
+  
+  
+  /**
+   * Return true if this renderer does rendering through OpenGL. Defaults to false.
+   */  
+  public boolean isGL() {
+    return false;
+  }   
+  
   //////////////////////////////////////////////////////////////
 
   // New API:
 
+  public PShape createShape() {
+    showMissingWarning("createShape");
+    return null;
+  }  
+
+  public PShape createShape(int type) {
+    showMissingWarning("createShape");
+    return null;
+  }  
+  
+  public PShape createShape(int kind, float... p) {
+    showMissingWarning("createShape");
+    return null;    
+  }
+  
   protected String[] getSupportedShapeFormats() {
     showMissingWarning("getSupportedShapeFormats");
     return null;
   }
-
 
   protected PShape loadShape(String filename, Object params) {
     showMissingWarning("loadShape");
     return null;
   }
 
-
-  protected PShape createShape(int size, Object params) {
-    showMissingWarning("createShape");
-    return null;
-  }
-
-  public void screenBlend(int mode) {
-    showMissingWarning("screenBlend");
-  }
-
-
-  public void textureBlend(int mode) {
-    showMissingWarning("textureBlend");
-  }
-
-
-  public PShape beginRecord() {
-    showMissingWarning("beginRecord");
-    return null;
-  }
-
-
-  public void endRecord() {
-    showMissingWarning("endRecord");
-  }
-
-
-  public boolean isRecordingShape() {
-    //showMissingWarning("isRecording");
-    return false;
-  }
-
-
-  public void mergeShapes(boolean val) {
-    showMissingWarning("mergeShapes");
-  }
-
-
-  public void shapeName(String name) {
-    showMissingWarning("shapeName");
-  }
-
-
-  public void autoNormal(boolean auto) {
-    this.autoNormal = auto;
-  }
-
-
-  public void matrixMode(int mode) {
-    showMissingWarning("matrixMode");
-  }
-
-
-  public void beginText() {
-    showMissingWarning("beginText");
-  }
-
-
-  public void endText() {
-    showMissingWarning("endText");
-  }
-
-
-  public void texture(PImage... images) {
-    showMissingWarning("texture");
-  }
-
-
-  public void vertex(float... values) {
-    showMissingWarning("vertex");
+  public void blendMode(int mode) {
+    showMissingWarning("blendMode");
   }
 }

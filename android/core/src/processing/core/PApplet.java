@@ -3797,16 +3797,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return null;
   }
 
-
-  /**
-   * Creates an empty shape, with the specified size and parameters. 
-   * The actual type will depend on the renderer.
-   */
-  public PShape createShape(int size, Object params) {
-    return g.createShape(size, params);
-  }
-
-  
   
   //////////////////////////////////////////////////////////////
 
@@ -7295,8 +7285,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void vertexFields(float[] v) {
-    g.vertexFields(v);
+  public void vertex(float[] v) {
+    g.vertex(v);
   }
 
 
@@ -8273,7 +8263,34 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return g.displayable();
   }
 
+  /**
+   * Return true if this renderer does rendering through OpenGL. Defaults to false.
+   */  
+  public boolean isGL() {
+    return g.isGL();
+  }
 
+
+  public PShape createShape() {
+    return g.createShape();
+  }
+
+
+  public PShape createShape(int type) {
+    return g.createShape(type);
+  }
+
+
+  public PShape createShape(int kind, float... p) {
+    return g.createShape(kind, p);
+  }
+
+
+  public void blendMode(int mode) {
+    g.blendMode(mode);
+  }
+ 
+  
   public void setCache(PGraphics renderer, Object storage) {
     g.setCache(renderer, storage);
   }
@@ -8377,70 +8394,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
                     int sx, int sy, int sw, int sh,
                     int dx, int dy, int dw, int dh, int mode) {
     g.blend(src, sx, sy, sw, sh, dx, dy, dw, dh, mode);
-  }
-
-  //////////////////////////////////////////////////////////////
-
-  // New API:
-  
-  
-  public void screenBlend(int mode) {
-    g.screenBlend(mode);
-  }
-
-  
-  public void textureBlend(int mode) {
-    g.textureBlend(mode);
-  }
-
-  
-  public PShape beginRecord() {
-    return g.beginRecord();
-  }
-  
-  
-  public void endRecord() {
-    g.endRecord();
-  }
-  
-  
-  public void mergeShapes(boolean val) { 
-    g.mergeShapes(val);
-  }
-  
-
-  public void shapeName(String name) {
-    g.shapeName(name);
-  }
-  
-  
-  public void autoNormal(boolean auto) {
-    g.autoNormal(auto);
-  }
-  
-  
-  public void matrixMode(int mode) {
-    g.matrixMode(mode);
-  }
-  
-  
-  public void beginText() {
-    g.beginText();
-  }
-
-
-  public void endText() {
-    g.endText();
-  }  
-  
-  
-  public void texture(PImage... images) {
-    g.texture(images);
-  }
-
-
-  public void vertex(float... values) {
-    g.vertex(values);
   }
 }
 

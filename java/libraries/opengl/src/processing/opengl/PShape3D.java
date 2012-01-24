@@ -3789,7 +3789,7 @@ public class PShape3D extends PShape {
     pg.stroke = false;    
     
     // Normals are automatically computed if not specified in the OBJ file.
-    pg.autoNormal(true);
+    //pg.autoNormal(true);
     
     // Using normal mode for texture coordinates (i.e.: normalized between 0 and 1).
     pg.textureMode = NORMAL;    
@@ -3827,7 +3827,7 @@ public class PShape3D extends PShape {
         pg.beginShape();  
       }      
       
-      pg.shapeName(face.name);
+      //pg.shapeName(face.name);
       
       for (int j = 0; j < face.vertIdx.size(); j++){
         int vertIdx, normIdx;

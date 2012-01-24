@@ -1893,7 +1893,7 @@ public class PShape3D extends PShape {
     return tess.fillTexcoords;
   }  
   
-  public int[] fillIndices() {
+  public short[] fillIndices() {
     updateTesselation();
     return tess.fillIndices;
   }
@@ -1948,7 +1948,7 @@ public class PShape3D extends PShape {
     return tess.lineAttributes;
   }  
   
-  public int[] lineIndices() {
+  public short[] lineIndices() {
     updateTesselation();
     return tess.lineIndices;
   }  
@@ -2003,7 +2003,7 @@ public class PShape3D extends PShape {
     return tess.pointAttributes;
   }  
   
-  public int[] pointIndices() {
+  public short[] pointIndices() {
     updateTesselation();
     return tess.pointIndices;
   }   
@@ -2873,7 +2873,7 @@ public class PShape3D extends PShape {
   }   
   
   
-  protected void copyFillIndices(int offset, int size, int[] indices) {
+  protected void copyFillIndices(int offset, int size, short[] indices) {
     pgl.bindIndexBuffer(glFillIndexBufferID);
     pgl.copyIndexBufferSubData(indices, offset, size, glMode); 
     pgl.unbindIndexBuffer();
@@ -2972,7 +2972,7 @@ public class PShape3D extends PShape {
   }
   
   
-  protected void copyLineIndices(int offset, int size, int[] indices) {
+  protected void copyLineIndices(int offset, int size, short[] indices) {
     pgl.bindIndexBuffer(glLineIndexBufferID);
     pgl.copyIndexBufferSubData(indices, offset, size, glMode);    
     pgl.unbindIndexBuffer();
@@ -3071,7 +3071,7 @@ public class PShape3D extends PShape {
   }
   
   
-  protected void copyPointIndices(int offset, int size, int[] indices) {
+  protected void copyPointIndices(int offset, int size, short[] indices) {
     pgl.bindIndexBuffer(glPointIndexBufferID);
     pgl.copyIndexBufferSubData(indices, offset, size, glMode);    
     pgl.unbindIndexBuffer();    
@@ -3764,7 +3764,7 @@ public class PShape3D extends PShape {
     renderer.stroke = false;    
     
     // Normals are automatically computed if not specified in the OBJ file.
-    renderer.autoNormal(true);
+    //renderer.autoNormal(true);
     
     // Using normal mode for texture coordinates (i.e.: normalized between 0 and 1).
     renderer.textureMode = NORMAL;    
@@ -3802,7 +3802,7 @@ public class PShape3D extends PShape {
         renderer.beginShape();  
       }      
       
-      renderer.shapeName(face.name);
+      //renderer.shapeName(face.name);
       
       for (int j = 0; j < face.vertIdx.size(); j++){
         int vertIdx, normIdx;

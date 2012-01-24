@@ -2047,7 +2047,7 @@ public class PApplet extends Applet
     }
   }
 
-
+  
   //////////////////////////////////////////////////////////////
 
 
@@ -9401,12 +9401,6 @@ public class PApplet extends Applet
     recorder.beginDraw();
   }
 
-  public PShape beginRecord() {
-    if (!g.isRecordingShape()) {
-      return g.beginRecord();
-    }
-    return null;
-  }
 
  /**
    * ( begin auto-generated from endRecord.xml )
@@ -9423,9 +9417,6 @@ public class PApplet extends Applet
       recorder.endDraw();
       recorder.dispose();
       recorder = null;
-    }
-    if (g.isRecordingShape()) {
-      g.endRecord();
     }
   }
 
@@ -13678,47 +13669,6 @@ public class PApplet extends Applet
   public void blendMode(int mode) {
     if (recorder != null) recorder.blendMode(mode);
     g.blendMode(mode);
-  }
-
-
-  public boolean isRecordingShape() {
-    return g.isRecordingShape();
-  }
-
-
-  public void mergeShapes(boolean val) {
-    if (recorder != null) recorder.mergeShapes(val);
-    g.mergeShapes(val);
-  }
-
-
-  public void shapeName(String name) {
-    if (recorder != null) recorder.shapeName(name);
-    g.shapeName(name);
-  }
-
-
-  public void autoNormal(boolean auto) {
-    if (recorder != null) recorder.autoNormal(auto);
-    g.autoNormal(auto);
-  }
-
-
-  public void matrixMode(int mode) {
-    if (recorder != null) recorder.matrixMode(mode);
-    g.matrixMode(mode);
-  }
-
-
-  public void beginText() {
-    if (recorder != null) recorder.beginText();
-    g.beginText();
-  }
-
-
-  public void endText() {
-    if (recorder != null) recorder.endText();
-    g.endText();
   }
 
 
