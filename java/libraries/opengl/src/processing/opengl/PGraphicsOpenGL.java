@@ -512,33 +512,6 @@ public class PGraphicsOpenGL extends PGraphics {
       currentLightSpecular = new float[4];
       lightsAllocated = true;
     }
-    
-    if (primarySurface) {
-      // Allocation of the main renderer, which mainly involves initializing OpenGL.
-//      if (context == null) {
-//        initPrimary();      
-//      } else {
-//        reapplySettings();
-//      }
-      
-      if (pgl.initialized) {
-        reapplySettings();
-      }      
-    } else {      
-      // Allocation of an offscreen renderer.
-//      if (context == null) {
-//        initOffscreen();
-//      } else {
-//        // Updating OpenGL context associated to this offscreen
-//        // surface, to take into account a context recreation situation.
-//        updateOffscreenContext();
-//        reapplySettings();
-//      }
-      if (pgl.initialized) {
-        updateOffscreenContext();
-        reapplySettings();        
-      }
-    }    
   }
 
   
@@ -1147,7 +1120,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.destroyContext();
     restartSurface();    
     pgl.detainContext();      
-    updateGLInterfaces();    
+    updatePGL();    
   }  
 
   protected void createFillBuffers() {
@@ -1290,6 +1263,11 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   
+  public void requestDraw() {    
+
+  }  
+  
+  
   public void beginDraw() {
     if (drawing) {
       showWarning("P3D: Already called beginDraw().");
@@ -1299,9 +1277,11 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       if (!pgl.initialized) {
         initPrimary();
-      }      
-      boolean res = pgl.beginOnscreenDraw();
-      if (!res) return;
+      }
+      
+      if (!pgl.initOnscreenDraw()) {
+        return;
+      }
       pgl.detainContext();      
     } else {
       if (!pgl.initialized) {
@@ -1319,7 +1299,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.beginOffscreenDraw();
     }
       
-    updateGLInterfaces();
+    updatePGL();
     
     if (!glParamsRead) {
       getGLParameters();  
@@ -1429,26 +1409,15 @@ public class PGraphicsOpenGL extends PGraphics {
     normalX = normalY = 0; 
     normalZ = 0;
     
-    
-    /*
-    if (primarySurface) {
-      // This instance of PGraphicsOpenGL is the primary (onscreen) drawing surface.    
-      // Nothing else needs setup here.      
-    } else {
-      pushFramebuffer();
-      if (offscreenMultisample) {
-        setFramebuffer(offscreenFramebufferMultisample);   
-        pgl.setDrawBuffer(0);
-      } else {
-        setFramebuffer(offscreenFramebuffer);
-      }
-    }
-    */
-    
-    
     // Clear depth and stencil buffers.
     pgl.setClearColor(0, 0, 0, 0);
     pgl.clearDepthAndStencilBuffers();
+    
+    if (primarySurface) {
+      pgl.beginOnscreenDraw();  
+    } else {
+      pgl.beginOffscreenDraw();  
+    }
     
     drawing = true;
     
@@ -1517,9 +1486,9 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   
-  public void updateGLInterfaces() {
+  public void updatePGL() {
     if (primarySurface) {
-      pgl.updateGLPrimary();  
+      pgl.updatePrimary();  
     } else {
       pgl.updateOffscreen(pg.pgl);
     }
@@ -1655,7 +1624,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // buffer.
   protected void beginGLOp() {
     pgl.detainContext();
-    updateGLInterfaces();
+    updatePGL();
   }
 
   
@@ -5891,16 +5860,16 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   protected void initPrimary() {
-    pgl.initPrimary(antialias);
+    pgl.initPrimarySurface(antialias);
     pg = this;
   }
   
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
     pg = (PGraphicsOpenGL)parent.g;
-    pgl.initOffscreen(pg.pgl);
+    pgl.initOffscreenSurface(pg.pgl);
     
-    updateGLInterfaces();
+    updatePGL();
     loadTextureImpl(BILINEAR);
     
     // In case of reinitialization (for example, when the smooth level
@@ -5943,8 +5912,8 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   protected void updateOffscreenContext() {
-    pgl.updateOffscreen(pg.pgl);
-    updateGLInterfaces();
+    pgl.updateOffscreenSurface(pg.pgl);
+    updatePGL();
   }  
   
   protected void getGLParameters() {

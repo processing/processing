@@ -657,6 +657,12 @@ public class PGraphics extends PImage implements PConstants {
     return true;
   }
 
+  /**
+   * Try to draw, or put a draw request on the queue.
+   */
+//  public void requestDraw() {  // ignore
+//  }  
+  
 
   /**
    * ( begin auto-generated from PGraphics_beginDraw.xml )
@@ -7459,73 +7465,12 @@ public class PGraphics extends PImage implements PConstants {
     return null;
   }
 
-
   protected PShape loadShape(String filename, Object params) {
     showMissingWarning("loadShape");
     return null;
   }
 
-/*
-  protected PShape createShape(int size, Object params) {
-    showMissingWarning("createShape");
-    return null;
-  }
-  */
-/*
-  protected PShape createGroup(String name) {
-    showMissingWarning("createShape");
-    return null;
-  }
-  */
-
   public void blendMode(int mode) {
     showMissingWarning("blendMode");
-  }
-
-
-  public PShape beginRecord() { // ignore
-    showMissingWarning("beginRecord");
-    return null;
-  }
-
-
-  public void endRecord() {  // ignore
-    showMissingWarning("endRecord");
-  }
-
-
-  public boolean isRecordingShape() {
-    //showMissingWarning("isRecording");
-    return false;
-  }
-
-
-  public void mergeShapes(boolean val) {
-    showMissingWarning("mergeShapes");
-  }
-
-
-  public void shapeName(String name) {
-    showMissingWarning("shapeName");
-  }
-
-
-  public void autoNormal(boolean auto) {
-    this.autoNormal = auto;
-  }
-
-
-  public void matrixMode(int mode) {
-    showMissingWarning("matrixMode");
-  }
-
-
-  public void beginText() {
-    showMissingWarning("beginText");
-  }
-
-
-  public void endText() {
-    showMissingWarning("endText");
   }
 }
