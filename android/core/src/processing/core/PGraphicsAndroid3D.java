@@ -165,11 +165,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // Lights:  
   
-  /**
-   * Maximum lights by default is 8, the minimum defined by OpenGL.
-   */
-  public static final int MAX_LIGHTS = 8;
-
   public boolean lights;
   public int lightCount = 0;
 
@@ -360,9 +355,6 @@ public class PGraphicsAndroid3D extends PGraphics {
  
   public static final int MIN_ARRAYCOPY_SIZE = 2;
   
-  public static final int MAX_TESS_VERTICES = 1000000;
-  public static final int MAX_TESS_INDICES  = 3000000; 
-  
   public static final int DEFAULT_IN_VERTICES = 64;
   public static final int DEFAULT_IN_EDGES = 128;
   public static final int DEFAULT_IN_TEXTURES = 64;
@@ -488,17 +480,17 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     if (!lightsAllocated) {
-      lightType = new int[MAX_LIGHTS];
-      lightPosition = new float[MAX_LIGHTS][4];
-      lightNormal = new float[MAX_LIGHTS][4];
-      lightDiffuse = new float[MAX_LIGHTS][4];
-      lightSpecular = new float[MAX_LIGHTS][4];
-      lightFalloffConstant = new float[MAX_LIGHTS];
-      lightFalloffLinear = new float[MAX_LIGHTS];
-      lightFalloffQuadratic = new float[MAX_LIGHTS];
-      lightSpotAngle = new float[MAX_LIGHTS];
-      lightSpotAngleCos = new float[MAX_LIGHTS];
-      lightSpotConcentration = new float[MAX_LIGHTS];
+      lightType = new int[PGL.MAX_LIGHTS];
+      lightPosition = new float[PGL.MAX_LIGHTS][4];
+      lightNormal = new float[PGL.MAX_LIGHTS][4];
+      lightDiffuse = new float[PGL.MAX_LIGHTS][4];
+      lightSpecular = new float[PGL.MAX_LIGHTS][4];
+      lightFalloffConstant = new float[PGL.MAX_LIGHTS];
+      lightFalloffLinear = new float[PGL.MAX_LIGHTS];
+      lightFalloffQuadratic = new float[PGL.MAX_LIGHTS];
+      lightSpotAngle = new float[PGL.MAX_LIGHTS];
+      lightSpotAngleCos = new float[PGL.MAX_LIGHTS];
+      lightSpotConcentration = new float[PGL.MAX_LIGHTS];
       currentLightSpecular = new float[4];
       lightsAllocated = true;
     }
@@ -1144,25 +1136,25 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void createFillBuffers() {
     glFillVertexBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glFillVertexBufferID);
-    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
+    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
                 
     glFillColorBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glFillColorBufferID);
-    pgl.initVertexBuffer(4 * MAX_TESS_VERTICES, vboMode);
+    pgl.initVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glFillNormalBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glFillNormalBufferID);
-    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);    
+    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);    
     
     glFillTexCoordBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glFillTexCoordBufferID);
-    pgl.initVertexBuffer(2 * MAX_TESS_VERTICES, vboMode);    
+    pgl.initVertexBuffer(2 * PGL.MAX_TESS_VERTICES, vboMode);    
     
     pgl.unbindVertexBuffer();
     
     glFillIndexBufferID = createVertexBufferObject();    
     pgl.bindIndexBuffer(glFillIndexBufferID);
-    pgl.initIndexBuffer(MAX_TESS_INDICES, vboMode);
+    pgl.initIndexBuffer(PGL.MAX_TESS_INDICES, vboMode);
 
     pgl.unbindIndexBuffer();
   }
@@ -1187,25 +1179,25 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void createLineBuffers() {
     glLineVertexBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glLineVertexBufferID);
-    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
+    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glLineColorBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glLineColorBufferID);
-    pgl.initVertexBuffer(4 * MAX_TESS_VERTICES, vboMode);
+    pgl.initVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glLineNormalBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glLineNormalBufferID);
-    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
+    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
         
     glLineAttribBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glLineAttribBufferID);
-    pgl.initVertexBuffer(4 * MAX_TESS_VERTICES, vboMode);
+    pgl.initVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);
     
     pgl.unbindVertexBuffer();
     
     glLineIndexBufferID = createVertexBufferObject();    
     pgl.bindIndexBuffer(glLineIndexBufferID);
-    pgl.initIndexBuffer(MAX_TESS_INDICES, vboMode);    
+    pgl.initIndexBuffer(PGL.MAX_TESS_INDICES, vboMode);    
     
     pgl.unbindIndexBuffer();
   }  
@@ -1230,25 +1222,25 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void createPointBuffers() {
     glPointVertexBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glPointVertexBufferID);
-    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
+    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glPointColorBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glPointColorBufferID);
-    pgl.initVertexBuffer(4 * MAX_TESS_VERTICES, vboMode);    
+    pgl.initVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);    
     
     glPointNormalBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glPointNormalBufferID);
-    pgl.initVertexBuffer(3 * MAX_TESS_VERTICES, vboMode);
+    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glPointAttribBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glPointAttribBufferID);
-    pgl.initVertexBuffer(2 * MAX_TESS_VERTICES, vboMode);    
+    pgl.initVertexBuffer(2 * PGL.MAX_TESS_VERTICES, vboMode);    
     
     pgl.unbindVertexBuffer();
     
     glPointIndexBufferID = createVertexBufferObject();    
     pgl.bindIndexBuffer(glPointIndexBufferID);
-    pgl.initIndexBuffer(MAX_TESS_INDICES, vboMode);       
+    pgl.initIndexBuffer(PGL.MAX_TESS_INDICES, vboMode);       
     
     pgl.unbindIndexBuffer();
   }  
@@ -4358,8 +4350,8 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void ambientLight(float r, float g, float b, float x, float y, float z) {
     enableLighting();
-    if (lightCount == MAX_LIGHTS) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    if (lightCount == PGL.MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + PGL.MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
     lightDiffuse[lightCount][0] = calcR;
@@ -4389,8 +4381,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void directionalLight(float r, float g, float b, float nx, float ny, float nz) {
     enableLighting();
-    if (lightCount == MAX_LIGHTS) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    if (lightCount == PGL.MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + PGL.MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
     lightDiffuse[lightCount][0] = calcR;
@@ -4428,8 +4420,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   public void pointLight(float r, float g, float b, float x, float y, float z) {
     enableLighting();   
-    if (lightCount == MAX_LIGHTS) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    if (lightCount == PGL.MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + PGL.MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
     lightDiffuse[lightCount][0] = calcR;
@@ -4464,8 +4456,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void spotLight(float r, float g, float b, float x, float y, float z,
       float nx, float ny, float nz, float angle, float concentration) {
     enableLighting();  
-    if (lightCount == MAX_LIGHTS) {
-      throw new RuntimeException("can only create " + MAX_LIGHTS + " lights");
+    if (lightCount == PGL.MAX_LIGHTS) {
+      throw new RuntimeException("can only create " + PGL.MAX_LIGHTS + " lights");
     }
     colorCalc(r, g, b);
     lightDiffuse[lightCount][0] = calcR;
@@ -6849,12 +6841,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     public boolean isFull() {
-      return MAX_TESS_VERTICES <= fillVertexCount || 
-             MAX_TESS_VERTICES <= lineVertexCount ||
-             MAX_TESS_VERTICES <= pointVertexCount ||
-             MAX_TESS_INDICES <= fillIndexCount ||
-             MAX_TESS_INDICES <= fillIndexCount ||
-             MAX_TESS_INDICES <= fillIndexCount;
+      return PGL.MAX_TESS_VERTICES <= fillVertexCount || 
+             PGL.MAX_TESS_VERTICES <= lineVertexCount ||
+             PGL.MAX_TESS_VERTICES <= pointVertexCount ||
+             PGL.MAX_TESS_INDICES <= fillIndexCount ||
+             PGL.MAX_TESS_INDICES <= fillIndexCount ||
+             PGL.MAX_TESS_INDICES <= fillIndexCount;
     }
     
     public void addCounts(TessGeometry other) {
