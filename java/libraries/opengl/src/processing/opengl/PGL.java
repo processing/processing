@@ -91,6 +91,16 @@ public class PGL {
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
   public static final int MAX_LIGHTS = 8;
   
+  /** Initial sizes for arrays of input and tessellated data. */
+  public static final int DEFAULT_IN_VERTICES = 64;
+  public static final int DEFAULT_IN_EDGES = 128;
+  public static final int DEFAULT_IN_TEXTURES = 64;
+  public static final int DEFAULT_TESS_VERTICES = 64;
+  public static final int DEFAULT_TESS_INDICES = 128;  
+  
+  /** Initial sizes for vertex cache used in PShape3D. */
+  public static final int DEFAULT_VERTEX_CACHE_SIZE = 128;  
+  
   /** Maximum number of tessellated vertices. */
   public static final int MAX_TESS_VERTICES = 100000;
   
