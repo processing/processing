@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Stack;
 import javax.microedition.khronos.opengles.*;
-import android.opengl.GLSurfaceView;
 
 
 // drawPixels is missing...calls to glDrawPixels are commented out
@@ -1688,9 +1687,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   // HINTS
 
   public void hint(int which) {
-    boolean oldValue = hints[which];
+    boolean oldValue = which > 0 ? hints[which] : hints[-which];
     super.hint(which);
-    boolean newValue = hints[which];
+    boolean newValue = which > 0 ? hints[which] : hints[-which];
 
     if (oldValue == newValue) {
       return;
