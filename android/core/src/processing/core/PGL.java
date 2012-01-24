@@ -70,6 +70,17 @@ public class PGL {
    
   /** Size of a float (in bytes). */
   static final int SIZEOF_FLOAT = Float.SIZE / 8;
+      
+  /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
+  public static final int MAX_LIGHTS = 8;
+  
+  /** Maximum number of tessellated vertices. For Android, it is 32767 because the 
+   * indices are of short type so they cannot represent more than 32767 different 
+   * positive values. */
+  public static final int MAX_TESS_VERTICES = 32767;
+  
+  /** Maximum number of indices */
+  public static final int MAX_TESS_INDICES  = 3 * 32767;  
 
   public static final int LESS              = GL10.GL_LESS;
   public static final int LESS_OR_EQUAL     = GL10.GL_LEQUAL;
