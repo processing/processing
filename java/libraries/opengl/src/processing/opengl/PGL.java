@@ -88,6 +88,15 @@ public class PGL {
   /** Size of a float (in bytes). */
   static final int SIZEOF_FLOAT = Float.SIZE / 8;
 
+  /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
+  public static final int MAX_LIGHTS = 8;
+  
+  /** Maximum number of tessellated vertices. */
+  public static final int MAX_TESS_VERTICES = 100000;
+  
+  /** Maximum number of indices */
+  public static final int MAX_TESS_INDICES  = 3 * 100000;  
+  
   public static final int LESS              = GL.GL_LESS;
   public static final int LESS_OR_EQUAL     = GL.GL_LEQUAL;
   public static final int COUNTER_CLOCKWISE = GL.GL_CCW;
