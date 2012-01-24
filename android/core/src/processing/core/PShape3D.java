@@ -138,8 +138,6 @@ public class PShape3D extends PShape {
   protected VertexCache pointColorsCache;
   protected VertexCache pointNormalsCache;
   protected VertexCache pointAttributesCache;  
-  
-  public static final int DEFAULT_CACHE_SIZE = 128;
     
   protected boolean isSolid;
   protected boolean isClosed;
@@ -2598,6 +2596,9 @@ public class PShape3D extends PShape {
     } else {
       if (0 < tess.fillVertexCount) {
         root.lastFillVertexOffset = tess.setFillVertex(root.lastFillVertexOffset);
+        if (32767 < root.lastFillVertexOffset) {
+          PApplet.println("problems " + root.lastFillVertexOffset);
+        }
       }
       if (0 < tess.fillIndexCount) {
         root.lastFillIndexOffset = tess.setFillIndex(root.lastFillIndexOffset);
@@ -3388,7 +3389,7 @@ public class PShape3D extends PShape {
     
     VertexCache(int ncoords) {
       this.ncoords = ncoords;
-      this.data = new float[ncoords * DEFAULT_CACHE_SIZE];
+      this.data = new float[ncoords * PGL.DEFAULT_VERTEX_CACHE_SIZE];
       this.offset = 0;
       this.size = 0;      
     }

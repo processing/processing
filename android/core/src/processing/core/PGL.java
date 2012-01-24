@@ -70,7 +70,17 @@ public class PGL {
    
   /** Size of a float (in bytes). */
   static final int SIZEOF_FLOAT = Float.SIZE / 8;
-      
+
+  /** Initial sizes for arrays of input and tessellated data. */
+  public static final int DEFAULT_IN_VERTICES = 16;
+  public static final int DEFAULT_IN_EDGES = 32;
+  public static final int DEFAULT_IN_TEXTURES = 16;
+  public static final int DEFAULT_TESS_VERTICES = 16;
+  public static final int DEFAULT_TESS_INDICES = 32;  
+  
+  /** Initial sizes for vertex cache used in PShape3D. */
+  public static final int DEFAULT_VERTEX_CACHE_SIZE = 128;
+  
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
   public static final int MAX_LIGHTS = 8;
   
