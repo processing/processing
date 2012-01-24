@@ -227,7 +227,7 @@ public class PGL {
     GLProfile.shutdown();    
   }
   
-  public void updateGLPrimary() {
+  public void updatePrimary() {
     gl = context.getGL();       
     
     if (pipeline == PROG_GL4) {
@@ -258,7 +258,7 @@ public class PGL {
     } catch (GLException e) {}    
   }
   
-  public void updateGLOffscreen(PGL primary) {
+  public void updateOffscreen(PGL primary) {
     gl   = primary.gl;       
     gl4p = primary.gl4p;
     gl3p = primary.gl3p;
@@ -267,7 +267,7 @@ public class PGL {
   }
   
   
-  public void initPrimary(int antialias) {
+  public void initPrimarySurface(int antialias) {
     if (pg.parent.online) {
       // RCP Application (Applet's, Webstart, Netbeans, ..) using JOGL may not 
       // be able to initialize JOGL before the first UI action, so initSingleton()
@@ -351,14 +351,14 @@ public class PGL {
     initialized = true;
   }
   
-  public void initOffscreen(PGL primary) {
+  public void initOffscreenSurface(PGL primary) {
     context = primary.context;
     capabilities = primary.capabilities;
     drawable = null;
     initialized = true;
   }  
     
-  public void updateOffscreen(PGL primary) {
+  public void updateOffscreenSurface(PGL primary) {
     context = primary.context;
     capabilities = primary.capabilities;
     drawable = null;    
@@ -393,7 +393,7 @@ public class PGL {
     return other.same(context);
   }
   
-  public boolean beginOnscreenDraw() {
+  public boolean initOnscreenDraw() {
     if (drawable != null) {
       // Call setRealized() after addNotify() has been called
       drawable.setRealized(pg.parent.isDisplayable());
@@ -404,7 +404,11 @@ public class PGL {
         return false;  // Should have called canDraw() anyway
       }
     }
-    return false;
+    return false;    
+  }
+  
+  public void beginOnscreenDraw() {
+
   }
   
   public void endOnscreenDraw() {
@@ -423,6 +427,10 @@ public class PGL {
   
   public boolean canDraw() {
     return pg.parent.isDisplayable();    
+  }
+  
+  public void requestDraw() {
+        
   }
   
   ///////////////////////////////////////////////////////////////////////////////////

@@ -27,14 +27,16 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.*;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-
 
 /** 
  * How the P3D renderer handles the different OpenGL profiles? Basically,
@@ -185,11 +187,11 @@ public class PGL {
   static public void shutdown() {
   }  
   
-  public void updateGLPrimary() {
+  public void updatePrimary() {
     
   }
 
-  public void updateGLOffscreen(PGL primary) {
+  public void updateOffscreen(PGL primary) {
     gl = primary.gl;       
     gl11 = primary.gl11;
     gl11x = primary.gl11x;
@@ -197,7 +199,7 @@ public class PGL {
   }  
   
   
-  public void initPrimary(int antialias) {
+  public void initPrimarySurface(int antialias) {
     /*
     
     offscreenTexCrop = new int[4];
@@ -208,23 +210,14 @@ public class PGL {
 
     offscreenImages = new PImage[2];
     offscreenParams = new PTexture.Parameters[2];
-    if (primarySurface) {
-      // Nearest filtering is used for the primary surface, otherwise some 
-      // artifacts appear (diagonal line when blending, for instance). This
-      // might deserve further examination.
-      offscreenParams[0] = new PTexture.Parameters(ARGB, POINT);
-      offscreenParams[1] = new PTexture.Parameters(ARGB, POINT);
-      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
-      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);          
-    } else {
-      // Linear filtering is needed to keep decent image quality when rendering 
-      // texture at a size different from its original resolution. This is expected
-      // to happen for offscreen rendering.
-      offscreenParams[0] = new PTexture.Parameters(ARGB, BILINEAR);
-      offscreenParams[1] = new PTexture.Parameters(ARGB, BILINEAR);      
-      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
-      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);                
-    }
+    
+    // Nearest filtering is used for the primary surface, otherwise some 
+    // artifacts appear (diagonal line when blending, for instance). This
+    // might deserve further examination.
+    offscreenParams[0] = new PTexture.Parameters(ARGB, POINT);
+    offscreenParams[1] = new PTexture.Parameters(ARGB, POINT);
+    offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
+    offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);          
     
     offscreenTextures = new PTexture[2];
     offscreenTextures[0] = addTexture(offscreenImages[0]);
@@ -251,7 +244,7 @@ public class PGL {
     initialized = true;
   }
   
-  public void initOffscreen(PGL primary) {
+  public void initOffscreenSurface(PGL primary) {
     
     /*
     offscreenTexCrop = new int[4];
@@ -262,23 +255,13 @@ public class PGL {
 
     offscreenImages = new PImage[2];
     offscreenParams = new PTexture.Parameters[2];
-    if (primarySurface) {
-      // Nearest filtering is used for the primary surface, otherwise some 
-      // artifacts appear (diagonal line when blending, for instance). This
-      // might deserve further examination.
-      offscreenParams[0] = new PTexture.Parameters(ARGB, POINT);
-      offscreenParams[1] = new PTexture.Parameters(ARGB, POINT);
-      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
-      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);          
-    } else {
-      // Linear filtering is needed to keep decent image quality when rendering 
-      // texture at a size different from its original resolution. This is expected
-      // to happen for offscreen rendering.
-      offscreenParams[0] = new PTexture.Parameters(ARGB, BILINEAR);
-      offscreenParams[1] = new PTexture.Parameters(ARGB, BILINEAR);      
-      offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
-      offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);                
-    }
+    // Linear filtering is needed to keep decent image quality when rendering 
+    // texture at a size different from its original resolution. This is expected
+    // to happen for offscreen rendering.
+    offscreenParams[0] = new PTexture.Parameters(ARGB, BILINEAR);
+    offscreenParams[1] = new PTexture.Parameters(ARGB, BILINEAR);      
+    offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
+    offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);                
     
     offscreenTextures = new PTexture[2];
     offscreenTextures[0] = addTexture(offscreenImages[0]);
@@ -305,7 +288,7 @@ public class PGL {
     initialized = true;
   }
   
-  public void updateOffscreen(PGL primary) {    
+  public void updateOffscreenSurface(PGL primary) {    
   }
   
   protected void detainContext() {    
@@ -321,7 +304,14 @@ public class PGL {
     return other.same(/*context*/);
   }  
   
-  public boolean beginOnscreenDraw() {
+  public boolean initOnscreenDraw() {
+    return true;
+  }
+  
+  public void beginOnscreenDraw() {
+    gl.glClearColor(0, 0, 0, 0);
+    gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+    
     /*
     if (clearColorBuffer) {
       // Simplest scenario: clear mode means we clear both the color and depth buffers.
@@ -362,8 +352,6 @@ public class PGL {
       }
     }    
      */
-    
-    return true;
   }
   
   public void endOnscreenDraw() {
@@ -419,6 +407,12 @@ public class PGL {
   
   public boolean canDraw() {
     return true;    
+  }  
+  
+  public void requestDraw() {
+    if (pg.parent.looping) { // This "if" is needed to avoid flickering when looping is disabled.
+      ((GLSurfaceView) pg.parent.surfaceView).requestRender();
+    }
   }  
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -817,19 +811,19 @@ public class PGL {
   }
   
   public void initIndexBuffer(int size, int mode) {
-    gl11.glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_INT, null, mode);  
+    gl11.glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_SHORT, null, mode);  
   }
   
-  public void copyIndexBufferData(int[] data, int size, int mode) {
-    gl11.glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_INT, IntBuffer.wrap(data, 0, size), mode);     
+  public void copyIndexBufferData(short[] data, int size, int mode) {
+    gl11.glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_SHORT, ShortBuffer.wrap(data, 0, size), mode);     
   }
   
-  public void copyIndexBufferData(int[] data, int offset, int size, int mode) {
-    gl11.glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_INT, IntBuffer.wrap(data, offset, size), mode);     
+  public void copyIndexBufferData(short[] data, int offset, int size, int mode) {
+    gl11.glBufferData(GL11.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_SHORT, ShortBuffer.wrap(data, offset, size), mode);     
   }
 
-  public void copyIndexBufferSubData(int[] data, int offset, int size, int mode) {
-    gl11.glBufferSubData(GL11.GL_ELEMENT_ARRAY_BUFFER, offset * SIZEOF_INT, size * SIZEOF_INT, IntBuffer.wrap(data, 0, size));
+  public void copyIndexBufferSubData(short[] data, int offset, int size, int mode) {
+    gl11.glBufferSubData(GL11.GL_ELEMENT_ARRAY_BUFFER, offset * SIZEOF_SHORT, size * SIZEOF_SHORT, ShortBuffer.wrap(data, 0, size));
   }  
   
   public void renderIndexBuffer(int size) {
@@ -837,7 +831,7 @@ public class PGL {
   }
 
   public void renderIndexBuffer(int offset, int size) {
-    gl11.glDrawElements(GL10.GL_TRIANGLES, size, GL10.GL_UNSIGNED_SHORT, offset * SIZEOF_INT);    
+    gl11.glDrawElements(GL10.GL_TRIANGLES, size, GL10.GL_UNSIGNED_SHORT, offset * SIZEOF_SHORT);    
   }
     
   public void unbindIndexBuffer() {
