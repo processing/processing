@@ -351,15 +351,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected boolean breakShape = false;  
   
   public static int flushMode = FLUSH_WHEN_FULL;
-//  public static int flushMode = FLUSH_AFTER_SHAPE;
  
   public static final int MIN_ARRAYCOPY_SIZE = 2;
-  
-  public static final int DEFAULT_IN_VERTICES = 64;
-  public static final int DEFAULT_IN_EDGES = 128;
-  public static final int DEFAULT_IN_TEXTURES = 64;
-  public static final int DEFAULT_TESS_VERTICES = 64;
-  public static final int DEFAULT_TESS_INDICES = 128;
     
   protected Tessellator tessellator;
   
@@ -6100,9 +6093,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     public void allocate() {
-      textures = new PImage[DEFAULT_IN_TEXTURES];
-      firstIndex = new int[DEFAULT_IN_TEXTURES];
-      lastIndex = new int[DEFAULT_IN_TEXTURES];
+      textures = new PImage[PGL.DEFAULT_IN_TEXTURES];
+      firstIndex = new int[PGL.DEFAULT_IN_TEXTURES];
+      lastIndex = new int[PGL.DEFAULT_IN_TEXTURES];
       count = 0;
       hasTexture = false;
     }
@@ -6204,13 +6197,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     public void allocate() {      
-      codes = new int[DEFAULT_IN_VERTICES];
-      vertices = new float[3 * DEFAULT_IN_VERTICES];
-      colors = new float[4 * DEFAULT_IN_VERTICES];      
-      normals = new float[3 * DEFAULT_IN_VERTICES];
-      texcoords = new float[2 * DEFAULT_IN_VERTICES];
-      strokes = new float[5 * DEFAULT_IN_VERTICES];
-      edges = new int[DEFAULT_IN_EDGES][3];
+      codes = new int[PGL.DEFAULT_IN_VERTICES];
+      vertices = new float[3 * PGL.DEFAULT_IN_VERTICES];
+      colors = new float[4 * PGL.DEFAULT_IN_VERTICES];      
+      normals = new float[3 * PGL.DEFAULT_IN_VERTICES];
+      texcoords = new float[2 * PGL.DEFAULT_IN_VERTICES];
+      strokes = new float[5 * PGL.DEFAULT_IN_VERTICES];
+      edges = new int[PGL.DEFAULT_IN_EDGES][3];
       reset();
     }
     
@@ -6799,23 +6792,23 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
       
     public void allocate() {     
-      fillVertices = new float[3 * DEFAULT_TESS_VERTICES];
-      fillColors = new float[4 * DEFAULT_TESS_VERTICES];
-      fillNormals = new float[3 * DEFAULT_TESS_VERTICES];
-      fillTexcoords = new float[2 * DEFAULT_TESS_VERTICES];
-      fillIndices = new short[DEFAULT_TESS_VERTICES];  
+      fillVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+      fillColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+      fillNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+      fillTexcoords = new float[2 * PGL.DEFAULT_TESS_VERTICES];
+      fillIndices = new short[PGL.DEFAULT_TESS_VERTICES];  
       
-      lineVertices = new float[3 * DEFAULT_TESS_VERTICES];
-      lineColors = new float[4 * DEFAULT_TESS_VERTICES];
-      lineNormals = new float[3 * DEFAULT_TESS_VERTICES];
-      lineAttributes = new float[4 * DEFAULT_TESS_VERTICES];
-      lineIndices = new short[DEFAULT_TESS_VERTICES];       
+      lineVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+      lineColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+      lineNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+      lineAttributes = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+      lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];       
       
-      pointVertices = new float[3 * DEFAULT_TESS_VERTICES];
-      pointColors = new float[4 * DEFAULT_TESS_VERTICES];
-      pointNormals = new float[3 * DEFAULT_TESS_VERTICES];
-      pointAttributes = new float[2 * DEFAULT_TESS_VERTICES];
-      pointIndices = new short[DEFAULT_TESS_VERTICES];
+      pointVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+      pointColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+      pointNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+      pointAttributes = new float[2 * PGL.DEFAULT_TESS_VERTICES];
+      pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
       
       reset();
     }
