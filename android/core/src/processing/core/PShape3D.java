@@ -49,6 +49,10 @@ import java.io.BufferedReader;
  * DXF: http://en.wikipedia.org/wiki/AutoCAD_DXF
  */
 
+// Large VBOs
+// http://www.gamedev.net/topic/590890-opengl-es-using-gldrawelements-with-integer-index-data/ 
+// http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
+
 public class PShape3D extends PShape {
   protected PGraphicsAndroid3D renderer;
   protected PGL pgl;
@@ -1628,9 +1632,9 @@ public class PShape3D extends PShape {
     bezierVertexCheck();
     PMatrix3D draw = bezierDrawMatrix;
 
-    float x1 = in.getlastVertexX();
-    float y1 = in.getlastVertexY();
-    float z1 = in.getlastVertexZ();
+    float x1 = in.getLastVertexX();
+    float y1 = in.getLastVertexY();
+    float z1 = in.getLastVertexZ();
 
     float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
     float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
@@ -1660,9 +1664,9 @@ public class PShape3D extends PShape {
   
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
-    float x1 = in.getlastVertexX();
-    float y1 = in.getlastVertexY();
-    float z1 = in.getlastVertexZ();
+    float x1 = in.getLastVertexX();
+    float y1 = in.getLastVertexY();
+    float z1 = in.getLastVertexZ();
 
     bezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
                  x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
