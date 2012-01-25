@@ -84,13 +84,14 @@ public class PGL {
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
   public static final int MAX_LIGHTS = 8;
   
-  /** Maximum number of tessellated vertices. For Android, it is 32767 because the 
-   * indices are of short type so they cannot represent more than 32767 different 
-   * positive values. */
-  public static final int MAX_TESS_VERTICES = 32767;
+  /** Maximum number of tessellated vertices. GLES restricts the vertex indices
+   * to be of type short, so 2^16 = 65536 is the maximum possible number of 
+   * vertices that can be referred to within a single VBO. */
+  public static final int MAX_TESS_VERTICES = 65536;
   
-  /** Maximum number of indices */
-  public static final int MAX_TESS_INDICES  = 3 * 32767;  
+  /** Maximum number of indices. 2 times the max number of 
+   * vertices to have good room for vertex reuse. */
+  public static final int MAX_TESS_INDICES  = 2 * MAX_TESS_VERTICES;  
 
   public static final int LESS              = GL10.GL_LESS;
   public static final int LESS_OR_EQUAL     = GL10.GL_LEQUAL;
@@ -173,6 +174,10 @@ public class PGL {
   public PGraphicsAndroid3D pg;
   
   public boolean initialized;
+    
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Intialization, finalization
   
   public PGL(PGraphicsAndroid3D pg) {
     this.pg = pg;
@@ -181,15 +186,6 @@ public class PGL {
     initialized = false;
   }
   
-  public AndroidRenderer getRenderer() {
-    return renderer;
-  }
-  
-  public AndroidConfigChooser getConfigChooser(int r, int g, int b, int a, int d, int s) {
-    AndroidConfigChooser configChooser = new AndroidConfigChooser(r, g, b, a, d, s);
-    return configChooser;
-  }  
-    
   /**
    * This static method can be called by applications that use
    * Processing+P3D inside their own GUI, so they can initialize
@@ -320,10 +316,27 @@ public class PGL {
   
   public void destroyContext() {   
   }
+ 
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Utilities  
   
   public boolean contextIsCurrent(Context other) {
     return other.same(/*context*/);
   }  
+  
+  static public short makeIndex(int intIdx) {
+    // When the index value is greater than 32767 subtracting 65536
+    // will make it as a short to wrap around to the negative range, which    
+    // is all we need to later pass these numbers to opengl (which will 
+    // interpret them as unsigned shorts). See discussion here:
+    // http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
+    return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Frame rendering  
   
   public boolean initOnscreenDraw() {
     return true;
@@ -569,6 +582,18 @@ public class PGL {
     gl.glGetIntegerv(GL10.GL_MAX_TEXTURE_UNITS, temp, 0);
     return temp[0];    
   }  
+
+  public int getMaxVertices() {
+    int temp[] = new int[1];
+    gl.glGetIntegerv(GL10.GL_MAX_ELEMENTS_VERTICES, temp, 0);
+    return temp[0];        
+  }
+
+  public int getMaxIndices() {
+    int temp[] = new int[1];
+    gl.glGetIntegerv(GL10.GL_MAX_ELEMENTS_INDICES, temp, 0);
+    return temp[0];        
+  }
   
   public void getNumSamples(int[] num) {
     num[0] = 1;    
@@ -1547,7 +1572,16 @@ public class PGL {
   
   /////////////////////////////////////////////////////////////////////////////////
   
-  // Android Renderer   
+  // Android specific stuff   
+  
+  public AndroidRenderer getRenderer() {
+    return renderer;
+  }
+  
+  public AndroidConfigChooser getConfigChooser(int r, int g, int b, int a, int d, int s) {
+    AndroidConfigChooser configChooser = new AndroidConfigChooser(r, g, b, a, d, s);
+    return configChooser;
+  }    
   
   public class AndroidRenderer implements Renderer {
     public AndroidRenderer() {
@@ -1579,6 +1613,8 @@ public class PGL {
 
     public void onSurfaceChanged(GL10 igl, int iwidth, int iheight) {
       gl = igl;
+      
+      // Here is where we should initialize native libs...
       // PGL2JNILib.init(iwidth, iheight);
 
       try {
@@ -1624,10 +1660,6 @@ public class PGL {
       }
     }    
   }
-
-  //////////////////////////////////////////////////////////////
-
-  // CONFIG CHOOSER
 
   public class AndroidConfigChooser implements EGLConfigChooser {
     // Desired size (in bits) for the rgba color, depth and stencil buffers.
@@ -1775,7 +1807,5 @@ public class PGL {
       }
       return defaultValue;
     }
-
   }
-  
 }

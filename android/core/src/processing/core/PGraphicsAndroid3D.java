@@ -339,6 +339,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected InGeometry inGeo;
   protected TessGeometry tessGeo;
+  protected int firstTexIndex;
   protected TexCache texCache;
 
   protected float[] currentVertex = { 0, 0, 0 };
@@ -1876,8 +1877,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (flushMode == FLUSH_CONTINUOUSLY || 
         (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
       // Flushing this current shape either because we are in the flush-after-shape,
-      // or the tess buffer is full or... we are in 2D mode and the shape is textured
-      // and stroked, so we need to rendering right away to avoid depth-sorting issues.
+      // or the tess buffer is full.
       flush();
     }    
   }
@@ -1949,6 +1949,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected void vertexImpl(float x, float y, float z, float u, float v, int code) {
+    if (inGeo.isFull()) {
+      PGraphics.showWarning("P3D: Too many vertices, try creating smaller shapes");
+      return;
+    }
+    
     boolean textured = textureImage != null;
     float fR, fG, fB, fA;
     fR = fG = fB = fA = 0;
@@ -2078,7 +2083,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     tessellator.setStrokeJoin(strokeJoin);
     tessellator.setStrokeColor(strokeR, strokeG, strokeB, strokeA);
     
-    int first = tessGeo.fillIndexCount;
+    setFirstTexIndex(tessGeo.fillIndexCount);
     
     if (shape == POINTS) {
       if (normalMode == NORMAL_MODE_AUTO) inGeo.calcPointsNormals();
@@ -2111,12 +2116,19 @@ public class PGraphicsAndroid3D extends PGraphics {
       tessellator.tessellatePolygon(false, mode == CLOSE, normalMode == NORMAL_MODE_AUTO);      
     }
     
-    int last = tessGeo.lastFillIndex;        
+    setLastTexIndex(tessGeo.lastFillIndex);
+  }
+  
+  protected void setFirstTexIndex(int first) {
+    firstTexIndex = first;
+  }
+  
+  protected void setLastTexIndex(int last) {            
     if (textureImage0 != textureImage || texCache.count == 0) {
-      texCache.addTexture(textureImage, first, last);
+      texCache.addTexture(textureImage, firstTexIndex, last);
     } else {
       texCache.setLastIndex(last);
-    }
+    }    
   }
   
   public void flush() {    
@@ -2270,12 +2282,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.enableTexCoordArrays();
       pgl.bindVertexBuffer(glFillTexCoordBufferID);
       pgl.copyVertexBufferData(tessGeo.fillTexcoords, 2 * size, vboMode);    
-      pgl.setTexCoordFormat(2, 0, 0);            
+      pgl.setTexCoordFormat(2, 0, 0);
+      pgl.setActiveTexUnit(0);
     }  
          
     pgl.bindIndexBuffer(glFillIndexBufferID);  
-    
-    pgl.setActiveTexUnit(0);
     
     PTexture tex0 = null;
     for (int i = 0; i < texCache.count; i++) {
@@ -2567,9 +2578,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     bezierVertexCheck();
     PMatrix3D draw = bezierDrawMatrix;
 
-    float x1 = inGeo.getlastVertexX();
-    float y1 = inGeo.getlastVertexY();
-    float z1 = inGeo.getlastVertexZ();
+    float x1 = inGeo.getLastVertexX();
+    float y1 = inGeo.getLastVertexY();
+    float z1 = inGeo.getLastVertexZ();
 
     float xplot1 = draw.m10*x1 + draw.m11*x2 + draw.m12*x3 + draw.m13*x4;
     float xplot2 = draw.m20*x1 + draw.m21*x2 + draw.m22*x3 + draw.m23*x4;
@@ -2599,9 +2610,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
-    float x1 = inGeo.getlastVertexX();
-    float y1 = inGeo.getlastVertexY();
-    float z1 = inGeo.getlastVertexZ();
+    float x1 = inGeo.getLastVertexX();
+    float y1 = inGeo.getLastVertexY();
+    float z1 = inGeo.getLastVertexZ();
 
     bezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
                  x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
@@ -6229,16 +6240,20 @@ public class PGraphicsAndroid3D extends PGraphics {
       return vertices[3 * idx + 2];
     }    
     
-    public float getlastVertexX() {
+    public float getLastVertexX() {
       return vertices[3 * (vertexCount - 1) + 0];  
     }
     
-    public float getlastVertexY() {
+    public float getLastVertexY() {
       return vertices[3 * (vertexCount - 1) + 1];
     }    
     
-    public float getlastVertexZ() {
+    public float getLastVertexZ() {
       return vertices[3 * (vertexCount - 1) + 2];
+    }
+    
+    public boolean isFull() {
+      return PGL.MAX_TESS_VERTICES <= vertexCount;
     }
     
     public int addVertex(float[] vertex, float[] color, float[] normal, float[] texcoord, float[] stroke, int code) {
@@ -6973,7 +6988,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     public void addFillIndex(int idx) {
       fillIndexCheck();
-      fillIndices[fillIndexCount] = (short)idx;
+      fillIndices[fillIndexCount] = PGL.makeIndex(idx);
       fillIndexCount++;
       lastFillIndex = fillIndexCount - 1;
     }
@@ -7897,6 +7912,8 @@ public class PGraphicsAndroid3D extends PGraphics {
           nvertTot += nvert; 
           nindTot += 3 * (nvert - 1);
         }
+     
+        checkForFlush(tess.lineVertexCount + nvertTot, tess.lineIndexCount + nindTot);
         
         tess.addPointVertices(nvertTot);
         tess.addPointIndices(nindTot);
@@ -7934,14 +7951,14 @@ public class PGraphicsAndroid3D extends PGraphics {
           // Adding vert0 to take into account the triangles of all
           // the preceding points.
           for (int k = 1; k < nvert - 1; k++) {
-            tess.pointIndices[indIdx++] = (short)(firstVert + 0);
-            tess.pointIndices[indIdx++] = (short)(firstVert + k);
-            tess.pointIndices[indIdx++] = (short)(firstVert + k + 1);
+            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 0);
+            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + k);
+            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + k + 1);
           }
           // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = (short)(firstVert + 0);
-          tess.pointIndices[indIdx++] = (short)(firstVert + 1);
-          tess.pointIndices[indIdx++] = (short)(firstVert + nvert - 1);      
+          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 0);
+          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 1);
+          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + nvert - 1);      
           
           firstVert = vertIdx;
         } 
@@ -7964,6 +7981,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         // So the quad is formed by 4 triangles, each requires
         // 3 indices.
         int nindTot = 12 * quadCount;
+        
+        checkForFlush(tess.lineVertexCount + nvertTot, tess.lineIndexCount + nindTot);     
         
         tess.addPointVertices(nvertTot);
         tess.addPointIndices(nindTot);
@@ -7995,14 +8014,14 @@ public class PGraphicsAndroid3D extends PGraphics {
           // Adding firstVert to take into account the triangles of all
           // the preceding points.
           for (int k = 1; k < nvert - 1; k++) {
-            tess.pointIndices[indIdx++] = (short)(firstVert + 0);
-            tess.pointIndices[indIdx++] = (short)(firstVert + k);
-            tess.pointIndices[indIdx++] = (short)(firstVert + k + 1);
+            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 0);
+            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + k);
+            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + k + 1);
           }
           // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = (short)(firstVert + 0);
-          tess.pointIndices[indIdx++] = (short)(firstVert + 1);
-          tess.pointIndices[indIdx++] = (short)(firstVert + nvert - 1);  
+          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 0);
+          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 1);
+          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + nvert - 1);  
           
           firstVert = vertIdx;
         }
@@ -8025,6 +8044,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         // require 3 indices to specify their connectivities.
         int nind = lineCount * 2 * 3;
 
+        checkForFlush(tess.lineVertexCount + nvert, tess.lineIndexCount + nvert);        
+        
         tess.addLineVertices(nvert);
         tess.addLineIndices(nind);      
         int vcount = tess.firstLineVertex;
@@ -8036,18 +8057,21 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
       }  
     }
-
+    
     public void tessellateTriangles() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;
+      int nInVert = in.lastVertex - in.firstVertex + 1;      
       
-      if (fill && 3 <= nInVert) {
+      if (fill && 3 <= nInVert) {        
+        int nInInd = nInVert;
+        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
+        
         tess.addFillVertices(in);
-
+        
         tess.addFillIndices(nInVert);
         int idx0 = tess.firstFillIndex;
         int offset = tess.firstFillVertex;
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-          tess.fillIndices[idx0 + i] = (short)(offset + i);
+          tess.fillIndices[idx0 + i] = PGL.makeIndex(offset + i);
         }        
       }
 
@@ -8059,17 +8083,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     public void tessellateTriangleFan() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-      
+            
       if (fill && 3 <= nInVert) {
+        int nInInd = 3 * (nInVert - 2); 
+        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
+        
         tess.addFillVertices(in);
 
-        tess.addFillIndices(3 * (nInVert - 2));
+        tess.addFillIndices(nInInd);
         int idx = tess.firstFillIndex;
         int offset = tess.firstFillVertex; 
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          tess.fillIndices[idx++] = (short)(offset + in.firstVertex);
-          tess.fillIndices[idx++] = (short)(offset + i);
-          tess.fillIndices[idx++] = (short)(offset + i + 1);
+          tess.fillIndices[idx++] = PGL.makeIndex(offset + in.firstVertex);
+          tess.fillIndices[idx++] = PGL.makeIndex(offset + i);
+          tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
         }
       }
       
@@ -8078,28 +8105,30 @@ public class PGraphicsAndroid3D extends PGraphics {
         tessellateEdges();
       }
     }
-    
-    
+        
     public void tessellateTriangleStrip() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
       
       if (fill && 3 <= nInVert) {
-        tess.addFillVertices(in);
-                
         int triCount = nInVert - 2;
+        int nInInd = 3 * triCount;
+        
+        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
+        
+        tess.addFillVertices(in);
         
         // Each vertex, except the first and last, defines a triangle.
-        tess.addFillIndices(3 * triCount);
+        tess.addFillIndices(nInInd);
         int idx = tess.firstFillIndex;
         int offset = tess.firstFillVertex;
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          tess.fillIndices[idx++] = (short)(offset + i);
+          tess.fillIndices[idx++] = PGL.makeIndex(offset + i);
           if (i % 2 == 0) {
-            tess.fillIndices[idx++] = (short)(offset + i - 1);  
-            tess.fillIndices[idx++] = (short)(offset + i + 1);
+            tess.fillIndices[idx++] = PGL.makeIndex(offset + i - 1);  
+            tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
           } else {
-            tess.fillIndices[idx++] = (short)(offset + i + 1);  
-            tess.fillIndices[idx++] = (short)(offset + i - 1);
+            tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);  
+            tess.fillIndices[idx++] = PGL.makeIndex(offset + i - 1);
           }
         }              
       }      
@@ -8114,11 +8143,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       int nInVert = in.lastVertex - in.firstVertex + 1;
       
       if (fill && 4 <= nInVert) {
-        tess.addFillVertices(in);
-      
         int quadCount = nInVert / 4;
+        int nInInd = 6 * quadCount;
         
-        tess.addFillIndices(6 * quadCount);
+        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
+        tess.addFillVertices(in);
+        
+        tess.addFillIndices(nInInd);
         int idx = tess.firstFillIndex;
         int offset = tess.firstFillVertex; 
         for (int qd = 0; qd < quadCount; qd++) {        
@@ -8127,13 +8158,13 @@ public class PGraphicsAndroid3D extends PGraphics {
           int i2 = offset + 4 * qd + 2;
           int i3 = offset + 4 * qd + 3;
           
-          tess.fillIndices[idx++] = (short)i0;
-          tess.fillIndices[idx++] = (short)i1;
-          tess.fillIndices[idx++] = (short)i3;
+          tess.fillIndices[idx++] = PGL.makeIndex(i0);
+          tess.fillIndices[idx++] = PGL.makeIndex(i1);
+          tess.fillIndices[idx++] = PGL.makeIndex(i3);
           
-          tess.fillIndices[idx++] = (short)i1;
-          tess.fillIndices[idx++] = (short)i2;
-          tess.fillIndices[idx++] = (short)i3;
+          tess.fillIndices[idx++] = PGL.makeIndex(i1);
+          tess.fillIndices[idx++] = PGL.makeIndex(i2);
+          tess.fillIndices[idx++] = PGL.makeIndex(i3);
         }              
       }
       
@@ -8148,11 +8179,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       int nInVert = in.lastVertex - in.firstVertex + 1;
       
       if (fill && 4 <= nInVert) {
-        tess.addFillVertices(in);
-        
         int quadCount = nInVert / 2 - 1;
+        int nInInd = 6 * quadCount;
         
-        tess.addFillIndices(6 * quadCount);
+        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
+        tess.addFillVertices(in);        
+        
+        tess.addFillIndices(nInInd);
         int idx = tess.firstFillIndex;
         int offset = tess.firstFillVertex; 
         for (int qd = 1; qd < nInVert / 2; qd++) {        
@@ -8161,13 +8194,13 @@ public class PGraphicsAndroid3D extends PGraphics {
           int i2 = offset + 2 * qd + 1;
           int i3 = offset + 2 * qd;      
           
-          tess.fillIndices[idx++] = (short)i0;
-          tess.fillIndices[idx++] = (short)i1;
-          tess.fillIndices[idx++] = (short)i3;
+          tess.fillIndices[idx++] = PGL.makeIndex(i0);
+          tess.fillIndices[idx++] = PGL.makeIndex(i1);
+          tess.fillIndices[idx++] = PGL.makeIndex(i3);
           
-          tess.fillIndices[idx++] = (short)i1;
-          tess.fillIndices[idx++] = (short)i2;
-          tess.fillIndices[idx++] = (short)i3;
+          tess.fillIndices[idx++] = PGL.makeIndex(i1);
+          tess.fillIndices[idx++] = PGL.makeIndex(i2);
+          tess.fillIndices[idx++] = PGL.makeIndex(i3);
         }              
       }
  
@@ -8183,6 +8216,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       callback.calcNormals = calcNormals;
       
       if (fill && 3 <= nInVert) {
+        checkForFlush(nInVert);
+        
         gluTess.beginPolygon();
         
         if (solid) {
@@ -8204,9 +8239,9 @@ public class PGraphicsAndroid3D extends PGraphics {
           }
           
           // Vertex data includes coordinates, colors, normals and texture coordinates.
-          double[] vertex = new double[] { in.vertices[3 * i + 0], in.vertices[3 * i + 1], in.vertices[3 * i + 2],
-                                           in.colors[4 * i + 0], in.colors[4 * i + 1], in.colors[4 * i + 2], in.colors[4 * i + 3],
-                                           in.normals[3 * i + 0], in.normals[3 * i + 1], in.normals[3 * i + 2],
+          double[] vertex = new double[] { in.vertices [3 * i + 0], in.vertices [3 * i + 1], in.vertices[3 * i + 2],
+                                           in.colors   [4 * i + 0], in.colors   [4 * i + 1], in.colors  [4 * i + 2], in.colors[4 * i + 3],
+                                           in.normals  [3 * i + 0], in.normals  [3 * i + 1], in.normals [3 * i + 2],
                                            in.texcoords[2 * i + 0], in.texcoords[2 * i + 1] };
           gluTess.addVertex(vertex);
         }        
@@ -8220,7 +8255,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         tessellateEdges();
       }
     }
-
     
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
@@ -8228,31 +8262,36 @@ public class PGraphicsAndroid3D extends PGraphics {
       tess.putLineVertex(in, i0, i1, vcount);
    
       tess.lineAttributes[4 * vcount + 3] = +strokeWeight;
-      tess.lineIndices[icount++] = (short)vcount;
+      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
       
       vcount++;
       tess.putLineVertex(in, i0, i1, vcount);
       tess.lineAttributes[4 * vcount + 3] = -strokeWeight;
-      tess.lineIndices[icount++] = (short)vcount;
+      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
       
       vcount++;
       tess.putLineVertex(in, i1, i0, vcount);
       tess.lineAttributes[4 * vcount + 3] = -strokeWeight;
-      tess.lineIndices[icount++] = (short)vcount;
+      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
       
       // Starting a new triangle re-using prev vertices.
-      tess.lineIndices[icount++] = (short)vcount;
-      tess.lineIndices[icount++] = (short)(vcount - 1);
+      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
+      tess.lineIndices[icount++] = PGL.makeIndex(vcount - 1);
       
       vcount++;
       tess.putLineVertex(in, i1, i0, vcount);      
       tess.lineAttributes[4 * vcount + 3] = +strokeWeight;
-      tess.lineIndices[icount++] = (short)vcount;
+      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
     }
     
     public void tessellateEdges() {
-      tess.addLineVertices(in.getNumLineVertices());
-      tess.addLineIndices(in.getNumLineIndices());
+      int nInVert = in.getNumLineVertices();
+      int nInInd = in.getNumLineIndices();     
+      
+      checkForFlush(tess.lineVertexCount + nInVert, tess.lineIndexCount + nInInd);
+      
+      tess.addLineVertices(nInVert);
+      tess.addLineIndices(nInInd);
       int vcount = tess.firstLineVertex;
       int icount = tess.firstLineIndex;          
       for (int i = in.firstEdge; i <= in.lastEdge; i++) {
@@ -8261,15 +8300,32 @@ public class PGraphicsAndroid3D extends PGraphics {
       }    
     }
     
-    public boolean startEdge(int edge) {
+    protected void checkForFlush(int vertCount) {
+      if (tess.renderMode == IMMEDIATE && PGL.MAX_TESS_VERTICES < vertCount) {
+        setLastTexIndex(tess.lastFillIndex);
+        flush();
+        setFirstTexIndex(0);
+      }      
+    }     
+    
+    protected void checkForFlush(int vertCount, int indCount) {
+      if (tess.renderMode == IMMEDIATE && (PGL.MAX_TESS_VERTICES < vertCount ||  
+                                           PGL.MAX_TESS_INDICES  < indCount)) {
+        setLastTexIndex(tess.lastFillIndex);
+        flush();
+        setFirstTexIndex(0);
+      }      
+    }    
+        
+    protected boolean startEdge(int edge) {
       return edge % 2 != 0;
     }
     
-    public boolean endEdge(int edge) {
+    protected boolean endEdge(int edge) {
       return 1 < edge;
     }    
     
-    public class TessellatorCallback implements PGL.TessellatorCallback {
+    protected class TessellatorCallback implements PGL.TessellatorCallback {
       public boolean calcNormals;
       protected int tessFirst;
       protected int tessCount;
@@ -8333,7 +8389,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
       
       protected void addIndex(int tessIdx) {
-        tess.addFillIndex(tessFirst + tessIdx);
+        if (tess.fillVertexCount < PGL.MAX_TESS_INDICES) {
+          tess.addFillIndex(tessFirst + tessIdx);
+        } else {
+          throw new RuntimeException("P3D: the tessellator is generating too many indices, reduce complexity of shape.");
+        }
       }
       
       protected void calcTriNormal(int tessIdx0, int tessIdx1, int tessIdx2) {
@@ -8347,12 +8407,16 @@ public class PGraphicsAndroid3D extends PGraphics {
             throw new RuntimeException("TessCallback vertex() data is not of length 12");
           }
           
-          tess.addFillVertex((float) d[ 0], (float) d[ 1], (float) d[2],
-                             (float) d[ 3], (float) d[ 4], (float) d[5], (float) d[6],
-                             (float) d[ 7], (float) d[ 8], (float) d[9],
-                             (float) d[10], (float) d[11]);
-
-          tessCount++;
+          if (tess.fillVertexCount < PGL.MAX_TESS_VERTICES) {
+            tess.addFillVertex((float) d[ 0], (float) d[ 1], (float) d[2],
+                               (float) d[ 3], (float) d[ 4], (float) d[5], (float) d[6],
+                               (float) d[ 7], (float) d[ 8], (float) d[9],
+                               (float) d[10], (float) d[11]);
+            tessCount++;
+          } else {
+            throw new RuntimeException("P3D: the tessellator is generating too many vertices, reduce complexity of shape.");
+          }          
+          
         } else {
           throw new RuntimeException("TessCallback vertex() data not understood");
         }

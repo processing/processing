@@ -101,11 +101,12 @@ public class PGL {
   /** Initial sizes for vertex cache used in PShape3D. */
   public static final int DEFAULT_VERTEX_CACHE_SIZE = 128;  
   
-  /** Maximum number of tessellated vertices. */
-  public static final int MAX_TESS_VERTICES = 100000;
+  /** Maximum number of tessellated vertices, using 2^20 for Mac/PC. */
+  public static final int MAX_TESS_VERTICES = 1048576;
   
-  /** Maximum number of indices */
-  public static final int MAX_TESS_INDICES  = 3 * 100000;  
+  /** Maximum number of indices. 2 times the max number of 
+   * vertices to have good room for vertex reuse. */
+  public static final int MAX_TESS_INDICES  = 2 * MAX_TESS_VERTICES;  
   
   public static final int LESS              = GL.GL_LESS;
   public static final int LESS_OR_EQUAL     = GL.GL_LEQUAL;
@@ -215,6 +216,10 @@ public class PGL {
   public PGraphicsOpenGL pg;
   
   public boolean initialized;
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Intialization, finalization  
   
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
@@ -408,9 +413,21 @@ public class PGL {
     context = null;    
   }
   
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Utilities    
+  
   public boolean contextIsCurrent(Context other) {
     return other.same(context);
   }
+  
+  static public int makeIndex(int intIdx) {
+    return intIdx;
+  }  
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Frame rendering    
   
   public boolean initOnscreenDraw() {
     if (drawable != null) {
@@ -427,7 +444,6 @@ public class PGL {
   }
   
   public void beginOnscreenDraw() {
-
   }
   
   public void endOnscreenDraw() {
@@ -437,19 +453,16 @@ public class PGL {
   }
   
   public void beginOffscreenDraw() {
-
   }
   
-  public void endOffscreenDraw() {
-    
+  public void endOffscreenDraw() {    
   }
   
   public boolean canDraw() {
     return pg.parent.isDisplayable();    
   }
   
-  public void requestDraw() {
-        
+  public void requestDraw() {        
   }
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -562,6 +575,18 @@ public class PGL {
     int temp[] = new int[1];
     gl.glGetIntegerv(GL2.GL_MAX_TEXTURE_UNITS, temp, 0);
     return temp[0];    
+  }  
+  
+  public int getMaxVertices() {
+    int temp[] = new int[1];
+    gl.glGetIntegerv(GL2.GL_MAX_ELEMENTS_VERTICES, temp, 0);
+    return temp[0];        
+  }
+
+  public int getMaxIndices() {
+    int temp[] = new int[1];
+    gl.glGetIntegerv(GL2.GL_MAX_ELEMENTS_INDICES, temp, 0);
+    return temp[0];        
   }  
   
   public void getNumSamples(int[] num) {
