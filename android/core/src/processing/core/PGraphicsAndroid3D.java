@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Stack;
 import javax.microedition.khronos.opengles.*;
 
-
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
 
@@ -1876,10 +1875,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     if (flushMode == FLUSH_CONTINUOUSLY || 
         (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
-      // Flushing this current shape either because we are in the flush-after-shape,
-      // or the tess buffer is full.
+      
+      if (flushMode == FLUSH_WHEN_FULL && tessGeo.isOverflow()) {
+        PGraphics.showWarning("P3D: tessellated arrays are overflowing");
+      }
+      
       flush();
-    }    
+    }
   }
 
   
@@ -6852,9 +6854,18 @@ public class PGraphicsAndroid3D extends PGraphics {
       return PGL.MAX_TESS_VERTICES <= fillVertexCount || 
              PGL.MAX_TESS_VERTICES <= lineVertexCount ||
              PGL.MAX_TESS_VERTICES <= pointVertexCount ||
-             PGL.MAX_TESS_INDICES <= fillIndexCount ||
-             PGL.MAX_TESS_INDICES <= fillIndexCount ||
-             PGL.MAX_TESS_INDICES <= fillIndexCount;
+             PGL.MAX_TESS_INDICES  <= fillIndexCount ||
+             PGL.MAX_TESS_INDICES  <= fillIndexCount ||
+             PGL.MAX_TESS_INDICES  <= fillIndexCount;
+    }
+
+    public boolean isOverflow() {
+      return PGL.MAX_TESS_VERTICES < fillVertexCount || 
+             PGL.MAX_TESS_VERTICES < lineVertexCount ||
+             PGL.MAX_TESS_VERTICES < pointVertexCount ||
+             PGL.MAX_TESS_INDICES  < fillIndexCount ||
+             PGL.MAX_TESS_INDICES  < fillIndexCount ||
+             PGL.MAX_TESS_INDICES  < fillIndexCount;
     }
     
     public void addCounts(TessGeometry other) {
