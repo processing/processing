@@ -583,18 +583,6 @@ public class PGL {
     return temp[0];    
   }  
 
-  public int getMaxVertices() {
-    int temp[] = new int[1];
-    gl.glGetIntegerv(GL10.GL_MAX_ELEMENTS_VERTICES, temp, 0);
-    return temp[0];        
-  }
-
-  public int getMaxIndices() {
-    int temp[] = new int[1];
-    gl.glGetIntegerv(GL10.GL_MAX_ELEMENTS_INDICES, temp, 0);
-    return temp[0];        
-  }
-  
   public void getNumSamples(int[] num) {
     num[0] = 1;    
   }  
