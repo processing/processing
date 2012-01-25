@@ -102,7 +102,7 @@ public class PGL {
   public static final int DEFAULT_VERTEX_CACHE_SIZE = 128;  
   
   /** Maximum number of tessellated vertices, using 2^20 for Mac/PC. */
-  public static final int MAX_TESS_VERTICES = 1048576;
+  public static final int MAX_TESS_VERTICES = 524288;
   
   /** Maximum number of indices. 2 times the max number of 
    * vertices to have good room for vertex reuse. */
@@ -575,18 +575,6 @@ public class PGL {
     int temp[] = new int[1];
     gl.glGetIntegerv(GL2.GL_MAX_TEXTURE_UNITS, temp, 0);
     return temp[0];    
-  }  
-  
-  public int getMaxVertices() {
-    int temp[] = new int[1];
-    gl.glGetIntegerv(GL2.GL_MAX_ELEMENTS_VERTICES, temp, 0);
-    return temp[0];        
-  }
-
-  public int getMaxIndices() {
-    int temp[] = new int[1];
-    gl.glGetIntegerv(GL2.GL_MAX_ELEMENTS_INDICES, temp, 0);
-    return temp[0];        
   }  
   
   public void getNumSamples(int[] num) {
