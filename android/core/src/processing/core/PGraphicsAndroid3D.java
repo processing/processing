@@ -34,10 +34,12 @@ import javax.microedition.khronos.opengles.*;
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
 
-/*
- * Android 3D renderer implemented with OpenGL ES 1.1
- * By Andres Colubri
- *
+/**
+ * OpenGL renderer.
+ * Some optimization tips useful mostly for mobile:
+ * http://developer.apple.com/library/ios/#documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/TechniquesforWorkingwithVertexData/TechniquesforWorkingwithVertexData.html
+ * http://code.google.com/p/webgl-loader/wiki/HappyBuddha
+ * 
  */
 public class PGraphicsAndroid3D extends PGraphics {
   /** Interface between Processing and OpenGL */
@@ -6910,12 +6912,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
     
     public int setFillVertex(int offset) {
-      firstFillVertex = 0;        
+      firstFillVertex = 0;
       if (0 < offset) {
         firstFillVertex = offset + 1; 
-      }      
+      }
       lastFillVertex = firstFillVertex + fillVertexCount - 1;      
-      return lastFillVertex; 
+      return lastFillVertex;         
     }
     
     public int setFillIndex(int offset) {
@@ -6924,12 +6926,15 @@ public class PGraphicsAndroid3D extends PGraphics {
         firstFillIndex = offset + 1; 
       }
       
+      /*
       // The indices are update to take into account all the previous 
       // shapes in the hierarchy, as the entire geometry will be stored
       // contiguously in a single VBO in the root node.
       for (int i = 0; i < fillIndexCount; i++) {
         fillIndices[i] += firstFillVertex;
       }
+      */
+      
       lastFillIndex = firstFillIndex + fillIndexCount - 1;        
       return lastFillIndex; 
     }
