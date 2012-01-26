@@ -111,6 +111,12 @@ public class PShape3D extends PShape {
   protected int lastPointVertexOffset;
   protected int lastPointIndexOffset;    
   
+  //int firstFillVertex;
+  int lastFillVertexLimit;
+  int lastFillVertexAbsol;
+  //int firstFillIndex;
+  //int lastFillIndex;
+  
   // ........................................................
   
   // Drawing/rendering state
@@ -2533,13 +2539,19 @@ public class PShape3D extends PShape {
       lastFillVertexOffset = 0;
       lastFillIndexOffset = 0;
       
+      //firstFillVertex = 0;
+      lastFillVertexLimit = 0;
+      lastFillVertexAbsol = 0;
+      //firstFillIndex = 0;
+      //lastFillIndex = 0;  
+      
       lastLineVertexOffset = 0;
       lastLineIndexOffset = 0;
 
       lastPointVertexOffset = 0;
       lastPointIndexOffset = 0;      
       
-      aggregateImpl();
+      aggregateImpl(true);
       
       // Now that we know, we can initialize the buffers with the correct size.
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {   
@@ -2569,16 +2581,16 @@ public class PShape3D extends PShape {
   // This method is very important, as it is responsible of
   // generating the correct vertex and index values for each
   // level of the shape hierarchy.
-  protected void aggregateImpl() {
+  protected void aggregateImpl(boolean last) {
     if (family == GROUP) {
       tess.reset();
       
       boolean firstGeom = true;
       boolean firstStroke = true;
       boolean firstPoint = true;
-      for (int i = 0; i < childCount; i++) {
+      for (int i = 0; i < childCount; i++) {        
         PShape3D child = (PShape3D) children[i];
-        child.aggregateImpl();
+        child.aggregateImpl(last && i == childCount - 1);
 
         tess.addCounts(child.tess);
         
@@ -2606,12 +2618,35 @@ public class PShape3D extends PShape {
           tess.setLastPoint(child.tess);
         }           
       }
+      
+      addFillIndexData();      
     } else {
       if (0 < tess.fillVertexCount) {
         root.lastFillVertexOffset = tess.setFillVertex(root.lastFillVertexOffset);
+        root.lastFillVertexLimit += tess.fillVertexCount;
       }
       if (0 < tess.fillIndexCount) {
-        root.lastFillIndexOffset = tess.setFillIndex(root.lastFillIndexOffset);
+        //root.lastFillIndexOffset = tess.setFillIndex(0, root.lastFillIndexOffset);
+                
+        
+        if (PGL.MAX_TESS_VERTICES <= root.lastFillVertexLimit) {
+          
+          //addFillIndexData(root.firstFillVertex, root.firstFillIndex, root.lastFillIndex - root.firstFillIndex + 1);
+          
+          //root.lastFillIndexOffset = tess.setFillIndex(root.lastFillVertex, root.lastFillIndexOffset);
+          
+          //root.firstFillVertex = tess.firstFillVertex;
+          //root.firstFillIndex = tess.firstFillIndex;  
+          root.lastFillVertexLimit = 0;
+          root.lastFillIndexOffset = tess.setFillIndex(root.lastFillVertexLimit, root.lastFillIndexOffset);
+          
+          root.lastFillVertexAbsol = root.lastFillVertexOffset + 1; 
+        } else {
+          //root.lastFillIndexOffset = tess.setFillIndex(root.lastFillVertex, root.lastFillIndexOffset);  
+          root.lastFillIndexOffset = tess.setFillIndex(root.lastFillVertexLimit, root.lastFillIndexOffset);
+        }
+            
+        //root.lastFillIndex = tess.lastFillIndex;        
       }
             
       if (0 < tess.lineVertexCount) {
@@ -2628,8 +2663,14 @@ public class PShape3D extends PShape {
         root.lastPointIndexOffset = tess.setPointIndex(root.lastPointIndexOffset);
       }      
       
-      // recursive add up to the root level
-      addFillIndexData(tess.firstFillVertex, tess.firstFillIndex, tess.lastFillIndex - tess.firstFillIndex + 1);
+      
+//      if (last) {
+//        addFillIndexData(root.firstFillVertex, root.firstFillIndex, root.lastFillIndex - root.firstFillIndex + 1);
+//      }
+      
+//      addFillIndexData(tess.firstFillVertex, tess.firstFillIndex, tess.lastFillIndex - tess.firstFillIndex + 1);
+      
+      addFillIndexData(root.lastFillVertexAbsol, tess.firstFillIndex, tess.lastFillIndex - tess.firstFillIndex + 1);
     }
     
     hasFill = 0 < tess.fillVertexCount && 0 < tess.fillIndexCount;
@@ -2643,11 +2684,40 @@ public class PShape3D extends PShape {
     }
     IndexData data = new IndexData(first, offset, size);
     fillIndexData.add(data);
-    if (parent != null) {
-      ((PShape3D)parent).addFillIndexData(first, offset, size);
-    }
+//    if (parent != null) {
+//      ((PShape3D)parent).addFillIndexData(first, offset, size);
+//    }
   }    
   
+  protected void addFillIndexData() {
+    // create index data
+    if (fillIndexData == null) {
+      fillIndexData = new ArrayList<IndexData>();
+    }
+    IndexData gdata = null;
+    
+    for (int i = 0; i < childCount; i++) {        
+      PShape3D child = (PShape3D) children[i];
+      
+      for (int j = 0; j < child.fillIndexData.size(); j++) {
+        IndexData cdata = child.fillIndexData.get(j);
+          
+        if (gdata == null) {
+          gdata = new IndexData(cdata.first, cdata.offset, cdata.size);
+          fillIndexData.add(gdata);
+        } else {
+          if (gdata.first == cdata.first) {
+            gdata.size += cdata.size;  
+          } else {
+            gdata = new IndexData(cdata.first, cdata.offset, cdata.size);
+            fillIndexData.add(gdata);
+          }
+        }
+      }
+      
+    }    
+  }
+    
   protected void initFillBuffers(int nvert, int nind) {
     glFillVertexBufferID = renderer.createVertexBufferObject();  
     pgl.bindVertexBuffer(glFillVertexBufferID);
@@ -3420,8 +3490,9 @@ public class PShape3D extends PShape {
     pgl.enableNormalArrays(); 
     pgl.enableTexCoordArrays();
         
+    PApplet.println("Number of vertices: " + tess.fillVertexCount);
     
-        
+    //PApplet.println("Number of index groups: " + fillIndexData.size());
     for (int i = 0; i < fillIndexData.size(); i++) {
       IndexData index = (IndexData)fillIndexData.get(i);
       
