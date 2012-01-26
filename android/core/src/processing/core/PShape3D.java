@@ -64,6 +64,10 @@ public class PShape3D extends PShape {
   protected TessGeometry tess;
   protected Tessellator tessellator;
   
+  protected ArrayList<IndexData> fillIndexData;
+  protected ArrayList<IndexData> lineIndexData;
+  protected ArrayList<IndexData> pointIndexData;
+  
   protected HashSet<PImage> textures;
   protected PImage texture;
   
@@ -569,6 +573,11 @@ public class PShape3D extends PShape {
   
   
   protected void vertexImpl(float x, float y, float z, float u, float v, int code) {
+    if (in.isFull()) {
+      PGraphics.showWarning("P3D: Too many vertices, try creating smaller shapes");
+      return;
+    }
+    
     if (family == GROUP) {      
       PGraphics.showWarning("Cannot add vertices to GROUP shape");
       return;
@@ -2600,9 +2609,6 @@ public class PShape3D extends PShape {
     } else {
       if (0 < tess.fillVertexCount) {
         root.lastFillVertexOffset = tess.setFillVertex(root.lastFillVertexOffset);
-        if (32767 < root.lastFillVertexOffset) {
-          PApplet.println("problems " + root.lastFillVertexOffset);
-        }
       }
       if (0 < tess.fillIndexCount) {
         root.lastFillIndexOffset = tess.setFillIndex(root.lastFillIndexOffset);
@@ -2621,6 +2627,9 @@ public class PShape3D extends PShape {
       if (0 < tess.pointIndexCount) {
         root.lastPointIndexOffset = tess.setPointIndex(root.lastPointIndexOffset);
       }      
+      
+      // recursive add up to the root level
+      addFillIndexData(tess.firstFillVertex, tess.firstFillIndex, tess.lastFillIndex - tess.firstFillIndex + 1);
     }
     
     hasFill = 0 < tess.fillVertexCount && 0 < tess.fillIndexCount;
@@ -2628,6 +2637,16 @@ public class PShape3D extends PShape {
     hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;    
   }
 
+  protected void addFillIndexData(int first, int offset, int size) {
+    if (fillIndexData == null) {
+      fillIndexData = new ArrayList<IndexData>();
+    }
+    IndexData data = new IndexData(first, offset, size);
+    fillIndexData.add(data);
+    if (parent != null) {
+      ((PShape3D)parent).addFillIndexData(first, offset, size);
+    }
+  }    
   
   protected void initFillBuffers(int nvert, int nind) {
     glFillVertexBufferID = renderer.createVertexBufferObject();  
@@ -3332,23 +3351,23 @@ public class PShape3D extends PShape {
   }  
   
   
-  protected void renderFill(PImage textureImage) {
+  protected void renderFill0(PImage textureImage) {    
     pgl.enableVertexArrays();
     pgl.enableColorArrays();
     pgl.enableNormalArrays(); 
     pgl.enableTexCoordArrays();
         
     pgl.bindVertexBuffer(root.glFillVertexBufferID);
-    pgl.setVertexFormat(3, 0, 0);      
+    //pgl.setVertexFormat(3, 0, 0);      
 
     pgl.bindVertexBuffer(root.glFillColorBufferID);    
-    pgl.setColorFormat(4, 0, 0);           
+    //pgl.setColorFormat(4, 0, 0);           
     
     pgl.bindVertexBuffer(root.glFillNormalBufferID);    
-    pgl.setNormalFormat(3, 0, 0);     
+    //pgl.setNormalFormat(3, 0, 0);     
     
     pgl.bindVertexBuffer(root.glFillTexCoordBufferID);    
-    pgl.setTexCoordFormat(2, 0, 0);      
+    //pgl.setTexCoordFormat(2, 0, 0);      
     
     PTexture tex = null;
     if (textureImage != null) {
@@ -3360,10 +3379,25 @@ public class PShape3D extends PShape {
       }
     }
     
-    int offset = tess.firstFillIndex;
-    int size =  tess.lastFillIndex - tess.firstFillIndex + 1;
-    pgl.bindIndexBuffer(root.glFillIndexBufferID);
-    pgl.renderIndexBuffer(offset, size);
+    pgl.bindIndexBuffer(root.glFillIndexBufferID);    
+    for (int i = 0; i < fillIndexData.size(); i++) {
+      IndexData index = (IndexData)fillIndexData.get(i);
+      
+      int first = index.first;
+      int offset = index.offset;
+      int size =  index.size;
+      //PApplet.println(first + " " + offset + " " + size);
+//      pgl.setVertexFormat(3, 0, 3 * first);
+//      pgl.setColorFormat(4, 0, 4 * first);
+//      pgl.setNormalFormat(3, 0, 3 * first);
+//      pgl.setTexCoordFormat(2, 0, 2 * first);
+      pgl.renderIndexBuffer(offset, size);      
+    }
+    
+    
+//    int offset = tess.firstFillIndex;
+//    int size =  tess.lastFillIndex - tess.firstFillIndex + 1;
+//    pgl.renderIndexBuffer(offset, size);
     
     if (tex != null) {
       pgl.unbindTexture(tex.glTarget); 
@@ -3377,6 +3411,92 @@ public class PShape3D extends PShape {
     pgl.disableColorArrays();
     pgl.disableNormalArrays(); 
     pgl.disableTexCoordArrays();    
+  }
+
+  
+  protected void renderFill(PImage textureImage) {    
+    pgl.enableVertexArrays();
+    pgl.enableColorArrays();
+    pgl.enableNormalArrays(); 
+    pgl.enableTexCoordArrays();
+        
+    
+        
+    for (int i = 0; i < fillIndexData.size(); i++) {
+      IndexData index = (IndexData)fillIndexData.get(i);
+      
+      int first = index.first;
+      int offset = index.offset;
+      int size =  index.size;    
+    
+    
+    pgl.bindVertexBuffer(root.glFillVertexBufferID);
+    pgl.setVertexFormat(3, 0, 3 * first);     
+
+    pgl.bindVertexBuffer(root.glFillColorBufferID);    
+    pgl.setColorFormat(4, 0, 4 * first);  
+    
+    pgl.bindVertexBuffer(root.glFillNormalBufferID);    
+    pgl.setNormalFormat(3, 0, 3 * first);     
+    
+    pgl.bindVertexBuffer(root.glFillTexCoordBufferID);    
+    pgl.setTexCoordFormat(2, 0, 2 * first);    
+    
+    PTexture tex = null;
+    if (textureImage != null) {
+      tex = renderer.getTexture(textureImage);
+      if (tex != null) {
+        pgl.enableTexturing(tex.glTarget);
+        pgl.setActiveTexUnit(0);
+        pgl.bindTexture(tex.glTarget, tex.glID);        
+      }
+    }
+    
+    pgl.bindIndexBuffer(root.glFillIndexBufferID);
+      //PApplet.println(first + " " + offset + " " + size);
+//      pgl.setVertexFormat(3, 0, 3 * first);
+//      pgl.setColorFormat(4, 0, 4 * first);
+//      pgl.setNormalFormat(3, 0, 3 * first);
+//      pgl.setTexCoordFormat(2, 0, 2 * first);
+      pgl.renderIndexBuffer(offset, size);      
+    
+    
+    
+//    int offset = tess.firstFillIndex;
+//    int size =  tess.lastFillIndex - tess.firstFillIndex + 1;
+//    pgl.renderIndexBuffer(offset, size);
+    
+    if (tex != null) {
+      pgl.unbindTexture(tex.glTarget); 
+      pgl.disableTexturing(tex.glTarget);
+    } 
+    
+    pgl.unbindIndexBuffer();
+    pgl.unbindVertexBuffer();    
+    
+    }
+    
+    pgl.disableVertexArrays();
+    pgl.disableColorArrays();
+    pgl.disableNormalArrays(); 
+    pgl.disableTexCoordArrays();
+  }
+  
+  
+  
+  ///////////////////////////////////////////////////////////  
+
+  // 
+
+  protected class IndexData {
+    IndexData(int first, int offset, int size) {
+      this.first = first;
+      this.offset = offset;
+      this.size = size;
+    }  
+    int first;
+    int offset;
+    int size;
   }
   
   ///////////////////////////////////////////////////////////  

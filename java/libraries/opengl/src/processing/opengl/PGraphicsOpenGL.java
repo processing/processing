@@ -45,9 +45,7 @@ import java.util.Stack;
 import javax.media.opengl.GL;
 
 /**
- * New OpenGL renderer for Processing, entirely based on OpenGL 2.x 
- * (fixed-function pipeline) and OpenGL 3.x (programmable pipeline).
- * By Andres Colubri
+ * OpenGL renderer.
  * 
  */
 public class PGraphicsOpenGL extends PGraphics {

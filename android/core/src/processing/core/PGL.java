@@ -821,19 +821,19 @@ public class PGL {
   }
   
   public void setVertexFormat(int size, int stride, int offset) {
-    gl11.glVertexPointer(size, GL11.GL_FLOAT, stride, offset);
+    gl11.glVertexPointer(size, GL11.GL_FLOAT, stride, offset * SIZEOF_FLOAT);
   }
   
   public void setColorFormat(int size, int stride, int offset) {
-    gl11.glColorPointer(size, GL11.GL_FLOAT, stride, offset);
+    gl11.glColorPointer(size, GL11.GL_FLOAT, stride, offset* SIZEOF_FLOAT);
   }
   
   public void setNormalFormat(int size, int stride, int offset) {
-    gl11.glNormalPointer(GL11.GL_FLOAT, stride, offset);
+    gl11.glNormalPointer(GL11.GL_FLOAT, stride, offset* SIZEOF_FLOAT);
   }
   
   public void setTexCoordFormat(int size, int stride, int offset) {
-    gl11.glTexCoordPointer(size, GL11.GL_FLOAT, stride, offset);
+    gl11.glTexCoordPointer(size, GL11.GL_FLOAT, stride, offset* SIZEOF_FLOAT);
   }
   
   public void unbindVertexBuffer() {
