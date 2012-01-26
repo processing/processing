@@ -6920,20 +6920,20 @@ public class PGraphicsAndroid3D extends PGraphics {
       return lastFillVertex;         
     }
     
-    public int setFillIndex(int offset) {
+    public int setFillIndex(int vertOffset, int indOffset) {
       firstFillIndex = 0;
-      if (0 < offset) {
-        firstFillIndex = offset + 1; 
+      if (0 < indOffset) {
+        firstFillIndex = indOffset + 1; 
       }
       
-      /*
-      // The indices are update to take into account all the previous 
-      // shapes in the hierarchy, as the entire geometry will be stored
-      // contiguously in a single VBO in the root node.
-      for (int i = 0; i < fillIndexCount; i++) {
-        fillIndices[i] += firstFillVertex;
+      if (0 < vertOffset) {
+        // The indices are update to take into account all the previous 
+        // shapes in the hierarchy, as the entire geometry will be stored
+        // contiguously in a single VBO in the root node.
+        for (int i = 0; i < fillIndexCount; i++) {
+          fillIndices[i] += vertOffset;
+        }
       }
-      */
       
       lastFillIndex = firstFillIndex + fillIndexCount - 1;        
       return lastFillIndex; 
