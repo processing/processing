@@ -3147,7 +3147,8 @@ public class PGraphicsAndroid3D extends PGraphics {
           textTex.textures[i].glID = 0; // To avoid finalization (texture objects were already deleted when context changed).
           textTex.textures[i] = null;
         }
-        textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
+        textTex = new PFontTexture(parent, textFont, PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), 
+                                                     PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize));
         textFont.setCache(this, textTex);
       }
     }    
