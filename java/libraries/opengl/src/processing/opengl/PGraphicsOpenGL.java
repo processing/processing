@@ -401,7 +401,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     tessellator = new Tessellator();
     
-    inGeo = newInGeometry();
+    inGeo = newInGeometry(IMMEDIATE);
     tessGeo = newTessGeometry(IMMEDIATE);
     texCache = newTexCache();
     
@@ -6092,8 +6092,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
   }
     
-  public InGeometry newInGeometry() {
-    return new InGeometry(); 
+  public InGeometry newInGeometry(int mode) {
+    return new InGeometry(mode); 
   }
   
   protected TessGeometry newTessGeometry(int mode) {
@@ -6182,6 +6182,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   public class InGeometry {
+    int renderMode;
     public int vertexCount;
     public int edgeCount;
     
@@ -6210,9 +6211,10 @@ public class PGraphicsOpenGL extends PGraphics {
     //public float[][] mtexcoords;
     //public float[][] attributes;
 
-    public InGeometry() {
+    public InGeometry(int mode) {
+      renderMode = mode;
       allocate();
-    }    
+    }   
     
     public void reset() {
       vertexCount = firstVertex = lastVertex = 0; 
@@ -6356,7 +6358,22 @@ public class PGraphicsOpenGL extends PGraphics {
         
     public void vertexCheck() {
       if (vertexCount == vertices.length / 3) {
-        int newSize = vertexCount << 1;  
+        int newSize = vertexCount;
+        
+        // Increase of vertex arrays is different between
+        // immediate and retained modes:
+        // * in immediate mode, since we need to very quickly
+        //   have larger arrays in order to accomodate the
+        //   incoming geometry, doubling of size is used.
+        // * in retained mode, since the arrays are used
+        //   to create arrays for individual shapes that
+        //   don't change afterwards, we only need linear
+        //   increase.
+        if (renderMode == IMMEDIATE) {
+          newSize <<= 1; 
+        } else {
+          newSize += PGL.IN_VERTICES_INCREMENT;
+        }
 
         expandCodes(newSize);
         expandVertices(newSize);
@@ -6439,7 +6456,15 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void edgeCheck() {
       if (edgeCount == edges.length) {
-        int temp[][] = new int[edgeCount << 1][3];
+        int newLen = edgeCount; 
+        
+        if (renderMode == IMMEDIATE) {
+          newLen <<= 1;
+        } else {
+          newLen += PGL.IN_EDGES_INCREMENT;
+        }
+        
+        int temp[][] = new int[newLen][3];
         PApplet.arrayCopy(edges, 0, temp, 0, edgeCount);
         edges = temp;        
       }
@@ -6474,7 +6499,7 @@ public class PGraphicsOpenGL extends PGraphics {
       PApplet.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
       texcoords = temp;    
     }
-        
+    
     protected void expandStrokes(int n) {
       float temp[] = new float[5 * n];      
       PApplet.arrayCopy(strokes, 0, temp, 0, 5 * vertexCount);
@@ -7088,7 +7113,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void addFillVertices(int count) {
       int oldSize = fillVertices.length / 3;
       if (fillVertexCount + count >= oldSize) {
-        int newSize = expandSize(oldSize, fillVertexCount + count); 
+        int newSize = expandVertSize(oldSize, fillVertexCount + count); 
                 
         expandFillVertices(newSize);
         expandFillColors(newSize);
@@ -7104,7 +7129,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void addFillIndices(int count) {
       int oldSize = fillIndices.length;
       if (fillIndexCount + count >= oldSize) {
-        int newSize = expandSize(oldSize, fillIndexCount + count);    
+        int newSize = expandIndSize(oldSize, fillIndexCount + count);    
         
         expandFillIndices(newSize);
       }
@@ -7141,7 +7166,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void addLineVertices(int count) {
       int oldSize = lineVertices.length / 3;
       if (lineVertexCount + count >= oldSize) {
-        int newSize = expandSize(oldSize, lineVertexCount + count);
+        int newSize = expandVertSize(oldSize, lineVertexCount + count);
         
         expandLineVertices(newSize);
         expandLineColors(newSize);
@@ -7181,7 +7206,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void addLineIndices(int count) {
       int oldSize = lineIndices.length;
       if (lineIndexCount + count >= oldSize) {
-        int newSize = expandSize(oldSize, lineIndexCount + count);
+        int newSize = expandIndSize(oldSize, lineIndexCount + count);
         
         expandLineIndices(newSize);
       }
@@ -7200,7 +7225,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void addPointVertices(int count) {
       int oldSize = pointVertices.length / 3;
       if (pointVertexCount + count >= oldSize) {
-        int newSize = expandSize(oldSize, pointVertexCount + count);
+        int newSize = expandVertSize(oldSize, pointVertexCount + count);
         
         expandPointVertices(newSize);
         expandPointColors(newSize);
@@ -7240,7 +7265,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void addPointIndices(int count) {
       int oldSize = pointIndices.length;
       if (pointIndexCount + count >= oldSize) {
-        int newSize = expandSize(oldSize, pointIndexCount + count);
+        int newSize = expandIndSize(oldSize, pointIndexCount + count);
         
         expandPointIndices(newSize);
       }
@@ -7520,13 +7545,29 @@ public class PGraphicsOpenGL extends PGraphics {
       pointColors[index  ] = a;      
     }
     
-    public int expandSize(int currSize, int newMinSize) {
+    public int expandVertSize(int currSize, int newMinSize) {
       int newSize = currSize; 
       while (newSize < newMinSize) {
-        newSize = newSize << 1;
+        if (renderMode == IMMEDIATE) {
+          newSize <<= 1;  
+        } else {
+          newSize += PGL.TESS_VERTICES_INCREMENT;
+        }        
       }
       return newSize;
     }
+
+    public int expandIndSize(int currSize, int newMinSize) {
+      int newSize = currSize; 
+      while (newSize < newMinSize) {
+        if (renderMode == IMMEDIATE) {
+          newSize <<= 1;  
+        } else {
+          newSize += PGL.TESS_INDICES_INCREMENT;
+        }        
+      }
+      return newSize;
+    }    
     
     public void center(float cx, float cy) {
       int index;
