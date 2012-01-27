@@ -2195,15 +2195,15 @@ public class PGraphicsOpenGL extends PGraphics {
    
     pgl.bindVertexBuffer(glPointVertexBufferID);
     pgl.copyVertexBufferData(tessGeo.pointVertices, 3 * size, vboMode);
-    pgl.setVertexFormat(3, 0, 0); 
+    pgl.setVertexFormat(3, 0); 
     
     pgl.bindVertexBuffer(glPointColorBufferID);
     pgl.copyVertexBufferData(tessGeo.pointColors, 4 * size, vboMode);    
-    pgl.setColorFormat(4, 0, 0);
+    pgl.setColorFormat(4, 0);
     
     pgl.bindVertexBuffer(glPointNormalBufferID);
     pgl.copyVertexBufferData(tessGeo.pointNormals, 3 * size, vboMode);    
-    pgl.setNormalFormat(3, 0, 0);
+    pgl.setNormalFormat(3, 0);
     
     setupPointShader(glPointAttribBufferID, tessGeo.pointAttributes, size);
     
@@ -2238,15 +2238,15 @@ public class PGraphicsOpenGL extends PGraphics {
     
     pgl.bindVertexBuffer(glLineVertexBufferID);
     pgl.copyVertexBufferData(tessGeo.lineVertices, 3 * size, vboMode);
-    pgl.setVertexFormat(3, 0, 0);     
+    pgl.setVertexFormat(3, 0);     
     
     pgl.bindVertexBuffer(glLineColorBufferID);
     pgl.copyVertexBufferData(tessGeo.lineColors, 4 * size, vboMode);    
-    pgl.setColorFormat(4, 0, 0);    
+    pgl.setColorFormat(4, 0);    
     
     pgl.bindVertexBuffer(glLineNormalBufferID);
     pgl.copyVertexBufferData(tessGeo.lineNormals, 3 * size, vboMode);    
-    pgl.setNormalFormat(3, 0, 0);    
+    pgl.setNormalFormat(3, 0);    
     
     setupLineShader(glLineAttribBufferID, tessGeo.lineAttributes, size);
     
@@ -2279,21 +2279,21 @@ public class PGraphicsOpenGL extends PGraphics {
     int size = tessGeo.fillVertexCount;
     pgl.bindVertexBuffer(glFillVertexBufferID);
     pgl.copyVertexBufferData(tessGeo.fillVertices, 3 * size, vboMode);
-    pgl.setVertexFormat(3, 0, 0);
+    pgl.setVertexFormat(3, 0);
 
     pgl.bindVertexBuffer(glFillColorBufferID);
     pgl.copyVertexBufferData(tessGeo.fillColors, 4 * size, vboMode);    
-    pgl.setColorFormat(4, 0, 0);    
+    pgl.setColorFormat(4, 0);    
     
     pgl.bindVertexBuffer(glFillNormalBufferID);
     pgl.copyVertexBufferData(tessGeo.fillNormals, 3 * size, vboMode);    
-    pgl.setNormalFormat(3, 0, 0);
+    pgl.setNormalFormat(3, 0);
     
     if (texCache.hasTexture) {
       pgl.enableTexCoordArrays();
       pgl.bindVertexBuffer(glFillTexCoordBufferID);
       pgl.copyVertexBufferData(tessGeo.fillTexcoords, 2 * size, vboMode);    
-      pgl.setTexCoordFormat(2, 0, 0);
+      pgl.setTexCoordFormat(2, 0);
       pgl.setActiveTexUnit(0);
     }  
          
@@ -2372,19 +2372,19 @@ public class PGraphicsOpenGL extends PGraphics {
     int size = tessGeo.fillVertexCount;   
     pgl.bindVertexBuffer(glFillVertexBufferID);
     pgl.copyVertexBufferData(tessGeo.fillVertices, 3 * size, vboMode);
-    pgl.setVertexFormat(3, 0, 0);
+    pgl.setVertexFormat(3, 0);
        
     pgl.bindVertexBuffer(glFillColorBufferID);
     pgl.copyVertexBufferData(tessGeo.fillColors, 4 * size, vboMode);    
-    pgl.setColorFormat(4, 0, 0);    
+    pgl.setColorFormat(4, 0);    
     
     pgl.bindVertexBuffer(glFillNormalBufferID);
     pgl.copyVertexBufferData(tessGeo.fillNormals, 3 * size, vboMode);    
-    pgl.setNormalFormat(3, 0, 0);
+    pgl.setNormalFormat(3, 0);
       
     pgl.bindVertexBuffer(glFillTexCoordBufferID);
     pgl.copyVertexBufferData(tessGeo.fillTexcoords, 2 * size, vboMode);    
-    pgl.setTexCoordFormat(2, 0, 0);            
+    pgl.setTexCoordFormat(2, 0);            
 
     size = tessGeo.fillIndexCount;
     pgl.bindIndexBuffer(glFillIndexBufferID);
@@ -6927,18 +6927,21 @@ public class PGraphicsOpenGL extends PGraphics {
       return lastFillVertex; 
     }
     
-    public int setFillIndex(int offset) {
+    public int setFillIndex(int voffset, int ioffset) {
       firstFillIndex = 0;
-      if (0 < offset) {
-        firstFillIndex = offset + 1; 
+      if (0 < ioffset) {
+        firstFillIndex = ioffset + 1; 
       }
       
-      // The indices are update to take into account all the previous 
-      // shapes in the hierarchy, as the entire geometry will be stored
-      // contiguously in a single VBO in the root node.
-      for (int i = 0; i < fillIndexCount; i++) {
-        fillIndices[i] += firstFillVertex;
+      if (0 < voffset) {
+        // The indices are update to take into account all the previous 
+        // shapes in the hierarchy, as the entire geometry will be stored
+        // contiguously in a single VBO in the root node.
+        for (int i = 0; i < fillIndexCount; i++) {
+          fillIndices[i] += voffset;
+        }
       }
+      
       lastFillIndex = firstFillIndex + fillIndexCount - 1;        
       return lastFillIndex; 
     }
@@ -6952,18 +6955,21 @@ public class PGraphicsOpenGL extends PGraphics {
       return lastLineVertex;      
     }
     
-    public int setLineIndex(int offset) {      
+    public int setLineIndex(int voffset, int ioffset) {      
       firstLineIndex = 0;
-      if (0 < offset) {
-        firstLineIndex = offset + 1; 
+      if (0 < ioffset) {
+        firstLineIndex = ioffset + 1; 
       }        
       
-      // The indices are update to take into account all the previous 
-      // shapes in the hierarchy, as the entire geometry will be stored
-      // contiguously in a single VBO in the root node.
-      for (int i = 0; i < lineIndexCount; i++) {
-        lineIndices[i] += firstLineVertex;
+      if (0 < voffset) {
+        // The indices are update to take into account all the previous 
+        // shapes in the hierarchy, as the entire geometry will be stored
+        // contiguously in a single VBO in the root node.
+        for (int i = 0; i < lineIndexCount; i++) {
+          lineIndices[i] += firstLineVertex;
+        }
       }
+      
       lastLineIndex = firstLineIndex + lineIndexCount - 1;
       return lastLineIndex;      
     }
@@ -6977,18 +6983,21 @@ public class PGraphicsOpenGL extends PGraphics {
       return lastPointVertex;      
     }
     
-    public int setPointIndex(int offset) { 
+    public int setPointIndex(int voffset, int ioffset) { 
       firstPointIndex = 0;
-      if (0 < offset) {
-        firstPointIndex = offset + 1; 
+      if (0 < ioffset) {
+        firstPointIndex = ioffset + 1; 
       }        
       
-      // The indices are update to take into account all the previous 
-      // shapes in the hierarchy, as the entire geometry will be stored
-      // contiguously in a single VBO in the root node.
-      for (int i = 0; i < pointIndexCount; i++) {
-        pointIndices[i] += firstPointVertex;
+      if (0 < voffset) {
+        // The indices are update to take into account all the previous 
+        // shapes in the hierarchy, as the entire geometry will be stored
+        // contiguously in a single VBO in the root node.
+        for (int i = 0; i < pointIndexCount; i++) {
+          pointIndices[i] += firstPointVertex;
+        }        
       }
+
       lastPointIndex = firstPointIndex + pointIndexCount - 1;
       return lastPointIndex;
     }

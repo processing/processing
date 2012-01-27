@@ -814,20 +814,20 @@ public class PGL {
     gl2f.glBufferSubData(GL.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size));    
   }
   
-  public void setVertexFormat(int size, int stride, long offset) {
-    gl2f.glVertexPointer(size, GL.GL_FLOAT, stride, offset);
+  public void setVertexFormat(int size, long offset) {
+    gl2f.glVertexPointer(size, GL.GL_FLOAT, 0, size * offset * SIZEOF_FLOAT);
   }
   
-  public void setColorFormat(int size, int stride, long offset) {
-    gl2f.glColorPointer(size, GL.GL_FLOAT, stride, offset);
+  public void setColorFormat(int size, long offset) {
+    gl2f.glColorPointer(size, GL.GL_FLOAT, 0, size * offset * SIZEOF_FLOAT);
   }
   
-  public void setNormalFormat(int size, int stride, long offset) {
-    gl2f.glNormalPointer(GL.GL_FLOAT, stride, offset);
+  public void setNormalFormat(int size, long offset) {
+    gl2f.glNormalPointer(GL.GL_FLOAT, 0, size * offset * SIZEOF_FLOAT);
   }
   
-  public void setTexCoordFormat(int size, int stride, long offset) {
-    gl2f.glTexCoordPointer(size, GL.GL_FLOAT, stride, offset);
+  public void setTexCoordFormat(int size, long offset) {
+    gl2f.glTexCoordPointer(size, GL.GL_FLOAT, 0, size * offset * SIZEOF_FLOAT);
   }
   
   public void unbindVertexBuffer() {
