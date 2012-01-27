@@ -1174,6 +1174,14 @@ public class PShape implements PConstants {
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
+  public void center(float cx, float cy) {
+    
+  }
+  
+  public void center(float cx, float cy, float cz) {
+    
+  }  
+  
   // translate, rotate, scale, apply (no push/pop)
   //   these each call matrix.translate, etc
   // if matrix is null when one is called,
