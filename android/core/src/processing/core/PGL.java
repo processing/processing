@@ -80,6 +80,14 @@ public class PGL {
   public static final int DEFAULT_TESS_VERTICES = 16;
   public static final int DEFAULT_TESS_INDICES = 32;  
   
+  /** In and tess increments used in retained mode, where
+   * arrays are not doubled in size but increased linearly. 
+   * */
+  public static final int IN_VERTICES_INCREMENT = 8;
+  public static final int IN_EDGES_INCREMENT = 16;
+  public static final int TESS_VERTICES_INCREMENT = 8;
+  public static final int TESS_INDICES_INCREMENT = 16;  
+  
   /** Initial sizes for vertex cache used in PShape3D. */
   public static final int DEFAULT_VERTEX_CACHE_SIZE = 512;
   
