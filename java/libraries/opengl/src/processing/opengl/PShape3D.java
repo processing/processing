@@ -280,13 +280,13 @@ public class PShape3D extends PShape {
     this.parent = null;
     this.tessellated = false;
     
+    if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
+      in = renderer.newInGeometry(RETAINED);      
+    }     
     tess = renderer.newTessGeometry(RETAINED);
     fillIndexData = new ArrayList<IndexData>();
     lineIndexData = new ArrayList<IndexData>();
     pointIndexData = new ArrayList<IndexData>();
-    if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
-      in = renderer.newInGeometry();      
-    }
     
     // Modes are retrieved from the current values in the renderer.
     textureMode = renderer.textureMode;    
