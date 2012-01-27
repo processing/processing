@@ -788,9 +788,18 @@ public class PTexture implements PConstants {
     pgl.initTex(glTarget, glFormat, glWidth, glHeight);
     
     // Once OpenGL knows the size of the new texture, we make sure it doesn't
-    // contain any garbage in the region of interest (0, 0, width, height):
-    int[] texels = new int[width * height];
-    setTexels(texels, 0, 0, width, height); 
+    // contain any garbage in the region of interest (0, 0, width, height):        
+    // Doing in patches of 16x16 pixels to avoid creating a (potentially)
+    // very large transient array which in certain situations (memory-
+    // constrained android devices) might lead to an out-of-memory error.
+    int[] texels = new int[16 * 16];
+    for (int y = 0; y < height + 16; y += 16) {
+      int h = PApplet.min(16, height - y);
+      for (int x = 0; x < width + 16; x += 16) {
+        int w = PApplet.min(16, width - x);
+        setTexels(texels, x, y, w, h);        
+      }
+    }
     texels = null;
     
     pgl.unbindTexture(glTarget);

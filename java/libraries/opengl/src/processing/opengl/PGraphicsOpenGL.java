@@ -3146,7 +3146,8 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
     textTex = (PFontTexture)textFont.getCache(pg);        
     if (textTex == null) {
-      textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
+      textTex = new PFontTexture(parent, textFont, PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), 
+                                                   PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize));
       textFont.setCache(this, textTex);
     } else {
       if (!pgl.contextIsCurrent(textTex.context)) {
