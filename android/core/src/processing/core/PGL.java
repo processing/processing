@@ -33,6 +33,8 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.*;
+
+import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.EGLConfigChooser;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLSurfaceView;
@@ -79,7 +81,7 @@ public class PGL {
   public static final int DEFAULT_TESS_INDICES = 32;  
   
   /** Initial sizes for vertex cache used in PShape3D. */
-  public static final int DEFAULT_VERTEX_CACHE_SIZE = 128;
+  public static final int DEFAULT_VERTEX_CACHE_SIZE = 512;
   
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
   public static final int MAX_LIGHTS = 8;
@@ -93,6 +95,9 @@ public class PGL {
    * vertices to have good room for vertex reuse. */
   public static final int MAX_TESS_INDICES  = 2 * MAX_TESS_VERTICES;  
 
+  /** Maximum dimension of a texture used to hold font data. **/
+  public static final int MAX_FONT_TEX_SIZE = 256;
+  
   public static final int LESS              = GL10.GL_LESS;
   public static final int LESS_OR_EQUAL     = GL10.GL_LEQUAL;
   public static final int COUNTER_CLOCKWISE = GL10.GL_CCW;
@@ -817,14 +822,17 @@ public class PGL {
   }  
   
   public void copyVertexBufferSubData(float[] data, int offset, int size, int mode) {
+    //GLES20.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size));
     gl11.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size));    
   }
   
   public void setVertexFormat(int size, int offset) {
+    //GLES20.glVertexAttribPointer(vertAttribIdx, size, GL11.GL_FLOAT, false, stride, (just an int buffer with a single element contaning the offset?));    
     gl11.glVertexPointer(size, GL11.GL_FLOAT, 0, size * offset * SIZEOF_FLOAT);
   }
   
   public void setColorFormat(int size, int offset) {
+  //GLES20.glVertexAttribPointer(colorAttribIdx, size, GL11.GL_FLOAT, false, stride, null);
     gl11.glColorPointer(size, GL11.GL_FLOAT, 0, size * offset* SIZEOF_FLOAT);
   }
   

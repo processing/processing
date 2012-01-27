@@ -108,6 +108,9 @@ public class PGL {
    * vertices to have good room for vertex reuse. */
   public static final int MAX_TESS_INDICES  = 2 * MAX_TESS_VERTICES;  
   
+  /** Maximum dimension of a texture used to hold font data. **/
+  public static final int MAX_FONT_TEX_SIZE = 2048;
+  
   public static final int LESS              = GL.GL_LESS;
   public static final int LESS_OR_EQUAL     = GL.GL_LEQUAL;
   public static final int COUNTER_CLOCKWISE = GL.GL_CCW;
