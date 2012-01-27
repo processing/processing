@@ -820,20 +820,20 @@ public class PGL {
     gl11.glBufferSubData(GL11.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size));    
   }
   
-  public void setVertexFormat(int size, int stride, int offset) {
-    gl11.glVertexPointer(size, GL11.GL_FLOAT, stride, offset * SIZEOF_FLOAT);
+  public void setVertexFormat(int size, int offset) {
+    gl11.glVertexPointer(size, GL11.GL_FLOAT, 0, size * offset * SIZEOF_FLOAT);
   }
   
-  public void setColorFormat(int size, int stride, int offset) {
-    gl11.glColorPointer(size, GL11.GL_FLOAT, stride, offset* SIZEOF_FLOAT);
+  public void setColorFormat(int size, int offset) {
+    gl11.glColorPointer(size, GL11.GL_FLOAT, 0, size * offset* SIZEOF_FLOAT);
   }
   
-  public void setNormalFormat(int size, int stride, int offset) {
-    gl11.glNormalPointer(GL11.GL_FLOAT, stride, offset* SIZEOF_FLOAT);
+  public void setNormalFormat(int size, int offset) {
+    gl11.glNormalPointer(GL11.GL_FLOAT, 0, size * offset* SIZEOF_FLOAT);
   }
   
-  public void setTexCoordFormat(int size, int stride, int offset) {
-    gl11.glTexCoordPointer(size, GL11.GL_FLOAT, stride, offset* SIZEOF_FLOAT);
+  public void setTexCoordFormat(int size, int offset) {
+    gl11.glTexCoordPointer(size, GL11.GL_FLOAT, 0, size * offset* SIZEOF_FLOAT);
   }
   
   public void unbindVertexBuffer() {
