@@ -684,6 +684,10 @@ public class PShape3D extends PShape {
       return;
     }
     
+    // Input arrays are trimmed since they are expanded by doubling their old size,
+    // which might lead to arrays larger than the vertex counts.
+    in.trim();
+    
     isClosed = mode == CLOSE;    
     root.tessellated = false;
     tessellated = false;
@@ -2269,9 +2273,13 @@ public class PShape3D extends PShape {
           // equivalent to use POLYGON with fill disabled.
         }
         
+        // Tessellated arrays are trimmed since they are expanded by doubling their old size,
+        // which might lead to arrays larger than the vertex counts.        
+        tess.trim();
+        
         if (texture != null && parent != null) {
           ((PShape3D)parent).addTexture(texture);
-        }        
+        }      
       }
     }
     
