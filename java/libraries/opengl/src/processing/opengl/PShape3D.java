@@ -74,7 +74,7 @@ import java.util.Hashtable;
  */
 
 public class PShape3D extends PShape {
-  protected PGraphicsOpenGL renderer;
+  protected PGraphicsOpenGL pg;
   protected PGL pgl;
 
   protected PShape3D root;  
@@ -251,8 +251,8 @@ public class PShape3D extends PShape {
   protected int imageMode;
   
   public PShape3D(PApplet parent, int family) {
-    renderer = (PGraphicsOpenGL)parent.g;
-    pgl = renderer.pgl;
+    pg = (PGraphicsOpenGL)parent.g;
+    pgl = pg.pgl;
     
     glMode = PGL.STATIC_DRAW;
     
@@ -274,53 +274,53 @@ public class PShape3D extends PShape {
     glPointAttribBufferID = 0;
     glPointIndexBufferID = 0;
     
-    this.tessellator = renderer.tessellator;
+    this.tessellator = pg.tessellator;
     this.family = family;    
     this.root = this;
     this.parent = null;
     this.tessellated = false;
     
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
-      in = renderer.newInGeometry(RETAINED);      
-    }     
-    tess = renderer.newTessGeometry(RETAINED);
+      in = pg.newInGeometry(RETAINED);      
+    }    
+    tess = pg.newTessGeometry(RETAINED);
     fillIndexData = new ArrayList<IndexData>();
     lineIndexData = new ArrayList<IndexData>();
     pointIndexData = new ArrayList<IndexData>();
     
     // Modes are retrieved from the current values in the renderer.
-    textureMode = renderer.textureMode;    
-    rectMode = renderer.rectMode;
-    ellipseMode = renderer.ellipseMode;
-    shapeMode = renderer.shapeMode;
-    imageMode = renderer.imageMode;    
+    textureMode = pg.textureMode;    
+    rectMode = pg.rectMode;
+    ellipseMode = pg.ellipseMode;
+    shapeMode = pg.shapeMode;
+    imageMode = pg.imageMode;    
     
-    colorMode(renderer.colorMode, renderer.colorModeX, renderer.colorModeY, renderer.colorModeZ, renderer.colorModeA);
+    colorMode(pg.colorMode, pg.colorModeX, pg.colorModeY, pg.colorModeZ, pg.colorModeA);
     
     // Initial values for fill, stroke and tint colors are also imported from the renderer.
     // This is particular relevant for primitive shapes, since is not possible to set 
     // their color separately when creating them, and their input vertices are actually
     // generated at rendering time, by which the color configuration of the renderer might
     // have changed.
-    fill = renderer.fill;
-    fillR = ((renderer.fillColor >> 16) & 0xFF) / 255.0f;    
-    fillG = ((renderer.fillColor >>  8) & 0xFF) / 255.0f; 
-    fillB = ((renderer.fillColor >>  0) & 0xFF) / 255.0f;
-    fillA = ((renderer.fillColor >> 24) & 0xFF) / 255.0f;
+    fill = pg.fill;
+    fillR = ((pg.fillColor >> 16) & 0xFF) / 255.0f;    
+    fillG = ((pg.fillColor >>  8) & 0xFF) / 255.0f; 
+    fillB = ((pg.fillColor >>  0) & 0xFF) / 255.0f;
+    fillA = ((pg.fillColor >> 24) & 0xFF) / 255.0f;
       
-    stroke = renderer.stroke;      
-    strokeR = ((renderer.strokeColor >> 16) & 0xFF) / 255.0f;    
-    strokeG = ((renderer.strokeColor >>  8) & 0xFF) / 255.0f; 
-    strokeB = ((renderer.strokeColor >>  0) & 0xFF) / 255.0f;
-    strokeA = ((renderer.strokeColor >> 24) & 0xFF) / 255.0f;
+    stroke = pg.stroke;      
+    strokeR = ((pg.strokeColor >> 16) & 0xFF) / 255.0f;    
+    strokeG = ((pg.strokeColor >>  8) & 0xFF) / 255.0f; 
+    strokeB = ((pg.strokeColor >>  0) & 0xFF) / 255.0f;
+    strokeA = ((pg.strokeColor >> 24) & 0xFF) / 255.0f;
 
-    strokeWeight = renderer.strokeWeight;    
+    strokeWeight = pg.strokeWeight;    
     
-    tint = renderer.tint;  
-    tintR = ((renderer.tintColor >> 16) & 0xFF) / 255.0f;    
-    tintG = ((renderer.tintColor >>  8) & 0xFF) / 255.0f; 
-    tintB = ((renderer.tintColor >>  0) & 0xFF) / 255.0f;
-    tintA = ((renderer.tintColor >> 24) & 0xFF) / 255.0f;
+    tint = pg.tint;  
+    tintR = ((pg.tintColor >> 16) & 0xFF) / 255.0f;    
+    tintG = ((pg.tintColor >>  8) & 0xFF) / 255.0f; 
+    tintB = ((pg.tintColor >>  0) & 0xFF) / 255.0f;
+    tintA = ((pg.tintColor >> 24) & 0xFF) / 255.0f;
     
     normalX = normalY = 0; 
     normalZ = 1;
@@ -382,67 +382,67 @@ public class PShape3D extends PShape {
   
   protected void finalizeFillBuffers() {
     if (glFillVertexBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glFillVertexBufferID);   
+      pg.finalizeVertexBufferObject(glFillVertexBufferID);   
     }    
     
     if (glFillColorBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glFillColorBufferID);   
+      pg.finalizeVertexBufferObject(glFillColorBufferID);   
     }    
 
     if (glFillNormalBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glFillNormalBufferID);   
+      pg.finalizeVertexBufferObject(glFillNormalBufferID);   
     }     
 
     if (glFillTexCoordBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glFillTexCoordBufferID);   
+      pg.finalizeVertexBufferObject(glFillTexCoordBufferID);   
     }    
     
     if (glFillIndexBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glFillIndexBufferID);   
+      pg.finalizeVertexBufferObject(glFillIndexBufferID);   
     }   
   }
   
   protected void finalizeLineBuffers() {
     if (glLineVertexBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glLineVertexBufferID);   
+      pg.finalizeVertexBufferObject(glLineVertexBufferID);   
     }    
     
     if (glLineColorBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glLineColorBufferID);   
+      pg.finalizeVertexBufferObject(glLineColorBufferID);   
     }    
 
     if (glLineNormalBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glLineNormalBufferID);   
+      pg.finalizeVertexBufferObject(glLineNormalBufferID);   
     }     
 
     if (glLineAttribBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glLineAttribBufferID);   
+      pg.finalizeVertexBufferObject(glLineAttribBufferID);   
     }    
     
     if (glLineIndexBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glLineIndexBufferID);   
+      pg.finalizeVertexBufferObject(glLineIndexBufferID);   
     }  
   }  
   
   protected void finalizePointBuffers() {
     if (glPointVertexBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glPointVertexBufferID);   
+      pg.finalizeVertexBufferObject(glPointVertexBufferID);   
     }    
     
     if (glPointColorBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glPointColorBufferID);   
+      pg.finalizeVertexBufferObject(glPointColorBufferID);   
     }    
 
     if (glPointNormalBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glPointNormalBufferID);   
+      pg.finalizeVertexBufferObject(glPointNormalBufferID);   
     }     
 
     if (glPointAttribBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glPointAttribBufferID);   
+      pg.finalizeVertexBufferObject(glPointAttribBufferID);   
     }    
     
     if (glPointIndexBufferID != 0) {    
-      renderer.finalizeVertexBufferObject(glPointIndexBufferID);   
+      pg.finalizeVertexBufferObject(glPointIndexBufferID);   
     }  
   }
     
@@ -642,7 +642,7 @@ public class PShape3D extends PShape {
       u /= texture.width;
       v /= texture.height;
       
-      PTexture tex = renderer.queryTexture(texture);
+      PTexture tex = pg.queryTexture(texture);
       if (tex != null && tex.isFlippedY()) {
         v = 1 - v;
       }          
@@ -707,6 +707,10 @@ public class PShape3D extends PShape {
       PGraphics.showWarning("Cannot end GROUP shape");
       return;
     }
+    
+    // Input arrays are trimmed since they are expanded by doubling their old size,
+    // which might lead to arrays larger than the vertex counts.
+    in.trim();
     
     isClosed = mode == CLOSE;    
     root.tessellated = false;
@@ -1652,11 +1656,11 @@ public class PShape3D extends PShape {
     }
 
     // setup matrix for forward differencing to speed up drawing
-    renderer.splineForward(detail, bezierDrawMatrix);
+    pg.splineForward(detail, bezierDrawMatrix);
 
     // multiply the basis and forward diff matrices together
     // saves much time since this needn't be done for each curve
-    bezierDrawMatrix.apply(renderer.bezierBasisMatrix);
+    bezierDrawMatrix.apply(pg.bezierBasisMatrix);
   }  
   
   public void bezierVertex(float x2, float y2,
@@ -1823,10 +1827,10 @@ public class PShape3D extends PShape {
                          (s-1)/2f, 0,         (1-s)/2f,  0,
                          0,        1,         0,         0);
 
-    renderer.splineForward(curveDetail, curveDrawMatrix);
+    pg.splineForward(curveDetail, curveDrawMatrix);
 
     if (bezierBasisInverse == null) {
-      bezierBasisInverse = renderer.bezierBasisMatrix.get();
+      bezierBasisInverse = pg.bezierBasisMatrix.get();
       bezierBasisInverse.invert();
       curveToBezierMatrix = new PMatrix3D();
     }
@@ -2293,9 +2297,13 @@ public class PShape3D extends PShape {
           // equivalent to use POLYGON with fill disabled.
         }
         
+        // Tessellated arrays are trimmed since they are expanded by doubling their old size,
+        // which might lead to arrays larger than the vertex counts.        
+        tess.trim();
+        
         if (texture != null && parent != null) {
           ((PShape3D)parent).addTexture(texture);
-        }        
+        }      
       }
     }
     
@@ -2409,8 +2417,8 @@ public class PShape3D extends PShape {
   protected void tessellateSphere() {
     // TODO: move to InGeometry
     float r = params[0];
-    int nu = renderer.sphereDetailU;
-    int nv = renderer.sphereDetailV;
+    int nu = pg.sphereDetailU;
+    int nv = pg.sphereDetailV;
     
     if ((nu < 3) || (nv < 2)) {
       nu = nv = 30;
@@ -2788,25 +2796,25 @@ public class PShape3D extends PShape {
   }
   
   protected void initFillBuffers(int nvert, int nind) {
-    glFillVertexBufferID = renderer.createVertexBufferObject();  
+    glFillVertexBufferID = pg.createVertexBufferObject();  
     pgl.bindVertexBuffer(glFillVertexBufferID);
     pgl.initVertexBuffer(3 * nvert, glMode);    
     
-    glFillColorBufferID = renderer.createVertexBufferObject();
+    glFillColorBufferID = pg.createVertexBufferObject();
     pgl.bindVertexBuffer(glFillColorBufferID);
     pgl.initVertexBuffer(4 * nvert, glMode);    
     
-    glFillNormalBufferID = renderer.createVertexBufferObject();
+    glFillNormalBufferID = pg.createVertexBufferObject();
     pgl.bindVertexBuffer(glFillNormalBufferID);
     pgl.initVertexBuffer(3 * nvert, glMode);     
     
-    glFillTexCoordBufferID = renderer.createVertexBufferObject();
+    glFillTexCoordBufferID = pg.createVertexBufferObject();
     pgl.bindVertexBuffer(glFillTexCoordBufferID);
     pgl.initVertexBuffer(2 * nvert, glMode);  
     
     pgl.unbindVertexBuffer();
         
-    glFillIndexBufferID = renderer.createVertexBufferObject();  
+    glFillIndexBufferID = pg.createVertexBufferObject();  
     pgl.bindIndexBuffer(glFillIndexBufferID);
     pgl.initIndexBuffer(nind, glMode);    
     
@@ -3044,25 +3052,25 @@ public class PShape3D extends PShape {
   
   
   protected void initLineBuffers(int nvert, int nind) {
-    glLineVertexBufferID = renderer.createVertexBufferObject();    
+    glLineVertexBufferID = pg.createVertexBufferObject();    
     pgl.bindVertexBuffer(glLineVertexBufferID);
     pgl.initVertexBuffer(3 * nvert, glMode);   
     
-    glLineColorBufferID = renderer.createVertexBufferObject();
+    glLineColorBufferID = pg.createVertexBufferObject();
     pgl.bindVertexBuffer(glLineColorBufferID);
     pgl.initVertexBuffer(4 * nvert, glMode);       
 
-    glLineNormalBufferID = renderer.createVertexBufferObject();    
+    glLineNormalBufferID = pg.createVertexBufferObject();    
     pgl.bindVertexBuffer(glLineNormalBufferID);
     pgl.initVertexBuffer(3 * nvert, glMode);    
     
-    glLineAttribBufferID = renderer.createVertexBufferObject();
+    glLineAttribBufferID = pg.createVertexBufferObject();
     pgl.bindVertexBuffer(glLineAttribBufferID);
     pgl.initVertexBuffer(4 * nvert, glMode);    
     
     pgl.unbindVertexBuffer();    
     
-    glLineIndexBufferID = renderer.createVertexBufferObject();    
+    glLineIndexBufferID = pg.createVertexBufferObject();    
     pgl.bindIndexBuffer(glLineIndexBufferID);
     pgl.initIndexBuffer(nind, glMode);    
 
@@ -3143,25 +3151,25 @@ public class PShape3D extends PShape {
   
 
   protected void initPointBuffers(int nvert, int nind) {
-    glPointVertexBufferID = renderer.createVertexBufferObject();
+    glPointVertexBufferID = pg.createVertexBufferObject();
     pgl.bindVertexBuffer(glPointVertexBufferID);
     pgl.initVertexBuffer(3 * nvert, glMode);   
 
-    glPointColorBufferID = renderer.createVertexBufferObject();
+    glPointColorBufferID = pg.createVertexBufferObject();
     pgl.bindVertexBuffer(glPointColorBufferID);
     pgl.initVertexBuffer(4 * nvert, glMode);     
     
-    glPointNormalBufferID = renderer.createVertexBufferObject();    
+    glPointNormalBufferID = pg.createVertexBufferObject();    
     pgl.bindVertexBuffer(glPointNormalBufferID);
     pgl.initVertexBuffer(3 * nvert, glMode);    
 
-    glPointAttribBufferID = renderer.createVertexBufferObject();
+    glPointAttribBufferID = pg.createVertexBufferObject();
     pgl.bindVertexBuffer(glPointAttribBufferID);
     pgl.initVertexBuffer(2 * nvert, glMode);    
       
     pgl.unbindVertexBuffer();     
         
-    glPointIndexBufferID = renderer.createVertexBufferObject();
+    glPointIndexBufferID = pg.createVertexBufferObject();
     pgl.bindIndexBuffer(glPointIndexBufferID);
     pgl.initIndexBuffer(nind, glMode);    
     
@@ -3257,27 +3265,27 @@ public class PShape3D extends PShape {
   
   protected void deleteFillBuffers() {
     if (glFillVertexBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glFillVertexBufferID);   
+      pg.deleteVertexBufferObject(glFillVertexBufferID);   
       glFillVertexBufferID = 0;
     }    
     
     if (glFillColorBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glFillColorBufferID);   
+      pg.deleteVertexBufferObject(glFillColorBufferID);   
       glFillColorBufferID = 0;
     }    
 
     if (glFillNormalBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glFillNormalBufferID);   
+      pg.deleteVertexBufferObject(glFillNormalBufferID);   
       glFillNormalBufferID = 0;
     }     
 
     if (glFillTexCoordBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glFillTexCoordBufferID);   
+      pg.deleteVertexBufferObject(glFillTexCoordBufferID);   
       glFillTexCoordBufferID = 0;
     }    
     
     if (glFillIndexBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glFillIndexBufferID);   
+      pg.deleteVertexBufferObject(glFillIndexBufferID);   
       glFillIndexBufferID = 0;
     }   
   }
@@ -3285,27 +3293,27 @@ public class PShape3D extends PShape {
   
   protected void deleteLineBuffers() {
     if (glLineVertexBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glLineVertexBufferID);   
+      pg.deleteVertexBufferObject(glLineVertexBufferID);   
       glLineVertexBufferID = 0;
     }    
     
     if (glLineColorBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glLineColorBufferID);   
+      pg.deleteVertexBufferObject(glLineColorBufferID);   
       glLineColorBufferID = 0;
     }    
 
     if (glLineNormalBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glLineNormalBufferID);   
+      pg.deleteVertexBufferObject(glLineNormalBufferID);   
       glLineNormalBufferID = 0;
     }     
 
     if (glLineAttribBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glLineAttribBufferID);   
+      pg.deleteVertexBufferObject(glLineAttribBufferID);   
       glLineAttribBufferID = 0;
     }    
     
     if (glLineIndexBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glLineIndexBufferID);   
+      pg.deleteVertexBufferObject(glLineIndexBufferID);   
       glLineIndexBufferID = 0;
     }  
   }  
@@ -3313,27 +3321,27 @@ public class PShape3D extends PShape {
   
   protected void deletePointBuffers() {
     if (glPointVertexBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glPointVertexBufferID);   
+      pg.deleteVertexBufferObject(glPointVertexBufferID);   
       glPointVertexBufferID = 0;
     }    
     
     if (glPointColorBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glPointColorBufferID);   
+      pg.deleteVertexBufferObject(glPointColorBufferID);   
       glPointColorBufferID = 0;
     }    
 
     if (glPointNormalBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glPointNormalBufferID);   
+      pg.deleteVertexBufferObject(glPointNormalBufferID);   
       glPointNormalBufferID = 0;
     }     
 
     if (glPointAttribBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glPointAttribBufferID);   
+      pg.deleteVertexBufferObject(glPointAttribBufferID);   
       glPointAttribBufferID = 0;
     }    
     
     if (glPointIndexBufferID != 0) {    
-      renderer.deleteVertexBufferObject(glPointIndexBufferID);   
+      pg.deleteVertexBufferObject(glPointIndexBufferID);   
       glPointIndexBufferID = 0;
     }  
   }
@@ -3346,7 +3354,7 @@ public class PShape3D extends PShape {
   
   
   public void draw() {
-    draw(renderer);
+    draw(pg);
   }
   
   
@@ -3423,7 +3431,7 @@ public class PShape3D extends PShape {
 
 
   protected void renderPoints() {
-    renderer.startPointShader();
+    pg.startPointShader();
     
     pgl.enableVertexArrays();
     pgl.enableColorArrays();
@@ -3444,7 +3452,7 @@ public class PShape3D extends PShape {
       pgl.bindVertexBuffer(root.glPointNormalBufferID);    
       pgl.setNormalFormat(3, first);    
       
-      renderer.setupPointShader(root.glPointAttribBufferID);
+      pg.setupPointShader(root.glPointAttribBufferID);
       
       pgl.bindIndexBuffer(root.glPointIndexBufferID);
       pgl.renderIndexBuffer(offset, size);
@@ -3457,12 +3465,12 @@ public class PShape3D extends PShape {
     pgl.disableColorArrays();
     pgl.disableNormalArrays();  
         
-    renderer.stopPointShader();
+    pg.stopPointShader();
   }  
 
 
   protected void renderLines() {
-    renderer.startLineShader();
+    pg.startLineShader();
     
     pgl.enableVertexArrays();
     pgl.enableColorArrays();
@@ -3483,7 +3491,7 @@ public class PShape3D extends PShape {
       pgl.bindVertexBuffer(root.glLineNormalBufferID);    
       pgl.setNormalFormat(3, first);      
           
-      renderer.setupLineShader(root.glLineAttribBufferID);    
+      pg.setupLineShader(root.glLineAttribBufferID);    
       
       pgl.bindIndexBuffer(root.glLineIndexBufferID);
       pgl.renderIndexBuffer(offset, size);
@@ -3496,7 +3504,7 @@ public class PShape3D extends PShape {
     pgl.disableColorArrays();
     pgl.disableNormalArrays();    
     
-    renderer.stopLineShader();    
+    pg.stopLineShader();    
   }  
 
   
@@ -3526,7 +3534,7 @@ public class PShape3D extends PShape {
       
       PTexture tex = null;
       if (textureImage != null) {
-        tex = renderer.getTexture(textureImage);
+        tex = pg.getTexture(textureImage);
         if (tex != null) {
           pgl.enableTexturing(tex.glTarget);
           pgl.setActiveTexUnit(0);
@@ -3946,23 +3954,23 @@ public class PShape3D extends PShape {
     int mtlIdxCur = -1;
     OBJMaterial mtl = null;
     
-    renderer.saveDrawingState();
+    pg.saveDrawingState();
     
     // The recorded shapes are not merged, they are grouped
     // according to the group names found in the OBJ file.    
     //ogl.mergeRecShapes = false;
     
     // Using RGB mode for coloring.
-    renderer.colorMode = RGB;
+    pg.colorMode = RGB;
     
     // Strokes are not used to draw the model.
-    renderer.stroke = false;    
+    pg.stroke = false;    
     
     // Normals are automatically computed if not specified in the OBJ file.
     //renderer.autoNormal(true);
     
     // Using normal mode for texture coordinates (i.e.: normalized between 0 and 1).
-    renderer.textureMode = NORMAL;    
+    pg.textureMode = NORMAL;    
     
     //ogl.beginShapeRecorderImpl();    
     for (int i = 0; i < faces.size(); i++) {
@@ -3975,26 +3983,26 @@ public class PShape3D extends PShape {
         mtl = materials.get(mtlIdxCur);
 
         // Setting colors.
-        renderer.specular(mtl.ks.x * 255.0f, mtl.ks.y * 255.0f, mtl.ks.z * 255.0f);
-        renderer.ambient(mtl.ka.x * 255.0f, mtl.ka.y * 255.0f, mtl.ka.z * 255.0f);
-        if (renderer.fill) {
-          renderer.fill(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);  
+        pg.specular(mtl.ks.x * 255.0f, mtl.ks.y * 255.0f, mtl.ks.z * 255.0f);
+        pg.ambient(mtl.ka.x * 255.0f, mtl.ka.y * 255.0f, mtl.ka.z * 255.0f);
+        if (pg.fill) {
+          pg.fill(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);  
         }        
-        renderer.shininess(mtl.ns);
+        pg.shininess(mtl.ns);
         
-        if (renderer.tint && mtl.kdMap != null) {
+        if (pg.tint && mtl.kdMap != null) {
           // If current material is textured, then tinting the texture using the diffuse color.
-          renderer.tint(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);
+          pg.tint(mtl.kd.x * 255.0f, mtl.kd.y * 255.0f, mtl.kd.z * 255.0f, mtl.d * 255.0f);
         }
       }
 
       // Recording current face.
       if (face.vertIdx.size() == 3) {
-        renderer.beginShape(TRIANGLES); // Face is a triangle, so using appropriate shape kind.
+        pg.beginShape(TRIANGLES); // Face is a triangle, so using appropriate shape kind.
       } else if (face.vertIdx.size() == 4) {
-        renderer.beginShape(QUADS);        // Face is a quad, so using appropriate shape kind.
+        pg.beginShape(QUADS);        // Face is a quad, so using appropriate shape kind.
       } else {
-        renderer.beginShape();  
+        pg.beginShape();  
       }      
       
       //renderer.shapeName(face.name);
@@ -4027,29 +4035,29 @@ public class PShape3D extends PShape {
             }
           }
           
-          PTexture texMtl = (PTexture)mtl.kdMap.getCache(renderer);
+          PTexture texMtl = (PTexture)mtl.kdMap.getCache(pg);
           if (texMtl != null) {     
             // Texture orientation in Processing is inverted.
             texMtl.setFlippedY(true);          
           }
-          renderer.texture(mtl.kdMap);
+          pg.texture(mtl.kdMap);
           if (norms != null) {
-            renderer.normal(norms.x, norms.y, norms.z);
+            pg.normal(norms.x, norms.y, norms.z);
           }
           if (tex != null) {
-            renderer.vertex(vert.x, vert.y, vert.z, tex.x, tex.y);  
+            pg.vertex(vert.x, vert.y, vert.z, tex.x, tex.y);  
           } else {
-            renderer.vertex(vert.x, vert.y, vert.z);
+            pg.vertex(vert.x, vert.y, vert.z);
           }
         } else {
           // This face is not textured.
           if (norms != null) {
-            renderer.normal(norms.x, norms.y, norms.z);
+            pg.normal(norms.x, norms.y, norms.z);
           }
-          renderer.vertex(vert.x, vert.y, vert.z);          
+          pg.vertex(vert.x, vert.y, vert.z);          
         }
       } 
-      renderer.endShape(CLOSE);
+      pg.endShape(CLOSE);
     }
     
     // Allocate space for the geometry that the triangulator has generated from the OBJ model.
@@ -4065,7 +4073,7 @@ public class PShape3D extends PShape {
     //ogl.endShapeRecorderImpl(this);
     //ogl.endShapeRecorderImpl(null);
     
-    renderer.restoreDrawingState();    
+    pg.restoreDrawingState();    
   }
   
 

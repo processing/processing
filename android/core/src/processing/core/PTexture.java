@@ -37,9 +37,9 @@ public class PTexture implements PConstants {
   public int width, height;
       
   protected PApplet parent;           // The Processing applet
-  protected PGraphicsAndroid3D renderer; // The main renderer
+  protected PGraphicsAndroid3D pg;    // The main renderer
   protected PGL pgl;                  // The interface between Processing and OpenGL.
-  protected PGL.Context context;        // The context that created this texture.
+  protected PGL.Context context;      // The context that created this texture.
   
   // These are public but use at your own risk!
   public int glID; 
@@ -95,8 +95,8 @@ public class PTexture implements PConstants {
   public PTexture(PApplet parent, int width, int height, Object params) { 
     this.parent = parent;
        
-    renderer = (PGraphicsAndroid3D)parent.g;
-    pgl = renderer.pgl;
+    pg = (PGraphicsAndroid3D)parent.g;
+    pgl = pg.pgl;
     context = pgl.getContext();
     
     glID = 0;
@@ -108,7 +108,7 @@ public class PTexture implements PConstants {
   protected void finalize() throws Throwable {
     try {
       if (glID != 0) {
-        renderer.finalizeTextureObject(glID);
+        pg.finalizeTextureObject(glID);
       }
     } finally {
       super.finalize();
@@ -194,13 +194,13 @@ public class PTexture implements PConstants {
 
   
   public void set(PImage img) {
-    PTexture tex = (PTexture)img.getCache(renderer);
+    PTexture tex = (PTexture)img.getCache(pg);
     set(tex);
   }
   
   
   public void set(PImage img, int x, int y, int w, int h) {
-    PTexture tex = (PTexture)img.getCache(renderer);
+    PTexture tex = (PTexture)img.getCache(pg);
     set(tex, x, y, w, h);
   }
   
@@ -294,18 +294,18 @@ public class PTexture implements PConstants {
       // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
       // from the current draw buffer (which is the color buffer of the FBO).
       tempFbo.setColorBuffer(this);
-      renderer.pushFramebuffer();
-      renderer.setFramebuffer(tempFbo);
+      pg.pushFramebuffer();
+      pg.setFramebuffer(tempFbo);
       tempFbo.readPixels();
-      renderer.popFramebuffer();
+      pg.popFramebuffer();
     } else {
       // Here we don't have FBOs, so the method above is of no use. What we do instead is
       // to draw the texture to the screen framebuffer, and then grab the pixels from there.      
-      renderer.pushFramebuffer();
-      renderer.setFramebuffer(tempFbo);
-      renderer.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
+      pg.pushFramebuffer();
+      pg.setFramebuffer(tempFbo);
+      pg.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
       tempFbo.readPixels();
-      renderer.popFramebuffer();
+      pg.popFramebuffer();
     }
     
     if (tempPixels == null) {
@@ -770,7 +770,7 @@ public class PTexture implements PConstants {
     
     pgl.enableTexturing(glTarget);
     
-    glID = renderer.createTextureObject();    
+    glID = pg.createTextureObject();    
     
     pgl.bindTexture(glTarget, glID);
     pgl.setTexMinFilter(glTarget, glMinFilter);
@@ -807,7 +807,7 @@ public class PTexture implements PConstants {
    */
   protected void release() {    
     if (glID != 0) {      
-      renderer.finalizeTextureObject(glID);
+      pg.finalizeTextureObject(glID);
       glID = 0;
     }    
   }
@@ -833,19 +833,19 @@ public class PTexture implements PConstants {
     tempFbo.disableDepthTest();
     
     // FBO copy:
-    renderer.pushFramebuffer();
-    renderer.setFramebuffer(tempFbo);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(tempFbo);
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      renderer.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
+      pg.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
     } else {
       // Rendering tex into "this" but without scaling so the contents 
       // of the source texture fall in the corresponding texels of the
       // destination.
-      renderer.drawTexture(tex, x, y, w, h, x, y, w, h);
+      pg.drawTexture(tex, x, y, w, h, x, y, w, h);
     }
-    renderer.popFramebuffer();
+    pg.popFramebuffer();
   }  
   
   protected void setTexels(int[] pix, int x, int y, int w, int h) {
@@ -873,7 +873,7 @@ public class PTexture implements PConstants {
     height = src.height;
     
     parent = src.parent;
-    renderer = src.renderer;
+    pg = src.pg;
     
     glID = src.glID;
     glTarget = src.glTarget;
