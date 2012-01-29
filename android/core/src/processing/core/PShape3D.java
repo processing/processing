@@ -2954,7 +2954,7 @@ public class PShape3D extends PShape {
         
         if (modifiedPointAttributes) {
           if (root.pointAttributesCache == null) { 
-            root.pointAttributesCache = new VertexCache(3);
+            root.pointAttributesCache = new VertexCache(2);
           }            
           root.pointAttributesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointAttributes);            
           modifiedPointAttributes = false;
