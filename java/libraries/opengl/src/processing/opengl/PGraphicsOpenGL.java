@@ -1890,7 +1890,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       
       flush();
-    }    
+    }
   }
 
   
@@ -3146,8 +3146,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void textLineImpl(char buffer[], int start, int stop, float x, float y) {
     textTex = (PFontTexture)textFont.getCache(pg);        
     if (textTex == null) {
-      textTex = new PFontTexture(parent, textFont, PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), 
-                                                   PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize));
+      textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);
     } else {
       if (!pgl.contextIsCurrent(textTex.context)) {
@@ -3155,7 +3154,8 @@ public class PGraphicsOpenGL extends PGraphics {
           textTex.textures[i].glID = 0; // To avoid finalization (texture objects were already deleted when context changed).
           textTex.textures[i] = null;
         }
-        textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
+        textTex = new PFontTexture(parent, textFont, PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), 
+                                                     PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize));
         textFont.setCache(this, textTex);
       }
     }    
@@ -6214,7 +6214,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public InGeometry(int mode) {
       renderMode = mode;
       allocate();
-    }   
+    }    
     
     public void reset() {
       vertexCount = firstVertex = lastVertex = 0; 
@@ -6230,6 +6230,16 @@ public class PGraphicsOpenGL extends PGraphics {
       strokes = new float[5 * PGL.DEFAULT_IN_VERTICES];
       edges = new int[PGL.DEFAULT_IN_EDGES][3];
       reset();
+    }
+    
+    public void trim() {
+      if (vertexCount < vertices.length / 3) {
+        trimVertices();
+        trimColors();
+        trimNormals();
+        trimTexcoords();
+        trimEdges();
+      }      
     }
     
     public void dispose() {
@@ -6358,22 +6368,7 @@ public class PGraphicsOpenGL extends PGraphics {
         
     public void vertexCheck() {
       if (vertexCount == vertices.length / 3) {
-        int newSize = vertexCount;
-        
-        // Increase of vertex arrays is different between
-        // immediate and retained modes:
-        // * in immediate mode, since we need to very quickly
-        //   have larger arrays in order to accomodate the
-        //   incoming geometry, doubling of size is used.
-        // * in retained mode, since the arrays are used
-        //   to create arrays for individual shapes that
-        //   don't change afterwards, we only need linear
-        //   increase.
-        if (renderMode == IMMEDIATE) {
-          newSize <<= 1; 
-        } else {
-          newSize += PGL.IN_VERTICES_INCREMENT;
-        }
+        int newSize = vertexCount << 1;
 
         expandCodes(newSize);
         expandVertices(newSize);
@@ -6456,13 +6451,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void edgeCheck() {
       if (edgeCount == edges.length) {
-        int newLen = edgeCount; 
-        
-        if (renderMode == IMMEDIATE) {
-          newLen <<= 1;
-        } else {
-          newLen += PGL.IN_EDGES_INCREMENT;
-        }
+        int newLen = edgeCount << 1;
         
         int temp[][] = new int[newLen][3];
         PApplet.arrayCopy(edges, 0, temp, 0, edgeCount);
@@ -6482,7 +6471,7 @@ public class PGraphicsOpenGL extends PGraphics {
       vertices = temp;    
     }
 
-    protected void expandColors(int n){
+    protected void expandColors(int n) {
       float temp[] = new float[4 * n];      
       PApplet.arrayCopy(colors, 0, temp, 0, 4 * vertexCount);
       colors = temp;  
@@ -6499,11 +6488,47 @@ public class PGraphicsOpenGL extends PGraphics {
       PApplet.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
       texcoords = temp;    
     }
-    
+        
     protected void expandStrokes(int n) {
       float temp[] = new float[5 * n];      
       PApplet.arrayCopy(strokes, 0, temp, 0, 5 * vertexCount);
       strokes = temp;
+    }
+    
+    protected void trimVertices() {
+      float temp[] = new float[3 * vertexCount];      
+      PApplet.arrayCopy(vertices, 0, temp, 0, 3 * vertexCount);
+      vertices = temp;      
+    }
+    
+    protected void trimColors() {
+      float temp[] = new float[4 * vertexCount];      
+      PApplet.arrayCopy(colors, 0, temp, 0, 4 * vertexCount);
+      colors = temp;        
+    }
+
+    protected void trimNormals() {
+      float temp[] = new float[3 * vertexCount];      
+      PApplet.arrayCopy(normals, 0, temp, 0, 3 * vertexCount);
+      normals = temp;          
+    }
+    
+    protected void trimTexcoords() {
+      float temp[] = new float[2 * vertexCount];      
+      PApplet.arrayCopy(texcoords, 0, temp, 0, 2 * vertexCount);
+      texcoords = temp;    
+    }
+        
+    protected void packStrokes() {
+      float temp[] = new float[5 * vertexCount];      
+      PApplet.arrayCopy(strokes, 0, temp, 0, 5 * vertexCount);
+      strokes = temp;
+    }    
+    
+    protected void trimEdges() {
+      int temp[][] = new int[edgeCount][3];
+      PApplet.arrayCopy(edges, 0, temp, 0, edgeCount);
+      edges = temp;        
     }
     
     public int getNumLineVertices() {
@@ -6865,6 +6890,131 @@ public class PGraphicsOpenGL extends PGraphics {
       reset();
     }
     
+    public void trim() {
+      if (fillVertexCount < fillVertices.length / 3) {
+        trimFillVertices();
+        trimFillColors();
+        trimFillNormals();
+        trimFillTexcoords();
+      }
+      
+      if (fillIndexCount < fillIndices.length) {
+        trimFillIndices();  
+      }
+            
+      if (lineVertexCount < lineVertices.length / 3) {
+        trimLineVertices();
+        trimLineColors();
+        trimLineNormals();
+        trimLineAttributes();
+      }
+      
+      if (lineIndexCount < lineIndices.length) {
+        trimLineIndices();  
+      }
+      
+      if (pointVertexCount < pointVertices.length / 3) {
+        trimPointVertices();
+        trimPointColors();
+        trimPointNormals();
+        trimPointAttributes();
+      }
+      
+      if (pointIndexCount < pointIndices.length) {
+        trimPointIndices();  
+      }       
+    }    
+    
+    protected void trimFillVertices() {
+      float temp[] = new float[3 * fillVertexCount];      
+      PApplet.arrayCopy(fillVertices, 0, temp, 0, 3 * fillVertexCount);
+      fillVertices = temp;       
+    }
+
+    protected void trimFillColors() {
+      float temp[] = new float[4 * fillVertexCount];      
+      PApplet.arrayCopy(fillColors, 0, temp, 0, 4 * fillVertexCount);
+      fillColors = temp;
+    }
+    
+    protected void trimFillNormals() {
+      float temp[] = new float[3 * fillVertexCount];      
+      PApplet.arrayCopy(fillNormals, 0, temp, 0, 3 * fillVertexCount);
+      fillNormals = temp;       
+    }
+    
+    protected void trimFillTexcoords() {
+      float temp[] = new float[2 * fillVertexCount];      
+      PApplet.arrayCopy(fillTexcoords, 0, temp, 0, 2 * fillVertexCount);
+      fillTexcoords = temp;
+    }
+    
+    public void trimFillIndices() {
+      int temp[] = new int[fillIndexCount];      
+      PApplet.arrayCopy(fillIndices, 0, temp, 0, fillIndexCount);
+      fillIndices = temp;      
+    }    
+    
+    protected void trimLineVertices() {
+      float temp[] = new float[3 * lineVertexCount];      
+      PApplet.arrayCopy(lineVertices, 0, temp, 0, 3 * lineVertexCount);
+      lineVertices = temp;  
+    }
+    
+    protected void trimLineColors() {
+      float temp[] = new float[4 * lineVertexCount];      
+      PApplet.arrayCopy(lineColors, 0, temp, 0, 4 * lineVertexCount);
+      lineColors = temp;      
+    }
+    
+    protected void trimLineNormals() {
+      float temp[] = new float[3 * lineVertexCount];      
+      PApplet.arrayCopy(lineNormals, 0, temp, 0, 3 * lineVertexCount);
+      lineNormals = temp;      
+    }
+    
+    protected void trimLineAttributes() {
+      float temp[] = new float[4 * lineVertexCount];      
+      PApplet.arrayCopy(lineAttributes, 0, temp, 0, 4 * lineVertexCount);
+      lineAttributes = temp;      
+    }      
+    
+    protected void trimLineIndices() {
+      int temp[] = new int[lineVertexCount];      
+      PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
+      lineIndices = temp;        
+    }    
+    
+    protected void trimPointVertices() {
+      float temp[] = new float[3 * pointVertexCount];      
+      PApplet.arrayCopy(pointVertices, 0, temp, 0, 3 * pointVertexCount);
+      pointVertices = temp;  
+    }
+    
+    protected void trimPointColors() {
+      float temp[] = new float[4 * pointVertexCount];      
+      PApplet.arrayCopy(pointColors, 0, temp, 0, 4 * pointVertexCount);
+      pointColors = temp;      
+    }
+    
+    protected void trimPointNormals() {
+      float temp[] = new float[3 * pointVertexCount];      
+      PApplet.arrayCopy(pointNormals, 0, temp, 0, 3 * pointVertexCount);
+      pointNormals = temp;      
+    }
+    
+    protected void trimPointAttributes() {
+      float temp[] = new float[2 * pointVertexCount];      
+      PApplet.arrayCopy(pointAttributes, 0, temp, 0, 2 * pointVertexCount);
+      pointAttributes = temp;      
+    }
+    
+    protected void trimPointIndices() {
+      int temp[] = new int[pointIndexCount];      
+      PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
+      pointIndices = temp;        
+    }    
+    
     public void dipose() {
       fillVertices = null;
       fillColors = null;
@@ -6902,7 +7052,7 @@ public class PGraphicsOpenGL extends PGraphics {
              PGL.MAX_TESS_INDICES  < fillIndexCount ||
              PGL.MAX_TESS_INDICES  < fillIndexCount;
     }
-        
+    
     public void addCounts(TessGeometry other) {
       fillVertexCount += other.fillVertexCount;
       fillIndexCount += other.fillIndexCount;
@@ -6945,12 +7095,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     public int setFillVertex(int offset) {
-      firstFillVertex = 0;        
+      firstFillVertex = 0;
       if (0 < offset) {
         firstFillVertex = offset + 1; 
-      }      
+      }
       lastFillVertex = firstFillVertex + fillVertexCount - 1;      
-      return lastFillVertex; 
+      return lastFillVertex;         
     }
     
     public int setFillIndex(int voffset, int ioffset) {
@@ -7112,7 +7262,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addFillVertices(int count) {
       int oldSize = fillVertices.length / 3;
-      if (fillVertexCount + count >= oldSize) {
+      if (fillVertexCount + count > oldSize) {
         int newSize = expandVertSize(oldSize, fillVertexCount + count); 
                 
         expandFillVertices(newSize);
@@ -7128,7 +7278,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addFillIndices(int count) {
       int oldSize = fillIndices.length;
-      if (fillIndexCount + count >= oldSize) {
+      if (fillIndexCount + count > oldSize) {
         int newSize = expandIndSize(oldSize, fillIndexCount + count);    
         
         expandFillIndices(newSize);
@@ -7165,7 +7315,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addLineVertices(int count) {
       int oldSize = lineVertices.length / 3;
-      if (lineVertexCount + count >= oldSize) {
+      if (lineVertexCount + count > oldSize) {
         int newSize = expandVertSize(oldSize, lineVertexCount + count);
         
         expandLineVertices(newSize);
@@ -7179,25 +7329,25 @@ public class PGraphicsOpenGL extends PGraphics {
       lastLineVertex = lineVertexCount - 1;
     }
 
-    public void expandLineVertices(int n) {
+    protected void expandLineVertices(int n) {
       float temp[] = new float[3 * n];      
       PApplet.arrayCopy(lineVertices, 0, temp, 0, 3 * lineVertexCount);
       lineVertices = temp;  
     }
     
-    public void expandLineColors(int n) {
+    protected void expandLineColors(int n) {
       float temp[] = new float[4 * n];      
       PApplet.arrayCopy(lineColors, 0, temp, 0, 4 * lineVertexCount);
       lineColors = temp;      
     }
     
-    public void expandLineNormals(int n) {
+    protected void expandLineNormals(int n) {
       float temp[] = new float[3 * n];      
       PApplet.arrayCopy(lineNormals, 0, temp, 0, 3 * lineVertexCount);
       lineNormals = temp;      
     }
     
-    public void expandLineAttributes(int n) {
+    protected void expandLineAttributes(int n) {
       float temp[] = new float[4 * n];      
       PApplet.arrayCopy(lineAttributes, 0, temp, 0, 4 * lineVertexCount);
       lineAttributes = temp;      
@@ -7205,7 +7355,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addLineIndices(int count) {
       int oldSize = lineIndices.length;
-      if (lineIndexCount + count >= oldSize) {
+      if (lineIndexCount + count > oldSize) {
         int newSize = expandIndSize(oldSize, lineIndexCount + count);
         
         expandLineIndices(newSize);
@@ -7216,7 +7366,7 @@ public class PGraphicsOpenGL extends PGraphics {
       lastLineIndex = lineIndexCount - 1;   
     }   
     
-    public void expandLineIndices(int n) {
+    protected void expandLineIndices(int n) {
       int temp[] = new int[n];      
       PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;        
@@ -7224,7 +7374,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addPointVertices(int count) {
       int oldSize = pointVertices.length / 3;
-      if (pointVertexCount + count >= oldSize) {
+      if (pointVertexCount + count > oldSize) {
         int newSize = expandVertSize(oldSize, pointVertexCount + count);
         
         expandPointVertices(newSize);
@@ -7238,25 +7388,25 @@ public class PGraphicsOpenGL extends PGraphics {
       lastPointVertex = pointVertexCount - 1;
     }
 
-    public void expandPointVertices(int n) {
+    protected void expandPointVertices(int n) {
       float temp[] = new float[3 * n];      
       PApplet.arrayCopy(pointVertices, 0, temp, 0, 3 * pointVertexCount);
       pointVertices = temp;  
     }
     
-    public void expandPointColors(int n) {
+    protected void expandPointColors(int n) {
       float temp[] = new float[4 * n];      
       PApplet.arrayCopy(pointColors, 0, temp, 0, 4 * pointVertexCount);
       pointColors = temp;      
     }
     
-    public void expandPointNormals(int n) {
+    protected void expandPointNormals(int n) {
       float temp[] = new float[3 * n];      
       PApplet.arrayCopy(pointNormals, 0, temp, 0, 3 * pointVertexCount);
       pointNormals = temp;      
     }
     
-    public void expandPointAttributes(int n) {
+    protected void expandPointAttributes(int n) {
       float temp[] = new float[2 * n];      
       PApplet.arrayCopy(pointAttributes, 0, temp, 0, 2 * pointVertexCount);
       pointAttributes = temp;      
@@ -7264,7 +7414,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public void addPointIndices(int count) {
       int oldSize = pointIndices.length;
-      if (pointIndexCount + count >= oldSize) {
+      if (pointIndexCount + count > oldSize) {
         int newSize = expandIndSize(oldSize, pointIndexCount + count);
         
         expandPointIndices(newSize);
@@ -7275,7 +7425,7 @@ public class PGraphicsOpenGL extends PGraphics {
       lastPointIndex = pointIndexCount - 1;   
     }   
     
-    public void expandPointIndices(int n) {
+    protected void expandPointIndices(int n) {
       int temp[] = new int[n];      
       PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;        
@@ -7548,11 +7698,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public int expandVertSize(int currSize, int newMinSize) {
       int newSize = currSize; 
       while (newSize < newMinSize) {
-        if (renderMode == IMMEDIATE) {
-          newSize <<= 1;  
-        } else {
-          newSize += PGL.TESS_VERTICES_INCREMENT;
-        }        
+        newSize <<= 1;        
       }
       return newSize;
     }
@@ -7560,11 +7706,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public int expandIndSize(int currSize, int newMinSize) {
       int newSize = currSize; 
       while (newSize < newMinSize) {
-        if (renderMode == IMMEDIATE) {
-          newSize <<= 1;  
-        } else {
-          newSize += PGL.TESS_INDICES_INCREMENT;
-        }        
+        newSize <<= 1;
       }
       return newSize;
     }    
@@ -7583,7 +7725,7 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int i = 0; i < lineVertexCount; i++) {
         index = 3 * i;
         cx0 += lineVertices[index++];
-        cy0 += lineVertices[index  ];        
+        cy0 += lineVertices[index  ];
       }
       for (int i = 0; i < pointVertexCount; i++) {
         index = 3 * i;
