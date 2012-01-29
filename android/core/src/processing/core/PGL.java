@@ -80,14 +80,6 @@ public class PGL {
   public static final int DEFAULT_TESS_VERTICES = 16;
   public static final int DEFAULT_TESS_INDICES = 32;  
   
-  /** In and tess increments used in retained mode, where
-   * arrays are not doubled in size but increased linearly. 
-   * */
-  public static final int IN_VERTICES_INCREMENT = 8;
-  public static final int IN_EDGES_INCREMENT = 16;
-  public static final int TESS_VERTICES_INCREMENT = 8;
-  public static final int TESS_INDICES_INCREMENT = 16;  
-  
   /** Initial sizes for vertex cache used in PShape3D. */
   public static final int DEFAULT_VERTEX_CACHE_SIZE = 512;
   
@@ -617,6 +609,7 @@ public class PGL {
   // Error  
   
   public int getError() {
+    //return GLES20.glGetError();
     return gl.glGetError();
   }
   
@@ -629,34 +622,42 @@ public class PGL {
   // Rendering options
   
   public void enableDepthTest() {
+    //GLES20.glEnable(GLES20.GL_DEPTH_TEST);
     gl.glEnable(GL10.GL_DEPTH_TEST);
   }
 
   public void disableDepthTest() {
+    //GLES20.glDisable(GLES20.GL_DEPTH_TEST);
     gl.glDisable(GL10.GL_DEPTH_TEST);
   }  
   
   public void enableDepthMask() {
+    //GLES20.glDepthMask(true);
     gl.glDepthMask(true);    
   }
   
   public void disableDepthMask() {
+    //GLES20.glDepthMask(false);
     gl.glDepthMask(false);    
   }  
   
   public void setDepthFunc(int func) {
+    //GLES20.glDepthFunc(func);
     gl.glDepthFunc(func);  
   }  
   
   public void setShadeModel(int model) {
+    // ??
     gl.glShadeModel(model);
   }
   
   public void setFrontFace(int mode) {
+    //GLES20.glFrontFace(mode);
     gl.glFrontFace(mode);
   }
   
   public void enableMultisample() {
+    //GLES20.glEnable(??);
     gl.glEnable(GL10.GL_MULTISAMPLE);  
   }
   
@@ -665,6 +666,7 @@ public class PGL {
   }
 
   public void enablePointSmooth() {
+    //GLES20.glEnable(??);
     gl.glEnable(GL10.GL_POINT_SMOOTH);  
   }
   
@@ -730,6 +732,7 @@ public class PGL {
   // Textures     
   
   public void genTexture(int[] id) {
+    //GLES20.glGenTextures(1, id, 0);
     gl.glGenTextures(1, id, 0);
   }
 
@@ -742,6 +745,7 @@ public class PGL {
   }
   
   public void setActiveTexUnit(int tu) {
+    //GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + tu);
     gl.glActiveTexture(GL10.GL_TEXTURE0 + tu);
   }
   
@@ -758,6 +762,7 @@ public class PGL {
   }    
   
   public void initTex(int target, int format, int w, int h) {
+    //GLES20.glTexImage2D(target, 0, format, w, h, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
     gl.glTexImage2D(target, 0, format, w, h, 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, null);
   }
 
@@ -778,6 +783,7 @@ public class PGL {
   }
   
   public void enableTexMipmapGen(int target) {
+    //GLES20.glTexParameterf(target, ??, GL10.GL_TRUE);
     gl.glTexParameterf(target, GL11.GL_GENERATE_MIPMAP, GL10.GL_TRUE);
   }
 
@@ -786,6 +792,7 @@ public class PGL {
   }  
   
   public void setTexMinFilter(int target, int filter) {
+    //GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_MIN_FILTER, filter);
     gl.glTexParameterf(target, GL10.GL_TEXTURE_MIN_FILTER, filter); 
   }
   
@@ -1044,73 +1051,73 @@ public class PGL {
   // Shaders  
   
   public void genProgram(int[] id) {
-    //id[0] = gl2x.glCreateProgram();    
+    //id[0] = GLES20.glCreateProgram();    
   }
   
   public void delProgram(int[] id) {
-    //gl2x.glDeleteProgram(id[0]);  
+    //GLES20.glDeleteProgram(id[0]);  
   }
   
   public void genVertexShader(int[] id) {
-    //id[0] = gl2x.glCreateShader(GL2.GL_VERTEX_SHADER);    
+    //id[0] = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);    
   }
   
   public void delVertexShader(int[] id) {
-    //gl2x.glDeleteShader(id[0]);    
+    //GLES20.glDeleteShader(id[0]);    
   }
   
   public void genFragmentShader(int[] id) {
-    //id[0] = gl2x.glCreateShader(GL2.GL_FRAGMENT_SHADER);    
+    //id[0] = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);    
   }
   
   public void delFragmentShader(int[] id) {
-    //gl2x.glDeleteShader(id[0]);    
+    //GLES20.glDeleteShader(id[0]);    
   }  
 
   public void linkProgram(int prog) {
-    //gl2.glLinkProgram(prog);  
+    //GLES20.glLinkProgram(prog);  
   }
   
   public void validateProgram(int prog) {
-    //gl2.glValidateProgram(prog);
+    //GLES20.glValidateProgram(prog);
   }
   
   public void startProgram(int prog) {
-    //gl2.glUseProgramObjectARB(prog);  
+    //GLES20.glUseProgram(prog);  
   }
   
   public void stopProgram() {
-    //gl2.glUseProgramObjectARB(0);  
+    //GLES20.glUseProgram(0);  
   }  
   
   public int getAttribLocation(int prog, String name) {
-    //return gl2.glGetAttribLocation(prog, name);
+    //return GLES20.glGetAttribLocation(prog, name);
     return -1;
   }
   
   public int getUniformLocation(int prog, String name) {
-    //return gl2.glGetUniformLocation(prog, name);
+    //return GLES20.glGetUniformLocation(prog, name);
     return -1;
   }  
   
   public void setIntUniform(int loc, int value) {
-    //gl2.glUniform1i(loc, value);  
+    //GLES20.glUniform1i(loc, value);  
   }
   
   public void setFloatUniform(int loc, float value) {
-    //gl2.glUniform1f(loc, value);  
+    //GLES20.glUniform1f(loc, value);  
   }    
   
   public void setFloatUniform(int loc, float value0, float value1) {
-    //gl2.glUniform2f(loc, value0, value1);  
+    //GLES20.glUniform2f(loc, value0, value1);  
   }
   
   public void setFloatUniform(int loc, float value0, float value1, float value2) {
-    //gl2.glUniform3f(loc, value0, value1, value2);  
+    //GLES20.glUniform3f(loc, value0, value1, value2);  
   }
   
   public void setFloatUniform(int loc, float value0, float value1, float value2, float value3) {
-    //gl2.glUniform4f(loc, value0, value1, value2, value3);  
+    //GLES20.glUniform4f(loc, value0, value1, value2, value3);  
   }
   
   public void setMatUniform(int loc, float m00, float m01,
@@ -1118,7 +1125,7 @@ public class PGL {
     float[] mat = new float[4];
     mat[0] = m00; mat[4] = m01;
     mat[1] = m10; mat[5] = m11;
-    //gl2.glUniformMatrix2fv(loc, 1, false, mat, 0);
+    //GLES20.glUniformMatrix2fv(loc, 1, false, mat, 0);
   }
   
   public void setMatUniform(int loc, float m00, float m01, float m02,
@@ -1128,7 +1135,7 @@ public class PGL {
     mat[0] = m00; mat[4] = m01; mat[ 8] = m02;
     mat[1] = m10; mat[5] = m11; mat[ 9] = m12;
     mat[2] = m20; mat[6] = m21; mat[10] = m22;    
-    //gl2.glUniformMatrix3fv(loc, 1, false, mat, 0);    
+    //GLES20.glUniformMatrix3fv(loc, 1, false, mat, 0);    
   }
   
   public void setMatUniform(int loc, float m00, float m01, float m02, float m03,
@@ -1140,41 +1147,41 @@ public class PGL {
     mat[1] = m10; mat[5] = m11; mat[ 9] = m12; mat[13] = m13;
     mat[2] = m20; mat[6] = m21; mat[10] = m22; mat[14] = m23;
     mat[3] = m30; mat[7] = m31; mat[11] = m32; mat[15] = m33;
-    //gl2.glUniformMatrix4fv(loc, 1, false, mat, 0);       
+    //GLES20.glUniformMatrix4fv(loc, 1, false, mat, 0);       
   }
   
   public void setFloatAttrib(int loc, float value) {
-    //gl2.glVertexAttrib1f(loc, value);  
+    //GLES20.glVertexAttrib1f(loc, value);  
   }
   
   public void setFloatAttrib(int loc, float value0, float value1) {
-    //gl2.glVertexAttrib2f(loc, value0, value1);  
+    //GLES20.glVertexAttrib2f(loc, value0, value1);  
   }  
   
   public void setFloatAttrib(int loc, float value0, float value1, float value2) {
-    //gl2.glVertexAttrib3f(loc, value0, value1, value2);  
+    //GLES20.glVertexAttrib3f(loc, value0, value1, value2);  
   }    
 
   public void setFloatAttrib(int loc, float value0, float value1, float value2, float value3) {
-    //gl2.glVertexAttrib4f(loc, value0, value1, value2, value3);  
+    //GLES20.glVertexAttrib4f(loc, value0, value1, value2, value3);  
   }
   
   public void setShaderSource(int id, String source) {
-    //gl2.glShaderSource(id, 1, new String[] { source }, (int[]) null, 0);    
+    //GLES20.glShaderSource(id, 1, new String[] { source }, (int[]) null, 0);    
   }
   
   public void compileShader(int id) {
-    //gl2.glCompileShader(id);    
+    //GLES20.glCompileShader(id);    
   }
   
   public void attachShader(int prog, int shader) {
-    //gl2.glAttachObjectARB(prog, shader);  
+    //GLES20.glAttachShader(prog, shader);  
   }
   
   public String getShaderLog(int id) {
     /*
     IntBuffer val = IntBuffer.allocate(1);
-    gl2.glGetObjectParameterivARB(id, GL2.GL_OBJECT_INFO_LOG_LENGTH_ARB, val);
+    GLES20.glGetObjectParameteriv(id, GLES20.GL_OBJECT_INFO_LOG_LENGTH, val);
     
     int length = val.get();
 
@@ -1186,7 +1193,7 @@ public class PGL {
     ByteBuffer infoLog = ByteBuffer.allocate(length);
     val.flip();
     
-    gl2.glGetInfoLogARB(id, length, val, infoLog);
+    GLES20.glGetInfoLog(id, length, val, infoLog);
         
     byte[] infoBytes = new byte[length];
     infoLog.get(infoBytes);
@@ -1256,7 +1263,7 @@ public class PGL {
     gl.glLoadMatrixf(mat, 0);
   }    
   
-  public void translate(float tx, float ty, float tz) {
+  public void translate(float tx, float ty, float tz) {    
     gl.glTranslatef(tx, ty, tz);  
   }
   
