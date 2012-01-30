@@ -150,9 +150,6 @@ public class PGL {
   public int pipeline;
   
   public GL10 gl;
-//  public GL11 gl11;
-//  public GL11Ext gl11x;
-//  public GL11ExtensionPack gl11xp;  
   public GLU glu; 
 
   public AndroidRenderer renderer;
@@ -164,6 +161,8 @@ public class PGL {
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Intialization, finalization
+  
+  // TODO: implement double buffering support in onscreen rendering, offscreen rendering.  
   
   public PGL(PGraphicsAndroid3D pg) {
     this.pg = pg;
@@ -439,6 +438,8 @@ public class PGL {
   
   // Caps query
   
+  // TODO: clean-up caps and remove obsolete ones (texture crossbar, etc).
+  
   public String getVendorString() {
     return GLES20.glGetString(GLES20.GL_VENDOR);
   }
@@ -595,6 +596,8 @@ public class PGL {
   
   // Rendering options
   
+  // TODO: Check which of the missing options can be emulated in GLES2
+  
   public void enableDepthTest() {
     GLES20.glEnable(GLES20.GL_DEPTH_TEST);
   }
@@ -678,23 +681,13 @@ public class PGL {
   public void disableRescaleNormals() {
 //    GLES20.glDisable(GLES20.GL_RESCALE_NORMAL);
   }  
-  
-  
-  /////////////////////////////////////////////////////////////////////////////////
-  
-  // Vertex arrays    
-  
-  public void genVertexArray(int[] id) {
-//    GLES20.glGenVertexArrays(1, id, 0);  
-  }
-  
-  public void delVertexArray(int[] id) {
-//    GLES20.glDeleteVertexArrays(1, id, 0);
-  }
+
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Textures     
+  
+  // TODO: Check how texture parameters work in GLES2, including mipmapping.
   
   public void genTexture(int[] id) {
     GLES20.glGenTextures(1, id, 0);
@@ -798,29 +791,7 @@ public class PGL {
   
   public void copyVertexBufferSubData(float[] data, int offset, int size, int mode) {
     GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size));    
-  }
-  
-  
-  
-  public void setVertexFormat(int size, int offset) {
-    //gl11.glVertexPointer(size, GL11.GL_FLOAT, 0, size * offset * SIZEOF_FLOAT);
-    
-//    GLES20.glVertexAttribPointer(vertexAttribIdx, size, GLES20.GL_FLOAT, false, stride, buffer??? );  
-  }
-  
-  public void setColorFormat(int size, int offset) {
-//    GLES20.glVertexAttribPointer(colorAttribIdx, size, GLES20.GL_FLOAT, false, stride, buffer??? );
-  }
-  
-  public void setNormalFormat(int size, int offset) {
-//    GLES20.glVertexAttribPointer(normalAttribIdx, size, GLES20.GL_FLOAT, false, stride, buffer??? );
-  }
-  
-  public void setTexCoordFormat(int size, int offset) {
-//    GLES20.glVertexAttribPointer(texcoordAttribIdx, size, GLES20.GL_FLOAT, false, stride, buffer??? );
-  }
-  
-  
+  }  
   
   public void unbindVertexBuffer() {
     GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
@@ -851,7 +822,7 @@ public class PGL {
   }
 
   public void renderIndexBuffer(int offset, int size) {
-    // WTF ????  
+    // TODO: Figure out what is going on with the parameters in GLES2 and find equivalent to GLES1.1  
 //    GLES20.glDrawElements(GLES20.GL_TRIANGLES, size, GLES20.GL_UNSIGNED_SHORT, offset * SIZEOF_SHORT);    
   }
     
@@ -871,6 +842,7 @@ public class PGL {
   
   
   public void setVertexAttribFormat(int loc, int size, int offset) {
+    // TODO: figure out how to set offset.
 //    GLES20.glVertexAttribPointer(loc, size, GLES20.GL_FLOAT, false, 0, size * offset * SIZEOF_FLOAT);
   }  
 
@@ -1153,56 +1125,9 @@ public class PGL {
   
   /////////////////////////////////////////////////////////////////////////////////
   
-  // Matrices, transformations
-  /*
-  public void setProjectionMode() {
-//    GLES20.glMatrixMode(GLES20.GL_PROJECTION);
-  }
-  
-  public void setModelviewMode() {
-//    GLES20.glMatrixMode(GLES20.GL_MODELVIEW);
-  }
-    
-  public void pushMatrix() {
-//    GLES20.glPushMatrix();  
-  }
-
-  public void popMatrix() {
-//    GLES20.glPopMatrix();  
-  }  
-  
-  public void loadIdentity() {
-//    GLES20.glLoadIdentity();    
-  }
-  
-  public void multMatrix(float[] mat) {
-//    GLES20.glMultMatrixf(mat, 0);
-  }
-
-  public void loadMatrix(float[] mat) {
-//    GLES20.glLoadMatrixf(mat, 0);
-  }    
-  
-  public void translate(float tx, float ty, float tz) {    
-//    GLES20.glTranslatef(tx, ty, tz);  
-  }
-  
-  public void rotate(float angle, float vx, float vy, float vz) {
-//    GLES20.glRotatef(PApplet.degrees(angle), vx, vy, vz);    
-  }
-  
-  public void scale(float sx, float sy, float sz) {
-//    GLES20.glScalef(sx, sy, sz);
-  }  
-  
-  public void setOrthographicProjection(float left, float right, float bottom, float top, float near, float far) {
-//    GLES20.glOrthof(left, right, bottom, top, near, far);
-  }  
-  */
-  
-  /////////////////////////////////////////////////////////////////////////////////
-  
   // Materials
+  
+  // TODO: remove and implement in shaders.
   
   public void setMaterialAmbient(float[] color) {
 //    GLES20.glMaterialfv(GLES20.GL_FRONT_AND_BACK, GLES20.GL_AMBIENT, color, 0);
@@ -1227,6 +1152,8 @@ public class PGL {
   /////////////////////////////////////////////////////////////////////////////////
   
   // Lights
+  
+  // TODO: Implement lighting in fill/line/point shaders.
   
   public void enableLighting() {
 //    GLES20.glEnable(GLES20.GL_LIGHTING);
@@ -1422,6 +1349,10 @@ public class PGL {
   
   // Tessellator interface
     
+  // TODO: Implement. Options:
+  // 1) Port Java GLU tessellator implementation from JOGL. 
+  // 2) Compile GLUES (http://code.google.com/p/glues/) in native code and access through JNI.
+  
   public Tessellator createTessellator(TessellatorCallback callback) {
     return new Tessellator(callback);
   }
