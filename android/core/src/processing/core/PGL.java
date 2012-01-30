@@ -1620,13 +1620,13 @@ public class PGL {
      * minimum size of 4 bits for red/green/blue, but will perform actual
      * matching in chooseConfig() below.
      */
-    private int EGL_OPENGL_ES_BIT = 0x01; // EGL 1.x attribute value for
+//    private int EGL_OPENGL_ES_BIT = 0x01; // EGL 1.x attribute value for
                                                  // GL_RENDERABLE_TYPE.
-//    private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
+    private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
                                                   // GL_RENDERABLE_TYPE.
     private int[] configAttribsGL = { EGL10.EGL_RED_SIZE, 4,
         EGL10.EGL_GREEN_SIZE, 4, EGL10.EGL_BLUE_SIZE, 4,
-        EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
+        EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
         EGL10.EGL_NONE };
 
     public AndroidConfigChooser(int r, int g, int b, int a, int d, int s) {
@@ -1667,8 +1667,7 @@ public class PGL {
       return chooseBestConfig(egl, display, configs);
     }
 
-    public EGLConfig chooseBestConfig(EGL10 egl, EGLDisplay display,
-        EGLConfig[] configs) {
+    public EGLConfig chooseBestConfig(EGL10 egl, EGLDisplay display, EGLConfig[] configs) {
       EGLConfig bestConfig = null;
       float bestScore = 1000;
       

@@ -29,6 +29,7 @@ import java.io.UnsupportedEncodingException;
 
 import android.content.*;
 import android.content.pm.ActivityInfo;
+import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.*;
@@ -44,6 +45,7 @@ import java.util.regex.*;
 import java.util.zip.*;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.net.Uri;
 import android.text.format.Time;
 import android.util.*;
@@ -784,6 +786,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     public SketchSurfaceView3D(Context context, int wide, int high) {
       super(context);
+
+      // Check if the system supports OpenGL ES 2.0.
+      final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+      final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+      final boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000;
+      
+      if (!supportsEs2) {
+        throw new RuntimeException("GLES2 NOT SUPPORTED!!!");
+      }
+      
+      
       surfaceHolder = getHolder();
       // are these two needed?
       surfaceHolder.addCallback(this);
