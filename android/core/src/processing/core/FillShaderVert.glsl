@@ -21,18 +21,16 @@
 
 uniform mat4 modelviewMatrix;
 uniform mat4 projectionMatrix;
- 
-attribute vec4 inVertex;
+
+attribute vec4 inPosition;
 attribute vec4 inColor;
 attribute vec3 inNormal;
-attribute vec2 inSize;
+attribute vec2 inTexcoord;
 
 varying vec4 vertColor;
 
 void main() {
-  vec4 pos = modelviewMatrix * inVertex;
-  pos.xy += inSize.xy;
-  gl_Position = projectionMatrix * pos;
+  gl_Position = projectionMatrix * modelviewMatrix * inPosition;
   
-  vertColor = inColor;
+  vertColor = inColor; 
 }

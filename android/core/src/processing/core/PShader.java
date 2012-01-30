@@ -220,6 +220,10 @@ public class PShader {
       pgl.setIntUniform(loc, unit);
     }
   }  
+
+  public void setTexUniform(int loc, int unit) {    
+    pgl.setIntUniform(loc, unit);
+  }    
   
   /**
    * Sets the texture uniform with the unit of tex is attached to
@@ -256,6 +260,10 @@ public class PShader {
     }
   }
 
+  public void setIntUniform(int loc, int x) {
+    pgl.setIntUniform(loc, x);
+  }  
+  
   /**
    * Sets the float uniform with name to the given value 
    * 
@@ -269,6 +277,10 @@ public class PShader {
     }
   }
 
+  public void setFloatUniform(int loc, float x) {
+    pgl.setFloatUniform(loc, x);
+  }  
+  
   /**
    * Sets the vec2 uniform with name to the given values. 
    * 
@@ -283,6 +295,10 @@ public class PShader {
     }
   }  
 
+  public void setVecUniform(int loc, float x, float y) {
+    pgl.setFloatUniform(loc, x, y);
+  }    
+  
   /**
    * Sets the vec3 uniform with name to the given values. 
    * 
@@ -296,6 +312,10 @@ public class PShader {
     if (-1 < loc) {
       pgl.setFloatUniform(loc, x, y, z);
     }
+  }  
+
+  public void setVecUniform(int loc, float x, float y, float z) {
+    pgl.setFloatUniform(loc, x, y, z);
   }  
   
   /**
@@ -314,6 +334,10 @@ public class PShader {
     }
   }  
   
+  public void setVecUniform(int loc, float x, float y, float z, float w) {
+    pgl.setFloatUniform(loc, x, y, z, w);
+  }   
+  
   /**
    * Sets the mat2 uniform with name to the given values 
    * 
@@ -329,6 +353,12 @@ public class PShader {
                              m10, m11);    
     }
   }  
+  
+  public void setMatUniform(int loc, float m00, float m01,
+                                     float m10, float m11) {
+    pgl.setMatUniform(loc, m00, m01, 
+                           m10, m11);    
+  }    
   
   /**
    * Sets the mat3 uniform with name to the given values 
@@ -346,6 +376,14 @@ public class PShader {
                              m10, m11, m12, 
                              m20, m21, m22);     
     }
+  }
+
+  public void setMatUniform(int loc, float m00, float m01, float m02,
+                                     float m10, float m11, float m12,
+                                     float m20, float m21, float m22) {
+    pgl.setMatUniform(loc, m00, m01, m02, 
+                           m10, m11, m12, 
+                           m20, m21, m22);     
   }
   
   /**
@@ -368,6 +406,16 @@ public class PShader {
     }
   }  
   
+  public void setMatUniform(int loc, float m00, float m01, float m02, float m03,
+                                     float m10, float m11, float m12, float m13,
+                                     float m20, float m21, float m22, float m23,
+                                     float m30, float m31, float m32, float m33) {
+    pgl.setMatUniform(loc, m00, m01, m02, m03, 
+                           m10, m11, m12, m13, 
+                           m20, m21, m22, m23, 
+                           m30, m31, m32, m33); 
+  }    
+  
   /**
    * Sets the float attribute with name to the given value 
    * 
@@ -381,6 +429,10 @@ public class PShader {
     }
   }
 
+  public void setFloatAttribute(int loc, float x) {
+    pgl.setFloatAttrib(loc, x);
+  }  
+  
   /**
    * Sets the vec2 attribute with name to the given values 
    * 
@@ -395,6 +447,10 @@ public class PShader {
     }
   }  
 
+  public void setVecAttribute(int loc, float x, float y) {
+    pgl.setFloatAttrib(loc, x, y);
+  }    
+  
   /**
    * Sets the vec3 attribute with name to the given values 
    * 
@@ -409,6 +465,10 @@ public class PShader {
       pgl.setFloatAttrib(loc, x, y, z);
     }
   }  
+
+  public void setVecAttribute(int loc, float x, float y, float z) {
+    pgl.setFloatAttrib(loc, x, y, z);
+  }    
   
   /**
    * Sets the vec4 attribute with name to the given values 
@@ -426,6 +486,10 @@ public class PShader {
     }
   }
 
+  public void setVecAttribute(int loc, float x, float y, float z, float w) {
+    pgl.setFloatAttrib(loc, x, y, z, w);
+  }  
+  
   /**
    * @param shaderSource a string containing the shader's code
    * @param filename the shader's filename, used to print error log information
