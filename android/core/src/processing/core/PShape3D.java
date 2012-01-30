@@ -3409,9 +3409,10 @@ public class PShape3D extends PShape {
   protected void renderPoints() {
     pg.startPointShader();
     
-    pgl.enableVertexArrays();
-    pgl.enableColorArrays();
-    pgl.enableNormalArrays();
+    pg.enablePointVertex();
+    pg.enablePointColor();
+    pg.enablePointNormal();
+    pg.enablePointSize();
     
     for (int i = 0; i < pointIndexData.size(); i++) {
       IndexData index = (IndexData)pointIndexData.get(i);      
@@ -3420,15 +3421,16 @@ public class PShape3D extends PShape {
       int size =  index.size;
       
       pgl.bindVertexBuffer(root.glPointVertexBufferID);
-      pgl.setVertexFormat(3, first); 
+      pg.setPointVertexFormat(3, first);
                     
       pgl.bindVertexBuffer(root.glPointColorBufferID);    
-      pgl.setColorFormat(4, first);    
+      pg.setPointColorFormat(4, first);    
       
       pgl.bindVertexBuffer(root.glPointNormalBufferID);    
-      pgl.setNormalFormat(3, first);    
+      pg.setPointNormalFormat(4, first);    
       
-      pg.setupPointShader(root.glPointAttribBufferID);
+      pgl.bindVertexBuffer(root.glPointAttribBufferID);
+      pg.setPointSizeFormat(2, first);
       
       pgl.bindIndexBuffer(root.glPointIndexBufferID);
       pgl.renderIndexBuffer(offset, size);
@@ -3437,10 +3439,11 @@ public class PShape3D extends PShape {
       pgl.unbindVertexBuffer();       
     }
     
-    pgl.disableVertexArrays();
-    pgl.disableColorArrays();
-    pgl.disableNormalArrays();  
-        
+    pg.disablePointVertex();
+    pg.disablePointColor();
+    pg.disablePointNormal();
+    pg.disablePointSize();    
+    
     pg.stopPointShader();
   }  
 
@@ -3448,9 +3451,10 @@ public class PShape3D extends PShape {
   protected void renderLines() {
     pg.startLineShader();
     
-    pgl.enableVertexArrays();
-    pgl.enableColorArrays();
-    pgl.enableNormalArrays();     
+    pg.enableLineVertex();
+    pg.enableLineColor();
+    pg.enableLineNormal();
+    pg.enableLineDirWidth();    
     
     for (int i = 0; i < lineIndexData.size(); i++) {
       IndexData index = (IndexData)lineIndexData.get(i);      
@@ -3459,15 +3463,16 @@ public class PShape3D extends PShape {
       int size =  index.size;
       
       pgl.bindVertexBuffer(root.glLineVertexBufferID);
-      pgl.setVertexFormat(3, first);  
+      pg.setLineVertexFormat(3, first); 
       
       pgl.bindVertexBuffer(root.glLineColorBufferID);    
-      pgl.setColorFormat(4, first);      
+      pg.setLineColorFormat(4, first);      
       
       pgl.bindVertexBuffer(root.glLineNormalBufferID);    
-      pgl.setNormalFormat(3, first);      
-          
-      pg.setupLineShader(root.glLineAttribBufferID);    
+      pg.setLineNormalFormat(3, first);      
+      
+      pgl.bindVertexBuffer(root.glLineAttribBufferID);
+      pg.setLineDirWidthFormat(2, 0); 
       
       pgl.bindIndexBuffer(root.glLineIndexBufferID);
       pgl.renderIndexBuffer(offset, size);
@@ -3476,19 +3481,24 @@ public class PShape3D extends PShape {
       pgl.unbindVertexBuffer();         
     }
     
-    pgl.disableVertexArrays();
-    pgl.disableColorArrays();
-    pgl.disableNormalArrays();    
+    pg.disableLineVertex();
+    pg.disableLineColor();
+    pg.disableLineNormal();
+    pg.disableLineDirWidth();
     
-    pg.stopLineShader();    
+    pg.stopLineShader();   
   }  
 
   
-  protected void renderFill(PImage textureImage) {    
-    pgl.enableVertexArrays();
-    pgl.enableColorArrays();
-    pgl.enableNormalArrays(); 
-    pgl.enableTexCoordArrays();
+  protected void renderFill(PImage textureImage) {
+    pg.startFillShader();
+
+    pg.startFillShader();
+    
+    pg.enableFillVertex();
+    pg.enableFillColor();
+    pg.enableFillNormal();
+    pg.enableFillTexCoord();
         
     for (int i = 0; i < fillIndexData.size(); i++) {
       IndexData index = (IndexData)fillIndexData.get(i);      
@@ -3497,23 +3507,23 @@ public class PShape3D extends PShape {
       int size =  index.size;
     
       pgl.bindVertexBuffer(root.glFillVertexBufferID);
-      pgl.setVertexFormat(3, first);     
+      pg.setFillVertexFormat(3, first);
 
       pgl.bindVertexBuffer(root.glFillColorBufferID);    
-      pgl.setColorFormat(4, first);  
+      pg.setFillColorFormat(4, first);
       
-      pgl.bindVertexBuffer(root.glFillNormalBufferID);    
-      pgl.setNormalFormat(3, first);     
+      pgl.bindVertexBuffer(root.glFillNormalBufferID);
+      pg.setFillNormalFormat(3, first);
       
-      pgl.bindVertexBuffer(root.glFillTexCoordBufferID);    
-      pgl.setTexCoordFormat(2, first);    
+      pgl.bindVertexBuffer(root.glFillTexCoordBufferID);
+      pg.setFillTexCoordFormat(2, first);   
       
       PTexture tex = null;
       if (textureImage != null) {
+        pgl.setActiveTexUnit(0);
         tex = pg.getTexture(textureImage);
         if (tex != null) {
-          pgl.enableTexturing(tex.glTarget);
-          pgl.setActiveTexUnit(0);
+          pgl.enableTexturing(tex.glTarget);          
           pgl.bindTexture(tex.glTarget, tex.glID);        
         }
       }
@@ -3530,10 +3540,12 @@ public class PShape3D extends PShape {
       pgl.unbindVertexBuffer();        
     }
     
-    pgl.disableVertexArrays();
-    pgl.disableColorArrays();
-    pgl.disableNormalArrays(); 
-    pgl.disableTexCoordArrays();
+    pg.disableFillVertex();
+    pg.disableFillColor();
+    pg.disableFillNormal();
+    pg.disableFillTexCoord();
+    
+    pg.stopFillShader();
   }
   
   

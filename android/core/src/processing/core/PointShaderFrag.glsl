@@ -19,6 +19,10 @@
   Boston, MA  02111-1307  USA
 */
 
-void main() {  
-  gl_FragColor = gl_Color;
+precision mediump float;
+
+varying vec4 vertColor;
+
+void main() {
+  gl_FragColor = vertColor;
 }
