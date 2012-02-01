@@ -248,9 +248,9 @@ public class PTexture implements PConstants {
       if (PGraphicsAndroid3D.mipmapGeneration) {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
-        convertToRGBA(pixels, rgbaPixels, format, w, h);        
-        pgl.enableTexMipmapGen(glTarget);
-        setTexels(rgbaPixels, x, y, w, h);
+        convertToRGBA(pixels, rgbaPixels, format, w, h);
+        setTexels(rgbaPixels, x, y, w, h);        
+        pgl.generateMipmap(glTarget);
         rgbaPixels = null;
       } else {
         // TODO: Manual mipmap generation.
