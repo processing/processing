@@ -356,6 +356,8 @@ public interface PConstants {
   /** texture coordinates based on image width/height */
   static final int IMAGE  = 2;
 
+  
+  
 
   // text placement modes
 
@@ -404,6 +406,9 @@ public interface PConstants {
   /** This constant identifies the repeat wrapping mode */
   public static final int REPEAT = 1;
   
+  /** This constant identifies the modulate texture environment mode */
+  public static final int MODULATE = 1;
+    
   // PShape3D
   
   /**  Static usage mode for PShape3D (vertices won't be updated after creation).  */

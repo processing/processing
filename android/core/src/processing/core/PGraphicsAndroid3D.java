@@ -368,6 +368,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected boolean defaultEdges = false;
   
   protected int vboMode = PGL.STATIC_DRAW;
+  
+  protected int texEnvMode = MODULATE;
     
   static public float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
@@ -2218,7 +2220,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     enableFillVertex();
     enableFillColor();
-    enableFillNormal();
+//    enableFillNormal();
         
     int size = tessGeo.fillVertexCount;
     pgl.bindVertexBuffer(glFillVertexBufferID);
@@ -2229,9 +2231,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.copyVertexBufferData(tessGeo.fillColors, 4 * size, vboMode);
     setFillColorFormat(4, 0);
     
-    pgl.bindVertexBuffer(glFillNormalBufferID);
-    pgl.copyVertexBufferData(tessGeo.fillNormals, 3 * size, vboMode);
-    setFillNormalFormat(3, 0);
+//    pgl.bindVertexBuffer(glFillNormalBufferID);
+//    pgl.copyVertexBufferData(tessGeo.fillNormals, 3 * size, vboMode);
+//    setFillNormalFormat(3, 0);
     
     if (texCache.hasTexture) {
       pgl.setActiveTexUnit(0);
@@ -2239,7 +2241,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.bindVertexBuffer(glFillTexCoordBufferID);
       pgl.copyVertexBufferData(tessGeo.fillTexcoords, 2 * size, vboMode);
       setFillTexCoordFormat(2, 0);
-    }  
+    }
          
     pgl.bindIndexBuffer(glFillIndexBufferID);  
     
@@ -2253,11 +2255,16 @@ public class PGraphicsAndroid3D extends PGraphics {
         if (tex != null) {                   
           tex.bind();          
           tex0 = tex;
-        }        
+          enableFillTexturing();
+        } else {
+          disableFillTexturing();
+        }
+      } else {
+        disableFillTexturing();
       }
       if (tex == null && tex0 != null) {
         tex0.unbind();
-        pgl.disableTexturing(tex0.glTarget);
+        pgl.disableTexturing(tex0.glTarget);        
       }
               
       int offset = texCache.firstIndex[i];
@@ -2290,6 +2297,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
       
       disableFillTexCoord();
+      disableFillTexturing();
     }
     
     pgl.unbindIndexBuffer();
@@ -2297,7 +2305,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     disableFillVertex();
     disableFillColor();
-    disableFillNormal();
+//    disableFillNormal();
     
     stopFillShader();
   }
@@ -5531,13 +5539,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     blendMode(REPLACE); 
     
     // The texels of the texture replace the color of wherever is on the screen.      
-    pgl.setTexEnvironmentMode(PGL.REPLACE);
+    texEnvMode = REPLACE;
     
     drawTexture(tw, th, crop, x, y, w, h);
     
-    // Returning to the default texture environment mode, GL_MODULATE. This allows tinting a texture
-    // with the current fragment color.       
-    pgl.setTexEnvironmentMode(PGL.MODULATE);
+    // Returning to the default texture environment mode, MODULATE. 
+    // This allows tinting a texture with the current fragment color.       
+    texEnvMode = MODULATE;
     
     pgl.unbindTexture(target);
     pgl.disableTexturing(target);
@@ -5789,6 +5797,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   protected static int fillModelviewLoc;
   protected static int fillProjectionLoc;
+    protected static int fillTexturedLoc;
   
   protected static int fillVertexAttribLoc;
   protected static int fillColorAttribLoc;
@@ -5822,6 +5831,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       fillModelviewLoc = fillShader.getUniformLocation("modelviewMatrix");
       fillProjectionLoc = fillShader.getUniformLocation("projectionMatrix");
+      fillTexturedLoc = fillShader.getUniformLocation("textured");
       
       fillVertexAttribLoc = fillShader.getAttribLocation("inVertex");
       fillColorAttribLoc = fillShader.getAttribLocation("inColor");
@@ -5845,6 +5855,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void stopFillShader() {
     fillShader.stop();
   }  
+  
+  protected void enableFillTexturing() {
+    fillShader.setIntUniform(fillTexturedLoc, 1);      
+  }
+
+  protected void disableFillTexturing() {
+    fillShader.setIntUniform(fillTexturedLoc, 0);
+  }
   
   protected void enableFillVertex() {
     pgl.enableVertexAttribArray(fillVertexAttribLoc);    

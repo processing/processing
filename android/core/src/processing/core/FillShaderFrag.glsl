@@ -21,8 +21,17 @@
 
 precision mediump float;
 
+uniform sampler2D textureSampler;
+
+uniform int textured;
+
 varying vec4 vertColor;
+varying vec2 vertTexcoord;
 
 void main() {
-  gl_FragColor = vertColor;
+  if (0 < textured) {
+    gl_FragColor = texture2D(textureSampler, vertTexcoord) * vertColor;
+  } else {
+    gl_FragColor = vertColor;
+  }
 }

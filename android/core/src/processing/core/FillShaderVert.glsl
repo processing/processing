@@ -22,15 +22,17 @@
 uniform mat4 modelviewMatrix;
 uniform mat4 projectionMatrix;
 
-attribute vec4 inPosition;
+attribute vec4 inVertex;
 attribute vec4 inColor;
 attribute vec3 inNormal;
 attribute vec2 inTexcoord;
 
 varying vec4 vertColor;
+varying vec2 vertTexcoord;
 
 void main() {
-  gl_Position = projectionMatrix * modelviewMatrix * inPosition;
+  gl_Position = projectionMatrix * modelviewMatrix * inVertex;
   
-  vertColor = inColor; 
+  vertColor = inColor;
+  vertTexcoord = inTexcoord; 
 }
