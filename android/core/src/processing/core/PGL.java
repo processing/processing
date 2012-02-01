@@ -93,9 +93,6 @@ public class PGL {
   public static final int BLEND_EQ_MAX              = 0x8008;
   public static final int BLEND_EQ_REVERSE_SUBTRACT = GLES20.GL_FUNC_REVERSE_SUBTRACT;
   
-  public static final int REPLACE  = GLES20.GL_REPLACE;
-  public static final int MODULATE = -1; //GLES20.GL_MODULATE;
-  
   public static final int FLAT   = -1; //GLES20.GL_FLAT;
   public static final int SMOOTH = -1; //GLES20.GL_SMOOTH;
   
@@ -738,25 +735,13 @@ public class PGL {
   public void copyTexSubImage(int[] pixels, int target, int level, int x, int y, int w, int h) {
     GLES20.glTexSubImage2D(target, level, x, y, w, h, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, IntBuffer.wrap(pixels));
   }  
-  
-  public void setTexEnvironmentMode(int mode) {
-//    GLES20.glTexEnvi(GLES20.GL_TEXTURE_ENV, GLES20.GL_TEXTURE_ENV_MODE, mode);   
-  }
-  
-  public void enableTexMipmapGen(int target) {
-//    GLES20.glTexParameterf(target, GLES20.GL_GENERATE_MIPMAP, GLES20.GL_TRUE);
-  }
-
-  public void disableTexMipmapGen(int target) {
-//    GLES20.glTexParameterf(target, GLES20.GL_GENERATE_MIPMAP, GLES20.GL_FALSE);
-  }  
-  
+    
   public void setTexMinFilter(int target, int filter) {
-//    GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_MIN_FILTER, filter); 
+    GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_MIN_FILTER, filter); 
   }
   
   public void setTexMagFilter(int target, int filter) {
-//    GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_MAG_FILTER, filter);
+    GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_MAG_FILTER, filter);
   }
   
   public void setTexWrapS(int target, int wrap) {
@@ -765,6 +750,10 @@ public class PGL {
   
   public void setTexWrapT(int target, int wrap) {
     GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_WRAP_T, wrap); 
+  }  
+
+  public void generateMipmap(int target) {
+    GLES20.glGenerateMipmap(target);
   }  
   
   /////////////////////////////////////////////////////////////////////////////////
@@ -824,12 +813,11 @@ public class PGL {
   }  
   
   public void renderIndexBuffer(int size) {
-    GLES20.glDrawElements(GLES20.GL_TRIANGLES, size, GLES20.GL_UNSIGNED_SHORT, null);
+    GLES20.glDrawElements(GLES20.GL_TRIANGLES, size, GLES20.GL_UNSIGNED_SHORT, 0);
   }
 
-  public void renderIndexBuffer(int offset, int size) {
-    // TODO: Figure out what is going on with the parameters in GLES2 and find equivalent to GLES1.1  
-//    GLES20.glDrawElements(GLES20.GL_TRIANGLES, size, GLES20.GL_UNSIGNED_SHORT, offset * SIZEOF_SHORT);    
+  public void renderIndexBuffer(int offset, int size) { 
+    GLES20.glDrawElements(GLES20.GL_TRIANGLES, size, GLES20.GL_UNSIGNED_SHORT, offset * SIZEOF_SHORT);    
   }
     
   public void unbindIndexBuffer() {
@@ -848,8 +836,7 @@ public class PGL {
   
   
   public void setVertexAttribFormat(int loc, int size, int offset) {
-    // TODO: figure out how to set offset.
-//    GLES20.glVertexAttribPointer(loc, size, GLES20.GL_FLOAT, false, 0, size * offset * SIZEOF_FLOAT);
+    GLES20.glVertexAttribPointer(loc, size, GLES20.GL_FLOAT, false, 0, size * offset * SIZEOF_FLOAT);
   }  
 
   
