@@ -30,7 +30,9 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGL10;
+import javax.microedition.khronos.egl.EGL11;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.*;
 
@@ -140,7 +142,11 @@ public class PGL {
   public static final int TESS_WINDING_NONZERO = -1;
   public static final int TESS_WINDING_ODD     = -1;  
   
-  // Rendering pipeline modes
+  // Some EGL constants needed to initialize an GLES2 context.
+  public static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+  public static final int EGL_OPENGL_ES2_BIT = 0x0004;
+  
+  // Rendering pipeline modes  
   public static final int FIXED    = 0;
   public static final int PROG_GL2 = 1;
   public static final int PROG_GL3 = 2;
@@ -1441,9 +1447,12 @@ public class PGL {
     return renderer;
   }
   
+  public AndroidContextFactory getContextFactory() {
+    return new AndroidContextFactory();
+  }  
+  
   public AndroidConfigChooser getConfigChooser(int r, int g, int b, int a, int d, int s) {
-    AndroidConfigChooser configChooser = new AndroidConfigChooser(r, g, b, a, d, s);
-    return configChooser;
+    return new AndroidConfigChooser(r, g, b, a, d, s);
   }    
   
   public class AndroidRenderer implements Renderer {
@@ -1527,6 +1536,20 @@ public class PGL {
       */
     }    
   }
+  
+  public class AndroidContextFactory implements GLSurfaceView.EGLContextFactory {
+    public EGLContext createContext(EGL10 egl, EGLDisplay display,
+        EGLConfig eglConfig) {
+      int[] attrib_list = { EGL_CONTEXT_CLIENT_VERSION, 2,
+                            EGL10.EGL_NONE };
+      EGLContext context = egl.eglCreateContext(display, eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
+      return context;
+    }
+
+    public void destroyContext(EGL10 egl, EGLDisplay display, EGLContext context) {
+      egl.eglDestroyContext(display, context);
+    }
+  }    
 
   public class AndroidConfigChooser implements EGLConfigChooser {
     // Desired size (in bits) for the rgba color, depth and stencil buffers.
@@ -1545,20 +1568,15 @@ public class PGL {
     public int depthBits;
     public int stencilBits;
     public int[] tempValue = new int[1];
-
-    /*
-     * This EGL config specification is used to specify 2.0 rendering. We use a
-     * minimum size of 4 bits for red/green/blue, but will perform actual
-     * matching in chooseConfig() below.
-     */
-//    private int EGL_OPENGL_ES_BIT = 0x01; // EGL 1.x attribute value for
-                                                 // GL_RENDERABLE_TYPE.
-    private int EGL_OPENGL_ES2_BIT = 0x04; // EGL 2.x attribute value for
-                                                  // GL_RENDERABLE_TYPE.
-    private int[] configAttribsGL = { EGL10.EGL_RED_SIZE, 4,
-        EGL10.EGL_GREEN_SIZE, 4, EGL10.EGL_BLUE_SIZE, 4,
-        EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-        EGL10.EGL_NONE };
+    
+    // The attributes we want in the frame buffer configuration for Processing.
+    // For more details on other attributes, see:
+    // http://www.khronos.org/opengles/documentation/opengles1_0/html/eglChooseConfig.html
+    protected int[] configAttribsGL = { EGL10.EGL_RED_SIZE, 4,
+                                        EGL10.EGL_GREEN_SIZE, 4, 
+                                        EGL10.EGL_BLUE_SIZE, 4,
+                                        EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+                                        EGL10.EGL_NONE };
 
     public AndroidConfigChooser(int r, int g, int b, int a, int d, int s) {
       redTarget = r;
@@ -1588,7 +1606,7 @@ public class PGL {
 
       if (PApplet.DEBUG) {
         for (EGLConfig config : configs) {
-          String configStr = "A3D - selected EGL config : "
+          String configStr = "P3D - selected EGL config : "
             + printConfig(egl, display, config);
           System.out.println(configStr);
         }
@@ -1603,43 +1621,46 @@ public class PGL {
       float bestScore = 1000;
       
       for (EGLConfig config : configs) {
-        int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
-        int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
+        int gl = findConfigAttrib(egl, display, config, EGL10.EGL_RENDERABLE_TYPE, 0);
+        if (gl == EGL_OPENGL_ES2_BIT) {        
+          int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
+          int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
 
-        int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
-        int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
-        int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
-        int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
-
-        float score = 0.20f * PApplet.abs(r - redTarget) + 
-                      0.20f * PApplet.abs(g - greenTarget) + 
-                      0.20f * PApplet.abs(b - blueTarget) +
-                      0.15f * PApplet.abs(a - blueTarget) +
-                      0.15f * PApplet.abs(d - depthTarget) +
-                      0.10f * PApplet.abs(s - stencilTarget);
-                      
-        if (score < bestScore) {
-          // We look for the config closest to the target config.
-          // Closeness is measured by the score function defined above:
-          // we give more weight to the RGB components, followed by the 
-          // alpha, depth and finally stencil bits.
-          bestConfig = config;
-          bestScore = score;
-
-          redBits = r;
-          greenBits = g;
-          blueBits = b;
-          alphaBits = a;
-          depthBits = d;
-          stencilBits = s;
+          int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
+          int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
+          int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
+          int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
           
-          pg.offscreenDepthBits = d;
-          pg.offscreenStencilBits = s;
+          float score = 0.20f * PApplet.abs(r - redTarget) + 
+                        0.20f * PApplet.abs(g - greenTarget) + 
+                        0.20f * PApplet.abs(b - blueTarget) +
+                        0.15f * PApplet.abs(a - blueTarget) +
+                        0.15f * PApplet.abs(d - depthTarget) +
+                        0.10f * PApplet.abs(s - stencilTarget);
+                   
+          if (score < bestScore) {
+            // We look for the config closest to the target config.
+            // Closeness is measured by the score function defined above:
+            // we give more weight to the RGB components, followed by the 
+            // alpha, depth and finally stencil bits.
+            bestConfig = config;
+            bestScore = score;
+
+            redBits = r;
+            greenBits = g;
+            blueBits = b;
+            alphaBits = a;
+            depthBits = d;
+            stencilBits = s;
+            
+            pg.offscreenDepthBits = d;
+            pg.offscreenStencilBits = s;
+          }
         }
       }
       
       if (PApplet.DEBUG) {
-        String configStr = "A3D - selected EGL config : "
+        String configStr = "P3D - selected EGL config : "
           + printConfig(egl, display, bestConfig);
         System.out.println(configStr);
       }

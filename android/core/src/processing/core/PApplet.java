@@ -790,12 +790,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // Check if the system supports OpenGL ES 2.0.
       final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
       final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-      final boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000;
+      final boolean supportsGLES2 = configurationInfo.reqGlEsVersion >= 0x20000;
       
-      if (!supportsEs2) {
-        throw new RuntimeException("GLES2 NOT SUPPORTED!!!");
+      if (!supportsGLES2) {
+        throw new RuntimeException("P3D: OpenGL ES 2.0 is not supported by this device.");
       }
-      
       
       surfaceHolder = getHolder();
       // are these two needed?
@@ -811,11 +810,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
       g3.setPrimary(true);      
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
       g3.setSize(wide, high);
-
-
-      // Set context factory. This make possible to have 2.x contexts.
-      // We don't need this for the time being since we are using GLES 1.1.
-      // setEGLContextFactory(g3.getContextFactory());
 
       String depth = sketchColordepth();
       if (!depth.equals(DEFAULT_COLOR_DEPTH)) {
@@ -842,8 +836,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
           // Getting stencil bits.
           val[5] = parseInt(list[5]);
         }
-        
+      
+        // We use our own context factory and config chooser to set the desired RGBA and depth+stencil
+        // bits. 
+        setEGLContextFactory(g3.pgl.getContextFactory());
         setEGLConfigChooser(g3.pgl.getConfigChooser(val[0], val[1], val[2], val[3], val[4], val[5]));  
+      } else {
+        // Tells the default EGLContextFactory and EGLConfigChooser to create an GLES2 context.
+        setEGLContextClientVersion(2);        
       }
       
       // The renderer can be set only once.      
