@@ -690,8 +690,6 @@ public class PGL {
   
   // Textures     
   
-  // TODO: Check how texture parameters work in GLES2, including mipmapping.
-  
   public void genTexture(int[] id) {
     GLES20.glGenTextures(1, id, 0);
   }
@@ -822,23 +820,19 @@ public class PGL {
     
   public void unbindIndexBuffer() {
     GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
-  }
-  
+  }  
   
   public void enableVertexAttribArray(int loc) {
     GLES20.glEnableVertexAttribArray(loc);
   }
-
   
   public void disableVertexAttribArray(int loc) {
     GLES20.glDisableVertexAttribArray(loc);
-  }
-  
+  }  
   
   public void setVertexAttribFormat(int loc, int size, int offset) {
     GLES20.glVertexAttribPointer(loc, size, GLES20.GL_FLOAT, false, 0, size * offset * SIZEOF_FLOAT);
   }  
-
   
   public ByteBuffer mapVertexBuffer() {  
 //    return GLES20.glMapBuffer(GLES20.GL_ARRAY_BUFFER, GLES20.GL_READ_WRITE);
@@ -999,6 +993,11 @@ public class PGL {
     return GLES20.glGetUniformLocation(prog, name);
   }  
   
+  public void setArrayUniform(int loc, float[] v) {
+    // ?
+    GLES20.glUniform1fv(loc, v.length, v, 0);
+  }
+  
   public void setIntUniform(int loc, int value) {
     GLES20.glUniform1i(loc, value);  
   }
@@ -1120,8 +1119,7 @@ public class PGL {
   
   // Materials
   
-  // TODO: remove and implement in shaders.
-  
+  /*
   public void setMaterialAmbient(float[] color) {
 //    GLES20.glMaterialfv(GLES20.GL_FRONT_AND_BACK, GLES20.GL_AMBIENT, color, 0);
   }
@@ -1140,14 +1138,14 @@ public class PGL {
   
   public void setColor(float r, float g, float b, float a) {
 //    GLES20.glColor4f(r, g, b, a);
-  }  
+  } 
+  */ 
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Lights
   
-  // TODO: Implement lighting in fill/line/point shaders.
-  
+/*  
   public void enableLighting() {
 //    GLES20.glEnable(GLES20.GL_LIGHTING);
   }
@@ -1224,6 +1222,7 @@ public class PGL {
   public void setNormal(float nx, float ny, float nz) {
 //    GLES20.glNormal3f(nx, ny, nz);    
   }  
+  */
   
   /////////////////////////////////////////////////////////////////////////////////
   
