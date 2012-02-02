@@ -3942,7 +3942,7 @@ public class PShape3D extends PShape {
     int mtlIdxCur = -1;
     OBJMaterial mtl = null;
     
-    pg.saveDrawingState();
+    //pg.saveDrawingState();
     
     // The recorded shapes are not merged, they are grouped
     // according to the group names found in the OBJ file.    
@@ -4061,7 +4061,7 @@ public class PShape3D extends PShape {
     //ogl.endShapeRecorderImpl(this);
     //ogl.endShapeRecorderImpl(null);
     
-    pg.restoreDrawingState();    
+    //pg.restoreDrawingState();    
   }
   
 

@@ -186,17 +186,21 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float[] lightSpotAngle;
 
   /** Cosine of light spot angle */
-  public float[] lightSpotAngleCos;
+  //public float[] lightSpotAngleCos;
 
   /** Light spot concentration */
   public float[] lightSpotConcentration;
 
   /**
-   * Diffuse colors for lights. For an ambient light, this will hold the ambient
-   * color. Internally these are stored as numbers between 0 and 1.
+   * Ambient colors for lights.
    */
-  public float[][] lightDiffuse;
-
+  public float[][] lightAmbient;  
+  
+  /**
+   * Diffuse colors for lights.
+   */
+  public float[][] lightDiffuse;  
+  
   /**
    * Specular colors for lights. Internally these are stored as numbers between
    * 0 and 1.
@@ -282,7 +286,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected boolean drawing = false;  
   
   /** Used to make backups of current drawing state. */
-  protected DrawingState drawState;
+  //protected DrawingState drawState;
   
   /** Used to hold color values to be sent to OpenGL. */
   protected float[] colorFloats; 
@@ -478,13 +482,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       lightType = new int[PGL.MAX_LIGHTS];
       lightPosition = new float[PGL.MAX_LIGHTS][4];
       lightNormal = new float[PGL.MAX_LIGHTS][4];
+      lightAmbient = new float[PGL.MAX_LIGHTS][4];
       lightDiffuse = new float[PGL.MAX_LIGHTS][4];
       lightSpecular = new float[PGL.MAX_LIGHTS][4];
       lightFalloffConstant = new float[PGL.MAX_LIGHTS];
       lightFalloffLinear = new float[PGL.MAX_LIGHTS];
       lightFalloffQuadratic = new float[PGL.MAX_LIGHTS];
       lightSpotAngle = new float[PGL.MAX_LIGHTS];
-      lightSpotAngleCos = new float[PGL.MAX_LIGHTS];
+      //lightSpotAngleCos = new float[PGL.MAX_LIGHTS];
       lightSpotConcentration = new float[PGL.MAX_LIGHTS];
       currentLightSpecular = new float[4];
       lightsAllocated = true;
@@ -1267,7 +1272,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // Disabling all lights, so the offscreen renderer can set completely
       // new light configuration (otherwise some light configuration from the 
       // primary renderer might stay).
-      pg.disableLights();
+      //pg.disableLights();
     }     
     
     inGeo.reset();
@@ -1497,6 +1502,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     calcB = emissiveB;    
     emissiveFromCalc();
     
+    /*
     // Restoring lights.
     if (lights) {
       lights();
@@ -1541,6 +1547,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else {
       noLights();
     } 
+    */
     
     // Some things the user might have changed from OpenGL, 
     // but we want to make sure they return to the Processing
@@ -1552,7 +1559,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     setSurfaceParams();
   }  
   
-  
+  /*
   protected void saveDrawingState() {
     if (drawState == null) {
       drawState = new DrawingState();
@@ -1564,6 +1571,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void restoreDrawingState() {
     drawState.restore();
   }
+  */
   
   // Utility function to get ready OpenGL for a specific
   // operation, such as grabbing the contents of the color
@@ -3954,97 +3962,44 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   protected void setFillColor() {
-    pgl.setColor(fillR, fillG, fillB, fillA);
+    //pgl.setColor(fillR, fillG, fillB, fillA);
   } 
   
   protected void setTintColor() {
-    pgl.setColor(tintR, tintG, tintB, tintA);
+    //pgl.setColor(tintR, tintG, tintB, tintA);
   }
   
   //////////////////////////////////////////////////////////////
 
   // MATERIAL PROPERTIES
 
-  // public void ambient(int rgb) {
-  // super.ambient(rgb);
-  // calcColorBuffer();
-  // gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer, 0);
-  // }
-
-  // public void ambient(float gray) {
-  // super.ambient(gray);
-  // calcColorBuffer();
-  // gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer, 0);
-  // }
-
-  // public void ambient(float x, float y, float z) {
-  // super.ambient(x, y, z);
-  // calcColorBuffer();
-  // gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT, colorBuffer, 0);
-  // }
 
   protected void ambientFromCalc() {
     super.ambientFromCalc();
-    calcColorBuffer();
-    
-    // OPENGL uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
-    // for all vertices are taken from the glColor/color buffer settings.    
-    pgl.setMaterialAmbient(colorFloats);
-    
+    calcColorBuffer();    
+    //pgl.setMaterialAmbient(colorFloats);    
   }
 
-  // public void specular(int rgb) {
-  // super.specular(rgb);
-  // calcColorBuffer();
-  // gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer, 0);
-  // }
-
-  // public void specular(float gray) {
-  // super.specular(gray);
-  // calcColorBuffer();
-  // gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer, 0);
-  // }
-
-  // public void specular(float x, float y, float z) {
-  // super.specular(x, y, z);
-  // calcColorBuffer();
-  // gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_SPECULAR, colorBuffer, 0);
-  // }
 
   protected void specularFromCalc() {
     super.specularFromCalc();
     calcColorBuffer();   
-    pgl.setMaterialSpecular(colorFloats);
+    //pgl.setMaterialSpecular(colorFloats);
   }
 
+  
   public void shininess(float shine) {
     super.shininess(shine);  
-    pgl.setMaterialShininess(shine);
+    //pgl.setMaterialShininess(shine);
   }
 
-  // public void emissive(int rgb) {
-  // super.emissive(rgb);
-  // calcColorBuffer();
-  // gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer, 0);
-  // }
-
-  // public void emissive(float gray) {
-  // super.emissive(gray);
-  // calcColorBuffer();
-  // gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer, 0);
-  // }
-
-  // public void emissive(float x, float y, float z) {
-  // super.emissive(x, y, z);
-  // calcColorBuffer();
-  // gl.glMaterialfv(GL.GL_FRONT_AND_BACK, GL.GL_EMISSION, colorBuffer, 0);
-  // }
 
   protected void emissiveFromCalc() {
     super.emissiveFromCalc();
     calcColorBuffer();
-    pgl.setMaterialEmission(colorFloats);
+    //pgl.setMaterialEmission(colorFloats);
   } 
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -4189,21 +4144,43 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (lightCount == PGL.MAX_LIGHTS) {
       throw new RuntimeException("can only create " + PGL.MAX_LIGHTS + " lights");
     }
-    colorCalc(r, g, b);
-    lightDiffuse[lightCount][0] = calcR;
-    lightDiffuse[lightCount][1] = calcG;
-    lightDiffuse[lightCount][2] = calcB;
-    lightDiffuse[lightCount][3] = 1.0f;
-
+    
     lightType[lightCount] = AMBIENT;
-    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
-    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
-    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    
+    colorCalc(r, g, b);
+    lightAmbient[lightCount][0] = calcR;
+    lightAmbient[lightCount][1] = calcG;
+    lightAmbient[lightCount][2] = calcB;
+    lightAmbient[lightCount][3] = 1.0f;
+    
     lightPosition[lightCount][0] = x;
     lightPosition[lightCount][1] = y;
     lightPosition[lightCount][2] = z;
     lightPosition[lightCount][3] = 1.0f;
+
+    lightFalloffConstant[lightCount] = currentLightFalloffConstant;
+    lightFalloffLinear[lightCount] = currentLightFalloffLinear;
+    lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+
+    lightDiffuse[lightCount][0] = 0;
+    lightDiffuse[lightCount][1] = 0;
+    lightDiffuse[lightCount][2] = 0;
+    lightDiffuse[lightCount][3] = 1;
     
+    lightSpotAngle[lightCount] = 180;
+    lightSpotConcentration[lightCount] = 0;    
+    
+    lightSpecular[lightCount][0] = 0;
+    lightSpecular[lightCount][1] = 0;
+    lightSpecular[lightCount][2] = 0;
+    lightSpecular[lightCount][3] = 1;
+    
+    lightNormal[lightCount][0] = 0;
+    lightNormal[lightCount][1] = 0;
+    lightNormal[lightCount][2] = 0;
+    lightNormal[lightCount][3] = 0;    
+        
+    /*
     lightEnable(lightCount);
     lightAmbient(lightCount);
     lightPosition(lightCount);
@@ -4211,6 +4188,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightNoSpot(lightCount);
     lightNoDiffuse(lightCount);
     lightNoSpecular(lightCount);
+    */
     
     lightCount++;
   }
@@ -4220,16 +4198,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (lightCount == PGL.MAX_LIGHTS) {
       throw new RuntimeException("can only create " + PGL.MAX_LIGHTS + " lights");
     }
+    
+    lightType[lightCount] = DIRECTIONAL;
+    
     colorCalc(r, g, b);
     lightDiffuse[lightCount][0] = calcR;
     lightDiffuse[lightCount][1] = calcG;
     lightDiffuse[lightCount][2] = calcB;
     lightDiffuse[lightCount][3] = 1.0f;
-
-    lightType[lightCount] = DIRECTIONAL;
+    
     lightFalloffConstant[lightCount] = currentLightFalloffConstant;
     lightFalloffLinear[lightCount] = currentLightFalloffLinear;
     lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    
     lightSpecular[lightCount][0] = currentLightSpecular[0];
     lightSpecular[lightCount][1] = currentLightSpecular[1];
     lightSpecular[lightCount][2] = currentLightSpecular[2];
@@ -4243,6 +4224,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightNormal[lightCount][2] = nz;
     lightNormal[lightCount][3] = 0.0f;
 
+    lightAmbient[lightCount][0] = 0;
+    lightAmbient[lightCount][1] = 0;
+    lightAmbient[lightCount][2] = 0;
+    lightAmbient[lightCount][3] = 1.0f;    
+    
+    lightSpotAngle[lightCount] = 180;
+    lightSpotConcentration[lightCount] = 0;    
+    
+    /*
     lightEnable(lightCount);
     lightNoAmbient(lightCount);
     lightDirection(lightCount);
@@ -4250,6 +4240,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightSpecular(lightCount);
     lightFalloff(lightCount);
     lightNoSpot(lightCount);
+    */
 
     lightCount++;
   }
@@ -4259,13 +4250,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (lightCount == PGL.MAX_LIGHTS) {
       throw new RuntimeException("can only create " + PGL.MAX_LIGHTS + " lights");
     }
+    
+    lightType[lightCount] = POINT;
+    
     colorCalc(r, g, b);
     lightDiffuse[lightCount][0] = calcR;
     lightDiffuse[lightCount][1] = calcG;
     lightDiffuse[lightCount][2] = calcB;
     lightDiffuse[lightCount][3] = 1.0f;
 
-    lightType[lightCount] = POINT;
+    
     lightFalloffConstant[lightCount] = currentLightFalloffConstant;
     lightFalloffLinear[lightCount] = currentLightFalloffLinear;
     lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
@@ -4278,6 +4272,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightPosition[lightCount][2] = z;
     lightPosition[lightCount][3] = 1.0f;
 
+    lightAmbient[lightCount][0] = 0;
+    lightAmbient[lightCount][1] = 0;
+    lightAmbient[lightCount][2] = 0;
+    lightAmbient[lightCount][3] = 1.0f;    
+    
+    lightSpotAngle[lightCount] = 180;
+    lightSpotConcentration[lightCount] = 0;        
+    
+    lightNormal[lightCount][0] = 0;
+    lightNormal[lightCount][1] = 0;
+    lightNormal[lightCount][2] = 0;
+    lightNormal[lightCount][3] = 0;    
+    
+    /*
     lightEnable(lightCount);
     lightNoAmbient(lightCount);
     lightPosition(lightCount);
@@ -4285,6 +4293,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightSpecular(lightCount);
     lightFalloff(lightCount);
     lightNoSpot(lightCount);
+    */
 
     lightCount++;
   }
@@ -4295,16 +4304,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (lightCount == PGL.MAX_LIGHTS) {
       throw new RuntimeException("can only create " + PGL.MAX_LIGHTS + " lights");
     }
+    
+    lightType[lightCount] = SPOT;
+    
     colorCalc(r, g, b);
     lightDiffuse[lightCount][0] = calcR;
     lightDiffuse[lightCount][1] = calcG;
     lightDiffuse[lightCount][2] = calcB;
     lightDiffuse[lightCount][3] = 1.0f;
-
-    lightType[lightCount] = SPOT;
+ 
     lightFalloffConstant[lightCount] = currentLightFalloffConstant;
     lightFalloffLinear[lightCount] = currentLightFalloffLinear;
     lightFalloffQuadratic[lightCount] = currentLightFalloffQuadratic;
+    
     lightSpecular[lightCount][0] = currentLightSpecular[0];
     lightSpecular[lightCount][1] = currentLightSpecular[1];
     lightSpecular[lightCount][2] = currentLightSpecular[2];
@@ -4321,9 +4333,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightNormal[lightCount][3] = 0.0f;
 
     lightSpotAngle[lightCount] = PApplet.degrees(angle);
-    lightSpotAngleCos[lightCount] = Math.max(0, (float) Math.cos(angle));
     lightSpotConcentration[lightCount] = concentration;
+    //lightSpotAngleCos[lightCount] = Math.max(0, (float) Math.cos(angle));    
 
+    lightAmbient[lightCount][0] = 0;
+    lightAmbient[lightCount][1] = 0;
+    lightAmbient[lightCount][2] = 0;
+    lightAmbient[lightCount][3] = 1.0f;      
+    
+    /*
     lightEnable(lightCount);
     lightNoAmbient(lightCount);
     lightPosition(lightCount);
@@ -4333,7 +4351,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightFalloff(lightCount);
     lightSpotAngle(lightCount);
     lightSpotConcentration(lightCount);
-
+*/
+    
     lightCount++;
   }
 
@@ -4358,6 +4377,28 @@ public class PGraphicsAndroid3D extends PGraphics {
     currentLightSpecular[3] = 1.0f;
   }
 
+  protected void enableLighting() {
+    if (!lights) {
+      // Flushing non-lit geometry.
+      flush();
+      
+      lights = true;
+      //pgl.enableLighting();
+    }
+  }
+
+  protected void disableLighting() {
+    if (lights) {
+      // Flushing lit geometry.
+      flush();
+      
+      lights = false;
+      //pgl.disableLighting();
+    }
+  }  
+  
+  
+  /*
   protected void enableLights() {
     for (int i = 0; i < lightCount; i++) {
       lightEnable(i);
@@ -4370,38 +4411,39 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }  
   
-  protected void enableLighting() {
-    if (!lights) {
-      // Flushing non-lit geometry.
-      flush();
-      
-      lights = true;
-      pgl.enableLighting();
-    }
+
+    
+  protected void lightEnable(int num) {
+    pgl.enableLight(num);
   }
 
-  protected void disableLighting() {
-    if (lights) {
-      // Flushing lit geometry.
-      flush();
-      
-      lights = false;
-      pgl.disableLighting();
+  protected void lightDisable(int num) {
+    pgl.disableLight(num);
+  }  
+  
+  lightPosition[num]
+  lightNormal[num]
+  lightAmbient[num]
+  lightDiffuse[num]
+  
+  protected void lightPosition(int num) {
+    pgl.setLightPosition(num, lightPosition[num]);
+  }  
+
+  protected void lightDirection(int num) {
+    if (lightType[num] == DIRECTIONAL) {      
+      pgl.setLightDirection(num, lightNormal[num]);      
+    } else { // spotlight
+      pgl.setSpotLightDirection(num, lightNormal[num]);      
     }
-  }
-    
+  }  
+  
   protected void lightAmbient(int num) {       
     pgl.setAmbientLight(num, lightDiffuse[num]);
-    
   }
 
   protected void lightNoAmbient(int num) {
     pgl.setAmbientLight(num, zeroLight);
-  }
-  
-  protected void lightNoSpot(int num) {
-    pgl.setSpotLightCutoff(num, 180);
-    pgl.setSpotLightExponent(num, 0);    
   }
 
   protected void lightDiffuse(int num) {
@@ -4411,31 +4453,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void lightNoDiffuse(int num) {
     pgl.setDiffuseLight(num, zeroLight);
   }
-    
-  protected void lightDirection(int num) {
-    if (lightType[num] == DIRECTIONAL) {      
-      pgl.setLightDirection(num, lightNormal[num]);      
-    } else { // spotlight
-      pgl.setSpotLightDirection(num, lightNormal[num]);      
-    }
-  }
-
-  protected void lightEnable(int num) {
-    pgl.enableLight(num);
-  }
-
-  protected void lightDisable(int num) {
-    pgl.disableLight(num);
-  }
 
   protected void lightFalloff(int num) {
     pgl.setLightConstantAttenuation(num, lightFalloffConstant[num]);
     pgl.setLightLinearAttenuation(num, lightFalloffLinear[num]);
     pgl.setLightQuadraticAttenuation(num, lightFalloffQuadratic[num]);
-  }
-
-  protected void lightPosition(int num) {
-    pgl.setLightPosition(num, lightPosition[num]);
   }
 
   protected void lightSpecular(int num) {
@@ -4453,6 +4475,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void lightSpotConcentration(int num) {
     pgl.setSpotLightExponent(num, lightSpotConcentration[num]);    
   }  
+  
+  protected void lightNoSpot(int num) {
+    pgl.setSpotLightCutoff(num, 180);
+    pgl.setSpotLightExponent(num, 0);    
+  }  
+  */
   
   //////////////////////////////////////////////////////////////
 
@@ -5664,8 +5692,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Light model defaults:
     // The default opengl ambient light is (0.2, 0.2, 0.2), so
     // here we set our own default value.
-    pgl.setTwoSidedLightModel();
-    pgl.setDefaultAmbientLight(baseLight);    
+    //pgl.setTwoSidedLightModel();
+    //pgl.setDefaultAmbientLight(baseLight);    
   }  
   
   /*
@@ -5684,9 +5712,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   }  
   */
     
+  /*
   protected void setDefNormals(float nx, float ny, float nz) { 
     pgl.setNormal(nx, ny, nz);  
   }
+  */
   
   //////////////////////////////////////////////////////////////
   
@@ -5849,7 +5879,33 @@ public class PGraphicsAndroid3D extends PGraphics {
     fillShader.setMatUniform(fillProjectionLoc, projection.m00, projection.m01, projection.m02, projection.m03, 
                                                 projection.m10, projection.m11, projection.m12, projection.m13, 
                                                 projection.m20, projection.m21, projection.m22, projection.m23, 
-                                                projection.m30, projection.m31, projection.m32, projection.m33);    
+                                                projection.m30, projection.m31, projection.m32, projection.m33);
+    
+    // Also send projection * modelview
+    
+    // About normal matrix 
+    // http://www.lighthouse3d.com/tutorials/glsl-tutorial/the-normal-matrix/
+    // http://arcsynthesis.org/gltut/Illumination/Tut09%20Normal%20Transformation.html
+    
+    // Multiple lights
+    // http://en.wikibooks.org/wiki/GLSL_Programming/GLUT/Multiple_Lights
+    for (int i = 0; i < lightCount; i++) {
+      // need to pass these to the shader:
+      
+      // vec4 lightPosition[lightCount]      
+      // vec4 lightNormal[lightCount]
+      
+      // vec4 lightAmbient[lightCount]
+      // vec4 lightDiffuse[lightCount]
+      // vec4 lightSpecular[lightCount]
+      
+      // float lightFalloffConstant[lightCount]
+      // float lightFalloffLinear[lightCount]
+      // float lightFalloffQuadratic[lightCount]
+      
+      // float lightSpotAngle[lightCount]
+      // float lightSpotConcentration[lightCount]    
+    }    
   }
 
   protected void stopFillShader() {
@@ -6083,227 +6139,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void setPointSizeFormat(int size, int offset) { 
     pgl.setVertexAttribFormat(pointSizeAttribLoc, size, offset);
   }  
-
-  
-  
-  
-/*
-  protected void startLineShader() {
-
-  }
-
-  
-  protected void setupLineShader(int attrBufID, float[] attribs, int nvert) {
-    lineShader.setIntUniform("lights", lightCount);                   
-    lineShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
-        
-    pgl.enableAttribsArray(lineAttribsLoc);
-    pgl.bindVertexBuffer(attrBufID);
-    pgl.copyVertexBufferData(attribs, 4 * nvert, vboMode);
-    pgl.setAttribsFormat(lineAttribsLoc, 4, 0, 0);
-  }
-  
-  
-  protected void setupLineShader(int attrBufID) {
-    lineShader.setVecUniform("viewport", viewport[0], viewport[1], viewport[2], viewport[3]);
-
-    if (hints[ENABLE_PERSPECTIVE_CORRECTED_LINES]) {
-      lineShader.setIntUniform("perspective", 1);
-    } else {
-      lineShader.setIntUniform("perspective", 0);
-    }    
     
-    lineShader.setIntUniform("lights", lightCount);           
-        
-    lineShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
-    
-    lineAttribsLoc = lineShader.getAttribLocation("attribs");     
-
-    pgl.enableAttribsArray(lineAttribsLoc);
-    pgl.bindVertexBuffer(attrBufID);
-    pgl.setAttribsFormat(lineAttribsLoc, 4, 0, 0);    
-  }
-  
-  
-  protected void stopLineShader() {
-    pgl.disableAttribsArray(lineAttribsLoc);
-    lineShader.stop();
-  }  
-  
-  
-  protected void startPointShader() {
-    if (pointShader == null) {
-      pointShader = new PShader(parent);
-      pointShader.loadVertexShader(PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl"));
-      pointShader.loadFragmentShader(PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl"));
-      pointShader.setup();
-    }    
-    
-    pointShader.start();    
-  }
-  
-  
-  protected void setupPointShader(int attrBufID, float[] attribs, int nvert) {
-    pointShader.setIntUniform("lights", lightCount);           
-    
-    pointShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
-    
-    pointAttribsLoc = PGraphicsAndroid3D.pointShader.getAttribLocation("vertDisp");     
-
-    pgl.enableAttribsArray(pointAttribsLoc);
-    pgl.bindVertexBuffer(attrBufID);
-    pgl.copyVertexBufferData(attribs, 2 * nvert, vboMode);
-    pgl.setAttribsFormat(pointAttribsLoc, 2, 0, 0);    
-  }
-  
-  
-  protected void setupPointShader(int attrBufID) {
-    pointShader.setIntUniform("lights", lightCount);           
-    
-    pointShader.setVecUniform("eye", cameraEyeX, cameraEyeY, cameraEyeZ, 0);
-    
-    pointAttribsLoc = PGraphicsAndroid3D.pointShader.getAttribLocation("vertDisp");     
-
-    pgl.enableAttribsArray(pointAttribsLoc);
-    pgl.bindVertexBuffer(attrBufID);
-    pgl.setAttribsFormat(pointAttribsLoc, 2, 0, 0);      
-  }
-  
-  
-  protected void stopPointShader() {
-    pgl.disableAttribsArray(pointAttribsLoc);
-    pointShader.stop();  
-  }
-   
- */
-  
-  
-  
   //////////////////////////////////////////////////////////////
   
-  // UTILITY INNER CLASSES    
-    
-  /**
-   *  This class encapsulates the drawing state in Processing.
-   */  
-  protected class DrawingState {
-    int tMode0;    
-    boolean auto0;
-    boolean stroke0;
-    int cMode0;
-    boolean merge0;
-    float specularR0, specularG0, specularB0;    
-    float ambientR0, ambientG0, ambientB0; 
-    boolean fill0;
-    float fillR0, fillG0, fillB0, fillA0;
-    int fillRi0, fillGi0, fillBi0, fillAi0;
-    int fillColor0;
-    boolean fillAlpha0;
-    boolean tint0;
-    float tintR0, tintG0, tintB0, tintA0;
-    int tintRi0, tintGi0, tintBi0, tintAi0;
-    int tintColor0;
-    boolean tintAlpha0;
-    float shininess0;        
-    
-    DrawingState() {}
-    
-    void save() {      
-      tMode0 = textureMode;
-      auto0 = autoNormal;
-      stroke0 = stroke;      
-      cMode0 = colorMode; 
-      //merge0 = mergeRecShapes;
-      
-      // Saving current colors.
-      specularR0 = specularR;
-      specularG0 = specularG;
-      specularB0 = specularB;
-       
-      ambientR0 = ambientR;
-      ambientG0 = ambientG;
-      ambientB0 = ambientB;    
-      
-      fill0 = fill;
-      fillR0 = fillR;
-      fillG0 = fillG;
-      fillB0 = fillB;
-      fillA0 = fillA;
-      fillRi0 = fillRi;
-      fillGi0 = fillGi;
-      fillBi0 = fillBi;
-      fillAi0 = fillAi;
-      fillColor0 = fillColor;
-      fillAlpha0 = fillAlpha;
-      
-      tint0 = tint;
-      tintR0 = tintR;
-      tintG0 = tintG;
-      tintB0 = tintB;
-      tintA0 = tintA;
-      tintRi0 = tintRi;
-      tintGi0 = tintGi;
-      tintBi0 = tintBi;
-      tintAi0 = tintAi;
-      tintColor0 = tintColor;
-      tintAlpha0 = tintAlpha;    
-      
-      shininess0 = shininess;    
-    }
-
-    void restore() {
-      textureMode = tMode0;
-      colorMode = cMode0;
-      autoNormal = auto0;
-      stroke = stroke0;
-      //mergeRecShapes = merge0;
-      
-      // Restore colors
-      calcR = specularR0;
-      calcG = specularG0;
-      calcB = specularB0;
-      specularFromCalc();
-      
-      calcR = ambientR0;
-      calcG = ambientG0;
-      calcB = ambientB0;    
-      ambientFromCalc();
-      
-      if (!fill0) {
-        noFill();
-      } else {
-        calcR = fillR0;
-        calcG = fillG0;
-        calcB = fillB0;
-        calcA = fillA0;
-        calcRi = fillRi0;
-        calcGi = fillGi0;
-        calcBi = fillBi0;
-        calcAi = fillAi0;
-        calcColor = fillColor0;
-        calcAlpha = fillAlpha0;
-        fillFromCalc();
-      }
-
-      if (!tint0) {
-        noTint();
-      } else {
-        calcR = tintR0;
-        calcG = tintG0;
-        calcB = tintB0;
-        calcA = tintA0;
-        calcRi = tintRi0;
-        calcGi = tintGi0;
-        calcBi = tintBi0;
-        calcAi = tintAi0;
-        calcColor = tintColor0;
-        calcAlpha = tintAlpha0;
-        tintFromCalc();
-      }    
-      
-      shininess(shininess0);  
-    }    
-  }
+  // Input, Tessellated geometry, tessellator.        
     
   public InGeometry newInGeometry(int mode) {
     return new InGeometry(mode); 
