@@ -22,19 +22,23 @@
 uniform mat4 modelviewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 projmodelviewMatrix;
+uniform mat3 normalMatrix;
 
 uniform int textured;
 
 uniform int lightCount;
 uniform vec4 lightPosition[8];
-uniform vec4 lightNormal[8];
+uniform vec3 lightNormal[8];
+
 uniform vec4 lightAmbient[8];
 uniform vec4 lightDiffuse[8];
-uniform vec4 lightSpecular[8];      
+uniform vec4 lightSpecular[8];
+      
 uniform float lightFalloffConstant[8];
 uniform float lightFalloffLinear[8];
-uniform float lightFalloffQuadratic[8];      
-uniform float lightSpotAngle[8];
+uniform float lightFalloffQuadratic[8];
+      
+uniform float lightSpotAngleCos[8];
 uniform float lightSpotConcentration[8]; 
 
 attribute vec4 inVertex;
@@ -42,37 +46,74 @@ attribute vec4 inColor;
 attribute vec3 inNormal;
 attribute vec2 inTexcoord;
 
+//attribute vec4 inDiffuseColor;
+//attribute vec4 inAmbientColor;
+//attribute vec4 inSpecularColor;
+//attribute vec4 inEmissiveColor;
+//attribute float shine;
 
 varying vec4 vertColor;
 varying vec2 vertTexcoord;
 
+
+float calcSpotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, float spotExp) {
+  float spotCos = dot(-lightNorm, lightPos - vertPos);
+  return spotCos <= minCos ? 0.0 : pow(spotCos, spotExp); 
+}
+
+float calcLambertFactor(vec3 lightDir, vec3 vecNormal) {
+  return max(0.0, dot(lightDir, vecNormal));
+}
+
+float calcBlinnPhongFactor(vec3 lightDir, vec3 lightPos, vec3 vecNormal, float shine) {
+  return pow(max(0.0, dot(lightDir - lightPos, vecNormal)), shine);
+}
+
 void main() {
   gl_Position = projmodelviewMatrix * inVertex;
-  
-  
-  // vertex in eye coordinates
+    
+  // Vertex in eye coordinates
   vec3 ecVertex = vec3(modelviewMatrix * inVertex);
   
-  // Normal in eye coordinates
+  // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * inNormal);
   
   vertColor = inColor;
   if (0 < textured) {
     vertTexcoord = inTexcoord;
   } 
-    
-  vec4 total = vec4(0, 0, 0, 0);
-  //vec4 total = vec4(1, 1, 1, 1);  
+  
+  // Light calculation *******************************************
+  vec4 totalAmbient = vec4(0, 0, 0, 0);
+  vec4 totalDiffuse = vec4(0, 0, 0, 0);
+  vec4 totalSpecular = vec4(0, 0, 0, 0);
   for (int i = 0; i < lightCount; i++) {
-    float distance = length(lightPosition[i] - ecVertex);
+    vec3 lightPos3 = lightPosition[i].xyz;
+    bool isDir = 0.0 < lightPosition[i].w;
+    float exp = lightSpotConcentration[i];
+    float mcos = lightSpotAngleCos[i];
+    
+    vec3 lightDir;
+    float falloff;    
+    float spot;
+    float shine = 0.5;
+      
+    if (isDir) {
+      falloff = 1.0;
+      lightDir = lightPos3 - ecVertex;
+    } else {
+      float d = distance(lightPos3, ecVertex);
+      falloff = 1.0 / (lightFalloffConstant[i] + 
+                       lightFalloffLinear[i] * d + 
+                       lightFalloffQuadratic[i] * d * d); 
+      lightDir = -lightNormal[i];  
+    }
   
-    // Some random calculation just to stop the compiler from discarding the uniforms.
-    //float c = lightFalloffConstant[i] * lightFalloffLinear[i] * lightFalloffQuadratic[i] * lightSpotAngle[i] * lightSpotConcentration[i];
-    //total += lightDiffuse[i] * dot(lightPosition[i], lightNormal[i]) + c * lightAmbient[i] + lightSpecular[i];
+    spot = exp > 0.0 ? calcSpotFactor(lightPos3, ecVertex, lightNormal[i], mcos, exp) : 1.0;
     
-    
-    
+    totalAmbient  += lightAmbient[i]  * falloff;
+    totalDiffuse  += lightDiffuse[i]  * falloff * spot * calcLambertFactor(lightDir, ecNormal);
+    totalSpecular += lightSpecular[i] * falloff * spot * calcBlinnPhongFactor(lightDir, lightPos3, ecNormal, shine);       
   }  
-  
-  vertColor += total;
+
 }

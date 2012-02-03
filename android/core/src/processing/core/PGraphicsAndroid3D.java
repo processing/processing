@@ -138,13 +138,13 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // ........................................................
 
-  // Projection, camera, and modelview matrices.
+  // All the matrices required for camera and geometry transformations.
   public PMatrix3D projection;    
   public PMatrix3D camera;
   public PMatrix3D cameraInv;  
   public PMatrix3D modelview;
-  public PMatrix3D projmodelview;
   public PMatrix3D modelviewInv;
+  public PMatrix3D projmodelview;  
   
   protected boolean matricesAllocated = false;
   
@@ -154,11 +154,11 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   protected boolean sizeChanged;  
   
-  /** Indicates if all scaling transformations have been uniform so far. */
-  protected boolean uniformScaling;  
-  
   /** Modelview matrix stack **/
   protected Stack<PMatrix3D> modelviewStack;  
+
+  /** Inverse modelview matrix stack **/
+  protected Stack<PMatrix3D> modelviewInvStack;  
   
   /** Projection matrix stack **/
   protected Stack<PMatrix3D> projectionStack;
@@ -201,11 +201,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float[] lightFalloffLinear;
   public float[] lightFalloffQuadratic;
 
-  /** Light spot angle */
-  public float[] lightSpotAngle;
-
   /** Cosine of light spot angle */
-  //public float[] lightSpotAngleCos;
+  public float[] lightSpotAngleCos;
 
   /** Light spot concentration */
   public float[] lightSpotConcentration;
@@ -473,22 +470,22 @@ public class PGraphicsAndroid3D extends PGraphics {
       camera = new PMatrix3D();
       cameraInv = new PMatrix3D();
       modelview = new PMatrix3D();
-      projmodelview = new PMatrix3D();
       modelviewInv = new PMatrix3D();
+      projmodelview = new PMatrix3D();      
       matricesAllocated = true;
     }
 
     if (!lightsAllocated) {
       lightType = new int[PGL.MAX_LIGHTS];
       lightPosition = new float[4 * PGL.MAX_LIGHTS];
-      lightNormal = new float[4 * PGL.MAX_LIGHTS];
+      lightNormal = new float[3 * PGL.MAX_LIGHTS];
       lightAmbient = new float[4 * PGL.MAX_LIGHTS];
       lightDiffuse = new float[4 * PGL.MAX_LIGHTS];
       lightSpecular = new float[4 * PGL.MAX_LIGHTS];
       lightFalloffConstant = new float[PGL.MAX_LIGHTS];
       lightFalloffLinear = new float[PGL.MAX_LIGHTS];
       lightFalloffQuadratic = new float[PGL.MAX_LIGHTS];
-      lightSpotAngle = new float[PGL.MAX_LIGHTS];
+      lightSpotAngleCos = new float[PGL.MAX_LIGHTS];
       lightSpotConcentration = new float[PGL.MAX_LIGHTS];
       currentLightSpecular = new float[4];
       lightsAllocated = true;
@@ -1358,8 +1355,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     // The current normal vector is set to be parallel to the Z axis.
     normalX = normalY = normalZ = 0;
     
-    uniformScaling = true;
-    
     // Clear depth and stencil buffers.
     pgl.setClearColor(0, 0, 0, 0);
     pgl.clearDepthAndStencilBuffers();
@@ -1610,6 +1605,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (modelviewStack == null) {
       modelviewStack = new Stack<PMatrix3D>();
     }
+    if (modelviewInvStack == null) {
+      modelviewInvStack = new Stack<PMatrix3D>();
+    }    
     if (projectionStack == null) {
       projectionStack = new Stack<PMatrix3D>();
     }
@@ -3122,16 +3120,22 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   
   public void pushMatrix() {
-    modelviewStack.push(new PMatrix3D(modelview));    
+    modelviewStack.push(new PMatrix3D(modelview));
+    modelviewInvStack.push(new PMatrix3D(modelviewInv));
   }
 
   
   public void popMatrix() {
     if (hints[DISABLE_TRANSFORM_CACHE]) {
       flush();  
-    }    
-    PMatrix3D mat = modelviewStack.pop();
+    }
+    PMatrix3D mat;
+    
+    mat = modelviewStack.pop();
     modelview.set(mat);
+    
+    mat = modelviewInvStack.pop();
+    modelviewInv.set(mat);    
   }
   
   
@@ -3150,7 +3154,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       flush();  
     }
     
-    modelview.translate(tx, ty, tz);    
+    modelview.translate(tx, ty, tz);
+    modelviewInv.invTranslate(tx, ty, tz);
   }
 
   
@@ -3190,6 +3195,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     modelview.rotate(angle, v0, v1, v2);
+    modelviewInv.invRotate(angle, v0, v1, v2);
   }
 
   
@@ -3217,11 +3223,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       flush();  
     }
 
-    if (FLOAT_EPS < PApplet.abs(sx - sy) || FLOAT_EPS < PApplet.abs(sy - sz)) {
-      uniformScaling = false;
-    }
-    
     modelview.scale(sx, sy, sz);
+    modelview.invScale(sx, sy, sz);
   }
 
   
@@ -3459,8 +3462,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     camera.set(modelview);
-    cameraInv.set(camera);
-    cameraInv.invert();
+    cameraInv.set(modelviewInv);
     
     // all done
     manipulatingCamera = false;
@@ -3625,9 +3627,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     float tz = -eyeZ;
     modelview.translate(tx, ty, tz);
 
+    modelviewInv.set(modelview);
+    modelviewInv.invert();    
+    
     camera.set(modelview);
-    cameraInv.set(camera);
-    cameraInv.invert();
+    cameraInv.set(modelviewInv);
   }
     
   
@@ -4150,8 +4154,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     lightType[lightCount] = AMBIENT;
     
-    lightPosition(lightCount, x, y, z);
-    lightNormal(lightCount, 0, 0, 0, 1);
+    lightPosition(lightCount, x, y, z, false);
+    lightNormal(lightCount, 0, 0, 0);
         
     lightAmbient(lightCount, r, g, b);
     noLightDiffuse(lightCount);
@@ -4173,8 +4177,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     lightType[lightCount] = DIRECTIONAL;
 
-    lightPosition(lightCount, 0, 0, 0);
-    lightNormal(lightCount, dx, dy, dz, 1);
+    lightPosition(lightCount, 0, 0, 0, true);
+    lightNormal(lightCount, dx, dy, dz);
         
     noLightAmbient(lightCount);
     lightDiffuse(lightCount, r, g, b);
@@ -4197,8 +4201,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     lightType[lightCount] = POINT;
 
-    lightPosition(lightCount, x, y, z);
-    lightNormal(lightCount, 0, 0, 0, 1);
+    lightPosition(lightCount, x, y, z, false);
+    lightNormal(lightCount, 0, 0, 0);
     
     noLightAmbient(lightCount);
     lightDiffuse(lightCount, r, g, b);
@@ -4226,8 +4230,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     lightType[lightCount] = SPOT;
 
-    lightPosition(lightCount, x, y, z);
-    lightNormal(lightCount, dx, dy, dz, 0);
+    lightPosition(lightCount, x, y, z, false);
+    lightNormal(lightCount, dx, dy, dz);
         
     noLightAmbient(lightCount);
     lightDiffuse(lightCount, r, g, b);
@@ -4278,14 +4282,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }  
   
-  protected void lightPosition(int num, float x, float y, float z) {
+  protected void lightPosition(int num, float x, float y, float z, boolean dir) {
     lightPosition[4 * num + 0] = x * modelview.m00 + y * modelview.m01 + z * modelview.m02 + modelview.m03;
     lightPosition[4 * num + 1] = x * modelview.m10 + y * modelview.m11 + z * modelview.m12 + modelview.m13;
     lightPosition[4 * num + 2] = x * modelview.m20 + y * modelview.m21 + z * modelview.m22 + modelview.m23;
-    lightPosition[4 * num + 3] = 1;
+    
+    // Used to inicate if the light is directional or not.
+    lightPosition[4 * num + 3] = dir ? 1: 0;
   }  
 
-  protected void lightNormal(int num, float dx, float dy, float dz, float w) {
+  protected void lightNormal(int num, float dx, float dy, float dz) {
     // Applying normal matrix to the light direction vector, which is the transpose of the inverse of the
     // modelview.
     float nx = dx * modelviewInv.m00 + dy * modelviewInv.m10 + dz * modelviewInv.m20;
@@ -4293,10 +4299,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     float nz = dx * modelviewInv.m02 + dy * modelviewInv.m12 + dz * modelviewInv.m22;    
      
     float invn = 1.0f / PApplet.dist(0, 0, 0, nx, ny, nz);
-    lightNormal[4 * num + 0] = invn * nx;
-    lightNormal[4 * num + 1] = invn * ny;
-    lightNormal[4 * num + 2] = invn * nz;
-    lightNormal[4 * num + 3] = w;
+    lightNormal[3 * num + 0] = invn * nx;
+    lightNormal[3 * num + 1] = invn * ny;
+    lightNormal[3 * num + 2] = invn * nz;
   }
   
   protected void lightAmbient(int num, float r, float g, float b) {       
@@ -4355,13 +4360,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightFalloffQuadratic[num] = 0;    
   }
   
-  protected void lightSpot(int num, float cutoff, float exponent) {
-    lightSpotAngle        [num] = PApplet.radians(cutoff);
+  protected void lightSpot(int num, float angle, float exponent) {
+    lightSpotAngleCos        [num] = Math.max(0, PApplet.cos(angle));
     lightSpotConcentration[num] = exponent;
   }
   
   protected void noLightSpot(int num) {
-    lightSpotAngle        [num] = PI;
+    lightSpotAngleCos     [num] = 0;
     lightSpotConcentration[num] = 0;
   }
   
@@ -5712,6 +5717,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected static int fillModelviewLoc;
   protected static int fillProjectionLoc;
   protected static int fillProjmodelviewLoc;
+  protected static int fillNormalLoc;
   protected static int fillTexturedLoc;
   
   protected static int fillLightCountLoc;  
@@ -5723,7 +5729,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected static int fillLightFalloffConstantLoc;
   protected static int fillLightFalloffLinearLoc;
   protected static int fillLightFalloffQuadraticLoc;      
-  protected static int fillLightSpotAngleLoc;
+  protected static int fillLightSpotAngleCosLoc;
   protected static int fillLightSpotConcentrationLoc;   
   
   protected static int fillVertexAttribLoc;
@@ -5759,6 +5765,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillModelviewLoc = fillShader.getUniformLocation("modelviewMatrix");
       fillProjectionLoc = fillShader.getUniformLocation("projectionMatrix");
       fillProjmodelviewLoc = fillShader.getUniformLocation("projmodelviewMatrix");
+      fillNormalLoc = fillShader.getUniformLocation("normalMatrix");
       fillTexturedLoc = fillShader.getUniformLocation("textured");
       
       fillLightCountLoc = fillShader.getUniformLocation("lightCount");      
@@ -5770,7 +5777,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillLightFalloffConstantLoc = fillShader.getUniformLocation("lightFalloffConstant");
       fillLightFalloffLinearLoc = fillShader.getUniformLocation("lightFalloffLinear");
       fillLightFalloffQuadraticLoc = fillShader.getUniformLocation("lightFalloffQuadratic");
-      fillLightSpotAngleLoc = fillShader.getUniformLocation("lightSpotAngle");
+      fillLightSpotAngleCosLoc = fillShader.getUniformLocation("lightSpotAngleCos");
       fillLightSpotConcentrationLoc = fillShader.getUniformLocation("lightSpotConcentration");
       
       
@@ -5799,6 +5806,11 @@ public class PGraphicsAndroid3D extends PGraphics {
                                                    projmodelview.m10, projmodelview.m11, projmodelview.m12, projmodelview.m13, 
                                                    projmodelview.m20, projmodelview.m21, projmodelview.m22, projmodelview.m23, 
                                                    projmodelview.m30, projmodelview.m31, projmodelview.m32, projmodelview.m33);    
+    
+    fillShader.setMatUniform(fillNormalLoc, modelviewInv.m00, modelviewInv.m10, modelviewInv.m20, 
+                                            modelviewInv.m01, modelviewInv.m11, modelviewInv.m21, 
+                                            modelviewInv.m02, modelviewInv.m12, modelviewInv.m22);    
+        
     
     // About normal matrix 
     // http://www.lighthouse3d.com/tutorials/glsl-tutorial/the-normal-matrix/
@@ -5873,7 +5885,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     fillShader.setFloatArrayUniform(fillLightFalloffConstantLoc, lightFalloffConstant);
     fillShader.setFloatArrayUniform(fillLightFalloffLinearLoc, lightFalloffLinear);
     fillShader.setFloatArrayUniform(fillLightFalloffQuadraticLoc, lightFalloffQuadratic);
-    fillShader.setFloatArrayUniform(fillLightSpotAngleLoc, lightSpotAngle);
+    fillShader.setFloatArrayUniform(fillLightSpotAngleCosLoc, lightSpotAngleCos);
     fillShader.setFloatArrayUniform(fillLightSpotConcentrationLoc, lightSpotConcentration);    
     
     
