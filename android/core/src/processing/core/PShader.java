@@ -281,6 +281,23 @@ public class PShader {
     pgl.setFloatUniform(loc, x);
   }  
   
+
+  public void setFloatArrayUniform(int loc, float[] x) {
+    pgl.setFloat1ArrayUniform(loc, x);
+  }
+  
+  public void setVec2ArrayUniform(int loc, float[] x) {
+    pgl.setFloat2ArrayUniform(loc, x);
+  }
+
+  public void setVec3ArrayUniform(int loc, float[] x) {
+    pgl.setFloat3ArrayUniform(loc, x);
+  }  
+
+  public void setVec4ArrayUniform(int loc, float[] x) {
+    pgl.setFloat4ArrayUniform(loc, x);
+  }    
+  
   /**
    * Sets the vec2 uniform with name to the given values. 
    * 

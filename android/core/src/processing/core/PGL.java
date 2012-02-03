@@ -993,11 +993,6 @@ public class PGL {
     return GLES20.glGetUniformLocation(prog, name);
   }  
   
-  public void setArrayUniform(int loc, float[] v) {
-    // ?
-    GLES20.glUniform1fv(loc, v.length, v, 0);
-  }
-  
   public void setIntUniform(int loc, int value) {
     GLES20.glUniform1i(loc, value);  
   }
@@ -1017,6 +1012,22 @@ public class PGL {
   public void setFloatUniform(int loc, float value0, float value1, float value2, float value3) {
     GLES20.glUniform4f(loc, value0, value1, value2, value3);  
   }
+
+  public void setFloat1ArrayUniform(int loc, float[] v) {
+    GLES20.glUniform1fv(loc, v.length, v, 0);
+  }    
+
+  public void setFloat2ArrayUniform(int loc, float[] v) {
+    GLES20.glUniform2fv(loc, v.length / 2, v, 0);
+  }    
+
+  public void setFloat3ArrayUniform(int loc, float[] v) {
+    GLES20.glUniform3fv(loc, v.length / 3, v, 0);
+  }
+
+  public void setFloat4ArrayUniform(int loc, float[] v) {
+    GLES20.glUniform4fv(loc, v.length / 4, v, 0);
+  }  
   
   public void setMatUniform(int loc, float m00, float m01,
                                      float m10, float m11) {
