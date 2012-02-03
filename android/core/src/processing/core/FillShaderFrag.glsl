@@ -29,6 +29,7 @@ varying vec4 vertColor;
 varying vec2 vertTexcoord;
 
 void main() {
+  gl_FragColor = vertColor;
   if (0 < textured) {
     gl_FragColor = texture2D(textureSampler, vertTexcoord) * vertColor;
   } else {

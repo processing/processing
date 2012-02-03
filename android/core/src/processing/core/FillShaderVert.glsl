@@ -21,18 +21,46 @@
 
 uniform mat4 modelviewMatrix;
 uniform mat4 projectionMatrix;
+uniform mat4 projmodelviewMatrix;
+
+uniform int textured;
+
+uniform int lightCount;
+uniform vec4 lightPosition[8];
+uniform vec4 lightNormal[8];
+uniform vec4 lightAmbient[8];
+uniform vec4 lightDiffuse[8];
+uniform vec4 lightSpecular[8];      
+uniform float lightFalloffConstant[8];
+uniform float lightFalloffLinear[8];
+uniform float lightFalloffQuadratic[8];      
+uniform float lightSpotAngle[8];
+uniform float lightSpotConcentration[8]; 
 
 attribute vec4 inVertex;
 attribute vec4 inColor;
 attribute vec3 inNormal;
 attribute vec2 inTexcoord;
 
+
 varying vec4 vertColor;
 varying vec2 vertTexcoord;
 
 void main() {
-  gl_Position = projectionMatrix * modelviewMatrix * inVertex;
+  gl_Position = projmodelviewMatrix * inVertex;
   
   vertColor = inColor;
-  vertTexcoord = inTexcoord; 
+  if (0 < textured) {
+    vertTexcoord = inTexcoord;
+  } 
+    
+  vec4 total = vec4(0, 0, 0, 0);
+  //vec4 total = vec4(1, 1, 1, 1);  
+  for (int i = 0; i < lightCount; i++) {
+    // Some random calculation just to stop the compiler from discarding the uniforms.
+    float c = lightFalloffConstant[i] * lightFalloffLinear[i] * lightFalloffQuadratic[i] * lightSpotAngle[i] * lightSpotConcentration[i];
+    total += lightDiffuse[i] * dot(lightPosition[i], lightNormal[i]) + c * lightAmbient[i] + lightSpecular[i];
+  }  
+  
+  vertColor += total;
 }
