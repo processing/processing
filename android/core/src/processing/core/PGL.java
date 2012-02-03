@@ -1031,8 +1031,8 @@ public class PGL {
   public void setMatUniform(int loc, float m00, float m01,
                                      float m10, float m11) {
     float[] mat = new float[4];
-    mat[0] = m00; mat[4] = m01;
-    mat[1] = m10; mat[5] = m11;
+    mat[0] = m00; mat[2] = m01;
+    mat[1] = m10; mat[3] = m11;
     GLES20.glUniformMatrix2fv(loc, 1, false, mat, 0);
   }
   
@@ -1040,9 +1040,9 @@ public class PGL {
                                      float m10, float m11, float m12,
                                      float m20, float m21, float m22) {
     float[] mat = new float[9];
-    mat[0] = m00; mat[4] = m01; mat[ 8] = m02;
-    mat[1] = m10; mat[5] = m11; mat[ 9] = m12;
-    mat[2] = m20; mat[6] = m21; mat[10] = m22;    
+    mat[0] = m00; mat[3] = m01; mat[6] = m02;
+    mat[1] = m10; mat[4] = m11; mat[7] = m12;
+    mat[2] = m20; mat[5] = m21; mat[8] = m22;    
     GLES20.glUniformMatrix3fv(loc, 1, false, mat, 0);    
   }
   
