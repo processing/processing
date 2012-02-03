@@ -49,6 +49,13 @@ varying vec2 vertTexcoord;
 void main() {
   gl_Position = projmodelviewMatrix * inVertex;
   
+  
+  // vertex in eye coordinates
+  vec3 ecVertex = vec3(modelviewMatrix * inVertex);
+  
+  // Normal in eye coordinates
+  vec3 ecNormal = normalize(normalMatrix * inNormal);
+  
   vertColor = inColor;
   if (0 < textured) {
     vertTexcoord = inTexcoord;
@@ -57,9 +64,14 @@ void main() {
   vec4 total = vec4(0, 0, 0, 0);
   //vec4 total = vec4(1, 1, 1, 1);  
   for (int i = 0; i < lightCount; i++) {
+    float distance = length(lightPosition[i] - ecVertex);
+  
     // Some random calculation just to stop the compiler from discarding the uniforms.
-    float c = lightFalloffConstant[i] * lightFalloffLinear[i] * lightFalloffQuadratic[i] * lightSpotAngle[i] * lightSpotConcentration[i];
-    total += lightDiffuse[i] * dot(lightPosition[i], lightNormal[i]) + c * lightAmbient[i] + lightSpecular[i];
+    //float c = lightFalloffConstant[i] * lightFalloffLinear[i] * lightFalloffQuadratic[i] * lightSpotAngle[i] * lightSpotConcentration[i];
+    //total += lightDiffuse[i] * dot(lightPosition[i], lightNormal[i]) + c * lightAmbient[i] + lightSpecular[i];
+    
+    
+    
   }  
   
   vertColor += total;
