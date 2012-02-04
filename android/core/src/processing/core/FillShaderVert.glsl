@@ -46,7 +46,6 @@ attribute vec4 inColor;
 attribute vec3 inNormal;
 attribute vec2 inTexcoord;
 
-//attribute vec4 inDiffuseColor;
 //attribute vec4 inAmbientColor;
 //attribute vec4 inSpecularColor;
 //attribute vec4 inEmissiveColor;
