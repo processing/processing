@@ -6249,7 +6249,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     public float[] strokes;
     
     public int[][] edges;
-        
+    
+    // Holds ambient, specular, and emissive colors
+    // and shine factor.
+    public float[] materials;
+    
     // For later, to be used by libraries...
     //public float[][] mtexcoords;
     //public float[][] attributes;
@@ -6272,6 +6276,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       texcoords = new float[2 * PGL.DEFAULT_IN_VERTICES];
       strokes = new float[5 * PGL.DEFAULT_IN_VERTICES];
       edges = new int[PGL.DEFAULT_IN_EDGES][3];
+      materials = new float[(4 * 3 + 1) * PGL.DEFAULT_IN_VERTICES];
       reset();
     }
     
@@ -6282,6 +6287,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         trimNormals();
         trimTexcoords();
         trimEdges();
+        trimMaterials();
       }      
     }
     
@@ -6572,6 +6578,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       int temp[][] = new int[edgeCount][3];
       PApplet.arrayCopy(edges, 0, temp, 0, edgeCount);
       edges = temp;        
+    }
+    
+    protected void trimMaterials() {
+      
     }
     
     public int getNumLineVertices() {
