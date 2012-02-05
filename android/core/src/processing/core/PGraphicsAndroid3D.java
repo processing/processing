@@ -1960,7 +1960,8 @@ public class PGraphicsAndroid3D extends PGraphics {
                  fR, fG, fB, fA, 
                  normalX, normalY, normalZ,
                  u, v, 
-                 sR, sG, sB, sA, sW, 
+                 sR, sG, sB, sA, sW,
+                 ambientColor, specularColor, emissiveColor, shininess,
                  code);     
   }
    
@@ -2225,8 +2226,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     startFillShader();  
     
     enableFillVertex();
-    enableFillColor();
-//    enableFillNormal();
+    enableFillColor();    
+    if (lights) {
+      enableFillNormal();
+      enableFillMaterials();
+    }
         
     int size = tessGeo.fillVertexCount;
     pgl.bindVertexBuffer(glFillVertexBufferID);
@@ -2237,9 +2241,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.copyVertexBufferData(tessGeo.fillColors, 4 * size, vboMode);
     setFillColorFormat(4, 0);
     
-//    pgl.bindVertexBuffer(glFillNormalBufferID);
-//    pgl.copyVertexBufferData(tessGeo.fillNormals, 3 * size, vboMode);
-//    setFillNormalFormat(3, 0);
+    if (lights) {
+      pgl.bindVertexBuffer(glFillNormalBufferID);
+      pgl.copyVertexBufferData(tessGeo.fillNormals, 3 * size, vboMode);
+      setFillNormalFormat(3, 0);
+      
+      // bind material buffers..
+      // copy data
+      // set formats
+    }
     
     if (texCache.hasTexture) {
       pgl.setActiveTexUnit(0);
@@ -2311,7 +2321,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     disableFillVertex();
     disableFillColor();
-//    disableFillNormal();
+    if (lights) {
+      disableFillNormal();
+    }
     
     stopFillShader();
   }
@@ -2721,8 +2733,8 @@ public class PGraphicsAndroid3D extends PGraphics {
      defaultEdges = false;
      inGeo.generateEllipse(ellipseMode, a, b, c, d, 
                         fill, fillR, fillG, fillB, fillA, 
-                        stroke, strokeR, strokeG, strokeB, strokeA,
-                        strokeWeight);
+                        stroke, strokeR, strokeG, strokeB, strokeA, strokeWeight,
+                        ambientColor, specularColor, emissiveColor, shininess);
      endShape();
   }
   
@@ -5919,6 +5931,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.enableVertexAttribArray(fillNormalAttribLoc);
   }
   
+  protected void enableFillMaterials() {
+    
+  }
+  
   protected void enableFillTexCoord() {
     pgl.enableVertexAttribArray(fillTexCoordAttribLoc);
   }
@@ -5940,19 +5956,19 @@ public class PGraphicsAndroid3D extends PGraphics {
   }  
   
   protected void setFillVertexFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(fillVertexAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(fillVertexAttribLoc, size, offset);
   }
   
   protected void setFillColorFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(fillColorAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(fillColorAttribLoc, size, offset);
   }
 
   protected void setFillNormalFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(fillNormalAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(fillNormalAttribLoc, size, offset);
   }
 
   protected void setFillTexCoordFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(fillTexCoordAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(fillTexCoordAttribLoc, size, offset);
   }    
   
   protected void startLineShader() {    
@@ -6030,19 +6046,19 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected void setLineVertexFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(lineVertexAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(lineVertexAttribLoc, size, offset);
   }
   
   protected void setLineColorFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(lineColorAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(lineColorAttribLoc, size, offset);
   }
 
   protected void setLineNormalFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(lineNormalAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(lineNormalAttribLoc, size, offset);
   }
 
   protected void setLineDirWidthFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(lineDirWidthAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(lineDirWidthAttribLoc, size, offset);
   }  
 
   
@@ -6112,19 +6128,19 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected void setPointVertexFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(pointVertexAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(pointVertexAttribLoc, size, offset);
   }
   
   protected void setPointColorFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(pointColorAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(pointColorAttribLoc, size, offset);
   }
 
   protected void setPointNormalFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(pointNormalAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(pointNormalAttribLoc, size, offset);
   }
 
   protected void setPointSizeFormat(int size, int offset) { 
-    pgl.setVertexAttribFormat(pointSizeAttribLoc, size, offset);
+    pgl.setFloatVertexAttribFormat(pointSizeAttribLoc, size, offset);
   }  
     
   //////////////////////////////////////////////////////////////
@@ -6250,9 +6266,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     public int[][] edges;
     
-    // Holds ambient, specular, and emissive colors
-    // and shine factor.
-    public float[] materials;
+    // Material properties
+    public int[] ambient;
+    public int[] specular;
+    public int[] emissive;
+    public float[] shininess;
     
     // For later, to be used by libraries...
     //public float[][] mtexcoords;
@@ -6276,7 +6294,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       texcoords = new float[2 * PGL.DEFAULT_IN_VERTICES];
       strokes = new float[5 * PGL.DEFAULT_IN_VERTICES];
       edges = new int[PGL.DEFAULT_IN_EDGES][3];
-      materials = new float[(4 * 3 + 1) * PGL.DEFAULT_IN_VERTICES];
+      ambient = new int[PGL.DEFAULT_IN_VERTICES];
+      specular = new int[PGL.DEFAULT_IN_VERTICES];
+      emissive = new int[PGL.DEFAULT_IN_VERTICES];
+      shininess = new float[PGL.DEFAULT_IN_VERTICES];
       reset();
     }
     
@@ -6287,7 +6308,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         trimNormals();
         trimTexcoords();
         trimEdges();
-        trimMaterials();
+        trimAmbient();
+        trimSpecular();
+        trimEmissive();
+        trimShininess();
       }      
     }
     
@@ -6328,46 +6352,34 @@ public class PGraphicsAndroid3D extends PGraphics {
     public boolean isFull() {
       return PGL.MAX_TESS_VERTICES <= vertexCount;
     }
-    
-    public int addVertex(float[] vertex, float[] color, float[] normal, float[] texcoord, float[] stroke, int code) {
-      vertexCheck();
 
-      codes[vertexCount] = code;  
-      
-      PApplet.arrayCopy(vertex, 0, vertices, 3 * vertexCount, 3);
-      PApplet.arrayCopy(color, 0, colors, 4 * vertexCount, 4);
-      PApplet.arrayCopy(normal, 0, normals, 3 * vertexCount, 3);
-      PApplet.arrayCopy(texcoord, 0, texcoords, 2 * vertexCount, 2);      
-      PApplet.arrayCopy(stroke, 0, strokes, 5 * vertexCount, 5);
-            
-      lastVertex = vertexCount; 
-      vertexCount++; 
-      
-      return lastVertex;
-    }
     
     public int addVertex(float x, float y, 
                          float r, float g, float b, float a,
                          float u, float v,
-                         float sr, float sg, float sb, float sa, float sw, 
+                         float sr, float sg, float sb, float sa, float sw,
+                         int ac, int sc, int ec, float shine,
                          int code) {
       return addVertex(x, y, 0, 
                        r, g, b, a, 
                        0, 0, 1, 
                        u, v, 
                        sr, sg, sb, sa, sw, 
+                       ac, sc, ec, shine,
                        code);      
     }
 
     public int addVertex(float x, float y, 
                          float r, float g, float b, float a,
-                         float sr, float sg, float sb, float sa, float sw, 
+                         float sr, float sg, float sb, float sa, float sw,
+                         int ac, int sc, int ec, float shine,
                          int code) {
       return addVertex(x, y, 0, 
                        r, g, b, a, 
                        0, 0, 1, 
                        0, 0, 
-                       sr, sg, sb, sa, sw, 
+                       sr, sg, sb, sa, sw,
+                       ac, sc, ec, shine,
                        code);   
     }    
     
@@ -6376,6 +6388,7 @@ public class PGraphicsAndroid3D extends PGraphics {
                          float nx, float ny, float nz,
                          float u, float v,
                          float sr, float sg, float sb, float sa, float sw, 
+                         int ac, int sc, int ec, float shine,
                          int code) {
       vertexCheck();
       int index;
@@ -6408,6 +6421,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       strokes[index++] = sb;
       strokes[index++] = sa;
       strokes[index  ] = sw;
+
+      ambient[vertexCount] = ac;
+      specular[vertexCount] = sc;
+      emissive[vertexCount] = ec;
+      shininess[vertexCount] = shine;
       
       lastVertex = vertexCount; 
       vertexCount++;
@@ -6425,6 +6443,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         expandNormals(newSize);
         expandTexcoords(newSize);      
         expandStrokes(newSize);
+        expandAmbient(newSize);
+        expandSpecular(newSize);
+        expandEmissive(newSize);
+        expandShininess(newSize);
       }
     }  
     
@@ -6544,6 +6566,30 @@ public class PGraphicsAndroid3D extends PGraphics {
       strokes = temp;
     }
     
+    protected void expandAmbient(int n) {
+      int temp[] = new int[n];      
+      PApplet.arrayCopy(ambient, 0, temp, 0, vertexCount);
+      ambient = temp;          
+    }
+    
+    protected void expandSpecular(int n) {
+      int temp[] = new int[n];      
+      PApplet.arrayCopy(specular, 0, temp, 0, vertexCount);
+      specular = temp;       
+    }
+    
+    protected void expandEmissive(int n) {
+      int temp[] = new int[n];      
+      PApplet.arrayCopy(emissive, 0, temp, 0, vertexCount);
+      emissive = temp;      
+    }
+    
+    protected void expandShininess(int n) {
+      float temp[] = new float[n];      
+      PApplet.arrayCopy(shininess, 0, temp, 0, vertexCount);
+      shininess = temp;       
+    }
+    
     protected void trimVertices() {
       float temp[] = new float[3 * vertexCount];      
       PApplet.arrayCopy(vertices, 0, temp, 0, 3 * vertexCount);
@@ -6580,8 +6626,28 @@ public class PGraphicsAndroid3D extends PGraphics {
       edges = temp;        
     }
     
-    protected void trimMaterials() {
-      
+    protected void trimAmbient() {
+      int temp[] = new int[vertexCount];
+      PApplet.arrayCopy(ambient, 0, temp, 0, vertexCount);
+      ambient = temp;      
+    }
+    
+    protected void trimSpecular() {
+      int temp[] = new int[vertexCount];
+      PApplet.arrayCopy(specular, 0, temp, 0, vertexCount);
+      specular = temp;      
+    }
+        
+    protected void trimEmissive() {
+      int temp[] = new int[vertexCount];
+      PApplet.arrayCopy(emissive, 0, temp, 0, vertexCount);
+      emissive = temp; 
+    }
+    
+    protected void trimShininess() {
+      float temp[] = new float[vertexCount];
+      PApplet.arrayCopy(shininess, 0, temp, 0, vertexCount);
+      shininess = temp;      
     }
     
     public int getNumLineVertices() {
@@ -6777,8 +6843,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     public void generateEllipse(int ellipseMode, float a, float b, float c, float d, 
                                 boolean fill, float fillR, float fillG, float fillB, float fillA, 
-                                boolean stroke, float strokeR, float strokeG, float strokeB, float strokeA,
-                                float strokeWeight) {      
+                                boolean stroke, float strokeR, float strokeG, float strokeB, float strokeA, float strokeWeight,
+                                int ambient, int specular, int emissive, float shininess) {      
       float x = a;
       float y = b;
       float w = c;
@@ -6828,7 +6894,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       if (fill) {
         addVertex(centerX, centerY, 
-                  fillR, fillG, fillB, fillA, strokeR, strokeG, strokeB, strokeA, strokeWeight, VERTEX);
+                  fillR, fillG, fillB, fillA, 
+                  strokeR, strokeG, strokeB, strokeA, strokeWeight,
+                  ambient, specular, emissive, shininess,
+                  VERTEX);
       }
       int idx0, pidx, idx;
       idx0 = pidx = idx = 0;
@@ -6836,7 +6905,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       for (int i = 0; i < accuracy; i++) {
         idx = addVertex(centerX + PGraphicsAndroid3D.cosLUT[(int) val] * radiusH, 
                         centerY + PGraphicsAndroid3D.sinLUT[(int) val] * radiusV, 
-                        fillR, fillG, fillB, fillA, strokeR, strokeG, strokeB, strokeA, strokeWeight, VERTEX);
+                        fillR, fillG, fillB, fillA, 
+                        strokeR, strokeG, strokeB, strokeA, strokeWeight,
+                        ambient, specular, emissive, shininess,
+                        VERTEX);
         val = (val + inc) % PGraphicsAndroid3D.SINCOS_LENGTH;
         
         if (0 < i) {
@@ -6850,7 +6922,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       // Back to the beginning
       addVertex(centerX + PGraphicsAndroid3D.cosLUT[0] * radiusH, 
                 centerY + PGraphicsAndroid3D.sinLUT[0] * radiusV, 
-                fillR, fillG, fillB, fillA, strokeR, strokeG, strokeB, strokeA, strokeWeight, VERTEX);
+                fillR, fillG, fillB, fillA, 
+                strokeR, strokeG, strokeB, strokeA, strokeWeight,
+                ambient, specular, emissive, shininess,
+                VERTEX);
       if (stroke) addEdge(idx, idx0, false, true);
     }
     
@@ -6869,6 +6944,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     public float[] fillNormals;
     public float[] fillTexcoords;
     
+    // Fill material
+    public int[] fillAmbient;
+    public int[] fillSpecular;
+    public int[] fillEmissive;
+    public float[] fillShininess;
+        
     public int fillIndexCount;
     public int firstFillIndex;
     public int lastFillIndex;    
@@ -6929,6 +7010,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillTexcoords = new float[2 * PGL.DEFAULT_TESS_VERTICES];
       fillIndices = new short[PGL.DEFAULT_TESS_VERTICES];  
       
+      fillAmbient = new int[PGL.DEFAULT_TESS_VERTICES];
+      fillSpecular = new int[PGL.DEFAULT_TESS_VERTICES];
+      fillEmissive = new int[PGL.DEFAULT_TESS_VERTICES];
+      fillShininess = new float[PGL.DEFAULT_TESS_VERTICES];
+      
+      
       lineVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       lineColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
@@ -6950,6 +7037,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         trimFillColors();
         trimFillNormals();
         trimFillTexcoords();
+        trimFillAmbient();
+        trimFillSpecular();
+        trimFillEmissive();
+        trimFillShininess();
       }
       
       if (fillIndexCount < fillIndices.length) {
@@ -7001,6 +7092,30 @@ public class PGraphicsAndroid3D extends PGraphics {
       float temp[] = new float[2 * fillVertexCount];      
       PApplet.arrayCopy(fillTexcoords, 0, temp, 0, 2 * fillVertexCount);
       fillTexcoords = temp;
+    }
+    
+    protected void trimFillAmbient() {
+      int temp[] = new int[fillVertexCount];
+      PApplet.arrayCopy(fillAmbient, 0, temp, 0, fillVertexCount);
+      fillAmbient = temp;      
+    }
+    
+    protected void trimFillSpecular() {
+      int temp[] = new int[fillVertexCount];
+      PApplet.arrayCopy(fillSpecular, 0, temp, 0, fillVertexCount);
+      fillSpecular = temp;      
+    }
+        
+    protected void trimFillEmissive() {
+      int temp[] = new int[fillVertexCount];
+      PApplet.arrayCopy(fillEmissive, 0, temp, 0, fillVertexCount);
+      fillEmissive = temp; 
+    }
+    
+    protected void trimFillShininess() {
+      float temp[] = new float[fillVertexCount];
+      PApplet.arrayCopy(fillShininess, 0, temp, 0, fillVertexCount);
+      fillShininess = temp;      
     }
     
     public void trimFillIndices() {
@@ -7074,7 +7189,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillColors = null;
       fillNormals = null;
       fillTexcoords = null;
-      fillIndices = null;  
+      fillIndices = null;        
+      fillAmbient = null;
+      fillSpecular = null;
+      fillEmissive = null;
+      fillShininess = null;
       
       lineVertices = null;
       lineColors = null;
@@ -7310,7 +7429,11 @@ public class PGraphicsAndroid3D extends PGraphics {
         expandFillVertices(newSize);
         expandFillColors(newSize);              
         expandFillNormals(newSize);
-        expandFillTexcoords(newSize);                
+        expandFillTexcoords(newSize);
+        expandFillAmbient(newSize);
+        expandFillSpecular(newSize);
+        expandFillEmissive(newSize);
+        expandFillShininess(newSize);
       }
     }
     
@@ -7323,6 +7446,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         expandFillColors(newSize);
         expandFillNormals(newSize);
         expandFillTexcoords(newSize);
+        expandFillAmbient(newSize);
+        expandFillSpecular(newSize);
+        expandFillEmissive(newSize);
+        expandFillShininess(newSize);
       }
                   
       firstFillVertex = fillVertexCount;
@@ -7366,6 +7493,30 @@ public class PGraphicsAndroid3D extends PGraphics {
       PApplet.arrayCopy(fillTexcoords, 0, temp, 0, 2 * fillVertexCount);
       fillTexcoords = temp;
     }
+    
+    protected void expandFillAmbient(int n) {
+      int temp[] = new int[n];      
+      PApplet.arrayCopy(fillAmbient, 0, temp, 0, fillVertexCount);
+      fillAmbient = temp;          
+    }
+    
+    protected void expandFillSpecular(int n) {
+      int temp[] = new int[n];      
+      PApplet.arrayCopy(fillSpecular, 0, temp, 0, fillVertexCount);
+      fillSpecular = temp;       
+    }
+    
+    protected void expandFillEmissive(int n) {
+      int temp[] = new int[n];      
+      PApplet.arrayCopy(fillEmissive, 0, temp, 0, fillVertexCount);
+      fillEmissive = temp;      
+    }
+    
+    protected void expandFillShininess(int n) {
+      float temp[] = new float[n];      
+      PApplet.arrayCopy(fillShininess, 0, temp, 0, fillVertexCount);
+      fillShininess = temp;       
+    }    
     
     public void addLineVertices(int count) {
       int oldSize = lineVertices.length / 3;
@@ -7485,10 +7636,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       pointIndices = temp;        
     }
     
-    public void addFillVertex(float x, float y, float z, float r, 
-                              float g, float b, float a,
+    public void addFillVertex(float x, float y, float z, 
+                              float r, float g, float b, float a,
                               float nx, float ny, float nz, 
-                              float u, float v) {
+                              float u, float v, 
+                              int am, int sp, int em, float shine) {
       fillVertexCheck();
       int index;
       
@@ -7525,6 +7677,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       index = 2 * fillVertexCount;
       fillTexcoords[index++] = u;
       fillTexcoords[index  ] = v;      
+      
+      fillAmbient[fillVertexCount] = am;
+      fillSpecular[fillVertexCount] = sp;
+      fillEmissive[fillVertexCount] = em;
+      fillShininess[fillVertexCount] = shine;
       
       fillVertexCount++;
     }    
@@ -7590,7 +7747,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             index = 3 * tessIdx;
             fillNormals[index++] = nx;
             fillNormals[index++] = ny;
-            fillNormals[index  ] = nz;            
+            fillNormals[index  ] = nz;
           }     
         } else {          
           PApplet.arrayCopy(in.vertices, 3 * i0, fillVertices, 3 * firstFillVertex, 3 * nvert);
@@ -7621,11 +7778,22 @@ public class PGraphicsAndroid3D extends PGraphics {
           
           index = 2 * tessIdx;
           fillTexcoords[index++] = u;
-          fillTexcoords[index  ] = v;            
+          fillTexcoords[index  ] = v;
+          
+          fillAmbient[tessIdx] = in.ambient[inIdx];
+          fillSpecular[tessIdx] = in.specular[inIdx];
+          fillEmissive[tessIdx] = in.emissive[inIdx];
+          fillShininess[tessIdx] = in.shininess[inIdx];          
         }
       } else {
         PApplet.arrayCopy(in.colors, 4 * i0, fillColors, 4 * firstFillVertex, 4 * nvert);      
         PApplet.arrayCopy(in.texcoords, 2 * i0, fillTexcoords, 2 * firstFillVertex, 2 * nvert);
+        
+        PApplet.arrayCopy(in.ambient, i0, fillAmbient, firstFillVertex, nvert);
+        PApplet.arrayCopy(in.specular, i0, fillSpecular, firstFillVertex, nvert);
+        PApplet.arrayCopy(in.emissive, i0, fillEmissive, firstFillVertex, nvert);
+        PApplet.arrayCopy(in.shininess, i0, fillShininess, firstFillVertex, nvert);
+        
       }
     }     
     
@@ -8506,11 +8674,12 @@ public class PGraphicsAndroid3D extends PGraphics {
             gluTess.beginContour();
           }
           
-          // Vertex data includes coordinates, colors, normals and texture coordinates.
+          // Vertex data includes coordinates, colors, normals, texture coordinates, and material properties.
           double[] vertex = new double[] { in.vertices [3 * i + 0], in.vertices [3 * i + 1], in.vertices[3 * i + 2],
                                            in.colors   [4 * i + 0], in.colors   [4 * i + 1], in.colors  [4 * i + 2], in.colors[4 * i + 3],
                                            in.normals  [3 * i + 0], in.normals  [3 * i + 1], in.normals [3 * i + 2],
-                                           in.texcoords[2 * i + 0], in.texcoords[2 * i + 1] };
+                                           in.texcoords[2 * i + 0], in.texcoords[2 * i + 1],
+                                           in.ambient[i], in.specular[i], in.emissive[i], in.shininess[i] };
           gluTess.addVertex(vertex);
         }        
         gluTess.endContour();
@@ -8671,15 +8840,18 @@ public class PGraphicsAndroid3D extends PGraphics {
       public void vertex(Object data) {
         if (data instanceof double[]) {
           double[] d = (double[]) data;
-          if (d.length < 12) {
-            throw new RuntimeException("TessCallback vertex() data is not of length 12");
+          if (d.length < 16) {
+            throw new RuntimeException("TessCallback vertex() data is not of length 16");
           }
+          
+          // We need to use separate rgba components for correct interpolation...
           
           if (tess.fillVertexCount < PGL.MAX_TESS_VERTICES) {
             tess.addFillVertex((float) d[ 0], (float) d[ 1], (float) d[2],
                                (float) d[ 3], (float) d[ 4], (float) d[5], (float) d[6],
                                (float) d[ 7], (float) d[ 8], (float) d[9],
-                               (float) d[10], (float) d[11]);
+                               (float) d[10], (float) d[11],
+                               (int) d[12], (int) d[13], (int) d[14], (float) d[15]);
             tessCount++;
           } else {
             throw new RuntimeException("P3D: the tessellator is generating too many vertices, reduce complexity of shape.");
@@ -8715,15 +8887,39 @@ public class PGraphicsAndroid3D extends PGraphics {
         vertex[1] = coords[1];
         vertex[2] = coords[2];
 
+        // Here w e need to use separate rgba components for correct interpolation...
+        
         // Calculating the rest of the vertex parameters (color,
         // normal, texcoords) as the linear combination of the 
         // combined vertices.
-        for (int i = 3; i < 12; i++) {
+        for (int i = 3; i < 16; i++) {
           vertex[i] = 0;
           for (int j = 0; j < 4; j++) {
             double[] vertData = (double[])data[j];
             if (vertData != null) {
-              vertex[i] += weight[j] * vertData[i];
+              if (11 < i && i < 15) {
+                // Color data
+                int colorj = (int) vertData[i];
+                int aj = (colorj >> 24) & 0xFF;
+                int rj = (colorj >> 16) & 0xFF;
+                int gj = (colorj >>  8) & 0xFF; 
+                int bj = (colorj >>  0) & 0xFF;                
+
+                int colori = (int) vertex[i];
+                int ai = (colori >> 24) & 0xFF;
+                int ri = (colori >> 16) & 0xFF;
+                int gi = (colori >>  8) & 0xFF; 
+                int bi = (colori >>  0) & 0xFF;
+                                                
+                ri += weight[j] * rj;
+                bi += weight[j] * bj;
+                gi += weight[j] * gj;
+                ai += weight[j] * aj;
+                
+                colori = (ai << 24) | (ri << 16) | (gi << 8) | bi;                
+              } else {
+                vertex[i] += weight[j] * vertData[i];
+              }
             }
           }
         }

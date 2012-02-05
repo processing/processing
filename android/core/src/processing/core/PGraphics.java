@@ -321,9 +321,15 @@ public class PGraphics extends PImage implements PConstants {
 //  PMaterial[] materialStack;
 //  int materialStackPointer;
 
+  public int ambientColor;
   public float ambientR, ambientG, ambientB;
+  
+  public int specularColor;
   public float specularR, specularG, specularB;
+  
+  public int emissiveColor;
   public float emissiveR, emissiveG, emissiveB;
+  
   public float shininess;
 
 
@@ -4102,6 +4108,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void ambientFromCalc() {
+    ambientColor = calcColor;
     ambientR = calcR;
     ambientG = calcG;
     ambientB = calcB;
@@ -4134,6 +4141,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void specularFromCalc() {
+    specularColor = calcColor; 
     specularR = calcR;
     specularG = calcG;
     specularB = calcB;
@@ -4171,6 +4179,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void emissiveFromCalc() {
+    emissiveColor = calcColor;
     emissiveR = calcR;
     emissiveG = calcG;
     emissiveB = calcB;
