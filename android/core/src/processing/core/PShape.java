@@ -463,6 +463,60 @@ public class PShape implements PConstants {
   public void tint(float x, float y, float z, float alpha) {
   }  
 
+  //////////////////////////////////////////////////////////////
+
+  // AMBIENT COLOR
+  
+  public void ambient(int rgb) {
+  }
+
+  public void ambient(float gray) { 
+  }
+
+  public void ambient(float x, float y, float z) {    
+  }
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // SPECULAR COLOR  
+  
+
+  public void specular(int rgb) {
+  }
+
+  public void specular(float gray) {
+  }
+
+  public void specular(float x, float y, float z) {
+  }
+    
+  
+  //////////////////////////////////////////////////////////////
+
+  // EMISSIVE COLOR
+  
+  
+  public void emissive(int rgb) {
+  }
+
+  public void emissive(float gray) {
+  }
+
+  public void emissive(float x, float y, float z) {
+  }
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SHININESS  
+  
+  
+  public void shininess(float shine) {    
+  }
+  
+  
+  
   ///////////////////////////////////////////////////////////  
   
   //

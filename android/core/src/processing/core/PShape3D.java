@@ -194,6 +194,12 @@ public class PShape3D extends PShape {
   protected boolean tint;
   protected float tintR, tintG, tintB, tintA;
   
+  // Material properties
+  public int ambientColor;  
+  public int specularColor;  
+  public int emissiveColor;
+  public float shininess;
+  
   // ........................................................
   
   // Bezier and Catmull-Rom curves  
@@ -279,24 +285,42 @@ public class PShape3D extends PShape {
     // generated at rendering time, by which the color configuration of the renderer might
     // have changed.
     fill = pg.fill;
-    fillR = ((pg.fillColor >> 16) & 0xFF) / 255.0f;    
-    fillG = ((pg.fillColor >>  8) & 0xFF) / 255.0f; 
-    fillB = ((pg.fillColor >>  0) & 0xFF) / 255.0f;
-    fillA = ((pg.fillColor >> 24) & 0xFF) / 255.0f;
-      
+//    fillR = ((pg.fillColor >> 16) & 0xFF) / 255.0f;    
+//    fillG = ((pg.fillColor >>  8) & 0xFF) / 255.0f; 
+//    fillB = ((pg.fillColor >>  0) & 0xFF) / 255.0f;
+//    fillA = ((pg.fillColor >> 24) & 0xFF) / 255.0f;
+    fillR = pg.fillR;
+    fillG = pg.fillG;
+    fillB = pg.fillB;
+    fillA = pg.fillA;    
+    
     stroke = pg.stroke;      
-    strokeR = ((pg.strokeColor >> 16) & 0xFF) / 255.0f;    
-    strokeG = ((pg.strokeColor >>  8) & 0xFF) / 255.0f; 
-    strokeB = ((pg.strokeColor >>  0) & 0xFF) / 255.0f;
-    strokeA = ((pg.strokeColor >> 24) & 0xFF) / 255.0f;
-
+//    strokeR = ((pg.strokeColor >> 16) & 0xFF) / 255.0f;    
+//    strokeG = ((pg.strokeColor >>  8) & 0xFF) / 255.0f; 
+//    strokeB = ((pg.strokeColor >>  0) & 0xFF) / 255.0f;
+//    strokeA = ((pg.strokeColor >> 24) & 0xFF) / 255.0f;
+    strokeR = pg.strokeR;
+    strokeG = pg.strokeG;
+    strokeB = pg.strokeB;
+    strokeA = pg.strokeA;
+     
     strokeWeight = pg.strokeWeight;    
     
     tint = pg.tint;  
-    tintR = ((pg.tintColor >> 16) & 0xFF) / 255.0f;    
-    tintG = ((pg.tintColor >>  8) & 0xFF) / 255.0f; 
-    tintB = ((pg.tintColor >>  0) & 0xFF) / 255.0f;
-    tintA = ((pg.tintColor >> 24) & 0xFF) / 255.0f;
+//    tintR = ((pg.tintColor >> 16) & 0xFF) / 255.0f;    
+//    tintG = ((pg.tintColor >>  8) & 0xFF) / 255.0f; 
+//    tintB = ((pg.tintColor >>  0) & 0xFF) / 255.0f;
+//    tintA = ((pg.tintColor >> 24) & 0xFF) / 255.0f;
+    tintR = pg.tintR;    
+    tintG = pg.tintG; 
+    tintB = pg.tintB;
+    tintA = pg.tintA;
+
+    ambientColor = pg.ambientColor;  
+    specularColor = pg.specularColor;  
+    emissiveColor = pg.emissiveColor;
+    shininess = pg.shininess;
+    
     
     normalX = normalY = 0; 
     normalZ = 1;
@@ -643,7 +667,8 @@ public class PShape3D extends PShape {
                  fR, fG, fB, fA, 
                  normalX, normalY, normalZ,
                  u, v, 
-                 sR, sG, sB, sA, sW, 
+                 sR, sG, sB, sA, sW,
+                 ambientColor, specularColor, emissiveColor, shininess,
                  code);    
     
     root.tessellated = false;
@@ -1163,6 +1188,68 @@ public class PShape3D extends PShape {
     modifiedFillColors = true;
     modified();  
   }
+  
+  //////////////////////////////////////////////////////////////
+
+  // AMBIENT COLOR
+  
+  public void ambient(int rgb) {
+  }
+
+
+  public void ambient(float gray) { 
+  }
+
+
+  public void ambient(float x, float y, float z) {    
+  }
+
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SPECULAR COLOR  
+  
+
+  public void specular(int rgb) {
+  }
+
+
+  public void specular(float gray) {
+  }
+
+
+  public void specular(float x, float y, float z) {
+  }
+  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // EMISSIVE COLOR
+  
+  
+  public void emissive(int rgb) {
+  }
+
+
+  public void emissive(float gray) {
+  }
+
+
+  public void emissive(float x, float y, float z) {
+  }
+  
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // SHININESS  
+  
+  
+  public void shininess(float shine) {    
+  }
+  
   
   ///////////////////////////////////////////////////////////  
   
@@ -2321,8 +2408,8 @@ public class PShape3D extends PShape {
 
     in.generateEllipse(ellipseMode, a, b, c, d,
                        fill, fillR, fillG, fillB, fillA, 
-                       stroke, strokeR, strokeG, strokeB, strokeA,
-                       strokeWeight);
+                       stroke, strokeR, strokeG, strokeB, strokeA, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininess);
     
     tessellator.tessellateTriangleFan(); 
   }
