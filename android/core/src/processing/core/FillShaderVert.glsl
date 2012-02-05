@@ -54,17 +54,21 @@ attribute vec2 inTexcoord;
 varying vec4 vertColor;
 varying vec2 vertTexcoord;
 
+float attenuationFactor(vec3 lightPos, vec3 vertPos, float c0, float c1, float c2) {
+  float d = distance(lightPos, vertPos);
+  return = 1.0 / (c0 + c1 * d + c2 * d * d);
+}
 
-float calcSpotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, float spotExp) {
+float spotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, float spotExp) {
   float spotCos = dot(-lightNorm, lightPos - vertPos);
   return spotCos <= minCos ? 0.0 : pow(spotCos, spotExp); 
 }
 
-float calcLambertFactor(vec3 lightDir, vec3 vecNormal) {
+float lambertFactor(vec3 lightDir, vec3 vecNormal) {
   return max(0.0, dot(lightDir, vecNormal));
 }
 
-float calcBlinnPhongFactor(vec3 lightDir, vec3 lightPos, vec3 vecNormal, float shine) {
+float blinnPhongFactor(vec3 lightDir, vec3 lightPos, vec3 vecNormal, float shine) {
   return pow(max(0.0, dot(lightDir - lightPos, vecNormal)), shine);
 }
 
@@ -101,18 +105,17 @@ void main() {
       falloff = 1.0;
       lightDir = lightPos3 - ecVertex;
     } else {
-      float d = distance(lightPos3, ecVertex);
-      falloff = 1.0 / (lightFalloffConstant[i] + 
-                       lightFalloffLinear[i] * d + 
-                       lightFalloffQuadratic[i] * d * d); 
+      falloff = attenuationFactor(lightPos3, ecVertex, lightFalloffConstant[i], 
+                                                       lightFalloffLinear[i],
+                                                       lightFalloffQuadratic[i]);
       lightDir = -lightNormal[i];  
     }
   
-    spot = exp > 0.0 ? calcSpotFactor(lightPos3, ecVertex, lightNormal[i], mcos, exp) : 1.0;
+    spot = exp > 0.0 ? spotFactor(lightPos3, ecVertex, lightNormal[i], mcos, exp) : 1.0;
     
     totalAmbient  += lightAmbient[i]  * falloff;
-    totalDiffuse  += lightDiffuse[i]  * falloff * spot * calcLambertFactor(lightDir, ecNormal);
-    totalSpecular += lightSpecular[i] * falloff * spot * calcBlinnPhongFactor(lightDir, lightPos3, ecNormal, shine);       
+    totalDiffuse  += lightDiffuse[i]  * falloff * spot * lambertFactor(lightDir, ecNormal);
+    totalSpecular += lightSpecular[i] * falloff * spot * blinnPhongFactor(lightDir, lightPos3, ecNormal, shine);       
   }  
 
 }
