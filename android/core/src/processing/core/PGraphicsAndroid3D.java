@@ -55,8 +55,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   public int glFillVertexBufferID;
   public int glFillColorBufferID;
   public int glFillNormalBufferID;
-  public int glFillTexCoordBufferID;  
-  public int glFillIndexBufferID;
+  public int glFillTexCoordBufferID;
+  public int glFillAmbientBufferID;
+  public int glFillSpecularBufferID;
+  public int glFillEmissiveBufferID;
+  public int glFillShininessBufferID;  
+  public int glFillIndexBufferID;  
   protected boolean fillVBOsCreated = false;
   
   public int glLineVertexBufferID;
@@ -281,12 +285,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** True if we are inside a beginDraw()/endDraw() block. */
   protected boolean drawing = false;  
   
-  /** Used to make backups of current drawing state. */
-  //protected DrawingState drawState;
-  
-  /** Used to hold color values to be sent to OpenGL. */
-  protected float[] colorFloats; 
-  
   /** Used to detect the occurrence of a frame resize event. */
   protected boolean resized = false;
   
@@ -401,7 +399,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     glFillVertexBufferID = 0;
     glFillColorBufferID = 0;
     glFillNormalBufferID = 0;
-    glFillTexCoordBufferID = 0;  
+    glFillTexCoordBufferID = 0;
+    glFillAmbientBufferID = 0;
+    glFillSpecularBufferID = 0;
+    glFillEmissiveBufferID = 0;
+    glFillShininessBufferID = 0;    
     glFillIndexBufferID = 0;
     
     glLineVertexBufferID = 0;
@@ -1077,19 +1079,35 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void createFillBuffers() {
     glFillVertexBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glFillVertexBufferID);
-    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
+    pgl.initFloatVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
                 
     glFillColorBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glFillColorBufferID);
-    pgl.initVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);
+    pgl.initFloatVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glFillNormalBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glFillNormalBufferID);
-    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);    
+    pgl.initFloatVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);    
     
     glFillTexCoordBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glFillTexCoordBufferID);
-    pgl.initVertexBuffer(2 * PGL.MAX_TESS_VERTICES, vboMode);    
+    pgl.initFloatVertexBuffer(2 * PGL.MAX_TESS_VERTICES, vboMode);        
+    
+    glFillAmbientBufferID = pg.createVertexBufferObject();  
+    pgl.bindVertexBuffer(glFillAmbientBufferID);
+    pgl.initIntVertexBuffer(PGL.MAX_TESS_VERTICES, vboMode);
+    
+    glFillSpecularBufferID = pg.createVertexBufferObject();
+    pgl.bindVertexBuffer(glFillSpecularBufferID);
+    pgl.initIntVertexBuffer(PGL.MAX_TESS_VERTICES, vboMode);    
+    
+    glFillEmissiveBufferID = pg.createVertexBufferObject();
+    pgl.bindVertexBuffer(glFillEmissiveBufferID);
+    pgl.initIntVertexBuffer(PGL.MAX_TESS_VERTICES, vboMode);
+    
+    glFillShininessBufferID = pg.createVertexBufferObject();
+    pgl.bindVertexBuffer(glFillShininessBufferID);
+    pgl.initFloatVertexBuffer(PGL.MAX_TESS_VERTICES, vboMode);
     
     pgl.unbindVertexBuffer();
     
@@ -1113,6 +1131,18 @@ public class PGraphicsAndroid3D extends PGraphics {
     deleteVertexBufferObject(glFillTexCoordBufferID);
     glFillTexCoordBufferID = 0;
     
+    deleteVertexBufferObject(glFillAmbientBufferID);
+    glFillAmbientBufferID = 0;
+    
+    deleteVertexBufferObject(glFillSpecularBufferID);
+    glFillSpecularBufferID = 0;
+
+    deleteVertexBufferObject(glFillEmissiveBufferID);
+    glFillEmissiveBufferID = 0;    
+    
+    deleteVertexBufferObject(glFillShininessBufferID);
+    glFillShininessBufferID = 0;    
+    
     deleteVertexBufferObject(glFillIndexBufferID);
     glFillIndexBufferID = 0;    
   }
@@ -1120,19 +1150,19 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void createLineBuffers() {
     glLineVertexBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glLineVertexBufferID);
-    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
+    pgl.initFloatVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glLineColorBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glLineColorBufferID);
-    pgl.initVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);
+    pgl.initFloatVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glLineNormalBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glLineNormalBufferID);
-    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
+    pgl.initFloatVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
         
     glLineAttribBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glLineAttribBufferID);
-    pgl.initVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);
+    pgl.initFloatVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);
     
     pgl.unbindVertexBuffer();
     
@@ -1163,19 +1193,19 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void createPointBuffers() {
     glPointVertexBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glPointVertexBufferID);
-    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
+    pgl.initFloatVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glPointColorBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glPointColorBufferID);
-    pgl.initVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);    
+    pgl.initFloatVertexBuffer(4 * PGL.MAX_TESS_VERTICES, vboMode);    
     
     glPointNormalBufferID = createVertexBufferObject();    
     pgl.bindVertexBuffer(glPointNormalBufferID);
-    pgl.initVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
+    pgl.initFloatVertexBuffer(3 * PGL.MAX_TESS_VERTICES, vboMode);
     
     glPointAttribBufferID = createVertexBufferObject();
     pgl.bindVertexBuffer(glPointAttribBufferID);
-    pgl.initVertexBuffer(2 * PGL.MAX_TESS_VERTICES, vboMode);    
+    pgl.initFloatVertexBuffer(2 * PGL.MAX_TESS_VERTICES, vboMode);    
     
     pgl.unbindVertexBuffer();
     
@@ -1418,11 +1448,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public GL beginGL() {
     saveGLState();
-    // OpenGL is using Processing defaults at this point,
-    // such as the inverted Y axis, GL_COLOR_MATERIAL mode, etc.
-    // The user is free to change anything she wants, endGL will
-    // try to do its best to restore things to the Processing
-    // settings valid at the time of calling beginGL().
     return pgl.gl;
   }
 
@@ -1442,15 +1467,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected void saveGLState() {
-    //saveGLMatrices();
   }
   
   
   protected void restoreGLState() {        
     // Restoring viewport.
     pgl.setViewport(viewport);
-
-    //restoreGLMatrices();
     
     // Restoring hints.
     if (hints[DISABLE_DEPTH_TEST]) {
@@ -1470,80 +1492,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     // Restoring blending.
     blendMode(blendMode);
     
-    // Restoring fill
-    if (fill) {
-      calcR = fillR;
-      calcG = fillG;
-      calcB = fillB;
-      calcA = fillA;
-      fillFromCalc();  
-    }    
-
-    // Restoring material properties.
-    calcR = ambientR;
-    calcG = ambientG;
-    calcB = ambientB;    
-    ambientFromCalc();
-
-    calcR = specularR;
-    calcG = specularG;
-    calcB = specularB;
-    specularFromCalc();
-    
-    shininess(shininess);
-    
-    calcR = emissiveR;
-    calcG = emissiveG;
-    calcB = emissiveB;    
-    emissiveFromCalc();
-    
-    /*
-    // Restoring lights.
-    if (lights) {
-      lights();
-      for (int i = 0; i < lightCount; i++) {
-        lightEnable(i);
-        if (lightType[i] == AMBIENT) {
-          lightEnable(i);
-          lightAmbient(i);
-          lightPosition(i);
-          lightFalloff(i);
-          lightNoSpot(i);
-          lightNoDiffuse(i);
-          lightNoSpecular(i);
-        } else if (lightType[i] == DIRECTIONAL) {
-          lightEnable(i);
-          lightNoAmbient(i);
-          lightDirection(i);
-          lightDiffuse(i);
-          lightSpecular(i);
-          lightFalloff(i);
-          lightNoSpot(i);
-        } else if (lightType[i] == POINT) {
-          lightEnable(i);
-          lightNoAmbient(i);
-          lightPosition(i);
-          lightDiffuse(i);
-          lightSpecular(i);
-          lightFalloff(i);
-          lightNoSpot(i);
-        } else if (lightType[i] == SPOT) {
-          lightEnable(i);
-          lightNoAmbient(i);
-          lightPosition(i);
-          lightDirection(i);
-          lightDiffuse(i);
-          lightSpecular(i);
-          lightFalloff(i);
-          lightSpotAngle(i);
-          lightSpotConcentration(i);
-        }
-      }
-    } else {
-      noLights();
-    } 
-    */
-    
     // Some things the user might have changed from OpenGL, 
     // but we want to make sure they return to the Processing
     // defaults (plus these cannot be changed through the API
@@ -1553,20 +1501,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     setSurfaceParams();
   }  
-  
-  /*
-  protected void saveDrawingState() {
-    if (drawState == null) {
-      drawState = new DrawingState();
-    }
-    drawState.save();
-  }
 
-  
-  protected void restoreDrawingState() {
-    drawState.restore();
-  }
-  */
   
   // Utility function to get ready OpenGL for a specific
   // operation, such as grabbing the contents of the color
@@ -3939,85 +3874,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void strokeCap(int cap) {
     this.strokeCap = cap;
   }
-
-  //////////////////////////////////////////////////////////////
-
-  // STROKE, TINT, FILL
-
-  // public void noStroke()
-  // public void stroke(int rgb)
-  // public void stroke(int rgb, float alpha)
-  // public void stroke(float gray)
-  // public void stroke(float gray, float alpha)
-  // public void stroke(float x, float y, float z)
-  // public void stroke(float x, float y, float z, float a)
-  // protected void strokeFromCalc()
-
-  // public void noTint()
-  // public void tint(int rgb)
-  // public void tint(int rgb, float alpha)
-  // public void tint(float gray)
-  // public void tint(float gray, float alpha)
-  // public void tint(float x, float y, float z)
-  // public void tint(float x, float y, float z, float a)
-  // protected void tintFromCalc()
-
-  // public void noFill()
-  // public void fill(int rgb)
-  // public void fill(int rgb, float alpha)
-  // public void fill(float gray)
-  // public void fill(float gray, float alpha)
-  // public void fill(float x, float y, float z)
-  // public void fill(float x, float y, float z, float a)
-
-  protected void fillFromCalc() {
-    super.fillFromCalc();
-    calcColorBuffer();
-    
-    // P3D uses GL_COLOR_MATERIAL mode, so the ambient and diffuse components
-    // for all vertices are taken from the glColor/color buffer settings and we don't
-    // need this:
-    //gl.glMaterialfv(GL10.GL_FRONT_AND_BACK, GL10.GL_AMBIENT_AND_DIFFUSE, colorFloats, 0);
-  }
-
-  protected void setFillColor() {
-    //pgl.setColor(fillR, fillG, fillB, fillA);
-  } 
-  
-  protected void setTintColor() {
-    //pgl.setColor(tintR, tintG, tintB, tintA);
-  }
-  
-  //////////////////////////////////////////////////////////////
-
-  // MATERIAL PROPERTIES
-
-
-  protected void ambientFromCalc() {
-    super.ambientFromCalc();
-    calcColorBuffer();    
-    //pgl.setMaterialAmbient(colorFloats);    
-  }
-
-
-  protected void specularFromCalc() {
-    super.specularFromCalc();
-    calcColorBuffer();   
-    //pgl.setMaterialSpecular(colorFloats);
-  }
-
-  
-  public void shininess(float shine) {
-    super.shininess(shine);  
-    //pgl.setMaterialShininess(shine);
-  }
-
-
-  protected void emissiveFromCalc() {
-    super.emissiveFromCalc();
-    calcColorBuffer();
-    //pgl.setMaterialEmission(colorFloats);
-  } 
   
   
   //////////////////////////////////////////////////////////////
@@ -4409,25 +4265,6 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // colorMode() is inherited from PGraphics.
 
-  //////////////////////////////////////////////////////////////
-
-  // COLOR CALC
-
-  // This is the OpenGL complement to the colorCalc() methods.
-
-  /**
-   * Load the calculated color into a pre-allocated array so that it can be
-   * quickly passed over to OpenGL.
-   */
-  protected final void calcColorBuffer() {
-    if (colorFloats == null) {
-      colorFloats = new float[4];
-    }
-    colorFloats[0] = calcR;
-    colorFloats[1] = calcG;
-    colorFloats[2] = calcB;
-    colorFloats[3] = calcA;
-  }
 
   //////////////////////////////////////////////////////////////
 
@@ -6944,7 +6781,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     public float[] fillNormals;
     public float[] fillTexcoords;
     
-    // Fill material
+    // Fill material properties (fillColor is used
+    // as the diffuse color when lighting is enabled)
     public int[] fillAmbient;
     public int[] fillSpecular;
     public int[] fillEmissive;
@@ -7008,13 +6846,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       fillNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       fillTexcoords = new float[2 * PGL.DEFAULT_TESS_VERTICES];
-      fillIndices = new short[PGL.DEFAULT_TESS_VERTICES];  
-      
       fillAmbient = new int[PGL.DEFAULT_TESS_VERTICES];
       fillSpecular = new int[PGL.DEFAULT_TESS_VERTICES];
       fillEmissive = new int[PGL.DEFAULT_TESS_VERTICES];
-      fillShininess = new float[PGL.DEFAULT_TESS_VERTICES];
-      
+      fillShininess = new float[PGL.DEFAULT_TESS_VERTICES];      
+      fillIndices = new short[PGL.DEFAULT_TESS_VERTICES];        
       
       lineVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       lineColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
@@ -7189,11 +7025,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillColors = null;
       fillNormals = null;
       fillTexcoords = null;
-      fillIndices = null;        
       fillAmbient = null;
       fillSpecular = null;
       fillEmissive = null;
-      fillShininess = null;
+      fillShininess = null;      
+      fillIndices = null;        
       
       lineVertices = null;
       lineColors = null;
@@ -7787,13 +7623,11 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
       } else {
         PApplet.arrayCopy(in.colors, 4 * i0, fillColors, 4 * firstFillVertex, 4 * nvert);      
-        PApplet.arrayCopy(in.texcoords, 2 * i0, fillTexcoords, 2 * firstFillVertex, 2 * nvert);
-        
+        PApplet.arrayCopy(in.texcoords, 2 * i0, fillTexcoords, 2 * firstFillVertex, 2 * nvert);        
         PApplet.arrayCopy(in.ambient, i0, fillAmbient, firstFillVertex, nvert);
         PApplet.arrayCopy(in.specular, i0, fillSpecular, firstFillVertex, nvert);
         PApplet.arrayCopy(in.emissive, i0, fillEmissive, firstFillVertex, nvert);
-        PApplet.arrayCopy(in.shininess, i0, fillShininess, firstFillVertex, nvert);
-        
+        PApplet.arrayCopy(in.shininess, i0, fillShininess, firstFillVertex, nvert);        
       }
     }     
     
@@ -8898,7 +8732,8 @@ public class PGraphicsAndroid3D extends PGraphics {
             double[] vertData = (double[])data[j];
             if (vertData != null) {
               if (11 < i && i < 15) {
-                // Color data
+                // Color data, needs to be split into rgba components
+                // for interpolation.
                 int colorj = (int) vertData[i];
                 int aj = (colorj >> 24) & 0xFF;
                 int rj = (colorj >> 16) & 0xFF;
@@ -8910,13 +8745,13 @@ public class PGraphicsAndroid3D extends PGraphics {
                 int ri = (colori >> 16) & 0xFF;
                 int gi = (colori >>  8) & 0xFF; 
                 int bi = (colori >>  0) & 0xFF;
-                                                
+                
+                ai += weight[j] * aj;
                 ri += weight[j] * rj;
                 bi += weight[j] * bj;
-                gi += weight[j] * gj;
-                ai += weight[j] * aj;
+                gi += weight[j] * gj;                
                 
-                colori = (ai << 24) | (ri << 16) | (gi << 8) | bi;                
+                vertex[i] = (ai << 24) | (ri << 16) | (gi << 8) | bi;                
               } else {
                 vertex[i] += weight[j] * vertData[i];
               }
