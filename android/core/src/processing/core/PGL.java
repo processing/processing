@@ -25,9 +25,6 @@ package processing.core;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -54,6 +51,9 @@ public class PGL {
    
   /** Size of a float (in bytes). */
   static final int SIZEOF_FLOAT = Float.SIZE / 8;
+  
+  /** Size of a vertex index. */
+  static final int SIZEOF_INDEX = SIZEOF_SHORT; 
 
   /** Initial sizes for arrays of input and tessellated data. */
   public static final int DEFAULT_IN_VERTICES = 16;
@@ -80,73 +80,137 @@ public class PGL {
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
   
-  public static final int LESS              = GLES20.GL_LESS;
-  public static final int LESS_OR_EQUAL     = GLES20.GL_LEQUAL;
-  public static final int COUNTER_CLOCKWISE = GLES20.GL_CCW;
-  public static final int CLOCKWISE         = GLES20.GL_CW;  
-  public static final int FRONT             = GLES20.GL_FRONT;
-  public static final int BACK              = GLES20.GL_BACK;
+  ///////////////////////////////////////////////////////////////////////////////////
   
-  public static final int BLEND_EQ_ADD              = GLES20.GL_FUNC_ADD;
-  public static final int BLEND_EQ_MIN              = 0x8007;
-  public static final int BLEND_EQ_MAX              = 0x8008;
-  public static final int BLEND_EQ_REVERSE_SUBTRACT = GLES20.GL_FUNC_REVERSE_SUBTRACT;
+  // OpenGL constants
   
-  public static final int FLAT   = -1; //GLES20.GL_FLAT;
-  public static final int SMOOTH = -1; //GLES20.GL_SMOOTH;
+  public static final int GL_LESS   = GLES20.GL_LESS;
+  public static final int GL_LEQUAL = GLES20.GL_LEQUAL;
+  public static final int GL_CCW    = GLES20.GL_CCW;
+  public static final int GL_CW     = GLES20.GL_CW;  
+  public static final int GL_FRONT  = GLES20.GL_FRONT;
+  public static final int GL_BACK   = GLES20.GL_BACK;
   
-  public static final int TEXTURE_2D = GLES20.GL_TEXTURE_2D;
-  public static final int RGB        = GLES20.GL_RGB;
-  public static final int RGBA       = GLES20.GL_RGBA;
-  public static final int ALPHA      = GLES20.GL_ALPHA;
+  public static final int GL_VIEWPORT = GLES20.GL_VIEWPORT;
   
-  public static final int NEAREST              = GLES20.GL_NEAREST;
-  public static final int LINEAR               = GLES20.GL_LINEAR;
-  public static final int LINEAR_MIPMAP_LINEAR = GLES20.GL_LINEAR_MIPMAP_LINEAR;
+  public static final int GL_SCISSOR_TEST = GLES20.GL_SCISSOR_TEST;  
+  public static final int GL_DEPTH_TEST   = GLES20.GL_DEPTH_TEST;
   
-  public static final int CLAMP_TO_EDGE = GLES20.GL_CLAMP_TO_EDGE;
-  public static final int REPEAT        = GLES20.GL_REPEAT;
+  public static final int GL_COLOR_BUFFER_BIT   = GLES20.GL_COLOR_BUFFER_BIT; 
+  public static final int GL_DEPTH_BUFFER_BIT   = GLES20.GL_DEPTH_BUFFER_BIT; 
+  public static final int GL_STENCIL_BUFFER_BIT = GLES20.GL_STENCIL_BUFFER_BIT;
   
-  public static final int RGBA8 = -1;  
-  public static final int DEPTH_24BIT_STENCIL_8BIT = -1;
+  public static final int GL_FUNC_ADD              = GLES20.GL_FUNC_ADD;
+  public static final int GL_FUNC_MIN              = 0x8007;
+  public static final int GL_FUNC_MAX              = 0x8008;
+  public static final int GL_FUNC_REVERSE_SUBTRACT = GLES20.GL_FUNC_REVERSE_SUBTRACT;
   
-  public static final int DEPTH_16BIT = GLES20.GL_DEPTH_COMPONENT16;
-  public static final int DEPTH_24BIT = -1; //GLES20.GL_DEPTH_COMPONENT24;
-  public static final int DEPTH_32BIT = -1; //GLES20.GL_DEPTH_COMPONENT32;    
+  public static final int GL_TEXTURE_2D     = GLES20.GL_TEXTURE_2D;
+  public static final int GL_RGB            = GLES20.GL_RGB;
+  public static final int GL_RGBA           = GLES20.GL_RGBA;
+  public static final int GL_ALPHA          = GLES20.GL_ALPHA;
+  public static final int GL_UNSIGNED_INT   = GLES20.GL_UNSIGNED_INT;
+  public static final int GL_UNSIGNED_BYTE  = GLES20.GL_UNSIGNED_BYTE;
+  public static final int GL_UNSIGNED_SHORT = GLES20.GL_UNSIGNED_SHORT;
+  public static final int GL_FLOAT          = GLES20.GL_FLOAT;
   
-  public static final int STENCIL_1BIT = -1; //GLES20.GL_STENCIL_INDEX1; 
-  public static final int STENCIL_4BIT = -1; //GLES20.GL_STENCIL_INDEX4; 
-  public static final int STENCIL_8BIT = GLES20.GL_STENCIL_INDEX8;   
+  public static final int GL_NEAREST              = GLES20.GL_NEAREST;
+  public static final int GL_LINEAR               = GLES20.GL_LINEAR;
+  public static final int GL_LINEAR_MIPMAP_LINEAR = GLES20.GL_LINEAR_MIPMAP_LINEAR;
   
-  public static final int FRAMEBUFFER_COMPLETE                      = GLES20.GL_FRAMEBUFFER_COMPLETE;    
-  public static final int FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GLES20.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GLES20.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
-  public static final int FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = GLES20.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS;      
-  public static final int FRAMEBUFFER_INCOMPLETE_FORMATS            = -1; //GLES20.GL_FRAMEBUFFER_INCOMPLETE_FORMATS;  
-  public static final int FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        = -1; //GLES20.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
-  public static final int FRAMEBUFFER_INCOMPLETE_READ_BUFFER        = -1; //GLES20.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;  
-  public static final int FRAMEBUFFER_UNSUPPORTED                   = GLES20.GL_FRAMEBUFFER_UNSUPPORTED;
+  public static final int GL_CLAMP_TO_EDGE = GLES20.GL_CLAMP_TO_EDGE;
+  public static final int GL_REPEAT        = GLES20.GL_REPEAT;
+  
+  public static final int GL_RGBA8 = -1;  
+  public static final int GL_DEPTH24_STENCIL8 = -1;
+  
+  public static final int GL_DEPTH_COMPONENT16 = GLES20.GL_DEPTH_COMPONENT16;
+  public static final int GL_DEPTH_COMPONENT24 = -1;
+  public static final int GL_DEPTH_COMPONENT32 = -1;    
+  
+  public static final int GL_STENCIL_INDEX1 = -1;
+  public static final int GL_STENCIL_INDEX4 = -1; 
+  public static final int GL_STENCIL_INDEX8 = GLES20.GL_STENCIL_INDEX8;   
+  
+  public static final int GL_ARRAY_BUFFER         = GLES20.GL_ARRAY_BUFFER;
+  public static final int GL_ELEMENT_ARRAY_BUFFER = GLES20.GL_ELEMENT_ARRAY_BUFFER;
     
-  public static final int STATIC_DRAW  = GLES20.GL_STATIC_DRAW;
-  public static final int DYNAMIC_DRAW = GLES20.GL_DYNAMIC_DRAW;
-  public static final int STREAM_DRAW  = -1;
+  public static final int GL_FRAMEBUFFER_COMPLETE                      = GLES20.GL_FRAMEBUFFER_COMPLETE;    
+  public static final int GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GLES20.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+  public static final int GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GLES20.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
+  public static final int GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = GLES20.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS;      
+  public static final int GL_FRAMEBUFFER_INCOMPLETE_FORMATS            = -1;  
+  public static final int GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        = -1;
+  public static final int GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER        = -1;  
+  public static final int GL_FRAMEBUFFER_UNSUPPORTED                   = GLES20.GL_FRAMEBUFFER_UNSUPPORTED;
     
-  public static final int TRIANGLE_FAN   = GLES20.GL_TRIANGLE_FAN;
-  public static final int TRIANGLE_STRIP = GLES20.GL_TRIANGLE_STRIP;
-  public static final int TRIANGLES      = GLES20.GL_TRIANGLES;  
+  public static final int GL_STATIC_DRAW  = GLES20.GL_STATIC_DRAW;
+  public static final int GL_DYNAMIC_DRAW = GLES20.GL_DYNAMIC_DRAW;
+  public static final int GL_STREAM_DRAW  = GLES20.GL_STREAM_DRAW;
   
-  public static final int TESS_WINDING_NONZERO = -1;
-  public static final int TESS_WINDING_ODD     = -1;  
+  public static final int GL_READ_ONLY  = -1;
+  public static final int GL_WRITE_ONLY = -1;  
+  public static final int GL_READ_WRITE = -1;
+    
+  public static final int GL_TRIANGLE_FAN   = GLES20.GL_TRIANGLE_FAN;
+  public static final int GL_TRIANGLE_STRIP = GLES20.GL_TRIANGLE_STRIP;
+  public static final int GL_TRIANGLES      = GLES20.GL_TRIANGLES;  
+  
+  public static final int GL_VENDOR     = GLES20.GL_VENDOR;
+  public static final int GL_RENDERER   = GLES20.GL_RENDERER;
+  public static final int GL_VERSION    = GLES20.GL_VERSION;
+  public static final int GL_EXTENSIONS = GLES20.GL_EXTENSIONS;
+    
+  public static final int GL_MAX_TEXTURE_SIZE         = GLES20.GL_MAX_TEXTURE_SIZE;
+  public static final int GL_ALIASED_LINE_WIDTH_RANGE = GLES20.GL_ALIASED_LINE_WIDTH_RANGE;
+  public static final int GL_ALIASED_POINT_SIZE_RANGE = GLES20.GL_ALIASED_POINT_SIZE_RANGE;
+  public static final int GL_SAMPLES                  = GLES20.GL_SAMPLES;
+
+  public static final int GLU_TESS_WINDING_NONZERO = -1;
+  public static final int GLU_TESS_WINDING_ODD     = -1;  
+    
+  public static final int GL_TEXTURE0           = GLES20.GL_TEXTURE0;
+  public static final int GL_TEXTURE1           = GLES20.GL_TEXTURE1;
+  public static final int GL_TEXTURE2           = GLES20.GL_TEXTURE2;
+  public static final int GL_TEXTURE3           = GLES20.GL_TEXTURE3;
+  public static final int GL_TEXTURE_MIN_FILTER = GLES20.GL_TEXTURE_MIN_FILTER;
+  public static final int GL_TEXTURE_MAG_FILTER = GLES20.GL_TEXTURE_MAG_FILTER;
+  public static final int GL_TEXTURE_WRAP_S     = GLES20.GL_TEXTURE_WRAP_S;
+  public static final int GL_TEXTURE_WRAP_T     = GLES20.GL_TEXTURE_WRAP_T;  
+  
+  public static final int GL_BLEND               = GLES20.GL_BLEND;
+  public static final int GL_ONE                 = GLES20.GL_ONE; 
+  public static final int GL_ZERO                = GLES20.GL_ZERO;
+  public static final int GL_SRC_ALPHA           = GLES20.GL_SRC_ALPHA; 
+  public static final int GL_DST_ALPHA           = GLES20.GL_DST_ALPHA;
+  public static final int GL_ONE_MINUS_SRC_ALPHA = GLES20.GL_ONE_MINUS_SRC_ALPHA;
+  public static final int GL_ONE_MINUS_DST_COLOR = GLES20.GL_ONE_MINUS_DST_COLOR;
+  public static final int GL_ONE_MINUS_SRC_COLOR = GLES20.GL_ONE_MINUS_SRC_COLOR;
+  public static final int GL_DST_COLOR           = GLES20.GL_DST_COLOR;
+  public static final int GL_SRC_COLOR           = GLES20.GL_SRC_COLOR;
+  
+  public static final int GL_FRAMEBUFFER       = GLES20.GL_FRAMEBUFFER;
+  public static final int GL_COLOR_ATTACHMENT0 = GLES20.GL_COLOR_ATTACHMENT0;
+  public static final int GL_RENDERBUFFER       = GLES20.GL_RENDERBUFFER;
+  public static final int GL_DEPTH_ATTACHMENT   = GLES20.GL_DEPTH_ATTACHMENT;
+  public static final int GL_STENCIL_ATTACHMENT = GLES20.GL_STENCIL_ATTACHMENT;  
+  public static final int GL_READ_FRAMEBUFFER  = -1;
+  public static final int GL_DRAW_FRAMEBUFFER  = -1;   
+  public static final int GL_COLOR_ATTACHMENT1 = -1;
+  public static final int GL_COLOR_ATTACHMENT2 = -1;
+  public static final int GL_COLOR_ATTACHMENT3 = -1;  
+  
+  public static final int GL_VERTEX_SHADER   = GLES20.GL_VERTEX_SHADER;
+  public static final int GL_FRAGMENT_SHADER = GLES20.GL_FRAGMENT_SHADER;
+  
+  public static final int GL_MULTISAMPLE    = -1;  
+  public static final int GL_POINT_SMOOTH   = -1;      
+  public static final int GL_LINE_SMOOTH    = -1;    
+  public static final int GL_POLYGON_SMOOTH = -1;  
   
   // Some EGL constants needed to initialize an GLES2 context.
   public static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-  public static final int EGL_OPENGL_ES2_BIT = 0x0004;
-  
-  // Rendering pipeline modes  
-  public static final int FIXED    = 0;
-  public static final int PROG_GL2 = 1;
-  public static final int PROG_GL3 = 2;
-  public static final int PROG_GL4 = 3;  
+  public static final int EGL_OPENGL_ES2_BIT         = 0x0004;
   
   /** Pipeline mode: FIXED, PROG_GL2, PROG_GL3 or PROG_GL4 */
   public int pipeline;
@@ -436,155 +500,50 @@ public class PGL {
     }
   }  
   
+
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Caps query
-  
-  // TODO: clean-up caps and remove obsolete ones (texture crossbar, etc).
-  
-  public String getVendorString() {
-    return GLES20.glGetString(GLES20.GL_VENDOR);
-  }
-  
-  public String getRendererString() {
-    return GLES20.glGetString(GLES20.GL_RENDERER);  
-  }
-  
-  public String getVersionString() {
-    return GLES20.glGetString(GLES20.GL_VERSION);  
-  }
-  
-  public String getExtensionsString() {
-    return GLES20.glGetString(GLES20.GL_EXTENSIONS); 
-  }
-  
-  public boolean isNpotTexSupported() {
-    // Better way to check for extensions and related functions (taken from jMonkeyEngine):
-    // renderbufferStorageMultisample = gl.isExtensionAvailable("GL_EXT_framebuffer_multisample") && 
-    //                                  gl.isFunctionAvailable("glRenderbufferStorageMultisample");    
-    // For more details on GL properties initialization in jMonkey using JOGL2, take a look at:
-    // http://code.google.com/p/jmonkeyengine/source/browse/branches/jme3/src/jogl2/com/jme3/renderer/jogl/JoglRenderer.java
-    
-    String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);
-    if (-1 < ext.indexOf("texture_non_power_of_two")) {
-      return true;
-    }
-    return false;    
-  }
-  
-  public boolean hasMipmapGeneration() {
-    String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);
-    if (-1 < ext.indexOf("generate_mipmap")) {
-      return true;
-    }    
-    return false;
-  }
 
-  public boolean isMatrixGetSupported() {
-    String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);
-    if (-1 < ext.indexOf("matrix_get")) {
-      return true;
-    }
-    return false;
+  public String glGetString(int name) {
+    return GLES20.glGetString(name);
+  }
+ 
+  public void glGetIntegerv(int name, int[] values, int offset) {
+    GLES20.glGetIntegerv(name, values, offset);
   }
   
-  public boolean isTexenvCrossbarSupported() {
-    String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);
-    if (-1 < ext.indexOf("texture_env_crossbar")) {
-      return true;
-    }    
-    return false;
-  }
-
-  public boolean isVboSupported() {
-    String ver = GLES20.glGetString(GLES20.GL_VERSION);
-    String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);
-    if (-1 < ext.indexOf("vertex_buffer_object") ||
-        -1 < ver.indexOf("1.1") || // Just in case
-                                   // vertex_buffer_object
-                                   // doesn't appear in the list
-                                   // of extensions,
-        -1 < ver.indexOf("2.")) { // If the opengl version is
-                                  // greater than 1.1, VBOs should
-                                  // be supported.
-      return true;
-    }  
-    return false;
-  }
-
-  public boolean isFboSupported() {
-    String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);
-    if (-1 < ext.indexOf("framebuffer_object")) {
-      try {
-        GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
-        return true;
-      } catch (UnsupportedOperationException e) {
-        // This takes care of Android 2.1 and older where the FBO extension appears to be supported,
-        // but any call to the FBO functions would result in an error.
-        return false;
-      } 
-    }    
-    return false;
-  }
-
-  public boolean isFboMultisampleSupported() { 
-    return false;
-  }
+  ///////////////////////////////////////////////////////////////////////////////////
   
-  public boolean isBlendEqSupported() {
-    try {
-      GLES20.glBlendEquation(GLES20.GL_FUNC_ADD);
-      return true;
-    } catch (UnsupportedOperationException e) {
-      // This takes care of Android 2.1 and older where the glBlendEquation is present in the API,
-      // but any call to it will result in an error.
-      return false;
+  // Enable/disable caps
+  
+  public void glEnable(int cap) {
+    if (-1 < cap) {
+      GLES20.glEnable(cap);
     }
   }  
   
-  public int getMaxTexureSize() {
-    int temp[] = new int[1];    
-    GLES20.glGetIntegerv(GLES20.GL_MAX_TEXTURE_SIZE, temp, 0);
-    return temp[0];    
-  }
-  
-  public int getMaxAliasedLineWidth() {
-    int temp[] = new int[2];
-    GLES20.glGetIntegerv(GLES20.GL_ALIASED_LINE_WIDTH_RANGE, temp, 0);
-    return temp[1];
-  }
-  
-  public int getMaxAliasedPointSize() {
-    int temp[] = new int[2];
-    GLES20.glGetIntegerv(GLES20.GL_ALIASED_POINT_SIZE_RANGE, temp, 0);
-    return temp[1];    
-  }
-  
-  public int getMaxTextureUnits() {
-    // The maximum number of texture units only makes sense in the
-    // fixed pipeline.    
-    return 2;
-  }  
-
-  public void getNumSamples(int[] num) {
-    num[0] = 1;    
+  public void glDisable(int cap) {
+    if (-1 < cap) {
+      GLES20.glDisable(cap);
+    }
   }  
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Render control 
   
-  public void flush() {
+  public void glFlush() {
     GLES20.glFlush();
   }  
   
-  public void finish() {
+  public void glFinish() {
     GLES20.glFinish();
   }
   
   /////////////////////////////////////////////////////////////////////////////////
   
-  // Error  
+  // Error handling  
   
   public int getError() {
     return GLES20.glGetError();
@@ -593,95 +552,21 @@ public class PGL {
   public String getErrorString(int err) {
     return GLU.gluErrorString(err);
   }
-
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Rendering options
-  
-  // TODO: Check which of the missing options can be emulated in GLES2
-  
-  public void enableDepthTest() {
-    GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-  }
 
-  public void disableDepthTest() {
-    GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-  }  
-  
-  public void enableDepthMask() {
-    GLES20.glDepthMask(true);   
-  }
-  
-  public void disableDepthMask() {
-    GLES20.glDepthMask(false);
-  }  
-  
-  public void setDepthFunc(int func) {
-    GLES20.glDepthFunc(func); 
-  }  
-  
-  public void setShadeModel(int model) {
-//    GLES20.glShadeModel(model);
-  }
-  
   public void setFrontFace(int mode) {
     GLES20.glFrontFace(mode);
   }
-  
-  public void enableMultisample() {
-//    GLES20.glEnable(GLES20.GL_MULTISAMPLE);  
+    
+  public void glDepthMask(boolean flag) {
+    GLES20.glDepthMask(flag);   
   }
-  
-  public void disableMultisample() {
-//    GLES20.glDisable(GLES20.GL_MULTISAMPLE);  
-  }
-
-  public void enablePointSmooth() {
-//    GLES20.glEnable(GLES20.GL_POINT_SMOOTH);  
-  }
-  
-  public void disablePointSmooth() {
-//    GLES20.glDisable(GLES20.GL_POINT_SMOOTH);  
-  }
-
-  public void enableLineSmooth() {
-//    GLES20.glEnable(GLES20.GL_LINE_SMOOTH);  
-  }
-  
-  public void disableLineSmooth() {
-//    GLES20.glDisable(GLES20.GL_LINE_SMOOTH);  
-  }  
-  
-  public void enablePolygonSmooth() {
-//    GLES20.glEnable(GLES20.GL_POLYGON_SMOOTH);  
-  }
-  
-  public void disablePolygonSmooth() {
-//    GLES20.glDisable(GLES20.GL_POLYGON_SMOOTH);
-  }    
-  
-  public void enableColorMaterial() {
-//    GLES20.glEnable(GLES20.GL_COLOR_MATERIAL);    
-  }
-
-  public void disableColorMaterial() {
-//    GLES20.glDisable(GLES20.GL_COLOR_MATERIAL);    
-  }  
-  
-  public void enableNormalization() {
-//    GLES20.glEnable(GLES20.GL_NORMALIZE);  
-  }
-
-  public void disableNormalization() {
-//    GLES20.glDisable(GLES20.GL_NORMALIZE);  
-  }  
-  
-  public void enableRescaleNormals() {
-//    GLES20.glEnable(GLES20.GL_RESCALE_NORMAL);
-  }
-
-  public void disableRescaleNormals() {
-//    GLES20.glDisable(GLES20.GL_RESCALE_NORMAL);
+    
+  public void setDepthFunc(int func) {
+    GLES20.glDepthFunc(func);
   }  
 
   
@@ -689,67 +574,35 @@ public class PGL {
   
   // Textures     
   
-  public void genTexture(int[] id) {
-    GLES20.glGenTextures(1, id, 0);
+  public void glGenTextures(int n, int[] ids, int offset) {
+    GLES20.glGenTextures(n, ids, offset);
   }
 
-  public void delTexture(int[] id) {
-    GLES20.glDeleteTextures(1, id, 0);
+  public void glDeleteTextures(int n, int[] ids, int offset) {
+    GLES20.glDeleteTextures(n, ids, offset);
   }  
   
-  public void enableTexturing(int target) {
-    GLES20.glEnable(target);
+  public void glActiveTexture(int unit) {
+    GLES20.glActiveTexture(unit);
   }
   
-  public void setActiveTexUnit(int tu) {
-    GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + tu);
-  }
-  
-  public void bindTexture(int target, int id) {
+  public void glBindTexture(int target, int id) {
     GLES20.glBindTexture(target, id);
   }
-
-  public void unbindTexture(int target) {
-    GLES20.glBindTexture(target, 0);
-  }  
-  
-  public void disableTexturing(int target) {
-    GLES20.glDisable(target);
-  }    
-  
-  public void initTex(int target, int format, int w, int h) {
-    GLES20.glTexImage2D(target, 0, format, w, h, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-  }
-
-  public void copyTexImage(Buffer image, int target, int format, int level, int w, int h) {
-    GLES20.glTexImage2D(target, level, format, w, h, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, image);
-  } 
-  
-  public void copyTexSubImage(Buffer image, int target, int level, int x, int y, int w, int h) {
-    GLES20.glTexSubImage2D(target, 0, x, y, w, h, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, image);
-  }
-
-  public void copyTexSubImage(int[] pixels, int target, int level, int x, int y, int w, int h) {
-    GLES20.glTexSubImage2D(target, level, x, y, w, h, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, IntBuffer.wrap(pixels));
-  }  
     
-  public void setTexMinFilter(int target, int filter) {
-    GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_MIN_FILTER, filter); 
+  public void glTexImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, Buffer data) {
+    GLES20.glTexImage2D(target, level, internalFormat, width, height, border, format, type, data);
   }
   
-  public void setTexMagFilter(int target, int filter) {
-    GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_MAG_FILTER, filter);
+  public void glTexSubImage2D(int target, int level, int xOffset, int yOffset, int width, int height, int format, int type, Buffer data) {
+    GLES20.glTexSubImage2D(target, level, xOffset, yOffset, width, height, format, type, data);
   }
-  
-  public void setTexWrapS(int target, int wrap) {
-    GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_WRAP_S, wrap);
-  }
-  
-  public void setTexWrapT(int target, int wrap) {
-    GLES20.glTexParameterf(target, GLES20.GL_TEXTURE_WRAP_T, wrap); 
-  }  
 
-  public void generateMipmap(int target) {
+  public void glTexParameterf(int target, int param, int value) {
+    GLES20.glTexParameterf(target, param, value); 
+  }
+
+  public void glGenerateMipmap(int target) {
     GLES20.glGenerateMipmap(target);
   }  
   
@@ -757,349 +610,224 @@ public class PGL {
   
   // Vertex Buffers
 
-  public void genBuffer(int[] id) {
-    GLES20.glGenBuffers(1, id, 0);  
+  public void glGenBuffers(int n, int[] ids, int offset) {
+    GLES20.glGenBuffers(n, ids, offset);  
   }
   
-  public void delBuffer(int[] id) {
-    GLES20.glDeleteBuffers(1, id, 0);  
-  }
-
-  public void bindVertexBuffer(int id) {
-    GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, id);
+  public void glDeleteBuffers(int n, int[] ids, int offset) {
+    GLES20.glDeleteBuffers(n, ids, offset);  
   }
   
-  public void initFloatVertexBuffer(int size, int mode) {
-    GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, null, mode);  
+  public void glBindBuffer(int target, int id) {
+    GLES20.glBindBuffer(target, id);
   }
-
-  public void initIntVertexBuffer(int size, int mode) {
-    GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, size * SIZEOF_INT, null, mode);  
-  }  
   
-  public void copyVertexBufferData(float[] data, int size, int mode) {
-    GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size), mode);     
+  public void glBufferData(int target, int size, Buffer data, int usage) {
+    GLES20.glBufferData(target, size, data, usage);
   }
 
-  public void copyVertexBufferData(int[] data, int size, int mode) {
-    GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, size * SIZEOF_INT, IntBuffer.wrap(data, 0, size), mode);     
-  }  
-  
-  public void copyVertexBufferData(float[] data, int offset, int size, int mode) {
-    GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, offset, size), mode);     
-  }  
-  
-  public void copyVertexBufferSubData(float[] data, int offset, int size, int mode) {
-    GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size));    
-  }  
-
-  public void copyVertexBufferSubData(int[] data, int offset, int size, int mode) {
-    GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, offset * SIZEOF_INT, size * SIZEOF_INT, IntBuffer.wrap(data, 0, size));    
-  }    
-  
-  public void unbindVertexBuffer() {
-    GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+  public void glBufferSubData(int target, int offset, int size, Buffer data) {
+    GLES20.glBufferSubData(target, offset, size, data);
   }
   
-  public void bindIndexBuffer(int id) {
-    GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, id);
-  }
   
-  public void initIndexBuffer(int size, int mode) {
-    GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_SHORT, null, mode);  
-  }
-  
-  public void copyIndexBufferData(short[] data, int size, int mode) {
-    GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_SHORT, ShortBuffer.wrap(data, 0, size), mode);     
-  }
-  
-  public void copyIndexBufferData(short[] data, int offset, int size, int mode) {
-    GLES20.glBufferData(GLES20.GL_ELEMENT_ARRAY_BUFFER, size * SIZEOF_SHORT, ShortBuffer.wrap(data, offset, size), mode);     
+  public void glDrawElements(int mode, int count, int type, int offset) {
+    GLES20.glDrawElements(mode, count, type, offset);
   }
 
-  public void copyIndexBufferSubData(short[] data, int offset, int size, int mode) {
-    GLES20.glBufferSubData(GLES20.GL_ELEMENT_ARRAY_BUFFER, offset * SIZEOF_SHORT, size * SIZEOF_SHORT, ShortBuffer.wrap(data, 0, size));
-  }  
   
-  public void renderIndexBuffer(int size) {
-    GLES20.glDrawElements(GLES20.GL_TRIANGLES, size, GLES20.GL_UNSIGNED_SHORT, 0);
-  }
-
-  public void renderIndexBuffer(int offset, int size) { 
-    GLES20.glDrawElements(GLES20.GL_TRIANGLES, size, GLES20.GL_UNSIGNED_SHORT, offset * SIZEOF_SHORT);    
-  }
-    
-  public void unbindIndexBuffer() {
-    GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
-  }  
-  
-  public void enableVertexAttribArray(int loc) {
+  public void glEnableVertexAttribArray(int loc) {
     GLES20.glEnableVertexAttribArray(loc);
   }
   
-  public void disableVertexAttribArray(int loc) {
+  public void glDisableVertexAttribArray(int loc) {
     GLES20.glDisableVertexAttribArray(loc);
   }  
   
-  public void setFloatVertexAttribFormat(int loc, int size, int offset) {
-    GLES20.glVertexAttribPointer(loc, size, GLES20.GL_FLOAT, false, 0, size * offset * SIZEOF_FLOAT);
+  public void glVertexAttribPointer(int loc, int size, int type, boolean normalized, int stride, int offset) {
+    GLES20.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
   }
   
-  public void setByteVertexAttribFormat(int loc, int size, int offset) {
-    GLES20.glVertexAttribPointer(loc, size, GLES20.GL_UNSIGNED_BYTE, false, 0, size * offset);
-  }  
   
-  
-  public ByteBuffer mapVertexBuffer() {  
-//    return GLES20.glMapBuffer(GLES20.GL_ARRAY_BUFFER, GLES20.GL_READ_WRITE);
+  public ByteBuffer glMapBuffer(int target, int acccess) {  
+    //return gl2f.glMapBuffer(GL.GL_ARRAY_BUFFER, GL2.GL_READ_WRITE);
     return null;
   }
   
-  public ByteBuffer mapVertexBufferRange(int offset, int length) {
-//    return GLES20.glMapBufferRange(GLES20.GL_ARRAY_BUFFER, offset, length, GLES20.GL_READ_WRITE);
+  public ByteBuffer glMapBufferRange(int target, int offset, int length, int acccess) {
+    //return gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, offset, length, GL2.GL_READ_WRITE);
     return null;
   }
   
-  public void unmapVertexBuffer() {
-//    GLES20.glUnmapBuffer(GLES20.GL_ARRAY_BUFFER);
+  public void glUnmapBuffer(int target) {
+    //gl2f.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
   }
-
-  public ByteBuffer mapIndexBuffer() {  
-//    return GLES20.glMapBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, GLES20.GL_READ_WRITE);
-    return null;
-  }
-  
-  public ByteBuffer mapIndexBufferRange(int offset, int length) {
-//    return GLES20.glMapBufferRange(GLES20.GL_ELEMENT_ARRAY_BUFFER, offset, length, GLES20.GL_READ_WRITE);
-    return null;
-  }
-  
-  public void unmapIndexBuffer() {
-//    GLES20.glUnmapBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER);
-  }    
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Framebuffers, renderbuffers  
   
-  public void genFramebuffer(int[] id) {
-    GLES20.glGenFramebuffers(1, id, 0);    
+  public void glGenFramebuffers(int n, int[] ids, int offset) {
+    GLES20.glGenFramebuffers(n, ids, offset);    
   }
   
-  public void delFramebuffer(int[] id) {
-    GLES20.glDeleteFramebuffers(1, id, 0);    
+  public void glDeleteFramebuffers(int n, int[] ids, int offset) {
+    GLES20.glDeleteFramebuffers(n, ids, offset);    
   }
   
-  public void genRenderbuffer(int[] id) {
-    GLES20.glGenRenderbuffers(1, id, 0);    
+  public void glGenRenderbuffers(int n, int[] ids, int offset) {
+    GLES20.glGenRenderbuffers(n, ids, offset);    
   }
   
-  public void delRenderbuffer(int[] id) {
-    GLES20.glGenRenderbuffers(1, id, 0);    
+  public void glDeleteRenderbuffers(int n, int[] ids, int offset) {
+    GLES20.glDeleteRenderbuffers(n, ids, offset);    
   }
   
-  public void bindFramebuffer(int id) {
-    GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, id);
+  public void glBindFramebuffer(int target, int id) {
+    GLES20.glBindFramebuffer(target, id);
   }
   
-  public void bindReadFramebuffer(int id) {
-//    GLES20.glBindFramebuffer(GLES20.GL_READ_FRAMEBUFFER, id);  
-  }
-
-  public void bindWriteFramebuffer(int id) {
-//    GLES20.glBindFramebuffer(GLES20.GL_DRAW_FRAMEBUFFER, id);  
-  }  
-  
-  public void copyFramebuffer(int srcW, int srcH, int destW, int destH) {
+  public void glBlitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, int mask, int filter) {
 //    GLES20.glBlitFramebuffer(0, 0, srcW, srcH, 0, 0, destW, destH, GLES20.GL_COLOR_BUFFER_BIT, GLES20.GL_NEAREST);    
   }
   
-  public void cleanFramebufferTexture(int fb) {
-    GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, 
-                                  GLES20.GL_COLOR_ATTACHMENT0 + fb, 
-                                  GLES20.GL_TEXTURE_2D, 0, 0);  
-  }
-  
-  public void setFramebufferTexture(int fb, int target, int id) {
-    GLES20.glFramebufferTexture2D(GLES20.GL_RENDERBUFFER, 
-                                  GLES20.GL_COLOR_ATTACHMENT0 + fb, target, id, 0);
+  public void glFramebufferTexture2D(int target, int attachment, int texTarget, int texId, int level) {   
+    GLES20.glFramebufferTexture2D(target, attachment, texTarget, texId, level);
   }
 
-  public void bindRenderbuffer(int id) {
+  public void glBindRenderbuffer(int target, int id) {
     GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
   }
     
-  public void setRenderbufferNumSamples(int samples, int format, int w, int h) {
+  public void glRenderbufferStorageMultisample(int target, int samples, int format, int width, int height) {
 //    GLES20.glRenderbufferStorageMultisample(GLES20.GL_RENDERBUFFER, samples, format, w, h);
   }
   
-  public void setRenderbufferStorage(int format, int w, int h) {
+  public void glRenderbufferStorage(int target, int format, int width, int height) {
 //    GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, format, w, h);
   }
   
-  public void setRenderbufferColorAttachment(int id) {
-    GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_RENDERBUFFER, id);
+  public void glFramebufferRenderbuffer(int target, int attachment, int rendbufTarget, int rendbufId) {
+    GLES20.glFramebufferRenderbuffer(target, attachment, rendbufTarget, rendbufId);
   }  
-  
-  public void setRenderbufferDepthAttachment(int id) {
-    GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER,            
-                                     GLES20.GL_DEPTH_ATTACHMENT,
-                                     GLES20.GL_RENDERBUFFER, id);  
-  }
-  
-  public void setRenderbufferStencilAttachment(int id) {
-    GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER,
-                                     GLES20.GL_STENCIL_ATTACHMENT,
-                                     GLES20.GL_RENDERBUFFER, id);  
-  }
-  
-  public int getFramebufferStatus() {
-    return GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
+
+  public int glCheckFramebufferStatus(int target) {
+    return GLES20.glCheckFramebufferStatus(target);
   }  
 
   /////////////////////////////////////////////////////////////////////////////////
   
   // Shaders  
   
-  public void genProgram(int[] id) {
-    id[0] = GLES20.glCreateProgram();    
+  public int glCreateProgram() {
+    return GLES20.glCreateProgram();    
   }
   
-  public void delProgram(int[] id) {
-    GLES20.glDeleteProgram(id[0]);  
+  public void glDeleteProgram(int id) {
+    GLES20.glDeleteProgram(id);  
   }
   
-  public void genVertexShader(int[] id) {
-    id[0] = GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER);    
+  public int glCreateShader(int type) {
+    return GLES20.glCreateShader(type);    
   }
   
-  public void delVertexShader(int[] id) {
-    GLES20.glDeleteShader(id[0]);    
+  public void glDeleteShader(int id) {
+    GLES20.glDeleteShader(id);    
   }
-  
-  public void genFragmentShader(int[] id) {
-    id[0] = GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER);    
-  }
-  
-  public void delFragmentShader(int[] id) {
-    GLES20.glDeleteShader(id[0]);    
-  }  
-
-  public void linkProgram(int prog) {
+   
+  public void glLinkProgram(int prog) {
     GLES20.glLinkProgram(prog);  
   }
   
-  public void validateProgram(int prog) {
+  public void glValidateProgram(int prog) {
     GLES20.glValidateProgram(prog);
   }
   
-  public void startProgram(int prog) {
+  public void glUseProgram(int prog) {
     GLES20.glUseProgram(prog);  
   }
   
-  public void stopProgram() {
-    GLES20.glUseProgram(0);  
-  }  
-  
-  public int getAttribLocation(int prog, String name) {
+  public int glGetAttribLocation(int prog, String name) {
     return GLES20.glGetAttribLocation(prog, name);
   }
   
-  public int getUniformLocation(int prog, String name) {
+  public int glGetUniformLocation(int prog, String name) {
     return GLES20.glGetUniformLocation(prog, name);
   }  
   
-  public void setIntUniform(int loc, int value) {
+  public void glUniform1i(int loc, int value) {
     GLES20.glUniform1i(loc, value);  
   }
   
-  public void setFloatUniform(int loc, float value) {
+  public void glUniform1f(int loc, float value) {
     GLES20.glUniform1f(loc, value);  
   }    
   
-  public void setFloatUniform(int loc, float value0, float value1) {
+  public void glUniform2f(int loc, float value0, float value1) {
     GLES20.glUniform2f(loc, value0, value1);  
   }
   
-  public void setFloatUniform(int loc, float value0, float value1, float value2) {
+  public void glUniform3f(int loc, float value0, float value1, float value2) {
     GLES20.glUniform3f(loc, value0, value1, value2);  
   }
   
-  public void setFloatUniform(int loc, float value0, float value1, float value2, float value3) {
+  public void glUniform4f(int loc, float value0, float value1, float value2, float value3) {
     GLES20.glUniform4f(loc, value0, value1, value2, value3);  
   }
-
-  public void setFloat1ArrayUniform(int loc, float[] v) {
-    GLES20.glUniform1fv(loc, v.length, v, 0);
+  
+  public void glUniform1fv(int loc, int count, float[] v, int offset) {
+    GLES20.glUniform1fv(loc, count, v, offset);
   }    
 
-  public void setFloat2ArrayUniform(int loc, float[] v) {
-    GLES20.glUniform2fv(loc, v.length / 2, v, 0);
+  public void glUniform2fv(int loc, int count, float[] v, int offset) {
+    GLES20.glUniform2fv(loc, count, v, offset);
   }    
 
-  public void setFloat3ArrayUniform(int loc, float[] v) {
-    GLES20.glUniform3fv(loc, v.length / 3, v, 0);
+  public void glUniform3fv(int loc, int count, float[] v, int offset) {
+    GLES20.glUniform3fv(loc, count, v, offset);
   }
 
-  public void setFloat4ArrayUniform(int loc, float[] v) {
-    GLES20.glUniform4fv(loc, v.length / 4, v, 0);
+  public void glUniform4fv(int loc, int count, float[] v, int offset) {
+    GLES20.glUniform4fv(loc, count, v, offset);
   }  
   
-  public void setMatUniform(int loc, float m00, float m01,
-                                     float m10, float m11) {
-    float[] mat = new float[4];
-    mat[0] = m00; mat[2] = m01;
-    mat[1] = m10; mat[3] = m11;
-    GLES20.glUniformMatrix2fv(loc, 1, false, mat, 0);
+  public void glUniformMatrix2fv(int loc, int count, boolean transpose, float[] mat, int offset) {
+    GLES20.glUniformMatrix2fv(loc, count, transpose, mat, offset);
   }
   
-  public void setMatUniform(int loc, float m00, float m01, float m02,
-                                     float m10, float m11, float m12,
-                                     float m20, float m21, float m22) {
-    float[] mat = new float[9];
-    mat[0] = m00; mat[3] = m01; mat[6] = m02;
-    mat[1] = m10; mat[4] = m11; mat[7] = m12;
-    mat[2] = m20; mat[5] = m21; mat[8] = m22;    
-    GLES20.glUniformMatrix3fv(loc, 1, false, mat, 0);    
+  public void glUniformMatrix3fv(int loc, int count, boolean transpose, float[] mat, int offset) {
+    GLES20.glUniformMatrix3fv(loc, count, transpose, mat, offset);
   }
   
-  public void setMatUniform(int loc, float m00, float m01, float m02, float m03,
-                                     float m10, float m11, float m12, float m13,
-                                     float m20, float m21, float m22, float m23,
-                                     float m30, float m31, float m32, float m33) {
-    float[] mat = new float[16];      
-    mat[0] = m00; mat[4] = m01; mat[ 8] = m02; mat[12] = m03;
-    mat[1] = m10; mat[5] = m11; mat[ 9] = m12; mat[13] = m13;
-    mat[2] = m20; mat[6] = m21; mat[10] = m22; mat[14] = m23;
-    mat[3] = m30; mat[7] = m31; mat[11] = m32; mat[15] = m33;
-    GLES20.glUniformMatrix4fv(loc, 1, false, mat, 0);       
+  public void glUniformMatrix4fv(int loc, int count, boolean transpose, float[] mat, int offset) {
+    GLES20.glUniformMatrix4fv(loc, count, transpose, mat, offset);      
   }
   
-  public void setFloatAttrib(int loc, float value) {
+  public void glVertexAttrib1f(int loc, float value) {
     GLES20.glVertexAttrib1f(loc, value);  
   }
   
-  public void setFloatAttrib(int loc, float value0, float value1) {
+  public void glVertexAttrib2f(int loc, float value0, float value1) {
     GLES20.glVertexAttrib2f(loc, value0, value1);  
   }  
   
-  public void setFloatAttrib(int loc, float value0, float value1, float value2) {
+  public void glVertexAttrib3f(int loc, float value0, float value1, float value2) {
     GLES20.glVertexAttrib3f(loc, value0, value1, value2);  
   }    
 
-  public void setFloatAttrib(int loc, float value0, float value1, float value2, float value3) {
+  public void glVertexAttrib4f(int loc, float value0, float value1, float value2, float value3) {
     GLES20.glVertexAttrib4f(loc, value0, value1, value2, value3);  
   }
   
-  public void setShaderSource(int id, String source) {
+  public void glShaderSource(int id, String source) {
     GLES20.glShaderSource(id, source);    
   }
   
-  public void compileShader(int id) {
+  public void glCompileShader(int id) {
     GLES20.glCompileShader(id);    
   }
   
-  public void attachShader(int prog, int shader) {
+  public void glAttachShader(int prog, int shader) {
     GLES20.glAttachShader(prog, shader);  
   }
   
@@ -1115,193 +843,37 @@ public class PGL {
   
   /////////////////////////////////////////////////////////////////////////////////
   
-  // Viewport  
-    
-  public void getViweport(int[] viewport) {
-    GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, viewport, 0);    
-  }
+  // Viewport
   
-  public void setViewport(int[] viewport) {
-    GLES20.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+      
+  public void glViewport(int x, int y, int width, int height) {
+    GLES20.glViewport(x, y, width, height);
   }
 
   /////////////////////////////////////////////////////////////////////////////////
   
   // Clipping (scissor test)
   
-  public void enableClipping() {
-    GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
-  }
-
-  public void disableClipping() {
-    GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
-  }  
   
-  public void setClipRect(int x, int y, int w, int h) {
+  public void glScissor(int x, int y, int w, int h) {
     GLES20.glScissor(x, y, w, h);
-  }
+  }    
   
-  
-  /////////////////////////////////////////////////////////////////////////////////
-  
-  // Materials
-  
-  /*
-  public void setMaterialAmbient(float[] color) {
-//    GLES20.glMaterialfv(GLES20.GL_FRONT_AND_BACK, GLES20.GL_AMBIENT, color, 0);
-  }
-  
-  public void setMaterialSpecular(float[] color) {
-//    GLES20.glMaterialfv(GLES20.GL_FRONT_AND_BACK, GLES20.GL_SPECULAR, color, 0);
-  }
-
-  public void setMaterialEmission(float[] color) {
-//    GLES20.glMaterialfv(GLES20.GL_FRONT_AND_BACK, GLES20.GL_EMISSION, color, 0);
-  }  
-  
-  public void setMaterialShininess(float shine) {
-//    GLES20.glMaterialf(GLES20.GL_FRONT_AND_BACK, GLES20.GL_SHININESS, shine);
-  }
-  
-  public void setColor(float r, float g, float b, float a) {
-//    GLES20.glColor4f(r, g, b, a);
-  } 
-  */ 
-  
-  /////////////////////////////////////////////////////////////////////////////////
-  
-  // Lights
-  
-/*  
-  public void enableLighting() {
-//    GLES20.glEnable(GLES20.GL_LIGHTING);
-  }
-  
-  public void disableLighting() {
-//    GLES20.glDisable(GLES20.GL_LIGHTING);
-  }  
-
-  public void setTwoSidedLightModel() {
-//    GLES20.glLightModelx(GLES20.GL_LIGHT_MODEL_TWO_SIDE, 0);
-  }
-  
-  public void setDefaultAmbientLight(float[] color) {
-//    GLES20.glLightModelfv(GLES20.GL_LIGHT_MODEL_AMBIENT, color, 0);
-  }  
-  
-  public void enableLight(int light) {
-//    GLES20.glEnable(GLES20.GL_LIGHT0 + light);
-  }
-
-  public void disableLight(int light) {
-//    GLES20.glDisable(GLES20.GL_LIGHT0 + light);
-  }  
-
-  public void setLightPosition(int light, float[] pos) {
-//    GLES20.glLightfv(GLES20.GL_LIGHT0 + light, GLES20.GL_POSITION, pos, 0);
-  }
-  
-  public void setAmbientLight(int light, float[] color) {
-//    GLES20.glLightfv(GLES20.GL_LIGHT0 + light, GLES20.GL_AMBIENT, color, 0);
-  }
-    
-  public void setDiffuseLight(int light, float[] color) {
-//    GLES20.glLightfv(GLES20.GL_LIGHT0 + light, GLES20.GL_DIFFUSE, color, 0);
-  }
-
-  public void setSpecularLight(int light, float[] color) {
-//    GLES20.glLightfv(GLES20.GL_LIGHT0 + light, GLES20.GL_SPECULAR, color, 0);
-  }
-  
-  public void setLightDirection(int light, float[] dir) {
-    // The w component of lightNormal[num] is zero, so the light is considered as
-    // a directional source because the position effectively becomes a direction
-    // in homogeneous coordinates:
-    // http://glprogramming.com/red/appendixf.html 
-    dir[3] = 0;
-//    GLES20.glLightfv(GLES20.GL_LIGHT0 + light, GLES20.GL_POSITION, dir, 0);    
-  }
-    
-  public void setSpotLightCutoff(int light, float cutoff) {
-//    GLES20.glLightf(GLES20.GL_LIGHT0 + light, GLES20.GL_SPOT_CUTOFF, cutoff);  
-  }
-  
-  public void setSpotLightExponent(int light, float exp) {
-//    GLES20.glLightf(GLES20.GL_LIGHT0 + light, GLES20.GL_SPOT_EXPONENT, exp);      
-  }
-  
-  public void setSpotLightDirection(int light, float[] dir) {
-//    GLES20.glLightfv(GLES20.GL_LIGHT0 + light, GLES20.GL_POSITION, dir, 0);
-  }
-  
-  public void setLightConstantAttenuation(int light, float attn) {
-//    GLES20.glLightf(GLES20.GL_LIGHT0 + light, GLES20.GL_CONSTANT_ATTENUATION, attn);  
-  }
-  
-  public void setLightLinearAttenuation(int light, float attn) {
-//    GLES20.glLightf(GLES20.GL_LIGHT0 + light, GLES20.GL_LINEAR_ATTENUATION, attn);  
-  }
-  
-  public void setLightQuadraticAttenuation(int light, float attn) {
-//    GLES20.glLightf(GLES20.GL_LIGHT0 + light, GLES20.GL_QUADRATIC_ATTENUATION, attn);  
-  }
-
-  public void setNormal(float nx, float ny, float nz) {
-//    GLES20.glNormal3f(nx, ny, nz);    
-  }  
-  */
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Blending  
-  
-  public void enableBlend() {
-    GLES20.glEnable(GLES20.GL_BLEND);
-  }
-  
-  public void setBlendEquation(int eq) {
+    
+    
+  public void glBlendEquation(int eq) {
     GLES20.glBlendEquation(eq);
   }
   
-  public void setReplaceBlend() {
-    GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ZERO);
+
+  public void glBlendFunc(int srcFactor, int dstFactor) {
+    GLES20.glBlendFunc(srcFactor, dstFactor);
   }
-  
-  public void setDefaultBlend() {
-    GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
-  }
-  
-  public void setAdditiveBlend() {
-    GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE);
-  }
-  
-  public void setSubstractiveBlend() {
-    GLES20.glBlendFunc(GLES20.GL_ONE_MINUS_DST_COLOR, GLES20.GL_ZERO);
-  }
-  
-  public void setLightestBlend() {
-    GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_DST_ALPHA);
-  }
-  
-  public void setDarkestBlend() {
-    GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_DST_ALPHA);
-  }
-  
-  public void setDifferenceBlend() {
-    GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE);
-  }
-  
-  public void setExclussionBlend() {
-    GLES20.glBlendFunc(GLES20.GL_ONE_MINUS_DST_COLOR, GLES20.GL_ONE_MINUS_SRC_COLOR);
-  }
-  
-  public void setMultiplyBlend() {
-    GLES20.glBlendFunc(GLES20.GL_DST_COLOR, GLES20.GL_SRC_COLOR);
-  }
-  
-  public void setScreenBlend() {
-    GLES20.glBlendFunc(GLES20.GL_ONE_MINUS_DST_COLOR, GLES20.GL_ONE);
-  }  
+
   
   /////////////////////////////////////////////////////////////////////////////////
   
@@ -1311,37 +883,22 @@ public class PGL {
 //    GLES20.glReadBuffer(buf);
   }
   
-  public void readPixels(Buffer buffer, int x, int y, int w, int h) {
-    GLES20.glReadPixels(x, y, w, h, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buffer);
+  public void glReadPixels(int x, int y, int width, int height, int format, int type, Buffer buffer) {
+    GLES20.glReadPixels(x, y, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buffer);
   } 
   
   public void setDrawBuffer(int buf) {
 //    GLES20.glDrawBuffer(GLES20.GL_COLOR_ATTACHMENT0 + buf);
   }
   
-  public void setClearColor(float r, float g, float b, float a) {
+  public void glClearColor(float r, float g, float b, float a) {
     GLES20.glClearColor(r, g, b, a);    
   }
   
-  public void clearDepthBuffer() {
-    GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
-  }
-    
-  public void clearStencilBuffer() {
-    GLES20.glClear(GLES20.GL_STENCIL_BUFFER_BIT);
-  }
-
-  public void clearDepthAndStencilBuffers() {
-    GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_STENCIL_BUFFER_BIT);
-  }
+  public void glClear(int mask) {
+    GLES20.glClear(mask);
+  }  
   
-  public void clearColorBuffer() {
-    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-  } 
-
-  public void clearAllBuffers() {
-    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_STENCIL_BUFFER_BIT); 
-  }
   
   /////////////////////////////////////////////////////////////////////////////////
   

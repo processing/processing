@@ -28,11 +28,13 @@ import processing.core.PGraphicsAndroid3D.Tessellator;
 import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.io.BufferedReader;
+
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -249,7 +251,7 @@ public class PShape3D extends PShape {
     pg = (PGraphicsAndroid3D)parent.g;
     pgl = pg.pgl;
     
-    glMode = PGL.STATIC_DRAW;
+    glMode = PGL.GL_STATIC_DRAW;
     
     glFillVertexBufferID = 0;
     glFillColorBufferID = 0;
@@ -353,11 +355,11 @@ public class PShape3D extends PShape {
   
   public void setMode(int mode) {
     if (mode == STATIC) {
-      glMode = PGL.STATIC_DRAW;
+      glMode = PGL.GL_STATIC_DRAW;
     } else if (mode == DYNAMIC) {
-      glMode = PGL.DYNAMIC_DRAW;
+      glMode = PGL.GL_DYNAMIC_DRAW;
     } else if (mode == STREAM) {
-      glMode = PGL.STREAM_DRAW;
+      glMode = PGL.GL_STREAM_DRAW;
     }
   }
   
@@ -2475,36 +2477,36 @@ public class PShape3D extends PShape {
   
   protected ByteBuffer mapVertexImpl(int id, int offset, int count) {
     updateTesselation();
-    pgl.bindVertexBuffer(id);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, id);
     ByteBuffer bb;
     if (root == this) {            
-      bb = pgl.mapVertexBuffer();  
+      bb = pgl.glMapBuffer(PGL.GL_ARRAY_BUFFER, PGL.GL_READ_WRITE);  
     } else {
-      bb = pgl.mapVertexBufferRange(offset, count); 
+      bb = pgl.glMapBufferRange(PGL.GL_ARRAY_BUFFER, offset, count, PGL.GL_READ_WRITE); 
     }
     return bb;
   }
   
   protected void unmapVertexImpl() {
-    pgl.unmapVertexBuffer();
-    pgl.unbindVertexBuffer();    
+    pgl.glUnmapBuffer(PGL.GL_ARRAY_BUFFER);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }
   
   protected ByteBuffer mapIndexImpl(int id, int offset, int count) {
     updateTesselation();
-    pgl.bindIndexBuffer(id);
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, id);
     ByteBuffer bb;
     if (root == this) {            
-      bb = pgl.mapIndexBuffer();  
+      bb = pgl.glMapBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, PGL.GL_READ_WRITE);  
     } else {
-      bb = pgl.mapIndexBufferRange(offset, count); 
+      bb = pgl.glMapBufferRange(PGL.GL_ELEMENT_ARRAY_BUFFER, offset, count, PGL.GL_READ_WRITE);
     }
     return bb;
   }
   
   protected void unmapIndexImpl() {
-    pgl.unmapIndexBuffer();
-    pgl.unbindIndexBuffer();    
+    pgl.glUnmapBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER);
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);    
   }
 
   
@@ -3095,45 +3097,49 @@ public class PShape3D extends PShape {
   }
   
   protected void initFillBuffers(int nvert, int nind) {
+    int sizef = nvert * PGL.SIZEOF_FLOAT;
+    int sizei = nvert * PGL.SIZEOF_INT;
+    int sizex = nind * PGL.SIZEOF_INDEX;
+    
     glFillVertexBufferID = pg.createVertexBufferObject();  
-    pgl.bindVertexBuffer(glFillVertexBufferID);
-    pgl.initFloatVertexBuffer(3 * nvert, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);
     
     glFillColorBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glFillColorBufferID);
-    pgl.initFloatVertexBuffer(4 * nvert, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);    
     
     glFillNormalBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glFillNormalBufferID);
-    pgl.initFloatVertexBuffer(3 * nvert, glMode);     
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);     
     
     glFillTexCoordBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glFillTexCoordBufferID);
-    pgl.initFloatVertexBuffer(2 * nvert, glMode);  
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, glMode);  
     
     glFillAmbientBufferID = pg.createVertexBufferObject();  
-    pgl.bindVertexBuffer(glFillAmbientBufferID);
-    pgl.initIntVertexBuffer(nvert, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);
     
     glFillSpecularBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glFillSpecularBufferID);
-    pgl.initIntVertexBuffer(nvert, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);    
     
     glFillEmissiveBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glFillEmissiveBufferID);
-    pgl.initIntVertexBuffer(nvert, glMode);     
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);
     
     glFillShininessBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glFillShininessBufferID);
-    pgl.initFloatVertexBuffer(nvert, glMode);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, null, glMode);
         
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
         
     glFillIndexBufferID = pg.createVertexBufferObject();  
-    pgl.bindIndexBuffer(glFillIndexBufferID);
-    pgl.initIndexBuffer(nind, glMode);    
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, glMode);
     
-    pgl.unbindIndexBuffer();  
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);  
   }  
   
   
@@ -3361,121 +3367,129 @@ public class PShape3D extends PShape {
                                   float[] vertices, float[] colors, 
                                   float[] normals, float[] texcoords,
                                   int[] ambient, int[] specular, int[] emissive, float[] shininess) {
-    pgl.bindVertexBuffer(glFillVertexBufferID);
-    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);    
+    int offsetf = offset * PGL.SIZEOF_FLOAT;
+    int offseti = offset * PGL.SIZEOF_INT;
+    int sizef = size * PGL.SIZEOF_FLOAT;
+    int sizei = size * PGL.SIZEOF_INT;
     
-    pgl.bindVertexBuffer(glFillColorBufferID);
-    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(vertices, 0, 3 * size));
     
-    pgl.bindVertexBuffer(glFillNormalBufferID);
-    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(colors, 0, 4 * size));
     
-    pgl.bindVertexBuffer(glFillTexCoordBufferID);
-    pgl.copyVertexBufferSubData(texcoords, 2 * offset, 2 * size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(normals, 0, 3 * size));
     
-    pgl.bindVertexBuffer(glFillAmbientBufferID);
-    pgl.copyVertexBufferSubData(ambient, offset, size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offsetf, 2 * sizef, FloatBuffer.wrap(texcoords, 0, 2 * size));
     
-    pgl.bindVertexBuffer(glFillSpecularBufferID);
-    pgl.copyVertexBufferSubData(specular, offset, size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(ambient, 0, size));
     
-    pgl.bindVertexBuffer(glFillEmissiveBufferID);
-    pgl.copyVertexBufferSubData(normals, offset, size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(specular, 0, size));    
     
-    pgl.bindVertexBuffer(glFillShininessBufferID);
-    pgl.copyVertexBufferSubData(shininess, offset, size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(emissive, 0, size));   
+    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offsetf, sizef, FloatBuffer.wrap(shininess, 0, size));
         
-    pgl.unbindVertexBuffer();    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }
 
   
-  protected void copyFillVertices(int offset, int size, float[] vertices) {
-    pgl.bindVertexBuffer(glFillVertexBufferID);
-    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);      
-    pgl.unbindVertexBuffer();
+  protected void copyFillVertices(int offset, int size, float[] vertices) {    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices, 0, 3 * size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
   
   protected void copyFillColors(int offset, int size, float[] colors) {    
-    pgl.bindVertexBuffer(glFillColorBufferID);
-    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);     
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors, 0, 4 * size));     
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }  
   
   
   protected void copyFillNormals(int offset, int size, float[] normals) {
-    pgl.bindVertexBuffer(glFillNormalBufferID);
-    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);    
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals, 0, 3 * size));    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }  
 
   
   protected void copyFillTexCoords(int offset, int size, float[] texcoords) {
-    pgl.bindVertexBuffer(glFillTexCoordBufferID);
-    pgl.copyVertexBufferSubData(texcoords, 2 * offset, 2 * size, glMode);      
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offset * PGL.SIZEOF_FLOAT, 2 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(texcoords, 0, 2 * size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }   
 
   
   protected void copyfillAmbient(int offset, int size, int[] ambient) {
-    pgl.bindVertexBuffer(glFillAmbientBufferID);
-    pgl.copyVertexBufferSubData(ambient, offset, size, glMode);      
-    pgl.unbindVertexBuffer();    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(ambient, 0, size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }
   
   
   protected void copyfillSpecular(int offset, int size, int[] specular) {
-    pgl.bindVertexBuffer(glFillSpecularBufferID);
-    pgl.copyVertexBufferSubData(specular, offset, size, glMode);      
-    pgl.unbindVertexBuffer();       
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(specular, 0, size));     
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);       
   }
 
   
   protected void copyfillEmissive(int offset, int size, int[] emissive) {
-    pgl.bindVertexBuffer(glFillEmissiveBufferID);
-    pgl.copyVertexBufferSubData(emissive, offset, size, glMode);      
-    pgl.unbindVertexBuffer();    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(emissive, 0, size));      
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }  
 
   
   protected void copyfillShininess(int offset, int size, float[] shininess) {
-    pgl.bindVertexBuffer(glFillShininessBufferID);
-    pgl.copyVertexBufferSubData(shininess, offset, size, glMode);      
-    pgl.unbindVertexBuffer();     
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_FLOAT, size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(shininess, 0, size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);     
   }    
   
   
   protected void copyFillIndices(int offset, int size, short[] indices) {
-    pgl.bindIndexBuffer(glFillIndexBufferID);
-    pgl.copyIndexBufferSubData(indices, offset, size, glMode); 
-    pgl.unbindIndexBuffer();
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, ShortBuffer.wrap(indices, 0, size));
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
   
   
   protected void initLineBuffers(int nvert, int nind) {
+    int sizef = nvert * PGL.SIZEOF_FLOAT;
+    int sizex = nind * PGL.SIZEOF_INDEX;
+    
     glLineVertexBufferID = pg.createVertexBufferObject();    
-    pgl.bindVertexBuffer(glLineVertexBufferID);
-    pgl.initFloatVertexBuffer(3 * nvert, glMode);   
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);      
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);
     
     glLineColorBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glLineColorBufferID);
-    pgl.initFloatVertexBuffer(4 * nvert, glMode);       
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);       
 
     glLineNormalBufferID = pg.createVertexBufferObject();    
-    pgl.bindVertexBuffer(glLineNormalBufferID);
-    pgl.initFloatVertexBuffer(3 * nvert, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);    
     
     glLineAttribBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glLineAttribBufferID);
-    pgl.initFloatVertexBuffer(4 * nvert, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);    
     
-    pgl.unbindVertexBuffer();    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
     
     glLineIndexBufferID = pg.createVertexBufferObject();    
-    pgl.bindIndexBuffer(glLineIndexBufferID);
-    pgl.initIndexBuffer(nind, glMode);    
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, glMode);
 
-    pgl.unbindIndexBuffer();
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
   
   
@@ -3500,81 +3514,87 @@ public class PShape3D extends PShape {
   
   protected void copyLineGeometry(int offset, int size, 
                                   float[] vertices, float[] colors, float[] normals, float[] attribs) {
-    pgl.bindVertexBuffer(glLineVertexBufferID);
-    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);     
+    int offsetf = offset * PGL.SIZEOF_FLOAT;
+    int sizef = size * PGL.SIZEOF_FLOAT;
+    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(vertices, 0, 3 * size));
 
-    pgl.bindVertexBuffer(glLineColorBufferID);
-    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(colors, 0, 4 * size));
     
-    pgl.bindVertexBuffer(glLineNormalBufferID);
-    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(normals, 0, 3 * size));
     
-    pgl.bindVertexBuffer(glLineAttribBufferID);
-    pgl.copyVertexBufferSubData(attribs, 4 * offset, 4 * size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(attribs, 0, 4 * size));
     
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }    
   
   
   protected void copyLineVertices(int offset, int size, float[] vertices) {    
-    pgl.bindVertexBuffer(glLineVertexBufferID);
-    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);    
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices, 0, 3 * size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }     
   
   
   protected void copyLineColors(int offset, int size, float[] colors) {
-    pgl.bindVertexBuffer(glLineColorBufferID);
-    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);     
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors, 0, 4 * size));             
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
   
   protected void copyLineNormals(int offset, int size, float[] normals) {
-    pgl.bindVertexBuffer(glLineNormalBufferID);
-    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);    
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals, 0, 4 * size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
 
   
   protected void copyLineAttributes(int offset, int size, float[] attribs) {
-    pgl.bindVertexBuffer(glLineAttribBufferID);
-    pgl.copyVertexBufferSubData(attribs, 4 * offset, 4 * size, glMode);    
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 4 * size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
   
   protected void copyLineIndices(int offset, int size, short[] indices) {
-    pgl.bindIndexBuffer(glLineIndexBufferID);
-    pgl.copyIndexBufferSubData(indices, offset, size, glMode);    
-    pgl.unbindIndexBuffer();
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, ShortBuffer.wrap(indices, 0, size));
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }  
   
 
   protected void initPointBuffers(int nvert, int nind) {
+    int sizef = nvert * PGL.SIZEOF_FLOAT;
+    int sizex = nind * PGL.SIZEOF_INDEX;
+    
     glPointVertexBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glPointVertexBufferID);
-    pgl.initFloatVertexBuffer(3 * nvert, glMode);   
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);   
 
     glPointColorBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glPointColorBufferID);
-    pgl.initFloatVertexBuffer(4 * nvert, glMode);     
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);     
     
     glPointNormalBufferID = pg.createVertexBufferObject();    
-    pgl.bindVertexBuffer(glPointNormalBufferID);
-    pgl.initFloatVertexBuffer(3 * nvert, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);    
 
     glPointAttribBufferID = pg.createVertexBufferObject();
-    pgl.bindVertexBuffer(glPointAttribBufferID);
-    pgl.initFloatVertexBuffer(2 * nvert, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, glMode);
       
-    pgl.unbindVertexBuffer();     
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);     
         
     glPointIndexBufferID = pg.createVertexBufferObject();
-    pgl.bindIndexBuffer(glPointIndexBufferID);
-    pgl.initIndexBuffer(nind, glMode);    
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, glMode);
     
-    pgl.unbindIndexBuffer();
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }  
   
   
@@ -3599,54 +3619,57 @@ public class PShape3D extends PShape {
   
   protected void copyPointGeometry(int offset, int size, 
                                    float[] vertices, float[] colors, float[] normals, float[] attribs) {
-    pgl.bindVertexBuffer(glPointVertexBufferID);
-    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);
+    int offsetf = offset * PGL.SIZEOF_FLOAT;
+    int sizef = size * PGL.SIZEOF_FLOAT;
 
-    pgl.bindVertexBuffer(glPointColorBufferID);
-    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(vertices, 0, 3 * size));
+
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(colors, 0, 4 * size));
     
-    pgl.bindVertexBuffer(glPointNormalBufferID);
-    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(normals, 0, 3 * size));
     
-    pgl.bindVertexBuffer(glPointAttribBufferID);
-    pgl.copyVertexBufferSubData(attribs, 2 * offset, 2 * size, glMode);     
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offsetf, 2 * sizef, FloatBuffer.wrap(attribs, 0, 2 * size));
     
-    pgl.unbindVertexBuffer();    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }  
 
 
   protected void copyPointVertices(int offset, int size, float[] vertices) {    
-    pgl.bindVertexBuffer(glPointVertexBufferID);
-    pgl.copyVertexBufferSubData(vertices, 3 * offset, 3 * size, glMode);    
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices, 0, 3 * size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
     
     
   protected void copyPointColors(int offset, int size, float[] colors) {
-    pgl.bindVertexBuffer(glPointColorBufferID);
-    pgl.copyVertexBufferSubData(colors, 4 * offset, 4 * size, glMode);     
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors, 0, 4 * size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
     
   
   protected void copyPointNormals(int offset, int size, float[] normals) {
-    pgl.bindVertexBuffer(glPointNormalBufferID);
-    pgl.copyVertexBufferSubData(normals, 3 * offset, 3 * size, glMode);      
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals, 0, 3 * size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
 
     
   protected void copyPointAttributes(int offset, int size, float[] attribs) {
-    pgl.bindVertexBuffer(glPointAttribBufferID);
-    pgl.copyVertexBufferSubData(attribs, 2 * offset, 2 * size, glMode);  
-    pgl.unbindVertexBuffer();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offset * PGL.SIZEOF_FLOAT, 2 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 2 * size));
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
   
   protected void copyPointIndices(int offset, int size, short[] indices) {
-    pgl.bindIndexBuffer(glPointIndexBufferID);
-    pgl.copyIndexBufferSubData(indices, offset, size, glMode);    
-    pgl.unbindIndexBuffer();    
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, ShortBuffer.wrap(indices, 0, size));
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);    
   }    
 
   
@@ -3865,23 +3888,23 @@ public class PShape3D extends PShape {
       int offset = index.offset;
       int size =  index.size;
       
-      pgl.bindVertexBuffer(root.glPointVertexBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glPointVertexBufferID);
       pg.setPointVertexFormat(3, first);
                     
-      pgl.bindVertexBuffer(root.glPointColorBufferID);    
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glPointColorBufferID);    
       pg.setPointColorFormat(4, first);    
       
-      pgl.bindVertexBuffer(root.glPointNormalBufferID);    
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glPointNormalBufferID);    
       pg.setPointNormalFormat(4, first);    
       
-      pgl.bindVertexBuffer(root.glPointAttribBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glPointAttribBufferID);
       pg.setPointSizeFormat(2, first);
       
-      pgl.bindIndexBuffer(root.glPointIndexBufferID);
-      pgl.renderIndexBuffer(offset, size);
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);      
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX); 
       
-      pgl.unbindIndexBuffer();
-      pgl.unbindVertexBuffer();       
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);       
     }
     
     pg.disablePointVertex();
@@ -3907,23 +3930,23 @@ public class PShape3D extends PShape {
       int offset = index.offset;
       int size =  index.size;
       
-      pgl.bindVertexBuffer(root.glLineVertexBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glLineVertexBufferID);
       pg.setLineVertexFormat(3, first); 
       
-      pgl.bindVertexBuffer(root.glLineColorBufferID);    
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glLineColorBufferID);    
       pg.setLineColorFormat(4, first);      
       
-      pgl.bindVertexBuffer(root.glLineNormalBufferID);    
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glLineNormalBufferID);    
       pg.setLineNormalFormat(3, first);      
       
-      pgl.bindVertexBuffer(root.glLineAttribBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glLineAttribBufferID);
       pg.setLineDirWidthFormat(2, 0); 
       
-      pgl.bindIndexBuffer(root.glLineIndexBufferID);
-      pgl.renderIndexBuffer(offset, size);
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glLineIndexBufferID);
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);
       
-      pgl.unbindIndexBuffer();
-      pgl.unbindVertexBuffer();         
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);         
     }
     
     pg.disableLineVertex();
@@ -3951,38 +3974,38 @@ public class PShape3D extends PShape {
       int offset = index.offset;
       int size =  index.size;
     
-      pgl.bindVertexBuffer(root.glFillVertexBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glFillVertexBufferID);
       pg.setFillVertexFormat(3, first);
 
-      pgl.bindVertexBuffer(root.glFillColorBufferID);    
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glFillColorBufferID);    
       pg.setFillColorFormat(4, first);
       
-      pgl.bindVertexBuffer(root.glFillNormalBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glFillNormalBufferID);
       pg.setFillNormalFormat(3, first);
       
-      pgl.bindVertexBuffer(root.glFillTexCoordBufferID);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glFillTexCoordBufferID);
       pg.setFillTexCoordFormat(2, first);   
       
       PTexture tex = null;
       if (textureImage != null) {
-        pgl.setActiveTexUnit(0);
+        pgl.glActiveTexture(PGL.GL_TEXTURE0);
         tex = pg.getTexture(textureImage);
         if (tex != null) {
-          pgl.enableTexturing(tex.glTarget);          
-          pgl.bindTexture(tex.glTarget, tex.glID);        
+          pgl.glEnable(tex.glTarget);          
+          pgl.glBindTexture(tex.glTarget, tex.glID);        
         }
       }
       
-      pgl.bindIndexBuffer(root.glFillIndexBufferID);
-      pgl.renderIndexBuffer(offset, size);      
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glFillIndexBufferID);
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);      
       
       if (tex != null) {
-        pgl.unbindTexture(tex.glTarget); 
-        pgl.disableTexturing(tex.glTarget);
+        pgl.glBindTexture(tex.glTarget, 0); 
+        pgl.glDisable(tex.glTarget);
       } 
       
-      pgl.unbindIndexBuffer();
-      pgl.unbindVertexBuffer();        
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);        
     }
     
     pg.disableFillVertex();
