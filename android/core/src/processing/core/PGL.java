@@ -769,9 +769,13 @@ public class PGL {
     GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, id);
   }
   
-  public void initVertexBuffer(int size, int mode) {
+  public void initFloatVertexBuffer(int size, int mode) {
     GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, null, mode);  
   }
+
+  public void initIntVertexBuffer(int size, int mode) {
+    GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, size * SIZEOF_INT, null, mode);  
+  }  
   
   public void copyVertexBufferData(float[] data, int size, int mode) {
     GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size), mode);     
@@ -788,6 +792,10 @@ public class PGL {
   public void copyVertexBufferSubData(float[] data, int offset, int size, int mode) {
     GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, offset * SIZEOF_FLOAT, size * SIZEOF_FLOAT, FloatBuffer.wrap(data, 0, size));    
   }  
+
+  public void copyVertexBufferSubData(int[] data, int offset, int size, int mode) {
+    GLES20.glBufferSubData(GLES20.GL_ARRAY_BUFFER, offset * SIZEOF_INT, size * SIZEOF_INT, IntBuffer.wrap(data, 0, size));    
+  }    
   
   public void unbindVertexBuffer() {
     GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
