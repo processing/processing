@@ -2167,7 +2167,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillVBOsCreated = true;
     }    
     
-    int size, sizef, sizex;
+    int size, sizef, sizei, sizex;
     
     startFillShader();  
     
@@ -2180,23 +2180,36 @@ public class PGraphicsAndroid3D extends PGraphics {
         
     size = tessGeo.fillVertexCount;
     sizef = size * PGL.SIZEOF_FLOAT;
+    sizei = size * PGL.SIZEOF_INT;
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillVertices, 0, 3 * size), vboMode);
-    setFillVertexFormat(3, 0);
+    pgl.glVertexAttribPointer(fillVertexAttribLoc, size, PGL.GL_FLOAT, false, 0, 0);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.fillColors, 0, 4 * size), vboMode);
-    setFillColorFormat(4, 0);
+    pgl.glVertexAttribPointer(fillColorAttribLoc, size, PGL.GL_FLOAT, false, 0, 0);
     
     if (lights) {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillNormals, 0, 3 * size), vboMode);
-      setFillNormalFormat(3, 0);
+      pgl.glVertexAttribPointer(fillNormalAttribLoc, size, PGL.GL_FLOAT, false, 0, 0);      
       
-      // bind material buffers..
-      // copy data
-      // set formats
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillAmbient, 0, size), vboMode);
+      pgl.glVertexAttribPointer(fillAmbientAttribLoc, 4, PGL.GL_UNSIGNED_BYTE, false, 0, 0);
+
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillSpecular, 0, size), vboMode);
+      pgl.glVertexAttribPointer(fillSpecularAttribLoc, 4, PGL.GL_UNSIGNED_BYTE, false, 0, 0);
+
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillEmissive, 0, size), vboMode);
+      pgl.glVertexAttribPointer(fillEmissiveAttribLoc, 4, PGL.GL_UNSIGNED_BYTE, false, 0, 0);      
+      
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, FloatBuffer.wrap(tessGeo.fillShininess, 0, size), vboMode);
+      pgl.glVertexAttribPointer(fillShininessAttribLoc, 1, PGL.GL_FLOAT, false, 0, 0);
     }
     
     if (texCache.hasTexture) {
@@ -2204,7 +2217,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       enableFillTexCoord();
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.fillTexcoords, 0, 2 * size), vboMode);
-      setFillTexCoordFormat(2, 0);
+      pgl.glVertexAttribPointer(fillTexCoordAttribLoc, size, PGL.GL_FLOAT, false, 0, 0);
     }
          
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);  
@@ -2272,6 +2285,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     disableFillColor();
     if (lights) {
       disableFillNormal();
+      disableFillMaterials();
     }
     
     stopFillShader();
@@ -5528,6 +5542,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected static int fillColorAttribLoc;
   protected static int fillNormalAttribLoc;
   protected static int fillTexCoordAttribLoc;
+  protected static int fillAmbientAttribLoc;
+  protected static int fillSpecularAttribLoc;
+  protected static int fillEmissiveAttribLoc;
+  protected static int fillShininessAttribLoc;
+  
   
   protected static int lineModelviewLoc;
   protected static int lineProjectionLoc;
@@ -5571,13 +5590,16 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillLightFalloffQuadraticLoc = fillShader.getUniformLocation("lightFalloffQuadratic");
       fillLightSpotAngleCosLoc = fillShader.getUniformLocation("lightSpotAngleCos");
       fillLightSpotConcentrationLoc = fillShader.getUniformLocation("lightSpotConcentration");
-      
-      
-      
+            
       fillVertexAttribLoc = fillShader.getAttribLocation("inVertex");
       fillColorAttribLoc = fillShader.getAttribLocation("inColor");
       fillNormalAttribLoc = fillShader.getAttribLocation("inNormal");
       fillTexCoordAttribLoc = fillShader.getAttribLocation("inTexcoord");
+      
+      fillAmbientAttribLoc = fillShader.getAttribLocation("inAmbientColor");
+      fillSpecularAttribLoc = fillShader.getAttribLocation("inSpecularColor");
+      fillEmissiveAttribLoc = fillShader.getAttribLocation("inEmissiveColor");
+      fillShininessAttribLoc = fillShader.getAttribLocation("inShininess");
     }
     
     fillShader.start();
@@ -5639,7 +5661,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected void enableFillMaterials() {
-    
+    pgl.glEnableVertexAttribArray(fillAmbientAttribLoc);
+    pgl.glEnableVertexAttribArray(fillSpecularAttribLoc);
+    pgl.glEnableVertexAttribArray(fillEmissiveAttribLoc);
+    pgl.glEnableVertexAttribArray(fillShininessAttribLoc);
   }
   
   protected void enableFillTexCoord() {
@@ -5660,6 +5685,13 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected void disableFillTexCoord() {
     pgl.glDisableVertexAttribArray(fillTexCoordAttribLoc);
+  }  
+  
+  protected void disableFillMaterials() {
+    pgl.glDisableVertexAttribArray(fillAmbientAttribLoc);
+    pgl.glDisableVertexAttribArray(fillSpecularAttribLoc);
+    pgl.glDisableVertexAttribArray(fillEmissiveAttribLoc);
+    pgl.glDisableVertexAttribArray(fillShininessAttribLoc);
   }  
   
   protected void setFillVertexFormat(int size, int offset) { 

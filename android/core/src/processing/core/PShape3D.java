@@ -3967,6 +3967,7 @@ public class PShape3D extends PShape {
     pg.enableFillColor();
     pg.enableFillNormal();
     pg.enableFillTexCoord();
+    pg.enableFillMaterials();
         
     for (int i = 0; i < fillIndexData.size(); i++) {
       IndexData index = (IndexData)fillIndexData.get(i);      
@@ -3985,6 +3986,18 @@ public class PShape3D extends PShape {
       
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glFillTexCoordBufferID);
       pg.setFillTexCoordFormat(2, first);   
+      
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
+      pgl.glVertexAttribPointer(pg.fillAmbientAttribLoc, 4, PGL.GL_UNSIGNED_BYTE, false, 0, 4 * first);
+
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
+      pgl.glVertexAttribPointer(pg.fillSpecularAttribLoc, 4, PGL.GL_UNSIGNED_BYTE, false, 0, 4 * first);
+
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
+      pgl.glVertexAttribPointer(pg.fillEmissiveAttribLoc, 4, PGL.GL_UNSIGNED_BYTE, false, 0, 4 * first);      
+      
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
+      pgl.glVertexAttribPointer(pg.fillShininessAttribLoc, 1, PGL.GL_FLOAT, false, 0, first);      
       
       PTexture tex = null;
       if (textureImage != null) {
@@ -4012,6 +4025,7 @@ public class PShape3D extends PShape {
     pg.disableFillColor();
     pg.disableFillNormal();
     pg.disableFillTexCoord();
+    pg.disableFillMaterials();
     
     pg.stopFillShader();
   }
