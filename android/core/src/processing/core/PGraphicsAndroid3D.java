@@ -68,14 +68,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   public int glLineVertexBufferID;
   public int glLineColorBufferID;
   public int glLineNormalBufferID;
-  public int glLineAttribBufferID;
+  public int glLineDirWidthBufferID;
   public int glLineIndexBufferID;  
   protected boolean lineVBOsCreated = false;
   
   public int glPointVertexBufferID;
   public int glPointColorBufferID;
   public int glPointNormalBufferID;
-  public int glPointAttribBufferID;
+  public int glPointSizeBufferID;
   public int glPointIndexBufferID;   
   protected boolean pointVBOsCreated = false;
   
@@ -425,13 +425,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     glLineVertexBufferID = 0;
     glLineColorBufferID = 0;
     glLineNormalBufferID = 0;
-    glLineAttribBufferID = 0;
+    glLineDirWidthBufferID = 0;
     glLineIndexBufferID = 0;
     
     glPointVertexBufferID = 0;
     glPointColorBufferID = 0;
     glPointNormalBufferID = 0;
-    glPointAttribBufferID = 0;
+    glPointSizeBufferID = 0;
     glPointIndexBufferID = 0;
   }  
 
@@ -1225,8 +1225,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, vboMode);
         
-    glLineAttribBufferID = createVertexBufferObject();
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    glLineDirWidthBufferID = createVertexBufferObject();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, vboMode);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
@@ -1248,8 +1248,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineColors, 0, 4 * size), vboMode);
     
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineAttributes, 0, 4 * size), vboMode);    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineDirWidths, 0, 4 * size), vboMode);    
   }
   
   protected void releaseLineBuffers() {
@@ -1262,8 +1262,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     deleteVertexBufferObject(glLineNormalBufferID);
     glLineNormalBufferID = 0;    
     
-    deleteVertexBufferObject(glLineAttribBufferID);
-    glLineAttribBufferID = 0;
+    deleteVertexBufferObject(glLineDirWidthBufferID);
+    glLineDirWidthBufferID = 0;
     
     deleteVertexBufferObject(glLineIndexBufferID);
     glLineIndexBufferID = 0;    
@@ -1285,8 +1285,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, vboMode);
     
-    glPointAttribBufferID = createVertexBufferObject();
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    glPointSizeBufferID = createVertexBufferObject();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, vboMode);    
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
@@ -1308,8 +1308,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.pointColors, 0, 4 * size), vboMode);
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);    
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointAttributes, 0, 2 * size), vboMode);   
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);    
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointSizes, 0, 2 * size), vboMode);   
   }
   
   protected void releasePointBuffers() {
@@ -1322,8 +1322,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     deleteVertexBufferObject(glPointNormalBufferID);
     glPointNormalBufferID = 0;
     
-    deleteVertexBufferObject(glPointAttribBufferID);
-    glPointAttribBufferID = 0; 
+    deleteVertexBufferObject(glPointSizeBufferID);
+    glPointSizeBufferID = 0; 
       
     deleteVertexBufferObject(glPointIndexBufferID);  
     glPointIndexBufferID = 0;
@@ -2165,7 +2165,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     shader.start();    
     shader.setVertexAttribute(glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
     shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_FLOAT, 0, 0);    
-    shader.setSizeAttribute(glPointAttribBufferID, 2, PGL.GL_FLOAT, 0, 0);
+    shader.setSizeAttribute(glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 0);
     
     int size = tessGeo.pointIndexCount;
     int sizex = size * PGL.SIZEOF_INDEX;
@@ -2188,7 +2188,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     shader.start();    
     shader.setVertexAttribute(glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
     shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_FLOAT, 0, 0);    
-    shader.setDirWidthAttribute(glLineAttribBufferID, 4, PGL.GL_FLOAT, 0, 0);
+    shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 0);
     
     int size = tessGeo.lineIndexCount;
     int sizex = size * PGL.SIZEOF_INDEX;
@@ -6906,7 +6906,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public float[] lineVertices;
     public float[] lineColors;
     public float[] lineNormals;
-    public float[] lineAttributes;    
+    public float[] lineDirWidths;    
     
     public int lineIndexCount;
     public int firstLineIndex;
@@ -6920,7 +6920,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public float[] pointVertices;
     public float[] pointColors;
     public float[] pointNormals;
-    public float[] pointAttributes;  
+    public float[] pointSizes;  
 
     public int pointIndexCount;
     public int firstPointIndex;
@@ -6961,13 +6961,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       lineVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       lineColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
-      lineAttributes = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+      lineDirWidths = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];       
       
       pointVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       pointColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       pointNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
-      pointAttributes = new float[2 * PGL.DEFAULT_TESS_VERTICES];
+      pointSizes = new float[2 * PGL.DEFAULT_TESS_VERTICES];
       pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
       
       reset();
@@ -7086,8 +7086,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     protected void trimLineAttributes() {
       float temp[] = new float[4 * lineVertexCount];      
-      PApplet.arrayCopy(lineAttributes, 0, temp, 0, 4 * lineVertexCount);
-      lineAttributes = temp;      
+      PApplet.arrayCopy(lineDirWidths, 0, temp, 0, 4 * lineVertexCount);
+      lineDirWidths = temp;      
     }      
     
     protected void trimLineIndices() {
@@ -7116,8 +7116,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     protected void trimPointAttributes() {
       float temp[] = new float[2 * pointVertexCount];      
-      PApplet.arrayCopy(pointAttributes, 0, temp, 0, 2 * pointVertexCount);
-      pointAttributes = temp;      
+      PApplet.arrayCopy(pointSizes, 0, temp, 0, 2 * pointVertexCount);
+      pointSizes = temp;      
     }
     
     protected void trimPointIndices() {
@@ -7140,13 +7140,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       lineVertices = null;
       lineColors = null;
       lineNormals = null;
-      lineAttributes = null;
+      lineDirWidths = null;
       lineIndices = null;       
       
       pointVertices = null;
       pointColors = null;
       pointNormals = null;
-      pointAttributes = null;
+      pointSizes = null;
       pointIndices = null;
     }
     
@@ -7496,8 +7496,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     protected void expandLineAttributes(int n) {
       float temp[] = new float[4 * n];      
-      PApplet.arrayCopy(lineAttributes, 0, temp, 0, 4 * lineVertexCount);
-      lineAttributes = temp;      
+      PApplet.arrayCopy(lineDirWidths, 0, temp, 0, 4 * lineVertexCount);
+      lineDirWidths = temp;      
     }      
     
     public void addLineIndices(int count) {
@@ -7555,8 +7555,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     protected void expandPointAttributes(int n) {
       float temp[] = new float[2 * n];      
-      PApplet.arrayCopy(pointAttributes, 0, temp, 0, 2 * pointVertexCount);
-      pointAttributes = temp;      
+      PApplet.arrayCopy(pointSizes, 0, temp, 0, 2 * pointVertexCount);
+      pointSizes = temp;      
     }
     
     public void addPointIndices(int count) {
@@ -7770,9 +7770,9 @@ public class PGraphicsAndroid3D extends PGraphics {
         lineNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
 
         index = 4 * tessIdx;
-        lineAttributes[index++] = x1 * tr.m00 + y1 * tr.m01 + z1 * tr.m02 + tr.m03;
-        lineAttributes[index++] = x1 * tr.m10 + y1 * tr.m11 + z1 * tr.m12 + tr.m13;
-        lineAttributes[index  ] = x1 * tr.m20 + y1 * tr.m21 + z1 * tr.m22 + tr.m23;        
+        lineDirWidths[index++] = x1 * tr.m00 + y1 * tr.m01 + z1 * tr.m02 + tr.m03;
+        lineDirWidths[index++] = x1 * tr.m10 + y1 * tr.m11 + z1 * tr.m12 + tr.m13;
+        lineDirWidths[index  ] = x1 * tr.m20 + y1 * tr.m21 + z1 * tr.m22 + tr.m23;        
       } else {
         index = 3 * tessIdx;
         lineVertices[index++] = x0;
@@ -7785,9 +7785,9 @@ public class PGraphicsAndroid3D extends PGraphics {
         lineNormals[index  ] = nz;
 
         index = 4 * tessIdx;
-        lineAttributes[index++] = x1;
-        lineAttributes[index++] = y1;
-        lineAttributes[index  ] = z1;
+        lineDirWidths[index++] = x1;
+        lineDirWidths[index++] = y1;
+        lineDirWidths[index  ] = z1;
       }      
       
       index = 4 * tessIdx;
@@ -7918,8 +7918,8 @@ public class PGraphicsAndroid3D extends PGraphics {
           lineVertices[index  ] += ty;
           
           index = 4 * i;
-          lineAttributes[index++] += tx;
-          lineAttributes[index  ] += ty;           
+          lineDirWidths[index++] += tx;
+          lineDirWidths[index  ] += ty;           
         }
       }
       
@@ -7985,9 +7985,9 @@ public class PGraphicsAndroid3D extends PGraphics {
           lineVertices[index  ] += tz;
           
           index = 4 * i;
-          lineAttributes[index++] += tx;
-          lineAttributes[index++] += ty;
-          lineAttributes[index  ] += tz;           
+          lineDirWidths[index++] += tx;
+          lineDirWidths[index++] += ty;
+          lineDirWidths[index  ] += tz;           
         }
       }
       
@@ -8060,8 +8060,8 @@ public class PGraphicsAndroid3D extends PGraphics {
           float ny = lineNormals[index  ];
 
           index = 4 * i;
-          float xa = lineAttributes[index++];
-          float ya = lineAttributes[index  ];
+          float xa = lineDirWidths[index++];
+          float ya = lineDirWidths[index  ];
                     
           index = 3 * i;
           lineVertices[index++] = x * tr.m00 + y * tr.m01 + tr.m02;
@@ -8072,8 +8072,8 @@ public class PGraphicsAndroid3D extends PGraphics {
           lineNormals[index  ] = nx * tr.m10 + ny * tr.m11;
           
           index = 4 * i;
-          lineAttributes[index++] = xa * tr.m00 + ya * tr.m01 + tr.m02;
-          lineAttributes[index  ] = xa * tr.m10 + ya * tr.m11 + tr.m12;              
+          lineDirWidths[index++] = xa * tr.m00 + ya * tr.m01 + tr.m02;
+          lineDirWidths[index  ] = xa * tr.m10 + ya * tr.m11 + tr.m12;              
         }   
       }      
       
@@ -8142,9 +8142,9 @@ public class PGraphicsAndroid3D extends PGraphics {
           float nz = lineNormals[index  ];
 
           index = 4 * i;
-          float xa = lineAttributes[index++];
-          float ya = lineAttributes[index++];
-          float za = lineAttributes[index  ];
+          float xa = lineDirWidths[index++];
+          float ya = lineDirWidths[index++];
+          float za = lineDirWidths[index  ];
                     
           index = 3 * i;
           lineVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
@@ -8157,9 +8157,9 @@ public class PGraphicsAndroid3D extends PGraphics {
           lineNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
           
           index = 4 * i;
-          lineAttributes[index++] = xa * tr.m00 + ya * tr.m01 + za * tr.m02 + tr.m03;
-          lineAttributes[index++] = xa * tr.m10 + ya * tr.m11 + za * tr.m12 + tr.m13;
-          lineAttributes[index  ] = xa * tr.m20 + ya * tr.m21 + za * tr.m22 + tr.m23;              
+          lineDirWidths[index++] = xa * tr.m00 + ya * tr.m01 + za * tr.m02 + tr.m03;
+          lineDirWidths[index++] = xa * tr.m10 + ya * tr.m11 + za * tr.m12 + tr.m13;
+          lineDirWidths[index  ] = xa * tr.m20 + ya * tr.m21 + za * tr.m22 + tr.m23;              
         }   
       }      
       
@@ -8312,14 +8312,14 @@ public class PGraphicsAndroid3D extends PGraphics {
           // the circle perimeter. The point shader will read these attributes and
           // displace the vertices in screen coordinates so the circles are always
           // camera facing (bilboards)
-          tess.pointAttributes[2 * attribIdx + 0] = 0;
-          tess.pointAttributes[2 * attribIdx + 1] = 0;
+          tess.pointSizes[2 * attribIdx + 0] = 0;
+          tess.pointSizes[2 * attribIdx + 1] = 0;
           attribIdx++;
           float val = 0;
           float inc = (float) SINCOS_LENGTH / perim;      
           for (int k = 0; k < perim; k++) {
-            tess.pointAttributes[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
-            tess.pointAttributes[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
+            tess.pointSizes[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
+            tess.pointSizes[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
             val = (val + inc) % SINCOS_LENGTH;                
             attribIdx++;           
           }
@@ -8378,12 +8378,12 @@ public class PGraphicsAndroid3D extends PGraphics {
           // the quad corners. The point shader will read these attributes and
           // displace the vertices in screen coordinates so the quads are always
           // camera facing (bilboards)
-          tess.pointAttributes[2 * attribIdx + 0] = 0;
-          tess.pointAttributes[2 * attribIdx + 1] = 0;
+          tess.pointSizes[2 * attribIdx + 0] = 0;
+          tess.pointSizes[2 * attribIdx + 1] = 0;
           attribIdx++;            
           for (int k = 0; k < 4; k++) {
-            tess.pointAttributes[2 * attribIdx + 0] = 0.5f * QUAD_SIGNS[k][0] * strokeWeight;
-            tess.pointAttributes[2 * attribIdx + 1] = 0.5f * QUAD_SIGNS[k][1] * strokeWeight;               
+            tess.pointSizes[2 * attribIdx + 0] = 0.5f * QUAD_SIGNS[k][0] * strokeWeight;
+            tess.pointSizes[2 * attribIdx + 1] = 0.5f * QUAD_SIGNS[k][1] * strokeWeight;               
             attribIdx++;           
           }
           
@@ -8638,17 +8638,17 @@ public class PGraphicsAndroid3D extends PGraphics {
     protected void addLine(int i0, int i1, int vcount, int icount) {
       tess.putLineVertex(in, i0, i1, vcount);
    
-      tess.lineAttributes[4 * vcount + 3] = +strokeWeight;
+      tess.lineDirWidths[4 * vcount + 3] = +strokeWeight;
       tess.lineIndices[icount++] = PGL.makeIndex(vcount);
       
       vcount++;
       tess.putLineVertex(in, i0, i1, vcount);
-      tess.lineAttributes[4 * vcount + 3] = -strokeWeight;
+      tess.lineDirWidths[4 * vcount + 3] = -strokeWeight;
       tess.lineIndices[icount++] = PGL.makeIndex(vcount);
       
       vcount++;
       tess.putLineVertex(in, i1, i0, vcount);
-      tess.lineAttributes[4 * vcount + 3] = -strokeWeight;
+      tess.lineDirWidths[4 * vcount + 3] = -strokeWeight;
       tess.lineIndices[icount++] = PGL.makeIndex(vcount);
       
       // Starting a new triangle re-using prev vertices.
@@ -8657,7 +8657,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       vcount++;
       tess.putLineVertex(in, i1, i0, vcount);      
-      tess.lineAttributes[4 * vcount + 3] = +strokeWeight;
+      tess.lineDirWidths[4 * vcount + 3] = +strokeWeight;
       tess.lineIndices[icount++] = PGL.makeIndex(vcount);
     }
     
