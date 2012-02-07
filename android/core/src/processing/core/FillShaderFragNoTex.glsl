@@ -21,13 +21,8 @@
 
 precision mediump float;
 
-uniform sampler2D textureSampler;
-
 varying vec4 vertColor;
-varying vec2 vertTexcoord;
 
 void main() {
-  // This implements GL_MODULATE mode. For GL_REPLACE, we just ignore
-  // vertColor (or set to 1 in the vertex shader...)
-  gl_FragColor = texture2D(textureSampler, vertTexcoord) * vertColor;
+  gl_FragColor = vertColor;
 }

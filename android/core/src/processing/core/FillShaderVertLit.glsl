@@ -38,7 +38,6 @@ uniform float lightSpotConcentration[8];
 attribute vec4 inVertex;
 attribute vec4 inColor;
 attribute vec3 inNormal;
-attribute vec2 inTexcoord;
 
 attribute vec4 inAmbient;
 attribute vec4 inSpecular;
@@ -46,7 +45,6 @@ attribute vec4 inEmissive;
 attribute float inShine;
 
 varying vec4 vertColor;
-varying vec2 vertTexcoord;
 
 float attenuationFactor(vec3 lightPos, vec3 vertPos, float c0, float c1, float c2) {
   float d = distance(lightPos, vertPos);
@@ -75,9 +73,6 @@ void main() {
   // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * inNormal);
   
-  // Passing texture coordinates to the fragment shader
-  vertTexcoord = inTexcoord;
-    
   // Light calculations
   vec4 totalAmbient = vec4(0, 0, 0, 0);
   vec4 totalDiffuse = vec4(0, 0, 0, 0);
