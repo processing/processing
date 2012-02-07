@@ -90,13 +90,13 @@ public class PShape3D extends PShape {
   public int glLineVertexBufferID;
   public int glLineColorBufferID;
   public int glLineNormalBufferID;
-  public int glLineAttribBufferID;
+  public int glLineDirWidthBufferID;
   public int glLineIndexBufferID;  
   
   public int glPointVertexBufferID;
   public int glPointColorBufferID;
   public int glPointNormalBufferID;
-  public int glPointAttribBufferID;
+  public int glPointSizeBufferID;
   public int glPointIndexBufferID;  
 
   // ........................................................
@@ -269,13 +269,13 @@ public class PShape3D extends PShape {
     glLineVertexBufferID = 0;
     glLineColorBufferID = 0;
     glLineNormalBufferID = 0;
-    glLineAttribBufferID = 0;
+    glLineDirWidthBufferID = 0;
     glLineIndexBufferID = 0;
     
     glPointVertexBufferID = 0;
     glPointColorBufferID = 0;
     glPointNormalBufferID = 0;
-    glPointAttribBufferID = 0;
+    glPointSizeBufferID = 0;
     glPointIndexBufferID = 0;
     
     this.tessellator = pg.tessellator;
@@ -453,8 +453,8 @@ public class PShape3D extends PShape {
       pg.finalizeVertexBufferObject(glLineNormalBufferID);   
     }     
 
-    if (glLineAttribBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glLineAttribBufferID);   
+    if (glLineDirWidthBufferID != 0) {    
+      pg.finalizeVertexBufferObject(glLineDirWidthBufferID);   
     }    
     
     if (glLineIndexBufferID != 0) {    
@@ -475,8 +475,8 @@ public class PShape3D extends PShape {
       pg.finalizeVertexBufferObject(glPointNormalBufferID);   
     }     
 
-    if (glPointAttribBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glPointAttribBufferID);   
+    if (glPointSizeBufferID != 0) {    
+      pg.finalizeVertexBufferObject(glPointSizeBufferID);   
     }    
     
     if (glPointIndexBufferID != 0) {    
@@ -2263,7 +2263,7 @@ public class PShape3D extends PShape {
   
   public float[] lineAttributes() {
     updateTesselation();
-    return tess.lineAttributes;
+    return tess.lineDirWidths;
   }  
   
   public short[] lineIndices() {
@@ -2318,7 +2318,7 @@ public class PShape3D extends PShape {
   
   public float[] pointAttributes() {
     updateTesselation();
-    return tess.pointAttributes;
+    return tess.pointSizes;
   }  
   
   public short[] pointIndices() {
@@ -2423,7 +2423,7 @@ public class PShape3D extends PShape {
   }
   
   public FloatBuffer mapLineAttributes() {        
-    return mapVertexImpl(root.glLineAttribBufferID, 2 * tess.firstLineVertex, 2 * tess.lineVertexCount).asFloatBuffer();
+    return mapVertexImpl(root.glLineDirWidthBufferID, 2 * tess.firstLineVertex, 2 * tess.lineVertexCount).asFloatBuffer();
   }
   
   public void unmapLineAttributes() {
@@ -2463,7 +2463,7 @@ public class PShape3D extends PShape {
   }
   
   public FloatBuffer mapPointAttributes() {        
-    return mapVertexImpl(root.glPointAttribBufferID, 2 * tess.firstPointVertex, 2 * tess.pointVertexCount).asFloatBuffer();
+    return mapVertexImpl(root.glPointSizeBufferID, 2 * tess.firstPointVertex, 2 * tess.pointVertexCount).asFloatBuffer();
   }
   
   public void unmapPointAttributes() {
@@ -3303,7 +3303,7 @@ public class PShape3D extends PShape {
           if (root.lineAttributesCache == null) { 
             root.lineAttributesCache = new VertexCache(4, true);
           }            
-          root.lineAttributesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineAttributes);            
+          root.lineAttributesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineDirWidths);            
           modifiedLineAttributes = false;
         } else if (root.lineAttributesCache != null && root.lineAttributesCache.hasData()) {
           root.copyLineAttributes(root.lineAttributesCache.offset, root.lineAttributesCache.size, root.lineAttributesCache.floatData);
@@ -3349,7 +3349,7 @@ public class PShape3D extends PShape {
           if (root.pointAttributesCache == null) { 
             root.pointAttributesCache = new VertexCache(2, true);
           }            
-          root.pointAttributesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointAttributes);            
+          root.pointAttributesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointSizes);            
           modifiedPointAttributes = false;
         } else if (root.pointAttributesCache != null && root.pointAttributesCache.hasData()) {
           root.copyPointAttributes(root.pointAttributesCache.offset, root.pointAttributesCache.size, root.pointAttributesCache.floatData);
@@ -3482,8 +3482,8 @@ public class PShape3D extends PShape {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);    
     
-    glLineAttribBufferID = pg.createVertexBufferObject();
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    glLineDirWidthBufferID = pg.createVertexBufferObject();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);    
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
@@ -3505,7 +3505,7 @@ public class PShape3D extends PShape {
     } else {
       if (hasLines) {
         root.copyLineGeometry(root.lineVertCopyOffset, tess.lineVertexCount, 
-                              tess.lineVertices, tess.lineColors, tess.lineNormals, tess.lineAttributes);        
+                              tess.lineVertices, tess.lineColors, tess.lineNormals, tess.lineDirWidths);        
         root.lineVertCopyOffset += tess.lineVertexCount;
         
         root.copyLineIndices(root.lineIndCopyOffset, tess.lineIndexCount, tess.lineIndices);
@@ -3529,7 +3529,7 @@ public class PShape3D extends PShape {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(normals, 0, 3 * size));
     
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(attribs, 0, 4 * size));
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
@@ -3558,7 +3558,7 @@ public class PShape3D extends PShape {
 
   
   protected void copyLineAttributes(int offset, int size, float[] attribs) {
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 4 * size));
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
@@ -3587,8 +3587,8 @@ public class PShape3D extends PShape {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);    
 
-    glPointAttribBufferID = pg.createVertexBufferObject();
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    glPointSizeBufferID = pg.createVertexBufferObject();
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, glMode);
       
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);     
@@ -3610,7 +3610,7 @@ public class PShape3D extends PShape {
     } else {
       if (hasPoints) {
         root.copyPointGeometry(root.pointVertCopyOffset, tess.pointVertexCount, 
-                               tess.pointVertices, tess.pointColors, tess.pointNormals, tess.pointAttributes);        
+                               tess.pointVertices, tess.pointColors, tess.pointNormals, tess.pointSizes);        
         root.pointVertCopyOffset += tess.pointVertexCount;
         
         root.copyPointIndices(root.pointIndCopyOffset, tess.pointIndexCount, tess.pointIndices);
@@ -3634,7 +3634,7 @@ public class PShape3D extends PShape {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(normals, 0, 3 * size));
     
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offsetf, 2 * sizef, FloatBuffer.wrap(attribs, 0, 2 * size));
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
@@ -3663,7 +3663,7 @@ public class PShape3D extends PShape {
 
     
   protected void copyPointAttributes(int offset, int size, float[] attribs) {
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offset * PGL.SIZEOF_FLOAT, 2 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 2 * size));
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
@@ -3754,9 +3754,9 @@ public class PShape3D extends PShape {
       glLineNormalBufferID = 0;
     }     
 
-    if (glLineAttribBufferID != 0) {    
-      pg.deleteVertexBufferObject(glLineAttribBufferID);   
-      glLineAttribBufferID = 0;
+    if (glLineDirWidthBufferID != 0) {    
+      pg.deleteVertexBufferObject(glLineDirWidthBufferID);   
+      glLineDirWidthBufferID = 0;
     }    
     
     if (glLineIndexBufferID != 0) {    
@@ -3782,9 +3782,9 @@ public class PShape3D extends PShape {
       glPointNormalBufferID = 0;
     }     
 
-    if (glPointAttribBufferID != 0) {    
-      pg.deleteVertexBufferObject(glPointAttribBufferID);   
-      glPointAttribBufferID = 0;
+    if (glPointSizeBufferID != 0) {    
+      pg.deleteVertexBufferObject(glPointSizeBufferID);   
+      glPointSizeBufferID = 0;
     }    
     
     if (glPointIndexBufferID != 0) {    
@@ -3889,7 +3889,7 @@ public class PShape3D extends PShape {
       
       shader.setVertexAttribute(root.glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
       shader.setColorAttribute(root.glPointColorBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);    
-      shader.setSizeAttribute(root.glPointAttribBufferID, 2, PGL.GL_FLOAT, 0, 2 * first);      
+      shader.setSizeAttribute(root.glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 2 * first);      
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);      
       pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);       
@@ -3912,7 +3912,7 @@ public class PShape3D extends PShape {
     
       shader.setVertexAttribute(root.glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
       shader.setColorAttribute(root.glLineColorBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);    
-      shader.setDirWidthAttribute(root.glLineAttribBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);
+      shader.setDirWidthAttribute(root.glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glLineIndexBufferID);
       pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);      
