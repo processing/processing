@@ -67,7 +67,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public int glLineVertexBufferID;
   public int glLineColorBufferID;
-  public int glLineNormalBufferID;
   public int glLineDirWidthBufferID;
   public int glLineIndexBufferID;  
   protected boolean lineVBOsCreated = false;
@@ -424,7 +423,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     glLineVertexBufferID = 0;
     glLineColorBufferID = 0;
-    glLineNormalBufferID = 0;
     glLineDirWidthBufferID = 0;
     glLineIndexBufferID = 0;
     
@@ -1221,10 +1219,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, vboMode);
     
-    glLineNormalBufferID = createVertexBufferObject();    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, vboMode);
-        
     glLineDirWidthBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, vboMode);
@@ -1259,9 +1253,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     deleteVertexBufferObject(glLineColorBufferID);
     glLineColorBufferID = 0;
 
-    deleteVertexBufferObject(glLineNormalBufferID);
-    glLineNormalBufferID = 0;    
-    
     deleteVertexBufferObject(glLineDirWidthBufferID);
     glLineDirWidthBufferID = 0;
     
@@ -6905,7 +6896,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     public int lastLineVertex;    
     public float[] lineVertices;
     public float[] lineColors;
-    public float[] lineNormals;
     public float[] lineDirWidths;    
     
     public int lineIndexCount;
@@ -6960,7 +6950,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       lineVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       lineColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
-      lineNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       lineDirWidths = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];       
       
@@ -6992,7 +6981,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (lineVertexCount < lineVertices.length / 3) {
         trimLineVertices();
         trimLineColors();
-        trimLineNormals();
         trimLineAttributes();
       }
       
@@ -7078,12 +7066,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       lineColors = temp;      
     }
     
-    protected void trimLineNormals() {
-      float temp[] = new float[3 * lineVertexCount];      
-      PApplet.arrayCopy(lineNormals, 0, temp, 0, 3 * lineVertexCount);
-      lineNormals = temp;      
-    }
-    
     protected void trimLineAttributes() {
       float temp[] = new float[4 * lineVertexCount];      
       PApplet.arrayCopy(lineDirWidths, 0, temp, 0, 4 * lineVertexCount);
@@ -7139,7 +7121,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       lineVertices = null;
       lineColors = null;
-      lineNormals = null;
       lineDirWidths = null;
       lineIndices = null;       
       
@@ -7467,7 +7448,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         
         expandLineVertices(newSize);
         expandLineColors(newSize);
-        expandLineNormals(newSize);
         expandLineAttributes(newSize);
       }
       
@@ -7486,12 +7466,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       float temp[] = new float[4 * n];      
       PApplet.arrayCopy(lineColors, 0, temp, 0, 4 * lineVertexCount);
       lineColors = temp;      
-    }
-    
-    protected void expandLineNormals(int n) {
-      float temp[] = new float[3 * n];      
-      PApplet.arrayCopy(lineNormals, 0, temp, 0, 3 * lineVertexCount);
-      lineNormals = temp;      
     }
     
     protected void expandLineAttributes(int n) {
@@ -7746,11 +7720,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       float y0 = in.vertices[index++];
       float z0 = in.vertices[index  ];
       
-      index = 3 * inIdx0;
-      float nx = in.normals[index++];
-      float ny = in.normals[index++];
-      float nz = in.normals[index  ];      
-
       index = 3 * inIdx1;
       float x1 = in.vertices[index++];
       float y1 = in.vertices[index++];
@@ -7764,11 +7733,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         lineVertices[index++] = x0 * tr.m10 + y0 * tr.m11 + z0 * tr.m12 + tr.m13;
         lineVertices[index  ] = x0 * tr.m20 + y0 * tr.m21 + z0 * tr.m22 + tr.m23;
         
-        index = 3 * tessIdx;
-        lineNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
-        lineNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
-        lineNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
-
         index = 4 * tessIdx;
         lineDirWidths[index++] = x1 * tr.m00 + y1 * tr.m01 + z1 * tr.m02 + tr.m03;
         lineDirWidths[index++] = x1 * tr.m10 + y1 * tr.m11 + z1 * tr.m12 + tr.m13;
@@ -7779,11 +7743,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         lineVertices[index++] = y0;
         lineVertices[index  ] = z0;
         
-        index = 3 * tessIdx;
-        lineNormals[index++] = nx;
-        lineNormals[index++] = ny;
-        lineNormals[index  ] = nz;
-
         index = 4 * tessIdx;
         lineDirWidths[index++] = x1;
         lineDirWidths[index++] = y1;
@@ -8055,10 +8014,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           float x = lineVertices[index++];
           float y = lineVertices[index  ];
         
-          index = 3 * i;
-          float nx = lineNormals[index++];
-          float ny = lineNormals[index  ];
-
           index = 4 * i;
           float xa = lineDirWidths[index++];
           float ya = lineDirWidths[index  ];
@@ -8067,10 +8022,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           lineVertices[index++] = x * tr.m00 + y * tr.m01 + tr.m02;
           lineVertices[index  ] = x * tr.m10 + y * tr.m11 + tr.m12;
         
-          index = 3 * i;
-          lineNormals[index++] = nx * tr.m00 + ny * tr.m01;
-          lineNormals[index  ] = nx * tr.m10 + ny * tr.m11;
-          
           index = 4 * i;
           lineDirWidths[index++] = xa * tr.m00 + ya * tr.m01 + tr.m02;
           lineDirWidths[index  ] = xa * tr.m10 + ya * tr.m11 + tr.m12;              
@@ -8136,11 +8087,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           float y = lineVertices[index++];
           float z = lineVertices[index  ];
         
-          index = 3 * i;
-          float nx = lineNormals[index++];
-          float ny = lineNormals[index++];
-          float nz = lineNormals[index  ];
-
           index = 4 * i;
           float xa = lineDirWidths[index++];
           float ya = lineDirWidths[index++];
@@ -8151,11 +8097,6 @@ public class PGraphicsAndroid3D extends PGraphics {
           lineVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
           lineVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
         
-          index = 3 * i;
-          lineNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
-          lineNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
-          lineNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
-          
           index = 4 * i;
           lineDirWidths[index++] = xa * tr.m00 + ya * tr.m01 + za * tr.m02 + tr.m03;
           lineDirWidths[index++] = xa * tr.m10 + ya * tr.m11 + za * tr.m12 + tr.m13;
