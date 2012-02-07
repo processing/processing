@@ -19,12 +19,11 @@
   Boston, MA  02111-1307  USA
 */
 
-uniform mat4 modelviewMatrix;
 uniform mat4 projectionMatrix;
+uniform mat4 modelviewMatrix;
  
 attribute vec4 inVertex;
 attribute vec4 inColor;
-attribute vec3 inNormal;
 attribute vec2 inSize;
 
 varying vec4 vertColor;

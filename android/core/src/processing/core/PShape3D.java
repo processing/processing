@@ -22,7 +22,10 @@
 
 package processing.core;
 
+import processing.core.PGraphicsAndroid3D.FillShader;
 import processing.core.PGraphicsAndroid3D.InGeometry;
+import processing.core.PGraphicsAndroid3D.LineShader;
+import processing.core.PGraphicsAndroid3D.PointShader;
 import processing.core.PGraphicsAndroid3D.TessGeometry;
 import processing.core.PGraphicsAndroid3D.Tessellator;
 import java.nio.FloatBuffer;
@@ -3875,13 +3878,8 @@ public class PShape3D extends PShape {
 
 
   protected void renderPoints() {
-    /*
-    pg.startPointShader();
-    
-    pg.enablePointVertex();
-    pg.enablePointColor();
-    pg.enablePointNormal();
-    pg.enablePointSize();
+    PointShader shader = pg.getPointShader();
+    shader.start(); 
     
     for (int i = 0; i < pointIndexData.size(); i++) {
       IndexData index = (IndexData)pointIndexData.get(i);      
@@ -3889,153 +3887,89 @@ public class PShape3D extends PShape {
       int offset = index.offset;
       int size =  index.size;
       
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glPointVertexBufferID);
-      pg.setPointVertexFormat(3, first);
-                    
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glPointColorBufferID);    
-      pg.setPointColorFormat(4, first);    
-      
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glPointNormalBufferID);    
-      pg.setPointNormalFormat(4, first);    
-      
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glPointAttribBufferID);
-      pg.setPointSizeFormat(2, first);
+      shader.setVertexAttribute(root.glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
+      shader.setColorAttribute(root.glPointColorBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);    
+      shader.setSizeAttribute(root.glPointAttribBufferID, 2, PGL.GL_FLOAT, 0, 2 * first);      
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);      
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX); 
-      
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);       
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);       
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);      
     }
     
-    pg.disablePointVertex();
-    pg.disablePointColor();
-    pg.disablePointNormal();
-    pg.disablePointSize();    
-    
-    pg.stopPointShader();
-    */
+    shader.stop();
   }  
 
 
   protected void renderLines() {
-    /*
-    pg.startLineShader();
-    
-    pg.enableLineVertex();
-    pg.enableLineColor();
-    pg.enableLineNormal();
-    pg.enableLineDirWidth();    
+    LineShader shader = pg.getLineShader();
+    shader.start(); 
     
     for (int i = 0; i < lineIndexData.size(); i++) {
       IndexData index = (IndexData)lineIndexData.get(i);      
       int first = index.first;
       int offset = index.offset;
       int size =  index.size;
-      
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glLineVertexBufferID);
-      pg.setLineVertexFormat(3, first); 
-      
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glLineColorBufferID);    
-      pg.setLineColorFormat(4, first);      
-      
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glLineNormalBufferID);    
-      pg.setLineNormalFormat(3, first);      
-      
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glLineAttribBufferID);
-      pg.setLineDirWidthFormat(2, 0); 
+    
+      shader.setVertexAttribute(root.glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
+      shader.setColorAttribute(root.glLineColorBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);    
+      shader.setDirWidthAttribute(root.glLineAttribBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glLineIndexBufferID);
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);
-      
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);         
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);      
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);      
     }
     
-    pg.disableLineVertex();
-    pg.disableLineColor();
-    pg.disableLineNormal();
-    pg.disableLineDirWidth();
-    
-    pg.stopLineShader();   
-    */
+    shader.stop();
   }  
 
   
   protected void renderFill(PImage textureImage) {
-    /*
-    pg.startFillShader();
-
-    pg.startFillShader();
+    PTexture tex = null;
+    if (textureImage != null) {
+      tex = pg.getTexture(textureImage);
+      if (tex != null) {
+        pgl.glEnable(tex.glTarget);          
+        pgl.glBindTexture(tex.glTarget, tex.glID);        
+      }
+    }    
     
-    pg.enableFillVertex();
-    pg.enableFillColor();
-    pg.enableFillNormal();
-    pg.enableFillTexCoord();
-    pg.enableFillMaterials();
-        
+    FillShader shader = pg.getFillShader(true, tex != null);
+
+    shader.start();
+    
     for (int i = 0; i < fillIndexData.size(); i++) {
       IndexData index = (IndexData)fillIndexData.get(i);      
       int first = index.first;
       int offset = index.offset;
       int size =  index.size;
-    
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glFillVertexBufferID);
-      pg.setFillVertexFormat(3, first);
-
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glFillColorBufferID);    
-      pg.setFillColorFormat(4, first);
       
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glFillNormalBufferID);
-      pg.setFillNormalFormat(3, first);
+      shader.setVertexAttribute(root.glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
+      shader.setColorAttribute(root.glFillColorBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);    
       
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, root.glFillTexCoordBufferID);
-      pg.setFillTexCoordFormat(2, first);   
-      
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
-      pgl.glVertexAttribPointer(pg.fillAmbientAttribLoc, 4, PGL.GL_UNSIGNED_BYTE, false, 0, 4 * first);
-
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
-      pgl.glVertexAttribPointer(pg.fillSpecularAttribLoc, 4, PGL.GL_UNSIGNED_BYTE, false, 0, 4 * first);
-
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
-      pgl.glVertexAttribPointer(pg.fillEmissiveAttribLoc, 4, PGL.GL_UNSIGNED_BYTE, false, 0, 4 * first);      
-      
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
-      pgl.glVertexAttribPointer(pg.fillShininessAttribLoc, 1, PGL.GL_FLOAT, false, 0, first);      
-      
-      PTexture tex = null;
-      if (textureImage != null) {
-        pgl.glActiveTexture(PGL.GL_TEXTURE0);
-        tex = pg.getTexture(textureImage);
-        if (tex != null) {
-          pgl.glEnable(tex.glTarget);          
-          pgl.glBindTexture(tex.glTarget, tex.glID);        
-        }
+      if (pg.lights) {
+        shader.setNormalAttribute(root.glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);
+        shader.setAmbientAttribute(root.glFillAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);
+        shader.setSpecularAttribute(root.glFillSpecularBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);
+        shader.setEmissiveAttribute(root.glFillEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);      
+        shader.setShininessAttribute(root.glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, first);
       }
       
+      if (tex != null) {        
+        shader.setTexCoordAttribute(root.glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * first);
+      }      
+      
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glFillIndexBufferID);
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);      
-      
-      if (tex != null) {
-        pgl.glBindTexture(tex.glTarget, 0); 
-        pgl.glDisable(tex.glTarget);
-      } 
-      
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);        
     }
     
-    pg.disableFillVertex();
-    pg.disableFillColor();
-    pg.disableFillNormal();
-    pg.disableFillTexCoord();
-    pg.disableFillMaterials();
+    shader.stop();
     
-    pg.stopFillShader();
-    */
-  }
-  
+    if (tex != null) {
+      pgl.glBindTexture(tex.glTarget, 0); 
+      pgl.glDisable(tex.glTarget);
+    }    
+  }  
   
   
   ///////////////////////////////////////////////////////////  

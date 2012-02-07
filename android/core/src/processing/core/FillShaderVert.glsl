@@ -20,24 +20,18 @@
 */
 
 uniform mat4 modelviewMatrix;
-uniform mat4 projectionMatrix;
 uniform mat4 projmodelviewMatrix;
 uniform mat3 normalMatrix;
-
-uniform int textured;
 
 uniform int lightCount;
 uniform vec4 lightPosition[8];
 uniform vec3 lightNormal[8];
-
 uniform vec4 lightAmbient[8];
 uniform vec4 lightDiffuse[8];
-uniform vec4 lightSpecular[8];
-      
+uniform vec4 lightSpecular[8];      
 uniform float lightFalloffConstant[8];
 uniform float lightFalloffLinear[8];
-uniform float lightFalloffQuadratic[8];
-      
+uniform float lightFalloffQuadratic[8];      
 uniform float lightSpotAngleCos[8];
 uniform float lightSpotConcentration[8]; 
 
