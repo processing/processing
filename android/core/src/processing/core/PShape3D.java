@@ -89,7 +89,6 @@ public class PShape3D extends PShape {
   
   public int glLineVertexBufferID;
   public int glLineColorBufferID;
-  public int glLineNormalBufferID;
   public int glLineDirWidthBufferID;
   public int glLineIndexBufferID;  
   
@@ -142,7 +141,6 @@ public class PShape3D extends PShape {
   
   boolean modifiedLineVertices;
   boolean modifiedLineColors;
-  boolean modifiedLineNormals;
   boolean modifiedLineAttributes;  
 
   boolean modifiedPointVertices;
@@ -161,7 +159,6 @@ public class PShape3D extends PShape {
   
   protected VertexCache lineVerticesCache;
   protected VertexCache lineColorsCache;
-  protected VertexCache lineNormalsCache;
   protected VertexCache lineAttributesCache;  
 
   protected VertexCache pointVerticesCache;
@@ -268,7 +265,6 @@ public class PShape3D extends PShape {
     
     glLineVertexBufferID = 0;
     glLineColorBufferID = 0;
-    glLineNormalBufferID = 0;
     glLineDirWidthBufferID = 0;
     glLineIndexBufferID = 0;
     
@@ -448,10 +444,6 @@ public class PShape3D extends PShape {
     if (glLineColorBufferID != 0) {    
       pg.finalizeVertexBufferObject(glLineColorBufferID);   
     }    
-
-    if (glLineNormalBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glLineNormalBufferID);   
-    }     
 
     if (glLineDirWidthBufferID != 0) {    
       pg.finalizeVertexBufferObject(glLineDirWidthBufferID);   
@@ -1538,7 +1530,6 @@ public class PShape3D extends PShape {
       }        
       if (0 < tess.lineVertexCount) {
         modifiedLineVertices = true;
-        modifiedLineNormals = true;
         modifiedLineAttributes = true;
       }
       if (0 < tess.pointVertexCount) {
@@ -1574,7 +1565,6 @@ public class PShape3D extends PShape {
       }        
       if (0 < tess.lineVertexCount) {
         modifiedLineVertices = true;
-        modifiedLineNormals = true;
         modifiedLineAttributes = true;
       }
       if (0 < tess.pointVertexCount) {
@@ -1611,7 +1601,6 @@ public class PShape3D extends PShape {
       }        
       if (0 < tess.lineVertexCount) {
         modifiedLineVertices = true;
-        modifiedLineNormals = true;
         modifiedLineAttributes = true;
       }
       if (0 < tess.pointVertexCount) {
@@ -1648,7 +1637,6 @@ public class PShape3D extends PShape {
       }        
       if (0 < tess.lineVertexCount) {
         modifiedLineVertices = true;
-        modifiedLineNormals = true;
         modifiedLineAttributes = true;
       }
       if (0 < tess.pointVertexCount) {
@@ -1684,7 +1672,6 @@ public class PShape3D extends PShape {
       }        
       if (0 < tess.lineVertexCount) {
         modifiedLineVertices = true;
-        modifiedLineNormals = true;
         modifiedLineAttributes = true;
       }
       if (0 < tess.pointVertexCount) {
@@ -1721,7 +1708,6 @@ public class PShape3D extends PShape {
       }        
       if (0 < tess.lineVertexCount) {
         modifiedLineVertices = true;
-        modifiedLineNormals = true;
         modifiedLineAttributes = true;
       }
       if (0 < tess.pointVertexCount) {
@@ -1758,7 +1744,6 @@ public class PShape3D extends PShape {
       }        
       if (0 < tess.lineVertexCount) {
         modifiedLineVertices = true;
-        modifiedLineNormals = true;
         modifiedLineAttributes = true;
       }
       if (0 < tess.pointVertexCount) {
@@ -1808,7 +1793,6 @@ public class PShape3D extends PShape {
       }        
       if (0 < tess.lineVertexCount) {
         modifiedLineVertices = true;
-        modifiedLineNormals = true;
         modifiedLineAttributes = true;
       }
       if (0 < tess.pointVertexCount) {
@@ -1862,7 +1846,6 @@ public class PShape3D extends PShape {
       }        
       if (0 < tess.lineVertexCount) {
         modifiedLineVertices = true;
-        modifiedLineNormals = true;
         modifiedLineAttributes = true;
       }
       if (0 < tess.pointVertexCount) {
@@ -2256,11 +2239,6 @@ public class PShape3D extends PShape {
     return tess.lineColors;
   }  
   
-  public float[] lineNormals() {
-    updateTesselation();
-    return tess.lineNormals;
-  }  
-  
   public float[] lineAttributes() {
     updateTesselation();
     return tess.lineDirWidths;
@@ -2412,10 +2390,6 @@ public class PShape3D extends PShape {
   
   public void unmapLineColors() {
     unmapVertexImpl();
-  }
-  
-  public FloatBuffer mapLineNormals() {        
-    return mapVertexImpl(root.glLineNormalBufferID, 3 * tess.firstLineVertex, 3 * tess.lineVertexCount).asFloatBuffer();
   }
   
   public void unmapLineNormals() {
@@ -2835,11 +2809,6 @@ public class PShape3D extends PShape {
       if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
         root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.floatData);
         root.lineColorsCache.reset();
-      }
-      
-      if (root.lineNormalsCache != null && root.lineNormalsCache.hasData()) {
-        root.copyLineNormals(root.lineNormalsCache.offset, root.lineNormalsCache.size, root.lineNormalsCache.floatData);
-        root.lineNormalsCache.reset();
       }
       
       if (root.lineAttributesCache != null && root.lineAttributesCache.hasData()) {
@@ -3288,17 +3257,6 @@ public class PShape3D extends PShape {
           root.lineColorsCache.reset();
         }
         
-        if (modifiedLineNormals) {
-          if (root.lineNormalsCache == null) { 
-            root.lineNormalsCache = new VertexCache(3, true);
-          }            
-          root.lineNormalsCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineNormals);            
-          modifiedLineNormals = false;
-        } else if (root.lineNormalsCache != null && root.lineNormalsCache.hasData()) {
-          root.copyLineNormals(root.lineNormalsCache.offset, root.lineNormalsCache.size, root.lineNormalsCache.floatData);
-          root.lineNormalsCache.reset();
-        }
-        
         if (modifiedLineAttributes) {
           if (root.lineAttributesCache == null) { 
             root.lineAttributesCache = new VertexCache(4, true);
@@ -3478,10 +3436,6 @@ public class PShape3D extends PShape {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);       
 
-    glLineNormalBufferID = pg.createVertexBufferObject();    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);    
-    
     glLineDirWidthBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);    
@@ -3505,7 +3459,7 @@ public class PShape3D extends PShape {
     } else {
       if (hasLines) {
         root.copyLineGeometry(root.lineVertCopyOffset, tess.lineVertexCount, 
-                              tess.lineVertices, tess.lineColors, tess.lineNormals, tess.lineDirWidths);        
+                              tess.lineVertices, tess.lineColors, tess.lineDirWidths);        
         root.lineVertCopyOffset += tess.lineVertexCount;
         
         root.copyLineIndices(root.lineIndCopyOffset, tess.lineIndexCount, tess.lineIndices);
@@ -3516,7 +3470,7 @@ public class PShape3D extends PShape {
 
   
   protected void copyLineGeometry(int offset, int size, 
-                                  float[] vertices, float[] colors, float[] normals, float[] attribs) {
+                                  float[] vertices, float[] colors, float[] attribs) {
     int offsetf = offset * PGL.SIZEOF_FLOAT;
     int sizef = size * PGL.SIZEOF_FLOAT;
     
@@ -3525,9 +3479,6 @@ public class PShape3D extends PShape {
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(colors, 0, 4 * size));
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(normals, 0, 3 * size));
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(attribs, 0, 4 * size));
@@ -3549,13 +3500,6 @@ public class PShape3D extends PShape {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
-  
-  protected void copyLineNormals(int offset, int size, float[] normals) {
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals, 0, 4 * size));
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
-  }
-
   
   protected void copyLineAttributes(int offset, int size, float[] attribs) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
@@ -3748,11 +3692,6 @@ public class PShape3D extends PShape {
       pg.deleteVertexBufferObject(glLineColorBufferID);   
       glLineColorBufferID = 0;
     }    
-
-    if (glLineNormalBufferID != 0) {    
-      pg.deleteVertexBufferObject(glLineNormalBufferID);   
-      glLineNormalBufferID = 0;
-    }     
 
     if (glLineDirWidthBufferID != 0) {    
       pg.deleteVertexBufferObject(glLineDirWidthBufferID);   
