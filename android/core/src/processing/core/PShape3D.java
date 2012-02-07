@@ -638,25 +638,15 @@ public class PShape3D extends PShape {
     }
 
     boolean textured = texture != null;
-    float fR, fG, fB, fA;
-    fR = fG = fB = fA = 0;
+    int fcolor = 0x00;
     if (fill || textured) {
       if (!textured) {
-        fR = fillR;
-        fG = fillG;
-        fB = fillB;
-        fA = fillA;
+        fcolor = fillColor;
       } else {       
         if (tint) {
-          fR = tintR;
-          fG = tintG;
-          fB = tintB;
-          fA = tintA;
+          fcolor = tintColor;
         } else {
-          fR = 1;
-          fG = 1;
-          fB = 1;
-          fA = 1;
+          fcolor = 0xffFFFFFF;
         }
       }
     }    
@@ -671,15 +661,12 @@ public class PShape3D extends PShape {
       }          
     }
         
-    float sR, sG, sB, sA, sW;
-    sR = sG = sB = sA = sW = 0;
+    int scolor = 0x00;
+    float sweight = 0;
     if (stroke) {
-      sR = strokeR;
-      sG = strokeG;
-      sB = strokeB;
-      sA = strokeA;
-      sW = strokeWeight;
-    }     
+      scolor = strokeColor;
+      sweight = strokeWeight;
+    }    
     
     if (breakShape) {
       code = BREAK;
@@ -687,10 +674,10 @@ public class PShape3D extends PShape {
     }    
     
     in.addVertex(x, y, z, 
-                 fR, fG, fB, fA, 
+                 fcolor, 
                  normalX, normalY, normalZ,
                  u, v, 
-                 sR, sG, sB, sA, sW,
+                 scolor, sweight,
                  ambientColor, specularColor, emissiveColor, shininess,
                  code);    
     
@@ -915,16 +902,8 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    int size = tess.fillVertexCount;
-    float[] colors = tess.fillColors;
-    int index;
-    for (int i = 0; i < size; i++) {
-      index = 4 * i;
-      colors[index++] = fillR;
-      colors[index++] = fillG;
-      colors[index++] = fillB;
-      colors[index  ] = fillA;
-    }
+    Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, fillColor);
+
     modifiedFillColors = true;
     modified();   
   }
@@ -1047,31 +1026,13 @@ public class PShape3D extends PShape {
       updateTesselation();
       
       if (0 < tess.lineVertexCount) {
-        int size = tess.lineVertexCount;
-        float[] colors = tess.lineColors;
-        int index;
-        for (int i = 0; i < size; i++) {
-          index = 4 * i;
-          colors[index++] = strokeR;
-          colors[index++] = strokeG;
-          colors[index++] = strokeB;
-          colors[index  ] = strokeA;
-        }
+        Arrays.fill(tess.lineColors, 0, tess.lineVertexCount, strokeColor);
         modifiedLineColors = true;
         modified();         
       }
       
       if (0 < tess.pointVertexCount) {
-        int size = tess.pointVertexCount;
-        float[] colors = tess.pointColors;
-        int index;
-        for (int i = 0; i < size; i++) {
-          index = 4 * i;
-          colors[index++] = strokeR;
-          colors[index++] = strokeG;
-          colors[index++] = strokeB;
-          colors[index  ] = strokeA;
-        }
+        Arrays.fill(tess.pointColors, 0, tess.pointVertexCount, strokeColor);
         modifiedPointColors = true;
         modified();            
       }            
@@ -1198,16 +1159,8 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    int size = tess.fillVertexCount;
-    float[] colors = tess.fillColors;
-    int index;
-    for (int i = 0; i < size; i++) {
-      index = 4 * i;
-      colors[index++] = tintR;
-      colors[index++] = tintG;
-      colors[index++] = tintB;
-      colors[index  ] = tintA;
-    }
+    Arrays.fill(tess.fillColors, 0, tess.pointVertexCount, tintColor);
+
     modifiedFillColors = true;
     modified();  
   }
@@ -2152,7 +2105,7 @@ public class PShape3D extends PShape {
     return tess.fillVertices;
   }
   
-  public float[] fillColors() {
+  public int[] fillColors() {
     updateTesselation();
     return tess.fillColors;
   }  
@@ -2227,7 +2180,7 @@ public class PShape3D extends PShape {
     return tess.lineVertices;
   }
   
-  public float[] lineColors() {
+  public int[] lineColors() {
     updateTesselation();
     return tess.lineColors;
   }  
@@ -2277,7 +2230,7 @@ public class PShape3D extends PShape {
     return tess.pointVertices;
   }
   
-  public float[] pointColors() {
+  public int[] pointColors() {
     updateTesselation();
     return tess.pointColors;
   }  
@@ -2606,8 +2559,8 @@ public class PShape3D extends PShape {
     float d = params[3];    
 
     in.generateEllipse(ellipseMode, a, b, c, d,
-                       fill, fillR, fillG, fillB, fillA, 
-                       stroke, strokeR, strokeG, strokeB, strokeA, strokeWeight,
+                       fill, fillColor, 
+                       stroke, strokeColor, strokeWeight,
                        ambientColor, specularColor, emissiveColor, shininess);
     
     tessellator.tessellateTriangleFan(); 
@@ -3293,7 +3246,7 @@ public class PShape3D extends PShape {
     
   
   protected void copyFillGeometry(int offset, int size, 
-                                  float[] vertices, float[] colors, 
+                                  float[] vertices, int[] colors, 
                                   float[] normals, float[] texcoords,
                                   int[] ambient, int[] specular, int[] emissive, float[] shininess) {
     int offsetf = offset * PGL.SIZEOF_FLOAT;
@@ -3305,7 +3258,7 @@ public class PShape3D extends PShape {
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(vertices, 0, 3 * size));
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(colors, 0, 4 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(colors, 0, size));
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(normals, 0, 3 * size));
@@ -3438,15 +3391,17 @@ public class PShape3D extends PShape {
 
   
   protected void copyLineGeometry(int offset, int size, 
-                                  float[] vertices, float[] colors, float[] attribs) {
+                                  float[] vertices, int[] colors, float[] attribs) {
     int offsetf = offset * PGL.SIZEOF_FLOAT;
     int sizef = size * PGL.SIZEOF_FLOAT;
+    int offseti = offset * PGL.SIZEOF_INT;
+    int sizei = size * PGL.SIZEOF_INT;
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(vertices, 0, 3 * size));
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(colors, 0, 4 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(colors, 0, size));
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(attribs, 0, 4 * size));
@@ -3529,15 +3484,17 @@ public class PShape3D extends PShape {
   
   
   protected void copyPointGeometry(int offset, int size, 
-                                   float[] vertices, float[] colors, float[] attribs) {
+                                   float[] vertices, int[] colors, float[] attribs) {
     int offsetf = offset * PGL.SIZEOF_FLOAT;
     int sizef = size * PGL.SIZEOF_FLOAT;
+    int offseti = offset * PGL.SIZEOF_INT;
+    int sizei = size * PGL.SIZEOF_INT;    
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(vertices, 0, 3 * size));
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(colors, 0, 4 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(colors, 0, size));
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offsetf, 2 * sizef, FloatBuffer.wrap(attribs, 0, 2 * size));
