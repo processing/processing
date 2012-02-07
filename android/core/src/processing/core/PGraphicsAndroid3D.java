@@ -340,9 +340,9 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // The new stuff (shaders, tessellator, etc)    
 
-  protected static PShader fillShader;
-  protected static PShader lineShader;
-  protected static PShader pointShader;
+  protected PShader fillShader;
+  protected PShader lineShader;
+  protected PShader pointShader;
     
   protected InGeometry inGeo;
   protected TessGeometry tessGeo;
@@ -2185,6 +2185,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillVertices, 0, 3 * size), vboMode);
     pgl.glVertexAttribPointer(fillVertexAttribLoc, size, PGL.GL_FLOAT, false, 0, 0);
+    //fillShaderFull.setVertexFormat(3, 0);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.fillColors, 0, 4 * size), vboMode);
@@ -5520,51 +5521,205 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // SHADER HANDLING
 
-  protected static int fillModelviewLoc;
-  protected static int fillProjectionLoc;
-  protected static int fillProjmodelviewLoc;
-  protected static int fillNormalLoc;
-  protected static int fillTexturedLoc;
+  public PShader loadFillShader(String fragShader, String vertShader, boolean lit, boolean tex) {
+    return null;
+  }
+
+  public void setFillShader(PShader shader, boolean lit, boolean tex) {
+  }
   
-  protected static int fillLightCountLoc;  
-  protected static int fillLightPositionLoc;
-  protected static int fillLightNormalLoc;
-  protected static int fillLightAmbientLoc;
-  protected static int fillLightDiffuseLoc;
-  protected static int fillLightSpecularLoc;      
-  protected static int fillLightFalloffConstantLoc;
-  protected static int fillLightFalloffLinearLoc;
-  protected static int fillLightFalloffQuadraticLoc;      
-  protected static int fillLightSpotAngleCosLoc;
-  protected static int fillLightSpotConcentrationLoc;   
+  public PShader loadLineShader(String fragShader, String vertShader) {
+    return null;
+  }
   
-  protected static int fillVertexAttribLoc;
-  protected static int fillColorAttribLoc;
-  protected static int fillNormalAttribLoc;
-  protected static int fillTexCoordAttribLoc;
-  protected static int fillAmbientAttribLoc;
-  protected static int fillSpecularAttribLoc;
-  protected static int fillEmissiveAttribLoc;
-  protected static int fillShininessAttribLoc;
+  public void setLineShader(PShader shader) {
+  }  
+
+  public PShader loadPointShader(String fragShader, String vertShader) {
+    return null;
+  }  
+  
+  public void setPointShader(PShader shader) {
+  }    
+  
+  protected class FillShaderSimple extends PShader {
+    int projmodelviewMatrixLoc;
+    
+    int inVertexLoc;
+    int inColorLoc;
+    
+    FillShaderSimple(PApplet parent) {
+      super(parent);
+    }
+    
+    void setVertexFormat(int size, int offset) {
+      
+    }
+    
+    void setColorFormat(int size, int offset) {
+      
+    }    
+  }
+
+  protected class FillShaderLit extends PShader {
+    int modelviewMatrixLoc;
+    int projmodelviewMatrixLoc;
+    int normalMatrixLoc;
+    
+    int lightCountLoc;  
+    int lightPositionLoc;
+    int lightNormalLoc;
+    int lightAmbientLoc;
+    int lightDiffuseLoc;
+    int lightSpecularLoc;      
+    int lightFalloffConstantLoc;
+    int lightFalloffLinearLoc;
+    int lightFalloffQuadraticLoc;      
+    int lightSpotAngleCosLoc;
+    int lightSpotConcentrationLoc;       
+    
+    int inVertexLoc;
+    int inColorLoc;
+    int inNormalLoc;
+
+    int inAmbientColorLoc;
+    int inSpecularColor;
+    int inEmissiveColor;
+    int shine;    
+    
+    public FillShaderLit(PApplet parent) {
+      super(parent);
+    }
+    
+    void setVertexFormat(int size, int offset) {
+      
+    }
+    
+    void setColorFormat(int size, int offset) {
+      
+    } 
+    
+    void setNormalFormat(int size, int offset) {
+      
+    }
+    
+    void setAmbientFormat(int size, /* type? */ int offset) {
+      
+    }
+    //...
+  }
+  
+  protected class FillShaderTex extends PShader {
+    int projmodelviewMatrixLoc;
+    
+    int inVertexLoc;
+    int inColorLoc;
+    int inTexcoordLoc;
+    
+    public FillShaderTex(PApplet parent) {
+      super(parent);
+    }
+    
+  }  
+  
+  protected class FillShaderFull extends PShader {
+    int modelviewMatrixLoc;
+    int projmodelviewMatrixLoc;
+    int normalMatrixLoc;
+    
+    int lightCountLoc;  
+    int lightPositionLoc;
+    int lightNormalLoc;
+    int lightAmbientLoc;
+    int lightDiffuseLoc;
+    int lightSpecularLoc;      
+    int lightFalloffConstantLoc;
+    int lightFalloffLinearLoc;
+    int lightFalloffQuadraticLoc;      
+    int lightSpotAngleCosLoc;
+    int lightSpotConcentrationLoc;       
+    
+    int inVertexLoc;
+    int inColorLoc;
+    int inNormalLoc;
+    int inTexcoordLoc;
+
+    int inAmbientColorLoc;
+    int inSpecularColor;
+    int inEmissiveColor;
+    int shine;      
+    
+    public FillShaderFull(PApplet parent) {
+      super(parent);
+    }
+    
+    
+    
+  } 
+  
+  protected class LineShader extends PShader {
+
+    public LineShader(PApplet parent) {
+      super(parent);
+    }
+    
+  }
+  
+  protected class PointShader extends PShader {
+
+    public PointShader(PApplet parent) {
+      super(parent);
+    }
+    
+  }
+
+  
+
+  protected int fillModelviewLoc;
+  protected int fillProjectionLoc;
+  protected int fillProjmodelviewLoc;
+  protected int fillNormalLoc;
+  protected int fillTexturedLoc;
+  
+  protected int fillLightCountLoc;  
+  protected int fillLightPositionLoc;
+  protected int fillLightNormalLoc;
+  protected int fillLightAmbientLoc;
+  protected int fillLightDiffuseLoc;
+  protected int fillLightSpecularLoc;      
+  protected int fillLightFalloffConstantLoc;
+  protected int fillLightFalloffLinearLoc;
+  protected int fillLightFalloffQuadraticLoc;      
+  protected int fillLightSpotAngleCosLoc;
+  protected int fillLightSpotConcentrationLoc;   
+  
+  protected int fillVertexAttribLoc;
+  protected int fillColorAttribLoc;
+  protected int fillNormalAttribLoc;
+  protected int fillTexCoordAttribLoc;
+  protected int fillAmbientAttribLoc;
+  protected int fillSpecularAttribLoc;
+  protected int fillEmissiveAttribLoc;
+  protected int fillShininessAttribLoc;
   
   
-  protected static int lineModelviewLoc;
-  protected static int lineProjectionLoc;
-  protected static int lineViewportLoc;
-  protected static int linePerspectiveLoc;
+  protected int lineModelviewLoc;
+  protected int lineProjectionLoc;
+  protected int lineViewportLoc;
+  protected int linePerspectiveLoc;
   
-  protected static int lineVertexAttribLoc;
-  protected static int lineColorAttribLoc;
-  protected static int lineNormalAttribLoc;
-  protected static int lineDirWidthAttribLoc;
+  protected int lineVertexAttribLoc;
+  protected int lineColorAttribLoc;
+  protected int lineNormalAttribLoc;
+  protected int lineDirWidthAttribLoc;
   
-  protected static int pointModelviewLoc;
-  protected static int pointProjectionLoc;
+  protected int pointModelviewLoc;
+  protected int pointProjectionLoc;
   
-  protected static int pointVertexAttribLoc;
-  protected static int pointColorAttribLoc;
-  protected static int pointNormalAttribLoc;
-  protected static int pointSizeAttribLoc;
+  protected int pointVertexAttribLoc;
+  protected int pointColorAttribLoc;
+  protected int pointNormalAttribLoc;
+  protected int pointSizeAttribLoc;
     
   protected void startFillShader() {
     if (fillShader == null) {
