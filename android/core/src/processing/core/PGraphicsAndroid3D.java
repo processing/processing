@@ -2135,7 +2135,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     PointShader shader = getPointShader();
     shader.start();    
     shader.setVertexAttribute(glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
-    shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_FLOAT, 0, 0);    
+    shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);    
     shader.setSizeAttribute(glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 0);
     
     int size = tessGeo.pointIndexCount;
@@ -2158,7 +2158,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     LineShader shader = getLineShader();
     shader.start();    
     shader.setVertexAttribute(glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
-    shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_FLOAT, 0, 0);    
+    shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);    
     shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 0);
     
     int size = tessGeo.lineIndexCount;
@@ -2188,7 +2188,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       shader.start();
       
       shader.setVertexAttribute(glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
-      shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_FLOAT, 0, 0);    
+      shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);    
       
       if (lights) {
         shader.setNormalAttribute(glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 0);
@@ -2228,7 +2228,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     shader.start();
     
     shader.setVertexAttribute(glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
-    shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_FLOAT, 0, 0);
+    shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
     shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);
     
     if (lights) {

@@ -3733,7 +3733,7 @@ public class PShape3D extends PShape {
       int size =  index.size;
       
       shader.setVertexAttribute(root.glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
-      shader.setColorAttribute(root.glPointColorBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);    
+      shader.setColorAttribute(root.glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
       shader.setSizeAttribute(root.glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 2 * first);      
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);      
@@ -3756,7 +3756,7 @@ public class PShape3D extends PShape {
       int size =  index.size;
     
       shader.setVertexAttribute(root.glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
-      shader.setColorAttribute(root.glLineColorBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);    
+      shader.setColorAttribute(root.glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
       shader.setDirWidthAttribute(root.glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glLineIndexBufferID);
@@ -3789,7 +3789,7 @@ public class PShape3D extends PShape {
       int size =  index.size;
       
       shader.setVertexAttribute(root.glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
-      shader.setColorAttribute(root.glFillColorBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);    
+      shader.setColorAttribute(root.glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
       
       if (pg.lights) {
         shader.setNormalAttribute(root.glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);
