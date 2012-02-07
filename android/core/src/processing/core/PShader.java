@@ -23,11 +23,9 @@
 
 package processing.core;
 
-import java.io.IOException;
-import java.net.URL;
-
 /**
- * This class encapsulates a glsl shader. Based in the code by JohnG
+ * This class encapsulates a GLSL shader program, including a vertex 
+ * and a fragment shader. Originally based in the code by JohnG
  * (http://www.hardcorepawn.com/)
  */
 public class PShader {
@@ -35,40 +33,33 @@ public class PShader {
   protected PGraphicsAndroid3D pg; 
   protected PGL pgl;
   
+  protected String vertexFilename;
+  protected String fragmentFilename;
+  
   protected int programObject;
   protected int vertexShader;
   protected int fragmentShader;  
-  protected boolean initialized;
-  
-  /**
-   * Creates an instance of GLSLShader.
-   * 
-   * @param parent PApplet
-   */
-  public PShader(PApplet parent) {
-    this.parent = parent;
-    pg = (PGraphicsAndroid3D) parent.g;
-    pgl = pg.pgl;
-    
-    programObject = pg.createGLSLProgramObject();  
-    
-    vertexShader = 0;
-    fragmentShader = 0;
-    initialized = false;    
-  }
+
 
   /**
-   * Creates a read-to-use instance of GLSLShader with vertex and fragment shaders
+   * Creates a shader program using the specified vertex and fragment
+   * shaders.
    * 
    * @param parent PApplet
    * @param vertexFN String
    * @param fragmentFN String          
    */
-  public PShader(PApplet parent, String vertexFN, String fragmentFN) {
-    this(parent);
-    loadVertexShader(vertexFN);
-    loadFragmentShader(fragmentFN);
-    setup();
+  public PShader(PApplet parent, String vertFilename, String fragFilename) {
+    this.parent = parent;
+    pg = (PGraphicsAndroid3D) parent.g;
+    pgl = pg.pgl;    
+    
+    this.vertexFilename = vertFilename;
+    this.fragmentFilename = fragFilename;
+    
+    programObject = 0;
+    vertexShader = 0;
+    fragmentShader = 0;      
   }
   
   
@@ -88,104 +79,23 @@ public class PShader {
     }
   }
   
-
-  /**
-   * Loads and compiles the vertex shader contained in file.
-   * 
-   * @param file String
-   */
-  public void loadVertexShader(String file) {
-    String shaderSource = PApplet.join(parent.loadStrings(file), "\n");
-    attachVertexShader(shaderSource, file);
-  }
-
-  public void loadVertexShaderSource(String source) {
-    attachVertexShader(source, "");
-  }
-    
-  /**
-   * Loads and compiles the vertex shader contained in the URL.
-   * 
-   * @param file String
-   */
-  public void loadVertexShader(URL url) {
-    String shaderSource;
-    try {
-      shaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
-      attachVertexShader(shaderSource, url.getFile());
-    } catch (IOException e) {
-      PGraphics.showException("Cannot load shader " + url.getFile());
-    }
-  }
-
-  /**
-   * Loads and compiles the fragment shader contained in file.
-   * 
-   * @param file String
-   */
-  public void loadFragmentShader(String file) {
-    String shaderSource = PApplet.join(parent.loadStrings(file), "\n");
-    attachFragmentShader(shaderSource, file);
-  }
-
-  public void loadFragmentShaderSource(String source) {
-    attachFragmentShader(source, "");
-  }  
-  
-  /**
-   * Loads and compiles the fragment shader contained in the URL.
-   * 
-   * @param url URL
-   */
-  public void loadFragmentShader(URL url) {
-    String shaderSource;
-    try {
-      shaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
-      attachFragmentShader(shaderSource, url.getFile());
-    } catch (IOException e) {
-      PGraphics.showException("Cannot load shader " + url.getFile());
-    }
-  }
-  
-  /**
-   * Links the shader program and validates it.
-   */
-  public void setup() {
-    pgl.glLinkProgram(programObject);
-    pgl.glValidateProgram(programObject);
-    checkLogInfo("GLSL program validation: ", programObject);
-    initialized = true;
-  }
-  
-  /**
-   * Returns true or false depending on whether the shader is initialized or not.
-   */  
-  public boolean isInitialized() {
-    return initialized;
-  }
   
   /**
    * Starts the execution of the shader program.
    */
-  public void start() {
-    if (!initialized) {
-      PGraphics.showWarning("This shader is not properly initialized. Call the setup() method first");
-    }
-    
-    // TODO:
-    // set the texture uniforms to the currently values texture units for all the
-    // textures.
-    // gl.glUniform1iARB(loc, unit); 
-    
+  public void start() {    
+    init();  
     pgl.glUseProgram(programObject);
   }
 
+  
   /**
    * Stops the execution of the shader program.
    */
   public void stop() {
     pgl.glUseProgram(0);
   }    
+  
   
   /**
    * Returns the ID location of the attribute parameter given its name.
@@ -194,9 +104,11 @@ public class PShader {
    * @return int
    */
   public int getAttribLocation(String name) {
+    init();
     return pgl.glGetAttribLocation(programObject, name);
   }
 
+  
   /**
    * Returns the ID location of the uniform parameter given its name.
    * 
@@ -204,9 +116,11 @@ public class PShader {
    * @return int
    */
   public int getUniformLocation(String name) {
+    init();
     return pgl.glGetUniformLocation(programObject, name);
   }
 
+  
   public void setIntUniform(int loc, int x) {
     pgl.glUniform1i(loc, x);
   }  
@@ -215,6 +129,7 @@ public class PShader {
   public void set1FloatUniform(int loc, float x) {
     pgl.glUniform1f(loc, x);
   }  
+  
   
   public void set2FloatUniform(int loc, float x, float y) {
     pgl.glUniform2f(loc, x, y);
@@ -283,40 +198,76 @@ public class PShader {
 
   public void set4FloatAttribute(int loc, float x, float y, float z, float w) {
     pgl.glVertexAttrib4f(loc, x, y, z, w);
+  }
+
+    
+  protected void init() {
+    if (programObject == 0) {
+      programObject = pg.createGLSLProgramObject();    
+      loadVertexShader(vertexFilename);
+      loadFragmentShader(fragmentFilename);
+      
+      checkLogInfo("Vertex shader " + vertexFilename + " compilation: ", vertexShader);
+      checkLogInfo("Fragment shader " + fragmentFilename + " compilation: ", fragmentShader);
+      
+      pgl.glLinkProgram(programObject);
+      pgl.glValidateProgram(programObject);
+      checkLogInfo("GLSL program validation: ", programObject);
+    }
+  }  
+  
+  
+  /**
+   * Loads and compiles the vertex shader contained in file.
+   * 
+   * @param file String
+   */
+  protected void loadVertexShader(String filename) {
+    String shaderSource = PApplet.join(parent.loadStrings(filename), "\n");
+    attachVertexShader(shaderSource);
+  }
+
+  
+  /**
+   * Loads and compiles the fragment shader contained in file.
+   * 
+   * @param file String
+   */
+  protected void loadFragmentShader(String filename) {
+    String shaderSource = PApplet.join(parent.loadStrings(filename), "\n");
+    attachFragmentShader(shaderSource);
   }  
   
   
   /**
    * @param shaderSource a string containing the shader's code
-   * @param filename the shader's filename, used to print error log information
    */
-  protected void attachVertexShader(String shaderSource, String file) {
+  protected void attachVertexShader(String shaderSource) {
     vertexShader = pg.createGLSLVertShaderObject();
     
     pgl.glShaderSource(vertexShader, shaderSource);
     pgl.glCompileShader(vertexShader);
-    
-    checkLogInfo("Vertex shader " + file + " compilation: ", vertexShader);
+        
     pgl.glAttachShader(programObject, vertexShader);    
   }  
       
+  
   /**
    * @param shaderSource a string containing the shader's code
-   * @param filename the shader's filename, used to print error log information
    */
-  protected void attachFragmentShader(String shaderSource, String file) {
+  protected void attachFragmentShader(String shaderSource) {
     fragmentShader = pg.createGLSLFragShaderObject();
     
     pgl.glShaderSource(fragmentShader, shaderSource);
     pgl.glCompileShader(fragmentShader);
-    
-    checkLogInfo("Fragment shader " + file + " compilation: ", fragmentShader);
+        
     pgl.glAttachShader(programObject, fragmentShader);
   }
     
+  
   /**
-   * @invisible Check the log error for the opengl object obj. Prints error
-   *            message if needed.
+   * Check the log error for the opengl object obj. Prints error
+   * message if needed.
    */
   protected void checkLogInfo(String title, int obj) {    
     String log = pgl.getShaderLog(obj);    
@@ -326,6 +277,7 @@ public class PShader {
     }
   }
 
+  
   protected void release() {
     if (vertexShader != 0) {
       pg.deleteGLSLVertShaderObject(vertexShader);

@@ -3875,6 +3875,7 @@ public class PShape3D extends PShape {
 
 
   protected void renderPoints() {
+    /*
     pg.startPointShader();
     
     pg.enablePointVertex();
@@ -3913,10 +3914,12 @@ public class PShape3D extends PShape {
     pg.disablePointSize();    
     
     pg.stopPointShader();
+    */
   }  
 
 
   protected void renderLines() {
+    /*
     pg.startLineShader();
     
     pg.enableLineVertex();
@@ -3955,10 +3958,12 @@ public class PShape3D extends PShape {
     pg.disableLineDirWidth();
     
     pg.stopLineShader();   
+    */
   }  
 
   
   protected void renderFill(PImage textureImage) {
+    /*
     pg.startFillShader();
 
     pg.startFillShader();
@@ -4028,6 +4033,7 @@ public class PShape3D extends PShape {
     pg.disableFillMaterials();
     
     pg.stopFillShader();
+    */
   }
   
   

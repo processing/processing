@@ -46,10 +46,10 @@ attribute vec4 inColor;
 attribute vec3 inNormal;
 attribute vec2 inTexcoord;
 
-attribute vec4 inAmbientColor;
-attribute vec4 inSpecularColor;
-attribute vec4 inEmissiveColor;
-attribute float shine;
+attribute vec4 inAmbient;
+attribute vec4 inSpecular;
+attribute vec4 inEmissive;
+attribute float inShine;
 
 varying vec4 vertColor;
 varying vec2 vertTexcoord;
@@ -114,8 +114,8 @@ void main() {
     
     totalAmbient  += lightAmbient[i]  * falloff;
     totalDiffuse  += lightDiffuse[i]  * falloff * spot * lambertFactor(lightDir, ecNormal);
-    totalSpecular += lightSpecular[i] * falloff * spot * blinnPhongFactor(lightDir, lightPos3, ecNormal, shine);       
+    totalSpecular += lightSpecular[i] * falloff * spot * blinnPhongFactor(lightDir, lightPos3, ecNormal, inShine);       
   }  
   
-  vertColor = totalAmbient * inAmbientColor + totalDiffuse * inColor + totalSpecular * inSpecular + inEmissive;
+  vertColor = totalAmbient * inAmbient + totalDiffuse * inColor + totalSpecular * inSpecular + inEmissive;
 }
