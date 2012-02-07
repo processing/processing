@@ -73,7 +73,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   public int glPointVertexBufferID;
   public int glPointColorBufferID;
-  public int glPointNormalBufferID;
   public int glPointSizeBufferID;
   public int glPointIndexBufferID;   
   protected boolean pointVBOsCreated = false;
@@ -428,7 +427,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     glPointVertexBufferID = 0;
     glPointColorBufferID = 0;
-    glPointNormalBufferID = 0;
     glPointSizeBufferID = 0;
     glPointIndexBufferID = 0;
   }  
@@ -1272,10 +1270,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, vboMode);    
     
-    glPointNormalBufferID = createVertexBufferObject();    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, vboMode);
-    
     glPointSizeBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, vboMode);    
@@ -1310,9 +1304,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     deleteVertexBufferObject(glPointColorBufferID);
     glPointColorBufferID = 0; 
       
-    deleteVertexBufferObject(glPointNormalBufferID);
-    glPointNormalBufferID = 0;
-    
     deleteVertexBufferObject(glPointSizeBufferID);
     glPointSizeBufferID = 0; 
       
@@ -6909,7 +6900,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     public int lastPointVertex;    
     public float[] pointVertices;
     public float[] pointColors;
-    public float[] pointNormals;
     public float[] pointSizes;  
 
     public int pointIndexCount;
@@ -6955,7 +6945,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       pointVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       pointColors = new float[4 * PGL.DEFAULT_TESS_VERTICES];
-      pointNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       pointSizes = new float[2 * PGL.DEFAULT_TESS_VERTICES];
       pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
       
@@ -6991,7 +6980,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (pointVertexCount < pointVertices.length / 3) {
         trimPointVertices();
         trimPointColors();
-        trimPointNormals();
         trimPointAttributes();
       }
       
@@ -7090,12 +7078,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       pointColors = temp;      
     }
     
-    protected void trimPointNormals() {
-      float temp[] = new float[3 * pointVertexCount];      
-      PApplet.arrayCopy(pointNormals, 0, temp, 0, 3 * pointVertexCount);
-      pointNormals = temp;      
-    }
-    
     protected void trimPointAttributes() {
       float temp[] = new float[2 * pointVertexCount];      
       PApplet.arrayCopy(pointSizes, 0, temp, 0, 2 * pointVertexCount);
@@ -7126,7 +7108,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       pointVertices = null;
       pointColors = null;
-      pointNormals = null;
       pointSizes = null;
       pointIndices = null;
     }
@@ -7500,7 +7481,6 @@ public class PGraphicsAndroid3D extends PGraphics {
         
         expandPointVertices(newSize);
         expandPointColors(newSize);
-        expandPointNormals(newSize);
         expandPointAttributes(newSize);
       }
       
@@ -7519,12 +7499,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       float temp[] = new float[4 * n];      
       PApplet.arrayCopy(pointColors, 0, temp, 0, 4 * pointVertexCount);
       pointColors = temp;      
-    }
-    
-    protected void expandPointNormals(int n) {
-      float temp[] = new float[3 * n];      
-      PApplet.arrayCopy(pointNormals, 0, temp, 0, 3 * pointVertexCount);
-      pointNormals = temp;      
     }
     
     protected void expandPointAttributes(int n) {
@@ -7774,33 +7748,18 @@ public class PGraphicsAndroid3D extends PGraphics {
       float y = in.vertices[index++];
       float z = in.vertices[index ];
       
-      index = 3 * inIdx;
-      float nx = in.normals[index++];
-      float ny = in.normals[index++];
-      float nz = in.normals[index  ];      
-      
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         PMatrix3D tr = modelview;
         
         index = 3 * tessIdx;
         pointVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
         pointVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
-        pointVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
-        
-        index = 3 * tessIdx;
-        pointNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
-        pointNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
-        pointNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
+        pointVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;        
       } else {
         index = 3 * tessIdx;
         pointVertices[index++] = x;
         pointVertices[index++] = y;
         pointVertices[index  ] = z;
-        
-        index = 3 * tessIdx;
-        pointNormals[index++] = nx;
-        pointNormals[index++] = ny;
-        pointNormals[index  ] = nz;        
       }      
       
       index = 5 * inIdx;
@@ -8037,16 +7996,8 @@ public class PGraphicsAndroid3D extends PGraphics {
           float y = pointVertices[index  ];
         
           index = 3 * i;
-          float nx = pointNormals[index++];
-          float ny = pointNormals[index  ];
-                    
-          index = 3 * i;
           pointVertices[index++] = x * tr.m00 + y * tr.m01 + tr.m02;
           pointVertices[index  ] = x * tr.m10 + y * tr.m11 + tr.m12;
-          
-          index = 3 * i;
-          pointNormals[index++] = nx * tr.m00 + ny * tr.m01;
-          pointNormals[index  ] = nx * tr.m10 + ny * tr.m11;
         } 
       }       
     }
@@ -8114,19 +8065,9 @@ public class PGraphicsAndroid3D extends PGraphics {
           float z = pointVertices[index  ];
         
           index = 3 * i;
-          float nx = pointNormals[index++];
-          float ny = pointNormals[index++];
-          float nz = pointNormals[index  ];
-                    
-          index = 3 * i;
           pointVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
           pointVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
           pointVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
-          
-          index = 3 * i;
-          pointNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
-          pointNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
-          pointNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
         } 
       }      
     }    

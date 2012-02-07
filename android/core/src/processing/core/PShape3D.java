@@ -94,7 +94,6 @@ public class PShape3D extends PShape {
   
   public int glPointVertexBufferID;
   public int glPointColorBufferID;
-  public int glPointNormalBufferID;
   public int glPointSizeBufferID;
   public int glPointIndexBufferID;  
 
@@ -163,7 +162,6 @@ public class PShape3D extends PShape {
 
   protected VertexCache pointVerticesCache;
   protected VertexCache pointColorsCache;
-  protected VertexCache pointNormalsCache;
   protected VertexCache pointAttributesCache;  
     
   protected boolean isSolid;
@@ -270,7 +268,6 @@ public class PShape3D extends PShape {
     
     glPointVertexBufferID = 0;
     glPointColorBufferID = 0;
-    glPointNormalBufferID = 0;
     glPointSizeBufferID = 0;
     glPointIndexBufferID = 0;
     
@@ -462,10 +459,6 @@ public class PShape3D extends PShape {
     if (glPointColorBufferID != 0) {    
       pg.finalizeVertexBufferObject(glPointColorBufferID);   
     }    
-
-    if (glPointNormalBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glPointNormalBufferID);   
-    }     
 
     if (glPointSizeBufferID != 0) {    
       pg.finalizeVertexBufferObject(glPointSizeBufferID);   
@@ -2289,11 +2282,6 @@ public class PShape3D extends PShape {
     return tess.pointColors;
   }  
   
-  public float[] pointNormals() {
-    updateTesselation();
-    return tess.pointNormals;
-  }  
-  
   public float[] pointAttributes() {
     updateTesselation();
     return tess.pointSizes;
@@ -2426,10 +2414,6 @@ public class PShape3D extends PShape {
   
   public void unmapPointColors() {
     unmapVertexImpl();
-  }
-  
-  public FloatBuffer mapPointNormals() {        
-    return mapVertexImpl(root.glPointNormalBufferID, 3 * tess.firstPointVertex, 3 * tess.pointVertexCount).asFloatBuffer();
   }
   
   public void unmapPointNormals() {
@@ -2824,11 +2808,6 @@ public class PShape3D extends PShape {
       if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
         root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.floatData);
         root.pointColorsCache.reset();
-      }
-      
-      if (root.pointNormalsCache != null && root.pointNormalsCache.hasData()) {
-        root.copyPointNormals(root.pointNormalsCache.offset, root.pointNormalsCache.size, root.pointNormalsCache.floatData);
-        root.pointNormalsCache.reset();
       }
       
       if (root.pointAttributesCache != null && root.pointAttributesCache.hasData()) {
@@ -3292,17 +3271,6 @@ public class PShape3D extends PShape {
           root.pointColorsCache.reset();
         }
         
-        if (modifiedPointNormals) {
-          if (root.pointNormalsCache == null) { 
-            root.pointNormalsCache = new VertexCache(3, true);
-          }            
-          root.pointNormalsCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointNormals);            
-          modifiedPointNormals = false;
-        } else if (root.pointNormalsCache != null && root.pointNormalsCache.hasData()) {
-          root.copyPointNormals(root.pointNormalsCache.offset, root.pointNormalsCache.size, root.pointNormalsCache.floatData);
-          root.pointNormalsCache.reset();
-        }
-        
         if (modifiedPointAttributes) {
           if (root.pointAttributesCache == null) { 
             root.pointAttributesCache = new VertexCache(2, true);
@@ -3527,10 +3495,6 @@ public class PShape3D extends PShape {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);     
     
-    glPointNormalBufferID = pg.createVertexBufferObject();    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);    
-
     glPointSizeBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, glMode);
@@ -3554,7 +3518,7 @@ public class PShape3D extends PShape {
     } else {
       if (hasPoints) {
         root.copyPointGeometry(root.pointVertCopyOffset, tess.pointVertexCount, 
-                               tess.pointVertices, tess.pointColors, tess.pointNormals, tess.pointSizes);        
+                               tess.pointVertices, tess.pointColors, tess.pointSizes);        
         root.pointVertCopyOffset += tess.pointVertexCount;
         
         root.copyPointIndices(root.pointIndCopyOffset, tess.pointIndexCount, tess.pointIndices);
@@ -3565,7 +3529,7 @@ public class PShape3D extends PShape {
   
   
   protected void copyPointGeometry(int offset, int size, 
-                                   float[] vertices, float[] colors, float[] normals, float[] attribs) {
+                                   float[] vertices, float[] colors, float[] attribs) {
     int offsetf = offset * PGL.SIZEOF_FLOAT;
     int sizef = size * PGL.SIZEOF_FLOAT;
 
@@ -3574,9 +3538,6 @@ public class PShape3D extends PShape {
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(colors, 0, 4 * size));
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(normals, 0, 3 * size));
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offsetf, 2 * sizef, FloatBuffer.wrap(attribs, 0, 2 * size));
@@ -3599,13 +3560,6 @@ public class PShape3D extends PShape {
   }
     
   
-  protected void copyPointNormals(int offset, int size, float[] normals) {
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals, 0, 3 * size));
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
-  }
-
-    
   protected void copyPointAttributes(int offset, int size, float[] attribs) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offset * PGL.SIZEOF_FLOAT, 2 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 2 * size));
@@ -3715,11 +3669,6 @@ public class PShape3D extends PShape {
       pg.deleteVertexBufferObject(glPointColorBufferID);   
       glPointColorBufferID = 0;
     }    
-
-    if (glPointNormalBufferID != 0) {    
-      pg.deleteVertexBufferObject(glPointNormalBufferID);   
-      glPointNormalBufferID = 0;
-    }     
 
     if (glPointSizeBufferID != 0) {    
       pg.deleteVertexBufferObject(glPointSizeBufferID);   
