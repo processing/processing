@@ -339,12 +339,12 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // The new stuff (shaders, tessellator, etc)    
   
-  protected FillShaderSimple defFillShaderSimple;
-  protected FillShaderTex defFillShaderTex;
-  protected FillShaderLit defFillShaderLit;
-  protected FillShaderFull defFillShaderFull;
-  protected LineShader defLineShader;
-  protected PointShader defPointShader;
+  protected static FillShaderSimple defFillShaderSimple;
+  protected static FillShaderTex defFillShaderTex;
+  protected static FillShaderLit defFillShaderLit;
+  protected static FillShaderFull defFillShaderFull;
+  protected static LineShader defLineShader;
+  protected static PointShader defPointShader;
   
   protected FillShaderSimple fillShaderSimple;
   protected FillShaderTex fillShaderTex;
@@ -1248,9 +1248,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineColors, 0, 4 * size), vboMode);
     
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.lineNormals, 0, 3 * size), vboMode);
-
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineAttributes, 0, 4 * size), vboMode);    
   }
@@ -1300,6 +1297,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }  
+  
+  protected void updatePointBuffers() {
+    int size = tessGeo.pointVertexCount;
+    int sizef = size * PGL.SIZEOF_FLOAT;
+
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.pointVertices, 0, 3 * size), vboMode);
+    
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.pointColors, 0, 4 * size), vboMode);
+
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);    
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointAttributes, 0, 2 * size), vboMode);   
+  }
   
   protected void releasePointBuffers() {
     deleteVertexBufferObject(glPointVertexBufferID);
@@ -1439,14 +1450,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       resized = false;            
     }
     
-    if (sizeChanged) {    
-      // set up the default camera and initializes modelview matrix.
-      camera();
-
+    if (sizeChanged) {
       // defaults to perspective, if the user has setup up their
       // own projection, they'll need to fix it after resize anyway.
       // this helps the people who haven't set up their own projection.
       perspective();
+      
+      // set up the default camera and initializes modelview matrix.
+      camera();
       
       // clear the flag
       sizeChanged = false;
@@ -1456,9 +1467,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       // remove any additional modelview transformation (and less likely, projection
       // transformations) applied by the user after setting the camera and/or projection      
       modelview.set(camera);
+      projmodelview.set(projection);
+      projmodelview.apply(modelview);        
     }
-    projmodelview.set(projection);
-    projmodelview.apply(modelview);
       
     noLights();
     lightFalloff(1, 0, 0);
@@ -2144,109 +2155,49 @@ public class PGraphicsAndroid3D extends PGraphics {
   
 
   protected void renderPoints() {
-    /*
     if (!pointVBOsCreated) {
       createPointBuffers();
       pointVBOsCreated = true;
     }
+    updatePointBuffers();
     
-    int size, sizef, sizex;
+    PointShader shader = getPointShader();
+    shader.start();    
+    shader.setVertexAttribute(glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
+    shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_FLOAT, 0, 0);    
+    shader.setSizeAttribute(glPointAttribBufferID, 2, PGL.GL_FLOAT, 0, 0);
     
-    startPointShader();
-    
-    enablePointVertex();
-    enablePointColor();
-    enablePointNormal();
-    enablePointSize();
-    
-    size = tessGeo.pointVertexCount;
-    sizef = size * PGL.SIZEOF_FLOAT;
-   
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.pointVertices, 0, 3 * size), vboMode);
-    setPointVertexFormat(3, 0); 
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.pointColors, 0, 4 * size), vboMode);
-    setPointColorFormat(4, 0);
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointNormalBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.pointNormals, 0, 3 * size), vboMode);
-    setPointNormalFormat(3, 0);
-        
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);    
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointAttributes, 0, 2 * size), vboMode);
-    setPointSizeFormat(2, 0);
-    
-    size = tessGeo.pointIndexCount;
-    sizex = size * PGL.SIZEOF_INDEX;
+    int size = tessGeo.pointIndexCount;
+    int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.pointIndices, 0, size), vboMode);
-    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, 0);
-        
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.pointIndices, 0, size), vboMode);
+    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, 0);        
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
     
-    disablePointVertex();
-    disablePointColor();
-    disablePointNormal();
-    disablePointSize();    
-    
-    stopPointShader();
-    */
+    shader.stop();
   }  
     
   protected void renderLines() {
-    /*
     if (!lineVBOsCreated) {
       createLineBuffers();
       lineVBOsCreated = true;
     }
     updateLineBuffers();
     
-
-    
-    
-    
-    int size, sizef, sizex;
-    
-    startLineShader();
-    
-    enableLineVertex();
-    enableLineColor();
-    enableLineNormal();
-    enableLineDirWidth();
-    
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-    setLineVertexFormat(3, 0);     
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    setLineColorFormat(4, 0);    
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineNormalBufferID);
-    setLineNormalFormat(3, 0);    
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineAttributes, 0, 4 * size), vboMode);
-    setLineDirWidthFormat(4, 0);   
+    LineShader shader = getLineShader();
+    shader.start();    
+    shader.setVertexAttribute(glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
+    shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_FLOAT, 0, 0);    
+    shader.setDirWidthAttribute(glLineAttribBufferID, 4, PGL.GL_FLOAT, 0, 0);
     
     int size = tessGeo.lineIndexCount;
     int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.lineIndices, 0, size), vboMode);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.lineIndices, 0, size), vboMode);
     pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, 0);
-
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
     
-    disableLineVertex();
-    disableLineColor();
-    disableLineNormal();
-    disableLineDirWidth();
-    
-    stopLineShader();
-    */
+    shader.stop();
   }  
   
   
@@ -2256,15 +2207,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillVBOsCreated = true;
     }        
     updateFillBuffers(lights, texCache.hasTexture);
-    
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);  
-        
+
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
     texCache.beginRender();
     for (int i = 0; i < texCache.count; i++) {
       PTexture tex = texCache.getTexture(i);
 
-      FillShader shader = getFillShader(lights, tex != null);
-      
+      FillShader shader = getFillShader(lights, tex != null);      
       shader.start();
       
       shader.setVertexAttribute(glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
@@ -2290,68 +2239,43 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       shader.stop();
     }  
-    texCache.endRender();
-    
+    texCache.endRender();    
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
-  
 
  
   // Utility function to render current tessellated geometry, under the assumption that
   // the texture is already bound.
-  // TODO: implement using shaders
   protected void renderTexFill() {
-    /*
     if (!fillVBOsCreated) {
       createFillBuffers();
       fillVBOsCreated = true;
     }    
+    updateFillBuffers(lights, true);
+    
+    FillShader shader = getFillShader(lights, true);      
+    shader.start();
+    
+    shader.setVertexAttribute(glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
+    shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_FLOAT, 0, 0);
+    shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);
+    
+    if (lights) {
+      shader.setNormalAttribute(glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 0);
+      shader.setAmbientAttribute(glFillAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
+      shader.setSpecularAttribute(glFillSpecularBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
+      shader.setEmissiveAttribute(glFillEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);      
+      shader.setShininessAttribute(glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, 0);
+    }
 
-    int size, sizef, sizex;
-    
-    startFillShader();
-    
-    enableFillVertex();
-    enableFillColor();
-    enableFillNormal();
-    enableFillTexCoord();
-    
-    size = tessGeo.fillVertexCount;   
-    sizef = size * PGL.SIZEOF_FLOAT;
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillVertices, 0, 3 * size), vboMode);
-    setFillVertexFormat(3, 0);
-       
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.fillColors, 0, 4 * size), vboMode);
-    setFillColorFormat(4, 0);
-    
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillNormals, 0, 3 * size), vboMode);
-    setFillNormalFormat(3, 0);
-      
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.fillTexcoords, 0, 2 * size), vboMode);
-    setFillTexCoordFormat(2, 0);            
-
-    size = tessGeo.fillIndexCount;
-    sizex = size * PGL.SIZEOF_INDEX;
+    int size = tessGeo.fillIndexCount;
+    int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.fillIndices, 0, size), vboMode);
-    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, 0);      
-  
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.fillIndices, 0, size), vboMode);
+    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, 0);       
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0); 
     
-    disableFillVertex();
-    disableFillColor();
-    disableFillNormal();
-    disableFillTexCoord();
-    
-    stopFillShader();
-    */
+    shader.stop();
   }
 
   //////////////////////////////////////////////////////////////
@@ -3187,7 +3111,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     modelview.rotate(angle, v0, v1, v2);
-    projmodelview.rotate(angle, v0, v1, v2);
+    projmodelview.set(projection);
+    projmodelview.apply(modelview);
     modelviewInv.invRotate(angle, v0, v1, v2);
   }
 
@@ -3631,6 +3556,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     camera.set(modelview);
     cameraInv.set(modelviewInv);
+    
+    projmodelview.set(projection);
+    projmodelview.apply(modelview);    
   }
     
   
@@ -3765,6 +3693,9 @@ public class PGraphicsAndroid3D extends PGraphics {
                               0,  -temp / temp3,  (top + bottom) / temp3,                      0,
                               0,              0, (-zfar - znear) / temp4, (-temp * zfar) / temp4,
                               0,              0,                      -1,                      1);
+    
+    projmodelview.set(projection);
+    projmodelview.apply(modelview);      
   }
 
   
@@ -5559,9 +5490,63 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   public void setShader(PShader shader, int kind) {
+    if (kind == FILL_SHADER_SIMPLE) {
+      fillShaderSimple = (FillShaderSimple) shader;
+    } else if (kind == FILL_SHADER_LIT) {
+      fillShaderLit = (FillShaderLit) shader;
+    } else if (kind == FILL_SHADER_TEX) {
+      fillShaderTex = (FillShaderTex) shader;
+    } else if (kind == FILL_SHADER_FULL) {
+      fillShaderFull = (FillShaderFull) shader;
+    } else if (kind == LINE_SHADER) {
+      lineShader = (LineShader) shader;
+    } else if (kind == POINT_SHADER) {      
+      pointShader = (PointShader) shader;
+    } else {
+      PGraphics.showWarning("Wrong shader type");
+    }    
   }
 
   public void resetShader(int kind) {
+    if (kind == FILL_SHADER_SIMPLE) {
+      if (defFillShaderSimple == null) {
+        defFillShaderSimple = new FillShaderSimple(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertSimple.glsl").toString(),
+                                                           PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl").toString());       
+      }      
+      fillShaderSimple = defFillShaderSimple;
+    } else if (kind == FILL_SHADER_LIT) {
+      if (defFillShaderLit == null) {
+        defFillShaderLit = new FillShaderLit(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertLit.glsl").toString(),
+                                                     PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl").toString());
+      }      
+      fillShaderLit = defFillShaderLit;
+    } else if (kind == FILL_SHADER_TEX) {
+      if (defFillShaderTex == null) {
+        defFillShaderTex = new FillShaderTex(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertTex.glsl").toString(),
+                                                     PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl").toString());
+      }      
+      fillShaderTex = defFillShaderTex;
+    } else if (kind == FILL_SHADER_FULL) {
+      if (defFillShaderFull == null) {
+        defFillShaderFull = new FillShaderFull(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertFull.glsl").toString(),
+                                                       PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl").toString());
+      }      
+      fillShaderFull = defFillShaderFull;
+    } else if (kind == LINE_SHADER) {
+      if (defLineShader == null) {
+        defLineShader = new LineShader(parent, PGraphicsAndroid3D.class.getResource("LineShaderVert.glsl").toString(),
+                                               PGraphicsAndroid3D.class.getResource("LineShaderFrag.glsl").toString());        
+      }      
+      lineShader = defLineShader;
+    } else if (kind == POINT_SHADER) {
+      if (defPointShader == null) {
+        defPointShader = new PointShader(parent, PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl").toString(),
+                                                 PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl").toString());        
+      }      
+      pointShader = defPointShader;
+    } else {
+      PGraphics.showWarning("Wrong shader type");
+    }     
   }
   
   protected FillShader getFillShader(boolean lit, boolean tex) {
@@ -5570,25 +5555,73 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (tex) {
         if (fillShaderFull == null) {
           if (defFillShaderFull == null) {
-            
+            defFillShaderFull = new FillShaderFull(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertFull.glsl").toString(),
+                                                           PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl").toString());
           }
           fillShaderFull = defFillShaderFull;
         }
         shader = fillShaderFull;  
       } else {
-        return fillShaderLit;
+        if (defFillShaderLit == null) {
+          if (defFillShaderLit == null) {
+            defFillShaderLit = new FillShaderLit(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertLit.glsl").toString(),
+                                                         PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl").toString());
+          }
+          fillShaderLit = defFillShaderLit;
+        }
+        shader = fillShaderLit;
       }
     } else {
       if (tex) {
-        return fillShaderTex;
+        if (fillShaderTex == null) {
+          if (defFillShaderTex == null) {
+            defFillShaderTex = new FillShaderTex(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertTex.glsl").toString(),
+                                                         PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl").toString());
+          }
+          fillShaderTex = defFillShaderTex;
+        }
+        shader = fillShaderTex;
       } else {
-        return fillShaderSimple;
+        if (fillShaderSimple == null) {
+          if (defFillShaderSimple == null) {
+            defFillShaderSimple = new FillShaderSimple(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertSimple.glsl").toString(),
+                                                               PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl").toString());            
+          }
+          fillShaderSimple = defFillShaderSimple;
+        }        
+        shader = fillShaderSimple;
       }      
     }    
     shader.loadAttributes();
     shader.loadUniforms();
     return shader;
   }
+  
+  protected LineShader getLineShader() {
+    if (lineShader == null) {
+      if (defLineShader == null) {
+        defLineShader = new LineShader(parent, PGraphicsAndroid3D.class.getResource("LineShaderVert.glsl").toString(),
+                                               PGraphicsAndroid3D.class.getResource("LineShaderFrag.glsl").toString());
+      }
+      lineShader = defLineShader;  
+    }
+    lineShader.loadAttributes();
+    lineShader.loadUniforms();
+    return lineShader;
+  }
+
+  protected PointShader getPointShader() {
+    if (pointShader == null) {
+      if (defPointShader == null) {
+        defPointShader = new PointShader(parent, PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl").toString(),
+                                                 PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl").toString());
+      }
+      pointShader = defPointShader;  
+    }
+    pointShader.loadAttributes();
+    pointShader.loadUniforms();
+    return pointShader;    
+  }  
   
   protected class FillShader extends PShader {
     public FillShader(PApplet parent, String fragFilename, String vertFilename) {
@@ -5598,8 +5631,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void loadAttributes() { }    
     public void loadUniforms() { }
     
-    public void setAttribute(int loc, int vboId, int size, int type, int stride, int offset) {
-      pgl.glEnableVertexAttribArray(loc);      
+    public void setAttribute(int loc, int vboId, int size, int type, int stride, int offset) {     
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
       pgl.glVertexAttribPointer(loc, size, type, false, stride, offset);       
     }
@@ -5625,8 +5657,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     public void loadAttributes() {
-      inVertexLoc = getAttribLocation("inVertexLoc");
-      inVertexLoc = getAttribLocation("inColorLoc");
+      inVertexLoc = getAttribLocation("inVertex");
+      inColorLoc = getAttribLocation("inColor");
     }
     
     public void loadUniforms() { 
@@ -5643,20 +5675,27 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     public void start() {
       super.start();
-      
-      
+
+      pgl.glEnableVertexAttribArray(inVertexLoc);
+      pgl.glEnableVertexAttribArray(inColorLoc);
+            
+      projmodelview.get(glProjmodelview);
+      set4x4MatUniform(projmodelviewMatrixLoc, glProjmodelview);      
     }
 
     public void stop() {      
       pgl.glDisableVertexAttribArray(inVertexLoc);
       pgl.glDisableVertexAttribArray(inColorLoc);
+      
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
+      
       super.stop();
-    }    
+    }
   }
 
   protected class FillShaderLit extends FillShader {
-    protected int modelviewMatrixLoc;
     protected int projmodelviewMatrixLoc;
+    protected int modelviewMatrixLoc;    
     protected int normalMatrixLoc;
     
     protected int lightCountLoc;  
@@ -5683,6 +5722,35 @@ public class PGraphicsAndroid3D extends PGraphics {
     public FillShaderLit(PApplet parent, String fragFilename, String vertFilename) {
       super(parent, fragFilename, vertFilename);
     }
+    
+    public void loadAttributes() {
+      inVertexLoc = getAttribLocation("inVertex");
+      inColorLoc = getAttribLocation("inColor");
+      inNormalLoc = getAttribLocation("inNormal");
+      
+      inAmbientLoc = getAttribLocation("inAmbient");
+      inSpecularLoc = getAttribLocation("inSpecular");
+      inEmissiveLoc = getAttribLocation("inEmissive");
+      inShineLoc = getAttribLocation("inShine");
+    }
+    
+    public void loadUniforms() { 
+      projmodelviewMatrixLoc = getUniformLocation("projmodelviewMatrix");      
+      modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
+      normalMatrixLoc = getUniformLocation("normalMatrix");
+      
+      lightCountLoc = getUniformLocation("lightCount");
+      lightPositionLoc = getUniformLocation("lightPosition");
+      lightNormalLoc = getUniformLocation("lightNormal");
+      lightAmbientLoc = getUniformLocation("lightAmbient");
+      lightDiffuseLoc = getUniformLocation("lightDiffuse");
+      lightSpecularLoc = getUniformLocation("lightSpecular");
+      lightFalloffConstantLoc = getUniformLocation("lightFalloffConstant");
+      lightFalloffLinearLoc = getUniformLocation("lightFalloffLinear");
+      lightFalloffQuadraticLoc = getUniformLocation("lightFalloffQuadratic");
+      lightSpotAngleCosLoc = getUniformLocation("lightSpotAngleCos");
+      lightSpotConcentrationLoc = getUniformLocation("lightSpotConcentration");      
+    }    
     
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { 
       setAttribute(inVertexLoc, vboId, size, type, stride, offset);
@@ -5711,475 +5779,266 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void setShininessAttribute(int vboId, int size, int type, int stride, int offset) { 
       setAttribute(inShineLoc, vboId, size, type, stride, offset);
     }       
+    
+    public void start() {
+      super.start();
+      
+      pgl.glEnableVertexAttribArray(inVertexLoc);
+      pgl.glEnableVertexAttribArray(inColorLoc);      
+      pgl.glEnableVertexAttribArray(inNormalLoc);
+      
+      pgl.glEnableVertexAttribArray(inAmbientLoc);
+      pgl.glEnableVertexAttribArray(inSpecularLoc);
+      pgl.glEnableVertexAttribArray(inEmissiveLoc);
+      pgl.glEnableVertexAttribArray(inShineLoc);         
+      
+      projmodelview.get(glProjmodelview);
+      set4x4MatUniform(projmodelviewMatrixLoc, glProjmodelview);
+      
+      modelview.get(glModelview);
+      set4x4MatUniform(modelviewMatrixLoc, glModelview);
+      
+      glNormal[0] = modelviewInv.m00; glNormal[1] = modelviewInv.m10; glNormal[2] = modelviewInv.m20; 
+      glNormal[3] = modelviewInv.m01; glNormal[4] = modelviewInv.m11; glNormal[5] = modelviewInv.m21; 
+      glNormal[6] = modelviewInv.m02; glNormal[7] = modelviewInv.m12; glNormal[8] = modelviewInv.m22;    
+      set3x3MatUniform(inNormalLoc, glNormal);
+      
+      setIntUniform(lightCountLoc, lightCount);      
+      set4FloatVecUniform(lightPositionLoc, lightPosition);
+      set3FloatVecUniform(lightNormalLoc, lightNormal);
+      set4FloatVecUniform(lightAmbientLoc, lightAmbient);
+      set4FloatVecUniform(lightDiffuseLoc, lightDiffuse);
+      set4FloatVecUniform(lightSpecularLoc, lightSpecular);          
+      set1FloatVecUniform(lightFalloffConstantLoc, lightFalloffConstant);
+      set1FloatVecUniform(lightFalloffLinearLoc, lightFalloffLinear);
+      set1FloatVecUniform(lightFalloffQuadraticLoc, lightFalloffQuadratic);
+      set1FloatVecUniform(lightSpotAngleCosLoc, lightSpotAngleCos);
+      set1FloatVecUniform(lightSpotConcentrationLoc, lightSpotConcentration);          
+    }
+
+    public void stop() {      
+      pgl.glDisableVertexAttribArray(inVertexLoc);
+      pgl.glDisableVertexAttribArray(inColorLoc);      
+      pgl.glDisableVertexAttribArray(inNormalLoc);
+      
+      pgl.glDisableVertexAttribArray(inAmbientLoc);
+      pgl.glDisableVertexAttribArray(inSpecularLoc);
+      pgl.glDisableVertexAttribArray(inEmissiveLoc);
+      pgl.glDisableVertexAttribArray(inShineLoc);     
+      
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
+      
+      super.stop();
+    }    
   }
   
-  protected class FillShaderTex extends FillShader {
-    int projmodelviewMatrixLoc;
-    
-    int inVertexLoc;
-    int inColorLoc;
-    int inTexcoordLoc;
+  protected class FillShaderTex extends FillShaderSimple {
+    protected int inTexcoordLoc;
     
     public FillShaderTex(PApplet parent, String fragFilename, String vertFilename) {
       super(parent, fragFilename, vertFilename);
     }
     
-    public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inVertexLoc, vboId, size, type, stride, offset);
-    } 
-    
-    public void setColorAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inColorLoc, vboId, size, type, stride, offset); 
-    } 
+    public void loadAttributes() {
+      super.loadAttributes();
+      
+      inTexcoordLoc = getAttribLocation("TexcoordLoc");
+    }    
     
     public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { 
       setAttribute(inTexcoordLoc, vboId, size, type, stride, offset);
     }     
+    
+    public void start() {
+      super.start();
+      
+      pgl.glEnableVertexAttribArray(inTexcoordLoc);
+    }    
+    
+    public void stop() {      
+      pgl.glDisableVertexAttribArray(inTexcoordLoc);
+      
+      super.stop();
+    }    
   }  
   
-  protected class FillShaderFull extends FillShader {
-    int modelviewMatrixLoc;
-    int projmodelviewMatrixLoc;
-    int normalMatrixLoc;
-    
-    int lightCountLoc;  
-    int lightPositionLoc;
-    int lightNormalLoc;
-    int lightAmbientLoc;
-    int lightDiffuseLoc;
-    int lightSpecularLoc;      
-    int lightFalloffConstantLoc;
-    int lightFalloffLinearLoc;
-    int lightFalloffQuadraticLoc;      
-    int lightSpotAngleCosLoc;
-    int lightSpotConcentrationLoc;       
-    
-    int inVertexLoc;
-    int inColorLoc;
-    int inNormalLoc;
+  protected class FillShaderFull extends FillShaderLit {
     int inTexcoordLoc;
-
-    int inAmbientLoc;
-    int inSpecularLoc;
-    int inEmissiveLoc;
-    int inShineLoc;       
     
     public FillShaderFull(PApplet parent, String fragFilename, String vertFilename) {
       super(parent, fragFilename, vertFilename);
     }
     
+    public void loadAttributes() {
+      super.loadAttributes();
+      
+      inTexcoordLoc = getAttribLocation("TexcoordLoc");
+    }    
+    
+    public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { 
+      setAttribute(inTexcoordLoc, vboId, size, type, stride, offset);
+    }     
+    
+    public void start() {
+      super.start();
+      
+      pgl.glEnableVertexAttribArray(inTexcoordLoc);
+    }
+    
+    public void stop() {      
+      pgl.glDisableVertexAttribArray(inTexcoordLoc);
+      
+      super.stop();
+    }    
+  } 
+  
+  protected class LineShader extends PShader {
+    protected int projectionMatrixLoc;
+    protected int modelviewMatrixLoc;
+
+    protected int viewportLoc;
+    protected int perspectiveLoc;
+
+    protected int inVertexLoc;
+    protected int inColorLoc;
+    protected int inDirWidthLoc;
+    
+    public LineShader(PApplet parent, String fragFilename, String vertFilename) {
+      super(parent, fragFilename, vertFilename);
+    }
+
+    public void loadAttributes() {
+      inVertexLoc = getAttribLocation("inVertex");
+      inColorLoc = getAttribLocation("inColor");
+      inDirWidthLoc = getAttribLocation("inDirWidth");      
+    } 
+    
+    public void loadUniforms() { 
+      projectionMatrixLoc = getUniformLocation("projectionMatrix");      
+      modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
+      
+      viewportLoc = getUniformLocation("viewport");
+      perspectiveLoc = getUniformLocation("perspective");
+    }
+    
+    public void setAttribute(int loc, int vboId, int size, int type, int stride, int offset) {
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
+      pgl.glVertexAttribPointer(loc, size, type, false, stride, offset);       
+    }
+    
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { 
       setAttribute(inVertexLoc, vboId, size, type, stride, offset);
     } 
     
     public void setColorAttribute(int vboId, int size, int type, int stride, int offset) { 
       setAttribute(inColorLoc, vboId, size, type, stride, offset); 
-    } 
+    }  
 
-    public void setNormalAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inNormalLoc, vboId, size, type, stride, offset);
+    public void setDirWidthAttribute(int vboId, int size, int type, int stride, int offset) { 
+      setAttribute(inDirWidthLoc, vboId, size, type, stride, offset); 
     }
     
-    public void setAmbientAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inAmbientLoc, vboId, size, type, stride, offset);
-    }
-    
-    public void setSpecularAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inSpecularLoc, vboId, size, type, stride, offset);
-    }
-    
-    public void setEmissiveAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inEmissiveLoc, vboId, size, type, stride, offset);
-    }
-    
-    public void setShininessAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inShineLoc, vboId, size, type, stride, offset);
-    }    
-    
-    public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inTexcoordLoc, vboId, size, type, stride, offset);
-    }    
-  } 
-  
-  
-  
-  
-  protected class LineShader extends PShader {
+    public void start() {
+      super.start();
+      
+      pgl.glEnableVertexAttribArray(inVertexLoc);
+      pgl.glEnableVertexAttribArray(inColorLoc);
+      pgl.glEnableVertexAttribArray(inDirWidthLoc);      
+      
+      projection.get(glProjection);
+      set4x4MatUniform(projectionMatrixLoc, glProjection);
 
-    public LineShader(PApplet parent, String fragFilename, String vertFilename) {
-      super(parent, fragFilename, vertFilename);
+      modelview.get(glModelview);
+      set4x4MatUniform(modelviewMatrixLoc, glModelview);      
+      
+      set4FloatUniform(viewportLoc, viewport[0], viewport[1], viewport[2], viewport[3]);
+      
+      if (hints[DISABLE_PERSPECTIVE_CORRECTED_LINES]) {
+        setIntUniform(perspectiveLoc, 1);
+      } else {
+        setIntUniform(perspectiveLoc, 0);
+      }
     }
-    
+
+    public void stop() {      
+      pgl.glDisableVertexAttribArray(inVertexLoc);
+      pgl.glDisableVertexAttribArray(inColorLoc);
+      pgl.glDisableVertexAttribArray(inDirWidthLoc);
+      
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
+      
+      super.stop();
+    }
   }
   
   protected class PointShader extends PShader {
-
+    protected int projectionMatrixLoc;
+    protected int modelviewMatrixLoc;
+     
+    protected int inVertexLoc;
+    protected int inColorLoc;
+    protected int inSizeLoc;
+    
     public PointShader(PApplet parent, String fragFilename, String vertFilename) {
       super(parent, fragFilename, vertFilename);
     }
-    
-  }
 
-  
-/*
-  protected int fillModelviewLoc;
-  protected int fillProjectionLoc;
-  protected int fillProjmodelviewLoc;
-  protected int fillNormalLoc;
-  protected int fillTexturedLoc;
-  
-  protected int fillLightCountLoc;  
-  protected int fillLightPositionLoc;
-  protected int fillLightNormalLoc;
-  protected int fillLightAmbientLoc;
-  protected int fillLightDiffuseLoc;
-  protected int fillLightSpecularLoc;      
-  protected int fillLightFalloffConstantLoc;
-  protected int fillLightFalloffLinearLoc;
-  protected int fillLightFalloffQuadraticLoc;      
-  protected int fillLightSpotAngleCosLoc;
-  protected int fillLightSpotConcentrationLoc;   
-  
-  protected int fillVertexAttribLoc;
-  protected int fillColorAttribLoc;
-  protected int fillNormalAttribLoc;
-  protected int fillTexCoordAttribLoc;
-  protected int fillAmbientAttribLoc;
-  protected int fillSpecularAttribLoc;
-  protected int fillEmissiveAttribLoc;
-  protected int fillShininessAttribLoc;
-  
-  
-  protected int lineModelviewLoc;
-  protected int lineProjectionLoc;
-  protected int lineViewportLoc;
-  protected int linePerspectiveLoc;
-  
-  protected int lineVertexAttribLoc;
-  protected int lineColorAttribLoc;
-  protected int lineNormalAttribLoc;
-  protected int lineDirWidthAttribLoc;
-  
-  protected int pointModelviewLoc;
-  protected int pointProjectionLoc;
-  
-  protected int pointVertexAttribLoc;
-  protected int pointColorAttribLoc;
-  protected int pointNormalAttribLoc;
-  protected int pointSizeAttribLoc;
+    public void loadAttributes() {
+      inVertexLoc = getAttribLocation("inVertex");
+      inColorLoc = getAttribLocation("inColor");
+      inSizeLoc = getAttribLocation("inSize");      
+    } 
     
-  protected void startFillShader() {
-    if (fillShader == null) {
-      fillShader = new PShader(parent);      
-      fillShader.loadVertexShader(PGraphicsAndroid3D.class.getResource("FillShaderVert.glsl"));
-      fillShader.loadFragmentShader(PGraphicsAndroid3D.class.getResource("FillShaderFrag.glsl"));
-      fillShader.setup();
-      
-      fillModelviewLoc = fillShader.getUniformLocation("modelviewMatrix");
-      fillProjectionLoc = fillShader.getUniformLocation("projectionMatrix");
-      fillProjmodelviewLoc = fillShader.getUniformLocation("projmodelviewMatrix");
-      fillNormalLoc = fillShader.getUniformLocation("normalMatrix");
-      fillTexturedLoc = fillShader.getUniformLocation("textured");
-      
-      fillLightCountLoc = fillShader.getUniformLocation("lightCount");      
-      fillLightPositionLoc = fillShader.getUniformLocation("lightPosition");
-      fillLightNormalLoc = fillShader.getUniformLocation("lightNormal");
-      fillLightAmbientLoc = fillShader.getUniformLocation("lightAmbient");
-      fillLightDiffuseLoc = fillShader.getUniformLocation("lightDiffuse");
-      fillLightSpecularLoc = fillShader.getUniformLocation("lightSpecular");
-      fillLightFalloffConstantLoc = fillShader.getUniformLocation("lightFalloffConstant");
-      fillLightFalloffLinearLoc = fillShader.getUniformLocation("lightFalloffLinear");
-      fillLightFalloffQuadraticLoc = fillShader.getUniformLocation("lightFalloffQuadratic");
-      fillLightSpotAngleCosLoc = fillShader.getUniformLocation("lightSpotAngleCos");
-      fillLightSpotConcentrationLoc = fillShader.getUniformLocation("lightSpotConcentration");
-            
-      fillVertexAttribLoc = fillShader.getAttribLocation("inVertex");
-      fillColorAttribLoc = fillShader.getAttribLocation("inColor");
-      fillNormalAttribLoc = fillShader.getAttribLocation("inNormal");
-      fillTexCoordAttribLoc = fillShader.getAttribLocation("inTexcoord");
-      
-      fillAmbientAttribLoc = fillShader.getAttribLocation("inAmbientColor");
-      fillSpecularAttribLoc = fillShader.getAttribLocation("inSpecularColor");
-      fillEmissiveAttribLoc = fillShader.getAttribLocation("inEmissiveColor");
-      fillShininessAttribLoc = fillShader.getAttribLocation("inShininess");
+    public void loadUniforms() { 
+      projectionMatrixLoc = getUniformLocation("projectionMatrix");      
+      modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
     }
     
-    fillShader.start();
-    
-    
-    modelview.get(glModelview);    
-    fillShader.set4x4MatUniform(fillModelviewLoc, glModelview);
-
-    projection.get(glProjection);
-    fillShader.set4x4MatUniform(fillProjectionLoc, glProjection);
-    
-    projmodelview.set(projection);
-    projmodelview.apply(modelview);
-    projmodelview.get(glProjmodelview);
-    fillShader.set4x4MatUniform(fillProjmodelviewLoc, glProjmodelview);    
-    
-    glNormal[0] = modelviewInv.m00; glNormal[1] = modelviewInv.m10; glNormal[2] = modelviewInv.m20; 
-    glNormal[3] = modelviewInv.m01; glNormal[4] = modelviewInv.m11; glNormal[5] = modelviewInv.m21; 
-    glNormal[6] = modelviewInv.m02; glNormal[7] = modelviewInv.m12; glNormal[8] = modelviewInv.m22;    
-    fillShader.set3x3MatUniform(fillNormalLoc, glNormal);    
-        
-    fillShader.setIntUniform(fillLightCountLoc, lightCount);
-    
-    fillShader.set4FloatVecUniform(fillLightPositionLoc, lightPosition);
-    fillShader.set3FloatVecUniform(fillLightNormalLoc, lightNormal);
-    fillShader.set4FloatVecUniform(fillLightAmbientLoc, lightAmbient);
-    fillShader.set4FloatVecUniform(fillLightDiffuseLoc, lightDiffuse);
-    fillShader.set4FloatVecUniform(fillLightSpecularLoc, lightSpecular);    
-    
-    fillShader.set1FloatVecUniform(fillLightFalloffConstantLoc, lightFalloffConstant);
-    fillShader.set1FloatVecUniform(fillLightFalloffLinearLoc, lightFalloffLinear);
-    fillShader.set1FloatVecUniform(fillLightFalloffQuadraticLoc, lightFalloffQuadratic);
-    fillShader.set1FloatVecUniform(fillLightSpotAngleCosLoc, lightSpotAngleCos);
-    fillShader.set1FloatVecUniform(fillLightSpotConcentrationLoc, lightSpotConcentration);    
-  }
-
-  protected void stopFillShader() {
-    fillShader.stop();
-  }  
-  
-  protected void enableFillTexturing() {
-    fillShader.setIntUniform(fillTexturedLoc, 1);      
-  }
-
-  protected void disableFillTexturing() {
-    fillShader.setIntUniform(fillTexturedLoc, 0);
-  }
-  
-  protected void enableFillVertex() {
-    pgl.glEnableVertexAttribArray(fillVertexAttribLoc);    
-  }
-  
-  protected void enableFillColor() {
-    pgl.glEnableVertexAttribArray(fillColorAttribLoc);
-  }
-  
-  protected void enableFillNormal() {
-    pgl.glEnableVertexAttribArray(fillNormalAttribLoc);
-  }
-  
-  protected void enableFillMaterials() {
-    pgl.glEnableVertexAttribArray(fillAmbientAttribLoc);
-    pgl.glEnableVertexAttribArray(fillSpecularAttribLoc);
-    pgl.glEnableVertexAttribArray(fillEmissiveAttribLoc);
-    pgl.glEnableVertexAttribArray(fillShininessAttribLoc);
-  }
-  
-  protected void enableFillTexCoord() {
-    pgl.glEnableVertexAttribArray(fillTexCoordAttribLoc);
-  }
-
-  protected void disableFillVertex() {
-    pgl.glDisableVertexAttribArray(fillVertexAttribLoc);
-  }
-  
-  protected void disableFillColor() {
-    pgl.glDisableVertexAttribArray(fillColorAttribLoc);
-  }
-  
-  protected void disableFillNormal() {
-    pgl.glDisableVertexAttribArray(fillNormalAttribLoc);
-  }
-  
-  protected void disableFillTexCoord() {
-    pgl.glDisableVertexAttribArray(fillTexCoordAttribLoc);
-  }  
-  
-  protected void disableFillMaterials() {
-    pgl.glDisableVertexAttribArray(fillAmbientAttribLoc);
-    pgl.glDisableVertexAttribArray(fillSpecularAttribLoc);
-    pgl.glDisableVertexAttribArray(fillEmissiveAttribLoc);
-    pgl.glDisableVertexAttribArray(fillShininessAttribLoc);
-  }  
-  
-  protected void setFillVertexFormat(int size, int offset) { 
-    pgl.glVertexAttribPointer(fillVertexAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }
-  
-  protected void setFillColorFormat(int size, int offset) { 
-    pgl.glVertexAttribPointer(fillColorAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }
-
-  protected void setFillNormalFormat(int size, int offset) { 
-    pgl.glVertexAttribPointer(fillNormalAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }
-
-  protected void setFillTexCoordFormat(int size, int offset) {
-    pgl.glVertexAttribPointer(fillTexCoordAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }    
-  
-  protected void startLineShader() {    
-    if (lineShader == null) {
-      lineShader = new PShader(parent);      
-      lineShader.loadVertexShader(PGraphicsAndroid3D.class.getResource("LineShaderVert.glsl"));
-      lineShader.loadFragmentShader(PGraphicsAndroid3D.class.getResource("LineShaderFrag.glsl"));
-      lineShader.setup();
-      
-      lineModelviewLoc = lineShader.getUniformLocation("modelviewMatrix");
-      lineProjectionLoc = lineShader.getUniformLocation("projectionMatrix");
-      lineViewportLoc = lineShader.getUniformLocation("viewport");
-      linePerspectiveLoc = lineShader.getUniformLocation("perspective");
-      
-      lineVertexAttribLoc = lineShader.getAttribLocation("inVertex");
-      lineColorAttribLoc = lineShader.getAttribLocation("inColor");
-      lineNormalAttribLoc = lineShader.getAttribLocation("inNormal");
-      lineDirWidthAttribLoc = lineShader.getAttribLocation("inDirWidth");
+    public void setAttribute(int loc, int vboId, int size, int type, int stride, int offset) {
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
+      pgl.glVertexAttribPointer(loc, size, type, false, stride, offset);       
     }
     
-    lineShader.start();
+    public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { 
+      setAttribute(inVertexLoc, vboId, size, type, stride, offset);
+    } 
     
-    modelview.get(glModelview);
-    lineShader.set4x4MatUniform(lineModelviewLoc, glModelview);
+    public void setColorAttribute(int vboId, int size, int type, int stride, int offset) { 
+      setAttribute(inColorLoc, vboId, size, type, stride, offset); 
+    }  
 
-    projection.get(glProjection);
-    lineShader.set4x4MatUniform(lineProjectionLoc, glProjection);
+    public void setSizeAttribute(int vboId, int size, int type, int stride, int offset) { 
+      setAttribute(inSizeLoc, vboId, size, type, stride, offset); 
+    }
     
-    lineShader.set4FloatUniform(lineViewportLoc, viewport[0], viewport[1], viewport[2], viewport[3]);    
-    if (hints[ENABLE_PERSPECTIVE_CORRECTED_LINES]) {
-      lineShader.setIntUniform(linePerspectiveLoc, 1);
-    } else {
-      lineShader.setIntUniform(linePerspectiveLoc, 0);
+    public void start() {
+      super.start();
+      
+      pgl.glEnableVertexAttribArray(inVertexLoc);
+      pgl.glEnableVertexAttribArray(inColorLoc);
+      pgl.glEnableVertexAttribArray(inSizeLoc);      
+      
+      projection.get(glProjection);
+      set4x4MatUniform(projectionMatrixLoc, glProjection);
+
+      modelview.get(glModelview);
+      set4x4MatUniform(modelviewMatrixLoc, glModelview);      
+    }
+
+    public void stop() {      
+      pgl.glDisableVertexAttribArray(inVertexLoc);
+      pgl.glDisableVertexAttribArray(inColorLoc);
+      pgl.glDisableVertexAttribArray(inSizeLoc);
+      
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
+      
+      super.stop();
     }    
   }
-
-  protected void stopLineShader() {
-    lineShader.stop();
-  }  
-  
-  protected void enableLineVertex() {
-    pgl.glEnableVertexAttribArray(lineVertexAttribLoc);
-  }
-  
-  protected void enableLineColor() {
-    pgl.glEnableVertexAttribArray(lineColorAttribLoc);
-  }
-  
-  protected void enableLineNormal() {
-    pgl.glEnableVertexAttribArray(lineNormalAttribLoc);
-  }
-  
-  protected void enableLineDirWidth() {
-    pgl.glEnableVertexAttribArray(lineDirWidthAttribLoc);
-  }
-
-  protected void disableLineVertex() {
-    pgl.glDisableVertexAttribArray(lineVertexAttribLoc);
-  }
-  
-  protected void disableLineColor() {
-    pgl.glDisableVertexAttribArray(lineColorAttribLoc);
-  }
-  
-  protected void disableLineNormal() {
-    pgl.glDisableVertexAttribArray(lineNormalAttribLoc);
-  }
-  
-  protected void disableLineDirWidth() {
-    pgl.glDisableVertexAttribArray(lineDirWidthAttribLoc);
-  }
-  
-  protected void setLineVertexFormat(int size, int offset) { 
-    pgl.glVertexAttribPointer(lineVertexAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }
-  
-  protected void setLineColorFormat(int size, int offset) {
-    pgl.glVertexAttribPointer(lineColorAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }
-
-  protected void setLineNormalFormat(int size, int offset) {
-    pgl.glVertexAttribPointer(lineNormalAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }
-
-  protected void setLineDirWidthFormat(int size, int offset) {
-    pgl.glVertexAttribPointer(lineDirWidthAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }  
-
-  
-  protected void startPointShader() {
-    if (pointShader == null) {
-      pointShader = new PShader(parent);      
-      pointShader.loadVertexShader(PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl"));
-      pointShader.loadFragmentShader(PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl"));
-      pointShader.setup();
-      
-      pointModelviewLoc = pointShader.getUniformLocation("modelviewMatrix");
-      pointProjectionLoc = pointShader.getUniformLocation("projectionMatrix");
-      
-      pointVertexAttribLoc = pointShader.getAttribLocation("inVertex");
-      pointColorAttribLoc = pointShader.getAttribLocation("inColor");
-      pointNormalAttribLoc = pointShader.getAttribLocation("inNormal");
-      pointSizeAttribLoc = pointShader.getAttribLocation("inSize");
-    }
-    
-    pointShader.start();       
-    
-    modelview.get(glModelview);
-    pointShader.set4x4MatUniform(pointModelviewLoc, glModelview);
-
-    projection.get(glProjection);
-    pointShader.set4x4MatUniform(pointProjectionLoc, glProjection);    
-  }
-
-  protected void stopPointShader() {
-    pointShader.stop();
-  }  
-  
-  protected void enablePointVertex() {
-    pgl.glEnableVertexAttribArray(pointVertexAttribLoc);
-  }
-  
-  protected void enablePointColor() {
-    pgl.glEnableVertexAttribArray(pointColorAttribLoc);
-  }
-  
-  protected void enablePointNormal() {
-    pgl.glEnableVertexAttribArray(pointNormalAttribLoc);
-  }
-  
-  protected void enablePointSize() {
-    pgl.glEnableVertexAttribArray(pointSizeAttribLoc);
-  }
-
-  protected void disablePointVertex() {
-    pgl.glDisableVertexAttribArray(pointVertexAttribLoc);
-  }
-  
-  protected void disablePointColor() {
-    pgl.glDisableVertexAttribArray(pointColorAttribLoc);
-  }
-  
-  protected void disablePointNormal() {
-    pgl.glDisableVertexAttribArray(pointNormalAttribLoc);
-  }
-  
-  protected void disablePointSize() {
-    pgl.glDisableVertexAttribArray(pointSizeAttribLoc);
-  }
-  
-  protected void setPointVertexFormat(int size, int offset) {
-    pgl.glVertexAttribPointer(pointVertexAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }
-  
-  protected void setPointColorFormat(int size, int offset) {
-    pgl.glVertexAttribPointer(pointColorAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }
-
-  protected void setPointNormalFormat(int size, int offset) {
-    pgl.glVertexAttribPointer(pointNormalAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }
-
-  protected void setPointSizeFormat(int size, int offset) {
-    pgl.glVertexAttribPointer(pointSizeAttribLoc, size, PGL.GL_FLOAT, false, 0, size * offset);
-  }  
-    */
     
   //////////////////////////////////////////////////////////////
   
-  // Input, Tessellated geometry, tessellator.        
+  // Input (raw) and Tessellated geometry, tessellator.        
     
   public InGeometry newInGeometry(int mode) {
     return new InGeometry(mode); 

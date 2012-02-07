@@ -29,7 +29,6 @@ uniform int perspective;
 
 attribute vec4 inVertex;
 attribute vec4 inColor;
-attribute vec3 inNormal;
 attribute vec4 inDirWidth;
 
 varying vec4 vertColor;
