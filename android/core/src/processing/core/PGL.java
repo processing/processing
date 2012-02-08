@@ -54,6 +54,9 @@ public class PGL {
   
   /** Size of a vertex index. */
   static final int SIZEOF_INDEX = SIZEOF_SHORT; 
+  
+  /** Type of a vertex index. */
+  static final int INDEX_TYPE = GLES20.GL_UNSIGNED_SHORT;
 
   /** Initial sizes for arrays of input and tessellated data. */
   public static final int DEFAULT_IN_VERTICES = 16;
