@@ -21,6 +21,7 @@
 
 package processing.core;
 
+import java.net.URL;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -336,6 +337,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   // ........................................................
 
   // The new stuff (shaders, tessellator, etc)    
+  
+  protected static URL defFillShaderVertSimpleURL = PGraphicsAndroid3D.class.getResource("FillShaderVertSimple.glsl");
+  protected static URL defFillShaderVertTexURL    = PGraphicsAndroid3D.class.getResource("FillShaderVertTex.glsl");
+  protected static URL defFillShaderVertLitURL    = PGraphicsAndroid3D.class.getResource("FillShaderVertLit.glsl");
+  protected static URL defFillShaderVertFullURL   = PGraphicsAndroid3D.class.getResource("FillShaderVertFull.glsl");  
+  protected static URL defFillShaderFragNoTexURL  = PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl");
+  protected static URL defFillShaderFragTexURL    = PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl");  
+  protected static URL defLineShaderVertURL       = PGraphicsAndroid3D.class.getResource("LineShaderVert.glsl");
+  protected static URL defLineShaderFragURL       = PGraphicsAndroid3D.class.getResource("LineShaderFrag.glsl");
+  protected static URL defPointShaderVertURL      = PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl");
+  protected static URL defPointShaderFragURL      = PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl");
   
   protected static FillShaderSimple defFillShaderSimple;
   protected static FillShaderTex defFillShaderTex;
@@ -1105,7 +1117,7 @@ public class PGraphicsAndroid3D extends PGraphics {
                 
     glFillColorBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, vboMode);
     
     glFillNormalBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
@@ -1207,6 +1219,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void createLineBuffers() {
     int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
     int sizex = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INDEX;
+    int sizei = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INT;    
     
     glLineVertexBufferID = createVertexBufferObject();
     
@@ -1215,7 +1228,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     glLineColorBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, vboMode);
     
     glLineDirWidthBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
@@ -1262,6 +1275,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void createPointBuffers() {
     int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
     int sizex = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INDEX;
+    int sizei = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INT;
     
     glPointVertexBufferID = createVertexBufferObject();    
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
@@ -1269,7 +1283,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     glPointColorBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, vboMode);    
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, vboMode);    
     
     glPointSizeBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
@@ -1313,8 +1327,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     glPointIndexBufferID = 0;
   }
   
-  
-  
+    
   /**
    * OpenGL cannot draw until a proper native peer is available, so this
    * returns the value of PApplet.isDisplayable() (inherited from Component).
@@ -1596,6 +1609,28 @@ public class PGraphicsAndroid3D extends PGraphics {
   // Pairs-up with beginGLOp().
   protected void endGLOp() {
     pgl.releaseContext();
+  }
+  
+  protected void updateProjmodelview() { 
+    glProjmodelview[0] = projmodelview.m00;
+    glProjmodelview[1] = projmodelview.m10;
+    glProjmodelview[2] = projmodelview.m20;
+    glProjmodelview[3] = projmodelview.m30;
+
+    glProjmodelview[4] = projmodelview.m01;
+    glProjmodelview[5] = projmodelview.m11;
+    glProjmodelview[6] = projmodelview.m21;
+    glProjmodelview[7] = projmodelview.m31;
+
+    glProjmodelview[8] = projmodelview.m02;
+    glProjmodelview[9] = projmodelview.m12;
+    glProjmodelview[10] = projmodelview.m22;
+    glProjmodelview[11] = projmodelview.m32;
+
+    glProjmodelview[12] = projmodelview.m03;
+    glProjmodelview[13] = projmodelview.m13;
+    glProjmodelview[14] = projmodelview.m23;
+    glProjmodelview[15] = projmodelview.m33;
   }
   
   
@@ -5481,38 +5516,32 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void resetShader(int kind) {
     if (kind == FILL_SHADER_SIMPLE) {
       if (defFillShaderSimple == null) {
-        defFillShaderSimple = new FillShaderSimple(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertSimple.glsl").toString(),
-                                                           PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl").toString());       
+        defFillShaderSimple = new FillShaderSimple(parent, defFillShaderVertSimpleURL, defFillShaderFragNoTexURL);       
       }      
       fillShaderSimple = defFillShaderSimple;
     } else if (kind == FILL_SHADER_LIT) {
       if (defFillShaderLit == null) {
-        defFillShaderLit = new FillShaderLit(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertLit.glsl").toString(),
-                                                     PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl").toString());
+        defFillShaderLit = new FillShaderLit(parent, defFillShaderVertLitURL, defFillShaderFragNoTexURL);
       }      
       fillShaderLit = defFillShaderLit;
     } else if (kind == FILL_SHADER_TEX) {
       if (defFillShaderTex == null) {
-        defFillShaderTex = new FillShaderTex(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertTex.glsl").toString(),
-                                                     PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl").toString());
+        defFillShaderTex = new FillShaderTex(parent, defFillShaderVertTexURL, defFillShaderFragTexURL);
       }      
       fillShaderTex = defFillShaderTex;
     } else if (kind == FILL_SHADER_FULL) {
       if (defFillShaderFull == null) {
-        defFillShaderFull = new FillShaderFull(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertFull.glsl").toString(),
-                                                       PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl").toString());
+        defFillShaderFull = new FillShaderFull(parent, defFillShaderVertFullURL, defFillShaderFragTexURL);
       }      
       fillShaderFull = defFillShaderFull;
     } else if (kind == LINE_SHADER) {
       if (defLineShader == null) {
-        defLineShader = new LineShader(parent, PGraphicsAndroid3D.class.getResource("LineShaderVert.glsl").toString(),
-                                               PGraphicsAndroid3D.class.getResource("LineShaderFrag.glsl").toString());        
+        defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);        
       }      
       lineShader = defLineShader;
     } else if (kind == POINT_SHADER) {
       if (defPointShader == null) {
-        defPointShader = new PointShader(parent, PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl").toString(),
-                                                 PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl").toString());        
+        defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);        
       }      
       pointShader = defPointShader;
     } else {
@@ -5526,8 +5555,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (tex) {
         if (fillShaderFull == null) {
           if (defFillShaderFull == null) {
-            defFillShaderFull = new FillShaderFull(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertFull.glsl").toString(),
-                                                           PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl").toString());
+            defFillShaderFull = new FillShaderFull(parent, defFillShaderVertFullURL, defFillShaderFragTexURL);
           }
           fillShaderFull = defFillShaderFull;
         }
@@ -5535,8 +5563,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       } else {
         if (defFillShaderLit == null) {
           if (defFillShaderLit == null) {
-            defFillShaderLit = new FillShaderLit(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertLit.glsl").toString(),
-                                                         PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl").toString());
+            defFillShaderLit = new FillShaderLit(parent, defFillShaderVertLitURL, defFillShaderFragNoTexURL);
           }
           fillShaderLit = defFillShaderLit;
         }
@@ -5546,8 +5573,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (tex) {
         if (fillShaderTex == null) {
           if (defFillShaderTex == null) {
-            defFillShaderTex = new FillShaderTex(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertTex.glsl").toString(),
-                                                         PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl").toString());
+            defFillShaderTex = new FillShaderTex(parent, defFillShaderVertTexURL, defFillShaderFragTexURL);
           }
           fillShaderTex = defFillShaderTex;
         }
@@ -5555,8 +5581,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       } else {
         if (fillShaderSimple == null) {
           if (defFillShaderSimple == null) {
-            defFillShaderSimple = new FillShaderSimple(parent, PGraphicsAndroid3D.class.getResource("FillShaderVertSimple.glsl").toString(),
-                                                               PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl").toString());            
+            defFillShaderSimple = new FillShaderSimple(parent, defFillShaderVertSimpleURL, defFillShaderFragNoTexURL);            
           }
           fillShaderSimple = defFillShaderSimple;
         }        
@@ -5571,8 +5596,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected LineShader getLineShader() {
     if (lineShader == null) {
       if (defLineShader == null) {
-        defLineShader = new LineShader(parent, PGraphicsAndroid3D.class.getResource("LineShaderVert.glsl").toString(),
-                                               PGraphicsAndroid3D.class.getResource("LineShaderFrag.glsl").toString());
+        defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
       }
       lineShader = defLineShader;  
     }
@@ -5584,8 +5608,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected PointShader getPointShader() {
     if (pointShader == null) {
       if (defPointShader == null) {
-        defPointShader = new PointShader(parent, PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl").toString(),
-                                                 PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl").toString());
+        defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
       }
       pointShader = defPointShader;  
     }
@@ -5595,16 +5618,20 @@ public class PGraphicsAndroid3D extends PGraphics {
   }  
   
   protected class FillShader extends PShader {
-    public FillShader(PApplet parent, String fragFilename, String vertFilename) {
-      super(parent, fragFilename, vertFilename);
+    public FillShader(PApplet parent, String vertFilename, String fragFilename) {
+      super(parent, vertFilename, fragFilename);
     }
-
+    
+    public FillShader(PApplet parent, URL vertURL, URL fragURL) {
+      super(parent, vertURL, fragURL);
+    }
+    
     public void loadAttributes() { }    
     public void loadUniforms() { }
     
-    public void setAttribute(int loc, int vboId, int size, int type, int stride, int offset) {     
+    public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {     
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
-      pgl.glVertexAttribPointer(loc, size, type, false, stride, offset);       
+      pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);       
     }
     
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { }    
@@ -5622,10 +5649,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     protected int inVertexLoc;
     protected int inColorLoc;
-    
-    public FillShaderSimple(PApplet parent, String fragFilename, String vertFilename) {
-      super(parent, fragFilename, vertFilename);
+
+    public FillShaderSimple(PApplet parent, String vertFilename, String fragFilename) {
+      super(parent, vertFilename, fragFilename);
     }
+    
+    public FillShaderSimple(PApplet parent, URL vertURL, URL fragURL) {
+      super(parent, vertURL, fragURL);
+    }    
     
     public void loadAttributes() {
       inVertexLoc = getAttribLocation("inVertex");
@@ -5637,11 +5668,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inVertexLoc, vboId, size, type, stride, offset);
+      setAttribute(inVertexLoc, vboId, size, type, false, stride, offset);
     } 
     
     public void setColorAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inColorLoc, vboId, size, type, stride, offset); 
+      setAttribute(inColorLoc, vboId, size, type, true, stride, offset); 
     }  
     
     public void start() {
@@ -5649,8 +5680,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
       pgl.glEnableVertexAttribArray(inVertexLoc);
       pgl.glEnableVertexAttribArray(inColorLoc);
-            
-      projmodelview.get(glProjmodelview);
+      
+      updateProjmodelview();
       set4x4MatUniform(projmodelviewMatrixLoc, glProjmodelview);      
     }
 
@@ -5690,9 +5721,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     protected int inEmissiveLoc;
     protected int inShineLoc;    
     
-    public FillShaderLit(PApplet parent, String fragFilename, String vertFilename) {
-      super(parent, fragFilename, vertFilename);
+    public FillShaderLit(PApplet parent, String vertFilename, String fragFilename) {
+      super(parent, vertFilename, fragFilename);
     }
+    
+    public FillShaderLit(PApplet parent, URL vertURL, URL fragURL) {
+      super(parent, vertURL, fragURL);
+    }    
     
     public void loadAttributes() {
       inVertexLoc = getAttribLocation("inVertex");
@@ -5724,31 +5759,31 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
     
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inVertexLoc, vboId, size, type, stride, offset);
+      setAttribute(inVertexLoc, vboId, size, type, false, stride, offset);
     } 
     
     public void setColorAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inColorLoc, vboId, size, type, stride, offset); 
+      setAttribute(inColorLoc, vboId, size, type, true, stride, offset); 
     } 
 
     public void setNormalAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inNormalLoc, vboId, size, type, stride, offset);
+      setAttribute(inNormalLoc, vboId, size, type, false, stride, offset);
     }
     
     public void setAmbientAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inAmbientLoc, vboId, size, type, stride, offset);
+      setAttribute(inAmbientLoc, vboId, size, type, true, stride, offset);
     }
     
     public void setSpecularAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inSpecularLoc, vboId, size, type, stride, offset);
+      setAttribute(inSpecularLoc, vboId, size, type, true, stride, offset);
     }
     
     public void setEmissiveAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inEmissiveLoc, vboId, size, type, stride, offset);
+      setAttribute(inEmissiveLoc, vboId, size, type, true, stride, offset);
     }
     
     public void setShininessAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inShineLoc, vboId, size, type, stride, offset);
+      setAttribute(inShineLoc, vboId, size, type, false, stride, offset);
     }       
     
     public void start() {
@@ -5806,9 +5841,13 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected class FillShaderTex extends FillShaderSimple {
     protected int inTexcoordLoc;
     
-    public FillShaderTex(PApplet parent, String fragFilename, String vertFilename) {
-      super(parent, fragFilename, vertFilename);
+    public FillShaderTex(PApplet parent, String vertFilename, String fragFilename) {
+      super(parent, vertFilename, fragFilename);
     }
+    
+    public FillShaderTex(PApplet parent, URL vertURL, URL fragURL) {
+      super(parent, vertURL, fragURL);
+    }        
     
     public void loadAttributes() {
       super.loadAttributes();
@@ -5817,7 +5856,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
     
     public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inTexcoordLoc, vboId, size, type, stride, offset);
+      setAttribute(inTexcoordLoc, vboId, size, type, false, stride, offset);
     }     
     
     public void start() {
@@ -5834,11 +5873,15 @@ public class PGraphicsAndroid3D extends PGraphics {
   }  
   
   protected class FillShaderFull extends FillShaderLit {
-    int inTexcoordLoc;
+    protected int inTexcoordLoc;
     
-    public FillShaderFull(PApplet parent, String fragFilename, String vertFilename) {
-      super(parent, fragFilename, vertFilename);
+    public FillShaderFull(PApplet parent, String vertFilename, String fragFilename) {
+      super(parent, vertFilename, fragFilename);
     }
+    
+    public FillShaderFull(PApplet parent, URL vertURL, URL fragURL) {
+      super(parent, vertURL, fragURL);
+    }     
     
     public void loadAttributes() {
       super.loadAttributes();
@@ -5847,7 +5890,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
     
     public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inTexcoordLoc, vboId, size, type, stride, offset);
+      setAttribute(inTexcoordLoc, vboId, size, type, false, stride, offset);
     }     
     
     public void start() {
@@ -5874,10 +5917,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     protected int inColorLoc;
     protected int inDirWidthLoc;
     
-    public LineShader(PApplet parent, String fragFilename, String vertFilename) {
-      super(parent, fragFilename, vertFilename);
+    public LineShader(PApplet parent, String vertFilename, String fragFilename) {
+      super(parent, vertFilename, fragFilename);
     }
-
+    
+    public LineShader(PApplet parent, URL vertURL, URL fragURL) {
+      super(parent, vertURL, fragURL);
+    }       
+    
     public void loadAttributes() {
       inVertexLoc = getAttribLocation("inVertex");
       inColorLoc = getAttribLocation("inColor");
@@ -5892,21 +5939,21 @@ public class PGraphicsAndroid3D extends PGraphics {
       perspectiveLoc = getUniformLocation("perspective");
     }
     
-    public void setAttribute(int loc, int vboId, int size, int type, int stride, int offset) {
+    public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
-      pgl.glVertexAttribPointer(loc, size, type, false, stride, offset);       
+      pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);       
     }
     
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inVertexLoc, vboId, size, type, stride, offset);
+      setAttribute(inVertexLoc, vboId, size, type, false, stride, offset);
     } 
     
     public void setColorAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inColorLoc, vboId, size, type, stride, offset); 
+      setAttribute(inColorLoc, vboId, size, type, true, stride, offset); 
     }  
 
     public void setDirWidthAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inDirWidthLoc, vboId, size, type, stride, offset); 
+      setAttribute(inDirWidthLoc, vboId, size, type, false, stride, offset); 
     }
     
     public void start() {
@@ -5949,11 +5996,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     protected int inVertexLoc;
     protected int inColorLoc;
     protected int inSizeLoc;
-    
-    public PointShader(PApplet parent, String fragFilename, String vertFilename) {
-      super(parent, fragFilename, vertFilename);
-    }
 
+    public PointShader(PApplet parent, String vertFilename, String fragFilename) {
+      super(parent, vertFilename, fragFilename);
+    }
+    
+    public PointShader(PApplet parent, URL vertURL, URL fragURL) {
+      super(parent, vertURL, fragURL);
+    }        
+    
     public void loadAttributes() {
       inVertexLoc = getAttribLocation("inVertex");
       inColorLoc = getAttribLocation("inColor");
@@ -5965,21 +6016,21 @@ public class PGraphicsAndroid3D extends PGraphics {
       modelviewMatrixLoc = getUniformLocation("modelviewMatrix");
     }
     
-    public void setAttribute(int loc, int vboId, int size, int type, int stride, int offset) {
+    public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
-      pgl.glVertexAttribPointer(loc, size, type, false, stride, offset);       
+      pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);       
     }
     
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inVertexLoc, vboId, size, type, stride, offset);
+      setAttribute(inVertexLoc, vboId, size, type, false, stride, offset);
     } 
     
     public void setColorAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inColorLoc, vboId, size, type, stride, offset); 
+      setAttribute(inColorLoc, vboId, size, type, true, stride, offset); 
     }  
 
     public void setSizeAttribute(int vboId, int size, int type, int stride, int offset) { 
-      setAttribute(inSizeLoc, vboId, size, type, stride, offset); 
+      setAttribute(inSizeLoc, vboId, size, type, false, stride, offset); 
     }
     
     public void start() {
@@ -6324,7 +6375,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       vertices[index  ] = z;
 
       colors[vertexCount] = javaToNativeARGB(fcolor);
-      
+  //    colors[vertexCount] = 0xFF0000FF;
+  //                            BBGG  
       index = 3 * vertexCount;
       normals[index++] = nx;
       normals[index++] = ny;
