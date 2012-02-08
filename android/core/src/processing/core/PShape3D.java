@@ -3011,7 +3011,7 @@ public class PShape3D extends PShape {
     
     glFillColorBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);    
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);    
     
     glFillNormalBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
@@ -3347,6 +3347,7 @@ public class PShape3D extends PShape {
   
   protected void initLineBuffers(int nvert, int nind) {
     int sizef = nvert * PGL.SIZEOF_FLOAT;
+    int sizei = nvert * PGL.SIZEOF_INT;
     int sizex = nind * PGL.SIZEOF_INDEX;
     
     glLineVertexBufferID = pg.createVertexBufferObject();    
@@ -3355,7 +3356,7 @@ public class PShape3D extends PShape {
     
     glLineColorBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);       
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);       
 
     glLineDirWidthBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
@@ -3440,6 +3441,7 @@ public class PShape3D extends PShape {
 
   protected void initPointBuffers(int nvert, int nind) {
     int sizef = nvert * PGL.SIZEOF_FLOAT;
+    int sizei = nvert * PGL.SIZEOF_INT;
     int sizex = nind * PGL.SIZEOF_INDEX;
     
     glPointVertexBufferID = pg.createVertexBufferObject();
@@ -3448,7 +3450,7 @@ public class PShape3D extends PShape {
 
     glPointColorBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);     
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);     
     
     glPointSizeBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);

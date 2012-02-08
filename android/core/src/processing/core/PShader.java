@@ -23,6 +23,9 @@
 
 package processing.core;
 
+import java.io.IOException;
+import java.net.URL;
+
 /**
  * This class encapsulates a GLSL shader program, including a vertex 
  * and a fragment shader. Originally based in the code by JohnG
@@ -32,6 +35,9 @@ public class PShader {
   protected PApplet parent;
   protected PGraphicsAndroid3D pg; 
   protected PGL pgl;
+
+  protected URL vertexURL;
+  protected URL fragmentURL;
   
   protected String vertexFilename;
   protected String fragmentFilename;
@@ -40,7 +46,21 @@ public class PShader {
   protected int vertexShader;
   protected int fragmentShader;  
 
-
+  public PShader() {
+    parent = null;
+    pg = null;
+    pgl = null;    
+    
+    this.vertexURL = null;
+    this.fragmentURL = null;
+    this.vertexFilename = null;
+    this.fragmentFilename = null;    
+    
+    programObject = 0;
+    vertexShader = 0;
+    fragmentShader = 0;      
+  }
+    
   /**
    * Creates a shader program using the specified vertex and fragment
    * shaders.
@@ -54,14 +74,30 @@ public class PShader {
     pg = (PGraphicsAndroid3D) parent.g;
     pgl = pg.pgl;    
     
+    this.vertexURL = null;
+    this.fragmentURL = null;
     this.vertexFilename = vertFilename;
-    this.fragmentFilename = fragFilename;
+    this.fragmentFilename = fragFilename;    
     
     programObject = 0;
     vertexShader = 0;
     fragmentShader = 0;      
   }
   
+  public PShader(PApplet parent, URL vertURL, URL fragURL) {
+    this.parent = parent;
+    pg = (PGraphicsAndroid3D) parent.g;
+    pgl = pg.pgl;    
+
+    this.vertexURL = vertURL;
+    this.fragmentURL = fragURL;    
+    this.vertexFilename = null;
+    this.fragmentFilename = null;
+    
+    programObject = 0;
+    vertexShader = 0;
+    fragmentShader = 0;      
+  }  
   
   protected void finalize() throws Throwable {
     try {
@@ -203,9 +239,17 @@ public class PShader {
     
   protected void init() {
     if (programObject == 0) {
-      programObject = pg.createGLSLProgramObject();    
-      loadVertexShader(vertexFilename);
-      loadFragmentShader(fragmentFilename);
+      programObject = pg.createGLSLProgramObject();
+      
+      if (vertexFilename != null && fragmentFilename != null) {
+        loadVertexShader(vertexFilename);
+        loadFragmentShader(fragmentFilename);
+      } else if (vertexURL != null && fragmentURL != null) {
+        loadVertexShader(vertexURL);
+        loadFragmentShader(fragmentURL);        
+      } else {
+        PGraphics.showException("Shader filenames and URLs are both null!");
+      }
       
       checkLogInfo("Vertex shader " + vertexFilename + " compilation: ", vertexShader);
       checkLogInfo("Fragment shader " + fragmentFilename + " compilation: ", fragmentShader);
@@ -227,7 +271,20 @@ public class PShader {
     attachVertexShader(shaderSource);
   }
 
-  
+  /**
+   * Loads and compiles the vertex shader contained in the URL.
+   * 
+   * @param file String
+   */
+  protected void loadVertexShader(URL url) {
+    try {
+      String shaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+      attachVertexShader(shaderSource);
+    } catch (IOException e) {
+      PGraphics.showException("Cannot load shader " + url.getFile());
+    }
+  }  
+    
   /**
    * Loads and compiles the fragment shader contained in file.
    * 
@@ -238,6 +295,19 @@ public class PShader {
     attachFragmentShader(shaderSource);
   }  
   
+  /**
+   * Loads and compiles the fragment shader contained in the URL.
+   * 
+   * @param url URL
+   */
+  protected void loadFragmentShader(URL url) {
+    try {
+      String shaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+      attachFragmentShader(shaderSource);
+    } catch (IOException e) {
+      PGraphics.showException("Cannot load shader " + url.getFile());
+    }
+  }  
   
   /**
    * @param shaderSource a string containing the shader's code
