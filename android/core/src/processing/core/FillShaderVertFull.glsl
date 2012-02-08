@@ -50,7 +50,7 @@ varying vec2 vertTexcoord;
 
 float attenuationFactor(vec3 lightPos, vec3 vertPos, float c0, float c1, float c2) {
   float d = distance(lightPos, vertPos);
-  return = 1.0 / (c0 + c1 * d + c2 * d * d);
+  return 1.0 / (c0 + c1 * d + c2 * d * d);
 }
 
 float spotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, float spotExp) {
