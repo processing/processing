@@ -2177,7 +2177,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.pointIndices, 0, size), vboMode);
-    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, 0);        
+    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);        
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     
     shader.stop();
@@ -2200,7 +2200,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.lineIndices, 0, size), vboMode);
-    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, 0);
+    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     
     shader.stop();
@@ -2241,7 +2241,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       int size = texCache.lastIndex[i] - texCache.firstIndex[i] + 1;
       int sizex = size * PGL.SIZEOF_INDEX; 
       pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.fillIndices, offset, size), vboMode);      
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, 0);
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);
       
       shader.stop();
     }  
@@ -2278,7 +2278,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.fillIndices, 0, size), vboMode);
-    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, 0);       
+    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);       
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     
     shader.stop();

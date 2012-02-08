@@ -3667,12 +3667,12 @@ public class PShape3D extends PShape {
       int offset = index.offset;
       int size =  index.size;
       
-      shader.setVertexAttribute(root.glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
+      shader.setVertexAttribute(root.glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);        
       shader.setColorAttribute(root.glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
-      shader.setSizeAttribute(root.glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 2 * first);      
+      shader.setSizeAttribute(root.glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 2 * first * PGL.SIZEOF_FLOAT);      
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);      
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);       
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, offset * PGL.SIZEOF_INDEX);       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);      
     }
     
@@ -3690,12 +3690,12 @@ public class PShape3D extends PShape {
       int offset = index.offset;
       int size =  index.size;
     
-      shader.setVertexAttribute(root.glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
+      shader.setVertexAttribute(root.glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);        
       shader.setColorAttribute(root.glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
-      shader.setDirWidthAttribute(root.glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 4 * first);
+      shader.setDirWidthAttribute(root.glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 4 * first * PGL.SIZEOF_FLOAT);
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glLineIndexBufferID);
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);      
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, offset * PGL.SIZEOF_INDEX);      
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);      
     }
     
@@ -3714,7 +3714,6 @@ public class PShape3D extends PShape {
     }    
     
     FillShader shader = pg.getFillShader(pg.lights, tex != null);
-
     shader.start();
     
     for (int i = 0; i < fillIndexData.size(); i++) {
@@ -3723,23 +3722,23 @@ public class PShape3D extends PShape {
       int offset = index.offset;
       int size =  index.size;
       
-      shader.setVertexAttribute(root.glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);        
+      shader.setVertexAttribute(root.glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);        
       shader.setColorAttribute(root.glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
       
       if (pg.lights) {
-        shader.setNormalAttribute(root.glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * first);
+        shader.setNormalAttribute(root.glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);
         shader.setAmbientAttribute(root.glFillAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);
         shader.setSpecularAttribute(root.glFillSpecularBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);
         shader.setEmissiveAttribute(root.glFillEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);      
-        shader.setShininessAttribute(root.glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, first);
+        shader.setShininessAttribute(root.glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, first * PGL.SIZEOF_FLOAT);
       }
       
       if (tex != null) {        
-        shader.setTexCoordAttribute(root.glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * first);
+        shader.setTexCoordAttribute(root.glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * first * PGL.SIZEOF_FLOAT);
       }      
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glFillIndexBufferID);
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.GL_UNSIGNED_SHORT, offset * PGL.SIZEOF_INDEX);
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, offset * PGL.SIZEOF_INDEX);
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     
