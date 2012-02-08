@@ -90,6 +90,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   static public boolean vboSupported;
   static public boolean fboSupported;
   static public boolean fboMultisampleSupported;
+  static public boolean blendEqSupported;
   
   /** Some hardware limits */  
   static public int maxTextureSize;
@@ -2073,7 +2074,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
-    tessellator.setStrokeColor(strokeR, strokeG, strokeB, strokeA);
     
     setFirstTexIndex(tessGeo.fillIndexCount);
     
@@ -5061,34 +5061,63 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glEnable(PGL.GL_BLEND);
       
       if (mode == REPLACE) {
-        pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        if (blendEqSupported) { 
+          pgl.glBlendEquation(PGL.GL_FUNC_ADD);          
+        }
         pgl.glBlendFunc(PGL.GL_ONE, PGL.GL_ZERO);
       } else if (mode == BLEND) {
-        pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        if (blendEqSupported) {
+          pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        }
         pgl.glBlendFunc(PGL.GL_SRC_ALPHA, PGL.GL_ONE_MINUS_SRC_ALPHA);
       } else if (mode == ADD) {
-        pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        if (blendEqSupported) {
+          pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        }
         pgl.glBlendFunc(PGL.GL_SRC_ALPHA, PGL.GL_ONE);
       } else if (mode == SUBTRACT) {
-        pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        if (blendEqSupported) {
+          pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        }
         pgl.glBlendFunc(PGL.GL_ONE_MINUS_DST_COLOR, PGL.GL_ZERO);
       } else if (mode == LIGHTEST) {
-        pgl.glBlendEquation(PGL.GL_FUNC_MAX);
+        if (blendEqSupported) { 
+          pgl.glBlendEquation(PGL.GL_FUNC_MAX);
+        } else {
+          PGraphics.showWarning("This blend mode is not supported");
+          return;
+        }
         pgl.glBlendFunc(PGL.GL_SRC_ALPHA, PGL.GL_DST_ALPHA);
       } else if (mode == DARKEST) {
-        pgl.glBlendEquation(PGL.GL_FUNC_MIN);
+        if (blendEqSupported) {
+          pgl.glBlendEquation(PGL.GL_FUNC_MIN);
+        } else {
+          PGraphics.showWarning("This blend mode is not supported");
+          return;
+        }        
         pgl.glBlendFunc(PGL.GL_SRC_ALPHA, PGL.GL_DST_ALPHA);
       } else if (mode == DIFFERENCE) {
-        pgl.glBlendEquation(PGL.GL_FUNC_REVERSE_SUBTRACT);
+        if (blendEqSupported) {
+          pgl.glBlendEquation(PGL.GL_FUNC_REVERSE_SUBTRACT);
+        } else {
+          PGraphics.showWarning("This blend mode is not supported");
+          return;
+        }        
         pgl.glBlendFunc(PGL.GL_ONE, PGL.GL_ONE);
       } else if (mode == EXCLUSION) {
-        pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        if (blendEqSupported) {
+          pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        }
         pgl.glBlendFunc(PGL.GL_ONE_MINUS_DST_COLOR, PGL.GL_ONE_MINUS_SRC_COLOR);
       } else if (mode == MULTIPLY) {
-        pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        if (blendEqSupported) {
+          pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        }
         pgl.glBlendFunc(PGL.GL_DST_COLOR, PGL.GL_SRC_COLOR);
       } else if (mode == SCREEN) {
-        pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        if (blendEqSupported) {
+          pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+        }
         pgl.glBlendFunc(PGL.GL_ONE_MINUS_DST_COLOR, PGL.GL_ONE);
       }  
       // HARD_LIGHT, SOFT_LIGHT, OVERLAY, DODGE, BURN modes cannot be implemented
@@ -5100,7 +5129,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void setDefaultBlend() {
     blendMode = BLEND;
     pgl.glEnable(PGL.GL_BLEND);
-    pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+    if (blendEqSupported) {
+      pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+    }
     pgl.glBlendFunc(PGL.GL_SRC_ALPHA, PGL.GL_ONE_MINUS_SRC_ALPHA);
   }
   
@@ -5451,12 +5482,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     OPENGL_RENDERER   = pgl.glGetString(PGL.GL_RENDERER);
     OPENGL_VERSION    = pgl.glGetString(PGL.GL_VERSION);    
     OPENGL_EXTENSIONS = pgl.glGetString(PGL.GL_EXTENSIONS);
-  
+    
     npotTexSupported        = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
     mipmapGeneration        = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
     vboSupported            = -1 < OPENGL_EXTENSIONS.indexOf("vertex_buffer_object");
     fboSupported            = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_object");
     fboMultisampleSupported = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample");
+       
+    try {      
+      pgl.glBlendEquation(PGL.GL_FUNC_ADD);
+      blendEqSupported = true;
+    } catch (UnsupportedOperationException e) {
+      blendEqSupported = false;
+    }
     
     int temp[] = new int[2];
     
@@ -6375,8 +6413,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       vertices[index  ] = z;
 
       colors[vertexCount] = javaToNativeARGB(fcolor);
-  //    colors[vertexCount] = 0xFF0000FF;
-  //                            BBGG  
+
       index = 3 * vertexCount;
       normals[index++] = nx;
       normals[index++] = ny;
@@ -8128,7 +8165,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     float strokeWeight;
     int strokeJoin;
     int strokeCap;
-    float strokeRed, strokeGreen, strokeBlue, strokeAlpha;
     int bezierDetil = 20;
     
     public Tessellator() {
@@ -8165,13 +8201,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       this.strokeCap = strokeCap;
     }
     
-    public void setStrokeColor(float r, float g, float b, float a) {
-      this.strokeRed = r;
-      this.strokeGreen = g; 
-      this.strokeBlue = b;
-      this.strokeAlpha = a;  
-    }
-        
     public void tessellatePoints() {
       if (strokeCap == ROUND) {
         tessellateRoundPoints();
