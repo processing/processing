@@ -193,26 +193,7 @@ public class PShape3D extends PShape {
 
   // Current mode for normals, one of AUTO, SHAPE, or VERTEX
   protected int normalMode;
-  
-  // ........................................................
-
-  // Fill, stroke and tint colors
-
-  protected boolean fill;
-  protected float fillR, fillG, fillB, fillA;
-  
-  protected boolean stroke;
-  protected float strokeR, strokeG, strokeB, strokeA;  
-  
-  protected boolean tint;
-  protected float tintR, tintG, tintB, tintA;
-  
-  // Material properties
-  public int ambientColor;  
-  public int specularColor;  
-  public int emissiveColor;
-  public float shininess;
-  
+    
   // ........................................................
   
   // Bezier and Catmull-Rom curves  
@@ -300,42 +281,19 @@ public class PShape3D extends PShape {
     // generated at rendering time, by which the color configuration of the renderer might
     // have changed.
     fill = pg.fill;
-//    fillR = ((pg.fillColor >> 16) & 0xFF) / 255.0f;    
-//    fillG = ((pg.fillColor >>  8) & 0xFF) / 255.0f; 
-//    fillB = ((pg.fillColor >>  0) & 0xFF) / 255.0f;
-//    fillA = ((pg.fillColor >> 24) & 0xFF) / 255.0f;
-    fillR = pg.fillR;
-    fillG = pg.fillG;
-    fillB = pg.fillB;
-    fillA = pg.fillA;    
+    fillColor = pg.fillColor;
     
     stroke = pg.stroke;      
-//    strokeR = ((pg.strokeColor >> 16) & 0xFF) / 255.0f;    
-//    strokeG = ((pg.strokeColor >>  8) & 0xFF) / 255.0f; 
-//    strokeB = ((pg.strokeColor >>  0) & 0xFF) / 255.0f;
-//    strokeA = ((pg.strokeColor >> 24) & 0xFF) / 255.0f;
-    strokeR = pg.strokeR;
-    strokeG = pg.strokeG;
-    strokeB = pg.strokeB;
-    strokeA = pg.strokeA;
-     
+    strokeColor = pg.strokeColor;     
     strokeWeight = pg.strokeWeight;    
     
     tint = pg.tint;  
-//    tintR = ((pg.tintColor >> 16) & 0xFF) / 255.0f;    
-//    tintG = ((pg.tintColor >>  8) & 0xFF) / 255.0f; 
-//    tintB = ((pg.tintColor >>  0) & 0xFF) / 255.0f;
-//    tintA = ((pg.tintColor >> 24) & 0xFF) / 255.0f;
-    tintR = pg.tintR;    
-    tintG = pg.tintG; 
-    tintB = pg.tintB;
-    tintA = pg.tintA;
+    tintColor = pg.tintColor;
 
     ambientColor = pg.ambientColor;  
     specularColor = pg.specularColor;  
     emissiveColor = pg.emissiveColor;
     shininess = pg.shininess;
-    
     
     normalX = normalY = 0; 
     normalZ = 1;
@@ -796,10 +754,6 @@ public class PShape3D extends PShape {
       }      
     } else {
       fill = false;
-      fillR = 0;
-      fillG = 0;
-      fillB = 0;
-      fillA = 0;
       fillColor = 0x0;
       updateFillColor();      
     }
@@ -886,10 +840,6 @@ public class PShape3D extends PShape {
 
   protected void fillFromCalc() {
     fill = true;
-    fillR = calcR;
-    fillG = calcG;
-    fillB = calcB;
-    fillA = calcA;
     fillColor = calcColor;
     updateFillColor();  
   }
@@ -922,10 +872,6 @@ public class PShape3D extends PShape {
       }      
     } else {
       stroke = false;
-      strokeR = 0;
-      strokeG = 0;
-      strokeB = 0;
-      strokeA = 0;
       strokeColor = 0x0;
       updateStrokeColor();      
     }  
@@ -1012,10 +958,6 @@ public class PShape3D extends PShape {
   
   protected void strokeFromCalc() {
     stroke = true;
-    strokeR = calcR;
-    strokeG = calcG;
-    strokeB = calcB;
-    strokeA = calcA;
     strokeColor = calcColor;
     updateStrokeColor();  
   }
@@ -1053,10 +995,6 @@ public class PShape3D extends PShape {
       }      
     } else {
       tint = false;
-      tintR = 0;
-      tintG = 0;
-      tintB = 0;
-      tintA = 0;
       tintColor = 0x0;
       updateTintColor();      
     }   
@@ -1143,10 +1081,6 @@ public class PShape3D extends PShape {
   
   protected void tintFromCalc() {
     tint = true;
-    tintR = calcR;
-    tintG = calcG;
-    tintB = calcB;
-    tintA = calcA;
     tintColor = calcColor;
     updateTintColor();  
   }  
@@ -2453,8 +2387,7 @@ public class PShape3D extends PShape {
         tessellator.setStroke(stroke);
         tessellator.setStrokeWeight(strokeWeight);
         tessellator.setStrokeCap(strokeCap);
-        tessellator.setStrokeJoin(strokeJoin);
-        tessellator.setStrokeColor(strokeR, strokeG, strokeB, strokeA);        
+        tessellator.setStrokeJoin(strokeJoin);       
         
         if (family == GEOMETRY) {
           if (kind == POINTS) {
@@ -2724,7 +2657,7 @@ public class PShape3D extends PShape {
       }
       
       if (root.fillColorsCache != null && root.fillColorsCache.hasData()) {
-        root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.floatData);
+        root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.intData);
         root.fillColorsCache.reset();
       }
       
@@ -2744,7 +2677,7 @@ public class PShape3D extends PShape {
       }
       
       if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
-        root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.floatData);
+        root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.intData);
         root.lineColorsCache.reset();
       }
       
@@ -2759,7 +2692,7 @@ public class PShape3D extends PShape {
       }
       
       if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
-        root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.floatData);
+        root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.intData);
         root.pointColorsCache.reset();
       }
       
@@ -3090,12 +3023,12 @@ public class PShape3D extends PShape {
         
         if (modifiedFillColors) {
           if (root.fillColorsCache == null) { 
-            root.fillColorsCache = new VertexCache(4, true);
+            root.fillColorsCache = new VertexCache(1, false);
           }            
           root.fillColorsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillColors);
           modifiedFillColors = false;            
         } else if (root.fillColorsCache != null && root.fillColorsCache.hasData()) {
-          root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.floatData);
+          root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.intData);
           root.fillColorsCache.reset();
         }
         
@@ -3180,12 +3113,12 @@ public class PShape3D extends PShape {
         
         if (modifiedLineColors) {
           if (root.lineColorsCache == null) { 
-            root.lineColorsCache = new VertexCache(4, true);
+            root.lineColorsCache = new VertexCache(1, false);
           }            
           root.lineColorsCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineColors);
           modifiedLineColors = false;            
         } else if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
-          root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.floatData);
+          root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.intData);
           root.lineColorsCache.reset();
         }
         
@@ -3215,12 +3148,12 @@ public class PShape3D extends PShape {
         
         if (modifiedPointColors) {
           if (root.pointColorsCache == null) { 
-            root.pointColorsCache = new VertexCache(4, true);
+            root.pointColorsCache = new VertexCache(1, false);
           }            
           root.pointColorsCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointColors);
           modifiedPointColors = false;            
         } else if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
-          root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.floatData);
+          root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.intData);
           root.pointColorsCache.reset();
         }
         
@@ -3289,9 +3222,9 @@ public class PShape3D extends PShape {
   }
   
   
-  protected void copyFillColors(int offset, int size, float[] colors) {    
+  protected void copyFillColors(int offset, int size, int[] colors) {    
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors, 0, 4 * size));     
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(colors, 0, size));     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }  
   
@@ -3340,7 +3273,7 @@ public class PShape3D extends PShape {
   
   protected void copyFillIndices(int offset, int size, short[] indices) {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, ShortBuffer.wrap(indices, 0, size));
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, ShortBuffer.wrap(indices, 0, size));
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
   
@@ -3418,9 +3351,9 @@ public class PShape3D extends PShape {
   }     
   
   
-  protected void copyLineColors(int offset, int size, float[] colors) {
+  protected void copyLineColors(int offset, int size, int[] colors) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors, 0, 4 * size));             
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(colors, 0, size));             
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
@@ -3434,7 +3367,7 @@ public class PShape3D extends PShape {
   
   protected void copyLineIndices(int offset, int size, short[] indices) {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, ShortBuffer.wrap(indices, 0, size));
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, ShortBuffer.wrap(indices, 0, size));
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }  
   
@@ -3512,9 +3445,9 @@ public class PShape3D extends PShape {
   }
     
     
-  protected void copyPointColors(int offset, int size, float[] colors) {
+  protected void copyPointColors(int offset, int size, int[] colors) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(colors, 0, 4 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(colors, 0, size));
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
     
@@ -3528,7 +3461,7 @@ public class PShape3D extends PShape {
   
   protected void copyPointIndices(int offset, int size, short[] indices) {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, ShortBuffer.wrap(indices, 0, size));
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, ShortBuffer.wrap(indices, 0, size));
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);    
   }    
 
@@ -3780,7 +3713,7 @@ public class PShape3D extends PShape {
       }
     }    
     
-    FillShader shader = pg.getFillShader(true, tex != null);
+    FillShader shader = pg.getFillShader(pg.lights, tex != null);
 
     shader.start();
     
@@ -3852,8 +3785,7 @@ public class PShape3D extends PShape {
       this.ncoords = ncoords;
       this.isFloat = isFloat;
       if (isFloat) {
-        this.floatData = new float[ncoords * PGL.DEFAULT_VERTEX_CACHE_SIZE];
-        
+        this.floatData = new float[ncoords * PGL.DEFAULT_VERTEX_CACHE_SIZE];        
       } else {
         this.intData = new int[ncoords * PGL.DEFAULT_VERTEX_CACHE_SIZE];
       }
