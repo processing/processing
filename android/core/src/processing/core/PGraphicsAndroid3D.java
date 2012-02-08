@@ -1612,6 +1612,50 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.releaseContext();
   }
   
+  protected void updateProjection() {
+    glProjection[0] = projection.m00;
+    glProjection[1] = projection.m10;
+    glProjection[2] = projection.m20;
+    glProjection[3] = projection.m30;
+
+    glProjection[4] = projection.m01;
+    glProjection[5] = projection.m11;
+    glProjection[6] = projection.m21;
+    glProjection[7] = projection.m31;
+
+    glProjection[8] = projection.m02;
+    glProjection[9] = projection.m12;
+    glProjection[10] = projection.m22;
+    glProjection[11] = projection.m32;
+
+    glProjection[12] = projection.m03;
+    glProjection[13] = projection.m13;
+    glProjection[14] = projection.m23;
+    glProjection[15] = projection.m33;
+  }
+
+  protected void updateModelview() {
+    glModelview[0] = modelview.m00;
+    glModelview[1] = modelview.m10;
+    glModelview[2] = modelview.m20;
+    glModelview[3] = modelview.m30;
+
+    glModelview[4] = modelview.m01;
+    glModelview[5] = modelview.m11;
+    glModelview[6] = modelview.m21;
+    glModelview[7] = modelview.m31;
+
+    glModelview[8] = modelview.m02;
+    glModelview[9] = modelview.m12;
+    glModelview[10] = modelview.m22;
+    glModelview[11] = modelview.m32;
+
+    glModelview[12] = modelview.m03;
+    glModelview[13] = modelview.m13;
+    glModelview[14] = modelview.m23;
+    glModelview[15] = modelview.m33;    
+  }  
+  
   protected void updateProjmodelview() { 
     glProjmodelview[0] = projmodelview.m00;
     glProjmodelview[1] = projmodelview.m10;
@@ -1634,6 +1678,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     glProjmodelview[15] = projmodelview.m33;
   }
   
+  protected void updateNormal() {
+    glNormal[0] = modelviewInv.m00; 
+    glNormal[1] = modelviewInv.m10; 
+    glNormal[2] = modelviewInv.m20;
+    
+    glNormal[3] = modelviewInv.m01; 
+    glNormal[4] = modelviewInv.m11; 
+    glNormal[5] = modelviewInv.m21;
+    
+    glNormal[6] = modelviewInv.m02; 
+    glNormal[7] = modelviewInv.m12; 
+    glNormal[8] = modelviewInv.m22;     
+  }
   
   //////////////////////////////////////////////////////////////  
   
@@ -5836,15 +5893,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glEnableVertexAttribArray(inEmissiveLoc);
       pgl.glEnableVertexAttribArray(inShineLoc);         
       
-      projmodelview.get(glProjmodelview);
+      updateProjmodelview();
       set4x4MatUniform(projmodelviewMatrixLoc, glProjmodelview);
       
-      modelview.get(glModelview);
+      updateModelview();
       set4x4MatUniform(modelviewMatrixLoc, glModelview);
       
-      glNormal[0] = modelviewInv.m00; glNormal[1] = modelviewInv.m10; glNormal[2] = modelviewInv.m20; 
-      glNormal[3] = modelviewInv.m01; glNormal[4] = modelviewInv.m11; glNormal[5] = modelviewInv.m21; 
-      glNormal[6] = modelviewInv.m02; glNormal[7] = modelviewInv.m12; glNormal[8] = modelviewInv.m22;    
+      updateNormal();
       set3x3MatUniform(inNormalLoc, glNormal);
       
       setIntUniform(lightCountLoc, lightCount);      
@@ -6001,15 +6056,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glEnableVertexAttribArray(inColorLoc);
       pgl.glEnableVertexAttribArray(inDirWidthLoc);      
       
-      projection.get(glProjection);
+      updateProjection();
       set4x4MatUniform(projectionMatrixLoc, glProjection);
 
-      modelview.get(glModelview);
+      updateModelview();
       set4x4MatUniform(modelviewMatrixLoc, glModelview);      
       
       set4FloatUniform(viewportLoc, viewport[0], viewport[1], viewport[2], viewport[3]);
       
-      if (hints[DISABLE_PERSPECTIVE_CORRECTED_LINES]) {
+      if (hints[ENABLE_PERSPECTIVE_CORRECTED_LINES]) {
         setIntUniform(perspectiveLoc, 1);
       } else {
         setIntUniform(perspectiveLoc, 0);
@@ -6078,10 +6133,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glEnableVertexAttribArray(inColorLoc);
       pgl.glEnableVertexAttribArray(inSizeLoc);      
       
-      projection.get(glProjection);
+      updateProjection();
       set4x4MatUniform(projectionMatrixLoc, glProjection);
 
-      modelview.get(glModelview);
+      updateModelview();
       set4x4MatUniform(modelviewMatrixLoc, glModelview);      
     }
 
