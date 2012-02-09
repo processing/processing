@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Stack;
 
-import android.opengl.GLES20;
 
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
@@ -111,6 +110,45 @@ public class PGraphicsAndroid3D extends PGraphics {
   static protected HashMap<Integer, Boolean> glslPrograms        = new HashMap<Integer, Boolean>();
   static protected HashMap<Integer, Boolean> glslVertexShaders   = new HashMap<Integer, Boolean>();
   static protected HashMap<Integer, Boolean> glslFragmentShaders = new HashMap<Integer, Boolean>();
+  
+  // ........................................................
+  
+  // Shaders    
+  
+  protected static URL defFillShaderVertSimpleURL = PGraphicsAndroid3D.class.getResource("FillShaderVertSimple.glsl");
+  protected static URL defFillShaderVertTexURL    = PGraphicsAndroid3D.class.getResource("FillShaderVertTex.glsl");
+  protected static URL defFillShaderVertLitURL    = PGraphicsAndroid3D.class.getResource("FillShaderVertLit.glsl");
+  protected static URL defFillShaderVertFullURL   = PGraphicsAndroid3D.class.getResource("FillShaderVertFull.glsl");  
+  protected static URL defFillShaderFragNoTexURL  = PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl");
+  protected static URL defFillShaderFragTexURL    = PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl");  
+  protected static URL defLineShaderVertURL       = PGraphicsAndroid3D.class.getResource("LineShaderVert.glsl");
+  protected static URL defLineShaderFragURL       = PGraphicsAndroid3D.class.getResource("LineShaderFrag.glsl");
+  protected static URL defPointShaderVertURL      = PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl");
+  protected static URL defPointShaderFragURL      = PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl");
+  
+  protected static FillShaderSimple defFillShaderSimple;
+  protected static FillShaderTex defFillShaderTex;
+  protected static FillShaderLit defFillShaderLit;
+  protected static FillShaderFull defFillShaderFull;
+  protected static LineShader defLineShader;
+  protected static PointShader defPointShader;
+  
+  protected FillShaderSimple fillShaderSimple;
+  protected FillShaderTex fillShaderTex;
+  protected FillShaderLit fillShaderLit;
+  protected FillShaderFull fillShaderFull;
+  protected LineShader lineShader;
+  protected PointShader pointShader;
+
+  // ........................................................
+  
+  // Tessellator, geometry  
+    
+  protected InGeometry inGeo;
+  protected TessGeometry tessGeo;
+  protected int firstTexIndex;
+  protected TexCache texCache;
+  protected Tessellator tessellator; 
   
   // ........................................................  
 
@@ -233,12 +271,17 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected int blendMode;  
   
   // ........................................................
+  
+  // Clipping  
+  
+  protected boolean clip = false;  
+  
+  // ........................................................
 
   // Text:
     
   /** Font texture of currently selected font. */
   PFontTexture textTex;
-
   
   // .......................................................
   
@@ -260,6 +303,25 @@ public class PGraphicsAndroid3D extends PGraphics {
   public int offscreenDepthBits = 24;
   public int offscreenStencilBits = 8;
   
+  // ........................................................  
+  
+  // Utility variables:
+  
+  /** True if we are inside a beginDraw()/endDraw() block. */
+  protected boolean drawing = false;  
+  
+  /** Used to detect the occurrence of a frame resize event. */
+  protected boolean resized = false;
+  
+  /** Stores previous viewport dimensions. */
+  protected int[] savedViewport = {0, 0, 0, 0};
+  protected int[] viewport = {0, 0, 0, 0};
+  
+  protected boolean openContour = false;
+  protected boolean breakShape = false;
+  protected boolean defaultEdges = false;
+  protected PImage textureImage0;    
+  
   // ........................................................
   
   // Drawing surface:
@@ -278,31 +340,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   /** 1-pixel get/set texture. */
   protected PTexture getsetTexture;
-
-  // ........................................................  
   
-  // Utility variables:
-  
-  /** True if we are inside a beginDraw()/endDraw() block. */
-  protected boolean drawing = false;  
-  
-  /** Used to detect the occurrence of a frame resize event. */
-  protected boolean resized = false;
-  
-  /** Stores previous viewport dimensions. */
-  protected int[] savedViewport = {0, 0, 0, 0};
-  protected int[] viewport = {0, 0, 0, 0};
-  
-  // ........................................................
-
-  // Utility constants:  
-  
-  /**
-   * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
-   * if little endian (x86 Intel for Mac or PC).
-   */
-  static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;
-
   // ........................................................
   
   // Bezier and Catmull-Rom curves  
@@ -330,68 +368,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     new PMatrix3D(-1,  3, -3,  1,
                    3, -6,  3,  0,
                   -3,  3,  0,  0,
-                   1,  0,  0,  0);   
-  
+                   1,  0,  0,  0);     
+    
   // ........................................................
-
-  // The new stuff (shaders, tessellator, etc)    
   
-  protected static URL defFillShaderVertSimpleURL = PGraphicsAndroid3D.class.getResource("FillShaderVertSimple.glsl");
-  protected static URL defFillShaderVertTexURL    = PGraphicsAndroid3D.class.getResource("FillShaderVertTex.glsl");
-  protected static URL defFillShaderVertLitURL    = PGraphicsAndroid3D.class.getResource("FillShaderVertLit.glsl");
-  protected static URL defFillShaderVertFullURL   = PGraphicsAndroid3D.class.getResource("FillShaderVertFull.glsl");  
-  protected static URL defFillShaderFragNoTexURL  = PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl");
-  protected static URL defFillShaderFragTexURL    = PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl");  
-  protected static URL defLineShaderVertURL       = PGraphicsAndroid3D.class.getResource("LineShaderVert.glsl");
-  protected static URL defLineShaderFragURL       = PGraphicsAndroid3D.class.getResource("LineShaderFrag.glsl");
-  protected static URL defPointShaderVertURL      = PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl");
-  protected static URL defPointShaderFragURL      = PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl");
+  // Constants    
   
-  protected static FillShaderSimple defFillShaderSimple;
-  protected static FillShaderTex defFillShaderTex;
-  protected static FillShaderLit defFillShaderLit;
-  protected static FillShaderFull defFillShaderFull;
-  protected static LineShader defLineShader;
-  protected static PointShader defPointShader;
-  
-  protected FillShaderSimple fillShaderSimple;
-  protected FillShaderTex fillShaderTex;
-  protected FillShaderLit fillShaderLit;
-  protected FillShaderFull fillShaderFull;
-  protected LineShader lineShader;
-  protected PointShader pointShader;
-
-  
-    
-  protected InGeometry inGeo;
-  protected TessGeometry tessGeo;
-  protected int firstTexIndex;
-  protected TexCache texCache;
-
-  protected float[] currentVertex = { 0, 0, 0 };
-  protected float[] currentColor = { 0, 0, 0, 0 };  
-  protected float[] currentNormal = { 0, 0, 1 };
-  protected float[] currentTexcoord = { 0, 0 };
-  protected float[] currentStroke = { 0, 0, 0, 1, 1 };  
-
-  protected boolean openContour = false;
-  protected boolean breakShape = false;  
-  
-  public static int flushMode = FLUSH_WHEN_FULL;
- 
-  public static final int MIN_ARRAYCOPY_SIZE = 2;
-    
-  protected Tessellator tessellator;
-  
-  protected PImage textureImage0;
-  
-  protected boolean clip = false;
-  
-  protected boolean defaultEdges = false;
-  
+  protected static int flushMode = FLUSH_WHEN_FULL;  
+  protected static final int MIN_ARRAYCOPY_SIZE = 2;  
   protected int vboMode = PGL.GL_STATIC_DRAW;
-  
-  protected int texEnvMode = MODULATE;
     
   static public float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
@@ -405,6 +390,12 @@ public class PGraphicsAndroid3D extends PGraphics {
    
     FLOAT_EPS = eps;
   }  
+  
+  /**
+   * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
+   * if little endian (x86 Intel for Mac or PC).
+   */
+  static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;  
   
   //////////////////////////////////////////////////////////////
   
@@ -2269,6 +2260,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     updateFillBuffers(lights, texCache.hasTexture);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.fillIndexCount * PGL.SIZEOF_INDEX, 
+                     ShortBuffer.wrap(tessGeo.fillIndices, 0, tessGeo.fillIndexCount), vboMode);
+    
     texCache.beginRender();    
     for (int i = 0; i < texCache.count; i++) {
       PTexture tex = texCache.getTexture(i);      
@@ -2290,13 +2284,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (tex != null) {
         shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);     
       }
-       
       
       int offset = texCache.firstIndex[i];
       int size = texCache.lastIndex[i] - texCache.firstIndex[i] + 1;
-      int sizex = size * PGL.SIZEOF_INDEX; 
-      pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.fillIndices, offset, size), vboMode);      
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, offset * PGL.SIZEOF_INDEX);
       
       shader.stop();
     }  
@@ -4291,7 +4282,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
 
     pgl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    pgl.glClear(GLES20.GL_COLOR_BUFFER_BIT);    
+    pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);    
   }  
   
   //////////////////////////////////////////////////////////////
@@ -5342,13 +5333,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     blendMode(REPLACE); 
     
     // The texels of the texture replace the color of wherever is on the screen.      
-    texEnvMode = REPLACE;
+//    texEnvMode = REPLACE;
     
     drawTexture(tw, th, crop, x, y, w, h);
     
     // Returning to the default texture environment mode, MODULATE. 
     // This allows tinting a texture with the current fragment color.       
-    texEnvMode = MODULATE;
+//    texEnvMode = MODULATE;
     
     pgl.glBindTexture(target, 0);
     pgl.disableTexturing(target);
@@ -6195,7 +6186,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     public PTexture getTexture(int i) {
-      PImage img = texCache.textures[i];
+      PImage img = textures[i];
       PTexture tex = null;
       
       if (img != null) {
@@ -6214,10 +6205,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     public void endRender() {
-      if (texCache.hasTexture) {
+      if (hasTexture) {
         // Unbinding all the textures in the cache.      
-        for (int i = 0; i < texCache.count; i++) {
-          PImage img = texCache.textures[i];
+        for (int i = 0; i < count; i++) {
+          PImage img = textures[i];
           if (img != null) {
             PTexture tex = pg.getTexture(img);
             if (tex != null) {
@@ -6227,8 +6218,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         }
         // Disabling texturing for each of the targets used
         // by textures in the cache.
-        for (int i = 0; i < texCache.count; i++) {
-          PImage img = texCache.textures[i];
+        for (int i = 0; i < count; i++) {
+          PImage img = textures[i];
           if (img != null) {
             PTexture tex = pg.getTexture(img);
             if (tex != null) {
