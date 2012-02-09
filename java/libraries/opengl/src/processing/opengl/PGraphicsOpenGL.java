@@ -1496,6 +1496,17 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   
+  public PGL beginPGL() {
+    saveGLState();
+    return pgl;
+  }
+
+  
+  public void endPGL() {
+    restoreGLState();
+  }
+  
+  
   public void updatePGL() {
     if (primarySurface) {
       pgl.updatePrimary();  
@@ -1681,10 +1692,10 @@ public class PGraphicsOpenGL extends PGraphics {
   // HINTS
 
   public void hint(int which) {
-    boolean oldValue = which > 0 ? hints[which] : hints[-which];
+    boolean oldValue = hints[Math.abs(which)];
     super.hint(which);
-    boolean newValue = which > 0 ? hints[which] : hints[-which];
-
+    boolean newValue = hints[Math.abs(which)];
+    
     if (oldValue == newValue) {
       return;
     }
