@@ -18,6 +18,10 @@ X   get rid of restore sketch feature
 _   remove pref for restoring sketches
 _   implement recent sketches menu
 
+stop() not called in 1.5
+http://code.google.com/p/processing/issues/detail?id=636
+In reply to comment 1, I noticed that dispose() is getting called. stop() isn't.
+
 fixed in 2.0a3
 X Commenting via menu or shortcut does not set sketch to "need save"
 X   http://code.google.com/p/processing/issues/detail?id=860
@@ -37,6 +41,9 @@ X library imports failing for libs that define the same packages in 1.5.1
 X   http://code.google.com/p/processing/issues/detail?id=725
 X Closing applet window in Processing 1.5 causes serial crash
 X   http://code.google.com/p/processing/issues/detail?id=635
+
+_ check on new JDK and how it works on OS X
+_   http://jdk7.java.net/macportpreview/
 
 _ "import processing.xml" throws a missing library error
 
