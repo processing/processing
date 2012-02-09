@@ -514,11 +514,11 @@ public class PFramebuffer implements PConstants {
   
   // Internal copy to texture method.
   protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {
-    pgl.glEnable(gltarget);
+    pgl.enableTexturing(gltarget);
     pgl.glBindTexture(gltarget, glid);    
     pgl.glTexSubImage2D(gltarget, 0, 0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
     pgl.glBindTexture(gltarget, 0);
-    pgl.glDisable(gltarget);    
+    pgl.disableTexturing(gltarget);    
   }  
   
   public boolean validateFbo() {

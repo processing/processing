@@ -241,7 +241,7 @@ public class PTexture implements PConstants {
       return;
     }
     
-    pgl.glEnable(glTarget);
+    pgl.enableTexturing(glTarget);
     pgl.glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
@@ -265,7 +265,7 @@ public class PTexture implements PConstants {
     }
 
     pgl.glBindTexture(glTarget, 0);
-    pgl.glDisable(glTarget);        
+    pgl.disableTexturing(glTarget);        
   }  
   
   
@@ -406,12 +406,12 @@ public class PTexture implements PConstants {
   // Bind/unbind  
   
   public void bind() {
-    pgl.glEnable(glTarget);
+    pgl.enableTexturing(glTarget);
     pgl.glBindTexture(glTarget, glID);
   }
   
   public void unbind() {
-    pgl.glEnable(glTarget);
+    pgl.enableTexturing(glTarget);
     pgl.glBindTexture(glTarget, 0);    
   }  
   
@@ -767,17 +767,17 @@ public class PTexture implements PConstants {
    */
   protected void allocate() {
     release(); // Just in the case this object is being re-allocated.
-    
-    pgl.glEnable(glTarget);
+        
+    pgl.enableTexturing(glTarget);
     
     glID = pg.createTextureObject();    
     
-    pgl.glBindTexture(glTarget, glID);
-    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MIN_FILTER, glMinFilter);
+    pgl.glBindTexture(glTarget, glID);    
+    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MIN_FILTER, glMinFilter);    
     pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MAG_FILTER, glMagFilter);
     pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_S, glWrapS);
     pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_T, glWrapT);
-            
+    
     // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
     // from w/h in the case that the GPU doesn't support NPOT textures)
     pgl.glTexImage2D(glTarget, 0, glFormat, glWidth, glHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
@@ -798,7 +798,7 @@ public class PTexture implements PConstants {
     texels = null;
     
     pgl.glBindTexture(glTarget, 0);
-    pgl.glDisable(glTarget);
+    pgl.disableTexturing(glTarget);
   }
   
   

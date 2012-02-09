@@ -39,9 +39,6 @@ import android.opengl.GLES20;
 
 /**
  * OpenGL renderer.
- * Some optimization tips useful mostly for mobile:
- * http://developer.apple.com/library/ios/#documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/TechniquesforWorkingwithVertexData/TechniquesforWorkingwithVertexData.html
- * http://code.google.com/p/webgl-loader/wiki/HappyBuddha
  * 
  */
 public class PGraphicsAndroid3D extends PGraphics {
@@ -2272,10 +2269,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     updateFillBuffers(lights, texCache.hasTexture);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    texCache.beginRender();
+    texCache.beginRender();    
     for (int i = 0; i < texCache.count; i++) {
-      PTexture tex = texCache.getTexture(i);
-
+      PTexture tex = texCache.getTexture(i);      
+          
       FillShader shader = getFillShader(lights, tex != null);      
       shader.start();
       
@@ -2290,9 +2287,10 @@ public class PGraphicsAndroid3D extends PGraphics {
         shader.setShininessAttribute(glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, 0);
       }
       
-      if (tex != null) {        
-        shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);
+      if (tex != null) {
+        shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);     
       }
+       
       
       int offset = texCache.firstIndex[i];
       int size = texCache.lastIndex[i] - texCache.firstIndex[i] + 1;
@@ -2983,7 +2981,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     textTex = (PFontTexture)textFont.getCache(pg);        
     if (textTex == null) {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
-      textFont.setCache(this, textTex);
+      textFont.setCache(this, textTex);      
     } else {
       if (!pgl.contextIsCurrent(textTex.context)) {
         for (int i = 0; i < textTex.textures.length; i++) {
@@ -2995,7 +2993,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         textFont.setCache(this, textTex);
       }
     }    
-    textTex.setFirstTexture();
+    textTex.setFirstTexture();    
     
     // Saving style parameters modified by text rendering.
     int savedTextureMode = textureMode;
@@ -3004,10 +3002,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     float savedNormalY = normalY;
     float savedNormalZ = normalZ;
     boolean savedTint = tint;
-    float savedTintR = tintR;
-    float savedTintG = tintG;
-    float savedTintB = tintB;
-    float savedTintA = tintA;
+    int savedTintColor = tintColor;
     int savedBlendMode = blendMode;
     
     // Setting style used in text rendering.
@@ -3017,10 +3012,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     normalY = 0;
     normalZ = 1;    
     tint = true;
-    tintR = fillR;
-    tintG = fillG;
-    tintB = fillB;
-    tintA = fillA;        
+    tintColor = fillColor;
     
     blendMode(BLEND);
     
@@ -3033,10 +3025,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     normalY = savedNormalY;
     normalZ = savedNormalZ;
     tint = savedTint;
-    tintR = savedTintR;
-    tintG = savedTintG;
-    tintB = savedTintB;
-    tintA = savedTintA;
+    tintColor = savedTintColor;
     
     // Note that if the user is using a blending mode different from
     // BLEND, and has a bunch of continuous text rendering, the performance
@@ -3086,7 +3075,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     vertex(x1, y0, info.u1, info.v0);
     vertex(x1, y1, info.u1, info.v1);
     vertex(x0, y1, info.u0, info.v1);
-    endShape();
+    endShape();    
   }
   
   
@@ -5346,7 +5335,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   /** Utility function to render texture without blend. */
   protected void drawTexture(int target, int id, int tw, int th, int[] crop, int x, int y, int w, int h) {
-    pgl.glEnable(target);
+    pgl.enableTexturing(target);
     pgl.glBindTexture(target, id);
     
     int savedBlendMode = blendMode;
@@ -5362,7 +5351,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     texEnvMode = MODULATE;
     
     pgl.glBindTexture(target, 0);
-    pgl.glDisable(target);
+    pgl.disableTexturing(target);
     
     blendMode(savedBlendMode);
   }  
@@ -5446,11 +5435,11 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   protected void copyToTexture(PTexture tex, IntBuffer buffer, int x, int y, int w, int h) {    
     buffer.rewind();    
-    pgl.glEnable(tex.glTarget);
+    pgl.enableTexturing(tex.glTarget);
     pgl.glBindTexture(tex.glTarget, tex.glID);    
     pgl.glTexSubImage2D(tex.glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
     pgl.glBindTexture(tex.glTarget, 0);
-    pgl.glDisable(tex.glTarget);
+    pgl.disableTexturing(tex.glTarget);
   }   
 
   
@@ -5945,7 +5934,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void loadAttributes() {
       super.loadAttributes();
       
-      inTexcoordLoc = getAttribLocation("TexcoordLoc");
+      inTexcoordLoc = getAttribLocation("inTexcoord");
     }    
     
     public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { 
@@ -5979,7 +5968,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void loadAttributes() {
       super.loadAttributes();
       
-      inTexcoordLoc = getAttribLocation("TexcoordLoc");
+      inTexcoordLoc = getAttribLocation("inTexcoord");
     }    
     
     public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { 
@@ -6218,7 +6207,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
       if (tex == null && tex0 != null) {
         tex0.unbind();
-        pgl.glDisable(tex0.glTarget);        
+        pgl.disableTexturing(tex0.glTarget);        
       }
       
       return tex;
@@ -6243,7 +6232,7 @@ public class PGraphicsAndroid3D extends PGraphics {
           if (img != null) {
             PTexture tex = pg.getTexture(img);
             if (tex != null) {
-              pgl.glDisable(tex.glTarget);
+              pgl.disableTexturing(tex.glTarget);
             }          
           }
         }

@@ -388,6 +388,14 @@ public class PGL {
     return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;
   }
   
+  public void enableTexturing(int target) {
+    //gl.glEnable(target);
+  }
+
+  public void disableTexturing(int target) {
+    //gl.glDisable(target);
+  }  
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Frame rendering  
