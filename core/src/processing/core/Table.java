@@ -289,7 +289,7 @@ public class Table implements Iterable<Table.Row> {
     if (rowCount == 0) {
       setRowCount(10);
     }
-    int prev = -1;
+    int prev = 0;  //-1;
     while ((line = reader.readLine()) != null) {
       if (row == getRowCount()) {
         setRowCount(row << 1);
@@ -300,7 +300,7 @@ public class Table implements Iterable<Table.Row> {
       if (row % 10000 == 0) {
         if (row < rowCount) {
           int pct = (100 * row) / rowCount;
-          if (pct != prev) {
+          if (pct != prev) {  // also prevents "0%" from showing up
             System.out.println(pct + "%");
             prev = pct;
           }
