@@ -140,7 +140,7 @@ public class PShader {
    * @return int
    */
   public int getAttribLocation(String name) {
-    init();
+    init();    
     return pgl.glGetAttribLocation(programObject, name);
   }
 
@@ -254,9 +254,8 @@ public class PShader {
       checkLogInfo("Vertex shader " + vertexFilename + " compilation: ", vertexShader);
       checkLogInfo("Fragment shader " + fragmentFilename + " compilation: ", fragmentShader);
       
-      pgl.glLinkProgram(programObject);
+      pgl.glLinkProgram(programObject);      
       pgl.glValidateProgram(programObject);
-      checkLogInfo("GLSL program validation: ", programObject);
     }
   }  
   

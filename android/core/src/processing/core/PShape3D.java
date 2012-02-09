@@ -3708,7 +3708,7 @@ public class PShape3D extends PShape {
     if (textureImage != null) {
       tex = pg.getTexture(textureImage);
       if (tex != null) {
-        pgl.glEnable(tex.glTarget);          
+        pgl.enableTexturing(tex.glTarget);          
         pgl.glBindTexture(tex.glTarget, tex.glID);        
       }
     }    
@@ -3746,7 +3746,7 @@ public class PShape3D extends PShape {
     
     if (tex != null) {
       pgl.glBindTexture(tex.glTarget, 0); 
-      pgl.glDisable(tex.glTarget);
+      pgl.disableTexturing(tex.glTarget);
     }    
   }  
   
