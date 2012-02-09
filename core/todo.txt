@@ -26,6 +26,20 @@ o   along with 90, 180 and 270 versions of it as well
 o   tie to glDrawPixels.. how to clear matrix properly for that?
 X   maybe just disable this for JAVA2D cuz it's silly?
 
+_ selectInput() and selectOutput() freezes
+_   http://code.google.com/p/processing/issues/detail?id=173
+_     -> now includes a patch that addresses one specific problem
+_   just nix the function and go with a callback setup
+o   http://code.google.com/p/processing/issues/detail?id=445
+_   decision: named callback functions
+_   if can't find the function, tell people to put it in the main tab
+_   inputFile() and outputFile() need a fix
+_     remove them from the code, write examples for these
+_     use callbacks instead
+_     need to decide if you specify the function name, or if it's specific
+
+_ fix edge + 1 issue on stroke/fill for rectangles
+
 _ urlEncode() and urlDecode()
 
 _ pause()/resume() need to work on the desktop side as well
@@ -222,16 +236,6 @@ _ require people to put things in the data folder
 _ make sure that loadXxxx() methods are used after init()
 _   nasty errors when loadImage/Font/createFont/etc used outside
 _   decision: add error messages where possible
-_ selectInput() and selectOutput() freezes
-_   just nix the function and go with a callback setup
-_   http://code.google.com/p/processing/issues/detail?id=173
-o   http://code.google.com/p/processing/issues/detail?id=445
-_   decision: named callback functions
-_   if can't find the function, tell people to put it in the main tab
-_   inputFile() and outputFile() need a fix
-_     remove them from the code, write examples for these
-_     use callbacks instead
-_     need to decide if you specify the function name, or if it's specific
 _ PShape API to handle internal vertex stuff
 _   add deconstruct() method for paths
 _   toArray() and toVector()
