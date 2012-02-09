@@ -9098,7 +9098,7 @@ public class PApplet extends Applet
 
         } else {
           name = args[argIndex];
-          break;
+          break;  // because of break, argIndex won't increment again
         }
       }
       argIndex++;
@@ -9151,7 +9151,9 @@ public class PApplet extends Applet
     // these are needed before init/start
     applet.frame = frame;
     applet.sketchPath = folder;
-    applet.args = PApplet.subset(args, 1);
+    // pass everything after the class name in as args to the sketch itself
+    // (fixed for 2.0a5, this was just subsetting by 1, which didn't skip opts)
+    applet.args = PApplet.subset(args, argIndex + 1);
     applet.external = external;
 
     // Need to save the window bounds at full screen,
