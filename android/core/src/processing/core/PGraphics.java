@@ -690,7 +690,12 @@ public class PGraphics extends PImage implements PConstants {
     colorMode(RGB, 255);
     fill(255);
     stroke(0);
-
+    
+    ambient(255);
+    specular(0);
+    emissive(0);
+    shininess(1);
+    
     // added for 0178 for subclasses that need them
     strokeWeight(DEFAULT_STROKE_WEIGHT);
     strokeJoin(DEFAULT_STROKE_JOIN);
