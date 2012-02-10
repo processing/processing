@@ -1668,15 +1668,15 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected void updateNormal() {
     glNormal[0] = modelviewInv.m00; 
-    glNormal[1] = modelviewInv.m10; 
-    glNormal[2] = modelviewInv.m20;
+    glNormal[1] = modelviewInv.m01; 
+    glNormal[2] = modelviewInv.m02;
     
-    glNormal[3] = modelviewInv.m01; 
+    glNormal[3] = modelviewInv.m10; 
     glNormal[4] = modelviewInv.m11; 
-    glNormal[5] = modelviewInv.m21;
+    glNormal[5] = modelviewInv.m12;
     
-    glNormal[6] = modelviewInv.m02; 
-    glNormal[7] = modelviewInv.m12; 
+    glNormal[6] = modelviewInv.m20; 
+    glNormal[7] = modelviewInv.m21; 
     glNormal[8] = modelviewInv.m22;     
   }
   
@@ -2176,6 +2176,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (hasPoints || hasLines || hasFill) {
       
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
+        if (lights) {
+          updateNormal();
+        }
+        
         // The modelview transformation has been applied already to the 
         // tessellated vertices, so we set the OpenGL modelview matrix as
         // the identity to avoid applying the model transformations twice.
@@ -4015,7 +4019,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
 
-    ambientLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f);
+    //ambientLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f);
     directionalLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f, 0, 0, -1);
     
     colorMode = colorModeSaved;
@@ -4109,7 +4113,6 @@ public class PGraphicsAndroid3D extends PGraphics {
                              currentLightFalloffLinear, 
                              currentLightFalloffQuadratic);
     
-
     lightCount++;
   }
 
@@ -5879,8 +5882,26 @@ public class PGraphicsAndroid3D extends PGraphics {
       updateModelview();
       set4x4MatUniform(modelviewMatrixLoc, glModelview);
       
-      updateNormal();
-      set3x3MatUniform(inNormalLoc, glNormal);
+      
+      set3x3MatUniform(normalMatrixLoc, glNormal);
+      
+      PApplet.println("light uniforms");
+      PApplet.println("lightCount: " + lightCount);
+      for (int i = 0; i < lightCount; i++) {
+        PApplet.println("light pos : " + lightPosition[4 * i + 0] + " " + 
+                                         lightPosition[4 * i + 1] + " " +
+                                         lightPosition[4 * i + 2] + " " +
+                                         lightPosition[4 * i + 3]);
+        PApplet.println("light normal : " + lightNormal[3 * i + 0] + " " + 
+                                            lightNormal[3 * i + 1] + " " +
+                                            lightNormal[3 * i + 2]);        
+                
+      }
+      
+      PApplet.println("normal matrix");
+      PApplet.println(glNormal[0] + " " + glNormal[3] + " " + glNormal[6] + '\n' + 
+                      glNormal[1] + " " + glNormal[4] + " " + glNormal[7] + '\n' +
+                      glNormal[2] + " " + glNormal[5] + " " + glNormal[8]);      
       
       setIntUniform(lightCountLoc, lightCount);      
       set4FloatVecUniform(lightPositionLoc, lightPosition);
