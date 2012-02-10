@@ -50,6 +50,7 @@ _   http://code.google.com/p/processing/issues/detail?id=904
 _ add loadTable().. 
 
 _ delay() remove or no? (keep adding it back...)
+_   serial and scripting need it. maybe edit the reference further...
 
 _ do we need an option to disable XML whitespace?
 _   should this be the default to be more like old XML?

@@ -5,6 +5,13 @@ X   http://code.google.com/p/processing/issues/detail?id=769
 X /opt/android using version #s again? fix build script (earlier)
 X smooth() is now the default
 
+_ now requiring SDK 10 (2.3.3) because of OpenGL issues
+_   not SDK 9, which is 2.3.1 (and still Gingerbread)
+X   noted on the changes page in the Wiki
+_   make a note of the change on the Android Wiki
+_   modify the .java build to require it
+_   make sure build.xml uses it too
+
 _ lack of registerXxx() implementation is breaking pre() and post() in particles
 
 _ focus handling note:
