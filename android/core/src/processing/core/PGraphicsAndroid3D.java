@@ -250,7 +250,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** Light spot concentration */
   public float[] lightSpotConcentration;
 
-
   /** Current specular color for lighting */
   public float[] currentLightSpecular;
 
@@ -494,15 +493,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       lightType = new int[PGL.MAX_LIGHTS];
       lightPosition = new float[4 * PGL.MAX_LIGHTS];
       lightNormal = new float[3 * PGL.MAX_LIGHTS];
-      lightAmbient = new float[4 * PGL.MAX_LIGHTS];
-      lightDiffuse = new float[4 * PGL.MAX_LIGHTS];
-      lightSpecular = new float[4 * PGL.MAX_LIGHTS];
+      lightAmbient = new float[3 * PGL.MAX_LIGHTS];
+      lightDiffuse = new float[3 * PGL.MAX_LIGHTS];
+      lightSpecular = new float[3 * PGL.MAX_LIGHTS];
       lightFalloffConstant = new float[PGL.MAX_LIGHTS];
       lightFalloffLinear = new float[PGL.MAX_LIGHTS];
       lightFalloffQuadratic = new float[PGL.MAX_LIGHTS];
       lightSpotAngleCos = new float[PGL.MAX_LIGHTS];
       lightSpotConcentration = new float[PGL.MAX_LIGHTS];
-      currentLightSpecular = new float[4];
+      currentLightSpecular = new float[3];
       lightsAllocated = true;
     }
     
@@ -4093,8 +4092,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightDiffuse(lightCount, r, g, b);
     lightSpecular(lightCount, currentLightSpecular[0], 
                               currentLightSpecular[1], 
-                              currentLightSpecular[2], 
-                              currentLightSpecular[3]);        
+                              currentLightSpecular[2]);        
     noLightSpot(lightCount);
     noLightFalloff(lightCount);
 
@@ -4117,8 +4115,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightDiffuse(lightCount, r, g, b);
     lightSpecular(lightCount, currentLightSpecular[0], 
                               currentLightSpecular[1], 
-                              currentLightSpecular[2], 
-                              currentLightSpecular[3]);
+                              currentLightSpecular[2]);
     noLightSpot(lightCount);
     lightFalloff(lightCount, currentLightFalloffConstant, 
                              currentLightFalloffLinear, 
@@ -4145,8 +4142,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightDiffuse(lightCount, r, g, b);
     lightSpecular(lightCount, currentLightSpecular[0], 
                               currentLightSpecular[1], 
-                              currentLightSpecular[2], 
-                              currentLightSpecular[3]);
+                              currentLightSpecular[2]);
     lightSpot(lightCount, angle, concentration);    
     lightFalloff(lightCount, currentLightFalloffConstant, 
                              currentLightFalloffLinear, 
@@ -4173,7 +4169,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     currentLightSpecular[0] = calcR;
     currentLightSpecular[1] = calcG;
     currentLightSpecular[2] = calcB;
-    currentLightSpecular[3] = 1.0f;
   }
 
   protected void enableLighting() {
@@ -4214,46 +4209,40 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected void lightAmbient(int num, float r, float g, float b) {       
     colorCalc(r, g, b);
-    lightAmbient[4 * num + 0] = calcR;
-    lightAmbient[4 * num + 1] = calcG;
-    lightAmbient[4 * num + 2] = calcB;
-    lightAmbient[4 * num + 3] = 1.0f;
+    lightAmbient[3 * num + 0] = calcR;
+    lightAmbient[3 * num + 1] = calcG;
+    lightAmbient[3 * num + 2] = calcB;
   }
 
   protected void noLightAmbient(int num) {
-    lightAmbient[4 * num + 0] = 0;
-    lightAmbient[4 * num + 1] = 0;
-    lightAmbient[4 * num + 2] = 0;
-    lightAmbient[4 * num + 3] = 1;
+    lightAmbient[3 * num + 0] = 0;
+    lightAmbient[3 * num + 1] = 0;
+    lightAmbient[3 * num + 2] = 0;
   }
 
   protected void lightDiffuse(int num, float r, float g, float b) {
     colorCalc(r, g, b);
-    lightDiffuse[4 * num + 0] = calcR;
-    lightDiffuse[4 * num + 1] = calcG;
-    lightDiffuse[4 * num + 2] = calcB;
-    lightDiffuse[4 * num + 3] = 1;
+    lightDiffuse[3 * num + 0] = calcR;
+    lightDiffuse[3 * num + 1] = calcG;
+    lightDiffuse[3 * num + 2] = calcB;
   }
 
   protected void noLightDiffuse(int num) {
-    lightDiffuse[4 * lightCount + 0] = 0;
-    lightDiffuse[4 * lightCount + 1] = 0;
-    lightDiffuse[4 * lightCount + 2] = 0;
-    lightDiffuse[4 * lightCount + 3] = 1;
+    lightDiffuse[3 * lightCount + 0] = 0;
+    lightDiffuse[3 * lightCount + 1] = 0;
+    lightDiffuse[3 * lightCount + 2] = 0;
   }
 
-  protected void lightSpecular(int num, float r, float g, float b, float a) {
-    lightSpecular[4 * num + 0] = r;
-    lightSpecular[4 * num + 1] = g;
-    lightSpecular[4 * num + 2] = b;
-    lightSpecular[4 * num + 3] = a;
+  protected void lightSpecular(int num, float r, float g, float b) {
+    lightSpecular[3 * num + 0] = r;
+    lightSpecular[3 * num + 1] = g;
+    lightSpecular[3 * num + 2] = b;
   }
 
   protected void noLightSpecular(int num) {
-    lightSpecular[4 * num + 0] = 0;
-    lightSpecular[4 * num + 1] = 0;
-    lightSpecular[4 * num + 2] = 0;
-    lightSpecular[4 * num + 3] = 0;
+    lightSpecular[3 * num + 0] = 0;
+    lightSpecular[3 * num + 1] = 0;
+    lightSpecular[3 * num + 2] = 0;
   }  
   
   protected void lightFalloff(int num, float c0, float c1, float c2) {
@@ -5896,30 +5885,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       updateGLNormal();
       set3x3MatUniform(normalMatrixLoc, glNormal);
       
-      PApplet.println("light uniforms");
-      PApplet.println("lightCount: " + lightCount);
-      for (int i = 0; i < lightCount; i++) {
-        PApplet.println("light pos : " + lightPosition[4 * i + 0] + " " + 
-                                         lightPosition[4 * i + 1] + " " +
-                                         lightPosition[4 * i + 2] + " " +
-                                         lightPosition[4 * i + 3]);
-        PApplet.println("light normal : " + lightNormal[3 * i + 0] + " " + 
-                                            lightNormal[3 * i + 1] + " " +
-                                            lightNormal[3 * i + 2]);        
-                
-      }
-      
-      PApplet.println("normal matrix");
-      PApplet.println(glNormal[0] + " " + glNormal[3] + " " + glNormal[6] + '\n' + 
-                      glNormal[1] + " " + glNormal[4] + " " + glNormal[7] + '\n' +
-                      glNormal[2] + " " + glNormal[5] + " " + glNormal[8]);      
-      
       setIntUniform(lightCountLoc, lightCount);      
       set4FloatVecUniform(lightPositionLoc, lightPosition);
       set3FloatVecUniform(lightNormalLoc, lightNormal);
-      set4FloatVecUniform(lightAmbientLoc, lightAmbient);
-      set4FloatVecUniform(lightDiffuseLoc, lightDiffuse);
-      set4FloatVecUniform(lightSpecularLoc, lightSpecular);          
+      set3FloatVecUniform(lightAmbientLoc, lightAmbient);
+      set3FloatVecUniform(lightDiffuseLoc, lightDiffuse);
+      set3FloatVecUniform(lightSpecularLoc, lightSpecular);          
       set1FloatVecUniform(lightFalloffConstantLoc, lightFalloffConstant);
       set1FloatVecUniform(lightFalloffLinearLoc, lightFalloffLinear);
       set1FloatVecUniform(lightFalloffQuadraticLoc, lightFalloffQuadratic);

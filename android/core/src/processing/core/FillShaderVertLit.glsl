@@ -26,9 +26,9 @@ uniform mat3 normalMatrix;
 uniform int lightCount;
 uniform vec4 lightPosition[8];
 uniform vec3 lightNormal[8];
-uniform vec4 lightAmbient[8];
-uniform vec4 lightDiffuse[8];
-uniform vec4 lightSpecular[8];      
+uniform vec3 lightAmbient[8];
+uniform vec3 lightDiffuse[8];
+uniform vec3 lightSpecular[8];      
 uniform float lightFalloffConstant[8];
 uniform float lightFalloffLinear[8];
 uniform float lightFalloffQuadratic[8];      
@@ -100,20 +100,13 @@ void main() {
       lightDir = lightPos3 - ecVertex;
     }
   
-    //falloff = 1.0;
     //spot = exp > 0.0 ? spotFactor(lightPos3, ecVertex, lightNormal[i], mcos, exp) : 1.0;
     spot = 1.0;
+    falloff = 1.0;
     
-    //totalAmbient  += lightAmbient[i].rgb  * falloff;
-    totalDiffuse  += lightDiffuse[i].rgb  * falloff * spot * lambertFactor(-lightDir, ecNormal);
-    //totalSpecular += lightSpecular[i].rgb * falloff * spot * blinnPhongFactor(lightDir, lightPos3, ecNormal, inShine);
-    
-    //totalDiffuse = ecNormal;
-    
-    //totalDiffuse = vec3(1, 1, 1) * lambertFactor(-lightDir, ecNormal);
-           
+    //totalAmbient  += lightAmbient[i]  * falloff;
+    totalDiffuse  += lightDiffuse[i]  * falloff * spot * lambertFactor(-lightDir, ecNormal);
+    //totalSpecular += lightSpecular[i] * falloff * spot * blinnPhongFactor(lightDir, lightPos3, ecNormal, inShine);
   }    
-  //vertColor = vec4(totalAmbient, 1) * inAmbient + totalDiffuse * inColor + totalSpecular * inSpecular + inEmissive;
-  vertColor = vec4(totalDiffuse, 1) * inColor;
-  //vertColor = inColor; 
+  vertColor = vec4(totalAmbient, 1) * inAmbient + vec4(totalDiffuse, 1) * inColor + vec4(totalSpecular, 1) * inSpecular + inEmissive;
 }
