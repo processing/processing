@@ -28,14 +28,9 @@ uniform vec4 lightPosition[8];
 uniform vec3 lightNormal[8];
 uniform vec3 lightAmbient[8];
 uniform vec3 lightDiffuse[8];
-uniform vec3 lightSpecular[8];
-      
-uniform float lightFalloffConstant[8];
-uniform float lightFalloffLinear[8];
-uniform float lightFalloffQuadratic[8];
-      
-uniform float lightSpotAngleCos[8];
-uniform float lightSpotConcentration[8]; 
+uniform vec3 lightSpecular[8];      
+uniform vec3 lightFalloffCoefficients[8];
+uniform vec2 lightSpotParameters[8];
 
 attribute vec4 inVertex;
 attribute vec4 inColor;
@@ -52,9 +47,12 @@ const float zero_float = 0.0;
 const float one_float = 1.0;
 const vec3 zero_vec3 = vec3(0);
 
-float attenuationFactor(vec3 lightPos, vec3 vertPos, float c0, float c1, float c2) {
-  float d = distance(lightPos, vertPos);
-  return one_float / (c0 + c1 * d + c2 * d * d);
+float falloffFactor(vec3 lightPos, vec3 vertPos, vec3 coeff) {
+  vec3 lpv = lightPos - vertPos;
+  vec3 dist = vec3(one_float);
+  dist.z = dot(lpv, lpv);
+  dist.y = sqrt(dist.z);
+  return one_float / dot(dist, coeff);
 }
 
 float spotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, float spotExp) {
@@ -88,8 +86,8 @@ void main() {
   for (int i = 0; i < lightCount; i++) {
     vec3 lightPos = lightPosition[i].xyz;
     bool isDir = zero_float < lightPosition[i].w;
-    float spotExp = lightSpotConcentration[i];
-    float spotCos = lightSpotAngleCos[i];
+    float spotCos = lightSpotParameters[i].x;
+    float spotExp = lightSpotParameters[i].y;
     
     vec3 lightDir;
     float falloff;    
@@ -99,9 +97,7 @@ void main() {
       falloff = one_float;
       lightDir = -lightNormal[i];
     } else {
-      falloff = attenuationFactor(lightPos, ecVertex, lightFalloffConstant[i], 
-                                                      lightFalloffLinear[i],
-                                                      lightFalloffQuadratic[i]);      
+      falloff = falloffFactor(lightPos, ecVertex, lightFalloffCoefficients[i]);      
       lightDir = lightPos - ecVertex;
     }
   
