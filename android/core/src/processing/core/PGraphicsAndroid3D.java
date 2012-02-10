@@ -487,10 +487,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       modelview = new PMatrix3D();
       modelviewInv = new PMatrix3D();
       projmodelview = new PMatrix3D();
-      glProjection = new float[16];
-      glModelview = new float[16];
-      glProjmodelview = new float[16];
-      glNormal = new float[9];      
       matricesAllocated = true;
     }
 
@@ -1453,8 +1449,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // remove any additional modelview transformation (and less likely, projection
       // transformations) applied by the user after setting the camera and/or projection      
       modelview.set(camera);
-      projmodelview.set(projection);
-      projmodelview.apply(modelview);        
+      calcProjmodelview();
     }
       
     noLights();
@@ -1599,8 +1594,12 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void endGLOp() {
     pgl.releaseContext();
   }
-  
-  protected void updateProjection() {
+    
+  protected void updateGLProjection() {
+    if (glProjection == null) {
+      glProjection = new float[16];
+    }
+    
     glProjection[0] = projection.m00;
     glProjection[1] = projection.m10;
     glProjection[2] = projection.m20;
@@ -1622,7 +1621,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     glProjection[15] = projection.m33;
   }
 
-  protected void updateModelview() {
+  protected void updateGLModelview() {
+    if (glModelview == null) {
+      glModelview = new float[16];
+    }
+    
     glModelview[0] = modelview.m00;
     glModelview[1] = modelview.m10;
     glModelview[2] = modelview.m20;
@@ -1644,7 +1647,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     glModelview[15] = modelview.m33;    
   }  
   
-  protected void updateProjmodelview() { 
+  protected void calcProjmodelview() {
+    projmodelview.set(projection);
+    projmodelview.apply(modelview);    
+  }
+    
+  protected void updateGLProjmodelview() {
+    if (glProjmodelview == null) {
+      glProjmodelview = new float[16];
+    }
+    
     glProjmodelview[0] = projmodelview.m00;
     glProjmodelview[1] = projmodelview.m10;
     glProjmodelview[2] = projmodelview.m20;
@@ -1666,7 +1678,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     glProjmodelview[15] = projmodelview.m33;
   }
   
-  protected void updateNormal() {
+  protected void updateGLNormal() {
+    if (glNormal == null) {
+      glNormal = new float[9];
+    }
+    
+    // The normal matrix is the transpose of the inverse of the
+    // modelview:
     glNormal[0] = modelviewInv.m00; 
     glNormal[1] = modelviewInv.m01; 
     glNormal[2] = modelviewInv.m02;
@@ -2176,10 +2194,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (hasPoints || hasLines || hasFill) {
       
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        if (lights) {
-          updateNormal();
-        }
-        
         // The modelview transformation has been applied already to the 
         // tessellated vertices, so we set the OpenGL modelview matrix as
         // the identity to avoid applying the model transformations twice.
@@ -3093,11 +3107,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     mat = modelviewStack.pop();
     modelview.set(mat);
-    projmodelview.set(projection);
-    projmodelview.apply(modelview);    
         
     mat = modelviewInvStack.pop();
-    modelviewInv.set(mat);    
+    modelviewInv.set(mat);
+    
+    calcProjmodelview();
   }
   
   
@@ -3116,9 +3130,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       flush();  
     }
     
-    modelview.translate(tx, ty, tz);
-    projmodelview.translate(tx, ty, tz);
-    modelviewInv.invTranslate(tx, ty, tz);
+    modelview.translate(tx, ty, tz);    
+    modelviewInv.invTranslate(tx, ty, tz);    
+    projmodelview.translate(tx, ty, tz);  
   }
 
   
@@ -3158,9 +3172,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     modelview.rotate(angle, v0, v1, v2);
-    projmodelview.set(projection);
-    projmodelview.apply(modelview);
     modelviewInv.invRotate(angle, v0, v1, v2);
+    calcProjmodelview(); // Possibly cheaper than doing projmodelview.rotate()
   }
 
   
@@ -3189,8 +3202,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     modelview.scale(sx, sy, sz);
-    projmodelview.scale(sx, sy, sz);
-    modelview.invScale(sx, sy, sz);
+    modelviewInv.invScale(sx, sy, sz);    
+    projmodelview.scale(sx, sy, sz);    
   }
 
   
@@ -3604,8 +3617,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     camera.set(modelview);
     cameraInv.set(modelviewInv);
     
-    projmodelview.set(projection);
-    projmodelview.apply(modelview);    
+    calcProjmodelview();
   }
     
   
@@ -3741,8 +3753,7 @@ public class PGraphicsAndroid3D extends PGraphics {
                               0,              0, (-zfar - znear) / temp4, (-temp * zfar) / temp4,
                               0,              0,                      -1,                      1);
     
-    projmodelview.set(projection);
-    projmodelview.apply(modelview);      
+    calcProjmodelview();      
   }
 
   
@@ -5759,7 +5770,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glEnableVertexAttribArray(inVertexLoc);
       pgl.glEnableVertexAttribArray(inColorLoc);
       
-      updateProjmodelview();
+      updateGLProjmodelview();
       set4x4MatUniform(projmodelviewMatrixLoc, glProjmodelview);      
     }
 
@@ -5876,13 +5887,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glEnableVertexAttribArray(inEmissiveLoc);
       pgl.glEnableVertexAttribArray(inShineLoc);         
       
-      updateProjmodelview();
+      updateGLProjmodelview();
       set4x4MatUniform(projmodelviewMatrixLoc, glProjmodelview);
       
-      updateModelview();
+      updateGLModelview();
       set4x4MatUniform(modelviewMatrixLoc, glModelview);
       
-      
+      updateGLNormal();
       set3x3MatUniform(normalMatrixLoc, glNormal);
       
       PApplet.println("light uniforms");
@@ -6057,10 +6068,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glEnableVertexAttribArray(inColorLoc);
       pgl.glEnableVertexAttribArray(inDirWidthLoc);      
       
-      updateProjection();
+      updateGLProjection();
       set4x4MatUniform(projectionMatrixLoc, glProjection);
 
-      updateModelview();
+      updateGLModelview();
       set4x4MatUniform(modelviewMatrixLoc, glModelview);      
       
       set4FloatUniform(viewportLoc, viewport[0], viewport[1], viewport[2], viewport[3]);
@@ -6134,10 +6145,10 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glEnableVertexAttribArray(inColorLoc);
       pgl.glEnableVertexAttribArray(inSizeLoc);      
       
-      updateProjection();
+      updateGLProjection();
       set4x4MatUniform(projectionMatrixLoc, glProjection);
 
-      updateModelview();
+      updateGLModelview();
       set4x4MatUniform(modelviewMatrixLoc, glModelview);      
     }
 
@@ -7690,17 +7701,18 @@ public class PGraphicsAndroid3D extends PGraphics {
       int index;
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D tr = modelview;
+        PMatrix3D mm = modelview;
+        PMatrix3D nm = modelviewInv;
         
         index = 3 * fillVertexCount;
-        fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
-        fillVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
-        fillVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
+        fillVertices[index++] = x * mm.m00 + y * mm.m01 + z * mm.m02 + mm.m03;
+        fillVertices[index++] = x * mm.m10 + y * mm.m11 + z * mm.m12 + mm.m13;
+        fillVertices[index  ] = x * mm.m20 + y * mm.m21 + z * mm.m22 + mm.m23;
         
         index = 3 * fillVertexCount;
-        fillNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
-        fillNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
-        fillNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
+        fillNormals[index++] = nx * nm.m00 + ny * nm.m10 + nz * nm.m02;
+        fillNormals[index++] = nx * nm.m01 + ny * nm.m11 + nz * nm.m12;
+        fillNormals[index  ] = nx * nm.m02 + ny * nm.m21 + nz * nm.m22;
       } else {
         index = 3 * fillVertexCount;
         fillVertices[index++] = x;
@@ -7736,7 +7748,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       addFillVertices(nvert);
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D tr = modelview;
+        PMatrix3D mm = modelview;
+        PMatrix3D nm = modelviewInv;
         
         for (int i = 0; i < nvert; i++) {
           int inIdx = i0 + i;
@@ -7753,14 +7766,14 @@ public class PGraphicsAndroid3D extends PGraphics {
           float nz = in.normals[index  ];
           
           index = 3 * tessIdx;
-          fillVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
-          fillVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
-          fillVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
+          fillVertices[index++] = x * mm.m00 + y * mm.m01 + z * mm.m02 + mm.m03;
+          fillVertices[index++] = x * mm.m10 + y * mm.m11 + z * mm.m12 + mm.m13;
+          fillVertices[index  ] = x * mm.m20 + y * mm.m21 + z * mm.m22 + mm.m23;
           
           index = 3 * tessIdx;
-          fillNormals[index++] = nx * tr.m00 + ny * tr.m01 + nz * tr.m02;
-          fillNormals[index++] = nx * tr.m10 + ny * tr.m11 + nz * tr.m12;
-          fillNormals[index  ] = nx * tr.m20 + ny * tr.m21 + nz * tr.m22;
+          fillNormals[index++] = nx * nm.m00 + ny * nm.m10 + nz * nm.m20;
+          fillNormals[index++] = nx * nm.m01 + ny * nm.m11 + nz * nm.m21;
+          fillNormals[index  ] = nx * nm.m02 + ny * nm.m12 + nz * nm.m22;
         }        
       } else {
         if (nvert <= MIN_ARRAYCOPY_SIZE) {
@@ -7840,17 +7853,17 @@ public class PGraphicsAndroid3D extends PGraphics {
       float z1 = in.vertices[index  ];        
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D tr = modelview;
+        PMatrix3D mm = modelview;
         
         index = 3 * tessIdx;
-        lineVertices[index++] = x0 * tr.m00 + y0 * tr.m01 + z0 * tr.m02 + tr.m03;
-        lineVertices[index++] = x0 * tr.m10 + y0 * tr.m11 + z0 * tr.m12 + tr.m13;
-        lineVertices[index  ] = x0 * tr.m20 + y0 * tr.m21 + z0 * tr.m22 + tr.m23;
+        lineVertices[index++] = x0 * mm.m00 + y0 * mm.m01 + z0 * mm.m02 + mm.m03;
+        lineVertices[index++] = x0 * mm.m10 + y0 * mm.m11 + z0 * mm.m12 + mm.m13;
+        lineVertices[index  ] = x0 * mm.m20 + y0 * mm.m21 + z0 * mm.m22 + mm.m23;
         
         index = 4 * tessIdx;
-        lineDirWidths[index++] = x1 * tr.m00 + y1 * tr.m01 + z1 * tr.m02 + tr.m03;
-        lineDirWidths[index++] = x1 * tr.m10 + y1 * tr.m11 + z1 * tr.m12 + tr.m13;
-        lineDirWidths[index  ] = x1 * tr.m20 + y1 * tr.m21 + z1 * tr.m22 + tr.m23;        
+        lineDirWidths[index++] = x1 * mm.m00 + y1 * mm.m01 + z1 * mm.m02 + mm.m03;
+        lineDirWidths[index++] = x1 * mm.m10 + y1 * mm.m11 + z1 * mm.m12 + mm.m13;
+        lineDirWidths[index  ] = x1 * mm.m20 + y1 * mm.m21 + z1 * mm.m22 + mm.m23;        
       } else {
         index = 3 * tessIdx;
         lineVertices[index++] = x0;
@@ -7880,12 +7893,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       float z = in.vertices[index ];
       
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D tr = modelview;
+        PMatrix3D mm = modelview;
         
         index = 3 * tessIdx;
-        pointVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
-        pointVertices[index++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
-        pointVertices[index  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;        
+        pointVertices[index++] = x * mm.m00 + y * mm.m01 + z * mm.m02 + mm.m03;
+        pointVertices[index++] = x * mm.m10 + y * mm.m11 + z * mm.m12 + mm.m13;
+        pointVertices[index  ] = x * mm.m20 + y * mm.m21 + z * mm.m22 + mm.m23;        
       } else {
         index = 3 * tessIdx;
         pointVertices[index++] = x;
