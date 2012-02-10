@@ -258,9 +258,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   public float currentLightFalloffLinear;
   public float currentLightFalloffQuadratic;
 
-  /** Default ambient light for the entire scene **/
-  public float[] baseLight = { 0.05f, 0.05f, 0.05f, 1.0f };
- 
   protected boolean lightsAllocated = false;   
   
   // ........................................................
@@ -4027,9 +4024,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     colorMode = RGB;
 
     lightFalloff(1, 0, 0);
-    lightSpecular(0, 0, 0);
+    lightSpecular(255, 255, 255);
 
-    //ambientLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f);
+    ambientLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f);
     directionalLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f, 0, 0, -1);
     
     colorMode = colorModeSaved;
