@@ -11,10 +11,10 @@
   </target>
 
   <target name="sdk_whining">
-    <available file="${env.ANDROID_SDK}/platforms/android-9/android.jar"
+    <available file="${env.ANDROID_SDK}/platforms/android-10/android.jar"
 	       property="andoid-jar-present" />
     <fail unless="andoid-jar-present" 
-	  message="Android SDK 9 could not be found in ${env.ANDROID_SDK}/platforms/android-9/android.jar" />
+	  message="Android SDK 10 could not be found in ${env.ANDROID_SDK}/platforms/android-10/android.jar" />
   </target>
 
   <target name="actual_build" if="env.ANDROID_SDK">
@@ -22,7 +22,7 @@
     <javac target="1.5" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   bootclasspath="${env.ANDROID_SDK}/platforms/android-9/android.jar"
+	   bootclasspath="${env.ANDROID_SDK}/platforms/android-10/android.jar"
 	   srcdir="src" destdir="bin" />
 
     <!-- Copy the shaders to the bin folder. 

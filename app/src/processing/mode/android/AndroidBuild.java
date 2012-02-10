@@ -33,7 +33,7 @@ import processing.mode.java.JavaBuild;
 
 class AndroidBuild extends JavaBuild {
   static final String basePackage = "changethispackage.beforesubmitting.tothemarket";
-  static final String sdkVersion = "8";
+  static final String sdkVersion = "10";  // Android 2.3.3 (Gingerbread)
   static final String sdkTarget = "android-" + sdkVersion;
 
 //  private final Editor editor;
