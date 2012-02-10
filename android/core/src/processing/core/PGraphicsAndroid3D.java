@@ -237,18 +237,13 @@ public class PGraphicsAndroid3D extends PGraphics {
    * 0 and 1.
    */
   public float[] lightSpecular;
-  
-  
+    
   /** Light falloff */
-  public float[] lightFalloffConstant;
-  public float[] lightFalloffLinear;
-  public float[] lightFalloffQuadratic;
+  public float[] lightFalloffCoefficients;
 
-  /** Cosine of light spot angle */
-  public float[] lightSpotAngleCos;
-
-  /** Light spot concentration */
-  public float[] lightSpotConcentration;
+  /** Light spot parameters: Cosine of light spot angle 
+   * and concentration */
+  public float[] lightSpotParameters;
 
   /** Current specular color for lighting */
   public float[] currentLightSpecular;
@@ -493,11 +488,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       lightAmbient = new float[3 * PGL.MAX_LIGHTS];
       lightDiffuse = new float[3 * PGL.MAX_LIGHTS];
       lightSpecular = new float[3 * PGL.MAX_LIGHTS];
-      lightFalloffConstant = new float[PGL.MAX_LIGHTS];
-      lightFalloffLinear = new float[PGL.MAX_LIGHTS];
-      lightFalloffQuadratic = new float[PGL.MAX_LIGHTS];
-      lightSpotAngleCos = new float[PGL.MAX_LIGHTS];
-      lightSpotConcentration = new float[PGL.MAX_LIGHTS];
+      lightFalloffCoefficients = new float[3 * PGL.MAX_LIGHTS];
+      lightSpotParameters = new float[2 * PGL.MAX_LIGHTS];
       currentLightSpecular = new float[3];
       lightsAllocated = true;
     }
@@ -4225,9 +4217,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   protected void noLightDiffuse(int num) {
-    lightDiffuse[3 * lightCount + 0] = 0;
-    lightDiffuse[3 * lightCount + 1] = 0;
-    lightDiffuse[3 * lightCount + 2] = 0;
+    lightDiffuse[3 * num + 0] = 0;
+    lightDiffuse[3 * num + 1] = 0;
+    lightDiffuse[3 * num + 2] = 0;
   }
 
   protected void lightSpecular(int num, float r, float g, float b) {
@@ -4243,25 +4235,25 @@ public class PGraphicsAndroid3D extends PGraphics {
   }  
   
   protected void lightFalloff(int num, float c0, float c1, float c2) {
-    lightFalloffConstant [num] = c0;
-    lightFalloffLinear   [num] = c1;
-    lightFalloffQuadratic[num] = c2;
+    lightFalloffCoefficients[3 * num + 0] = c0;
+    lightFalloffCoefficients[3 * num + 1] = c1;
+    lightFalloffCoefficients[3 * num + 2] = c2;
   }
 
   protected void noLightFalloff(int num) {
-    lightFalloffConstant [num] = 1;
-    lightFalloffLinear   [num] = 0;
-    lightFalloffQuadratic[num] = 0;    
+    lightFalloffCoefficients[3 * num + 0] = 1;
+    lightFalloffCoefficients[3 * num + 1] = 0;
+    lightFalloffCoefficients[3 * num + 2] = 0;
   }
   
   protected void lightSpot(int num, float angle, float exponent) {
-    lightSpotAngleCos     [num] = Math.max(0, PApplet.cos(angle));
-    lightSpotConcentration[num] = exponent;
+    lightSpotParameters[2 * num + 0] = Math.max(0, PApplet.cos(angle));
+    lightSpotParameters[2 * num + 1] = exponent;
   }
   
   protected void noLightSpot(int num) {
-    lightSpotAngleCos     [num] = 0;
-    lightSpotConcentration[num] = 0;
+    lightSpotParameters[2 * num + 0] = 0;
+    lightSpotParameters[2 * num + 1] = 0;
   }
   
   
@@ -5780,12 +5772,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     protected int lightNormalLoc;
     protected int lightAmbientLoc;
     protected int lightDiffuseLoc;
-    protected int lightSpecularLoc;      
-    protected int lightFalloffConstantLoc;
-    protected int lightFalloffLinearLoc;
-    protected int lightFalloffQuadraticLoc;      
-    protected int lightSpotAngleCosLoc;
-    protected int lightSpotConcentrationLoc;       
+    protected int lightSpecularLoc;
+    protected int lightFalloffCoefficientsLoc;
+    protected int lightSpotParametersLoc;      
     
     protected int inVertexLoc;
     protected int inColorLoc;
@@ -5826,11 +5815,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       lightAmbientLoc = getUniformLocation("lightAmbient");
       lightDiffuseLoc = getUniformLocation("lightDiffuse");
       lightSpecularLoc = getUniformLocation("lightSpecular");
-      lightFalloffConstantLoc = getUniformLocation("lightFalloffConstant");
-      lightFalloffLinearLoc = getUniformLocation("lightFalloffLinear");
-      lightFalloffQuadraticLoc = getUniformLocation("lightFalloffQuadratic");
-      lightSpotAngleCosLoc = getUniformLocation("lightSpotAngleCos");
-      lightSpotConcentrationLoc = getUniformLocation("lightSpotConcentration");      
+      lightFalloffCoefficientsLoc = getUniformLocation("lightFalloffCoefficients");
+      lightSpotParametersLoc = getUniformLocation("lightSpotParameters");      
     }    
     
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { 
@@ -5887,12 +5873,9 @@ public class PGraphicsAndroid3D extends PGraphics {
       set3FloatVecUniform(lightNormalLoc, lightNormal);
       set3FloatVecUniform(lightAmbientLoc, lightAmbient);
       set3FloatVecUniform(lightDiffuseLoc, lightDiffuse);
-      set3FloatVecUniform(lightSpecularLoc, lightSpecular);          
-      set1FloatVecUniform(lightFalloffConstantLoc, lightFalloffConstant);
-      set1FloatVecUniform(lightFalloffLinearLoc, lightFalloffLinear);
-      set1FloatVecUniform(lightFalloffQuadraticLoc, lightFalloffQuadratic);
-      set1FloatVecUniform(lightSpotAngleCosLoc, lightSpotAngleCos);
-      set1FloatVecUniform(lightSpotConcentrationLoc, lightSpotConcentration);          
+      set3FloatVecUniform(lightSpecularLoc, lightSpecular);
+      set3FloatVecUniform(lightFalloffCoefficientsLoc, lightFalloffCoefficients);
+      set2FloatVecUniform(lightSpotParametersLoc, lightSpotParameters);
     }
 
     public void stop() {      
