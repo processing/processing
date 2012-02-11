@@ -82,6 +82,13 @@ public class JavaScriptEditor extends Editor
         }
       });
 
+	JMenuItem openInBrowserItem = Base.newJMenuItem("Reopen in Browser", 'B');
+    openInBrowserItem.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          handleOpenInBrowser();
+        }
+      });
+
     JMenuItem stopServerItem = new JMenuItem("Stop Server");
     stopServerItem.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -112,7 +119,7 @@ public class JavaScriptEditor extends Editor
 	});
 
     return buildSketchMenu(new JMenuItem[] {
-		startServerItem, stopServerItem, 
+		startServerItem, openInBrowserItem, stopServerItem, 
 		copyServerAddressItem, setServerPortItem
 	});
   }
@@ -449,12 +456,11 @@ public class JavaScriptEditor extends Editor
    *  export to folder, start server, open in default browser.
    */
   public void handleStartServer ()
-  {	
-	System.out.println();
+  {			
 	statusEmpty();
-	System.out.println();
 	
 	if ( !handleExport( false ) ) return;
+		
 	File serverRoot = getExportFolder();
 	// if server hung or something else went wrong .. stop it.
 	if ( jsServer != null && 
@@ -468,6 +474,10 @@ public class JavaScriptEditor extends Editor
 	{
 		jsServer = createJavaScriptServer();
 		jsServer.start();
+		
+		// a little delay to give the server time to kick in ..
+		long ts = System.currentTimeMillis();
+		while ( System.currentTimeMillis() - ts < 200 ) {}
 		
 		while ( !jsServer.isRunning() ) {}
 		
@@ -486,8 +496,16 @@ public class JavaScriptEditor extends Editor
     toolbar.activate(JavaScriptToolbar.RUN);
   }
 
+	private void handleOpenInBrowser ()
+	{
+		if ( jsServer != null && jsServer.isRunning() )
+		{
+			Base.openURL( jsServer.getAddress() );
+		}
+	}
+
   private JavaScriptServer createJavaScriptServer ()
-  {
+  {	
 	if ( jsServer != null ) return jsServer;
 	
 	jsServer = new JavaScriptServer( getExportFolder() );
@@ -526,7 +544,7 @@ public class JavaScriptEditor extends Editor
    * Call the export method of the sketch and handle the gui stuff
    */
   public boolean handleExport ( boolean openFolder ) 
-  {
+  {		
     if ( !handleExportCheckModified() )
     {
 		return false;
