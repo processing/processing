@@ -906,6 +906,20 @@ public class PGraphics extends PImage implements PConstants {
     normalX = nx;
     normalY = ny;
     normalZ = nz;
+    
+    /*
+    // if drawing a shape and the normal hasn't been set yet,
+    // then we need to set the normals for each vertex so far
+    if (shape != 0) {
+      if (normalMode == NORMAL_MODE_AUTO) {
+        // One normal per begin/end shape
+        normalMode = NORMAL_MODE_SHAPE;
+      } else if (normalMode == NORMAL_MODE_SHAPE) {
+        // a separate normal for each vertex
+        normalMode = NORMAL_MODE_VERTEX;
+      }
+    }
+    */
   }
 
 
@@ -1902,9 +1916,81 @@ public class PGraphics extends PImage implements PConstants {
     if ((sphereDetailU < 3) || (sphereDetailV < 2)) {
       sphereDetail(30);
     }
-
+    
     edge(false);
 
+    
+    float startLat = -90;
+    float startLon = 0.0f;
+
+    float latInc = 180.0f / sphereDetailU;
+    float lonInc = 360.0f / sphereDetailV;
+
+    float phi1,  phi2;
+    float theta1,  theta2;
+    float x0, y0, z0;
+    float x1, y1, z1;
+    float x2, y2, z2;
+    float x3, y3, z3;
+    float u1, v1, u2, v2, v3;
+
+    beginShape(TRIANGLES);
+    
+    for (int col = 0; col < sphereDetailU; col++) {
+      phi1 = (startLon + col * lonInc) * DEG_TO_RAD;
+      phi2 = (startLon + (col + 1) * lonInc) * DEG_TO_RAD;
+      for (int row = 0; row < sphereDetailV; row++) {
+        theta1 = (startLat + row * latInc) * DEG_TO_RAD;
+        theta2 = (startLat + (row + 1) * latInc) * DEG_TO_RAD;
+
+        x0 = PApplet.cos(phi1) * PApplet.cos(theta1);
+        y0 = PApplet.sin(theta1);
+        z0 = PApplet.sin(phi1) * PApplet.cos(theta1);
+        
+        x1 = PApplet.cos(phi1) * PApplet.cos(theta2);
+        y1 = PApplet.sin(theta2);
+        z1 = PApplet.sin(phi1) * PApplet.cos(theta2);
+        
+        x2 = PApplet.cos(phi2) * PApplet.cos(theta2);
+        y2 = PApplet.sin(theta2);        
+        z2 = PApplet.sin(phi2) * PApplet.cos(theta2);
+
+        x3 = PApplet.cos(phi2) * PApplet.cos(theta1);
+        y3 = PApplet.sin(theta1);            
+        z3 = PApplet.sin(phi2) * PApplet.cos(theta1);
+        
+        u1 = PApplet.map(phi1, TWO_PI, 0, 0, 1); 
+        u2 = PApplet.map(phi2, TWO_PI, 0, 0, 1);
+        v1 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+        v2 = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
+        v3 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+        
+        normal(x0, y0, z0);     
+        vertex(r * x0, r * y0, r * z0, u1, v1);
+
+        normal(x2, y2, z2);
+        vertex(r * x2, r * y2, r * z2, u2, v2);        
+        
+        normal(x1, y1, z1);
+        vertex(r * x1,  r * y1,  r * z1, u1, v2);
+
+
+
+        normal(x0, y0, z0);    
+        vertex(r * x0, r * y0, r * z0, u1, v1);
+
+        normal(x3,  y3,  z3);
+        vertex(r * x3,  r * y3,  r * z3,  u2,  v3);        
+        
+        normal(x2, y2, z2);
+        vertex(r * x2, r * y2, r * z2, u2, v2);
+      }
+    }
+    
+    endShape();
+    
+    
+/*
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
     for (int i = 0; i < sphereDetailU; i++) {
@@ -1958,7 +2044,8 @@ public class PGraphics extends PImage implements PConstants {
     normal(0, 1, 0);
     vertex(0, r, 0);
     endShape();
-
+*/
+    
     edge(true);
   }
 
