@@ -1437,6 +1437,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // remove any additional modelview transformation (and less likely, projection
       // transformations) applied by the user after setting the camera and/or projection      
       modelview.set(camera);
+      modelviewInv.set(cameraInv);
       calcProjmodelview();
     }
       
@@ -1672,7 +1673,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     // The normal matrix is the transpose of the inverse of the
-    // modelview:
+    // modelview (remember that gl matrices are column-major, 
+    // meaning that elements 0, 1, 2 are the first column,
+    // 3, 4, 5 the second, etc.:
     glNormal[0] = modelviewInv.m00; 
     glNormal[1] = modelviewInv.m01; 
     glNormal[2] = modelviewInv.m02;
@@ -2202,7 +2205,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }          
       
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        popMatrix();
+        //popMatrix();
       }
     }
     
@@ -7662,9 +7665,9 @@ public class PGraphicsAndroid3D extends PGraphics {
         fillVertices[index  ] = x * mm.m20 + y * mm.m21 + z * mm.m22 + mm.m23;
         
         index = 3 * fillVertexCount;
-        fillNormals[index++] = nx * nm.m00 + ny * nm.m10 + nz * nm.m02;
-        fillNormals[index++] = nx * nm.m01 + ny * nm.m11 + nz * nm.m12;
-        fillNormals[index  ] = nx * nm.m02 + ny * nm.m21 + nz * nm.m22;
+        fillNormals[index++] = nx * nm.m00 + ny * nm.m10 + nz * nm.m20;
+        fillNormals[index++] = nx * nm.m01 + ny * nm.m11 + nz * nm.m21;
+        fillNormals[index  ] = nx * nm.m02 + ny * nm.m12 + nz * nm.m22;
       } else {
         index = 3 * fillVertexCount;
         fillVertices[index++] = x;

@@ -73,6 +73,7 @@ float blinnPhongFactor(vec3 lightDir, vec3 lightPos, vec3 vecNormal, float shine
 }
 
 void main() {
+  // Vertex in clip coordinates
   gl_Position = projmodelviewMatrix * inVertex;
     
   // Vertex in eye coordinates
@@ -99,8 +100,8 @@ void main() {
       falloff = one_float;
       lightDir = -lightNormal[i];
     } else {
-      falloff = falloffFactor(lightPos, ecVertex, lightFalloffCoefficients[i]);      
-      lightDir = lightPos - ecVertex;
+      falloff = falloffFactor(lightPos, ecVertex, lightFalloffCoefficients[i]);  
+      lightDir = normalize(lightPos - ecVertex);
     }
   
     spotf = spotExp > zero_float ? spotFactor(lightPos, ecVertex, lightNormal[i], 
@@ -110,21 +111,24 @@ void main() {
     if (any(greaterThan(lightAmbient[i], zero_vec3))) {
       totalAmbient  += lightAmbient[i] * falloff;
     }
+    
     if (any(greaterThan(lightDiffuse[i], zero_vec3))) {
       totalDiffuse  += lightDiffuse[i] * falloff * spotf * 
                        lambertFactor(-lightDir, ecNormal);
     }
+    
     if (any(greaterThan(lightSpecular[i], zero_vec3))) {
       totalSpecular += lightSpecular[i] * falloff * spotf * 
                        blinnPhongFactor(-lightDir, lightPos, ecNormal, inShine);
-    }
+    }    
   }    
   
+  // Calculating final color as result of all lights (plus emissive term)
   vertColor = vec4(totalAmbient, 1) * inAmbient + 
               vec4(totalDiffuse, 1) * inColor + 
               vec4(totalSpecular, 1) * inSpecular + 
               inEmissive;
               
   // Passing texture coordinates to the fragment shader
-  vertTexcoord = inTexcoord;              
+  vertTexcoord = inTexcoord;                
 }

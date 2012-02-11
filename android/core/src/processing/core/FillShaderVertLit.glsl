@@ -71,6 +71,7 @@ float blinnPhongFactor(vec3 lightDir, vec3 lightPos, vec3 vecNormal, float shine
 }
 
 void main() {
+  // Vertex in clip coordinates
   gl_Position = projmodelviewMatrix * inVertex;
     
   // Vertex in eye coordinates
@@ -97,7 +98,7 @@ void main() {
       falloff = one_float;
       lightDir = -lightNormal[i];
     } else {
-      falloff = falloffFactor(lightPos, ecVertex, lightFalloffCoefficients[i]);      
+      falloff = falloffFactor(lightPos, ecVertex, lightFalloffCoefficients[i]);  
       lightDir = normalize(lightPos - ecVertex);
     }
   
@@ -120,6 +121,7 @@ void main() {
     }    
   }    
   
+  // Calculating final color as result of all lights (plus emissive term)
   vertColor = vec4(totalAmbient, 1) * inAmbient + 
               vec4(totalDiffuse, 1) * inColor + 
               vec4(totalSpecular, 1) * inSpecular + 
