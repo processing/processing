@@ -117,6 +117,7 @@ class JavaScriptServer implements HttpConstants, Runnable
 	        ds.setReuseAddress(true);
 	        return true;
 	    } catch (IOException e) {
+			e.printStackTrace();
 	    } finally {
 	        if (ds != null) {
 	            ds.close();
@@ -215,6 +216,10 @@ class JavaScriptServer implements HttpConstants, Runnable
 				    //threads.add(ws);
 	                (new Thread(ws, "ProcessingJSServer Worker")).start();
 		        }
+			}
+			else
+			{
+				System.err.println( "Server is null. Bad. Really." );
 			}
 		} catch ( IOException ioe ) {
 			// happens on shutDown(), ignore ..
