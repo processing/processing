@@ -114,12 +114,12 @@ void main() {
     
     if (any(greaterThan(lightDiffuse[i], zero_vec3))) {
       totalDiffuse  += lightDiffuse[i] * falloff * spotf * 
-                       lambertFactor(-lightDir, ecNormal);
+                       lambertFactor(lightDir, ecNormal);
     }
     
     if (any(greaterThan(lightSpecular[i], zero_vec3))) {
       totalSpecular += lightSpecular[i] * falloff * spotf * 
-                       blinnPhongFactor(-lightDir, lightPos, ecNormal, inShine);
+                       blinnPhongFactor(lightDir, lightPos, ecNormal, inShine);
     }    
   }    
   

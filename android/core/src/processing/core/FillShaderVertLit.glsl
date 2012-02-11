@@ -112,18 +112,18 @@ void main() {
     
     if (any(greaterThan(lightDiffuse[i], zero_vec3))) {
       totalDiffuse  += lightDiffuse[i] * falloff * spotf * 
-                       lambertFactor(-lightDir, ecNormal);
+                       lambertFactor(lightDir, ecNormal);
     }
     
     if (any(greaterThan(lightSpecular[i], zero_vec3))) {
       totalSpecular += lightSpecular[i] * falloff * spotf * 
-                       blinnPhongFactor(-lightDir, lightPos, ecNormal, inShine);
+                       blinnPhongFactor(lightDir, lightPos, ecNormal, inShine);
     }    
   }    
-  
+
   // Calculating final color as result of all lights (plus emissive term)
   vertColor = vec4(totalAmbient, 1) * inAmbient + 
               vec4(totalDiffuse, 1) * inColor + 
               vec4(totalSpecular, 1) * inSpecular + 
-              inEmissive;
+              inEmissive;          
 }

@@ -2391,10 +2391,8 @@ public class PShape3D extends PShape {
         
         if (family == GEOMETRY) {
           if (kind == POINTS) {
-            if (normalMode == NORMAL_MODE_AUTO) in.calcPointsNormals();
             tessellator.tessellatePoints();    
           } else if (kind == LINES) {
-            if (normalMode == NORMAL_MODE_AUTO) in.calcLinesNormals();
             tessellator.tessellateLines();    
           } else if (kind == TRIANGLE || kind == TRIANGLES) {
             if (stroke) in.addTrianglesEdges();
@@ -2571,7 +2569,6 @@ public class PShape3D extends PShape {
     if ((nu < 3) || (nv < 2)) {
       nu = nv = 30;
     }
- 
     
     float startLat = -90;
     float startLon = 0.0f;
