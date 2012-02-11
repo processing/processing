@@ -3220,6 +3220,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
   public void resetMatrix() {
     modelview.reset();
+    modelviewInv.reset();
     projmodelview.set(projection);
   }
   
