@@ -2132,10 +2132,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     setFirstTexIndex(tessGeo.fillIndexCount);
     
     if (shape == POINTS) {
-      if (normalMode == NORMAL_MODE_AUTO) inGeo.calcPointsNormals();
       tessellator.tessellatePoints();    
     } else if (shape == LINES) {
-      if (normalMode == NORMAL_MODE_AUTO) inGeo.calcLinesNormals();
       tessellator.tessellateLines();    
     } else if (shape == TRIANGLE || shape == TRIANGLES) {
       if (stroke && defaultEdges) inGeo.addTrianglesEdges();
@@ -6513,9 +6511,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       float v10y = y0 - y1;
       float v10z = z0 - z1;
       
-      float nx = v12y * v10z - v10y * v12z;
-      float ny = v12z * v10x - v10z * v12x;
-      float nz = v12x * v10y - v10x * v12y;
+      // n = v10 x v12 (so the normal points out following the
+      // clockwise direction along the vertices of the triangle).
+      float nx = v10y * v12z - v12y * v10z;
+      float ny = v10z * v12x - v12z * v10x;
+      float nz = v10x * v12y - v12x * v10y;
       float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
       nx /= d;
       ny /= d;
@@ -6707,14 +6707,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       return 6 *(lastEdge - firstEdge + 1);
     }    
 
-    public void calcPointsNormals() {
-      // TODO 
-    }    
-    
-    public void calcLinesNormals() {
-      // TODO
-    }
-        
     public void calcTrianglesNormals() {
       for (int i = 0; i < (lastVertex - firstVertex + 1) / 3; i++) {
         int i0 = 3 * i + 0;
