@@ -25,6 +25,7 @@ package processing.core;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -380,8 +381,8 @@ public class PGL {
   }  
   
   static public short makeIndex(int intIdx) {
-    // When the index value is greater than 32767 subtracting 65536
-    // will make it as a short to wrap around to the negative range, which    
+    // When the index value is greater than 32767, subtracting 65536
+    // will make it (as a short) to wrap around to the negative range, which    
     // is all we need to later pass these numbers to opengl (which will 
     // interpret them as unsigned shorts). See discussion here:
     // http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
@@ -394,6 +395,30 @@ public class PGL {
 
   public void disableTexturing(int target) {
     //gl.glDisable(target);
+  }  
+  
+  public void initTexture(int target, int width, int height, int format, int type) {
+    // Doing in patches of 16x16 pixels to avoid creating a (potentially)
+    // very large transient array which in certain situations (memory-
+    // constrained android devices) might lead to an out-of-memory error.
+    int[] texels = new int[16 * 16];
+    for (int y = 0; y < height + 16; y += 16) {
+      int h = PApplet.min(16, height - y);
+      for (int x = 0; x < width + 16; x += 16) {
+        int w = PApplet.min(16, width - x);
+        gl.glTexSubImage2D(target, 0, x, y, w, h, format, type, IntBuffer.wrap(texels));
+      }
+    }
+  }  
+  
+  public String getShaderLog(int id) {
+    int[] compiled = new int[1];
+    GLES20.glGetShaderiv(id, GLES20.GL_COMPILE_STATUS, compiled, 0);
+    if (compiled[0] == 0) {
+      return GLES20.glGetShaderInfoLog(id);
+    } else {
+      return "";
+    }
   }  
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -660,12 +685,12 @@ public class PGL {
   }
   
   
-  public ByteBuffer glMapBuffer(int target, int acccess) {  
+  public ByteBuffer glMapBuffer(int target, int access) {  
     //return gl2f.glMapBuffer(GL.GL_ARRAY_BUFFER, GL2.GL_READ_WRITE);
     return null;
   }
   
-  public ByteBuffer glMapBufferRange(int target, int offset, int length, int acccess) {
+  public ByteBuffer glMapBufferRange(int target, int offset, int length, int access) {
     //return gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, offset, length, GL2.GL_READ_WRITE);
     return null;
   }
@@ -707,7 +732,7 @@ public class PGL {
   }
 
   public void glBindRenderbuffer(int target, int id) {
-    GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, id);
+    GLES20.glBindRenderbuffer(target, id);
   }
     
   public void glRenderbufferStorageMultisample(int target, int samples, int format, int width, int height) {
@@ -842,16 +867,6 @@ public class PGL {
     GLES20.glAttachShader(prog, shader);  
   }
   
-  public String getShaderLog(int id) {
-    int[] compiled = new int[1];
-    GLES20.glGetShaderiv(id, GLES20.GL_COMPILE_STATUS, compiled, 0);
-    if (compiled[0] == 0) {
-      return GLES20.glGetShaderInfoLog(id);
-    } else {
-      return "";
-    }
-  }
-  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Viewport
@@ -895,7 +910,7 @@ public class PGL {
   }
   
   public void glReadPixels(int x, int y, int width, int height, int format, int type, Buffer buffer) {
-    GLES20.glReadPixels(x, y, width, height, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, buffer);
+    GLES20.glReadPixels(x, y, width, height, format, type, buffer);
   } 
   
   public void setDrawBuffer(int buf) {

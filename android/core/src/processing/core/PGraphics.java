@@ -907,7 +907,6 @@ public class PGraphics extends PImage implements PConstants {
     normalY = ny;
     normalZ = nz;
     
-    /*
     // if drawing a shape and the normal hasn't been set yet,
     // then we need to set the normals for each vertex so far
     if (shape != 0) {
@@ -918,10 +917,8 @@ public class PGraphics extends PImage implements PConstants {
         // a separate normal for each vertex
         normalMode = NORMAL_MODE_VERTEX;
       }
-    }
-    */
+    }        
   }
-
 
   /**
    * Set texture mode to either to use coordinates based on the IMAGE

@@ -28,6 +28,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PImage;
+
 import java.util.HashMap;
 
 /**
@@ -51,7 +52,7 @@ class PFontTexture implements PConstants {
   protected PApplet parent;
   protected PGraphicsOpenGL pg;
   protected PGL pgl;             
-  protected PGL.Context context;
+  protected PGL.Context context; 
   protected PFont font;
 
   protected int maxTexWidth;

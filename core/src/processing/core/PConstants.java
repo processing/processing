@@ -46,6 +46,15 @@ public interface PConstants {
   static public final int FLUSH_CONTINUOUSLY = 0;
   static public final int FLUSH_WHEN_FULL    = 1;  
   
+  // shaders
+  
+  static public final int FILL_SHADER_SIMPLE = 0;
+  static public final int FILL_SHADER_LIT = 1;
+  static public final int FILL_SHADER_TEX = 2;
+  static public final int FILL_SHADER_FULL = 3;
+  static public final int LINE_SHADER = 4;
+  static public final int POINT_SHADER = 5;  
+  
   // vertex fields
   
   static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)

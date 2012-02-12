@@ -28,6 +28,7 @@ import java.nio.IntBuffer;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+
 /**
  * This class wraps an OpenGL texture.
  * By Andres Colubri
@@ -782,20 +783,8 @@ public class PTexture implements PConstants {
     // from w/h in the case that the GPU doesn't support NPOT textures)
     pgl.glTexImage2D(glTarget, 0, glFormat, glWidth, glHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
     
-    // Once OpenGL knows the size of the new texture, we make sure it doesn't
-    // contain any garbage in the region of interest (0, 0, width, height):        
-    // Doing in patches of 16x16 pixels to avoid creating a (potentially)
-    // very large transient array which in certain situations (memory-
-    // constrained android devices) might lead to an out-of-memory error.
-    int[] texels = new int[16 * 16];
-    for (int y = 0; y < height + 16; y += 16) {
-      int h = PApplet.min(16, height - y);
-      for (int x = 0; x < width + 16; x += 16) {
-        int w = PApplet.min(16, width - x);
-        setTexels(texels, x, y, w, h);        
-      }
-    }
-    texels = null;
+    // Makes sure that the texture buffer in video memory doesn't contain any garbage.
+    pgl.initTexture(glTarget, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE);
     
     pgl.glBindTexture(glTarget, 0);
     pgl.disableTexturing(glTarget);
