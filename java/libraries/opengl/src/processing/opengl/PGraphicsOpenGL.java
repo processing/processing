@@ -4019,7 +4019,7 @@ public class PGraphicsOpenGL extends PGraphics {
     colorMode = RGB;
 
     lightFalloff(1, 0, 0);
-    lightSpecular(255, 255, 255);
+    lightSpecular(0, 0, 0);
 
     ambientLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f);
     directionalLight(colorModeX * 0.5f, colorModeY * 0.5f, colorModeZ * 0.5f, 0, 0, -1);
