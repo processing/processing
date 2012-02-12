@@ -780,8 +780,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   // GLSL Program Objects -----------------------------------------------
   
   protected int createGLSLProgramObject() {
-    
-    pg.report("before delete");
     deleteFinalizedGLSLProgramObjects();
         
     int id = pgl.glCreateProgram();
@@ -2203,7 +2201,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }          
       
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        //popMatrix();
+        popMatrix();
       }
     }
     
@@ -6327,7 +6325,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     public void trim() {
-      if (vertexCount < vertices.length / 3) {
+      if (0 < vertexCount && vertexCount < vertices.length / 3) {
         trimVertices();
         trimColors();
         trimNormals();
@@ -6337,9 +6335,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         trimAmbient();
         trimSpecular();
         trimEmissive();
-        trimShininess();
+        trimShininess();        
+      } 
+      
+      if (0 < edgeCount && edgeCount < edges.length) { 
         trimEdges();
-      }      
+      }
     }
     
     public void dispose() {
@@ -6437,7 +6438,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       index = 3 * vertexCount;
       normals[index++] = nx;
       normals[index++] = ny;
-      normals[index  ] = ny;      
+      normals[index  ] = nz;      
       
       index = 2 * vertexCount;
       texcoords[index++] = u;
@@ -7065,7 +7066,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     public void trim() {
-      if (fillVertexCount < fillVertices.length / 3) {
+      if (0 < fillVertexCount && fillVertexCount < fillVertices.length / 3) {
         trimFillVertices();
         trimFillColors();
         trimFillNormals();
@@ -7076,31 +7077,31 @@ public class PGraphicsAndroid3D extends PGraphics {
         trimFillShininess();
       }
       
-      if (fillIndexCount < fillIndices.length) {
+      if (0 < fillIndexCount && fillIndexCount < fillIndices.length) {
         trimFillIndices();  
       }
             
-      if (lineVertexCount < lineVertices.length / 3) {
+      if (0 < lineVertexCount && lineVertexCount < lineVertices.length / 3) {
         trimLineVertices();
         trimLineColors();
         trimLineAttributes();
       }
       
-      if (lineIndexCount < lineIndices.length) {
+      if (0 < lineIndexCount && lineIndexCount < lineIndices.length) {
         trimLineIndices();  
       }
       
-      if (pointVertexCount < pointVertices.length / 3) {
+      if (0 < pointVertexCount && pointVertexCount < pointVertices.length / 3) {
         trimPointVertices();
         trimPointColors();
         trimPointAttributes();
       }
       
-      if (pointIndexCount < pointIndices.length) {
+      if (0 < pointIndexCount && pointIndexCount < pointIndices.length) {
         trimPointIndices();  
       }       
     }    
-    
+        
     protected void trimFillVertices() {
       float temp[] = new float[3 * fillVertexCount];      
       PApplet.arrayCopy(fillVertices, 0, temp, 0, 3 * fillVertexCount);
@@ -7174,7 +7175,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }      
     
     protected void trimLineIndices() {
-      short temp[] = new short[lineVertexCount];      
+      short temp[] = new short[lineIndexCount];      
       PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;        
     }    
@@ -8571,10 +8572,11 @@ public class PGraphicsAndroid3D extends PGraphics {
           
           // Vertex data includes coordinates, colors, normals, texture coordinates, and material properties.
           double[] vertex = new double[] { in.vertices [3 * i + 0], in.vertices [3 * i + 1], in.vertices[3 * i + 2],
-                                           in.colors   [4 * i + 0], in.colors   [4 * i + 1], in.colors  [4 * i + 2], in.colors[4 * i + 3],
+                                           in.colors   [i],
                                            in.normals  [3 * i + 0], in.normals  [3 * i + 1], in.normals [3 * i + 2],
                                            in.texcoords[2 * i + 0], in.texcoords[2 * i + 1],
                                            in.ambient[i], in.specular[i], in.emissive[i], in.shininess[i] };
+          
           gluTess.addVertex(vertex);
         }        
         gluTess.endContour();

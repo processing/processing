@@ -19,6 +19,18 @@
   Boston, MA  02111-1307  USA
 */
 
-void main() {  
-  gl_FragColor = gl_Color;
+uniform mat4 projmodelviewMatrix;
+
+attribute vec4 inVertex;
+attribute vec4 inColor;
+attribute vec2 inTexcoord;
+
+varying vec4 vertColor;
+varying vec2 vertTexcoord;
+
+void main() {
+  gl_Position = projmodelviewMatrix * inVertex;
+    
+  vertColor = inColor;
+  vertTexcoord = inTexcoord;
 }

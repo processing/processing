@@ -342,9 +342,15 @@ public class PGraphics extends PImage implements PConstants {
 //  PMaterial[] materialStack;
 //  int materialStackPointer;
 
+  public int ambientColor;
   public float ambientR, ambientG, ambientB;
+  
+  public int specularColor;
   public float specularR, specularG, specularB;
+  
+  public int emissiveColor;
   public float emissiveR, emissiveG, emissiveB;
+  
   public float shininess;
 
 
@@ -730,6 +736,11 @@ public class PGraphics extends PImage implements PConstants {
     colorMode(RGB, 255);
     fill(255);
     stroke(0);
+    
+    ambient(255);
+    specular(0);
+    emissive(0);
+    shininess(1);    
 
     // as of 0178, no longer relying on local versions of the variables
     // being set, because subclasses may need to take extra action.
@@ -1008,28 +1019,20 @@ public class PGraphics extends PImage implements PConstants {
   public void normal(float nx, float ny, float nz) {
     normalX = nx;
     normalY = ny;
-    normalZ = nz;
-
+    normalZ = nz;    
+    
     // if drawing a shape and the normal hasn't been set yet,
     // then we need to set the normals for each vertex so far
     if (shape != 0) {
       if (normalMode == NORMAL_MODE_AUTO) {
-        // either they set the normals, or they don't [0149]
-//        for (int i = vertex_start; i < vertexCount; i++) {
-//          vertices[i][NX] = normalX;
-//          vertices[i][NY] = normalY;
-//          vertices[i][NZ] = normalZ;
-//        }
         // One normal per begin/end shape
         normalMode = NORMAL_MODE_SHAPE;
-
       } else if (normalMode == NORMAL_MODE_SHAPE) {
         // a separate normal for each vertex
         normalMode = NORMAL_MODE_VERTEX;
       }
-    }
+    }        
   }
-
 
   /**
    * ( begin auto-generated from textureMode.xml )
@@ -2448,6 +2451,79 @@ public class PGraphics extends PImage implements PConstants {
 
     edge(false);
 
+    
+    float startLat = -90;
+    float startLon = 0.0f;
+
+    float latInc = 180.0f / sphereDetailU;
+    float lonInc = 360.0f / sphereDetailV;
+
+    float phi1,  phi2;
+    float theta1,  theta2;
+    float x0, y0, z0;
+    float x1, y1, z1;
+    float x2, y2, z2;
+    float x3, y3, z3;
+    float u1, v1, u2, v2, v3;
+
+    beginShape(TRIANGLES);
+    
+    for (int col = 0; col < sphereDetailU; col++) {
+      phi1 = (startLon + col * lonInc) * DEG_TO_RAD;
+      phi2 = (startLon + (col + 1) * lonInc) * DEG_TO_RAD;
+      for (int row = 0; row < sphereDetailV; row++) {
+        theta1 = (startLat + row * latInc) * DEG_TO_RAD;
+        theta2 = (startLat + (row + 1) * latInc) * DEG_TO_RAD;
+
+        x0 = PApplet.cos(phi1) * PApplet.cos(theta1);
+        y0 = PApplet.sin(theta1);
+        z0 = PApplet.sin(phi1) * PApplet.cos(theta1);
+        
+        x1 = PApplet.cos(phi1) * PApplet.cos(theta2);
+        y1 = PApplet.sin(theta2);
+        z1 = PApplet.sin(phi1) * PApplet.cos(theta2);
+        
+        x2 = PApplet.cos(phi2) * PApplet.cos(theta2);
+        y2 = PApplet.sin(theta2);        
+        z2 = PApplet.sin(phi2) * PApplet.cos(theta2);
+
+        x3 = PApplet.cos(phi2) * PApplet.cos(theta1);
+        y3 = PApplet.sin(theta1);            
+        z3 = PApplet.sin(phi2) * PApplet.cos(theta1);
+        
+        u1 = PApplet.map(phi1, TWO_PI, 0, 0, 1); 
+        u2 = PApplet.map(phi2, TWO_PI, 0, 0, 1);
+        v1 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+        v2 = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
+        v3 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+        
+        normal(x0, y0, z0);     
+        vertex(r * x0, r * y0, r * z0, u1, v1);
+
+        normal(x2, y2, z2);
+        vertex(r * x2, r * y2, r * z2, u2, v2);        
+        
+        normal(x1, y1, z1);
+        vertex(r * x1,  r * y1,  r * z1, u1, v2);
+
+
+
+        normal(x0, y0, z0);    
+        vertex(r * x0, r * y0, r * z0, u1, v1);
+
+        normal(x3,  y3,  z3);
+        vertex(r * x3,  r * y3,  r * z3,  u2,  v3);        
+        
+        normal(x2, y2, z2);
+        vertex(r * x2, r * y2, r * z2, u2, v2);
+      }
+    }
+    
+    endShape();
+
+    
+    
+    /*
     // 1st ring from south pole
     beginShape(TRIANGLE_STRIP);
     for (int i = 0; i < sphereDetailU; i++) {
@@ -2501,7 +2577,8 @@ public class PGraphics extends PImage implements PConstants {
     normal(0, 1, 0);
     vertex(0, r, 0);
     endShape();
-
+*/
+    
     edge(true);
   }
 
@@ -5971,6 +6048,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void ambientFromCalc() {
+    ambientColor = calcColor;
     ambientR = calcR;
     ambientG = calcG;
     ambientB = calcB;
@@ -6028,6 +6106,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void specularFromCalc() {
+    specularColor = calcColor;
     specularR = calcR;
     specularG = calcG;
     specularB = calcB;
@@ -6102,6 +6181,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void emissiveFromCalc() {
+    emissiveColor = calcColor;
     emissiveR = calcR;
     emissiveG = calcG;
     emissiveB = calcB;

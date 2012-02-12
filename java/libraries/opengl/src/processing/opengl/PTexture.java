@@ -27,6 +27,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
+
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -41,10 +42,10 @@ import java.util.NoSuchElementException;
 public class PTexture implements PConstants { 
   public int width, height;
       
-  protected PApplet parent;      // The Processing applet
-  protected PGraphicsOpenGL pg;  // The main renderer
-  protected PGL pgl;             // The interface between Processing and OpenGL.
-  protected PGL.Context context; // The context that created this texture.
+  protected PApplet parent;           // The Processing applet
+  protected PGraphicsOpenGL pg;    // The main renderer
+  protected PGL pgl;                  // The interface between Processing and OpenGL.
+  protected PGL.Context context;      // The context that created this texture.
   
   // These are public but use at your own risk!
   public int glID; 
@@ -247,15 +248,15 @@ public class PTexture implements PConstants {
     }
     
     pgl.enableTexturing(glTarget);
-    pgl.bindTexture(glTarget, glID);
+    pgl.glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
       if (PGraphicsOpenGL.mipmapGeneration) {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
-        convertToRGBA(pixels, rgbaPixels, format, w, h);        
-        pgl.enableTexMipmapGen(glTarget);
-        setTexels(rgbaPixels, x, y, w, h);
+        convertToRGBA(pixels, rgbaPixels, format, w, h);
+        setTexels(rgbaPixels, x, y, w, h);        
+        pgl.glGenerateMipmap(glTarget);
         rgbaPixels = null;
       } else {
         // TODO: Manual mipmap generation.
@@ -269,7 +270,7 @@ public class PTexture implements PConstants {
       rgbaPixels = null;
     }
 
-    pgl.bindTexture(glTarget, 0);
+    pgl.glBindTexture(glTarget, 0);
     pgl.disableTexturing(glTarget);        
   }  
   
@@ -412,12 +413,12 @@ public class PTexture implements PConstants {
   
   public void bind() {
     pgl.enableTexturing(glTarget);
-    pgl.bindTexture(glTarget, glID);
+    pgl.glBindTexture(glTarget, glID);
   }
   
   public void unbind() {
     pgl.enableTexturing(glTarget);
-    pgl.unbindTexture(glTarget);    
+    pgl.glBindTexture(glTarget, 0);    
   }  
   
   ////////////////////////////////////////////////////////////
@@ -772,37 +773,25 @@ public class PTexture implements PConstants {
    */
   protected void allocate() {
     release(); // Just in the case this object is being re-allocated.
-    
+        
     pgl.enableTexturing(glTarget);
     
     glID = pg.createTextureObject();    
     
-    pgl.bindTexture(glTarget, glID);
-    pgl.setTexMinFilter(glTarget, glMinFilter);
-    pgl.setTexMagFilter(glTarget, glMagFilter);
-    pgl.setTexWrapS(glTarget, glWrapS);
-    pgl.setTexWrapT(glTarget, glWrapT);
-            
+    pgl.glBindTexture(glTarget, glID);    
+    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MIN_FILTER, glMinFilter);    
+    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MAG_FILTER, glMagFilter);
+    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_S, glWrapS);
+    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_T, glWrapT);
+    
     // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
     // from w/h in the case that the GPU doesn't support NPOT textures)
-    pgl.initTex(glTarget, glFormat, glWidth, glHeight);
+    pgl.glTexImage2D(glTarget, 0, glFormat, glWidth, glHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
     
-    // Once OpenGL knows the size of the new texture, we make sure it doesn't
-    // contain any garbage in the region of interest (0, 0, width, height):        
-    // Doing in patches of 16x16 pixels to avoid creating a (potentially)
-    // very large transient array which in certain situations (memory-
-    // constrained android devices) might lead to an out-of-memory error.
-    int[] texels = new int[16 * 16];
-    for (int y = 0; y < height + 16; y += 16) {
-      int h = PApplet.min(16, height - y);
-      for (int x = 0; x < width + 16; x += 16) {
-        int w = PApplet.min(16, width - x);
-        setTexels(texels, x, y, w, h);        
-      }
-    }
-    texels = null;
+    // Makes sure that the texture buffer in video memory doesn't contain any garbage.
+    pgl.initTexture(glTarget, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE);
     
-    pgl.unbindTexture(glTarget);
+    pgl.glBindTexture(glTarget, 0);
     pgl.disableTexturing(glTarget);
   }
   
@@ -858,7 +847,7 @@ public class PTexture implements PConstants {
   }
   
   protected void setTexels(int[] pix, int level, int x, int y, int w, int h) {
-    pgl.copyTexSubImage(pix, glTarget, level, x, y, w, h);
+    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
   }
 
   protected void setTexels(IntBuffer buffer, int x, int y, int w, int h) {
@@ -866,7 +855,7 @@ public class PTexture implements PConstants {
   }  
   
   protected void setTexels(IntBuffer buffer, int level, int x, int y, int w, int h) {
-    pgl.copyTexSubImage(buffer, glTarget, level, x, y, w, h);
+    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
   }
   
   protected void copyObject(PTexture src) {
@@ -905,35 +894,35 @@ public class PTexture implements PConstants {
   public Parameters getParameters() {
     Parameters res = new Parameters();
     
-    if (glTarget == PGL.TEXTURE_2D)  {
+    if (glTarget == PGL.GL_TEXTURE_2D)  {
         res.target = TEXTURE2D;
     }
     
-    if (glFormat == PGL.RGB)  {
+    if (glFormat == PGL.GL_RGB)  {
       res.format = RGB;
-    } else  if (glFormat == PGL.RGBA) {
+    } else  if (glFormat == PGL.GL_RGBA) {
       res.format = ARGB;
-    } else  if (glFormat == PGL.ALPHA) {
+    } else  if (glFormat == PGL.GL_ALPHA) {
       res.format = ALPHA;
     }
     
-    if (glMinFilter == PGL.NEAREST)  {
+    if (glMinFilter == PGL.GL_NEAREST)  {
       res.sampling = POINT;
-    } else if (glMinFilter == PGL.LINEAR)  {
+    } else if (glMinFilter == PGL.GL_LINEAR)  {
       res.sampling = BILINEAR;
-    } else if (glMinFilter == PGL.LINEAR_MIPMAP_LINEAR) {
+    } else if (glMinFilter == PGL.GL_LINEAR_MIPMAP_LINEAR) {
       res.sampling = TRILINEAR;
     }
 
-    if (glWrapS == PGL.CLAMP_TO_EDGE) {
+    if (glWrapS == PGL.GL_CLAMP_TO_EDGE) {
       res.wrapU = CLAMP;  
-    } else if (glWrapS == PGL.REPEAT) {
+    } else if (glWrapS == PGL.GL_REPEAT) {
       res.wrapU = REPEAT;
     }
 
-    if (glWrapT == PGL.CLAMP_TO_EDGE) {
+    if (glWrapT == PGL.GL_CLAMP_TO_EDGE) {
       res.wrapV = CLAMP;  
-    } else if (glWrapT == PGL.REPEAT) {
+    } else if (glWrapT == PGL.GL_REPEAT) {
       res.wrapV = REPEAT;
     }
     
@@ -948,51 +937,51 @@ public class PTexture implements PConstants {
    */   
   protected void setParameters(Parameters params) {    
     if (params.target == TEXTURE2D)  {
-        glTarget = PGL.TEXTURE_2D;
+        glTarget = PGL.GL_TEXTURE_2D;
     } else {
       throw new RuntimeException("OPENGL2: Unknown texture target");     
     }
     
     if (params.format == RGB)  {
-      glFormat = PGL.RGB;
+      glFormat = PGL.GL_RGB;
     } else  if (params.format == ARGB) {
-      glFormat = PGL.RGBA;
+      glFormat = PGL.GL_RGBA;
     } else  if (params.format == ALPHA) {
-      glFormat = PGL.ALPHA;
+      glFormat = PGL.GL_ALPHA;
     } else {
       throw new RuntimeException("OPENGL2: Unknown texture format");     
     }
     
     if (params.sampling == POINT) {
-      glMagFilter = PGL.NEAREST;
-      glMinFilter = PGL.NEAREST;
+      glMagFilter = PGL.GL_NEAREST;
+      glMinFilter = PGL.GL_NEAREST;
     } else if (params.sampling == BILINEAR)  {
-      glMagFilter = PGL.LINEAR;
-      glMinFilter = PGL.LINEAR;
+      glMagFilter = PGL.GL_LINEAR;
+      glMinFilter = PGL.GL_LINEAR;
     } else if (params.sampling == TRILINEAR)  {
-      glMagFilter = PGL.LINEAR;
-      glMinFilter = PGL.LINEAR_MIPMAP_LINEAR;      
+      glMagFilter = PGL.GL_LINEAR;
+      glMinFilter = PGL.GL_LINEAR_MIPMAP_LINEAR;      
     } else {
       throw new RuntimeException("OPENGL2: Unknown texture filtering mode");     
     }
     
     if (params.wrapU == CLAMP) {
-      glWrapS = PGL.CLAMP_TO_EDGE;  
+      glWrapS = PGL.GL_CLAMP_TO_EDGE;  
     } else if (params.wrapU == REPEAT)  {
-      glWrapS = PGL.REPEAT;
+      glWrapS = PGL.GL_REPEAT;
     } else {
       throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
     }
     
     if (params.wrapV == CLAMP) {
-      glWrapT = PGL.CLAMP_TO_EDGE;  
+      glWrapT = PGL.GL_CLAMP_TO_EDGE;  
     } else if (params.wrapV == REPEAT)  {
-      glWrapT = PGL.REPEAT;
+      glWrapT = PGL.GL_REPEAT;
     } else {
       throw new RuntimeException("OPENGL2: Unknown wrapping mode");     
     }
     
-    usingMipmaps = glMinFilter == PGL.LINEAR_MIPMAP_LINEAR;
+    usingMipmaps = glMinFilter == PGL.GL_LINEAR_MIPMAP_LINEAR;
     
     flippedX = false;
     flippedY = false;    
