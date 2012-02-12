@@ -1718,6 +1718,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // easiest for beginners
     textureMode(IMAGE);
+    
+    // Default material properties
+    ambient(80);
+    specular(125);
+    emissive(0);
+    shininess(1);    
   }
   
   // reapplySettings
