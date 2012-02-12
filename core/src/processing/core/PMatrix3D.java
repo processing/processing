@@ -644,7 +644,7 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   // These functions should not be used, as they will be removed in the future.
 
 
-  protected void invTranslate(float tx, float ty, float tz) {
+  public void invTranslate(float tx, float ty, float tz) {
     preApply(1, 0, 0, -tx,
              0, 1, 0, -ty,
              0, 0, 1, -tz,
@@ -652,28 +652,28 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   }
 
 
-  protected void invRotateX(float angle) {
+  public void invRotateX(float angle) {
     float c = cos(-angle);
     float s = sin(-angle);
     preApply(1, 0, 0, 0,  0, c, -s, 0,  0, s, c, 0,  0, 0, 0, 1);
   }
 
 
-  protected void invRotateY(float angle) {
+  public void invRotateY(float angle) {
     float c = cos(-angle);
     float s = sin(-angle);
     preApply(c, 0, s, 0,  0, 1, 0, 0,  -s, 0, c, 0,  0, 0, 0, 1);
   }
 
 
-  protected void invRotateZ(float angle) {
+  public void invRotateZ(float angle) {
     float c = cos(-angle);
     float s = sin(-angle);
     preApply(c, -s, 0, 0,  s, c, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1);
   }
 
 
-  protected void invRotate(float angle, float v0, float v1, float v2) {
+  public void invRotate(float angle, float v0, float v1, float v2) {
     //TODO should make sure this vector is normalized
 
     float c = cos(-angle);
@@ -687,15 +687,15 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
   }
 
 
-  protected void invScale(float x, float y, float z) {
+  public void invScale(float x, float y, float z) {
     preApply(1/x, 0, 0, 0,  0, 1/y, 0, 0,  0, 0, 1/z, 0,  0, 0, 0, 1);
   }
 
 
-  protected boolean invApply(float n00, float n01, float n02, float n03,
-                             float n10, float n11, float n12, float n13,
-                             float n20, float n21, float n22, float n23,
-                             float n30, float n31, float n32, float n33) {
+  public boolean invApply(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
     if (inverseCopy == null) {
       inverseCopy = new PMatrix3D();
     }
