@@ -25,8 +25,9 @@ void draw() {
   background(255);
   
   hint(DISABLE_DEPTH_TEST);
-  
+    
   // Center and spin grid
+  pushMatrix();
   translate(width/2, height/2, -depth);
   rotateY(frameCount * 0.01);
   rotateX(frameCount * 0.01);
@@ -46,6 +47,7 @@ void draw() {
       }
     }
   }
+  popMatrix();
   
   fcount += 1;
   int m = millis();
@@ -55,5 +57,6 @@ void draw() {
     lastm = m;
     println("fps: " + frate); 
   }
+  fill(0);
+  text("fps: " + frate, 10, 20);  
 }
-

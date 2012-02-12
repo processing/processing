@@ -14,6 +14,7 @@ color boxFill;
 void setup() {
   size(640, 360, P3D);
   noStroke();
+  hint(DISABLE_DEPTH_TEST);
 }
 
 void draw() {
