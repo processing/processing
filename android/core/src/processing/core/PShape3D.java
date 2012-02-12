@@ -610,13 +610,8 @@ public class PShape3D extends PShape {
     }    
     
     if (texture != null && textureMode == IMAGE) {
-      u /= texture.width;
-      v /= texture.height;
-      
-      PTexture tex = pg.queryTexture(texture);
-      if (tex != null && tex.isFlippedY()) {
-        v = 1 - v;
-      }          
+      u = PApplet.min(1, u / texture.width);
+      v = PApplet.min(1, v / texture.height);
     }
         
     int scolor = 0x00;
