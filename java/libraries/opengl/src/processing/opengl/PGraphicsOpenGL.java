@@ -2044,13 +2044,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
             
     if (textured && textureMode == IMAGE) {
-      u /= textureImage.width;
-      v /= textureImage.height;
-
-      PTexture tex = queryTexture(textureImage);
-      if (tex != null && tex.isFlippedY()) {
-        v = 1 - v;
-      }
+      u = PApplet.min(1, u / textureImage.width);
+      v = PApplet.min(1, v / textureImage.height);
     }
     
     inGeo.addVertex(x, y, z, 
@@ -2293,7 +2288,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       
       if (tex != null) {
-        shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);     
+        shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);
+        shader.setTexture(tex);
       }
       
       int offset = texCache.firstIndex[i];
@@ -2309,7 +2305,7 @@ public class PGraphicsOpenGL extends PGraphics {
  
   // Utility function to render current tessellated geometry, under the assumption that
   // the texture is already bound.
-  protected void renderTexFill() {
+  protected void renderTexFill(PTexture tex) {
     if (!fillVBOsCreated) {
       createFillBuffers();
       fillVBOsCreated = true;
@@ -2322,6 +2318,7 @@ public class PGraphicsOpenGL extends PGraphics {
     shader.setVertexAttribute(glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
     shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
     shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);
+    shader.setTexture(tex);
     
     if (lights) {
       shader.setNormalAttribute(glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 0);
@@ -5406,7 +5403,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * Pushes a normalized (1x1) textured quad to the GPU.
    */
   protected void drawTexQuad(float u0, float v0, float u1, float v1) {
-    // TODO: need to test...
+    // TODO: need to fix null thing, test...
     stroke = false;
     beginShape(QUAD);
     vertex(0, 0, u0, v0);
@@ -5415,7 +5412,7 @@ public class PGraphicsOpenGL extends PGraphics {
     vertex(0, 1, u0, v1);
     endShape();
     tessellate(OPEN);    
-    renderTexFill();   
+    renderTexFill(null); // we need the texture object here...   
   }  
   
   
@@ -5714,7 +5711,8 @@ public class PGraphicsOpenGL extends PGraphics {
     public void setSpecularAttribute(int vboId, int size, int type, int stride, int offset) { }
     public void setEmissiveAttribute(int vboId, int size, int type, int stride, int offset) { }
     public void setShininessAttribute(int vboId, int size, int type, int stride, int offset) { }
-    public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { }
+    public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { }    
+    public void setTexture(PTexture tex) { }
   }
   
   protected class FillShaderSimple extends FillShader {
@@ -5902,7 +5900,12 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   protected class FillShaderTex extends FillShaderSimple {
+    protected int texcoordScaleLoc;
+    protected int texcoordOffsetLoc;
+    
     protected int inTexcoordLoc;
+    
+    PTexture texture;
     
     public FillShaderTex(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
@@ -5911,6 +5914,13 @@ public class PGraphicsOpenGL extends PGraphics {
     public FillShaderTex(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }        
+    
+    public void loadUniforms() {
+      super.loadUniforms();
+      
+      texcoordScaleLoc = getUniformLocation("texcoordScale");
+      texcoordOffsetLoc = getUniformLocation("texcoordOffset");        
+    }
     
     public void loadAttributes() {
       super.loadAttributes();
@@ -5921,6 +5931,26 @@ public class PGraphicsOpenGL extends PGraphics {
     public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { 
       setAttribute(inTexcoordLoc, vboId, size, type, false, stride, offset);
     }     
+    
+    public void setTexture(PTexture tex) { 
+      texture = tex;  
+      
+      // Calculate scale and offset for texture coordinates
+      // and passing them to the fragment shader.
+      
+      float scaleu = tex.maxTexCoordU;
+      float scalev = tex.maxTexCoordV;
+      float offsetu = 0;
+      float offsetv = 0;
+      
+      if (tex.isFlippedY()) {
+        scalev *= -1;
+        offsetv = 1;
+      }
+      
+      set2FloatUniform(texcoordScaleLoc, scaleu, scalev);
+      set2FloatUniform(texcoordOffsetLoc, offsetu, offsetv);
+    }
     
     public void start() {
       super.start();
@@ -5938,6 +5968,9 @@ public class PGraphicsOpenGL extends PGraphics {
   protected class FillShaderFull extends FillShaderLit {
     protected int inTexcoordLoc;
     
+    protected int texcoordScaleLoc;
+    protected int texcoordOffsetLoc;
+    
     public FillShaderFull(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
@@ -5945,6 +5978,13 @@ public class PGraphicsOpenGL extends PGraphics {
     public FillShaderFull(PApplet parent, URL vertURL, URL fragURL) {
       super(parent, vertURL, fragURL);
     }     
+
+    public void loadUniforms() {
+      super.loadUniforms();
+      
+      texcoordScaleLoc = getUniformLocation("texcoordScale");
+      texcoordOffsetLoc = getUniformLocation("texcoordOffset");      
+    }
     
     public void loadAttributes() {
       super.loadAttributes();
@@ -5955,6 +5995,26 @@ public class PGraphicsOpenGL extends PGraphics {
     public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { 
       setAttribute(inTexcoordLoc, vboId, size, type, false, stride, offset);
     }     
+    
+    public void setTexture(PTexture tex) { 
+      texture = tex;  
+      
+      // Calculate scale and offset for texture coordinates
+      // and passing them to the fragment shader.
+      
+      float scaleu = tex.maxTexCoordU;
+      float scalev = tex.maxTexCoordV;
+      float offsetu = 0;
+      float offsetv = 0;
+      
+      if (tex.isFlippedY()) {
+        scalev *= -1;
+        offsetv = 1;
+      }
+      
+      set2FloatUniform(texcoordScaleLoc, scaleu, scalev);
+      set2FloatUniform(texcoordOffsetLoc, offsetu, offsetv);
+    }
     
     public void start() {
       super.start();

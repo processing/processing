@@ -775,19 +775,19 @@ public class PTexture implements PConstants {
     
     pgl.glBindTexture(glTarget, glID);    
     pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MIN_FILTER, glMinFilter);    
-    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MAG_FILTER, glMagFilter);
+    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_MAG_FILTER, glMagFilter);       
     pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_S, glWrapS);
-    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_T, glWrapT);
+    pgl.glTexParameterf(glTarget, PGL.GL_TEXTURE_WRAP_T, glWrapT);    
     
     // First, we use glTexImage2D to set the full size of the texture (glW/glH might be diff
     // from w/h in the case that the GPU doesn't support NPOT textures)
     pgl.glTexImage2D(glTarget, 0, glFormat, glWidth, glHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
     
     // Makes sure that the texture buffer in video memory doesn't contain any garbage.
-    pgl.initTexture(glTarget, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE);
+    pgl.initTexture(glTarget, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE);    
     
     pgl.glBindTexture(glTarget, 0);
-    pgl.disableTexturing(glTarget);
+    pgl.disableTexturing(glTarget);    
   }
   
   
