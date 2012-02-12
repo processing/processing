@@ -3744,6 +3744,7 @@ public class PShape3D extends PShape {
       
       if (tex != null) {        
         shader.setTexCoordAttribute(root.glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * first * PGL.SIZEOF_FLOAT);
+        shader.setTexture(tex);
       }      
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glFillIndexBufferID);
