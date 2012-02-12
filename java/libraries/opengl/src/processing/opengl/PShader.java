@@ -160,84 +160,115 @@ public class PShader {
 
   
   public void setIntUniform(int loc, int x) {
-    pgl.glUniform1i(loc, x);
+    if (-1 < loc) {
+      pgl.glUniform1i(loc, x);
+    }
   }  
 
   
   public void set1FloatUniform(int loc, float x) {
-    pgl.glUniform1f(loc, x);
+    if (-1 < loc) {
+      pgl.glUniform1f(loc, x);
+    }
   }  
   
   
   public void set2FloatUniform(int loc, float x, float y) {
-    pgl.glUniform2f(loc, x, y);
+    if (-1 < loc) {
+      pgl.glUniform2f(loc, x, y);  
+    }
   }    
   
 
   public void set3FloatUniform(int loc, float x, float y, float z) {
-    pgl.glUniform3f(loc, x, y, z);
+    if (-1 < loc) {
+      pgl.glUniform3f(loc, x, y, z);  
+    }    
   }  
 
   
   public void set4FloatUniform(int loc, float x, float y, float z, float w) {
-    pgl.glUniform4f(loc, x, y, z, w);
+    if (-1 < loc) {
+      pgl.glUniform4f(loc, x, y, z, w);
+    }
   }   
   
   
   public void set1FloatVecUniform(int loc, float[] vec) {
-    pgl.glUniform1fv(loc, vec.length, vec, 0);
+    if (-1 < loc) {
+      pgl.glUniform1fv(loc, vec.length, vec, 0);
+    }
   }
   
   
   public void set2FloatVecUniform(int loc, float[] vec) {
-    pgl.glUniform2fv(loc, vec.length / 2, vec, 0);
+    if (-1 < loc) {
+      pgl.glUniform2fv(loc, vec.length / 2, vec, 0);
+    }
   }
 
   
   public void set3FloatVecUniform(int loc, float[] vec) {
-    pgl.glUniform3fv(loc, vec.length / 3, vec, 0);
+    if (-1 < loc) {
+      pgl.glUniform3fv(loc, vec.length / 3, vec, 0);
+    }
   }  
 
   
   public void set4FloatVecUniform(int loc, float[] vec) {
-    pgl.glUniform4fv(loc, vec.length / 4, vec, 0);
+    if (-1 < loc) {
+      pgl.glUniform4fv(loc, vec.length / 4, vec, 0);
+    }
   }    
   
   
   public void set2x2MatUniform(int loc, float[] mat) {
-    pgl.glUniformMatrix2fv(loc, 1, false, mat, 0);    
+    if (-1 < loc) {
+      pgl.glUniformMatrix2fv(loc, 1, false, mat, 0);
+    }
   }    
   
 
   public void set3x3MatUniform(int loc, float[] mat) {
-    pgl.glUniformMatrix3fv(loc, 1, false, mat, 0);     
+    if (-1 < loc) {
+      pgl.glUniformMatrix3fv(loc, 1, false, mat, 0);
+    }
   }
   
   
   public void set4x4MatUniform(int loc, float[] mat) {
-    pgl.glUniformMatrix4fv(loc, 1, false, mat, 0); 
+    if (-1 < loc) {
+      pgl.glUniformMatrix4fv(loc, 1, false, mat, 0);
+    }
   }    
 
   
   public void set1FloatAttribute(int loc, float x) {
-    pgl.glVertexAttrib1f(loc, x);
+    if (-1 < loc) {
+      pgl.glVertexAttrib1f(loc, x);
+    }
   }  
   
 
   public void set2FloatAttribute(int loc, float x, float y) {
-    pgl.glVertexAttrib2f(loc, x, y);
+    if (-1 < loc) {
+      pgl.glVertexAttrib2f(loc, x, y);
+    }
   }    
   
 
   public void set3FloatAttribute(int loc, float x, float y, float z) {
-    pgl.glVertexAttrib3f(loc, x, y, z);
+    if (-1 < loc) {
+      pgl.glVertexAttrib3f(loc, x, y, z);
+    }
   }    
   
 
   public void set4FloatAttribute(int loc, float x, float y, float z, float w) {
-    pgl.glVertexAttrib4f(loc, x, y, z, w);
+    if (-1 < loc) {
+      pgl.glVertexAttrib4f(loc, x, y, z, w);
+    }
   }
-
     
   protected void init() {
     if (programObject == 0) {

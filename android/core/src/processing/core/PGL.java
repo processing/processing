@@ -402,11 +402,11 @@ public class PGL {
     // very large transient array which in certain situations (memory-
     // constrained android devices) might lead to an out-of-memory error.
     int[] texels = new int[16 * 16];
-    for (int y = 0; y < height + 16; y += 16) {
+    for (int y = 0; y < height; y += 16) {
       int h = PApplet.min(16, height - y);
-      for (int x = 0; x < width + 16; x += 16) {
+      for (int x = 0; x < width; x += 16) {
         int w = PApplet.min(16, width - x);
-        gl.glTexSubImage2D(target, 0, x, y, w, h, format, type, IntBuffer.wrap(texels));
+        GLES20.glTexSubImage2D(target, 0, x, y, w, h, format, type, IntBuffer.wrap(texels));
       }
     }
   }  
