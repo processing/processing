@@ -736,11 +736,6 @@ public class PGraphics extends PImage implements PConstants {
     colorMode(RGB, 255);
     fill(255);
     stroke(0);
-    
-    ambient(255);
-    specular(0);
-    emissive(0);
-    shininess(1);    
 
     // as of 0178, no longer relying on local versions of the variables
     // being set, because subclasses may need to take extra action.
