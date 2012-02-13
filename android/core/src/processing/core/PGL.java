@@ -27,6 +27,9 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import processing.glu.PGLU;
+import processing.glu.PGLUtessellator;
+import processing.glu.PGLUtessellatorCallbackAdapter;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -170,8 +173,8 @@ public class PGL {
   public static final int GL_ALIASED_POINT_SIZE_RANGE = GLES20.GL_ALIASED_POINT_SIZE_RANGE;
   public static final int GL_SAMPLES                  = GLES20.GL_SAMPLES;
 
-  public static final int GLU_TESS_WINDING_NONZERO = -1;
-  public static final int GLU_TESS_WINDING_ODD     = -1;  
+  public static final int GLU_TESS_WINDING_NONZERO = PGLU.GLU_TESS_WINDING_NONZERO;
+  public static final int GLU_TESS_WINDING_ODD     = PGLU.GLU_TESS_WINDING_ODD;  
     
   public static final int GL_TEXTURE0           = GLES20.GL_TEXTURE0;
   public static final int GL_TEXTURE1           = GLES20.GL_TEXTURE1;
@@ -216,11 +219,8 @@ public class PGL {
   public static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
   public static final int EGL_OPENGL_ES2_BIT         = 0x0004;
   
-  /** Pipeline mode: FIXED, PROG_GL2, PROG_GL3 or PROG_GL4 */
-  public int pipeline;
-  
   public GL10 gl;
-  public GLU glu; 
+  public PGLU glu; 
 
   public AndroidRenderer renderer;
   
@@ -237,22 +237,10 @@ public class PGL {
   public PGL(PGraphicsAndroid3D pg) {
     this.pg = pg;
     renderer = new AndroidRenderer();
-    glu = new GLU();
+    glu = new PGLU();
     initialized = false;
   }
   
-  /**
-   * This static method can be called by applications that use
-   * Processing+P3D inside their own GUI, so they can initialize
-   * JOGL2 before anything else.
-   * According to the JOGL2 documentation, applications shall call 
-   * GLProfile.initSingleton() ASAP, before any other UI invocation.
-   * In case applications are able to initialize JOGL before any other 
-   * UI action, hey shall invoke this method with beforeUI=true and 
-   * benefit from fast native multithreading support on all platforms 
-   * if possible. 
-   *
-   */  
   static public void startup(boolean beforeUI) {    
   }
   
@@ -265,9 +253,6 @@ public class PGL {
 
   public void updateOffscreen(PGL primary) {
     gl = primary.gl;       
-//    gl11 = primary.gl11;
-//    gl11x = primary.gl11x;
-//    gl11xp = primary.gl11xp;
   }  
   
   
@@ -370,56 +355,7 @@ public class PGL {
   }
   
   public void destroyContext() {   
-  }
- 
-  ///////////////////////////////////////////////////////////////////////////////////
-  
-  // Utilities  
-  
-  public boolean contextIsCurrent(Context other) {
-    return other.same(/*context*/);
-  }  
-  
-  static public short makeIndex(int intIdx) {
-    // When the index value is greater than 32767, subtracting 65536
-    // will make it (as a short) to wrap around to the negative range, which    
-    // is all we need to later pass these numbers to opengl (which will 
-    // interpret them as unsigned shorts). See discussion here:
-    // http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
-    return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;
-  }
-  
-  public void enableTexturing(int target) {
-    //gl.glEnable(target);
-  }
-
-  public void disableTexturing(int target) {
-    //gl.glDisable(target);
-  }  
-  
-  public void initTexture(int target, int width, int height, int format, int type) {
-    // Doing in patches of 16x16 pixels to avoid creating a (potentially)
-    // very large transient array which in certain situations (memory-
-    // constrained android devices) might lead to an out-of-memory error.
-    int[] texels = new int[16 * 16];
-    for (int y = 0; y < height; y += 16) {
-      int h = PApplet.min(16, height - y);
-      for (int x = 0; x < width; x += 16) {
-        int w = PApplet.min(16, width - x);
-        GLES20.glTexSubImage2D(target, 0, x, y, w, h, format, type, IntBuffer.wrap(texels));
-      }
-    }
-  }  
-  
-  public String getShaderLog(int id) {
-    int[] compiled = new int[1];
-    GLES20.glGetShaderiv(id, GLES20.GL_COMPILE_STATUS, compiled, 0);
-    if (compiled[0] == 0) {
-      return GLES20.glGetShaderInfoLog(id);
-    } else {
-      return "";
-    }
-  }  
+  } 
   
   ///////////////////////////////////////////////////////////////////////////////////
   
@@ -429,12 +365,12 @@ public class PGL {
     return true;
   }
   
-  public void beginOnscreenDraw() {
+  public void beginOnscreenDraw(boolean clear, int frame) {
     GLES20.glClearColor(0, 0, 0, 0);
     GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
     
     /*
-    if (clearColorBuffer) {
+    if (clear) {
       // Simplest scenario: clear mode means we clear both the color and depth buffers.
       // No need for saving front color buffer, etc.
       gl.glClearColor(0, 0, 0, 0);
@@ -453,7 +389,7 @@ public class PGL {
           
           // Drawing contents of back color buffer as background.
           gl.glClearColor(0, 0, 0, 0);
-          if (parent.frameCount == 0) {
+          if (frame == 0) {
             // No need to draw back color buffer because we are in the first frame ever.
             gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);  
           } else {
@@ -466,7 +402,7 @@ public class PGL {
         if (texture != null) { 
           gl.glClearColor(0, 0, 0, 0);
           gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-          if (0 < parent.frameCount) {
+          if (0 < frame) {
             drawTexture();
           }
         }
@@ -475,9 +411,9 @@ public class PGL {
      */
   }
   
-  public void endOnscreenDraw() {
+  public void endOnscreenDraw(boolean clear0) {
     /*
-      if (!clearColorBuffer0) {
+      if (!clear0) {
         // We are in the primary surface, and no clear mode, this means that the current
         // contents of the front buffer needs to be used in the next frame as the background
         // for incremental rendering. Depending on whether or not FBOs are supported,
@@ -507,22 +443,22 @@ public class PGL {
   }
   
   
-  public void beginOffscreenDraw() {
+  public void beginOffscreenDraw(boolean clear, int frame) {
     /*
     // Drawing contents of back color buffer as background.
     gl.glClearColor(0, 0, 0, 0);
-    if (clearColorBuffer || parent.frameCount == 0) {
+    if (clear || frame == 0) {
       // No need to draw back color buffer.
-      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);  
+      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);  
     } else {
-      gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
+      GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
       // Render previous draw texture as background.      
       drawOffscreenTexture((offscreenIndex + 1) % 2);        
     } 
-    */ 
+    */     
   }
   
-  public void endOffscreenDraw() {
+  public void endOffscreenDraw(boolean clear0) {
     //swapOffscreenIndex(); 
   }  
   
@@ -536,7 +472,7 @@ public class PGL {
     }
   }  
   
-
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Caps query
@@ -581,12 +517,16 @@ public class PGL {
   
   // Error handling  
   
-  public int getError() {
+  public int glGetError() {
     return GLES20.glGetError();
   }
   
-  public String getErrorString(int err) {
+  public String glErrorString(int err) {
     return GLU.gluErrorString(err);
+  }
+
+  public String gluErrorString(int err) {
+    return PGLU.gluErrorString(err);
   }
   
   /////////////////////////////////////////////////////////////////////////////////
@@ -951,57 +891,52 @@ public class PGL {
   
   // Tessellator interface
     
-  // TODO: Implement. Options:
-  // 1) Port Java GLU tessellator implementation from JOGL. 
-  // 2) Compile GLUES (http://code.google.com/p/glues/) in native code and access through JNI.
-  
   public Tessellator createTessellator(TessellatorCallback callback) {
     return new Tessellator(callback);
   }
   
   public class Tessellator {
-    //protected GLUtessellator tess;
+    protected PGLUtessellator tess;
     protected TessellatorCallback callback;
-    //protected GLUCallback gluCallback;
+    protected GLUCallback gluCallback;
     
     public Tessellator(TessellatorCallback callback) {
       this.callback = callback;
-      //tess = GLU.gluNewTess();
-      //gluCallback = new GLUCallback();
+      tess = PGLU.gluNewTess();
+      gluCallback = new GLUCallback();
       
-      //GLU.gluTessCallback(tess, GLU.GLU_TESS_BEGIN, gluCallback);
-      //GLU.gluTessCallback(tess, GLU.GLU_TESS_END, gluCallback);
-      //GLU.gluTessCallback(tess, GLU.GLU_TESS_VERTEX, gluCallback);
-      //GLU.gluTessCallback(tess, GLU.GLU_TESS_COMBINE, gluCallback);
-      //GLU.gluTessCallback(tess, GLU.GLU_TESS_ERROR, gluCallback);      
+      PGLU.gluTessCallback(tess, PGLU.GLU_TESS_BEGIN, gluCallback);
+      PGLU.gluTessCallback(tess, PGLU.GLU_TESS_END, gluCallback);
+      PGLU.gluTessCallback(tess, PGLU.GLU_TESS_VERTEX, gluCallback);
+      PGLU.gluTessCallback(tess, PGLU.GLU_TESS_COMBINE, gluCallback);
+      PGLU.gluTessCallback(tess, PGLU.GLU_TESS_ERROR, gluCallback);      
     }
     
     public void beginPolygon() {
-      //GLU.gluTessBeginPolygon(tess, null);      
+      PGLU.gluTessBeginPolygon(tess, null);      
     }
     
     public void endPolygon() {
-      //GLU.gluTessEndPolygon(tess);
+      PGLU.gluTessEndPolygon(tess);
     }
     
     public void setWindingRule(int rule) {
-      //GLU.gluTessProperty(tess, GLU.GLU_TESS_WINDING_RULE, rule);  
+      PGLU.gluTessProperty(tess, PGLU.GLU_TESS_WINDING_RULE, rule);  
     }
     
     public void beginContour() {
-      //GLU.gluTessBeginContour(tess);  
+      PGLU.gluTessBeginContour(tess);  
     }
     
     public void endContour() {
-      //GLU.gluTessEndContour(tess);
+      PGLU.gluTessEndContour(tess);
     }
     
     public void addVertex(double[] v) {
-      //GLU.gluTessVertex(tess, v, 0, v);  
+      PGLU.gluTessVertex(tess, v, 0, v);  
     }
     
-    /*
-    protected class GLUCallback extends GLUtessellatorCallbackAdapter {
+    protected class GLUCallback extends PGLUtessellatorCallbackAdapter {
       public void begin(int type) {
         callback.begin(type);
       }
@@ -1023,7 +958,6 @@ public class PGL {
         callback.error(errnum);
       }
     }
-    */
   }
 
   public interface TessellatorCallback  {
@@ -1033,7 +967,56 @@ public class PGL {
     public void combine(double[] coords, Object[] data,
                         float[] weight, Object[] outData);
     public void error(int errnum);    
-  }      
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Utility functions  
+  
+  public boolean contextIsCurrent(Context other) {
+    return other.same(/*context*/);
+  }  
+  
+  static public short makeIndex(int intIdx) {
+    // When the index value is greater than 32767, subtracting 65536
+    // will make it (as a short) to wrap around to the negative range, which    
+    // is all we need to later pass these numbers to opengl (which will 
+    // interpret them as unsigned shorts). See discussion here:
+    // http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
+    return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;
+  }
+  
+  public void enableTexturing(int target) {
+    //gl.glEnable(target);
+  }
+
+  public void disableTexturing(int target) {
+    //gl.glDisable(target);
+  }  
+  
+  public void initTexture(int target, int width, int height, int format, int type) {
+    // Doing in patches of 16x16 pixels to avoid creating a (potentially)
+    // very large transient array which in certain situations (memory-
+    // constrained android devices) might lead to an out-of-memory error.
+    int[] texels = new int[16 * 16];
+    for (int y = 0; y < height; y += 16) {
+      int h = PApplet.min(16, height - y);
+      for (int x = 0; x < width; x += 16) {
+        int w = PApplet.min(16, width - x);
+        GLES20.glTexSubImage2D(target, 0, x, y, w, h, format, type, IntBuffer.wrap(texels));
+      }
+    }
+  }  
+  
+  public String getShaderLog(int id) {
+    int[] compiled = new int[1];
+    GLES20.glGetShaderiv(id, GLES20.GL_COMPILE_STATUS, compiled, 0);
+    if (compiled[0] == 0) {
+      return GLES20.glGetShaderInfoLog(id);
+    } else {
+      return "";
+    }
+  }    
   
   /////////////////////////////////////////////////////////////////////////////////
   
@@ -1057,26 +1040,6 @@ public class PGL {
 
     public void onDrawFrame(GL10 igl) {
       gl = igl;
-      
-      /*
-      try {
-        gl11 = (GL11) gl;
-      } catch (ClassCastException cce) {
-        gl11 = null;
-      }
-
-      try {
-        gl11x = (GL11Ext) gl;
-      } catch (ClassCastException cce) {
-        gl11x = null;
-      }
-
-      try {
-        gl11xp = (GL11ExtensionPack) gl;
-      } catch (ClassCastException cce) {
-        gl11xp = null;
-      }
-      */
       pg.parent.handleDraw();
     }
 
@@ -1084,52 +1047,13 @@ public class PGL {
       gl = igl;
       
       // Here is where we should initialize native libs...
-      // PGL2JNILib.init(iwidth, iheight);
+      // lib.init(iwidth, iheight);
 
-      /*
-      try {
-        gl11 = (GL11) gl;
-      } catch (ClassCastException cce) {
-        gl11 = null;
-      }
-
-      try {
-        gl11x = (GL11Ext) gl;
-      } catch (ClassCastException cce) {
-        gl11x = null;
-      }
-
-      try {
-        gl11xp = (GL11ExtensionPack) gl;
-      } catch (ClassCastException cce) {
-        gl11xp = null;
-      }
-      */
       pg.setSize(iwidth, iheight);
     }
 
     public void onSurfaceCreated(GL10 igl, EGLConfig config) {      
       gl = igl;
-      
-      /*
-      try {
-        gl11 = (GL11) gl;
-      } catch (ClassCastException cce) {
-        gl11 = null;
-      }
-
-      try {
-        gl11x = (GL11Ext) gl;
-      } catch (ClassCastException cce) {
-        gl11x = null;
-      }
-
-      try {
-        gl11xp = (GL11ExtensionPack) gl;
-      } catch (ClassCastException cce) {
-        gl11xp = null;
-      }
-      */
     }    
   }
   

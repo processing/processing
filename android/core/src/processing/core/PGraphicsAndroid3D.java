@@ -307,6 +307,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected int[] savedViewport = {0, 0, 0, 0};
   protected int[] viewport = {0, 0, 0, 0};
   
+  /** Used to register calls to glClear. */
+  protected boolean clearColorBuffer; 
+  protected boolean clearColorBuffer0;
+  
   protected boolean openContour = false;
   protected boolean breakShape = false;
   protected boolean defaultEdges = false;
@@ -1456,12 +1460,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT | PGL.GL_STENCIL_BUFFER_BIT);
     
     if (primarySurface) {
-      pgl.beginOnscreenDraw();  
+      pgl.beginOnscreenDraw(clearColorBuffer, parent.frameCount);  
     } else {
-      pgl.beginOffscreenDraw();  
+      pgl.beginOffscreenDraw(clearColorBuffer, parent.frameCount);  
     }
     
     drawing = true;
+    
+    clearColorBuffer0 = clearColorBuffer;
+    clearColorBuffer = false;
     
     report("bot beginDraw()");
   }
@@ -1492,7 +1499,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       // operation. Thus, only the main renderer (the primary surface)
       // should call it at the end of draw, and none of the offscreen 
       // renderers...
-      pgl.endOnscreenDraw();
+      pgl.endOnscreenDraw(clearColorBuffer0);
       pgl.glFlush();                  
       pgl.releaseContext();
     } else {
@@ -1501,7 +1508,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
       popFramebuffer();
       
-      pgl.endOffscreenDraw();
+      pgl.endOffscreenDraw(clearColorBuffer0);
       
       pg.restoreGLState();
     }    
@@ -2038,7 +2045,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
 
     if (breakShape) {
-      code = BREAK;
+      code = PShape.BREAK;
       breakShape = false;
     }    
             
@@ -4266,6 +4273,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void backgroundImpl(PImage image) {
     backgroundImpl();
     set(0, 0, image);
+    clearColorBuffer = true;
   }
 
   protected void backgroundImpl() {
@@ -4276,7 +4284,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
 
     pgl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
-    pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);    
+    pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
+    clearColorBuffer = true;
   }  
   
   //////////////////////////////////////////////////////////////
@@ -4325,10 +4334,9 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   public void report(String where) {
     if (!hints[DISABLE_OPENGL_ERROR_REPORT]) {
-      int err = pgl.getError();
+      int err = pgl.glGetError();
       if (err != 0) {
-        //String errString = glu.gluErrorString(err);
-        String errString = pgl.getErrorString(err);
+        String errString = pgl.glErrorString(err);
         String msg = "OpenGL error " + err + " at " + where + ": " + errString;
         PGraphics.showWarning(msg);
       }
@@ -5482,8 +5490,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       offscreenFramebufferMultisample.clear();
       offscreenMultisample = true;
-      
-      pg.report("after cleaning fbm");
       
       // The offscreen framebuffer where the multisampled image is finally drawn to doesn't
       // need depth and stencil buffers since they are part of the multisampled framebuffer.
@@ -8703,12 +8709,34 @@ public class PGraphicsAndroid3D extends PGraphics {
             gluTess.beginContour();
           }
           
+          // Separting colors into individual rgba components for interpolation.
+          int fa = (in.colors[i] >> 24) & 0xFF;
+          int fr = (in.colors[i] >> 16) & 0xFF;
+          int fg = (in.colors[i] >>  8) & 0xFF; 
+          int fb = (in.colors[i] >>  0) & 0xFF;
+          
+          int aa = (in.ambient[i] >> 24) & 0xFF;
+          int ar = (in.ambient[i] >> 16) & 0xFF;
+          int ag = (in.ambient[i] >>  8) & 0xFF; 
+          int ab = (in.ambient[i] >>  0) & 0xFF;
+
+          int sa = (in.specular[i] >> 24) & 0xFF;
+          int sr = (in.specular[i] >> 16) & 0xFF;
+          int sg = (in.specular[i] >>  8) & 0xFF; 
+          int sb = (in.specular[i] >>  0) & 0xFF; 
+          
+          int ea = (in.emissive[i] >> 24) & 0xFF;
+          int er = (in.emissive[i] >> 16) & 0xFF;
+          int eg = (in.emissive[i] >>  8) & 0xFF; 
+          int eb = (in.emissive[i] >>  0) & 0xFF; 
+          
           // Vertex data includes coordinates, colors, normals, texture coordinates, and material properties.
           double[] vertex = new double[] { in.vertices [3 * i + 0], in.vertices [3 * i + 1], in.vertices[3 * i + 2],
-                                           in.colors   [i],
+                                           fa, fr, fg, fb,
                                            in.normals  [3 * i + 0], in.normals  [3 * i + 1], in.normals [3 * i + 2],
                                            in.texcoords[2 * i + 0], in.texcoords[2 * i + 1],
-                                           in.ambient[i], in.specular[i], in.emissive[i], in.shininess[i] };
+                                           aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, 
+                                           in.shininess[i] };
           
           gluTess.addVertex(vertex);
         }        
@@ -8870,19 +8898,26 @@ public class PGraphicsAndroid3D extends PGraphics {
       public void vertex(Object data) {
         if (data instanceof double[]) {
           double[] d = (double[]) data;
-          if (d.length < 13) {
-            throw new RuntimeException("TessCallback vertex() data is not of length 13");
+          if (d.length < 25) {
+            throw new RuntimeException("TessCallback vertex() data is not of length 25");
           }
           
-          // We need to use separate rgba components for correct interpolation...
-          
           if (tess.fillVertexCount < PGL.MAX_TESS_VERTICES) {
-            tess.addFillVertex((float) d[0], (float) d[ 1], (float) d[ 2],
-                               (int)   d[3],
-                               (float) d[4], (float) d[ 5], (float) d[ 6],
-                               (float) d[7], (float) d[ 8],
-                               (int)   d[9], (int)   d[10], (int)   d[11], (float) d[12]);
-            tessCount++;
+
+            // Combining individual rgba components back into int color values
+            int fcolor = ((int) d[ 3] << 24) | ((int) d[ 4] << 16) | ((int) d[ 5] << 8) | (int) d[ 6];          
+            int acolor = ((int) d[12] << 24) | ((int) d[13] << 16) | ((int) d[14] << 8) | (int) d[15];  
+            int scolor = ((int) d[16] << 24) | ((int) d[17] << 16) | ((int) d[18] << 8) | (int) d[19];
+            int ecolor = ((int) d[20] << 24) | ((int) d[21] << 16) | ((int) d[22] << 8) | (int) d[23];
+                    
+            tess.addFillVertex((float) d[ 0],  (float) d[ 1], (float) d[ 2],
+                               fcolor,
+                               (float) d[ 7],  (float) d[ 8], (float) d[ 9],
+                               (float) d[10], (float) d[11],
+                               acolor, scolor, ecolor, 
+                               (float) d[24]);
+            
+            tessCount++;            
           } else {
             throw new RuntimeException("P3D: the tessellator is generating too many vertices, reduce complexity of shape.");
           }          
@@ -8893,7 +8928,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
 
       public void error(int errnum) {
-        String estring = pgl.getErrorString(errnum);
+        String estring = pgl.gluErrorString(errnum);
         PGraphics.showWarning("Tessellation Error: " + estring);
       }
       
@@ -8912,7 +8947,7 @@ public class PGraphicsAndroid3D extends PGraphics {
        */
       public void combine(double[] coords, Object[] data,
                           float[] weight, Object[] outData) {
-        double[] vertex = new double[13];
+        double[] vertex = new double[25];
         vertex[0] = coords[0];
         vertex[1] = coords[1];
         vertex[2] = coords[2];
@@ -8922,35 +8957,12 @@ public class PGraphicsAndroid3D extends PGraphics {
         // Calculating the rest of the vertex parameters (color,
         // normal, texcoords) as the linear combination of the 
         // combined vertices.
-        for (int i = 3; i < 13; i++) {
+        for (int i = 3; i < 25; i++) {
           vertex[i] = 0;
           for (int j = 0; j < 4; j++) {
             double[] vertData = (double[])data[j];
             if (vertData != null) {
-              if (i == 3 || 8 < i) {
-                // Color data, needs to be split into rgba components
-                // for interpolation.
-                int colorj = (int) vertData[i];
-                int xj = (colorj >> 24) & 0xFF;
-                int yj = (colorj >> 16) & 0xFF;
-                int zj = (colorj >>  8) & 0xFF; 
-                int wj = (colorj >>  0) & 0xFF;
-
-                int colori = (int) vertex[i];
-                int xi = (colori >> 24) & 0xFF;
-                int yi = (colori >> 16) & 0xFF;
-                int zi = (colori >>  8) & 0xFF; 
-                int wi = (colori >>  0) & 0xFF;
-                
-                xi += weight[j] * xj;
-                yi += weight[j] * yj;
-                zi += weight[j] * zj;
-                wi += weight[j] * wj;                
-                
-                vertex[i] = (xi << 24) | (yi << 16) | (zi << 8) | wi;                
-              } else {
-                vertex[i] += weight[j] * vertData[i];
-              }
+              vertex[i] += weight[j] * vertData[i];
             }
           }
         }

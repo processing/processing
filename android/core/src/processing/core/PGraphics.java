@@ -1203,7 +1203,17 @@ public class PGraphics extends PImage implements PConstants {
                 "or shapes with holes.");
   }
 
-
+  
+  public void beginContour() {
+    showMissingWarning("beginContour");
+  }
+  
+  
+  public void endContour() {
+    showMissingWarning("endContour");
+  }  
+  
+  
   public void endShape() {
     endShape(OPEN);
   }
