@@ -7318,6 +7318,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  public void beginContour() {
+    g.beginContour();
+  }
+
+
+  public void endContour() {
+    g.endContour();
+  }
+  
+  
   public void endShape() {
     g.endShape();
   }
