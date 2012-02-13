@@ -219,9 +219,6 @@ public class PGL {
   public static final int GL_LINE_SMOOTH    = GL.GL_LINE_SMOOTH;    
   public static final int GL_POLYGON_SMOOTH = GL2.GL_POLYGON_SMOOTH;  
   
-  /** Pipeline mode: FIXED, PROG_GL2, PROG_GL3 or PROG_GL4 */
-  public int pipeline;
-  
   /** Basic GL functionality, common to all profiles */
   public GL gl;
   
@@ -310,46 +307,11 @@ public class PGL {
       }
     }
     
-    profile = null;      
-    
-    //profile = GLProfile.getDefault();
+    // For the time being we use the fixed function profile
+    // because GL3 is not supported in MacOSX Snow Leopard.
     profile = GLProfile.getMaxFixedFunc();
+    //profile = GLProfile.getMaxProgrammable();
     
-    //profile = GLProfile.get(GLProfile.GL2ES1);    
-    //profile = GLProfile.get(GLProfile.GL4bc);
-    //profile = GLProfile.getMaxProgrammable();    
-    //pipeline = PGL.FIXED; 
-
-    /*
-    // Profile auto-selection disabled for the time being.
-    // TODO: Implement programmable pipeline :-)
-    try {
-      profile = GLProfile.get(GLProfile.GL4);
-      pipeline = PROG_GL4;
-    } catch (GLException e) {}   
-    
-    if (profile == null) {
-      try {
-        profile = GLProfile.get(GLProfile.GL3);
-        pipeline = PROG_GL3;
-      } catch (GLException e) {}           
-    }
-    
-    if (profile == null) {
-      try {
-        profile = GLProfile.get(GLProfile.GL2ES2);
-        pipeline = PROG_GL2;
-      } catch (GLException e) {}           
-    }
-
-    if (profile == null) {
-      try {
-        profile = GLProfile.get(GLProfile.GL2ES1);
-        pipeline = FIXED;
-      } catch (GLException e) {}
-    }
-    */      
-          
     if (profile == null) {
       pg.parent.die("Cannot get a valid OpenGL profile");
     }
@@ -413,52 +375,6 @@ public class PGL {
   public void destroyContext() {
     context.destroy();
     context = null;    
-  }
-  
-  ///////////////////////////////////////////////////////////////////////////////////
-  
-  // Utilities    
-  
-  public boolean contextIsCurrent(Context other) {
-    return other.same(context);
-  }
-  
-  static public int makeIndex(int intIdx) {
-    return intIdx;
-  }  
-  
-  public void enableTexturing(int target) {
-    gl.glEnable(target);
-  }
-
-  public void disableTexturing(int target) {
-    gl.glDisable(target);
-  }   
-  
-  public void initTexture(int target, int width, int height, int format, int type) {
-    int[] texels = new int[width * height];
-    gl.glTexSubImage2D(target, 0, 0, 0, width, height, format, type, IntBuffer.wrap(texels));
-  }
-  
-  public String getShaderLog(int id) {
-    IntBuffer val = IntBuffer.allocate(1);
-    gl2.glGetObjectParameterivARB(id, GL2.GL_OBJECT_INFO_LOG_LENGTH_ARB, val);
-    
-    int length = val.get();
-
-    if (length <= 1) {
-      return ""; 
-    }
-
-    // Some error occurred...
-    ByteBuffer infoLog = ByteBuffer.allocate(length);
-    val.flip();
-    
-    gl2.glGetInfoLogARB(id, length, val, infoLog);
-        
-    byte[] infoBytes = new byte[length];
-    infoLog.get(infoBytes);
-    return new String(infoBytes);
   }  
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -479,19 +395,19 @@ public class PGL {
     return false;    
   }
   
-  public void beginOnscreenDraw() {
+  public void beginOnscreenDraw(boolean clear, int frame) {
   }
   
-  public void endOnscreenDraw() {
+  public void endOnscreenDraw(boolean clear0) {
     if (drawable != null) {
       drawable.swapBuffers();        
     }    
   }
   
-  public void beginOffscreenDraw() {
+  public void beginOffscreenDraw(boolean clear, int frame) {
   }
   
-  public void endOffscreenDraw() {    
+  public void endOffscreenDraw(boolean clear0) {    
   }
   
   public boolean canDraw() {
@@ -545,11 +461,15 @@ public class PGL {
   
   // Error handling  
   
-  public int getError() {
+  public int glGetError() {
     return gl.glGetError();
   }
+
+  public String glErrorString(int err) {
+    return glu.gluErrorString(err);
+  }  
   
-  public String getErrorString(int err) {
+  public String gluErrorString(int err) {
     return glu.gluErrorString(err);
   }
   
@@ -557,7 +477,7 @@ public class PGL {
   
   // Rendering options
 
-  public void setFrontFace(int mode) {
+  public void glFrontFace(int mode) {
     gl.glFrontFace(mode);
   }
     
@@ -565,7 +485,7 @@ public class PGL {
     gl.glDepthMask(flag);   
   }
     
-  public void setDepthFunc(int func) {
+  public void glDepthFunc(int func) {
     gl.glDepthFunc(func);
   }  
 
@@ -987,5 +907,51 @@ public class PGL {
     public void combine(double[] coords, Object[] data,
                         float[] weight, Object[] outData);
     public void error(int errnum);    
-  }      
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Utility functions  
+  
+  public boolean contextIsCurrent(Context other) {
+    return other.same(context);
+  }
+  
+  static public int makeIndex(int intIdx) {
+    return intIdx;
+  }  
+  
+  public void enableTexturing(int target) {
+    gl.glEnable(target);
+  }
+
+  public void disableTexturing(int target) {
+    gl.glDisable(target);
+  }   
+  
+  public void initTexture(int target, int width, int height, int format, int type) {
+    int[] texels = new int[width * height];
+    gl.glTexSubImage2D(target, 0, 0, 0, width, height, format, type, IntBuffer.wrap(texels));
+  }
+  
+  public String getShaderLog(int id) {
+    IntBuffer val = IntBuffer.allocate(1);
+    gl2.glGetObjectParameterivARB(id, GL2.GL_OBJECT_INFO_LOG_LENGTH_ARB, val);
+    
+    int length = val.get();
+
+    if (length <= 1) {
+      return ""; 
+    }
+
+    // Some error occurred...
+    ByteBuffer infoLog = ByteBuffer.allocate(length);
+    val.flip();
+    
+    gl2.glGetInfoLogARB(id, length, val, infoLog);
+        
+    byte[] infoBytes = new byte[length];
+    infoLog.get(infoBytes);
+    return new String(infoBytes);
+  }    
 }
