@@ -11,7 +11,7 @@ float px = 0, py = 0, pz = 0;
 float flapSpeed = 0.2;
 
 void setup(){
-  size(640, 360, P3D);
+  size(640, 360, P3D);  
   noStroke();
 }
 
