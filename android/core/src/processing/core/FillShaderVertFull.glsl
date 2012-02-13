@@ -22,6 +22,7 @@
 uniform mat4 modelviewMatrix;
 uniform mat4 projmodelviewMatrix;
 uniform mat3 normalMatrix;
+uniform mat4 texcoordMatrix;
 
 uniform int lightCount;
 uniform vec4 lightPosition[8];
@@ -43,7 +44,7 @@ attribute vec4 inEmissive;
 attribute float inShine;
 
 varying vec4 vertColor;
-varying vec2 vertTexcoord;
+varying vec4 vertTexcoord;
 
 const float zero_float = 0.0;
 const float one_float = 1.0;
@@ -129,6 +130,6 @@ void main() {
               vec4(totalSpecular, 1) * inSpecular + 
               inEmissive;
               
-  // Passing texture coordinates to the fragment shader
-  vertTexcoord = inTexcoord;                
+  // Calculating texture coordinates, with r and q set both to one
+  vertTexcoord = texcoordMatrix * vec4(inTexcoord, 1.0, 1.0);        
 }
