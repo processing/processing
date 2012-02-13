@@ -21,13 +21,11 @@
 
 uniform sampler2D textureSampler;
 
-uniform vec2 texcoordScale;
 uniform vec2 texcoordOffset;
 
 varying vec4 vertColor;
-varying vec2 vertTexcoord;
+varying vec4 vertTexcoord;
 
 void main() {
-  vec2 uv = vertTexcoord * texcoordScale + texcoordOffset;
-  gl_FragColor = texture2D(textureSampler, uv) * vertColor;
+  gl_FragColor = texture2D(textureSampler, vertTexcoord.st) * vertColor;
 }
