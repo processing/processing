@@ -1,3 +1,5 @@
+// ISSUES: shapes containing curve vertices don't render properly
+
 /**
  * Run-Amuck
  * By Ira Greenberg <br />
