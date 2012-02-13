@@ -10,8 +10,8 @@
 
 // Cube class required
 float ang;
-int rows = 21;
-int cols = 21;
+int rows = 11;
+int cols = 11;
 int cubeCount = rows*cols;
 int colSpan, rowSpan;
 float rotspd = 2.0;
@@ -29,7 +29,7 @@ void setup(){
 
   // instantiate cubes
   for (int i = 0; i < cubeCount; i++){
-    cubes[i] = new Cube(12, 12, 6, 0, 0, 0);
+    cubes[i] = new Cube(24, 24, 12, 0, 0, 0);
     /* 3 different rotation options
        - 1st option: cubes each rotate uniformly
        - 2nd option: cubes each rotate randomly

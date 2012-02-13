@@ -1,6 +1,3 @@
-// ISSUES: beginShape() need to be called with QUADS because generic polygon
-//         tesselation still not implemented
-
 /**
  * Texture 1. 
  * 
@@ -22,7 +19,7 @@ void draw() {
   translate(width / 2, height / 2);
   rotateY(map(mouseX, 0, width, -PI, PI));
   rotateZ(PI/6);
-  beginShape(QUADS);
+  beginShape();
   texture(img);
   vertex(-100, -100, 0, 0, 0);
   vertex(100, -100, 0, 400, 0);

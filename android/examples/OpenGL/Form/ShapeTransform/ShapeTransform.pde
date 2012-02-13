@@ -7,9 +7,9 @@
  * Cylinder 3D primitives.
  * 
  * Instructions:<br />
- * Up Arrow - increases points<br />
- * Down Arrow - decreases points<br />
- * 'p' key toggles between cube/pyramid<br />
+ * tap on the right of the screen - increases points<br />
+ * tap on the left of the screen - decreases points<br />
+ * tap on the bottom of the screen - toggles between cube/pyramid<br />
  */
 
 int pts = 4; 
@@ -88,30 +88,30 @@ void draw(){
 
 
 /*
- up/down arrow keys control
+ tap left/right control
  polygon detail.
  */
-void keyPressed(){
-  if(key == CODED) { 
-    // pts
-    if (keyCode == UP) { 
-      if (pts < 90){
-        pts++;
-      } 
-    } 
-    else if (keyCode == DOWN) { 
-      if (pts > 4){
-        pts--;
-      }
-    } 
-  }
-  if (key =='p'){
+void mousePressed(){
+  if (300 < mouseY) {
     if (isPyramid){
       isPyramid = false;
     } 
     else {
       isPyramid = true;
     }
+    return;
   }
+  
+  // pts  
+  if (320 < mouseX) { 
+    if (pts < 90){
+      pts++;
+    } 
+  } 
+  else { 
+    if (pts > 4){
+      pts--;
+    }
+  }   
 }
 
