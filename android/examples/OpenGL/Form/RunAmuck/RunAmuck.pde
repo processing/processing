@@ -7,7 +7,7 @@
  * Friends of ED, 2009
  */
 
-int count = 250;
+int count = 25;
 Legs[] legs = new Legs[count];
 
 void setup() {

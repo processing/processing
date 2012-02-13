@@ -1,6 +1,3 @@
-// ISSUES: non-interactive sketches don't show anything on screen,
-//         and polygon tessellation still not implemented.
-
 size(100, 100, P3D);
 
 beginShape(POLYGON);
