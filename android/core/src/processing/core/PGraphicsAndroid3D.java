@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Stack;
 
-
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
 
@@ -5564,9 +5563,37 @@ public class PGraphicsAndroid3D extends PGraphics {
       return null;
     }
   }
+  
+  public PShader loadShader(String fragFilename, int kind) {
+    PShader shader;
+    if (kind == FILL_SHADER_SIMPLE) {
+      shader = new FillShaderSimple(parent);
+      shader.setVertexShader(defFillShaderVertSimpleURL);
+    } else if (kind == FILL_SHADER_LIT) {
+      shader = new FillShaderLit(parent);
+      shader.setVertexShader(defFillShaderVertLitURL);
+    } else if (kind == FILL_SHADER_TEX) {
+      shader = new FillShaderTex(parent);
+      shader.setVertexShader(defFillShaderVertTexURL);
+    } else if (kind == FILL_SHADER_FULL) {
+      shader = new FillShaderFull(parent);
+      shader.setVertexShader(defFillShaderVertFullURL);
+    } else if (kind == LINE_SHADER) {
+      shader = new LineShader(parent);
+      shader.setVertexShader(defLineShaderVertURL);
+    } else if (kind == POINT_SHADER) {
+      shader = new PointShader(parent);
+      shader.setVertexShader(defPointShaderVertURL);
+    } else {
+      PGraphics.showWarning("Wrong shader type");
+      return null;
+    }
+    shader.setFragmentShader(fragFilename);
+    return shader;    
+  }  
 
   public void setShader(PShader shader, int kind) {
-    if (kind == FILL_SHADER_SIMPLE) {
+    if (kind == FILL_SHADER_SIMPLE) {      
       fillShaderSimple = (FillShaderSimple) shader;
     } else if (kind == FILL_SHADER_LIT) {
       fillShaderLit = (FillShaderLit) shader;
@@ -5619,42 +5646,42 @@ public class PGraphicsAndroid3D extends PGraphics {
     }     
   }
   
-  protected FillShader getFillShader(boolean lit, boolean tex) {
+  protected FillShader getFillShader(boolean lit, boolean tex) {    
     FillShader shader;
     if (lit) {
       if (tex) {
+        if (defFillShaderFull == null) {
+          defFillShaderFull = new FillShaderFull(parent, defFillShaderVertFullURL, defFillShaderFragTexURL);
+        }         
         if (fillShaderFull == null) {
-          if (defFillShaderFull == null) {
-            defFillShaderFull = new FillShaderFull(parent, defFillShaderVertFullURL, defFillShaderFragTexURL);
-          }
           fillShaderFull = defFillShaderFull;
         }
         shader = fillShaderFull;  
       } else {
         if (defFillShaderLit == null) {
-          if (defFillShaderLit == null) {
-            defFillShaderLit = new FillShaderLit(parent, defFillShaderVertLitURL, defFillShaderFragNoTexURL);
-          }
+          defFillShaderLit = new FillShaderLit(parent, defFillShaderVertLitURL, defFillShaderFragNoTexURL);
+        }
+        if (fillShaderLit == null) { 
           fillShaderLit = defFillShaderLit;
         }
         shader = fillShaderLit;
       }
     } else {
       if (tex) {
+        if (defFillShaderTex == null) {
+          defFillShaderTex = new FillShaderTex(parent, defFillShaderVertTexURL, defFillShaderFragTexURL);
+        }        
         if (fillShaderTex == null) {
-          if (defFillShaderTex == null) {
-            defFillShaderTex = new FillShaderTex(parent, defFillShaderVertTexURL, defFillShaderFragTexURL);
-          }
           fillShaderTex = defFillShaderTex;
         }
         shader = fillShaderTex;
       } else {
+        if (defFillShaderSimple == null) {
+          defFillShaderSimple = new FillShaderSimple(parent, defFillShaderVertSimpleURL, defFillShaderFragNoTexURL);            
+        }          
         if (fillShaderSimple == null) {
-          if (defFillShaderSimple == null) {
-            defFillShaderSimple = new FillShaderSimple(parent, defFillShaderVertSimpleURL, defFillShaderFragNoTexURL);            
-          }
           fillShaderSimple = defFillShaderSimple;
-        }        
+        }
         shader = fillShaderSimple;
       }      
     }    
@@ -5664,11 +5691,11 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected LineShader getLineShader() {
+    if (defLineShader == null) {
+      defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
+    }    
     if (lineShader == null) {
-      if (defLineShader == null) {
-        defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
-      }
-      lineShader = defLineShader;  
+      lineShader = defLineShader;
     }
     lineShader.loadAttributes();
     lineShader.loadUniforms();
@@ -5676,18 +5703,22 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   protected PointShader getPointShader() {
-    if (pointShader == null) {
-      if (defPointShader == null) {
-        defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
-      }
-      pointShader = defPointShader;  
-    }
+    if (defPointShader == null) {
+      defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
+    }    
+    if (pointShader == null) {      
+      pointShader = defPointShader;
+    }    
     pointShader.loadAttributes();
     pointShader.loadUniforms();
     return pointShader;    
   }  
   
   protected class FillShader extends PShader {
+    public FillShader(PApplet parent) {
+      super(parent);
+    }
+    
     public FillShader(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
@@ -5699,9 +5730,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void loadAttributes() { }    
     public void loadUniforms() { }
     
-    public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {     
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
-      pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);       
+    public void setAttribute(int loc, int vboId, int size, int type, boolean normalized, int stride, int offset) {
+      if (-1 < loc) {
+        pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, vboId);
+        pgl.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
+      }
     }
     
     public void setVertexAttribute(int vboId, int size, int type, int stride, int offset) { }    
@@ -5720,6 +5753,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     protected int inVertexLoc;
     protected int inColorLoc;
+    
+    public FillShaderSimple(PApplet parent) {
+      super(parent);
+    }    
 
     public FillShaderSimple(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
@@ -5749,16 +5786,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void start() {
       super.start();
 
-      pgl.glEnableVertexAttribArray(inVertexLoc);
-      pgl.glEnableVertexAttribArray(inColorLoc);
+      if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
       
       updateGLProjmodelview();
       set4x4MatUniform(projmodelviewMatrixLoc, glProjmodelview);      
     }
 
     public void stop() {      
-      pgl.glDisableVertexAttribArray(inVertexLoc);
-      pgl.glDisableVertexAttribArray(inColorLoc);
+      if (-1 < inVertexLoc) pgl.glDisableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)  pgl.glDisableVertexAttribArray(inColorLoc);
       
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
       
@@ -5789,6 +5826,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     protected int inEmissiveLoc;
     protected int inShineLoc;    
     
+    public FillShaderLit(PApplet parent) {
+      super(parent);
+    }      
+    
     public FillShaderLit(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
@@ -5799,7 +5840,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     public void loadAttributes() {
       inVertexLoc = getAttribLocation("inVertex");
-      inColorLoc = getAttribLocation("inColor");
+      inColorLoc = getAttribLocation("inColor");      
       inNormalLoc = getAttribLocation("inNormal");
       
       inAmbientLoc = getAttribLocation("inAmbient");
@@ -5854,14 +5895,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void start() {
       super.start();
       
-      pgl.glEnableVertexAttribArray(inVertexLoc);
-      pgl.glEnableVertexAttribArray(inColorLoc);      
-      pgl.glEnableVertexAttribArray(inNormalLoc);
+      if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);      
+      if (-1 < inNormalLoc) pgl.glEnableVertexAttribArray(inNormalLoc);
       
-      pgl.glEnableVertexAttribArray(inAmbientLoc);
-      pgl.glEnableVertexAttribArray(inSpecularLoc);
-      pgl.glEnableVertexAttribArray(inEmissiveLoc);
-      pgl.glEnableVertexAttribArray(inShineLoc);         
+      if (-1 < inAmbientLoc)  pgl.glEnableVertexAttribArray(inAmbientLoc);
+      if (-1 < inSpecularLoc) pgl.glEnableVertexAttribArray(inSpecularLoc);
+      if (-1 < inEmissiveLoc) pgl.glEnableVertexAttribArray(inEmissiveLoc);
+      if (-1 < inShineLoc)    pgl.glEnableVertexAttribArray(inShineLoc);         
       
       updateGLProjmodelview();
       set4x4MatUniform(projmodelviewMatrixLoc, glProjmodelview);
@@ -5882,15 +5923,15 @@ public class PGraphicsAndroid3D extends PGraphics {
       set2FloatVecUniform(lightSpotParametersLoc, lightSpotParameters);
     }
 
-    public void stop() {      
-      pgl.glDisableVertexAttribArray(inVertexLoc);
-      pgl.glDisableVertexAttribArray(inColorLoc);      
-      pgl.glDisableVertexAttribArray(inNormalLoc);
+    public void stop() {                  
+      if (-1 < inVertexLoc) pgl.glDisableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)  pgl.glDisableVertexAttribArray(inColorLoc);      
+      if (-1 < inNormalLoc) pgl.glDisableVertexAttribArray(inNormalLoc);
       
-      pgl.glDisableVertexAttribArray(inAmbientLoc);
-      pgl.glDisableVertexAttribArray(inSpecularLoc);
-      pgl.glDisableVertexAttribArray(inEmissiveLoc);
-      pgl.glDisableVertexAttribArray(inShineLoc);     
+      if (-1 < inAmbientLoc)  pgl.glDisableVertexAttribArray(inAmbientLoc);
+      if (-1 < inSpecularLoc) pgl.glDisableVertexAttribArray(inSpecularLoc);
+      if (-1 < inEmissiveLoc) pgl.glDisableVertexAttribArray(inEmissiveLoc);
+      if (-1 < inShineLoc)    pgl.glDisableVertexAttribArray(inShineLoc);        
       
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
       
@@ -5899,15 +5940,19 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
   
   protected class FillShaderTex extends FillShaderSimple {
-    protected int texcoordScaleLoc;
-    protected int texcoordOffsetLoc;
-    
     protected int inTexcoordLoc;
     
-    PTexture texture;
+    protected int texcoordMatrixLoc;
+    protected int texcoordOffsetLoc;
+    
+    protected float[] tcmat;
+    
+    public FillShaderTex(PApplet parent) {
+      super(parent);
+    }        
     
     public FillShaderTex(PApplet parent, String vertFilename, String fragFilename) {
-      super(parent, vertFilename, fragFilename);
+      super(parent, vertFilename, fragFilename);      
     }
     
     public FillShaderTex(PApplet parent, URL vertURL, URL fragURL) {
@@ -5917,7 +5962,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void loadUniforms() {
       super.loadUniforms();
       
-      texcoordScaleLoc = getUniformLocation("texcoordScale");
+      texcoordMatrixLoc = getUniformLocation("texcoordMatrix");
       texcoordOffsetLoc = getUniformLocation("texcoordOffset");        
     }
     
@@ -5932,33 +5977,37 @@ public class PGraphicsAndroid3D extends PGraphics {
     }     
     
     public void setTexture(PTexture tex) { 
-      texture = tex;  
-      
-      // Calculate scale and offset for texture coordinates
-      // and passing them to the fragment shader.
-      
       float scaleu = tex.maxTexCoordU;
       float scalev = tex.maxTexCoordV;
-      float offsetu = 0;
-      float offsetv = 0;
+      float dispu = 0;
+      float dispv = 0;
       
       if (tex.isFlippedY()) {
         scalev *= -1;
-        offsetv = 1;
+        dispv = 1;
       }
+
+      if (tcmat == null) {
+        tcmat = new float[16];
+      }      
       
-      set2FloatUniform(texcoordScaleLoc, scaleu, scalev);
-      set2FloatUniform(texcoordOffsetLoc, offsetu, offsetv);
+      tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
+      tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
+      tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
+      tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;      
+      set4x4MatUniform(texcoordMatrixLoc, tcmat);      
+      
+      set2FloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
     
     public void start() {
       super.start();
       
-      pgl.glEnableVertexAttribArray(inTexcoordLoc);
+      if (-1 < inTexcoordLoc) pgl.glEnableVertexAttribArray(inTexcoordLoc);
     }    
     
     public void stop() {      
-      pgl.glDisableVertexAttribArray(inTexcoordLoc);
+      if (-1 < inTexcoordLoc) pgl.glDisableVertexAttribArray(inTexcoordLoc);
       
       super.stop();
     }    
@@ -5967,8 +6016,14 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected class FillShaderFull extends FillShaderLit {
     protected int inTexcoordLoc;
     
-    protected int texcoordScaleLoc;
+    protected int texcoordMatrixLoc;
     protected int texcoordOffsetLoc;
+    
+    protected float[] tcmat;
+    
+    public FillShaderFull(PApplet parent) {
+      super(parent);
+    } 
     
     public FillShaderFull(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
@@ -5981,7 +6036,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void loadUniforms() {
       super.loadUniforms();
       
-      texcoordScaleLoc = getUniformLocation("texcoordScale");
+      texcoordMatrixLoc = getUniformLocation("texcoordMatrix");
       texcoordOffsetLoc = getUniformLocation("texcoordOffset");      
     }
     
@@ -5996,33 +6051,37 @@ public class PGraphicsAndroid3D extends PGraphics {
     }     
     
     public void setTexture(PTexture tex) { 
-      texture = tex;  
-      
-      // Calculate scale and offset for texture coordinates
-      // and passing them to the fragment shader.
-      
       float scaleu = tex.maxTexCoordU;
       float scalev = tex.maxTexCoordV;
-      float offsetu = 0;
-      float offsetv = 0;
+      float dispu = 0;
+      float dispv = 0;
       
       if (tex.isFlippedY()) {
         scalev *= -1;
-        offsetv = 1;
+        dispv = 1;
       }
+
+      if (tcmat == null) {
+        tcmat = new float[16];
+      }      
       
-      set2FloatUniform(texcoordScaleLoc, scaleu, scalev);
-      set2FloatUniform(texcoordOffsetLoc, offsetu, offsetv);
+      tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
+      tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
+      tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
+      tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;      
+      set4x4MatUniform(texcoordMatrixLoc, tcmat);      
+      
+      set2FloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
     
     public void start() {
       super.start();
       
-      pgl.glEnableVertexAttribArray(inTexcoordLoc);
+      if (-1 < inTexcoordLoc) pgl.glEnableVertexAttribArray(inTexcoordLoc);
     }
     
     public void stop() {      
-      pgl.glDisableVertexAttribArray(inTexcoordLoc);
+      if (-1 < inTexcoordLoc) pgl.glDisableVertexAttribArray(inTexcoordLoc);
       
       super.stop();
     }    
@@ -6038,6 +6097,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     protected int inVertexLoc;
     protected int inColorLoc;
     protected int inDirWidthLoc;
+    
+    public LineShader(PApplet parent) {
+      super(parent);
+    }
     
     public LineShader(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
@@ -6081,9 +6144,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void start() {
       super.start();
       
-      pgl.glEnableVertexAttribArray(inVertexLoc);
-      pgl.glEnableVertexAttribArray(inColorLoc);
-      pgl.glEnableVertexAttribArray(inDirWidthLoc);      
+      if (-1 < inVertexLoc)   pgl.glEnableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)    pgl.glEnableVertexAttribArray(inColorLoc);
+      if (-1 < inDirWidthLoc) pgl.glEnableVertexAttribArray(inDirWidthLoc);      
       
       updateGLProjection();
       set4x4MatUniform(projectionMatrixLoc, glProjection);
@@ -6101,9 +6164,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     public void stop() {      
-      pgl.glDisableVertexAttribArray(inVertexLoc);
-      pgl.glDisableVertexAttribArray(inColorLoc);
-      pgl.glDisableVertexAttribArray(inDirWidthLoc);
+      if (-1 < inVertexLoc)   pgl.glDisableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)    pgl.glDisableVertexAttribArray(inColorLoc);
+      if (-1 < inDirWidthLoc) pgl.glDisableVertexAttribArray(inDirWidthLoc);     
       
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
       
@@ -6118,6 +6181,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     protected int inVertexLoc;
     protected int inColorLoc;
     protected int inSizeLoc;
+    
+    public PointShader(PApplet parent) {
+      super(parent);
+    }    
 
     public PointShader(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
@@ -6158,9 +6225,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void start() {
       super.start();
       
-      pgl.glEnableVertexAttribArray(inVertexLoc);
-      pgl.glEnableVertexAttribArray(inColorLoc);
-      pgl.glEnableVertexAttribArray(inSizeLoc);      
+      if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
+      if (-1 < inSizeLoc)   pgl.glEnableVertexAttribArray(inSizeLoc);      
       
       updateGLProjection();
       set4x4MatUniform(projectionMatrixLoc, glProjection);
@@ -6170,16 +6237,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
 
     public void stop() {      
-      pgl.glDisableVertexAttribArray(inVertexLoc);
-      pgl.glDisableVertexAttribArray(inColorLoc);
-      pgl.glDisableVertexAttribArray(inSizeLoc);
+      if (-1 < inVertexLoc) pgl.glDisableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)  pgl.glDisableVertexAttribArray(inColorLoc);
+      if (-1 < inSizeLoc)   pgl.glDisableVertexAttribArray(inSizeLoc);
       
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
       
       super.stop();
     }    
   }
-    
+  
   //////////////////////////////////////////////////////////////
   
   // Input (raw) and Tessellated geometry, tessellator.        

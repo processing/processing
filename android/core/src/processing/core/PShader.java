@@ -61,6 +61,13 @@ public class PShader {
     fragmentShader = 0;      
   }
     
+  public PShader(PApplet parent) {
+    this();
+    this.parent = parent;
+    pg = (PGraphicsAndroid3D) parent.g;
+    pgl = pg.pgl;     
+  }  
+  
   /**
    * Creates a shader program using the specified vertex and fragment
    * shaders.
@@ -115,6 +122,21 @@ public class PShader {
     }
   }
   
+  public void setVertexShader(String vertFilename) {
+    this.vertexFilename = vertFilename;
+  }
+
+  public void setVertexShader(URL vertURL) {
+    this.vertexURL = vertURL;    
+  }  
+  
+  public void setFragmentShader(String fragFilename) {
+    this.fragmentFilename = fragFilename;    
+  }
+
+  public void setFragmentShader(URL fragURL) {
+    this.fragmentURL = fragURL;        
+  }
   
   /**
    * Starts the execution of the shader program.
@@ -267,20 +289,25 @@ public class PShader {
       pgl.glVertexAttrib4f(loc, x, y, z, w);
     }
   }
-
     
   protected void init() {
     if (programObject == 0) {
       programObject = pg.createGLSLProgramObject();
       
-      if (vertexFilename != null && fragmentFilename != null) {
+      if (vertexFilename != null) {
         loadVertexShader(vertexFilename);
-        loadFragmentShader(fragmentFilename);
-      } else if (vertexURL != null && fragmentURL != null) {
+      } else if (vertexURL != null) {
         loadVertexShader(vertexURL);
-        loadFragmentShader(fragmentURL);        
       } else {
-        PGraphics.showException("Shader filenames and URLs are both null!");
+        PGraphics.showException("Vertex shader filenames and URLs are both null!");
+      }
+      
+      if (fragmentFilename != null) {
+        loadFragmentShader(fragmentFilename);
+      } else if (fragmentURL != null) {      
+        loadFragmentShader(fragmentURL);
+      } else {
+        PGraphics.showException("Fragment shader filenames and URLs are both null!");
       }
       
       checkLogInfo("Vertex shader " + vertexFilename + " compilation: ", vertexShader);
@@ -394,4 +421,3 @@ public class PShader {
     }
   }  
 }
-
