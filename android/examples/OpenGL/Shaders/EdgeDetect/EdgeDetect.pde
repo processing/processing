@@ -2,7 +2,7 @@
 // in P3D to render textures, by a custom one that applies a simple 
 // edge detection filter.
 //
-// Press any key to switch between the custom and the default shader.
+// Tap the screen to switch between the custom and the default shader.
 
 PImage img;
 PShader shader;

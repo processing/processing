@@ -1,6 +1,3 @@
-// ISSUES: beginShape() need to be called with TRIANGLES because generic polygon
-//         tesselation still not implemented
-
 /**
  * Texture 2. 
  * 
@@ -20,7 +17,7 @@ void draw() {
   background(0);
   translate(width / 2, height / 2);
   rotateY(map(mouseX, 0, width, -PI, PI));
-  beginShape(TRIANGLES);
+  beginShape();
   texture(img);
   vertex(-100, -100, 0, 0, 0);
   vertex(100, -40, 0, 400, 120);

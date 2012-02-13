@@ -1,6 +1,6 @@
 PImage sprite;  
 
-int npartTotal = 5000;
+int npartTotal = 4000;
 float partSize = 20;
 
 PVector positions[];
