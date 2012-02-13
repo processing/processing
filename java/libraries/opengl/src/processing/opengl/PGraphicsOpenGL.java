@@ -5570,9 +5570,37 @@ public class PGraphicsOpenGL extends PGraphics {
       return null;
     }
   }
+  
+  public PShader loadShader(String fragFilename, int kind) {
+    PShader shader;
+    if (kind == FILL_SHADER_SIMPLE) {
+      shader = new FillShaderSimple(parent);
+      shader.setVertexShader(defFillShaderVertSimpleURL);
+    } else if (kind == FILL_SHADER_LIT) {
+      shader = new FillShaderLit(parent);
+      shader.setVertexShader(defFillShaderVertLitURL);
+    } else if (kind == FILL_SHADER_TEX) {
+      shader = new FillShaderTex(parent);
+      shader.setVertexShader(defFillShaderVertTexURL);
+    } else if (kind == FILL_SHADER_FULL) {
+      shader = new FillShaderFull(parent);
+      shader.setVertexShader(defFillShaderVertFullURL);
+    } else if (kind == LINE_SHADER) {
+      shader = new LineShader(parent);
+      shader.setVertexShader(defLineShaderVertURL);
+    } else if (kind == POINT_SHADER) {
+      shader = new PointShader(parent);
+      shader.setVertexShader(defPointShaderVertURL);
+    } else {
+      PGraphics.showWarning("Wrong shader type");
+      return null;
+    }
+    shader.setFragmentShader(fragFilename);
+    return shader;    
+  }  
 
   public void setShader(PShader shader, int kind) {
-    if (kind == FILL_SHADER_SIMPLE) {
+    if (kind == FILL_SHADER_SIMPLE) {      
       fillShaderSimple = (FillShaderSimple) shader;
     } else if (kind == FILL_SHADER_LIT) {
       fillShaderLit = (FillShaderLit) shader;
@@ -5625,7 +5653,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }     
   }
   
-  protected FillShader getFillShader(boolean lit, boolean tex) {
+  protected FillShader getFillShader(boolean lit, boolean tex) {    
     FillShader shader;
     if (lit) {
       if (tex) {
@@ -5694,6 +5722,10 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   protected class FillShader extends PShader {
+    public FillShader(PApplet parent) {
+      super(parent);
+    }
+    
     public FillShader(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
     }
@@ -5726,6 +5758,10 @@ public class PGraphicsOpenGL extends PGraphics {
     
     protected int inVertexLoc;
     protected int inColorLoc;
+    
+    public FillShaderSimple(PApplet parent) {
+      super(parent);
+    }    
 
     public FillShaderSimple(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
@@ -5794,6 +5830,10 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int inSpecularLoc;
     protected int inEmissiveLoc;
     protected int inShineLoc;    
+    
+    public FillShaderLit(PApplet parent) {
+      super(parent);
+    }      
     
     public FillShaderLit(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
@@ -5906,15 +5946,19 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   protected class FillShaderTex extends FillShaderSimple {
-    protected int texcoordScaleLoc;
-    protected int texcoordOffsetLoc;
-    
     protected int inTexcoordLoc;
     
-    PTexture texture;
+    protected int texcoordMatrixLoc;
+    protected int texcoordOffsetLoc;
+    
+    protected float[] tcmat;
+    
+    public FillShaderTex(PApplet parent) {
+      super(parent);
+    }        
     
     public FillShaderTex(PApplet parent, String vertFilename, String fragFilename) {
-      super(parent, vertFilename, fragFilename);
+      super(parent, vertFilename, fragFilename);      
     }
     
     public FillShaderTex(PApplet parent, URL vertURL, URL fragURL) {
@@ -5924,7 +5968,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadUniforms() {
       super.loadUniforms();
       
-      texcoordScaleLoc = getUniformLocation("texcoordScale");
+      texcoordMatrixLoc = getUniformLocation("texcoordMatrix");
       texcoordOffsetLoc = getUniformLocation("texcoordOffset");        
     }
     
@@ -5939,23 +5983,27 @@ public class PGraphicsOpenGL extends PGraphics {
     }     
     
     public void setTexture(PTexture tex) { 
-      texture = tex;  
-      
-      // Calculate scale and offset for texture coordinates
-      // and passing them to the fragment shader.
-      
       float scaleu = tex.maxTexCoordU;
       float scalev = tex.maxTexCoordV;
-      float offsetu = 0;
-      float offsetv = 0;
+      float dispu = 0;
+      float dispv = 0;
       
       if (tex.isFlippedY()) {
         scalev *= -1;
-        offsetv = 1;
+        dispv = 1;
       }
+
+      if (tcmat == null) {
+        tcmat = new float[16];
+      }      
       
-      set2FloatUniform(texcoordScaleLoc, scaleu, scalev);
-      set2FloatUniform(texcoordOffsetLoc, offsetu, offsetv);
+      tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
+      tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
+      tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
+      tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;      
+      set4x4MatUniform(texcoordMatrixLoc, tcmat);      
+      
+      set2FloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
     
     public void start() {
@@ -5974,8 +6022,14 @@ public class PGraphicsOpenGL extends PGraphics {
   protected class FillShaderFull extends FillShaderLit {
     protected int inTexcoordLoc;
     
-    protected int texcoordScaleLoc;
+    protected int texcoordMatrixLoc;
     protected int texcoordOffsetLoc;
+    
+    protected float[] tcmat;
+    
+    public FillShaderFull(PApplet parent) {
+      super(parent);
+    } 
     
     public FillShaderFull(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
@@ -5988,7 +6042,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadUniforms() {
       super.loadUniforms();
       
-      texcoordScaleLoc = getUniformLocation("texcoordScale");
+      texcoordMatrixLoc = getUniformLocation("texcoordMatrix");
       texcoordOffsetLoc = getUniformLocation("texcoordOffset");      
     }
     
@@ -6003,23 +6057,27 @@ public class PGraphicsOpenGL extends PGraphics {
     }     
     
     public void setTexture(PTexture tex) { 
-      texture = tex;  
-      
-      // Calculate scale and offset for texture coordinates
-      // and passing them to the fragment shader.
-      
       float scaleu = tex.maxTexCoordU;
       float scalev = tex.maxTexCoordV;
-      float offsetu = 0;
-      float offsetv = 0;
+      float dispu = 0;
+      float dispv = 0;
       
       if (tex.isFlippedY()) {
         scalev *= -1;
-        offsetv = 1;
+        dispv = 1;
       }
+
+      if (tcmat == null) {
+        tcmat = new float[16];
+      }      
       
-      set2FloatUniform(texcoordScaleLoc, scaleu, scalev);
-      set2FloatUniform(texcoordOffsetLoc, offsetu, offsetv);
+      tcmat[0] = scaleu; tcmat[4] = 0;      tcmat[ 8] = 0; tcmat[12] = dispu;
+      tcmat[1] = 0;      tcmat[5] = scalev; tcmat[ 9] = 0; tcmat[13] = dispv;
+      tcmat[2] = 0;      tcmat[6] = 0;      tcmat[10] = 0; tcmat[14] = 0;
+      tcmat[3] = 0;      tcmat[7] = 0;      tcmat[11] = 0; tcmat[15] = 0;      
+      set4x4MatUniform(texcoordMatrixLoc, tcmat);      
+      
+      set2FloatUniform(texcoordOffsetLoc, 1.0f / tex.width, 1.0f / tex.height);
     }
     
     public void start() {
@@ -6045,6 +6103,10 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int inVertexLoc;
     protected int inColorLoc;
     protected int inDirWidthLoc;
+    
+    public LineShader(PApplet parent) {
+      super(parent);
+    }
     
     public LineShader(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);
@@ -6125,6 +6187,10 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int inVertexLoc;
     protected int inColorLoc;
     protected int inSizeLoc;
+    
+    public PointShader(PApplet parent) {
+      super(parent);
+    }    
 
     public PointShader(PApplet parent, String vertFilename, String fragFilename) {
       super(parent, vertFilename, fragFilename);

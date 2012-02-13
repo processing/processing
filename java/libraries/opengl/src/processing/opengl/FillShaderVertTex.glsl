@@ -20,17 +20,18 @@
 */
 
 uniform mat4 projmodelviewMatrix;
+uniform mat4 texcoordMatrix;
 
 attribute vec4 inVertex;
 attribute vec4 inColor;
 attribute vec2 inTexcoord;
 
 varying vec4 vertColor;
-varying vec2 vertTexcoord;
+varying vec4 vertTexcoord;
 
 void main() {
   gl_Position = projmodelviewMatrix * inVertex;
     
   vertColor = inColor;
-  vertTexcoord = inTexcoord;
+  vertTexcoord = texcoordMatrix * vec4(inTexcoord, 1.0, 1.0);
 }
