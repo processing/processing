@@ -1,5 +1,7 @@
 // Example showing the use of a custom lighting shader in order  
 // to apply a toon effect on the scene.
+// Based on the glsl tutorial from lighthouse 3D:
+// http://www.lighthouse3d.com/tutorials/glsl-tutorial/toon-shader-version-ii/
 
 PShader shader;
 PGraphicsOpenGL pg;  

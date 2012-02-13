@@ -1,3 +1,5 @@
+// ISSUES: normals not correct at the poles, texture border visible
+
 /**
  * Textured Sphere 
  * by Mike 'Flux' Chang (cleaned up by Aaron Koblin). 

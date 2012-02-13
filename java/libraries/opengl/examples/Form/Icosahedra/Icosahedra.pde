@@ -1,3 +1,5 @@
+// ISSUES: normals are not properly set
+
 /**
  * I Like Icosahedra
  * by Ira Greenberg.
