@@ -112,7 +112,7 @@ public class JavaScriptMode extends Mode
 		}
 	}
 	if ( jMode == null )
-		return new File[0];
+		return inclExamples; // js examples only
 	
 	File jExamples = jMode.getContentFile("examples");
 	File[] jModeExamples = new File[] {

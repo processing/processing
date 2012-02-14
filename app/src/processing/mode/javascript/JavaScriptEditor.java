@@ -1,5 +1,7 @@
 package processing.mode.javascript;
 
+import processing.mode.javascript.ServingEditor;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -7,7 +9,6 @@ import java.io.IOException;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import processing.app.Base;
 import processing.app.EditorState;
@@ -21,14 +22,12 @@ import processing.mode.java.AutoFormat;
 
 import javax.swing.*;
 
-public class JavaScriptEditor extends Editor 
+public class JavaScriptEditor extends ServingEditor 
 {
 	final static String PROP_KEY_MODE = "mode";
 	final static String PROP_VAL_MODE = "JavaScript";
-	final static String PROP_KEY_SERVER_PORT = "js.server.port";
 	
   private JavaScriptMode jsMode;
-  private JavaScriptServer jsServer;
 
   private DirectivesEditor directivesEditor;
 
@@ -53,7 +52,7 @@ public class JavaScriptEditor extends Editor
   
   public Formatter createFormatter () 
   { 
-    return new AutoFormat();    
+    return new AutoFormat();
   }
 
   
@@ -250,14 +249,28 @@ public class JavaScriptEditor extends Editor
     
     return menu;
   }
-
-  
-  // - - - - - - - - - - - - - - - - - -
-  
   
   public String getCommentPrefix () 
   { 
     return "//";
+  }
+
+  /**
+   *  Called when the window is going to be reused for another sketch.
+   */
+  public void internalCloseRunner ()
+  {
+      handleStopServer();
+	  if ( directivesEditor != null )
+	  {
+		directivesEditor.hide();
+		directivesEditor = null;
+	  }
+  }
+
+  public void deactivateRun ()
+  {
+      // not sure what to do here ..
   }
   
   // - - - - - - - - - - - - - - - - - -
@@ -266,80 +279,18 @@ public class JavaScriptEditor extends Editor
   {
 	statusEmpty();
 	
-	String pString = null;
-	String msg = "Set the server port (1024 < port < 65535)";
-	int currentPort = -1;
-	
-	if ( jsServer != null ) currentPort = jsServer.getPort();
-	
-	if ( currentPort > 0 )
-		pString = JOptionPane.showInputDialog( msg, (currentPort+"") );
-	else
-		pString = JOptionPane.showInputDialog( msg );
-	
-	if ( pString == null ) return;
-	
-	int port = -1;
-	try {
-		port = Integer.parseInt(pString);
-	} catch ( Exception e ) {
-		// sending foobar? you lil' hacker you ...
-		statusError("That number was not okay ..");
-		return;
+	boolean wasRunning = serverRunning();
+	if ( wasRunning ) {
+		statusNotice("Server was running, changing the port requires a restart.");
+		stopServer();
 	}
 	
-	if ( port < 0 || port > 65535 )
-	{
-		statusError("That port number is out of range");
-		return;
-	}
-	
-	createJavaScriptServer();
-	if ( jsServer != null )
-	{
-		jsServer.setPort(port);
-	}
-	
+	setServerPort();
 	saveSketchSettings();
-  }
-
-  private void saveSketchSettings ()
-  {
-	statusEmpty();
-
-	File sketchProps = getSketchPropertiesFile();
-	if ( !sketchProps.exists() )
-	{
-		try {
-			sketchProps.createNewFile();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			statusError( "Unable to create sketch properties file!" );
-			return;
-		}
-	}
 	
-	Settings settings;
-	try {
-		settings = new Settings(sketchProps);
-	} catch ( IOException ioe ) {
-		ioe.printStackTrace();
-		return;
+	if ( wasRunning ) {
+		startServer( getExportFolder() );
 	}
-	if ( settings == null )
-	{
-		statusError( "Unable to create sketch properties file!" );
-		return;
-	}
-	settings.set( PROP_KEY_MODE, PROP_VAL_MODE );
-	
-	if ( jsServer != null )
-	{
-		int port = jsServer.getPort();
-		if ( port > 0 ) settings.set( PROP_KEY_SERVER_PORT, (port+"") );
-	}
-	
-	settings.save();
   }
 
   private void handleCreateCustomTemplate ()
@@ -384,10 +335,12 @@ public class JavaScriptEditor extends Editor
 
   private void handleCopyServerAddress ()
   {
-	if ( jsServer != null && jsServer.isRunning() )
+	String address = getServerAddress();
+	
+	if ( address != null )
 	{
 		java.awt.datatransfer.StringSelection stringSelection = 
-			new java.awt.datatransfer.StringSelection( jsServer.getAddress() );
+			new java.awt.datatransfer.StringSelection( address );
 	    java.awt.datatransfer.Clipboard clipboard = 
 			java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
 	    clipboard.setContents( stringSelection, null );
@@ -422,128 +375,45 @@ public class JavaScriptEditor extends Editor
      }
   }
 
-  public void handleStartStopServer ()
-  {
-  	if ( jsServer != null && jsServer.isRunning())
-    {
-		handleStopServer();
-	}
-	else
+	private void handleStartStopServer ()
 	{
-		handleStartServer();
+		startStopServer( getExportFolder() );
 	}
-  }
-
-  private File getExportFolder ()
-  {
-  	return new File( getSketch().getFolder(),
-	 				 JavaScriptBuild.EXPORTED_FOLDER_NAME );
-  }
-
-  private File getSketchPropertiesFile ()
-  {
-  	return new File( getSketch().getFolder(), "sketch.properties");
-  }
-
-  private File getCustomTemplateFolder ()
-  {
-	return new File( getSketch().getFolder(), 
-					 JavaScriptBuild.TEMPLATE_FOLDER_NAME );
-  }
   
-  /**
-   *  Replacement for RUN: 
-   *  export to folder, start server, open in default browser.
-   */
-  public void handleStartServer ()
-  {			
-	statusEmpty();
-	
-	if ( !handleExport( false ) ) return;
-		
-	File serverRoot = getExportFolder();
-	// if server hung or something else went wrong .. stop it.
-	if ( jsServer != null && 
-		 (!jsServer.isRunning() || !jsServer.getRoot().equals(serverRoot)) )
-    {
-		jsServer.shutDown();
-		jsServer = null;
+	/**
+	 *  Replacement for RUN: 
+	 *  export to folder, start server, open in default browser.
+	 */
+	private void handleStartServer ()
+	{			
+		statusEmpty();
+
+		if ( !handleExport( false ) ) return;
+
+		startServer( getExportFolder() );
+
+		toolbar.activate(JavaScriptToolbar.RUN);
 	}
-	
-    if ( jsServer == null )
-	{
-		jsServer = createJavaScriptServer();
-		jsServer.start();
-		
-		// a little delay to give the server time to kick in ..
-		long ts = System.currentTimeMillis();
-		while ( System.currentTimeMillis() - ts < 200 ) {}
-		
-		while ( !jsServer.isRunning() ) {}
-		
-		String location = jsServer.getAddress();
-		
-		statusNotice( "Server started: " + location );
-		
-		Base.openURL( location );
-	}
-	else if ( jsServer.isRunning() )
-	{
-		statusNotice( "Server running (" + 
-					  jsServer.getAddress() +
-					  "), reload your browser window." );
-	}
-    toolbar.activate(JavaScriptToolbar.RUN);
-  }
 
 	private void handleOpenInBrowser ()
 	{
-		if ( jsServer != null && jsServer.isRunning() )
-		{
-			Base.openURL( jsServer.getAddress() );
-		}
+		openBrowserForServer();
 	}
-
-  private JavaScriptServer createJavaScriptServer ()
-  {	
-	if ( jsServer != null ) return jsServer;
-	
-	jsServer = new JavaScriptServer( getExportFolder() );
-	
-    File sketchProps = getSketchPropertiesFile();
-    if ( sketchProps.exists() ) {
-		try {
-        	Settings props = new Settings(sketchProps);
-			String portString = props.get( PROP_KEY_SERVER_PORT );
-			if ( portString != null && !portString.trim().equals("") )
-			{
-        		int port = Integer.parseInt(portString);
-				jsServer.setPort(port);
-			}
-		} catch ( IOException ioe ) {
-			statusError(ioe);
-		}
-    }
-
-	return jsServer;
-  }
 
   /**
    *  Replacement for STOP: stop server.
    */
-  public void handleStopServer ()
+  private void handleStopServer ()
   {
-	if ( jsServer != null && jsServer.isRunning() )
-		jsServer.shutDown();
+	stopServer();
 	
-	statusNotice("Server stopped.");
 	toolbar.deactivate(JavaScriptToolbar.RUN);
   }
   
   /**
    * Call the export method of the sketch and handle the gui stuff
    */
-  public boolean handleExport ( boolean openFolder ) 
+  private boolean handleExport ( boolean openFolder ) 
   {		
     if ( !handleExportCheckModified() )
     {
@@ -557,9 +427,9 @@ public class JavaScriptEditor extends Editor
         boolean success = jsMode.handleExport(sketch);
         if ( success && openFolder ) 
 		{
-          File appletJSFolder = new File( sketch.getFolder(),
+          File exportFolder = new File( sketch.getFolder(),
  										  JavaScriptBuild.EXPORTED_FOLDER_NAME );
-          Base.openFolder(appletJSFolder);
+          Base.openFolder( exportFolder );
 
           statusNotice("Finished exporting.");
         } else if ( !success ) { 
@@ -588,25 +458,21 @@ public class JavaScriptEditor extends Editor
 
     } else if (immediately) {
       handleSave();
-	  if ( jsServer != null && jsServer.isRunning() )
-		handleStartServer();
-	  else
-		statusEmpty();
+	  statusEmpty();
+	  startServer( getExportFolder() );
     } else {
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             handleSave();
-			  if ( jsServer != null && jsServer.isRunning() )
-				handleStartServer();
-			  else
-				statusEmpty();
+			statusEmpty();
+			startServer( getExportFolder() );
           }
         });
     }
     return true;
   }
   
-  public boolean handleExportCheckModified () 
+  private boolean handleExportCheckModified () 
   {
     if (sketch.isModified()) {
       Object[] options = { "OK", "Cancel" };
@@ -623,11 +489,7 @@ public class JavaScriptEditor extends Editor
         handleSaveRequest(true);
 
       } else {
-        // why it's not CANCEL_OPTION is beyond me (at least on the mac)
-        // but f-- it.. let's get this shite done..
-        //} else if (result == JOptionPane.CANCEL_OPTION) {
         statusNotice("Export canceled, changes must first be saved.");
-        //toolbar.clear();
         return false;
       }
     }
@@ -660,21 +522,43 @@ public class JavaScriptEditor extends Editor
                      null);
   }
 
-  /**
-   *  Called when the window is going to be reused for another sketch.
-   */
-  public void internalCloseRunner()
+  // ------- utilities ---------
+
+  private File getExportFolder ()
   {
-      handleStopServer();
-	  if ( directivesEditor != null )
-	  {
-		directivesEditor.hide();
-		directivesEditor = null;
-	  }
+  	return new File( getSketch().getFolder(),
+	 				 JavaScriptBuild.EXPORTED_FOLDER_NAME );
   }
 
-  public void deactivateRun ()
+  private File getCustomTemplateFolder ()
   {
-      // not sure what to do here ..
-  } 
+	return new File( getSketch().getFolder(), 
+					 JavaScriptBuild.TEMPLATE_FOLDER_NAME );
+  }
+
+  private void saveSketchSettings ()
+  {
+	statusEmpty();
+
+	File sketchProps = getSketchPropertiesFile();
+	Settings settings;
+
+	try {
+		settings = new Settings(sketchProps);
+	} catch ( IOException ioe ) {
+		ioe.printStackTrace();
+		return;
+	}
+	if ( settings == null )
+	{
+		statusError( "Unable to create sketch properties file!" );
+		return;
+	}
+	settings.set( PROP_KEY_MODE, PROP_VAL_MODE );
+
+	int port = getServerPort();
+	if ( port > 0 ) settings.set( PROP_KEY_SERVER_PORT, (port+"") );
+
+	settings.save();
+  }
 }
