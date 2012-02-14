@@ -9,7 +9,7 @@ import java.util.*;
  *
  * Changed to accept a document root.
  */
-class JavaScriptServer implements HttpConstants, Runnable
+class BasicServer implements HttpConstants, Runnable
 {
 
 	// TODO how to handle too many servers?
@@ -30,7 +30,7 @@ class JavaScriptServer implements HttpConstants, Runnable
 	private boolean running = false, inited = false;
 //	private boolean stopping = false;
 	
-	JavaScriptServer ( File root ) 
+	BasicServer ( File root ) 
 	{
 		if ( virtualRoot == null && root.exists() && root.canRead() )
 		{
@@ -532,6 +532,7 @@ outerloop:
 		setSuffix(".cht",	  "audio/x-dspeeh");
 		setSuffix(".class",	  "application/octet-stream");
 		setSuffix(".cod",	  "image/cis-cod");
+		setSuffix(".coffee",  "text/coffeescript");
 		setSuffix(".com",	  "application/octet-stream"); 
 		setSuffix(".cpio",	  "application/x-cpio");
 		setSuffix(".cpt", 	  "application/mac-compactpro");
