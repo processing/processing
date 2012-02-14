@@ -81,7 +81,7 @@ class BasicServer implements HttpConstants, Runnable
 		{
 			if ( !available(port) )
 			{
-				System.err.println( "JavaScriptServer: " + 
+				System.err.println( "BasicServer: " + 
 								    "that port ("+port+") seems to be taken " + 
 									"or is out of range (0-65535)");
 				port = -1;
@@ -231,7 +231,7 @@ class BasicServer implements HttpConstants, Runnable
 }
 
 
-class Worker extends JavaScriptServer 
+class Worker extends BasicServer 
 implements HttpConstants, Runnable
 {
     final static int BUF_SIZE = 2048;

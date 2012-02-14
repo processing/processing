@@ -384,7 +384,7 @@ public class JavaScriptEditor extends ServingEditor
 	 *  Replacement for RUN: 
 	 *  export to folder, start server, open in default browser.
 	 */
-	private void handleStartServer ()
+	public void handleStartServer ()
 	{			
 		statusEmpty();
 
@@ -403,7 +403,7 @@ public class JavaScriptEditor extends ServingEditor
   /**
    *  Replacement for STOP: stop server.
    */
-  private void handleStopServer ()
+  public void handleStopServer ()
   {
 	stopServer();
 	
@@ -413,7 +413,7 @@ public class JavaScriptEditor extends ServingEditor
   /**
    * Call the export method of the sketch and handle the gui stuff
    */
-  private boolean handleExport ( boolean openFolder ) 
+  public boolean handleExport ( boolean openFolder ) 
   {		
     if ( !handleExportCheckModified() )
     {
