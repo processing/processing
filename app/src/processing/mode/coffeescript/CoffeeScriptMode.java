@@ -20,19 +20,19 @@ public class CoffeeScriptMode extends JavaScriptMode
 	public CoffeeScriptMode( Base base, File folder )
 	{
 		super( base, folder );
-		System.out.println("Mode created.");
 	}
 	
 	public Editor createEditor( Base base, String path, EditorState state )
 	{
-		if ( path != null && !path.endsWith(".coffee") ) {
+		if ( path != null && !path.endsWith(".coffee") ) 
+		{
 			String cPath = path.replace(".pde", ".coffee");
 			File cFile = new File( cPath );
-			if ( !cFile.exists() ) {
+			if ( !cFile.exists() ) 
+			{
 				try {
-					if ( cFile.createNewFile() ) {
-						path = cPath;
-					} else {
+					if ( !cFile.createNewFile() ) 
+					{
 						System.err.println( "CoffeeScriptMode: " + 
 											"unable to create .coffee file for .pde file at:\n" + 
 											cPath );
@@ -41,6 +41,7 @@ public class CoffeeScriptMode extends JavaScriptMode
 					ioe.printStackTrace();
 				}
 			}
+			path = cPath;
 		}
 	 	csEditor = new CoffeeScriptEditor( base, path, state, this );
 		return csEditor;
