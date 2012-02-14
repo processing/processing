@@ -36,7 +36,6 @@ public class CoffeeScriptToolbar extends EditorToolbar
 	public CoffeeScriptToolbar ( Editor editor, Base base ) 
 	{
 		super( editor, base );
-		System.out.println("Toolbar created.");
 	}
 
 	public void init () 
@@ -56,11 +55,11 @@ public class CoffeeScriptToolbar extends EditorToolbar
 	  switch (index) {
 
 		case RUN:
-			//jsEditor.handleStartServer();
+			csEditor.handleStartServer();
 			break;
 
 		case STOP:
-			//jsEditor.handleStopServer();
+			csEditor.handleStopServer();
 			break;
 
 	  case OPEN:

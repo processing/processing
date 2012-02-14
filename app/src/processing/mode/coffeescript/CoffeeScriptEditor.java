@@ -28,7 +28,6 @@ public class CoffeeScriptEditor extends Editor
 	protected CoffeeScriptEditor ( Base base, String path, EditorState state, Mode mode ) 
 	{	
 		super( base, path, state, mode );
-		System.out.println("Editor created.");
 
 		csMode = (CoffeeScriptMode) mode;
 	}
@@ -205,11 +204,11 @@ public class CoffeeScriptEditor extends Editor
 		return true;
 	}
 	
-	private void handleStartServer () {
+	public void handleStartServer () {
 		
 	}
 	
-	private void handleStopServer () {
+	public void handleStopServer () {
 		
 	}
 	
