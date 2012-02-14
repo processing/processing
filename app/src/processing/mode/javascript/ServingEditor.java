@@ -17,6 +17,8 @@ public abstract class ServingEditor extends Editor
 	
 	BasicServer server;
 	
+	public boolean showSizeWarning = true;
+	
 	protected ServingEditor ( Base base, String path, EditorState state, Mode mode )
 	{
 		super( base, path, state, mode );

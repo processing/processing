@@ -248,11 +248,8 @@ public class Base {
     Mode javaScriptMode =
       ModeContribution.getCoreMode(this, "processing.mode.javascript.JavaScriptMode",
                                    getContentFile("modes/javascript"));
-    Mode coffeeScriptMode =
-      ModeContribution.getCoreMode(this, "processing.mode.coffeescript.CoffeeScriptMode",
-                                   getContentFile("modes/coffeescript"));
 
-    coreModes = new Mode[] { defaultMode, androidMode, javaScriptMode, coffeeScriptMode };
+    coreModes = new Mode[] { defaultMode, androidMode, javaScriptMode };
   }
 
   /** Instantiates and adds new contributed modes to the contribModes list.
