@@ -167,12 +167,6 @@
       	<exclude name="**/._*" />
       </fileset>
     </copy>
-	
-	<copy todir="${target.path}/modes/coffeescript">
-      <fileset dir="../coffeescript">
-      	<exclude name="**/._*" />
-      </fileset>
-    </copy>
 
     <copy todir="${target.path}/modes/android">
       <fileset dir="../android">
