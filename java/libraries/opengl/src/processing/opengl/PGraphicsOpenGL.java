@@ -1528,7 +1528,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   
-  public void endGL() {
+  public void endPGL() {
     restoreGLState();
   }
   
