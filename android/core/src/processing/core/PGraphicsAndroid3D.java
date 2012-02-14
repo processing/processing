@@ -1521,7 +1521,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   }
 
   
-  public void endGL() {
+  public void endPGL() {
     restoreGLState();
   }
   
