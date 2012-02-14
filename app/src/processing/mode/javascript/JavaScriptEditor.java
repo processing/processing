@@ -459,13 +459,13 @@ public class JavaScriptEditor extends ServingEditor
     } else if (immediately) {
       handleSave();
 	  statusEmpty();
-	  startServer( getExportFolder() );
+	  handleStartServer();
     } else {
       SwingUtilities.invokeLater(new Runnable() {
           public void run() {
             handleSave();
 			statusEmpty();
-			startServer( getExportFolder() );
+			handleStartServer();
           }
         });
     }
