@@ -1495,12 +1495,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]);
     
     if (primarySurface) {
-      // glFlush should be called only once, since it is an expensive
-      // operation. Thus, only the main renderer (the primary surface)
-      // should call it at the end of draw, and none of the offscreen 
-      // renderers...
+      pgl.glFlush();
       pgl.endOnscreenDraw(clearColorBuffer0);
-      pgl.glFlush();                  
       pgl.releaseContext();
     } else {
       if (offscreenMultisample) {
