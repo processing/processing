@@ -1,0 +1,10 @@
+See JS mode todo as well for things added there for Processing.js that might apply to CS mode as well.
+---
+Syntax highlighting will not work.
+---
+Auto-formatting will not work.
+---
+Pre-run catching errors / typos
+We have no precompiler with CS mode as it's not written in Java syntax and compilation happens browser-sided. 
+This means errors will happen late and can only ba caught via the browser console. 
+---
