@@ -631,7 +631,6 @@ public class PGraphics extends PImage implements PConstants {
     reapplySettings();
   }
 
-
   /**
    * Allocate memory for this renderer. Generally will need to be implemented
    * for all renderers.
@@ -666,8 +665,9 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Try to draw, or put a draw request on the queue.
    */
-//  public void requestDraw() {  // ignore
-//  }  
+  public void requestDraw() {  // ignore
+    parent.handleDraw();
+  }  
   
 
   /**

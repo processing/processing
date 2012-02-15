@@ -472,6 +472,10 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  public boolean handleListeners() {
+    return true;
+  }  
+  
   /**
    * Called by resize(), this handles creating the actual GLCanvas the
    * first time around, or simply resizing it on subsequent calls.
@@ -511,6 +515,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //      } else {
 //        reapplySettings();
 //      }
+      //initPrimary();
       if (pgl.initialized) {
         reapplySettings();
       }      
@@ -534,10 +539,10 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public void dispose() { // PGraphics    
     super.dispose();
-    pgl.detainContext();
+    //pgl.detainContext();
     deleteFinalizedGLResources();
-    pgl.releaseContext();
-    PGL.shutdown();    
+    //pgl.releaseContext();
+    //PGL.shutdown();    
   }
   
 
@@ -1080,10 +1085,10 @@ public class PGraphicsOpenGL extends PGraphics {
   public void restartContext() {
     releaseResources();    
     
-    pgl.releaseContext();
-    pgl.destroyContext();
+    //pgl.releaseContext();
+    //pgl.destroyContext();
     restartSurface();    
-    pgl.detainContext();      
+    //pgl.detainContext();      
     updatePGL();    
   }  
 
@@ -1318,8 +1323,13 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   
-  public void requestDraw() {    
-    pgl.requestDraw();
+  public void requestDraw() {
+    if (primarySurface) {
+      if (!pgl.initialized) {
+        initPrimary();  
+      }
+      pgl.requestDraw();
+    }    
   }  
   
   
@@ -1330,15 +1340,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     if (primarySurface) {
-      if (!pgl.initialized) {
-        initPrimary();
-      } 
+      pgl.beginOnscreenDraw(clearColorBuffer, parent.frameCount);
       
-      if (!pgl.initOnscreenDraw()) {
-        return;
-      }
-      pgl.detainContext();      
-    } else {
+    } else {    
       if (!pgl.initialized) {
         initOffscreen();
       }     
@@ -1349,9 +1353,11 @@ public class PGraphicsOpenGL extends PGraphics {
         pgl.setDrawBuffer(0);
       } else {
         setFramebuffer(offscreenFramebuffer);
-      } 
-    }
+      }
       
+      pgl.beginOffscreenDraw(clearColorBuffer, parent.frameCount);
+    }
+    
     updatePGL();
     
     if (!glParamsRead) {
@@ -1368,11 +1374,6 @@ public class PGraphicsOpenGL extends PGraphics {
     
     if (!primarySurface) {
       pg.saveGLState();
-            
-      // Disabling all lights, so the offscreen renderer can set completely
-      // new light configuration (otherwise some light configuration from the 
-      // primary renderer might stay).
-      //pg.disableLights();
     }     
     
     inGeo.reset();
@@ -1466,16 +1467,14 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.glClearColor(0, 0, 0, 0);
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT | PGL.GL_STENCIL_BUFFER_BIT);
     
-    if (primarySurface) {
-      pgl.beginOnscreenDraw(clearColorBuffer, parent.frameCount);  
-    } else {
-      pgl.beginOffscreenDraw(clearColorBuffer, parent.frameCount);  
-    }
-    
     drawing = true;
     
+    // This copy of the clear color buffer variable is needed to take into account
+    // the situation when clearColorBuffer = true with FBOs enabled at beginDraw()
+    // and clearColorBuffer = false at endDraw(). In such situation, an offscreen
+    // buffer might be bound, but should popped to the screen buffer for correct
+    // continuation of onscreen rendering.
     clearColorBuffer0 = clearColorBuffer;
-    clearColorBuffer = false;
     
     report("bot beginDraw()");
   }
@@ -1504,7 +1503,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       pgl.glFlush(); 
       pgl.endOnscreenDraw(clearColorBuffer0);
-      pgl.releaseContext();
     } else {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
@@ -1528,19 +1526,17 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   
-  public void endPGL() {
+  public void endGL() {
     restoreGLState();
   }
   
   
   public void updatePGL() {
-    if (primarySurface) {
-      pgl.updatePrimary();  
+    if (primarySurface) { 
     } else {
       pgl.updateOffscreen(pg.pgl);
     }
   }
-  
   
   protected void saveGLState() {
   }
@@ -1581,14 +1577,14 @@ public class PGraphicsOpenGL extends PGraphics {
   // operation, such as grabbing the contents of the color
   // buffer.
   protected void beginGLOp() {
-    pgl.detainContext();
+    //pgl.detainContext();
     updatePGL();
   }
 
   
   // Pairs-up with beginGLOp().
   protected void endGLOp() {
-    pgl.releaseContext();
+    //pgl.releaseContext();
   }
     
   protected void updateGLProjection() {
@@ -1733,6 +1729,8 @@ public class PGraphicsOpenGL extends PGraphics {
     specular(125);
     emissive(0);
     shininess(1); 
+    
+    clearColorBuffer = false;
   }
   
   // reapplySettings
@@ -4288,7 +4286,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
     pgl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
-    clearColorBuffer = true;
+    
+    if (0 < parent.frameCount) {
+      // Only one call to background during the drawing loop is needed to set the clear mode to true.    
+      clearColorBuffer = true;
+    }
   }  
   
   //////////////////////////////////////////////////////////////
@@ -5444,12 +5446,12 @@ public class PGraphicsOpenGL extends PGraphics {
   // INITIALIZATION ROUTINES    
   
   static public void init() {
-    PGL.startup(true);
+    //PGL.startup(true);
   }
 
 
   static public void init(boolean beforeUI) {
-    PGL.startup(beforeUI);
+    //PGL.startup(beforeUI);
   }
     
   protected void restartSurface() {
