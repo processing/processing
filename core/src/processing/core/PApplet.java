@@ -1809,7 +1809,8 @@ public class PApplet extends Applet
       }
 
       // render a single frame
-      handleDraw();
+      //handleDraw();
+      if (g != null) g.requestDraw();
 
       if (frameCount == 1) {
         // Call the request focus event once the image is sure to be on
@@ -2049,8 +2050,7 @@ public class PApplet extends Applet
 
   
   //////////////////////////////////////////////////////////////
-
-
+  
   public void addListeners() {
     addMouseListener(this);
     addMouseMotionListener(this);
@@ -2072,7 +2072,6 @@ public class PApplet extends Applet
       }
     });
   }
-
 
   //////////////////////////////////////////////////////////////
 
