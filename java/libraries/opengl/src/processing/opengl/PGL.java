@@ -27,6 +27,8 @@ import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.media.nativewindow.GraphicsConfigurationFactory;
 import javax.media.nativewindow.NativeWindow;
@@ -40,21 +42,15 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
-import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.opengl.GLWindow;
-
-import jogamp.nativewindow.Debug;
-
-import processing.core.PApplet;
-import processing.core.PConstants;
+import com.jogamp.opengl.util.AnimatorBase;
 
 /** 
  * Processing-OpenGL abstraction layer.
@@ -250,7 +246,8 @@ public class PGL {
   
   //public GLCanvas canvas;
   public NewtCanvasAWT canvas;
-  public GLWindow windows;  
+  public GLWindow window;
+  protected CustomAnimator animator;
   
   public PGraphicsOpenGL pg;
   
@@ -318,11 +315,46 @@ public class PGL {
     } else {
       capabilities.setSampleBuffers(false);
     }
+        
+    AWTGraphicsScreen screen = (AWTGraphicsScreen)AWTGraphicsScreen.createDefault();
+    AWTGraphicsConfiguration config = (AWTGraphicsConfiguration)GraphicsConfigurationFactory
+        .getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(capabilities, capabilities, null, screen);
+    NativeWindow win = NativeWindowFactory.getNativeWindow(pg.parent.frame, config);    
+    
+    window = GLWindow.create(win, capabilities);    
+    //window = GLWindow.create(capabilities);
+    canvas = new NewtCanvasAWT(window);
+    
+//    pg.parent.frame.add(canvas, pg.parent.frame.getComponentCount() - 1);
+//    pg.parent.frame.validate();
     
     
-    windows = GLWindow.create(capabilities);        
-    windows.addGLEventListener(new JavaRenderer());
-    canvas = new NewtCanvasAWT(windows);
+    pg.parent.frame.add(canvas);
+    pg.parent.frame.validate();
+    
+
+    
+    // Choppy
+//    pg.parent.add(canvas);
+//    pg.parent.validate();
+    
+//    pg.parent.add(canvas, pg.parent.getComponentCount() - 1); 
+//    pg.parent.validate();
+    
+    // Setting up animation
+    window.addGLEventListener(new PGLEventListener());
+    animator = new CustomAnimator(window);
+    animator.setThreadName("Processing-OpenGL");
+    animator.start();
+    
+    
+    
+    
+//    window = GLWindow.create(capabilities);        
+//    window.addGLEventListener(new PGLEventListener());
+//    canvas = new NewtCanvasAWT(window);
+    
+    
     
     
     /*
@@ -337,7 +369,7 @@ public class PGL {
     canvas.addFocusListener(pg.parent);
     */
     
-    pg.parent.add(canvas);
+    
     
     initialized = true;
   }
@@ -423,8 +455,12 @@ public class PGL {
 //    if (canvas != null) {
 //      canvas.display();
 //    }
-    if (windows != null) {
-      windows.display();
+//    if (window != null) {
+//      window.display();
+//    }
+
+    if (animator != null) {
+      animator.requestRender();
     }
     
   }
@@ -971,7 +1007,7 @@ public class PGL {
   
   // Java specific stuff     
   
-  class JavaRenderer implements GLEventListener {      
+  class PGLEventListener implements GLEventListener {      
     @Override
     public void display(GLAutoDrawable drawable) {
       context = drawable.getContext();
@@ -993,5 +1029,126 @@ public class PGL {
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
       context = drawable.getContext();
     }    
+  }
+  
+  /** An Animator subclass which renders one frame at the time
+   *  upon calls to the requestRender() method. */
+  public class CustomAnimator extends AnimatorBase {    
+      private Timer timer = null;
+      private TimerTask task = null;
+      private String threadName = null;
+      private volatile boolean shouldRun;
+
+      protected String getBaseName(String prefix) {
+          return "Custom" + prefix + "Animator" ;
+      }
+
+      /** Creates an CustomAnimator with an initial drawable to 
+       * animate. */
+      public CustomAnimator(GLAutoDrawable drawable) {
+          if (drawable != null) {
+              add(drawable);
+          }
+      }
+      
+      public void setThreadName(String name) {
+        threadName = name;
+      }
+
+      public synchronized void requestRender() {
+          shouldRun = true;
+      }
+
+      public final boolean isStarted() {
+          stateSync.lock();
+          try {
+              return (timer != null);
+          } finally {
+              stateSync.unlock();
+          }
+      }
+
+      public final boolean isAnimating() {
+          stateSync.lock();
+          try {
+              return (timer != null) && (task != null);
+          } finally {
+              stateSync.unlock();
+          }
+      }
+
+      private void startTask() {
+          if(null != task) {
+              return;
+          }
+          
+          task = new TimerTask() {
+              private boolean firstRun = true;
+              public void run() {
+                  if (firstRun) {
+                    if (threadName != null) Thread.currentThread().setName(threadName);
+                    firstRun = false;
+                  }
+                  if(CustomAnimator.this.shouldRun) {
+                     CustomAnimator.this.animThread = Thread.currentThread();
+                      // display impl. uses synchronized block on the animator instance
+                      display();                
+                      synchronized (this) {
+                        // done with current frame.
+                        shouldRun = false;
+                      }                    
+                  }
+              }
+          };
+
+          fpsCounter.resetFPSCounter();
+          shouldRun = false;
+          
+          timer.schedule(task, 0, 1);
+      }
+      
+      public synchronized boolean  start() {
+          if (timer != null) {
+              return false;
+          }
+          stateSync.lock();
+          try {
+              timer = new Timer();
+              startTask();
+          } finally {
+              stateSync.unlock();
+          }
+          return true;
+      }
+
+      /** Stops this CustomAnimator. */
+      public synchronized boolean stop() {
+          if (timer == null) {
+              return false;
+          }
+          stateSync.lock();
+          try {
+              shouldRun = false;
+              if(null != task) {
+                  task.cancel();
+                  task = null;
+              }
+              if(null != timer) {
+                  timer.cancel();
+                  timer = null;
+              }
+              animThread = null;
+              try {
+                  Thread.sleep(20); // ~ 1/60 hz wait, since we can't ctrl stopped threads
+              } catch (InterruptedException e) { }
+          } finally {
+              stateSync.unlock();
+          }
+          return true;
+      }
+      
+      public final boolean isPaused() { return false; }
+      public synchronized boolean resume() { return false; }
+      public synchronized boolean pause() { return false; }    
   }  
 }
