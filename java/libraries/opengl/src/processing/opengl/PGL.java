@@ -48,6 +48,9 @@ import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
+import com.jogamp.newt.awt.NewtCanvasAWT;
+import com.jogamp.newt.opengl.GLWindow;
+
 import jogamp.nativewindow.Debug;
 
 import processing.core.PApplet;
@@ -245,7 +248,9 @@ public class PGL {
   /** The rendering context (holds rendering state info) */
   public GLContext context;
   
-  public GLCanvas canvas;
+  //public GLCanvas canvas;
+  public NewtCanvasAWT canvas;
+  public GLWindow windows;  
   
   public PGraphicsOpenGL pg;
   
@@ -314,6 +319,13 @@ public class PGL {
       capabilities.setSampleBuffers(false);
     }
     
+    
+    windows = GLWindow.create(capabilities);        
+    windows.addGLEventListener(new JavaRenderer());
+    canvas = new NewtCanvasAWT(windows);
+    
+    
+    /*
     canvas = new GLCanvas(capabilities);
     canvas.addGLEventListener(new JavaRenderer());    
     
@@ -323,6 +335,9 @@ public class PGL {
     canvas.addMouseMotionListener(pg.parent);
     canvas.addKeyListener(pg.parent);
     canvas.addFocusListener(pg.parent);
+    */
+    
+    pg.parent.add(canvas);
     
     initialized = true;
   }
@@ -405,9 +420,13 @@ public class PGL {
   }
   
   public void requestDraw() {    
-    if (canvas != null) {
-      canvas.display();
+//    if (canvas != null) {
+//      canvas.display();
+//    }
+    if (windows != null) {
+      windows.display();
     }
+    
   }
   
   ///////////////////////////////////////////////////////////////////////////////////
