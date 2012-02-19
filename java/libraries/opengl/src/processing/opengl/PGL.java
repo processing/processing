@@ -23,6 +23,7 @@
 
 package processing.opengl;
 
+import java.awt.Insets;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
@@ -44,6 +45,7 @@ import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
+import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
@@ -244,10 +246,15 @@ public class PGL {
   /** The rendering context (holds rendering state info) */
   public GLContext context;
   
-  //public GLCanvas canvas;
-  public NewtCanvasAWT canvas;
+  public GLCanvas awtCanvas;
+  public NewtCanvasAWT newtCanvas;
   public GLWindow window;
-  protected CustomAnimator animator;
+  protected PGLAnimator animator;
+  
+  // Some testing parameters
+  boolean useNewtCanvas = true;
+  boolean addCanvasToFrame = true;
+  boolean printThreadInfo = false;
   
   public PGraphicsOpenGL pg;
   
@@ -299,6 +306,8 @@ public class PGL {
   
   
   public void initPrimarySurface(int antialias) {
+    if (printThreadInfo) System.out.println("Current thread at PGL.initPrimarySurface(): " + Thread.currentThread());
+    
     // For the time being we use the fixed function profile
     // because GL3 is not supported in MacOSX Snow Leopard.
     profile = GLProfile.getMaxFixedFunc();
@@ -319,57 +328,62 @@ public class PGL {
     AWTGraphicsScreen screen = (AWTGraphicsScreen)AWTGraphicsScreen.createDefault();
     AWTGraphicsConfiguration config = (AWTGraphicsConfiguration)GraphicsConfigurationFactory
         .getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(capabilities, capabilities, null, screen);
-    NativeWindow win = NativeWindowFactory.getNativeWindow(pg.parent.frame, config);    
+    NativeWindow natWin = NativeWindowFactory.getNativeWindow(pg.parent.frame, config);    
     
-    window = GLWindow.create(win, capabilities);    
-    //window = GLWindow.create(capabilities);
-    canvas = new NewtCanvasAWT(window);
-    
-//    pg.parent.frame.add(canvas, pg.parent.frame.getComponentCount() - 1);
-//    pg.parent.frame.validate();
-    
-    
-    pg.parent.frame.add(canvas);
-    pg.parent.frame.validate();
-    
-
-    
-    // Choppy
-//    pg.parent.add(canvas);
-//    pg.parent.validate();
-    
-//    pg.parent.add(canvas, pg.parent.getComponentCount() - 1); 
-//    pg.parent.validate();
-    
-    // Setting up animation
-    window.addGLEventListener(new PGLEventListener());
-    animator = new CustomAnimator(window);
-    animator.setThreadName("Processing-OpenGL");
-    animator.start();
-    
-    
-    
-    
-//    window = GLWindow.create(capabilities);        
-//    window.addGLEventListener(new PGLEventListener());
-//    canvas = new NewtCanvasAWT(window);
-    
-    
-    
-    
-    /*
-    canvas = new GLCanvas(capabilities);
-    canvas.addGLEventListener(new JavaRenderer());    
-    
-    pg.parent.add(canvas);
-    canvas.setBounds(0, 0, pg.parent.width, pg.parent.height);
-    canvas.addMouseListener(pg.parent);
-    canvas.addMouseMotionListener(pg.parent);
-    canvas.addKeyListener(pg.parent);
-    canvas.addFocusListener(pg.parent);
-    */
-    
-    
+    if (useNewtCanvas) {    
+      // NEWT canvas
+      
+      window = GLWindow.create(natWin, capabilities);    
+      newtCanvas = new NewtCanvasAWT(window);
+      newtCanvas.setBounds(0, 0, pg.parent.width, pg.parent.height);
+      Insets insets = pg.parent.frame.getInsets();
+      newtCanvas.setLocation(insets.left, insets.top);    
+      
+      if (addCanvasToFrame) {
+        pg.parent.frame.add(newtCanvas);
+        pg.parent.frame.validate();
+      } else {      
+        // Framerate doesn't work, invalid drawable error (same for AWT).
+        pg.parent.add(newtCanvas);
+        pg.parent.validate();
+      }
+      
+      window.addGLEventListener(new PGLListener());
+      animator = new PGLAnimator(window);
+      animator.setThreadName("Processing-OpenGL");
+      animator.start();
+      
+      newtCanvas.addMouseListener(pg.parent);
+      newtCanvas.addMouseMotionListener(pg.parent);
+      newtCanvas.addKeyListener(pg.parent);
+      newtCanvas.addFocusListener(pg.parent);
+    } else {
+      // AWT canvas
+      
+      awtCanvas = new GLCanvas(capabilities);
+      awtCanvas.setBounds(0, 0, pg.parent.width, pg.parent.height);
+      Insets insets = pg.parent.frame.getInsets();
+      awtCanvas.setLocation(insets.left, insets.top);
+      
+      if (addCanvasToFrame) {
+        pg.parent.frame.add(awtCanvas);
+        pg.parent.frame.validate();
+      } else{
+        // Framerate doesn't work, invalid drawable error (same for NEWT).
+        pg.parent.add(awtCanvas);
+        pg.parent.validate();        
+      }
+          
+      awtCanvas.addGLEventListener(new PGLListener());    
+      animator = new PGLAnimator(awtCanvas);    
+      animator.setThreadName("Processing-OpenGL");
+      animator.start();
+      
+      awtCanvas.addMouseListener(pg.parent);
+      awtCanvas.addMouseMotionListener(pg.parent);
+      awtCanvas.addKeyListener(pg.parent);
+      awtCanvas.addFocusListener(pg.parent);    
+    }
     
     initialized = true;
   }
@@ -1007,9 +1021,10 @@ public class PGL {
   
   // Java specific stuff     
   
-  class PGLEventListener implements GLEventListener {      
+  class PGLListener implements GLEventListener {      
     @Override
     public void display(GLAutoDrawable drawable) {
+      if (printThreadInfo) System.out.println("Current thread at PGLListener.display(): " + Thread.currentThread());
       context = drawable.getContext();
       gl = context.getGL();
       gl2 = gl.getGL2();      
@@ -1033,7 +1048,7 @@ public class PGL {
   
   /** An Animator subclass which renders one frame at the time
    *  upon calls to the requestRender() method. */
-  public class CustomAnimator extends AnimatorBase {    
+  public class PGLAnimator extends AnimatorBase {    
       private Timer timer = null;
       private TimerTask task = null;
       private String threadName = null;
@@ -1045,7 +1060,7 @@ public class PGL {
 
       /** Creates an CustomAnimator with an initial drawable to 
        * animate. */
-      public CustomAnimator(GLAutoDrawable drawable) {
+      public PGLAnimator(GLAutoDrawable drawable) {
           if (drawable != null) {
               add(drawable);
           }
@@ -1089,8 +1104,8 @@ public class PGL {
                     if (threadName != null) Thread.currentThread().setName(threadName);
                     firstRun = false;
                   }
-                  if(CustomAnimator.this.shouldRun) {
-                     CustomAnimator.this.animThread = Thread.currentThread();
+                  if(PGLAnimator.this.shouldRun) {
+                     PGLAnimator.this.animThread = Thread.currentThread();
                       // display impl. uses synchronized block on the animator instance
                       display();                
                       synchronized (this) {
