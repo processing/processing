@@ -340,11 +340,11 @@ public class PGL {
       newtCanvas.setLocation(insets.left, insets.top);    
       
       if (addCanvasToFrame) {
-        pg.parent.frame.add(newtCanvas);
+        pg.parent.frame.add(newtCanvas, pg.parent.frame.getComponentCount() - 1);
         pg.parent.frame.validate();
       } else {      
         // Framerate doesn't work, invalid drawable error (same for AWT).
-        pg.parent.add(newtCanvas);
+        pg.parent.add(newtCanvas, pg.parent.getComponentCount() - 1);
         pg.parent.validate();
       }
       
@@ -366,11 +366,11 @@ public class PGL {
       awtCanvas.setLocation(insets.left, insets.top);
       
       if (addCanvasToFrame) {
-        pg.parent.frame.add(awtCanvas);
+        pg.parent.frame.add(awtCanvas, pg.parent.frame.getComponentCount() - 1);
         pg.parent.frame.validate();
       } else{
         // Framerate doesn't work, invalid drawable error (same for NEWT).
-        pg.parent.add(awtCanvas);
+        pg.parent.add(awtCanvas, pg.parent.getComponentCount() - 1);
         pg.parent.validate();        
       }
           
