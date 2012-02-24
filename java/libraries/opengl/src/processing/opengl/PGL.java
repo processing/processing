@@ -281,6 +281,9 @@ public class PGL {
   public void updatePrimary() {
     gl = context.getGL();
     gl2 = gl.getGL2();
+    
+    // disables vsync (framerate cap) on windows
+    gl.setSwapInterval(0);
   }
   
   public void updateOffscreen(PGL primary) {
