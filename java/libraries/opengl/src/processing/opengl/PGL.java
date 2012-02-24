@@ -23,13 +23,10 @@
 
 package processing.opengl;
 
-import java.awt.Insets;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.media.nativewindow.GraphicsConfigurationFactory;
 import javax.media.nativewindow.NativeWindow;
@@ -39,20 +36,17 @@ import javax.media.nativewindow.awt.AWTGraphicsDevice;
 import javax.media.nativewindow.awt.AWTGraphicsScreen;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
-import javax.media.opengl.GLEventListener;
+import javax.media.opengl.GLDrawableFactory;
 import javax.media.opengl.GLProfile;
-import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
-import com.jogamp.newt.awt.NewtCanvasAWT;
-import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.util.AnimatorBase;
+import processing.core.PApplet;
+import processing.core.PConstants;
 
 /** 
  * Processing-OpenGL abstraction layer.
@@ -244,17 +238,7 @@ public class PGL {
   public GLDrawable drawable;   
   
   /** The rendering context (holds rendering state info) */
-  public GLContext context;
-  
-  public GLCanvas awtCanvas;
-  public NewtCanvasAWT newtCanvas;
-  public GLWindow window;
-  protected PGLAnimator animator;
-  
-  // Some testing parameters
-  boolean useNewtCanvas = true;
-  boolean addCanvasToFrame = true;
-  boolean printThreadInfo = false;
+  public GLContext context;  
   
   public PGraphicsOpenGL pg;
   
@@ -282,22 +266,22 @@ public class PGL {
    * if possible. 
    *
    */  
-//  static public void startup(boolean beforeUI) {
-//    try {
-//      GLProfile.initSingleton(beforeUI);
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }      
-//  }
-  
-  static public void shutdown() {
-   // GLProfile.shutdown();    
+  static public void startup(boolean beforeUI) {
+    try {
+      GLProfile.initSingleton(beforeUI);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }      
   }
   
-//  public void updatePrimary() {
-//    gl = context.getGL();
-//    gl2 = gl.getGL2();
-//  }
+  static public void shutdown() {
+    GLProfile.shutdown();    
+  }
+  
+  public void updatePrimary() {
+    gl = context.getGL();
+    gl2 = gl.getGL2();
+  }
   
   public void updateOffscreen(PGL primary) {
     gl  = primary.gl;
@@ -306,7 +290,22 @@ public class PGL {
   
   
   public void initPrimarySurface(int antialias) {
-    if (printThreadInfo) System.out.println("Current thread at PGL.initPrimarySurface(): " + Thread.currentThread());
+    if (pg.parent.online) {
+      // RCP Application (Applet's, Webstart, Netbeans, ..) using JOGL may not 
+      // be able to initialize JOGL before the first UI action, so initSingleton()
+      // is called with its argument set to false.
+      GLProfile.initSingleton(false);
+    } else {
+      if (PApplet.platform == PConstants.LINUX) {
+        // Special case for Linux, since the multithreading issues described for
+        // example here:
+        // http://forum.jogamp.org/QtJambi-JOGL-Ubuntu-Lucid-td909554.html
+        // have not been solved yet (at least for stable release b32 of JOGL2).
+        GLProfile.initSingleton(false);
+      } else { 
+        GLProfile.initSingleton(true);
+      }
+    }
     
     // For the time being we use the fixed function profile
     // because GL3 is not supported in MacOSX Snow Leopard.
@@ -324,70 +323,22 @@ public class PGL {
     } else {
       capabilities.setSampleBuffers(false);
     }
-        
+
+    // Getting the native window:
+    // http://www.java-gaming.org/index.php/topic,21559.0.html
     AWTGraphicsScreen screen = (AWTGraphicsScreen)AWTGraphicsScreen.createDefault();
     AWTGraphicsConfiguration config = (AWTGraphicsConfiguration)GraphicsConfigurationFactory
         .getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(capabilities, capabilities, null, screen);
-    NativeWindow natWin = NativeWindowFactory.getNativeWindow(pg.parent.frame, config);    
+    NativeWindow win = NativeWindowFactory.getNativeWindow(pg.parent, config);    
     
-    if (useNewtCanvas) {    
-      // NEWT canvas
-      
-      window = GLWindow.create(natWin, capabilities);    
-      newtCanvas = new NewtCanvasAWT(window);
-      newtCanvas.setBounds(0, 0, pg.parent.width, pg.parent.height);
-      Insets insets = pg.parent.frame.getInsets();
-      newtCanvas.setLocation(insets.left, insets.top);    
-      
-      if (addCanvasToFrame) {
-        pg.parent.frame.add(newtCanvas, pg.parent.frame.getComponentCount() - 1);
-        pg.parent.frame.validate();
-      } else {      
-        // Framerate doesn't work, invalid drawable error (same for AWT).
-        pg.parent.add(newtCanvas, pg.parent.getComponentCount() - 1);
-        pg.parent.validate();
-      }
-      
-      window.addGLEventListener(new PGLListener());
-      animator = new PGLAnimator(window);
-      animator.setThreadName("Processing-OpenGL");
-      animator.start();
-      
-      newtCanvas.addMouseListener(pg.parent);
-      newtCanvas.addMouseMotionListener(pg.parent);
-      newtCanvas.addKeyListener(pg.parent);
-      newtCanvas.addFocusListener(pg.parent);
-    } else {
-      // AWT canvas
-      
-      awtCanvas = new GLCanvas(capabilities);
-      awtCanvas.setBounds(0, 0, pg.parent.width, pg.parent.height);
-      Insets insets = pg.parent.frame.getInsets();
-      awtCanvas.setLocation(insets.left, insets.top);
-      
-      if (addCanvasToFrame) {
-        pg.parent.frame.add(awtCanvas, pg.parent.frame.getComponentCount() - 1);
-        pg.parent.frame.validate();
-      } else{
-        // Framerate doesn't work, invalid drawable error (same for NEWT).
-        pg.parent.add(awtCanvas, pg.parent.getComponentCount() - 1);
-        pg.parent.validate();        
-      }
-          
-      awtCanvas.addGLEventListener(new PGLListener());    
-      animator = new PGLAnimator(awtCanvas);    
-      animator.setThreadName("Processing-OpenGL");
-      animator.start();
-      
-      awtCanvas.addMouseListener(pg.parent);
-      awtCanvas.addMouseMotionListener(pg.parent);
-      awtCanvas.addKeyListener(pg.parent);
-      awtCanvas.addFocusListener(pg.parent);    
-    }
+    // With the native window we get the drawable and context:
+    GLDrawableFactory factory = GLDrawableFactory.getFactory(profile);
+    drawable = factory.createGLDrawable(win);
+    context = drawable.createContext(null);
     
     initialized = true;
   }
-
+  
   public void initOffscreenSurface(PGL primary) {
     context = primary.context;
     capabilities = primary.capabilities;
@@ -404,33 +355,32 @@ public class PGL {
   /**
    * Make the OpenGL rendering context current for this thread.
    */
-//  protected void detainContext() {
-//    try {
-//      while (context.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT) {
-//        Thread.sleep(10);
-//      }
-//    } catch (InterruptedException e) {
-//      e.printStackTrace();
-//    }  
-//  }
-//  
-//  /**
-//   * Release the context, otherwise the AWT lock on X11 will not be released
-//   */
-//  public void releaseContext() {
-//    context.release();
-//  }  
-//  
-//  public void destroyContext() {
-//    context.destroy();
-//    context = null;    
-//  }  
+  protected void detainContext() {
+    try {
+      while (context.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT) {
+        Thread.sleep(10);
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }  
+  }
+  
+  /**
+   * Release the context, otherwise the AWT lock on X11 will not be released
+   */
+  public void releaseContext() {
+    context.release();
+  }  
+  
+  public void destroyContext() {
+    context.destroy();
+    context = null;    
+  }  
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Frame rendering    
   
-  /*
   public boolean initOnscreenDraw() {
     if (drawable != null) {
       // Call setRealized() after addNotify() has been called
@@ -444,7 +394,6 @@ public class PGL {
     }
     return false;    
   }
-  */
   
   public void beginOnscreenDraw(boolean clear, int frame) {
   }
@@ -465,18 +414,7 @@ public class PGL {
     return pg.parent.isDisplayable();    
   }
   
-  public void requestDraw() {    
-//    if (canvas != null) {
-//      canvas.display();
-//    }
-//    if (window != null) {
-//      window.display();
-//    }
-
-    if (animator != null) {
-      animator.requestRender();
-    }
-    
+  public void requestDraw() {        
   }
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -1015,155 +953,5 @@ public class PGL {
     byte[] infoBytes = new byte[length];
     infoLog.get(infoBytes);
     return new String(infoBytes);
-  }
-
-  /////////////////////////////////////////////////////////////////////////////////
-  
-  // Java specific stuff     
-  
-  class PGLListener implements GLEventListener {      
-    @Override
-    public void display(GLAutoDrawable drawable) {
-      if (printThreadInfo) System.out.println("Current thread at PGLListener.display(): " + Thread.currentThread());
-      context = drawable.getContext();
-      gl = context.getGL();
-      gl2 = gl.getGL2();      
-      pg.parent.handleDraw();      
-    }
-
-    @Override
-    public void dispose(GLAutoDrawable drawable) {
-    }
-
-    @Override
-    public void init(GLAutoDrawable drawable) {
-      context = drawable.getContext();
-    }
-
-    @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
-      context = drawable.getContext();
-    }    
-  }
-  
-  /** An Animator subclass which renders one frame at the time
-   *  upon calls to the requestRender() method. */
-  public class PGLAnimator extends AnimatorBase {    
-      private Timer timer = null;
-      private TimerTask task = null;
-      private String threadName = null;
-      private volatile boolean shouldRun;
-
-      protected String getBaseName(String prefix) {
-          return "Custom" + prefix + "Animator" ;
-      }
-
-      /** Creates an CustomAnimator with an initial drawable to 
-       * animate. */
-      public PGLAnimator(GLAutoDrawable drawable) {
-          if (drawable != null) {
-              add(drawable);
-          }
-      }
-      
-      public void setThreadName(String name) {
-        threadName = name;
-      }
-
-      public synchronized void requestRender() {
-          shouldRun = true;
-      }
-
-      public final boolean isStarted() {
-          stateSync.lock();
-          try {
-              return (timer != null);
-          } finally {
-              stateSync.unlock();
-          }
-      }
-
-      public final boolean isAnimating() {
-          stateSync.lock();
-          try {
-              return (timer != null) && (task != null);
-          } finally {
-              stateSync.unlock();
-          }
-      }
-
-      private void startTask() {
-          if(null != task) {
-              return;
-          }
-          
-          task = new TimerTask() {
-              private boolean firstRun = true;
-              public void run() {
-                  if (firstRun) {
-                    if (threadName != null) Thread.currentThread().setName(threadName);
-                    firstRun = false;
-                  }
-                  if(PGLAnimator.this.shouldRun) {
-                     PGLAnimator.this.animThread = Thread.currentThread();
-                      // display impl. uses synchronized block on the animator instance
-                      display();                
-                      synchronized (this) {
-                        // done with current frame.
-                        shouldRun = false;
-                      }                    
-                  }
-              }
-          };
-
-          fpsCounter.resetFPSCounter();
-          shouldRun = false;
-          
-          timer.schedule(task, 0, 1);
-      }
-      
-      public synchronized boolean  start() {
-          if (timer != null) {
-              return false;
-          }
-          stateSync.lock();
-          try {
-              timer = new Timer();
-              startTask();
-          } finally {
-              stateSync.unlock();
-          }
-          return true;
-      }
-
-      /** Stops this CustomAnimator. */
-      public synchronized boolean stop() {
-          if (timer == null) {
-              return false;
-          }
-          stateSync.lock();
-          try {
-              shouldRun = false;
-              if(null != task) {
-                  task.cancel();
-                  task = null;
-              }
-              if(null != timer) {
-                  timer.cancel();
-                  timer = null;
-              }
-              animThread = null;
-              try {
-                  Thread.sleep(20); // ~ 1/60 hz wait, since we can't ctrl stopped threads
-              } catch (InterruptedException e) { }
-          } finally {
-              stateSync.unlock();
-          }
-          return true;
-      }
-      
-      public final boolean isPaused() { return false; }
-      public synchronized boolean resume() { return false; }
-      public synchronized boolean pause() { return false; }    
-  }  
+  }    
 }
