@@ -1,0 +1,10 @@
+# If you want to support more platforms, see the jogl.dev.java.net to get the 
+# natives libraries for the platform in question (i.e. Solaris). 
+
+name = OpenGL
+
+# In releases later than (but not including) 1.0.9, the applet JAR files 
+# are downloaded directly from Sun, so that a single version is cached
+# on the user's computer, rather than increasing the download size with
+# the versions for each platform.
+applet = opengl.jar
