@@ -1265,8 +1265,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 
   public void popMatrix() {
     if (transformCount == 0) {
-      throw new RuntimeException("missing a popMatrix() " +
-                                 "to go with that pushMatrix()");
+      throw new RuntimeException("missing a pushMatrix() " +
+                                 "to go with that popMatrix()");
     }
     transformCount--;
     g2.setTransform(transformStack[transformCount]);
