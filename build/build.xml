@@ -79,6 +79,7 @@
     <subant buildpath="../java/libraries/dxf" target="clean"/>
     <subant buildpath="../java/libraries/net" target="clean"/>
     <subant buildpath="../java/libraries/opengl" target="clean"/>
+    <subant buildpath="../java/libraries/lwjgl" target="clean"/>    
     <subant buildpath="../java/libraries/pdf" target="clean"/>
     <subant buildpath="../java/libraries/serial" target="clean"/>
     <subant buildpath="../java/libraries/video" target="clean"/>
@@ -92,6 +93,7 @@
     <subant buildpath="../java/libraries/dxf" target="build"/>
     <subant buildpath="../java/libraries/net" target="build"/>
     <subant buildpath="../java/libraries/opengl" target="build"/>
+    <subant buildpath="../java/libraries/lwjgl" target="build"/>    
     <subant buildpath="../java/libraries/pdf" target="build"/>
     <subant buildpath="../java/libraries/serial" target="build"/>
     <subant buildpath="../java/libraries/video" target="build"/>
