@@ -23,6 +23,7 @@
 
 package processing.lwjgl;
 
+import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.nio.Buffer;
 
@@ -273,39 +274,28 @@ public class PGL {
   
   
   public void initPrimarySurface(int antialias) {
-//    if (pg.parent.online) {
-//      // RCP Application (Applet's, Webstart, Netbeans, ..) using JOGL may not 
-//      // be able to initialize JOGL before the first UI action, so initSingleton()
-//      // is called with its argument set to false.
-//      GLProfile.initSingleton(false);
-//    } else {
-//      if (PApplet.platform == PConstants.LINUX) {
-//        // Special case for Linux, since the multithreading issues described for
-//        // example here:
-//        // http://forum.jogamp.org/QtJambi-JOGL-Ubuntu-Lucid-td909554.html
-//        // have not been solved yet (at least for stable release b32 of JOGL2).
-//        GLProfile.initSingleton(false);
-//      } else { 
-//        GLProfile.initSingleton(true);
-//      }
-//    }
-    
     canvas = new Canvas();
-    pg.parent.add(canvas);
     
     canvas.setBounds(0, 0, pg.parent.width, pg.parent.height);       
     canvas.setFocusable(true);
     canvas.requestFocus();
-    canvas.setIgnoreRepaint(true);      
+    canvas.setIgnoreRepaint(true);
+    pg.parent.setLayout(new BorderLayout());
+    pg.parent.add(canvas, BorderLayout.CENTER);
     
     try {
       Display.setParent(canvas);
       PixelFormat format = new PixelFormat(32, 0, 24, 8, antialias);
       Display.create(format);            
-      Display.setVSyncEnabled(false);      
+      Display.setVSyncEnabled(false);
     } catch (LWJGLException e) {
       e.printStackTrace();
     }    
+
+    canvas.addMouseListener(pg.parent);    
+    canvas.addMouseMotionListener(pg.parent);
+    canvas.addKeyListener(pg.parent);
+    canvas.addFocusListener(pg.parent);    
     
     initialized = true;
   }
