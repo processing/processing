@@ -23,7 +23,7 @@
 	 Eclipse does this automatically. -->
     <copy todir="bin">
       <fileset dir="src">
-	<include name="processing/lwopengl/*.glsl" />
+	<include name="processing/lwjgl/*.glsl" />
       </fileset>
     </copy>
   </target>
