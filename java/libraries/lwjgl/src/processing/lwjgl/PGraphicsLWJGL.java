@@ -7961,7 +7961,7 @@ public class PGraphicsLWJGL extends PGraphics {
       fillAmbient.position(fillVertexCount);
       fillAmbient.put(am);      
       fillSpecular.position(fillVertexCount);
-      fillAmbient.put(am).put(sp);
+      fillSpecular.put(sp);
       fillEmissive.position(fillVertexCount);
       fillEmissive.put(em);
       fillShininess.position(fillVertexCount);
