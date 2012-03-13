@@ -47,7 +47,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 
-import org.lwjgl.BufferUtils;
 
 // Notes about geometry update in PShape3D.
 // 1) When applying a transformation on a group shape
@@ -867,20 +866,15 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    BufferUtils.zeroBuffer(tess.fillColors);
-    
-    //Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, fillColor);
-//    int[] temp = new int[tess.fillVertexCount];
-//    Arrays.fill(temp, 0, tess.fillVertexCount, fillColor);
-//    tess.fillColors.position(0);
-//    tess.fillColors.put(temp);    
-    Arrays.fill(tess.fillColors.array(), 0, tess.fillVertexCount, fillColor);
+    int[] temp = new int[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, fillColor);
+    tess.fillColors.rewind();
+    tess.fillColors.put(temp);
     
     modifiedFillColors = true;
     modified();   
   }
-  
-    
+      
   //////////////////////////////////////////////////////////////
 
   // STROKE COLOR 
@@ -990,15 +984,19 @@ public class PShape3D extends PShape {
       updateTesselation();
       
       if (0 < tess.lineVertexCount) {
-        //Arrays.fill(tess.lineColors, 0, tess.lineVertexCount, strokeColor);
-        Arrays.fill(tess.lineColors.array(), 0, tess.lineVertexCount, strokeColor);
+        int[] temp = new int[tess.lineVertexCount];
+        Arrays.fill(temp, 0, tess.lineVertexCount, strokeColor);
+        tess.lineColors.rewind();
+        tess.lineColors.put(temp);
         modifiedLineColors = true;
         modified();         
       }
       
       if (0 < tess.pointVertexCount) {
-        //Arrays.fill(tess.pointColors, 0, tess.pointVertexCount, strokeColor);
-        Arrays.fill(tess.pointColors.array(), 0, tess.pointVertexCount, strokeColor);
+        int[] temp = new int[tess.pointVertexCount];
+        Arrays.fill(temp, 0, tess.pointVertexCount, strokeColor);
+        tess.pointColors.rewind();
+        tess.pointColors.put(temp);        
         modifiedPointColors = true;
         modified();            
       }            
@@ -1117,11 +1115,10 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    //Arrays.fill(tess.fillColors, 0, tess.pointVertexCount, tintColor);
     int[] temp = new int[tess.fillVertexCount];
     Arrays.fill(temp, 0, tess.fillVertexCount, tintColor);
-    tess.fillColors.position(0);
-    tess.fillColors.put(temp);    
+    tess.fillColors.rewind();
+    tess.fillColors.put(temp);
     
     modifiedFillColors = true;
     modified();  
@@ -1180,9 +1177,11 @@ public class PShape3D extends PShape {
     }
       
     updateTesselation();
-    
-    //Arrays.fill(tess.fillAmbient, 0, tess.fillVertexCount, ambientColor);
-    Arrays.fill(tess.fillAmbient.array(), 0, tess.fillVertexCount, ambientColor);
+
+    int[] temp = new int[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, ambientColor);
+    tess.fillAmbient.rewind();
+    tess.fillAmbient.put(temp);
     
     modifiedFillAmbient = true;
     modified();      
@@ -1243,8 +1242,10 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    //Arrays.fill(tess.fillSpecular, 0, tess.fillVertexCount, specularColor);
-    Arrays.fill(tess.fillSpecular.array(), 0, tess.fillVertexCount, specularColor);
+    int[] temp = new int[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, specularColor);
+    tess.fillSpecular.rewind();
+    tess.fillSpecular.put(temp);
     
     modifiedFillSpecular = true;
     modified();     
@@ -1305,8 +1306,10 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    //Arrays.fill(tess.fillEmissive, 0, tess.fillVertexCount, emissiveColor);
-    Arrays.fill(tess.fillEmissive.array(), 0, tess.fillVertexCount, emissiveColor);
+    int[] temp = new int[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, emissiveColor);
+    tess.fillEmissive.rewind();
+    tess.fillEmissive.put(temp);
     
     modifiedFillEmissive = true;
     modified();    
@@ -1337,8 +1340,10 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    //Arrays.fill(tess.fillShininess, 0, tess.fillVertexCount, shininess);
-    Arrays.fill(tess.fillShininess.array(), 0, tess.fillVertexCount, shininess);
+    float[] temp = new float[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, shininess);
+    tess.fillShininess.rewind();
+    tess.fillShininess.put(temp);    
     
     modifiedFillShininess = true;
     modified();      
@@ -2882,7 +2887,7 @@ public class PShape3D extends PShape {
   // level of the shape hierarchy.
   protected void aggregateImpl() {
     if (family == GROUP) {
-      tess.reset();
+      tess.clear();
       
       boolean firstGeom = true;
       boolean firstStroke = true;
