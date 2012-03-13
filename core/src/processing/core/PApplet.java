@@ -12136,7 +12136,7 @@ public class PApplet extends Applet
    * @param fovy field-of-view angle (in radians) for vertical direction
    * @param aspect ratio of width to height
    * @param zNear z-position of nearest clipping plane
-   * @param zFar z-position of nearest farthest plane
+   * @param zFar z-position of farthest clipping plane
    */
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
     if (recorder != null) recorder.perspective(fovy, aspect, zNear, zFar);

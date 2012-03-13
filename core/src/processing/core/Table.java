@@ -49,6 +49,7 @@ import processing.core.PApplet;
 // <p>By default, empty rows are skipped and so are lines that start with the
 // # character. Using # at the beginning of a line indicates a comment.</p>
 
+//TODO: handling categorical, time
 
 /**
  * <p>Generic class for handling tabular data, typically from a CSV, TSV, or 
@@ -90,13 +91,14 @@ public class Table implements Iterable<Table.Row> {
   protected Object[] columns;  // [column]
 
   // typed data
-  static final int STRING = 0;
-  static final int INT = 1;
-  static final int LONG = 2;
-  static final int FLOAT = 3;
-  static final int DOUBLE = 4;
-  static final int CATEGORICAL = 5;
-//  static final int TIME = 5;
+  public static final int UNSUPPORTED = -1;
+  public static final int STRING      =  0;
+  public static final int INT         =  1;
+  public static final int LONG        =  2;
+  public static final int FLOAT       =  3;
+  public static final int DOUBLE      =  4;
+  public static final int CATEGORICAL =  5;
+  public static final int TIME        =  6;
   int[] columnTypes;
 
 //  int[][] intData;  // [column][row]
@@ -770,6 +772,7 @@ public class Table implements Iterable<Table.Row> {
       case DOUBLE: columns[index] = new double[rowCount]; break;
       case STRING: columns[index] = new String[rowCount]; break;
       case CATEGORICAL: columns[index] = new int[rowCount]; break;
+      case TIME: columns[index] = new long[rowCount]; break;
     }
   }
 
@@ -816,7 +819,14 @@ public class Table implements Iterable<Table.Row> {
     }
   }
 
-
+  public int getColumnType(String columnName) {
+    return getColumnType(getColumnIndex(columnName));   
+  }  
+  
+  public int getColumnType(int col) {
+    return columnTypes[col];    
+  }
+  
   public void setColumnType(String columnName, String columnType) {
     setColumnType(getColumnIndex(columnName), columnType);
   }
@@ -2391,11 +2401,19 @@ public class Table implements Iterable<Table.Row> {
   }
 
 
-  class HashMapBlows {
-    HashMap<String,Integer> dataToIndex = new HashMap<String, Integer>();
-    ArrayList<String> indexToData = new ArrayList<String>();
+  static public class HashMapBlows {
+    protected HashMap<String,Integer> dataToIndex = new HashMap<String, Integer>();
+    protected ArrayList<String> indexToData = new ArrayList<String>();
 
-    int index(String key) {
+    public boolean containsKey(String key) {
+      return dataToIndex.containsKey(key);
+    }
+
+    public boolean containsIndex(int index) {
+      return dataToIndex.containsValue(index);
+    }    
+    
+    public int index(String key) {
       Integer value = dataToIndex.get(key);
       if (value != null) {
         return value;
@@ -2407,22 +2425,29 @@ public class Table implements Iterable<Table.Row> {
       return v;
     }
 
-    String key(int index) {
+    public String key(int index) {
       return indexToData.get(index);
     }
     
-    int size() {
+    public int size() {
       return dataToIndex.size();
     }
     
-    void write(DataOutputStream output) throws IOException {
+    public void put(HashMapBlows src) {
+      this.dataToIndex.clear();
+      this.dataToIndex.putAll(src.dataToIndex);
+      this.indexToData.clear();
+      this.indexToData.addAll(src.indexToData);
+    }
+    
+    public void write(DataOutputStream output) throws IOException {
       output.writeInt(size());
       for (String str : indexToData) {
         output.writeUTF(str);
       }
     }
 
-    void writeln(PrintWriter writer) throws IOException {
+    public void writeln(PrintWriter writer) throws IOException {
       for (String str : indexToData) {
         writer.println(str);
       }
@@ -2430,7 +2455,7 @@ public class Table implements Iterable<Table.Row> {
       writer.close();
     }
 
-    void read(DataInputStream input) throws IOException {
+    public void read(DataInputStream input) throws IOException {
       int count = input.readInt();
       dataToIndex = new HashMap<String, Integer>(count);
       for (int i = 0; i < count; i++) {
@@ -2456,7 +2481,7 @@ public class Table implements Iterable<Table.Row> {
 //  }
   
   
-  class HashMapSucks extends HashMap<String,Integer> {
+  public class HashMapSucks extends HashMap<String,Integer> {
     
     void increment(String what) {
       Integer value = get(what);
@@ -2628,4 +2653,142 @@ public class Table implements Iterable<Table.Row> {
       }
     }
   }
+  
+  //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+  
+  
+  static public final int min(int[] list) {
+    return PApplet.min(list);
+  }
+  
+  
+  static public final long min(long[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(PApplet.ERROR_MIN_MAX);
+    }
+    long min = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] < min) min = list[i];
+    }
+    return min;
+  }
+
+  
+  static public final float min(float[] list) {
+    return PApplet.min(list);
+  }
+    
+
+  static public final double min(double[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(PApplet.ERROR_MIN_MAX);
+    }
+    double min = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (list[i] < min) min = list[i];
+    }
+    return min;
+  }
+  
+  
+  static public final int max(int[] list) {
+    return PApplet.max(list);
+  }
+  
+  
+  static public final long max(long[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(PApplet.ERROR_MIN_MAX);
+    }
+    long max = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (max < list[i]) max = list[i];
+    }
+    return max;
+  }
+
+  
+  static public final float max(float[] list) {
+    return PApplet.max(list);
+  }
+    
+
+  static public final double max(double[] list) {
+    if (list.length == 0) {
+      throw new ArrayIndexOutOfBoundsException(PApplet.ERROR_MIN_MAX);
+    }
+    double max = list[0];
+    for (int i = 1; i < list.length; i++) {
+      if (max < list[i]) max = list[i];
+    }
+    return max;
+  }
+  
+  static public int getType(int mysqlType) {    
+    int tableType = UNSUPPORTED;
+    
+    switch (mysqlType) {
+    case Types.TINYINT:
+    case Types.SMALLINT:
+    case Types.INTEGER:       
+      tableType = INT; 
+      break;
+    case Types.BIGINT: 
+      tableType = LONG; 
+      break;
+    case Types.FLOAT:
+      tableType = FLOAT; 
+      break;
+    case Types.DECIMAL: 
+    case Types.DOUBLE:  
+    case Types.REAL: 
+      tableType = DOUBLE; 
+      break;
+    case Types.CHAR:      
+    case Types.VARCHAR:
+      tableType = STRING;
+      break;
+    case Types.DATE:
+    case Types.TIME:
+      tableType = TIME;
+      break;
+    }
+    
+    return tableType;
+  }
+  
+  
+  static public int getType(String mysqlType) {
+    mysqlType = mysqlType.toUpperCase();
+    
+    int type = UNSUPPORTED;
+    
+    if (mysqlType.indexOf("INT") == 0 ||
+        mysqlType.equals("INTEGER") ||
+        mysqlType.equals("TINYINT") || 
+        mysqlType.equals("SMALLINT")) {
+      type = INT;
+    } else if (mysqlType.equals("BIGINT")) {
+      type = LONG;
+    } else if (mysqlType.equals("FLOAT")) {
+      type = FLOAT;
+    } else if (mysqlType.equals("DECIMAL") ||
+               mysqlType.equals("DOUBLE") || 
+               mysqlType.equals("REAL")) {
+      type = DOUBLE;
+    } else if (mysqlType.indexOf("CHAR") == 0 || 
+               mysqlType.indexOf("VARCHAR") == 0) {
+      type = STRING;
+    } else if (mysqlType.indexOf("ENUM") == 0) {
+      type = CATEGORICAL;      
+    } else if (mysqlType.equals("DATE") ||
+               mysqlType.equals("DATETIME") || 
+               mysqlType.equals("TIMESTAMP") || 
+               mysqlType.equals("TIME") ||
+               mysqlType.equals("YEAR")) {
+      type = TIME;      
+    }
+    
+    return type;
+  }  
 }
