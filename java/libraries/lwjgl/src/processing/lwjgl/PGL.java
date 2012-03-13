@@ -927,8 +927,7 @@ public class PGL {
     GL11.glDisable(target);
   }   
   
-  public void initTexture(int target, int width, int height, int format, int type) {
-    //int[] texels = new int[width * height];    
+  public void initTexture(int target, int width, int height, int format, int type) {    
     IntBuffer texels = createIntBuffer(width * height);    
     GL11.glTexSubImage2D(target, 0, 0, 0, width, height, format, type, texels);
   }
