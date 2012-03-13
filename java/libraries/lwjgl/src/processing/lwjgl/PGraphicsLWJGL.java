@@ -1414,9 +1414,9 @@ public class PGraphicsLWJGL extends PGraphics {
       //pg.disableLights();
     }     
     
-    inGeo.reset();
-    tessGeo.reset();
-    texCache.reset();
+    inGeo.clear();
+    tessGeo.clear();
+    texCache.clear();
     
     // Each frame starts with textures disabled. 
     super.noTexture();
@@ -1956,7 +1956,7 @@ public class PGraphicsLWJGL extends PGraphics {
   public void beginShape(int kind) {
     shape = kind;
     
-    inGeo.reset();
+    inGeo.clear();
         
     breakShape = false;    
     defaultEdges = true;
@@ -2254,8 +2254,8 @@ public class PGraphicsLWJGL extends PGraphics {
       }
     }
     
-    tessGeo.reset();  
-    texCache.reset();
+    tessGeo.clear();  
+    texCache.clear();
   }
   
 
@@ -4307,8 +4307,8 @@ public class PGraphicsLWJGL extends PGraphics {
   }
 
   protected void backgroundImpl() {
-    tessGeo.reset();  
-    texCache.reset();
+    tessGeo.clear();  
+    texCache.clear();
     
     pgl.glClearColor(0, 0, 0, 0);
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
@@ -6321,7 +6321,7 @@ public class PGraphicsLWJGL extends PGraphics {
       hasTexture = false;
     }
     
-    public void reset() {
+    public void clear() {
       java.util.Arrays.fill(textures, 0, count, null);
       count = 0;
       hasTexture = false;
@@ -6472,7 +6472,7 @@ public class PGraphicsLWJGL extends PGraphics {
       allocate();
     }    
     
-    public void reset() {
+    public void clear() {
       vertexCount = firstVertex = lastVertex = 0; 
       edgeCount = firstEdge = lastEdge = 0;
     }
@@ -6490,7 +6490,7 @@ public class PGraphicsLWJGL extends PGraphics {
       emissive = new int[PGL.DEFAULT_IN_VERTICES];
       shininess = new float[PGL.DEFAULT_IN_VERTICES];
       edges = new int[PGL.DEFAULT_IN_EDGES][3];
-      reset();
+      clear();
     }
     
     public void trim() {
@@ -7197,7 +7197,7 @@ public class PGraphicsLWJGL extends PGraphics {
       allocate();      
     }    
     
-    public void reset() {
+    public void clear() {
       firstFillVertex = lastFillVertex = fillVertexCount = 0;
       firstFillIndex = lastFillIndex = fillIndexCount = 0;
       
@@ -7207,25 +7207,25 @@ public class PGraphicsLWJGL extends PGraphics {
       firstPointVertex = lastPointVertex = pointVertexCount = 0;
       firstPointIndex = lastPointIndex = pointIndexCount = 0;  
             
-      fillVertices.rewind();      
-      fillColors.rewind();
-      fillNormals.rewind();
-      fillTexcoords.rewind();
-      fillAmbient.rewind();
-      fillSpecular.rewind();
-      fillEmissive.rewind();
-      fillShininess.rewind();      
-      fillIndices.rewind();       
+      fillVertices.clear();
+      fillColors.clear();
+      fillNormals.clear();
+      fillTexcoords.clear();
+      fillAmbient.clear();
+      fillSpecular.clear();
+      fillEmissive.clear();
+      fillShininess.clear();      
+      fillIndices.clear();       
       
-      lineVertices.rewind();
-      lineColors.rewind();
-      lineDirWidths.rewind();
-      lineIndices.rewind();    
+      lineVertices.clear();
+      lineColors.clear();
+      lineDirWidths.clear();
+      lineIndices.clear();    
       
-      pointVertices.rewind();
-      pointColors.rewind();
-      pointSizes.rewind();
-      pointIndices.rewind();      
+      pointVertices.clear();
+      pointColors.clear();
+      pointSizes.clear();
+      pointIndices.clear();      
       
       isStroked = false;
     }
@@ -7251,7 +7251,7 @@ public class PGraphicsLWJGL extends PGraphics {
       pointSizes = pgl.createFloatBuffer(2 * PGL.DEFAULT_TESS_VERTICES);
       pointIndices = pgl.createIntBuffer(PGL.DEFAULT_TESS_VERTICES);
       
-      reset();
+      clear();
     }
     
     public void trim() {
@@ -7735,8 +7735,8 @@ public class PGraphicsLWJGL extends PGraphics {
     }
 
     protected void prepareLineIndicesForCopy(int start, int count) {
-      lineIndices.position(3 * start);
-      lineIndices.limit(3 * count);      
+      lineIndices.position(start);
+      lineIndices.limit(count);      
     }            
     
     protected void preparePointVerticesForCopy() {
@@ -7759,8 +7759,8 @@ public class PGraphicsLWJGL extends PGraphics {
     }    
     
     protected void preparePointIndicesForCopy(int start, int count) {
-      pointIndices.position(3 * start);
-      pointIndices.limit(3 * count);
+      pointIndices.position(start);
+      pointIndices.limit(count);
     }        
     
     
@@ -7998,18 +7998,20 @@ public class PGraphicsLWJGL extends PGraphics {
           float ny = in.normals[index++];
           float nz = in.normals[index  ];
           
-          index = 3 * tessIdx;
           vert[0] = x * mm.m00 + y * mm.m01 + z * mm.m02 + mm.m03;
           vert[1] = x * mm.m10 + y * mm.m11 + z * mm.m12 + mm.m13;
           vert[2] = x * mm.m20 + y * mm.m21 + z * mm.m22 + mm.m23;          
-          
-          index = 3 * tessIdx;
+
           norm[0] = nx * nm.m00 + ny * nm.m10 + nz * nm.m20;
           norm[1] = nx * nm.m01 + ny * nm.m11 + nz * nm.m21;
           norm[2] = nx * nm.m02 + ny * nm.m12 + nz * nm.m22;          
-          
+                    
           fillVertices.position(3 * tessIdx);
-          fillVertices.put(vert);
+          try {          
+            fillVertices.put(vert);
+          } catch (java.nio.BufferOverflowException e) {
+            PApplet.println("mama mia " + 3 * tessIdx + " " + fillVertices.position() + " " + fillVertices.limit() + " " + fillVertices.capacity() + " " + 3 * fillVertexCount);
+          }
           
           fillNormals.position(3 * tessIdx);
           fillNormals.put(norm);          
@@ -8072,14 +8074,14 @@ public class PGraphicsLWJGL extends PGraphics {
         lineVertices.position(3 * tessIdx);
         lineVertices.put(vert);
 
-        lineVertices.position(4 * tessIdx);
-        lineVertices.put(attr);        
+        lineDirWidths.position(4 * tessIdx);
+        lineDirWidths.put(attr);
       } else {
         lineVertices.position(3 * tessIdx);
         lineVertices.put(in.vertices, 3 * inIdx0, 3);
         
-        lineVertices.position(4 * tessIdx);
-        lineVertices.put(in.vertices, 3 * inIdx1, 3);
+        lineDirWidths.position(4 * tessIdx);
+        lineDirWidths.put(in.vertices, 3 * inIdx1, 3);
       }      
       
       lineColors.position(tessIdx);

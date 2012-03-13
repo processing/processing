@@ -68,6 +68,8 @@ public class PTexture implements PConstants {
   protected int[] tempPixels = null;
   protected PFramebuffer tempFbo = null;
   
+  protected IntBuffer texels;
+  
   protected Object bufferSource;
   protected LinkedList<BufferData> bufferCache = null;
   protected Method disposeBufferMethod;
@@ -845,14 +847,21 @@ public class PTexture implements PConstants {
   protected void setTexels(int[] pix, int x, int y, int w, int h) {
     setTexels(pix, 0, x, y, w, h);
   }
-  
-  protected void setTexels(int[] pix, int level, int x, int y, int w, int h) {
-    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
-  }
 
   protected void setTexels(IntBuffer buffer, int x, int y, int w, int h) {
     setTexels(buffer, 0, x, y, w, h);
-  }  
+  }    
+  
+  protected void setTexels(int[] pix, int level, int x, int y, int w, int h) {
+    if (texels == null || texels.capacity() != width * height) {      
+      texels = pgl.createIntBuffer(width * height);
+    }
+    texels.position(0);
+    texels.limit(pix.length);
+    texels.put(pix);
+    texels.flip();
+    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, texels);
+  }
   
   protected void setTexels(IntBuffer buffer, int level, int x, int y, int w, int h) {
     pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
