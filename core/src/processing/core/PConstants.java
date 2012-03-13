@@ -141,6 +141,7 @@ public interface PConstants {
   static final String PDF    = "processing.pdf.PGraphicsPDF";
   static final String DXF    = "processing.dxf.RawDXF";
 
+  static final String LWJGL  = "processing.lwjgl.PGraphicsLWJGL";
 
   // platform IDs for PApplet.platform
 
