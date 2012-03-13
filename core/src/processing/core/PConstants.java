@@ -142,7 +142,7 @@ public interface PConstants {
   static final String DXF    = "processing.dxf.RawDXF";
 
   static final String LWJGL  = "processing.lwjgl.PGraphicsLWJGL";
-
+  
   // platform IDs for PApplet.platform
 
   static final int OTHER   = 0;
