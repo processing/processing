@@ -864,13 +864,15 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, fillColor);
-
+    int[] temp = new int[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, fillColor);
+    tess.fillColors.rewind();
+    tess.fillColors.put(temp);
+    
     modifiedFillColors = true;
     modified();   
   }
-  
-    
+      
   //////////////////////////////////////////////////////////////
 
   // STROKE COLOR 
@@ -980,13 +982,19 @@ public class PShape3D extends PShape {
       updateTesselation();
       
       if (0 < tess.lineVertexCount) {
-        Arrays.fill(tess.lineColors, 0, tess.lineVertexCount, strokeColor);
+        int[] temp = new int[tess.lineVertexCount];
+        Arrays.fill(temp, 0, tess.lineVertexCount, strokeColor);
+        tess.lineColors.rewind();
+        tess.lineColors.put(temp);
         modifiedLineColors = true;
         modified();         
       }
       
       if (0 < tess.pointVertexCount) {
-        Arrays.fill(tess.pointColors, 0, tess.pointVertexCount, strokeColor);
+        int[] temp = new int[tess.pointVertexCount];
+        Arrays.fill(temp, 0, tess.pointVertexCount, strokeColor);
+        tess.pointColors.rewind();
+        tess.pointColors.put(temp);        
         modifiedPointColors = true;
         modified();            
       }            
@@ -1105,8 +1113,11 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    Arrays.fill(tess.fillColors, 0, tess.pointVertexCount, tintColor);
-
+    int[] temp = new int[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, tintColor);
+    tess.fillColors.rewind();
+    tess.fillColors.put(temp);
+    
     modifiedFillColors = true;
     modified();  
   }
@@ -1164,8 +1175,11 @@ public class PShape3D extends PShape {
     }
       
     updateTesselation();
-    
-    Arrays.fill(tess.fillAmbient, 0, tess.fillVertexCount, ambientColor);
+
+    int[] temp = new int[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, ambientColor);
+    tess.fillAmbient.rewind();
+    tess.fillAmbient.put(temp);
     
     modifiedFillAmbient = true;
     modified();      
@@ -1226,7 +1240,10 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    Arrays.fill(tess.fillSpecular, 0, tess.fillVertexCount, specularColor);
+    int[] temp = new int[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, specularColor);
+    tess.fillSpecular.rewind();
+    tess.fillSpecular.put(temp);
     
     modifiedFillSpecular = true;
     modified();     
@@ -1287,7 +1304,10 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    Arrays.fill(tess.fillEmissive, 0, tess.fillVertexCount, emissiveColor);
+    int[] temp = new int[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, emissiveColor);
+    tess.fillEmissive.rewind();
+    tess.fillEmissive.put(temp);
     
     modifiedFillEmissive = true;
     modified();    
@@ -1318,7 +1338,10 @@ public class PShape3D extends PShape {
       
     updateTesselation();
     
-    Arrays.fill(tess.fillShininess, 0, tess.fillVertexCount, shininess);
+    float[] temp = new float[tess.fillVertexCount];
+    Arrays.fill(temp, 0, tess.fillVertexCount, shininess);
+    tess.fillShininess.rewind();
+    tess.fillShininess.put(temp);    
     
     modifiedFillShininess = true;
     modified();      
@@ -1335,7 +1358,7 @@ public class PShape3D extends PShape {
     if (family == GROUP) {
       count = updateCenter(vec, count); 
     } else {      
-      count += tess.getCenter(vec);      
+      count += tess.sumVertices(vec);      
     }
     return count;
   }
@@ -1357,7 +1380,7 @@ public class PShape3D extends PShape {
       super.translate(tx, ty);
     } else {
       PVector vec = new PVector();
-      int count = tess.getCenter(vec);
+      int count = tess.sumVertices(vec);
       vec.x /= count;
       vec.y /= count;
       
@@ -1386,7 +1409,7 @@ public class PShape3D extends PShape {
       super.translate(tx, ty, tz);
     } else {
       PVector vec = new PVector();
-      int count = tess.getCenter(vec);
+      int count = tess.sumVertices(vec);
       vec.x /= count;
       vec.y /= count;
       vec.z /= count;
@@ -2046,49 +2069,94 @@ public class PShape3D extends PShape {
     return tess.fillIndexCount;
   }
   
-  public float[] fillVertices() {
+  public float[] fillVertices(float[] vertices) {
     updateTesselation();
-    return tess.fillVertices;
+    if (vertices == null || vertices.length != tess.fillVertices.capacity()) {
+      vertices = new float[tess.fillVertices.capacity()]; 
+    }
+    tess.fillVertices.rewind();
+    tess.fillVertices.get(vertices);
+    return vertices;
   }
   
-  public int[] fillColors() {
+  public int[] fillColors(int[] colors) {
     updateTesselation();
-    return tess.fillColors;
+    if (colors == null || colors.length != tess.fillColors.capacity()) {
+      colors = new int[tess.fillVertices.capacity()]; 
+    }
+    tess.fillColors.rewind();
+    tess.fillColors.get(colors);
+    return colors;    
   }  
   
-  public float[] fillNormals() {
+  public float[] fillNormals(float[] normals) {
     updateTesselation();
-    return tess.fillNormals;
+    if (normals == null || normals.length != tess.fillNormals.capacity()) {
+      normals = new float[tess.fillNormals.capacity()]; 
+    }
+    tess.fillNormals.rewind();
+    tess.fillNormals.get(normals);
+    return normals;  
   }  
   
-  public float[] fillTexCoords() {
+  public float[] fillTexCoords(float[] texcoords) {
     updateTesselation();
-    return tess.fillTexcoords;
+    if (texcoords == null || texcoords.length != tess.fillTexcoords.capacity()) {
+      texcoords = new float[tess.fillTexcoords.capacity()]; 
+    }
+    tess.fillTexcoords.rewind();
+    tess.fillTexcoords.get(texcoords);
+    return texcoords; 
   }  
 
-  public int[] fillAmbient() {
+  public int[] fillAmbient(int[] ambient) {
     updateTesselation();
-    return tess.fillAmbient;
+    if (ambient == null || ambient.length != tess.fillAmbient.capacity()) {
+      ambient = new int[tess.fillAmbient.capacity()]; 
+    }
+    tess.fillAmbient.rewind();
+    tess.fillAmbient.get(ambient);
+    return ambient;     
   }  
 
-  public int[] fillSpecular() {
+  public int[] fillSpecular(int[] specular) {
     updateTesselation();
-    return tess.fillSpecular;
+    if (specular == null || specular.length != tess.fillSpecular.capacity()) {
+      specular = new int[tess.fillSpecular.capacity()]; 
+    }
+    tess.fillSpecular.rewind();
+    tess.fillSpecular.get(specular);
+    return specular;      
   }
 
-  public int[] fillEmissive() {
+  public int[] fillEmissive(int[] emissive) {
     updateTesselation();
-    return tess.fillEmissive;
+    if (emissive == null || emissive.length != tess.fillEmissive.capacity()) {
+      emissive = new int[tess.fillEmissive.capacity()]; 
+    }
+    tess.fillEmissive.rewind();
+    tess.fillEmissive.get(emissive);
+    return emissive;       
   }
 
-  public float[] fillShininess() {
+  public float[] fillShininess(float[] shininess) {
     updateTesselation();
-    return tess.fillShininess;
+    if (shininess == null || shininess.length != tess.fillShininess.capacity()) {
+      shininess = new float[tess.fillShininess.capacity()]; 
+    }
+    tess.fillShininess.rewind();
+    tess.fillShininess.get(shininess);
+    return shininess;        
   }  
   
-  public int[] fillIndices() {
-    updateTesselation();
-    return tess.fillIndices;
+  public int[] fillIndices(int[] indices) {
+    updateTesselation();    
+    if (indices == null || indices.length != tess.fillIndices.capacity()) {
+      indices = new int[tess.fillIndices.capacity()]; 
+    }
+    tess.fillIndices.rewind();
+    tess.fillIndices.get(indices);
+    return indices;      
   }
     
   public int firstLineVertex() {
@@ -2121,24 +2189,44 @@ public class PShape3D extends PShape {
     return tess.lineIndexCount;
   }
     
-  public float[] lineVertices() {
+  public float[] lineVertices(float[] vertices) {
     updateTesselation();
-    return tess.lineVertices;
+    if (vertices == null || vertices.length != tess.lineVertices.capacity()) {
+      vertices = new float[tess.lineVertices.capacity()]; 
+    }
+    tess.lineVertices.rewind();
+    tess.lineVertices.get(vertices);
+    return vertices;      
   }
   
-  public int[] lineColors() {
+  public int[] lineColors(int[] colors) {
     updateTesselation();
-    return tess.lineColors;
+    if (colors == null || colors.length != tess.lineColors.capacity()) {
+      colors = new int[tess.lineColors.capacity()]; 
+    }
+    tess.lineColors.rewind();
+    tess.lineColors.get(colors);
+    return colors;       
   }  
   
-  public float[] lineAttributes() {
+  public float[] lineAttributes(float[] attribs) {
     updateTesselation();
-    return tess.lineDirWidths;
+    if (attribs == null || attribs.length != tess.lineDirWidths.capacity()) {
+      attribs = new float[tess.lineDirWidths.capacity()]; 
+    }
+    tess.lineDirWidths.rewind();
+    tess.lineDirWidths.get(attribs);
+    return attribs;     
   }  
   
-  public int[] lineIndices() {
+  public int[] lineIndices(int[] indices) {
     updateTesselation();
-    return tess.lineIndices;
+    if (indices == null || indices.length != tess.lineIndices.capacity()) {
+      indices = new int[tess.lineIndices.capacity()]; 
+    }
+    tess.lineIndices.rewind();
+    tess.lineIndices.get(indices);
+    return indices;       
   }  
   
   public int firstPointVertex() {
@@ -2171,24 +2259,44 @@ public class PShape3D extends PShape {
     return tess.pointIndexCount;
   }  
   
-  public float[] pointVertices() {
+  public float[] pointVertices(float[] vertices) {
     updateTesselation();
-    return tess.pointVertices;
+    if (vertices == null || vertices.length != tess.pointVertices.capacity()) {
+      vertices = new float[tess.pointVertices.capacity()]; 
+    }
+    tess.pointVertices.rewind();
+    tess.pointVertices.get(vertices);
+    return vertices;      
   }
   
-  public int[] pointColors() {
+  public int[] pointColors(int[] colors) {
     updateTesselation();
-    return tess.pointColors;
+    if (colors == null || colors.length != tess.pointColors.capacity()) {
+      colors = new int[tess.pointColors.capacity()]; 
+    }
+    tess.pointColors.rewind();
+    tess.pointColors.get(colors);
+    return colors;      
   }  
   
-  public float[] pointAttributes() {
+  public float[] pointAttributes(float[] attribs) {
     updateTesselation();
-    return tess.pointSizes;
+    if (attribs == null || attribs.length != tess.pointSizes.capacity()) {
+      attribs = new float[tess.pointSizes.capacity()]; 
+    }
+    tess.pointSizes.rewind();
+    tess.pointSizes.get(attribs);
+    return attribs;     
   }  
   
-  public int[] pointIndices() {
+  public int[] pointIndices(int[] indices) {
     updateTesselation();
-    return tess.pointIndices;
+    if (indices == null || indices.length != tess.pointIndices.capacity()) {
+      indices = new int[tess.pointIndices.capacity()]; 
+    }
+    tess.pointIndices.rewind();
+    tess.pointIndices.get(indices);
+    return indices;       
   }   
   
   public FloatBuffer mapFillVertices() {        
@@ -2393,6 +2501,7 @@ public class PShape3D extends PShape {
       }      
     } else {   
       if (!tessellated && shapeEnded) {
+        tess.clear();
         tessellator.setInGeometry(in);
         tessellator.setTessGeometry(tess);
         tessellator.setFill(fill || texture != null);
@@ -2661,51 +2770,85 @@ public class PShape3D extends PShape {
       
       // Copying any data remaining in the caches
       if (root.fillVerticesCache != null && root.fillVerticesCache.hasData()) {
+        root.fillVerticesCache.prepareForCopy();
         root.copyFillVertices(root.fillVerticesCache.offset, root.fillVerticesCache.size, root.fillVerticesCache.floatData);
         root.fillVerticesCache.reset();
       }
       
       if (root.fillColorsCache != null && root.fillColorsCache.hasData()) {
+        root.fillColorsCache.prepareForCopy();
         root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.intData);
         root.fillColorsCache.reset();
       }
       
       if (root.fillNormalsCache != null && root.fillNormalsCache.hasData()) {
+        root.fillNormalsCache.prepareForCopy();
         root.copyFillNormals(root.fillNormalsCache.offset, root.fillNormalsCache.size, root.fillNormalsCache.floatData);
         root.fillNormalsCache.reset();
       }
       
       if (root.fillTexCoordsCache != null && root.fillTexCoordsCache.hasData()) {
+        root.fillTexCoordsCache.prepareForCopy();
         root.copyFillTexCoords(root.fillTexCoordsCache.offset, root.fillTexCoordsCache.size, root.fillTexCoordsCache.floatData);
         root.fillTexCoordsCache.reset();
       }
       
+      if (root.fillAmbientCache != null && root.fillAmbientCache.hasData()) {
+        root.fillAmbientCache.prepareForCopy();
+        root.copyFillAmbient(root.fillAmbientCache.offset, root.fillAmbientCache.size, root.fillAmbientCache.intData);
+        root.fillAmbientCache.reset();      
+      }  
+
+      if (root.fillSpecularCache != null && root.fillSpecularCache.hasData()) {
+        root.fillSpecularCache.prepareForCopy();
+        root.copyfillSpecular(root.fillSpecularCache.offset, root.fillSpecularCache.size, root.fillSpecularCache.intData);
+        root.fillSpecularCache.reset();        
+      }
+      
+      if (root.fillEmissiveCache != null && root.fillEmissiveCache.hasData()) {
+        root.fillEmissiveCache.prepareForCopy();
+        root.copyFillEmissive(root.fillEmissiveCache.offset, root.fillEmissiveCache.size, root.fillEmissiveCache.intData);
+        root.fillEmissiveCache.reset();        
+      }
+      
+      if (root.fillShininessCache != null && root.fillShininessCache.hasData()) {
+        root.fillShininessCache.prepareForCopy();
+        root.copyFillShininess(root.fillShininessCache.offset, root.fillShininessCache.size, root.fillShininessCache.floatData);
+        root.fillShininessCache.reset();        
+      }      
+      
       if (root.lineVerticesCache != null && root.lineVerticesCache.hasData()) {
+        root.lineVerticesCache.prepareForCopy();
         root.copyLineVertices(root.lineVerticesCache.offset, root.lineVerticesCache.size, root.lineVerticesCache.floatData);
         root.lineVerticesCache.reset();
       }
       
       if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
+        root.lineColorsCache.prepareForCopy();
         root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.intData);
         root.lineColorsCache.reset();
       }
       
       if (root.lineAttributesCache != null && root.lineAttributesCache.hasData()) {
+        root.lineAttributesCache.prepareForCopy();
         root.copyLineAttributes(root.lineAttributesCache.offset, root.lineAttributesCache.size, root.lineAttributesCache.floatData);
         root.lineAttributesCache.reset();
       }      
     
      if (root.pointVerticesCache != null && root.pointVerticesCache.hasData()) {
+        root.pointVerticesCache.prepareForCopy();
         root.copyPointVertices(root.pointVerticesCache.offset, root.pointVerticesCache.size, root.pointVerticesCache.floatData);
         root.pointVerticesCache.reset();
       }
       
       if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
+        root.pointColorsCache.prepareForCopy();
         root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.intData);
         root.pointColorsCache.reset();
       }
       
       if (root.pointAttributesCache != null && root.pointAttributesCache.hasData()) {
+        root.pointAttributesCache.prepareForCopy();
         root.copyPointAttributes(root.pointAttributesCache.offset, root.pointAttributesCache.size, root.pointAttributesCache.floatData);
         root.pointAttributesCache.reset();
       }        
@@ -2763,7 +2906,7 @@ public class PShape3D extends PShape {
   // level of the shape hierarchy.
   protected void aggregateImpl() {
     if (family == GROUP) {
-      tess.reset();
+      tess.clear();
       
       boolean firstGeom = true;
       boolean firstStroke = true;
@@ -2996,12 +3139,14 @@ public class PShape3D extends PShape {
         child.copyFillGeometryToRoot();
       }    
     } else {
-      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {        
+      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {     
+        tess.prepareFillVerticesForCopy();
         root.copyFillGeometry(root.fillVertCopyOffset, tess.fillVertexCount, 
                               tess.fillVertices, tess.fillColors, tess.fillNormals, tess.fillTexcoords,
                               tess.fillAmbient, tess.fillSpecular, tess.fillEmissive, tess.fillShininess);
         root.fillVertCopyOffset += tess.fillVertexCount;
       
+        tess.prepareFillIndicesForCopy();
         root.copyFillIndices(root.fillIndCopyOffset, tess.fillIndexCount, tess.fillIndices);
         root.fillIndCopyOffset += tess.fillIndexCount;
       }
@@ -3017,15 +3162,17 @@ public class PShape3D extends PShape {
       } 
     } else {
  
-      if (0 < tess.fillVertexCount) {    
+      if (0 < tess.fillVertexCount) {
+        tess.prepareFillVerticesForCopy();
+        
         if (modifiedFillVertices) {
           if (root.fillVerticesCache == null) { 
             root.fillVerticesCache = new VertexCache(3, true);
-          }            
-          
+          }                      
           root.fillVerticesCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillVertices);
           modifiedFillVertices = false;
         } else if (root.fillVerticesCache != null && root.fillVerticesCache.hasData()) {
+          root.fillVerticesCache.prepareForCopy();
           root.copyFillVertices(root.fillVerticesCache.offset, root.fillVerticesCache.size, root.fillVerticesCache.floatData);
           root.fillVerticesCache.reset();
         }
@@ -3037,6 +3184,7 @@ public class PShape3D extends PShape {
           root.fillColorsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillColors);
           modifiedFillColors = false;            
         } else if (root.fillColorsCache != null && root.fillColorsCache.hasData()) {
+          root.fillColorsCache.prepareForCopy();
           root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.intData);
           root.fillColorsCache.reset();
         }
@@ -3048,6 +3196,7 @@ public class PShape3D extends PShape {
           root.fillNormalsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillNormals);            
           modifiedFillNormals = false;            
         } else if (root.fillNormalsCache != null && root.fillNormalsCache.hasData()) {
+          root.fillNormalsCache.prepareForCopy();
           root.copyFillNormals(root.fillNormalsCache.offset, root.fillNormalsCache.size, root.fillNormalsCache.floatData);
           root.fillNormalsCache.reset();
         }
@@ -3059,6 +3208,7 @@ public class PShape3D extends PShape {
           root.fillTexCoordsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillTexcoords);            
           modifiedFillTexCoords = false;
         } else if (root.fillTexCoordsCache != null && root.fillTexCoordsCache.hasData()) {
+          root.fillTexCoordsCache.prepareForCopy();
           root.copyFillTexCoords(root.fillTexCoordsCache.offset, root.fillTexCoordsCache.size, root.fillTexCoordsCache.floatData);
           root.fillTexCoordsCache.reset();
         }
@@ -3070,7 +3220,8 @@ public class PShape3D extends PShape {
           root.fillAmbientCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillAmbient);            
           modifiedFillAmbient = false;
         } else if (root.fillAmbientCache != null && root.fillAmbientCache.hasData()) {
-          root.copyfillAmbient(root.fillAmbientCache.offset, root.fillAmbientCache.size, root.fillAmbientCache.intData);
+          root.fillAmbientCache.prepareForCopy();
+          root.copyFillAmbient(root.fillAmbientCache.offset, root.fillAmbientCache.size, root.fillAmbientCache.intData);
           root.fillAmbientCache.reset();
         }
 
@@ -3081,6 +3232,7 @@ public class PShape3D extends PShape {
           root.fillSpecularCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillSpecular);            
           modifiedFillSpecular = false;
         } else if (root.fillSpecularCache != null && root.fillSpecularCache.hasData()) {
+          root.fillSpecularCache.prepareForCopy();
           root.copyfillSpecular(root.fillSpecularCache.offset, root.fillSpecularCache.size, root.fillSpecularCache.intData);
           root.fillSpecularCache.reset();
         }        
@@ -3092,7 +3244,8 @@ public class PShape3D extends PShape {
           root.fillEmissiveCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillEmissive);            
           modifiedFillEmissive = false;
         } else if (root.fillEmissiveCache != null && root.fillEmissiveCache.hasData()) {
-          root.copyfillEmissive(root.fillEmissiveCache.offset, root.fillEmissiveCache.size, root.fillEmissiveCache.intData);
+          root.fillEmissiveCache.prepareForCopy();
+          root.copyFillEmissive(root.fillEmissiveCache.offset, root.fillEmissiveCache.size, root.fillEmissiveCache.intData);
           root.fillEmissiveCache.reset();
         }          
         
@@ -3103,12 +3256,15 @@ public class PShape3D extends PShape {
           root.fillShininessCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillShininess);            
           modifiedFillShininess = false;
         } else if (root.fillShininessCache != null && root.fillShininessCache.hasData()) {
-          root.copyfillShininess(root.fillShininessCache.offset, root.fillShininessCache.size, root.fillShininessCache.floatData);
+          root.fillShininessCache.prepareForCopy();
+          root.copyFillShininess(root.fillShininessCache.offset, root.fillShininessCache.size, root.fillShininessCache.floatData);
           root.fillShininessCache.reset();
         }          
       } 
       
       if (0 < tess.lineVertexCount) {
+        tess.prepareLineVerticesForCopy();
+        
         if (modifiedLineVertices) {
           if (root.lineVerticesCache == null) { 
             root.lineVerticesCache = new VertexCache(3, true);
@@ -3116,6 +3272,7 @@ public class PShape3D extends PShape {
           root.lineVerticesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineVertices);
           modifiedLineVertices = false;
         } else if (root.lineVerticesCache != null && root.lineVerticesCache.hasData()) {
+          root.lineVerticesCache.prepareForCopy();
           root.copyLineVertices(root.lineVerticesCache.offset, root.lineVerticesCache.size, root.lineVerticesCache.floatData);
           root.lineVerticesCache.reset();
         }
@@ -3127,6 +3284,7 @@ public class PShape3D extends PShape {
           root.lineColorsCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineColors);
           modifiedLineColors = false;            
         } else if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
+          root.lineColorsCache.prepareForCopy();
           root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.intData);
           root.lineColorsCache.reset();
         }
@@ -3138,12 +3296,15 @@ public class PShape3D extends PShape {
           root.lineAttributesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineDirWidths);            
           modifiedLineAttributes = false;
         } else if (root.lineAttributesCache != null && root.lineAttributesCache.hasData()) {
+          root.lineAttributesCache.prepareForCopy();
           root.copyLineAttributes(root.lineAttributesCache.offset, root.lineAttributesCache.size, root.lineAttributesCache.floatData);
           root.lineAttributesCache.reset();
         }      
       }
 
       if (0 < tess.pointVertexCount) {
+        tess.preparePointVerticesForCopy();
+        
         if (modifiedPointVertices) {
           if (root.pointVerticesCache == null) { 
             root.pointVerticesCache = new VertexCache(3, true);
@@ -3151,6 +3312,7 @@ public class PShape3D extends PShape {
           root.pointVerticesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointVertices);
           modifiedPointVertices = false;
         } else if (root.pointVerticesCache != null && root.pointVerticesCache.hasData()) {
+          root.pointVerticesCache.prepareForCopy();
           root.copyPointVertices(root.pointVerticesCache.offset, root.pointVerticesCache.size, root.pointVerticesCache.floatData);
           root.pointVerticesCache.reset();
         }
@@ -3162,6 +3324,7 @@ public class PShape3D extends PShape {
           root.pointColorsCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointColors);
           modifiedPointColors = false;            
         } else if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
+          root.pointColorsCache.prepareForCopy();
           root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.intData);
           root.pointColorsCache.reset();
         }
@@ -3173,6 +3336,7 @@ public class PShape3D extends PShape {
           root.pointAttributesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointSizes);            
           modifiedPointAttributes = false;
         } else if (root.pointAttributesCache != null && root.pointAttributesCache.hasData()) {
+          root.pointAttributesCache.prepareForCopy();
           root.copyPointAttributes(root.pointAttributesCache.offset, root.pointAttributesCache.size, root.pointAttributesCache.floatData);
           root.pointAttributesCache.reset();
         }        
@@ -3188,101 +3352,101 @@ public class PShape3D extends PShape {
     
   
   protected void copyFillGeometry(int offset, int size, 
-                                  float[] vertices, int[] colors, 
-                                  float[] normals, float[] texcoords,
-                                  int[] ambient, int[] specular, int[] emissive, float[] shininess) {
+                                  FloatBuffer vertices, IntBuffer colors, 
+                                  FloatBuffer normals, FloatBuffer texcoords,
+                                  IntBuffer ambient, IntBuffer specular, IntBuffer emissive, FloatBuffer shininess) {
     int offsetf = offset * PGL.SIZEOF_FLOAT;
     int offseti = offset * PGL.SIZEOF_INT;
     int sizef = size * PGL.SIZEOF_FLOAT;
     int sizei = size * PGL.SIZEOF_INT;
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(vertices, 0, 3 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, vertices);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(colors, 0, size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, colors);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(normals, 0, 3 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, normals);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offsetf, 2 * sizef, FloatBuffer.wrap(texcoords, 0, 2 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offsetf, 2 * sizef, texcoords);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(ambient, 0, size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, ambient);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(specular, 0, size));    
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, specular);    
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(emissive, 0, size));   
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, emissive);   
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offsetf, sizef, FloatBuffer.wrap(shininess, 0, size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offsetf, sizef, shininess);
         
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }
 
   
-  protected void copyFillVertices(int offset, int size, float[] vertices) {    
+  protected void copyFillVertices(int offset, int size, FloatBuffer vertices) {    
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices, 0, 3 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, vertices);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
   
-  protected void copyFillColors(int offset, int size, int[] colors) {    
+  protected void copyFillColors(int offset, int size, IntBuffer colors) {    
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(colors, 0, size));     
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, colors);     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }  
   
   
-  protected void copyFillNormals(int offset, int size, float[] normals) {
+  protected void copyFillNormals(int offset, int size, FloatBuffer normals) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(normals, 0, 3 * size));    
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, normals);    
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }  
 
   
-  protected void copyFillTexCoords(int offset, int size, float[] texcoords) {
+  protected void copyFillTexCoords(int offset, int size, FloatBuffer texcoords) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offset * PGL.SIZEOF_FLOAT, 2 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(texcoords, 0, 2 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offset * PGL.SIZEOF_FLOAT, 2 * size * PGL.SIZEOF_FLOAT, texcoords);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }   
 
   
-  protected void copyfillAmbient(int offset, int size, int[] ambient) {
+  protected void copyFillAmbient(int offset, int size, IntBuffer ambient) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(ambient, 0, size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, ambient);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }
   
   
-  protected void copyfillSpecular(int offset, int size, int[] specular) {
+  protected void copyfillSpecular(int offset, int size, IntBuffer specular) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(specular, 0, size));     
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, specular);     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);       
   }
 
   
-  protected void copyfillEmissive(int offset, int size, int[] emissive) {
+  protected void copyFillEmissive(int offset, int size, IntBuffer emissive) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(emissive, 0, size));      
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, emissive);      
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }  
 
   
-  protected void copyfillShininess(int offset, int size, float[] shininess) {
+  protected void copyFillShininess(int offset, int size, FloatBuffer shininess) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_FLOAT, size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(shininess, 0, size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_FLOAT, size * PGL.SIZEOF_FLOAT, shininess);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);     
   }    
   
   
-  protected void copyFillIndices(int offset, int size, int[] indices) {
+  protected void copyFillIndices(int offset, int size, IntBuffer indices) {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, IntBuffer.wrap(indices, 0, size));
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, indices);
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
   
@@ -3322,10 +3486,12 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (hasLines) {
+        tess.prepareLineVerticesForCopy();
         root.copyLineGeometry(root.lineVertCopyOffset, tess.lineVertexCount, 
                               tess.lineVertices, tess.lineColors, tess.lineDirWidths);        
         root.lineVertCopyOffset += tess.lineVertexCount;
         
+        tess.prepareLineIndicesForCopy();
         root.copyLineIndices(root.lineIndCopyOffset, tess.lineIndexCount, tess.lineIndices);
         root.lineIndCopyOffset += tess.lineIndexCount;        
       }
@@ -3334,49 +3500,49 @@ public class PShape3D extends PShape {
 
   
   protected void copyLineGeometry(int offset, int size, 
-                                  float[] vertices, int[] colors, float[] attribs) {
+                                  FloatBuffer vertices, IntBuffer colors, FloatBuffer attribs) {
     int offsetf = offset * PGL.SIZEOF_FLOAT;
     int sizef = size * PGL.SIZEOF_FLOAT;
     int offseti = offset * PGL.SIZEOF_INT;
     int sizei = size * PGL.SIZEOF_INT;
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(vertices, 0, 3 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, vertices);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(colors, 0, size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, colors);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, FloatBuffer.wrap(attribs, 0, 4 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offsetf, 4 * sizef, attribs);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }    
   
   
-  protected void copyLineVertices(int offset, int size, float[] vertices) {    
+  protected void copyLineVertices(int offset, int size, FloatBuffer vertices) {    
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices, 0, 3 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, vertices);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }     
   
   
-  protected void copyLineColors(int offset, int size, int[] colors) {
+  protected void copyLineColors(int offset, int size, IntBuffer colors) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(colors, 0, size));             
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, colors);             
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
   
-  protected void copyLineAttributes(int offset, int size, float[] attribs) {
+  protected void copyLineAttributes(int offset, int size, FloatBuffer attribs) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 4 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 4 * offset * PGL.SIZEOF_FLOAT, 4 * size * PGL.SIZEOF_FLOAT, attribs);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
   
-  protected void copyLineIndices(int offset, int size, int[] indices) {
+  protected void copyLineIndices(int offset, int size, IntBuffer indices) {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, IntBuffer.wrap(indices, 0, size));
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, indices);
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }  
   
@@ -3416,10 +3582,12 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (hasPoints) {
+        tess.preparePointVerticesForCopy();
         root.copyPointGeometry(root.pointVertCopyOffset, tess.pointVertexCount, 
                                tess.pointVertices, tess.pointColors, tess.pointSizes);        
         root.pointVertCopyOffset += tess.pointVertexCount;
         
+        tess.preparePointIndicesForCopy();
         root.copyPointIndices(root.pointIndCopyOffset, tess.pointIndexCount, tess.pointIndices);
         root.pointIndCopyOffset += tess.pointIndexCount;        
       }
@@ -3428,49 +3596,49 @@ public class PShape3D extends PShape {
   
   
   protected void copyPointGeometry(int offset, int size, 
-                                   float[] vertices, int[] colors, float[] attribs) {
+                                   FloatBuffer vertices, IntBuffer colors, FloatBuffer attribs) {
     int offsetf = offset * PGL.SIZEOF_FLOAT;
     int sizef = size * PGL.SIZEOF_FLOAT;
     int offseti = offset * PGL.SIZEOF_INT;
     int sizei = size * PGL.SIZEOF_INT;    
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, FloatBuffer.wrap(vertices, 0, 3 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offsetf, 3 * sizef, vertices);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, IntBuffer.wrap(colors, 0, size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offseti, sizei, colors);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offsetf, 2 * sizef, FloatBuffer.wrap(attribs, 0, 2 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offsetf, 2 * sizef, attribs);
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }  
 
 
-  protected void copyPointVertices(int offset, int size, float[] vertices) {    
+  protected void copyPointVertices(int offset, int size, FloatBuffer vertices) {    
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(vertices, 0, 3 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 3 * offset * PGL.SIZEOF_FLOAT, 3 * size * PGL.SIZEOF_FLOAT, vertices);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
     
     
-  protected void copyPointColors(int offset, int size, int[] colors) {
+  protected void copyPointColors(int offset, int size, IntBuffer colors) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, IntBuffer.wrap(colors, 0, size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, colors);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
     
   
-  protected void copyPointAttributes(int offset, int size, float[] attribs) {
+  protected void copyPointAttributes(int offset, int size, FloatBuffer attribs) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
-    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offset * PGL.SIZEOF_FLOAT, 2 * size * PGL.SIZEOF_FLOAT, FloatBuffer.wrap(attribs, 0, 2 * size));
+    pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, 2 * offset * PGL.SIZEOF_FLOAT, 2 * size * PGL.SIZEOF_FLOAT, attribs);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
   }
   
   
-  protected void copyPointIndices(int offset, int size, int[] indices) {
+  protected void copyPointIndices(int offset, int size, IntBuffer indices) {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, IntBuffer.wrap(indices, 0, size));
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, indices);
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);    
   }    
 
@@ -3784,19 +3952,19 @@ public class PShape3D extends PShape {
   // to the VBOs with fewer calls.
   protected class VertexCache {
     boolean isFloat;
-    int ncoords;
-    int offset;
-    int size;    
-    float[] floatData;
-    int[] intData;
+    int ncoords; // Number of components per data element
+    int offset;  // Offset (in the dest VBO) to start copying this data to
+    int size;    // Total number of data elements
+    FloatBuffer floatData;
+    IntBuffer intData;
     
     VertexCache(int ncoords, boolean isFloat) {
       this.ncoords = ncoords;
       this.isFloat = isFloat;
       if (isFloat) {
-        this.floatData = new float[ncoords * PGL.DEFAULT_VERTEX_CACHE_SIZE];        
+        this.floatData = pgl.createFloatBuffer(ncoords * PGL.DEFAULT_VERTEX_CACHE_SIZE);        
       } else {
-        this.intData = new int[ncoords * PGL.DEFAULT_VERTEX_CACHE_SIZE];
+        this.intData = pgl.createIntBuffer(ncoords * PGL.DEFAULT_VERTEX_CACHE_SIZE);
       }
       this.offset = 0;
       this.size = 0;      
@@ -3805,96 +3973,50 @@ public class PShape3D extends PShape {
     void reset() {
       offset = 0;
       size = 0;
-    }    
+      if (isFloat) {
+        floatData.clear();
+      } else {
+        intData.clear();
+      }
+    }
     
-    void add(int dataOffset, int dataSize, float[] newData) {
+    void add(int dataOffset, int dataSize, FloatBuffer newData) {
       if (size == 0) {
         offset = dataOffset;
       }
       
-      int oldSize = floatData.length / ncoords;
+      int oldSize = floatData.capacity() / ncoords;
       if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
+        int newSize = expandSize(oldSize, size + dataSize);
+        prepareFloatDataForCopy();
         expand(newSize);
       }
       
-      if (dataSize <= PGraphicsOpenGL.MIN_ARRAYCOPY_SIZE) {
-        // Copying elements one by one instead of using arrayCopy is more efficient for
-        // few vertices...
-        for (int i = 0; i < dataSize; i++) {
-          int srcIndex = ncoords * i;
-          int destIndex = ncoords * (size + i);
-          
-          if (ncoords == 2) {
-            floatData[destIndex++] = newData[srcIndex++];
-            floatData[destIndex  ] = newData[srcIndex  ];
-          } else if (ncoords == 3) {
-            floatData[destIndex++] = newData[srcIndex++];
-            floatData[destIndex++] = newData[srcIndex++];
-            floatData[destIndex  ] = newData[srcIndex  ];
-          } else if (ncoords == 4) {
-            floatData[destIndex++] = newData[srcIndex++];
-            floatData[destIndex++] = newData[srcIndex++];
-            floatData[destIndex++] = newData[srcIndex++];
-            floatData[destIndex  ] = newData[srcIndex  ];            
-          } else {
-            for (int j = 0; j < ncoords; j++) {
-              floatData[destIndex++] = newData[srcIndex++];
-            }            
-          }
-        }
-      } else {
-        PApplet.arrayCopy(newData, 0, floatData, ncoords * size, ncoords * dataSize);
-      }
+      floatData.position(ncoords * size);
+      floatData.put(newData);
       
       size += dataSize;
     } 
     
-    void add(int dataOffset, int dataSize, int[] newData) {
+    void add(int dataOffset, int dataSize, IntBuffer newData) {
       if (size == 0) {
         offset = dataOffset;
       }
       
-      int oldSize = intData.length / ncoords;
+      int oldSize = intData.capacity() / ncoords;
       if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
+        int newSize = expandSize(oldSize, size + dataSize);
+        prepareIntDataForCopy();
         expand(newSize);
       }
       
-      if (dataSize <= PGraphicsOpenGL.MIN_ARRAYCOPY_SIZE) {
-        // Copying elements one by one instead of using arrayCopy is more efficient for
-        // few vertices...
-        for (int i = 0; i < dataSize; i++) {
-          int srcIndex = ncoords * i;
-          int destIndex = ncoords * (size + i);
-          
-          if (ncoords == 2) {
-            intData[destIndex++] = newData[srcIndex++];
-            intData[destIndex  ] = newData[srcIndex  ];
-          } else if (ncoords == 3) {
-            intData[destIndex++] = newData[srcIndex++];
-            intData[destIndex++] = newData[srcIndex++];
-            intData[destIndex  ] = newData[srcIndex  ];
-          } else if (ncoords == 4) {
-            intData[destIndex++] = newData[srcIndex++];
-            intData[destIndex++] = newData[srcIndex++];
-            intData[destIndex++] = newData[srcIndex++];
-            intData[destIndex  ] = newData[srcIndex  ];            
-          } else {
-            for (int j = 0; j < ncoords; j++) {
-              intData[destIndex++] = newData[srcIndex++];
-            }            
-          }
-        }
-      } else {
-        PApplet.arrayCopy(newData, 0, intData, ncoords * size, ncoords * dataSize);
-      }
+      intData.position(ncoords * size);
+      intData.put(newData);
       
       size += dataSize;
     } 
     
-    void add(int dataOffset, int dataSize, float[] newData, PMatrix tr) {
-      
+    void add(int dataOffset, int dataSize, float[] newData, PMatrix tr) {      
       if (tr instanceof PMatrix2D) {
         add(dataOffset, dataSize, newData, (PMatrix2D)tr);  
       } else if (tr instanceof PMatrix3D) {
@@ -3902,59 +4024,81 @@ public class PShape3D extends PShape {
       }
     }
     
-    void add(int dataOffset, int dataSize, float[] newData, PMatrix2D tr) {
+    void add(int dataOffset, int dataSize, FloatBuffer newData, PMatrix2D tr) {
       if (size == 0) {
         offset = dataOffset;
       }
       
-      int oldSize = floatData.length / ncoords;
+      int oldSize = floatData.capacity() / ncoords;
       if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
+        int newSize = expandSize(oldSize, size + dataSize);
+        prepareFloatDataForCopy();
         expand(newSize);
       }
       
       if (2 <= ncoords) {
+        float[] data0 = new float[2];
+        float[] data1 = new float[2];
         for (int i = 0; i < dataSize; i++) {
-          int srcIndex = ncoords * i;
-          float x = newData[srcIndex++];
-          float y = newData[srcIndex  ];
+          newData.get(data0);
 
-          int destIndex = ncoords * (size + i); 
-          floatData[destIndex++] = x * tr.m00 + y * tr.m01 + tr.m02;
-          floatData[destIndex  ] = x * tr.m10 + y * tr.m11 + tr.m12;
+          data1[0] = data0[0] * tr.m00 + data0[1] * tr.m01 + tr.m02;
+          data1[1] = data0[0] * tr.m10 + data0[1] * tr.m11 + tr.m12;
+          floatData.position(ncoords * (size + i));
+          floatData.put(data1, 0, 2);          
         }        
       }
       
       size += dataSize;
     }
     
-    void add(int dataOffset, int dataSize, float[] newData, PMatrix3D tr) {
+    void add(int dataOffset, int dataSize, FloatBuffer newData, PMatrix3D tr) {
       if (size == 0) {
         offset = dataOffset;
       }
       
-      int oldSize = floatData.length / ncoords;
+      int oldSize = floatData.capacity() / ncoords;
       if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
+        int newSize = expandSize(oldSize, size + dataSize);
+        prepareIntDataForCopy();
         expand(newSize);
       }
       
       if (3 <= ncoords) {
+        float[] data0 = new float[3];
+        float[] data1 = new float[3];
         for (int i = 0; i < dataSize; i++) {
-          int srcIndex = ncoords * i;
-          float x = newData[srcIndex++];
-          float y = newData[srcIndex++];
-          float z = newData[srcIndex++];
-
-          int destIndex = ncoords * (size + i); 
-          floatData[destIndex++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
-          floatData[destIndex++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
-          floatData[destIndex  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
+          newData.get(data0);
+          
+          data1[0] = data0[0] * tr.m00 + data0[1] * tr.m01 + data0[2] * tr.m02 + tr.m03;
+          data1[1] = data0[0] * tr.m10 + data0[1] * tr.m11 + data0[2] * tr.m12 + tr.m13;
+          data1[2] = data0[0] * tr.m20 + data0[1] * tr.m21 + data0[2] * tr.m22 + tr.m23;
+          
+          floatData.position(ncoords * (size + i));
+          floatData.put(data1);
         }          
       }      
       
       size += dataSize;
     }
+    
+    void prepareForCopy() {
+      if (isFloat) {
+        prepareFloatDataForCopy();
+      } else {
+        prepareIntDataForCopy();
+      }
+    }
+    
+    void prepareFloatDataForCopy() {
+      floatData.position(0);
+      floatData.limit(ncoords * size);
+    }
+
+    void prepareIntDataForCopy() {
+      intData.position(0);
+      intData.limit(ncoords * size);      
+    }    
     
     void expand(int n) {
       if (isFloat) {
@@ -3965,15 +4109,15 @@ public class PShape3D extends PShape {
     }
 
     void expandFloat(int n) {
-      float temp[] = new float[ncoords * n];      
-      PApplet.arrayCopy(floatData, 0, temp, 0, ncoords * size);
+      FloatBuffer temp = pgl.createFloatBuffer(ncoords * n);    
+      temp.put(floatData);
       floatData = temp;      
     }
     
     void expandInt(int n) {
-      int temp[] = new int[ncoords * n];      
-      PApplet.arrayCopy(intData, 0, temp, 0, ncoords * size);
-      intData = temp;      
+      IntBuffer temp = pgl.createIntBuffer(ncoords * n);
+      temp.put(intData);
+      intData = temp;         
     }
     
     int expandSize(int currSize, int newMinSize) {
@@ -3986,8 +4130,7 @@ public class PShape3D extends PShape {
     
     boolean hasData() {
       return 0 < size;
-    }
-    
+    }    
   }  
   
   

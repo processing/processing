@@ -26,6 +26,7 @@ package processing.opengl;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.nativewindow.GraphicsConfigurationFactory;
@@ -428,8 +429,8 @@ public class PGL {
     return gl.glGetString(name);
   }
  
-  public void glGetIntegerv(int name, int[] values, int offset) {
-    gl.glGetIntegerv(name, values, offset);
+  public void glGetIntegerv(int name, IntBuffer values) {
+    gl.glGetIntegerv(name, values);
   }
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -497,12 +498,14 @@ public class PGL {
   
   // Textures     
   
-  public void glGenTextures(int n, int[] ids, int offset) {
-    gl.glGenTextures(n, ids, offset);
+  public void glGenTextures(int n, IntBuffer ids) {
+    ids.limit(n);
+    gl.glGenTextures(n, ids);
   }
 
-  public void glDeleteTextures(int n, int[] ids, int offset) {
-    gl.glDeleteTextures(n, ids, offset);
+  public void glDeleteTextures(int n, IntBuffer ids) {
+    ids.limit(n);
+    gl.glDeleteTextures(n, ids);
   }  
   
   public void glActiveTexture(int unit) {
@@ -533,12 +536,14 @@ public class PGL {
   
   // Vertex Buffers
 
-  public void glGenBuffers(int n, int[] ids, int offset) {
-    gl.glGenBuffers(n, ids, offset);  
+  public void glGenBuffers(int n, IntBuffer ids) {
+    ids.limit(n);    
+    gl.glGenBuffers(n, ids);  
   }
   
-  public void glDeleteBuffers(int n, int[] ids, int offset) {
-    gl.glDeleteBuffers(n, ids, offset);  
+  public void glDeleteBuffers(int n, IntBuffer ids) {
+    ids.limit(n);
+    gl.glDeleteBuffers(n, ids);  
   }
   
   public void glBindBuffer(int target, int id) {
@@ -588,20 +593,24 @@ public class PGL {
   
   // Framebuffers, renderbuffers  
   
-  public void glGenFramebuffers(int n, int[] ids, int offset) {
-    gl.glGenFramebuffers(n, ids, offset);    
+  public void glGenFramebuffers(int n, IntBuffer ids) {
+    ids.limit(n);
+    gl.glGenFramebuffers(n, ids);    
   }
   
-  public void glDeleteFramebuffers(int n, int[] ids, int offset) {
-    gl.glDeleteFramebuffers(n, ids, offset);    
+  public void glDeleteFramebuffers(int n, IntBuffer ids) {
+    ids.limit(n);
+    gl.glDeleteFramebuffers(n, ids);    
   }
   
-  public void glGenRenderbuffers(int n, int[] ids, int offset) {
-    gl.glGenRenderbuffers(n, ids, offset);    
+  public void glGenRenderbuffers(int n, IntBuffer ids) {
+    ids.limit(n);
+    gl.glGenRenderbuffers(n, ids);    
   }
   
-  public void glDeleteRenderbuffers(int n, int[] ids, int offset) {
-    gl.glDeleteRenderbuffers(n, ids, offset);    
+  public void glDeleteRenderbuffers(int n, IntBuffer ids) {
+    ids.limit(n);
+    gl.glDeleteRenderbuffers(n, ids);    
   }
   
   public void glBindFramebuffer(int target, int id) {
@@ -696,32 +705,32 @@ public class PGL {
     gl2.glUniform4f(loc, value0, value1, value2, value3);  
   }
   
-  public void glUniform1fv(int loc, int count, float[] v, int offset) {
-    gl2.glUniform1fv(loc, count, v, offset);
+  public void glUniform1fv(int loc, int count, FloatBuffer v) {
+    gl2.glUniform1fv(loc, count, v);
   }    
 
-  public void glUniform2fv(int loc, int count, float[] v, int offset) {
-    gl2.glUniform2fv(loc, count, v, offset);
+  public void glUniform2fv(int loc, int count, FloatBuffer v) {
+    gl2.glUniform2fv(loc, count, v);
   }    
 
-  public void glUniform3fv(int loc, int count, float[] v, int offset) {
-    gl2.glUniform3fv(loc, count, v, offset);
+  public void glUniform3fv(int loc, int count, FloatBuffer v) {
+    gl2.glUniform3fv(loc, count, v);
   }
 
-  public void glUniform4fv(int loc, int count, float[] v, int offset) {
-    gl2.glUniform4fv(loc, count, v, offset);
+  public void glUniform4fv(int loc, int count, FloatBuffer v) {
+    gl2.glUniform4fv(loc, count, v);
   }  
   
-  public void glUniformMatrix2fv(int loc, int count, boolean transpose, float[] mat, int offset) {
-    gl2.glUniformMatrix2fv(loc, count, transpose, mat, offset);
+  public void glUniformMatrix2fv(int loc, int count, boolean transpose, FloatBuffer mat) {
+    gl2.glUniformMatrix2fv(loc, count, transpose, mat);
   }
   
-  public void glUniformMatrix3fv(int loc, int count, boolean transpose, float[] mat, int offset) {
-    gl2.glUniformMatrix3fv(loc, count, transpose, mat, offset);
+  public void glUniformMatrix3fv(int loc, int count, boolean transpose, FloatBuffer mat) {
+    gl2.glUniformMatrix3fv(loc, count, transpose, mat);
   }
   
-  public void glUniformMatrix4fv(int loc, int count, boolean transpose, float[] mat, int offset) {
-    gl2.glUniformMatrix4fv(loc, count, transpose, mat, offset);      
+  public void glUniformMatrix4fv(int loc, int count, boolean transpose, FloatBuffer mat) {
+    gl2.glUniformMatrix4fv(loc, count, transpose, mat);      
   }
   
   public void glVertexAttrib1f(int loc, float value) {
@@ -916,6 +925,14 @@ public class PGL {
   
   // Utility functions  
   
+  public FloatBuffer createFloatBuffer(int size) {
+    return FloatBuffer.allocate(size);
+  }
+  
+  public IntBuffer createIntBuffer(int size) {
+    return IntBuffer.allocate(size);
+  }
+    
   public boolean contextIsCurrent(Context other) {
     return other.same(context);
   }
@@ -933,8 +950,8 @@ public class PGL {
   }   
   
   public void initTexture(int target, int width, int height, int format, int type) {
-    int[] texels = new int[width * height];
-    gl.glTexSubImage2D(target, 0, 0, 0, width, height, format, type, IntBuffer.wrap(texels));
+    IntBuffer texels = createIntBuffer(width * height);
+    gl.glTexSubImage2D(target, 0, 0, 0, width, height, format, type, texels);
   }
   
   public String getShaderLog(int id) {
