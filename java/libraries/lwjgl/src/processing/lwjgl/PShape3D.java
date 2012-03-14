@@ -1360,7 +1360,7 @@ public class PShape3D extends PShape {
     if (family == GROUP) {
       count = updateCenter(vec, count); 
     } else {      
-      count += tess.getCenter(vec);      
+      count += tess.sumVertices(vec);      
     }
     return count;
   }
@@ -1382,7 +1382,7 @@ public class PShape3D extends PShape {
       super.translate(tx, ty);
     } else {
       PVector vec = new PVector();
-      int count = tess.getCenter(vec);
+      int count = tess.sumVertices(vec);
       vec.x /= count;
       vec.y /= count;
       
@@ -1411,7 +1411,7 @@ public class PShape3D extends PShape {
       super.translate(tx, ty, tz);
     } else {
       PVector vec = new PVector();
-      int count = tess.getCenter(vec);
+      int count = tess.sumVertices(vec);
       vec.x /= count;
       vec.y /= count;
       vec.z /= count;
@@ -2083,7 +2083,6 @@ public class PShape3D extends PShape {
   
   public int[] fillColors(int[] colors) {
     updateTesselation();
-    //return tess.fillColors;
     if (colors == null || colors.length != tess.fillColors.capacity()) {
       colors = new int[tess.fillVertices.capacity()]; 
     }
@@ -2114,7 +2113,6 @@ public class PShape3D extends PShape {
 
   public int[] fillAmbient(int[] ambient) {
     updateTesselation();
-    //return tess.fillAmbient;
     if (ambient == null || ambient.length != tess.fillAmbient.capacity()) {
       ambient = new int[tess.fillAmbient.capacity()]; 
     }
@@ -2125,7 +2123,6 @@ public class PShape3D extends PShape {
 
   public int[] fillSpecular(int[] specular) {
     updateTesselation();
-//    return tess.fillSpecular;
     if (specular == null || specular.length != tess.fillSpecular.capacity()) {
       specular = new int[tess.fillSpecular.capacity()]; 
     }
@@ -2136,7 +2133,6 @@ public class PShape3D extends PShape {
 
   public int[] fillEmissive(int[] emissive) {
     updateTesselation();
-//    return tess.fillEmissive;
     if (emissive == null || emissive.length != tess.fillEmissive.capacity()) {
       emissive = new int[tess.fillEmissive.capacity()]; 
     }
@@ -2147,7 +2143,6 @@ public class PShape3D extends PShape {
 
   public float[] fillShininess(float[] shininess) {
     updateTesselation();
-//    return tess.fillShininess;
     if (shininess == null || shininess.length != tess.fillShininess.capacity()) {
       shininess = new float[tess.fillShininess.capacity()]; 
     }
@@ -2157,8 +2152,7 @@ public class PShape3D extends PShape {
   }  
   
   public int[] fillIndices(int[] indices) {
-    updateTesselation();
-//    return tess.fillIndices;    
+    updateTesselation();    
     if (indices == null || indices.length != tess.fillIndices.capacity()) {
       indices = new int[tess.fillIndices.capacity()]; 
     }
@@ -2199,7 +2193,6 @@ public class PShape3D extends PShape {
     
   public float[] lineVertices(float[] vertices) {
     updateTesselation();
-//    return tess.lineVertices;
     if (vertices == null || vertices.length != tess.lineVertices.capacity()) {
       vertices = new float[tess.lineVertices.capacity()]; 
     }
@@ -2210,7 +2203,6 @@ public class PShape3D extends PShape {
   
   public int[] lineColors(int[] colors) {
     updateTesselation();
-//    return tess.lineColors;
     if (colors == null || colors.length != tess.lineColors.capacity()) {
       colors = new int[tess.lineColors.capacity()]; 
     }
@@ -2221,7 +2213,6 @@ public class PShape3D extends PShape {
   
   public float[] lineAttributes(float[] attribs) {
     updateTesselation();
-//    return tess.lineDirWidths;
     if (attribs == null || attribs.length != tess.lineDirWidths.capacity()) {
       attribs = new float[tess.lineDirWidths.capacity()]; 
     }
@@ -2232,7 +2223,6 @@ public class PShape3D extends PShape {
   
   public int[] lineIndices(int[] indices) {
     updateTesselation();
-//    return tess.lineIndices;
     if (indices == null || indices.length != tess.lineIndices.capacity()) {
       indices = new int[tess.lineIndices.capacity()]; 
     }
@@ -2273,7 +2263,6 @@ public class PShape3D extends PShape {
   
   public float[] pointVertices(float[] vertices) {
     updateTesselation();
-//    return tess.pointVertices;
     if (vertices == null || vertices.length != tess.pointVertices.capacity()) {
       vertices = new float[tess.pointVertices.capacity()]; 
     }
@@ -2284,7 +2273,6 @@ public class PShape3D extends PShape {
   
   public int[] pointColors(int[] colors) {
     updateTesselation();
-//    return tess.pointColors;
     if (colors == null || colors.length != tess.pointColors.capacity()) {
       colors = new int[tess.pointColors.capacity()]; 
     }
@@ -2295,7 +2283,6 @@ public class PShape3D extends PShape {
   
   public float[] pointAttributes(float[] attribs) {
     updateTesselation();
-//    return tess.pointSizes;
     if (attribs == null || attribs.length != tess.pointSizes.capacity()) {
       attribs = new float[tess.pointSizes.capacity()]; 
     }
@@ -2306,7 +2293,6 @@ public class PShape3D extends PShape {
   
   public int[] pointIndices(int[] indices) {
     updateTesselation();
-//    return tess.pointIndices;
     if (indices == null || indices.length != tess.pointIndices.capacity()) {
       indices = new int[tess.pointIndices.capacity()]; 
     }
@@ -2517,6 +2503,7 @@ public class PShape3D extends PShape {
       }      
     } else {   
       if (!tessellated && shapeEnded) {
+        tess.clear();
         tessellator.setInGeometry(in);
         tessellator.setTessGeometry(tess);
         tessellator.setFill(fill || texture != null);
@@ -2785,51 +2772,85 @@ public class PShape3D extends PShape {
       
       // Copying any data remaining in the caches
       if (root.fillVerticesCache != null && root.fillVerticesCache.hasData()) {
+        root.fillVerticesCache.prepareForCopy();
         root.copyFillVertices(root.fillVerticesCache.offset, root.fillVerticesCache.size, root.fillVerticesCache.floatData);
         root.fillVerticesCache.reset();
       }
       
       if (root.fillColorsCache != null && root.fillColorsCache.hasData()) {
+        root.fillColorsCache.prepareForCopy();
         root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.intData);
         root.fillColorsCache.reset();
       }
       
       if (root.fillNormalsCache != null && root.fillNormalsCache.hasData()) {
+        root.fillNormalsCache.prepareForCopy();
         root.copyFillNormals(root.fillNormalsCache.offset, root.fillNormalsCache.size, root.fillNormalsCache.floatData);
         root.fillNormalsCache.reset();
       }
       
       if (root.fillTexCoordsCache != null && root.fillTexCoordsCache.hasData()) {
+        root.fillTexCoordsCache.prepareForCopy();
         root.copyFillTexCoords(root.fillTexCoordsCache.offset, root.fillTexCoordsCache.size, root.fillTexCoordsCache.floatData);
         root.fillTexCoordsCache.reset();
       }
       
+      if (root.fillAmbientCache != null && root.fillAmbientCache.hasData()) {
+        root.fillAmbientCache.prepareForCopy();
+        root.copyFillAmbient(root.fillAmbientCache.offset, root.fillAmbientCache.size, root.fillAmbientCache.intData);
+        root.fillAmbientCache.reset();      
+      }  
+
+      if (root.fillSpecularCache != null && root.fillSpecularCache.hasData()) {
+        root.fillSpecularCache.prepareForCopy();
+        root.copyfillSpecular(root.fillSpecularCache.offset, root.fillSpecularCache.size, root.fillSpecularCache.intData);
+        root.fillSpecularCache.reset();        
+      }
+      
+      if (root.fillEmissiveCache != null && root.fillEmissiveCache.hasData()) {
+        root.fillEmissiveCache.prepareForCopy();
+        root.copyFillEmissive(root.fillEmissiveCache.offset, root.fillEmissiveCache.size, root.fillEmissiveCache.intData);
+        root.fillEmissiveCache.reset();        
+      }
+      
+      if (root.fillShininessCache != null && root.fillShininessCache.hasData()) {
+        root.fillShininessCache.prepareForCopy();
+        root.copyFillShininess(root.fillShininessCache.offset, root.fillShininessCache.size, root.fillShininessCache.floatData);
+        root.fillShininessCache.reset();        
+      }      
+      
       if (root.lineVerticesCache != null && root.lineVerticesCache.hasData()) {
+        root.lineVerticesCache.prepareForCopy();
         root.copyLineVertices(root.lineVerticesCache.offset, root.lineVerticesCache.size, root.lineVerticesCache.floatData);
         root.lineVerticesCache.reset();
       }
       
       if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
+        root.lineColorsCache.prepareForCopy();
         root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.intData);
         root.lineColorsCache.reset();
       }
       
       if (root.lineAttributesCache != null && root.lineAttributesCache.hasData()) {
+        root.lineAttributesCache.prepareForCopy();
         root.copyLineAttributes(root.lineAttributesCache.offset, root.lineAttributesCache.size, root.lineAttributesCache.floatData);
         root.lineAttributesCache.reset();
       }      
     
      if (root.pointVerticesCache != null && root.pointVerticesCache.hasData()) {
+        root.pointVerticesCache.prepareForCopy();
         root.copyPointVertices(root.pointVerticesCache.offset, root.pointVerticesCache.size, root.pointVerticesCache.floatData);
         root.pointVerticesCache.reset();
       }
       
       if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
+        root.pointColorsCache.prepareForCopy();
         root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.intData);
         root.pointColorsCache.reset();
       }
       
       if (root.pointAttributesCache != null && root.pointAttributesCache.hasData()) {
+        root.pointAttributesCache.prepareForCopy();
         root.copyPointAttributes(root.pointAttributesCache.offset, root.pointAttributesCache.size, root.pointAttributesCache.floatData);
         root.pointAttributesCache.reset();
       }        
@@ -3120,12 +3141,14 @@ public class PShape3D extends PShape {
         child.copyFillGeometryToRoot();
       }    
     } else {
-      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {        
+      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {     
+        tess.prepareFillVerticesForCopy();
         root.copyFillGeometry(root.fillVertCopyOffset, tess.fillVertexCount, 
                               tess.fillVertices, tess.fillColors, tess.fillNormals, tess.fillTexcoords,
                               tess.fillAmbient, tess.fillSpecular, tess.fillEmissive, tess.fillShininess);
         root.fillVertCopyOffset += tess.fillVertexCount;
       
+        tess.prepareFillIndicesForCopy();
         root.copyFillIndices(root.fillIndCopyOffset, tess.fillIndexCount, tess.fillIndices);
         root.fillIndCopyOffset += tess.fillIndexCount;
       }
@@ -3141,15 +3164,17 @@ public class PShape3D extends PShape {
       } 
     } else {
  
-      if (0 < tess.fillVertexCount) {    
+      if (0 < tess.fillVertexCount) {
+        tess.prepareFillVerticesForCopy();
+        
         if (modifiedFillVertices) {
           if (root.fillVerticesCache == null) { 
             root.fillVerticesCache = new VertexCache(3, true);
-          }            
-          
+          }                      
           root.fillVerticesCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillVertices);
           modifiedFillVertices = false;
         } else if (root.fillVerticesCache != null && root.fillVerticesCache.hasData()) {
+          root.fillVerticesCache.prepareForCopy();
           root.copyFillVertices(root.fillVerticesCache.offset, root.fillVerticesCache.size, root.fillVerticesCache.floatData);
           root.fillVerticesCache.reset();
         }
@@ -3161,6 +3186,7 @@ public class PShape3D extends PShape {
           root.fillColorsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillColors);
           modifiedFillColors = false;            
         } else if (root.fillColorsCache != null && root.fillColorsCache.hasData()) {
+          root.fillColorsCache.prepareForCopy();
           root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.intData);
           root.fillColorsCache.reset();
         }
@@ -3172,6 +3198,7 @@ public class PShape3D extends PShape {
           root.fillNormalsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillNormals);            
           modifiedFillNormals = false;            
         } else if (root.fillNormalsCache != null && root.fillNormalsCache.hasData()) {
+          root.fillNormalsCache.prepareForCopy();
           root.copyFillNormals(root.fillNormalsCache.offset, root.fillNormalsCache.size, root.fillNormalsCache.floatData);
           root.fillNormalsCache.reset();
         }
@@ -3183,6 +3210,7 @@ public class PShape3D extends PShape {
           root.fillTexCoordsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillTexcoords);            
           modifiedFillTexCoords = false;
         } else if (root.fillTexCoordsCache != null && root.fillTexCoordsCache.hasData()) {
+          root.fillTexCoordsCache.prepareForCopy();
           root.copyFillTexCoords(root.fillTexCoordsCache.offset, root.fillTexCoordsCache.size, root.fillTexCoordsCache.floatData);
           root.fillTexCoordsCache.reset();
         }
@@ -3194,7 +3222,8 @@ public class PShape3D extends PShape {
           root.fillAmbientCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillAmbient);            
           modifiedFillAmbient = false;
         } else if (root.fillAmbientCache != null && root.fillAmbientCache.hasData()) {
-          root.copyfillAmbient(root.fillAmbientCache.offset, root.fillAmbientCache.size, root.fillAmbientCache.intData);
+          root.fillAmbientCache.prepareForCopy();
+          root.copyFillAmbient(root.fillAmbientCache.offset, root.fillAmbientCache.size, root.fillAmbientCache.intData);
           root.fillAmbientCache.reset();
         }
 
@@ -3205,6 +3234,7 @@ public class PShape3D extends PShape {
           root.fillSpecularCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillSpecular);            
           modifiedFillSpecular = false;
         } else if (root.fillSpecularCache != null && root.fillSpecularCache.hasData()) {
+          root.fillSpecularCache.prepareForCopy();
           root.copyfillSpecular(root.fillSpecularCache.offset, root.fillSpecularCache.size, root.fillSpecularCache.intData);
           root.fillSpecularCache.reset();
         }        
@@ -3216,7 +3246,8 @@ public class PShape3D extends PShape {
           root.fillEmissiveCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillEmissive);            
           modifiedFillEmissive = false;
         } else if (root.fillEmissiveCache != null && root.fillEmissiveCache.hasData()) {
-          root.copyfillEmissive(root.fillEmissiveCache.offset, root.fillEmissiveCache.size, root.fillEmissiveCache.intData);
+          root.fillEmissiveCache.prepareForCopy();
+          root.copyFillEmissive(root.fillEmissiveCache.offset, root.fillEmissiveCache.size, root.fillEmissiveCache.intData);
           root.fillEmissiveCache.reset();
         }          
         
@@ -3227,12 +3258,15 @@ public class PShape3D extends PShape {
           root.fillShininessCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillShininess);            
           modifiedFillShininess = false;
         } else if (root.fillShininessCache != null && root.fillShininessCache.hasData()) {
-          root.copyfillShininess(root.fillShininessCache.offset, root.fillShininessCache.size, root.fillShininessCache.floatData);
+          root.fillShininessCache.prepareForCopy();
+          root.copyFillShininess(root.fillShininessCache.offset, root.fillShininessCache.size, root.fillShininessCache.floatData);
           root.fillShininessCache.reset();
         }          
       } 
       
       if (0 < tess.lineVertexCount) {
+        tess.prepareLineVerticesForCopy();
+        
         if (modifiedLineVertices) {
           if (root.lineVerticesCache == null) { 
             root.lineVerticesCache = new VertexCache(3, true);
@@ -3240,6 +3274,7 @@ public class PShape3D extends PShape {
           root.lineVerticesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineVertices);
           modifiedLineVertices = false;
         } else if (root.lineVerticesCache != null && root.lineVerticesCache.hasData()) {
+          root.lineVerticesCache.prepareForCopy();
           root.copyLineVertices(root.lineVerticesCache.offset, root.lineVerticesCache.size, root.lineVerticesCache.floatData);
           root.lineVerticesCache.reset();
         }
@@ -3251,6 +3286,7 @@ public class PShape3D extends PShape {
           root.lineColorsCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineColors);
           modifiedLineColors = false;            
         } else if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
+          root.lineColorsCache.prepareForCopy();
           root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.intData);
           root.lineColorsCache.reset();
         }
@@ -3262,12 +3298,15 @@ public class PShape3D extends PShape {
           root.lineAttributesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineDirWidths);            
           modifiedLineAttributes = false;
         } else if (root.lineAttributesCache != null && root.lineAttributesCache.hasData()) {
+          root.lineAttributesCache.prepareForCopy();
           root.copyLineAttributes(root.lineAttributesCache.offset, root.lineAttributesCache.size, root.lineAttributesCache.floatData);
           root.lineAttributesCache.reset();
         }      
       }
 
       if (0 < tess.pointVertexCount) {
+        tess.preparePointVerticesForCopy();
+        
         if (modifiedPointVertices) {
           if (root.pointVerticesCache == null) { 
             root.pointVerticesCache = new VertexCache(3, true);
@@ -3275,6 +3314,7 @@ public class PShape3D extends PShape {
           root.pointVerticesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointVertices);
           modifiedPointVertices = false;
         } else if (root.pointVerticesCache != null && root.pointVerticesCache.hasData()) {
+          root.pointVerticesCache.prepareForCopy();
           root.copyPointVertices(root.pointVerticesCache.offset, root.pointVerticesCache.size, root.pointVerticesCache.floatData);
           root.pointVerticesCache.reset();
         }
@@ -3286,6 +3326,7 @@ public class PShape3D extends PShape {
           root.pointColorsCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointColors);
           modifiedPointColors = false;            
         } else if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
+          root.pointColorsCache.prepareForCopy();
           root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.intData);
           root.pointColorsCache.reset();
         }
@@ -3297,6 +3338,7 @@ public class PShape3D extends PShape {
           root.pointAttributesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointSizes);            
           modifiedPointAttributes = false;
         } else if (root.pointAttributesCache != null && root.pointAttributesCache.hasData()) {
+          root.pointAttributesCache.prepareForCopy();
           root.copyPointAttributes(root.pointAttributesCache.offset, root.pointAttributesCache.size, root.pointAttributesCache.floatData);
           root.pointAttributesCache.reset();
         }        
@@ -3376,7 +3418,7 @@ public class PShape3D extends PShape {
   }   
 
   
-  protected void copyfillAmbient(int offset, int size, IntBuffer ambient) {
+  protected void copyFillAmbient(int offset, int size, IntBuffer ambient) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, ambient);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
@@ -3390,14 +3432,14 @@ public class PShape3D extends PShape {
   }
 
   
-  protected void copyfillEmissive(int offset, int size, IntBuffer emissive) {
+  protected void copyFillEmissive(int offset, int size, IntBuffer emissive) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_INT, size * PGL.SIZEOF_INT, emissive);      
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
   }  
 
   
-  protected void copyfillShininess(int offset, int size, FloatBuffer shininess) {
+  protected void copyFillShininess(int offset, int size, FloatBuffer shininess) {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
     pgl.glBufferSubData(PGL.GL_ARRAY_BUFFER, offset * PGL.SIZEOF_FLOAT, size * PGL.SIZEOF_FLOAT, shininess);
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);     
@@ -3446,10 +3488,12 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (hasLines) {
+        tess.prepareLineVerticesForCopy();
         root.copyLineGeometry(root.lineVertCopyOffset, tess.lineVertexCount, 
                               tess.lineVertices, tess.lineColors, tess.lineDirWidths);        
         root.lineVertCopyOffset += tess.lineVertexCount;
         
+        tess.prepareLineIndicesForCopy();
         root.copyLineIndices(root.lineIndCopyOffset, tess.lineIndexCount, tess.lineIndices);
         root.lineIndCopyOffset += tess.lineIndexCount;        
       }
@@ -3540,10 +3584,12 @@ public class PShape3D extends PShape {
       }    
     } else {
       if (hasPoints) {
+        tess.preparePointVerticesForCopy();
         root.copyPointGeometry(root.pointVertCopyOffset, tess.pointVertexCount, 
                                tess.pointVertices, tess.pointColors, tess.pointSizes);        
         root.pointVertCopyOffset += tess.pointVertexCount;
         
+        tess.preparePointIndicesForCopy();
         root.copyPointIndices(root.pointIndCopyOffset, tess.pointIndexCount, tess.pointIndices);
         root.pointIndCopyOffset += tess.pointIndexCount;        
       }
@@ -3908,9 +3954,9 @@ public class PShape3D extends PShape {
   // to the VBOs with fewer calls.
   protected class VertexCache {
     boolean isFloat;
-    int ncoords;
-    int offset;
-    int size;    
+    int ncoords; // Number of components per data element
+    int offset;  // Offset (in the dest VBO) to start copying this data to
+    int size;    // Total number of data elements
     FloatBuffer floatData;
     IntBuffer intData;
     
@@ -3929,7 +3975,12 @@ public class PShape3D extends PShape {
     void reset() {
       offset = 0;
       size = 0;
-    }    
+      if (isFloat) {
+        floatData.clear();
+      } else {
+        intData.clear();
+      }
+    }
     
     void add(int dataOffset, int dataSize, FloatBuffer newData) {
       if (size == 0) {
@@ -3938,40 +3989,12 @@ public class PShape3D extends PShape {
       
       int oldSize = floatData.capacity() / ncoords;
       if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
+        int newSize = expandSize(oldSize, size + dataSize);
+        prepareFloatDataForCopy();
         expand(newSize);
       }
       
-//      if (dataSize <= PGraphicsLWJGL.MIN_ARRAYCOPY_SIZE) {
-//        // Copying elements one by one instead of using arrayCopy is more efficient for
-//        // few vertices...
-//        for (int i = 0; i < dataSize; i++) {
-//          int srcIndex = ncoords * i;
-//          int destIndex = ncoords * (size + i);
-//          
-//          if (ncoords == 2) {
-//            floatData[destIndex++] = newData[srcIndex++];
-//            floatData[destIndex  ] = newData[srcIndex  ];
-//          } else if (ncoords == 3) {
-//            floatData[destIndex++] = newData[srcIndex++];
-//            floatData[destIndex++] = newData[srcIndex++];
-//            floatData[destIndex  ] = newData[srcIndex  ];
-//          } else if (ncoords == 4) {
-//            floatData[destIndex++] = newData[srcIndex++];
-//            floatData[destIndex++] = newData[srcIndex++];
-//            floatData[destIndex++] = newData[srcIndex++];
-//            floatData[destIndex  ] = newData[srcIndex  ];            
-//          } else {
-//            for (int j = 0; j < ncoords; j++) {
-//              floatData[destIndex++] = newData[srcIndex++];
-//            }            
-//          }
-//        }
-//      } else {
-//        PApplet.arrayCopy(newData, 0, floatData, ncoords * size, ncoords * dataSize);
-//      }
       floatData.position(ncoords * size);
-      newData.position(0);
       floatData.put(newData);
       
       size += dataSize;
@@ -3984,47 +4007,18 @@ public class PShape3D extends PShape {
       
       int oldSize = intData.capacity() / ncoords;
       if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
+        int newSize = expandSize(oldSize, size + dataSize);
+        prepareIntDataForCopy();
         expand(newSize);
       }
       
-//      if (dataSize <= PGraphicsLWJGL.MIN_ARRAYCOPY_SIZE) {
-//        // Copying elements one by one instead of using arrayCopy is more efficient for
-//        // few vertices...
-//        for (int i = 0; i < dataSize; i++) {
-//          int srcIndex = ncoords * i;
-//          int destIndex = ncoords * (size + i);
-//          
-//          if (ncoords == 2) {
-//            intData[destIndex++] = newData[srcIndex++];
-//            intData[destIndex  ] = newData[srcIndex  ];
-//          } else if (ncoords == 3) {
-//            intData[destIndex++] = newData[srcIndex++];
-//            intData[destIndex++] = newData[srcIndex++];
-//            intData[destIndex  ] = newData[srcIndex  ];
-//          } else if (ncoords == 4) {
-//            intData[destIndex++] = newData[srcIndex++];
-//            intData[destIndex++] = newData[srcIndex++];
-//            intData[destIndex++] = newData[srcIndex++];
-//            intData[destIndex  ] = newData[srcIndex  ];            
-//          } else {
-//            for (int j = 0; j < ncoords; j++) {
-//              intData[destIndex++] = newData[srcIndex++];
-//            }            
-//          }
-//        }
-//      } else {
-//        PApplet.arrayCopy(newData, 0, intData, ncoords * size, ncoords * dataSize);
-//      }
       intData.position(ncoords * size);
-      newData.position(0);
       intData.put(newData);
       
       size += dataSize;
     } 
     
-    void add(int dataOffset, int dataSize, float[] newData, PMatrix tr) {
-      
+    void add(int dataOffset, int dataSize, float[] newData, PMatrix tr) {      
       if (tr instanceof PMatrix2D) {
         add(dataOffset, dataSize, newData, (PMatrix2D)tr);  
       } else if (tr instanceof PMatrix3D) {
@@ -4039,7 +4033,8 @@ public class PShape3D extends PShape {
       
       int oldSize = floatData.capacity() / ncoords;
       if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
+        int newSize = expandSize(oldSize, size + dataSize);
+        prepareFloatDataForCopy();
         expand(newSize);
       }
       
@@ -4047,15 +4042,8 @@ public class PShape3D extends PShape {
         float[] data0 = new float[2];
         float[] data1 = new float[2];
         for (int i = 0; i < dataSize; i++) {
-          int srcIndex = ncoords * i;
-          newData.position(ncoords * i);
-          newData.get(data0, 0, 2);
-          //float x = newData[srcIndex++];
-          //float y = newData[srcIndex  ];
+          newData.get(data0);
 
-          int destIndex = ncoords * (size + i); 
-//          floatData[destIndex++] = x * tr.m00 + y * tr.m01 + tr.m02;
-//          floatData[destIndex  ] = x * tr.m10 + y * tr.m11 + tr.m12;
           data1[0] = data0[0] * tr.m00 + data0[1] * tr.m01 + tr.m02;
           data1[1] = data0[0] * tr.m10 + data0[1] * tr.m11 + tr.m12;
           floatData.position(ncoords * (size + i));
@@ -4073,7 +4061,8 @@ public class PShape3D extends PShape {
       
       int oldSize = floatData.capacity() / ncoords;
       if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
+        int newSize = expandSize(oldSize, size + dataSize);
+        prepareIntDataForCopy();
         expand(newSize);
       }
       
@@ -4081,28 +4070,37 @@ public class PShape3D extends PShape {
         float[] data0 = new float[3];
         float[] data1 = new float[3];
         for (int i = 0; i < dataSize; i++) {
-          int srcIndex = ncoords * i;
-//          float x = newData[srcIndex++];
-//          float y = newData[srcIndex++];
-//          float z = newData[srcIndex++];
-          newData.position(ncoords * i);
-          newData.get(data0, 0, 3);
+          newData.get(data0);
           
-          int destIndex = ncoords * (size + i); 
-//          floatData[destIndex++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
-//          floatData[destIndex++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
-//          floatData[destIndex  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
           data1[0] = data0[0] * tr.m00 + data0[1] * tr.m01 + data0[2] * tr.m02 + tr.m03;
           data1[1] = data0[0] * tr.m10 + data0[1] * tr.m11 + data0[2] * tr.m12 + tr.m13;
           data1[2] = data0[0] * tr.m20 + data0[1] * tr.m21 + data0[2] * tr.m22 + tr.m23;
           
           floatData.position(ncoords * (size + i));
-          floatData.put(data1, 0, 3);           
+          floatData.put(data1);
         }          
       }      
       
       size += dataSize;
     }
+    
+    void prepareForCopy() {
+      if (isFloat) {
+        prepareFloatDataForCopy();
+      } else {
+        prepareIntDataForCopy();
+      }
+    }
+    
+    void prepareFloatDataForCopy() {
+      floatData.position(0);
+      floatData.limit(ncoords * size);
+    }
+
+    void prepareIntDataForCopy() {
+      intData.position(0);
+      intData.limit(ncoords * size);      
+    }    
     
     void expand(int n) {
       if (isFloat) {
@@ -4113,25 +4111,13 @@ public class PShape3D extends PShape {
     }
 
     void expandFloat(int n) {
-//      float temp[] = new float[ncoords * n];      
-//      PApplet.arrayCopy(floatData, 0, temp, 0, ncoords * size);
-//      floatData = temp;    
-      
-      FloatBuffer temp = pgl.createFloatBuffer(ncoords * n);      
-      floatData.position(0);
-      floatData.limit(ncoords * size);
+      FloatBuffer temp = pgl.createFloatBuffer(ncoords * n);    
       temp.put(floatData);
       floatData = temp;      
     }
     
     void expandInt(int n) {
-//      int temp[] = new int[ncoords * n];      
-//      PApplet.arrayCopy(intData, 0, temp, 0, ncoords * size);
-//      intData = temp;     
-      
-      IntBuffer temp = pgl.createIntBuffer(ncoords * n);      
-      intData.position(0);
-      intData.limit(ncoords * size);
+      IntBuffer temp = pgl.createIntBuffer(ncoords * n);
       temp.put(intData);
       intData = temp;         
     }
@@ -4146,8 +4132,7 @@ public class PShape3D extends PShape {
     
     boolean hasData() {
       return 0 < size;
-    }
-    
+    }    
   }  
   
   
