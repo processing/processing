@@ -8143,8 +8143,8 @@ public class PGraphicsLWJGL extends PGraphics {
       float cy0 = 0;
       for (int i = 0; i < fillVertexCount; i++) {
         index = 3 * i;
-        cx += fillVertices.get(index++);
-        cy += fillVertices.get(index  );
+        cx0 += fillVertices.get(index++);
+        cy0 += fillVertices.get(index  );
       }      
       for (int i = 0; i < lineVertexCount; i++) {
         index = 3 * i;
@@ -8168,8 +8168,11 @@ public class PGraphicsLWJGL extends PGraphics {
         for (int i = 0; i < fillVertexCount; i++) {
           index = 3 * i;
           for (int j = 0; j < 2; j++) {
+            float v = fillVertices.get(index + j);
+            
             fillVertices.position(index + j);
-            fillVertices.put(fillVertices.get(index + j) + tvect[j]);
+            //fillVertices.put(v + tvect[j]);
+            fillVertices.put(v + 100);
           }
         }        
       }
@@ -8270,7 +8273,7 @@ public class PGraphicsLWJGL extends PGraphics {
       }
     }
     
-    public int getCenter(PVector v) {
+    public int sumVertices(PVector v) {
       int index;
       for (int i = 0; i < fillVertexCount; i++) {
         index = 3 * i;       
@@ -8291,11 +8294,9 @@ public class PGraphicsLWJGL extends PGraphics {
         v.z += pointVertices.get(index  );          
       }      
       int ntot = fillVertexCount + lineVertexCount + pointVertexCount;
-      v.x /= ntot;
-      v.y /= ntot;
-      v.z /= ntot;
       return ntot;
-    }
+    }    
+    
     
     public void applyMatrix(PMatrix2D tr) {
       float[] vec0 = new float[2];
