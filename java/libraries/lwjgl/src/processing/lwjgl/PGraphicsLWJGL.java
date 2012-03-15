@@ -1255,9 +1255,9 @@ public class PGraphicsLWJGL extends PGraphics {
     
     tessGeo.prepareLineIndicesForCopy();
     
-    int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, tessGeo.lineIndices, vboMode);    
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.lineIndexCount * PGL.SIZEOF_INDEX, 
+                     tessGeo.lineIndices, vboMode);   
   }
   
   protected void unbindLineBuffers() {
@@ -1323,9 +1323,9 @@ public class PGraphicsLWJGL extends PGraphics {
     
     tessGeo.preparePointIndicesForCopy();
     
-    int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, tessGeo.pointIndices, vboMode);    
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.pointIndexCount * PGL.SIZEOF_INDEX, 
+                     tessGeo.pointIndices, vboMode); 
   }
   
   protected void unbindPointBuffers() {

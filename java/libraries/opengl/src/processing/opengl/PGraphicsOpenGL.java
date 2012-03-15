@@ -1255,9 +1255,9 @@ public class PGraphicsOpenGL extends PGraphics {
     
     tessGeo.prepareLineIndicesForCopy();
     
-    int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, tessGeo.lineIndices, vboMode);    
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.lineIndexCount * PGL.SIZEOF_INDEX, 
+                     tessGeo.lineIndices, vboMode);    
   }
   
   protected void unbindLineBuffers() {
@@ -1323,9 +1323,9 @@ public class PGraphicsOpenGL extends PGraphics {
     
     tessGeo.preparePointIndicesForCopy();
     
-    int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, tessGeo.pointIndices, vboMode);    
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.pointIndexCount * PGL.SIZEOF_INDEX, 
+                     tessGeo.pointIndices, vboMode);    
   }
   
   protected void unbindPointBuffers() {
@@ -2281,8 +2281,9 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void renderLines() {
     if (!lineVBOsCreated) {
       createLineBuffers();
-      lineVBOsCreated = true;
+      lineVBOsCreated = true;      
     }
+    
     updateLineBuffers();
     
     LineShader shader = getLineShader();
@@ -2294,7 +2295,8 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.glDrawElements(PGL.GL_TRIANGLES, tessGeo.lineIndexCount, PGL.INDEX_TYPE, 0);    
     
     shader.stop();
-    unbindLineBuffers();
+    
+    unbindLineBuffers();    
   }  
   
   
