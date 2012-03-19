@@ -26,7 +26,6 @@ package processing.opengl;
 import processing.core.*;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.FloatBuffer;
 
 /**
  * This class encapsulates a GLSL shader program, including a vertex 
@@ -37,6 +36,7 @@ public class PShader {
   protected PApplet parent;
   protected PGraphicsOpenGL pg; 
   protected PGL pgl;
+  protected PGL.Context context;      // The context that created this shader.
 
   protected URL vertexURL;
   protected URL fragmentURL;
@@ -48,14 +48,6 @@ public class PShader {
   protected int vertexShader;
   protected int fragmentShader;  
 
-  protected FloatBuffer vec1f;
-  protected FloatBuffer vec2f;
-  protected FloatBuffer vec3f;
-  protected FloatBuffer vec4f;
-  protected FloatBuffer mat2x2;
-  protected FloatBuffer mat3x3;
-  protected FloatBuffer mat4x4;
-  
   public PShader() {
     parent = null;
     pg = null;
@@ -226,91 +218,49 @@ public class PShader {
   
   public void set1FloatVecUniform(int loc, float[] vec) {
     if (-1 < loc) {
-      if (vec1f == null || vec1f.capacity() != vec.length) {
-        vec1f = pgl.createFloatBuffer(vec.length);
-      }
-      vec1f.rewind();
-      vec1f.put(vec);     
-      vec1f.flip(); 
-      pgl.glUniform1fv(loc, vec.length, vec1f);
+      pgl.glUniform1fv(loc, vec.length, vec, 0);
     }
   }
   
   
   public void set2FloatVecUniform(int loc, float[] vec) {
     if (-1 < loc) {
-      if (vec2f == null || vec2f.capacity() != vec.length) {
-        vec2f = pgl.createFloatBuffer(vec.length);
-      }
-      vec2f.rewind();
-      vec2f.put(vec);
-      vec2f.flip();
-      pgl.glUniform2fv(loc, vec.length / 2, vec2f);
+      pgl.glUniform2fv(loc, vec.length / 2, vec, 0);
     }
   }
 
   
   public void set3FloatVecUniform(int loc, float[] vec) {
     if (-1 < loc) {
-      if (vec3f == null || vec3f.capacity() != vec.length) {
-        vec3f = pgl.createFloatBuffer(vec.length);
-      }
-      vec3f.rewind();
-      vec3f.put(vec);
-      vec3f.flip();
-      pgl.glUniform3fv(loc, vec.length / 3, vec3f);
+      pgl.glUniform3fv(loc, vec.length / 3, vec, 0);
     }
   }  
 
   
   public void set4FloatVecUniform(int loc, float[] vec) {
     if (-1 < loc) {
-      if (vec4f == null || vec4f.capacity() != vec.length) {
-        vec4f = pgl.createFloatBuffer(vec.length);
-      }
-      vec4f.rewind();
-      vec4f.put(vec);
-      vec4f.flip();
-      pgl.glUniform4fv(loc, vec.length / 4, vec4f);
+      pgl.glUniform4fv(loc, vec.length / 4, vec, 0);
     }
   }    
   
   
   public void set2x2MatUniform(int loc, float[] mat) {
     if (-1 < loc) {
-      if (mat2x2 == null) {
-        mat2x2 = pgl.createFloatBuffer(2 * 2);
-      }           
-      mat2x2.rewind();
-      mat2x2.put(mat);
-      mat2x2.flip();
-      pgl.glUniformMatrix2fv(loc, 1, false, mat2x2);
+      pgl.glUniformMatrix2fv(loc, 1, false, mat, 0);
     }
   }    
   
 
   public void set3x3MatUniform(int loc, float[] mat) {
     if (-1 < loc) {
-      if (mat3x3 == null) {
-        mat3x3 = pgl.createFloatBuffer(3 * 3);
-      }
-      mat3x3.rewind();
-      mat3x3.put(mat);
-      mat3x3.flip();
-      pgl.glUniformMatrix3fv(loc, 1, false, mat3x3);
+      pgl.glUniformMatrix3fv(loc, 1, false, mat, 0);
     }
   }
   
   
   public void set4x4MatUniform(int loc, float[] mat) {
     if (-1 < loc) {
-      if (mat4x4 == null) {
-        mat4x4 = pgl.createFloatBuffer(4 * 4);
-      }
-      mat4x4.rewind();
-      mat4x4.put(mat);
-      mat4x4.flip();
-      pgl.glUniformMatrix4fv(loc, 1, false, mat4x4);
+      pgl.glUniformMatrix4fv(loc, 1, false, mat, 0);
     }
   }    
 
@@ -343,7 +293,9 @@ public class PShader {
   }
     
   protected void init() {
-    if (programObject == 0) {
+    if (programObject == 0 || contextIsOutdated()) {
+      
+      context = pgl.getContext();
       programObject = pg.createGLSLProgramObject();
       
       if (vertexFilename != null) {
@@ -369,6 +321,17 @@ public class PShader {
       pgl.glValidateProgram(programObject);
     }
   }  
+  
+  
+  protected boolean contextIsOutdated() {
+    boolean outdated = !pgl.contextIsCurrent(context);
+    if (outdated) {
+      programObject = 0;
+      vertexShader = 0;
+      fragmentShader = 0;
+    }
+    return outdated;
+  }
   
   
   /**
@@ -473,4 +436,3 @@ public class PShader {
     }
   }  
 }
-

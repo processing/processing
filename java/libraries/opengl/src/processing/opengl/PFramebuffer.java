@@ -38,10 +38,14 @@ import java.nio.IntBuffer;
  * 
  * By Andres Colubri.
  */
+
+// TODO: restart framebuffer when context changes
+
 public class PFramebuffer implements PConstants {  
   protected PApplet parent;
   protected PGraphicsOpenGL pg;
   protected PGL pgl;
+  protected PGL.Context context;      // The context that created this framebuffer.
   
   public int glFboID;
   public int glDepthBufferID;
@@ -187,6 +191,9 @@ public class PFramebuffer implements PConstants {
   }
   
   public void bind() {
+    // if context is outdated ??
+    
+    
     if (screenFb) {
       if (PGraphicsOpenGL.fboSupported) {
         pgl.glBindFramebuffer(PGL.GL_FRAMEBUFFER, 0);
@@ -341,10 +348,11 @@ public class PFramebuffer implements PConstants {
   protected void allocate() {
     release(); // Just in the case this object is being re-allocated.    
     
+    context = pgl.getContext();
+    
     if (screenFb) {
       glFboID = 0;
-    } else if (fboMode) {
-      //glFboID = ogl.createGLResource(PGraphicsAndroid3D.GL_FRAME_BUFFER); 
+    } else if (fboMode) {      
       glFboID = pg.createFrameBufferObject();
     }  else {
       glFboID = 0;

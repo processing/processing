@@ -42,7 +42,7 @@ public class PTexture implements PConstants {
   public int width, height;
       
   protected PApplet parent;           // The Processing applet
-  protected PGraphicsOpenGL pg;    // The main renderer
+  protected PGraphicsOpenGL pg;       // The main renderer
   protected PGL pgl;                  // The interface between Processing and OpenGL.
   protected PGL.Context context;      // The context that created this texture.
   
@@ -66,8 +66,6 @@ public class PTexture implements PConstants {
 
   protected int[] tempPixels = null;
   protected PFramebuffer tempFbo = null;
-  
-  protected IntBuffer texels;
   
   protected Object bufferSource;
   protected LinkedList<BufferData> bufferCache = null;
@@ -103,8 +101,7 @@ public class PTexture implements PConstants {
     this.parent = parent;
        
     pg = (PGraphicsOpenGL)parent.g;
-    pgl = pg.pgl;
-    context = pgl.getContext();
+    pgl = pg.pgl;    
     
     glID = 0;
      
@@ -120,8 +117,7 @@ public class PTexture implements PConstants {
     } finally {
       super.finalize();
     }
-  }  
-
+  }    
   
 
   ////////////////////////////////////////////////////////////
@@ -777,6 +773,7 @@ public class PTexture implements PConstants {
         
     pgl.enableTexturing(glTarget);
     
+    context = pgl.getContext();
     glID = pg.createTextureObject();    
     
     pgl.glBindTexture(glTarget, glID);    
@@ -807,6 +804,14 @@ public class PTexture implements PConstants {
     }    
   }
 
+  
+  protected boolean contextIsOutdated() {
+    boolean outdated = !pgl.contextIsCurrent(context);
+    if (outdated) {
+      glID = 0;     
+    }
+    return outdated;
+  }
   
   ///////////////////////////////////////////////////////////  
 
@@ -846,21 +851,14 @@ public class PTexture implements PConstants {
   protected void setTexels(int[] pix, int x, int y, int w, int h) {
     setTexels(pix, 0, x, y, w, h);
   }
+  
+  protected void setTexels(int[] pix, int level, int x, int y, int w, int h) {
+    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, IntBuffer.wrap(pix));
+  }
 
   protected void setTexels(IntBuffer buffer, int x, int y, int w, int h) {
     setTexels(buffer, 0, x, y, w, h);
-  }    
-  
-  protected void setTexels(int[] pix, int level, int x, int y, int w, int h) {
-    if (texels == null || texels.capacity() != width * height) {      
-      texels = pgl.createIntBuffer(width * height);
-    }
-    texels.position(0);
-    texels.limit(pix.length);
-    texels.put(pix);
-    texels.flip();
-    pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, texels);
-  }
+  }  
   
   protected void setTexels(IntBuffer buffer, int level, int x, int y, int w, int h) {
     pgl.glTexSubImage2D(glTarget, level, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);

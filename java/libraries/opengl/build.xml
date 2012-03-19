@@ -17,7 +17,7 @@
 	   srcdir="src" destdir="bin" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   classpath="../../../core/core.jar; library/jogl.all.jar; library/gluegen-rt.jar; library/nativewindow.all.jar" />
+	   classpath="../../../core/core.jar; library/jogl.all.jar; library/gluegen-rt.jar" />
 
     <!-- Copy the shaders to the bin folder. 
 	 Eclipse does this automatically. -->

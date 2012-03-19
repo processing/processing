@@ -16,6 +16,8 @@ float ry =0;
 
 void setup() {
   size(1024, 768, P3D);
+  noSmooth();
+  frameRate(120);  
   radio = height/3.5;
   
   lista = new pelo[cuantos];
