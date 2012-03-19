@@ -1809,8 +1809,9 @@ public class PApplet extends Applet
       }
 
       // render a single frame
-      handleDraw();
-
+      //handleDraw();
+      if (g != null) g.requestDraw();
+      
       if (frameCount == 1) {
         // Call the request focus event once the image is sure to be on
         // screen and the component is valid. The OpenGL renderer will
@@ -2073,6 +2074,61 @@ public class PApplet extends Applet
     });
   }
 
+ 
+  public void removeListeners() {
+    removeMouseListener(this);
+    removeMouseMotionListener(this);
+    removeKeyListener(this);
+    removeFocusListener(this);
+
+//    removeComponentListener(??);      
+//    addComponentListener(new ComponentAdapter() {
+//      public void componentResized(ComponentEvent e) {
+//        Component c = e.getComponent();
+//        //System.out.println("componentResized() " + c);
+//        Rectangle bounds = c.getBounds();
+//        resizeRequest = true;
+//        resizeWidth = bounds.width;
+//        resizeHeight = bounds.height;
+//
+//        if (!looping) {
+//          redraw();
+//        }
+//      }
+//    });    
+  }
+  
+  
+  public void addListeners(Canvas canvas) {
+    canvas.addMouseListener(this);
+    canvas.addMouseMotionListener(this);
+    canvas.addKeyListener(this);
+    canvas.addFocusListener(this);
+
+//    canvas.addComponentListener(new ComponentAdapter() {
+//      public void componentResized(ComponentEvent e) {
+//        Component c = e.getComponent();
+//        //System.out.println("componentResized() " + c);
+//        Rectangle bounds = c.getBounds();
+//        resizeRequest = true;
+//        resizeWidth = bounds.width;
+//        resizeHeight = bounds.height;
+//
+//        if (!looping) {
+//          redraw();
+//        }
+//      }
+//    });    
+  }
+  
+  
+  public void removeListeners(Canvas canvas) {
+    canvas.removeMouseListener(this);
+    canvas.removeMouseMotionListener(this);
+    canvas.removeKeyListener(this);
+    canvas.removeFocusListener(this);
+
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -2777,6 +2833,7 @@ public class PApplet extends Applet
   public void frameRate(float newRateTarget) {
     frameRateTarget = newRateTarget;
     frameRatePeriod = (long) (1000000000.0 / frameRateTarget);
+    g.setFrameRate(newRateTarget);
   }
 
 
@@ -12136,7 +12193,7 @@ public class PApplet extends Applet
    * @param fovy field-of-view angle (in radians) for vertical direction
    * @param aspect ratio of width to height
    * @param zNear z-position of nearest clipping plane
-   * @param zFar z-position of nearest farthest plane
+   * @param zFar z-position of farthest clipping plane
    */
   public void perspective(float fovy, float aspect, float zNear, float zFar) {
     if (recorder != null) recorder.perspective(fovy, aspect, zNear, zFar);
