@@ -402,6 +402,25 @@ public class PFramebuffer implements PConstants {
   }
   
   
+  protected boolean contextIsOutdated() {
+    boolean outdated = !pgl.contextIsCurrent(context);
+    if (outdated) {
+      glFboID = 0;
+      glDepthBufferID = 0;
+      glStencilBufferID = 0;
+      glDepthStencilBufferID = 0;    
+      glColorBufferMultisampleID = 0;
+      
+      for (int i = 0; i < numColorBuffers; i++) {
+        colorBufferTex[i] = null;
+      }
+     
+      backupTexture = null;            
+    }
+    return outdated;
+  }  
+  
+  
   protected void createColorBufferMultisample() {
     if (screenFb) return;
     
