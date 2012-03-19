@@ -34,6 +34,7 @@ import java.util.TimerTask;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
+import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
@@ -152,6 +153,8 @@ public class PGL {
   
   public static final int GL_ARRAY_BUFFER         = GL.GL_ARRAY_BUFFER;
   public static final int GL_ELEMENT_ARRAY_BUFFER = GL.GL_ELEMENT_ARRAY_BUFFER;
+  
+  public static final int GL_SAMPLES = GL.GL_SAMPLES;
     
   public static final int GL_FRAMEBUFFER_COMPLETE                      = GL.GL_FRAMEBUFFER_COMPLETE;    
   public static final int GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
@@ -180,10 +183,10 @@ public class PGL {
   public static final int GL_EXTENSIONS = GL.GL_EXTENSIONS;
     
   public static final int GL_MAX_TEXTURE_SIZE         = GL.GL_MAX_TEXTURE_SIZE;
+  public static final int GL_MAX_SAMPLES              = GL2.GL_MAX_SAMPLES;  
   public static final int GL_ALIASED_LINE_WIDTH_RANGE = GL.GL_ALIASED_LINE_WIDTH_RANGE;
   public static final int GL_ALIASED_POINT_SIZE_RANGE = GL.GL_ALIASED_POINT_SIZE_RANGE;
-  public static final int GL_SAMPLES                  = GL.GL_SAMPLES;
-
+  
   public static final int GLU_TESS_WINDING_NONZERO = GLU.GLU_TESS_WINDING_NONZERO;
   public static final int GLU_TESS_WINDING_ODD     = GLU.GLU_TESS_WINDING_ODD;  
     

@@ -96,9 +96,10 @@ public class PGraphicsOpenGL extends PGraphics {
   
   /** Some hardware limits */  
   static public int maxTextureSize;
+  static public int maxSamples;
   static public float maxPointSize;
   static public float maxLineWidth;
-  
+    
   /** OpenGL information strings */
   static public String OPENGL_VENDOR;
   static public String OPENGL_RENDERER;
@@ -1428,12 +1429,14 @@ public class PGraphicsOpenGL extends PGraphics {
       flushMode = FLUSH_WHEN_FULL;
     }
     
-    int[] temp = { 0 };
-    pgl.glGetIntegerv(PGL.GL_SAMPLES, temp, 0);    
-    if (antialias != temp[0]) {
-      PGraphics.showWarning("Smooth level " + antialias + " not supported. Using " + temp[0] + " instead.");
-      antialias = temp[0];
-    }    
+    if (primarySurface) {
+      int[] temp = { 0 };
+      pgl.glGetIntegerv(PGL.GL_SAMPLES, temp, 0);
+      if (antialias != temp[0]) {
+        PGraphics.showWarning("Smooth level " + antialias + " not supported. Using " + temp[0] + " instead.");
+        antialias = temp[0];
+      }    
+    }
     if (antialias < 2) {
       pgl.glDisable(PGL.GL_MULTISAMPLE);
       pgl.glEnable(PGL.GL_POINT_SMOOTH);
@@ -2932,6 +2935,11 @@ public class PGraphicsOpenGL extends PGraphics {
   
   public void smooth(int level) {
     smooth = true;
+    
+    if (maxSamples < level) {
+      PGraphics.showWarning("Smooth level not supported by the video card. Using " + maxSamples + " instead.");
+      level = maxSamples;      
+    }
     
     if (antialias != level) {      
       antialias = level;
@@ -5642,6 +5650,9 @@ public class PGraphicsOpenGL extends PGraphics {
     
     pgl.glGetIntegerv(PGL.GL_MAX_TEXTURE_SIZE, temp, 0);    
     maxTextureSize = temp[0];  
+
+    pgl.glGetIntegerv(PGL.GL_MAX_SAMPLES, temp, 0);
+    maxSamples = temp[0];    
     
     pgl.glGetIntegerv(PGL.GL_ALIASED_LINE_WIDTH_RANGE, temp, 0);    
     maxLineWidth = temp[1];
