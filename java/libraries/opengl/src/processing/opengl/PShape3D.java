@@ -2590,9 +2590,14 @@ public class PShape3D extends PShape {
   
   protected void tessellateBox() {
     // TODO: move to InGeometry
-    float w = params[0];
-    float h = params[1];
-    float d = params[2];
+    float w, h, d;
+    if (params.length == 1) {
+      w = h = d = params[0];  
+    } else {
+      w = params[0];
+      h = params[1];
+      d = params[2];
+    }
         
     float x1 = -w/2f; float x2 = w/2f;
     float y1 = -h/2f; float y2 = h/2f;

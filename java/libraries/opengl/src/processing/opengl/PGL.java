@@ -139,8 +139,8 @@ public class PGL {
   public static final int GL_CLAMP_TO_EDGE = GL.GL_CLAMP_TO_EDGE;
   public static final int GL_REPEAT        = GL.GL_REPEAT;
   
-  public static final int GL_RGBA8 = -1;  
-  public static final int GL_DEPTH24_STENCIL8 = -1;
+  public static final int GL_RGBA8            = GL.GL_RGBA8;  
+  public static final int GL_DEPTH24_STENCIL8 = GL.GL_DEPTH24_STENCIL8;
   
   public static final int GL_DEPTH_COMPONENT16 = GL.GL_DEPTH_COMPONENT16;
   public static final int GL_DEPTH_COMPONENT24 = GL.GL_DEPTH_COMPONENT24;
@@ -876,7 +876,7 @@ public class PGL {
   // Pixels  
   
   
-  public void setReadBuffer(int buf) {
+  public void glReadBuffer(int buf) {
     gl2.glReadBuffer(buf);
   }
   
@@ -886,7 +886,7 @@ public class PGL {
   } 
 
   
-  public void setDrawBuffer(int buf) {
+  public void glDrawBuffer(int buf) {
     gl2.glDrawBuffer(buf);
   }
   

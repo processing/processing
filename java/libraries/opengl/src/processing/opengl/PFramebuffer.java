@@ -138,7 +138,7 @@ public class PFramebuffer implements PConstants {
     }
     
     screenFb = screen;
-
+    
     allocate();
     noDepth = false;
     
@@ -187,7 +187,9 @@ public class PFramebuffer implements PConstants {
   public void copy(PFramebuffer dest) {
     pgl.glBindFramebuffer(PGL.GL_READ_FRAMEBUFFER, this.glFboID);
     pgl.glBindFramebuffer(PGL.GL_DRAW_FRAMEBUFFER, dest.glFboID);
-    pgl.glBlitFramebuffer(0, 0,this.width, this.height, 0, 0, dest.width, dest.height, PGL.GL_COLOR_BUFFER_BIT, PGL.GL_NEAREST);
+    pgl.glBlitFramebuffer(0, 0, this.width, this.height,
+                          0, 0, dest.width, dest.height, 
+                          PGL.GL_COLOR_BUFFER_BIT, PGL.GL_NEAREST);
   }
   
   public void bind() {
@@ -362,7 +364,7 @@ public class PFramebuffer implements PConstants {
     if (multisample) {
       createColorBufferMultisample();
     }
-   
+    
     if (combinedDepthStencil) {
       createCombinedDepthStencilBuffer();
     } else {
@@ -372,7 +374,7 @@ public class PFramebuffer implements PConstants {
       if (0 < stencilBits) {
         createStencilBuffer();
       }      
-    }    
+    }           
   }
   
   
@@ -408,7 +410,7 @@ public class PFramebuffer implements PConstants {
       pg.setFramebuffer(this);      
 
       glColorBufferMultisampleID = pg.createRenderBufferObject();
-      pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glColorBufferMultisampleID);
+      pgl.glBindRenderbuffer(PGL.GL_RENDERBUFFER, glColorBufferMultisampleID);      
       pgl.glRenderbufferStorageMultisample(PGL.GL_RENDERBUFFER, nsamples, PGL.GL_RGBA8, width, height);
       pgl.glFramebufferRenderbuffer(PGL.GL_FRAMEBUFFER, PGL.GL_COLOR_ATTACHMENT0, PGL.GL_RENDERBUFFER, glColorBufferMultisampleID);
       
