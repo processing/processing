@@ -722,7 +722,7 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedRenderBufferObjects();
     
     int[] temp = new int[1];
-    pgl.glDeleteRenderbuffers(1, temp, 0);
+    pgl.glGenRenderbuffers(1, temp, 0);
     int id = temp[0];
     
     if (glRenderBuffers.containsKey(id)) {
@@ -736,8 +736,8 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deleteRenderBufferObject(int id) {
     if (glRenderBuffers.containsKey(id)) {
-      int[] temp = { id };
-      pgl.glGenRenderbuffers(1, temp, 0);
+      int[] temp = { id };     
+      pgl.glDeleteRenderbuffers(1, temp, 0);
       glRenderBuffers.remove(id); 
     }
   }   
@@ -1374,13 +1374,13 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.updatePrimary();
     } else {
       if (!pgl.initialized) {
-        initOffscreen();
+        initOffscreen();        
       }     
       
       pushFramebuffer();
       if (offscreenMultisample) {
         setFramebuffer(offscreenFramebufferMultisample);   
-        pgl.setDrawBuffer(0);
+        pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
       } else {
         setFramebuffer(offscreenFramebuffer);
       }
@@ -4494,7 +4494,7 @@ public class PGraphicsOpenGL extends PGraphics {
         
     pixelBuffer.rewind();
     if (primarySurface) {
-      pgl.setReadBuffer(PGL.GL_FRONT);
+      pgl.glReadBuffer(PGL.GL_FRONT);
     }
     pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
     
@@ -4953,7 +4953,7 @@ public class PGraphicsOpenGL extends PGraphics {
      
     getsetBuffer.rewind();
     if (primarySurface) {
-      pgl.setReadBuffer(PGL.GL_FRONT);
+      pgl.glReadBuffer(PGL.GL_FRONT);
     }
     pgl.glReadPixels(x, height - y - 1, 1, 1, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, getsetBuffer);
 
@@ -4995,7 +4995,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     newbieBuffer.rewind();
     if (primarySurface) {
-      pgl.setReadBuffer(PGL.GL_FRONT);
+      pgl.glReadBuffer(PGL.GL_FRONT);
     }
 
     pgl.glReadPixels(x, height - y - h, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, newbieBuffer);
@@ -5577,24 +5577,23 @@ public class PGraphicsOpenGL extends PGraphics {
     pg = (PGraphicsOpenGL)parent.g;
     pgl.initOffscreenSurface(pg.pgl);
     
-    pgl.updateOffscreen(pg.pgl);;
+    pgl.updateOffscreen(pg.pgl);
     loadTextureImpl(BILINEAR);
     
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
     // to the surface are released by calling delete().
     if (offscreenFramebuffer != null) {
-      offscreenFramebuffer = null;
+      offscreenFramebuffer.release();
     }
     if (offscreenFramebufferMultisample != null) {
-      offscreenFramebufferMultisample = null;
+      offscreenFramebufferMultisample.release();
     }
     
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < antialias) {
-      int nsamples = antialias;
-      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, nsamples, 0, 
+      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, antialias, 0, 
                                                          offscreenDepthBits, offscreenStencilBits, 
                                                          offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
       
@@ -5606,15 +5605,15 @@ public class PGraphicsOpenGL extends PGraphics {
       offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
                                               0, 0,
                                               false, false);
-      
             
     } else {
+      antialias = 0;
       offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
                                               offscreenDepthBits, offscreenStencilBits,
                                               offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
       offscreenMultisample = false;
     }
-        
+    
     offscreenFramebuffer.setColorBuffer(texture);
     offscreenFramebuffer.clear();
   }
