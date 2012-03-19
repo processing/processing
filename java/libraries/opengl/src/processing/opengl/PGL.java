@@ -23,37 +23,43 @@
 
 package processing.opengl;
 
+import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.media.nativewindow.GraphicsConfigurationFactory;
-import javax.media.nativewindow.NativeWindow;
-import javax.media.nativewindow.NativeWindowFactory;
-import javax.media.nativewindow.awt.AWTGraphicsConfiguration;
-import javax.media.nativewindow.awt.AWTGraphicsDevice;
-import javax.media.nativewindow.awt.AWTGraphicsScreen;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
+import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
-import javax.media.opengl.GLDrawableFactory;
+import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
+import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
-import processing.core.PApplet;
-import processing.core.PConstants;
+import com.jogamp.newt.awt.NewtCanvasAWT;
+import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.util.AnimatorBase;
 
 /** 
  * Processing-OpenGL abstraction layer.
  * 
  */
 public class PGL {
+  // The two windowing toolkits available to use in JOGL:
+  public static int AWT  = 0; // http://jogamp.org/wiki/index.php/Using_JOGL_in_AWT_SWT_and_Swing
+  public static int NEWT = 1; // http://jogamp.org/jogl/doc/NEWT-Overview.html  
+  
+  public static int toolkit = AWT;
+  
   /** Size of a short (in bytes). */
   static final int SIZEOF_SHORT = Short.SIZE / 8; 
   
@@ -82,7 +88,7 @@ public class PGL {
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
   public static final int MAX_LIGHTS = 8;
   
-  /** Maximum number of tessellated vertices, using 2^20 for Mac/PC. */
+  /** Maximum number of tessellated vertices, using 2^19 for Mac/PC. */
   public static final int MAX_TESS_VERTICES = 524288;
   
   /** Maximum number of indices. 2 times the max number of 
@@ -229,6 +235,12 @@ public class PGL {
   /** GLU interface **/
   public GLU glu;
   
+  /** The PGraphics object using this interface */
+  public PGraphicsOpenGL pg;  
+  
+  /** Whether OpenGL has been initialized or not */ 
+  public boolean initialized;
+  
   /** Selected GL profile */
   public GLProfile profile;
   
@@ -241,51 +253,67 @@ public class PGL {
   /** The rendering context (holds rendering state info) */
   public GLContext context;  
   
-  public PGraphicsOpenGL pg;
+  /** The AWT canvas where OpenGL rendering takes place */
+  public Canvas canvas;
   
-  public boolean initialized;
+  /** The AWT-OpenGL canvas */
+  protected GLCanvas canvasAWT;  
+  
+  /** The NEWT-OpenGL canvas */
+  protected NewtCanvasAWT canvasNEWT;
+  
+  /** The NEWT window */
+  protected GLWindow window;    
+
+  /** The listener that fires the frame rendering in Processing */  
+  protected PGLListener listener;
+  
+  /** Animator to drive the rendering thread in NEWT */
+  protected NEWTAnimator animator;   
+  
+  /** Desired target framerate */
+  protected float targetFramerate = 60;
+  protected boolean setFramerate = false;
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Intialization, finalization  
+  
   
   public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
     glu = new GLU();
     initialized = false;
   }
+
   
-  /**
-   * This static method can be called by applications that use
-   * Processing+P3D inside their own GUI, so they can initialize
-   * JOGL2 before anything else.
-   * According to the JOGL2 documentation, applications shall call 
-   * GLProfile.initSingleton() ASAP, before any other UI invocation.
-   * In case applications are able to initialize JOGL before any other 
-   * UI action, hey shall invoke this method with beforeUI=true and 
-   * benefit from fast native multithreading support on all platforms 
-   * if possible. 
-   *
-   */  
-  static public void startup(boolean beforeUI) {
-    try {
-      GLProfile.initSingleton(beforeUI);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }      
+  public void setFramerate(float framerate) {    
+    if (60 < framerate) {
+      // Disables v-sync
+      gl.setSwapInterval(0);  
+    } else if (30 < framerate) {
+      gl.setSwapInterval(1); 
+    } else {
+      gl.setSwapInterval(2);
+    }
+    if ((60 < framerate && targetFramerate <= 60) ||
+        (framerate <= 60 && 60 < targetFramerate)) {
+      // Enabling/disabling v-sync, we force a 
+      // surface reinitialization to avoid screen
+      // no-paint issue observed on MacOSX.
+      initialized = false;
+    }
+    targetFramerate = framerate;
+    setFramerate = true;
   }
   
-  static public void shutdown() {
-    GLProfile.shutdown();    
-  }
   
   public void updatePrimary() {
-    gl = context.getGL();
-    gl2 = gl.getGL2();
-    
-    // disables vsync (framerate cap) on windows
-    gl.setSwapInterval(0);
+    if (!setFramerate) {
+      setFramerate(targetFramerate);
+    }
   }
+
   
   public void updateOffscreen(PGL primary) {
     gl  = primary.gl;
@@ -294,32 +322,24 @@ public class PGL {
   
   
   public void initPrimarySurface(int antialias) {
-    if (pg.parent.online) {
-      // RCP Application (Applet's, Webstart, Netbeans, ..) using JOGL may not 
-      // be able to initialize JOGL before the first UI action, so initSingleton()
-      // is called with its argument set to false.
-      GLProfile.initSingleton(false);
-    } else {
-      if (PApplet.platform == PConstants.LINUX) {
-        // Special case for Linux, since the multithreading issues described for
-        // example here:
-        // http://forum.jogamp.org/QtJambi-JOGL-Ubuntu-Lucid-td909554.html
-        // have not been solved yet (at least for stable release b32 of JOGL2).
-        GLProfile.initSingleton(false);
-      } else { 
-        GLProfile.initSingleton(true);
-      }
-    }
-    
-    // For the time being we use the fixed function profile
-    // because GL3 is not supported in MacOSX Snow Leopard.
-    profile = GLProfile.getMaxFixedFunc();
-    //profile = GLProfile.getMaxProgrammable();
-    
     if (profile == null) {
-      pg.parent.die("Cannot get a valid OpenGL profile");
+      profile = GLProfile.getDefault();      
+    } else {
+      // Restarting...
+      if (toolkit == AWT) {
+        canvasAWT.removeGLEventListener(listener);    
+        pg.parent.removeListeners(canvasAWT);
+        pg.parent.remove(canvasAWT);
+      } else if (toolkit == NEWT) {
+        animator.stop();
+        animator.remove(window);    
+        window.removeGLEventListener(listener);    
+        pg.parent.removeListeners(canvasNEWT);
+        pg.parent.remove(canvasNEWT);        
+      }      
+      setFramerate = false;
     }
-
+    
     capabilities = new GLCapabilities(profile);
     if (1 < antialias) {
       capabilities.setSampleBuffers(true);
@@ -327,21 +347,40 @@ public class PGL {
     } else {
       capabilities.setSampleBuffers(false);
     }
-
-    // Getting the native window:
-    // http://www.java-gaming.org/index.php/topic,21559.0.html
-    AWTGraphicsScreen screen = (AWTGraphicsScreen)AWTGraphicsScreen.createDefault();
-    AWTGraphicsConfiguration config = (AWTGraphicsConfiguration)GraphicsConfigurationFactory
-        .getFactory(AWTGraphicsDevice.class).chooseGraphicsConfiguration(capabilities, capabilities, null, screen);
-    NativeWindow win = NativeWindowFactory.getNativeWindow(pg.parent, config);    
     
-    // With the native window we get the drawable and context:
-    GLDrawableFactory factory = GLDrawableFactory.getFactory(profile);
-    drawable = factory.createGLDrawable(win);
-    context = drawable.createContext(null);
+    if (toolkit == AWT) {      
+      canvasAWT = new GLCanvas(capabilities);
+      canvasAWT.setBounds(0, 0, pg.width, pg.height);
+      
+      pg.parent.setLayout(new BorderLayout());
+      pg.parent.add(canvasAWT, BorderLayout.CENTER);
+      pg.parent.removeListeners();
+      pg.parent.addListeners(canvasAWT);
+      
+      listener = new PGLListener();
+      canvasAWT.addGLEventListener(listener);
+      
+      canvas = canvasAWT;
+    } else if (toolkit == NEWT) {    
+      window = GLWindow.create(capabilities);    
+      canvasNEWT = new NewtCanvasAWT(window);
+      
+      pg.parent.setLayout(new BorderLayout());
+      pg.parent.add(canvasNEWT, BorderLayout.CENTER);
+      pg.parent.removeListeners();
+      pg.parent.addListeners(canvasNEWT);
+      
+      listener = new PGLListener();
+      window.addGLEventListener(listener);
+      animator = new NEWTAnimator(window);
+      animator.start();
+      
+      canvas = canvasNEWT;
+    }
     
     initialized = true;
   }
+  
   
   public void initOffscreenSurface(PGL primary) {
     context = primary.context;
@@ -349,93 +388,64 @@ public class PGL {
     drawable = null;
     initialized = true;
   }  
-    
-  public void updateOffscreenSurface(PGL primary) {
-    context = primary.context;
-    capabilities = primary.capabilities;
-    drawable = null;    
-  }  
-  
-  /**
-   * Make the OpenGL rendering context current for this thread.
-   */
-  protected void detainContext() {
-    try {
-      while (context.makeCurrent() == GLContext.CONTEXT_NOT_CURRENT) {
-        Thread.sleep(10);
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }  
-  }
-  
-  /**
-   * Release the context, otherwise the AWT lock on X11 will not be released
-   */
-  public void releaseContext() {
-    context.release();
-  }  
-  
-  public void destroyContext() {
-    context.destroy();
-    context = null;    
-  }  
+
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Frame rendering    
   
-  public boolean initOnscreenDraw() {
-    if (drawable != null) {
-      // Call setRealized() after addNotify() has been called
-      drawable.setRealized(pg.parent.isDisplayable());
-      if (pg.parent.isDisplayable()) {
-        drawable.setRealized(true);
-        return true;
-      } else {
-        return false;  // Should have called canDraw() anyway
-      }
-    }
-    return false;    
-  }
   
   public void beginOnscreenDraw(boolean clear, int frame) {
   }
   
+  
   public void endOnscreenDraw(boolean clear0) {
-    if (drawable != null) {
-      drawable.swapBuffers();        
-    }    
   }
+  
   
   public void beginOffscreenDraw(boolean clear, int frame) {
   }
   
+  
   public void endOffscreenDraw(boolean clear0) {    
   }
   
+  
   public boolean canDraw() {
-    return pg.parent.isDisplayable();    
+    return initialized && pg.parent.isDisplayable();    
   }
   
-  public void requestDraw() {        
+  
+  public void requestDraw() {
+    if (initialized) {
+      if (toolkit == AWT) {
+        canvasAWT.display();           
+      } else if (toolkit == NEWT) {
+        animator.requestDisplay();       
+      }
+    }
   }
+  
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Caps query
 
+  
   public String glGetString(int name) {
     return gl.glGetString(name);
   }
  
-  public void glGetIntegerv(int name, IntBuffer values) {
-    gl.glGetIntegerv(name, values);
+  
+  public void glGetIntegerv(int name, int[] values, int offset) {
+    gl.glGetIntegerv(name, values, offset);
   }
+  
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Enable/disable caps
+  
   
   public void glEnable(int cap) {
     if (-1 < cap) {
@@ -443,52 +453,64 @@ public class PGL {
     }
   }  
   
+  
   public void glDisable(int cap) {
     if (-1 < cap) {
       gl.glDisable(cap);
     }
   }  
   
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Render control 
+  
   
   public void glFlush() {
     gl.glFlush();
   }  
   
+  
   public void glFinish() {
     gl.glFinish();
   }
+  
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Error handling  
   
+  
   public int glGetError() {
     return gl.glGetError();
   }
 
+  
   public String glErrorString(int err) {
     return glu.gluErrorString(err);
   }  
+  
   
   public String gluErrorString(int err) {
     return glu.gluErrorString(err);
   }
   
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Rendering options
 
+  
   public void glFrontFace(int mode) {
     gl.glFrontFace(mode);
   }
-    
+  
+  
   public void glDepthMask(boolean flag) {
     gl.glDepthMask(flag);   
   }
-    
+  
+  
   public void glDepthFunc(int func) {
     gl.glDepthFunc(func);
   }  
@@ -498,62 +520,72 @@ public class PGL {
   
   // Textures     
   
-  public void glGenTextures(int n, IntBuffer ids) {
-    ids.limit(n);
-    gl.glGenTextures(n, ids);
+  
+  public void glGenTextures(int n, int[] ids, int offset) {
+    gl.glGenTextures(n, ids, offset);
   }
 
-  public void glDeleteTextures(int n, IntBuffer ids) {
-    ids.limit(n);
-    gl.glDeleteTextures(n, ids);
+  
+  public void glDeleteTextures(int n, int[] ids, int offset) {
+    gl.glDeleteTextures(n, ids, offset);
   }  
+  
   
   public void glActiveTexture(int unit) {
     gl.glActiveTexture(unit);
   }
   
+  
   public void glBindTexture(int target, int id) {
     gl.glBindTexture(target, id);
   }
-    
+  
+  
   public void glTexImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, Buffer data) {
     gl.glTexImage2D(target, level, internalFormat, width, height, border, format, type, data);
   }
+  
   
   public void glTexSubImage2D(int target, int level, int xOffset, int yOffset, int width, int height, int format, int type, Buffer data) {
     gl.glTexSubImage2D(target, level, xOffset, yOffset, width, height, format, type, data);
   }
 
+  
   public void glTexParameterf(int target, int param, int value) {
     gl.glTexParameterf(target, param, value); 
   }
 
+  
   public void glGenerateMipmap(int target) {
     gl.glGenerateMipmap(target);
   }  
+  
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Vertex Buffers
 
-  public void glGenBuffers(int n, IntBuffer ids) {
-    ids.limit(n);    
-    gl.glGenBuffers(n, ids);  
+  
+  public void glGenBuffers(int n, int[] ids, int offset) {
+    gl.glGenBuffers(n, ids, offset);  
   }
   
-  public void glDeleteBuffers(int n, IntBuffer ids) {
-    ids.limit(n);
-    gl.glDeleteBuffers(n, ids);  
+  
+  public void glDeleteBuffers(int n, int[] ids, int offset) {
+    gl.glDeleteBuffers(n, ids, offset);  
   }
+  
   
   public void glBindBuffer(int target, int id) {
     gl.glBindBuffer(target, id);
   }
   
+  
   public void glBufferData(int target, int size, Buffer data, int usage) {
     gl.glBufferData(target, size, data, usage);
   }
 
+  
   public void glBufferSubData(int target, int offset, int size, Buffer data) {
     gl.glBufferSubData(target, offset, size, data);
   }
@@ -568,9 +600,11 @@ public class PGL {
     gl2.glEnableVertexAttribArray(loc);
   }
   
+  
   public void glDisableVertexAttribArray(int loc) {
     gl2.glDisableVertexAttribArray(loc);
   }  
+  
   
   public void glVertexAttribPointer(int loc, int size, int type, boolean normalized, int stride, int offset) {
     gl2.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
@@ -581,185 +615,226 @@ public class PGL {
     return gl2.glMapBuffer(target, access);
   }
   
+  
   public ByteBuffer glMapBufferRange(int target, int offset, int length, int access) {
     return gl2.glMapBufferRange(target, offset, length, access);
   }
+  
   
   public void glUnmapBuffer(int target) {
     gl2.glUnmapBuffer(target);
   }
   
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Framebuffers, renderbuffers  
   
-  public void glGenFramebuffers(int n, IntBuffer ids) {
-    ids.limit(n);
-    gl.glGenFramebuffers(n, ids);    
+  
+  public void glGenFramebuffers(int n, int[] ids, int offset) {
+    gl.glGenFramebuffers(n, ids, offset);    
   }
   
-  public void glDeleteFramebuffers(int n, IntBuffer ids) {
-    ids.limit(n);
-    gl.glDeleteFramebuffers(n, ids);    
+  
+  public void glDeleteFramebuffers(int n, int[] ids, int offset) {
+    gl.glDeleteFramebuffers(n, ids, offset);    
   }
   
-  public void glGenRenderbuffers(int n, IntBuffer ids) {
-    ids.limit(n);
-    gl.glGenRenderbuffers(n, ids);    
+  
+  public void glGenRenderbuffers(int n, int[] ids, int offset) {
+    gl.glGenRenderbuffers(n, ids, offset);    
   }
   
-  public void glDeleteRenderbuffers(int n, IntBuffer ids) {
-    ids.limit(n);
-    gl.glDeleteRenderbuffers(n, ids);    
+  
+  public void glDeleteRenderbuffers(int n, int[] ids, int offset) {
+    gl.glDeleteRenderbuffers(n, ids, offset);    
   }
+  
   
   public void glBindFramebuffer(int target, int id) {
     gl.glBindFramebuffer(target, id);
   }
   
+  
   public void glBlitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, int mask, int filter) {
     gl2.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);    
   }
+  
   
   public void glFramebufferTexture2D(int target, int attachment, int texTarget, int texId, int level) {   
     gl.glFramebufferTexture2D(target, attachment, texTarget, texId, level);
   }
 
+  
   public void glBindRenderbuffer(int target, int id) {
     gl.glBindRenderbuffer(target, id);
   }
-    
+  
+  
   public void glRenderbufferStorageMultisample(int target, int samples, int format, int width, int height) {
     gl2.glRenderbufferStorageMultisample(target, samples, format, width, height);
   }
+  
   
   public void glRenderbufferStorage(int target, int format, int width, int height) {
     gl.glRenderbufferStorage(target, format, width, height);
   }
   
+  
   public void glFramebufferRenderbuffer(int target, int attachment, int rendbufTarget, int rendbufId) {
     gl.glFramebufferRenderbuffer(target, attachment, rendbufTarget, rendbufId);
   }  
 
+  
   public int glCheckFramebufferStatus(int target) {
     return gl.glCheckFramebufferStatus(target);
   }  
 
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Shaders  
+  
   
   public int glCreateProgram() {
     return gl2.glCreateProgram();    
   }
   
+  
   public void glDeleteProgram(int id) {
     gl2.glDeleteProgram(id);  
   }
+  
   
   public int glCreateShader(int type) {
     return gl2.glCreateShader(type);    
   }
   
+  
   public void glDeleteShader(int id) {
     gl2.glDeleteShader(id);    
   }
-   
+  
+  
   public void glLinkProgram(int prog) {
     gl2.glLinkProgram(prog);  
   }
+  
   
   public void glValidateProgram(int prog) {
     gl2.glValidateProgram(prog);
   }
   
+  
   public void glUseProgram(int prog) {
     gl2.glUseProgram(prog);  
   }
+  
   
   public int glGetAttribLocation(int prog, String name) {
     return gl2.glGetAttribLocation(prog, name);
   }
   
+  
   public int glGetUniformLocation(int prog, String name) {
     return gl2.glGetUniformLocation(prog, name);
   }  
+  
   
   public void glUniform1i(int loc, int value) {
     gl2.glUniform1i(loc, value);  
   }
   
+  
   public void glUniform1f(int loc, float value) {
     gl2.glUniform1f(loc, value);  
   }    
+  
   
   public void glUniform2f(int loc, float value0, float value1) {
     gl2.glUniform2f(loc, value0, value1);  
   }
   
+  
   public void glUniform3f(int loc, float value0, float value1, float value2) {
     gl2.glUniform3f(loc, value0, value1, value2);  
   }
+  
   
   public void glUniform4f(int loc, float value0, float value1, float value2, float value3) {
     gl2.glUniform4f(loc, value0, value1, value2, value3);  
   }
   
-  public void glUniform1fv(int loc, int count, FloatBuffer v) {
-    gl2.glUniform1fv(loc, count, v);
+  
+  public void glUniform1fv(int loc, int count, float[] v, int offset) {
+    gl2.glUniform1fv(loc, count, v, offset);
   }    
 
-  public void glUniform2fv(int loc, int count, FloatBuffer v) {
-    gl2.glUniform2fv(loc, count, v);
+  
+  public void glUniform2fv(int loc, int count, float[] v, int offset) {
+    gl2.glUniform2fv(loc, count, v, offset);
   }    
 
-  public void glUniform3fv(int loc, int count, FloatBuffer v) {
-    gl2.glUniform3fv(loc, count, v);
+  
+  public void glUniform3fv(int loc, int count, float[] v, int offset) {
+    gl2.glUniform3fv(loc, count, v, offset);
   }
 
-  public void glUniform4fv(int loc, int count, FloatBuffer v) {
-    gl2.glUniform4fv(loc, count, v);
+  
+  public void glUniform4fv(int loc, int count, float[] v, int offset) {
+    gl2.glUniform4fv(loc, count, v, offset);
   }  
   
-  public void glUniformMatrix2fv(int loc, int count, boolean transpose, FloatBuffer mat) {
-    gl2.glUniformMatrix2fv(loc, count, transpose, mat);
+  
+  public void glUniformMatrix2fv(int loc, int count, boolean transpose, float[] mat, int offset) {
+    gl2.glUniformMatrix2fv(loc, count, transpose, mat, offset);
   }
   
-  public void glUniformMatrix3fv(int loc, int count, boolean transpose, FloatBuffer mat) {
-    gl2.glUniformMatrix3fv(loc, count, transpose, mat);
+  
+  public void glUniformMatrix3fv(int loc, int count, boolean transpose, float[] mat, int offset) {
+    gl2.glUniformMatrix3fv(loc, count, transpose, mat, offset);
   }
   
-  public void glUniformMatrix4fv(int loc, int count, boolean transpose, FloatBuffer mat) {
-    gl2.glUniformMatrix4fv(loc, count, transpose, mat);      
+  
+  public void glUniformMatrix4fv(int loc, int count, boolean transpose, float[] mat, int offset) {
+    gl2.glUniformMatrix4fv(loc, count, transpose, mat, offset);      
   }
+  
   
   public void glVertexAttrib1f(int loc, float value) {
     gl2.glVertexAttrib1f(loc, value);  
   }
   
+  
   public void glVertexAttrib2f(int loc, float value0, float value1) {
     gl2.glVertexAttrib2f(loc, value0, value1);  
   }  
+  
   
   public void glVertexAttrib3f(int loc, float value0, float value1, float value2) {
     gl2.glVertexAttrib3f(loc, value0, value1, value2);  
   }    
 
+  
   public void glVertexAttrib4f(int loc, float value0, float value1, float value2, float value3) {
     gl2.glVertexAttrib4f(loc, value0, value1, value2, value3);  
   }
+  
   
   public void glShaderSource(int id, String source) {
     gl2.glShaderSource(id, 1, new String[] { source }, (int[]) null, 0);  
   }
   
+  
   public void glCompileShader(int id) {
     gl2.glCompileShader(id);    
   }
   
+  
   public void glAttachShader(int prog, int shader) {
     gl2.glAttachShader(prog, shader);  
   }
+  
   
   /////////////////////////////////////////////////////////////////////////////////
   
@@ -770,6 +845,7 @@ public class PGL {
     gl.glViewport(x, y, width, height);
   }
 
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Clipping (scissor test)
@@ -799,29 +875,36 @@ public class PGL {
   
   // Pixels  
   
+  
   public void setReadBuffer(int buf) {
     gl2.glReadBuffer(buf);
   }
   
+  
   public void glReadPixels(int x, int y, int width, int height, int format, int type, Buffer buffer) {
     gl.glReadPixels(x, y, width, height, format, type, buffer);
   } 
+
   
   public void setDrawBuffer(int buf) {
     gl2.glDrawBuffer(buf);
   }
   
+  
   public void glClearColor(float r, float g, float b, float a) {
     gl.glClearColor(r, g, b, a);    
   }
   
+  
   public void glClear(int mask) {
     gl.glClear(mask);
   }  
-    
+  
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Context interface  
+  
   
   public Context getContext() {
     return new Context(context);
@@ -839,13 +922,16 @@ public class PGL {
     }
   }  
   
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Tessellator interface
-    
+  
+  
   public Tessellator createTessellator(TessellatorCallback callback) {
     return new Tessellator(callback);
   }
+  
   
   public class Tessellator {
     protected GLUtessellator tess;
@@ -912,6 +998,7 @@ public class PGL {
     }
   }
 
+  
   public interface TessellatorCallback  {
     public void begin(int type);
     public void end();
@@ -921,38 +1008,37 @@ public class PGL {
     public void error(int errnum);    
   }
   
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Utility functions  
   
-  public FloatBuffer createFloatBuffer(int size) {
-    return FloatBuffer.allocate(size);
+  
+  public boolean contextIsCurrent(Context other) {
+    return other != null && other.same(context);
   }
   
-  public IntBuffer createIntBuffer(int size) {
-    return IntBuffer.allocate(size);
-  }
-    
-  public boolean contextIsCurrent(Context other) {
-    return other.same(context);
-  }
   
   static public int makeIndex(int intIdx) {
     return intIdx;
   }  
   
+  
   public void enableTexturing(int target) {
     gl.glEnable(target);
   }
 
+  
   public void disableTexturing(int target) {
     gl.glDisable(target);
   }   
   
+  
   public void initTexture(int target, int width, int height, int format, int type) {
-    IntBuffer texels = createIntBuffer(width * height);
-    gl.glTexSubImage2D(target, 0, 0, 0, width, height, format, type, texels);
+    int[] texels = new int[width * height];
+    gl.glTexSubImage2D(target, 0, 0, 0, width, height, format, type, IntBuffer.wrap(texels));
   }
+  
   
   public String getShaderLog(int id) {
     IntBuffer val = IntBuffer.allocate(1);
@@ -973,5 +1059,158 @@ public class PGL {
     byte[] infoBytes = new byte[length];
     infoLog.get(infoBytes);
     return new String(infoBytes);
-  }    
+  }
+  
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Java specific stuff  
+  
+  
+  protected class PGLListener implements GLEventListener {
+    @Override
+    public void display(GLAutoDrawable adrawable) {
+      drawable = adrawable;
+      context = adrawable.getContext();
+      gl = context.getGL();
+      gl2 = gl.getGL2();
+      pg.parent.handleDraw(); 
+    }
+
+    @Override
+    public void dispose(GLAutoDrawable adrawable) {
+    }
+
+    @Override
+    public void init(GLAutoDrawable adrawable) {
+      drawable = adrawable;
+      context = adrawable.getContext();      
+    }
+
+    @Override
+    public void reshape(GLAutoDrawable adrawable, int x, int y, int w, int h) {
+      drawable = adrawable;
+      context = adrawable.getContext();
+    }        
+  }
+  
+  
+  /** Animator subclass to drive render loop when using NEWT. 
+   **/
+  protected static class NEWTAnimator extends AnimatorBase {
+    private static int count = 0;
+    private Timer timer = null;
+    private TimerTask task = null;
+    private volatile boolean shouldRun;
+
+    protected String getBaseName(String prefix) {
+      return prefix + "PGLAnimator" ;
+    }
+
+    /** Creates an CustomAnimator with an initial drawable to 
+     * animate. 
+     */
+    public NEWTAnimator(GLAutoDrawable drawable) {
+      if (drawable != null) {
+        add(drawable);
+      }
+    }
+
+    public synchronized void requestDisplay() {
+      shouldRun = true;
+    }
+
+    public final boolean isStarted() {
+      stateSync.lock();
+      try {
+        return (timer != null);
+      } finally {
+        stateSync.unlock();
+      }
+    }
+
+    public final boolean isAnimating() {
+      stateSync.lock();
+      try {
+        return (timer != null) && (task != null);
+      } finally {
+        stateSync.unlock();
+      }
+    }
+
+    private void startTask() {
+      if(null != task) {
+        return;
+      }
+
+      task = new TimerTask() {
+        private boolean firstRun = true;
+        public void run() {
+          if (firstRun) {
+            Thread.currentThread().setName("NEWT-RenderQueue-" + count);
+            firstRun = false;
+            count++;
+          }          
+          if (NEWTAnimator.this.shouldRun) {
+            NEWTAnimator.this.animThread = Thread.currentThread();
+            // display impl. uses synchronized block on the animator instance
+            display();                
+            synchronized (this) {
+              // done with current frame.
+              shouldRun = false;
+            }                    
+          }
+        }
+      };
+
+      fpsCounter.resetFPSCounter();
+      shouldRun = false;
+
+      timer.schedule(task, 0, 1);
+    }
+    
+    public synchronized boolean  start() {
+      if (timer != null) {
+        return false;
+      }
+      stateSync.lock();
+      try {
+        timer = new Timer();
+        startTask();
+      } finally {
+        stateSync.unlock();
+      }
+      return true;
+    }
+
+    /** Stops this CustomAnimator. */
+    public synchronized boolean stop() {
+      if (timer == null) {
+        return false;
+      }
+      stateSync.lock();
+      try {
+        shouldRun = false;
+        if(null != task) {
+          task.cancel();
+          task = null;
+        }
+        if(null != timer) {
+          timer.cancel();
+          timer = null;
+        }
+        animThread = null;
+        try {
+          Thread.sleep(20); // ~ 1/60 hz wait, since we can't ctrl stopped threads
+        } catch (InterruptedException e) { }
+      } finally {
+        stateSync.unlock();
+      }
+      return true;
+    }
+    
+    public final boolean isPaused() { return false; }
+    public synchronized boolean resume() { return false; }
+    public synchronized boolean pause() { return false; }    
+  }  
 }

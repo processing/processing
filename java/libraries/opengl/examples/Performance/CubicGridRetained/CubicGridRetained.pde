@@ -11,7 +11,8 @@ int fint = 3;
 
 void setup() {
   size(640, 360, P3D);
-  frameRate(120);
+  frameRate(60);
+  noSmooth();
   noStroke();
   
   grid = createShape(PShape.GROUP);
@@ -97,6 +98,8 @@ void draw() {
 
   shape(grid);
   popMatrix();
+  
+  hint(ENABLE_DEPTH_TEST);
   
   fcount += 1;
   int m = millis();

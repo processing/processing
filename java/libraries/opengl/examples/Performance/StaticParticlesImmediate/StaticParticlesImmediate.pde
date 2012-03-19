@@ -11,7 +11,7 @@ int fint = 3;
 
 void setup() {
   size(800, 600, P3D);
-  frameRate(240);
+  frameRate(60);
   
   sprite = loadImage("sprite.png");
 
