@@ -610,6 +610,10 @@ public class PGraphics extends PImage implements PConstants {
   }
   
   
+  public void setFrameRate(float framerate) {  // ignore
+  }
+  
+  
   /**
    * The final step in setting up a renderer, set its size of this renderer.
    * This was formerly handled by the constructor, but instead it's been broken
@@ -666,8 +670,9 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * Try to draw, or put a draw request on the queue.
    */
-//  public void requestDraw() {  // ignore
-//  }  
+  public void requestDraw() {  // ignore
+    parent.handleDraw();
+  }
   
 
   /**
