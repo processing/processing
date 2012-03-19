@@ -1376,7 +1376,14 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       if (!pgl.initialized) {
         initOffscreen();        
-      }     
+      } else {
+        boolean outdated = offscreenFramebuffer != null && offscreenFramebuffer.contextIsOutdated();
+        boolean outdatedMulti = offscreenFramebufferMultisample != null && offscreenFramebufferMultisample.contextIsOutdated();
+        if (outdated || outdatedMulti) {
+          pgl.initialized = false;
+          initOffscreen();
+        }
+      }
       
       pushFramebuffer();
       if (offscreenMultisample) {
@@ -4851,7 +4858,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void loadTextureImpl(int sampling) {
     if (width == 0 || height == 0) return;
-    if (texture == null) {
+    if (texture == null || texture.contextIsOutdated()) {
       PTexture.Parameters params = PTexture.newParameters(ARGB, sampling);
       texture = new PTexture(parent, width, height, params);      
       texture.setFlippedY(true);
