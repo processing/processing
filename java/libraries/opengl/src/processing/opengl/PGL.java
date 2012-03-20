@@ -34,7 +34,6 @@ import java.util.TimerTask;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
-import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLContext;
@@ -210,16 +209,16 @@ public class PGL {
   public static final int GL_DST_COLOR           = GL.GL_DST_COLOR;
   public static final int GL_SRC_COLOR           = GL.GL_SRC_COLOR;
   
-  public static final int GL_FRAMEBUFFER       = GL.GL_FRAMEBUFFER;
-  public static final int GL_COLOR_ATTACHMENT0 = GL.GL_COLOR_ATTACHMENT0;
+  public static final int GL_FRAMEBUFFER        = GL.GL_FRAMEBUFFER;
+  public static final int GL_COLOR_ATTACHMENT0  = GL.GL_COLOR_ATTACHMENT0;
+  public static final int GL_COLOR_ATTACHMENT1  = GL2.GL_COLOR_ATTACHMENT1;
+  public static final int GL_COLOR_ATTACHMENT2  = GL2.GL_COLOR_ATTACHMENT2;
+  public static final int GL_COLOR_ATTACHMENT3  = GL2.GL_COLOR_ATTACHMENT3;  
   public static final int GL_RENDERBUFFER       = GL.GL_RENDERBUFFER;
   public static final int GL_DEPTH_ATTACHMENT   = GL.GL_DEPTH_ATTACHMENT;
   public static final int GL_STENCIL_ATTACHMENT = GL.GL_STENCIL_ATTACHMENT;  
-  public static final int GL_READ_FRAMEBUFFER  = GL2.GL_READ_FRAMEBUFFER;
-  public static final int GL_DRAW_FRAMEBUFFER  = GL2.GL_DRAW_FRAMEBUFFER ;   
-  public static final int GL_COLOR_ATTACHMENT1 = GL2.GL_COLOR_ATTACHMENT1;
-  public static final int GL_COLOR_ATTACHMENT2 = GL2.GL_COLOR_ATTACHMENT2;
-  public static final int GL_COLOR_ATTACHMENT3 = GL2.GL_COLOR_ATTACHMENT3;  
+  public static final int GL_READ_FRAMEBUFFER   = GL2.GL_READ_FRAMEBUFFER;
+  public static final int GL_DRAW_FRAMEBUFFER   = GL2.GL_DRAW_FRAMEBUFFER;   
   
   public static final int GL_VERTEX_SHADER   = GL2.GL_VERTEX_SHADER;
   public static final int GL_FRAGMENT_SHADER = GL2.GL_FRAGMENT_SHADER;

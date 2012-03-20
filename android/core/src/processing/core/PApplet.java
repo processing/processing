@@ -2558,6 +2558,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void frameRate(float newRateTarget) {
     frameRateTarget = newRateTarget;
     frameRatePeriod = (long) (1000000000.0 / frameRateTarget);
+    g.setFrameRate(newRateTarget);
   }
 
 

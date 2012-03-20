@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Stack;
 
+
 // drawPixels is missing...calls to glDrawPixels are commented out
 //   setRasterPos() is also commented out
 
@@ -89,9 +90,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   /** Some hardware limits */  
   static public int maxTextureSize;
+  static public int maxSamples;
   static public float maxPointSize;
   static public float maxLineWidth;
-  
+    
   /** OpenGL information strings */
   static public String OPENGL_VENDOR;
   static public String OPENGL_RENDERER;
@@ -309,7 +311,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   /** Used to register calls to glClear. */
   protected boolean clearColorBuffer; 
-  protected boolean clearColorBuffer0;
+  protected boolean clearColorBuffer0;  
   
   protected boolean openContour = false;
   protected boolean breakShape = false;
@@ -391,13 +393,15 @@ public class PGraphicsAndroid3D extends PGraphics {
    */
   static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;  
   
-  //////////////////////////////////////////////////////////////
   
+  //////////////////////////////////////////////////////////////  
   
   // INIT/ALLOCATE/FINISH
   
+  
   public PGraphicsAndroid3D() {
     pgl = new PGL(this);
+    pg = null;
     
     tessellator = new Tessellator();
     
@@ -426,6 +430,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     glPointIndexBufferID = 0;
   }  
 
+  
   //public void setParent(PApplet parent)  // PGraphics
 
 
@@ -436,7 +441,16 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   //public void setPath(String path)  // PGraphics
-    
+  
+  
+  //public void setAntiAlias(int samples)  // PGraphics
+  
+  
+  public void setFrameRate(float framerate) { 
+    pgl.setFramerate(framerate);     
+  }
+  
+  
   public void setSize(int iwidth, int iheight) {
     resized = (0 < width && width != iwidth) || (0 < height && height != iwidth);
     
@@ -448,8 +462,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     allocate();
     reapplySettings();
     
-    vertexCheck();
-
     // init perspective projection based on new dimensions
     cameraFOV = 60 * DEG_TO_RAD; // at least for now
     cameraX = width / 2.0f;
@@ -461,7 +473,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     cameraDepth = cameraZ; // eye is at (cameraX, cameraY, cameraZ), aiming at (cameraX, cameraY, 0)
     
     // set this flag so that beginDraw() will do an update to the camera.
-    sizeChanged = true;    
+    sizeChanged = true;  
+    
+    // Forces a restart of OpenGL so the canvas has the right size.
+    pgl.initialized = false;
   }
 
 
@@ -496,41 +511,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       currentLightSpecular = new float[3];
       lightsAllocated = true;
     }
-    
-    if (primarySurface) {
-      // Allocation of the main renderer, which mainly involves initializing OpenGL.
-//      if (context == null) {
-//        initPrimary();      
-//      } else {
-//        reapplySettings();
-//      }
-      if (pgl.initialized) {
-        reapplySettings();
-      }      
-    } else {      
-      // Allocation of an offscreen renderer.
-//      if (context == null) {
-//        initOffscreen();
-//      } else {
-//        // Updating OpenGL context associated to this offscreen
-//        // surface, to take into account a context recreation situation.
-//        updateOffscreenContext();
-//        reapplySettings();
-//      }
-      if (pgl.initialized) {
-        updateOffscreenContext();
-        reapplySettings();        
-      }
-    }    
   }
 
   
   public void dispose() { // PGraphics    
     super.dispose();
-    pgl.detainContext();
-    deleteFinalizedGLResources();
-    pgl.releaseContext();
-    PGL.shutdown();    
+    deleteFinalizedGLResources();  
   }
   
 
@@ -543,6 +529,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // RESOURCE HANDLING
+  
   
   // Texture Objects -------------------------------------------
   
@@ -603,6 +590,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
+  
   // Vertex Buffer Objects ----------------------------------------------
     
   protected int createVertexBufferObject() {
@@ -661,6 +649,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       glVertexBuffers.remove(id);  
     }
   }
+  
   
   // FrameBuffer Objects -----------------------------------------
 
@@ -721,13 +710,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
   // RenderBuffer Objects -----------------------------------------------
   
   protected int createRenderBufferObject() {
     deleteFinalizedRenderBufferObjects();
     
     int[] temp = new int[1];
-    pgl.glDeleteRenderbuffers(1, temp, 0);
+    pgl.glGenRenderbuffers(1, temp, 0);
     int id = temp[0];
     
     if (glRenderBuffers.containsKey(id)) {
@@ -741,8 +731,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected void deleteRenderBufferObject(int id) {
     if (glRenderBuffers.containsKey(id)) {
-      int[] temp = { id };
-      pgl.glGenRenderbuffers(1, temp, 0);
+      int[] temp = { id };     
+      pgl.glDeleteRenderbuffers(1, temp, 0);
       glRenderBuffers.remove(id); 
     }
   }   
@@ -779,6 +769,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       glRenderBuffers.remove(id);  
     }
   }
+  
   
   // GLSL Program Objects -----------------------------------------------
   
@@ -834,6 +825,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
   // GLSL Vertex Shader Objects -----------------------------------------------
   
   protected int createGLSLVertShaderObject() {
@@ -888,8 +880,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
-  // GLSL Fragment Shader Objects -----------------------------------------------
-    
+  
+  // GLSL Fragment Shader Objects -----------------------------------------------  
   
   protected int createGLSLFragShaderObject() {
     deleteFinalizedGLSLFragShaderObjects();
@@ -953,7 +945,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     deleteFinalizedGLSLVertShaderObjects();
     deleteFinalizedGLSLFragShaderObjects();
   }
-    
+   
+  
   protected void deleteAllGLResources() {
     deleteAllTextureObjects();
     deleteAllVertexBufferObjects();
@@ -964,9 +957,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     deleteAllGLSLFragShaderObjects();    
   }
   
+  
   //////////////////////////////////////////////////////////////
 
   // FRAMEBUFFERS
+  
   
   public void pushFramebuffer() {
     fbStack.push(currentFramebuffer);
@@ -989,25 +984,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
+  
   //////////////////////////////////////////////////////////////
 
   // FRAME RENDERING
+ 
   
-//  public GLContext getContext() {
-//    return context;
-//  }
-//  public GLCapabilities getCapabilities() {
-//    return capabilities;
-//  }  
-//  public GLProfile getProfile() {
-//    return profile;
-//  }
-//  public GLDrawable getDrawable() {
-//    return drawable;
-//  }
-  
-  
-
   protected void releaseResources() {
     // First, releasing the resources used by
     // the renderer itself.
@@ -1044,6 +1026,36 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (defPointShader != null) {
       defPointShader.release();
       defPointShader = null;
+    }    
+    
+    if (fillShaderSimple != null) {
+      fillShaderSimple.release();
+      fillShaderSimple = null;
+    }
+    
+    if (fillShaderTex != null) {
+      fillShaderTex.release();
+      fillShaderTex = null;
+    }
+    
+    if (fillShaderLit != null) {
+      fillShaderLit.release();
+      fillShaderLit = null;
+    }
+    
+    if (fillShaderFull != null) {
+      fillShaderFull.release();
+      fillShaderFull = null;
+    }
+    
+    if (lineShader != null) {
+      lineShader.release();
+      lineShader = null;
+    }
+    
+    if (pointShader != null) {
+      pointShader.release();
+      pointShader = null;
     }
     
     if (fillVBOsCreated) {
@@ -1065,21 +1077,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // (from user's objects).
     deleteAllGLResources();    
   }
-  
-  /**
-   * Destroys current OpenGL context and creates a new one, making sure that all
-   * the current OpenGL objects remain valid afterward.
-   */  
-  public void restartContext() {
-    releaseResources();    
-    
-    pgl.releaseContext();
-    pgl.destroyContext();
-    restartSurface();    
-    pgl.detainContext();      
-    updatePGL();    
-  }  
 
+  
   protected void createFillBuffers() {
     int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
     int sizei = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_INT;
@@ -1126,6 +1125,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
   
+  
   protected void updateFillBuffers(boolean lit, boolean tex) {
     int size = tessGeo.fillVertexCount;
     int sizef = size * PGL.SIZEOF_FLOAT;
@@ -1159,7 +1159,18 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.fillTexcoords, 0, 2 * size), vboMode);      
     }
+    
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.fillIndexCount * PGL.SIZEOF_INDEX, 
+                     ShortBuffer.wrap(tessGeo.fillIndices, 0, tessGeo.fillIndexCount), vboMode);    
   }    
+  
+  
+  protected void unbindFillBuffers() {
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
+  }  
+  
   
   protected void releaseFillBuffers() {
     deleteVertexBufferObject(glFillVertexBufferID);
@@ -1190,6 +1201,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     glFillIndexBufferID = 0;    
   }
 
+  
   protected void createLineBuffers() {
     int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
     int sizex = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INDEX;
@@ -1217,6 +1229,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }  
   
+  
   protected void updateLineBuffers() {
     int size = tessGeo.lineVertexCount;
     int sizef = size * PGL.SIZEOF_FLOAT;
@@ -1230,7 +1243,18 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineDirWidths, 0, 4 * size), vboMode);    
+            
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.lineIndexCount * PGL.SIZEOF_INDEX, 
+                     ShortBuffer.wrap(tessGeo.lineIndices, 0, tessGeo.lineIndexCount), vboMode);
   }
+  
+  
+  protected void unbindLineBuffers() {
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);    
+  }  
+  
   
   protected void releaseLineBuffers() {
     deleteVertexBufferObject(glLineVertexBufferID);
@@ -1246,6 +1270,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     glLineIndexBufferID = 0;    
   }
 
+  
   protected void createPointBuffers() {
     int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
     int sizex = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INDEX;
@@ -1272,6 +1297,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }  
   
+  
   protected void updatePointBuffers() {
     int size = tessGeo.pointVertexCount;
     int sizef = size * PGL.SIZEOF_FLOAT;
@@ -1284,8 +1310,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.pointColors, 0, size), vboMode);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);    
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointSizes, 0, 2 * size), vboMode);   
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointSizes, 0, 2 * size), vboMode);
+    
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.pointIndexCount * PGL.SIZEOF_INDEX, 
+                     ShortBuffer.wrap(tessGeo.pointIndices, 0, tessGeo.pointIndexCount), vboMode);    
   }
+  
+  
+  protected void unbindPointBuffers() {
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
+    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);    
+  }
+  
   
   protected void releasePointBuffers() {
     deleteVertexBufferObject(glPointVertexBufferID);
@@ -1312,8 +1349,14 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   
   public void requestDraw() {    
-    pgl.requestDraw();
-  }  
+    if (primarySurface) {
+      if (pgl.initialized) {
+        pgl.requestDraw();        
+      } else {
+        initPrimary();  
+      }
+    }
+  }
   
   
   public void beginDraw() {
@@ -1323,29 +1366,29 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
     
     if (primarySurface) {
-      if (!pgl.initialized) {
-        initPrimary();
-      } 
-      
-      if (!pgl.initOnscreenDraw()) {
-        return;
-      }
-      pgl.detainContext();      
+      pgl.updatePrimary();
     } else {
       if (!pgl.initialized) {
-        initOffscreen();
-      }     
+        initOffscreen();        
+      } else {
+        boolean outdated = offscreenFramebuffer != null && offscreenFramebuffer.contextIsOutdated();
+        boolean outdatedMulti = offscreenFramebufferMultisample != null && offscreenFramebufferMultisample.contextIsOutdated();
+        if (outdated || outdatedMulti) {
+          pgl.initialized = false;
+          initOffscreen();
+        }
+      }
       
       pushFramebuffer();
       if (offscreenMultisample) {
         setFramebuffer(offscreenFramebufferMultisample);   
-        pgl.setDrawBuffer(0);
+        pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
       } else {
         setFramebuffer(offscreenFramebuffer);
-      } 
-    }
+      }
       
-    updatePGL();
+      pgl.updateOffscreen(pg.pgl);
+    }
     
     if (!glParamsRead) {
       getGLParameters();  
@@ -1357,20 +1400,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     // We are ready to go!
     
-    report("top beginDraw()");    
+    report("top beginDraw()");   
     
-    if (!primarySurface) {
-      pg.saveGLState();
-            
-      // Disabling all lights, so the offscreen renderer can set completely
-      // new light configuration (otherwise some light configuration from the 
-      // primary renderer might stay).
-      //pg.disableLights();
-    }     
-    
-    inGeo.reset();
-    tessGeo.reset();
-    texCache.reset();
+    inGeo.clear();
+    tessGeo.clear();
+    texCache.clear();
     
     // Each frame starts with textures disabled. 
     super.noTexture();
@@ -1388,18 +1422,31 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glEnable(PGL.GL_DEPTH_TEST);
     }
     // use <= since that's what processing.core does
-    pgl.setDepthFunc(PGL.GL_LEQUAL);
-    
-    if (hints[DISABLE_DEPTH_MASK]) {
-      pgl.glDepthMask(false);
-    } else {
-      pgl.glDepthMask(true);
-    }
+    pgl.glDepthFunc(PGL.GL_LEQUAL);
 
     if (hints[ENABLE_ACCURATE_2D]) {
       flushMode = FLUSH_CONTINUOUSLY;      
     } else {
       flushMode = FLUSH_WHEN_FULL;
+    }
+    
+    if (primarySurface) {
+      int[] temp = { 0 };
+      pgl.glGetIntegerv(PGL.GL_SAMPLES, temp, 0);
+      if (antialias != temp[0] && 1 < temp[0] && 1 < antialias) {
+        antialias = temp[0];
+      }    
+    }
+    if (antialias < 2) {
+      pgl.glDisable(PGL.GL_MULTISAMPLE);
+      pgl.glEnable(PGL.GL_POINT_SMOOTH);
+      pgl.glEnable(PGL.GL_LINE_SMOOTH);
+      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);    
+    } else {
+      pgl.glEnable(PGL.GL_MULTISAMPLE); 
+      pgl.glDisable(PGL.GL_POINT_SMOOTH);
+      pgl.glDisable(PGL.GL_LINE_SMOOTH);
+      pgl.glDisable(PGL.GL_POLYGON_SMOOTH);        
     }
     
     // setup opengl viewport.    
@@ -1447,7 +1494,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightSpecular(0, 0, 0);
 
     // because y is flipped
-    pgl.setFrontFace(PGL.GL_CW);
+    pgl.glFrontFace(PGL.GL_CW);
     
     // Processing uses only one texture unit.
     pgl.glActiveTexture(PGL.GL_TEXTURE0);
@@ -1456,8 +1503,15 @@ public class PGraphicsAndroid3D extends PGraphics {
     normalX = normalY = normalZ = 0;
     
     // Clear depth and stencil buffers.
+    pgl.glDepthMask(true);
     pgl.glClearColor(0, 0, 0, 0);
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT | PGL.GL_STENCIL_BUFFER_BIT);
+    
+    if (hints[DISABLE_DEPTH_MASK]) {
+      pgl.glDepthMask(false);
+    } else {
+      pgl.glDepthMask(true);
+    }    
     
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer, parent.frameCount);  
@@ -1495,9 +1549,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]);
     
     if (primarySurface) {
-      pgl.glFlush();
+      pgl.glFlush(); 
       pgl.endOnscreenDraw(clearColorBuffer0);
-      pgl.releaseContext();
     } else {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
@@ -1506,7 +1559,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       pgl.endOffscreenDraw(clearColorBuffer0);
       
-      pg.restoreGLState();
+      pg.restoreGL();
     }    
 
     drawing = false;    
@@ -1516,73 +1569,68 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   
   public PGL beginPGL() {
-    saveGLState();
     return pgl;
   }
 
   
   public void endPGL() {
-    restoreGLState();
+    restoreGL();
   }
   
   
-  public void updatePGL() {
-    if (primarySurface) {
-      pgl.updatePrimary();  
-    } else {
-      pgl.updateOffscreen(pg.pgl);
-    }
+  public void restartPGL() {
+    pgl.initialized = false;  
   }
   
   
-  protected void saveGLState() {
-  }
-  
-  
-  protected void restoreGLState() {        
-    // Restoring viewport.
-    pgl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+  protected void restoreGL() {
+    blendMode(blendMode);    
     
-    // Restoring hints.
     if (hints[DISABLE_DEPTH_TEST]) {
       pgl.glDisable(PGL.GL_DEPTH_TEST);
-      pgl.glClearColor(0, 0, 0, 0);
-      pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
     } else {
       pgl.glEnable(PGL.GL_DEPTH_TEST);
     }
+    pgl.glDepthFunc(PGL.GL_LEQUAL);    
+    
+    if (antialias < 2) {
+      pgl.glDisable(PGL.GL_MULTISAMPLE);
+      pgl.glEnable(PGL.GL_POINT_SMOOTH);
+      pgl.glEnable(PGL.GL_LINE_SMOOTH);
+      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);    
+    } else {
+      pgl.glEnable(PGL.GL_MULTISAMPLE); 
+      pgl.glDisable(PGL.GL_POINT_SMOOTH);
+      pgl.glDisable(PGL.GL_LINE_SMOOTH);
+      pgl.glDisable(PGL.GL_POLYGON_SMOOTH);        
+    }    
+    
+    pgl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+    
+    pgl.glFrontFace(PGL.GL_CW);
+    
+    pgl.glActiveTexture(PGL.GL_TEXTURE0);
     
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.glDepthMask(false);
     } else {
       pgl.glDepthMask(true);
-    }
-        
-    // Restoring blending.
-    blendMode(blendMode);
-    
-    // Some things the user might have changed from OpenGL, 
-    // but we want to make sure they return to the Processing
-    // defaults (plus these cannot be changed through the API
-    // so they should remain constant anyways):   
-    pgl.setFrontFace(PGL.GL_CW);
-    pgl.setDepthFunc(PGL.GL_LEQUAL);
-  }  
-
+    }    
+  }
+  
   
   // Utility function to get ready OpenGL for a specific
   // operation, such as grabbing the contents of the color
   // buffer.
   protected void beginGLOp() {
-    pgl.detainContext();
-    updatePGL();
+    pgl.updateOffscreen(pg.pgl);
   }
 
   
   // Pairs-up with beginGLOp().
   protected void endGLOp() {
-    pgl.releaseContext();
   }
+  
     
   protected void updateGLProjection() {
     if (glProjection == null) {
@@ -1610,6 +1658,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     glProjection[15] = projection.m33;
   }
 
+  
   protected void updateGLModelview() {
     if (glModelview == null) {
       glModelview = new float[16];
@@ -1636,11 +1685,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     glModelview[15] = modelview.m33;    
   }  
   
+  
   protected void calcProjmodelview() {
     projmodelview.set(projection);
     projmodelview.apply(modelview);    
   }
     
+  
   protected void updateGLProjmodelview() {
     if (glProjmodelview == null) {
       glProjmodelview = new float[16];
@@ -1667,6 +1718,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     glProjmodelview[15] = projmodelview.m33;
   }
   
+  
   protected void updateGLNormal() {
     if (glNormal == null) {
       glNormal = new float[9];
@@ -1688,6 +1740,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     glNormal[7] = modelviewInv.m21; 
     glNormal[8] = modelviewInv.m22;     
   }
+  
   
   //////////////////////////////////////////////////////////////  
   
@@ -1725,8 +1778,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     ambient(80);
     specular(125);
     emissive(0);
-    shininess(1);    
+    shininess(1); 
   }
+  
   
   // reapplySettings
 
@@ -1734,6 +1788,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // HINTS
 
+  
   public void hint(int which) {
     boolean oldValue = hints[PApplet.abs(which)];
     super.hint(which);
@@ -1746,46 +1801,35 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (which == DISABLE_DEPTH_TEST) {
       flush();
       pgl.glDisable(PGL.GL_DEPTH_TEST);
-      pgl.glClearColor(0, 0, 0, 0);
-      pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);      
-
     } else if (which == ENABLE_DEPTH_TEST) {
       flush();
       pgl.glEnable(PGL.GL_DEPTH_TEST);
-
     } else if (which == DISABLE_DEPTH_MASK) {
       flush();
       pgl.glDepthMask(false);
-
     } else if (which == ENABLE_DEPTH_MASK) {
       flush();
-      pgl.glDepthMask(true);
-      
+      pgl.glDepthMask(true);      
     } else if (which == DISABLE_ACCURATE_2D) {
       flush();
-      setFlushMode(FLUSH_WHEN_FULL);
-      
+      setFlushMode(FLUSH_WHEN_FULL);      
     } else if (which == ENABLE_ACCURATE_2D) {
       flush();
-      setFlushMode(FLUSH_CONTINUOUSLY);
-      
+      setFlushMode(FLUSH_CONTINUOUSLY);      
     } else if (which == DISABLE_TEXTURE_CACHE) {
-      flush();
-      
+      flush();      
     } else if (which == DISABLE_PERSPECTIVE_CORRECTED_LINES) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         flush();
-      }
-      
+      }      
     } else if (which == ENABLE_PERSPECTIVE_CORRECTED_LINES) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         flush();
-      }      
-      
+      }            
     }
-
   }
 
+  
   //////////////////////////////////////////////////////////////
 
   // SHAPE CREATORS
@@ -1794,6 +1838,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   public PShape createShape() {
     return createShape(POLYGON);
   }
+  
   
   public PShape createShape(int type) {
     PShape3D shape = null;
@@ -1826,6 +1871,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     return shape;
   }
+  
   
   public PShape createShape(int kind, float... p) {
     PShape3D shape = null;
@@ -1903,14 +1949,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     return shape;
   }
   
+  
   //////////////////////////////////////////////////////////////
 
   // VERTEX SHAPES
   
+  
   public void beginShape(int kind) {
     shape = kind;
     
-    inGeo.reset();
+    inGeo.clear();
         
     breakShape = false;    
     defaultEdges = true;
@@ -2121,6 +2169,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // protected void sort()  
   
+  
   protected void tessellate(int mode) {
     tessellator.setInGeometry(inGeo);
     tessellator.setTessGeometry(tessGeo);
@@ -2164,9 +2213,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     setLastTexIndex(tessGeo.lastFillIndex);
   }
   
+  
   protected void setFirstTexIndex(int first) {
     firstTexIndex = first;
   }
+  
   
   protected void setLastTexIndex(int last) {            
     if (textureImage0 != textureImage || texCache.count == 0) {
@@ -2175,6 +2226,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       texCache.setLastIndex(last);
     }    
   }
+  
   
   public void flush() {    
     boolean hasPoints = 0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount;
@@ -2208,8 +2260,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       }
     }
     
-    tessGeo.reset();  
-    texCache.reset();
+    tessGeo.clear();  
+    texCache.clear();
   }
   
 
@@ -2225,17 +2277,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     shader.setVertexAttribute(glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
     shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);    
     shader.setSizeAttribute(glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 0);
-    
-    int size = tessGeo.pointIndexCount;
-    int sizex = size * PGL.SIZEOF_INDEX;
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.pointIndices, 0, size), vboMode);
-    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);        
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    pgl.glDrawElements(PGL.GL_TRIANGLES, tessGeo.pointIndexCount, PGL.INDEX_TYPE, 0);        
     
     shader.stop();
+    unbindPointBuffers();
   }  
     
+  
   protected void renderLines() {
     if (!lineVBOsCreated) {
       createLineBuffers();
@@ -2245,18 +2294,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     LineShader shader = getLineShader();
     shader.start();    
+    
     shader.setVertexAttribute(glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
     shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);    
-    shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 0);
+    shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 0);    
+    report("renderLines: attribs set");
     
-    int size = tessGeo.lineIndexCount;
-    int sizex = size * PGL.SIZEOF_INDEX;
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.lineIndices, 0, size), vboMode);
-    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    pgl.glDrawElements(PGL.GL_TRIANGLES, tessGeo.lineIndexCount, PGL.INDEX_TYPE, 0);    
     
     shader.stop();
+    unbindLineBuffers();
   }  
   
   
@@ -2266,15 +2313,11 @@ public class PGraphicsAndroid3D extends PGraphics {
       fillVBOsCreated = true;
     }        
     updateFillBuffers(lights, texCache.hasTexture);
-
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.fillIndexCount * PGL.SIZEOF_INDEX, 
-                     ShortBuffer.wrap(tessGeo.fillIndices, 0, tessGeo.fillIndexCount), vboMode);
     
-    texCache.beginRender();        
-    for (int i = 0; i < texCache.count; i++) {      
-      PTexture tex = texCache.getTexture(i); 
-      
+    texCache.beginRender();    
+    for (int i = 0; i < texCache.count; i++) {
+      PTexture tex = texCache.getTexture(i);      
+          
       FillShader shader = getFillShader(lights, tex != null);      
       shader.start();
       
@@ -2289,7 +2332,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         shader.setShininessAttribute(glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, 0);
       }
       
-      if (tex != null) {        
+      if (tex != null) {
         shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);
         shader.setTexture(tex);
       }
@@ -2300,8 +2343,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       shader.stop();
     }  
-    texCache.endRender();    
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    texCache.endRender();   
+    unbindFillBuffers();    
   }
 
  
@@ -2340,10 +2383,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     shader.stop();
   }
 
+  
   //////////////////////////////////////////////////////////////
 
   // PSHAPE RENDERING IN 3D
 
+  
   public void shape(PShape shape, float x, float y, float z) {
     if (shape.isVisible()) { // don't do expensive matrix ops if invisible
       pushMatrix();
@@ -2361,6 +2406,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
   public void shape(PShape shape, float x, float y, float z, float c, float d,
       float e) {
     if (shape.isVisible()) { // don't do expensive matrix ops if invisible
@@ -2389,11 +2435,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       popMatrix();
     }
   }
+  
 
   //////////////////////////////////////////////////////////////
 
   // BEZIER CURVE VERTICES
 
+  
   public void bezierDetail(int detail) {
     bezierDetail = detail;
 
@@ -2409,6 +2457,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     bezierDrawMatrix.apply(pg.bezierBasisMatrix);
   }  
   
+  
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
@@ -2416,6 +2465,7 @@ public class PGraphicsAndroid3D extends PGraphics {
                  x3, y3, 0, 
                  x4, y4, 0); 
   }
+  
   
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
@@ -2448,11 +2498,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }
   
+  
   public void quadraticVertex(float cx, float cy,
                               float x3, float y3) {
     quadraticVertex(cx, cy, 0,
                     x3, y3, 0);
   }
+  
   
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
@@ -2465,17 +2517,20 @@ public class PGraphicsAndroid3D extends PGraphics {
                  x3, y3, z3);
   }
 
+  
   protected void bezierInitCheck() {
     if (!bezierInited) {
       bezierInit();
     }
   }
 
+  
   protected void bezierInit() {
     // overkill to be broken out, but better parity with the curve stuff below
     bezierDetail(bezierDetail);
     bezierInited = true;
   }  
+  
   
   protected void bezierVertexCheck() {
     if (shape != POLYGON) {
@@ -2488,24 +2543,29 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }    
 
+  
   //////////////////////////////////////////////////////////////
 
   // CATMULL-ROM CURVE VERTICES    
 
+  
   public void curveDetail(int detail) {
     curveDetail = detail;
     curveInit();
   }
+  
   
   public void curveTightness(float tightness) {
     curveTightness = tightness;
     curveInit();
   }  
   
+  
   public void curveVertex(float x, float y) {
     curveVertex(x, y, 0);
   }  
 
+  
   public void curveVertex(float x, float y, float z) {
     curveVertexCheck();
     float[] vertex = curveVertices[curveVertexCount];
@@ -2553,11 +2613,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     curveInitCheck();
   }
   
+  
   protected void curveInitCheck() {
     if (!curveInited) {
       curveInit();
     }
   }
+  
   
   protected void curveInit() {
     // allocate only if/when used to save startup time
@@ -2591,6 +2653,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // saves much time since this needn't be done for each curve
     curveDrawMatrix.apply(curveBasisMatrix);
   }  
+  
   
   /**
    * Handle emitting a specific segment of Catmull-Rom curve. This can be
@@ -2627,10 +2690,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }  
 
+  
   //////////////////////////////////////////////////////////////
 
   // SPLINE UTILITY FUNCTIONS (used by both Bezier and Catmull-Rom)
 
+  
   /**
    * Setup forward-differencing matrix to be used for speedy
    * curve rendering. It's based on using a specific number
@@ -2710,7 +2775,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // ARC
-    
+  
+  
   protected void arcImpl(float x, float y, float w, float h,
                          float start, float stop) {
     float hr = w / 2f;
@@ -2772,6 +2838,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
   //////////////////////////////////////////////////////////////
 
   // BOX
@@ -2859,6 +2926,8 @@ public class PGraphicsAndroid3D extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // SMOOTH
+  
+  
   public void smooth() {
     smooth(2);
   }
@@ -2867,29 +2936,20 @@ public class PGraphicsAndroid3D extends PGraphics {
   public void smooth(int level) {
     smooth = true;
     
-    if (antialias != level) {
+    if (maxSamples < level) {
+      PGraphics.showWarning("Smooth level " + level + " is not supported by the hardware. Using " + maxSamples + " instead.");
+      level = maxSamples;      
+    }
+    
+    if (antialias != level) {      
       antialias = level;
-      if (primarySurface) {
-        restartContext();          
-//        throw new PApplet.RendererChangeException();
-      } else {
-        initOffscreen();
+      if (antialias == 1) {
+        antialias = 0;
       }
+      // This will trigger a surface restart next time
+      // requestDraw() is called.
+      pgl.initialized = false; 
     }
-    
-    int[] temp = { 0 };
-    pgl.glGetIntegerv(PGL.GL_SAMPLES, temp, 0);    
-    if (antialias != temp[0]) {
-      antialias = temp[0];
-      PApplet.println("Effective multisampling level: " + antialias);
-    }
-    
-    if (antialias < 2) {
-      pgl.glEnable(PGL.GL_MULTISAMPLE);
-      pgl.glEnable(PGL.GL_POINT_SMOOTH);
-      pgl.glEnable(PGL.GL_LINE_SMOOTH);
-      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);    
-    }    
   }
 
   
@@ -2898,19 +2958,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     if (1 < antialias) {
       antialias = 0;
-      if (primarySurface) {
-        restartContext();          
-        //throw new PApplet.RendererChangeException();
-      } else {
-        initOffscreen();
-      }      
+      // This will trigger a surface restart next time
+      // requestDraw() is called.
+      pgl.initialized = false;       
     }
-    
-    pgl.glDisable(PGL.GL_MULTISAMPLE);
-    pgl.glDisable(PGL.GL_POINT_SMOOTH);
-    pgl.glDisable(PGL.GL_LINE_SMOOTH);
-    pgl.glDisable(PGL.GL_POLYGON_SMOOTH);    
   }   
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -2918,14 +2971,17 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // public void shapeMode(int mode)
 
+  
   public void shape(PShape3D shape) {
     shape.draw(this);
   }
 
+  
   public void shape(PShape3D shape, float x, float y) {
     shape(shape, x, y, 0);
   }
 
+  
   public void shape(PShape3D shape, float x, float y, float z) {
     pushMatrix();
     translate(x, y, z);
@@ -2933,6 +2989,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     popMatrix();
   }
 
+  
   // public void shape(PShape shape, float x, float y, float c, float d)
 
   //////////////////////////////////////////////////////////////
@@ -2972,6 +3029,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // TEXT IMPL
 
+  
   // protected void textLineAlignImpl(char buffer[], int start, int stop,
   // float x, float y)
   
@@ -2984,11 +3042,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       textTex = new PFontTexture(parent, textFont, maxTextureSize, maxTextureSize);
       textFont.setCache(this, textTex);      
     } else {
-      if (!pgl.contextIsCurrent(textTex.context)) {
-        for (int i = 0; i < textTex.textures.length; i++) {
-          textTex.textures[i].glID = 0; // To avoid finalization (texture objects were already deleted when context changed).
-          textTex.textures[i] = null;
-        }
+      if (textTex.contextIsOutdated()) {
         textTex = new PFontTexture(parent, textFont, PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize), 
                                                      PApplet.min(PGL.MAX_FONT_TEX_SIZE, maxTextureSize));
         textFont.setCache(this, textTex);
@@ -3035,6 +3089,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     blendMode(savedBlendMode);
   }
 
+  
   protected void textCharImpl(char ch, float x, float y) {
     PFont.Glyph glyph = textFont.getGlyph(ch);
     
@@ -3064,7 +3119,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
 
   protected void textCharModelImpl(PFontTexture.TextureInfo info, float x0, float y0,
-      float x1, float y1) {
+                                                                  float x1, float y1) {
     if (textTex.currentTex != info.texIndex) {
       textTex.setTexture(info.texIndex);
     }    
@@ -3300,12 +3355,15 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // MATRIX GET/SET/PRINT
 
+  
   public PMatrix getMatrix() {
     return modelview.get();      
   }
 
+  
   // public PMatrix2D getMatrix(PMatrix2D target)
 
+  
   public PMatrix3D getMatrix(PMatrix3D target) {
     if (target == null) {
       target = new PMatrix3D();
@@ -3314,13 +3372,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     return target;
   }
 
+  
   // public void setMatrix(PMatrix source)
 
+  
   public void setMatrix(PMatrix2D source) {
     resetMatrix();
     applyMatrix(source);
   }
 
+  
   /**
    * Set the current transformation to the contents of the specified source.
    */
@@ -3329,12 +3390,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     applyMatrix(source);
   }
 
+  
   /**
    * Print the current model (or "transformation") matrix.
    */
   public void printMatrix() {      
     modelview.print();      
   }
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -3897,14 +3960,17 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // STROKE CAP/JOIN/WEIGHT
 
+  
   public void strokeWeight(float weight) {
     this.strokeWeight = weight;
   }
 
+  
   public void strokeJoin(int join) {
     this.strokeJoin = join;
   }
 
+  
   public void strokeCap(int cap) {
     this.strokeCap = cap;
   }
@@ -4029,6 +4095,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     colorMode = colorModeSaved;
   }
 
+  
   /**
    * Disables lighting.
    */
@@ -4037,6 +4104,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightCount = 0;
   }
 
+  
   /**
    * Add an ambient light based on the current color mode.
    */
@@ -4044,6 +4112,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     ambientLight(r, g, b, 0, 0, 0);
   }
 
+  
   /**
    * Add an ambient light based on the current color mode. This version includes
    * an (x, y, z) position for situations where the falloff distance is used.
@@ -4069,6 +4138,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     lightCount++;
   }
+  
 
   public void directionalLight(float r, float g, float b, 
                                float dx, float dy, float dz) {
@@ -4093,6 +4163,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightCount++;
   }
 
+  
   public void pointLight(float r, float g, float b, 
                          float x, float y, float z) {
     enableLighting();   
@@ -4118,6 +4189,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightCount++;
   }
 
+  
   public void spotLight(float r, float g, float b, 
                         float x, float y, float z,
                         float dx, float dy, float dz, 
@@ -4145,6 +4217,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightCount++;
   }
 
+  
   /**
    * Set the light falloff rates for the last light that was created. Default is
    * lightFalloff(1, 0, 0).
@@ -4155,6 +4228,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     currentLightFalloffQuadratic = quadratic;
   }
 
+  
   /**
    * Set the specular color of the last light created.
    */
@@ -4165,12 +4239,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     currentLightSpecular[2] = calcB;
   }
 
+  
   protected void enableLighting() {
     if (!lights) {      
       flush(); // Flushing non-lit geometry.      
       lights = true;
     }
   }
+  
 
   protected void disableLighting() {
     if (lights) {      
@@ -4178,6 +4254,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       lights = false;
     }
   }  
+  
   
   protected void lightPosition(int num, float x, float y, float z, boolean dir) {
     lightPosition[4 * num + 0] = x * modelview.m00 + y * modelview.m01 + z * modelview.m02 + modelview.m03;
@@ -4188,6 +4265,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightPosition[4 * num + 3] = dir ? 1: 0;
   }  
 
+  
   protected void lightNormal(int num, float dx, float dy, float dz) {
     // Applying normal matrix to the light direction vector, which is the transpose of the inverse of the
     // modelview.
@@ -4201,12 +4279,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightNormal[3 * num + 2] = invn * nz;
   }
   
+  
   protected void lightAmbient(int num, float r, float g, float b) {       
     colorCalc(r, g, b);
     lightAmbient[3 * num + 0] = calcR;
     lightAmbient[3 * num + 1] = calcG;
     lightAmbient[3 * num + 2] = calcB;
   }
+  
 
   protected void noLightAmbient(int num) {
     lightAmbient[3 * num + 0] = 0;
@@ -4214,12 +4294,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightAmbient[3 * num + 2] = 0;
   }
 
+  
   protected void lightDiffuse(int num, float r, float g, float b) {
     colorCalc(r, g, b);
     lightDiffuse[3 * num + 0] = calcR;
     lightDiffuse[3 * num + 1] = calcG;
     lightDiffuse[3 * num + 2] = calcB;
   }
+  
 
   protected void noLightDiffuse(int num) {
     lightDiffuse[3 * num + 0] = 0;
@@ -4227,17 +4309,20 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightDiffuse[3 * num + 2] = 0;
   }
 
+  
   protected void lightSpecular(int num, float r, float g, float b) {
     lightSpecular[3 * num + 0] = r;
     lightSpecular[3 * num + 1] = g;
     lightSpecular[3 * num + 2] = b;
   }
 
+  
   protected void noLightSpecular(int num) {
     lightSpecular[3 * num + 0] = 0;
     lightSpecular[3 * num + 1] = 0;
     lightSpecular[3 * num + 2] = 0;
   }  
+  
   
   protected void lightFalloff(int num, float c0, float c1, float c2) {
     lightFalloffCoefficients[3 * num + 0] = c0;
@@ -4245,16 +4330,19 @@ public class PGraphicsAndroid3D extends PGraphics {
     lightFalloffCoefficients[3 * num + 2] = c2;
   }
 
+  
   protected void noLightFalloff(int num) {
     lightFalloffCoefficients[3 * num + 0] = 1;
     lightFalloffCoefficients[3 * num + 1] = 0;
     lightFalloffCoefficients[3 * num + 2] = 0;
   }
   
+  
   protected void lightSpot(int num, float angle, float exponent) {
     lightSpotParameters[2 * num + 0] = Math.max(0, PApplet.cos(angle));
     lightSpotParameters[2 * num + 1] = exponent;
   }
+  
   
   protected void noLightSpot(int num) {
     lightSpotParameters[2 * num + 0] = 0;
@@ -4266,23 +4354,32 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // BACKGROUND
 
+  
   protected void backgroundImpl(PImage image) {
     backgroundImpl();
     set(0, 0, image);
     clearColorBuffer = true;
   }
 
+  
   protected void backgroundImpl() {
-    tessGeo.reset();  
-    texCache.reset();
+    tessGeo.clear();  
+    texCache.clear();
     
+    pgl.glDepthMask(true);
     pgl.glClearColor(0, 0, 0, 0);
-    pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);
-
+    pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT);    
+    if (hints[DISABLE_DEPTH_MASK]) {
+      pgl.glDepthMask(false);
+    } else {
+      pgl.glDepthMask(true);
+    }   
+    
     pgl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
     clearColorBuffer = true;
   }  
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -4339,6 +4436,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
+  
   //////////////////////////////////////////////////////////////
 
   // RENDERER SUPPORT QUERIES
@@ -4381,6 +4479,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // LOAD/UPDATE PIXELS
 
+  
   public void loadPixels() {
     flush();
     
@@ -4403,7 +4502,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         
     pixelBuffer.rewind();
     if (primarySurface) {
-      pgl.setReadBuffer(PGL.GL_FRONT);
+      pgl.glReadBuffer(PGL.GL_FRONT);
     }
     pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
     
@@ -4476,6 +4575,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }
 
+  
   /**
    * Convert native OpenGL format into palatable ARGB format. This function
    * leaves alone (ignores) the alpha component. Also flips the image
@@ -4515,6 +4615,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       yindex -= image.width * 2;
     }
   }
+  
 
   /**
    * Convert native OpenGL format into palatable ARGB format. This function
@@ -4558,6 +4659,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       yindex -= image.width * 2;
     }
   }
+  
 
   /**
    * Convert ARGB (Java/Processing) data to native OpenGL format. This function
@@ -4607,6 +4709,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
   /**
    * Convert Java ARGB to native OpenGL format. Also flips the image vertically,
    * since images are upside-down in GL.
@@ -4652,6 +4755,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
   public void updatePixels() {
     // flip vertically (opengl stores images upside down),
     
@@ -4721,10 +4825,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       endGLOp();      
     }    
   }
+  
     
   //////////////////////////////////////////////////////////////
 
   // LOAD/UPDATE TEXTURE
+  
   
   public void loadTexture() {
     if (primarySurface) {
@@ -4742,9 +4848,10 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
+  
   protected void loadTextureImpl(int sampling) {
     if (width == 0 || height == 0) return;
-    if (texture == null) {
+    if (texture == null || texture.contextIsOutdated()) {
       PTexture.Parameters params = PTexture.newParameters(ARGB, sampling);
       texture = new PTexture(parent, width, height, params);      
       texture.setFlippedY(true);
@@ -4758,6 +4865,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       texCrop[3] = height;     
     }
   }   
+  
   
   // Draws wherever it is in the screen texture right now to the screen.
   public void updateTexture() {
@@ -4785,13 +4893,16 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }
   
+  
   protected void drawTexture() {
     drawTexture(texture, texCrop, 0, 0, width, height);
   }
   
+  
   protected void copyToTexture(IntBuffer buffer) {
     copyToTexture(texture, buffer, 0, 0, width, height);
   }
+  
   
   protected void copyFrameToTexture() {
     // Make sure that the execution off all the openGL commands is 
@@ -4800,25 +4911,31 @@ public class PGraphicsAndroid3D extends PGraphics {
     loadTexture();    
   }
   
+  
   protected void pixelsToTexture() {    
     texture.set(pixels);
   }
   
+  
   protected void textureToPixels() {
     texture.get(pixels);
   }
+  
 
   //////////////////////////////////////////////////////////////
 
   // RESIZE
 
+  
   public void resize(int wide, int high) {
     PGraphics.showMethodWarning("resize");
   }
+  
 
   //////////////////////////////////////////////////////////////
 
   // GET/SET
+  
   
   public int get(int x, int y) {
     flush();
@@ -4844,7 +4961,7 @@ public class PGraphicsAndroid3D extends PGraphics {
      
     getsetBuffer.rewind();
     if (primarySurface) {
-      pgl.setReadBuffer(PGL.GL_FRONT);
+      pgl.glReadBuffer(PGL.GL_FRONT);
     }
     pgl.glReadPixels(x, height - y - 1, 1, 1, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, getsetBuffer);
 
@@ -4866,9 +4983,11 @@ public class PGraphicsAndroid3D extends PGraphics {
           | ((getset >> 16) & 0xff);
     }   
   }
+  
 
   // public PImage get(int x, int y, int w, int h)
 
+  
   protected PImage getImpl(int x, int y, int w, int h) {
     flush();
     
@@ -4884,7 +5003,7 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     newbieBuffer.rewind();
     if (primarySurface) {
-      pgl.setReadBuffer(PGL.GL_FRONT);
+      pgl.glReadBuffer(PGL.GL_FRONT);
     }
 
     pgl.glReadPixels(x, height - y - h, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, newbieBuffer);
@@ -4899,10 +5018,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     return newbie;
   }
   
+  
   public PImage get() {
     return get(0, 0, width, height);
   }
 
+  
   // TODO: doesn't appear to work
   public void set(int x, int y, int argb) {
     flush();
@@ -4954,6 +5075,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }
 
+  
   /**
    * Set an image directly to the screen.
    * 
@@ -4990,11 +5112,13 @@ public class PGraphicsAndroid3D extends PGraphics {
       }      
     }
   }  
-      
+
+  
   //////////////////////////////////////////////////////////////
 
   // MASK
 
+  
   public void mask(int alpha[]) {
     PGraphics.showMethodWarning("mask");
   }
@@ -5004,10 +5128,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     PGraphics.showMethodWarning("mask");
   }
 
+  
   //////////////////////////////////////////////////////////////
 
   // FILTER
 
+  
   /**
    * This is really inefficient and not a good idea in OpenGL. Use get() and
    * set() with a smaller image area, or call the filter on an image instead,
@@ -5019,6 +5145,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     set(0, 0, temp);
   }
 
+  
   /**
    * This is really inefficient and not a good idea in OpenGL. Use get() and
    * set() with a smaller image area, or call the filter on an image instead,
@@ -5030,6 +5157,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     set(0, 0, temp);
   }
 
+  
   //////////////////////////////////////////////////////////////
 
   /**
@@ -5048,6 +5176,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // int sx1, int sy1, int sx2, int sy2,
   // int dx1, int dy1, int dx2, int dy2)
 
+  
   //////////////////////////////////////////////////////////////
 
   // BLEND
@@ -5059,6 +5188,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // set(dx, dy, PImage.blendColor(src.get(sx, sy), get(dx, dy), mode));
   // }
 
+  
   /**
    * Extremely slow and not optimized, should use GL methods instead. Currently
    * calls a beginPixels() on the whole canvas, then does the copy, then it
@@ -5081,6 +5211,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // updatePixels();
   // }
 
+  
   /**
    * Allows to set custom blend modes for the entire scene, using openGL.
    * Reference article about blending modes:
@@ -5161,6 +5292,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
   protected void setDefaultBlend() {
     blendMode = BLEND;
     pgl.glEnable(PGL.GL_BLEND);
@@ -5177,9 +5309,11 @@ public class PGraphicsAndroid3D extends PGraphics {
 
   // public void save(String filename) // PImage calls loadPixels()
 
+  
   //////////////////////////////////////////////////////////////
   
   // SHAPE I/O  
+  
   
   protected String[] getSupportedShapeFormats() {
     return new String[] { "obj" };
@@ -5202,6 +5336,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // TEXTURE UTILS  
 
+  
   /**
    * This utility method returns the texture associated to the renderer's.
    * drawing surface, making sure is updated to reflect the current contents
@@ -5212,6 +5347,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     return texture;
   }
   
+  
   /**
    * This utility method returns the texture associated to the image.
    * creating and/or updating it if needed.
@@ -5220,18 +5356,10 @@ public class PGraphicsAndroid3D extends PGraphics {
   public PTexture getTexture(PImage img) {
     PTexture tex = (PTexture)img.getCache(pg);
     if (tex == null) {
-      tex = addTexture(img);           
+      tex = addTexture(img);      
     } else {       
-      if (!pgl.contextIsCurrent(tex.context)) {
-        // The texture was created with a different context. We need
-        // to recreate it. First, we make sure that the old GL id
-        // is not used to delete the texture object (it was already
-        // deleted when the context changed).
-        tex.glID = 0;
+      if (tex.contextIsOutdated()) {
         tex = addTexture(img);
-        // TODO: apply this mechanism to all the Processing objects using
-        // GL resources (PShape, PShader, PFramebuffer). They will probably 
-        // need the cache thingy as well.
       }
       
       if (img.isModified()) {
@@ -5270,13 +5398,14 @@ public class PGraphicsAndroid3D extends PGraphics {
     if (params == null) {
       params = PTexture.newParameters();
       img.setParams(pg, params);
-    }
-    PTexture tex = new PTexture(img.parent, img.width, img.height, params);       
+    }    
+    PTexture tex = new PTexture(img.parent, img.width, img.height, params);    
     img.loadPixels();    
-    if (img.pixels != null) tex.set(img.pixels);    
-    img.setCache(pg, tex);    
+    if (img.pixels != null) tex.set(img.pixels);
+    img.setCache(pg, tex);
     return tex;
   }
+  
   
   protected PImage wrapTexture(PTexture tex) {
     // We don't use the PImage(int width, int height, int mode) constructor to
@@ -5290,6 +5419,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     return img;
   }
     
+  
   protected void updateTexture(PImage img, PTexture tex) {    
     if (tex != null) {
       int x = img.getModifiedX1();
@@ -5345,10 +5475,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     blendMode(savedBlendMode);
   }  
   
+  
   protected void drawTexture(int w, int h, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
     int[] crop = {x1, y1, w1, h1};
     drawTexture(w, h, crop, x2, y2, w2, h2);
   }
+  
   
   /** 
    * Utility function to render currently bound texture using current blend mode. 
@@ -5402,6 +5534,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     drawTexQuad(0, 0, 1, 1);
   }
   
+  
   /** 
    * Pushes a normalized (1x1) textured quad to the GPU.
    */
@@ -5436,51 +5569,39 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // INITIALIZATION ROUTINES    
   
-  static public void init() {
-    PGL.startup(true);
-  }
 
-
-  static public void init(boolean beforeUI) {
-    PGL.startup(beforeUI);
-  }
-    
-  protected void restartSurface() {
-    if (primarySurface) {
-      initPrimary();
-    } else {
-      initOffscreen();
-    }    
-  }
-  
   protected void initPrimary() {
+    if (pg != null) {
+      releaseResources();
+    }
+    
     pgl.initPrimarySurface(antialias);
     pg = this;
   }
+  
   
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
     pg = (PGraphicsAndroid3D)parent.g;
     pgl.initOffscreenSurface(pg.pgl);
     
-    updatePGL();
+    pgl.updateOffscreen(pg.pgl);
     loadTextureImpl(BILINEAR);
     
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
     // to the surface are released by calling delete().
     if (offscreenFramebuffer != null) {
-      offscreenFramebuffer = null;
+      offscreenFramebuffer.release();
     }
     if (offscreenFramebufferMultisample != null) {
-      offscreenFramebufferMultisample = null;
+      offscreenFramebufferMultisample.release();
     }
     
     // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
     // function used in multisampled (antialiased) offscreen rendering.        
     if (PGraphicsAndroid3D.fboMultisampleSupported && 1 < antialias) {
-      int nsamples = antialias;
-      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, nsamples, 0, 
+      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, antialias, 0, 
                                                          offscreenDepthBits, offscreenStencilBits, 
                                                          offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
       
@@ -5492,23 +5613,19 @@ public class PGraphicsAndroid3D extends PGraphics {
       offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
                                               0, 0,
                                               false, false);
-      
             
     } else {
+      antialias = 0;
       offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
                                               offscreenDepthBits, offscreenStencilBits,
                                               offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
       offscreenMultisample = false;
     }
-        
+    
     offscreenFramebuffer.setColorBuffer(texture);
     offscreenFramebuffer.clear();
   }
-  
-  protected void updateOffscreenContext() {
-    pgl.updateOffscreenSurface(pg.pgl);
-    updatePGL();
-  }  
+
   
   protected void getGLParameters() {
     OPENGL_VENDOR     = pgl.glGetString(PGL.GL_VENDOR);  
@@ -5533,6 +5650,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     pgl.glGetIntegerv(PGL.GL_MAX_TEXTURE_SIZE, temp, 0);    
     maxTextureSize = temp[0];  
+
+    pgl.glGetIntegerv(PGL.GL_MAX_SAMPLES, temp, 0);
+    maxSamples = temp[0];    
     
     pgl.glGetIntegerv(PGL.GL_ALIASED_LINE_WIDTH_RANGE, temp, 0);    
     maxLineWidth = temp[1];
@@ -5542,11 +5662,13 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     glParamsRead = true;
   }
+  
    
   //////////////////////////////////////////////////////////////
   
   // SHADER HANDLING
 
+  
   public PShader loadShader(String vertFilename, String fragFilename, int kind) {
     if (kind == FILL_SHADER_SIMPLE) {
       return new FillShaderSimple(parent, vertFilename, fragFilename);
@@ -5565,6 +5687,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       return null;
     }
   }
+  
   
   public PShader loadShader(String fragFilename, int kind) {
     PShader shader;
@@ -5593,6 +5716,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     shader.setFragmentShader(fragFilename);
     return shader;    
   }  
+  
 
   public void setShader(PShader shader, int kind) {
     if (kind == FILL_SHADER_SIMPLE) {      
@@ -5612,6 +5736,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }
 
+  
   public void resetShader(int kind) {
     if (kind == FILL_SHADER_SIMPLE) {
       if (defFillShaderSimple == null) {
@@ -5647,6 +5772,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       PGraphics.showWarning("Wrong shader type");
     }     
   }
+  
   
   protected FillShader getFillShader(boolean lit, boolean tex) {    
     FillShader shader;
@@ -5692,6 +5818,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     return shader;
   }
   
+  
   protected LineShader getLineShader() {
     if (defLineShader == null) {
       defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
@@ -5704,6 +5831,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     return lineShader;
   }
 
+  
   protected PointShader getPointShader() {
     if (defPointShader == null) {
       defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
@@ -5715,6 +5843,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     pointShader.loadUniforms();
     return pointShader;    
   }  
+  
   
   protected class FillShader extends PShader {
     public FillShader(PApplet parent) {
@@ -5749,6 +5878,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     public void setTexCoordAttribute(int vboId, int size, int type, int stride, int offset) { }    
     public void setTexture(PTexture tex) { }
   }
+  
   
   protected class FillShaderSimple extends FillShader {
     protected int projmodelviewMatrixLoc;
@@ -5805,6 +5935,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
 
+  
   protected class FillShaderLit extends FillShader {
     protected int projmodelviewMatrixLoc;
     protected int modelviewMatrixLoc;    
@@ -5941,6 +6072,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }
   
+  
   protected class FillShaderTex extends FillShaderSimple {
     protected int inTexcoordLoc;
     
@@ -6015,6 +6147,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }    
   }  
   
+  
   protected class FillShaderFull extends FillShaderLit {
     protected int inTexcoordLoc;
     
@@ -6088,6 +6221,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       super.stop();
     }    
   } 
+  
   
   protected class LineShader extends PShader {
     protected int projectionMatrixLoc;
@@ -6176,6 +6310,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
   }
   
+  
   protected class PointShader extends PShader {
     protected int projectionMatrixLoc;
     protected int modelviewMatrixLoc;
@@ -6248,22 +6383,27 @@ public class PGraphicsAndroid3D extends PGraphics {
       super.stop();
     }    
   }
+    
   
   //////////////////////////////////////////////////////////////
   
   // Input (raw) and Tessellated geometry, tessellator.        
     
+  
   public InGeometry newInGeometry(int mode) {
     return new InGeometry(mode); 
   }
+  
   
   protected TessGeometry newTessGeometry(int mode) {
     return new TessGeometry(mode);
   }
   
+  
   protected TexCache newTexCache() {
     return new TexCache();
   }  
+  
   
   // Holds an array of textures and the range of vertex
   // indices each texture applies to.
@@ -6287,7 +6427,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       hasTexture = false;
     }
     
-    public void reset() {
+    public void clear() {
       java.util.Arrays.fill(textures, 0, count, null);
       count = 0;
       hasTexture = false;
@@ -6307,8 +6447,8 @@ public class PGraphicsAndroid3D extends PGraphics {
       PImage img = textures[i];
       PTexture tex = null;
       
-      if (img != null) {
-        tex = pg.getTexture(img);
+      if (img != null) {        
+        tex = pg.getTexture(img);        
         if (tex != null) {                   
           tex.bind();          
           tex0 = tex;
@@ -6438,7 +6578,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       allocate();
     }    
     
-    public void reset() {
+    public void clear() {
       vertexCount = firstVertex = lastVertex = 0; 
       edgeCount = firstEdge = lastEdge = 0;
     }
@@ -6456,7 +6596,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       emissive = new int[PGL.DEFAULT_IN_VERTICES];
       shininess = new float[PGL.DEFAULT_IN_VERTICES];
       edges = new int[PGL.DEFAULT_IN_EDGES][3];
-      reset();
+      clear();
     }
     
     public void trim() {
@@ -7163,7 +7303,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       allocate();      
     }    
     
-    public void reset() {
+    public void clear() {
       firstFillVertex = lastFillVertex = fillVertexCount = 0;
       firstFillIndex = lastFillIndex = fillIndexCount = 0;
       
@@ -7197,7 +7337,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       pointSizes = new float[2 * PGL.DEFAULT_TESS_VERTICES];
       pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
       
-      reset();
+      clear();
     }
     
     public void trim() {
@@ -7236,7 +7376,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         trimPointIndices();  
       }       
     }    
-        
+    
     protected void trimFillVertices() {
       float temp[] = new float[3 * fillVertexCount];      
       PApplet.arrayCopy(fillVertices, 0, temp, 0, 3 * fillVertexCount);
@@ -7468,7 +7608,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         // shapes in the hierarchy, as the entire geometry will be stored
         // contiguously in a single VBO in the root node.
         for (int i = 0; i < lineIndexCount; i++) {
-          lineIndices[i] += firstLineVertex;
+          lineIndices[i] += voffset;
         }
       }
       
@@ -7496,7 +7636,7 @@ public class PGraphicsAndroid3D extends PGraphics {
         // shapes in the hierarchy, as the entire geometry will be stored
         // contiguously in a single VBO in the root node.
         for (int i = 0; i < pointIndexCount; i++) {
-          pointIndices[i] += firstPointVertex;
+          pointIndices[i] += voffset;
         }        
       }
 
@@ -8704,7 +8844,7 @@ public class PGraphicsAndroid3D extends PGraphics {
             gluTess.endContour();
             gluTess.beginContour();
           }
-          
+                    
           // Separting colors into individual rgba components for interpolation.
           int fa = (in.colors[i] >> 24) & 0xFF;
           int fr = (in.colors[i] >> 16) & 0xFF;

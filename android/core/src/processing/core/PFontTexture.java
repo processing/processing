@@ -49,8 +49,7 @@ import processing.core.PFont;
 class PFontTexture implements PConstants {
   protected PApplet parent;
   protected PGraphicsAndroid3D pg;
-  protected PGL pgl;             
-  protected PGL.Context context; 
+  protected PGL pgl;              
   protected PFont font;
 
   protected int maxTexWidth;
@@ -70,7 +69,6 @@ class PFontTexture implements PConstants {
     this.font = font;    
     pg = (PGraphicsAndroid3D)parent.g;
     pgl = pg.pgl;
-    context = pgl.getContext();
     
     initTexture(maxw, maxh);
   }    
@@ -218,6 +216,21 @@ class PFontTexture implements PConstants {
   }  
   
 
+  public boolean contextIsOutdated() {
+    boolean outdated = false;
+    for (int i = 0; i < textures.length; i++) {
+      if (textures[i].contextIsOutdated())  {
+        outdated = true;
+      }
+    }
+    if (outdated) {
+      for (int i = 0; i < textures.length; i++) {
+        textures[i].glID = 0;
+      }
+    }
+    return outdated;
+  } 
+  
   // Adds this glyph to the opengl texture in PFont.
   protected void addToTexture(int idx, PFont.Glyph glyph) {
     // We add one pixel to avoid issues when sampling the font texture at fractional

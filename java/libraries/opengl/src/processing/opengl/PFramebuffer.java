@@ -39,8 +39,6 @@ import java.nio.IntBuffer;
  * By Andres Colubri.
  */
 
-// TODO: restart framebuffer when context changes
-
 public class PFramebuffer implements PConstants {  
   protected PApplet parent;
   protected PGraphicsOpenGL pg;
