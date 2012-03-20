@@ -98,6 +98,9 @@ public class PGL {
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
   
+  public static int DEFAULT_DEPTH_BITS = 24;
+  public static int DEFAULT_STENCIL_BITS = 8;  
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // OpenGL constants
@@ -1040,6 +1043,16 @@ public class PGL {
     int[] texels = new int[width * height];
     gl.glTexSubImage2D(target, 0, 0, 0, width, height, format, type, IntBuffer.wrap(texels));
   }
+  
+  
+  // bit shifting this might be more efficient
+  static public int nextPowerOfTwo(int val) {
+    int ret = 1;
+    while (ret < val) {
+      ret <<= 1;
+    }
+    return ret;
+  }   
   
   
   public String getShaderLog(int id) {
