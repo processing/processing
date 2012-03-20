@@ -89,8 +89,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Extensions used by Processing */
   static public boolean npotTexSupported;
   static public boolean mipmapGeneration;
-  static public boolean vboSupported;
-  static public boolean fboSupported;
   static public boolean fboMultisampleSupported;
   static public boolean blendEqSupported;
   
@@ -296,10 +294,6 @@ public class PGraphicsOpenGL extends PGraphics {
   protected PFramebuffer offscreenFramebuffer;
   protected PFramebuffer offscreenFramebufferMultisample;
   protected boolean offscreenMultisample;
-  
-  /** These are public so they can be changed by advanced users. */
-  public int offscreenDepthBits = 24;
-  public int offscreenStencilBits = 8;
   
   // ........................................................  
   
@@ -5608,8 +5602,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // function used in multisampled (antialiased) offscreen rendering.        
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < antialias) {
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, antialias, 0, 
-                                                         offscreenDepthBits, offscreenStencilBits, 
-                                                         offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
+                                                         PGL.DEFAULT_DEPTH_BITS, PGL.DEFAULT_STENCIL_BITS, 
+                                                         PGL.DEFAULT_DEPTH_BITS == 24 && PGL.DEFAULT_STENCIL_BITS == 8, false);
       
       offscreenFramebufferMultisample.clear();
       offscreenMultisample = true;
@@ -5623,8 +5617,8 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       antialias = 0;
       offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
-                                              offscreenDepthBits, offscreenStencilBits,
-                                              offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
+                                              PGL.DEFAULT_DEPTH_BITS, PGL.DEFAULT_STENCIL_BITS,
+                                              PGL.DEFAULT_DEPTH_BITS == 24 && PGL.DEFAULT_STENCIL_BITS == 8, false);
       offscreenMultisample = false;
     }
     
@@ -5641,8 +5635,6 @@ public class PGraphicsOpenGL extends PGraphics {
     
     npotTexSupported        = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
     mipmapGeneration        = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
-    vboSupported            = -1 < OPENGL_EXTENSIONS.indexOf("vertex_buffer_object");
-    fboSupported            = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_object");
     fboMultisampleSupported = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample");
        
     try {      
