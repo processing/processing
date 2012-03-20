@@ -35,6 +35,7 @@ public class PShader {
   protected PApplet parent;
   protected PGraphicsAndroid3D pg; 
   protected PGL pgl;
+  protected PGL.Context context;      // The context that created this shader.
 
   protected URL vertexURL;
   protected URL fragmentURL;
@@ -291,7 +292,9 @@ public class PShader {
   }
     
   protected void init() {
-    if (programObject == 0) {
+    if (programObject == 0 || contextIsOutdated()) {
+      
+      context = pgl.getContext();
       programObject = pg.createGLSLProgramObject();
       
       if (vertexFilename != null) {
@@ -317,6 +320,17 @@ public class PShader {
       pgl.glValidateProgram(programObject);
     }
   }  
+  
+  
+  protected boolean contextIsOutdated() {
+    boolean outdated = !pgl.contextIsCurrent(context);
+    if (outdated) {
+      programObject = 0;
+      vertexShader = 0;
+      fragmentShader = 0;
+    }
+    return outdated;
+  }
   
   
   /**

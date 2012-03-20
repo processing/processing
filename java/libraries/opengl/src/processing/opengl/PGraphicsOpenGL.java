@@ -1439,8 +1439,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       int[] temp = { 0 };
       pgl.glGetIntegerv(PGL.GL_SAMPLES, temp, 0);
-      if (antialias != temp[0]) {
-        PGraphics.showWarning("Smooth level " + antialias + " not supported. Using " + temp[0] + " instead.");
+      if (antialias != temp[0] && 1 < temp[0] && 1 < antialias) {
         antialias = temp[0];
       }    
     }
@@ -2944,7 +2943,7 @@ public class PGraphicsOpenGL extends PGraphics {
     smooth = true;
     
     if (maxSamples < level) {
-      PGraphics.showWarning("Smooth level not supported by the video card. Using " + maxSamples + " instead.");
+      PGraphics.showWarning("Smooth level " + level + " is not supported by the hardware. Using " + maxSamples + " instead.");
       level = maxSamples;      
     }
     
