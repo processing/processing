@@ -50,6 +50,8 @@ void draw() {
   }
   popMatrix();
   
+  hint(ENABLE_DEPTH_TEST);
+  
   fcount += 1;
   int m = millis();
   if (m - lastm > 1000 * fint) {

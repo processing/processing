@@ -99,6 +99,8 @@ void draw() {
   shape(grid);
   popMatrix();
   
+  hint(ENABLE_DEPTH_TEST);
+  
   fcount += 1;
   int m = millis();
   if (m - lastm > 1000 * fint) {
