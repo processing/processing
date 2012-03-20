@@ -583,6 +583,10 @@ public class PGraphics extends PImage implements PConstants {
     this.path = path;
   }
 
+  
+  public void setFrameRate(float framerate) {  // ignore
+  }
+  
 
   /**
    * The final step in setting up a renderer, set its size of this renderer.

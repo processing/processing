@@ -26,10 +26,12 @@ package processing.core;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
 import processing.glu.PGLU;
 import processing.glu.PGLUtessellator;
 import processing.glu.PGLUtessellatorCallbackAdapter;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -70,7 +72,7 @@ public class PGL {
   public static final int DEFAULT_TESS_INDICES = 32;  
   
   /** Initial sizes for vertex cache used in PShape3D. */
-  public static final int DEFAULT_VERTEX_CACHE_SIZE = 512;
+  public static final int DEFAULT_VERTEX_CACHE_SIZE = 256;
   
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
   public static final int MAX_LIGHTS = 8;
@@ -128,7 +130,7 @@ public class PGL {
   public static final int GL_CLAMP_TO_EDGE = GLES20.GL_CLAMP_TO_EDGE;
   public static final int GL_REPEAT        = GLES20.GL_REPEAT;
   
-  public static final int GL_RGBA8 = -1;  
+  public static final int GL_RGBA8            = -1;  
   public static final int GL_DEPTH24_STENCIL8 = -1;
   
   public static final int GL_DEPTH_COMPONENT16 = GLES20.GL_DEPTH_COMPONENT16;
@@ -142,6 +144,8 @@ public class PGL {
   public static final int GL_ARRAY_BUFFER         = GLES20.GL_ARRAY_BUFFER;
   public static final int GL_ELEMENT_ARRAY_BUFFER = GLES20.GL_ELEMENT_ARRAY_BUFFER;
     
+  public static final int GL_SAMPLES = GLES20.GL_SAMPLES;  
+  
   public static final int GL_FRAMEBUFFER_COMPLETE                      = GLES20.GL_FRAMEBUFFER_COMPLETE;    
   public static final int GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GLES20.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
   public static final int GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GLES20.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
@@ -169,9 +173,9 @@ public class PGL {
   public static final int GL_EXTENSIONS = GLES20.GL_EXTENSIONS;
     
   public static final int GL_MAX_TEXTURE_SIZE         = GLES20.GL_MAX_TEXTURE_SIZE;
+  public static final int GL_MAX_SAMPLES              = -1;
   public static final int GL_ALIASED_LINE_WIDTH_RANGE = GLES20.GL_ALIASED_LINE_WIDTH_RANGE;
   public static final int GL_ALIASED_POINT_SIZE_RANGE = GLES20.GL_ALIASED_POINT_SIZE_RANGE;
-  public static final int GL_SAMPLES                  = GLES20.GL_SAMPLES;
 
   public static final int GLU_TESS_WINDING_NONZERO = PGLU.GLU_TESS_WINDING_NONZERO;
   public static final int GLU_TESS_WINDING_ODD     = PGLU.GLU_TESS_WINDING_ODD;  
@@ -196,16 +200,16 @@ public class PGL {
   public static final int GL_DST_COLOR           = GLES20.GL_DST_COLOR;
   public static final int GL_SRC_COLOR           = GLES20.GL_SRC_COLOR;
   
-  public static final int GL_FRAMEBUFFER       = GLES20.GL_FRAMEBUFFER;
-  public static final int GL_COLOR_ATTACHMENT0 = GLES20.GL_COLOR_ATTACHMENT0;
+  public static final int GL_FRAMEBUFFER        = GLES20.GL_FRAMEBUFFER;
+  public static final int GL_COLOR_ATTACHMENT0  = GLES20.GL_COLOR_ATTACHMENT0;
+  public static final int GL_COLOR_ATTACHMENT1  = -1;
+  public static final int GL_COLOR_ATTACHMENT2  = -1;
+  public static final int GL_COLOR_ATTACHMENT3  = -1;  
   public static final int GL_RENDERBUFFER       = GLES20.GL_RENDERBUFFER;
   public static final int GL_DEPTH_ATTACHMENT   = GLES20.GL_DEPTH_ATTACHMENT;
   public static final int GL_STENCIL_ATTACHMENT = GLES20.GL_STENCIL_ATTACHMENT;  
-  public static final int GL_READ_FRAMEBUFFER  = -1;
-  public static final int GL_DRAW_FRAMEBUFFER  = -1;   
-  public static final int GL_COLOR_ATTACHMENT1 = -1;
-  public static final int GL_COLOR_ATTACHMENT2 = -1;
-  public static final int GL_COLOR_ATTACHMENT3 = -1;  
+  public static final int GL_READ_FRAMEBUFFER   = -1;
+  public static final int GL_DRAW_FRAMEBUFFER   = -1;     
   
   public static final int GL_VERTEX_SHADER   = GLES20.GL_VERTEX_SHADER;
   public static final int GL_FRAGMENT_SHADER = GLES20.GL_FRAGMENT_SHADER;
@@ -219,20 +223,28 @@ public class PGL {
   public static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
   public static final int EGL_OPENGL_ES2_BIT         = 0x0004;
   
+  /** Basic GLES 1.0 interface */
   public GL10 gl;
-  public PGLU glu; 
-
-  public AndroidRenderer renderer;
   
+  /** GLU interface **/
+  public PGLU glu; 
+  
+  /** The PGraphics object using this interface */
   public PGraphicsAndroid3D pg;
   
+  /** Whether OpenGL has been initialized or not */
   public boolean initialized;
-    
+
+  /** The renderer object driving the rendering loop,
+   * analogous to the GLEventListener in JOGL */
+  protected AndroidRenderer renderer;
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Intialization, finalization
   
   // TODO: implement double buffering support in onscreen rendering, offscreen rendering.  
+  
   
   public PGL(PGraphicsAndroid3D pg) {
     this.pg = pg;
@@ -240,17 +252,16 @@ public class PGL {
     glu = new PGLU();
     initialized = false;
   }
+
   
-  static public void startup(boolean beforeUI) {    
+  public void setFramerate(float framerate) {    
   }
   
-  static public void shutdown() {
-  }  
   
-  public void updatePrimary() {
-    
+  public void updatePrimary() {    
   }
 
+  
   public void updateOffscreen(PGL primary) {
     gl = primary.gl;       
   }  
@@ -301,6 +312,7 @@ public class PGL {
     initialized = true;
   }
   
+  
   public void initOffscreenSurface(PGL primary) {
     
     /*
@@ -345,25 +357,11 @@ public class PGL {
     initialized = true;
   }
   
-  public void updateOffscreenSurface(PGL primary) {    
-  }
-  
-  protected void detainContext() {    
-  }
-  
-  public void releaseContext() {    
-  }
-  
-  public void destroyContext() {   
-  } 
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Frame rendering  
-  
-  public boolean initOnscreenDraw() {
-    return true;
-  }
+
   
   public void beginOnscreenDraw(boolean clear, int frame) {
     GLES20.glClearColor(0, 0, 0, 0);
@@ -410,6 +408,7 @@ public class PGL {
     }    
      */
   }
+  
   
   public void endOnscreenDraw(boolean clear0) {
     /*
@@ -458,13 +457,16 @@ public class PGL {
     */     
   }
   
+  
   public void endOffscreenDraw(boolean clear0) {
     //swapOffscreenIndex(); 
   }  
   
+  
   public boolean canDraw() {
     return true;    
   }  
+  
   
   public void requestDraw() {
     if (pg.parent.looping) { // This "if" is needed to avoid flickering when looping is disabled.
@@ -477,17 +479,25 @@ public class PGL {
   
   // Caps query
 
+  
   public String glGetString(int name) {
     return GLES20.glGetString(name);
   }
  
+  
   public void glGetIntegerv(int name, int[] values, int offset) {
-    GLES20.glGetIntegerv(name, values, offset);
+    if (-1 < name) {
+      GLES20.glGetIntegerv(name, values, offset);
+    } else {
+      Arrays.fill(values, 0);
+    }
   }
+  
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Enable/disable caps
+  
   
   public void glEnable(int cap) {
     if (-1 < cap) {
@@ -495,53 +505,65 @@ public class PGL {
     }
   }  
   
+  
   public void glDisable(int cap) {
     if (-1 < cap) {
       GLES20.glDisable(cap);
     }
   }  
   
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Render control 
+  
   
   public void glFlush() {
     GLES20.glFlush();
   }  
   
+  
   public void glFinish() {
     GLES20.glFinish();
   }
+  
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Error handling  
   
+  
   public int glGetError() {
     return GLES20.glGetError();
   }
+  
   
   public String glErrorString(int err) {
     return GLU.gluErrorString(err);
   }
 
+  
   public String gluErrorString(int err) {
     return PGLU.gluErrorString(err);
   }
+  
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Rendering options
 
-  public void setFrontFace(int mode) {
+  
+  public void glFrontFace(int mode) {
     GLES20.glFrontFace(mode);
   }
-    
+  
+  
   public void glDepthMask(boolean flag) {
     GLES20.glDepthMask(flag);   
   }
-    
-  public void setDepthFunc(int func) {
+  
+  
+  public void glDepthFunc(int func) {
     GLES20.glDepthFunc(func);
   }  
 
@@ -550,58 +572,72 @@ public class PGL {
   
   // Textures     
   
+  
   public void glGenTextures(int n, int[] ids, int offset) {
     GLES20.glGenTextures(n, ids, offset);
   }
 
+  
   public void glDeleteTextures(int n, int[] ids, int offset) {
     GLES20.glDeleteTextures(n, ids, offset);
   }  
+  
   
   public void glActiveTexture(int unit) {
     GLES20.glActiveTexture(unit);
   }
   
+  
   public void glBindTexture(int target, int id) {
     GLES20.glBindTexture(target, id);
   }
-    
+  
+  
   public void glTexImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, Buffer data) {
     GLES20.glTexImage2D(target, level, internalFormat, width, height, border, format, type, data);
   }
+  
   
   public void glTexSubImage2D(int target, int level, int xOffset, int yOffset, int width, int height, int format, int type, Buffer data) {
     GLES20.glTexSubImage2D(target, level, xOffset, yOffset, width, height, format, type, data);
   }
 
+  
   public void glTexParameterf(int target, int param, int value) {
     GLES20.glTexParameterf(target, param, value); 
   }
 
+  
   public void glGenerateMipmap(int target) {
     GLES20.glGenerateMipmap(target);
   }  
+  
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Vertex Buffers
 
+  
   public void glGenBuffers(int n, int[] ids, int offset) {
     GLES20.glGenBuffers(n, ids, offset);  
   }
+  
   
   public void glDeleteBuffers(int n, int[] ids, int offset) {
     GLES20.glDeleteBuffers(n, ids, offset);  
   }
   
+  
   public void glBindBuffer(int target, int id) {
     GLES20.glBindBuffer(target, id);
   }
+  
   
   public void glBufferData(int target, int size, Buffer data, int usage) {
     GLES20.glBufferData(target, size, data, usage);
   }
 
+  
   public void glBufferSubData(int target, int offset, int size, Buffer data) {
     GLES20.glBufferSubData(target, offset, size, data);
   }
@@ -616,9 +652,11 @@ public class PGL {
     GLES20.glEnableVertexAttribArray(loc);
   }
   
+  
   public void glDisableVertexAttribArray(int loc) {
     GLES20.glDisableVertexAttribArray(loc);
   }  
+  
   
   public void glVertexAttribPointer(int loc, int size, int type, boolean normalized, int stride, int offset) {
     GLES20.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
@@ -630,182 +668,227 @@ public class PGL {
     return null;
   }
   
+  
   public ByteBuffer glMapBufferRange(int target, int offset, int length, int access) {
     //return gl2x.glMapBufferRange(GL.GL_ARRAY_BUFFER, offset, length, GL2.GL_READ_WRITE);
     return null;
   }
   
+  
   public void glUnmapBuffer(int target) {
     //gl2f.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
   }
+  
   
   /////////////////////////////////////////////////////////////////////////////////
   
   // Framebuffers, renderbuffers  
   
+  
   public void glGenFramebuffers(int n, int[] ids, int offset) {
     GLES20.glGenFramebuffers(n, ids, offset);    
   }
+  
   
   public void glDeleteFramebuffers(int n, int[] ids, int offset) {
     GLES20.glDeleteFramebuffers(n, ids, offset);    
   }
   
+  
   public void glGenRenderbuffers(int n, int[] ids, int offset) {
     GLES20.glGenRenderbuffers(n, ids, offset);    
   }
+  
   
   public void glDeleteRenderbuffers(int n, int[] ids, int offset) {
     GLES20.glDeleteRenderbuffers(n, ids, offset);    
   }
   
+  
   public void glBindFramebuffer(int target, int id) {
     GLES20.glBindFramebuffer(target, id);
   }
+  
   
   public void glBlitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, int mask, int filter) {
 //    GLES20.glBlitFramebuffer(0, 0, srcW, srcH, 0, 0, destW, destH, GLES20.GL_COLOR_BUFFER_BIT, GLES20.GL_NEAREST);    
   }
   
+  
   public void glFramebufferTexture2D(int target, int attachment, int texTarget, int texId, int level) {   
     GLES20.glFramebufferTexture2D(target, attachment, texTarget, texId, level);
   }
 
+  
   public void glBindRenderbuffer(int target, int id) {
     GLES20.glBindRenderbuffer(target, id);
   }
-    
+  
+  
   public void glRenderbufferStorageMultisample(int target, int samples, int format, int width, int height) {
 //    GLES20.glRenderbufferStorageMultisample(GLES20.GL_RENDERBUFFER, samples, format, w, h);
   }
+  
   
   public void glRenderbufferStorage(int target, int format, int width, int height) {
 //    GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, format, w, h);
   }
   
+  
   public void glFramebufferRenderbuffer(int target, int attachment, int rendbufTarget, int rendbufId) {
     GLES20.glFramebufferRenderbuffer(target, attachment, rendbufTarget, rendbufId);
   }  
 
+  
   public int glCheckFramebufferStatus(int target) {
     return GLES20.glCheckFramebufferStatus(target);
   }  
 
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Shaders  
+  
   
   public int glCreateProgram() {
     return GLES20.glCreateProgram();    
   }
   
+  
   public void glDeleteProgram(int id) {
     GLES20.glDeleteProgram(id);  
   }
+  
   
   public int glCreateShader(int type) {
     return GLES20.glCreateShader(type);    
   }
   
+  
   public void glDeleteShader(int id) {
     GLES20.glDeleteShader(id);    
   }
-   
+  
+  
   public void glLinkProgram(int prog) {
     GLES20.glLinkProgram(prog);  
   }
+  
   
   public void glValidateProgram(int prog) {
     GLES20.glValidateProgram(prog);
   }
   
+  
   public void glUseProgram(int prog) {
     GLES20.glUseProgram(prog);  
   }
+  
   
   public int glGetAttribLocation(int prog, String name) {
     return GLES20.glGetAttribLocation(prog, name);
   }
   
+  
   public int glGetUniformLocation(int prog, String name) {
     return GLES20.glGetUniformLocation(prog, name);
   }  
+  
   
   public void glUniform1i(int loc, int value) {
     GLES20.glUniform1i(loc, value);  
   }
   
+  
   public void glUniform1f(int loc, float value) {
     GLES20.glUniform1f(loc, value);  
   }    
+  
   
   public void glUniform2f(int loc, float value0, float value1) {
     GLES20.glUniform2f(loc, value0, value1);  
   }
   
+  
   public void glUniform3f(int loc, float value0, float value1, float value2) {
     GLES20.glUniform3f(loc, value0, value1, value2);  
   }
+  
   
   public void glUniform4f(int loc, float value0, float value1, float value2, float value3) {
     GLES20.glUniform4f(loc, value0, value1, value2, value3);  
   }
   
+  
   public void glUniform1fv(int loc, int count, float[] v, int offset) {
     GLES20.glUniform1fv(loc, count, v, offset);
   }    
 
+  
   public void glUniform2fv(int loc, int count, float[] v, int offset) {
     GLES20.glUniform2fv(loc, count, v, offset);
   }    
 
+  
   public void glUniform3fv(int loc, int count, float[] v, int offset) {
     GLES20.glUniform3fv(loc, count, v, offset);
   }
 
+  
   public void glUniform4fv(int loc, int count, float[] v, int offset) {
     GLES20.glUniform4fv(loc, count, v, offset);
   }  
+  
   
   public void glUniformMatrix2fv(int loc, int count, boolean transpose, float[] mat, int offset) {
     GLES20.glUniformMatrix2fv(loc, count, transpose, mat, offset);
   }
   
+  
   public void glUniformMatrix3fv(int loc, int count, boolean transpose, float[] mat, int offset) {
     GLES20.glUniformMatrix3fv(loc, count, transpose, mat, offset);
   }
+  
   
   public void glUniformMatrix4fv(int loc, int count, boolean transpose, float[] mat, int offset) {
     GLES20.glUniformMatrix4fv(loc, count, transpose, mat, offset);      
   }
   
+  
   public void glVertexAttrib1f(int loc, float value) {
     GLES20.glVertexAttrib1f(loc, value);  
   }
+  
   
   public void glVertexAttrib2f(int loc, float value0, float value1) {
     GLES20.glVertexAttrib2f(loc, value0, value1);  
   }  
   
+  
   public void glVertexAttrib3f(int loc, float value0, float value1, float value2) {
     GLES20.glVertexAttrib3f(loc, value0, value1, value2);  
   }    
 
+  
   public void glVertexAttrib4f(int loc, float value0, float value1, float value2, float value3) {
     GLES20.glVertexAttrib4f(loc, value0, value1, value2, value3);  
   }
+  
   
   public void glShaderSource(int id, String source) {
     GLES20.glShaderSource(id, source);    
   }
   
+  
   public void glCompileShader(int id) {
     GLES20.glCompileShader(id);    
   }
   
+  
   public void glAttachShader(int prog, int shader) {
     GLES20.glAttachShader(prog, shader);  
   }
+  
   
   /////////////////////////////////////////////////////////////////////////////////
   
@@ -816,6 +899,7 @@ public class PGL {
     GLES20.glViewport(x, y, width, height);
   }
 
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Clipping (scissor test)
@@ -845,21 +929,26 @@ public class PGL {
   
   // Pixels  
   
-  public void setReadBuffer(int buf) {
+  
+  public void glReadBuffer(int buf) {
 //    GLES20.glReadBuffer(buf);
   }
+  
   
   public void glReadPixels(int x, int y, int width, int height, int format, int type, Buffer buffer) {
     GLES20.glReadPixels(x, y, width, height, format, type, buffer);
   } 
   
-  public void setDrawBuffer(int buf) {
+  
+  public void glDrawBuffer(int buf) {
 //    GLES20.glDrawBuffer(GLES20.GL_COLOR_ATTACHMENT0 + buf);
   }
+  
   
   public void glClearColor(float r, float g, float b, float a) {
     GLES20.glClearColor(r, g, b, a);    
   }
+  
   
   public void glClear(int mask) {
     GLES20.glClear(mask);
@@ -870,9 +959,11 @@ public class PGL {
   
   // Context interface  
   
+  
   public Context getContext() {
     return new Context(/*context*/);
   }
+  
   
   public class Context {
     //protected GLContext context;
@@ -890,10 +981,12 @@ public class PGL {
   /////////////////////////////////////////////////////////////////////////////////
   
   // Tessellator interface
-    
+  
+  
   public Tessellator createTessellator(TessellatorCallback callback) {
     return new Tessellator(callback);
   }
+  
   
   public class Tessellator {
     protected PGLUtessellator tess;
@@ -960,6 +1053,7 @@ public class PGL {
     }
   }
 
+  
   public interface TessellatorCallback  {
     public void begin(int type);
     public void end();
@@ -969,13 +1063,16 @@ public class PGL {
     public void error(int errnum);    
   }
   
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Utility functions  
   
+  
   public boolean contextIsCurrent(Context other) {
     return other.same(/*context*/);
   }  
+  
   
   static public short makeIndex(int intIdx) {
     // When the index value is greater than 32767, subtracting 65536
@@ -986,13 +1083,16 @@ public class PGL {
     return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;
   }
   
+  
   public void enableTexturing(int target) {
     //gl.glEnable(target);
   }
 
+  
   public void disableTexturing(int target) {
     //gl.glDisable(target);
   }  
+  
   
   public void initTexture(int target, int width, int height, int format, int type) {
     // Doing in patches of 16x16 pixels to avoid creating a (potentially)
@@ -1008,6 +1108,7 @@ public class PGL {
     }
   }  
   
+  
   public String getShaderLog(int id) {
     int[] compiled = new int[1];
     GLES20.glGetShaderiv(id, GLES20.GL_COMPILE_STATUS, compiled, 0);
@@ -1018,21 +1119,26 @@ public class PGL {
     }
   }    
   
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Android specific stuff   
+  
   
   public AndroidRenderer getRenderer() {
     return renderer;
   }
   
+  
   public AndroidContextFactory getContextFactory() {
     return new AndroidContextFactory();
   }  
   
+  
   public AndroidConfigChooser getConfigChooser(int r, int g, int b, int a, int d, int s) {
     return new AndroidConfigChooser(r, g, b, a, d, s);
   }    
+  
   
   public class AndroidRenderer implements Renderer {
     public AndroidRenderer() {
@@ -1057,6 +1163,7 @@ public class PGL {
     }    
   }
   
+  
   public class AndroidContextFactory implements GLSurfaceView.EGLContextFactory {
     public EGLContext createContext(EGL10 egl, EGLDisplay display,
         EGLConfig eglConfig) {
@@ -1071,6 +1178,7 @@ public class PGL {
     }
   }    
 
+  
   public class AndroidConfigChooser implements EGLConfigChooser {
     // Desired size (in bits) for the rgba color, depth and stencil buffers.
     public int redTarget;
