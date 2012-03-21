@@ -43,6 +43,9 @@ public class PShader {
   
   protected String vertexFilename;
   protected String fragmentFilename;
+
+  protected String vertexShaderSource;
+  protected String fragmentShaderSource;
   
   protected int programObject;
   protected int vertexShader;
@@ -293,32 +296,61 @@ public class PShader {
   }
     
   protected void init() {
-    if (programObject == 0 || contextIsOutdated()) {
-      
+    if (programObject == 0 || contextIsOutdated()) {      
       context = pgl.getContext();
       programObject = pg.createGLSLProgramObject();
       
+      boolean hasVert = false;            
       if (vertexFilename != null) {
-        loadVertexShader(vertexFilename);
+        hasVert = loadVertexShader(vertexFilename); 
       } else if (vertexURL != null) {
-        loadVertexShader(vertexURL);
+        hasVert = loadVertexShader(vertexURL);
       } else {
         PGraphics.showException("Vertex shader filenames and URLs are both null!");
       }
       
+      boolean hasFrag = false;      
       if (fragmentFilename != null) {
-        loadFragmentShader(fragmentFilename);
+        hasFrag = loadFragmentShader(fragmentFilename);
       } else if (fragmentURL != null) {      
-        loadFragmentShader(fragmentURL);
+        hasFrag = loadFragmentShader(fragmentURL);
       } else {
         PGraphics.showException("Fragment shader filenames and URLs are both null!");
       }
       
-      checkLogInfo("Vertex shader " + vertexFilename + " compilation: ", vertexShader);
-      checkLogInfo("Fragment shader " + fragmentFilename + " compilation: ", fragmentShader);
+      boolean vertRes = true; 
+      if (hasVert) {
+        vertRes = compileVertexShader();
+      }
+
+      boolean fragRes = true;
+      if (hasFrag) {
+        fragRes = compileFragmentShader();
+      }
       
-      pgl.glLinkProgram(programObject);      
-      pgl.glValidateProgram(programObject);
+      if (vertRes && fragRes) {
+        if (hasVert) {
+          pgl.glAttachShader(programObject, vertexShader);
+        }
+        if (hasFrag) {
+          pgl.glAttachShader(programObject, fragmentShader);
+        }
+        pgl.glLinkProgram(programObject);
+        
+        int[] linked = new int[1];
+        pgl.glGetProgramiv(programObject, PGL.GL_LINK_STATUS, linked, 0);        
+        if (linked[0] == PGL.GL_FALSE) {
+          PGraphics.showException("Cannot link shader program:\n" + pgl.glGetProgramInfoLog(programObject));
+        }
+        
+        pgl.glValidateProgram(programObject);
+        
+        int[] validated = new int[1];
+        pgl.glGetProgramiv(programObject, PGL.GL_VALIDATE_STATUS, validated, 0);        
+        if (validated[0] == PGL.GL_FALSE) {
+          PGraphics.showException("Cannot validate shader program:\n" + pgl.glGetProgramInfoLog(programObject));
+        }        
+      }
     }
   }  
   
@@ -339,9 +371,9 @@ public class PShader {
    * 
    * @param file String
    */
-  protected void loadVertexShader(String filename) {
-    String shaderSource = PApplet.join(parent.loadStrings(filename), "\n");
-    attachVertexShader(shaderSource);
+  protected boolean loadVertexShader(String filename) {
+    vertexShaderSource = PApplet.join(parent.loadStrings(filename), "\n");
+    return vertexShaderSource != null;
   }
 
   /**
@@ -349,12 +381,13 @@ public class PShader {
    * 
    * @param file String
    */
-  protected void loadVertexShader(URL url) {
+  protected boolean loadVertexShader(URL url) {
     try {
-      String shaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
-      attachVertexShader(shaderSource);
+      vertexShaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+      return vertexShaderSource != null;
     } catch (IOException e) {
-      PGraphics.showException("Cannot load shader " + url.getFile());
+      PGraphics.showException("Cannot load vertex shader " + url.getFile());
+      return false;
     }
   }  
     
@@ -363,9 +396,9 @@ public class PShader {
    * 
    * @param file String
    */
-  protected void loadFragmentShader(String filename) {
-    String shaderSource = PApplet.join(parent.loadStrings(filename), "\n");
-    attachFragmentShader(shaderSource);
+  protected boolean loadFragmentShader(String filename) {
+    fragmentShaderSource = PApplet.join(parent.loadStrings(filename), "\n");
+    return fragmentShaderSource != null;
   }  
   
   /**
@@ -373,51 +406,53 @@ public class PShader {
    * 
    * @param url URL
    */
-  protected void loadFragmentShader(URL url) {
+  protected boolean loadFragmentShader(URL url) {
     try {
-      String shaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
-      attachFragmentShader(shaderSource);
+      fragmentShaderSource = PApplet.join(PApplet.loadStrings(url.openStream()), "\n");
+      return fragmentShaderSource != null;
     } catch (IOException e) {
-      PGraphics.showException("Cannot load shader " + url.getFile());
+      PGraphics.showException("Cannot load fragment shader " + url.getFile());
+      return false;
     }
   }  
   
   /**
    * @param shaderSource a string containing the shader's code
    */
-  protected void attachVertexShader(String shaderSource) {
+  protected boolean compileVertexShader() {
     vertexShader = pg.createGLSLVertShaderObject();
     
-    pgl.glShaderSource(vertexShader, shaderSource);
+    pgl.glShaderSource(vertexShader, vertexShaderSource);
     pgl.glCompileShader(vertexShader);
-        
-    pgl.glAttachShader(programObject, vertexShader);    
+    
+    int[] compiled = new int[1];
+    pgl.glGetShaderiv(vertexShader, PGL.GL_COMPILE_STATUS, compiled, 0);        
+    if (compiled[0] == PGL.GL_FALSE) {
+      PGraphics.showException("Cannot compile vertex shader:\n" + pgl.glGetShaderInfoLog(vertexShader));
+      return false;
+    } else {
+      return true;
+    }        
   }  
       
   
   /**
    * @param shaderSource a string containing the shader's code
    */
-  protected void attachFragmentShader(String shaderSource) {
+  protected boolean compileFragmentShader() {
     fragmentShader = pg.createGLSLFragShaderObject();
     
-    pgl.glShaderSource(fragmentShader, shaderSource);
+    pgl.glShaderSource(fragmentShader, fragmentShaderSource);
     pgl.glCompileShader(fragmentShader);
-        
-    pgl.glAttachShader(programObject, fragmentShader);
-  }
     
-  
-  /**
-   * Check the log error for the opengl object obj. Prints error
-   * message if needed.
-   */
-  protected void checkLogInfo(String title, int obj) {    
-    String log = pgl.getShaderLog(obj);    
-    if (!log.equals("")) {
-      System.out.println(title);
-      System.out.println(log);
-    }
+    int[] compiled = new int[1];
+    pgl.glGetShaderiv(fragmentShader, PGL.GL_COMPILE_STATUS, compiled, 0);
+    if (compiled[0] == PGL.GL_FALSE) {
+      PGraphics.showException("Cannot compile fragment shader:\n" + pgl.glGetShaderInfoLog(fragmentShader));      
+      return false;
+    } else {
+      return true;
+    }    
   }
 
   

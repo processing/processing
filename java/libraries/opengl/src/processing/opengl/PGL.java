@@ -105,6 +105,9 @@ public class PGL {
   
   // OpenGL constants
   
+  public static final int GL_FALSE = GL.GL_FALSE;
+  public static final int GL_TRUE  = GL.GL_TRUE;  
+  
   public static final int GL_LESS   = GL.GL_LESS;
   public static final int GL_LEQUAL = GL.GL_LEQUAL;
   public static final int GL_CCW    = GL.GL_CCW;
@@ -223,8 +226,13 @@ public class PGL {
   public static final int GL_READ_FRAMEBUFFER   = GL2.GL_READ_FRAMEBUFFER;
   public static final int GL_DRAW_FRAMEBUFFER   = GL2.GL_DRAW_FRAMEBUFFER;   
   
-  public static final int GL_VERTEX_SHADER   = GL2.GL_VERTEX_SHADER;
-  public static final int GL_FRAGMENT_SHADER = GL2.GL_FRAGMENT_SHADER;
+  public static final int GL_VERTEX_SHADER        = GL2.GL_VERTEX_SHADER;
+  public static final int GL_FRAGMENT_SHADER      = GL2.GL_FRAGMENT_SHADER;
+  public static final int GL_INFO_LOG_LENGTH      = GL2.GL_INFO_LOG_LENGTH;
+  public static final int GL_SHADER_SOURCE_LENGTH = GL2.GL_SHADER_SOURCE_LENGTH;
+  public static final int GL_COMPILE_STATUS       = GL2.GL_COMPILE_STATUS;
+  public static final int GL_LINK_STATUS          = GL2.GL_LINK_STATUS;
+  public static final int GL_VALIDATE_STATUS      = GL2.GL_VALIDATE_STATUS;  
   
   public static final int GL_MULTISAMPLE    = GL.GL_MULTISAMPLE;  
   public static final int GL_POINT_SMOOTH   = GL2.GL_POINT_SMOOTH;      
@@ -841,6 +849,38 @@ public class PGL {
   }
   
   
+  public void glGetShaderiv(int shader, int pname, int[] params, int offset) {
+    gl2.glGetShaderiv(shader, pname, params, offset);  
+  }
+  
+  
+  public String glGetShaderInfoLog(int shader) {
+    int[] val = { 0 };
+    gl2.glGetShaderiv(shader, GL2.GL_INFO_LOG_LENGTH, val, 0);
+    int length = val[0];
+    
+    byte[] log = new byte[length];
+    gl2.glGetShaderInfoLog(shader, length, val, 0, log, 0);
+    return new String(log);
+  }
+  
+  
+  public void glGetProgramiv(int prog, int pname, int[] params, int offset) {
+    gl2.glGetProgramiv(prog, pname, params, offset);  
+  }
+  
+  
+  public String glGetProgramInfoLog(int prog) {
+    int[] val = { 0 };
+    gl2.glGetShaderiv(prog, GL2.GL_INFO_LOG_LENGTH, val, 0);
+    int length = val[0];
+    
+    byte[] log = new byte[length];
+    gl2.glGetProgramInfoLog(prog, length, val, 0, log, 0);
+    return new String(log);
+  }    
+
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Viewport
@@ -1053,28 +1093,6 @@ public class PGL {
     }
     return ret;
   }   
-  
-  
-  public String getShaderLog(int id) {
-    IntBuffer val = IntBuffer.allocate(1);
-    gl2.glGetObjectParameterivARB(id, GL2.GL_OBJECT_INFO_LOG_LENGTH_ARB, val);
-    
-    int length = val.get();
-
-    if (length <= 1) {
-      return ""; 
-    }
-
-    // Some error occurred...
-    ByteBuffer infoLog = ByteBuffer.allocate(length);
-    val.flip();
-    
-    gl2.glGetInfoLogARB(id, length, val, infoLog);
-        
-    byte[] infoBytes = new byte[length];
-    infoLog.get(infoBytes);
-    return new String(infoBytes);
-  }
   
   
   ///////////////////////////////////////////////////////////////////////////////////
