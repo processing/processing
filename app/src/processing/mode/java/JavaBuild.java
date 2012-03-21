@@ -747,14 +747,13 @@ public class JavaBuild {
 
     // Grab the Javadoc-style description from the main code.
     String description = "";
-    String[] javadoc = PApplet.match(sketch.getCode(0).getProgram(), "/\\*{2,}(.*)\\*+/");
+    // If there are multiple closings, need to catch the first, 
+    // which is what the (.*?) will do for us.
+    // http://code.google.com/p/processing/issues/detail?id=877
+    String[] javadoc = PApplet.match(sketch.getCode(0).getProgram(), "/\\*{2,}(.*?)\\*+/"); 
     if (javadoc != null) {
       StringBuffer dbuffer = new StringBuffer();
       String found = javadoc[1];
-      // If there are multiple closings, need to catch the first. (A better 
-      // regex would fix this too, please submit one if that's your thing.)
-      // http://code.google.com/p/processing/issues/detail?id=877
-      found = found.substring(0, found.indexOf("*/"));
       String[] pieces = PApplet.split(found, '\n');
       for (String line : pieces) {
         // if this line starts with * characters, remove 'em
@@ -764,7 +763,6 @@ public class JavaBuild {
         dbuffer.append('\n');
       }
       description = dbuffer.toString();
-//      PApplet.println(description);
     }
 
     // Add links to all the code
