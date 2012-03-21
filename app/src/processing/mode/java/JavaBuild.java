@@ -35,21 +35,21 @@ import processing.mode.java.preproc.*;
 
 public class JavaBuild {
   /**
-   * Regular expression for parsing the size() method. This should match 
-   * against any uses of the size() function, whether numbers or variables 
-   * or whatever. This way, no warning is shown if size() isn't actually used 
+   * Regular expression for parsing the size() method. This should match
+   * against any uses of the size() function, whether numbers or variables
+   * or whatever. This way, no warning is shown if size() isn't actually used
    * in the sketch, which is the case especially for anyone who is cutting
    * and pasting from the reference.
    */
-  public static final String SIZE_REGEX = 
+  public static final String SIZE_REGEX =
     "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
     //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-  public static final String PACKAGE_REGEX = 
+  public static final String PACKAGE_REGEX =
     "(?:^|\\s|;)package\\s+(\\S+)\\;";
 
   protected Sketch sketch;
   protected Mode mode;
-  
+
   // what happens in the build, stays in the build.
   // (which is to say that everything below this line, stays within this class)
 
@@ -151,7 +151,7 @@ public class JavaBuild {
 
 //    Base.openFolder(srcFolder);
 //    Base.openFolder(binFolder);
-    
+
     // run the preprocessor
     String classNameFound = preprocess(srcFolder);
 
@@ -166,8 +166,8 @@ public class JavaBuild {
     }
     return null;
   }
-  
-  
+
+
   public String getSketchClassName() {
     return sketchClassName;
   }
@@ -250,7 +250,7 @@ public class JavaBuild {
     }
 
     // Automatically insert the OpenGL import line if P3D is used. Do this by
-    // modifying the code here instead of 
+    // modifying the code here instead of
     String scrubbed = scrubComments(sketch.getCode(0).getProgram());
     String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
     String renderer = "";
@@ -261,13 +261,13 @@ public class JavaBuild {
     }
     // OpenGL import time! Really, this is for P3D, but may as well do it
     // for OpenGL as well.
-    if (renderer.equals("P3D") || renderer.equals("OPENGL")) {  
+    if (renderer.equals("P3D") || renderer.equals("OPENGL")) {
       bigCode.insert(0, "import processing.opengl.*; ");
     }
 
     PreprocessorResult result;
     try {
-      File outputFolder = (packageName == null) ? 
+      File outputFolder = (packageName == null) ?
         srcFolder : new File(srcFolder, packageName.replace('.', '/'));
       outputFolder.mkdirs();
       final File java = new File(outputFolder, sketch.getName() + ".java");
@@ -407,7 +407,7 @@ public class JavaBuild {
         }
       } else {
         boolean found = false;
-        // If someone insists on unnecessarily repeating the code folder 
+        // If someone insists on unnecessarily repeating the code folder
         // import, don't show an error for it.
         if (codeFolderPackages != null) {
           String itemPkg = item.substring(0, item.lastIndexOf('.'));
@@ -494,10 +494,10 @@ public class JavaBuild {
 
   /**
    * Returns true if this package isn't part of a library (it's a system import
-   * or something like that). Don't bother complaining about java.* or javax.* 
-   * because it's probably in boot.class.path. But we're not checking against 
+   * or something like that). Don't bother complaining about java.* or javax.*
+   * because it's probably in boot.class.path. But we're not checking against
    * that path since it's enormous. Unfortunately we do still have to check
-   * for libraries that begin with a prefix like javax, since that includes 
+   * for libraries that begin with a prefix like javax, since that includes
    * the OpenGL library, even though we're just returning true here, hrm...
    */
   protected boolean ignorableImport(String pkg) {
@@ -505,8 +505,8 @@ public class JavaBuild {
     if (pkg.startsWith("javax.")) return true;
     return false;
   }
-  
-  
+
+
   protected int findErrorFile(int errorLine) {
     for (int i = sketch.getCodeCount() - 1; i > 0; i--) {
       SketchCode sc = sketch.getCode(i);
@@ -535,8 +535,8 @@ public class JavaBuild {
 
   /**
    * Absolute path to the sketch folder. Used to set the working directry of
-   * the sketch when running, i.e. so that saveFrame() goes to the right 
-   * location when running from the PDE, instead of the same folder as the 
+   * the sketch when running, i.e. so that saveFrame() goes to the right
+   * location when running from the PDE, instead of the same folder as the
    * Processing.exe or the root of the user's home dir.
    */
   public String getSketchPath() {
@@ -548,8 +548,8 @@ public class JavaBuild {
   public String getClassPath() {
     return classPath;
   }
-  
-  
+
+
   /** Return the java.library.path for this sketch (for all the native DLLs etc). */
   public String getJavaLibraryPath() {
     return javaLibraryPath;
@@ -698,7 +698,7 @@ public class JavaBuild {
    */
   public boolean exportApplet(File appletFolder) throws SketchException, IOException {
     mode.prepareExportFolder(appletFolder);
-    
+
     srcFolder = sketch.makeTempFolder();
     binFolder = sketch.makeTempFolder();
     String foundName = build(srcFolder, binFolder);
@@ -747,10 +747,10 @@ public class JavaBuild {
 
     // Grab the Javadoc-style description from the main code.
     String description = "";
-    // If there are multiple closings, need to catch the first, 
+    // If there are multiple closings, need to catch the first,
     // which is what the (.*?) will do for us.
     // http://code.google.com/p/processing/issues/detail?id=877
-    String[] javadoc = PApplet.match(sketch.getCode(0).getProgram(), "/\\*{2,}(.*?)\\*+/"); 
+    String[] javadoc = PApplet.match(sketch.getCode(0).getProgram(), "/\\*{2,}(.*?)\\*+/");
     if (javadoc != null) {
       StringBuffer dbuffer = new StringBuffer();
       String found = javadoc[1];
@@ -802,7 +802,7 @@ public class JavaBuild {
       javaLibraryPath.length() != 0;
 
     File skeletonFolder = mode.getContentFile("applet");
-    
+
     // Copy the loading gif to the applet
     String LOADING_IMAGE = "loading.gif";
     // Check if the user already has their own loader image
@@ -816,7 +816,7 @@ public class JavaBuild {
     // not a good idea after all
 //    File deployFile = new File(skeletonFolder, "deployJava.js");
 //    Base.copyFile(deployFile, new File(appletFolder, "deployJava.js"));
-    
+
     // Create new .jar file
     FileOutputStream zipOutputFile =
       new FileOutputStream(new File(appletFolder, sketch.getName() + ".jar"));
@@ -877,7 +877,7 @@ public class JavaBuild {
       String bagelJarPath = bagelJar.getAbsolutePath();
       packClassPathIntoZipFile(bagelJarPath, zos, zipFileContents);
     }
-    
+
     if (sketch.hasCodeFolder()) {
       File[] codeJarFiles = sketch.getCodeFolder().listFiles(new FilenameFilter() {
         public boolean accept(File dir, String name) {
@@ -1040,9 +1040,9 @@ public class JavaBuild {
    */
   protected boolean exportApplication() throws IOException, SketchException {
     // Do the build once, so that we know what libraries are in use (and what
-    // the situation is with their native libs), and also for efficiency of 
-    // not redoing the compilation for each platform. In particular, though, 
-    // importedLibraries won't be set until the preprocessing has finished, 
+    // the situation is with their native libs), and also for efficiency of
+    // not redoing the compilation for each platform. In particular, though,
+    // importedLibraries won't be set until the preprocessing has finished,
     // so we have to do that before the stuff below.
     String foundName = build();
 
@@ -1098,16 +1098,16 @@ public class JavaBuild {
   private boolean exportApplication(File destFolder,
                                    int exportPlatform,
                                    int exportBits) throws IOException, SketchException {
-    // TODO this should probably be a dialog box instead of a warning  
+    // TODO this should probably be a dialog box instead of a warning
     // on the terminal. And the message should be written better than this.
     // http://code.google.com/p/processing/issues/detail?id=884
     for (Library library : importedLibraries) {
       if (!library.supportsArch(exportPlatform, exportBits)) {
         String pn = PConstants.platformNames[exportPlatform];
-        System.err.println("The application." + pn + exportBits + 
-                           " folder will not be created because no " +  
+        System.err.println("The application." + pn + exportBits +
+                           " folder will not be created because no " +
                            exportBits + "-bit version of " +
-                           library.getName() + 
+                           library.getName() +
                            " is available for " + pn);
         return true;  // don't cancel export for this, just move along
       }
@@ -1117,7 +1117,7 @@ public class JavaBuild {
 
     mode.prepareExportFolder(destFolder);
 
-    
+
     /// figure out where the jar files will be placed
 
     File jarFolder = new File(destFolder, "lib");
@@ -1172,7 +1172,7 @@ public class JavaBuild {
 
     if (exportPlatform == PConstants.WINDOWS) {
       if (exportBits == 64) {
-        // We don't yet have a 64-bit launcher, so this is a workaround for now. 
+        // We don't yet have a 64-bit launcher, so this is a workaround for now.
         File batFile = new File(destFolder, sketch.getName() + ".bat");
         PrintWriter writer = PApplet.createWriter(batFile);
         writer.println("@echo off");
@@ -1222,7 +1222,7 @@ public class JavaBuild {
 
     // add the data folder to the main jar file
 //    addDataFolder(zos);
-    // For 2.0a2, make the data folder a separate directory, rather than 
+    // For 2.0a2, make the data folder a separate directory, rather than
     // packaging potentially large files into the JAR. On OS X, we have to hide
     // the folder inside the .app package, while Linux and Windows will have a
     // 'data' folder next to 'lib'.
@@ -1276,7 +1276,7 @@ public class JavaBuild {
 //        System.out.println("export: " + exportFile);
         String exportName = exportFile.getName();
         if (!exportFile.exists()) {
-          System.err.println(exportFile.getName() + 
+          System.err.println(exportFile.getName() +
                              " is mentioned in export.txt, but it's " +
                              "a big fat lie and does not exist.");
 
@@ -1310,12 +1310,12 @@ public class JavaBuild {
           // first 2.0a2 attempt, until below...
 //        } else if (exportPlatform == PConstants.MACOSX) {
 //          Base.copyFile(exportFile, new File(jarFolder, exportName));
-//          
+//
 //        } else {
 //          Base.copyFile(exportFile, new File(destFolder, exportName));
         } else {
-          // Starting with 2.0a2 put extra export files (DLLs, plugins folder, 
-          // anything else for libraries) inside lib or Contents/Resources/Java 
+          // Starting with 2.0a2 put extra export files (DLLs, plugins folder,
+          // anything else for libraries) inside lib or Contents/Resources/Java
           Base.copyFile(exportFile, new File(jarFolder, exportName));
         }
       }
@@ -1363,7 +1363,7 @@ public class JavaBuild {
 //        runOptions += " -d32";
 //      } else if (exportBits == 64) {
 //        runOptions += " -d64";
-//      }      
+//      }
 //    }
 
     /// macosx: write out Info.plist (template for classpath, etc)
@@ -1401,7 +1401,7 @@ public class JavaBuild {
           while ((index = sb.indexOf("@@lsarchitecturepriority@@")) != -1) {
             // More about this mess: http://support.apple.com/kb/TS2827
             // First default to exportBits == 0 case
-            String arch = "<string>x86_64</string>\n      <string>i386</string>"; 
+            String arch = "<string>x86_64</string>\n      <string>i386</string>";
             if (exportBits == 32) {
               arch = "<string>i386</string>";
             } else if (exportBits == 64) {
@@ -1442,7 +1442,7 @@ public class JavaBuild {
       // another fix for bug #234, LD_LIBRARY_PATH ignored on some platforms
       //ps.print("LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$APPDIR\n");
       pw.print("java " + Preferences.get("run.options") +
-               " -Djava.library.path=\"$APPDIR:$APPDIR\\lib\"" +
+               " -Djava.library.path=\"$APPDIR:$APPDIR/lib\"" +
                " -cp \"" + exportClassPath + "\"" +
                " " + sketch.getName() + "\n");
 
