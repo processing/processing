@@ -264,7 +264,7 @@ public class PFramebuffer implements PConstants {
       pgl.glFramebufferTexture2D(PGL.GL_FRAMEBUFFER, PGL.GL_COLOR_ATTACHMENT0 + i, colorBufferTex[i].glTarget, colorBufferTex[i].glID, 0);
     }
 
-    validateFbo();
+    pgl.validateFramebuffer();
 
     pg.popFramebuffer();
   }  
@@ -457,36 +457,4 @@ public class PFramebuffer implements PConstants {
     pixelBuffer = IntBuffer.allocate(width * height);
     pixelBuffer.rewind();     
   }  
-  
-  ///////////////////////////////////////////////////////////  
-
-  // Utilities.  
-  
-  // Internal copy to texture method.
-  protected void copyToTexture(IntBuffer buffer, int glid, int gltarget) {
-    pgl.enableTexturing(gltarget);
-    pgl.glBindTexture(gltarget, glid);    
-    pgl.glTexSubImage2D(gltarget, 0, 0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
-    pgl.glBindTexture(gltarget, 0);
-    pgl.disableTexturing(gltarget);    
-  }  
-  
-  public boolean validateFbo() {
-    int status = pgl.glCheckFramebufferStatus(PGL.GL_FRAMEBUFFER);
-    if (status == PGL.GL_FRAMEBUFFER_COMPLETE) {
-      return true;
-    } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT (" + Integer.toHexString(status) + ")");
-    } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT (" + Integer.toHexString(status) + ")");
-    } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS (" + Integer.toHexString(status) + ")");      
-    } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_FORMATS) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_FORMATS (" + Integer.toHexString(status) + ")");
-    } else if (status == PGL.GL_FRAMEBUFFER_UNSUPPORTED) {
-      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_UNSUPPORTED" + Integer.toHexString(status));      
-    } else {
-      throw new RuntimeException("PFramebuffer: unknown framebuffer error (" + Integer.toHexString(status) + ")");
-    }
-  }
 }
