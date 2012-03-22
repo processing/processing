@@ -26,7 +26,8 @@ public class AVD {
     "This could mean that the Android tools need to be updated,<br>" +
     "or that the Processing AVD should be deleted (it will<br>" +
     "automatically re-created the next time you run Processing).<br>" +
-    "Open the Android SDK manager to check for any errors.";
+    "Open the Android SDK Manager (underneath the Android menu)<br>" + 
+    "to check for any errors.";
 
   static private final String AVD_TARGET_PRIMARY =
     "The Google APIs are not installed properly";
@@ -114,7 +115,11 @@ public class AVD {
   }
 
 
-  /** Return true if this AVD was on the bad list. */
+  /** 
+   * Return true if a member of the renowned and prestigious 
+   * "The following Android Virtual Devices could not be loaded:" club. 
+   * (Prestigious may also not be the right word.)
+   */
   protected boolean badness() {
     for (String avd : badList) {
       if (avd.equals(name)) {
@@ -161,12 +166,13 @@ public class AVD {
   }
 
 
-  static public boolean ensureEclairAVD(final AndroidSDK sdk) {
+  static public boolean ensureProperAVD(final AndroidSDK sdk) {
     try {
       if (defaultAVD.exists(sdk)) {
 //        System.out.println("the avd exists");
         return true;
       }
+//      if (badList.contains(defaultAVD)) {
       if (defaultAVD.badness()) {
 //        Base.showWarning("Android Error", AVD_CANNOT_LOAD, null);
         Base.showWarningTiered("Android Error", AVD_LOAD_PRIMARY, AVD_LOAD_SECONDARY, null);
@@ -180,6 +186,7 @@ public class AVD {
 //      Base.showWarning("Android Error", AVD_CREATE_ERROR, e);
       Base.showWarningTiered("Android Error", AVD_CREATE_PRIMARY, AVD_CREATE_SECONDARY, null);
     }
+    System.out.println("at bottom of ensure proper");
     return false;
   }
 }

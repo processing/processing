@@ -32,7 +32,8 @@ import processing.mode.java.JavaBuild;
 
 
 class AndroidBuild extends JavaBuild {
-  static final String basePackage = "changethispackage.beforesubmitting.tothemarket";
+//  static final String basePackage = "changethispackage.beforesubmitting.tothemarket";
+  static final String basePackage = "processing.test";
   static final String sdkVersion = "10";  // Android 2.3.3 (Gingerbread)
   static final String sdkTarget = "android-" + sdkVersion;
 
@@ -135,9 +136,10 @@ class AndroidBuild extends JavaBuild {
       writeLocalProps(new File(tmpFolder, "local.properties"));
       writeRes(new File(tmpFolder, "res"), sketchClassName);
 
-      File proguardSrc = new File(sdk.getSdkFolder(), "tools/lib/proguard.cfg");
-      File proguardDst = new File(tmpFolder, "proguard.cfg");
-      Base.copyFile(proguardSrc, proguardDst);
+      // new location for SDK Tools 17: /opt/android/tools/proguard/proguard-android.txt
+//      File proguardSrc = new File(sdk.getSdkFolder(), "tools/lib/proguard.cfg");
+//      File proguardDst = new File(tmpFolder, "proguard.cfg");
+//      Base.copyFile(proguardSrc, proguardDst);
 
       final File libsFolder = mkdirs(tmpFolder, "libs");
       final File assetsFolder = mkdirs(tmpFolder, "assets");
