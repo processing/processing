@@ -440,28 +440,14 @@ public class PGL {
       // Simplest scenario: clear mode means we clear both the color and depth buffers.
       // No need for saving front color buffer, etc.
       GLES20.glClearColor(0, 0, 0, 0);
-      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);        
-    } else {
+      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);      
+    }
+    
+    if (!clear) {
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);    
       GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, textures[frontTex], 0);   
-
-      int status = glCheckFramebufferStatus(PGL.GL_FRAMEBUFFER);
-      if (status != PGL.GL_FRAMEBUFFER_COMPLETE) {        
-        if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
-          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT (" + Integer.toHexString(status) + ")");
-        } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
-          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT (" + Integer.toHexString(status) + ")");
-        } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
-          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS (" + Integer.toHexString(status) + ")");      
-        } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_FORMATS) {
-          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_FORMATS (" + Integer.toHexString(status) + ")");
-        } else if (status == PGL.GL_FRAMEBUFFER_UNSUPPORTED) {
-          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_UNSUPPORTED" + Integer.toHexString(status));      
-        } else {
-          throw new RuntimeException("PFramebuffer: unknown framebuffer error (" + Integer.toHexString(status) + ")");
-        }      
-      }
-       
+      validateFramebuffer();
+      
       // We need to save the color buffer after finishing with the rendering of this frame,
       // to use is as the background for the next frame ("incremental drawing"). 
       GLES20.glClearColor(0, 0, 0, 0);
@@ -469,11 +455,14 @@ public class PGL {
       if (firstOnscreenFrame) {
         // No need to draw back color buffer because we are in the first frame.
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        firstOnscreenFrame = false;
       } else {
         // Render previous draw texture as background.      
         drawTexture(GLES20.GL_TEXTURE_2D, textures[backTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       }
+    }
+    
+    if (firstOnscreenFrame) {
+      firstOnscreenFrame = false;
     }
   }
   

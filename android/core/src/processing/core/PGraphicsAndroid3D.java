@@ -1748,6 +1748,8 @@ public class PGraphicsAndroid3D extends PGraphics {
 
     manipulatingCamera = false;
         
+    clearColorBuffer = false;
+    
     if (fbStack == null) {
       fbStack = new Stack<PFramebuffer>();
 
@@ -4352,7 +4354,9 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected void backgroundImpl(PImage image) {
     backgroundImpl();
     set(0, 0, image);
-    clearColorBuffer = true;
+    if (0 < parent.frameCount) {
+      clearColorBuffer = true;
+    }
   }
 
   
@@ -4371,7 +4375,9 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     pgl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
     pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
-    clearColorBuffer = true;
+    if (0 < parent.frameCount) {
+      clearColorBuffer = true;
+    }
   }  
   
   
