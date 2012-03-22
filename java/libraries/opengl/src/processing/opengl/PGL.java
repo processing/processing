@@ -359,20 +359,7 @@ public class PGL {
     setFramerate = true;
   }
   
-  
-  public void updatePrimary() {
-    if (!setFramerate) {
-      setFramerate(targetFramerate);
-    }
-  }
 
-  
-  public void updateOffscreen(PGL primary) {
-    gl  = primary.gl;
-    gl2 = primary.gl2;        
-  }
-  
-  
   public void initPrimarySurface(int antialias) {
     if (profile == null) {
       profile = GLProfile.getDefault();      
@@ -439,7 +426,20 @@ public class PGL {
     capabilities = primary.capabilities;
     drawable = null;
     initialized = true;
-  }  
+  }    
+  
+  
+  public void updatePrimary() {
+    if (!setFramerate) {
+      setFramerate(targetFramerate);
+    }
+  }
+
+  
+  public void updateOffscreen(PGL primary) {
+    gl  = primary.gl;
+    gl2 = primary.gl2;        
+  }
 
   
   ///////////////////////////////////////////////////////////////////////////////////

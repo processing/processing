@@ -305,8 +305,6 @@ public class PGL {
   
   // Intialization, finalization
   
-  // TODO: implement double buffering support in offscreen rendering.  
-  
   
   public PGL(PGraphicsAndroid3D pg) {
     this.pg = pg;
@@ -318,6 +316,19 @@ public class PGL {
   
   public void setFramerate(float framerate) {    
   }
+  
+  
+  public void initPrimarySurface(int antialias) {
+    // We do the initialization in updatePrimary() because
+    // at the moment initPrimarySurface() gets called we 
+    // cannot rely on the GL surface actually being
+    // available.
+  }
+  
+  
+  public void initOffscreenSurface(PGL primary) {
+    initialized = true;
+  }  
   
   
   public void updatePrimary() {    
@@ -373,61 +384,6 @@ public class PGL {
   public void updateOffscreen(PGL primary) {
     gl = primary.gl;       
   }  
-  
-
-  
-  public void initPrimarySurface(int antialias) {
-  }
-  
-  
-  public void initOffscreenSurface(PGL primary) {
-    
-    /*
-    offscreenTexCrop = new int[4];
-    offscreenTexCrop[0] = 0;
-    offscreenTexCrop[1] = 0;
-    offscreenTexCrop[2] = width;
-    offscreenTexCrop[3] = height;      
-
-    offscreenImages = new PImage[2];
-    offscreenParams = new PTexture.Parameters[2];
-    // Linear filtering is needed to keep decent image quality when rendering 
-    // texture at a size different from its original resolution. This is expected
-    // to happen for offscreen rendering.
-    offscreenParams[0] = new PTexture.Parameters(ARGB, BILINEAR);
-    offscreenParams[1] = new PTexture.Parameters(ARGB, BILINEAR);      
-    offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
-    offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);                
-    
-    
-    offscreenTextures = new PTexture[2];
-    offscreenTextures[0] = addTexture(offscreenImages[0]);
-    offscreenTextures[1] = addTexture(offscreenImages[1]);
-    
-    // Drawing textures are marked as flipped along Y to ensure they are properly
-    // rendered by Processing, which has inverted Y axis with respect to
-    // OpenGL.
-    offscreenTextures[0].setFlippedY(true);
-    offscreenTextures[1].setFlippedY(true);
-
-    offscreenIndex = 0;
-
-
-
-
-
-    offscreenFramebuffer = new PFramebuffer(parent, offscreenTextures[0].glWidth, offscreenTextures[0].glHeight,
-                                            1, 1, offscreenDepthBits, offscreenStencilBits, false);
-    
-    // The image texture points to the current offscreen texture.
-    texture = offscreenTextures[offscreenIndex]; 
-    this.setCache(a3d, offscreenTextures[offscreenIndex]);
-    this.setParams(a3d, offscreenParams[offscreenIndex]);         
-    */
-    
-    
-    initialized = true;
-  }
   
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -488,23 +444,10 @@ public class PGL {
   
   
   public void beginOffscreenDraw(boolean clear) {
-    /*
-    // Drawing contents of back color buffer as background.
-    gl.glClearColor(0, 0, 0, 0);
-    if (clear || frame == 0) {
-      // No need to draw back color buffer.
-      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);  
-    } else {
-      GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT);
-      // Render previous draw texture as background.      
-      drawOffscreenTexture((offscreenIndex + 1) % 2);        
-    } 
-    */     
   }
   
   
   public void endOffscreenDraw(boolean clear0) {
-    //swapOffscreenIndex(); 
   }  
   
   
@@ -795,7 +738,7 @@ public class PGL {
   
   
   public void glRenderbufferStorage(int target, int format, int width, int height) {
-//    GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, format, w, h);
+    GLES20.glRenderbufferStorage(target, format, width, height);
   }
   
   
