@@ -42,7 +42,7 @@ import java.util.Stack;
  */
 public class PGraphicsAndroid3D extends PGraphics {
   /** Interface between Processing and OpenGL */
-  protected PGL pgl;
+  public PGL pgl;
   
   /** The PApplet renderer. For the primary surface, pg == this. */
   protected PGraphicsAndroid3D pg;
@@ -83,8 +83,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   /** Extensions used by Processing */
   static public boolean npotTexSupported;
   static public boolean mipmapGeneration;
-  static public boolean vboSupported;
-  static public boolean fboSupported;
   static public boolean fboMultisampleSupported;
   static public boolean blendEqSupported;
   
@@ -290,10 +288,6 @@ public class PGraphicsAndroid3D extends PGraphics {
   protected PFramebuffer offscreenFramebuffer;
   protected PFramebuffer offscreenFramebufferMultisample;
   protected boolean offscreenMultisample;
-  
-  /** These are public so they can be changed by advanced users. */
-  public int offscreenDepthBits = 24;
-  public int offscreenStencilBits = 8;
   
   // ........................................................  
   
@@ -1507,17 +1501,17 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glClearColor(0, 0, 0, 0);
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT | PGL.GL_STENCIL_BUFFER_BIT);
     
+    if (primarySurface) {
+      pgl.beginOnscreenDraw(clearColorBuffer);  
+    } else {
+      pgl.beginOffscreenDraw(clearColorBuffer);  
+    }
+
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.glDepthMask(false);
     } else {
       pgl.glDepthMask(true);
-    }    
-    
-    if (primarySurface) {
-      pgl.beginOnscreenDraw(clearColorBuffer, parent.frameCount);  
-    } else {
-      pgl.beginOffscreenDraw(clearColorBuffer, parent.frameCount);  
-    }
+    }        
     
     drawing = true;
     
@@ -1549,8 +1543,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     pgl.glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]);
     
     if (primarySurface) {
-      pgl.glFlush(); 
       pgl.endOnscreenDraw(clearColorBuffer0);
+      pgl.glFlush();       
     } else {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
@@ -5602,8 +5596,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     // function used in multisampled (antialiased) offscreen rendering.        
     if (PGraphicsAndroid3D.fboMultisampleSupported && 1 < antialias) {
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, antialias, 0, 
-                                                         offscreenDepthBits, offscreenStencilBits, 
-                                                         offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
+                                                         PGL.DEFAULT_DEPTH_BITS, PGL.DEFAULT_STENCIL_BITS, 
+                                                         PGL.DEFAULT_DEPTH_BITS == 24 && PGL.DEFAULT_STENCIL_BITS == 8, false);
       
       offscreenFramebufferMultisample.clear();
       offscreenMultisample = true;
@@ -5617,8 +5611,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else {
       antialias = 0;
       offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
-                                              offscreenDepthBits, offscreenStencilBits,
-                                              offscreenDepthBits == 24 && offscreenStencilBits == 8, false);
+                                              PGL.DEFAULT_DEPTH_BITS, PGL.DEFAULT_STENCIL_BITS,
+                                              PGL.DEFAULT_DEPTH_BITS == 24 && PGL.DEFAULT_STENCIL_BITS == 8, false);
       offscreenMultisample = false;
     }
     
@@ -5635,8 +5629,6 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     npotTexSupported        = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
     mipmapGeneration        = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
-    vboSupported            = -1 < OPENGL_EXTENSIONS.indexOf("vertex_buffer_object");
-    fboSupported            = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_object");
     fboMultisampleSupported = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample");
        
     try {      

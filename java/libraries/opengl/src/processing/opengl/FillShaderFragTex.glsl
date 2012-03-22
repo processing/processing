@@ -21,6 +21,8 @@
 
 uniform sampler2D textureSampler;
 
+uniform vec2 texcoordOffset;
+
 varying vec4 vertColor;
 varying vec4 vertTexcoord;
 

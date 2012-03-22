@@ -28,7 +28,10 @@ import java.awt.Canvas;
 import java.nio.Buffer;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -117,8 +120,9 @@ public class PGL {
   
   public static final int GL_VIEWPORT = GL.GL_VIEWPORT;
   
-  public static final int GL_SCISSOR_TEST = GL.GL_SCISSOR_TEST;  
-  public static final int GL_DEPTH_TEST   = GL.GL_DEPTH_TEST;
+  public static final int GL_SCISSOR_TEST    = GL.GL_SCISSOR_TEST;  
+  public static final int GL_DEPTH_TEST      = GL.GL_DEPTH_TEST;
+  public static final int GL_DEPTH_WRITEMASK = GL.GL_DEPTH_WRITEMASK;  
   
   public static final int GL_COLOR_BUFFER_BIT   = GL.GL_COLOR_BUFFER_BIT; 
   public static final int GL_DEPTH_BUFFER_BIT   = GL.GL_DEPTH_BUFFER_BIT; 
@@ -287,6 +291,41 @@ public class PGL {
   /** Desired target framerate */
   protected float targetFramerate = 60;
   protected boolean setFramerate = false;
+    
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Texture rendering
+  
+  protected boolean loadedTexShader = false;
+  protected int texShaderProgram;
+  protected int texVertShader;
+  protected int texFragShader;
+  
+  protected int texVertLoc;
+  protected int texTCoordLoc;
+  
+  protected float[] texCoords = {
+    //  X,    Y,    U,    V
+    -1.0f, -1.0f, 0.0f, 0.0f,
+    +1.0f, -1.0f, 1.0f, 0.0f,    
+    -1.0f, +1.0f, 0.0f, 1.0f,
+    +1.0f, +1.0f, 1.0f, 1.0f
+  }; 
+  protected FloatBuffer texData;
+  
+  protected String texVertShaderSource = "attribute vec2 inVertex;" +
+                                         "attribute vec2 inTexcoord;" +
+                                         "varying vec2 vertTexcoord;" +
+                                         "void main() {" +
+                                         "  gl_Position = vec4(inVertex, 0, 1);" +
+                                         "  vertTexcoord = inTexcoord;" +    
+                                         "}";
+  
+  protected String texFragShaderSource = "uniform sampler2D textureSampler;" +
+                                         "varying vec2 vertTexcoord;" +
+                                         "void main() {" +
+                                         "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);" +                                   
+                                         "}";   
   
   ///////////////////////////////////////////////////////////////////////////////////
   
@@ -408,7 +447,7 @@ public class PGL {
   // Frame rendering    
   
   
-  public void beginOnscreenDraw(boolean clear, int frame) {
+  public void beginOnscreenDraw(boolean clear) {
   }
   
   
@@ -416,7 +455,7 @@ public class PGL {
   }
   
   
-  public void beginOffscreenDraw(boolean clear, int frame) {
+  public void beginOffscreenDraw(boolean clear) {
   }
   
   
@@ -453,6 +492,19 @@ public class PGL {
   public void glGetIntegerv(int name, int[] values, int offset) {
     gl.glGetIntegerv(name, values, offset);
   }
+  
+  
+  public void glGetBooleanv(int name, boolean[] values, int offset) {
+    if (-1 < name) {
+      byte[] bvalues = new byte[values.length];
+      gl.glGetBooleanv(name, bvalues, offset);
+      for (int i = 0; i < values.length; i++) {
+        values[i] = bvalues[i] != 0;
+      }
+    } else {
+      Arrays.fill(values, false);
+    }    
+  }  
   
   
   ///////////////////////////////////////////////////////////////////////////////////
@@ -604,6 +656,11 @@ public class PGL {
   }
   
   
+  public void glDrawArrays(int mode, int first, int count) {
+    gl.glDrawArrays(mode, first, count);
+  }
+  
+  
   public void glDrawElements(int mode, int count, int type, int offset) {
     gl.glDrawElements(mode, count, type, offset);
   }
@@ -621,6 +678,11 @@ public class PGL {
   
   public void glVertexAttribPointer(int loc, int size, int type, boolean normalized, int stride, int offset) {
     gl2.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
+  }
+  
+  
+  public void glVertexAttribPointer(int loc, int size, int type, boolean normalized, int stride, Buffer data) {
+    gl2.glVertexAttribPointer(loc, size, type, normalized, stride, data);
   }
   
   
@@ -1085,6 +1147,93 @@ public class PGL {
   }
   
   
+  public void drawTexture(int target, int id, int width, int height,
+                          int texX0, int texY0, int texX1, int texY1, 
+                          int scrX0, int scrY0, int scrX1, int scrY1) {
+
+    if (!loadedTexShader) {
+      texVertShader = createShader(GL_VERTEX_SHADER, texVertShaderSource);
+      texFragShader = createShader(GL_FRAGMENT_SHADER, texFragShaderSource);
+      if (0 < texVertShader && 0 < texFragShader) {
+        texShaderProgram = createProgram(texVertShader, texFragShader);
+      }
+      if (0 < texShaderProgram) {
+        texVertLoc = glGetAttribLocation(texShaderProgram, "inVertex");
+        texTCoordLoc = glGetAttribLocation(texShaderProgram, "inTexcoord");     
+      }      
+      texData = ByteBuffer.allocateDirect(texCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
+      loadedTexShader = true;
+    }
+
+    if (0 < texShaderProgram) {
+      // When drawing the texture we don't write to the 
+      // depth mask, so the texture remains in the background
+      // and can be occluded by anything drawn later, even if
+      // if it is behind it.
+      boolean[] val = new boolean[1];
+      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
+      boolean writeMask = val[0];
+      glDepthMask(false);      
+
+      glUseProgram(texShaderProgram);
+
+      glEnableVertexAttribArray(texVertLoc);
+      glEnableVertexAttribArray(texTCoordLoc);
+
+      // Vertex coordinates of the textured quad are specified
+      // in normalized screen space (-1, 1):
+
+      // Corner 1
+      texCoords[ 0] = 2 * (float)scrX0 / pg.width - 1;
+      texCoords[ 1] = 2 * (float)scrY0 / pg.height - 1;
+      texCoords[ 2] = (float)texX0 / width;
+      texCoords[ 3] = (float)texY0 / height;
+
+      // Corner 2
+      texCoords[ 4] = 2 * (float)scrX1 / pg.width - 1;
+      texCoords[ 5] = 2 * (float)scrY0 / pg.height - 1;
+      texCoords[ 6] = (float)texX1 / width;
+      texCoords[ 7] = (float)texY0 / height;
+
+      // Corner 3
+      texCoords[ 8] = 2 * (float)scrX0 / pg.width - 1;
+      texCoords[ 9] = 2 * (float)scrY1 / pg.height - 1;
+      texCoords[10] = (float)texX0 / width;
+      texCoords[11] = (float)texY1 / height;       
+
+      // Corner 4
+      texCoords[12] = 2 * (float)scrX1 / pg.width - 1;
+      texCoords[13] = 2 * (float)scrY1 / pg.height - 1;
+      texCoords[14] = (float)texX1 / width;
+      texCoords[15] = (float)texY1 / height;
+
+      texData.rewind();
+      texData.put(texCoords);
+
+      enableTexturing(target);
+      glActiveTexture(target);
+      glBindTexture(target, id);      
+
+      texData.position(0);
+      glVertexAttribPointer(texVertLoc, 2, GL_FLOAT, false, 4 * SIZEOF_FLOAT, texData);
+      texData.position(2);
+      glVertexAttribPointer(texTCoordLoc, 2, GL_FLOAT, false, 4 * SIZEOF_FLOAT, texData);
+
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+      glBindTexture(target, 0);       
+      disableTexturing(target);
+
+      glDisableVertexAttribArray(texVertLoc);
+      glDisableVertexAttribArray(texTCoordLoc);
+
+      glUseProgram(0); 
+
+      glDepthMask(writeMask);
+    }
+  }
+  
+  
   // bit shifting this might be more efficient
   static public int nextPowerOfTwo(int val) {
     int ret = 1;
@@ -1093,6 +1242,63 @@ public class PGL {
     }
     return ret;
   }   
+  
+  
+  public int createShader(int shaderType, String source) {
+    int shader = glCreateShader(shaderType);
+    if (shader != 0) {
+      glShaderSource(shader, source);
+      glCompileShader(shader);
+      int[] compiled = new int[1];
+      glGetShaderiv(shader, GL_COMPILE_STATUS, compiled, 0);
+      if (compiled[0] == GL_FALSE) {
+        System.err.println("Could not compile shader " + shaderType + ":");
+        System.err.println(glGetShaderInfoLog(shader));
+        glDeleteShader(shader);
+        shader = 0;
+      }
+    }
+    return shader;
+  } 
+  
+  
+  public int createProgram(int vertexShader, int fragmentShader) {
+    int program = glCreateProgram();
+    if (program != 0) {
+      glAttachShader(program, vertexShader);
+      glAttachShader(program, fragmentShader);
+      glLinkProgram(program);
+      int[] linked = new int[1];
+      glGetProgramiv(program, GL_LINK_STATUS, linked, 0);
+      if (linked[0] == GL_FALSE) {
+        System.err.println("Could not link program: ");
+        System.err.println(glGetProgramInfoLog(program));
+        glDeleteProgram(program);
+        program = 0;
+      }            
+    }
+    return program;
+  }
+  
+  
+  public boolean validateFramebuffer() {
+    int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status == GL_FRAMEBUFFER_COMPLETE) {
+      return true;
+    } else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT (" + Integer.toHexString(status) + ")");
+    } else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT (" + Integer.toHexString(status) + ")");
+    } else if (status == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS (" + Integer.toHexString(status) + ")");      
+    } else if (status == GL_FRAMEBUFFER_INCOMPLETE_FORMATS) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_FORMATS (" + Integer.toHexString(status) + ")");
+    } else if (status == GL_FRAMEBUFFER_UNSUPPORTED) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_UNSUPPORTED" + Integer.toHexString(status));      
+    } else {
+      throw new RuntimeException("PFramebuffer: unknown framebuffer error (" + Integer.toHexString(status) + ")");
+    }
+  }
   
   
   ///////////////////////////////////////////////////////////////////////////////////

@@ -289,23 +289,13 @@ public class PTexture implements PConstants {
       tempFbo = new PFramebuffer(parent, glWidth, glHeight);
     }
     
-    if (PGraphicsAndroid3D.fboSupported) {
-      // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
-      // from the current draw buffer (which is the color buffer of the FBO).
-      tempFbo.setColorBuffer(this);
-      pg.pushFramebuffer();
-      pg.setFramebuffer(tempFbo);
-      tempFbo.readPixels();
-      pg.popFramebuffer();
-    } else {
-      // Here we don't have FBOs, so the method above is of no use. What we do instead is
-      // to draw the texture to the screen framebuffer, and then grab the pixels from there.      
-      pg.pushFramebuffer();
-      pg.setFramebuffer(tempFbo);
-      pg.drawTexture(this, 0, 0, glWidth, glHeight, 0, 0, glWidth, glHeight);
-      tempFbo.readPixels();
-      pg.popFramebuffer();
-    }
+    // Attaching the texture to the color buffer of a FBO, binding the FBO and reading the pixels
+    // from the current draw buffer (which is the color buffer of the FBO).
+    tempFbo.setColorBuffer(this);
+    pg.pushFramebuffer();
+    pg.setFramebuffer(tempFbo);
+    tempFbo.readPixels();
+    pg.popFramebuffer();
     
     if (tempPixels == null) {
       tempPixels = new int[size];
@@ -484,15 +474,6 @@ public class PTexture implements PConstants {
   ////////////////////////////////////////////////////////////     
  
   // Utilities 
-  
-  // bit shifting this might be more efficient
-  protected int nextPowerOfTwo(int val) {
-    int ret = 1;
-    while (ret < val) {
-      ret <<= 1;
-    }
-    return ret;
-  }    
       
   
   /**
@@ -741,8 +722,8 @@ public class PTexture implements PConstants {
       glWidth = w;
       glHeight = h;
     } else {
-      glWidth = nextPowerOfTwo(w);
-      glHeight = nextPowerOfTwo(h);
+      glWidth = PGL.nextPowerOfTwo(w);
+      glHeight = PGL.nextPowerOfTwo(h);
     }
     
     if ((glWidth > PGraphicsAndroid3D.maxTextureSize) || (glHeight > PGraphicsAndroid3D.maxTextureSize)) {
