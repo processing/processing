@@ -179,11 +179,20 @@ public class AndroidEditor extends JavaEditor {
     item.setEnabled(false);
     menu.add(item);
     
-    item = new JMenuItem("Android SDK & AVD Manager");
+    item = new JMenuItem("Android SDK Manager");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         File file = amode.getSDK().getAndroidTool();
-        PApplet.exec(new String[] { file.getAbsolutePath() });
+        PApplet.exec(new String[] { file.getAbsolutePath(), "sdk" });
+      }
+    });
+    menu.add(item);
+
+    item = new JMenuItem("Android AVD Manager");
+    item.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        File file = amode.getSDK().getAndroidTool();
+        PApplet.exec(new String[] { file.getAbsolutePath(), "avd" });
       }
     });
     menu.add(item);

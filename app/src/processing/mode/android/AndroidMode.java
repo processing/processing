@@ -3,7 +3,7 @@
 /*
  Part of the Processing project - http://processing.org
 
- Copyright (c) 2011 Ben Fry and Casey Reas
+ Copyright (c) 2011-12 Ben Fry and Casey Reas
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 2
@@ -146,7 +146,7 @@ public class AndroidMode extends JavaMode {
     listener.statusNotice("Building Android project...");
     build.build("debug");
     
-    boolean avd = AVD.ensureEclairAVD(sdk);
+    boolean avd = AVD.ensureProperAVD(sdk);
     if (!avd) {
       SketchException se = 
         new SketchException("Could not create a virtual device for the emulator.");
