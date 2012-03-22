@@ -1585,11 +1585,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
     pg.setPrimary(false);
     pg.setSize(iwidth, iheight);
     
-    // In the case of A3D, the first beginDraw/endDraw
-    // call is needed to initialize the offscreen buffers.
-    pg.beginDraw();
-    pg.endDraw();
-    
     return pg;
   }
 
