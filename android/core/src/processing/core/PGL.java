@@ -25,6 +25,8 @@ package processing.core;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 
@@ -88,10 +90,16 @@ public class PGL {
 
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
+    
+  public static int DEFAULT_DEPTH_BITS = 16;
+  public static int DEFAULT_STENCIL_BITS = 8;
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // OpenGL constants
+  
+  public static final int GL_FALSE = GLES20.GL_FALSE;
+  public static final int GL_TRUE  = GLES20.GL_TRUE;  
   
   public static final int GL_LESS   = GLES20.GL_LESS;
   public static final int GL_LEQUAL = GLES20.GL_LEQUAL;
@@ -102,8 +110,9 @@ public class PGL {
   
   public static final int GL_VIEWPORT = GLES20.GL_VIEWPORT;
   
-  public static final int GL_SCISSOR_TEST = GLES20.GL_SCISSOR_TEST;  
-  public static final int GL_DEPTH_TEST   = GLES20.GL_DEPTH_TEST;
+  public static final int GL_SCISSOR_TEST    = GLES20.GL_SCISSOR_TEST;  
+  public static final int GL_DEPTH_TEST      = GLES20.GL_DEPTH_TEST;
+  public static final int GL_DEPTH_WRITEMASK = GLES20.GL_DEPTH_WRITEMASK;
   
   public static final int GL_COLOR_BUFFER_BIT   = GLES20.GL_COLOR_BUFFER_BIT; 
   public static final int GL_DEPTH_BUFFER_BIT   = GLES20.GL_DEPTH_BUFFER_BIT; 
@@ -211,8 +220,13 @@ public class PGL {
   public static final int GL_READ_FRAMEBUFFER   = -1;
   public static final int GL_DRAW_FRAMEBUFFER   = -1;     
   
-  public static final int GL_VERTEX_SHADER   = GLES20.GL_VERTEX_SHADER;
-  public static final int GL_FRAGMENT_SHADER = GLES20.GL_FRAGMENT_SHADER;
+  public static final int GL_VERTEX_SHADER        = GLES20.GL_VERTEX_SHADER;
+  public static final int GL_FRAGMENT_SHADER      = GLES20.GL_FRAGMENT_SHADER;  
+  public static final int GL_INFO_LOG_LENGTH      = GLES20.GL_INFO_LOG_LENGTH;
+  public static final int GL_SHADER_SOURCE_LENGTH = GLES20.GL_SHADER_SOURCE_LENGTH;
+  public static final int GL_COMPILE_STATUS       = GLES20.GL_COMPILE_STATUS;
+  public static final int GL_LINK_STATUS          = GLES20.GL_LINK_STATUS;
+  public static final int GL_VALIDATE_STATUS      = GLES20.GL_VALIDATE_STATUS;
   
   public static final int GL_MULTISAMPLE    = -1;  
   public static final int GL_POINT_SMOOTH   = -1;      
@@ -238,12 +252,60 @@ public class PGL {
   /** The renderer object driving the rendering loop,
    * analogous to the GLEventListener in JOGL */
   protected AndroidRenderer renderer;
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // FBO for incremental drawing  
+  
+  protected boolean firstOnscreenFrame = true;
+  protected int[] textures = { 0, 0 };
+  protected int[] fbo = { 0 };
+  protected int[] depth = { 0 };
+  protected int[] stencil = { 0 };
+  protected int texWidth, texHeight;
+  protected int backTex, frontTex;
+    
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Texture rendering
+  
+  protected boolean loadedTexShader = false;
+  protected int texShaderProgram;
+  protected int texVertShader;
+  protected int texFragShader;
+  
+  protected int texVertLoc;
+  protected int texTCoordLoc;
+  
+  protected float[] texCoords = {
+    //  X,    Y,    U,    V
+    -1.0f, -1.0f, 0.0f, 0.0f,
+    +1.0f, -1.0f, 1.0f, 0.0f,    
+    -1.0f, +1.0f, 0.0f, 1.0f,
+    +1.0f, +1.0f, 1.0f, 1.0f
+  }; 
+  protected FloatBuffer texData;
+  
+  protected String texVertShaderSource = "attribute vec2 inVertex;" +
+                                         "attribute vec2 inTexcoord;" +
+                                         "varying vec2 vertTexcoord;" +
+                                         "void main() {" +
+                                         "  gl_Position = vec4(inVertex, 0, 1);" +
+                                         "  vertTexcoord = inTexcoord;" +    
+                                         "}";
+  
+  protected String texFragShaderSource = "precision mediump float;" +
+                                         "uniform sampler2D textureSampler;" +
+                                         "varying vec2 vertTexcoord;" +
+                                         "void main() {" +
+                                         "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);" +                                   
+                                         "}";  
   
   ///////////////////////////////////////////////////////////////////////////////////
   
   // Intialization, finalization
   
-  // TODO: implement double buffering support in onscreen rendering, offscreen rendering.  
+  // TODO: implement double buffering support in offscreen rendering.  
   
   
   public PGL(PGraphicsAndroid3D pg) {
@@ -259,6 +321,52 @@ public class PGL {
   
   
   public void updatePrimary() {    
+    if (!initialized) {
+      String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);      
+      if (-1 < ext.indexOf("texture_non_power_of_two")) {
+        texWidth = pg.width;
+        texHeight = pg.height;
+      } else {
+        texWidth = PGL.nextPowerOfTwo(pg.width);
+        texHeight = PGL.nextPowerOfTwo(pg.height);
+      }
+      
+      // We create the GL resources we need to draw incrementally, ie: not clearing
+      // the screen in each frame. Because the way Android handles double buffering
+      // we need to handle our own custom buffering using FBOs.
+      GLES20.glGenTextures(2, textures, 0);        
+      for (int i = 0; i < 2; i++) {
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[i]);    
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);    
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, texWidth, texHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
+        initTexture(GLES20.GL_TEXTURE_2D, texWidth, texHeight, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE);
+      }
+      GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+      
+      GLES20.glGenFramebuffers(1, fbo, 0);      
+      GLES20.glGenRenderbuffers(1, depth, 0); 
+      GLES20.glGenRenderbuffers(1, stencil, 0);
+      
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);
+      
+      GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, depth[0]);
+      GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_DEPTH_COMPONENT16, texWidth, texHeight);
+      GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT, GLES20.GL_RENDERBUFFER, depth[0]);
+      
+      GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, stencil[0]);
+      GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_STENCIL_INDEX8, texWidth, texHeight);
+      GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_STENCIL_ATTACHMENT, GLES20.GL_RENDERBUFFER, stencil[0]);
+      
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+      
+      backTex = 1; 
+      frontTex = 0;
+      
+      initialized = true;
+    }    
   }
 
   
@@ -266,50 +374,9 @@ public class PGL {
     gl = primary.gl;       
   }  
   
+
   
   public void initPrimarySurface(int antialias) {
-    /*
-    
-    offscreenTexCrop = new int[4];
-    offscreenTexCrop[0] = 0;
-    offscreenTexCrop[1] = 0;
-    offscreenTexCrop[2] = width;
-    offscreenTexCrop[3] = height;      
-
-    offscreenImages = new PImage[2];
-    offscreenParams = new PTexture.Parameters[2];
-    
-    // Nearest filtering is used for the primary surface, otherwise some 
-    // artifacts appear (diagonal line when blending, for instance). This
-    // might deserve further examination.
-    offscreenParams[0] = new PTexture.Parameters(ARGB, POINT);
-    offscreenParams[1] = new PTexture.Parameters(ARGB, POINT);
-    offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
-    offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);          
-    
-    offscreenTextures = new PTexture[2];
-    offscreenTextures[0] = addTexture(offscreenImages[0]);
-    offscreenTextures[1] = addTexture(offscreenImages[1]);
-    
-    // Drawing textures are marked as flipped along Y to ensure they are properly
-    // rendered by Processing, which has inverted Y axis with respect to
-    // OpenGL.
-    offscreenTextures[0].setFlippedY(true);
-    offscreenTextures[1].setFlippedY(true);
-
-    offscreenIndex = 0;
-
-    offscreenFramebuffer = new PFramebuffer(parent, offscreenTextures[0].glWidth, offscreenTextures[0].glHeight,
-                                            1, 1, offscreenDepthBits, offscreenStencilBits, false);
-    
-    // The image texture points to the current offscreen texture.
-    texture = offscreenTextures[offscreenIndex]; 
-    this.setCache(a3d, offscreenTextures[offscreenIndex]);
-    this.setParams(a3d, offscreenParams[offscreenIndex]);       
-    
-    */
-    
-    initialized = true;
   }
   
   
@@ -332,6 +399,7 @@ public class PGL {
     offscreenImages[0] = parent.createImage(width, height, ARGB, offscreenParams[0]);
     offscreenImages[1] = parent.createImage(width, height, ARGB, offscreenParams[1]);                
     
+    
     offscreenTextures = new PTexture[2];
     offscreenTextures[0] = addTexture(offscreenImages[0]);
     offscreenTextures[1] = addTexture(offscreenImages[1]);
@@ -343,6 +411,10 @@ public class PGL {
     offscreenTextures[1].setFlippedY(true);
 
     offscreenIndex = 0;
+
+
+
+
 
     offscreenFramebuffer = new PFramebuffer(parent, offscreenTextures[0].glWidth, offscreenTextures[0].glHeight,
                                             1, 1, offscreenDepthBits, offscreenStencilBits, false);
@@ -363,86 +435,70 @@ public class PGL {
   // Frame rendering  
 
   
-  public void beginOnscreenDraw(boolean clear, int frame) {
-    GLES20.glClearColor(0, 0, 0, 0);
-    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-    
-    /*
+  public void beginOnscreenDraw(boolean clear) {
     if (clear) {
       // Simplest scenario: clear mode means we clear both the color and depth buffers.
       // No need for saving front color buffer, etc.
-      gl.glClearColor(0, 0, 0, 0);
-      gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);        
+      GLES20.glClearColor(0, 0, 0, 0);
+      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);        
     } else {
-      // We need to save the color buffer after finishing with the rendering of this frame,
-      // to use is as the background for the next frame (I call this "incremental rendering"). 
-     
-      if (fboSupported) {
-        if (offscreenFramebuffer != null) {
-          // Setting the framebuffer corresponding to this surface.
-          pushFramebuffer();
-          setFramebuffer(offscreenFramebuffer);
-          // Setting the current front color buffer.
-          offscreenFramebuffer.setColorBuffer(offscreenTextures[offscreenIndex]);
-          
-          // Drawing contents of back color buffer as background.
-          gl.glClearColor(0, 0, 0, 0);
-          if (frame == 0) {
-            // No need to draw back color buffer because we are in the first frame ever.
-            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);  
-          } else {
-            gl.glClear(GL10.GL_DEPTH_BUFFER_BIT);
-            // Render previous draw texture as background.      
-            drawOffscreenTexture((offscreenIndex + 1) % 2);        
-          }
-        }
-      } else {
-        if (texture != null) { 
-          gl.glClearColor(0, 0, 0, 0);
-          gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-          if (0 < frame) {
-            drawTexture();
-          }
-        }
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);    
+      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, textures[frontTex], 0);   
+
+      int status = glCheckFramebufferStatus(PGL.GL_FRAMEBUFFER);
+      if (status != PGL.GL_FRAMEBUFFER_COMPLETE) {        
+        if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT (" + Integer.toHexString(status) + ")");
+        } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT (" + Integer.toHexString(status) + ")");
+        } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
+          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS (" + Integer.toHexString(status) + ")");      
+        } else if (status == PGL.GL_FRAMEBUFFER_INCOMPLETE_FORMATS) {
+          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_FORMATS (" + Integer.toHexString(status) + ")");
+        } else if (status == PGL.GL_FRAMEBUFFER_UNSUPPORTED) {
+          throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_UNSUPPORTED" + Integer.toHexString(status));      
+        } else {
+          throw new RuntimeException("PFramebuffer: unknown framebuffer error (" + Integer.toHexString(status) + ")");
+        }      
       }
-    }    
-     */
+       
+      // We need to save the color buffer after finishing with the rendering of this frame,
+      // to use is as the background for the next frame ("incremental drawing"). 
+      GLES20.glClearColor(0, 0, 0, 0);
+      GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_STENCIL_BUFFER_BIT);
+      if (firstOnscreenFrame) {
+        // No need to draw back color buffer because we are in the first frame.
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        firstOnscreenFrame = false;
+      } else {
+        // Render previous draw texture as background.      
+        drawTexture(GLES20.GL_TEXTURE_2D, textures[backTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+      }
+    }
   }
   
   
   public void endOnscreenDraw(boolean clear0) {
-    /*
-      if (!clear0) {
-        // We are in the primary surface, and no clear mode, this means that the current
-        // contents of the front buffer needs to be used in the next frame as the background
-        // for incremental rendering. Depending on whether or not FBOs are supported,
-        // one of the two following paths is selected.
-        if (fboSupported) {
-          if (offscreenFramebuffer != null) {
-            // Restoring screen buffer.
-            popFramebuffer();
+    if (!clear0) {
+      // We are in the primary surface, and no clear mode, this means that the current
+      // contents of the front buffer needs to be used in the next frame as the background.
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0); 
             
-            // Only the primary surface in clear mode will write the contents of the
-            // offscreen framebuffer to the screen.
-            gl.glClearColor(0, 0, 0, 0);
-            gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+      GLES20.glClearColor(0, 0, 0, 0);
+      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
       
-            // Render current draw texture to screen.
-            drawOffscreenTexture(offscreenIndex);
-        
-            swapOffscreenIndex();
-          }
-        } else {
-          if (texture != null) {
-            copyFrameToTexture();
-          }
-        }
-      } 
-     */
+      // Render current front texture to screen.
+      drawTexture(GLES20.GL_TEXTURE_2D, textures[frontTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+      
+      // Swapping front and back textures.
+      int temp = frontTex;
+      frontTex = backTex;
+      backTex = temp;
+    }
   }
   
   
-  public void beginOffscreenDraw(boolean clear, int frame) {
+  public void beginOffscreenDraw(boolean clear) {
     /*
     // Drawing contents of back color buffer as background.
     gl.glClearColor(0, 0, 0, 0);
@@ -493,6 +549,15 @@ public class PGL {
     }
   }
   
+  
+  public void glGetBooleanv(int name, boolean[] values, int offset) {
+    if (-1 < name) {
+      GLES20.glGetBooleanv(name, values, offset);
+    } else {
+      Arrays.fill(values, false);
+    }    
+  }
+    
   
   ///////////////////////////////////////////////////////////////////////////////////
   
@@ -643,6 +708,11 @@ public class PGL {
   }
   
   
+  public void glDrawArrays(int mode, int first, int count) {
+    GLES20.glDrawArrays(mode, first, count);
+  }
+  
+  
   public void glDrawElements(int mode, int count, int type, int offset) {
     GLES20.glDrawElements(mode, count, type, offset);
   }
@@ -659,7 +729,12 @@ public class PGL {
   
   
   public void glVertexAttribPointer(int loc, int size, int type, boolean normalized, int stride, int offset) {
-    GLES20.glVertexAttribPointer(loc, size, type, normalized, stride, offset);
+    GLES20.glVertexAttribPointer(loc, size, type, normalized, stride, offset);    
+  }
+  
+  
+  public void glVertexAttribPointer(int loc, int size, int type, boolean normalized, int stride, Buffer data) {
+    GLES20.glVertexAttribPointer(loc, size, type, normalized, stride, data);
   }
   
   
@@ -890,6 +965,26 @@ public class PGL {
   }
   
   
+  public void glGetShaderiv(int shader, int pname, int[] params, int offset) {
+    GLES20.glGetShaderiv(shader, pname, params, offset);  
+  }
+  
+  
+  public String glGetShaderInfoLog(int shader) {
+    return GLES20.glGetShaderInfoLog(shader);
+  }
+  
+  
+  public void glGetProgramiv(int prog, int pname, int[] params, int offset) {
+    GLES20.glGetProgramiv(prog, pname, params, offset);  
+  }
+  
+  
+  public String glGetProgramInfoLog(int prog) {
+    return GLES20.glGetProgramInfoLog(prog);
+  }  
+  
+  
   /////////////////////////////////////////////////////////////////////////////////
   
   // Viewport
@@ -1107,17 +1202,160 @@ public class PGL {
       }
     }
   }  
+
+    
+  public void drawTexture(int target, int id, int width, int height,
+                                              int texX0, int texY0, int texX1, int texY1, 
+                                              int scrX0, int scrY0, int scrX1, int scrY1) {
   
-  
-  public String getShaderLog(int id) {
-    int[] compiled = new int[1];
-    GLES20.glGetShaderiv(id, GLES20.GL_COMPILE_STATUS, compiled, 0);
-    if (compiled[0] == 0) {
-      return GLES20.glGetShaderInfoLog(id);
-    } else {
-      return "";
+    if (!loadedTexShader) {
+      texVertShader = createShader(GL_VERTEX_SHADER, texVertShaderSource);
+      texFragShader = createShader(GL_FRAGMENT_SHADER, texFragShaderSource);
+      if (0 < texVertShader && 0 < texFragShader) {
+        texShaderProgram = createProgram(texVertShader, texFragShader);
+      }
+      if (0 < texShaderProgram) {
+        texVertLoc = glGetAttribLocation(texShaderProgram, "inVertex");
+        texTCoordLoc = glGetAttribLocation(texShaderProgram, "inTexcoord");     
+      }      
+      texData = ByteBuffer.allocateDirect(texCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
+      loadedTexShader = true;
     }
-  }    
+        
+    if (0 < texShaderProgram) {
+      // When drawing the texture we don't write to the 
+      // depth mask, so the texture remains in the background
+      // and can be occluded by anything drawn later, even if
+      // if it is behind it.
+      boolean[] val = new boolean[1];
+      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
+      boolean writeMask = val[0];
+      glDepthMask(false);      
+      
+      glUseProgram(texShaderProgram);
+      
+      glEnableVertexAttribArray(texVertLoc);
+      glEnableVertexAttribArray(texTCoordLoc);
+      
+      // Vertex coordinates of the textured quad are specified
+      // in normalized screen space (-1, 1):
+      
+      // Corner 1
+      texCoords[ 0] = 2 * (float)scrX0 / pg.width - 1;
+      texCoords[ 1] = 2 * (float)scrY0 / pg.height - 1;
+      texCoords[ 2] = (float)texX0 / width;
+      texCoords[ 3] = (float)texY0 / height;
+      
+      // Corner 2
+      texCoords[ 4] = 2 * (float)scrX1 / pg.width - 1;
+      texCoords[ 5] = 2 * (float)scrY0 / pg.height - 1;
+      texCoords[ 6] = (float)texX1 / width;
+      texCoords[ 7] = (float)texY0 / height;
+      
+      // Corner 3
+      texCoords[ 8] = 2 * (float)scrX0 / pg.width - 1;
+      texCoords[ 9] = 2 * (float)scrY1 / pg.height - 1;
+      texCoords[10] = (float)texX0 / width;
+      texCoords[11] = (float)texY1 / height;       
+      
+      // Corner 4
+      texCoords[12] = 2 * (float)scrX1 / pg.width - 1;
+      texCoords[13] = 2 * (float)scrY1 / pg.height - 1;
+      texCoords[14] = (float)texX1 / width;
+      texCoords[15] = (float)texY1 / height;
+      
+      texData.rewind();
+      texData.put(texCoords);
+      
+      enableTexturing(target);
+      glActiveTexture(target);
+      glBindTexture(target, id);      
+      
+      texData.position(0);
+      glVertexAttribPointer(texVertLoc, 2, GL_FLOAT, false, 4 * SIZEOF_FLOAT, texData);
+      texData.position(2);
+      glVertexAttribPointer(texTCoordLoc, 2, GL_FLOAT, false, 4 * SIZEOF_FLOAT, texData);
+      
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+      
+      glBindTexture(target, 0);       
+      disableTexturing(target);
+      
+      glDisableVertexAttribArray(texVertLoc);
+      glDisableVertexAttribArray(texTCoordLoc);
+      
+      glUseProgram(0); 
+      
+      glDepthMask(writeMask);
+    }
+  }
+  
+  
+  // bit shifting this might be more efficient
+  static public int nextPowerOfTwo(int val) {
+    int ret = 1;
+    while (ret < val) {
+      ret <<= 1;
+    }
+    return ret;
+  }   
+  
+  
+  public int createShader(int shaderType, String source) {
+    int shader = glCreateShader(shaderType);
+    if (shader != 0) {
+      glShaderSource(shader, source);
+      glCompileShader(shader);
+      int[] compiled = new int[1];
+      glGetShaderiv(shader, GL_COMPILE_STATUS, compiled, 0);
+      if (compiled[0] == GL_FALSE) {
+        System.err.println("Could not compile shader " + shaderType + ":");
+        System.err.println(glGetShaderInfoLog(shader));
+        glDeleteShader(shader);
+        shader = 0;
+      }
+    }
+    return shader;
+  } 
+  
+  
+  public int createProgram(int vertexShader, int fragmentShader) {
+    int program = glCreateProgram();
+    if (program != 0) {
+      glAttachShader(program, vertexShader);
+      glAttachShader(program, fragmentShader);
+      glLinkProgram(program);
+      int[] linked = new int[1];
+      glGetProgramiv(program, GL_LINK_STATUS, linked, 0);
+      if (linked[0] == GL_FALSE) {
+        System.err.println("Could not link program: ");
+        System.err.println(glGetProgramInfoLog(program));
+        glDeleteProgram(program);
+        program = 0;
+      }            
+    }
+    return program;
+  }
+  
+  
+  public boolean validateFramebuffer() {
+    int status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status == GL_FRAMEBUFFER_COMPLETE) {
+      return true;
+    } else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT (" + Integer.toHexString(status) + ")");
+    } else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT (" + Integer.toHexString(status) + ")");
+    } else if (status == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS (" + Integer.toHexString(status) + ")");      
+    } else if (status == GL_FRAMEBUFFER_INCOMPLETE_FORMATS) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_INCOMPLETE_FORMATS (" + Integer.toHexString(status) + ")");
+    } else if (status == GL_FRAMEBUFFER_UNSUPPORTED) {
+      throw new RuntimeException("PFramebuffer: GL_FRAMEBUFFER_UNSUPPORTED" + Integer.toHexString(status));      
+    } else {
+      throw new RuntimeException("PFramebuffer: unknown framebuffer error (" + Integer.toHexString(status) + ")");
+    }
+  }  
   
   
   /////////////////////////////////////////////////////////////////////////////////
@@ -1280,9 +1518,9 @@ public class PGL {
             alphaBits = a;
             depthBits = d;
             stencilBits = s;
-            
-            pg.offscreenDepthBits = d;
-            pg.offscreenStencilBits = s;
+                        
+            DEFAULT_DEPTH_BITS = d;
+            DEFAULT_STENCIL_BITS = s;
           }
         }
       }

@@ -1507,17 +1507,17 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.glClearColor(0, 0, 0, 0);
     pgl.glClear(PGL.GL_DEPTH_BUFFER_BIT | PGL.GL_STENCIL_BUFFER_BIT);
     
+    if (primarySurface) {
+      pgl.beginOnscreenDraw(clearColorBuffer);  
+    } else {
+      pgl.beginOffscreenDraw(clearColorBuffer);  
+    }
+
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.glDepthMask(false);
     } else {
       pgl.glDepthMask(true);
-    }    
-    
-    if (primarySurface) {
-      pgl.beginOnscreenDraw(clearColorBuffer, parent.frameCount);  
-    } else {
-      pgl.beginOffscreenDraw(clearColorBuffer, parent.frameCount);  
-    }
+    }        
     
     drawing = true;
     
@@ -1548,9 +1548,9 @@ public class PGraphicsOpenGL extends PGraphics {
     // Restoring previous viewport.
     pgl.glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]);
     
-    if (primarySurface) {
-      pgl.glFlush(); 
+    if (primarySurface) {      
       pgl.endOnscreenDraw(clearColorBuffer0);
+      pgl.glFlush(); 
     } else {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
