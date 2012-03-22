@@ -305,8 +305,7 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Used to detect the occurrence of a frame resize event. */
   protected boolean resized = false;
   
-  /** Stores previous viewport dimensions. */
-  protected int[] savedViewport = {0, 0, 0, 0};
+  /** Viewport dimensions. */
   protected int[] viewport = {0, 0, 0, 0};
   
   /** Used to register calls to glClear. */
@@ -1449,8 +1448,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glDisable(PGL.GL_POLYGON_SMOOTH);        
     }
     
-    // setup opengl viewport.    
-    pgl.glGetIntegerv(PGL.GL_VIEWPORT, savedViewport, 0);    
+    // setup opengl viewport.        
     viewport[0] = 0; viewport[1] = 0; viewport[2] = width; viewport[3] = height;
     pgl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
     if (resized) {
@@ -1510,7 +1508,10 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer);  
     } else {
-      pgl.beginOffscreenDraw(clearColorBuffer);  
+      pgl.beginOffscreenDraw(clearColorBuffer);
+      
+      // Just in case the texture was recreated (in a resize event for example)
+      offscreenFramebuffer.setColorBuffer(texture);      
     }
 
     if (hints[DISABLE_DEPTH_MASK]) {
@@ -1544,9 +1545,6 @@ public class PGraphicsOpenGL extends PGraphics {
       showWarning("P3D: Cannot call endDraw() before beginDraw().");
       return;
     }
-    
-    // Restoring previous viewport.
-    pgl.glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]);
     
     if (primarySurface) {      
       pgl.endOnscreenDraw(clearColorBuffer0);
@@ -5604,8 +5602,6 @@ public class PGraphicsOpenGL extends PGraphics {
       offscreenFramebufferMultisample.release();
     }
     
-    // We need the GL2GL3 profile to access the glRenderbufferStorageMultisample
-    // function used in multisampled (antialiased) offscreen rendering.        
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < antialias) {
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, antialias, 0, 
                                                          PGL.DEFAULT_DEPTH_BITS, PGL.DEFAULT_STENCIL_BITS, 
@@ -6115,15 +6111,25 @@ public class PGraphicsOpenGL extends PGraphics {
     }     
     
     public void setTexture(PTexture tex) { 
-      float scaleu = tex.maxTexCoordU;
-      float scalev = tex.maxTexCoordV;
+      float scaleu = 1;
+      float scalev = 1;
       float dispu = 0;
       float dispv = 0;
+
+      if (tex.isFlippedX()) {
+        scaleu = -1;
+        dispu = 1;
+      }      
       
       if (tex.isFlippedY()) {
-        scalev *= -1;
+        scalev = -1;
         dispv = 1;
       }
+
+      scaleu *= tex.maxTexCoordU;      
+      dispu *= tex.maxTexCoordU;
+      scalev *= tex.maxTexCoordV;
+      dispv *= tex.maxTexCoordV;
 
       if (tcmat == null) {
         tcmat = new float[16];
@@ -6190,15 +6196,25 @@ public class PGraphicsOpenGL extends PGraphics {
     }     
     
     public void setTexture(PTexture tex) { 
-      float scaleu = tex.maxTexCoordU;
-      float scalev = tex.maxTexCoordV;
+      float scaleu = 1;
+      float scalev = 1;
       float dispu = 0;
       float dispv = 0;
+
+      if (tex.isFlippedX()) {
+        scaleu = -1;
+        dispu = 1;
+      }      
       
       if (tex.isFlippedY()) {
-        scalev *= -1;
+        scalev = -1;
         dispv = 1;
       }
+
+      scaleu *= tex.maxTexCoordU;      
+      dispu *= tex.maxTexCoordU;
+      scalev *= tex.maxTexCoordV;
+      dispv *= tex.maxTexCoordV;
 
       if (tcmat == null) {
         tcmat = new float[16];
