@@ -42,3 +42,7 @@ Find your own IP address so you can test the sketch from other clients
 on the network.
 
 ----------------------------------------------------------------------------
+
+Nice subpages for: 404, directory listing, ...
+
+----------------------------------------------------------------------------
