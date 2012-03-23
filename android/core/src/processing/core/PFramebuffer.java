@@ -49,7 +49,7 @@ public class PFramebuffer implements PConstants {
 
   protected int depthBits;
   protected int stencilBits;
-  protected boolean combinedDepthStencil;
+  protected boolean packedDepthStencil;
   
   protected boolean multisample;
   protected int nsamples;
@@ -71,7 +71,7 @@ public class PFramebuffer implements PConstants {
   }
 
   PFramebuffer(PApplet parent, int w, int h, int samples, int colorBuffers, 
-               int depthBits, int stencilBits, boolean combinedDepthStencil, 
+               int depthBits, int stencilBits, boolean packedDepthStencil, 
                boolean screen) {
     this.parent = parent;
     pg = (PGraphicsAndroid3D)parent.g;
@@ -110,18 +110,18 @@ public class PFramebuffer implements PConstants {
     if (depthBits < 1 && stencilBits < 1) {
       this.depthBits = 0;
       this.stencilBits = 0;
-      this.combinedDepthStencil = false;
+      this.packedDepthStencil = false;
     } else {
-      if (combinedDepthStencil) {
+      if (packedDepthStencil) {
         // When combined depth/stencil format is required, the depth and stencil bits
         // are overriden and the 24/8 combination for a 32 bits surface is used. 
         this.depthBits = 24;
         this.stencilBits = 8;
-        this.combinedDepthStencil = true;        
+        this.packedDepthStencil = true;        
       } else {
         this.depthBits = depthBits;
         this.stencilBits = stencilBits;
-        this.combinedDepthStencil = false;        
+        this.packedDepthStencil = false;        
       }
     }
     
@@ -173,11 +173,7 @@ public class PFramebuffer implements PConstants {
   }
   
   public void bind() {
-    if (screenFb) {
-        pgl.glBindFramebuffer(PGL.GL_FRAMEBUFFER, 0);
-    } else {
-      pgl.glBindFramebuffer(PGL.GL_FRAMEBUFFER, glFboID);
-    }
+    pgl.glBindFramebuffer(PGL.GL_FRAMEBUFFER, glFboID);
   }
   
   public void disableDepthTest() {
@@ -285,8 +281,8 @@ public class PFramebuffer implements PConstants {
       createColorBufferMultisample();
     }
     
-    if (combinedDepthStencil) {
-      createCombinedDepthStencilBuffer();
+    if (packedDepthStencil) {
+      createPackedDepthStencilBuffer();
     } else {
       if (0 < depthBits) {
         createDepthBuffer();
@@ -354,7 +350,7 @@ public class PFramebuffer implements PConstants {
   }
   
   
-  protected void createCombinedDepthStencilBuffer() {
+  protected void createPackedDepthStencilBuffer() {
     if (screenFb) return;
     
     if (width == 0 || height == 0) {
