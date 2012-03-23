@@ -10,8 +10,8 @@
   License as published by the Free Software Foundation, version 2.
 
   This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty 
-  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  but WITHOUT ANY WARRANTY; without even the implied warranty
+  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   See the GNU Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General
@@ -23,10 +23,15 @@
 package processing.core;
 
 import java.io.*;
+import java.util.Properties;
+
 import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
@@ -36,27 +41,27 @@ import processing.core.PApplet;
 
 
 /**
- * This is the base class used for the Processing XML library, 
+ * This is the base class used for the Processing XML library,
  * representing a single node of an XML tree.
  */
 public class XML implements Serializable {
 
   /** The internal representation, a DOM node. */
   protected Node node;
-  
+
   /** Cached locally because it's used often. */
   protected String name;
-  
+
   /** The parent element. */
   protected XML parent;
 
   /** Child elements, once loaded. */
   protected XML[] children;
-  
+
 
   protected XML() { }
-  
-  
+
+
   /**
    * Begin parsing XML data passed in from a PApplet. This code
    * wraps exception handling, for more advanced exception handling,
@@ -85,23 +90,28 @@ public class XML implements Serializable {
       // Prevent 503 errors from www.w3.org
       factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 //      factory.setAttribute("http://apache.org/xml/features/dom/create-entity-ref-nodes", false);
+
+      // doesn't seem to help the NPE issues caused by new whitespace parsing
+      //factory.setIgnoringElementContentWhitespace(true);
+
       factory.setExpandEntityReferences(false);
 //      factory.setExpandEntityReferences(true);
+
 //      factory.setCoalescing(true);
 //      builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
       DocumentBuilder builder = factory.newDocumentBuilder();
 //      builder.setEntityResolver()
-      
+
 //      SAXParserFactory spf = SAXParserFactory.newInstance();
 //      spf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 //      SAXParser p = spf.newSAXParser();
-            
+
       //    builder = DocumentBuilderFactory.newDocumentBuilder();
       //    builder = new SAXBuilder();
       //    builder.setValidation(validating);
-      
+
 //      print(dataPath("1broke.html"), System.out);
-      
+
 //      Document document = builder.parse(dataPath("1_alt.html"));
       Document document = builder.parse(new InputSource(reader));
       node = document.getDocumentElement();
@@ -110,14 +120,14 @@ public class XML implements Serializable {
 //      for (int i = 0; i < nodeList.getLength(); i++) {
 //      }
 //      print(createWriter("data/1_alt_reparse.html"), document.getDocumentElement(), 0);
-      
+
     } catch (ParserConfigurationException pce) {
       pce.printStackTrace();
     } catch (IOException e1) {
       e1.printStackTrace();
     } catch (SAXException e2) {
       e2.printStackTrace();
-    }    
+    }
   }
 
 
@@ -129,16 +139,16 @@ public class XML implements Serializable {
       DocumentBuilder builder = factory.newDocumentBuilder();
       Document document = builder.newDocument();
       node = document.createElement(name);
-      
+
       this.name = name;
       this.parent = null;
-      
+
     } catch (ParserConfigurationException e) {
       e.printStackTrace();
     }
   }
 
-  
+
 //  public PNodeXML(String name, PNode parent) {
 //    PNodeXML pxml = PNodeXML.parse("<" + name + ">");
 //    this.node = pxml.node;
@@ -146,18 +156,18 @@ public class XML implements Serializable {
 //    this.parent = parent;
 //  }
 
-  
+
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
-    
+
     if (node.getNodeType() == Node.ELEMENT_NODE) {
       name = node.getNodeName();
     }
   }
-  
-  
-  static public XML parse(String xml) { 
+
+
+  static public XML parse(String xml) {
     return new XML(new StringReader(xml));
   }
 
@@ -170,7 +180,7 @@ public class XML implements Serializable {
     return this.parent;
   }
 
-    
+
   /**
    * Returns the full name (i.e. the name including an eventual namespace
    * prefix) of the element.
@@ -180,7 +190,7 @@ public class XML implements Serializable {
     return name;
   }
 
-    
+
   /**
    * Returns the name of the element (without namespace prefix).
    * @return the name, or null if the element only contains #PCDATA.
@@ -214,9 +224,9 @@ public class XML implements Serializable {
     return children.length;
   }
 
-    
+
   /**
-   * Put the names of all children into an array. Same as looping through 
+   * Put the names of all children into an array. Same as looping through
    * each child and calling getName() on each XMLElement.
    */
   public String[] listChildren() {
@@ -236,8 +246,8 @@ public class XML implements Serializable {
     }
     return outgoing;
   }
-    
-    
+
+
   /**
    * Returns an array containing all the child elements.
    */
@@ -361,8 +371,8 @@ public class XML implements Serializable {
     }
     return outgoing;
   }
-  
-  
+
+
   public XML addChild(String tag) {
     Document document = node.getOwnerDocument();
     Node newChild = document.createElement(tag);
@@ -388,7 +398,7 @@ public class XML implements Serializable {
     return node.getAttributes().getLength();
   }
 
-  
+
   /**
    * Get a list of the names for all of the attributes for this node.
    */
@@ -432,7 +442,7 @@ public class XML implements Serializable {
 //    return (attr == null) ? defaultValue : attr.getNodeValue();
 //  }
 
-  
+
   public String getString(String name) {
     return getString(name, null);
   }
@@ -453,12 +463,12 @@ public class XML implements Serializable {
     return getInt(name, 0);
   }
 
-  
+
   public void setInt(String name, int value) {
     setString(name, String.valueOf(value));
   }
 
-  
+
   /**
    * Returns the value of an attribute.
    *
@@ -479,8 +489,8 @@ public class XML implements Serializable {
   public float getFloat(String name) {
     return getFloat(name, 0);
   }
-  
-  
+
+
   /**
    * Returns the value of an attribute.
    *
@@ -499,12 +509,12 @@ public class XML implements Serializable {
     setString(name, String.valueOf(value));
   }
 
-  
+
   public double getDouble(String name) {
     return getDouble(name, 0);
   }
 
-  
+
   /**
    * Returns the value of an attribute.
    *
@@ -517,8 +527,8 @@ public class XML implements Serializable {
     String value = getString(name);
     return (value == null) ? defaultValue : Double.parseDouble(value);
   }
-  
-  
+
+
   public void setDouble(String name, double value) {
     setString(name, String.valueOf(value));
   }
@@ -536,54 +546,88 @@ public class XML implements Serializable {
     return node.getTextContent();
   }
 
-  
+
+  public void setContent(String text) {
+    node.setTextContent(text);
+  }
+
+
   public String toString() {
     return toString(2);
   }
-  
-  
+
+
   public String toString(int indent) {
     try {
+//      node.normalize();  // does nothing useful
       DOMSource dumSource = new DOMSource(node);
+      // entities = doctype.getEntities()
       TransformerFactory tf = TransformerFactory.newInstance();
       Transformer transformer = tf.newTransformer();
       // if this is the root, output the decl, if not, hide it
       if (parent != null) {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+//      } else {
+//        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
       }
+//      transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, "sample.dtd");
       transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+//      transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS, "yes");  // huh?
+
+//      transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC,
+//          "-//W3C//DTD XHTML 1.0 Transitional//EN");
+//      transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM,
+//          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
+
 //      transformer.setOutputProperty(OutputKeys.ENCODING,"ISO-8859-1");
-      transformer.setOutputProperty(OutputKeys.ENCODING,"UTF8");
+//      transformer.setOutputProperty(OutputKeys.ENCODING,"UTF8");
+      transformer.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
+//      transformer.setOutputProperty(OutputKeys.CDATA_SECTION_ELEMENTS
       // indent by default, but sometimes this needs to be turned off
       if (indent != 0) {
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       }
-      java.io.StringWriter sw = new java.io.StringWriter();
+//      Properties p = transformer.getOutputProperties();
+//      for (Object key : p.keySet()) {
+//        System.out.println(key + " -> " + p.get(key));
+//      }
+
+      StringWriter sw = new StringWriter();
       StreamResult sr = new StreamResult(sw);
       transformer.transform(dumSource, sr);
       return sw.toString();
-      
+
+//      Document document = node.getOwnerDocument();
+//      OutputFormat format = new OutputFormat(document);
+//      format.setLineWidth(65);
+//      format.setIndenting(true);
+//      format.setIndent(2);
+//      StringWriter sw = new StringWriter();
+//      XMLSerializer serializer = new XMLSerializer(sw, format);
+//      serializer.serialize(document);
+//      return sw.toString();
+
     } catch (Exception e) {
       e.printStackTrace();
     }
     return null;
-    
+
 //    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 //    try {
 //      DocumentBuilder builder = factory.newDocumentBuilder();
 //      //builder.get
 ////      Document document = builder.
-//      
+//
 //    } catch (ParserConfigurationException e) {
 //      e.printStackTrace();
 //    }
 
-    
-    
+
+
     //    Document doc = new DocumentImpl();
 //    return node.toString();
-    
+
 //    TransformerFactory transfac = TransformerFactory.newInstance();
 //    Transformer trans = transfac.newTransformer();
 //    trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -592,14 +636,14 @@ public class XML implements Serializable {
 //    //create string from xml tree
 //    StringWriter sw = new StringWriter();
 //    StreamResult result = new StreamResult(sw);
-////    Document doc = 
+////    Document doc =
 //    DOMSource source = new DOMSource(doc);
 //    trans.transform(source, result);
 //    String xmlString = sw.toString();
 
   }
-  
-  
+
+
 //  static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 //
 //  public void write(PrintWriter writer) {
