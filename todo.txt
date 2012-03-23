@@ -16,14 +16,13 @@ X Syntax highlighting not case sensitive in 1.5 through 2.0+
 X   http://code.google.com/p/processing/issues/detail?id=913
 X Fix problem with application export on Linux
 X   http://code.google.com/p/processing/issues/detail?id=945
-X add EditorState class, device-aware placement
-X   get rid of restore sketch feature
-_   remove pref for restoring sketches
-_   implement recent sketches menu
+X "import processing.xml" throws a missing library error
 
-stop() not called in 1.5
-http://code.google.com/p/processing/issues/detail?id=636
-In reply to comment 1, I noticed that dispose() is getting called. stop() isn't.
+javascript
+F JavaScript mode export folder name
+F   http://code.google.com/p/processing/issues/detail?id=848
+F Intermittent hangs of PDE when launching JavaScript Server
+F   http://code.google.com/p/processing/issues/detail?id=936
 
 fixed in 2.0a3
 X Commenting via menu or shortcut does not set sketch to "need save"
@@ -45,10 +44,20 @@ X   http://code.google.com/p/processing/issues/detail?id=725
 X Closing applet window in Processing 1.5 causes serial crash
 X   http://code.google.com/p/processing/issues/detail?id=635
 
+X add EditorState class, device-aware placement
+X   get rid of restore sketch feature
+_   remove pref for restoring sketches
+_   implement recent sketches menu
+
+_ P3D as the renderer doesn't need import opengl
+_   but exporting applet/app needs to recognize that P3D is OpenGL
+
+_ stop() not called in 1.5
+_   http://code.google.com/p/processing/issues/detail?id=636
+_   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
+
 _ check on new JDK and how it works on OS X
 _   http://jdk7.java.net/macportpreview/
-
-_ "import processing.xml" throws a missing library error
 
 _ renaming a normal tab to same name with ".java" fails with ".pde" version already exists
 _   http://code.google.com/p/processing/issues/detail?id=776

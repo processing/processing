@@ -1,3 +1,104 @@
+PROCESSING 2.0a5 (REV 0204) - 23 March 2012
+
+Major updates in this release include a huge revamp of the OpenGL library
+by Andres, fixes to get Android Mode working again, and a number of bug 
+fixes and additions as we head toward 2.0.
+
+On the OpenGL front, we're working to have a single library that works 
+across both desktop and mobile, which is good news because it means we have 
+a fighting chance of making it work (rather than maintaining two entire sets 
+of a very complicated set of code), but the downside is that it requires 
+newer versions of OpenGL on both the desktop and mobile, so it may cause 
+problems with old OSes, mediocre graphics drivers, etc that worked with 
+earlier releases.
+
+[ bug fixes ] 
+
++ OpenGL applets are working again.
+  http://code.google.com/p/processing/issues/detail?id=845
+
++ Abnormal high Java CPU usage at empty sketch with draw() 
+  http://code.google.com/p/processing/issues/detail?id=729
+
++ "Framingham" example has BufferOverflowException
+  http://code.google.com/p/processing/issues/detail?id=900
+
++ Repeatedly calling texture() with new image raises memory error
+  http://code.google.com/p/processing/issues/detail?id=806
+
++ Doc comments not being properly terminated in export of applet
+  http://code.google.com/p/processing/issues/detail?id=877
+
++ Tweaks to the code to prevent multiple copies of Processing from 
+  running at once.
+
++ Fix bug with 'base' not getting set in the Mac OS X platform class.
+
++ Syntax highlighting not case sensitive in 1.5 through 2.0+
+  http://code.google.com/p/processing/issues/detail?id=913
+
++ Fix problem with application export on Linux
+  http://code.google.com/p/processing/issues/detail?id=945
+
++ Fix PImage.get() issue with width or height < 0.
+
++ (Mostly failed) attempts to improve the performance of tint() with Java2D.
+
++ Fix so that normals aren't attempted when no texture is set.
+
++ Several bug fixes inside Table as they relate to inserting/adding columns.
+
+[ changes/additions ] 
+
++ Enable smooth() by default.
+
++ Added setContent() to the XML library, other tweaks to XML export.
+
++ Make note of when library is not available (serial) with error msg
+  i.e. if running in 64-bit mode on OS X, can't do serial
+
++ Update to Java 6u29 for Linux and Windows (OS X now updated).
+
++ Don't show library conflict warning until someone tries to build 
+  with code that actually calls on one of those packages.
+
++ urlEncode() and urlDecode() added (docs coming later).
+
++ delay() is back again. F*king delay().
+
++ Added anti-alias methods so that FSAA can set up properly. The API for
+  these is not set yet. 
+
+[ in earlier releases ] 
+
++ Commenting via menu or shortcut does not set sketch to "need save".
+  http://code.google.com/p/processing/issues/detail?id=860
+
++ Moved the data folder outside the main jar in exported applications.
+  Otherwise enormous files are sometimes added to the jar, which makes
+  things needlessly slow.
+
++ Create new MovieMaker tool to write uncompressed QuickTime movies.
+  www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java
+
++ Library imports failing for libs that define the same packages in 1.5.1
+  http://code.google.com/p/processing/issues/detail?id=725
+
++ Closing applet window in Processing 1.5 causes serial crash.
+  http://code.google.com/p/processing/issues/detail?id=635
+
+[ javascript ] 
+
++ Finalize JavaScript mode export folder name.
+  http://code.google.com/p/processing/issues/detail?id=848
+
++ Intermittent hangs of PDE when launching JavaScript Server
+  http://code.google.com/p/processing/issues/detail?id=936
+
+
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+
+
 PROCESSING 2.0a4 (REV 0203) - 10 November 2011
 
 This is just a quick release so that I can procrastinate on packing for

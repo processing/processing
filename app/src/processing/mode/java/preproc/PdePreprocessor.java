@@ -297,7 +297,7 @@ public class PdePreprocessor {
   }
 
   public PreprocessorResult write(Writer out, String program,
-                                String codeFolderPackages[])
+                                  String codeFolderPackages[])
       throws SketchException, RecognitionException, TokenStreamException {
 
     // these ones have the .* at the end, since a class name might be at the end
@@ -333,7 +333,9 @@ public class PdePreprocessor {
       String piece = pieces[1] + pieces[2] + pieces[3];
       int len = piece.length(); // how much to trim out
 
-      programImports.add(pieces[2]); // the package name
+      if (!ignoreImport(pieces[2])) {
+        programImports.add(pieces[2]); // the package name
+      }
 
       // find index of this import in the program
       int idx = program.indexOf(piece);
@@ -700,6 +702,16 @@ public class PdePreprocessor {
     // These may change in-between (if the prefs panel adds this option)
     String prefsLine = Preferences.get("preproc.imports.list");
     return PApplet.splitTokens(prefsLine, ", ");
+  }
+  
+  /**
+   * Return true if this import should be removed from the code. This is used
+   * for packages like processing.xml which no longer exist.
+   * @param pkg something like processing.xml.XMLElement or processing.xml.*
+   * @return true if this shouldn't be added to the final code
+   */
+  public boolean ignoreImport(String pkg) {
+    return pkg.startsWith("processing.xml.");
   }
 
   /**
