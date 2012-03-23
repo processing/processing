@@ -10,6 +10,16 @@ X repeatedly calling texture() with new image raises memory error
 X   http://code.google.com/p/processing/issues/detail?id=806
 X adding anti-alias methods so that FSAA can set up properly
 X several bug fixes inside Table as they relate to inserting/adding columns
+X urlEncode() and urlDecode() added
+X fix so that normals aren't attempted when no texture is set
+X added setContent() to the XML library, other tweaks to XML export
+X fix PImage.get() issue with width or height < 0
+X attempts to improve the performance of tint() with Java2D
+X delay() remove or no? (keep adding it back...)
+X   serial and scripting need it. maybe edit the reference further...
+X   just can't remove it. needed for scripting.
+X Fix OpenGL applets (again)
+X   http://code.google.com/p/processing/issues/detail?id=845
 
 earlier
 o text using textMode(SCREEN) not displayed in Processing 1.5.1
@@ -40,7 +50,7 @@ _     need to decide if you specify the function name, or if it's specific
 
 _ fix edge + 1 issue on stroke/fill for rectangles
 
-_ urlEncode() and urlDecode()
+_ add reference/docs for urlEncode() and urlDecode()
 
 _ pause()/resume() need to work on the desktop side as well
 
@@ -48,9 +58,6 @@ _ Wishlist for the new XML class in Processing 2.0
 _   http://code.google.com/p/processing/issues/detail?id=904
 
 _ add loadTable().. 
-
-_ delay() remove or no? (keep adding it back...)
-_   serial and scripting need it. maybe edit the reference further...
 
 _ do we need an option to disable XML whitespace?
 _   should this be the default to be more like old XML?
