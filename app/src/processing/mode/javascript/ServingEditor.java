@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 
-public abstract class ServingEditor extends Editor
+public abstract class ServingEditor extends Editor implements BasicServerListener
 {
 	public final static String PROP_KEY_SERVER_PORT = "basicserver.port";
 	
@@ -71,16 +71,21 @@ public abstract class ServingEditor extends Editor
 	    }
 	}
 	
-	protected int getServerPort ()
+	public int getServerPort ()
 	{
 		if ( server != null ) return server.getPort();
 		return -1;
 	}
 	
-	protected String getServerAddress ()
+	public String getServerAddress ()
 	{
 		if ( server != null && server.isRunning() ) return server.getAddress();
 		return null;
+	}
+
+	public BasicServer getServer ()
+	{
+		return server;
 	}
 	
 	protected void startStopServer ( File root )
@@ -98,8 +103,14 @@ public abstract class ServingEditor extends Editor
 	protected BasicServer createServer ( File root )
 	{
 		if ( server != null ) return server;
+		
+		if ( !root.exists() && !root.mkdir() )
+		{
+			// bad .. let server handle the complaining ..
+		}
 
 		server = new BasicServer( root );
+		server.addListener( this );
 
 	    File sketchProps = getSketchPropertiesFile();
 	    if ( sketchProps.exists() ) {
@@ -122,7 +133,7 @@ public abstract class ServingEditor extends Editor
 	protected void startServer ( File root )
 	{
 		if ( server != null && 
-			 (!server.isRunning() || !server.getRoot().equals(root)) )
+			 ( !server.isRunning() || !server.getRoot().equals(root) ) )
 	    {
 			// if server hung or something else went wrong .. stop it.
 			server.shutDown();
@@ -131,20 +142,14 @@ public abstract class ServingEditor extends Editor
 
 	    if ( server == null )
 		{
-			server = createServer(root);
+			server = createServer( root );
+		}
+		
+		if ( !server.isRunning() )
+		{
+			server.setRoot( root );
 			server.start();
-
-			// a little delay to give the server time to kick in ..
-			long ts = System.currentTimeMillis();
-			while ( System.currentTimeMillis() - ts < 200 ) {}
-
-			while ( !server.isRunning() ) {}
-
-			String location = server.getAddress();
-
-			statusNotice( "Server started: " + location );
-
-			openBrowserForServer();
+			statusNotice( "Waiting for server to start ..." );
 		}
 		else if ( server.isRunning() )
 		{
@@ -164,7 +169,6 @@ public abstract class ServingEditor extends Editor
 		if ( server != null && server.isRunning() )
 			server.shutDown();
 
-		statusNotice("Server stopped.");
 	}
 	
 	protected File getSketchPropertiesFile ()
@@ -189,5 +193,19 @@ public abstract class ServingEditor extends Editor
 		{
 			Base.openURL( server.getAddress() );
 		}
+	}
+	
+	// ---- interface BasicServerListener
+	
+	public void serverStarted ()
+	{
+		String location = server.getAddress();
+		statusNotice( "Server started: " + location );
+		openBrowserForServer();
+	}
+	
+	public void serverStopped ()
+	{
+		statusNotice("Server stopped.");
 	}
 }

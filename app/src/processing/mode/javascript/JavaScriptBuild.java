@@ -10,12 +10,16 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Enumeration;
+
+import java.net.*;
 
 import processing.app.Base;
 import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchCode;
 import processing.app.SketchException;
+import processing.app.Library;
 
 import processing.core.PApplet;
 
@@ -24,9 +28,12 @@ import processing.mode.java.preproc.PdePreprocessor;
 
 public class JavaScriptBuild
 {
-	public final static String TEMPLATE_FOLDER_NAME = "template_js";
-	public final static String EXPORTED_FOLDER_NAME = "applet_js";
+	public final static String TEMPLATE_FOLDER_NAME = "template";
+	public final static String EXPORTED_FOLDER_NAME = "web-export";
 	public final static String TEMPLATE_FILE_NAME = "template.html";
+	
+	public final static String IMPORT_REGEX = 
+								"^[\\s]*import[\\s]+([^\\s]+)[\\s]*";
   
   /**
    * Answers with the first java doc style comment in the string,
@@ -136,6 +143,11 @@ public class JavaScriptBuild
     sketch.ensureExistence();
     
     this.binFolder = bin;
+
+	// we need these ..
+	JavaScriptMode jsMode = (JavaScriptMode)mode;
+	JavaScriptEditor jsEditor = (JavaScriptEditor)jsMode.getEditor();
+	BasicServer jsServer = jsEditor.getServer();
     
     if ( bin.exists() ) 
     {    
@@ -146,7 +158,7 @@ public class JavaScriptBuild
     // .. exceptions bubble up.
     preprocess(bin);
 
-    // move the data files, copies contents of sketch/data/ to applet_js/
+    // move the data files, copies contents of sketch/data/ to web-export/
     if (sketch.hasDataFolder()) 
 	{
       try {
@@ -155,7 +167,7 @@ public class JavaScriptBuild
       } catch (IOException e) {
         final String msg = "An exception occured while trying to copy the data folder. " + 
                            "You may have to manually move the contents of sketch/data to " +
-                           "the applet_js/ folder. Processing.js doesn't look for a data " +
+                           "the web-export/ folder. Processing.js doesn't look for a data " +
                            "folder, so lump them together.";
         Base.showWarning("Problem building the sketch", msg, e);
       }
@@ -187,18 +199,17 @@ public class JavaScriptBuild
 			return false;
 		}
 	}
-    
-    // get width and height
-    int wide = PApplet.DEFAULT_WIDTH;
-    int high = PApplet.DEFAULT_HEIGHT;
 
 	// TODO
 	// Really scrub comments from code? 
 	// Con: larger files, PJS needs to do it later
 	// Pro: being literate as we are in a script language.
     String scrubbed = JavaBuild.scrubComments(sketch.getCode(0).getProgram());
-    String[] matches = PApplet.match(scrubbed, JavaBuild.SIZE_REGEX);
 
+    // get width and height
+    int wide = PApplet.DEFAULT_WIDTH;
+    int high = PApplet.DEFAULT_HEIGHT;
+    String[] matches = PApplet.match(scrubbed, JavaBuild.SIZE_REGEX);
     if (matches != null) 
 	{
       try 
@@ -223,6 +234,81 @@ public class JavaScriptBuild
       }
     }  // else no size() command found, defaults will be used
 
+	// try resolve imports
+	ArrayList<String> importPackages = new ArrayList<String>();
+	String[] lines = scrubbed.split( "\n" );
+	for ( String l : lines ) 
+	{
+		int iIndex = l.indexOf( "import" );
+		if ( iIndex != -1 )
+		{
+			String[] iStatements = l.split(";");
+			for ( String iExpression : iStatements )
+			{
+				matches = PApplet.match( iExpression, JavaScriptBuild.IMPORT_REGEX );
+				if ( matches != null && matches.length >= 2 && matches[1] != null )
+				{
+					String iPackage = matches[1];
+					iPackage = iPackage.trim();
+					
+					if ( iPackage.indexOf(".*") != -1 ) {
+						// de.bezier.tutto.*
+						iPackage = iPackage.replace( ".*", "" );
+					} else {
+						// de.bezier.uno.SingleClass
+						iPackage = iPackage.replaceAll( "\\.[^.]+$", "" );
+					}
+					if ( !importPackages.contains(iPackage) ) // is this a "==" or ".equals()" ?
+						importPackages.add( iPackage );
+				}
+			}
+		}
+	}
+	ArrayList<String> jsImports = new ArrayList<String>();
+	if ( importPackages.size() > 0 )
+	{
+		File libsExport = new File( bin, "libs" );
+		if ( !libsExport.mkdir() )
+		{
+			Base.showWarning( "Error",
+			 				  "Unable to create 'libs' in export folder.",
+							  null );
+			return false;
+		}
+	}
+	for ( String pack : importPackages ) 
+	{
+		Library lib = mode.getLibrary( pack );
+		if ( lib != null ) 
+		{
+			String libPath = lib.getJarPath();
+			File libJar = new File( libPath );
+			if ( libJar.exists() )
+			{
+				File libJS = new File( libJar.getParent(), libJar.getName().replace(".jar",".js") );
+				//System.out.println( libJS.getPath() );
+				if ( libJS.exists() ) 
+				{
+					String libJSDest = "libs" + File.separator + libJS.getName();
+					File libJSDestFile = new File( bin, libJSDest );
+					if ( libJSDestFile.exists() ) 
+					{
+						System.out.println( "Duplicate import!" );
+					}
+					try 
+					{
+						Base.copyFile( libJS, 
+									   libJSDestFile );
+						jsImports.add( libJSDest );
+						
+					} catch ( Exception se ) {
+						se.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
     // final prep and write to template.
 	// getTemplateFile() is very important as it looks and preps
 	// any custom templates present in the sketch folder.
@@ -237,10 +323,30 @@ public class JavaScriptBuild
 
 	// generate an ID for the sketch to use with <canvas id="XXXX"></canvas>
 	String sketchID = sketch.getName().replaceAll("[^a-zA-Z0-9]+", "").replaceAll("^[^a-zA-Z]+","");
+	
 	// add a handy method to read the generated sketchID
-	String scriptFiles = "<script type=\"text/javascript\">" +
-						 "function getProcessingSketchID () { return '"+sketchID+"'; }" +
-						 "</script>\n";
+	String scriptFiles = "<script type=\"text/javascript\">\n";
+	
+	scriptFiles += "// convenience function to fetch ID of sketch html element\n" +
+				   "function getProcessingSketchID () { return '"+sketchID+"'; }\n";
+	
+	ArrayList<String> addresses = jsServer.getInetAddresses();
+	int port = jsServer.getPort();
+	
+	// scriptFiles += "var getServerAddresses = function () {\nreturn [\n";
+	// for ( String addr : addresses )
+	// {
+	// 	scriptFiles += "\"http://" + addr + ":" + port + "/\", \n";
+	// }
+	// scriptFiles += "];\n}\n";
+	
+	scriptFiles += "</script>\n";
+
+	// add imports if any ...
+	for ( String importScript : jsImports )
+	{
+		scriptFiles += "<script type=\"text/javascript\" src=\""+importScript+"\"></script>";
+	}
 
 	// main .pde file first
 	String sourceFiles = "<a href=\"" + sketch.getName() + ".pde\">" + 
@@ -271,31 +377,37 @@ public class JavaScriptBuild
       return false;
     }
     
-    // finally, add Processing.js
-    try 
+    // finally, add files processing.js
+	String[] defaultJSFiles = new String[]{
+		"processing.js" /*, "qrcode.js"*/
+	};
+	for ( String defaultJSFile : defaultJSFiles )
 	{
-      Base.copyFile( sketch.getMode().getContentFile(
-						EXPORTED_FOLDER_NAME+"/processing.js"
-					 ),
-                     new File( bin, "processing.js")
-	  );
+	    try 
+		{
+	      Base.copyFile( sketch.getMode().getContentFile(
+							TEMPLATE_FOLDER_NAME + File.separator + defaultJSFile
+						 ),
+	                     new File( bin, defaultJSFile )
+		  );
 
-    } catch (IOException ioe) {
-      final String msg = "There was a problem copying processing.js to the " +
-                         "build folder. You will have to manually add " + 
-                         "processing.js to the build folder before the sketch " +
-                         "will run.";
-      Base.showWarning("There was a problem writing to the build folder", msg, ioe);
-      //return false; 
-    }
+	    } catch (IOException ioe) {
+	      final String msg = "There was a problem copying " +defaultJSFile+ " to the " +
+	                         "build folder. You will have to manually add " + 
+	                         defaultJSFile +" to the build folder before the sketch " +
+	                         "will run.";
+	      Base.showWarning( "There was a problem writing to the build folder", msg, ioe);
+	      //return false; 
+	    }
+	}
 
     return true;
   }
 
   /**
    *  Find and return the template HTML file to use. This also checks for custom
-   *  templates that might be living in the sketch folder. If such a "template_js"
-   *  folder exists then it's contents will be copied over to "applet_js" and
+   *  templates that might be living in the sketch folder. If such a "template"
+   *  folder exists then it's contents will be copied over to "web-export" and
    *  it's template.html will be used as template.
    */
   private File getTemplateFile ()
@@ -309,7 +421,7 @@ public class JavaScriptBuild
 		File appletJsFolder = new File( sketchFolder, EXPORTED_FOLDER_NAME );
 		
 		try {
-			//TODO: this is potentially dangerous as it might override files in applet_js 
+			//TODO: this is potentially dangerous as it might override files in "web-export" 
 			Base.copyDir( customTemplateFolder, appletJsFolder );
 			if ( !(new File( appletJsFolder, TEMPLATE_FILE_NAME )).delete() )
 			{
@@ -320,13 +432,13 @@ public class JavaScriptBuild
 			String msg = "";
 			Base.showWarning("There was a problem copying your custom template folder", msg, e);
 			return sketch.getMode().getContentFile(
-				EXPORTED_FOLDER_NAME + File.separator + TEMPLATE_FILE_NAME
+				TEMPLATE_FOLDER_NAME + File.separator + TEMPLATE_FILE_NAME
 			);
 		}
 	}
 	else
     	return sketch.getMode().getContentFile(
-			EXPORTED_FOLDER_NAME + File.separator + TEMPLATE_FILE_NAME
+			TEMPLATE_FOLDER_NAME + File.separator + TEMPLATE_FILE_NAME
 		);
   }
   
@@ -516,12 +628,12 @@ public class JavaScriptBuild
 
   
   /** 
-   * Export the sketch to the default applet_js folder.  
+   * Export the sketch to the default "web-export" folder.  
    * @return success of the operation 
    */
   public boolean export() throws IOException, SketchException
   {
-    File applet_js = new File(sketch.getFolder(), EXPORTED_FOLDER_NAME);
-    return build( applet_js );
+    File webExport = new File(sketch.getFolder(), EXPORTED_FOLDER_NAME);
+    return build( webExport );
   }
 }
