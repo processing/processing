@@ -90,13 +90,13 @@ public class PGL {
 
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
-    
-  public static int DEFAULT_DEPTH_BITS = 16;
-  public static int DEFAULT_STENCIL_BITS = 8;
-  
+
   ///////////////////////////////////////////////////////////////////////////////////
   
   // OpenGL constants
+  
+  // The values for constants not defined in the GLES20 interface can be found in this file:
+  // http://androidxref.com/source/raw/development/tools/glesv2debugger/src/com/android/glesv2debugger/GLEnum.java
   
   public static final int GL_FALSE = GLES20.GL_FALSE;
   public static final int GL_TRUE  = GLES20.GL_TRUE;  
@@ -140,14 +140,14 @@ public class PGL {
   public static final int GL_REPEAT        = GLES20.GL_REPEAT;
   
   public static final int GL_RGBA8            = -1;  
-  public static final int GL_DEPTH24_STENCIL8 = -1;
+  public static final int GL_DEPTH24_STENCIL8 = 0x88F0;
   
   public static final int GL_DEPTH_COMPONENT16 = GLES20.GL_DEPTH_COMPONENT16;
-  public static final int GL_DEPTH_COMPONENT24 = -1;
-  public static final int GL_DEPTH_COMPONENT32 = -1;    
+  public static final int GL_DEPTH_COMPONENT24 = 0x81A6;
+  public static final int GL_DEPTH_COMPONENT32 = 0x81A7;    
   
-  public static final int GL_STENCIL_INDEX1 = -1;
-  public static final int GL_STENCIL_INDEX4 = -1; 
+  public static final int GL_STENCIL_INDEX1 = 0x8D46;
+  public static final int GL_STENCIL_INDEX4 = 0x8D47; 
   public static final int GL_STENCIL_INDEX8 = GLES20.GL_STENCIL_INDEX8;   
   
   public static final int GL_ARRAY_BUFFER         = GLES20.GL_ARRAY_BUFFER;
@@ -159,7 +159,7 @@ public class PGL {
   public static final int GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT         = GLES20.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
   public static final int GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT = GLES20.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
   public static final int GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS         = GLES20.GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS;      
-  public static final int GL_FRAMEBUFFER_INCOMPLETE_FORMATS            = -1;  
+  public static final int GL_FRAMEBUFFER_INCOMPLETE_FORMATS            = 0x8CDA;  
   public static final int GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER        = -1;
   public static final int GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER        = -1;  
   public static final int GL_FRAMEBUFFER_UNSUPPORTED                   = GLES20.GL_FRAMEBUFFER_UNSUPPORTED;
@@ -184,8 +184,10 @@ public class PGL {
   public static final int GL_MAX_TEXTURE_SIZE         = GLES20.GL_MAX_TEXTURE_SIZE;
   public static final int GL_MAX_SAMPLES              = -1;
   public static final int GL_ALIASED_LINE_WIDTH_RANGE = GLES20.GL_ALIASED_LINE_WIDTH_RANGE;
-  public static final int GL_ALIASED_POINT_SIZE_RANGE = GLES20.GL_ALIASED_POINT_SIZE_RANGE;
-
+  public static final int GL_ALIASED_POINT_SIZE_RANGE = GLES20.GL_ALIASED_POINT_SIZE_RANGE;  
+  public static final int GL_DEPTH_BITS               = GLES20.GL_DEPTH_BITS;
+  public static final int GL_STENCIL_BITS             = GLES20.GL_STENCIL_BITS;
+  
   public static final int GLU_TESS_WINDING_NONZERO = PGLU.GLU_TESS_WINDING_NONZERO;
   public static final int GLU_TESS_WINDING_ODD     = PGLU.GLU_TESS_WINDING_ODD;  
     
@@ -228,9 +230,9 @@ public class PGL {
   public static final int GL_LINK_STATUS          = GLES20.GL_LINK_STATUS;
   public static final int GL_VALIDATE_STATUS      = GLES20.GL_VALIDATE_STATUS;
   
-  public static final int GL_MULTISAMPLE    = -1;  
-  public static final int GL_POINT_SMOOTH   = -1;      
-  public static final int GL_LINE_SMOOTH    = -1;    
+  public static final int GL_MULTISAMPLE    = 0x809D;  
+  public static final int GL_POINT_SMOOTH   = 0x0B10;      
+  public static final int GL_LINE_SMOOTH    = 0x0B20;    
   public static final int GL_POLYGON_SMOOTH = -1;  
   
   // Some EGL constants needed to initialize an GLES2 context.
@@ -333,7 +335,7 @@ public class PGL {
   
   public void updatePrimary() {    
     if (!initialized) {
-      String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS);      
+      String ext = GLES20.glGetString(GLES20.GL_EXTENSIONS); 
       if (-1 < ext.indexOf("texture_non_power_of_two")) {
         texWidth = pg.width;
         texHeight = pg.height;
@@ -358,23 +360,34 @@ public class PGL {
       GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
       
       GLES20.glGenFramebuffers(1, fbo, 0);      
-      GLES20.glGenRenderbuffers(1, depth, 0); 
-      GLES20.glGenRenderbuffers(1, stencil, 0);
+      GLES20.glGenRenderbuffers(1, depth, 0);       
       
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);
-      
+            
       GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, depth[0]);
       GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_DEPTH_COMPONENT16, texWidth, texHeight);
       GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_DEPTH_ATTACHMENT, GLES20.GL_RENDERBUFFER, depth[0]);
       
-      GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, stencil[0]);
-      GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_STENCIL_INDEX8, texWidth, texHeight);
-      GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_STENCIL_ATTACHMENT, GLES20.GL_RENDERBUFFER, stencil[0]);
+      int[] temp = new int[1];
+      GLES20.glGetIntegerv(GLES20.GL_STENCIL_BITS, temp, 0);    
+      int stencilBits = temp[0];       
+      if (stencilBits == 8) {
+        GLES20.glGenRenderbuffers(1, stencil, 0);
+        GLES20.glBindRenderbuffer(GLES20.GL_RENDERBUFFER, stencil[0]);
+        GLES20.glRenderbufferStorage(GLES20.GL_RENDERBUFFER, GLES20.GL_STENCIL_INDEX8, texWidth, texHeight);
+        GLES20.glFramebufferRenderbuffer(GLES20.GL_FRAMEBUFFER, GLES20.GL_STENCIL_ATTACHMENT, GLES20.GL_RENDERBUFFER, stencil[0]);
+      }
       
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
       
       backTex = 1; 
       frontTex = 0;
+      
+      // The screen framebuffer is the FBO just created. We need
+      // to update the screenFramebuffer object so when the
+      // framebuffer is popped back to the screen, the correct
+      // id is set.
+      PGraphicsAndroid3D.screenFramebuffer.glFboID = fbo[0];
       
       initialized = true;
     }    
@@ -396,10 +409,9 @@ public class PGL {
       // Simplest scenario: clear mode means we clear both the color and depth buffers.
       // No need for saving front color buffer, etc.
       GLES20.glClearColor(0, 0, 0, 0);
-      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);      
-    }
-    
-    if (!clear) {
+      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+      PGraphicsAndroid3D.screenFramebuffer.glFboID = 0;
+    } else {
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);    
       GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, textures[frontTex], 0);   
       validateFramebuffer();
@@ -415,6 +427,7 @@ public class PGL {
         // Render previous draw texture as background.      
         drawTexture(GLES20.GL_TEXTURE_2D, textures[backTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       }
+      PGraphicsAndroid3D.screenFramebuffer.glFboID = fbo[0];
     }
     
     if (firstOnscreenFrame) {
@@ -448,9 +461,6 @@ public class PGL {
   
   
   public void endOffscreenDraw(boolean clear0) {
-    if (!clear0) {
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);
-    }
   }  
   
   
@@ -1453,9 +1463,6 @@ public class PGL {
             alphaBits = a;
             depthBits = d;
             stencilBits = s;
-                        
-            DEFAULT_DEPTH_BITS = d;
-            DEFAULT_STENCIL_BITS = s;
           }
         }
       }

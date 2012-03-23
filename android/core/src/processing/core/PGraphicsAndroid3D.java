@@ -91,13 +91,16 @@ public class PGraphicsAndroid3D extends PGraphics {
   static public boolean npotTexSupported;
   static public boolean mipmapGeneration;
   static public boolean fboMultisampleSupported;
-  static public boolean blendEqSupported;
+  static public boolean packedDepthStencilSupported;
+  static public boolean blendEqSupported;  
   
   /** Some hardware limits */  
   static public int maxTextureSize;
   static public int maxSamples;
   static public float maxPointSize;
   static public float maxLineWidth;
+  static public int depthBits;
+  static public int stencilBits;
     
   /** OpenGL information strings */
   static public String OPENGL_VENDOR;
@@ -1363,6 +1366,14 @@ public class PGraphicsAndroid3D extends PGraphics {
       return;
     }    
     
+    if (!glParamsRead) {
+      getGLParameters();  
+    }
+    
+    if (!settingsInited) {
+      defaultSettings();
+    }     
+    
     if (primarySurface) {
       pgl.updatePrimary();
     } else {
@@ -1387,14 +1398,6 @@ public class PGraphicsAndroid3D extends PGraphics {
       
       pgl.updateOffscreen(pg.pgl);
     }
-    
-    if (!glParamsRead) {
-      getGLParameters();  
-    }
-    
-    if (!settingsInited) {
-      defaultSettings();
-    }    
     
     // We are ready to go!
     
@@ -5602,8 +5605,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     if (PGraphicsAndroid3D.fboMultisampleSupported && 1 < antialias) {
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, antialias, 0, 
-                                                         PGL.DEFAULT_DEPTH_BITS, PGL.DEFAULT_STENCIL_BITS, 
-                                                         PGL.DEFAULT_DEPTH_BITS == 24 && PGL.DEFAULT_STENCIL_BITS == 8, false);
+                                                         depthBits, stencilBits, 
+                                                         depthBits == 24 && stencilBits == 8 && packedDepthStencilSupported, false);
       
       offscreenFramebufferMultisample.clear();
       offscreenMultisample = true;
@@ -5617,8 +5620,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     } else {
       antialias = 0;
       offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
-                                              PGL.DEFAULT_DEPTH_BITS, PGL.DEFAULT_STENCIL_BITS,
-                                              PGL.DEFAULT_DEPTH_BITS == 24 && PGL.DEFAULT_STENCIL_BITS == 8, false);
+                                              depthBits, stencilBits,
+                                              depthBits == 24 && stencilBits == 8 && packedDepthStencilSupported, false);
       offscreenMultisample = false;
     }
     
@@ -5633,10 +5636,11 @@ public class PGraphicsAndroid3D extends PGraphics {
     OPENGL_VERSION    = pgl.glGetString(PGL.GL_VERSION);    
     OPENGL_EXTENSIONS = pgl.glGetString(PGL.GL_EXTENSIONS);
     
-    npotTexSupported        = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
-    mipmapGeneration        = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
-    fboMultisampleSupported = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample");
-       
+    npotTexSupported            = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
+    mipmapGeneration            = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
+    fboMultisampleSupported     = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample");
+    packedDepthStencilSupported = -1 < OPENGL_EXTENSIONS.indexOf("packed_depth_stencil");   
+        
     try {      
       pgl.glBlendEquation(PGL.GL_FUNC_ADD);
       blendEqSupported = true;
@@ -5657,6 +5661,12 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     pgl.glGetIntegerv(PGL.GL_ALIASED_POINT_SIZE_RANGE, temp, 0);
     maxPointSize = temp[1];        
+    
+    pgl.glGetIntegerv(PGL.GL_DEPTH_BITS, temp, 0);    
+    depthBits = temp[0];
+    
+    pgl.glGetIntegerv(PGL.GL_STENCIL_BITS, temp, 0);    
+    stencilBits = temp[0];    
     
     glParamsRead = true;
   }
