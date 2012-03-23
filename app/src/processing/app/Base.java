@@ -49,16 +49,16 @@ import processing.core.*;
  * files and images, etc) that comes from that.
  */
 public class Base {
-  static public final int REVISION = 204;
+  static public final int REVISION = 205;
   /** This might be replaced by main() if there's a lib/version.txt file. */
-  static public String VERSION_NAME = "0204";
+  static public String VERSION_NAME = "0205";
   /** Set true if this a proper release rather than a numbered revision. */
   static public boolean RELEASE = false;
-  
+
   /** True if heavy debugging error/log messages are enabled */
   static public boolean DEBUG = false;
 //  static public boolean DEBUG = true;
-  
+
   static HashMap<Integer, String> platformNames =
     new HashMap<Integer, String>();
   static {
@@ -719,8 +719,8 @@ public class Base {
 //      }
 //    }
 //  }
-  
-  
+
+
   /**
    * Return the same mode as the active editor, or the default mode, which
    * begins as Java/Standard, but is updated with the last mode used.
@@ -1572,7 +1572,7 @@ public class Base {
 
 
   /**
-   * Return whether sketches will run as 32- or 64-bits. On Linux and Windows, 
+   * Return whether sketches will run as 32- or 64-bits. On Linux and Windows,
    * this is the bit depth of the machine, while on OS X it's determined by the
    * setting from preferences, since both 32- and 64-bit are supported.
    */
@@ -2794,8 +2794,8 @@ public class Base {
       }
     }
   }
-  
-  
+
+
   static public void log(String message) {
     if (DEBUG) System.out.println(message);
   }

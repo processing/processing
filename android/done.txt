@@ -1,3 +1,22 @@
+0204 android (2.0a5)
+X Android emulator not launching on Windows with 2.0 alpha releases
+X   http://code.google.com/p/processing/issues/detail?id=899
+X   http://code.google.com/p/processing/issues/detail?id=769
+X /opt/android using version #s again? fix build script (earlier)
+X smooth() is now the default
+X update to Android tools 17
+X add workarounds for problem with tools 17 version of dex
+o import statements with android.* break things
+X   http://code.google.com/p/processing/issues/detail?id=989
+X   was already fixed
+X now requiring SDK 10 (2.3.3) because of OpenGL issues
+X   not SDK 9, which is 2.3.1 (and still Gingerbread)
+X   noted on the changes page in the Wiki
+X   make a note of the change on the Android Wiki
+X   modify the .java build to require it
+X   make sure build.xml uses it too
+
+
 0203 android (2.0a4)
 X fix incessant "inefficient font rendering" message
 X fix build.xml to point at the correct SDK version
