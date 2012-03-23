@@ -39,8 +39,9 @@ class Device {
 
   public void bringLauncherToFront() {
     try {
-      adb("shell", "am", "start", "-a", "android.intent.action.MAIN", "-c",
-        "android.intent.category.HOME");
+      adb("shell", "am", "start", 
+          "-a", "android.intent.action.MAIN", 
+          "-c", "android.intent.category.HOME");
     } catch (final Exception e) {
       e.printStackTrace(System.err);
     }
@@ -90,6 +91,7 @@ class Device {
     return false;
   }
 
+  
   // different version that actually runs through JDI:
   // http://asantoso.wordpress.com/2009/09/26/using-jdb-with-adb-to-debugging-of-android-app-on-a-real-device/
   public boolean launchApp(final String packageName, final String className)
@@ -97,10 +99,15 @@ class Device {
     if (!isAlive()) {
       return false;
     }
-    ProcessResult pr = adb("shell", "am", "start", "-e", "debug", "true", 
-                           "-a", "android.intent.action.MAIN", 
-                           "-c", "android.intent.category.LAUNCHER",
-                           "-n", packageName + "/." + className);
+    String[] cmd = {
+      "shell", "am", "start", 
+      "-e", "debug", "true", 
+      "-a", "android.intent.action.MAIN", 
+      "-c", "android.intent.category.LAUNCHER",
+      "-n", packageName + "/." + className
+    };
+//    PApplet.println(cmd);
+    ProcessResult pr = adb(cmd);
     if (Base.DEBUG) {
       System.out.println(pr.toString());
     }
