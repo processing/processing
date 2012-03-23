@@ -1,3 +1,52 @@
+0204 pde (2.0a5)
+X Doc comments not being properly terminated in export of applet
+X   http://code.google.com/p/processing/issues/detail?id=877
+X   and fixed again for non-greedy regex
+X make note of when library is not available (serial) with error msg
+X   i.e. if running in 64-bit mode on OS X, can't do serial
+X update to Java 6u29 for Linux and Windows (OS X now updated)
+X don't show library conflict warning until someone tries to build 
+X   with code that actually calls on one of those packages
+X   too many people seem to think this is an error
+X work on code to quit if multiple instances are running
+X   need to bring the other instance to front
+X   and/or open a new window
+X fix bug with 'base' not getting set in the Mac OS X platform class
+X Syntax highlighting not case sensitive in 1.5 through 2.0+
+X   http://code.google.com/p/processing/issues/detail?id=913
+X Fix problem with application export on Linux
+X   http://code.google.com/p/processing/issues/detail?id=945
+X "import processing.xml" throws a missing library error
+X P3D as the renderer doesn't need import opengl
+X   but exporting applet/app needs to recognize that P3D is OpenGL
+
+javascript
+F JavaScript mode export folder name
+F   http://code.google.com/p/processing/issues/detail?id=848
+F Intermittent hangs of PDE when launching JavaScript Server
+F   http://code.google.com/p/processing/issues/detail?id=936
+
+fixed in 2.0a3
+X Commenting via menu or shortcut does not set sketch to "need save"
+X   http://code.google.com/p/processing/issues/detail?id=860
+
+fixed in 2.0a4
+X is there a better way to handle the data folder for apps?
+X   rather than adding it to the main zip file?
+X   otherwise ppl are copying really large files into a jar...
+
+fixed earlier
+A need to get GLGraphics examples out of the video examples
+A   Examples > Video > GLGraphics
+X write quicktime uncompressed (w/o qtjava)
+X   wrapped into the new moviemaker tool
+X   www.randelshofer.ch/blog/2010/10/writing-quicktime-movies-in-pure-java
+X library imports failing for libs that define the same packages in 1.5.1
+X   http://code.google.com/p/processing/issues/detail?id=725
+X Closing applet window in Processing 1.5 causes serial crash
+X   http://code.google.com/p/processing/issues/detail?id=635
+
+
 0203 pde (2.0a4)
 X changing between 32- and 64- bit mode on OS X wasn't reloading library paths
 

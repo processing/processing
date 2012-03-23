@@ -1,3 +1,42 @@
+0204 core (2.0a5)
+X Abnormal high Java CPU usage at empty sketch with draw() 
+X   http://code.google.com/p/processing/issues/detail?id=729
+X   https://forum.processing.org/topic/absurd-java-cpu-usage-at-empty-sketch-with-draw
+X "Framingham" example has BufferOverflowException
+X   http://code.google.com/p/processing/issues/detail?id=900
+X enable smooth() by default
+X   better to learn noSmooth() later
+X repeatedly calling texture() with new image raises memory error
+X   http://code.google.com/p/processing/issues/detail?id=806
+X adding anti-alias methods so that FSAA can set up properly
+X several bug fixes inside Table as they relate to inserting/adding columns
+X urlEncode() and urlDecode() added
+X fix so that normals aren't attempted when no texture is set
+X added setContent() to the XML library, other tweaks to XML export
+X fix PImage.get() issue with width or height < 0
+X attempts to improve the performance of tint() with Java2D
+X delay() remove or no? (keep adding it back...)
+X   serial and scripting need it. maybe edit the reference further...
+X   just can't remove it. needed for scripting.
+X Fix OpenGL applets (again)
+X   http://code.google.com/p/processing/issues/detail?id=845
+
+earlier
+o text using textMode(SCREEN) not displayed in Processing 1.5.1
+o   http://code.google.com/p/processing/issues/detail?id=741
+X remove textMode(SCREEN)
+o   is it possible to do decent vlw text with JAVA2D and OPENGL?
+o optimize textMode(MODEL) with textMode(SCREEN)
+o   in PGraphics and PGraphics3, check to see if matrix is within epsilon
+o   of one of the rotation matrices (many fewer steps) 
+o   if identity, or just translate, or a rotate, make OBJECT into SCREEN
+o textMode(SCREEN) needs to be faster
+o   need flat image implementation that takes no transforms
+o   along with 90, 180 and 270 versions of it as well
+o   tie to glDrawPixels.. how to clear matrix properly for that?
+X   maybe just disable this for JAVA2D cuz it's silly?
+
+
 0203 core (2.0a4)
 X Capture.list() Fails Mac OSX 10.6 Processing 2.0a3
 X   fix strange build issue with video capture breakage on OS X
