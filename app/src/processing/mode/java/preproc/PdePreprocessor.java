@@ -711,7 +711,8 @@ public class PdePreprocessor {
    * @return true if this shouldn't be added to the final code
    */
   public boolean ignoreImport(String pkg) {
-    return pkg.startsWith("processing.xml.");
+    return false;
+//    return pkg.startsWith("processing.xml.");
   }
 
   /**
