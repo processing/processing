@@ -186,26 +186,26 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /** Last reported positions and pressures for all pointers */
   protected int numPointers;
   protected int pnumPointers;
-  
+
   protected float[] ppointersX = {0};
   protected float[] ppointersY = {0};
   protected float[] ppointersPressure = {0};
-  
+
   protected float[] pointersX = {0};
   protected float[] pointersY = {0};
   protected float[] pointersPressure = {0};
-  
+
   protected int downMillis;
   protected float downX, downY;
   protected boolean onePointerGesture = false;
   protected boolean twoPointerGesture = true;
-  
-  protected final int MIN_SWIPE_LENGTH = 150;       // Minimum length (in pixels) of a swipe event 
+
+  protected final int MIN_SWIPE_LENGTH = 150;       // Minimum length (in pixels) of a swipe event
   protected final int MAX_SWIPE_DURATION = 2000;    // Maximum duration (in millis) of a swipe event
-  protected final int MAX_TAP_DISP = 20;            // Maximum displacement (in pixels) during a tap event 
+  protected final int MAX_TAP_DISP = 20;            // Maximum displacement (in pixels) during a tap event
   protected final int MAX_TAP_DURATION = 1000;      // Maximum duration (in millis) of a tap event
-  
-  
+
+
   /**
    * Previous x/y position of the mouse. This will be a different value
    * when inside a mouse handler (like the mouseMoved() method) versus
@@ -477,7 +477,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       surfaceView = new SketchSurfaceView3D(this, sw, sh);
     }
     g = ((SketchSurfaceView) surfaceView).getGraphics();
-    
+
 //    surfaceView.setLayoutParams(new LayoutParams(sketchWidth(), sketchHeight()));
 
 //    layout.addView(surfaceView);
@@ -497,7 +497,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     if (sw == screenWidth && sh == screenHeight) {
       // If using the full screen, don't embed inside other layouts
-      window.setContentView(surfaceView);      
+      window.setContentView(surfaceView);
     } else {
       // If not using full screen, setup awkward view-inside-a-view so that
       // the sketch can be centered on screen. (If anyone has a more efficient
@@ -514,11 +514,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
       overallLayout.addView(layout, lp);
       window.setContentView(overallLayout);
     }
-    
+
     /*
     // Here we use Honeycomb API (11+) to hide (in reality, just make the status icons into small dots)
     // the status bar. Since the core is still built against API 7 (2.1), we use introspection to get
-    // the setSystemUiVisibility() method from the view class. 
+    // the setSystemUiVisibility() method from the view class.
     Method visibilityMethod = null;
     try {
       visibilityMethod = surfaceView.getClass().getMethod("setSystemUiVisibility", new Class[] { int.class});
@@ -526,20 +526,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // Nothing to do. This means that we are running with a version of Android previous to Honeycomb.
     }
     if (visibilityMethod != null) {
-      try {        
+      try {
         // This is equivalent to calling:
         //surfaceView.setSystemUiVisibility(View.STATUS_BAR_HIDDEN);
         // The value of View.STATUS_BAR_HIDDEN is 1.
         visibilityMethod.invoke(surfaceView, new Object[] { 1 });
-      } catch (InvocationTargetException e) {        
-      } catch (IllegalAccessException e) {        
+      } catch (InvocationTargetException e) {
+      } catch (IllegalAccessException e) {
       }
     }
-    window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,   
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);        
+    window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
     */
-    
-    
+
+
 //    layout.addView(surfaceView, lp);
 //    surfaceView.setLayoutParams(new LayoutParams(sketchWidth(), sketchHeight()));
 
@@ -614,7 +614,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   protected void onPause() {
     super.onPause();
-    
+
 
     // TODO need to save all application state here!
 //    System.out.println("PApplet.onPause() called");
@@ -791,31 +791,31 @@ public class PApplet extends Activity implements PConstants, Runnable {
       final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
       final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
       final boolean supportsGLES2 = configurationInfo.reqGlEsVersion >= 0x20000;
-      
+
       if (!supportsGLES2) {
         throw new RuntimeException("P3D: OpenGL ES 2.0 is not supported by this device.");
       }
-      
+
       surfaceHolder = getHolder();
       // are these two needed?
       surfaceHolder.addCallback(this);
       //surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_GPU);
-      
+
       // The PGraphics object needs to be created here so the renderer is not
       // null. This is required because PApplet.onResume events (which call
       // this.onResume() and thus require a valid renderer) are triggered
       // before surfaceChanged() is ever called.
       g3 = new PGraphicsAndroid3D();
       g3.setParent(PApplet.this);
-      g3.setPrimary(true);      
+      g3.setPrimary(true);
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
       g3.setSize(wide, high);
 
       String depth = sketchColordepth();
       if (!depth.equals(DEFAULT_COLOR_DEPTH)) {
-        // Setting user specified color depth. Otherwise, we let the 
+        // Setting user specified color depth. Otherwise, we let the
         // device to choose the configuration it pleases.
-        
+
         if (sketchTranslucency()) {
           surfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
         }
@@ -825,28 +825,28 @@ public class PApplet extends Activity implements PConstants, Runnable {
         if (3 < list.length) {
           // Getting RGBA bits.
           for (int i = 0; i < 4; i++) {
-            val[i] = parseInt(list[i]);  
+            val[i] = parseInt(list[i]);
           }
         }
         if (4 < list.length) {
           // Getting depth bits.
           val[4] = parseInt(list[4]);
-        }        
+        }
         if (5 < list.length) {
           // Getting stencil bits.
           val[5] = parseInt(list[5]);
         }
-      
+
         // We use our own context factory and config chooser to set the desired RGBA and depth+stencil
-        // bits. 
+        // bits.
         setEGLContextFactory(g3.pgl.getContextFactory());
-        setEGLConfigChooser(g3.pgl.getConfigChooser(val[0], val[1], val[2], val[3], val[4], val[5]));  
+        setEGLConfigChooser(g3.pgl.getConfigChooser(val[0], val[1], val[2], val[3], val[4], val[5]));
       } else {
         // Tells the default EGLContextFactory and EGLConfigChooser to create an GLES2 context.
-        setEGLContextClientVersion(2);        
+        setEGLContextClientVersion(2);
       }
-      
-      // The renderer can be set only once.      
+
+      // The renderer can be set only once.
       setRenderer(g3.pgl.getRenderer());
       setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
@@ -876,12 +876,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (DEBUG) {
         System.out.println("surfaceDestroyed()");
       }
-      
+
       /*
       // TODO: Check how to make sure of calling g3.dispose() when this call to
       // surfaceDestoryed corresponds to the sketch being shut down instead of just
       // taken to the background.
-       
+
       // For instance, something like this would be ok?
       // The sketch is being stopped, so we dispose the resources.
       if (!paused) {
@@ -898,7 +898,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       if (DEBUG) {
         System.out.println("SketchSurfaceView3D.surfaceChanged() " + w + " " + h);
       }
-      surfaceChanged = true;      
+      surfaceChanged = true;
 //      width = w;
 //      height = h;
 //      g.setSize(w, h);
@@ -1015,11 +1015,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return P2D;
   }
 
-  
+
   public boolean sketchTranslucency() {
     return true;
   }
-  
+
   public String sketchColordepth() {
     return DEFAULT_COLOR_DEPTH;
   }
@@ -1071,10 +1071,10 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public void stop() {
     // this used to shut down the sketch, but that code has
-    // been moved to dispose() 
-    
+    // been moved to dispose()
+
     paused = true; // sleep the animation thread
-    
+
     //TODO listeners
   }
 
@@ -1556,14 +1556,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
       } catch (ClassNotFoundException cnfe) {
         throw new RuntimeException("Missing renderer class");
       }
-      
+
       if (rendererClass != null) {
         try {
           constructor = rendererClass.getConstructor(new Class[] { });
         } catch (NoSuchMethodException nsme) {
           throw new RuntimeException("Missing renderer constructor");
         }
-        
+
         if (constructor != null) {
           try {
             pg = (PGraphics) constructor.newInstance();
@@ -1572,19 +1572,19 @@ public class PApplet extends Activity implements PConstants, Runnable {
             throw new RuntimeException(e.getMessage());
           } catch (IllegalAccessException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());            
+            throw new RuntimeException(e.getMessage());
           } catch (InstantiationException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
-          }            
+          }
         }
-      }      
+      }
     }
-    
+
     pg.setParent(this);
     pg.setPrimary(false);
     pg.setSize(iwidth, iheight);
-    
+
     return pg;
   }
 
@@ -1648,12 +1648,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /**
    * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the <b>width</b> and <b>height</b> parameters. The <b>format</b> parameter defines how the pixels are stored. See the PImage reference for more information.
-   */ 
+   */
   public PImage createImage(int wide, int high, int format) {
     return createImage(wide, high, format, null);
   }
-  
-  
+
+
   /**
    * Preferred method of creating new PImage objects, ensures that a
    * reference to the parent PApplet is included, which makes save() work
@@ -1749,15 +1749,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
     final int NO_DELAYS_PER_YIELD = 15;
 
     while ((Thread.currentThread() == thread) && !finished) {
-      
+
       while (paused) {
         try{
           Thread.sleep(100L);
-        } catch (InterruptedException e) { 
+        } catch (InterruptedException e) {
           //ignore?
         }
       }
-      
+
       // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
       // otherwise it may attempt a resize mid-render.
 //      if (resizeRequest) {
@@ -1867,7 +1867,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //        // (e.g. OpenGL has to wait for a peer to be on screen)
 //        return;
 //      }
-      
+
       g.beginDraw();
 
       long now = System.nanoTime();
@@ -1995,30 +1995,30 @@ public class PApplet extends Activity implements PConstants, Runnable {
     float[] motionX, motionY;
     float[] motionPressure;
     int[] mouseX, mouseY;
-    
+
     void setAction (int action) {
       this.action = action;
     }
-    
+
     void setNumPointers(int n) {
       numPointers = n;
-      motionX = new float[n]; 
+      motionX = new float[n];
       motionY = new float[n];
       motionPressure = new float[n];
-      mouseX = new int[n]; 
+      mouseX = new int[n];
       mouseY = new int[n];
     }
-    
+
     void setPointers(MotionEvent event) {
       for (int ptIdx = 0; ptIdx < numPointers; ptIdx++) {
         motionX[ptIdx] = event.getX(ptIdx);
         motionY[ptIdx] = event.getY(ptIdx);
         motionPressure[ptIdx] = event.getPressure(ptIdx);  // should this be constrained?
         mouseX[ptIdx] = (int) motionX[ptIdx];  //event.getRawX();
-        mouseY[ptIdx] = (int) motionY[ptIdx];  //event.getRawY();      
-      }      
+        mouseY[ptIdx] = (int) motionY[ptIdx];  //event.getRawY();
+      }
     }
-    
+
     // Sets the pointers for the historical event histIdx
     void setPointers(MotionEvent event, int hisIdx) {
       for (int ptIdx = 0; ptIdx < numPointers; ptIdx++) {
@@ -2026,8 +2026,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
         motionY[ptIdx] = event.getHistoricalY(ptIdx, hisIdx);
         motionPressure[ptIdx] = event.getHistoricalPressure(ptIdx, hisIdx);  // should this be constrained?
         mouseX[ptIdx] = (int) motionX[ptIdx];  //event.getRawX();
-        mouseY[ptIdx] = (int) motionY[ptIdx];  //event.getRawY();      
-      }      
+        mouseY[ptIdx] = (int) motionY[ptIdx];  //event.getRawY();
+      }
     }
   }
 
@@ -2076,7 +2076,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
           hist.setPointers(event, i);
         }
       }
-      
+
       // now step over the last one that we used to assign 'pme'
       // if historyCount is 0, this just steps over the last
       motionEventCount++;
@@ -2133,11 +2133,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
       ppointersX = new float[numPointers];
       ppointersY = new float[numPointers];
       ppointersPressure = new float[numPointers];
-    }    
+    }
     arrayCopy(pointersX, ppointersX);
     arrayCopy(pointersY, ppointersY);
     arrayCopy(pointersPressure, ppointersPressure);
-        
+
     numPointers = pme.numPointers;
     if (pointersX.length < numPointers) {
       pointersX = new float[numPointers];
@@ -2156,29 +2156,29 @@ public class PApplet extends Activity implements PConstants, Runnable {
       twoPointerGesture = false;
       downMillis = millis();
       downX = pointersX[0];
-      downY = pointersY[0]; 
-      
+      downY = pointersY[0];
+
       mousePressed();
       pressEvent();
-      
-    } else if ((pme.action == MotionEvent.ACTION_POINTER_DOWN  && numPointers == 2) || 
+
+    } else if ((pme.action == MotionEvent.ACTION_POINTER_DOWN  && numPointers == 2) ||
                (pme.action == MotionEvent.ACTION_POINTER_2_DOWN) || // 2.3 seems to use this action constant (supposedly deprecated) instead of ACTION_POINTER_DOWN
                (pnumPointers == 1 && numPointers == 2)) {           // 2.1 just uses MOVE as the action constant, so the only way to know we have a new pointer is to compare the counters.
-      
+
       // An additional pointer is down (we keep track of multitouch only for 2 pointers)
       onePointerGesture = false;
-      twoPointerGesture = true;   
-      
-    } else if ((pme.action == MotionEvent.ACTION_POINTER_UP && numPointers == 2) || 
+      twoPointerGesture = true;
+
+    } else if ((pme.action == MotionEvent.ACTION_POINTER_UP && numPointers == 2) ||
                (pme.action == MotionEvent.ACTION_POINTER_2_UP) || // 2.1 doesn't use the ACTION_POINTER_UP constant, but this one, apparently deprecated in newer versions of the SDK.
                (twoPointerGesture && numPointers < 2)) {          // Sometimes it seems that it doesn't generate the up event.
       // A previously detected pointer is up
-      
+
       twoPointerGesture = false; // Not doing a 2-pointer gesture anymore, but neither a 1-pointer.
-      
+
     } else if (pme.action == MotionEvent.ACTION_MOVE) {
       // Pointer motion
-      
+
       if (onePointerGesture) {
         if (mousePressed) {
           mouseDragged();
@@ -2186,15 +2186,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
         } else {
           mouseMoved();
           moveEvent();
-        }        
+        }
       } else if (twoPointerGesture) {
-        float d0 = PApplet.dist(ppointersX[0], ppointersY[0], ppointersX[1], ppointersY[1]); 
+        float d0 = PApplet.dist(ppointersX[0], ppointersY[0], ppointersX[1], ppointersY[1]);
         float d1 = PApplet.dist(pointersX[0], pointersY[0], pointersX[1], pointersY[1]);
-        
+
         if (0 < d0 && 0 < d1) {
           float centerX = 0.5f * (pointersX[0] + pointersX[1]);
           float centerY = 0.5f * (pointersY[0] + pointersY[1]);
-          
+
           zoomEvent(centerX, centerY, d0, d1);
         }
       }
@@ -2202,41 +2202,41 @@ public class PApplet extends Activity implements PConstants, Runnable {
     } else if (pme.action == MotionEvent.ACTION_UP) {
       // Final pointer is up
       mousePressed = false;
-      
+
       float upX = pointersX[0];
-      float upY = pointersY[0];   
+      float upY = pointersY[0];
       float gestureLength = PApplet.dist(downX, downY, upX, upY);
-      
-      int upMillis = millis();      
+
+      int upMillis = millis();
       int gestureTime = upMillis - downMillis;
-      
+
       if (onePointerGesture) {
-        
-        // First, lets determine if this 1-pointer event is a tap 
+
+        // First, lets determine if this 1-pointer event is a tap
         boolean tap = gestureLength <= MAX_TAP_DISP && gestureTime <= MAX_TAP_DURATION;
         if (tap) {
           mouseClicked();
-          tapEvent(downX, downY);          
+          tapEvent(downX, downY);
         } else if (MIN_SWIPE_LENGTH <= gestureLength && gestureTime <= MAX_SWIPE_DURATION) {
           swipeEvent(downX, downY, upX, upY);
         } else {
           mouseReleased();
-          releaseEvent();          
+          releaseEvent();
         }
-        
+
       } else {
         mouseReleased();
         releaseEvent();
       }
-      
-      onePointerGesture = twoPointerGesture = false;       
+
+      onePointerGesture = twoPointerGesture = false;
     } else if (pme.action == MotionEvent.ACTION_CANCEL) {
       // Current gesture is canceled.
       onePointerGesture = twoPointerGesture = false;
       mousePressed = false;
-      
+
       mouseReleased();
-      releaseEvent();       
+      releaseEvent();
     } else {
       //System.out.println("Unknown MotionEvent action: " + action);
     }
@@ -2278,14 +2278,14 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void mouseDragged() { }
 
   public void mouseMoved() { }
-  
+
   public void pressEvent() { }
   public void dragEvent() { }
   public void moveEvent() { }
   public void releaseEvent() { }
   public void zoomEvent(float x, float y, float d0, float d1) { }
   public void tapEvent(float x, float y) { }
-  public void swipeEvent(float x0, float y0, float x1, float y1) { }  
+  public void swipeEvent(float x0, float y0, float x1, float y1) { }
 
   //////////////////////////////////////////////////////////////
 
@@ -2543,12 +2543,41 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   /**
-   * Set a target frameRate. This will cause delay() to be called
-   * after each frame so that the sketch synchronizes to a particular speed.
-   * Note that this only sets the maximum frame rate, it cannot be used to
-   * make a slow sketch go faster. Sketches have no default frame rate
-   * setting, and will attempt to use maximum processor power to achieve
-   * maximum speed.
+   * The delay() function causes the program to halt for a specified time.
+   * Delay times are specified in thousandths of a second. For example,
+   * running delay(3000) will stop the program for three seconds and
+   * delay(500) will stop the program for a half-second.
+   *
+   * The screen only updates when the end of draw() is reached, so delay()
+   * cannot be used to slow down drawing. For instance, you cannot use delay()
+   * to control the timing of an animation.
+   *
+   * The delay() function should only be used for pausing scripts (i.e.
+   * a script that needs to pause a few seconds before attempting a download,
+   * or a sketch that needs to wait a few milliseconds before reading from
+   * the serial port).
+   */
+  public void delay(int napTime) {
+    //if (frameCount != 0) {
+    //if (napTime > 0) {
+    try {
+      Thread.sleep(napTime);
+    } catch (InterruptedException e) { }
+    //}
+    //}
+  }
+
+
+  /**
+   * ( begin auto-generated from frameRate.xml )
+   *
+   * Specifies the number of frames to be displayed every second. If the
+   * processor is not fast enough to maintain the specified rate, it will not
+   * be achieved. For example, the function call <b>frameRate(30)</b> will
+   * attempt to refresh 30 times a second. It is recommended to set the frame
+   * rate within <b>setup()</b>. The default rate is 60 frames per second.
+   *
+   * ( end auto-generated )
    */
   public void frameRate(float newRateTarget) {
     frameRateTarget = newRateTarget;
@@ -2685,7 +2714,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // if not looping, shut down things explicitly,
       // because the main thread will be sleeping
       dispose();
-      
+
       // now get out
       exit2();
     }
@@ -2700,11 +2729,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
     }
   }
 
-  /** 
-   * Called to dispose of resources and shut down the sketch. 
+  /**
+   * Called to dispose of resources and shut down the sketch.
    * Destroys the thread, dispose the renderer, and notify listeners.
    * <p>
-   * Not to be called or overriden by users. If called multiple times, 
+   * Not to be called or overriden by users. If called multiple times,
    * will only notify listeners once. Register a dispose listener instead.
    */
   final public void dispose() {
@@ -2714,7 +2743,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     // don't run stop and disposers twice
     if (thread == null) return;
     thread = null;
-    
+
     // call to shut down renderer, in case it needs it (pdf does)
     if (g != null) g.dispose();
 
@@ -2722,15 +2751,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
 
   /**
    * Call a method in the current class based on its name.
-   * <p/> 
-   * Note that the function being called must be public. Inside the PDE, 
-   * 'public' is automatically added, but when used without the preprocessor, 
+   * <p/>
+   * Note that the function being called must be public. Inside the PDE,
+   * 'public' is automatically added, but when used without the preprocessor,
    * (like from Eclipse) you'll have to do it yourself.
    */
   public void method(String name) {
@@ -2755,11 +2784,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /**
    * Launch a new thread and call the specified function from that new thread.
-   * This is a very simple way to do a thread without needing to get into 
-   * classes, runnables, etc.  
-   * <p/> 
-   * Note that the function being called must be public. Inside the PDE, 
-   * 'public' is automatically added, but when used without the preprocessor, 
+   * This is a very simple way to do a thread without needing to get into
+   * classes, runnables, etc.
+   * <p/>
+   * Note that the function being called must be public. Inside the PDE,
+   * 'public' is automatically added, but when used without the preprocessor,
    * (like from Eclipse) you'll have to do it yourself.
    */
   public void thread(final String name) {
@@ -3570,7 +3599,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return loadImage(filename, null);
   }
 
-  
+
   public PImage loadImage(String filename, Object params) {
 //    return loadImage(filename, null);
     InputStream stream = createInput(filename);
@@ -3746,15 +3775,15 @@ public class PApplet extends Activity implements PConstants, Runnable {
   // SHAPE I/O
 
   protected String[] loadShapeFormats;
-  
-  
+
+
   /**
    * Load a geometry from a file as a PShape (either an SVG or OBJ file).
-   */  
+   */
   public PShape loadShape(String filename) {
     return loadShape(filename, null);
   }
-  
+
 
 
   /**
@@ -3762,7 +3791,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    */
   public PShape loadShape(String filename, Object params) {
    String extension;
-    
+
     String lower = filename.toLowerCase();
     int dot = filename.lastIndexOf('.');
     if (dot == -1) {
@@ -3775,8 +3804,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
     int question = extension.indexOf('?');
     if (question != -1) {
       extension = extension.substring(0, question);
-    }        
-    
+    }
+
     if (extension.equals("svg")) {
       return new PShapeSVG(this, filename);
 
@@ -3790,9 +3819,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
       }
     } else {
       // Loading the formats supported by the renderer.
-    
+
       loadShapeFormats = g.getSupportedShapeFormats();
-    
+
       if (loadShapeFormats != null) {
         for (int i = 0; i < loadShapeFormats.length; i++) {
           if (extension.equals(loadShapeFormats[i])) {
@@ -3800,22 +3829,22 @@ public class PApplet extends Activity implements PConstants, Runnable {
           }
         }
       }
-        
+
     }
-    
+
     return null;
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // NODE I/O (XML, JSON, etc.)
-  
+
   public XML loadNode(String filename) {
     return new XML(this, filename);
   }
-  
-  
+
+
 //  public PData loadData(String filename) {
 //    if (filename.toLowerCase().endsWith(".json")) {
 //      return new PData(this, filename);
@@ -3825,7 +3854,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //  }
 
 
-  
+
   //////////////////////////////////////////////////////////////
 
   // FONT I/O
@@ -4228,7 +4257,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
         return entity.getContent();
         // can't use BufferedHttpEntity because it may try to allocate a byte
         // buffer of the size of the download, bad when DL is 25 MB... [0200]
-//        BufferedHttpEntity bufHttpEntity = new BufferedHttpEntity(entity);   
+//        BufferedHttpEntity bufHttpEntity = new BufferedHttpEntity(entity);
 //        return bufHttpEntity.getContent();
 
       } catch (MalformedURLException mfue) {
@@ -4599,8 +4628,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
       bos = null;
 
       if (targetFile.exists() && !targetFile.delete()) {
-        System.err.println("Could not replace " + 
-                           targetFile.getAbsolutePath() + "."); 
+        System.err.println("Could not replace " +
+                           targetFile.getAbsolutePath() + ".");
       }
 
       if (!tempFile.renameTo(targetFile)) {
@@ -4831,16 +4860,16 @@ public class PApplet extends Activity implements PConstants, Runnable {
   //////////////////////////////////////////////////////////////
 
   // URL ENCODING
-  
+
   static public String urlEncode(String what) {
     try {
       return URLEncoder.encode(what, "UTF-8");
-    } catch (UnsupportedEncodingException e) {  // oh c'mon 
+    } catch (UnsupportedEncodingException e) {  // oh c'mon
       return null;
     }
   }
 
-  
+
   static public String urlDecode(String what) {
     try {
       return URLDecoder.decode(what, "UTF-8");
@@ -4848,9 +4877,9 @@ public class PApplet extends Activity implements PConstants, Runnable {
       return null;
     }
   }
-  
 
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // SORT
@@ -6511,8 +6540,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
   /**
-   * Returns a String that contains the binary value of an int. The length 
-   * depends on the size of the number itself. If you want a specific number 
+   * Returns a String that contains the binary value of an int. The length
+   * depends on the size of the number itself. If you want a specific number
    * of digits use binary(int what, int digits) to specify how many.
    */
   static final public String binary(int what) {
@@ -7263,7 +7292,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.edge(edge);
   }
 
-  
+
   public void normal(float nx, float ny, float nz) {
     g.normal(nx, ny, nz);
   }
@@ -7278,12 +7307,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
     g.texture(image);
   }
 
-  
+
   public void noTexture() {
     g.noTexture();
   }
-  
-  
+
+
   public void vertex(float x, float y) {
     g.vertex(x, y);
   }
@@ -7302,13 +7331,13 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void vertex(float x, float y, float u, float v) {
     g.vertex(x, y, u, v);
   }
-  
-  
+
+
   public void vertex(float x, float y, float z, float u, float v) {
     g.vertex(x, y, z, u, v);
   }
 
-  
+
   public void breakShape() {
     g.breakShape();
   }
@@ -7322,8 +7351,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void endContour() {
     g.endContour();
   }
-  
-  
+
+
   public void endShape() {
     g.endShape();
   }
@@ -7871,7 +7900,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
                     float bottom, float top) {
     g.ortho(left, right, bottom, top);
   }
-  
+
   public void ortho(float left, float right,
                     float bottom, float top,
                     float near, float far) {
@@ -8284,7 +8313,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   /**
    * Return true if this renderer does rendering through OpenGL. Defaults to false.
-   */  
+   */
   public boolean isGL() {
     return g.isGL();
   }
@@ -8308,8 +8337,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   public void blendMode(int mode) {
     g.blendMode(mode);
   }
- 
-  
+
+
   public void setCache(PGraphics renderer, Object storage) {
     g.setCache(renderer, storage);
   }
