@@ -5671,7 +5671,13 @@ public class PGraphicsOpenGL extends PGraphics {
     depthBits = temp[0];
     
     pgl.glGetIntegerv(PGL.GL_STENCIL_BITS, temp, 0);    
-    stencilBits = temp[0];    
+    stencilBits = temp[0];
+    if (stencilBits == 0) {
+      // Dirty hack
+      stencilBits = 8;
+    }
+    // TODO: figure out why glGetIntegerv is not returning the
+    // correct number of stencil bits...
     
     glParamsRead = true;
   }
