@@ -929,7 +929,7 @@ public class JavaBuild {
 //    }
     // If the renderer is set to the built-in OpenGL library,
     // then it's definitely an OpenGL applet.
-    if (renderer.equals("OPENGL")) {
+    if (renderer.equals("P3D") || renderer.equals("OPENGL")) {
       openglApplet = true;
     }
     if (is == null) {
