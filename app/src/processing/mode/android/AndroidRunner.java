@@ -71,11 +71,14 @@ public class AndroidRunner implements DeviceListener {
 
 //  monitor.setNote("Installing sketch on " + device.getId());
     listener.statusNotice("Installing sketch on " + device.getId());
+    // this stopped working with Android SDK tools revision 17
     if (!device.installApp(build.getPathForAPK(), listener)) {
       listener.statusError("Lost connection with device while installing. Try again.");
       Devices.killAdbServer();  // see above
       return;
     }
+//    if (!build.antInstall()) {      
+//    }
 
 //  if (monitor.isCanceled()) {
 //    throw new MonitorCanceled();

@@ -524,9 +524,16 @@ public class PImage implements PConstants, Cloneable {
       h += y; // clip off some of the height
       y = 0;
     }
-
+    
     if (x + w > width) w = width - x;
     if (y + h > height) h = height - y;
+
+    if (w < 0) {
+      w = 0;
+    }
+    if (h < 0) {
+      h = 0;
+    }
 
     return getImpl(x, y, w, h);
   }
