@@ -1442,7 +1442,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       pgl.glDisable(PGL.GL_MULTISAMPLE);
       pgl.glEnable(PGL.GL_POINT_SMOOTH);
       pgl.glEnable(PGL.GL_LINE_SMOOTH);
-      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);    
+      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);
     } else {
       pgl.glEnable(PGL.GL_MULTISAMPLE); 
       pgl.glDisable(PGL.GL_POINT_SMOOTH);
@@ -1492,7 +1492,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     noLights();
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
-
+    
     // because y is flipped
     pgl.glFrontFace(PGL.GL_CW);
     
@@ -1549,8 +1549,8 @@ public class PGraphicsAndroid3D extends PGraphics {
     }
     
     if (primarySurface) {
-      pgl.endOnscreenDraw(clearColorBuffer0);
-      pgl.glFlush();       
+      pgl.endOnscreenDraw(clearColorBuffer0);      
+      pgl.glFlush();
     } else {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
@@ -2298,8 +2298,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     
     shader.setVertexAttribute(glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
     shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);    
-    shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 0);    
-    report("renderLines: attribs set");
+    shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 0);
     
     pgl.glDrawElements(PGL.GL_TRIANGLES, tessGeo.lineIndexCount, PGL.INDEX_TYPE, 0);    
     
