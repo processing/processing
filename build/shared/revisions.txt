@@ -4,6 +4,9 @@ Major updates in this release include a huge revamp of the OpenGL library
 by Andres, fixes to get Android Mode working again, and a number of bug 
 fixes and additions as we head toward 2.0.
 
+Unfortunately, however, Android mode is still broken on Windows.
+http://code.google.com/p/processing/issues/detail?id=1022
+
 On the OpenGL front, we're working to have a single library that works 
 across both desktop and mobile, which is good news because it means we have 
 a fighting chance of making it work (rather than maintaining two entire sets 
