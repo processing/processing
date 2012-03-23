@@ -230,9 +230,9 @@ public class PGL {
   public static final int GL_LINK_STATUS          = GLES20.GL_LINK_STATUS;
   public static final int GL_VALIDATE_STATUS      = GLES20.GL_VALIDATE_STATUS;
   
-  public static final int GL_MULTISAMPLE    = 0x809D;  
-  public static final int GL_POINT_SMOOTH   = 0x0B10;      
-  public static final int GL_LINE_SMOOTH    = 0x0B20;    
+  public static final int GL_MULTISAMPLE    = -1;  
+  public static final int GL_POINT_SMOOTH   = -1;      
+  public static final int GL_LINE_SMOOTH    = -1;    
   public static final int GL_POLYGON_SMOOTH = -1;  
   
   // Some EGL constants needed to initialize an GLES2 context.
@@ -411,10 +411,10 @@ public class PGL {
       GLES20.glClearColor(0, 0, 0, 0);
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
       PGraphicsAndroid3D.screenFramebuffer.glFboID = 0;
-    } else {
-      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);    
-      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, textures[frontTex], 0);   
-      validateFramebuffer();
+    } else {      
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);      
+      GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, textures[frontTex], 0);
+      validateFramebuffer();      
       
       // We need to save the color buffer after finishing with the rendering of this frame,
       // to use is as the background for the next frame ("incremental drawing"). 
@@ -441,9 +441,9 @@ public class PGL {
       // We are in the primary surface, and no clear mode, this means that the current
       // contents of the front buffer needs to be used in the next frame as the background.
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0); 
-            
+      
       GLES20.glClearColor(0, 0, 0, 0);
-      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+      GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);      
       
       // Render current front texture to screen.
       drawTexture(GLES20.GL_TEXTURE_2D, textures[frontTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
@@ -1152,7 +1152,6 @@ public class PGL {
   public void drawTexture(int target, int id, int width, int height,
                                               int texX0, int texY0, int texX1, int texY1, 
                                               int scrX0, int scrY0, int scrX1, int scrY1) {
-  
     if (!loadedTexShader) {
       texVertShader = createShader(GL_VERTEX_SHADER, texVertShaderSource);
       texFragShader = createShader(GL_FRAGMENT_SHADER, texFragShaderSource);
@@ -1172,9 +1171,9 @@ public class PGL {
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      boolean[] val = new boolean[1];
-      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
-      boolean writeMask = val[0];
+      boolean[] val = new boolean[1];      
+      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);      
+      boolean writeMask = val[0];      
       glDepthMask(false);      
       
       glUseProgram(texShaderProgram);
@@ -1213,7 +1212,7 @@ public class PGL {
       texData.put(texCoords);
       
       enableTexturing(target);
-      glActiveTexture(target);
+      glActiveTexture(GL_TEXTURE0);
       glBindTexture(target, id);      
       
       texData.position(0);
