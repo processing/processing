@@ -101,9 +101,6 @@ public class PGL {
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
   
-  public static int DEFAULT_DEPTH_BITS = 24;
-  public static int DEFAULT_STENCIL_BITS = 8;  
-  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // OpenGL constants
@@ -195,6 +192,8 @@ public class PGL {
   public static final int GL_MAX_SAMPLES              = GL2.GL_MAX_SAMPLES;  
   public static final int GL_ALIASED_LINE_WIDTH_RANGE = GL.GL_ALIASED_LINE_WIDTH_RANGE;
   public static final int GL_ALIASED_POINT_SIZE_RANGE = GL.GL_ALIASED_POINT_SIZE_RANGE;
+  public static final int GL_DEPTH_BITS               = GL.GL_DEPTH_BITS;
+  public static final int GL_STENCIL_BITS             = GL.GL_STENCIL_BITS;  
   
   public static final int GLU_TESS_WINDING_NONZERO = GLU.GLU_TESS_WINDING_NONZERO;
   public static final int GLU_TESS_WINDING_ODD     = GLU.GLU_TESS_WINDING_ODD;  
@@ -1148,9 +1147,8 @@ public class PGL {
   
   
   public void drawTexture(int target, int id, int width, int height,
-                          int texX0, int texY0, int texX1, int texY1, 
-                          int scrX0, int scrY0, int scrX1, int scrY1) {
-
+                                              int texX0, int texY0, int texX1, int texY1, 
+                                              int scrX0, int scrY0, int scrX1, int scrY1) {
     if (!loadedTexShader) {
       texVertShader = createShader(GL_VERTEX_SHADER, texVertShaderSource);
       texFragShader = createShader(GL_FRAGMENT_SHADER, texFragShaderSource);
@@ -1211,7 +1209,7 @@ public class PGL {
       texData.put(texCoords);
 
       enableTexturing(target);
-      glActiveTexture(target);
+      glActiveTexture(GL_TEXTURE0);
       glBindTexture(target, id);      
 
       texData.position(0);

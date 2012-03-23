@@ -48,7 +48,7 @@ import java.util.Stack;
  */
 public class PGraphicsOpenGL extends PGraphics {
   /** Interface between Processing and OpenGL */
-  protected PGL pgl;
+  public PGL pgl;
   
   /** The PApplet renderer. For the primary surface, pg == this. */
   protected PGraphicsOpenGL pg;
@@ -58,7 +58,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Basic rendering parameters:  
   
   protected int flushMode = FLUSH_WHEN_FULL; 
-  protected int vboMode = PGL.GL_STATIC_DRAW;
+  protected int vboMode = PGL.GL_STATIC_DRAW;  
   
   // ........................................................  
   
@@ -97,13 +97,16 @@ public class PGraphicsOpenGL extends PGraphics {
   static public boolean npotTexSupported;
   static public boolean mipmapGeneration;
   static public boolean fboMultisampleSupported;
-  static public boolean blendEqSupported;
+  static public boolean packedDepthStencilSupported;
+  static public boolean blendEqSupported;  
   
   /** Some hardware limits */  
   static public int maxTextureSize;
   static public int maxSamples;
   static public float maxPointSize;
   static public float maxLineWidth;
+  static public int depthBits;
+  static public int stencilBits;
     
   /** OpenGL information strings */
   static public String OPENGL_VENDOR;
@@ -127,23 +130,23 @@ public class PGraphicsOpenGL extends PGraphics {
   
   // Shaders    
   
-  protected static URL defFillShaderVertSimpleURL = PGraphicsOpenGL.class.getResource("FillShaderVertSimple.glsl");
-  protected static URL defFillShaderVertTexURL    = PGraphicsOpenGL.class.getResource("FillShaderVertTex.glsl");
-  protected static URL defFillShaderVertLitURL    = PGraphicsOpenGL.class.getResource("FillShaderVertLit.glsl");
-  protected static URL defFillShaderVertFullURL   = PGraphicsOpenGL.class.getResource("FillShaderVertFull.glsl");  
-  protected static URL defFillShaderFragNoTexURL  = PGraphicsOpenGL.class.getResource("FillShaderFragNoTex.glsl");
-  protected static URL defFillShaderFragTexURL    = PGraphicsOpenGL.class.getResource("FillShaderFragTex.glsl");  
-  protected static URL defLineShaderVertURL       = PGraphicsOpenGL.class.getResource("LineShaderVert.glsl");
-  protected static URL defLineShaderFragURL       = PGraphicsOpenGL.class.getResource("LineShaderFrag.glsl");
-  protected static URL defPointShaderVertURL      = PGraphicsOpenGL.class.getResource("PointShaderVert.glsl");
-  protected static URL defPointShaderFragURL      = PGraphicsOpenGL.class.getResource("PointShaderFrag.glsl");
+  static protected URL defFillShaderVertSimpleURL = PGraphicsOpenGL.class.getResource("FillShaderVertSimple.glsl");
+  static protected URL defFillShaderVertTexURL    = PGraphicsOpenGL.class.getResource("FillShaderVertTex.glsl");
+  static protected URL defFillShaderVertLitURL    = PGraphicsOpenGL.class.getResource("FillShaderVertLit.glsl");
+  static protected URL defFillShaderVertFullURL   = PGraphicsOpenGL.class.getResource("FillShaderVertFull.glsl");  
+  static protected URL defFillShaderFragNoTexURL  = PGraphicsOpenGL.class.getResource("FillShaderFragNoTex.glsl");
+  static protected URL defFillShaderFragTexURL    = PGraphicsOpenGL.class.getResource("FillShaderFragTex.glsl");  
+  static protected URL defLineShaderVertURL       = PGraphicsOpenGL.class.getResource("LineShaderVert.glsl");
+  static protected URL defLineShaderFragURL       = PGraphicsOpenGL.class.getResource("LineShaderFrag.glsl");
+  static protected URL defPointShaderVertURL      = PGraphicsOpenGL.class.getResource("PointShaderVert.glsl");
+  static protected URL defPointShaderFragURL      = PGraphicsOpenGL.class.getResource("PointShaderFrag.glsl");
   
-  protected static FillShaderSimple defFillShaderSimple;
-  protected static FillShaderTex defFillShaderTex;
-  protected static FillShaderLit defFillShaderLit;
-  protected static FillShaderFull defFillShaderFull;
-  protected static LineShader defLineShader;
-  protected static PointShader defPointShader;
+  static protected FillShaderSimple defFillShaderSimple;
+  static protected FillShaderTex defFillShaderTex;
+  static protected FillShaderLit defFillShaderLit;
+  static protected FillShaderFull defFillShaderFull;
+  static protected LineShader defLineShader;
+  static protected PointShader defPointShader;
   
   protected FillShaderSimple fillShaderSimple;
   protected FillShaderTex fillShaderTex;
@@ -375,8 +378,8 @@ public class PGraphicsOpenGL extends PGraphics {
   // ........................................................
   
   // Constants    
-
-  protected static final int MIN_ARRAYCOPY_SIZE = 2;  
+  
+  static protected final int MIN_ARRAYCOPY_SIZE = 2;  
     
   static public float FLOAT_EPS = Float.MIN_VALUE;
   // Calculation of the Machine Epsilon for float precision. From:
@@ -1369,6 +1372,14 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }    
     
+    if (!glParamsRead) {
+      getGLParameters();  
+    }
+    
+    if (!settingsInited) {
+      defaultSettings();
+    }     
+    
     if (primarySurface) {
       pgl.updatePrimary();
     } else {
@@ -1393,14 +1404,6 @@ public class PGraphicsOpenGL extends PGraphics {
       
       pgl.updateOffscreen(pg.pgl);
     }
-    
-    if (!glParamsRead) {
-      getGLParameters();  
-    }
-    
-    if (!settingsInited) {
-      defaultSettings();
-    }    
     
     // We are ready to go!
     
@@ -1445,13 +1448,13 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glDisable(PGL.GL_MULTISAMPLE);
       pgl.glEnable(PGL.GL_POINT_SMOOTH);
       pgl.glEnable(PGL.GL_LINE_SMOOTH);
-      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);    
+      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);
     } else {
       pgl.glEnable(PGL.GL_MULTISAMPLE); 
       pgl.glDisable(PGL.GL_POINT_SMOOTH);
       pgl.glDisable(PGL.GL_LINE_SMOOTH);
       pgl.glDisable(PGL.GL_POLYGON_SMOOTH);        
-    }
+    }    
     
     // setup opengl viewport.        
     viewport[0] = 0; viewport[1] = 0; viewport[2] = width; viewport[3] = height;
@@ -1491,11 +1494,11 @@ public class PGraphicsOpenGL extends PGraphics {
       modelviewInv.set(cameraInv);
       calcProjmodelview();
     }
-    
+      
     noLights();
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
-
+    
     // because y is flipped
     pgl.glFrontFace(PGL.GL_CW);
     
@@ -1516,7 +1519,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.beginOffscreenDraw(pg.clearColorBuffer);
       
       // Just in case the texture was recreated (in a resize event for example)
-      offscreenFramebuffer.setColorBuffer(texture);      
+      offscreenFramebuffer.setColorBuffer(texture); 
     }
 
     if (hints[DISABLE_DEPTH_MASK]) {
@@ -1551,9 +1554,9 @@ public class PGraphicsOpenGL extends PGraphics {
       return;
     }
     
-    if (primarySurface) {      
-      pgl.endOnscreenDraw(clearColorBuffer0);
-      pgl.glFlush(); 
+    if (primarySurface) {
+      pgl.endOnscreenDraw(clearColorBuffer0);      
+      pgl.glFlush();
     } else {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
@@ -1564,7 +1567,7 @@ public class PGraphicsOpenGL extends PGraphics {
       
       pg.restoreGL();
     }    
-
+    
     drawing = false;    
     
     report("bot endDraw()");    
@@ -2232,7 +2235,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   
-  public void flush() {
+  public void flush() {    
     boolean hasPoints = 0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount;
     boolean hasLines = 0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount;
     boolean hasFill = 0 < tessGeo.fillVertexCount && 0 < tessGeo.fillIndexCount;
@@ -2246,7 +2249,7 @@ public class PGraphicsOpenGL extends PGraphics {
         pushMatrix();
         resetMatrix();
       }
-            
+      
       if (hasFill) {
         renderFill();
       }
@@ -2301,8 +2304,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     shader.setVertexAttribute(glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
     shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);    
-    shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 0);    
-    report("renderLines: attribs set");
+    shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 0);
     
     pgl.glDrawElements(PGL.GL_TRIANGLES, tessGeo.lineIndexCount, PGL.INDEX_TYPE, 0);    
     
@@ -2321,9 +2323,9 @@ public class PGraphicsOpenGL extends PGraphics {
     texCache.beginRender();    
     for (int i = 0; i < texCache.count; i++) {
       PTexture tex = texCache.getTexture(i);      
-            
-      FillShader shader = getFillShader(lights, tex != null);            
-      shader.start();      
+          
+      FillShader shader = getFillShader(lights, tex != null);      
+      shader.start();
       
       shader.setVertexAttribute(glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);        
       shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);    
@@ -2343,7 +2345,8 @@ public class PGraphicsOpenGL extends PGraphics {
       
       int offset = texCache.firstIndex[i];
       int size = texCache.lastIndex[i] - texCache.firstIndex[i] + 1;
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, offset * PGL.SIZEOF_INDEX);      
+      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, offset * PGL.SIZEOF_INDEX);
+      
       shader.stop();
     }  
     texCache.endRender();   
@@ -5594,7 +5597,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     pgl.updateOffscreen(pg.pgl);
     loadTextureImpl(BILINEAR);
-    
+        
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
     // to the surface are released by calling delete().
@@ -5607,8 +5610,8 @@ public class PGraphicsOpenGL extends PGraphics {
     
     if (PGraphicsOpenGL.fboMultisampleSupported && 1 < antialias) {
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, antialias, 0, 
-                                                         PGL.DEFAULT_DEPTH_BITS, PGL.DEFAULT_STENCIL_BITS, 
-                                                         PGL.DEFAULT_DEPTH_BITS == 24 && PGL.DEFAULT_STENCIL_BITS == 8, false);
+                                                         depthBits, stencilBits, 
+                                                         depthBits == 24 && stencilBits == 8 && packedDepthStencilSupported, false);
       
       offscreenFramebufferMultisample.clear();
       offscreenMultisample = true;
@@ -5622,13 +5625,13 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       antialias = 0;
       offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1, 
-                                              PGL.DEFAULT_DEPTH_BITS, PGL.DEFAULT_STENCIL_BITS,
-                                              PGL.DEFAULT_DEPTH_BITS == 24 && PGL.DEFAULT_STENCIL_BITS == 8, false);
+                                              depthBits, stencilBits,
+                                              depthBits == 24 && stencilBits == 8 && packedDepthStencilSupported, false);
       offscreenMultisample = false;
     }
     
     offscreenFramebuffer.setColorBuffer(texture);
-    offscreenFramebuffer.clear();
+    offscreenFramebuffer.clear(); 
   }
 
   
@@ -5638,10 +5641,11 @@ public class PGraphicsOpenGL extends PGraphics {
     OPENGL_VERSION    = pgl.glGetString(PGL.GL_VERSION);    
     OPENGL_EXTENSIONS = pgl.glGetString(PGL.GL_EXTENSIONS);
     
-    npotTexSupported        = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
-    mipmapGeneration        = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
-    fboMultisampleSupported = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample");
-       
+    npotTexSupported            = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
+    mipmapGeneration            = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
+    fboMultisampleSupported     = -1 < OPENGL_EXTENSIONS.indexOf("framebuffer_multisample");
+    packedDepthStencilSupported = -1 < OPENGL_EXTENSIONS.indexOf("packed_depth_stencil");   
+        
     try {      
       pgl.glBlendEquation(PGL.GL_FUNC_ADD);
       blendEqSupported = true;
@@ -5662,6 +5666,12 @@ public class PGraphicsOpenGL extends PGraphics {
     
     pgl.glGetIntegerv(PGL.GL_ALIASED_POINT_SIZE_RANGE, temp, 0);
     maxPointSize = temp[1];        
+    
+    pgl.glGetIntegerv(PGL.GL_DEPTH_BITS, temp, 0);    
+    depthBits = temp[0];
+    
+    pgl.glGetIntegerv(PGL.GL_STENCIL_BITS, temp, 0);    
+    stencilBits = temp[0];    
     
     glParamsRead = true;
   }
@@ -6439,6 +6449,7 @@ public class PGraphicsOpenGL extends PGraphics {
       super.stop();
     }    
   }
+
     
   
   //////////////////////////////////////////////////////////////
