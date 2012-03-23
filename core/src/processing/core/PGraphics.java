@@ -2497,30 +2497,48 @@ public class PGraphics extends PImage implements PConstants {
         v2 = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
         v3 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
         
-        normal(x0, y0, z0);     
-        vertex(r * x0, r * y0, r * z0, u1, v1);
+        if (textureImage != null) {
+          normal(x0, y0, z0);     
+          vertex(r * x0, r * y0, r * z0, u1, v1);
 
-        normal(x2, y2, z2);
-        vertex(r * x2, r * y2, r * z2, u2, v2);        
-        
-        normal(x1, y1, z1);
-        vertex(r * x1,  r * y1,  r * z1, u1, v2);
+          normal(x2, y2, z2);
+          vertex(r * x2, r * y2, r * z2, u2, v2);        
 
+          normal(x1, y1, z1);
+          vertex(r * x1,  r * y1,  r * z1, u1, v2);
 
+          normal(x0, y0, z0);    
+          vertex(r * x0, r * y0, r * z0, u1, v1);
 
-        normal(x0, y0, z0);    
-        vertex(r * x0, r * y0, r * z0, u1, v1);
+          normal(x3,  y3,  z3);
+          vertex(r * x3,  r * y3,  r * z3,  u2,  v3);        
 
-        normal(x3,  y3,  z3);
-        vertex(r * x3,  r * y3,  r * z3,  u2,  v3);        
-        
-        normal(x2, y2, z2);
-        vertex(r * x2, r * y2, r * z2, u2, v2);
+          normal(x2, y2, z2);
+          vertex(r * x2, r * y2, r * z2, u2, v2);
+          
+        } else {
+          normal(x0, y0, z0);     
+          vertex(r * x0, r * y0, r * z0);
+
+          normal(x2, y2, z2);
+          vertex(r * x2, r * y2, r * z2);        
+
+          normal(x1, y1, z1);
+          vertex(r * x1,  r * y1,  r * z1);
+
+          normal(x0, y0, z0);    
+          vertex(r * x0, r * y0, r * z0);
+
+          normal(x3,  y3,  z3);
+          vertex(r * x3,  r * y3,  r * z3);        
+
+          normal(x2, y2, z2);
+          vertex(r * x2, r * y2, r * z2);
+        }
       }
     }
     
     endShape();
-
     
     
     /*
