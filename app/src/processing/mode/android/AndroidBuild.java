@@ -37,10 +37,10 @@ class AndroidBuild extends JavaBuild {
   static final String sdkVersion = "10";  // Android 2.3.3 (Gingerbread)
   static final String sdkTarget = "android-" + sdkVersion;
 
-//  private final Editor editor;
   private final AndroidSDK sdk;
   private final File coreZipFile;
 
+  /** whether this is a "debug" or "release" build */
   private String target;
   private Manifest manifest;
 
@@ -56,14 +56,12 @@ class AndroidBuild extends JavaBuild {
     
     sdk = mode.getSDK();
     coreZipFile = mode.getCoreZipLocation();
-    
-//    AVD.ensureEclairAVD(sdk);
   }
 
 
   /**
    * Build into temporary folders (needed for the Windows 8.3 bugs in the Android SDK). 
-   * @param target
+   * @param target "debug" or "release"
    * @throws SketchException 
    * @throws IOException 
    */
@@ -148,29 +146,17 @@ class AndroidBuild extends JavaBuild {
 //      PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
       Base.copyFile(coreZipFile, new File(libsFolder, "processing-core.jar"));
 
-//      try {
-      // Copy any imported libraries or code folder contents to the project
+      // Copy any imported libraries (their libs and assets),  
+      // and anything in the code folder contents to the project.
       copyLibraries(libsFolder, assetsFolder);
       copyCodeFolder(libsFolder);
 
-      // Copy the data folder, if one exists, to the 'assets' folder of the
-      // project
+      // Copy the data folder (if one exists) to the project's 'assets' folder
       final File sketchDataFolder = sketch.getDataFolder();
       if (sketchDataFolder.exists()) {
         Base.copyDir(sketchDataFolder, assetsFolder);
       }
-//      } catch (final IOException e) {
-//        e.printStackTrace();
-//        throw new SketchException(e.getMessage());
-//      }
     }
-//    } catch (final SketchException e) {
-//      editor.statusError(e);
-//      return null;
-//    } catch (final IOException e) {
-//      editor.statusError(e);
-//      return null;
-//    }
     return tmpFolder;
   }
 
@@ -188,10 +174,9 @@ class AndroidBuild extends JavaBuild {
    * @throws IOException
    */
   private File createTempBuildFolder(final Sketch sketch) throws IOException {
-    final File tmp = File.createTempFile("android", ".pde");
+    final File tmp = File.createTempFile("android", "sketch");
     if (!(tmp.delete() && tmp.mkdir())) {
-      throw new IOException("Cannot create temp dir " + tmp
-          + " to build android sketch");
+      throw new IOException("Cannot create temp dir " + tmp + " to build android sketch");
     }
     return tmp;
   }
@@ -277,11 +262,85 @@ class AndroidBuild extends JavaBuild {
   }
 
 
-  /**
-   * @param target "debug" or "release"
-   */
+  // SDK tools 17 have a problem where 'dex' won't pick up the libs folder
+  // (which contains our friend processing-core.jar) unless your current 
+  // working directory is the same as the build file. So this is an unpleasant
+  // workaround, at least until things are fixed or we hear of a better way.
   protected boolean antBuild() throws SketchException {
+    try {
+//      ProcessHelper helper = new ProcessHelper(tmpFolder, new String[] { "ant", target });
+//      System.out.println("cp is " + System.getProperty("java.class.path"));
+      // Since Ant may or may not be installed, call it from the .jar file,
+      // though hopefully 'java' is in the classpath.. Given what we do in
+      // processing.mode.java.runner (and it that it works), should be ok.
+      String[] cmd = new String[] {
+        "java", 
+        "-cp", System.getProperty("java.class.path"),
+        "org.apache.tools.ant.Main", target
+//        "ant", target
+      };
+      ProcessHelper helper = new ProcessHelper(tmpFolder, cmd);
+      ProcessResult pr = helper.execute();
+      if (pr.getResult() != 0) {
+//        System.err.println("mo builds, mo problems");
+        System.err.println(pr.getStderr());
+        System.out.println(pr.getStdout());
+        // the actual javac errors and whatnot go to stdout
+        antBuildProblems(pr.getStdout());
+        return false;
+      }
+
+    } catch (InterruptedException e) {
+      return false;
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    }
+    return true;
+  }
+  
+  /*
+  public class HopefullyTemporaryWorkaround extends org.apache.tools.ant.Main {
+    
+    protected void exit(int exitCode) {
+      // I want to exit, but let's not System.exit()
+      System.out.println("gonna exit");
+      System.out.flush();
+      System.err.flush();
+    }
+  }
+  
+  
+  protected boolean antBuild() throws SketchException {
+    String[] cmd = new String[] {
+      "-main", "processing.mode.android.HopefullyTemporaryWorkaround", 
+      "-Duser.dir=" + tmpFolder.getAbsolutePath(),
+      "-logfile", "/Users/fry/Desktop/ant-log.txt",
+      "-verbose",
+      "-help",
+//      "debug"
+    };
+    HopefullyTemporaryWorkaround.main(cmd);
+    return true;
+//    ProcessResult listResult =
+//      new ProcessHelper("ant", "debug", tmpFolder).execute();
+//    if (listResult.succeeded()) {
+//      boolean badness = false;
+//      for (String line : listResult) {
+//      }
+//    }
+  }
+  */
+  
+  
+  protected boolean antBuild_normal() throws SketchException {
+//    System.setProperty("user.dir", tmpFolder.getAbsolutePath());  // oh why not { because it doesn't help }
     final Project p = new Project();
+//    p.setBaseDir(tmpFolder);  // doesn't seem to do anything
+    
+//    System.out.println(tmpFolder.getAbsolutePath());
+//    p.setUserProperty("user.dir", tmpFolder.getAbsolutePath());
     String path = buildFile.getAbsolutePath().replace('\\', '/');
     p.setUserProperty("ant.file", path);
 
@@ -295,7 +354,8 @@ class AndroidBuild extends JavaBuild {
     consoleLogger.setOutputPrintStream(System.out);  // ? uncommented before
     // WARN, INFO, VERBOSE, DEBUG
     //consoleLogger.setMessageOutputLevel(Project.MSG_ERR);
-    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
+//    consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
+    consoleLogger.setMessageOutputLevel(Project.MSG_DEBUG);
     p.addBuildListener(consoleLogger);
 
     // This logger is used to pick up javac errors to be parsed into 
@@ -308,7 +368,8 @@ class AndroidBuild extends JavaBuild {
     final ByteArrayOutputStream outb = new ByteArrayOutputStream();
     final PrintStream outp = new PrintStream(outb);
     errorLogger.setOutputPrintStream(outp);
-    errorLogger.setMessageOutputLevel(Project.MSG_INFO);
+//    errorLogger.setMessageOutputLevel(Project.MSG_INFO);
+    errorLogger.setMessageOutputLevel(Project.MSG_DEBUG);
     p.addBuildListener(errorLogger);
 
     try {
@@ -336,60 +397,64 @@ class AndroidBuild extends JavaBuild {
       // PApplet.println(errorLines);
 
       final String outPile = new String(outb.toByteArray());
-      final String[] outLines = outPile.split(System.getProperty("line.separator"));
-      // PApplet.println(outLines);
+      antBuildProblems(outPile);
+    }
+    return false;
+  }
+  
+  
+  void antBuildProblems(String outPile) throws SketchException {
+    final String[] outLines = outPile.split(System.getProperty("line.separator"));
+//    System.err.println("lines are:");
+//    PApplet.println(outLines);
 
-      for (final String line : outLines) {
-        final String javacPrefix = "[javac]";
-        final int javacIndex = line.indexOf(javacPrefix);
-        if (javacIndex != -1) {
-          // System.out.println("checking: " + line);
-//          final Sketch sketch = editor.getSketch();
-          // String sketchPath = sketch.getFolder().getAbsolutePath();
-          int offset = javacIndex + javacPrefix.length() + 1;
-          String[] pieces = 
-            PApplet.match(line.substring(offset), "^(.+):([0-9]+):\\s+(.+)$");
-          if (pieces != null) {
-            // PApplet.println(pieces);
-            String fileName = pieces[1];
-            // remove the path from the front of the filename
-            fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
-            final int lineNumber = PApplet.parseInt(pieces[2]) - 1;
-            // PApplet.println("looking for " + fileName + " line " +
-            // lineNumber);
-            SketchException rex = placeException(pieces[3], fileName, lineNumber);
-            if (rex != null) {
-//              rex.hideStackTrace();
-//              editor.statusError(rex);
-//              return false; // get outta here
-              throw rex;
-            }
+    for (final String line : outLines) {
+      final String javacPrefix = "[javac]";
+      final int javacIndex = line.indexOf(javacPrefix);
+      if (javacIndex != -1) {
+//         System.out.println("checking: " + line);
+//        final Sketch sketch = editor.getSketch();
+        // String sketchPath = sketch.getFolder().getAbsolutePath();
+        int offset = javacIndex + javacPrefix.length() + 1;
+        String[] pieces = 
+          PApplet.match(line.substring(offset), "^(.+):([0-9]+):\\s+(.+)$");
+        if (pieces != null) {
+//          PApplet.println(pieces);
+          String fileName = pieces[1];
+          // remove the path from the front of the filename
+          fileName = fileName.substring(fileName.lastIndexOf('/') + 1);
+          final int lineNumber = PApplet.parseInt(pieces[2]) - 1;
+//          PApplet.println("looking for " + fileName + " line " + lineNumber);
+          SketchException rex = placeException(pieces[3], fileName, lineNumber);
+          if (rex != null) {
+//            System.out.println("found a rex");
+//            rex.hideStackTrace();
+//            editor.statusError(rex);
+//            return false; // get outta here
+            throw rex;
           }
         }
       }
-      // this info will have already been printed
-//      System.err.println("Problem during build: " + e.getMessage());
-      // this info is a huge stacktrace of where it died inside the ant code (totally useless)
-//      e.printStackTrace();
-      // Couldn't parse the exception, so send something generic
-      SketchException skex = 
-        new SketchException("Error from inside the Android tools, check the console.");
-      skex.hideStackTrace();
-      throw skex;
     }
-    //return false;
+    // this info will have already been printed
+//    System.err.println("Problem during build: " + e.getMessage());
+    // this info is a huge stacktrace of where it died inside the ant code (totally useless)
+//    e.printStackTrace();
+    // Couldn't parse the exception, so send something generic
+    SketchException skex = 
+      new SketchException("Error from inside the Android tools, check the console.");
+    skex.hideStackTrace();
+    throw skex;
   }
-
-  
-//  protected String getClassName() {
-//    return className;
-//  }
 
   
   String getPathForAPK() {
     String suffix = target.equals("release") ? "unsigned" : "debug";
     String apkName = "bin/" + sketch.getName() + "-" + suffix + ".apk";
     final File apkFile = new File(tmpFolder, apkName);
+    if (!apkFile.exists()) {
+      return null;
+    }
     return apkFile.getAbsolutePath();
   }
 
@@ -405,8 +470,6 @@ class AndroidBuild extends JavaBuild {
   private void writeBuildXML(final File file, final String projectName) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-
-
     
     writer.println("<project name=\"" + projectName + "\" default=\"help\">");
     
