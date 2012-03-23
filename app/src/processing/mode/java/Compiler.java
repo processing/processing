@@ -220,14 +220,22 @@ public class Compiler {
           String[] m = PApplet.match(errorMessage, "The import (.*) cannot be resolved");
           //what = what.substring(0, what.indexOf(' '));
           if (m != null) {
-            exception.setMessage("The package " +
-                                 "\u201C" + m[1] + "\u201D" +
-                                 " does not exist. " +
-                                 "You might be missing a library.");
+//            System.out.println("'" + m[1] + "'");
+            if (m[1].equals("processing.xml")) {
+              System.err.println("The processing.xml library has been replaced " +
+              		               "with a new 'XML' class that's built-in.");
+              handleCrustyCode(exception);
+
+            } else {
+              exception.setMessage("The package " +
+                                   "\u201C" + m[1] + "\u201D" +
+                                   " does not exist. " +
+                                   "You might be missing a library.");
+              System.err.println("As of release 1.0, libraries must be " +
+                                 "installed in a folder named 'libraries' " +
+                                 "inside the 'sketchbook' folder.");
+            }
           }
-          System.err.println("As of release 1.0, libraries must be " +
-                             "installed in a folder named 'libraries' " +
-                             "inside the 'sketchbook' folder.");
 
 //          // Actually create the folder and open it for the user
 //          File sketchbookLibraries = Base.getSketchbookLibrariesFolder();
