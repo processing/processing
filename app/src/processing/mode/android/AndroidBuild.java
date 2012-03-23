@@ -53,17 +53,17 @@ class AndroidBuild extends JavaBuild {
 
   public AndroidBuild(final Sketch sketch, final AndroidMode mode) {
     super(sketch);
-    
+
     sdk = mode.getSDK();
     coreZipFile = mode.getCoreZipLocation();
   }
 
 
   /**
-   * Build into temporary folders (needed for the Windows 8.3 bugs in the Android SDK). 
+   * Build into temporary folders (needed for the Windows 8.3 bugs in the Android SDK).
    * @param target "debug" or "release"
-   * @throws SketchException 
-   * @throws IOException 
+   * @throws SketchException
+   * @throws IOException
    */
   public File build(String target) throws IOException, SketchException {
     this.target = target;
@@ -75,9 +75,9 @@ class AndroidBuild extends JavaBuild {
     }
     return folder;
   }
-  
-  
-  /** 
+
+
+  /**
    * Tell the PDE to not complain about android.* packages and others that are
    * part of the OS library set as if they're missing.
    */
@@ -91,11 +91,11 @@ class AndroidBuild extends JavaBuild {
     if (pkg.startsWith("org.xml.sax.")) return true;
     return false;
   }
- 
-  
+
+
   /**
-   * Create an Android project folder, and run the preprocessor on the sketch. 
-   * Populates the 'src' folder with Java code, and 'libs' folder with the 
+   * Create an Android project folder, and run the preprocessor on the sketch.
+   * Populates the 'src' folder with Java code, and 'libs' folder with the
    * libraries and code folder contents. Also copies data folder to 'assets'.
    */
   public File createProject() throws IOException, SketchException {
@@ -104,7 +104,7 @@ class AndroidBuild extends JavaBuild {
     // Create the 'src' folder with the preprocessed code.
 //    final File srcFolder = new File(tmpFolder, "src");
     srcFolder = new File(tmpFolder, "src");
-    // this folder isn't actually used, but it's used by the java preproc to 
+    // this folder isn't actually used, but it's used by the java preproc to
     // figure out the classpath, so we have to set it to something
 //    binFolder = new File(tmpFolder, "bin");
     // use the src folder, since 'bin' might be used by the ant build
@@ -146,7 +146,7 @@ class AndroidBuild extends JavaBuild {
 //      PApplet.saveStream(new File(libsFolder, "processing-core.jar"), input);
       Base.copyFile(coreZipFile, new File(libsFolder, "processing-core.jar"));
 
-      // Copy any imported libraries (their libs and assets),  
+      // Copy any imported libraries (their libs and assets),
       // and anything in the code folder contents to the project.
       copyLibraries(libsFolder, assetsFolder);
       copyCodeFolder(libsFolder);
@@ -184,7 +184,7 @@ class AndroidBuild extends JavaBuild {
 
   protected File createExportFolder() throws IOException {
 //    Sketch sketch = editor.getSketch();
-    // Create the 'android' build folder, and move any existing version out. 
+    // Create the 'android' build folder, and move any existing version out.
     File androidFolder = new File(sketch.getFolder(), "android");
     if (androidFolder.exists()) {
 //      Date mod = new Date(androidFolder.lastModified());
@@ -209,10 +209,10 @@ class AndroidBuild extends JavaBuild {
         }
         if (!pr.succeeded()) {
           System.err.println(pr.getStderr());
-          Base.showWarning("Failed to rename", 
-                           "Could not rename the old “android” build folder.\n" + 
-                           "Please delete, close, or rename the folder\n" + 
-                           androidFolder.getAbsolutePath() + "\n" +  
+          Base.showWarning("Failed to rename",
+                           "Could not rename the old “android” build folder.\n" +
+                           "Please delete, close, or rename the folder\n" +
+                           androidFolder.getAbsolutePath() + "\n" +
                            "and try again." , null);
           Base.openFolder(sketch.getFolder());
           return null;
@@ -221,7 +221,7 @@ class AndroidBuild extends JavaBuild {
     } else {
       boolean result = androidFolder.mkdirs();
       if (!result) {
-        Base.showWarning("Folders, folders, folders", 
+        Base.showWarning("Folders, folders, folders",
                          "Could not create the necessary folders to build.\n" +
                          "Perhaps you have some file permissions to sort out?", null);
         return null;
@@ -229,15 +229,15 @@ class AndroidBuild extends JavaBuild {
     }
     return androidFolder;
   }
-  
-  
+
+
   public File exportProject() throws IOException, SketchException {
 //    File projectFolder = build("debug");
 //    if (projectFolder == null) {
 //      return null;
 //    }
     // this will set debuggable to true in the .xml file
-    target = "debug";   
+    target = "debug";
     File projectFolder = createProject();
     if (projectFolder != null) {
       File exportFolder = createExportFolder();
@@ -253,7 +253,7 @@ class AndroidBuild extends JavaBuild {
     if (projectFolder == null) {
       return false;
     }
-    
+
     // TODO all the signing magic needs to happen here
 
     File exportFolder = createExportFolder();
@@ -263,19 +263,26 @@ class AndroidBuild extends JavaBuild {
 
 
   // SDK tools 17 have a problem where 'dex' won't pick up the libs folder
-  // (which contains our friend processing-core.jar) unless your current 
+  // (which contains our friend processing-core.jar) unless your current
   // working directory is the same as the build file. So this is an unpleasant
   // workaround, at least until things are fixed or we hear of a better way.
   protected boolean antBuild() throws SketchException {
     try {
 //      ProcessHelper helper = new ProcessHelper(tmpFolder, new String[] { "ant", target });
-//      System.out.println("cp is " + System.getProperty("java.class.path"));
+      // Windows doesn't include full paths, so make 'em happen.
+      String cp = System.getProperty("java.class.path");
+      String[] cpp = PApplet.split(cp, File.pathSeparatorChar);
+      for (int i = 0; i < cpp.length; i++) {
+        cpp[i] = new File(cpp[i]).getAbsolutePath();
+      }
+      cp = PApplet.join(cpp, File.pathSeparator);
+
       // Since Ant may or may not be installed, call it from the .jar file,
       // though hopefully 'java' is in the classpath.. Given what we do in
       // processing.mode.java.runner (and it that it works), should be ok.
       String[] cmd = new String[] {
-        "java", 
-        "-cp", System.getProperty("java.class.path"),
+        "java",
+        "-cp", cp, //System.getProperty("java.class.path"),
         "org.apache.tools.ant.Main", target
 //        "ant", target
       };
@@ -299,10 +306,10 @@ class AndroidBuild extends JavaBuild {
     }
     return true;
   }
-  
+
   /*
   public class HopefullyTemporaryWorkaround extends org.apache.tools.ant.Main {
-    
+
     protected void exit(int exitCode) {
       // I want to exit, but let's not System.exit()
       System.out.println("gonna exit");
@@ -310,11 +317,11 @@ class AndroidBuild extends JavaBuild {
       System.err.flush();
     }
   }
-  
-  
+
+
   protected boolean antBuild() throws SketchException {
     String[] cmd = new String[] {
-      "-main", "processing.mode.android.HopefullyTemporaryWorkaround", 
+      "-main", "processing.mode.android.HopefullyTemporaryWorkaround",
       "-Duser.dir=" + tmpFolder.getAbsolutePath(),
       "-logfile", "/Users/fry/Desktop/ant-log.txt",
       "-verbose",
@@ -332,13 +339,13 @@ class AndroidBuild extends JavaBuild {
 //    }
   }
   */
-  
-  
+
+
   protected boolean antBuild_normal() throws SketchException {
 //    System.setProperty("user.dir", tmpFolder.getAbsolutePath());  // oh why not { because it doesn't help }
     final Project p = new Project();
 //    p.setBaseDir(tmpFolder);  // doesn't seem to do anything
-    
+
 //    System.out.println(tmpFolder.getAbsolutePath());
 //    p.setUserProperty("user.dir", tmpFolder.getAbsolutePath());
     String path = buildFile.getAbsolutePath().replace('\\', '/');
@@ -358,7 +365,7 @@ class AndroidBuild extends JavaBuild {
     consoleLogger.setMessageOutputLevel(Project.MSG_DEBUG);
     p.addBuildListener(consoleLogger);
 
-    // This logger is used to pick up javac errors to be parsed into 
+    // This logger is used to pick up javac errors to be parsed into
     // SketchException objects. Note that most errors seem to show up on stdout
     // since that's where the [javac] prefixed lines are coming through.
     final DefaultLogger errorLogger = new DefaultLogger();
@@ -401,8 +408,8 @@ class AndroidBuild extends JavaBuild {
     }
     return false;
   }
-  
-  
+
+
   void antBuildProblems(String outPile) throws SketchException {
     final String[] outLines = outPile.split(System.getProperty("line.separator"));
 //    System.err.println("lines are:");
@@ -416,7 +423,7 @@ class AndroidBuild extends JavaBuild {
 //        final Sketch sketch = editor.getSketch();
         // String sketchPath = sketch.getFolder().getAbsolutePath();
         int offset = javacIndex + javacPrefix.length() + 1;
-        String[] pieces = 
+        String[] pieces =
           PApplet.match(line.substring(offset), "^(.+):([0-9]+):\\s+(.+)$");
         if (pieces != null) {
 //          PApplet.println(pieces);
@@ -441,13 +448,13 @@ class AndroidBuild extends JavaBuild {
     // this info is a huge stacktrace of where it died inside the ant code (totally useless)
 //    e.printStackTrace();
     // Couldn't parse the exception, so send something generic
-    SketchException skex = 
+    SketchException skex =
       new SketchException("Error from inside the Android tools, check the console.");
     skex.hideStackTrace();
     throw skex;
   }
 
-  
+
   String getPathForAPK() {
     String suffix = target.equals("release") ? "unsigned" : "debug";
     String apkName = "bin/" + sketch.getName() + "-" + suffix + ".apk";
@@ -458,7 +465,7 @@ class AndroidBuild extends JavaBuild {
     return apkFile.getAbsolutePath();
   }
 
-    
+
   private void writeAntProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("application-package=" + getPackageName());
@@ -466,19 +473,19 @@ class AndroidBuild extends JavaBuild {
     writer.close();
   }
 
-  
+
   private void writeBuildXML(final File file, final String projectName) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-    
+
     writer.println("<project name=\"" + projectName + "\" default=\"help\">");
-    
+
     writer.println("  <loadproperties srcFile=\"local.properties\" />");
     writer.println("  <property file=\"ant.properties\" />");
     writer.println("  <loadproperties srcFile=\"project.properties\" />");
-    
+
     writer.println("  <fail message=\"sdk.dir is missing. Make sure to generate local.properties using 'android update project'\" unless=\"sdk.dir\" />");
-    
+
     writer.println("  <!-- version-tag: 1 -->");  // should this be 'custom' instead of 1?
     writer.println("  <import file=\"${sdk.dir}/tools/ant/build.xml\" />");
 
@@ -505,7 +512,7 @@ class AndroidBuild extends JavaBuild {
     writer.close();
   }
 
-  
+
   private void writeProjectProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("target=" + sdkTarget);
@@ -517,7 +524,7 @@ class AndroidBuild extends JavaBuild {
     writer.close();
   }
 
-  
+
   private void writeLocalProps(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     final String sdkPath = sdk.getSdkFolder().getAbsolutePath();
@@ -533,12 +540,12 @@ class AndroidBuild extends JavaBuild {
     writer.close();
   }
 
-  
+
   static final String ICON_72 = "icon-72.png";
   static final String ICON_48 = "icon-48.png";
   static final String ICON_36 = "icon-36.png";
 
-  private void writeRes(File resFolder, 
+  private void writeRes(File resFolder,
                         String className) throws SketchException {
     File layoutFolder = mkdirs(resFolder, "layout");
     File layoutFile = new File(layoutFolder, "main.xml");
@@ -549,15 +556,15 @@ class AndroidBuild extends JavaBuild {
     File localIcon36 = new File(sketchFolder, ICON_36);
     File localIcon48 = new File(sketchFolder, ICON_48);
     File localIcon72 = new File(sketchFolder, ICON_72);
-    
+
 //    File drawableFolder = new File(resFolder, "drawable");
 //    drawableFolder.mkdirs()
     File buildIcon48 = new File(resFolder, "drawable/icon.png");
     File buildIcon36 = new File(resFolder, "drawable-ldpi/icon.png");
     File buildIcon72 = new File(resFolder, "drawable-hdpi/icon.png");
 
-    if (!localIcon36.exists() && 
-        !localIcon48.exists() && 
+    if (!localIcon36.exists() &&
+        !localIcon48.exists() &&
         !localIcon72.exists()) {
       try {
         // if no icons are in the sketch folder, then copy all the defaults
@@ -603,13 +610,13 @@ class AndroidBuild extends JavaBuild {
         e.printStackTrace();
       }
     }
-    
+
 //    final File valuesFolder = mkdirs(resFolder, "values");
 //    final File stringsFile = new File(valuesFolder, "strings.xml");
 //    writeResValuesStrings(stringsFile, className);
   }
 
-  
+
   private File mkdirs(final File parent, final String name) throws SketchException {
     final File result = new File(parent, name);
     if (!(result.exists() || result.mkdirs())) {
@@ -618,7 +625,7 @@ class AndroidBuild extends JavaBuild {
     return result;
   }
 
-  
+
   private void writeResLayoutMain(final File file) {
     final PrintWriter writer = PApplet.createWriter(file);
     writer.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
@@ -632,8 +639,8 @@ class AndroidBuild extends JavaBuild {
   }
 
 
-  // This recommended to be a string resource so that it can be localized. 
-  // nah.. we're gonna be messing with it in the GUI anyway... 
+  // This recommended to be a string resource so that it can be localized.
+  // nah.. we're gonna be messing with it in the GUI anyway...
   // people can edit themselves if they need to
 //  private static void writeResValuesStrings(final File file,
 //                                            final String className) {
@@ -648,17 +655,17 @@ class AndroidBuild extends JavaBuild {
 
 
   /**
-   * For each library, copy .jar and .zip files to the 'libs' folder, 
+   * For each library, copy .jar and .zip files to the 'libs' folder,
    * and copy anything else to the 'assets' folder.
    */
-  private void copyLibraries(final File libsFolder, 
+  private void copyLibraries(final File libsFolder,
                              final File assetsFolder) throws IOException {
     for (Library library : getImportedLibraries()) {
       // add each item from the library folder / export list to the output
       for (File exportFile : library.getAndroidExports()) {
         String exportName = exportFile.getName();
         if (!exportFile.exists()) {
-          System.err.println(exportFile.getName() + 
+          System.err.println(exportFile.getName() +
                              " is mentioned in export.txt, but it's " +
                              "a big fat lie and does not exist.");
         } else if (exportFile.isDirectory()) {
@@ -671,17 +678,17 @@ class AndroidBuild extends JavaBuild {
           System.err.println("Please rename " + exportFile.getName() + " to be a .jar file.");
           String jarName = exportName.substring(0, exportName.length() - 4) + ".jar";
           Base.copyFile(exportFile, new File(libsFolder, jarName));
-          
+
         } else if (exportName.toLowerCase().endsWith(".jar")) {
           Base.copyFile(exportFile, new File(libsFolder, exportName));
-          
+
         } else {
           Base.copyFile(exportFile, new File(assetsFolder, exportName));
         }
       }
     }
   }
-//  private void copyLibraries(final File libsFolder, 
+//  private void copyLibraries(final File libsFolder,
 //                             final File assetsFolder) throws IOException {
 //    // Copy any libraries to the 'libs' folder
 //    for (Library library : getImportedLibraries()) {
@@ -689,7 +696,7 @@ class AndroidBuild extends JavaBuild {
 //      // in the list is a File object that points the
 //      // library sketch's "library" folder
 //      final File exportSettings = new File(libraryFolder, "export.txt");
-//      final HashMap<String, String> exportTable = 
+//      final HashMap<String, String> exportTable =
 //        Base.readSettings(exportSettings);
 //      final String androidList = exportTable.get("android");
 //      String exportList[] = null;
@@ -716,7 +723,7 @@ class AndroidBuild extends JavaBuild {
 //          if (lcname.endsWith(".zip") || lcname.endsWith(".jar")) {
 //            // As of r4 of the Android SDK, it looks like .zip files
 //            // are ignored in the libs folder, so rename to .jar
-//            final String jarName = 
+//            final String jarName =
 //              name.substring(0, name.length() - 4) + ".jar";
 //            Base.copyFile(exportFile, new File(libsFolder, jarName));
 //          } else {
@@ -727,8 +734,8 @@ class AndroidBuild extends JavaBuild {
 //      }
 //    }
 //  }
-  
-  
+
+
   private void copyCodeFolder(final File libsFolder) throws IOException {
     // Copy files from the 'code' directory into the 'libs' folder
     final File codeFolder = sketch.getCodeFolder();
@@ -746,7 +753,7 @@ class AndroidBuild extends JavaBuild {
     }
   }
 
-  
+
   protected String getPackageName() {
     return manifest.getPackageName();
   }
