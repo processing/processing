@@ -38,10 +38,9 @@
 		width="@@width@@"
 		height="@@height@@"
 		archive="@@archive@@,
-			 http://jogamp.org/deployment/util/applet-launcher.jar,
-			 http://jogamp.org/deployment/webstart/nativewindow.all.jar,
-			 http://jogamp.org/deployment/webstart/jogl.all.jar,
-			 http://jogamp.org/deployment/webstart/gluegen-rt.jar">
+			 http://jogamp.org/deployment/jogamp-current/jar/applet-launcher.jar,
+			 http://jogamp.org/deployment/jogamp-current/jar/jogl.all.jar,
+			 http://jogamp.org/deployment/jogamp-current/jar/gluegen-rt.jar">
 	  <!--http://jogamp.org/deployment/webstart/jogl-demos/jogl-demos.jar-->
 	  <param name="codebase_lookup" value="false" />
 	  <param name="subapplet.classname" value="@@sketch@@" />
@@ -50,7 +49,7 @@
 	  <param name="progressbar" value="true" />
 	  <param name="jnlpNumExtensions" value="1" />
 	  <param name="jnlpExtension1"
-		 value="http://jogamp.org/deployment/webstart/jogl-core.jnlp" />
+		 value="http://jogamp.org/deployment/jogamp-current/jogl-all-awt.jnlp" />
 	  <param name="java_arguments" value="-Dsun.java2d.noddraw=true" />
 	  <!--<param name="jnlp_href" value="applet-gears.jnlp">-->
 	  
