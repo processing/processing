@@ -448,6 +448,9 @@ public class PGL {
   
   
   public void endOffscreenDraw(boolean clear0) {
+    if (!clear0) {
+      GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);
+    }
   }  
   
   
