@@ -1230,8 +1230,8 @@ public class PApplet extends Applet
    * <b>redraw()</b> causes the code inside <b>draw()</b> to execute once and
    * <b>loop()</b> will causes the code inside <b>draw()</b> to execute
    * continuously again. The number of times <b>draw()</b> executes in each
-   * second may be controlled with the <b>delay()</b> and <b>frameRate()</b>
-   * functions. There can only be one <b>draw()</b> function for each sketch
+   * second may be controlled with <b>frameRate()</b> function.
+   * There can only be one <b>draw()</b> function for each sketch
    * and <b>draw()</b> must exist if you want the code to run continuously or
    * to process events such as <b>mousePressed()</b>. Sometimes, you might
    * have an empty call to <b>draw()</b> in your program as shown in the
@@ -1811,7 +1811,7 @@ public class PApplet extends Applet
       // render a single frame
       //handleDraw();
       if (g != null) g.requestDraw();
-      
+
       if (frameCount == 1) {
         // Call the request focus event once the image is sure to be on
         // screen and the component is valid. The OpenGL renderer will
@@ -2048,7 +2048,7 @@ public class PApplet extends Applet
     }
   }
 
-  
+
   //////////////////////////////////////////////////////////////
 
 
@@ -2074,14 +2074,14 @@ public class PApplet extends Applet
     });
   }
 
- 
+
   public void removeListeners() {
     removeMouseListener(this);
     removeMouseMotionListener(this);
     removeKeyListener(this);
     removeFocusListener(this);
 
-//    removeComponentListener(??);      
+//    removeComponentListener(??);
 //    addComponentListener(new ComponentAdapter() {
 //      public void componentResized(ComponentEvent e) {
 //        Component c = e.getComponent();
@@ -2095,10 +2095,10 @@ public class PApplet extends Applet
 //          redraw();
 //        }
 //      }
-//    });    
+//    });
   }
-  
-  
+
+
   public void addListeners(Canvas canvas) {
     canvas.addMouseListener(this);
     canvas.addMouseMotionListener(this);
@@ -2118,10 +2118,10 @@ public class PApplet extends Applet
 //          redraw();
 //        }
 //      }
-//    });    
+//    });
   }
-  
-  
+
+
   public void removeListeners(Canvas canvas) {
     canvas.removeMouseListener(this);
     canvas.removeMouseMotionListener(this);
@@ -2806,6 +2806,32 @@ public class PApplet extends Applet
 
 
   /**
+   * The delay() function causes the program to halt for a specified time.
+   * Delay times are specified in thousandths of a second. For example,
+   * running delay(3000) will stop the program for three seconds and
+   * delay(500) will stop the program for a half-second.
+   *
+   * The screen only updates when the end of draw() is reached, so delay()
+   * cannot be used to slow down drawing. For instance, you cannot use delay()
+   * to control the timing of an animation.
+   *
+   * The delay() function should only be used for pausing scripts (i.e.
+   * a script that needs to pause a few seconds before attempting a download,
+   * or a sketch that needs to wait a few milliseconds before reading from
+   * the serial port).
+   */
+  public void delay(int napTime) {
+    //if (frameCount != 0) {
+    //if (napTime > 0) {
+    try {
+      Thread.sleep(napTime);
+    } catch (InterruptedException e) { }
+    //}
+    //}
+  }
+
+
+  /**
    * ( begin auto-generated from frameRate.xml )
    *
    * Specifies the number of frames to be displayed every second. If the
@@ -2815,13 +2841,6 @@ public class PApplet extends Applet
    * rate within <b>setup()</b>. The default rate is 60 frames per second.
    *
    * ( end auto-generated )
-   *  <h3>Advanced</h3>
-   * Set a target frameRate. This will cause delay() to be called
-   * after each frame so that the sketch synchronizes to a particular speed.
-   * Note that this only sets the maximum frame rate, it cannot be used to
-   * make a slow sketch go faster. Sketches have no default frame rate
-   * setting, and will attempt to use maximum processor power to achieve
-   * maximum speed.
    * @webref environment
    * @param newRateTarget number of frames per second
    * @see PApplet#setup()
@@ -6686,16 +6705,16 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
   // URL ENCODING
-  
+
   static public String urlEncode(String what) {
     try {
       return URLEncoder.encode(what, "UTF-8");
-    } catch (UnsupportedEncodingException e) {  // oh c'mon 
+    } catch (UnsupportedEncodingException e) {  // oh c'mon
       return null;
     }
   }
 
-  
+
   static public String urlDecode(String what) {
     try {
       return URLDecoder.decode(what, "UTF-8");
@@ -6703,9 +6722,9 @@ public class PApplet extends Applet
       return null;
     }
   }
-  
 
-  
+
+
   //////////////////////////////////////////////////////////////
 
   // SORT
