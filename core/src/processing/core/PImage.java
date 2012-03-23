@@ -699,18 +699,6 @@ public class PImage implements PConstants, Cloneable {
    * @param h height of pixel rectangle to get
    */
   public PImage get(int x, int y, int w, int h) {
-    /*
-    if (imageMode == CORNERS) {  // if CORNER, do nothing
-      //x2 += x1; y2 += y1;
-      // w/h are x2/y2 in this case, bring em down to size
-      w = (w - x);
-      h = (h - y);
-    } else if (imageMode == CENTER) {
-      x -= w/2;
-      y -= h/2;
-    }
-    */
-
     if (x < 0) {
       w += x; // clip off the left edge
       x = 0;
@@ -719,9 +707,16 @@ public class PImage implements PConstants, Cloneable {
       h += y; // clip off some of the height
       y = 0;
     }
-
+    
     if (x + w > width) w = width - x;
     if (y + h > height) h = height - y;
+
+    if (w < 0) {
+      w = 0;
+    }
+    if (h < 0) {
+      h = 0;
+    }
 
     return getImpl(x, y, w, h);
   }
