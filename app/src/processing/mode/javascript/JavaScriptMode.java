@@ -26,24 +26,29 @@ public class JavaScriptMode extends Mode
 	
 	private JavaScriptEditor jsEditor;
 
-  // create a new editor with the mode
-  public Editor createEditor( Base base, String path, EditorState state )
-  {
-	jsEditor = new JavaScriptEditor( base, path, state, this );
-    return jsEditor;
-  }
+	// create a new editor with the mode
+	public Editor createEditor( Base base, String path, EditorState state )
+	{
+		jsEditor = new JavaScriptEditor( base, path, state, this );
 
-  public JavaScriptMode( Base base, File folder )
-  {
-    super(base, folder);
-    
-    try {
-      loadKeywords();
-    } catch (IOException e) {
-      Base.showError("Problem loading keywords",
-                     "Could not load keywords.txt, please re-install Processing.", e);
-    }
-  }
+		return jsEditor;
+	}
+
+	public Editor getEditor() {
+		return jsEditor;
+	}
+
+	public JavaScriptMode( Base base, File folder )
+	{
+	  super(base, folder);
+ 
+	  try {
+	    loadKeywords();
+	  } catch (IOException e) {
+	    Base.showError("Problem loading keywords",
+	                   "Could not load keywords.txt, please re-install Processing.", e);
+	  }
+	}
 
   protected void loadKeywords() throws IOException
   {
@@ -139,17 +144,17 @@ public class JavaScriptMode extends Mode
   }
 
   // all file extensions it supports
-  public String[] getExtensions() 
+  public String[] getExtensions () 
   {
     return new String[] {"pde", "js"};
   }
 
-  public String[] getIgnorable() 
+  public String[] getIgnorable () 
   {
     return new String[] {
 	  "applet",
-      "applet_js", 
-	  "template_js"
+      "applet_js",
+	  JavaScriptBuild.EXPORTED_FOLDER_NAME
     };
   }
   

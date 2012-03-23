@@ -298,7 +298,7 @@ public class JavaScriptEditor extends ServingEditor
 	Sketch sketch = getSketch();
 	
 	File ajs = sketch.getMode().
-				getContentFile(JavaScriptBuild.EXPORTED_FOLDER_NAME);
+				getContentFile( JavaScriptBuild.TEMPLATE_FOLDER_NAME );
 				
 	File tjs = getCustomTemplateFolder();
 					
@@ -385,13 +385,13 @@ public class JavaScriptEditor extends ServingEditor
 	 *  export to folder, start server, open in default browser.
 	 */
 	public void handleStartServer ()
-	{			
+	{
 		statusEmpty();
-
-		if ( !handleExport( false ) ) return;
-
+		
 		startServer( getExportFolder() );
-
+		
+		if ( !handleExport( false ) ) return;
+		
 		toolbar.activate(JavaScriptToolbar.RUN);
 	}
 
