@@ -34,6 +34,7 @@ import processing.mode.java.JavaBuild;
 class AndroidBuild extends JavaBuild {
 //  static final String basePackage = "changethispackage.beforesubmitting.tothemarket";
   static final String basePackage = "processing.test";
+  static final String sdkName = "2.3.3";
   static final String sdkVersion = "10";  // Android 2.3.3 (Gingerbread)
   static final String sdkTarget = "android-" + sdkVersion;
 
@@ -293,7 +294,7 @@ class AndroidBuild extends JavaBuild {
         System.err.println(pr.getStderr());
         System.out.println(pr.getStdout());
         // the actual javac errors and whatnot go to stdout
-        antBuildProblems(pr.getStdout());
+        antBuildProblems(pr.getStdout(), pr.getStderr());
         return false;
       }
 
@@ -403,15 +404,20 @@ class AndroidBuild extends JavaBuild {
       // errorOutput.split(System.getProperty("line.separator"));
       // PApplet.println(errorLines);
 
-      final String outPile = new String(outb.toByteArray());
-      antBuildProblems(outPile);
+      //final String outPile = new String(outb.toByteArray());
+      //antBuildProblems(new String(outb.toByteArray())
+      antBuildProblems(new String(outb.toByteArray()),
+                       new String(errb.toByteArray()));
     }
     return false;
   }
 
 
-  void antBuildProblems(String outPile) throws SketchException {
-    final String[] outLines = outPile.split(System.getProperty("line.separator"));
+  void antBuildProblems(String outPile, String errPile) throws SketchException {
+    final String[] outLines =
+      outPile.split(System.getProperty("line.separator"));
+    final String[] errLines =
+      errPile.split(System.getProperty("line.separator"));
 //    System.err.println("lines are:");
 //    PApplet.println(outLines);
 
@@ -443,13 +449,24 @@ class AndroidBuild extends JavaBuild {
         }
       }
     }
-    // this info will have already been printed
-//    System.err.println("Problem during build: " + e.getMessage());
-    // this info is a huge stacktrace of where it died inside the ant code (totally useless)
-//    e.printStackTrace();
+
     // Couldn't parse the exception, so send something generic
     SketchException skex =
-      new SketchException("Error from inside the Android tools, check the console.");
+      new SketchException("Error from inside the Android tools, " +
+                          "check the console.");
+
+    // Try to parse anything else we might know about
+    for (final String line : errLines) {
+      if (line.contains("Unable to resolve target '" + sdkTarget + "'")) {
+        System.err.println("Use the Android SDK Manager (under the Android");
+        System.err.println("menu) to install the SDK platform and ");
+        System.err.println("Google APIs for Android " + sdkName +
+                           " (API " + sdkVersion + ")");
+        skex = new SketchException("Please install the SDK platform and " +
+                                   "Google APIs for API " + sdkVersion);
+      }
+    }
+    // Stack trace is not relevant, just the message.
     skex.hideStackTrace();
     throw skex;
   }
