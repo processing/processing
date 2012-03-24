@@ -237,6 +237,7 @@ public class PApplet extends Applet
    */
   static public boolean useQuartz = true;
 
+
   /**
    * Modifier flags for the shortcut key used to trigger menus.
    * (Cmd on Mac OS X, Ctrl on Linux and Windows)

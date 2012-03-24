@@ -1,6 +1,18 @@
 0205 core
 
 
+_ look into using BufferStrategy again to improve performance
+_   there are more improvements to be made ala issue #729
+
+_ memory leak when many createGraphics(..., JAVA2D) calls are used
+_   http://code.google.com/p/processing/issues/detail?id=507
+_   need to add clear() method so clear out ARGB surfaces
+
+_ pause()/resume() need to work on the desktop side as well
+_ stop() not called in 1.5
+_   http://code.google.com/p/processing/issues/detail?id=636
+_   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
+
 _ selectInput() and selectOutput() freezes
 _   http://code.google.com/p/processing/issues/detail?id=173
 _     -> now includes a patch that addresses one specific problem
@@ -17,8 +29,6 @@ _ fix edge + 1 issue on stroke/fill for rectangles
 
 _ add reference/docs for urlEncode() and urlDecode()
 
-_ pause()/resume() need to work on the desktop side as well
-
 _ Wishlist for the new XML class in Processing 2.0
 _   http://code.google.com/p/processing/issues/detail?id=904
 
@@ -28,9 +38,6 @@ _ do we need an option to disable XML whitespace?
 _   should this be the default to be more like old XML?
 
 _ add() to add things to lists, sum() for the math (sum is used less after all)
-
-_ consider using BufferStrategy to improve performance
-_   there are more improvements to be made ala issue #729
 
 _ add inputPath() and outputPath() -> sketch folder or sd card
 _   or should this just be a change to sketchPath() on Android?
@@ -149,31 +156,11 @@ _     and on android, start/stop can be used to save state information
 _   need to fix opengl applets so that we can safely kill P3D
 
 more xml/json changes
-_ finish xml writing on android
-_   http://stackoverflow.com/questions/2290945/writing-xml-on-android
-_   consider switch to android 2.2 as the minimum
 _ finish updating XML documentation
 _   http://code.google.com/p/processing/issues/detail?id=382
 _ json issues
 _   http://www.xml.com/lpt/a/1658
 _   http://www.json.org/java/
-_ remove unnecessary processing.xml.* code from android-core
-_   http://code.google.com/p/processing/issues/detail?id=214
-
-casey [Moved to web/todo.txt 17 SEP 2011]
-o pdf fonts
-o   rewrite documentation about pdf fonts (errors with non-native fonts)
-o   figure out why font naming not working correctly
-o add blendMode() to reference, remove blend()
-o need documentation for quadraticVertex()
-o docs for rect(x, y, w, h, r) and rect(x, y, w, h, tl, tr, br, bl)
-o docs for new arc()
-o "Find in Reference" for copy() goes to PVector (oog)
-X screen.width/height shouldn't be anywhere
-X add docs for screenWidth and screenHeight 
-X remove delay() documentation
-X remove textMode(SCREEN) references
-
 
 2.0
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
@@ -233,8 +220,6 @@ _   http://code.google.com/p/processing/issues/detail?id=697
 _ sleep time needs to be set *much* higher for dormant applets
 _   10s should be fine--no need to keep spinning (bad for android too)
 _   just call interrupt() when it's time to get back to work
-_ memory leak when many createGraphics(..., JAVA2D) calls are used
-_   http://code.google.com/p/processing/issues/detail?id=507
 _ add methods to PShape to apply all transformations in the tree
 _ need to clean up the hints in the reference/source
 
