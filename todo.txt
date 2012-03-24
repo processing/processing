@@ -6,9 +6,10 @@ X   get rid of restore sketch feature
 _   remove pref for restoring sketches
 _   implement recent sketches menu
 
-_ stop() not called in 1.5
-_   http://code.google.com/p/processing/issues/detail?id=636
-_   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
+_ find in reference for copy() (on image) tries to open PVector.copy()
+_   might need disambiguation pages?
+_ if a reference page is missing, throws a bunch of exceptions
+_   i.e. PVector.copy() not in the reference
 
 _ check on new JDK and how it works on OS X
 _   http://jdk7.java.net/macportpreview/
