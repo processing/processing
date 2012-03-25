@@ -23,15 +23,11 @@
 package processing.core;
 
 import java.io.*;
-import java.util.Properties;
 
 import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
