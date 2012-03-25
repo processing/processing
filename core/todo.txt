@@ -56,6 +56,8 @@ _   decide on naming for the next release
 _ wiki.processing.org/w/Window_Size_and_Full_Screen
 
 _ static mode sketches seem to break ESC... noLoop() problem?
+_   need to find another way to get ESC on static mode
+_   b/c static mode sketches *do* finish because they have no draw()
 
 _ PUtil -> move match(), lots of other non-gui functions into own class
 _   and merge it in statically via the methods code

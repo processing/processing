@@ -3,6 +3,9 @@ X fix up some of the error messages inside Compiler
 X when internal tools crash, don't add them to the menu
 X   (prevents the PDE from locking up on startup)
 
+_ add redirects from dev.processing.org again, plus dns entry
+_   old bugs db links no longer working
+
 displays
 X ability to select monitor via preferences panel
 X   this applies to any applet that's run externally currently (verify)
@@ -21,10 +24,8 @@ X   get rid of restore sketch feature
 _   remove pref for restoring sketches
 _   implement recent sketches menu
 _ casey: recent sketches is a yes, window menu could go either way
-window menu:
-http://code.google.com/p/processing/issues/detail?id=545
-recent sketches:
-http://code.google.com/p/processing/issues/detail?id=188
+window menu: http://code.google.com/p/processing/issues/detail?id=545
+recent sketches: http://code.google.com/p/processing/issues/detail?id=188
 _ multiple sketch windows.. having a windows menu?
 _   examples button on toolbar? open / recent / sketchbook?
 _ add "recent files" list to open menu?
@@ -41,6 +42,10 @@ _   messy since some displays have negative coords
 _   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _   http://code.google.com/p/processing/issues/detail?id=27
 Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
+
+2.0
+_ decide whether to do same as Android preproc on parsing size/renderer/etc
+
 
 _ find in reference for copy() (on image) tries to open PVector.copy()
 _   might need disambiguation pages?
@@ -1021,6 +1026,7 @@ _   http://code.google.com/p/processing/issues/detail?id=157
 _ don't allow people to override methods like paint() 
 _   make them final? just improve the error messages?
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1219
+_   http://processing.org/bugs/bugzilla/1219.html
 _ Processing chokes if a sketch defines a class with same name as the sketch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1199
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1294
