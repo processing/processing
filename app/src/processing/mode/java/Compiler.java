@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -222,16 +222,17 @@ public class Compiler {
           if (m != null) {
 //            System.out.println("'" + m[1] + "'");
             if (m[1].equals("processing.xml")) {
+              exception.setMessage("processing.xml no longer exists, this code needs to be updated for 2.0.");
               System.err.println("The processing.xml library has been replaced " +
               		               "with a new 'XML' class that's built-in.");
-              handleCrustyCode(exception);
+              handleCrustyCode();
 
             } else {
               exception.setMessage("The package " +
                                    "\u201C" + m[1] + "\u201D" +
                                    " does not exist. " +
                                    "You might be missing a library.");
-              System.err.println("As of release 1.0, libraries must be " +
+              System.err.println("Libraries must be " +
                                  "installed in a folder named 'libraries' " +
                                  "inside the 'sketchbook' folder.");
             }
@@ -254,7 +255,8 @@ public class Compiler {
           if (what.equals("BFont") ||
               what.equals("BGraphics") ||
               what.equals("BImage")) {
-            handleCrustyCode(exception);
+            exception.setMessage(what + " has been replaced with P" + what.substring(1));
+            handleCrustyCode();
 
           } else {
             exception.setMessage("Cannot find a class or type " +
@@ -268,9 +270,20 @@ public class Compiler {
           String what = errorMessage.substring(0, errorMessage.indexOf(' '));
 
           if (what.equals("LINE_LOOP") ||
-              what.equals("LINE_STRIP") ||
-              what.equals("framerate")) {
-            handleCrustyCode(exception);
+              what.equals("LINE_STRIP")) {
+            exception.setMessage("LINE_LOOP and LINE_STRIP are not available, " +
+            		                 "please update your code.");
+            handleCrustyCode();
+            
+          } else if (what.equals("framerate")) {
+            exception.setMessage("framerate should be changed to frameRate"); 
+            handleCrustyCode();
+            
+          } else if (what.equals("screen")) {
+//            handleCrustyCode(exception, what);
+            exception.setMessage("Change screen.width and screen.height to " +
+            		                 "screenWidth and screenHeight for 2.0.");
+            handleCrustyCode();
 
           } else {
             exception.setMessage("Cannot find anything " +
@@ -294,9 +307,18 @@ public class Compiler {
             "The method (\\S+\\(.*\\)) is undefined for the type (.*)";
           parts = PApplet.match(errorMessage, undefined);
           if (parts != null) {
-            if (parts[1].equals("framerate(int)") ||
-                parts[1].equals("push()")) {
-              handleCrustyCode(exception);
+            if (parts[1].equals("framerate(int)")) {
+              exception.setMessage("framerate() no longer exists, use frameRate() instead.");
+              handleCrustyCode();
+
+            } else if (parts[1].equals("push()")) {
+              exception.setMessage("push() no longer exists, use pushMatrix() instead.");
+              handleCrustyCode();
+              
+            } else if (parts[1].equals("pop()")) {
+              exception.setMessage("pop() no longer exists, use popMatrix() instead.");
+              handleCrustyCode();
+              
             } else {
               String mess = "The function " + parts[1] + " does not exist.";
               exception.setMessage(mess);
@@ -667,9 +689,10 @@ public class Compiler {
 //  }
 
 
-  static protected void handleCrustyCode(SketchException rex) {
-    rex.setMessage("This code needs to be updated, " +
-                   "please read the Changes page on the Wiki.");
+  static protected void handleCrustyCode() {
+    System.err.println("This code needs to be updated " +
+                       "for this version of Processing, " +
+                       "please read the Changes page on the Wiki.");
     JavaEditor.showChanges();
   }
 

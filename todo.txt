@@ -1,4 +1,7 @@
 0205 pde
+X fix up some of the error messages inside Compiler
+
+
 
 
 X add EditorState class, device-aware placement

@@ -254,7 +254,8 @@ preproc.imports.list = java.applet.*,java.awt.Dimension,java.awt.Frame,java.awt.
 # FULL SCREEN (PRESENT MODE)
 run.present.bgcolor = #666666
 run.present.stop.color = #cccccc
+# Starting in 2.0a6, don't use FSEM at all, embed native lib to hide menubar
 # starting in release 0159, don't use full screen exclusive anymore
-run.present.exclusive = false
+#run.present.exclusive = false
 # use this by default to hide the menu bar and dock on osx
-run.present.exclusive.macosx = true
+#run.present.exclusive.macosx = true

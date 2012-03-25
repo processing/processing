@@ -243,10 +243,10 @@ public class Runner implements MessageConsumer {
                  build.getSketchPath());
 
       if (presenting) {
-        params.add(PApplet.ARGS_PRESENT);
-        if (Preferences.getBoolean("run.present.exclusive")) {
-          params.add(PApplet.ARGS_EXCLUSIVE);
-        }
+        params.add(PApplet.ARGS_FULL_SCREEN);
+//        if (Preferences.getBoolean("run.present.exclusive")) {
+//          params.add(PApplet.ARGS_EXCLUSIVE);
+//        }
         params.add(PApplet.ARGS_STOP_COLOR + "=" +
                    Preferences.get("run.present.stop.color"));
         params.add(PApplet.ARGS_BGCOLOR + "=" +
