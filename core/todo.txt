@@ -1,6 +1,57 @@
 0205 core
 
 
+sort out full screen issues
+X boolean sketchFullscreen() ? 
+X   for more options, just integrate the fs library?
+_   let hansi know when it's integrated so he can update his library
+X   casey: I think we only want to most basic functionality, 
+X     to go full screen across monitors.
+X   http://www.superduper.org/processing/fullscreen_api/
+X   https://github.com/kritzikratzi/jAppleMenuBar/blob/master/src/native/jAppleMenuBar.m
+X detect when using full screen
+X   and if so, remove decoration and don't bother with bg present frame
+o   this will help for exported applets that don't need 'present'
+X   only doing this via sketchXxxx() methods, but should work well
+o add option to use full screen exclusive mode on present inside pde?
+o   override default setting of macosx (yes) and linux/win (no)
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1043
+o   linux present mode isn't working properly
+X   removing FSEM, too buggy and problematic
+_ --display not working on osx
+_   http://code.google.com/p/processing/issues/detail?id=71
+X implement full screen mode.. this takes over the screen as best it can
+X   size(screen.width, screen.height, OPENGL);
+X   if size is screen.width and screen.height, does its best
+X   needs to get the size of the main screen
+o   this probably works but just needs to be tested
+_ ability to select monitor via preferences panel
+_   this applies to any applet that's run externally currently (verify)
+_   make it also work with anything that's run inside of p5 itself
+_     this means changing the frame creation code inside Runner
+_   check current present code with multiple monitors
+o exceptions in full screen mode will quit the app completely
+o   can't keep window open because things are hosed
+X   nah, this is fine--not ideal but fine
+_ doc: if you want to use multiple monitors
+_   set full screen to true (for one screen)
+_   have sketchWidth() and sketchHeight() return the size of both monitors
+_     provide example for doing this with multiple displays?
+_     there are just too many possibilities for monitor arrangement
+_     and display depth changes that there's no way for us to do it correctly
+_ frame.setSize() works, but we aren't going to add the title bar back
+_   just too problematic and buggy to get this to work perfectly
+_ default is that full screen app doesn't cover multiple displays
+_   this is fine since opengl can't usually go across both
+_   but include an example for how to use full in gl 
+
+_ static mode sketches seem to break ESC... noLoop() problem?
+
+_ PUtil -> move match(), lots of other non-gui functions into own class
+_   and merge it in statically via the methods code
+
+_ make sure rendering is happening on the EDT
+_   (hopefully fixes flicker issues)
 _ look into using BufferStrategy again to improve performance
 _   there are more improvements to be made ala issue #729
 
@@ -51,33 +102,12 @@ _ change how beginRecord() works.. passing around PApplet vs PGraphics is gross
 _   have to pass PApplet just to make the rendering work to both renderers
 _   should instead be a renderer that splits things out
 
-sort out full screen issues
-_ boolean sketchFullscreen() ? 
-_   for more options, just integrate the fs library?
-_   let hansi know when it's integrated so he can update his library
-_   casey: I think we only want to most basic functionality, to go full screen across monitors.
-_   http://www.superduper.org/processing/fullscreen_api/
-_   https://github.com/kritzikratzi/jAppleMenuBar/blob/master/src/native/jAppleMenuBar.m
-_ detect when using full screen
-_   and if so, remove decoration and don't bother with bg present frame
-_   frame.setUndecorated(true);
-_   frame.setLocation(0,0);
-_   size(screen.width,screen,height); 
-_   this will help for exported applets that don't need 'present'
-_ add option to use full screen exclusive mode on present inside pde?
-_   override default setting of macosx (yes) and linux/win (no)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1043
-_   linux present mode isn't working properly
-
 _ if save() returns boolean, does saveFrame()?
 _   also need to copy this over to android
 
 _ disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
 _ document how things are sometimes null in XML
 _   test xml examples to see if they break
-
-_ add resize().. make it call setSize().
-_   also needs to do a redraw if noLoop() has been called
 
 _ trimming text on URLs?
 _   http://code.google.com/p/processing/issues/detail?id=715
@@ -162,6 +192,27 @@ _ json issues
 _   http://www.xml.com/lpt/a/1658
 _   http://www.json.org/java/
 
+2.0 / methods
+_ decision on registered methods
+_   remove registerPre() et al
+_   add register("pause", ...) 
+_   add PEvent
+_ size() and resize() and whatever? 
+_   should be setSize(), but that's odd for image files
+_   -> resize() is fine with PImage and PGraphics... 
+_   we may be inheriting the resize() from Java -> make it final?
+_   add resize().. make it call setSize().
+_     also needs to do a redraw if noLoop() has been called
+_   the registered method for size() also needs to be called
+_ need to wrap mouse/key events for p5
+_   need a version that works with both android and desktop
+_   also need to interleave events properly (as per report)
+_ touch events.. can't do MouseEvent et al with Android
+_   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
+_   http://www.html5rocks.com/en/mobile/touch.html
+_   decision: go with what looks like javascript/ios
+_   touchEvent(), gestureEvent()?
+
 2.0
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
 _ thread() causes weird flickering
@@ -171,18 +222,6 @@ _   toColorArray(), toColorArray(float[])...
 _ remove blend(), add blendMode()
 _ fix blue-channel bias on blend() so that blendMode() will work in 2.0
 _   http://code.google.com/p/processing/issues/detail?id=475
-_ decision on registered methods
-_   remove registerPre() et al
-_   add register("pause", ...) 
-_   add PEvent
-_ need to wrap mouse/key events for p5
-_   need a version that works with both android and desktop
-_   also need to interleave events properly (as per report)
-_ touch events.. can't do MouseEvent et al with Android
-_   http://dvcs.w3.org/hg/webevents/raw-file/tip/touchevents.html
-_   http://www.html5rocks.com/en/mobile/touch.html
-_   decision: go with what looks like javascript/ios
-_   touchEvent(), gestureEvent()?
 _ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
 _   also works that way with tables
 _   decision: useExtension() or something like that
@@ -200,15 +239,9 @@ _ PShape API to handle internal vertex stuff
 _   add deconstruct() method for paths
 _   toArray() and toVector()
 _   setVertex(0, x, y), setVertex(0, x, y, z)
-_ PUtil -> move match(), lots of other non-gui functions into own class
-_   and merge it in statically via the methods code
 _ how much of com.benfry.* should go in? 
 _   Table? StringIntPairs? JSON? MD5? Integrator? ColorIntegrator?
 _   decision: depends on if we can think of a good name
-_ size() and resize() and whatever? 
-_   should be setSize(), but that's odd for image files
-_   -> resize() is fine with PImage and PGraphics... 
-_   we may be inheriting the resize() from Java -> make it final?
 _ if PShape3D, then is it PShape2D? or do you handle both the same?
 _ svg fonts
 _   would be nifty if we could convert on the fly to ttf for speed...
@@ -345,29 +378,12 @@ _   don't bother using a buffering stream, just handle internally. gah!
 
 CORE / PApplet - main()
 
-_ implement full screen mode.. this takes over the screen as best it can
-_   size(screen.width, screen.height, OPENGL);
-_   if size is screen.width and screen.height, does its best
-_   needs to get the size of the main screen
-_   this probably works but just needs to be tested
-_   exceptions in full screen mode will quit the app completely
-_     can't keep window open because things are hosed
-_   default is that full screen app doesn't cover multiple displays
-_     this is fine since opengl can't usually go across both
-_     but include an example for how to use full in gl 
-_ ability to select monitor via preferences panel
-_   this applies to any applet that's run externally currently (verify)
-_   make it also work with anything that's run inside of p5 itself
-_     this means changing the frame creation code inside Runner
-_   check current present code with multiple monitors
 _ hitting cmd-q when an applet is running quits p5 (on macosx)
 _   but cmd-q when running externally is ok because it just quits
 _   is there a way to catch cmd-q when running a sketch? 
 _     so that it could avoid quitting if the sketch hasn't been stopped
 _     or if the sketch window is foremost
 _     maybe a hack where a new menubar is added? 
-_ --display not working on osx
-_   http://code.google.com/p/processing/issues/detail?id=71
 
 
 CORE / PFont and text()
