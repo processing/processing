@@ -2,6 +2,8 @@
 
 
 sort out full screen issues
+X make screenWidth and screenHeight work properly with multiple screens
+X   also set screenX and screenY
 X boolean sketchFullscreen() ? 
 X   for more options, just integrate the fs library?
 _   let hansi know when it's integrated so he can update his library
@@ -44,6 +46,36 @@ _   just too problematic and buggy to get this to work perfectly
 _ default is that full screen app doesn't cover multiple displays
 _   this is fine since opengl can't usually go across both
 _   but include an example for how to use full in gl 
+http://wiki.processing.org/index.php?title=Window_Size_and_Full_Screen&action=edit&redlink=1
+
+_ look into using BufferStrategy again to improve performance
+_   there are more improvements to be made ala issue #729
+
+ * It is also possible to resize the Processing window by including
+ * <tt>frame.setResizable(true)</tt> inside your <tt>setup()</tt> method.
+ * Note that the Java method <tt>frame.setSize()</tt> will not work unless
+ * you first set the frame to be resizable.
+ * <p/>
+
+ * <H2>Processing on multiple displays</H2>
+ * <p>I was asked about Processing with multiple displays, and for lack of a
+ * better place to document it, things will go here.</P>
+ * <p>You can address both screens by making a window the width of both,
+ * and the height of the maximum of both screens. In this case, do not use
+ * present mode, because that's exclusive to one screen. Basically it'll
+ * give you a PApplet that spans both screens. If using one half to control
+ * and the other half for graphics, you'd just have to put the 'live' stuff
+ * on one half of the canvas, the control stuff on the other. This works
+ * better in windows because on the mac we can't get rid of the menu bar
+ * unless it's running in present mode.</P>
+ * <p>For more control, you need to write straight java code that uses p5.
+ * You can create two windows, that are shown on two separate screens,
+ * that have their own PApplet. this is just one of the tradeoffs of one of
+ * the things that we don't support in p5 from within the environment
+ * itself (we must draw the line somewhere), because of how messy it would
+ * get to start talking about multiple screens. It's also not that tough to
+ * do by hand w/ some Java code.</P>
+
 
 _ static mode sketches seem to break ESC... noLoop() problem?
 
@@ -52,8 +84,7 @@ _   and merge it in statically via the methods code
 
 _ make sure rendering is happening on the EDT
 _   (hopefully fixes flicker issues)
-_ look into using BufferStrategy again to improve performance
-_   there are more improvements to be made ala issue #729
+_   change PApplet.java javadoc to reflect the change
 
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
