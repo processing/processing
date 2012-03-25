@@ -233,13 +233,13 @@ public class PApplet extends Applet
   public Frame frame;
 //  public JFrame frame;
 
-  /** 
-   * Usually just 0, but with multiple displays, the X and Y coordinates of 
-   * the screen will depend on the current screen's position relative to 
-   * the other displays.   
-   */
-  public int screenX; 
-  public int screenY;
+//  /** 
+//   * Usually just 0, but with multiple displays, the X and Y coordinates of 
+//   * the screen will depend on the current screen's position relative to 
+//   * the other displays.   
+//   */
+//  public int screenX; 
+//  public int screenY;
   
   /**
    * ( begin auto-generated from screenWidth.xml )
@@ -1894,6 +1894,8 @@ public class PApplet extends Applet
           getGraphicsConfiguration().getDevice();
         Rectangle screenRect = 
           displayDevice.getDefaultConfiguration().getBounds();
+//        screenX = screenRect.x;
+//        screenY = screenRect.y;
         screenWidth = screenRect.width;
         screenHeight = screenRect.height;          
 
@@ -9113,8 +9115,8 @@ public class PApplet extends Applet
    *                       the pde, everything goes into the same folder
    *                       as processing.exe.
    *
-   * --display=n           set what display should be used by this applet.
-   *                       displays are numbered starting from 1.
+   * --display=n           set what display should be used by this sketch.
+   *                       displays are numbered starting from 0.
    *
    * Parameters used by Processing when running via the PDE
    *
@@ -9182,7 +9184,7 @@ public class PApplet extends Applet
           editorLocation = parseInt(split(value, ','));
 
         } else if (param.equals(ARGS_DISPLAY)) {
-          int deviceIndex = Integer.parseInt(value) - 1;
+          int deviceIndex = Integer.parseInt(value);
 
           GraphicsEnvironment environment =
             GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -9412,7 +9414,7 @@ public class PApplet extends Applet
         // (applet has been run more than once, user placed window)
         frame.setLocation(location[0], location[1]);
 
-      } else if (external) {
+      } else if (external && editorLocation != null) {
         int locationX = editorLocation[0] - 20;
         int locationY = editorLocation[1];
 

@@ -3,6 +3,15 @@ X fix up some of the error messages inside Compiler
 X when internal tools crash, don't add them to the menu
 X   (prevents the PDE from locking up on startup)
 
+displays
+X ability to select monitor via preferences panel
+X   this applies to any applet that's run externally currently (verify)
+X   make it also work with anything that's run inside of p5 itself
+X     this means changing the frame creation code inside Runner
+X   check current present code with multiple monitors
+_ --bgcolor shouldn't be in main() unless 'present' is turned on
+o also add option for FSEM or not
+X   nope, FSEM too buggy and error-prone
 
 X add EditorState class, device-aware placement
 X   get rid of restore sketch feature
@@ -18,6 +27,17 @@ _   examples button on toolbar? open / recent / sketchbook?
 _ add "recent files" list to open menu?
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1335
 
+_ changing number of screens between run causes things to show up off-screen
+_   so when running, check to make sure that things are out of the area
+_ saved window positions.. if displays has changed, becomes a problem
+_   record the display that it was on?
+_     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
+_   make sure that the application is within the bounds of the current display?
+_   (from 0, 0 to width, height)
+_   messy since some displays have negative coords
+_   http://dev.processing.org/bugs/show_bug.cgi?id=72
+_   http://code.google.com/p/processing/issues/detail?id=27
+Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
 
 _ find in reference for copy() (on image) tries to open PVector.copy()
 _   might need disambiguation pages?
@@ -38,9 +58,6 @@ _   http://code.google.com/p/processing/issues/detail?id=837
 
 _ bad tool brings down the environment
 _   http://code.google.com/p/processing/issues/detail?id=798
-
-_ --bgcolor shouldn't be in main() unless 'present' is turned on
-_ also add option for FSEM or not
 
 _ update the build instructions page
 _   http://code.google.com/p/processing/wiki/BuildInstructions
@@ -289,20 +306,6 @@ _ Added some basic Emacs cursor navigator keybindings
 _   just implement these as a preference
 _   http://code.google.com/p/processing/issues/detail?id=555
 
-. . . . 
-
-
-_ changing number of screens between run causes things to show up off-screen
-_   so when running, check to make sure that things are out of the area
-_ saved window positions.. if displays has changed, becomes a problem
-_   record the display that it was on?
-_     GraphicsDevice gd = frame.getGraphicsConfiguration().getDevice();
-_   make sure that the application is within the bounds of the current display?
-_   (from 0, 0 to width, height)
-_   messy since some displays have negative coords
-_   http://dev.processing.org/bugs/show_bug.cgi?id=72
-_   http://code.google.com/p/processing/issues/detail?id=27
-Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
 
 . . . . 
 
