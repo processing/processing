@@ -35,7 +35,7 @@ import java.nio.IntBuffer;
  */
 public class PFramebuffer implements PConstants {  
   protected PApplet parent;
-  protected PGraphicsAndroid3D pg;
+  protected PGraphicsOpenGL pg;
   protected PGL pgl;
   protected PGL.Context context;      // The context that created this framebuffer.
   
@@ -74,7 +74,7 @@ public class PFramebuffer implements PConstants {
                int depthBits, int stencilBits, boolean packedDepthStencil, 
                boolean screen) {
     this.parent = parent;
-    pg = (PGraphicsAndroid3D)parent.g;
+    pg = (PGraphicsOpenGL)parent.g;
     pgl = pg.pgl;
     
     glFboID = 0;

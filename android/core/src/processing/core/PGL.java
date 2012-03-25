@@ -246,7 +246,7 @@ public class PGL {
   public PGLU glu; 
   
   /** The PGraphics object using this interface */
-  public PGraphicsAndroid3D pg;
+  public PGraphicsOpenGL pg;
   
   /** Whether OpenGL has been initialized or not */
   public boolean initialized;
@@ -308,7 +308,7 @@ public class PGL {
   // Intialization, finalization
   
   
-  public PGL(PGraphicsAndroid3D pg) {
+  public PGL(PGraphicsOpenGL pg) {
     this.pg = pg;
     renderer = new AndroidRenderer();
     glu = new PGLU();
@@ -387,7 +387,7 @@ public class PGL {
       // to update the screenFramebuffer object so when the
       // framebuffer is popped back to the screen, the correct
       // id is set.
-      PGraphicsAndroid3D.screenFramebuffer.glFboID = fbo[0];
+      PGraphicsOpenGL.screenFramebuffer.glFboID = fbo[0];
       
       initialized = true;
     }    
@@ -410,7 +410,7 @@ public class PGL {
       // No need for saving front color buffer, etc.
       GLES20.glClearColor(0, 0, 0, 0);
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-      PGraphicsAndroid3D.screenFramebuffer.glFboID = 0;
+      PGraphicsOpenGL.screenFramebuffer.glFboID = 0;
     } else {      
       GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, fbo[0]);      
       GLES20.glFramebufferTexture2D(GLES20.GL_FRAMEBUFFER, GLES20.GL_COLOR_ATTACHMENT0, GLES20.GL_TEXTURE_2D, textures[frontTex], 0);
@@ -427,7 +427,7 @@ public class PGL {
         // Render previous draw texture as background.      
         drawTexture(GLES20.GL_TEXTURE_2D, textures[backTex], texWidth, texHeight, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
       }
-      PGraphicsAndroid3D.screenFramebuffer.glFboID = fbo[0];
+      PGraphicsOpenGL.screenFramebuffer.glFboID = fbo[0];
     }
     
     if (firstOnscreenFrame) {

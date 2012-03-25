@@ -38,7 +38,7 @@ public class PTexture implements PConstants {
   public int width, height;
       
   protected PApplet parent;           // The Processing applet
-  protected PGraphicsAndroid3D pg;    // The main renderer
+  protected PGraphicsOpenGL pg;    // The main renderer
   protected PGL pgl;                  // The interface between Processing and OpenGL.
   protected PGL.Context context;      // The context that created this texture.
   
@@ -96,7 +96,7 @@ public class PTexture implements PConstants {
   public PTexture(PApplet parent, int width, int height, Object params) { 
     this.parent = parent;
        
-    pg = (PGraphicsAndroid3D)parent.g;
+    pg = (PGraphicsOpenGL)parent.g;
     pgl = pg.pgl;    
     
     glID = 0;
@@ -244,7 +244,7 @@ public class PTexture implements PConstants {
     pgl.glBindTexture(glTarget, glID);
                 
     if (usingMipmaps) {
-      if (PGraphicsAndroid3D.mipmapGeneration) {
+      if (PGraphicsOpenGL.mipmapGeneration) {
         // Automatic mipmap generation.
         int[] rgbaPixels = new int[w * h];
         convertToRGBA(pixels, rgbaPixels, format, w, h);
@@ -538,7 +538,7 @@ public class PTexture implements PConstants {
    * @param h int
    */
   protected void convertToRGBA(int[] intArray, int[] tIntArray, int arrayFormat, int w, int h)  {
-    if (PGraphicsAndroid3D.BIG_ENDIAN)  {
+    if (PGraphicsOpenGL.BIG_ENDIAN)  {
       switch (arrayFormat) {
       case ALPHA:
                   
@@ -678,7 +678,7 @@ public class PTexture implements PConstants {
   protected void convertToARGB(int[] intArray, int[] tIntArray) {
     int t = 0; 
     int p = 0;
-    if (PGraphicsAndroid3D.BIG_ENDIAN) {
+    if (PGraphicsOpenGL.BIG_ENDIAN) {
 
       // RGBA to ARGB conversion: shifting RGB 8 bits to the right,
       // and placing A 24 bits to the left.
@@ -718,7 +718,7 @@ public class PTexture implements PConstants {
     width = w;
     height = h;
     
-    if (PGraphicsAndroid3D.npotTexSupported) {
+    if (PGraphicsOpenGL.npotTexSupported) {
       glWidth = w;
       glHeight = h;
     } else {
@@ -726,10 +726,10 @@ public class PTexture implements PConstants {
       glHeight = PGL.nextPowerOfTwo(h);
     }
     
-    if ((glWidth > PGraphicsAndroid3D.maxTextureSize) || (glHeight > PGraphicsAndroid3D.maxTextureSize)) {
+    if ((glWidth > PGraphicsOpenGL.maxTextureSize) || (glHeight > PGraphicsOpenGL.maxTextureSize)) {
       glWidth = glHeight = 0;
       throw new RuntimeException("Image width and height cannot be" +
-                                 " larger than " + PGraphicsAndroid3D.maxTextureSize +
+                                 " larger than " + PGraphicsOpenGL.maxTextureSize +
                                  " with this graphics card.");
     }
     
