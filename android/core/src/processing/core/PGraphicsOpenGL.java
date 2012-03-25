@@ -40,12 +40,12 @@ import java.util.Stack;
  * OpenGL renderer.
  * 
  */
-public class PGraphicsAndroid3D extends PGraphics {
+public class PGraphicsOpenGL extends PGraphics {
   /** Interface between Processing and OpenGL */
   public PGL pgl;
   
   /** The PApplet renderer. For the primary surface, pg == this. */
-  protected PGraphicsAndroid3D pg;
+  protected PGraphicsOpenGL pg;
 
   // ........................................................  
   
@@ -124,16 +124,16 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   // Shaders    
   
-  static protected URL defFillShaderVertSimpleURL = PGraphicsAndroid3D.class.getResource("FillShaderVertSimple.glsl");
-  static protected URL defFillShaderVertTexURL    = PGraphicsAndroid3D.class.getResource("FillShaderVertTex.glsl");
-  static protected URL defFillShaderVertLitURL    = PGraphicsAndroid3D.class.getResource("FillShaderVertLit.glsl");
-  static protected URL defFillShaderVertFullURL   = PGraphicsAndroid3D.class.getResource("FillShaderVertFull.glsl");  
-  static protected URL defFillShaderFragNoTexURL  = PGraphicsAndroid3D.class.getResource("FillShaderFragNoTex.glsl");
-  static protected URL defFillShaderFragTexURL    = PGraphicsAndroid3D.class.getResource("FillShaderFragTex.glsl");  
-  static protected URL defLineShaderVertURL       = PGraphicsAndroid3D.class.getResource("LineShaderVert.glsl");
-  static protected URL defLineShaderFragURL       = PGraphicsAndroid3D.class.getResource("LineShaderFrag.glsl");
-  static protected URL defPointShaderVertURL      = PGraphicsAndroid3D.class.getResource("PointShaderVert.glsl");
-  static protected URL defPointShaderFragURL      = PGraphicsAndroid3D.class.getResource("PointShaderFrag.glsl");
+  static protected URL defFillShaderVertSimpleURL = PGraphicsOpenGL.class.getResource("FillShaderVertSimple.glsl");
+  static protected URL defFillShaderVertTexURL    = PGraphicsOpenGL.class.getResource("FillShaderVertTex.glsl");
+  static protected URL defFillShaderVertLitURL    = PGraphicsOpenGL.class.getResource("FillShaderVertLit.glsl");
+  static protected URL defFillShaderVertFullURL   = PGraphicsOpenGL.class.getResource("FillShaderVertFull.glsl");  
+  static protected URL defFillShaderFragNoTexURL  = PGraphicsOpenGL.class.getResource("FillShaderFragNoTex.glsl");
+  static protected URL defFillShaderFragTexURL    = PGraphicsOpenGL.class.getResource("FillShaderFragTex.glsl");  
+  static protected URL defLineShaderVertURL       = PGraphicsOpenGL.class.getResource("LineShaderVert.glsl");
+  static protected URL defLineShaderFragURL       = PGraphicsOpenGL.class.getResource("LineShaderFrag.glsl");
+  static protected URL defPointShaderVertURL      = PGraphicsOpenGL.class.getResource("PointShaderVert.glsl");
+  static protected URL defPointShaderFragURL      = PGraphicsOpenGL.class.getResource("PointShaderFrag.glsl");
   
   static protected FillShaderSimple defFillShaderSimple;
   static protected FillShaderTex defFillShaderTex;
@@ -400,7 +400,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   // INIT/ALLOCATE/FINISH
   
   
-  public PGraphicsAndroid3D() {
+  public PGraphicsOpenGL() {
     pgl = new PGL(this);
     pg = null;
     
@@ -5586,7 +5586,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   protected void initOffscreen() {
     // Getting the context and capabilities from the main renderer.
-    pg = (PGraphicsAndroid3D)parent.g;
+    pg = (PGraphicsOpenGL)parent.g;
     pgl.initOffscreenSurface(pg.pgl);
     
     pgl.updateOffscreen(pg.pgl);
@@ -5602,7 +5602,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       offscreenFramebufferMultisample.release();
     }
     
-    if (PGraphicsAndroid3D.fboMultisampleSupported && 1 < antialias) {
+    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < antialias) {
       offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, antialias, 0, 
                                                          depthBits, stencilBits, 
                                                          depthBits == 24 && stencilBits == 8 && packedDepthStencilSupported, false);
@@ -5860,7 +5860,7 @@ public class PGraphicsAndroid3D extends PGraphics {
     // be called by different renderers within a single application
     // (the one corresponding to the main surface, or other offscreen
     // renderers).
-    protected PGraphicsAndroid3D renderer;
+    protected PGraphicsOpenGL renderer;
     
     public FillShader(PApplet parent) {
       super(parent);
@@ -5874,7 +5874,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       super(parent, vertURL, fragURL);
     }   
     
-    public void setRenderer(PGraphicsAndroid3D pg) {
+    public void setRenderer(PGraphicsOpenGL pg) {
       this.renderer = pg;
     }    
     
@@ -6268,7 +6268,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected class LineShader extends PShader {
-    protected PGraphicsAndroid3D renderer;
+    protected PGraphicsOpenGL renderer;
     
     protected int projectionMatrixLoc;
     protected int modelviewMatrixLoc;
@@ -6292,7 +6292,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       super(parent, vertURL, fragURL);
     }       
     
-    public void setRenderer(PGraphicsAndroid3D pg) {
+    public void setRenderer(PGraphicsOpenGL pg) {
       this.renderer = pg;
     }      
     
@@ -6364,7 +6364,7 @@ public class PGraphicsAndroid3D extends PGraphics {
   
   
   protected class PointShader extends PShader {
-    protected PGraphicsAndroid3D renderer;
+    protected PGraphicsOpenGL renderer;
     
     protected int projectionMatrixLoc;
     protected int modelviewMatrixLoc;
@@ -6385,7 +6385,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       super(parent, vertURL, fragURL);
     }        
     
-    public void setRenderer(PGraphicsAndroid3D pg) {
+    public void setRenderer(PGraphicsOpenGL pg) {
       this.renderer = pg;
     }      
     
@@ -7268,7 +7268,7 @@ public class PGraphicsAndroid3D extends PGraphics {
       if (accuracy < 6) {
         accuracy = 6;
       }      
-      float inc = (float) PGraphicsAndroid3D.SINCOS_LENGTH / accuracy;
+      float inc = (float) PGraphicsOpenGL.SINCOS_LENGTH / accuracy;
       
       if (fill) {
         addVertex(centerX, centerY, 
@@ -7280,12 +7280,12 @@ public class PGraphicsAndroid3D extends PGraphics {
       idx0 = pidx = idx = 0;
       float val = 0;
       for (int i = 0; i < accuracy; i++) {
-        idx = addVertex(centerX + PGraphicsAndroid3D.cosLUT[(int) val] * radiusH, 
-                        centerY + PGraphicsAndroid3D.sinLUT[(int) val] * radiusV, 
+        idx = addVertex(centerX + PGraphicsOpenGL.cosLUT[(int) val] * radiusH, 
+                        centerY + PGraphicsOpenGL.sinLUT[(int) val] * radiusV, 
                         fillColor, strokeColor, strokeWeight,
                         ambient, specular, emissive, shininess,
                         VERTEX);
-        val = (val + inc) % PGraphicsAndroid3D.SINCOS_LENGTH;
+        val = (val + inc) % PGraphicsOpenGL.SINCOS_LENGTH;
         
         if (0 < i) {
           if (stroke) addEdge(pidx, idx, i == 1, false);
@@ -7296,8 +7296,8 @@ public class PGraphicsAndroid3D extends PGraphics {
         pidx = idx;
       }
       // Back to the beginning
-      addVertex(centerX + PGraphicsAndroid3D.cosLUT[0] * radiusH, 
-                centerY + PGraphicsAndroid3D.sinLUT[0] * radiusV, 
+      addVertex(centerX + PGraphicsOpenGL.cosLUT[0] * radiusH, 
+                centerY + PGraphicsOpenGL.sinLUT[0] * radiusV, 
                 fillColor, strokeColor, strokeWeight,
                 ambient, specular, emissive, shininess,
                 VERTEX);

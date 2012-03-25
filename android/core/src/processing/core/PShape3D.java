@@ -22,12 +22,12 @@
 
 package processing.core;
 
-import processing.core.PGraphicsAndroid3D.FillShader;
-import processing.core.PGraphicsAndroid3D.InGeometry;
-import processing.core.PGraphicsAndroid3D.LineShader;
-import processing.core.PGraphicsAndroid3D.PointShader;
-import processing.core.PGraphicsAndroid3D.TessGeometry;
-import processing.core.PGraphicsAndroid3D.Tessellator;
+import processing.core.PGraphicsOpenGL.FillShader;
+import processing.core.PGraphicsOpenGL.InGeometry;
+import processing.core.PGraphicsOpenGL.LineShader;
+import processing.core.PGraphicsOpenGL.PointShader;
+import processing.core.PGraphicsOpenGL.TessGeometry;
+import processing.core.PGraphicsOpenGL.Tessellator;
 
 import java.nio.FloatBuffer;
 import java.nio.ByteBuffer;
@@ -67,7 +67,7 @@ import java.io.BufferedReader;
  */
 
 public class PShape3D extends PShape {
-  protected PGraphicsAndroid3D pg;
+  protected PGraphicsOpenGL pg;
   protected PGL pgl;
   protected PGL.Context context;      // The context that created this shape.
 
@@ -239,7 +239,7 @@ public class PShape3D extends PShape {
   protected int imageMode;
   
   public PShape3D(PApplet parent, int family) {
-    pg = (PGraphicsAndroid3D)parent.g;
+    pg = (PGraphicsOpenGL)parent.g;
     pgl = pg.pgl;
     
     glMode = PGL.GL_STATIC_DRAW;
@@ -3946,7 +3946,7 @@ public class PShape3D extends PShape {
         expand(newSize);
       }
       
-      if (dataSize <= PGraphicsAndroid3D.MIN_ARRAYCOPY_SIZE) {
+      if (dataSize <= PGraphicsOpenGL.MIN_ARRAYCOPY_SIZE) {
         // Copying elements one by one instead of using arrayCopy is more efficient for
         // few vertices...
         for (int i = 0; i < dataSize; i++) {
@@ -3989,7 +3989,7 @@ public class PShape3D extends PShape {
         expand(newSize);
       }
       
-      if (dataSize <= PGraphicsAndroid3D.MIN_ARRAYCOPY_SIZE) {
+      if (dataSize <= PGraphicsOpenGL.MIN_ARRAYCOPY_SIZE) {
         // Copying elements one by one instead of using arrayCopy is more efficient for
         // few vertices...
         for (int i = 0; i < dataSize; i++) {

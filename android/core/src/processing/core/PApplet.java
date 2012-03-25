@@ -780,7 +780,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public class SketchSurfaceView3D extends GLSurfaceView implements SketchSurfaceView {
-    PGraphicsAndroid3D g3;
+    PGraphicsOpenGL g3;
     SurfaceHolder surfaceHolder;
 
 
@@ -805,7 +805,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
       // null. This is required because PApplet.onResume events (which call
       // this.onResume() and thus require a valid renderer) are triggered
       // before surfaceChanged() is ever called.
-      g3 = new PGraphicsAndroid3D();
+      g3 = new PGraphicsOpenGL();
       g3.setParent(PApplet.this);
       g3.setPrimary(true);
       // Set semi-arbitrary size; will be set properly when surfaceChanged() called
@@ -1542,7 +1542,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
     if (irenderer.equals(P2D)) {
       pg = new PGraphicsAndroid2D();
     } else if (irenderer.equals(P3D)) {
-      pg = new PGraphicsAndroid3D();
+      pg = new PGraphicsOpenGL();
     } else {
       Class<?> rendererClass = null;
       Constructor<?> constructor = null;

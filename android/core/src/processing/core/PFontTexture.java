@@ -48,7 +48,7 @@ import processing.core.PFont;
  */
 class PFontTexture implements PConstants {
   protected PApplet parent;
-  protected PGraphicsAndroid3D pg;
+  protected PGraphicsOpenGL pg;
   protected PGL pgl;              
   protected PFont font;
 
@@ -67,7 +67,7 @@ class PFontTexture implements PConstants {
   public PFontTexture(PApplet parent, PFont font, int maxw, int maxh) {
     this.parent = parent;
     this.font = font;    
-    pg = (PGraphicsAndroid3D)parent.g;
+    pg = (PGraphicsOpenGL)parent.g;
     pgl = pg.pgl;
     
     initTexture(maxw, maxh);
@@ -110,7 +110,7 @@ class PFontTexture implements PConstants {
       h = PApplet.min(2 * textures[currentTex].glHeight, maxTexHeight);
       resize = true;
     } else {
-      h = PApplet.min(PGraphicsAndroid3D.maxTextureSize, 512, maxTexHeight / 4);
+      h = PApplet.min(PGraphicsOpenGL.maxTextureSize, 512, maxTexHeight / 4);
       resize = false;
     }
     
@@ -248,7 +248,7 @@ class PFontTexture implements PConstants {
     int[] rgba = new int[w * h];
     int t = 0;
     int p = 0;
-    if (PGraphicsAndroid3D.BIG_ENDIAN)  {            
+    if (PGraphicsOpenGL.BIG_ENDIAN)  {            
       java.util.Arrays.fill(rgba, 0, w, 0xFFFFFF00); // Set the first row to blank pixels.
       t = w;      
       for (int y = 0; y < glyph.height; y++) {

@@ -133,7 +133,7 @@ public interface PConstants {
 
   static final String P2D = "processing.core.PGraphicsAndroid2D";
   static final String JAVA2D = P2D;
-  static final String P3D = "processing.core.PGraphicsAndroid3D";
+  static final String P3D = "processing.core.PGraphicsOpenGL";
   static final String OPENGL = P3D;
 
   // The PDF and DXF renderers are not available for Android. 
