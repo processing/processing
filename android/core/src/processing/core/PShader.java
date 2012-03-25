@@ -34,7 +34,7 @@ import java.net.URL;
  */
 public class PShader {
   protected PApplet parent;
-  protected PGraphicsAndroid3D pg; 
+  protected PGraphicsOpenGL pg; 
   protected PGL pgl;
   protected PGL.Context context;      // The context that created this shader.
 
@@ -69,7 +69,7 @@ public class PShader {
   public PShader(PApplet parent) {
     this();
     this.parent = parent;
-    pg = (PGraphicsAndroid3D) parent.g;
+    pg = (PGraphicsOpenGL) parent.g;
     pgl = pg.pgl;     
   }  
   
@@ -83,7 +83,7 @@ public class PShader {
    */
   public PShader(PApplet parent, String vertFilename, String fragFilename) {
     this.parent = parent;
-    pg = (PGraphicsAndroid3D) parent.g;
+    pg = (PGraphicsOpenGL) parent.g;
     pgl = pg.pgl;    
     
     this.vertexURL = null;
@@ -98,7 +98,7 @@ public class PShader {
   
   public PShader(PApplet parent, URL vertURL, URL fragURL) {
     this.parent = parent;
-    pg = (PGraphicsAndroid3D) parent.g;
+    pg = (PGraphicsOpenGL) parent.g;
     pgl = pg.pgl;    
 
     this.vertexURL = vertURL;
