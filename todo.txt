@@ -1,7 +1,7 @@
 0205 pde
 X fix up some of the error messages inside Compiler
-
-
+X when internal tools crash, don't add them to the menu
+X   (prevents the PDE from locking up on startup)
 
 
 X add EditorState class, device-aware placement
