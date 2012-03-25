@@ -321,6 +321,12 @@ public class PApplet extends Applet
   static public final int MIN_WINDOW_WIDTH = 128;
   static public final int MIN_WINDOW_HEIGHT = 128;
 
+  /** 
+   * Gets set by main() if --present (old) or --full-screen (newer) are used,
+   * and is returned by sketchFullscreen() when initializing in main().  
+   */
+//  protected boolean fullScreen = false; 
+  
   /**
    * Exception thrown when size() is called the first time.
    * <p>
@@ -755,9 +761,12 @@ public class PApplet extends Applet
 
   static public final String ARGS_BGCOLOR = "--bgcolor";
 
+  /** @deprecated use --full-screen instead. */
   static public final String ARGS_PRESENT = "--present";
+    
+  static public final String ARGS_FULL_SCREEN = "--full-screen";
 
-  static public final String ARGS_EXCLUSIVE = "--exclusive";
+//  static public final String ARGS_EXCLUSIVE = "--exclusive";
 
   static public final String ARGS_STOP_COLOR = "--stop-color";
 
@@ -873,7 +882,7 @@ public class PApplet extends Applet
   }
 
 
-  public int sketchAntiAlias() {
+  public int sketchSmooth() {
     return 2;
   }
 
@@ -890,6 +899,12 @@ public class PApplet extends Applet
 
   public String sketchRenderer() {
     return JAVA2D;
+  }
+  
+  
+  public boolean sketchFullScreen() {
+//    return fullScreen;
+    return false;
   }
 
 
@@ -1569,7 +1584,7 @@ public class PApplet extends Applet
       pg.setParent(this);
       pg.setPrimary(iprimary);
       if (ipath != null) pg.setPath(ipath);
-      pg.setAntiAlias(sketchAntiAlias());
+      pg.setAntiAlias(sketchSmooth());
       pg.setSize(iwidth, iheight);
 
       // everything worked, return it
@@ -9017,6 +9032,20 @@ public class PApplet extends Applet
   };
 
 
+  // Not gonna do this dynamically, only on startup. Too much headache.
+//  public void fullscreen() {
+//    if (frame != null) {
+//      if (PApplet.platform == MACOSX) {
+//        japplemenubar.JAppleMenuBar.hide();
+//      }
+//      GraphicsConfiguration gc = frame.getGraphicsConfiguration();
+//      Rectangle rect = gc.getBounds();
+////      GraphicsDevice device = gc.getDevice();
+//      frame.setBounds(rect.x, rect.y, rect.width, rect.height);
+//    }
+//  }
+
+
   /**
    * main() method for running this class from the command line.
    * <p>
@@ -9037,12 +9066,7 @@ public class PApplet extends Applet
    *                       should appear on screen. if not used,
    *                       the default is to center on the main screen.
    *
-   * --present             put the applet into full screen presentation
-   *                       mode. requires java 1.4 or later.
-   *
-   * --exclusive           use full screen exclusive mode when presenting.
-   *                       disables new windows or interaction with other
-   *                       monitors, this is like a "game" mode.
+   * --full-screen         put the applet into full screen "present" mode.
    *
    * --hide-stop           use to hide the stop button in situations where
    *                       you don't want to allow users to exit. also
@@ -9102,7 +9126,7 @@ public class PApplet extends Applet
 
     String name = null;
     boolean present = false;
-    boolean exclusive = false;
+//    boolean exclusive = false;
     Color backgroundColor = Color.BLACK;
     Color stopColor = Color.GRAY;
     GraphicsDevice displayDevice = null;
@@ -9161,11 +9185,14 @@ public class PApplet extends Applet
         }
 
       } else {
-        if (args[argIndex].equals(ARGS_PRESENT)) {
+        if (args[argIndex].equals(ARGS_PRESENT)) {  // keep for compatability
           present = true;
 
-        } else if (args[argIndex].equals(ARGS_EXCLUSIVE)) {
-          exclusive = true;
+        } else if (args[argIndex].equals(ARGS_FULL_SCREEN)) {
+          present = true;
+
+//        } else if (args[argIndex].equals(ARGS_EXCLUSIVE)) {
+//          exclusive = true;
 
         } else if (args[argIndex].equals(ARGS_HIDE_STOP)) {
           hideStop = true;
@@ -9225,9 +9252,14 @@ public class PApplet extends Applet
       }
     }
 
-    // these are needed before init/start
+    // A handful of things that need to be set before init/start.
     applet.frame = frame;
     applet.sketchPath = folder;
+    // If the applet doesn't call for full screen, but the command line does,
+    // enable it. Conversely, if the command line does not, don't disable it. 
+//    applet.fullScreen |= present;
+    // Query the applet to see if it wants to be full screen all the time.
+    present |= applet.sketchFullScreen();
     // pass everything after the class name in as args to the sketch itself
     // (fixed for 2.0a5, this was just subsetting by 1, which didn't skip opts)
     applet.args = PApplet.subset(args, argIndex + 1);
@@ -9237,6 +9269,14 @@ public class PApplet extends Applet
     // because pack() will cause the bounds to go to zero.
     // http://dev.processing.org/bugs/show_bug.cgi?id=923
     Rectangle fullScreenRect = null;
+    DisplayMode mode = displayDevice.getDisplayMode();
+    fullScreenRect = new Rectangle(0, 0, mode.getWidth(), mode.getHeight());
+    // Sketch has already requested to be the same as the screen's 
+    // width and height, so let's roll with full screen mode.
+    if (mode.getWidth() == applet.sketchWidth() &&
+        mode.getHeight() == applet.sketchHeight()) {
+      present = true;
+    }
 
     // For 0149, moving this code (up to the pack() method) before init().
     // For OpenGL (and perhaps other renderers in the future), a peer is
@@ -9246,19 +9286,23 @@ public class PApplet extends Applet
     // http://dev.processing.org/bugs/show_bug.cgi?id=891
     // http://dev.processing.org/bugs/show_bug.cgi?id=908
     if (present) {
+      if (platform == MACOSX) {
+        // Call some native code to remove the menu bar on OS X. Not necessary
+        // on Linux and Windows, who are happy to make full screen windows.
+        japplemenubar.JAppleMenuBar.hide();
+      }
+
       frame.setUndecorated(true);
       frame.setBackground(backgroundColor);
-      if (exclusive) {
-        displayDevice.setFullScreenWindow(frame);
-        // this trashes the location of the window on os x
-        //frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
-        fullScreenRect = frame.getBounds();
-      } else {
-        DisplayMode mode = displayDevice.getDisplayMode();
-        fullScreenRect = new Rectangle(0, 0, mode.getWidth(), mode.getHeight());
-        frame.setBounds(fullScreenRect);
-        frame.setVisible(true);
-      }
+//      if (exclusive) {
+//        displayDevice.setFullScreenWindow(frame);
+//        // this trashes the location of the window on os x
+//        //frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+//        fullScreenRect = frame.getBounds();
+//      } else {
+      frame.setBounds(fullScreenRect);
+      frame.setVisible(true);
+//      }
     }
     frame.setLayout(null);
     frame.add(applet);
@@ -9415,6 +9459,7 @@ public class PApplet extends Applet
     runSketch(args, null);
   }
 
+
   /**
    * These methods provide a means for running an already-constructed
    * sketch. In particular, it makes it easy to launch a sketch in
@@ -9435,9 +9480,11 @@ public class PApplet extends Applet
     runSketch(argsWithSketchName, this);
   }
 
+  
   protected void runSketch() {
     runSketch(new String[0]);
   }
+  
 
   //////////////////////////////////////////////////////////////
 

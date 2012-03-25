@@ -668,7 +668,7 @@ public class PdePreprocessor {
         out.print(indent + indent + "PApplet.main(new String[] { ");
 
         if (Preferences.getBoolean("export.application.fullscreen")) {
-          out.print("\"" + PApplet.ARGS_PRESENT + "\", ");
+          out.print("\"" + PApplet.ARGS_FULL_SCREEN + "\", ");
 
           String farbe = Preferences.get("run.present.bgcolor");
           out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
