@@ -10,14 +10,7 @@ import java.io.IOException;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-import processing.app.Base;
-import processing.app.EditorState;
-import processing.app.Settings;
-import processing.app.Editor;
-import processing.app.EditorToolbar;
-import processing.app.Sketch;
-import processing.app.Formatter;
-import processing.app.Mode;
+import processing.app.*;
 import processing.mode.java.AutoFormat;
 
 import javax.swing.*;
@@ -375,10 +368,10 @@ public class JavaScriptEditor extends ServingEditor
      }
   }
 
-	private void handleStartStopServer ()
-	{
-		startStopServer( getExportFolder() );
-	}
+//	private void handleStartStopServer ()
+//	{
+//		startStopServer( getExportFolder() );
+//	}
   
 	/**
 	 *  Replacement for RUN: 
