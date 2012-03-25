@@ -64,6 +64,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpEntity;
+
+import processing.opengl.PGraphicsOpenGL;
+
 import java.net.URI;
 
 
@@ -71,8 +74,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
-//  static final boolean DEBUG = true;
-  static final boolean DEBUG = false;
+//  static final public boolean DEBUG = true;
+  static final public boolean DEBUG = false;
 
   /** The frame containing this applet (if any) */
 //  public Frame frame;
@@ -951,6 +954,17 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      super.onDetachedFromWindow();
 //      stop();
 //    }
+  }
+
+
+  // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+
+  /** Holy crap this was an ugly one. Need to fix. */
+  public void andresNeedsBetterAPI() {
+    if (looping) { // This "if" is needed to avoid flickering when looping is disabled.
+      ((GLSurfaceView) surfaceView).requestRender();
+    }
   }
 
 
