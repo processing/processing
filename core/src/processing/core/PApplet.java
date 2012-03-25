@@ -3707,6 +3707,13 @@ public class PApplet extends Applet
           }
           break;
 
+        case 'J':  // int
+          long jj[] = (long[]) what;
+          for (int i = 0; i < jj.length; i++) {
+            System.out.println("[" + i + "] " + jj[i]);
+          }
+          break;
+
         case 'F':  // float
           float ff[] = (float[]) what;
           for (int i = 0; i < ff.length; i++) {
