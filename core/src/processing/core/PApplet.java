@@ -3554,7 +3554,17 @@ public class PApplet extends Applet
     System.out.flush();
   }
 
+  static public void print(long what) {
+    System.out.print(what);
+    System.out.flush();
+  }
+
   static public void print(float what) {
+    System.out.print(what);
+    System.out.flush();
+  }
+
+  static public void print(double what) {
     System.out.print(what);
     System.out.flush();
   }
@@ -3603,27 +3613,43 @@ public class PApplet extends Applet
  * @param what boolean, byte, char, color, int, float, String, Object
  */
   static public void println(byte what) {
-    print(what); System.out.println();
+    System.out.println(what);
+    System.out.flush();
   }
 
   static public void println(boolean what) {
-    print(what); System.out.println();
+    System.out.println(what);
+    System.out.flush();
   }
 
   static public void println(char what) {
-    print(what); System.out.println();
+    System.out.println(what);
+    System.out.flush();
   }
 
   static public void println(int what) {
-    print(what); System.out.println();
+    System.out.println(what);
+    System.out.flush();
+  }
+
+  static public void println(long what) {
+    System.out.println(what);
+    System.out.flush();
   }
 
   static public void println(float what) {
-    print(what); System.out.println();
+    System.out.println(what);
+    System.out.flush();
+  }
+
+  static public void println(double what) {
+    System.out.println(what);
+    System.out.flush();
   }
 
   static public void println(String what) {
-    print(what); System.out.println();
+    System.out.println(what);
+    System.out.flush();
   }
 
   static public void println(Object what) {
