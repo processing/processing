@@ -1,6 +1,7 @@
 0205 core
 X add support for println(long) because it was converting the type to float
 X   http://code.google.com/p/processing/issues/detail?id=969
+X   also add support for printing arrays of longs (doubles were already there)
 
 
 sort out full screen issues
@@ -87,6 +88,8 @@ _   and merge it in statically via the methods code
 _ make sure rendering is happening on the EDT
 _   (hopefully fixes flicker issues)
 _   change PApplet.java javadoc to reflect the change
+_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
+_   http://code.google.com/p/processing/issues/detail?id=775
 
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507
