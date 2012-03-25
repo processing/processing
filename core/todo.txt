@@ -5,6 +5,11 @@ X   also add support for printing arrays of longs (doubles were already there)
 
 _ look into using BufferStrategy again to improve performance
 _   there are more improvements to be made ala issue #729
+_ make sure rendering is happening on the EDT
+_   (hopefully fixes flicker issues)
+_   change PApplet.java javadoc to reflect the change
+_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
+_   http://code.google.com/p/processing/issues/detail?id=775
 
 sort out full screen issues
 X make screenWidth and screenHeight work properly with multiple screens
@@ -46,19 +51,14 @@ X   just too problematic and buggy to get this to work perfectly
 X default is that full screen app doesn't cover multiple displays
 X   this is fine since opengl can't usually go across both
 o   but include an example for how to use full in gl 
-X screenX and screenY are both already taken, so not including vars for them
-
+_ screenX and screenY are both already taken, so not including vars for them
+_   decide on naming for the next release
+_ wiki.processing.org/w/Window_Size_and_Full_Screen
 
 _ static mode sketches seem to break ESC... noLoop() problem?
 
 _ PUtil -> move match(), lots of other non-gui functions into own class
 _   and merge it in statically via the methods code
-
-_ make sure rendering is happening on the EDT
-_   (hopefully fixes flicker issues)
-_   change PApplet.java javadoc to reflect the change
-_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
-_   http://code.google.com/p/processing/issues/detail?id=775
 
 _ memory leak when many createGraphics(..., JAVA2D) calls are used
 _   http://code.google.com/p/processing/issues/detail?id=507

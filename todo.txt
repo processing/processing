@@ -9,7 +9,10 @@ X   this applies to any applet that's run externally currently (verify)
 X   make it also work with anything that's run inside of p5 itself
 X     this means changing the frame creation code inside Runner
 X   check current present code with multiple monitors
-_ --bgcolor shouldn't be in main() unless 'present' is turned on
+X --bgcolor shouldn't be in main() unless 'present' is turned on
+o   actually it should, it controls the window color
+X   nah, take it out. why the complexity...
+X   if no window color set, then don't apply it
 o also add option for FSEM or not
 X   nope, FSEM too buggy and error-prone
 

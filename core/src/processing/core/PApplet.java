@@ -9157,7 +9157,8 @@ public class PApplet extends Applet
     String name = null;
     boolean present = false;
 //    boolean exclusive = false;
-    Color backgroundColor = Color.BLACK;
+//    Color backgroundColor = Color.BLACK;
+    Color backgroundColor = null; //Color.BLACK;
     Color stopColor = Color.GRAY;
     GraphicsDevice displayDevice = null;
     boolean hideStop = false;
@@ -9323,7 +9324,9 @@ public class PApplet extends Applet
       }
 
       frame.setUndecorated(true);
-      frame.setBackground(backgroundColor);
+      if (backgroundColor != null) {
+        frame.setBackground(backgroundColor);
+      }
 //      if (exclusive) {
 //        displayDevice.setFullScreenWindow(frame);
 //        // this trashes the location of the window on os x
@@ -9450,11 +9453,13 @@ public class PApplet extends Applet
         frame.setLocation(frameLoc.x, 30);
       }
 
-      if (backgroundColor == Color.black) {  //BLACK) {
-        // this means no bg color unless specified
-        backgroundColor = SystemColor.control;
+      if (backgroundColor != null) {
+//      if (backgroundColor == Color.black) {  //BLACK) {
+//        // this means no bg color unless specified
+//        backgroundColor = SystemColor.control;
+//      }
+        frame.setBackground(backgroundColor);
       }
-      frame.setBackground(backgroundColor);
 
       int usableWindowH = windowH - insets.top - insets.bottom;
       applet.setBounds((windowW - applet.width)/2,
