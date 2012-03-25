@@ -362,6 +362,7 @@ public class Preferences {
     displayLabel.setToolTipText(tip);
     displayBox.add(displayLabel);
     displaySelectionBox = new JComboBox();
+    updateDisplayList();  // needs to happen here for getPreferredSize()
     displayBox.add(displaySelectionBox);
     pain.add(displayBox);
     d = displayBox.getPreferredSize();

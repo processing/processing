@@ -31,7 +31,6 @@ import processing.mode.java.JavaBuild;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.io.*;
 import java.util.*;
 

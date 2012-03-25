@@ -21,11 +21,6 @@
 
 package processing.app;
 
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.io.*;
 
 import processing.core.PApplet;
