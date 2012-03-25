@@ -1,4 +1,6 @@
 0205 core
+X add support for println(long) because it was converting the type to float
+X   http://code.google.com/p/processing/issues/detail?id=969
 
 
 sort out full screen issues
@@ -20,8 +22,8 @@ o   override default setting of macosx (yes) and linux/win (no)
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1043
 o   linux present mode isn't working properly
 X   removing FSEM, too buggy and problematic
-_ --display not working on osx
-_   http://code.google.com/p/processing/issues/detail?id=71
+X --display not working on osx
+X   http://code.google.com/p/processing/issues/detail?id=71
 X implement full screen mode.. this takes over the screen as best it can
 X   size(screen.width, screen.height, OPENGL);
 X   if size is screen.width and screen.height, does its best
