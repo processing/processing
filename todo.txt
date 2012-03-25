@@ -8,6 +8,16 @@ X add EditorState class, device-aware placement
 X   get rid of restore sketch feature
 _   remove pref for restoring sketches
 _   implement recent sketches menu
+_ casey: recent sketches is a yes, window menu could go either way
+window menu:
+http://code.google.com/p/processing/issues/detail?id=545
+recent sketches:
+http://code.google.com/p/processing/issues/detail?id=188
+_ multiple sketch windows.. having a windows menu?
+_   examples button on toolbar? open / recent / sketchbook?
+_ add "recent files" list to open menu?
+o   http://dev.processing.org/bugs/show_bug.cgi?id=1335
+
 
 _ find in reference for copy() (on image) tries to open PVector.copy()
 _   might need disambiguation pages?
@@ -22,12 +32,6 @@ _   http://code.google.com/p/processing/issues/detail?id=776
 
 _ undo seems to not be going to the right location (now with example)
 _   http://code.google.com/p/processing/issues/detail?id=668
-
-_ casey: recent sketches is a yes, window menu could go either way
-window menu:
-http://code.google.com/p/processing/issues/detail?id=545
-recent sketches:
-http://code.google.com/p/processing/issues/detail?id=188
 
 _ move Movie Maker out to its own separate tool package (with separate build)
 _   http://code.google.com/p/processing/issues/detail?id=837
@@ -220,8 +224,6 @@ _   blockCaret always false.. remove it?
 _ EditorToolbar, two TODO items for open menu handling
 
 blob of mess
-_ multiple sketch windows.. having a windows menu?
-_   examples button on toolbar? open / recent / sketchbook?
 _ modes have their own methods for digging through sketch & libraries folders
 _   therefore it need only check the sketch.txt file to see if it's ok
 _   (between android and java) 
@@ -1067,8 +1069,6 @@ _ dragging title bar while sketch running causes strange selection behavior
 _   http://dev.processing.org/bugs/show_bug.cgi?id=504
 _ convert tabs to spaces when pasting text
 _   http://dev.processing.org/bugs/show_bug.cgi?id=506
-_ add "recent files" list to open menu?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1335
 _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility
 _   to overwrite. i.e. make a change and save in external editor,

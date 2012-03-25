@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This library is free software; you can redistribute it and/or
@@ -37,6 +37,7 @@ import java.util.zip.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+//import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 
@@ -47,6 +48,10 @@ import javax.swing.SwingUtilities;
  * applet. The surface is made to automatically update itself, and will cause
  * problems with redraw of components drawn above it. If you'd like to
  * integrate other Java components, see below.
+ * <p/>
+ * The <A HREF="http://wiki.processing.org/w/Window_Size_and_Full_Screen">
+ * Window Size and Full Screen</A> page on the Wiki has useful information
+ * about sizing, multiple displays, full screen, etc. 
  * <p/>
  * As of release 0145, Processing uses active mode rendering in all cases.
  * All animation tasks happen on the "Processing Animation Thread". The
@@ -59,11 +64,10 @@ import javax.swing.SwingUtilities;
  * animation thread. Use of a callback function or the registerXxx() methods
  * in PApplet can help ensure that your code doesn't do something naughty.
  * <p/>
- * As of release 0136 of Processing, we have discontinued support for versions
- * of Java prior to 1.5. We don't have enough people to support it, and for a
- * project of our size, we should be focusing on the future, rather than
- * working around legacy Java code. In addition, Java 1.5 gives us access to
- * better timing facilities which will improve the steadiness of animation.
+ * As of Processing 2.0, we have discontinued support for versions of Java 
+ * prior to 1.6. We don't have enough people to support it, and for a
+ * project of our (tiny) size, we should be focusing on the future, rather 
+ * than working around legacy Java code. 
  * <p/>
  * This class extends Applet instead of JApplet because 1) historically,
  * we supported Java 1.1, which does not include Swing (without an
@@ -74,28 +78,22 @@ import javax.swing.SwingUtilities;
  * Similarly, Processing runs in a Frame and not a JFrame. However, there's
  * nothing to prevent you from embedding a PApplet into a JFrame, it's just
  * that the base version uses a regular AWT frame because there's simply
- * no need for swing in that context. If people want to use Swing, they can
+ * no need for Swing in that context. If people want to use Swing, they can
  * embed themselves as they wish.
  * <p/>
  * It is possible to use PApplet, along with core.jar in other projects.
- * In addition to enabling you to use Java 1.5+ features with your sketch,
- * this also allows you to embed a Processing drawing area into another Java
+ * This also allows you to embed a Processing drawing area into another Java
  * application. This means you can use standard GUI controls with a Processing
  * sketch. Because AWT and Swing GUI components cannot be used on top of a
  * PApplet, you can instead embed the PApplet inside another GUI the way you
  * would any other Component.
  * <p/>
- * It is also possible to resize the Processing window by including
- * <tt>frame.setResizable(true)</tt> inside your <tt>setup()</tt> method.
- * Note that the Java method <tt>frame.setSize()</tt> will not work unless
- * you first set the frame to be resizable.
- * <p/>
  * Because the default animation thread will run at 60 frames per second,
- * an embedded PApplet can make the parent sluggish. You can use frameRate()
- * to make it update less often, or you can use noLoop() and loop() to disable
- * and then re-enable looping. If you want to only update the sketch
- * intermittently, use noLoop() inside setup(), and redraw() whenever
- * the screen needs to be updated once (or loop() to re-enable the animation
+ * an embedded PApplet can make the parent application sluggish. You can use 
+ * frameRate() to make it update less often, or you can use noLoop() and loop()
+ * to disable and then re-enable looping. If you want to only update the sketch
+ * intermittently, use noLoop() inside setup(), and redraw() whenever the 
+ * screen needs to be updated once (or loop() to re-enable the animation
  * thread). The following example embeds a sketch and also uses the noLoop()
  * and redraw() methods. You need not use noLoop() and redraw() when embedding
  * if you want your application to animate continuously.
@@ -138,25 +136,6 @@ import javax.swing.SwingUtilities;
  *     }
  * }
  * </PRE>
- *
- * <H2>Processing on multiple displays</H2>
- * <p>I was asked about Processing with multiple displays, and for lack of a
- * better place to document it, things will go here.</P>
- * <p>You can address both screens by making a window the width of both,
- * and the height of the maximum of both screens. In this case, do not use
- * present mode, because that's exclusive to one screen. Basically it'll
- * give you a PApplet that spans both screens. If using one half to control
- * and the other half for graphics, you'd just have to put the 'live' stuff
- * on one half of the canvas, the control stuff on the other. This works
- * better in windows because on the mac we can't get rid of the menu bar
- * unless it's running in present mode.</P>
- * <p>For more control, you need to write straight java code that uses p5.
- * You can create two windows, that are shown on two separate screens,
- * that have their own PApplet. this is just one of the tradeoffs of one of
- * the things that we don't support in p5 from within the environment
- * itself (we must draw the line somewhere), because of how messy it would
- * get to start talking about multiple screens. It's also not that tough to
- * do by hand w/ some Java code.</P>
  * @usage Web &amp; Application
  */
 public class PApplet extends Applet
@@ -252,7 +231,16 @@ public class PApplet extends Applet
 
   /** The frame containing this applet (if any) */
   public Frame frame;
+//  public JFrame frame;
 
+  /** 
+   * Usually just 0, but with multiple displays, the X and Y coordinates of 
+   * the screen will depend on the current screen's position relative to 
+   * the other displays.   
+   */
+  public int screenX; 
+  public int screenY;
+  
   /**
    * ( begin auto-generated from screenWidth.xml )
    *
@@ -813,9 +801,9 @@ public class PApplet extends Applet
   public void init() {
 //    println("init() called " + Integer.toHexString(hashCode()));
     // using a local version here since the class variable is deprecated
-    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-    screenWidth = screen.width;
-    screenHeight = screen.height;
+//    Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+//    screenWidth = screen.width;
+//    screenHeight = screen.height;
 
     // send tab keys through to the PApplet
     setFocusTraversalKeysEnabled(false);
@@ -1902,6 +1890,13 @@ public class PApplet extends Applet
       long now = System.nanoTime();
 
       if (frameCount == 0) {
+        GraphicsDevice displayDevice = 
+          getGraphicsConfiguration().getDevice();
+        Rectangle screenRect = 
+          displayDevice.getDefaultConfiguration().getBounds();
+        screenWidth = screenRect.width;
+        screenHeight = screenRect.height;          
+
         try {
           //println("Calling setup()");
           setup();
@@ -9156,9 +9151,6 @@ public class PApplet extends Applet
         } else if (param.equals(ARGS_DISPLAY)) {
           int deviceIndex = Integer.parseInt(value) - 1;
 
-          //DisplayMode dm = device.getDisplayMode();
-          //if ((dm.getWidth() == 1024) && (dm.getHeight() == 768)) {
-
           GraphicsEnvironment environment =
             GraphicsEnvironment.getLocalGraphicsEnvironment();
           GraphicsDevice devices[] = environment.getScreenDevices();
@@ -9220,6 +9212,7 @@ public class PApplet extends Applet
     }
 
     Frame frame = new Frame(displayDevice.getDefaultConfiguration());
+//    JFrame frame = new JFrame(displayDevice.getDefaultConfiguration());
       /*
       Frame frame = null;
       if (displayDevice != null) {
@@ -9268,13 +9261,15 @@ public class PApplet extends Applet
     // Need to save the window bounds at full screen,
     // because pack() will cause the bounds to go to zero.
     // http://dev.processing.org/bugs/show_bug.cgi?id=923
-    Rectangle fullScreenRect = null;
-    DisplayMode mode = displayDevice.getDisplayMode();
-    fullScreenRect = new Rectangle(0, 0, mode.getWidth(), mode.getHeight());
+    Rectangle screenRect = 
+      displayDevice.getDefaultConfiguration().getBounds();
+    // DisplayMode doesn't work here, because we can't get the upper-left
+    // corner of the display, which is important for multi-display setups.
+    
     // Sketch has already requested to be the same as the screen's 
     // width and height, so let's roll with full screen mode.
-    if (mode.getWidth() == applet.sketchWidth() &&
-        mode.getHeight() == applet.sketchHeight()) {
+    if (screenRect.width == applet.sketchWidth() &&
+        screenRect.height == applet.sketchHeight()) {
       present = true;
     }
 
@@ -9300,7 +9295,7 @@ public class PApplet extends Applet
 //        //frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 //        fullScreenRect = frame.getBounds();
 //      } else {
-      frame.setBounds(fullScreenRect);
+      frame.setBounds(screenRect);
       frame.setVisible(true);
 //      }
     }
@@ -9338,9 +9333,9 @@ public class PApplet extends Applet
 
     if (present) {
       // After the pack(), the screen bounds are gonna be 0s
-      frame.setBounds(fullScreenRect);
-      applet.setBounds((fullScreenRect.width - applet.width) / 2,
-                       (fullScreenRect.height - applet.height) / 2,
+      frame.setBounds(screenRect);
+      applet.setBounds((screenRect.width - applet.width) / 2,
+                       (screenRect.height - applet.height) / 2,
                        applet.width, applet.height);
 
       if (!hideStop) {
@@ -9358,7 +9353,7 @@ public class PApplet extends Applet
         //System.out.println("label width is " + labelSize.width);
         labelSize = new Dimension(100, labelSize.height);
         label.setSize(labelSize);
-        label.setLocation(20, fullScreenRect.height - labelSize.height - 20);
+        label.setLocation(20, screenRect.height - labelSize.height - 20);
       }
 
       // not always running externally when in present mode
@@ -9380,7 +9375,7 @@ public class PApplet extends Applet
       frame.setSize(windowW, windowH);
 
       if (location != null) {
-        // a specific location was received from PdeRuntime
+        // a specific location was received from the Runner
         // (applet has been run more than once, user placed window)
         frame.setLocation(location[0], location[1]);
 
@@ -9408,8 +9403,10 @@ public class PApplet extends Applet
           frame.setLocation(locationX, locationY);
         }
       } else {  // just center on screen
-        frame.setLocation((applet.screenWidth - applet.width) / 2,
-                          (applet.screenHeight - applet.height) / 2);
+        // Can't use frame.setLocationRelativeTo(null) because it sends the 
+        // frame to the main display, which undermines the --display setting.
+        frame.setLocation(screenRect.x + (screenRect.width - applet.width) / 2,
+                          screenRect.y + (screenRect.height - applet.height) / 2);
       }
       Point frameLoc = frame.getLocation();
       if (frameLoc.y < 0) {
