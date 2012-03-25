@@ -10,9 +10,6 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
-import java.util.Enumeration;
-
-import java.net.*;
 
 import processing.app.Base;
 import processing.app.Mode;
@@ -145,9 +142,9 @@ public class JavaScriptBuild
     this.binFolder = bin;
 
 	// we need these ..
-	JavaScriptMode jsMode = (JavaScriptMode)mode;
-	JavaScriptEditor jsEditor = (JavaScriptEditor)jsMode.getEditor();
-	BasicServer jsServer = jsEditor.getServer();
+//	JavaScriptMode jsMode = (JavaScriptMode)mode;
+//	JavaScriptEditor jsEditor = (JavaScriptEditor)jsMode.getEditor();
+//	BasicServer jsServer = jsEditor.getServer();
     
     if ( bin.exists() ) 
     {    
@@ -330,8 +327,8 @@ public class JavaScriptBuild
 	scriptFiles += "// convenience function to fetch ID of sketch html element\n" +
 				   "function getProcessingSketchID () { return '"+sketchID+"'; }\n";
 	
-	ArrayList<String> addresses = jsServer.getInetAddresses();
-	int port = jsServer.getPort();
+//	ArrayList<String> addresses = jsServer.getInetAddresses();
+//	int port = jsServer.getPort();
 	
 	// scriptFiles += "var getServerAddresses = function () {\nreturn [\n";
 	// for ( String addr : addresses )
