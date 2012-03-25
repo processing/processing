@@ -679,9 +679,11 @@ public class PdePreprocessor {
           } else {
             out.print("\"" + PApplet.ARGS_HIDE_STOP + "\", ");
           }
-        } else {
-          String farbe = Preferences.get("run.window.bgcolor");
-          out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
+//        } else {
+//          // This is set initially based on the system control color, just
+//          // sets the color for what goes behind the sketch before it's added.
+//          String farbe = Preferences.get("run.window.bgcolor");
+//          out.print("\"" + PApplet.ARGS_BGCOLOR + "=" + farbe + "\", ");
         }
         out.println("\"" + className + "\" });");
         out.println(indent + "}");
