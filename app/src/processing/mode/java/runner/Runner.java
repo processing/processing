@@ -28,7 +28,10 @@ import processing.app.exec.StreamRedirectThread;
 import processing.core.*;
 import processing.mode.java.JavaBuild;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.*;
 import java.util.*;
 
@@ -214,9 +217,13 @@ public class Runner implements MessageConsumer {
     // http://dev.processing.org/bugs/show_bug.cgi?id=1446
     if (build.getFoundMain()) {
       params.add(build.getSketchClassName());
+
     } else {
       params.add("processing.core.PApplet");
 
+      // get the stored device index (starts at 1)
+      int runDisplay = Preferences.getInteger("run.display") - 1;
+      
       // If there was a saved location (this guy has been run more than once)
       // then the location will be set to the last position of the sketch window.
       // This will be passed to the PApplet runner using something like
@@ -225,20 +232,48 @@ public class Runner implements MessageConsumer {
       // figure out where to place itself based on the editor location.
       // --editor-location=150,20
       if (editor != null) {  // if running processing-cmd, don't do placement
+        GraphicsDevice editorDevice = 
+          editor.getGraphicsConfiguration().getDevice();
+        GraphicsEnvironment ge = 
+          GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] devices = ge.getScreenDevices();
+        GraphicsDevice runDevice = 
+          (runDisplay >= 0 && runDisplay < devices.length) ? devices[runDisplay] : editorDevice;
+
         Point windowLocation = editor.getSketchLocation();
-        if (windowLocation != null) {
+//        if (windowLocation != null) {
+//          // could check to make sure the sketch location is on the device
+//          // that's specified in Preferences, but that's going to be annoying
+//          // if you move a sketch to another window, then it keeps jumping 
+//          // back to the specified window.
+////          Rectangle screenRect = 
+////            runDevice.getDefaultConfiguration().getBounds();
+//        }
+        if (windowLocation == null) {
+          if (editorDevice == runDevice) {
+            // If sketches are to be shown on the same display as the editor, 
+            // provide the editor location so the sketch's main() can place it. 
+            Point editorLocation = editor.getLocation();
+            params.add(PApplet.ARGS_EDITOR_LOCATION + "=" +
+                       editorLocation.x + "," + editorLocation.y);
+          } else {
+            // The sketch's main() will set a location centered on the new 
+            // display. It has to happen in main() because the width/height
+            // of the sketch are not known here.
+//             Set a location centered on the other display
+//            Rectangle screenRect = 
+//              runDevice.getDefaultConfiguration().getBounds();
+//            int runX = 
+//            params.add(PApplet.ARGS_LOCATION + "=" + runX + "," + runY);
+          }
+        } else {
           params.add(PApplet.ARGS_LOCATION + "=" +
                      windowLocation.x + "," + windowLocation.y);
-        } else {
-          Point editorLocation = editor.getLocation();
-          params.add(PApplet.ARGS_EDITOR_LOCATION + "=" +
-                     editorLocation.x + "," + editorLocation.y);
         }
         params.add(PApplet.ARGS_EXTERNAL);
       }
 
-      params.add(PApplet.ARGS_DISPLAY + "=" +
-                 Preferences.get("run.display"));
+      params.add(PApplet.ARGS_DISPLAY + "=" + runDisplay);
       params.add(PApplet.ARGS_SKETCH_FOLDER + "=" +
                  build.getSketchPath());
 

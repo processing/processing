@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-09 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   This program is free software; you can redistribute it and/or modify
@@ -120,7 +120,9 @@ public class Preferences {
   JCheckBox autoAssociateBox;
   JRadioButton bitsThirtyTwoButton;
   JRadioButton bitsSixtyFourButton;
+  JComboBox displaySelectionBox;
 
+  int displayCount;
 
   // the calling editor, so updates can be applied
 
@@ -201,10 +203,8 @@ public class Preferences {
   }
 
 
+  // setup dialog for the prefs
   public Preferences() {
-
-    // setup dialog for the prefs
-
     //dialog = new JDialog(editor, "Preferences", true);
     dialog = new JFrame("Preferences");
     dialog.setResizable(false);
@@ -347,6 +347,25 @@ public class Preferences {
     d = checkUpdatesBox.getPreferredSize();
     checkUpdatesBox.setBounds(left, top, d.width + 10, d.height);
     right = Math.max(right, left + d.width);
+    top += d.height + GUI_BETWEEN;
+    
+    
+    // Run sketches on display [  1 ]
+
+    Container displayBox = Box.createHorizontalBox();
+    JLabel displayLabel = new JLabel("Run sketches on display ");
+    final String tip = "<html>" +
+      "Sets the display where sketches are initially placed.<br>" +
+      "As usual, if the sketch window is moved, it will re-open<br>" +
+      "at the same location, however when running in present<br>" + 
+      "(full screen) mode, this display will always be used.";
+    displayLabel.setToolTipText(tip);
+    displayBox.add(displayLabel);
+    displaySelectionBox = new JComboBox();
+    displayBox.add(displaySelectionBox);
+    pain.add(displayBox);
+    d = displayBox.getPreferredSize();
+    displayBox.setBounds(left, top, d.width, d.height);
     top += d.height + GUI_BETWEEN;
 
 
@@ -545,6 +564,14 @@ public class Preferences {
     setBoolean("editor.external", externalEditorBox.isSelected());
     setBoolean("update.check", checkUpdatesBox.isSelected());
 
+    int displayIndex = 0;
+    for (int d = 0; d < displaySelectionBox.getItemCount(); d++) {
+      if (displaySelectionBox.getSelectedIndex() == d) {
+        displayIndex = d;
+      }
+    }
+    setInteger("run.display", displayIndex + 1);
+
     setBoolean("run.options.memory", memoryOverrideBox.isSelected());
     int memoryMin = Preferences.getInteger("run.options.memory.initial");
     int memoryMax = Preferences.getInteger("run.options.memory.maximum");
@@ -626,6 +653,15 @@ public class Preferences {
       setSelected(getBoolean("editor.external"));
     checkUpdatesBox.
       setSelected(getBoolean("update.check"));
+
+    updateDisplayList();
+    int displayNum = getInteger("run.display") - 1;
+//    System.out.println("display is " + displayNum + ", d count is " + displayCount);
+    if (displayNum >= 0 && displayNum < displayCount) {
+//      System.out.println("setting num to " + displayNum);
+      displaySelectionBox.setSelectedIndex(displayNum);
+    }
+    
     memoryOverrideBox.
       setSelected(getBoolean("run.options.memory"));
     memoryField.
@@ -651,6 +687,21 @@ public class Preferences {
     }
 
     dialog.setVisible(true);
+  }
+
+
+  void updateDisplayList() {
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    displayCount = ge.getScreenDevices().length;
+//    displaySelectionBox.removeAll();
+    String[] items = new String[displayCount];
+    for (int i = 0; i < displayCount; i++) {
+      items[i] = String.valueOf(i + 1);
+//      displaySelectionBox.add(String.valueOf(i + 1));
+    }
+//    PApplet.println(items);
+    displaySelectionBox.setModel(new DefaultComboBoxModel(items));
+//    displaySelectionBox = new JComboBox(items);
   }
 
 
