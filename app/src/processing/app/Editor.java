@@ -952,7 +952,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     return null;
   }
 
-  protected JMenuItem createToolMenuItem(String className) {
+
+  protected void addToolMenuItem(JMenu menu, String className) {
     try {
       Class<?> toolClass = Class.forName(className);
       final Tool tool = (Tool) toolClass.newInstance();
@@ -966,11 +967,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
           SwingUtilities.invokeLater(tool);
         }
       });
-      return item;
+      menu.add(item);
+//      return item;
 
     } catch (Exception e) {
       e.printStackTrace();
-      return null;
+//      return null;
     }
   }
 
@@ -982,13 +984,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    item.setAccelerator(KeyStroke.getKeyStroke('T', modifiers));
 //    menu.add(item);
 
-    menu.add(createToolMenuItem("processing.app.tools.CreateFont"));
-    menu.add(createToolMenuItem("processing.app.tools.ColorSelector"));
-    menu.add(createToolMenuItem("processing.app.tools.Archiver"));
-    menu.add(createToolMenuItem("processing.app.tools.FixEncoding"));
+    addToolMenuItem(menu, "processing.app.tools.CreateFont");
+    addToolMenuItem(menu, "processing.app.tools.ColorSelector");
+    addToolMenuItem(menu, "processing.app.tools.Archiver");
+    addToolMenuItem(menu, "processing.app.tools.FixEncoding");
 
     if (Base.DEBUG) {
-      menu.add(createToolMenuItem("processing.app.tools.ExportExamples"));
+      addToolMenuItem(menu, "processing.app.tools.ExportExamples");
     }
 
 //    // These are temporary entries while Android mode is being worked out.
@@ -1003,8 +1005,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     return menu;
   }
-
-
+  
+  
   /*
   // testing internal web server to serve up docs from a zip file
   item = new JMenuItem("Web Server Test");
