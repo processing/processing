@@ -381,11 +381,13 @@ public class JavaScriptEditor extends ServingEditor
 	{
 		statusEmpty();
 		
-		startServer( getExportFolder() );
+		if ( !startServer( getExportFolder() ) )
+		{
+			if ( !handleExport( false ) ) return;
+			toolbar.activate(JavaScriptToolbar.RUN);
+		}
 		
-		if ( !handleExport( false ) ) return;
-		
-		toolbar.activate(JavaScriptToolbar.RUN);
+		// waiting for server to call "serverStarted() below ..."
 	}
 
 	private void handleOpenInBrowser ()
@@ -513,6 +515,16 @@ public class JavaScriptEditor extends ServingEditor
                      "Libraries are not supported. Import statements are " +
                      "ignored, and code relying on them will break.",
                      null);
+  }
+
+  // ------- server callbacks ----
+
+  public void serverStarted ()
+  {
+  		super.serverStarted();
+
+		if ( !handleExport( false ) ) return;
+		toolbar.activate(JavaScriptToolbar.RUN);
   }
 
   // ------- utilities ---------

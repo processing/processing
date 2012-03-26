@@ -130,7 +130,7 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 		return server;
 	}
 	
-	protected void startServer ( File root )
+	protected boolean startServer ( File root )
 	{
 		if ( server != null && 
 			 ( !server.isRunning() || !server.getRoot().equals(root) ) )
@@ -156,7 +156,11 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 			statusNotice( "Server running (" + 
 						  server.getAddress() +
 						  "), reload your browser window." );
+						
+			return false;
 		}
+		
+		return true;
 	}
 	
 	protected boolean serverRunning ()
