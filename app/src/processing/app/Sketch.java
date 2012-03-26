@@ -386,7 +386,7 @@ public class Sketch {
       if (renamingCode) {  // If creating a new tab, don't show this error
         if (current == code[0]) {  // If this is the main tab, disallow
           Base.showWarning("Problem with rename",
-                           "The first tab cannot be ." + newExtension + " file.\n" +
+                           "The first tab cannot be a ." + newExtension + " file.\n" +
                            "(It may be time for your to graduate to a\n" +
                            "\"real\" programming environment, hotshot.)", null);
           return;
@@ -403,14 +403,19 @@ public class Sketch {
       newName = sanitaryName + "." + newExtension;
     }
 
-    // Make sure no .pde *and* no .java files with the same name already exist
-    // http://dev.processing.org/bugs/show_bug.cgi?id=543
-    for (SketchCode c : code) {
-      if (sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
-        Base.showMessage("Nope",
-                         "A file named \"" + c.getFileName() + "\" already exists\n" +
-                         "in \"" + folder.getAbsolutePath() + "\"");
-        return;
+    // If changing the extension of a file from .pde to .java, then it's ok.
+    // http://code.google.com/p/processing/issues/detail?id=776
+    // A regression introduced by Florian's bug report (below) years earlier.
+    if (!(renamingCode && sanitaryName.equals(current.getPrettyName()))) {
+      // Make sure no .pde *and* no .java files with the same name already exist
+      // http://processing.org/bugs/bugzilla/543.html
+      for (SketchCode c : code) {
+        if (sanitaryName.equalsIgnoreCase(c.getPrettyName())) {
+          Base.showMessage("Nope",
+                           "A file named \"" + c.getFileName() + "\" already exists at\n" +
+                             "\"" + folder.getAbsolutePath() + "\"");
+          return;
+        }
       }
     }
 
