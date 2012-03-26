@@ -3,6 +3,10 @@ X fix up some of the error messages inside Compiler
 X when internal tools crash, don't add them to the menu
 X   (prevents the PDE from locking up on startup)
 
+_ write up code guidelines
+_ write up guidelines for modes
+_   i.e. don't mess with Sketch menu, put it in the mode menu
+
 _ add redirects from dev.processing.org again, plus dns entry
 _   old bugs db links no longer working
 
