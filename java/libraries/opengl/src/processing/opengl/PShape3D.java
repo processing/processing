@@ -4303,7 +4303,7 @@ public class PShape3D extends PShape {
             materials.add(currentMtl);
           } else if (elements[0].equals("map_Kd") && elements.length > 1) {
             // Loading texture map.
-            String texname = elements[1];
+//            String texname = elements[1];
             //currentMtl.kdMap = papplet.loadImage(texname);
             currentMtl.kdMap = null;
           } else if (elements[0].equals("Ka") && elements.length > 3) {
