@@ -3,6 +3,13 @@ X add support for println(long) because it was converting the type to float
 X   http://code.google.com/p/processing/issues/detail?id=969
 X   also add support for printing arrays of longs (doubles were already there)
 
+fixed in 2.0a5
+A OpenGL noSmooth() does not work
+A   http://code.google.com/p/processing/issues/detail?id=328
+
+_ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
+_   libraries have to do a lot of casting
+
 _ look into using BufferStrategy again to improve performance
 _   there are more improvements to be made ala issue #729
 _ make sure rendering is happening on the EDT
