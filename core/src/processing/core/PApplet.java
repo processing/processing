@@ -1890,8 +1890,11 @@ public class PApplet extends Applet
       long now = System.nanoTime();
 
       if (frameCount == 0) {
+        GraphicsConfiguration gc = getGraphicsConfiguration();
+        if (gc == null) return;
         GraphicsDevice displayDevice = 
           getGraphicsConfiguration().getDevice();
+        if (displayDevice == null) return;
         Rectangle screenRect = 
           displayDevice.getDefaultConfiguration().getBounds();
 //        screenX = screenRect.x;
