@@ -141,6 +141,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           base.handleActivated(Editor.this);
 //          mode.handleActivated(Editor.this);
           fileMenu.insert(base.getSketchbookMenu(), 2);
+          fileMenu.insert(base.getRecentMenu(), 3);
 //          fileMenu.insert(mode.getExamplesMenu(), 3);
           sketchMenu.insert(mode.getImportMenu(), 4);
         }
@@ -151,6 +152,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //          EditorConsole.systemErr.println("editor window deactivated");
 //          mode.handleDeactivated(Editor.this);
           fileMenu.remove(base.getSketchbookMenu());
+          fileMenu.remove(base.getRecentMenu());
 //          fileMenu.remove(mode.getExamplesMenu());
           sketchMenu.remove(mode.getImportMenu());
         }
@@ -271,6 +273,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // Open the document that was passed in
     boolean loaded = handleOpenInternal(path);
     if (!loaded) sketch = null;
+  }
+
+
+  public EditorState getEditorState() {
+    return state;
   }
 
 

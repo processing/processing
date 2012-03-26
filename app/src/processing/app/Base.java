@@ -121,6 +121,9 @@ public class Base {
   public List<ModeContribution> contribModes;
 
   private JMenu sketchbookMenu;
+  
+  private Recent recent;
+  private JMenu recentMenu;
 
   protected File sketchbookFolder;
   protected File toolsFolder;
@@ -161,7 +164,7 @@ public class Base {
 
     // run static initialization that grabs all the prefs
     Preferences.init(null);
-
+    
 //    String filename = args.length > 1 ? args[0] : null;
     if (!SingleInstance.exists(args)) {
       SingleInstance.createServer(platform);
@@ -271,6 +274,9 @@ public class Base {
   }
 
   public Base(String[] args) {
+    recent = new Recent(this);
+    recentMenu = recent.createMenu();
+
     // Get the sketchbook path, and make sure it's set properly
     determineSketchbookFolder();
 
@@ -877,6 +883,8 @@ public class Base {
     if (!loaded) {
       // replace the document without checking if that's ok
       handleNewReplaceImpl();
+    } else {
+      recent.handleOpen(activeEditor, recentMenu);
     }
   }
 
@@ -958,6 +966,7 @@ public class Base {
       if (editor.getSketch().getMainFilePath().equals(path)) {
         editor.toFront();
 //        System.err.println("  handleOpen: already opened");
+        recent.handleOpen(editor, recentMenu);
         return editor;
       }
     }
@@ -1023,6 +1032,7 @@ public class Base {
     }
 
     editors.add(editor);
+    recent.handleOpen(editor, recentMenu);
 
     // now that we're ready, show the window
     // (don't do earlier, cuz we might move it based on a window being closed)
@@ -1116,6 +1126,7 @@ public class Base {
         editor.setVisible(false);
         editor.dispose();
         defaultFileMenu.insert(sketchbookMenu, 2);
+        defaultFileMenu.insert(recentMenu, 3);
 //        defaultFileMenu.insert(defaultMode.getExamplesMenu(), 3);
         activeEditor = null;
         editors.remove(editor);
@@ -1244,6 +1255,16 @@ public class Base {
       rebuildSketchbookMenu();
     }
     return sketchbookMenu;
+  }
+  
+
+  public JMenu getRecentMenu() {
+    if (recentMenu == null) {
+      recentMenu = recent.createMenu();
+    } else {
+      recent.updateMenu(recentMenu);
+    }
+    return recentMenu;
   }
 
 

@@ -3,8 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-11 Ben Fry and Casey Reas
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -28,6 +27,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.io.*;
 import java.util.List;
+
+import processing.core.PApplet;
 
 //import processing.core.PApplet;
 
@@ -67,10 +68,11 @@ public class EditorState {
 
 //    EditorState(BufferedReader reader) throws IOException {
 //      String line = reader.readLine();
-  EditorState(String[] pieces) throws IOException {
+//  EditorState(String[] pieces) throws IOException {
+  EditorState(String info) throws IOException {
 //      String line = reader.readLine();
 //      String[] pieces = PApplet.split(line, '\t');
-//      String[] pieces = PApplet.split(line, ',');
+      String[] pieces = PApplet.split(info, ',');
 //      path = pieces[0];
 
     editorBounds = new Rectangle(Integer.parseInt(pieces[0]),
@@ -93,20 +95,39 @@ public class EditorState {
 //      displayW = Integer.parseInt(pieces[5]);
 //      displayH = Integer.parseInt(pieces[6]);
   }
-
   
+  
+  public String toString() {
+    return (editorBounds.x + "," +
+            editorBounds.y + "," +
+            editorBounds.width + "," +
+            editorBounds.height + "," +
+            dividerLocation + "," + 
+            deviceBounds.x + "," +
+            deviceBounds.y + "," +
+            deviceBounds.width + "," +
+            deviceBounds.height);
+  }
+
+
+  /**
+   * Returns a GraphicsConfiguration so that a new Editor Frame can be 
+   * constructed. First tries to match the bounds for this state information
+   * to an existing config (nominally, a display) and if that doesn't work,
+   * then returns the default configuration/default display. 
+   */
   GraphicsConfiguration checkConfig() {
-    GraphicsEnvironment graphicsEnvironment = 
-      GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice[] screenDevices = graphicsEnvironment.getScreenDevices();
-    for (GraphicsDevice device : screenDevices) {
-      GraphicsConfiguration[] configurations = device.getConfigurations();
-      for (GraphicsConfiguration config : configurations) {
+    if (deviceBounds != null) {
+      GraphicsEnvironment graphicsEnvironment = 
+        GraphicsEnvironment.getLocalGraphicsEnvironment();
+      GraphicsDevice[] screenDevices = graphicsEnvironment.getScreenDevices();
+      for (GraphicsDevice device : screenDevices) {
+        GraphicsConfiguration[] configurations = device.getConfigurations();
+        for (GraphicsConfiguration config : configurations) {
 //          if (config.getDevice().getIDstring().equals(deviceName)) { 
-        if (deviceBounds != null && config.getBounds().equals(deviceBounds)) {
-          return config;
-//            } else {
-//            }
+          if (config.getBounds().equals(deviceBounds)) {
+            return config;
+          }
         }
       }
     }
@@ -186,24 +207,24 @@ public class EditorState {
   }
 
 
-  void write(PrintWriter writer) {
-//      writer.print(path);
-    writer.print('\t');
-    writeRect(writer, editorBounds);
-//      writer.print('\t');
-//      writer.print(deviceName);
-    writer.print('\t');
-    writeRect(writer, deviceBounds);
-  }
-
-
-  void writeRect(PrintWriter writer, Rectangle rect) {
-    writer.print(rect.x);
-    writer.print('\t');
-    writer.print(rect.y);
-    writer.print('\t');
-    writer.print(rect.width);
-    writer.print('\t');
-    writer.print(rect.height);
-  }
+//  void write(PrintWriter writer) {
+////      writer.print(path);
+//    writer.print('\t');
+//    writeRect(writer, editorBounds);
+////      writer.print('\t');
+////      writer.print(deviceName);
+//    writer.print('\t');
+//    writeRect(writer, deviceBounds);
+//  }
+//
+//
+//  void writeRect(PrintWriter writer, Rectangle rect) {
+//    writer.print(rect.x);
+//    writer.print('\t');
+//    writer.print(rect.y);
+//    writer.print('\t');
+//    writer.print(rect.width);
+//    writer.print('\t');
+//    writer.print(rect.height);
+//  }
 }
