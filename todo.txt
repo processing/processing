@@ -3,6 +3,13 @@ X fix up some of the error messages inside Compiler
 X when internal tools crash, don't add them to the menu
 X   (prevents the PDE from locking up on startup)
 
+X renaming .pde to .java (or vice versa) complains
+X   http://code.google.com/p/processing/issues/detail?id=776
+X   regression from: http://processing.org/bugs/bugzilla/543.html
+
+_ Resurrect the Eclipse plug-in project
+_   http://code.google.com/p/processing/issues/detail?id=1031
+
 _ write up code guidelines
 _ write up guidelines for modes
 _   i.e. don't mess with Sketch menu, put it in the mode menu
@@ -22,11 +29,13 @@ X   nah, take it out. why the complexity...
 X   if no window color set, then don't apply it
 o also add option for FSEM or not
 X   nope, FSEM too buggy and error-prone
-
 X add EditorState class, device-aware placement
 X   get rid of restore sketch feature
 _   remove pref for restoring sketches
 _   implement recent sketches menu
+
+_ saved window position problematic with multiple monitors
+_   http://code.google.com/p/processing/issues/detail?id=27
 _ casey: recent sketches is a yes, window menu could go either way
 window menu: http://code.google.com/p/processing/issues/detail?id=545
 recent sketches: http://code.google.com/p/processing/issues/detail?id=188
@@ -58,9 +67,6 @@ _   i.e. PVector.copy() not in the reference
 
 _ check on new JDK and how it works on OS X
 _   http://jdk7.java.net/macportpreview/
-
-_ renaming a normal tab to same name with ".java" fails with ".pde" version already exists
-_   http://code.google.com/p/processing/issues/detail?id=776
 
 _ undo seems to not be going to the right location (now with example)
 _   http://code.google.com/p/processing/issues/detail?id=668
@@ -1029,8 +1035,8 @@ _ Saving sketch with the same name as a class or primitive breaks sketch
 _   http://code.google.com/p/processing/issues/detail?id=157
 _ don't allow people to override methods like paint() 
 _   make them final? just improve the error messages?
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1219
 _   http://processing.org/bugs/bugzilla/1219.html
+_   http://code.google.com/p/processing/issues/detail?id=1020
 _ Processing chokes if a sketch defines a class with same name as the sketch
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1199
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1294

@@ -3,6 +3,8 @@ X add support for println(long) because it was converting the type to float
 X   http://code.google.com/p/processing/issues/detail?id=969
 X   also add support for printing arrays of longs (doubles were already there)
 
+_ 
+
 fixed in 2.0a5
 A OpenGL noSmooth() does not work
 A   http://code.google.com/p/processing/issues/detail?id=328
@@ -89,6 +91,8 @@ _   inputFile() and outputFile() need a fix
 _     remove them from the code, write examples for these
 _     use callbacks instead
 _     need to decide if you specify the function name, or if it's specific
+_ Linux file chooser is gross (presumably Windows too)
+_   http://code.google.com/p/processing/issues/detail?id=1014
 
 _ fix edge + 1 issue on stroke/fill for rectangles
 
