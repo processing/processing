@@ -265,9 +265,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // May not be necessary, but helps avoid random situations with 
     // the editor not being able to request its own focus.
     addWindowFocusListener(new WindowAdapter() {
-        public void windowGainedFocus(WindowEvent e) {
-            textarea.requestFocusInWindow();
-        }
+      public void windowGainedFocus(WindowEvent e) {
+        textarea.requestFocusInWindow();
+      }
+
+//      public void windowLostFocus(WindowEvent e) {
+//        System.out.println("lost focus, should we tell the text area?");
+//      }
     });
 
     // Open the document that was passed in

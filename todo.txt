@@ -1542,6 +1542,10 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1567
 
 DIST / Mac OS X
 
+_ cut/copy/paste while saving a sketch on goes to the editor, not save dialog
+_   http://code.google.com/p/processing/issues/detail?id=997
+_   problem with focus traversal and native windows on OS X
+_   using JFileChooser fixes the problem (but is ugly)
 _ the word from apple on Info.plist setup
 DO NOT USE "JVMArchs". It is deprecated, and manually overrides the natural architecture launching and ordering that LaunchServices does, including accommodating the 32-bit checkbox in the Get Info window.
 _ instead of "show sketch folder" method, use:
