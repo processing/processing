@@ -2337,14 +2337,14 @@ public class JEditTextArea extends JComponent
   {
     public void focusGained(FocusEvent evt)
     {
-      System.out.println("JEditTextArea: focusGained");
+//      System.out.println("JEditTextArea: focusGained");
       setCaretVisible(true);
 //      focusedComponent = JEditTextArea.this;
     }
 
     public void focusLost(FocusEvent evt)
     {
-      System.out.println("JEditTextArea: focusLost");
+//      System.out.println("JEditTextArea: focusLost");
       setCaretVisible(false);
 //      focusedComponent = null;
     }
