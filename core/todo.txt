@@ -9,6 +9,29 @@ fixed in 2.0a5
 A OpenGL noSmooth() does not work
 A   http://code.google.com/p/processing/issues/detail?id=328
 
+cleaning
+o too much object creation in java2d
+o   causes inconsistency/hiccups as the gc runs?
+
+
+XML
+o questions re: final xml api changes
+o   http://code.google.com/p/processing/issues/detail?id=612
+X look into replacing nanoxml
+X   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
+_ Wishlist for the new XML class in Processing 2.0
+_   http://code.google.com/p/processing/issues/detail?id=904
+void addChild(XML child)
+void setContent(java.lang.String content)
+void setName(java.lang.String name)
+_ do we need an option to disable XML whitespace?
+_   should this be the default to be more like old XML?
+_ document how things are sometimes null in XML
+_   test xml examples to see if they break
+_ finish updating XML documentation
+_   http://code.google.com/p/processing/issues/detail?id=382
+_ several other items under the LIBRARIES / XML section below
+
 _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting
 
@@ -101,13 +124,7 @@ _   http://code.google.com/p/processing/issues/detail?id=509
 
 _ add reference/docs for urlEncode() and urlDecode()
 
-_ Wishlist for the new XML class in Processing 2.0
-_   http://code.google.com/p/processing/issues/detail?id=904
-
 _ add loadTable().. 
-
-_ do we need an option to disable XML whitespace?
-_   should this be the default to be more like old XML?
 
 _ add() to add things to lists, sum() for the math (sum is used less after all)
 
@@ -127,8 +144,6 @@ _ if save() returns boolean, does saveFrame()?
 _   also need to copy this over to android
 
 _ disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
-_ document how things are sometimes null in XML
-_   test xml examples to see if they break
 
 _ trimming text on URLs?
 _   http://code.google.com/p/processing/issues/detail?id=715
@@ -207,8 +222,6 @@ _     and on android, start/stop can be used to save state information
 _   need to fix opengl applets so that we can safely kill P3D
 
 more xml/json changes
-_ finish updating XML documentation
-_   http://code.google.com/p/processing/issues/detail?id=382
 _ json issues
 _   http://www.xml.com/lpt/a/1658
 _   http://www.json.org/java/
@@ -589,10 +602,6 @@ LIBRARIES / XML
 _ ref: constructor has changed to .parse(...) instead of new XMLElement(str)
 _ add XMLElement.listChildren() to reference
 _ document XMLElement save() and write(), and their differences
-_ questions re: final xml api changes
-_   http://code.google.com/p/processing/issues/detail?id=612
-_ look into replacing nanoxml
-_   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
 _ need to handle <!ENTITY tags for svg documents
 _   get entity tags working in xml library for SVG
 _ handle charset decoding in xml element parser?
@@ -655,8 +664,6 @@ _     available, so it can't be relied upon, but would help in some cases.
 _   loadBytes() is used for images.. ouch
 _   might be worth doing a test to see if it actually would help at all 
 _     before rewriting all of createInput()
-_ too much object creation in java2d
-_   causes inconsistency/hiccups as the gc runs?
 
 
 LATER (post 2.0)
