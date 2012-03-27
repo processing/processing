@@ -11,6 +11,8 @@ X   seems to have been fixed earlier
 X Base.listFiles does not list recursively if extension is given
 X   this is for fjen/js.. fix already contributed:
 X   http://code.google.com/p/processing/issues/detail?id=718
+X ByteUnderflowException thrown and Font not reported
+X   http://code.google.com/p/processing/issues/detail?id=442
 
 fixed earlier
 X Export reports "Could not copy source file" (even though it works)
