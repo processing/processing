@@ -16,7 +16,11 @@
     <javac target="1.5" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
-	   srcdir="src" destdir="bin"/>
+	   srcdir="src" destdir="bin" />
+    
+    <!-- copy the jnilib to the bin folder so it's included -->
+    <copy todir="bin/japplemenubar" 
+	  file="src/japplemenubar/libjAppleMenuBar.jnilib" />
   </target>		
 
   <target name="build" depends="compile" description="Build core library">

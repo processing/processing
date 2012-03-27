@@ -85,6 +85,8 @@ X   just too problematic and buggy to get this to work perfectly
 X default is that full screen app doesn't cover multiple displays
 X   this is fine since opengl can't usually go across both
 o   but include an example for how to use full in gl 
+o full screen not working on snow leopard
+X   fix build script to include the jnilib, also add more error checks
 _ screenX and screenY are both already taken, so not including vars for them
 _   decide on naming for the next release
 _ wiki.processing.org/w/Window_Size_and_Full_Screen
