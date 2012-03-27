@@ -12,6 +12,10 @@ X Base.listFiles does not list recursively if extension is given
 X   this is for fjen/js.. fix already contributed:
 X   http://code.google.com/p/processing/issues/detail?id=718
 
+fixed earlier
+X Export reports "Could not copy source file" (even though it works)
+X   http://code.google.com/p/processing/issues/detail?id=638
+
 _ add redirects from dev.processing.org again, plus dns entry
 _   old bugs db links no longer working
 
@@ -206,9 +210,6 @@ _ add === for String.equals()
 _   might be problematic since it might be opposite the javascript meaning
 _   jer: it's a decent time to start talking abt references/vars
 
-
-_ Export reports "Could not copy source file" (even though it works)
-_   http://code.google.com/p/processing/issues/detail?id=638
 
 _ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it (?)
