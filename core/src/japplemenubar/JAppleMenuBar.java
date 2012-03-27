@@ -45,36 +45,44 @@ public class JAppleMenuBar {
 
 	    File jnilibFile = new File(temp, FILENAME);
 	    InputStream input = JAppleMenuBar.class.getResourceAsStream(FILENAME);
-	    PApplet.saveStream(jnilibFile, input);
+	    if (input != null) {
+	      if (PApplet.saveStream(jnilibFile, input)) {
+	        System.load(jnilibFile.getAbsolutePath());
+	        instance = new JAppleMenuBar();
 
-//	    String libraryPath = System.getProperty("java.library.path");
-//	    libraryPath += File.pathSeparator + temp.getAbsolutePath();
-//	    System.setProperty("java.library.path", libraryPath);
-//	    System.out.println("java library path should be: " + libraryPath);
-//	    System.out.println("  get returns: " + System.getProperty("java.library.path"));
-//	    System.out.println("LD library path is: " + System.getenv("LD_LIBRARY_PATH"));
-//	    System.loadLibrary("jAppleMenuBar");
-	    
-	    System.load(jnilibFile.getAbsolutePath());
-	    instance = new JAppleMenuBar();
-	    
+	      } else {
+	        sadness("Problem saving " + FILENAME + " for full screen use.");
+	      }
+	    } else {
+        sadness("Could not load " + FILENAME + " from core.jar");
+	    }
 	  } catch (IOException e) {
+	    sadness("Unknown error, here's the stack trace.");
 	    e.printStackTrace();
 	  }
 	}
+	
+	
+	static void sadness(String msg) {
+	  System.err.println("Full screen mode disabled. " + msg);
+	}
 
+	
 //	static public void show() {
 //	  instance.setVisible(true);
 //	}
 
+	
 	static public void hide() {
-	  instance.setVisible(false);
+	  instance.setVisible(false, false);
 	}
 
+	
 	public native void setVisible(boolean visibility, boolean kioskMode); 
 
-  public void setVisible(boolean visibility) {
-    // Keep original API in-tact.  Default kiosk-mode to off.
-    setVisible(visibility, false);
-  }
+	
+//  public void setVisible(boolean visibility) {
+//    // Keep original API in-tact.  Default kiosk-mode to off.
+//    setVisible(visibility, false);
+//  }
 }
