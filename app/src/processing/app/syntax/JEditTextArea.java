@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.awt.im.InputMethodRequests;
@@ -1824,8 +1825,26 @@ public class JEditTextArea extends JComponent
     if (editable) {
       Clipboard clipboard = getToolkit().getSystemClipboard();
       try {
-        // The MacOS MRJ doesn't convert \r to \n, so do it here
-        String selection = ((String)clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor)).replace('\r','\n');
+        String selection = 
+          ((String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor));
+
+        if (selection.contains("\r\n")) {
+          selection = selection.replaceAll("\r\n", "\n"); 
+
+        } else if (selection.contains("\r")) {
+          // The Mac OS MRJ doesn't convert \r to \n, so do it here
+          selection = selection.replace('\r','\n');
+        }
+
+        // Remove tabs and replace with spaces
+        // http://code.google.com/p/processing/issues/detail?id=69
+        if (selection.contains("\t")) {
+          int tabSize = Preferences.getInteger("editor.tabs.size");
+          char[] c = new char[tabSize];
+          Arrays.fill(c, ' ');
+          String tabString = new String(c);
+          selection = selection.replaceAll("\t", tabString); 
+        }
 
         // particularly on macosx when pasting from safari,
         // replace unicode x00A0 (non-breaking space)
@@ -1834,12 +1853,13 @@ public class JEditTextArea extends JComponent
 
         int repeatCount = inputHandler.getRepeatCount();
         StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < repeatCount; i++)
+        for (int i = 0; i < repeatCount; i++) {
           buf.append(selection);
+        }
         selection = buf.toString();
         setSelectedText(selection);
 
-      } catch(Exception e) {
+      } catch (Exception e) {
         getToolkit().beep();
         System.err.println("Clipboard does not contain a string");
       }

@@ -97,6 +97,7 @@ _ Linux file chooser is gross (presumably Windows too)
 _   http://code.google.com/p/processing/issues/detail?id=1014
 
 _ fix edge + 1 issue on stroke/fill for rectangles
+_   http://code.google.com/p/processing/issues/detail?id=509
 
 _ add reference/docs for urlEncode() and urlDecode()
 
