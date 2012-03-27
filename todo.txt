@@ -16,9 +16,6 @@ fixed earlier
 X Export reports "Could not copy source file" (even though it works)
 X   http://code.google.com/p/processing/issues/detail?id=638
 
-_ add redirects from dev.processing.org again, plus dns entry
-_   old bugs db links no longer working
-
 displays
 X ability to select monitor via preferences panel
 X   this applies to any applet that's run externally currently (verify)
