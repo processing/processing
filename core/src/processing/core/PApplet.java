@@ -1606,22 +1606,20 @@ public class PApplet extends Applet
       }
 
     } catch (Exception e) {
-      //System.out.println("ex3");
       if ((e instanceof IllegalArgumentException) ||
           (e instanceof NoSuchMethodException) ||
           (e instanceof IllegalAccessException)) {
-        e.printStackTrace();
-        /*
-        String msg = "public " +
-          irenderer.substring(irenderer.lastIndexOf('.') + 1) +
-          "(int width, int height, PApplet parent" +
-          ((ipath == null) ? "" : ", String filename") +
-          ") does not exist.";
-          */
-        String msg = irenderer + " needs to be updated " +
-          "for the current release of Processing.";
-        throw new RuntimeException(msg);
+        if (e.getMessage().contains("cannot be <= 0")) {
+          // IllegalArgumentException will be thrown if w/h is <= 0
+          // http://code.google.com/p/processing/issues/detail?id=983
+          throw new RuntimeException(e);
 
+        } else {
+          e.printStackTrace();
+          String msg = irenderer + " needs to be updated " +
+            "for the current release of Processing.";
+          throw new RuntimeException(msg);
+        }
       } else {
         if (platform == MACOSX) e.printStackTrace(System.out);
         throw new RuntimeException(e.getMessage());

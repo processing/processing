@@ -2,6 +2,8 @@
 X add support for println(long) because it was converting the type to float
 X   http://code.google.com/p/processing/issues/detail?id=969
 X   also add support for printing arrays of longs (doubles were already there)
+X createGraphics for JAVA2D generates the wrong error msg w/ w/h <= 0
+X   http://code.google.com/p/processing/issues/detail?id=983
 
 _ 
 
