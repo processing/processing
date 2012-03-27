@@ -176,13 +176,13 @@ public class JEditTextArea extends JComponent
   }
 
 
-  /**
-   * Returns if this component can be traversed by pressing
-   * the Tab key. This returns false.
-   */
-  //  public final boolean isManagingFocus() {
-  //    return true;
-  //  }
+//  /**
+//   * Returns if this component can be traversed by pressing
+//   * the Tab key. This returns false. (removing b/c superclass returns false)
+//   */
+//    public final boolean isManagingFocus() {
+//      return false;
+//    }
 
   /**
    * Returns the object responsible for painting this text area.
@@ -1822,7 +1822,7 @@ public class JEditTextArea extends JComponent
    * Inserts the clipboard contents into the text.
    */
   public void paste() {
-    System.out.println("focus owner is: " + isFocusOwner());
+//    System.out.println("focus owner is: " + isFocusOwner());
     if (editable) {
       Clipboard clipboard = getToolkit().getSystemClipboard();
       try {
