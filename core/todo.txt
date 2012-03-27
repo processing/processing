@@ -21,6 +21,8 @@ _   (hopefully fixes flicker issues)
 _   change PApplet.java javadoc to reflect the change
 _   Update http://wiki.processing.org/w/Troubleshooting#Flicker
 _   http://code.google.com/p/processing/issues/detail?id=775
+_ Potential race condition when resizing sketches
+_   http://code.google.com/p/processing/issues/detail?id=697
 
 sort out full screen issues
 X make screenWidth and screenHeight work properly with multiple screens
@@ -268,8 +270,6 @@ _   would be nifty if we could convert on the fly to ttf for speed...
 _   http://code.google.com/p/processing/issues/detail?id=748
 _ check on DXFWriter, since it used to subclass P3D
 _   at least implement is3D? 
-_ Potential race condition when resizing sketches
-_   http://code.google.com/p/processing/issues/detail?id=697
 _ sleep time needs to be set *much* higher for dormant applets
 _   10s should be fine--no need to keep spinning (bad for android too)
 _   just call interrupt() when it's time to get back to work
