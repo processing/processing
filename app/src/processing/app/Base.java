@@ -2639,9 +2639,12 @@ public class Base {
           if (newPath.startsWith(basePath)) {
             newPath = newPath.substring(basePath.length());
           }
-          vector.add(newPath);
-          if (file.isDirectory()) {
-            listFiles(basePath, newPath, extension, vector);
+          // only add if no ext or match
+          if (extension == null || item.toLowerCase().endsWith(extension)) {
+            vector.add(newPath);
+          }
+          if (file.isDirectory()) {  // use absolute path
+            listFiles(basePath, file.getAbsolutePath(), extension, vector);
           }
         }
       }

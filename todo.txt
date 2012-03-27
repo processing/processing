@@ -2,10 +2,15 @@
 X fix up some of the error messages inside Compiler
 X when internal tools crash, don't add them to the menu
 X   (prevents the PDE from locking up on startup)
-
 X renaming .pde to .java (or vice versa) complains
 X   http://code.google.com/p/processing/issues/detail?id=776
 X   regression from: http://processing.org/bugs/bugzilla/543.html
+X handleFindReference in Editor.java should be public for alternative modes (?)
+X   http://code.google.com/p/processing/issues/detail?id=713
+X   seems to have been fixed earlier
+X Base.listFiles does not list recursively if extension is given
+X   this is for fjen/js.. fix already contributed:
+X   http://code.google.com/p/processing/issues/detail?id=718
 
 _ add redirects from dev.processing.org again, plus dns entry
 _   old bugs db links no longer working
@@ -112,8 +117,6 @@ _ how to catch these?
 Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
 Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
 
-_ handleFindReference in Editor.java should be public for alternative modes (?)
-_   http://code.google.com/p/processing/issues/detail?id=713
 _ play button (and others) no longer highlighting
 _   http://code.google.com/p/processing/issues/detail?id=688
 
@@ -206,10 +209,6 @@ _   jer: it's a decent time to start talking abt references/vars
 
 _ Export reports "Could not copy source file" (even though it works)
 _   http://code.google.com/p/processing/issues/detail?id=638
-
-_ Base.listFiles does not list recursivly if extension is given
-_   this is for fjen/js.. fix already contributed:
-_   http://code.google.com/p/processing/issues/detail?id=718
 
 _ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it (?)
