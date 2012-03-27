@@ -1822,6 +1822,7 @@ public class JEditTextArea extends JComponent
    * Inserts the clipboard contents into the text.
    */
   public void paste() {
+    System.out.println("focus owner is: " + isFocusOwner());
     if (editable) {
       Clipboard clipboard = getToolkit().getSystemClipboard();
       try {
@@ -2336,14 +2337,14 @@ public class JEditTextArea extends JComponent
   {
     public void focusGained(FocusEvent evt)
     {
-      //System.out.println("JEditTextArea: focusGained");
+      System.out.println("JEditTextArea: focusGained");
       setCaretVisible(true);
 //      focusedComponent = JEditTextArea.this;
     }
 
     public void focusLost(FocusEvent evt)
     {
-      //System.out.println("JEditTextArea: focusLost");
+      System.out.println("JEditTextArea: focusLost");
       setCaretVisible(false);
 //      focusedComponent = null;
     }
@@ -2367,6 +2368,7 @@ public class JEditTextArea extends JComponent
         // being using regardless of the focusedComponent.
 //        if (focusedComponent != JEditTextArea.this) return;
         if (!hasFocus()) {
+          System.out.println("requesting focus in window");
           requestFocusInWindow();
           return;
         }
