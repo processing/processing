@@ -13,10 +13,17 @@ X   this is for fjen/js.. fix already contributed:
 X   http://code.google.com/p/processing/issues/detail?id=718
 X ByteUnderflowException thrown and Font not reported
 X   http://code.google.com/p/processing/issues/detail?id=442
+X convert tabs to spaces when pasting text
+X   http://code.google.com/p/processing/issues/detail?id=69
 
 fixed earlier
 X Export reports "Could not copy source file" (even though it works)
 X   http://code.google.com/p/processing/issues/detail?id=638
+X Preferences window not visible on taskbar
+X   http://code.google.com/p/processing/issues/detail?id=63
+X paste value into color picker tool does not update box-slider
+X   http://code.google.com/p/processing/issues/detail?id=68
+X   don't see this one having a problem on OS X 10.7
 
 displays
 X ability to select monitor via preferences panel
@@ -44,6 +51,11 @@ _ multiple sketch windows.. having a windows menu?
 _   examples button on toolbar? open / recent / sketchbook?
 _ add "recent files" list to open menu?
 o   http://dev.processing.org/bugs/show_bug.cgi?id=1335
+_ Closing the last window doesn't cause PDE to save its position/contents/etc
+_   (when the pref for close last window = quit is set)
+_   http://dev.processing.org/bugs/show_bug.cgi?id=835
+_ not remembering window size/placement preferences
+_   http://dev.processing.org/bugs/show_bug.cgi?id=837
 
 _ changing number of screens between run causes things to show up off-screen
 _   so when running, check to make sure that things are out of the area
@@ -537,12 +549,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=1225
 
 _ fix regex documentation
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1202
-
-_ Closing the last window doesn't cause PDE to save its position/contents/etc
-_   (when the pref for close last window = quit is set)
-_   http://dev.processing.org/bugs/show_bug.cgi?id=835
-_ not remembering window size/placement preferences
-_   http://dev.processing.org/bugs/show_bug.cgi?id=837
 
 _ make better version of the windows launcher for debugging
 
@@ -1086,8 +1092,6 @@ _ add auto-save to the editor
 _   http://dev.processing.org/bugs/show_bug.cgi?id=739
 _ dragging title bar while sketch running causes strange selection behavior
 _   http://dev.processing.org/bugs/show_bug.cgi?id=504
-_ convert tabs to spaces when pasting text
-_   http://dev.processing.org/bugs/show_bug.cgi?id=506
 _ unchecking 'use external editor' sketch should not set modified
 _   dangerous if a version that hasn't been re-loaded has possibility
 _   to overwrite. i.e. make a change and save in external editor,
@@ -1584,6 +1588,8 @@ _   or at least a boolean for the whole folder?
 
 WISH LIST 
 
+_ Replace current editor with more advanced version
+_   http://code.google.com/p/processing/issues/detail?id=1032
 _ Resurrect the Eclipse plug-in project
 _   http://code.google.com/p/processing/issues/detail?id=1031
 
