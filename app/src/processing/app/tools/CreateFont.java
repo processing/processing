@@ -116,8 +116,14 @@ public class CreateFont extends JFrame implements Tool {
       //String psname = fonts[i].getPSName();
       //if (psname == null) System.err.println("ps name is null");
 
-      flist[index++] = fonts[i].getPSName();
-      table.put(fonts[i].getPSName(), fonts[i]);
+      try {
+        flist[index++] = fonts[i].getPSName();
+        table.put(fonts[i].getPSName(), fonts[i]);
+      } catch (Exception e) {
+        // Sometimes fonts cause lots of trouble.
+        // http://code.google.com/p/processing/issues/detail?id=442
+        e.printStackTrace();
+      }
     }
 
     list = new String[index];
