@@ -709,7 +709,9 @@ public class Sketch {
     String newParentDir = null;
     String newName = null;
 
-    /*
+    if (false) {
+      // The Swing file chooser has some upside (i.e. fixes an OS X focus
+      // traversal bug) bug is super ugly and not OS native.
       JFileChooser fc = new JFileChooser();
       fc.setDialogTitle("Save sketch folder as...");
       if (isReadOnly() || isUntitled()) {
@@ -727,25 +729,24 @@ public class Sketch {
         newParentDir = selection.getParent();
         newName = selection.getName();
       }
-    */
-
-    // get new name for folder
-    FileDialog fd = new FileDialog(editor,
-                                   "Save sketch folder as...",
-                                   FileDialog.SAVE);
-    if (isReadOnly() || isUntitled()) {
-      // default to the sketchbook folder
-      fd.setDirectory(Preferences.get("sketchbook.path"));
     } else {
-      // default to the parent folder of where this was
-      fd.setDirectory(folder.getParent());
+      // get new name for folder
+      FileDialog fd = new FileDialog(editor,
+                                     "Save sketch folder as...",
+                                     FileDialog.SAVE);
+      if (isReadOnly() || isUntitled()) {
+        // default to the sketchbook folder
+        fd.setDirectory(Preferences.get("sketchbook.path"));
+      } else {
+        // default to the parent folder of where this was
+        fd.setDirectory(folder.getParent());
+      }
+      String oldName = folder.getName();
+      fd.setFile(oldName);
+      fd.setVisible(true);
+      newParentDir = fd.getDirectory();
+      newName = fd.getFile();
     }
-    String oldName = folder.getName();
-    fd.setFile(oldName);
-
-    fd.setVisible(true);
-    newParentDir = fd.getDirectory();
-    newName = fd.getFile();
 
     // user canceled selection
     if (newName == null) return false;
