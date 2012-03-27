@@ -309,7 +309,7 @@ public class PGL {
   protected int texTCoordLoc;
   
   protected float[] texCoords = {
-    //  X,    Y,    U,    V
+    //  X,     Y,    U,    V
     -1.0f, -1.0f, 0.0f, 0.0f,
     +1.0f, -1.0f, 1.0f, 0.0f,    
     -1.0f, +1.0f, 0.0f, 1.0f,
@@ -330,6 +330,37 @@ public class PGL {
                                          "void main() {" +
                                          "  gl_FragColor = texture2D(textureSampler, vertTexcoord.st);" +                                   
                                          "}";   
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // Rectangle rendering
+  
+  protected boolean loadedRectShader = false;
+  protected int rectShaderProgram;
+  protected int rectVertShader;
+  protected int rectFragShader;
+  
+  protected int rectVertLoc;
+  protected int rectColorLoc;
+      
+  protected float[] rectCoords = {
+    //  X,     Y
+    -1.0f, -1.0f,
+    +1.0f, -1.0f,    
+    -1.0f, +1.0f,
+    +1.0f, +1.0f,
+  }; 
+  protected FloatBuffer rectData;  
+  
+  protected String rectVertShaderSource = "attribute vec2 inVertex;" +
+                                          "void main() {" +
+                                          "  gl_Position = vec4(inVertex, 0, 1);" +
+                                          "}";
+
+  protected String rectFragShaderSource = "uniform vec4 rectColor;" +
+                                          "void main() {" +
+                                          "  gl_FragColor = rectColor;" +                                   
+                                          "}";
   
   ///////////////////////////////////////////////////////////////////////////////////
   
@@ -1255,6 +1286,73 @@ public class PGL {
     }
   }
   
+  
+  public void drawRectangle(float r, float g, float b, float a, 
+                            int scrX0, int scrY0, int scrX1, int scrY1) {
+    if (!loadedRectShader) {
+      rectVertShader = createShader(GL_VERTEX_SHADER, rectVertShaderSource);
+      rectFragShader = createShader(GL_FRAGMENT_SHADER, rectFragShaderSource);
+      if (0 < rectVertShader && 0 < rectFragShader) {
+        rectShaderProgram = createProgram(rectVertShader, rectFragShader);
+      }
+      if (0 < rectShaderProgram) {
+        rectVertLoc = glGetAttribLocation(rectShaderProgram, "inVertex");
+        rectColorLoc = glGetUniformLocation(rectShaderProgram, "rectColor");     
+      }      
+      rectData = ByteBuffer.allocateDirect(rectCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
+      loadedRectShader = true;
+    }
+
+    if (0 < rectShaderProgram) {
+      // When drawing the rectangle we don't write to the 
+      // depth mask, so the rectangle remains in the background
+      // and can be occluded by anything drawn later, even if
+      // if it is behind it.
+      boolean[] val = new boolean[1];
+      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
+      boolean writeMask = val[0];
+      glDepthMask(false);      
+
+      glUseProgram(rectShaderProgram);
+
+      glEnableVertexAttribArray(rectVertLoc);      
+      glUniform4f(rectColorLoc, r, g, b, a);  
+
+      // Vertex coordinates of the rectangle are specified
+      // in normalized screen space (-1, 1):
+
+      // Corner 1
+      rectCoords[0] = 2 * (float)scrX0 / pg.width - 1;
+      rectCoords[1] = 2 * (float)scrY0 / pg.height - 1;
+
+      // Corner 2
+      rectCoords[2] = 2 * (float)scrX1 / pg.width - 1;
+      rectCoords[3] = 2 * (float)scrY0 / pg.height - 1;
+
+      // Corner 3
+      rectCoords[4] = 2 * (float)scrX0 / pg.width - 1;
+      rectCoords[5] = 2 * (float)scrY1 / pg.height - 1;
+
+      // Corner 4
+      rectCoords[6] = 2 * (float)scrX1 / pg.width - 1;
+      rectCoords[7] = 2 * (float)scrY1 / pg.height - 1;
+
+      rectData.rewind();
+      rectData.put(rectCoords);
+
+      rectData.position(0);
+      glVertexAttribPointer(rectVertLoc, 2, GL_FLOAT, false, 2 * SIZEOF_FLOAT, rectData);
+
+      glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+      glDisableVertexAttribArray(rectVertLoc);
+
+      glUseProgram(0); 
+
+      glDepthMask(writeMask);
+    }
+  }
+    
   
   // bit shifting this might be more efficient
   static public int nextPowerOfTwo(int val) {

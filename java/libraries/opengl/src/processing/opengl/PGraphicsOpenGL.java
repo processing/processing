@@ -5034,55 +5034,15 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   
-  // TODO: doesn't appear to work
   public void set(int x, int y, int argb) {
     flush();
+     
+    float a = ((argb >> 24) & 0xFF) / 255.0f;
+    float r = ((argb >> 16) & 0xFF) / 255.0f;
+    float g = ((argb >>  8) & 0xFF) / 255.0f;
+    float b = ((argb >>  0) & 0xFF) / 255.0f;
     
-    int getset = 0;
-
-    if (BIG_ENDIAN) {
-      // convert ARGB to RGBA
-      getset = (argb << 8) | 0xff;
-    } else {
-      // convert ARGB to ABGR
-      getset = (argb & 0xff00ff00) | ((argb << 16) & 0xff0000)
-          | ((argb >> 16) & 0xff);
-    }
-    
-    if (getsetBuffer == null) {
-      getsetBuffer = IntBuffer.allocate(1);
-      getsetBuffer.rewind();
-    }
-    
-    getsetBuffer.put(0, getset);
-    getsetBuffer.rewind();    
-    
-    if (getsetTexture == null) {
-      getsetTexture = new PTexture(parent, 1, 1, new PTexture.Parameters(ARGB, POINT));
-    }
-    
-    boolean outsideDraw = primarySurface && !drawing;
-    if (outsideDraw) {
-      beginGLOp();      
-    }    
-    
-    copyToTexture(getsetTexture, getsetBuffer, 0, 0, 1, 1);
-    
-    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    if (notCurrent) {
-      pushFramebuffer();
-      setFramebuffer(offscreenFramebuffer);
-    } 
-    
-    drawTexture(getsetTexture, 0, 0, 1, 1, x, height - y, 1, 1);
-    
-    if (notCurrent) {
-      popFramebuffer();
-    }
-    
-    if (outsideDraw) {
-      endGLOp();      
-    }    
+    pgl.drawRectangle(r, g, b, a, x, y, x + 1, y + 1);
   }
 
   
