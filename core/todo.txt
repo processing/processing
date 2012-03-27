@@ -5,8 +5,6 @@ X   also add support for printing arrays of longs (doubles were already there)
 X createGraphics for JAVA2D generates the wrong error msg w/ w/h <= 0
 X   http://code.google.com/p/processing/issues/detail?id=983
 
-_ 
-
 fixed in 2.0a5
 A OpenGL noSmooth() does not work
 A   http://code.google.com/p/processing/issues/detail?id=328
