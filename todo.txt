@@ -27,6 +27,9 @@ X   http://code.google.com/p/processing/issues/detail?id=63
 X paste value into color picker tool does not update box-slider
 X   http://code.google.com/p/processing/issues/detail?id=68
 X   don't see this one having a problem on OS X 10.7
+X Unable to access Javascript examples
+X   http://code.google.com/p/processing/issues/detail?id=909
+X   appears to have been freak thing in the build process
 
 displays
 X ability to select monitor via preferences panel
