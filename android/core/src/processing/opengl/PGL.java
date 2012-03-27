@@ -330,7 +330,8 @@ public class PGL {
                                           "  gl_Position = vec4(inVertex, 0, 1);" +
                                           "}";
 
-  protected String rectFragShaderSource = "uniform vec4 rectColor;" +
+  protected String rectFragShaderSource = "precision mediump float;" +
+                                          "uniform vec4 rectColor;" +
                                           "void main() {" +
                                           "  gl_FragColor = rectColor;" +                                   
                                           "}";
