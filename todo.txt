@@ -7,13 +7,6 @@ X renaming .pde to .java (or vice versa) complains
 X   http://code.google.com/p/processing/issues/detail?id=776
 X   regression from: http://processing.org/bugs/bugzilla/543.html
 
-_ Resurrect the Eclipse plug-in project
-_   http://code.google.com/p/processing/issues/detail?id=1031
-
-_ write up code guidelines
-_ write up guidelines for modes
-_   i.e. don't mess with Sketch menu, put it in the mode menu
-
 _ add redirects from dev.processing.org again, plus dns entry
 _   old bugs db links no longer working
 
@@ -56,8 +49,13 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _   http://code.google.com/p/processing/issues/detail?id=27
 Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
 
+
 2.0
 _ decide whether to do same as Android preproc on parsing size/renderer/etc
+_ should open() not return a Process object? (exec() instead?)
+_   pro: can write out error messages (or output)
+_   con: loses cross platform ability
+_   but: open() is platform specific anyway, ppl can use exec()
 
 
 _ find in reference for copy() (on image) tries to open PVector.copy()
@@ -1583,7 +1581,13 @@ LATER
 _ rename location is awkward, do it on the tab?
 _ method of including/excluding data files in the JAR
 _   or at least a boolean for the whole folder?
-_ should open() not return a Process object? (exec() instead?)
-_   pro: can write out error messages (or output)
-_   con: loses cross platform ability
-_   but: open() is platform specific anyway, ppl can use exec()
+
+
+WISH LIST 
+
+_ Resurrect the Eclipse plug-in project
+_   http://code.google.com/p/processing/issues/detail?id=1031
+
+_ write up code guidelines
+_ write up guidelines for modes
+_   i.e. don't mess with Sketch menu, put it in the mode menu
