@@ -37,8 +37,10 @@ import java.util.TimerTask;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL2;
+import javax.media.opengl.GL2ES2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
+import javax.media.opengl.GLCapabilitiesImmutable;
 import javax.media.opengl.GLContext;
 import javax.media.opengl.GLDrawable;
 import javax.media.opengl.GLEventListener;
@@ -245,9 +247,12 @@ public class PGL {
   /** Basic GL functionality, common to all profiles */
   public GL gl;
   
-  /** GL2 functionality (shaders, etc) */
-  public GL2 gl2;
-    
+  /** GLES2 functionality (shaders, etc) */
+  public GL2ES2 gl2;
+  
+  /** GL2 desktop functionality (blit framebuffer, map buffer range, multisampled renerbuffers) */
+  public GL2 gl2x;
+  
   /** GLU interface **/
   public GLU glu;
   
@@ -261,7 +266,7 @@ public class PGL {
   public GLProfile profile;
   
   /** The capabilities of the OpenGL rendering surface */
-  public GLCapabilities capabilities;  
+  public GLCapabilitiesImmutable capabilities;  
   
   /** The rendering surface */
   public GLDrawable drawable;   
@@ -378,16 +383,20 @@ public class PGL {
       setFramerate = false;
     }
     
-    capabilities = new GLCapabilities(profile);
+    // Setting up the desired GL capabilities;
+    GLCapabilities caps = new GLCapabilities(profile);
     if (1 < antialias) {
-      capabilities.setSampleBuffers(true);
-      capabilities.setNumSamples(antialias);
+      caps.setSampleBuffers(true);
+      caps.setNumSamples(antialias);
     } else {
-      capabilities.setSampleBuffers(false);
+      caps.setSampleBuffers(false);
     }
+    caps.setDepthBits(24);
+    caps.setStencilBits(8);
+    caps.setAlphaBits(8);
     
     if (toolkit == AWT) {      
-      canvasAWT = new GLCanvas(capabilities);
+      canvasAWT = new GLCanvas(caps);
       canvasAWT.setBounds(0, 0, pg.width, pg.height);
       
       pg.parent.setLayout(new BorderLayout());
@@ -398,6 +407,7 @@ public class PGL {
       listener = new PGLListener();
       canvasAWT.addGLEventListener(listener);
       
+      capabilities = canvasAWT.getChosenGLCapabilities();
       canvas = canvasAWT;
     } else if (toolkit == NEWT) {    
       window = GLWindow.create(capabilities);    
@@ -413,7 +423,8 @@ public class PGL {
       animator = new NEWTAnimator(window);
       animator.start();
       
-      canvas = canvasNEWT;
+      capabilities = window.getChosenGLCapabilities();
+      canvas = canvasNEWT;      
     }
     
     initialized = true;
@@ -437,7 +448,8 @@ public class PGL {
   
   public void updateOffscreen(PGL primary) {
     gl  = primary.gl;
-    gl2 = primary.gl2;        
+    gl2 = primary.gl2;
+    gl2x = primary.gl2x;
   }
 
   
@@ -691,7 +703,11 @@ public class PGL {
   
   
   public ByteBuffer glMapBufferRange(int target, int offset, int length, int access) {
-    return gl2.glMapBufferRange(target, offset, length, access);
+    if (gl2x != null) {
+      return gl2x.glMapBufferRange(target, offset, length, access);
+    } else {
+      return null;
+    }
   }
   
   
@@ -731,7 +747,9 @@ public class PGL {
   
   
   public void glBlitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, int mask, int filter) {
-    gl2.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);    
+    if (gl2x != null) {
+      gl2x.glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    }
   }
   
   
@@ -746,7 +764,9 @@ public class PGL {
   
   
   public void glRenderbufferStorageMultisample(int target, int samples, int format, int width, int height) {
-    gl2.glRenderbufferStorageMultisample(target, samples, format, width, height);
+    if (gl2x != null) {
+      gl2x.glRenderbufferStorageMultisample(target, samples, format, width, height);
+    }
   }
   
   
@@ -983,7 +1003,9 @@ public class PGL {
   
   
   public void glReadBuffer(int buf) {
-    gl2.glReadBuffer(buf);
+    if (gl2x != null) {
+      gl2x.glReadBuffer(buf);
+    }
   }
   
   
@@ -993,7 +1015,9 @@ public class PGL {
 
   
   public void glDrawBuffer(int buf) {
-    gl2.glDrawBuffer(buf);
+    if (gl2x != null) {
+      gl2x.glDrawBuffer(buf);
+    }
   }
   
   
@@ -1309,8 +1333,14 @@ public class PGL {
     public void display(GLAutoDrawable adrawable) {
       drawable = adrawable;
       context = adrawable.getContext();
-      gl = context.getGL();
-      gl2 = gl.getGL2();
+      gl = context.getGL();      
+      gl2 = gl.getGL2ES2();      
+      try {
+        gl2x = gl.getGL2(); 
+      } catch (javax.media.opengl.GLException e) {
+        gl2x = null;
+      }
+      
       pg.parent.handleDraw(); 
     }
 
