@@ -15,6 +15,9 @@ X ByteUnderflowException thrown and Font not reported
 X   http://code.google.com/p/processing/issues/detail?id=442
 X convert tabs to spaces when pasting text
 X   http://code.google.com/p/processing/issues/detail?id=69
+o Added some basic Emacs cursor navigator keybindings
+o   just implement these as a preference
+o   http://code.google.com/p/processing/issues/detail?id=555
 
 fixed earlier
 X Export reports "Could not copy source file" (even though it works)
@@ -44,6 +47,8 @@ _   implement recent sketches menu
 
 _ saved window position problematic with multiple monitors
 _   http://code.google.com/p/processing/issues/detail?id=27
+_ Closing the last window doesn't cause PDE to save it's position/contents/etc
+_   http://code.google.com/p/processing/issues/detail?id=103
 _ casey: recent sketches is a yes, window menu could go either way
 window menu: http://code.google.com/p/processing/issues/detail?id=545
 recent sketches: http://code.google.com/p/processing/issues/detail?id=188
@@ -56,6 +61,8 @@ _   (when the pref for close last window = quit is set)
 _   http://dev.processing.org/bugs/show_bug.cgi?id=835
 _ not remembering window size/placement preferences
 _   http://dev.processing.org/bugs/show_bug.cgi?id=837
+_ Blank sketch opened even if opening an existing sketch by double-clicking
+_   http://code.google.com/p/processing/issues/detail?id=179
 
 _ changing number of screens between run causes things to show up off-screen
 _   so when running, check to make sure that things are out of the area
@@ -68,6 +75,9 @@ _   messy since some displays have negative coords
 _   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _   http://code.google.com/p/processing/issues/detail?id=27
 Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
+
+
+
 
 
 2.0
@@ -328,10 +338,6 @@ _   (on mac os x, due to the change for no windows open)
 
 _ how to handle double-clicked files on windows?
 _   big deal for psk and others
-
-_ Added some basic Emacs cursor navigator keybindings
-_   just implement these as a preference
-_   http://code.google.com/p/processing/issues/detail?id=555
 
 
 . . . . 
