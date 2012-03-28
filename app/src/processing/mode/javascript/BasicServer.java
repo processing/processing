@@ -363,7 +363,9 @@ implements HttpConstants, Runnable
 				try {
 					handleClient();
 				} catch (Exception e) {
-					e.printStackTrace();
+					// TODO check why this is raised instead of 
+					// sending 404 for favicon.ico, etc. ..
+					//e.printStackTrace();
 				}
 			}
 			socket = null;
