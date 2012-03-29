@@ -314,8 +314,11 @@ public class PGraphicsOpenGL extends PGraphics {
   /** True if we are inside a beginDraw()/endDraw() block. */
   protected boolean drawing = false;  
   
-  /** True if we are inside a beginScreenOp()/endScreenOp() block. */
-  protected boolean screenOp = false;
+  /** Type of screen operation. */
+  static protected final int OP_NONE = 0;
+  static protected final int OP_READ = 1;
+  static protected final int OP_WRITE = 2;
+  protected int screenOp = OP_NONE;
   
   /** Used to detect the occurrence of a frame resize event. */
   protected boolean resized = false;
@@ -1377,12 +1380,11 @@ public class PGraphicsOpenGL extends PGraphics {
       
       pushFramebuffer();
       if (offscreenMultisample) {
-        setFramebuffer(offscreenFramebufferMultisample);   
-        pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
+        setFramebuffer(offscreenFramebufferMultisample);           
       } else {
         setFramebuffer(offscreenFramebuffer);
-      }
-      
+      } 
+      pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
       pgl.updateOffscreen(pg.pgl);
     }
     
@@ -1510,7 +1512,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }        
         
     drawing = true;
-    screenOp = false;
+    screenOp = OP_NONE;
     
     pixelsAreDirty = true;
     settingPixels = false;
@@ -1621,30 +1623,63 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   
-  protected void beginScreenOp() {  
-    if (!primarySurface) {
-      offscreenNotCurrent = offscreenFramebuffer != currentFramebuffer;
-      if (offscreenNotCurrent) {
-        // If the surface is not primary and multisampling is on, then the framebuffer
-        // will be switched momentarily from offscreenFramebufferMultisample to offscreenFramebuffer.
-        // This is in fact correct, because the glReadPixels() function doesn't work with 
-        // multisample framebuffer attached as the read buffer.        
-        pushFramebuffer();
-        setFramebuffer(offscreenFramebuffer);
-        pgl.updateOffscreen(pg.pgl);
-      }      
+  protected void beginScreenOp(int op) {  
+    if (primarySurface) {
+      if (op == OP_READ) {
+        pgl.glReadBuffer(PGL.GL_FRONT);
+      } else {
+        pgl.glDrawBuffer(PGL.GL_BACK);
+      }
+      offscreenNotCurrent = false;      
     } else {
-      offscreenNotCurrent = false;
+      // Making sure that the offscreen FBO is current. This allows to do calls
+      // like loadPixels(), set() or get() without enclosing them between 
+      // beginDraw()/endDraw() when working with a PGraphics object. We don't
+      // need the rest of the surface initialization/finalization, since only
+      // the pixels are affected.      
+      if (op == OP_READ) {
+        // We always read the screen pixels from the color FBO.
+        offscreenNotCurrent = offscreenFramebuffer != currentFramebuffer;
+        if (offscreenNotCurrent) {
+          pushFramebuffer();
+          setFramebuffer(offscreenFramebuffer);
+          pgl.updateOffscreen(pg.pgl);
+        }
+        pgl.glReadBuffer(PGL.GL_COLOR_ATTACHMENT0);
+      } else {
+        // We can write directly to the color FBO, or to the multisample FBO
+        // if multisampling is enabled.
+        if (offscreenMultisample) {
+          offscreenNotCurrent = offscreenFramebufferMultisample != currentFramebuffer;
+        } else {
+          offscreenNotCurrent = offscreenFramebuffer != currentFramebuffer;
+        }        
+        if (offscreenNotCurrent) {
+          pushFramebuffer();
+          if (offscreenMultisample) {
+            setFramebuffer(offscreenFramebufferMultisample);               
+          } else {
+            setFramebuffer(offscreenFramebuffer);
+          }          
+          pgl.updateOffscreen(pg.pgl);
+        }
+        pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
+      }
     }
-    screenOp = true;
+    screenOp = op;
   }
 
   
-  protected void endScreenOp() {
-    screenOp = false;
+  protected void endScreenOp() {    
     if (offscreenNotCurrent) {
+      if (screenOp == OP_WRITE && offscreenMultisample) {
+        // We were writing to the multisample FBO, so we need
+        // to blit its contents to the color FBO.
+        offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
+      }
       popFramebuffer();
-    }    
+    }
+    screenOp = OP_NONE;
   }  
   
   
@@ -2249,7 +2284,7 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean hasPoints = 0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount;
     boolean hasLines = 0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount;
     boolean hasFill = 0 < tessGeo.fillVertexCount && 0 < tessGeo.fillIndexCount;
-    
+        
     if (hasPoints || hasLines || hasFill) {
       if (settingPixels) {
         // If the user has been manipulating individual pixels,
@@ -2288,8 +2323,8 @@ public class PGraphicsOpenGL extends PGraphics {
       settingPixels = false;
     }
     
-    tessGeo.clear();  
-    texCache.clear();
+    tessGeo.clear();      
+    texCache.clear();    
   }
   
 
@@ -4610,19 +4645,18 @@ public class PGraphicsOpenGL extends PGraphics {
   // Initializes the pixels array, copying the current contents of the
   // color buffer into it.
   public void loadPixels() {
-    flush();
+    flush();        
     
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];      
       pixelBuffer = IntBuffer.wrap(pixels);      
       pixelsAreDirty = true;
     }
-
+    
     if (pixelsAreDirty) {
-      beginScreenOp();        
+      beginScreenOp(OP_READ);        
       pixelBuffer.rewind();
-      pgl.glReadBuffer(PGL.GL_FRONT);
-      pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);    
+      pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
       endScreenOp();        
       
       PGL.nativeToJavaARGB(pixels, width, height);      
@@ -4652,7 +4686,7 @@ public class PGraphicsOpenGL extends PGraphics {
                       0, 0, width, height, IntBuffer.wrap(rgbaPixels));
     
     // ...and drawing the texture to screen.
-    beginScreenOp();
+    beginScreenOp(OP_WRITE);
     drawTexture();    
     endScreenOp();
     
@@ -4679,7 +4713,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Draws wherever it is in the screen texture right now to the screen.
   public void updateTexture() {
     flush();    
-    beginScreenOp();
+    beginScreenOp(OP_WRITE);
     drawTexture();    
     endScreenOp();   
   }
@@ -4719,7 +4753,6 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   public int get(int x, int y) {
-    flush();
     loadPixels();    
     
     int i = y * width + x;
@@ -4746,8 +4779,7 @@ public class PGraphicsOpenGL extends PGraphics {
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);    
     newbieBuffer.rewind();
     
-    beginScreenOp();
-    pgl.glReadBuffer(PGL.GL_FRONT);
+    beginScreenOp(OP_READ);
     pgl.glReadPixels(x, height - y - h, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, newbieBuffer);
     endScreenOp();
     
@@ -4759,8 +4791,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void set(int x, int y, int argb) {
-    flush();
-    loadPixels();
+    loadPixels();    
     settingPixels = true;
     
     int i = y * width + x;
@@ -4779,7 +4810,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     PTexture tex = getTexture(source);
     if (tex != null) {      
-      beginScreenOp();
+      beginScreenOp(OP_WRITE);
       pgl.drawTexture(tex.glTarget, tex.glID, tex.glWidth, tex.glHeight,
                       0, 0, tex.width, tex.height, 
                       x, y + height, x + tex.width, y + height - tex.height);
