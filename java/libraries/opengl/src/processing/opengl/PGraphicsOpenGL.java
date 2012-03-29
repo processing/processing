@@ -349,12 +349,9 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Array to store pixels in OpenGL format. */
   protected int[] rgbaPixels;
   
-  /** Flag that indicates that the OpenGL color buffer is out of 
-   * sync with the pixels array. */
-  protected boolean pixelsAreDirty;
-  
-  /** Flag to indicate if the user is setting individual pixels */
-  protected boolean settingPixels;
+  /** Flag to indicate if the user is manipulating the  
+   * pixels array through the set()/get() methods */
+  protected boolean setgetPixels;
   
   // ........................................................
   
@@ -1514,8 +1511,8 @@ public class PGraphicsOpenGL extends PGraphics {
     drawing = true;
     screenOp = OP_NONE;
     
-    pixelsAreDirty = true;
-    settingPixels = false;
+    modified = false;
+    setgetPixels = false;
     
     clearColorBuffer0 = clearColorBuffer;
     clearColorBuffer = false;
@@ -1531,15 +1528,15 @@ public class PGraphicsOpenGL extends PGraphics {
       // Flushing any remaining geometry.
       flush();
              
-      if (settingPixels) {
-        // Drawing the pixels array. We can only get
-        // here if there was no geometry to flush at 
-        // the end of draw, and the user has been
-        // manipulating individual pixels. If that's 
-        // the case we need to update the screen with 
-        // the changes in  the pixels array.
-        updatePixels();        
-      }
+//      if (settingPixels) {
+//        // Drawing the pixels array. We can only get
+//        // here if there was no geometry to flush at 
+//        // the end of draw, and the user has been
+//        // manipulating individual pixels. If that's 
+//        // the case we need to update the screen with 
+//        // the changes in  the pixels array.
+//        updatePixels();        
+//      }
       
       // TODO: Implement depth sorting (http://code.google.com/p/processing/issues/detail?id=51)      
       //if (hints[ENABLE_DEPTH_SORT]) {
@@ -2284,15 +2281,17 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean hasPoints = 0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount;
     boolean hasLines = 0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount;
     boolean hasFill = 0 < tessGeo.fillVertexCount && 0 < tessGeo.fillIndexCount;
-        
+    boolean hasPixels = modified && pixels != null;
+    
+    if (hasPixels) {
+      // If the user has been manipulating individual pixels,
+      // the changes need to be copied to the screen before
+      // drawing any new geometry.      
+      renderPixels();
+      setgetPixels = false;
+    }
+    
     if (hasPoints || hasLines || hasFill) {
-      if (settingPixels) {
-        // If the user has been manipulating individual pixels,
-        // the changes need to be copied to the screen before
-        // drawing any new geometry.
-        updatePixels();        
-      }   
-      
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         // The modelview transformation has been applied already to the 
         // tessellated vertices, so we set the OpenGL modelview matrix as
@@ -2316,11 +2315,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         popMatrix();
       }
-      
-      // The pixels array is dirty because it lost sync with the color buffer
-      // as new geometry has been drawn.
-      pixelsAreDirty = true;
-      settingPixels = false;
     }
     
     tessGeo.clear();      
@@ -2328,6 +2322,43 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
 
+  protected void renderPixels() {
+    int mi1 = my1 * width + mx1;
+    int mi2 = my2 * width + mx2;
+    int mw = mx2 - mx1 + 1;
+    int mh = my2 - my1 + 1;
+    int mlen = mi2 - mi1 + 1;
+
+    if (rgbaPixels == null || rgbaPixels.length < mlen) {
+      rgbaPixels = new int[mlen];
+    }
+    
+    PApplet.arrayCopy(pixels, mi1, rgbaPixels, 0, mlen);
+    PGL.javaToNativeARGB(rgbaPixels, mw, mh);
+    
+    //PApplet.arrayCopy(pixels, rgbaPixels);    
+    //PGL.javaToNativeARGB(rgbaPixels, width, height);
+    
+    // Copying pixel buffer to screen texture...
+    pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glID, 
+                      mx1, my1, mw, mh, IntBuffer.wrap(rgbaPixels));
+    
+    if (primarySurface || offscreenMultisample) {
+      // ...and drawing the texture to screen... but only
+      // if we are on the primary surface or we have 
+      // multisampled FBO. Why? Because in the case of non-
+      // multisampled FBO, texture is actually the color buffer
+      // used by the color FBO, so with the copy operation we
+      // should be done updating the (off)screen buffer.      
+      beginScreenOp(OP_WRITE);
+      drawTexture(mx1, my1, mw, mh);    
+      endScreenOp();
+    }
+    
+    modified = false;   
+  }
+  
+  
   protected void renderPoints() {
     if (!pointVBOsCreated) {
       createPointBuffers();
@@ -2979,63 +3010,11 @@ public class PGraphicsOpenGL extends PGraphics {
   // SHAPE
 
   // public void shapeMode(int mode)
-
-  
-  public void shape(PShape shape) {
-    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
-      flush();
-      if (settingPixels) {
-        updatePixels();        
-      }
-      
-      if (shapeMode == CENTER) {
-        pushMatrix();
-        translate(-shape.getWidth()/2, -shape.getHeight()/2);
-      }
-
-      shape.draw(this); // needs to handle recorder too
-
-      if (shapeMode == CENTER) {
-        popMatrix();
-      }
-      
-      pixelsAreDirty = true;
-      settingPixels = false;        
-    }
-  }
-  
-  
-  public void shape(PShape shape, float x, float y) {
-    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
-      flush();
-      if (settingPixels) {
-        updatePixels();        
-      }  
-      
-      pushMatrix();
-
-      if (shapeMode == CENTER) {
-        translate(x - shape.getWidth()/2, y - shape.getHeight()/2);
-
-      } else if ((shapeMode == CORNER) || (shapeMode == CORNERS)) {
-        translate(x, y);
-      }
-      shape.draw(this);
-
-      popMatrix();
-      
-      pixelsAreDirty = true;
-      settingPixels = false; 
-    }
-  }
   
   
   public void shape(PShape shape, float x, float y, float z) {
     if (shape.isVisible()) { // don't do expensive matrix ops if invisible
       flush();
-      if (settingPixels) {
-        updatePixels();        
-      }  
       
       pushMatrix();
 
@@ -3049,55 +3028,13 @@ public class PGraphicsOpenGL extends PGraphics {
       shape.draw(this);
 
       popMatrix();
-      
-      pixelsAreDirty = true;
-      settingPixels = false;      
     }
   }
-
-  
-  public void shape(PShape shape, float x, float y, float c, float d) {
-    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
-      flush();
-      if (settingPixels) {
-        updatePixels();        
-      }  
-      
-      pushMatrix();
-
-      if (shapeMode == CENTER) {
-        // x and y are center, c and d refer to a diameter
-        translate(x - c/2f, y - d/2f);
-        scale(c / shape.getWidth(), d / shape.getHeight());
-
-      } else if (shapeMode == CORNER) {
-        translate(x, y);
-        scale(c / shape.getWidth(), d / shape.getHeight());
-
-      } else if (shapeMode == CORNERS) {
-        // c and d are x2/y2, make them into width/height
-        c -= x;
-        d -= y;
-        // then same as above
-        translate(x, y);
-        scale(c / shape.getWidth(), d / shape.getHeight());
-      }
-      shape.draw(this);
-
-      popMatrix();
-      
-      pixelsAreDirty = true;
-      settingPixels = false;        
-    }
-  }  
   
   
   public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
     if (shape.isVisible()) { // don't do expensive matrix ops if invisible
       flush();
-      if (settingPixels) {
-        updatePixels();        
-      } 
       
       pushMatrix();
 
@@ -3122,32 +3059,9 @@ public class PGraphicsOpenGL extends PGraphics {
       shape.draw(this);
 
       popMatrix();
-      
-      pixelsAreDirty = true;
-      settingPixels = false;      
     }
   }
   
-/*  
-  public void shape(PShape3D shape) {
-    shape.draw(this);
-  }
-
-  
-  public void shape(PShape3D shape, float x, float y) {
-    shape(shape, x, y, 0);
-  }
-
-  
-  public void shape(PShape3D shape, float x, float y, float z) {
-    pushMatrix();
-    translate(x, y, z);
-    shape.draw(this);
-    popMatrix();
-  }
-*/
-  
-  // public void shape(PShape shape, float x, float y, float c, float d)
 
   //////////////////////////////////////////////////////////////
 
@@ -4645,15 +4559,18 @@ public class PGraphicsOpenGL extends PGraphics {
   // Initializes the pixels array, copying the current contents of the
   // color buffer into it.
   public void loadPixels() {
-    flush();        
+    if (!setgetPixels) {
+      // Draws any remaining geometry in case the user is still not 
+      // setting/getting new pixels.
+      flush();         
+    }
     
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];      
       pixelBuffer = IntBuffer.wrap(pixels);      
-      pixelsAreDirty = true;
     }
     
-    if (pixelsAreDirty) {
+    if (!setgetPixels) {
       beginScreenOp(OP_READ);        
       pixelBuffer.rewind();
       pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
@@ -4662,38 +4579,47 @@ public class PGraphicsOpenGL extends PGraphics {
       PGL.nativeToJavaARGB(pixels, width, height);      
       
       if (primarySurface) {
-        loadTextureImpl(POINT);           
+        loadTextureImpl(POINT);
         pixelsToTexture();
       }
-      
-      pixelsAreDirty = false;
     }
+  }
+  
+
+  //////////////////////////////////////////////////////////////
+
+  // GET/SET PIXELS
+  
+  
+  public int get(int x, int y) {
+    loadPixels();
+    setgetPixels = true;
+    return super.get(x, y);
   }
 
   
-  // Copies the contents of the pixels array to the screen
-  public void updatePixels() {
-    if (pixels == null) return;
-    
-    if (rgbaPixels == null || rgbaPixels.length != pixels.length) {
-      rgbaPixels = new int[pixels.length];
-    }
-    PApplet.arrayCopy(pixels, rgbaPixels);    
-    PGL.javaToNativeARGB(rgbaPixels, width, height);
-    
-    // Copying pixel buffer to screen texture...
-    pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glID, 
-                      0, 0, width, height, IntBuffer.wrap(rgbaPixels));
-    
-    // ...and drawing the texture to screen.
-    beginScreenOp(OP_WRITE);
-    drawTexture();    
-    endScreenOp();
-    
-    pixelsAreDirty = false;
-  }  
+  protected PImage getImpl(int x, int y, int w, int h) {
+    loadPixels();
+    setgetPixels = true;
+    return super.getImpl(x, y, w, h);
+  }
+
   
+  public void set(int x, int y, int argb) {
+    loadPixels();
+    setgetPixels = true;  
+    super.set(x, y, argb);
+  }
+
+  
+  protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
+                         PImage src) {
+    loadPixels();
+    setgetPixels = true;
+    super.setImpl(dx, dy, sx, sy, sw, sh, src);
+  } 
     
+  
   //////////////////////////////////////////////////////////////
 
   // LOAD/UPDATE TEXTURE
@@ -4732,8 +4658,16 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   protected void drawTexture() {
-    pgl.drawTexture(texture.glTarget, texture.glID, texture.glWidth, texture.glHeight,
-                                                    0, 0, width, height, 0, 0, width, height);
+    pgl.drawTexture(texture.glTarget, texture.glID, 
+                    texture.glWidth, texture.glHeight,
+                    0, 0, width, height);
+  }
+
+  
+  protected void drawTexture(int x, int y, int w, int h) {
+    pgl.drawTexture(texture.glTarget, texture.glID, 
+                    texture.glWidth, texture.glHeight,
+                    x, y, x + w, y + h);
   }
   
   
@@ -4746,79 +4680,6 @@ public class PGraphicsOpenGL extends PGraphics {
     texture.get(pixels);
   }
   
-  
-  //////////////////////////////////////////////////////////////
-
-  // GET/SET PIXELS
-  
-  
-  public int get(int x, int y) {
-    loadPixels();    
-    
-    int i = y * width + x;
-    if (0 <= i && i < pixels.length) {
-      return pixels[i];
-    } else {
-      return 0x000000;
-    }
-  }
-  
-
-  public PImage get() {
-    return get(0, 0, width, height);
-  }
-  
-  
-  // public PImage get(int x, int y, int w, int h)
-
-  
-  protected PImage getImpl(int x, int y, int w, int h) {
-    flush();
-    
-    PImage newbie = parent.createImage(w, h, ARGB);
-    IntBuffer newbieBuffer = IntBuffer.allocate(w * h);    
-    newbieBuffer.rewind();
-    
-    beginScreenOp(OP_READ);
-    pgl.glReadPixels(x, height - y - h, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, newbieBuffer);
-    endScreenOp();
-    
-    newbie.loadPixels();
-    newbieBuffer.get(newbie.pixels);
-    nativeToJavaARGB(newbie);
-    return newbie;
-  }
-
-  
-  public void set(int x, int y, int argb) {
-    loadPixels();    
-    settingPixels = true;
-    
-    int i = y * width + x;
-    if (0 <= i && i < pixels.length) {
-      pixels[i] = argb;
-    }
-  }
-
-  
-  /**
-   * Set an image directly to the screen.
-   * 
-   */
-  public void set(int x, int y, PImage source) {
-    flush();
-    
-    PTexture tex = getTexture(source);
-    if (tex != null) {      
-      beginScreenOp(OP_WRITE);
-      pgl.drawTexture(tex.glTarget, tex.glID, tex.glWidth, tex.glHeight,
-                      0, 0, tex.width, tex.height, 
-                      x, y + height, x + tex.width, y + height - tex.height);
-      endScreenOp();
-      pixelsAreDirty = true;
-    }
-  }  
-
   
   //////////////////////////////////////////////////////////////
 
