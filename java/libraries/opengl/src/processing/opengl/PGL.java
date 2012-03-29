@@ -1250,6 +1250,12 @@ public class PGL {
     disableTexturing(target);
   } 
   
+
+  public void drawTexture(int target, int id, int width, int height,
+                          int X0, int Y0, int X1, int Y1) {
+    drawTexture(target, id, width, height, X0, Y0, X1, Y1, X0, Y0, X1, Y1);
+  }
+  
   
   public void drawTexture(int target, int id, int width, int height,
                                               int texX0, int texY0, int texX1, int texY1, 
