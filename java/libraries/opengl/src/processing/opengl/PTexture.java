@@ -542,7 +542,7 @@ public class PTexture implements PConstants {
    * @param h int
    */
   protected void convertToRGBA(int[] intArray, int[] tIntArray, int arrayFormat, int w, int h)  {
-    if (PGraphicsOpenGL.BIG_ENDIAN)  {
+    if (PGL.BIG_ENDIAN)  {
       switch (arrayFormat) {
       case ALPHA:
                   
@@ -682,7 +682,7 @@ public class PTexture implements PConstants {
   protected void convertToARGB(int[] intArray, int[] tIntArray) {
     int t = 0; 
     int p = 0;
-    if (PGraphicsOpenGL.BIG_ENDIAN) {
+    if (PGL.BIG_ENDIAN) {
 
       // RGBA to ARGB conversion: shifting RGB 8 bits to the right,
       // and placing A 24 bits to the left.
@@ -768,7 +768,7 @@ public class PTexture implements PConstants {
     pgl.glTexImage2D(glTarget, 0, glFormat, glWidth, glHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
     
     // Makes sure that the texture buffer in video memory doesn't contain any garbage.
-    pgl.initTexture(glTarget, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE);
+    pgl.initTexture(glTarget, PGL.GL_RGBA, width, height);
     
     pgl.glBindTexture(glTarget, 0);
     pgl.disableTexturing(glTarget);
@@ -819,12 +819,15 @@ public class PTexture implements PConstants {
     if (scale) {
       // Rendering tex into "this", and scaling the source rectangle
       // to cover the entire destination region.
-      pg.drawTexture(tex, x, y, w, h, 0, 0, width, height);    
+      pgl.drawTexture(tex.glTarget, tex.glID, tex.glWidth, tex.glHeight,
+                                              x, y, w, h, 0, 0, width, height);
+      
     } else {
       // Rendering tex into "this" but without scaling so the contents 
       // of the source texture fall in the corresponding texels of the
       // destination.
-      pg.drawTexture(tex, x, y, w, h, x, y, w, h);
+      pgl.drawTexture(tex.glTarget, tex.glID, tex.glWidth, tex.glHeight,
+                                              x, y, w, h, x, y, w, h);
     }
     pg.popFramebuffer();
   }  

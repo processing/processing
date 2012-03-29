@@ -3952,7 +3952,7 @@ public class PShape3D extends PShape {
         expand(newSize);
       }
       
-      if (dataSize <= PGraphicsOpenGL.MIN_ARRAYCOPY_SIZE) {
+      if (dataSize <= PGL.MIN_ARRAYCOPY_SIZE) {
         // Copying elements one by one instead of using arrayCopy is more efficient for
         // few vertices...
         for (int i = 0; i < dataSize; i++) {
@@ -3995,7 +3995,7 @@ public class PShape3D extends PShape {
         expand(newSize);
       }
       
-      if (dataSize <= PGraphicsOpenGL.MIN_ARRAYCOPY_SIZE) {
+      if (dataSize <= PGL.MIN_ARRAYCOPY_SIZE) {
         // Copying elements one by one instead of using arrayCopy is more efficient for
         // few vertices...
         for (int i = 0; i < dataSize; i++) {
