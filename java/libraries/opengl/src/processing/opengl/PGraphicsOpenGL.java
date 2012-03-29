@@ -4626,18 +4626,6 @@ public class PGraphicsOpenGL extends PGraphics {
   public int get(int x, int y) {
     flush();
     loadPixels();    
-
-//    beginScreenOp();
-//    int color = pgl.getColorValue(x, y);
-//    endScreenOp();
-//    
-//    if (PGL.BIG_ENDIAN) {
-//      return 0xff000000 | ((color >> 8) & 0x00ffffff);
-//    } else {
-//      return 0xff000000 | ((color << 16) & 0xff0000) | 
-//                          (color & 0xff00) | 
-//                          ((color >> 16) & 0xff);
-//    }   
     
     int i = y * width + x;
     if (0 <= i && i < pixels.length) {
@@ -4679,15 +4667,6 @@ public class PGraphicsOpenGL extends PGraphics {
     flush();
     loadPixels();
     settingPixels = true;
-     
-//    float a = ((argb >> 24) & 0xFF) / 255.0f;
-//    float r = ((argb >> 16) & 0xFF) / 255.0f;
-//    float g = ((argb >>  8) & 0xFF) / 255.0f;
-//    float b = ((argb >>  0) & 0xFF) / 255.0f;
-//    
-//    beginScreenOp();
-//    pgl.drawRectangle(r, g, b, a, x, height - y - 1, x + 1, height - y);
-//    endScreenOp();
     
     int i = y * width + x;
     if (0 <= i && i < pixels.length) {
