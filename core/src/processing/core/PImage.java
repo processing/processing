@@ -787,7 +787,7 @@ public class PImage implements PConstants, Cloneable {
   public void set(int x, int y, int c) {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return;
     pixels[y*width + x] = c;
-    updatePixelsImpl(x, y, x+1, y+1);  // slow?
+    updatePixelsImpl(x, y, 1, 1);  // slow?
   }
 
 
@@ -847,7 +847,7 @@ public class PImage implements PConstants, Cloneable {
       srcOffset += src.width;
       dstOffset += width;
     }
-    updatePixelsImpl(sx, sy, sx+sw, sy+sh);
+    updatePixelsImpl(sx, sy, sw, sh);
   }
 
 
