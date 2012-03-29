@@ -305,12 +305,17 @@ public class PGraphicsOpenGL extends PGraphics {
   protected PFramebuffer offscreenFramebufferMultisample;
   protected boolean offscreenMultisample;
   
+  protected boolean offscreenNotCurrent;  
+  
   // ........................................................  
   
   // Utility variables:
   
   /** True if we are inside a beginDraw()/endDraw() block. */
   protected boolean drawing = false;  
+  
+  /** True if we are inside a beginScreenOp()/endScreenOp() block. */
+  protected boolean screenOp = false;
   
   /** Used to detect the occurrence of a frame resize event. */
   protected boolean resized = false;
@@ -329,22 +334,24 @@ public class PGraphicsOpenGL extends PGraphics {
   
   // ........................................................
   
-  // Drawing surface:
+  // Screen surface:
 
-  /** A handy reference to the PTexture bound to the drawing surface (off or on-screen) */
+  /** A handy reference to the PTexture bound to the drawing surface 
+   * (off or on-screen) */
   protected PTexture texture;
   
-  /** The crop rectangle for texture. It should always be {0, 0, width, height}. */
-  protected int[] texCrop;
-  
-  /** IntBuffer to go with the pixels[] array. */
+  /** IntBuffer wrapping the pixels array. */
   protected IntBuffer pixelBuffer;
   
-  /** 1-pixel get/set buffer. */
-  protected IntBuffer getsetBuffer;
+  /** Array to store pixels in OpenGL format. */
+  protected int[] rgbaPixels;
   
-  /** 1-pixel get/set texture. */
-  protected PTexture getsetTexture;
+  /** Flag that indicates that the OpenGL color buffer is out of 
+   * sync with the pixels array. */
+  protected boolean pixelsAreDirty;
+  
+  /** Flag to indicate if the user is setting individual pixels */
+  protected boolean settingPixels;
   
   // ........................................................
   
@@ -373,33 +380,7 @@ public class PGraphicsOpenGL extends PGraphics {
     new PMatrix3D(-1,  3, -3,  1,
                    3, -6,  3,  0,
                   -3,  3,  0,  0,
-                   1,  0,  0,  0);     
-    
-  // ........................................................
-  
-  // Constants    
-  
-  static protected final int MIN_ARRAYCOPY_SIZE = 2;  
-    
-  static public float FLOAT_EPS = Float.MIN_VALUE;
-  // Calculation of the Machine Epsilon for float precision. From:
-  // http://en.wikipedia.org/wiki/Machine_epsilon#Approximation_using_Java
-  static {
-    float eps = 1.0f;
-
-    do {
-      eps /= 2.0f;
-    } while ((float)(1.0 + (eps / 2.0)) != 1.0);
-   
-    FLOAT_EPS = eps;
-  }  
-  
-  /**
-   * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
-   * if little endian (x86 Intel for Mac or PC).
-   */
-  static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;  
-  
+                   1,  0,  0,  0);       
   
   //////////////////////////////////////////////////////////////  
   
@@ -987,7 +968,7 @@ public class PGraphicsOpenGL extends PGraphics {
       currentFramebuffer = fbStack.pop();
       currentFramebuffer.bind();
     } catch (EmptyStackException e) {
-      PGraphics.showWarning(": Empty framebuffer stack");
+      PGraphics.showWarning("P3D: Empty framebuffer stack");
     }
   }
   
@@ -1527,8 +1508,12 @@ public class PGraphicsOpenGL extends PGraphics {
     } else {
       pgl.glDepthMask(true);
     }        
-    
+        
     drawing = true;
+    screenOp = false;
+    
+    pixelsAreDirty = true;
+    settingPixels = false;
     
     clearColorBuffer0 = clearColorBuffer;
     clearColorBuffer = false;
@@ -1543,6 +1528,17 @@ public class PGraphicsOpenGL extends PGraphics {
     if (flushMode == FLUSH_WHEN_FULL) {
       // Flushing any remaining geometry.
       flush();
+             
+      if (settingPixels) {
+        // Drawing the pixels array. We can only get
+        // here if there was no geometry to flush at 
+        // the end of draw, and the user has been
+        // manipulating individual pixels. If that's 
+        // the case we need to update the screen with 
+        // the changes in  the pixels array.
+        updatePixels();        
+      }
+      
       // TODO: Implement depth sorting (http://code.google.com/p/processing/issues/detail?id=51)      
       //if (hints[ENABLE_DEPTH_SORT]) {
       //  flush();
@@ -1625,19 +1621,33 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   
-  // Utility function to get ready OpenGL for a specific
-  // operation, such as grabbing the contents of the color
-  // buffer.
-  protected void beginGLOp() {
-    pgl.updateOffscreen(pg.pgl);
+  protected void beginScreenOp() {  
+    if (!primarySurface) {
+      offscreenNotCurrent = offscreenFramebuffer != currentFramebuffer;
+      if (offscreenNotCurrent) {
+        // If the surface is not primary and multisampling is on, then the framebuffer
+        // will be switched momentarily from offscreenFramebufferMultisample to offscreenFramebuffer.
+        // This is in fact correct, because the glReadPixels() function doesn't work with 
+        // multisample framebuffer attached as the read buffer.        
+        pushFramebuffer();
+        setFramebuffer(offscreenFramebuffer);
+        pgl.updateOffscreen(pg.pgl);
+      }      
+    } else {
+      offscreenNotCurrent = false;
+    }
+    screenOp = true;
   }
 
   
-  // Pairs-up with beginGLOp().
-  protected void endGLOp() {
-  }
+  protected void endScreenOp() {
+    screenOp = false;
+    if (offscreenNotCurrent) {
+      popFramebuffer();
+    }    
+  }  
   
-    
+  
   protected void updateGLProjection() {
     if (glProjection == null) {
       glProjection = new float[16];
@@ -2241,6 +2251,12 @@ public class PGraphicsOpenGL extends PGraphics {
     boolean hasFill = 0 < tessGeo.fillVertexCount && 0 < tessGeo.fillIndexCount;
     
     if (hasPoints || hasLines || hasFill) {
+      if (settingPixels) {
+        // If the user has been manipulating individual pixels,
+        // the changes need to be copied to the screen before
+        // drawing any new geometry.
+        updatePixels();        
+      }   
       
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         // The modelview transformation has been applied already to the 
@@ -2265,6 +2281,11 @@ public class PGraphicsOpenGL extends PGraphics {
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         popMatrix();
       }
+      
+      // The pixels array is dirty because it lost sync with the color buffer
+      // as new geometry has been drawn.
+      pixelsAreDirty = true;
+      settingPixels = false;
     }
     
     tessGeo.clear();  
@@ -4485,356 +4506,63 @@ public class PGraphicsOpenGL extends PGraphics {
   // setCache, getCache, removeCache
   // isModified, setModified
 
+  
   //////////////////////////////////////////////////////////////
 
   // LOAD/UPDATE PIXELS
 
   
+  // Initializes the pixels array, copying the current contents of the
+  // color buffer into it.
   public void loadPixels() {
     flush();
     
     if ((pixels == null) || (pixels.length != width * height)) {
       pixels = new int[width * height];      
-      pixelBuffer = IntBuffer.allocate(pixels.length);      
+      pixelBuffer = IntBuffer.wrap(pixels);      
+      pixelsAreDirty = true;
     }
 
-    boolean outsideDraw = primarySurface && !drawing;
-    if (outsideDraw) {
-      beginGLOp();      
-    }
-    
-    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    
-    if (notCurrent) {
-      pushFramebuffer();
-      setFramebuffer(offscreenFramebuffer);
-    }
-        
-    pixelBuffer.rewind();
-    if (primarySurface) {
+    if (pixelsAreDirty) {
+      beginScreenOp();        
+      pixelBuffer.rewind();
       pgl.glReadBuffer(PGL.GL_FRONT);
-    }
-    pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
-    
-    if (notCurrent) {
-      popFramebuffer();
-    } 
-        
-    pixelBuffer.get(pixels);
-
-    // flip vertically (opengl stores images upside down),
-    // and swap RGBA components to ARGB (big endian)
-    int index = 0;
-    int yindex = (height - 1) * width;
-    for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) {
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-          // ignores alpha component, just sets it opaque
-          pixels[index] = 0xff000000 | ((pixels[yindex] >> 8) & 0x00ffffff);
-          pixels[yindex] = 0xff000000 | ((temp >> 8) & 0x00ffffff);
-
-          index++;
-          yindex++;
-        }
-      } else { // LITTLE_ENDIAN, convert ABGR to ARGB
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-
-          // identical to endPixels because only two
-          // components are being swapped
-          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000)
-              | (pixels[yindex] & 0xff00) | ((pixels[yindex] >> 16) & 0xff);
-
-          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000)
-              | (temp & 0xff00) | ((temp >> 16) & 0xff);
-
-          index++;
-          yindex++;
-        }
+      pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);    
+      endScreenOp();        
+      
+      PGL.nativeToJavaARGB(pixels, width, height);      
+      
+      if (primarySurface) {
+        loadTextureImpl(POINT);           
+        pixelsToTexture();
       }
-      yindex -= width * 2;
-    }
-
-    // When height is an odd number, the middle line needs to be
-    // endian swapped, but not y-swapped.
-    // http://dev.processing.org/bugs/show_bug.cgi?id=944
-    if ((height % 2) == 1) {
-      index = (height / 2) * width;
-      if (BIG_ENDIAN) {
-        for (int x = 0; x < width; x++) {
-          // ignores alpha component, just sets it opaque
-          pixels[index] = 0xff000000 | ((pixels[index] >> 8) & 0x00ffffff);
-        }
-      } else {
-        for (int x = 0; x < width; x++) {
-          pixels[index] = 0xff000000 | ((pixels[index] << 16) & 0xff0000)
-              | (pixels[index] & 0xff00) | ((pixels[index] >> 16) & 0xff);
-        }
-      }
-    }    
-    
-    if (primarySurface) {
-      // Load texture.
-      loadTextureImpl(POINT);           
-      pixelsToTexture();
-    }
-    
-    if (outsideDraw) {
-      endGLOp();      
-    }    
-  }
-
-  
-  /**
-   * Convert native OpenGL format into palatable ARGB format. This function
-   * leaves alone (ignores) the alpha component. Also flips the image
-   * vertically, since images are upside-down in GL.
-   */
-  static public void nativeToJavaRGB(PImage image) {
-    int index = 0;
-    int yindex = (image.height - 1) * image.width;
-    for (int y = 0; y < image.height / 2; y++) {
-      if (BIG_ENDIAN) {
-        for (int x = 0; x < image.width; x++) {
-          int temp = image.pixels[index];
-          // ignores alpha component, just sets it opaque
-          image.pixels[index] = 0xff000000 | ((image.pixels[yindex] >> 8) & 0x00ffffff);
-          image.pixels[yindex] = 0xff000000 | ((temp >> 8) & 0x00ffffff);
-          index++;
-          yindex++;
-        }
-      } else { // LITTLE_ENDIAN, convert ABGR to ARGB
-        for (int x = 0; x < image.width; x++) {
-          int temp = image.pixels[index];
-
-          // identical to endPixels because only two
-          // components are being swapped
-          image.pixels[index] = 0xff000000
-              | ((image.pixels[yindex] << 16) & 0xff0000)
-              | (image.pixels[yindex] & 0xff00)
-              | ((image.pixels[yindex] >> 16) & 0xff);
-
-          image.pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000)
-              | (temp & 0xff00) | ((temp >> 16) & 0xff);
-
-          index++;
-          yindex++;
-        }
-      }
-      yindex -= image.width * 2;
-    }
-  }
-  
-
-  /**
-   * Convert native OpenGL format into palatable ARGB format. This function
-   * leaves alone (ignores) the alpha component. Also flips the image
-   * vertically, since images are upside-down in GL.
-   */
-  static public void nativeToJavaARGB(PImage image) {
-    int index = 0;
-    int yindex = (image.height - 1) * image.width;
-    for (int y = 0; y < image.height / 2; y++) {
-      if (BIG_ENDIAN) {
-        for (int x = 0; x < image.width; x++) {
-          int temp = image.pixels[index];
-          // ignores alpha component, just sets it opaque
-          image.pixels[index] = (image.pixels[yindex] & 0xff000000)
-              | ((image.pixels[yindex] >> 8) & 0x00ffffff);
-          image.pixels[yindex] = (temp & 0xff000000)
-              | ((temp >> 8) & 0x00ffffff);
-          index++;
-          yindex++;
-        }
-      } else { // LITTLE_ENDIAN, convert ABGR to ARGB
-        for (int x = 0; x < image.width; x++) {
-          int temp = image.pixels[index];
-
-          // identical to endPixels because only two
-          // components are being swapped
-          image.pixels[index] = (image.pixels[yindex] & 0xff000000)
-              | ((image.pixels[yindex] << 16) & 0xff0000)
-              | (image.pixels[yindex] & 0xff00)
-              | ((image.pixels[yindex] >> 16) & 0xff);
-
-          image.pixels[yindex] = (temp & 0xff000000)
-              | ((temp << 16) & 0xff0000) | (temp & 0xff00)
-              | ((temp >> 16) & 0xff);
-
-          index++;
-          yindex++;
-        }
-      }
-      yindex -= image.width * 2;
-    }
-  }
-  
-
-  /**
-   * Convert ARGB (Java/Processing) data to native OpenGL format. This function
-   * leaves alone (ignores) the alpha component. Also flips the image
-   * vertically, since images are upside-down in GL.
-   */
-  static public void javaToNativeRGB(PImage image) {
-    int width = image.width;
-    int height = image.height;
-    int pixels[] = image.pixels;
-
-    int index = 0;
-    int yindex = (height - 1) * width;
-    for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) {
-        // and convert ARGB back to opengl RGBA components (big endian)
-        for (int x = 0; x < image.width; x++) {
-          int temp = pixels[index];
-          /*
-           * pixels[index] = ((pixels[yindex] >> 24) & 0xff) | ((pixels[yindex]
-           * << 8) & 0xffffff00); pixels[yindex] = ((temp >> 24) & 0xff) |
-           * ((temp << 8) & 0xffffff00);
-           */
-          pixels[index] = ((pixels[yindex] << 8) & 0xffffff00) | 0xff;
-          pixels[yindex] = ((temp << 8) & 0xffffff00) | 0xff;
-
-          index++;
-          yindex++;
-        }
-
-      } else {
-        // convert ARGB back to native little endian ABGR
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-
-          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000)
-              | (pixels[yindex] & 0xff00) | ((pixels[yindex] >> 16) & 0xff);
-
-          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000)
-              | (temp & 0xff00) | ((temp >> 16) & 0xff);
-
-          index++;
-          yindex++;
-        }
-      }
-      yindex -= width * 2;
+      
+      pixelsAreDirty = false;
     }
   }
 
   
-  /**
-   * Convert Java ARGB to native OpenGL format. Also flips the image vertically,
-   * since images are upside-down in GL.
-   */
-  static public void javaToNativeARGB(PImage image) {
-    int width = image.width;
-    int height = image.height;
-    int pixels[] = image.pixels;
-
-    int index = 0;
-    int yindex = (height - 1) * width;
-    for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) {
-        // and convert ARGB back to opengl RGBA components (big endian)
-        for (int x = 0; x < image.width; x++) {
-          int temp = pixels[index];
-          pixels[index] = ((pixels[yindex] >> 24) & 0xff)
-              | ((pixels[yindex] << 8) & 0xffffff00);
-          pixels[yindex] = ((temp >> 24) & 0xff) | ((temp << 8) & 0xffffff00);
-
-          index++;
-          yindex++;
-        }
-
-      } else {
-        // convert ARGB back to native little endian ABGR
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-
-          pixels[index] = (pixels[yindex] & 0xff000000)
-              | ((pixels[yindex] << 16) & 0xff0000) | (pixels[yindex] & 0xff00)
-              | ((pixels[yindex] >> 16) & 0xff);
-
-          pixels[yindex] = (pixels[yindex] & 0xff000000)
-              | ((temp << 16) & 0xff0000) | (temp & 0xff00)
-              | ((temp >> 16) & 0xff);
-
-          index++;
-          yindex++;
-        }
-      }
-      yindex -= width * 2;
-    }
-  }
-
-  
+  // Copies the contents of the pixels array to the screen
   public void updatePixels() {
-    // flip vertically (opengl stores images upside down),
+    if (pixels == null) return;
     
-    int index = 0;
-    int yindex = (height - 1) * width;
-    for (int y = 0; y < height / 2; y++) {
-      if (BIG_ENDIAN) {
-        // and convert ARGB back to opengl RGBA components (big endian)
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-
-          pixels[index] = ((pixels[yindex] << 8) & 0xffffff00) | 0xff;
-          pixels[yindex] = ((temp << 8) & 0xffffff00) | 0xff;
-
-          index++;
-          yindex++;
-        }
-
-      } else {
-        // convert ARGB back to native little endian ABGR
-        for (int x = 0; x < width; x++) {
-          int temp = pixels[index];
-
-          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000)
-              | (pixels[yindex] & 0xff00) | ((pixels[yindex] >> 16) & 0xff);
-
-          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000)
-              | (temp & 0xff00) | ((temp >> 16) & 0xff);
-
-          index++;
-          yindex++;
-        }
-      }
-      yindex -= width * 2;
+    if (rgbaPixels == null || rgbaPixels.length != pixels.length) {
+      rgbaPixels = new int[pixels.length];
     }
-    
-    pixelBuffer.rewind();    
-    pixelBuffer.put(pixels);
-    
-    boolean outsideDraw = primarySurface && !drawing;
-    if (outsideDraw) {
-      beginGLOp();      
-    }    
+    PApplet.arrayCopy(pixels, rgbaPixels);    
+    PGL.javaToNativeARGB(rgbaPixels, width, height);
     
     // Copying pixel buffer to screen texture...
-    copyToTexture(pixelBuffer);
+    pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glID, 
+                      0, 0, width, height, IntBuffer.wrap(rgbaPixels));
     
     // ...and drawing the texture to screen.
+    beginScreenOp();
+    drawTexture();    
+    endScreenOp();
     
-    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    if (notCurrent) {
-      // If this is an offscreen surface that is not current, then the offscreen framebuffer
-      // is bound so the texture is drawn to it instead to the main surface. Even if the
-      // surface in antialiased we don't need to bind the multisample framebuffer, we
-      // just draw to the regular offscreen framebuffer.
-      pushFramebuffer();
-      setFramebuffer(offscreenFramebuffer);
-    }
-    
-    drawTexture();
-    
-    if (notCurrent) {
-      popFramebuffer();
-    }    
-    
-    if (outsideDraw) {
-      endGLOp();      
-    }    
-  }
+    pixelsAreDirty = false;
+  }  
   
     
   //////////////////////////////////////////////////////////////
@@ -4842,20 +4570,23 @@ public class PGraphicsOpenGL extends PGraphics {
   // LOAD/UPDATE TEXTURE
   
   
+  // Copies the contents of the color buffer into the pixels
+  // array, and then the pixels array into the screen texture.
   public void loadTexture() {
     if (primarySurface) {
-      if (!drawing) {
-        beginGLOp();      
-      }   
-      
       loadTextureImpl(POINT);      
       loadPixels();      
       pixelsToTexture();
-      
-      if (!drawing) {
-        endGLOp();      
-      }            
     }
+  }
+    
+  
+  // Draws wherever it is in the screen texture right now to the screen.
+  public void updateTexture() {
+    flush();    
+    beginScreenOp();
+    drawTexture();    
+    endScreenOp();   
   }
   
   
@@ -4867,58 +4598,13 @@ public class PGraphicsOpenGL extends PGraphics {
       texture.setFlippedY(true);
       this.setCache(pg, texture);
       this.setParams(pg, params);
-      
-      texCrop = new int[4];
-      texCrop[0] = 0;
-      texCrop[1] = 0;
-      texCrop[2] = width;
-      texCrop[3] = height;     
     }
   }   
   
   
-  // Draws wherever it is in the screen texture right now to the screen.
-  public void updateTexture() {
-    flush();
-    
-    boolean outsideDraw = primarySurface && !drawing;
-    if (outsideDraw) {
-      beginGLOp();      
-    }    
-    
-    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    if (notCurrent) {
-      pushFramebuffer();
-      setFramebuffer(offscreenFramebuffer);
-    }  
-    
-    drawTexture();
-    
-    if (notCurrent) {
-      popFramebuffer();
-    }
-    
-    if (outsideDraw) {
-      endGLOp();      
-    }    
-  }
-  
-  
   protected void drawTexture() {
-    drawTexture(texture, texCrop, 0, 0, width, height);
-  }
-  
-  
-  protected void copyToTexture(IntBuffer buffer) {
-    copyToTexture(texture, buffer, 0, 0, width, height);
-  }
-  
-  
-  protected void copyFrameToTexture() {
-    // Make sure that the execution off all the openGL commands is 
-    // finished before loading the texture. 
-    pgl.glFinish();
-    loadTexture();    
+    pgl.drawTexture(texture.glTarget, texture.glID, texture.glWidth, texture.glHeight,
+                                                    0, 0, width, height, 0, 0, width, height);
   }
   
   
@@ -4931,70 +4617,42 @@ public class PGraphicsOpenGL extends PGraphics {
     texture.get(pixels);
   }
   
-
+  
   //////////////////////////////////////////////////////////////
 
-  // RESIZE
-
-  
-  public void resize(int wide, int high) {
-    PGraphics.showMethodWarning("resize");
-  }
-  
-
-  //////////////////////////////////////////////////////////////
-
-  // GET/SET
+  // GET/SET PIXELS
   
   
   public int get(int x, int y) {
     flush();
-    
-    if (getsetBuffer == null) {
-      getsetBuffer = IntBuffer.allocate(1);      
-    }
-    
-    boolean outsideDraw = primarySurface && !drawing;
-    if (outsideDraw) {
-      beginGLOp();      
-    }       
-    
-    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    if (notCurrent) {
-      // If the surface is not primary and multisampling is on, then the framebuffer
-      // will be switched momentarily from offscreenFramebufferMultisample to offscreenFramebuffer.
-      // This is in fact correct, because the glReadPixels() function doesn't work with 
-      // multisample framebuffer attached as the read buffer.
-      pushFramebuffer();
-      setFramebuffer(offscreenFramebuffer);
-    }
-     
-    getsetBuffer.rewind();
-    if (primarySurface) {
-      pgl.glReadBuffer(PGL.GL_FRONT);
-    }
-    pgl.glReadPixels(x, height - y - 1, 1, 1, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, getsetBuffer);
+    loadPixels();    
 
-    if (notCurrent) {
-      popFramebuffer();
-    }
-
-    int getset = getsetBuffer.get(0);
+//    beginScreenOp();
+//    int color = pgl.getColorValue(x, y);
+//    endScreenOp();
+//    
+//    if (PGL.BIG_ENDIAN) {
+//      return 0xff000000 | ((color >> 8) & 0x00ffffff);
+//    } else {
+//      return 0xff000000 | ((color << 16) & 0xff0000) | 
+//                          (color & 0xff00) | 
+//                          ((color >> 16) & 0xff);
+//    }   
     
-    if (outsideDraw) {
-      endGLOp();      
-    }    
-    
-    if (BIG_ENDIAN) {
-      return 0xff000000 | ((getset >> 8) & 0x00ffffff);
-
+    int i = y * width + x;
+    if (0 <= i && i < pixels.length) {
+      return pixels[i];
     } else {
-      return 0xff000000 | ((getset << 16) & 0xff0000) | (getset & 0xff00)
-          | ((getset >> 16) & 0xff);
-    }   
+      return 0x000000;
+    }
   }
   
 
+  public PImage get() {
+    return get(0, 0, width, height);
+  }
+  
+  
   // public PImage get(int x, int y, int w, int h)
 
   
@@ -5002,47 +4660,39 @@ public class PGraphicsOpenGL extends PGraphics {
     flush();
     
     PImage newbie = parent.createImage(w, h, ARGB);
-
     IntBuffer newbieBuffer = IntBuffer.allocate(w * h);    
-    
-    boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-    if (notCurrent) {
-      pushFramebuffer();
-      setFramebuffer(offscreenFramebuffer);
-    }    
-
     newbieBuffer.rewind();
-    if (primarySurface) {
-      pgl.glReadBuffer(PGL.GL_FRONT);
-    }
-
-    pgl.glReadPixels(x, height - y - h, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, newbieBuffer);
     
-    if (notCurrent) {
-      popFramebuffer();
-    }    
+    beginScreenOp();
+    pgl.glReadBuffer(PGL.GL_FRONT);
+    pgl.glReadPixels(x, height - y - h, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, newbieBuffer);
+    endScreenOp();
     
     newbie.loadPixels();
     newbieBuffer.get(newbie.pixels);
     nativeToJavaARGB(newbie);
     return newbie;
   }
-  
-  
-  public PImage get() {
-    return get(0, 0, width, height);
-  }
 
   
   public void set(int x, int y, int argb) {
     flush();
+    loadPixels();
+    settingPixels = true;
      
-    float a = ((argb >> 24) & 0xFF) / 255.0f;
-    float r = ((argb >> 16) & 0xFF) / 255.0f;
-    float g = ((argb >>  8) & 0xFF) / 255.0f;
-    float b = ((argb >>  0) & 0xFF) / 255.0f;
+//    float a = ((argb >> 24) & 0xFF) / 255.0f;
+//    float r = ((argb >> 16) & 0xFF) / 255.0f;
+//    float g = ((argb >>  8) & 0xFF) / 255.0f;
+//    float b = ((argb >>  0) & 0xFF) / 255.0f;
+//    
+//    beginScreenOp();
+//    pgl.drawRectangle(r, g, b, a, x, height - y - 1, x + 1, height - y);
+//    endScreenOp();
     
-    pgl.drawRectangle(r, g, b, a, x, y, x + 1, y + 1);
+    int i = y * width + x;
+    if (0 <= i && i < pixels.length) {
+      pixels[i] = argb;
+    }
   }
 
   
@@ -5054,34 +4704,48 @@ public class PGraphicsOpenGL extends PGraphics {
     flush();
     
     PTexture tex = getTexture(source);
-    if (tex != null) {
-      int w = source.width; 
-      int h = source.height;
-      
-      boolean outsideDraw = primarySurface && !drawing;
-      if (outsideDraw) {
-        beginGLOp();      
-      }        
-      
-      boolean notCurrent = !primarySurface && offscreenFramebuffer != currentFramebuffer;
-      if (notCurrent) {
-        pushFramebuffer();
-        setFramebuffer(offscreenFramebuffer);
-      }
-      
-      // The crop region and draw rectangle are given like this to take into account
-      // inverted y-axis in Processin with respect to OpenGL.
-      drawTexture(tex, 0, 0, w, h, x, height - y, w, -h);
-      
-      if (notCurrent) {
-        popFramebuffer();
-      }     
-      
-      if (outsideDraw) {
-        endGLOp();      
-      }      
+    if (tex != null) {      
+      beginScreenOp();
+      pgl.drawTexture(tex.glTarget, tex.glID, tex.glWidth, tex.glHeight,
+                      0, 0, tex.width, tex.height, 
+                      x, y + height, x + tex.width, y + height - tex.height);
+      endScreenOp();
+      pixelsAreDirty = true;
     }
   }  
+
+  
+  //////////////////////////////////////////////////////////////
+
+  // IMAGE CONVERSION
+  
+  
+  static public void nativeToJavaRGB(PImage image) {
+    if (image.pixels != null) {
+      PGL.nativeToJavaRGB(image.pixels, image.width, image.height);  
+    }    
+  }
+
+
+  static public void nativeToJavaARGB(PImage image) {
+    if (image.pixels != null) {
+      PGL.nativeToJavaARGB(image.pixels, image.width, image.height);  
+    }    
+  }
+  
+
+  static public void javaToNativeRGB(PImage image) {
+    if (image.pixels != null) {
+      PGL.javaToNativeRGB(image.pixels, image.width, image.height);  
+    } 
+  }
+  
+  
+  static public void javaToNativeARGB(PImage image) {
+    if (image.pixels != null) {
+      PGL.javaToNativeARGB(image.pixels, image.width, image.height);  
+    } 
+  }
 
   
   //////////////////////////////////////////////////////////////
@@ -5321,6 +4985,7 @@ public class PGraphicsOpenGL extends PGraphics {
   /**
    * This utility method returns the texture associated to the image.
    * creating and/or updating it if needed.
+   * 
    * @param img the image to have a texture metadata associated to it
    */  
   public PTexture getTexture(PImage img) {
@@ -5346,17 +5011,6 @@ public class PGraphicsOpenGL extends PGraphics {
     return tex;
   }
 
-  
-  /**
-   * This utility method returns the texture associated to the image,
-   * but it doesn't create a new texture if the image has no texture.
-   * @param img the image to have a texture metadata associated to it
-   */      
-  protected PTexture queryTexture(PImage img) {
-    PTexture tex = (PTexture)img.getCache(pg);
-    return tex;
-  }
-  
   
   /**
    * This utility method creates a texture for the provided image, and adds it
@@ -5402,138 +5056,15 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   
-  /** Utility function to render texture. */
-  protected void drawTexture(PTexture tex, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
-    int[] crop = {x1, y1, w1, h1};
-    drawTexture(tex, crop, x2, y2, w2, h2);    
+  //////////////////////////////////////////////////////////////
+
+  // RESIZE
+
+  
+  public void resize(int wide, int high) {
+    PGraphics.showMethodWarning("resize");
   }
   
-  
-  /** Utility function to render texture. */
-  protected void drawTexture(PTexture tex, int[] crop, int x, int y, int w, int h) {
-    drawTexture(tex.glTarget, tex.glID, tex.glWidth, tex.glHeight, crop, x, y, w, h);
-  }  
-  
-  
-  /** Utility function to render texture. */
-  protected void drawTexture(int target, int id, int w, int h, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
-    int[] crop = {x1, y1, w1, h1};
-    drawTexture(target, id, w, h, crop, x2, y2, w2, h2);    
-  }  
-  
-  
-  /** Utility function to render texture without blend. */
-  protected void drawTexture(int target, int id, int tw, int th, int[] crop, int x, int y, int w, int h) {
-    pgl.enableTexturing(target);
-    pgl.glBindTexture(target, id);
-    
-    int savedBlendMode = blendMode;
-    blendMode(REPLACE); 
-    
-    // The texels of the texture replace the color of wherever is on the screen.      
-//    texEnvMode = REPLACE;
-    
-    drawTexture(tw, th, crop, x, y, w, h);
-    
-    // Returning to the default texture environment mode, MODULATE. 
-    // This allows tinting a texture with the current fragment color.       
-//    texEnvMode = MODULATE;
-    
-    pgl.glBindTexture(target, 0);
-    pgl.disableTexturing(target);
-    
-    blendMode(savedBlendMode);
-  }  
-  
-  
-  protected void drawTexture(int w, int h, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
-    int[] crop = {x1, y1, w1, h1};
-    drawTexture(w, h, crop, x2, y2, w2, h2);
-  }
-  
-  
-  /** 
-   * Utility function to render currently bound texture using current blend mode. 
-   * Equivalent to:
-   * glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, crop, 0);
-   * glDrawTexiOES(x, y, 0, w, h);
-   * in OpenGL ES. 
-   */
-  protected void drawTexture(int tw, int th, int[] crop, int x, int y, int w, int h) {
-    flush();
-    
-    pgl.glDepthMask(false);
-
-    // TODO: finish this!
-    /*
-    
-    pgl.setProjectionMode();
-    pgl.pushMatrix();
-    pgl.loadIdentity();
-    pgl.setOrthographicProjection(0, width, 0, height, -1, 1);
-    
-    pgl.setModelviewMode();
-    pgl.pushMatrix();
-    pgl.loadIdentity();
-
-    pgl.translate(x, y, 0);
-    pgl.scale(w, h, 1);
-    // Rendering the quad with the appropriate texture coordinates needed for the
-    // specified crop region
-    float s0 = (float)crop[0] / tw;
-    float s1 = (float)(crop[0] + crop[2]) / tw;    
-    float t0 = (float)crop[1] / th;
-    float t1 = (float)(crop[1] + crop[3]) / th;
-    drawTexQuad(s0, t0, s1, t1);
-
-    // Restoring matrices.
-    pgl.setProjectionMode();
-    pgl.popMatrix();
-    pgl.setModelviewMode();
-    pgl.popMatrix();
-    
-    if (hintEnabled(ENABLE_DEPTH_MASK)) {
-      pgl.enableDepthMask();
-    }       
-    
-    */
-  }
-  
-  
-  protected void drawTexQuad() {
-    drawTexQuad(0, 0, 1, 1);
-  }
-  
-  
-  /** 
-   * Pushes a normalized (1x1) textured quad to the GPU.
-   */
-  protected void drawTexQuad(float u0, float v0, float u1, float v1) {
-    // TODO: need to fix null thing, test...
-    stroke = false;
-    beginShape(QUAD);
-    vertex(0, 0, u0, v0);
-    vertex(1, 0, u1, v0);
-    vertex(1, 1, u1, v1);
-    vertex(0, 1, u0, v1);
-    endShape();
-    tessellate(OPEN);    
-    renderTexFill(null); // we need the texture object here...   
-  }  
-  
-  
-  /** 
-   * Utility function to copy buffer to texture.
-   */
-  protected void copyToTexture(PTexture tex, IntBuffer buffer, int x, int y, int w, int h) {    
-    buffer.rewind();    
-    pgl.enableTexturing(tex.glTarget);
-    pgl.glBindTexture(tex.glTarget, tex.glID);    
-    pgl.glTexSubImage2D(tex.glTarget, 0, x, y, w, h, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, buffer);
-    pgl.glBindTexture(tex.glTarget, 0);
-    pgl.disableTexturing(tex.glTarget);
-  }   
-
   
   //////////////////////////////////////////////////////////////
   
@@ -6761,7 +6292,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
         
     public int javaToNativeARGB(int color) {
-      if (BIG_ENDIAN) {
+      if (PGL.BIG_ENDIAN) {
         return ((color >> 24) & 0xff) | ((color << 8) & 0xffffff00);
       } else {
         return (color & 0xff000000)
@@ -8026,7 +7557,7 @@ public class PGraphicsOpenGL extends PGraphics {
           fillNormals[index  ] = nx * nm.m02 + ny * nm.m12 + nz * nm.m22;
         }        
       } else {
-        if (nvert <= MIN_ARRAYCOPY_SIZE) {
+        if (nvert <= PGL.MIN_ARRAYCOPY_SIZE) {
           // Copying elements one by one instead of using arrayCopy is more efficient for
           // few vertices...
           for (int i = 0; i < nvert; i++) {
@@ -8059,7 +7590,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
         
-      if (nvert <= MIN_ARRAYCOPY_SIZE) {
+      if (nvert <= PGL.MIN_ARRAYCOPY_SIZE) {
         for (int i = 0; i < nvert; i++) {
           int inIdx = i0 + i;
           int tessIdx = firstFillVertex + i;

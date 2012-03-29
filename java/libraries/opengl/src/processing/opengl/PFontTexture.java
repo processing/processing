@@ -250,7 +250,7 @@ class PFontTexture implements PConstants {
     int[] rgba = new int[w * h];
     int t = 0;
     int p = 0;
-    if (PGraphicsOpenGL.BIG_ENDIAN)  {            
+    if (PGL.BIG_ENDIAN)  {            
       java.util.Arrays.fill(rgba, 0, w, 0xFFFFFF00); // Set the first row to blank pixels.
       t = w;      
       for (int y = 0; y < glyph.height; y++) {
