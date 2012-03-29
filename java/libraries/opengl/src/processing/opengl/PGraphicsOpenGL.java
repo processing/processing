@@ -2409,59 +2409,6 @@ public class PGraphicsOpenGL extends PGraphics {
     
     shader.stop();
   }
-
-  
-  //////////////////////////////////////////////////////////////
-
-  // PSHAPE RENDERING IN 3D
-
-  
-  public void shape(PShape shape, float x, float y, float z) {
-    if (shape.isVisible()) { // don't do expensive matrix ops if invisible
-      pushMatrix();
-
-      if (shapeMode == CENTER) {
-        translate(x - shape.getWidth() / 2, y - shape.getHeight() / 2, z
-            - shape.getDepth() / 2);
-
-      } else if ((shapeMode == CORNER) || (shapeMode == CORNERS)) {
-        translate(x, y, z);
-      }
-      shape.draw(this);
-
-      popMatrix();
-    }
-  }
-
-  
-  public void shape(PShape shape, float x, float y, float z, float c, float d,
-      float e) {
-    if (shape.isVisible()) { // don't do expensive matrix ops if invisible
-      pushMatrix();
-
-      if (shapeMode == CENTER) {
-        // x, y and z are center, c, d and e refer to a diameter
-        translate(x - c / 2f, y - d / 2f, z - e / 2f);
-        scale(c / shape.getWidth(), d / shape.getHeight(), e / shape.getDepth());
-
-      } else if (shapeMode == CORNER) {
-        translate(x, y, z);
-        scale(c / shape.getWidth(), d / shape.getHeight(), e / shape.getDepth());
-
-      } else if (shapeMode == CORNERS) {
-        // c, d, e are x2/y2/z2, make them into width/height/depth
-        c -= x;
-        d -= y;
-        e -= z;
-        // then same as above
-        translate(x, y, z);
-        scale(c / shape.getWidth(), d / shape.getHeight(), e / shape.getDepth());
-      }
-      shape.draw(this);
-
-      popMatrix();
-    }
-  }
   
 
   //////////////////////////////////////////////////////////////
@@ -2999,6 +2946,154 @@ public class PGraphicsOpenGL extends PGraphics {
   // public void shapeMode(int mode)
 
   
+  public void shape(PShape shape) {
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      flush();
+      if (settingPixels) {
+        updatePixels();        
+      }
+      
+      if (shapeMode == CENTER) {
+        pushMatrix();
+        translate(-shape.getWidth()/2, -shape.getHeight()/2);
+      }
+
+      shape.draw(this); // needs to handle recorder too
+
+      if (shapeMode == CENTER) {
+        popMatrix();
+      }
+      
+      pixelsAreDirty = true;
+      settingPixels = false;        
+    }
+  }
+  
+  
+  public void shape(PShape shape, float x, float y) {
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      flush();
+      if (settingPixels) {
+        updatePixels();        
+      }  
+      
+      pushMatrix();
+
+      if (shapeMode == CENTER) {
+        translate(x - shape.getWidth()/2, y - shape.getHeight()/2);
+
+      } else if ((shapeMode == CORNER) || (shapeMode == CORNERS)) {
+        translate(x, y);
+      }
+      shape.draw(this);
+
+      popMatrix();
+      
+      pixelsAreDirty = true;
+      settingPixels = false; 
+    }
+  }
+  
+  
+  public void shape(PShape shape, float x, float y, float z) {
+    if (shape.isVisible()) { // don't do expensive matrix ops if invisible
+      flush();
+      if (settingPixels) {
+        updatePixels();        
+      }  
+      
+      pushMatrix();
+
+      if (shapeMode == CENTER) {
+        translate(x - shape.getWidth() / 2, y - shape.getHeight() / 2, z
+            - shape.getDepth() / 2);
+
+      } else if ((shapeMode == CORNER) || (shapeMode == CORNERS)) {
+        translate(x, y, z);
+      }
+      shape.draw(this);
+
+      popMatrix();
+      
+      pixelsAreDirty = true;
+      settingPixels = false;      
+    }
+  }
+
+  
+  public void shape(PShape shape, float x, float y, float c, float d) {
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      flush();
+      if (settingPixels) {
+        updatePixels();        
+      }  
+      
+      pushMatrix();
+
+      if (shapeMode == CENTER) {
+        // x and y are center, c and d refer to a diameter
+        translate(x - c/2f, y - d/2f);
+        scale(c / shape.getWidth(), d / shape.getHeight());
+
+      } else if (shapeMode == CORNER) {
+        translate(x, y);
+        scale(c / shape.getWidth(), d / shape.getHeight());
+
+      } else if (shapeMode == CORNERS) {
+        // c and d are x2/y2, make them into width/height
+        c -= x;
+        d -= y;
+        // then same as above
+        translate(x, y);
+        scale(c / shape.getWidth(), d / shape.getHeight());
+      }
+      shape.draw(this);
+
+      popMatrix();
+      
+      pixelsAreDirty = true;
+      settingPixels = false;        
+    }
+  }  
+  
+  
+  public void shape(PShape shape, float x, float y, float z, float c, float d, float e) {
+    if (shape.isVisible()) { // don't do expensive matrix ops if invisible
+      flush();
+      if (settingPixels) {
+        updatePixels();        
+      } 
+      
+      pushMatrix();
+
+      if (shapeMode == CENTER) {
+        // x, y and z are center, c, d and e refer to a diameter
+        translate(x - c / 2f, y - d / 2f, z - e / 2f);
+        scale(c / shape.getWidth(), d / shape.getHeight(), e / shape.getDepth());
+
+      } else if (shapeMode == CORNER) {
+        translate(x, y, z);
+        scale(c / shape.getWidth(), d / shape.getHeight(), e / shape.getDepth());
+
+      } else if (shapeMode == CORNERS) {
+        // c, d, e are x2/y2/z2, make them into width/height/depth
+        c -= x;
+        d -= y;
+        e -= z;
+        // then same as above
+        translate(x, y, z);
+        scale(c / shape.getWidth(), d / shape.getHeight(), e / shape.getDepth());
+      }
+      shape.draw(this);
+
+      popMatrix();
+      
+      pixelsAreDirty = true;
+      settingPixels = false;      
+    }
+  }
+  
+/*  
   public void shape(PShape3D shape) {
     shape.draw(this);
   }
@@ -3015,7 +3110,7 @@ public class PGraphicsOpenGL extends PGraphics {
     shape.draw(this);
     popMatrix();
   }
-
+*/
   
   // public void shape(PShape shape, float x, float y, float c, float d)
 
