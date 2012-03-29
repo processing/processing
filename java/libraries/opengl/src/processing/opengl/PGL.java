@@ -129,7 +129,7 @@ public class PGL {
   protected static final String SHADER_PREPROCESSOR_DIRECTIVE = "#ifdef GL_ES\n" +
                                                                 "precision mediump float;\n" +
                                                                 "precision mediump int;\n" +
-                                                                "#endif;\n";
+                                                                "#endif\n";
   
   ///////////////////////////////////////////////////////////////////////////////////
   
