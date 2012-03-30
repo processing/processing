@@ -3257,10 +3257,18 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     modelview.translate(tx, ty, tz);    
-    modelviewInv.invTranslate(tx, ty, tz);    
+    invTranslate(modelviewInv, tx, ty, tz);  
     projmodelview.translate(tx, ty, tz);  
   }
 
+  
+  static protected void invTranslate(PMatrix3D matrix, float tx, float ty, float tz) {
+    matrix.preApply(1, 0, 0, -tx,
+                    0, 1, 0, -ty,
+                    0, 0, 1, -tz,
+                    0, 0, 0, 1);
+  }
+  
   
   /**
    * Two dimensional rotation. Same as rotateZ (this is identical to a 3D
@@ -3298,10 +3306,24 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     modelview.rotate(angle, v0, v1, v2);
-    modelviewInv.invRotate(angle, v0, v1, v2);
+    invRotate(modelviewInv, angle, v0, v1, v2);
     calcProjmodelview(); // Possibly cheaper than doing projmodelview.rotate()
   }
 
+  
+  static private void invRotate(PMatrix3D matrix, float angle, float v0, float v1, float v2) {
+    //TODO should make sure this vector is normalized
+
+    float c = PApplet.cos(-angle);
+    float s = PApplet.sin(-angle);
+    float t = 1.0f - c;
+
+    matrix.preApply((t*v0*v0) + c, (t*v0*v1) - (s*v2), (t*v0*v2) + (s*v1), 0,
+                    (t*v0*v1) + (s*v2), (t*v1*v1) + c, (t*v1*v2) - (s*v0), 0,
+                    (t*v0*v2) - (s*v1), (t*v1*v2) + (s*v0), (t*v2*v2) + c, 0,
+                    0, 0, 0, 1);
+  }  
+  
   
   /**
    * Same as scale(s, s, s).
@@ -3328,8 +3350,13 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     modelview.scale(sx, sy, sz);
-    modelviewInv.invScale(sx, sy, sz);    
+    invScale(modelviewInv, sx, sy, sz);   
     projmodelview.scale(sx, sy, sz);    
+  }
+
+  
+  static protected void invScale(PMatrix3D matrix, float x, float y, float z) {
+    matrix.preApply(1/x, 0, 0, 0,  0, 1/y, 0, 0,  0, 0, 1/z, 0,  0, 0, 0, 1);
   }
 
   
