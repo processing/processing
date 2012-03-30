@@ -307,34 +307,6 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected boolean offscreenNotCurrent;  
   
-  // ........................................................  
-  
-  // Utility variables:
-  
-  /** True if we are inside a beginDraw()/endDraw() block. */
-  protected boolean drawing = false;  
-  
-  /** Type of screen operation. */
-  static protected final int OP_NONE = 0;
-  static protected final int OP_READ = 1;
-  static protected final int OP_WRITE = 2;
-  protected int screenOp = OP_NONE;
-  
-  /** Used to detect the occurrence of a frame resize event. */
-  protected boolean resized = false;
-  
-  /** Viewport dimensions. */
-  protected int[] viewport = {0, 0, 0, 0};
-  
-  /** Used to register calls to glClear. */
-  protected boolean clearColorBuffer; 
-  protected boolean clearColorBuffer0;  
-  
-  protected boolean openContour = false;
-  protected boolean breakShape = false;
-  protected boolean defaultEdges = false;
-  protected PImage textureImage0;    
-  
   // ........................................................
   
   // Screen surface:
@@ -380,7 +352,37 @@ public class PGraphicsOpenGL extends PGraphics {
     new PMatrix3D(-1,  3, -3,  1,
                    3, -6,  3,  0,
                   -3,  3,  0,  0,
-                   1,  0,  0,  0);       
+                   1,  0,  0,  0);
+  
+  // ........................................................  
+  
+  // Utility variables:
+  
+  /** True if we are inside a beginDraw()/endDraw() block. */
+  protected boolean drawing = false;  
+  
+  /** Type of pixels operation. */
+  static protected final int OP_NONE = 0;
+  static protected final int OP_READ = 1;
+  static protected final int OP_WRITE = 2;
+  protected int pixelsOp = OP_NONE;
+  
+  /** Used to detect the occurrence of a frame resize event. */
+  protected boolean resized = false;
+  
+  /** Viewport dimensions. */
+  protected int[] viewport = {0, 0, 0, 0};
+  
+  /** Used to register calls to glClear. */
+  protected boolean clearColorBuffer; 
+  protected boolean clearColorBuffer0;  
+  
+  protected boolean openContour = false;
+  protected boolean breakShape = false;
+  protected boolean defaultEdges = false;
+  protected PImage textureImage0;    
+  
+  protected boolean perspectiveCorrectedLines = false;  
   
   //////////////////////////////////////////////////////////////  
   
@@ -1488,6 +1490,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // The current normal vector is set to be parallel to the Z axis.
     normalX = normalY = normalZ = 0;
     
+    perspectiveCorrectedLines = hints[ENABLE_PERSPECTIVE_CORRECTED_LINES];
+    
     // Clear depth and stencil buffers.
     pgl.glDepthMask(true);
     pgl.glClearColor(0, 0, 0, 0);
@@ -1509,7 +1513,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }        
         
     drawing = true;
-    screenOp = OP_NONE;
+    pixelsOp = OP_NONE;
     
     modified = false;
     setgetPixels = false;
@@ -1620,7 +1624,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
   
   
-  protected void beginScreenOp(int op) {  
+  protected void beginPixelsOp(int op) {  
     if (primarySurface) {
       if (op == OP_READ) {
         pgl.glReadBuffer(PGL.GL_FRONT);
@@ -1663,20 +1667,20 @@ public class PGraphicsOpenGL extends PGraphics {
         pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
       }
     }
-    screenOp = op;
+    pixelsOp = op;
   }
 
   
-  protected void endScreenOp() {    
+  protected void endPixelsOp() {    
     if (offscreenNotCurrent) {
-      if (screenOp == OP_WRITE && offscreenMultisample) {
+      if (pixelsOp == OP_WRITE && offscreenMultisample) {
         // We were writing to the multisample FBO, so we need
         // to blit its contents to the color FBO.
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);       
       }
       popFramebuffer();
     }
-    screenOp = OP_NONE;
+    pixelsOp = OP_NONE;
   }  
   
   
@@ -1870,12 +1874,16 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();      
     } else if (which == DISABLE_PERSPECTIVE_CORRECTED_LINES) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
+        // We flush the geometry using the previous line setting.
         flush();
-      }      
+      }
+      perspectiveCorrectedLines = false;
     } else if (which == ENABLE_PERSPECTIVE_CORRECTED_LINES) {
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
+        // We flush the geometry using the previous line setting.
         flush();
-      }            
+      }
+      perspectiveCorrectedLines = true;
     }
   }
 
@@ -2350,9 +2358,9 @@ public class PGraphicsOpenGL extends PGraphics {
       // multisampled FBO, texture is actually the color buffer
       // used by the color FBO, so with the copy operation we
       // should be done updating the (off)screen buffer.      
-      beginScreenOp(OP_WRITE);
+      beginPixelsOp(OP_WRITE);
       drawTexture(mx1, my1, mw, mh);    
-      endScreenOp();
+      endPixelsOp();
     }
     
     modified = false;   
@@ -4571,10 +4579,10 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     if (!setgetPixels) {
-      beginScreenOp(OP_READ);        
+      beginPixelsOp(OP_READ);        
       pixelBuffer.rewind();
       pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
-      endScreenOp();        
+      endPixelsOp();        
       
       PGL.nativeToJavaARGB(pixels, width, height);      
       
@@ -4639,9 +4647,9 @@ public class PGraphicsOpenGL extends PGraphics {
   // Draws wherever it is in the screen texture right now to the screen.
   public void updateTexture() {
     flush();    
-    beginScreenOp(OP_WRITE);
+    beginPixelsOp(OP_WRITE);
     drawTexture();    
-    endScreenOp();   
+    endPixelsOp();   
   }
   
   
@@ -5807,11 +5815,7 @@ public class PGraphicsOpenGL extends PGraphics {
         set4FloatUniform(viewportLoc, renderer.viewport[0], renderer.viewport[1], renderer.viewport[2], renderer.viewport[3]);
       }
       
-      if (hints[ENABLE_PERSPECTIVE_CORRECTED_LINES]) {
-        setIntUniform(perspectiveLoc, 1);
-      } else {
-        setIntUniform(perspectiveLoc, 0);
-      }
+      setIntUniform(perspectiveLoc, perspectiveCorrectedLines ? 1 : 0);
     }
 
     public void stop() {      
