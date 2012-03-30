@@ -92,6 +92,34 @@ public class PGL {
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
 
+  /** Minimum array size to use arrayCopy method(). **/
+  static protected final int MIN_ARRAYCOPY_SIZE = 2;    
+  
+  /** Machine Epsilon for float precision. **/
+  static public float FLOAT_EPS = Float.MIN_VALUE;
+  // Calculation of the Machine Epsilon for float precision. From:
+  // http://en.wikipedia.org/wiki/Machine_epsilon#Approximation_using_Java
+  static {
+    float eps = 1.0f;
+
+    do {
+      eps /= 2.0f;
+    } while ((float)(1.0 + (eps / 2.0)) != 1.0);
+   
+    FLOAT_EPS = eps;
+  }  
+  
+  /**
+   * Set to true if the host system is big endian (PowerPC, MIPS, SPARC), false
+   * if little endian (x86 Intel for Mac or PC).
+   */
+  static public boolean BIG_ENDIAN = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN;    
+  
+  protected static final String SHADER_PREPROCESSOR_DIRECTIVE = "#ifdef GL_ES\n" +
+                                                                "precision mediump float;\n" +
+                                                                "precision mediump int;\n" +
+                                                                "#endif\n";  
+  
   ///////////////////////////////////////////////////////////////////////////////////
   
   // OpenGL constants
@@ -143,10 +171,12 @@ public class PGL {
   public static final int GL_RGBA8            = -1;  
   public static final int GL_DEPTH24_STENCIL8 = 0x88F0;
   
+  public static final int GL_DEPTH_COMPONENT   = GLES20.GL_DEPTH_COMPONENT;
   public static final int GL_DEPTH_COMPONENT16 = GLES20.GL_DEPTH_COMPONENT16;
   public static final int GL_DEPTH_COMPONENT24 = 0x81A6;
   public static final int GL_DEPTH_COMPONENT32 = 0x81A7;    
   
+  public static final int GL_STENCIL_INDEX  = GLES20.GL_STENCIL_INDEX;
   public static final int GL_STENCIL_INDEX1 = 0x8D46;
   public static final int GL_STENCIL_INDEX4 = 0x8D47; 
   public static final int GL_STENCIL_INDEX8 = GLES20.GL_STENCIL_INDEX8;   
@@ -297,7 +327,7 @@ public class PGL {
                                          "  vertTexcoord = inTexcoord;" +    
                                          "}";
   
-  protected String texFragShaderSource = "precision mediump float;" +
+  protected String texFragShaderSource = SHADER_PREPROCESSOR_DIRECTIVE +
                                          "uniform sampler2D textureSampler;" +
                                          "varying vec2 vertTexcoord;" +
                                          "void main() {" +
@@ -330,11 +360,19 @@ public class PGL {
                                           "  gl_Position = vec4(inVertex, 0, 1);" +
                                           "}";
 
-  protected String rectFragShaderSource = "precision mediump float;" +
+  protected String rectFragShaderSource = SHADER_PREPROCESSOR_DIRECTIVE +
                                           "uniform vec4 rectColor;" +
                                           "void main() {" +
                                           "  gl_FragColor = rectColor;" +                                   
                                           "}";
+  
+  ///////////////////////////////////////////////////////////////////////////////////
+  
+  // 1-pixel color, depth, stencil buffers
+  
+  protected IntBuffer colorBuffer;
+  protected FloatBuffer depthBuffer;
+  protected ByteBuffer stencilBuffer;  
   
   ///////////////////////////////////////////////////////////////////////////////////
   
@@ -388,7 +426,7 @@ public class PGL {
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexImage2D(GLES20.GL_TEXTURE_2D, 0, GLES20.GL_RGBA, texWidth, texHeight, 0, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, null);
-        initTexture(GLES20.GL_TEXTURE_2D, texWidth, texHeight, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE);
+        initTexture(GLES20.GL_TEXTURE_2D, PGL.GL_RGBA, texWidth, texHeight);
       }
       GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
       
@@ -1165,7 +1203,7 @@ public class PGL {
   }  
   
   
-  public void initTexture(int target, int width, int height, int format, int type) {
+  public void initTexture(int target, int format, int width, int height) {
     // Doing in patches of 16x16 pixels to avoid creating a (potentially)
     // very large transient array which in certain situations (memory-
     // constrained android devices) might lead to an out-of-memory error.
@@ -1174,12 +1212,27 @@ public class PGL {
       int h = PApplet.min(16, height - y);
       for (int x = 0; x < width; x += 16) {
         int w = PApplet.min(16, width - x);
-        GLES20.glTexSubImage2D(target, 0, x, y, w, h, format, type, IntBuffer.wrap(texels));
+        glTexSubImage2D(target, 0, x, y, w, h, format, GL_UNSIGNED_BYTE, IntBuffer.wrap(texels));
       }
     }
   }  
 
-    
+  
+  public void copyToTexture(int target, int format, int id, int x, int y, int w, int h, IntBuffer buffer) {           
+    enableTexturing(target);
+    glBindTexture(target, id);    
+    glTexSubImage2D(target, 0, x, y, w, h, format, GL_UNSIGNED_BYTE, buffer);
+    glBindTexture(target, 0);
+    disableTexturing(target);
+  }   
+   
+  
+  public void drawTexture(int target, int id, int width, int height,
+                          int X0, int Y0, int X1, int Y1) {
+    drawTexture(target, id, width, height, X0, Y0, X1, Y1, X0, Y0, X1, Y1);
+  }  
+  
+  
   public void drawTexture(int target, int id, int width, int height,
                                               int texX0, int texY0, int texX1, int texY1, 
                                               int scrX0, int scrY0, int scrX1, int scrY1) {
@@ -1333,6 +1386,27 @@ public class PGL {
   }
   
   
+  public int getColorValue(int scrX, int scrY) {
+    if (colorBuffer == null) {
+      colorBuffer = IntBuffer.allocate(1);
+    }
+    colorBuffer.rewind();
+    glReadPixels(scrX, pg.height - scrY - 1, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, colorBuffer);    
+    return colorBuffer.get();
+  }
+  
+  
+  public float getDepthValue(int scrX, int scrY) {
+    // http://stackoverflow.com/questions/2596682/opengl-es-2-0-read-depth-buffer
+    return 0;
+  }
+  
+  
+  public byte getStencilValue(int scrX, int scrY) {
+    return 0;
+  }
+  
+  
   // bit shifting this might be more efficient
   static public int nextPowerOfTwo(int val) {
     int ret = 1;
@@ -1341,6 +1415,238 @@ public class PGL {
     }
     return ret;
   }   
+  
+  
+  /**
+   * Convert native OpenGL format into palatable ARGB format. This function
+   * leaves alone (ignores) the alpha component. Also flips the image
+   * vertically, since images are upside-down in GL.
+   */ 
+  static public void nativeToJavaRGB(int[] pixels, int width, int height) {
+    int index = 0;
+    int yindex = (height - 1) * width;
+    for (int y = 0; y < height / 2; y++) {
+      if (BIG_ENDIAN) {
+        for (int x = 0; x < width; x++) {
+          int temp = pixels[index];
+          // ignores alpha component, just sets it opaque
+          pixels[index] = 0xff000000 | ((pixels[yindex] >> 8) & 0x00ffffff);
+          pixels[yindex] = 0xff000000 | ((temp >> 8) & 0x00ffffff);
+          index++;
+          yindex++;
+        }
+      } else { // LITTLE_ENDIAN, convert ABGR to ARGB
+        for (int x = 0; x < width; x++) {
+          int temp = pixels[index];
+          // identical to endPixels because only two
+          // components are being swapped
+          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000) | 
+                                       (pixels[yindex] & 0xff00) | 
+                                       ((pixels[yindex] >> 16) & 0xff);
+          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000) | 
+                                        (temp & 0xff00) | 
+                                        ((temp >> 16) & 0xff);
+          index++;
+          yindex++;
+        }
+      }
+      yindex -= width * 2;
+    }    
+    
+    // When height is an odd number, the middle line needs to be
+    // endian swapped, but not y-swapped.
+    // http://dev.processing.org/bugs/show_bug.cgi?id=944
+    if ((height % 2) == 1) {
+      index = (height / 2) * width;
+      if (BIG_ENDIAN) {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = 0xff000000 | ((pixels[index] >> 8) & 0x00ffffff);
+          index++;
+        }
+      } else {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = 0xff000000 | ((pixels[index] << 16) & 0xff0000) | 
+                                       (pixels[index] & 0xff00) | 
+                                       ((pixels[index] >> 16) & 0xff);
+          index++;
+        }
+      }
+    }           
+  }
+  
+
+  /**
+   * Convert native OpenGL format into palatable ARGB format. This function
+   * leaves alone (ignores) the alpha component. Also flips the image
+   * vertically, since images are upside-down in GL.
+   */  
+  static public void nativeToJavaARGB(int[] pixels, int width, int height) {
+    int index = 0;
+    int yindex = (height - 1) * width;
+    for (int y = 0; y < height / 2; y++) {
+      if (BIG_ENDIAN) {
+        for (int x = 0; x < width; x++) {
+          int temp = pixels[index];
+          // ignores alpha component, just sets it opaque
+          pixels[index] = (pixels[yindex] & 0xff000000) | 
+                          ((pixels[yindex] >> 8) & 0x00ffffff);
+          pixels[yindex] = (temp & 0xff000000) | 
+                           ((temp >> 8) & 0x00ffffff);
+          index++;
+          yindex++;
+        }
+      } else { // LITTLE_ENDIAN, convert ABGR to ARGB
+        for (int x = 0; x < width; x++) {
+          int temp = pixels[index];
+          pixels[index] = (pixels[yindex] & 0xff000000) | 
+                          ((pixels[yindex] << 16) & 0xff0000) | 
+                          (pixels[yindex] & 0xff00) | 
+                          ((pixels[yindex] >> 16) & 0xff);
+          pixels[yindex] = (temp & 0xff000000) | 
+                           ((temp << 16) & 0xff0000) | 
+                           (temp & 0xff00) | 
+                           ((temp >> 16) & 0xff);
+          index++;
+          yindex++;
+        }
+      }
+      yindex -= width * 2;
+    }    
+    
+    if ((height % 2) == 1) {
+      index = (height / 2) * width;
+      if (BIG_ENDIAN) {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = (pixels[index] & 0xff000000) | 
+                          ((pixels[index] >> 8) & 0x00ffffff);
+          index++;
+        }
+      } else {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = (pixels[index] & 0xff000000) | 
+                          ((pixels[index] << 16) & 0xff0000) | 
+                          (pixels[index] & 0xff00) | 
+                          ((pixels[index] >> 16) & 0xff);
+          index++;
+        }
+      }
+    }  
+  }
+  
+  
+  /**
+   * Convert ARGB (Java/Processing) data to native OpenGL format. This function
+   * leaves alone (ignores) the alpha component. Also flips the image
+   * vertically, since images are upside-down in GL.
+   */  
+  static public void javaToNativeRGB(int[] pixels, int width, int height) {
+    int index = 0;
+    int yindex = (height - 1) * width;
+    for (int y = 0; y < height / 2; y++) {
+      if (BIG_ENDIAN) {
+        // and convert ARGB back to opengl RGBA components (big endian)
+        for (int x = 0; x < width; x++) {
+          int temp = pixels[index];
+          pixels[index] = ((pixels[yindex] << 8) & 0xffffff00) | 0xff;
+          pixels[yindex] = ((temp << 8) & 0xffffff00) | 0xff;
+          index++;
+          yindex++;
+        }
+
+      } else {
+        // convert ARGB back to native little endian ABGR
+        for (int x = 0; x < width; x++) {
+          int temp = pixels[index];
+          pixels[index] = 0xff000000 | ((pixels[yindex] << 16) & 0xff0000) | 
+                                       (pixels[yindex] & 0xff00) | 
+                                       ((pixels[yindex] >> 16) & 0xff);
+          pixels[yindex] = 0xff000000 | ((temp << 16) & 0xff0000) | 
+                                        (temp & 0xff00) | 
+                                        ((temp >> 16) & 0xff);
+          index++;
+          yindex++;
+        }
+      }
+      yindex -= width * 2;
+    }   
+    
+    if ((height % 2) == 1) {
+      index = (height / 2) * width;
+      if (BIG_ENDIAN) {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = ((pixels[index] << 8) & 0xffffff00) | 0xff;
+          index++;
+        }
+      } else {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = 0xff000000 | ((pixels[index] << 16) & 0xff0000) | 
+                                       (pixels[index] & 0xff00) | 
+                                       ((pixels[index] >> 16) & 0xff);
+          index++;
+        }
+      }
+    }        
+  }
+  
+
+  /**
+   * Convert Java ARGB to native OpenGL format. Also flips the image vertically,
+   * since images are upside-down in GL.
+   */ 
+  static public void javaToNativeARGB(int[] pixels, int width, int height) {
+    int index = 0;
+    int yindex = (height - 1) * width;
+    for (int y = 0; y < height / 2; y++) {
+      if (BIG_ENDIAN) {
+        // and convert ARGB back to opengl RGBA components (big endian)
+        for (int x = 0; x < width; x++) {
+          int temp = pixels[index];
+          pixels[index] = ((pixels[yindex] >> 24) & 0xff) | 
+                          ((pixels[yindex] << 8) & 0xffffff00);
+          pixels[yindex] = ((temp >> 24) & 0xff) | 
+                           ((temp << 8) & 0xffffff00);
+          index++;
+          yindex++;
+        }
+
+      } else {
+        // convert ARGB back to native little endian ABGR
+        for (int x = 0; x < width; x++) {
+          int temp = pixels[index];
+          pixels[index] = (pixels[yindex] & 0xff000000) | 
+                          ((pixels[yindex] << 16) & 0xff0000) | 
+                          (pixels[yindex] & 0xff00) | 
+                          ((pixels[yindex] >> 16) & 0xff);
+          pixels[yindex] = (pixels[yindex] & 0xff000000) | 
+                           ((temp << 16) & 0xff0000) | 
+                           (temp & 0xff00) | 
+                           ((temp >> 16) & 0xff);
+          index++;
+          yindex++;
+        }
+      }
+      yindex -= width * 2;
+    }
+    
+    if ((height % 2) == 1) {
+      index = (height / 2) * width;
+      if (BIG_ENDIAN) {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = ((pixels[index] >> 24) & 0xff) | 
+                          ((pixels[index] << 8) & 0xffffff00);
+          index++;
+        }
+      } else {
+        for (int x = 0; x < width; x++) {
+          pixels[index] = (pixels[index] & 0xff000000) | 
+                          ((pixels[index] << 16) & 0xff0000) | 
+                          (pixels[index] & 0xff00) | 
+                          ((pixels[index] >> 16) & 0xff);
+          index++;
+        }
+      }
+    }       
+  } 
   
   
   public int createShader(int shaderType, String source) {
