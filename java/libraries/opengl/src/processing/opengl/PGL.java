@@ -50,6 +50,8 @@ import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUtessellator;
 import javax.media.opengl.glu.GLUtessellatorCallbackAdapter;
 
+import processing.core.PGraphics;
+
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.util.AnimatorBase;
@@ -75,10 +77,10 @@ public class PGL {
   static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
   /** Size of a vertex index. */
-  static final int SIZEOF_INDEX = SIZEOF_INT; 
+  static final int SIZEOF_INDEX = SIZEOF_SHORT; 
   
   /** Type of a vertex index. */
-  static final int INDEX_TYPE = GL.GL_UNSIGNED_INT;
+  static final int INDEX_TYPE = GL.GL_UNSIGNED_SHORT;
 
   /** Initial sizes for arrays of input and tessellated data. */
   public static final int DEFAULT_IN_VERTICES = 64;
@@ -93,8 +95,11 @@ public class PGL {
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
   public static final int MAX_LIGHTS = 8;
   
-  /** Maximum number of tessellated vertices, using 2^19 for Mac/PC. */
-  public static final int MAX_TESS_VERTICES = 524288;
+  /** Maximum number of tessellated vertices. GLES restricts the vertex indices
+   * to be of type unsigned short. Since Java only supports native shorts as 
+   * primitive type we have 2^15 = 32768 as the maximum number of  vertices 
+   * that can be referred to within a single VBO. */
+  public static final int MAX_TESS_VERTICES = 32768;
   
   /** Maximum number of indices. 2 times the max number of 
    * vertices to have good room for vertex reuse. */
@@ -1221,9 +1226,22 @@ public class PGL {
   }
   
   
-  static public int makeIndex(int intIdx) {
-    return intIdx;
-  }  
+  static public short makeIndex(int intIdx) {
+    // The old hack to have unsigned shorts as indices using Java's
+    // signed shorts:
+    // When the index value is greater than 32767, subtracting 65536
+    // will make it (as a short) to wrap around to the negative range, which    
+    // is all we need to later pass these numbers to opengl (which will 
+    // interpret them as unsigned shorts). See discussion here:
+    // http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
+    //return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;    
+    if (32767 < intIdx) {
+      PGraphics.showWarning("P3D: Vertex index is greater than 32767");
+      return 32767;
+    } else {
+      return (short)intIdx;
+    }
+  }
   
   
   public void enableTexturing(int target) {

@@ -1152,7 +1152,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.fillIndexCount * PGL.SIZEOF_INDEX, 
-                     IntBuffer.wrap(tessGeo.fillIndices, 0, tessGeo.fillIndexCount), vboMode);    
+                     ShortBuffer.wrap(tessGeo.fillIndices, 0, tessGeo.fillIndexCount), vboMode);    
   }    
   
   
@@ -1236,7 +1236,7 @@ public class PGraphicsOpenGL extends PGraphics {
             
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.lineIndexCount * PGL.SIZEOF_INDEX, 
-                     IntBuffer.wrap(tessGeo.lineIndices, 0, tessGeo.lineIndexCount), vboMode);
+                     ShortBuffer.wrap(tessGeo.lineIndices, 0, tessGeo.lineIndexCount), vboMode);
   }
   
   
@@ -1304,7 +1304,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.pointIndexCount * PGL.SIZEOF_INDEX, 
-                     IntBuffer.wrap(tessGeo.pointIndices, 0, tessGeo.pointIndexCount), vboMode);    
+                     ShortBuffer.wrap(tessGeo.pointIndices, 0, tessGeo.pointIndexCount), vboMode);    
   }
   
   
@@ -2477,7 +2477,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int size = tessGeo.fillIndexCount;
     int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, IntBuffer.wrap(tessGeo.fillIndices, 0, size), vboMode);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.fillIndices, 0, size), vboMode);
     pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);       
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     
@@ -6823,7 +6823,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public int fillIndexCount;
     public int firstFillIndex;
     public int lastFillIndex;    
-    public int[] fillIndices;
+    public short[] fillIndices;
     
     // Tessellated line data    
     public int lineVertexCount;
@@ -6836,7 +6836,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public int lineIndexCount;
     public int firstLineIndex;
     public int lastLineIndex;  
-    public int[] lineIndices;  
+    public short[] lineIndices;  
     
     // Tessellated point data
     public int pointVertexCount;
@@ -6849,7 +6849,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public int pointIndexCount;
     public int firstPointIndex;
     public int lastPointIndex;  
-    public int[] pointIndices;
+    public short[] pointIndices;
     
     public boolean isStroked;
 
@@ -6880,17 +6880,17 @@ public class PGraphicsOpenGL extends PGraphics {
       fillSpecular = new int[PGL.DEFAULT_TESS_VERTICES];
       fillEmissive = new int[PGL.DEFAULT_TESS_VERTICES];
       fillShininess = new float[PGL.DEFAULT_TESS_VERTICES];      
-      fillIndices = new int[PGL.DEFAULT_TESS_VERTICES];        
+      fillIndices = new short[PGL.DEFAULT_TESS_VERTICES];        
       
       lineVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       lineColors = new int[PGL.DEFAULT_TESS_VERTICES];
       lineDirWidths = new float[4 * PGL.DEFAULT_TESS_VERTICES];
-      lineIndices = new int[PGL.DEFAULT_TESS_VERTICES];       
+      lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];       
       
       pointVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
       pointColors = new int[PGL.DEFAULT_TESS_VERTICES];
       pointSizes = new float[2 * PGL.DEFAULT_TESS_VERTICES];
-      pointIndices = new int[PGL.DEFAULT_TESS_VERTICES];
+      pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
       
       clear();
     }
@@ -6981,7 +6981,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     public void trimFillIndices() {
-      int temp[] = new int[fillIndexCount];      
+      short temp[] = new short[fillIndexCount];      
       PApplet.arrayCopy(fillIndices, 0, temp, 0, fillIndexCount);
       fillIndices = temp;      
     }    
@@ -7005,7 +7005,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }      
     
     protected void trimLineIndices() {
-      int temp[] = new int[lineIndexCount];      
+      short temp[] = new short[lineIndexCount];      
       PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;        
     }    
@@ -7029,7 +7029,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     protected void trimPointIndices() {
-      int temp[] = new int[pointIndexCount];      
+      short temp[] = new short[pointIndexCount];      
       PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;        
     }    
@@ -7207,7 +7207,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
     
     public void expandFillIndices(int n) {
-      int temp[] = new int[n];      
+      short temp[] = new short[n];      
       PApplet.arrayCopy(fillIndices, 0, temp, 0, fillIndexCount);
       fillIndices = temp;      
     }
@@ -7413,7 +7413,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }   
     
     protected void expandLineIndices(int n) {
-      int temp[] = new int[n];      
+      short temp[] = new short[n];      
       PApplet.arrayCopy(lineIndices, 0, temp, 0, lineIndexCount);
       lineIndices = temp;        
     }
@@ -7465,7 +7465,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }   
     
     protected void expandPointIndices(int n) {
-      int temp[] = new int[n];      
+      short temp[] = new short[n];      
       PApplet.arrayCopy(pointIndices, 0, temp, 0, pointIndexCount);
       pointIndices = temp;        
     }
