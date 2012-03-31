@@ -41,6 +41,7 @@ import java.io.BufferedReader;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -3414,9 +3415,9 @@ public class PShape3D extends PShape {
   }    
   
   
-  protected void copyFillIndices(int offset, int size, int[] indices) {
+  protected void copyFillIndices(int offset, int size, short[] indices) {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, IntBuffer.wrap(indices, 0, size));
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, ShortBuffer.wrap(indices, 0, size));
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
   
@@ -3508,9 +3509,9 @@ public class PShape3D extends PShape {
   }
   
   
-  protected void copyLineIndices(int offset, int size, int[] indices) {
+  protected void copyLineIndices(int offset, int size, short[] indices) {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, IntBuffer.wrap(indices, 0, size));
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, ShortBuffer.wrap(indices, 0, size));
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }  
   
@@ -3602,9 +3603,9 @@ public class PShape3D extends PShape {
   }
   
   
-  protected void copyPointIndices(int offset, int size, int[] indices) {
+  protected void copyPointIndices(int offset, int size, short[] indices) {
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, IntBuffer.wrap(indices, 0, size));
+    pgl.glBufferSubData(PGL.GL_ELEMENT_ARRAY_BUFFER, offset * PGL.SIZEOF_INDEX, size * PGL.SIZEOF_INDEX, ShortBuffer.wrap(indices, 0, size));
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);    
   }    
 
