@@ -1333,6 +1333,74 @@ public class PShape3D extends PShape {
   // Geometric transformations
   
   
+  public void center(float cx, float cy) {
+    if (shapeEnded) {
+      updateTesselation();    
+
+      if (family == GROUP) {
+        PVector center = new PVector();
+              
+        int count = updateCenter(center, 0);
+        center.x /= count;   
+        center.y /= count;
+        
+        float tx = cx - center.x;
+        float ty = cy - center.y;      
+        
+        childHasMatrix();
+        applyMatrix = true;
+        super.translate(tx, ty);
+      } else {
+        PVector vec = new PVector();
+        int count = tess.getCenter(vec);
+        vec.x /= count;
+        vec.y /= count;
+        
+        float tx = cx - vec.x;
+        float ty = cy - vec.y;
+        
+        translate(tx, ty);   
+      }      
+    }
+  }
+
+  
+  public void center(float cx, float cy, float cz) {
+    if (shapeEnded) {
+      updateTesselation();
+     
+      if (family == GROUP) {
+        PVector center0 = new PVector();
+        
+        int count = updateCenter(center0, 0);
+        center0.x /= count;   
+        center0.y /= count;
+        center0.z /= count;
+        
+        float tx = cx - center0.x;
+        float ty = cy - center0.y;
+        float tz = cz - center0.z;
+        
+        childHasMatrix();
+        applyMatrix = true;
+        super.translate(tx, ty, tz);
+      } else {
+        PVector vec = new PVector();
+        int count = tess.getCenter(vec);
+        vec.x /= count;
+        vec.y /= count;
+        vec.z /= count;
+        
+        float tx = cx - vec.x;
+        float ty = cy - vec.y;
+        float tz = cz - vec.z;
+        
+        translate(tx, ty, tz); 
+      }      
+    }    
+  }  
+  
+  
   protected int updateCenter(PVector vec, int count) {
     if (family == GROUP) {
       count = updateCenter(vec, count); 
@@ -1340,313 +1408,250 @@ public class PShape3D extends PShape {
       count += tess.getCenter(vec);      
     }
     return count;
-  }
-  
-  
-  public void center(float cx, float cy) {
-    if (family == GROUP) {
-      PVector center = new PVector();
-            
-      int count = updateCenter(center, 0);
-      center.x /= count;   
-      center.y /= count;
-      
-      float tx = cx - center.x;
-      float ty = cy - center.y;      
-      
-      childHasMatrix();
-      applyMatrix = true;
-      super.translate(tx, ty);
-    } else {
-      PVector vec = new PVector();
-      int count = tess.getCenter(vec);
-      vec.x /= count;
-      vec.y /= count;
-      
-      float tx = cx - vec.x;
-      float ty = cy - vec.y;
-      
-      translate(tx, ty);   
-    }
-  }
-
-  public void center(float cx, float cy, float cz) {
-    if (family == GROUP) {
-      PVector center0 = new PVector();
-      
-      int count = updateCenter(center0, 0);
-      center0.x /= count;   
-      center0.y /= count;
-      center0.z /= count;
-      
-      float tx = cx - center0.x;
-      float ty = cy - center0.y;
-      float tz = cz - center0.z;
-      
-      childHasMatrix();
-      applyMatrix = true;
-      super.translate(tx, ty, tz);
-    } else {
-      PVector vec = new PVector();
-      int count = tess.getCenter(vec);
-      vec.x /= count;
-      vec.y /= count;
-      vec.z /= count;
-      
-      float tx = cx - vec.x;
-      float ty = cy - vec.y;
-      float tz = cz - vec.z;
-      
-      translate(tx, ty, tz); 
-    }
   }  
   
+  
   public void translate(float tx, float ty) {
-    if (family == GROUP) {
-      childHasMatrix();
-      applyMatrix = true;
-      super.translate(tx, ty);
-    } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
-      
-      checkMatrix(2);
-      matrix.reset();
-      matrix.translate(tx, ty);
-      tess.applyMatrix((PMatrix2D) matrix);
-       
-      modified();
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-        modifiedFillNormals = true; 
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;
-        modifiedPointNormals = true;        
-      }
-      
-      // So the transformation is not applied again when drawing
-      applyMatrix = false; 
-    }    
+    if (shapeEnded) {
+      updateTesselation();
+
+      if (family == GROUP) {
+        childHasMatrix();
+        applyMatrix = true;
+        super.translate(tx, ty);
+      } else {
+        checkMatrix(2);
+        matrix.reset();
+        matrix.translate(tx, ty);
+        tess.applyMatrix((PMatrix2D) matrix);
+         
+        modified();
+        if (0 < tess.fillVertexCount) {
+          modifiedFillVertices = true;  
+          modifiedFillNormals = true; 
+        }        
+        if (0 < tess.lineVertexCount) {
+          modifiedLineVertices = true;
+          modifiedLineAttributes = true;
+        }
+        if (0 < tess.pointVertexCount) {
+          modifiedPointVertices = true;
+          modifiedPointNormals = true;        
+        }
+        
+        // So the transformation is not applied again when drawing
+        applyMatrix = false; 
+      }          
+    }
   }
   
+  
   public void translate(float tx, float ty, float tz) {
-    if (family == GROUP) {
-      childHasMatrix();
-      applyMatrix = true;
-      super.translate(tx, ty, tz);
-    } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
+    if (shapeEnded) {
+      updateTesselation();
 
-      checkMatrix(3);
-      matrix.reset();
-      matrix.translate(tx, ty, tz);
-      tess.applyMatrix((PMatrix3D) matrix);
-      
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-        modifiedFillNormals = true; 
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;
-        modifiedPointNormals = true;        
-      }
-      
-      // So the transformation is not applied again when drawing
-      applyMatrix = false;
+      if (family == GROUP) {
+        childHasMatrix();
+        applyMatrix = true;
+        super.translate(tx, ty, tz);
+      } else {
+        checkMatrix(3);
+        matrix.reset();
+        matrix.translate(tx, ty, tz);
+        tess.applyMatrix((PMatrix3D) matrix);
+        
+        modified(); 
+        if (0 < tess.fillVertexCount) {
+          modifiedFillVertices = true;  
+          modifiedFillNormals = true; 
+        }        
+        if (0 < tess.lineVertexCount) {
+          modifiedLineVertices = true;
+          modifiedLineAttributes = true;
+        }
+        if (0 < tess.pointVertexCount) {
+          modifiedPointVertices = true;
+          modifiedPointNormals = true;        
+        }
+        
+        // So the transformation is not applied again when drawing
+        applyMatrix = false;
+      }          
     }    
   }
   
   
   public void rotate(float angle) {
-    if (family == GROUP) {
-      childHasMatrix();
-      applyMatrix = true;
-      super.rotate(angle);
-    } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
-      
-      checkMatrix(2);
-      matrix.reset();
-      matrix.rotate(angle);
-      tess.applyMatrix((PMatrix2D) matrix);
-            
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-        modifiedFillNormals = true; 
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;
-        modifiedPointNormals = true;        
-      }
-      
-      // So the transformation is not applied again when drawing
-      applyMatrix = false;   
-    }
+    if (shapeEnded) {
+      updateTesselation();
 
+      if (family == GROUP) {
+        childHasMatrix();
+        applyMatrix = true;
+        super.rotate(angle);
+      } else {
+        checkMatrix(2);
+        matrix.reset();
+        matrix.rotate(angle);
+        tess.applyMatrix((PMatrix2D) matrix);
+              
+        modified(); 
+        if (0 < tess.fillVertexCount) {
+          modifiedFillVertices = true;  
+          modifiedFillNormals = true; 
+        }        
+        if (0 < tess.lineVertexCount) {
+          modifiedLineVertices = true;
+          modifiedLineAttributes = true;
+        }
+        if (0 < tess.pointVertexCount) {
+          modifiedPointVertices = true;
+          modifiedPointNormals = true;        
+        }
+        
+        // So the transformation is not applied again when drawing
+        applyMatrix = false;   
+      }      
+    }    
   }
+  
   
   public void rotate(float angle, float v0, float v1, float v2) {
-    if (family == GROUP) {
-      childHasMatrix();
-      applyMatrix = true;
-      super.rotate(angle, v0, v1, v2);
-    } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
-      
-      checkMatrix(3);
-      matrix.reset();
-      matrix.rotate(angle, v0, v1, v2);
-      tess.applyMatrix((PMatrix3D) matrix);
-            
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-        modifiedFillNormals = true; 
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;
-        modifiedPointNormals = true;        
-      }
-      
-      // So the transformation is not applied again when drawing
-      applyMatrix = false;   
-    }
+    if (shapeEnded) {
+      updateTesselation();
+
+      if (family == GROUP) {
+        childHasMatrix();
+        applyMatrix = true;
+        super.rotate(angle, v0, v1, v2);
+      } else {
+        checkMatrix(3);
+        matrix.reset();
+        matrix.rotate(angle, v0, v1, v2);
+        tess.applyMatrix((PMatrix3D) matrix);
+              
+        modified(); 
+        if (0 < tess.fillVertexCount) {
+          modifiedFillVertices = true;  
+          modifiedFillNormals = true; 
+        }        
+        if (0 < tess.lineVertexCount) {
+          modifiedLineVertices = true;
+          modifiedLineAttributes = true;
+        }
+        if (0 < tess.pointVertexCount) {
+          modifiedPointVertices = true;
+          modifiedPointNormals = true;        
+        }
+        
+        // So the transformation is not applied again when drawing
+        applyMatrix = false;   
+      }      
+    }        
   }
   
+  
   public void scale(float s) {
-    if (family == GROUP) {
-      childHasMatrix();
-      applyMatrix = true;
-      super.scale(s);
-    } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
-      
-      checkMatrix(2);
-      matrix.reset();
-      matrix.scale(s);
-      tess.applyMatrix((PMatrix2D) matrix);
-      
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-        modifiedFillNormals = true; 
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;
-        modifiedPointNormals = true;        
-      }
-      
-      // So the transformation is not applied again when drawing
-      applyMatrix = false;
-    }
+    if (shapeEnded) {
+      updateTesselation();
+
+      if (family == GROUP) {
+        childHasMatrix();
+        applyMatrix = true;
+        super.scale(s);
+      } else {
+        checkMatrix(2);
+        matrix.reset();
+        matrix.scale(s);
+        tess.applyMatrix((PMatrix2D) matrix);
+        
+        modified(); 
+        if (0 < tess.fillVertexCount) {
+          modifiedFillVertices = true;  
+          modifiedFillNormals = true; 
+        }        
+        if (0 < tess.lineVertexCount) {
+          modifiedLineVertices = true;
+          modifiedLineAttributes = true;
+        }
+        if (0 < tess.pointVertexCount) {
+          modifiedPointVertices = true;
+          modifiedPointNormals = true;        
+        }
+        
+        // So the transformation is not applied again when drawing
+        applyMatrix = false;
+      }      
+    }    
   }
 
 
   public void scale(float x, float y) {
-    if (family == GROUP) {
-      childHasMatrix();
-      applyMatrix = true;
-      super.scale(x, y);
-    } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
-      
-      checkMatrix(2);
-      matrix.reset();
-      matrix.scale(x, y);
-      tess.applyMatrix((PMatrix2D) matrix);
-      
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-        modifiedFillNormals = true; 
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;
-        modifiedPointNormals = true;        
-      }
-      
-      // So the transformation is not applied again when drawing
-      applyMatrix = false;
-    }
+    if (shapeEnded) {
+      updateTesselation();
+
+      if (family == GROUP) {
+        childHasMatrix();
+        applyMatrix = true;
+        super.scale(x, y);
+      } else {
+        checkMatrix(2);
+        matrix.reset();
+        matrix.scale(x, y);
+        tess.applyMatrix((PMatrix2D) matrix);
+        
+        modified(); 
+        if (0 < tess.fillVertexCount) {
+          modifiedFillVertices = true;  
+          modifiedFillNormals = true; 
+        }        
+        if (0 < tess.lineVertexCount) {
+          modifiedLineVertices = true;
+          modifiedLineAttributes = true;
+        }
+        if (0 < tess.pointVertexCount) {
+          modifiedPointVertices = true;
+          modifiedPointNormals = true;        
+        }
+        
+        // So the transformation is not applied again when drawing
+        applyMatrix = false;
+      }      
+    }    
   }
 
 
   public void scale(float x, float y, float z) {
-    if (family == GROUP) {
-      childHasMatrix();
-      applyMatrix = true;
-      super.scale(x, y, z);
-    } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
-      
-      checkMatrix(3);
-      matrix.reset();
-      matrix.scale(x, y, z);
-      tess.applyMatrix((PMatrix3D) matrix);
-      
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-        modifiedFillNormals = true; 
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;
-        modifiedPointNormals = true;        
-      }
-      
-      // So the transformation is not applied again when drawing
-      applyMatrix = false;
+    if (shapeEnded) {
+      updateTesselation();
+
+      if (family == GROUP) {
+        childHasMatrix();
+        applyMatrix = true;
+        super.scale(x, y, z);
+      } else {
+        checkMatrix(3);
+        matrix.reset();
+        matrix.scale(x, y, z);
+        tess.applyMatrix((PMatrix3D) matrix);
+        
+        modified(); 
+        if (0 < tess.fillVertexCount) {
+          modifiedFillVertices = true;  
+          modifiedFillNormals = true; 
+        }        
+        if (0 < tess.lineVertexCount) {
+          modifiedLineVertices = true;
+          modifiedLineAttributes = true;
+        }
+        if (0 < tess.pointVertexCount) {
+          modifiedPointVertices = true;
+          modifiedPointNormals = true;        
+        }
+        
+        // So the transformation is not applied again when drawing
+        applyMatrix = false;
+      }          
     }    
   }  
   
@@ -1663,40 +1668,39 @@ public class PShape3D extends PShape {
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    if (family == GROUP) {
-      childHasMatrix();
-      applyMatrix = true;
-      super.applyMatrix(n00, n01, n02,
-                        n10, n11, n12);
-    } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
-      
-      checkMatrix(2);
-      matrix.reset();
-      matrix.apply(n00, n01, n02,
-                   n10, n11, n12);   
-      tess.applyMatrix((PMatrix2D) matrix);
-      
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-        modifiedFillNormals = true; 
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;
-        modifiedPointNormals = true;        
-      }
-      
-      // So the transformation is not applied again when drawing
-      applyMatrix = false;     
-    }
+    if (shapeEnded) {
+      updateTesselation();
+
+      if (family == GROUP) {
+        childHasMatrix();
+        applyMatrix = true;
+        super.applyMatrix(n00, n01, n02,
+                          n10, n11, n12);
+      } else {
+        checkMatrix(2);
+        matrix.reset();
+        matrix.apply(n00, n01, n02,
+                     n10, n11, n12);   
+        tess.applyMatrix((PMatrix2D) matrix);
+        
+        modified(); 
+        if (0 < tess.fillVertexCount) {
+          modifiedFillVertices = true;  
+          modifiedFillNormals = true; 
+        }        
+        if (0 < tess.lineVertexCount) {
+          modifiedLineVertices = true;
+          modifiedLineAttributes = true;
+        }
+        if (0 < tess.pointVertexCount) {
+          modifiedPointVertices = true;
+          modifiedPointNormals = true;        
+        }
+        
+        // So the transformation is not applied again when drawing
+        applyMatrix = false;     
+      }      
+    }    
   }
 
 
@@ -1712,44 +1716,43 @@ public class PShape3D extends PShape {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-    if (family == GROUP) {
-      childHasMatrix();
-      applyMatrix = true;
-      super.applyMatrix(n00, n01, n02, n03,
-                        n10, n11, n12, n13,
-                        n20, n21, n22, n23,
-                        n30, n31, n32, n33);
-    } else {
-      if (!shapeEnded) {
-        PGraphics.showWarning("Transformations can be applied only after the shape has been ended.");
-        return;
-      }
-      
-      checkMatrix(3);
-      matrix.reset();
-      matrix.apply(n00, n01, n02, n03,
-                   n10, n11, n12, n13,
-                   n20, n21, n22, n23,
-                   n30, n31, n32, n33);   
-      tess.applyMatrix((PMatrix3D) matrix);
-      
-      modified(); 
-      if (0 < tess.fillVertexCount) {
-        modifiedFillVertices = true;  
-        modifiedFillNormals = true; 
-      }        
-      if (0 < tess.lineVertexCount) {
-        modifiedLineVertices = true;
-        modifiedLineAttributes = true;
-      }
-      if (0 < tess.pointVertexCount) {
-        modifiedPointVertices = true;
-        modifiedPointNormals = true;        
-      }
-      
-      // So the transformation is not applied again when drawing
-      applyMatrix = false;     
-    }
+    if (shapeEnded) {
+      updateTesselation();
+
+      if (family == GROUP) {
+        childHasMatrix();
+        applyMatrix = true;
+        super.applyMatrix(n00, n01, n02, n03,
+                          n10, n11, n12, n13,
+                          n20, n21, n22, n23,
+                          n30, n31, n32, n33);
+      } else {
+        checkMatrix(3);
+        matrix.reset();
+        matrix.apply(n00, n01, n02, n03,
+                     n10, n11, n12, n13,
+                     n20, n21, n22, n23,
+                     n30, n31, n32, n33);   
+        tess.applyMatrix((PMatrix3D) matrix);
+        
+        modified(); 
+        if (0 < tess.fillVertexCount) {
+          modifiedFillVertices = true;  
+          modifiedFillNormals = true; 
+        }        
+        if (0 < tess.lineVertexCount) {
+          modifiedLineVertices = true;
+          modifiedLineAttributes = true;
+        }
+        if (0 < tess.pointVertexCount) {
+          modifiedPointVertices = true;
+          modifiedPointNormals = true;        
+        }
+        
+        // So the transformation is not applied again when drawing
+        applyMatrix = false;     
+      } 
+    }    
   }
   
   
@@ -1770,6 +1773,7 @@ public class PShape3D extends PShape {
       ((PShape3D)parent).childHasMatrix();
     }
   }
+  
   
   ///////////////////////////////////////////////////////////  
   
