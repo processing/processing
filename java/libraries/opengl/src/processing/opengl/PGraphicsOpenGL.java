@@ -1908,7 +1908,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (type == LINES) {
       shape = new PShape3D(parent, PShape.GEOMETRY);
       shape.setKind(LINES);
-    } else if (type == TRIANGLES) {
+    } else if (type == TRIANGLE || type == TRIANGLES) {
       shape = new PShape3D(parent, PShape.GEOMETRY);
       shape.setKind(TRIANGLES);
     } else if (type == TRIANGLE_FAN) {
@@ -1917,7 +1917,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (type == TRIANGLE_STRIP) {      
       shape = new PShape3D(parent, PShape.GEOMETRY);
       shape.setKind(TRIANGLE_STRIP);
-    } else if (type == QUADS) {
+    } else if (type == QUADS || type == QUADS) {
       shape = new PShape3D(parent, PShape.GEOMETRY);
       shape.setKind(QUADS);
     } else if (type == QUAD_STRIP) {
