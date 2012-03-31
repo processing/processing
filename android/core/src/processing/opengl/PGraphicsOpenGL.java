@@ -26,7 +26,6 @@ import java.nio.*;
 import java.util.*;
 
 import processing.core.*;
-import processing.opengl.PGraphicsOpenGL.Tessellator.TessellatorCallback;
 
 
 // drawPixels is missing...calls to glDrawPixels are commented out

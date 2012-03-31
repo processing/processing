@@ -31,6 +31,7 @@ import java.nio.IntBuffer;
 import java.util.Arrays;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.opengl.tess.PGLU;
 import processing.opengl.tess.PGLUtessellator;
 import processing.opengl.tess.PGLUtessellatorCallbackAdapter;
@@ -81,9 +82,10 @@ public class PGL {
   public static final int MAX_LIGHTS = 8;
   
   /** Maximum number of tessellated vertices. GLES restricts the vertex indices
-   * to be of type short, so 2^16 = 65536 is the maximum possible number of 
-   * vertices that can be referred to within a single VBO. */
-  public static final int MAX_TESS_VERTICES = 65536;
+   * to be of type unsigned short. Since Java only supports native shorts as 
+   * primitive type we have 2^15 = 32768 as the maximum number of  vertices 
+   * that can be referred to within a single VBO. */
+  public static final int MAX_TESS_VERTICES = 32768;
   
   /** Maximum number of indices. 2 times the max number of 
    * vertices to have good room for vertex reuse. */
@@ -1184,12 +1186,20 @@ public class PGL {
   
   
   static public short makeIndex(int intIdx) {
+    // The old hack to have unsigned shorts as indices using Java's
+    // signed shorts:
     // When the index value is greater than 32767, subtracting 65536
     // will make it (as a short) to wrap around to the negative range, which    
     // is all we need to later pass these numbers to opengl (which will 
     // interpret them as unsigned shorts). See discussion here:
     // http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
-    return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;
+    //return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;    
+    if (32767 < intIdx) {
+      PGraphics.showWarning("P3D: Vertex index is greater than 32767");
+      return 32767;
+    } else {
+      return (short)intIdx;
+    }
   }
   
   
