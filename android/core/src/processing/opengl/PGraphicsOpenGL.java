@@ -6111,6 +6111,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public int[] emissive;
     public float[] shininess;
     
+    // TODO: this should probably go in the TessGeometry class
     public int[][] edges;
     
     // For later, to be used by libraries...
@@ -6126,6 +6127,12 @@ public class PGraphicsOpenGL extends PGraphics {
       vertexCount = firstVertex = lastVertex = 0; 
       edgeCount = firstEdge = lastEdge = 0;
     }
+    
+    
+    public void clearEdges() {
+      edgeCount = firstEdge = lastEdge = 0;
+    }
+    
     
     public void allocate() {      
       codes = new int[PGL.DEFAULT_IN_VERTICES];
