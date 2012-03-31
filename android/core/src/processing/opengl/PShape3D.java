@@ -3761,7 +3761,7 @@ public class PShape3D extends PShape {
         render(texture);
       }
     
-      if (matrix != null) {
+      if (matrix != null && applyMatrix) {
         g.popMatrix();
       } 
     }
