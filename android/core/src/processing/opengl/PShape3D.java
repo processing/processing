@@ -2457,6 +2457,7 @@ public class PShape3D extends PShape {
     } else {   
       if (shapeEnded) {
         if (tessellated) {
+          in.clearEdges();
           tess.clear();
         }
         
@@ -2825,6 +2826,8 @@ public class PShape3D extends PShape {
       
       aggregateImpl();
       
+      context = pgl.getContext();
+      
       // Now that we know, we can initialize the buffers with the correct size.
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {   
         initFillBuffers(tess.fillVertexCount, tess.fillIndexCount);          
@@ -3072,8 +3075,6 @@ public class PShape3D extends PShape {
     int sizef = nvert * PGL.SIZEOF_FLOAT;
     int sizei = nvert * PGL.SIZEOF_INT;
     int sizex = nind * PGL.SIZEOF_INDEX;
-    
-    context = pgl.getContext();
     
     glFillVertexBufferID = pg.createVertexBufferObject();  
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
@@ -4126,13 +4127,14 @@ public class PShape3D extends PShape {
   
   protected BufferedReader getBufferedReader(String filename) {
     //BufferedReader retval = papplet.createReader(filename);
-    BufferedReader retval = null;
-    if (retval != null) {
-      return retval;
-    } else {
-      PApplet.println("Could not find this file " + filename);
-      return null;
-    }
+//    BufferedReader retval = null;
+//    if (retval != null) {
+//      return retval;
+//    } else {
+//      PApplet.println("Could not find this file " + filename);
+//      return null;
+//    }
+    return null;
   }
   
   
