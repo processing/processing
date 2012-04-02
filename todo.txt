@@ -18,6 +18,9 @@ X   http://code.google.com/p/processing/issues/detail?id=69
 o Added some basic Emacs cursor navigator keybindings
 o   just implement these as a preference
 o   http://code.google.com/p/processing/issues/detail?id=555
+o method of including/excluding data files in the JAR
+o   or at least a boolean for the whole folder?
+X   files moved outside the jar for exporting to application
 
 fixed earlier
 X Export reports "Could not copy source file" (even though it works)
@@ -30,6 +33,15 @@ X   don't see this one having a problem on OS X 10.7
 X Unable to access Javascript examples
 X   http://code.google.com/p/processing/issues/detail?id=909
 X   appears to have been freak thing in the build process
+X finished work (earlier) to make gsvideo behave properly
+o   "setenv DYLD_LIBRARY_PATH /Library/GStreamer/"
+o   "setenv setenv GST_PLUGIN_PATH /Library/GStreamer/lib/gstreamer-0.10"
+were added to the file "/etc/launchd.conf" by the installer. This is needed for GStreamer to work properly.
+X Closing sketch file closes applet
+X   http://code.google.com/p/processing/issues/detail?id=606
+X   Marked closed around 1.5?
+X incorporate gsvideo library from Andres
+o fast java2d video?
 
 displays
 X ability to select monitor via preferences panel
@@ -47,7 +59,16 @@ X add EditorState class, device-aware placement
 X   get rid of restore sketch feature
 _   remove pref for restoring sketches
 _   implement recent sketches menu
+_ Opening sketch via editor window open-menu ignores mode
+_   http://code.google.com/p/processing/issues/detail?id=1034
 
+_ don't pollute the recent menu with un-saved sketches
+_ toFront() not working from recent menu
+_ don't re-open new window on top of another
+_ not properly handling other odd cases
+http://code.google.com/p/processing/issues/list?can=2&q=owner%3Afry%40processing.org+Type%3ADefect&colspec=Stars+ID+Type+Status+Priority+Owner+Summary&cells=tiles
+_ save window positions on quit, and restore them (w/ a preference?)
+_   new windows use same mode and dimensions as topmost window
 _ saved window position problematic with multiple monitors
 _   http://code.google.com/p/processing/issues/detail?id=27
 _ Closing the last window doesn't cause PDE to save it's position/contents/etc
@@ -66,7 +87,6 @@ _ not remembering window size/placement preferences
 _   http://dev.processing.org/bugs/show_bug.cgi?id=837
 _ Blank sketch opened even if opening an existing sketch by double-clicking
 _   http://code.google.com/p/processing/issues/detail?id=179
-
 _ changing number of screens between run causes things to show up off-screen
 _   so when running, check to make sure that things are out of the area
 _ saved window positions.. if displays has changed, becomes a problem
@@ -80,8 +100,45 @@ _   http://code.google.com/p/processing/issues/detail?id=27
 Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
 
 
+decisions
+_ saving files... save("...svg") or saveSVG("...")
+_ lots of other things in the google code issues list
+_ does editor.bgcolor live in the theme.txt file for the mode? 
+_   or should it be a user preference thing
+_   for that matter, need to decide on how much modes can customize themselves
+_ find in reference for copy() (on image) tries to open PVector.copy()
+_   might need disambiguation pages?
+_   if a reference page is missing, throws a bunch of exceptions
+_   i.e. PVector.copy() not in the reference
 
-
+with casey
+_ specifically add "eclipse" to integration description
+_ link books and sample chapters from the "getting started" portion of the faq
+_ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
+_   mark examples as untitled (rather than read-only)
+_   maybe even pull these directly from the zip file?
+_ load examples from zip files
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1049
+_ disallow add file to sketch, export, export application
+_   pretty much anything inside the sketch?
+_   but don't do this with untitled, cuz it kinda stinks
+_   this is too weird--just put examples into individual zip files
+_   mark example files as untitled
+_   though will that require the sketch to be saved before export?
+o find in reference issues
+o   if() and for() don't work, they look for for_.html instead of for.html
+o   XMLElement is not linked for find in ref
+o   the ? operator is not in find in ref (no ref page either?)
+o update keywords generator script on the site
+o   perhaps move this closer to the dev process?
+o move reference folder around so that it matches site organization
+o   otherwise several links break on the main faq page
+o discuss i18n issues and proper system (?)
+o look through 404 issues on the site
+o TRIANGLE_STRIP not highlighted for "find in reference"
+o   nor is it listed on the reference page
+o   so students can't find the ref for it
+o   needs to link TRIANGLE_STRIP to the beginShape() reference
 
 2.0
 _ decide whether to do same as Android preproc on parsing size/renderer/etc
@@ -89,12 +146,37 @@ _ should open() not return a Process object? (exec() instead?)
 _   pro: can write out error messages (or output)
 _   con: loses cross platform ability
 _   but: open() is platform specific anyway, ppl can use exec()
+_ wordtreemap_sotu gives weird preproc error: wrong line, can't parse extends
+_ add blendMode() to JAVA2D so we can rip out blend()
+
+2.0 / command line
+_ kill external editor (for all its quirks) in favor of command line? 
+_   use external editor needs to enable/disable across all windows
+_   http://code.google.com/p/processing/issues/detail?id=515
+C   Casey says yes kill ext editor and finish command line
+X could move to java6 and better internal javac support (drop ecj)
+_   decided to use Java 6, so check on Javac usefulness
+_ change command line to just be part of regular distros
+_   there's so much platform code in there, it's not worth the extra work
+_   also include update check for logging
+_ command line support is currently broken
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
+_   http://code.google.com/p/processing/issues/detail?id=142
+_   some fixes can be found in the bug report
+_   need to deal with setting path to sketchbook/examples
+_   also deal with the script not being in the right folder
+_   problems with imports and prefs file
+_     http://dev.processing.org/bugs/show_bug.cgi?id=1298
+_ processing.app.Commander headless still requiring X11
+_   problem is static calls to PApplet
+_   http://dev.processing.org/bugs/show_bug.cgi?id=1426
 
 
-_ find in reference for copy() (on image) tries to open PVector.copy()
-_   might need disambiguation pages?
-_ if a reference page is missing, throws a bunch of exceptions
-_   i.e. PVector.copy() not in the reference
+_ change syntax highlighting so it differentiates keyPressed and keyPressed()
+_ syntax highlight with parens also helps "String line" vs "line()"
+
+_ excessive CPU usage of PDE after using library manager
+_   http://code.google.com/p/processing/issues/detail?id=1036
 
 _ check on new JDK and how it works on OS X
 _   http://jdk7.java.net/macportpreview/
@@ -131,16 +213,6 @@ _ switch to a non-modified version of launch4j
 _ switch the exported launcher to use launch4j as well? 
 X   figured out how to do Intel build for OS X
 
-decisions
-_ kill external editor (for all its quirks) in favor of command line? 
-_ use external editor needs to enable/disable across all windows
-_   http://code.google.com/p/processing/issues/detail?id=515
-_ lots of other things in the google code issues list
-_ does editor.bgcolor live in the theme.txt file for the mode? 
-_   or should it be a user preference thing
-_   for that matter, need to decide on how much modes can customize themselves
-_ could move to java6 and better internal javac support (drop ecj)
-
 _ how to catch these?
 Exception in thread "Animation Thread" java.lang.NoClassDefFoundError: Could not initialize class javax.media.opengl.GLProfile
 Exception in thread "Animation Thread" java.lang.UnsatisfiedLinkError: no gluegen-rt in java.library.path
@@ -156,6 +228,10 @@ _   or make the area light up gray as it's being worked on
 _ fix autoformat to indent like the p5 book/examples
 _ common error messages
 _   with a proper list, we can add links when throwing an error in the PDE
+
+_ write up code guidelines for project (in advance of GSoC)
+_ write up guidelines for modes
+_   i.e. don't mess with Sketch menu, put it in the mode menu
 
 ben
 _ build is currently broken for fresh checkout due to changes to file layout
@@ -211,29 +287,9 @@ _ stroke caps and joins in P2D, P3D, and OpenGL
 _ start caching shape objects with opengl
 _   store them in the PFont itself?
 
-gsvideo
-_ incorporate gsvideo library from Andres
-_ fast java2d video?
-
 gsoc
 _ "install library" menu option
 _ see how library installation goes, then possibly do same w/ examples
-
-3.0
-_ better text editor / live debugging (integrate Eclipse JDT)
-_   line numbers
-_ it's too difficult for students to debug their code
-_   can the jdt be hooked in somewhat easily?
-_ require Java 6 (and with that, OS X 10.5 plus Core 2 Intel Mac)?
-_   though we need a 64-bit browser before applets will run...
-_   http://www.ornl.gov/~t6p/Main/Utilities.html
-_ get rid of static mode? only setup/draw mode? or create project that way?
-_   pro: simplify internal code, fixes some of the worst errors
-_   con: people love it, most of the books use it heavily
-_ add === for String.equals()
-_   might be problematic since it might be opposite the javascript meaning
-_   jer: it's a decent time to start talking abt references/vars
-
 
 _ launch4j problem - FIXABLE
 _   no crash when double-clicking a sketch and loading it (?)
@@ -256,8 +312,6 @@ regressions
 _ strange window flicker when first opened
 _ test libraries on android
 _ test .java files on desktop version
-_ Closing sketch file closes applet
-_   http://code.google.com/p/processing/issues/detail?id=606
 
 additions
 _ when creating a sketch within non-java mode, should write the settings file
@@ -396,21 +450,6 @@ _ write build.xml file to automatically update the examples
 _ error that sketch is read-only can't be canceled
 _   hitting cancel (or ESC?) still brings up the save dialog
 
-_ change command line to just be part of regular distros
-_   there's so much platform code in there, it's not worth the extra work
-_   also include update check for logging
-_ command line support is currently broken
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1048
-_   http://code.google.com/p/processing/issues/detail?id=142
-_   some fixes can be found in the bug report
-_   need to deal with setting path to sketchbook/examples
-_   also deal with the script not being in the right folder
-_   problems with imports and prefs file
-_     http://dev.processing.org/bugs/show_bug.cgi?id=1298
-_ processing.app.Commander headless still requiring X11
-_   problem is static calls to PApplet
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1426
-
 svn copy https://processing.googlecode.com/svn/trunk/processing https://processing.googlecode.com/svn/tags/processing-01XX
 
 svn copy https://processing.googlecode.com/svn/trunk/processing https://processing.googlecode.com/svn/branches/processing-0192-refactor
@@ -444,10 +483,6 @@ _   use FileChannels, see FileInputStream.getChannel(),
 _   and use transferFrom() or transferTo().)
 _   could also use FileUtils in Apache's common io
 _   http://commons.apache.org/io/api-release/index.html
-
-"setenv DYLD_LIBRARY_PATH /Library/GStreamer/"
-"setenv setenv GST_PLUGIN_PATH /Library/GStreamer/lib/gstreamer-0.10"
-were added to the file "/etc/launchd.conf" by the installer. This is needed for GStreamer to work properly.
 
 _ problem changing sketchbook to new location (e.g. from ex to regular) 
 _   new libraries are not picked up
@@ -601,36 +636,6 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=874
 _ sometimes not launching
 _   this seems to be a threading problem, like an NPE on load/open
 _   probaby related to the other load/save sync errors
-
-
-with casey
-_ specifically add "eclipse" to integration description
-_ link books and sample chapters from the "getting started" portion of the faq
-_ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)
-_   mark examples as untitled (rather than read-only)
-_   maybe even pull these directly from the zip file?
-_ load examples from zip files
-_   http://dev.processing.org/bugs/show_bug.cgi?id=1049
-_   disallow add file to sketch, export, export application
-_   pretty much anything inside the sketch?
-_   but don't do this with untitled, cuz it kinda stinks
-_   this is too weird--just put examples into individual zip files
-_   mark example files as untitled
-_   though will that require the sketch to be saved before export?
-o find in reference issues
-o   if() and for() don't work, they look for for_.html instead of for.html
-o   XMLElement is not linked for find in ref
-o   the ? operator is not in find in ref (no ref page either?)
-o update keywords generator script on the site
-o   perhaps move this closer to the dev process?
-o move reference folder around so that it matches site organization
-o   otherwise several links break on the main faq page
-o discuss i18n issues and proper system (?)
-o look through 404 issues on the site
-o TRIANGLE_STRIP not highlighted for "find in reference"
-o   nor is it listed on the reference page
-o   so students can't find the ref for it
-o   needs to link TRIANGLE_STRIP to the beginShape() reference
 
 
 libraries and classpaths [1.0]
@@ -1592,20 +1597,27 @@ _ some reports of it not quitting properly, but not confirmed
 _ splash screen
 
 
-LATER
+WISH LIST 
 
 _ rename location is awkward, do it on the tab?
-_ method of including/excluding data files in the JAR
-_   or at least a boolean for the whole folder?
-
-
-WISH LIST 
 
 _ Replace current editor with more advanced version
 _   http://code.google.com/p/processing/issues/detail?id=1032
 _ Resurrect the Eclipse plug-in project
 _   http://code.google.com/p/processing/issues/detail?id=1031
 
-_ write up code guidelines
-_ write up guidelines for modes
-_   i.e. don't mess with Sketch menu, put it in the mode menu
+
+3.0
+_ better text editor / live debugging (integrate Eclipse JDT)
+_   line numbers
+_ it's too difficult for students to debug their code
+_   can the jdt be hooked in somewhat easily?
+_ require Java 6 (and with that, OS X 10.5 plus Core 2 Intel Mac)?
+_   though we need a 64-bit browser before applets will run...
+_   http://www.ornl.gov/~t6p/Main/Utilities.html
+_ get rid of static mode? only setup/draw mode? or create project that way?
+_   pro: simplify internal code, fixes some of the worst errors
+_   con: people love it, most of the books use it heavily
+_ add === for String.equals()
+_   might be problematic since it might be opposite the javascript meaning
+_   jer: it's a decent time to start talking abt references/vars

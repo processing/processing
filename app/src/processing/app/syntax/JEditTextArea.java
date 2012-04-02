@@ -31,7 +31,7 @@ import processing.core.PApplet;
 /**
  * The text area component from the JEdit Syntax (syntax.jedit.org) project.
  * This is a very early version of what later was completely rewritten and
- * become jEdit (jedit.org). Over the years we've also added minor features 
+ * become jEdit (jedit.org). Over the years we've also added minor features
  * for use with Processing (notably mouse wheel support and copyAsHTML). [fry]
  * <p>
  * jEdit's text area component. It is more suited for editing program
@@ -70,7 +70,7 @@ public class JEditTextArea extends JComponent
    * bar is added this way.
    */
   public static String LEFT_OF_SCROLLBAR = "los";
-  
+
   /** The size of the offset between the leftmost padding and the code */
   public static final int leftHandGutter = 6;
 
@@ -87,13 +87,13 @@ public class JEditTextArea extends JComponent
     caretTimer = new Timer(500, new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (hasFocus()) {
-          blinkCaret();      
+          blinkCaret();
         }
       }
     }); //new CaretBlinker//new CaretBlinker());
     caretTimer.setInitialDelay(500);
     caretTimer.start();
-    
+
     // Initialize some misc. stuff
     painter = new TextAreaPainter(this, defaults);
     documentHandler = new DocumentHandler();
@@ -641,7 +641,7 @@ public class JEditTextArea extends JComponent
 
     } else {
       Token tokens;
-      if (painter.currentLineIndex == line && 
+      if (painter.currentLineIndex == line &&
           painter.currentLineTokens != null) {
         tokens = painter.currentLineTokens;
       } else {
@@ -668,7 +668,7 @@ public class JEditTextArea extends JComponent
 
         for (int i = 0; i < length; i++) {
 //          System.out.println("segmentOffset = " + segmentOffset +
-//                             ", offset = " + offset + 
+//                             ", offset = " + offset +
 //                             ", i = " + i +
 //                             ", length = " + length +
 //                             ", array len = " + segmentArray.length);
@@ -833,7 +833,7 @@ public class JEditTextArea extends JComponent
     }
     return offset + length;
   }
-  
+
   /**
    * Returns the end offset of the specified line.
    * @param line The line
@@ -849,7 +849,7 @@ public class JEditTextArea extends JComponent
     else
       return lineElement.getEndOffset();
   }
-  
+
   public int getLineStopNonWhiteSpaceOffset(int line)
   {
     int offset = getLineStopOffset(line);
@@ -861,12 +861,12 @@ public class JEditTextArea extends JComponent
         return offset - i;
       }
     }
-    
+
     return offset - length;
   }
 
   /**
-   * Returns the start offset of the line after this line, or the end of 
+   * Returns the start offset of the line after this line, or the end of
    * this line if there is no next line.
    * @param line The line
    * @return The end offset of the specified line, or -1 if the line is
@@ -1249,13 +1249,13 @@ public class JEditTextArea extends JComponent
       //                 getLineOfOffset(end));
     }
   }
-  
+
   private enum CharacterKinds {
       Word,
       Whitespace,
       Other
   }
-  
+
   private CharacterKinds CharacterKind( char ch, String noWordSep )
   {
     if ( Character.isLetterOrDigit(ch) || ch=='_' || noWordSep.indexOf(ch) != -1 )
@@ -1273,7 +1273,7 @@ public class JEditTextArea extends JComponent
       newSelectionEnd = newSelectionStart;
       return;
     }
-    
+
     String noWordSep = (String)document.getProperty("noWordSep");
     if(noWordSep == null)
       noWordSep = "";
@@ -1284,9 +1284,9 @@ public class JEditTextArea extends JComponent
     int wordEnd = lineText.length();
 
     char ch = lineText.charAt(Math.max(0,offset - 1));
-    
+
     CharacterKinds thisWord = CharacterKind(ch,noWordSep);
-    
+
     for(int i = offset - 1; i >= 0; i--) {
       ch = lineText.charAt(i);
       if(CharacterKind(ch,noWordSep) != thisWord) {
@@ -1303,7 +1303,7 @@ public class JEditTextArea extends JComponent
       }
     }
     int lineStart = getLineStartOffset(line);
-    
+
     newSelectionStart = lineStart + wordStart;
     newSelectionEnd = lineStart + wordEnd;
   }
@@ -1678,14 +1678,14 @@ public class JEditTextArea extends JComponent
    * rather than opening a new window.
    * <p/>
    * Updated for 0144 to only format the selected lines.
-   * <p/> 
-   * Updated for 0185 to incorporate the HTML changes from the Arduino project, 
-   * and set the formatter to always use HTML (disabling, but not removing the 
+   * <p/>
+   * Updated for 0185 to incorporate the HTML changes from the Arduino project,
+   * and set the formatter to always use HTML (disabling, but not removing the
    * YaBB version of the code) and also fixing it for the Tools API.
    * <p/>
-   * Updated for 0190 to simply be part of JEditTextArea, removed YaBB code. 
+   * Updated for 0190 to simply be part of JEditTextArea, removed YaBB code.
    * Simplest and most sensible to have it live here, since it's no longer
-   * specific to any language or version of the PDE.    
+   * specific to any language or version of the PDE.
    */
   public void copyAsHTML() {
     StringBuffer cf = new StringBuffer("<pre>\n");
@@ -1803,7 +1803,7 @@ public class JEditTextArea extends JComponent
 
 
   /**
-   * Handle encoding HTML entities for lt, gt, and anything non-ASCII. 
+   * Handle encoding HTML entities for lt, gt, and anything non-ASCII.
    */
   private void appendAsHTML(StringBuffer buffer, char c) {
     if (c == '<') {
@@ -1826,11 +1826,11 @@ public class JEditTextArea extends JComponent
     if (editable) {
       Clipboard clipboard = getToolkit().getSystemClipboard();
       try {
-        String selection = 
+        String selection =
           ((String) clipboard.getContents(this).getTransferData(DataFlavor.stringFlavor));
 
         if (selection.contains("\r\n")) {
-          selection = selection.replaceAll("\r\n", "\n"); 
+          selection = selection.replaceAll("\r\n", "\n");
 
         } else if (selection.contains("\r")) {
           // The Mac OS MRJ doesn't convert \r to \n, so do it here
@@ -1844,7 +1844,7 @@ public class JEditTextArea extends JComponent
           char[] c = new char[tabSize];
           Arrays.fill(c, ' ');
           String tabString = new String(c);
-          selection = selection.replaceAll("\t", tabString); 
+          selection = selection.replaceAll("\t", tabString);
         }
 
         // particularly on macosx when pasting from safari,
@@ -2332,7 +2332,7 @@ public class JEditTextArea extends JComponent
     public void mouseMoved(MouseEvent evt) {}
   }
 
-  
+
   class FocusHandler implements FocusListener
   {
     public void focusGained(FocusEvent evt)
@@ -2361,14 +2361,14 @@ public class JEditTextArea extends JComponent
 //      setCaretVisible(true);
 //      focusedComponent = JEditTextArea.this;
         // Here be dragons: for release 0195, this fixes a problem where the
-        // line segment data from the previous window was being used for 
+        // line segment data from the previous window was being used for
         // selections, causing an exception when the window you're clicking to
         // was not full of text. Simply ignoring clicks when not focused fixes
         // the problem, though it's not clear why the wrong Document data was
         // being using regardless of the focusedComponent.
 //        if (focusedComponent != JEditTextArea.this) return;
         if (!hasFocus()) {
-          System.out.println("requesting focus in window");
+//          System.out.println("requesting focus in window");
           requestFocusInWindow();
           return;
         }
