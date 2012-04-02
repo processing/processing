@@ -13,11 +13,6 @@ cleaning
 o too much object creation in java2d
 o   causes inconsistency/hiccups as the gc runs?
 
-_ change screenWidth/Height to displayWidth/Height
-_   also fix the Android etc docs
-_ add screen(PVector), model(PVector) and world(PVector)?
-_ test what happens with NPE in OpenGL, does the error make sense?
-
 XML
 o questions re: final xml api changes
 o   http://code.google.com/p/processing/issues/detail?id=612
@@ -39,9 +34,27 @@ X   http://code.google.com/p/processing/issues/detail?id=975
 o finish updating XML documentation
 o   http://code.google.com/p/processing/issues/detail?id=382
 X   headed over to Reas
-_ several other items under the LIBRARIES / XML section below
+o ref: constructor has changed to .parse(...) instead of new XMLElement(str)
+X   this wasn't documented in the first place
+o add XMLElement.listChildren() to reference
+o document XMLElement save() and write(), and their differences
+o handle charset decoding in xml element parser?
+o   same with the other methods like loadStrings()
+o   could also be a way to handle gzip too?
+o   tho charset + gzip would be a problem
+X   not gonna do charset
+o vectors shouldn't be exposed, need to expose attr lists as arrays
+o   or also add a method for getting the vectors?
+X   no longer an issue post-NanoXML
+X several other items under the LIBRARIES / XML section below
 _ move to processing.data.* package
 _   update the internal code for Android and desktop to add the import
+
+_ change screenWidth/Height to displayWidth/Height
+_   also fix the Android etc docs
+_ add screen(PVector), model(PVector) and world(PVector)?
+X test what happens with NPE in OpenGL, does the error make sense?
+_   nope, it doesn't, need to clean this up
 
 _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting
@@ -573,6 +586,8 @@ _ for PShape, need to be able to set the origin (flash people)
 
 CORE / PShapeSVG
 
+_ need to handle <!ENTITY tags in XML for SVG documents
+_   get entity tags working in xml library for SVG
 _ cover the svg changes in a future release
 _ load PShape from a string object
 _   http://code.google.com/p/processing/issues/detail?id=277
@@ -612,21 +627,6 @@ _   http://processing.org/discourse/yabb/YaBB.cgi?board=Proce55ing_software_bugs
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-
-
-LIBRARIES / XML
-
-_ ref: constructor has changed to .parse(...) instead of new XMLElement(str)
-_ add XMLElement.listChildren() to reference
-_ document XMLElement save() and write(), and their differences
-_ need to handle <!ENTITY tags for svg documents
-_   get entity tags working in xml library for SVG
-_ handle charset decoding in xml element parser?
-_   same with the other methods like loadStrings()
-_   could also be a way to handle gzip too?
-_   tho charset + gzip would be a problem
-_ vectors shouldn't be exposed, need to expose attr lists as arrays
-_   or also add a method for getting the vectors?
 
 
 more andres
