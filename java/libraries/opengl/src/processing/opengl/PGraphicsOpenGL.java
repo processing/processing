@@ -5049,8 +5049,8 @@ public class PGraphicsOpenGL extends PGraphics {
     if (tex != null) {
       int x = img.getModifiedX1();
       int y = img.getModifiedY1();
-      int w = img.getModifiedX2() - x;
-      int h = img.getModifiedY2() - y;      
+      int w = img.getModifiedX2() - x + 1;
+      int h = img.getModifiedY2() - y + 1;      
       tex.set(img.pixels, x, y, w, h, img.format);
     }
     img.setModified(false);
