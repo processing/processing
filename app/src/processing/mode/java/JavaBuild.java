@@ -298,8 +298,12 @@ public class JavaBuild {
 //      System.out.println(errorLine + " " + errorFile + " " + code[errorFile].getPreprocOffset());
 
       String msg = re.getMessage();
+      
+      //System.out.println(java.getAbsolutePath());
+      System.out.println(bigCode);
 
-      if (msg.equals("expecting RCURLY, found 'null'")) {
+      if (msg.contains("expecting RCURLY")) {
+      //if (msg.equals("expecting RCURLY, found 'null'")) {
         // This can be a problem since the error is sometimes listed as a line
         // that's actually past the number of lines. For instance, it might
         // report "line 15" of a 14 line program. Added code to highlightLine()
@@ -307,28 +311,39 @@ public class JavaBuild {
         // useful for other similar situations).
         throw new SketchException("Found one too many { characters " +
                                   "without a } to match it.",
-                                  errorFile, errorLine, re.getColumn());
+                                  errorFile, errorLine, re.getColumn(), false);
+      }
+      
+      if (msg.contains("expecting LCURLY")) {
+        System.err.println(msg);
+        String suffix = ".";
+        String[] m = PApplet.match(msg, "found ('.*')");
+        if (m != null) {
+          suffix = ", not " + m[1] + ".";
+        }
+        throw new SketchException("Was expecting a { character" + suffix,  
+                                   errorFile, errorLine, re.getColumn(), false);
       }
 
       if (msg.indexOf("expecting RBRACK") != -1) {
         System.err.println(msg);
         throw new SketchException("Syntax error, " +
                                   "maybe a missing ] character?",
-                                  errorFile, errorLine, re.getColumn());
+                                  errorFile, errorLine, re.getColumn(), false);
       }
 
       if (msg.indexOf("expecting SEMI") != -1) {
         System.err.println(msg);
         throw new SketchException("Syntax error, " +
                                   "maybe a missing semicolon?",
-                                  errorFile, errorLine, re.getColumn());
+                                  errorFile, errorLine, re.getColumn(), false);
       }
 
       if (msg.indexOf("expecting RPAREN") != -1) {
         System.err.println(msg);
         throw new SketchException("Syntax error, " +
                                   "maybe a missing right parenthesis?",
-                                  errorFile, errorLine, re.getColumn());
+                                  errorFile, errorLine, re.getColumn(), false);
       }
 
       if (msg.indexOf("preproc.web_colors") != -1) {
@@ -339,7 +354,7 @@ public class JavaBuild {
 
       //System.out.println("msg is " + msg);
       throw new SketchException(msg, errorFile,
-                                errorLine, re.getColumn());
+                                errorLine, re.getColumn(), false);
 
     } catch (antlr.TokenStreamRecognitionException tsre) {
       // while this seems to store line and column internally,

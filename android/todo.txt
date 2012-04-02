@@ -2,10 +2,16 @@
 X finish xml writing on android
 X   http://stackoverflow.com/questions/2290945/writing-xml-on-android
 X   consider switch to android 2.2 as the minimum
-X GL2 specific code in Processing 2.0a5 break P3D on GLES2 hardware
-X   http://code.google.com/p/processing/issues/detail?id=1029
 
-2.0a5
+andres
+A GL2 specific code in Processing 2.0a5 break P3D on GLES2 hardware
+A   http://code.google.com/p/processing/issues/detail?id=1029
+_ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
+_   http://code.google.com/p/processing/issues/detail?id=1019
+X OpenGL/ES requires precision specifier on float types
+X   http://code.google.com/p/processing/issues/detail?id=1035
+
+earlier
 X remove unnecessary processing.xml.* code from android-core
 X   http://code.google.com/p/processing/issues/detail?id=214
 
