@@ -24,8 +24,8 @@ o   http://code.google.com/p/processing/issues/detail?id=612
 X look into replacing nanoxml
 X   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
 X add save() method
-_ Wishlist for the new XML class in Processing 2.0
-_   http://code.google.com/p/processing/issues/detail?id=904
+X Wishlist for the new XML class in Processing 2.0
+X   http://code.google.com/p/processing/issues/detail?id=904
 X   void addChild(XML child)
 X   void setContent(String content)
 X   void setName(String name)
@@ -34,8 +34,11 @@ o   should this be the default to be more like old XML?
 o   otherwise document how things are sometimes null in XML
 o   test xml examples to see if they break
 X   changed to make it return #text for the name, which is more correct
-_ finish updating XML documentation
-_   http://code.google.com/p/processing/issues/detail?id=382
+X white space in XML 
+X   http://code.google.com/p/processing/issues/detail?id=975
+o finish updating XML documentation
+o   http://code.google.com/p/processing/issues/detail?id=382
+X   headed over to Reas
 _ several other items under the LIBRARIES / XML section below
 _ move to processing.data.* package
 _   update the internal code for Android and desktop to add the import

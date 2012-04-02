@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2009-11 Ben Fry and Casey Reas
+  Copyright (c) 2009-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,13 +23,15 @@
 package processing.core;
 
 import java.io.*;
+
 import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 import org.xml.sax.*;
+
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
 
 import processing.core.PApplet;
 
@@ -66,26 +68,19 @@ public class XML implements Serializable {
   }
 
 
-//  public XML(String xml) {
-//    this(new StringReader(xml));
-//  }
-
-
   public XML(Reader reader) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//      factory.setValidating(false);
-//      factory.setAttribute("http://xml.org/sax/features/namespaces", true);
-//      factory.setAttribute("http://xml.org/sax/features/validation", false);
-//      factory.setAttribute("http://xml.org/sax/features/validation", true);
-//      factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-      // enable this to temporarily get around some parsing quirks (and get a proper error msg)
-//      factory.setFeature("http://apache.org/xml/features/dom/defer-node-expansion", false);
+
       // Prevent 503 errors from www.w3.org
       factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-//      factory.setAttribute("http://apache.org/xml/features/dom/create-entity-ref-nodes", false);
+
+      // without a validating DTD, this doesn't do anything since it doesn't know what is ignorable
+//      factory.setIgnoringElementContentWhitespace(true);
+
       factory.setExpandEntityReferences(false);
 //      factory.setExpandEntityReferences(true);
+
 //      factory.setCoalescing(true);
 //      builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
       DocumentBuilder builder = factory.newDocumentBuilder();
@@ -149,15 +144,29 @@ public class XML implements Serializable {
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
-
-    if (node.getNodeType() == Node.ELEMENT_NODE) {
-      name = node.getNodeName();
-    }
+    this.name = node.getNodeName();
   }
 
 
   static public XML parse(String xml) {
     return new XML(new StringReader(xml));
+  }
+
+
+  public boolean save(OutputStream output) {
+    return save(PApplet.createWriter(output));
+  }
+
+
+  public boolean save(File file) {
+    return save(PApplet.createWriter(file));
+  }
+
+
+  public boolean save(PrintWriter output) {
+    output.print(toString(2));
+    output.flush();
+    return true;
   }
 
 
@@ -170,6 +179,11 @@ public class XML implements Serializable {
   }
 
 
+  protected Node getNode() {
+    return node;
+  }
+
+
   /**
    * Returns the full name (i.e. the name including an eventual namespace
    * prefix) of the element.
@@ -177,6 +191,13 @@ public class XML implements Serializable {
    */
   public String getName() {
     return name;
+  }
+
+
+  public void setName(String newName) {
+    Document document = node.getOwnerDocument();
+    node = document.renameNode(node, null, newName);
+    name = node.getNodeName();
   }
 
 
@@ -352,7 +373,7 @@ public class XML implements Serializable {
     if (offset == items.length-1) {
       return getChildren(items[offset]);
     }
-    XML[] matches = (XML[]) getChildren(items[offset]);
+    XML[] matches = getChildren(items[offset]);
     XML[] outgoing = new XML[0];
     for (int i = 0; i < matches.length; i++) {
       XML[] kidMatches = matches[i].getChildrenRecursive(items, offset+1);
@@ -365,12 +386,25 @@ public class XML implements Serializable {
   public XML addChild(String tag) {
     Document document = node.getOwnerDocument();
     Node newChild = document.createElement(tag);
-    node.appendChild(newChild);
-    XML pn = new XML(this, newChild);
+    return appendChild(newChild);
+  }
+
+
+  public XML addChild(XML child) {
+    Document document = node.getOwnerDocument();
+    Node newChild = document.importNode(child.getNode(), true);
+    return appendChild(newChild);
+  }
+
+
+  /** Internal handler to add the node structure. */
+  protected XML appendChild(Node newNode) {
+    node.appendChild(newNode);
+    XML newbie = new XML(this, newNode);
     if (children != null) {
-      children = (XML[]) PApplet.concat(children, new XML[] { pn });
+      children = (XML[]) PApplet.concat(children, new XML[] { newbie });
     }
-    return pn;
+    return newbie;
   }
 
 
@@ -602,40 +636,41 @@ public class XML implements Serializable {
     }
     return null;
 
-    /*
-    javax.xml.transform.TransformerFactory factory = new javax.xml.transform.TransformerFactory();
-    javax.xml.transform.Transformer transformer = factory.newTransformer();
-    javax.xml.transform.dom.DOMSource domSource = new javax.xml.transform.dom.DOMSource(rootNode);
-    javax.xml.transform.stream.StreamResult result = new javax.xml.transform.stream.StreamResult(outputStream);
-    transformer(domSource, result);
-    */
+//    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//    try {
+//      DocumentBuilder builder = factory.newDocumentBuilder();
+//      //builder.get
+////      Document document = builder.
+//
+//    } catch (ParserConfigurationException e) {
+//      e.printStackTrace();
+//    }
 
-    /*
-    try {
-      DOMSource dumSource = new DOMSource(node);
-      TransformerFactory tf = TransformerFactory.newInstance();
-      Transformer transformer = tf.newTransformer();
-      // if this is the root, output the decl, if not, hide it
-      if (parent != null) {
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-      }
-      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-//      transformer.setOutputProperty(OutputKeys.ENCODING,"ISO-8859-1");
-      transformer.setOutputProperty(OutputKeys.ENCODING,"UTF8");
-      // indent by default, but sometimes this needs to be turned off
-      if (indent != 0) {
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", String.valueOf(indent));
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      }
-      java.io.StringWriter sw = new java.io.StringWriter();
-      StreamResult sr = new StreamResult(sw);
-      transformer.transform(dumSource, sr);
-      return sw.toString();
 
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return null;
-    */
+
+    //    Document doc = new DocumentImpl();
+//    return node.toString();
+
+//    TransformerFactory transfac = TransformerFactory.newInstance();
+//    Transformer trans = transfac.newTransformer();
+//    trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+//    trans.setOutputProperty(OutputKeys.INDENT, "yes");
+//
+//    //create string from xml tree
+//    StringWriter sw = new StringWriter();
+//    StreamResult result = new StreamResult(sw);
+////    Document doc =
+//    DOMSource source = new DOMSource(doc);
+//    trans.transform(source, result);
+//    String xmlString = sw.toString();
+
   }
+
+
+//  static final String HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+//
+//  public void write(PrintWriter writer) {
+//    writer.println(HEADER);
+//    writer.print(toString(2));
+//  }
 }
