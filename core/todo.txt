@@ -23,18 +23,22 @@ o questions re: final xml api changes
 o   http://code.google.com/p/processing/issues/detail?id=612
 X look into replacing nanoxml
 X   http://www.exampledepot.com/egs/javax.xml.parsers/pkg.html
+X add save() method
 _ Wishlist for the new XML class in Processing 2.0
 _   http://code.google.com/p/processing/issues/detail?id=904
-_   void addChild(XML child)
+X   void addChild(XML child)
 X   void setContent(String content)
-_   void setName(String name)
-_ do we need an option to disable XML whitespace?
-_   should this be the default to be more like old XML?
-_   otherwise document how things are sometimes null in XML
-_   test xml examples to see if they break
+X   void setName(String name)
+X do we need an option to disable XML whitespace?
+o   should this be the default to be more like old XML?
+o   otherwise document how things are sometimes null in XML
+o   test xml examples to see if they break
+X   changed to make it return #text for the name, which is more correct
 _ finish updating XML documentation
 _   http://code.google.com/p/processing/issues/detail?id=382
 _ several other items under the LIBRARIES / XML section below
+_ move to processing.data.* package
+_   update the internal code for Android and desktop to add the import
 
 _ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
 _   libraries have to do a lot of casting

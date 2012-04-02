@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2009-11 Ben Fry and Casey Reas
+  Copyright (c) 2009-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -68,27 +68,15 @@ public class XML implements Serializable {
   }
 
 
-//  public XML(String xml) {
-//    this(new StringReader(xml));
-//  }
-
-
   public XML(Reader reader) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//      factory.setValidating(false);
-//      factory.setAttribute("http://xml.org/sax/features/namespaces", true);
-//      factory.setAttribute("http://xml.org/sax/features/validation", false);
-//      factory.setAttribute("http://xml.org/sax/features/validation", true);
-//      factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-      // enable this to temporarily get around some parsing quirks (and get a proper error msg)
-//      factory.setFeature("http://apache.org/xml/features/dom/defer-node-expansion", false);
+
       // Prevent 503 errors from www.w3.org
       factory.setAttribute("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-//      factory.setAttribute("http://apache.org/xml/features/dom/create-entity-ref-nodes", false);
 
-      // doesn't seem to help the NPE issues caused by new whitespace parsing
-      //factory.setIgnoringElementContentWhitespace(true);
+      // without a validating DTD, this doesn't do anything since it doesn't know what is ignorable
+//      factory.setIgnoringElementContentWhitespace(true);
 
       factory.setExpandEntityReferences(false);
 //      factory.setExpandEntityReferences(true);
@@ -156,15 +144,29 @@ public class XML implements Serializable {
   protected XML(XML parent, Node node) {
     this.node = node;
     this.parent = parent;
-
-    if (node.getNodeType() == Node.ELEMENT_NODE) {
-      name = node.getNodeName();
-    }
+    this.name = node.getNodeName();
   }
 
 
   static public XML parse(String xml) {
     return new XML(new StringReader(xml));
+  }
+
+
+  public boolean save(OutputStream output) {
+    return save(PApplet.createWriter(output));
+  }
+
+
+  public boolean save(File file) {
+    return save(PApplet.createWriter(file));
+  }
+
+
+  public boolean save(PrintWriter output) {
+    output.print(toString(2));
+    output.flush();
+    return true;
   }
 
 
@@ -177,6 +179,11 @@ public class XML implements Serializable {
   }
 
 
+  protected Node getNode() {
+    return node;
+  }
+
+
   /**
    * Returns the full name (i.e. the name including an eventual namespace
    * prefix) of the element.
@@ -184,6 +191,13 @@ public class XML implements Serializable {
    */
   public String getName() {
     return name;
+  }
+
+
+  public void setName(String newName) {
+    Document document = node.getOwnerDocument();
+    node = document.renameNode(node, null, newName);
+    name = node.getNodeName();
   }
 
 
@@ -372,12 +386,25 @@ public class XML implements Serializable {
   public XML addChild(String tag) {
     Document document = node.getOwnerDocument();
     Node newChild = document.createElement(tag);
-    node.appendChild(newChild);
-    XML pn = new XML(this, newChild);
+    return appendChild(newChild);
+  }
+
+
+  public XML addChild(XML child) {
+    Document document = node.getOwnerDocument();
+    Node newChild = document.importNode(child.getNode(), true);
+    return appendChild(newChild);
+  }
+
+
+  /** Internal handler to add the node structure. */
+  protected XML appendChild(Node newNode) {
+    node.appendChild(newNode);
+    XML newbie = new XML(this, newNode);
     if (children != null) {
-      children = (XML[]) PApplet.concat(children, new XML[] { pn });
+      children = (XML[]) PApplet.concat(children, new XML[] { newbie });
     }
-    return pn;
+    return newbie;
   }
 
 
