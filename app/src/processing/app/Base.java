@@ -398,20 +398,8 @@ public class Base {
    */
   protected void restoreSketches() {
     String lastMode = Preferences.get("last.sketch.mode");
-    if (DEBUG) {
-      System.out.println("setting mode to " + lastMode);
-    }
+    log("setting mode to " + lastMode);
     if (lastMode != null) {
-//      try {
-//        Class<?> modeClass = Class.forName(lastMode);
-//        defaultMode = (Mode) modeClass.newInstance();
-//      } catch (ClassNotFoundException e) {
-//        e.printStackTrace();
-//      } catch (InstantiationException e) {
-//        e.printStackTrace();
-//      } catch (IllegalAccessException e) {
-//        e.printStackTrace();
-//      }
       for (Mode m : getModeList()) {
         if (m.getClass().getName().equals(lastMode)) {
           defaultMode = m;

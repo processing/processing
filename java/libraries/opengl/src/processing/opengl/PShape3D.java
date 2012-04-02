@@ -3811,7 +3811,7 @@ public class PShape3D extends PShape {
     shader.start(); 
     
     for (int i = 0; i < pointIndexData.size(); i++) {
-      IndexData index = (IndexData)pointIndexData.get(i);      
+      IndexData index = pointIndexData.get(i);      
       int first = index.first;
       int offset = index.offset;
       int size =  index.size;
@@ -3834,7 +3834,7 @@ public class PShape3D extends PShape {
     shader.start(); 
     
     for (int i = 0; i < lineIndexData.size(); i++) {
-      IndexData index = (IndexData)lineIndexData.get(i);      
+      IndexData index = lineIndexData.get(i);      
       int first = index.first;
       int offset = index.offset;
       int size =  index.size;
@@ -3866,7 +3866,7 @@ public class PShape3D extends PShape {
     shader.start();
     
     for (int i = 0; i < fillIndexData.size(); i++) {
-      IndexData index = (IndexData)fillIndexData.get(i);      
+      IndexData index = fillIndexData.get(i);      
       int first = index.first;
       int offset = index.offset;
       int size =  index.size;
