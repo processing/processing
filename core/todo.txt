@@ -286,9 +286,6 @@ _   decision: go with what looks like javascript/ios
 _   touchEvent(), gestureEvent()?
 
 2.0
-_ implement JSON class
-_   http://www.xml.com/lpt/a/1658
-_   http://www.json.org/java/
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
@@ -698,6 +695,9 @@ _     before rewriting all of createInput()
 
 LATER (post 2.0)
 
+_ implement JSON class
+_   http://www.xml.com/lpt/a/1658
+_   http://www.json.org/java/
 _ add shader support
 _ createColor() instead of color()?
 _ route all exceptions through PException and catch method
