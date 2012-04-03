@@ -4,6 +4,10 @@ X   http://code.google.com/p/processing/issues/detail?id=969
 X   also add support for printing arrays of longs (doubles were already there)
 X createGraphics for JAVA2D generates the wrong error msg w/ w/h <= 0
 X   http://code.google.com/p/processing/issues/detail?id=983
+X move to processing.data.* package
+X   update the internal code for Android and desktop to add the import
+X   add loadTable().. 
+X   loadXML and loadTable are now in desktop
 
 fixed in 2.0a5
 A OpenGL noSmooth() does not work
@@ -47,8 +51,6 @@ o vectors shouldn't be exposed, need to expose attr lists as arrays
 o   or also add a method for getting the vectors?
 X   no longer an issue post-NanoXML
 X several other items under the LIBRARIES / XML section below
-X move to processing.data.* package
-X   update the internal code for Android and desktop to add the import
 
 _ change screenWidth/Height to displayWidth/Height
 _   also fix the Android etc docs
@@ -155,8 +157,6 @@ _ fix edge + 1 issue on stroke/fill for rectangles
 _   http://code.google.com/p/processing/issues/detail?id=509
 
 _ add reference/docs for urlEncode() and urlDecode()
-
-_ add loadTable().. 
 
 _ add() to add things to lists, sum() for the math (sum is used less after all)
 

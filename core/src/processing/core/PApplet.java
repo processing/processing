@@ -5352,21 +5352,20 @@ public class PApplet extends Applet
   */
 
 
+
   //////////////////////////////////////////////////////////////
 
-  // NODE I/O (XML, JSON, etc.)
+  // DATA I/O
+
+
   public XML loadXML(String filename) {
     return new XML(this, filename);
   }
 
 
-//  public PData loadData(String filename) {
-//    if (filename.toLowerCase().endsWith(".json")) {
-//      return new PData(this, filename);
-//    } else {
-//      throw new RuntimeException("filename used for loadNode() must end with XML");
-//    }
-//  }
+  public Table loadTable(String filename) {
+    return new Table(this, filename);
+  }
 
 
 
