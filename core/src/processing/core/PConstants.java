@@ -347,7 +347,7 @@ public interface PConstants {
   // the low four bits set the variety,
   // higher bits set the specific shape type
 
-  static final int GROUP           = 1;   // createShape()
+  static final int GROUP           = 0;   // createShape()
 
   static final int POINT           = 2;   // primitive
   static final int POINTS          = 3;   // vertices

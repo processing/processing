@@ -1197,9 +1197,9 @@ public class PGraphicsAndroid2D extends PGraphics {
 //    canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
     fillPaint.setAntiAlias(smooth);
 
-    textX = x + textWidthImpl(buffer, start, stop);
-    textY = y;
-    textZ = 0;  // this will get set by the caller if non-zero
+//    textX = x + textWidthImpl(buffer, start, stop);
+//    textY = y;
+//    textZ = 0;  // this will get set by the caller if non-zero
   }
 
 

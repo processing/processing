@@ -796,13 +796,13 @@ public class PImage implements PConstants, Cloneable {
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    *
-   * @param image image to draw on screen
+   * @param img image to draw on screen
    */
-  public void set(int x, int y, PImage image) {
+  public void set(int x, int y, PImage img) {
     int sx = 0;
     int sy = 0;
-    int sw = image.width;
-    int sh = image.height;
+    int sw = img.width;
+    int sh = img.height;
 
 //    if (imageMode == CENTER) {
 //      x -= src.width/2;
@@ -828,7 +828,7 @@ public class PImage implements PConstants, Cloneable {
     // this could be nonexistant
     if ((sw <= 0) || (sh <= 0)) return;
 
-    setImpl(x, y, sx, sy, sw, sh, image);
+    setImpl(x, y, sx, sy, sw, sh, img);
   }
 
 
@@ -837,13 +837,13 @@ public class PImage implements PConstants, Cloneable {
    * has already been properly cropped from the image to a valid region.
    */
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
-                         PImage src) {
-    int srcOffset = sy * src.width + sx;
+                         PImage img) {
+    int srcOffset = sy * img.width + sx;
     int dstOffset = dy * width + dx;
 
     for (int y = sy; y < sy + sh; y++) {
-      System.arraycopy(src.pixels, srcOffset, pixels, dstOffset, sw);
-      srcOffset += src.width;
+      System.arraycopy(img.pixels, srcOffset, pixels, dstOffset, sw);
+      srcOffset += img.width;
       dstOffset += width;
     }
     updatePixelsImpl(sx, sy, sw, sh);
@@ -907,11 +907,11 @@ public class PImage implements PConstants, Cloneable {
 
 
   /**
-   * @param maskImg a PImage object used as the alpha channel for "img", must be same dimensions as "img"
+   * @param img a PImage object used as the alpha channel for "img", must be same dimensions as "img"
    */
-  public void mask(PImage maskImg) {
-    maskImg.loadPixels();
-    mask(maskImg.pixels);
+  public void mask(PImage img) {
+    img.loadPixels();
+    mask(img.pixels);
   }
 
 

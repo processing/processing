@@ -135,11 +135,11 @@ public class PGraphics extends PImage implements PConstants {
   // width and height are already inherited from PImage
 
 
-  /// width minus one (useful for many calculations)
-  protected int width1;
-
-  /// height minus one (useful for many calculations)
-  protected int height1;
+//  /// width minus one (useful for many calculations)
+//  protected int width1;
+//
+//  /// height minus one (useful for many calculations)
+//  protected int height1;
 
   /// width * height (useful for many calculations)
   public int pixelCount;
@@ -491,8 +491,8 @@ public class PGraphics extends PImage implements PConstants {
   /** Metrics for the current native Java font */
   //protected FontMetrics textFontNativeMetrics;
 
-  /** Last text position, because text often mixed on lines together */
-  protected float textX, textY, textZ;
+//  /** Last text position, because text often mixed on lines together */
+//  protected float textX, textY, textZ;
 
   /**
    * Internal buffer used by the text() functions
@@ -628,8 +628,8 @@ public class PGraphics extends PImage implements PConstants {
   public void setSize(int w, int h) {  // ignore
     width = w;
     height = h;
-    width1 = width - 1;
-    height1 = height - 1;
+//    width1 = width - 1;
+//    height1 = height - 1;
 
     allocate();
     reapplySettings();
@@ -3174,22 +3174,22 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void image(PImage image, float x, float y) {
+  public void image(PImage img, float x, float y) {
     // Starting in release 0144, image errors are simply ignored.
     // loadImageAsync() sets width and height to -1 when loading fails.
-    if (image.width == -1 || image.height == -1) return;
+    if (img.width == -1 || img.height == -1) return;
 
     if (imageMode == CORNER || imageMode == CORNERS) {
-      imageImpl(image,
-                x, y, x+image.width, y+image.height,
-                0, 0, image.width, image.height);
+      imageImpl(img,
+                x, y, x+img.width, y+img.height,
+                0, 0, img.width, img.height);
 
     } else if (imageMode == CENTER) {
-      float x1 = x - image.width/2;
-      float y1 = y - image.height/2;
-      imageImpl(image,
-                x1, y1, x1+image.width, y1+image.height,
-                0, 0, image.width, image.height);
+      float x1 = x - img.width/2;
+      float y1 = y - img.height/2;
+      imageImpl(img,
+                x1, y1, x1+img.width, y1+img.height,
+                0, 0, img.width, img.height);
     }
   }
 
@@ -3221,9 +3221,9 @@ public class PGraphics extends PImage implements PConstants {
    * smooth() will also improve image quality of resized images.
    *
    * @webref image:loading_displaying
-   * @param image the image to display
-   * @param x x-coordinate of the image
-   * @param y y-coordinate of the image
+   * @param img the image to display
+   * @param a x-coordinate of the image
+   * @param b y-coordinate of the image
    * @param c width to display the image
    * @param d height to display the image
    * @see PApplet#loadImage(String, String)
@@ -3233,8 +3233,8 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#alpha(int)
    */
-  public void image(PImage image, float x, float y, float c, float d) {
-    image(image, x, y, c, d, 0, 0, image.width, image.height);
+  public void image(PImage img, float a, float b, float c, float d) {
+    image(img, a, b, c, d, 0, 0, img.width, img.height);
   }
 
 
@@ -3245,12 +3245,12 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @nowebref
    */
-  public void image(PImage image,
+  public void image(PImage img,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
     // Starting in release 0144, image errors are simply ignored.
     // loadImageAsync() sets width and height to -1 when loading fails.
-    if (image.width == -1 || image.height == -1) return;
+    if (img.width == -1 || img.height == -1) return;
 
     if (imageMode == CORNER) {
       if (c < 0) {  // reset a negative width
@@ -3260,7 +3260,7 @@ public class PGraphics extends PImage implements PConstants {
         b += d; d = -d;
       }
 
-      imageImpl(image,
+      imageImpl(img,
                 a, b, a + c, b + d,
                 u1, v1, u2, v2);
 
@@ -3272,7 +3272,7 @@ public class PGraphics extends PImage implements PConstants {
         float temp = b; b = d; d = temp;
       }
 
-      imageImpl(image,
+      imageImpl(img,
                 a, b, c, d,
                 u1, v1, u2, v2);
 
@@ -3283,7 +3283,7 @@ public class PGraphics extends PImage implements PConstants {
       float x1 = a - c/2;
       float y1 = b - d/2;
 
-      imageImpl(image,
+      imageImpl(img,
                 x1, y1, x1 + c, y1 + d,
                 u1, v1, u2, v2);
     }
@@ -3297,7 +3297,7 @@ public class PGraphics extends PImage implements PConstants {
    * The default implementation draws an image as a textured quad.
    * The (u, v) coordinates are in image space (they're ints, after all..)
    */
-  protected void imageImpl(PImage image,
+  protected void imageImpl(PImage img,
                            float x1, float y1, float x2, float y2,
                            int u1, int v1, int u2, int v2) {
     boolean savedStroke = stroke;
@@ -3327,7 +3327,7 @@ public class PGraphics extends PImage implements PConstants {
 //    }
 
     beginShape(QUADS);
-    texture(image);
+    texture(img);
     vertex(x1, y1, u1, v1);
     vertex(x1, y2, u1, v2);
     vertex(x2, y2, u2, v2);
@@ -3442,15 +3442,15 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref shape:loading_displaying
    * @param shape the shape to display
-   * @param x x-coordinate of the shape
-   * @param y y-coordinate of the shape
+   * @param a x-coordinate of the shape
+   * @param b y-coordinate of the shape
    * @param c width to display the shape
    * @param d height to display the shape
    * @see PShape
    * @see PApplet#loadShape(String)
    * @see PGraphics#shapeMode(int)
    */
-  public void shape(PShape shape, float x, float y, float c, float d) {
+  public void shape(PShape shape, float a, float b, float c, float d) {
     if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
       flush();
 
@@ -3458,19 +3458,19 @@ public class PGraphics extends PImage implements PConstants {
 
       if (shapeMode == CENTER) {
         // x and y are center, c and d refer to a diameter
-        translate(x - c/2f, y - d/2f);
+        translate(a - c/2f, b - d/2f);
         scale(c / shape.getWidth(), d / shape.getHeight());
 
       } else if (shapeMode == CORNER) {
-        translate(x, y);
+        translate(a, b);
         scale(c / shape.getWidth(), d / shape.getHeight());
 
       } else if (shapeMode == CORNERS) {
         // c and d are x2/y2, make them into width/height
-        c -= x;
-        d -= y;
+        c -= a;
+        d -= b;
         // then same as above
-        translate(x, y);
+        translate(a, b);
         scale(c / shape.getWidth(), d / shape.getHeight());
       }
       shape.draw(this);
@@ -3856,6 +3856,8 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref typography:loading_displaying
    * @param c the alphanumeric character to be displayed
+   * @param x x-coordinate of text
+   * @param y y-coordinate of text
    * @see PGraphics#textAlign(int, int)
    * @see PGraphics#textMode(int)
    * @see PApplet#loadFont(String)
@@ -3864,20 +3866,6 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#rectMode(int)
    * @see PGraphics#fill(int, float)
    * @see_external String
-   */
-  public void text(char c) {
-    text(c, textX, textY, textZ);
-  }
-
-
-  /**
-   * <h3>Advanced</h3>
-   * Draw a single character on screen.
-   * Extremely slow when used with textMode(SCREEN) and Java 2D,
-   * because loadPixels has to be called first and updatePixels last.
-   *
-   * @param x x-coordinate of text
-   * @param y y-coordinate of text
    */
   public void text(char c, float x, float y) {
     if (textFont == null) {
@@ -3911,18 +3899,18 @@ public class PGraphics extends PImage implements PConstants {
     if (z != 0) translate(0, 0, z);  // slowness, badness
 
     text(c, x, y);
-    textZ = z;
+//    textZ = z;
 
     if (z != 0) translate(0, 0, -z);
   }
 
 
-  /**
-   * @param str the alphanumeric symbols to be displayed
-   */
-  public void text(String str) {
-    text(str, textX, textY, textZ);
-  }
+//  /**
+//   * @param str the alphanumeric symbols to be displayed
+//   */
+//  public void text(String str) {
+//    text(str, textX, textY, textZ);
+//  }
 
 
   /**
@@ -4003,7 +3991,7 @@ public class PGraphics extends PImage implements PConstants {
     if (z != 0) translate(0, 0, z);  // slow!
 
     text(str, x, y);
-    textZ = z;
+//    textZ = z;
 
     if (z != 0) translate(0, 0, -z);  // inaccurate!
   }
@@ -4014,7 +4002,7 @@ public class PGraphics extends PImage implements PConstants {
     if (z != 0) translate(0, 0, z);  // slow!
 
     text(chars, start, stop, x, y);
-    textZ = z;
+//    textZ = z;
 
     if (z != 0) translate(0, 0, -z);  // inaccurate!
   }
@@ -4234,14 +4222,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void text(String s, float x1, float y1, float x2, float y2, float z) {
-    if (z != 0) translate(0, 0, z);  // slowness, badness
-
-    text(s, x1, y1, x2, y2);
-    textZ = z;
-
-    if (z != 0) translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
-  }
+//  public void text(String s, float a, float b, float c, float d, float z) {
+//    if (z != 0) translate(0, 0, z);  // slowness, badness
+//
+//    text(s, a, b, c, d);
+//    textZ = z;
+//
+//    if (z != 0) translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
+//  }
 
 
   public void text(int num, float x, float y) {
@@ -4309,9 +4297,9 @@ public class PGraphics extends PImage implements PConstants {
       // this doesn't account for kerning
       x += textWidth(buffer[index]);
     }
-    textX = x;
-    textY = y;
-    textZ = 0;  // this will get set by the caller if non-zero
+//    textX = x;
+//    textY = y;
+//    textZ = 0;  // this will get set by the caller if non-zero
   }
 
 

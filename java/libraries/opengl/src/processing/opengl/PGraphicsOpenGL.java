@@ -444,8 +444,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
     width = iwidth;
     height = iheight;
-    width1 = width - 1;
-    height1 = height - 1;
+//    width1 = width - 1;
+//    height1 = height - 1;
 
     allocate();
     reapplySettings();

@@ -112,8 +112,8 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void setSize(int iwidth, int iheight) {  // ignore
     width = iwidth;
     height = iheight;
-    width1 = width - 1;
-    height1 = height - 1;
+//    width1 = width - 1;
+//    height1 = height - 1;
 
     allocate();
     reapplySettings();
@@ -1277,9 +1277,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       //g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialias);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialias);
 
-      textX = x + textWidthImpl(buffer, start, stop);
-      textY = y;
-      textZ = 0;  // this will get set by the caller if non-zero
+//      textX = x + textWidthImpl(buffer, start, stop);
+//      textY = y;
+//      textZ = 0;  // this will get set by the caller if non-zero
 
     } else {  // otherwise just do the default
       super.textLineImpl(buffer, start, stop, x, y);
