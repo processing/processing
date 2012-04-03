@@ -1485,6 +1485,11 @@ public class PApplet extends Activity implements PConstants, Runnable {
 */
   }
 
+  
+  public PGraphics createGraphics(int iwidth, int iheight) {
+    return createGraphics(iwidth, iheight, JAVA2D);
+  }
+
 
   /**
    * Create an offscreen PGraphics object for drawing. This can be used
