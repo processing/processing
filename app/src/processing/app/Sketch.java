@@ -87,13 +87,13 @@ public class Sketch {
 //  private ArrayList<Library> importedLibraries;
 //  //private ArrayList<File> importedLibraries;
 
-  /** 
+  /**
    * Most recent, default build path. This will contain the .java files that
-   * have been preprocessed, as well as any .class files that were compiled. 
+   * have been preprocessed, as well as any .class files that were compiled.
    */
 //  private File buildFolder;
-  
-  
+
+
   /**
    * path is location of the main .pde file, because this is also
    * simplest to use when opening the file from the finder/explorer.
@@ -134,7 +134,7 @@ public class Sketch {
 
     load();
   }
-  
+
 
   /**
    * Build the list of files.
@@ -215,8 +215,8 @@ public class Sketch {
   }
 
 
-  /** 
-   * Reload the current sketch. Used to update the text area when 
+  /**
+   * Reload the current sketch. Used to update the text area when
    * an external editor is in use.
    */
   public void reload() {
@@ -432,7 +432,7 @@ public class Sketch {
                            "\"" + newName + "\" already exists.", null);
           return;
         }
-        
+
         // renaming the containing sketch folder
         boolean success = folder.renameTo(newFolder);
         if (!success) {
@@ -632,7 +632,7 @@ public class Sketch {
   public void setModified(boolean state) {
     //System.out.println("setting modified to " + state);
     //new Exception().printStackTrace(System.out);
-    if (current.isModified() != state) { 
+    if (current.isModified() != state) {
       current.setModified(state);
       calcModified();
     }
@@ -792,7 +792,7 @@ public class Sketch {
       }
     } catch (IOException e) { }
 
-    // if the new folder already exists, then first remove its contents before 
+    // if the new folder already exists, then first remove its contents before
     // copying everything over (user will have already been warned)
     if (newFolder.exists()) {
       Base.removeDir(newFolder);
@@ -828,7 +828,7 @@ public class Sketch {
             return false;
           }
         }
-        // don't do screen captures, since there might be thousands. kind of 
+        // don't do screen captures, since there might be thousands. kind of
         // a hack, but seems harmless. hm, where have i heard that before...
         if (name.startsWith("screen-")) {
           return false;
@@ -839,7 +839,7 @@ public class Sketch {
     // now copy over the items that make sense
     for (File copyable : copyItems) {
       if (copyable.isDirectory()) {
-        Base.copyDir(copyable, new File(newFolder, copyable.getName())); 
+        Base.copyDir(copyable, new File(newFolder, copyable.getName()));
       } else {
         Base.copyFile(copyable, new File(newFolder, copyable.getName()));
       }
@@ -863,19 +863,19 @@ public class Sketch {
     // let Editor know that the save was successful
     return true;
   }
-  
-  
-  /** 
+
+
+  /**
    * Update internal state for new sketch name or folder location.
    */
   protected void updateInternal(String sketchName, File sketchFolder) {
-    // reset all the state information for the sketch object 
+    // reset all the state information for the sketch object
     primaryFile = code[0].getFile();
     name = sketchName;
     folder = sketchFolder;
     codeFolder = new File(folder, "code");
     dataFolder = new File(folder, "data");
-    
+
     // set the main file to be the current tab
     //setCurrentCode(0);
     // nah, this might just annoy people
@@ -1067,7 +1067,7 @@ public class Sketch {
    * </OL>
    */
   public void setCurrentCode(int which) {
-//    // for the tab sizing 
+//    // for the tab sizing
 //    if (current != null) {
 //      current.visited = System.currentTimeMillis();
 //      System.out.println(current.visited);
@@ -1110,7 +1110,7 @@ public class Sketch {
   }
 
 
-  /** 
+  /**
    * Create a temporary folder that includes the sketch's name in its title.
    */
   public File makeTempFolder() {
@@ -1120,11 +1120,11 @@ public class Sketch {
       return buildFolder;
 
 //      } else {
-//        Base.showWarning("Build folder bad", 
+//        Base.showWarning("Build folder bad",
 //                         "Could not create a place to build the sketch.", null);
 //      }
     } catch (IOException e) {
-      Base.showWarning("Build folder bad", 
+      Base.showWarning("Build folder bad",
                        "Could not find a place to build the sketch.", e);
     }
     return null;
@@ -1281,7 +1281,7 @@ public class Sketch {
     return dataFolder;
   }
 
-  
+
   public boolean hasDataFolder() {
     return dataFolder.exists();
   }
@@ -1361,6 +1361,11 @@ public class Sketch {
 
   public SketchCode getCurrentCode() {
     return current;
+  }
+
+
+  public String getMainProgram() {
+    return getCode(0).getProgram();
   }
 
 
@@ -1448,8 +1453,8 @@ public class Sketch {
     }
     return buffer.toString();
   }
-  
-  
+
+
   public Mode getMode() {
     return mode;
   }

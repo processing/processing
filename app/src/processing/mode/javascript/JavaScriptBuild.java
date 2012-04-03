@@ -20,27 +20,27 @@ import processing.app.Library;
 
 import processing.core.PApplet;
 
-import processing.mode.java.JavaBuild;
 import processing.mode.java.preproc.PdePreprocessor;
+
 
 public class JavaScriptBuild
 {
 	public final static String TEMPLATE_FOLDER_NAME = "template";
 	public final static String EXPORTED_FOLDER_NAME = "web-export";
 	public final static String TEMPLATE_FILE_NAME = "template.html";
-	
-	public final static String IMPORT_REGEX = 
+
+	public final static String IMPORT_REGEX =
 								"^[\\s]*import[\\s]+([^\\s]+)[\\s]*";
-  
+
   /**
    * Answers with the first java doc style comment in the string,
    * or an empty string if no such comment can be found.
    */
-  public static String getDocString ( String s ) 
+  public static String getDocString ( String s )
   {
     String[] javadoc = PApplet.match(s, "/\\*{2,}(.*?)\\*+/");
 
-    if (javadoc != null) 
+    if (javadoc != null)
 	{
       StringBuffer dbuffer = new StringBuffer();
       String[] pieces = PApplet.split(javadoc[1], '\n');
@@ -56,21 +56,21 @@ public class JavaScriptBuild
     return "";
   }
 
-  
+
   /**
    * Reads in a simple template file, with fields of the form '@@somekey@@'
    * and replaces each field with the value in the map for 'somekey', writing
    * the output to the output file.
-   * 
+   *
    * Keys not in the map will be replaced with empty strings.
-   * 
+   *
    * @param template File object mapping to the template
    * @param output File object handle to the output
    * @param args template keys, data values to replace them
    * @throws IOException when there are problems writing to or from the files
    */
   public static void writeTemplate ( File template, File output, Map<String, String> fields )
-  throws IOException 
+  throws IOException
   {
     BufferedReader reader = PApplet.createReader(template);
     PrintWriter writer = PApplet.createWriter(output);
@@ -97,11 +97,11 @@ public class JavaScriptBuild
     }
     writer.close();
   }
-  
-  // -----------------------------------------------------
-  
 
-  /** 
+  // -----------------------------------------------------
+
+
+  /**
    * The sketch this builder is working on.
    * <p>
    * Each builder instance should only work on a single sketch, so if
@@ -110,16 +110,16 @@ public class JavaScriptBuild
   protected Sketch sketch;
 
   protected Mode mode;
-  
+
   protected File binFolder;
-  
-  public JavaScriptBuild ( Sketch sketch ) 
+
+  public JavaScriptBuild ( Sketch sketch )
   {
     this.sketch = sketch;
     this.mode = sketch.getMode();
   }
-  
-  
+
+
   /**
    * Builds the sketch
    * <p>
@@ -128,9 +128,9 @@ public class JavaScriptBuild
    * 2. cat *.pde > bin/sketchname.pde
    * 3. cp -r sketch/data/* bin/ (p.js doesn't recognize the data folder)
    * 4. series of greps to find height, width, name, desc
-   * 5. cat template.html | sed 's/@@sketch@@/[name]/g' ... [many sed filters] > bin/index.html  
+   * 5. cat template.html | sed 's/@@sketch@@/[name]/g' ... [many sed filters] > bin/index.html
    * </p>
-   * 
+   *
    * @param bin the output folder for the built sketch
    * @return boolean whether the build was successful
    */
@@ -138,38 +138,38 @@ public class JavaScriptBuild
   {
     // make sure the user isn't playing "hide-the-sketch-folder" again
     sketch.ensureExistence();
-    
+
     this.binFolder = bin;
 
 	// we need these ..
 //	JavaScriptMode jsMode = (JavaScriptMode)mode;
 //	JavaScriptEditor jsEditor = (JavaScriptEditor)jsMode.getEditor();
 //	BasicServer jsServer = jsEditor.getServer();
-    
-    if ( bin.exists() ) 
-    {    
+
+    if ( bin.exists() )
+    {
       Base.removeDescendants(bin);
     } //else will be created during preprocesss
-    
+
 	// pass through preprocessor to catch syntax errors
     // .. exceptions bubble up.
     preprocess(bin);
 
     // move the data files, copies contents of sketch/data/ to web-export/
-    if (sketch.hasDataFolder()) 
+    if (sketch.hasDataFolder())
 	{
       try {
         Base.copyDir(sketch.getDataFolder(), bin);
 
       } catch (IOException e) {
-        final String msg = "An exception occured while trying to copy the data folder. " + 
+        final String msg = "An exception occured while trying to copy the data folder. " +
                            "You may have to manually move the contents of sketch/data to " +
                            "the web-export/ folder. Processing.js doesn't look for a data " +
                            "folder, so lump them together.";
         Base.showWarning("Problem building the sketch", msg, e);
       }
     }
-    
+
 	// as .js files are allowed now include these into the mix,
 	// first find 'em ..
 	String[] sketchFolderFilesRaw = sketch.getFolder().list();
@@ -198,18 +198,18 @@ public class JavaScriptBuild
 	}
 
 	// TODO
-	// Really scrub comments from code? 
+	// Really scrub comments from code?
 	// Con: larger files, PJS needs to do it later
 	// Pro: being literate as we are in a script language.
-    String scrubbed = JavaBuild.scrubComments(sketch.getCode(0).getProgram());
+    String scrubbed = PdePreprocessor.scrubComments(sketch.getCode(0).getProgram());
 
     // get width and height
     int wide = PApplet.DEFAULT_WIDTH;
     int high = PApplet.DEFAULT_HEIGHT;
-    String[] matches = PApplet.match(scrubbed, JavaBuild.SIZE_REGEX);
-    if (matches != null) 
+    String[] matches = PApplet.match(scrubbed, PdePreprocessor.SIZE_REGEX);
+    if (matches != null)
 	{
-      try 
+      try
 	  {
         wide = Integer.parseInt(matches[1]);
         high = Integer.parseInt(matches[2]);
@@ -234,7 +234,7 @@ public class JavaScriptBuild
 	// try resolve imports
 	ArrayList<String> importPackages = new ArrayList<String>();
 	String[] lines = scrubbed.split( "\n" );
-	for ( String l : lines ) 
+	for ( String l : lines )
 	{
 		int iIndex = l.indexOf( "import" );
 		if ( iIndex != -1 )
@@ -247,7 +247,7 @@ public class JavaScriptBuild
 				{
 					String iPackage = matches[1];
 					iPackage = iPackage.trim();
-					
+
 					if ( iPackage.indexOf(".*") != -1 ) {
 						// de.bezier.tutto.*
 						iPackage = iPackage.replace( ".*", "" );
@@ -273,10 +273,10 @@ public class JavaScriptBuild
 			return false;
 		}
 	}
-	for ( String pack : importPackages ) 
+	for ( String pack : importPackages )
 	{
 		Library lib = mode.getLibrary( pack );
-		if ( lib != null ) 
+		if ( lib != null )
 		{
 			String libPath = lib.getJarPath();
 			File libJar = new File( libPath );
@@ -284,20 +284,20 @@ public class JavaScriptBuild
 			{
 				File libJS = new File( libJar.getParent(), libJar.getName().replace(".jar",".js") );
 				//System.out.println( libJS.getPath() );
-				if ( libJS.exists() ) 
+				if ( libJS.exists() )
 				{
 					String libJSDest = "libs" + File.separator + libJS.getName();
 					File libJSDestFile = new File( bin, libJSDest );
-					if ( libJSDestFile.exists() ) 
+					if ( libJSDestFile.exists() )
 					{
 						System.out.println( "Duplicate import!" );
 					}
-					try 
+					try
 					{
-						Base.copyFile( libJS, 
+						Base.copyFile( libJS,
 									   libJSDestFile );
 						jsImports.add( libJSDest );
-						
+
 					} catch ( Exception se ) {
 						se.printStackTrace();
 					}
@@ -305,13 +305,13 @@ public class JavaScriptBuild
 			}
 		}
 	}
-	
+
     // final prep and write to template.
 	// getTemplateFile() is very important as it looks and preps
 	// any custom templates present in the sketch folder.
     File templateFile = getTemplateFile();
     File htmlOutputFile = new File(bin, "index.html");
-	
+
     Map<String, String> templateFields = new HashMap<String, String>();
     templateFields.put( "width", 		String.valueOf(wide) );
     templateFields.put( "height", 		String.valueOf(high) );
@@ -320,23 +320,23 @@ public class JavaScriptBuild
 
 	// generate an ID for the sketch to use with <canvas id="XXXX"></canvas>
 	String sketchID = sketch.getName().replaceAll("[^a-zA-Z0-9]+", "").replaceAll("^[^a-zA-Z]+","");
-	
+
 	// add a handy method to read the generated sketchID
 	String scriptFiles = "<script type=\"text/javascript\">\n";
-	
+
 	scriptFiles += "// convenience function to fetch ID of sketch html element\n" +
 				   "function getProcessingSketchID () { return '"+sketchID+"'; }\n";
-	
+
 //	ArrayList<String> addresses = jsServer.getInetAddresses();
 //	int port = jsServer.getPort();
-	
+
 	// scriptFiles += "var getServerAddresses = function () {\nreturn [\n";
 	// for ( String addr : addresses )
 	// {
 	// 	scriptFiles += "\"http://" + addr + ":" + port + "/\", \n";
 	// }
 	// scriptFiles += "];\n}\n";
-	
+
 	scriptFiles += "</script>\n";
 
 	// add imports if any ...
@@ -346,9 +346,9 @@ public class JavaScriptBuild
 	}
 
 	// main .pde file first
-	String sourceFiles = "<a href=\"" + sketch.getName() + ".pde\">" + 
+	String sourceFiles = "<a href=\"" + sketch.getName() + ".pde\">" +
                     					sketch.getName() + "</a> ";
-	
+
 	// add all other files (both types: .pde and .js)
 	if ( sketchFolderFiles != null )
 	{
@@ -373,14 +373,14 @@ public class JavaScriptBuild
       Base.showWarning("A problem occured during the build", msg, ioe);
       return false;
     }
-    
+
     // finally, add files processing.js
 	String[] defaultJSFiles = new String[]{
 		"processing.js" /*, "qrcode.js"*/
 	};
 	for ( String defaultJSFile : defaultJSFiles )
 	{
-	    try 
+	    try
 		{
 	      Base.copyFile( sketch.getMode().getContentFile(
 							TEMPLATE_FOLDER_NAME + File.separator + defaultJSFile
@@ -390,11 +390,11 @@ public class JavaScriptBuild
 
 	    } catch (IOException ioe) {
 	      final String msg = "There was a problem copying " +defaultJSFile+ " to the " +
-	                         "build folder. You will have to manually add " + 
+	                         "build folder. You will have to manually add " +
 	                         defaultJSFile +" to the build folder before the sketch " +
 	                         "will run.";
 	      Base.showWarning( "There was a problem writing to the build folder", msg, ioe);
-	      //return false; 
+	      //return false;
 	    }
 	}
 
@@ -411,21 +411,21 @@ public class JavaScriptBuild
   {
 	File sketchFolder = sketch.getFolder();
 	File customTemplateFolder = new File( sketchFolder, TEMPLATE_FOLDER_NAME );
-	if ( customTemplateFolder.exists() && 
-		 customTemplateFolder.isDirectory() && 
+	if ( customTemplateFolder.exists() &&
+		 customTemplateFolder.isDirectory() &&
 		 customTemplateFolder.canRead() )
 	{
 		File appletJsFolder = new File( sketchFolder, EXPORTED_FOLDER_NAME );
-		
+
 		try {
-			//TODO: this is potentially dangerous as it might override files in "web-export" 
+			//TODO: this is potentially dangerous as it might override files in "web-export"
 			Base.copyDir( customTemplateFolder, appletJsFolder );
 			if ( !(new File( appletJsFolder, TEMPLATE_FILE_NAME )).delete() )
 			{
 				// ignore?
 			}
 			return new File( customTemplateFolder, TEMPLATE_FILE_NAME );
-		} catch ( Exception e ) {	
+		} catch ( Exception e ) {
 			String msg = "";
 			Base.showWarning("There was a problem copying your custom template folder", msg, e);
 			return sketch.getMode().getContentFile(
@@ -438,9 +438,9 @@ public class JavaScriptBuild
 			TEMPLATE_FOLDER_NAME + File.separator + TEMPLATE_FILE_NAME
 		);
   }
-  
-  
-  /** 
+
+
+  /**
    * Collects the sketch code and runs it by the Java-mode preprocessor
    * to fish for errors.
    *
@@ -460,7 +460,7 @@ public class JavaScriptBuild
         bigCode.append("\n");
       }
     }
-    
+
     if (!bin.exists()) {
       bin.mkdirs();
     }
@@ -475,8 +475,8 @@ public class JavaScriptBuild
 
 	PdePreprocessor preprocessor = new PdePreprocessor( sketch.getName() );
 	//PreprocessorResult result;
-	
-    try 
+
+    try
 	{
       File outputFolder = sketch.makeTempFolder();
       final File java = new File( outputFolder, sketch.getName() + ".java" );
@@ -596,12 +596,12 @@ public class JavaScriptBuild
    * Copied from JavaBuild as it is protected there.
    * @see processing.mode.java.JavaBuild#findErrorFile(int)
    */
-  protected int findErrorFile ( int errorLine ) 
+  protected int findErrorFile ( int errorLine )
   {
-    for (int i = 1; i < sketch.getCodeCount(); i++) 
+    for (int i = 1; i < sketch.getCodeCount(); i++)
     {
       SketchCode sc = sketch.getCode(i);
-      if (sc.isExtension("pde") && (sc.getPreprocOffset() < errorLine)) 
+      if (sc.isExtension("pde") && (sc.getPreprocOffset() < errorLine))
       {
         // keep looping until the errorLine is past the offset
         return i;
@@ -609,9 +609,9 @@ public class JavaScriptBuild
     }
     return 0;  // i give up
   }
-  
+
   /**
-   * Parse the sketch to retrieve it's description. Answers with the first 
+   * Parse the sketch to retrieve it's description. Answers with the first
    * java doc style comment in the main sketch file, or an empty string if
    * no such comment exists.
    */
@@ -623,10 +623,10 @@ public class JavaScriptBuild
   // -----------------------------------------------------
   // Export
 
-  
-  /** 
-   * Export the sketch to the default "web-export" folder.  
-   * @return success of the operation 
+
+  /**
+   * Export the sketch to the default "web-export" folder.
+   * @return success of the operation
    */
   public boolean export() throws IOException, SketchException
   {
