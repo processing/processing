@@ -4,7 +4,7 @@
   PdePreprocessor - wrapper for default ANTLR-generated parser
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-10 Ben Fry and Casey Reas
+  Copyright (c) 2004-12 Ben Fry and Casey Reas
   Copyright (c) 2001-04 Massachusetts Institute of Technology
 
   ANTLR-generated parser and several supporting classes written
@@ -30,6 +30,8 @@ package processing.mode.java.preproc;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import processing.app.Base;
 import processing.app.Preferences;
 import processing.app.SketchException;
 import processing.core.PApplet;
@@ -146,32 +148,32 @@ public class PdePreprocessor {
 
   private TokenStreamCopyingHiddenTokenFilter filter;
 
-  private boolean foundMain;
-
-  public void setFoundMain(boolean foundMain) {
-    this.foundMain = foundMain;
-  }
-
-  public boolean getFoundMain() {
-    return foundMain;
-  }
-
+//  private boolean foundMain;
   private String advClassName = "";
-
-  public void setAdvClassName(final String advClassName) {
-    this.advClassName = advClassName;
-  }
-
   protected Mode mode;
+  HashMap<String, Object> foundMethods;
 
-  public void setMode(final Mode mode) {
-    // System.err.println("Setting mode to " + mode);
-    this.mode = mode;
-  }
+  protected String sizeStatement;
+  protected String sketchWidth;
+  protected String sketchHeight;
+  protected String sketchRenderer;
+
+  /**
+   * Regular expression for parsing the size() method. This should match
+   * against any uses of the size() function, whether numbers or variables
+   * or whatever. This way, no warning is shown if size() isn't actually used
+   * in the sketch, which is the case especially for anyone who is cutting
+   * and pasting from the reference.
+   */
+  public static final String SIZE_REGEX =
+    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+    //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
+
 
   public PdePreprocessor(final String sketchName) {
     this(sketchName, Preferences.getInteger("editor.tabs.size"));
   }
+
 
   public PdePreprocessor(final String sketchName, final int tabSize) {
     this.name = sketchName;
@@ -180,13 +182,175 @@ public class PdePreprocessor {
     indent = new String(indentChars);
   }
 
+
+  public String[] initSketchSize(String code) throws SketchException {
+    String[] info = parseSketchSize(code, true);
+    if (info != null) {
+      sizeStatement = info[0];
+      sketchWidth = info[1];
+      sketchHeight = info[2];
+      sketchRenderer = info[3];
+    }
+    return info;
+  }
+
+
+  /**
+   * Parse a chunk of code and extract the size() command and its contents.
+   * @param code Usually the code from the main tab in the sketch
+   * @param fussy true if it should show an error message if bad size()
+   * @return null if there was an error, otherwise an array (might contain some/all nulls)
+   */
+  static public String[] parseSketchSize(String code, boolean fussy) {
+    // This matches against any uses of the size() function, whether numbers
+    // or variables or whatever. This way, no warning is shown if size() isn't
+    // actually used in the applet, which is the case especially for anyone
+    // who is cutting/pasting from the reference.
+
+//    String scrubbed = scrubComments(sketch.getCode(0).getProgram());
+//    String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
+    String[] matches = PApplet.match(scrubComments(code), SIZE_REGEX);
+
+    if (matches != null) {
+      boolean badSize = false;
+
+      if (matches[1].equals("screenWidth") ||
+          matches[1].equals("screenHeight") ||
+          matches[2].equals("screenWidth") ||
+          matches[2].equals("screenHeight")) {
+        final String message =
+          "The screenWidth and screenHeight variables\n" +
+          "are named displayWidth and displayHeight\n" +
+          "in this release of Processing.";
+        Base.showWarning("Time for a quick update", message, null);
+        return null;
+      }
+
+      if (!matches[1].equals("displayWidth") &&
+          !matches[1].equals("displayHeight") &&
+          PApplet.parseInt(matches[1], -1) == -1) {
+        badSize = true;
+      }
+      if (!matches[2].equals("displayWidth") &&
+          !matches[2].equals("displayHeight") &&
+          PApplet.parseInt(matches[2], -1) == -1) {
+        badSize = true;
+      }
+
+      if (badSize && fussy) {
+        // found a reference to size, but it didn't seem to contain numbers
+        final String message =
+          "The size of this applet could not automatically\n" +
+          "be determined from your code. Use only numeric\n" +
+          "values (not variables) for the size() command.\n" +
+          "See the size() reference for an explanation.";
+        Base.showWarning("Could not find sketch size", message, null);
+        new Exception().printStackTrace(System.out);
+        return null;
+      }
+
+      // if the renderer entry is empty, set it to null
+      if (matches[3].trim().length() == 0) {
+        matches[3] = null;
+      }
+      return matches;
+    }
+    return new String[] { null, null, null, null };  // not an error, just empty
+  }
+
+
+  /**
+   * Replace all commented portions of a given String as spaces.
+   * Utility function used here and in the preprocessor.
+   */
+  static public String scrubComments(String what) {
+    char p[] = what.toCharArray();
+
+    int index = 0;
+    while (index < p.length) {
+      // for any double slash comments, ignore until the end of the line
+      if ((p[index] == '/') &&
+          (index < p.length - 1) &&
+          (p[index+1] == '/')) {
+        p[index++] = ' ';
+        p[index++] = ' ';
+        while ((index < p.length) &&
+               (p[index] != '\n')) {
+          p[index++] = ' ';
+        }
+
+        // check to see if this is the start of a new multiline comment.
+        // if it is, then make sure it's actually terminated somewhere.
+      } else if ((p[index] == '/') &&
+                 (index < p.length - 1) &&
+                 (p[index+1] == '*')) {
+        p[index++] = ' ';
+        p[index++] = ' ';
+        boolean endOfRainbow = false;
+        while (index < p.length - 1) {
+          if ((p[index] == '*') && (p[index+1] == '/')) {
+            p[index++] = ' ';
+            p[index++] = ' ';
+            endOfRainbow = true;
+            break;
+
+          } else {
+            // continue blanking this area
+            p[index++] = ' ';
+          }
+        }
+        if (!endOfRainbow) {
+          throw new RuntimeException("Missing the */ from the end of a " +
+                                     "/* comment */");
+        }
+      } else {  // any old character, move along
+        index++;
+      }
+    }
+    return new String(p);
+  }
+
+
+  public void addMethod(String methodName) {
+    foundMethods.put(methodName, new Object());
+  }
+
+
+  public boolean hasMethod(String methodName) {
+    return foundMethods.containsKey(methodName);
+  }
+
+
+//  public void setFoundMain(boolean foundMain) {
+//    this.foundMain = foundMain;
+//  }
+
+
+//  public boolean getFoundMain() {
+//    return foundMain;
+//  }
+
+
+  public void setAdvClassName(final String advClassName) {
+    this.advClassName = advClassName;
+  }
+
+
+  public void setMode(final Mode mode) {
+    // System.err.println("Setting mode to " + mode);
+    this.mode = mode;
+  }
+
+
   CommonHiddenStreamToken getHiddenAfter(final CommonHiddenStreamToken t) {
     return filter.getHiddenAfter(t);
   }
 
+
   CommonHiddenStreamToken getInitialHiddenToken() {
     return filter.getInitialHiddenToken();
   }
+
 
   private static int countNewlines(final String s) {
     int count = 0;
@@ -194,6 +358,7 @@ public class PdePreprocessor {
       count++;
     return count;
   }
+
 
   private static void checkForUnterminatedMultilineComment(final String program)
       throws SketchException {
@@ -291,10 +456,12 @@ public class PdePreprocessor {
     }
   }
 
+
   public PreprocessorResult write(final Writer out, String program)
       throws SketchException, RecognitionException, TokenStreamException {
     return write(out, program, null);
   }
+
 
   public PreprocessorResult write(Writer out, String program,
                                   String codeFolderPackages[])
@@ -310,9 +477,10 @@ public class PdePreprocessor {
     final ArrayList<String> codeFolderImports = new ArrayList<String>();
 
     // need to reset whether or not this has a main()
-    foundMain = false;
+//    foundMain = false;
+    foundMethods = new HashMap<String, Object>();
 
-    // bug #5
+    // http://processing.org/bugs/bugzilla/5.html
     if (!program.endsWith("\n"))
       program += "\n";
 
@@ -663,7 +831,17 @@ public class PdePreprocessor {
     }
 
     if ((mode == Mode.STATIC) || (mode == Mode.ACTIVE)) {
-      if (!foundMain) {
+      if (sketchWidth != null && !hasMethod("sketchWidth")) {
+        out.println(indent + "public int sketchWidth() { return " + sketchWidth + "; }");
+      }
+      if (sketchHeight != null && !hasMethod("sketchHeight")) {
+        out.println(indent + "public int sketchHeight() { return " + sketchHeight + "; }");
+      }
+      if (sketchRenderer != null && !hasMethod("sketchRenderer")) {
+        out.println(indent + "public String sketchRenderer() { return " + sketchRenderer + "; }");
+      }
+
+      if (!hasMethod("main")) {
         out.println(indent + "static public void main(String args[]) {");
         out.print(indent + indent + "PApplet.main(new String[] { ");
 

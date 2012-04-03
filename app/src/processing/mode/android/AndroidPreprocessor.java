@@ -26,10 +26,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.List;
 
-import processing.app.Base;
-import processing.app.Preferences;
-import processing.app.Sketch;
-import processing.app.SketchException;
+import processing.app.*;
 import processing.core.PApplet;
 import processing.mode.java.preproc.PdePreprocessor;
 import processing.mode.java.preproc.PreprocessorResult;
@@ -41,11 +38,6 @@ public class AndroidPreprocessor extends PdePreprocessor {
   Sketch sketch;
   String packageName;
 
-  String sizeStatement;
-  String sketchWidth;
-  String sketchHeight;
-  String sketchRenderer;
-
 
   public AndroidPreprocessor(final Sketch sketch,
                              final String packageName) throws IOException {
@@ -55,8 +47,21 @@ public class AndroidPreprocessor extends PdePreprocessor {
   }
 
 
-  // TODO this needs to be a generic function inside Sketch or elsewhere
+  public String[] initSketchSize(String code) throws SketchException {
+    String[] info = parseSketchSize(code, true);
+    if (info == null) {
+      System.err.println("More about the size() command on Android can be");
+      System.err.println("found here: http://wiki.processing.org/w/Android");
+      throw new SketchException("Could not parse the size() command.");
+    }
+    sizeStatement = info[0];
+    sketchWidth = info[1];
+    sketchHeight = info[2];
+    sketchRenderer = info[3];
+    return info;
+  }
 
+  /*
   protected boolean parseSketchSize() {
     // This matches against any uses of the size() function, whether numbers
     // or variables or whatever. This way, no warning is shown if size() isn't
@@ -121,6 +126,7 @@ public class AndroidPreprocessor extends PdePreprocessor {
     }
     return true;
   }
+  */
 
 
   public PreprocessorResult write(Writer out, String program, String[] codeFolderPackages)

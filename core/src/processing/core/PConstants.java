@@ -39,24 +39,24 @@ import java.awt.event.KeyEvent;
  */
 public interface PConstants {
   // render & flush modes (in P3D)
-  
+
   static public final int IMMEDIATE = 0;
-  static public final int RETAINED  = 1;  
-  
+  static public final int RETAINED  = 1;
+
   static public final int FLUSH_CONTINUOUSLY = 0;
-  static public final int FLUSH_WHEN_FULL    = 1;  
-  
+  static public final int FLUSH_WHEN_FULL    = 1;
+
   // shaders
-  
+
   static public final int FILL_SHADER_SIMPLE = 0;
   static public final int FILL_SHADER_LIT = 1;
   static public final int FILL_SHADER_TEX = 2;
   static public final int FILL_SHADER_FULL = 3;
   static public final int LINE_SHADER = 4;
-  static public final int POINT_SHADER = 5;  
-  
+  static public final int POINT_SHADER = 5;
+
   // vertex fields
-  
+
   static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)
   static public final int Y = 1;
   static public final int Z = 2;
@@ -134,15 +134,15 @@ public interface PConstants {
 
   // renderers known to processing.core
 
-  static final String P2D    = "processing.core.PGraphicsJava2D";
-  static final String P3D    = "processing.opengl.PGraphicsOpenGL";
   static final String JAVA2D = "processing.core.PGraphicsJava2D";
+  static final String P2D    = "processing.opengl.PGraphics2D";
+  static final String P3D    = "processing.opengl.PGraphics3D";
   static final String OPENGL = "processing.opengl.PGraphicsOpenGL";
   static final String PDF    = "processing.pdf.PGraphicsPDF";
   static final String DXF    = "processing.dxf.RawDXF";
 
   static final String LWJGL  = "processing.lwjgl.PGraphicsLWJGL";
-  
+
   // platform IDs for PApplet.platform
 
   static final int OTHER   = 0;
@@ -178,23 +178,23 @@ public interface PConstants {
   static final int MIN_INT = Integer.MIN_VALUE;
 
   // shapes
-  
-  static public final int VERTEX = 0;  
-  static public final int BEZIER_VERTEX = 1;  
-  static public final int QUAD_BEZIER_VERTEX = 2;  
+
+  static public final int VERTEX = 0;
+  static public final int BEZIER_VERTEX = 1;
+  static public final int QUAD_BEZIER_VERTEX = 2;
   static public final int CURVE_VERTEX = 3;
-  static public final int BREAK = 4;  
- 
+  static public final int BREAK = 4;
+
   // useful goodness
 
   /**
    * ( begin auto-generated from PI.xml )
-   * 
-   * PI is a mathematical constant with the value 3.14159265358979323846. It 
-   * is the ratio of the circumference of a circle to its diameter. It is 
-   * useful in combination with the trigonometric functions <b>sin()</b> and 
-   * <b>cos()</b>. 
-   * 
+   *
+   * PI is a mathematical constant with the value 3.14159265358979323846. It
+   * is the ratio of the circumference of a circle to its diameter. It is
+   * useful in combination with the trigonometric functions <b>sin()</b> and
+   * <b>cos()</b>.
+   *
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#HALF_PI
@@ -205,12 +205,12 @@ public interface PConstants {
   static final float PI = (float) Math.PI;
   /**
    * ( begin auto-generated from HALF_PI.xml )
-   * 
-   * HALF_PI is a mathematical constant with the value 
-   * 1.57079632679489661923. It is half the ratio of the circumference of a 
-   * circle to its diameter. It is useful in combination with the 
-   * trigonometric functions <b>sin()</b> and <b>cos()</b>. 
-   * 
+   *
+   * HALF_PI is a mathematical constant with the value
+   * 1.57079632679489661923. It is half the ratio of the circumference of a
+   * circle to its diameter. It is useful in combination with the
+   * trigonometric functions <b>sin()</b> and <b>cos()</b>.
+   *
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#PI
@@ -221,12 +221,12 @@ public interface PConstants {
   static final float THIRD_PI   = PI / 3.0f;
   /**
    * ( begin auto-generated from QUARTER_PI.xml )
-   * 
-   * QUARTER_PI is a mathematical constant with the value 0.7853982. It is 
-   * one quarter the ratio of the circumference of a circle to its diameter. 
-   * It is useful in combination with the trigonometric functions 
-   * <b>sin()</b> and <b>cos()</b>. 
-   * 
+   *
+   * QUARTER_PI is a mathematical constant with the value 0.7853982. It is
+   * one quarter the ratio of the circumference of a circle to its diameter.
+   * It is useful in combination with the trigonometric functions
+   * <b>sin()</b> and <b>cos()</b>.
+   *
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#PI
@@ -236,12 +236,12 @@ public interface PConstants {
   static final float QUARTER_PI = PI / 4.0f;
   /**
    * ( begin auto-generated from TWO_PI.xml )
-   * 
-   * TWO_PI is a mathematical constant with the value 6.28318530717958647693. 
-   * It is twice the ratio of the circumference of a circle to its diameter. 
-   * It is useful in combination with the trigonometric functions 
-   * <b>sin()</b> and <b>cos()</b>. 
-   * 
+   *
+   * TWO_PI is a mathematical constant with the value 6.28318530717958647693.
+   * It is twice the ratio of the circumference of a circle to its diameter.
+   * It is useful in combination with the trigonometric functions
+   * <b>sin()</b> and <b>cos()</b>.
+   *
    * ( end auto-generated )
    * @webref constants
    * @see PConstants#PI
@@ -379,8 +379,8 @@ public interface PConstants {
 
   static public final int NON_STROKED_SHAPE = 60;
   static public final int STROKED_SHAPE     = 61;
-  
-  
+
+
   // shape closing modes
 
   static final int OPEN = 1;
@@ -560,16 +560,16 @@ public interface PConstants {
 
   static final int ENABLE_NATIVE_FONTS                 =  1;
   static final int DISABLE_NATIVE_FONTS                = -1;
-  
+
   static final int DISABLE_DEPTH_TEST                  =  2;
   static final int ENABLE_DEPTH_TEST                   = -2;
-      
+
   static final int ENABLE_DEPTH_SORT                   =  3;
   static final int DISABLE_DEPTH_SORT                  = -3;
-  
+
   static final int DISABLE_OPENGL_ERROR_REPORT         =  4;
   static final int ENABLE_OPENGL_ERROR_REPORT          = -4;
-  
+
   static final int ENABLE_ACCURATE_TEXTURES            =  5;
   static final int DISABLE_ACCURATE_TEXTURES           = -5;
 
@@ -583,11 +583,11 @@ public interface PConstants {
   static final int ENABLE_TEXTURE_CACHE                = -8;
 
   static final int DISABLE_TRANSFORM_CACHE             =  9;
-  static final int ENABLE_TRANSFORM_CACHE              = -9;  
+  static final int ENABLE_TRANSFORM_CACHE              = -9;
 
   static final int ENABLE_PERSPECTIVE_CORRECTED_LINES  =  10;
-  static final int DISABLE_PERSPECTIVE_CORRECTED_LINES = -10;  
-  
+  static final int DISABLE_PERSPECTIVE_CORRECTED_LINES = -10;
+
   static final int HINT_COUNT                  =  11;
 
   // error messages
