@@ -2806,17 +2806,17 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref environment
-   * @param newRateTarget number of frames per second
+   * @param fps number of frames per second
    * @see PApplet#setup()
    * @see PApplet#draw()
    * @see PApplet#loop()
    * @see PApplet#noLoop()
    * @see PApplet#redraw()
    */
-  public void frameRate(float newRateTarget) {
-    frameRateTarget = newRateTarget;
+  public void frameRate(float fps) {
+    frameRateTarget = fps;
     frameRatePeriod = (long) (1000000000.0 / frameRateTarget);
-    g.setFrameRate(newRateTarget);
+    g.setFrameRate(fps);
   }
 
 
@@ -2837,11 +2837,11 @@ public class PApplet extends Applet
    * @webref input:web
    * @usage Web
    *
-   * @param what name of the param to read
+   * @param name name of the param to read
    */
-  public String param(String what) {
+  public String param(String name) {
     if (online) {
-      return getParameter(what);
+      return getParameter(name);
 
     } else {
       System.err.println("param() only works inside a web browser");
@@ -2865,14 +2865,14 @@ public class PApplet extends Applet
    *
    * @webref input:web
    * @usage Web
-   * @param what any valid String
+   * @param value any valid String
    */
-  public void status(String what) {
+  public void status(String value) {
     if (online) {
-      showStatus(what);
+      showStatus(value);
 
     } else {
-      System.out.println(what);  // something more interesting?
+      System.out.println(value);  // something more interesting?
     }
   }
 
@@ -2902,16 +2902,16 @@ public class PApplet extends Applet
    *
    * @webref input:web
    * @param url complete url as a String in quotes
-   * @param frameTitle name of the window to load the URL as a string in quotes
+   * @param target name of the window to load the URL as a string in quotes
    *
    */
-  public void link(String url, String frameTitle) {
+  public void link(String url, String target) {
     if (online) {
       try {
-        if (frameTitle == null) {
+        if (target == null) {
           getAppletContext().showDocument(new URL(url));
         } else {
-          getAppletContext().showDocument(new URL(url), frameTitle);
+          getAppletContext().showDocument(new URL(url), target);
         }
       } catch (Exception e) {
         e.printStackTrace();
@@ -3303,11 +3303,11 @@ public class PApplet extends Applet
    * @webref output:image
    * @see PApplet#save(String)
    * @see PApplet#createGraphics(int, int, String, String)
-   * @param what any sequence of letters or numbers that ends with either ".tif", ".tga", ".jpg", or ".png"
+   * @param filename any sequence of letters or numbers that ends with either ".tif", ".tga", ".jpg", or ".png"
    */
-  public void saveFrame(String what) {
+  public void saveFrame(String filename) {
     try {
-      g.save(savePath(insertFrame(what)));
+      g.save(savePath(insertFrame(filename)));
     } catch (SecurityException se) {
       System.err.println("Can't use saveFrame() when running in a browser, " +
                          "unless using a signed applet.");
@@ -3351,12 +3351,12 @@ public class PApplet extends Applet
 
   /**
    * Set the cursor type
-   * @param cursorType either ARROW, CROSS, HAND, MOVE, TEXT, WAIT
+   * @param kind either ARROW, CROSS, HAND, MOVE, TEXT, WAIT
    */
-  public void cursor(int cursorType) {
-    setCursor(Cursor.getPredefinedCursor(cursorType));
+  public void cursor(int kind) {
+    setCursor(Cursor.getPredefinedCursor(kind));
     cursorVisible = true;
-    this.cursorType = cursorType;
+    this.cursorType = kind;
   }
 
 
@@ -3364,8 +3364,8 @@ public class PApplet extends Applet
    * Replace the cursor with the specified PImage. The x- and y-
    * coordinate of the center will be the center of the image.
    */
-  public void cursor(PImage image) {
-    cursor(image, image.width/2, image.height/2);
+  public void cursor(PImage img) {
+    cursor(img, img.width/2, img.height/2);
   }
 
 
@@ -3393,18 +3393,18 @@ public class PApplet extends Applet
    * Reflection removed for release 0128 and later.
    * @webref environment
    * @see PApplet#noCursor()
-   * @param image any variable of type PImage
-   * @param hotspotX the horizonal active spot of the cursor
-   * @param hotspotY the vertical active spot of the cursor
+   * @param img any variable of type PImage
+   * @param x the horizonal active spot of the cursor
+   * @param y the vertical active spot of the cursor
    */
-  public void cursor(PImage image, int hotspotX, int hotspotY) {
+  public void cursor(PImage img, int x, int y) {
     // don't set this as cursor type, instead use cursor_type
     // to save the last cursor used in case cursor() is called
     //cursor_type = Cursor.CUSTOM_CURSOR;
     Image jimage =
-      createImage(new MemoryImageSource(image.width, image.height,
-                                        image.pixels, 0, image.width));
-    Point hotspot = new Point(hotspotX, hotspotY);
+      createImage(new MemoryImageSource(img.width, img.height,
+                                        img.pixels, 0, img.width));
+    Point hotspot = new Point(x, y);
     Toolkit tk = Toolkit.getDefaultToolkit();
     Cursor cursor = tk.createCustomCursor(jimage, hotspot, "Custom Cursor");
     setCursor(cursor);
@@ -3741,11 +3741,11 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a number to square
+   * @param n number to square
    * @see PApplet#sqrt(float)
    */
-  static public final float sq(float a) {
-    return a*a;
+  static public final float sq(float n) {
+    return n*n;
   }
 
 /**
@@ -3758,12 +3758,12 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a non-negative number
+   * @param n non-negative number
    * @see PApplet#pow(float, float)
    * @see PApplet#sq(float)
    */
-  static public final float sqrt(float a) {
-    return (float)Math.sqrt(a);
+  static public final float sqrt(float n) {
+    return (float)Math.sqrt(n);
   }
 
 /**
@@ -3774,10 +3774,10 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a number greater than 0.0
+   * @param n number greater than 0.0
    */
-  static public final float log(float a) {
-    return (float)Math.log(a);
+  static public final float log(float n) {
+    return (float)Math.log(n);
   }
 
 /**
@@ -3788,10 +3788,10 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a exponent to raise
+   * @param n exponent to raise
    */
-  static public final float exp(float a) {
-    return (float)Math.exp(a);
+  static public final float exp(float n) {
+    return (float)Math.exp(n);
   }
 
 /**
@@ -3804,12 +3804,12 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:calculation
-   * @param a base of the exponential expression
-   * @param b power of which to raise the base
+   * @param n base of the exponential expression
+   * @param e power of which to raise the base
    * @see PApplet#sqrt(float)
    */
-  static public final float pow(float a, float b) {
-    return (float)Math.pow(a, b);
+  static public final float pow(float n, float e) {
+    return (float)Math.pow(n, e);
   }
 
 /**
@@ -4128,12 +4128,12 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:trigonometry
-   * @param a y-coordinate of the point
-   * @param b x-coordinate of the point
+   * @param y y-coordinate of the point
+   * @param x x-coordinate of the point
    * @see PApplet#tan(float)
    */
-  static public final float atan2(float a, float b) {
-    return (float)Math.atan2(a, b);
+  static public final float atan2(float y, float x) {
+    return (float)Math.atan2(y, x);
   }
 
 /**
@@ -4180,12 +4180,12 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:calculation
-   * @param what number to round up
+   * @param n number to round up
    * @see PApplet#floor(float)
    * @see PApplet#round(float)
    */
-  static public final int ceil(float what) {
-    return (int) Math.ceil(what);
+  static public final int ceil(float n) {
+    return (int) Math.ceil(n);
   }
 
 /**
@@ -4196,12 +4196,12 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:calculation
-   * @param what number to round down
+   * @param n number to round down
    * @see PApplet#ceil(float)
    * @see PApplet#round(float)
    */
-  static public final int floor(float what) {
-    return (int) Math.floor(what);
+  static public final int floor(float n) {
+    return (int) Math.floor(n);
   }
 
 /**
@@ -4212,12 +4212,12 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:calculation
-   * @param what number to round
+   * @param n number to round
    * @see PApplet#floor(float)
    * @see PApplet#ceil(float)
    */
-  static public final int round(float what) {
-    return Math.round(what);
+  static public final int round(float n) {
+    return Math.round(n);
   }
 
 
@@ -4360,13 +4360,13 @@ public class PApplet extends Applet
   /**
    *
    */
-  public final float random(float howbig) {
+  public final float random(float high) {
     // for some reason (rounding error?) Math.random() * 3
     // can sometimes return '3' (once in ~30 million tries)
     // so a check was added to avoid the inclusion of 'howbig'
 
     // avoid an infinite loop
-    if (howbig == 0) return 0;
+    if (high == 0) return 0;
 
     // internal random number object
     if (internalRandom == null) internalRandom = new Random();
@@ -4374,8 +4374,8 @@ public class PApplet extends Applet
     float value = 0;
     do {
       //value = (float)Math.random() * howbig;
-      value = internalRandom.nextFloat() * howbig;
-    } while (value == howbig);
+      value = internalRandom.nextFloat() * high;
+    } while (value == high);
     return value;
   }
 
@@ -4396,15 +4396,15 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:random
-   * @param howsmall lower limit
-   * @param howbig upper limit
+   * @param low lower limit
+   * @param high upper limit
    * @see PApplet#randomSeed(long)
    * @see PApplet#noise(float, float, float)
    */
-  public final float random(float howsmall, float howbig) {
-    if (howsmall >= howbig) return howsmall;
-    float diff = howbig - howsmall;
-    return random(diff) + howsmall;
+  public final float random(float low, float high) {
+    if (low >= high) return low;
+    float diff = high - low;
+    return random(diff) + low;
   }
 
  /**
@@ -4417,15 +4417,15 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:random
-   * @param what seed value
+   * @param seed seed value
    * @see PApplet#random(float,float)
    * @see PApplet#noise(float, float, float)
    * @see PApplet#noiseSeed(long)
    */
-  public final void randomSeed(long what) {
+  public final void randomSeed(long seed) {
     // internal random number object
     if (internalRandom == null) internalRandom = new Random();
-    internalRandom.setSeed(what);
+    internalRandom.setSeed(seed);
   }
 
 
@@ -4639,15 +4639,15 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:random
-   * @param what int
+   * @param seed int
    * @see PApplet#noise(float, float, float)
    * @see PApplet#noiseDetail(int, float)
    * @see PApplet#random(float,float)
    * @see PApplet#randomSeed(long)
    */
-  public void noiseSeed(long what) {
+  public void noiseSeed(long seed) {
     if (perlinRandom == null) perlinRandom = new Random();
-    perlinRandom.setSeed(what);
+    perlinRandom.setSeed(seed);
     // force table reset after changing the random number seed [0122]
     perlin = null;
   }
@@ -6313,12 +6313,12 @@ public class PApplet extends Applet
    * ( end auto-generated )
    *
    * @webref output:files
-   * @param targetFilename name of the file to write to
-   * @param sourceLocation location to save the file
+   * @param target name of the file to write to
+   * @param source location to read from (a filename, path, or URL)
    * @see PApplet#createOutput(String)
    */
-  public boolean saveStream(String targetFilename, String sourceLocation) {
-    return saveStream(saveFile(targetFilename), sourceLocation);
+  public boolean saveStream(String target, String source) {
+    return saveStream(saveFile(target), source);
   }
 
   /**
@@ -6328,42 +6328,43 @@ public class PApplet extends Applet
    * Note that unlike other api methods, this will not automatically
    * compress or uncompress gzip files.
    *
-   * @param targetFile the file to write to
+   * @param target the file to write to
+   * @param source location to read from (a filename, path, or URL)
    */
-  public boolean saveStream(File targetFile, String sourceLocation) {
-    return saveStream(targetFile, createInputRaw(sourceLocation));
+  public boolean saveStream(File target, String source) {
+    return saveStream(target, createInputRaw(source));
   }
 
   /**
    * @nowebref
    */
-  public boolean saveStream(String targetFilename, InputStream sourceStream) {
-    return saveStream(saveFile(targetFilename), sourceStream);
+  public boolean saveStream(String target, InputStream source) {
+    return saveStream(saveFile(target), source);
   }
 
   /**
    * @nowebref
    */
-  static public boolean saveStream(File targetFile, InputStream sourceStream) {
+  static public boolean saveStream(File target, InputStream source) {
     File tempFile = null;
     try {
-      File parentDir = targetFile.getParentFile();
+      File parentDir = target.getParentFile();
       // make sure that this path actually exists before writing
-      createPath(targetFile);
-      tempFile = File.createTempFile(targetFile.getName(), null, parentDir);
+      createPath(target);
+      tempFile = File.createTempFile(target.getName(), null, parentDir);
       FileOutputStream targetStream = new FileOutputStream(tempFile);
 
-      saveStream(targetStream, sourceStream);
+      saveStream(targetStream, source);
       targetStream.close();
       targetStream = null;
 
-      if (targetFile.exists()) {
-        if (!targetFile.delete()) {
+      if (target.exists()) {
+        if (!target.delete()) {
           System.err.println("Could not replace " +
-                             targetFile.getAbsolutePath() + ".");
+                             target.getAbsolutePath() + ".");
         }
       }
-      if (!tempFile.renameTo(targetFile)) {
+      if (!tempFile.renameTo(target)) {
         System.err.println("Could not rename temporary file " +
                            tempFile.getAbsolutePath());
         return false;
@@ -6382,10 +6383,10 @@ public class PApplet extends Applet
   /**
    * @nowebref
    */
-  static public void saveStream(OutputStream targetStream,
-                                InputStream sourceStream) throws IOException {
-    BufferedInputStream bis = new BufferedInputStream(sourceStream, 16384);
-    BufferedOutputStream bos = new BufferedOutputStream(targetStream);
+  static public void saveStream(OutputStream target,
+                                InputStream source) throws IOException {
+    BufferedInputStream bis = new BufferedInputStream(source, 16384);
+    BufferedOutputStream bos = new BufferedOutputStream(target);
 
     byte[] buffer = new byte[8192];
     int bytesRead;
@@ -6416,35 +6417,28 @@ public class PApplet extends Applet
    *
    * @webref output:files
    * @param filename name of the file to write to
-   * @param buffer array of bytes to be written
+   * @param data array of bytes to be written
    * @see PApplet#loadStrings(String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#saveStrings(String, String[])
    */
-  public void saveBytes(String filename, byte buffer[]) {
-    saveBytes(saveFile(filename), buffer);
+  public void saveBytes(String filename, byte[] data) {
+    saveBytes(saveFile(filename), data);
   }
+
 
   /**
    * @nowebref
    * Saves bytes to a specific File location specified by the user.
    */
-  static public void saveBytes(File file, byte buffer[]) {
+  static public void saveBytes(File file, byte[] data) {
     File tempFile = null;
     try {
       File parentDir = file.getParentFile();
       tempFile = File.createTempFile(file.getName(), null, parentDir);
 
-      /*
-      String filename = file.getAbsolutePath();
-      createPath(filename);
-      OutputStream output = new FileOutputStream(file);
-      if (file.getName().toLowerCase().endsWith(".gz")) {
-        output = new GZIPOutputStream(output);
-      }
-      */
       OutputStream output = createOutput(tempFile);
-      saveBytes(output, buffer);
+      saveBytes(output, data);
       output.close();
       output = null;
 
@@ -6468,19 +6462,21 @@ public class PApplet extends Applet
     }
   }
 
+
   /**
    * @nowebref
    * Spews a buffer of bytes to an OutputStream.
    */
-  static public void saveBytes(OutputStream output, byte buffer[]) {
+  static public void saveBytes(OutputStream output, byte[] data) {
     try {
-      output.write(buffer);
+      output.write(data);
       output.flush();
 
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
+
 
   //
 
@@ -6506,44 +6502,31 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref output:files
    * @param filename filename for output
-   * @param strings string array to be written
+   * @param data string array to be written
    * @see PApplet#loadStrings(String)
    * @see PApplet#loadBytes(String)
    * @see PApplet#saveBytes(String, byte[])
    */
-  public void saveStrings(String filename, String strings[]) {
-    saveStrings(saveFile(filename), strings);
+  public void saveStrings(String filename, String data[]) {
+    saveStrings(saveFile(filename), data);
   }
+
 
   /**
    * @nowebref
    */
-  static public void saveStrings(File file, String strings[]) {
-    saveStrings(createOutput(file), strings);
-    /*
-    try {
-      String location = file.getAbsolutePath();
-      createPath(location);
-      OutputStream output = new FileOutputStream(location);
-      if (file.getName().toLowerCase().endsWith(".gz")) {
-        output = new GZIPOutputStream(output);
-      }
-      saveStrings(output, strings);
-      output.close();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    */
+  static public void saveStrings(File file, String data[]) {
+    saveStrings(createOutput(file), data);
   }
+
 
   /**
    * @nowebref
    */
-  static public void saveStrings(OutputStream output, String strings[]) {
+  static public void saveStrings(OutputStream output, String[] data) {
     PrintWriter writer = createWriter(output);
-    for (int i = 0; i < strings.length; i++) {
-      writer.println(strings[i]);
+    for (int i = 0; i < data.length; i++) {
+      writer.println(data[i]);
     }
     writer.flush();
     writer.close();
@@ -6702,18 +6685,19 @@ public class PApplet extends Applet
 
   // URL ENCODING
 
-  static public String urlEncode(String what) {
+
+  static public String urlEncode(String str) {
     try {
-      return URLEncoder.encode(what, "UTF-8");
+      return URLEncoder.encode(str, "UTF-8");
     } catch (UnsupportedEncodingException e) {  // oh c'mon
       return null;
     }
   }
 
 
-  static public String urlDecode(String what) {
+  static public String urlDecode(String str) {
     try {
-      return URLDecoder.decode(what, "UTF-8");
+      return URLDecoder.decode(str, "UTF-8");
     } catch (UnsupportedEncodingException e) {  // safe per the JDK source
       return null;
     }
@@ -6742,60 +6726,60 @@ public class PApplet extends Applet
    * @param what array to sort
    * @see PApplet#reverse(boolean[])
    */
-  static public byte[] sort(byte what[]) {
-    return sort(what, what.length);
+  static public byte[] sort(byte list[]) {
+    return sort(list, list.length);
   }
 
   /**
         * @param count number of elements to sort, starting from 0
    */
-  static public byte[] sort(byte[] what, int count) {
-    byte[] outgoing = new byte[what.length];
-    System.arraycopy(what, 0, outgoing, 0, what.length);
+  static public byte[] sort(byte[] list, int count) {
+    byte[] outgoing = new byte[list.length];
+    System.arraycopy(list, 0, outgoing, 0, list.length);
     Arrays.sort(outgoing, 0, count);
     return outgoing;
   }
 
-  static public char[] sort(char what[]) {
-    return sort(what, what.length);
+  static public char[] sort(char list[]) {
+    return sort(list, list.length);
   }
 
-  static public char[] sort(char[] what, int count) {
-    char[] outgoing = new char[what.length];
-    System.arraycopy(what, 0, outgoing, 0, what.length);
+  static public char[] sort(char[] list, int count) {
+    char[] outgoing = new char[list.length];
+    System.arraycopy(list, 0, outgoing, 0, list.length);
     Arrays.sort(outgoing, 0, count);
     return outgoing;
   }
 
-  static public int[] sort(int what[]) {
-    return sort(what, what.length);
+  static public int[] sort(int list[]) {
+    return sort(list, list.length);
   }
 
-  static public int[] sort(int[] what, int count) {
-    int[] outgoing = new int[what.length];
-    System.arraycopy(what, 0, outgoing, 0, what.length);
+  static public int[] sort(int[] list, int count) {
+    int[] outgoing = new int[list.length];
+    System.arraycopy(list, 0, outgoing, 0, list.length);
     Arrays.sort(outgoing, 0, count);
     return outgoing;
   }
 
-  static public float[] sort(float what[]) {
-    return sort(what, what.length);
+  static public float[] sort(float list[]) {
+    return sort(list, list.length);
   }
 
-  static public float[] sort(float[] what, int count) {
-    float[] outgoing = new float[what.length];
-    System.arraycopy(what, 0, outgoing, 0, what.length);
+  static public float[] sort(float[] list, int count) {
+    float[] outgoing = new float[list.length];
+    System.arraycopy(list, 0, outgoing, 0, list.length);
     Arrays.sort(outgoing, 0, count);
     return outgoing;
   }
 
-  static public String[] sort(String what[]) {
-    return sort(what, what.length);
+  static public String[] sort(String list[]) {
+    return sort(list, list.length);
   }
 
-  static public String[] sort(String[] what, int count) {
-    String[] outgoing = new String[what.length];
-    System.arraycopy(what, 0, outgoing, 0, what.length);
+  static public String[] sort(String[] list, int count) {
+    String[] outgoing = new String[list.length];
+    System.arraycopy(list, 0, outgoing, 0, list.length);
     Arrays.sort(outgoing, 0, count);
     return outgoing;
   }
@@ -7009,46 +6993,46 @@ public class PApplet extends Applet
    * ( end auto-generated )
    *
    * @webref data:array_functions
-   * @param b array to append
+   * @param array array to append
    * @param value new data for the array
    * @see PApplet#shorten(boolean[])
    * @see PApplet#expand(boolean[])
    */
-  static public byte[] append(byte b[], byte value) {
-    b = expand(b, b.length + 1);
-    b[b.length-1] = value;
-    return b;
+  static public byte[] append(byte array[], byte value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
   }
 
-  static public char[] append(char b[], char value) {
-    b = expand(b, b.length + 1);
-    b[b.length-1] = value;
-    return b;
+  static public char[] append(char array[], char value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
   }
 
-  static public int[] append(int b[], int value) {
-    b = expand(b, b.length + 1);
-    b[b.length-1] = value;
-    return b;
+  static public int[] append(int array[], int value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
   }
 
-  static public float[] append(float b[], float value) {
-    b = expand(b, b.length + 1);
-    b[b.length-1] = value;
-    return b;
+  static public float[] append(float array[], float value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
   }
 
-  static public String[] append(String b[], String value) {
-    b = expand(b, b.length + 1);
-    b[b.length-1] = value;
-    return b;
+  static public String[] append(String array[], String value) {
+    array = expand(array, array.length + 1);
+    array[array.length-1] = value;
+    return array;
   }
 
-  static public Object append(Object b, Object value) {
-    int length = Array.getLength(b);
-    b = expand(b, length + 1);
-    Array.set(b, length, value);
-    return b;
+  static public Object append(Object array, Object value) {
+    int length = Array.getLength(array);
+    array = expand(array, length + 1);
+    Array.set(array, length, value);
+    return array;
   }
 
 
@@ -7113,148 +7097,148 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref data:array_functions
    * @param list array to splice into
-   * @param v value to be spliced in
+   * @param value value to be spliced in
    * @param index position in the array from which to insert data
    * @see PApplet#concat(boolean[], boolean[])
    * @see PApplet#subset(boolean[], int, int)
    */
   static final public boolean[] splice(boolean list[],
-                                       boolean v, int index) {
+                                       boolean value, int index) {
     boolean outgoing[] = new boolean[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
-    outgoing[index] = v;
+    outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
   static final public boolean[] splice(boolean list[],
-                                       boolean v[], int index) {
-    boolean outgoing[] = new boolean[list.length + v.length];
+                                       boolean value[], int index) {
+    boolean outgoing[] = new boolean[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
-    System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length,
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
                      list.length - index);
     return outgoing;
   }
 
   static final public byte[] splice(byte list[],
-                                    byte v, int index) {
+                                    byte value, int index) {
     byte outgoing[] = new byte[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
-    outgoing[index] = v;
+    outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
   static final public byte[] splice(byte list[],
-                                    byte v[], int index) {
-    byte outgoing[] = new byte[list.length + v.length];
+                                    byte value[], int index) {
+    byte outgoing[] = new byte[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
-    System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length,
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
                      list.length - index);
     return outgoing;
   }
 
 
   static final public char[] splice(char list[],
-                                    char v, int index) {
+                                    char value, int index) {
     char outgoing[] = new char[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
-    outgoing[index] = v;
+    outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
   static final public char[] splice(char list[],
-                                    char v[], int index) {
-    char outgoing[] = new char[list.length + v.length];
+                                    char value[], int index) {
+    char outgoing[] = new char[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
-    System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length,
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
                      list.length - index);
     return outgoing;
   }
 
   static final public int[] splice(int list[],
-                                   int v, int index) {
+                                   int value, int index) {
     int outgoing[] = new int[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
-    outgoing[index] = v;
+    outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
   static final public int[] splice(int list[],
-                                   int v[], int index) {
-    int outgoing[] = new int[list.length + v.length];
+                                   int value[], int index) {
+    int outgoing[] = new int[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
-    System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length,
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
                      list.length - index);
     return outgoing;
   }
 
   static final public float[] splice(float list[],
-                                     float v, int index) {
+                                     float value, int index) {
     float outgoing[] = new float[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
-    outgoing[index] = v;
+    outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
   static final public float[] splice(float list[],
-                                     float v[], int index) {
-    float outgoing[] = new float[list.length + v.length];
+                                     float value[], int index) {
+    float outgoing[] = new float[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
-    System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length,
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
                      list.length - index);
     return outgoing;
   }
 
   static final public String[] splice(String list[],
-                                      String v, int index) {
+                                      String value, int index) {
     String outgoing[] = new String[list.length + 1];
     System.arraycopy(list, 0, outgoing, 0, index);
-    outgoing[index] = v;
+    outgoing[index] = value;
     System.arraycopy(list, index, outgoing, index + 1,
                      list.length - index);
     return outgoing;
   }
 
   static final public String[] splice(String list[],
-                                      String v[], int index) {
-    String outgoing[] = new String[list.length + v.length];
+                                      String value[], int index) {
+    String outgoing[] = new String[list.length + value.length];
     System.arraycopy(list, 0, outgoing, 0, index);
-    System.arraycopy(v, 0, outgoing, index, v.length);
-    System.arraycopy(list, index, outgoing, index + v.length,
+    System.arraycopy(value, 0, outgoing, index, value.length);
+    System.arraycopy(list, index, outgoing, index + value.length,
                      list.length - index);
     return outgoing;
   }
 
-  static final public Object splice(Object list, Object v, int index) {
+  static final public Object splice(Object list, Object value, int index) {
     Object[] outgoing = null;
     int length = Array.getLength(list);
 
     // check whether item being spliced in is an array
-    if (v.getClass().getName().charAt(0) == '[') {
-      int vlength = Array.getLength(v);
+    if (value.getClass().getName().charAt(0) == '[') {
+      int vlength = Array.getLength(value);
       outgoing = new Object[length + vlength];
       System.arraycopy(list, 0, outgoing, 0, index);
-      System.arraycopy(v, 0, outgoing, index, vlength);
+      System.arraycopy(value, 0, outgoing, index, vlength);
       System.arraycopy(list, index, outgoing, index + vlength, length - index);
 
     } else {
       outgoing = new Object[length + 1];
       System.arraycopy(list, 0, outgoing, 0, index);
-      Array.set(outgoing, index, v);
+      Array.set(outgoing, index, value);
       System.arraycopy(list, index, outgoing, index + 1, length - index);
     }
     return outgoing;
@@ -7528,6 +7512,7 @@ public class PApplet extends Applet
     return str.replace('\u00A0', ' ').trim();
   }
 
+
  /**
   * @param array a String array
   */
@@ -7552,30 +7537,30 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param str array of Strings
+   * @param list array of Strings
    * @param separator char or String to be placed between each item
    * @see PApplet#split(String, String)
    * @see PApplet#trim(String)
    * @see PApplet#nf(float, int, int)
    * @see PApplet#nfs(float, int, int)
    */
-  static public String join(String str[], char separator) {
-    return join(str, String.valueOf(separator));
+  static public String join(String[] list, char separator) {
+    return join(list, String.valueOf(separator));
   }
 
-  static public String join(String str[], String separator) {
+
+  static public String join(String[] list, String separator) {
     StringBuffer buffer = new StringBuffer();
-    for (int i = 0; i < str.length; i++) {
+    for (int i = 0; i < list.length; i++) {
       if (i != 0) buffer.append(separator);
-      buffer.append(str[i]);
+      buffer.append(list[i]);
     }
     return buffer.toString();
   }
 
 
-
-  static public String[] splitTokens(String what) {
-    return splitTokens(what, WHITESPACE);
+  static public String[] splitTokens(String value) {
+    return splitTokens(value, WHITESPACE);
   }
 
 
@@ -7594,14 +7579,14 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param what the string to be split
+   * @param value the string to be split
    * @param delim list of individual characters that will be used as separators
    * @see PApplet#split(String, String)
    * @see PApplet#join(String[], String)
    * @see PApplet#trim(String)
    */
-  static public String[] splitTokens(String what, String delim) {
-    StringTokenizer toker = new StringTokenizer(what, delim);
+  static public String[] splitTokens(String value, String delim) {
+    StringTokenizer toker = new StringTokenizer(value, delim);
     String pieces[] = new String[toker.countTokens()];
 
     int index = 0;
@@ -7610,6 +7595,7 @@ public class PApplet extends Applet
     }
     return pieces;
   }
+
 
   /**
    * ( begin auto-generated from split.xml )
@@ -7642,16 +7628,16 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref data:string_functions
    * @usage web_application
-   * @param what string to be split
+   * @param value string to be split
    * @param delim the character or String used to separate the data
    */
-  static public String[] split(String what, char delim) {
+  static public String[] split(String value, char delim) {
     // do this so that the exception occurs inside the user's
     // program, rather than appearing to be a bug inside split()
-    if (what == null) return null;
+    if (value == null) return null;
     //return split(what, String.valueOf(delim));  // huh
 
-    char chars[] = what.toCharArray();
+    char chars[] = value.toCharArray();
     int splitCount = 0; //1;
     for (int i = 0; i < chars.length; i++) {
       if (chars[i] == delim) splitCount++;
@@ -7664,7 +7650,7 @@ public class PApplet extends Applet
     //}
     if (splitCount == 0) {
       String splits[] = new String[1];
-      splits[0] = new String(what);
+      splits[0] = new String(value);
       return splits;
     }
     //int pieceCount = splitCount + 1;
@@ -7685,15 +7671,16 @@ public class PApplet extends Applet
     return splits;
   }
 
-  static public String[] split(String what, String delim) {
+
+  static public String[] split(String value, String delim) {
     ArrayList<String> items = new ArrayList<String>();
     int index;
     int offset = 0;
-    while ((index = what.indexOf(delim, offset)) != -1) {
-      items.add(what.substring(offset, index));
+    while ((index = value.indexOf(delim, offset)) != -1) {
+      items.add(value.substring(offset, index));
       offset = index + delim.length();
     }
-    items.add(what.substring(offset));
+    items.add(value.substring(offset));
     String[] outgoing = new String[items.size()];
     items.toArray(outgoing);
     return outgoing;
@@ -7753,7 +7740,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param what the String to be searched
+   * @param str the String to be searched
    * @param regexp the regexp to be used for matching
    * @see PApplet#matchAll(String, String)
    * @see PApplet#split(String, String)
@@ -7761,9 +7748,9 @@ public class PApplet extends Applet
    * @see PApplet#join(String[], String)
    * @see PApplet#trim(String)
    */
-  static public String[] match(String what, String regexp) {
+  static public String[] match(String str, String regexp) {
     Pattern p = matchPattern(regexp);
-    Matcher m = p.matcher(what);
+    Matcher m = p.matcher(str);
     if (m.find()) {
       int count = m.groupCount() + 1;
       String[] groups = new String[count];
@@ -8651,27 +8638,27 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref data:conversion
-   * @param what the value to convert
+   * @param value the value to convert
    * @see PApplet#unhex(String)
    * @see PApplet#binary(byte)
    * @see PApplet#unbinary(String)
    */
-  static final public String hex(byte what) {
-    return hex(what, 2);
+  static final public String hex(byte value) {
+    return hex(value, 2);
   }
 
-  static final public String hex(char what) {
-    return hex(what, 4);
+  static final public String hex(char value) {
+    return hex(value, 4);
   }
 
-  static final public String hex(int what) {
-    return hex(what, 8);
+  static final public String hex(int value) {
+    return hex(value, 8);
   }
 /**
  * @param digits the number of digits (maximum 8)
  */
-  static final public String hex(int what, int digits) {
-    String stuff = Integer.toHexString(what).toUpperCase();
+  static final public String hex(int value, int digits) {
+    String stuff = Integer.toHexString(value).toUpperCase();
     if (digits > 8) {
       digits = 8;
     }
@@ -8695,14 +8682,14 @@ public class PApplet extends Applet
    * ( end auto-generated )
    *
    * @webref data:conversion
-   * @param what String to convert to an integer
+   * @param value String to convert to an integer
    * @see PApplet#hex(int, int)
    * @see PApplet#binary(byte)
    * @see PApplet#unbinary(String)
    */
-  static final public int unhex(String what) {
+  static final public int unhex(String value) {
     // has to parse as a Long so that it'll work for numbers bigger than 2^31
-    return (int) (Long.parseLong(what, 16));
+    return (int) (Long.parseLong(value, 16));
   }
 
   //
@@ -8711,8 +8698,8 @@ public class PApplet extends Applet
    * Returns a String that contains the binary value of a byte.
    * The returned value will always have 8 digits.
    */
-  static final public String binary(byte what) {
-    return binary(what, 8);
+  static final public String binary(byte value) {
+    return binary(value, 8);
   }
 
   /**
@@ -8720,8 +8707,8 @@ public class PApplet extends Applet
    * The returned value will always have 16 digits because chars
    * are two bytes long.
    */
-  static final public String binary(char what) {
-    return binary(what, 16);
+  static final public String binary(char value) {
+    return binary(value, 16);
   }
 
   /**
@@ -8729,8 +8716,8 @@ public class PApplet extends Applet
    * depends on the size of the number itself. If you want a specific number
    * of digits use binary(int what, int digits) to specify how many.
    */
-  static final public String binary(int what) {
-    return binary(what, 32);
+  static final public String binary(int value) {
+    return binary(value, 32);
   }
 
   /*
@@ -8752,14 +8739,14 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
   * @webref data:conversion
-  * @param what value to convert
+  * @param value value to convert
   * @param digits number of digits to return
   * @see PApplet#unbinary(String)
   * @see PApplet#hex(int,int)
   * @see PApplet#unhex(String)
   */
-  static final public String binary(int what, int digits) {
-    String stuff = Integer.toBinaryString(what);
+  static final public String binary(int value, int digits) {
+    String stuff = Integer.toBinaryString(value);
     if (digits > 32) {
       digits = 32;
     }
@@ -8784,13 +8771,13 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref data:conversion
-   * @param what String to convert to an integer
+   * @param value String to convert to an integer
    * @see PApplet#binary(byte)
    * @see PApplet#hex(int,int)
    * @see PApplet#unhex(String)
    */
-  static final public int unbinary(String what) {
-    return Integer.parseInt(what, 2);
+  static final public int unbinary(String value) {
+    return Integer.parseInt(value, 2);
   }
 
 
@@ -10952,9 +10939,9 @@ public class PApplet extends Applet
   }
 
 
-  public void image(PImage image, float x, float y) {
-    if (recorder != null) recorder.image(image, x, y);
-    g.image(image, x, y);
+  public void image(PImage img, float x, float y) {
+    if (recorder != null) recorder.image(img, x, y);
+    g.image(img, x, y);
   }
 
 
@@ -10985,9 +10972,9 @@ public class PApplet extends Applet
    * smooth() will also improve image quality of resized images.
    *
    * @webref image:loading_displaying
-   * @param image the image to display
-   * @param x x-coordinate of the image
-   * @param y y-coordinate of the image
+   * @param img the image to display
+   * @param a x-coordinate of the image
+   * @param b y-coordinate of the image
    * @param c width to display the image
    * @param d height to display the image
    * @see PApplet#loadImage(String, String)
@@ -10997,9 +10984,9 @@ public class PApplet extends Applet
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#alpha(int)
    */
-  public void image(PImage image, float x, float y, float c, float d) {
-    if (recorder != null) recorder.image(image, x, y, c, d);
-    g.image(image, x, y, c, d);
+  public void image(PImage img, float a, float b, float c, float d) {
+    if (recorder != null) recorder.image(img, a, b, c, d);
+    g.image(img, a, b, c, d);
   }
 
 
@@ -11010,11 +10997,11 @@ public class PApplet extends Applet
    *
    * @nowebref
    */
-  public void image(PImage image,
+  public void image(PImage img,
                     float a, float b, float c, float d,
                     int u1, int v1, int u2, int v2) {
-    if (recorder != null) recorder.image(image, a, b, c, d, u1, v1, u2, v2);
-    g.image(image, a, b, c, d, u1, v1, u2, v2);
+    if (recorder != null) recorder.image(img, a, b, c, d, u1, v1, u2, v2);
+    g.image(img, a, b, c, d, u1, v1, u2, v2);
   }
 
 
@@ -11083,17 +11070,17 @@ public class PApplet extends Applet
    *
    * @webref shape:loading_displaying
    * @param shape the shape to display
-   * @param x x-coordinate of the shape
-   * @param y y-coordinate of the shape
+   * @param a x-coordinate of the shape
+   * @param b y-coordinate of the shape
    * @param c width to display the shape
    * @param d height to display the shape
    * @see PShape
    * @see PApplet#loadShape(String)
    * @see PGraphics#shapeMode(int)
    */
-  public void shape(PShape shape, float x, float y, float c, float d) {
-    if (recorder != null) recorder.shape(shape, x, y, c, d);
-    g.shape(shape, x, y, c, d);
+  public void shape(PShape shape, float a, float b, float c, float d) {
+    if (recorder != null) recorder.shape(shape, a, b, c, d);
+    g.shape(shape, a, b, c, d);
   }
 
 
@@ -11338,13 +11325,36 @@ public class PApplet extends Applet
 
 
   /**
-   * <h3>Advanced</h3>
-   * Draw a single character on screen.
-   * Extremely slow when used with textMode(SCREEN) and Java 2D,
-   * because loadPixels has to be called first and updatePixels last.
+   * ( begin auto-generated from text.xml )
    *
+   * Draws text to the screen. Displays the information specified in the
+   * <b>data</b> or <b>stringdata</b> parameters on the screen in the
+   * position specified by the <b>x</b> and <b>y</b> parameters and the
+   * optional <b>z</b> parameter. A default font will be used unless a font
+   * is set with the <b>textFont()</b> function. Change the color of the text
+   * with the <b>fill()</b> function. The text displays in relation to the
+   * <b>textAlign()</b> function, which gives the option to draw to the left,
+   * right, and center of the coordinates.
+   * <br /><br />
+   * The <b>x2</b> and <b>y2</b> parameters define a rectangular area to
+   * display within and may only be used with string data. For text drawn
+   * inside a rectangle, the coordinates are interpreted based on the current
+   * <b>rectMode()</b> setting.
+   *
+   * ( end auto-generated )
+   *
+   * @webref typography:loading_displaying
+   * @param c the alphanumeric character to be displayed
    * @param x x-coordinate of text
    * @param y y-coordinate of text
+   * @see PGraphics#textAlign(int, int)
+   * @see PGraphics#textMode(int)
+   * @see PApplet#loadFont(String)
+   * @see PFont#PFont
+   * @see PGraphics#textFont(PFont)
+   * @see PGraphics#rectMode(int)
+   * @see PGraphics#fill(int, float)
+   * @see_external String
    */
   public void text(char c, float x, float y) {
     if (recorder != null) recorder.text(c, x, y);
@@ -11750,12 +11760,12 @@ public class PApplet extends Applet
    * Not recommended for use in 3D, because the z-dimension is just
    * scaled by 1, since there's no way to know what else to scale it by.
    *
-   * @param sx percentage to scale the object in the x-axis
-   * @param sy percentage to scale the objects in the y-axis
+   * @param x percentage to scale the object in the x-axis
+   * @param y percentage to scale the objects in the y-axis
    */
-  public void scale(float sx, float sy) {
-    if (recorder != null) recorder.scale(sx, sy);
-    g.scale(sx, sy);
+  public void scale(float x, float y) {
+    if (recorder != null) recorder.scale(x, y);
+    g.scale(x, y);
   }
 
 
@@ -12623,20 +12633,20 @@ public class PApplet extends Applet
 
 
   /**
-   * @param x red or hue value (depending on current color mode)
-   * @param y green or saturation value (depending on current color mode)
-   * @param z blue or brightness value (depending on current color mode)
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @webref color:setting
    */
-  public void stroke(float x, float y, float z) {
-    if (recorder != null) recorder.stroke(x, y, z);
-    g.stroke(x, y, z);
+  public void stroke(float v1, float v2, float v3) {
+    if (recorder != null) recorder.stroke(v1, v2, v3);
+    g.stroke(v1, v2, v3);
   }
 
 
-  public void stroke(float x, float y, float z, float alpha) {
-    if (recorder != null) recorder.stroke(x, y, z, alpha);
-    g.stroke(x, y, z, alpha);
+  public void stroke(float v1, float v2, float v3, float alpha) {
+    if (recorder != null) recorder.stroke(v1, v2, v3, alpha);
+    g.stroke(v1, v2, v3, alpha);
   }
 
 
@@ -12725,22 +12735,22 @@ public class PApplet extends Applet
 
 
 /**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
+ * @param v1 red or hue value (depending on current color mode)
+ * @param v2 green or saturation value (depending on current color mode)
+ * @param v3 blue or brightness value (depending on current color mode)
  */
-  public void tint(float x, float y, float z) {
-    if (recorder != null) recorder.tint(x, y, z);
-    g.tint(x, y, z);
+  public void tint(float v1, float v2, float v3) {
+    if (recorder != null) recorder.tint(v1, v2, v3);
+    g.tint(v1, v2, v3);
   }
 
 
   /**
-   * @param z opacity of the image
+   * @param v3 opacity of the image
    */
-  public void tint(float x, float y, float z, float a) {
-    if (recorder != null) recorder.tint(x, y, z, a);
-    g.tint(x, y, z, a);
+  public void tint(float v1, float v2, float v3, float a) {
+    if (recorder != null) recorder.tint(v1, v2, v3, a);
+    g.tint(v1, v2, v3, a);
   }
 
 
@@ -12826,18 +12836,18 @@ public class PApplet extends Applet
   }
 
 
-  public void fill(float x, float y, float z) {
-    if (recorder != null) recorder.fill(x, y, z);
-    g.fill(x, y, z);
+  public void fill(float v1, float v2, float v3) {
+    if (recorder != null) recorder.fill(v1, v2, v3);
+    g.fill(v1, v2, v3);
   }
 
 
   /**
    * @param a opacity of the fill
    */
-  public void fill(float x, float y, float z, float a) {
-    if (recorder != null) recorder.fill(x, y, z, a);
-    g.fill(x, y, z, a);
+  public void fill(float v1, float v2, float v3, float a) {
+    if (recorder != null) recorder.fill(v1, v2, v3, a);
+    g.fill(v1, v2, v3, a);
   }
 
 
@@ -12877,13 +12887,13 @@ public class PApplet extends Applet
 
 
 /**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
+ * @param v1 red or hue value (depending on current color mode)
+ * @param v2 green or saturation value (depending on current color mode)
+ * @param v3 blue or brightness value (depending on current color mode)
  */
-  public void ambient(float x, float y, float z) {
-    if (recorder != null) recorder.ambient(x, y, z);
-    g.ambient(x, y, z);
+  public void ambient(float v1, float v2, float v3) {
+    if (recorder != null) recorder.ambient(v1, v2, v3);
+    g.ambient(v1, v2, v3);
   }
 
 
@@ -12923,13 +12933,13 @@ public class PApplet extends Applet
 
 
 /**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
+ * @param v1 red or hue value (depending on current color mode)
+ * @param v2 green or saturation value (depending on current color mode)
+ * @param v3 blue or brightness value (depending on current color mode)
  */
-  public void specular(float x, float y, float z) {
-    if (recorder != null) recorder.specular(x, y, z);
-    g.specular(x, y, z);
+  public void specular(float v1, float v2, float v3) {
+    if (recorder != null) recorder.specular(v1, v2, v3);
+    g.specular(v1, v2, v3);
   }
 
 
@@ -12988,13 +12998,13 @@ public class PApplet extends Applet
 
 
   /**
-   * @param x red or hue value (depending on current color mode)
-   * @param y green or saturation value (depending on current color mode)
-   * @param z blue or brightness value (depending on current color mode)
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    */
-  public void emissive(float x, float y, float z) {
-    if (recorder != null) recorder.emissive(x, y, z);
-    g.emissive(x, y, z);
+  public void emissive(float v1, float v2, float v3) {
+    if (recorder != null) recorder.emissive(v1, v2, v3);
+    g.emissive(v1, v2, v3);
   }
 
 
@@ -13249,18 +13259,18 @@ public class PApplet extends Applet
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param x red or hue value (depending on current color mode)
-   * @param y green or saturation value (depending on current color mode)
-   * @param z blue or brightness value (depending on current color mode)
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @see PGraphics#specular(float, float, float)
    * @see PGraphics#lights()
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
    * @see PGraphics#pointLight(float, float, float, float, float, float)
    * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
    */
-  public void lightSpecular(float x, float y, float z) {
-    if (recorder != null) recorder.lightSpecular(x, y, z);
-    g.lightSpecular(x, y, z);
+  public void lightSpecular(float v1, float v2, float v3) {
+    if (recorder != null) recorder.lightSpecular(v1, v2, v3);
+    g.lightSpecular(v1, v2, v3);
   }
 
 
@@ -13332,22 +13342,22 @@ public class PApplet extends Applet
 
 
   /**
-   * @param x red or hue value (depending on the current color mode)
-   * @param y green or saturation value (depending on the current color mode)
-   * @param z blue or brightness value (depending on the current color mode)
+   * @param v1 red or hue value (depending on the current color mode)
+   * @param v2 green or saturation value (depending on the current color mode)
+   * @param v3 blue or brightness value (depending on the current color mode)
    */
-  public void background(float x, float y, float z) {
-    if (recorder != null) recorder.background(x, y, z);
-    g.background(x, y, z);
+  public void background(float v1, float v2, float v3) {
+    if (recorder != null) recorder.background(v1, v2, v3);
+    g.background(v1, v2, v3);
   }
 
 
   /**
    * @param a opacity of the background
    */
-  public void background(float x, float y, float z, float a) {
-    if (recorder != null) recorder.background(x, y, z, a);
-    g.background(x, y, z, a);
+  public void background(float v1, float v2, float v3, float a) {
+    if (recorder != null) recorder.background(v1, v2, v3, a);
+    g.background(v1, v2, v3, a);
   }
 
 
@@ -13407,23 +13417,23 @@ public class PApplet extends Applet
 
 
   /**
-   * @param maxX range for the red or hue depending on the current color mode
-   * @param maxY range for the green or saturation depending on the current color mode
-   * @param maxZ range for the blue or brightness depending on the current color mode
+   * @param max1 range for the red or hue depending on the current color mode
+   * @param max2 range for the green or saturation depending on the current color mode
+   * @param max3 range for the blue or brightness depending on the current color mode
    */
-  public void colorMode(int mode, float maxX, float maxY, float maxZ) {
-    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ);
-    g.colorMode(mode, maxX, maxY, maxZ);
+  public void colorMode(int mode, float max1, float max2, float max3) {
+    if (recorder != null) recorder.colorMode(mode, max1, max2, max3);
+    g.colorMode(mode, max1, max2, max3);
   }
 
 
-/**
- * @param maxA range for the alpha
- */
+  /**
+   * @param maxA range for the alpha
+   */
   public void colorMode(int mode,
-                        float maxX, float maxY, float maxZ, float maxA) {
-    if (recorder != null) recorder.colorMode(mode, maxX, maxY, maxZ, maxA);
-    g.colorMode(mode, maxX, maxY, maxZ, maxA);
+                        float max1, float max2, float max3, float maxA) {
+    if (recorder != null) recorder.colorMode(mode, max1, max2, max3, maxA);
+    g.colorMode(mode, max1, max2, max3, maxA);
   }
 
 
@@ -13435,7 +13445,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -13443,8 +13453,8 @@ public class PApplet extends Applet
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
    */
-  public final float alpha(int what) {
-    return g.alpha(what);
+  public final float alpha(int rgb) {
+    return g.alpha(rgb);
   }
 
 
@@ -13465,7 +13475,7 @@ public class PApplet extends Applet
    *
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#alpha(int)
@@ -13474,8 +13484,8 @@ public class PApplet extends Applet
    * @see PGraphics#brightness(int)
    * @see_external rightshift
    */
-  public final float red(int what) {
-    return g.red(what);
+  public final float red(int rgb) {
+    return g.red(rgb);
   }
 
 
@@ -13496,7 +13506,7 @@ public class PApplet extends Applet
    *
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#alpha(int)
@@ -13505,8 +13515,8 @@ public class PApplet extends Applet
    * @see PGraphics#brightness(int)
    * @see_external rightshift
    */
-  public final float green(int what) {
-    return g.green(what);
+  public final float green(int rgb) {
+    return g.green(rgb);
   }
 
 
@@ -13527,7 +13537,7 @@ public class PApplet extends Applet
    *
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#alpha(int)
@@ -13536,8 +13546,8 @@ public class PApplet extends Applet
    * @see PGraphics#brightness(int)
    * @see_external rightshift
    */
-  public final float blue(int what) {
-    return g.blue(what);
+  public final float blue(int rgb) {
+    return g.blue(rgb);
   }
 
 
@@ -13549,7 +13559,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -13557,8 +13567,8 @@ public class PApplet extends Applet
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
    */
-  public final float hue(int what) {
-    return g.hue(what);
+  public final float hue(int rgb) {
+    return g.hue(rgb);
   }
 
 
@@ -13570,7 +13580,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -13578,8 +13588,8 @@ public class PApplet extends Applet
    * @see PGraphics#hue(int)
    * @see PGraphics#brightness(int)
    */
-  public final float saturation(int what) {
-    return g.saturation(what);
+  public final float saturation(int rgb) {
+    return g.saturation(rgb);
   }
 
 
@@ -13592,7 +13602,7 @@ public class PApplet extends Applet
    *
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -13600,8 +13610,8 @@ public class PApplet extends Applet
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    */
-  public final float brightness(int what) {
-    return g.brightness(what);
+  public final float brightness(int rgb) {
+    return g.brightness(rgb);
   }
 
 
@@ -13740,7 +13750,7 @@ public class PApplet extends Applet
    * PGraphicsJava2D, or resized image data and OpenGL texture indices for
    * PGraphicsOpenGL.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer
+   * @param storage The metadata required by the renderer   
    */
   public void setCache(PGraphics renderer, Object storage) {
     if (recorder != null) recorder.setCache(renderer, storage);
@@ -13775,7 +13785,7 @@ public class PApplet extends Applet
    * Store parameters for a renderer that requires extra metadata of
    * some kind.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer
+   * @param storage The parameters required by the renderer  
    */
   public void setParams(PGraphics renderer, Object params) {
     if (recorder != null) recorder.setParams(renderer, params);
@@ -13805,26 +13815,26 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_get.xml )
-   *
-   * Reads the color of any pixel or grabs a section of an image. If no
-   * parameters are specified, the entire image is returned. Use the <b>x</b>
-   * and <b>y</b> parameters to get the value of one pixel. Get a section of
-   * the display window by specifying an additional <b>width</b> and
-   * <b>height</b> parameter. When getting an image, the <b>x</b> and
-   * <b>y</b> parameters define the coordinates for the upper-left corner of
+   * 
+   * Reads the color of any pixel or grabs a section of an image. If no 
+   * parameters are specified, the entire image is returned. Use the <b>x</b> 
+   * and <b>y</b> parameters to get the value of one pixel. Get a section of 
+   * the display window by specifying an additional <b>width</b> and 
+   * <b>height</b> parameter. When getting an image, the <b>x</b> and 
+   * <b>y</b> parameters define the coordinates for the upper-left corner of 
    * the image, regardless of the current <b>imageMode()</b>.<br />
    * <br />
-   * If the pixel requested is outside of the image window, black is
-   * returned. The numbers returned are scaled according to the current color
-   * ranges, but only RGB values are returned by this function. For example,
-   * even though you may have drawn a shape with <b>colorMode(HSB)</b>, the
+   * If the pixel requested is outside of the image window, black is 
+   * returned. The numbers returned are scaled according to the current color 
+   * ranges, but only RGB values are returned by this function. For example, 
+   * even though you may have drawn a shape with <b>colorMode(HSB)</b>, the 
    * numbers returned will be in RGB format.<br />
    * <br />
-   * Getting the color of a single pixel with <b>get(x, y)</b> is easy, but
-   * not as fast as grabbing the data directly from <b>pixels[]</b>. The
-   * equivalent statement to <b>get(x, y)</b> using <b>pixels[]</b> is
+   * Getting the color of a single pixel with <b>get(x, y)</b> is easy, but 
+   * not as fast as grabbing the data directly from <b>pixels[]</b>. The 
+   * equivalent statement to <b>get(x, y)</b> using <b>pixels[]</b> is 
    * <b>pixels[y*width+x]</b>. See the reference for <b>pixels[]</b> for more information.
-   *
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -13844,7 +13854,7 @@ public class PApplet extends Applet
    * is inside the bounds, and then has to check to see what image
    * type it is. If you want things to be more efficient, access the
    * pixels[] array directly.
-   *
+   * 
    * @webref image:pixels
    * @brief Reads the color of any pixel or grabs a rectangle of pixels
    * @usage web_application
@@ -13878,25 +13888,25 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_set.xml )
-   *
-   * Changes the color of any pixel or writes an image directly into the
+   * 
+   * Changes the color of any pixel or writes an image directly into the 
    * display window.<br />
    * <br />
-   * The <b>x</b> and <b>y</b> parameters specify the pixel to change and the
-   * <b>color</b> parameter specifies the color value. The color parameter is
-   * affected by the current color mode (the default is RGB values from 0 to
-   * 255). When setting an image, the <b>x</b> and <b>y</b> parameters define
-   * the coordinates for the upper-left corner of the image, regardless of
+   * The <b>x</b> and <b>y</b> parameters specify the pixel to change and the 
+   * <b>color</b> parameter specifies the color value. The color parameter is 
+   * affected by the current color mode (the default is RGB values from 0 to 
+   * 255). When setting an image, the <b>x</b> and <b>y</b> parameters define 
+   * the coordinates for the upper-left corner of the image, regardless of 
    * the current <b>imageMode()</b>.
    * <br /><br />
-   * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but
-   * not as fast as putting the data directly into <b>pixels[]</b>. The
-   * equivalent statement to <b>set(x, y, #000000)</b> using <b>pixels[]</b>
-   * is <b>pixels[y*width+x] = #000000</b>. See the reference for
+   * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but 
+   * not as fast as putting the data directly into <b>pixels[]</b>. The 
+   * equivalent statement to <b>set(x, y, #000000)</b> using <b>pixels[]</b> 
+   * is <b>pixels[y*width+x] = #000000</b>. See the reference for 
    * <b>pixels[]</b> for more information.
-   *
+   * 
    * ( end auto-generated )
-   *
+   * 
    * @webref image:pixels
    * @brief writes a color to any pixel or writes an image into another
    * @usage web_application
@@ -13919,28 +13929,28 @@ public class PApplet extends Applet
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    *
-   * @param src image to draw on screen
+   * @param img image to draw on screen
    */
-  public void set(int x, int y, PImage src) {
-    if (recorder != null) recorder.set(x, y, src);
-    g.set(x, y, src);
+  public void set(int x, int y, PImage img) {
+    if (recorder != null) recorder.set(x, y, img);
+    g.set(x, y, img);
   }
 
 
   /**
    * ( begin auto-generated from PImage_mask.xml )
-   *
-   * Masks part of an image from displaying by loading another image and
-   * using it as an alpha channel. This mask image should only contain
-   * grayscale data, but only the blue color channel is used. The mask image
+   * 
+   * Masks part of an image from displaying by loading another image and 
+   * using it as an alpha channel. This mask image should only contain 
+   * grayscale data, but only the blue color channel is used. The mask image 
    * needs to be the same size as the image to which it is applied.<br />
    * <br />
-   * In addition to using a mask image, an integer array containing the alpha
-   * channel data can be specified directly. This method is useful for
-   * creating dynamically generated alpha masks. This array must be of the
-   * same length as the target image's pixels array and should contain only
+   * In addition to using a mask image, an integer array containing the alpha 
+   * channel data can be specified directly. This method is useful for 
+   * creating dynamically generated alpha masks. This array must be of the 
+   * same length as the target image's pixels array and should contain only 
    * grayscale data of values between 0-255.
-   *
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -13969,11 +13979,11 @@ public class PApplet extends Applet
 
 
   /**
-   * @param maskImg a PImage object used as the alpha channel for "img", must be same dimensions as "img"
+   * @param img a PImage object used as the alpha channel for "img", must be same dimensions as "img"
    */
-  public void mask(PImage maskImg) {
-    if (recorder != null) recorder.mask(maskImg);
-    g.mask(maskImg);
+  public void mask(PImage img) {
+    if (recorder != null) recorder.mask(img);
+    g.mask(img);
   }
 
 
@@ -13985,31 +13995,31 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_filter.xml )
-   *
-   * Filters an image as defined by one of the following modes:<br /><br
-   * />THRESHOLD - converts the image to black and white pixels depending if
-   * they are above or below the threshold defined by the level parameter.
-   * The level must be between 0.0 (black) and 1.0(white). If no level is
+   * 
+   * Filters an image as defined by one of the following modes:<br /><br 
+   * />THRESHOLD - converts the image to black and white pixels depending if 
+   * they are above or below the threshold defined by the level parameter. 
+   * The level must be between 0.0 (black) and 1.0(white). If no level is 
    * specified, 0.5 is used.<br />
    * <br />
    * GRAY - converts any colors in the image to grayscale equivalents<br />
    * <br />
    * INVERT - sets each pixel to its inverse value<br />
    * <br />
-   * POSTERIZE - limits each channel of the image to the number of colors
+   * POSTERIZE - limits each channel of the image to the number of colors 
    * specified as the level parameter<br />
    * <br />
-   * BLUR - executes a Guassian blur with the level parameter specifying the
-   * extent of the blurring. If no level parameter is used, the blur is
+   * BLUR - executes a Guassian blur with the level parameter specifying the 
+   * extent of the blurring. If no level parameter is used, the blur is 
    * equivalent to Guassian blur of radius 1<br />
    * <br />
    * OPAQUE - sets the alpha channel to entirely opaque<br />
    * <br />
-   * ERODE - reduces the light areas with the amount defined by the level
+   * ERODE - reduces the light areas with the amount defined by the level 
    * parameter<br />
    * <br />
    * DILATE - increases the light areas with the amount defined by the level parameter
-   *
+   * 
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -14044,17 +14054,17 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_copy.xml )
-   *
-   * Copies a region of pixels from one image into another. If the source and
-   * destination regions aren't the same size, it will automatically resize
-   * source pixels to fit the specified target region. No alpha information
-   * is used in the process, however if the source image has an alpha channel
+   * 
+   * Copies a region of pixels from one image into another. If the source and 
+   * destination regions aren't the same size, it will automatically resize 
+   * source pixels to fit the specified target region. No alpha information 
+   * is used in the process, however if the source image has an alpha channel 
    * set, it will be copied as well.
    * <br /><br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
-   *
+   * 
    * ( end auto-generated )
-   *
+   * 
    * @webref image:pixels
    * @brief Copies the entire image
    * @usage web_application
@@ -14089,11 +14099,11 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from blendColor.xml )
-   *
-   * Blends two color values together based on the blending mode given as the
-   * <b>MODE</b> parameter. The possible modes are described in the reference
+   * 
+   * Blends two color values together based on the blending mode given as the 
+   * <b>MODE</b> parameter. The possible modes are described in the reference 
    * for the <b>blend()</b> function.
-   *
+   * 
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * <UL>
@@ -14180,17 +14190,17 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_blend.xml )
-   *
-   * Blends a region of pixels into the image specified by the <b>img</b>
-   * parameter. These copies utilize full alpha channel support and a choice
-   * of the following modes to blend the colors of source pixels (A) with the
+   * 
+   * Blends a region of pixels into the image specified by the <b>img</b> 
+   * parameter. These copies utilize full alpha channel support and a choice 
+   * of the following modes to blend the colors of source pixels (A) with the 
    * ones of pixels in the destination image (B):<br />
    * <br />
    * BLEND - linear interpolation of colours: C = A*factor + B<br />
    * <br />
    * ADD - additive blending with white clip: C = min(A*factor + B, 255)<br />
    * <br />
-   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor,
+   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 
    * 0)<br />
    * <br />
    * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br />
@@ -14210,7 +14220,7 @@ public class PApplet extends Applet
    * <br />
    * HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br />
    * <br />
-   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
+   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST. 
    * Works like OVERLAY, but not as harsh.<br />
    * <br />
    * DODGE - Lightens light tones and increases contrast, ignores darks.
@@ -14219,14 +14229,14 @@ public class PApplet extends Applet
    * BURN - Darker areas are applied, increasing contrast, ignores lights.
    * Called "Color Burn" in Illustrator and Photoshop.<br />
    * <br />
-   * All modes use the alpha information (highest byte) of source image
-   * pixels as the blending factor. If the source and destination regions are
-   * different sizes, the image will be automatically resized to match the
-   * destination size. If the <b>srcImg</b> parameter is not used, the
+   * All modes use the alpha information (highest byte) of source image 
+   * pixels as the blending factor. If the source and destination regions are 
+   * different sizes, the image will be automatically resized to match the 
+   * destination size. If the <b>srcImg</b> parameter is not used, the 
    * display window is used as the source image.<br />
    * <br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
-   *
+   * 
    * ( end auto-generated )
    *
    * @webref image:pixels
