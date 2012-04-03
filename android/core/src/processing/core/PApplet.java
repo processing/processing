@@ -78,9 +78,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
    * not all instances of PApplet will necessarily be started on a screen of
    * the same size.
    */
-  public int screenWidth, screenHeight;
-//  public Dimension screen =
-//    Toolkit.getDefaultToolkit().getScreenSize();
+  public int displayWidth, displayHeight;
 
   /**
    * Command line options passed in from main().
@@ -439,8 +437,8 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
     DisplayMetrics dm = new DisplayMetrics();
     getWindowManager().getDefaultDisplay().getMetrics(dm);
-    screenWidth = dm.widthPixels;
-    screenHeight = dm.heightPixels;
+    displayWidth = dm.widthPixels;
+    displayHeight = dm.heightPixels;
 //    println("density is " + dm.density);
 //    println("densityDpi is " + dm.densityDpi);
     if (DEBUG) println("display metrics: " + dm);
@@ -485,7 +483,7 @@ public class PApplet extends Activity implements PConstants, Runnable {
 //      new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
 //        RelativeLayout.LayoutParams.FILL_PARENT);
 
-    if (sw == screenWidth && sh == screenHeight) {
+    if (sw == displayWidth && sh == displayHeight) {
       // If using the full screen, don't embed inside other layouts
       window.setContentView(surfaceView);
     } else {
@@ -1003,12 +1001,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
 
   public int sketchWidth() {
-    return screenWidth;
+    return displayWidth;
   }
 
 
   public int sketchHeight() {
-    return screenHeight;
+    return displayHeight;
   }
 
 
