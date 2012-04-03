@@ -137,7 +137,8 @@ public interface PConstants {
   static final String JAVA2D = "processing.core.PGraphicsJava2D";
   static final String P2D    = "processing.opengl.PGraphics2D";
   static final String P3D    = "processing.opengl.PGraphics3D";
-  static final String OPENGL = "processing.opengl.PGraphicsOpenGL";
+  static final String OPENGL = P3D;
+
   static final String PDF    = "processing.pdf.PGraphicsPDF";
   static final String DXF    = "processing.dxf.RawDXF";
 

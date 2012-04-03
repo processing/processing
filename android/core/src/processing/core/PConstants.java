@@ -131,9 +131,9 @@ public interface PConstants {
   static final String MEDIUM_COLOR_DEPTH = "8:8:8:8:16:0";
   static final String HIGH_COLOR_DEPTH = "8:8:8:8:24:8";
 
-  static final String P2D = "processing.core.PGraphicsAndroid2D";
-  static final String JAVA2D = P2D;
-  static final String P3D = "processing.core.PGraphicsOpenGL";
+  static final String JAVA2D = "processing.core.PGraphicsAndroid2D";
+  static final String P2D = "processing.opengl.PGraphics2D";
+  static final String P3D = "processing.opengl.PGraphics3D";
   static final String OPENGL = P3D;
 
   // The PDF and DXF renderers are not available for Android. 
