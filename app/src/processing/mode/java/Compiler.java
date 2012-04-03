@@ -67,7 +67,7 @@ public class Compiler {
     };
     //PApplet.println(baseCommand);
 
-    // make list of code files that need to be compiled    
+    // make list of code files that need to be compiled
 //    String[] sourceFiles = new String[sketch.getCodeCount()];
 //    int sourceCount = 0;
 //    sourceFiles[sourceCount++] =
@@ -148,8 +148,8 @@ public class Compiler {
         int dotJavaLineIndex = PApplet.parseInt(pieces[2]) - 1;
         String errorMessage = pieces[4];
 
-        exception = build.placeException(errorMessage, 
-                                         dotJavaFilename, 
+        exception = build.placeException(errorMessage,
+                                         dotJavaFilename,
                                          dotJavaLineIndex);
         /*
         int codeIndex = 0; //-1;
@@ -274,15 +274,20 @@ public class Compiler {
             exception.setMessage("LINE_LOOP and LINE_STRIP are not available, " +
             		                 "please update your code.");
             handleCrustyCode();
-            
+
           } else if (what.equals("framerate")) {
-            exception.setMessage("framerate should be changed to frameRate"); 
+            exception.setMessage("framerate should be changed to frameRate.");
             handleCrustyCode();
-            
+
           } else if (what.equals("screen")) {
-//            handleCrustyCode(exception, what);
             exception.setMessage("Change screen.width and screen.height to " +
-            		                 "screenWidth and screenHeight for 2.0.");
+            		                 "displayWidth and displayHeight.");
+            handleCrustyCode();
+
+          } else if (what.equals("screenWidth") ||
+                     what.equals("screenHeight")) {
+            exception.setMessage("Change screenWidth and screenHeight to " +
+                                 "displayWidth and displayHeight.");
             handleCrustyCode();
 
           } else {
@@ -314,11 +319,11 @@ public class Compiler {
             } else if (parts[1].equals("push()")) {
               exception.setMessage("push() no longer exists, use pushMatrix() instead.");
               handleCrustyCode();
-              
+
             } else if (parts[1].equals("pop()")) {
               exception.setMessage("pop() no longer exists, use popMatrix() instead.");
               handleCrustyCode();
-              
+
             } else {
               String mess = "The function " + parts[1] + " does not exist.";
               exception.setMessage(mess);

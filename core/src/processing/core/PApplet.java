@@ -229,26 +229,23 @@ public class PApplet extends Applet
   /** The PGraphics renderer associated with this PApplet */
   public PGraphics g;
 
-  //protected Object glock = new Object(); // for sync
-
   /** The frame containing this applet (if any) */
   public Frame frame;
-//  public JFrame frame;
 
 //  /**
 //   * Usually just 0, but with multiple displays, the X and Y coordinates of
 //   * the screen will depend on the current screen's position relative to
 //   * the other displays.
 //   */
-//  public int screenX;
-//  public int screenY;
+//  public int displayX;
+//  public int displayY;
 
   /**
    * ( begin auto-generated from screenWidth.xml )
    *
    * System variable which stores the width of the computer screen. For
    * example, if the current screen resolution is 1024x768,
-   * <b>screenWidth</b> is 1024 and <b>screenHeight</b> is 768. These
+   * <b>displayWidth</b> is 1024 and <b>displayHeight</b> is 768. These
    * dimensions are useful when exporting full-screen applications.
    * <br /><br />
    * To ensure that the sketch takes over the entire screen, use "Present"
@@ -259,7 +256,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    */
-  public int screenWidth;
+  public int displayWidth;
 
   /**
    * ( begin auto-generated from screenHeight.xml )
@@ -277,7 +274,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    */
-  public int screenHeight;
+  public int displayHeight;
 
   /**
    * A leech graphics object that is echoing all events.
@@ -1899,8 +1896,8 @@ public class PApplet extends Applet
           displayDevice.getDefaultConfiguration().getBounds();
 //        screenX = screenRect.x;
 //        screenY = screenRect.y;
-        screenWidth = screenRect.width;
-        screenHeight = screenRect.height;
+        displayWidth = screenRect.width;
+        displayHeight = screenRect.height;
 
         try {
           //println("Calling setup()");
@@ -9434,11 +9431,11 @@ public class PApplet extends Applet
           locationX = editorLocation[0] + 66;
           locationY = editorLocation[1] + 66;
 
-          if ((locationX + windowW > applet.screenWidth - 33) ||
-              (locationY + windowH > applet.screenHeight - 33)) {
+          if ((locationX + windowW > applet.displayWidth - 33) ||
+              (locationY + windowH > applet.displayHeight - 33)) {
             // otherwise center on screen
-            locationX = (applet.screenWidth - windowW) / 2;
-            locationY = (applet.screenHeight - windowH) / 2;
+            locationX = (applet.displayWidth - windowW) / 2;
+            locationY = (applet.displayHeight - windowH) / 2;
           }
           frame.setLocation(locationX, locationY);
         }
