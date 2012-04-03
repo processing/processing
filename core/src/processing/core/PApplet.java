@@ -11338,42 +11338,6 @@ public class PApplet extends Applet
 
 
   /**
-   * ( begin auto-generated from text.xml )
-   *
-   * Draws text to the screen. Displays the information specified in the
-   * <b>data</b> or <b>stringdata</b> parameters on the screen in the
-   * position specified by the <b>x</b> and <b>y</b> parameters and the
-   * optional <b>z</b> parameter. A default font will be used unless a font
-   * is set with the <b>textFont()</b> function. Change the color of the text
-   * with the <b>fill()</b> function. The text displays in relation to the
-   * <b>textAlign()</b> function, which gives the option to draw to the left,
-   * right, and center of the coordinates.
-   * <br /><br />
-   * The <b>x2</b> and <b>y2</b> parameters define a rectangular area to
-   * display within and may only be used with string data. For text drawn
-   * inside a rectangle, the coordinates are interpreted based on the current
-   * <b>rectMode()</b> setting.
-   *
-   * ( end auto-generated )
-   *
-   * @webref typography:loading_displaying
-   * @param c the alphanumeric character to be displayed
-   * @see PGraphics#textAlign(int, int)
-   * @see PGraphics#textMode(int)
-   * @see PApplet#loadFont(String)
-   * @see PFont#PFont
-   * @see PGraphics#textFont(PFont)
-   * @see PGraphics#rectMode(int)
-   * @see PGraphics#fill(int, float)
-   * @see_external String
-   */
-  public void text(char c) {
-    if (recorder != null) recorder.text(c);
-    g.text(c);
-  }
-
-
-  /**
    * <h3>Advanced</h3>
    * Draw a single character on screen.
    * Extremely slow when used with textMode(SCREEN) and Java 2D,
@@ -11394,15 +11358,6 @@ public class PApplet extends Applet
   public void text(char c, float x, float y, float z) {
     if (recorder != null) recorder.text(c, x, y, z);
     g.text(c, x, y, z);
-  }
-
-
-  /**
-   * @param str the alphanumeric symbols to be displayed
-   */
-  public void text(String str) {
-    if (recorder != null) recorder.text(str);
-    g.text(str);
   }
 
 
@@ -11472,12 +11427,6 @@ public class PApplet extends Applet
   public void text(String str, float x1, float y1, float x2, float y2) {
     if (recorder != null) recorder.text(str, x1, y1, x2, y2);
     g.text(str, x1, y1, x2, y2);
-  }
-
-
-  public void text(String s, float x1, float y1, float x2, float y2, float z) {
-    if (recorder != null) recorder.text(s, x1, y1, x2, y2, z);
-    g.text(s, x1, y1, x2, y2, z);
   }
 
 

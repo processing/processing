@@ -7668,11 +7668,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
-  public void text(char c) {
-    g.text(c);
-  }
-
-
   public void text(char c, float x, float y) {
     g.text(c, x, y);
   }
@@ -7680,11 +7675,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void text(char c, float x, float y, float z) {
     g.text(c, x, y, z);
-  }
-
-
-  public void text(String str) {
-    g.text(str);
   }
 
 
@@ -7700,11 +7690,6 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   public void text(String str, float x1, float y1, float x2, float y2) {
     g.text(str, x1, y1, x2, y2);
-  }
-
-
-  public void text(String s, float x1, float y1, float x2, float y2, float z) {
-    g.text(s, x1, y1, x2, y2, z);
   }
 
 

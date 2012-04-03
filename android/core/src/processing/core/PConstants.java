@@ -286,36 +286,38 @@ public interface PConstants {
   // the low four bits set the variety,
   // higher bits set the specific shape type
 
-  //static final int GROUP           = (1 << 2);
+  static final int GROUP           = 0;   // createShape()
 
-  static final int POINT           = 2;  // shared with light and texture filtering (!)
-  static final int POINTS          = 2;
+  static final int POINT           = 2;   // primitive
+  static final int POINTS          = 3;   // vertices
 
-  static final int LINE            = 4;
-  static final int LINES           = 4;
+  static final int LINE            = 4;   // primitive
+  static final int LINES           = 5;   // beginShape(), createShape()
+  static final int LINE_STRIP      = 50;  // beginShape()
+  static final int LINE_LOOP       = 51;
+
+  static final int TRIANGLE        = 8;   // primitive
+  static final int TRIANGLES       = 9;   // vertices
+  static final int TRIANGLE_STRIP  = 10;  // vertices
+  static final int TRIANGLE_FAN    = 11;  // vertices
+
+  static final int QUAD            = 16;  // primitive
+  static final int QUADS           = 17;  // vertices
+  static final int QUAD_STRIP      = 18;  // vertices
+
+  static final int POLYGON         = 20;  // in the end, probably cannot
+  static final int PATH            = 21;  // separate these two
+
+  static final int RECT            = 30;  // primitive
+  static final int ELLIPSE         = 31;  // primitive
+  static final int ARC             = 32;  // primitive
+
+  static final int SPHERE          = 40;  // primitive
+  static final int BOX             = 41;  // primitive
   
-  static final int TRIANGLE        = 8;
-  static final int TRIANGLES       = 9;
-  static final int TRIANGLE_STRIP  = 10;
-  static final int TRIANGLE_FAN    = 11;
-
-  static final int QUAD            = 16;
-  static final int QUADS           = 16;
-  static final int QUAD_STRIP      = 17;
-
-  static final int POLYGON         = 20;
-  static final int PATH            = 21;
-
-  static final int RECT            = 30;
-  static final int ELLIPSE         = 31;
-  static final int ARC             = 32;
-
-  static final int SPHERE          = 40;
-  static final int BOX             = 41;
-  
-  static public final int LINE_STRIP    = 50;   
-  static public final int LINE_LOOP     = 51;   
-  static public final int POINT_SPRITES = 52;  
+//  static public final int LINE_STRIP    = 50;   
+//  static public final int LINE_LOOP     = 51;   
+//  static public final int POINT_SPRITES = 52;  
 
 
   // shape closing modes
