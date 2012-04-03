@@ -23,40 +23,29 @@
 
 package processing.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.*;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.regex.*;
+import java.util.zip.*;
 
+import android.app.*;
 import android.content.*;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ConfigurationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.*;
-
-import java.io.*;
-import java.lang.reflect.*;
-import java.net.MalformedURLException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.regex.*;
-import java.util.zip.*;
-
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.net.Uri;
-import android.text.format.Time;
-import android.util.*;
-import android.view.MotionEvent;
-import android.view.SurfaceView;
 import android.opengl.GLSurfaceView;
-import android.view.WindowManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.Time;
+import android.util.*;
 import android.view.*;
-import android.widget.LinearLayout;
+import android.widget.*;
 import android.widget.RelativeLayout;
 
 import org.apache.http.client.HttpClient;
@@ -65,9 +54,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpEntity;
 
-import processing.opengl.PGraphicsOpenGL;
-
-import java.net.URI;
+import processing.data.*;
+import processing.opengl.*;
 
 
 public class PApplet extends Activity implements PConstants, Runnable {

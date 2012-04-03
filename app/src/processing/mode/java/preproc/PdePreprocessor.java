@@ -127,13 +127,13 @@ import antlr.collections.AST;
  * itself.  The ANTLR manual goes into a fair amount of detail about the
  * what each type of file is for.
  * <P/>
- * 
+ *
  * Hacked to death in 2010 by
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  */
 public class PdePreprocessor {
-  protected static final String UNICODE_ESCAPES = "0123456789abcdefABCDEF"; 
-  
+  protected static final String UNICODE_ESCAPES = "0123456789abcdefABCDEF";
+
   // used for calling the ASTFactory to get the root node
   private static final int ROOT_ID = 0;
 
@@ -271,7 +271,7 @@ public class PdePreprocessor {
             if (UNICODE_ESCAPES.indexOf(program.charAt(i)) == -1) {
               throw new SketchException("Bad or unfinished \\uXXXX sequence " +
               		                      "(malformed Unicode character constant)", 0,
-                                        countNewlines(program.substring(0, i)));     
+                                        countNewlines(program.substring(0, i)));
             }
             i++;
           }
@@ -394,13 +394,13 @@ public class PdePreprocessor {
     return new String(p2, 0, index);
   }
 
-  private static final Pattern PUBLIC_CLASS = 
+  private static final Pattern PUBLIC_CLASS =
     Pattern.compile("(^|;)\\s*public\\s+class\\s+\\S+\\s+extends\\s+PApplet", Pattern.MULTILINE);
     // Can't only match any 'public class', needs to be a PApplet
-    // http://code.google.com/p/processing/issues/detail?id=551 
+    // http://code.google.com/p/processing/issues/detail?id=551
     //Pattern.compile("(^|;)\\s*public\\s+class", Pattern.MULTILINE);
 
-  private static final Pattern FUNCTION_DECL = 
+  private static final Pattern FUNCTION_DECL =
     Pattern.compile("(^|;)\\s*((public|private|protected|final|static)\\s+)*" +
     		"(void|int|float|double|String|char|byte)" +
     		"(\\s*\\[\\s*\\])?\\s+[a-zA-Z0-9]+\\s*\\(",
@@ -550,8 +550,8 @@ public class PdePreprocessor {
       final AST oldFirstMod = mods.getFirstChild();
       for (AST mod = oldFirstMod; mod != null; mod = mod.getNextSibling()) {
         final int t = mod.getType();
-        if (t == PdeTokenTypes.LITERAL_private || 
-            t == PdeTokenTypes.LITERAL_protected || 
+        if (t == PdeTokenTypes.LITERAL_private ||
+            t == PdeTokenTypes.LITERAL_protected ||
             t == PdeTokenTypes.LITERAL_public) {
           return;
         }
@@ -559,7 +559,7 @@ public class PdePreprocessor {
       if (mods.getNextSibling().getType() == PdeTokenTypes.TYPE_PARAMETERS) {
         return;
       }
-      final CommonHiddenStreamToken publicToken = 
+      final CommonHiddenStreamToken publicToken =
         new CommonHiddenStreamToken(PdeTokenTypes.LITERAL_public, "public") {
         {
           setHiddenAfter(new CommonHiddenStreamToken(PdeTokenTypes.WS, " "));
@@ -593,7 +593,7 @@ public class PdePreprocessor {
   }
 
   /**
-   * 
+   *
    * @param out
    * @param programImports
    * @param codeFolderImports
@@ -695,8 +695,9 @@ public class PdePreprocessor {
   }
 
   public String[] getCoreImports() {
-    return new String[] { 
-      "processing.core.*"
+    return new String[] {
+      "processing.core.*",
+      "processing.data.*"
     };
   }
 
@@ -705,7 +706,7 @@ public class PdePreprocessor {
     String prefsLine = Preferences.get("preproc.imports.list");
     return PApplet.splitTokens(prefsLine, ", ");
   }
-  
+
   /**
    * Return true if this import should be removed from the code. This is used
    * for packages like processing.xml which no longer exist.

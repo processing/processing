@@ -29,28 +29,28 @@ import java.io.PrintWriter;
 
 import processing.app.*;
 import processing.core.PApplet;
-import processing.core.XML;
+import processing.data.XML;
 
 
 public class Manifest {
   static final String MANIFEST_XML = "AndroidManifest.xml";
 
-  static final String WORLD_OF_HURT_COMING =  
-    "Errors occurred while reading or writing " + MANIFEST_XML + ",\n" + 
+  static final String WORLD_OF_HURT_COMING =
+    "Errors occurred while reading or writing " + MANIFEST_XML + ",\n" +
     "which means lots of things are likely to stop working properly.\n" +
-    "To prevent losing any data, it's recommended that you use “Save As”\n" + 
-    "to save a separate copy of your sketch, and the restart Processing."; 
-  static final String MULTIPLE_ACTIVITIES = 
+    "To prevent losing any data, it's recommended that you use “Save As”\n" +
+    "to save a separate copy of your sketch, and the restart Processing.";
+  static final String MULTIPLE_ACTIVITIES =
     "Processing only supports a single Activity in the AndroidManifest.xml\n" +
-    "file. Only the first activity entry will be updated, and you better \n" + 
+    "file. Only the first activity entry will be updated, and you better \n" +
     "hope that's the right one, smartypants.";
 
 //  private Editor editor;
   private Sketch sketch;
-  
+
   // entries we care about from the manifest file
 //  private String packageName;
-  
+
   /** the manifest data read from the file */
   private XML xml;
 
@@ -64,13 +64,13 @@ public class Manifest {
     this.sketch = sketch;
     load();
   }
-  
-  
+
+
   private String defaultPackageName() {
 //    Sketch sketch = editor.getSketch();
     return AndroidBuild.basePackage + "." + sketch.getName().toLowerCase();
   }
-  
+
 
   // called by other classes who want an actual package name
   // internally, we'll figure this out ourselves whether it's filled or not
@@ -78,20 +78,20 @@ public class Manifest {
     String pkg = xml.getString("package");
     return pkg.length() == 0 ? defaultPackageName() : pkg;
   }
-  
-  
+
+
   public void setPackageName(String packageName) {
 //    this.packageName = packageName;
     // this is the package attribute in the root <manifest> object
     xml.setString("package", packageName);
     save();
   }
-  
-  
+
+
 //writer.println("  <uses-permission android:name=\"android.permission.INTERNET\" />");
 //writer.println("  <uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />");
   static final String PERMISSION_PREFIX = "android.permission.";
-  
+
   public String[] getPermissions() {
     XML[] elements = xml.getChildren("uses-permission");
     int count = elements.length;
@@ -101,8 +101,8 @@ public class Manifest {
     }
     return names;
   }
-  
-  
+
+
   public void setPermissions(String[] names) {
     // just remove all the old ones
     for (XML kid : xml.getChildren("uses-permission")) {
@@ -141,14 +141,14 @@ public class Manifest {
     writer.println("<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" ");
 //    writer.println("          package=\"" + defaultPackageName() + "\" ");
     writer.println("          package=\"\" ");
-    
-    // Tempting to use 'preferExternal' here, but might annoy some users. 
+
+    // Tempting to use 'preferExternal' here, but might annoy some users.
     // 'auto' at least enables it to be moved back and forth
     // http://developer.android.com/guide/appendix/install-location.html
 //    writer.println("          android:installLocation=\"auto\" ");
     // Disabling this for now (0190), requires default.properties to use API 8
 
-    // This is just a number (like the Processing 'revision'). It should 
+    // This is just a number (like the Processing 'revision'). It should
     // increment with each release. Perhaps P5 should do this automatically
     // with each build or read/write of the manifest file?
     writer.println("          android:versionCode=\"1\" ");
@@ -168,8 +168,8 @@ public class Manifest {
 ////    writer.println("              android:label=\"@string/app_name\">");  // pretty name
 //    writer.println("              android:label=\"\">");
 
-    // activity/android:name should be the full name (package + class name) of 
-    // the actual activity class. or the package can be replaced by a single 
+    // activity/android:name should be the full name (package + class name) of
+    // the actual activity class. or the package can be replaced by a single
     // dot as a prefix as an easier shorthand.
     writer.println("    <activity android:name=\"\">");
 
@@ -186,14 +186,14 @@ public class Manifest {
 
 
   /**
-   * Save a new version of the manifest info to the build location. 
+   * Save a new version of the manifest info to the build location.
    * Also fill in any missing attributes that aren't yet set properly.
    */
-  protected void writeBuild(File file, String className, 
+  protected void writeBuild(File file, String className,
                             boolean debug) throws IOException {
     // write a copy to the build location
     save(file);
-    
+
     // load the copy from the build location and start messing with it
     XML mf = new XML(new FileReader(file));
 
@@ -235,7 +235,7 @@ public class Manifest {
       } catch (Exception e) {
         e.printStackTrace();
         System.err.println("Problem reading AndroidManifest.xml, creating a new version");
-        
+
         // remove the old manifest file, rename it with date stamp
         long lastModified = manifestFile.lastModified();
         String stamp = AndroidMode.getDateStamp(lastModified);
@@ -247,7 +247,7 @@ public class Manifest {
           return;
         }
       }
-    } 
+    }
     if (xml == null) {
       writeBlankManifest(manifestFile);
       try {
@@ -262,13 +262,13 @@ public class Manifest {
     }
 //    return xml;
   }
-  
-  
+
+
   protected void save() {
     save(getManifestFile());
   }
 
-  
+
   /**
    * Save to the sketch folder, so that it can be copied in later.
    */

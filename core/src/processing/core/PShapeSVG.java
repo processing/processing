@@ -23,6 +23,8 @@
 
 package processing.core;
 
+import processing.data.*;
+
 import java.awt.Paint;
 import java.awt.PaintContext;
 import java.awt.Rectangle;
@@ -1662,7 +1664,7 @@ public class PShapeSVG extends PShape {
         String name = elements[i].getName();
         XML elem = elements[i];
         if (name == null) {
-          // skip it 
+          // skip it
         } else if (name.equals("glyph")) {
           FontGlyph fg = new FontGlyph(this, elem, this);
           if (fg.isLegit()) {
