@@ -12,8 +12,18 @@ o trimming text on URLs?
 o   http://code.google.com/p/processing/issues/detail?id=715
 X change screenWidth/Height to displayWidth/Height
 _   update wiki.processing.org/w/Window_Size_and_Full_Screen
+_ docs: P2D and P3D are now OpenGL variations
+X add createGraphics() with no renderer param to point to JAVA2D
+X   also added to Android
+_   add to docs
 
-_ add createGraphics() with no renderer param to point to JAVA2D
+andres
+A polygon shapes without fill slowdown render progressively
+A   http://code.google.com/p/processing/issues/detail?id=1028
+o OPENGL broken in 2.0a5 on Linux (upstream issues)
+o   http://code.google.com/p/processing/issues/detail?id=1026
+A   these were upstream issues
+_ Update JOGL when RC6 arrive: forum.jogamp.org/Road-to-RC6-td3866404.html
 
 fixed in 2.0a5
 A OpenGL noSmooth() does not work
@@ -57,9 +67,9 @@ o vectors shouldn't be exposed, need to expose attr lists as arrays
 o   or also add a method for getting the vectors?
 X   no longer an issue post-NanoXML
 X several other items under the LIBRARIES / XML section below
+_ hasChildren()? 
+_   http://code.google.com/p/processing/issues/detail?id=1045
 
-
-_ add screen(PVector), model(PVector) and world(PVector)?
 X test what happens with NPE in OpenGL, does the error make sense?
 _   nope, it doesn't, need to clean this up
 
@@ -130,7 +140,8 @@ C clear() ok to add
 X   decided clear(r, g, b, a) problematic since it's an exception to color model
 X   and that people should use background() anyway
 o   or background(r, g, b, a) would be the thing
-_   clear() with a color doesn't make sense
+_   clear() with a color doesn't make (verbal) sense
+_   provide a way to clear the PGraphics with plain alpha
 
 _ pause()/resume() need to work on the desktop side as well
 _ stop() not called in 1.5
@@ -285,8 +296,8 @@ _ remove blend(), add blendMode()
 _ fix blue-channel bias on blend() so that blendMode() will work in 2.0
 _   http://code.google.com/p/processing/issues/detail?id=475
 _ load/save methods.. is it save("blah.svg") or saveSVG("blah.svg")
-_   also works that way with tables
-_   decision: useExtension() or something like that
+X   also works that way with tables
+X   decision: useExtension() or something like that
 _ how should stroke work w/ arcs?
 _   has an effect elliptical arc
 _   http://code.google.com/p/processing/issues/detail?id=130
@@ -328,13 +339,16 @@ gui priorities
 \ Progress bar
 \ Toggle
 
-decisions to make
-_ possible addition for 'implementation' variable
-_   http://code.google.com/p/processing/issues/detail?id=281
+vector
 _ PVector discussion with Dan
 _   jer and dan will look at their code, plus toxiclibs
 _ modify PVector to include better methods for chaining operations
 _   http://code.google.com/p/processing/issues/detail?id=218
+_ add screen(PVector), model(PVector) and world(PVector)?
+
+decisions to make
+_ possible addition for 'implementation' variable
+_   http://code.google.com/p/processing/issues/detail?id=281
 _ should map() actually constrain to the low and high values?
 _   or have an alternate version that does that?
 _ decide whether to keep:
@@ -355,7 +369,6 @@ _ new PGraphics(... OutputStream)
 _   http://code.google.com/p/processing/issues/detail?id=246
 _ path for selectXxxxx() functions
 _   http://code.google.com/p/processing/issues/detail?id=233
-_ provide a way to clear the PGraphics with plain alpha
 _ add breakShape to the public API 
 _   or handle differently in general.. nested beginPath() calls?
 
