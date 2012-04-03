@@ -1338,49 +1338,49 @@ public class PApplet extends Applet
    * use the previous renderer and simply resize it.
    *
    * @webref environment
-   * @param iwidth width of the display window in units of pixels
-   * @param iheight height of the display window in units of pixels
+   * @param w width of the display window in units of pixels
+   * @param h height of the display window in units of pixels
    */
-  public void size(int iwidth, int iheight) {
-    size(iwidth, iheight, JAVA2D, null);
+  public void size(int w, int h) {
+    size(w, h, JAVA2D, null);
   }
 
   /**
-   * @param irenderer   Either P2D, P3D
+   * @param renderer   Either P2D, P3D
    */
-  public void size(int iwidth, int iheight, String irenderer) {
-    size(iwidth, iheight, irenderer, null);
+  public void size(int w, int h, String renderer) {
+    size(w, h, renderer, null);
   }
 
 /**
  * @nowebref
  */
-  public void size(final int iwidth, final int iheight,
-                   String irenderer, String ipath) {
+  public void size(final int w, final int h,
+                   String renderer, String path) {
     // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         // Set the preferred size so that the layout managers can handle it
-        setPreferredSize(new Dimension(iwidth, iheight));
-        setSize(iwidth, iheight);
+        setPreferredSize(new Dimension(w, h));
+        setSize(w, h);
       }
     });
 
     // ensure that this is an absolute path
-    if (ipath != null) ipath = savePath(ipath);
+    if (path != null) path = savePath(path);
 
     String currentRenderer = g.getClass().getName();
-    if (currentRenderer.equals(irenderer)) {
+    if (currentRenderer.equals(renderer)) {
       // Avoid infinite loop of throwing exception to reset renderer
-      resizeRenderer(iwidth, iheight);
+      resizeRenderer(w, h);
       //redraw();  // will only be called insize draw()
 
     } else {  // renderer is being changed
       // otherwise ok to fall through and create renderer below
       // the renderer is changing, so need to create a new object
-      g = makeGraphics(iwidth, iheight, irenderer, ipath, true);
-      width = iwidth;
-      height = iheight;
+      g = makeGraphics(w, h, renderer, path, true);
+      this.width = w;
+      this.height = h;
 
       // fire resize event to make sure the applet is the proper size
 //      setSize(iwidth, iheight);
@@ -1397,8 +1397,8 @@ public class PApplet extends Applet
   }
 
 
-  public PGraphics createGraphics(int iwidth, int iheight) {
-    return createGraphics(iwidth, iheight, JAVA2D);
+  public PGraphics createGraphics(int w, int h) {
+    return createGraphics(w, h, JAVA2D);
   }
 
 
@@ -1471,16 +1471,15 @@ public class PApplet extends Applet
    * </UL>
    *
    * @webref rendering
-   * @param iwidth width in pixels
-   * @param iheight height in pixels
-   * @param irenderer Either P2D, P3D, PDF, DXF
+   * @param w width in pixels
+   * @param h height in pixels
+   * @param renderer Either P2D, P3D, PDF, DXF
    *
    * @see PGraphics#PGraphics
    *
    */
-  public PGraphics createGraphics(int iwidth, int iheight,
-                                  String irenderer) {
-    PGraphics pg = makeGraphics(iwidth, iheight, irenderer, null, false);
+  public PGraphics createGraphics(int w, int h, String renderer) {
+    PGraphics pg = makeGraphics(w, h, renderer, null, false);
     //pg.parent = this;  // make save() work
     return pg;
   }
@@ -1489,14 +1488,14 @@ public class PApplet extends Applet
   /**
    * Create an offscreen graphics surface for drawing, in this case
    * for a renderer that writes to a file (such as PDF or DXF).
-   * @param ipath the name of the file (can be an absolute or relative path)
+   * @param path the name of the file (can be an absolute or relative path)
    */
-  public PGraphics createGraphics(int iwidth, int iheight,
-                                  String irenderer, String ipath) {
-    if (ipath != null) {
-      ipath = savePath(ipath);
+  public PGraphics createGraphics(int w, int h,
+                                  String renderer, String path) {
+    if (path != null) {
+      path = savePath(path);
     }
-    PGraphics pg = makeGraphics(iwidth, iheight, irenderer, ipath, false);
+    PGraphics pg = makeGraphics(w, h, renderer, path, false);
     pg.parent = this;  // make save() work
     return pg;
   }
@@ -1505,74 +1504,25 @@ public class PApplet extends Applet
   /**
    * Version of createGraphics() used internally.
    */
-  protected PGraphics makeGraphics(int iwidth, int iheight,
-                                   String irenderer, String ipath,
-                                   boolean iprimary) {
-    if (irenderer.equals(OPENGL)) {
-      if (PApplet.platform == WINDOWS) {
-        String s = System.getProperty("java.version");
-        if (s != null) {
-          if (s.equals("1.5.0_10")) {
-            System.err.println("OpenGL support is broken with Java 1.5.0_10");
-            System.err.println("See http://dev.processing.org" +
-                               "/bugs/show_bug.cgi?id=513 for more info.");
-            throw new RuntimeException("Please update your Java " +
-                                       "installation (see bug #513)");
-          }
-        }
-      }
-    }
-
-//    if (irenderer.equals(P2D)) {
-//      throw new RuntimeException("The P2D renderer is currently disabled, " +
-//                                 "please use P3D or JAVA2D.");
-//    }
-
+  protected PGraphics makeGraphics(int w, int h,
+                                   String renderer, String path,
+                                   boolean primary) {
     String openglError =
       "Before using OpenGL, first select " +
-      "Import Library > opengl from the Sketch menu.";
+      "Import Library > OpenGL from the Sketch menu.";
 
     try {
-      /*
-      Class<?> rendererClass = Class.forName(irenderer);
-
-      Class<?> constructorParams[] = null;
-      Object constructorValues[] = null;
-
-      if (ipath == null) {
-        constructorParams = new Class[] {
-          Integer.TYPE, Integer.TYPE, PApplet.class
-        };
-        constructorValues = new Object[] {
-          new Integer(iwidth), new Integer(iheight), this
-        };
-      } else {
-        constructorParams = new Class[] {
-          Integer.TYPE, Integer.TYPE, PApplet.class, String.class
-        };
-        constructorValues = new Object[] {
-          new Integer(iwidth), new Integer(iheight), this, ipath
-        };
-      }
-
-      Constructor<?> constructor =
-        rendererClass.getConstructor(constructorParams);
-      PGraphics pg = (PGraphics) constructor.newInstance(constructorValues);
-      */
-
       Class<?> rendererClass =
-        Thread.currentThread().getContextClassLoader().loadClass(irenderer);
+        Thread.currentThread().getContextClassLoader().loadClass(renderer);
 
-      //Class<?> params[] = null;
-      //PApplet.println(rendererClass.getConstructors());
       Constructor<?> constructor = rendererClass.getConstructor(new Class[] { });
       PGraphics pg = (PGraphics) constructor.newInstance();
 
       pg.setParent(this);
-      pg.setPrimary(iprimary);
-      if (ipath != null) pg.setPath(ipath);
+      pg.setPrimary(primary);
+      if (path != null) pg.setPath(path);
       pg.setAntiAlias(sketchSmooth());
-      pg.setSize(iwidth, iheight);
+      pg.setSize(w, h);
 
       // everything worked, return it
       return pg;
@@ -1583,7 +1533,6 @@ public class PApplet extends Applet
           (msg.indexOf("no jogl in java.library.path") != -1)) {
         throw new RuntimeException(openglError +
                                    " (The native library is missing.)");
-
       } else {
         ite.getTargetException().printStackTrace();
         Throwable target = ite.getTargetException();
@@ -1596,12 +1545,12 @@ public class PApplet extends Applet
       }
 
     } catch (ClassNotFoundException cnfe) {
-      if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsGL") != -1) {
+      if (cnfe.getMessage().indexOf("processing.opengl.PGraphicsOpenGL") != -1) {
         throw new RuntimeException(openglError +
                                    " (The library .jar file is missing.)");
       } else {
         throw new RuntimeException("You need to use \"Import Library\" " +
-                                   "to add " + irenderer + " to your sketch.");
+                                   "to add " + renderer + " to your sketch.");
       }
 
     } catch (Exception e) {
@@ -1615,7 +1564,7 @@ public class PApplet extends Applet
 
         } else {
           e.printStackTrace();
-          String msg = irenderer + " needs to be updated " +
+          String msg = renderer + " needs to be updated " +
             "for the current release of Processing.";
           throw new RuntimeException(msg);
         }
@@ -1625,6 +1574,7 @@ public class PApplet extends Applet
       }
     }
   }
+
 
   /**
    * ( begin auto-generated from createImage.xml )
@@ -1647,21 +1597,22 @@ public class PApplet extends Applet
    * without needing an absolute path.
    *
    * @webref image
-   * @param wide width in pixels
-   * @param high height in pixels
+   * @param w width in pixels
+   * @param h height in pixels
    * @param format Either RGB, ARGB, ALPHA (grayscale alpha channel)
    * @see PImage#PImage
    * @see PGraphics#PGraphics
    */
-  public PImage createImage(int wide, int high, int format) {
-    return createImage(wide, high, format, null);
+  public PImage createImage(int w, int h, int format) {
+    return createImage(w, h, format, null);
   }
+
 
   /**
    * @nowebref
    */
-  public PImage createImage(int wide, int high, int format, Object params) {
-    PImage image = new PImage(wide, high, format);
+  public PImage createImage(int w, int h, int format, Object params) {
+    PImage image = new PImage(w, h, format);
     if (params != null) {
       image.setParams(g, params);
     }

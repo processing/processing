@@ -145,9 +145,6 @@ o   nor is it listed on the reference page
 o   so students can't find the ref for it
 o   needs to link TRIANGLE_STRIP to the beginShape() reference
 
-2.0
-_ wordtreemap_sotu gives weird preproc error: wrong line, can't parse extends
-_ add blendMode() to JAVA2D so we can rip out blend()
 
 2.0 / command line
 _ kill external editor (for all its quirks) in favor of command line? 
@@ -171,6 +168,8 @@ _ processing.app.Commander headless still requiring X11
 _   problem is static calls to PApplet
 _   http://dev.processing.org/bugs/show_bug.cgi?id=1426
 
+
+_ wordtreemap_sotu gives weird preproc error: wrong line, can't parse extends
 
 _ change syntax highlighting so it differentiates keyPressed and keyPressed()
 _ syntax highlight with parens also helps "String line" vs "line()"
