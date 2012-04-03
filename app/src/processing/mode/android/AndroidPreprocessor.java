@@ -40,21 +40,21 @@ import antlr.TokenStreamException;
 public class AndroidPreprocessor extends PdePreprocessor {
   Sketch sketch;
   String packageName;
-  
+
   String sizeStatement;
-  String sketchWidth; 
+  String sketchWidth;
   String sketchHeight;
   String sketchRenderer;
 
 
-  public AndroidPreprocessor(final Sketch sketch, 
+  public AndroidPreprocessor(final Sketch sketch,
                              final String packageName) throws IOException {
     super(sketch.getName());
     this.sketch = sketch;
     this.packageName = packageName;
   }
 
-  
+
   // TODO this needs to be a generic function inside Sketch or elsewhere
 
   protected boolean parseSketchSize() {
@@ -70,7 +70,7 @@ public class AndroidPreprocessor extends PdePreprocessor {
 
     if (matches != null) {
       boolean badSize = false;
-      
+
       if (!matches[1].equals("screenWidth") &&
           !matches[1].equals("screenHeight") &&
           PApplet.parseInt(matches[1], -1) == -1) {
@@ -84,7 +84,7 @@ public class AndroidPreprocessor extends PdePreprocessor {
 
       if (badSize) {
         // found a reference to size, but it didn't seem to contain numbers
-        final String message = 
+        final String message =
           "The size of this applet could not automatically be determined\n" +
           "from your code. Use only numeric values (not variables) for the\n" +
           "size() command. See the size() reference for more information.";
@@ -116,7 +116,7 @@ public class AndroidPreprocessor extends PdePreprocessor {
   throws SketchException, RecognitionException, TokenStreamException {
     if (sizeStatement != null) {
       int start = program.indexOf(sizeStatement);
-      program = program.substring(0, start) + 
+      program = program.substring(0, start) +
       program.substring(start + sizeStatement.length());
     }
     //      String[] found = PApplet.match(program, "import\\s+processing.opengl.*\\s*");
@@ -166,8 +166,9 @@ public class AndroidPreprocessor extends PdePreprocessor {
 
   @Override
   public String[] getCoreImports() {
-    return new String[] { 
-      "processing.core.*" 
+    return new String[] {
+      "processing.core.*",
+      "processing.data.*"
     };
   }
 
@@ -192,7 +193,7 @@ public class AndroidPreprocessor extends PdePreprocessor {
       //"java.util.zip.*", "java.util.regex.*" // not necessary w/ newer i/o
     };
 
-    Preferences.set("android.preproc.imports.list", 
+    Preferences.set("android.preproc.imports.list",
                     PApplet.join(androidImports, ","));
 
     return androidImports;
