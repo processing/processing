@@ -471,8 +471,8 @@ public class PGraphics extends PImage implements PConstants {
   /** Metrics for the current native Java font */
   //protected FontMetrics textFontNativeMetrics;
 
-  /** Last text position, because text often mixed on lines together */
-  protected float textX, textY, textZ;
+//  /** Last text position, because text often mixed on lines together */
+//  protected float textX, textY, textZ;
 
   /**
    * Internal buffer used by the text() functions
@@ -2855,12 +2855,12 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
 
-  /**
-   * Write text where we just left off.
-   */
-  public void text(char c) {
-    text(c, textX, textY, textZ);
-  }
+//  /**
+//   * Write text where we just left off.
+//   */
+//  public void text(char c) {
+//    text(c, textX, textY, textZ);
+//  }
 
 
   /**
@@ -2900,18 +2900,18 @@ public class PGraphics extends PImage implements PConstants {
     if (z != 0) translate(0, 0, z);  // slowness, badness
 
     text(c, x, y);
-    textZ = z;
+//    textZ = z;
 
     if (z != 0) translate(0, 0, -z);
   }
 
 
-  /**
-   * Write text where we just left off.
-   */
-  public void text(String str) {
-    text(str, textX, textY, textZ);
-  }
+//  /**
+//   * Write text where we just left off.
+//   */
+//  public void text(String str) {
+//    text(str, textX, textY, textZ);
+//  }
 
 
   /**
@@ -2983,7 +2983,7 @@ public class PGraphics extends PImage implements PConstants {
     if (z != 0) translate(0, 0, z);  // slow!
 
     text(str, x, y);
-    textZ = z;
+//    textZ = z;
 
     if (z != 0) translate(0, 0, -z);
   }
@@ -3197,19 +3197,14 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void text(String s, float x1, float y1, float x2, float y2, float z) {
-//    if ((z != 0) && (textMode == SCREEN)) {
-//      String msg = "textMode(SCREEN) cannot have a z coordinate";
-//      throw new RuntimeException(msg);
-//    }
-
-    if (z != 0) translate(0, 0, z);  // slowness, badness
-
-    text(s, x1, y1, x2, y2);
-    textZ = z;
-
-    if (z != 0) translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
-  }
+//  public void text(String s, float x1, float y1, float x2, float y2, float z) {
+//    if (z != 0) translate(0, 0, z);  // slowness, badness
+//
+//    text(s, x1, y1, x2, y2);
+//    textZ = z;
+//
+//    if (z != 0) translate(0, 0, -z);  // TEMPORARY HACK! SLOW!
+//  }
 
 
   public void text(int num, float x, float y) {
@@ -3274,9 +3269,9 @@ public class PGraphics extends PImage implements PConstants {
       // this doesn't account for kerning
       x += textWidth(buffer[index]);
     }
-    textX = x;
-    textY = y;
-    textZ = 0;  // this will get set by the caller if non-zero
+//    textX = x;
+//    textY = y;
+//    textZ = 0;  // this will get set by the caller if non-zero
   }
 
 

@@ -81,8 +81,9 @@ public class PShape implements PConstants {
   protected String name;
   protected HashMap<String,PShape> nameTable;
 
-  /** Generic, only draws its child objects. */
-  static public final int GROUP = 0;
+//  /** Generic, only draws its child objects. */
+//  static public final int GROUP = 0;
+  // GROUP now inherited from PConstants
   /** A line, ellipse, arc, image, etc. */
   static public final int PRIMITIVE = 1;
   /** A series of vertex, curveVertex, and bezierVertex calls. */

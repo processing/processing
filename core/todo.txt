@@ -16,7 +16,10 @@ _ docs: P2D and P3D are now OpenGL variations
 X add createGraphics() with no renderer param to point to JAVA2D
 X   also added to Android
 _   add to docs
-X CENTER_RADIUS, CENTER_DIAMETER, NORMALIZED have been removed
+X removals
+X   CENTER_RADIUS, CENTER_DIAMETER, NORMALIZED 
+X   text(x, y, w, h, z)
+X   textX/Y/Z variables
 _   update changes Wiki
 
 andres
