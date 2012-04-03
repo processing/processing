@@ -42,6 +42,8 @@ X   http://code.google.com/p/processing/issues/detail?id=606
 X   Marked closed around 1.5?
 X incorporate gsvideo library from Andres
 o fast java2d video?
+o saving files... save("...svg") or saveSVG("...")
+o lots of other things in the google code issues list
 
 displays
 X ability to select monitor via preferences panel
@@ -100,9 +102,7 @@ _   http://code.google.com/p/processing/issues/detail?id=27
 Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
 
 
-decisions
-_ saving files... save("...svg") or saveSVG("...")
-_ lots of other things in the google code issues list
+with casey
 _ does editor.bgcolor live in the theme.txt file for the mode? 
 _   or should it be a user preference thing
 _   for that matter, need to decide on how much modes can customize themselves
@@ -110,8 +110,6 @@ _ find in reference for copy() (on image) tries to open PVector.copy()
 _   might need disambiguation pages?
 _   if a reference page is missing, throws a bunch of exceptions
 _   i.e. PVector.copy() not in the reference
-
-with casey
 _ specifically add "eclipse" to integration description
 _ link books and sample chapters from the "getting started" portion of the faq
 _ keep examples.zip in a zip file? (5000 files @ 30 MB instead of 15 MB zip)

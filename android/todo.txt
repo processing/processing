@@ -2,6 +2,8 @@
 X finish xml writing on android
 X   http://stackoverflow.com/questions/2290945/writing-xml-on-android
 X   consider switch to android 2.2 as the minimum
+X screenWidth/Height replaced with displayWidth/Height
+_   update this on the Wiki page
 
 andres
 A GL2 specific code in Processing 2.0a5 break P3D on GLES2 hardware

@@ -8,6 +8,10 @@ X move to processing.data.* package
 X   update the internal code for Android and desktop to add the import
 X   add loadTable().. 
 X   loadXML and loadTable are now in desktop
+o trimming text on URLs?
+o   http://code.google.com/p/processing/issues/detail?id=715
+X change screenWidth/Height to displayWidth/Height
+_   update wiki.processing.org/w/Window_Size_and_Full_Screen
 
 fixed in 2.0a5
 A OpenGL noSmooth() does not work
@@ -52,14 +56,10 @@ o   or also add a method for getting the vectors?
 X   no longer an issue post-NanoXML
 X several other items under the LIBRARIES / XML section below
 
-_ change screenWidth/Height to displayWidth/Height
-_   also fix the Android etc docs
+
 _ add screen(PVector), model(PVector) and world(PVector)?
 X test what happens with NPE in OpenGL, does the error make sense?
 _   nope, it doesn't, need to clean this up
-
-_ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
-_   libraries have to do a lot of casting
 
 _ look into using BufferStrategy again to improve performance
 _   there are more improvements to be made ala issue #729
@@ -115,13 +115,8 @@ X   this is fine since opengl can't usually go across both
 o   but include an example for how to use full in gl 
 o full screen not working on snow leopard
 X   fix build script to include the jnilib, also add more error checks
-_ screenX and screenY are both already taken, so not including vars for them
-_   decide on naming for the next release
-_ wiki.processing.org/w/Window_Size_and_Full_Screen
-
-_ static mode sketches seem to break ESC... noLoop() problem?
-_   need to find another way to get ESC on static mode
-_   b/c static mode sketches *do* finish because they have no draw()
+X screenX and screenY are both already taken, so not including vars for them
+X   decide on naming for the next release
 
 _ PUtil -> move match(), lots of other non-gui functions into own class
 _   and merge it in statically via the methods code
@@ -132,12 +127,16 @@ _   need to add clear() method so clear out ARGB surfaces
 C clear() ok to add
 X   decided clear(r, g, b, a) problematic since it's an exception to color model
 X   and that people should use background() anyway
-_   or background(r, g, b, a) would be the thing
+o   or background(r, g, b, a) would be the thing
+_   clear() with a color doesn't make sense
 
 _ pause()/resume() need to work on the desktop side as well
 _ stop() not called in 1.5
 _   http://code.google.com/p/processing/issues/detail?id=636
 _   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
+_ static mode sketches seem to break ESC... noLoop() problem?
+_   need to find another way to get ESC on static mode
+_   b/c static mode sketches *do* finish because they have no draw()
 
 _ selectInput() and selectOutput() freezes
 _   http://code.google.com/p/processing/issues/detail?id=173
@@ -176,9 +175,6 @@ _ if save() returns boolean, does saveFrame()?
 _   also need to copy this over to android
 
 _ disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
-
-_ trimming text on URLs?
-_   http://code.google.com/p/processing/issues/detail?id=715
 
 andres 
 _ beginRaw() not working with 3D
@@ -252,11 +248,8 @@ _   http://java.sun.com/docs/books/tutorial/deployment/applet/lifeCycle.html
 _   really, stop() should just call noLoop() (and start re-enable if done)
 _     and on android, start/stop can be used to save state information
 _   need to fix opengl applets so that we can safely kill P3D
-
-more xml/json changes
-_ json issues
-_   http://www.xml.com/lpt/a/1658
-_   http://www.json.org/java/
+_ shared intf for 3D view data across PGraphicsOpenGL and PGraphicsAndroid3D
+_   libraries have to do a lot of casting
 
 2.0 / methods
 _ decision on registered methods
@@ -280,6 +273,9 @@ _   decision: go with what looks like javascript/ios
 _   touchEvent(), gestureEvent()?
 
 2.0
+_ implement JSON class
+_   http://www.xml.com/lpt/a/1658
+_   http://www.json.org/java/
 _ PNode.getChildren() shouldn't make a new array.. toArray() can do that
 _ toArray(), toArray(float[]), toVectorArray(), toVectorArray(PVector[])
 _   toColorArray(), toColorArray(float[])...
@@ -379,8 +375,10 @@ _   http://code.google.com/p/processing/issues/detail?id=195
 stop() mess
 _ sort out destroy(), stop(), pause() et al
 _   ColorSelector should stop/pause when not visible
+_     right now it's doing a low-level looping
 _   start()/stop() perform like onPause()/onResume()
 _     all of which call pause() and resume()
+_   destroy() (from Applet) calls (our) dispose()
 _ destroy() shouldn't call exit()... change from lonnen
 _   calls ((PApplet)this).exit() instead of stop() (since stop is pause)
 _ notes

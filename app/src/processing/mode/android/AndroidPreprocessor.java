@@ -71,13 +71,24 @@ public class AndroidPreprocessor extends PdePreprocessor {
     if (matches != null) {
       boolean badSize = false;
 
-      if (!matches[1].equals("screenWidth") &&
-          !matches[1].equals("screenHeight") &&
+      if (matches[1].equals("screenWidth") ||
+          matches[1].equals("screenHeight") ||
+          matches[2].equals("screenWidth") ||
+          matches[2].equals("screenHeight")) {
+        final String message =
+          "The screenWidth and screenHeight variables are named\n" +
+          "displayWidth and displayHeight in this release of Processing.";
+        Base.showWarning("Time for a quick update", message, null);
+        return false;
+      }
+
+      if (!matches[1].equals("displayWidth") &&
+          !matches[1].equals("displayHeight") &&
           PApplet.parseInt(matches[1], -1) == -1) {
         badSize = true;
       }
-      if (!matches[2].equals("screenWidth") &&
-          !matches[2].equals("screenHeight") &&
+      if (!matches[2].equals("displayWidth") &&
+          !matches[2].equals("displayHeight") &&
           PApplet.parseInt(matches[2], -1) == -1) {
         badSize = true;
       }
@@ -112,18 +123,15 @@ public class AndroidPreprocessor extends PdePreprocessor {
   }
 
 
-  public PreprocessorResult write(Writer out, String program, String codeFolderPackages[])
+  public PreprocessorResult write(Writer out, String program, String[] codeFolderPackages)
   throws SketchException, RecognitionException, TokenStreamException {
     if (sizeStatement != null) {
       int start = program.indexOf(sizeStatement);
       program = program.substring(0, start) +
       program.substring(start + sizeStatement.length());
     }
-    //      String[] found = PApplet.match(program, "import\\s+processing.opengl.*\\s*");
-    //      if (found != null) {
-    //      }
-    program = program.replaceAll("import\\s+processing\\.opengl\\.\\S+;", "");
-    //      PApplet.println(program);
+    // the OpenGL package is back in 2.0a5
+    //program = program.replaceAll("import\\s+processing\\.opengl\\.\\S+;", "");
     return super.write(out, program, codeFolderPackages);
   }
 
