@@ -47,8 +47,8 @@ o vectors shouldn't be exposed, need to expose attr lists as arrays
 o   or also add a method for getting the vectors?
 X   no longer an issue post-NanoXML
 X several other items under the LIBRARIES / XML section below
-_ move to processing.data.* package
-_   update the internal code for Android and desktop to add the import
+X move to processing.data.* package
+X   update the internal code for Android and desktop to add the import
 
 _ change screenWidth/Height to displayWidth/Height
 _   also fix the Android etc docs

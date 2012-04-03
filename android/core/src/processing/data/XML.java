@@ -20,7 +20,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package processing.core;
+package processing.data;
 
 import java.io.*;
 

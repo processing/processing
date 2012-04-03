@@ -23,6 +23,8 @@
 
 package processing.core;
 
+import processing.data.*;
+
 import java.util.HashMap;
 
 import android.graphics.*;

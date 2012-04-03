@@ -23,6 +23,8 @@
 
 package processing.core;
 
+import processing.data.*;
+
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -51,7 +53,7 @@ import javax.swing.SwingUtilities;
  * <p/>
  * The <A HREF="http://wiki.processing.org/w/Window_Size_and_Full_Screen">
  * Window Size and Full Screen</A> page on the Wiki has useful information
- * about sizing, multiple displays, full screen, etc. 
+ * about sizing, multiple displays, full screen, etc.
  * <p/>
  * As of release 0145, Processing uses active mode rendering in all cases.
  * All animation tasks happen on the "Processing Animation Thread". The
@@ -64,10 +66,10 @@ import javax.swing.SwingUtilities;
  * animation thread. Use of a callback function or the registerXxx() methods
  * in PApplet can help ensure that your code doesn't do something naughty.
  * <p/>
- * As of Processing 2.0, we have discontinued support for versions of Java 
+ * As of Processing 2.0, we have discontinued support for versions of Java
  * prior to 1.6. We don't have enough people to support it, and for a
- * project of our (tiny) size, we should be focusing on the future, rather 
- * than working around legacy Java code. 
+ * project of our (tiny) size, we should be focusing on the future, rather
+ * than working around legacy Java code.
  * <p/>
  * This class extends Applet instead of JApplet because 1) historically,
  * we supported Java 1.1, which does not include Swing (without an
@@ -89,10 +91,10 @@ import javax.swing.SwingUtilities;
  * would any other Component.
  * <p/>
  * Because the default animation thread will run at 60 frames per second,
- * an embedded PApplet can make the parent application sluggish. You can use 
+ * an embedded PApplet can make the parent application sluggish. You can use
  * frameRate() to make it update less often, or you can use noLoop() and loop()
  * to disable and then re-enable looping. If you want to only update the sketch
- * intermittently, use noLoop() inside setup(), and redraw() whenever the 
+ * intermittently, use noLoop() inside setup(), and redraw() whenever the
  * screen needs to be updated once (or loop() to re-enable the animation
  * thread). The following example embeds a sketch and also uses the noLoop()
  * and redraw() methods. You need not use noLoop() and redraw() when embedding
@@ -233,14 +235,14 @@ public class PApplet extends Applet
   public Frame frame;
 //  public JFrame frame;
 
-//  /** 
-//   * Usually just 0, but with multiple displays, the X and Y coordinates of 
-//   * the screen will depend on the current screen's position relative to 
-//   * the other displays.   
+//  /**
+//   * Usually just 0, but with multiple displays, the X and Y coordinates of
+//   * the screen will depend on the current screen's position relative to
+//   * the other displays.
 //   */
-//  public int screenX; 
+//  public int screenX;
 //  public int screenY;
-  
+
   /**
    * ( begin auto-generated from screenWidth.xml )
    *
@@ -309,12 +311,12 @@ public class PApplet extends Applet
   static public final int MIN_WINDOW_WIDTH = 128;
   static public final int MIN_WINDOW_HEIGHT = 128;
 
-  /** 
+  /**
    * Gets set by main() if --present (old) or --full-screen (newer) are used,
-   * and is returned by sketchFullscreen() when initializing in main().  
+   * and is returned by sketchFullscreen() when initializing in main().
    */
-//  protected boolean fullScreen = false; 
-  
+//  protected boolean fullScreen = false;
+
   /**
    * Exception thrown when size() is called the first time.
    * <p>
@@ -751,7 +753,7 @@ public class PApplet extends Applet
 
   /** @deprecated use --full-screen instead. */
   static public final String ARGS_PRESENT = "--present";
-    
+
   static public final String ARGS_FULL_SCREEN = "--full-screen";
 
 //  static public final String ARGS_EXCLUSIVE = "--exclusive";
@@ -888,8 +890,8 @@ public class PApplet extends Applet
   public String sketchRenderer() {
     return JAVA2D;
   }
-  
-  
+
+
   public boolean sketchFullScreen() {
 //    return fullScreen;
     return false;
@@ -1890,15 +1892,15 @@ public class PApplet extends Applet
       if (frameCount == 0) {
         GraphicsConfiguration gc = getGraphicsConfiguration();
         if (gc == null) return;
-        GraphicsDevice displayDevice = 
+        GraphicsDevice displayDevice =
           getGraphicsConfiguration().getDevice();
         if (displayDevice == null) return;
-        Rectangle screenRect = 
+        Rectangle screenRect =
           displayDevice.getDefaultConfiguration().getBounds();
 //        screenX = screenRect.x;
 //        screenY = screenRect.y;
         screenWidth = screenRect.width;
-        screenHeight = screenRect.height;          
+        screenHeight = screenRect.height;
 
         try {
           //println("Calling setup()");
@@ -9286,7 +9288,7 @@ public class PApplet extends Applet
     applet.frame = frame;
     applet.sketchPath = folder;
     // If the applet doesn't call for full screen, but the command line does,
-    // enable it. Conversely, if the command line does not, don't disable it. 
+    // enable it. Conversely, if the command line does not, don't disable it.
 //    applet.fullScreen |= present;
     // Query the applet to see if it wants to be full screen all the time.
     present |= applet.sketchFullScreen();
@@ -9298,12 +9300,12 @@ public class PApplet extends Applet
     // Need to save the window bounds at full screen,
     // because pack() will cause the bounds to go to zero.
     // http://dev.processing.org/bugs/show_bug.cgi?id=923
-    Rectangle screenRect = 
+    Rectangle screenRect =
       displayDevice.getDefaultConfiguration().getBounds();
     // DisplayMode doesn't work here, because we can't get the upper-left
     // corner of the display, which is important for multi-display setups.
-    
-    // Sketch has already requested to be the same as the screen's 
+
+    // Sketch has already requested to be the same as the screen's
     // width and height, so let's roll with full screen mode.
     if (screenRect.width == applet.sketchWidth() &&
         screenRect.height == applet.sketchHeight()) {
@@ -9442,7 +9444,7 @@ public class PApplet extends Applet
           frame.setLocation(locationX, locationY);
         }
       } else {  // just center on screen
-        // Can't use frame.setLocationRelativeTo(null) because it sends the 
+        // Can't use frame.setLocationRelativeTo(null) because it sends the
         // frame to the main display, which undermines the --display setting.
         frame.setLocation(screenRect.x + (screenRect.width - applet.width) / 2,
                           screenRect.y + (screenRect.height - applet.height) / 2);
@@ -9518,11 +9520,11 @@ public class PApplet extends Applet
     runSketch(argsWithSketchName, this);
   }
 
-  
+
   protected void runSketch() {
     runSketch(new String[0]);
   }
-  
+
 
   //////////////////////////////////////////////////////////////
 
@@ -10254,15 +10256,15 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from line.xml )
-   * 
-   * Draws a line (a direct path between two points) to the screen. The 
-   * version of <b>line()</b> with four parameters draws the line in 2D.  To 
-   * color a line, use the <b>stroke()</b> function. A line cannot be filled, 
-   * therefore the <b>fill()</b> function will not affect the color of a 
-   * line. 2D lines are drawn with a width of one pixel by default, but this 
-   * can be changed with the <b>strokeWeight()</b> function. The version with 
-   * six parameters allows the line to be placed anywhere within XYZ space. 
-   * Drawing this shape in 3D with the <b>z</b> parameter requires the P3D 
+   *
+   * Draws a line (a direct path between two points) to the screen. The
+   * version of <b>line()</b> with four parameters draws the line in 2D.  To
+   * color a line, use the <b>stroke()</b> function. A line cannot be filled,
+   * therefore the <b>fill()</b> function will not affect the color of a
+   * line. 2D lines are drawn with a width of one pixel by default, but this
+   * can be changed with the <b>strokeWeight()</b> function. The version with
+   * six parameters allows the line to be placed anywhere within XYZ space.
+   * Drawing this shape in 3D with the <b>z</b> parameter requires the P3D
    * parameter in combination with <b>size()</b> as shown in the above example.
    *
    * ( end auto-generated )
@@ -10384,7 +10386,7 @@ public class PApplet extends Applet
    * <b>rectMode()</b> function.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref shape:2d_primitives
    * @param a x-coordinate of the rectangle by default
    * @param b y-coordinate of the rectangle by default
@@ -10423,16 +10425,16 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from ellipseMode.xml )
-   * 
-   * The origin of the ellipse is modified by the <b>ellipseMode()</b> 
-   * function. The default configuration is <b>ellipseMode(CENTER)</b>, which 
-   * specifies the location of the ellipse as the center of the shape. The 
-   * <b>RADIUS</b> mode is the same, but the width and height parameters to 
-   * <b>ellipse()</b> specify the radius of the ellipse, rather than the 
-   * diameter. The <b>CORNER</b> mode draws the shape from the upper-left 
-   * corner of its bounding box. The <b>CORNERS</b> mode uses the four 
-   * parameters to <b>ellipse()</b> to set two opposing corners of the 
-   * ellipse's bounding box. The parameter must be written in ALL CAPS 
+   *
+   * The origin of the ellipse is modified by the <b>ellipseMode()</b>
+   * function. The default configuration is <b>ellipseMode(CENTER)</b>, which
+   * specifies the location of the ellipse as the center of the shape. The
+   * <b>RADIUS</b> mode is the same, but the width and height parameters to
+   * <b>ellipse()</b> specify the radius of the ellipse, rather than the
+   * diameter. The <b>CORNER</b> mode draws the shape from the upper-left
+   * corner of its bounding box. The <b>CORNERS</b> mode uses the four
+   * parameters to <b>ellipse()</b> to set two opposing corners of the
+   * ellipse's bounding box. The parameter must be written in ALL CAPS
    * because Processing is a case-sensitive language.
    *
    * ( end auto-generated )
@@ -10543,7 +10545,7 @@ public class PApplet extends Applet
    * with two parameters.
    *
    * ( end auto-generated )
-   * 
+   *
    * <h3>Advanced</h3>
    * Code for sphereDetail() submitted by toxi [031031].
    * Code for enhanced u/v version from davbol [080801].
@@ -10574,7 +10576,7 @@ public class PApplet extends Applet
    * A sphere is a hollow ball made from tessellated triangles.
    *
    * ( end auto-generated )
-   * 
+   *
    * <h3>Advanced</h3>
    * <P>
    * Implementation notes:
@@ -10616,7 +10618,7 @@ public class PApplet extends Applet
    * at t.
    *
    * ( end auto-generated )
-   * 
+   *
    * <h3>Advanced</h3>
    * For instance, to convert the following example:<PRE>
    * stroke(255, 102, 0);
@@ -10661,7 +10663,7 @@ public class PApplet extends Applet
    * target="new"><em>tangent</em> on Wikipedia</a>.
    *
    * ( end auto-generated )
-   * 
+   *
    * <h3>Advanced</h3>
    * Code submitted by Dave Bollinger (davol) for release 0136.
    *
@@ -10688,7 +10690,7 @@ public class PApplet extends Applet
    * P2D renderer does not use this information.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref shape:curves
    * @param detail resolution of the curves
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -10722,7 +10724,7 @@ public class PApplet extends Applet
    * Environment reference for more information).
    *
    * ( end auto-generated )
-   * 
+   *
    * <h3>Advanced</h3>
    * Draw a cubic bezier curve. The first and last points are
    * the on-curve points. The middle two are the 'control' points,
@@ -10833,7 +10835,7 @@ public class PApplet extends Applet
    * P2D renderer does not use this information.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref shape:curves
    * @param detail resolution of the curves
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -10858,7 +10860,7 @@ public class PApplet extends Applet
    * recognizable and as values increase in magnitude, they will continue to deform.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref shape:curves
    * @param tightness amount of deformation from the original vertices
    * @see PGraphics#curve(float, float, float, float, float, float, float, float, float, float, float, float)
@@ -10946,7 +10948,7 @@ public class PApplet extends Applet
    * smoothing altogether.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref shape:attributes
    * @see PGraphics#noSmooth()
    * @see PGraphics#hint(int)
@@ -10996,7 +10998,7 @@ public class PApplet extends Applet
    * Processing is a case-sensitive language.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref image:loading_displaying
    * @param mode either CORNER, CORNERS, or CENTER
    * @see PApplet#loadImage(String, String)
@@ -11037,7 +11039,7 @@ public class PApplet extends Applet
    * This function will maintain transparency for GIF and PNG images.
    *
    * ( end auto-generated )
-   * 
+   *
    * <h3>Advanced</h3>
    * Starting with release 0124, when using the default (JAVA2D) renderer,
    * smooth() will also improve image quality of resized images.
@@ -11092,7 +11094,7 @@ public class PApplet extends Applet
    * Processing is a case sensitive language.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref shape:loading_displaying
    * @param mode either CORNER, CORNERS, CENTER
    * @see PGraphics#shape(PShape)
@@ -11138,7 +11140,7 @@ public class PApplet extends Applet
    * yet support shapes that have holes or complicated breaks.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref shape:loading_displaying
    * @param shape the shape to display
    * @param x x-coordinate of the shape
@@ -11190,7 +11192,7 @@ public class PApplet extends Applet
    * if you change the size of the font.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref typography:attributes
    * @param alignX horizontal alignment, either LEFT, CENTER, or RIGHT
    * @param alignY vertical alignment, either TOP, BOTTOM, CENTER, or BASELINE
@@ -11213,7 +11215,7 @@ public class PApplet extends Applet
    * will give you the total height of the line.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref typography:metrics
    * @see PGraphics#textDescent()
    */
@@ -11231,7 +11233,7 @@ public class PApplet extends Applet
    * <b>textDescent()</b> values will give you the total height of the line.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref typography:metrics
    * @see PGraphics#textAscent()
    */
@@ -11290,7 +11292,7 @@ public class PApplet extends Applet
    * will be used in all subsequent calls to the <b>text()</b> function.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref typography:attributes
    * @param leading the size in pixels for spacing between lines
    * @see PApplet#loadFont(String)
@@ -11306,23 +11308,23 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from textMode.xml )
-   * 
-   * Sets the way text draws to the screen. In the default configuration, the 
-   * <b>MODEL</b> mode, it's possible to rotate, scale, and place letters in 
+   *
+   * Sets the way text draws to the screen. In the default configuration, the
+   * <b>MODEL</b> mode, it's possible to rotate, scale, and place letters in
    * two and three dimensional space.<br />
    * <br />
-   * The <b>SHAPE</b> mode draws text using the the glyph outlines of 
-   * individual characters rather than as textures. This mode is only 
-   * supported with the <b>PDF</b> and <b>P3D</b> renderer settings. With the 
-   * <b>PDF</b> renderer, you must call <b>textMode(SHAPE)</b> before any 
-   * other drawing occurs. If the outlines are not available, then 
-   * <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will 
+   * The <b>SHAPE</b> mode draws text using the the glyph outlines of
+   * individual characters rather than as textures. This mode is only
+   * supported with the <b>PDF</b> and <b>P3D</b> renderer settings. With the
+   * <b>PDF</b> renderer, you must call <b>textMode(SHAPE)</b> before any
+   * other drawing occurs. If the outlines are not available, then
+   * <b>textMode(SHAPE)</b> will be ignored and <b>textMode(MODEL)</b> will
    * be used instead.<br />
    * <br />
-   * The <b>textMode(SHAPE)</b> option in <b>P3D</b> can be combined with 
-   * <b>beginRaw()</b> to write vector-accurate text to 2D and 3D output 
-   * files, for instance <b>DXF</b> or <b>PDF</b>. The <b>SHAPE</b> mode is 
-   * not currently optimized for <b>P3D</b>, so if recording shape data, use 
+   * The <b>textMode(SHAPE)</b> option in <b>P3D</b> can be combined with
+   * <b>beginRaw()</b> to write vector-accurate text to 2D and 3D output
+   * files, for instance <b>DXF</b> or <b>PDF</b>. The <b>SHAPE</b> mode is
+   * not currently optimized for <b>P3D</b>, so if recording shape data, use
    * <b>textMode(MODEL)</b> until you're ready to capture the geometry with <b>beginRaw()</b>.
    *
    * ( end auto-generated )
@@ -11349,7 +11351,7 @@ public class PApplet extends Applet
    * calls to the <b>text()</b> function. Font size is measured in units of pixels.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref typography:attributes
    * @param size the size of the letters in units of pixels
    * @see PApplet#loadFont(String)
@@ -11574,18 +11576,18 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from pushMatrix.xml )
-   * 
-   * Pushes the current transformation matrix onto the matrix stack. 
-   * Understanding <b>pushMatrix()</b> and <b>popMatrix()</b> requires 
-   * understanding the concept of a matrix stack. The <b>pushMatrix()</b> 
-   * function saves the current coordinate system to the stack and 
-   * <b>popMatrix()</b> restores the prior coordinate system. 
-   * <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with 
-   * the other transformation functions and may be embedded to control the 
+   *
+   * Pushes the current transformation matrix onto the matrix stack.
+   * Understanding <b>pushMatrix()</b> and <b>popMatrix()</b> requires
+   * understanding the concept of a matrix stack. The <b>pushMatrix()</b>
+   * function saves the current coordinate system to the stack and
+   * <b>popMatrix()</b> restores the prior coordinate system.
+   * <b>pushMatrix()</b> and <b>popMatrix()</b> are used in conjuction with
+   * the other transformation functions and may be embedded to control the
    * scope of the transformations.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @see PGraphics#popMatrix()
    * @see PGraphics#translate(float, float, float)
@@ -11602,17 +11604,17 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from popMatrix.xml )
-   * 
-   * Pops the current transformation matrix off the matrix stack. 
-   * Understanding pushing and popping requires understanding the concept of 
-   * a matrix stack. The <b>pushMatrix()</b> function saves the current 
-   * coordinate system to the stack and <b>popMatrix()</b> restores the prior 
-   * coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used 
-   * in conjuction with the other transformation functions and may be 
+   *
+   * Pops the current transformation matrix off the matrix stack.
+   * Understanding pushing and popping requires understanding the concept of
+   * a matrix stack. The <b>pushMatrix()</b> function saves the current
+   * coordinate system to the stack and <b>popMatrix()</b> restores the prior
+   * coordinate system. <b>pushMatrix()</b> and <b>popMatrix()</b> are used
+   * in conjuction with the other transformation functions and may be
    * embedded to control the scope of the transformations.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @see PGraphics#pushMatrix()
    */
@@ -11639,7 +11641,7 @@ public class PApplet extends Applet
    * further controlled by the <b>pushMatrix()</b> and <b>popMatrix()</b>.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @param tx left/right translation
    * @param ty up/down translation
@@ -11686,7 +11688,7 @@ public class PApplet extends Applet
    * the <b>pushMatrix()</b> and <b>popMatrix()</b>.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -11720,7 +11722,7 @@ public class PApplet extends Applet
    * as shown in the example above.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -11754,7 +11756,7 @@ public class PApplet extends Applet
    * as shown in the examples above.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -11788,7 +11790,7 @@ public class PApplet extends Applet
    * as shown in the examples above.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @param angle angle of rotation specified in radians
    * @see PGraphics#popMatrix()
@@ -11808,9 +11810,9 @@ public class PApplet extends Applet
   /**
    * <h3>Advanced</h3>
    * Rotate about a vector in space. Same as the glRotatef() function.
-   * @param vx 
-   * @param vy 
-   * @param vz 
+   * @param vx
+   * @param vy
+   * @param vz
    */
   public void rotate(float angle, float vx, float vy, float vz) {
     if (recorder != null) recorder.rotate(angle, vx, vy, vz);
@@ -11835,7 +11837,7 @@ public class PApplet extends Applet
    * can be further controlled by <b>pushMatrix()</b> and <b>popMatrix()</b>.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @param s percentage to scale the object
    * @see PGraphics#popMatrix()
@@ -11898,7 +11900,7 @@ public class PApplet extends Applet
    * the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @param angle angle of shear specified in radians
    * @see PGraphics#popMatrix()
@@ -11933,7 +11935,7 @@ public class PApplet extends Applet
    * the <b>pushMatrix()</b> and <b>popMatrix()</b> functions.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @param angle angle of shear specified in radians
    * @see PGraphics#popMatrix()
@@ -11956,7 +11958,7 @@ public class PApplet extends Applet
    * function in OpenGL is glLoadIdentity().
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @see PGraphics#pushMatrix()
    * @see PGraphics#popMatrix()
@@ -11978,7 +11980,7 @@ public class PApplet extends Applet
    * function in OpenGL is glMultMatrix().
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @source
    * @see PGraphics#pushMatrix()
@@ -12096,7 +12098,7 @@ public class PApplet extends Applet
    * of Processing).
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref transform
    * @see PGraphics#pushMatrix()
    * @see PGraphics#popMatrix()
@@ -12130,7 +12132,7 @@ public class PApplet extends Applet
    * <b>endCamera()</b> cannot be nested.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:camera
    * @see PGraphics#camera()
    * @see PGraphics#endCamera()
@@ -12153,7 +12155,7 @@ public class PApplet extends Applet
    * <b>beginCamera()</b> for a description of how the functions are used.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:camera
    * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
    */
@@ -12165,19 +12167,19 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from camera.xml )
-   * 
-   * Sets the position of the camera through setting the eye position, the 
-   * center of the scene, and which axis is facing upward. Moving the eye 
-   * position and the direction it is pointing (the center of the scene) 
-   * allows the images to be seen from different angles. The version without 
-   * any parameters sets the camera to the default position, pointing to the 
-   * center of the display window with the Y axis as up. The default values 
-   * are <b>camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 
-   * 180.0), width/2.0, height/2.0, 0, 0, 1, 0)</b>. This function is similar 
+   *
+   * Sets the position of the camera through setting the eye position, the
+   * center of the scene, and which axis is facing upward. Moving the eye
+   * position and the direction it is pointing (the center of the scene)
+   * allows the images to be seen from different angles. The version without
+   * any parameters sets the camera to the default position, pointing to the
+   * center of the display window with the Y axis as up. The default values
+   * are <b>camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 /
+   * 180.0), width/2.0, height/2.0, 0, 0, 1, 0)</b>. This function is similar
    * to <b>gluLookAt()</b> in OpenGL, but it first clears the current camera settings.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:camera
    * @see PGraphics#endCamera()
    * @see PGraphics#frustum(float, float, float, float, float, float)
@@ -12236,7 +12238,7 @@ public class PApplet extends Applet
    * -10, 10).
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:camera
    */
   public void ortho() {
@@ -12285,7 +12287,7 @@ public class PApplet extends Applet
    * cameraZ*10.0) where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:camera
    */
   public void perspective() {
@@ -12314,7 +12316,7 @@ public class PApplet extends Applet
    * than muliplying itself with it.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:camera
    * @param left left coordinate of the clipping plane
    * @param right right coordinate of the clipping plane
@@ -12341,7 +12343,7 @@ public class PApplet extends Applet
    * the bottom of Processing).
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:camera
    * @see PGraphics#camera(float, float, float, float, float, float, float, float, float)
    */
@@ -12358,7 +12360,7 @@ public class PApplet extends Applet
    * where it will appear on a (two-dimensional) screen.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12377,7 +12379,7 @@ public class PApplet extends Applet
    * where it will appear on a (two-dimensional) screen.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12412,7 +12414,7 @@ public class PApplet extends Applet
    * where it will appear on a (two-dimensional) screen.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12434,15 +12436,15 @@ public class PApplet extends Applet
    * to place an object in space relative to the location of the original
    * point once the transformations are no longer in use.
    * <br/> <br/>
-   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and 
-   * <b>modelZ()</b> functions record the location of a box in space after 
-   * being placed using a series of translate and rotate commands. After 
-   * popMatrix() is called, those transformations no longer apply, but the 
-   * (x, y, z) coordinate returned by the model functions is used to place 
+   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and
+   * <b>modelZ()</b> functions record the location of a box in space after
+   * being placed using a series of translate and rotate commands. After
+   * popMatrix() is called, those transformations no longer apply, but the
+   * (x, y, z) coordinate returned by the model functions is used to place
    * another box in the same location.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12457,22 +12459,22 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from modelY.xml )
-   * 
-   * Returns the three-dimensional X, Y, Z position in model space. This 
-   * returns the Y value for a given coordinate based on the current set of 
-   * transformations (scale, rotate, translate, etc.) The Y value can be used 
-   * to place an object in space relative to the location of the original 
-   * point once the transformations are no longer in use.<br /> 
+   *
+   * Returns the three-dimensional X, Y, Z position in model space. This
+   * returns the Y value for a given coordinate based on the current set of
+   * transformations (scale, rotate, translate, etc.) The Y value can be used
+   * to place an object in space relative to the location of the original
+   * point once the transformations are no longer in use.<br />
    * <br />
-   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and 
-   * <b>modelZ()</b> functions record the location of a box in space after 
-   * being placed using a series of translate and rotate commands. After 
-   * popMatrix() is called, those transformations no longer apply, but the 
-   * (x, y, z) coordinate returned by the model functions is used to place 
+   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and
+   * <b>modelZ()</b> functions record the location of a box in space after
+   * being placed using a series of translate and rotate commands. After
+   * popMatrix() is called, those transformations no longer apply, but the
+   * (x, y, z) coordinate returned by the model functions is used to place
    * another box in the same location.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12487,22 +12489,22 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from modelZ.xml )
-   * 
-   * Returns the three-dimensional X, Y, Z position in model space. This 
-   * returns the Z value for a given coordinate based on the current set of 
-   * transformations (scale, rotate, translate, etc.) The Z value can be used 
-   * to place an object in space relative to the location of the original 
+   *
+   * Returns the three-dimensional X, Y, Z position in model space. This
+   * returns the Z value for a given coordinate based on the current set of
+   * transformations (scale, rotate, translate, etc.) The Z value can be used
+   * to place an object in space relative to the location of the original
    * point once the transformations are no longer in use.<br />
    * <br />
-   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and 
-   * <b>modelZ()</b> functions record the location of a box in space after 
-   * being placed using a series of translate and rotate commands. After 
-   * popMatrix() is called, those transformations no longer apply, but the 
-   * (x, y, z) coordinate returned by the model functions is used to place 
+   * In the example, the <b>modelX()</b>, <b>modelY()</b>, and
+   * <b>modelZ()</b> functions record the location of a box in space after
+   * being placed using a series of translate and rotate commands. After
+   * popMatrix() is called, those transformations no longer apply, but the
+   * (x, y, z) coordinate returned by the model functions is used to place
    * another box in the same location.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:coordinates
    * @param x 3D x-coordinate to be mapped
    * @param y 3D y-coordinate to be mapped
@@ -12534,7 +12536,7 @@ public class PApplet extends Applet
    * emissive(), specular(), shininess(), ambient()
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref structure
    * @see PGraphics#popStyle()
    */
@@ -12556,7 +12558,7 @@ public class PApplet extends Applet
    * provide more control (see the second example above for a demonstration.)
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref structure
    * @see PGraphics#pushStyle()
    */
@@ -12588,7 +12590,7 @@ public class PApplet extends Applet
    * may not go higher than 10 pixels.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref shape:attributes
    * @param weight the weight (in pixels) of the stroke
    * @see PGraphics#stroke(int, float)
@@ -12615,7 +12617,7 @@ public class PApplet extends Applet
    * <b>size()</b> reference.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref shape:attributes
    * @param join either MITER, BEVEL, ROUND
    * @see PGraphics#stroke(int, float)
@@ -12693,7 +12695,7 @@ public class PApplet extends Applet
    * maximum value is 255.
    *
    * ( end auto-generated )
-   * 
+   *
    * @param rgb color value in hexadecimal notation
    * @see PGraphics#noStroke()
    * @see PGraphics#fill(int, float)
@@ -12756,7 +12758,7 @@ public class PApplet extends Applet
    * displaying images with their original hues.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref image:loading_displaying
    * @usage web_application
    * @see PGraphics#tint(float, float, float, float)
@@ -12772,30 +12774,30 @@ public class PApplet extends Applet
    * ( begin auto-generated from tint.xml )
    *
    * Sets the fill value for displaying images. Images can be tinted to
-   * specified colors or made transparent by setting the alpha.<br /> 
+   * specified colors or made transparent by setting the alpha.<br />
    * <br />
    * To make an image transparent, but not change it's color, use white as
    * the tint color and specify an alpha value. For instance, tint(255, 128)
-   * will make an image 50% transparent (unless <b>colorMode()</b> has been 
+   * will make an image 50% transparent (unless <b>colorMode()</b> has been
    * used).<br />
    * <br />
-   * When using hexadecimal notation to specify a color, use "#" or "0x" 
-   * before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six 
-   * digits to specify a color (the way colors are specified in HTML and 
-   * CSS). When using the hexadecimal notation starting with "0x", the 
-   * hexadecimal value must be specified with eight characters; the first two 
-   * characters define the alpha component and the remainder the red, green, 
+   * When using hexadecimal notation to specify a color, use "#" or "0x"
+   * before the values (e.g. #CCFFAA, 0xFFCCFFAA). The # syntax uses six
+   * digits to specify a color (the way colors are specified in HTML and
+   * CSS). When using the hexadecimal notation starting with "0x", the
+   * hexadecimal value must be specified with eight characters; the first two
+   * characters define the alpha component and the remainder the red, green,
    * and blue components.<br />
    * <br />
    * The value for the parameter "gray" must be less than or equal to the
    * current maximum value as specified by <b>colorMode()</b>. The default
-   * maximum value is 255.<br /> 
+   * maximum value is 255.<br />
    * <br />
-   * The <b>tint()</b> function is also used to control the coloring of 
-   * textures in 3D. 
-   * 
+   * The <b>tint()</b> function is also used to control the coloring of
+   * textures in 3D.
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref image:loading_displaying
    * @usage web_application
    * @param rgb color value in hexadecimal notation
@@ -12860,7 +12862,7 @@ public class PApplet extends Applet
    * are called, nothing will be drawn to the screen.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref color:setting
    * @usage web_application
    * @see PGraphics#fill(float, float, float, float)
@@ -12962,7 +12964,7 @@ public class PApplet extends Applet
    * and <b>shininess()</b> in setting the material properties of shapes.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:material_properties
    * @usage web_application
    * @param rgb any value of the color datatype
@@ -13007,7 +13009,7 @@ public class PApplet extends Applet
    * setting the material properties of shapes.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:material_properties
    * @usage web_application
    * @param rgb color to set
@@ -13050,7 +13052,7 @@ public class PApplet extends Applet
    * setting the material properties of shapes.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:material_properties
    * @usage web_application
    * @param shine degree of shininess
@@ -13073,7 +13075,7 @@ public class PApplet extends Applet
    * properties of shapes.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:material_properties
    * @usage web_application
    * @param rgb color to set
@@ -13119,7 +13121,7 @@ public class PApplet extends Applet
    * through the loop.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:lights
    * @usage web_application
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
@@ -13136,14 +13138,14 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from noLights.xml )
-   * 
-   * Disable all lighting. Lighting is turned off by default and enabled with 
-   * the <b>lights()</b> function. This function can be used to disable 
-   * lighting so that 2D geometry (which does not require lighting) can be 
+   *
+   * Disable all lighting. Lighting is turned off by default and enabled with
+   * the <b>lights()</b> function. This function can be used to disable
+   * lighting so that 2D geometry (which does not require lighting) can be
    * drawn after a set of lighted 3D geometry.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:lights
    * @usage web_application
    * @see PGraphics#lights()
@@ -13167,7 +13169,7 @@ public class PApplet extends Applet
    * parameters is determined by the current color mode.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref lights_camera:lights
    * @usage web_application
    * @param red red or hue value (depending on current color mode)
@@ -13391,7 +13393,7 @@ public class PApplet extends Applet
    * the main drawing surface, however they will work properly with <b>createGraphics()</b>.
    *
    * ( end auto-generated )
-   * 
+   *
    * <h3>Advanced</h3>
    * <p>Clear the background with a color that includes an alpha value. This can
    * only be used with objects created by createGraphics(), because the main
@@ -13571,7 +13573,7 @@ public class PApplet extends Applet
    * &amp; 0xFF;</pre>
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -13602,7 +13604,7 @@ public class PApplet extends Applet
    * myColor &gt;&gt; 8 &amp; 0xFF;</pre>
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -13633,7 +13635,7 @@ public class PApplet extends Applet
    * &amp; 0xFF;</pre>
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -13698,7 +13700,7 @@ public class PApplet extends Applet
    * Extracts the brightness value from a color.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref color:creating_reading
    * @usage web_application
    * @param what any value of the color datatype
@@ -13723,7 +13725,7 @@ public class PApplet extends Applet
    * point, 0.5 is half-way in between, etc.
    *
    * ( end auto-generated )
-   * 
+   *
    * @webref color:creating_reading
    * @usage web_application
    * @param c1 interpolate from this color
@@ -13809,7 +13811,7 @@ public class PApplet extends Applet
 
   /**
    * Return true if this renderer does rendering through OpenGL. Defaults to false.
-   */  
+   */
   public boolean isGL() {
     return g.isGL();
   }
@@ -13849,7 +13851,7 @@ public class PApplet extends Applet
    * PGraphicsJava2D, or resized image data and OpenGL texture indices for
    * PGraphicsOpenGL.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The metadata required by the renderer   
+   * @param storage The metadata required by the renderer
    */
   public void setCache(PGraphics renderer, Object storage) {
     if (recorder != null) recorder.setCache(renderer, storage);
@@ -13884,7 +13886,7 @@ public class PApplet extends Applet
    * Store parameters for a renderer that requires extra metadata of
    * some kind.
    * @param renderer The PGraphics renderer associated to the image
-   * @param storage The parameters required by the renderer  
+   * @param storage The parameters required by the renderer
    */
   public void setParams(PGraphics renderer, Object params) {
     if (recorder != null) recorder.setParams(renderer, params);
@@ -13914,26 +13916,26 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_get.xml )
-   * 
-   * Reads the color of any pixel or grabs a section of an image. If no 
-   * parameters are specified, the entire image is returned. Use the <b>x</b> 
-   * and <b>y</b> parameters to get the value of one pixel. Get a section of 
-   * the display window by specifying an additional <b>width</b> and 
-   * <b>height</b> parameter. When getting an image, the <b>x</b> and 
-   * <b>y</b> parameters define the coordinates for the upper-left corner of 
+   *
+   * Reads the color of any pixel or grabs a section of an image. If no
+   * parameters are specified, the entire image is returned. Use the <b>x</b>
+   * and <b>y</b> parameters to get the value of one pixel. Get a section of
+   * the display window by specifying an additional <b>width</b> and
+   * <b>height</b> parameter. When getting an image, the <b>x</b> and
+   * <b>y</b> parameters define the coordinates for the upper-left corner of
    * the image, regardless of the current <b>imageMode()</b>.<br />
    * <br />
-   * If the pixel requested is outside of the image window, black is 
-   * returned. The numbers returned are scaled according to the current color 
-   * ranges, but only RGB values are returned by this function. For example, 
-   * even though you may have drawn a shape with <b>colorMode(HSB)</b>, the 
+   * If the pixel requested is outside of the image window, black is
+   * returned. The numbers returned are scaled according to the current color
+   * ranges, but only RGB values are returned by this function. For example,
+   * even though you may have drawn a shape with <b>colorMode(HSB)</b>, the
    * numbers returned will be in RGB format.<br />
    * <br />
-   * Getting the color of a single pixel with <b>get(x, y)</b> is easy, but 
-   * not as fast as grabbing the data directly from <b>pixels[]</b>. The 
-   * equivalent statement to <b>get(x, y)</b> using <b>pixels[]</b> is 
+   * Getting the color of a single pixel with <b>get(x, y)</b> is easy, but
+   * not as fast as grabbing the data directly from <b>pixels[]</b>. The
+   * equivalent statement to <b>get(x, y)</b> using <b>pixels[]</b> is
    * <b>pixels[y*width+x]</b>. See the reference for <b>pixels[]</b> for more information.
-   * 
+   *
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -13953,7 +13955,7 @@ public class PApplet extends Applet
    * is inside the bounds, and then has to check to see what image
    * type it is. If you want things to be more efficient, access the
    * pixels[] array directly.
-   * 
+   *
    * @webref image:pixels
    * @brief Reads the color of any pixel or grabs a rectangle of pixels
    * @usage web_application
@@ -13987,25 +13989,25 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_set.xml )
-   * 
-   * Changes the color of any pixel or writes an image directly into the 
+   *
+   * Changes the color of any pixel or writes an image directly into the
    * display window.<br />
    * <br />
-   * The <b>x</b> and <b>y</b> parameters specify the pixel to change and the 
-   * <b>color</b> parameter specifies the color value. The color parameter is 
-   * affected by the current color mode (the default is RGB values from 0 to 
-   * 255). When setting an image, the <b>x</b> and <b>y</b> parameters define 
-   * the coordinates for the upper-left corner of the image, regardless of 
+   * The <b>x</b> and <b>y</b> parameters specify the pixel to change and the
+   * <b>color</b> parameter specifies the color value. The color parameter is
+   * affected by the current color mode (the default is RGB values from 0 to
+   * 255). When setting an image, the <b>x</b> and <b>y</b> parameters define
+   * the coordinates for the upper-left corner of the image, regardless of
    * the current <b>imageMode()</b>.
    * <br /><br />
-   * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but 
-   * not as fast as putting the data directly into <b>pixels[]</b>. The 
-   * equivalent statement to <b>set(x, y, #000000)</b> using <b>pixels[]</b> 
-   * is <b>pixels[y*width+x] = #000000</b>. See the reference for 
+   * Setting the color of a single pixel with <b>set(x, y)</b> is easy, but
+   * not as fast as putting the data directly into <b>pixels[]</b>. The
+   * equivalent statement to <b>set(x, y, #000000)</b> using <b>pixels[]</b>
+   * is <b>pixels[y*width+x] = #000000</b>. See the reference for
    * <b>pixels[]</b> for more information.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref image:pixels
    * @brief writes a color to any pixel or writes an image into another
    * @usage web_application
@@ -14038,18 +14040,18 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_mask.xml )
-   * 
-   * Masks part of an image from displaying by loading another image and 
-   * using it as an alpha channel. This mask image should only contain 
-   * grayscale data, but only the blue color channel is used. The mask image 
+   *
+   * Masks part of an image from displaying by loading another image and
+   * using it as an alpha channel. This mask image should only contain
+   * grayscale data, but only the blue color channel is used. The mask image
    * needs to be the same size as the image to which it is applied.<br />
    * <br />
-   * In addition to using a mask image, an integer array containing the alpha 
-   * channel data can be specified directly. This method is useful for 
-   * creating dynamically generated alpha masks. This array must be of the 
-   * same length as the target image's pixels array and should contain only 
+   * In addition to using a mask image, an integer array containing the alpha
+   * channel data can be specified directly. This method is useful for
+   * creating dynamically generated alpha masks. This array must be of the
+   * same length as the target image's pixels array and should contain only
    * grayscale data of values between 0-255.
-   * 
+   *
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -14094,31 +14096,31 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_filter.xml )
-   * 
-   * Filters an image as defined by one of the following modes:<br /><br 
-   * />THRESHOLD - converts the image to black and white pixels depending if 
-   * they are above or below the threshold defined by the level parameter. 
-   * The level must be between 0.0 (black) and 1.0(white). If no level is 
+   *
+   * Filters an image as defined by one of the following modes:<br /><br
+   * />THRESHOLD - converts the image to black and white pixels depending if
+   * they are above or below the threshold defined by the level parameter.
+   * The level must be between 0.0 (black) and 1.0(white). If no level is
    * specified, 0.5 is used.<br />
    * <br />
    * GRAY - converts any colors in the image to grayscale equivalents<br />
    * <br />
    * INVERT - sets each pixel to its inverse value<br />
    * <br />
-   * POSTERIZE - limits each channel of the image to the number of colors 
+   * POSTERIZE - limits each channel of the image to the number of colors
    * specified as the level parameter<br />
    * <br />
-   * BLUR - executes a Guassian blur with the level parameter specifying the 
-   * extent of the blurring. If no level parameter is used, the blur is 
+   * BLUR - executes a Guassian blur with the level parameter specifying the
+   * extent of the blurring. If no level parameter is used, the blur is
    * equivalent to Guassian blur of radius 1<br />
    * <br />
    * OPAQUE - sets the alpha channel to entirely opaque<br />
    * <br />
-   * ERODE - reduces the light areas with the amount defined by the level 
+   * ERODE - reduces the light areas with the amount defined by the level
    * parameter<br />
    * <br />
    * DILATE - increases the light areas with the amount defined by the level parameter
-   * 
+   *
    * ( end auto-generated )
    *
    * <h3>Advanced</h3>
@@ -14153,17 +14155,17 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_copy.xml )
-   * 
-   * Copies a region of pixels from one image into another. If the source and 
-   * destination regions aren't the same size, it will automatically resize 
-   * source pixels to fit the specified target region. No alpha information 
-   * is used in the process, however if the source image has an alpha channel 
+   *
+   * Copies a region of pixels from one image into another. If the source and
+   * destination regions aren't the same size, it will automatically resize
+   * source pixels to fit the specified target region. No alpha information
+   * is used in the process, however if the source image has an alpha channel
    * set, it will be copied as well.
    * <br /><br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
-   * 
+   *
    * ( end auto-generated )
-   * 
+   *
    * @webref image:pixels
    * @brief Copies the entire image
    * @usage web_application
@@ -14198,11 +14200,11 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from blendColor.xml )
-   * 
-   * Blends two color values together based on the blending mode given as the 
-   * <b>MODE</b> parameter. The possible modes are described in the reference 
+   *
+   * Blends two color values together based on the blending mode given as the
+   * <b>MODE</b> parameter. The possible modes are described in the reference
    * for the <b>blend()</b> function.
-   * 
+   *
    * ( end auto-generated )
    * <h3>Advanced</h3>
    * <UL>
@@ -14289,17 +14291,17 @@ public class PApplet extends Applet
 
   /**
    * ( begin auto-generated from PImage_blend.xml )
-   * 
-   * Blends a region of pixels into the image specified by the <b>img</b> 
-   * parameter. These copies utilize full alpha channel support and a choice 
-   * of the following modes to blend the colors of source pixels (A) with the 
+   *
+   * Blends a region of pixels into the image specified by the <b>img</b>
+   * parameter. These copies utilize full alpha channel support and a choice
+   * of the following modes to blend the colors of source pixels (A) with the
    * ones of pixels in the destination image (B):<br />
    * <br />
    * BLEND - linear interpolation of colours: C = A*factor + B<br />
    * <br />
    * ADD - additive blending with white clip: C = min(A*factor + B, 255)<br />
    * <br />
-   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor, 
+   * SUBTRACT - subtractive blending with black clip: C = max(B - A*factor,
    * 0)<br />
    * <br />
    * DARKEST - only the darkest colour succeeds: C = min(A*factor, B)<br />
@@ -14319,7 +14321,7 @@ public class PApplet extends Applet
    * <br />
    * HARD_LIGHT - SCREEN when greater than 50% gray, MULTIPLY when lower.<br />
    * <br />
-   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST. 
+   * SOFT_LIGHT - Mix of DARKEST and LIGHTEST.
    * Works like OVERLAY, but not as harsh.<br />
    * <br />
    * DODGE - Lightens light tones and increases contrast, ignores darks.
@@ -14328,14 +14330,14 @@ public class PApplet extends Applet
    * BURN - Darker areas are applied, increasing contrast, ignores lights.
    * Called "Color Burn" in Illustrator and Photoshop.<br />
    * <br />
-   * All modes use the alpha information (highest byte) of source image 
-   * pixels as the blending factor. If the source and destination regions are 
-   * different sizes, the image will be automatically resized to match the 
-   * destination size. If the <b>srcImg</b> parameter is not used, the 
+   * All modes use the alpha information (highest byte) of source image
+   * pixels as the blending factor. If the source and destination regions are
+   * different sizes, the image will be automatically resized to match the
+   * destination size. If the <b>srcImg</b> parameter is not used, the
    * display window is used as the source image.<br />
    * <br />
    * As of release 0149, this function ignores <b>imageMode()</b>.
-   * 
+   *
    * ( end auto-generated )
    *
    * @webref image:pixels
