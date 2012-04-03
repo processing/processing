@@ -16,6 +16,8 @@ _ docs: P2D and P3D are now OpenGL variations
 X add createGraphics() with no renderer param to point to JAVA2D
 X   also added to Android
 _   add to docs
+X CENTER_RADIUS, CENTER_DIAMETER, NORMALIZED have been removed
+_   update changes Wiki
 
 andres
 A polygon shapes without fill slowdown render progressively

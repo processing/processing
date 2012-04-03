@@ -1384,11 +1384,11 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /** This feature is in testing, do not use or rely upon its implementation */
-  public void breakShape() {
-    showWarning("This renderer cannot currently handle concave shapes, " +
-                "or shapes with holes.");
-  }
+//  /** This feature is in testing, do not use or rely upon its implementation */
+//  public void breakShape() {
+//    showWarning("This renderer cannot currently handle concave shapes, " +
+//                "or shapes with holes.");
+//  }
 
 
   public void beginContour() {
@@ -5711,6 +5711,7 @@ public class PGraphics extends PImage implements PConstants {
     strokeFromCalc();
   }
 
+
   /**
    * @param alpha opacity of the stroke
    */
@@ -5728,24 +5729,27 @@ public class PGraphics extends PImage implements PConstants {
     strokeFromCalc();
   }
 
+
   public void stroke(float gray, float alpha) {
     colorCalc(gray, alpha);
     strokeFromCalc();
   }
 
+
   /**
-   * @param x red or hue value (depending on current color mode)
-   * @param y green or saturation value (depending on current color mode)
-   * @param z blue or brightness value (depending on current color mode)
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @webref color:setting
    */
-  public void stroke(float x, float y, float z) {
-    colorCalc(x, y, z);
+  public void stroke(float v1, float v2, float v3) {
+    colorCalc(v1, v2, v3);
     strokeFromCalc();
   }
 
-  public void stroke(float x, float y, float z, float alpha) {
-    colorCalc(x, y, z, alpha);
+
+  public void stroke(float v1, float v2, float v3, float alpha) {
+    colorCalc(v1, v2, v3, alpha);
     strokeFromCalc();
   }
 
@@ -5854,21 +5858,21 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 /**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
+ * @param v1 red or hue value (depending on current color mode)
+ * @param v2 green or saturation value (depending on current color mode)
+ * @param v3 blue or brightness value (depending on current color mode)
  */
-  public void tint(float x, float y, float z) {
-    colorCalc(x, y, z);
+  public void tint(float v1, float v2, float v3) {
+    colorCalc(v1, v2, v3);
     tintFromCalc();
   }
 
 
   /**
-   * @param z opacity of the image
+   * @param v3 opacity of the image
    */
-  public void tint(float x, float y, float z, float a) {
-    colorCalc(x, y, z, a);
+  public void tint(float v1, float v2, float v3, float a) {
+    colorCalc(v1, v2, v3, a);
     tintFromCalc();
   }
 
@@ -5974,13 +5978,13 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 /**
- * @param x red or hue value (depending on current color mode)
- * @param y green or saturation value (depending on current color mode)
- * @param z blue or brightness value (depending on current color mode)
+ * @param v1 red or hue value (depending on current color mode)
+ * @param v2 green or saturation value (depending on current color mode)
+ * @param v3 blue or brightness value (depending on current color mode)
  */
 
-  public void fill(float x, float y, float z) {
-    colorCalc(x, y, z);
+  public void fill(float v1, float v2, float v3) {
+    colorCalc(v1, v2, v3);
     fillFromCalc();
   }
 
@@ -5988,8 +5992,8 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * @param a opacity of the fill
    */
-  public void fill(float x, float y, float z, float a) {
-    colorCalc(x, y, z, a);
+  public void fill(float v1, float v2, float v3, float a) {
+    colorCalc(v1, v2, v3, a);
     fillFromCalc();
   }
 
@@ -6453,16 +6457,16 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param x red or hue value (depending on current color mode)
-   * @param y green or saturation value (depending on current color mode)
-   * @param z blue or brightness value (depending on current color mode)
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
    * @see PGraphics#specular(float, float, float)
    * @see PGraphics#lights()
    * @see PGraphics#ambientLight(float, float, float, float, float, float)
    * @see PGraphics#pointLight(float, float, float, float, float, float)
    * @see PGraphics#spotLight(float, float, float, float, float, float, float, float, float, float, float)
    */
-  public void lightSpecular(float x, float y, float z) {
+  public void lightSpecular(float v1, float v2, float v3) {
     showMethodWarning("lightSpecular");
   }
 
@@ -6572,12 +6576,12 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @param x red or hue value (depending on the current color mode)
-   * @param y green or saturation value (depending on the current color mode)
-   * @param z blue or brightness value (depending on the current color mode)
+   * @param v1 red or hue value (depending on the current color mode)
+   * @param v2 green or saturation value (depending on the current color mode)
+   * @param v3 blue or brightness value (depending on the current color mode)
    */
-  public void background(float x, float y, float z) {
-    colorCalc(x, y, z);
+  public void background(float v1, float v2, float v3) {
+    colorCalc(v1, v2, v3);
     backgroundFromCalc();
 //    backgroundImpl();
   }
@@ -6586,7 +6590,7 @@ public class PGraphics extends PImage implements PConstants {
   /**
    * @param a opacity of the background
    */
-  public void background(float x, float y, float z, float a) {
+  public void background(float v1, float v2, float v3, float a) {
 //    if (format == RGB) {
 //      background(x, y, z);  // don't allow people to set alpha
 //
@@ -6595,7 +6599,7 @@ public class PGraphics extends PImage implements PConstants {
 //      backgroundFromCalc();
 //      backgroundImpl();
 //    }
-    colorCalc(x, y, z, a);
+    colorCalc(v1, v2, v3, a);
     backgroundFromCalc();
   }
 
@@ -6723,6 +6727,7 @@ public class PGraphics extends PImage implements PConstants {
     colorMode(mode, colorModeX, colorModeY, colorModeZ, colorModeA);
   }
 
+
   /**
    * @param max range for all color elements
    */
@@ -6732,29 +6737,30 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @param maxX range for the red or hue depending on the current color mode
-   * @param maxY range for the green or saturation depending on the current color mode
-   * @param maxZ range for the blue or brightness depending on the current color mode
+   * @param max1 range for the red or hue depending on the current color mode
+   * @param max2 range for the green or saturation depending on the current color mode
+   * @param max3 range for the blue or brightness depending on the current color mode
    */
-  public void colorMode(int mode, float maxX, float maxY, float maxZ) {
-    colorMode(mode, maxX, maxY, maxZ, colorModeA);
+  public void colorMode(int mode, float max1, float max2, float max3) {
+    colorMode(mode, max1, max2, max3, colorModeA);
   }
 
-/**
- * @param maxA range for the alpha
- */
+
+  /**
+   * @param maxA range for the alpha
+   */
   public void colorMode(int mode,
-                        float maxX, float maxY, float maxZ, float maxA) {
+                        float max1, float max2, float max3, float maxA) {
     colorMode = mode;
 
-    colorModeX = maxX;  // still needs to be set for hsb
-    colorModeY = maxY;
-    colorModeZ = maxZ;
+    colorModeX = max1;  // still needs to be set for hsb
+    colorModeY = max2;
+    colorModeZ = max3;
     colorModeA = maxA;
 
     // if color max values are all 1, then no need to scale
     colorModeScale =
-      ((maxA != 1) || (maxX != maxY) || (maxY != maxZ) || (maxZ != maxA));
+      ((maxA != 1) || (max1 != max2) || (max2 != max3) || (max3 != maxA));
 
     // if color is rgb/0..255 this will make it easier for the
     // red() green() etc functions
@@ -7009,43 +7015,26 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public final int color(int x, int y, int z) {  // ignore
-//    if (colorModeDefault) {
-//      // bounds checking to make sure the numbers aren't to high or low
-//      if (x > 255) x = 255; else if (x < 0) x = 0;
-//      if (y > 255) y = 255; else if (y < 0) y = 0;
-//      if (z > 255) z = 255; else if (z < 0) z = 0;
-//
-//      return 0xff000000 | (x << 16) | (y << 8) | z;
-//    }
-    colorCalc(x, y, z);
+  public final int color(int v1, int v2, int v3) {  // ignore
+    colorCalc(v1, v2, v3);
     return calcColor;
   }
 
 
-  public final int color(float x, float y, float z) {  // ignore
-    colorCalc(x, y, z);
+  public final int color(float v1, float v2, float v3) {  // ignore
+    colorCalc(v1, v2, v3);
     return calcColor;
   }
 
 
-  public final int color(int x, int y, int z, int a) {  // ignore
-//    if (colorModeDefault) {
-//      // bounds checking to make sure the numbers aren't to high or low
-//      if (a > 255) a = 255; else if (a < 0) a = 0;
-//      if (x > 255) x = 255; else if (x < 0) x = 0;
-//      if (y > 255) y = 255; else if (y < 0) y = 0;
-//      if (z > 255) z = 255; else if (z < 0) z = 0;
-//
-//      return (a << 24) | (x << 16) | (y << 8) | z;
-//    }
-    colorCalc(x, y, z, a);
+  public final int color(int v1, int v2, int v3, int a) {  // ignore
+    colorCalc(v1, v2, v3, a);
     return calcColor;
   }
 
 
-  public final int color(float x, float y, float z, float a) {  // ignore
-    colorCalc(x, y, z, a);
+  public final int color(float v1, float v2, float v3, float a) {  // ignore
+    colorCalc(v1, v2, v3, a);
     return calcColor;
   }
 
