@@ -589,31 +589,31 @@ public class PImage implements PConstants, Cloneable {
    * @webref pimage:method
    * @brief Changes the size of an image to a new width and height
    * @usage web_application
-   * @param wide the resized image width
-   * @param high the resized image height
+   * @param w the resized image width
+   * @param h the resized image height
    * @see PImage#get(int, int, int, int)
    */
-  public void resize(int wide, int high) {  // ignore
+  public void resize(int w, int h) {  // ignore
     // Make sure that the pixels[] array is valid
     loadPixels();
 
-    if (wide <= 0 && high <= 0) {
+    if (w <= 0 && h <= 0) {
       width = 0;  // Gimme a break, don't waste my time
       height = 0;
       pixels = new int[0];
 
     } else {
-      if (wide == 0) {  // Use height to determine relative size
-        float diff = (float) high / (float) height;
-        wide = (int) (width * diff);
-      } else if (high == 0) {  // Use the width to determine relative size
-        float diff = (float) wide / (float) width;
-        high = (int) (height * diff);
+      if (w == 0) {  // Use height to determine relative size
+        float diff = (float) h / (float) height;
+        w = (int) (width * diff);
+      } else if (h == 0) {  // Use the width to determine relative size
+        float diff = (float) w / (float) width;
+        h = (int) (height * diff);
       }
-      PImage temp = new PImage(wide, high, this.format);
-      temp.copy(this, 0, 0, width, height, 0, 0, wide, high);
-      this.width = wide;
-      this.height = high;
+      PImage temp = new PImage(w, h, this.format);
+      temp.copy(this, 0, 0, width, height, 0, 0, w, h);
+      this.width = w;
+      this.height = h;
       this.pixels = temp.pixels;
     }
     // Mark the pixels array as altered
@@ -796,13 +796,13 @@ public class PImage implements PConstants, Cloneable {
    * No variations are employed, meaning that any scale, tint, or imageMode
    * settings will be ignored.
    *
-   * @param src image to draw on screen
+   * @param image image to draw on screen
    */
-  public void set(int x, int y, PImage src) {
+  public void set(int x, int y, PImage image) {
     int sx = 0;
     int sy = 0;
-    int sw = src.width;
-    int sh = src.height;
+    int sw = image.width;
+    int sh = image.height;
 
 //    if (imageMode == CENTER) {
 //      x -= src.width/2;
@@ -828,7 +828,7 @@ public class PImage implements PConstants, Cloneable {
     // this could be nonexistant
     if ((sw <= 0) || (sh <= 0)) return;
 
-    setImpl(x, y, sx, sy, sw, sh, src);
+    setImpl(x, y, sx, sy, sw, sh, image);
   }
 
 

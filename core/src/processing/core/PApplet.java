@@ -9995,13 +9995,6 @@ public class PApplet extends Applet
   }
 
 
-  /** This feature is in testing, do not use or rely upon its implementation */
-  public void breakShape() {
-    if (recorder != null) recorder.breakShape();
-    g.breakShape();
-  }
-
-
   public void beginContour() {
     if (recorder != null) recorder.beginContour();
     g.beginContour();

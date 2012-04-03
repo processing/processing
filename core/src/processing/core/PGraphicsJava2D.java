@@ -391,8 +391,13 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
-  public void breakShape() {
+  public void beginContour() {
     breakShape = true;
+  }
+
+
+  public void endContour() {
+    // does nothing, just need the break in beginContour()
   }
 
 
