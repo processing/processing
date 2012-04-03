@@ -4700,10 +4700,10 @@ public class PGraphics extends PImage implements PConstants {
    * Not recommended for use in 3D, because the z-dimension is just
    * scaled by 1, since there's no way to know what else to scale it by.
    *
-   * @param sx percentage to scale the object in the x-axis
-   * @param sy percentage to scale the objects in the y-axis
+   * @param x percentage to scale the object in the x-axis
+   * @param y percentage to scale the objects in the y-axis
    */
-  public void scale(float sx, float sy) {
+  public void scale(float x, float y) {
     showMissingWarning("scale");
   }
 
@@ -7042,7 +7042,7 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -7050,10 +7050,10 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
    */
-  public final float alpha(int what) {
-    float c = (what >> 24) & 0xff;
-    if (colorModeA == 255) return c;
-    return (c / 255.0f) * colorModeA;
+  public final float alpha(int rgb) {
+    float outgoing = (rgb >> 24) & 0xff;
+    if (colorModeA == 255) return outgoing;
+    return (outgoing / 255.0f) * colorModeA;
   }
 
 
@@ -7074,7 +7074,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#alpha(int)
@@ -7083,8 +7083,8 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#brightness(int)
    * @see_external rightshift
    */
-  public final float red(int what) {
-    float c = (what >> 16) & 0xff;
+  public final float red(int rgb) {
+    float c = (rgb >> 16) & 0xff;
     if (colorModeDefault) return c;
     return (c / 255.0f) * colorModeX;
   }
@@ -7107,7 +7107,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#blue(int)
    * @see PGraphics#alpha(int)
@@ -7116,8 +7116,8 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#brightness(int)
    * @see_external rightshift
    */
-  public final float green(int what) {
-    float c = (what >> 8) & 0xff;
+  public final float green(int rgb) {
+    float c = (rgb >> 8) & 0xff;
     if (colorModeDefault) return c;
     return (c / 255.0f) * colorModeY;
   }
@@ -7140,7 +7140,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#alpha(int)
@@ -7149,8 +7149,8 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#brightness(int)
    * @see_external rightshift
    */
-  public final float blue(int what) {
-    float c = (what) & 0xff;
+  public final float blue(int rgb) {
+    float c = (rgb) & 0xff;
     if (colorModeDefault) return c;
     return (c / 255.0f) * colorModeZ;
   }
@@ -7164,7 +7164,7 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -7172,11 +7172,11 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#saturation(int)
    * @see PGraphics#brightness(int)
    */
-  public final float hue(int what) {
-    if (what != cacheHsbKey) {
-      Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
-                     what & 0xff, cacheHsbValue);
-      cacheHsbKey = what;
+  public final float hue(int rgb) {
+    if (rgb != cacheHsbKey) {
+      Color.RGBtoHSB((rgb >> 16) & 0xff, (rgb >> 8) & 0xff,
+                     rgb & 0xff, cacheHsbValue);
+      cacheHsbKey = rgb;
     }
     return cacheHsbValue[0] * colorModeX;
   }
@@ -7190,7 +7190,7 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -7198,11 +7198,11 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#hue(int)
    * @see PGraphics#brightness(int)
    */
-  public final float saturation(int what) {
-    if (what != cacheHsbKey) {
-      Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
-                     what & 0xff, cacheHsbValue);
-      cacheHsbKey = what;
+  public final float saturation(int rgb) {
+    if (rgb != cacheHsbKey) {
+      Color.RGBtoHSB((rgb >> 16) & 0xff, (rgb >> 8) & 0xff,
+                     rgb & 0xff, cacheHsbValue);
+      cacheHsbKey = rgb;
     }
     return cacheHsbValue[1] * colorModeY;
   }
@@ -7217,7 +7217,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref color:creating_reading
    * @usage web_application
-   * @param what any value of the color datatype
+   * @param rgb any value of the color datatype
    * @see PGraphics#red(int)
    * @see PGraphics#green(int)
    * @see PGraphics#blue(int)
@@ -7225,11 +7225,11 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#hue(int)
    * @see PGraphics#saturation(int)
    */
-  public final float brightness(int what) {
-    if (what != cacheHsbKey) {
-      Color.RGBtoHSB((what >> 16) & 0xff, (what >> 8) & 0xff,
-                     what & 0xff, cacheHsbValue);
-      cacheHsbKey = what;
+  public final float brightness(int rgb) {
+    if (rgb != cacheHsbKey) {
+      Color.RGBtoHSB((rgb >> 16) & 0xff, (rgb >> 8) & 0xff,
+                     rgb & 0xff, cacheHsbValue);
+      cacheHsbKey = rgb;
     }
     return cacheHsbValue[2] * colorModeZ;
   }
