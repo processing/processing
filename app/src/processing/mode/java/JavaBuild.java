@@ -3,7 +3,7 @@
 /*
 Part of the Processing project - http://processing.org
 
-Copyright (c) 2004-11 Ben Fry and Casey Reas
+Copyright (c) 2004-12 Ben Fry and Casey Reas
 Copyright (c) 2001-04 Massachusetts Institute of Technology
 
 This program is free software; you can redistribute it and/or modify
@@ -34,16 +34,6 @@ import processing.mode.java.preproc.*;
 
 
 public class JavaBuild {
-  /**
-   * Regular expression for parsing the size() method. This should match
-   * against any uses of the size() function, whether numbers or variables
-   * or whatever. This way, no warning is shown if size() isn't actually used
-   * in the sketch, which is the case especially for anyone who is cutting
-   * and pasting from the reference.
-   */
-  public static final String SIZE_REGEX =
-    "(?:^|\\s|;)size\\s*\\(\\s*([^\\s,]+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
-    //"(?:^|\\s|;)size\\s*\\(\\s*(\\S+)\\s*,\\s*([^\\s,\\)]+),?\\s*([^\\)]*)\\s*\\)\\s*\\;";
   public static final String PACKAGE_REGEX =
     "(?:^|\\s|;)package\\s+(\\S+)\\;";
 
@@ -249,20 +239,24 @@ public class JavaBuild {
       }
     }
 
-    // Automatically insert the OpenGL import line if P3D is used. Do this by
-    // modifying the code here instead of
-    String scrubbed = scrubComments(sketch.getCode(0).getProgram());
-    String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
-    String renderer = "";
-    if (matches != null) {
-      // Adding back the trim() for 0136 to handle Bug #769
-      if (matches.length == 4) renderer = matches[3].trim();
-      // Actually, matches.length should always be 4...
-    }
-    // OpenGL import time! Really, this is for P3D, but may as well do it
-    // for OpenGL as well.
-    if (renderer.equals("P3D") || renderer.equals("OPENGL")) {
-      bigCode.insert(0, "import processing.opengl.*; ");
+    // initSketchSize() sets the internal sketchWidth/Height/Renderer vars
+    // in the preprocessor. Those are used in preproc.write() so that they
+    // can be turned into sketchXxxx() methods.
+    // This also returns the size info as an array so that we can figure out
+    // if this fella is OpenGL, and if so, to add the import. It's messy and
+    // gross and someday we'll just always include OpenGL.
+    String[] sizeInfo =
+      preprocessor.initSketchSize(sketch.getMainProgram());
+      //PdePreprocessor.parseSketchSize(sketch.getMainProgram(), false);
+    if (sizeInfo != null) {
+      String sketchRenderer = sizeInfo[3];
+      if (sketchRenderer != null) {
+        if (sketchRenderer.equals("P2D") ||
+            sketchRenderer.equals("P3D") ||
+            sketchRenderer.equals("OPENGL")) {
+          bigCode.insert(0, "import processing.opengl.*; ");
+        }
+      }
     }
 
     PreprocessorResult result;
@@ -298,7 +292,7 @@ public class JavaBuild {
 //      System.out.println(errorLine + " " + errorFile + " " + code[errorFile].getPreprocOffset());
 
       String msg = re.getMessage();
-      
+
       //System.out.println(java.getAbsolutePath());
       System.out.println(bigCode);
 
@@ -313,7 +307,7 @@ public class JavaBuild {
                                   "without a } to match it.",
                                   errorFile, errorLine, re.getColumn(), false);
       }
-      
+
       if (msg.contains("expecting LCURLY")) {
         System.err.println(msg);
         String suffix = ".";
@@ -321,7 +315,7 @@ public class JavaBuild {
         if (m != null) {
           suffix = ", not " + m[1] + ".";
         }
-        throw new SketchException("Was expecting a { character" + suffix,  
+        throw new SketchException("Was expecting a { character" + suffix,
                                    errorFile, errorLine, re.getColumn(), false);
       }
 
@@ -365,7 +359,7 @@ public class JavaBuild {
       // TODO not tested since removing ORO matcher.. ^ could be a problem
       String mess = "^line (\\d+):(\\d+):\\s";
 
-      matches = PApplet.match(tsre.toString(), mess);
+      String[] matches = PApplet.match(tsre.toString(), mess);
       if (matches != null) {
         int errorLine = Integer.parseInt(matches[1]) - 1;
         int errorColumn = Integer.parseInt(matches[2]);
@@ -503,7 +497,7 @@ public class JavaBuild {
         sc.addPreprocOffset(result.headerOffset);
       }
     }
-    foundMain = preprocessor.getFoundMain();
+    foundMain = preprocessor.hasMethod("main");
     return result.className;
   }
 
@@ -730,12 +724,57 @@ public class JavaBuild {
       return false;
     }
 
+    String[] sizeInfo =
+      PdePreprocessor.parseSketchSize(sketch.getMainProgram(), false);
+    int sketchWidth = PApplet.DEFAULT_WIDTH;
+    int sketchHeight = PApplet.DEFAULT_HEIGHT;
+    boolean openglApplet = false;
+    boolean foundSize = false;
+    if (sizeInfo != null) {
+      try {
+        if (sizeInfo[1] != null && sizeInfo[2] != null) {
+          sketchWidth = Integer.parseInt(sizeInfo[1]);
+          sketchHeight = Integer.parseInt(sizeInfo[2]);
+          foundSize = true;
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        // parsing errors, whatever; ignored
+      }
+
+      String sketchRenderer = sizeInfo[3];
+      if (sketchRenderer != null) {
+        if (sketchRenderer.equals("P2D") ||
+            sketchRenderer.equals("P3D") ||
+            sketchRenderer.equals("OPENGL")) {
+          openglApplet = true;
+        }
+      }
+    }
+    if (!foundSize) {
+      final String message =
+        "The size of this applet could not automatically be\n" +
+        "determined from your code. You'll have to edit the\n" +
+        "HTML file to set the size of the applet.\n" +
+        "Use only numeric values (not variables) for the size()\n" +
+        "command. See the size() reference for an explanation.";
+      Base.showWarning("Could not find applet size", message, null);
+    }
+
+//      // If the renderer is set to the built-in OpenGL library,
+//      // then it's definitely an OpenGL applet.
+//      if (sketchRenderer.equals("P3D") || sketchRenderer.equals("OPENGL")) {
+//        openglApplet = true;
+//      }
+
+
+    /*
     int wide = PApplet.DEFAULT_WIDTH;
     int high = PApplet.DEFAULT_HEIGHT;
     String renderer = "";
 
-    String scrubbed = scrubComments(sketch.getCode(0).getProgram());
-    String[] matches = PApplet.match(scrubbed, SIZE_REGEX);
+    String scrubbed = PdePreprocessor.scrubComments(sketch.getCode(0).getProgram());
+    String[] matches = PApplet.match(scrubbed, PdePreprocessor.SIZE_REGEX);
 
     if (matches != null) {
       try {
@@ -759,6 +798,7 @@ public class JavaBuild {
         Base.showWarning("Could not find applet size", message, null);
       }
     }  // else no size() command found
+    */
 
     // Grab the Javadoc-style description from the main code.
     String description = "";
@@ -847,7 +887,7 @@ public class JavaBuild {
 //    File openglLibraryFolder =
 //      new File(editor.getMode().getLibrariesFolder(), "opengl/library");
 //    String openglLibraryPath = openglLibraryFolder.getAbsolutePath();
-    boolean openglApplet = false;
+//    boolean openglApplet = false;
 
     HashMap<String,Object> zipFileContents = new HashMap<String,Object>();
 
@@ -942,11 +982,6 @@ public class JavaBuild {
 //    for (File libraryFolder : importedLibraries) {
 //      System.out.println(libraryFolder + " " + libraryFolder.getAbsolutePath());
 //    }
-    // If the renderer is set to the built-in OpenGL library,
-    // then it's definitely an OpenGL applet.
-    if (renderer.equals("P3D") || renderer.equals("OPENGL")) {
-      openglApplet = true;
-    }
     if (is == null) {
       if (openglApplet) {
         is = mode.getContentStream("applet/template-opengl.html");
@@ -975,11 +1010,11 @@ public class JavaBuild {
         }
         while ((index = sb.indexOf("@@width@@")) != -1) {
           sb.replace(index, index + "@@width@@".length(),
-                     String.valueOf(wide));
+                     String.valueOf(sketchWidth));
         }
         while ((index = sb.indexOf("@@height@@")) != -1) {
           sb.replace(index, index + "@@height@@".length(),
-                     String.valueOf(high));
+                     String.valueOf(sketchHeight));
         }
         while ((index = sb.indexOf("@@description@@")) != -1) {
           sb.replace(index, index + "@@description@@".length(),
@@ -995,58 +1030,6 @@ public class JavaBuild {
     htmlWriter.close();
 
     return true;
-  }
-
-
-  /**
-   * Replace all commented portions of a given String as spaces.
-   * Utility function used here and in the preprocessor.
-   */
-  static public String scrubComments(String what) {
-    char p[] = what.toCharArray();
-
-    int index = 0;
-    while (index < p.length) {
-      // for any double slash comments, ignore until the end of the line
-      if ((p[index] == '/') &&
-          (index < p.length - 1) &&
-          (p[index+1] == '/')) {
-        p[index++] = ' ';
-        p[index++] = ' ';
-        while ((index < p.length) &&
-               (p[index] != '\n')) {
-          p[index++] = ' ';
-        }
-
-        // check to see if this is the start of a new multiline comment.
-        // if it is, then make sure it's actually terminated somewhere.
-      } else if ((p[index] == '/') &&
-                 (index < p.length - 1) &&
-                 (p[index+1] == '*')) {
-        p[index++] = ' ';
-        p[index++] = ' ';
-        boolean endOfRainbow = false;
-        while (index < p.length - 1) {
-          if ((p[index] == '*') && (p[index+1] == '/')) {
-            p[index++] = ' ';
-            p[index++] = ' ';
-            endOfRainbow = true;
-            break;
-
-          } else {
-            // continue blanking this area
-            p[index++] = ' ';
-          }
-        }
-        if (!endOfRainbow) {
-          throw new RuntimeException("Missing the */ from the end of a " +
-                                     "/* comment */");
-        }
-      } else {  // any old character, move along
-        index++;
-      }
-    }
-    return new String(p);
   }
 
 

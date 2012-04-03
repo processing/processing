@@ -13,6 +13,8 @@ o   http://code.google.com/p/processing/issues/detail?id=715
 X change screenWidth/Height to displayWidth/Height
 _   update wiki.processing.org/w/Window_Size_and_Full_Screen
 
+_ add createGraphics() with no renderer param to point to JAVA2D
+
 fixed in 2.0a5
 A OpenGL noSmooth() does not work
 A   http://code.google.com/p/processing/issues/detail?id=328

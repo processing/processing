@@ -24,7 +24,7 @@ import antlr.collections.AST;
  * other than System.out, and then call print(), passing the
  * AST. Typically, the AST node that you pass would be the root of a
  * tree - the ROOT_ID node that represents a Java file.
- * 
+ *
  * Modified March 2010 to support Java 5 type arguments and for loops by
  * @author Jonathan Feinberg &lt;jdf@pobox.com&gt;
  */
@@ -239,10 +239,11 @@ public class PdeEmitter implements PdeTokenTypes {
       type = modifiers.getNextSibling();
     }
     final AST methodName = type.getNextSibling();
-    if (methodName.getText().equals("main")) {
-      pdePreprocessor.setFoundMain(true);
-    }
-    printChildren(ast); 
+//    if (methodName.getText().equals("main")) {
+//      pdePreprocessor.setFoundMain(true);
+//    }
+    pdePreprocessor.addMethod(methodName.getText());
+    printChildren(ast);
   }
 
   private void printIfThenElse(final AST literalIf) throws SketchException {
@@ -265,10 +266,10 @@ public class PdeEmitter implements PdeTokenTypes {
       dumpHiddenBefore(bestPrintableNode);
       final CommonHiddenStreamToken hiddenBefore =
         ((CommonASTWithHiddenTokens) elsePath).getHiddenBefore();
-      if (elsePath.getType() == PdeTokenTypes.SLIST && elsePath.getNumberOfChildren() == 0 && 
+      if (elsePath.getType() == PdeTokenTypes.SLIST && elsePath.getNumberOfChildren() == 0 &&
           hiddenBefore == null) {
         out.print("{");
-        final CommonHiddenStreamToken hiddenAfter = 
+        final CommonHiddenStreamToken hiddenAfter =
           ((CommonASTWithHiddenTokens) elsePath).getHiddenAfter();
         if (hiddenAfter == null) {
           out.print("}");
@@ -742,11 +743,11 @@ public class PdeEmitter implements PdeTokenTypes {
       out.print("@");
       printChildren(ast);
       break;
-      
+
     case ANNOTATION_ARRAY_INIT:
       printChildren(ast);
       break;
-      
+
     case ANNOTATION_MEMBER_VALUE_PAIR:
       print(ast.getFirstChild());
       out.print("=");

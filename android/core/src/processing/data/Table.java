@@ -3,8 +3,8 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011- Ben Fry and Casey Reas
-  Copyright (c) 2006-2011 Ben Fry
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
+  Copyright (c) 2006-11 Ben Fry
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public

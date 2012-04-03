@@ -120,9 +120,12 @@ class AndroidBuild extends JavaBuild {
 
     // build the preproc and get to work
     AndroidPreprocessor preproc = new AndroidPreprocessor(sketch, getPackageName());
-    if (!preproc.parseSketchSize()) {
-      throw new SketchException("Could not parse the size() command.");
-    }
+//    if (!preproc.parseSketchSize()) {
+//    String[] sizeInfo = PdePreprocessor.parseSketchSize(sketch.getMainProgram());
+//    if (sizeInfo == null) {
+//      throw new SketchException("Could not parse the size() command.");
+//    }
+    preproc.initSketchSize(sketch.getMainProgram());
     sketchClassName = preprocess(srcFolder, manifest.getPackageName(), preproc);
     if (sketchClassName != null) {
       File tempManifest = new File(tmpFolder, "AndroidManifest.xml");
