@@ -46,7 +46,6 @@ import android.text.format.Time;
 import android.util.*;
 import android.view.*;
 import android.widget.*;
-import android.widget.RelativeLayout;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -3838,22 +3837,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
   }
 
 
+  
   //////////////////////////////////////////////////////////////
 
-  // NODE I/O (XML, JSON, etc.)
+  // DATA I/O
 
-  public XML loadNode(String filename) {
+
+  public XML loadXML(String filename) {
     return new XML(this, filename);
   }
 
 
-//  public PData loadData(String filename) {
-//    if (filename.toLowerCase().endsWith(".json")) {
-//      return new PData(this, filename);
-//    } else {
-//      throw new RuntimeException("filename used for loadNode() must end with XML");
-//    }
-//  }
+  public Table loadTable(String filename) {
+    return new Table(this, filename);
+  }
 
 
 

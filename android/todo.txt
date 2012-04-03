@@ -6,12 +6,14 @@ X   consider switch to android 2.2 as the minimum
 andres
 A GL2 specific code in Processing 2.0a5 break P3D on GLES2 hardware
 A   http://code.google.com/p/processing/issues/detail?id=1029
-_ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
-_   http://code.google.com/p/processing/issues/detail?id=1019
 X OpenGL/ES requires precision specifier on float types
 X   http://code.google.com/p/processing/issues/detail?id=1035
+_ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
+_   http://code.google.com/p/processing/issues/detail?id=1019
 
 earlier
+X remove unnecessary processing.xml.* code from android-core
+X   http://code.google.com/p/processing/issues/detail?id=214
 X remove unnecessary processing.xml.* code from android-core
 X   http://code.google.com/p/processing/issues/detail?id=214
 
@@ -374,8 +376,6 @@ DL _   http://code.google.com/p/processing/issues/detail?id=244
 
 EH _ separate "PApplet" into separate View and Activity classes
 EH _   http://code.google.com/p/processing/issues/detail?id=212
-EM _ remove unnecessary processing.xml.* code from android-core
-EM _   http://code.google.com/p/processing/issues/detail?id=214
 EM _ implement size() and createGraphics() for arbitrary renderers
 EM _   http://code.google.com/p/processing/issues/detail?id=241
 
