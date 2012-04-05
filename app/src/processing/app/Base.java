@@ -1243,6 +1243,11 @@ public class Base {
   }
 
 
+  public void thinkDifferentExamples() {
+    nextMode.showExamplesFrame();
+  }
+
+
   /**
    * Synchronous version of rebuild, used when the sketchbook folder has
    * changed, so that the libraries are properly re-scanned before those menus
