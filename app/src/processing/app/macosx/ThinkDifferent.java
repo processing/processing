@@ -129,7 +129,7 @@ public class ThinkDifferent implements ApplicationListener {
     item = new JMenuItem("Examples...");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.nextMode.showExamplesFrame();
+        base.thinkDifferentExamples();
       }
     });
     fileMenu.add(item);
