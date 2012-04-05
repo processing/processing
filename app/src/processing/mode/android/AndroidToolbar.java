@@ -97,7 +97,7 @@ public class AndroidToolbar extends EditorToolbar {
       break;
 
     case SAVE:
-      aeditor.handleSaveRequest(false);
+      aeditor.handleSave(false);
       break;
 
     case EXPORT:

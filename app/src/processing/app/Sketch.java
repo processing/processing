@@ -663,7 +663,9 @@ public class Sketch {
 
 
   /**
-   * Save all code in the current sketch.
+   * Save all code in the current sketch. This just forces the files to save
+   * in place, so if it's an untitled (un-saved) sketch, saveAs() should be
+   * called instead. (This is handled inside Editor.handleSave()).
    */
   public boolean save() throws IOException {
     // make sure the user didn't hide the sketch folder
@@ -711,7 +713,7 @@ public class Sketch {
 
     if (false) {
       // The Swing file chooser has some upside (i.e. fixes an OS X focus
-      // traversal bug) bug is super ugly and not OS native.
+      // traversal bug) but is super ugly and not OS native.
       JFileChooser fc = new JFileChooser();
       fc.setDialogTitle("Save sketch folder as...");
       if (isReadOnly() || isUntitled()) {
@@ -793,12 +795,12 @@ public class Sketch {
     } catch (IOException e) { }
 
     // if the new folder already exists, then first remove its contents before
-    // copying everything over (user will have already been warned)
+    // copying everything over (user will have already been warned).
     if (newFolder.exists()) {
       Base.removeDir(newFolder);
     }
-    // in fact, you can't do this on windows because the file dialog
-    // will instead put you inside the folder, but it happens on osx a lot.
+    // in fact, you can't do this on Windows because the file dialog
+    // will instead put you inside the folder, but it happens on OS X a lot.
 
     // now make a fresh copy of the folder
     newFolder.mkdirs();
@@ -851,6 +853,13 @@ public class Sketch {
       code[i].saveAs(newFile);
     }
 
+    // While the old path to the main .pde is still set, remove the entry from
+    // the Recent menu so that it's not sticking around after the rename.
+    // If untitled, it won't be in the menu, so there's no point.
+    if (!isUntitled()) {
+      editor.removeRecent();
+    }
+
     // save the main tab with its new name
     File newFile = new File(newFolder, newName + ".pde");
     code[0].saveAs(newFile);
@@ -859,6 +868,9 @@ public class Sketch {
 
     // Make sure that it's not an untitled sketch
     setUntitled(false);
+
+    // Add this sketch back using the new name
+    editor.addRecent();
 
     // let Editor know that the save was successful
     return true;
@@ -870,7 +882,12 @@ public class Sketch {
    */
   protected void updateInternal(String sketchName, File sketchFolder) {
     // reset all the state information for the sketch object
+
+//  String oldPath = getMainFilePath();
     primaryFile = code[0].getFile();
+//    String newPath = getMainFilePath();
+//    editor.base.renameRecent(oldPath, newPath);
+
     name = sketchName;
     folder = sketchFolder;
     codeFolder = new File(folder, "code");

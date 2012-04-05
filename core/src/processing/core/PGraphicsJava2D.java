@@ -48,6 +48,7 @@ import java.awt.image.*;
  * if it breaks."</p>
  */
 public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
+  Canvas canvas;
 
   public Graphics2D g2;
   protected BufferedImage offscreen;
@@ -128,6 +129,18 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     // strange things to happen with blending.
 //    image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     if (primarySurface) {
+//      if (canvas != null) {
+//        parent.removeListeners(canvas);
+//        parent.remove(canvas);
+//      }
+//      canvas = new Canvas();
+//      parent.setLayout(new BorderLayout());
+//      parent.add(canvas, BorderLayout.CENTER);
+//      parent.addListeners(canvas);
+////      canvas.createBufferStrategy(1);
+//      g2 = (Graphics2D) canvas.getGraphics();
+      parent.addListeners(parent);
+
       // Needs to be RGB otherwise there's a major performance hit [0204]
       // http://code.google.com/p/processing/issues/detail?id=729
       image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -163,6 +176,15 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   }
 
 
+  public void requestDraw() {
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+    parent.handleDraw();
+//      }
+//    });
+  }
+
+
   public void beginDraw() {
     checkSettings();
 
@@ -179,12 +201,19 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     //updatePixels();
 
     if (primarySurface) {
-      // don't copy the pixels/data elements of the buffered image directly,
-      // since it'll disable the nice speedy pipeline stuff, sending all drawing
-      // into a world of suck that's rough 6 trillion times slower.
-      synchronized (image) {
-        //System.out.println("inside j2d sync");
-        image.getGraphics().drawImage(offscreen, 0, 0, null);
+      if (canvas != null) {
+        System.out.println(canvas);
+        canvas.repaint();
+        // ?? what to do for swapping buffers
+
+      } else {
+        // don't copy the pixels/data elements of the buffered image directly,
+        // since it'll disable the nice speedy pipeline stuff, sending all drawing
+        // into a world of suck that's rough 6 trillion times slower.
+        synchronized (image) {
+          //System.out.println("inside j2d sync");
+          image.getGraphics().drawImage(offscreen, 0, 0, null);
+        }
       }
     } else {
       // TODO this is probably overkill for most tasks...

@@ -36,14 +36,14 @@ import com.apple.eawt.*;
 /**
  * Deal with issues related to thinking differently. This handles the basic
  * Mac OS X menu commands (and apple events) for open, about, prefs, etc.
- *  
+ *
  * Based on OSXAdapter.java from Apple DTS.
- * 
- * As of 0140, this code need not be built on platforms other than OS X, 
+ *
+ * As of 0140, this code need not be built on platforms other than OS X,
  * because of the new platform structure which isolates through reflection.
- * 
- * This suppresses deprecation warnings because to use the new code, all users 
- * would be forced to use Java Update 3 on OS X 10.6, and Java Update 8 on 
+ *
+ * This suppresses deprecation warnings because to use the new code, all users
+ * would be forced to use Java Update 3 on OS X 10.6, and Java Update 8 on
  * OS X 10.5, which doesn't seem likely at the moment.
  */
 @SuppressWarnings("deprecation")
@@ -58,8 +58,8 @@ public class ThinkDifferent implements ApplicationListener {
   // reference to the app where the existing quit, about, prefs code is
   private Base base;
 
-  
-  static protected void init(Base base) {    
+
+  static protected void init(Base base) {
     if (application == null) {
       //application = new com.apple.eawt.Application();
       application = Application.getApplication();
@@ -74,12 +74,12 @@ public class ThinkDifferent implements ApplicationListener {
     // Set the menubar to be used when nothing else is open. http://j.mp/dkZmka
     // http://developer.apple.com/mac/library/documentation/Java/Reference/
     //   JavaSE6_AppleExtensionsRef/api/com/apple/eawt/Application.html
-    // Only available since Java for Mac OS X 10.6 Update 1, and 
+    // Only available since Java for Mac OS X 10.6 Update 1, and
     // Java for Mac OS X 10.5 Update 6, so need to load this dynamically
     try {
-      // com.apple.eawt.Application.setDefaultMenuBar(JMenuBar)      
+      // com.apple.eawt.Application.setDefaultMenuBar(JMenuBar)
       Class<?> appClass = Application.class;
-      Method method = 
+      Method method =
         appClass.getMethod("setDefaultMenuBar", new Class[] { JMenuBar.class });
       if (method != null) {
         JMenuBar defaultMenuBar = new JMenuBar();
@@ -93,12 +93,12 @@ public class ThinkDifferent implements ApplicationListener {
       e.printStackTrace();  // oh well nevermind
     }
   }
-  
-  
+
+
   public ThinkDifferent(Base base) {
     this.base = base;
   }
-  
+
 
   /**
    * Gimpy file menu to be used on OS X when no sketches are open.
@@ -124,21 +124,21 @@ public class ThinkDifferent implements ApplicationListener {
     fileMenu.add(item);
 
     fileMenu.add(base.getSketchbookMenu());
-    
+
 //    fileMenu.add(base.nextEditorMode().getExamplesMenu());
     item = new JMenuItem("Examples...");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        base.nextEditorMode().showExamplesFrame();
+        base.nextMode.showExamplesFrame();
       }
     });
     fileMenu.add(item);
 
     return fileMenu;
   }
-  
-  
-  // implemented handler methods.  These are basically hooks into existing 
+
+
+  // implemented handler methods.  These are basically hooks into existing
   // functionality from the main app, as if it came over from another platform.
   public void handleAbout(ApplicationEvent ae) {
     if (base != null) {
@@ -148,8 +148,8 @@ public class ThinkDifferent implements ApplicationListener {
       throw new IllegalStateException("handleAbout: Base instance detached from listener");
     }
   }
-  
-  
+
+
   public void handlePreferences(ApplicationEvent ae) {
     if (base != null) {
       base.handlePrefs();
@@ -179,7 +179,7 @@ public class ThinkDifferent implements ApplicationListener {
 
   public void handleQuit(ApplicationEvent ae) {
     if (base != null) {
-      /*  
+      /*
       / You MUST setHandled(false) if you want to delay or cancel the quit.
       / This is important for cross-platform development -- have a universal quit
       / routine that chooses whether or not to quit, so the functionality is identical
@@ -192,8 +192,8 @@ public class ThinkDifferent implements ApplicationListener {
       throw new IllegalStateException("handleQuit: Base instance detached from listener");
     }
   }
-  
-  
+
+
   public void handleReOpenApplication(ApplicationEvent arg0) {
   }
 }

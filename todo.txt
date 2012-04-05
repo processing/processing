@@ -64,18 +64,19 @@ X   nah, take it out. why the complexity...
 X   if no window color set, then don't apply it
 o also add option for FSEM or not
 X   nope, FSEM too buggy and error-prone
+
+recent/open
 X add EditorState class, device-aware placement
 X   get rid of restore sketch feature
-_   remove pref for restoring sketches
+o   remove pref for restoring sketches
+_     make sure this is still around, we want it
 _   implement recent sketches menu
 _ Opening sketch via editor window open-menu ignores mode
 _   http://code.google.com/p/processing/issues/detail?id=1034
-
 _ don't pollute the recent menu with un-saved sketches
 _ toFront() not working from recent menu
 _ don't re-open new window on top of another
 _ not properly handling other odd cases
-http://code.google.com/p/processing/issues/list?can=2&q=owner%3Afry%40processing.org+Type%3ADefect&colspec=Stars+ID+Type+Status+Priority+Owner+Summary&cells=tiles
 _ save window positions on quit, and restore them (w/ a preference?)
 _   new windows use same mode and dimensions as topmost window
 _ saved window position problematic with multiple monitors
@@ -108,6 +109,7 @@ _   http://dev.processing.org/bugs/show_bug.cgi?id=72
 _   http://code.google.com/p/processing/issues/detail?id=27
 Base.restoreSketches() has commented out code that checked for out of bounds windows with the preferences last.window.x and last.window.y. These prefs don't exist anymore, but it would be quick to implement it again using last.sketch<i>.location instead. It would probably result in less code, because it would mean we could get rid of the windowPositionValid stuff.
 
+http://code.google.com/p/processing/issues/list?can=2&q=owner%3Afry%40processing.org+Type%3ADefect&colspec=Stars+ID+Type+Status+Priority+Owner+Summary&cells=tiles
 
 with casey
 _ does editor.bgcolor live in the theme.txt file for the mode? 

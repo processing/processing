@@ -105,7 +105,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   private FindReplace find;
   JMenu toolsMenu;
-  JMenu modeMenu;  
+  JMenu modeMenu;
 
   ArrayList<ToolContribution> coreTools;
   public ArrayList<ToolContribution> contribTools;
@@ -117,7 +117,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     this.base = base;
     this.state = state;
     this.mode = mode;
-    
+
     Base.setIcon(this);  // TODO should this be per-mode?
 
     // Install default actions for Run, Present, etc.
@@ -159,7 +159,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
 
     timer = new Timer();
-    
+
     buildMenuBar();
 
     Container contentPain = getContentPane();
@@ -198,7 +198,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     consolePanel.add(lineStatus, BorderLayout.SOUTH);
 
     upper.add(textarea);
-    
+
     // alternate spot for status, but ugly
 //    status = new EditorStatus(this);
 //    upper.add(status);
@@ -222,19 +222,19 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (dividerSize != 0) {
       splitPane.setDividerSize(dividerSize);
     }
-    
+
     box.add(splitPane);
 
     pain.add(box);
 
     // get shift down/up events so we can show the alt version of toolbar buttons
     textarea.addKeyListener(toolbar);
-    
+
     // end an undo-chunk any time the caret moves unless it's when text is edited
     textarea.addCaretListener(new CaretListener() {
-      
+
       String lastText = textarea.getText();
-      
+
       public void caretUpdate(CaretEvent e) {
         String newText = textarea.getText();
         if (lastText.equals(newText) && isDirectEdit()) {
@@ -256,13 +256,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // Set the minimum size for the editor window
     setMinimumSize(new Dimension(Preferences.getInteger("editor.window.width.min"),
                                  Preferences.getInteger("editor.window.height.min")));
-    
+
     // Bring back the general options for the editor
     applyPreferences();
-    
+
     // Make textField get the focus whenever frame is activated.
     // http://download.oracle.com/javase/tutorial/uiswing/misc/focus.html
-    // May not be necessary, but helps avoid random situations with 
+    // May not be necessary, but helps avoid random situations with
     // the editor not being able to request its own focus.
     addWindowFocusListener(new WindowAdapter() {
       public void windowGainedFocus(WindowEvent e) {
@@ -282,6 +282,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
   public EditorState getEditorState() {
     return state;
+  }
+
+
+  public void removeRecent() {
+    base.removeRecent(this);
+  }
+
+
+  public void addRecent() {
+    base.handleRecent(this);
   }
 
 
@@ -332,7 +342,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
           }
         }
       } catch (Exception e) {
-        Base.showWarning("Drag & Drop Problem", 
+        Base.showWarning("Drag & Drop Problem",
                          "An error occurred while trying to add files to the sketch.", e);
         return false;
       }
@@ -349,18 +359,18 @@ public abstract class Editor extends JFrame implements RunnerListener {
       return true;
     }
   }
-  
-  
+
+
   public Base getBase() {
     return base;
   }
-  
-  
+
+
   public Mode getMode() {
     return mode;
   }
-  
-  
+
+
   protected void initModeMenu() {
     modeMenu = new JMenu();
     for (final Mode m : base.getModeList()) {
@@ -380,7 +390,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         modeMenu.add(item);
       }
     }
-    
+
     modeMenu.addSeparator();
     JMenuItem addLib = new JMenuItem("Add Mode...");
     addLib.addActionListener(new ActionListener() {
@@ -390,22 +400,22 @@ public abstract class Editor extends JFrame implements RunnerListener {
     });
     modeMenu.add(addLib);
   }
-  
-  
+
+
   public JMenu getModeMenu() {
     return modeMenu;
   }
 
-  
-  
+
+
 //  public Settings getTheme() {
 //    return mode.getTheme();
 //  }
-  
-  
+
+
   abstract public EditorToolbar createToolbar();
-  
-  
+
+
   abstract public Formatter createFormatter();
 
 
@@ -432,13 +442,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //
 //    return location;
 //  }
-  
-  
+
+
   protected void setDividerLocation(int pos) {
     splitPane.setDividerLocation(pos);
   }
-  
-  
+
+
   protected int getDividerLocation() {
     return splitPane.getDividerLocation();
   }
@@ -467,7 +477,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       painter.setBackground(color);
       painter.setLineHighlightEnabled(false);
       textarea.setCaretVisible(false);
-      
+
       // new stuff
 //      splitPane.setDividerLocation(toolbar.getHeight() + header.getHeight());
 //      splitPane.setResizeWeight(0D);
@@ -478,7 +488,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       boolean highlight = Preferences.getBoolean("editor.linehighlight");
       painter.setLineHighlightEnabled(highlight);
       textarea.setCaretVisible(true);
-      
+
       // new stuff
 //      splitPane.setDividerLocation(-1); // any negative value resets to preferred size
 //      splitPane.setResizeWeight(1D);
@@ -513,7 +523,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     rebuildToolList();
     rebuildToolMenu();
     menubar.add(getToolMenu());
-    
+
     JMenu modeMenu = buildModeMenu();
     if (modeMenu != null) {
       menubar.add(modeMenu);
@@ -536,11 +546,11 @@ public abstract class Editor extends JFrame implements RunnerListener {
     menubar.add(buildHelpMenu());
     setJMenuBar(menubar);
   }
-    
+
 
   abstract public JMenu buildFileMenu();
-  
-  
+
+
 //  public JMenu buildFileMenu(Editor editor) {
 //    return buildFileMenu(editor, null);
 //  }
@@ -548,8 +558,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //
 //  // most of these items are per-mode
 //  protected JMenu buildFileMenu(Editor editor, JMenuItem[] exportItems) {
-  
-  
+
+
   protected JMenu buildFileMenu(JMenuItem[] exportItems) {
     JMenuItem item;
     JMenu fileMenu = new JMenu("File");
@@ -592,7 +602,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     item = Base.newJMenuItem("Save", 'S');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleSaveRequest(false);
+        handleSave(false);
       }
     });
     saveMenuItem = item;
@@ -655,8 +665,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
     }
     return fileMenu;
   }
-  
-  
+
+
 //  public void setSaveItem(JMenuItem item) {
 //    saveMenuItem = item;
 //  }
@@ -666,7 +676,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //    saveAsMenuItem = item;
 //  }
 
-  
+
   protected JMenu buildEditMenu() {
     JMenu menu = new JMenu("Edit");
     JMenuItem item;
@@ -732,7 +742,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     /*
     menu.addSeparator();
-    
+
     item = Base.newJMenuItem("Delete Selected Lines", 'D');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -740,7 +750,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       }
     });
     menu.add(item);
-    
+
     item = new JMenuItem("Move Selected Lines Up");
     item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, Event.ALT_MASK));
     item.addActionListener(new ActionListener() {
@@ -749,7 +759,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
         }
       });
     menu.add(item);
-    
+
     item = new JMenuItem("Move Selected Lines Down");
     item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, Event.ALT_MASK));
     item.addActionListener(new ActionListener() {
@@ -759,7 +769,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       });
     menu.add(item);
      */
-    
+
     menu.addSeparator();
 
     item = Base.newJMenuItem("Auto Format", 'T');
@@ -847,8 +857,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
 
   abstract public JMenu buildSketchMenu();
-  
-  
+
+
   protected JMenu buildSketchMenu(JMenuItem[] runItems) {
     JMenuItem item;
     sketchMenu = new JMenu("Sketch");
@@ -880,8 +890,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     return sketchMenu;
   }
-  
-  
+
+
   abstract public void handleImportLibrary(String jarPath);
 
 
@@ -905,13 +915,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
     } else {
       toolsMenu.removeAll();
     }
-    
+
     rebuildToolList();
-    
+
     addInternalTools(toolsMenu);
     addTools(toolsMenu, coreTools);
     addTools(toolsMenu, contribTools);
-    
+
     toolsMenu.addSeparator();
     JMenuItem item = new JMenuItem("Add Tool...");
     item.addActionListener(new ActionListener() {
@@ -944,7 +954,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       //menu.add(item);
       toolItems.put(title, item);
     }
-    
+
     ArrayList<String> toolList = new ArrayList<String>(toolItems.keySet());
     if (toolList.size() == 0) return;
 
@@ -1016,8 +1026,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     return menu;
   }
-  
-  
+
+
   /*
   // testing internal web server to serve up docs from a zip file
   item = new JMenuItem("Web Server Test");
@@ -1066,12 +1076,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
     Base.openURL(file.getAbsolutePath());
   }
 
-  
+
   static public void showChanges() {
     Base.openURL("http://wiki.processing.org/w/Changes");
-  }  
+  }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1083,7 +1093,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     public void actionPerformed(ActionEvent e) {
       stopCompoundEdit();
-      
+
       try {
         final Integer caret = caretUndoStack.pop();
         caretRedoStack.push(caret);
@@ -1134,7 +1144,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
     public void actionPerformed(ActionEvent e) {
       stopCompoundEdit();
-      
+
       try {
         undo.redo();
       } catch (CannotRedoException ex) {
@@ -1428,29 +1438,29 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //      code.undo = new UndoManager();
 
       document.addDocumentListener(new DocumentListener() {
-        
+
         public void removeUpdate(DocumentEvent e) {
           if (isInserting && isDirectEdit()) {
             endTextEditHistory();
           }
           isInserting = false;
         }
-        
+
         public void insertUpdate(DocumentEvent e) {
           if (!isInserting && isDirectEdit()) {
             endTextEditHistory();
           }
           isInserting = true;
         }
-        
+
         public void changedUpdate(DocumentEvent e) {
           endTextEditHistory();
         }
       });
-      
+
       // connect the undo listener to the editor
       document.addUndoableEditListener(new UndoableEditListener() {
-        
+
           public void undoableEditHappened(UndoableEditEvent e) {
             // if an edit is in progress, reset the timer
             if (endUndoEvent != null) {
@@ -1458,13 +1468,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
               endUndoEvent = null;
               startTimerEvent();
             }
-            
+
             // if this edit is just getting started, create a compound edit
             if (compoundEdit == null) {
               startCompoundEdit();
               startTimerEvent();
             }
-            
+
             compoundEdit.addEdit(e.getEdit());
             undoAction.updateUndoState();
             redoAction.updateRedoState();
@@ -1503,7 +1513,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     // let the gc eat the cancelled events
     timer.purge();
   }
-  
+
   void endTextEditHistory() {
     if (endUndoEvent != null) {
       endUndoEvent.cancel();
@@ -1562,32 +1572,32 @@ public abstract class Editor extends JFrame implements RunnerListener {
   /*
   public void handleMoveLines(boolean moveUp) {
     startCompoundEdit();
-    
+
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
-    
+
     // if more than one line is selected and none of the characters of the end
     // line are selected, don't move that line
     if (startLine != stopLine
         && textarea.getSelectionStop() == textarea.getLineStartOffset(stopLine))
       stopLine--;
-    
+
     int replacedLine = moveUp ? startLine - 1 : stopLine + 1;
     if (replacedLine < 0 || replacedLine >= textarea.getLineCount())
       return;
-    
+
     final String source = getText();
-    
+
     int replaceStart = textarea.getLineStartOffset(replacedLine);
     int replaceEnd = textarea.getLineStopOffset(replacedLine);
     if (replaceEnd == source.length() + 1)
       replaceEnd--;
-    
+
     int selectionStart = textarea.getLineStartOffset(startLine);
     int selectionEnd = textarea.getLineStopOffset(stopLine);
     if (selectionEnd == source.length() + 1)
       selectionEnd--;
-    
+
     String replacedText = source.substring(replaceStart, replaceEnd);
     String selectedText = source.substring(selectionStart, selectionEnd);
     if (replacedLine == textarea.getLineCount() - 1) {
@@ -1597,51 +1607,51 @@ public abstract class Editor extends JFrame implements RunnerListener {
       selectedText += "\n";
       replacedText = replacedText.substring(0, replacedText.length() - 1);
     }
-    
+
     int newSelectionStart, newSelectionEnd;
     if (moveUp) {
       // Change the selection, then change the line above
       textarea.select(selectionStart, selectionEnd);
       textarea.setSelectedText(replacedText);
-      
+
       textarea.select(replaceStart, replaceEnd);
       textarea.setSelectedText(selectedText);
-      
+
       newSelectionStart = textarea.getLineStartOffset(startLine - 1);
-      newSelectionEnd = textarea.getLineStopOffset(stopLine - 1) -  1; 
+      newSelectionEnd = textarea.getLineStopOffset(stopLine - 1) -  1;
     } else {
       // Change the line beneath, then change the selection
       textarea.select(replaceStart, replaceEnd);
       textarea.setSelectedText(selectedText);
-      
+
       textarea.select(selectionStart, selectionEnd);
       textarea.setSelectedText(replacedText);
-    
+
       newSelectionStart = textarea.getLineStartOffset(startLine + 1);
-      newSelectionEnd = textarea.getLineStopOffset(stopLine + 1) - 1; 
+      newSelectionEnd = textarea.getLineStopOffset(stopLine + 1) - 1;
     }
-    
+
     textarea.select(newSelectionStart, newSelectionEnd);
     stopCompoundEdit();
   }
   */
 
-  
+
   /*
   public void handleDeleteLines() {
     int startLine = textarea.getSelectionStartLine();
     int stopLine = textarea.getSelectionStopLine();
-    
+
     int start = textarea.getLineStartOffset(startLine);
-    int end = textarea.getLineStopOffset(stopLine); 
+    int end = textarea.getLineStopOffset(stopLine);
     if (end == getText().length() + 1)
       end--;
-    
+
     textarea.select(start, end);
     textarea.setSelectedText("");
   }
   */
-  
+
 
   public void handleAutoFormat() {
     final String source = getText();
@@ -1740,13 +1750,13 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public void handleIndent() {
     handleIndentOutdent(true);
   }
-  
-  
+
+
   public void handleOutdent() {
     handleIndentOutdent(false);
   }
-  
-  
+
+
   public void handleIndentOutdent(boolean indent) {
     int tabSize = Preferences.getInteger("editor.tabs.size");
     String tabString = Editor.EMPTY.substring(0, tabSize);
@@ -1829,7 +1839,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     return sketchWindowLocation;
   }
 
-  
+
 //  public void internalCloseRunner() {
 //    mode.internalCloseRunner(this);
 //  }
@@ -1854,7 +1864,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
                                       JOptionPane.QUESTION_MESSAGE);
 
       if (result == JOptionPane.YES_OPTION) {
-        return handleSaveRequest(true);
+        return handleSave(true);
 
       } else if (result == JOptionPane.NO_OPTION) {
         return true;  // ok to continue
@@ -1906,7 +1916,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
 
       Object result = pane.getValue();
       if (result == options[0]) {  // save (and close/quit)
-        return handleSaveRequest(true);
+        return handleSave(true);
 
       } else if (result == options[2]) {  // don't save (still close/quit)
         return true;
@@ -2044,10 +2054,10 @@ public abstract class Editor extends JFrame implements RunnerListener {
 //      return false;
 //    }
   }
-  
-  
-  /** 
-   * Set the title of the PDE window based on the current sketch, i.e. 
+
+
+  /**
+   * Set the title of the PDE window based on the current sketch, i.e.
    * something like "sketch_070752a - Processing 0126"
    */
   public void setTitle() {
@@ -2064,7 +2074,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
    * won't run properly while a quit is happening. This fixes
    * <A HREF="http://dev.processing.org/bugs/show_bug.cgi?id=276">Bug 276</A>.
    */
-  public boolean handleSaveRequest(boolean immediately) {
+  public boolean handleSave(boolean immediately) {
 //    handleStop();  // 0136
 
     if (untitled) {
@@ -2072,12 +2082,12 @@ public abstract class Editor extends JFrame implements RunnerListener {
       // need to get the name, user might also cancel here
 
     } else if (immediately) {
-      handleSave();
+      handleSaveImpl();
 
     } else {
-      SwingUtilities.invokeLater(new Runnable() {
+      EventQueue.invokeLater(new Runnable() {
           public void run() {
-            handleSave();
+            handleSaveImpl();
           }
         });
     }
@@ -2085,7 +2095,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  public void handleSave() {
+  protected void handleSaveImpl() {
     statusNotice("Saving...");
     try {
       if (sketch.save()) {
@@ -2177,8 +2187,8 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  /** 
-   * Grab current contents of the sketch window, advance the console, 
+  /**
+   * Grab current contents of the sketch window, advance the console,
    * stop any other running sketches... not in that order.
    */
   public void prepareRun() {
@@ -2192,7 +2202,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
     if (Preferences.getBoolean("console.auto_clear")) {
       console.clear();
     }
-    
+
     // make sure the user didn't hide the sketch folder
     sketch.ensureExistence();
 
@@ -2208,16 +2218,16 @@ public abstract class Editor extends JFrame implements RunnerListener {
   }
 
 
-  /** 
-   * Halt the current runner for whatever reason. Might be the VM dying, 
-   * the window closing, an error... 
+  /**
+   * Halt the current runner for whatever reason. Might be the VM dying,
+   * the window closing, an error...
    */
   abstract public void internalCloseRunner();
-  
-  
+
+
   abstract public void deactivateRun();
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -2292,7 +2302,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public void statusNotice(String msg) {
     status.notice(msg);
   }
-  
+
 
   public void clearNotice(String msg) {
     if (status.message.equals(msg)) {
@@ -2307,23 +2317,23 @@ public abstract class Editor extends JFrame implements RunnerListener {
   public void statusEmpty() {
     statusNotice(EMPTY);
   }
-  
-  
+
+
   public void startIndeterminate() {
     status.startIndeterminate();
   }
-  
-  
+
+
   public void stopIndeterminate() {
     status.stopIndeterminate();
   }
-  
-  
+
+
   public void statusHalt() {
     // stop called by someone else
   }
-  
-  
+
+
   public boolean isHalted() {
     return false;
   }

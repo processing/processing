@@ -21,6 +21,20 @@ X   CENTER_RADIUS, CENTER_DIAMETER, NORMALIZED
 X   text(x, y, w, h, z)
 X   textX/Y/Z variables
 _   update changes Wiki
+_ where did hintEnabled() come from?
+
+_ move requestFocusInWindow() to safter EDT place
+_ look into using BufferStrategy again to improve performance
+_   there are more improvements to be made ala issue #729
+_ make sure rendering is happening on the EDT
+_   (hopefully fixes flicker issues)
+_   change PApplet.java javadoc to reflect the change
+_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
+_   http://code.google.com/p/processing/issues/detail?id=775
+_ thread() causes weird flickering
+_   http://code.google.com/p/processing/issues/detail?id=742
+_ Potential race condition when resizing sketches
+_   http://code.google.com/p/processing/issues/detail?id=697
 
 andres
 A polygon shapes without fill slowdown render progressively
@@ -29,6 +43,10 @@ o OPENGL broken in 2.0a5 on Linux (upstream issues)
 o   http://code.google.com/p/processing/issues/detail?id=1026
 A   these were upstream issues
 _ Update JOGL when RC6 arrive: forum.jogamp.org/Road-to-RC6-td3866404.html
+_ why are LINE_SMOOTH et al being enabled if antialias < 2?
+_ why is initPrimarySurface() public?
+_ why is setFramerate() public? (also should be setFrameRate or just frameRate)
+_ remove 'params' from createImage (is it on loadImage too?)
 
 fixed in 2.0a5
 A OpenGL noSmooth() does not work
@@ -77,18 +95,6 @@ _   http://code.google.com/p/processing/issues/detail?id=1045
 
 X test what happens with NPE in OpenGL, does the error make sense?
 _   nope, it doesn't, need to clean this up
-
-_ look into using BufferStrategy again to improve performance
-_   there are more improvements to be made ala issue #729
-_ make sure rendering is happening on the EDT
-_   (hopefully fixes flicker issues)
-_   change PApplet.java javadoc to reflect the change
-_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
-_   http://code.google.com/p/processing/issues/detail?id=775
-_ thread() causes weird flickering
-_   http://code.google.com/p/processing/issues/detail?id=742
-_ Potential race condition when resizing sketches
-_   http://code.google.com/p/processing/issues/detail?id=697
 
 sort out full screen issues
 X make screenWidth and screenHeight work properly with multiple screens
@@ -148,6 +154,8 @@ o   or background(r, g, b, a) would be the thing
 _   clear() with a color doesn't make (verbal) sense
 _   provide a way to clear the PGraphics with plain alpha
 
+_ dispose() method in PApplet should be empty so ppl can override
+_   move that stuff to destroy()
 _ pause()/resume() need to work on the desktop side as well
 _ stop() not called in 1.5
 _   http://code.google.com/p/processing/issues/detail?id=636
