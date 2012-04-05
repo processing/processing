@@ -66,7 +66,7 @@ contribution.backup.on_remove = true
 # (for example, from a plb file)
 contribution.backup.on_install = true
 
-recent.count = 5
+recent.count = 10
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

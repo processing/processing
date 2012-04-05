@@ -861,7 +861,22 @@ public class PApplet extends Applet
     width = g.width;
     height = g.height;
 
-    addListeners();
+//    addListeners();  // 2.0a6
+    // moved out of addListeners() in 2.0a6
+    addComponentListener(new ComponentAdapter() {
+      public void componentResized(ComponentEvent e) {
+        Component c = e.getComponent();
+        //System.out.println("componentResized() " + c);
+        Rectangle bounds = c.getBounds();
+        resizeRequest = true;
+        resizeWidth = bounds.width;
+        resizeHeight = bounds.height;
+
+        if (!looping) {
+          redraw();
+        }
+      }
+    });
 
     // this is automatically called in applets
     // though it's here for applications anyway
@@ -1666,6 +1681,7 @@ public class PApplet extends Applet
       }
     }
 */
+
     // the 1.2.1 version
     if ((g != null) && (g.image != null)) {
 //      println("inside paint(), screen.drawImage()");
@@ -1674,7 +1690,7 @@ public class PApplet extends Applet
   }
 
 
-  // active paint method
+  // active paint method  (also the 1.2.1 version)
   protected void paint() {
     try {
       Graphics screen = this.getGraphics();
@@ -1694,6 +1710,7 @@ public class PApplet extends Applet
 //      }
     }
   }
+
 
   protected void paint_1_5_1() {
     try {
@@ -1748,9 +1765,7 @@ public class PApplet extends Applet
 //        println("paused...");
         try {
           Thread.sleep(100L);
-        } catch (InterruptedException e) {
-          //ignore?
-        }
+        } catch (InterruptedException e) { }  // ignored
       }
 
       // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
@@ -1765,17 +1780,22 @@ public class PApplet extends Applet
       if (g != null) g.requestDraw();
 
       if (frameCount == 1) {
-        // Call the request focus event once the image is sure to be on
-        // screen and the component is valid. The OpenGL renderer will
-        // request focus for its canvas inside beginDraw().
-        // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
-        // Disabling for 0185, because it causes an assertion failure on OS X
-        // http://code.google.com/p/processing/issues/detail?id=258
-        //        requestFocus();
+        // for 2.0a6, moving this request to the EDT
+        EventQueue.invokeLater(new Runnable() {
+          public void run() {
+            // Call the request focus event once the image is sure to be on
+            // screen and the component is valid. The OpenGL renderer will
+            // request focus for its canvas inside beginDraw().
+            // http://java.sun.com/j2se/1.4.2/docs/api/java/awt/doc-files/FocusSpec.html
+            // Disabling for 0185, because it causes an assertion failure on OS X
+            // http://code.google.com/p/processing/issues/detail?id=258
+            //        requestFocus();
 
-        // Changing to this version for 0187
-        // http://code.google.com/p/processing/issues/detail?id=279
-        requestFocusInWindow();
+            // Changing to this version for 0187
+            // http://code.google.com/p/processing/issues/detail?id=279
+            requestFocusInWindow();
+          }
+        });
       }
 
       // wait for update & paint to happen before drawing next frame
@@ -1907,9 +1927,12 @@ public class PApplet extends Applet
       frameRateLastNanos = now;
       frameCount++;
 
-      paint();  // back to active paint
-//      repaint();
-//      getToolkit().sync();  // force repaint now (proper method)
+      // 1.2.1 version
+//      paint();
+
+      // 1.5.1 version
+      repaint();
+      getToolkit().sync();  // force repaint now (proper method)
 
       if (frameCount != 0) {
         postMethods.handle();
@@ -2016,36 +2039,12 @@ public class PApplet extends Applet
   //////////////////////////////////////////////////////////////
 
 
-  public void addListeners() {
-    addMouseListener(this);
-    addMouseMotionListener(this);
-    addKeyListener(this);
-    addFocusListener(this);
-
-    addComponentListener(new ComponentAdapter() {
-      public void componentResized(ComponentEvent e) {
-        Component c = e.getComponent();
-        //System.out.println("componentResized() " + c);
-        Rectangle bounds = c.getBounds();
-        resizeRequest = true;
-        resizeWidth = bounds.width;
-        resizeHeight = bounds.height;
-
-        if (!looping) {
-          redraw();
-        }
-      }
-    });
-  }
-
-
-  public void removeListeners() {
-    removeMouseListener(this);
-    removeMouseMotionListener(this);
-    removeKeyListener(this);
-    removeFocusListener(this);
-
-//    removeComponentListener(??);
+//  public void addListeners() {
+//    addMouseListener(this);
+//    addMouseMotionListener(this);
+//    addKeyListener(this);
+//    addFocusListener(this);
+//
 //    addComponentListener(new ComponentAdapter() {
 //      public void componentResized(ComponentEvent e) {
 //        Component c = e.getComponent();
@@ -2060,14 +2059,38 @@ public class PApplet extends Applet
 //        }
 //      }
 //    });
-  }
+//  }
+//
+//
+//  public void removeListeners() {
+//    removeMouseListener(this);
+//    removeMouseMotionListener(this);
+//    removeKeyListener(this);
+//    removeFocusListener(this);
+//
+////    removeComponentListener(??);
+////    addComponentListener(new ComponentAdapter() {
+////      public void componentResized(ComponentEvent e) {
+////        Component c = e.getComponent();
+////        //System.out.println("componentResized() " + c);
+////        Rectangle bounds = c.getBounds();
+////        resizeRequest = true;
+////        resizeWidth = bounds.width;
+////        resizeHeight = bounds.height;
+////
+////        if (!looping) {
+////          redraw();
+////        }
+////      }
+////    });
+//  }
 
 
-  public void addListeners(Canvas canvas) {
-    canvas.addMouseListener(this);
-    canvas.addMouseMotionListener(this);
-    canvas.addKeyListener(this);
-    canvas.addFocusListener(this);
+  public void addListeners(Component comp) {
+    comp.addMouseListener(this);
+    comp.addMouseMotionListener(this);
+    comp.addKeyListener(this);
+    comp.addFocusListener(this);
 
 //    canvas.addComponentListener(new ComponentAdapter() {
 //      public void componentResized(ComponentEvent e) {
@@ -2086,11 +2109,11 @@ public class PApplet extends Applet
   }
 
 
-  public void removeListeners(Canvas canvas) {
-    canvas.removeMouseListener(this);
-    canvas.removeMouseMotionListener(this);
-    canvas.removeKeyListener(this);
-    canvas.removeFocusListener(this);
+  public void removeListeners(Component comp) {
+    comp.removeMouseListener(this);
+    comp.removeMouseMotionListener(this);
+    comp.removeKeyListener(this);
+    comp.removeFocusListener(this);
 
   }
 

@@ -23,7 +23,7 @@ public class JavaEditor extends Editor {
 
 
   protected JavaEditor(Base base, String path, EditorState state, Mode mode) {
-    super(base, path, state, mode);    
+    super(base, path, state, mode);
 
     // hopefully these are no longer needed w/ swing
     // (har har har.. that was wishful thinking)
@@ -173,7 +173,7 @@ public class JavaEditor extends Editor {
     menu.add(item);
 
     return menu;
-  }    
+  }
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -224,7 +224,7 @@ public class JavaEditor extends Editor {
 //      statusError(e);
 //    }
 //    toolbar.deactivate(Toolbar.EXPORT);
-//  }  
+//  }
 
 
   /**
@@ -456,7 +456,7 @@ public class JavaEditor extends Editor {
                                                 options[0]);
 
       if (result == JOptionPane.OK_OPTION) {
-        handleSaveRequest(true);
+        handleSave(true);
 
       } else {
         // why it's not CANCEL_OPTION is beyond me (at least on the mac)
@@ -530,7 +530,7 @@ public class JavaEditor extends Editor {
   public void handleSave() {
     toolbar.activate(JavaToolbar.SAVE);
     //handleStop();
-    super.handleSave();
+    super.handleSave(true);
     toolbar.deactivate(JavaToolbar.SAVE);
   }
 

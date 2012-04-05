@@ -79,7 +79,7 @@ public class JavaScriptToolbar extends EditorToolbar {
       break;
       
     case SAVE:
-      jsEditor.handleSaveRequest(false);
+      jsEditor.handleSave(false);
       break;
 
     case EXPORT:
