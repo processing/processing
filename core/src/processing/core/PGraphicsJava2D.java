@@ -139,7 +139,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //      parent.addListeners(canvas);
 ////      canvas.createBufferStrategy(1);
 //      g2 = (Graphics2D) canvas.getGraphics();
-      parent.addListeners(parent);
+      parent.updateListeners(parent);  // in case they're already there
 
       // Needs to be RGB otherwise there's a major performance hit [0204]
       // http://code.google.com/p/processing/issues/detail?id=729
