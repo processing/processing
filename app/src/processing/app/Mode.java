@@ -14,16 +14,16 @@ import processing.app.syntax.*;
 
 public abstract class Mode {
   protected Base base;
-  
+
   protected File folder;
 
   protected HashMap<String, String> keywordToReference;
-  
+
   protected PdeKeywords tokenMarker;
   protected Settings theme;
 //  protected Formatter formatter;
 //  protected Tool formatter;
-  
+
   // maps imported packages to their library folder
 //  protected HashMap<String, Library> importToLibraryTable;
   protected HashMap<String, ArrayList<Library>> importToLibraryTable;
@@ -32,25 +32,25 @@ public abstract class Mode {
   // each time a sketch is created, renamed, or moved.
   protected JMenu examplesMenu;  // this is for the menubar, not the toolbar
   protected JMenu importMenu;
-  
+
 //  protected JTree examplesTree;
   protected JFrame examplesFrame;
-  
+
   // popup menu used for the toolbar
   protected JMenu toolbarMenu;
-  
+
   protected File examplesFolder;
   protected File librariesFolder;
   protected File referenceFolder;
 
   public ArrayList<Library> coreLibraries;
-  public ArrayList<Library> contribLibraries;  
+  public ArrayList<Library> contribLibraries;
 
-  
+
   public Mode(Base base, File folder) {
     this.base = base;
     this.folder = folder;
-    
+
     // Get paths for the libraries and examples in the mode folder
     examplesFolder = new File(folder, "examples");
     librariesFolder = new File(folder, "libraries");
@@ -65,38 +65,50 @@ public abstract class Mode {
 
       // other things that have to be set explicitly for the defaults
       theme.setColor("run.window.bgcolor", SystemColor.control);
-      
+
     } catch (IOException e) {
-      Base.showError("Problem loading theme.txt", 
+      Base.showError("Problem loading theme.txt",
                      "Could not load theme.txt, please re-install Processing", e);
     }
   }
-  
-  
+
+
   public File getContentFile(String path) {
     return new File(folder, path);
   }
-  
-  
+
+
   public InputStream getContentStream(String path) throws FileNotFoundException {
     return new FileInputStream(getContentFile(path));
   }
 
-  
-  /** 
+
+  /**
    * Return the pretty/printable/menu name for this mode. This is separate from
    * the single word name of the folder that contains this mode. It could even
-   * have spaces, though that might result in sheer madness or total mayhem.   
+   * have spaces, though that might result in sheer madness or total mayhem.
    */
   abstract public String getTitle();
 
 
   /**
-   * Create a new editor associated with this mode. 
+   * Get an identifier that can be used to resurrect this mode and connect it
+   * to a sketch. Using this instead of getTitle() because there might be name
+   * clashes with the titles, but there should not be once the actual package,
+   * et al. is included.
+   * @return full name (package + class name) for this mode.
+   */
+  public String getIdentifier() {
+    return getClass().getCanonicalName();
+  }
+
+
+  /**
+   * Create a new editor associated with this mode.
    */
   abstract public Editor createEditor(Base base, String path, EditorState state);
   //abstract public Editor createEditor(Base base, String path, int[] location);
-  
+
 
   public File getExamplesFolder() {
     return examplesFolder;
@@ -106,8 +118,8 @@ public abstract class Mode {
   public File getLibrariesFolder() {
     return librariesFolder;
   }
-  
-  
+
+
   public File getReferenceFolder() {
     return referenceFolder;
   }
@@ -122,7 +134,7 @@ public abstract class Mode {
 
     coreLibraries = Library.list(librariesFolder);
     contribLibraries = Library.list(base.getSketchbookLibrariesFolder());
-    
+
     for (Library lib : coreLibraries) {
       lib.addPackageList(importToLibraryTable);
     }
@@ -130,8 +142,8 @@ public abstract class Mode {
       lib.addPackageList(importToLibraryTable);
     }
   }
-  
-  
+
+
   public Library getLibrary(String pkgName) throws SketchException {
     ArrayList<Library> libraries = importToLibraryTable.get(pkgName);
     if (libraries == null) {
@@ -139,7 +151,7 @@ public abstract class Mode {
 
     } else if (libraries.size() > 1) {
       String primary = "More than one library is competing for this sketch.";
-      String secondary = "The import " + pkgName + " points to multiple libraries:<br>";      
+      String secondary = "The import " + pkgName + " points to multiple libraries:<br>";
       for (Library library : libraries) {
         String location = library.getPath();
         if (location.startsWith(getLibrariesFolder().getAbsolutePath())) {
@@ -147,22 +159,22 @@ public abstract class Mode {
         }
         secondary += "<b>" + library.getName() + "</b> (" + location + ")<br>";
       }
-      secondary += "Extra libraries need to be removed before this sketch can be used."; 
+      secondary += "Extra libraries need to be removed before this sketch can be used.";
       Base.showWarningTiered("Duplicate Library Problem", primary, secondary, null);
       throw new SketchException("Duplicate libraries found for " + pkgName + ".");
-    
+
     } else {
       return libraries.get(0);
     }
   }
 
-  
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    
+
 
 //  abstract public EditorToolbar createToolbar(Editor editor);
-  
-  
+
+
   public JMenu getToolbarMenu() {
     if (toolbarMenu == null) {
 //      toolbarMenu = new JMenu();
@@ -189,7 +201,7 @@ public abstract class Mode {
         }
       });
     toolbarMenu.add(item);
-    
+
 //    JMenu examplesMenu = new JMenu("Examples");
 //    rebuildExamplesMenu(examplesMenu, true);
     item = new JMenuItem("Examples...");
@@ -200,7 +212,7 @@ public abstract class Mode {
     });
     toolbarMenu.add(item);
 //    toolbarMenu.add(examplesMenu);
-    
+
     toolbarMenu.addSeparator();
 
     // Add a list of all sketches and subfolders
@@ -248,9 +260,9 @@ public abstract class Mode {
     });
     importMenu.add(addLib);
     importMenu.addSeparator();
-    
+
     rebuildLibraryList();
-    
+
     ActionListener listener = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         base.activeEditor.handleImportLibrary(e.getActionCommand());
@@ -283,12 +295,12 @@ public abstract class Mode {
       importMenu.add(contrib);
 
       HashMap<String, JMenu> subfolders = new HashMap<String, JMenu>();
-      
+
       for (Library library : contribLibraries) {
         JMenuItem item = new JMenuItem(library.getName());
         item.addActionListener(listener);
         item.setActionCommand(library.getJarPath());
-      
+
         String group = library.getGroup();
         if (group != null) {
           JMenu subMenu = subfolders.get(group);
@@ -298,14 +310,14 @@ public abstract class Mode {
             subfolders.put(group, subMenu);
           }
           subMenu.add(item);
-        } else {          
+        } else {
           importMenu.add(item);
         }
       }
     }
   }
-  
-  
+
+
   /*
   public JMenu getExamplesMenu() {
     if (examplesMenu == null) {
@@ -321,13 +333,13 @@ public abstract class Mode {
     }
     rebuildExamplesMenu(examplesMenu, false);
   }
-  
-  
+
+
   public void rebuildExamplesMenu(JMenu menu, boolean replace) {
     try {
       // break down the examples folder for examples
       File[] subfolders = getExampleCategoryFolders();
-      
+
       for (File sub : subfolders) {
         Base.addDisabledItem(menu, sub.getName());
 //        JMenuItem categoryItem = new JMenuItem(sub.getName());
@@ -340,7 +352,7 @@ public abstract class Mode {
 //      if (coreLibraries == null) {
 //        rebuildLibraryList();
 //      }
-      
+
       // get library examples
       Base.addDisabledItem(menu, "Libraries");
       for (Library lib : coreLibraries) {
@@ -387,8 +399,8 @@ public abstract class Mode {
       }
     });
   }
-  
-  
+
+
   public JTree buildExamplesTree() {
     DefaultMutableTreeNode node = new DefaultMutableTreeNode("Examples");
 
@@ -400,7 +412,7 @@ public abstract class Mode {
 //    TreeCellRenderer tcr = examplesTree.getCellRenderer();
 
     //
-//  
+//
 //  public void rebuildExamplesTree(DefaultMutableTreeNode node) {
     try {
       // break down the examples folder for examples
@@ -464,8 +476,8 @@ public abstract class Mode {
     }
     return examplesTree;
   }
-  
-  
+
+
   public void resetExamples() {
     if (examplesFrame != null) {
       boolean visible = examplesFrame.isVisible();
@@ -517,7 +529,7 @@ public abstract class Mode {
         }
       });
       */
-      
+
       /*
        *  MouseListener ml = new MouseAdapter() {
        *     public void <b>mousePressed</b>(MouseEvent e) {
@@ -538,7 +550,7 @@ public abstract class Mode {
       tree.addMouseListener(new MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
           if (e.getClickCount() == 2) {
-            DefaultMutableTreeNode node = 
+            DefaultMutableTreeNode node =
               (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
             if (node != null && node.isLeaf()) {
               SketchReference sketch = (SketchReference) node.getUserObject();
@@ -565,16 +577,16 @@ public abstract class Mode {
         }
         public void keyTyped(KeyEvent e) {
           if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-            DefaultMutableTreeNode node = 
+            DefaultMutableTreeNode node =
               (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
             if (node != null && node.isLeaf()) {
               SketchReference sketch = (SketchReference) node.getUserObject();
               base.handleOpen(sketch.getPath());
             }
-          } 
+          }
         }
       });
-      
+
       tree.setBorder(new EmptyBorder(5, 5, 5, 5));
       JScrollPane treePane = new JScrollPane(tree);
       treePane.setPreferredSize(new Dimension(250, 450));
@@ -586,13 +598,13 @@ public abstract class Mode {
     int roughWidth = examplesFrame.getWidth() + 20;
     Point p = null;
     // If no window open, or the editor is at the edge of the screen
-    if (base.activeEditor == null ||  
+    if (base.activeEditor == null ||
         (p = base.activeEditor.getLocation()).x < roughWidth) {
       // Center the window on the screen
       examplesFrame.setLocationRelativeTo(null);
     } else {
       // Open the window relative to the editor
-      examplesFrame.setLocation(p.x - roughWidth, p.y);  
+      examplesFrame.setLocation(p.x - roughWidth, p.y);
     }
     examplesFrame.setVisible(true);
   }
@@ -612,10 +624,10 @@ public abstract class Mode {
 //    sketchMenu.remove(importMenu);
 //  }
 
-  
-//  abstract public void internalCloseRunner(Editor editor);  
 
-  
+//  abstract public void internalCloseRunner(Editor editor);
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -626,16 +638,16 @@ public abstract class Mode {
     File file = new File(folder, filename);
     return new ImageIcon(file.getAbsolutePath()).getImage();
   }
-  
-  
+
+
   //public Settings getTheme() {
   //  return theme;
   //}
 
 
-  /** 
-   * Returns the HTML filename (including path prefix if necessary)  
-   * for this keyword, or null if it doesn't exist. 
+  /**
+   * Returns the HTML filename (including path prefix if necessary)
+   * for this keyword, or null if it doesn't exist.
    */
   public String lookupReference(String keyword) {
     return keywordToReference.get(keyword);
@@ -649,24 +661,24 @@ public abstract class Mode {
   public TokenMarker getTokenMarker() {
     return tokenMarker;
   }
-  
-  
+
+
 //  abstract public Formatter createFormatter();
 
 
 //  public Formatter getFormatter() {
-//    return formatter; 
+//    return formatter;
 //  }
-  
-  
+
+
 //  public Tool getFormatter() {
-//    return formatter; 
+//    return formatter;
 //  }
-  
+
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
-  
+
   //public String get(String attribute) {
   //  return theme.get(attribute);
   //}
@@ -699,8 +711,8 @@ public abstract class Mode {
 
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-  
-  
+
+
   // Breaking out extension types in order to clean up the code, and make it
   // easier for other environments (like Arduino) to incorporate changes.
 
@@ -748,7 +760,7 @@ public abstract class Mode {
    * Returns the default extension for this editor setup.
    */
   abstract public String getDefaultExtension();
-  
+
 
 
   /**
@@ -761,13 +773,13 @@ public abstract class Mode {
    * Get array of file/directory names that needn't be copied during "Save As".
    */
   abstract public String[] getIgnorable();
-  
- 
+
+
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
   /**
-   * Create a fresh applet/application folder if the 'delete target folder' 
+   * Create a fresh applet/application folder if the 'delete target folder'
    * pref has been set in the preferences.
    */
   public void prepareExportFolder(File targetFolder) {
@@ -784,7 +796,7 @@ public abstract class Mode {
   }
 
 //  public void handleNew() {
-//    base.handleNew();    
+//    base.handleNew();
 //  }
 //
 //

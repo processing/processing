@@ -15,11 +15,11 @@ import processing.mode.java.AutoFormat;
 
 import javax.swing.*;
 
-public class JavaScriptEditor extends ServingEditor 
+public class JavaScriptEditor extends ServingEditor
 {
 	final static String PROP_KEY_MODE = "mode";
 	final static String PROP_VAL_MODE = "JavaScript";
-	
+
   private JavaScriptMode jsMode;
 
   private DirectivesEditor directivesEditor;
@@ -27,33 +27,33 @@ public class JavaScriptEditor extends ServingEditor
   // tapping into Java mode might not be wanted?
   processing.mode.java.PdeKeyListener listener;
 
-  protected JavaScriptEditor ( Base base, String path, EditorState state, Mode mode ) 
+  protected JavaScriptEditor ( Base base, String path, EditorState state, Mode mode )
   {
     super(base, path, state, mode);
 
 	listener = new processing.mode.java.PdeKeyListener(this,textarea);
-	
+
     jsMode = (JavaScriptMode) mode;
   }
 
-  
-  public EditorToolbar createToolbar () 
+
+  public EditorToolbar createToolbar ()
   {
     return new JavaScriptToolbar(this, base);
   }
 
-  
-  public Formatter createFormatter () 
-  { 
+
+  public Formatter createFormatter ()
+  {
     return new AutoFormat();
   }
 
-  
+
   // - - - - - - - - - - - - - - - - - -
   // Menu methods
 
-  
-  public JMenu buildFileMenu () 
+
+  public JMenu buildFileMenu ()
   {
     JMenuItem exportItem = Base.newJMenuItem("Export", 'E');
     exportItem.addActionListener(new ActionListener() {
@@ -65,7 +65,7 @@ public class JavaScriptEditor extends ServingEditor
   }
 
 
-  public JMenu buildSketchMenu () 
+  public JMenu buildSketchMenu ()
   {
 	JMenuItem startServerItem = Base.newJMenuItem("Start Server", 'R');
     startServerItem.addActionListener(new ActionListener() {
@@ -102,7 +102,7 @@ public class JavaScriptEditor extends ServingEditor
 	// 		}
 	// 	}
 	// );
-	
+
 	JMenuItem setServerPortItem = new JMenuItem("Set Server Port");
 	setServerPortItem.addActionListener(new ActionListener(){
 		public void actionPerformed (ActionEvent e) {
@@ -111,13 +111,13 @@ public class JavaScriptEditor extends ServingEditor
 	});
 
     return buildSketchMenu(new JMenuItem[] {
-		startServerItem, openInBrowserItem, stopServerItem, 
+		startServerItem, openInBrowserItem, stopServerItem,
 		copyServerAddressItem, setServerPortItem
 	});
   }
 
   public JMenu buildModeMenu() {
-    JMenu menu = new JMenu("JavaScript");    
+    JMenu menu = new JMenu("JavaScript");
     JMenuItem item;
 
 	item = new JMenuItem("Playback Settings (Directives)");
@@ -148,8 +148,8 @@ public class JavaScriptEditor extends ServingEditor
 
     return menu;
   }
-  
-  public JMenu buildHelpMenu () 
+
+  public JMenu buildHelpMenu ()
   {
     JMenu menu = new JMenu("Help ");
     JMenuItem item;
@@ -195,7 +195,7 @@ public class JavaScriptEditor extends ServingEditor
     item = new JMenuItem("Reference");
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        //TODO get offline reference archive corresponding to the release 
+        //TODO get offline reference archive corresponding to the release
         // packaged with this mode see: P.js ticket 1146 "Offline Reference"
         Base.openURL("http://processingjs.org/reference");
       }
@@ -219,7 +219,7 @@ public class JavaScriptEditor extends ServingEditor
       });
     menu.add(item);
     */
-    
+
     item = new JMenuItem("Visit Processingjs.org");
     item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
@@ -227,7 +227,7 @@ public class JavaScriptEditor extends ServingEditor
         }
       });
     menu.add(item);
-    
+
     // OSX has its own about menu
     if (!Base.isMacOS()) {
       menu.addSeparator();
@@ -239,12 +239,12 @@ public class JavaScriptEditor extends ServingEditor
       });
       menu.add(item);
     }
-    
+
     return menu;
   }
-  
-  public String getCommentPrefix () 
-  { 
+
+  public String getCommentPrefix ()
+  {
     return "//";
   }
 
@@ -265,22 +265,22 @@ public class JavaScriptEditor extends ServingEditor
   {
       // not sure what to do here ..
   }
-  
+
   // - - - - - - - - - - - - - - - - - -
 
   private void handleSetServerPort ()
   {
 	statusEmpty();
-	
+
 	boolean wasRunning = serverRunning();
 	if ( wasRunning ) {
 		statusNotice("Server was running, changing the port requires a restart.");
 		stopServer();
 	}
-	
+
 	setServerPort();
 	saveSketchSettings();
-	
+
 	if ( wasRunning ) {
 		startServer( getExportFolder() );
 	}
@@ -289,12 +289,12 @@ public class JavaScriptEditor extends ServingEditor
   private void handleCreateCustomTemplate ()
   {
 	Sketch sketch = getSketch();
-	
+
 	File ajs = sketch.getMode().
 				getContentFile( JavaScriptBuild.TEMPLATE_FOLDER_NAME );
-				
+
 	File tjs = getCustomTemplateFolder();
-					
+
 	if ( !tjs.exists() )
 	{
 		try {
@@ -302,7 +302,7 @@ public class JavaScriptEditor extends ServingEditor
 			statusNotice( "Default template copied." );
 			Base.openFolder( tjs );
 		} catch ( java.io.IOException ioe ) {
-			Base.showWarning("Copy default template folder", 
+			Base.showWarning("Copy default template folder",
 				"Something went wrong when copying the template folder.", ioe);
 		}
 	}
@@ -329,12 +329,12 @@ public class JavaScriptEditor extends ServingEditor
   private void handleCopyServerAddress ()
   {
 	String address = getServerAddress();
-	
+
 	if ( address != null )
 	{
-		java.awt.datatransfer.StringSelection stringSelection = 
+		java.awt.datatransfer.StringSelection stringSelection =
 			new java.awt.datatransfer.StringSelection( address );
-	    java.awt.datatransfer.Clipboard clipboard = 
+	    java.awt.datatransfer.Clipboard clipboard =
 			java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
 	    clipboard.setContents( stringSelection, null );
 	}
@@ -346,7 +346,7 @@ public class JavaScriptEditor extends ServingEditor
 	{
 	  directivesEditor = new DirectivesEditor(this);
 	}
-	
+
 	directivesEditor.show();
   }
 
@@ -362,7 +362,7 @@ public class JavaScriptEditor extends ServingEditor
 	if (textarea.isSelectionActive()) {
         Base.openURL(
           "http://www.google.com/search?q=" +
-          textarea.getSelectedText().trim() + 
+          textarea.getSelectedText().trim() +
           "+site%3Ahttp%3A%2F%2Fprocessingjs.org%2Freference"
         );
      }
@@ -372,21 +372,21 @@ public class JavaScriptEditor extends ServingEditor
 //	{
 //		startStopServer( getExportFolder() );
 //	}
-  
+
 	/**
-	 *  Replacement for RUN: 
+	 *  Replacement for RUN:
 	 *  export to folder, start server, open in default browser.
 	 */
 	public void handleStartServer ()
 	{
 		statusEmpty();
-		
+
 		if ( !startServer( getExportFolder() ) )
 		{
 			if ( !handleExport( false ) ) return;
 			toolbar.activate(JavaScriptToolbar.RUN);
 		}
-		
+
 		// waiting for server to call "serverStarted() below ..."
 	}
 
@@ -401,15 +401,15 @@ public class JavaScriptEditor extends ServingEditor
   public void handleStopServer ()
   {
 	stopServer();
-	
+
 	toolbar.deactivate(JavaScriptToolbar.RUN);
   }
-  
+
   /**
    * Call the export method of the sketch and handle the gui stuff
    */
-  public boolean handleExport ( boolean openFolder ) 
-  {		
+  public boolean handleExport ( boolean openFolder )
+  {
     if ( !handleExportCheckModified() )
     {
 		return false;
@@ -417,17 +417,17 @@ public class JavaScriptEditor extends ServingEditor
 	else
 	{
       toolbar.activate(JavaScriptToolbar.EXPORT);
-      try 
+      try
 	  {
         boolean success = jsMode.handleExport(sketch);
-        if ( success && openFolder ) 
+        if ( success && openFolder )
 		{
           File exportFolder = new File( sketch.getFolder(),
  										  JavaScriptBuild.EXPORTED_FOLDER_NAME );
           Base.openFolder( exportFolder );
 
           statusNotice("Finished exporting.");
-        } else if ( !success ) { 
+        } else if ( !success ) {
           // error message already displayed by handleExport
 	      return false;
         }
@@ -440,12 +440,12 @@ public class JavaScriptEditor extends ServingEditor
     }
 	return true;
   }
-  
+
   /**
    *  Changed from Editor.java to automaticaly export and
    *  handle the server when it's running. Normal save ops otherwise.
    */
-  public boolean handleSaveRequest(boolean immediately)
+  public boolean handleSave(boolean immediately)
   {
     if (untitled) {
       return handleSaveAs();
@@ -466,8 +466,8 @@ public class JavaScriptEditor extends ServingEditor
     }
     return true;
   }
-  
-  private boolean handleExportCheckModified () 
+
+  private boolean handleExportCheckModified ()
   {
     if (sketch.isModified()) {
       Object[] options = { "OK", "Cancel" };
@@ -481,7 +481,7 @@ public class JavaScriptEditor extends ServingEditor
                                                 options[0]);
 
       if (result == JOptionPane.OK_OPTION) {
-        handleSaveRequest(true);
+        handleSave(true);
 
       } else {
         statusNotice("Export canceled, changes must first be saved.");
@@ -490,18 +490,18 @@ public class JavaScriptEditor extends ServingEditor
     }
     return true;
   }
-  
-  
-  public void handleSave () 
-  { 
+
+
+  public void handleSave ()
+  {
     toolbar.activate(JavaScriptToolbar.SAVE);
-    super.handleSave();
+    super.handleSave(true);
     toolbar.deactivate(JavaScriptToolbar.SAVE);
   }
-  
-  
-  public boolean handleSaveAs () 
-  { 
+
+
+  public boolean handleSaveAs ()
+  {
     toolbar.activate(JavaScriptToolbar.SAVE);
     boolean result = super.handleSaveAs();
     toolbar.deactivate(JavaScriptToolbar.SAVE);
@@ -509,7 +509,7 @@ public class JavaScriptEditor extends ServingEditor
   }
 
 
-  public void handleImportLibrary (String item) 
+  public void handleImportLibrary (String item)
   {
     Base.showWarning("Processing.js doesn't support libraries",
                      "Libraries are not supported. Import statements are " +
@@ -537,7 +537,7 @@ public class JavaScriptEditor extends ServingEditor
 
   private File getCustomTemplateFolder ()
   {
-	return new File( getSketch().getFolder(), 
+	return new File( getSketch().getFolder(),
 					 JavaScriptBuild.TEMPLATE_FOLDER_NAME );
   }
 

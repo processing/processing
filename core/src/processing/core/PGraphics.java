@@ -667,6 +667,7 @@ public class PGraphics extends PImage implements PConstants {
     return true;
   }
 
+
   /**
    * Try to draw, or put a draw request on the queue.
    */

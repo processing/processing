@@ -111,7 +111,7 @@ public class JavaToolbar extends EditorToolbar {
       break;
 
     case SAVE:
-      jeditor.handleSaveRequest(false);
+      jeditor.handleSave(false);
       break;
 
     case EXPORT:

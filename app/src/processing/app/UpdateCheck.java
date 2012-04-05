@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2005-06 Ben Fry and Casey Reas
+  Copyright (c) 2005-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Random;
 
 import javax.swing.JOptionPane;
@@ -88,14 +87,13 @@ public class UpdateCheck {
       Preferences.set("update.id", String.valueOf(id));
     }
 
-    String info;
-    info = URLEncoder.encode(id + "\t" +
-                             PApplet.nf(Base.REVISION, 4) + "\t" +
-                             System.getProperty("java.version") + "\t" +
-                             System.getProperty("java.vendor") + "\t" +
-                             System.getProperty("os.name") + "\t" +
-                             System.getProperty("os.version") + "\t" +
-                             System.getProperty("os.arch"), "UTF-8");
+    String info = PApplet.urlEncode(id + "\t" +
+                                    PApplet.nf(Base.REVISION, 4) + "\t" +
+                                    System.getProperty("java.version") + "\t" +
+                                    System.getProperty("java.vendor") + "\t" +
+                                    System.getProperty("os.name") + "\t" +
+                                    System.getProperty("os.version") + "\t" +
+                                    System.getProperty("os.arch"));
 
     int latest = readInt(downloadURL + "?" + info);
 
@@ -111,14 +109,13 @@ public class UpdateCheck {
     Preferences.set("update.last", String.valueOf(now));
 
     if (base.activeEditor != null) {
-      
       boolean offerToUpdateContributions = true;
-      
+
       if (latest > Base.REVISION) {
         // Assume the person is busy downloading the latest version
         offerToUpdateContributions = !promptToVisitDownloadPage();
       }
-      
+
       if (offerToUpdateContributions) {
         // Wait for xml file to be downloaded and updates to come in. (this
         // should really be handled better).
@@ -133,11 +130,11 @@ public class UpdateCheck {
   }
 
 
-  protected boolean promptToVisitDownloadPage() {  
+  protected boolean promptToVisitDownloadPage() {
     String prompt =
       "A new version of Processing is available,\n" +
       "would you like to visit the Processing download page?";
-    
+
     Object[] options = { "Yes", "No" };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
                                               prompt,
@@ -151,16 +148,16 @@ public class UpdateCheck {
       Base.openURL("http://processing.org/download/");
       return true;
     }
-    
+
     return false;
   }
-  
-  
+
+
   protected boolean promptToOpenContributionManager() {
     String contributionPrompt =
       "There are updates available for some of the installed contributions,\n" +
       "would you like to open the the Contribution Manager now?";
-    
+
     Object[] options = { "Yes", "No" };
     int result = JOptionPane.showOptionDialog(base.activeEditor,
                                               contributionPrompt,
@@ -174,7 +171,7 @@ public class UpdateCheck {
       base.handleShowUpdates();
       return true;
     }
-    
+
     return false;
   }
 

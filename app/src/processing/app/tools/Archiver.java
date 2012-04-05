@@ -46,8 +46,8 @@ public class Archiver implements Tool {
   public String getMenuTitle() {
     return "Archive Sketch";
   }
-  
-  
+
+
   public void init(Editor editor) {
     this.editor = editor;
 
@@ -61,27 +61,17 @@ public class Archiver implements Tool {
 
   public void run() {
     Sketch sketch = editor.getSketch();
-    
-    // first save the sketch so that things don't archive strangely
-    boolean success = false;
-    try {
-      success = sketch.save();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    if (!success) {
-      Base.showWarning("Couldn't archive sketch",
-                       "Archiving the sketch has been canceled because\n" +
-                       "the sketch couldn't save properly.", null);
+
+    if (sketch.isModified()) {
+      Base.showWarning("Save",
+                       "Please save the sketch before archiving.",
+                       null);
       return;
     }
 
     File location = sketch.getFolder();
     String name = location.getName();
     File parent = new File(location.getParent());
-
-    //System.out.println("loc " + location);
-    //System.out.println("par " + parent);
 
     File newbie = null;
     String namely = null;
