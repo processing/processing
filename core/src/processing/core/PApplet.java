@@ -2114,8 +2114,18 @@ public class PApplet extends Applet
     comp.removeMouseMotionListener(this);
     comp.removeKeyListener(this);
     comp.removeFocusListener(this);
-
   }
+  
+
+  /** 
+   * Call to remove, then add, listeners to a component. 
+   * Avoids issues with double-adding. 
+   */
+  public void updateListeners(Component comp) {
+    removeListeners(comp);
+    addListeners(comp);
+  }
+  
 
   //////////////////////////////////////////////////////////////
 
