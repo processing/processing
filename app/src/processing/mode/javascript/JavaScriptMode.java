@@ -27,7 +27,7 @@ public class JavaScriptMode extends Mode
 	public boolean showSizeWarning = true;
 	
 	private JavaScriptEditor jsEditor;
-	private File javaModeFolder;
+	private File javaModeFolder, jsModeFolder;
 	
 	/**
 	 *	Constructor
@@ -40,6 +40,7 @@ public class JavaScriptMode extends Mode
 		super(base, folder);
 		
 		javaModeFolder = base.getContentFile( "modes/java" );
+		jsModeFolder = base.getContentFile( "modes/javascript" );
  	  	
 		try {
 			loadKeywords();
@@ -76,7 +77,7 @@ public class JavaScriptMode extends Mode
 	{
 		File[] files = new File[]{
 			new File( javaModeFolder, "keywords.txt" ),
-			new File( folder, "keywords.txt" )
+			new File( jsModeFolder, "keywords.txt" )
 		};
 
 		tokenMarker = new PdeKeywords();
