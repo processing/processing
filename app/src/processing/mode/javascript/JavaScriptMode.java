@@ -29,7 +29,6 @@ public class JavaScriptMode extends Mode
 	public boolean showSizeWarning = true;
 	
 	private JavaScriptEditor jsEditor;
-	private File javaModeFolder, jsModeFolder;
 	
 	/**
 	 *	Constructor
@@ -41,14 +40,18 @@ public class JavaScriptMode extends Mode
 	{
 		super(base, folder);
 		
-		javaModeFolder = base.getContentFile( "modes/java" );
-		jsModeFolder = base.getContentFile( "modes/javascript" );
- 	  	
 		try {
-			loadKeywords();
-	  	} catch (IOException e) {
-	    	Base.showError( "Problem loading keywords",
-	                   		"Could not load keywords.txt, please re-install Processing.", e);
+			loadKeywords(); // in JavaMode, sets tokenMarker
+			loadAdditionalKeywords( 
+				new File( base.getContentFile("modes/java"), 
+						  "keywords.txt" ),
+				tokenMarker
+			);
+		} 
+		catch ( IOException e ) 
+		{
+			Base.showError( "Problem loading keywords",
+			                "Could not load keywords.txt, please re-install Processing.", e);
 		}
 	}
 
@@ -71,44 +74,66 @@ public class JavaScriptMode extends Mode
 	}
 
 	/**
-	 *	Override Mode.loadKeywords()
-	 *
-	 *	Loads default Java keywords, then adds JS mode keywords.
+	 *	Loads default Java keywords, JS keywords 
+	 *	were already loaded in constructor.
 	 */
-	protected void loadKeywords() throws IOException
+	protected void loadAdditionalKeywords ( File keywords, PdeKeywords tokenMarker ) throws IOException
 	{
-		File[] files = new File[]{
-			new File( javaModeFolder, "keywords.txt" ),
-			new File( jsModeFolder, "keywords.txt" )
-		};
-
-		tokenMarker = (PdeKeywords)getTokenMarker();
-		keywordToReference = new HashMap<String, String>();
+		if ( keywordToReference == null )
+			keywordToReference = new HashMap<String, String>();
 		
-		for ( File f : files )
+		BufferedReader reader = PApplet.createReader( keywords );
+		String line = null;
+		while ((line = reader.readLine()) != null) 
 		{
-			BufferedReader reader = PApplet.createReader( f );
-			String line = null;
-			while ((line = reader.readLine()) != null) 
+			String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
+		    if (pieces.length >= 2) 
 			{
-				String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
-			    if (pieces.length >= 2) 
-				{
-			    	String keyword = pieces[0];
-					String coloring = pieces[1];
-					if (coloring.length() > 0) {
-			        	tokenMarker.addColoring(keyword, coloring);
-			      	}
-			      	if (pieces.length == 3) {
-			        	String htmlFilename = pieces[2];
-			        	if (htmlFilename.length() > 0) {
-			          		keywordToReference.put(keyword, htmlFilename);
-			        	}
-			      	}
-				}
+		    	String keyword = pieces[0];
+				String coloring = pieces[1];
+				if (coloring.length() > 0) {
+		        	tokenMarker.addColoring(keyword, coloring);
+		      	}
+		      	if (pieces.length == 3) {
+		        	String htmlFilename = pieces[2];
+		        	if (htmlFilename.length() > 0) {
+		          		keywordToReference.put(keyword, htmlFilename);
+		        	}
+		      	}
 			}
 		}
 	}
+	
+	/**
+	 * Copied from JavaMode
+	 */
+	protected void loadKeywords() throws IOException 
+	{
+	    File file = new File(folder, "keywords.txt");
+	    BufferedReader reader = PApplet.createReader(file);
+
+	    tokenMarker = new PdeKeywords();
+	    keywordToReference = new HashMap<String, String>();
+
+	    String line = null;
+    	while ((line = reader.readLine()) != null) {
+      		String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
+      		if (pieces.length >= 2) {
+        		String keyword = pieces[0];
+        		String coloring = pieces[1];
+
+        		if (coloring.length() > 0) {
+          			tokenMarker.addColoring(keyword, coloring);
+        		}
+        		if (pieces.length == 3) {
+          			String htmlFilename = pieces[2];
+          			if (htmlFilename.length() > 0) {
+            			keywordToReference.put(keyword, htmlFilename);
+          			}
+        		}
+      		}
+    	}
+  	}
 	
 	/**
 	 *	Override getTokenMarker in Mode
