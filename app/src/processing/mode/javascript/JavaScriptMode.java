@@ -11,8 +11,10 @@ import processing.app.EditorState;
 import processing.app.Mode;
 import processing.app.Sketch;
 import processing.app.SketchException;
-import processing.app.syntax.PdeKeywords;
 import processing.core.PApplet;
+
+import processing.app.syntax.PdeKeywords;
+import processing.app.syntax.TokenMarker;
 
 import processing.mode.java.JavaMode;
 
@@ -80,7 +82,7 @@ public class JavaScriptMode extends Mode
 			new File( jsModeFolder, "keywords.txt" )
 		};
 
-		tokenMarker = new PdeKeywords();
+		tokenMarker = (PdeKeywords)getTokenMarker();
 		keywordToReference = new HashMap<String, String>();
 		
 		for ( File f : files )
@@ -106,6 +108,16 @@ public class JavaScriptMode extends Mode
 				}
 			}
 		}
+	}
+	
+	/**
+	 *	Override getTokenMarker in Mode
+	 */
+	public TokenMarker getTokenMarker () 
+	{
+		if ( tokenMarker == null )
+			tokenMarker = new PdeKeywords();
+		return tokenMarker;
 	}
 
   // pretty printable name of the mode
