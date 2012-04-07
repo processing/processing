@@ -22,11 +22,36 @@ import processing.mode.java.JavaMode;
  */
 public class JavaScriptMode extends Mode
 {
+	// show that warning only once per run-cycle as we are 
+	// continously exporting behind the scenes at every save
 	public boolean showSizeWarning = true;
 	
 	private JavaScriptEditor jsEditor;
+	private File javaModeFolder;
+	
+	/**
+	 *	Constructor
+	 *
+	 *	@param base the Processing editor base
+	 *	@param folder the folder that this mode is started from
+	 */
+	public JavaScriptMode ( Base base, File folder )
+	{
+		super(base, folder);
+		
+		javaModeFolder = base.getContentFile( "modes/java" );
+ 	  	
+		try {
+			loadKeywords();
+	  	} catch (IOException e) {
+	    	Base.showError( "Problem loading keywords",
+	                   		"Could not load keywords.txt, please re-install Processing.", e);
+		}
+	}
 
-	// create a new editor with the mode
+	/**
+	 *	Called to create the actual editor when needed (once per Sketch)
+	 */
 	public Editor createEditor( Base base, String path, EditorState state )
 	{
 		jsEditor = new JavaScriptEditor( base, path, state, this );
@@ -34,49 +59,53 @@ public class JavaScriptMode extends Mode
 		return jsEditor;
 	}
 
-	public Editor getEditor() {
+	/**
+	 *	Called from Base to get the Editor for this mode.
+	 */
+	public Editor getEditor () 
+	{
 		return jsEditor;
 	}
 
-	public JavaScriptMode( Base base, File folder )
+	/**
+	 *	Override Mode.loadKeywords()
+	 *
+	 *	Loads default Java keywords, then adds JS mode keywords.
+	 */
+	protected void loadKeywords() throws IOException
 	{
-	  super(base, folder);
- 
-	  try {
-	    loadKeywords();
-	  } catch (IOException e) {
-	    Base.showError("Problem loading keywords",
-	                   "Could not load keywords.txt, please re-install Processing.", e);
-	  }
+		File[] files = new File[]{
+			new File( javaModeFolder, "keywords.txt" ),
+			new File( folder, "keywords.txt" )
+		};
+
+		tokenMarker = new PdeKeywords();
+		keywordToReference = new HashMap<String, String>();
+		
+		for ( File f : files )
+		{
+			BufferedReader reader = PApplet.createReader( f );
+			String line = null;
+			while ((line = reader.readLine()) != null) 
+			{
+				String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
+			    if (pieces.length >= 2) 
+				{
+			    	String keyword = pieces[0];
+					String coloring = pieces[1];
+					if (coloring.length() > 0) {
+			        	tokenMarker.addColoring(keyword, coloring);
+			      	}
+			      	if (pieces.length == 3) {
+			        	String htmlFilename = pieces[2];
+			        	if (htmlFilename.length() > 0) {
+			          		keywordToReference.put(keyword, htmlFilename);
+			        	}
+			      	}
+				}
+			}
+		}
 	}
-
-  protected void loadKeywords() throws IOException
-  {
-    File file = new File(folder, "keywords.txt");
-    BufferedReader reader = PApplet.createReader(file);
-
-    tokenMarker = new PdeKeywords();
-    keywordToReference = new HashMap<String, String>();
-
-    String line = null;
-    while ((line = reader.readLine()) != null) {
-      String[] pieces = PApplet.trim(PApplet.split(line, '\t'));
-      if (pieces.length >= 2) {
-        String keyword = pieces[0];
-        String coloring = pieces[1];
-
-        if (coloring.length() > 0) {
-          tokenMarker.addColoring(keyword, coloring);
-        }
-        if (pieces.length == 3) {
-          String htmlFilename = pieces[2];
-          if (htmlFilename.length() > 0) {
-            keywordToReference.put(keyword, htmlFilename);
-          }
-        }
-      }
-    }
-  }
 
   // pretty printable name of the mode
   public String getTitle()
