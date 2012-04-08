@@ -1717,9 +1717,9 @@ public abstract class Editor extends JFrame implements RunnerListener {
       if (pos + prefixLen > length) {
         commented = false;
       } else {
-        // Check the first two characters to see if it's already a comment.
-        String begin = textarea.getText(pos, 2);
-        //System.out.println("begin is '" + begin + "'");
+        // Check the first characters to see if it's already a comment.
+        String begin = textarea.getText(pos, prefixLen);
+        System.out.println("begin is '" + begin + "'");
         commented = begin.equals(prefix);
       }
     }
