@@ -1719,7 +1719,7 @@ public abstract class Editor extends JFrame implements RunnerListener {
       } else {
         // Check the first characters to see if it's already a comment.
         String begin = textarea.getText(pos, prefixLen);
-        System.out.println("begin is '" + begin + "'");
+        //System.out.println("begin is '" + begin + "'");
         commented = begin.equals(prefix);
       }
     }
