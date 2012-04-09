@@ -38,23 +38,6 @@ import java.awt.event.KeyEvent;
  * @usage Web &amp; Application
  */
 public interface PConstants {
-  // render & flush modes (in P3D)
-
-  static public final int IMMEDIATE = 0;
-  static public final int RETAINED  = 1;
-
-  static public final int FLUSH_CONTINUOUSLY = 0;
-  static public final int FLUSH_WHEN_FULL    = 1;
-
-  // shaders
-
-  static public final int FILL_SHADER_SIMPLE = 0;
-  static public final int FILL_SHADER_LIT = 1;
-  static public final int FILL_SHADER_TEX = 2;
-  static public final int FILL_SHADER_FULL = 3;
-  static public final int LINE_SHADER = 4;
-  static public final int POINT_SHADER = 5;
-
   // vertex fields
 
   static public final int X = 0;  // model coords xyz (formerly MX/MY/MZ)
@@ -141,8 +124,6 @@ public interface PConstants {
 
   static final String PDF    = "processing.pdf.PGraphicsPDF";
   static final String DXF    = "processing.dxf.RawDXF";
-
-  static final String LWJGL  = "processing.lwjgl.PGraphicsLWJGL";
 
   // platform IDs for PApplet.platform
 
@@ -451,9 +432,10 @@ public interface PConstants {
   // text alignment modes
   // are inherited from LEFT, CENTER, RIGHT
 
-  // PTexture
+  // textures
 
-  /** This constant identifies the texture target GL_TEXTURE_2D, that is, textures with normalized coordinates */
+  /** This constant identifies the texture target GL_TEXTURE_2D, that is, 
+   * textures with normalized coordinates */
   public static final int TEXTURE2D = 0;
 
   /** This constant identifies the nearest texture filter (point sampling) */
@@ -462,18 +444,13 @@ public interface PConstants {
   public static final int BILINEAR = 3;
   /** This constant identifies the linear/linear function to build mipmaps  */
   public static final int TRILINEAR = 4;
-
   /** This constant identifies the clamp-to-edge wrapping mode */
   public static final int CLAMP = 0;
   /** This constant identifies the repeat wrapping mode */
   public static final int REPEAT = 1;
 
-  /** Point sprite distance attenuation functions */
-  public static final int LINEAR = 0;
-  public static final int QUADRATIC = 1;
 
-
-  // PShape3D
+  // vbos
 
   /**  Static usage mode for PShape3D (vertices won't be updated after creation).  */
   public static final int STATIC = 0;
@@ -482,7 +459,17 @@ public interface PConstants {
   /**  Dynamic usage mode for PShape3D (vertices will be updated at every frame). */
   public static final int STREAM = 2;
 
+  
+  // shaders
 
+  static public final int FILL_SHADER_SIMPLE = 0;
+  static public final int FILL_SHADER_LIT = 1;
+  static public final int FILL_SHADER_TEX = 2;
+  static public final int FILL_SHADER_FULL = 3;
+  static public final int LINE_SHADER = 4;
+  static public final int POINT_SHADER = 5;
+  
+  
   // stroke modes
 
   static final int SQUARE   = 1 << 0;  // called 'butt' in the svg spec
