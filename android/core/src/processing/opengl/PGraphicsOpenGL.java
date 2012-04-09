@@ -4073,6 +4073,22 @@ public class PGraphicsOpenGL extends PGraphics {
   
   //////////////////////////////////////////////////////////////
 
+  // FILL COLOR  
+  
+  
+  protected void fillFromCalc() {
+    super.fillFromCalc();
+    
+    // Setting the ambient color from the current fill
+    // is what the old P3D did and allows to have an 
+    // default ambient color when the user doesn't specify
+    // it explicitly.
+    ambientFromCalc();
+  }   
+  
+  
+  //////////////////////////////////////////////////////////////
+
   // LIGHTING
 
   /**
