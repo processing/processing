@@ -267,9 +267,9 @@ public class PShape3D extends PShape {
     this.tessellated = false;
     
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
-      in = pg.newInGeometry(RETAINED);      
+      in = pg.newInGeometry(PGraphicsOpenGL.RETAINED);      
     }    
-    tess = pg.newTessGeometry(RETAINED);
+    tess = pg.newTessGeometry(PGraphicsOpenGL.RETAINED);
     fillIndexData = new ArrayList<IndexData>();
     lineIndexData = new ArrayList<IndexData>();
     pointIndexData = new ArrayList<IndexData>();
