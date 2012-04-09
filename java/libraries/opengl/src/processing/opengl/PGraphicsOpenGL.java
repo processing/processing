@@ -44,7 +44,7 @@ import java.util.Stack;
  * OpenGL renderer.
  *
  */
-public class PGraphicsOpenGL extends PGraphics {
+public class PGraphicsOpenGL extends PGraphics {  
   /** Interface between Processing and OpenGL */
   public PGL pgl;
 
@@ -55,7 +55,22 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Basic rendering parameters:
 
+  /** Flush modes: continuously (geometry is flushed after each call to
+   * endShape) when-full (geometry is accumulated until a maximum size is
+   * reached.  */
+  static protected final int FLUSH_CONTINUOUSLY = 0;
+  static protected final int FLUSH_WHEN_FULL    = 1;     
+  
+  /** Type of geometry: immediate is that generated with beginShape/vertex/
+   * endShape, retained is the result of creating a PShape3D object with
+   * createShape. */
+  static protected final int IMMEDIATE = 0;
+  static protected final int RETAINED  = 1;
+
+  /** Current flush mode. */
   protected int flushMode = FLUSH_WHEN_FULL;
+  
+  /** VBO storage mode. */
   protected int vboMode = PGL.GL_STATIC_DRAW;
 
   // ........................................................
@@ -507,12 +522,11 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedGLResources();
   }
 
-
-  // Only for debugging purposes.
-  public void setFlushMode(int mode) {
-    flushMode = mode;
+  
+  protected void setFlushMode(int mode) {
+    flushMode = mode;    
   }
-
+  
 
   //////////////////////////////////////////////////////////////
 
@@ -6369,9 +6383,9 @@ public class PGraphicsOpenGL extends PGraphics {
       float ny = v10z * v12x - v12z * v10x;
       float nz = v10x * v12y - v12x * v10y;
       float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
-      nx /= d;
-      ny /= d;
-      nz /= d;
+      nx /= -d;
+      ny /= -d;
+      nz /= -d;
 
       index = 3 * i0;
       normals[index++] = nx;
