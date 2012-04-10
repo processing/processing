@@ -62,12 +62,14 @@ float spotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, floa
 }
 
 float lambertFactor(vec3 lightDir, vec3 vecNormal) {
-  return max(zero_float, dot(lightDir, vecNormal));
+  //return max(zero_float, dot(lightDir, vecNormal));
+  return abs(dot(lightDir, vecNormal));
 }
 
 float blinnPhongFactor(vec3 lightDir, vec3 lightPos, vec3 vecNormal, float shine) {
   vec3 ldp = normalize(lightDir - lightPos);
-  return pow(max(zero_float, dot(ldp, vecNormal)), shine);
+  //return pow(max(zero_float, dot(ldp, vecNormal)), shine);
+  return pow(abs(dot(ldp, vecNormal)), shine);
 }
 
 void main() {
