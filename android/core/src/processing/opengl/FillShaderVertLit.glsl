@@ -62,12 +62,14 @@ float spotFactor(vec3 lightPos, vec3 vertPos, vec3 lightNorm, float minCos, floa
 }
 
 float lambertFactor(vec3 lightDir, vec3 vecNormal) {
-  return max(zero_float, dot(lightDir, vecNormal));
+  //return max(zero_float, dot(lightDir, vecNormal));
+  return abs(dot(lightDir, vecNormal));
 }
 
 float blinnPhongFactor(vec3 lightDir, vec3 lightPos, vec3 vecNormal, float shine) {
   vec3 ldp = normalize(lightDir - lightPos);
-  return pow(max(zero_float, dot(ldp, vecNormal)), shine);
+  //return pow(max(zero_float, dot(ldp, vecNormal)), shine);
+  return pow(abs(dot(ldp, vecNormal)), shine);
 }
 
 void main() {
@@ -118,12 +120,13 @@ void main() {
     if (any(greaterThan(lightSpecular[i], zero_vec3))) {
       totalSpecular += lightSpecular[i] * falloff * spotf * 
                        blinnPhongFactor(lightDir, lightPos, ecNormal, inShine);
-    }    
+    }
+     
   }    
 
   // Calculating final color as result of all lights (plus emissive term)
   vertColor = vec4(totalAmbient, 1) * inAmbient + 
               vec4(totalDiffuse, 1) * inColor + 
               vec4(totalSpecular, 1) * inSpecular + 
-              inEmissive;          
+              inEmissive;              
 }
