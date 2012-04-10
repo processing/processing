@@ -134,10 +134,14 @@ public class PGL {
   
   public static final int GL_LESS   = GLES20.GL_LESS;
   public static final int GL_LEQUAL = GLES20.GL_LEQUAL;
+  
   public static final int GL_CCW    = GLES20.GL_CCW;
-  public static final int GL_CW     = GLES20.GL_CW;  
-  public static final int GL_FRONT  = GLES20.GL_FRONT;
-  public static final int GL_BACK   = GLES20.GL_BACK;
+  public static final int GL_CW     = GLES20.GL_CW;
+  
+  public static final int GL_CULL_FACE      = GLES20.GL_CULL_FACE;
+  public static final int GL_FRONT          = GLES20.GL_FRONT;
+  public static final int GL_BACK           = GLES20.GL_BACK;
+  public static final int GL_FRONT_AND_BACK = GLES20.GL_FRONT_AND_BACK;
   
   public static final int GL_VIEWPORT = GLES20.GL_VIEWPORT;
   
@@ -636,6 +640,11 @@ public class PGL {
   
   public void glFrontFace(int mode) {
     GLES20.glFrontFace(mode);
+  }
+  
+  
+  public void glCullFace(int mode) {
+    GLES20.glCullFace(mode);  
   }
   
   
