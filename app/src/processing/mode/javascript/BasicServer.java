@@ -17,6 +17,9 @@ class BasicServer implements HttpConstants, Runnable
 	// TODO read settings from sketch.properties
 	// NOTE 0.0.0.0 does not work on XP
 	public static final String localDomain = "http://127.0.0.1";
+	
+	final static int MIN_PORT = 0;
+	final static int MAX_PORT = 49151;
 
 	Thread thread = null;
 	ServerSocket server = null;
@@ -132,12 +135,12 @@ class BasicServer implements HttpConstants, Runnable
 			// http://stackoverflow.com/questions/434718/sockets-discover-port-availability-using-java
 			// http://stackoverflow.com/questions/2675362/how-to-find-an-available-port
 
-			if ( port >= 0 )
+			if ( newPort >= 0 )
 			{
-				if ( !available(port) )
+				if ( !available(newPort) )
 				{
 					System.err.println( "BasicServer: " + 
-										"that port ("+port+") seems to be taken " + 
+										"that port ("+newPort+") seems to be taken " + 
 										"or is out of range (<1025 or >49151)");
 					System.out.println( "... if it works anyway, ignore the warning." );
 				}

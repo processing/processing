@@ -48,9 +48,9 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 			return;
 		}
 
-		if ( port < 0 || port > 65535 )
+		if ( port < BasicServer.MIN_PORT || port > BasicServer.MAX_PORT )
 		{
-			statusError("That port number is out of range");
+			statusError( "That port number is out of range" );
 			return;
 		}
 		
