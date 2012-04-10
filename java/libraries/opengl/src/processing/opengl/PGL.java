@@ -143,12 +143,16 @@ public class PGL {
   public static final int GL_FALSE = GL.GL_FALSE;
   public static final int GL_TRUE  = GL.GL_TRUE;
 
-  public static final int GL_LESS   = GL.GL_LESS;
-  public static final int GL_LEQUAL = GL.GL_LEQUAL;
-  public static final int GL_CCW    = GL.GL_CCW;
-  public static final int GL_CW     = GL.GL_CW;
-  public static final int GL_FRONT  = GL.GL_FRONT;
-  public static final int GL_BACK   = GL.GL_BACK;
+  public static final int GL_LESS      = GL.GL_LESS;
+  public static final int GL_LEQUAL    = GL.GL_LEQUAL;
+  
+  public static final int GL_CCW       = GL.GL_CCW;
+  public static final int GL_CW        = GL.GL_CW;
+  
+  public static final int GL_CULL_FACE      = GL.GL_CULL_FACE;
+  public static final int GL_FRONT          = GL.GL_FRONT;
+  public static final int GL_BACK           = GL.GL_BACK;
+  public static final int GL_FRONT_AND_BACK = GL.GL_FRONT_AND_BACK;
 
   public static final int GL_VIEWPORT = GL.GL_VIEWPORT;
 
@@ -658,6 +662,11 @@ public class PGL {
     gl.glFrontFace(mode);
   }
 
+  
+  public void glCullFace(int mode) {
+    gl.glCullFace(mode);
+  }
+  
 
   public void glDepthMask(boolean flag) {
     gl.glDepthMask(flag);
