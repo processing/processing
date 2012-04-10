@@ -2605,6 +2605,9 @@ public class PShape3D extends PShape {
       d = params[2];
     }
         
+    //in.generateBox(w, h, d);
+                       
+    
     float x1 = -w/2f; float x2 = w/2f;
     float y1 = -h/2f; float y2 = h/2f;
     float z1 = -d/2f; float z2 = d/2f;
