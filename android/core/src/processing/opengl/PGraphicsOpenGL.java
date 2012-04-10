@@ -1485,8 +1485,11 @@ public class PGraphicsOpenGL extends PGraphics {
     lightFalloff(1, 0, 0);
     lightSpecular(0, 0, 0);
 
-    // because y is flipped
+    // Because y is flipped, the vertices that should be specified by 
+    // the user in CCW order to define a front-facing facet, end up being
+    // CW.
     pgl.glFrontFace(PGL.GL_CW);
+    pgl.glDisable(PGL.GL_CULL_FACE);
 
     // Processing uses only one texture unit.
     pgl.glActiveTexture(PGL.GL_TEXTURE0);
@@ -1617,6 +1620,7 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 
     pgl.glFrontFace(PGL.GL_CW);
+    pgl.glDisable(PGL.GL_CULL_FACE);
 
     pgl.glActiveTexture(PGL.GL_TEXTURE0);
 
@@ -1837,6 +1841,9 @@ public class PGraphicsOpenGL extends PGraphics {
     specular(125);
     emissive(0);
     shininess(1);
+    
+    // To indicate that the user hasn't set ambient
+    setAmbient = false;
   }
 
 
@@ -4094,11 +4101,14 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void fillFromCalc() {
     super.fillFromCalc();
     
-    // Setting the ambient color from the current fill
-    // is what the old P3D did and allows to have an 
-    // default ambient color when the user doesn't specify
-    // it explicitly.
-    ambientFromCalc();
+    if (!setAmbient) {
+      // Setting the ambient color from the current fill
+      // is what the old P3D did and allows to have an 
+      // default ambient color when the user doesn't specify
+      // it explicitly.
+      ambientFromCalc();
+      setAmbient = false;
+    }
   }  
   
 
@@ -6369,15 +6379,17 @@ public class PGraphicsOpenGL extends PGraphics {
       float v10y = y0 - y1;
       float v10z = z0 - z1;
 
-      // n = v10 x v12 (so the normal points out following the
-      // clockwise direction along the vertices of the triangle).
-      float nx = v10y * v12z - v12y * v10z;
-      float ny = v10z * v12x - v12z * v10x;
-      float nz = v10x * v12y - v12x * v10y;
+      // The automatic normal calculation in Processing assumes
+      // that vertices as given in CCW order so:
+      // n = v12 x v10
+      // so that the normal outwards.
+      float nx = v12y * v10z - v10y * v12z;
+      float ny = v12z * v10x - v10z * v12x;
+      float nz = v12x * v10y - v10x * v12y;
       float d = PApplet.sqrt(nx * nx + ny * ny + nz * nz);
-      nx /= -d;
-      ny /= -d;
-      nz /= -d;
+      nx /= d;
+      ny /= d;
+      nz /= d;
 
       index = 3 * i0;
       normals[index++] = nx;
@@ -6614,9 +6626,11 @@ public class PGraphicsOpenGL extends PGraphics {
         int i1 = i;
         int i0, i2;
         if (i % 2 == 0) {
+          // The even triangles (0, 2, 4...) should be CW
           i0 = i + 1;
           i2 = i - 1;
         } else {
+          // The even triangles (1, 3, 5...) should be CCW
           i0 = i - 1;
           i2 = i + 1;
         }
@@ -6672,11 +6686,11 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int qd = 1; qd < (lastVertex - firstVertex + 1) / 2; qd++) {
         int i0 = firstVertex + 2 * (qd - 1);
         int i1 = firstVertex + 2 * (qd - 1) + 1;
-        int i2 = firstVertex + 2 * qd + 1;
-        int i3 = firstVertex + 2 * qd;
+        int i2 = firstVertex + 2 * qd;
+        int i3 = firstVertex + 2 * qd + 1;
 
-        calcTriangleNormal(i0, i1, i3);
-        calcTriangleNormal(i3, i2, i0);
+        calcTriangleNormal(i0, i3, i1);
+        calcTriangleNormal(i0, i2, i3);
       }
     }
 
@@ -8572,15 +8586,16 @@ public class PGraphicsOpenGL extends PGraphics {
           }
           break;
         case TRIANGLE_STRIP:
-          for (int i = 1; i < tessCount - 1; i++) {
-            addIndex(i);
+          for (int i = 1; i < tessCount - 1; i++) {            
             if (i % 2 == 0) {
-              addIndex(i - 1);
               addIndex(i + 1);
+              addIndex(i);
+              addIndex(i - 1);              
               if (calcNormals) calcTriNormal(i + 1, i, i - 1);
             } else {
-              addIndex(i + 1);
               addIndex(i - 1);
+              addIndex(i);
+              addIndex(i + 1);              
               if (calcNormals) calcTriNormal(i - 1, i, i + 1);
             }
           }
