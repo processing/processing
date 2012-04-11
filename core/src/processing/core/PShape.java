@@ -1499,7 +1499,7 @@ public class PShape implements PConstants {
     if (source instanceof PMatrix2D) {
       applyMatrix((PMatrix2D) source);
     } else if (source instanceof PMatrix3D) {
-      applyMatrix(source);
+      applyMatrix((PMatrix3D) source);
     }
   }
 
@@ -1522,7 +1522,7 @@ public class PShape implements PConstants {
   }
 
 
-  public void apply(PMatrix3D source) {
+  public void applyMatrix(PMatrix3D source) {
     applyMatrix(source.m00, source.m01, source.m02, source.m03,
                 source.m10, source.m11, source.m12, source.m13,
                 source.m20, source.m21, source.m22, source.m23,
