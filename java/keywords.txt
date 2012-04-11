@@ -246,7 +246,7 @@ boolean	KEYWORD2	booleanconvert_
 byte	KEYWORD2	byteconvert_
 cache	KEYWORD2
 char	KEYWORD2	charconvert_
-color KEYWORD1	color_datatype
+color	KEYWORD1	color_datatype
 start	KEYWORD2
 stop	KEYWORD2
 breakShape	KEYWORD2
