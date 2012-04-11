@@ -932,7 +932,7 @@ public class PGraphics extends PImage implements PConstants {
     if (which > 0) {
       return hints[which];
     } else {
-      return hints[-which];
+      return !hints[-which];
     }
   }
 
