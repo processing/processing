@@ -342,6 +342,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // Bezier and Catmull-Rom curves
 
+  // TODO: move bezier/curve vertex generation to InGeometry.   
+  
   protected boolean bezierInited = false;
   public int bezierDetail = 20;
   protected PMatrix3D bezierDrawMatrix;
@@ -4509,8 +4511,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void backgroundImpl() {
-    tessGeo.clear();
-    texCache.clear();
+    flush();
 
     pgl.glDepthMask(true);
     pgl.glClearColor(0, 0, 0, 0);
@@ -4521,7 +4522,7 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glDepthMask(true);
     }
 
-    pgl.glClearColor(backgroundR, backgroundG, backgroundB, 1);
+    pgl.glClearColor(backgroundR, backgroundG, backgroundB, backgroundA);
     pgl.glClear(PGL.GL_COLOR_BUFFER_BIT);
     if (0 < parent.frameCount) {
       clearColorBuffer = true;
@@ -6160,13 +6161,18 @@ public class PGraphicsOpenGL extends PGraphics {
     public int[] emissive;
     public float[] shininess;
 
-    // TODO: this should probably go in the TessGeometry class
+    // TODO: this should probably go in the TessGeometry class, or maybe not...
     public int[][] edges;
 
-    // For later, to be used by libraries...
-    //public float[][] mtexcoords;
-    //public float[][] attributes;
-
+    // Internally used by the addVertex() methods.
+    protected int fillColor;
+    protected int strokeColor; 
+    protected float strokeWeight;
+    protected int ambientColor;
+    protected int specularColor;
+    protected int emissiveColor;
+    protected float shininessFactor; 
+    
     public InGeometry(int mode) {
       renderMode = mode;
       allocate();
@@ -6260,8 +6266,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public boolean isFull() {
       return PGL.MAX_TESS_VERTICES <= vertexCount;
     }
-
-
+    
     public int addVertex(float x, float y,
                          int fcolor,
                          float u, float v,
@@ -6278,6 +6283,17 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public int addVertex(float x, float y,
+                         float u, float v,
+                         int code) { 
+      return addVertex(x, y, 
+                       fillColor, 
+                       u, v, 
+                       strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininessFactor,
+                       code);
+    }    
+    
+    public int addVertex(float x, float y,
                          int fcolor,
                          int scolor, float sweight,
                          int am, int sp, int em, float shine,
@@ -6290,7 +6306,16 @@ public class PGraphicsOpenGL extends PGraphics {
                        am, sp, em, shine,
                        code);
     }
-
+    
+    public int addVertex(float x, float y,
+                         int code) { 
+      return addVertex(x, y, 
+                       fillColor,
+                       strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininessFactor,
+                       code);
+    }      
+    
     public int addVertex(float x, float y, float z,
                          int fcolor,
                          float nx, float ny, float nz,
@@ -6331,6 +6356,19 @@ public class PGraphicsOpenGL extends PGraphics {
       vertexCount++;
 
       return lastVertex;
+    }
+    
+    public int addVertex(float x, float y, float z,
+                         float nx, float ny, float nz,
+                         float u, float v,
+                         int code) {
+      return addVertex(x, y, z,
+                       fillColor,
+                       nx, ny, nz,
+                       u, v, 
+                       strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininessFactor,
+                       code);           
     }
 
     public int javaToNativeARGB(int color) {
@@ -6760,12 +6798,11 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    // Primitive generation
-
     public void generateEllipse(int ellipseMode, float a, float b, float c, float d,
                                 boolean fill, int fillColor,
                                 boolean stroke, int strokeColor, float strokeWeight,
-                                int ambient, int specular, int emissive, float shininess) {
+                                int ambientColor, int specularColor, int emissiveColor, 
+                                float shininessFactor) {
       float x = a;
       float y = b;
       float w = c;
@@ -6795,7 +6832,15 @@ public class PGraphicsOpenGL extends PGraphics {
         y += h;
         h = -h;
       }
-
+      
+      this.fillColor = fillColor;
+      this.strokeColor = strokeColor; 
+      this.strokeWeight = strokeWeight;
+      this.ambientColor = ambientColor;
+      this.specularColor = specularColor;
+      this.emissiveColor = emissiveColor;
+      this.shininessFactor = shininessFactor; 
+      
       float radiusH = w / 2;
       float radiusV = h / 2;
 
@@ -6814,10 +6859,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float inc = (float) PGraphicsOpenGL.SINCOS_LENGTH / accuracy;
 
       if (fill) {
-        addVertex(centerX, centerY,
-                  fillColor, strokeColor, strokeWeight,
-                  ambient, specular, emissive, shininess,
-                  VERTEX);
+        addVertex(centerX, centerY, VERTEX);
       }
       int idx0, pidx, idx;
       idx0 = pidx = idx = 0;
@@ -6825,8 +6867,6 @@ public class PGraphicsOpenGL extends PGraphics {
       for (int i = 0; i < accuracy; i++) {
         idx = addVertex(centerX + PGraphicsOpenGL.cosLUT[(int) val] * radiusH,
                         centerY + PGraphicsOpenGL.sinLUT[(int) val] * radiusV,
-                        fillColor, strokeColor, strokeWeight,
-                        ambient, specular, emissive, shininess,
                         VERTEX);
         val = (val + inc) % PGraphicsOpenGL.SINCOS_LENGTH;
 
@@ -6841,12 +6881,82 @@ public class PGraphicsOpenGL extends PGraphics {
       // Back to the beginning
       addVertex(centerX + PGraphicsOpenGL.cosLUT[0] * radiusH,
                 centerY + PGraphicsOpenGL.sinLUT[0] * radiusV,
-                fillColor, strokeColor, strokeWeight,
-                ambient, specular, emissive, shininess,
                 VERTEX);
       if (stroke) addEdge(idx, idx0, false, true);
     }
 
+    public void generateBox(float w, float h, float d,
+                            boolean fill, int fillColor,
+                            boolean stroke, int strokeColor, float strokeWeight,
+                            int ambientColor, int specularColor, int emissiveColor, 
+                            float shininessFactor) {
+      float x1 = -w/2f; float x2 = w/2f;
+      float y1 = -h/2f; float y2 = h/2f;
+      float z1 = -d/2f; float z2 = d/2f;
+
+      this.fillColor = fillColor;
+      this.strokeColor = strokeColor; 
+      this.strokeWeight = strokeWeight;
+      this.ambientColor = ambientColor;
+      this.specularColor = specularColor;
+      this.emissiveColor = emissiveColor;
+      this.shininessFactor = shininessFactor;     
+
+      if (fill || stroke) {
+        // front face
+        addVertex(x1, y1, z1, 0, 0, 1, 0, 0, VERTEX);
+        addVertex(x2, y1, z1, 0, 0, 1, 1, 0, VERTEX);
+        addVertex(x2, y2, z1, 0, 0, 1, 1, 1, VERTEX);
+        addVertex(x1, y2, z1, 0, 0, 1, 0, 1, VERTEX);
+
+        // right face
+        addVertex(x2, y1, z1, 1, 0, 0, 0, 0, VERTEX);
+        addVertex(x2, y1, z2, 1, 0, 0, 1, 0, VERTEX);
+        addVertex(x2, y2, z2, 1, 0, 0, 1, 1, VERTEX);
+        addVertex(x2, y2, z1, 1, 0, 0, 0, 1, VERTEX);
+
+        // back face
+        addVertex(x2, y1, z2, 0, 0, -1, 0, 0, VERTEX);
+        addVertex(x1, y1, z2, 0, 0, -1, 1, 0, VERTEX);
+        addVertex(x1, y2, z2, 0, 0, -1, 1, 1, VERTEX);
+        addVertex(x2, y2, z2, 0, 0, -1, 0, 1, VERTEX);
+
+        // left face
+        addVertex(x1, y1, z2, -1, 0, 0, 0, 0, VERTEX);
+        addVertex(x1, y1, z1, -1, 0, 0, 1, 0, VERTEX);
+        addVertex(x1, y2, z1, -1, 0, 0, 1, 1, VERTEX);
+        addVertex(x1, y2, z2, -1, 0, 0, 0, 1, VERTEX);;
+
+        // top face
+        addVertex(x1, y1, z2, 0, 1, 0, 0, 0, VERTEX);
+        addVertex(x2, y1, z2, 0, 1, 0, 1, 0, VERTEX);
+        addVertex(x2, y1, z1, 0, 1, 0, 1, 1, VERTEX);
+        addVertex(x1, y1, z1, 0, 1, 0, 0, 1, VERTEX);
+
+        // bottom face
+        addVertex(x1, y2, z1, 0, -1, 0, 0, 0, VERTEX);
+        addVertex(x2, y2, z1, 0, -1, 0, 1, 0, VERTEX);
+        addVertex(x2, y2, z2, 0, -1, 0, 1, 1, VERTEX);
+        addVertex(x1, y2, z2, 0, -1, 0, 0, 1, VERTEX);        
+      }
+      
+      if (stroke) {
+        addEdge(0, 1, true, false);
+        addEdge(1, 2, false, false);
+        addEdge(2, 3, false, false);
+        addEdge(3, 0, false, false);
+                
+        addEdge(0,  9, false, false);
+        addEdge(1,  8, false, false);
+        addEdge(2, 11, false, false);
+        addEdge(3, 10, false, false);
+        
+        addEdge( 8,  9, false, false);
+        addEdge( 9, 10, false, false);
+        addEdge(10, 11, false, false);
+        addEdge(11,  8, false, true);        
+      }
+    }
   }
 
   // Holds tessellated data for fill, line and point geometry.
@@ -7903,6 +8013,14 @@ public class PGraphicsOpenGL extends PGraphics {
       return fillVertexCount + lineVertexCount + pointVertexCount;
     }
 
+    public void applyMatrix(PMatrix tr) {
+      if (tr instanceof PMatrix2D) {
+        applyMatrix((PMatrix2D) tr);
+      } else if (tr instanceof PMatrix3D) {
+        applyMatrix((PMatrix3D) tr);
+      }      
+    }
+    
     public void applyMatrix(PMatrix2D tr) {
       if (0 < fillVertexCount) {
         int index;

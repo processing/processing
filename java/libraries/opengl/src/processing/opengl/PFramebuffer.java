@@ -189,10 +189,10 @@ public class PFramebuffer implements PConstants {
   public void finish() {
     if (noDepth) {
       // No need to clear depth buffer because depth testing was disabled.
-      if (pg.hintEnabled(DISABLE_DEPTH_TEST)) {
-        pgl.glDisable(PGL.GL_DEPTH_TEST);
+      if (pg.hintEnabled(ENABLE_DEPTH_TEST)) {
+        pgl.glEnable(PGL.GL_DEPTH_TEST);        
       } else {
-        pgl.glEnable(PGL.GL_DEPTH_TEST);
+        pgl.glDisable(PGL.GL_DEPTH_TEST);
       }        
     }
   }

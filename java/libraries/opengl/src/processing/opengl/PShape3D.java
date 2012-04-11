@@ -69,11 +69,15 @@ import java.util.Hashtable;
  * Other formats to consider:
  * AMF: http://en.wikipedia.org/wiki/Additive_Manufacturing_File_Format
  * STL: http://en.wikipedia.org/wiki/STL_(file_format)
- * OFF: http://en.wikipedia.org/wiki/STL_(file_format)
+ * OFF: http://people.sc.fsu.edu/~jburkardt/data/off/off.html(file_format)
  * DXF: http://en.wikipedia.org/wiki/AutoCAD_DXF
  */
-
 public class PShape3D extends PShape {
+  static protected final int TRANSLATE = 0;
+  static protected final int ROTATE    = 1;
+  static protected final int SCALE     = 2;
+  static protected final int MATRIX    = 3;
+  
   protected PGraphicsOpenGL pg;
   protected PGL pgl;
   protected PGL.Context context;      // The context that created this shape.
@@ -244,6 +248,15 @@ public class PShape3D extends PShape {
   protected int ellipseMode;
   protected int shapeMode;
   protected int imageMode;
+
+  // ........................................................
+  
+  // Geometric transformations  
+  
+  protected PMatrix transform;
+  protected boolean cacheTransformations;
+  
+  
   
   public PShape3D(PApplet parent, int family) {
     pg = (PGraphicsOpenGL)parent.g;
@@ -318,6 +331,13 @@ public class PShape3D extends PShape {
     normalZ = 1;
     
     normalMode = NORMAL_MODE_AUTO;
+    
+    cacheTransformations = pg.hintEnabled(ENABLE_TRANSFORM_CACHE);
+    
+    if (family == GROUP) {
+      // GROUP shapes are always marked as ended.
+      shapeEnded = true;
+    }
   }
   
   
@@ -343,7 +363,9 @@ public class PShape3D extends PShape {
         child.updateRoot(root);
         root.tessellated = false;
         tessellated = false;
-        ((PShape3D)child).tessellated = false;
+        if (!cacheTransformations && ((PShape3D)child).hasMatrix()) {
+          setChildHasMatrix(true);
+        }        
       } else {
         PGraphics.showWarning("Cannot add child shape to non-group shape.");
       }
@@ -1333,6 +1355,9 @@ public class PShape3D extends PShape {
   // Geometric transformations
   
   
+  //------------------------------------------------------------------------------
+  
+  // TODO: Remove center, add function to get center from point... 
   public void center(float cx, float cy) {
     if (shapeEnded) {
       updateTesselation();    
@@ -1347,7 +1372,7 @@ public class PShape3D extends PShape {
         float tx = cx - center.x;
         float ty = cy - center.y;      
         
-        childHasMatrix();
+        setChildHasMatrix(true);
         applyMatrix = true;
         super.translate(tx, ty);
       } else {
@@ -1381,7 +1406,7 @@ public class PShape3D extends PShape {
         float ty = cy - center0.y;
         float tz = cz - center0.z;
         
-        childHasMatrix();
+        setChildHasMatrix(true);
         applyMatrix = true;
         super.translate(tx, ty, tz);
       } else {
@@ -1409,306 +1434,49 @@ public class PShape3D extends PShape {
     }
     return count;
   }  
+  //------------------------------------------------------------------------------
+  
   
   
   public void translate(float tx, float ty) {
-    if (shapeEnded) {
-      updateTesselation();
-
-      if (family == GROUP) {
-        childHasMatrix();
-        applyMatrix = true;
-        super.translate(tx, ty);
-      } else {
-        checkMatrix(2);
-        matrix.reset();
-        matrix.translate(tx, ty);
-        tess.applyMatrix((PMatrix2D) matrix);
-         
-        modified();
-        if (0 < tess.fillVertexCount) {
-          modifiedFillVertices = true;  
-          modifiedFillNormals = true; 
-        }        
-        if (0 < tess.lineVertexCount) {
-          modifiedLineVertices = true;
-          modifiedLineAttributes = true;
-        }
-        if (0 < tess.pointVertexCount) {
-          modifiedPointVertices = true;
-          modifiedPointNormals = true;        
-        }
-        
-        // So the transformation is not applied again when drawing
-        applyMatrix = false; 
-      }          
-    }
+    transform(TRANSLATE, tx, ty);
   }
   
   
   public void translate(float tx, float ty, float tz) {
-    if (shapeEnded) {
-      updateTesselation();
-
-      if (family == GROUP) {
-        childHasMatrix();
-        applyMatrix = true;
-        super.translate(tx, ty, tz);
-      } else {
-        checkMatrix(3);
-        matrix.reset();
-        matrix.translate(tx, ty, tz);
-        tess.applyMatrix((PMatrix3D) matrix);
-        
-        modified(); 
-        if (0 < tess.fillVertexCount) {
-          modifiedFillVertices = true;  
-          modifiedFillNormals = true; 
-        }        
-        if (0 < tess.lineVertexCount) {
-          modifiedLineVertices = true;
-          modifiedLineAttributes = true;
-        }
-        if (0 < tess.pointVertexCount) {
-          modifiedPointVertices = true;
-          modifiedPointNormals = true;        
-        }
-        
-        // So the transformation is not applied again when drawing
-        applyMatrix = false;
-      }          
-    }    
+    transform(TRANSLATE, tx, ty, tz);
   }
   
   
   public void rotate(float angle) {
-    if (shapeEnded) {
-      updateTesselation();
-
-      if (family == GROUP) {
-        childHasMatrix();
-        applyMatrix = true;
-        super.rotate(angle);
-      } else {
-        checkMatrix(2);
-        matrix.reset();
-        matrix.rotate(angle);
-        tess.applyMatrix((PMatrix2D) matrix);
-              
-        modified(); 
-        if (0 < tess.fillVertexCount) {
-          modifiedFillVertices = true;  
-          modifiedFillNormals = true; 
-        }        
-        if (0 < tess.lineVertexCount) {
-          modifiedLineVertices = true;
-          modifiedLineAttributes = true;
-        }
-        if (0 < tess.pointVertexCount) {
-          modifiedPointVertices = true;
-          modifiedPointNormals = true;        
-        }
-        
-        // So the transformation is not applied again when drawing
-        applyMatrix = false;   
-      }      
-    }    
+    transform(ROTATE, angle);
   }
   
   
   public void rotate(float angle, float v0, float v1, float v2) {
-    if (shapeEnded) {
-      updateTesselation();
-
-      if (family == GROUP) {
-        childHasMatrix();
-        applyMatrix = true;
-        super.rotate(angle, v0, v1, v2);
-      } else {
-        checkMatrix(3);
-        matrix.reset();
-        matrix.rotate(angle, v0, v1, v2);
-        tess.applyMatrix((PMatrix3D) matrix);
-              
-        modified(); 
-        if (0 < tess.fillVertexCount) {
-          modifiedFillVertices = true;  
-          modifiedFillNormals = true; 
-        }        
-        if (0 < tess.lineVertexCount) {
-          modifiedLineVertices = true;
-          modifiedLineAttributes = true;
-        }
-        if (0 < tess.pointVertexCount) {
-          modifiedPointVertices = true;
-          modifiedPointNormals = true;        
-        }
-        
-        // So the transformation is not applied again when drawing
-        applyMatrix = false;   
-      }      
-    }        
+    transform(ROTATE, v0, v1, v2);
   }
   
   
   public void scale(float s) {
-    if (shapeEnded) {
-      updateTesselation();
-
-      if (family == GROUP) {
-        childHasMatrix();
-        applyMatrix = true;
-        super.scale(s);
-      } else {
-        checkMatrix(2);
-        matrix.reset();
-        matrix.scale(s);
-        tess.applyMatrix((PMatrix2D) matrix);
-        
-        modified(); 
-        if (0 < tess.fillVertexCount) {
-          modifiedFillVertices = true;  
-          modifiedFillNormals = true; 
-        }        
-        if (0 < tess.lineVertexCount) {
-          modifiedLineVertices = true;
-          modifiedLineAttributes = true;
-        }
-        if (0 < tess.pointVertexCount) {
-          modifiedPointVertices = true;
-          modifiedPointNormals = true;        
-        }
-        
-        // So the transformation is not applied again when drawing
-        applyMatrix = false;
-      }      
-    }    
+    transform(SCALE, s, s);
   }
 
 
   public void scale(float x, float y) {
-    if (shapeEnded) {
-      updateTesselation();
-
-      if (family == GROUP) {
-        childHasMatrix();
-        applyMatrix = true;
-        super.scale(x, y);
-      } else {
-        checkMatrix(2);
-        matrix.reset();
-        matrix.scale(x, y);
-        tess.applyMatrix((PMatrix2D) matrix);
-        
-        modified(); 
-        if (0 < tess.fillVertexCount) {
-          modifiedFillVertices = true;  
-          modifiedFillNormals = true; 
-        }        
-        if (0 < tess.lineVertexCount) {
-          modifiedLineVertices = true;
-          modifiedLineAttributes = true;
-        }
-        if (0 < tess.pointVertexCount) {
-          modifiedPointVertices = true;
-          modifiedPointNormals = true;        
-        }
-        
-        // So the transformation is not applied again when drawing
-        applyMatrix = false;
-      }      
-    }    
+    transform(SCALE, x, y);
   }
 
 
   public void scale(float x, float y, float z) {
-    if (shapeEnded) {
-      updateTesselation();
-
-      if (family == GROUP) {
-        childHasMatrix();
-        applyMatrix = true;
-        super.scale(x, y, z);
-      } else {
-        checkMatrix(3);
-        matrix.reset();
-        matrix.scale(x, y, z);
-        tess.applyMatrix((PMatrix3D) matrix);
-        
-        modified(); 
-        if (0 < tess.fillVertexCount) {
-          modifiedFillVertices = true;  
-          modifiedFillNormals = true; 
-        }        
-        if (0 < tess.lineVertexCount) {
-          modifiedLineVertices = true;
-          modifiedLineAttributes = true;
-        }
-        if (0 < tess.pointVertexCount) {
-          modifiedPointVertices = true;
-          modifiedPointNormals = true;        
-        }
-        
-        // So the transformation is not applied again when drawing
-        applyMatrix = false;
-      }          
-    }    
+    transform(SCALE, x, y, z);
   }  
-  
-
-  public void applyMatrix(PMatrix source) {
-    super.applyMatrix(source);
-  }
-
-
-  public void applyMatrix(PMatrix2D source) {
-    super.applyMatrix(source);
-  }
 
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    if (shapeEnded) {
-      updateTesselation();
-
-      if (family == GROUP) {
-        childHasMatrix();
-        applyMatrix = true;
-        super.applyMatrix(n00, n01, n02,
-                          n10, n11, n12);
-      } else {
-        checkMatrix(2);
-        matrix.reset();
-        matrix.apply(n00, n01, n02,
-                     n10, n11, n12);   
-        tess.applyMatrix((PMatrix2D) matrix);
-        
-        modified(); 
-        if (0 < tess.fillVertexCount) {
-          modifiedFillVertices = true;  
-          modifiedFillNormals = true; 
-        }        
-        if (0 < tess.lineVertexCount) {
-          modifiedLineVertices = true;
-          modifiedLineAttributes = true;
-        }
-        if (0 < tess.pointVertexCount) {
-          modifiedPointVertices = true;
-          modifiedPointNormals = true;        
-        }
-        
-        // So the transformation is not applied again when drawing
-        applyMatrix = false;     
-      }      
-    }    
-  }
-
-
-  public void apply(PMatrix3D source) {
-    applyMatrix(source.m00, source.m01, source.m02, source.m03,
-                source.m10, source.m11, source.m12, source.m13,
-                source.m20, source.m21, source.m22, source.m23,
-                source.m30, source.m31, source.m32, source.m33);
+    transform(MATRIX, n00, n01, n02,
+                      n10, n11, n12);
   }
 
 
@@ -1716,63 +1484,192 @@ public class PShape3D extends PShape {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
-    if (shapeEnded) {
-      updateTesselation();
-
-      if (family == GROUP) {
-        childHasMatrix();
-        applyMatrix = true;
-        super.applyMatrix(n00, n01, n02, n03,
-                          n10, n11, n12, n13,
-                          n20, n21, n22, n23,
-                          n30, n31, n32, n33);
-      } else {
-        checkMatrix(3);
-        matrix.reset();
-        matrix.apply(n00, n01, n02, n03,
-                     n10, n11, n12, n13,
-                     n20, n21, n22, n23,
-                     n30, n31, n32, n33);   
-        tess.applyMatrix((PMatrix3D) matrix);
-        
-        modified(); 
-        if (0 < tess.fillVertexCount) {
-          modifiedFillVertices = true;  
-          modifiedFillNormals = true; 
-        }        
-        if (0 < tess.lineVertexCount) {
-          modifiedLineVertices = true;
-          modifiedLineAttributes = true;
-        }
-        if (0 < tess.pointVertexCount) {
-          modifiedPointVertices = true;
-          modifiedPointNormals = true;        
-        }
-        
-        // So the transformation is not applied again when drawing
-        applyMatrix = false;     
-      } 
-    }    
+    transform(MATRIX, n00, n01, n02, n03,
+                      n10, n11, n12, n13,
+                      n20, n21, n22, n23,
+                      n30, n31, n32, n33);
   }
   
   
   public void resetMatrix() {
-    // TODO
-    // What to do in the case of geometry shapes?
-    // In order to properly reset the transformation,
-    // we need to have the last matrix applied, calculate
-    // the inverse and apply on the tess object... 
-    //checkMatrix(2);
-    //matrix.reset();
-  }
-  
-  
-  protected void childHasMatrix() {
-    childHasMatrix = true;
-    if (parent != null) {
-      ((PShape3D)parent).childHasMatrix();
+    if (!cacheTransformations && parent != null && hasMatrix()) {
+      ((PShape3D)parent).setChildHasMatrix(false);
+    }    
+    
+    if (shapeEnded) {
+      updateTesselation();
+      
+      if (family == GROUP) {
+        for (int i = 0; i < childCount; i++) {
+          PShape3D child = (PShape3D) children[i];
+          child.resetMatrix();
+        }
+        if (matrix != null) {
+          matrix.reset();
+          applyMatrix = false;
+        }
+      } else {
+        if (cacheTransformations) {
+          boolean res = matrix.invert();
+          if (res) {
+            applyMatrix(matrix);
+            matrix.reset();
+          } else {
+            PGraphics.showWarning("The transformation matrix cannot be inverted");
+          }
+        } else {
+          if (hasMatrix()) {
+            matrix.reset();
+            applyMatrix = false;
+          }          
+        }
+      }      
     }
   }
+  
+  
+  protected void transform(int type, float... args) {
+    int dimensions;
+    if (type == ROTATE) {
+      dimensions = args.length == 1 ? 2 : 3;
+    } else if (type == MATRIX) {
+      dimensions = args.length == 6 ? 2 : 3;
+    } else {
+      dimensions = args.length;
+    }    
+    transformImpl(type, dimensions, args);
+  }
+  
+  
+  protected void transformImpl(int type, int ncoords, float... args) {
+    if (shapeEnded) {
+      updateTesselation();
+
+      if (family == GROUP) {
+        if (cacheTransformations) {
+          // The transformation will be passed down to the child shapes
+          // which will in turn apply it to the tessellated vertices,
+          // so effectively becoming "cached" into the geometry itself.
+          for (int i = 0; i < childCount; i++) {
+            PShape3D child = (PShape3D) children[i];
+            child.transformImpl(type, ncoords, args);
+          }
+        } else {
+          checkMatrix(ncoords);
+          calcTransform(type, ncoords, args);
+          applyMatrix = true;
+        }
+      } else {       
+        checkMatrix(ncoords);
+        if (cacheTransformations) {
+          calcTransform(type, ncoords, args);
+          applyTransform(ncoords);
+          
+          // Setting the applyMatrix variable to false so
+          // that the transformation is not applied again
+          // in the draw() method.
+          applyMatrix = false;             
+
+          // TODO: check the vertex cache stuff...
+          modified();
+          if (0 < tess.fillVertexCount) {
+            modifiedFillVertices = true;  
+            modifiedFillNormals = true; 
+          }        
+          if (0 < tess.lineVertexCount) {
+            modifiedLineVertices = true;
+            modifiedLineAttributes = true;
+          }
+          if (0 < tess.pointVertexCount) {
+            modifiedPointVertices = true;
+            modifiedPointNormals = true;        
+          }
+        } else {
+          // The transformation will be applied in draw().
+          calcTransform(type, ncoords, args);
+          applyMatrix = true;          
+        }
+      }
+      
+      if (!cacheTransformations && parent != null && hasMatrix()) {
+        // Making sure that the parent shapes (if any) know that
+        // this shape has a transformation matrix to be applied
+        // in draw().
+        ((PShape3D)parent).setChildHasMatrix(true);
+      }
+    }        
+  }
+  
+  
+  protected void calcTransform(int type, int dimensions, float... args) {
+    if (transform == null) {
+      if (dimensions == 2) {
+        transform = new PMatrix2D();
+      } else {
+        transform = new PMatrix3D();
+      }
+    } else {
+      transform.reset();
+    }
+      
+    switch (type) {
+    case TRANSLATE:
+      if (dimensions == 3) {
+        transform.translate(args[0], args[1], args[2]);
+      } else {
+        transform.translate(args[0], args[1]);
+      }
+      break;
+    case ROTATE:
+      if (dimensions == 3) {
+        transform.rotate(args[0], args[1], args[2], args[3]);
+      } else {
+        transform.rotate(args[0]);
+      }
+      break;
+    case SCALE:
+      if (dimensions == 3) {
+        transform.scale(args[0], args[1], args[2]);
+      } else {
+        transform.scale(args[0], args[1]);
+      }
+      break;
+    case MATRIX:
+      if (dimensions == 3) {
+        transform.set(args[ 0], args[ 1], args[ 2], args[ 3],
+                      args[ 4], args[ 5], args[ 6], args[ 7],
+                      args[ 8], args[ 9], args[10], args[11],
+                      args[12], args[13], args[14], args[15]);
+      } else {
+        transform.set(args[0], args[1], args[2],
+                      args[3], args[4], args[5]);
+      }
+      break;      
+    }   
+    matrix.apply(transform);
+  }
+  
+  
+  protected void applyTransform(int dimensions) {
+    if (dimensions == 3) {
+      tess.applyMatrix((PMatrix3D) transform);
+    } else {
+      tess.applyMatrix((PMatrix2D) transform);
+    }
+  }
+  
+  
+  protected void setChildHasMatrix(boolean value) {
+    childHasMatrix = value;
+    if (parent != null) {
+      ((PShape3D)parent).setChildHasMatrix(value);
+    }
+  }
+  
+  
+  protected boolean hasMatrix() {
+    return matrix != null || childHasMatrix; 
+  }  
   
   
   ///////////////////////////////////////////////////////////  
@@ -2466,12 +2363,7 @@ public class PShape3D extends PShape {
         child.tessellate();
       }      
     } else {   
-      if (shapeEnded) {
-        if (tessellated) {
-          in.clearEdges();
-          tess.clear();
-        }
-        
+      if (shapeEnded  && !tessellated) {
         tessellator.setInGeometry(in);
         tessellator.setTessGeometry(tess);
         tessellator.setFill(fill || texture != null);
@@ -2534,8 +2426,9 @@ public class PShape3D extends PShape {
           // equivalent to use POLYGON with fill disabled.
         }
         
-        // Tessellated arrays are trimmed since they are expanded by doubling their old size,
-        // which might lead to arrays larger than the vertex counts.        
+        // Tessellated arrays are trimmed since they are expanded 
+        // by doubling their old size, which might lead to arrays 
+        // larger than the vertex counts.        
         tess.trim();
         
         if (texture != null && parent != null) {
@@ -2583,7 +2476,8 @@ public class PShape3D extends PShape {
     in.generateEllipse(ellipseMode, a, b, c, d,
                        fill, fillColor, 
                        stroke, strokeColor, strokeWeight,
-                       ambientColor, specularColor, emissiveColor, shininess);
+                       ambientColor, specularColor, emissiveColor, 
+                       shininess);
     
     tessellator.tessellateTriangleFan(); 
   }
@@ -2595,7 +2489,6 @@ public class PShape3D extends PShape {
   
   
   protected void tessellateBox() {
-    // TODO: move to InGeometry
     float w, h, d;
     if (params.length == 1) {
       w = h = d = params[0];  
@@ -2605,57 +2498,13 @@ public class PShape3D extends PShape {
       d = params[2];
     }
         
-    //in.generateBox(w, h, d);
-                       
+    in.generateBox(w, h, d,
+                   fill, fillColor, 
+                   stroke, strokeColor, strokeWeight,
+                   ambientColor, specularColor, emissiveColor, 
+                   shininess);
     
-    float x1 = -w/2f; float x2 = w/2f;
-    float y1 = -h/2f; float y2 = h/2f;
-    float z1 = -d/2f; float z2 = d/2f;
-
-    // front
-    normal(0, 0, 1);
-    vertex(x1, y1, z1, 0, 0);
-    vertex(x2, y1, z1, 1, 0);
-    vertex(x2, y2, z1, 1, 1);
-    vertex(x1, y2, z1, 0, 1);
-
-    // right
-    normal(1, 0, 0);
-    vertex(x2, y1, z1, 0, 0);
-    vertex(x2, y1, z2, 1, 0);
-    vertex(x2, y2, z2, 1, 1);
-    vertex(x2, y2, z1, 0, 1);
-
-    // back
-    normal(0, 0, -1);
-    vertex(x2, y1, z2, 0, 0);
-    vertex(x1, y1, z2, 1, 0);
-    vertex(x1, y2, z2, 1, 1);
-    vertex(x2, y2, z2, 0, 1);
-
-    // left
-    normal(-1, 0, 0);
-    vertex(x1, y1, z2, 0, 0);
-    vertex(x1, y1, z1, 1, 0);
-    vertex(x1, y2, z1, 1, 1);
-    vertex(x1, y2, z2, 0, 1);
-
-    // top
-    normal(0, 1, 0);
-    vertex(x1, y1, z2, 0, 0);
-    vertex(x2, y1, z2, 1, 0);
-    vertex(x2, y1, z1, 1, 1);
-    vertex(x1, y1, z1, 0, 1);
-
-    // bottom
-    normal(0, -1, 0);
-    vertex(x1, y2, z1, 0, 0);
-    vertex(x2, y2, z1, 1, 0);
-    vertex(x2, y2, z2, 1, 1);
-    vertex(x1, y2, z2, 0, 1);
-    
-    if (stroke) in.addQuadsEdges(); 
-    tessellator.tessellateQuads();      
+    tessellator.tessellateQuads();     
   }
   
   
@@ -3738,18 +3587,16 @@ public class PShape3D extends PShape {
   
   
   public void draw(PGraphics g) {
-    if (visible) {
-      
+    if (visible) {      
       updateTesselation();      
       updateGeometry();
       
-      if (matrix != null && applyMatrix) {
+      if (applyMatrix && matrix != null) {
         g.pushMatrix();
         g.applyMatrix(matrix);
       }
     
-      if (family == GROUP) {
-        
+      if (family == GROUP) {        
         boolean matrixBelow = childHasMatrix;
         boolean diffTexBelow = textures != null && 1 < textures.size();
         
@@ -3780,7 +3627,7 @@ public class PShape3D extends PShape {
         render(texture);
       }
     
-      if (matrix != null && applyMatrix) {
+      if (applyMatrix && matrix != null) {
         g.popMatrix();
       } 
     }
