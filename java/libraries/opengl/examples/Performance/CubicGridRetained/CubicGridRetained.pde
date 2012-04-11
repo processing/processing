@@ -23,62 +23,10 @@ void setup() {
       for (float k =- width+margin; k <= width-margin; k += boxSize){
         // Base fill color on counter values, abs function 
         // ensures values stay within legal range
-        boxFill = color(abs(i), abs(j), abs(k), 50);
-        
-        PShape cube = createShape(QUADS);
-        cube.noStroke();
+        boxFill = color(abs(i), abs(j), abs(k), 50);        
+        PShape cube = createShape(BOX, boxSize, boxSize, boxSize);
         cube.fill(boxFill);
-        
-        float w = boxSize;
-        float h = boxSize;
-        float d = boxSize; 
-        float shiftX = k; 
-        float shiftY = j; 
-        float shiftZ = i;
-        
-        // Front face
-        cube.normal(0, 0, 1);
-        cube.vertex(-w/2 + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, +h/2 + shiftY, -d/2 + shiftZ); 
-        cube.vertex(-w/2 + shiftX, +h/2 + shiftY, -d/2 + shiftZ); 
-
-        // Back face
-        cube.normal(0, 0, -1);
-        cube.vertex(-w/2 + shiftX, -h/2 + shiftY, +d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, -h/2 + shiftY, +d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, +h/2 + shiftY, +d/2 + shiftZ); 
-        cube.vertex(-w/2 + shiftX, +h/2 + shiftY, +d/2 + shiftZ);
-
-        // Left face
-        cube.normal(1, 0, 0);
-        cube.vertex(-w/2 + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
-        cube.vertex(-w/2 + shiftX, -h/2 + shiftY, +d/2 + shiftZ); 
-        cube.vertex(-w/2 + shiftX, +h/2 + shiftY, +d/2 + shiftZ); 
-        cube.vertex(-w/2 + shiftX, +h/2 + shiftY, -d/2 + shiftZ); 
-
-        // Right face
-        cube.normal(-1, 0, 0);
-        cube.vertex(+w/2 + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, -h/2 + shiftY, +d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, +h/2 + shiftY, +d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, +h/2 + shiftY, -d/2 + shiftZ); 
-
-        // Top face
-        cube.normal(0, 1, 0);
-        cube.vertex(-w/2 + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, -h/2 + shiftY, -d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, -h/2 + shiftY, +d/2 + shiftZ); 
-        cube.vertex(-w/2 + shiftX, -h/2 + shiftY, +d/2 + shiftZ); 
-
-        // Bottom face
-        cube.normal(0, -1, 0);
-        cube.vertex(-w/2 + shiftX, +h/2 + shiftY, -d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, +h/2 + shiftY, -d/2 + shiftZ); 
-        cube.vertex(+w/2 + shiftX, +h/2 + shiftY, +d/2 + shiftZ); 
-        cube.vertex(-w/2 + shiftX, +h/2 + shiftY, +d/2 + shiftZ);  
-            
-        cube.end();
+        cube.translate(k, j, i);
         grid.addChild(cube);
       }
     }
