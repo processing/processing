@@ -467,7 +467,62 @@ public class PShape3D extends PShape {
       pg.finalizeVertexBufferObject(glPointIndexBufferID);   
     }  
   }
-    
+
+  
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
+  // Query methods  
+  
+  
+  public float getWidth() {
+
+    return width;
+  }
+
+  
+  public float getHeight() {
+
+    return height;
+  }
+
+
+  public float getDepth() {
+    return depth;
+  }  
+
+  
+  public PVector getCenter() {
+    PVector center = new PVector();
+    int count = 0;
+    if (shapeEnded) {
+      updateTesselation();
+      
+      count = getVertexSum(center, count);
+      if (0 < count) {
+        center.x /= count;
+        center.y /= count;
+        center.z /= count;
+      }    
+    }
+    return center;
+  }  
+  
+  
+  protected int getVertexSum(PVector sum, int count) {
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];
+        count += child.getVertexSum(sum, count);
+      }
+    } else {      
+      count += tess.getVertexSum(sum);      
+    }
+    return count;
+  }
+  
+  
   ///////////////////////////////////////////////////////////  
   
   //
@@ -1353,89 +1408,6 @@ public class PShape3D extends PShape {
   //
   
   // Geometric transformations
-  
-  
-  //------------------------------------------------------------------------------
-  
-  // TODO: Remove center, add function to get center from point... 
-  public void center(float cx, float cy) {
-    if (shapeEnded) {
-      updateTesselation();    
-
-      if (family == GROUP) {
-        PVector center = new PVector();
-              
-        int count = updateCenter(center, 0);
-        center.x /= count;   
-        center.y /= count;
-        
-        float tx = cx - center.x;
-        float ty = cy - center.y;      
-        
-        setChildHasMatrix(true);
-        applyMatrix = true;
-        super.translate(tx, ty);
-      } else {
-        PVector vec = new PVector();
-        int count = tess.getCenter(vec);
-        vec.x /= count;
-        vec.y /= count;
-        
-        float tx = cx - vec.x;
-        float ty = cy - vec.y;
-        
-        translate(tx, ty);   
-      }      
-    }
-  }
-
-  
-  public void center(float cx, float cy, float cz) {
-    if (shapeEnded) {
-      updateTesselation();
-     
-      if (family == GROUP) {
-        PVector center0 = new PVector();
-        
-        int count = updateCenter(center0, 0);
-        center0.x /= count;   
-        center0.y /= count;
-        center0.z /= count;
-        
-        float tx = cx - center0.x;
-        float ty = cy - center0.y;
-        float tz = cz - center0.z;
-        
-        setChildHasMatrix(true);
-        applyMatrix = true;
-        super.translate(tx, ty, tz);
-      } else {
-        PVector vec = new PVector();
-        int count = tess.getCenter(vec);
-        vec.x /= count;
-        vec.y /= count;
-        vec.z /= count;
-        
-        float tx = cx - vec.x;
-        float ty = cy - vec.y;
-        float tz = cz - vec.z;
-        
-        translate(tx, ty, tz); 
-      }      
-    }    
-  }  
-  
-  
-  protected int updateCenter(PVector vec, int count) {
-    if (family == GROUP) {
-      count = updateCenter(vec, count); 
-    } else {      
-      count += tess.getCenter(vec);      
-    }
-    return count;
-  }  
-  //------------------------------------------------------------------------------
-  
   
   
   public void translate(float tx, float ty) {
