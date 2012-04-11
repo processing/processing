@@ -393,6 +393,11 @@ public class PShape implements PConstants {
   }
 
 
+  public PVector getCenter() {
+    return new PVector();
+  }
+  
+  
   /**
    * Return true if this shape is 3D. Defaults to false.
    */
