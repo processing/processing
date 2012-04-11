@@ -1938,7 +1938,7 @@ public class PGraphicsOpenGL extends PGraphics {
     } else if (type == TRIANGLE_STRIP) {
       shape = new PShape3D(parent, PShape.GEOMETRY);
       shape.setKind(TRIANGLE_STRIP);
-    } else if (type == QUADS || type == QUADS) {
+    } else if (type == QUAD || type == QUADS) {
       shape = new PShape3D(parent, PShape.GEOMETRY);
       shape.setKind(QUADS);
     } else if (type == QUAD_STRIP) {
@@ -7862,135 +7862,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return newSize;
     }
 
-    public void center(float cx, float cy) {
-      int index;
-
-      // Computing current center
-      float cx0 = 0;
-      float cy0 = 0;
-      for (int i = 0; i < fillVertexCount; i++) {
-        index = 3 * i;
-        cx0 += fillVertices[index++];
-        cy0 += fillVertices[index  ];
-      }
-      for (int i = 0; i < lineVertexCount; i++) {
-        index = 3 * i;
-        cx0 += lineVertices[index++];
-        cy0 += lineVertices[index  ];
-      }
-      for (int i = 0; i < pointVertexCount; i++) {
-        index = 3 * i;
-        cx0 += pointVertices[index++];
-        cy0 += pointVertices[index  ];
-      }
-      int nt = fillVertexCount + lineVertexCount + pointVertexCount;
-      if (0 < nt) {
-        cx0 /= nt;
-        cy0 /= nt;
-      }
-
-      float tx = cx - cx0;
-      float ty = cy - cy0;
-
-      if (0 < fillVertexCount) {
-        for (int i = 0; i < fillVertexCount; i++) {
-          index = 3 * i;
-          fillVertices[index++] += tx;
-          fillVertices[index  ] += ty;
-        }
-      }
-
-      if (0 < lineVertexCount) {
-        for (int i = 0; i < lineVertexCount; i++) {
-          index = 3 * i;
-          lineVertices[index++] += tx;
-          lineVertices[index  ] += ty;
-
-          index = 4 * i;
-          lineDirWidths[index++] += tx;
-          lineDirWidths[index  ] += ty;
-        }
-      }
-
-      if (0 < pointVertexCount) {
-        for (int i = 0; i < pointVertexCount; i++) {
-          index = 3 * i;
-          pointVertices[index++] += tx;
-          pointVertices[index  ] += ty;
-        }
-      }
-    }
-
-    public void center(float cx, float cy, float cz) {
-      int index;
-
-      // Computing current center
-      float cx0 = 0;
-      float cy0 = 0;
-      float cz0 = 0;
-      for (int i = 0; i < fillVertexCount; i++) {
-        index = 3 * i;
-        cx0 += fillVertices[index++];
-        cy0 += fillVertices[index++];
-        cz0 += fillVertices[index  ];
-      }
-      for (int i = 0; i < lineVertexCount; i++) {
-        index = 3 * i;
-        cx0 += lineVertices[index++];
-        cy0 += lineVertices[index++];
-        cz0 += lineVertices[index  ];
-      }
-      for (int i = 0; i < pointVertexCount; i++) {
-        index = 3 * i;
-        cx0 += pointVertices[index++];
-        cy0 += pointVertices[index++];
-        cz0 += pointVertices[index  ];
-      }
-      int nt = fillVertexCount + lineVertexCount + pointVertexCount;
-      if (0 < nt) {
-        cx0 /= nt;
-        cy0 /= nt;
-        cz0 /= nt;
-      }
-
-      float tx = cx - cx0;
-      float ty = cy - cy0;
-      float tz = cz - cz0;
-
-      if (0 < fillVertexCount) {
-        for (int i = 0; i < fillVertexCount; i++) {
-          index = 3 * i;
-          fillVertices[index++] += tx;
-          fillVertices[index++] += ty;
-          fillVertices[index  ] += tz;
-        }
-      }
-
-      if (0 < lineVertexCount) {
-        for (int i = 0; i < lineVertexCount; i++) {
-          index = 3 * i;
-          lineVertices[index++] += tx;
-          lineVertices[index++] += ty;
-          lineVertices[index  ] += tz;
-
-          index = 4 * i;
-          lineDirWidths[index++] += tx;
-          lineDirWidths[index++] += ty;
-          lineDirWidths[index  ] += tz;
-        }
-      }
-
-      if (0 < pointVertexCount) {
-        for (int i = 0; i < pointVertexCount; i++) {
-          index = 3 * i;
-          pointVertices[index++] += tx;
-          pointVertices[index++] += ty;
-          pointVertices[index  ] += tz;
-        }
-      }
-    }
-
-    public int getCenter(PVector v) {
+    public int getVertexSum(PVector v) {
       int index;
       for (int i = 0; i < fillVertexCount; i++) {
         index = 3 * i;

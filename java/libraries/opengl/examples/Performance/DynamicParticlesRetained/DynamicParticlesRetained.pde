@@ -62,7 +62,8 @@ void draw () {
       
       if (lifetimes[n] == 0) {
         // Re-spawn dead particle
-        part.center(mouseX, mouseY);
+        PVector center = part.getCenter();
+        part.translate(mouseX - center.x, mouseY - center.y);
         float angle = random(0, TWO_PI);
         float s = random(0.5 * speed, 0.5 * speed);
         velocities[n].x = s * cos(angle);
