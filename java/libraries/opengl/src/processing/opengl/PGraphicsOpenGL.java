@@ -6267,6 +6267,41 @@ public class PGraphicsOpenGL extends PGraphics {
       return PGL.MAX_TESS_VERTICES <= vertexCount;
     }
     
+    
+    public void getVertexMin(PVector v) {
+      int index;
+      for (int i = 0; i < vertexCount; i++) {
+        index = 3 * i;
+        v.x = PApplet.min(v.x, vertices[index++]);
+        v.y = PApplet.min(v.y, vertices[index++]);
+        v.z = PApplet.min(v.z, vertices[index  ]);
+      }      
+    }
+    
+
+    public void getVertexMax(PVector v) {
+      int index;
+      for (int i = 0; i < vertexCount; i++) {
+        index = 3 * i;
+        v.x = PApplet.max(v.x, vertices[index++]);
+        v.y = PApplet.max(v.y, vertices[index++]);
+        v.z = PApplet.max(v.z, vertices[index  ]);
+      }      
+    }    
+    
+    
+    public int getVertexSum(PVector v) {
+      int index;
+      for (int i = 0; i < vertexCount; i++) {
+        index = 3 * i;
+        v.x += vertices[index++];
+        v.y += vertices[index++];
+        v.z += vertices[index  ];
+      }
+      return vertexCount;
+    }
+    
+    
     public int addVertex(float x, float y,
                          int fcolor,
                          float u, float v,
@@ -7862,6 +7897,50 @@ public class PGraphicsOpenGL extends PGraphics {
       return newSize;
     }
 
+    public void getVertexMin(PVector v) {
+      int index;
+      for (int i = 0; i < fillVertexCount; i++) {
+        index = 3 * i;
+        v.x = PApplet.min(v.x, fillVertices[index++]);
+        v.y = PApplet.min(v.y, fillVertices[index++]);
+        v.z = PApplet.min(v.z, fillVertices[index  ]);
+      }     
+      for (int i = 0; i < lineVertexCount; i++) {
+        index = 3 * i;
+        v.x += PApplet.min(v.x, lineVertices[index++]);
+        v.y += PApplet.min(v.y, lineVertices[index++]);
+        v.z += PApplet.min(v.z, lineVertices[index  ]);
+      }
+      for (int i = 0; i < pointVertexCount; i++) {
+        index = 3 * i;
+        v.x += PApplet.min(v.x, pointVertices[index++]);
+        v.y += PApplet.min(v.y, pointVertices[index++]);
+        v.z += PApplet.min(v.z, pointVertices[index  ]);
+      }      
+    }
+    
+    public void getVertexMax(PVector v) {
+      int index;
+      for (int i = 0; i < fillVertexCount; i++) {
+        index = 3 * i;
+        v.x = PApplet.max(v.x, fillVertices[index++]);
+        v.y = PApplet.max(v.y, fillVertices[index++]);
+        v.z = PApplet.max(v.z, fillVertices[index  ]);
+      }
+      for (int i = 0; i < lineVertexCount; i++) {
+        index = 3 * i;
+        v.x += PApplet.max(v.x, lineVertices[index++]);
+        v.y += PApplet.max(v.y, lineVertices[index++]);
+        v.z += PApplet.max(v.z, lineVertices[index  ]);
+      }
+      for (int i = 0; i < pointVertexCount; i++) {
+        index = 3 * i;
+        v.x += PApplet.max(v.x, pointVertices[index++]);
+        v.y += PApplet.max(v.y, pointVertices[index++]);
+        v.z += PApplet.max(v.z, pointVertices[index  ]);
+      }          
+    }       
+    
     public int getVertexSum(PVector v) {
       int index;
       for (int i = 0; i < fillVertexCount; i++) {
