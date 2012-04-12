@@ -1476,6 +1476,19 @@ public class PGL {
   }
 
 
+  static public int javaToNativeARGB(int color) {
+    if (BIG_ENDIAN) {
+      return ((color >> 24) & 0xff) | 
+             ((color << 8) & 0xffffff00);
+    } else {
+      return (color & 0xff000000) | 
+             ((color << 16) & 0xff0000) | 
+             (color & 0xff00) | 
+             ((color >> 16) & 0xff);
+    }
+  }
+  
+  
   /**
    * Convert native OpenGL format into palatable ARGB format. This function
    * leaves alone (ignores) the alpha component. Also flips the image
