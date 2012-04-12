@@ -359,12 +359,19 @@ public class PShape3D extends PShape {
   public void addChild(PShape child) {
     if (child instanceof PShape3D) {
       if (family == GROUP) {
-        super.addChild(child);
-        child.updateRoot(root);
+        PShape3D c3d = (PShape3D)child;
+        
+        super.addChild(c3d);
+        c3d.updateRoot(root);
         root.tessellated = false;
         tessellated = false;
-        if (!cacheTransformations && ((PShape3D)child).hasMatrix()) {
+        
+        if (!cacheTransformations && c3d.hasMatrix()) {
           setChildHasMatrix(true);
+        }        
+        
+        if (c3d.texture != null) {
+          addTexture(c3d.texture);
         }        
       } else {
         PGraphics.showWarning("Cannot add child shape to non-group shape.");
@@ -477,18 +484,37 @@ public class PShape3D extends PShape {
   
   
   public float getWidth() {
-
+    PVector min = new PVector(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY); 
+    PVector max = new PVector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+    if (shapeEnded) {
+      getVertexMin(min);
+      getVertexMin(max);
+    }    
+    width = max.x - min.x;
     return width;
   }
 
   
   public float getHeight() {
-
+    PVector min = new PVector(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY); 
+    PVector max = new PVector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+    if (shapeEnded) {
+      getVertexMin(min);
+      getVertexMin(max);
+    }    
+    width = max.y - min.y;
     return height;
   }
 
-
+  
   public float getDepth() {
+    PVector min = new PVector(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY); 
+    PVector max = new PVector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
+    if (shapeEnded) {
+      getVertexMin(min);
+      getVertexMin(max);
+    }    
+    width = max.z - min.z;    
     return depth;
   }  
 
@@ -497,8 +523,6 @@ public class PShape3D extends PShape {
     PVector center = new PVector();
     int count = 0;
     if (shapeEnded) {
-      updateTesselation();
-      
       count = getVertexSum(center, count);
       if (0 < count) {
         center.x /= count;
@@ -510,6 +534,38 @@ public class PShape3D extends PShape {
   }  
   
   
+  protected void getVertexMin(PVector min) {
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];
+        child.getVertexMin(min);
+      }
+    } else {      
+      if (tessellated) {
+        tess.getVertexMin(min);
+      } else {
+        in.getVertexMin(min);
+      }
+    }
+  }
+
+  
+  protected void getVertexMax(PVector max) {
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D) children[i];
+        child.getVertexMax(max);
+      }
+    } else {      
+      if (tessellated) {
+        tess.getVertexMax(max);
+      } else {
+        in.getVertexMax(max);
+      }
+    }
+  }  
+  
+  
   protected int getVertexSum(PVector sum, int count) {
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -517,7 +573,11 @@ public class PShape3D extends PShape {
         count += child.getVertexSum(sum, count);
       }
     } else {      
-      count += tess.getVertexSum(sum);      
+      if (tessellated) {
+        count += tess.getVertexSum(sum);
+      } else {
+        count += in.getVertexSum(sum);
+      }
     }
     return count;
   }
@@ -941,7 +1001,7 @@ public class PShape3D extends PShape {
       return;
     }
       
-    updateTesselation();
+    updateTessellation();
     
     Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, fillColor);
 
@@ -1055,8 +1115,8 @@ public class PShape3D extends PShape {
 
   
   protected void updateStrokeColor() {
-    if (shapeEnded) {
-      updateTesselation();
+    if (shapeEnded || (tess.lineVertexCount == 0 && tess.pointVertexCount == 0)) {
+      updateTessellation();
       
       if (0 < tess.lineVertexCount) {
         Arrays.fill(tess.lineColors, 0, tess.lineVertexCount, strokeColor);
@@ -1182,7 +1242,7 @@ public class PShape3D extends PShape {
       return;
     }
       
-    updateTesselation();
+    updateTessellation();
     
     Arrays.fill(tess.fillColors, 0, tess.pointVertexCount, tintColor);
 
@@ -1238,11 +1298,11 @@ public class PShape3D extends PShape {
   }
 
   protected void updateAmbientColor() {    
-    if (!shapeEnded || tess.fillVertexCount == 0 || texture == null) {
+    if (!shapeEnded || tess.fillVertexCount == 0) {
       return;
     }
       
-    updateTesselation();
+    updateTessellation();
     
     Arrays.fill(tess.fillAmbient, 0, tess.fillVertexCount, ambientColor);
     
@@ -1299,11 +1359,11 @@ public class PShape3D extends PShape {
   }
 
   protected void updateSpecularColor() {
-    if (!shapeEnded || tess.fillVertexCount == 0 || texture == null) {
+    if (!shapeEnded || tess.fillVertexCount == 0) {
       return;
     }
       
-    updateTesselation();
+    updateTessellation();
     
     Arrays.fill(tess.fillSpecular, 0, tess.fillVertexCount, specularColor);
     
@@ -1360,11 +1420,11 @@ public class PShape3D extends PShape {
   }
 
   protected void updateEmissiveColor() {   
-    if (!shapeEnded || tess.fillVertexCount == 0 || texture == null) {
+    if (!shapeEnded || tess.fillVertexCount == 0) {
       return;
     }
       
-    updateTesselation();
+    updateTessellation();
     
     Arrays.fill(tess.fillEmissive, 0, tess.fillVertexCount, emissiveColor);
     
@@ -1391,11 +1451,11 @@ public class PShape3D extends PShape {
   
   
   protected void updateShininessFactor() {
-    if (!shapeEnded || tess.fillVertexCount == 0 || texture == null) {
+    if (!shapeEnded || tess.fillVertexCount == 0) {
       return;
     }
       
-    updateTesselation();
+    updateTessellation();
     
     Arrays.fill(tess.fillShininess, 0, tess.fillVertexCount, shininess);
     
@@ -1469,9 +1529,9 @@ public class PShape3D extends PShape {
     }    
     
     if (shapeEnded) {
-      updateTesselation();
-      
       if (family == GROUP) {
+        updateTessellation();
+        
         for (int i = 0; i < childCount; i++) {
           PShape3D child = (PShape3D) children[i];
           child.resetMatrix();
@@ -1484,7 +1544,9 @@ public class PShape3D extends PShape {
         if (cacheTransformations) {
           boolean res = matrix.invert();
           if (res) {
-            applyMatrix(matrix);
+            if (tessellated) {
+              applyMatrix(matrix);
+            }
             matrix.reset();
           } else {
             PGraphics.showWarning("The transformation matrix cannot be inverted");
@@ -1515,9 +1577,16 @@ public class PShape3D extends PShape {
   
   protected void transformImpl(int type, int ncoords, float... args) {
     if (shapeEnded) {
-      updateTesselation();
 
       if (family == GROUP) {
+        // The tessellation is not updated for geometry/primitive shapes
+        // because a common situation is shapes not still tessellated
+        // but being transformed before adding them to the parent group
+        // shape. If each shape is tessellated individually, then the process,
+        // although still valid, is significantly slower than tessellating
+        // all the geometry in a single batch.
+        updateTessellation();
+        
         if (cacheTransformations) {
           // The transformation will be passed down to the child shapes
           // which will in turn apply it to the tessellated vertices,
@@ -1535,27 +1604,31 @@ public class PShape3D extends PShape {
         checkMatrix(ncoords);
         if (cacheTransformations) {
           calcTransform(type, ncoords, args);
-          applyTransform(ncoords);
-          
-          // Setting the applyMatrix variable to false so
-          // that the transformation is not applied again
-          // in the draw() method.
-          applyMatrix = false;             
+          if (tessellated) {
+            applyTransform(ncoords);
+            // Setting the applyMatrix variable to false so
+            // that the transformation is not applied again
+            // in the draw() method.            
+            applyMatrix = false;
+            
+            modified();
+            if (0 < tess.fillVertexCount) {
+              modifiedFillVertices = true;  
+              modifiedFillNormals = true; 
+            }        
+            if (0 < tess.lineVertexCount) {
+              modifiedLineVertices = true;
+              modifiedLineAttributes = true;
+            }
+            if (0 < tess.pointVertexCount) {
+              modifiedPointVertices = true;
+              modifiedPointNormals = true;        
+            }            
+          } else {
+            // The matrix will be applied right after tessellation.
+            applyMatrix = true;
+          }
 
-          // TODO: check the vertex cache stuff...
-          modified();
-          if (0 < tess.fillVertexCount) {
-            modifiedFillVertices = true;  
-            modifiedFillNormals = true; 
-          }        
-          if (0 < tess.lineVertexCount) {
-            modifiedLineVertices = true;
-            modifiedLineAttributes = true;
-          }
-          if (0 < tess.pointVertexCount) {
-            modifiedPointVertices = true;
-            modifiedPointNormals = true;        
-          }
         } else {
           // The transformation will be applied in draw().
           calcTransform(type, ncoords, args);
@@ -1892,37 +1965,37 @@ public class PShape3D extends PShape {
   
   
   public int firstFillVertex() {
-    updateTesselation();
+    updateTessellation();
     return tess.firstFillVertex;  
   }
   
   public int lastFillVertex() {
-    updateTesselation();
+    updateTessellation();
     return tess.lastFillVertex;
   }
 
   public int fillVertexCount() {
-    updateTesselation();
+    updateTessellation();
     return tess.fillVertexCount;
   }
   
   public int firstFillIndex() {
-    updateTesselation();
+    updateTessellation();
     return tess.firstFillIndex;  
   }
   
   public int lastFillIndex() {
-    updateTesselation();
+    updateTessellation();
     return tess.lastFillIndex;
   }  
     
   public int fillIndexCount() {
-    updateTesselation();
+    updateTessellation();
     return tess.fillIndexCount;
   }
   
   public float[] fillVertices(float[] vertices) {
-    updateTesselation();
+    updateTessellation();
     if (vertices == null || vertices.length != tess.fillVertices.length) {
       vertices = new float[tess.fillVertices.length];
     }
@@ -1931,7 +2004,7 @@ public class PShape3D extends PShape {
   }
   
   public int[] fillColors(int[] colors) {
-    updateTesselation();
+    updateTessellation();
     if (colors == null || colors.length != tess.fillColors.length) {
       colors = new int[tess.fillColors.length];  
     }
@@ -1940,7 +2013,7 @@ public class PShape3D extends PShape {
   }  
   
   public float[] fillNormals(float[] normals) {
-    updateTesselation();
+    updateTessellation();
     if (normals == null || normals.length != tess.fillNormals.length) {
       normals = new float[tess.fillNormals.length];
     }
@@ -1949,7 +2022,7 @@ public class PShape3D extends PShape {
   }  
   
   public float[] fillTexCoords(float[] texcoords) {
-    updateTesselation();
+    updateTessellation();
     if (texcoords == null || texcoords.length != tess.fillTexcoords.length) {
       texcoords = new float[tess.fillTexcoords.length];
     }
@@ -1958,7 +2031,7 @@ public class PShape3D extends PShape {
   }  
 
   public int[] fillAmbient(int[] ambient) {
-    updateTesselation();
+    updateTessellation();
     if (ambient == null || ambient.length != tess.fillAmbient.length) {
       ambient = new int[tess.fillAmbient.length];
     }
@@ -1967,7 +2040,7 @@ public class PShape3D extends PShape {
   }  
 
   public int[] fillSpecular(int[] specular) {
-    updateTesselation();
+    updateTessellation();
     if (specular == null || specular.length != tess.fillSpecular.length) {
       specular = new int[tess.fillSpecular.length];  
     }
@@ -1976,7 +2049,7 @@ public class PShape3D extends PShape {
   }
 
   public int[] fillEmissive(int[] emissive) {
-    updateTesselation();
+    updateTessellation();
     if (emissive == null || emissive.length != tess.fillEmissive.length) {
       emissive = new int[tess.fillEmissive.length];
     }
@@ -1985,7 +2058,7 @@ public class PShape3D extends PShape {
   }
 
   public float[] fillShininess(float[] shininess) {
-    updateTesselation();
+    updateTessellation();
     if (shininess == null || shininess.length != tess.fillShininess.length) {
       shininess = new float[tess.fillShininess.length];
     }
@@ -1994,7 +2067,7 @@ public class PShape3D extends PShape {
   }  
   
   public int[] fillIndices(int[] indices) {
-    updateTesselation();
+    updateTessellation();
     if (indices == null || indices.length != tess.fillIndices.length) {
       indices = new int[tess.fillIndices.length];      
     }
@@ -2003,37 +2076,37 @@ public class PShape3D extends PShape {
   }
     
   public int firstLineVertex() {
-    updateTesselation();
+    updateTessellation();
     return tess.firstLineVertex;  
   }
   
   public int lastLineVertex() {
-    updateTesselation();
+    updateTessellation();
     return tess.lastLineVertex;
   }
   
   public int lineVertexCount() {
-    updateTesselation();
+    updateTessellation();
     return tess.lineVertexCount;
   }  
   
   public int firstLineIndex() {
-    updateTesselation();
+    updateTessellation();
     return tess.firstLineIndex;  
   }
   
   public int lastLineIndex() {
-    updateTesselation();
+    updateTessellation();
     return tess.lastLineIndex;
   }
 
   public int lineIndexCount() {
-    updateTesselation();
+    updateTessellation();
     return tess.lineIndexCount;
   }
     
   public float[] lineVertices(float[] vertices) {
-    updateTesselation();
+    updateTessellation();
     if (vertices == null || vertices.length != tess.lineVertices.length) {
       vertices = new float[tess.lineVertices.length];
     }
@@ -2042,7 +2115,7 @@ public class PShape3D extends PShape {
   }
   
   public int[] lineColors(int[] colors) {
-    updateTesselation();
+    updateTessellation();
     if (colors == null || colors.length != tess.lineColors.length) {
       colors = new int[tess.lineColors.length];
     }
@@ -2051,7 +2124,7 @@ public class PShape3D extends PShape {
   }  
   
   public float[] lineAttributes(float[] attribs) {
-    updateTesselation();
+    updateTessellation();
     if (attribs == null || attribs.length != tess.lineDirWidths.length) {
       attribs = new float[tess.lineDirWidths.length];
     }
@@ -2060,7 +2133,7 @@ public class PShape3D extends PShape {
   }  
   
   public int[] lineIndices(int[] indices) {
-    updateTesselation();
+    updateTessellation();
     if (indices == null || indices.length != tess.lineIndices.length) {
       indices = new int[tess.lineIndices.length];
     }
@@ -2069,37 +2142,37 @@ public class PShape3D extends PShape {
   }  
   
   public int firstPointVertex() {
-    updateTesselation();
+    updateTessellation();
     return tess.firstPointVertex;  
   }
   
   public int lastPointVertex() {
-    updateTesselation();
+    updateTessellation();
     return tess.lastPointVertex;
   }
   
   public int pointVertexCount() {
-    updateTesselation();
+    updateTessellation();
     return tess.pointVertexCount;
   }    
   
   public int firstPointIndex() {
-    updateTesselation();
+    updateTessellation();
     return tess.firstPointIndex;  
   }
   
   public int lastPointIndex() {
-    updateTesselation();
+    updateTessellation();
     return tess.lastPointIndex;
   }  
   
   public int pointIndexCount() {
-    updateTesselation();
+    updateTessellation();
     return tess.pointIndexCount;
   }  
   
   public float[] pointVertices(float[] vertices) {
-    updateTesselation();
+    updateTessellation();
     if (vertices == null || vertices.length != tess.pointVertices.length) {
       vertices = new float[tess.pointVertices.length];
     }
@@ -2108,7 +2181,7 @@ public class PShape3D extends PShape {
   }
   
   public int[] pointColors(int[] colors) {
-    updateTesselation();
+    updateTessellation();
     if (colors == null || colors.length != tess.pointColors.length) {
       colors = new int[tess.pointColors.length];
     }
@@ -2117,7 +2190,7 @@ public class PShape3D extends PShape {
   }  
   
   public float[] pointAttributes(float[] attribs) {
-    updateTesselation();
+    updateTessellation();
     if (attribs == null || attribs.length != tess.pointSizes.length) {
       attribs = new float[tess.pointSizes.length];
     }
@@ -2126,7 +2199,7 @@ public class PShape3D extends PShape {
   }  
   
   public int[] pointIndices(int[] indices) {
-    updateTesselation();
+    updateTessellation();
     if (indices == null || indices.length != tess.pointIndices.length) {
       indices = new int[tess.pointIndices.length];
     }
@@ -2279,7 +2352,7 @@ public class PShape3D extends PShape {
   }
   
   protected ByteBuffer mapVertexImpl(int id, int offset, int count) {
-    updateTesselation();
+    updateTessellation();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, id);
     ByteBuffer bb;
     if (root == this) {            
@@ -2296,7 +2369,7 @@ public class PShape3D extends PShape {
   }
   
   protected ByteBuffer mapIndexImpl(int id, int offset, int count) {
-    updateTesselation();
+    updateTessellation();
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, id);
     ByteBuffer bb;
     if (root == this) {            
@@ -2320,7 +2393,7 @@ public class PShape3D extends PShape {
   // Construction methods  
   
   
-  protected void updateTesselation() {
+  protected void updateTessellation() {
     if (!root.tessellated || root.contextIsOutdated()) {
       root.tessellate();
       root.aggregate();        
@@ -2405,7 +2478,14 @@ public class PShape3D extends PShape {
         
         if (texture != null && parent != null) {
           ((PShape3D)parent).addTexture(texture);
-        }      
+        }
+        
+        if (cacheTransformations && applyMatrix) {
+          // Some geometric transformations were applied on
+          // this shape before tessellation, so they are applied now.
+          tess.applyMatrix(matrix);
+          applyMatrix = false;
+        }
       }
     }
     
@@ -3560,7 +3640,7 @@ public class PShape3D extends PShape {
   
   public void draw(PGraphics g) {
     if (visible) {      
-      updateTesselation();      
+      updateTessellation();      
       updateGeometry();
       
       if (applyMatrix && matrix != null) {
