@@ -997,16 +997,11 @@ public class PShape3D extends PShape {
 
   
   protected void updateFillColor() {
-    if (!shapeEnded || tess.fillVertexCount == 0 || texture != null) {
-      return;
+    if (shapeEnded && 0 < tess.fillVertexCount && texture == null) {
+      Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, PGL.javaToNativeARGB(fillColor));
+      modifiedFillColors = true;
+      modified();  
     }
-      
-    updateTessellation();
-    
-    Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, fillColor);
-
-    modifiedFillColors = true;
-    modified();   
   }
   
     
@@ -1115,17 +1110,15 @@ public class PShape3D extends PShape {
 
   
   protected void updateStrokeColor() {
-    if (shapeEnded || (tess.lineVertexCount == 0 && tess.pointVertexCount == 0)) {
-      updateTessellation();
-      
+    if (shapeEnded && (0 < tess.lineVertexCount || 0 < tess.pointVertexCount)) {
       if (0 < tess.lineVertexCount) {
-        Arrays.fill(tess.lineColors, 0, tess.lineVertexCount, strokeColor);
+        Arrays.fill(tess.lineColors, 0, tess.lineVertexCount, PGL.javaToNativeARGB(strokeColor));
         modifiedLineColors = true;
         modified();         
       }
       
       if (0 < tess.pointVertexCount) {
-        Arrays.fill(tess.pointColors, 0, tess.pointVertexCount, strokeColor);
+        Arrays.fill(tess.pointColors, 0, tess.pointVertexCount, PGL.javaToNativeARGB(strokeColor));
         modifiedPointColors = true;
         modified();            
       }            
@@ -1238,21 +1231,18 @@ public class PShape3D extends PShape {
   
   
   protected void updateTintColor() {    
-    if (!shapeEnded || tess.fillVertexCount == 0 || texture == null) {
-      return;
+    if (shapeEnded && 0 < tess.fillVertexCount && texture != null) {
+      Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, PGL.javaToNativeARGB(tintColor));
+      modifiedFillColors = true;
+      modified();  
     }
-      
-    updateTessellation();
-    
-    Arrays.fill(tess.fillColors, 0, tess.pointVertexCount, tintColor);
-
-    modifiedFillColors = true;
-    modified();  
   }
+  
   
   //////////////////////////////////////////////////////////////
 
   // AMBIENT COLOR
+  
   
   public void ambient(int rgb) {
     if (family == GROUP) {
@@ -1292,23 +1282,21 @@ public class PShape3D extends PShape {
     }      
   }
   
+  
   protected void ambientFromCalc() {
     ambientColor = calcColor;
     updateAmbientColor();      
   }
+  
 
   protected void updateAmbientColor() {    
-    if (!shapeEnded || tess.fillVertexCount == 0) {
-      return;
-    }
-      
-    updateTessellation();
-    
-    Arrays.fill(tess.fillAmbient, 0, tess.fillVertexCount, ambientColor);
-    
-    modifiedFillAmbient = true;
-    modified();      
+    if (shapeEnded && 0 < tess.fillVertexCount) {
+      Arrays.fill(tess.fillAmbient, 0, tess.fillVertexCount, PGL.javaToNativeARGB(ambientColor));      
+      modifiedFillAmbient = true;
+      modified();  
+    }      
   }
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -1353,23 +1341,21 @@ public class PShape3D extends PShape {
     }      
   }
   
+  
   protected void specularFromCalc() {
     specularColor = calcColor;
     updateSpecularColor();    
   }
 
+  
   protected void updateSpecularColor() {
-    if (!shapeEnded || tess.fillVertexCount == 0) {
-      return;
+    if (shapeEnded && 0 < tess.fillVertexCount) {
+      Arrays.fill(tess.fillSpecular, 0, tess.fillVertexCount, PGL.javaToNativeARGB(specularColor));    
+      modifiedFillSpecular = true;
+      modified();
     }
-      
-    updateTessellation();
-    
-    Arrays.fill(tess.fillSpecular, 0, tess.fillVertexCount, specularColor);
-    
-    modifiedFillSpecular = true;
-    modified();     
   }
+  
   
   //////////////////////////////////////////////////////////////
 
@@ -1414,22 +1400,19 @@ public class PShape3D extends PShape {
     }      
   }
   
+  
   protected void emissiveFromCalc() {
     emissiveColor = calcColor;
     updateEmissiveColor();     
   }
 
+  
   protected void updateEmissiveColor() {   
-    if (!shapeEnded || tess.fillVertexCount == 0) {
-      return;
-    }
-      
-    updateTessellation();
-    
-    Arrays.fill(tess.fillEmissive, 0, tess.fillVertexCount, emissiveColor);
-    
-    modifiedFillEmissive = true;
-    modified();    
+    if (shapeEnded && 0 < tess.fillVertexCount) {
+      Arrays.fill(tess.fillEmissive, 0, tess.fillVertexCount, PGL.javaToNativeARGB(emissiveColor));    
+      modifiedFillEmissive = true;
+      modified();
+    }    
   }
   
   //////////////////////////////////////////////////////////////
@@ -1462,6 +1445,7 @@ public class PShape3D extends PShape {
     modifiedFillShininess = true;
     modified();      
   }
+  
   
   ///////////////////////////////////////////////////////////  
   
