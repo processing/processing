@@ -6368,7 +6368,7 @@ public class PGraphicsOpenGL extends PGraphics {
       vertices[index++] = y;
       vertices[index  ] = z;
 
-      colors[vertexCount] = javaToNativeARGB(fcolor);
+      colors[vertexCount] = PGL.javaToNativeARGB(fcolor);
 
       index = 3 * vertexCount;
       normals[index++] = nx;
@@ -6379,12 +6379,12 @@ public class PGraphicsOpenGL extends PGraphics {
       texcoords[index++] = u;
       texcoords[index  ] = v;
 
-      scolors[vertexCount] = javaToNativeARGB(scolor);
+      scolors[vertexCount] = PGL.javaToNativeARGB(scolor);
       sweights[vertexCount] = sweight;
 
-      ambient[vertexCount] = javaToNativeARGB(am);
-      specular[vertexCount] = javaToNativeARGB(sp);
-      emissive[vertexCount] = javaToNativeARGB(em);
+      ambient[vertexCount] = PGL.javaToNativeARGB(am);
+      specular[vertexCount] = PGL.javaToNativeARGB(sp);
+      emissive[vertexCount] = PGL.javaToNativeARGB(em);
       shininess[vertexCount] = shine;
 
       lastVertex = vertexCount;
@@ -6406,15 +6406,6 @@ public class PGraphicsOpenGL extends PGraphics {
                        code);           
     }
 
-    public int javaToNativeARGB(int color) {
-      if (PGL.BIG_ENDIAN) {
-        return ((color >> 24) & 0xff) | ((color << 8) & 0xffffff00);
-      } else {
-        return (color & 0xff000000)
-               | ((color << 16) & 0xff0000) | (color & 0xff00)
-               | ((color >> 16) & 0xff);
-      }
-    }
 
     public void vertexCheck() {
       if (vertexCount == vertices.length / 3) {
