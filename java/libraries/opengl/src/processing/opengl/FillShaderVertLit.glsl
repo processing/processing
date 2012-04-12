@@ -80,10 +80,10 @@ void main() {
   // Normal vector in eye coordinates
   vec3 ecNormal = normalize(normalMatrix * inNormal);
   
-  if (dot(-ecVertex, ecNormal) < 0) {
+  if (dot(-ecVertex, ecNormal) < zero_float) {
     // If normal is away from camera, choose its opposite.
     // If we add backface culling, this will be backfacing  
-    ecNormal *= -1;
+    ecNormal *= -one_float;
   }
   
   // Light calculations
