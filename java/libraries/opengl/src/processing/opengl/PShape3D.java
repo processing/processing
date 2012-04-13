@@ -48,27 +48,9 @@ import java.util.HashSet;
 import java.util.Hashtable;
 
 // TODO:
-// 1) after geometry is copied to the root in first tessellation, clear tess arrays of childs
-// 2) Determine if PATH type is necessary, since it is equivalent to use POLYGON with fill disabled.
 // 3) Move tessellateSphere to InGeometry and implement rest of primitive tessellation functions.
+// 2) Determine if PATH type is necessary, since it is equivalent to use POLYGON with fill disabled.
 // 4) strokeWeight() should update the attributes of lines and points when called after tessellation. 
-
-// 5) getters/setters for individual vertex data:
-//    PVector getVertex(int n) gets vertex n from fill data.
-//    PVector getVertex(int n, PVector v, int type)
-//    PVector getVertex(int n, PVector v, int type)
-//    void setVertex(int n, PVector v, type)
-//    int getFillColor(int n, int)
-//    void setFillColor(int n, int color);
-//    void setFillColor(int n, int color);
-// ....
-//    void getStrokeWeight(int n)
-//    void setStrokeWeight(int n, int weight)
-// where type for vertices = FILL, LINE, POINT
-// where type for fill colors = FILL, LINE, POINT ... AMBIENT, ...
-// STROKE = LINE and POINTS ...!
-// setStrokeWeight(int n) for a line vertex should automatically update the attributes...
-// 6) Rename fillVertices to be compatible with the above, add corresponding setters, remove map methods.
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -1962,6 +1944,47 @@ public class PShape3D extends PShape {
   // Methods to access tessellated data.
   
   
+  
+  
+  
+
+//5) getters/setters for individual vertex data:
+//   PVector getVertex(int n) gets vertex n from fill data.
+//   PVector getVertex(int n, PVector v, int type)
+//   PVector getVertex(int n, PVector v, int type)
+//   void setVertex(int n, PVector v, type)
+//   int getFillColor(int n, int)
+//   void setFillColor(int n, int color);
+//   void setFillColor(int n, int color);
+//....
+//   void getStrokeWeight(int n)
+//   void setStrokeWeight(int n, int weight)
+//where type for vertices = FILL, LINE, POINT
+//where type for fill colors = FILL, LINE, POINT ... AMBIENT, ...
+//STROKE = LINE and POINTS ...!
+//setStrokeWeight(int n) for a line vertex should automatically update the attributes...
+//6) Rename fillVertices to be compatible with the above, add corresponding setters, remove map methods.
+  
+  
+  /*
+  public float[] getVertex(int index) {    
+  }
+  public float getVertexX(int index) {    
+  }
+  public float getVertexY(int index) {    
+  }  
+  public float getVertexZ(int index) {    
+  }
+  public int[] getVertexCodes() {    
+  }
+  public int getVertexCodeCount() {    
+  }
+  public int getVertexCode(int index) {    
+  }
+  */
+  
+  
+  
   public int firstFillVertex() {
     updateTessellation();
     return tess.firstFillVertex;  
@@ -2537,11 +2560,11 @@ public class PShape3D extends PShape {
     float c = params[2];
     float d = params[3];    
 
-    in.generateEllipse(ellipseMode, a, b, c, d,
-                       fill, fillColor, 
-                       stroke, strokeColor, strokeWeight,
-                       ambientColor, specularColor, emissiveColor, 
-                       shininess);
+    in.addEllipse(ellipseMode, a, b, c, d,
+                  fill, fillColor, 
+                  stroke, strokeColor, strokeWeight,
+                  ambientColor, specularColor, emissiveColor, 
+                  shininess);
     
     tessellator.tessellateTriangleFan(); 
   }
@@ -2562,11 +2585,11 @@ public class PShape3D extends PShape {
       d = params[2];
     }
         
-    in.generateBox(w, h, d,
-                   fill, fillColor, 
-                   stroke, strokeColor, strokeWeight,
-                   ambientColor, specularColor, emissiveColor, 
-                   shininess);
+    in.addBox(w, h, d,
+              fill, fillColor, 
+              stroke, strokeColor, strokeWeight,
+              ambientColor, specularColor, emissiveColor, 
+              shininess);
     
     tessellator.tessellateQuads();     
   }
@@ -2577,75 +2600,19 @@ public class PShape3D extends PShape {
     int nu = pg.sphereDetailU;
     int nv = pg.sphereDetailV;
     
-    if ((nu < 3) || (nv < 2)) {
-      nu = nv = 30;
-    }
+    in.addSphere(r, nu, nv, 
+                 fill, fillColor, 
+                 stroke, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, 
+                 shininess);
     
-    float startLat = -90;
-    float startLon = 0.0f;
-
-    float latInc = 180.0f / nu;
-    float lonInc = 360.0f / nv;
-
-    float phi1,  phi2;
-    float theta1,  theta2;
-    float x0, y0, z0;
-    float x1, y1, z1;
-    float x2, y2, z2;
-    float x3, y3, z3;
-    float u1, v1, u2, v2, v3;
-
-    for (int col = 0; col < nu; col++) {
-      phi1 = (startLon + col * lonInc) * DEG_TO_RAD;
-      phi2 = (startLon + (col + 1) * lonInc) * DEG_TO_RAD;
-      for (int row = 0; row < nv; row++) {
-        theta1 = (startLat + row * latInc) * DEG_TO_RAD;
-        theta2 = (startLat + (row + 1) * latInc) * DEG_TO_RAD;
-
-        x0 = PApplet.cos(phi1) * PApplet.cos(theta1);
-        x1 = PApplet.cos(phi1) * PApplet.cos(theta2);
-        x2 = PApplet.cos(phi2) * PApplet.cos(theta2);
-        
-        y0 = PApplet.sin(theta1);
-        y1 = PApplet.sin(theta2);
-        y2 = PApplet.sin(theta2);
-        
-        z0 = PApplet.sin(phi1) * PApplet.cos(theta1);
-        z1 = PApplet.sin(phi1) * PApplet.cos(theta2);
-        z2 = PApplet.sin(phi2) * PApplet.cos(theta2);
-
-        x3 = PApplet.cos(phi2) * PApplet.cos(theta1);
-        y3 = PApplet.sin(theta1);            
-        z3 = PApplet.sin(phi2) * PApplet.cos(theta1);
-        
-        u1 = PApplet.map(phi1, TWO_PI, 0, 0, 1); 
-        u2 = PApplet.map(phi2, TWO_PI, 0, 0, 1);
-        v1 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
-        v2 = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
-        v3 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
-        
-        normal(x0, y0, z0);     
-        vertex(r * x0, r * y0, r * z0, u1, v1);
-   
-        normal(x1, y1, z1);
-        vertex(r * x1,  r * y1,  r * z1, u1, v2);
-
-        normal(x2, y2, z2);
-        vertex(r * x2, r * y2, r * z2, u2, v2);
-
-        normal(x0, y0, z0);    
-        vertex(r * x0, r * y0, r * z0, u1, v1);
-
-        normal(x2, y2, z2);
-        vertex(r * x2, r * y2, r * z2, u2, v2);
-        
-        normal(x3,  y3,  z3);
-        vertex(r * x3,  r * y3,  r * z3,  u2,  v3);
-      }
-    }
+    tessellator.tessellateTriangles();               
     
-    if (stroke) in.addTrianglesEdges();
-    tessellator.tessellateTriangles();
+    
+    
+    
+   // if (stroke) in.addTrianglesEdges();
+   // tessellator.tessellateTriangles();
   }
   
   
