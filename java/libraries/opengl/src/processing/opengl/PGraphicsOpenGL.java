@@ -40,6 +40,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
+// TODO: 
+// 1) Should edges stay in InGeometry or go to TessGeometry?
+// 2) move bezier/curve vertex generation to InGeometry.   
+
 /**
  * OpenGL renderer.
  *
@@ -70,9 +74,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Current flush mode. */
   protected int flushMode = FLUSH_WHEN_FULL;
   
-  /** VBO storage mode. */
-  protected int vboMode = PGL.GL_STATIC_DRAW;
-
   // ........................................................
 
   // VBOs for immediate rendering:
@@ -341,8 +342,6 @@ public class PGraphicsOpenGL extends PGraphics {
   // ........................................................
 
   // Bezier and Catmull-Rom curves
-
-  // TODO: move bezier/curve vertex generation to InGeometry.   
   
   protected boolean bezierInited = false;
   public int bezierDetail = 20;
@@ -1090,41 +1089,41 @@ public class PGraphicsOpenGL extends PGraphics {
 
     glFillVertexBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
     glFillColorBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
     glFillNormalBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
     glFillTexCoordBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
 
     glFillAmbientBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
     glFillSpecularBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
     glFillEmissiveBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
     glFillShininessBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, null, PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
     glFillIndexBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, vboMode);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -1136,37 +1135,37 @@ public class PGraphicsOpenGL extends PGraphics {
     int sizei = size * PGL.SIZEOF_INT;
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillVertices, 0, 3 * size), vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillVertices, 0, 3 * size), PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillColors, 0, size), vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillColors, 0, size), PGL.GL_STATIC_DRAW);
 
     if (lit) {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillNormals, 0, 3 * size), vboMode);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillNormals, 0, 3 * size), PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
-      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillAmbient, 0, size), vboMode);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillAmbient, 0, size), PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
-      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillSpecular, 0, size), vboMode);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillSpecular, 0, size), PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
-      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillEmissive, 0, size), vboMode);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.fillEmissive, 0, size), PGL.GL_STATIC_DRAW);
 
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
-      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, FloatBuffer.wrap(tessGeo.fillShininess, 0, size), vboMode);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, FloatBuffer.wrap(tessGeo.fillShininess, 0, size), PGL.GL_STATIC_DRAW);
     }
 
     if (tex) {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.fillTexcoords, 0, 2 * size), vboMode);
+      pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.fillTexcoords, 0, 2 * size), PGL.GL_STATIC_DRAW);
     }
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.fillIndexCount * PGL.SIZEOF_INDEX,
-                     ShortBuffer.wrap(tessGeo.fillIndices, 0, tessGeo.fillIndexCount), vboMode);
+                     ShortBuffer.wrap(tessGeo.fillIndices, 0, tessGeo.fillIndexCount), PGL.GL_STATIC_DRAW);
   }
 
 
@@ -1214,21 +1213,21 @@ public class PGraphicsOpenGL extends PGraphics {
     glLineVertexBufferID = createVertexBufferObject();
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
     glLineColorBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
     glLineDirWidthBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
     glLineIndexBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, vboMode);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -1240,17 +1239,17 @@ public class PGraphicsOpenGL extends PGraphics {
     int sizei = size * PGL.SIZEOF_INT;
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.lineVertices, 0, 3 * size), vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.lineVertices, 0, 3 * size), PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.lineColors, 0, size), vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.lineColors, 0, size), PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineDirWidths, 0, 4 * size), vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineDirWidths, 0, 4 * size), PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.lineIndexCount * PGL.SIZEOF_INDEX,
-                     ShortBuffer.wrap(tessGeo.lineIndices, 0, tessGeo.lineIndexCount), vboMode);
+                     ShortBuffer.wrap(tessGeo.lineIndices, 0, tessGeo.lineIndexCount), PGL.GL_STATIC_DRAW);
   }
 
 
@@ -1282,21 +1281,21 @@ public class PGraphicsOpenGL extends PGraphics {
 
     glPointVertexBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
     glPointColorBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
     glPointSizeBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
     glPointIndexBufferID = createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, vboMode);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -1308,17 +1307,17 @@ public class PGraphicsOpenGL extends PGraphics {
     int sizei = size * PGL.SIZEOF_INT;
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.pointVertices, 0, 3 * size), vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.pointVertices, 0, 3 * size), PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.pointColors, 0, size), vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.pointColors, 0, size), PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointSizes, 0, 2 * size), vboMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointSizes, 0, 2 * size), PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.pointIndexCount * PGL.SIZEOF_INDEX,
-                     ShortBuffer.wrap(tessGeo.pointIndices, 0, tessGeo.pointIndexCount), vboMode);
+                     ShortBuffer.wrap(tessGeo.pointIndices, 0, tessGeo.pointIndexCount), PGL.GL_STATIC_DRAW);
   }
 
 
@@ -1548,16 +1547,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (flushMode == FLUSH_WHEN_FULL) {
       // Flushing any remaining geometry.
       flush();
-
-//      if (settingPixels) {
-//        // Drawing the pixels array. We can only get
-//        // here if there was no geometry to flush at
-//        // the end of draw, and the user has been
-//        // manipulating individual pixels. If that's
-//        // the case we need to update the screen with
-//        // the changes in  the pixels array.
-//        updatePixels();
-//      }
 
       // TODO: Implement depth sorting (http://code.google.com/p/processing/issues/detail?id=51)
       //if (hints[ENABLE_DEPTH_SORT]) {
@@ -2019,6 +2008,8 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       shape = new PShape3D(parent, PShape.PRIMITIVE);
       shape.setKind(SPHERE);
+    } else {
+      showWarning("Unrecognized primitive type");
     }
 
     if (shape != null) {
@@ -2498,7 +2489,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int size = tessGeo.fillIndexCount;
     int sizex = size * PGL.SIZEOF_INDEX;
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.fillIndices, 0, size), vboMode);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.fillIndices, 0, size), PGL.GL_STATIC_DRAW);
     pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -2712,9 +2703,6 @@ public class PGraphicsOpenGL extends PGraphics {
       curveToBezierMatrix = new PMatrix3D();
     }
 
-    // TODO only needed for PGraphicsJava2D? if so, move it there
-    // actually, it's generally useful for other renderers, so keep it
-    // or hide the implementation elsewhere.
     curveToBezierMatrix.set(curveBasisMatrix);
     curveToBezierMatrix.preApply(bezierBasisInverse);
 
@@ -2912,9 +2900,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // BOX
 
-  // TODO GL and GLUT in GL ES doesn't offer functions to create
-  // cubes.
-
   // public void box(float size)
 
   // public void box(float w, float h, float d) // P3D
@@ -2922,9 +2907,6 @@ public class PGraphicsOpenGL extends PGraphics {
   //////////////////////////////////////////////////////////////
 
   // SPHERE
-
-  // TODO GL and GLUT in GL ES doesn't offer functions to create
-  // spheres.
 
   // public void sphereDetail(int res)
 
@@ -3333,8 +3315,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   static private void invRotate(PMatrix3D matrix, float angle, float v0, float v1, float v2) {
-    //TODO should make sure this vector is normalized
-
+    float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
+    if (Math.abs(norm2 - 1) > EPSILON) {
+      // The rotation vector is not normalized.
+      float norm = PApplet.sqrt(norm2);
+      v0 /= norm;
+      v1 /= norm;
+      v2 /= norm;
+    }    
+    
     float c = PApplet.cos(-angle);
     float s = PApplet.sin(-angle);
     float t = 1.0f - c;
@@ -4842,10 +4831,6 @@ public class PGraphicsOpenGL extends PGraphics {
   // public void copy(int sx1, int sy1, int sx2, int sy2,
   // int dx1, int dy1, int dx2, int dy2)
 
-  /**
-   * TODO - extremely slow and not optimized. Currently calls a beginPixels() on
-   * the whole canvas, then does the copy, then it calls endPixels().
-   */
   // public void copy(PImage src,
   // int sx1, int sy1, int sx2, int sy2,
   // int dx1, int dy1, int dx2, int dy2)
@@ -5994,6 +5979,11 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
+  protected TessGeometry newTessGeometry(int mode, boolean empty) {
+    return new TessGeometry(mode, empty);
+  }
+  
+  
   protected TexCache newTexCache() {
     return new TexCache();
   }
@@ -6160,8 +6150,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public int[] specular;
     public int[] emissive;
     public float[] shininess;
-
-    // TODO: this should probably go in the TessGeometry class, or maybe not...
+    
     public int[][] edges;
 
     // Internally used by the addVertex() methods.
@@ -7040,9 +7029,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
     public TessGeometry(int mode) {
       renderMode = mode;
-      allocate();
+      allocate(false);
     }
 
+    public TessGeometry(int mode, boolean empty) {
+      renderMode = mode;
+      allocate(empty);
+    }    
+    
     public void clear() {
       firstFillVertex = lastFillVertex = fillVertexCount = 0;
       firstFillIndex = lastFillIndex = fillIndexCount = 0;
@@ -7056,30 +7050,56 @@ public class PGraphicsOpenGL extends PGraphics {
       isStroked = false;
     }
 
-    public void allocate() {
-      fillVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
-      fillColors = new int[PGL.DEFAULT_TESS_VERTICES];
-      fillNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
-      fillTexcoords = new float[2 * PGL.DEFAULT_TESS_VERTICES];
-      fillAmbient = new int[PGL.DEFAULT_TESS_VERTICES];
-      fillSpecular = new int[PGL.DEFAULT_TESS_VERTICES];
-      fillEmissive = new int[PGL.DEFAULT_TESS_VERTICES];
-      fillShininess = new float[PGL.DEFAULT_TESS_VERTICES];
-      fillIndices = new short[PGL.DEFAULT_TESS_VERTICES];
+    public void allocate(boolean empty) {
+      if (!empty) {
+        fillVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+        fillColors = new int[PGL.DEFAULT_TESS_VERTICES];
+        fillNormals = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+        fillTexcoords = new float[2 * PGL.DEFAULT_TESS_VERTICES];
+        fillAmbient = new int[PGL.DEFAULT_TESS_VERTICES];
+        fillSpecular = new int[PGL.DEFAULT_TESS_VERTICES];
+        fillEmissive = new int[PGL.DEFAULT_TESS_VERTICES];
+        fillShininess = new float[PGL.DEFAULT_TESS_VERTICES];
+        fillIndices = new short[PGL.DEFAULT_TESS_VERTICES];
 
-      lineVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
-      lineColors = new int[PGL.DEFAULT_TESS_VERTICES];
-      lineDirWidths = new float[4 * PGL.DEFAULT_TESS_VERTICES];
-      lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];
+        lineVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+        lineColors = new int[PGL.DEFAULT_TESS_VERTICES];
+        lineDirWidths = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+        lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];
 
-      pointVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
-      pointColors = new int[PGL.DEFAULT_TESS_VERTICES];
-      pointSizes = new float[2 * PGL.DEFAULT_TESS_VERTICES];
-      pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
+        pointVertices = new float[3 * PGL.DEFAULT_TESS_VERTICES];
+        pointColors = new int[PGL.DEFAULT_TESS_VERTICES];
+        pointSizes = new float[2 * PGL.DEFAULT_TESS_VERTICES];
+        pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
+      } else {
+        fillVertices = null;
+        fillColors = null;
+        fillNormals = null;
+        fillTexcoords = null;
+        fillAmbient = null;
+        fillSpecular = null;
+        fillEmissive = null;
+        fillShininess = null;
+        fillIndices = null;
 
+        lineVertices = null;
+        lineColors = null;
+        lineDirWidths = null;
+        lineIndices = null;
+
+        pointVertices = null;
+        pointColors = null;
+        pointSizes = null;
+        pointIndices = null;        
+      }
       clear();
     }
 
+    
+    public void free() {
+      
+    }
+    
     public void trim() {
       if (0 < fillVertexCount && fillVertexCount < fillVertices.length / 3) {
         trimFillVertices();

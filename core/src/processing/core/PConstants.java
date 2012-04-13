@@ -450,14 +450,12 @@ public interface PConstants {
   public static final int REPEAT = 1;
 
 
-  // vbos
+  // shape objects
 
-  /**  Static usage mode for PShape3D (vertices won't be updated after creation).  */
+  /**  Static shapes (vertices won't be updated after creation).  */
   public static final int STATIC = 0;
-  /**  Dynamic usage mode for PShape3D (vertices will be updated after creation). */
+  /**  Dynamic shapes (vertices will be updated after creation). */
   public static final int DYNAMIC = 1;
-  /**  Dynamic usage mode for PShape3D (vertices will be updated at every frame). */
-  public static final int STREAM = 2;
 
   
   // shaders
