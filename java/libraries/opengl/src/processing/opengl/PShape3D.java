@@ -47,15 +47,28 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 
-// Notes about geometry update in PShape3D.
-// 1) When applying a transformation on a group shape
-//    check if it is more efficient to apply as a gl
-//    transformation on all the childs, instead of 
-//    propagating the transformation downwards in order
-//    to calculate the transformation matrices.
-// 2) Change the transformation logic, so the matrix is applied 
-//    on the values stored in the vertex cache and not on the
-//    tessellated vertices.
+// TODO:
+// 1) after geometry is copied to the root in first tessellation, clear tess arrays of childs
+// 2) Determine if PATH type is necessary, since it is equivalent to use POLYGON with fill disabled.
+// 3) Move tessellateSphere to InGeometry and implement rest of primitive tessellation functions.
+// 4) strokeWeight() should update the attributes of lines and points when called after tessellation. 
+
+// 5) getters/setters for individual vertex data:
+//    PVector getVertex(int n) gets vertex n from fill data.
+//    PVector getVertex(int n, PVector v, int type)
+//    PVector getVertex(int n, PVector v, int type)
+//    void setVertex(int n, PVector v, type)
+//    int getFillColor(int n, int)
+//    void setFillColor(int n, int color);
+//    void setFillColor(int n, int color);
+// ....
+//    void getStrokeWeight(int n)
+//    void setStrokeWeight(int n, int weight)
+// where type for vertices = FILL, LINE, POINT
+// where type for fill colors = FILL, LINE, POINT ... AMBIENT, ...
+// STROKE = LINE and POINTS ...!
+// setStrokeWeight(int n) for a line vertex should automatically update the attributes...
+// 6) Rename fillVertices to be compatible with the above, add corresponding setters, remove map methods.
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -83,18 +96,21 @@ public class PShape3D extends PShape {
   protected PGL.Context context;      // The context that created this shape.
 
   protected PShape3D root;  
-  protected int glMode;
-    
+
+  // ........................................................
+  
+  // Input, tessellated geometry    
+  
   protected InGeometry in;
   protected TessGeometry tess;
   protected Tessellator tessellator;
+
+  // ........................................................
   
-  protected ArrayList<IndexData> fillIndexData;
-  protected ArrayList<IndexData> lineIndexData;
-  protected ArrayList<IndexData> pointIndexData;
+  // Texturing  
   
   protected HashSet<PImage> textures;
-  protected PImage texture;
+  protected PImage texture; 
   
   // ........................................................
   
@@ -148,9 +164,90 @@ public class PShape3D extends PShape {
   
   // ........................................................
   
-  // Drawing/rendering state
+  // Indices    
+  
+  // Contains the blocks of geometry that can be rendered  
+  // in a single drawElements() call. 
+  protected ArrayList<IndexData> fillIndexData;
+  protected ArrayList<IndexData> lineIndexData;
+  protected ArrayList<IndexData> pointIndexData;  
+  
+  // ........................................................
+  
+  // State/rendering flags  
   
   protected boolean tessellated;
+  protected boolean needBufferInit;
+  
+  protected boolean isSolid;
+  protected boolean isClosed;
+  
+  protected boolean openContour = false;
+  protected boolean breakShape = false;
+  protected boolean shapeEnded = false;
+
+  protected boolean hasFill;
+  protected boolean hasLines;
+  protected boolean hasPoints;
+  
+  protected int prevMode;
+  
+  // ........................................................
+  
+  // Modes inherited from renderer  
+  
+  protected int textureMode;
+  protected int rectMode;
+  protected int ellipseMode;
+  protected int shapeMode;
+  protected int imageMode;
+
+  // ........................................................
+  
+  // Geometric transformations  
+  
+  protected PMatrix transform;
+  protected boolean cacheTransformations;
+  protected boolean childHasMatrix;    
+  
+  // ........................................................
+  
+  // Normals
+  
+  protected float normalX, normalY, normalZ;
+
+  // normal calculated per triangle
+  static protected final int NORMAL_MODE_AUTO = 0;
+  // one normal manually specified per shape
+  static protected final int NORMAL_MODE_SHAPE = 1;
+  // normals specified for each shape vertex
+  static protected final int NORMAL_MODE_VERTEX = 2;
+
+  // Current mode for normals, one of AUTO, SHAPE, or VERTEX
+  protected int normalMode;  
+    
+  // ........................................................
+  
+  // Modification caches  
+  
+  // The caches are used to copy the data from each modified child shape 
+  // to a contiguous array that will be then copied to the VBO in the root shape.
+  protected VertexCache fillVerticesCache;
+  protected VertexCache fillColorsCache;
+  protected VertexCache fillNormalsCache;
+  protected VertexCache fillTexCoordsCache;
+  protected VertexCache fillAmbientCache;
+  protected VertexCache fillSpecularCache;
+  protected VertexCache fillEmissiveCache;
+  protected VertexCache fillShininessCache;
+  
+  protected VertexCache lineVerticesCache;
+  protected VertexCache lineColorsCache;
+  protected VertexCache lineAttributesCache;  
+
+  protected VertexCache pointVerticesCache;
+  protected VertexCache pointColorsCache;
+  protected VertexCache pointAttributesCache;
   
   boolean modifiedFillVertices;
   boolean modifiedFillColors;
@@ -168,54 +265,7 @@ public class PShape3D extends PShape {
   boolean modifiedPointVertices;
   boolean modifiedPointColors;
   boolean modifiedPointNormals;
-  boolean modifiedPointAttributes;  
-
-  protected VertexCache fillVerticesCache;
-  protected VertexCache fillColorsCache;
-  protected VertexCache fillNormalsCache;
-  protected VertexCache fillTexCoordsCache;
-  protected VertexCache fillAmbientCache;
-  protected VertexCache fillSpecularCache;
-  protected VertexCache fillEmissiveCache;
-  protected VertexCache fillShininessCache;
-  
-  protected VertexCache lineVerticesCache;
-  protected VertexCache lineColorsCache;
-  protected VertexCache lineAttributesCache;  
-
-  protected VertexCache pointVerticesCache;
-  protected VertexCache pointColorsCache;
-  protected VertexCache pointAttributesCache;  
-    
-  protected boolean isSolid;
-  protected boolean isClosed;
-  
-  protected boolean openContour = false;
-  protected boolean breakShape = false;
-  protected boolean shapeEnded = false;
-  
-  protected boolean hasFill;
-  protected boolean hasLines;
-  protected boolean hasPoints;
-  
-  protected boolean applyMatrix;
-  protected boolean childHasMatrix;
-  
-  // ........................................................
-  
-  // Input data
-  
-  protected float normalX, normalY, normalZ;
-
-  // normal calculated per triangle
-  static protected final int NORMAL_MODE_AUTO = 0;
-  // one normal manually specified per shape
-  static protected final int NORMAL_MODE_SHAPE = 1;
-  // normals specified for each shape vertex
-  static protected final int NORMAL_MODE_VERTEX = 2;
-
-  // Current mode for normals, one of AUTO, SHAPE, or VERTEX
-  protected int normalMode;
+  boolean modifiedPointAttributes;    
     
   // ........................................................
   
@@ -239,22 +289,6 @@ public class PShape3D extends PShape {
   protected float curveVertices[][];
   protected int curveVertexCount;  
   
-  // ........................................................
-  
-  // Modes inherited from renderer  
-  
-  protected int textureMode;
-  protected int rectMode;
-  protected int ellipseMode;
-  protected int shapeMode;
-  protected int imageMode;
-
-  // ........................................................
-  
-  // Geometric transformations  
-  
-  protected PMatrix transform;
-  protected boolean cacheTransformations;
   
   
   
@@ -262,7 +296,7 @@ public class PShape3D extends PShape {
     pg = (PGraphicsOpenGL)parent.g;
     pgl = pg.pgl;
     
-    glMode = PGL.GL_STATIC_DRAW;
+    prevMode = mode = DYNAMIC;
     
     glFillVertexBufferID = 0;
     glFillColorBufferID = 0;
@@ -293,10 +327,12 @@ public class PShape3D extends PShape {
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
       in = pg.newInGeometry(PGraphicsOpenGL.RETAINED);      
     }    
-    tess = pg.newTessGeometry(PGraphicsOpenGL.RETAINED);
+    //tess = pg.newTessGeometry(PGraphicsOpenGL.RETAINED);
+    
     fillIndexData = new ArrayList<IndexData>();
     lineIndexData = new ArrayList<IndexData>();
-    pointIndexData = new ArrayList<IndexData>();
+    pointIndexData = new ArrayList<IndexData>();          
+    
     
     // Modes are retrieved from the current values in the renderer.
     textureMode = pg.textureMode;    
@@ -339,21 +375,17 @@ public class PShape3D extends PShape {
       shapeEnded = true;
     }
   }
-  
-  
-  public void setKind(int kind) {
-    this.kind = kind;
-  }
 
   
   public void setMode(int mode) {
-    if (mode == STATIC) {
-      glMode = PGL.GL_STATIC_DRAW;
-    } else if (mode == DYNAMIC) {
-      glMode = PGL.GL_DYNAMIC_DRAW;
-    } else if (mode == STREAM) {
-      glMode = PGL.GL_STREAM_DRAW;
+    if (this.mode == STATIC && mode == DYNAMIC) {
+      // Marking the shape as not tessellated, this
+      // will trigger a tessellation next time the
+      // shape is drawn or modified, which will bring
+      // back all the tess objects.      
+      tessellated = false;
     }
+    super.setMode(mode);
   }
   
   public void addChild(PShape child) {
@@ -997,7 +1029,7 @@ public class PShape3D extends PShape {
 
   
   protected void updateFillColor() {
-    if (shapeEnded && 0 < tess.fillVertexCount && texture == null) {
+    if (shapeEnded && tessellated && 0 < tess.fillVertexCount && texture == null) {
       Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, PGL.javaToNativeARGB(fillColor));
       modifiedFillColors = true;
       modified();  
@@ -1110,7 +1142,7 @@ public class PShape3D extends PShape {
 
   
   protected void updateStrokeColor() {
-    if (shapeEnded && (0 < tess.lineVertexCount || 0 < tess.pointVertexCount)) {
+    if (shapeEnded && tessellated && (0 < tess.lineVertexCount || 0 < tess.pointVertexCount)) {
       if (0 < tess.lineVertexCount) {
         Arrays.fill(tess.lineColors, 0, tess.lineVertexCount, PGL.javaToNativeARGB(strokeColor));
         modifiedLineColors = true;
@@ -1231,7 +1263,7 @@ public class PShape3D extends PShape {
   
   
   protected void updateTintColor() {    
-    if (shapeEnded && 0 < tess.fillVertexCount && texture != null) {
+    if (shapeEnded && tessellated && 0 < tess.fillVertexCount && texture != null) {
       Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, PGL.javaToNativeARGB(tintColor));
       modifiedFillColors = true;
       modified();  
@@ -1290,7 +1322,7 @@ public class PShape3D extends PShape {
   
 
   protected void updateAmbientColor() {    
-    if (shapeEnded && 0 < tess.fillVertexCount) {
+    if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
       Arrays.fill(tess.fillAmbient, 0, tess.fillVertexCount, PGL.javaToNativeARGB(ambientColor));      
       modifiedFillAmbient = true;
       modified();  
@@ -1349,7 +1381,7 @@ public class PShape3D extends PShape {
 
   
   protected void updateSpecularColor() {
-    if (shapeEnded && 0 < tess.fillVertexCount) {
+    if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
       Arrays.fill(tess.fillSpecular, 0, tess.fillVertexCount, PGL.javaToNativeARGB(specularColor));    
       modifiedFillSpecular = true;
       modified();
@@ -1408,7 +1440,7 @@ public class PShape3D extends PShape {
 
   
   protected void updateEmissiveColor() {   
-    if (shapeEnded && 0 < tess.fillVertexCount) {
+    if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
       Arrays.fill(tess.fillEmissive, 0, tess.fillVertexCount, PGL.javaToNativeARGB(emissiveColor));    
       modifiedFillEmissive = true;
       modified();
@@ -1434,16 +1466,11 @@ public class PShape3D extends PShape {
   
   
   protected void updateShininessFactor() {
-    if (!shapeEnded || tess.fillVertexCount == 0) {
-      return;
+    if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
+      Arrays.fill(tess.fillShininess, 0, tess.fillVertexCount, shininess);    
+      modifiedFillShininess = true;
+      modified();    
     }
-      
-    updateTessellation();
-    
-    Arrays.fill(tess.fillShininess, 0, tess.fillVertexCount, shininess);
-    
-    modifiedFillShininess = true;
-    modified();      
   }
   
   
@@ -1522,13 +1549,14 @@ public class PShape3D extends PShape {
         }
         if (matrix != null) {
           matrix.reset();
-          applyMatrix = false;
         }
       } else {
         if (cacheTransformations) {
           boolean res = matrix.invert();
           if (res) {
             if (tessellated) {
+              // This will be ultimately handled by transformImpl(),
+              // which will take care of setting the modified flags, etc.
               applyMatrix(matrix);
             }
             matrix.reset();
@@ -1538,7 +1566,6 @@ public class PShape3D extends PShape {
         } else {
           if (hasMatrix()) {
             matrix.reset();
-            applyMatrix = false;
           }          
         }
       }      
@@ -1563,12 +1590,6 @@ public class PShape3D extends PShape {
     if (shapeEnded) {
 
       if (family == GROUP) {
-        // The tessellation is not updated for geometry/primitive shapes
-        // because a common situation is shapes not still tessellated
-        // but being transformed before adding them to the parent group
-        // shape. If each shape is tessellated individually, then the process,
-        // although still valid, is significantly slower than tessellating
-        // all the geometry in a single batch.
         updateTessellation();
         
         if (cacheTransformations) {
@@ -1582,19 +1603,20 @@ public class PShape3D extends PShape {
         } else {
           checkMatrix(ncoords);
           calcTransform(type, ncoords, args);
-          applyMatrix = true;
         }
-      } else {       
+      } else {
+        // The tessellation is not updated for geometry/primitive shapes
+        // because a common situation is shapes not still tessellated
+        // but being transformed before adding them to the parent group
+        // shape. If each shape is tessellated individually, then the process
+        // is significantly slower than tessellating all the geometry in a single 
+        // batch when calling tessellate() on the root shape.
+        
         checkMatrix(ncoords);
         if (cacheTransformations) {
           calcTransform(type, ncoords, args);
           if (tessellated) {
             applyTransform(ncoords);
-            // Setting the applyMatrix variable to false so
-            // that the transformation is not applied again
-            // in the draw() method.            
-            applyMatrix = false;
-            
             modified();
             if (0 < tess.fillVertexCount) {
               modifiedFillVertices = true;  
@@ -1608,15 +1630,10 @@ public class PShape3D extends PShape {
               modifiedPointVertices = true;
               modifiedPointNormals = true;        
             }            
-          } else {
-            // The matrix will be applied right after tessellation.
-            applyMatrix = true;
           }
-
         } else {
           // The transformation will be applied in draw().
-          calcTransform(type, ncoords, args);
-          applyMatrix = true;          
+          calcTransform(type, ncoords, args);          
         }
       }
       
@@ -1894,9 +1911,6 @@ public class PShape3D extends PShape {
       curveToBezierMatrix = new PMatrix3D();
     }
 
-    // TODO only needed for PGraphicsJava2D? if so, move it there
-    // actually, it's generally useful for other renderers, so keep it
-    // or hide the implementation elsewhere.
     curveToBezierMatrix.set(curveBasisMatrix);
     curveToBezierMatrix.preApply(bezierBasisInverse);
 
@@ -2380,19 +2394,30 @@ public class PShape3D extends PShape {
   protected void updateTessellation() {
     if (!root.tessellated || root.contextIsOutdated()) {
       root.tessellate();
-      root.aggregate();        
+      root.aggregate();
     }
   }
  
   
   protected void tessellate() {
+    if (tess == null) {
+      tess = pg.newTessGeometry(PGraphicsOpenGL.RETAINED, family == GROUP);
+    }
+    tess.clear();
+    
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D) children[i];
         child.tessellate();
       }      
     } else {   
-      if (shapeEnded  && !tessellated) {
+      if (shapeEnded) {
+        // If the geometry was tessellated previously, then
+        // the edges information will still be stored in the
+        // input object, so it needs to be removed to avoid
+        // duplication.
+        in.clearEdges();        
+        
         tessellator.setInGeometry(in);
         tessellator.setTessGeometry(tess);
         tessellator.setFill(fill || texture != null);
@@ -2431,6 +2456,12 @@ public class PShape3D extends PShape {
             tessellator.tessellatePolygon(isSolid, isClosed, normalMode == NORMAL_MODE_AUTO);
           }
         } else if (family == PRIMITIVE) {
+          
+          // The input geometry needs to be cleared because the geometry
+          // generation methods in InGeometry add the vertices of the
+          // new primitive to what is already stored.
+          in.clear();
+          
           if (kind == POINT) {
             tessellatePoint();
           } else if (kind == LINE) {
@@ -2450,9 +2481,7 @@ public class PShape3D extends PShape {
           } else if (kind == SPHERE) {
             tessellateSphere();
           }
-        } else if (family == PATH) {
-          // TODO: Determine if this is necessary, since it is 
-          // equivalent to use POLYGON with fill disabled.
+        } else if (family == PATH) {          
         }
         
         // Tessellated arrays are trimmed since they are expanded 
@@ -2464,11 +2493,10 @@ public class PShape3D extends PShape {
           ((PShape3D)parent).addTexture(texture);
         }
         
-        if (cacheTransformations && applyMatrix) {
+        if (cacheTransformations && matrix != null) {
           // Some geometric transformations were applied on
           // this shape before tessellation, so they are applied now.
           tess.applyMatrix(matrix);
-          applyMatrix = false;
         }
       }
     }
@@ -2544,8 +2572,7 @@ public class PShape3D extends PShape {
   }
   
   
-  protected void tessellateSphere() {
-    // TODO: move to InGeometry
+  protected void tessellateSphere() {    
     float r = params[0];
     int nu = pg.sphereDetailU;
     int nv = pg.sphereDetailV;
@@ -2725,29 +2752,7 @@ public class PShape3D extends PShape {
       
       aggregateImpl();
       
-      context = pgl.getContext();
-      
-      // Now that we know, we can initialize the buffers with the correct size.
-      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {   
-        initFillBuffers(tess.fillVertexCount, tess.fillIndexCount);          
-        fillVertCopyOffset = 0;
-        fillIndCopyOffset = 0;
-        copyFillGeometryToRoot();
-      }
-      
-      if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {   
-        initLineBuffers(tess.lineVertexCount, tess.lineIndexCount);
-        lineVertCopyOffset = 0;
-        lineIndCopyOffset = 0;
-        copyLineGeometryToRoot();
-      }
-      
-      if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {   
-        initPointBuffers(tess.pointVertexCount, tess.pointIndexCount);
-        pointVertCopyOffset = 0;
-        pointIndCopyOffset = 0;
-        copyPointGeometryToRoot();
-      }      
+      needBufferInit = true;      
     }
   }
   
@@ -2757,8 +2762,6 @@ public class PShape3D extends PShape {
   // level of the shape hierarchy.
   protected void aggregateImpl() {
     if (family == GROUP) {
-      tess.clear();
-      
       boolean firstGeom = true;
       boolean firstStroke = true;
       boolean firstPoint = true;
@@ -2833,7 +2836,7 @@ public class PShape3D extends PShape {
     
     hasFill = 0 < tess.fillVertexCount && 0 < tess.fillIndexCount;
     hasLines = 0 < tess.lineVertexCount && 0 < tess.lineIndexCount; 
-    hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;    
+    hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;            
   }
 
   // Creates fill index data for a geometry shape.
@@ -2939,6 +2942,56 @@ public class PShape3D extends PShape {
   }
   
   
+  protected void initBuffers() {
+    if (root.needBufferInit) {
+      root.copyGeometryToRoot();
+    }
+  }
+  
+  
+  protected void copyGeometryToRoot() {
+    if (root == this && parent == null) {
+      context = pgl.getContext();
+      
+      // Now that we know, we can initialize the buffers with the correct size.
+      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {   
+        initFillBuffers(tess.fillVertexCount, tess.fillIndexCount);          
+        fillVertCopyOffset = 0;
+        fillIndCopyOffset = 0;
+        copyFillGeometryToRoot();
+      }
+      
+      if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {   
+        initLineBuffers(tess.lineVertexCount, tess.lineIndexCount);
+        lineVertCopyOffset = 0;
+        lineIndCopyOffset = 0;
+        copyLineGeometryToRoot();
+      }
+      
+      if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {   
+        initPointBuffers(tess.pointVertexCount, tess.pointIndexCount);
+        pointVertCopyOffset = 0;
+        pointIndCopyOffset = 0;
+        copyPointGeometryToRoot();
+      }
+      
+      needBufferInit = false;
+      
+      // Since all the tessellated geometry has just been copied to the
+      // root VBOs, we can mark all the shapes as not modified.
+      notModified();
+    }
+  }
+  
+  
+  protected void modeCheck() {
+    if (root.mode == STATIC && root.prevMode == DYNAMIC) {
+      root.freeCaches();
+      root.freeTessData();
+    }
+    root.prevMode = root.mode;   
+  }
+  
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
@@ -2977,41 +3030,41 @@ public class PShape3D extends PShape {
     
     glFillVertexBufferID = pg.createVertexBufferObject();  
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
     
     glFillColorBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);    
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);    
     
     glFillNormalBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);     
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);     
     
     glFillTexCoordBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, glMode);  
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);  
     
     glFillAmbientBufferID = pg.createVertexBufferObject();  
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
     
     glFillSpecularBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);    
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);    
     
     glFillEmissiveBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
     
     glFillShininessBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, null, glMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, null, PGL.GL_STATIC_DRAW);
         
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
         
     glFillIndexBufferID = pg.createVertexBufferObject();  
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, glMode);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
     
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);  
   }  
@@ -3043,8 +3096,7 @@ public class PShape3D extends PShape {
         PShape3D child = (PShape3D) children[i];        
         child.updateRootGeometry();        
       } 
-    } else {
- 
+    } else {      
       if (0 < tess.fillVertexCount) {    
         if (modifiedFillVertices) {
           if (root.fillVerticesCache == null) { 
@@ -3322,21 +3374,21 @@ public class PShape3D extends PShape {
     
     glLineVertexBufferID = pg.createVertexBufferObject();    
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);      
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
     
     glLineColorBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);       
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);       
 
     glLineDirWidthBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, glMode);    
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, PGL.GL_STATIC_DRAW);    
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
     
     glLineIndexBufferID = pg.createVertexBufferObject();    
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, glMode);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }
@@ -3349,7 +3401,7 @@ public class PShape3D extends PShape {
         child.copyLineGeometryToRoot();
       }    
     } else {
-      if (hasLines) {
+      if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {
         root.copyLineGeometry(root.lineVertCopyOffset, tess.lineVertexCount, 
                               tess.lineVertices, tess.lineColors, tess.lineDirWidths);        
         root.lineVertCopyOffset += tess.lineVertexCount;
@@ -3416,21 +3468,21 @@ public class PShape3D extends PShape {
     
     glPointVertexBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, glMode);   
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);   
 
     glPointColorBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, glMode);     
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);     
     
     glPointSizeBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, glMode);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
       
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);     
         
     glPointIndexBufferID = pg.createVertexBufferObject();
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, glMode);
+    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
     
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
   }  
@@ -3443,7 +3495,7 @@ public class PShape3D extends PShape {
         child.copyPointGeometryToRoot();
       }    
     } else {
-      if (hasPoints) {
+      if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {
         root.copyPointGeometry(root.pointVertCopyOffset, tess.pointVertexCount, 
                                tess.pointVertices, tess.pointColors, tess.pointSizes);        
         root.pointVertCopyOffset += tess.pointVertexCount;
@@ -3610,6 +3662,38 @@ public class PShape3D extends PShape {
     }  
   }
   
+  
+  protected void freeCaches() {
+    fillVerticesCache = null;
+    fillColorsCache = null;
+    fillNormalsCache = null;
+    fillTexCoordsCache = null;
+    fillAmbientCache = null;
+    fillSpecularCache = null;
+    fillEmissiveCache = null;
+    fillShininessCache = null;
+    
+    lineVerticesCache = null;
+    lineColorsCache = null;
+    lineAttributesCache = null;
+
+    pointVerticesCache = null;
+    pointColorsCache = null;
+    pointAttributesCache = null;  
+  }
+  
+  
+  protected void freeTessData() {
+    tess = null;
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        child.freeTessData();
+      }
+    }
+  }
+  
+  
   ///////////////////////////////////////////////////////////  
   
   //
@@ -3624,10 +3708,11 @@ public class PShape3D extends PShape {
   
   public void draw(PGraphics g) {
     if (visible) {      
-      updateTessellation();      
+      updateTessellation();
+      initBuffers();
       updateGeometry();
       
-      if (applyMatrix && matrix != null) {
+      if (!cacheTransformations && matrix != null) {
         g.pushMatrix();
         g.applyMatrix(matrix);
       }
@@ -3663,9 +3748,11 @@ public class PShape3D extends PShape {
         render(texture);
       }
     
-      if (applyMatrix && matrix != null) {
+      if (!cacheTransformations && matrix != null) {
         g.popMatrix();
       } 
+      
+      modeCheck();
     }
   }
 
@@ -3677,7 +3764,7 @@ public class PShape3D extends PShape {
       // Some error. Root should never be null. At least it should be this.
       return; 
     }
-
+    
     if (hasPoints) {
       renderPoints();
     }
