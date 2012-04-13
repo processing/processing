@@ -95,6 +95,9 @@ public class PShape implements PConstants {
 
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
   protected int kind;
+  
+  /** STATIC, DYNAMIC, STREAM */
+  protected int mode;
 
   protected PMatrix matrix;
 
@@ -255,7 +258,17 @@ public class PShape implements PConstants {
     this.family = family;
   }
 
+  
+  public void setKind(int kind) {
+    this.kind = kind;
+  }
+  
+  
+  public void setMode(int mode) {
+    this.mode = mode;
+  }  
 
+  
   public void setName(String name) {
     this.name = name;
   }
@@ -1135,6 +1148,13 @@ public class PShape implements PConstants {
     }
   }
 
+  protected void notModified() {
+    modified = false;
+    for (int i = 0; i < childCount; i++) {
+      children[i].notModified();
+    }
+  }
+  
 
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -1432,6 +1452,14 @@ public class PShape implements PConstants {
  */
   public void rotate(float angle, float v0, float v1, float v2) {
     checkMatrix(3);
+    float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
+    if (Math.abs(norm2 - 1) > EPSILON) {
+      // The rotation vector is not normalized.
+      float norm = PApplet.sqrt(norm2);
+      v0 /= norm;
+      v1 /= norm;
+      v2 /= norm;
+    }     
     matrix.rotate(angle, v0, v1, v2);
   }
 
