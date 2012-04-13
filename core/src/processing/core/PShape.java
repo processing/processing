@@ -1292,13 +1292,6 @@ public class PShape implements PConstants {
   // if matrix is null when one is called,
   //   it is created and set to identity
 
-  public void center(float cx, float cy) {
-
-  }
-
-  public void center(float cx, float cy, float cz) {
-
-  }
 
 /**
    * ( begin auto-generated from PShape_translate.xml )

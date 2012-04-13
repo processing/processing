@@ -41,7 +41,6 @@ import java.util.Set;
 import java.util.Stack;
 
 // TODO: 
-// 1) Should edges stay in InGeometry or go to TessGeometry?
 // 2) move bezier/curve vertex generation to InGeometry.   
 
 /**
@@ -2816,7 +2815,7 @@ public class PGraphicsOpenGL extends PGraphics {
   public void ellipse(float a, float b, float c, float d) {
      beginShape(TRIANGLE_FAN);
      defaultEdges = false;
-     inGeo.generateEllipse(ellipseMode, a, b, c, d,
+     inGeo.addEllipse(ellipseMode, a, b, c, d,
                            fill, fillColor,
                            stroke, strokeColor, strokeWeight,
                            ambientColor, specularColor, emissiveColor, shininess);
@@ -6813,11 +6812,11 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    public void generateEllipse(int ellipseMode, float a, float b, float c, float d,
-                                boolean fill, int fillColor,
-                                boolean stroke, int strokeColor, float strokeWeight,
-                                int ambientColor, int specularColor, int emissiveColor, 
-                                float shininessFactor) {
+    public void addEllipse(int ellipseMode, float a, float b, float c, float d,
+                           boolean fill, int fillColor,
+                           boolean stroke, int strokeColor, float strokeWeight,
+                           int ambientColor, int specularColor, int emissiveColor, 
+                           float shininessFactor) {
       float x = a;
       float y = b;
       float w = c;
@@ -6900,11 +6899,11 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke) addEdge(idx, idx0, false, true);
     }
 
-    public void generateBox(float w, float h, float d,
-                            boolean fill, int fillColor,
-                            boolean stroke, int strokeColor, float strokeWeight,
-                            int ambientColor, int specularColor, int emissiveColor, 
-                            float shininessFactor) {
+    public void addBox(float w, float h, float d,
+                       boolean fill, int fillColor,
+                       boolean stroke, int strokeColor, float strokeWeight,
+                       int ambientColor, int specularColor, int emissiveColor, 
+                       float shininessFactor) {
       float x1 = -w/2f; float x2 = w/2f;
       float y1 = -h/2f; float y2 = h/2f;
       float z1 = -d/2f; float z2 = d/2f;
@@ -6972,6 +6971,82 @@ public class PGraphicsOpenGL extends PGraphics {
         addEdge(11,  8, false, true);        
       }
     }
+    
+    public void addSphere(float rad, int detU, int detV, 
+                          boolean fill, int fillColor,
+                          boolean stroke, int strokeColor, float strokeWeight,
+                          int ambientColor, int specularColor, int emissiveColor, 
+                          float shininessFactor) {
+      /*
+      if ((nu < 3) || (nv < 2)) {
+        nu = nv = 30;
+      }
+      
+      float startLat = -90;
+      float startLon = 0.0f;
+
+      float latInc = 180.0f / nu;
+      float lonInc = 360.0f / nv;
+
+      float phi1,  phi2;
+      float theta1,  theta2;
+      float x0, y0, z0;
+      float x1, y1, z1;
+      float x2, y2, z2;
+      float x3, y3, z3;
+      float u1, v1, u2, v2, v3;
+
+      for (int col = 0; col < nu; col++) {
+        phi1 = (startLon + col * lonInc) * DEG_TO_RAD;
+        phi2 = (startLon + (col + 1) * lonInc) * DEG_TO_RAD;
+        for (int row = 0; row < nv; row++) {
+          theta1 = (startLat + row * latInc) * DEG_TO_RAD;
+          theta2 = (startLat + (row + 1) * latInc) * DEG_TO_RAD;
+
+          x0 = PApplet.cos(phi1) * PApplet.cos(theta1);
+          x1 = PApplet.cos(phi1) * PApplet.cos(theta2);
+          x2 = PApplet.cos(phi2) * PApplet.cos(theta2);
+          
+          y0 = PApplet.sin(theta1);
+          y1 = PApplet.sin(theta2);
+          y2 = PApplet.sin(theta2);
+          
+          z0 = PApplet.sin(phi1) * PApplet.cos(theta1);
+          z1 = PApplet.sin(phi1) * PApplet.cos(theta2);
+          z2 = PApplet.sin(phi2) * PApplet.cos(theta2);
+
+          x3 = PApplet.cos(phi2) * PApplet.cos(theta1);
+          y3 = PApplet.sin(theta1);            
+          z3 = PApplet.sin(phi2) * PApplet.cos(theta1);
+          
+          u1 = PApplet.map(phi1, TWO_PI, 0, 0, 1); 
+          u2 = PApplet.map(phi2, TWO_PI, 0, 0, 1);
+          v1 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+          v2 = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
+          v3 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
+          
+          normal(x0, y0, z0);     
+          vertex(r * x0, r * y0, r * z0, u1, v1);
+     
+          normal(x1, y1, z1);
+          vertex(r * x1,  r * y1,  r * z1, u1, v2);
+
+          normal(x2, y2, z2);
+          vertex(r * x2, r * y2, r * z2, u2, v2);
+
+          normal(x0, y0, z0);    
+          vertex(r * x0, r * y0, r * z0, u1, v1);
+
+          normal(x2, y2, z2);
+          vertex(r * x2, r * y2, r * z2, u2, v2);
+          
+          normal(x3,  y3,  z3);
+          vertex(r * x3,  r * y3,  r * z3,  u2,  v3);
+        }
+      }
+      */
+    }
+    
   }
 
   // Holds tessellated data for fill, line and point geometry.
