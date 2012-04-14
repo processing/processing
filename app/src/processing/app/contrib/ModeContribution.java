@@ -92,8 +92,9 @@ public class ModeContribution extends InstalledContribution {
       loader = new URLClassLoader(urlList);
   
       for (int j = 0; j < archives.length; j++) {
-        className = ToolContribution.findClassInZipFile(folder.getName(),
-                                                        archives[j]);
+        className = ToolContribution.findClassInZipFile( folder.getName(),
+                                                         archives[j] );
+		if (className != null) break;
       }
     } catch (MalformedURLException e) {
       // Maybe log this
