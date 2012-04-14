@@ -10,6 +10,10 @@ throw	KEYWORD1
 with	KEYWORD1
 in	KEYWORD1
 
+prototype	KEYWORD1
+arguments	KEYWORD1
+#callee	KEYWORD1
+
 enum	KEYWORD1
 export	KEYWORD1
 let	KEYWORD1
