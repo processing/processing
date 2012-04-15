@@ -449,11 +449,6 @@ public class JavaScriptEditor extends ServingEditor
      }
   }
 
-//	private void handleStartStopServer ()
-//	{
-//		startStopServer( getExportFolder() );
-//	}
-
 	/**
 	 *	Menu item callback, replacement for RUN:
 	 *  export to folder, start server, open in default browser.
@@ -535,24 +530,39 @@ public class JavaScriptEditor extends ServingEditor
 	 */
   public boolean handleSave ( boolean immediately )
   {
-    if (untitled) {
+    if (untitled) 
+	{
       return handleSaveAs();
-      // need to get the name, user might also cancel here
-
-    } else if (immediately) {
+    } 
+	else if (immediately) 
+	{
       handleSave();
 	  statusEmpty();
-	  handleStartServer();
-    } else {
-      SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            handleSave();
-			statusEmpty();
-			handleStartServer();
-          }
+		if ( serverRunning() ) handleStartServer();
+    } 
+	else 
+	{
+      	SwingUtilities.invokeLater(new Runnable() 
+		{
+          	public void run() 
+			{
+            	handleSave();
+				statusEmpty();
+				if ( serverRunning() ) handleStartServer();
+			}
         });
     }
     return true;
+  }
+
+	/**
+	 *	Called from handleSave( true/false )
+	 */
+  public void handleSave ()
+  {
+    toolbar.activate(JavaScriptToolbar.SAVE);
+    handleSaveImpl();
+    toolbar.deactivate(JavaScriptToolbar.SAVE);
   }
 	
 	/**
@@ -580,16 +590,6 @@ public class JavaScriptEditor extends ServingEditor
       }
     }
     return true;
-  }
-
-	/**
-	 *	Menu item callback
-	 */
-  public void handleSave ()
-  {
-    toolbar.activate(JavaScriptToolbar.SAVE);
-    super.handleSave(true);
-    toolbar.deactivate(JavaScriptToolbar.SAVE);
   }
 
 	/**
