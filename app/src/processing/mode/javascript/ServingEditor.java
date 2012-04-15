@@ -11,6 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 
+/**
+ *	This is the basis for the JavaScript mode, an editor that serves files from a
+ *  given root directory.
+ */
 public abstract class ServingEditor extends Editor implements BasicServerListener
 {
 	public final static String PROP_KEY_SERVER_PORT = "basicserver.port";
@@ -19,11 +23,24 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 	
 	public boolean showSizeWarning = true;
 	
+	/**
+	 *	Constructor
+	 *
+	 *	@param base the Processing Base this runs of
+	 *	@param path the path to a sketch to open
+	 *	@param editor state
+	 *	@param the mode to open in
+	 *	@see processing.app.Editor
+	 *	@see processing.app.Base
+	 */
 	protected ServingEditor ( Base base, String path, EditorState state, Mode mode )
 	{
 		super( base, path, state, mode );
 	}
 	
+	/**
+	 *	Set the server port, shows an input dialog to enter a port number
+	 */
 	protected void setServerPort ()
 	{
 		String pString = null;
@@ -71,26 +88,46 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 	    }
 	}
 	
+	/**
+	 *	Getter, returns the server port
+	 *
+	 *	@return the server port as int or -1
+	 */
 	public int getServerPort ()
 	{
 		if ( server != null ) return server.getPort();
 		return -1;
 	}
 	
+	/**
+	 *	Getter, returns the current server address
+	 *
+	 *	@return the server address as URL string or null
+	 */
 	public String getServerAddress ()
 	{
 		if ( server != null && server.isRunning() ) return server.getAddress();
 		return null;
 	}
-
+	
+	/**
+	 *	Getter, returns the server
+	 *
+	 *	@return the BasicServer of this editor
+	 */
 	public BasicServer getServer ()
 	{
 		return server;
 	}
 	
+	/**
+	 *	A toggle to start/stop the server
+	 *
+	 *	@param root the root folder to start from if it needs to be started
+	 */
 	protected void startStopServer ( File root )
 	{
-		if ( server != null && server.isRunning() )
+		if ( serverRunning() )
 	    {
 			stopServer();
 		}
@@ -100,6 +137,12 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 		}
 	}
 	
+	/**
+	 *	Create a server to server from given root dir
+	 *
+	 *	@param root the root folder to server from
+	 *	@return the BasicServer instance running or created
+	 */
 	protected BasicServer createServer ( File root )
 	{
 		if ( server != null ) return server;
@@ -130,6 +173,12 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 		return server;
 	}
 	
+	/**
+	 *	Start the internal server for this sketch.
+	 *
+	 *	@param root the root folder for the server to serve from
+	 *	@return true if it was started anew, false if it was running
+	 */
 	protected boolean startServer ( File root )
 	{
 		if ( server != null && 
@@ -163,18 +212,29 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 		return true;
 	}
 	
+	/**
+	 *	Check if server is running
+	 *
+	 *	@return true if server is running
+	 */
 	protected boolean serverRunning ()
 	{
 		return server != null && server.isRunning();
 	}
 	
+	/**
+	 *	Stop server
+	 */
 	protected void stopServer ()
 	{
-		if ( server != null && server.isRunning() )
-			server.shutDown();
-
+		if ( serverRunning() ) server.shutDown();
 	}
 	
+	/**
+	 *	Create or get the sketch's properties file
+	 *
+	 *	@return the sketch properties file or null
+	 */
 	protected File getSketchPropertiesFile ()
 	{
 		File sketchPropsFile = new File( getSketch().getFolder(), "sketch.properties");
@@ -191,16 +251,25 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 		return sketchPropsFile;
 	}
 	
+	/**
+	 *	Open a new browser window or tab with the server address
+	 */
 	protected void openBrowserForServer ()
 	{
-		if ( server != null && server.isRunning() )
+		if ( serverRunning() )
 		{
 			Base.openURL( server.getAddress() );
 		}
 	}
 	
-	// ---- interface BasicServerListener
+	// ------------------------------------------
+	//  interface BasicServerListener
+	// ------------------------------------------
 	
+	/**
+	 *	interface BasicServerListener
+	 *	Called after the server was started from the server thread
+	 */
 	public void serverStarted ()
 	{
 		String location = server.getAddress();
@@ -208,8 +277,12 @@ public abstract class ServingEditor extends Editor implements BasicServerListene
 		openBrowserForServer();
 	}
 	
+	/**
+	 *	interface BasicServerListener
+	 *	Called from server thread after the server stopped
+	 */
 	public void serverStopped ()
 	{
-		statusNotice("Server stopped.");
+		statusNotice( "Server stopped." );
 	}
 }

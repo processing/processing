@@ -5,9 +5,9 @@ import java.net.*;
 import java.util.*;
 
 /**
- * Based on Sun tutorial at: http://bit.ly/fpoHAF
- *
- * Changed to accept a document root.
+ *	BasicServer, the server underneath JavaScript mode.
+ *	Based on a Sun tutorial at: http://bit.ly/fpoHAF
+ *	Changed to accept a document root.
  */
 class BasicServer implements HttpConstants, Runnable
 {
@@ -36,6 +36,11 @@ class BasicServer implements HttpConstants, Runnable
 	
 	private ArrayList<String> addresses;
 	
+	/**
+	 *	Constructor
+	 *
+	 *	@param root the root folder to serve from
+	 */
 	BasicServer ( File root ) 
 	{
 		setRoot( root );
@@ -43,11 +48,21 @@ class BasicServer implements HttpConstants, Runnable
 		findPort();
 	}
 	
+	/**
+	 *	Getter, return the server root folder
+	 *
+	 *	@return the root file
+	 */
 	public File getRoot ()
 	{
 		return virtualRoot;
 	}
-
+	
+	/**
+	 *	Set the root folder to a new dir
+	 *
+	 *	@param root the new folder to server form 
+	 */
 	public void setRoot ( File root )
 	{
 		if ( root.exists() && root.isDirectory() && root.canRead() ) 
@@ -60,24 +75,44 @@ class BasicServer implements HttpConstants, Runnable
 		}
 	}
 	
-	public void addListener ( BasicServerListener l )
+	/**
+	 *	Add a listener to this server for start/stop callbacks
+	 *
+	 *	@param listener the listener to add, needs to implement interface BasicServerListener
+	 */
+	public void addListener ( BasicServerListener listener )
 	{
 		if ( listeners == null ) listeners = new ArrayList<BasicServerListener>();
-		if ( l != null ) {
-			listeners.add( l );
+		if ( listener != null ) {
+			listeners.add( listener );
 		}
 	}
 	
+	/**
+	 *	Get the timeout, the time span after which requests are discarded
+	 *
+	 *	@return the timeout as int in milliseconds
+	 */
 	public int getTimeout ()
 	{
 		return timeout;
 	}
 	
+	/**
+	 *	Getter, returns the server address with port as URL string
+	 *
+	 *	@return the server address as URL string
+	 */
 	public String getAddress ()
 	{
 		return localDomain + ":" + getPort() + "/";
 	}
 	
+	/**
+	 *	Build a list of addresses that this machine is available under
+	 *
+	 *	@return an ArrayList with 0 or more addresses as URL strings
+	 */
 	public ArrayList<String> getInetAddresses ()
 	{
 		addresses = new ArrayList<String>();
@@ -105,6 +140,9 @@ class BasicServer implements HttpConstants, Runnable
 		return addresses;
 	}
 	
+	/**
+	 *	Look for and set to an available port
+	 */
 	private void findPort ()
 	{
 		ServerSocket ss = null;
@@ -122,11 +160,21 @@ class BasicServer implements HttpConstants, Runnable
 		}
 	}
 	
+	/**
+	 *	Getter, return the current port the server is available on
+	 *
+	 *	@return the port number as int
+	 */
 	public int getPort ()
 	{
 		return port;
 	}
 	
+	/**
+	 *	Set the port number to a new one
+	 * 
+	 *	@param newPort the new port number as int, should be > 1024 and < 49151
+	 */
 	public void setPort ( int newPort )
 	{
 		if ( !isRunning() ) 
@@ -151,7 +199,10 @@ class BasicServer implements HttpConstants, Runnable
 			}
 		}
 	}
-
+	
+	/**
+	 *	Start this server, starts internal thread
+	 */
 	public void start ()
 	{
 		if ( virtualRoot == null )
@@ -169,6 +220,9 @@ class BasicServer implements HttpConstants, Runnable
 	 * Checks to see if a specific port is available.
 	 * http://mina.apache.org/
 	 * http://stackoverflow.com/questions/434718/sockets-discover-port-availability-using-java
+	 *
+	 *	@param port a port number to test
+	 *	@return true if port number is available
 	 */
 	public static boolean available ( int port )
 	{
@@ -209,7 +263,9 @@ class BasicServer implements HttpConstants, Runnable
 		return false;
 	}
 	
-	
+	/**
+	 *	Restart the server
+	 */
 	public void restart ()
 	{
 		if ( running ) shutDown();
@@ -217,7 +273,10 @@ class BasicServer implements HttpConstants, Runnable
 		start();
 	}
 	
-	// http://bit.ly/eA8iGj
+	/**
+	 *	Stop the server
+	 *	With a little help from: http://bit.ly/eA8iGj
+	 */
 	public void shutDown ()
 	{
 		//System.out.println("Shutting down");
@@ -248,11 +307,22 @@ class BasicServer implements HttpConstants, Runnable
 		}
 	}
 	
+	/**
+	 *	Getter, return if server is running
+	 *
+	 *	@return true if server is running
+	 */
 	public boolean isRunning ()
 	{
 		return running && inited;
 	}
 
+	/**
+	 *	interface Runnable
+	 *	Called on a new thread to do handle the requests coming in
+	 * 
+	 *	@see <a href="http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Runnable.html">java.lang.Runnable</a>
+	 */	
 	public void run ()
 	{	
 		try
@@ -314,6 +384,9 @@ class BasicServer implements HttpConstants, Runnable
 	}
 }
 
+/**
+ *	Worker class, handles the actual serving of files
+ */
 class Worker extends BasicServer 
 implements HttpConstants, Runnable
 {
@@ -327,26 +400,50 @@ implements HttpConstants, Runnable
 	private Socket socket;
 
 	private boolean stopping = false;
+	
+	/* mapping of file extensions to content-types */
+	static java.util.Hashtable map = new java.util.Hashtable();
 
+	static {
+		fillMap();
+	}
+	
+	/**
+	 *	Constructor
+	 *
+	 *	@param root the root folder to serve from
+	 */
 	Worker ( File root ) 
 	{
 		super( root );
 		buf = new byte[BUF_SIZE];
 		socket = null;
 	}
-
+	
+	/**
+	 *	Set socket, this is the actual request
+	 */
 	synchronized void setSocket( Socket s ) 
 	{
 		socket = s;
 		notify();
 	}
-
+	
+	/**
+	 *	Try to stop it
+	 */
 	synchronized void stop ()
 	{
 		stopping = true;
 		notify();
 	}
-
+	
+	/**
+	 *	interface Runnable
+	 *	Called to do the heavy lifting
+	 *
+	 *	@see <a href="http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Runnable.html">java.lang.Runnable</a>
+	 */
 	public synchronized void run ()
 	{
 		while ( true && !stopping )
@@ -376,6 +473,9 @@ implements HttpConstants, Runnable
 		}
 	}
 
+	/**
+	 *	Handle a request from a client
+	 */
 	void handleClient() throws IOException 
 	{
 		InputStream is = new BufferedInputStream( socket.getInputStream() );
@@ -500,6 +600,9 @@ outerloop:
 		}
 	}
 
+	/**
+	 *	Send the default headers to client
+	 */
 	boolean printHeaders ( File targ, PrintStream ps ) throws IOException 
 	{
 		boolean ret = false;
@@ -560,7 +663,10 @@ outerloop:
 		}
 		return ret;
 	}
-
+	
+	/**
+	 *	Send 404 content to client
+	 */
 	void send404(File targ, PrintStream ps) throws IOException 
 	{
 		ps.write(EOL);
@@ -568,14 +674,40 @@ outerloop:
 		ps.println("Not Found\n\n"+
 				   "The requested resource was not found.\n");
 	}
-
+	
+	
+	/**
+	 *	Build list of contents and send it to client
+	 */
+	void listDirectory ( File dir, PrintStream ps ) throws IOException
+	{
+		ps.println("<TITLE>Directory listing</TITLE><P>\n");
+		ps.println("<A HREF=\"..\">Parent Directory</A><BR>\n");
+		String[] list = dir.list();
+		for (int i = 0; list != null && i < list.length; i++) {
+			File f = new File(dir, list[i]);
+			if (f.isDirectory()) {
+				ps.println("<A HREF=\""+list[i]+"/\">"+list[i]+"/</A><BR>");
+			} else {
+				ps.println("<A HREF=\""+list[i]+"\">"+list[i]+"</A><BR");
+			}
+		}
+		ps.println("<P><HR><BR><I>" + (new Date()) + "</I>");
+	}
+	
+	/**
+	 *	
+	 */
 	void logAndSendNop (PrintStream ps) throws IOException 
 	{
 		ps.write(EOL);
 		ps.write(EOL);
 		ps.println("\n");
 	}
-
+	
+	/**
+	 *	Send contents of a file to client
+	 */
 	void sendFile(File targ, PrintStream ps) throws IOException 
 	{
 		InputStream is = null;
@@ -596,19 +728,19 @@ outerloop:
 			is.close();
 		}
 	}
-
-	/* mapping of file extensions to content-types */
-	static java.util.Hashtable map = new java.util.Hashtable();
-
-	static {
-		fillMap();
-	}
-
-	static void setSuffix(String k, String v) {
+	
+	/**
+	 *	Add a mapping of file extension to mime-type / content-type
+	 */
+	static void setSuffix ( String k, String v ) 
+	{
 		map.put(k, v);
 	}
-
-	static void fillMap()
+	
+	/**
+	 *	Add some default mappings
+	 */
+	static void fillMap ()
 	{
 		// this probably can be shortened a lot since this is not a normal server ..
 		setSuffix("",		   "content/unknown");
@@ -862,25 +994,13 @@ outerloop:
 		setSuffix(".z",	   "application/x-compress");
 		setSuffix(".zip",	  "application/zip");
 	}
-
-	void listDirectory ( File dir, PrintStream ps ) throws IOException
-	{
-		ps.println("<TITLE>Directory listing</TITLE><P>\n");
-		ps.println("<A HREF=\"..\">Parent Directory</A><BR>\n");
-		String[] list = dir.list();
-		for (int i = 0; list != null && i < list.length; i++) {
-			File f = new File(dir, list[i]);
-			if (f.isDirectory()) {
-				ps.println("<A HREF=\""+list[i]+"/\">"+list[i]+"/</A><BR>");
-			} else {
-				ps.println("<A HREF=\""+list[i]+"\">"+list[i]+"</A><BR");
-			}
-		}
-		ps.println("<P><HR><BR><I>" + (new Date()) + "</I>");
-	}
-
 }
 
+/**
+ *	Needed HTTP constants/codes
+ *
+ *	@see <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes">Wikipedia: List of HTTP codes</a>
+ */
 interface HttpConstants {
 	/** 2XX: generally "OK" */
 	public static final int HTTP_OK = 200;
@@ -926,6 +1046,9 @@ interface HttpConstants {
 	public static final int HTTP_VERSION = 505;
 }
 
+/**
+ *	Interface BasicServerListener
+ */
 interface BasicServerListener
 {
 	public abstract void serverStarted();
