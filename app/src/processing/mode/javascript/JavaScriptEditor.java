@@ -26,7 +26,12 @@ public class JavaScriptEditor extends ServingEditor
 
   // tapping into Java mode might not be wanted?
   processing.mode.java.PdeKeyListener listener;
-
+	
+	/**
+	 *	Constructor, overrides ServingEditor( .. )
+	 *
+	 *	@see processing.mode.javascript.ServingEditor
+	 */
   protected JavaScriptEditor ( Base base, String path, EditorState state, Mode mode )
   {
     super(base, path, state, mode);
@@ -36,23 +41,43 @@ public class JavaScriptEditor extends ServingEditor
     jsMode = (JavaScriptMode) mode;
   }
 
-
+	// ----------------------------------------
+	//  abstract Editor implementations
+	//  and standard overrides
+	// ----------------------------------------
+	
+	/**
+	 *	Create and return the toolbar (tools above text area), 
+	 *	implements abstract Editor.createToolbar(),
+	 *	called in Editor constructor to add the toolbar to the window.
+	 *
+	 *	@return an EditorToolbar, in our case a JavaScriptToolbar
+	 *	@see processing.mode.javascript.JavaScriptToolbar
+	 */
   public EditorToolbar createToolbar ()
   {
     return new JavaScriptToolbar(this, base);
   }
 
-
+	/**
+	 *	Create a formatter to prettify code, 
+	 *	implements abstract Editor.createFormatter(),
+	 *	called by Editor.handleAutoFormat() to handle menu item or shortcut
+	 *
+	 *	@return the formatter to handle formatting of code.
+	 */
   public Formatter createFormatter ()
   {
     return new AutoFormat();
   }
 
-
-  // - - - - - - - - - - - - - - - - - -
-  // Menu methods
-
-
+	/**
+	 *	Build the "File" menu,
+	 *	implements abstract Editor.buildFileMenu(),
+	 *	called by Editor.buildMenuBar() to generate the app menu for the editor window
+	 *
+	 *	@return JMenu containing the menu items for "File" menu
+	 */
   public JMenu buildFileMenu ()
   {
     JMenuItem exportItem = Base.newJMenuItem("Export", 'E');
@@ -64,7 +89,13 @@ public class JavaScriptEditor extends ServingEditor
     return buildFileMenu(new JMenuItem[] { exportItem });
   }
 
-
+	/**
+	 *	Build the "Sketch" menu,
+	 *	implements abstract Editor.buildSketchMenu(),
+	 *	called by Editor.buildMenuBar() to generate the app menu for the editor window
+	 *
+	 *	@return JMenu containing the menu items for "Sketch" menu
+	 */
   public JMenu buildSketchMenu ()
   {
 	JMenuItem startServerItem = Base.newJMenuItem("Run in Browser", 'R');
@@ -95,6 +126,13 @@ public class JavaScriptEditor extends ServingEditor
 	});
   }
 
+	/**
+	 *	Build the mode menu,
+	 *	overrides Editor.buildModeMenu(),
+	 *	called by Editor.buildMenuBar() to generate the app menu for the editor window
+	 *
+	 *	@return JMenu containing the menu items for "JavaScript" menu
+	 */
   public JMenu buildModeMenu() 
   {
     JMenu menu = new JMenu("JavaScript");
@@ -144,7 +182,14 @@ public class JavaScriptEditor extends ServingEditor
 
     return menu;
   }
-
+	
+	/**
+	 *	Build the "Help" menu,
+	 *	implements abstract Editor.buildHelpMenu(),
+	 *	called by Editor.buildMenuBar() to generate the app menu for the editor window
+	 *
+	 *	@return JMenu containing the menu items for "Help" menu
+	 */
   public JMenu buildHelpMenu ()
   {
     JMenu menu = new JMenu("Help ");
@@ -201,7 +246,7 @@ public class JavaScriptEditor extends ServingEditor
     item = Base.newJMenuItemShift("Find in Reference", 'F');
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        handleFindReferenceHACK();
+        handleFindReferenceImpl();
       }
     });
     menu.add(item);
@@ -239,14 +284,25 @@ public class JavaScriptEditor extends ServingEditor
     return menu;
   }
 
+	/**
+	 *	Returns the default commenting prefix for comment/uncomment command,
+	 *	implements abstract Editor.getCommentPrefix(),
+	 *	called from Editor.handleCommentUncomment()
+	 *  
+	 *	@return the comment prefix as String
+	 */
   public String getCommentPrefix ()
   {
     return "//";
   }
 
-  /**
-   *  Called when the window is going to be reused for another sketch.
-   */
+	/**
+	 *	Stop the runner, in our case this is the server,
+	 *	implements abstract Editor.internalCloseRunner(),
+	 *	called from Editor.prepareRun()
+	 *
+	 *  Called when the window is going to be reused for another sketch.
+	 */
   public void internalCloseRunner ()
   {
       handleStopServer();
@@ -256,14 +312,22 @@ public class JavaScriptEditor extends ServingEditor
 		directivesEditor = null;
 	  }
   }
-
+	
+	/**
+	 *	Implements abstract Editor.deactivateRun()
+	 */
   public void deactivateRun ()
   {
       // not sure what to do here ..
   }
 
-  // - - - - - - - - - - - - - - - - - -
+	// ----------------------------------------
+	//  handlers ... mainly for menu items
+	// ----------------------------------------
 
+	/**
+	 *	Menu item callback, let's users set the server port number
+	 */
   private void handleSetServerPort ()
   {
 	statusEmpty();
@@ -283,6 +347,9 @@ public class JavaScriptEditor extends ServingEditor
 	}
   }
 
+	/**
+	 *	Menu item callback, copy basic template to sketch folder
+	 */
   private void handleCreateCustomTemplate ()
   {
 	Sketch sketch = getSketch();
@@ -309,6 +376,9 @@ public class JavaScriptEditor extends ServingEditor
 					 "folder from the sketch." );
   }
 
+	/**
+	 *	Menu item callback, open custom template folder from inside sketch folder
+	 */
   private void handleOpenCustomTemplateFolder ()
   {
   	File tjs = getCustomTemplateFolder();
@@ -323,6 +393,9 @@ public class JavaScriptEditor extends ServingEditor
 	}
   }
 
+	/**
+	 *	Menu item callback, copy server address to clipboard
+	 */
   private void handleCopyServerAddress ()
   {
 	String address = getServerAddress();
@@ -337,6 +410,9 @@ public class JavaScriptEditor extends ServingEditor
 	}
   }
 
+	/**
+	 *	Menu item callback, open the playback settings frontend
+	 */
   private void handleShowDirectivesEditor ()
   {
 	if ( directivesEditor == null )
@@ -347,14 +423,22 @@ public class JavaScriptEditor extends ServingEditor
 	directivesEditor.show();
   }
 
-  // this catches the textarea right-click events
-  public void showReference( String filename )
+	/**
+	 *	Catches textarea right-click events,
+	 *	overrides Editor.showReference()
+	 *
+	 *	@param filename the reference filename to open, provided by keywords.txt
+	 */
+  public void showReference ( String filename )
   {
 	// TODO: catch handleFindReference directly
-	handleFindReferenceHACK();
+	handleFindReferenceImpl();
   }
-
-  private void handleFindReferenceHACK ()
+	
+	/**
+	 *	Menu item callback, handles showing a reference page.
+	 */
+  private void handleFindReferenceImpl ()
   {
 	if (textarea.isSelectionActive()) {
         Base.openURL(
@@ -371,7 +455,7 @@ public class JavaScriptEditor extends ServingEditor
 //	}
 
 	/**
-	 *  Replacement for RUN:
+	 *	Menu item callback, replacement for RUN:
 	 *  export to folder, start server, open in default browser.
 	 */
 	public void handleStartServer ()
@@ -386,15 +470,18 @@ public class JavaScriptEditor extends ServingEditor
 
 		// waiting for server to call "serverStarted() below ..."
 	}
-
+	
+	/**
+	 *	Menu item callback, open running server address in a browser
+	 */
 	private void handleOpenInBrowser ()
 	{
 		openBrowserForServer();
 	}
 
-  /**
-   *  Replacement for STOP: stop server.
-   */
+	/**
+	 *  Menu item callback, replacement for STOP: stop server.
+	 */
   public void handleStopServer ()
   {
 	stopServer();
@@ -402,9 +489,10 @@ public class JavaScriptEditor extends ServingEditor
 	toolbar.deactivate(JavaScriptToolbar.RUN);
   }
 
-  /**
-   * Call the export method of the sketch and handle the gui stuff
-   */
+	/**
+	 *	Menu item callback, call the export method of the sketch 
+	 *	and handle the gui stuff
+	 */
   public boolean handleExport ( boolean openFolder )
   {
     if ( !handleExportCheckModified() )
@@ -438,11 +526,14 @@ public class JavaScriptEditor extends ServingEditor
 	return true;
   }
 
-  /**
-   *  Changed from Editor.java to automaticaly export and
-   *  handle the server when it's running. Normal save ops otherwise.
-   */
-  public boolean handleSave(boolean immediately)
+	/**
+	 *  Menu item callback, changed from Editor.java to automaticaly 
+	 *	export and handle the server when it's running. 
+	 *	Normal save ops otherwise.
+	 *
+	 *	@param immediately set to false to allow it to be run in a Swing optimized manner 
+	 */
+  public boolean handleSave ( boolean immediately )
   {
     if (untitled) {
       return handleSaveAs();
@@ -463,7 +554,10 @@ public class JavaScriptEditor extends ServingEditor
     }
     return true;
   }
-
+	
+	/**
+	 *	Called from handleExport()
+	 */
   private boolean handleExportCheckModified ()
   {
     if (sketch.isModified()) {
@@ -488,7 +582,9 @@ public class JavaScriptEditor extends ServingEditor
     return true;
   }
 
-
+	/**
+	 *	Menu item callback
+	 */
   public void handleSave ()
   {
     toolbar.activate(JavaScriptToolbar.SAVE);
@@ -496,7 +592,9 @@ public class JavaScriptEditor extends ServingEditor
     toolbar.deactivate(JavaScriptToolbar.SAVE);
   }
 
-
+	/**
+	 *	Menu item callback
+	 */
   public boolean handleSaveAs ()
   {
     toolbar.activate(JavaScriptToolbar.SAVE);
@@ -505,7 +603,9 @@ public class JavaScriptEditor extends ServingEditor
     return result;
   }
 
-
+	/**
+	 *	Menu item callback
+	 */
   public void handleImportLibrary (String item)
   {
     Base.showWarning("Processing.js doesn't support libraries",
@@ -514,8 +614,14 @@ public class JavaScriptEditor extends ServingEditor
                      null);
   }
 
-  // ------- server callbacks ----
+	// ----------------------------------------
+	//  implementation BasicServerListener
+	// ----------------------------------------
 
+	/**
+	 *	BasicServerListener implementation, 
+	 *	called by server once it starts serving
+	 */
   public void serverStarted ()
   {
   		super.serverStarted();
@@ -524,20 +630,35 @@ public class JavaScriptEditor extends ServingEditor
 		toolbar.activate(JavaScriptToolbar.RUN);
   }
 
-  // ------- utilities ---------
+	// ----------------------------------------
+	//  other methods
+	// ----------------------------------------
 
+	/**
+	 *	Return the current export folder in a sane way
+	 *
+	 *	@return the export folder as File
+	 */
   private File getExportFolder ()
   {
   	return new File( getSketch().getFolder(),
 	 				 JavaScriptBuild.EXPORTED_FOLDER_NAME );
   }
 
+	/**
+	 *	Return the custom template folder
+	 * 
+	 *	@return the custom template folder as File
+	 */
   private File getCustomTemplateFolder ()
   {
 	return new File( getSketch().getFolder(),
 					 JavaScriptBuild.TEMPLATE_FOLDER_NAME );
   }
 
+	/**
+	 *	Save current sketch settings, this adds the server port to them
+	 */
   private void saveSketchSettings ()
   {
 	statusEmpty();

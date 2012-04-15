@@ -13,8 +13,11 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-/* http://processingjs.org/reference/pjs%20directive */
-
+/**
+ *	DirectivesEditor, is a simple frontend to Processing.js playback settings a.k.a. "directives".
+ *
+ *	@see <a href="http://processingjs.org/reference/pjs%20directive">Processing.js directives</a>
+ */
 public class DirectivesEditor
 {
 	JavaScriptEditor editor;
