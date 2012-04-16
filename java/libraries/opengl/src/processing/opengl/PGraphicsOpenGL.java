@@ -6873,7 +6873,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int[] indices = pointIndices[inIdx];
         int pos;
         if (indices.length == 0) {
-          pointIndices[inIdx] = indices = new int[1];
+          indices = new int[1];
           pos = 0;
         } else {
           int len = indices.length;
@@ -6882,23 +6882,25 @@ public class PGraphicsOpenGL extends PGraphics {
           pos = len;
         }
         indices[pos] = tessIdx;
+        pointIndices[inIdx] = indices;
       }     
     }
     
     public void addLineIndex(int inIdx, int tessIdx) {
       if (renderMode == RETAINED) {
-        int[] indices = pointIndices[inIdx];
+        int[] indices = lineIndices[inIdx];
         int pos;
         if (indices.length == 0) {
-          pointIndices[inIdx] = indices = new int[1];
+          indices = new int[1];
           pos = 0;
         } else {
           int len = indices.length;
           indices = new int[len + 1];
-          PApplet.arrayCopy(pointIndices[inIdx], indices, len);      
+          PApplet.arrayCopy(lineIndices[inIdx], indices, len);      
           pos = len;
         }
         indices[pos] = tessIdx;
+        lineIndices[inIdx] = indices;
       }  
     }
         
@@ -6908,8 +6910,8 @@ public class PGraphicsOpenGL extends PGraphics {
         float[] weights = fillWeights[inIdx];
         int pos;
         if (indices.length == 0) {
-          fillIndices[inIdx] = indices = new int[1];
-          fillWeights[inIdx] = weights = new float[1];
+          indices = new int[1];
+          weights = new float[1];
           pos = 0;
         } else {
           int len = indices.length;
@@ -6921,6 +6923,8 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         indices[pos] = tessIdx;
         weights[pos] = weight;
+        fillIndices[inIdx] = indices;
+        fillWeights[inIdx] = weights; 
       }
     }    
     
@@ -9012,8 +9016,10 @@ public class PGraphicsOpenGL extends PGraphics {
         // used to construct this combined vertex.
         for (int j = 0; j < 4; j++) {
           double[] vertData = (double[])data[j];
-          vertex[25 + 2 * j + 0] = vertData[25];
-          vertex[25 + 2 * j + 1] = weight[j];
+          if (vertData != null) {
+            vertex[25 + 2 * j + 0] = vertData[25];
+            vertex[25 + 2 * j + 1] = weight[j];            
+          }
         }
         
         // Normalizing normal vector, since the weighted
