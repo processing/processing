@@ -2795,19 +2795,13 @@ public class PShape3D extends PShape {
     int nu = pg.sphereDetailU;
     int nv = pg.sphereDetailV;
     
-    in.addSphere(r, nu, nv, 
-                 fill, fillColor, 
-                 stroke, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, 
-                 shininess);
+    int[] indices = in.addSphere(r, nu, nv, 
+                                 fill, fillColor, 
+                                 stroke, strokeColor, strokeWeight,
+                                 ambientColor, specularColor, emissiveColor, 
+                                 shininess);
     
-    tessellator.tessellateTriangles();               
-    
-    
-    
-    
-   // if (stroke) in.addTrianglesEdges();
-   // tessellator.tessellateTriangles();
+    tessellator.tessellateTriangles(indices);               
   }
   
   
