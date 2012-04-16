@@ -246,7 +246,6 @@ public class PShape3D extends PShape {
 
   boolean modifiedPointVertices;
   boolean modifiedPointColors;
-  boolean modifiedPointNormals;
   boolean modifiedPointAttributes;    
     
   // ........................................................
@@ -877,7 +876,31 @@ public class PShape3D extends PShape {
         child.strokeWeight(weight);
       }
     } else {
+      float prevStrokeWeight = strokeWeight; 
       strokeWeight = weight;
+      updateStrokeWeight(prevStrokeWeight);
+    }    
+  }
+  
+  protected void updateStrokeWeight(float prevStrokeWeight) {
+    if (shapeEnded && tessellated && (0 < tess.lineVertexCount || 0 < tess.pointVertexCount)) {      
+      float resizeFactor = strokeWeight / prevStrokeWeight;
+      Arrays.fill(in.sweights, 0, in.vertexCount, strokeWeight);         
+      if (0 < tess.lineVertexCount) {
+        for (int i = 0; i < tess.lineVertexCount; i++) {
+          tess.lineDirWidths[4 * i + 3] *= resizeFactor;
+        }
+        modifiedLineAttributes = true;
+        modified();   
+      }      
+      if (0 < tess.pointVertexCount) {
+        for (int i = 0; i < tess.pointVertexCount; i++) {
+          tess.pointSizes[2 * i + 0] *= resizeFactor;
+          tess.pointSizes[2 * i + 1] *= resizeFactor;
+        }
+        modifiedPointAttributes = true;
+        modified();            
+      }            
     }    
   }
 
@@ -1012,6 +1035,7 @@ public class PShape3D extends PShape {
   
   protected void updateFillColor() {
     if (shapeEnded && tessellated && 0 < tess.fillVertexCount && texture == null) {
+      Arrays.fill(in.colors, 0, in.vertexCount, PGL.javaToNativeARGB(fillColor));
       Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, PGL.javaToNativeARGB(fillColor));
       modifiedFillColors = true;
       modified();  
@@ -1125,12 +1149,12 @@ public class PShape3D extends PShape {
   
   protected void updateStrokeColor() {
     if (shapeEnded && tessellated && (0 < tess.lineVertexCount || 0 < tess.pointVertexCount)) {
+      Arrays.fill(in.scolors, 0, in.vertexCount, PGL.javaToNativeARGB(strokeColor));      
       if (0 < tess.lineVertexCount) {
         Arrays.fill(tess.lineColors, 0, tess.lineVertexCount, PGL.javaToNativeARGB(strokeColor));
         modifiedLineColors = true;
         modified();         
-      }
-      
+      }      
       if (0 < tess.pointVertexCount) {
         Arrays.fill(tess.pointColors, 0, tess.pointVertexCount, PGL.javaToNativeARGB(strokeColor));
         modifiedPointColors = true;
@@ -1246,6 +1270,7 @@ public class PShape3D extends PShape {
   
   protected void updateTintColor() {    
     if (shapeEnded && tessellated && 0 < tess.fillVertexCount && texture != null) {
+      Arrays.fill(in.colors, 0, in.vertexCount, PGL.javaToNativeARGB(tintColor));
       Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, PGL.javaToNativeARGB(tintColor));
       modifiedFillColors = true;
       modified();  
@@ -1305,6 +1330,7 @@ public class PShape3D extends PShape {
 
   protected void updateAmbientColor() {    
     if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
+      Arrays.fill(in.ambient, 0, in.vertexCount, PGL.javaToNativeARGB(ambientColor));
       Arrays.fill(tess.fillAmbient, 0, tess.fillVertexCount, PGL.javaToNativeARGB(ambientColor));      
       modifiedFillAmbient = true;
       modified();  
@@ -1364,6 +1390,7 @@ public class PShape3D extends PShape {
   
   protected void updateSpecularColor() {
     if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
+      Arrays.fill(in.specular, 0, in.vertexCount, PGL.javaToNativeARGB(specularColor));
       Arrays.fill(tess.fillSpecular, 0, tess.fillVertexCount, PGL.javaToNativeARGB(specularColor));    
       modifiedFillSpecular = true;
       modified();
@@ -1423,6 +1450,7 @@ public class PShape3D extends PShape {
   
   protected void updateEmissiveColor() {   
     if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
+      Arrays.fill(in.emissive, 0, in.vertexCount, PGL.javaToNativeARGB(emissiveColor));
       Arrays.fill(tess.fillEmissive, 0, tess.fillVertexCount, PGL.javaToNativeARGB(emissiveColor));    
       modifiedFillEmissive = true;
       modified();
@@ -1449,6 +1477,7 @@ public class PShape3D extends PShape {
   
   protected void updateShininessFactor() {
     if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
+      Arrays.fill(in.shininess, 0, in.vertexCount, shininess);
       Arrays.fill(tess.fillShininess, 0, tess.fillVertexCount, shininess);    
       modifiedFillShininess = true;
       modified();    
@@ -1609,8 +1638,7 @@ public class PShape3D extends PShape {
               modifiedLineAttributes = true;
             }
             if (0 < tess.pointVertexCount) {
-              modifiedPointVertices = true;
-              modifiedPointNormals = true;        
+              modifiedPointVertices = true;        
             }            
           }
         } else {
@@ -1941,40 +1969,369 @@ public class PShape3D extends PShape {
   
   //
   
-  // Methods to access tessellated data.
-  
-  
-  
-  
+  // Setters/getters of individual vertices
   
 
-//5) getters/setters for individual vertex data:
-//   PVector getVertex(int n) gets vertex n from fill data.
-//   PVector getVertex(int n, PVector v, int type)
-//   PVector getVertex(int n, PVector v, int type)
-//   void setVertex(int n, PVector v, type)
-//   int getFillColor(int n, int)
-//   void setFillColor(int n, int color);
-//   void setFillColor(int n, int color);
-//....
-//   void getStrokeWeight(int n)
-//   void setStrokeWeight(int n, int weight)
-//where type for vertices = FILL, LINE, POINT
-//where type for fill colors = FILL, LINE, POINT ... AMBIENT, ...
-//STROKE = LINE and POINTS ...!
-//setStrokeWeight(int n) for a line vertex should automatically update the attributes...
-//6) Rename fillVertices to be compatible with the above, add corresponding setters, remove map methods.
+  public int getVertexCount() {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return 0;
+    }
+    
+    return in.vertexCount;  
+  }
   
+  
+  public float[] getVertex(int index) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return null;
+    }
+    
+    float[] data = new float[VERTEX_FIELD_COUNT];
+        
+    
+  data[X] = in.vertices[3 * index + 0];
+  data[Y] = in.vertices[3 * index + 1];
+  data[Z] = in.vertices[3 * index + 2];
+
+  
+//  int fa = (in.colors[i] >> 24) & 0xFF;
+//  int fr = (in.colors[i] >> 16) & 0xFF;
+//  int fg = (in.colors[i] >>  8) & 0xFF;
+//  int fb = (in.colors[i] >>  0) & 0xFF;
+  
+  
+//  in.colors[3 * index + 2];
   
   /*
-  public float[] getVertex(int index) {    
+  data[R] = 3;  // actual rgb, after lighting
+  data[G] = 4;  // fill stored here, transform in place
+  data[B] = 5;  // TODO don't do that anymore (?)
+  data[A] = 6;
+
+  data[U] = 7; // texture
+  data[V] = 8;
+
+  data[NX] = 9; // normal
+  data[NY] = 10;
+  data[NZ] = 11;
+
+  // stroke
+
+  data[SR] = 13;
+  data[SG] = 14;
+  data[SB] = 15;
+  data[SA] = 16;
+
+  data[SW = 17;
+
+  // material properties
+  data[AR] = 25;
+  data[AG] = 26;
+  data[AB] = 27;
+
+  data[SPR] = 28;
+  data[SPG] = 29;
+  data[SPB] = 30;
+
+  data[SHINE] = 31;
+
+  data[ER] = 32;
+  data[EG] = 33;
+  data[EB] = 34;
+
+  data[HAS_NORMAL] = 36;
+     */
+    
+    
+    return data;
   }
-  public float getVertexX(int index) {    
+  
+//  public PVector getVertex(int index) {
+//    return getVertex(index, null);
+//  }  
+  
+  public PVector getVertex(int index, PVector vec) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return null;
+    }
+    updateTessellation();
+    
+    if (vec == null) {
+      vec = new PVector();
+    }
+    vec.x = in.vertices[3 * index + 0];
+    vec.y = in.vertices[3 * index + 1];
+    vec.z = in.vertices[3 * index + 2];
+    return vec;
   }
-  public float getVertexY(int index) {    
+  
+  public float getVertexX(int index) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return 0;
+    }
+    updateTessellation();
+    
+    return in.vertices[3 * index + 0];
+  }
+  
+  public float getVertexY(int index) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return 0;
+    }
+    updateTessellation();
+    
+    return in.vertices[3 * index + 1];
+  }
+  
+  public float getVertexZ(int index) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return 0;
+    }
+    updateTessellation();
+    
+    return in.vertices[3 * index + 2];
   }  
-  public float getVertexZ(int index) {    
+  
+  public void setVertex(int index, float x, float y) {
+    setVertex(index, x, y, 0);
   }
+  
+  public void setVertex(int index, float x, float y, float z) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return;
+    }
+    updateTessellation();
+    
+    if (hasPoints) {
+      int[] indices = in.pointIndices[index];
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        tess.pointVertices[3 * tessIdx + 0] = x;
+        tess.pointVertices[3 * tessIdx + 1] = y;
+        tess.pointVertices[3 * tessIdx + 2] = z;        
+      } 
+      modifiedPointVertices = true;
+    }
+
+    if (hasLines) {
+      int[] indices = in.lineIndices[index];
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        tess.lineVertices[3 * tessIdx + 0] = x;
+        tess.lineVertices[3 * tessIdx + 1] = y;
+        tess.lineVertices[3 * tessIdx + 2] = z;        
+      }     
+      modifiedLineVertices = true;
+    }    
+    
+    if (hasFill) {
+      if (-1 < in.firstFillIndex) {
+        int tessIdx = in.firstFillIndex + index;
+        tess.fillVertices[3 * tessIdx + 0] = x;
+        tess.fillVertices[3 * tessIdx + 1] = y;
+        tess.fillVertices[3 * tessIdx + 2] = z;
+      } else {
+        float x0 = in.vertices[3 * index + 0];
+        float y0 = in.vertices[3 * index + 1];
+        float z0 = in.vertices[3 * index + 2];        
+        int[] indices = in.fillIndices[index];
+        float[] weigths = in.fillWeights[index];
+        for (int i = 0; i < indices.length; i++) {
+          int tessIdx = indices[i];
+          float weight = weigths[i];
+          float tx0 = tess.fillVertices[3 * tessIdx + 0];
+          float ty0 = tess.fillVertices[3 * tessIdx + 1];
+          float tz0 = tess.fillVertices[3 * tessIdx + 2];        
+          tess.fillVertices[3 * tessIdx + 0] = tx0 + weight * (x - x0);
+          tess.fillVertices[3 * tessIdx + 1] = ty0 + weight * (y - y0);
+          tess.fillVertices[3 * tessIdx + 2] = tz0 + weight * (z - z0);        
+        }    
+      }
+      modifiedFillVertices = true;      
+    }
+    in.vertices[3 * index + 0] = x;
+    in.vertices[3 * index + 1] = y;
+    in.vertices[3 * index + 2] = z;    
+    modified();
+  }
+  
+  public PVector getNormal(int index, PVector vec) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return null;
+    }
+    updateTessellation();
+    
+    if (vec == null) {
+      vec = new PVector();
+    }
+    vec.x = in.normals[3 * index + 0];
+    vec.y = in.normals[3 * index + 1];
+    vec.z = in.normals[3 * index + 2];
+    return vec;
+  }
+  
+  public float getNormalX(int index) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return 0;
+    }
+    updateTessellation();
+    
+    return in.normals[3 * index + 0];
+  }
+
+  public float getNormalY(int index) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return 0;
+    }
+    updateTessellation();
+    
+    return in.normals[3 * index + 1];
+  }  
+
+  public float getNormalZ(int index) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return 0;
+    }
+    updateTessellation();
+    
+    return in.normals[3 * index + 2];
+  }    
+  
+  public void setNormal(int index, float nx, float ny, float nz) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return;
+    }
+    updateTessellation();
+    
+    if (hasFill) {
+      if (-1 < in.firstFillIndex) {
+        int tessIdx = in.firstFillIndex + index;
+        tess.fillNormals[3 * tessIdx + 0] = nx;
+        tess.fillNormals[3 * tessIdx + 1] = ny;
+        tess.fillNormals[3 * tessIdx + 2] = nz;
+      } else {
+        float nx0 = in.normals[3 * index + 0];
+        float ny0 = in.normals[3 * index + 1];
+        float nz0 = in.normals[3 * index + 2];        
+        int[] indices = in.fillIndices[index];
+        float[] weigths = in.fillWeights[index];
+        for (int i = 0; i < indices.length; i++) {
+          int tessIdx = indices[i];
+          float weight = weigths[i];
+          float tnx0 = tess.fillNormals[3 * tessIdx + 0];
+          float tny0 = tess.fillNormals[3 * tessIdx + 1];
+          float tnz0 = tess.fillNormals[3 * tessIdx + 2];        
+          float tnx = tnx0 + weight * (nx - nx0);
+          float tny = tny0 + weight * (ny - ny0);
+          float tnz = tnz0 + weight * (nz - nz0);
+          
+          // Making sure that the new normal vector is indeed
+          // normalized.
+          float sum = tnx * tnx + tny * tny + tnz * tnz;
+          float len = PApplet.sqrt(sum);
+          tnx /= len;
+          tny /= len;
+          tnz /= len;
+           
+          tess.fillNormals[3 * tessIdx + 0] = tnx;
+          tess.fillNormals[3 * tessIdx + 1] = tny;
+          tess.fillNormals[3 * tessIdx + 2] = tnz;
+        }    
+      }
+      modifiedFillNormals = true;      
+    }    
+    in.normals[3 * index + 0] = nx;
+    in.normals[3 * index + 1] = ny;
+    in.normals[3 * index + 2] = nz;      
+    modified(); 
+  }
+  
+  public PVector getVertexUV(int index, PVector vec) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return null;
+    }
+    updateTessellation();
+    
+    if (vec == null) {
+      vec = new PVector();
+    }
+    vec.x = in.texcoords[2 * index + 0];
+    vec.y = in.texcoords[2 * index + 1];
+    return vec;
+  }
+  
+  public float getVertexU(int index) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return 0;
+    }
+    updateTessellation();
+    
+    return in.texcoords[2 * index + 0];
+  }
+
+  public float getVertexV(int index) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return 0;
+    }
+    updateTessellation();
+    
+    return in.texcoords[2 * index + 1];
+  }  
+  
+  public void setVertexUV(int index, float u, float v) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return;
+    }
+    updateTessellation();
+    
+    if (hasFill) {
+      if (-1 < in.firstFillIndex) {
+        int tessIdx = in.firstFillIndex + index;
+        tess.fillTexcoords[2 * tessIdx + 0] = u;
+        tess.fillTexcoords[2 * tessIdx + 1] = v;
+      } else {       
+        float u0 = in.normals[2 * index + 0];
+        float v0 = in.normals[2 * index + 1];
+        int[] indices = in.fillIndices[index];
+        float[] weigths = in.fillWeights[index];
+        for (int i = 0; i < indices.length; i++) {
+          int tessIdx = indices[i];
+          float weight = weigths[i];
+          float tu0 = tess.fillTexcoords[2 * tessIdx + 0];
+          float tv0 = tess.fillTexcoords[2 * tessIdx + 1];        
+          float tu = tu0 + weight * (u - u0);
+          float tv = tv0 + weight * (v - v0);           
+          tess.fillTexcoords[2 * tessIdx + 0] = tu;
+          tess.fillTexcoords[2 * tessIdx + 1] = tv;
+        }        
+      }
+      modifiedFillTexCoords = true;
+    }
+    
+    in.texcoords[3 * index + 0] = u;
+    in.texcoords[3 * index + 1] = v;    
+  }
+
+  
+  /*
+  public float[] getVertex(int index) {
+  }    
   public int[] getVertexCodes() {    
   }
   public int getVertexCodeCount() {    
@@ -1984,39 +2341,20 @@ public class PShape3D extends PShape {
   */
   
   
+  ///////////////////////////////////////////////////////////  
   
-  public int firstFillVertex() {
-    updateTessellation();
-    return tess.firstFillVertex;  
-  }
+  //
   
-  public int lastFillVertex() {
-    updateTessellation();
-    return tess.lastFillVertex;
-  }
-
-  public int fillVertexCount() {
-    updateTessellation();
-    return tess.fillVertexCount;
-  }
+  // Getters of tessellated data.  
   
-  public int firstFillIndex() {
-    updateTessellation();
-    return tess.firstFillIndex;  
-  }
   
-  public int lastFillIndex() {
+  public float[] getFillVertices(float[] vertices) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return vertices;
+    }    
     updateTessellation();
-    return tess.lastFillIndex;
-  }  
     
-  public int fillIndexCount() {
-    updateTessellation();
-    return tess.fillIndexCount;
-  }
-  
-  public float[] fillVertices(float[] vertices) {
-    updateTessellation();
     if (vertices == null || vertices.length != tess.fillVertices.length) {
       vertices = new float[tess.fillVertices.length];
     }
@@ -2024,8 +2362,13 @@ public class PShape3D extends PShape {
     return vertices;
   }
   
-  public int[] fillColors(int[] colors) {
+  public int[] getFillColors(int[] colors) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return colors;
+    }    
     updateTessellation();
+    
     if (colors == null || colors.length != tess.fillColors.length) {
       colors = new int[tess.fillColors.length];  
     }
@@ -2033,8 +2376,13 @@ public class PShape3D extends PShape {
     return colors;
   }  
   
-  public float[] fillNormals(float[] normals) {
+  public float[] getFillNormals(float[] normals) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return normals;
+    }    
     updateTessellation();
+    
     if (normals == null || normals.length != tess.fillNormals.length) {
       normals = new float[tess.fillNormals.length];
     }
@@ -2042,8 +2390,13 @@ public class PShape3D extends PShape {
     return normals;
   }  
   
-  public float[] fillTexCoords(float[] texcoords) {
+  public float[] getFillTexcoords(float[] texcoords) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return texcoords;
+    }    
     updateTessellation();
+    
     if (texcoords == null || texcoords.length != tess.fillTexcoords.length) {
       texcoords = new float[tess.fillTexcoords.length];
     }
@@ -2051,8 +2404,13 @@ public class PShape3D extends PShape {
     return texcoords;
   }  
 
-  public int[] fillAmbient(int[] ambient) {
+  public int[] getFillAmbient(int[] ambient) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return ambient;
+    }    
     updateTessellation();
+    
     if (ambient == null || ambient.length != tess.fillAmbient.length) {
       ambient = new int[tess.fillAmbient.length];
     }
@@ -2060,8 +2418,13 @@ public class PShape3D extends PShape {
     return ambient;
   }  
 
-  public int[] fillSpecular(int[] specular) {
+  public int[] getFillSpecular(int[] specular) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return specular;
+    }    
     updateTessellation();
+    
     if (specular == null || specular.length != tess.fillSpecular.length) {
       specular = new int[tess.fillSpecular.length];  
     }
@@ -2069,8 +2432,13 @@ public class PShape3D extends PShape {
     return specular;
   }
 
-  public int[] fillEmissive(int[] emissive) {
+  public int[] getFillEmissive(int[] emissive) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return emissive;
+    }    
     updateTessellation();
+    
     if (emissive == null || emissive.length != tess.fillEmissive.length) {
       emissive = new int[tess.fillEmissive.length];
     }
@@ -2078,8 +2446,13 @@ public class PShape3D extends PShape {
     return emissive;
   }
 
-  public float[] fillShininess(float[] shininess) {
+  public float[] getFillShininess(float[] shininess) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return shininess;
+    }    
     updateTessellation();
+    
     if (shininess == null || shininess.length != tess.fillShininess.length) {
       shininess = new float[tess.fillShininess.length];
     }
@@ -2087,47 +2460,28 @@ public class PShape3D extends PShape {
     return shininess;
   }  
   
-  public int[] fillIndices(int[] indices) {
+  public int[] getFillIndices(int[] indices) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return indices;
+    }    
     updateTessellation();
+    
     if (indices == null || indices.length != tess.fillIndices.length) {
       indices = new int[tess.fillIndices.length];      
     }
-    PApplet.arrayCopy(tess.fillIndexCount, indices);
+    PApplet.arrayCopy(tess.fillIndices, indices);
+    removeIndexOffset(indices);
     return indices;
-  }
+  }    
+  
+  public float[] getLineVertices(float[] vertices) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return vertices;
+    }    
+    updateTessellation();
     
-  public int firstLineVertex() {
-    updateTessellation();
-    return tess.firstLineVertex;  
-  }
-  
-  public int lastLineVertex() {
-    updateTessellation();
-    return tess.lastLineVertex;
-  }
-  
-  public int lineVertexCount() {
-    updateTessellation();
-    return tess.lineVertexCount;
-  }  
-  
-  public int firstLineIndex() {
-    updateTessellation();
-    return tess.firstLineIndex;  
-  }
-  
-  public int lastLineIndex() {
-    updateTessellation();
-    return tess.lastLineIndex;
-  }
-
-  public int lineIndexCount() {
-    updateTessellation();
-    return tess.lineIndexCount;
-  }
-    
-  public float[] lineVertices(float[] vertices) {
-    updateTessellation();
     if (vertices == null || vertices.length != tess.lineVertices.length) {
       vertices = new float[tess.lineVertices.length];
     }
@@ -2135,8 +2489,13 @@ public class PShape3D extends PShape {
     return vertices;
   }
   
-  public int[] lineColors(int[] colors) {
+  public int[] getLineColors(int[] colors) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return colors;
+    }    
     updateTessellation();
+    
     if (colors == null || colors.length != tess.lineColors.length) {
       colors = new int[tess.lineColors.length];
     }
@@ -2144,8 +2503,13 @@ public class PShape3D extends PShape {
     return colors;
   }  
   
-  public float[] lineAttributes(float[] attribs) {
+  public float[] getLineAttributes(float[] attribs) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return attribs;
+    }    
     updateTessellation();
+    
     if (attribs == null || attribs.length != tess.lineDirWidths.length) {
       attribs = new float[tess.lineDirWidths.length];
     }
@@ -2153,47 +2517,28 @@ public class PShape3D extends PShape {
     return attribs;
   }  
   
-  public int[] lineIndices(int[] indices) {
+  public int[] getLineIndices(int[] indices) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return indices;
+    }    
     updateTessellation();
+    
     if (indices == null || indices.length != tess.lineIndices.length) {
       indices = new int[tess.lineIndices.length];
     }
     PApplet.arrayCopy(tess.lineIndices, indices);
+    removeIndexOffset(indices);
     return indices;
   }  
   
-  public int firstPointVertex() {
+  public float[] getPointVertices(float[] vertices) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return vertices;
+    }    
     updateTessellation();
-    return tess.firstPointVertex;  
-  }
-  
-  public int lastPointVertex() {
-    updateTessellation();
-    return tess.lastPointVertex;
-  }
-  
-  public int pointVertexCount() {
-    updateTessellation();
-    return tess.pointVertexCount;
-  }    
-  
-  public int firstPointIndex() {
-    updateTessellation();
-    return tess.firstPointIndex;  
-  }
-  
-  public int lastPointIndex() {
-    updateTessellation();
-    return tess.lastPointIndex;
-  }  
-  
-  public int pointIndexCount() {
-    updateTessellation();
-    return tess.pointIndexCount;
-  }  
-  
-  public float[] pointVertices(float[] vertices) {
-    updateTessellation();
+    
     if (vertices == null || vertices.length != tess.pointVertices.length) {
       vertices = new float[tess.pointVertices.length];
     }
@@ -2201,8 +2546,13 @@ public class PShape3D extends PShape {
     return vertices;
   }
   
-  public int[] pointColors(int[] colors) {
+  public int[] getPointColors(int[] colors) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return colors;
+    }    
     updateTessellation();
+    
     if (colors == null || colors.length != tess.pointColors.length) {
       colors = new int[tess.pointColors.length];
     }
@@ -2210,8 +2560,13 @@ public class PShape3D extends PShape {
     return colors;
   }  
   
-  public float[] pointAttributes(float[] attribs) {
+  public float[] getPointAttributes(float[] attribs) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return attribs;
+    }    
     updateTessellation();
+    
     if (attribs == null || attribs.length != tess.pointSizes.length) {
       attribs = new float[tess.pointSizes.length];
     }
@@ -2219,194 +2574,31 @@ public class PShape3D extends PShape {
     return attribs;
   }  
   
-  public int[] pointIndices(int[] indices) {
+  public int[] getPointIndices(int[] indices) {
+    if (family == GROUP) {
+      PGraphics.showWarning("GROUP shapes don't have any vertices");
+      return indices;
+    }    
     updateTessellation();
+    
     if (indices == null || indices.length != tess.pointIndices.length) {
       indices = new int[tess.pointIndices.length];
     }
     PApplet.arrayCopy(tess.pointIndices, indices);
+    removeIndexOffset(indices);
     return indices;
   }   
   
-  public FloatBuffer mapFillVertices() {        
-    return mapVertexImpl(root.glFillVertexBufferID, 3 * tess.firstFillVertex, 3 * tess.fillVertexCount).asFloatBuffer();
+  protected void removeIndexOffset(int[] indices) {
+    if (0 < indices.length && 0 < indices[0]) {
+      // Removing any offset added in the aggregation step.
+      int i0 = indices[0];
+      for (int i = 0; i < indices.length; i++) {
+        indices[i] -= i0;
+      }
+    }    
   }
-  
-  public void unmapFillVertices() {
-    unmapVertexImpl();
-  }
-  
-  public FloatBuffer mapFillColors() {        
-    return mapVertexImpl(root.glFillColorBufferID, 4 * tess.firstFillVertex, 4 * tess.fillVertexCount).asFloatBuffer();
-  }
-  
-  public void unmapFillColors() {
-    unmapVertexImpl();
-  }
-  
-  public FloatBuffer mapFillNormals() {        
-    return mapVertexImpl(root.glFillNormalBufferID, 3 * tess.firstFillVertex, 3 * tess.fillVertexCount).asFloatBuffer();
-  }
-  
-  public void unmapFillNormals() {
-    unmapVertexImpl();
-  }
-  
-  public FloatBuffer mapFillTexCoords() {        
-    return mapVertexImpl(root.glFillTexCoordBufferID, 2 * tess.firstFillVertex, 2 * tess.fillVertexCount).asFloatBuffer();
-  }  
-  
-  public IntBuffer mapFillAmbient() {        
-    return mapVertexImpl(root.glFillAmbientBufferID, tess.firstFillVertex, tess.fillVertexCount).asIntBuffer();
-  }
-  
-  public void unmapFillAmbient() {
-    unmapVertexImpl();
-  }
-
-  public IntBuffer mapFillSpecular() {        
-    return mapVertexImpl(root.glFillSpecularBufferID, tess.firstFillVertex, tess.fillVertexCount).asIntBuffer();
-  }
-  
-  public void unmapFillSpecular() {
-    unmapVertexImpl();
-  }
-  
-  public IntBuffer mapFillEmissive() {        
-    return mapVertexImpl(root.glFillEmissiveBufferID, tess.firstFillVertex, tess.fillVertexCount).asIntBuffer();
-  }
-  
-  public void unmapFillEmissive() {
-    unmapVertexImpl();
-  }
-
-  public FloatBuffer mapFillShininess() {        
-    return mapVertexImpl(root.glFillShininessBufferID, tess.firstFillVertex, tess.fillVertexCount).asFloatBuffer();
-  }
-  
-  public void unmapFillShininess() {
-    unmapVertexImpl();
-  }
-  
-  public void unmapFillTexCoords() {
-    unmapVertexImpl();
-  }
-  
-  public IntBuffer mapFillIndices() {        
-    return mapIndexImpl(root.glFillIndexBufferID, tess.firstFillIndex, tess.fillIndexCount).asIntBuffer();
-  }
-  
-  public void unmapFillIndices() {
-    unmapIndexImpl();
-  }
-  
-  public FloatBuffer mapLineVertices() {        
-    return mapVertexImpl(root.glLineVertexBufferID, 3 * tess.firstLineVertex, 3 * tess.lineVertexCount).asFloatBuffer();
-  }
-  
-  public void unmapLineVertices() {
-    unmapVertexImpl();
-  }
-  
-  public FloatBuffer mapLineColors() {        
-    return mapVertexImpl(root.glLineColorBufferID, 4 * tess.firstLineVertex, 4 * tess.lineVertexCount).asFloatBuffer();
-  }
-  
-  public void unmapLineColors() {
-    unmapVertexImpl();
-  }
-  
-  public void unmapLineNormals() {
-    unmapVertexImpl();
-  }
-  
-  public FloatBuffer mapLineAttributes() {        
-    return mapVertexImpl(root.glLineDirWidthBufferID, 2 * tess.firstLineVertex, 2 * tess.lineVertexCount).asFloatBuffer();
-  }
-  
-  public void unmapLineAttributes() {
-    unmapVertexImpl();
-  }
-  
-  public IntBuffer mapLineIndices() {        
-    return mapIndexImpl(root.glLineIndexBufferID, tess.firstLineIndex, tess.lineIndexCount).asIntBuffer();
-  }
-  
-  public void unmapLineIndices() {
-    unmapIndexImpl();
-  }
-  
-  public FloatBuffer mapPointVertices() {        
-    return mapVertexImpl(root.glPointVertexBufferID, 3 * tess.firstPointVertex, 3 * tess.pointVertexCount).asFloatBuffer();
-  }
-  
-  public void unmapPointVertices() {
-    unmapVertexImpl();
-  }
-  
-  public FloatBuffer mapPointColors() {        
-    return mapVertexImpl(root.glPointColorBufferID, 4 * tess.firstPointVertex, 4 * tess.pointVertexCount).asFloatBuffer();
-  }
-  
-  public void unmapPointColors() {
-    unmapVertexImpl();
-  }
-  
-  public void unmapPointNormals() {
-    unmapVertexImpl();
-  }
-  
-  public FloatBuffer mapPointAttributes() {        
-    return mapVertexImpl(root.glPointSizeBufferID, 2 * tess.firstPointVertex, 2 * tess.pointVertexCount).asFloatBuffer();
-  }
-  
-  public void unmapPointAttributes() {
-    unmapVertexImpl();
-  }
-  
-  public IntBuffer mapPointIndices() {        
-    return mapIndexImpl(root.glPointIndexBufferID, tess.firstPointIndex, tess.pointIndexCount).asIntBuffer();
-  }
-  
-  public void unmapPointIndices() {
-    unmapIndexImpl();
-  }
-  
-  protected ByteBuffer mapVertexImpl(int id, int offset, int count) {
-    updateTessellation();
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, id);
-    ByteBuffer bb;
-    if (root == this) {            
-      bb = pgl.glMapBuffer(PGL.GL_ARRAY_BUFFER, PGL.GL_READ_WRITE);  
-    } else {
-      bb = pgl.glMapBufferRange(PGL.GL_ARRAY_BUFFER, offset, count, PGL.GL_READ_WRITE); 
-    }
-    return bb;
-  }
-  
-  protected void unmapVertexImpl() {
-    pgl.glUnmapBuffer(PGL.GL_ARRAY_BUFFER);
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
-  }
-  
-  protected ByteBuffer mapIndexImpl(int id, int offset, int count) {
-    updateTessellation();
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, id);
-    ByteBuffer bb;
-    if (root == this) {            
-      bb = pgl.glMapBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, PGL.GL_READ_WRITE);  
-    } else {
-      bb = pgl.glMapBufferRange(PGL.GL_ELEMENT_ARRAY_BUFFER, offset, count, PGL.GL_READ_WRITE);
-    }
-    return bb;
-  }
-  
-  protected void unmapIndexImpl() {
-    pgl.glUnmapBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER);
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);    
-  }
-
-  
+    
   ///////////////////////////////////////////////////////////  
   
   //
@@ -2439,7 +2631,8 @@ public class PShape3D extends PShape {
         // the edges information will still be stored in the
         // input object, so it needs to be removed to avoid
         // duplication.
-        in.clearEdges();        
+        in.clearEdges();       
+        in.initTessMaps();
         
         tessellator.setInGeometry(in);
         tessellator.setTessGeometry(tess);
@@ -2521,6 +2714,8 @@ public class PShape3D extends PShape {
           // this shape before tessellation, so they are applied now.
           tess.applyMatrix(matrix);
         }
+        
+        in.compactTessMaps();
       }
     }
     
@@ -2955,6 +3150,7 @@ public class PShape3D extends PShape {
     if (root.mode == STATIC && root.prevMode == DYNAMIC) {
       root.freeCaches();
       root.freeTessData();
+      root.freeTessMaps();
     }
     root.prevMode = root.mode;   
   }
@@ -3656,6 +3852,19 @@ public class PShape3D extends PShape {
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D)children[i];
         child.freeTessData();
+      }
+    }
+  }
+  
+  protected void freeTessMaps() {
+    if (family == GROUP) {
+      for (int i = 0; i < childCount; i++) {
+        PShape3D child = (PShape3D)children[i];
+        child.freeTessMaps();
+      }
+    } else {
+      if (in != null) {
+        in.freeTessMaps();
       }
     }
   }

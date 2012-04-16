@@ -6152,6 +6152,9 @@ public class PGraphicsOpenGL extends PGraphics {
     
     public int[][] edges;
 
+    //public int [][]
+    
+    
     // Internally used by the addVertex() methods.
     protected int fillColor;
     protected int strokeColor; 
@@ -6630,11 +6633,11 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public int getNumLineVertices() {
-      return 4 *(lastEdge - firstEdge + 1);
+      return 4 * (lastEdge - firstEdge + 1);
     }
 
     public int getNumLineIndices() {
-      return 6 *(lastEdge - firstEdge + 1);
+      return 6 * (lastEdge - firstEdge + 1);
     }
 
     public void calcTrianglesNormals() {
@@ -6812,6 +6815,129 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    // Indices to map input vertices to tessellated vertices.
+    public int[][] pointIndices;
+    public int firstPointIndex;
+    public int[][] lineIndices;
+    public int firstLineIndex;
+    public int[][] fillIndices;
+    public float[][] fillWeights;
+    public int firstFillIndex;
+    
+    public void initTessMaps() {
+      pointIndices = new int[vertexCount][0];
+      lineIndices = new int[vertexCount][0];
+      fillIndices = new int[vertexCount][0];
+      fillWeights = new float[vertexCount][0];
+    }
+    
+    public void freeTessMaps() {
+      pointIndices = null;
+      lineIndices = null;
+      fillIndices = null;
+      fillWeights = null;
+    }
+    
+    public void compactTessMaps() {
+      firstPointIndex = -1;      
+      firstLineIndex = -1;      
+      
+      boolean contiguous = true;
+      for (int i = firstVertex; i <= lastVertex; i++) {
+        int[] indices = fillIndices[i];
+        float[] weigths = fillWeights[i];        
+        if (indices.length == 1 && weigths[0] == 1) {
+          if (i < lastVertex) {
+            int[] indices1 = fillIndices[i + 1];
+            if (indices[0] + 1 != indices1[0]) {
+              contiguous = false;
+              break;
+            }            
+          }
+        } else {
+          contiguous = false;
+          break;
+        }
+      }
+      if (contiguous) {
+        firstFillIndex = 0 < fillIndices.length ? fillIndices[firstVertex][0] : 0;
+        fillIndices = null;
+        fillWeights = null;
+      } else {
+        firstFillIndex = -1;
+      }
+    }
+    
+    public void addPointIndex(int inIdx, int tessIdx) {
+      if (renderMode == RETAINED) {
+        int[] indices = pointIndices[inIdx];
+        int pos;
+        if (indices.length == 0) {
+          pointIndices[inIdx] = indices = new int[1];
+          pos = 0;
+        } else {
+          int len = indices.length;
+          indices = new int[len + 1];
+          PApplet.arrayCopy(pointIndices[inIdx], indices, len);      
+          pos = len;
+        }
+        indices[pos] = tessIdx;
+      }     
+    }
+    
+    public void addLineIndex(int inIdx, int tessIdx) {
+      if (renderMode == RETAINED) {
+        int[] indices = pointIndices[inIdx];
+        int pos;
+        if (indices.length == 0) {
+          pointIndices[inIdx] = indices = new int[1];
+          pos = 0;
+        } else {
+          int len = indices.length;
+          indices = new int[len + 1];
+          PApplet.arrayCopy(pointIndices[inIdx], indices, len);      
+          pos = len;
+        }
+        indices[pos] = tessIdx;
+      }  
+    }
+        
+    public void addFillIndex(int inIdx, int tessIdx, float weight) {
+      if (renderMode == RETAINED) {
+        int[] indices = fillIndices[inIdx];
+        float[] weights = fillWeights[inIdx];
+        int pos;
+        if (indices.length == 0) {
+          fillIndices[inIdx] = indices = new int[1];
+          fillWeights[inIdx] = weights = new float[1];
+          pos = 0;
+        } else {
+          int len = indices.length;
+          indices = new int[len + 1];
+          weights = new float[len + 1];
+          PApplet.arrayCopy(fillIndices[inIdx], indices, len);
+          PApplet.arrayCopy(fillWeights[inIdx], weights, len);          
+          pos = len;
+        }
+        indices[pos] = tessIdx;
+        weights[pos] = weight;
+      }
+    }    
+    
+    public void addFillIndex(int inIdx, int tessIdx) {
+      addFillIndex(inIdx, tessIdx, 1);
+    }
+    
+    public void addFillIndices(int firstTessIdx) {
+      if (renderMode == RETAINED) {
+        int i0 = firstVertex;
+        int i1 = lastVertex;        
+        for (int i = i0; i <= i1; i++) {
+          addFillIndex(i, firstTessIdx + i - i0);
+        }                  
+      }      
+    }    
+    
     public void addEllipse(int ellipseMode, float a, float b, float c, float d,
                            boolean fill, int fillColor,
                            boolean stroke, int strokeColor, float strokeWeight,
@@ -7794,7 +7920,7 @@ public class PGraphicsOpenGL extends PGraphics {
       fillEmissive[fillVertexCount] = em;
       fillShininess[fillVertexCount] = shine;
 
-      fillVertexCount++;
+      fillVertexCount++;     
     }
 
     public void addFillVertices(InGeometry in) {
@@ -8210,7 +8336,7 @@ public class PGraphicsOpenGL extends PGraphics {
     TessGeometry tess;
     PGL.Tessellator gluTess;
     TessellatorCallback callback;
-
+    
     boolean fill;
     boolean stroke;
     float strokeWeight;
@@ -8223,7 +8349,7 @@ public class PGraphicsOpenGL extends PGraphics {
       gluTess = pgl.createTessellator(callback);
       bezierDetil = 20;
     }
-
+    
     public void setInGeometry(InGeometry in) {
       this.in = in;
     }
@@ -8295,6 +8421,7 @@ public class PGraphicsOpenGL extends PGraphics {
           // All the tessellated vertices are identical to the center point
           for (int k = 0; k < nvert; k++) {
             tess.putPointVertex(in, i, vertIdx);
+            in.addPointIndex(i, vertIdx);
             vertIdx++;
           }
 
@@ -8361,6 +8488,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
           for (int k = 0; k < nvert; k++) {
             tess.putPointVertex(in, i, vertIdx);
+            in.addPointIndex(i, vertIdx);
             vertIdx++;
           }
 
@@ -8423,7 +8551,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
     }
-
+    
     public void tessellateTriangles() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
@@ -8432,6 +8560,7 @@ public class PGraphicsOpenGL extends PGraphics {
         checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
 
         tess.addFillVertices(in);
+        in.addFillIndices(tess.firstFillVertex);
 
         tess.addFillIndices(nInVert);
         int idx0 = tess.firstFillIndex;
@@ -8455,6 +8584,7 @@ public class PGraphicsOpenGL extends PGraphics {
         checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
 
         tess.addFillVertices(in);
+        in.addFillIndices(tess.firstFillVertex);
 
         tess.addFillIndices(nInInd);
         int idx = tess.firstFillIndex;
@@ -8482,6 +8612,7 @@ public class PGraphicsOpenGL extends PGraphics {
         checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
 
         tess.addFillVertices(in);
+        in.addFillIndices(tess.firstFillVertex);
 
         // Each vertex, except the first and last, defines a triangle.
         tess.addFillIndices(nInInd);
@@ -8514,6 +8645,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
         checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
         tess.addFillVertices(in);
+        in.addFillIndices(tess.firstFillVertex);
 
         tess.addFillIndices(nInInd);
         int idx = tess.firstFillIndex;
@@ -8550,6 +8682,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
         checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
         tess.addFillVertices(in);
+        in.addFillIndices(tess.firstFillVertex);
 
         tess.addFillIndices(nInInd);
         int idx = tess.firstFillIndex;
@@ -8631,7 +8764,7 @@ public class PGraphicsOpenGL extends PGraphics {
                                            in.normals  [3 * i + 0], in.normals  [3 * i + 1], in.normals [3 * i + 2],
                                            in.texcoords[2 * i + 0], in.texcoords[2 * i + 1],
                                            aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb,
-                                           in.shininess[i] };
+                                           in.shininess[i], i, 1.0 };
 
           gluTess.addVertex(vertex);
         }
@@ -8650,28 +8783,31 @@ public class PGraphicsOpenGL extends PGraphics {
     // ending at i1.
     protected void addLine(int i0, int i1, int vcount, int icount) {
       tess.putLineVertex(in, i0, i1, vcount);
-
       tess.lineDirWidths[4 * vcount + 3] = +strokeWeight;
       tess.lineIndices[icount++] = PGL.makeIndex(vcount);
-
+      in.addLineIndex(i0, vcount);
+      
       vcount++;
       tess.putLineVertex(in, i0, i1, vcount);
       tess.lineDirWidths[4 * vcount + 3] = -strokeWeight;
       tess.lineIndices[icount++] = PGL.makeIndex(vcount);
-
+      in.addLineIndex(i0, vcount);
+      
       vcount++;
       tess.putLineVertex(in, i1, i0, vcount);
       tess.lineDirWidths[4 * vcount + 3] = -strokeWeight;
       tess.lineIndices[icount++] = PGL.makeIndex(vcount);
-
+      in.addLineIndex(i1, vcount);
+      
       // Starting a new triangle re-using prev vertices.
-      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
-      tess.lineIndices[icount++] = PGL.makeIndex(vcount - 1);
+      tess.lineIndices[icount++] = PGL.makeIndex(vcount);      
+      tess.lineIndices[icount++] = PGL.makeIndex(vcount - 1); 
 
       vcount++;
       tess.putLineVertex(in, i1, i0, vcount);
       tess.lineDirWidths[4 * vcount + 3] = +strokeWeight;
       tess.lineIndices[icount++] = PGL.makeIndex(vcount);
+      in.addLineIndex(i1, vcount);
     }
 
     public void tessellateEdges() {
@@ -8794,7 +8930,8 @@ public class PGraphicsOpenGL extends PGraphics {
       public void vertex(Object data) {
         if (data instanceof double[]) {
           double[] d = (double[]) data;
-          if (d.length < 25) {
+          int l = d.length;
+          if (l < 25) {
             throw new RuntimeException("TessCallback vertex() data is not of length 25");
           }
 
@@ -8805,7 +8942,7 @@ public class PGraphicsOpenGL extends PGraphics {
             int acolor = ((int) d[12] << 24) | ((int) d[13] << 16) | ((int) d[14] << 8) | (int) d[15];
             int scolor = ((int) d[16] << 24) | ((int) d[17] << 16) | ((int) d[18] << 8) | (int) d[19];
             int ecolor = ((int) d[20] << 24) | ((int) d[21] << 16) | ((int) d[22] << 8) | (int) d[23];
-
+            
             tess.addFillVertex((float) d[ 0],  (float) d[ 1], (float) d[ 2],
                                fcolor,
                                (float) d[ 7],  (float) d[ 8], (float) d[ 9],
@@ -8813,6 +8950,16 @@ public class PGraphicsOpenGL extends PGraphics {
                                acolor, scolor, ecolor,
                                (float) d[24]);
 
+            int nvert = (l - 25) / 2;
+            if (0 < nvert) {
+              int tessIdx = tess.fillVertexCount - 1;
+              for (int n = 0; n < nvert; n++) {
+                int inIdx = (int) d[25 + 2 * n + 0];
+                float weight = (float) d[25 + 2 * n + 1];
+                in.addFillIndex(inIdx, tessIdx, weight);
+              }
+            }
+            
             tessCount++;
           } else {
             throw new RuntimeException("P3D: the tessellator is generating too many vertices, reduce complexity of shape.");
@@ -8843,12 +8990,10 @@ public class PGraphicsOpenGL extends PGraphics {
        */
       public void combine(double[] coords, Object[] data,
                           float[] weight, Object[] outData) {
-        double[] vertex = new double[25];
+        double[] vertex = new double[25 + 8];
         vertex[0] = coords[0];
         vertex[1] = coords[1];
         vertex[2] = coords[2];
-
-        // Here w e need to use separate rgba components for correct interpolation...
 
         // Calculating the rest of the vertex parameters (color,
         // normal, texcoords) as the linear combination of the
@@ -8862,7 +9007,15 @@ public class PGraphicsOpenGL extends PGraphics {
             }
           }
         }
-
+        
+        // Adding the indices and weights of the 4 input vertices
+        // used to construct this combined vertex.
+        for (int j = 0; j < 4; j++) {
+          double[] vertData = (double[])data[j];
+          vertex[25 + 2 * j + 0] = vertData[25];
+          vertex[25 + 2 * j + 1] = weight[j];
+        }
+        
         // Normalizing normal vector, since the weighted
         // combination of normal vectors is not necessarily
         // normal.
@@ -8873,7 +9026,7 @@ public class PGraphicsOpenGL extends PGraphics {
         vertex[7] /= len;
         vertex[8] /= len;
         vertex[9] /= len;
-
+        
         outData[0] = vertex;
       }
     }
