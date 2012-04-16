@@ -1215,7 +1215,18 @@ public class PShape implements PConstants {
     return vertices[index];
   }
 
+  
+  public PVector getVertex(int index, PVector vec) {
+    if (vec == null) {
+      vec = new PVector();
+    }
+    vec.x = vertices[index][X];
+    vec.y = vertices[index][Y];
+    vec.z = vertices[index][Z];
+    return vec;
+  }
 
+  
   public float getVertexX(int index) {
     return vertices[index][X];
   }
@@ -1230,7 +1241,66 @@ public class PShape implements PConstants {
     return vertices[index][Z];
   }
 
+  public void setVertex(int index, float x, float y) {
+    setVertex(index, x, y, 0);
+  }
+  
+  public void setVertex(int index, float x, float y, float z) {
+    vertices[index][X] = x;
+    vertices[index][Y] = y;
+    vertices[index][Z] = z;
+  }
+  
+  public PVector getNormal(int index, PVector vec) {
+    if (vec == null) {
+      vec = new PVector();
+    }
+    vec.x = vertices[index][NX];
+    vec.y = vertices[index][NY];
+    vec.z = vertices[index][NZ];
+    return vec;    
+  }
+  
+  public float getNormalX(int index) {
+    return vertices[index][NX];
+  }
 
+  public float getNormalY(int index) {
+    return vertices[index][NY];
+  }  
+  
+  public float getNormalZ(int index) {
+    return vertices[index][NZ];
+  }    
+
+  public void setNormal(int index, float nx, float ny, float nz) {
+    vertices[index][NX] = nx;
+    vertices[index][NY] = ny;
+    vertices[index][NZ] = nz;    
+  }
+  
+  public PVector getVertexUV(int index, PVector vec) {
+    if (vec == null) {
+      vec = new PVector();
+    }
+    vec.x = vertices[index][U];
+    vec.y = vertices[index][V];
+    return vec;        
+  }
+  
+  public float getVertexU(int index) {
+    return vertices[index][U];
+  }
+  
+  public float getVertexV(int index) {
+    return vertices[index][V];
+  }  
+  
+  public void setVertexUV(int index, float u, float v) {
+    vertices[index][U] = u;
+    vertices[index][V] = v;
+  }
+  
   public int[] getVertexCodes() {
     if (vertexCodes == null) {
       return null;
@@ -1245,7 +1315,7 @@ public class PShape implements PConstants {
   public int getVertexCodeCount() {
     return vertexCodeCount;
   }
-
+  
 
   /**
    * One of VERTEX, BEZIER_VERTEX, CURVE_VERTEX, or BREAK.
