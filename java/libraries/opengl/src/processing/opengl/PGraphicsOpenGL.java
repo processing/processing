@@ -7102,21 +7102,28 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
-    public void addSphere(float rad, int detU, int detV, 
-                          boolean fill, int fillColor,
-                          boolean stroke, int strokeColor, float strokeWeight,
-                          int ambientColor, int specularColor, int emissiveColor, 
-                          float shininessFactor) {
-      /*
-      if ((nu < 3) || (nv < 2)) {
-        nu = nv = 30;
+    public int[] addSphere(float rad, int detU, int detV, 
+                           boolean fill, int fillColor,
+                           boolean stroke, int strokeColor, float strokeWeight,
+                           int ambientColor, int specularColor, int emissiveColor, 
+                           float shininessFactor) {
+      if ((detU < 3) || (detV < 3)) {
+        detU = detV = 30;
       }
+      
+      this.fillColor = fillColor;
+      this.strokeColor = strokeColor; 
+      this.strokeWeight = strokeWeight;
+      this.ambientColor = ambientColor;
+      this.specularColor = specularColor;
+      this.emissiveColor = emissiveColor;
+      this.shininessFactor = shininessFactor;       
       
       float startLat = -90;
       float startLon = 0.0f;
 
-      float latInc = 180.0f / nu;
-      float lonInc = 360.0f / nv;
+      float latInc = 180.0f / detU;
+      float lonInc = 360.0f / detV;
 
       float phi1,  phi2;
       float theta1,  theta2;
@@ -7126,10 +7133,15 @@ public class PGraphicsOpenGL extends PGraphics {
       float x3, y3, z3;
       float u1, v1, u2, v2, v3;
 
-      for (int col = 0; col < nu; col++) {
+      int nind = detV * detU * 6;
+      int[] indices = new int[nind];
+      
+      int icount = 0;
+      int vcount = 0;
+      for (int col = 0; col < detU; col++) {
         phi1 = (startLon + col * lonInc) * DEG_TO_RAD;
         phi2 = (startLon + (col + 1) * lonInc) * DEG_TO_RAD;
-        for (int row = 0; row < nv; row++) {
+        for (int row = 0; row < detV; row++) {
           theta1 = (startLat + row * latInc) * DEG_TO_RAD;
           theta2 = (startLat + (row + 1) * latInc) * DEG_TO_RAD;
 
@@ -7155,27 +7167,39 @@ public class PGraphicsOpenGL extends PGraphics {
           v2 = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
           v3 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
           
-          normal(x0, y0, z0);     
-          vertex(r * x0, r * y0, r * z0, u1, v1);
+          //normal(x0, y0, z0);     
+          //vertex(rad * x0, rad * y0, rad * z0, u1, v1);          
+          addVertex(rad * x0, rad * y0, rad * z0, x0, y0, z0, u1, v1, VERTEX);
+          indices[icount++] = vcount++;
      
-          normal(x1, y1, z1);
-          vertex(r * x1,  r * y1,  r * z1, u1, v2);
+          //normal(x1, y1, z1);
+          //vertex(rad * x1,  rad * y1,  rad * z1, u1, v2);
+          addVertex(rad * x1,  rad * y1,  rad * z1, x1, y1, z1, u1, v2, VERTEX);
+          indices[icount++] = vcount++;
 
-          normal(x2, y2, z2);
-          vertex(r * x2, r * y2, r * z2, u2, v2);
-
-          normal(x0, y0, z0);    
-          vertex(r * x0, r * y0, r * z0, u1, v1);
-
-          normal(x2, y2, z2);
-          vertex(r * x2, r * y2, r * z2, u2, v2);
+          //normal(x2, y2, z2);
+          //vertex(rad * x2, rad * y2, rad * z2, u2, v2);
+          addVertex(rad * x2, rad * y2, rad * z2, x2, y2, z2, u2, v2, VERTEX);
+          indices[icount++] = vcount++;
+                    
+          //normal(x0, y0, z0);    
+          //vertex(rad * x0, rad * y0, rad * z0, u1, v1);
+          indices[icount++] = vcount - 2;
           
-          normal(x3,  y3,  z3);
-          vertex(r * x3,  r * y3,  r * z3,  u2,  v3);
+          //normal(x2, y2, z2);
+          //vertex(rad * x2, rad * y2, rad * z2, u2, v2);
+          indices[icount++] = vcount - 1;
+          
+          //normal(x3, y3, z3);
+          //vertex(rad * x3, rad * y3, rad * z3, u2, v3);
+          addVertex(rad * x3, rad * y3, rad * z3, x3, y3, z3, u2, v3, VERTEX);
+          indices[icount++] = vcount++;
         }
       }
-      */
+     
+      return indices;
     }
+    
     
   }
 
@@ -8566,7 +8590,7 @@ public class PGraphicsOpenGL extends PGraphics {
         tess.addFillVertices(in);
         in.addFillIndices(tess.firstFillVertex);
 
-        tess.addFillIndices(nInVert);
+        tess.addFillIndices(nInInd);
         int idx0 = tess.firstFillIndex;
         int offset = tess.firstFillVertex;
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
@@ -8580,6 +8604,29 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    public void tessellateTriangles(int[] indices) {
+      int nInVert = in.lastVertex - in.firstVertex + 1;
+      
+      if (fill && 3 <= nInVert) {
+        int nInInd = indices.length;
+        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
+
+        tess.addFillVertices(in);
+        
+        tess.addFillIndices(nInInd);
+        int idx0 = tess.firstFillIndex;
+        int offset = tess.firstFillVertex;
+        for (int i = 0; i <= nInInd; i++) {
+          tess.fillIndices[idx0 + i] = PGL.makeIndex(offset + indices[i]);
+        }
+      }
+      
+      if (stroke) {
+        tess.isStroked = true;
+        tessellateEdges();
+      }      
+    }
+    
     public void tessellateTriangleFan() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
