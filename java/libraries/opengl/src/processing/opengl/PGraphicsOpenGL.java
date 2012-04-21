@@ -2060,10 +2060,6 @@ public class PGraphicsOpenGL extends PGraphics {
     if (flushMode == FLUSH_CONTINUOUSLY ||
         (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
 
-      if (flushMode == FLUSH_WHEN_FULL && tessGeo.isOverflow()) {
-        PGraphics.showWarning("P3D: tessellated arrays are overflowing");
-      }
-
       flush();
     }
   }
@@ -2090,10 +2086,6 @@ public class PGraphicsOpenGL extends PGraphics {
     
     if (flushMode == FLUSH_CONTINUOUSLY ||
         (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
-
-      if (flushMode == FLUSH_WHEN_FULL && tessGeo.isOverflow()) {
-        PGraphics.showWarning("P3D: tessellated arrays are overflowing");
-      }
 
       flush();
     }    

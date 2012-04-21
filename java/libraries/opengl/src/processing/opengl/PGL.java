@@ -1245,7 +1245,8 @@ public class PGL {
     // http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
     //return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;
     if (32767 < intIdx) {
-      PGraphics.showWarning("P3D: Vertex index is greater than 32767");
+      PGraphics.showWarning("P3D: More than 32767 vertices in a single shape, not all will be drawn.\n" +
+                             "Consider splitting your large shape into multiple smaller shapes.");
       return 32767;
     } else {
       return (short)intIdx;
