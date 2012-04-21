@@ -553,9 +553,9 @@ public class PGraphics extends PImage implements PConstants {
 
   // ........................................................
 
-  // [toxi031031] new & faster sphere code w/ support flexibile resolutions
+  // [toxi031031] new & faster sphere code w/ support flexible resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  float sphereX[], sphereY[], sphereZ[];
+  protected float sphereX[], sphereY[], sphereZ[];
 
   /// Number of U steps (aka "theta") around longitudinally spanning 2*pi
   public int sphereDetailU = 0;
@@ -2401,7 +2401,7 @@ public class PGraphics extends PImage implements PConstants {
     // step along Y axis
     for (int i = 1; i < vres; i++) {
       float curradius = sinLUT[(int) angle % SINCOS_LENGTH];
-      float currY = -cosLUT[(int) angle % SINCOS_LENGTH];
+      float currY = cosLUT[(int) angle % SINCOS_LENGTH];
       for (int j = 0; j < ures; j++) {
         sphereX[currVert] = cx[j] * curradius;
         sphereY[currVert] = currY;

@@ -38,7 +38,6 @@ import processing.opengl.PGraphicsOpenGL.PointShader;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
 import java.io.BufferedReader;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
@@ -2631,8 +2630,7 @@ public class PShape3D extends PShape {
         // the edges information will still be stored in the
         // input object, so it needs to be removed to avoid
         // duplication.
-        in.clearEdges();       
-        in.initTessMaps();
+        in.clearEdges();
         
         tessellator.setInGeometry(in);
         tessellator.setTessGeometry(tess);
@@ -2643,6 +2641,12 @@ public class PShape3D extends PShape {
         tessellator.setStrokeJoin(strokeJoin);       
         
         if (family == GEOMETRY) {
+          // The tessellation maps are used to associate input
+          // vertices with the corresponding tessellated vertices.
+          // This correspondence might not be one-to-one, in the
+          // case of lines and polygon shapes for example.
+          in.initTessMaps();
+          
           if (kind == POINTS) {
             tessellator.tessellatePoints();    
           } else if (kind == LINES) {
@@ -2671,8 +2675,7 @@ public class PShape3D extends PShape {
             if (stroke) in.addPolygonEdges(isClosed);
             tessellator.tessellatePolygon(isSolid, isClosed, normalMode == NORMAL_MODE_AUTO);
           }
-        } else if (family == PRIMITIVE) {
-          
+        } else if (family == PRIMITIVE) {          
           // The input geometry needs to be cleared because the geometry
           // generation methods in InGeometry add the vertices of the
           // new primitive to what is already stored.
@@ -2760,7 +2763,7 @@ public class PShape3D extends PShape {
                   stroke, strokeColor, strokeWeight,
                   ambientColor, specularColor, emissiveColor, 
                   shininess);
-    
+    in.initTessMaps();
     tessellator.tessellateTriangleFan(); 
   }
   
@@ -2784,8 +2787,8 @@ public class PShape3D extends PShape {
               fill, fillColor, 
               stroke, strokeColor, strokeWeight,
               ambientColor, specularColor, emissiveColor, 
-              shininess);
-    
+              shininess);    
+    in.initTessMaps();    
     tessellator.tessellateQuads();     
   }
   
@@ -2800,7 +2803,7 @@ public class PShape3D extends PShape {
                                  stroke, strokeColor, strokeWeight,
                                  ambientColor, specularColor, emissiveColor, 
                                  shininess);
-    
+    in.initTessMaps();
     tessellator.tessellateTriangles(indices);               
   }
   
