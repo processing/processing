@@ -128,9 +128,10 @@ void main() {
      
   }    
 
-  // Calculating final color as result of all lights (plus emissive term)
-  vertColor = vec4(totalAmbient, 1) * inAmbient + 
+  // Calculating final color as result of all lights (plus emissive term).
+  // Transparency is determined exclusively by the diffuse component.
+  vertColor = vec4(totalAmbient, 0) * inAmbient + 
               vec4(totalDiffuse, 1) * inColor + 
-              vec4(totalSpecular, 1) * inSpecular + 
-              inEmissive;              
+              vec4(totalSpecular, 0) * inSpecular + 
+              vec4(inEmissive.rgb, 0);              
 }
