@@ -397,6 +397,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected boolean perspectiveCorrectedLines = false;
 
+  /** Used in point tessellation. */
+  final static protected int MIN_POINT_ACCURACY = 6;
+  final protected float[][] QUAD_POINT_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
+  
+
   //////////////////////////////////////////////////////////////
 
   // INIT/ALLOCATE/FINISH
@@ -2063,6 +2068,36 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+  protected void endShape(int[] indices) {
+    endShape(indices, null);
+  }
+
+  protected void endShape(int[] indices, int[] edges) {
+    if (shape != TRIANGLE && shape != TRIANGLES) {
+      throw new RuntimeException("Indices and edges can only be set for TRIANGLE shapes");
+    }
+    
+    if (flushMode == FLUSH_WHEN_FULL && hints[DISABLE_TEXTURE_CACHE] &&
+        textureImage0 != null && textureImage == null) {
+      // The previous shape had a texture and this one doesn't. So we need to flush
+      // the textured geometry.
+      textureImage = textureImage0;
+      flush();
+      textureImage = null;
+    }   
+
+    tessellate(indices, edges);    
+    
+    if (flushMode == FLUSH_CONTINUOUSLY ||
+        (flushMode == FLUSH_WHEN_FULL && tessGeo.isFull())) {
+
+      if (flushMode == FLUSH_WHEN_FULL && tessGeo.isOverflow()) {
+        PGraphics.showWarning("P3D: tessellated arrays are overflowing");
+      }
+
+      flush();
+    }    
+  }
 
   public void texture(PImage image) {
     if (flushMode == FLUSH_WHEN_FULL && hints[DISABLE_TEXTURE_CACHE] &&
@@ -2281,6 +2316,33 @@ public class PGraphicsOpenGL extends PGraphics {
     setLastTexIndex(tessGeo.lastFillIndex);
   }
 
+  protected void tessellate(int[] indices, int[] edges) {
+    if (edges != null) {
+      int nedges = edges.length / 2;
+      for (int n = 0; n < nedges; n++) {
+        int i0 = edges[2 * n + 0];
+        int i1 = edges[2 * n + 1];
+        inGeo.addEdge(i0, i1, n == 0, n == nedges - 1);            
+      }
+    }
+    
+    tessellator.setInGeometry(inGeo);
+    tessellator.setTessGeometry(tessGeo);
+    tessellator.setFill(fill || textureImage != null);
+    tessellator.setStroke(stroke);
+    tessellator.setStrokeWeight(strokeWeight);
+    tessellator.setStrokeCap(strokeCap);
+    tessellator.setStrokeJoin(strokeJoin);
+
+    setFirstTexIndex(tessGeo.fillIndexCount);
+    
+    if (stroke && defaultEdges && edges == null) inGeo.addTrianglesEdges();
+    if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTrianglesNormals();
+    tessellator.tessellateTriangles(indices);    
+    
+    setLastTexIndex(tessGeo.lastFillIndex);
+  }
+  
 
   protected void setFirstTexIndex(int first) {
     firstTexIndex = first;
@@ -2815,10 +2877,11 @@ public class PGraphicsOpenGL extends PGraphics {
   public void ellipse(float a, float b, float c, float d) {
      beginShape(TRIANGLE_FAN);
      defaultEdges = false;
+     normalMode = NORMAL_MODE_SHAPE;
      inGeo.addEllipse(ellipseMode, a, b, c, d,
-                           fill, fillColor,
-                           stroke, strokeColor, strokeWeight,
-                           ambientColor, specularColor, emissiveColor, shininess);
+                      fill, fillColor,
+                      stroke, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
      endShape();
   }
 
@@ -2900,8 +2963,18 @@ public class PGraphicsOpenGL extends PGraphics {
   // BOX
 
   // public void box(float size)
-
-  // public void box(float w, float h, float d) // P3D
+  
+  public void box(float w, float h, float d) {
+    beginShape(QUADS);
+    defaultEdges = false;
+    normalMode = NORMAL_MODE_VERTEX;
+    inGeo.addBox(w, h, d,
+                 fill, fillColor, 
+                 stroke, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, 
+                 shininess);
+    endShape();
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -2910,8 +2983,18 @@ public class PGraphicsOpenGL extends PGraphics {
   // public void sphereDetail(int res)
 
   // public void sphereDetail(int ures, int vres)
-
-  // public void sphere(float r)
+  
+  public void sphere(float r) {
+    beginShape(TRIANGLES);
+    defaultEdges = false;
+    normalMode = NORMAL_MODE_VERTEX;
+    int[] indices = inGeo.addSphere(r, sphereDetailU, sphereDetailV, 
+                                    fill, fillColor, 
+                                    stroke, strokeColor, strokeWeight,
+                                    ambientColor, specularColor, emissiveColor, 
+                                    shininess);    
+    endShape(indices);
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -6151,9 +6234,6 @@ public class PGraphicsOpenGL extends PGraphics {
     public float[] shininess;
     
     public int[][] edges;
-
-    //public int [][]
-    
     
     // Internally used by the addVertex() methods.
     protected int fillColor;
@@ -6163,6 +6243,15 @@ public class PGraphicsOpenGL extends PGraphics {
     protected int specularColor;
     protected int emissiveColor;
     protected float shininessFactor; 
+
+    // Indices to map input vertices to tessellated vertices.
+    public int[][] pointIndices;
+    public int firstPointIndex;
+    public int[][] lineIndices;
+    public int firstLineIndex;
+    public int[][] fillIndices;
+    public float[][] fillWeights;
+    public int firstFillIndex;    
     
     public InGeometry(int mode) {
       renderMode = mode;
@@ -6174,11 +6263,9 @@ public class PGraphicsOpenGL extends PGraphics {
       edgeCount = firstEdge = lastEdge = 0;
     }
 
-
     public void clearEdges() {
       edgeCount = firstEdge = lastEdge = 0;
     }
-
 
     public void allocate() {
       codes = new int[PGL.DEFAULT_IN_VERTICES];
@@ -6814,15 +6901,6 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
     }
-
-    // Indices to map input vertices to tessellated vertices.
-    public int[][] pointIndices;
-    public int firstPointIndex;
-    public int[][] lineIndices;
-    public int firstLineIndex;
-    public int[][] fillIndices;
-    public float[][] fillWeights;
-    public int firstFillIndex;
     
     public void initTessMaps() {
       pointIndices = new int[vertexCount][0];
@@ -7102,14 +7180,16 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
-    public int[] addSphere(float rad, int detU, int detV, 
+    // Adds the vertices that define an sphere, without duplicating
+    // any vertex or edge.
+    public int[] addSphere(float r, int detU, int detV, 
                            boolean fill, int fillColor,
                            boolean stroke, int strokeColor, float strokeWeight,
                            int ambientColor, int specularColor, int emissiveColor, 
                            float shininessFactor) {
-      if ((detU < 3) || (detV < 3)) {
-        detU = detV = 30;
-      }
+      if ((detU < 3) || (detV < 2)) {
+        sphereDetail(30);
+      }      
       
       this.fillColor = fillColor;
       this.strokeColor = strokeColor; 
@@ -7117,90 +7197,128 @@ public class PGraphicsOpenGL extends PGraphics {
       this.ambientColor = ambientColor;
       this.specularColor = specularColor;
       this.emissiveColor = emissiveColor;
-      this.shininessFactor = shininessFactor;       
+      this.shininessFactor = shininessFactor;      
       
-      float startLat = -90;
-      float startLon = 0.0f;
-
-      float latInc = 180.0f / detU;
-      float lonInc = 360.0f / detV;
-
-      float phi1,  phi2;
-      float theta1,  theta2;
-      float x0, y0, z0;
-      float x1, y1, z1;
-      float x2, y2, z2;
-      float x3, y3, z3;
-      float u1, v1, u2, v2, v3;
-
-      int nind = detV * detU * 6;
-      int[] indices = new int[nind];
+      int nind = 3 * sphereDetailU + (6 * sphereDetailU + 3) * (sphereDetailV - 2) + 3 * sphereDetailU;
+      int[] indices = new int[nind];      
       
-      int icount = 0;
-      int vcount = 0;
-      for (int col = 0; col < detU; col++) {
-        phi1 = (startLon + col * lonInc) * DEG_TO_RAD;
-        phi2 = (startLon + (col + 1) * lonInc) * DEG_TO_RAD;
-        for (int row = 0; row < detV; row++) {
-          theta1 = (startLat + row * latInc) * DEG_TO_RAD;
-          theta2 = (startLat + (row + 1) * latInc) * DEG_TO_RAD;
+      int vertCount = 0;
+      int indCount = 0;
+      int vert0, vert1;      
+      
+      float u, v;
+      float du = 1.0f / (sphereDetailU);
+      float dv = 1.0f / (sphereDetailV);
 
-          x0 = PApplet.cos(phi1) * PApplet.cos(theta1);
-          x1 = PApplet.cos(phi1) * PApplet.cos(theta2);
-          x2 = PApplet.cos(phi2) * PApplet.cos(theta2);
-          
-          y0 = PApplet.sin(theta1);
-          y1 = PApplet.sin(theta2);
-          y2 = PApplet.sin(theta2);
-          
-          z0 = PApplet.sin(phi1) * PApplet.cos(theta1);
-          z1 = PApplet.sin(phi1) * PApplet.cos(theta2);
-          z2 = PApplet.sin(phi2) * PApplet.cos(theta2);
-
-          x3 = PApplet.cos(phi2) * PApplet.cos(theta1);
-          y3 = PApplet.sin(theta1);            
-          z3 = PApplet.sin(phi2) * PApplet.cos(theta1);
-          
-          u1 = PApplet.map(phi1, TWO_PI, 0, 0, 1); 
-          u2 = PApplet.map(phi2, TWO_PI, 0, 0, 1);
-          v1 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
-          v2 = PApplet.map(theta2, -HALF_PI, HALF_PI, 0, 1);
-          v3 = PApplet.map(theta1, -HALF_PI, HALF_PI, 0, 1);
-          
-          //normal(x0, y0, z0);     
-          //vertex(rad * x0, rad * y0, rad * z0, u1, v1);          
-          addVertex(rad * x0, rad * y0, rad * z0, x0, y0, z0, u1, v1, VERTEX);
-          indices[icount++] = vcount++;
-     
-          //normal(x1, y1, z1);
-          //vertex(rad * x1,  rad * y1,  rad * z1, u1, v2);
-          addVertex(rad * x1,  rad * y1,  rad * z1, x1, y1, z1, u1, v2, VERTEX);
-          indices[icount++] = vcount++;
-
-          //normal(x2, y2, z2);
-          //vertex(rad * x2, rad * y2, rad * z2, u2, v2);
-          addVertex(rad * x2, rad * y2, rad * z2, x2, y2, z2, u2, v2, VERTEX);
-          indices[icount++] = vcount++;
-                    
-          //normal(x0, y0, z0);    
-          //vertex(rad * x0, rad * y0, rad * z0, u1, v1);
-          indices[icount++] = vcount - 2;
-          
-          //normal(x2, y2, z2);
-          //vertex(rad * x2, rad * y2, rad * z2, u2, v2);
-          indices[icount++] = vcount - 1;
-          
-          //normal(x3, y3, z3);
-          //vertex(rad * x3, rad * y3, rad * z3, u2, v3);
-          addVertex(rad * x3, rad * y3, rad * z3, x3, y3, z3, u2, v3, VERTEX);
-          indices[icount++] = vcount++;
-        }
+      // Southern cap -------------------------------------------------------
+      
+      // Adding multiple copies of the south pole vertex, each one with a 
+      // different u coordinate, so the texture mapping is correct when 
+      // making the first strip of triangles.
+      u = 1; v = 1;
+      for (int i = 0; i < sphereDetailU; i++) {
+        addVertex(0, r, 0, 0, 1, 0, u , v, VERTEX);
+        u -= du;
+      }      
+      vertCount = sphereDetailU;
+      vert0 = vertCount;
+      u = 1; v -= dv;
+      for (int i = 0; i < sphereDetailU; i++) {      
+        addVertex(r * sphereX[i], r *sphereY[i], r * sphereZ[i], 
+                  sphereX[i], sphereY[i], sphereZ[i], u , v, VERTEX);
+        u -= du;
+      }      
+      vertCount += sphereDetailU;
+      vert1 = vertCount;      
+      addVertex(r * sphereX[0], r * sphereY[0], r * sphereZ[0], 
+                sphereX[0], sphereY[0], sphereZ[0], u, v, VERTEX);
+      vertCount++;
+      
+      for (int i = 0; i < sphereDetailU; i++) {
+        int i1 = vert0 + i;
+        int i0 = vert0 + i - sphereDetailU;
+        
+        indices[3 * i + 0] = i1;
+        indices[3 * i + 1] = i0;
+        indices[3 * i + 2] = i1 + 1;
+        
+        addEdge(i0, i1, i == 0, false);
+        addEdge(i1, i1 + 1, false, false);        
       }
-     
+      indCount += 3 * sphereDetailU;
+      
+      // Middle rings -------------------------------------------------------
+            
+      int offset = 0;
+      for (int j = 2; j < sphereDetailV; j++) {      
+        offset += sphereDetailU;
+        vert0 = vertCount;
+        u = 1; v -= dv;       
+        for (int i = 0; i < sphereDetailU; i++) {
+          int ioff = offset + i;
+          addVertex(r * sphereX[ioff], r *sphereY[ioff], r * sphereZ[ioff], 
+                    sphereX[ioff], sphereY[ioff], sphereZ[ioff], u , v, VERTEX);
+          u -= du;
+        }
+        vertCount += sphereDetailU;
+        vert1 = vertCount;
+        addVertex(r * sphereX[offset], r * sphereY[offset], r * sphereZ[offset], 
+                  sphereX[offset], sphereY[offset], sphereZ[offset], u, v, VERTEX);
+        vertCount++;
+        
+        for (int i = 0; i < sphereDetailU; i++) {
+          int i1 = vert0 + i;
+          int i0 = vert0 + i - sphereDetailU - 1;
+          
+          indices[indCount + 6 * i + 0] = i1;
+          indices[indCount + 6 * i + 1] = i0;
+          indices[indCount + 6 * i + 2] = i0 + 1;
+          
+          indices[indCount + 6 * i + 3] = i1;
+          indices[indCount + 6 * i + 4] = i0 + 1;
+          indices[indCount + 6 * i + 5] = i1 + 1;
+          
+          addEdge(i0, i1, false, false);
+          addEdge(i1, i1 + 1, false, false);
+          addEdge(i0 + 1, i1, false, false);
+        }
+        indCount += 6 * sphereDetailU;
+        indices[indCount + 0] = vert1;
+        indices[indCount + 1] = vert1 - sphereDetailU;
+        indices[indCount + 2] = vert1 - 1;
+        indCount += 3;
+        
+        addEdge(vert1 - sphereDetailU, vert1 - 1, false, false);
+        addEdge(vert1 - 1, vert1, false, false);        
+      }
+            
+      // Northern cap -------------------------------------------------------
+      
+      // Adding multiple copies of the north pole vertex, each one with a 
+      // different u coordinate, so the texture mapping is correct when 
+      // making the last strip of triangles.      
+      u = 1; v = 0;
+      for (int i = 0; i < sphereDetailU; i++) {
+        addVertex(0, -r, 0, 0, -1, 0, u , v, VERTEX);
+        u -= du;
+      }         
+      vertCount += sphereDetailU;      
+      
+      for (int i = 0; i < sphereDetailU; i++) {
+        int i0 = vert0 + i;
+        int i1 = vert0 + i + sphereDetailU + 1;
+        
+        indices[indCount + 3 * i + 0] = i0;
+        indices[indCount + 3 * i + 1] = i1;
+        indices[indCount + 3 * i + 2] = i0 + 1;
+        
+        addEdge(i0, i0 + 1, false, false);
+        addEdge(i0, i1, false, i == sphereDetailU - 1);        
+      }
+      indCount += 3 * sphereDetailU;      
+      
       return indices;
     }
-    
-    
   }
 
   // Holds tessellated data for fill, line and point geometry.
@@ -8343,20 +8461,20 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
-  final static protected int MIN_ACCURACY = 6;
-  final static protected float sinLUT[];
-  final static protected float cosLUT[];
-  final static protected float SINCOS_PRECISION = 0.5f;
-  final static protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
-  static {
-    sinLUT = new float[SINCOS_LENGTH];
-    cosLUT = new float[SINCOS_LENGTH];
-    for (int i = 0; i < SINCOS_LENGTH; i++) {
-      sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
-      cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
-    }
-  }
-  final protected float[][] QUAD_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
+  
+//  final static protected float sinLUT[];
+//  final static protected float cosLUT[];
+//  final static protected float SINCOS_PRECISION = 0.5f;
+//  final static protected int SINCOS_LENGTH = (int) (360f / SINCOS_PRECISION);
+//  static {
+//    sinLUT = new float[SINCOS_LENGTH];
+//    cosLUT = new float[SINCOS_LENGTH];
+//    for (int i = 0; i < SINCOS_LENGTH; i++) {
+//      sinLUT[i] = (float) Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
+//      cosLUT[i] = (float) Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
+//    }
+//  }
+  
 
   // Generates tessellated geometry given a batch of input vertices.
   public class Tessellator {
@@ -8426,7 +8544,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int nvertTot = 0;
         int nindTot = 0;
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-          int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
+          int perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
           // Number of points along the perimeter plus the center point.
           int nvert = perim + 1;
           nvertTot += nvert;
@@ -8443,7 +8561,7 @@ public class PGraphicsOpenGL extends PGraphics {
         int firstVert = tess.firstPointVertex;
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
           // Creating the triangle fan for each input vertex.
-          int perim = PApplet.max(MIN_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
+          int perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
           int nvert = perim + 1;
 
           // All the tessellated vertices are identical to the center point
@@ -8528,8 +8646,8 @@ public class PGraphicsOpenGL extends PGraphics {
           tess.pointSizes[2 * attribIdx + 1] = 0;
           attribIdx++;
           for (int k = 0; k < 4; k++) {
-            tess.pointSizes[2 * attribIdx + 0] = 0.5f * QUAD_SIGNS[k][0] * strokeWeight;
-            tess.pointSizes[2 * attribIdx + 1] = 0.5f * QUAD_SIGNS[k][1] * strokeWeight;
+            tess.pointSizes[2 * attribIdx + 0] = 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
+            tess.pointSizes[2 * attribIdx + 1] = 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
             attribIdx++;
           }
 
@@ -8612,11 +8730,12 @@ public class PGraphicsOpenGL extends PGraphics {
         checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
 
         tess.addFillVertices(in);
+        in.addFillIndices(tess.firstFillVertex);
         
         tess.addFillIndices(nInInd);
         int idx0 = tess.firstFillIndex;
         int offset = tess.firstFillVertex;
-        for (int i = 0; i <= nInInd; i++) {
+        for (int i = 0; i < nInInd; i++) {
           tess.fillIndices[idx0 + i] = PGL.makeIndex(offset + indices[i]);
         }
       }
