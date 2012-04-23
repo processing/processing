@@ -754,7 +754,7 @@ public class PTexture implements PConstants {
         
     pgl.enableTexturing(glTarget);
     
-    context = pgl.getContext();
+    context = pgl.getContext();    
     glID = pg.createTextureObject();    
     
     pgl.glBindTexture(glTarget, glID);    
@@ -789,6 +789,13 @@ public class PTexture implements PConstants {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
+      // Removing the texture object from the renderer's list so it
+      // doesn't get deleted by OpenGL. The texture object was 
+      // automatically disposed when the old context was destroyed.
+      pg.removeTextureObject(glID);
+      
+      // And then set the id to zero, so it doesn't try to be
+      // deleted when the object's finalizer is invoked by the GC.
       glID = 0;     
     }
     return outdated;
