@@ -41,8 +41,6 @@ import java.util.Set;
 import java.util.Stack;
 
 // TODO:
-// 0) Make sure to delete finalized resources.
-// 1) fix get/set pixels, doesn't seem to work.
 // 2) non-interactive mode problem?
 
 /**
@@ -88,21 +86,21 @@ public class PGraphicsOpenGL extends PGraphics {
   public int glFillEmissiveBufferID;
   public int glFillShininessBufferID;
   public int glFillIndexBufferID;
-  protected boolean fillVBOsCreated = false;
+  protected boolean fillBuffersCreated = false;
   protected PGL.Context fillBuffersContext;
 
   public int glLineVertexBufferID;
   public int glLineColorBufferID;
   public int glLineDirWidthBufferID;
   public int glLineIndexBufferID;
-  protected boolean lineVBOsCreated = false;
+  protected boolean lineBuffersCreated = false;
   protected PGL.Context lineBuffersContext;
 
   public int glPointVertexBufferID;
   public int glPointColorBufferID;
   public int glPointSizeBufferID;
   public int glPointIndexBufferID;
-  protected boolean pointVBOsCreated = false;
+  protected boolean pointBuffersCreated = false;
   protected PGL.Context pointBuffersContext;
 
   // ........................................................
@@ -350,6 +348,9 @@ public class PGraphicsOpenGL extends PGraphics {
   /** True if we are inside a beginDraw()/endDraw() block. */
   protected boolean drawing = false;
 
+  /** Used to indicate an OpenGL surface recreation */
+  protected boolean restoreSurface = false;
+  
   /** Type of pixels operation. */
   static protected final int OP_NONE = 0;
   static protected final int OP_READ = 1;
@@ -1026,7 +1027,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void createFillBuffers() {
-    if (!fillVBOsCreated || fillBuffersContextIsOutdated()) {
+    if (!fillBuffersCreated || fillBuffersContextIsOutdated()) {
       fillBuffersContext = pgl.getContext();
       
       int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
@@ -1073,7 +1074,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
       
-      fillVBOsCreated = true;
+      fillBuffersCreated = true;
     }
   }
 
@@ -1132,7 +1133,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   protected void deleteFillBuffers() {
-    if (fillVBOsCreated) {
+    if (fillBuffersCreated) {
       deleteVertexBufferObject(glFillVertexBufferID);
       glFillVertexBufferID = 0;
 
@@ -1160,13 +1161,13 @@ public class PGraphicsOpenGL extends PGraphics {
       deleteVertexBufferObject(glFillIndexBufferID);
       glFillIndexBufferID = 0;    
       
-      fillVBOsCreated = false;
+      fillBuffersCreated = false;
     }
   }
 
 
   protected void createLineBuffers() {
-    if (!lineVBOsCreated || lineBufferContextIsOutdated()) {
+    if (!lineBuffersCreated || lineBufferContextIsOutdated()) {
       lineBuffersContext = pgl.getContext();
       
       int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
@@ -1194,7 +1195,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
       
-      lineVBOsCreated = true;      
+      lineBuffersCreated = true;      
     }
   }
 
@@ -1233,7 +1234,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   protected void deleteLineBuffers() {
-    if (lineVBOsCreated) {
+    if (lineBuffersCreated) {
       deleteVertexBufferObject(glLineVertexBufferID);
       glLineVertexBufferID = 0;
 
@@ -1246,13 +1247,13 @@ public class PGraphicsOpenGL extends PGraphics {
       deleteVertexBufferObject(glLineIndexBufferID);
       glLineIndexBufferID = 0;
       
-      lineVBOsCreated = false;
+      lineBuffersCreated = false;
     }
   }
 
 
   protected void createPointBuffers() {
-    if (!pointVBOsCreated || pointBuffersContextIsOutdated()) {
+    if (!pointBuffersCreated || pointBuffersContextIsOutdated()) {
       pointBuffersContext = pgl.getContext();
       
       int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
@@ -1279,7 +1280,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
             
-      pointVBOsCreated = true;
+      pointBuffersCreated = true;
     }    
   }
 
@@ -1318,7 +1319,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
   
   protected void deletePointBuffers() {
-    if (pointVBOsCreated) {
+    if (pointBuffersCreated) {
       deleteVertexBufferObject(glPointVertexBufferID);
       glPointVertexBufferID = 0;
 
@@ -1331,7 +1332,7 @@ public class PGraphicsOpenGL extends PGraphics {
       deleteVertexBufferObject(glPointIndexBufferID);
       glPointIndexBufferID = 0;
       
-      pointVBOsCreated = false;
+      pointBuffersCreated = false;
     }
   }
 
@@ -1509,6 +1510,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer);
+      
+      if (restoreSurface) {
+        restoreSurfaceFromPixels();
+        restoreSurface = false;        
+      }
     } else {
       pgl.beginOffscreenDraw(pg.clearColorBuffer);
 
@@ -1534,7 +1540,7 @@ public class PGraphicsOpenGL extends PGraphics {
     report("bot beginDraw()");
   }
 
-
+  
   public void endDraw() {
     report("top endDraw()");
 
@@ -1555,6 +1561,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.endOnscreenDraw(clearColorBuffer0);
+      
+      if (!pgl.initialized) {
+        // Smooth was called at some point during drawing. We save
+        // the current contents of the back buffer (because the 
+        // buffers haven't been swapped yet) to the pixels array.
+        saveSurfaceToPixels();
+        restoreSurface = true;
+      }
+      
       pgl.glFlush();
     } else {
       if (offscreenMultisample) {
@@ -1627,8 +1642,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void beginPixelsOp(int op) {
     if (primarySurface) {
+      // We read or write from the back buffer, where all the 
+      // drawing in the current frame is taking place.
       if (op == OP_READ) {
-        pgl.glReadBuffer(PGL.GL_FRONT);
+        pgl.glReadBuffer(PGL.GL_BACK);
       } else {
         pgl.glDrawBuffer(PGL.GL_BACK);
       }
@@ -2418,6 +2435,8 @@ public class PGraphicsOpenGL extends PGraphics {
       endPixelsOp();
     }
 
+    report("here");
+    
     modified = false;
   }
 
@@ -2495,9 +2514,9 @@ public class PGraphicsOpenGL extends PGraphics {
   // Utility function to render current tessellated geometry, under the assumption that
   // the texture is already bound.
   protected void renderTexFill(PTexture tex) {
-    if (!fillVBOsCreated) {
+    if (!fillBuffersCreated) {
       createFillBuffers();
-      fillVBOsCreated = true;
+      fillBuffersCreated = true;
     }
     updateFillBuffers(lights, true);
 
@@ -2846,8 +2865,6 @@ public class PGraphicsOpenGL extends PGraphics {
       // requestDraw() is called.
       pgl.initialized = false;
     }
-    
-    PApplet.println("setting smooth at " + level);
   }
 
 
@@ -4475,18 +4492,10 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     }
 
-    if ((pixels == null) || (pixels.length != width * height)) {
-      pixels = new int[width * height];
-      pixelBuffer = IntBuffer.wrap(pixels);
-    }
+    allocatePixels();
 
     if (!setgetPixels) {
-      beginPixelsOp(OP_READ);
-      pixelBuffer.rewind();
-      pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
-      endPixelsOp();
-
-      PGL.nativeToJavaARGB(pixels, width, height);
+      readPixels();
 
       if (primarySurface) {
         loadTextureImpl(POINT);
@@ -4589,8 +4598,45 @@ public class PGraphicsOpenGL extends PGraphics {
   protected void textureToPixels() {
     texture.get(pixels);
   }
+  
+  
+  protected void saveSurfaceToPixels() {
+    if (primarySurface) {
+      allocatePixels();      
+      readPixels();      
+    }
+  }
+  
+  protected void restoreSurfaceFromPixels() {
+    if (primarySurface) {
+      loadTextureImpl(POINT);      
+      pixelsToTexture();
+      
+      beginPixelsOp(OP_WRITE);      
+      drawTexture();      
+      endPixelsOp();      
+    }
+  }
 
-
+  
+  protected void allocatePixels() {
+    if ((pixels == null) || (pixels.length != width * height)) {
+      pixels = new int[width * height];
+      pixelBuffer = IntBuffer.wrap(pixels);
+    }    
+  }  
+  
+  
+  protected void readPixels() {
+    beginPixelsOp(OP_READ);
+    pixelBuffer.rewind();
+    pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
+    endPixelsOp();
+    
+    PGL.nativeToJavaARGB(pixels, width, height);    
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // IMAGE CONVERSION
@@ -5153,7 +5199,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (defFillShaderFull == null || defFillShaderFull.contextIsOutdated()) {
           defFillShaderFull = new FillShaderFull(parent, defFillShaderVertFullURL, defFillShaderFragTexURL);
         }
-        if (fillShaderFull == null) {
+        if (fillShaderFull == null || fillShaderFull.contextIsOutdated()) {
           fillShaderFull = defFillShaderFull;
         }
         shader = fillShaderFull;
@@ -5161,7 +5207,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (defFillShaderLit == null || defFillShaderLit.contextIsOutdated()) {
           defFillShaderLit = new FillShaderLit(parent, defFillShaderVertLitURL, defFillShaderFragNoTexURL);
         }
-        if (fillShaderLit == null) {
+        if (fillShaderLit == null || fillShaderLit.contextIsOutdated()) {
           fillShaderLit = defFillShaderLit;
         }
         shader = fillShaderLit;
@@ -5171,7 +5217,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (defFillShaderTex == null || defFillShaderTex.contextIsOutdated()) {
           defFillShaderTex = new FillShaderTex(parent, defFillShaderVertTexURL, defFillShaderFragTexURL);
         }
-        if (fillShaderTex == null) {
+        if (fillShaderTex == null || fillShaderTex.contextIsOutdated()) {
           fillShaderTex = defFillShaderTex;
         }
         shader = fillShaderTex;
@@ -5179,7 +5225,7 @@ public class PGraphicsOpenGL extends PGraphics {
         if (defFillShaderSimple == null || defFillShaderSimple.contextIsOutdated()) {
           defFillShaderSimple = new FillShaderSimple(parent, defFillShaderVertSimpleURL, defFillShaderFragNoTexURL);
         }
-        if (fillShaderSimple == null) {
+        if (fillShaderSimple == null || fillShaderSimple.contextIsOutdated()) {
           fillShaderSimple = defFillShaderSimple;
         }
         shader = fillShaderSimple;
@@ -5196,7 +5242,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (defLineShader == null || defLineShader.contextIsOutdated()) {
       defLineShader = new LineShader(parent, defLineShaderVertURL, defLineShaderFragURL);
     }
-    if (lineShader == null) {
+    if (lineShader == null || lineShader.contextIsOutdated()) {
       lineShader = defLineShader;
     }
     lineShader.setRenderer(this);
@@ -5210,7 +5256,7 @@ public class PGraphicsOpenGL extends PGraphics {
     if (defPointShader == null || defPointShader.contextIsOutdated()) {
       defPointShader = new PointShader(parent, defPointShaderVertURL, defPointShaderFragURL);
     }
-    if (pointShader == null) {
+    if (pointShader == null || pointShader.contextIsOutdated()) {
       pointShader = defPointShader;
     }
     pointShader.setRenderer(this);
