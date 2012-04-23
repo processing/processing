@@ -445,7 +445,7 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   protected boolean curveInited = false;
-  protected int curveDetail = 20;
+  public int curveDetail = 20;
   public float curveTightness = 0;
   // catmull-rom basis matrix, perhaps with optional s parameter
   protected PMatrix3D curveBasisMatrix;
@@ -1438,8 +1438,13 @@ public class PGraphics extends PImage implements PConstants {
 
   // CURVE/BEZIER VERTEX HANDLING
 
-
+  
   protected void bezierVertexCheck() {
+    bezierVertexCheck(shape, vertexCount);
+  }
+  
+
+  protected void bezierVertexCheck(int shape, int vertexCount) {
     if (shape == 0 || shape != POLYGON) {
       throw new RuntimeException("beginShape() or beginShape(POLYGON) " +
                                  "must be used before bezierVertex() or quadraticVertex()");
@@ -1577,12 +1582,15 @@ public class PGraphics extends PImage implements PConstants {
                  x3, y3, z3);
   }
 
-
+  protected void curveVertexCheck() {
+    curveVertexCheck(shape);
+  }
+  
   /**
    * Perform initialization specific to curveVertex(), and handle standard
    * error modes. Can be overridden by subclasses that need the flexibility.
    */
-  protected void curveVertexCheck() {
+  protected void curveVertexCheck(int shape) {
     if (shape != POLYGON) {
       throw new RuntimeException("You must use beginShape() or " +
                                  "beginShape(POLYGON) before curveVertex()");
