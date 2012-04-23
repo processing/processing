@@ -1510,11 +1510,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     if (primarySurface) {
       pgl.beginOnscreenDraw(clearColorBuffer);
-      
-      if (restoreSurface) {
-        restoreSurfaceFromPixels();
-        restoreSurface = false;        
-      }
     } else {
       pgl.beginOffscreenDraw(pg.clearColorBuffer);
 
@@ -1522,6 +1517,11 @@ public class PGraphicsOpenGL extends PGraphics {
       offscreenFramebuffer.setColorBuffer(texture);
     }
 
+    if (restoreSurface) {
+      restoreSurfaceFromPixels();
+      restoreSurface = false;        
+    }    
+    
     if (hints[DISABLE_DEPTH_MASK]) {
       pgl.glDepthMask(false);
     } else {
@@ -1558,23 +1558,41 @@ public class PGraphicsOpenGL extends PGraphics {
       showWarning("P3D: Cannot call endDraw() before beginDraw().");
       return;
     }
-
+    
     if (primarySurface) {
       pgl.endOnscreenDraw(clearColorBuffer0);
-      
-      if (!pgl.initialized) {
+
+      if (!pgl.initialized || parent.frameCount == 0) {
         // Smooth was called at some point during drawing. We save
         // the current contents of the back buffer (because the 
         // buffers haven't been swapped yet) to the pixels array.
+        // The frameCount == 0 condition is to handle the situation when
+        // no smooth is called in setup in the PDE, but the OpenGL appears to
+        // be recreated due to the size() nastiness.        
         saveSurfaceToPixels();
         restoreSurface = true;
-      }
+      }         
       
       pgl.glFlush();
     } else {
       if (offscreenMultisample) {
         offscreenFramebufferMultisample.copy(offscreenFramebuffer);
       }
+      
+      if (!pgl.initialized || !pg.pgl.initialized || parent.frameCount == 0) {
+        // If the primary surface is re-initialized, this offscreen 
+        // surface needs to save its contents into the pixels array
+        // so they can be restored after the FBOs are recreated.
+        // Note that a consequence of how this is code works, is that
+        // if the user changes th smooth level of the primary surface
+        // in the middle of draw, but after drawing the offscreen surfaces
+        // then these won't be restored in the next frame since their 
+        // endDraw() calls didn't pick up any change in the initialization
+        // state of the primary surface.        
+        saveSurfaceToPixels();
+        restoreSurface = true;
+      }      
+      
       popFramebuffer();
 
       pgl.endOffscreenDraw(pg.clearColorBuffer0);
@@ -2403,40 +2421,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void renderPixels() {
-    int mi1 = my1 * width + mx1;
-    int mi2 = my2 * width + mx2;
-    int mw = mx2 - mx1 + 1;
-    int mh = my2 - my1 + 1;
-    int mlen = mi2 - mi1 + 1;
-
-    if (rgbaPixels == null || rgbaPixels.length < mlen) {
-      rgbaPixels = new int[mlen];
-    }
-
-    PApplet.arrayCopy(pixels, mi1, rgbaPixels, 0, mlen);
-    PGL.javaToNativeARGB(rgbaPixels, mw, mh);
-    
-    // Copying pixel buffer to screen texture...
-    if (primarySurface) {
-      loadTextureImpl(POINT);  // (first making sure that the screen texture is valid).
-    }
-    pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glID,
-                      mx1, my1, mw, mh, IntBuffer.wrap(rgbaPixels));
-
-    if (primarySurface || offscreenMultisample) {
-      // ...and drawing the texture to screen... but only
-      // if we are on the primary surface or we have
-      // multisampled FBO. Why? Because in the case of non-
-      // multisampled FBO, texture is actually the color buffer
-      // used by the color FBO, so with the copy operation we
-      // should be done updating the (off)screen buffer.
-      beginPixelsOp(OP_WRITE);
-      drawTexture(mx1, my1, mw, mh);
-      endPixelsOp();
-    }
-
-    report("here");
-    
+    drawPixels(mx1, my1, mx2 - mx1 + 1, my2 - my1 + 1);
     modified = false;
   }
 
@@ -4504,7 +4489,68 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+  
+  protected void saveSurfaceToPixels() {
+    allocatePixels();      
+    readPixels();      
+  }
+  
+  
+  protected void restoreSurfaceFromPixels() {
+    drawPixels(0, 0, width, height);
+  }
 
+  
+  protected void allocatePixels() {
+    if ((pixels == null) || (pixels.length != width * height)) {
+      pixels = new int[width * height];
+      pixelBuffer = IntBuffer.wrap(pixels);
+    }    
+  }  
+  
+  
+  protected void readPixels() {
+    beginPixelsOp(OP_READ);
+    pixelBuffer.rewind();
+    pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
+    endPixelsOp();
+    
+    PGL.nativeToJavaARGB(pixels, width, height);    
+  }
+  
+  
+  protected void drawPixels(int x, int y, int w, int h) {
+    int i0 = y * width + x;
+    int len = w * h;
+      
+    if (rgbaPixels == null || rgbaPixels.length < len) {
+      rgbaPixels = new int[len];
+    }
+
+    PApplet.arrayCopy(pixels, i0, rgbaPixels, 0, len);
+    PGL.javaToNativeARGB(rgbaPixels, w, h);
+    
+    // Copying pixel buffer to screen texture...
+    if (primarySurface) {
+      loadTextureImpl(POINT);  // (first making sure that the screen texture is valid).
+    }
+    pgl.copyToTexture(texture.glTarget, texture.glFormat, texture.glID,
+                      x, y, w, h, IntBuffer.wrap(rgbaPixels));
+
+    if (primarySurface || offscreenMultisample) {
+      // ...and drawing the texture to screen... but only
+      // if we are on the primary surface or we have
+      // multisampled FBO. Why? Because in the case of non-
+      // multisampled FBO, texture is actually the color buffer
+      // used by the color FBO, so with the copy operation we
+      // should be done updating the (off)screen buffer.
+      beginPixelsOp(OP_WRITE);
+      drawTexture(x, y, w, h);
+      endPixelsOp();
+    }
+  }
+  
+  
   //////////////////////////////////////////////////////////////
 
   // GET/SET PIXELS
@@ -4597,43 +4643,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void textureToPixels() {
     texture.get(pixels);
-  }
-  
-  
-  protected void saveSurfaceToPixels() {
-    if (primarySurface) {
-      allocatePixels();      
-      readPixels();      
-    }
-  }
-  
-  protected void restoreSurfaceFromPixels() {
-    if (primarySurface) {
-      loadTextureImpl(POINT);      
-      pixelsToTexture();
-      
-      beginPixelsOp(OP_WRITE);      
-      drawTexture();      
-      endPixelsOp();      
-    }
-  }
-
-  
-  protected void allocatePixels() {
-    if ((pixels == null) || (pixels.length != width * height)) {
-      pixels = new int[width * height];
-      pixelBuffer = IntBuffer.wrap(pixels);
-    }    
-  }  
-  
-  
-  protected void readPixels() {
-    beginPixelsOp(OP_READ);
-    pixelBuffer.rewind();
-    pgl.glReadPixels(0, 0, width, height, PGL.GL_RGBA, PGL.GL_UNSIGNED_BYTE, pixelBuffer);
-    endPixelsOp();
-    
-    PGL.nativeToJavaARGB(pixels, width, height);    
   }
   
   
