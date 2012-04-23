@@ -343,6 +343,7 @@ public class PGL {
   protected int texShaderProgram;
   protected int texVertShader;
   protected int texFragShader;
+  protected GLContext texShaderContext;
 
   protected int texVertLoc;
   protected int texTCoordLoc;
@@ -379,6 +380,7 @@ public class PGL {
   protected int rectShaderProgram;
   protected int rectVertShader;
   protected int rectFragShader;
+  protected GLContext rectShaderContext;
 
   protected int rectVertLoc;
   protected int rectColorLoc;
@@ -1288,7 +1290,7 @@ public class PGL {
   public void drawTexture(int target, int id, int width, int height,
                                               int texX0, int texY0, int texX1, int texY1,
                                               int scrX0, int scrY0, int scrX1, int scrY1) {
-    if (!loadedTexShader) {
+    if (!loadedTexShader || texShaderContext.hashCode() != context.hashCode()) {
       texVertShader = createShader(GL_VERTEX_SHADER, texVertShaderSource);
       texFragShader = createShader(GL_FRAGMENT_SHADER, texFragShaderSource);
       if (0 < texVertShader && 0 < texFragShader) {
@@ -1300,8 +1302,9 @@ public class PGL {
       }
       texData = ByteBuffer.allocateDirect(texCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
       loadedTexShader = true;
+      texShaderContext = context;
     }
-
+    
     if (0 < texShaderProgram) {
       // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
@@ -1311,9 +1314,9 @@ public class PGL {
       glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
       boolean writeMask = val[0];
       glDepthMask(false);
-
+      
       glUseProgram(texShaderProgram);
-
+      
       glEnableVertexAttribArray(texVertLoc);
       glEnableVertexAttribArray(texTCoordLoc);
 
@@ -1346,18 +1349,18 @@ public class PGL {
 
       texData.rewind();
       texData.put(texCoords);
-
+      
       enableTexturing(target);
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(target, id);
-
+      
       texData.position(0);
       glVertexAttribPointer(texVertLoc, 2, GL_FLOAT, false, 4 * SIZEOF_FLOAT, texData);
       texData.position(2);
       glVertexAttribPointer(texTCoordLoc, 2, GL_FLOAT, false, 4 * SIZEOF_FLOAT, texData);
-
+      
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
+      
       glBindTexture(target, 0);
       disableTexturing(target);
 
@@ -1373,7 +1376,7 @@ public class PGL {
 
   public void drawRectangle(float r, float g, float b, float a,
                             int scrX0, int scrY0, int scrX1, int scrY1) {
-    if (!loadedRectShader) {
+    if (!loadedRectShader || rectShaderContext.hashCode() != context.hashCode()) {
       rectVertShader = createShader(GL_VERTEX_SHADER, rectVertShaderSource);
       rectFragShader = createShader(GL_FRAGMENT_SHADER, rectFragShaderSource);
       if (0 < rectVertShader && 0 < rectFragShader) {
@@ -1385,6 +1388,7 @@ public class PGL {
       }
       rectData = ByteBuffer.allocateDirect(rectCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
       loadedRectShader = true;
+      rectShaderContext = context;
     }
 
     if (0 < rectShaderProgram) {
