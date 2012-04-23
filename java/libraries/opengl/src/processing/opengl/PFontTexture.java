@@ -227,6 +227,7 @@ class PFontTexture implements PConstants {
     }
     if (outdated) {
       for (int i = 0; i < textures.length; i++) {
+        pg.removeTextureObject(textures[i].glID);
         textures[i].glID = 0;
       }
     }

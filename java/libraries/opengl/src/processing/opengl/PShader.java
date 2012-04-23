@@ -296,7 +296,7 @@ public class PShader {
   }
     
   protected void init() {
-    if (programObject == 0 || contextIsOutdated()) {      
+    if (programObject == 0 || contextIsOutdated()) {
       context = pgl.getContext();
       programObject = pg.createGLSLProgramObject();
       
@@ -358,6 +358,10 @@ public class PShader {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
+      pg.removeGLSLProgramObject(programObject);
+      pg.removeGLSLVertShaderObject(vertexShader);
+      pg.removeGLSLFragShaderObject(fragmentShader);
+      
       programObject = 0;
       vertexShader = 0;
       fragmentShader = 0;

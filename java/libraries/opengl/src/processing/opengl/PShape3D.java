@@ -2990,6 +2990,30 @@ public class PShape3D extends PShape {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
+      // Removing the VBOs from the renderer's list so they
+      // doesn't get deleted by OpenGL. The VBOs were already 
+      // automatically disposed when the old context was 
+      // destroyed.
+      pg.removeVertexBufferObject(glFillVertexBufferID);
+      pg.removeVertexBufferObject(glFillColorBufferID);
+      pg.removeVertexBufferObject(glFillNormalBufferID);
+      pg.removeVertexBufferObject(glFillTexCoordBufferID);
+      pg.removeVertexBufferObject(glFillAmbientBufferID);
+      pg.removeVertexBufferObject(glFillSpecularBufferID);
+      pg.removeVertexBufferObject(glFillEmissiveBufferID);
+      pg.removeVertexBufferObject(glFillShininessBufferID);     
+      pg.removeVertexBufferObject(glFillIndexBufferID);
+      
+      pg.removeVertexBufferObject(glLineVertexBufferID);
+      pg.removeVertexBufferObject(glLineColorBufferID);
+      pg.removeVertexBufferObject(glLineDirWidthBufferID);
+      pg.removeVertexBufferObject(glLineIndexBufferID);
+      
+      pg.removeVertexBufferObject(glPointVertexBufferID);
+      pg.removeVertexBufferObject(glPointColorBufferID);
+      pg.removeVertexBufferObject(glPointSizeBufferID);
+      pg.removeVertexBufferObject(glPointIndexBufferID);
+      
       // The OpenGL resources have been already deleted
       // when the context changed. We only need to zero 
       // them to avoid deleting them again when the GC

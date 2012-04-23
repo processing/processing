@@ -327,6 +327,12 @@ public class PFramebuffer implements PConstants {
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
     if (outdated) {
+      pg.removeFrameBufferObject(glFboID);
+      pg.removeRenderBufferObject(glDepthBufferID);
+      pg.removeRenderBufferObject(glStencilBufferID);
+      pg.removeRenderBufferObject(glDepthStencilBufferID);
+      pg.removeRenderBufferObject(glColorBufferMultisampleID);
+      
       glFboID = 0;
       glDepthBufferID = 0;
       glStencilBufferID = 0;
