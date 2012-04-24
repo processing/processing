@@ -134,13 +134,13 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // GL objects:
 
-  static protected HashMap<Integer, Boolean> glTextureObjects    = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glVertexBuffers     = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glFrameBuffers      = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glRenderBuffers     = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glslPrograms        = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glslVertexShaders   = new HashMap<Integer, Boolean>();
-  static protected HashMap<Integer, Boolean> glslFragmentShaders = new HashMap<Integer, Boolean>();
+  static protected HashMap<GLResource, Boolean> glTextureObjects    = new HashMap<GLResource, Boolean>();
+  static protected HashMap<GLResource, Boolean> glVertexBuffers     = new HashMap<GLResource, Boolean>();
+  static protected HashMap<GLResource, Boolean> glFrameBuffers      = new HashMap<GLResource, Boolean>();
+  static protected HashMap<GLResource, Boolean> glRenderBuffers     = new HashMap<GLResource, Boolean>();
+  static protected HashMap<GLResource, Boolean> glslPrograms        = new HashMap<GLResource, Boolean>();
+  static protected HashMap<GLResource, Boolean> glslVertexShaders   = new HashMap<GLResource, Boolean>();
+  static protected HashMap<GLResource, Boolean> glslFragmentShaders = new HashMap<GLResource, Boolean>();
 
   // ........................................................
 
@@ -517,456 +517,494 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // RESOURCE HANDLING
 
+  
+  protected class GLResource {
+    int id;
+    int context;
+    GLResource(int id, int context) {
+      this.id = id;
+      this.context = context;
+    }
+    
+    public boolean equals(Object obj) {
+      GLResource other = (GLResource)obj; 
+      return other.id == id && other.context == context; 
+    }
+  }  
+  
 
   // Texture Objects -------------------------------------------
 
-  protected int createTextureObject() {
+  protected int createTextureObject(int context) {
     deleteFinalizedTextureObjects();
 
     int[] temp = new int[1];
     pgl.glGenTextures(1, temp, 0);
     int id = temp[0];
 
-    if (glTextureObjects.containsKey(id)) {
+    GLResource res = new GLResource(id, context);
+    
+    if (glTextureObjects.containsKey(res)) {
       showWarning("Adding same texture twice");
     } else {
-      glTextureObjects.put(id, false);
+      glTextureObjects.put(res, false);
     }
 
     return id;
   }
 
-  protected void deleteTextureObject(int id) {
-    if (glTextureObjects.containsKey(id)) {
-      int[] temp = new int[1];
-      temp[0] = id;
+  protected void deleteTextureObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glTextureObjects.containsKey(res)) {
+      int[] temp = { id };
       pgl.glDeleteTextures(1, temp, 0);
-      glTextureObjects.remove(id);
+      glTextureObjects.remove(res);
     }
   }
 
   protected void deleteAllTextureObjects() {
-    for (Integer id : glTextureObjects.keySet()) {
-      int[] temp = new int[1];
-      temp[0] = id.intValue();
+    for (GLResource res : glTextureObjects.keySet()) {
+      int[] temp = { res.id };
       pgl.glDeleteTextures(1, temp, 0);
     }
     glTextureObjects.clear();
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeTextureObject(int id) {
-    if (glTextureObjects.containsKey(id)) {
-      glTextureObjects.put(id, true);
+  synchronized protected void finalizeTextureObject(int id, int context) {
+    GLResource res = new GLResource(id, context);
+    if (glTextureObjects.containsKey(res)) {
+      glTextureObjects.put(res, true);
     } else {
       showWarning("Trying to finalize non-existing texture");
     }
   }
 
   protected void deleteFinalizedTextureObjects() {
-    Set<Integer> finalized = new HashSet<Integer>();
+    Set<GLResource> finalized = new HashSet<GLResource>();
 
-    for (Integer id : glTextureObjects.keySet()) {
-      if (glTextureObjects.get(id)) {
-        finalized.add(id);
-        int[] temp = new int[1];
-        temp[0] = id.intValue();
+    for (GLResource res : glTextureObjects.keySet()) {
+      if (glTextureObjects.get(res)) {
+        finalized.add(res);
+        int[] temp = { res.id };
         pgl.glDeleteTextures(1, temp, 0);
       }
     }
 
-    for (Integer id : finalized) {
-      glTextureObjects.remove(id);
+    for (GLResource res : finalized) {
+      glTextureObjects.remove(res);
     }
   }
   
-  protected void removeTextureObject(int id) {
-    if (glTextureObjects.containsKey(id)) {      
-      glTextureObjects.remove(id);
+  protected void removeTextureObject(int id, int context) {
+    GLResource res = new GLResource(id, context);
+    if (glTextureObjects.containsKey(res)) {      
+      glTextureObjects.remove(res);
     }    
   }  
 
   // Vertex Buffer Objects ----------------------------------------------
 
-  protected int createVertexBufferObject() {
+  protected int createVertexBufferObject(int context) {
     deleteFinalizedVertexBufferObjects();
 
     int[] temp = new int[1];
     pgl.glGenBuffers(1, temp, 0);
     int id = temp[0];
-
-    if (glVertexBuffers.containsKey(id)) {
+    
+    GLResource res = new GLResource(id, context); 
+    
+    if (glVertexBuffers.containsKey(res)) {
       showWarning("Adding same VBO twice");
     } else {
-      glVertexBuffers.put(id, false);
+      glVertexBuffers.put(res, false);
     }
 
     return id;
   }
 
-  protected void deleteVertexBufferObject(int id) {
-    if (glVertexBuffers.containsKey(id)) {
-      int[] temp = new int[1]; 
-      temp[0] = id;
+  protected void deleteVertexBufferObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glVertexBuffers.containsKey(res)) {
+      int[] temp = { id };
       pgl.glDeleteBuffers(1, temp, 0);
-      glVertexBuffers.remove(id);
+      glVertexBuffers.remove(res);
     }
   }
 
   protected void deleteAllVertexBufferObjects() {
-    for (Integer id : glVertexBuffers.keySet()) {
-      int[] temp = new int[1];
-      temp[0] = id.intValue();
+    for (GLResource res : glVertexBuffers.keySet()) {
+      int[] temp = { res.id };
       pgl.glDeleteBuffers(1, temp, 0);
     }
     glVertexBuffers.clear();
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeVertexBufferObject(int id) {
-    if (glVertexBuffers.containsKey(id)) {
-      glVertexBuffers.put(id, true);
+  synchronized protected void finalizeVertexBufferObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glVertexBuffers.containsKey(res)) {
+      glVertexBuffers.put(res, true);
     } else {
       showWarning("Trying to finalize non-existing VBO");
     }
   }
 
   protected void deleteFinalizedVertexBufferObjects() {
-    Set<Integer> finalized = new HashSet<Integer>();
+    Set<GLResource> finalized = new HashSet<GLResource>();
 
-    for (Integer id : glVertexBuffers.keySet()) {
-      if (glVertexBuffers.get(id)) {
-        finalized.add(id);
-        int[] temp = new int[1];
-        temp[0] = id.intValue();
+    for (GLResource res : glVertexBuffers.keySet()) {
+      if (glVertexBuffers.get(res)) {
+        finalized.add(res);
+        int[] temp = { res.id };
         pgl.glDeleteBuffers(1, temp, 0);
       }
     }
 
-    for (Integer id : finalized) {
-      glVertexBuffers.remove(id);
+    for (GLResource res : finalized) {
+      glVertexBuffers.remove(res);
     }
   }
 
-  protected void removeVertexBufferObject(int id) {
-    if (glVertexBuffers.containsKey(id)) {      
-      glVertexBuffers.remove(id);
+  protected void removeVertexBufferObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glVertexBuffers.containsKey(res)) {      
+      glVertexBuffers.remove(res);
     }    
   }    
 
   // FrameBuffer Objects -----------------------------------------
 
-  protected int createFrameBufferObject() {
+  protected int createFrameBufferObject(int context) {
     deleteFinalizedFrameBufferObjects();
 
     int[] temp = new int[1];
     pgl.glGenFramebuffers(1, temp, 0);
     int id = temp[0];
-
-    if (glFrameBuffers.containsKey(id)) {
+    
+    GLResource res = new GLResource(id, context); 
+    
+    if (glFrameBuffers.containsKey(res)) {
       showWarning("Adding same FBO twice");
     } else {
-      glFrameBuffers.put(id, false);
+      glFrameBuffers.put(res, false);
     }
 
     return id;
   }
 
-  protected void deleteFrameBufferObject(int id) {
-    if (glFrameBuffers.containsKey(id)) {
-      int[] temp = new int[1];
-      temp[0] = id;
+  protected void deleteFrameBufferObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glFrameBuffers.containsKey(res)) {
+      int[] temp = { id };
       pgl.glDeleteFramebuffers(1, temp, 0);
-      glFrameBuffers.remove(id);
+      glFrameBuffers.remove(res);
     }
   }
 
   protected void deleteAllFrameBufferObjects() {
-    for (Integer id : glFrameBuffers.keySet()) {
-      int[] temp = new int[1];
-      temp[0] = id.intValue();
+    for (GLResource res : glFrameBuffers.keySet()) {
+      int[] temp = { res.id };
       pgl.glDeleteFramebuffers(1, temp, 0);
     }
     glFrameBuffers.clear();
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeFrameBufferObject(int id) {
-    if (glFrameBuffers.containsKey(id)) {
-      glFrameBuffers.put(id, true);
+  synchronized protected void finalizeFrameBufferObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glFrameBuffers.containsKey(res)) {
+      glFrameBuffers.put(res, true);
     } else {
       showWarning("Trying to finalize non-existing FBO");
     }
   }
 
   protected void deleteFinalizedFrameBufferObjects() {
-    Set<Integer> finalized = new HashSet<Integer>();
+    Set<GLResource> finalized = new HashSet<GLResource>();
 
-    for (Integer id : glFrameBuffers.keySet()) {
-      if (glFrameBuffers.get(id)) {
-        finalized.add(id);
-        int[] temp = new int[1];
-        temp[0] = id.intValue();
+    for (GLResource res : glFrameBuffers.keySet()) {
+      if (glFrameBuffers.get(res)) {
+        finalized.add(res);
+        int[] temp = { res.id };
         pgl.glDeleteFramebuffers(1, temp, 0);
       }
     }
 
-    for (Integer id : finalized) {
-      glFrameBuffers.remove(id);
+    for (GLResource res : finalized) {
+      glFrameBuffers.remove(res);
     }
   }
 
-  protected void removeFrameBufferObject(int id) {
-    if (glFrameBuffers.containsKey(id)) {      
-      glFrameBuffers.remove(id);
+  protected void removeFrameBufferObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glFrameBuffers.containsKey(res)) {      
+      glFrameBuffers.remove(res);
     }    
   }   
   
   // RenderBuffer Objects -----------------------------------------------
 
-  protected int createRenderBufferObject() {
+  protected int createRenderBufferObject(int context) {
     deleteFinalizedRenderBufferObjects();
 
     int[] temp = new int[1];
     pgl.glGenRenderbuffers(1, temp, 0);
     int id = temp[0];
+    
+    GLResource res = new GLResource(id, context); 
 
-    if (glRenderBuffers.containsKey(id)) {
+    if (glRenderBuffers.containsKey(res)) {
       showWarning("Adding same renderbuffer twice");
     } else {
-      glRenderBuffers.put(id, false);
+      glRenderBuffers.put(res, false);
     }
 
     return id;
   }
 
-  protected void deleteRenderBufferObject(int id) {
-    if (glRenderBuffers.containsKey(id)) {
-      int[] temp = new int[1];
-      temp[0] = id;
+  protected void deleteRenderBufferObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glRenderBuffers.containsKey(res)) {
+      int[] temp = { id };
       pgl.glDeleteRenderbuffers(1, temp, 0);
-      glRenderBuffers.remove(id);
+      glRenderBuffers.remove(res);
     }
   }
 
   protected void deleteAllRenderBufferObjects() {
-    for (Integer id : glRenderBuffers.keySet()) {
-      int[] temp = new int[1];
-      temp[0] = id.intValue();
+    for (GLResource res : glRenderBuffers.keySet()) {
+      int[] temp = { res.id };
       pgl.glDeleteRenderbuffers(1, temp, 0);
     }
     glRenderBuffers.clear();
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeRenderBufferObject(int id) {
-    if (glRenderBuffers.containsKey(id)) {
-      glRenderBuffers.put(id, true);
+  synchronized protected void finalizeRenderBufferObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glRenderBuffers.containsKey(res)) {
+      glRenderBuffers.put(res, true);
     } else {
       showWarning("Trying to finalize non-existing renderbuffer");
     }
   }
 
   protected void deleteFinalizedRenderBufferObjects() {
-    Set<Integer> finalized = new HashSet<Integer>();
+    Set<GLResource> finalized = new HashSet<GLResource>();
 
-    for (Integer id : glRenderBuffers.keySet()) {
-      if (glRenderBuffers.get(id)) {
-        finalized.add(id);
-        int[] temp = new int[1]; 
-        temp[0] = id.intValue();
+    for (GLResource res : glRenderBuffers.keySet()) {
+      if (glRenderBuffers.get(res)) {
+        finalized.add(res);
+        int[] temp = { res.id };
         pgl.glDeleteRenderbuffers(1, temp, 0);
       }
     }
 
-    for (Integer id : finalized) {
-      glRenderBuffers.remove(id);
+    for (GLResource res : finalized) {
+      glRenderBuffers.remove(res);
     }
   }
 
-  protected void removeRenderBufferObject(int id) {
-    if (glRenderBuffers.containsKey(id)) {      
-      glRenderBuffers.remove(id);
+  protected void removeRenderBufferObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glRenderBuffers.containsKey(res)) {      
+      glRenderBuffers.remove(res);
     }    
   }  
   
   // GLSL Program Objects -----------------------------------------------
 
-  protected int createGLSLProgramObject() {
+  protected int createGLSLProgramObject(int context) {
     deleteFinalizedGLSLProgramObjects();
 
     int id = pgl.glCreateProgram();
 
-    if (glslPrograms.containsKey(id)) {
+    GLResource res = new GLResource(id, context); 
+    
+    if (glslPrograms.containsKey(res)) {
       showWarning("Adding same glsl program twice");
     } else {
-      glslPrograms.put(id, false);
+      glslPrograms.put(res, false);
     }
 
     return id;
   }
 
-  protected void deleteGLSLProgramObject(int id) {
-    if (glslPrograms.containsKey(id)) {
-      pgl.glDeleteProgram(id);
-      glslPrograms.remove(id);
+  protected void deleteGLSLProgramObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glslPrograms.containsKey(res)) {
+      pgl.glDeleteProgram(res.id);
+      glslPrograms.remove(res);
     }
   }
 
   protected void deleteAllGLSLProgramObjects() {
-    for (Integer id : glslPrograms.keySet()) {
-      pgl.glDeleteProgram(id);
+    for (GLResource res : glslPrograms.keySet()) {
+      pgl.glDeleteProgram(res.id);
     }
     glslPrograms.clear();
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeGLSLProgramObject(int id) {
-    if (glslPrograms.containsKey(id)) {
-      glslPrograms.put(id, true);
+  synchronized protected void finalizeGLSLProgramObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glslPrograms.containsKey(res)) {
+      glslPrograms.put(res, true);
     } else {
       showWarning("Trying to finalize non-existing glsl program");
     }
   }
 
   protected void deleteFinalizedGLSLProgramObjects() {
-    Set<Integer> finalized = new HashSet<Integer>();
+    Set<GLResource> finalized = new HashSet<GLResource>();
 
-    for (Integer id : glslPrograms.keySet()) {
-      if (glslPrograms.get(id)) {
-        finalized.add(id);
-        pgl.glDeleteProgram(id);
+    for (GLResource res : glslPrograms.keySet()) {
+      if (glslPrograms.get(res)) {
+        finalized.add(res);
+        pgl.glDeleteProgram(res.id);
       }
     }
 
-    for (Integer id : finalized) {
-      glslPrograms.remove(id);
+    for (GLResource res : finalized) {
+      glslPrograms.remove(res);
     }
   }
 
-  protected void removeGLSLProgramObject(int id) {
-    if (glslPrograms.containsKey(id)) {      
-      glslPrograms.remove(id);
+  protected void removeGLSLProgramObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glslPrograms.containsKey(res)) {      
+      glslPrograms.remove(res);
     }    
   }  
 
   // GLSL Vertex Shader Objects -----------------------------------------------
 
-  protected int createGLSLVertShaderObject() {
+  protected int createGLSLVertShaderObject(int context) {
     deleteFinalizedGLSLVertShaderObjects();
 
     int id = pgl.glCreateShader(PGL.GL_VERTEX_SHADER);
 
-    if (glslVertexShaders.containsKey(id)) {
+    GLResource res = new GLResource(id, context); 
+    
+    if (glslVertexShaders.containsKey(res)) {
       showWarning("Adding same glsl vertex shader twice");
     } else {
-      glslVertexShaders.put(id, false);
+      glslVertexShaders.put(res, false);
     }
 
     return id;
   }
 
-  protected void deleteGLSLVertShaderObject(int id) {
-    if (glslVertexShaders.containsKey(id)) {
-      pgl.glDeleteShader(id);
-      glslVertexShaders.remove(id);
+  protected void deleteGLSLVertShaderObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glslVertexShaders.containsKey(res)) {
+      pgl.glDeleteShader(res.id);
+      glslVertexShaders.remove(res);
     }
   }
 
   protected void deleteAllGLSLVertShaderObjects() {
-    for (Integer id : glslVertexShaders.keySet()) {
-      pgl.glDeleteShader(id);
+    for (GLResource res : glslVertexShaders.keySet()) {
+      pgl.glDeleteShader(res.id);
     }
     glslVertexShaders.clear();
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeGLSLVertShaderObject(int id) {
-    if (glslVertexShaders.containsKey(id)) {
-      glslVertexShaders.put(id, true);
+  synchronized protected void finalizeGLSLVertShaderObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glslVertexShaders.containsKey(res)) {
+      glslVertexShaders.put(res, true);
     } else {
       showWarning("Trying to finalize non-existing glsl vertex shader");
     }
   }
 
   protected void deleteFinalizedGLSLVertShaderObjects() {
-    Set<Integer> finalized = new HashSet<Integer>();
+    Set<GLResource> finalized = new HashSet<GLResource>();
 
-    for (Integer id : glslVertexShaders.keySet()) {
-      if (glslVertexShaders.get(id)) {
-        finalized.add(id);
-        pgl.glDeleteShader(id);
+    for (GLResource res : glslVertexShaders.keySet()) {
+      if (glslVertexShaders.get(res)) {
+        finalized.add(res);
+        pgl.glDeleteShader(res.id);
       }
     }
 
-    for (Integer id : finalized) {
-      glslVertexShaders.remove(id);
+    for (GLResource res : finalized) {
+      glslVertexShaders.remove(res);
     }
   }
 
-  protected void removeGLSLVertShaderObject(int id) {
-    if (glslVertexShaders.containsKey(id)) {      
-      glslVertexShaders.remove(id);
+  protected void removeGLSLVertShaderObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glslVertexShaders.containsKey(res)) {      
+      glslVertexShaders.remove(res);
     }    
   }  
 
   // GLSL Fragment Shader Objects -----------------------------------------------
 
-  protected int createGLSLFragShaderObject() {
+  protected int createGLSLFragShaderObject(int context) {
     deleteFinalizedGLSLFragShaderObjects();
 
     int id = pgl.glCreateShader(PGL.GL_FRAGMENT_SHADER);
 
-    if (glslFragmentShaders.containsKey(id)) {
+    GLResource res = new GLResource(id, context); 
+    
+    if (glslFragmentShaders.containsKey(res)) {
       showWarning("Adding same glsl fragment shader twice");
     } else {
-      glslFragmentShaders.put(id, false);
+      glslFragmentShaders.put(res, false);
     }
 
     return id;
   }
 
-  protected void deleteGLSLFragShaderObject(int id) {
-    if (glslFragmentShaders.containsKey(id)) {
-      pgl.glDeleteShader(id);
-      glslFragmentShaders.remove(id);
+  protected void deleteGLSLFragShaderObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glslFragmentShaders.containsKey(res)) {
+      pgl.glDeleteShader(res.id);
+      glslFragmentShaders.remove(res);
     }
   }
 
   protected void deleteAllGLSLFragShaderObjects() {
-    for (Integer id : glslFragmentShaders.keySet()) {
-      pgl.glDeleteShader(id);
+    for (GLResource res : glslFragmentShaders.keySet()) {
+      pgl.glDeleteShader(res.id);
     }
     glslFragmentShaders.clear();
   }
 
   // This is synchronized because it is called from the GC thread.
-  synchronized protected void finalizeGLSLFragShaderObject(int id) {
-    if (glslFragmentShaders.containsKey(id)) {
-      glslFragmentShaders.put(id, true);
+  synchronized protected void finalizeGLSLFragShaderObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glslFragmentShaders.containsKey(res)) {
+      glslFragmentShaders.put(res, true);
     } else {
       showWarning("Trying to finalize non-existing glsl fragment shader");
     }
   }
 
   protected void deleteFinalizedGLSLFragShaderObjects() {
-    Set<Integer> finalized = new HashSet<Integer>();
+    Set<GLResource> finalized = new HashSet<GLResource>();
 
-    for (Integer id : glslFragmentShaders.keySet()) {
-      if (glslFragmentShaders.get(id)) {
-        finalized.add(id);
-        pgl.glDeleteShader(id);
+    for (GLResource res : glslFragmentShaders.keySet()) {
+      if (glslFragmentShaders.get(res)) {
+        finalized.add(res);
+        pgl.glDeleteShader(res.id);
       }
     }
 
-    for (Integer id : finalized) {
-      glslFragmentShaders.remove(id);
+    for (GLResource res : finalized) {
+      glslFragmentShaders.remove(res);
     }
   }
 
-  protected void removeGLSLFragShaderObject(int id) {
-    if (glslFragmentShaders.containsKey(id)) {      
-      glslFragmentShaders.remove(id);
+  protected void removeGLSLFragShaderObject(int id, int context) {
+    GLResource res = new GLResource(id, context); 
+    if (glslFragmentShaders.containsKey(res)) {      
+      glslFragmentShaders.remove(res);
     }    
   }  
   
@@ -983,15 +1021,15 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void deleteAllGLResources() {
-    deleteAllTextureObjects();
-    deleteAllVertexBufferObjects();
-    deleteAllFrameBufferObjects();
-    deleteAllRenderBufferObjects();
-    deleteAllGLSLProgramObjects();
-    deleteAllGLSLVertShaderObjects();
-    deleteAllGLSLFragShaderObjects();
-  }
+//  protected void deleteAllGLResources() {
+//    deleteAllTextureObjects();
+//    deleteAllVertexBufferObjects();
+//    deleteAllFrameBufferObjects();
+//    deleteAllRenderBufferObjects();
+//    deleteAllGLSLProgramObjects();
+//    deleteAllGLSLVertShaderObjects();
+//    deleteAllGLSLFragShaderObjects();
+//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -1028,47 +1066,47 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void createFillBuffers() {
     if (!fillBuffersCreated || fillBuffersContextIsOutdated()) {
-      fillBuffersContext = pgl.getContext();
+      fillBuffersContext = pgl.getCurrentContext();
       
       int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
       int sizei = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_INT;
       int sizex = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INDEX;
 
-      glFillVertexBufferID = createVertexBufferObject();
+      glFillVertexBufferID = createVertexBufferObject(fillBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glFillColorBufferID = createVertexBufferObject();
+      glFillColorBufferID = createVertexBufferObject(fillBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glFillNormalBufferID = createVertexBufferObject();
+      glFillNormalBufferID = createVertexBufferObject(fillBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glFillTexCoordBufferID = createVertexBufferObject();
+      glFillTexCoordBufferID = createVertexBufferObject(fillBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glFillAmbientBufferID = pg.createVertexBufferObject();
+      glFillAmbientBufferID = pg.createVertexBufferObject(fillBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glFillSpecularBufferID = pg.createVertexBufferObject();
+      glFillSpecularBufferID = pg.createVertexBufferObject(fillBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glFillEmissiveBufferID = pg.createVertexBufferObject();
+      glFillEmissiveBufferID = pg.createVertexBufferObject(fillBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glFillShininessBufferID = pg.createVertexBufferObject();
+      glFillShininessBufferID = pg.createVertexBufferObject(fillBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      glFillIndexBufferID = createVertexBufferObject();
+      glFillIndexBufferID = createVertexBufferObject(fillBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
       pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
@@ -1114,10 +1152,10 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.fillTexcoords, 0, 2 * size), PGL.GL_STATIC_DRAW);
     }
-
+    
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.fillIndexCount * PGL.SIZEOF_INDEX,
-                     ShortBuffer.wrap(tessGeo.fillIndices, 0, tessGeo.fillIndexCount), PGL.GL_STATIC_DRAW);
+                     ShortBuffer.wrap(tessGeo.fillIndices, 0, tessGeo.fillIndexCount), PGL.GL_STATIC_DRAW);     
   }
 
 
@@ -1134,31 +1172,31 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deleteFillBuffers() {
     if (fillBuffersCreated) {
-      deleteVertexBufferObject(glFillVertexBufferID);
+      deleteVertexBufferObject(glFillVertexBufferID, fillBuffersContext.code());
       glFillVertexBufferID = 0;
 
-      deleteVertexBufferObject(glFillColorBufferID);
+      deleteVertexBufferObject(glFillColorBufferID, fillBuffersContext.code());
       glFillColorBufferID = 0;
 
-      deleteVertexBufferObject(glFillNormalBufferID);
+      deleteVertexBufferObject(glFillNormalBufferID, fillBuffersContext.code());
       glFillNormalBufferID = 0;
 
-      deleteVertexBufferObject(glFillTexCoordBufferID);
+      deleteVertexBufferObject(glFillTexCoordBufferID, fillBuffersContext.code());
       glFillTexCoordBufferID = 0;
 
-      deleteVertexBufferObject(glFillAmbientBufferID);
+      deleteVertexBufferObject(glFillAmbientBufferID, fillBuffersContext.code());
       glFillAmbientBufferID = 0;
 
-      deleteVertexBufferObject(glFillSpecularBufferID);
+      deleteVertexBufferObject(glFillSpecularBufferID, fillBuffersContext.code());
       glFillSpecularBufferID = 0;
 
-      deleteVertexBufferObject(glFillEmissiveBufferID);
+      deleteVertexBufferObject(glFillEmissiveBufferID, fillBuffersContext.code());
       glFillEmissiveBufferID = 0;
 
-      deleteVertexBufferObject(glFillShininessBufferID);
+      deleteVertexBufferObject(glFillShininessBufferID, fillBuffersContext.code());
       glFillShininessBufferID = 0;
 
-      deleteVertexBufferObject(glFillIndexBufferID);
+      deleteVertexBufferObject(glFillIndexBufferID, fillBuffersContext.code());
       glFillIndexBufferID = 0;    
       
       fillBuffersCreated = false;
@@ -1168,28 +1206,28 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void createLineBuffers() {
     if (!lineBuffersCreated || lineBufferContextIsOutdated()) {
-      lineBuffersContext = pgl.getContext();
+      lineBuffersContext = pgl.getCurrentContext();
       
       int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
       int sizex = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INDEX;
       int sizei = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INT;
 
-      glLineVertexBufferID = createVertexBufferObject();
+      glLineVertexBufferID = createVertexBufferObject(lineBuffersContext.code());
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glLineColorBufferID = createVertexBufferObject();
+      glLineColorBufferID = createVertexBufferObject(lineBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glLineDirWidthBufferID = createVertexBufferObject();
+      glLineDirWidthBufferID = createVertexBufferObject(lineBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      glLineIndexBufferID = createVertexBufferObject();
+      glLineIndexBufferID = createVertexBufferObject(lineBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
       pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
@@ -1235,16 +1273,16 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deleteLineBuffers() {
     if (lineBuffersCreated) {
-      deleteVertexBufferObject(glLineVertexBufferID);
+      deleteVertexBufferObject(glLineVertexBufferID, lineBuffersContext.code());
       glLineVertexBufferID = 0;
 
-      deleteVertexBufferObject(glLineColorBufferID);
+      deleteVertexBufferObject(glLineColorBufferID, lineBuffersContext.code());
       glLineColorBufferID = 0;
 
-      deleteVertexBufferObject(glLineDirWidthBufferID);
+      deleteVertexBufferObject(glLineDirWidthBufferID, lineBuffersContext.code());
       glLineDirWidthBufferID = 0;
 
-      deleteVertexBufferObject(glLineIndexBufferID);
+      deleteVertexBufferObject(glLineIndexBufferID, lineBuffersContext.code());
       glLineIndexBufferID = 0;
       
       lineBuffersCreated = false;
@@ -1254,27 +1292,27 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected void createPointBuffers() {
     if (!pointBuffersCreated || pointBuffersContextIsOutdated()) {
-      pointBuffersContext = pgl.getContext();
+      pointBuffersContext = pgl.getCurrentContext();
       
       int sizef = PGL.MAX_TESS_VERTICES * PGL.SIZEOF_FLOAT;
       int sizex = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INDEX;
       int sizei = PGL.MAX_TESS_INDICES * PGL.SIZEOF_INT;
 
-      glPointVertexBufferID = createVertexBufferObject();
+      glPointVertexBufferID = createVertexBufferObject(pointBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
 
-      glPointColorBufferID = createVertexBufferObject();
+      glPointColorBufferID = createVertexBufferObject(pointBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPointSizeBufferID = createVertexBufferObject();
+      glPointSizeBufferID = createVertexBufferObject(pointBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
-      glPointIndexBufferID = createVertexBufferObject();
+      glPointIndexBufferID = createVertexBufferObject(pointBuffersContext.code());
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
       pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
@@ -1320,16 +1358,16 @@ public class PGraphicsOpenGL extends PGraphics {
   
   protected void deletePointBuffers() {
     if (pointBuffersCreated) {
-      deleteVertexBufferObject(glPointVertexBufferID);
+      deleteVertexBufferObject(glPointVertexBufferID, pointBuffersContext.code());
       glPointVertexBufferID = 0;
 
-      deleteVertexBufferObject(glPointColorBufferID);
+      deleteVertexBufferObject(glPointColorBufferID, pointBuffersContext.code());
       glPointColorBufferID = 0;
 
-      deleteVertexBufferObject(glPointSizeBufferID);
+      deleteVertexBufferObject(glPointSizeBufferID, pointBuffersContext.code());
       glPointSizeBufferID = 0;
 
-      deleteVertexBufferObject(glPointIndexBufferID);
+      deleteVertexBufferObject(glPointIndexBufferID, pointBuffersContext.code());
       glPointIndexBufferID = 0;
       
       pointBuffersCreated = false;
@@ -2385,7 +2423,7 @@ public class PGraphicsOpenGL extends PGraphics {
       // If the user has been manipulating individual pixels,
       // the changes need to be copied to the screen before
       // drawing any new geometry.
-      renderPixels();
+      flushPixels();
       setgetPixels = false;
     }
 
@@ -2399,15 +2437,15 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       if (hasFill) {
-        renderFill();
+        flushFill();
       }
 
       if (hasPoints) {
-        renderPoints();
+        flushPoints();
       }
 
       if (hasLines) {
-        renderLines();
+        flushLines();
       }
 
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
@@ -2420,13 +2458,13 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void renderPixels() {
+  protected void flushPixels() {
     drawPixels(mx1, my1, mx2 - mx1 + 1, my2 - my1 + 1);
     modified = false;
   }
 
 
-  protected void renderPoints() {
+  protected void flushPoints() {
     updatePointBuffers();
 
     PointShader shader = getPointShader();
@@ -2442,7 +2480,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void renderLines() {
+  protected void flushLines() {
     updateLineBuffers();
 
     LineShader shader = getLineShader();
@@ -2459,7 +2497,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  protected void renderFill() {
+  protected void flushFill() {
     updateFillBuffers(lights, texCache.hasTexture);
 
     texCache.beginRender();
@@ -2493,42 +2531,6 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     texCache.endRender();
     unbindFillBuffers();
-  }
-
-
-  // Utility function to render current tessellated geometry, under the assumption that
-  // the texture is already bound.
-  protected void renderTexFill(PTexture tex) {
-    if (!fillBuffersCreated) {
-      createFillBuffers();
-      fillBuffersCreated = true;
-    }
-    updateFillBuffers(lights, true);
-
-    FillShader shader = getFillShader(lights, true);
-    shader.start();
-
-    shader.setVertexAttribute(glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);
-    shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
-    shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 0);
-    shader.setTexture(tex);
-
-    if (lights) {
-      shader.setNormalAttribute(glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 0);
-      shader.setAmbientAttribute(glFillAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
-      shader.setSpecularAttribute(glFillSpecularBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
-      shader.setEmissiveAttribute(glFillEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
-      shader.setShininessAttribute(glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, 0);
-    }
-
-    int size = tessGeo.fillIndexCount;
-    int sizex = size * PGL.SIZEOF_INDEX;
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
-    pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, ShortBuffer.wrap(tessGeo.fillIndices, 0, size), PGL.GL_STATIC_DRAW);
-    pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, 0);
-    pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    shader.stop();
   }
 
 
