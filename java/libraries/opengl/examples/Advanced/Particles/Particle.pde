@@ -21,7 +21,6 @@ class Particle {
     part.vertex(-partSize/2, +partSize/2, 0, sprite.height);
     part.end();
     
-    // Getting original location doesn't work (somehwo 
     rebirth(width/2,height/2);
     lifespan = random(255);
   }
@@ -53,9 +52,7 @@ class Particle {
     lifespan = lifespan - 1;
     velocity.add(gravity);
     
-    // Tint not working
     part.tint(255,lifespan);
     part.translate(velocity.x, velocity.y);
   }
 }
-

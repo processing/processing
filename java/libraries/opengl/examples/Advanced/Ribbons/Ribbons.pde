@@ -5,8 +5,8 @@
 // the structure using a ribbon representation.
 
 String pdbFile = "4HHB.pdb"; // PDB file to read
-//String pdbFile = "2POR.pdb";
 //String pdbFile = "1CBS.pdb";
+//String pdbFile = "2POR.pdb";
 
 // Some parameters to control the visual appearance:
 float scaleFactor = 5;          // Size factor
@@ -29,12 +29,10 @@ void setup() {
 }
 
 void draw() {
-   background(0);
+  background(0);
    
-  if (renderMode == 1) {
-    lights();
-  }
-  
+  lights();
+   
   translate(width/2, height/2, 200);
   arcball.run();
 
@@ -50,5 +48,3 @@ void mousePressed(){
 void mouseDragged(){
   arcball.mouseDragged();
 }
-
-
