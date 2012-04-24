@@ -229,7 +229,19 @@ public final class PMatrix3D implements PMatrix /*, PConstants*/ {
 
 
   public void rotate(float angle, float v0, float v1, float v2) {
-    // TODO should make sure this vector is normalized
+    float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
+    if (norm2 < PConstants.EPSILON) {
+      // The vector is zero, cannot apply rotation.
+      return;
+    }    
+    
+    if (Math.abs(norm2 - 1) > PConstants.EPSILON) {
+      // The rotation vector is not normalized.
+      float norm = PApplet.sqrt(norm2);
+      v0 /= norm;
+      v1 /= norm;
+      v2 /= norm;
+    } 
 
     float c = cos(angle);
     float s = sin(angle);
