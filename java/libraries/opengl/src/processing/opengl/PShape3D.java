@@ -259,6 +259,7 @@ public class PShape3D extends PShape {
   public PShape3D(PApplet parent, int family) {
     pg = (PGraphicsOpenGL)parent.g;
     pgl = pg.pgl;
+    context = pgl.createEmptyContext();
     
     prevMode = mode = DYNAMIC;
     
@@ -399,75 +400,75 @@ public class PShape3D extends PShape {
   
   protected void finalizeFillBuffers() {
     if (glFillVertexBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glFillVertexBufferID);   
+      pg.finalizeVertexBufferObject(glFillVertexBufferID, context.code());   
     }    
     
     if (glFillColorBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glFillColorBufferID);   
+      pg.finalizeVertexBufferObject(glFillColorBufferID, context.code());   
     }    
 
     if (glFillNormalBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glFillNormalBufferID);   
+      pg.finalizeVertexBufferObject(glFillNormalBufferID, context.code());   
     }     
 
     if (glFillTexCoordBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glFillTexCoordBufferID);   
+      pg.finalizeVertexBufferObject(glFillTexCoordBufferID, context.code());   
     }    
 
     if (glFillAmbientBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glFillAmbientBufferID);   
+      pg.finalizeVertexBufferObject(glFillAmbientBufferID, context.code());   
     }    
     
     if (glFillSpecularBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glFillSpecularBufferID);   
+      pg.finalizeVertexBufferObject(glFillSpecularBufferID, context.code());   
     }    
 
     if (glFillEmissiveBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glFillEmissiveBufferID);   
+      pg.finalizeVertexBufferObject(glFillEmissiveBufferID, context.code());   
     }     
 
     if (glFillShininessBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glFillShininessBufferID);   
+      pg.finalizeVertexBufferObject(glFillShininessBufferID, context.code());   
     }    
     
     if (glFillIndexBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glFillIndexBufferID);   
+      pg.finalizeVertexBufferObject(glFillIndexBufferID, context.code());   
     }   
   }
   
   protected void finalizeLineBuffers() {
     if (glLineVertexBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glLineVertexBufferID);   
+      pg.finalizeVertexBufferObject(glLineVertexBufferID, context.code());   
     }    
     
     if (glLineColorBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glLineColorBufferID);   
+      pg.finalizeVertexBufferObject(glLineColorBufferID, context.code());   
     }    
 
     if (glLineDirWidthBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glLineDirWidthBufferID);   
+      pg.finalizeVertexBufferObject(glLineDirWidthBufferID, context.code());   
     }    
     
     if (glLineIndexBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glLineIndexBufferID);   
+      pg.finalizeVertexBufferObject(glLineIndexBufferID, context.code());   
     }  
   }  
   
   protected void finalizePointBuffers() {
     if (glPointVertexBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glPointVertexBufferID);   
+      pg.finalizeVertexBufferObject(glPointVertexBufferID, context.code());   
     }    
     
     if (glPointColorBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glPointColorBufferID);   
+      pg.finalizeVertexBufferObject(glPointColorBufferID, context.code());   
     }    
 
     if (glPointSizeBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glPointSizeBufferID);   
+      pg.finalizeVertexBufferObject(glPointSizeBufferID, context.code());   
     }    
     
     if (glPointIndexBufferID != 0) {    
-      pg.finalizeVertexBufferObject(glPointIndexBufferID);   
+      pg.finalizeVertexBufferObject(glPointIndexBufferID, context.code());   
     }  
   }
 
@@ -2945,7 +2946,7 @@ public class PShape3D extends PShape {
   
   protected void copyGeometryToRoot() {
     if (root == this && parent == null) {
-      context = pgl.getContext();
+      context = pgl.getCurrentContext();
       
       // Now that we know, we can initialize the buffers with the correct size.
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {   
@@ -2994,25 +2995,25 @@ public class PShape3D extends PShape {
       // doesn't get deleted by OpenGL. The VBOs were already 
       // automatically disposed when the old context was 
       // destroyed.
-      pg.removeVertexBufferObject(glFillVertexBufferID);
-      pg.removeVertexBufferObject(glFillColorBufferID);
-      pg.removeVertexBufferObject(glFillNormalBufferID);
-      pg.removeVertexBufferObject(glFillTexCoordBufferID);
-      pg.removeVertexBufferObject(glFillAmbientBufferID);
-      pg.removeVertexBufferObject(glFillSpecularBufferID);
-      pg.removeVertexBufferObject(glFillEmissiveBufferID);
-      pg.removeVertexBufferObject(glFillShininessBufferID);     
-      pg.removeVertexBufferObject(glFillIndexBufferID);
+      pg.removeVertexBufferObject(glFillVertexBufferID, context.code());
+      pg.removeVertexBufferObject(glFillColorBufferID, context.code());
+      pg.removeVertexBufferObject(glFillNormalBufferID, context.code());
+      pg.removeVertexBufferObject(glFillTexCoordBufferID, context.code());
+      pg.removeVertexBufferObject(glFillAmbientBufferID, context.code());
+      pg.removeVertexBufferObject(glFillSpecularBufferID, context.code());
+      pg.removeVertexBufferObject(glFillEmissiveBufferID, context.code());
+      pg.removeVertexBufferObject(glFillShininessBufferID, context.code());     
+      pg.removeVertexBufferObject(glFillIndexBufferID, context.code());
       
-      pg.removeVertexBufferObject(glLineVertexBufferID);
-      pg.removeVertexBufferObject(glLineColorBufferID);
-      pg.removeVertexBufferObject(glLineDirWidthBufferID);
-      pg.removeVertexBufferObject(glLineIndexBufferID);
+      pg.removeVertexBufferObject(glLineVertexBufferID, context.code());
+      pg.removeVertexBufferObject(glLineColorBufferID, context.code());
+      pg.removeVertexBufferObject(glLineDirWidthBufferID, context.code());
+      pg.removeVertexBufferObject(glLineIndexBufferID, context.code());
       
-      pg.removeVertexBufferObject(glPointVertexBufferID);
-      pg.removeVertexBufferObject(glPointColorBufferID);
-      pg.removeVertexBufferObject(glPointSizeBufferID);
-      pg.removeVertexBufferObject(glPointIndexBufferID);
+      pg.removeVertexBufferObject(glPointVertexBufferID, context.code());
+      pg.removeVertexBufferObject(glPointColorBufferID, context.code());
+      pg.removeVertexBufferObject(glPointSizeBufferID, context.code());
+      pg.removeVertexBufferObject(glPointIndexBufferID, context.code());
       
       // The OpenGL resources have been already deleted
       // when the context changed. We only need to zero 
@@ -3047,41 +3048,41 @@ public class PShape3D extends PShape {
     int sizei = nvert * PGL.SIZEOF_INT;
     int sizex = nind * PGL.SIZEOF_INDEX;
     
-    glFillVertexBufferID = pg.createVertexBufferObject();  
+    glFillVertexBufferID = pg.createVertexBufferObject(context.code());  
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
     
-    glFillColorBufferID = pg.createVertexBufferObject();
+    glFillColorBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);    
     
-    glFillNormalBufferID = pg.createVertexBufferObject();
+    glFillNormalBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillNormalBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);     
     
-    glFillTexCoordBufferID = pg.createVertexBufferObject();
+    glFillTexCoordBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillTexCoordBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);  
     
-    glFillAmbientBufferID = pg.createVertexBufferObject();  
+    glFillAmbientBufferID = pg.createVertexBufferObject(context.code());  
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillAmbientBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
     
-    glFillSpecularBufferID = pg.createVertexBufferObject();
+    glFillSpecularBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillSpecularBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);    
     
-    glFillEmissiveBufferID = pg.createVertexBufferObject();
+    glFillEmissiveBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillEmissiveBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
     
-    glFillShininessBufferID = pg.createVertexBufferObject();
+    glFillShininessBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillShininessBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizef, null, PGL.GL_STATIC_DRAW);
         
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
         
-    glFillIndexBufferID = pg.createVertexBufferObject();  
+    glFillIndexBufferID = pg.createVertexBufferObject(context.code());  
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
     
@@ -3391,21 +3392,21 @@ public class PShape3D extends PShape {
     int sizei = nvert * PGL.SIZEOF_INT;
     int sizex = nind * PGL.SIZEOF_INDEX;
     
-    glLineVertexBufferID = pg.createVertexBufferObject();    
+    glLineVertexBufferID = pg.createVertexBufferObject(context.code());    
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineVertexBufferID);      
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);
     
-    glLineColorBufferID = pg.createVertexBufferObject();
+    glLineColorBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);       
 
-    glLineDirWidthBufferID = pg.createVertexBufferObject();
+    glLineDirWidthBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, PGL.GL_STATIC_DRAW);    
     
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);    
     
-    glLineIndexBufferID = pg.createVertexBufferObject();    
+    glLineIndexBufferID = pg.createVertexBufferObject(context.code());    
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
 
@@ -3485,21 +3486,21 @@ public class PShape3D extends PShape {
     int sizei = nvert * PGL.SIZEOF_INT;
     int sizex = nind * PGL.SIZEOF_INDEX;
     
-    glPointVertexBufferID = pg.createVertexBufferObject();
+    glPointVertexBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointVertexBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, null, PGL.GL_STATIC_DRAW);   
 
-    glPointColorBufferID = pg.createVertexBufferObject();
+    glPointColorBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);     
     
-    glPointSizeBufferID = pg.createVertexBufferObject();
+    glPointSizeBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
       
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);     
         
-    glPointIndexBufferID = pg.createVertexBufferObject();
+    glPointIndexBufferID = pg.createVertexBufferObject(context.code());
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, sizex, null, PGL.GL_STATIC_DRAW);
     
@@ -3590,47 +3591,47 @@ public class PShape3D extends PShape {
   
   protected void deleteFillBuffers() {
     if (glFillVertexBufferID != 0) {    
-      pg.deleteVertexBufferObject(glFillVertexBufferID);   
+      pg.deleteVertexBufferObject(glFillVertexBufferID, context.code());   
       glFillVertexBufferID = 0;
     }    
     
     if (glFillColorBufferID != 0) {    
-      pg.deleteVertexBufferObject(glFillColorBufferID);   
+      pg.deleteVertexBufferObject(glFillColorBufferID, context.code());   
       glFillColorBufferID = 0;
     }    
 
     if (glFillNormalBufferID != 0) {    
-      pg.deleteVertexBufferObject(glFillNormalBufferID);   
+      pg.deleteVertexBufferObject(glFillNormalBufferID, context.code());   
       glFillNormalBufferID = 0;
     }     
 
     if (glFillTexCoordBufferID != 0) {    
-      pg.deleteVertexBufferObject(glFillTexCoordBufferID);   
+      pg.deleteVertexBufferObject(glFillTexCoordBufferID, context.code());  
       glFillTexCoordBufferID = 0;
     }    
 
     if (glFillAmbientBufferID != 0) {    
-      pg.deleteVertexBufferObject(glFillAmbientBufferID);   
+      pg.deleteVertexBufferObject(glFillAmbientBufferID, context.code());   
       glFillAmbientBufferID = 0;
     }    
     
     if (glFillSpecularBufferID != 0) {    
-      pg.deleteVertexBufferObject(glFillSpecularBufferID);   
+      pg.deleteVertexBufferObject(glFillSpecularBufferID, context.code());   
       glFillSpecularBufferID = 0;
     }    
 
     if (glFillEmissiveBufferID != 0) {    
-      pg.deleteVertexBufferObject(glFillEmissiveBufferID);   
+      pg.deleteVertexBufferObject(glFillEmissiveBufferID, context.code());   
       glFillEmissiveBufferID = 0;
     }     
 
     if (glFillShininessBufferID != 0) {    
-      pg.deleteVertexBufferObject(glFillShininessBufferID);   
+      pg.deleteVertexBufferObject(glFillShininessBufferID, context.code());   
       glFillShininessBufferID = 0;
     }        
     
     if (glFillIndexBufferID != 0) {    
-      pg.deleteVertexBufferObject(glFillIndexBufferID);   
+      pg.deleteVertexBufferObject(glFillIndexBufferID, context.code());  
       glFillIndexBufferID = 0;
     }   
   }
@@ -3638,22 +3639,22 @@ public class PShape3D extends PShape {
   
   protected void deleteLineBuffers() {
     if (glLineVertexBufferID != 0) {    
-      pg.deleteVertexBufferObject(glLineVertexBufferID);   
+      pg.deleteVertexBufferObject(glLineVertexBufferID, context.code());   
       glLineVertexBufferID = 0;
     }    
     
     if (glLineColorBufferID != 0) {    
-      pg.deleteVertexBufferObject(glLineColorBufferID);   
+      pg.deleteVertexBufferObject(glLineColorBufferID, context.code());   
       glLineColorBufferID = 0;
     }    
 
     if (glLineDirWidthBufferID != 0) {    
-      pg.deleteVertexBufferObject(glLineDirWidthBufferID);   
+      pg.deleteVertexBufferObject(glLineDirWidthBufferID, context.code());  
       glLineDirWidthBufferID = 0;
     }    
     
     if (glLineIndexBufferID != 0) {    
-      pg.deleteVertexBufferObject(glLineIndexBufferID);   
+      pg.deleteVertexBufferObject(glLineIndexBufferID, context.code());   
       glLineIndexBufferID = 0;
     }  
   }  
@@ -3661,22 +3662,22 @@ public class PShape3D extends PShape {
   
   protected void deletePointBuffers() {
     if (glPointVertexBufferID != 0) {    
-      pg.deleteVertexBufferObject(glPointVertexBufferID);   
+      pg.deleteVertexBufferObject(glPointVertexBufferID, context.code());   
       glPointVertexBufferID = 0;
     }    
     
     if (glPointColorBufferID != 0) {    
-      pg.deleteVertexBufferObject(glPointColorBufferID);   
+      pg.deleteVertexBufferObject(glPointColorBufferID, context.code());   
       glPointColorBufferID = 0;
     }    
 
     if (glPointSizeBufferID != 0) {    
-      pg.deleteVertexBufferObject(glPointSizeBufferID);   
+      pg.deleteVertexBufferObject(glPointSizeBufferID, context.code());   
       glPointSizeBufferID = 0;
     }    
     
     if (glPointIndexBufferID != 0) {    
-      pg.deleteVertexBufferObject(glPointIndexBufferID);   
+      pg.deleteVertexBufferObject(glPointIndexBufferID, context.code());   
       glPointIndexBufferID = 0;
     }  
   }
