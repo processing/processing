@@ -1123,20 +1123,48 @@ public class PGL {
 
   // Context interface
 
+  
+  public Context createEmptyContext() {
+    return new Context();
+  }
+  
 
-  public Context getContext() {
+  public Context getCurrentContext() {
     return new Context(context);
   }
 
+  
   public class Context {
     protected GLContext context;
 
+    Context() {
+      context = null;    
+    }
+    
     Context(GLContext context) {
       this.context = context;
     }
 
-    boolean same(GLContext context) {
-      return this.context.hashCode() == context.hashCode();
+    boolean current() {
+      return equal(context);
+    }    
+    
+    boolean equal(GLContext context) {
+      if (this.context == null || context == null) {
+        // A null context means a still non-created resource,
+        // so it is considered equal to the argument.
+        return true; 
+      } else {        
+        return this.context.hashCode() == context.hashCode();
+      }
+    }
+    
+    int code() {
+      if (context == null) {
+        return -1;
+      } else {
+        return context.hashCode();
+      }
     }
   }
 
@@ -1233,7 +1261,7 @@ public class PGL {
 
 
   public boolean contextIsCurrent(Context other) {
-    return other != null && other.same(context);
+    return other == null || other.current();
   }
 
 
