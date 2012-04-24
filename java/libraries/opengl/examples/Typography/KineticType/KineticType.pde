@@ -33,6 +33,9 @@ void setup() {
     ln = new Line(words[i], 0, i * 70);
     lns[i] = ln;
   }
+  
+  // To avoid letter occluding each other on the edges
+  hint(DISABLE_DEPTH_TEST);  
 }
 
 void draw() {

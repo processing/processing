@@ -16,7 +16,7 @@ void setup() {
   pg.beginDraw();
   pg.background(0, 0);
   pg.noStroke();
-  pg.fill(255, 0, 0, 75);
+  pg.fill(255, 0, 0, 200);
   pg.endDraw(); 
 
   // Saving trefoil surface into a PShape3D object

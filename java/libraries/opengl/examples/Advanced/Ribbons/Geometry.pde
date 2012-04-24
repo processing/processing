@@ -11,11 +11,15 @@ int LHANDED = -1;
 int RHANDED = 1;
 
 void createRibbonModel(ArrayList residues, PShape model, ArrayList trj) {
-  ArrayList vertices;
-  ArrayList normals;
-  vertices = new ArrayList();
-  normals = new ArrayList();
+  // For line ribbons
+  ArrayList vertices0 = new ArrayList();
+  ArrayList vertices1 = new ArrayList();
+  ArrayList vertices2 = new ArrayList();
   
+  // For flat ribbons
+  ArrayList vertices = new ArrayList();
+  ArrayList normals = new ArrayList();
+    
   if (ribbonDetail == 1) uspacing = 10;
   else if (ribbonDetail == 2) uspacing = 5;
   else if (ribbonDetail == 3) uspacing = 2;
@@ -35,16 +39,42 @@ void createRibbonModel(ArrayList residues, PShape model, ArrayList trj) {
     constructControlPoints(residues, i, ss[i], handness[i]);
 
     if (renderMode == 0) {
-      generateSpline(0, vertices);
-      generateSpline(1, vertices);        
-      generateSpline(2, vertices);        
+      generateSpline(0, vertices0);
+      generateSpline(1, vertices1);        
+      generateSpline(2, vertices2);        
     } 
-    else generateFlatRibbon(vertices, normals);
+    else {
+      generateFlatRibbon(vertices, normals);
+    }
   }  
 
   if (renderMode == 0) {
-   // not implemented 
+    model = createShape();
+    model.stroke(ribbonColor);
+    model.noFill();    
+    model.beginContour();
+    for (int i = 0; i < vertices0.size(); i++) {
+      PVector posVec = (PVector)vertices0.get(i);
+      model.vertex(posVec.x, posVec.y, posVec.z);    
+    }
+    model.endContour();
+    model.beginContour();
+    for (int i = 0; i < vertices1.size(); i++) {
+      PVector posVec = (PVector)vertices1.get(i);
+      model.vertex(posVec.x, posVec.y, posVec.z);    
+    }
+    model.endContour();    
+    model.beginContour();
+    for (int i = 0; i < vertices2.size(); i++) {
+      PVector posVec = (PVector)vertices2.get(i);
+      model.vertex(posVec.x, posVec.y, posVec.z);    
+    }
+    model.endContour();    
+    model.end(OPEN);    
   } else {
+    // The ribbon construction is fairly inneficient here, since
+    // it could use triangle strips instead to avoid duplicating
+    // shared vertices...
     model = createShape(TRIANGLES);
     model.noStroke();
     model.fill(ribbonColor);
@@ -56,11 +86,15 @@ void createRibbonModel(ArrayList residues, PShape model, ArrayList trj) {
     }
     model.end();
   }
-  //model.setColor(ribbonColor);
   
   trj.add(model);
 
-  println("Adding new model with " + vertices.size() + " vertices.");
+  if (renderMode == 0) {
+    int totCount = vertices0.size() + vertices1.size() + vertices2.size();
+    println("Adding new model with " + totCount + " vertices.");
+  } else {
+    println("Adding new model with " + vertices.size() + " vertices.");
+  }
 }
 
 float calculateGyrRadius(ArrayList atoms) {
@@ -201,23 +235,21 @@ void generateSpline(int n, ArrayList vertices) {
   float u;
   PVector v0, v1;
 
-  v0 = new PVector();
   v1 = new PVector();
 
   if (n == 0) splineSide1.feval(0, v1); 
   else if (n == 1) splineCenter.feval(0, v1);
   else splineSide2.feval(0, v1);
+  vertices.add(new PVector(v1.x, v1.y, v1.z));
 
   for (ui = 1; ui <= 10; ui ++) {
     if (ui % uspacing == 0) {
       u = 0.1 * ui; 
-      v0.set(v1);
 
       if (n == 0) splineSide1.feval(u, v1); 
       else if (n == 1) splineCenter.feval(u, v1); 
       else splineSide2.feval(u, v1);
 
-      vertices.add(new PVector(v0.x, v0.y, v0.z));
       vertices.add(new PVector(v1.x, v1.y, v1.z));            
     }
   }
@@ -461,4 +493,3 @@ void constructControlPoints(ArrayList residues, int res, int ss, int handness) {
 PVector linearComb(float scalar0, PVector vector0, float scalar1, PVector vector1) {
   return PVector.add(PVector.mult(vector0, scalar0), PVector.mult(vector1, scalar1));
 }
-
