@@ -1429,8 +1429,8 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         setFramebuffer(offscreenFramebuffer);
       }
-      pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);
       pgl.updateOffscreen(pg.pgl);
+      pgl.glDrawBuffer(PGL.GL_COLOR_ATTACHMENT0);      
     }
 
     // We are ready to go!
@@ -3159,14 +3159,12 @@ public class PGraphicsOpenGL extends PGraphics {
       flush();
     }
 
-    modelview.rotate(angle, v0, v1, v2);
-    invRotate(modelviewInv, angle, v0, v1, v2);
-    calcProjmodelview(); // Possibly cheaper than doing projmodelview.rotate()
-  }
-
-
-  static private void invRotate(PMatrix3D matrix, float angle, float v0, float v1, float v2) {
     float norm2 = v0 * v0 + v1 * v1 + v2 * v2;
+    if (norm2 < EPSILON) {
+      // The vector is zero, cannot apply rotation.
+      return;
+    }    
+    
     if (Math.abs(norm2 - 1) > EPSILON) {
       // The rotation vector is not normalized.
       float norm = PApplet.sqrt(norm2);
@@ -3175,6 +3173,13 @@ public class PGraphicsOpenGL extends PGraphics {
       v2 /= norm;
     }    
     
+    modelview.rotate(angle, v0, v1, v2);
+    invRotate(modelviewInv, angle, v0, v1, v2);
+    calcProjmodelview(); // Possibly cheaper than doing projmodelview.rotate()
+  }
+
+
+  static private void invRotate(PMatrix3D matrix, float angle, float v0, float v1, float v2) {
     float c = PApplet.cos(-angle);
     float s = PApplet.sin(-angle);
     float t = 1.0f - c;
@@ -5010,10 +5015,10 @@ public class PGraphicsOpenGL extends PGraphics {
     // Getting the context and capabilities from the main renderer.
     pg = (PGraphicsOpenGL)parent.g;
     pgl.initOffscreenSurface(pg.pgl);
-
     pgl.updateOffscreen(pg.pgl);
+    
     loadTextureImpl(BILINEAR);
-
+    
     // In case of reinitialization (for example, when the smooth level
     // is changed), we make sure that all the OpenGL resources associated
     // to the surface are released by calling delete().
