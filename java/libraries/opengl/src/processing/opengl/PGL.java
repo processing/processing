@@ -1135,14 +1135,14 @@ public class PGL {
 
   
   public class Context {
-    protected GLContext context;
+    protected GLContext glContext;
 
     Context() {
-      context = null;    
+      glContext = null;    
     }
     
     Context(GLContext context) {
-      this.context = context;
+      glContext = context;
     }
 
     boolean current() {
@@ -1150,20 +1150,20 @@ public class PGL {
     }    
     
     boolean equal(GLContext context) {
-      if (this.context == null || context == null) {
+      if (glContext == null || context == null) {
         // A null context means a still non-created resource,
         // so it is considered equal to the argument.
         return true; 
       } else {        
-        return this.context.hashCode() == context.hashCode();
+        return glContext.hashCode() == context.hashCode();
       }
     }
     
     int code() {
-      if (context == null) {
+      if (glContext == null) {
         return -1;
       } else {
-        return context.hashCode();
+        return glContext.hashCode();
       }
     }
   }
