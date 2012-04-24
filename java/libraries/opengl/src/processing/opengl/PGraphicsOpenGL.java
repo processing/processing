@@ -575,8 +575,6 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context);
     if (glTextureObjects.containsKey(res)) {
       glTextureObjects.put(res, true);
-    } else {
-      showWarning("Trying to finalize non-existing texture");
     }
   }
 
@@ -645,8 +643,6 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context); 
     if (glVertexBuffers.containsKey(res)) {
       glVertexBuffers.put(res, true);
-    } else {
-      showWarning("Trying to finalize non-existing VBO");
     }
   }
 
@@ -715,8 +711,6 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context); 
     if (glFrameBuffers.containsKey(res)) {
       glFrameBuffers.put(res, true);
-    } else {
-      showWarning("Trying to finalize non-existing FBO");
     }
   }
 
@@ -785,8 +779,6 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context); 
     if (glRenderBuffers.containsKey(res)) {
       glRenderBuffers.put(res, true);
-    } else {
-      showWarning("Trying to finalize non-existing renderbuffer");
     }
   }
 
@@ -851,8 +843,6 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context); 
     if (glslPrograms.containsKey(res)) {
       glslPrograms.put(res, true);
-    } else {
-      showWarning("Trying to finalize non-existing glsl program");
     }
   }
 
@@ -916,8 +906,6 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context); 
     if (glslVertexShaders.containsKey(res)) {
       glslVertexShaders.put(res, true);
-    } else {
-      showWarning("Trying to finalize non-existing glsl vertex shader");
     }
   }
 
@@ -981,8 +969,6 @@ public class PGraphicsOpenGL extends PGraphics {
     GLResource res = new GLResource(id, context); 
     if (glslFragmentShaders.containsKey(res)) {
       glslFragmentShaders.put(res, true);
-    } else {
-      showWarning("Trying to finalize non-existing glsl fragment shader");
     }
   }
 
