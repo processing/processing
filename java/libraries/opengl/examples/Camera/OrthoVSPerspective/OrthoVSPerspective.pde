@@ -1,5 +1,3 @@
-// Status: Fixed
-
 /** 
  * Ortho vs Perspective. 
  * 

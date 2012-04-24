@@ -1,6 +1,6 @@
 // Blending, by Andres Colubri
 // Images can be blended using one of the 10 blending modes 
-// available in OPENGL2.   
+// available in P3D.   
 // Images by Kevin Bjorke.
 
 PImage pic1, pic2;

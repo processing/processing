@@ -1,5 +1,3 @@
-// Status: Fixed
-
 /**
  * Move Eye. 
  * by Simon Greenwold.

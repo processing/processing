@@ -1,6 +1,6 @@
 // Ariel and V3ga's arcball class with a couple tiny mods by Robert Hodgin
 
-class Arcball{
+class Arcball {
   float center_x, center_y, radius;
   Vec3 v_down, v_drag;
   Quat q_now, q_down, q_drag;
@@ -22,7 +22,7 @@ class Arcball{
     q_drag = new Quat();
 
     axisSet = new Vec3[] {new Vec3(1.0f, 0.0f, 0.0f), new Vec3(0.0f, 1.0f, 0.0f), new Vec3(0.0f, 0.0f, 1.0f)};
-    axis = -1;  // no constraints...
+    axis = -1;  // no constraints...    
   }
 
   void mousePressed(){
@@ -37,7 +37,6 @@ class Arcball{
   }
 
   void run(){
-
     q_now = Quat.mul(q_drag, q_down);
     applyQuat2Matrix(q_now);
     

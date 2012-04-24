@@ -103,19 +103,13 @@ void readPDB(String filename) {
   }
 
   // Centering models at (0, 0, 0).
-//  float dx = -0.5f * (xmin + xmax);
-//  float dy = -0.5f * (ymin + ymax);
-//  float dz = -0.5f * (zmin + zmax);
-//  for (int n = 0; n < models.size(); n++) {
-//    model = (PShape3D)models.get(n);
-//    model.loadVertices();
-//    for (int i = 0; i < model.getVertexCount(); i++) {
-//      model.vertices[3 * i + 0] += dx;
-//      model.vertices[3 * i + 1] += dy; 
-//      model.vertices[3 * i + 2] += dz;
-//    }
-//    model.updateVertices();
-//  }
+  float dx = -0.5f * (xmin + xmax);
+  float dy = -0.5f * (ymin + ymax);
+  float dz = -0.5f * (zmin + zmax);
+  for (int n = 0; n < models.size(); n++) {
+    model = (PShape) models.get(n);
+    model.translate(dx, dy, dz);
+  }
 
   println("Loaded PDB file with " + models.size() + " models.");
 }

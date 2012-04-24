@@ -84,11 +84,11 @@ PVector evalPoint(float u, float v) {
   float z = c * sin(1.5 * t);
         
   PVector dv = new PVector();
-  dv.x = -1.5f * b * sin(1.5f * t) * cos(t) -
-         (a + b * cos(1.5f * t)) * sin(t);
-  dv.y = -1.5f * b * sin(1.5f * t) * sin(t) +
-         (a + b * cos(1.5f * t)) * cos(t);
-  dv.z = 1.5f * c * cos(1.5f * t);
+  dv.x = -1.5 * b * sin(1.5 * t) * cos(t) -
+         (a + b * cos(1.5 * t)) * sin(t);
+  dv.y = -1.5 * b * sin(1.5 * t) * sin(t) +
+         (a + b * cos(1.5 * t)) * cos(t);
+  dv.z = 1.5 * c * cos(1.5 * t);
         
   PVector q = dv;      
   q.normalize();
