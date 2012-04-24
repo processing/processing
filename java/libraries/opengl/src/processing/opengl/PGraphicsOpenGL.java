@@ -40,9 +40,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-// TODO:
-// 2) non-interactive mode problem?
-
 /**
  * OpenGL renderer.
  *
@@ -4943,6 +4940,9 @@ public class PGraphicsOpenGL extends PGraphics {
       params = PTexture.newParameters();
       img.setParams(pg, params);
     }
+    if (img.parent == null) {
+      img.parent = parent;
+    }
     PTexture tex = new PTexture(img.parent, img.width, img.height, params);
     img.loadPixels();
     if (img.pixels != null) tex.set(img.pixels);
@@ -6825,6 +6825,14 @@ public class PGraphicsOpenGL extends PGraphics {
           addFillIndex(i, firstTessIdx + i - i0);
         }                  
       }      
+    }    
+    
+    void addPoint() {
+      
+    }
+
+    void addLine() {
+      
     }    
     
     void addEllipse(int ellipseMode, float a, float b, float c, float d,
