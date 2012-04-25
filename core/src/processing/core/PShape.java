@@ -96,7 +96,7 @@ public class PShape implements PConstants {
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
   protected int kind;
   
-  /** STATIC, DYNAMIC, STREAM */
+  /** STATIC, DYNAMIC */
   protected int mode;
 
   protected PMatrix matrix;
@@ -1201,6 +1201,45 @@ public class PShape implements PConstants {
   }
 
 
+  public void setPath(float[][] coords) {
+    setPath(coords, null);
+  }
+  
+  
+  public void setPath(float[][] coords, int[] codes) {
+    if (coords == null || coords.length == 0) return;
+    
+    if (codes == null || codes.length == 0) { 
+      vertexCodeCount = 0;
+    } else {
+      if (codes.length != coords.length) {
+        PGraphics.showWarning("Wrong number of vertex codes");
+        return;
+      }
+      vertexCodeCount = codes.length;
+    }
+      
+    int ncoords = coords[0].length;
+    
+    if (vertices == null || 
+        vertices.length != coords.length || 
+        vertices[0].length != ncoords) {
+      vertices = new float[coords.length][ncoords];
+    }
+    
+    for (int i = 0; i < coords.length; i++) {
+      PApplet.arrayCopy(coords[i], vertices[i]);
+    }
+    
+    if (0 < vertexCodeCount) {
+      if (vertexCodes == null || vertexCodes.length != vertexCodeCount) {
+        vertexCodes = new int[vertexCodeCount];
+      }
+      PApplet.arrayCopy(codes, vertexCodes);
+    }
+  }
+  
+  
   public int getVertexCount() {
     return vertexCount;
   }
