@@ -2344,7 +2344,10 @@ public class PShape3D extends PShape {
     if (indices == null || indices.length != tess.fillIndices.length) {
       indices = new int[tess.fillIndices.length];      
     }
-    PApplet.arrayCopy(tess.fillIndices, indices);
+    //PApplet.arrayCopy(tess.fillIndices, indices);
+    for (int i = 0; i < tess.fillIndices.length; i++) {
+      indices[i] = tess.fillIndices[i];
+    }    
     removeIndexOffset(indices);
     return indices;
   }    
@@ -2409,7 +2412,10 @@ public class PShape3D extends PShape {
     if (indices == null || indices.length != tess.lineIndices.length) {
       indices = new int[tess.lineIndices.length];
     }
-    PApplet.arrayCopy(tess.lineIndices, indices);
+    //PApplet.arrayCopy(tess.lineIndices, indices);
+    for (int i = 0; i < tess.lineIndices.length; i++) {
+      indices[i] = tess.lineIndices[i];
+    }    
     removeIndexOffset(indices);
     return indices;
   }  
@@ -2474,7 +2480,10 @@ public class PShape3D extends PShape {
     if (indices == null || indices.length != tess.pointIndices.length) {
       indices = new int[tess.pointIndices.length];
     }
-    PApplet.arrayCopy(tess.pointIndices, indices);
+//    PApplet.arrayCopy(tess.pointIndices, indices);
+    for (int i = 0; i < tess.pointIndices.length; i++) {
+      indices[i] = tess.pointIndices[i];
+    }    
     removeIndexOffset(indices);
     return indices;
   }   
