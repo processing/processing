@@ -1996,14 +1996,14 @@ public class PGraphicsOpenGL extends PGraphics {
     int len = p.length;
 
     if (kind == POINT) {
-      if (len != 2) {
+      if (len != 2 && len != 3) {
         showWarning("Wrong number of parameters");
         return null;
       }
       shape = new PShape3D(parent, PShape.PRIMITIVE);
       shape.setKind(POINT);
     } else if (kind == LINE) {
-      if (len != 4) {
+      if (len != 4 && len != 6) {
         showWarning("Wrong number of parameters");
         return null;
       }
@@ -2533,16 +2533,15 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
-                           float x4, float y4, float z4) {  
+                           float x4, float y4, float z4) {
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addBezierVertex(x2, y2, z2,
                           x3, y3, z3,
                           x4, y4, z4,
-                          normalX, normalY, normalZ,
-                          bezierDetail, fill, fillColor, 
-                          stroke, strokeColor, strokeWeight,
-                          ambientColor, specularColor, emissiveColor, 
-                          shininess, 
-                          shape);
+                          fill, stroke, bezierDetail, shape); 
+                          
   }
 
 
@@ -2555,12 +2554,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
-    float x1 = inGeo.getLastVertexX();
-    float y1 = inGeo.getLastVertexY();
-    float z1 = inGeo.getLastVertexZ();
-    bezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
-                 x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
-                 x3, y3, z3);
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);    
+    inGeo.addQuadraticVertex(cx, cy, cz,
+                             x3, y3, z3,
+                             fill, stroke, bezierDetail, shape);    
   }
 
   
@@ -2575,13 +2574,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void curveVertex(float x, float y, float z) {
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addCurveVertex(x, y, z,
-                         normalX, normalY, normalZ,
-                         curveDetail, fill, fillColor, 
-                         stroke, strokeColor, strokeWeight,
-                         ambientColor, specularColor, emissiveColor, 
-                         shininess,
-                         shape);
+                         fill, stroke, curveDetail, shape); 
   }
 
   
@@ -2589,23 +2586,75 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // POINT, LINE, TRIANGLE, QUAD
 
-  // Because vertex(x, y) is mapped to vertex(x, y, 0), none of these commands
-  // need to be overridden from their default implementation in PGraphics.
+  
+  public void point(float x, float y) {
+    point(x, y, 0);  
+  }
 
-  // public void point(float x, float y)
+  
+  public void point(float x, float y, float z) {
+    beginShape(POINTS);
+    defaultEdges = false;
+    normalMode = NORMAL_MODE_SHAPE;
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);     
+    inGeo.addPoint(x, y, z, fill, stroke);
+    endShape();
+  }
 
-  // public void point(float x, float y, float z)
+  
+  public void line(float x1, float y1, float x2, float y2) {
+    line(x1, y1, 0, x2, y2, 0);
+  }
 
-  // public void line(float x1, float y1, float x2, float y2)
+  
+  public void line(float x1, float y1, float z1,
+                   float x2, float y2, float z2) {
+    beginShape(LINES);
+    defaultEdges = false;
+    normalMode = NORMAL_MODE_SHAPE;
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addLine(x1, y1, z1,
+                  x2, y2, z2,
+                  fill, stroke);
+    endShape();
+  }
+  
 
-  // public void line(float x1, float y1, float z1,
-  // float x2, float y2, float z2)
+  public void triangle(float x1, float y1, float x2, float y2,
+                       float x3, float y3) {
+    beginShape(TRIANGLES);
+    defaultEdges = false;
+    normalMode = NORMAL_MODE_SHAPE;
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addTriangle(x1, y1, 0,
+                      x2, y2, 0,
+                      x3, y3, 0,
+                      fill, stroke);    
+    endShape();
+  }
 
-  // public void triangle(float x1, float y1, float x2, float y2,
-  // float x3, float y3)
-
-  // public void quad(float x1, float y1, float x2, float y2,
-  // float x3, float y3, float x4, float y4)
+  
+  public void quad(float x1, float y1, float x2, float y2,
+                   float x3, float y3, float x4, float y4) {
+    beginShape(QUADS);
+    defaultEdges = false;
+    normalMode = NORMAL_MODE_SHAPE;
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addQuad(x1, y1, 0,
+                  x2, y2, 0,
+                  x3, y3, 0,
+                  x4, y4, 0,
+                  fill, stroke);
+    endShape();
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -2613,8 +2662,33 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // public void rectMode(int mode)
 
-  // public void rect(float a, float b, float c, float d)
+  public void rect(float a, float b, float c, float d) {
+    beginShape(QUADS);
+    defaultEdges = false;
+    normalMode = NORMAL_MODE_SHAPE;
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addRect(a, b, c, d,
+                  fill, stroke, rectMode);    
+    endShape();
+  }
 
+  
+  public void rect(float a, float b, float c, float d,
+                   float tl, float tr, float br, float bl) {
+    beginShape(POLYGON);
+    defaultEdges = false;
+    normalMode = NORMAL_MODE_SHAPE;
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addRect(a, b, c, d,
+                  tl, tr, br, bl,
+                  fill, stroke, bezierDetail, rectMode);
+    endShape(CLOSE);
+  }
+  
   // protected void rectImpl(float x1, float y1, float x2, float y2)
 
   //////////////////////////////////////////////////////////////
@@ -2628,83 +2702,26 @@ public class PGraphicsOpenGL extends PGraphics {
      beginShape(TRIANGLE_FAN);
      defaultEdges = false;
      normalMode = NORMAL_MODE_SHAPE;
-     inGeo.addEllipse(ellipseMode, a, b, c, d,
-                      fill, fillColor,
-                      stroke, strokeColor, strokeWeight,
-                      ambientColor, specularColor, emissiveColor, shininess);
+     inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                     ambientColor, specularColor, emissiveColor, shininess);
+     inGeo.setNormal(normalX, normalY, normalZ);     
+     inGeo.addEllipse(a, b, c, d, fill, stroke, ellipseMode);
      endShape();
   }
 
 
   // public void ellipse(float a, float b, float c, float d)
 
-  // public void arc(float a, float b, float c, float d,
-  // float start, float stop)
-
-  //////////////////////////////////////////////////////////////
-
-  // ARC
-
-
-  protected void arcImpl(float x, float y, float w, float h,
-                         float start, float stop) {
-    float hr = w / 2f;
-    float vr = h / 2f;
-
-    float centerX = x + hr;
-    float centerY = y + vr;
-
-    if (fill) {
-      // shut off stroke for a minute
-      boolean savedStroke = stroke;
-      stroke = false;
-
-      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
-      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
-
-      beginShape(TRIANGLE_FAN);
-      vertex(centerX, centerY);
-      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
-      for (int i = startLUT; i < stopLUT; i += increment) {
-        int ii = i % SINCOS_LENGTH;
-        // modulo won't make the value positive
-        if (ii < 0) ii += SINCOS_LENGTH;
-        vertex(centerX + cosLUT[ii] * hr,
-               centerY + sinLUT[ii] * vr);
-      }
-      // draw last point explicitly for accuracy
-      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
-             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
-      endShape();
-
-      stroke = savedStroke;
-    }
-
-    if (stroke) {
-      // Almost identical to above, but this uses a LINE_STRIP
-      // and doesn't include the first (center) vertex.
-
-      boolean savedFill = fill;
-      fill = false;
-
-      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
-      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
-
-      beginShape(); //LINE_STRIP);
-      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
-      for (int i = startLUT; i < stopLUT; i += increment) {
-        int ii = i % SINCOS_LENGTH;
-        if (ii < 0) ii += SINCOS_LENGTH;
-        vertex(centerX + cosLUT[ii] * hr,
-               centerY + sinLUT[ii] * vr);
-      }
-      // draw last point explicitly for accuracy
-      vertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
-             centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr);
-      endShape();
-
-      fill = savedFill;
-    }
+  public void arc(float a, float b, float c, float d,
+                  float start, float stop) {
+    beginShape(TRIANGLE_FAN);
+    defaultEdges = false;
+    normalMode = NORMAL_MODE_SHAPE;
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setNormal(normalX, normalY, normalZ);     
+    inGeo.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
+    endShape();    
   }
 
 
@@ -2718,11 +2735,9 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(QUADS);
     defaultEdges = false;
     normalMode = NORMAL_MODE_VERTEX;
-    inGeo.addBox(w, h, d,
-                 fill, fillColor, 
-                 stroke, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, 
-                 shininess);
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);    
+    inGeo.addBox(w, h, d, fill, stroke);
     endShape();
   }
 
@@ -2738,11 +2753,9 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(TRIANGLES);
     defaultEdges = false;
     normalMode = NORMAL_MODE_VERTEX;
-    int[] indices = inGeo.addSphere(r, sphereDetailU, sphereDetailV, 
-                                    fill, fillColor, 
-                                    stroke, strokeColor, strokeWeight,
-                                    ambientColor, specularColor, emissiveColor, 
-                                    shininess);    
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
+                    ambientColor, specularColor, emissiveColor, shininess);    
+    int[] indices = inGeo.addSphere(r, sphereDetailU, sphereDetailV, fill, stroke);    
     endShape(indices);
   }
 
@@ -6053,6 +6066,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int specularColor;
     int emissiveColor;
     float shininessFactor; 
+    float normalX, normalY, normalZ;
 
     // Indices to map input vertices to tessellated vertices.
     int[][] pointIndices;
@@ -6187,53 +6201,50 @@ public class PGraphicsOpenGL extends PGraphics {
     }
         
     int addVertex(float x, float y,
-                  int fcolor,
-                  float u, float v,
-                  int scolor, float sweight,
-                  int am, int sp, int em, float shine,
                   int code) {
       return addVertex(x, y, 0,
-                       fcolor,
-                       0, 0, 1,
-                       u, v,
-                       scolor, sweight,
-                       am, sp, em, shine,
+                       fillColor,
+                       normalX, normalY, normalZ,
+                       0, 0,
+                       strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininessFactor,
                        code);
     }
 
     int addVertex(float x, float y,
                   float u, float v,
                   int code) { 
-      return addVertex(x, y, 
-                       fillColor, 
-                       u, v, 
+      return addVertex(x, y, 0,
+                       fillColor,
+                       normalX, normalY, normalZ,
+                       u, v,
                        strokeColor, strokeWeight,
                        ambientColor, specularColor, emissiveColor, shininessFactor,
                        code);
     }    
-    
-    int addVertex(float x, float y,
-                  int fcolor,
-                  int scolor, float sweight,
-                  int am, int sp, int em, float shine,
-                  int code) {
-      return addVertex(x, y, 0,
-                       fcolor,
-                       0, 0, 1,
-                       0, 0,
-                       scolor, sweight,
-                       am, sp, em, shine,
-                       code);
-    }
-    
-    int addVertex(float x, float y,
+
+    int addVertex(float x, float y, float z,
                   int code) { 
-      return addVertex(x, y, 
+      return addVertex(x, y, z,
                        fillColor,
+                       normalX, normalY, normalZ,
+                       0, 0,
                        strokeColor, strokeWeight,
                        ambientColor, specularColor, emissiveColor, shininessFactor,
                        code);
     }      
+    
+    int addVertex(float x, float y, float z,
+                  float u, float v,
+                  int code) {
+      return addVertex(x, y, z,
+                       fillColor,
+                       normalX, normalY, normalZ,
+                       u, v, 
+                       strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininessFactor,
+                       code);           
+    }    
     
     int addVertex(float x, float y, float z,
                   int fcolor,
@@ -6277,19 +6288,6 @@ public class PGraphicsOpenGL extends PGraphics {
       vertexCount++;
 
       return lastVertex;
-    }
-    
-    int addVertex(float x, float y, float z,
-                  float nx, float ny, float nz,
-                  float u, float v,
-                  int code) {
-      return addVertex(x, y, z,
-                       fillColor,
-                       nx, ny, nz,
-                       u, v, 
-                       strokeColor, strokeWeight,
-                       ambientColor, specularColor, emissiveColor, shininessFactor,
-                       code);           
     }
 
     void vertexCheck() {
@@ -6827,19 +6825,186 @@ public class PGraphicsOpenGL extends PGraphics {
       }      
     }    
     
-    void addPoint() {
-      
+    // -----------------------------------------------------------------
+    //
+    // Primitives
+    
+    void setColors(int fillColor, int strokeColor, float strokeWeight,
+                   int ambientColor, int specularColor, int emissiveColor, float shininessFactor) {
+      this.fillColor = fillColor;
+      this.strokeColor = strokeColor; 
+      this.strokeWeight = strokeWeight;
+      this.ambientColor = ambientColor;
+      this.specularColor = specularColor;
+      this.emissiveColor = emissiveColor;
+      this.shininessFactor = shininessFactor;      
+    }
+    
+    void setNormal(float normalX, float normalY, float normalZ) {
+      this.normalX = normalX;
+      this.normalY = normalY; 
+      this.normalZ = normalZ;
+    }
+    
+    void addPoint(float x, float y, float z, boolean fill, boolean stroke) {       
+      addVertex(x, y, z, VERTEX);      
     }
 
-    void addLine() {
-      
+    void addLine(float x1, float y1, float z1,
+                 float x2, float y2, float z2,
+                 boolean fill, boolean stroke) {
+      int idx1 = addVertex(x1, y1, z1, VERTEX);
+      int idx2 = addVertex(x2, y2, z2, VERTEX);
+      if (stroke) addEdge(idx1, idx2, true, true);      
+    } 
+
+    void addTriangle(float x1, float y1, float z1, 
+                     float x2, float y2, float z2,
+                     float x3, float y3, float z3,
+                     boolean fill, boolean stroke) {
+      int idx1 = addVertex(x1, y1, z1, VERTEX);
+      int idx2 = addVertex(x2, y2, z2, VERTEX);      
+      int idx3 = addVertex(x3, y3, z3, VERTEX);
+      if (stroke) { 
+        addEdge(idx1, idx2, true, false);
+        addEdge(idx2, idx3, false, false);
+        addEdge(idx3, idx1, false, true);
+      }
     }    
+
+    void addQuad(float x1, float y1, float z1,
+                 float x2, float y2, float z2,
+                 float x3, float y3, float z3,
+                 float x4, float y4, float z4,
+                 boolean fill, boolean stroke) {
+      int idx1 = addVertex(x1, y1, z1, VERTEX);
+      int idx2 = addVertex(x2, y2, z2, VERTEX);      
+      int idx3 = addVertex(x3, y3, z3, VERTEX);
+      int idx4 = addVertex(x4, y4, z4, VERTEX);
+      if (stroke) { 
+        addEdge(idx1, idx2, true, false);
+        addEdge(idx2, idx3, false, false);
+        addEdge(idx3, idx4, false, false);
+        addEdge(idx4, idx1, false, true);
+      }      
+    } 
     
-    void addEllipse(int ellipseMode, float a, float b, float c, float d,
-                    boolean fill, int fillColor,
-                    boolean stroke, int strokeColor, float strokeWeight,
-                    int ambientColor, int specularColor, int emissiveColor, 
-                    float shininessFactor) {
+    void addRect(float a, float b, float c, float d, 
+                 boolean fill, boolean stroke, int rectMode) {
+      float hradius, vradius;
+      switch (rectMode) {
+      case CORNERS:
+        break;
+      case CORNER:
+        c += a; d += b;
+        break;
+      case RADIUS:
+        hradius = c;
+        vradius = d;
+        c = a + hradius;
+        d = b + vradius;
+        a -= hradius;
+        b -= vradius;
+        break;
+      case CENTER:
+        hradius = c / 2.0f;
+        vradius = d / 2.0f;
+        c = a + hradius;
+        d = b + vradius;
+        a -= hradius;
+        b -= vradius;
+      }
+
+      if (a > c) {
+        float temp = a; a = c; c = temp;
+      }
+
+      if (b > d) {
+        float temp = b; b = d; d = temp;
+      }   
+        
+      addQuad(a, b, 0,
+              c, b, 0, 
+              c, d, 0,
+              a, d, 0,
+              fill, stroke);
+    }
+    
+    void addRect(float a, float b, float c, float d,
+                 float tl, float tr, float br, float bl,
+                 boolean fill, boolean stroke, int detail, int rectMode) {
+      float hradius, vradius;
+      switch (rectMode) {
+      case CORNERS:
+        break;
+      case CORNER:
+        c += a; d += b;
+        break;
+      case RADIUS:
+        hradius = c;
+        vradius = d;
+        c = a + hradius;
+        d = b + vradius;
+        a -= hradius;
+        b -= vradius;
+        break;
+      case CENTER:
+        hradius = c / 2.0f;
+        vradius = d / 2.0f;
+        c = a + hradius;
+        d = b + vradius;
+        a -= hradius;
+        b -= vradius;
+      }
+
+      if (a > c) {
+        float temp = a; a = c; c = temp;
+      }
+
+      if (b > d) {
+        float temp = b; b = d; d = temp;
+      }
+
+      float maxRounding = PApplet.min((c - a) / 2, (d - b) / 2);
+      if (tl > maxRounding) tl = maxRounding;
+      if (tr > maxRounding) tr = maxRounding;
+      if (br > maxRounding) br = maxRounding;
+      if (bl > maxRounding) bl = maxRounding;      
+            
+      if (tr != 0) {
+        addVertex(c-tr, b, VERTEX);
+        addQuadraticVertex(c, b, 0, c, b+tr, 0,
+                           fill, stroke, detail, POLYGON);
+      } else {
+        addVertex(c, b, VERTEX);
+      }
+      if (br != 0) {
+        addVertex(c, d-br, VERTEX);
+        addQuadraticVertex(c, d, 0, c-br, d, 0,
+                           fill, stroke, detail, POLYGON);
+      } else {
+        addVertex(c, d, VERTEX);
+      }
+      if (bl != 0) {
+        addVertex(a+bl, d, VERTEX);
+        addQuadraticVertex(a, d, 0, a, d-bl, 0,
+                           fill, stroke, detail, POLYGON);
+      } else {
+        addVertex(a, d, VERTEX);
+      }
+      if (tl != 0) {
+        addVertex(a, b+tl, VERTEX);
+        addQuadraticVertex(a, b, 0, a+tl, b, 0,
+                           fill, stroke, detail, POLYGON);
+      } else {
+        addVertex(a, b, VERTEX);
+      }
+      
+      if (stroke) addPolygonEdges(true);
+    }
+    
+    void addEllipse(float a, float b, float c, float d, 
+                    boolean fill, boolean stroke, int ellipseMode) {
       float x = a;
       float y = b;
       float w = c;
@@ -6869,14 +7034,6 @@ public class PGraphicsOpenGL extends PGraphics {
         y += h;
         h = -h;
       }
-      
-      this.fillColor = fillColor;
-      this.strokeColor = strokeColor; 
-      this.strokeWeight = strokeWeight;
-      this.ambientColor = ambientColor;
-      this.specularColor = specularColor;
-      this.emissiveColor = emissiveColor;
-      this.shininessFactor = shininessFactor; 
       
       float radiusH = w / 2;
       float radiusV = h / 2;
@@ -6921,60 +7078,131 @@ public class PGraphicsOpenGL extends PGraphics {
                 VERTEX);
       if (stroke) addEdge(idx, idx0, false, true);
     }
+    
+    void addArc(float a, float b, float c, float d,
+                float start, float stop,
+                boolean fill, boolean stroke, int ellipseMode) {
+      float x = a;
+      float y = b;
+      float w = c;
+      float h = d;
+
+      if (ellipseMode == CORNERS) {
+        w = c - a;
+        h = d - b;
+
+      } else if (ellipseMode == RADIUS) {
+        x = a - c;
+        y = b - d;
+        w = c * 2;
+        h = d * 2;
+
+      } else if (ellipseMode == CENTER) {
+        x = a - c/2f;
+        y = b - d/2f;
+      }
+
+      // make sure this loop will exit before starting while
+      if (Float.isInfinite(start) || Float.isInfinite(stop)) return;
+      if (stop < start) return;  // why bother
+
+      // make sure that we're starting at a useful point
+      while (start < 0) {
+        start += TWO_PI;
+        stop += TWO_PI;
+      }
+
+      if (stop - start > TWO_PI) {
+        start = 0;
+        stop = TWO_PI;
+      }
+      
+      float hr = w / 2f;
+      float vr = h / 2f;
+
+      float centerX = x + hr;
+      float centerY = y + vr;
+
+      
+      int startLUT = (int) (0.5f + (start / TWO_PI) * SINCOS_LENGTH);
+      int stopLUT = (int) (0.5f + (stop / TWO_PI) * SINCOS_LENGTH);
+
+      if (fill) {
+        vertex(centerX, centerY, VERTEX);
+      }
+        
+      int increment = 1; // what's a good algorithm? stopLUT - startLUT;
+      int pidx, idx;
+      pidx = idx = 0;
+      for (int i = startLUT; i < stopLUT; i += increment) {
+        int ii = i % SINCOS_LENGTH;
+        // modulo won't make the value positive
+        if (ii < 0) ii += SINCOS_LENGTH;
+        idx = addVertex(centerX + cosLUT[ii] * hr,
+                        centerY + sinLUT[ii] * vr,
+                        VERTEX);
+        
+        if (0 < i) {
+          if (stroke) addEdge(pidx, idx, i == 1, false);
+        }
+
+        pidx = idx;        
+      }
+      // draw last point explicitly for accuracy
+      idx = addVertex(centerX + cosLUT[stopLUT % SINCOS_LENGTH] * hr,
+                      centerY + sinLUT[stopLUT % SINCOS_LENGTH] * vr,
+                      VERTEX);
+      if (stroke) addEdge(pidx, idx, false, true);
+    }    
 
     void addBox(float w, float h, float d,
-                boolean fill, int fillColor,
-                boolean stroke, int strokeColor, float strokeWeight,
-                int ambientColor, int specularColor, int emissiveColor, 
-                float shininessFactor) {
+                boolean fill, boolean stroke) {
       float x1 = -w/2f; float x2 = w/2f;
       float y1 = -h/2f; float y2 = h/2f;
       float z1 = -d/2f; float z2 = d/2f;
 
-      this.fillColor = fillColor;
-      this.strokeColor = strokeColor; 
-      this.strokeWeight = strokeWeight;
-      this.ambientColor = ambientColor;
-      this.specularColor = specularColor;
-      this.emissiveColor = emissiveColor;
-      this.shininessFactor = shininessFactor;     
-
       if (fill || stroke) {
         // front face
-        addVertex(x1, y1, z1, 0, 0, 1, 0, 0, VERTEX);
-        addVertex(x2, y1, z1, 0, 0, 1, 1, 0, VERTEX);
-        addVertex(x2, y2, z1, 0, 0, 1, 1, 1, VERTEX);
-        addVertex(x1, y2, z1, 0, 0, 1, 0, 1, VERTEX);
+        setNormal(0, 0, 1);
+        addVertex(x1, y1, z1, 0, 0, VERTEX);
+        addVertex(x2, y1, z1, 1, 0, VERTEX);
+        addVertex(x2, y2, z1, 1, 1, VERTEX);
+        addVertex(x1, y2, z1, 0, 1, VERTEX);
 
         // right face
-        addVertex(x2, y1, z1, 1, 0, 0, 0, 0, VERTEX);
-        addVertex(x2, y1, z2, 1, 0, 0, 1, 0, VERTEX);
-        addVertex(x2, y2, z2, 1, 0, 0, 1, 1, VERTEX);
-        addVertex(x2, y2, z1, 1, 0, 0, 0, 1, VERTEX);
+        setNormal(1, 0, 0);
+        addVertex(x2, y1, z1, 0, 0, VERTEX);
+        addVertex(x2, y1, z2, 1, 0, VERTEX);
+        addVertex(x2, y2, z2, 1, 1, VERTEX);
+        addVertex(x2, y2, z1, 0, 1, VERTEX);
 
         // back face
-        addVertex(x2, y1, z2, 0, 0, -1, 0, 0, VERTEX);
-        addVertex(x1, y1, z2, 0, 0, -1, 1, 0, VERTEX);
-        addVertex(x1, y2, z2, 0, 0, -1, 1, 1, VERTEX);
-        addVertex(x2, y2, z2, 0, 0, -1, 0, 1, VERTEX);
+        setNormal(0, 0, -1);
+        addVertex(x2, y1, z2, 0, 0, VERTEX);
+        addVertex(x1, y1, z2, 1, 0, VERTEX);
+        addVertex(x1, y2, z2, 1, 1, VERTEX);
+        addVertex(x2, y2, z2, 0, 1, VERTEX);
 
         // left face
-        addVertex(x1, y1, z2, -1, 0, 0, 0, 0, VERTEX);
-        addVertex(x1, y1, z1, -1, 0, 0, 1, 0, VERTEX);
-        addVertex(x1, y2, z1, -1, 0, 0, 1, 1, VERTEX);
-        addVertex(x1, y2, z2, -1, 0, 0, 0, 1, VERTEX);;
+        setNormal(-1, 0, 0);
+        addVertex(x1, y1, z2, 0, 0, VERTEX);
+        addVertex(x1, y1, z1, 1, 0, VERTEX);
+        addVertex(x1, y2, z1, 1, 1, VERTEX);
+        addVertex(x1, y2, z2, 0, 1, VERTEX);;
 
         // top face
-        addVertex(x1, y1, z2, 0, 1, 0, 0, 0, VERTEX);
-        addVertex(x2, y1, z2, 0, 1, 0, 1, 0, VERTEX);
-        addVertex(x2, y1, z1, 0, 1, 0, 1, 1, VERTEX);
-        addVertex(x1, y1, z1, 0, 1, 0, 0, 1, VERTEX);
+        setNormal(0, 1, 0);
+        addVertex(x1, y1, z2, 0, 0, VERTEX);
+        addVertex(x2, y1, z2, 1, 0, VERTEX);
+        addVertex(x2, y1, z1, 1, 1, VERTEX);
+        addVertex(x1, y1, z1, 0, 1, VERTEX);
 
         // bottom face
-        addVertex(x1, y2, z1, 0, -1, 0, 0, 0, VERTEX);
-        addVertex(x2, y2, z1, 0, -1, 0, 1, 0, VERTEX);
-        addVertex(x2, y2, z2, 0, -1, 0, 1, 1, VERTEX);
-        addVertex(x1, y2, z2, 0, -1, 0, 0, 1, VERTEX);        
+        setNormal(0, -1, 0);
+        addVertex(x1, y2, z1, 0, 0, VERTEX);
+        addVertex(x2, y2, z1, 1, 0, VERTEX);
+        addVertex(x2, y2, z2, 1, 1, VERTEX);
+        addVertex(x1, y2, z2, 0, 1, VERTEX);        
       }
       
       if (stroke) {
@@ -6998,24 +7226,13 @@ public class PGraphicsOpenGL extends PGraphics {
     // Adds the vertices that define an sphere, without duplicating
     // any vertex or edge.
     int[] addSphere(float r, int detailU, int detailV, 
-                    boolean fill, int fillColor,
-                    boolean stroke, int strokeColor, float strokeWeight,
-                    int ambientColor, int specularColor, int emissiveColor, 
-                    float shininessFactor) {
+                    boolean fill, boolean stroke) {
       if ((detailU < 3) || (detailV < 2)) {
         sphereDetail(30);
         detailU = detailV = 30;
       } else {
         sphereDetail(detailU, detailV);
       }
-      
-      this.fillColor = fillColor;
-      this.strokeColor = strokeColor; 
-      this.strokeWeight = strokeWeight;
-      this.ambientColor = ambientColor;
-      this.specularColor = specularColor;
-      this.emissiveColor = emissiveColor;
-      this.shininessFactor = shininessFactor;      
       
       int nind = 3 * detailU + (6 * detailU + 3) * (detailV - 2) + 3 * detailU;
       int[] indices = new int[nind];      
@@ -7035,21 +7252,22 @@ public class PGraphicsOpenGL extends PGraphics {
       // making the first strip of triangles.
       u = 1; v = 1;
       for (int i = 0; i < detailU; i++) {
-        addVertex(0, r, 0, 0, 1, 0, u , v, VERTEX);
+        setNormal(0, 1, 0);
+        addVertex(0, r, 0, u , v, VERTEX);
         u -= du;
       }      
       vertCount = detailU;
       vert0 = vertCount;
       u = 1; v -= dv;
-      for (int i = 0; i < detailU; i++) {      
-        addVertex(r * sphereX[i], r *sphereY[i], r * sphereZ[i], 
-                  sphereX[i], sphereY[i], sphereZ[i], u , v, VERTEX);
+      for (int i = 0; i < detailU; i++) {
+        setNormal(sphereX[i], sphereY[i], sphereZ[i]);
+        addVertex(r * sphereX[i], r *sphereY[i], r * sphereZ[i], u , v, VERTEX);
         u -= du;
       }      
       vertCount += detailU;
-      vert1 = vertCount;      
-      addVertex(r * sphereX[0], r * sphereY[0], r * sphereZ[0], 
-                sphereX[0], sphereY[0], sphereZ[0], u, v, VERTEX);
+      vert1 = vertCount;
+      setNormal(sphereX[0], sphereY[0], sphereZ[0]);
+      addVertex(r * sphereX[0], r * sphereY[0], r * sphereZ[0], u, v, VERTEX);
       vertCount++;
       
       for (int i = 0; i < detailU; i++) {
@@ -7074,14 +7292,14 @@ public class PGraphicsOpenGL extends PGraphics {
         u = 1; v -= dv;       
         for (int i = 0; i < detailU; i++) {
           int ioff = offset + i;
-          addVertex(r * sphereX[ioff], r *sphereY[ioff], r * sphereZ[ioff], 
-                    sphereX[ioff], sphereY[ioff], sphereZ[ioff], u , v, VERTEX);
+          setNormal(sphereX[ioff], sphereY[ioff], sphereZ[ioff]);
+          addVertex(r * sphereX[ioff], r *sphereY[ioff], r * sphereZ[ioff], u , v, VERTEX);
           u -= du;
         }
         vertCount += detailU;
         vert1 = vertCount;
-        addVertex(r * sphereX[offset], r * sphereY[offset], r * sphereZ[offset], 
-                  sphereX[offset], sphereY[offset], sphereZ[offset], u, v, VERTEX);
+        setNormal(sphereX[offset], sphereY[offset], sphereZ[offset]);
+        addVertex(r * sphereX[offset], r * sphereY[offset], r * sphereZ[offset], u, v, VERTEX);
         vertCount++;
         
         for (int i = 0; i < detailU; i++) {
@@ -7117,7 +7335,8 @@ public class PGraphicsOpenGL extends PGraphics {
       // making the last strip of triangles.      
       u = 1; v = 0;
       for (int i = 0; i < detailU; i++) {
-        addVertex(0, -r, 0, 0, -1, 0, u , v, VERTEX);
+        setNormal(0, -1, 0);
+        addVertex(0, -r, 0, u , v, VERTEX);
         u -= du;
       }         
       vertCount += detailU;      
@@ -7140,23 +7359,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void addBezierVertex(float x2, float y2, float z2,
                          float x3, float y3, float z3,
-                         float x4, float y4, float z4,
-                         float nx, float ny, float nz,
-                         int detail, boolean fill, int fillColor,
-                         boolean stroke, int strokeColor, float strokeWeight,
-                         int ambientColor, int specularColor, int emissiveColor, 
-                         float shininessFactor, 
-                         int shapeType) {
+                         float x4, float y4, float z4,                         
+                         boolean fill, boolean stroke, int detail, int shape) {
       bezierInitCheck();
-      bezierVertexCheck(shapeType, vertexCount);  
-      
-      this.fillColor = fillColor;
-      this.strokeColor = strokeColor; 
-      this.strokeWeight = strokeWeight;
-      this.ambientColor = ambientColor;
-      this.specularColor = specularColor;
-      this.emissiveColor = emissiveColor;
-      this.shininessFactor = shininessFactor;    
+      bezierVertexCheck(shape, vertexCount);  
       
       PMatrix3D draw = bezierDrawMatrix;
 
@@ -7180,18 +7386,25 @@ public class PGraphicsOpenGL extends PGraphics {
         x1 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
         y1 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z1 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
-        addVertex(x1, y1, z1, nx, ny, nz, 0, 0, BEZIER_VERTEX);
+        addVertex(x1, y1, z1, BEZIER_VERTEX);
       }
     }  
     
+    public void addQuadraticVertex(float cx, float cy, float cz,
+                                   float x3, float y3, float z3,
+                                   boolean fill, boolean stroke, int detail, int shape) {
+      float x1 = getLastVertexX();
+      float y1 = getLastVertexY();
+      float z1 = getLastVertexZ();
+      addBezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
+                      x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
+                      x3, y3, z3,
+                      fill, stroke, detail, shape);
+    }
+    
     void addCurveVertex(float x, float y, float z,
-                        float nx, float ny, float nz,
-                        int detail, boolean fill, int fillColor,
-                        boolean stroke, int strokeColor, float strokeWeight,
-                        int ambientColor, int specularColor, int emissiveColor, 
-                        float shininessFactor,
-                        int shapeType) {
-      curveVertexCheck(shapeType);
+                        boolean fill, boolean stroke, int detail, int shape) {
+      curveVertexCheck(shape);
       float[] vertex = curveVertices[curveVertexCount];
       vertex[X] = x;
       vertex[Y] = y;
@@ -7200,14 +7413,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
       // draw a segment if there are enough points
       if (curveVertexCount > 3) {
-        this.fillColor = fillColor;
-        this.strokeColor = strokeColor; 
-        this.strokeWeight = strokeWeight;
-        this.ambientColor = ambientColor;
-        this.specularColor = specularColor;
-        this.emissiveColor = emissiveColor;
-        this.shininessFactor = shininessFactor;  
-        
         float[] v1 = curveVertices[curveVertexCount-4];      
         float[] v2 = curveVertices[curveVertexCount-3];
         float[] v3 = curveVertices[curveVertexCount-2];
@@ -7216,7 +7421,6 @@ public class PGraphicsOpenGL extends PGraphics {
                               v2[X], v2[Y], v2[Z],
                               v3[X], v3[Y], v3[Z],
                               v4[X], v4[Y], v4[Z],
-                              nx, ny, nz,
                               detail);
       }      
     }
@@ -7225,7 +7429,6 @@ public class PGraphicsOpenGL extends PGraphics {
                                float x2, float y2, float z2,
                                float x3, float y3, float z3,
                                float x4, float y4, float z4,
-                               float nx, float ny, float nz,
                                int detail) {
       float x0 = x2;
       float y0 = y2;
@@ -7248,12 +7451,12 @@ public class PGraphicsOpenGL extends PGraphics {
       // addVertex() will reset curveVertexCount, so save it
       int savedCount = curveVertexCount;
       
-      addVertex(x0, y0, z0, nx, ny, nz, 0, 0, CURVE_VERTEX);
+      addVertex(x0, y0, z0, CURVE_VERTEX);
       for (int j = 0; j < detail; j++) {
         x0 += xplot1; xplot1 += xplot2; xplot2 += xplot3;
         y0 += yplot1; yplot1 += yplot2; yplot2 += yplot3;
         z0 += zplot1; zplot1 += zplot2; zplot2 += zplot3;
-        addVertex(x0, y0, z0, nx, ny, nz, 0, 0, CURVE_VERTEX);
+        addVertex(x0, y0, z0, CURVE_VERTEX);
       }
       
       curveVertexCount = savedCount;

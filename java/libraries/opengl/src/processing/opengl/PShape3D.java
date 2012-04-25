@@ -1728,22 +1728,22 @@ public class PShape3D extends PShape {
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
-    bezierVertex(x2, y2, 0, x3, y3, 0, x4, y4, 0); 
+    bezierVertex(x2, y2, 0,
+                 x3, y3, 0,
+                 x4, y4, 0);
   }
   
   
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    in.setNormal(normalX, normalY, normalZ);
     in.addBezierVertex(x2, y2, z2,
                        x3, y3, z3,
                        x4, y4, z4,
-                       normalX, normalY, normalZ,
-                       bezierDetail, fill, fillColor, 
-                       stroke, strokeColor, strokeWeight,
-                       ambientColor, specularColor, emissiveColor, 
-                       shininess, 
-                       kind);    
+                       fill, stroke, bezierDetail, kind);     
   }
   
   
@@ -1756,12 +1756,12 @@ public class PShape3D extends PShape {
   
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
-    float x1 = in.getLastVertexX();
-    float y1 = in.getLastVertexY();
-    float z1 = in.getLastVertexZ();
-    bezierVertex(x1 + ((cx-x1)*2/3.0f), y1 + ((cy-y1)*2/3.0f), z1 + ((cz-z1)*2/3.0f),
-                 x3 + ((cx-x3)*2/3.0f), y3 + ((cy-y3)*2/3.0f), z3 + ((cz-z3)*2/3.0f),
-                 x3, y3, z3);
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    in.setNormal(normalX, normalY, normalZ);    
+    in.addQuadraticVertex(cx, cy, cz,
+                          x3, y3, z3,
+                          fill, stroke, bezierDetail, kind); 
   }
   
   
@@ -1790,13 +1790,11 @@ public class PShape3D extends PShape {
 
   
   public void curveVertex(float x, float y, float z) {
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    in.setNormal(normalX, normalY, normalZ);
     in.addCurveVertex(x, y, z,
-                      normalX, normalY, normalZ,
-                      curveDetail, fill, fillColor, 
-                      stroke, strokeColor, strokeWeight,
-                      ambientColor, specularColor, emissiveColor, 
-                      shininess,
-                      kind);
+                      fill, stroke, curveDetail, kind); 
   }
   
   
@@ -2564,81 +2562,224 @@ public class PShape3D extends PShape {
 
   
   protected void tessellatePoint() {
+    float x = 0, y = 0, z = 0;
+    if (params.length == 2) {
+      x = params[0];
+      y = params[1];
+      z = 0;
+    } else if (params.length == 3) {
+      x = params[0];
+      y = params[1];
+      z = params[2];
+    }
     
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    in.setNormal(normalX, normalY, normalZ);
+    in.addPoint(x, y, z, fill, stroke);    
+    in.initTessMaps();    
+    tessellator.tessellatePoints();   
   }
   
   
   protected void tessellateLine() {
+    float x1 = 0, y1 = 0, z1 = 0;
+    float x2 = 0, y2 = 0, z2 = 0;
+    if (params.length == 4) {
+      x1 = params[0];
+      y1 = params[1];
+      x2 = params[2];
+      y2 = params[3];     
+    } else if (params.length == 6) {
+      x1 = params[0];
+      y1 = params[1];
+      z1 = params[2];
+      x2 = params[3];
+      y2 = params[4];
+      z2 = params[5];      
+    }
     
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    in.setNormal(normalX, normalY, normalZ);
+    in.addLine(x1, y1, z1,
+               x2, y2, z2,
+               fill, stroke);    
+    in.initTessMaps();    
+    tessellator.tessellateLines();  
   }
   
   
   protected void tessellateTriangle() {
-    
+    float x1 = 0, y1 = 0;
+    float x2 = 0, y2 = 0;
+    float x3 = 0, y3 = 0;
+    if (params.length == 6) {
+      x1 = params[0];
+      y1 = params[1];
+      x2 = params[2];
+      y2 = params[3];
+      x3 = params[4];
+      y3 = params[5];       
+    }
+
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);  
+    in.setNormal(normalX, normalY, normalZ);
+    in.addTriangle(x1, y1, 0,
+                   x2, y2, 0,
+                   x3, y3, 0,
+                   fill, stroke);    
+    in.initTessMaps();    
+    tessellator.tessellateTriangles();    
   }
   
   
   protected void tessellateQuad() {
-    
+    float x1 = 0, y1 = 0;
+    float x2 = 0, y2 = 0;
+    float x3 = 0, y3 = 0;
+    float x4 = 0, y4 = 0;    
+    if (params.length == 8) {
+      x1 = params[0];
+      y1 = params[1];
+      x2 = params[2];
+      y2 = params[3];
+      x3 = params[4];
+      y3 = params[5];      
+      x4 = params[6];
+      y4 = params[7];            
+    }
+
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    in.setNormal(normalX, normalY, normalZ);
+    in.addQuad(x1, y1, 0,
+               x2, y2, 0,
+               x3, y3, 0,
+               x4, y4, 0,
+               fill, stroke);    
+    in.initTessMaps();    
+    tessellator.tessellateQuads();     
   }  
   
   
   protected void tessellateRect() {
-    
+    float a = 0, b = 0, c = 0, d = 0;
+    float tl = 0, tr = 0, br = 0, bl = 0;
+    boolean rounded = false;
+    if (params.length == 4) {
+      rounded = false;
+      a = params[0];
+      b = params[1];
+      c = params[2];
+      d = params[3];
+    } else if (params.length == 5) {
+      a = params[0];
+      b = params[1];
+      c = params[2];
+      d = params[3];
+      tl = tr = br = bl = params[4]; 
+      rounded = true;
+    } else if (params.length == 8) {
+      a = params[0];
+      b = params[1];
+      c = params[2];
+      d = params[3];
+      tl = params[4];
+      tr = params[5];
+      br = params[6];
+      bl = params[7]; 
+      rounded = true;
+    }
+
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    in.setNormal(normalX, normalY, normalZ);
+    if (rounded) {
+      in.addRect(a, b, c, d,
+                 tl, tr, br, bl,
+                 fill, stroke, bezierDetail, rectMode);       
+      in.initTessMaps();      
+      tessellator.tessellatePolygon(false, true, true);      
+    } else {
+      in.addRect(a, b, c, d,
+                 fill, stroke, rectMode);    
+      in.initTessMaps();
+      tessellator.tessellateQuads();      
+    }   
   }
   
   
   protected void tessellateEllipse() {
-    float a = params[0];
-    float b = params[1];
-    float c = params[2];
-    float d = params[3];    
+    float a = 0, b = 0, c = 0, d = 0;
+    if (params.length == 4) {
+      a = params[0];
+      b = params[1];
+      c = params[2];
+      d = params[3];      
+    }
 
-    in.addEllipse(ellipseMode, a, b, c, d,
-                  fill, fillColor, 
-                  stroke, strokeColor, strokeWeight,
-                  ambientColor, specularColor, emissiveColor, 
-                  shininess);
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    in.setNormal(normalX, normalY, normalZ);    
+    in.addEllipse(a, b, c, d, fill, stroke, ellipseMode);
     in.initTessMaps();
     tessellator.tessellateTriangleFan(); 
   }
   
   
   protected void tessellateArc() {
+    float a = 0, b = 0, c = 0, d = 0;
+    float start = 0, stop = 0;
+    if (params.length == 6) {
+      a = params[0];
+      b = params[1];
+      c = params[2];
+      d = params[3];      
+      start = params[4];
+      stop = params[5];      
+    }    
     
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    in.setNormal(normalX, normalY, normalZ);    
+    in.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
+    in.initTessMaps();
+    tessellator.tessellateTriangleFan();    
   }
   
   
   protected void tessellateBox() {
-    float w, h, d;
+    float w = 0, h = 0, d = 0;
     if (params.length == 1) {
       w = h = d = params[0];  
-    } else {
+    } else if (params.length == 3) {
       w = params[0];
       h = params[1];
       d = params[2];
     }
         
-    in.addBox(w, h, d,
-              fill, fillColor, 
-              stroke, strokeColor, strokeWeight,
-              ambientColor, specularColor, emissiveColor, 
-              shininess);    
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);    
+    in.addBox(w, h, d, fill, stroke);   
     in.initTessMaps();    
     tessellator.tessellateQuads();     
   }
   
   
-  protected void tessellateSphere() {    
-    float r = params[0];
+  protected void tessellateSphere() {
+    // Getting sphere detail from renderer. Is this correct?
     int nu = pg.sphereDetailU;
     int nv = pg.sphereDetailV;
+    float r = 0;
+    if (params.length == 1) {
+      r = params[0];
+    }
     
-    int[] indices = in.addSphere(r, nu, nv, 
-                                 fill, fillColor, 
-                                 stroke, strokeColor, strokeWeight,
-                                 ambientColor, specularColor, emissiveColor, 
-                                 shininess);
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);     
+    int[] indices = in.addSphere(r, nu, nv, fill, stroke);   
     in.initTessMaps();
     tessellator.tessellateTriangles(indices);               
   }
