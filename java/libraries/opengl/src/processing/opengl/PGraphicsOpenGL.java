@@ -7016,16 +7016,16 @@ public class PGraphicsOpenGL extends PGraphics {
                  float x3, float y3, float z3,
                  float x4, float y4, float z4,
                  boolean fill, boolean stroke) {
-      int idx1 = addVertex(x1, y1, z1, VERTEX);
-      int idx2 = addVertex(x2, y2, z2, VERTEX);      
-      int idx3 = addVertex(x3, y3, z3, VERTEX);
-      int idx4 = addVertex(x4, y4, z4, VERTEX);
+      int idx1 = addVertex(x1, y1, z1, 0, 0, VERTEX);
+      int idx2 = addVertex(x2, y2, z2, 1, 0, VERTEX);      
+      int idx3 = addVertex(x3, y3, z3, 1, 1, VERTEX);
+      int idx4 = addVertex(x4, y4, z4, 0, 1, VERTEX);
       if (stroke) { 
         addEdge(idx1, idx2, true, false);
         addEdge(idx2, idx3, false, false);
         addEdge(idx3, idx4, false, false);
         addEdge(idx4, idx1, false, true);
-      }      
+      }
     } 
     
     void addRect(float a, float b, float c, float d, 
