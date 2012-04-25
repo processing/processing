@@ -733,11 +733,11 @@ public class PShape3D extends PShape {
 
   
   public void vertex(float x, float y, float z, float u, float v) {
-    vertexImpl(x, y, z, u, v, VERTEX);  
+    vertexImpl(x, y, z, u, v);  
   }  
   
   
-  protected void vertexImpl(float x, float y, float z, float u, float v, int code) {
+  protected void vertexImpl(float x, float y, float z, float u, float v) {
     if (in.isFull()) {
       PGraphics.showWarning("P3D: Too many vertices, try creating smaller shapes");
       return;
@@ -774,21 +774,26 @@ public class PShape3D extends PShape {
       sweight = strokeWeight;
     }    
     
-    if (breakShape) {
-      code = BREAK;
-      breakShape = false;
-    }    
-    
     in.addVertex(x, y, z, 
                  fcolor, 
                  normalX, normalY, normalZ,
                  u, v, 
                  scolor, sweight,
                  ambientColor, specularColor, emissiveColor, shininess,
-                 code);    
+                 vertexCode());    
     
     root.tessellated = false;
     tessellated = false;  
+  }
+  
+  
+  protected int vertexCode() {
+    int code = VERTEX;
+    if (breakShape) {
+      code = BREAK;
+      breakShape = false;
+    }    
+    return code;
   }
   
   
@@ -846,6 +851,35 @@ public class PShape3D extends PShape {
     root.tessellated = false;
     tessellated = false;
     shapeEnded = true;
+  }
+  
+  
+  public void setPath(float[][] coords) {
+    setPath(coords, null, OPEN);
+  }
+
+  
+  public void setPath(float[][] coords, int mode) {
+    setPath(coords, null, mode);
+  }  
+  
+  
+  public void setPath(float[][] coords, int[] codes) {
+    setPath(coords, codes, OPEN);
+  }
+  
+  
+  public void setPath(float[][] coords, int[] codes, int mode) {
+    if (family != PATH) {      
+      PGraphics.showWarning("Vertex coordinates and codes can only be set to PATH shapes");
+      return;
+    }
+    
+    super.setPath(coords, codes);
+    isClosed = mode == CLOSE;
+    root.tessellated = false;
+    tessellated = false;
+    shapeEnded = true;    
   }
 
   //////////////////////////////////////////////////////////////
@@ -1743,7 +1777,7 @@ public class PShape3D extends PShape {
     in.addBezierVertex(x2, y2, z2,
                        x3, y3, z3,
                        x4, y4, z4,
-                       fill, stroke, bezierDetail, kind);     
+                       fill, stroke, bezierDetail, vertexCode(), kind);     
   }
   
   
@@ -1761,7 +1795,7 @@ public class PShape3D extends PShape {
     in.setNormal(normalX, normalY, normalZ);    
     in.addQuadraticVertex(cx, cy, cz,
                           x3, y3, z3,
-                          fill, stroke, bezierDetail, kind); 
+                          fill, stroke, bezierDetail, vertexCode(), kind); 
   }
   
   
@@ -1794,7 +1828,7 @@ public class PShape3D extends PShape {
                  ambientColor, specularColor, emissiveColor, shininess);
     in.setNormal(normalX, normalY, normalZ);
     in.addCurveVertex(x, y, z,
-                      fill, stroke, curveDetail, kind); 
+                      fill, stroke, curveDetail, vertexCode(), kind); 
   }
   
   
@@ -2180,8 +2214,15 @@ public class PShape3D extends PShape {
   
   // Getters of tessellated data.  
   
+  public int fillVertexCount() {
+    return tess.fillVertices.length;
+  }
+
+  public int fillIndexCount() {
+    return tess.fillIndices.length;
+  }  
   
-  public float[] getFillVertices(float[] vertices) {
+  public float[] fillVertices(float[] vertices) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return vertices;
@@ -2195,7 +2236,7 @@ public class PShape3D extends PShape {
     return vertices;
   }
   
-  public int[] getFillColors(int[] colors) {
+  public int[] fillColors(int[] colors) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return colors;
@@ -2209,7 +2250,7 @@ public class PShape3D extends PShape {
     return colors;
   }  
   
-  public float[] getFillNormals(float[] normals) {
+  public float[] fillNormals(float[] normals) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return normals;
@@ -2223,7 +2264,7 @@ public class PShape3D extends PShape {
     return normals;
   }  
   
-  public float[] getFillTexcoords(float[] texcoords) {
+  public float[] fillTexcoords(float[] texcoords) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return texcoords;
@@ -2237,7 +2278,7 @@ public class PShape3D extends PShape {
     return texcoords;
   }  
 
-  public int[] getFillAmbient(int[] ambient) {
+  public int[] fillAmbient(int[] ambient) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return ambient;
@@ -2251,7 +2292,7 @@ public class PShape3D extends PShape {
     return ambient;
   }  
 
-  public int[] getFillSpecular(int[] specular) {
+  public int[] fillSpecular(int[] specular) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return specular;
@@ -2265,7 +2306,7 @@ public class PShape3D extends PShape {
     return specular;
   }
 
-  public int[] getFillEmissive(int[] emissive) {
+  public int[] fillEmissive(int[] emissive) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return emissive;
@@ -2279,7 +2320,7 @@ public class PShape3D extends PShape {
     return emissive;
   }
 
-  public float[] getFillShininess(float[] shininess) {
+  public float[] fillShininess(float[] shininess) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return shininess;
@@ -2293,7 +2334,7 @@ public class PShape3D extends PShape {
     return shininess;
   }  
   
-  public int[] getFillIndices(int[] indices) {
+  public int[] fillIndices(int[] indices) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return indices;
@@ -2307,8 +2348,16 @@ public class PShape3D extends PShape {
     removeIndexOffset(indices);
     return indices;
   }    
+
+  public int lineVertexCount() {
+    return tess.lineVertices.length;
+  }
+
+  public int lineIndexCount() {
+    return tess.lineIndices.length;
+  }    
   
-  public float[] getLineVertices(float[] vertices) {
+  public float[] lineVertices(float[] vertices) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return vertices;
@@ -2322,7 +2371,7 @@ public class PShape3D extends PShape {
     return vertices;
   }
   
-  public int[] getLineColors(int[] colors) {
+  public int[] lineColors(int[] colors) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return colors;
@@ -2336,7 +2385,7 @@ public class PShape3D extends PShape {
     return colors;
   }  
   
-  public float[] getLineAttributes(float[] attribs) {
+  public float[] lineAttributes(float[] attribs) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return attribs;
@@ -2350,7 +2399,7 @@ public class PShape3D extends PShape {
     return attribs;
   }  
   
-  public int[] getLineIndices(int[] indices) {
+  public int[] lineIndices(int[] indices) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return indices;
@@ -2365,7 +2414,15 @@ public class PShape3D extends PShape {
     return indices;
   }  
   
-  public float[] getPointVertices(float[] vertices) {
+  public int pointVertexCount() {
+    return tess.pointVertices.length;
+  }
+
+  public int pointIndexCount() {
+    return tess.pointIndices.length;
+  }    
+    
+  public float[] pointVertices(float[] vertices) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return vertices;
@@ -2379,7 +2436,7 @@ public class PShape3D extends PShape {
     return vertices;
   }
   
-  public int[] getPointColors(int[] colors) {
+  public int[] pointColors(int[] colors) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return colors;
@@ -2393,7 +2450,7 @@ public class PShape3D extends PShape {
     return colors;
   }  
   
-  public float[] getPointAttributes(float[] attribs) {
+  public float[] pointAttributes(float[] attribs) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return attribs;
@@ -2407,7 +2464,7 @@ public class PShape3D extends PShape {
     return attribs;
   }  
   
-  public int[] getPointIndices(int[] indices) {
+  public int[] pointIndices(int[] indices) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
       return indices;
@@ -2534,7 +2591,8 @@ public class PShape3D extends PShape {
           } else if (kind == SPHERE) {
             tessellateSphere();
           }
-        } else if (family == PATH) {          
+        } else if (family == PATH) {
+          tessellatePath();
         }
         
         // Tessellated arrays are trimmed since they are expanded 
@@ -2743,7 +2801,7 @@ public class PShape3D extends PShape {
     
     in.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);    
+    in.setNormal(normalX, normalY, normalZ);
     in.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
     in.initTessMaps();
     tessellator.tessellateTriangleFan();    
@@ -2778,12 +2836,117 @@ public class PShape3D extends PShape {
     }
     
     in.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);     
+                 ambientColor, specularColor, emissiveColor, shininess); 
     int[] indices = in.addSphere(r, nu, nv, fill, stroke);   
     in.initTessMaps();
     tessellator.tessellateTriangles(indices);               
   }
   
+  
+  protected void tessellatePath() {
+    if (vertices == null) return;
+
+    in.setColors(fillColor, strokeColor, strokeWeight,
+                 ambientColor, specularColor, emissiveColor, shininess);
+    
+    boolean insideContour = false;
+
+    if (vertexCodeCount == 0) {  // each point is a simple vertex
+      if (vertices[0].length == 2) {  // tesellating 2D vertices
+        for (int i = 0; i < vertexCount; i++) {
+          in.addVertex(vertices[i][X], vertices[i][Y], VERTEX);
+        }
+      } else {  // drawing 3D vertices
+        for (int i = 0; i < vertexCount; i++) {
+          in.addVertex(vertices[i][X], vertices[i][Y], vertices[i][Z], VERTEX);
+        }
+      }
+    } else {  // coded set of vertices
+      int index = 0;
+      int code = VERTEX;
+      
+      if (vertices[0].length == 2) {  // tessellating a 2D path
+        for (int j = 0; j < vertexCodeCount; j++) {
+          switch (vertexCodes[j]) {
+
+          case VERTEX:
+            in.addVertex(vertices[index][X], vertices[index][Y], code);
+            index++;
+            break;
+
+          case QUAD_BEZIER_VERTEX:
+            in.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], 0, 
+                                  vertices[index+1][X], vertices[index+1][Y], 0,
+                                  fill, stroke, bezierDetail, code);
+            index += 2;
+            break;
+
+          case BEZIER_VERTEX:
+            in.addBezierVertex(vertices[index+0][X], vertices[index+0][Y], 0,
+                               vertices[index+1][X], vertices[index+1][Y], 0,
+                               vertices[index+2][X], vertices[index+2][Y], 0,
+                               fill, stroke, bezierDetail, code);
+            index += 3;
+            break;
+
+          case CURVE_VERTEX:
+            in.addCurveVertex(vertices[index][X], vertices[index][Y], 0,
+                              fill, stroke, curveDetail, code);
+            index++;
+
+          case BREAK:
+            if (insideContour) {
+              code = VERTEX;
+            }
+            code = BREAK;
+            insideContour = true;
+          }
+        }
+      } else {  // tessellating a 3D path
+        for (int j = 0; j < vertexCodeCount; j++) {
+          switch (vertexCodes[j]) {
+
+          case VERTEX:
+            in.addVertex(vertices[index][X], vertices[index][Y], vertices[index][Z], code);
+            index++;
+            break;
+
+          case QUAD_BEZIER_VERTEX:
+            in.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
+                                  vertices[index+1][X], vertices[index+1][Y], vertices[index+0][Z],
+                                  fill, stroke, bezierDetail, code);
+            index += 2;
+            break;
+
+
+          case BEZIER_VERTEX:
+            in.addBezierVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
+                               vertices[index+1][X], vertices[index+1][Y], vertices[index+1][Z],
+                               vertices[index+2][X], vertices[index+2][Y], vertices[index+2][Z],
+                               fill, stroke, bezierDetail, code);
+            index += 3;
+            break;
+
+          case CURVE_VERTEX:
+            in.addCurveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z],
+                              fill, stroke, curveDetail, code);
+            index++;
+
+          case BREAK:
+            if (insideContour) {
+              code = VERTEX;
+            }
+            code = BREAK;
+            insideContour = true;
+          }
+        }
+      }
+    }
+    
+    if (stroke) in.addPolygonEdges(isClosed);
+    in.initTessMaps();  
+    tessellator.tessellatePolygon(false, isClosed, true);    
+  }  
   
   protected void updateGeometry() {
     if (root == this && parent == null && modified) {
