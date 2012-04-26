@@ -192,9 +192,6 @@ public class PGraphicsOpenGL extends PGraphics {
   /** Aspect ratio of camera's view. */
   public float cameraAspect;
 
-  /** Distance between the camera eye and aim point. */
-  protected float cameraDepth;
-
   /** Actual position of the camera. */
   protected float cameraEyeX, cameraEyeY, cameraEyeZ;
 
@@ -452,7 +449,6 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraNear = cameraZ / 10.0f;
     cameraFar = cameraZ * 10.0f;
     cameraAspect = (float) width / (float) height;
-    cameraDepth = cameraZ; // eye is at (cameraX, cameraY, cameraZ), aiming at (cameraX, cameraY, 0)
 
     // set this flag so that beginDraw() will do an update to the camera.
     sizeChanged = true;
@@ -3597,7 +3593,6 @@ public class PGraphicsOpenGL extends PGraphics {
     cameraEyeX = eyeX;
     cameraEyeY = eyeY;
     cameraEyeZ = eyeZ;
-    cameraDepth = mag;
 
     // Calculating Y vector
     float y0 = upX;
@@ -3668,7 +3663,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * orthographic projection.
    */
   public void ortho() {
-    ortho(0, width, 0, height, -500, 500);
+    ortho(0, width, 0, height, cameraNear, cameraFar);
   }
 
 
@@ -3678,7 +3673,7 @@ public class PGraphicsOpenGL extends PGraphics {
    */
   public void ortho(float left, float right,
                     float bottom, float top) {
-    ortho(left, right, bottom, top, -500, 500);
+    ortho(left, right, bottom, top, cameraNear, cameraFar);
   }
 
 
@@ -3705,9 +3700,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
     bottom -= halfh;
     top -= halfh;
-    
-//    near += cameraDepth;
-//    far += cameraDepth;
     
     float x = 2.0f / (right - left);
     float y = 2.0f / (top - bottom);
