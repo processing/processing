@@ -3697,15 +3697,18 @@ public class PGraphicsOpenGL extends PGraphics {
     // Flushing geometry with a different perspective configuration.
     flush();
 
-    left -= width/2;
-    right -= width/2;
+    float halfw = 0.5f * (right - left);
+    float halfh = 0.5f * (top - bottom);
 
-    bottom -= height/2;
-    top -= height/2;
+    left -= halfw;
+    right -= halfw;
 
-    near += cameraDepth;
-    far += cameraDepth;
-
+    bottom -= halfh;
+    top -= halfh;
+    
+//    near += cameraDepth;
+//    far += cameraDepth;
+    
     float x = 2.0f / (right - left);
     float y = 2.0f / (top - bottom);
     float z = -2.0f / (far - near);
