@@ -101,9 +101,11 @@ public class PGL {
    * that can be referred to within a single VBO. */
   public static final int MAX_TESS_VERTICES = 32768;
 
-  /** Maximum number of indices. 2 times the max number of
-   * vertices to have good room for vertex reuse. */
-  public static final int MAX_TESS_INDICES  = 2 * MAX_TESS_VERTICES;
+  /** Maximum number of indices. Arbitrarily set to 2^24. GLES doesn't impose
+   * any restriction on the size of the index buffers, but in any case a
+   * geometry so complex that requires this many indices would be rendered
+   * very slowly on the majority of devices, including desktop-class GPUs */
+  public static final int MAX_TESS_INDICES  = 16777216;
 
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
