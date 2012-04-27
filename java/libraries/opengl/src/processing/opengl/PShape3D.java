@@ -149,9 +149,9 @@ public class PShape3D extends PShape {
   
   // Contains the blocks of geometry that can be rendered  
   // in a single drawElements() call. 
-  protected ArrayList<IndexData> fillIndexData;
-  protected ArrayList<IndexData> lineIndexData;
-  protected ArrayList<IndexData> pointIndexData;  
+  protected ArrayList<IndexBlock> fillIndexBlocks;
+  protected ArrayList<IndexBlock> lineIndexBlocks;
+  protected ArrayList<IndexBlock> pointIndexBlocks;  
   
   // ........................................................
   
@@ -292,11 +292,10 @@ public class PShape3D extends PShape {
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
       in = pg.newInGeometry(PGraphicsOpenGL.RETAINED);      
     }    
-    //tess = pg.newTessGeometry(PGraphicsOpenGL.RETAINED);
     
-    fillIndexData = new ArrayList<IndexData>();
-    lineIndexData = new ArrayList<IndexData>();
-    pointIndexData = new ArrayList<IndexData>();          
+    fillIndexBlocks = new ArrayList<IndexBlock>();
+    lineIndexBlocks = new ArrayList<IndexBlock>();
+    pointIndexBlocks = new ArrayList<IndexBlock>();          
     
     
     // Modes are retrieved from the current values in the renderer.
@@ -3065,9 +3064,37 @@ public class PShape3D extends PShape {
   }
   
   
-  // This method is very important, as it is responsible of
-  // generating the correct vertex and index values for each
-  // level of the shape hierarchy.
+  // This method is very important, as it is responsible of generating the correct 
+  // vertex and index values for each level of the shape hierarchy.
+  // This is the core of the recursive algorithm that calculates the indices
+  // for the vertices accumulated in a single VBO.
+  // Basically, the algorithm traverses all the shapes in the hierarchy and 
+  // computes a first (absolute) index, an offset and a size for each shape. 
+  // The first absolute index is used as the offset argument for glVertexAttribPointer(), 
+  // while the size and offset values is the count and offset arguments for 
+  // glDrawElements(). 
+  // All this complication is due to the fact that we want to render the entire 
+  // geometry with a single VBO (for performance reasons), while being constrained by
+  // the limitation that the indices cannot be larger than the MAX_TESS_VERTICES
+  // constant, which is relatively small in order to preserve compatibility with GLES.
+  // Also, we should be able to render the corresponding piece of geometry if calling
+  // draw() on any of the child shapes, either of type GROUOP or GEOMETRY.
+  
+  // Consider the following hierarchy:
+  //
+  //                     ROOT GROUP                       
+  //                         |
+  //       /-----------------0-----------------\ 
+  //       |                                   |
+  //  CHILD GROUP 0                       CHILD GROUP 1                     
+  //       |                                   |
+  //       |                   /---------------0-----------------\              
+  //       |                   |               |                 |
+  //   GEO SHAPE 0         GEO SHAPE 0     GEO SHAPE 1       GEO SHAPE 2
+  //   4 vertices          5 vertices      6 vertices        3 vertices
+  //
+  // and assume that MAX_TESS_VERTICES is equal to 8.  
+    
   protected void aggregateImpl() {
     if (family == GROUP) {
       boolean firstGeom = true;
@@ -3104,9 +3131,9 @@ public class PShape3D extends PShape {
         }           
       }
       
-      addFillIndexData();
-      addLineIndexData();
-      addPointIndexData();
+      addFillIndexBlocks();
+      addLineIndexBlocks();
+      addPointIndexBlocks();
     } else {
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {
         if (PGL.MAX_TESS_VERTICES < root.firstFillVertexRel + tess.fillVertexCount) {
@@ -3116,7 +3143,7 @@ public class PShape3D extends PShape {
         root.lastFillVertexOffset = tess.setFillVertex(root.lastFillVertexOffset);              
         root.lastFillIndexOffset = tess.setFillIndex(root.firstFillVertexRel, root.lastFillIndexOffset);        
         root.firstFillVertexRel += tess.fillVertexCount;
-        addFillIndexData(root.firstFillVertexAbs, tess.firstFillIndex, tess.lastFillIndex - tess.firstFillIndex + 1);
+        addFillIndexBlock(tess.lastFillIndex - tess.firstFillIndex + 1, tess.firstFillIndex, root.firstFillVertexAbs);
       }
             
       if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {
@@ -3127,7 +3154,7 @@ public class PShape3D extends PShape {
         root.lastLineVertexOffset = tess.setLineVertex(root.lastLineVertexOffset);
         root.lastLineIndexOffset = tess.setLineIndex(root.firstLineVertexRel, root.lastLineIndexOffset);
         root.firstLineVertexRel += tess.lineVertexCount;        
-        addLineIndexData(root.firstLineVertexAbs, tess.firstLineIndex, tess.lastLineIndex - tess.firstLineIndex + 1);
+        addLineIndexBlock(tess.lastLineIndex - tess.firstLineIndex + 1, tess.firstLineIndex, root.firstLineVertexAbs);
       }
             
       if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {
@@ -3138,7 +3165,7 @@ public class PShape3D extends PShape {
         root.lastPointVertexOffset = tess.setPointVertex(root.lastPointVertexOffset);
         root.lastPointIndexOffset = tess.setPointIndex(root.firstPointVertexRel, root.lastPointIndexOffset);
         root.firstPointVertexRel += tess.pointVertexCount;
-        addPointIndexData(root.firstPointVertexAbs, tess.firstPointIndex, tess.lastPointIndex - tess.firstPointIndex + 1);
+        addPointIndexBlock(tess.lastPointIndex - tess.firstPointIndex + 1, tess.firstPointIndex, root.firstPointVertexAbs);
       }      
     }
     
@@ -3147,33 +3174,34 @@ public class PShape3D extends PShape {
     hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;            
   }
 
-  // Creates fill index data for a geometry shape.
-  protected void addFillIndexData(int first, int offset, int size) {
-    fillIndexData.clear(); 
-    IndexData data = new IndexData(first, offset, size);
-    fillIndexData.add(data);
+  // Adds one fill index block to a geometry shape.
+  protected void addFillIndexBlock(int icount, int ioffset, int voffset) {
+    fillIndexBlocks.clear(); 
+    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
+    fillIndexBlocks.add(data);
   }    
   
-  // Creates fill index data for a group shape.
-  protected void addFillIndexData() {
-    fillIndexData.clear(); 
-    IndexData gdata = null;
+  // Adds fill index blocks for a group shape, using the blocks of its
+  // child shapes.
+  protected void addFillIndexBlocks() {
+    fillIndexBlocks.clear(); 
+    IndexBlock gdata = null;
     
     for (int i = 0; i < childCount; i++) {        
       PShape3D child = (PShape3D) children[i];
       
-      for (int j = 0; j < child.fillIndexData.size(); j++) {
-        IndexData cdata = child.fillIndexData.get(j);
+      for (int j = 0; j < child.fillIndexBlocks.size(); j++) {
+        IndexBlock cdata = child.fillIndexBlocks.get(j);
           
         if (gdata == null) {
-          gdata = new IndexData(cdata.first, cdata.offset, cdata.size);
-          fillIndexData.add(gdata);
+          gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
+          fillIndexBlocks.add(gdata);
         } else {
-          if (gdata.first == cdata.first) {
-            gdata.size += cdata.size;  
+          if (gdata.vertexOffset == cdata.vertexOffset) {
+            gdata.indexCount += cdata.indexCount;  
           } else {
-            gdata = new IndexData(cdata.first, cdata.offset, cdata.size);
-            fillIndexData.add(gdata);
+            gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
+            fillIndexBlocks.add(gdata);
           }
         }
       }
@@ -3181,33 +3209,34 @@ public class PShape3D extends PShape {
     }    
   }
   
-  // Creates line index data for a geometry shape.
-  protected void addLineIndexData(int first, int offset, int size) {
-    lineIndexData.clear(); 
-    IndexData data = new IndexData(first, offset, size);
-    lineIndexData.add(data);
+  // Adds one line index block to a geometry shape.
+  protected void addLineIndexBlock(int icount, int ioffset, int voffset) {
+    lineIndexBlocks.clear(); 
+    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
+    lineIndexBlocks.add(data);
   }    
   
-  // Creates line index data for a group shape.
-  protected void addLineIndexData() {
-    lineIndexData.clear(); 
-    IndexData gdata = null;
+  // Adds line index blocks for a group shape, using the blocks of its
+  // child shapes.
+  protected void addLineIndexBlocks() {
+    lineIndexBlocks.clear(); 
+    IndexBlock gdata = null;
     
     for (int i = 0; i < childCount; i++) {        
       PShape3D child = (PShape3D) children[i];
       
-      for (int j = 0; j < child.lineIndexData.size(); j++) {
-        IndexData cdata = child.lineIndexData.get(j);
+      for (int j = 0; j < child.lineIndexBlocks.size(); j++) {
+        IndexBlock cdata = child.lineIndexBlocks.get(j);
           
         if (gdata == null) {
-          gdata = new IndexData(cdata.first, cdata.offset, cdata.size);
-          lineIndexData.add(gdata);
+          gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
+          lineIndexBlocks.add(gdata);
         } else {
-          if (gdata.first == cdata.first) {
-            gdata.size += cdata.size;  
+          if (gdata.vertexOffset == cdata.vertexOffset) {
+            gdata.indexCount += cdata.indexCount;  
           } else {
-            gdata = new IndexData(cdata.first, cdata.offset, cdata.size);
-            lineIndexData.add(gdata);
+            gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
+            lineIndexBlocks.add(gdata);
           }
         }
       }
@@ -3215,33 +3244,34 @@ public class PShape3D extends PShape {
     }    
   }  
 
-  // Creates point index data for a geometry shape.
-  protected void addPointIndexData(int first, int offset, int size) {
-    pointIndexData.clear(); 
-    IndexData data = new IndexData(first, offset, size);
-    pointIndexData.add(data);
+  // Adds one point index block to a geometry shape.
+  protected void addPointIndexBlock(int icount, int ioffset, int voffset) {
+    pointIndexBlocks.clear(); 
+    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
+    pointIndexBlocks.add(data);
   }    
   
-  // Creates point index data for a group shape.
-  protected void addPointIndexData() {
-    pointIndexData.clear(); 
-    IndexData gdata = null;
+  // Adds point index blocks for a group shape, using the blocks of its
+  // child shapes.
+  protected void addPointIndexBlocks() {
+    pointIndexBlocks.clear(); 
+    IndexBlock gdata = null;
     
     for (int i = 0; i < childCount; i++) {        
       PShape3D child = (PShape3D) children[i];
       
-      for (int j = 0; j < child.pointIndexData.size(); j++) {
-        IndexData cdata = child.pointIndexData.get(j);
+      for (int j = 0; j < child.pointIndexBlocks.size(); j++) {
+        IndexBlock cdata = child.pointIndexBlocks.get(j);
           
         if (gdata == null) {
-          gdata = new IndexData(cdata.first, cdata.offset, cdata.size);
-          pointIndexData.add(gdata);
+          gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
+          pointIndexBlocks.add(gdata);
         } else {
-          if (gdata.first == cdata.first) {
-            gdata.size += cdata.size;  
+          if (gdata.vertexOffset == cdata.vertexOffset) {
+            gdata.indexCount += cdata.indexCount;  
           } else {
-            gdata = new IndexData(cdata.first, cdata.offset, cdata.size);
-            pointIndexData.add(gdata);
+            gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
+            pointIndexBlocks.add(gdata);
           }
         }
       }
@@ -4129,11 +4159,11 @@ public class PShape3D extends PShape {
     PointShader shader = pg.getPointShader();
     shader.start(); 
     
-    for (int i = 0; i < pointIndexData.size(); i++) {
-      IndexData index = pointIndexData.get(i);      
-      int first = index.first;
-      int offset = index.offset;
-      int size =  index.size;
+    for (int i = 0; i < pointIndexBlocks.size(); i++) {
+      IndexBlock index = pointIndexBlocks.get(i);      
+      int first = index.vertexOffset;
+      int offset = index.indexOffset;
+      int size =  index.indexCount;
       
       shader.setVertexAttribute(root.glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);        
       shader.setColorAttribute(root.glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
@@ -4152,11 +4182,11 @@ public class PShape3D extends PShape {
     LineShader shader = pg.getLineShader();
     shader.start(); 
     
-    for (int i = 0; i < lineIndexData.size(); i++) {
-      IndexData index = lineIndexData.get(i);      
-      int first = index.first;
-      int offset = index.offset;
-      int size =  index.size;
+    for (int i = 0; i < lineIndexBlocks.size(); i++) {
+      IndexBlock index = lineIndexBlocks.get(i);      
+      int first = index.vertexOffset;
+      int offset = index.indexOffset;
+      int size =  index.indexCount;
     
       shader.setVertexAttribute(root.glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);        
       shader.setColorAttribute(root.glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
@@ -4184,11 +4214,11 @@ public class PShape3D extends PShape {
     FillShader shader = pg.getFillShader(pg.lights, tex != null);
     shader.start();
     
-    for (int i = 0; i < fillIndexData.size(); i++) {
-      IndexData index = fillIndexData.get(i);      
-      int first = index.first;
-      int offset = index.offset;
-      int size =  index.size;
+    for (int i = 0; i < fillIndexBlocks.size(); i++) {
+      IndexBlock index = fillIndexBlocks.get(i);      
+      int first = index.vertexOffset;
+      int offset = index.indexOffset;
+      int size =  index.indexCount;
       
       shader.setVertexAttribute(root.glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);        
       shader.setColorAttribute(root.glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
@@ -4224,15 +4254,16 @@ public class PShape3D extends PShape {
 
   // 
 
-  protected class IndexData {
-    IndexData(int first, int offset, int size) {
-      this.first = first;
-      this.offset = offset;
-      this.size = size;
+  protected class IndexBlock {
+    int indexCount;
+    int indexOffset;
+    int vertexOffset;    
+    
+    IndexBlock(int icount, int ioffset, int voffset) {
+      this.indexCount = icount;
+      this.indexOffset = ioffset;
+      this.vertexOffset = voffset;      
     }  
-    int first;
-    int offset;
-    int size;
   }
   
   ///////////////////////////////////////////////////////////  
