@@ -34,6 +34,8 @@ import processing.core.PVector;
 
 import java.net.URL;
 import java.nio.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -2197,6 +2199,21 @@ public class PGraphicsOpenGL extends PGraphics {
     vertexImpl(x, y, z, u, v);
   }
 
+  public void test() {
+    
+    inGeo.clear();
+    tessGeo.clear();
+    for (int i = 0; i <= 10; i++) {
+      inGeo.addVertex(i, i, VERTEX);  
+    }    
+    tessellator.setInGeometry(inGeo);
+    tessellator.setTessGeometry(tessGeo);
+   
+    int[] indices = {0, 1, 2, 3, 4, 5, 7, 6, 1, 0, 8, 2, 9, 10, 9};
+    
+    tessellator.tessellateTrianglesTest(indices);
+  }
+  
 
   protected void vertexImpl(float x, float y, float z, float u, float v) {
     if (inGeo.isFull()) {
@@ -2231,12 +2248,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     inGeo.addVertex(x, y, z,
-                 fcolor,
-                 normalX, normalY, normalZ,
-                 u, v,
-                 scolor, sweight,
-                 ambientColor, specularColor, emissiveColor, shininess,
-                 vertexCode());
+                    fcolor,
+                    normalX, normalY, normalZ,
+                    u, v,
+                    scolor, sweight,
+                    ambientColor, specularColor, emissiveColor, shininess,
+                    vertexCode());
   }
 
 
@@ -7535,7 +7552,31 @@ public class PGraphicsOpenGL extends PGraphics {
     // Utils    
   }
   
+  protected class IndexBlock {
+    int indexCount;
+    int indexOffset;
+    int vertexCount;
+    int vertexOffset;    
+    
+    IndexBlock() {
+      indexCount = 0;
+      indexOffset = 0;
+      vertexCount = 0;
+      vertexOffset = 0; 
+    }
+    
+    IndexBlock(int icount, int ioffset, int voffset) {
+      this.indexCount = icount;
+      this.indexOffset = ioffset;
+      this.vertexOffset = voffset;      
+    }  
+    
+    int relativeVertexIndex(int i) {
+      return i + vertexCount; 
+    }
+  }
 
+  
   // Holds tessellated data for fill, line and point geometry.
   protected class TessGeometry {
     int renderMode;
@@ -7560,6 +7601,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int firstFillIndex;
     int lastFillIndex;
     short[] fillIndices;
+    ArrayList<IndexBlock> fillIndexBlocks;
 
     // Tessellated line data
     int lineVertexCount;
@@ -7592,6 +7634,7 @@ public class PGraphicsOpenGL extends PGraphics {
     TessGeometry(int mode) {
       renderMode = mode;      
       allocate();
+      fillIndexBlocks = new ArrayList<IndexBlock>();
     }
 
     TessGeometry(int mode, boolean empty) {
@@ -7600,6 +7643,23 @@ public class PGraphicsOpenGL extends PGraphics {
         allocate();
       }
     }    
+
+    // -----------------------------------------------------------------
+    //
+    // Index block    
+    
+    IndexBlock getLastFillIndexBlock() {
+      int n = fillIndexBlocks.size();
+      IndexBlock block;
+      if (n == 0) {
+        block = new IndexBlock();
+        fillIndexBlocks.add(block);
+      } else {
+        block = fillIndexBlocks.get(n - 1);
+      }
+      return block;
+    }
+    
     
     // -----------------------------------------------------------------
     //
@@ -8948,6 +9008,109 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke) {
         tess.isStroked = true;
         tessellateEdges();
+      }      
+    }
+    
+    void tessellateTrianglesTest(int[] indices) {
+      int nInInd = indices.length;
+      short[] testIndices = new short[indices.length];
+      
+      int inInd0, inInd1;
+      int inMaxVert0, inMaxVert1;
+      int inMaxRel;
+      
+      inInd0 = inInd1 = 0;
+      inMaxVert0 = inMaxVert1 = in.firstVertex;
+      inMaxRel = 0;
+      
+      Set<Integer> inDupSet = new HashSet<Integer>();
+      
+      IndexBlock block0 = null;
+      IndexBlock block = tess.getLastFillIndexBlock();
+      int trCount = nInInd / 3;
+      for (int tr = 0; tr < trCount; tr++) {
+        if (block == null) {
+          block = new IndexBlock();
+          if (block0 != null) {
+            block.indexOffset = block0.indexOffset + block0.indexCount;
+            block.vertexOffset = block0.vertexOffset + block0.vertexCount;
+          }
+        }
+        
+        int i0 = indices[3 * tr + 0];
+        int i1 = indices[3 * tr + 1];
+        int i2 = indices[3 * tr + 2];
+
+        // Vertex indices relative to the last copy position.
+        int ii0 = i0 - inMaxVert0;
+        int ii1 = i1 - inMaxVert0;
+        int ii2 = i2 - inMaxVert0;        
+        
+        // Vertex indices relative to the current block.
+        int ri0, ri1, ri2;
+        if (ii0 < 0) {
+          inDupSet.add(ii0);
+          ri0 = ii0;
+        } else {
+          ri0 = block.relativeVertexIndex(ii0);
+        }
+        if (ii1 < 0) {
+          inDupSet.add(ii1);
+          ri1 = ii1;
+        } else {
+          ri1 = block.relativeVertexIndex(ii1);
+        }
+        if (ii2 < 0) {
+          inDupSet.add(ii2);
+          ri2 = ii2;
+        } else {
+          ri2 = block.relativeVertexIndex(ii2);
+        }
+        
+        testIndices[3 * tr + 0] = (short) ri0;
+        testIndices[3 * tr + 1] = (short) ri1;
+        testIndices[3 * tr + 2] = (short) ri2;   
+        
+        inInd1 = 3 * tr + 2;
+        inMaxVert1 = PApplet.max(i0, i1, i2);          
+        
+        inMaxRel = PApplet.max(inMaxRel, PApplet.max(ri0, ri1, ri2));
+        int dup = inDupSet.size();
+        
+        if (PGL.MAX_TESS_VERTICES - 3 <= inMaxRel + dup && inMaxRel + dup < PGL.MAX_TESS_VERTICES ) {          
+          if (0 < dup) {
+            // Adjusting the negative indices so they correspond to vertices added 
+            // at the end of the block.
+            ArrayList<Integer> inDupList = new ArrayList<Integer>(inDupSet);            
+            Collections.sort(inDupList);
+            for (int i = inInd0; i <= inInd1; i++) {
+              int ri = testIndices[i];
+              if (ri < 0) {
+                testIndices[i] = (short) (inMaxRel + 1 + inDupList.indexOf(ri));
+              }
+            }
+          }
+          
+          // Close current block:
+          block.indexCount += inInd1 - inInd0 + 1;
+          block.vertexCount += inMaxVert1 - inMaxVert0 + 1;
+          block0 = block;
+          block = null;
+          
+          inMaxRel = 0;
+          inMaxVert0 = inMaxVert1 + 1;
+          inInd0 = inInd1 + 1; 
+          inDupSet.clear(); 
+        }
+      }
+      
+      // Close current block
+      for (int i = 0; i < indices.length; i++) {
+        PApplet.print(PApplet.nf(indices[i], 2) + " ");  
+      }
+      PApplet.print('\n');
+      for (int i = 0; i < testIndices.length; i++) {
+        PApplet.print(PApplet.nf(testIndices[i], 2) + " ");  
       }      
     }
     
