@@ -100,6 +100,7 @@ public class PGL {
    * primitive type we have 2^15 = 32768 as the maximum number of  vertices
    * that can be referred to within a single VBO. */
   public static final int MAX_TESS_VERTICES = 32768;
+//  public static final int MAX_TESS_VERTICES = 6;
 
   /** Maximum number of indices. Arbitrarily set to 2^24. GLES doesn't impose
    * any restriction on the size of the index buffers, but in any case a
