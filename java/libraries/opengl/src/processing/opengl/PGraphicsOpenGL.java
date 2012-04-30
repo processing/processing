@@ -2209,7 +2209,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setInGeometry(inGeo);
     tessellator.setTessGeometry(tessGeo);
    
-    int[] indices = {0, 1, 2, 3, 4, 5, 7, 6, 1, 0, 8, 2, 9, 10, 9};
+    int[] indices = {0, 1, 2, 3, 4, 5, 7, 6, 1, 0, 8, 1, 9, 10, 9};
     
     tessellator.tessellateTrianglesTest(indices);
   }
@@ -7567,11 +7567,19 @@ public class PGraphicsOpenGL extends PGraphics {
     
     IndexBlock(int icount, int ioffset, int voffset) {
       this.indexCount = icount;
-      this.indexOffset = ioffset;
+      this.indexOffset = ioffset;      
+      this.vertexCount = 0;
       this.vertexOffset = voffset;      
     }  
+
+    IndexBlock(int icount, int ioffset, int vcount, int voffset) {
+      this.indexCount = icount;
+      this.indexOffset = ioffset;      
+      this.vertexCount = vcount;
+      this.vertexOffset = voffset;      
+    }      
     
-    int relativeVertexIndex(int i) {
+    int newVertexIndex(int i) {
       return i + vertexCount; 
     }
   }
@@ -7647,6 +7655,12 @@ public class PGraphicsOpenGL extends PGraphics {
     // -----------------------------------------------------------------
     //
     // Index block    
+    
+    IndexBlock addFillIndexBlock() {
+      IndexBlock block = new IndexBlock();
+      fillIndexBlocks.add(block);
+      return block;
+    }
     
     IndexBlock getLastFillIndexBlock() {
       int n = fillIndexBlocks.size();
@@ -8400,11 +8414,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
       fillVertexCount++;     
     }
-
+    
     void addFillVertices(InGeometry in) {
+      addFillVertices(in, in.firstVertex, in.lastVertex);
+    }    
+
+    void addFillVertex(InGeometry in, int i) {
+      addFillVertices(in, i, i);
+    }
+    
+    void addFillVertices(InGeometry in, int i0, int i1) {
       int index;
-      int i0 = in.firstVertex;
-      int i1 = in.lastVertex;
       int nvert = i1 - i0 + 1;
 
       fillVertexCheck(nvert);
@@ -8498,7 +8518,7 @@ public class PGraphicsOpenGL extends PGraphics {
         PApplet.arrayCopy(in.specular, i0, fillSpecular, firstFillVertex, nvert);
         PApplet.arrayCopy(in.emissive, i0, fillEmissive, firstFillVertex, nvert);
         PApplet.arrayCopy(in.shininess, i0, fillShininess, firstFillVertex, nvert);
-      }
+      }      
     }
     
     void addFillIndices(int count) {
@@ -9030,7 +9050,7 @@ public class PGraphicsOpenGL extends PGraphics {
       int trCount = nInInd / 3;
       for (int tr = 0; tr < trCount; tr++) {
         if (block == null) {
-          block = new IndexBlock();
+          block = tess.addFillIndexBlock();
           if (block0 != null) {
             block.indexOffset = block0.indexOffset + block0.indexCount;
             block.vertexOffset = block0.vertexOffset + block0.vertexCount;
@@ -9044,7 +9064,7 @@ public class PGraphicsOpenGL extends PGraphics {
         // Vertex indices relative to the last copy position.
         int ii0 = i0 - inMaxVert0;
         int ii1 = i1 - inMaxVert0;
-        int ii2 = i2 - inMaxVert0;        
+        int ii2 = i2 - inMaxVert0;
         
         // Vertex indices relative to the current block.
         int ri0, ri1, ri2;
@@ -9052,19 +9072,19 @@ public class PGraphicsOpenGL extends PGraphics {
           inDupSet.add(ii0);
           ri0 = ii0;
         } else {
-          ri0 = block.relativeVertexIndex(ii0);
+          ri0 = block.newVertexIndex(ii0);
         }
         if (ii1 < 0) {
           inDupSet.add(ii1);
           ri1 = ii1;
         } else {
-          ri1 = block.relativeVertexIndex(ii1);
+          ri1 = block.newVertexIndex(ii1);
         }
         if (ii2 < 0) {
           inDupSet.add(ii2);
           ri2 = ii2;
         } else {
-          ri2 = block.relativeVertexIndex(ii2);
+          ri2 = block.newVertexIndex(ii2);
         }
         
         testIndices[3 * tr + 0] = (short) ri0;
@@ -9077,7 +9097,11 @@ public class PGraphicsOpenGL extends PGraphics {
         inMaxRel = PApplet.max(inMaxRel, PApplet.max(ri0, ri1, ri2));
         int dup = inDupSet.size();
         
-        if (PGL.MAX_TESS_VERTICES - 3 <= inMaxRel + dup && inMaxRel + dup < PGL.MAX_TESS_VERTICES ) {          
+        if ((PGL.MAX_TESS_VERTICES - 3 <= inMaxRel + dup && inMaxRel + dup < PGL.MAX_TESS_VERTICES)||
+            (tr == trCount - 1)) {
+          // Copy block vertices first
+          tess.addFillVertices(in, inMaxVert0, inMaxVert1);
+          
           if (0 < dup) {
             // Adjusting the negative indices so they correspond to vertices added 
             // at the end of the block.
@@ -9087,13 +9111,16 @@ public class PGraphicsOpenGL extends PGraphics {
               int ri = testIndices[i];
               if (ri < 0) {
                 testIndices[i] = (short) (inMaxRel + 1 + inDupList.indexOf(ri));
+            
+                // Copy duplicated vertices last
+                tess.addFillVertex(in, ri + inMaxVert0);
               }
             }
           }
           
           // Close current block:
           block.indexCount += inInd1 - inInd0 + 1;
-          block.vertexCount += inMaxVert1 - inMaxVert0 + 1;
+          block.vertexCount += inMaxVert1 - inMaxVert0 + 1 + dup;
           block0 = block;
           block = null;
           
@@ -9104,13 +9131,23 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
       
-      // Close current block
+
       for (int i = 0; i < indices.length; i++) {
         PApplet.print(PApplet.nf(indices[i], 2) + " ");  
       }
       PApplet.print('\n');
       for (int i = 0; i < testIndices.length; i++) {
         PApplet.print(PApplet.nf(testIndices[i], 2) + " ");  
+      }
+      PApplet.print('\n');
+      
+      for (int i = 0; i < tess.fillIndexBlocks.size(); i++) {
+        block = tess.fillIndexBlocks.get(i);
+        PApplet.println("Index block " + i);
+        PApplet.println("  index offset : " + block.indexOffset);
+        PApplet.println("  index count  : " + block.indexCount);
+        PApplet.println("  vertex offset: " + block.vertexOffset);
+        PApplet.println("  vertex count : " + block.vertexCount);        
       }      
     }
     
