@@ -2200,6 +2200,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
   public void test() {
+    hint(DISABLE_TRANSFORM_CACHE);
     
     inGeo.clear();
     tessGeo.clear();
@@ -9043,7 +9044,7 @@ public class PGraphicsOpenGL extends PGraphics {
       inMaxVert0 = inMaxVert1 = in.firstVertex;
       inMaxRel = 0;
       
-      Set<Integer> inDupSet = new HashSet<Integer>();
+      Set<Integer> inDupSet = null;
       
       IndexBlock block0 = null;
       IndexBlock block = tess.getLastFillIndexBlock();
@@ -9069,23 +9070,20 @@ public class PGraphicsOpenGL extends PGraphics {
         // Vertex indices relative to the current block.
         int ri0, ri1, ri2;
         if (ii0 < 0) {
+          if (inDupSet == null) inDupSet = new HashSet<Integer>();
           inDupSet.add(ii0);
           ri0 = ii0;
-        } else {
-          ri0 = block.newVertexIndex(ii0);
-        }
+        } else ri0 = block.newVertexIndex(ii0);
         if (ii1 < 0) {
+          if (inDupSet == null) inDupSet = new HashSet<Integer>();
           inDupSet.add(ii1);
           ri1 = ii1;
-        } else {
-          ri1 = block.newVertexIndex(ii1);
-        }
+        } else ri1 = block.newVertexIndex(ii1);
         if (ii2 < 0) {
+          if (inDupSet == null) inDupSet = new HashSet<Integer>();          
           inDupSet.add(ii2);
           ri2 = ii2;
-        } else {
-          ri2 = block.newVertexIndex(ii2);
-        }
+        } else ri2 = block.newVertexIndex(ii2);
         
         testIndices[3 * tr + 0] = (short) ri0;
         testIndices[3 * tr + 1] = (short) ri1;
@@ -9095,7 +9093,7 @@ public class PGraphicsOpenGL extends PGraphics {
         inMaxVert1 = PApplet.max(i0, i1, i2);          
         
         inMaxRel = PApplet.max(inMaxRel, PApplet.max(ri0, ri1, ri2));
-        int dup = inDupSet.size();
+        int dup = inDupSet == null ? 0 : inDupSet.size();
         
         if ((PGL.MAX_TESS_VERTICES - 3 <= inMaxRel + dup && inMaxRel + dup < PGL.MAX_TESS_VERTICES)||
             (tr == trCount - 1)) {
@@ -9111,10 +9109,13 @@ public class PGraphicsOpenGL extends PGraphics {
               int ri = testIndices[i];
               if (ri < 0) {
                 testIndices[i] = (short) (inMaxRel + 1 + inDupList.indexOf(ri));
-            
-                // Copy duplicated vertices last
-                tess.addFillVertex(in, ri + inMaxVert0);
               }
+            }
+            
+            // Copy duplicated vertices last            
+            for (int i = 0; i < inDupList.size(); i++) {
+              int ri = inDupList.get(i);
+              tess.addFillVertex(in, ri + inMaxVert0);  
             }
           }
           
@@ -9126,8 +9127,8 @@ public class PGraphicsOpenGL extends PGraphics {
           
           inMaxRel = 0;
           inMaxVert0 = inMaxVert1 + 1;
-          inInd0 = inInd1 + 1; 
-          inDupSet.clear(); 
+          inInd0 = inInd1 + 1;
+          if (inDupSet != null) inDupSet.clear(); 
         }
       }
       
@@ -9149,6 +9150,13 @@ public class PGraphicsOpenGL extends PGraphics {
         PApplet.println("  vertex offset: " + block.vertexOffset);
         PApplet.println("  vertex count : " + block.vertexCount);        
       }      
+      
+      PApplet.println("tess vertices count: " + tess.fillVertexCount);
+      for (int i = 0; i < tess.fillVertexCount; i++) {
+        PApplet.println("  tess vertex " + i + " : " + tess.fillVertices[3 * i + 0] + ", " + 
+                                                       tess.fillVertices[3 * i + 1] + ", " + 
+                                                       tess.fillVertices[3 * i + 2]);
+      }
     }
     
     void tessellateTriangleFan() {
