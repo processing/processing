@@ -737,11 +737,6 @@ public class PShape3D extends PShape {
   
   
   protected void vertexImpl(float x, float y, float z, float u, float v) {
-    if (in.isFull()) {
-      PGraphics.showWarning("P3D: Too many vertices, try creating smaller shapes");
-      return;
-    }
-    
     if (family == GROUP) {      
       PGraphics.showWarning("Cannot add vertices to GROUP shape");
       return;
@@ -3136,7 +3131,7 @@ public class PShape3D extends PShape {
       addPointIndexBlocks();
     } else {
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {
-        if (PGL.MAX_TESS_VERTICES < root.firstFillVertexRel + tess.fillVertexCount) {
+        if (PGL.MAX_VERTEX_INDEX1 < root.firstFillVertexRel + tess.fillVertexCount) {
           root.firstFillVertexRel = 0;
           root.firstFillVertexAbs = root.lastFillVertexOffset + 1;          
         } 
@@ -3147,7 +3142,7 @@ public class PShape3D extends PShape {
       }
             
       if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {
-        if (PGL.MAX_TESS_VERTICES < root.firstLineVertexRel + tess.lineVertexCount) {
+        if (PGL.MAX_VERTEX_INDEX1 < root.firstLineVertexRel + tess.lineVertexCount) {
           root.firstLineVertexRel = 0;
           root.firstLineVertexAbs = root.lastLineVertexOffset + 1;          
         }        
@@ -3158,7 +3153,7 @@ public class PShape3D extends PShape {
       }
             
       if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {
-        if (PGL.MAX_TESS_VERTICES < root.firstPointVertexRel + tess.pointVertexCount) {
+        if (PGL.MAX_VERTEX_INDEX1 < root.firstPointVertexRel + tess.pointVertexCount) {
           root.firstPointVertexRel = 0;
           root.firstPointVertexAbs = root.lastPointVertexOffset + 1;          
         }                
