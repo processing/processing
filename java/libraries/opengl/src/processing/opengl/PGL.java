@@ -76,6 +76,9 @@ public class PGL {
   /** Size of a float (in bytes). */
   static final int SIZEOF_FLOAT = Float.SIZE / 8;
 
+  /** Size of a byte (in bytes). */
+  static final int SIZEOF_BYTE = Byte.SIZE / 8;
+  
   /** Size of a vertex index. */
   static final int SIZEOF_INDEX = SIZEOF_SHORT;
 
@@ -95,19 +98,21 @@ public class PGL {
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */
   public static final int MAX_LIGHTS = 8;
 
-  /** Maximum number of tessellated vertices. GLES restricts the vertex indices
-   * to be of type unsigned short. Since Java only supports native shorts as
-   * primitive type we have 2^15 = 32768 as the maximum number of  vertices
-   * that can be referred to within a single VBO. */
-  public static final int MAX_TESS_VERTICES = 32768;
-//  public static final int MAX_TESS_VERTICES = 4;
-
-  /** Maximum number of indices. Arbitrarily set to 2^24. GLES doesn't impose
-   * any restriction on the size of the index buffers, but in any case a
-   * geometry so complex that requires this many indices would be rendered
-   * very slowly on the majority of devices, including desktop-class GPUs */
-  public static final int MAX_TESS_INDICES  = 1 << 24;
-
+  /** Maximum index value of a tessellated vertex. GLES restricts the vertex 
+   * indices to be of type unsigned short. Since Java only supports signed
+   * shorts as primitive type we have 2^15 = 32768 as the maximum number of  
+   * vertices that can be referred to within a single VBO. */
+  public static final int MAX_VERTEX_INDEX = 32767;
+  public static final int MAX_VERTEX_INDEX1 = MAX_VERTEX_INDEX + 1;
+  
+  /** Count of tessellated fill, line or point vertices that will 
+   * trigger a flush in the immediate mode. It doesn't necessarily 
+   * be equal to MAX_VERTEX_INDEX1, since the number of vertices can 
+   * be effectively much large since the renderer uses offsets to
+   * refer to vertices beyond the MAX_VERTEX_INDEX limit. 
+   */
+  public static final int FLUSH_VERTEX_COUNT = MAX_VERTEX_INDEX1; 
+  
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
 
