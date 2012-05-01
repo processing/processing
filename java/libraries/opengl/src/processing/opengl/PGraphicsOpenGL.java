@@ -1108,8 +1108,6 @@ public class PGraphicsOpenGL extends PGraphics {
     int size = tessGeo.fillVertexCount;
     int sizef = size * PGL.SIZEOF_FLOAT;
     int sizei = size * PGL.SIZEOF_INT;
-    
-    PApplet.println(tessGeo.fillVertexCount);
 
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glFillVertexBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 3 * sizef, FloatBuffer.wrap(tessGeo.fillVertices, 0, 3 * size), PGL.GL_STATIC_DRAW);
@@ -2472,12 +2470,19 @@ public class PGraphicsOpenGL extends PGraphics {
     LineShader shader = getLineShader();
     shader.start();
 
-    shader.setVertexAttribute(glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);
-    shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
-    shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 0);
+    for (int b = 0; b < tessGeo.getLineIndexBlockCount(); b++) {
+      IndexBlock block = tessGeo.getLineIndexBlock(b);      
+      int ioffset = block.indexOffset;
+      int icount =  block.indexCount;
+      int voffset = block.vertexOffset;
+      
+      shader.setVertexAttribute(glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+      shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
 
-    pgl.glDrawElements(PGL.GL_TRIANGLES, tessGeo.lineIndexCount, PGL.INDEX_TYPE, 0);
-
+      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
+    }
+    
     shader.stop();
     unbindLineBuffers();
   }
@@ -2496,28 +2501,28 @@ public class PGraphicsOpenGL extends PGraphics {
       int last = texCache.lastBlock[i];
       for (int b = first; b <= last; b++) {
         IndexBlock block = tessGeo.getFillIndexBlock(b);       
-        int indexOffset = b == first ? texCache.firstIndex[i] : block.indexOffset;
-        int indexCount = b == last ? texCache.lastIndex[i] - indexOffset + 1 : 
-                                     block.indexOffset + block.indexCount - indexOffset;        
-        int vertOffset = block.vertexOffset;
+        int ioffset = b == first ? texCache.firstIndex[i] : block.indexOffset;
+        int icount = b == last ? texCache.lastIndex[i] - ioffset + 1 : 
+                                     block.indexOffset + block.indexCount - ioffset;        
+        int voffset = block.vertexOffset;
         
-        shader.setVertexAttribute(glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * vertOffset * PGL.SIZEOF_FLOAT);
-        shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * vertOffset * PGL.SIZEOF_BYTE);
+        shader.setVertexAttribute(glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
+        shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
 
         if (lights) {
-          shader.setNormalAttribute(glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * vertOffset * PGL.SIZEOF_FLOAT);
-          shader.setAmbientAttribute(glFillAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * vertOffset * PGL.SIZEOF_BYTE);
-          shader.setSpecularAttribute(glFillSpecularBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * vertOffset * PGL.SIZEOF_BYTE);
-          shader.setEmissiveAttribute(glFillEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * vertOffset * PGL.SIZEOF_BYTE);
-          shader.setShininessAttribute(glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, vertOffset * PGL.SIZEOF_FLOAT);
+          shader.setNormalAttribute(glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
+          shader.setAmbientAttribute(glFillAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+          shader.setSpecularAttribute(glFillSpecularBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+          shader.setEmissiveAttribute(glFillEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+          shader.setShininessAttribute(glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, voffset * PGL.SIZEOF_FLOAT);
         }
 
         if (tex != null) {
-          shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * vertOffset * PGL.SIZEOF_FLOAT);
+          shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
           shader.setTexture(tex);
         }
 
-        pgl.glDrawElements(PGL.GL_TRIANGLES, indexCount, PGL.INDEX_TYPE, indexOffset * PGL.SIZEOF_INDEX);
+        pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
       }
 
       shader.stop();
@@ -5875,7 +5880,17 @@ public class PGraphicsOpenGL extends PGraphics {
     }
   }
 
+  //////////////////////////////////////////////////////////////
 
+  // Utils
+  
+  static protected int expandArraySize(int currSize, int newMinSize) {
+    int newSize = currSize;
+    while (newSize < newMinSize) {
+      newSize <<= 1;
+    }
+    return newSize;
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -6952,7 +6967,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
-    void addPointIndex(int inIdx, int tessIdx) {
+    void addPointIndexToTessMap(int inIdx, int tessIdx) {
       if (renderMode == RETAINED) {
         int[] indices = pointIndices[inIdx];
         int pos;
@@ -6970,7 +6985,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }     
     }
     
-    void addLineIndex(int inIdx, int tessIdx) {
+    void addLineIndexToTessMap(int inIdx, int tessIdx) {
       if (renderMode == RETAINED) {
         int[] indices = lineIndices[inIdx];
         int pos;
@@ -6988,7 +7003,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }  
     }
         
-    void addFillIndex(int inIdx, int tessIdx, float weight) {
+    void addFillIndexToTessMap(int inIdx, int tessIdx, float weight) {
       if (renderMode == RETAINED) {
         int[] indices = fillIndices[inIdx];
         float[] weights = fillWeights[inIdx];
@@ -7012,16 +7027,16 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }    
     
-    void addFillIndex(int inIdx, int tessIdx) {
-      addFillIndex(inIdx, tessIdx, 1);
+    void addFillIndexToTessMap(int inIdx, int tessIdx) {
+      addFillIndexToTessMap(inIdx, tessIdx, 1);
     }
     
-    void addFillIndices(int firstTessIdx) {
+    void addFillIndicesToTessMap(int firstTessIdx) {
       if (renderMode == RETAINED) {
         int i0 = firstVertex;
         int i1 = lastVertex;        
         for (int i = i0; i <= i1; i++) {
-          addFillIndex(i, firstTessIdx + i - i0);
+          addFillIndexToTessMap(i, firstTessIdx + i - i0);
         }                  
       }      
     }    
@@ -7556,11 +7571,7 @@ public class PGraphicsOpenGL extends PGraphics {
       indCount += 3 * detailU;      
       
       return indices;
-    }
-    
-    // -----------------------------------------------------------------
-    //
-    // Utils    
+    } 
   }
   
   protected class IndexBlock {
@@ -7590,11 +7601,12 @@ public class PGraphicsOpenGL extends PGraphics {
       this.vertexOffset = voffset;      
     }      
     
-    int newVertexIndex(int i) {
-      return vertexCount + i; 
+    IndexBlock(IndexBlock other) {
+      this();
+      indexOffset = other.indexOffset + other.indexCount;
+      vertexOffset = other.vertexOffset + other.vertexCount;            
     }
   }
-
   
   // Holds tessellated data for fill, line and point geometry.
   protected class TessGeometry {
@@ -7634,6 +7646,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int firstLineIndex;
     int lastLineIndex;
     short[] lineIndices;
+    ArrayList<IndexBlock> lineIndexBlocks;
 
     // Tessellated point data
     int pointVertexCount;
@@ -7647,19 +7660,23 @@ public class PGraphicsOpenGL extends PGraphics {
     int firstPointIndex;
     int lastPointIndex;
     short[] pointIndices;
+    ArrayList<IndexBlock> pointIndexBlocks;
 
     boolean isStroked;
 
     TessGeometry(int mode) {
       renderMode = mode;      
       fillIndexBlocks = new ArrayList<IndexBlock>();
+      lineIndexBlocks = new ArrayList<IndexBlock>();
+      pointIndexBlocks = new ArrayList<IndexBlock>();
       allocate();
-      
     }
 
     TessGeometry(int mode, boolean empty) {
       renderMode = mode;
       fillIndexBlocks = new ArrayList<IndexBlock>();
+      lineIndexBlocks = new ArrayList<IndexBlock>();
+      pointIndexBlocks = new ArrayList<IndexBlock>();      
       if (!empty) {
         allocate();
       }
@@ -7667,7 +7684,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // -----------------------------------------------------------------
     //
-    // Index block    
+    // Fill index blocks    
     
     IndexBlock addFillIndexBlock() {
       IndexBlock block = new IndexBlock();
@@ -7676,9 +7693,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     IndexBlock addFillIndexBlock(IndexBlock other) {
-      IndexBlock block = new IndexBlock();
-      block.indexOffset = other.indexOffset + other.indexCount;
-      block.vertexOffset = other.vertexOffset + other.vertexCount;      
+      IndexBlock block = new IndexBlock(other);
       fillIndexBlocks.add(block);
       return block;
     }    
@@ -7702,6 +7717,48 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       return block;
     }
+
+    // -----------------------------------------------------------------
+    //
+    // Line index blocks    
+
+    IndexBlock addLineIndexBlock() {
+      IndexBlock block = new IndexBlock();
+      lineIndexBlocks.add(block);
+      return block;
+    }
+
+    IndexBlock addLineIndexBlock(IndexBlock other) {
+      IndexBlock block = new IndexBlock(other); 
+      lineIndexBlocks.add(block);
+      return block;
+    }    
+    
+    int getLineIndexBlockCount() {
+      return lineIndexBlocks.size();
+    }
+    
+    IndexBlock getLineIndexBlock(int n) {
+      return lineIndexBlocks.get(n);      
+    }
+    
+    IndexBlock getLastLineIndexBlock() {
+      int n = lineIndexBlocks.size();
+      IndexBlock block;
+      if (n == 0) {
+        block = new IndexBlock();
+        lineIndexBlocks.add(block);
+      } else {
+        block = lineIndexBlocks.get(n - 1);
+      }
+      return block;
+    }
+
+    // -----------------------------------------------------------------
+    //
+    // Point index blocks    
+    
+    // ...
     
     // -----------------------------------------------------------------
     //
@@ -7742,6 +7799,8 @@ public class PGraphicsOpenGL extends PGraphics {
       firstPointIndex = lastPointIndex = pointIndexCount = 0;
 
       fillIndexBlocks.clear();
+      lineIndexBlocks.clear();
+      pointIndexBlocks.clear();
       
       isStroked = false;
     }
@@ -7781,12 +7840,16 @@ public class PGraphicsOpenGL extends PGraphics {
         expandFillEmissive(newSize);
         expandFillShininess(newSize);
       }
+      
+      firstFillVertex = fillVertexCount;
+      fillVertexCount++;
+      lastFillVertex = fillVertexCount - 1;       
     }
 
     void fillVertexCheck(int count) {
       int oldSize = fillVertices.length / 3;
       if (fillVertexCount + count > oldSize) {
-        int newSize = expandVertSize(oldSize, fillVertexCount + count);
+        int newSize = expandArraySize(oldSize, fillVertexCount + count);
 
         expandFillVertices(newSize);
         expandFillColors(newSize);
@@ -7806,7 +7869,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void fillIndexCheck(int count) {
       int oldSize = fillIndices.length;
       if (fillIndexCount + count > oldSize) {
-        int newSize = expandIndSize(oldSize, fillIndexCount + count);
+        int newSize = expandArraySize(oldSize, fillIndexCount + count);
 
         expandFillIndices(newSize);
       }
@@ -7821,12 +7884,16 @@ public class PGraphicsOpenGL extends PGraphics {
         int newSize = fillIndexCount << 1;
         expandFillIndices(newSize);
       }
+      
+      firstFillIndex = fillIndexCount;
+      fillIndexCount++;
+      lastFillIndex = fillIndexCount - 1;      
     }    
     
     void lineVertexCheck(int count) {
       int oldSize = lineVertices.length / 3;
       if (lineVertexCount + count > oldSize) {
-        int newSize = expandVertSize(oldSize, lineVertexCount + count);
+        int newSize = expandArraySize(oldSize, lineVertexCount + count);
 
         expandLineVertices(newSize);
         expandLineColors(newSize);
@@ -7841,7 +7908,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void lineIndexCheck(int count) {
       int oldSize = lineIndices.length;
       if (lineIndexCount + count > oldSize) {
-        int newSize = expandIndSize(oldSize, lineIndexCount + count);
+        int newSize = expandArraySize(oldSize, lineIndexCount + count);
 
         expandLineIndices(newSize);
       }
@@ -7854,7 +7921,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void pointVertexCheck(int count) {
       int oldSize = pointVertices.length / 3;
       if (pointVertexCount + count > oldSize) {
-        int newSize = expandVertSize(oldSize, pointVertexCount + count);
+        int newSize = expandArraySize(oldSize, pointVertexCount + count);
 
         expandPointVertices(newSize);
         expandPointColors(newSize);
@@ -7869,7 +7936,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void pointIndexCheck(int count) {
       int oldSize = pointIndices.length;
       if (pointIndexCount + count > oldSize) {
-        int newSize = expandIndSize(oldSize, pointIndexCount + count);
+        int newSize = expandArraySize(oldSize, pointIndexCount + count);
 
         expandPointIndices(newSize);
       }
@@ -8062,22 +8129,6 @@ public class PGraphicsOpenGL extends PGraphics {
       pointIndices = temp;
     }    
         
-    int expandVertSize(int currSize, int newMinSize) {
-      int newSize = currSize;
-      while (newSize < newMinSize) {
-        newSize <<= 1;
-      }
-      return newSize;
-    }
-
-    int expandIndSize(int currSize, int newMinSize) {
-      int newSize = currSize;
-      while (newSize < newMinSize) {
-        newSize <<= 1;
-      }
-      return newSize;
-    }    
-    
     // -----------------------------------------------------------------
     //
     // Trim arrays     
@@ -8406,6 +8457,83 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // -----------------------------------------------------------------
     //
+    // Add point geometry
+    
+    void putPointVertex(InGeometry in, int inIdx, int tessIdx) {
+      int index;
+
+      index = 3 * inIdx;
+      float x = in.vertices[index++];
+      float y = in.vertices[index++];
+      float z = in.vertices[index ];
+
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
+        PMatrix3D mm = modelview;
+
+        index = 3 * tessIdx;
+        pointVertices[index++] = x * mm.m00 + y * mm.m01 + z * mm.m02 + mm.m03;
+        pointVertices[index++] = x * mm.m10 + y * mm.m11 + z * mm.m12 + mm.m13;
+        pointVertices[index  ] = x * mm.m20 + y * mm.m21 + z * mm.m22 + mm.m23;
+      } else {
+        index = 3 * tessIdx;
+        pointVertices[index++] = x;
+        pointVertices[index++] = y;
+        pointVertices[index  ] = z;
+      }
+
+      pointColors[tessIdx] = in.scolors[inIdx];
+    }        
+    
+    // -----------------------------------------------------------------
+    //
+    // Add line geometry
+    
+    void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx, int rgba) {
+      int index;
+
+      index = 3 * inIdx0;
+      float x0 = in.vertices[index++];
+      float y0 = in.vertices[index++];
+      float z0 = in.vertices[index  ];
+
+      index = 3 * inIdx1;
+      float x1 = in.vertices[index++];
+      float y1 = in.vertices[index++];
+      float z1 = in.vertices[index  ];
+
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
+        PMatrix3D mm = modelview;
+
+        index = 3 * tessIdx;
+        lineVertices[index++] = x0 * mm.m00 + y0 * mm.m01 + z0 * mm.m02 + mm.m03;
+        lineVertices[index++] = x0 * mm.m10 + y0 * mm.m11 + z0 * mm.m12 + mm.m13;
+        lineVertices[index  ] = x0 * mm.m20 + y0 * mm.m21 + z0 * mm.m22 + mm.m23;
+
+        index = 4 * tessIdx;
+        lineDirWidths[index++] = x1 * mm.m00 + y1 * mm.m01 + z1 * mm.m02 + mm.m03;
+        lineDirWidths[index++] = x1 * mm.m10 + y1 * mm.m11 + z1 * mm.m12 + mm.m13;
+        lineDirWidths[index  ] = x1 * mm.m20 + y1 * mm.m21 + z1 * mm.m22 + mm.m23;
+      } else {
+        index = 3 * tessIdx;
+        lineVertices[index++] = x0;
+        lineVertices[index++] = y0;
+        lineVertices[index  ] = z0;
+
+        index = 4 * tessIdx;
+        lineDirWidths[index++] = x1;
+        lineDirWidths[index++] = y1;
+        lineDirWidths[index  ] = z1;
+      }
+
+      lineColors[tessIdx] = rgba;
+    }
+
+    void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx) {
+      putLineVertex(in, inIdx0, inIdx1, tessIdx, in.scolors[inIdx0]);
+    }
+    
+    // -----------------------------------------------------------------
+    //
     // Add fill geometry
     
     void addFillVertex(float x, float y, float z,
@@ -8415,44 +8543,43 @@ public class PGraphicsOpenGL extends PGraphics {
                        int am, int sp, int em, float shine) {
       fillVertexCheck();
       int index;
+      int count = fillVertexCount - 1;
 
       if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
         PMatrix3D mm = modelview;
         PMatrix3D nm = modelviewInv;
 
-        index = 3 * fillVertexCount;
+        index = 3 * count;
         fillVertices[index++] = x * mm.m00 + y * mm.m01 + z * mm.m02 + mm.m03;
         fillVertices[index++] = x * mm.m10 + y * mm.m11 + z * mm.m12 + mm.m13;
         fillVertices[index  ] = x * mm.m20 + y * mm.m21 + z * mm.m22 + mm.m23;
 
-        index = 3 * fillVertexCount;
+        index = 3 * count;
         fillNormals[index++] = nx * nm.m00 + ny * nm.m10 + nz * nm.m20;
         fillNormals[index++] = nx * nm.m01 + ny * nm.m11 + nz * nm.m21;
         fillNormals[index  ] = nx * nm.m02 + ny * nm.m12 + nz * nm.m22;
       } else {
-        index = 3 * fillVertexCount;
+        index = 3 * count;
         fillVertices[index++] = x;
         fillVertices[index++] = y;
         fillVertices[index  ] = z;
 
-        index = 3 * fillVertexCount;
+        index = 3 * count;
         fillNormals[index++] = nx;
         fillNormals[index++] = ny;
         fillNormals[index  ] = nz;
       }
 
-      fillColors[fillVertexCount] = rgba;
+      fillColors[count] = rgba;
 
-      index = 2 * fillVertexCount;
+      index = 2 * count;
       fillTexcoords[index++] = u;
       fillTexcoords[index  ] = v;
 
-      fillAmbient[fillVertexCount] = am;
-      fillSpecular[fillVertexCount] = sp;
-      fillEmissive[fillVertexCount] = em;
-      fillShininess[fillVertexCount] = shine;
-
-      fillVertexCount++;     
+      fillAmbient[count] = am;
+      fillSpecular[count] = sp;
+      fillEmissive[count] = em;
+      fillShininess[count] = shine;
     }
     
     void addFillVertices(InGeometry in) {
@@ -8559,90 +8686,6 @@ public class PGraphicsOpenGL extends PGraphics {
         PApplet.arrayCopy(in.emissive, i0, fillEmissive, firstFillVertex, nvert);
         PApplet.arrayCopy(in.shininess, i0, fillShininess, firstFillVertex, nvert);
       }      
-    }
-
-    void addFillIndex(int idx) {
-      fillIndexCheck();
-      fillIndices[fillIndexCount] = PGL.makeIndex(idx);
-      fillIndexCount++;
-      lastFillIndex = fillIndexCount - 1;
-    }    
-    
-    // -----------------------------------------------------------------
-    //
-    // Add line geometry
-    
-    void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx, int rgba) {
-      int index;
-
-      index = 3 * inIdx0;
-      float x0 = in.vertices[index++];
-      float y0 = in.vertices[index++];
-      float z0 = in.vertices[index  ];
-
-      index = 3 * inIdx1;
-      float x1 = in.vertices[index++];
-      float y1 = in.vertices[index++];
-      float z1 = in.vertices[index  ];
-
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D mm = modelview;
-
-        index = 3 * tessIdx;
-        lineVertices[index++] = x0 * mm.m00 + y0 * mm.m01 + z0 * mm.m02 + mm.m03;
-        lineVertices[index++] = x0 * mm.m10 + y0 * mm.m11 + z0 * mm.m12 + mm.m13;
-        lineVertices[index  ] = x0 * mm.m20 + y0 * mm.m21 + z0 * mm.m22 + mm.m23;
-
-        index = 4 * tessIdx;
-        lineDirWidths[index++] = x1 * mm.m00 + y1 * mm.m01 + z1 * mm.m02 + mm.m03;
-        lineDirWidths[index++] = x1 * mm.m10 + y1 * mm.m11 + z1 * mm.m12 + mm.m13;
-        lineDirWidths[index  ] = x1 * mm.m20 + y1 * mm.m21 + z1 * mm.m22 + mm.m23;
-      } else {
-        index = 3 * tessIdx;
-        lineVertices[index++] = x0;
-        lineVertices[index++] = y0;
-        lineVertices[index  ] = z0;
-
-        index = 4 * tessIdx;
-        lineDirWidths[index++] = x1;
-        lineDirWidths[index++] = y1;
-        lineDirWidths[index  ] = z1;
-      }
-
-      lineColors[tessIdx] = rgba;
-    }
-
-    void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx) {
-      putLineVertex(in, inIdx0, inIdx1, tessIdx, in.scolors[inIdx0]);
-    }
-    
-    // -----------------------------------------------------------------
-    //
-    // Add point geometry
-    
-    void putPointVertex(InGeometry in, int inIdx, int tessIdx) {
-      int index;
-
-      index = 3 * inIdx;
-      float x = in.vertices[index++];
-      float y = in.vertices[index++];
-      float z = in.vertices[index ];
-
-      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
-        PMatrix3D mm = modelview;
-
-        index = 3 * tessIdx;
-        pointVertices[index++] = x * mm.m00 + y * mm.m01 + z * mm.m02 + mm.m03;
-        pointVertices[index++] = x * mm.m10 + y * mm.m11 + z * mm.m12 + mm.m13;
-        pointVertices[index  ] = x * mm.m20 + y * mm.m21 + z * mm.m22 + mm.m23;
-      } else {
-        index = 3 * tessIdx;
-        pointVertices[index++] = x;
-        pointVertices[index++] = y;
-        pointVertices[index  ] = z;
-      }
-
-      pointColors[tessIdx] = in.scolors[inIdx];
     }
 
     // -----------------------------------------------------------------
@@ -8800,12 +8843,14 @@ public class PGraphicsOpenGL extends PGraphics {
     float strokeWeight;
     int strokeJoin;
     int strokeCap;
-    int bezierDetil = 20;
+    
+    int[] rawIndices;
+    int rawSize;
 
     Tessellator() {
       callback = new TessellatorCallback();
       gluTess = pgl.createTessellator(callback);
-      bezierDetil = 20;
+      rawIndices = new int[512];
     }
     
     void setInGeometry(InGeometry in) {
@@ -8836,6 +8881,10 @@ public class PGraphicsOpenGL extends PGraphics {
       this.strokeCap = strokeCap;
     }
 
+    // -----------------------------------------------------------------
+    //
+    // Point tessellation    
+    
     void tessellatePoints() {
       if (strokeCap == ROUND) {
         tessellateRoundPoints();
@@ -8863,8 +8912,6 @@ public class PGraphicsOpenGL extends PGraphics {
           nindTot += 3 * (nvert - 1);
         }
 
-        checkForFlush(tess.lineVertexCount + nvertTot, tess.lineIndexCount + nindTot);
-
         tess.pointVertexCheck(nvertTot);
         tess.pointIndexCheck(nindTot);
         int vertIdx = tess.firstPointVertex;
@@ -8879,7 +8926,7 @@ public class PGraphicsOpenGL extends PGraphics {
           // All the tessellated vertices are identical to the center point
           for (int k = 0; k < nvert; k++) {
             tess.putPointVertex(in, i, vertIdx);
-            in.addPointIndex(i, vertIdx);
+            in.addPointIndexToTessMap(i, vertIdx);
             vertIdx++;
           }
 
@@ -8933,8 +8980,6 @@ public class PGraphicsOpenGL extends PGraphics {
         // 3 indices.
         int nindTot = 12 * quadCount;
 
-        checkForFlush(tess.lineVertexCount + nvertTot, tess.lineIndexCount + nindTot);
-
         tess.pointVertexCheck(nvertTot);
         tess.pointIndexCheck(nindTot);
         int vertIdx = tess.firstPointVertex;
@@ -8946,7 +8991,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
           for (int k = 0; k < nvert; k++) {
             tess.putPointVertex(in, i, vertIdx);
-            in.addPointIndex(i, vertIdx);
+            in.addPointIndexToTessMap(i, vertIdx);
             vertIdx++;
           }
 
@@ -8980,6 +9025,10 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
+    // -----------------------------------------------------------------
+    //
+    // Line tessellation    
+    
     void tessellateLines() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
@@ -8996,35 +9045,122 @@ public class PGraphicsOpenGL extends PGraphics {
         // require 3 indices to specify their connectivities.
         int nind = lineCount * 2 * 3;
 
-        checkForFlush(tess.lineVertexCount + nvert, tess.lineIndexCount + nvert);
-
         tess.lineVertexCheck(nvert);
         tess.lineIndexCheck(nind);
-        int vcount = tess.firstLineVertex;
-        int icount = tess.firstLineIndex;
+        IndexBlock block = tess.getLastLineIndexBlock();
         for (int ln = 0; ln < lineCount; ln++) {
           int i0 = first + 2 * ln + 0;
           int i1 = first + 2 * ln + 1;
-          addLine(i0, i1, vcount, icount); vcount += 4; icount += 6;
+          block = addLine(i0, i1, block);
         }
       }
     }
+
+    void tessellateEdges() {
+      if (!stroke) return;
+      
+      int nInVert = in.getNumLineVertices();
+      int nInInd = in.getNumLineIndices();
+
+      tess.lineVertexCheck(nInVert);
+      tess.lineIndexCheck(nInInd);
+      IndexBlock block = tess.getLastLineIndexBlock();
+      for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+        int[] edge = in.edges[i];
+        block = addLine(edge[0], edge[1], block);
+      }
+     
+      tess.isStroked = true;
+    }
+
+    // Adding the data that defines a quad starting at vertex i0 and
+    // ending at i1.
+    IndexBlock addLine(int i0, int i1, IndexBlock block) {
+      if (PGL.MAX_VERTEX_INDEX1 <= block.vertexCount + 4) {
+        // We need to start a new index block for this line.
+        block = tess.addLineIndexBlock(block);
+      }
+      int iidx = block.indexOffset + block.indexCount;
+      int vidx = block.vertexOffset + block.vertexCount;
+      
+      tess.putLineVertex(in, i0, i1, vidx);
+      tess.lineDirWidths[4 * vidx + 3] = +strokeWeight;
+      tess.lineIndices[iidx++] = (short) (block.vertexCount + 0);
+      in.addLineIndexToTessMap(i0, vidx);
+      
+      vidx++;
+      tess.putLineVertex(in, i0, i1, vidx);
+      tess.lineDirWidths[4 * vidx + 3] = -strokeWeight;
+      tess.lineIndices[iidx++] = (short) (block.vertexCount + 1);
+      in.addLineIndexToTessMap(i0, vidx);
+      
+      vidx++;
+      tess.putLineVertex(in, i1, i0, vidx);
+      tess.lineDirWidths[4 * vidx + 3] = -strokeWeight;
+      tess.lineIndices[iidx++] = (short) (block.vertexCount + 2);
+      in.addLineIndexToTessMap(i1, vidx);
+      
+      // Starting a new triangle re-using prev vertices.
+      tess.lineIndices[iidx++] = (short) (block.vertexCount + 2);      
+      tess.lineIndices[iidx++] = (short) (block.vertexCount + 1);
+
+      vidx++;
+      tess.putLineVertex(in, i1, i0, vidx);
+      tess.lineDirWidths[4 * vidx + 3] = +strokeWeight;
+      tess.lineIndices[iidx++] = (short) (block.vertexCount + 3);
+      in.addLineIndexToTessMap(i1, vidx);
+      
+      block.indexCount += 6;
+      block.vertexCount += 4;
+      return block;
+    }    
+    
+    boolean startEdge(int edge) {
+      return edge % 2 != 0;
+    }
+
+    boolean endEdge(int edge) {
+      return 1 < edge;
+    }    
+    
+    // -----------------------------------------------------------------
+    //
+    // Fill primitives tessellation      
     
     void tessellateTriangles() {
+      int nInInd = in.lastVertex - in.firstVertex + 1;
+      setRawSize(nInInd);
+      for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+        rawIndices[i - in.firstVertex] = i;
+      }
+      partitionRawIndices();
+      tessellateEdges();
+    }
+
+    void tessellateTriangles(int[] indices) {
+      int nInInd = indices.length;
+      setRawSize(nInInd);
+      PApplet.arrayCopy(indices, rawIndices, nInInd);
+      partitionRawIndices();
+      tessellateEdges();
+    }
+    
+    void tessellateTriangleFan() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
       if (fill && 3 <= nInVert) {
-        int nInInd = nInVert;
-        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
+        int nInInd = 3 * (nInVert - 2);
 
         tess.addFillVertices(in);
-        in.addFillIndices(tess.firstFillVertex);
+        in.addFillIndicesToTessMap(tess.firstFillVertex);
 
         tess.fillIndexCheck(nInInd);
-        int idx0 = tess.firstFillIndex;
+        int idx = tess.firstFillIndex;
         int offset = tess.firstFillVertex;
-        for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-          tess.fillIndices[idx0 + i] = PGL.makeIndex(offset + i);
+        for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
+          tess.fillIndices[idx++] = PGL.makeIndex(offset + in.firstVertex);
+          tess.fillIndices[idx++] = PGL.makeIndex(offset + i);
+          tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
         }
       }
 
@@ -9034,11 +9170,114 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
 
-    void tessellateTriangles(int[] indices) {
+    void tessellateTriangleStrip() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-      
+
       if (fill && 3 <= nInVert) {
-        int nInInd = indices.length;
+        int triCount = nInVert - 2;
+        int nInInd = 3 * triCount;
+
+        tess.addFillVertices(in);
+        in.addFillIndicesToTessMap(tess.firstFillVertex);
+
+        // Each vertex, except the first and last, defines a triangle.
+        tess.fillIndexCheck(nInInd);
+        int idx = tess.firstFillIndex;
+        int offset = tess.firstFillVertex;
+        for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
+          tess.fillIndices[idx++] = PGL.makeIndex(offset + i);
+          if (i % 2 == 0) {
+            tess.fillIndices[idx++] = PGL.makeIndex(offset + i - 1);
+            tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
+          } else {
+            tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
+            tess.fillIndices[idx++] = PGL.makeIndex(offset + i - 1);
+          }
+        }
+      }
+
+      if (stroke) {
+        tess.isStroked = true;
+        tessellateEdges();
+      }
+    }
+
+    void tessellateQuads() {
+      int nInVert = in.lastVertex - in.firstVertex + 1;
+
+      if (fill && 4 <= nInVert) {
+        int quadCount = nInVert / 4;
+        int nInInd = 6 * quadCount;
+
+        tess.addFillVertices(in);
+        in.addFillIndicesToTessMap(tess.firstFillVertex);
+
+        tess.fillIndexCheck(nInInd);
+        int idx = tess.firstFillIndex;
+        int offset = tess.firstFillVertex;
+        for (int qd = 0; qd < quadCount; qd++) {
+          int i0 = offset + 4 * qd + 0;
+          int i1 = offset + 4 * qd + 1;
+          int i2 = offset + 4 * qd + 2;
+          int i3 = offset + 4 * qd + 3;
+
+          tess.fillIndices[idx++] = PGL.makeIndex(i0);
+          tess.fillIndices[idx++] = PGL.makeIndex(i1);
+          tess.fillIndices[idx++] = PGL.makeIndex(i3);
+
+          tess.fillIndices[idx++] = PGL.makeIndex(i1);
+          tess.fillIndices[idx++] = PGL.makeIndex(i2);
+          tess.fillIndices[idx++] = PGL.makeIndex(i3);
+        }
+      }
+
+      if (stroke) {
+        tess.isStroked = true;
+        tessellateEdges();
+      }
+    }
+
+    void tessellateQuadStrip() {
+      int nInVert = in.lastVertex - in.firstVertex + 1;
+
+      if (fill && 4 <= nInVert) {
+        int quadCount = nInVert / 2 - 1;
+        int nInInd = 6 * quadCount;
+
+        tess.addFillVertices(in);
+        in.addFillIndicesToTessMap(tess.firstFillVertex);
+
+        tess.fillIndexCheck(nInInd);
+        int idx = tess.firstFillIndex;
+        int offset = tess.firstFillVertex;
+        for (int qd = 1; qd < nInVert / 2; qd++) {
+          int i0 = offset + 2 * (qd - 1);
+          int i1 = offset + 2 * (qd - 1) + 1;
+          int i2 = offset + 2 * qd + 1;
+          int i3 = offset + 2 * qd;
+
+          tess.fillIndices[idx++] = PGL.makeIndex(i0);
+          tess.fillIndices[idx++] = PGL.makeIndex(i1);
+          tess.fillIndices[idx++] = PGL.makeIndex(i3);
+
+          tess.fillIndices[idx++] = PGL.makeIndex(i1);
+          tess.fillIndices[idx++] = PGL.makeIndex(i2);
+          tess.fillIndices[idx++] = PGL.makeIndex(i3);
+        }
+      }
+
+      if (stroke) {
+        tess.isStroked = true;
+        tessellateEdges();
+      }
+    }
+
+    // Uses the raw indices to tessellate the geometry in separate 
+    // index blocks in the vertex indices become too large.
+    void partitionRawIndices() {
+      int nInVert = in.lastVertex - in.firstVertex + 1;      
+      if (fill && 3 <= nInVert) {
+        tess.fillIndexCheck(rawSize);
         
         int inInd0 = 0, inInd1 = 0;
         int inMaxVert0 = in.firstVertex, inMaxVert1 = in.firstVertex;
@@ -9047,14 +9286,14 @@ public class PGraphicsOpenGL extends PGraphics {
         Set<Integer> inDupSet = null;        
         IndexBlock block0 = null;
         IndexBlock block = tess.getLastFillIndexBlock();
-        tess.fillIndexCheck(nInInd);
-        int trCount = nInInd / 3;        
+        
+        int trCount = rawSize / 3;        
         for (int tr = 0; tr < trCount; tr++) {
           if (block == null) block = tess.addFillIndexBlock(block0);
           
-          int i0 = indices[3 * tr + 0];
-          int i1 = indices[3 * tr + 1];
-          int i2 = indices[3 * tr + 2];
+          int i0 = rawIndices[3 * tr + 0];
+          int i1 = rawIndices[3 * tr + 1];
+          int i2 = rawIndices[3 * tr + 2];
 
           // Vertex indices relative to the last copy position.
           int ii0 = i0 - inMaxVert0;
@@ -9067,17 +9306,17 @@ public class PGraphicsOpenGL extends PGraphics {
             if (inDupSet == null) inDupSet = new HashSet<Integer>();
             inDupSet.add(ii0);
             ri0 = ii0;
-          } else ri0 = block.newVertexIndex(ii0);
+          } else ri0 = block.vertexCount + ii0;
           if (ii1 < 0) {
             if (inDupSet == null) inDupSet = new HashSet<Integer>();
             inDupSet.add(ii1);
             ri1 = ii1;
-          } else ri1 = block.newVertexIndex(ii1);
+          } else ri1 = block.vertexCount + ii1;
           if (ii2 < 0) {
             if (inDupSet == null) inDupSet = new HashSet<Integer>();          
             inDupSet.add(ii2);
             ri2 = ii2;
-          } else ri2 = block.newVertexIndex(ii2);
+          } else ri2 = block.vertexCount + ii2;
           
           tess.fillIndices[3 * tr + 0] = (short) ri0;
           tess.fillIndices[3 * tr + 1] = (short) ri1;
@@ -9125,173 +9364,36 @@ public class PGraphicsOpenGL extends PGraphics {
             if (inDupSet != null) inDupSet.clear(); 
           }
         }
-
-        
-        
-        
-        
-//        int nInInd = indices.length;
-//        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
-//
-//        tess.addFillVertices(in);
-//        in.addFillIndices(tess.firstFillVertex);
-//        
-//        tess.addFillIndices(nInInd);
-//        int idx0 = tess.firstFillIndex;
-//        int offset = tess.firstFillVertex;
-//        for (int i = 0; i < nInInd; i++) {
-//          tess.fillIndices[idx0 + i] = PGL.makeIndex(offset + indices[i]);
-//        }
-        
-        
       }
       
-//      if (stroke) {
-//        tess.isStroked = true;
-//        tessellateEdges();
-//      }      
+      // TODO: in.addFillIndicesToTessMap !!!!!
     }
         
-    void tessellateTriangleFan() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-
-      if (fill && 3 <= nInVert) {
-        int nInInd = 3 * (nInVert - 2);
-        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
-
-        tess.addFillVertices(in);
-        in.addFillIndices(tess.firstFillVertex);
-
-        tess.fillIndexCheck(nInInd);
-        int idx = tess.firstFillIndex;
-        int offset = tess.firstFillVertex;
-        for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          tess.fillIndices[idx++] = PGL.makeIndex(offset + in.firstVertex);
-          tess.fillIndices[idx++] = PGL.makeIndex(offset + i);
-          tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
-        }
+    void setRawSize(int size) {      
+      int size0 = rawIndices.length;
+      if (size0 < size) {
+        int size1 = expandArraySize(size0, size);
+        expandRawIndices(size1);
       }
-
-      if (stroke) {
-        tess.isStroked = true;
-        tessellateEdges();
-      }
+      rawSize = size;
     }
 
-    void tessellateTriangleStrip() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-
-      if (fill && 3 <= nInVert) {
-        int triCount = nInVert - 2;
-        int nInInd = 3 * triCount;
-
-        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
-
-        tess.addFillVertices(in);
-        in.addFillIndices(tess.firstFillVertex);
-
-        // Each vertex, except the first and last, defines a triangle.
-        tess.fillIndexCheck(nInInd);
-        int idx = tess.firstFillIndex;
-        int offset = tess.firstFillVertex;
-        for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          tess.fillIndices[idx++] = PGL.makeIndex(offset + i);
-          if (i % 2 == 0) {
-            tess.fillIndices[idx++] = PGL.makeIndex(offset + i - 1);
-            tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
-          } else {
-            tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
-            tess.fillIndices[idx++] = PGL.makeIndex(offset + i - 1);
-          }
-        }
-      }
-
-      if (stroke) {
-        tess.isStroked = true;
-        tessellateEdges();
-      }
+    void expandRawIndices(int n) {
+      int temp[] = new int[n];
+      PApplet.arrayCopy(rawIndices, 0, temp, 0, rawSize);
+      rawIndices = temp;
     }
-
-    void tessellateQuads() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-
-      if (fill && 4 <= nInVert) {
-        int quadCount = nInVert / 4;
-        int nInInd = 6 * quadCount;
-
-        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
-        tess.addFillVertices(in);
-        in.addFillIndices(tess.firstFillVertex);
-
-        tess.fillIndexCheck(nInInd);
-        int idx = tess.firstFillIndex;
-        int offset = tess.firstFillVertex;
-        for (int qd = 0; qd < quadCount; qd++) {
-          int i0 = offset + 4 * qd + 0;
-          int i1 = offset + 4 * qd + 1;
-          int i2 = offset + 4 * qd + 2;
-          int i3 = offset + 4 * qd + 3;
-
-          tess.fillIndices[idx++] = PGL.makeIndex(i0);
-          tess.fillIndices[idx++] = PGL.makeIndex(i1);
-          tess.fillIndices[idx++] = PGL.makeIndex(i3);
-
-          tess.fillIndices[idx++] = PGL.makeIndex(i1);
-          tess.fillIndices[idx++] = PGL.makeIndex(i2);
-          tess.fillIndices[idx++] = PGL.makeIndex(i3);
-        }
-      }
-
-      if (stroke) {
-        tess.isStroked = true;
-        tessellateEdges();
-      }
-    }
-
-    void tessellateQuadStrip() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-
-      if (fill && 4 <= nInVert) {
-        int quadCount = nInVert / 2 - 1;
-        int nInInd = 6 * quadCount;
-
-        checkForFlush(tess.fillVertexCount + nInVert, tess.fillIndexCount + nInInd);
-        tess.addFillVertices(in);
-        in.addFillIndices(tess.firstFillVertex);
-
-        tess.fillIndexCheck(nInInd);
-        int idx = tess.firstFillIndex;
-        int offset = tess.firstFillVertex;
-        for (int qd = 1; qd < nInVert / 2; qd++) {
-          int i0 = offset + 2 * (qd - 1);
-          int i1 = offset + 2 * (qd - 1) + 1;
-          int i2 = offset + 2 * qd + 1;
-          int i3 = offset + 2 * qd;
-
-          tess.fillIndices[idx++] = PGL.makeIndex(i0);
-          tess.fillIndices[idx++] = PGL.makeIndex(i1);
-          tess.fillIndices[idx++] = PGL.makeIndex(i3);
-
-          tess.fillIndices[idx++] = PGL.makeIndex(i1);
-          tess.fillIndices[idx++] = PGL.makeIndex(i2);
-          tess.fillIndices[idx++] = PGL.makeIndex(i3);
-        }
-      }
-
-      if (stroke) {
-        tess.isStroked = true;
-        tessellateEdges();
-      }
-    }
-
+    
+    // -----------------------------------------------------------------
+    //
+    // Polygon tessellation    
+    
     void tessellatePolygon(boolean solid, boolean closed, boolean calcNormals) {
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
       callback.calcNormals = calcNormals;
 
       if (fill && 3 <= nInVert) {
-        checkForFlush(nInVert);
-
         gluTess.beginPolygon();
 
         if (solid) {
@@ -9303,7 +9405,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
 
         gluTess.beginContour();
-
+        
         // Now, iterate over all input data and send to GLU tessellator..
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
           boolean breakPt = in.breaks[i];
@@ -9353,87 +9455,17 @@ public class PGraphicsOpenGL extends PGraphics {
         tessellateEdges();
       }
     }
-
-    // Adding the data that defines a quad starting at vertex i0 and
-    // ending at i1.
-    void addLine(int i0, int i1, int vcount, int icount) {
-      tess.putLineVertex(in, i0, i1, vcount);
-      tess.lineDirWidths[4 * vcount + 3] = +strokeWeight;
-      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
-      in.addLineIndex(i0, vcount);
-      
-      vcount++;
-      tess.putLineVertex(in, i0, i1, vcount);
-      tess.lineDirWidths[4 * vcount + 3] = -strokeWeight;
-      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
-      in.addLineIndex(i0, vcount);
-      
-      vcount++;
-      tess.putLineVertex(in, i1, i0, vcount);
-      tess.lineDirWidths[4 * vcount + 3] = -strokeWeight;
-      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
-      in.addLineIndex(i1, vcount);
-      
-      // Starting a new triangle re-using prev vertices.
-      tess.lineIndices[icount++] = PGL.makeIndex(vcount);      
-      tess.lineIndices[icount++] = PGL.makeIndex(vcount - 1); 
-
-      vcount++;
-      tess.putLineVertex(in, i1, i0, vcount);
-      tess.lineDirWidths[4 * vcount + 3] = +strokeWeight;
-      tess.lineIndices[icount++] = PGL.makeIndex(vcount);
-      in.addLineIndex(i1, vcount);
-    }
-
-    void tessellateEdges() {
-      int nInVert = in.getNumLineVertices();
-      int nInInd = in.getNumLineIndices();
-
-      checkForFlush(tess.lineVertexCount + nInVert, tess.lineIndexCount + nInInd);
-
-      tess.lineVertexCheck(nInVert);
-      tess.lineIndexCheck(nInInd);
-      int vcount = tess.firstLineVertex;
-      int icount = tess.firstLineIndex;
-      for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-        int[] edge = in.edges[i];
-        addLine(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
-      }
-    }
-
-    void checkForFlush(int vertCount) {
-//      if (tess.renderMode == IMMEDIATE && PGL.MAX_TESS_VERTICES < vertCount) {
-//        //setLastTexIndex(tess.lastFillIndex);
-//        flush();
-////        setFirstTexIndex(0);
-//      }
-    }
-
-    void checkForFlush(int vertCount, int indCount) {
-//      if (tess.renderMode == IMMEDIATE && (PGL.MAX_TESS_VERTICES < vertCount ||
-//                                           PGL.MAX_TESS_INDICES  < indCount)) {
-//        //setLastTexIndex(tess.lastFillIndex);
-//        flush();
-// //       setFirstTexIndex(0);
-//      }
-    }
-
-    boolean startEdge(int edge) {
-      return edge % 2 != 0;
-    }
-
-    boolean endEdge(int edge) {
-      return 1 < edge;
-    }
-
+    
     protected class TessellatorCallback implements PGL.TessellatorCallback {
       boolean calcNormals;
+      IndexBlock tessBlock;
       int tessFirst;
       int tessCount;
       int tessType;
 
       public void begin(int type) {
-        tessFirst = tess.fillVertexCount;
+        tessBlock = tess.getLastFillIndexBlock();        
+        tessFirst = tessBlock.vertexCount;
         tessCount = 0;
 
         switch (type) {
@@ -9450,6 +9482,17 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       public void end() {
+        if (PGL.MAX_VERTEX_INDEX1 <= tessFirst + tessCount) {
+          // We need a new index block for the new batch of
+          // vertices resulting from this primitive. tessCount can
+          // be safely assumed here to be less or equal than
+          // MAX_VERTEX_INDEX1 because the condition was checked
+          // every time a new vertex was emitted (see vertex() below).
+          tessBlock = tess.addFillIndexBlock(tessBlock);
+          tessBlock.vertexCount = tessCount;
+          tessFirst = 0;
+        }
+        
         switch (tessType) {
         case TRIANGLE_FAN:
           for (int i = 1; i < tessCount - 1; i++) {
@@ -9491,7 +9534,9 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       protected void addIndex(int tessIdx) {
-        tess.addFillIndex(tessFirst + tessIdx);
+        tessBlock.indexCount++;
+        tess.fillIndexCheck();
+        tess.fillIndices[tess.fillIndexCount - 1] = (short) (tessFirst + tessIdx);
       }
 
       protected void calcTriNormal(int tessIdx0, int tessIdx1, int tessIdx2) {
@@ -9506,7 +9551,7 @@ public class PGraphicsOpenGL extends PGraphics {
             throw new RuntimeException("TessCallback vertex() data is not of length 25");
           }
 
-          if (tess.fillVertexCount < PGL.MAX_VERTEX_INDEX1) {
+          if (tessCount < PGL.MAX_VERTEX_INDEX1) {
 
             // Combining individual rgba components back into int color values
             int fcolor = ((int) d[ 3] << 24) | ((int) d[ 4] << 16) | ((int) d[ 5] << 8) | (int) d[ 6];
@@ -9523,11 +9568,11 @@ public class PGraphicsOpenGL extends PGraphics {
 
             int nvert = (l - 25) / 2;
             if (0 < nvert) {
-              int tessIdx = tess.fillVertexCount - 1;
+              int tessIdx = tess.fillVertexCount - 1; // aaaaah!!!!
               for (int n = 0; n < nvert; n++) {
                 int inIdx = (int) d[25 + 2 * n + 0];
                 float weight = (float) d[25 + 2 * n + 1];
-                in.addFillIndex(inIdx, tessIdx, weight);
+                in.addFillIndexToTessMap(inIdx, tessIdx, weight);
               }
             }
             
