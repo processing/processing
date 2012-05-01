@@ -7662,8 +7662,6 @@ public class PGraphicsOpenGL extends PGraphics {
     short[] pointIndices;
     ArrayList<IndexBlock> pointIndexBlocks;
 
-    boolean isStroked;
-
     TessGeometry(int mode) {
       renderMode = mode;      
       fillIndexBlocks = new ArrayList<IndexBlock>();
@@ -7801,8 +7799,6 @@ public class PGraphicsOpenGL extends PGraphics {
       fillIndexBlocks.clear();
       lineIndexBlocks.clear();
       pointIndexBlocks.clear();
-      
-      isStroked = false;
     }
     
     void dipose() {
@@ -8897,8 +8893,6 @@ public class PGraphicsOpenGL extends PGraphics {
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
       if (stroke && 1 <= nInVert) {
-        tess.isStroked = true;
-
         // Each point generates a separate triangle fan.
         // The number of triangles of each fan depends on the
         // stroke weight of the point.
@@ -8967,8 +8961,6 @@ public class PGraphicsOpenGL extends PGraphics {
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
       if (stroke && 1 <= nInVert) {
-        tess.isStroked = true;
-
         // Each point generates a separate quad.
         int quadCount = nInVert;
 
@@ -9033,8 +9025,6 @@ public class PGraphicsOpenGL extends PGraphics {
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
       if (stroke && 2 <= nInVert) {
-        tess.isStroked = true;
-
         int lineCount = nInVert / 2;
         int first = in.firstVertex;
 
@@ -9057,20 +9047,18 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void tessellateEdges() {
-      if (!stroke) return;
-      
-      int nInVert = in.getNumLineVertices();
-      int nInInd = in.getNumLineIndices();
+      if (stroke) {
+        int nInVert = in.getNumLineVertices();
+        int nInInd = in.getNumLineIndices();
 
-      tess.lineVertexCheck(nInVert);
-      tess.lineIndexCheck(nInInd);
-      IndexBlock block = tess.getLastLineIndexBlock();
-      for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-        int[] edge = in.edges[i];
-        block = addLine(edge[0], edge[1], block);
+        tess.lineVertexCheck(nInVert);
+        tess.lineIndexCheck(nInInd);
+        IndexBlock block = tess.getLastLineIndexBlock();
+        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+          int[] edge = in.edges[i];
+          block = addLine(edge[0], edge[1], block);
+        }
       }
-     
-      tess.isStroked = true;
     }
 
     // Adding the data that defines a quad starting at vertex i0 and
@@ -9164,10 +9152,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
 
-      if (stroke) {
-        tess.isStroked = true;
-        tessellateEdges();
-      }
+      tessellateEdges();
     }
 
     void tessellateTriangleStrip() {
@@ -9196,10 +9181,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
 
-      if (stroke) {
-        tess.isStroked = true;
-        tessellateEdges();
-      }
+      tessellateEdges();
     }
 
     void tessellateQuads() {
@@ -9231,10 +9213,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
 
-      if (stroke) {
-        tess.isStroked = true;
-        tessellateEdges();
-      }
+      tessellateEdges();
     }
 
     void tessellateQuadStrip() {
@@ -9266,10 +9245,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
 
-      if (stroke) {
-        tess.isStroked = true;
-        tessellateEdges();
-      }
+      tessellateEdges();
     }
 
     // Uses the raw indices to tessellate the geometry in separate 
@@ -9450,10 +9426,7 @@ public class PGraphicsOpenGL extends PGraphics {
         gluTess.endPolygon();
       }
 
-      if (stroke) {
-        tess.isStroked = true;
-        tessellateEdges();
-      }
+      tessellateEdges();
     }
     
     protected class TessellatorCallback implements PGL.TessellatorCallback {
