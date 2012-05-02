@@ -9164,8 +9164,9 @@ public class PGraphicsOpenGL extends PGraphics {
       if (fill && 3 <= nInVert) {
         int nInInd = nInVert;
         setRawSize(nInInd);
+        int idx = 0;
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-          rawIndices[i - in.firstVertex] = i;
+          rawIndices[idx++] = i;
         }
         partitionRawIndices();
       }
@@ -9189,11 +9190,10 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = 3 * (nInVert - 2);
         setRawSize(nInInd);
         int idx = 0;
-        int offset = tess.firstFillVertex;
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          rawIndices[idx++] = offset + in.firstVertex;
-          rawIndices[idx++] = offset + i;
-          rawIndices[idx++] = offset + i + 1;
+          rawIndices[idx++] = in.firstVertex;
+          rawIndices[idx++] = i;
+          rawIndices[idx++] = i + 1;
         }
         partitionRawIndices();
       }
@@ -9207,15 +9207,14 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = 3 * triCount;
         setRawSize(nInInd);
         int idx = 0;
-        int offset = tess.firstFillVertex;
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          rawIndices[idx++] = offset + i;
+          rawIndices[idx++] = i;
           if (i % 2 == 0) {
-            rawIndices[idx++] = offset + i - 1;
-            rawIndices[idx++] = offset + i + 1;
+            rawIndices[idx++] = i - 1;
+            rawIndices[idx++] = i + 1;
           } else {
-            rawIndices[idx++] = offset + i + 1;
-            rawIndices[idx++] = offset + i - 1;
+            rawIndices[idx++] = i + 1;
+            rawIndices[idx++] = i - 1;
           }
         }
         partitionRawIndices();
@@ -9230,12 +9229,11 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = 6 * quadCount;
         setRawSize(nInInd);        
         int idx = 0;
-        int offset = tess.firstFillVertex;
         for (int qd = 0; qd < quadCount; qd++) {
-          int i0 = offset + 4 * qd + 0;
-          int i1 = offset + 4 * qd + 1;
-          int i2 = offset + 4 * qd + 2;
-          int i3 = offset + 4 * qd + 3;
+          int i0 = in.firstVertex + 4 * qd + 0;
+          int i1 = in.firstVertex + 4 * qd + 1;
+          int i2 = in.firstVertex + 4 * qd + 2;
+          int i3 = in.firstVertex + 4 * qd + 3;
 
           rawIndices[idx++] = i0;
           rawIndices[idx++] = i1;
@@ -9257,12 +9255,11 @@ public class PGraphicsOpenGL extends PGraphics {
         int nInInd = 6 * quadCount;
         setRawSize(nInInd); 
         int idx = 0;
-        int offset = tess.firstFillVertex;
         for (int qd = 1; qd < nInVert / 2; qd++) {
-          int i0 = offset + 2 * (qd - 1);
-          int i1 = offset + 2 * (qd - 1) + 1;
-          int i2 = offset + 2 * qd + 1;
-          int i3 = offset + 2 * qd;
+          int i0 = in.firstVertex + 2 * (qd - 1);
+          int i1 = in.firstVertex + 2 * (qd - 1) + 1;
+          int i2 = in.firstVertex + 2 * qd + 1;
+          int i3 = in.firstVertex + 2 * qd;
 
           rawIndices[idx++] = i0;
           rawIndices[idx++] = i1;
@@ -9277,10 +9274,11 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellateEdges();
     }
 
-    // Uses the raw indices to tessellate the geometry in separate 
-    // index blocks in the vertex indices become too large.
+    // Uses the raw indices to partition the geometry into separate 
+    // index blocks when the vertex indices become too large.
     void partitionRawIndices() {
       tess.fillIndexCheck(rawSize);
+      int offset = tess.firstFillIndex; 
       
       int inInd0 = 0, inInd1 = 0;
       int inMaxVert0 = in.firstVertex, inMaxVert1 = in.firstVertex;
@@ -9321,9 +9319,9 @@ public class PGraphicsOpenGL extends PGraphics {
           ri2 = ii2;
         } else ri2 = block.vertexCount + ii2;
         
-        tess.fillIndices[3 * tr + 0] = (short) ri0;
-        tess.fillIndices[3 * tr + 1] = (short) ri1;
-        tess.fillIndices[3 * tr + 2] = (short) ri2;   
+        tess.fillIndices[offset + 3 * tr + 0] = (short) ri0;
+        tess.fillIndices[offset + 3 * tr + 1] = (short) ri1;
+        tess.fillIndices[offset + 3 * tr + 2] = (short) ri2;   
         
         inInd1 = 3 * tr + 2;
         inMaxVert1 = PApplet.max(i0, i1, i2);          
