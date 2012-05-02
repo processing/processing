@@ -6015,7 +6015,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void addTexture(PImage img, int firsti, int firstb, int lasti, int lastb) {
-      textureCheck();
+      arrayCheck();
 
       textures[count] = img;
       firstIndex[count] = firsti;
@@ -6034,7 +6034,7 @@ public class PGraphicsOpenGL extends PGraphics {
       lastBlock[count - 1] = lastb;
     }
 
-    void textureCheck() {
+    void arrayCheck() {
       if (count == textures.length) {
         int newSize = count << 1;
 
@@ -7582,6 +7582,72 @@ public class PGraphicsOpenGL extends PGraphics {
     } 
   }
   
+  protected class IndexCache {
+    int count;
+    int[] indexCount;
+    int[] indexOffset;
+    int[] vertexCount;
+    int[] vertexOffset;
+    
+    IndexCache() {
+      allocate();
+    }
+    
+    void allocate() {
+      indexCount = new int[2];
+      indexOffset = new int[2];      
+      vertexCount = new int[2];
+      vertexOffset = new int[2];
+      count = 0;
+    }
+
+    void clear() {
+      count = 0;
+    }    
+    
+    void add() {
+      
+    }
+    
+    
+    void arrayCheck() {
+      if (count == indexCount.length) {
+        int newSize = count << 1;
+
+        expandIndexCount(newSize);
+        expandIndexOffset(newSize);
+        expandVertexCount(newSize);
+        expandVertexOffset(newSize);       
+      }
+    }
+    
+    void expandIndexCount(int n) {
+      int[] temp = new int[n];
+      PApplet.arrayCopy(indexCount, 0, temp, 0, count);
+      indexCount = temp;
+    }
+    
+    void expandIndexOffset(int n) {
+      int[] temp = new int[n];
+      PApplet.arrayCopy(indexOffset, 0, temp, 0, count);
+      indexOffset = temp;      
+    }
+    
+    void expandVertexCount(int n) {
+      int[] temp = new int[n];
+      PApplet.arrayCopy(vertexCount, 0, temp, 0, count);
+      vertexCount = temp;
+    }
+    
+    void expandVertexOffset(int n) {
+      int[] temp = new int[n];
+      PApplet.arrayCopy(vertexOffset, 0, temp, 0, count);
+      vertexOffset = temp;
+    }    
+  }
+  
+  
+  
   protected class IndexBlock {
     int indexCount;
     int indexOffset;
@@ -9115,7 +9181,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
-    IndexBlock addLine(int i0, int i1, IndexBlock block) {
+    IndexBlock addLine(int i0, int i1, IndexBlock block/*, int vidx, int iidx*/) {
       if (PGL.MAX_VERTEX_INDEX1 <= block.vertexCount + 4) {
         // We need to start a new index block for this line.
         block = tess.addLineIndexBlock(block);
@@ -9124,19 +9190,19 @@ public class PGraphicsOpenGL extends PGraphics {
       int vidx = block.vertexOffset + block.vertexCount;
       
       tess.putLineVertex(in, i0, i1, vidx);
-      tess.lineDirWidths[4 * vidx + 3] = +strokeWeight;
+      tess.lineDirWidths[4 * vidx + 3] = +strokeWeight/2;
       tess.lineIndices[iidx++] = (short) (block.vertexCount + 0);
       in.addLineIndexToTessMap(i0, vidx);
       
       vidx++;
       tess.putLineVertex(in, i0, i1, vidx);
-      tess.lineDirWidths[4 * vidx + 3] = -strokeWeight;
+      tess.lineDirWidths[4 * vidx + 3] = -strokeWeight/2;
       tess.lineIndices[iidx++] = (short) (block.vertexCount + 1);
       in.addLineIndexToTessMap(i0, vidx);
       
       vidx++;
       tess.putLineVertex(in, i1, i0, vidx);
-      tess.lineDirWidths[4 * vidx + 3] = -strokeWeight;
+      tess.lineDirWidths[4 * vidx + 3] = -strokeWeight/2;
       tess.lineIndices[iidx++] = (short) (block.vertexCount + 2);
       in.addLineIndexToTessMap(i1, vidx);
       
@@ -9146,7 +9212,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       vidx++;
       tess.putLineVertex(in, i1, i0, vidx);
-      tess.lineDirWidths[4 * vidx + 3] = +strokeWeight;
+      tess.lineDirWidths[4 * vidx + 3] = +strokeWeight/2;
       tess.lineIndices[iidx++] = (short) (block.vertexCount + 3);
       in.addLineIndexToTessMap(i1, vidx);
       
