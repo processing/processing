@@ -9485,10 +9485,10 @@ public class PGraphicsOpenGL extends PGraphics {
           // be safely assumed here to be less or equal than
           // MAX_VERTEX_INDEX1 because the condition was checked
           // every time a new vertex was emitted (see vertex() below).
-          tessBlock = tess.addFillIndexBlock(tessBlock);
-          tessBlock.vertexCount = tessCount;
+          tessBlock = tess.addFillIndexBlock(tessBlock);          
           tessFirst = 0;
         }
+        tessBlock.vertexCount += tessCount;
         
         switch (tessType) {
         case TRIANGLE_FAN:
