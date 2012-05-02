@@ -29,28 +29,28 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 /**
-   * ( begin auto-generated from PVector.xml )
-   * 
-   * A class to describe a two or three dimensional vector. This datatype 
-   * stores two or three variables that are commonly used as a position, 
-   * velocity, and/or acceleration. Technically, <em>position</em> is a point 
-   * and <em>velocity</em> and <em>acceleration</em> are vectors, but this is 
-   * often simplified to consider all three as vectors. For example, if you 
-   * consider a rectangle moving across the screen, at any given instant it 
-   * has a position (the object's location, expressed as a point.), a 
-   * velocity (the rate at which the object's position changes per time unit, 
-   * expressed as a vector), and acceleration (the rate at which the object's 
-   * velocity changes per time unit, expressed as a vector). Since vectors 
-   * represent groupings of values, we cannot simply use traditional 
-   * addition/multiplication/etc. Instead, we'll need to do some "vector" 
-   * math, which is made easy by the methods inside the <b>PVector</b> 
-   * class.<br />
-   * <br />
-   * The methods for this class are extensive. For a complete list, visit the 
-   * <a 
-   * href="http://processing.googlecode.com/svn/trunk/processing/build/javadoc/core/">developer's reference.</a>
-   * 
-   * ( end auto-generated )
+ * ( begin auto-generated from PVector.xml )
+ * 
+ * A class to describe a two or three dimensional vector. This datatype 
+ * stores two or three variables that are commonly used as a position, 
+ * velocity, and/or acceleration. Technically, <em>position</em> is a point 
+ * and <em>velocity</em> and <em>acceleration</em> are vectors, but this is 
+ * often simplified to consider all three as vectors. For example, if you 
+ * consider a rectangle moving across the screen, at any given instant it 
+ * has a position (the object's location, expressed as a point.), a 
+ * velocity (the rate at which the object's position changes per time unit, 
+ * expressed as a vector), and acceleration (the rate at which the object's 
+ * velocity changes per time unit, expressed as a vector). Since vectors 
+ * represent groupings of values, we cannot simply use traditional 
+ * addition/multiplication/etc. Instead, we'll need to do some "vector" 
+ * math, which is made easy by the methods inside the <b>PVector</b> 
+ * class.<br />
+ * <br />
+ * The methods for this class are extensive. For a complete list, visit the 
+ * <a 
+ * href="http://processing.googlecode.com/svn/trunk/processing/build/javadoc/core/">developer's reference.</a>
+ * 
+ * ( end auto-generated )
  * 
  * A class to describe a two or three dimensional vector.
  * <p>
@@ -196,6 +196,76 @@ public class PVector implements Serializable {
   }
 
 
+
+  /**
+   * Make a new 2D unit vector with a random direction
+   */
+  static public PVector random2D() {
+    return fromAngle((float)(Math.random()*Math.PI*2),null);
+  }
+
+
+  /**
+   * Make a new 2D unit vector with a random direction
+   * @param target the target vector (if null, a new vector will be created)
+   */
+  static public PVector random2D(PVector target) {
+    return fromAngle((float)(Math.random()*Math.PI*2),target);
+  }
+
+
+  /**
+   * Make a new 3D unit vector with a random direction
+   */
+  static public PVector random3D() {
+    return random3D(null);
+  }
+
+
+  /**
+   * Make a new 3D unit vector with a random direction
+   * @param target the target vector (if null, a new vector will be created)
+   */
+  static public PVector random3D(PVector target) {
+    if (target == null) {
+      // Picking random point on a sphere using Equal Area Projection
+      float angle = (float) (Math.random()*Math.PI*2);
+      float vz = (float) (Math.random()*2-1);
+      float vx = (float) (Math.sqrt(1-vz*vz)*Math.cos(angle));
+      float vy = (float) (Math.sqrt(1-vz*vz)*Math.sin(angle));
+      target = new PVector(vx, vy, vz);
+      target.normalize();
+    } else {
+      target.set((float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1);
+    }
+    return target;
+  }
+
+  /**
+   * Make a new 2D unit vector from an angle
+   * @param angle the angle
+   */
+  static public PVector fromAngle(float angle) {
+    return fromAngle(angle,null);
+  }
+
+
+  /**
+   * Make a new 2D unit vector from an angle
+   * @param angle the angle
+   * @param target the target vector (if null, a new vector will be created)
+   */
+  static public PVector fromAngle(float angle, PVector target) {
+    if (target == null) {
+      target = new PVector((float)Math.cos(angle),(float)Math.sin(angle),0);
+    } else {
+      target.set((float)Math.cos(angle),(float)Math.sin(angle),0);
+    }
+    return target;
+  }
+
+
+
   /**
    * ( begin auto-generated from PVector_get.xml )
    * 
@@ -210,7 +280,7 @@ public class PVector implements Serializable {
   public PVector get() {
     return new PVector(x, y, z);
   }
-  
+
   /**
    * @param target
    */
@@ -279,11 +349,11 @@ public class PVector implements Serializable {
     z += v.z;
   }
 
-/**
- * @param x x component of the vector
- * @param y y component of the vector
- * @param z z component of the vector
- */
+  /**
+   * @param x x component of the vector
+   * @param y y component of the vector
+   * @param z z component of the vector
+   */
   public void add(float x, float y, float z) {
     this.x += x;
     this.y += y;
@@ -337,11 +407,11 @@ public class PVector implements Serializable {
     z -= v.z;
   }
 
-/**
- * @param x the x component of the vector
- * @param y the y component of the vector
- * @param z the z component of the vector
- */
+  /**
+   * @param x the x component of the vector
+   * @param y the y component of the vector
+   * @param z the z component of the vector
+   */
   public void sub(float x, float y, float z) {
     this.x -= x;
     this.y -= y;
@@ -429,7 +499,7 @@ public class PVector implements Serializable {
     return mult(v1, v2, null);
   }
 
-  
+
   static public PVector mult(PVector v1, PVector v2, PVector target) {
     if (target == null) {
       target = new PVector(v1.x*v2.x, v1.y*v2.y, v1.z*v2.z);
