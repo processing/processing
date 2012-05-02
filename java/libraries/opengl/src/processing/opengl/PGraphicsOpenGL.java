@@ -2454,11 +2454,11 @@ public class PGraphicsOpenGL extends PGraphics {
     PointShader shader = getPointShader();
     shader.start();
 
-    for (int b = 0; b < tessGeo.getPointIndexBlockCount(); b++) {
-      IndexBlock block = tessGeo.getPointIndexBlock(b);      
-      int ioffset = block.indexOffset;
-      int icount =  block.indexCount;
-      int voffset = block.vertexOffset;
+    IndexCache cache = tessGeo.pointIndexCache;
+    for (int n = 0; n < cache.count; n++) {     
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];
 
       shader.setVertexAttribute(glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
       shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);;
@@ -6077,6 +6077,102 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
   }
 
+
+  // Stores the offsets and counts of indices and vertices
+  // to render a piece of geometry that doesn't fit in a single
+  // glDrawElements() call.
+  protected class IndexCache {
+    int count;
+    int[] indexCount;
+    int[] indexOffset;
+    int[] vertexCount;
+    int[] vertexOffset;
+    
+    IndexCache() {
+      allocate();
+    }
+    
+    void allocate() {
+      indexCount = new int[2];
+      indexOffset = new int[2];      
+      vertexCount = new int[2];
+      vertexOffset = new int[2];
+      count = 0;
+    }
+
+    void clear() {
+      count = 0;
+    }    
+    
+    int addNew() {
+      arrayCheck();
+      init(count);
+      count++;      
+      return count - 1;
+    }
+    
+    int getLast() {
+      if (count == 0) {
+        arrayCheck();
+        init(0);
+        count = 1;
+      }
+      return count - 1;
+    }
+    
+    void incCounts(int index, int icount, int vcount) {
+      indexCount[index] += icount;
+      vertexCount[index] += vcount;            
+    }
+    
+    void init(int n) {
+      if (0 < n) {        
+        indexOffset[n] = indexOffset[n - 1] + indexCount[n - 1];        
+        vertexOffset[n] = vertexOffset[n - 1] + vertexCount[n - 1];
+      } else {
+        indexOffset[n] = 0;
+        vertexOffset[n] = 0;        
+      }
+      indexCount[n] = 0;
+      vertexCount[n] = 0;
+    }
+    
+    void arrayCheck() {
+      if (count == indexCount.length) {
+        int newSize = count << 1;
+
+        expandIndexCount(newSize);
+        expandIndexOffset(newSize);
+        expandVertexCount(newSize);
+        expandVertexOffset(newSize);       
+      }
+    }
+    
+    void expandIndexCount(int n) {
+      int[] temp = new int[n];
+      PApplet.arrayCopy(indexCount, 0, temp, 0, count);
+      indexCount = temp;
+    }
+    
+    void expandIndexOffset(int n) {
+      int[] temp = new int[n];
+      PApplet.arrayCopy(indexOffset, 0, temp, 0, count);
+      indexOffset = temp;      
+    }
+    
+    void expandVertexCount(int n) {
+      int[] temp = new int[n];
+      PApplet.arrayCopy(vertexCount, 0, temp, 0, count);
+      vertexCount = temp;
+    }
+    
+    void expandVertexOffset(int n) {
+      int[] temp = new int[n];
+      PApplet.arrayCopy(vertexOffset, 0, temp, 0, count);
+      vertexOffset = temp;
+    }    
+  }
+  
   
   // Holds the input vertices: xyz coordinates, fill/tint color,
   // normal, texture coordinates and stroke color and weight.
@@ -7581,140 +7677,7 @@ public class PGraphicsOpenGL extends PGraphics {
       return indices;
     } 
   }
-  
-  // Stores the offsets and counts of indices and vertices
-  // to render a piece of geometry that doesn't fit in a single
-  // glDrawElements() call.
-  protected class IndexCache {
-    int count;
-    int[] indexCount;
-    int[] indexOffset;
-    int[] vertexCount;
-    int[] vertexOffset;
-    
-    IndexCache() {
-      allocate();
-    }
-    
-    void allocate() {
-      indexCount = new int[2];
-      indexOffset = new int[2];      
-      vertexCount = new int[2];
-      vertexOffset = new int[2];
-      count = 0;
-    }
 
-    void clear() {
-      count = 0;
-    }    
-    
-    int addNew() {
-      arrayCheck();
-      init(count);
-      count++;      
-      return count - 1;
-    }
-    
-    int getLast() {
-      if (count == 0) {
-        arrayCheck();
-        init(0);
-        count = 1;
-      }
-      return count - 1;
-    }
-    
-    void incCounts(int index, int icount, int vcount) {
-      indexCount[index] += icount;
-      vertexCount[index] += vcount;            
-    }
-    
-    void init(int n) {
-      if (0 < n) {        
-        indexOffset[n] = indexOffset[n - 1] + indexCount[n - 1];        
-        vertexOffset[n] = vertexOffset[n - 1] + vertexCount[n - 1];
-      } else {
-        indexOffset[n] = 0;
-        vertexOffset[n] = 0;        
-      }
-      indexCount[n] = 0;
-      vertexCount[n] = 0;
-    }
-    
-    void arrayCheck() {
-      if (count == indexCount.length) {
-        int newSize = count << 1;
-
-        expandIndexCount(newSize);
-        expandIndexOffset(newSize);
-        expandVertexCount(newSize);
-        expandVertexOffset(newSize);       
-      }
-    }
-    
-    void expandIndexCount(int n) {
-      int[] temp = new int[n];
-      PApplet.arrayCopy(indexCount, 0, temp, 0, count);
-      indexCount = temp;
-    }
-    
-    void expandIndexOffset(int n) {
-      int[] temp = new int[n];
-      PApplet.arrayCopy(indexOffset, 0, temp, 0, count);
-      indexOffset = temp;      
-    }
-    
-    void expandVertexCount(int n) {
-      int[] temp = new int[n];
-      PApplet.arrayCopy(vertexCount, 0, temp, 0, count);
-      vertexCount = temp;
-    }
-    
-    void expandVertexOffset(int n) {
-      int[] temp = new int[n];
-      PApplet.arrayCopy(vertexOffset, 0, temp, 0, count);
-      vertexOffset = temp;
-    }    
-  }
-  
-  
-  
-  protected class IndexBlock {
-    int indexCount;
-    int indexOffset;
-    int vertexCount;
-    int vertexOffset;    
-    
-    IndexBlock() {
-      indexCount = 0;
-      indexOffset = 0;
-      vertexCount = 0;
-      vertexOffset = 0; 
-    }
-    
-    IndexBlock(int icount, int ioffset, int voffset) {
-      this.indexCount = icount;
-      this.indexOffset = ioffset;      
-      this.vertexCount = 0;
-      this.vertexOffset = voffset;      
-    }  
-
-    IndexBlock(int icount, int ioffset, int vcount, int voffset) {
-      this.indexCount = icount;
-      this.indexOffset = ioffset;      
-      this.vertexCount = vcount;
-      this.vertexOffset = voffset;      
-    }      
-    
-    IndexBlock(IndexBlock other) {
-      this();
-      indexOffset = other.indexOffset + other.indexCount;
-      vertexOffset = other.vertexOffset + other.vertexCount;            
-    }
-  }
-  
-  
-  
   
   // Holds tessellated data for fill, line and point geometry.
   protected class TessGeometry {
@@ -7755,7 +7718,6 @@ public class PGraphicsOpenGL extends PGraphics {
     int lastLineIndex;
     short[] lineIndices;
     IndexCache lineIndexCache = new IndexCache();
-    //ArrayList<IndexBlock> lineIndexBlocks;
 
     // Tessellated point data
     int pointVertexCount;
@@ -7769,58 +7731,20 @@ public class PGraphicsOpenGL extends PGraphics {
     int firstPointIndex;
     int lastPointIndex;
     short[] pointIndices;
-    ArrayList<IndexBlock> pointIndexBlocks;
+    IndexCache pointIndexCache = new IndexCache();
 
     TessGeometry(int mode) {
       renderMode = mode;      
-      pointIndexBlocks = new ArrayList<IndexBlock>();
       allocate();
     }
 
     TessGeometry(int mode, boolean empty) {
-      renderMode = mode;
-      pointIndexBlocks = new ArrayList<IndexBlock>();      
+      renderMode = mode;    
       if (!empty) {
         allocate();
       }
     }
 
-    // -----------------------------------------------------------------
-    //
-    // Point index blocks    
-    
-    IndexBlock addPointIndexBlock() {
-      IndexBlock block = new IndexBlock();
-      pointIndexBlocks.add(block);
-      return block;
-    }
-
-    IndexBlock addPointIndexBlock(IndexBlock other) {
-      IndexBlock block = new IndexBlock(other); 
-      pointIndexBlocks.add(block);
-      return block;
-    }    
-    
-    int getPointIndexBlockCount() {
-      return pointIndexBlocks.size();
-    }
-    
-    IndexBlock getPointIndexBlock(int n) {
-      return pointIndexBlocks.get(n);      
-    }
-    
-    IndexBlock getLastPointIndexBlock() {
-      int n = pointIndexBlocks.size();
-      IndexBlock block;
-      if (n == 0) {
-        block = new IndexBlock();
-        pointIndexBlocks.add(block);
-      } else {
-        block = pointIndexBlocks.get(n - 1);
-      }
-      return block;
-    }
-    
     // -----------------------------------------------------------------
     //
     // Allocate/dispose    
@@ -7861,7 +7785,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       fillIndexCache.clear();
       lineIndexCache.clear();
-      pointIndexBlocks.clear();
+      pointIndexCache.clear();
     }
     
     void dipose() {
@@ -8974,7 +8898,8 @@ public class PGraphicsOpenGL extends PGraphics {
         int vertIdx = tess.firstPointVertex;
         int attribIdx = tess.firstPointVertex;
         int indIdx = tess.firstPointIndex;
-        IndexBlock block = tess.getLastPointIndexBlock();
+        IndexCache cache = tess.pointIndexCache;
+        int index = cache.getLast();
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
           // Creating the triangle fan for each input vertex.
           int perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
@@ -8983,9 +8908,11 @@ public class PGraphicsOpenGL extends PGraphics {
           if (PGL.MAX_VERTEX_INDEX1 <= nvert) {
             throw new RuntimeException("P3D: the point has too many vertices.");
           }
-          if (PGL.MAX_VERTEX_INDEX1 <= block.vertexCount + nvert) {
-            // We need to start a new index block for this line.
-            block = tess.addPointIndexBlock(block);
+          int count = cache.vertexCount[index];
+          if (PGL.MAX_VERTEX_INDEX1 <= count + nvert) {
+            // We need to start a new index block for this point.
+            index = cache.addNew();
+            count = 0;
           }           
 
           // All the tessellated vertices are identical to the center point
@@ -9014,17 +8941,16 @@ public class PGraphicsOpenGL extends PGraphics {
           // Adding vert0 to take into account the triangles of all
           // the preceding points.
           for (int k = 1; k < nvert - 1; k++) {
-            tess.pointIndices[indIdx++] = (short) (block.vertexCount + 0);
-            tess.pointIndices[indIdx++] = (short) (block.vertexCount + k);
-            tess.pointIndices[indIdx++] = (short) (block.vertexCount + k + 1);
+            tess.pointIndices[indIdx++] = (short) (count + 0);
+            tess.pointIndices[indIdx++] = (short) (count + k);
+            tess.pointIndices[indIdx++] = (short) (count + k + 1);
           }
           // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = (short) (block.vertexCount + 0);
-          tess.pointIndices[indIdx++] = (short) (block.vertexCount + 1);
-          tess.pointIndices[indIdx++] = (short) (block.vertexCount + nvert - 1);
+          tess.pointIndices[indIdx++] = (short) (count + 0);
+          tess.pointIndices[indIdx++] = (short) (count + 1);
+          tess.pointIndices[indIdx++] = (short) (count + nvert - 1);
 
-          block.indexCount += 3 * (nvert - 1);
-          block.vertexCount += nvert;      
+          cache.incCounts(index, 3 * (nvert - 1), nvert);
         }
       }
     }
@@ -9049,13 +8975,16 @@ public class PGraphicsOpenGL extends PGraphics {
         int vertIdx = tess.firstPointVertex;
         int attribIdx = tess.firstPointVertex;
         int indIdx = tess.firstPointIndex;
-        IndexBlock block = tess.getLastPointIndexBlock();
+        IndexCache cache = tess.pointIndexCache;
+        int index = cache.getLast();
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
           int nvert = 5;
-          if (PGL.MAX_VERTEX_INDEX1 <= block.vertexCount + nvert) {
-            // We need to start a new index block for this line.
-            block = tess.addPointIndexBlock(block);
-          }          
+          int count = cache.vertexCount[index];
+          if (PGL.MAX_VERTEX_INDEX1 <= count + nvert) {
+            // We need to start a new index block for this point.
+            index = cache.addNew();
+            count = 0;
+          }        
           
           for (int k = 0; k < nvert; k++) {
             tess.putPointVertex(in, i, vertIdx);
@@ -9079,17 +9008,16 @@ public class PGraphicsOpenGL extends PGraphics {
           // Adding firstVert to take into account the triangles of all
           // the preceding points.
           for (int k = 1; k < nvert - 1; k++) {
-            tess.pointIndices[indIdx++] = (short) (block.vertexCount + 0);
-            tess.pointIndices[indIdx++] = (short) (block.vertexCount + k);
-            tess.pointIndices[indIdx++] = (short) (block.vertexCount + k + 1);
+            tess.pointIndices[indIdx++] = (short) (count + 0);
+            tess.pointIndices[indIdx++] = (short) (count + k);
+            tess.pointIndices[indIdx++] = (short) (count + k + 1);
           }
           // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = (short) (block.vertexCount + 0);
-          tess.pointIndices[indIdx++] = (short) (block.vertexCount + 1);
-          tess.pointIndices[indIdx++] = (short) (block.vertexCount + nvert - 1);
+          tess.pointIndices[indIdx++] = (short) (count + 0);
+          tess.pointIndices[indIdx++] = (short) (count + 1);
+          tess.pointIndices[indIdx++] = (short) (count + nvert - 1);
 
-          block.indexCount += 12;
-          block.vertexCount += nvert;
+          cache.incCounts(index, 12, 5);
         }
       }
     }
