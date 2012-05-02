@@ -9160,86 +9160,76 @@ public class PGraphicsOpenGL extends PGraphics {
     // Fill primitives tessellation      
     
     void tessellateTriangles() {
-      int nInInd = in.lastVertex - in.firstVertex + 1;
-      setRawSize(nInInd);
-      for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-        rawIndices[i - in.firstVertex] = i;
+      int nInVert = in.lastVertex - in.firstVertex + 1;
+      if (fill && 3 <= nInVert) {
+        int nInInd = nInVert;
+        setRawSize(nInInd);
+        for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+          rawIndices[i - in.firstVertex] = i;
+        }
+        partitionRawIndices();
       }
-      partitionRawIndices();
       tessellateEdges();
     }
 
     void tessellateTriangles(int[] indices) {
-      int nInInd = indices.length;
-      setRawSize(nInInd);
-      PApplet.arrayCopy(indices, rawIndices, nInInd);
-      partitionRawIndices();
+      int nInVert = in.lastVertex - in.firstVertex + 1;
+      if (fill && 3 <= nInVert) {
+        int nInInd = indices.length;
+        setRawSize(nInInd);
+        PApplet.arrayCopy(indices, rawIndices, nInInd);
+        partitionRawIndices();        
+      }
       tessellateEdges();
     }
     
     void tessellateTriangleFan() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-
       if (fill && 3 <= nInVert) {
         int nInInd = 3 * (nInVert - 2);
-
-        tess.addFillVertices(in);
-        in.addFillIndicesToTessMap(tess.firstFillVertex);
-
-        tess.fillIndexCheck(nInInd);
-        int idx = tess.firstFillIndex;
+        setRawSize(nInInd);
+        int idx = 0;
         int offset = tess.firstFillVertex;
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          tess.fillIndices[idx++] = PGL.makeIndex(offset + in.firstVertex);
-          tess.fillIndices[idx++] = PGL.makeIndex(offset + i);
-          tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
+          rawIndices[idx++] = offset + in.firstVertex;
+          rawIndices[idx++] = offset + i;
+          rawIndices[idx++] = offset + i + 1;
         }
+        partitionRawIndices();
       }
-
       tessellateEdges();
     }
 
     void tessellateTriangleStrip() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-
       if (fill && 3 <= nInVert) {
         int triCount = nInVert - 2;
         int nInInd = 3 * triCount;
-
-        tess.addFillVertices(in);
-        in.addFillIndicesToTessMap(tess.firstFillVertex);
-
-        // Each vertex, except the first and last, defines a triangle.
-        tess.fillIndexCheck(nInInd);
-        int idx = tess.firstFillIndex;
+        setRawSize(nInInd);
+        int idx = 0;
         int offset = tess.firstFillVertex;
         for (int i = in.firstVertex + 1; i < in.lastVertex; i++) {
-          tess.fillIndices[idx++] = PGL.makeIndex(offset + i);
+          rawIndices[idx++] = offset + i;
           if (i % 2 == 0) {
-            tess.fillIndices[idx++] = PGL.makeIndex(offset + i - 1);
-            tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
+            rawIndices[idx++] = offset + i - 1;
+            rawIndices[idx++] = offset + i + 1;
           } else {
-            tess.fillIndices[idx++] = PGL.makeIndex(offset + i + 1);
-            tess.fillIndices[idx++] = PGL.makeIndex(offset + i - 1);
+            rawIndices[idx++] = offset + i + 1;
+            rawIndices[idx++] = offset + i - 1;
           }
         }
+        partitionRawIndices();
       }
-
       tessellateEdges();
     }
 
     void tessellateQuads() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-
       if (fill && 4 <= nInVert) {
         int quadCount = nInVert / 4;
         int nInInd = 6 * quadCount;
-
-        tess.addFillVertices(in);
-        in.addFillIndicesToTessMap(tess.firstFillVertex);
-
-        tess.fillIndexCheck(nInInd);
-        int idx = tess.firstFillIndex;
+        setRawSize(nInInd);        
+        int idx = 0;
         int offset = tess.firstFillVertex;
         for (int qd = 0; qd < quadCount; qd++) {
           int i0 = offset + 4 * qd + 0;
@@ -9247,31 +9237,26 @@ public class PGraphicsOpenGL extends PGraphics {
           int i2 = offset + 4 * qd + 2;
           int i3 = offset + 4 * qd + 3;
 
-          tess.fillIndices[idx++] = PGL.makeIndex(i0);
-          tess.fillIndices[idx++] = PGL.makeIndex(i1);
-          tess.fillIndices[idx++] = PGL.makeIndex(i3);
+          rawIndices[idx++] = i0;
+          rawIndices[idx++] = i1;
+          rawIndices[idx++] = i3;
 
-          tess.fillIndices[idx++] = PGL.makeIndex(i1);
-          tess.fillIndices[idx++] = PGL.makeIndex(i2);
-          tess.fillIndices[idx++] = PGL.makeIndex(i3);
+          rawIndices[idx++] = i1;
+          rawIndices[idx++] = i2;
+          rawIndices[idx++] = i3;
         }
+        partitionRawIndices();
       }
-
       tessellateEdges();
     }
 
     void tessellateQuadStrip() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-
       if (fill && 4 <= nInVert) {
         int quadCount = nInVert / 2 - 1;
         int nInInd = 6 * quadCount;
-
-        tess.addFillVertices(in);
-        in.addFillIndicesToTessMap(tess.firstFillVertex);
-
-        tess.fillIndexCheck(nInInd);
-        int idx = tess.firstFillIndex;
+        setRawSize(nInInd); 
+        int idx = 0;
         int offset = tess.firstFillVertex;
         for (int qd = 1; qd < nInVert / 2; qd++) {
           int i0 = offset + 2 * (qd - 1);
@@ -9279,110 +9264,107 @@ public class PGraphicsOpenGL extends PGraphics {
           int i2 = offset + 2 * qd + 1;
           int i3 = offset + 2 * qd;
 
-          tess.fillIndices[idx++] = PGL.makeIndex(i0);
-          tess.fillIndices[idx++] = PGL.makeIndex(i1);
-          tess.fillIndices[idx++] = PGL.makeIndex(i3);
+          rawIndices[idx++] = i0;
+          rawIndices[idx++] = i1;
+          rawIndices[idx++] = i3;
 
-          tess.fillIndices[idx++] = PGL.makeIndex(i1);
-          tess.fillIndices[idx++] = PGL.makeIndex(i2);
-          tess.fillIndices[idx++] = PGL.makeIndex(i3);
+          rawIndices[idx++] = i1;
+          rawIndices[idx++] = i2;
+          rawIndices[idx++] = i3;
         }
+        partitionRawIndices();
       }
-
       tessellateEdges();
     }
 
     // Uses the raw indices to tessellate the geometry in separate 
     // index blocks in the vertex indices become too large.
     void partitionRawIndices() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;      
-      if (fill && 3 <= nInVert) {
-        tess.fillIndexCheck(rawSize);
+      tess.fillIndexCheck(rawSize);
+      
+      int inInd0 = 0, inInd1 = 0;
+      int inMaxVert0 = in.firstVertex, inMaxVert1 = in.firstVertex;
+      int inMaxRel = 0;
+      
+      Set<Integer> inDupSet = null;        
+      IndexBlock block0 = null;
+      IndexBlock block = tess.getLastFillIndexBlock();
+      
+      int trCount = rawSize / 3;        
+      for (int tr = 0; tr < trCount; tr++) {
+        if (block == null) block = tess.addFillIndexBlock(block0);
         
-        int inInd0 = 0, inInd1 = 0;
-        int inMaxVert0 = in.firstVertex, inMaxVert1 = in.firstVertex;
-        int inMaxRel = 0;
-        
-        Set<Integer> inDupSet = null;        
-        IndexBlock block0 = null;
-        IndexBlock block = tess.getLastFillIndexBlock();
-        
-        int trCount = rawSize / 3;        
-        for (int tr = 0; tr < trCount; tr++) {
-          if (block == null) block = tess.addFillIndexBlock(block0);
-          
-          int i0 = rawIndices[3 * tr + 0];
-          int i1 = rawIndices[3 * tr + 1];
-          int i2 = rawIndices[3 * tr + 2];
+        int i0 = rawIndices[3 * tr + 0];
+        int i1 = rawIndices[3 * tr + 1];
+        int i2 = rawIndices[3 * tr + 2];
 
-          // Vertex indices relative to the last copy position.
-          int ii0 = i0 - inMaxVert0;
-          int ii1 = i1 - inMaxVert0;
-          int ii2 = i2 - inMaxVert0;
+        // Vertex indices relative to the last copy position.
+        int ii0 = i0 - inMaxVert0;
+        int ii1 = i1 - inMaxVert0;
+        int ii2 = i2 - inMaxVert0;
+        
+        // Vertex indices relative to the current block.
+        int ri0, ri1, ri2;
+        if (ii0 < 0) {
+          if (inDupSet == null) inDupSet = new HashSet<Integer>();
+          inDupSet.add(ii0);
+          ri0 = ii0;
+        } else ri0 = block.vertexCount + ii0;
+        if (ii1 < 0) {
+          if (inDupSet == null) inDupSet = new HashSet<Integer>();
+          inDupSet.add(ii1);
+          ri1 = ii1;
+        } else ri1 = block.vertexCount + ii1;
+        if (ii2 < 0) {
+          if (inDupSet == null) inDupSet = new HashSet<Integer>();          
+          inDupSet.add(ii2);
+          ri2 = ii2;
+        } else ri2 = block.vertexCount + ii2;
+        
+        tess.fillIndices[3 * tr + 0] = (short) ri0;
+        tess.fillIndices[3 * tr + 1] = (short) ri1;
+        tess.fillIndices[3 * tr + 2] = (short) ri2;   
+        
+        inInd1 = 3 * tr + 2;
+        inMaxVert1 = PApplet.max(i0, i1, i2);          
+        
+        inMaxRel = PApplet.max(inMaxRel, PApplet.max(ri0, ri1, ri2));
+        int dup = inDupSet == null ? 0 : inDupSet.size();
+        
+        if ((PGL.MAX_VERTEX_INDEX1 - 3 <= inMaxRel + dup && inMaxRel + dup < PGL.MAX_VERTEX_INDEX1)||
+            (tr == trCount - 1)) {
+          // Copy block vertices first
+          tess.addFillVertices(in, inMaxVert0, inMaxVert1);
           
-          // Vertex indices relative to the current block.
-          int ri0, ri1, ri2;
-          if (ii0 < 0) {
-            if (inDupSet == null) inDupSet = new HashSet<Integer>();
-            inDupSet.add(ii0);
-            ri0 = ii0;
-          } else ri0 = block.vertexCount + ii0;
-          if (ii1 < 0) {
-            if (inDupSet == null) inDupSet = new HashSet<Integer>();
-            inDupSet.add(ii1);
-            ri1 = ii1;
-          } else ri1 = block.vertexCount + ii1;
-          if (ii2 < 0) {
-            if (inDupSet == null) inDupSet = new HashSet<Integer>();          
-            inDupSet.add(ii2);
-            ri2 = ii2;
-          } else ri2 = block.vertexCount + ii2;
-          
-          tess.fillIndices[3 * tr + 0] = (short) ri0;
-          tess.fillIndices[3 * tr + 1] = (short) ri1;
-          tess.fillIndices[3 * tr + 2] = (short) ri2;   
-          
-          inInd1 = 3 * tr + 2;
-          inMaxVert1 = PApplet.max(i0, i1, i2);          
-          
-          inMaxRel = PApplet.max(inMaxRel, PApplet.max(ri0, ri1, ri2));
-          int dup = inDupSet == null ? 0 : inDupSet.size();
-          
-          if ((PGL.MAX_VERTEX_INDEX1 - 3 <= inMaxRel + dup && inMaxRel + dup < PGL.MAX_VERTEX_INDEX1)||
-              (tr == trCount - 1)) {
-            // Copy block vertices first
-            tess.addFillVertices(in, inMaxVert0, inMaxVert1);
-            
-            if (0 < dup) {
-              // Adjusting the negative indices so they correspond to vertices added 
-              // at the end of the block.
-              ArrayList<Integer> inDupList = new ArrayList<Integer>(inDupSet);            
-              Collections.sort(inDupList);
-              for (int i = inInd0; i <= inInd1; i++) {
-                int ri = tess.fillIndices[i];
-                if (ri < 0) {
-                  tess.fillIndices[i] = (short) (inMaxRel + 1 + inDupList.indexOf(ri));
-                }
-              }
-              
-              // Copy duplicated vertices last            
-              for (int i = 0; i < inDupList.size(); i++) {
-                int ri = inDupList.get(i);
-                tess.addFillVertex(in, ri + inMaxVert0);  
+          if (0 < dup) {
+            // Adjusting the negative indices so they correspond to vertices added 
+            // at the end of the block.
+            ArrayList<Integer> inDupList = new ArrayList<Integer>(inDupSet);            
+            Collections.sort(inDupList);
+            for (int i = inInd0; i <= inInd1; i++) {
+              int ri = tess.fillIndices[i];
+              if (ri < 0) {
+                tess.fillIndices[i] = (short) (inMaxRel + 1 + inDupList.indexOf(ri));
               }
             }
             
-            // Close current block:
-            block.indexCount += inInd1 - inInd0 + 1;
-            block.vertexCount += inMaxVert1 - inMaxVert0 + 1 + dup;
-            block0 = block;
-            block = null;
-            
-            inMaxRel = 0;
-            inMaxVert0 = inMaxVert1 + 1;
-            inInd0 = inInd1 + 1;
-            if (inDupSet != null) inDupSet.clear(); 
+            // Copy duplicated vertices last            
+            for (int i = 0; i < inDupList.size(); i++) {
+              int ri = inDupList.get(i);
+              tess.addFillVertex(in, ri + inMaxVert0);  
+            }
           }
+          
+          // Close current block:
+          block.indexCount += inInd1 - inInd0 + 1;
+          block.vertexCount += inMaxVert1 - inMaxVert0 + 1 + dup;
+          block0 = block;
+          block = null;
+          
+          inMaxRel = 0;
+          inMaxVert0 = inMaxVert1 + 1;
+          inInd0 = inInd1 + 1;
+          if (inDupSet != null) inDupSet.clear(); 
         }
       }
       
