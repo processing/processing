@@ -2453,11 +2453,19 @@ public class PGraphicsOpenGL extends PGraphics {
 
     PointShader shader = getPointShader();
     shader.start();
-    shader.setVertexAttribute(glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 0);
-    shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 0);
-    shader.setSizeAttribute(glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 0);
 
-    pgl.glDrawElements(PGL.GL_TRIANGLES, tessGeo.pointIndexCount, PGL.INDEX_TYPE, 0);
+    for (int b = 0; b < tessGeo.getPointIndexBlockCount(); b++) {
+      IndexBlock block = tessGeo.getPointIndexBlock(b);      
+      int ioffset = block.indexOffset;
+      int icount =  block.indexCount;
+      int voffset = block.vertexOffset;
+
+      shader.setVertexAttribute(glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);;
+      shader.setSizeAttribute(glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+
+      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);      
+    }
 
     shader.stop();
     unbindPointBuffers();
@@ -7756,7 +7764,37 @@ public class PGraphicsOpenGL extends PGraphics {
     //
     // Point index blocks    
     
-    // ...
+    IndexBlock addPointIndexBlock() {
+      IndexBlock block = new IndexBlock();
+      pointIndexBlocks.add(block);
+      return block;
+    }
+
+    IndexBlock addPointIndexBlock(IndexBlock other) {
+      IndexBlock block = new IndexBlock(other); 
+      pointIndexBlocks.add(block);
+      return block;
+    }    
+    
+    int getPointIndexBlockCount() {
+      return pointIndexBlocks.size();
+    }
+    
+    IndexBlock getPointIndexBlock(int n) {
+      return pointIndexBlocks.get(n);      
+    }
+    
+    IndexBlock getLastPointIndexBlock() {
+      int n = pointIndexBlocks.size();
+      IndexBlock block;
+      if (n == 0) {
+        block = new IndexBlock();
+        pointIndexBlocks.add(block);
+      } else {
+        block = pointIndexBlocks.get(n - 1);
+      }
+      return block;
+    }
     
     // -----------------------------------------------------------------
     //
@@ -8911,11 +8949,19 @@ public class PGraphicsOpenGL extends PGraphics {
         int vertIdx = tess.firstPointVertex;
         int attribIdx = tess.firstPointVertex;
         int indIdx = tess.firstPointIndex;
-        int firstVert = tess.firstPointVertex;
+        IndexBlock block = tess.getLastPointIndexBlock();
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
           // Creating the triangle fan for each input vertex.
           int perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
           int nvert = perim + 1;
+          
+          if (PGL.MAX_VERTEX_INDEX1 <= nvert) {
+            throw new RuntimeException("P3D: the point has too many vertices.");
+          }
+          if (PGL.MAX_VERTEX_INDEX1 <= block.vertexCount + nvert) {
+            // We need to start a new index block for this line.
+            block = tess.addPointIndexBlock(block);
+          }           
 
           // All the tessellated vertices are identical to the center point
           for (int k = 0; k < nvert; k++) {
@@ -8943,16 +8989,17 @@ public class PGraphicsOpenGL extends PGraphics {
           // Adding vert0 to take into account the triangles of all
           // the preceding points.
           for (int k = 1; k < nvert - 1; k++) {
-            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 0);
-            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + k);
-            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + k + 1);
+            tess.pointIndices[indIdx++] = (short) (block.vertexCount + 0);
+            tess.pointIndices[indIdx++] = (short) (block.vertexCount + k);
+            tess.pointIndices[indIdx++] = (short) (block.vertexCount + k + 1);
           }
           // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 0);
-          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 1);
-          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + nvert - 1);
+          tess.pointIndices[indIdx++] = (short) (block.vertexCount + 0);
+          tess.pointIndices[indIdx++] = (short) (block.vertexCount + 1);
+          tess.pointIndices[indIdx++] = (short) (block.vertexCount + nvert - 1);
 
-          firstVert = vertIdx;
+          block.indexCount += 3 * (nvert - 1);
+          block.vertexCount += nvert;      
         }
       }
     }
@@ -8971,16 +9018,20 @@ public class PGraphicsOpenGL extends PGraphics {
         // So the quad is formed by 4 triangles, each requires
         // 3 indices.
         int nindTot = 12 * quadCount;
-
+        
         tess.pointVertexCheck(nvertTot);
         tess.pointIndexCheck(nindTot);
         int vertIdx = tess.firstPointVertex;
         int attribIdx = tess.firstPointVertex;
         int indIdx = tess.firstPointIndex;
-        int firstVert = tess.firstPointVertex;
+        IndexBlock block = tess.getLastPointIndexBlock();
         for (int i = in.firstVertex; i <= in.lastVertex; i++) {
           int nvert = 5;
-
+          if (PGL.MAX_VERTEX_INDEX1 <= block.vertexCount + nvert) {
+            // We need to start a new index block for this line.
+            block = tess.addPointIndexBlock(block);
+          }          
+          
           for (int k = 0; k < nvert; k++) {
             tess.putPointVertex(in, i, vertIdx);
             in.addPointIndexToTessMap(i, vertIdx);
@@ -9003,16 +9054,17 @@ public class PGraphicsOpenGL extends PGraphics {
           // Adding firstVert to take into account the triangles of all
           // the preceding points.
           for (int k = 1; k < nvert - 1; k++) {
-            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 0);
-            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + k);
-            tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + k + 1);
+            tess.pointIndices[indIdx++] = (short) (block.vertexCount + 0);
+            tess.pointIndices[indIdx++] = (short) (block.vertexCount + k);
+            tess.pointIndices[indIdx++] = (short) (block.vertexCount + k + 1);
           }
           // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 0);
-          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + 1);
-          tess.pointIndices[indIdx++] = PGL.makeIndex(firstVert + nvert - 1);
+          tess.pointIndices[indIdx++] = (short) (block.vertexCount + 0);
+          tess.pointIndices[indIdx++] = (short) (block.vertexCount + 1);
+          tess.pointIndices[indIdx++] = (short) (block.vertexCount + nvert - 1);
 
-          firstVert = vertIdx;
+          block.indexCount += 12;
+          block.vertexCount += nvert;
         }
       }
     }
@@ -9101,14 +9153,6 @@ public class PGraphicsOpenGL extends PGraphics {
       block.indexCount += 6;
       block.vertexCount += 4;
       return block;
-    }    
-    
-    boolean startEdge(int edge) {
-      return edge % 2 != 0;
-    }
-
-    boolean endEdge(int edge) {
-      return 1 < edge;
     }    
     
     // -----------------------------------------------------------------
