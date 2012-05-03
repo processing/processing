@@ -1556,15 +1556,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public void endDraw() {
     report("top endDraw()");
 
-    if (flushMode == FLUSH_WHEN_FULL) {
-      // Flushing any remaining geometry.
-      flush();
-
-      // TODO: Implement depth sorting (http://code.google.com/p/processing/issues/detail?id=51)
-      //if (hints[ENABLE_DEPTH_SORT]) {
-      //  flush();
-      //}
-    }
+    // Flushing any remaining geometry.
+    flush();
 
     if (!drawing) {
       showWarning("P3D: Cannot call endDraw() before beginDraw().");
