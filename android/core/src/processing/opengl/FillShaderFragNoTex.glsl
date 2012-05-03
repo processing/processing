@@ -1,13 +1,12 @@
-/* -*- mode: java; c-basic-offset: 2; indent-tabs-mode: nil -*- */
-
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2012 Ben Fry and Casey Reas
+  Copyright (c) 2011 Andres Colubri
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,16 +17,15 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
- */
+*/
 
-package processing.opengl;
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
 
+varying vec4 vertColor;
 
-public class PGraphics2D extends PGraphicsOpenGL {
-  
-  public PGraphics2D() {
-    super();
-    hints[ENABLE_ACCURATE_2D] = true;
-  }
-  
+void main() {
+  gl_FragColor = vertColor;
 }

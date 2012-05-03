@@ -224,6 +224,7 @@ class PFontTexture implements PConstants {
     }
     if (outdated) {
       for (int i = 0; i < textures.length; i++) {
+        pg.removeTextureObject(textures[i].glID, textures[i].context.code());
         textures[i].glID = 0;
       }
     }
@@ -236,7 +237,7 @@ class PFontTexture implements PConstants {
     // screen positions. I.e.: the pixel on the screen only contains half of the 
     // font rectangle, so it would sample half of the color from the glyph 
     // area in the texture, and the other half from the contiguous pixel. If the
-    // later contains a portion of the neighbor glyph and former doesn't, this
+    // later contains a portion of the neighbor glyph and the former doesn't, this
     // would result in a shaded pixel when the correct output is blank.
     // This is a consequence of putting all the glyphs in a common texture with
     // bilinear sampling.
