@@ -1343,6 +1343,94 @@ public class PShape implements PConstants {
   }
   
   
+  public int getFill(int index) {
+    int a = (int) (vertices[index][A] * 255);
+    int r = (int) (vertices[index][R] * 255);
+    int g = (int) (vertices[index][G] * 255);
+    int b = (int) (vertices[index][B] * 255);                                        
+    return (a << 24) | (r << 16) | (g << 8) | b;
+  }
+
+  
+  public void setFill(int index, int fill) {
+    vertices[index][A] = ((fill >> 24) & 0xFF) / 255.0f; 
+    vertices[index][R] = ((fill >> 16) & 0xFF) / 255.0f;
+    vertices[index][G] = ((fill >>  8) & 0xFF) / 255.0f;
+    vertices[index][B] = ((fill >>  0) & 0xFF) / 255.0f;  
+  }  
+
+  
+  public int getStroke(int index) {
+    int a = (int) (vertices[index][SA] * 255);
+    int r = (int) (vertices[index][SR] * 255);
+    int g = (int) (vertices[index][SG] * 255);
+    int b = (int) (vertices[index][SB] * 255);                                        
+    return (a << 24) | (r << 16) | (g << 8) | b;
+  }
+
+  
+  public void setStroke(int index, int fill) {
+    vertices[index][SA] = ((fill >> 24) & 0xFF) / 255.0f; 
+    vertices[index][SR] = ((fill >> 16) & 0xFF) / 255.0f;
+    vertices[index][SG] = ((fill >>  8) & 0xFF) / 255.0f;
+    vertices[index][SB] = ((fill >>  0) & 0xFF) / 255.0f;   
+  }  
+  
+  
+  public float getStrokeWeight(int index) {
+    return vertices[index][SW];
+  }
+  
+
+  public void setStrokeWeight(int index, float weight) {
+    vertices[index][SW] = weight;
+  }
+
+  
+  public int getAmbient(int index) {
+    int r = (int) (vertices[index][AR] * 255);
+    int g = (int) (vertices[index][AG] * 255);
+    int b = (int) (vertices[index][AB] * 255);
+    return 0xff000000 | (r << 16) | (g << 8) | b;
+  }
+
+  
+  public void setAmbient(int index, int fill) {
+    vertices[index][AR] = ((fill >> 16) & 0xFF) / 255.0f;
+    vertices[index][AG] = ((fill >>  8) & 0xFF) / 255.0f;
+    vertices[index][AB] = ((fill >>  0) & 0xFF) / 255.0f;  
+  }    
+  
+  public int getSpecular(int index) {
+    int r = (int) (vertices[index][SPR] * 255);
+    int g = (int) (vertices[index][SPG] * 255);
+    int b = (int) (vertices[index][SPB] * 255);
+    return 0xff000000 | (r << 16) | (g << 8) | b;
+  }
+
+  
+  public void setSpecular(int index, int fill) {
+    vertices[index][SPR] = ((fill >> 16) & 0xFF) / 255.0f;
+    vertices[index][SPG] = ((fill >>  8) & 0xFF) / 255.0f;
+    vertices[index][SPB] = ((fill >>  0) & 0xFF) / 255.0f;  
+  }    
+    
+  
+  public int getEmissive(int index) {
+    int r = (int) (vertices[index][ER] * 255);
+    int g = (int) (vertices[index][EG] * 255);
+    int b = (int) (vertices[index][EB] * 255);
+    return 0xff000000 | (r << 16) | (g << 8) | b;
+  }
+
+  
+  public void setEmissive(int index, int fill) {
+    vertices[index][ER] = ((fill >> 16) & 0xFF) / 255.0f;
+    vertices[index][EG] = ((fill >>  8) & 0xFF) / 255.0f;
+    vertices[index][EB] = ((fill >>  0) & 0xFF) / 255.0f;  
+  }     
+  
+  
   public int[] getVertexCodes() {
     if (vertexCodes == null) {
       return null;
@@ -1352,8 +1440,8 @@ public class PShape implements PConstants {
     }
     return vertexCodes;
   }
-
-
+  
+  
   public int getVertexCodeCount() {
     return vertexCodeCount;
   }
