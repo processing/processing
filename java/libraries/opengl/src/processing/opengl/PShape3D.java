@@ -132,15 +132,15 @@ public class PShape3D extends PShape {
   protected int fillVertexAbs;
   protected int fillVertexRel;  
   
-  protected int lastLineVertexOffset;
-  protected int lastLineIndexOffset; 
-  protected int firstLineVertexRel;
-  protected int firstLineVertexAbs;
+  protected int lineIndexOffset;
+  protected int lineVertexOffset;
+  protected int lineVertexAbs;
+  protected int lineVertexRel;
   
-  protected int lastPointVertexOffset;
-  protected int lastPointIndexOffset;    
-  protected int firstPointVertexRel;
-  protected int firstPointVertexAbs;
+  protected int pointIndexOffset;
+  protected int pointVertexOffset;
+  protected int pointVertexAbs;
+  protected int pointVertexRel;
     
   // ........................................................
   
@@ -3070,22 +3070,22 @@ public class PShape3D extends PShape {
   
   protected void aggregate() {
     if (root == this && parent == null) {
-      // We recursively calculate the total number of vertices and indices.
       fillIndexOffset = 0;
       fillVertexOffset = 0;
       fillVertexAbs = 0;      
       fillVertexRel = 0;      
       
-      lastLineVertexOffset = 0;
-      lastLineIndexOffset = 0;
-      firstLineVertexRel = 0;
-      firstLineVertexAbs = 0;
+      lineIndexOffset = 0;
+      lineVertexOffset = 0;
+      lineVertexAbs = 0;      
+      lineVertexRel = 0;  
       
-      lastPointVertexOffset = 0;
-      lastPointIndexOffset = 0;      
-      firstPointVertexRel = 0;
-      firstPointVertexAbs = 0;
+      pointIndexOffset = 0;
+      pointVertexOffset = 0;
+      pointVertexAbs = 0;      
+      pointVertexRel = 0;
       
+      // We recursively calculate the total number of vertices and indices.
       aggregateImpl();
       
       needBufferInit = true;      
@@ -3196,27 +3196,45 @@ public class PShape3D extends PShape {
       }
             
       if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {
-        if (PGL.MAX_VERTEX_INDEX1 < root.firstLineVertexRel + tess.lineVertexCount) {
-          root.firstLineVertexRel = 0;
-          root.firstLineVertexAbs = root.lastLineVertexOffset + 1;          
-        }        
-        root.lastLineVertexOffset = tess.setLineVertex(root.lastLineVertexOffset);
-        root.lastLineIndexOffset = tess.setLineIndex(root.firstLineVertexRel, root.lastLineIndexOffset);
-        root.firstLineVertexRel += tess.lineVertexCount;        
-        
-        //addLineIndexBlock(tess.lastLineIndex - tess.firstLineIndex + 1, tess.firstLineIndex, root.firstLineVertexAbs);
+        IndexCache cache = tess.lineIndexCache;
+        for (int n = 0; n < cache.count; n++) {
+          int ioffset = cache.indexOffset[n];
+          int icount = cache.indexCount[n];
+          int vcount = cache.vertexCount[n];
+         
+          if (PGL.MAX_VERTEX_INDEX1 <= root.lineVertexRel + vcount) {            
+            root.lineVertexRel = 0;
+            root.lineVertexOffset = root.lineVertexAbs;
+            cache.indexOffset[n] = root.lineIndexOffset;
+          } else tess.incLineIndices(ioffset, ioffset + icount - 1, root.lineVertexRel); 
+          cache.vertexOffset[n] = root.lineVertexOffset;          
+          
+          root.lineIndexOffset += icount;          
+          root.lineVertexAbs += vcount;
+          root.lineVertexRel += vcount;          
+        }
+        tess.updateLineFromCache();
       }
             
       if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {
-        if (PGL.MAX_VERTEX_INDEX1 < root.firstPointVertexRel + tess.pointVertexCount) {
-          root.firstPointVertexRel = 0;
-          root.firstPointVertexAbs = root.lastPointVertexOffset + 1;          
-        }                
-        root.lastPointVertexOffset = tess.setPointVertex(root.lastPointVertexOffset);
-        root.lastPointIndexOffset = tess.setPointIndex(root.firstPointVertexRel, root.lastPointIndexOffset);
-        root.firstPointVertexRel += tess.pointVertexCount;
-        
-        //addPointIndexBlock(tess.lastPointIndex - tess.firstPointIndex + 1, tess.firstPointIndex, root.firstPointVertexAbs);
+        IndexCache cache = tess.pointIndexCache;
+        for (int n = 0; n < cache.count; n++) {
+          int ioffset = cache.indexOffset[n];
+          int icount = cache.indexCount[n];
+          int vcount = cache.vertexCount[n];
+          
+          if (PGL.MAX_VERTEX_INDEX1 <= root.pointVertexRel + vcount) {            
+            root.pointVertexRel = 0;
+            root.pointVertexOffset = root.pointVertexAbs;
+            cache.indexOffset[n] = root.pointIndexOffset;
+          } else tess.incPointIndices(ioffset, ioffset + icount - 1, root.pointVertexRel); 
+          cache.vertexOffset[n] = root.pointVertexOffset;  
+          
+          root.pointIndexOffset += icount;          
+          root.pointVertexAbs += vcount;
+          root.pointVertexRel += vcount;                    
+        }
+        tess.updatePointFromCache();
       }      
     }
     
