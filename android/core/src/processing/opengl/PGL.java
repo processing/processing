@@ -31,7 +31,6 @@ import java.nio.IntBuffer;
 import java.util.Arrays;
 
 import processing.core.PApplet;
-import processing.core.PGraphics;
 import processing.opengl.tess.PGLU;
 import processing.opengl.tess.PGLUtessellator;
 import processing.opengl.tess.PGLUtessellatorCallbackAdapter;
@@ -62,6 +61,9 @@ public class PGL {
   /** Size of a float (in bytes). */
   static final int SIZEOF_FLOAT = Float.SIZE / 8;
   
+  /** Size of a byte (in bytes). */
+  static final int SIZEOF_BYTE = Byte.SIZE / 8;  
+  
   /** Size of a vertex index. */
   static final int SIZEOF_INDEX = SIZEOF_SHORT; 
   
@@ -81,15 +83,20 @@ public class PGL {
   /** Maximum lights by default is 8, the minimum defined by OpenGL. */   
   public static final int MAX_LIGHTS = 8;
   
-  /** Maximum number of tessellated vertices. GLES restricts the vertex indices
-   * to be of type unsigned short. Since Java only supports native shorts as 
-   * primitive type we have 2^15 = 32768 as the maximum number of  vertices 
-   * that can be referred to within a single VBO. */
-  public static final int MAX_TESS_VERTICES = 32768;
+  /** Maximum index value of a tessellated vertex. GLES restricts the vertex 
+   * indices to be of type unsigned short. Since Java only supports signed
+   * shorts as primitive type we have 2^15 = 32768 as the maximum number of  
+   * vertices that can be referred to within a single VBO. */
+  public static final int MAX_VERTEX_INDEX = 32767;
+  public static final int MAX_VERTEX_INDEX1 = MAX_VERTEX_INDEX + 1;
   
-  /** Maximum number of indices. 2 times the max number of 
-   * vertices to have good room for vertex reuse. */
-  public static final int MAX_TESS_INDICES  = 2 * MAX_TESS_VERTICES;  
+  /** Count of tessellated fill, line or point vertices that will 
+   * trigger a flush in the immediate mode. It doesn't necessarily 
+   * be equal to MAX_VERTEX_INDEX1, since the number of vertices can 
+   * be effectively much large since the renderer uses offsets to
+   * refer to vertices beyond the MAX_VERTEX_INDEX limit. 
+   */
+  public static final int FLUSH_VERTEX_COUNT = MAX_VERTEX_INDEX1; 
 
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
@@ -1080,23 +1087,34 @@ public class PGL {
   // Context interface  
   
   
-  public Context getContext() {
-    return new Context(/*context*/);
+  public Context createEmptyContext() {
+    return new Context();
+  }
+    
+  
+  public Context getCurrentContext() {
+    return new Context();
   }
   
   
   public class Context {
-    //protected GLContext context;
-    
-    Context(/*GLContext context*/) {
-      //this.context = context;
+
+    Context() {    
     }
     
-    boolean same(/*GLContext context*/) {
-      //return this.context.hashCode() == context.hashCode();
+    boolean current() {
+      return true;
+    }    
+    
+    boolean equal() {
       return true;
     }
-  }   
+    
+    int code() {
+      return 0;
+    }
+  }  
+  
   
   /////////////////////////////////////////////////////////////////////////////////
   
@@ -1190,35 +1208,15 @@ public class PGL {
   
   
   public boolean contextIsCurrent(Context other) {
-    return other.same(/*context*/);
-  }  
-  
-  
-  static public short makeIndex(int intIdx) {
-    // The old hack to have unsigned shorts as indices using Java's
-    // signed shorts:
-    // When the index value is greater than 32767, subtracting 65536
-    // will make it (as a short) to wrap around to the negative range, which    
-    // is all we need to later pass these numbers to opengl (which will 
-    // interpret them as unsigned shorts). See discussion here:
-    // http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
-    //return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;    
-    if (32767 < intIdx) {
-      PGraphics.showWarning("P3D: Vertex index is greater than 32767");
-      return 32767;
-    } else {
-      return (short)intIdx;
-    }
+    return other == null || other.current();
   }
   
   
   public void enableTexturing(int target) {
-    //gl.glEnable(target);
   }
 
   
   public void disableTexturing(int target) {
-    //gl.glDisable(target);
   }  
   
   
@@ -1263,60 +1261,60 @@ public class PGL {
       }
       if (0 < texShaderProgram) {
         texVertLoc = glGetAttribLocation(texShaderProgram, "inVertex");
-        texTCoordLoc = glGetAttribLocation(texShaderProgram, "inTexcoord");     
-      }      
+        texTCoordLoc = glGetAttribLocation(texShaderProgram, "inTexcoord");
+      }
       texData = ByteBuffer.allocateDirect(texCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
       loadedTexShader = true;
     }
         
     if (0 < texShaderProgram) {
-      // When drawing the texture we don't write to the 
+      // When drawing the texture we don't write to the
       // depth mask, so the texture remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
-      boolean[] val = new boolean[1];      
-      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);      
-      boolean writeMask = val[0];      
-      glDepthMask(false);      
+      boolean[] val = new boolean[1];
+      glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
+      boolean writeMask = val[0];
+      glDepthMask(false);
       
       glUseProgram(texShaderProgram);
       
       glEnableVertexAttribArray(texVertLoc);
       glEnableVertexAttribArray(texTCoordLoc);
-      
+
       // Vertex coordinates of the textured quad are specified
       // in normalized screen space (-1, 1):
-      
+
       // Corner 1
       texCoords[ 0] = 2 * (float)scrX0 / pg.width - 1;
       texCoords[ 1] = 2 * (float)scrY0 / pg.height - 1;
       texCoords[ 2] = (float)texX0 / width;
       texCoords[ 3] = (float)texY0 / height;
-      
+
       // Corner 2
       texCoords[ 4] = 2 * (float)scrX1 / pg.width - 1;
       texCoords[ 5] = 2 * (float)scrY0 / pg.height - 1;
       texCoords[ 6] = (float)texX1 / width;
       texCoords[ 7] = (float)texY0 / height;
-      
+
       // Corner 3
       texCoords[ 8] = 2 * (float)scrX0 / pg.width - 1;
       texCoords[ 9] = 2 * (float)scrY1 / pg.height - 1;
       texCoords[10] = (float)texX0 / width;
-      texCoords[11] = (float)texY1 / height;       
-      
+      texCoords[11] = (float)texY1 / height;
+
       // Corner 4
       texCoords[12] = 2 * (float)scrX1 / pg.width - 1;
       texCoords[13] = 2 * (float)scrY1 / pg.height - 1;
       texCoords[14] = (float)texX1 / width;
       texCoords[15] = (float)texY1 / height;
-      
+
       texData.rewind();
       texData.put(texCoords);
       
       enableTexturing(target);
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(target, id);      
+      glBindTexture(target, id);
       
       texData.position(0);
       glVertexAttribPointer(texVertLoc, 2, GL_FLOAT, false, 4 * SIZEOF_FLOAT, texData);
@@ -1325,14 +1323,14 @@ public class PGL {
       
       glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
       
-      glBindTexture(target, 0);       
+      glBindTexture(target, 0);
       disableTexturing(target);
-      
+
       glDisableVertexAttribArray(texVertLoc);
       glDisableVertexAttribArray(texTCoordLoc);
-      
-      glUseProgram(0); 
-      
+
+      glUseProgram(0);
+
       glDepthMask(writeMask);
     }
   }
@@ -1348,26 +1346,26 @@ public class PGL {
       }
       if (0 < rectShaderProgram) {
         rectVertLoc = glGetAttribLocation(rectShaderProgram, "inVertex");
-        rectColorLoc = glGetUniformLocation(rectShaderProgram, "rectColor");     
-      }      
+        rectColorLoc = glGetUniformLocation(rectShaderProgram, "rectColor");
+      }
       rectData = ByteBuffer.allocateDirect(rectCoords.length * SIZEOF_FLOAT).order(ByteOrder.nativeOrder()).asFloatBuffer();
       loadedRectShader = true;
     }
 
     if (0 < rectShaderProgram) {
-      // When drawing the rectangle we don't write to the 
+      // When drawing the rectangle we don't write to the
       // depth mask, so the rectangle remains in the background
       // and can be occluded by anything drawn later, even if
       // if it is behind it.
       boolean[] val = new boolean[1];
       glGetBooleanv(GL_DEPTH_WRITEMASK, val, 0);
       boolean writeMask = val[0];
-      glDepthMask(false);      
+      glDepthMask(false);
 
       glUseProgram(rectShaderProgram);
 
-      glEnableVertexAttribArray(rectVertLoc);      
-      glUniform4f(rectColorLoc, r, g, b, a);  
+      glEnableVertexAttribArray(rectVertLoc);
+      glUniform4f(rectColorLoc, r, g, b, a);
 
       // Vertex coordinates of the rectangle are specified
       // in normalized screen space (-1, 1):
@@ -1398,7 +1396,7 @@ public class PGL {
 
       glDisableVertexAttribArray(rectVertLoc);
 
-      glUseProgram(0); 
+      glUseProgram(0);
 
       glDepthMask(writeMask);
     }
@@ -1444,6 +1442,19 @@ public class PGL {
       return (color & 0xff000000) | 
              ((color << 16) & 0xff0000) | 
              (color & 0xff00) | 
+             ((color >> 16) & 0xff);
+    }
+  }
+  
+  
+  static public int nativeToJavaARGB(int color) {
+    if (BIG_ENDIAN) {
+      return (color & 0xff000000) |
+             ((color >> 8) & 0x00ffffff);
+    } else {
+      return (color & 0xff000000) |
+             ((color << 16) & 0xff0000) |
+             (color & 0xff00) |
              ((color >> 16) & 0xff);
     }
   }  

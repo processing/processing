@@ -535,7 +535,7 @@ public class PGraphics extends PImage implements PConstants {
 
   // [toxi031031] new & faster sphere code w/ support flexibile resolutions
   // will be set by sphereDetail() or 1st call to sphere()
-  float sphereX[], sphereY[], sphereZ[];
+  protected float sphereX[], sphereY[], sphereZ[];
 
   /// Number of U steps (aka "theta") around longitudinally spanning 2*pi
   public int sphereDetailU = 0;
@@ -1235,6 +1235,11 @@ public class PGraphics extends PImage implements PConstants {
 
 
   protected void bezierVertexCheck() {
+    bezierVertexCheck(shape, vertexCount);
+  }
+  
+
+  protected void bezierVertexCheck(int shape, int vertexCount) {
     if (shape == 0 || shape != POLYGON) {
       throw new RuntimeException("beginShape() or beginShape(POLYGON) " +
                                  "must be used before bezierVertex() or quadraticVertex()");
@@ -1333,11 +1338,16 @@ public class PGraphics extends PImage implements PConstants {
   }
   
   
+  protected void curveVertexCheck() {
+    curveVertexCheck(shape);
+  }
+  
+  
   /**
    * Perform initialization specific to curveVertex(), and handle standard
    * error modes. Can be overridden by subclasses that need the flexibility.
    */
-  protected void curveVertexCheck() {
+  protected void curveVertexCheck(int shape) {
     if (shape != POLYGON) {
       throw new RuntimeException("You must use beginShape() or " +
                                  "beginShape(POLYGON) before curveVertex()");

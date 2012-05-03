@@ -70,6 +70,9 @@ public class PShape implements PConstants {
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
   protected int kind;
 
+  /** STATIC, DYNAMIC */
+  protected int mode;  
+  
   protected PMatrix matrix;
 
   /** Texture or image data associated with this shape. */
@@ -222,6 +225,16 @@ public class PShape implements PConstants {
     this.family = family;
   }
 
+  
+  public void setKind(int kind) {
+    this.kind = kind;
+  }
+  
+  
+  public void setMode(int mode) {
+    this.mode = mode;
+  }  
+    
 
   public void setName(String name) {
     this.name = name;
@@ -1101,7 +1114,26 @@ public class PShape implements PConstants {
     }
   }
   
+  
+  // TODO: finish implementing partial updates in PShape3D
+  protected void modified(int i0, int i1) {
+    modified = true;
+    // firstModified = i0;
+    // lastModified = i1;
+    if (parent != null) {
+      parent.modified(i0, i1);
+    }
+  }  
+  
+  
+  protected void notModified() {
+    modified = false;
+    for (int i = 0; i < childCount; i++) {
+      children[i].notModified();
+    }
+  } 
 
+  
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
@@ -1147,20 +1179,55 @@ public class PShape implements PConstants {
   }    
   
 
+  public void setPath(float[][] coords) {
+    setPath(coords, null);
+  }
+  
+  
+  public void setPath(float[][] coords, int[] codes) {
+    if (coords == null || coords.length == 0) return;
+    
+    if (codes == null || codes.length == 0) { 
+      vertexCodeCount = 0;
+    } else {
+      if (codes.length != coords.length) {
+        PGraphics.showWarning("Wrong number of vertex codes");
+        return;
+      }
+      vertexCodeCount = codes.length;
+    }
+      
+    int ncoords = coords[0].length;
+    
+    if (vertices == null || 
+        vertices.length != coords.length || 
+        vertices[0].length != ncoords) {
+      vertices = new float[coords.length][ncoords];
+    }
+    
+    for (int i = 0; i < coords.length; i++) {
+      PApplet.arrayCopy(coords[i], vertices[i]);
+    }
+    
+    if (0 < vertexCodeCount) {
+      if (vertexCodes == null || vertexCodes.length != vertexCodeCount) {
+        vertexCodes = new int[vertexCodeCount];
+      }
+      PApplet.arrayCopy(codes, vertexCodes);
+    }
+  }
+  
+  
   public int getVertexCount() {
     return vertexCount;
   }
 
 
-  public float[] getVertex(int index) {
-    if (index < 0 || index >= vertexCount) {
-      String msg = "No vertex " + index + " for this shape, " +
-        "only vertices 0 through " + (vertexCount-1) + ".";
-      throw new IllegalArgumentException(msg);
-    }
-    return vertices[index];
-  }
-
+  
+  public PVector getVertex(int index) {
+    return getVertex(index, null);
+  }  
+  
   
   public PVector getVertex(int index, PVector vec) {
     if (vec == null) {
@@ -1187,11 +1254,23 @@ public class PShape implements PConstants {
     return vertices[index][Z];
   }
 
+  
+  public void setVertex(int index, float x, float y) {
+    setVertex(index, x, y, 0);
+  }
+  
+  
   public void setVertex(int index, float x, float y, float z) {
     vertices[index][X] = x;
     vertices[index][Y] = y;
     vertices[index][Z] = z;
   }
+  
+  
+  public PVector getNormal(int index) {
+    return getNormal(index, null);
+  }
+  
   
   public PVector getNormal(int index, PVector vec) {
     if (vec == null) {
@@ -1203,17 +1282,21 @@ public class PShape implements PConstants {
     return vec;    
   }
   
+  
   public float getNormalX(int index) {
     return vertices[index][NX];
   }
+  
 
   public float getNormalY(int index) {
     return vertices[index][NY];
-  }  
+  }
+  
   
   public float getNormalZ(int index) {
-    return vertices[index][NZ];
+    return vertices[index][NZ];  
   }    
+  
 
   public void setNormal(int index, float nx, float ny, float nz) {
     vertices[index][NX] = nx;
@@ -1221,29 +1304,102 @@ public class PShape implements PConstants {
     vertices[index][NZ] = nz;    
   }
   
-  public PVector getVertexUV(int index, PVector vec) {
-    if (vec == null) {
-      vec = new PVector();
-    }
-    vec.x = vertices[index][U];
-    vec.y = vertices[index][V];
-    return vec;        
-  }
   
-  public float getVertexU(int index) {
+  public float getTextureU(int index) {
     return vertices[index][U];
   }
   
-  public float getVertexV(int index) {
+  
+  public float getTextureV(int index) {
     return vertices[index][V];
   }  
   
-  public void setVertexUV(int index, float u, float v) {
+  
+  public void setTextureUV(int index, float u, float v) {
     vertices[index][U] = u;
     vertices[index][V] = v;
   }
+  
+  
+  public int getFill(int index) {
+    int a = (int) (vertices[index][A] * 255);
+    int r = (int) (vertices[index][R] * 255);
+    int g = (int) (vertices[index][G] * 255);
+    int b = (int) (vertices[index][B] * 255);                                        
+    return (a << 24) | (r << 16) | (g << 8) | b;
+  }
 
+  
+  public void setFill(int index, int fill) {
+    vertices[index][A] = ((fill >> 24) & 0xFF) / 255.0f; 
+    vertices[index][R] = ((fill >> 16) & 0xFF) / 255.0f;
+    vertices[index][G] = ((fill >>  8) & 0xFF) / 255.0f;
+    vertices[index][B] = ((fill >>  0) & 0xFF) / 255.0f;  
+  }  
 
+  
+  public int getStroke(int index) {
+    int a = (int) (vertices[index][SA] * 255);
+    int r = (int) (vertices[index][SR] * 255);
+    int g = (int) (vertices[index][SG] * 255);
+    int b = (int) (vertices[index][SB] * 255);                                        
+    return (a << 24) | (r << 16) | (g << 8) | b;
+  }
+
+  
+  public void setStroke(int index, int stroke) {
+    vertices[index][SA] = ((stroke >> 24) & 0xFF) / 255.0f; 
+    vertices[index][SR] = ((stroke >> 16) & 0xFF) / 255.0f;
+    vertices[index][SG] = ((stroke >>  8) & 0xFF) / 255.0f;
+    vertices[index][SB] = ((stroke >>  0) & 0xFF) / 255.0f;   
+  }  
+  
+  
+  public float getStrokeWeight(int index) {
+    return vertices[index][SW];
+  }
+  
+
+  public void setStrokeWeight(int index, float weight) {
+    vertices[index][SW] = weight;
+  }  
+  
+  
+  public int getAmbient(int index) {
+    return 0;
+  }
+
+  
+  public void setAmbient(int index, int ambient) {
+  }    
+  
+  public int getSpecular(int index) {
+    return 0;
+  }
+
+  
+  public void setSpecular(int index, int specular) {
+  }    
+    
+  
+  public int getEmissive(int index) {
+    return 0;
+  }
+
+  
+  public void setEmissive(int index, int emissive) {
+  }     
+  
+  
+  public float getShininess(int index) {
+    return 0;
+  }
+
+  
+  public void setShininess(int index, float shine) {
+  }
+  
+  
   public int[] getVertexCodes() {
     if (vertexCodes == null) {
       return null;
@@ -1253,8 +1409,8 @@ public class PShape implements PConstants {
     }
     return vertexCodes;
   }
-
-
+  
+  
   public int getVertexCodeCount() {
     return vertexCodeCount;
   }
