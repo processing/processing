@@ -1824,20 +1824,11 @@ public class PShape3D extends PShape {
   
 
   public int getVertexCount() {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return 0;
-    }
-    
     return inGeo.vertexCount;  
   }
   
   
   public PVector getVertex(int index, PVector vec) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return null;
-    }
     updateTessellation();
     
     if (vec == null) {
@@ -1851,10 +1842,6 @@ public class PShape3D extends PShape {
   
   
   public float getVertexX(int index) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return 0;
-    }
     updateTessellation();
     
     return inGeo.vertices[3 * index + 0];
@@ -1862,10 +1849,6 @@ public class PShape3D extends PShape {
   
   
   public float getVertexY(int index) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return 0;
-    }
     updateTessellation();
     
     return inGeo.vertices[3 * index + 1];
@@ -1873,10 +1856,6 @@ public class PShape3D extends PShape {
   
   
   public float getVertexZ(int index) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return 0;
-    }
     updateTessellation();
     
     return inGeo.vertices[3 * index + 2];
@@ -1889,10 +1868,6 @@ public class PShape3D extends PShape {
   
   
   public void setVertex(int index, float x, float y, float z) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return;
-    }
     updateTessellation();
     
     inGeo.tessMap.setVertex(index, x, y, z);
@@ -1908,10 +1883,6 @@ public class PShape3D extends PShape {
   
   
   public PVector getNormal(int index, PVector vec) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return null;
-    }
     updateTessellation();
     
     if (vec == null) {
@@ -1925,10 +1896,6 @@ public class PShape3D extends PShape {
   
   
   public float getNormalX(int index) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return 0;
-    }
     updateTessellation();
     
     return inGeo.normals[3 * index + 0];
@@ -1936,10 +1903,6 @@ public class PShape3D extends PShape {
 
   
   public float getNormalY(int index) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return 0;
-    }
     updateTessellation();
     
     return inGeo.normals[3 * index + 1];
@@ -1947,10 +1910,6 @@ public class PShape3D extends PShape {
 
   
   public float getNormalZ(int index) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return 0;
-    }
     updateTessellation();
     
     return inGeo.normals[3 * index + 2];
@@ -1958,10 +1917,6 @@ public class PShape3D extends PShape {
   
   
   public void setNormal(int index, float nx, float ny, float nz) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return;
-    }
     updateTessellation();
     
     inGeo.tessMap.setNormal(index, nx, ny, nz);
@@ -1975,10 +1930,6 @@ public class PShape3D extends PShape {
   
   
   public float getTextureU(int index) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return 0;
-    }
     updateTessellation();
     
     return inGeo.texcoords[2 * index + 0];
@@ -1986,10 +1937,6 @@ public class PShape3D extends PShape {
 
   
   public float getTextureV(int index) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return 0;
-    }
     updateTessellation();
     
     return inGeo.texcoords[2 * index + 1];
@@ -1997,10 +1944,6 @@ public class PShape3D extends PShape {
   
   
   public void setTextureUV(int index, float u, float v) {
-    if (family == GROUP) {
-      PGraphics.showWarning("GROUP shapes don't have any vertices");
-      return;
-    }
     updateTessellation();
     
     inGeo.tessMap.setTexcoords(index, u, v);
@@ -2010,18 +1953,138 @@ public class PShape3D extends PShape {
     if (hasFill) modifiedFillTexCoords = true;
     modified();
   }
+  
+  
+  public int getFill(int index) {
+    updateTessellation();
+    
+    return PGL.nativeToJavaARGB(inGeo.colors[index]);
+  }
 
   
-  /*
-  public float[] getVertex(int index) {
+  public void setFill(int index, int fill) {
+    updateTessellation();
+    
+    int nfill = PGL.javaToNativeARGB(fill);
+    inGeo.tessMap.setFill(index, nfill);
+    inGeo.colors[index] = nfill;
+    
+    if (hasFill) modifiedFillColors = true;
+    modified();    
+  }  
+
+  
+  public int getStroke(int index) {
+    updateTessellation();
+    
+    return PGL.nativeToJavaARGB(inGeo.scolors[index]);
+  }
+
+  
+  public void setStroke(int index, int stroke) {
+    updateTessellation();
+    
+    int nstroke = PGL.javaToNativeARGB(stroke);
+    inGeo.tessMap.setStroke(index, nstroke);
+    inGeo.scolors[index] = nstroke;
+    
+    if (hasPoints) modifiedPointColors = true;
+    if (hasLines) modifiedLineColors = true;
+    modified();  
+  }  
+  
+  
+  public float getStrokeWeight(int index) {
+    updateTessellation();
+    
+    return inGeo.sweights[index];
+  }
+  
+
+  public void setStrokeWeight(int index, float weight) {
+    updateTessellation();
+    
+    inGeo.tessMap.setStrokeWeight(index, weight);
+    inGeo.sweights[index] = weight;
+    
+    if (hasPoints) modifiedPointAttributes = true;
+    if (hasLines) modifiedLineAttributes = true;
+    modified();       
+  }
+
+  
+  public int getAmbient(int index) {
+    updateTessellation();
+    
+    return PGL.nativeToJavaARGB(inGeo.ambient[index]);
+  }
+
+  
+  public void setAmbient(int index, int ambient) {
+    updateTessellation();
+    
+    int nambient = PGL.javaToNativeARGB(ambient);
+    inGeo.tessMap.setAmbient(index, nambient);
+    inGeo.ambient[index] = nambient;
+    
+    if (hasFill) modifiedFillAmbient = true;
+    modified(); 
   }    
-  public int[] getVertexCodes() {    
+  
+  public int getSpecular(int index) {
+    updateTessellation();
+    
+    return PGL.nativeToJavaARGB(inGeo.specular[index]);
   }
-  public int getVertexCodeCount() {    
+
+  
+  public void setSpecular(int index, int specular) {
+    updateTessellation();
+    
+    int nspecular = PGL.javaToNativeARGB(specular);
+    inGeo.tessMap.setSpecular(index, nspecular);
+    inGeo.specular[index] = nspecular;
+    
+    if (hasFill) modifiedFillSpecular = true;
+    modified(); 
+  }    
+    
+  
+  public int getEmissive(int index) {
+    updateTessellation();
+    
+    return PGL.nativeToJavaARGB(inGeo.emissive[index]);
   }
-  public int getVertexCode(int index) {    
+
+  
+  public void setEmissive(int index, int emissive) {
+    updateTessellation();
+    
+    int nemissive = PGL.javaToNativeARGB(emissive);
+    inGeo.tessMap.setEmissive(index, nemissive);
+    inGeo.emissive[index] = nemissive;
+    
+    if (hasFill) modifiedFillEmissive = true;
+    modified(); 
+  }     
+  
+  
+  public float getShininess(int index) {
+    updateTessellation();
+    
+    return inGeo.shininess[index];
   }
-  */
+
+  
+  public void setShininess(int index, float shine) {
+    updateTessellation();
+    
+    inGeo.tessMap.setShininess(index, shine);
+    inGeo.shininess[index] = shine;
+    
+    if (hasFill) modifiedFillShininess = true;
+    modified(); 
+  }
   
   
   ///////////////////////////////////////////////////////////  
