@@ -2234,11 +2234,16 @@ public class PShape3D extends PShape {
     if (indices == null || indices.length != tessGeo.fillIndices.length) {
       indices = new int[tessGeo.fillIndices.length];      
     }
-    //PApplet.arrayCopy(tess.fillIndices, indices);
-    for (int i = 0; i < tessGeo.fillIndices.length; i++) {
-      indices[i] = tessGeo.fillIndices[i];
-    }    
-    removeIndexOffset(indices);
+    
+    IndexCache cache = tessGeo.fillIndexCache;
+    for (int n = 0; n < cache.size; n++) {
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];    
+      for (int i = ioffset; i < ioffset + icount; i++) {
+        indices[i] = voffset + tessGeo.fillIndices[i];  
+      }      
+    }
     return indices;
   }   
   
@@ -2308,11 +2313,15 @@ public class PShape3D extends PShape {
     if (indices == null || indices.length != tessGeo.lineIndices.length) {
       indices = new int[tessGeo.lineIndices.length];
     }
-    //PApplet.arrayCopy(tess.lineIndices, indices);
-    for (int i = 0; i < tessGeo.lineIndices.length; i++) {
-      indices[i] = tessGeo.lineIndices[i];
-    }    
-    removeIndexOffset(indices);
+    IndexCache cache = tessGeo.lineIndexCache;
+    for (int n = 0; n < cache.size; n++) {
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];    
+      for (int i = ioffset; i < ioffset + icount; i++) {
+        indices[i] = voffset + tessGeo.lineIndices[i];  
+      }      
+    }
     return indices;
   }  
   
@@ -2382,24 +2391,17 @@ public class PShape3D extends PShape {
     if (indices == null || indices.length != tessGeo.pointIndices.length) {
       indices = new int[tessGeo.pointIndices.length];
     }
-//    PApplet.arrayCopy(tess.pointIndices, indices);
-    for (int i = 0; i < tessGeo.pointIndices.length; i++) {
-      indices[i] = tessGeo.pointIndices[i];
-    }    
-    removeIndexOffset(indices);
-    return indices;
+    IndexCache cache = tessGeo.pointIndexCache;
+    for (int n = 0; n < cache.size; n++) {
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];    
+      for (int i = ioffset; i < ioffset + icount; i++) {
+        indices[i] = voffset + tessGeo.pointIndices[i];  
+      }      
+    }
+    return indices;    
   }   
-  
-  
-  protected void removeIndexOffset(int[] indices) {
-    if (0 < indices.length && 0 < indices[0]) {
-      // Removing any offset added in the aggregation step.
-      int i0 = indices[0];
-      for (int i = 0; i < indices.length; i++) {
-        indices[i] -= i0;
-      }
-    }    
-  }
   
     
   ///////////////////////////////////////////////////////////  
@@ -3054,7 +3056,7 @@ public class PShape3D extends PShape {
       
       if (0 < tessGeo.fillVertexCount && 0 < tessGeo.fillIndexCount) {
         IndexCache cache = tessGeo.fillIndexCache;
-        for (int n = 0; n < cache.count; n++) {
+        for (int n = 0; n < cache.size; n++) {
           int ioffset = cache.indexOffset[n];
           int icount = cache.indexCount[n];
           int vcount = cache.vertexCount[n];
@@ -3075,7 +3077,7 @@ public class PShape3D extends PShape {
             
       if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
         IndexCache cache = tessGeo.lineIndexCache;
-        for (int n = 0; n < cache.count; n++) {
+        for (int n = 0; n < cache.size; n++) {
           int ioffset = cache.indexOffset[n];
           int icount = cache.indexCount[n];
           int vcount = cache.vertexCount[n];
@@ -3096,7 +3098,7 @@ public class PShape3D extends PShape {
             
       if (0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount) {
         IndexCache cache = tessGeo.pointIndexCache;
-        for (int n = 0; n < cache.count; n++) {
+        for (int n = 0; n < cache.size; n++) {
           int ioffset = cache.indexOffset[n];
           int icount = cache.indexCount[n];
           int vcount = cache.vertexCount[n];
@@ -3134,7 +3136,7 @@ public class PShape3D extends PShape {
       PShape3D child = (PShape3D) children[i];
       IndexCache ccache = child.tessGeo.fillIndexCache;
       
-      for (int n = 0; n < ccache.count; n++) {        
+      for (int n = 0; n < ccache.size; n++) {        
         if (gindex == -1) {
           gindex = gcache.addNew(ccache, n);
         } else {
@@ -3163,7 +3165,7 @@ public class PShape3D extends PShape {
       PShape3D child = (PShape3D) children[i];
       IndexCache ccache = child.tessGeo.lineIndexCache;
       
-      for (int n = 0; n < ccache.count; n++) {        
+      for (int n = 0; n < ccache.size; n++) {        
         if (gindex == -1) {
           gindex = gcache.addNew(ccache, n);
         } else {
@@ -3187,7 +3189,7 @@ public class PShape3D extends PShape {
       PShape3D child = (PShape3D) children[i];
       IndexCache ccache = child.tessGeo.pointIndexCache;
       
-      for (int n = 0; n < ccache.count; n++) {        
+      for (int n = 0; n < ccache.size; n++) {        
         if (gindex == -1) {
           gindex = gcache.addNew(ccache, n);
         } else {
@@ -4088,7 +4090,7 @@ public class PShape3D extends PShape {
     shader.start(); 
     
     IndexCache cache = tessGeo.pointIndexCache;    
-    for (int n = 0; n < cache.count; n++) {     
+    for (int n = 0; n < cache.size; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
@@ -4111,7 +4113,7 @@ public class PShape3D extends PShape {
     shader.start(); 
     
     IndexCache cache = tessGeo.lineIndexCache;
-    for (int n = 0; n < cache.count; n++) {     
+    for (int n = 0; n < cache.size; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
@@ -4143,7 +4145,7 @@ public class PShape3D extends PShape {
     shader.start();
     
     IndexCache cache = tessGeo.fillIndexCache;
-    for (int n = 0; n < cache.count; n++) {     
+    for (int n = 0; n < cache.size; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];

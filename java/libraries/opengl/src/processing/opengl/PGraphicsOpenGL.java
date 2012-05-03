@@ -2303,7 +2303,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
 
-    setFirstTexIndex(tessGeo.fillIndexCount, tessGeo.fillIndexCache.count - 1);
+    setFirstTexIndex(tessGeo.fillIndexCount, tessGeo.fillIndexCache.size - 1);
 
     if (shape == POINTS) {
       tessellator.tessellatePoints();
@@ -2334,7 +2334,7 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellator.tessellatePolygon(false, mode == CLOSE, normalMode == NORMAL_MODE_AUTO);
     }
 
-    setLastTexIndex(tessGeo.lastFillIndex, tessGeo.fillIndexCache.count - 1);
+    setLastTexIndex(tessGeo.lastFillIndex, tessGeo.fillIndexCache.size - 1);
   }
 
   protected void tessellate(int[] indices, int[] edges) {
@@ -2356,13 +2356,13 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
 
-    setFirstTexIndex(tessGeo.fillIndexCount, tessGeo.fillIndexCache.count - 1);
+    setFirstTexIndex(tessGeo.fillIndexCount, tessGeo.fillIndexCache.size - 1);
     
     if (stroke && defaultEdges && edges == null) inGeo.addTrianglesEdges();
     if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTrianglesNormals();
     tessellator.tessellateTriangles(indices);    
     
-    setLastTexIndex(tessGeo.lastFillIndex, tessGeo.fillIndexCache.count - 1);
+    setLastTexIndex(tessGeo.lastFillIndex, tessGeo.fillIndexCache.size - 1);
   }
   
 
@@ -2373,7 +2373,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void setLastTexIndex(int lastIndex, int lastCache) {
-    if (textureImage0 != textureImage || texCache.count == 0) {
+    if (textureImage0 != textureImage || texCache.size == 0) {
       texCache.addTexture(textureImage, firstTexIndex, firstTexCache, lastIndex, lastCache);
     } else {
       texCache.setLastIndex(lastIndex, lastCache);
@@ -2439,7 +2439,7 @@ public class PGraphicsOpenGL extends PGraphics {
     shader.start();
 
     IndexCache cache = tessGeo.pointIndexCache;
-    for (int n = 0; n < cache.count; n++) {     
+    for (int n = 0; n < cache.size; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
@@ -2463,7 +2463,7 @@ public class PGraphicsOpenGL extends PGraphics {
     shader.start();
 
     IndexCache cache = tessGeo.lineIndexCache;
-    for (int n = 0; n < cache.count; n++) {     
+    for (int n = 0; n < cache.size; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
@@ -2484,7 +2484,7 @@ public class PGraphicsOpenGL extends PGraphics {
     updateFillBuffers(lights, texCache.hasTexture);
 
     texCache.beginRender();
-    for (int i = 0; i < texCache.count; i++) {
+    for (int i = 0; i < texCache.size; i++) {
       PTexture tex = texCache.getTexture(i);
       FillShader shader = getFillShader(lights, tex != null);
       shader.start();      
@@ -5912,7 +5912,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // Holds an array of textures and the range of vertex
   // indices each texture applies to.
   protected class TexCache {
-    int count;
+    int size;
     PImage[] textures;
     int[] firstIndex;
     int[] lastIndex;
@@ -5931,13 +5931,13 @@ public class PGraphicsOpenGL extends PGraphics {
       lastIndex = new int[PGL.DEFAULT_IN_TEXTURES];      
       firstCache = new int[PGL.DEFAULT_IN_TEXTURES];
       lastCache = new int[PGL.DEFAULT_IN_TEXTURES];
-      count = 0;
+      size = 0;
       hasTexture = false;
     }
 
     void clear() {
-      java.util.Arrays.fill(textures, 0, count, null);
-      count = 0;
+      java.util.Arrays.fill(textures, 0, size, null);
+      size = 0;
       hasTexture = false;
     }
 
@@ -5975,7 +5975,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void endRender() {
       if (hasTexture) {
         // Unbinding all the textures in the cache.
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < size; i++) {
           PImage img = textures[i];
           if (img != null) {
             PTexture tex = pg.getTexture(img);
@@ -5986,7 +5986,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         // Disabling texturing for each of the targets used
         // by textures in the cache.
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < size; i++) {
           PImage img = textures[i];
           if (img != null) {
             PTexture tex = pg.getTexture(img);
@@ -6001,26 +6001,26 @@ public class PGraphicsOpenGL extends PGraphics {
     void addTexture(PImage img, int firsti, int firstb, int lasti, int lastb) {
       arrayCheck();
 
-      textures[count] = img;
-      firstIndex[count] = firsti;
-      lastIndex[count] = lasti;
-      firstCache[count] = firstb;
-      lastCache[count] = lastb;
+      textures[size] = img;
+      firstIndex[size] = firsti;
+      lastIndex[size] = lasti;
+      firstCache[size] = firstb;
+      lastCache[size] = lastb;
       
       // At least one non-null texture since last reset.
       hasTexture |= img != null;
 
-      count++;
+      size++;
     }
 
     void setLastIndex(int lasti, int lastb) {
-      lastIndex[count - 1] = lasti;
-      lastCache[count - 1] = lastb;
+      lastIndex[size - 1] = lasti;
+      lastCache[size - 1] = lastb;
     }
 
     void arrayCheck() {
-      if (count == textures.length) {
-        int newSize = count << 1;
+      if (size == textures.length) {
+        int newSize = size << 1;
 
         expandTextures(newSize);
         expandFirstIndex(newSize);
@@ -6032,31 +6032,31 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void expandTextures(int n) {
       PImage[] temp = new PImage[n];
-      PApplet.arrayCopy(textures, 0, temp, 0, count);
+      PApplet.arrayCopy(textures, 0, temp, 0, size);
       textures = temp;
     }
 
     void expandFirstIndex(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(firstIndex, 0, temp, 0, count);
+      PApplet.arrayCopy(firstIndex, 0, temp, 0, size);
       firstIndex = temp;
     }
 
     void expandLastIndex(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(lastIndex, 0, temp, 0, count);
+      PApplet.arrayCopy(lastIndex, 0, temp, 0, size);
       lastIndex = temp;
     }
     
     void expandFirstCache(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(firstCache, 0, temp, 0, count);
+      PApplet.arrayCopy(firstCache, 0, temp, 0, size);
       firstCache = temp;
     }
     
     void expandLastCache(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(lastCache, 0, temp, 0, count);
+      PApplet.arrayCopy(lastCache, 0, temp, 0, size);
       lastCache = temp;
     }    
   }
@@ -6066,7 +6066,7 @@ public class PGraphicsOpenGL extends PGraphics {
   // to render a piece of geometry that doesn't fit in a single
   // glDrawElements() call.
   protected class IndexCache {
-    int count;
+    int size;
     int[] indexCount;
     int[] indexOffset;
     int[] vertexCount;
@@ -6081,37 +6081,37 @@ public class PGraphicsOpenGL extends PGraphics {
       indexOffset = new int[2];      
       vertexCount = new int[2];
       vertexOffset = new int[2];
-      count = 0;
+      size = 0;
     }
 
     void clear() {
-      count = 0;
+      size = 0;
     }    
     
     int addNew() {
       arrayCheck();
-      init(count);
-      count++;      
-      return count - 1;
+      init(size);
+      size++;      
+      return size - 1;
     }
     
     int addNew(IndexCache source, int index) {
       arrayCheck();
-      indexCount[count] = source.indexCount[index];
-      indexOffset[count] = source.indexOffset[index]; 
-      vertexCount[count] = source.vertexCount[index];  
-      vertexOffset[count] = source.vertexOffset[index];        
-      count++;      
-      return count - 1;      
+      indexCount[size] = source.indexCount[index];
+      indexOffset[size] = source.indexOffset[index]; 
+      vertexCount[size] = source.vertexCount[index];  
+      vertexOffset[size] = source.vertexOffset[index];        
+      size++;      
+      return size - 1;      
     }
     
     int getLast() {
-      if (count == 0) {
+      if (size == 0) {
         arrayCheck();
         init(0);
-        count = 1;
+        size = 1;
       }
-      return count - 1;
+      return size - 1;
     }
     
     void incCounts(int index, int icount, int vcount) {
@@ -6132,8 +6132,8 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     void arrayCheck() {
-      if (count == indexCount.length) {
-        int newSize = count << 1;
+      if (size == indexCount.length) {
+        int newSize = size << 1;
 
         expandIndexCount(newSize);
         expandIndexOffset(newSize);
@@ -6144,25 +6144,25 @@ public class PGraphicsOpenGL extends PGraphics {
     
     void expandIndexCount(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(indexCount, 0, temp, 0, count);
+      PApplet.arrayCopy(indexCount, 0, temp, 0, size);
       indexCount = temp;
     }
     
     void expandIndexOffset(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(indexOffset, 0, temp, 0, count);
+      PApplet.arrayCopy(indexOffset, 0, temp, 0, size);
       indexOffset = temp;      
     }
     
     void expandVertexCount(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(vertexCount, 0, temp, 0, count);
+      PApplet.arrayCopy(vertexCount, 0, temp, 0, size);
       vertexCount = temp;
     }
     
     void expandVertexOffset(int n) {
       int[] temp = new int[n];
-      PApplet.arrayCopy(vertexOffset, 0, temp, 0, count);
+      PApplet.arrayCopy(vertexOffset, 0, temp, 0, size);
       vertexOffset = temp;
     }    
   }
