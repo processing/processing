@@ -994,7 +994,7 @@ public class PGraphicsOpenGL extends PGraphics {
   }  
   
   // All OpenGL resources -----------------------------------------------
-
+  
   protected void deleteFinalizedGLResources() {
     deleteFinalizedTextureObjects();
     deleteFinalizedVertexBufferObjects();
@@ -1004,17 +1004,6 @@ public class PGraphicsOpenGL extends PGraphics {
     deleteFinalizedGLSLVertShaderObjects();
     deleteFinalizedGLSLFragShaderObjects();
   }
-
-
-//  protected void deleteAllGLResources() {
-//    deleteAllTextureObjects();
-//    deleteAllVertexBufferObjects();
-//    deleteAllFrameBufferObjects();
-//    deleteAllRenderBufferObjects();
-//    deleteAllGLSLProgramObjects();
-//    deleteAllGLSLVertShaderObjects();
-//    deleteAllGLSLFragShaderObjects();
-//  }
 
 
   //////////////////////////////////////////////////////////////
@@ -6183,6 +6172,265 @@ public class PGraphicsOpenGL extends PGraphics {
     }    
   }
   
+  // This class allows to define a multi-valued mapping
+  // from input to tessellated vertices.
+  protected class TessMap {
+    InGeometry in;
+    TessGeometry tess;
+    
+    int[][] pointIndices;
+    int firstPointIndex;
+    int[][] lineIndices;
+    int firstLineIndex;
+    int[][] fillIndices;
+    float[][] fillWeights;
+    int firstFillIndex;
+        
+    TessMap() {
+      in = null;
+      tess = null;      
+      pointIndices = null;
+      lineIndices = null;
+      fillIndices = null;
+      fillWeights = null;
+      firstPointIndex = -1;
+      firstLineIndex = -1;
+      firstFillIndex = -1;
+    }
+    
+    void init(InGeometry in, TessGeometry tess) {
+      this.in = in;
+      this.tess = tess;
+      pointIndices = new int[in.vertexCount][0];
+      lineIndices = new int[in.vertexCount][0];
+      fillIndices = new int[in.vertexCount][0];
+      fillWeights = new float[in.vertexCount][0];
+    }
+    
+    void dispose() {
+      in = null;
+      tess = null;
+      pointIndices = null;
+      lineIndices = null;
+      fillIndices = null;
+      fillWeights = null;
+    }
+        
+    void compact() {
+      firstPointIndex = -1;      
+      firstLineIndex = -1;      
+    
+      // When the in and tess indices are in a 1-1 mapping, there
+      // is no need to define it using the indices and weights arrays.
+      // Only the first offset between the two is needed.
+      boolean contiguous = true;
+      for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+        int[] indices = fillIndices[i];
+        float[] weigths = fillWeights[i];        
+        if (indices.length == 1 && weigths[0] == 1) {
+          if (i < in.lastVertex) {
+            int[] indices1 = fillIndices[i + 1];
+            if (indices[0] + 1 != indices1[0]) {
+              contiguous = false;
+              break;
+            }            
+          }
+        } else {
+          contiguous = false;
+          break;
+        }
+      }
+      if (contiguous) {
+        firstFillIndex = 0 < fillIndices.length ? fillIndices[in.firstVertex][0] : 0;
+        fillIndices = null;
+        fillWeights = null;
+      } else {
+        firstFillIndex = -1;
+      }
+    }
+    
+    void addPointIndex(int inIdx, int tessIdx) {
+      int[] indices = pointIndices[inIdx];
+      int pos;
+      if (indices.length == 0) {
+        indices = new int[1];
+        pos = 0;
+      } else {
+        int len = indices.length;
+        indices = new int[len + 1];
+        PApplet.arrayCopy(pointIndices[inIdx], indices, len);      
+        pos = len;
+      }
+      indices[pos] = tessIdx;
+      pointIndices[inIdx] = indices;
+    }
+    
+    void addLineIndex(int inIdx, int tessIdx) {
+      int[] indices = lineIndices[inIdx];
+      int pos;
+      if (indices.length == 0) {
+        indices = new int[1];
+        pos = 0;
+      } else {
+        int len = indices.length;
+        indices = new int[len + 1];
+        PApplet.arrayCopy(lineIndices[inIdx], indices, len);      
+        pos = len;
+      }
+      indices[pos] = tessIdx;
+      lineIndices[inIdx] = indices; 
+    }
+        
+    void addFillIndex(int inIdx, int tessIdx, float weight) {
+      int[] indices = fillIndices[inIdx];
+      float[] weights = fillWeights[inIdx];
+      int pos;
+      if (indices.length == 0) {
+        indices = new int[1];
+        weights = new float[1];
+        pos = 0;
+      } else {
+        int len = indices.length;
+        indices = new int[len + 1];
+        weights = new float[len + 1];
+        PApplet.arrayCopy(fillIndices[inIdx], indices, len);
+        PApplet.arrayCopy(fillWeights[inIdx], weights, len);          
+        pos = len;
+      }
+      indices[pos] = tessIdx;
+      weights[pos] = weight;
+      fillIndices[inIdx] = indices;
+      fillWeights[inIdx] = weights; 
+    }    
+    
+    void addFillIndex(int inIdx, int tessIdx) {
+      addFillIndex(inIdx, tessIdx, 1);
+    }
+    
+    void setVertex(int inIdx, float x, float y, float z) {
+      int[] indices;
+      float[] vertices;
+            
+      indices = pointIndices[inIdx];
+      vertices = tess.pointVertices; 
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        vertices[3 * tessIdx + 0] = x;
+        vertices[3 * tessIdx + 1] = y;
+        vertices[3 * tessIdx + 2] = z;        
+      } 
+      
+      indices = lineIndices[inIdx];
+      vertices = tess.lineVertices;
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        vertices[3 * tessIdx + 0] = x;
+        vertices[3 * tessIdx + 1] = y;
+        vertices[3 * tessIdx + 2] = z;        
+      }     
+      
+      vertices = tess.fillVertices;
+      if (-1 < firstFillIndex) {
+        // 1-1 mapping, only need to offset the input index
+        int tessIdx = firstFillIndex + inIdx;
+        vertices[3 * tessIdx + 0] = x;
+        vertices[3 * tessIdx + 1] = y;
+        vertices[3 * tessIdx + 2] = z;
+      } else {
+        // Multi-valued mapping. Going through all the tess
+        // vertices affected by inIdx.
+        float x0 = in.vertices[3 * inIdx + 0];
+        float y0 = in.vertices[3 * inIdx + 1];
+        float z0 = in.vertices[3 * inIdx + 2];        
+        indices = fillIndices[inIdx];
+        float[] weigths = fillWeights[inIdx];
+        for (int i = 0; i < indices.length; i++) {
+          // tessIdx is a linear combination of input vertices,
+          // including inIdx:
+          // tessVert[tessIdx] = SUM(i from I, inVert[i]), inIdx in I
+          // For example:
+          // xt = w0 * x0 + w1 * x1 + w2 * x2
+          // If x2 changes from x2 to x2', then the new value of xt is:
+          // xt' = w0 * x0 + w1 * x1 + w2 * x2' =
+          //     = w0 * x0 + w1 * x1 + w2 * x2' + w2 * x2 - w2 * x2 
+          //     = xt + w2 * (x2' - x2)
+          // This explains the calculations below:
+          int tessIdx = indices[i];
+          float weight = weigths[i];
+          float tx0 = vertices[3 * tessIdx + 0];
+          float ty0 = vertices[3 * tessIdx + 1];
+          float tz0 = vertices[3 * tessIdx + 2];        
+          vertices[3 * tessIdx + 0] = tx0 + weight * (x - x0);
+          vertices[3 * tessIdx + 1] = ty0 + weight * (y - y0);
+          vertices[3 * tessIdx + 2] = tz0 + weight * (z - z0);        
+        }    
+      }      
+    }
+    
+    void setNormal(int inIdx, float nx, float ny, float nz) {
+      float[] normals = tess.fillNormals;
+      
+      if (-1 < firstFillIndex) {
+        int tessIdx = firstFillIndex + inIdx;
+        normals[3 * tessIdx + 0] = nx;
+        normals[3 * tessIdx + 1] = ny;
+        normals[3 * tessIdx + 2] = nz;
+      } else {
+        float nx0 = in.normals[3 * inIdx + 0];
+        float ny0 = in.normals[3 * inIdx + 1];
+        float nz0 = in.normals[3 * inIdx + 2];        
+        int[] indices = fillIndices[inIdx];
+        float[] weigths = fillWeights[inIdx];
+        for (int i = 0; i < indices.length; i++) {
+          int tessIdx = indices[i];
+          float weight = weigths[i];
+          float tnx0 = normals[3 * tessIdx + 0];
+          float tny0 = normals[3 * tessIdx + 1];
+          float tnz0 = normals[3 * tessIdx + 2];        
+          float tnx = tnx0 + weight * (nx - nx0);
+          float tny = tny0 + weight * (ny - ny0);
+          float tnz = tnz0 + weight * (nz - nz0);
+          
+          // Making sure that the new normal vector is indeed
+          // normalized.
+          float sum = tnx * tnx + tny * tny + tnz * tnz;
+          float len = PApplet.sqrt(sum);
+          tnx /= len;
+          tny /= len;
+          tnz /= len;
+           
+          normals[3 * tessIdx + 0] = tnx;
+          normals[3 * tessIdx + 1] = tny;
+          normals[3 * tessIdx + 2] = tnz;
+        }    
+      }
+    }
+    
+    void setTexcoords(int inIdx, float u, float v) {
+      float[] texcoords = tess.fillTexcoords;
+      
+      if (-1 <firstFillIndex) {
+        int tessIdx = firstFillIndex + inIdx;
+        tessGeo.fillTexcoords[2 * tessIdx + 0] = u;
+        tessGeo.fillTexcoords[2 * tessIdx + 1] = v;
+      } else {       
+        float u0 = in.texcoords[2 * inIdx + 0];
+        float v0 = in.texcoords[2 * inIdx + 1];
+        int[] indices = fillIndices[inIdx];
+        float[] weigths = fillWeights[inIdx];
+        for (int i = 0; i < indices.length; i++) {
+          int tessIdx = indices[i];
+          float weight = weigths[i];
+          float tu0 = texcoords[2 * tessIdx + 0];
+          float tv0 = texcoords[2 * tessIdx + 1];        
+          float tu = tu0 + weight * (u - u0);
+          float tv = tv0 + weight * (v - v0);           
+          texcoords[2 * tessIdx + 0] = tu;
+          texcoords[2 * tessIdx + 1] = tv;
+        }        
+      }      
+    }
+  }  
   
   // Holds the input vertices: xyz coordinates, fill/tint color,
   // normal, texture coordinates and stroke color and weight.
@@ -6230,14 +6478,7 @@ public class PGraphicsOpenGL extends PGraphics {
     float shininessFactor; 
     float normalX, normalY, normalZ;
 
-    // Indices to map input vertices to tessellated vertices.
-    int[][] pointIndices;
-    int firstPointIndex;
-    int[][] lineIndices;
-    int firstLineIndex;
-    int[][] fillIndices;
-    float[][] fillWeights;
-    int firstFillIndex;    
+    TessMap tessMap;  
     
     InGeometry(int mode) {
       renderMode = mode;
@@ -6269,7 +6510,12 @@ public class PGraphicsOpenGL extends PGraphics {
       emissive = new int[PGL.DEFAULT_IN_VERTICES];
       shininess = new float[PGL.DEFAULT_IN_VERTICES];
       breaks = new boolean[PGL.DEFAULT_IN_VERTICES];
-      edges = new int[PGL.DEFAULT_IN_EDGES][3];      
+      edges = new int[PGL.DEFAULT_IN_EDGES][3];
+      
+      if (renderMode == RETAINED) {
+        tessMap = new TessMap();
+      }
+      
       clear();
     }
 
@@ -6286,6 +6532,10 @@ public class PGraphicsOpenGL extends PGraphics {
       emissive = null;
       shininess = null;
       edges = null;
+      
+      if (renderMode == RETAINED) {
+        tessMap.dispose();
+      }      
     }
 
     void vertexCheck() {
@@ -6312,6 +6562,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
         expandEdges(newLen);
       }
+    }
+    
+    void initTessMap(TessGeometry tess) {
+      if (renderMode == RETAINED) {
+        tessMap.init(this, tess);
+      }
+    }
+    
+    void disposeTessMap() {
+      tessMap.dispose();
     }
 
     // -----------------------------------------------------------------
@@ -7037,123 +7297,7 @@ public class PGraphicsOpenGL extends PGraphics {
     //
     // Tess maps    
     
-    void initTessMaps() {
-      pointIndices = new int[vertexCount][0];
-      lineIndices = new int[vertexCount][0];
-      fillIndices = new int[vertexCount][0];
-      fillWeights = new float[vertexCount][0];
-    }
-    
-    void freeTessMaps() {
-      pointIndices = null;
-      lineIndices = null;
-      fillIndices = null;
-      fillWeights = null;
-    }
-    
-    void compactTessMaps() {
-      firstPointIndex = -1;      
-      firstLineIndex = -1;      
-      
-      boolean contiguous = true;
-      for (int i = firstVertex; i <= lastVertex; i++) {
-        int[] indices = fillIndices[i];
-        float[] weigths = fillWeights[i];        
-        if (indices.length == 1 && weigths[0] == 1) {
-          if (i < lastVertex) {
-            int[] indices1 = fillIndices[i + 1];
-            if (indices[0] + 1 != indices1[0]) {
-              contiguous = false;
-              break;
-            }            
-          }
-        } else {
-          contiguous = false;
-          break;
-        }
-      }
-      if (contiguous) {
-        firstFillIndex = 0 < fillIndices.length ? fillIndices[firstVertex][0] : 0;
-        fillIndices = null;
-        fillWeights = null;
-      } else {
-        firstFillIndex = -1;
-      }
-    }
-    
-    void addPointIndexToTessMap(int inIdx, int tessIdx) {
-//      if (renderMode == RETAINED) {
-//        int[] indices = pointIndices[inIdx];
-//        int pos;
-//        if (indices.length == 0) {
-//          indices = new int[1];
-//          pos = 0;
-//        } else {
-//          int len = indices.length;
-//          indices = new int[len + 1];
-//          PApplet.arrayCopy(pointIndices[inIdx], indices, len);      
-//          pos = len;
-//        }
-//        indices[pos] = tessIdx;
-//        pointIndices[inIdx] = indices;
-//      }     
-    }
-    
-    void addLineIndexToTessMap(int inIdx, int tessIdx) {
-//      if (renderMode == RETAINED) {
-//        int[] indices = lineIndices[inIdx];
-//        int pos;
-//        if (indices.length == 0) {
-//          indices = new int[1];
-//          pos = 0;
-//        } else {
-//          int len = indices.length;
-//          indices = new int[len + 1];
-//          PApplet.arrayCopy(lineIndices[inIdx], indices, len);      
-//          pos = len;
-//        }
-//        indices[pos] = tessIdx;
-//        lineIndices[inIdx] = indices;
-//      }  
-    }
-        
-    void addFillIndexToTessMap(int inIdx, int tessIdx, float weight) {
-//      if (renderMode == RETAINED) {
-//        int[] indices = fillIndices[inIdx];
-//        float[] weights = fillWeights[inIdx];
-//        int pos;
-//        if (indices.length == 0) {
-//          indices = new int[1];
-//          weights = new float[1];
-//          pos = 0;
-//        } else {
-//          int len = indices.length;
-//          indices = new int[len + 1];
-//          weights = new float[len + 1];
-//          PApplet.arrayCopy(fillIndices[inIdx], indices, len);
-//          PApplet.arrayCopy(fillWeights[inIdx], weights, len);          
-//          pos = len;
-//        }
-//        indices[pos] = tessIdx;
-//        weights[pos] = weight;
-//        fillIndices[inIdx] = indices;
-//        fillWeights[inIdx] = weights; 
-//      }
-    }    
-    
-    void addFillIndexToTessMap(int inIdx, int tessIdx) {
-//      addFillIndexToTessMap(inIdx, tessIdx, 1);
-    }
-    
-    void addFillIndicesToTessMap(int firstTessIdx) {
-//      if (renderMode == RETAINED) {
-//        int i0 = firstVertex;
-//        int i1 = lastVertex;        
-//        for (int i = i0; i <= i1; i++) {
-//          addFillIndexToTessMap(i, firstTessIdx + i - i0);
-//        }                  
-//      }      
-    }    
+   
     
     // -----------------------------------------------------------------
     //
@@ -8433,6 +8577,10 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       pointColors[tessIdx] = in.scolors[inIdx];
+      
+      if (renderMode == RETAINED) {
+        in.tessMap.addPointIndex(inIdx, tessIdx);  
+      }      
     }        
     
     // -----------------------------------------------------------------
@@ -8477,6 +8625,10 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       lineColors[tessIdx] = rgba;
+      
+      if (renderMode == RETAINED) {
+        in.tessMap.addLineIndex(inIdx0, tessIdx);
+      }
     }
 
     void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx) {
@@ -8491,7 +8643,8 @@ public class PGraphicsOpenGL extends PGraphics {
                        int rgba,
                        float nx, float ny, float nz,
                        float u, float v,
-                       int am, int sp, int em, float shine) {
+                       int am, int sp, int em, float shine, 
+                       InGeometry in, int[] vertices, float[] weights) {
       fillVertexCheck();
       int index;
       int count = fillVertexCount - 1;
@@ -8531,6 +8684,13 @@ public class PGraphicsOpenGL extends PGraphics {
       fillSpecular[count] = sp;
       fillEmissive[count] = em;
       fillShininess[count] = shine;
+      
+      if (renderMode == RETAINED && vertices != null && weights != null) {
+        int len = vertices.length;
+        for (int i = 0; i < len; i++) {
+          in.tessMap.addFillIndex(vertices[i], count, weights[i]);
+        }
+      }
     }
     
     void addFillVertices(InGeometry in) {
@@ -8637,6 +8797,14 @@ public class PGraphicsOpenGL extends PGraphics {
         PApplet.arrayCopy(in.emissive, i0, fillEmissive, firstFillVertex, nvert);
         PApplet.arrayCopy(in.shininess, i0, fillShininess, firstFillVertex, nvert);
       }      
+      
+      if (renderMode == RETAINED) {
+        for (int i = 0; i < nvert; i++) {
+          int inIdx = i0 + i;
+          int tessIdx = firstFillVertex + i;
+          in.tessMap.addFillIndex(inIdx, tessIdx);
+        }  
+      }
     }
 
     // -----------------------------------------------------------------
@@ -8885,8 +9053,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
           // All the tessellated vertices are identical to the center point
           for (int k = 0; k < nvert; k++) {
-            tess.putPointVertex(in, i, vertIdx);
-            in.addPointIndexToTessMap(i, vertIdx);
+            tess.putPointVertex(in, i, vertIdx);            
             vertIdx++;
           }
 
@@ -8956,7 +9123,6 @@ public class PGraphicsOpenGL extends PGraphics {
           
           for (int k = 0; k < nvert; k++) {
             tess.putPointVertex(in, i, vertIdx);
-            in.addPointIndexToTessMap(i, vertIdx);
             vertIdx++;
           }
 
@@ -9049,20 +9215,17 @@ public class PGraphicsOpenGL extends PGraphics {
       
       tess.putLineVertex(in, i0, i1, vidx);
       tess.lineDirWidths[4 * vidx + 3] = +strokeWeight/2;
-      tess.lineIndices[iidx++] = (short) (count + 0);
-      in.addLineIndexToTessMap(i0, vidx);
+      tess.lineIndices[iidx++] = (short) (count + 0);      
       
       vidx++;
       tess.putLineVertex(in, i0, i1, vidx);
       tess.lineDirWidths[4 * vidx + 3] = -strokeWeight/2;
       tess.lineIndices[iidx++] = (short) (count + 1);
-      in.addLineIndexToTessMap(i0, vidx);
       
       vidx++;
       tess.putLineVertex(in, i1, i0, vidx);
       tess.lineDirWidths[4 * vidx + 3] = -strokeWeight/2;
       tess.lineIndices[iidx++] = (short) (count + 2);
-      in.addLineIndexToTessMap(i1, vidx);
       
       // Starting a new triangle re-using prev vertices.
       tess.lineIndices[iidx++] = (short) (count + 2);      
@@ -9072,7 +9235,6 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.putLineVertex(in, i1, i0, vidx);
       tess.lineDirWidths[4 * vidx + 3] = +strokeWeight/2;
       tess.lineIndices[iidx++] = (short) (count + 3);
-      in.addLineIndexToTessMap(i1, vidx);
       
       cache.incCounts(index, 6, 4);
       return index;
@@ -9298,8 +9460,6 @@ public class PGraphicsOpenGL extends PGraphics {
           if (inDupSet != null) inDupSet.clear(); 
         }
       }
-      
-      // TODO: in.addFillIndicesToTessMap !!!!!
     }
         
     void setRawSize(int size) {      
@@ -9496,22 +9656,25 @@ public class PGraphicsOpenGL extends PGraphics {
             int scolor = ((int) d[16] << 24) | ((int) d[17] << 16) | ((int) d[18] << 8) | (int) d[19];
             int ecolor = ((int) d[20] << 24) | ((int) d[21] << 16) | ((int) d[22] << 8) | (int) d[23];
             
+            int[] vertices = null;
+            float[] weights = null;
+            int nvert = (l - 25) / 2;
+            if (0 < nvert) {
+              vertices = new int[nvert];
+              weights = new float[nvert];
+              for (int n = 0; n < nvert; n++) {
+                vertices[n] = (int) d[25 + 2 * n + 0];
+                weights[n] = (float) d[25 + 2 * n + 1];                
+              }              
+            }
+            
             tess.addFillVertex((float) d[ 0],  (float) d[ 1], (float) d[ 2],
                                fcolor,
                                (float) d[ 7],  (float) d[ 8], (float) d[ 9],
                                (float) d[10], (float) d[11],
                                acolor, scolor, ecolor,
-                               (float) d[24]);
-
-            int nvert = (l - 25) / 2;
-            if (0 < nvert) {
-              int tessIdx = tess.fillVertexCount - 1; // aaaaah!!!!
-              for (int n = 0; n < nvert; n++) {
-                int inIdx = (int) d[25 + 2 * n + 0];
-                float weight = (float) d[25 + 2 * n + 1];
-                in.addFillIndexToTessMap(inIdx, tessIdx, weight);
-              }
-            }
+                               (float) d[24], 
+                               in, vertices, weights);
             
             vertCount++;
           } else {
