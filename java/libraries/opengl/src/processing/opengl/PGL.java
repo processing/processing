@@ -1273,25 +1273,6 @@ public class PGL {
   }
 
 
-  static public short makeIndex(int intIdx) {
-    // The old hack to have unsigned shorts as indices using Java's
-    // signed shorts:
-    // When the index value is greater than 32767, subtracting 65536
-    // will make it (as a short) to wrap around to the negative range, which
-    // is all we need to later pass these numbers to opengl (which will
-    // interpret them as unsigned shorts). See discussion here:
-    // http://stackoverflow.com/questions/4331021/java-opengl-gldrawelements-with-32767-vertices
-    //return 32767 < intIdx ? (short)(intIdx - 65536) : (short)intIdx;
-    if (32767 < intIdx) {
-      PGraphics.showWarning("P3D: More than 32767 vertices in a single shape, not all will be drawn.\n" +
-                             "Consider splitting your large shape into multiple smaller shapes.");
-      return 32767;
-    } else {
-      return (short)intIdx;
-    }
-  }
-
-
   public void enableTexturing(int target) {
     glEnable(target);
   }
