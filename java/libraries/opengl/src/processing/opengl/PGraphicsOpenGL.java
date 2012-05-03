@@ -6343,7 +6343,7 @@ public class PGraphicsOpenGL extends PGraphics {
         float y0 = in.vertices[3 * inIdx + 1];
         float z0 = in.vertices[3 * inIdx + 2];        
         indices = fillIndices[inIdx];
-        float[] weigths = fillWeights[inIdx];
+        float[] weights = fillWeights[inIdx];
         for (int i = 0; i < indices.length; i++) {
           // tessIdx is a linear combination of input vertices,
           // including inIdx:
@@ -6356,7 +6356,7 @@ public class PGraphicsOpenGL extends PGraphics {
           //     = xt + w2 * (x2' - x2)
           // This explains the calculations below:
           int tessIdx = indices[i];
-          float weight = weigths[i];
+          float weight = weights[i];
           float tx0 = vertices[3 * tessIdx + 0];
           float ty0 = vertices[3 * tessIdx + 1];
           float tz0 = vertices[3 * tessIdx + 2];        
@@ -6380,10 +6380,10 @@ public class PGraphicsOpenGL extends PGraphics {
         float ny0 = in.normals[3 * inIdx + 1];
         float nz0 = in.normals[3 * inIdx + 2];        
         int[] indices = fillIndices[inIdx];
-        float[] weigths = fillWeights[inIdx];
+        float[] weights = fillWeights[inIdx];
         for (int i = 0; i < indices.length; i++) {
           int tessIdx = indices[i];
-          float weight = weigths[i];
+          float weight = weights[i];
           float tnx0 = normals[3 * tessIdx + 0];
           float tny0 = normals[3 * tessIdx + 1];
           float tnz0 = normals[3 * tessIdx + 2];        
@@ -6417,10 +6417,10 @@ public class PGraphicsOpenGL extends PGraphics {
         float u0 = in.texcoords[2 * inIdx + 0];
         float v0 = in.texcoords[2 * inIdx + 1];
         int[] indices = fillIndices[inIdx];
-        float[] weigths = fillWeights[inIdx];
+        float[] weights = fillWeights[inIdx];
         for (int i = 0; i < indices.length; i++) {
           int tessIdx = indices[i];
-          float weight = weigths[i];
+          float weight = weights[i];
           float tu0 = texcoords[2 * tessIdx + 0];
           float tv0 = texcoords[2 * tessIdx + 1];        
           float tu = tu0 + weight * (u - u0);
@@ -6430,6 +6430,143 @@ public class PGraphicsOpenGL extends PGraphics {
         }        
       }      
     }
+    
+    void setFill(int inIdx, int fill) {
+      int[] colors = tess.fillColors;
+      
+      if (-1 < firstFillIndex) {
+        int tessIdx = firstFillIndex + inIdx;
+        colors[tessIdx] = fill;
+      } else {
+        int[] indices = fillIndices[inIdx];
+        float[] weights = fillWeights[inIdx];
+        int fill0 = in.colors[inIdx];
+        setColorARGB(colors, fill, fill0, indices, weights);   
+      }      
+    }
+    
+    void setStroke(int inIdx, int stroke) {      
+      int[] indices;
+      int[] colors;
+            
+      indices = pointIndices[inIdx];
+      colors = tess.pointColors; 
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        colors[tessIdx] = stroke;
+      } 
+      
+      indices = lineIndices[inIdx];
+      colors = tess.lineColors; 
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        colors[tessIdx] = stroke;
+      } 
+    }
+    
+    void setStrokeWeight(int inIdx, float weight) {
+      
+    }   
+    
+    void setAmbient(int inIdx, int ambient) {
+      int[] colors = tess.fillAmbient;
+      
+      if (-1 < firstFillIndex) {
+        int tessIdx = firstFillIndex + inIdx;
+        colors[tessIdx] = ambient;
+      } else {
+        int[] indices = fillIndices[inIdx];
+        float[] weights = fillWeights[inIdx];
+        int ambient0 = in.ambient[inIdx];
+        setColorRGB(colors, ambient, ambient0, indices, weights);   
+      }   
+    }
+    
+    void setSpecular(int inIdx, int specular) {
+      int[] colors = tess.fillSpecular;
+      
+      if (-1 < firstFillIndex) {
+        int tessIdx = firstFillIndex + inIdx;
+        colors[tessIdx] = specular;
+      } else {
+        int[] indices = fillIndices[inIdx];
+        float[] weights = fillWeights[inIdx];
+        int specular0 = in.specular[inIdx];
+        setColorRGB(colors, specular, specular0, indices, weights);   
+      }         
+    }
+    
+    void setEmissive(int inIdx, int emissive) {
+      int[] colors = tess.fillEmissive;
+      
+      if (-1 < firstFillIndex) {
+        int tessIdx = firstFillIndex + inIdx;
+        colors[tessIdx] = emissive;
+      } else {
+        int[] indices = fillIndices[inIdx];
+        float[] weights = fillWeights[inIdx];
+        int emissive0 = in.emissive[inIdx];
+        setColorRGB(colors, emissive, emissive0, indices, weights);   
+      }           
+    }
+    
+    void setShininess(int inIdx, float weight) {
+      
+    } 
+    
+    void setColorARGB(int[] colors, int fill, int fill0, int[] indices, float[] weights) {
+      float a = (fill >> 24) & 0xFF;
+      float r = (fill >> 16) & 0xFF;
+      float g = (fill >>  8) & 0xFF;
+      float b = (fill >>  0) & 0xFF;
+      
+      float a0 = (fill0 >> 24) & 0xFF;
+      float r0 = (fill0 >> 16) & 0xFF;
+      float g0 = (fill0 >>  8) & 0xFF;
+      float b0 = (fill0 >>  0) & 0xFF;
+
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        float weight = weights[i];
+        int tfill0 = colors[tessIdx];          
+        float ta0 = (tfill0 >> 24) & 0xFF;
+        float tr0 = (tfill0 >> 16) & 0xFF;
+        float tg0 = (tfill0 >>  8) & 0xFF;
+        float tb0 = (tfill0 >>  0) & 0xFF;
+        
+        int ta = (int) (ta0 + weight * (a - a0));
+        int tr = (int) (tr0 + weight * (r - r0));
+        int tg = (int) (tg0 + weight * (g - g0));
+        int tb = (int) (tb0 + weight * (b - b0));
+         
+        colors[tessIdx] = (ta << 24) | (tr << 16) | (tg << 8) | tb;
+      }       
+    }
+    
+    void setColorRGB(int[] colors, int fill, int fill0, int[] indices, float[] weights) {
+      float r = (fill >> 16) & 0xFF;
+      float g = (fill >>  8) & 0xFF;
+      float b = (fill >>  0) & 0xFF;
+      
+      float r0 = (fill0 >> 16) & 0xFF;
+      float g0 = (fill0 >>  8) & 0xFF;
+      float b0 = (fill0 >>  0) & 0xFF;
+
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        float weight = weights[i];
+        int tfill0 = colors[tessIdx];          
+        float tr0 = (tfill0 >> 16) & 0xFF;
+        float tg0 = (tfill0 >>  8) & 0xFF;
+        float tb0 = (tfill0 >>  0) & 0xFF;
+        
+        int tr = (int) (tr0 + weight * (r - r0));
+        int tg = (int) (tg0 + weight * (g - g0));
+        int tb = (int) (tb0 + weight * (b - b0));
+         
+        colors[tessIdx] = 0xff000000 | (tr << 16) | (tg << 8) | tb;
+      }       
+    }    
   }  
   
   // Holds the input vertices: xyz coordinates, fill/tint color,
