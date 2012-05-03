@@ -1148,6 +1148,7 @@ public class PShape implements PConstants {
     }
   }
 
+  
   // TODO: finish implementing partial updates in PShape3D
   protected void modified(int i0, int i1) {
     modified = true;
@@ -1157,6 +1158,7 @@ public class PShape implements PConstants {
       parent.modified(i0, i1);
     }
   }  
+  
   
   protected void notModified() {
     modified = false;
