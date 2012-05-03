@@ -4092,7 +4092,11 @@ public class PShape3D extends PShape {
   
   
   protected void freeTessData() {
-    tess = null;
+    // The dispose() call will destroy all the geometry
+    // arrays but will keep the index caches that are
+    // needed by the render methods.
+    tess.dipose();    
+    
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D)children[i];
