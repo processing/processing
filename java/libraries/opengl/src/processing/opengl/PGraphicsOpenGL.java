@@ -2461,8 +2461,8 @@ public class PGraphicsOpenGL extends PGraphics {
       int voffset = cache.vertexOffset[n];
 
       shader.setVertexAttribute(glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
-      shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);;
-      shader.setSizeAttribute(glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+      shader.setSizeAttribute(glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
 
       pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);      
     }
@@ -6111,6 +6111,16 @@ public class PGraphicsOpenGL extends PGraphics {
       return count - 1;
     }
     
+    int addNew(IndexCache source, int index) {
+      arrayCheck();
+      indexCount[count] = source.indexCount[index];
+      indexOffset[count] = source.indexOffset[index]; 
+      vertexCount[count] = source.vertexCount[index];  
+      vertexOffset[count] = source.vertexOffset[index];        
+      count++;      
+      return count - 1;      
+    }
+    
     int getLast() {
       if (count == 0) {
         arrayCheck();
@@ -7072,77 +7082,77 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     void addPointIndexToTessMap(int inIdx, int tessIdx) {
-      if (renderMode == RETAINED) {
-        int[] indices = pointIndices[inIdx];
-        int pos;
-        if (indices.length == 0) {
-          indices = new int[1];
-          pos = 0;
-        } else {
-          int len = indices.length;
-          indices = new int[len + 1];
-          PApplet.arrayCopy(pointIndices[inIdx], indices, len);      
-          pos = len;
-        }
-        indices[pos] = tessIdx;
-        pointIndices[inIdx] = indices;
-      }     
+//      if (renderMode == RETAINED) {
+//        int[] indices = pointIndices[inIdx];
+//        int pos;
+//        if (indices.length == 0) {
+//          indices = new int[1];
+//          pos = 0;
+//        } else {
+//          int len = indices.length;
+//          indices = new int[len + 1];
+//          PApplet.arrayCopy(pointIndices[inIdx], indices, len);      
+//          pos = len;
+//        }
+//        indices[pos] = tessIdx;
+//        pointIndices[inIdx] = indices;
+//      }     
     }
     
     void addLineIndexToTessMap(int inIdx, int tessIdx) {
-      if (renderMode == RETAINED) {
-        int[] indices = lineIndices[inIdx];
-        int pos;
-        if (indices.length == 0) {
-          indices = new int[1];
-          pos = 0;
-        } else {
-          int len = indices.length;
-          indices = new int[len + 1];
-          PApplet.arrayCopy(lineIndices[inIdx], indices, len);      
-          pos = len;
-        }
-        indices[pos] = tessIdx;
-        lineIndices[inIdx] = indices;
-      }  
+//      if (renderMode == RETAINED) {
+//        int[] indices = lineIndices[inIdx];
+//        int pos;
+//        if (indices.length == 0) {
+//          indices = new int[1];
+//          pos = 0;
+//        } else {
+//          int len = indices.length;
+//          indices = new int[len + 1];
+//          PApplet.arrayCopy(lineIndices[inIdx], indices, len);      
+//          pos = len;
+//        }
+//        indices[pos] = tessIdx;
+//        lineIndices[inIdx] = indices;
+//      }  
     }
         
     void addFillIndexToTessMap(int inIdx, int tessIdx, float weight) {
-      if (renderMode == RETAINED) {
-        int[] indices = fillIndices[inIdx];
-        float[] weights = fillWeights[inIdx];
-        int pos;
-        if (indices.length == 0) {
-          indices = new int[1];
-          weights = new float[1];
-          pos = 0;
-        } else {
-          int len = indices.length;
-          indices = new int[len + 1];
-          weights = new float[len + 1];
-          PApplet.arrayCopy(fillIndices[inIdx], indices, len);
-          PApplet.arrayCopy(fillWeights[inIdx], weights, len);          
-          pos = len;
-        }
-        indices[pos] = tessIdx;
-        weights[pos] = weight;
-        fillIndices[inIdx] = indices;
-        fillWeights[inIdx] = weights; 
-      }
+//      if (renderMode == RETAINED) {
+//        int[] indices = fillIndices[inIdx];
+//        float[] weights = fillWeights[inIdx];
+//        int pos;
+//        if (indices.length == 0) {
+//          indices = new int[1];
+//          weights = new float[1];
+//          pos = 0;
+//        } else {
+//          int len = indices.length;
+//          indices = new int[len + 1];
+//          weights = new float[len + 1];
+//          PApplet.arrayCopy(fillIndices[inIdx], indices, len);
+//          PApplet.arrayCopy(fillWeights[inIdx], weights, len);          
+//          pos = len;
+//        }
+//        indices[pos] = tessIdx;
+//        weights[pos] = weight;
+//        fillIndices[inIdx] = indices;
+//        fillWeights[inIdx] = weights; 
+//      }
     }    
     
     void addFillIndexToTessMap(int inIdx, int tessIdx) {
-      addFillIndexToTessMap(inIdx, tessIdx, 1);
+//      addFillIndexToTessMap(inIdx, tessIdx, 1);
     }
     
     void addFillIndicesToTessMap(int firstTessIdx) {
-      if (renderMode == RETAINED) {
-        int i0 = firstVertex;
-        int i1 = lastVertex;        
-        for (int i = i0; i <= i1; i++) {
-          addFillIndexToTessMap(i, firstTessIdx + i - i0);
-        }                  
-      }      
+//      if (renderMode == RETAINED) {
+//        int i0 = firstVertex;
+//        int i1 = lastVertex;        
+//        for (int i = i0; i <= i1; i++) {
+//          addFillIndexToTessMap(i, firstTessIdx + i - i0);
+//        }                  
+//      }      
     }    
     
     // -----------------------------------------------------------------
@@ -8257,8 +8267,8 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // -----------------------------------------------------------------
     //
-    // Aggregation       
-    
+    // Aggregation methods  
+  
     void addCounts(TessGeometry other) {
       fillVertexCount += other.fillVertexCount;
       fillIndexCount += other.fillIndexCount;
@@ -8299,7 +8309,7 @@ public class PGraphicsOpenGL extends PGraphics {
       lastPointVertex = other.lastPointVertex;
       lastPointIndex = other.lastPointIndex;
     }
-
+  /*  
     int setFillVertex(int offset) {
       firstFillVertex = 0;
       if (0 < offset) {
@@ -8327,7 +8337,9 @@ public class PGraphicsOpenGL extends PGraphics {
       lastFillIndex = firstFillIndex + fillIndexCount - 1;
       return lastFillIndex;
     }
-
+*/
+    
+    
     int setLineVertex(int offset) {
       firstLineVertex = 0;
       if (0 < offset) {
@@ -9228,8 +9240,16 @@ public class PGraphicsOpenGL extends PGraphics {
       tessellateEdges();
     }
 
-    // Uses the raw indices to partition the geometry into separate 
-    // index blocks when the vertex indices become too large.
+    // Uses the raw indices to partition the geometry into contiguous 
+    // index groups when the vertex indices become too large. The basic
+    // idea of this algorithm is to scan through the array of raw indices
+    // in groups of three vertices at the time (since we are always dealing
+    // with triangles) and create a new offset in the index cache once the
+    // index values go above the MAX_VERTEX_INDEX constant. The tricky part
+    // is that triangles in the new group might refer to vertices in a 
+    // previous group. Since the index groups are by definition disjoint,
+    // these vertices need to be duplicated at the end of the corresponding
+    // region in the vertex array.
     void partitionRawIndices() {
       tess.fillIndexCheck(rawSize);
       int offset = tess.firstFillIndex; 
@@ -9238,12 +9258,13 @@ public class PGraphicsOpenGL extends PGraphics {
       int inMaxVert0 = in.firstVertex, inMaxVert1 = in.firstVertex;
       int inMaxRel = 0;
       
-      Set<Integer> inDupSet = null;        
-      int index = tess.fillIndexCache.getLast();
+      Set<Integer> inDupSet = null;
+      IndexCache cache = tess.fillIndexCache;
+      int index = cache.getLast();
       
       int trCount = rawSize / 3;        
       for (int tr = 0; tr < trCount; tr++) {
-        if (index == -1) index = tess.fillIndexCache.addNew();
+        if (index == -1) index = cache.addNew();
         
         int i0 = rawIndices[3 * tr + 0];
         int i1 = rawIndices[3 * tr + 1];
@@ -9254,8 +9275,8 @@ public class PGraphicsOpenGL extends PGraphics {
         int ii1 = i1 - inMaxVert0;
         int ii2 = i2 - inMaxVert0;
         
-        // Vertex indices relative to the current block.
-        int count = tess.fillIndexCache.vertexCount[index];
+        // Vertex indices relative to the current group.
+        int count = cache.vertexCount[index];
         int ri0, ri1, ri2;
         if (ii0 < 0) {
           if (inDupSet == null) inDupSet = new HashSet<Integer>();
@@ -9285,7 +9306,11 @@ public class PGraphicsOpenGL extends PGraphics {
         
         if ((PGL.MAX_VERTEX_INDEX1 - 3 <= inMaxRel + dup && inMaxRel + dup < PGL.MAX_VERTEX_INDEX1)||
             (tr == trCount - 1)) {
-          // Copy block vertices first
+          // The vertex indices of the current group are about to 
+          // surpass the MAX_VERTEX_INDEX limit, or we are at the last triangle
+          // so we need to wrap-up things anyways.
+          
+          // So, copy vertices in current region first
           tess.addFillVertices(in, inMaxVert0, inMaxVert1);
           
           if (0 < dup) {
@@ -9300,7 +9325,7 @@ public class PGraphicsOpenGL extends PGraphics {
               }
             }
             
-            // Copy duplicated vertices last            
+            // Copy duplicated vertices from previous regions last            
             for (int i = 0; i < inDupList.size(); i++) {
               int ri = inDupList.get(i);
               tess.addFillVertex(in, ri + inMaxVert0);  
@@ -9308,7 +9333,7 @@ public class PGraphicsOpenGL extends PGraphics {
           }
           
           // Increment counts:
-          tess.fillIndexCache.incCounts(index, inInd1 - inInd0 + 1, inMaxVert1 - inMaxVert0 + 1 + dup);          
+          cache.incCounts(index, inInd1 - inInd0 + 1, inMaxVert1 - inMaxVert0 + 1 + dup);          
           index = -1;
           
           inMaxRel = 0;
@@ -9407,14 +9432,16 @@ public class PGraphicsOpenGL extends PGraphics {
     
     protected class TessellatorCallback implements PGL.TessellatorCallback {
       boolean calcNormals;
+      IndexCache cache;
       int cacheIndex;
       int vertFirst;
       int vertCount;
       int primitive;
 
       public void begin(int type) {
-        cacheIndex = tess.fillIndexCache.getLast();
-        vertFirst = tess.fillIndexCache.vertexCount[cacheIndex];        
+        cache = tess.fillIndexCache;
+        cacheIndex = cache.getLast();
+        vertFirst = cache.vertexCount[cacheIndex];        
         vertCount = 0;
 
         switch (type) {
@@ -9438,7 +9465,7 @@ public class PGraphicsOpenGL extends PGraphics {
           // MAX_VERTEX_INDEX1 because the condition was checked
           // every time a new vertex was emitted (see vertex() below).
           //tessBlock = tess.addFillIndexBlock(tessBlock);          
-          cacheIndex = tess.fillIndexCache.addNew();          
+          cacheIndex = cache.addNew();          
           vertFirst = 0;
         }
                         
@@ -9485,7 +9512,7 @@ public class PGraphicsOpenGL extends PGraphics {
           break;
         }
         
-        tess.fillIndexCache.incCounts(cacheIndex, indCount, vertCount);
+        cache.incCounts(cacheIndex, indCount, vertCount);
       }
 
       protected void addIndex(int tessIdx) {
