@@ -379,7 +379,7 @@ public interface PConstants {
   // text alignment modes
   // are inherited from LEFT, CENTER, RIGHT  
 
-  // PTexture
+  // textures
   
   /** This constant identifies the texture target GL_TEXTURE_2D, that is, 
    * textures with normalized coordinates */
@@ -397,15 +397,13 @@ public interface PConstants {
   public static final int REPEAT = 1;
     
   
-  // vbos
-  
-  /**  Static usage mode for PShape3D (vertices won't be updated after creation).  */
-  public static final int STATIC = 0;
-  /**  Dynamic usage mode for PShape3D (vertices will be updated after creation). */
-  public static final int DYNAMIC = 1;    
-  /**  Dynamic usage mode for PShape3D (vertices will be updated at every frame). */
-  public static final int STREAM = 2;  
+  // shape objects
 
+  /**  Static shapes (vertices won't be updated after creation).  */
+  public static final int STATIC = 0;
+  /**  Dynamic shapes (vertices will be updated after creation). */
+  public static final int DYNAMIC = 1;
+  
   
   // shaders
   
