@@ -24,4 +24,10 @@ package processing.opengl;
 
 
 public class PGraphics2D extends PGraphicsOpenGL {
+  
+  public PGraphics2D() {
+    super();
+    hints[ENABLE_ACCURATE_2D] = true;
+  }
+  
 }
