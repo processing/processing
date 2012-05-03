@@ -33,6 +33,7 @@ import processing.core.PShape;
 import processing.core.PVector;
 import processing.opengl.PGraphicsOpenGL.FillShader;
 import processing.opengl.PGraphicsOpenGL.InGeometry;
+import processing.opengl.PGraphicsOpenGL.IndexCache;
 import processing.opengl.PGraphicsOpenGL.LineShader;
 import processing.opengl.PGraphicsOpenGL.PointShader;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
@@ -48,8 +49,6 @@ import java.util.Hashtable;
 
 // TODO:
 // 1) Complete the get/set API (getTextureU/V setTextureUV), set/get for fill, stroke, tint, ambient, etc.
-// 3) Implement rest of primitive tessellation functions.
-// 2) Determine if PATH type is necessary, since it is equivalent to use POLYGON with fill disabled.
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
@@ -128,10 +127,10 @@ public class PShape3D extends PShape {
   protected int pointVertCopyOffset;
   protected int pointIndCopyOffset;
 
-  protected int lastFillVertexOffset;
+  protected int fillIndexOffset;
   protected int lastFillIndexOffset;
-  protected int firstFillVertexRel;
-  protected int firstFillVertexAbs;
+  protected int fillVertexRel;
+  protected int fillVertexOffset;
   
   protected int lastLineVertexOffset;
   protected int lastLineIndexOffset; 
@@ -142,17 +141,7 @@ public class PShape3D extends PShape {
   protected int lastPointIndexOffset;    
   protected int firstPointVertexRel;
   protected int firstPointVertexAbs;
-  
-  // ........................................................
-  
-  // Indices    
-  
-  // Contains the blocks of geometry that can be rendered  
-  // in a single drawElements() call. 
-  protected ArrayList<IndexBlock> fillIndexBlocks;
-  protected ArrayList<IndexBlock> lineIndexBlocks;
-  protected ArrayList<IndexBlock> pointIndexBlocks;  
-  
+    
   // ........................................................
   
   // State/rendering flags  
@@ -293,11 +282,6 @@ public class PShape3D extends PShape {
       in = pg.newInGeometry(PGraphicsOpenGL.RETAINED);      
     }    
     
-    fillIndexBlocks = new ArrayList<IndexBlock>();
-    lineIndexBlocks = new ArrayList<IndexBlock>();
-    pointIndexBlocks = new ArrayList<IndexBlock>();          
-    
-    
     // Modes are retrieved from the current values in the renderer.
     textureMode = pg.textureMode;    
     rectMode = pg.rectMode;
@@ -352,6 +336,7 @@ public class PShape3D extends PShape {
     super.setMode(mode);
   }
   
+  
   public void addChild(PShape child) {
     if (child instanceof PShape3D) {
       if (family == GROUP) {
@@ -375,7 +360,8 @@ public class PShape3D extends PShape {
     } else {
       PGraphics.showWarning("Shape must be 3D to be added to the group.");
     }
-  }  
+  }
+  
   
   public void updateRoot(PShape root) {
     this.root = (PShape3D) root;
@@ -387,6 +373,7 @@ public class PShape3D extends PShape {
     }
   }      
   
+  
   protected void finalize() throws Throwable {
     try {
       finalizeFillBuffers();  
@@ -396,6 +383,7 @@ public class PShape3D extends PShape {
       super.finalize();
     }
   }
+  
   
   protected void finalizeFillBuffers() {
     if (glFillVertexBufferID != 0) {    
@@ -435,6 +423,7 @@ public class PShape3D extends PShape {
     }   
   }
   
+  
   protected void finalizeLineBuffers() {
     if (glLineVertexBufferID != 0) {    
       pg.finalizeVertexBufferObject(glLineVertexBufferID, context.code());   
@@ -452,6 +441,7 @@ public class PShape3D extends PShape {
       pg.finalizeVertexBufferObject(glLineIndexBufferID, context.code());   
     }  
   }  
+  
   
   protected void finalizePointBuffers() {
     if (glPointVertexBufferID != 0) {    
@@ -876,6 +866,7 @@ public class PShape3D extends PShape {
     shapeEnded = true;    
   }
 
+  
   //////////////////////////////////////////////////////////////
 
   // STROKE CAP/JOIN/WEIGHT
@@ -1469,6 +1460,7 @@ public class PShape3D extends PShape {
     }    
   }
   
+  
   //////////////////////////////////////////////////////////////
 
   // SHININESS  
@@ -1909,9 +1901,11 @@ public class PShape3D extends PShape {
     return data;
   }
   
+  
 //  public PVector getVertex(int index) {
 //    return getVertex(index, null);
 //  }  
+  
   
   public PVector getVertex(int index, PVector vec) {
     if (family == GROUP) {
@@ -1929,6 +1923,7 @@ public class PShape3D extends PShape {
     return vec;
   }
   
+  
   public float getVertexX(int index) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -1938,6 +1933,7 @@ public class PShape3D extends PShape {
     
     return in.vertices[3 * index + 0];
   }
+  
   
   public float getVertexY(int index) {
     if (family == GROUP) {
@@ -1949,6 +1945,7 @@ public class PShape3D extends PShape {
     return in.vertices[3 * index + 1];
   }
   
+  
   public float getVertexZ(int index) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -1959,9 +1956,11 @@ public class PShape3D extends PShape {
     return in.vertices[3 * index + 2];
   }  
   
+  
   public void setVertex(int index, float x, float y) {
     setVertex(index, x, y, 0);
   }
+  
   
   public void setVertex(int index, float x, float y, float z) {
     if (family == GROUP) {
@@ -2023,6 +2022,7 @@ public class PShape3D extends PShape {
     modified();
   }
   
+  
   public PVector getNormal(int index, PVector vec) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2039,6 +2039,7 @@ public class PShape3D extends PShape {
     return vec;
   }
   
+  
   public float getNormalX(int index) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2049,6 +2050,7 @@ public class PShape3D extends PShape {
     return in.normals[3 * index + 0];
   }
 
+  
   public float getNormalY(int index) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2059,6 +2061,7 @@ public class PShape3D extends PShape {
     return in.normals[3 * index + 1];
   }  
 
+  
   public float getNormalZ(int index) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2068,6 +2071,7 @@ public class PShape3D extends PShape {
     
     return in.normals[3 * index + 2];
   }    
+  
   
   public void setNormal(int index, float nx, float ny, float nz) {
     if (family == GROUP) {
@@ -2119,6 +2123,7 @@ public class PShape3D extends PShape {
     modified(); 
   }
   
+  
   public PVector getVertexUV(int index, PVector vec) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2134,6 +2139,7 @@ public class PShape3D extends PShape {
     return vec;
   }
   
+  
   public float getVertexU(int index) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2144,6 +2150,7 @@ public class PShape3D extends PShape {
     return in.texcoords[2 * index + 0];
   }
 
+  
   public float getVertexV(int index) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2153,6 +2160,7 @@ public class PShape3D extends PShape {
     
     return in.texcoords[2 * index + 1];
   }  
+  
   
   public void setVertexUV(int index, float u, float v) {
     if (family == GROUP) {
@@ -2208,13 +2216,16 @@ public class PShape3D extends PShape {
   
   // Getters of tessellated data.  
   
+  
   public int fillVertexCount() {
     return tess.fillVertices.length;
   }
 
+  
   public int fillIndexCount() {
     return tess.fillIndices.length;
   }  
+  
   
   public float[] fillVertices(float[] vertices) {
     if (family == GROUP) {
@@ -2230,6 +2241,7 @@ public class PShape3D extends PShape {
     return vertices;
   }
   
+  
   public int[] fillColors(int[] colors) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2243,6 +2255,7 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(tess.fillColors, colors);
     return colors;
   }  
+  
   
   public float[] fillNormals(float[] normals) {
     if (family == GROUP) {
@@ -2258,6 +2271,7 @@ public class PShape3D extends PShape {
     return normals;
   }  
   
+  
   public float[] fillTexcoords(float[] texcoords) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2272,6 +2286,7 @@ public class PShape3D extends PShape {
     return texcoords;
   }  
 
+  
   public int[] fillAmbient(int[] ambient) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2286,6 +2301,7 @@ public class PShape3D extends PShape {
     return ambient;
   }  
 
+  
   public int[] fillSpecular(int[] specular) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2299,6 +2315,7 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(tess.fillSpecular, specular);
     return specular;
   }
+  
 
   public int[] fillEmissive(int[] emissive) {
     if (family == GROUP) {
@@ -2313,6 +2330,7 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(tess.fillEmissive, emissive);
     return emissive;
   }
+  
 
   public float[] fillShininess(float[] shininess) {
     if (family == GROUP) {
@@ -2327,6 +2345,7 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(tess.fillShininess, shininess);
     return shininess;
   }  
+  
   
   public int[] fillIndices(int[] indices) {
     if (family == GROUP) {
@@ -2344,15 +2363,18 @@ public class PShape3D extends PShape {
     }    
     removeIndexOffset(indices);
     return indices;
-  }    
+  }   
+  
 
   public int lineVertexCount() {
     return tess.lineVertices.length;
   }
 
+  
   public int lineIndexCount() {
     return tess.lineIndices.length;
-  }    
+  }   
+  
   
   public float[] lineVertices(float[] vertices) {
     if (family == GROUP) {
@@ -2368,6 +2390,7 @@ public class PShape3D extends PShape {
     return vertices;
   }
   
+  
   public int[] lineColors(int[] colors) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2382,6 +2405,7 @@ public class PShape3D extends PShape {
     return colors;
   }  
   
+  
   public float[] lineAttributes(float[] attribs) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2395,6 +2419,7 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(tess.lineDirWidths, attribs);
     return attribs;
   }  
+  
   
   public int[] lineIndices(int[] indices) {
     if (family == GROUP) {
@@ -2414,13 +2439,16 @@ public class PShape3D extends PShape {
     return indices;
   }  
   
+  
   public int pointVertexCount() {
     return tess.pointVertices.length;
   }
 
+  
   public int pointIndexCount() {
     return tess.pointIndices.length;
   }    
+  
     
   public float[] pointVertices(float[] vertices) {
     if (family == GROUP) {
@@ -2436,6 +2464,7 @@ public class PShape3D extends PShape {
     return vertices;
   }
   
+  
   public int[] pointColors(int[] colors) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2450,6 +2479,7 @@ public class PShape3D extends PShape {
     return colors;
   }  
   
+  
   public float[] pointAttributes(float[] attribs) {
     if (family == GROUP) {
       PGraphics.showWarning("GROUP shapes don't have any vertices");
@@ -2463,6 +2493,7 @@ public class PShape3D extends PShape {
     PApplet.arrayCopy(tess.pointSizes, attribs);
     return attribs;
   }  
+  
   
   public int[] pointIndices(int[] indices) {
     if (family == GROUP) {
@@ -2482,6 +2513,7 @@ public class PShape3D extends PShape {
     return indices;
   }   
   
+  
   protected void removeIndexOffset(int[] indices) {
     if (0 < indices.length && 0 < indices[0]) {
       // Removing any offset added in the aggregation step.
@@ -2491,6 +2523,7 @@ public class PShape3D extends PShape {
       }
     }    
   }
+  
     
   ///////////////////////////////////////////////////////////  
   
@@ -2951,6 +2984,7 @@ public class PShape3D extends PShape {
     tessellator.tessellatePolygon(false, isClosed, true);    
   }  
   
+  
   protected void updateGeometry() {
     if (root == this && parent == null && modified) {
       // Initializing offsets
@@ -3037,10 +3071,10 @@ public class PShape3D extends PShape {
   protected void aggregate() {
     if (root == this && parent == null) {
       // We recursively calculate the total number of vertices and indices.
-      lastFillVertexOffset = 0;
+      fillIndexOffset = 0;
       lastFillIndexOffset = 0;      
-      firstFillVertexRel = 0;
-      firstFillVertexAbs = 0;  
+      fillVertexRel = 0;
+      fillVertexOffset = 0;  
       
       lastLineVertexOffset = 0;
       lastLineIndexOffset = 0;
@@ -3060,22 +3094,16 @@ public class PShape3D extends PShape {
   
   
   // This method is very important, as it is responsible of generating the correct 
-  // vertex and index values for each level of the shape hierarchy.
+  // vertex and index offsets for each level of the shape hierarchy.
   // This is the core of the recursive algorithm that calculates the indices
   // for the vertices accumulated in a single VBO.
   // Basically, the algorithm traverses all the shapes in the hierarchy and 
-  // computes a first (absolute) index, an offset and a size for each shape. 
-  // The first absolute index is used as the offset argument for glVertexAttribPointer(), 
-  // while the size and offset values is the count and offset arguments for 
-  // glDrawElements(). 
-  // All this complication is due to the fact that we want to render the entire 
-  // geometry with a single VBO (for performance reasons), while being constrained by
-  // the limitation that the indices cannot be larger than the MAX_TESS_VERTICES
-  // constant, which is relatively small in order to preserve compatibility with GLES.
-  // Also, we should be able to render the corresponding piece of geometry if calling
-  // draw() on any of the child shapes, either of type GROUOP or GEOMETRY.
-  
-  // Consider the following hierarchy:
+  // updates the index cache for each child shape holding geometry (those being 
+  // the leaf nodes in the hierarchy tree), and creates index caches for the 
+  // group shapes so that the draw() method can be called from any shape in the
+  // hierarchy and the correct piece of geometry will be rendered.  
+  //
+  // For example, in the following hierarchy:
   //
   //                     ROOT GROUP                       
   //                         |
@@ -3088,8 +3116,10 @@ public class PShape3D extends PShape {
   //   GEO SHAPE 0         GEO SHAPE 0     GEO SHAPE 1       GEO SHAPE 2
   //   4 vertices          5 vertices      6 vertices        3 vertices
   //
-  // and assume that MAX_TESS_VERTICES is equal to 8.  
-    
+  // calling draw() from the root group should result in all the 
+  // vertices (4 + 5 + 6 + 3 = 18) being rendered, while calling
+  // draw() from either child groups 0 or 1 should result in the first
+  // 4 vertices or the last 14 vertices being rendered, respectively.
   protected void aggregateImpl() {
     if (family == GROUP) {
       boolean firstGeom = true;
@@ -3126,19 +3156,48 @@ public class PShape3D extends PShape {
         }           
       }
       
-      addFillIndexBlocks();
-      addLineIndexBlocks();
-      addPointIndexBlocks();
+      buildFillIndexCache();
+      buildLineIndexCache();
+      buildPointIndexCache();
     } else {
+      // The index caches for fill, line and point geometry are updated
+      // in order to reflect the fact that all the vertices will be stored
+      // in a single VBO in the root shape.
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {
-        if (PGL.MAX_VERTEX_INDEX1 < root.firstFillVertexRel + tess.fillVertexCount) {
-          root.firstFillVertexRel = 0;
-          root.firstFillVertexAbs = root.lastFillVertexOffset + 1;          
-        } 
-        root.lastFillVertexOffset = tess.setFillVertex(root.lastFillVertexOffset);              
-        root.lastFillIndexOffset = tess.setFillIndex(root.firstFillVertexRel, root.lastFillIndexOffset);        
-        root.firstFillVertexRel += tess.fillVertexCount;
-        addFillIndexBlock(tess.lastFillIndex - tess.firstFillIndex + 1, tess.firstFillIndex, root.firstFillVertexAbs);
+        IndexCache cache = tess.fillIndexCache;
+        for (int n = 0; n < cache.count; n++) {
+          int ioffset = cache.indexOffset[n];
+          int icount = cache.indexCount[n];
+          //int voffset = cache.vertexOffset[n];
+          int vcount = cache.vertexCount[n];
+
+          if (PGL.MAX_VERTEX_INDEX1 <= root.fillVertexRel + vcount) {
+            root.fillVertexRel = 0;
+            //root.firstFillVertexAbs = root.lastFillVertexOffset + 1;          
+          }
+          
+          //root.lastFillVertexOffset = tess.setFillVertex(root.lastFillVertexOffset);              
+          //root.lastFillIndexOffset = tess.setFillIndex(root.firstFillVertexRel, root.lastFillIndexOffset);
+          
+          if (0 < root.fillVertexRel) {
+            for (int i = 0; i < icount; i++) {
+              tess.fillIndices[ioffset + i] += root.fillVertexRel;
+            }          
+          }
+          cache.indexOffset[n] = root.fillIndexOffset;
+          cache.vertexOffset[n] = root.fillVertexOffset;
+                    
+          root.fillIndexOffset += icount;          
+          root.fillVertexOffset += vcount;
+          root.fillVertexRel += vcount;
+        //addFillIndexBlock(tess.lastFillIndex - tess.firstFillIndex + 1, tess.firstFillIndex, root.firstFillVertexAbs);
+        }
+        tess.firstFillVertex = cache.vertexOffset[0];
+        tess.lastFillVertex = tess.firstFillVertex + tess.fillVertexCount;  
+        
+        tess.firstFillIndex = cache.indexOffset[0];
+        tess.lastFillIndex = tess.firstFillIndex + tess.fillIndexCount;
+        
       }
             
       if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {
@@ -3149,7 +3208,8 @@ public class PShape3D extends PShape {
         root.lastLineVertexOffset = tess.setLineVertex(root.lastLineVertexOffset);
         root.lastLineIndexOffset = tess.setLineIndex(root.firstLineVertexRel, root.lastLineIndexOffset);
         root.firstLineVertexRel += tess.lineVertexCount;        
-        addLineIndexBlock(tess.lastLineIndex - tess.firstLineIndex + 1, tess.firstLineIndex, root.firstLineVertexAbs);
+        
+        //addLineIndexBlock(tess.lastLineIndex - tess.firstLineIndex + 1, tess.firstLineIndex, root.firstLineVertexAbs);
       }
             
       if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {
@@ -3160,7 +3220,8 @@ public class PShape3D extends PShape {
         root.lastPointVertexOffset = tess.setPointVertex(root.lastPointVertexOffset);
         root.lastPointIndexOffset = tess.setPointIndex(root.firstPointVertexRel, root.lastPointIndexOffset);
         root.firstPointVertexRel += tess.pointVertexCount;
-        addPointIndexBlock(tess.lastPointIndex - tess.firstPointIndex + 1, tess.firstPointIndex, root.firstPointVertexAbs);
+        
+        //addPointIndexBlock(tess.lastPointIndex - tess.firstPointIndex + 1, tess.firstPointIndex, root.firstPointVertexAbs);
       }      
     }
     
@@ -3169,109 +3230,102 @@ public class PShape3D extends PShape {
     hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;            
   }
 
-  // Adds one fill index block to a geometry shape.
-  protected void addFillIndexBlock(int icount, int ioffset, int voffset) {
-    fillIndexBlocks.clear(); 
-    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
-    fillIndexBlocks.add(data);
-  }    
   
-  // Adds fill index blocks for a group shape, using the blocks of its
-  // child shapes.
-  protected void addFillIndexBlocks() {
-    fillIndexBlocks.clear(); 
-    IndexBlock gdata = null;
+  // Adds one fill index block to a geometry shape.
+//  protected void addFillIndexBlock(int icount, int ioffset, int voffset) {
+//    fillIndexBlocks.clear(); 
+//    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
+//    fillIndexBlocks.add(data);
+//  }    
+  
+  
+  // Builds the index cache for a group shape, using the caches of the child
+  // shapes.
+  protected void buildFillIndexCache() {
+    IndexCache gcache = tess.fillIndexCache;    
+    int gindex = -1;
+    gcache.clear(); 
     
     for (int i = 0; i < childCount; i++) {        
       PShape3D child = (PShape3D) children[i];
+      IndexCache ccache = child.tess.fillIndexCache;
       
-      for (int j = 0; j < child.fillIndexBlocks.size(); j++) {
-        IndexBlock cdata = child.fillIndexBlocks.get(j);
-          
-        if (gdata == null) {
-          gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
-          fillIndexBlocks.add(gdata);
+      for (int n = 0; n < ccache.count; n++) {        
+        if (gindex == -1) {
+          gindex = gcache.addNew(ccache, n);
         } else {
-          if (gdata.vertexOffset == cdata.vertexOffset) {
-            gdata.indexCount += cdata.indexCount;  
+          if (gcache.vertexOffset[gindex] == ccache.vertexOffset[n]) {
+            gcache.incCounts(gindex, ccache.indexCount[n], ccache.vertexCount[n]);
           } else {
-            gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
-            fillIndexBlocks.add(gdata);
+            gindex = gcache.addNew(ccache, n);
           }
         }
       }
-      
     }    
   }
   
-  // Adds one line index block to a geometry shape.
-  protected void addLineIndexBlock(int icount, int ioffset, int voffset) {
-    lineIndexBlocks.clear(); 
-    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
-    lineIndexBlocks.add(data);
-  }    
   
-  // Adds line index blocks for a group shape, using the blocks of its
-  // child shapes.
-  protected void addLineIndexBlocks() {
-    lineIndexBlocks.clear(); 
-    IndexBlock gdata = null;
+  // Adds one line index block to a geometry shape.
+//  protected void addLineIndexBlock(int icount, int ioffset, int voffset) {
+//    lineIndexBlocks.clear(); 
+//    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
+//    lineIndexBlocks.add(data);
+//  }    
+  
+
+  protected void buildLineIndexCache() {
+    IndexCache gcache = tess.lineIndexCache;    
+    int gindex = -1;
+    gcache.clear(); 
     
     for (int i = 0; i < childCount; i++) {        
       PShape3D child = (PShape3D) children[i];
+      IndexCache ccache = child.tess.lineIndexCache;
       
-      for (int j = 0; j < child.lineIndexBlocks.size(); j++) {
-        IndexBlock cdata = child.lineIndexBlocks.get(j);
-          
-        if (gdata == null) {
-          gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
-          lineIndexBlocks.add(gdata);
+      for (int n = 0; n < ccache.count; n++) {        
+        if (gindex == -1) {
+          gindex = gcache.addNew(ccache, n);
         } else {
-          if (gdata.vertexOffset == cdata.vertexOffset) {
-            gdata.indexCount += cdata.indexCount;  
+          if (gcache.vertexOffset[gindex] == ccache.vertexOffset[n]) {
+            gcache.incCounts(gindex, ccache.indexCount[n], ccache.vertexCount[n]);
           } else {
-            gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
-            lineIndexBlocks.add(gdata);
+            gindex = gcache.addNew(ccache, n);
           }
         }
       }
-      
-    }    
+    }        
   }  
 
-  // Adds one point index block to a geometry shape.
-  protected void addPointIndexBlock(int icount, int ioffset, int voffset) {
-    pointIndexBlocks.clear(); 
-    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
-    pointIndexBlocks.add(data);
-  }    
   
-  // Adds point index blocks for a group shape, using the blocks of its
-  // child shapes.
-  protected void addPointIndexBlocks() {
-    pointIndexBlocks.clear(); 
-    IndexBlock gdata = null;
+  // Adds one point index block to a geometry shape.
+//  protected void addPointIndexBlock(int icount, int ioffset, int voffset) {
+//    pointIndexBlocks.clear(); 
+//    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
+//    pointIndexBlocks.add(data);
+//  }    
+  
+  
+  protected void buildPointIndexCache() {
+    IndexCache gcache = tess.pointIndexCache;    
+    int gindex = -1;
+    gcache.clear(); 
     
     for (int i = 0; i < childCount; i++) {        
       PShape3D child = (PShape3D) children[i];
+      IndexCache ccache = child.tess.pointIndexCache;
       
-      for (int j = 0; j < child.pointIndexBlocks.size(); j++) {
-        IndexBlock cdata = child.pointIndexBlocks.get(j);
-          
-        if (gdata == null) {
-          gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
-          pointIndexBlocks.add(gdata);
+      for (int n = 0; n < ccache.count; n++) {        
+        if (gindex == -1) {
+          gindex = gcache.addNew(ccache, n);
         } else {
-          if (gdata.vertexOffset == cdata.vertexOffset) {
-            gdata.indexCount += cdata.indexCount;  
+          if (gcache.vertexOffset[gindex] == ccache.vertexOffset[n]) {
+            gcache.incCounts(gindex, ccache.indexCount[n], ccache.vertexCount[n]);
           } else {
-            gdata = new IndexBlock(cdata.indexCount, cdata.indexOffset, cdata.vertexOffset);
-            pointIndexBlocks.add(gdata);
+            gindex = gcache.addNew(ccache, n);
           }
         }
       }
-      
-    }    
+    }   
   }
   
   
@@ -3325,6 +3379,7 @@ public class PShape3D extends PShape {
     }
     root.prevMode = root.mode;   
   }
+  
   
   protected boolean contextIsOutdated() {
     boolean outdated = !pgl.contextIsCurrent(context);
@@ -4051,6 +4106,7 @@ public class PShape3D extends PShape {
     }
   }
   
+  
   protected void freeTessMaps() {
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -4154,18 +4210,18 @@ public class PShape3D extends PShape {
     PointShader shader = pg.getPointShader();
     shader.start(); 
     
-    for (int i = 0; i < pointIndexBlocks.size(); i++) {
-      IndexBlock index = pointIndexBlocks.get(i);      
-      int first = index.vertexOffset;
-      int offset = index.indexOffset;
-      int size =  index.indexCount;
+    IndexCache cache = tess.pointIndexCache;    
+    for (int n = 0; n < cache.count; n++) {     
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];
       
-      shader.setVertexAttribute(root.glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);        
-      shader.setColorAttribute(root.glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
-      shader.setSizeAttribute(root.glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 2 * first * PGL.SIZEOF_FLOAT);      
+      shader.setVertexAttribute(root.glPointVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);        
+      shader.setColorAttribute(root.glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);    
+      shader.setSizeAttribute(root.glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);      
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glPointIndexBufferID);      
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, offset * PGL.SIZEOF_INDEX);       
+      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);    
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);      
     }
     
@@ -4177,18 +4233,18 @@ public class PShape3D extends PShape {
     LineShader shader = pg.getLineShader();
     shader.start(); 
     
-    for (int i = 0; i < lineIndexBlocks.size(); i++) {
-      IndexBlock index = lineIndexBlocks.get(i);      
-      int first = index.vertexOffset;
-      int offset = index.indexOffset;
-      int size =  index.indexCount;
+    IndexCache cache = tess.lineIndexCache;
+    for (int n = 0; n < cache.count; n++) {     
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];
     
-      shader.setVertexAttribute(root.glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);        
-      shader.setColorAttribute(root.glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
-      shader.setDirWidthAttribute(root.glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 4 * first * PGL.SIZEOF_FLOAT);
+      shader.setVertexAttribute(root.glLineVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);        
+      shader.setColorAttribute(root.glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);    
+      shader.setDirWidthAttribute(root.glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glLineIndexBufferID);
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, offset * PGL.SIZEOF_INDEX);      
+      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);      
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);      
     }
     
@@ -4209,30 +4265,30 @@ public class PShape3D extends PShape {
     FillShader shader = pg.getFillShader(pg.lights, tex != null);
     shader.start();
     
-    for (int i = 0; i < fillIndexBlocks.size(); i++) {
-      IndexBlock index = fillIndexBlocks.get(i);      
-      int first = index.vertexOffset;
-      int offset = index.indexOffset;
-      int size =  index.indexCount;
+    IndexCache cache = tess.fillIndexCache;
+    for (int n = 0; n < cache.count; n++) {     
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];
       
-      shader.setVertexAttribute(root.glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);        
-      shader.setColorAttribute(root.glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);    
+      shader.setVertexAttribute(root.glFillVertexBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);        
+      shader.setColorAttribute(root.glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);    
       
       if (pg.lights) {
-        shader.setNormalAttribute(root.glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * first * PGL.SIZEOF_FLOAT);
-        shader.setAmbientAttribute(root.glFillAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);
-        shader.setSpecularAttribute(root.glFillSpecularBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);
-        shader.setEmissiveAttribute(root.glFillEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * first);      
-        shader.setShininessAttribute(root.glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, first * PGL.SIZEOF_FLOAT);
+        shader.setNormalAttribute(root.glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
+        shader.setAmbientAttribute(root.glFillAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+        shader.setSpecularAttribute(root.glFillSpecularBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+        shader.setEmissiveAttribute(root.glFillEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+        shader.setShininessAttribute(root.glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, voffset * PGL.SIZEOF_FLOAT);
       }
       
       if (tex != null) {        
-        shader.setTexCoordAttribute(root.glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * first * PGL.SIZEOF_FLOAT);
+        shader.setTexCoordAttribute(root.glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
         shader.setTexture(tex);
       }      
       
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glFillIndexBufferID);
-      pgl.glDrawElements(PGL.GL_TRIANGLES, size, PGL.INDEX_TYPE, offset * PGL.SIZEOF_INDEX);
+      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     
@@ -4243,23 +4299,7 @@ public class PShape3D extends PShape {
       pgl.disableTexturing(tex.glTarget);
     }    
   }  
-  
-  
-  ///////////////////////////////////////////////////////////  
 
-  // 
-
-  protected class IndexBlock {
-    int indexCount;
-    int indexOffset;
-    int vertexOffset;    
-    
-    IndexBlock(int icount, int ioffset, int voffset) {
-      this.indexCount = icount;
-      this.indexOffset = ioffset;
-      this.vertexOffset = voffset;      
-    }  
-  }
   
   ///////////////////////////////////////////////////////////  
   
@@ -4378,69 +4418,6 @@ public class PShape3D extends PShape {
       size += dataSize;
     } 
     
-    void add(int dataOffset, int dataSize, float[] newData, PMatrix tr) {
-      
-      if (tr instanceof PMatrix2D) {
-        add(dataOffset, dataSize, newData, (PMatrix2D)tr);  
-      } else if (tr instanceof PMatrix3D) {
-        add(dataOffset, dataSize, newData, (PMatrix3D)tr);
-      }
-    }
-    
-    void add(int dataOffset, int dataSize, float[] newData, PMatrix2D tr) {
-      if (size == 0) {
-        offset = dataOffset;
-      }
-      
-      int oldSize = floatData.length / ncoords;
-      if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
-        expand(newSize);
-      }
-      
-      if (2 <= ncoords) {
-        for (int i = 0; i < dataSize; i++) {
-          int srcIndex = ncoords * i;
-          float x = newData[srcIndex++];
-          float y = newData[srcIndex  ];
-
-          int destIndex = ncoords * (size + i); 
-          floatData[destIndex++] = x * tr.m00 + y * tr.m01 + tr.m02;
-          floatData[destIndex  ] = x * tr.m10 + y * tr.m11 + tr.m12;
-        }        
-      }
-      
-      size += dataSize;
-    }
-    
-    void add(int dataOffset, int dataSize, float[] newData, PMatrix3D tr) {
-      if (size == 0) {
-        offset = dataOffset;
-      }
-      
-      int oldSize = floatData.length / ncoords;
-      if (size + dataSize >= oldSize) {
-        int newSize = expandSize(oldSize, size + dataSize);        
-        expand(newSize);
-      }
-      
-      if (3 <= ncoords) {
-        for (int i = 0; i < dataSize; i++) {
-          int srcIndex = ncoords * i;
-          float x = newData[srcIndex++];
-          float y = newData[srcIndex++];
-          float z = newData[srcIndex++];
-
-          int destIndex = ncoords * (size + i); 
-          floatData[destIndex++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + tr.m03;
-          floatData[destIndex++] = x * tr.m10 + y * tr.m11 + z * tr.m12 + tr.m13;
-          floatData[destIndex  ] = x * tr.m20 + y * tr.m21 + z * tr.m22 + tr.m23;
-        }          
-      }      
-      
-      size += dataSize;
-    }
-    
     void expand(int n) {
       if (isFloat) {
         expandFloat(n);
@@ -4467,12 +4444,11 @@ public class PShape3D extends PShape {
         newSize = newSize << 1;
       }
       return newSize;
-    }    
+    }
     
     boolean hasData() {
       return 0 < size;
-    }
-    
+    }    
   }  
   
   
