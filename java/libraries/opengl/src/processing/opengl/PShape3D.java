@@ -31,13 +31,12 @@ import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
-import processing.opengl.PGraphicsOpenGL.FillShader;
-import processing.opengl.PGraphicsOpenGL.InGeometry;
-import processing.opengl.PGraphicsOpenGL.IndexCache;
 import processing.opengl.PGraphicsOpenGL.LineShader;
 import processing.opengl.PGraphicsOpenGL.PointShader;
+import processing.opengl.PGraphicsOpenGL.FillShader;
+import processing.opengl.PGraphicsOpenGL.IndexCache;
+import processing.opengl.PGraphicsOpenGL.InGeometry;
 import processing.opengl.PGraphicsOpenGL.TessGeometry;
-import processing.opengl.PGraphicsOpenGL.TessMap;
 import processing.opengl.PGraphicsOpenGL.Tessellator;
 import java.io.BufferedReader;
 import java.nio.FloatBuffer;
@@ -47,9 +46,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
-
-// TODO:
-// 1) Complete the get/set API (getTextureU/V setTextureUV), set/get for fill, stroke, tint, ambient, etc.
 
 /**
  * This class holds a 3D model composed of vertices, normals, colors (per vertex) and 
