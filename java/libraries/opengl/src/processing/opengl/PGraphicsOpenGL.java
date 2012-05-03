@@ -8309,35 +8309,22 @@ public class PGraphicsOpenGL extends PGraphics {
       lastPointVertex = other.lastPointVertex;
       lastPointIndex = other.lastPointIndex;
     }
-  /*  
-    int setFillVertex(int offset) {
-      firstFillVertex = 0;
-      if (0 < offset) {
-        firstFillVertex = offset + 1;
-      }
-      lastFillVertex = firstFillVertex + fillVertexCount - 1;
-      return lastFillVertex;
+    
+    void updateFillFromCache() {
+      firstFillVertex = fillIndexCache.vertexOffset[0];
+      lastFillVertex = firstFillVertex + fillVertexCount - 1;  
+      
+      firstFillIndex = fillIndexCache.indexOffset[0];
+      lastFillIndex = firstFillIndex + fillIndexCount - 1;       
     }
-
-    int setFillIndex(int voffset, int ioffset) {
-      firstFillIndex = 0;
-      if (0 < ioffset) {
-        firstFillIndex = ioffset + 1;
+    
+    void incFillIndices(int i0, int i1, int inc) {
+      for (int i = i0; i <= i1; i++) {
+        fillIndices[i] += inc;
       }
-
-      if (0 < voffset) {
-        // The indices are update to take into account all the previous
-        // shapes in the hierarchy, as the entire geometry will be stored
-        // contiguously in a single VBO in the root node.
-        for (int i = 0; i < fillIndexCount; i++) {
-          fillIndices[i] += voffset;
-        }
-      }
-
-      lastFillIndex = firstFillIndex + fillIndexCount - 1;
-      return lastFillIndex;
     }
-*/
+    
+
     
     
     int setLineVertex(int offset) {
@@ -8396,6 +8383,8 @@ public class PGraphicsOpenGL extends PGraphics {
       return lastPointIndex;
     }
 
+    
+    
     // -----------------------------------------------------------------
     //
     // Normal calculation    
