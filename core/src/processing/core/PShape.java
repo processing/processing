@@ -1245,15 +1245,11 @@ public class PShape implements PConstants {
   }
 
 
-  public float[] getVertex(int index) {
-    if (index < 0 || index >= vertexCount) {
-      String msg = "No vertex " + index + " for this shape, " +
-        "only vertices 0 through " + (vertexCount-1) + ".";
-      throw new IllegalArgumentException(msg);
-    }
-    return vertices[index];
-  }
-
+  
+  public PVector getVertex(int index) {
+    return getVertex(index, null);
+  }  
+  
   
   public PVector getVertex(int index, PVector vec) {
     if (vec == null) {
@@ -1280,15 +1276,23 @@ public class PShape implements PConstants {
     return vertices[index][Z];
   }
 
+  
   public void setVertex(int index, float x, float y) {
     setVertex(index, x, y, 0);
   }
+  
   
   public void setVertex(int index, float x, float y, float z) {
     vertices[index][X] = x;
     vertices[index][Y] = y;
     vertices[index][Z] = z;
   }
+  
+  
+  public PVector getNormal(int index) {
+    return getNormal(index, null);
+  }
+  
   
   public PVector getNormal(int index, PVector vec) {
     if (vec == null) {
@@ -1300,17 +1304,21 @@ public class PShape implements PConstants {
     return vec;    
   }
   
+  
   public float getNormalX(int index) {
     return vertices[index][NX];
   }
+  
 
   public float getNormalY(int index) {
     return vertices[index][NY];
-  }  
+  }
+  
   
   public float getNormalZ(int index) {
-    return vertices[index][NZ];
+    return vertices[index][NZ];  
   }    
+  
 
   public void setNormal(int index, float nx, float ny, float nz) {
     vertices[index][NX] = nx;
@@ -1318,27 +1326,22 @@ public class PShape implements PConstants {
     vertices[index][NZ] = nz;    
   }
   
-  public PVector getVertexUV(int index, PVector vec) {
-    if (vec == null) {
-      vec = new PVector();
-    }
-    vec.x = vertices[index][U];
-    vec.y = vertices[index][V];
-    return vec;        
-  }
   
-  public float getVertexU(int index) {
+  public float getTextureU(int index) {
     return vertices[index][U];
   }
   
-  public float getVertexV(int index) {
+  
+  public float getTextureV(int index) {
     return vertices[index][V];
   }  
   
-  public void setVertexUV(int index, float u, float v) {
+  
+  public void setTextureUV(int index, float u, float v) {
     vertices[index][U] = u;
     vertices[index][V] = v;
   }
+  
   
   public int[] getVertexCodes() {
     if (vertexCodes == null) {
