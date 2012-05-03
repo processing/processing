@@ -81,8 +81,8 @@ public class PShape3D extends PShape {
   
   // Input, tessellated geometry    
   
-  protected InGeometry in;
-  protected TessGeometry tess;
+  protected InGeometry inGeo;
+  protected TessGeometry tessGeo;
   protected Tessellator tessellator;
 
   // ........................................................
@@ -279,7 +279,7 @@ public class PShape3D extends PShape {
     this.tessellated = false;
     
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
-      in = pg.newInGeometry(PGraphicsOpenGL.RETAINED);      
+      inGeo = pg.newInGeometry(PGraphicsOpenGL.RETAINED);      
     }    
     
     // Modes are retrieved from the current values in the renderer.
@@ -528,9 +528,9 @@ public class PShape3D extends PShape {
       }
     } else {      
       if (tessellated) {
-        tess.getVertexMin(min);
+        tessGeo.getVertexMin(min);
       } else {
-        in.getVertexMin(min);
+        inGeo.getVertexMin(min);
       }
     }
   }
@@ -544,9 +544,9 @@ public class PShape3D extends PShape {
       }
     } else {      
       if (tessellated) {
-        tess.getVertexMax(max);
+        tessGeo.getVertexMax(max);
       } else {
-        in.getVertexMax(max);
+        inGeo.getVertexMax(max);
       }
     }
   }  
@@ -560,9 +560,9 @@ public class PShape3D extends PShape {
       }
     } else {      
       if (tessellated) {
-        count += tess.getVertexSum(sum);
+        count += tessGeo.getVertexSum(sum);
       } else {
-        count += in.getVertexSum(sum);
+        count += inGeo.getVertexSum(sum);
       }
     }
     return count;
@@ -758,7 +758,7 @@ public class PShape3D extends PShape {
       sweight = strokeWeight;
     }    
     
-    in.addVertex(x, y, z, 
+    inGeo.addVertex(x, y, z, 
                  fcolor, 
                  normalX, normalY, normalZ,
                  u, v, 
@@ -816,7 +816,7 @@ public class PShape3D extends PShape {
     
     // Input arrays are trimmed since they are expanded by doubling their old size,
     // which might lead to arrays larger than the vertex counts.
-    in.trim();
+    inGeo.trim();
     
     isClosed = mode == CLOSE;    
     root.tessellated = false;
@@ -886,20 +886,20 @@ public class PShape3D extends PShape {
   }
   
   protected void updateStrokeWeight(float prevStrokeWeight) {
-    if (shapeEnded && tessellated && (0 < tess.lineVertexCount || 0 < tess.pointVertexCount)) {      
+    if (shapeEnded && tessellated && (0 < tessGeo.lineVertexCount || 0 < tessGeo.pointVertexCount)) {      
       float resizeFactor = strokeWeight / prevStrokeWeight;
-      Arrays.fill(in.sweights, 0, in.vertexCount, strokeWeight);         
-      if (0 < tess.lineVertexCount) {
-        for (int i = 0; i < tess.lineVertexCount; i++) {
-          tess.lineDirWidths[4 * i + 3] *= resizeFactor;
+      Arrays.fill(inGeo.sweights, 0, inGeo.vertexCount, strokeWeight);         
+      if (0 < tessGeo.lineVertexCount) {
+        for (int i = 0; i < tessGeo.lineVertexCount; i++) {
+          tessGeo.lineDirWidths[4 * i + 3] *= resizeFactor;
         }
         modifiedLineAttributes = true;
         modified();   
       }      
-      if (0 < tess.pointVertexCount) {
-        for (int i = 0; i < tess.pointVertexCount; i++) {
-          tess.pointSizes[2 * i + 0] *= resizeFactor;
-          tess.pointSizes[2 * i + 1] *= resizeFactor;
+      if (0 < tessGeo.pointVertexCount) {
+        for (int i = 0; i < tessGeo.pointVertexCount; i++) {
+          tessGeo.pointSizes[2 * i + 0] *= resizeFactor;
+          tessGeo.pointSizes[2 * i + 1] *= resizeFactor;
         }
         modifiedPointAttributes = true;
         modified();            
@@ -1037,9 +1037,9 @@ public class PShape3D extends PShape {
 
   
   protected void updateFillColor() {
-    if (shapeEnded && tessellated && 0 < tess.fillVertexCount && texture == null) {
-      Arrays.fill(in.colors, 0, in.vertexCount, PGL.javaToNativeARGB(fillColor));
-      Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, PGL.javaToNativeARGB(fillColor));
+    if (shapeEnded && tessellated && 0 < tessGeo.fillVertexCount && texture == null) {
+      Arrays.fill(inGeo.colors, 0, inGeo.vertexCount, PGL.javaToNativeARGB(fillColor));
+      Arrays.fill(tessGeo.fillColors, 0, tessGeo.fillVertexCount, PGL.javaToNativeARGB(fillColor));
       modifiedFillColors = true;
       modified();  
     }
@@ -1151,15 +1151,15 @@ public class PShape3D extends PShape {
 
   
   protected void updateStrokeColor() {
-    if (shapeEnded && tessellated && (0 < tess.lineVertexCount || 0 < tess.pointVertexCount)) {
-      Arrays.fill(in.scolors, 0, in.vertexCount, PGL.javaToNativeARGB(strokeColor));      
-      if (0 < tess.lineVertexCount) {
-        Arrays.fill(tess.lineColors, 0, tess.lineVertexCount, PGL.javaToNativeARGB(strokeColor));
+    if (shapeEnded && tessellated && (0 < tessGeo.lineVertexCount || 0 < tessGeo.pointVertexCount)) {
+      Arrays.fill(inGeo.scolors, 0, inGeo.vertexCount, PGL.javaToNativeARGB(strokeColor));      
+      if (0 < tessGeo.lineVertexCount) {
+        Arrays.fill(tessGeo.lineColors, 0, tessGeo.lineVertexCount, PGL.javaToNativeARGB(strokeColor));
         modifiedLineColors = true;
         modified();         
       }      
-      if (0 < tess.pointVertexCount) {
-        Arrays.fill(tess.pointColors, 0, tess.pointVertexCount, PGL.javaToNativeARGB(strokeColor));
+      if (0 < tessGeo.pointVertexCount) {
+        Arrays.fill(tessGeo.pointColors, 0, tessGeo.pointVertexCount, PGL.javaToNativeARGB(strokeColor));
         modifiedPointColors = true;
         modified();            
       }            
@@ -1272,9 +1272,9 @@ public class PShape3D extends PShape {
   
   
   protected void updateTintColor() {    
-    if (shapeEnded && tessellated && 0 < tess.fillVertexCount && texture != null) {
-      Arrays.fill(in.colors, 0, in.vertexCount, PGL.javaToNativeARGB(tintColor));
-      Arrays.fill(tess.fillColors, 0, tess.fillVertexCount, PGL.javaToNativeARGB(tintColor));
+    if (shapeEnded && tessellated && 0 < tessGeo.fillVertexCount && texture != null) {
+      Arrays.fill(inGeo.colors, 0, inGeo.vertexCount, PGL.javaToNativeARGB(tintColor));
+      Arrays.fill(tessGeo.fillColors, 0, tessGeo.fillVertexCount, PGL.javaToNativeARGB(tintColor));
       modifiedFillColors = true;
       modified();  
     }
@@ -1332,9 +1332,9 @@ public class PShape3D extends PShape {
   
 
   protected void updateAmbientColor() {    
-    if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
-      Arrays.fill(in.ambient, 0, in.vertexCount, PGL.javaToNativeARGB(ambientColor));
-      Arrays.fill(tess.fillAmbient, 0, tess.fillVertexCount, PGL.javaToNativeARGB(ambientColor));      
+    if (shapeEnded && tessellated && 0 < tessGeo.fillVertexCount) {
+      Arrays.fill(inGeo.ambient, 0, inGeo.vertexCount, PGL.javaToNativeARGB(ambientColor));
+      Arrays.fill(tessGeo.fillAmbient, 0, tessGeo.fillVertexCount, PGL.javaToNativeARGB(ambientColor));      
       modifiedFillAmbient = true;
       modified();  
     }      
@@ -1392,9 +1392,9 @@ public class PShape3D extends PShape {
 
   
   protected void updateSpecularColor() {
-    if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
-      Arrays.fill(in.specular, 0, in.vertexCount, PGL.javaToNativeARGB(specularColor));
-      Arrays.fill(tess.fillSpecular, 0, tess.fillVertexCount, PGL.javaToNativeARGB(specularColor));    
+    if (shapeEnded && tessellated && 0 < tessGeo.fillVertexCount) {
+      Arrays.fill(inGeo.specular, 0, inGeo.vertexCount, PGL.javaToNativeARGB(specularColor));
+      Arrays.fill(tessGeo.fillSpecular, 0, tessGeo.fillVertexCount, PGL.javaToNativeARGB(specularColor));    
       modifiedFillSpecular = true;
       modified();
     }
@@ -1452,9 +1452,9 @@ public class PShape3D extends PShape {
 
   
   protected void updateEmissiveColor() {   
-    if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
-      Arrays.fill(in.emissive, 0, in.vertexCount, PGL.javaToNativeARGB(emissiveColor));
-      Arrays.fill(tess.fillEmissive, 0, tess.fillVertexCount, PGL.javaToNativeARGB(emissiveColor));    
+    if (shapeEnded && tessellated && 0 < tessGeo.fillVertexCount) {
+      Arrays.fill(inGeo.emissive, 0, inGeo.vertexCount, PGL.javaToNativeARGB(emissiveColor));
+      Arrays.fill(tessGeo.fillEmissive, 0, tessGeo.fillVertexCount, PGL.javaToNativeARGB(emissiveColor));    
       modifiedFillEmissive = true;
       modified();
     }    
@@ -1480,9 +1480,9 @@ public class PShape3D extends PShape {
   
   
   protected void updateShininessFactor() {
-    if (shapeEnded && tessellated && 0 < tess.fillVertexCount) {
-      Arrays.fill(in.shininess, 0, in.vertexCount, shininess);
-      Arrays.fill(tess.fillShininess, 0, tess.fillVertexCount, shininess);    
+    if (shapeEnded && tessellated && 0 < tessGeo.fillVertexCount) {
+      Arrays.fill(inGeo.shininess, 0, inGeo.vertexCount, shininess);
+      Arrays.fill(tessGeo.fillShininess, 0, tessGeo.fillVertexCount, shininess);    
       modifiedFillShininess = true;
       modified();    
     }
@@ -1633,15 +1633,15 @@ public class PShape3D extends PShape {
           if (tessellated) {
             applyTransform(ncoords);
             modified();
-            if (0 < tess.fillVertexCount) {
+            if (0 < tessGeo.fillVertexCount) {
               modifiedFillVertices = true;  
               modifiedFillNormals = true; 
             }        
-            if (0 < tess.lineVertexCount) {
+            if (0 < tessGeo.lineVertexCount) {
               modifiedLineVertices = true;
               modifiedLineAttributes = true;
             }
-            if (0 < tess.pointVertexCount) {
+            if (0 < tessGeo.pointVertexCount) {
               modifiedPointVertices = true;        
             }            
           }
@@ -1712,9 +1712,9 @@ public class PShape3D extends PShape {
   
   protected void applyTransform(int dimensions) {
     if (dimensions == 3) {
-      tess.applyMatrix((PMatrix3D) transform);
+      tessGeo.applyMatrix((PMatrix3D) transform);
     } else {
-      tess.applyMatrix((PMatrix2D) transform);
+      tessGeo.applyMatrix((PMatrix2D) transform);
     }
   }
   
@@ -1757,10 +1757,10 @@ public class PShape3D extends PShape {
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);
-    in.addBezierVertex(x2, y2, z2,
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addBezierVertex(x2, y2, z2,
                        x3, y3, z3,
                        x4, y4, z4,
                        fill, stroke, bezierDetail, vertexCode(), kind);     
@@ -1776,10 +1776,10 @@ public class PShape3D extends PShape {
   
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);    
-    in.addQuadraticVertex(cx, cy, cz,
+    inGeo.setNormal(normalX, normalY, normalZ);    
+    inGeo.addQuadraticVertex(cx, cy, cz,
                           x3, y3, z3,
                           fill, stroke, bezierDetail, vertexCode(), kind); 
   }
@@ -1810,10 +1810,10 @@ public class PShape3D extends PShape {
 
   
   public void curveVertex(float x, float y, float z) {
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);
-    in.addCurveVertex(x, y, z,
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addCurveVertex(x, y, z,
                       fill, stroke, curveDetail, vertexCode(), kind); 
   }
   
@@ -1831,7 +1831,7 @@ public class PShape3D extends PShape {
       return 0;
     }
     
-    return in.vertexCount;  
+    return inGeo.vertexCount;  
   }
   
   
@@ -1844,9 +1844,9 @@ public class PShape3D extends PShape {
     float[] data = new float[VERTEX_FIELD_COUNT];
         
     
-  data[X] = in.vertices[3 * index + 0];
-  data[Y] = in.vertices[3 * index + 1];
-  data[Z] = in.vertices[3 * index + 2];
+  data[X] = inGeo.vertices[3 * index + 0];
+  data[Y] = inGeo.vertices[3 * index + 1];
+  data[Z] = inGeo.vertices[3 * index + 2];
 
   
 //  int fa = (in.colors[i] >> 24) & 0xFF;
@@ -1917,9 +1917,9 @@ public class PShape3D extends PShape {
     if (vec == null) {
       vec = new PVector();
     }
-    vec.x = in.vertices[3 * index + 0];
-    vec.y = in.vertices[3 * index + 1];
-    vec.z = in.vertices[3 * index + 2];
+    vec.x = inGeo.vertices[3 * index + 0];
+    vec.y = inGeo.vertices[3 * index + 1];
+    vec.z = inGeo.vertices[3 * index + 2];
     return vec;
   }
   
@@ -1931,7 +1931,7 @@ public class PShape3D extends PShape {
     }
     updateTessellation();
     
-    return in.vertices[3 * index + 0];
+    return inGeo.vertices[3 * index + 0];
   }
   
   
@@ -1942,7 +1942,7 @@ public class PShape3D extends PShape {
     }
     updateTessellation();
     
-    return in.vertices[3 * index + 1];
+    return inGeo.vertices[3 * index + 1];
   }
   
   
@@ -1953,7 +1953,7 @@ public class PShape3D extends PShape {
     }
     updateTessellation();
     
-    return in.vertices[3 * index + 2];
+    return inGeo.vertices[3 * index + 2];
   }  
   
   
@@ -1970,55 +1970,55 @@ public class PShape3D extends PShape {
     updateTessellation();
     
     if (hasPoints) {
-      int[] indices = in.pointIndices[index];
+      int[] indices = inGeo.pointIndices[index];
       for (int i = 0; i < indices.length; i++) {
         int tessIdx = indices[i];
-        tess.pointVertices[3 * tessIdx + 0] = x;
-        tess.pointVertices[3 * tessIdx + 1] = y;
-        tess.pointVertices[3 * tessIdx + 2] = z;        
+        tessGeo.pointVertices[3 * tessIdx + 0] = x;
+        tessGeo.pointVertices[3 * tessIdx + 1] = y;
+        tessGeo.pointVertices[3 * tessIdx + 2] = z;        
       } 
       modifiedPointVertices = true;
     }
 
     if (hasLines) {
-      int[] indices = in.lineIndices[index];
+      int[] indices = inGeo.lineIndices[index];
       for (int i = 0; i < indices.length; i++) {
         int tessIdx = indices[i];
-        tess.lineVertices[3 * tessIdx + 0] = x;
-        tess.lineVertices[3 * tessIdx + 1] = y;
-        tess.lineVertices[3 * tessIdx + 2] = z;        
+        tessGeo.lineVertices[3 * tessIdx + 0] = x;
+        tessGeo.lineVertices[3 * tessIdx + 1] = y;
+        tessGeo.lineVertices[3 * tessIdx + 2] = z;        
       }     
       modifiedLineVertices = true;
     }    
     
     if (hasFill) {
-      if (-1 < in.firstFillIndex) {
-        int tessIdx = in.firstFillIndex + index;
-        tess.fillVertices[3 * tessIdx + 0] = x;
-        tess.fillVertices[3 * tessIdx + 1] = y;
-        tess.fillVertices[3 * tessIdx + 2] = z;
+      if (-1 < inGeo.firstFillIndex) {
+        int tessIdx = inGeo.firstFillIndex + index;
+        tessGeo.fillVertices[3 * tessIdx + 0] = x;
+        tessGeo.fillVertices[3 * tessIdx + 1] = y;
+        tessGeo.fillVertices[3 * tessIdx + 2] = z;
       } else {
-        float x0 = in.vertices[3 * index + 0];
-        float y0 = in.vertices[3 * index + 1];
-        float z0 = in.vertices[3 * index + 2];        
-        int[] indices = in.fillIndices[index];
-        float[] weigths = in.fillWeights[index];
+        float x0 = inGeo.vertices[3 * index + 0];
+        float y0 = inGeo.vertices[3 * index + 1];
+        float z0 = inGeo.vertices[3 * index + 2];        
+        int[] indices = inGeo.fillIndices[index];
+        float[] weigths = inGeo.fillWeights[index];
         for (int i = 0; i < indices.length; i++) {
           int tessIdx = indices[i];
           float weight = weigths[i];
-          float tx0 = tess.fillVertices[3 * tessIdx + 0];
-          float ty0 = tess.fillVertices[3 * tessIdx + 1];
-          float tz0 = tess.fillVertices[3 * tessIdx + 2];        
-          tess.fillVertices[3 * tessIdx + 0] = tx0 + weight * (x - x0);
-          tess.fillVertices[3 * tessIdx + 1] = ty0 + weight * (y - y0);
-          tess.fillVertices[3 * tessIdx + 2] = tz0 + weight * (z - z0);        
+          float tx0 = tessGeo.fillVertices[3 * tessIdx + 0];
+          float ty0 = tessGeo.fillVertices[3 * tessIdx + 1];
+          float tz0 = tessGeo.fillVertices[3 * tessIdx + 2];        
+          tessGeo.fillVertices[3 * tessIdx + 0] = tx0 + weight * (x - x0);
+          tessGeo.fillVertices[3 * tessIdx + 1] = ty0 + weight * (y - y0);
+          tessGeo.fillVertices[3 * tessIdx + 2] = tz0 + weight * (z - z0);        
         }    
       }
       modifiedFillVertices = true;      
     }
-    in.vertices[3 * index + 0] = x;
-    in.vertices[3 * index + 1] = y;
-    in.vertices[3 * index + 2] = z;    
+    inGeo.vertices[3 * index + 0] = x;
+    inGeo.vertices[3 * index + 1] = y;
+    inGeo.vertices[3 * index + 2] = z;    
     modified();
   }
   
@@ -2033,9 +2033,9 @@ public class PShape3D extends PShape {
     if (vec == null) {
       vec = new PVector();
     }
-    vec.x = in.normals[3 * index + 0];
-    vec.y = in.normals[3 * index + 1];
-    vec.z = in.normals[3 * index + 2];
+    vec.x = inGeo.normals[3 * index + 0];
+    vec.y = inGeo.normals[3 * index + 1];
+    vec.z = inGeo.normals[3 * index + 2];
     return vec;
   }
   
@@ -2047,7 +2047,7 @@ public class PShape3D extends PShape {
     }
     updateTessellation();
     
-    return in.normals[3 * index + 0];
+    return inGeo.normals[3 * index + 0];
   }
 
   
@@ -2058,7 +2058,7 @@ public class PShape3D extends PShape {
     }
     updateTessellation();
     
-    return in.normals[3 * index + 1];
+    return inGeo.normals[3 * index + 1];
   }  
 
   
@@ -2069,7 +2069,7 @@ public class PShape3D extends PShape {
     }
     updateTessellation();
     
-    return in.normals[3 * index + 2];
+    return inGeo.normals[3 * index + 2];
   }    
   
   
@@ -2081,23 +2081,23 @@ public class PShape3D extends PShape {
     updateTessellation();
     
     if (hasFill) {
-      if (-1 < in.firstFillIndex) {
-        int tessIdx = in.firstFillIndex + index;
-        tess.fillNormals[3 * tessIdx + 0] = nx;
-        tess.fillNormals[3 * tessIdx + 1] = ny;
-        tess.fillNormals[3 * tessIdx + 2] = nz;
+      if (-1 < inGeo.firstFillIndex) {
+        int tessIdx = inGeo.firstFillIndex + index;
+        tessGeo.fillNormals[3 * tessIdx + 0] = nx;
+        tessGeo.fillNormals[3 * tessIdx + 1] = ny;
+        tessGeo.fillNormals[3 * tessIdx + 2] = nz;
       } else {
-        float nx0 = in.normals[3 * index + 0];
-        float ny0 = in.normals[3 * index + 1];
-        float nz0 = in.normals[3 * index + 2];        
-        int[] indices = in.fillIndices[index];
-        float[] weigths = in.fillWeights[index];
+        float nx0 = inGeo.normals[3 * index + 0];
+        float ny0 = inGeo.normals[3 * index + 1];
+        float nz0 = inGeo.normals[3 * index + 2];        
+        int[] indices = inGeo.fillIndices[index];
+        float[] weigths = inGeo.fillWeights[index];
         for (int i = 0; i < indices.length; i++) {
           int tessIdx = indices[i];
           float weight = weigths[i];
-          float tnx0 = tess.fillNormals[3 * tessIdx + 0];
-          float tny0 = tess.fillNormals[3 * tessIdx + 1];
-          float tnz0 = tess.fillNormals[3 * tessIdx + 2];        
+          float tnx0 = tessGeo.fillNormals[3 * tessIdx + 0];
+          float tny0 = tessGeo.fillNormals[3 * tessIdx + 1];
+          float tnz0 = tessGeo.fillNormals[3 * tessIdx + 2];        
           float tnx = tnx0 + weight * (nx - nx0);
           float tny = tny0 + weight * (ny - ny0);
           float tnz = tnz0 + weight * (nz - nz0);
@@ -2110,16 +2110,16 @@ public class PShape3D extends PShape {
           tny /= len;
           tnz /= len;
            
-          tess.fillNormals[3 * tessIdx + 0] = tnx;
-          tess.fillNormals[3 * tessIdx + 1] = tny;
-          tess.fillNormals[3 * tessIdx + 2] = tnz;
+          tessGeo.fillNormals[3 * tessIdx + 0] = tnx;
+          tessGeo.fillNormals[3 * tessIdx + 1] = tny;
+          tessGeo.fillNormals[3 * tessIdx + 2] = tnz;
         }    
       }
       modifiedFillNormals = true;      
     }    
-    in.normals[3 * index + 0] = nx;
-    in.normals[3 * index + 1] = ny;
-    in.normals[3 * index + 2] = nz;      
+    inGeo.normals[3 * index + 0] = nx;
+    inGeo.normals[3 * index + 1] = ny;
+    inGeo.normals[3 * index + 2] = nz;      
     modified(); 
   }
   
@@ -2134,8 +2134,8 @@ public class PShape3D extends PShape {
     if (vec == null) {
       vec = new PVector();
     }
-    vec.x = in.texcoords[2 * index + 0];
-    vec.y = in.texcoords[2 * index + 1];
+    vec.x = inGeo.texcoords[2 * index + 0];
+    vec.y = inGeo.texcoords[2 * index + 1];
     return vec;
   }
   
@@ -2147,7 +2147,7 @@ public class PShape3D extends PShape {
     }
     updateTessellation();
     
-    return in.texcoords[2 * index + 0];
+    return inGeo.texcoords[2 * index + 0];
   }
 
   
@@ -2158,7 +2158,7 @@ public class PShape3D extends PShape {
     }
     updateTessellation();
     
-    return in.texcoords[2 * index + 1];
+    return inGeo.texcoords[2 * index + 1];
   }  
   
   
@@ -2170,31 +2170,31 @@ public class PShape3D extends PShape {
     updateTessellation();
     
     if (hasFill) {
-      if (-1 < in.firstFillIndex) {
-        int tessIdx = in.firstFillIndex + index;
-        tess.fillTexcoords[2 * tessIdx + 0] = u;
-        tess.fillTexcoords[2 * tessIdx + 1] = v;
+      if (-1 < inGeo.firstFillIndex) {
+        int tessIdx = inGeo.firstFillIndex + index;
+        tessGeo.fillTexcoords[2 * tessIdx + 0] = u;
+        tessGeo.fillTexcoords[2 * tessIdx + 1] = v;
       } else {       
-        float u0 = in.normals[2 * index + 0];
-        float v0 = in.normals[2 * index + 1];
-        int[] indices = in.fillIndices[index];
-        float[] weigths = in.fillWeights[index];
+        float u0 = inGeo.normals[2 * index + 0];
+        float v0 = inGeo.normals[2 * index + 1];
+        int[] indices = inGeo.fillIndices[index];
+        float[] weigths = inGeo.fillWeights[index];
         for (int i = 0; i < indices.length; i++) {
           int tessIdx = indices[i];
           float weight = weigths[i];
-          float tu0 = tess.fillTexcoords[2 * tessIdx + 0];
-          float tv0 = tess.fillTexcoords[2 * tessIdx + 1];        
+          float tu0 = tessGeo.fillTexcoords[2 * tessIdx + 0];
+          float tv0 = tessGeo.fillTexcoords[2 * tessIdx + 1];        
           float tu = tu0 + weight * (u - u0);
           float tv = tv0 + weight * (v - v0);           
-          tess.fillTexcoords[2 * tessIdx + 0] = tu;
-          tess.fillTexcoords[2 * tessIdx + 1] = tv;
+          tessGeo.fillTexcoords[2 * tessIdx + 0] = tu;
+          tessGeo.fillTexcoords[2 * tessIdx + 1] = tv;
         }        
       }
       modifiedFillTexCoords = true;
     }
     
-    in.texcoords[3 * index + 0] = u;
-    in.texcoords[3 * index + 1] = v;    
+    inGeo.texcoords[3 * index + 0] = u;
+    inGeo.texcoords[3 * index + 1] = v;    
   }
 
   
@@ -2218,12 +2218,12 @@ public class PShape3D extends PShape {
   
   
   public int fillVertexCount() {
-    return tess.fillVertices.length;
+    return tessGeo.fillVertices.length;
   }
 
   
   public int fillIndexCount() {
-    return tess.fillIndices.length;
+    return tessGeo.fillIndices.length;
   }  
   
   
@@ -2234,10 +2234,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (vertices == null || vertices.length != tess.fillVertices.length) {
-      vertices = new float[tess.fillVertices.length];
+    if (vertices == null || vertices.length != tessGeo.fillVertices.length) {
+      vertices = new float[tessGeo.fillVertices.length];
     }
-    PApplet.arrayCopy(tess.fillVertices, vertices);
+    PApplet.arrayCopy(tessGeo.fillVertices, vertices);
     return vertices;
   }
   
@@ -2249,10 +2249,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (colors == null || colors.length != tess.fillColors.length) {
-      colors = new int[tess.fillColors.length];  
+    if (colors == null || colors.length != tessGeo.fillColors.length) {
+      colors = new int[tessGeo.fillColors.length];  
     }
-    PApplet.arrayCopy(tess.fillColors, colors);
+    PApplet.arrayCopy(tessGeo.fillColors, colors);
     return colors;
   }  
   
@@ -2264,10 +2264,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (normals == null || normals.length != tess.fillNormals.length) {
-      normals = new float[tess.fillNormals.length];
+    if (normals == null || normals.length != tessGeo.fillNormals.length) {
+      normals = new float[tessGeo.fillNormals.length];
     }
-    PApplet.arrayCopy(tess.fillNormals, normals);
+    PApplet.arrayCopy(tessGeo.fillNormals, normals);
     return normals;
   }  
   
@@ -2279,10 +2279,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (texcoords == null || texcoords.length != tess.fillTexcoords.length) {
-      texcoords = new float[tess.fillTexcoords.length];
+    if (texcoords == null || texcoords.length != tessGeo.fillTexcoords.length) {
+      texcoords = new float[tessGeo.fillTexcoords.length];
     }
-    PApplet.arrayCopy(tess.fillTexcoords, texcoords);
+    PApplet.arrayCopy(tessGeo.fillTexcoords, texcoords);
     return texcoords;
   }  
 
@@ -2294,10 +2294,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (ambient == null || ambient.length != tess.fillAmbient.length) {
-      ambient = new int[tess.fillAmbient.length];
+    if (ambient == null || ambient.length != tessGeo.fillAmbient.length) {
+      ambient = new int[tessGeo.fillAmbient.length];
     }
-    PApplet.arrayCopy(tess.fillAmbient, ambient);
+    PApplet.arrayCopy(tessGeo.fillAmbient, ambient);
     return ambient;
   }  
 
@@ -2309,10 +2309,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (specular == null || specular.length != tess.fillSpecular.length) {
-      specular = new int[tess.fillSpecular.length];  
+    if (specular == null || specular.length != tessGeo.fillSpecular.length) {
+      specular = new int[tessGeo.fillSpecular.length];  
     }
-    PApplet.arrayCopy(tess.fillSpecular, specular);
+    PApplet.arrayCopy(tessGeo.fillSpecular, specular);
     return specular;
   }
   
@@ -2324,10 +2324,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (emissive == null || emissive.length != tess.fillEmissive.length) {
-      emissive = new int[tess.fillEmissive.length];
+    if (emissive == null || emissive.length != tessGeo.fillEmissive.length) {
+      emissive = new int[tessGeo.fillEmissive.length];
     }
-    PApplet.arrayCopy(tess.fillEmissive, emissive);
+    PApplet.arrayCopy(tessGeo.fillEmissive, emissive);
     return emissive;
   }
   
@@ -2339,10 +2339,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (shininess == null || shininess.length != tess.fillShininess.length) {
-      shininess = new float[tess.fillShininess.length];
+    if (shininess == null || shininess.length != tessGeo.fillShininess.length) {
+      shininess = new float[tessGeo.fillShininess.length];
     }
-    PApplet.arrayCopy(tess.fillShininess, shininess);
+    PApplet.arrayCopy(tessGeo.fillShininess, shininess);
     return shininess;
   }  
   
@@ -2354,12 +2354,12 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (indices == null || indices.length != tess.fillIndices.length) {
-      indices = new int[tess.fillIndices.length];      
+    if (indices == null || indices.length != tessGeo.fillIndices.length) {
+      indices = new int[tessGeo.fillIndices.length];      
     }
     //PApplet.arrayCopy(tess.fillIndices, indices);
-    for (int i = 0; i < tess.fillIndices.length; i++) {
-      indices[i] = tess.fillIndices[i];
+    for (int i = 0; i < tessGeo.fillIndices.length; i++) {
+      indices[i] = tessGeo.fillIndices[i];
     }    
     removeIndexOffset(indices);
     return indices;
@@ -2367,12 +2367,12 @@ public class PShape3D extends PShape {
   
 
   public int lineVertexCount() {
-    return tess.lineVertices.length;
+    return tessGeo.lineVertices.length;
   }
 
   
   public int lineIndexCount() {
-    return tess.lineIndices.length;
+    return tessGeo.lineIndices.length;
   }   
   
   
@@ -2383,10 +2383,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (vertices == null || vertices.length != tess.lineVertices.length) {
-      vertices = new float[tess.lineVertices.length];
+    if (vertices == null || vertices.length != tessGeo.lineVertices.length) {
+      vertices = new float[tessGeo.lineVertices.length];
     }
-    PApplet.arrayCopy(tess.lineVertices, vertices);
+    PApplet.arrayCopy(tessGeo.lineVertices, vertices);
     return vertices;
   }
   
@@ -2398,10 +2398,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (colors == null || colors.length != tess.lineColors.length) {
-      colors = new int[tess.lineColors.length];
+    if (colors == null || colors.length != tessGeo.lineColors.length) {
+      colors = new int[tessGeo.lineColors.length];
     }
-    PApplet.arrayCopy(tess.lineColors, colors);
+    PApplet.arrayCopy(tessGeo.lineColors, colors);
     return colors;
   }  
   
@@ -2413,10 +2413,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (attribs == null || attribs.length != tess.lineDirWidths.length) {
-      attribs = new float[tess.lineDirWidths.length];
+    if (attribs == null || attribs.length != tessGeo.lineDirWidths.length) {
+      attribs = new float[tessGeo.lineDirWidths.length];
     }
-    PApplet.arrayCopy(tess.lineDirWidths, attribs);
+    PApplet.arrayCopy(tessGeo.lineDirWidths, attribs);
     return attribs;
   }  
   
@@ -2428,12 +2428,12 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (indices == null || indices.length != tess.lineIndices.length) {
-      indices = new int[tess.lineIndices.length];
+    if (indices == null || indices.length != tessGeo.lineIndices.length) {
+      indices = new int[tessGeo.lineIndices.length];
     }
     //PApplet.arrayCopy(tess.lineIndices, indices);
-    for (int i = 0; i < tess.lineIndices.length; i++) {
-      indices[i] = tess.lineIndices[i];
+    for (int i = 0; i < tessGeo.lineIndices.length; i++) {
+      indices[i] = tessGeo.lineIndices[i];
     }    
     removeIndexOffset(indices);
     return indices;
@@ -2441,12 +2441,12 @@ public class PShape3D extends PShape {
   
   
   public int pointVertexCount() {
-    return tess.pointVertices.length;
+    return tessGeo.pointVertices.length;
   }
 
   
   public int pointIndexCount() {
-    return tess.pointIndices.length;
+    return tessGeo.pointIndices.length;
   }    
   
     
@@ -2457,10 +2457,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (vertices == null || vertices.length != tess.pointVertices.length) {
-      vertices = new float[tess.pointVertices.length];
+    if (vertices == null || vertices.length != tessGeo.pointVertices.length) {
+      vertices = new float[tessGeo.pointVertices.length];
     }
-    PApplet.arrayCopy(tess.pointVertices, vertices);
+    PApplet.arrayCopy(tessGeo.pointVertices, vertices);
     return vertices;
   }
   
@@ -2472,10 +2472,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (colors == null || colors.length != tess.pointColors.length) {
-      colors = new int[tess.pointColors.length];
+    if (colors == null || colors.length != tessGeo.pointColors.length) {
+      colors = new int[tessGeo.pointColors.length];
     }
-    PApplet.arrayCopy(tess.pointColors, colors);
+    PApplet.arrayCopy(tessGeo.pointColors, colors);
     return colors;
   }  
   
@@ -2487,10 +2487,10 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (attribs == null || attribs.length != tess.pointSizes.length) {
-      attribs = new float[tess.pointSizes.length];
+    if (attribs == null || attribs.length != tessGeo.pointSizes.length) {
+      attribs = new float[tessGeo.pointSizes.length];
     }
-    PApplet.arrayCopy(tess.pointSizes, attribs);
+    PApplet.arrayCopy(tessGeo.pointSizes, attribs);
     return attribs;
   }  
   
@@ -2502,12 +2502,12 @@ public class PShape3D extends PShape {
     }    
     updateTessellation();
     
-    if (indices == null || indices.length != tess.pointIndices.length) {
-      indices = new int[tess.pointIndices.length];
+    if (indices == null || indices.length != tessGeo.pointIndices.length) {
+      indices = new int[tessGeo.pointIndices.length];
     }
 //    PApplet.arrayCopy(tess.pointIndices, indices);
-    for (int i = 0; i < tess.pointIndices.length; i++) {
-      indices[i] = tess.pointIndices[i];
+    for (int i = 0; i < tessGeo.pointIndices.length; i++) {
+      indices[i] = tessGeo.pointIndices[i];
     }    
     removeIndexOffset(indices);
     return indices;
@@ -2541,10 +2541,10 @@ public class PShape3D extends PShape {
  
   
   protected void tessellate() {
-    if (tess == null) {
-      tess = pg.newTessGeometry(PGraphicsOpenGL.RETAINED, family == GROUP);
+    if (tessGeo == null) {
+      tessGeo = pg.newTessGeometry(PGraphicsOpenGL.RETAINED, family == GROUP);
     }
-    tess.clear();
+    tessGeo.clear();
     
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -2557,10 +2557,10 @@ public class PShape3D extends PShape {
         // the edges information will still be stored in the
         // input object, so it needs to be removed to avoid
         // duplication.
-        in.clearEdges();
+        inGeo.clearEdges();
         
-        tessellator.setInGeometry(in);
-        tessellator.setTessGeometry(tess);
+        tessellator.setInGeometry(inGeo);
+        tessellator.setTessGeometry(tessGeo);
         tessellator.setFill(fill || texture != null);
         tessellator.setStroke(stroke);
         tessellator.setStrokeWeight(strokeWeight);
@@ -2572,41 +2572,41 @@ public class PShape3D extends PShape {
           // vertices with the corresponding tessellated vertices.
           // This correspondence might not be one-to-one, in the
           // case of lines and polygon shapes for example.
-          in.initTessMaps();
+          inGeo.initTessMaps();
           
           if (kind == POINTS) {
             tessellator.tessellatePoints();    
           } else if (kind == LINES) {
             tessellator.tessellateLines();    
           } else if (kind == TRIANGLE || kind == TRIANGLES) {
-            if (stroke) in.addTrianglesEdges();
-            if (normalMode == NORMAL_MODE_AUTO) in.calcTrianglesNormals();
+            if (stroke) inGeo.addTrianglesEdges();
+            if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTrianglesNormals();
             tessellator.tessellateTriangles();
           } else if (kind == TRIANGLE_FAN) {
-            if (stroke) in.addTriangleFanEdges();
-            if (normalMode == NORMAL_MODE_AUTO) in.calcTriangleFanNormals();
+            if (stroke) inGeo.addTriangleFanEdges();
+            if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTriangleFanNormals();
             tessellator.tessellateTriangleFan();
           } else if (kind == TRIANGLE_STRIP) {            
-            if (stroke) in.addTriangleStripEdges();
-            if (normalMode == NORMAL_MODE_AUTO) in.calcTriangleStripNormals();
+            if (stroke) inGeo.addTriangleStripEdges();
+            if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTriangleStripNormals();
             tessellator.tessellateTriangleStrip();
           } else if (kind == QUAD || kind == QUADS) {            
-            if (stroke) in.addQuadsEdges();
-            if (normalMode == NORMAL_MODE_AUTO) in.calcQuadsNormals();
+            if (stroke) inGeo.addQuadsEdges();
+            if (normalMode == NORMAL_MODE_AUTO) inGeo.calcQuadsNormals();
             tessellator.tessellateQuads();
           } else if (kind == QUAD_STRIP) {
-            if (stroke) in.addQuadStripEdges();
-            if (normalMode == NORMAL_MODE_AUTO) in.calcQuadStripNormals();
+            if (stroke) inGeo.addQuadStripEdges();
+            if (normalMode == NORMAL_MODE_AUTO) inGeo.calcQuadStripNormals();
             tessellator.tessellateQuadStrip();
           } else if (kind == POLYGON) {
-            if (stroke) in.addPolygonEdges(isClosed);
+            if (stroke) inGeo.addPolygonEdges(isClosed);
             tessellator.tessellatePolygon(isSolid, isClosed, normalMode == NORMAL_MODE_AUTO);
           }
         } else if (family == PRIMITIVE) {          
           // The input geometry needs to be cleared because the geometry
           // generation methods in InGeometry add the vertices of the
           // new primitive to what is already stored.
-          in.clear();
+          inGeo.clear();
           
           if (kind == POINT) {
             tessellatePoint();
@@ -2634,7 +2634,7 @@ public class PShape3D extends PShape {
         // Tessellated arrays are trimmed since they are expanded 
         // by doubling their old size, which might lead to arrays 
         // larger than the vertex counts.        
-        tess.trim();
+        tessGeo.trim();
         
         if (texture != null && parent != null) {
           ((PShape3D)parent).addTexture(texture);
@@ -2643,10 +2643,10 @@ public class PShape3D extends PShape {
         if (cacheTransformations && matrix != null) {
           // Some geometric transformations were applied on
           // this shape before tessellation, so they are applied now.
-          tess.applyMatrix(matrix);
+          tessGeo.applyMatrix(matrix);
         }
         
-        in.compactTessMaps();
+        inGeo.compactTessMaps();
       }
     }
     
@@ -2667,11 +2667,11 @@ public class PShape3D extends PShape {
       z = params[2];
     }
     
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);
-    in.addPoint(x, y, z, fill, stroke);    
-    in.initTessMaps();    
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addPoint(x, y, z, fill, stroke);    
+    inGeo.initTessMaps();    
     tessellator.tessellatePoints();   
   }
   
@@ -2693,13 +2693,13 @@ public class PShape3D extends PShape {
       z2 = params[5];      
     }
     
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);
-    in.addLine(x1, y1, z1,
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addLine(x1, y1, z1,
                x2, y2, z2,
                fill, stroke);    
-    in.initTessMaps();    
+    inGeo.initTessMaps();    
     tessellator.tessellateLines();  
   }
   
@@ -2717,14 +2717,14 @@ public class PShape3D extends PShape {
       y3 = params[5];       
     }
 
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);  
-    in.setNormal(normalX, normalY, normalZ);
-    in.addTriangle(x1, y1, 0,
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addTriangle(x1, y1, 0,
                    x2, y2, 0,
                    x3, y3, 0,
                    fill, stroke);    
-    in.initTessMaps();    
+    inGeo.initTessMaps();    
     tessellator.tessellateTriangles();    
   }
   
@@ -2745,15 +2745,15 @@ public class PShape3D extends PShape {
       y4 = params[7];            
     }
 
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);
-    in.addQuad(x1, y1, 0,
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addQuad(x1, y1, 0,
                x2, y2, 0,
                x3, y3, 0,
                x4, y4, 0,
                fill, stroke);    
-    in.initTessMaps();    
+    inGeo.initTessMaps();    
     tessellator.tessellateQuads();     
   }  
   
@@ -2787,19 +2787,19 @@ public class PShape3D extends PShape {
       rounded = true;
     }
 
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);
+    inGeo.setNormal(normalX, normalY, normalZ);
     if (rounded) {
-      in.addRect(a, b, c, d,
+      inGeo.addRect(a, b, c, d,
                  tl, tr, br, bl,
                  fill, stroke, bezierDetail, rectMode);       
-      in.initTessMaps();      
+      inGeo.initTessMaps();      
       tessellator.tessellatePolygon(false, true, true);      
     } else {
-      in.addRect(a, b, c, d,
+      inGeo.addRect(a, b, c, d,
                  fill, stroke, rectMode);    
-      in.initTessMaps();
+      inGeo.initTessMaps();
       tessellator.tessellateQuads();      
     }   
   }
@@ -2814,11 +2814,11 @@ public class PShape3D extends PShape {
       d = params[3];      
     }
 
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);    
-    in.addEllipse(a, b, c, d, fill, stroke, ellipseMode);
-    in.initTessMaps();
+    inGeo.setNormal(normalX, normalY, normalZ);    
+    inGeo.addEllipse(a, b, c, d, fill, stroke, ellipseMode);
+    inGeo.initTessMaps();
     tessellator.tessellateTriangleFan(); 
   }
   
@@ -2835,11 +2835,11 @@ public class PShape3D extends PShape {
       stop = params[5];      
     }    
     
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
-    in.setNormal(normalX, normalY, normalZ);
-    in.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
-    in.initTessMaps();
+    inGeo.setNormal(normalX, normalY, normalZ);
+    inGeo.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
+    inGeo.initTessMaps();
     tessellator.tessellateTriangleFan();    
   }
   
@@ -2854,10 +2854,10 @@ public class PShape3D extends PShape {
       d = params[2];
     }
         
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);    
-    in.addBox(w, h, d, fill, stroke);   
-    in.initTessMaps();    
+    inGeo.addBox(w, h, d, fill, stroke);   
+    inGeo.initTessMaps();    
     tessellator.tessellateQuads();     
   }
   
@@ -2871,10 +2871,10 @@ public class PShape3D extends PShape {
       r = params[0];
     }
     
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess); 
-    int[] indices = in.addSphere(r, nu, nv, fill, stroke);   
-    in.initTessMaps();
+    int[] indices = inGeo.addSphere(r, nu, nv, fill, stroke);   
+    inGeo.initTessMaps();
     tessellator.tessellateTriangles(indices);               
   }
   
@@ -2882,7 +2882,7 @@ public class PShape3D extends PShape {
   protected void tessellatePath() {
     if (vertices == null) return;
 
-    in.setColors(fillColor, strokeColor, strokeWeight,
+    inGeo.setColors(fillColor, strokeColor, strokeWeight,
                  ambientColor, specularColor, emissiveColor, shininess);
     
     boolean insideContour = false;
@@ -2890,11 +2890,11 @@ public class PShape3D extends PShape {
     if (vertexCodeCount == 0) {  // each point is a simple vertex
       if (vertices[0].length == 2) {  // tesellating 2D vertices
         for (int i = 0; i < vertexCount; i++) {
-          in.addVertex(vertices[i][X], vertices[i][Y], VERTEX);
+          inGeo.addVertex(vertices[i][X], vertices[i][Y], VERTEX);
         }
       } else {  // drawing 3D vertices
         for (int i = 0; i < vertexCount; i++) {
-          in.addVertex(vertices[i][X], vertices[i][Y], vertices[i][Z], VERTEX);
+          inGeo.addVertex(vertices[i][X], vertices[i][Y], vertices[i][Z], VERTEX);
         }
       }
     } else {  // coded set of vertices
@@ -2906,19 +2906,19 @@ public class PShape3D extends PShape {
           switch (vertexCodes[j]) {
 
           case VERTEX:
-            in.addVertex(vertices[index][X], vertices[index][Y], code);
+            inGeo.addVertex(vertices[index][X], vertices[index][Y], code);
             index++;
             break;
 
           case QUAD_BEZIER_VERTEX:
-            in.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], 0, 
+            inGeo.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], 0, 
                                   vertices[index+1][X], vertices[index+1][Y], 0,
                                   fill, stroke, bezierDetail, code);
             index += 2;
             break;
 
           case BEZIER_VERTEX:
-            in.addBezierVertex(vertices[index+0][X], vertices[index+0][Y], 0,
+            inGeo.addBezierVertex(vertices[index+0][X], vertices[index+0][Y], 0,
                                vertices[index+1][X], vertices[index+1][Y], 0,
                                vertices[index+2][X], vertices[index+2][Y], 0,
                                fill, stroke, bezierDetail, code);
@@ -2926,7 +2926,7 @@ public class PShape3D extends PShape {
             break;
 
           case CURVE_VERTEX:
-            in.addCurveVertex(vertices[index][X], vertices[index][Y], 0,
+            inGeo.addCurveVertex(vertices[index][X], vertices[index][Y], 0,
                               fill, stroke, curveDetail, code);
             index++;
 
@@ -2943,12 +2943,12 @@ public class PShape3D extends PShape {
           switch (vertexCodes[j]) {
 
           case VERTEX:
-            in.addVertex(vertices[index][X], vertices[index][Y], vertices[index][Z], code);
+            inGeo.addVertex(vertices[index][X], vertices[index][Y], vertices[index][Z], code);
             index++;
             break;
 
           case QUAD_BEZIER_VERTEX:
-            in.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
+            inGeo.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
                                   vertices[index+1][X], vertices[index+1][Y], vertices[index+0][Z],
                                   fill, stroke, bezierDetail, code);
             index += 2;
@@ -2956,7 +2956,7 @@ public class PShape3D extends PShape {
 
 
           case BEZIER_VERTEX:
-            in.addBezierVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
+            inGeo.addBezierVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
                                vertices[index+1][X], vertices[index+1][Y], vertices[index+1][Z],
                                vertices[index+2][X], vertices[index+2][Y], vertices[index+2][Z],
                                fill, stroke, bezierDetail, code);
@@ -2964,7 +2964,7 @@ public class PShape3D extends PShape {
             break;
 
           case CURVE_VERTEX:
-            in.addCurveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z],
+            inGeo.addCurveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z],
                               fill, stroke, curveDetail, code);
             index++;
 
@@ -2979,8 +2979,8 @@ public class PShape3D extends PShape {
       }
     }
     
-    if (stroke) in.addPolygonEdges(isClosed);
-    in.initTessMaps();  
+    if (stroke) inGeo.addPolygonEdges(isClosed);
+    inGeo.initTessMaps();  
     tessellator.tessellatePolygon(false, isClosed, true);    
   }  
   
@@ -3129,30 +3129,30 @@ public class PShape3D extends PShape {
         PShape3D child = (PShape3D) children[i];
         child.aggregateImpl();
 
-        tess.addCounts(child.tess);
+        tessGeo.addCounts(child.tessGeo);
         
-        if (0 < child.tess.fillVertexCount) {
+        if (0 < child.tessGeo.fillVertexCount) {
           if (firstGeom) {
-            tess.setFirstFill(child.tess);
+            tessGeo.setFirstFill(child.tessGeo);
             firstGeom = false;
           }
-          tess.setLastFill(child.tess);
+          tessGeo.setLastFill(child.tessGeo);
         }  
 
-        if (0 < child.tess.lineVertexCount) {
+        if (0 < child.tessGeo.lineVertexCount) {
           if (firstStroke) {
-            tess.setFirstLine(child.tess);
+            tessGeo.setFirstLine(child.tessGeo);
             firstStroke = false;
           }          
-          tess.setLastLine(child.tess);
+          tessGeo.setLastLine(child.tessGeo);
         }
         
-        if (0 < child.tess.pointVertexCount) {
+        if (0 < child.tessGeo.pointVertexCount) {
           if (firstPoint) {
-            tess.setFirstPoint(child.tess);
+            tessGeo.setFirstPoint(child.tessGeo);
             firstPoint = false;
           }
-          tess.setLastPoint(child.tess);
+          tessGeo.setLastPoint(child.tessGeo);
         }           
       }
       
@@ -3174,8 +3174,8 @@ public class PShape3D extends PShape {
       // root shape. When this happens, the indices in the child shape need
       // to be restarted as well to reflect the new index offset.
       
-      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {
-        IndexCache cache = tess.fillIndexCache;
+      if (0 < tessGeo.fillVertexCount && 0 < tessGeo.fillIndexCount) {
+        IndexCache cache = tessGeo.fillIndexCache;
         for (int n = 0; n < cache.count; n++) {
           int ioffset = cache.indexOffset[n];
           int icount = cache.indexCount[n];
@@ -3185,18 +3185,18 @@ public class PShape3D extends PShape {
             root.fillVertexRel = 0;
             root.fillVertexOffset = root.fillVertexAbs;
             cache.indexOffset[n] = root.fillIndexOffset;
-          } else tess.incFillIndices(ioffset, ioffset + icount - 1, root.fillVertexRel); 
+          } else tessGeo.incFillIndices(ioffset, ioffset + icount - 1, root.fillVertexRel); 
           cache.vertexOffset[n] = root.fillVertexOffset;
                     
           root.fillIndexOffset += icount;          
           root.fillVertexAbs += vcount;
           root.fillVertexRel += vcount;
         }
-        tess.updateFillFromCache();
+        tessGeo.updateFillFromCache();
       }
             
-      if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {
-        IndexCache cache = tess.lineIndexCache;
+      if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
+        IndexCache cache = tessGeo.lineIndexCache;
         for (int n = 0; n < cache.count; n++) {
           int ioffset = cache.indexOffset[n];
           int icount = cache.indexCount[n];
@@ -3206,18 +3206,18 @@ public class PShape3D extends PShape {
             root.lineVertexRel = 0;
             root.lineVertexOffset = root.lineVertexAbs;
             cache.indexOffset[n] = root.lineIndexOffset;
-          } else tess.incLineIndices(ioffset, ioffset + icount - 1, root.lineVertexRel); 
+          } else tessGeo.incLineIndices(ioffset, ioffset + icount - 1, root.lineVertexRel); 
           cache.vertexOffset[n] = root.lineVertexOffset;          
           
           root.lineIndexOffset += icount;          
           root.lineVertexAbs += vcount;
           root.lineVertexRel += vcount;          
         }
-        tess.updateLineFromCache();
+        tessGeo.updateLineFromCache();
       }
             
-      if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {
-        IndexCache cache = tess.pointIndexCache;
+      if (0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount) {
+        IndexCache cache = tessGeo.pointIndexCache;
         for (int n = 0; n < cache.count; n++) {
           int ioffset = cache.indexOffset[n];
           int icount = cache.indexCount[n];
@@ -3227,20 +3227,20 @@ public class PShape3D extends PShape {
             root.pointVertexRel = 0;
             root.pointVertexOffset = root.pointVertexAbs;
             cache.indexOffset[n] = root.pointIndexOffset;
-          } else tess.incPointIndices(ioffset, ioffset + icount - 1, root.pointVertexRel); 
+          } else tessGeo.incPointIndices(ioffset, ioffset + icount - 1, root.pointVertexRel); 
           cache.vertexOffset[n] = root.pointVertexOffset;  
           
           root.pointIndexOffset += icount;          
           root.pointVertexAbs += vcount;
           root.pointVertexRel += vcount;                    
         }
-        tess.updatePointFromCache();
+        tessGeo.updatePointFromCache();
       }      
     }
     
-    hasFill = 0 < tess.fillVertexCount && 0 < tess.fillIndexCount;
-    hasLines = 0 < tess.lineVertexCount && 0 < tess.lineIndexCount; 
-    hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;            
+    hasFill = 0 < tessGeo.fillVertexCount && 0 < tessGeo.fillIndexCount;
+    hasLines = 0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount; 
+    hasPoints = 0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount;            
   }
   
   
@@ -3248,13 +3248,13 @@ public class PShape3D extends PShape {
   // shapes. The index ranges of the child shapes that share the vertex offset
   // are unified into a single range in the parent level.
   protected void buildFillIndexCache() {
-    IndexCache gcache = tess.fillIndexCache;    
+    IndexCache gcache = tessGeo.fillIndexCache;    
     int gindex = -1;
     gcache.clear(); 
     
     for (int i = 0; i < childCount; i++) {        
       PShape3D child = (PShape3D) children[i];
-      IndexCache ccache = child.tess.fillIndexCache;
+      IndexCache ccache = child.tessGeo.fillIndexCache;
       
       for (int n = 0; n < ccache.count; n++) {        
         if (gindex == -1) {
@@ -3277,13 +3277,13 @@ public class PShape3D extends PShape {
 
   
   protected void buildLineIndexCache() {
-    IndexCache gcache = tess.lineIndexCache;    
+    IndexCache gcache = tessGeo.lineIndexCache;    
     int gindex = -1;
     gcache.clear(); 
     
     for (int i = 0; i < childCount; i++) {        
       PShape3D child = (PShape3D) children[i];
-      IndexCache ccache = child.tess.lineIndexCache;
+      IndexCache ccache = child.tessGeo.lineIndexCache;
       
       for (int n = 0; n < ccache.count; n++) {        
         if (gindex == -1) {
@@ -3301,13 +3301,13 @@ public class PShape3D extends PShape {
 
   
   protected void buildPointIndexCache() {
-    IndexCache gcache = tess.pointIndexCache;    
+    IndexCache gcache = tessGeo.pointIndexCache;    
     int gindex = -1;
     gcache.clear(); 
     
     for (int i = 0; i < childCount; i++) {        
       PShape3D child = (PShape3D) children[i];
-      IndexCache ccache = child.tess.pointIndexCache;
+      IndexCache ccache = child.tessGeo.pointIndexCache;
       
       for (int n = 0; n < ccache.count; n++) {        
         if (gindex == -1) {
@@ -3336,22 +3336,22 @@ public class PShape3D extends PShape {
       context = pgl.getCurrentContext();
       
       // Now that we know, we can initialize the buffers with the correct size.
-      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {   
-        initFillBuffers(tess.fillVertexCount, tess.fillIndexCount);          
+      if (0 < tessGeo.fillVertexCount && 0 < tessGeo.fillIndexCount) {   
+        initFillBuffers(tessGeo.fillVertexCount, tessGeo.fillIndexCount);          
         fillVertCopyOffset = 0;
         fillIndCopyOffset = 0;
         copyFillGeometryToRoot();
       }
       
-      if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {   
-        initLineBuffers(tess.lineVertexCount, tess.lineIndexCount);
+      if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {   
+        initLineBuffers(tessGeo.lineVertexCount, tessGeo.lineIndexCount);
         lineVertCopyOffset = 0;
         lineIndCopyOffset = 0;
         copyLineGeometryToRoot();
       }
       
-      if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {   
-        initPointBuffers(tess.pointVertexCount, tess.pointIndexCount);
+      if (0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount) {   
+        initPointBuffers(tessGeo.pointVertexCount, tessGeo.pointIndexCount);
         pointVertCopyOffset = 0;
         pointIndCopyOffset = 0;
         copyPointGeometryToRoot();
@@ -3485,14 +3485,14 @@ public class PShape3D extends PShape {
         child.copyFillGeometryToRoot();
       }    
     } else {
-      if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {        
-        root.copyFillGeometry(root.fillVertCopyOffset, tess.fillVertexCount, 
-                              tess.fillVertices, tess.fillColors, tess.fillNormals, tess.fillTexcoords,
-                              tess.fillAmbient, tess.fillSpecular, tess.fillEmissive, tess.fillShininess);
-        root.fillVertCopyOffset += tess.fillVertexCount;
+      if (0 < tessGeo.fillVertexCount && 0 < tessGeo.fillIndexCount) {        
+        root.copyFillGeometry(root.fillVertCopyOffset, tessGeo.fillVertexCount, 
+                              tessGeo.fillVertices, tessGeo.fillColors, tessGeo.fillNormals, tessGeo.fillTexcoords,
+                              tessGeo.fillAmbient, tessGeo.fillSpecular, tessGeo.fillEmissive, tessGeo.fillShininess);
+        root.fillVertCopyOffset += tessGeo.fillVertexCount;
       
-        root.copyFillIndices(root.fillIndCopyOffset, tess.fillIndexCount, tess.fillIndices);
-        root.fillIndCopyOffset += tess.fillIndexCount;
+        root.copyFillIndices(root.fillIndCopyOffset, tessGeo.fillIndexCount, tessGeo.fillIndices);
+        root.fillIndCopyOffset += tessGeo.fillIndexCount;
       }
     }
   }
@@ -3505,13 +3505,13 @@ public class PShape3D extends PShape {
         child.updateRootGeometry();        
       } 
     } else {      
-      if (0 < tess.fillVertexCount) {    
+      if (0 < tessGeo.fillVertexCount) {    
         if (modifiedFillVertices) {
           if (root.fillVerticesCache == null) { 
             root.fillVerticesCache = new VertexCache(3, true);
           }            
           
-          root.fillVerticesCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillVertices);
+          root.fillVerticesCache.add(root.fillVertCopyOffset, tessGeo.fillVertexCount, tessGeo.fillVertices);
           modifiedFillVertices = false;
         } else if (root.fillVerticesCache != null && root.fillVerticesCache.hasData()) {
           root.copyFillVertices(root.fillVerticesCache.offset, root.fillVerticesCache.size, root.fillVerticesCache.floatData);
@@ -3522,7 +3522,7 @@ public class PShape3D extends PShape {
           if (root.fillColorsCache == null) { 
             root.fillColorsCache = new VertexCache(1, false);
           }            
-          root.fillColorsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillColors);
+          root.fillColorsCache.add(root.fillVertCopyOffset, tessGeo.fillVertexCount, tessGeo.fillColors);
           modifiedFillColors = false;            
         } else if (root.fillColorsCache != null && root.fillColorsCache.hasData()) {
           root.copyFillColors(root.fillColorsCache.offset, root.fillColorsCache.size, root.fillColorsCache.intData);
@@ -3533,7 +3533,7 @@ public class PShape3D extends PShape {
           if (root.fillNormalsCache == null) { 
             root.fillNormalsCache = new VertexCache(3, true);
           }            
-          root.fillNormalsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillNormals);            
+          root.fillNormalsCache.add(root.fillVertCopyOffset, tessGeo.fillVertexCount, tessGeo.fillNormals);            
           modifiedFillNormals = false;            
         } else if (root.fillNormalsCache != null && root.fillNormalsCache.hasData()) {
           root.copyFillNormals(root.fillNormalsCache.offset, root.fillNormalsCache.size, root.fillNormalsCache.floatData);
@@ -3544,7 +3544,7 @@ public class PShape3D extends PShape {
           if (root.fillTexCoordsCache == null) { 
             root.fillTexCoordsCache = new VertexCache(2, true);
           }            
-          root.fillTexCoordsCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillTexcoords);            
+          root.fillTexCoordsCache.add(root.fillVertCopyOffset, tessGeo.fillVertexCount, tessGeo.fillTexcoords);            
           modifiedFillTexCoords = false;
         } else if (root.fillTexCoordsCache != null && root.fillTexCoordsCache.hasData()) {
           root.copyFillTexCoords(root.fillTexCoordsCache.offset, root.fillTexCoordsCache.size, root.fillTexCoordsCache.floatData);
@@ -3555,7 +3555,7 @@ public class PShape3D extends PShape {
           if (root.fillAmbientCache == null) { 
             root.fillAmbientCache = new VertexCache(1, false);
           }            
-          root.fillAmbientCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillAmbient);            
+          root.fillAmbientCache.add(root.fillVertCopyOffset, tessGeo.fillVertexCount, tessGeo.fillAmbient);            
           modifiedFillAmbient = false;
         } else if (root.fillAmbientCache != null && root.fillAmbientCache.hasData()) {
           root.copyFillAmbient(root.fillAmbientCache.offset, root.fillAmbientCache.size, root.fillAmbientCache.intData);
@@ -3566,7 +3566,7 @@ public class PShape3D extends PShape {
           if (root.fillSpecularCache == null) { 
             root.fillSpecularCache = new VertexCache(1, false);
           }            
-          root.fillSpecularCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillSpecular);            
+          root.fillSpecularCache.add(root.fillVertCopyOffset, tessGeo.fillVertexCount, tessGeo.fillSpecular);            
           modifiedFillSpecular = false;
         } else if (root.fillSpecularCache != null && root.fillSpecularCache.hasData()) {
           root.copyFillSpecular(root.fillSpecularCache.offset, root.fillSpecularCache.size, root.fillSpecularCache.intData);
@@ -3577,7 +3577,7 @@ public class PShape3D extends PShape {
           if (root.fillEmissiveCache == null) { 
             root.fillEmissiveCache = new VertexCache(1, false);
           }            
-          root.fillEmissiveCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillEmissive);            
+          root.fillEmissiveCache.add(root.fillVertCopyOffset, tessGeo.fillVertexCount, tessGeo.fillEmissive);            
           modifiedFillEmissive = false;
         } else if (root.fillEmissiveCache != null && root.fillEmissiveCache.hasData()) {
           root.copyFillEmissive(root.fillEmissiveCache.offset, root.fillEmissiveCache.size, root.fillEmissiveCache.intData);
@@ -3588,7 +3588,7 @@ public class PShape3D extends PShape {
           if (root.fillShininessCache == null) { 
             root.fillShininessCache = new VertexCache(1, true);
           }            
-          root.fillShininessCache.add(root.fillVertCopyOffset, tess.fillVertexCount, tess.fillShininess);            
+          root.fillShininessCache.add(root.fillVertCopyOffset, tessGeo.fillVertexCount, tessGeo.fillShininess);            
           modifiedFillShininess = false;
         } else if (root.fillShininessCache != null && root.fillShininessCache.hasData()) {
           root.copyFillShininess(root.fillShininessCache.offset, root.fillShininessCache.size, root.fillShininessCache.floatData);
@@ -3596,12 +3596,12 @@ public class PShape3D extends PShape {
         }          
       } 
       
-      if (0 < tess.lineVertexCount) {
+      if (0 < tessGeo.lineVertexCount) {
         if (modifiedLineVertices) {
           if (root.lineVerticesCache == null) { 
             root.lineVerticesCache = new VertexCache(3, true);
           }            
-          root.lineVerticesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineVertices);
+          root.lineVerticesCache.add(root.lineVertCopyOffset, tessGeo.lineVertexCount, tessGeo.lineVertices);
           modifiedLineVertices = false;
         } else if (root.lineVerticesCache != null && root.lineVerticesCache.hasData()) {
           root.copyLineVertices(root.lineVerticesCache.offset, root.lineVerticesCache.size, root.lineVerticesCache.floatData);
@@ -3612,7 +3612,7 @@ public class PShape3D extends PShape {
           if (root.lineColorsCache == null) { 
             root.lineColorsCache = new VertexCache(1, false);
           }            
-          root.lineColorsCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineColors);
+          root.lineColorsCache.add(root.lineVertCopyOffset, tessGeo.lineVertexCount, tessGeo.lineColors);
           modifiedLineColors = false;            
         } else if (root.lineColorsCache != null && root.lineColorsCache.hasData()) {
           root.copyLineColors(root.lineColorsCache.offset, root.lineColorsCache.size, root.lineColorsCache.intData);
@@ -3623,7 +3623,7 @@ public class PShape3D extends PShape {
           if (root.lineAttributesCache == null) { 
             root.lineAttributesCache = new VertexCache(4, true);
           }            
-          root.lineAttributesCache.add(root.lineVertCopyOffset, tess.lineVertexCount, tess.lineDirWidths);            
+          root.lineAttributesCache.add(root.lineVertCopyOffset, tessGeo.lineVertexCount, tessGeo.lineDirWidths);            
           modifiedLineAttributes = false;
         } else if (root.lineAttributesCache != null && root.lineAttributesCache.hasData()) {
           root.copyLineAttributes(root.lineAttributesCache.offset, root.lineAttributesCache.size, root.lineAttributesCache.floatData);
@@ -3631,12 +3631,12 @@ public class PShape3D extends PShape {
         }      
       }
 
-      if (0 < tess.pointVertexCount) {
+      if (0 < tessGeo.pointVertexCount) {
         if (modifiedPointVertices) {
           if (root.pointVerticesCache == null) { 
             root.pointVerticesCache = new VertexCache(3, true);
           }            
-          root.pointVerticesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointVertices);
+          root.pointVerticesCache.add(root.pointVertCopyOffset, tessGeo.pointVertexCount, tessGeo.pointVertices);
           modifiedPointVertices = false;
         } else if (root.pointVerticesCache != null && root.pointVerticesCache.hasData()) {
           root.copyPointVertices(root.pointVerticesCache.offset, root.pointVerticesCache.size, root.pointVerticesCache.floatData);
@@ -3647,7 +3647,7 @@ public class PShape3D extends PShape {
           if (root.pointColorsCache == null) { 
             root.pointColorsCache = new VertexCache(1, false);
           }            
-          root.pointColorsCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointColors);
+          root.pointColorsCache.add(root.pointVertCopyOffset, tessGeo.pointVertexCount, tessGeo.pointColors);
           modifiedPointColors = false;            
         } else if (root.pointColorsCache != null && root.pointColorsCache.hasData()) {
           root.copyPointColors(root.pointColorsCache.offset, root.pointColorsCache.size, root.pointColorsCache.intData);
@@ -3658,7 +3658,7 @@ public class PShape3D extends PShape {
           if (root.pointAttributesCache == null) { 
             root.pointAttributesCache = new VertexCache(2, true);
           }            
-          root.pointAttributesCache.add(root.pointVertCopyOffset, tess.pointVertexCount, tess.pointSizes);            
+          root.pointAttributesCache.add(root.pointVertCopyOffset, tessGeo.pointVertexCount, tessGeo.pointSizes);            
           modifiedPointAttributes = false;
         } else if (root.pointAttributesCache != null && root.pointAttributesCache.hasData()) {
           root.copyPointAttributes(root.pointAttributesCache.offset, root.pointAttributesCache.size, root.pointAttributesCache.floatData);
@@ -3666,9 +3666,9 @@ public class PShape3D extends PShape {
         }        
       }
       
-      root.fillVertCopyOffset += tess.fillVertexCount;
-      root.lineVertCopyOffset += tess.lineVertexCount;
-      root.pointVertCopyOffset += tess.pointVertexCount;
+      root.fillVertCopyOffset += tessGeo.fillVertexCount;
+      root.lineVertCopyOffset += tessGeo.lineVertexCount;
+      root.pointVertCopyOffset += tessGeo.pointVertexCount;
     }
     
     modified = false;
@@ -3809,13 +3809,13 @@ public class PShape3D extends PShape {
         child.copyLineGeometryToRoot();
       }    
     } else {
-      if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {
-        root.copyLineGeometry(root.lineVertCopyOffset, tess.lineVertexCount, 
-                              tess.lineVertices, tess.lineColors, tess.lineDirWidths);        
-        root.lineVertCopyOffset += tess.lineVertexCount;
+      if (0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount) {
+        root.copyLineGeometry(root.lineVertCopyOffset, tessGeo.lineVertexCount, 
+                              tessGeo.lineVertices, tessGeo.lineColors, tessGeo.lineDirWidths);        
+        root.lineVertCopyOffset += tessGeo.lineVertexCount;
         
-        root.copyLineIndices(root.lineIndCopyOffset, tess.lineIndexCount, tess.lineIndices);
-        root.lineIndCopyOffset += tess.lineIndexCount;        
+        root.copyLineIndices(root.lineIndCopyOffset, tessGeo.lineIndexCount, tessGeo.lineIndices);
+        root.lineIndCopyOffset += tessGeo.lineIndexCount;        
       }
     }    
   }
@@ -3903,13 +3903,13 @@ public class PShape3D extends PShape {
         child.copyPointGeometryToRoot();
       }    
     } else {
-      if (0 < tess.pointVertexCount && 0 < tess.pointIndexCount) {
-        root.copyPointGeometry(root.pointVertCopyOffset, tess.pointVertexCount, 
-                               tess.pointVertices, tess.pointColors, tess.pointSizes);        
-        root.pointVertCopyOffset += tess.pointVertexCount;
+      if (0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount) {
+        root.copyPointGeometry(root.pointVertCopyOffset, tessGeo.pointVertexCount, 
+                               tessGeo.pointVertices, tessGeo.pointColors, tessGeo.pointSizes);        
+        root.pointVertCopyOffset += tessGeo.pointVertexCount;
         
-        root.copyPointIndices(root.pointIndCopyOffset, tess.pointIndexCount, tess.pointIndices);
-        root.pointIndCopyOffset += tess.pointIndexCount;        
+        root.copyPointIndices(root.pointIndCopyOffset, tessGeo.pointIndexCount, tessGeo.pointIndices);
+        root.pointIndCopyOffset += tessGeo.pointIndexCount;        
       }
     }
   }
@@ -4095,7 +4095,7 @@ public class PShape3D extends PShape {
     // The dispose() call will destroy all the geometry
     // arrays but will keep the index caches that are
     // needed by the render methods.
-    tess.dipose();    
+    tessGeo.dipose();    
     
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -4113,8 +4113,8 @@ public class PShape3D extends PShape {
         child.freeTessMaps();
       }
     } else {
-      if (in != null) {
-        in.freeTessMaps();
+      if (inGeo != null) {
+        inGeo.freeTessMaps();
       }
     }
   }
@@ -4209,7 +4209,7 @@ public class PShape3D extends PShape {
     PointShader shader = pg.getPointShader();
     shader.start(); 
     
-    IndexCache cache = tess.pointIndexCache;    
+    IndexCache cache = tessGeo.pointIndexCache;    
     for (int n = 0; n < cache.count; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
@@ -4232,7 +4232,7 @@ public class PShape3D extends PShape {
     LineShader shader = pg.getLineShader();
     shader.start(); 
     
-    IndexCache cache = tess.lineIndexCache;
+    IndexCache cache = tessGeo.lineIndexCache;
     for (int n = 0; n < cache.count; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
@@ -4264,7 +4264,7 @@ public class PShape3D extends PShape {
     FillShader shader = pg.getFillShader(pg.lights, tex != null);
     shader.start();
     
-    IndexCache cache = tess.fillIndexCache;
+    IndexCache cache = tessGeo.fillIndexCache;
     for (int n = 0; n < cache.count; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
