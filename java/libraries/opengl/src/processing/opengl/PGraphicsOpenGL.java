@@ -8324,66 +8324,33 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
     
-
+    void updateLineFromCache() {
+      firstLineVertex = lineIndexCache.vertexOffset[0];
+      lastLineVertex = firstLineVertex + lineVertexCount - 1;  
+      
+      firstLineIndex = lineIndexCache.indexOffset[0];
+      lastLineIndex = firstLineIndex + lineIndexCount - 1;       
+    }
     
+    void incLineIndices(int i0, int i1, int inc) {
+      for (int i = i0; i <= i1; i++) {
+        lineIndices[i] += inc;
+      }
+    }
     
-    int setLineVertex(int offset) {
-      firstLineVertex = 0;
-      if (0 < offset) {
-        firstLineVertex = offset + 1;
-      }
-      lastLineVertex = firstLineVertex + lineVertexCount - 1;
-      return lastLineVertex;
+    void updatePointFromCache() {
+      firstPointVertex = pointIndexCache.vertexOffset[0];
+      lastPointVertex = firstPointVertex + pointVertexCount - 1;  
+      
+      firstPointIndex = pointIndexCache.indexOffset[0];
+      lastPointIndex = firstPointIndex + pointIndexCount - 1;       
     }
-
-    int setLineIndex(int voffset, int ioffset) {
-      firstLineIndex = 0;
-      if (0 < ioffset) {
-        firstLineIndex = ioffset + 1;
-      }
-
-      if (0 < voffset) {
-        // The indices are update to take into account all the previous
-        // shapes in the hierarchy, as the entire geometry will be stored
-        // contiguously in a single VBO in the root node.
-        for (int i = 0; i < lineIndexCount; i++) {
-          lineIndices[i] += voffset;
-        }
-      }
-
-      lastLineIndex = firstLineIndex + lineIndexCount - 1;
-      return lastLineIndex;
-    }
-
-    int setPointVertex(int offset) {
-      firstPointVertex = 0;
-      if (0 < offset) {
-        firstPointVertex = offset + 1;
-      }
-      lastPointVertex = firstPointVertex + pointVertexCount - 1;
-      return lastPointVertex;
-    }
-
-    int setPointIndex(int voffset, int ioffset) {
-      firstPointIndex = 0;
-      if (0 < ioffset) {
-        firstPointIndex = ioffset + 1;
-      }
-
-      if (0 < voffset) {
-        // The indices are update to take into account all the previous
-        // shapes in the hierarchy, as the entire geometry will be stored
-        // contiguously in a single VBO in the root node.
-        for (int i = 0; i < pointIndexCount; i++) {
-          pointIndices[i] += voffset;
-        }
-      }
-
-      lastPointIndex = firstPointIndex + pointIndexCount - 1;
-      return lastPointIndex;
-    }
-
     
+    void incPointIndices(int i0, int i1, int inc) {
+      for (int i = i0; i <= i1; i++) {
+        pointIndices[i] += inc;
+      }
+    }
     
     // -----------------------------------------------------------------
     //
