@@ -128,9 +128,9 @@ public class PShape3D extends PShape {
   protected int pointIndCopyOffset;
 
   protected int fillIndexOffset;
-  protected int lastFillIndexOffset;
-  protected int fillVertexRel;
   protected int fillVertexOffset;
+  protected int fillVertexAbs;
+  protected int fillVertexRel;  
   
   protected int lastLineVertexOffset;
   protected int lastLineIndexOffset; 
@@ -3072,9 +3072,9 @@ public class PShape3D extends PShape {
     if (root == this && parent == null) {
       // We recursively calculate the total number of vertices and indices.
       fillIndexOffset = 0;
-      lastFillIndexOffset = 0;      
-      fillVertexRel = 0;
-      fillVertexOffset = 0;  
+      fillVertexOffset = 0;
+      fillVertexAbs = 0;      
+      fillVertexRel = 0;      
       
       lastLineVertexOffset = 0;
       lastLineIndexOffset = 0;
@@ -3159,45 +3159,40 @@ public class PShape3D extends PShape {
       buildFillIndexCache();
       buildLineIndexCache();
       buildPointIndexCache();
-    } else {
+    } else { // LEAF SHAPE (family either GEOMETRY, PATH or PRIMITIVE)
+      
       // The index caches for fill, line and point geometry are updated
       // in order to reflect the fact that all the vertices will be stored
       // in a single VBO in the root shape.
+      // This update works as follows (the methodology is the same for
+      // fill, line and point): the VertexAbs variable in the root shape 
+      // stores the index of the last vertex up to this shape (plus one)
+      // without taking into consideration the MAX_VERTEX_INDEX limit, so
+      // it effectively runs over the entire range.
+      // VertexRel, on the other hand, is reset every time the limit is
+      // exceeded, therefore creating the start of a new index group in the
+      // root shape. When this happens, the indices in the child shape need
+      // to be restarted as well to reflect the new index offset.
+      
       if (0 < tess.fillVertexCount && 0 < tess.fillIndexCount) {
         IndexCache cache = tess.fillIndexCache;
         for (int n = 0; n < cache.count; n++) {
           int ioffset = cache.indexOffset[n];
           int icount = cache.indexCount[n];
-          //int voffset = cache.vertexOffset[n];
           int vcount = cache.vertexCount[n];
 
-          if (PGL.MAX_VERTEX_INDEX1 <= root.fillVertexRel + vcount) {
+          if (PGL.MAX_VERTEX_INDEX1 <= root.fillVertexRel + vcount) {            
             root.fillVertexRel = 0;
-            //root.firstFillVertexAbs = root.lastFillVertexOffset + 1;          
-          }
-          
-          //root.lastFillVertexOffset = tess.setFillVertex(root.lastFillVertexOffset);              
-          //root.lastFillIndexOffset = tess.setFillIndex(root.firstFillVertexRel, root.lastFillIndexOffset);
-          
-          if (0 < root.fillVertexRel) {
-            for (int i = 0; i < icount; i++) {
-              tess.fillIndices[ioffset + i] += root.fillVertexRel;
-            }          
-          }
-          cache.indexOffset[n] = root.fillIndexOffset;
+            root.fillVertexOffset = root.fillVertexAbs;
+            cache.indexOffset[n] = root.fillIndexOffset;
+          } else tess.incFillIndices(ioffset, ioffset + icount - 1, root.fillVertexRel); 
           cache.vertexOffset[n] = root.fillVertexOffset;
                     
           root.fillIndexOffset += icount;          
-          root.fillVertexOffset += vcount;
+          root.fillVertexAbs += vcount;
           root.fillVertexRel += vcount;
-        //addFillIndexBlock(tess.lastFillIndex - tess.firstFillIndex + 1, tess.firstFillIndex, root.firstFillVertexAbs);
         }
-        tess.firstFillVertex = cache.vertexOffset[0];
-        tess.lastFillVertex = tess.firstFillVertex + tess.fillVertexCount;  
-        
-        tess.firstFillIndex = cache.indexOffset[0];
-        tess.lastFillIndex = tess.firstFillIndex + tess.fillIndexCount;
-        
+        tess.updateFillFromCache();
       }
             
       if (0 < tess.lineVertexCount && 0 < tess.lineIndexCount) {
@@ -3229,18 +3224,11 @@ public class PShape3D extends PShape {
     hasLines = 0 < tess.lineVertexCount && 0 < tess.lineIndexCount; 
     hasPoints = 0 < tess.pointVertexCount && 0 < tess.pointIndexCount;            
   }
-
-  
-  // Adds one fill index block to a geometry shape.
-//  protected void addFillIndexBlock(int icount, int ioffset, int voffset) {
-//    fillIndexBlocks.clear(); 
-//    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
-//    fillIndexBlocks.add(data);
-//  }    
   
   
   // Builds the index cache for a group shape, using the caches of the child
-  // shapes.
+  // shapes. The index ranges of the child shapes that share the vertex offset
+  // are unified into a single range in the parent level.
   protected void buildFillIndexCache() {
     IndexCache gcache = tess.fillIndexCache;    
     int gindex = -1;
@@ -3255,6 +3243,11 @@ public class PShape3D extends PShape {
           gindex = gcache.addNew(ccache, n);
         } else {
           if (gcache.vertexOffset[gindex] == ccache.vertexOffset[n]) {
+            // When the vertex offsets are the same, this means that the 
+            // current index range in the group shape can be extended to 
+            // include either the index range in the current child shape.
+            // This is a result of how the indices are updated for the
+            // leaf shapes in aggregateImpl().
             gcache.incCounts(gindex, ccache.indexCount[n], ccache.vertexCount[n]);
           } else {
             gindex = gcache.addNew(ccache, n);
@@ -3263,16 +3256,8 @@ public class PShape3D extends PShape {
       }
     }    
   }
-  
-  
-  // Adds one line index block to a geometry shape.
-//  protected void addLineIndexBlock(int icount, int ioffset, int voffset) {
-//    lineIndexBlocks.clear(); 
-//    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
-//    lineIndexBlocks.add(data);
-//  }    
-  
 
+  
   protected void buildLineIndexCache() {
     IndexCache gcache = tess.lineIndexCache;    
     int gindex = -1;
@@ -3296,14 +3281,6 @@ public class PShape3D extends PShape {
     }        
   }  
 
-  
-  // Adds one point index block to a geometry shape.
-//  protected void addPointIndexBlock(int icount, int ioffset, int voffset) {
-//    pointIndexBlocks.clear(); 
-//    IndexBlock data = new IndexBlock(icount, ioffset, voffset);
-//    pointIndexBlocks.add(data);
-//  }    
-  
   
   protected void buildPointIndexCache() {
     IndexCache gcache = tess.pointIndexCache;    
