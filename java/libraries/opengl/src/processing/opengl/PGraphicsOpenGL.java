@@ -2305,6 +2305,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setTessGeometry(tessGeo);
     tessellator.setFill(fill || textureImage != null);
     tessellator.setStroke(stroke);
+    tessellator.setStrokeColor(strokeColor);
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
@@ -2357,6 +2358,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setTessGeometry(tessGeo);
     tessellator.setFill(fill || textureImage != null);
     tessellator.setStroke(stroke);
+    tessellator.setStrokeColor(strokeColor);
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
@@ -2546,8 +2548,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addBezierVertex(x2, y2, z2,
                           x3, y3, z3,
@@ -2566,8 +2568,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);    
     inGeo.addQuadraticVertex(cx, cy, cz,
                              x3, y3, z3,
@@ -2586,8 +2588,8 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void curveVertex(float x, float y, float z) {
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addCurveVertex(x, y, z,
                          fill, stroke, curveDetail, vertexCode(), shape); 
@@ -2608,8 +2610,8 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(POINTS);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);     
     inGeo.addPoint(x, y, z, fill, stroke);
     endShape();
@@ -2626,8 +2628,8 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(LINES);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addLine(x1, y1, z1,
                   x2, y2, z2,
@@ -2641,8 +2643,8 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(TRIANGLES);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addTriangle(x1, y1, 0,
                       x2, y2, 0,
@@ -2657,8 +2659,8 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(QUADS);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addQuad(x1, y1, 0,
                   x2, y2, 0,
@@ -2678,8 +2680,8 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(QUADS);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addRect(a, b, c, d,
                   fill, stroke, rectMode);    
@@ -2692,8 +2694,8 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(POLYGON);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addRect(a, b, c, d,
                   tl, tr, br, bl,
@@ -2714,8 +2716,8 @@ public class PGraphicsOpenGL extends PGraphics {
      beginShape(TRIANGLE_FAN);
      defaultEdges = false;
      normalMode = NORMAL_MODE_SHAPE;
-     inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                     ambientColor, specularColor, emissiveColor, shininess);
+     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                       ambientColor, specularColor, emissiveColor, shininess);
      inGeo.setNormal(normalX, normalY, normalZ);     
      inGeo.addEllipse(a, b, c, d, fill, stroke, ellipseMode);
      endShape();
@@ -2729,8 +2731,8 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(TRIANGLE_FAN);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);     
     inGeo.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
     endShape();    
@@ -2747,8 +2749,8 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(QUADS);
     defaultEdges = false;
     normalMode = NORMAL_MODE_VERTEX;
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);    
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);    
     inGeo.addBox(w, h, d, fill, stroke);
     endShape();
   }
@@ -2765,8 +2767,8 @@ public class PGraphicsOpenGL extends PGraphics {
     beginShape(TRIANGLES);
     defaultEdges = false;
     normalMode = NORMAL_MODE_VERTEX;
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                    ambientColor, specularColor, emissiveColor, shininess);    
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);    
     int[] indices = inGeo.addSphere(r, sphereDetailU, sphereDetailV, fill, stroke);    
     endShape(indices);
   }
@@ -6180,7 +6182,8 @@ public class PGraphicsOpenGL extends PGraphics {
     
     int[][] pointIndices;
     int firstPointIndex;
-    int[][] lineIndices;
+    int[][] lineIndices0;
+    int[][] lineIndices1;
     int firstLineIndex;
     int[][] fillIndices;
     float[][] fillWeights;
@@ -6190,7 +6193,8 @@ public class PGraphicsOpenGL extends PGraphics {
       in = null;
       tess = null;      
       pointIndices = null;
-      lineIndices = null;
+      lineIndices0 = null;
+      lineIndices1 = null;
       fillIndices = null;
       fillWeights = null;
       firstPointIndex = -1;
@@ -6202,7 +6206,8 @@ public class PGraphicsOpenGL extends PGraphics {
       this.in = in;
       this.tess = tess;
       pointIndices = new int[in.vertexCount][0];
-      lineIndices = new int[in.vertexCount][0];
+      lineIndices0 = new int[in.vertexCount][0];
+      lineIndices1 = new int[in.vertexCount][0];
       fillIndices = new int[in.vertexCount][0];
       fillWeights = new float[in.vertexCount][0];
     }
@@ -6211,7 +6216,8 @@ public class PGraphicsOpenGL extends PGraphics {
       in = null;
       tess = null;
       pointIndices = null;
-      lineIndices = null;
+      lineIndices0 = null;
+      lineIndices1 = null;
       fillIndices = null;
       fillWeights = null;
     }
@@ -6265,8 +6271,8 @@ public class PGraphicsOpenGL extends PGraphics {
       pointIndices[inIdx] = indices;
     }
     
-    void addLineIndex(int inIdx, int tessIdx) {
-      int[] indices = lineIndices[inIdx];
+    void addLineIndex0(int inIdx, int tessIdx) {
+      int[] indices = lineIndices0[inIdx];
       int pos;
       if (indices.length == 0) {
         indices = new int[1];
@@ -6274,12 +6280,28 @@ public class PGraphicsOpenGL extends PGraphics {
       } else {
         int len = indices.length;
         indices = new int[len + 1];
-        PApplet.arrayCopy(lineIndices[inIdx], indices, len);      
+        PApplet.arrayCopy(lineIndices0[inIdx], indices, len);      
         pos = len;
       }
       indices[pos] = tessIdx;
-      lineIndices[inIdx] = indices; 
+      lineIndices0[inIdx] = indices; 
     }
+    
+    void addLineIndex1(int inIdx, int tessIdx) {
+      int[] indices = lineIndices1[inIdx];
+      int pos;
+      if (indices.length == 0) {
+        indices = new int[1];
+        pos = 0;
+      } else {
+        int len = indices.length;
+        indices = new int[len + 1];
+        PApplet.arrayCopy(lineIndices1[inIdx], indices, len);      
+        pos = len;
+      }
+      indices[pos] = tessIdx;
+      lineIndices1[inIdx] = indices; 
+    }    
         
     void addFillIndex(int inIdx, int tessIdx, float weight) {
       int[] indices = fillIndices[inIdx];
@@ -6309,10 +6331,12 @@ public class PGraphicsOpenGL extends PGraphics {
     
     void setVertex(int inIdx, float x, float y, float z) {
       int[] indices;
+      int[] indices1;
       float[] vertices;
+      float[] attribs;
             
       indices = pointIndices[inIdx];
-      vertices = tess.pointVertices; 
+      vertices = tess.pointVertices;      
       for (int i = 0; i < indices.length; i++) {
         int tessIdx = indices[i];
         vertices[3 * tessIdx + 0] = x;
@@ -6320,13 +6344,20 @@ public class PGraphicsOpenGL extends PGraphics {
         vertices[3 * tessIdx + 2] = z;        
       } 
       
-      indices = lineIndices[inIdx];
+      indices = lineIndices0[inIdx];
+      indices1 = lineIndices1[inIdx];      
       vertices = tess.lineVertices;
+      attribs = tess.lineDirWidths;
       for (int i = 0; i < indices.length; i++) {
         int tessIdx = indices[i];
         vertices[3 * tessIdx + 0] = x;
         vertices[3 * tessIdx + 1] = y;
-        vertices[3 * tessIdx + 2] = z;        
+        vertices[3 * tessIdx + 2] = z;
+        
+        int tessIdx1 = indices1[i];
+        attribs[4 * tessIdx1 + 0] = x;
+        attribs[4 * tessIdx1 + 1] = y;
+        attribs[4 * tessIdx1 + 2] = z;        
       }     
       
       vertices = tess.fillVertices;
@@ -6445,7 +6476,7 @@ public class PGraphicsOpenGL extends PGraphics {
       }      
     }
     
-    void setStroke(int inIdx, int stroke) {      
+    void setStrokeColor(int inIdx, int stroke) {      
       int[] indices;
       int[] colors;
             
@@ -6456,17 +6487,46 @@ public class PGraphicsOpenGL extends PGraphics {
         colors[tessIdx] = stroke;
       } 
       
-      indices = lineIndices[inIdx];
-      colors = tess.lineColors; 
+      colors = tess.lineColors;      
+      indices = lineIndices0[inIdx];       
       for (int i = 0; i < indices.length; i++) {
         int tessIdx = indices[i];
         colors[tessIdx] = stroke;
-      } 
+      }
+      indices = lineIndices1[inIdx];       
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        colors[tessIdx] = stroke;
+      }      
     }
     
     void setStrokeWeight(int inIdx, float weight) {
+      int[] indices;
+      float[] attribs;      
       
-    }   
+      float weight0 = in.sweights[inIdx]; 
+      float resizeFactor = weight / weight0;
+      
+      indices = pointIndices[inIdx];
+      attribs = tess.pointSizes; 
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        attribs[2 * tessIdx + 0] *= resizeFactor;
+        attribs[2 * tessIdx + 1] *= resizeFactor;
+      }      
+      
+      attribs = tess.lineDirWidths;
+      indices = lineIndices0[inIdx];
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        attribs[4 * tessIdx + 3] *= resizeFactor;
+      }
+      indices = lineIndices1[inIdx];
+      for (int i = 0; i < indices.length; i++) {
+        int tessIdx = indices[i];
+        attribs[4 * tessIdx + 3] *= resizeFactor;
+      }      
+    }    
     
     void setAmbient(int inIdx, int ambient) {
       int[] colors = tess.fillAmbient;
@@ -6510,8 +6570,25 @@ public class PGraphicsOpenGL extends PGraphics {
       }           
     }
     
-    void setShininess(int inIdx, float weight) {
+    void setShininess(int inIdx, float shine) {
+      float[] shininess = tess.fillShininess;
       
+      if (-1 < firstFillIndex) {
+        int tessIdx = firstFillIndex + inIdx;
+        shininess[tessIdx] = shine;
+      } else {
+        float shine0 = in.shininess[inIdx];
+        int[] indices = fillIndices[inIdx];
+        float[] weights = fillWeights[inIdx];
+        for (int i = 0; i < indices.length; i++) {
+          int tessIdx = indices[i];
+          float weight = weights[i];
+          float tshine0 = shininess[tessIdx];
+          float tshine = tshine0 + weight * (shine - shine0);
+          
+          shininess[tessIdx] = tshine;
+        }    
+      }
     } 
     
     void setColorARGB(int[] colors, int fill, int fill0, int[] indices, float[] weights) {
@@ -6663,7 +6740,7 @@ public class PGraphicsOpenGL extends PGraphics {
       normals = null;
       texcoords = null;
       scolors = null;
-      scolors = null;
+      sweights = null;
       ambient = null;
       specular = null;
       emissive = null;
@@ -7432,16 +7509,10 @@ public class PGraphicsOpenGL extends PGraphics {
     
     // -----------------------------------------------------------------
     //
-    // Tess maps    
-    
-   
-    
-    // -----------------------------------------------------------------
-    //
     // Primitives
     
-    void setColors(int fillColor, int strokeColor, float strokeWeight,
-                   int ambientColor, int specularColor, int emissiveColor, float shininessFactor) {
+    void setMaterial(int fillColor, int strokeColor, float strokeWeight,
+                     int ambientColor, int specularColor, int emissiveColor, float shininessFactor) {
       this.fillColor = fillColor;
       this.strokeColor = strokeColor; 
       this.strokeWeight = strokeWeight;
@@ -8724,7 +8795,7 @@ public class PGraphicsOpenGL extends PGraphics {
     //
     // Add line geometry
     
-    void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx, int rgba) {
+    void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx, int rgba, float weight) {
       int index;
 
       index = 3 * inIdx0;
@@ -8758,18 +8829,16 @@ public class PGraphicsOpenGL extends PGraphics {
         index = 4 * tessIdx;
         lineDirWidths[index++] = x1;
         lineDirWidths[index++] = y1;
-        lineDirWidths[index  ] = z1;
+        lineDirWidths[index  ] = z1;         
       }
 
       lineColors[tessIdx] = rgba;
+      lineDirWidths[4 * tessIdx + 3] = weight;
       
       if (renderMode == RETAINED) {
-        in.tessMap.addLineIndex(inIdx0, tessIdx);
+        in.tessMap.addLineIndex0(inIdx0, tessIdx);
+        in.tessMap.addLineIndex1(inIdx1, tessIdx);
       }
-    }
-
-    void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx) {
-      putLineVertex(in, inIdx0, inIdx1, tessIdx, in.scolors[inIdx0]);
     }
     
     // -----------------------------------------------------------------
@@ -9096,6 +9165,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     boolean fill;
     boolean stroke;
+    int strokeColor;
     float strokeWeight;
     int strokeJoin;
     int strokeCap;
@@ -9123,6 +9193,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void setStroke(boolean stroke) {
       this.stroke = stroke;
+    }
+    
+    void setStrokeColor(int color) {
+      this.strokeColor = PGL.javaToNativeARGB(color);
     }
 
     void setStrokeWeight(float weight) {
@@ -9317,7 +9391,7 @@ public class PGraphicsOpenGL extends PGraphics {
         for (int ln = 0; ln < lineCount; ln++) {
           int i0 = first + 2 * ln + 0;
           int i1 = first + 2 * ln + 1;
-          index = addLine(i0, i1, index);
+          index = addLine(i0, i1, index, false);
         }
       }
     }
@@ -9332,14 +9406,14 @@ public class PGraphicsOpenGL extends PGraphics {
         int index = tess.lineIndexCache.getLast();
         for (int i = in.firstEdge; i <= in.lastEdge; i++) {
           int[] edge = in.edges[i];
-          index = addLine(edge[0], edge[1], index);
+          index = addLine(edge[0], edge[1], index, true);
         }
       }
     }
 
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
-    int addLine(int i0, int i1, int index) {
+    int addLine(int i0, int i1, int index, boolean constStroke) {
       IndexCache cache = tess.lineIndexCache;
       int count = cache.vertexCount[index];
       if (PGL.MAX_VERTEX_INDEX1 <= count + 4) {
@@ -9349,19 +9423,24 @@ public class PGraphicsOpenGL extends PGraphics {
       }
       int iidx = cache.indexOffset[index] + cache.indexCount[index];
       int vidx = cache.vertexOffset[index] + cache.vertexCount[index];
+      int color;
+      float weight;
       
-      tess.putLineVertex(in, i0, i1, vidx);
-      tess.lineDirWidths[4 * vidx + 3] = +strokeWeight/2;
+      color = constStroke ? strokeColor : in.scolors[i0];
+      weight = constStroke ? strokeWeight : in.sweights[i0];      
+      
+      tess.putLineVertex(in, i0, i1, vidx, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 0);      
       
       vidx++;
-      tess.putLineVertex(in, i0, i1, vidx);
-      tess.lineDirWidths[4 * vidx + 3] = -strokeWeight/2;
+      tess.putLineVertex(in, i0, i1, vidx, color, -weight/2);
       tess.lineIndices[iidx++] = (short) (count + 1);
       
+      color = constStroke ? strokeColor : in.scolors[i1];
+      weight = constStroke ? strokeWeight : in.sweights[i1];
+      
       vidx++;
-      tess.putLineVertex(in, i1, i0, vidx);
-      tess.lineDirWidths[4 * vidx + 3] = -strokeWeight/2;
+      tess.putLineVertex(in, i1, i0, vidx, color, -weight/2);
       tess.lineIndices[iidx++] = (short) (count + 2);
       
       // Starting a new triangle re-using prev vertices.
@@ -9369,8 +9448,7 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.lineIndices[iidx++] = (short) (count + 1);
 
       vidx++;
-      tess.putLineVertex(in, i1, i0, vidx);
-      tess.lineDirWidths[4 * vidx + 3] = +strokeWeight/2;
+      tess.putLineVertex(in, i1, i0, vidx, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 3);
       
       cache.incCounts(index, 6, 4);
