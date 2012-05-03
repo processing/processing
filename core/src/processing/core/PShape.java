@@ -1148,6 +1148,16 @@ public class PShape implements PConstants {
     }
   }
 
+  // TODO: finish implementing partial updates in PShape3D
+  protected void modified(int i0, int i1) {
+    modified = true;
+    // firstModified = i0;
+    // lastModified = i1;
+    if (parent != null) {
+      parent.modified(i0, i1);
+    }
+  }  
+  
   protected void notModified() {
     modified = false;
     for (int i = 0; i < childCount; i++) {
@@ -1369,11 +1379,11 @@ public class PShape implements PConstants {
   }
 
   
-  public void setStroke(int index, int fill) {
-    vertices[index][SA] = ((fill >> 24) & 0xFF) / 255.0f; 
-    vertices[index][SR] = ((fill >> 16) & 0xFF) / 255.0f;
-    vertices[index][SG] = ((fill >>  8) & 0xFF) / 255.0f;
-    vertices[index][SB] = ((fill >>  0) & 0xFF) / 255.0f;   
+  public void setStroke(int index, int stroke) {
+    vertices[index][SA] = ((stroke >> 24) & 0xFF) / 255.0f; 
+    vertices[index][SR] = ((stroke >> 16) & 0xFF) / 255.0f;
+    vertices[index][SG] = ((stroke >>  8) & 0xFF) / 255.0f;
+    vertices[index][SB] = ((stroke >>  0) & 0xFF) / 255.0f;   
   }  
   
   
@@ -1384,8 +1394,8 @@ public class PShape implements PConstants {
 
   public void setStrokeWeight(int index, float weight) {
     vertices[index][SW] = weight;
-  }
-
+  }  
+  
   
   public int getAmbient(int index) {
     int r = (int) (vertices[index][AR] * 255);
@@ -1395,10 +1405,10 @@ public class PShape implements PConstants {
   }
 
   
-  public void setAmbient(int index, int fill) {
-    vertices[index][AR] = ((fill >> 16) & 0xFF) / 255.0f;
-    vertices[index][AG] = ((fill >>  8) & 0xFF) / 255.0f;
-    vertices[index][AB] = ((fill >>  0) & 0xFF) / 255.0f;  
+  public void setAmbient(int index, int ambient) {
+    vertices[index][AR] = ((ambient >> 16) & 0xFF) / 255.0f;
+    vertices[index][AG] = ((ambient >>  8) & 0xFF) / 255.0f;
+    vertices[index][AB] = ((ambient >>  0) & 0xFF) / 255.0f;  
   }    
   
   public int getSpecular(int index) {
@@ -1409,10 +1419,10 @@ public class PShape implements PConstants {
   }
 
   
-  public void setSpecular(int index, int fill) {
-    vertices[index][SPR] = ((fill >> 16) & 0xFF) / 255.0f;
-    vertices[index][SPG] = ((fill >>  8) & 0xFF) / 255.0f;
-    vertices[index][SPB] = ((fill >>  0) & 0xFF) / 255.0f;  
+  public void setSpecular(int index, int specular) {
+    vertices[index][SPR] = ((specular >> 16) & 0xFF) / 255.0f;
+    vertices[index][SPG] = ((specular >>  8) & 0xFF) / 255.0f;
+    vertices[index][SPB] = ((specular >>  0) & 0xFF) / 255.0f;  
   }    
     
   
@@ -1424,11 +1434,21 @@ public class PShape implements PConstants {
   }
 
   
-  public void setEmissive(int index, int fill) {
-    vertices[index][ER] = ((fill >> 16) & 0xFF) / 255.0f;
-    vertices[index][EG] = ((fill >>  8) & 0xFF) / 255.0f;
-    vertices[index][EB] = ((fill >>  0) & 0xFF) / 255.0f;  
+  public void setEmissive(int index, int emissive) {
+    vertices[index][ER] = ((emissive >> 16) & 0xFF) / 255.0f;
+    vertices[index][EG] = ((emissive >>  8) & 0xFF) / 255.0f;
+    vertices[index][EB] = ((emissive >>  0) & 0xFF) / 255.0f;  
   }     
+  
+  
+  public float getShininess(int index) {
+    return vertices[index][SHINE];
+  }
+
+  
+  public void setShininess(int index, float shine) {
+    vertices[index][SHINE] = shine;
+  }
   
   
   public int[] getVertexCodes() {

@@ -1510,7 +1510,7 @@ public class PShape3D extends PShape {
   
   
   public void rotate(float angle, float v0, float v1, float v2) {
-    transform(ROTATE, v0, v1, v2);
+    transform(ROTATE, angle, v0, v1, v2);
   }
   
   
@@ -1755,8 +1755,8 @@ public class PShape3D extends PShape {
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addBezierVertex(x2, y2, z2,
                        x3, y3, z3,
@@ -1774,8 +1774,8 @@ public class PShape3D extends PShape {
   
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);    
     inGeo.addQuadraticVertex(cx, cy, cz,
                           x3, y3, z3,
@@ -1808,8 +1808,8 @@ public class PShape3D extends PShape {
 
   
   public void curveVertex(float x, float y, float z) {
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addCurveVertex(x, y, z,
                       fill, stroke, curveDetail, vertexCode(), kind); 
@@ -1972,7 +1972,7 @@ public class PShape3D extends PShape {
     if (hasFill) modifiedFillColors = true;
     modified();    
   }  
-
+  
   
   public int getStroke(int index) {
     updateTessellation();
@@ -1985,7 +1985,7 @@ public class PShape3D extends PShape {
     updateTessellation();
     
     int nstroke = PGL.javaToNativeARGB(stroke);
-    inGeo.tessMap.setStroke(index, nstroke);
+    inGeo.tessMap.setStrokeColor(index, nstroke);
     inGeo.scolors[index] = nstroke;
     
     if (hasPoints) modifiedPointColors = true;
@@ -2003,14 +2003,14 @@ public class PShape3D extends PShape {
 
   public void setStrokeWeight(int index, float weight) {
     updateTessellation();
-    
+        
     inGeo.tessMap.setStrokeWeight(index, weight);
     inGeo.sweights[index] = weight;
     
-    if (hasPoints) modifiedPointAttributes = true;
-    if (hasLines) modifiedLineAttributes = true;
-    modified();       
-  }
+    if (hasPoints) modifiedPointColors = true;
+    if (hasLines) modifiedLineColors = true;
+    modified();  
+  }   
 
   
   public int getAmbient(int index) {
@@ -2440,6 +2440,7 @@ public class PShape3D extends PShape {
         tessellator.setTessGeometry(tessGeo);
         tessellator.setFill(fill || texture != null);
         tessellator.setStroke(stroke);
+        tessellator.setStrokeColor(strokeColor);
         tessellator.setStrokeWeight(strokeWeight);
         tessellator.setStrokeCap(strokeCap);
         tessellator.setStrokeJoin(strokeJoin);       
@@ -2544,8 +2545,8 @@ public class PShape3D extends PShape {
       z = params[2];
     }
     
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addPoint(x, y, z, fill, stroke);    
     inGeo.initTessMap(tessGeo);    
@@ -2570,8 +2571,8 @@ public class PShape3D extends PShape {
       z2 = params[5];      
     }
     
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addLine(x1, y1, z1,
                x2, y2, z2,
@@ -2594,8 +2595,8 @@ public class PShape3D extends PShape {
       y3 = params[5];       
     }
 
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);  
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);  
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addTriangle(x1, y1, 0,
                    x2, y2, 0,
@@ -2622,8 +2623,8 @@ public class PShape3D extends PShape {
       y4 = params[7];            
     }
 
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addQuad(x1, y1, 0,
                x2, y2, 0,
@@ -2664,8 +2665,8 @@ public class PShape3D extends PShape {
       rounded = true;
     }
 
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     if (rounded) {
       inGeo.addRect(a, b, c, d,
@@ -2691,8 +2692,8 @@ public class PShape3D extends PShape {
       d = params[3];      
     }
 
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);    
     inGeo.addEllipse(a, b, c, d, fill, stroke, ellipseMode);
     inGeo.initTessMap(tessGeo);
@@ -2712,8 +2713,8 @@ public class PShape3D extends PShape {
       stop = params[5];      
     }    
     
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
     inGeo.addArc(a, b, c, d, start, stop, fill, stroke, ellipseMode);
     inGeo.initTessMap(tessGeo);
@@ -2731,8 +2732,8 @@ public class PShape3D extends PShape {
       d = params[2];
     }
         
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);    
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);    
     inGeo.addBox(w, h, d, fill, stroke);   
     inGeo.initTessMap(tessGeo);    
     tessellator.tessellateQuads();     
@@ -2748,8 +2749,8 @@ public class PShape3D extends PShape {
       r = params[0];
     }
     
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess); 
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess); 
     int[] indices = inGeo.addSphere(r, nu, nv, fill, stroke);   
     inGeo.initTessMap(tessGeo);
     tessellator.tessellateTriangles(indices);               
@@ -2759,8 +2760,8 @@ public class PShape3D extends PShape {
   protected void tessellatePath() {
     if (vertices == null) return;
 
-    inGeo.setColors(fillColor, strokeColor, strokeWeight,
-                 ambientColor, specularColor, emissiveColor, shininess);
+    inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
+                      ambientColor, specularColor, emissiveColor, shininess);
     
     boolean insideContour = false;
 
