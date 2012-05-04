@@ -269,7 +269,7 @@ public class PShape3D extends PShape {
     glPointSizeBufferID = 0;
     glPointIndexBufferID = 0;
     
-    this.tessellator = pg.tessellator;
+    this.tessellator = PGraphicsOpenGL.tessellator;
     this.family = family;    
     this.root = this;
     this.parent = null;
@@ -277,7 +277,7 @@ public class PShape3D extends PShape {
     
     if (family == GEOMETRY || family == PRIMITIVE || family == PATH) {
       inGeo = pg.newInGeometry(PGraphicsOpenGL.RETAINED);      
-    }    
+    }
     
     // Modes are retrieved from the current values in the renderer.
     textureMode = pg.textureMode;    
@@ -2526,7 +2526,7 @@ public class PShape3D extends PShape {
           tessGeo.applyMatrix(matrix);
         }
         
-        inGeo.tessMap.compact();
+        inGeo.compactTessMap();
       }
     }
     
