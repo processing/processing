@@ -182,7 +182,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected int firstTexIndex;
   protected int firstTexCache;
   protected TexCache texCache;
-  protected Tessellator tessellator;
+  static protected Tessellator tessellator;
 
   // ........................................................
 
@@ -388,7 +388,9 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl = new PGL(this);
     pg = null;
 
-    tessellator = new Tessellator();
+    if (tessellator == null) {
+      tessellator = new Tessellator();
+    }
 
     inGeo = newInGeometry(IMMEDIATE);
     tessGeo = newTessGeometry(IMMEDIATE);
@@ -6780,7 +6782,11 @@ public class PGraphicsOpenGL extends PGraphics {
     void disposeTessMap() {
       tessMap.dispose();
     }
-
+    
+    void compactTessMap() {
+      tessMap.compact();
+    }
+    
     // -----------------------------------------------------------------
     //
     // Query    
