@@ -6,7 +6,7 @@
  * and popMatrix() functions. 
  */
 
-float boxSize = 40;
+float boxSize = 50;
 float margin = boxSize*2;
 float depth = 400;
 color boxFill;
@@ -19,6 +19,7 @@ void setup() {
   size(640, 360, P3D);
   orientation(LANDSCAPE);
   frameRate(60);
+  noSmooth();
   noStroke();
 }
 
