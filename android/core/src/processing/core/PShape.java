@@ -70,9 +70,6 @@ public class PShape implements PConstants {
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
   protected int kind;
 
-  /** STATIC, DYNAMIC */
-  protected int mode;  
-  
   protected PMatrix matrix;
 
   /** Texture or image data associated with this shape. */
@@ -181,9 +178,6 @@ public class PShape implements PConstants {
   /** True if colorMode(RGB, 255) */
   boolean colorModeDefault; // = true;
   
-  /** To mark the shape dirty upon changes in its geometry **/
-  public boolean modified; 
-
   // POINTS, LINES, xLINE_STRIP, xLINE_LOOP
   // TRIANGLES, TRIANGLE_STRIP, TRIANGLE_FAN
   // QUADS, QUAD_STRIP
@@ -231,11 +225,6 @@ public class PShape implements PConstants {
   }
   
   
-  public void setMode(int mode) {
-    this.mode = mode;
-  }  
-    
-
   public void setName(String name) {
     this.name = name;
   }
@@ -341,6 +330,11 @@ public class PShape implements PConstants {
     return depth;
   }
 
+  
+  public PVector getCenter() {
+    return new PVector();
+  }  
+  
 
   /**
    * Return true if this shape is 3D. Defaults to false.
@@ -393,9 +387,8 @@ public class PShape implements PConstants {
   
   //////////////////////////////////////////////////////////////
 
-  // STROKE CAP/JOIN/WEIGHT
+  // Stroke cap/join/weight set/update
 
-  
   public void strokeWeight(float weight) {
   }
 
@@ -403,11 +396,11 @@ public class PShape implements PConstants {
   }
 
   public void strokeCap(int cap) {
-  }  
-  
+  }
+
   //////////////////////////////////////////////////////////////
 
-  // FILL COLOR
+  // Fill set/update
 
   public void noFill() {
   }
@@ -428,112 +421,105 @@ public class PShape implements PConstants {
   }
 
   public void fill(float x, float y, float z, float a) {
-  }  
-  
+  }
+
   //////////////////////////////////////////////////////////////
 
-  // STROKE COLOR 
-  
+  // Stroke (color) set/update 
+
   public void noStroke() {
-  }  
-  
+  }
+
   public void stroke(int rgb) {
-  }  
-  
+  }
+
   public void stroke(int rgb, float alpha) {
   }
-  
+
   public void stroke(float gray) {
   }
-  
+
   public void stroke(float gray, float alpha) {
   }
 
   public void stroke(float x, float y, float z) {
   }
-  
+
   public void stroke(float x, float y, float z, float alpha) {
   }
-  
+
   //////////////////////////////////////////////////////////////
 
-  // TINT COLOR 
-  
-  
+  // Tint set/update 
+
+
   public void noTint() {
-  }  
-  
+  }
+
   public void tint(int rgb) {
-  }  
-  
+  }
+
   public void tint(int rgb, float alpha) {
   }
-  
+
   public void tint(float gray) {
   }
-  
+
   public void tint(float gray, float alpha) {
   }
 
   public void tint(float x, float y, float z) {
   }
-  
+
   public void tint(float x, float y, float z, float alpha) {
-  }  
+  }
 
   //////////////////////////////////////////////////////////////
 
-  // AMBIENT COLOR
+  // Ambient set/update
   
-  public void ambient(int rgb) {
+  public void ambient(int rgb) {    
   }
-
-  public void ambient(float gray) { 
+  
+  public void ambient(float gray) {    
   }
-
-  public void ambient(float x, float y, float z) {    
+  
+  public void ambient(float x, float y, float z) {
   }
-
   
   //////////////////////////////////////////////////////////////
 
-  // SPECULAR COLOR  
+  // Specular set/update
   
-
-  public void specular(int rgb) {
+  public void specular(int rgb) {    
   }
-
-  public void specular(float gray) {
+  
+  public void specular(float gray) {    
   }
-
+  
   public void specular(float x, float y, float z) {
-  }
-    
+  }  
+  
   
   //////////////////////////////////////////////////////////////
 
-  // EMISSIVE COLOR
-  
-  
-  public void emissive(int rgb) {
-  }
+  // Emissive set/update  
 
-  public void emissive(float gray) {
+  public void emissive(int rgb) {    
   }
-
+  
+  public void emissive(float gray) {    
+  }
+  
   public void emissive(float x, float y, float z) {
-  }
-  
+  }    
   
   //////////////////////////////////////////////////////////////
 
-  // SHININESS  
-  
+  // Shininess set/update  
   
   public void shininess(float shine) {    
-  }
-  
-  
+  }  
   
   ///////////////////////////////////////////////////////////  
   
@@ -1107,32 +1093,10 @@ public class PShape implements PConstants {
   }
 
   
-  protected void modified() {
-    modified = true;
-    if (parent != null) {
-      parent.modified();
-    }
+  public PShape getTessellation() {
+    return null;
   }
   
-  
-  // TODO: finish implementing partial updates in PShape3D
-  protected void modified(int i0, int i1) {
-    modified = true;
-    // firstModified = i0;
-    // lastModified = i1;
-    if (parent != null) {
-      parent.modified(i0, i1);
-    }
-  }  
-  
-  
-  protected void notModified() {
-    modified = false;
-    for (int i = 0; i < childCount; i++) {
-      children[i].notModified();
-    }
-  } 
-
   
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
