@@ -2315,8 +2315,11 @@ public class PGraphics extends PImage implements PConstants {
   public void smooth() {
     smooth = true;
   }
-
-
+  
+  public void smooth(int level) {
+    smooth = true;
+  }  
+  
   /**
    * Disable smoothing. See smooth().
    */
@@ -5007,6 +5010,15 @@ public class PGraphics extends PImage implements PConstants {
     }
   }
 
+  
+  public boolean haveRaw() { // ignore
+    return raw != null; 
+  }
+  
+  
+  public PGraphics getRaw() { // ignore
+    return raw;
+  }  
 
 
   //////////////////////////////////////////////////////////////
@@ -5176,14 +5188,14 @@ public class PGraphics extends PImage implements PConstants {
     showMissingWarning("createShape");
     return null;    
   }
+
+  public PShape loadShape(String filename) { // ignore
+    showMissingWarning("loadShape");
+    return null;    
+  }  
   
   protected String[] getSupportedShapeFormats() {
     showMissingWarning("getSupportedShapeFormats");
-    return null;
-  }
-
-  protected PShape loadShape(String filename, Object params) {
-    showMissingWarning("loadShape");
     return null;
   }
 
