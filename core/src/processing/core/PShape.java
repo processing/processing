@@ -95,9 +95,6 @@ public class PShape implements PConstants {
 
   /** ELLIPSE, LINE, QUAD; TRIANGLE_FAN, QUAD_STRIP; etc. */
   protected int kind;
-  
-  /** STATIC, DYNAMIC */
-  protected int mode;
 
   protected PMatrix matrix;
 
@@ -209,8 +206,6 @@ public class PShape implements PConstants {
   /** True if colorMode(RGB, 255) */
   boolean colorModeDefault; // = true;
 
-  /** To mark the shape dirty upon changes in its geometry **/
-  public boolean modified;
 
   // should this be called vertices (consistent with PGraphics internals)
   // or does that hurt flexibility?
@@ -263,11 +258,6 @@ public class PShape implements PConstants {
     this.kind = kind;
   }
   
-  
-  public void setMode(int mode) {
-    this.mode = mode;
-  }  
-
   
   public void setName(String name) {
     this.name = name;
@@ -551,6 +541,53 @@ public class PShape implements PConstants {
   public void tint(float x, float y, float z, float alpha) {
   }
 
+  //////////////////////////////////////////////////////////////
+
+  // Ambient set/update
+  
+  public void ambient(int rgb) {    
+  }
+  
+  public void ambient(float gray) {    
+  }
+  
+  public void ambient(float x, float y, float z) {
+  }
+  
+  //////////////////////////////////////////////////////////////
+
+  // Specular set/update
+  
+  public void specular(int rgb) {    
+  }
+  
+  public void specular(float gray) {    
+  }
+  
+  public void specular(float x, float y, float z) {
+  }  
+  
+  
+  //////////////////////////////////////////////////////////////
+
+  // Emissive set/update  
+
+  public void emissive(int rgb) {    
+  }
+  
+  public void emissive(float gray) {    
+  }
+  
+  public void emissive(float x, float y, float z) {
+  }    
+  
+  //////////////////////////////////////////////////////////////
+
+  // Shininess set/update  
+  
+  public void shininess(float shine) {    
+  }  
+  
   ///////////////////////////////////////////////////////////
 
   //
@@ -1140,34 +1177,12 @@ public class PShape implements PConstants {
   public void updateRoot(PShape root) {
   }
 
-
-  protected void modified() {
-    modified = true;
-    if (parent != null) {
-      parent.modified();
-    }
+  
+  public PShape getTessellation() {
+    return null;
   }
 
   
-  // TODO: finish implementing partial updates in PShape3D
-  protected void modified(int i0, int i1) {
-    modified = true;
-    // firstModified = i0;
-    // lastModified = i1;
-    if (parent != null) {
-      parent.modified(i0, i1);
-    }
-  }  
-  
-  
-  protected void notModified() {
-    modified = false;
-    for (int i = 0; i < childCount; i++) {
-      children[i].notModified();
-    }
-  }
-  
-
   // . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
