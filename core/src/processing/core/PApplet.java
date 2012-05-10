@@ -1361,7 +1361,7 @@ public class PApplet extends Applet
   }
 
   /**
-   * @param renderer   Either P2D, P3D
+   * @param renderer Either P2D, P3D, or PDF
    */
   public void size(int w, int h, String renderer) {
     size(w, h, renderer, null);
@@ -1488,7 +1488,7 @@ public class PApplet extends Applet
    * @webref rendering
    * @param w width in pixels
    * @param h height in pixels
-   * @param renderer Either P2D, P3D, PDF, DXF
+   * @param renderer Either P2D, P3D, or PDF
    *
    * @see PGraphics#PGraphics
    *
@@ -2839,7 +2839,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref environment
-   * @param fps number of frames per second
+   * @param fps number of desired frames per second
    * @see PApplet#setup()
    * @see PApplet#draw()
    * @see PApplet#loop()
@@ -3384,7 +3384,7 @@ public class PApplet extends Applet
 
   /**
    * Set the cursor type
-   * @param kind either ARROW, CROSS, HAND, MOVE, TEXT, WAIT
+   * @param kind either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT
    */
   public void cursor(int kind) {
     setCursor(Cursor.getPredefinedCursor(kind));
@@ -3427,7 +3427,7 @@ public class PApplet extends Applet
    * @webref environment
    * @see PApplet#noCursor()
    * @param img any variable of type PImage
-   * @param x the horizonal active spot of the cursor
+   * @param x the horizontal active spot of the cursor
    * @param y the vertical active spot of the cursor
    */
   public void cursor(PImage img, int x, int y) {
