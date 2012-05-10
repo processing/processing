@@ -4674,6 +4674,12 @@ public class PGraphicsOpenGL extends PGraphics {
   // Initializes the pixels array, copying the current contents of the
   // color buffer into it.
   public void loadPixels() {
+    boolean needEndDraw = false;
+    if (!drawing) {
+      beginDraw();
+      needEndDraw = true;
+    }
+    
     if (!setgetPixels) {
       // Draws any remaining geometry in case the user is still not
       // setting/getting new pixels.
@@ -4689,6 +4695,10 @@ public class PGraphicsOpenGL extends PGraphics {
         loadTextureImpl(POINT);
         pixelsToTexture();
       }
+    }
+    
+    if (needEndDraw) {
+      endDraw();
     }
   }
 
