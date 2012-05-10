@@ -3778,23 +3778,12 @@ public class PApplet extends Activity implements PConstants, Runnable {
 
   // SHAPE I/O
 
-  protected String[] loadShapeFormats;
-
 
   /**
    * Load a geometry from a file as a PShape (either an SVG or OBJ file).
    */
   public PShape loadShape(String filename) {
-    return loadShape(filename, null);
-  }
-
-
-
-  /**
-   * Load a geometry from a file as a PShape (either an SVG or OBJ file).
-   */
-  public PShape loadShape(String filename, Object params) {
-   String extension;
+    String extension;
 
     String lower = filename.toLowerCase();
     int dot = filename.lastIndexOf('.');
@@ -3824,23 +3813,21 @@ public class PApplet extends Activity implements PConstants, Runnable {
     } else {
       // Loading the formats supported by the renderer.
 
-      loadShapeFormats = g.getSupportedShapeFormats();
+      String[] loadShapeFormats = g.getSupportedShapeFormats();
 
       if (loadShapeFormats != null) {
         for (int i = 0; i < loadShapeFormats.length; i++) {
           if (extension.equals(loadShapeFormats[i])) {
-            return g.loadShape(filename, params);
+            return g.loadShape(filename);
           }
         }
       }
-
     }
 
     return null;
   }
 
 
-  
   //////////////////////////////////////////////////////////////
 
   // DATA I/O
