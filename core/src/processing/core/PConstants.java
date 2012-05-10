@@ -449,14 +449,6 @@ public interface PConstants {
   /** This constant identifies the repeat wrapping mode */
   public static final int REPEAT = 1;
 
-
-  // shape objects
-
-  /**  Static shapes (vertices won't be updated after creation).  */
-  public static final int STATIC = 0;
-  /**  Dynamic shapes (vertices will be updated after creation). */
-  public static final int DYNAMIC = 1;
-
   
   // shaders
 
