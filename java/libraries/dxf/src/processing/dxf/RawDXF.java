@@ -161,6 +161,16 @@ public class RawDXF extends PGraphics {
     return false;  // just in case someone wants to use this on its own
   }
 
+  
+  public boolean is2D() {
+    return false;
+  }
+
+  
+  public boolean is3D() {
+    return true;
+  }
+  
 
   // ..............................................................
 
