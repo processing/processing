@@ -5198,8 +5198,6 @@ public class PApplet extends Applet
 
   // SHAPE I/O
 
-  protected String[] loadShapeFormats;
-
 
  /**
    * ( begin auto-generated from loadShape.xml )
@@ -5230,14 +5228,6 @@ public class PApplet extends Applet
    * @see PGraphics#shapeMode(int)
    */
   public PShape loadShape(String filename) {
-    return loadShape(filename, null);
-  }
-
-
-  /**
-   * @nowebref
-   */
-  public PShape loadShape(String filename, Object params) {
     String extension;
 
     String lower = filename.toLowerCase();
@@ -5268,70 +5258,19 @@ public class PApplet extends Applet
     } else {
       // Loading the formats supported by the renderer.
 
-      loadShapeFormats = g.getSupportedShapeFormats();
+      String[] loadShapeFormats = g.getSupportedShapeFormats();
 
       if (loadShapeFormats != null) {
         for (int i = 0; i < loadShapeFormats.length; i++) {
           if (extension.equals(loadShapeFormats[i])) {
-            return g.loadShape(filename, params);
+            return g.loadShape(filename);
           }
         }
       }
-
     }
 
     return null;
   }
-
-
-  /**
-   * Creates an empty shape, with the specified size and parameters.
-   * The actual type will depend on the renderer.
-   */
-  /*
-  public PShape createShape(int size, Object params) {
-    return g.createShape(size, params);
-  }
-  */
-
-
-  /*
-  public PShape createGroup(String name) {
-    PShape shape = new PShape(PShape.GROUP);
-    shape.setName(name);
-    shape.g = g;
-    return shape;
-  }
-
-  public PShape createPrimitive(String name, int type) {
-    PShape shape = new PShape();
-    shape.family = PShape.PRIMITIVE;
-    shape.primitive = type;
-    shape.setName(name);
-    shape.g = g;
-    return shape;
-  }
-
-  public PShape createShapePath(String name) {
-    PShape shape = new PShape();
-    shape.family = PShape.PATH;
-    shape.setName(name);
-    shape.g = g;
-    shape.vertexInit();
-    return shape;
-  }
-
-  public PShape createGeometry(String name, int type) {
-    PShape shape = new PShape();
-    shape.family = PShape.GEOMETRY;
-    shape.primitive = type;
-    shape.setName(name);
-    shape.g = g;
-    shape.vertexInit();
-    return shape;
-  }
-  */
-
 
 
   //////////////////////////////////////////////////////////////
