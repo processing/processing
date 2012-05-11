@@ -5861,9 +5861,9 @@ public class PGraphics extends PImage implements PConstants {
     fillFromCalc();
   }
 
-/**
- * @param alpha opacity of the fill
- */
+  /**
+   * @param alpha opacity of the fill
+   */
   public void fill(int rgb, float alpha) {
     colorCalc(rgb, alpha);
     fillFromCalc();
@@ -5884,23 +5884,20 @@ public class PGraphics extends PImage implements PConstants {
     fillFromCalc();
   }
 
-/**
- * @param v1 red or hue value (depending on current color mode)
- * @param v2 green or saturation value (depending on current color mode)
- * @param v3 blue or brightness value (depending on current color mode)
- */
 
+  /**
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
+   */
   public void fill(float v1, float v2, float v3) {
     colorCalc(v1, v2, v3);
     fillFromCalc();
   }
 
 
-  /**
-   * @param a opacity of the fill
-   */
-  public void fill(float v1, float v2, float v3, float a) {
-    colorCalc(v1, v2, v3, a);
+  public void fill(float v1, float v2, float v3, float alpha) {
+    colorCalc(v1, v2, v3, alpha);
     fillFromCalc();
   }
 
