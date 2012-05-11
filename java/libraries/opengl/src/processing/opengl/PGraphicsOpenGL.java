@@ -1950,6 +1950,8 @@ public class PGraphicsOpenGL extends PGraphics {
     PShape3D shape = null;
     if (type == PShape.GROUP) {
       shape = new PShape3D(parent, PShape.GROUP);
+    } else if (type == PShape.PATH) {
+      shape = new PShape3D(parent, PShape.PATH);
     } else if (type == POINTS) {
       shape = new PShape3D(parent, PShape.GEOMETRY);
       shape.setKind(POINTS);
