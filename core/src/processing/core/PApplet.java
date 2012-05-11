@@ -12682,7 +12682,6 @@ public class PApplet extends Applet
 
 
   /**
-   * @param rgb color value in hexadecimal notation
    * @param alpha opacity of the image
    */
   public void tint(int rgb, float alpha) {
@@ -12692,7 +12691,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param gray any valid number
+   * @param gray specifies a value between white and black
    */
   public void tint(float gray) {
     if (recorder != null) recorder.tint(gray);
@@ -12717,12 +12716,9 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * @param v3 opacity of the image
-   */
-  public void tint(float v1, float v2, float v3, float a) {
-    if (recorder != null) recorder.tint(v1, v2, v3, a);
-    g.tint(v1, v2, v3, a);
+  public void tint(float v1, float v2, float v3, float alpha) {
+    if (recorder != null) recorder.tint(v1, v2, v3, alpha);
+    g.tint(v1, v2, v3, alpha);
   }
 
 
@@ -13326,26 +13322,24 @@ public class PApplet extends Applet
   }
 
 
-  /**
-   * @param a opacity of the background
-   */
-  public void background(float v1, float v2, float v3, float a) {
-    if (recorder != null) recorder.background(v1, v2, v3, a);
-    g.background(v1, v2, v3, a);
+  public void background(float v1, float v2, float v3, float alpha) {
+    if (recorder != null) recorder.background(v1, v2, v3, alpha);
+    g.background(v1, v2, v3, alpha);
   }
 
 
   /**
-   * @param image PImage to set as background (must be same size as the program)
+   * @param image PImage to set as background (must be same size as the sketch window).<br/>
+   * <br/>
    * Takes an RGB or ARGB image and sets it as the background.
    * The width and height of the image must be the same size as the sketch.
-   * Use image.resize(width, height) to make short work of such a task.
-   * <P>
+   * Use image.resize(width, height) to make short work of such a task.<br/>
+   * <br/>
    * Note that even if the image is set as RGB, the high 8 bits of each pixel
-   * should be set opaque (0xFF000000), because the image data will be copied
+   * should be set opaque (0xFF000000) because the image data will be copied
    * directly to the screen, and non-opaque background images may have strange
-   * behavior. Using image.filter(OPAQUE) will handle this easily.
-   * <P>
+   * behavior. Use image.filter(OPAQUE) to handle this easily.<br/>
+   * <br/>
    * When using 3D, this will also clear the zbuffer (if it exists).
    */
   public void background(PImage image) {
