@@ -2868,6 +2868,7 @@ public class PShape3D extends PShape {
 
           case VERTEX:
             inGeo.addVertex(vertices[index][X], vertices[index][Y], code);
+            code = VERTEX; 
             index++;
             break;
 
@@ -2875,6 +2876,7 @@ public class PShape3D extends PShape {
             inGeo.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], 0, 
                                      vertices[index+1][X], vertices[index+1][Y], 0,
                                      fill, stroke, bezierDetail, code);
+            code = VERTEX;
             index += 2;
             break;
 
@@ -2883,19 +2885,20 @@ public class PShape3D extends PShape {
                                   vertices[index+1][X], vertices[index+1][Y], 0,
                                   vertices[index+2][X], vertices[index+2][Y], 0,
                                   fill, stroke, bezierDetail, code);
+            code = VERTEX;
             index += 3;
             break;
 
           case CURVE_VERTEX:
             inGeo.addCurveVertex(vertices[index][X], vertices[index][Y], 0,
                                  fill, stroke, curveDetail, code);
+            code = VERTEX;
             index++;
 
           case BREAK:
             if (insideContour) {
-              code = VERTEX;
-            }
-            code = BREAK;
+              code = BREAK;
+            }            
             insideContour = true;
           }
         }
@@ -2905,6 +2908,7 @@ public class PShape3D extends PShape {
 
           case VERTEX:
             inGeo.addVertex(vertices[index][X], vertices[index][Y], vertices[index][Z], code);
+            code = VERTEX;
             index++;
             break;
 
@@ -2912,6 +2916,7 @@ public class PShape3D extends PShape {
             inGeo.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
                                      vertices[index+1][X], vertices[index+1][Y], vertices[index+0][Z],
                                      fill, stroke, bezierDetail, code);
+            code = VERTEX;
             index += 2;
             break;
 
@@ -2921,19 +2926,20 @@ public class PShape3D extends PShape {
                                   vertices[index+1][X], vertices[index+1][Y], vertices[index+1][Z],
                                   vertices[index+2][X], vertices[index+2][Y], vertices[index+2][Z],
                                   fill, stroke, bezierDetail, code);
+            code = VERTEX;
             index += 3;
             break;
 
           case CURVE_VERTEX:
             inGeo.addCurveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z],
                                  fill, stroke, curveDetail, code);
+            code = VERTEX;
             index++;
 
           case BREAK:
             if (insideContour) {
-              code = VERTEX;
-            }
-            code = BREAK;
+              code = BREAK;
+            }            
             insideContour = true;
           }
         }
