@@ -12784,9 +12784,9 @@ public class PApplet extends Applet
   }
 
 
-/**
- * @param alpha opacity of the fill
- */
+  /**
+   * @param alpha opacity of the fill
+   */
   public void fill(int rgb, float alpha) {
     if (recorder != null) recorder.fill(rgb, alpha);
     g.fill(rgb, alpha);
@@ -12808,18 +12808,20 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @param v1 red or hue value (depending on current color mode)
+   * @param v2 green or saturation value (depending on current color mode)
+   * @param v3 blue or brightness value (depending on current color mode)
+   */
   public void fill(float v1, float v2, float v3) {
     if (recorder != null) recorder.fill(v1, v2, v3);
     g.fill(v1, v2, v3);
   }
 
 
-  /**
-   * @param a opacity of the fill
-   */
-  public void fill(float v1, float v2, float v3, float a) {
-    if (recorder != null) recorder.fill(v1, v2, v3, a);
-    g.fill(v1, v2, v3, a);
+  public void fill(float v1, float v2, float v3, float alpha) {
+    if (recorder != null) recorder.fill(v1, v2, v3, alpha);
+    g.fill(v1, v2, v3, alpha);
   }
 
 
