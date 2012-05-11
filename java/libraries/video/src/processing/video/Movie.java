@@ -830,7 +830,17 @@ public class Movie extends PImage implements PConstants {
   
   protected void eosEvent() {    
     if (repeat) {
-      goToBeginning();
+      if (0 < rate) {
+        // Playing forward, so we return to the beginning
+        goToBeginning();
+      } else {
+        // Playing backwards, so we go to the end.
+        goToEnd();
+      }      
+      
+      // The rate is reset to 1 when restarting the stream, so
+      // we call frameRate to restart the rate.  
+      frameRate(fps);
     } else {
       playing = false;
     }
