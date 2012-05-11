@@ -8572,18 +8572,18 @@ public class PGraphicsOpenGL extends PGraphics {
     void getLineVertexMin(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x += PApplet.min(v.x, lineVertices[index++]);
-        v.y += PApplet.min(v.y, lineVertices[index++]);
-        v.z += PApplet.min(v.z, lineVertices[index  ]);
+        v.x = PApplet.min(v.x, lineVertices[index++]);
+        v.y = PApplet.min(v.y, lineVertices[index++]);
+        v.z = PApplet.min(v.z, lineVertices[index  ]);
       }      
     }
     
     void getPointVertexMin(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x += PApplet.min(v.x, pointVertices[index++]);
-        v.y += PApplet.min(v.y, pointVertices[index++]);
-        v.z += PApplet.min(v.z, pointVertices[index  ]);
+        v.x = PApplet.min(v.x, pointVertices[index++]);
+        v.y = PApplet.min(v.y, pointVertices[index++]);
+        v.z = PApplet.min(v.z, pointVertices[index  ]);
       }      
     }    
         
@@ -8599,18 +8599,18 @@ public class PGraphicsOpenGL extends PGraphics {
     void getLineVertexMax(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x += PApplet.max(v.x, lineVertices[index++]);
-        v.y += PApplet.max(v.y, lineVertices[index++]);
-        v.z += PApplet.max(v.z, lineVertices[index  ]);
+        v.x = PApplet.max(v.x, lineVertices[index++]);
+        v.y = PApplet.max(v.y, lineVertices[index++]);
+        v.z = PApplet.max(v.z, lineVertices[index  ]);
       }     
     }
     
     void getPointVertexMax(PVector v, int first, int last) {
       for (int i = first; i <= last; i++) {
         int index = 4 * i;
-        v.x += PApplet.max(v.x, pointVertices[index++]);
-        v.y += PApplet.max(v.y, pointVertices[index++]);
-        v.z += PApplet.max(v.z, pointVertices[index  ]);
+        v.x = PApplet.max(v.x, pointVertices[index++]);
+        v.y = PApplet.max(v.y, pointVertices[index++]);
+        v.z = PApplet.max(v.z, pointVertices[index  ]);
       }         
     }
     

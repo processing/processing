@@ -488,7 +488,7 @@ public class PShape3D extends PShape {
       getVertexMin(min);
       getVertexMax(max);
     }    
-    width = max.y - min.y;
+    height = max.y - min.y;
     return height;
   }
 
@@ -500,7 +500,7 @@ public class PShape3D extends PShape {
       getVertexMin(min);
       getVertexMax(max);
     }    
-    width = max.z - min.z;    
+    depth = max.z - min.z;    
     return depth;
   }  
 
@@ -521,79 +521,53 @@ public class PShape3D extends PShape {
   
   
   protected void getVertexMin(PVector min) {
+    updateTessellation();
+    
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D) children[i];
-        child.getVertexMin(min);
+        child.getVertexMin(min);        
       }
     } else {      
-      if (tessellated) {
-        if (haveFill) tessGeo.getFillVertexMin(min, firstFillVertex, lastFillVertex);
-        if (haveLines) tessGeo.getLineVertexMin(min, firstLineVertex, lastLineVertex);
-        if (havePoints) tessGeo.getPointVertexMin(min, firstPointVertex, lastPointVertex);
-      } else {
-        if (family == GEOMETRY) {
-          inGeo.getVertexMin(min);
-        } else if (family == PRIMITIVE) {
-          
-          
-        } else if (family == PATH) {
-          
-        }
-      }
+      if (haveFill) tessGeo.getFillVertexMin(min, firstFillVertex, lastFillVertex);
+      if (haveLines) tessGeo.getLineVertexMin(min, firstLineVertex, lastLineVertex);
+      if (havePoints) tessGeo.getPointVertexMin(min, firstPointVertex, lastPointVertex);
     }
   }
 
   
   protected void getVertexMax(PVector max) {
+    updateTessellation();
+    
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D) children[i];
         child.getVertexMax(max);
       }
     } else {      
-      if (tessellated) {
-        if (haveFill) tessGeo.getFillVertexMax(max, firstFillVertex, lastFillVertex);
-        if (haveLines) tessGeo.getLineVertexMax(max, firstLineVertex, lastLineVertex);
-        if (havePoints) tessGeo.getPointVertexMax(max, firstPointVertex, lastPointVertex);
-      } else {
-        if (family == GEOMETRY) {
-          inGeo.getVertexMax(max);
-        } else if (family == PRIMITIVE) {
-          
-          
-        } else if (family == PATH) {
-          
-        }
-      }
+      if (haveFill) tessGeo.getFillVertexMax(max, firstFillVertex, lastFillVertex);
+      if (haveLines) tessGeo.getLineVertexMax(max, firstLineVertex, lastLineVertex);
+      if (havePoints) tessGeo.getPointVertexMax(max, firstPointVertex, lastPointVertex);
     }
   }  
   
   
   protected int getVertexSum(PVector sum, int count) {
+    updateTessellation();
+    
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
         PShape3D child = (PShape3D) children[i];
         count += child.getVertexSum(sum, count);
       }
     } else {      
-      if (tessellated) {     
-        if (haveFill) count += tessGeo.getFillVertexSum(sum, firstFillVertex, lastFillVertex);
-        if (haveLines) count += tessGeo.getLineVertexSum(sum, firstLineVertex, lastLineVertex);
-        if (havePoints) count += tessGeo.getPointVertexSum(sum, firstPointVertex, lastPointVertex);        
-      } else {
-        if (family == GEOMETRY) {
-          count += inGeo.getVertexSum(sum);
-        } else if (family == PRIMITIVE) {          
-          
-        } else if (family == PATH) {
-          
-        }
-      }
+      if (haveFill) count += tessGeo.getFillVertexSum(sum, firstFillVertex, lastFillVertex);
+      if (haveLines) count += tessGeo.getLineVertexSum(sum, firstLineVertex, lastLineVertex);
+      if (havePoints) count += tessGeo.getPointVertexSum(sum, firstPointVertex, lastPointVertex);        
     }
     return count;
   }
-  
+
   
   ///////////////////////////////////////////////////////////  
   
