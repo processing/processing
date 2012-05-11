@@ -13090,9 +13090,9 @@ public class PApplet extends Applet
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red or hue value (depending on current color mode)
-   * @param green green or saturation value (depending on current color mode)
-   * @param blue blue or brightness value (depending on current color mode)
+   * @param red red value
+   * @param green green value
+   * @param blue blue value
    * @param nx direction along the x-axis
    * @param ny direction along the y-axis
    * @param nz direction along the z-axis
@@ -13123,9 +13123,9 @@ public class PApplet extends Applet
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red or hue value (depending on current color mode)
-   * @param green green or saturation value (depending on current color mode)
-   * @param blue blue or brightness value (depending on current color mode)
+   * @param red red value
+   * @param green green value
+   * @param blue blue value
    * @param x x-coordinate of the light
    * @param y y-coordinate of the light
    * @param z z-coordinate of the light
@@ -13158,9 +13158,9 @@ public class PApplet extends Applet
    *
    * @webref lights_camera:lights
    * @usage web_application
-   * @param red red or hue value (depending on current color mode)
-   * @param green green or saturation value (depending on current color mode)
-   * @param blue blue or brightness value (depending on current color mode)
+   * @param red red value
+   * @param green green value
+   * @param blue blue value
    * @param x x-coordinate of the light
    * @param y y-coordinate of the light
    * @param z z-coordinate of the light
