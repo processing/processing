@@ -474,7 +474,7 @@ public class PShape3D extends PShape {
     PVector max = new PVector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
     if (shapeEnded) {
       getVertexMin(min);
-      getVertexMin(max);
+      getVertexMax(max);
     }    
     width = max.x - min.x;
     return width;
@@ -486,7 +486,7 @@ public class PShape3D extends PShape {
     PVector max = new PVector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
     if (shapeEnded) {
       getVertexMin(min);
-      getVertexMin(max);
+      getVertexMax(max);
     }    
     width = max.y - min.y;
     return height;
@@ -498,7 +498,7 @@ public class PShape3D extends PShape {
     PVector max = new PVector(Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY);
     if (shapeEnded) {
       getVertexMin(min);
-      getVertexMin(max);
+      getVertexMax(max);
     }    
     width = max.z - min.z;    
     return depth;
@@ -532,7 +532,14 @@ public class PShape3D extends PShape {
         if (haveLines) tessGeo.getLineVertexMin(min, firstLineVertex, lastLineVertex);
         if (havePoints) tessGeo.getPointVertexMin(min, firstPointVertex, lastPointVertex);
       } else {
-        inGeo.getVertexMin(min);
+        if (family == GEOMETRY) {
+          inGeo.getVertexMin(min);
+        } else if (family == PRIMITIVE) {
+          
+          
+        } else if (family == PATH) {
+          
+        }
       }
     }
   }
@@ -550,7 +557,14 @@ public class PShape3D extends PShape {
         if (haveLines) tessGeo.getLineVertexMax(max, firstLineVertex, lastLineVertex);
         if (havePoints) tessGeo.getPointVertexMax(max, firstPointVertex, lastPointVertex);
       } else {
-        inGeo.getVertexMax(max);
+        if (family == GEOMETRY) {
+          inGeo.getVertexMax(max);
+        } else if (family == PRIMITIVE) {
+          
+          
+        } else if (family == PATH) {
+          
+        }
       }
     }
   }  
@@ -568,7 +582,13 @@ public class PShape3D extends PShape {
         if (haveLines) count += tessGeo.getLineVertexSum(sum, firstLineVertex, lastLineVertex);
         if (havePoints) count += tessGeo.getPointVertexSum(sum, firstPointVertex, lastPointVertex);        
       } else {
-        count += inGeo.getVertexSum(sum);
+        if (family == GEOMETRY) {
+          count += inGeo.getVertexSum(sum);
+        } else if (family == PRIMITIVE) {          
+          
+        } else if (family == PATH) {
+          
+        }
       }
     }
     return count;
@@ -844,29 +864,13 @@ public class PShape3D extends PShape {
   }
   
   
-  public void setPath(float[][] coords) {
-    setPath(coords, null, OPEN);
-  }
-
-  
-  public void setPath(float[][] coords, int mode) {
-    setPath(coords, null, mode);
-  }  
-  
-  
-  public void setPath(float[][] coords, int[] codes) {
-    setPath(coords, codes, OPEN);
-  }
-  
-  
-  public void setPath(float[][] coords, int[] codes, int mode) {
+  public void setPath(int vcount, float[][] verts, int ccount, int[] codes) {
     if (family != PATH) {      
       PGraphics.showWarning("Vertex coordinates and codes can only be set to PATH shapes");
       return;
     }
     
-    super.setPath(coords, codes);
-    isClosed = mode == CLOSE;
+    super.setPath(vcount, verts, ccount, codes);
     root.tessellated = false;
     tessellated = false;
     shapeEnded = true;    
@@ -1047,7 +1051,7 @@ public class PShape3D extends PShape {
   protected void updateFillColor() {
     if (shapeEnded && tessellated && haveFill && texture == null) {
       Arrays.fill(inGeo.colors, 0, inGeo.vertexCount, PGL.javaToNativeARGB(fillColor));
-      Arrays.fill(tessGeo.fillColors, firstFillVertex, lastFillVertex, PGL.javaToNativeARGB(fillColor));      
+      Arrays.fill(tessGeo.fillColors, firstFillVertex, lastFillVertex + 1, PGL.javaToNativeARGB(fillColor));      
       root.setModifiedFillColors(firstFillVertex, lastFillVertex);     
     }
   }
@@ -1161,11 +1165,11 @@ public class PShape3D extends PShape {
     if (shapeEnded && tessellated && (haveLines || havePoints)) {
       Arrays.fill(inGeo.scolors, 0, inGeo.vertexCount, PGL.javaToNativeARGB(strokeColor));      
       if (haveLines) {        
-        Arrays.fill(tessGeo.lineColors, firstLineVertex, lastLineVertex, PGL.javaToNativeARGB(strokeColor));      
+        Arrays.fill(tessGeo.lineColors, firstLineVertex, lastLineVertex + 1, PGL.javaToNativeARGB(strokeColor));      
         root.setModifiedLineColors(firstLineVertex, lastLineVertex);         
       }      
       if (havePoints) {       
-        Arrays.fill(tessGeo.pointColors, firstPointVertex, lastPointVertex, PGL.javaToNativeARGB(strokeColor));
+        Arrays.fill(tessGeo.pointColors, firstPointVertex, lastPointVertex + 1, PGL.javaToNativeARGB(strokeColor));
         root.setModifiedPointColors(firstPointVertex, lastPointVertex);          
       }            
     }    
@@ -1279,7 +1283,7 @@ public class PShape3D extends PShape {
   protected void updateTintColor() {    
     if (shapeEnded && tessellated && haveFill && texture != null) {
       Arrays.fill(inGeo.colors, 0, inGeo.vertexCount, PGL.javaToNativeARGB(tintColor));
-      Arrays.fill(tessGeo.fillColors, firstFillVertex, lastFillVertex, PGL.javaToNativeARGB(tintColor));      
+      Arrays.fill(tessGeo.fillColors, firstFillVertex, lastFillVertex + 1, PGL.javaToNativeARGB(tintColor));      
       root.setModifiedFillColors(firstFillVertex, lastFillVertex);          
     }
   }
@@ -1338,7 +1342,7 @@ public class PShape3D extends PShape {
   protected void updateAmbientColor() {    
     if (shapeEnded && tessellated && haveFill) {
       Arrays.fill(inGeo.ambient, 0, inGeo.vertexCount, PGL.javaToNativeARGB(ambientColor));      
-      Arrays.fill(tessGeo.fillAmbient, firstFillVertex, lastFillVertex, PGL.javaToNativeARGB(ambientColor));      
+      Arrays.fill(tessGeo.fillAmbient, firstFillVertex, lastFillVertex = 1, PGL.javaToNativeARGB(ambientColor));      
       root.setModifiedFillAmbient(firstFillVertex, lastFillVertex);  
     }      
   }
@@ -1397,7 +1401,7 @@ public class PShape3D extends PShape {
   protected void updateSpecularColor() {
     if (shapeEnded && tessellated && haveFill) {
       Arrays.fill(inGeo.specular, 0, inGeo.vertexCount, PGL.javaToNativeARGB(specularColor));
-      Arrays.fill(tessGeo.fillSpecular, firstFillVertex, lastFillVertex, PGL.javaToNativeARGB(specularColor));      
+      Arrays.fill(tessGeo.fillSpecular, firstFillVertex, lastFillVertex + 1, PGL.javaToNativeARGB(specularColor));      
       root.setModifiedFillSpecular(firstFillVertex, lastFillVertex);      
     }
   }
@@ -1456,7 +1460,7 @@ public class PShape3D extends PShape {
   protected void updateEmissiveColor() {   
     if (shapeEnded && tessellated && 0 < tessGeo.fillVertexCount) {
       Arrays.fill(inGeo.emissive, 0, inGeo.vertexCount, PGL.javaToNativeARGB(emissiveColor));      
-      Arrays.fill(tessGeo.fillEmissive, firstFillVertex, lastFillVertex, PGL.javaToNativeARGB(emissiveColor));      
+      Arrays.fill(tessGeo.fillEmissive, firstFillVertex, lastFillVertex + 1, PGL.javaToNativeARGB(emissiveColor));      
       root.setModifiedFillEmissive(firstFillVertex, lastFillVertex);        
     }    
   }
@@ -1483,7 +1487,7 @@ public class PShape3D extends PShape {
   protected void updateShininessFactor() {
     if (shapeEnded && tessellated && haveFill) {
       Arrays.fill(inGeo.shininess, 0, inGeo.vertexCount, shininess);
-      Arrays.fill(tessGeo.fillShininess, firstFillVertex, lastFillVertex, shininess);      
+      Arrays.fill(tessGeo.fillShininess, firstFillVertex, lastFillVertex + 1, shininess);      
       root.setModifiedFillShininess(firstFillVertex, lastFillVertex);         
     }
   }
@@ -2403,7 +2407,7 @@ public class PShape3D extends PShape {
     
     return tess;
   }
-    
+      
     
   ///////////////////////////////////////////////////////////  
   
@@ -2740,6 +2744,7 @@ public class PShape3D extends PShape {
       rounded = true;
     }
 
+    rectMode = CORNER;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -2766,7 +2771,8 @@ public class PShape3D extends PShape {
       c = params[2];
       d = params[3];      
     }
-
+    
+    ellipseMode = CORNER;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);    
@@ -2788,6 +2794,7 @@ public class PShape3D extends PShape {
       stop = params[5];      
     }    
     
+    ellipseMode = CORNER;
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -2855,6 +2862,7 @@ public class PShape3D extends PShape {
       int code = VERTEX;
       
       if (vertices[0].length == 2) {  // tessellating a 2D path
+
         for (int j = 0; j < vertexCodeCount; j++) {
           switch (vertexCodes[j]) {
 
@@ -2865,22 +2873,22 @@ public class PShape3D extends PShape {
 
           case QUAD_BEZIER_VERTEX:
             inGeo.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], 0, 
-                                  vertices[index+1][X], vertices[index+1][Y], 0,
-                                  fill, stroke, bezierDetail, code);
+                                     vertices[index+1][X], vertices[index+1][Y], 0,
+                                     fill, stroke, bezierDetail, code);
             index += 2;
             break;
 
           case BEZIER_VERTEX:
             inGeo.addBezierVertex(vertices[index+0][X], vertices[index+0][Y], 0,
-                               vertices[index+1][X], vertices[index+1][Y], 0,
-                               vertices[index+2][X], vertices[index+2][Y], 0,
-                               fill, stroke, bezierDetail, code);
+                                  vertices[index+1][X], vertices[index+1][Y], 0,
+                                  vertices[index+2][X], vertices[index+2][Y], 0,
+                                  fill, stroke, bezierDetail, code);
             index += 3;
             break;
 
           case CURVE_VERTEX:
             inGeo.addCurveVertex(vertices[index][X], vertices[index][Y], 0,
-                              fill, stroke, curveDetail, code);
+                                 fill, stroke, curveDetail, code);
             index++;
 
           case BREAK:
@@ -2902,23 +2910,23 @@ public class PShape3D extends PShape {
 
           case QUAD_BEZIER_VERTEX:
             inGeo.addQuadraticVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
-                                  vertices[index+1][X], vertices[index+1][Y], vertices[index+0][Z],
-                                  fill, stroke, bezierDetail, code);
+                                     vertices[index+1][X], vertices[index+1][Y], vertices[index+0][Z],
+                                     fill, stroke, bezierDetail, code);
             index += 2;
             break;
 
 
           case BEZIER_VERTEX:
             inGeo.addBezierVertex(vertices[index+0][X], vertices[index+0][Y], vertices[index+0][Z],
-                               vertices[index+1][X], vertices[index+1][Y], vertices[index+1][Z],
-                               vertices[index+2][X], vertices[index+2][Y], vertices[index+2][Z],
-                               fill, stroke, bezierDetail, code);
+                                  vertices[index+1][X], vertices[index+1][Y], vertices[index+1][Z],
+                                  vertices[index+2][X], vertices[index+2][Y], vertices[index+2][Z],
+                                  fill, stroke, bezierDetail, code);
             index += 3;
             break;
 
           case CURVE_VERTEX:
             inGeo.addCurveVertex(vertices[index][X], vertices[index][Y], vertices[index][Z],
-                              fill, stroke, curveDetail, code);
+                                 fill, stroke, curveDetail, code);
             index++;
 
           case BREAK:
@@ -3886,6 +3894,43 @@ public class PShape3D extends PShape {
   
   //
   
+  // Style handling
+
+  
+  // Applies the styles of g.
+  protected void styles(PGraphics g) {
+    if (stroke) {
+      stroke(g.strokeColor);
+      strokeWeight(g.strokeWeight);
+      
+      // These two don't to nothing probably:
+      strokeCap(g.strokeCap);
+      strokeJoin(g.strokeJoin);
+    } else {
+      noStroke();
+    }
+
+    if (fill) {      
+      fill(g.fillColor);
+    } else {
+      noFill();
+    }    
+    
+    ambient(g.ambientColor);  
+    specular(g.specularColor);  
+    emissive(g.emissiveColor);
+    shininess(g.shininess);   
+    
+    // What about other style parameters, such as rectMode, etc?
+    // These should force a tessellation update, same as stroke
+    // cap and weight... right?
+  }
+  
+  
+  ///////////////////////////////////////////////////////////  
+  
+  //
+  
   // Rendering methods
   
   
@@ -3896,25 +3941,23 @@ public class PShape3D extends PShape {
   
   public void draw(PGraphics g) {
     if (visible) {      
+      pre(g);
+      
       updateTessellation();      
       updateGeometry();
-    
+      
       if (family == GROUP) {        
-        if (textures != null && 1 < textures.size()) {
-          // Some child shape below this group has a non-null matrix
-          // transformation assigned to it, so the group cannot
-          // be drawn in a single render call.
-          // Or, some child shapes below this group use different
+        if ((textures != null && 1 < textures.size()) || 
+            pg.hintEnabled(ENABLE_ACCURATE_2D)) {
+          // Some child shapes below this group use different
           // texture maps, so they cannot rendered in a single call
-          // either.          
+          // either.
+          // Or accurate 2D mode is enabled, which forces each 
+          // shape to be rendered separately.
           for (int i = 0; i < childCount; i++) {
             ((PShape3D) children[i]).draw(g);
           }        
-        } else {
-          // None of the child shapes below this group has a matrix
-          // transformation applied to them, so we can render everything
-          // in a single block.
-          // And all have the same texture applied to them.          
+        } else {          
           PImage tex = null;
           if (textures != null && textures.size() == 1) {
             tex = (PImage)textures.toArray()[0];
@@ -3925,9 +3968,22 @@ public class PShape3D extends PShape {
       } else {
         render((PGraphicsOpenGL)g, texture);
       }
+      
+      post(g);
     }
   }
 
+  
+  protected void pre(PGraphics g) {
+    if (!style) {
+      styles(g);
+    }
+  }
+  
+  
+  public void post(PGraphics g) {
+  }  
+  
   
   // Render the geometry stored in the root shape as VBOs, for the vertices 
   // corresponding to this shape. Sometimes we can have root == this.
