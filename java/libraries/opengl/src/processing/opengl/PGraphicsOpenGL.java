@@ -32,6 +32,10 @@ import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
 
+import java.awt.BasicStroke;
+import java.awt.Shape;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
 import java.io.BufferedReader;
 import java.net.URL;
 import java.nio.*;
@@ -9570,6 +9574,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         lastPointIndexCache = index;
         
+//      NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
 //          in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, nPtVert);
 //        }
@@ -9642,6 +9647,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         lastPointIndexCache = index;
         
+//      NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
 //          in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, 5);
 //        }        
@@ -9677,6 +9683,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         lastLineIndexCache = index;
         
+//      NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }
@@ -9702,6 +9709,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }         
         lastLineIndexCache = index;
         
+//      NEW TESSMAP API        
 //      if (tess.renderMode == RETAINED) {
 //        addLineMapping(in.firstVertex, in.lastVertex);
 //      }        
@@ -9728,6 +9736,7 @@ public class PGraphicsOpenGL extends PGraphics {
         index = addLine(in.lastVertex, in.firstVertex, index, false);
         lastLineIndexCache = index;
         
+//      NEW TESSMAP API        
 //      if (tess.renderMode == RETAINED) {
 //        addLineMapping(in.firstVertex, in.lastVertex);
 //      }        
@@ -9750,6 +9759,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         lastLineIndexCache = index;
         
+//      NEW TESSMAP API        
 //      if (tess.renderMode == RETAINED) {
 //        addLineMapping(in.firstVertex, in.lastVertex);
 //      }        
@@ -9796,6 +9806,7 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.putLineVertex(in, i1, i0, vidx, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 3);
       
+//    NEW TESSMAP API      
 //      if (tess.renderMode == RETAINED) {
 //        in.setLineMapping(i0, i1, vidx - 4);
 //      }      
@@ -10053,6 +10064,7 @@ public class PGraphicsOpenGL extends PGraphics {
     void tessellatePolygon(boolean solid, boolean closed, boolean calcNormals) {
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
+//    NEW TESSMAP API      
 //      if (tess.renderMode == RETAINED) {
 //        in.addWeightedMapping(in.firstVertex, in.lastVertex);
 //      }
@@ -10120,6 +10132,114 @@ public class PGraphicsOpenGL extends PGraphics {
 
       tessellateEdges();
     }
+    
+    
+    // Tessellates the path given as parameter. This will work only in 2D mode.
+    // By Tom Carden, and Karl D.D. Willis:
+    // http://wiki.processing.org/w/Stroke_attributes_in_OpenGL
+    public void tessellatePath(GeneralPath path) {
+      // AWT implementation for Android?
+      // http://hi-android.info/src/java/awt/Shape.java.html
+      // http://hi-android.info/src/java/awt/geom/GeneralPath.java.html
+      // http://hi-android.info/src/java/awt/geom/PathIterator.java.html
+      // and:
+      // http://stackoverflow.com/questions/3897775/using-awt-with-android
+      // http://code.google.com/p/awt-android-compat/
+        
+      BasicStroke bs;
+      int bstrokeCap = strokeCap == ROUND ? BasicStroke.CAP_ROUND :
+                       strokeCap == PROJECT ? BasicStroke.CAP_SQUARE :
+                       BasicStroke.CAP_BUTT;
+      int bstrokeJoin = strokeJoin == ROUND ? BasicStroke.JOIN_ROUND :
+                        strokeJoin == BEVEL ? BasicStroke.JOIN_BEVEL :
+                        BasicStroke.JOIN_MITER;              
+      bs = new BasicStroke(strokeWeight, bstrokeCap, bstrokeJoin);      
+            
+      // Make the outline of the stroke from the path
+      Shape sh = bs.createStrokedShape(path);
+      
+      gluTess.beginPolygon();
+      
+      float lastX = 0;
+      float lastY = 0;
+      double[] vertex;
+      float[] coords = new float[6];
+      
+      PathIterator iter = sh.getPathIterator(null); // ,5) add a number on here to simplify verts
+      int rule = iter.getWindingRule();
+      switch(rule) {
+      case PathIterator.WIND_EVEN_ODD:
+        gluTess.setWindingRule(PGL.GLU_TESS_WINDING_ODD);
+        break;
+      case PathIterator.WIND_NON_ZERO:
+        gluTess.setWindingRule(PGL.GLU_TESS_WINDING_NONZERO);
+        break;
+      }
+      
+      while (!iter.isDone()) {
+        
+        float strokeRed = 0; 
+        float strokeGreen = 0; 
+        float strokeBlue = 0;
+        float strokeAlpha = 0;
+        
+        switch (iter.currentSegment(coords)) {
+   
+        case PathIterator.SEG_MOVETO:   // 1 point (2 vars) in coords
+          gluTess.beginContour();
+   
+        case PathIterator.SEG_LINETO:   // 1 point
+          vertex = new double[] { coords[0], coords[1], 0,
+            strokeRed, strokeGreen, strokeBlue, strokeAlpha,
+            0, 0, 1,
+            0, 0 };          
+          
+          gluTess.addVertex(vertex);
+          lastX = coords[0];
+          lastY = coords[1];
+          break;
+   
+        case PathIterator.SEG_QUADTO:   // 2 points
+          for (int i = 1; i < bezierDetail; i++) {
+            float t = (float)i / (float)bezierDetail;
+            vertex = new double[] { 
+              bezierPoint(lastX, coords[0], coords[2], coords[2], t),
+              bezierPoint(lastY, coords[1], coords[3], coords[3], t), 
+              0, 
+              strokeRed, strokeGreen, strokeBlue, strokeAlpha,
+              0, 0, 1,
+              0, 0 };
+            gluTess.addVertex(vertex);
+          }
+          lastX = coords[2];
+          lastY = coords[3];
+          break;
+   
+        case PathIterator.SEG_CUBICTO:  // 3 points
+          for (int i = 1; i < bezierDetail; i++) {
+            float t = (float)i / (float)bezierDetail;
+            vertex = new double[] { 
+              bezierPoint(lastX, coords[0], coords[2], coords[4], t),
+              bezierPoint(lastY, coords[1], coords[3], coords[5], t), 
+              0, 
+              strokeRed, strokeGreen, strokeBlue, strokeAlpha,
+              0, 0, 1,
+              0, 0 };
+            gluTess.addVertex(vertex);
+          }
+          lastX = coords[4];
+          lastY = coords[5];
+          break;
+   
+        case PathIterator.SEG_CLOSE:
+          gluTess.endContour();
+          break;
+        }
+        iter.next();
+      }
+      gluTess.endPolygon();      
+    }
+    
     
     protected class TessellatorCallback implements PGL.TessellatorCallback {
       boolean calcNormals;
