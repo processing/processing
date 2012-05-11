@@ -377,7 +377,7 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean perspectiveCorrectedLines = false;
 
   /** Used in point tessellation. */
-  final static protected int MIN_POINT_ACCURACY = 6;
+  final static protected int MIN_POINT_ACCURACY = 20;
   final protected float[][] QUAD_POINT_SIGNS = { {-1, +1}, {-1, -1}, {+1, -1}, {+1, +1} };
   
 
@@ -7997,10 +7997,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float sx2 = screenX(x + w, y + h);
       float sy2 = screenY(x + w, y + h);
 
-      int accuracy = (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20);
-      if (accuracy < 6) {
-        accuracy = 6;
-      }
+      int accuracy = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * PApplet.dist(sx1, sy1, sx2, sy2) / 20));
       float inc = (float) PGraphicsOpenGL.SINCOS_LENGTH / accuracy;
 
       if (fill) {
