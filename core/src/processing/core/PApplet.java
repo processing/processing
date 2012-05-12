@@ -11062,9 +11062,9 @@ public class PApplet extends Applet
   }
 
 
-  public void textAlign(int align) {
-    if (recorder != null) recorder.textAlign(align);
-    g.textAlign(align);
+  public void textAlign(int alignX) {
+    if (recorder != null) recorder.textAlign(alignX);
+    g.textAlign(alignX);
   }
 
 
@@ -11270,6 +11270,9 @@ public class PApplet extends Applet
   }
 
 
+  /**
+   * @param c the character to measure
+   */
   public float textWidth(char c) {
     return g.textWidth(c);
   }
@@ -11283,7 +11286,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    *
    * @webref typography:attributes
-   * @param str
+   * @param str the String of characters to measure
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float, float, float, float)
@@ -11368,8 +11371,8 @@ public class PApplet extends Applet
    * more efficient than drawing from a String object, because the String will
    * not be converted to a char array before drawing.
    * @param chars the alphanumberic symbols to be displayed
-   * @param start array index to start writing characters
-   * @param stop array index to stop writing characters
+   * @param start array index at which to start writing characters
+   * @param stop array index at which to stop writing characters
    */
   public void text(char[] chars, int start, int stop, float x, float y) {
     if (recorder != null) recorder.text(chars, start, stop, x, y);
@@ -11437,7 +11440,7 @@ public class PApplet extends Applet
    * or if they want the long, ugly version of float,
    * use String.valueOf() to convert the float to a String first.
    *
-   * @param num the alphanumeric symbols to be displayed
+   * @param num the numeric value to be displayed
    */
   public void text(float num, float x, float y) {
     if (recorder != null) recorder.text(num, x, y);
