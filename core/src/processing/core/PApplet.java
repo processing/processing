@@ -3838,7 +3838,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref math:calculation
    * @param n base of the exponential expression
-   * @param e power of which to raise the base
+   * @param e power by which to raise the base
    * @see PApplet#sqrt(float)
    */
   static public final float pow(float n, float e) {
@@ -3884,7 +3884,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param list list to compare
+   * @param list array of numbers to compare
    */
   static public final int max(int[] list) {
     if (list.length == 0) {
@@ -3972,7 +3972,7 @@ public class PApplet extends Applet
 
 
   /**
-   * @param list int or float array
+   * @param list array of numbers to compare
    */
   static public final int min(int[] list) {
     if (list.length == 0) {
