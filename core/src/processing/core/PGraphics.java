@@ -3412,8 +3412,8 @@ public class PGraphics extends PImage implements PConstants {
   // TEXT/FONTS
 
 
-  public void textAlign(int align) {
-    textAlign(align, BASELINE);
+  public void textAlign(int alignX) {
+    textAlign(alignX, BASELINE);
   }
 
 
@@ -3685,6 +3685,9 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
 
+  /**
+   * @param c the character to measure
+   */
   public float textWidth(char c) {
     textWidthBuffer[0] = c;
     return textWidthImpl(textWidthBuffer, 0, 1);
@@ -3699,7 +3702,7 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref typography:attributes
-   * @param str
+   * @param str the String of characters to measure
    * @see PApplet#loadFont(String)
    * @see PFont#PFont
    * @see PGraphics#text(String, float, float, float, float, float)
@@ -3831,9 +3834,9 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-//  /**
-//   * @param str the alphanumeric symbols to be displayed
-//   */
+  /**
+   * @param str the alphanumeric symbols to be displayed
+   */
 //  public void text(String str) {
 //    text(str, textX, textY, textZ);
 //  }
@@ -3866,8 +3869,8 @@ public class PGraphics extends PImage implements PConstants {
    * more efficient than drawing from a String object, because the String will
    * not be converted to a char array before drawing.
    * @param chars the alphanumberic symbols to be displayed
-   * @param start array index to start writing characters
-   * @param stop array index to stop writing characters
+   * @param start array index at which to start writing characters
+   * @param stop array index at which to stop writing characters
    */
   public void text(char[] chars, int start, int stop, float x, float y) {
     // If multiple lines, sum the height of the additional lines
@@ -4175,7 +4178,7 @@ public class PGraphics extends PImage implements PConstants {
    * or if they want the long, ugly version of float,
    * use String.valueOf() to convert the float to a String first.
    *
-   * @param num the alphanumeric symbols to be displayed
+   * @param num the numeric value to be displayed
    */
   public void text(float num, float x, float y) {
     text(PApplet.nfs(num, 0, 3), x, y);
