@@ -979,7 +979,7 @@ public class PGraphics extends PImage implements PConstants {
    *
    * ( end auto-generated )
    * @webref shape:vertex
-   * @param kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
+   * @param kind Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
    * @see PGraphics#endShape()
    * @see PGraphics#vertex(float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float, float)
@@ -1069,13 +1069,11 @@ public class PGraphics extends PImage implements PConstants {
    *
    * ( end auto-generated )
    * @webref shape:vertex
-   * @param image the texture to apply
+   * @param image reference to a PImage object
    * @see PGraphics#textureMode(int)
    * @see PGraphics#beginShape(int)
    * @see PGraphics#endShape(int)
    * @see PGraphics#vertex(float, float, float, float, float)
-   *
-   * @param image reference to a PImage object
    */
   public void texture(PImage image) {
     textureImage = image;
@@ -2140,8 +2138,8 @@ public class PGraphics extends PImage implements PConstants {
    * @webref shape:2d_primitives
    * @param a x-coordinate of the ellipse
    * @param b y-coordinate of the ellipse
-   * @param c width of the ellipse
-   * @param d height of the ellipse
+   * @param c width of the ellipse by default
+   * @param d height of the ellipse by default
    * @see PApplet#ellipseMode(int)
    * @see PApplet#arc(float, float, float, float, float, float)
    */
@@ -2197,12 +2195,14 @@ public class PGraphics extends PImage implements PConstants {
    * @webref shape:2d_primitives
    * @param a x-coordinate of the arc's ellipse
    * @param b y-coordinate of the arc's ellipse
-   * @param c width of the arc's ellipse
-   * @param d height of the arc's ellipse
+   * @param c width of the arc's ellipse by default
+   * @param d height of the arc's ellipse by default
    * @param start angle to start the arc, specified in radians
    * @param stop angle to stop the arc, specified in radians
    * @see PApplet#ellipse(float, float, float, float)
    * @see PApplet#ellipseMode(int)
+   * @see PApplet#radians(float)
+   * @see PApplet#degrees(float)
    */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
@@ -2271,7 +2271,7 @@ public class PGraphics extends PImage implements PConstants {
    * ( end auto-generated )
    *
    * @webref shape:3d_primitives
-   * @param size dimension of the box in all dimensions, creates a cube
+   * @param size dimension of the box in all dimensions (creates a cube)
    * @see PGraphics#sphere(float)
    */
   public void box(float size) {
@@ -3093,26 +3093,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void image(PImage img, float x, float y) {
-    // Starting in release 0144, image errors are simply ignored.
-    // loadImageAsync() sets width and height to -1 when loading fails.
-    if (img.width == -1 || img.height == -1) return;
-
-    if (imageMode == CORNER || imageMode == CORNERS) {
-      imageImpl(img,
-                x, y, x+img.width, y+img.height,
-                0, 0, img.width, img.height);
-
-    } else if (imageMode == CENTER) {
-      float x1 = x - img.width/2;
-      float y1 = y - img.height/2;
-      imageImpl(img,
-                x1, y1, x1+img.width, y1+img.height,
-                0, 0, img.width, img.height);
-    }
-  }
-
-
   /**
    * ( begin auto-generated from image.xml )
    *
@@ -3141,16 +3121,39 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref image:loading_displaying
    * @param img the image to display
-   * @param a x-coordinate of the image
-   * @param b y-coordinate of the image
-   * @param c width to display the image
-   * @param d height to display the image
+   * @param x x-coordinate of the image
+   * @param y y-coordinate of the image
    * @see PApplet#loadImage(String, String)
    * @see PImage
    * @see PGraphics#imageMode(int)
    * @see PGraphics#tint(float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#alpha(int)
+   */
+  public void image(PImage img, float x, float y) {
+    // Starting in release 0144, image errors are simply ignored.
+    // loadImageAsync() sets width and height to -1 when loading fails.
+    if (img.width == -1 || img.height == -1) return;
+
+    if (imageMode == CORNER || imageMode == CORNERS) {
+      imageImpl(img,
+                x, y, x+img.width, y+img.height,
+                0, 0, img.width, img.height);
+
+    } else if (imageMode == CENTER) {
+      float x1 = x - img.width/2;
+      float y1 = y - img.height/2;
+      imageImpl(img,
+                x1, y1, x1+img.width, y1+img.height,
+                0, 0, img.width, img.height);
+    }
+  }
+  
+  /**
+   * @param a x-coordinate of the image
+   * @param b y-coordinate of the image
+   * @param c width to display the image
+   * @param d height to display the image
    */
   public void image(PImage img, float a, float b, float c, float d) {
     image(img, a, b, c, d, 0, 0, img.width, img.height);
@@ -3317,27 +3320,6 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  /**
-   * Convenience method to draw at a particular location.
-   */
-  public void shape(PShape shape, float x, float y) {
-    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
-      flush();
-
-      pushMatrix();
-
-      if (shapeMode == CENTER) {
-        translate(x - shape.getWidth()/2, y - shape.getHeight()/2);
-
-      } else if ((shapeMode == CORNER) || (shapeMode == CORNERS)) {
-        translate(x, y);
-      }
-      shape.draw(this);
-
-      popMatrix();
-    }
-  }
-
 
   /**
    * ( begin auto-generated from shape.xml )
@@ -3361,13 +3343,38 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref shape:loading_displaying
    * @param shape the shape to display
+   * @param x x-coordinate of the shape
+   * @param y y-coordinate of the shape
+   * @see PShape
+   * @see PApplet#loadShape(String)
+   * @see PGraphics#shapeMode(int)
+   *
+   * Convenience method to draw at a particular location.
+   */
+  public void shape(PShape shape, float x, float y) {
+    if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
+      flush();
+
+      pushMatrix();
+
+      if (shapeMode == CENTER) {
+        translate(x - shape.getWidth()/2, y - shape.getHeight()/2);
+
+      } else if ((shapeMode == CORNER) || (shapeMode == CORNERS)) {
+        translate(x, y);
+      }
+      shape.draw(this);
+
+      popMatrix();
+    }
+  }
+
+
+  /**
    * @param a x-coordinate of the shape
    * @param b y-coordinate of the shape
    * @param c width to display the shape
    * @param d height to display the shape
-   * @see PShape
-   * @see PApplet#loadShape(String)
-   * @see PGraphics#shapeMode(int)
    */
   public void shape(PShape shape, float a, float b, float c, float d) {
     if (shape.isVisible()) {  // don't do expensive matrix ops if invisible
