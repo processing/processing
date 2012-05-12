@@ -8848,16 +8848,16 @@ public class PApplet extends Applet
     return g.color(x, y, z);
   }
 
-  public final int color(int x, int y, int z, int a) {
+  public final int color(int x, int y, int z, int alpha) {
     if (g == null) {
-      if (a > 255) a = 255; else if (a < 0) a = 0;
+      if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
       if (x > 255) x = 255; else if (x < 0) x = 0;
       if (y > 255) y = 255; else if (y < 0) y = 0;
       if (z > 255) z = 255; else if (z < 0) z = 0;
 
-      return (a << 24) | (x << 16) | (y << 8) | z;
+      return (alpha << 24) | (x << 16) | (y << 8) | z;
     }
-    return g.color(x, y, z, a);
+    return g.color(x, y, z, alpha);
   }
 
   public final int color(float x, float y, float z) {
@@ -8871,17 +8871,16 @@ public class PApplet extends Applet
     return g.color(x, y, z);
   }
 
-
-  public final int color(float x, float y, float z, float a) {
+  public final int color(float x, float y, float z, float alpha) {
     if (g == null) {
-      if (a > 255) a = 255; else if (a < 0) a = 0;
+      if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
       if (x > 255) x = 255; else if (x < 0) x = 0;
       if (y > 255) y = 255; else if (y < 0) y = 0;
       if (z > 255) z = 255; else if (z < 0) z = 0;
 
-      return ((int)a << 24) | ((int)x << 16) | ((int)y << 8) | (int)z;
+      return ((int)alpha << 24) | ((int)x << 16) | ((int)y << 8) | (int)z;
     }
-    return g.color(x, y, z, a);
+    return g.color(x, y, z, alpha);
   }
 
 
@@ -9781,7 +9780,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref shape:vertex
-   * @param kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, QUAD_STRIP
+   * @param kind Either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
    * @see PGraphics#endShape()
    * @see PGraphics#vertex(float, float, float, float, float)
    * @see PGraphics#curveVertex(float, float, float)
@@ -9862,13 +9861,11 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref shape:vertex
-   * @param image the texture to apply
+   * @param image reference to a PImage object
    * @see PGraphics#textureMode(int)
    * @see PGraphics#beginShape(int)
    * @see PGraphics#endShape(int)
    * @see PGraphics#vertex(float, float, float, float, float)
-   *
-   * @param image reference to a PImage object
    */
   public void texture(PImage image) {
     if (recorder != null) recorder.texture(image);
@@ -10360,8 +10357,8 @@ public class PApplet extends Applet
    * @webref shape:2d_primitives
    * @param a x-coordinate of the ellipse
    * @param b y-coordinate of the ellipse
-   * @param c width of the ellipse
-   * @param d height of the ellipse
+   * @param c width of the ellipse by default
+   * @param d height of the ellipse by default
    * @see PApplet#ellipseMode(int)
    * @see PApplet#arc(float, float, float, float, float, float)
    */
@@ -10384,12 +10381,14 @@ public class PApplet extends Applet
    * @webref shape:2d_primitives
    * @param a x-coordinate of the arc's ellipse
    * @param b y-coordinate of the arc's ellipse
-   * @param c width of the arc's ellipse
-   * @param d height of the arc's ellipse
+   * @param c width of the arc's ellipse by default
+   * @param d height of the arc's ellipse by default
    * @param start angle to start the arc, specified in radians
    * @param stop angle to stop the arc, specified in radians
    * @see PApplet#ellipse(float, float, float, float)
    * @see PApplet#ellipseMode(int)
+   * @see PApplet#radians(float)
+   * @see PApplet#degrees(float)
    */
   public void arc(float a, float b, float c, float d,
                   float start, float stop) {
@@ -10407,7 +10406,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    *
    * @webref shape:3d_primitives
-   * @param size dimension of the box in all dimensions, creates a cube
+   * @param size dimension of the box in all dimensions (creates a cube)
    * @see PGraphics#sphere(float)
    */
   public void box(float size) {
@@ -10911,12 +10910,6 @@ public class PApplet extends Applet
   }
 
 
-  public void image(PImage img, float x, float y) {
-    if (recorder != null) recorder.image(img, x, y);
-    g.image(img, x, y);
-  }
-
-
   /**
    * ( begin auto-generated from image.xml )
    *
@@ -10945,16 +10938,26 @@ public class PApplet extends Applet
    *
    * @webref image:loading_displaying
    * @param img the image to display
-   * @param a x-coordinate of the image
-   * @param b y-coordinate of the image
-   * @param c width to display the image
-   * @param d height to display the image
+   * @param x x-coordinate of the image
+   * @param y y-coordinate of the image
    * @see PApplet#loadImage(String, String)
    * @see PImage
    * @see PGraphics#imageMode(int)
    * @see PGraphics#tint(float)
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#alpha(int)
+   */
+  public void image(PImage img, float x, float y) {
+    if (recorder != null) recorder.image(img, x, y);
+    g.image(img, x, y);
+  }
+
+
+  /**
+   * @param a x-coordinate of the image
+   * @param b y-coordinate of the image
+   * @param c width to display the image
+   * @param d height to display the image
    */
   public void image(PImage img, float a, float b, float c, float d) {
     if (recorder != null) recorder.image(img, a, b, c, d);
@@ -11012,15 +11015,6 @@ public class PApplet extends Applet
 
 
   /**
-   * Convenience method to draw at a particular location.
-   */
-  public void shape(PShape shape, float x, float y) {
-    if (recorder != null) recorder.shape(shape, x, y);
-    g.shape(shape, x, y);
-  }
-
-
-  /**
    * ( begin auto-generated from shape.xml )
    *
    * Displays shapes to the screen. The shapes must be in the sketch's "data"
@@ -11042,13 +11036,25 @@ public class PApplet extends Applet
    *
    * @webref shape:loading_displaying
    * @param shape the shape to display
+   * @param x x-coordinate of the shape
+   * @param y y-coordinate of the shape
+   * @see PShape
+   * @see PApplet#loadShape(String)
+   * @see PGraphics#shapeMode(int)
+   *
+   * Convenience method to draw at a particular location.
+   */
+  public void shape(PShape shape, float x, float y) {
+    if (recorder != null) recorder.shape(shape, x, y);
+    g.shape(shape, x, y);
+  }
+
+
+  /**
    * @param a x-coordinate of the shape
    * @param b y-coordinate of the shape
    * @param c width to display the shape
    * @param d height to display the shape
-   * @see PShape
-   * @see PApplet#loadShape(String)
-   * @see PGraphics#shapeMode(int)
    */
   public void shape(PShape shape, float a, float b, float c, float d) {
     if (recorder != null) recorder.shape(shape, a, b, c, d);
@@ -14011,7 +14017,7 @@ public class PApplet extends Applet
    * @webref image:pixels
    * @brief Converts the image to grayscale or black and white
    * @usage web_application
-   * @param kind Either THRESHOLD, GRAY, INVERT, POSTERIZE, BLUR, OPAQUE, ERODE, or DILATE
+   * @param kind Either THRESHOLD, GRAY, OPAQUE, INVERT, POSTERIZE, BLUR, ERODE, or DILATE
    * @param param unique for each, see above
    */
   public void filter(int kind, float param) {
