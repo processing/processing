@@ -4609,13 +4609,13 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref transform
    * @param s percentage to scale the object
-   * @see PGraphics#popMatrix()
    * @see PGraphics#pushMatrix()
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#translate(float, float, float)
    * @see PGraphics#rotate(float)
    * @see PGraphics#rotateX(float)
    * @see PGraphics#rotateY(float)
    * @see PGraphics#rotateZ(float)
-   * @see PGraphics#translate(float, float, float)
    */
   public void scale(float s) {
     showMissingWarning("scale");
@@ -4630,7 +4630,7 @@ public class PGraphics extends PImage implements PConstants {
    * scaled by 1, since there's no way to know what else to scale it by.
    *
    * @param x percentage to scale the object in the x-axis
-   * @param y percentage to scale the objects in the y-axis
+   * @param y percentage to scale the object in the y-axis
    */
   public void scale(float x, float y) {
     showMissingWarning("scale");
@@ -4638,8 +4638,6 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
-   * @param x percentage to scale the object in the x-axis
-   * @param y percentage to scale the objects in the y-axis
    * @param z percentage to scale the object in the z-axis
    */
   public void scale(float x, float y, float z) {
