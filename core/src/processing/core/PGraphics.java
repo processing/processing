@@ -4790,6 +4790,7 @@ public class PGraphics extends PImage implements PConstants {
 
 
   /**
+   * @param n03 numbers which define the 4x4 matrix to be multiplied
    * @param n13 numbers which define the 4x4 matrix to be multiplied
    * @param n20 numbers which define the 4x4 matrix to be multiplied
    * @param n21 numbers which define the 4x4 matrix to be multiplied
