@@ -4544,6 +4544,7 @@ public class PApplet extends Applet
    * @param x x-coordinate in noise space
    * @param y y-coordinate in noise space
    * @param z z-coordinate in noise space
+   * @see PApplet#noiseSeed(long)
    * @see PApplet#noiseDetail(int, float)
    * @see PApplet#random(float,float)
    */
@@ -4672,7 +4673,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref math:random
-   * @param seed int
+   * @param seed seed value
    * @see PApplet#noise(float, float, float)
    * @see PApplet#noiseDetail(int, float)
    * @see PApplet#random(float,float)
