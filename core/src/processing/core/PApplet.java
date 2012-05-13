@@ -2910,8 +2910,8 @@ public class PApplet extends Applet
   }
 
 
-  public void link(String here) {
-    link(here, null);
+  public void link(String url) {
+    link(url, null);
   }
 
 
@@ -2934,8 +2934,8 @@ public class PApplet extends Applet
    * yet have a standard method for launching URLs.
    *
    * @webref input:web
-   * @param url complete url as a String in quotes
-   * @param target name of the window to load the URL as a string in quotes
+   * @param url the complete URL, as a String in quotes
+   * @param target the name of the window in which to load the URL, as a String in quotes
    *
    */
   public void link(String url, String target) {
@@ -6696,7 +6696,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref data:array_functions
-   * @param what array to sort
+   * @param list array to sort
    * @see PApplet#reverse(boolean[])
    */
   static public byte[] sort(byte list[]) {
@@ -11721,13 +11721,13 @@ public class PApplet extends Applet
    *
    * @webref transform
    * @param s percentage to scale the object
-   * @see PGraphics#popMatrix()
    * @see PGraphics#pushMatrix()
+   * @see PGraphics#popMatrix()
+   * @see PGraphics#translate(float, float, float)
    * @see PGraphics#rotate(float)
    * @see PGraphics#rotateX(float)
    * @see PGraphics#rotateY(float)
    * @see PGraphics#rotateZ(float)
-   * @see PGraphics#translate(float, float, float)
    */
   public void scale(float s) {
     if (recorder != null) recorder.scale(s);
@@ -11743,7 +11743,7 @@ public class PApplet extends Applet
    * scaled by 1, since there's no way to know what else to scale it by.
    *
    * @param x percentage to scale the object in the x-axis
-   * @param y percentage to scale the objects in the y-axis
+   * @param y percentage to scale the object in the y-axis
    */
   public void scale(float x, float y) {
     if (recorder != null) recorder.scale(x, y);
@@ -11752,8 +11752,6 @@ public class PApplet extends Applet
 
 
   /**
-   * @param x percentage to scale the object in the x-axis
-   * @param y percentage to scale the objects in the y-axis
    * @param z percentage to scale the object in the z-axis
    */
   public void scale(float x, float y, float z) {
