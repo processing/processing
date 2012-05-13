@@ -6300,9 +6300,6 @@ public class PApplet extends Applet
    * <p/>
    * Note that unlike other api methods, this will not automatically
    * compress or uncompress gzip files.
-   *
-   * @param target the file to write to
-   * @param source location to read from (a filename, path, or URL)
    */
   public boolean saveStream(File target, String source) {
     return saveStream(target, createInputRaw(source));
@@ -7552,7 +7549,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param value the string to be split
+   * @param value the String to be split
    * @param delim list of individual characters that will be used as separators
    * @see PApplet#split(String, String)
    * @see PApplet#join(String[], String)
@@ -7601,7 +7598,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref data:string_functions
    * @usage web_application
-   * @param value string to be split
+   * @param value the String to be split
    * @param delim the character or String used to separate the data
    */
   static public String[] split(String value, char delim) {
@@ -7764,7 +7761,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param what the String to search inside
+   * @param what the String to be searched
    * @param regexp the regexp to be used for matching
    * @see PApplet#match(String, String)
    * @see PApplet#split(String, String)
@@ -8316,7 +8313,7 @@ public class PApplet extends Applet
     return formatted;
   }
 
-/**
+  /**
    * ( begin auto-generated from nf.xml )
    *
    * Utility function for formatting numbers into strings. There are two
@@ -8330,13 +8327,14 @@ public class PApplet extends Applet
    * functions.
    *
    * ( end auto-generated )
- * @webref data:string_functions
- * @param num the number(s) to format
- * @param digits number of digits to pad with zero
- * @see PApplet#nfs(float, int, int)
- * @see PApplet#nfp(float, int, int)
- * @see PApplet#nfc(float, int)
- */
+   * @webref data:string_functions
+   * @param num the number(s) to format
+   * @param digits number of digits to pad with zero
+   * @see PApplet#nfs(float, int, int)
+   * @see PApplet#nfp(float, int, int)
+   * @see PApplet#nfc(float, int)
+   * @see PApplet#int(float)
+   */
   static public String nf(int num, int digits) {
     if ((int_nf != null) &&
         (int_nf_digits == digits) &&
@@ -8456,7 +8454,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
   * @webref data:string_functions
-  * @param num[] the number(s) to format
+  * @param num the number(s) to format
   * @param digits number of digits to pad with zeroes
   * @see PApplet#nf(float, int, int)
   * @see PApplet#nfs(float, int, int)
@@ -8572,7 +8570,6 @@ public class PApplet extends Applet
   }
 
  /**
-  * @param num[] the number(s) to format
   * @param left the number of digits to the left of the decimal point
   * @param right the number of digits to the right of the decimal point
   */
@@ -8583,9 +8580,7 @@ public class PApplet extends Applet
     }
     return formatted;
   }
-/**
- * @param num the number(s) to format
- */
+
   static public String nfp(float num, int left, int right) {
     return (num < 0) ? nf(num, left, right) :  ('+' + nf(num, left, right));
   }
@@ -11901,6 +11896,7 @@ public class PApplet extends Applet
 
 
   /**
+   * @param n03 numbers which define the 4x4 matrix to be multiplied
    * @param n13 numbers which define the 4x4 matrix to be multiplied
    * @param n20 numbers which define the 4x4 matrix to be multiplied
    * @param n21 numbers which define the 4x4 matrix to be multiplied
