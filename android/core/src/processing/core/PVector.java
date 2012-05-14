@@ -128,7 +128,7 @@ public class PVector implements Serializable {
    *
    * @param  x the x coordinate.
    * @param  y the y coordinate.
-   * @param  z the y coordinate.
+   * @param  z the z coordinate.
    */
   public PVector(float x, float y, float z) {
     this.x = x;
