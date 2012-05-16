@@ -734,7 +734,9 @@ public class PShape implements PConstants {
 
   
   
-  
+  ////////////////////////////////////////////////////////////////////////
+  //
+  // The new copy methods to put an SVG into a PShape3D, for example
   
   public PShape copy(PGraphics g) {
     PShape res = null;
@@ -844,6 +846,7 @@ public class PShape implements PConstants {
     }    
   }
   
+  ////////////////////////////////////////////////////////////////////////
   
 
   /**

@@ -27,7 +27,23 @@ public class PGraphics2D extends PGraphicsOpenGL {
   
   public PGraphics2D() {
     super();
-    hints[ENABLE_ACCURATE_2D] = true;
+    //hints[ENABLE_ACCURATE_2D] = true;
+    hints[ENABLE_PERSPECTIVE_CORRECTED_LINES] = false;
   }
+  
+  /**
+   * Return true if this renderer supports 2D drawing. Defaults to true.
+   */
+  public boolean is2D() {
+    return true;
+  }
+
+
+  /**
+   * Return true if this renderer supports 2D drawing. Defaults to false.
+   */
+  public boolean is3D() {
+    return false;
+  }  
   
 }
