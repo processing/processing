@@ -9634,66 +9634,122 @@ public class PGraphicsOpenGL extends PGraphics {
         int nvertTot = nPtVert * nInVert;
         int nindTot = 3 * (nPtVert - 1) * nInVert;
 
-        tess.pointVertexCheck(nvertTot);
-        tess.pointIndexCheck(nindTot);
-        int vertIdx = tess.firstPointVertex;
-        int attribIdx = tess.firstPointVertex;
-        int indIdx = tess.firstPointIndex;
-        IndexCache cache = tess.pointIndexCache;
-        int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
-        firstPointIndexCache = index;        
-        for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-          // Creating the triangle fan for each input vertex.          
-          
-          int count = cache.vertexCount[index];
-          if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
-            // We need to start a new index block for this point.
-            index = cache.addNew();
-            count = 0;
-          }           
+        if (is3D()) { 
+          tess.pointVertexCheck(nvertTot);
+          tess.pointIndexCheck(nindTot);
+          int vertIdx = tess.firstPointVertex;
+          int attribIdx = tess.firstPointVertex;
+          int indIdx = tess.firstPointIndex;
+          IndexCache cache = tess.pointIndexCache;
+          int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
+          firstPointIndexCache = index;        
+          for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+            // Creating the triangle fan for each input vertex.          
+            
+            int count = cache.vertexCount[index];
+            if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
+              // We need to start a new index block for this point.
+              index = cache.addNew();
+              count = 0;
+            }           
 
-          // All the tessellated vertices are identical to the center point
-          for (int k = 0; k < nPtVert; k++) {
-            tess.setPointVertex(vertIdx, in, i);            
-            vertIdx++;
-          }
+            // All the tessellated vertices are identical to the center point
+            for (int k = 0; k < nPtVert; k++) {
+              tess.setPointVertex(vertIdx, in, i);            
+              vertIdx++;
+            }
 
-          // The attributes for each tessellated vertex are the displacement along
-          // the circle perimeter. The point shader will read these attributes and
-          // displace the vertices in screen coordinates so the circles are always
-          // camera facing (bilboards)
-          tess.pointSizes[2 * attribIdx + 0] = 0;
-          tess.pointSizes[2 * attribIdx + 1] = 0;
-          attribIdx++;
-          float val = 0;
-          float inc = (float) SINCOS_LENGTH / perim;
-          for (int k = 0; k < perim; k++) {
-            tess.pointSizes[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
-            tess.pointSizes[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
-            val = (val + inc) % SINCOS_LENGTH;
+            // The attributes for each tessellated vertex are the displacement along
+            // the circle perimeter. The point shader will read these attributes and
+            // displace the vertices in screen coordinates so the circles are always
+            // camera facing (bilboards)
+            tess.pointSizes[2 * attribIdx + 0] = 0;
+            tess.pointSizes[2 * attribIdx + 1] = 0;
             attribIdx++;
-          }
+            float val = 0;
+            float inc = (float) SINCOS_LENGTH / perim;
+            for (int k = 0; k < perim; k++) {
+              tess.pointSizes[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
+              tess.pointSizes[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
+              val = (val + inc) % SINCOS_LENGTH;
+              attribIdx++;
+            }
 
-          // Adding vert0 to take into account the triangles of all
-          // the preceding points.
-          for (int k = 1; k < nPtVert - 1; k++) {
+            // Adding vert0 to take into account the triangles of all
+            // the preceding points.
+            for (int k = 1; k < nPtVert - 1; k++) {
+              tess.pointIndices[indIdx++] = (short) (count + 0);
+              tess.pointIndices[indIdx++] = (short) (count + k);
+              tess.pointIndices[indIdx++] = (short) (count + k + 1);
+            }
+            // Final triangle between the last and first point:
             tess.pointIndices[indIdx++] = (short) (count + 0);
-            tess.pointIndices[indIdx++] = (short) (count + k);
-            tess.pointIndices[indIdx++] = (short) (count + k + 1);
-          }
-          // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = (short) (count + 0);
-          tess.pointIndices[indIdx++] = (short) (count + 1);
-          tess.pointIndices[indIdx++] = (short) (count + nPtVert - 1);
+            tess.pointIndices[indIdx++] = (short) (count + 1);
+            tess.pointIndices[indIdx++] = (short) (count + nPtVert - 1);
 
-          cache.incCounts(index, 3 * (nPtVert - 1), nPtVert);
+            cache.incCounts(index, 3 * (nPtVert - 1), nPtVert);
+          }
+          lastPointIndexCache = index;
+          
+//        NEW TESSMAP API        
+//          if (tess.renderMode == RETAINED) {
+//            in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, nPtVert);
+//          }          
+        } else {
+          tess.fillVertexCheck(nvertTot);
+          tess.fillIndexCheck(nindTot);
+          int vertIdx = tess.firstFillVertex;
+          int indIdx = tess.firstFillIndex;
+          IndexCache cache = tess.fillIndexCache;
+          int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
+          firstFillIndexCache = index;        
+          for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+            int count = cache.vertexCount[index];
+            if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
+              // We need to start a new index block for this point.
+              index = cache.addNew();
+              count = 0;
+            }   
+            
+            float x0 = in.vertices[4 * i + 0];
+            float y0 = in.vertices[4 * i + 1];
+            float w0 = in.vertices[4 * i + 3];
+            int rgba = in.scolors[i];
+            if (in.renderMode == RETAINED) {
+              in.tessMap.addFillIndex(i, -1);
+            }
+            
+            float val = 0;
+            float inc = (float) SINCOS_LENGTH / perim;            
+            tess.setFillVertex(vertIdx, x0, y0, 0, w0, rgba, in, null);              
+            vertIdx++;            
+            for (int k = 0; k < perim; k++) {
+              tess.setFillVertex(vertIdx, x0 + 0.5f * cosLUT[(int) val] * strokeWeight, 
+                                          y0 + 0.5f * sinLUT[(int) val] * strokeWeight, 0, w0, rgba, in, null);
+              vertIdx++;
+              val = (val + inc) % SINCOS_LENGTH;
+            }
+            
+            // Adding vert0 to take into account the triangles of all
+            // the preceding points.
+            for (int k = 1; k < nPtVert - 1; k++) {
+              tess.fillIndices[indIdx++] = (short) (count + 0);
+              tess.fillIndices[indIdx++] = (short) (count + k);
+              tess.fillIndices[indIdx++] = (short) (count + k + 1);
+            }
+            // Final triangle between the last and first point:
+            tess.fillIndices[indIdx++] = (short) (count + 0);
+            tess.fillIndices[indIdx++] = (short) (count + 1);
+            tess.fillIndices[indIdx++] = (short) (count + nPtVert - 1);
+
+            cache.incCounts(index, 3 * (nPtVert - 1), nPtVert);            
+          }
+          lastFillIndexCache = index;          
+//        NEW TESSMAP API        
+//          if (tess.renderMode == RETAINED) {
+//            ????
+//          }                    
         }
-        lastPointIndexCache = index;
-        
-//      NEW TESSMAP API        
-//        if (tess.renderMode == RETAINED) {
-//          in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, nPtVert);
-//        }
       }
     }
 
@@ -9712,61 +9768,113 @@ public class PGraphicsOpenGL extends PGraphics {
         // 3 indices.
         int nindTot = 12 * quadCount;
         
-        tess.pointVertexCheck(nvertTot);
-        tess.pointIndexCheck(nindTot);
-        int vertIdx = tess.firstPointVertex;
-        int attribIdx = tess.firstPointVertex;
-        int indIdx = tess.firstPointIndex;
-        IndexCache cache = tess.pointIndexCache;
-        int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();        
-        firstPointIndexCache = index;
-        for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-          int nvert = 5;
-          int count = cache.vertexCount[index];
-          if (PGL.MAX_VERTEX_INDEX1 <= count + nvert) {
-            // We need to start a new index block for this point.
-            index = cache.addNew();
-            count = 0;
-          }        
-          
-          for (int k = 0; k < nvert; k++) {
-            tess.setPointVertex(vertIdx, in, i);
-            vertIdx++;
-          }
+        if (is3D()) { 
+          tess.pointVertexCheck(nvertTot);
+          tess.pointIndexCheck(nindTot);
+          int vertIdx = tess.firstPointVertex;
+          int attribIdx = tess.firstPointVertex;
+          int indIdx = tess.firstPointIndex;
+          IndexCache cache = tess.pointIndexCache;
+          int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();        
+          firstPointIndexCache = index;
+          for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+            int nvert = 5;
+            int count = cache.vertexCount[index];
+            if (PGL.MAX_VERTEX_INDEX1 <= count + nvert) {
+              // We need to start a new index block for this point.
+              index = cache.addNew();
+              count = 0;
+            }        
+            
+            for (int k = 0; k < nvert; k++) {
+              tess.setPointVertex(vertIdx, in, i);
+              vertIdx++;
+            }
 
-          // The attributes for each tessellated vertex are the displacement along
-          // the quad corners. The point shader will read these attributes and
-          // displace the vertices in screen coordinates so the quads are always
-          // camera facing (bilboards)
-          tess.pointSizes[2 * attribIdx + 0] = 0;
-          tess.pointSizes[2 * attribIdx + 1] = 0;
-          attribIdx++;
-          for (int k = 0; k < 4; k++) {
-            tess.pointSizes[2 * attribIdx + 0] = 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
-            tess.pointSizes[2 * attribIdx + 1] = 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
+            // The attributes for each tessellated vertex are the displacement along
+            // the quad corners. The point shader will read these attributes and
+            // displace the vertices in screen coordinates so the quads are always
+            // camera facing (bilboards)
+            tess.pointSizes[2 * attribIdx + 0] = 0;
+            tess.pointSizes[2 * attribIdx + 1] = 0;
             attribIdx++;
-          }
+            for (int k = 0; k < 4; k++) {
+              tess.pointSizes[2 * attribIdx + 0] = 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
+              tess.pointSizes[2 * attribIdx + 1] = 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
+              attribIdx++;
+            }
 
-          // Adding firstVert to take into account the triangles of all
-          // the preceding points.
-          for (int k = 1; k < nvert - 1; k++) {
+            // Adding firstVert to take into account the triangles of all
+            // the preceding points.
+            for (int k = 1; k < nvert - 1; k++) {
+              tess.pointIndices[indIdx++] = (short) (count + 0);
+              tess.pointIndices[indIdx++] = (short) (count + k);
+              tess.pointIndices[indIdx++] = (short) (count + k + 1);
+            }
+            // Final triangle between the last and first point:
             tess.pointIndices[indIdx++] = (short) (count + 0);
-            tess.pointIndices[indIdx++] = (short) (count + k);
-            tess.pointIndices[indIdx++] = (short) (count + k + 1);
-          }
-          // Final triangle between the last and first point:
-          tess.pointIndices[indIdx++] = (short) (count + 0);
-          tess.pointIndices[indIdx++] = (short) (count + 1);
-          tess.pointIndices[indIdx++] = (short) (count + nvert - 1);
+            tess.pointIndices[indIdx++] = (short) (count + 1);
+            tess.pointIndices[indIdx++] = (short) (count + nvert - 1);
 
-          cache.incCounts(index, 12, 5);
-        }
-        lastPointIndexCache = index;
-        
-//      NEW TESSMAP API        
+            cache.incCounts(index, 12, 5);
+          }
+          lastPointIndexCache = index;
+          
+//        NEW TESSMAP API        
+//          if (tess.renderMode == RETAINED) {
+//            in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, 5);
+//          }                  
+        } else {
+          tess.fillVertexCheck(nvertTot);
+          tess.fillIndexCheck(nindTot);     
+          int vertIdx = tess.firstFillVertex;
+          int indIdx = tess.firstFillIndex;
+          IndexCache cache = tess.fillIndexCache;
+          int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();        
+          firstFillIndexCache = index;
+          for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+            int nvert = 5;
+            int count = cache.vertexCount[index];
+            if (PGL.MAX_VERTEX_INDEX1 <= count + nvert) {
+              // We need to start a new index block for this point.
+              index = cache.addNew();
+              count = 0;
+            }        
+            
+            float x0 = in.vertices[4 * i + 0];
+            float y0 = in.vertices[4 * i + 1];
+            float w0 = in.vertices[4 * i + 3];
+            int rgba = in.scolors[i];
+            if (in.renderMode == RETAINED) {
+              in.tessMap.addFillIndex(i, -1);
+            }
+
+            tess.setFillVertex(vertIdx, x0, y0, 0, w0, rgba, in, null);              
+            vertIdx++;            
+            for (int k = 0; k < nvert - 1; k++) {
+              tess.setFillVertex(vertIdx, x0 + 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight, 
+                                          y0 + 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight, 0, w0, rgba, in, null);
+              vertIdx++;
+            }            
+            
+            for (int k = 1; k < nvert - 1; k++) {
+              tess.fillIndices[indIdx++] = (short) (count + 0);
+              tess.fillIndices[indIdx++] = (short) (count + k);
+              tess.fillIndices[indIdx++] = (short) (count + k + 1);
+            }
+            // Final triangle between the last and first point:
+            tess.fillIndices[indIdx++] = (short) (count + 0);
+            tess.fillIndices[indIdx++] = (short) (count + 1);
+            tess.fillIndices[indIdx++] = (short) (count + nvert - 1);
+
+            cache.incCounts(index, 12, 5);            
+          }          
+          lastFillIndexCache = index;
+//        NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
-//          in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, 5);
-//        }        
+//          ?????
+//        }             
+        }        
       }
     }
 
