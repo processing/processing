@@ -320,6 +320,8 @@ public class PShape3D extends PShape {
     stroke = pg.stroke;      
     strokeColor = pg.strokeColor;     
     strokeWeight = pg.strokeWeight;    
+    strokeCap = pg.strokeCap;
+    strokeJoin = pg.strokeJoin;
     
     tint = pg.tint;  
     tintColor = pg.tintColor;
