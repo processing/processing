@@ -114,7 +114,7 @@ public class PGL {
   /** Minimum stroke weight needed to apply the full path stroking
    * algorithm that properly generates caps and joing. 
    */
-  public static final float MIN_CAPS_JOINS_WEIGHT = 2.1f;
+  public static final float MIN_CAPS_JOINS_WEIGHT = 1.5f;
   
   /** Minimum array size to use arrayCopy method(). **/
   static protected final int MIN_ARRAYCOPY_SIZE = 2;
