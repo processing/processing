@@ -32,10 +32,6 @@ import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
 
-import java.awt.BasicStroke;
-import java.awt.Shape;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.PathIterator;
 import java.io.BufferedReader;
 import java.net.URL;
 import java.nio.*;
@@ -47,6 +43,8 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Stack;
+
+import processing.opengl.geom.LinePath;
 
 /**
  * OpenGL renderer.
@@ -378,6 +376,11 @@ public class PGraphicsOpenGL extends PGraphics {
   protected boolean defaultEdges = false;
   protected PImage textureImage0;
 
+  static protected final int EDGE_MIDDLE = 0;
+  static protected final int EDGE_START  = 1;
+  static protected final int EDGE_STOP   = 2;
+  static protected final int EDGE_SINGLE = 3;
+  
   protected boolean perspectiveCorrectedLines = false;
 
   /** Used in point tessellation. */
@@ -7656,6 +7659,7 @@ public class PGraphicsOpenGL extends PGraphics {
             begin = true;
           } else if (!breaks[i1]) {
             addEdge(i0, i1, begin, false);
+            begin = false;
           }
         }
       }
@@ -9660,59 +9664,82 @@ public class PGraphicsOpenGL extends PGraphics {
     
     void tessellateLines() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-
+      
       if (stroke && 2 <= nInVert) {
         int lineCount = nInVert / 2;
         int first = in.firstVertex;
-
-        // Lines are made up of 4 vertices defining the quad.
-        // Each vertex has its own offset representing the stroke weight.
-        int nvert = lineCount * 4;
-        // Each stroke line has 4 vertices, defining 2 triangles, which
-        // require 3 indices to specify their connectivities.
-        int nind = lineCount * 2 * 3;
-
-        tess.lineVertexCheck(nvert);
-        tess.lineIndexCheck(nind);
-        int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
-        firstLineIndexCache = index;
-        for (int ln = 0; ln < lineCount; ln++) {
-          int i0 = first + 2 * ln + 0;
-          int i1 = first + 2 * ln + 1;
-          index = addLine(i0, i1, index, false);
-        }
-        lastLineIndexCache = index;
-        
-//      NEW TESSMAP API        
+        if (is3D()) {
+          // Lines are made up of 4 vertices defining the quad.
+          // Each vertex has its own offset representing the stroke weight.
+          int nvert = lineCount * 4;
+          // Each stroke line has 4 vertices, defining 2 triangles, which
+          // require 3 indices to specify their connectivities.
+          int nind = lineCount * 2 * 3;
+          
+          tess.lineVertexCheck(nvert);
+          tess.lineIndexCheck(nind);
+          int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
+          firstLineIndexCache = index;
+          for (int ln = 0; ln < lineCount; ln++) {
+            int i0 = first + 2 * ln + 0;
+            int i1 = first + 2 * ln + 1;
+            index = addLine(i0, i1, index, false);
+          }
+          lastLineIndexCache = index;        
+          
+//        NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }
+        } else {
+          // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
+          LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+          for (int ln = 0; ln < lineCount; ln++) {
+            int i0 = first + 2 * ln + 0;
+            int i1 = first + 2 * ln + 1;
+            path.moveTo(inGeo.vertices[4 * i0 + 0], inGeo.vertices[4 * i0 + 1]);
+            path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
+          }
+          tessellateLinePath(path);          
+        }
       }
     }
     
     void tessellateLineStrip() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-
+      int lineCount = nInVert - 1;
+      
       if (stroke && 2 <= nInVert) {
-        int lineCount = nInVert - 1;
-        int nvert = lineCount * 4;
-        int nind = lineCount * 2 * 3;
-        tess.lineVertexCheck(nvert);
-        tess.lineIndexCheck(nind);
-        int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
-        firstLineIndexCache = index;
-        int i0 = in.firstVertex;
-        for (int ln = 0; ln < lineCount; ln++) {
-          int i1 = in.firstVertex + ln + 1;
-          index = addLine(i0, i1, index, false);
-          i0 = i1;
-        }         
-        lastLineIndexCache = index;
-        
-//      NEW TESSMAP API        
-//      if (tess.renderMode == RETAINED) {
-//        addLineMapping(in.firstVertex, in.lastVertex);
-//      }        
+        if (is3D()) {
+          int nvert = lineCount * 4;
+          int nind = lineCount * 2 * 3;
+          tess.lineVertexCheck(nvert);
+          tess.lineIndexCheck(nind);
+          int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
+          firstLineIndexCache = index;
+          int i0 = in.firstVertex;
+          for (int ln = 0; ln < lineCount; ln++) {
+            int i1 = in.firstVertex + ln + 1;
+            index = addLine(i0, i1, index, false);
+            i0 = i1;
+          }         
+          lastLineIndexCache = index;
+          
+//        NEW TESSMAP API        
+//        if (tess.renderMode == RETAINED) {
+//          addLineMapping(in.firstVertex, in.lastVertex);
+//        }           
+        } else {          
+          // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
+          int first = in.firstVertex;          
+          LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+          path.moveTo(inGeo.vertices[4 * first + 0], inGeo.vertices[4 * first + 1]);
+          for (int ln = 0; ln < lineCount; ln++) {
+            int i1 = first + ln + 1;          
+            path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
+          }    
+          tessellateLinePath(path);          
+        }
       }
     }
 
@@ -9721,49 +9748,119 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (stroke && 2 <= nInVert) {
         int lineCount = nInVert;
-        int nvert = lineCount * 4;
-        int nind = lineCount * 2 * 3;
-        tess.lineVertexCheck(nvert);
-        tess.lineIndexCheck(nind);
-        int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
-        firstLineIndexCache = index;
-        int i0 = in.firstVertex;
-        for (int ln = 0; ln < lineCount - 1; ln++) {
-          int i1 = in.firstVertex + ln + 1;
-          index = addLine(i0, i1, index, false);
-          i0 = i1;
+        if (is3D()) {
+          int nvert = lineCount * 4;
+          int nind = lineCount * 2 * 3;
+          tess.lineVertexCheck(nvert);
+          tess.lineIndexCheck(nind);
+          int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
+          firstLineIndexCache = index;
+          int i0 = in.firstVertex;
+          for (int ln = 0; ln < lineCount - 1; ln++) {
+            int i1 = in.firstVertex + ln + 1;
+            index = addLine(i0, i1, index, false);
+            i0 = i1;
+          }
+          index = addLine(in.lastVertex, in.firstVertex, index, false);
+          lastLineIndexCache = index;
+          
+//        NEW TESSMAP API        
+//        if (tess.renderMode == RETAINED) {
+//          addLineMapping(in.firstVertex, in.lastVertex);
+//        }          
+        } else {
+          // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
+          int first = in.firstVertex;          
+          LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+          path.moveTo(inGeo.vertices[4 * first + 0], inGeo.vertices[4 * first + 1]);
+          for (int ln = 0; ln < lineCount - 1; ln++) {
+            int i1 = first + ln + 1;          
+            path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
+          }    
+          path.closePath();
+          tessellateLinePath(path);  
         }
-        index = addLine(in.lastVertex, in.firstVertex, index, false);
-        lastLineIndexCache = index;
-        
-//      NEW TESSMAP API        
-//      if (tess.renderMode == RETAINED) {
-//        addLineMapping(in.firstVertex, in.lastVertex);
-//      }        
       }
       
     }    
     
     void tessellateEdges() {
       if (stroke) {
-        int nInVert = in.getNumLineVertices();
-        int nInInd = in.getNumLineIndices();
+        if (is3D()) {
+          int nInVert = in.getNumLineVertices();
+          int nInInd = in.getNumLineIndices();
 
-        tess.lineVertexCheck(nInVert);
-        tess.lineIndexCheck(nInInd);
-        int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
-        firstLineIndexCache = index;
-        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-          int[] edge = in.edges[i];
-          index = addLine(edge[0], edge[1], index, true);
+          tess.lineVertexCheck(nInVert);
+          tess.lineIndexCheck(nInInd);
+          int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
+          firstLineIndexCache = index;
+          for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+            int[] edge = in.edges[i];
+            index = addLine(edge[0], edge[1], index, true);
+          }
+          lastLineIndexCache = index;
+          
+//        NEW TESSMAP API        
+//        if (tess.renderMode == RETAINED) {
+//          addLineMapping(in.firstVertex, in.lastVertex);
+//        }               
+        } else {
+          // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
+          LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+          for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+            int[] edge = in.edges[i];
+            int i0 = edge[0];
+            int i1 = edge[1];
+            switch (edge[2]) {
+            case EDGE_MIDDLE:
+              path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
+              break;
+            case EDGE_START:
+              path.moveTo(inGeo.vertices[4 * i0 + 0], inGeo.vertices[4 * i0 + 1]);
+              path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
+              break;
+            case EDGE_STOP:
+              path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
+              path.closePath();
+              break;
+            case EDGE_SINGLE:
+              path.moveTo(inGeo.vertices[4 * i0 + 0], inGeo.vertices[4 * i0 + 1]);
+              path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
+              path.closePath();
+              break;              
+            } 
+          }
+          tessellateLinePath(path); 
         }
-        lastLineIndexCache = index;
-        
-//      NEW TESSMAP API        
-//      if (tess.renderMode == RETAINED) {
-//        addLineMapping(in.firstVertex, in.lastVertex);
-//      }        
       }
+      
+      
+      
+//      tessGeo.firstLineIndex = tessGeo.fillIndexCount;
+//      tessGeo.addFillVertices(inGeo.getNumLineVertices());
+//      tessGeo.addFillIndices(inGeo.getNumLineIndices());
+//      tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1; 
+//      int vcount = tessGeo.firstFillVertex;
+//      int icount = tessGeo.firstFillIndex;          
+//      for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
+//        int[] edge = inGeo.edges[i];
+//        addLineToFill(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
+//      }     
+
+      // Not using the fancy path tessellation in 2D because it slows down things
+      // significantly (it also calls the GLU tessellator).
+      // It generates the right caps and joins, though.
+      
+//      GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);          
+//      for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
+//        int[] edge = inGeo.edges[i];
+//        if (startEdge(edge[2])) path.moveTo(inGeo.getVertexX(edge[0]), inGeo.getVertexY(edge[0])); 
+//        path.lineTo(inGeo.getVertexX(edge[1]), inGeo.getVertexY(edge[1]));
+//        if (endEdge(edge[2])) path.closePath();
+//      }        
+//      tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
+//      tessellatePath(path);
+//      tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;           
     }
 
     // Adding the data that defines a quad starting at vertex i0 and
@@ -10131,116 +10228,91 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       tessellateEdges();
-    }
+    }    
     
-    
-    // Tessellates the path given as parameter. This will work only in 2D mode.
-    // By Tom Carden, and Karl D.D. Willis:
+    // Tessellates the path given as parameter. This will work only in 2D.
+    // Based on the opengl stroke hack described here: 
     // http://wiki.processing.org/w/Stroke_attributes_in_OpenGL
-    public void tessellatePath(GeneralPath path) {
-      // AWT implementation for Android?
-      // http://hi-android.info/src/java/awt/Shape.java.html
-      // http://hi-android.info/src/java/awt/geom/GeneralPath.java.html
-      // http://hi-android.info/src/java/awt/geom/PathIterator.java.html
-      // and:
-      // http://stackoverflow.com/questions/3897775/using-awt-with-android
-      // http://code.google.com/p/awt-android-compat/
-        
-      BasicStroke bs;
-      int bstrokeCap = strokeCap == ROUND ? BasicStroke.CAP_ROUND :
-                       strokeCap == PROJECT ? BasicStroke.CAP_SQUARE :
-                       BasicStroke.CAP_BUTT;
-      int bstrokeJoin = strokeJoin == ROUND ? BasicStroke.JOIN_ROUND :
-                        strokeJoin == BEVEL ? BasicStroke.JOIN_BEVEL :
-                        BasicStroke.JOIN_MITER;              
-      bs = new BasicStroke(strokeWeight, bstrokeCap, bstrokeJoin);      
-            
+    public void tessellateLinePath(LinePath path) {      
+      firstFillIndexCache = Integer.MAX_VALUE;      
+      callback.calcNormals = true;
+      
+      int cap = strokeCap == ROUND ? LinePath.CAP_ROUND :
+                strokeCap == PROJECT ? LinePath.CAP_SQUARE :
+                LinePath.CAP_BUTT;
+      int join = strokeJoin == ROUND ? LinePath.JOIN_ROUND :
+                 strokeJoin == BEVEL ? LinePath.JOIN_BEVEL :
+                 LinePath.JOIN_MITER;        
+      
       // Make the outline of the stroke from the path
-      Shape sh = bs.createStrokedShape(path);
+      LinePath strokedPath = LinePath.createStrokedPath(path, strokeWeight, cap, join);
       
       gluTess.beginPolygon();
       
-      float lastX = 0;
-      float lastY = 0;
       double[] vertex;
       float[] coords = new float[6];
       
-      PathIterator iter = sh.getPathIterator(null); // ,5) add a number on here to simplify verts
+      LinePath.PathIterator iter = strokedPath.getPathIterator();
       int rule = iter.getWindingRule();
       switch(rule) {
-      case PathIterator.WIND_EVEN_ODD:
+      case LinePath.WIND_EVEN_ODD:
         gluTess.setWindingRule(PGL.GLU_TESS_WINDING_ODD);
         break;
-      case PathIterator.WIND_NON_ZERO:
+      case LinePath.WIND_NON_ZERO:
         gluTess.setWindingRule(PGL.GLU_TESS_WINDING_NONZERO);
         break;
       }
       
-      while (!iter.isDone()) {
-        
-        float strokeRed = 0; 
-        float strokeGreen = 0; 
-        float strokeBlue = 0;
-        float strokeAlpha = 0;
+      while (!iter.isDone()) {        
+        float sr = 0; 
+        float sg = 0; 
+        float sb = 0;
+        float sa = 0;
         
         switch (iter.currentSegment(coords)) {
    
-        case PathIterator.SEG_MOVETO:   // 1 point (2 vars) in coords
+        case LinePath.SEG_MOVETO:
           gluTess.beginContour();
    
-        case PathIterator.SEG_LINETO:   // 1 point
+        case LinePath.SEG_LINETO:
+          sa = (strokeColor >> 24) & 0xFF;
+          sr = (strokeColor >> 16) & 0xFF;
+          sg = (strokeColor >>  8) & 0xFF;
+          sb = (strokeColor >>  0) & 0xFF;
+          
+          // Vertex data includes coordinates, colors, normals, texture coordinates, and material properties.
           vertex = new double[] { coords[0], coords[1], 0,
-            strokeRed, strokeGreen, strokeBlue, strokeAlpha,
-            0, 0, 1,
-            0, 0 };          
+                                  sa, sr, sg, sb,
+                                  0, 0, 1,
+                                  0, 0,
+                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                  0, 0, 1.0 }; // what about i!!!!!!!!!!!          
           
           gluTess.addVertex(vertex);
-          lastX = coords[0];
-          lastY = coords[1];
+
           break;
-   
-        case PathIterator.SEG_QUADTO:   // 2 points
-          for (int i = 1; i < bezierDetail; i++) {
-            float t = (float)i / (float)bezierDetail;
-            vertex = new double[] { 
-              bezierPoint(lastX, coords[0], coords[2], coords[2], t),
-              bezierPoint(lastY, coords[1], coords[3], coords[3], t), 
-              0, 
-              strokeRed, strokeGreen, strokeBlue, strokeAlpha,
-              0, 0, 1,
-              0, 0 };
-            gluTess.addVertex(vertex);
-          }
-          lastX = coords[2];
-          lastY = coords[3];
-          break;
-   
-        case PathIterator.SEG_CUBICTO:  // 3 points
-          for (int i = 1; i < bezierDetail; i++) {
-            float t = (float)i / (float)bezierDetail;
-            vertex = new double[] { 
-              bezierPoint(lastX, coords[0], coords[2], coords[4], t),
-              bezierPoint(lastY, coords[1], coords[3], coords[5], t), 
-              0, 
-              strokeRed, strokeGreen, strokeBlue, strokeAlpha,
-              0, 0, 1,
-              0, 0 };
-            gluTess.addVertex(vertex);
-          }
-          lastX = coords[4];
-          lastY = coords[5];
-          break;
-   
-        case PathIterator.SEG_CLOSE:
+        case LinePath.SEG_CLOSE:
           gluTess.endContour();
           break;
         }
         iter.next();
       }
-      gluTess.endPolygon();      
+      gluTess.endPolygon();     
     }
     
+    /////////////////////////////////////////
     
+    // Interenting notes about using the GLU tessellator to render thick polylines:
+    // http://stackoverflow.com/questions/687173/how-do-i-render-thick-2d-lines-as-polygons
+    //
+    // "...Since I disliked the tesselator API I lifted the tesselation code from the free 
+    //  SGI OpenGL reference implementation, rewrote the entire front-end and added memory 
+    //  pools to get the number of allocations down. It took two days to do this, but it was 
+    //  well worth it (like factor five performance improvement)..."
+    //
+    // This C implementation of GLU could be useful:    
+    // http://code.google.com/p/glues/
+    // to eventually come up with an optimized GLU tessellator in native code.
     protected class TessellatorCallback implements PGL.TessellatorCallback {
       boolean calcNormals;
       IndexCache cache;
