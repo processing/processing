@@ -111,6 +111,11 @@ public class PGL {
   /** Maximum dimension of a texture used to hold font data. **/
   public static final int MAX_FONT_TEX_SIZE = 256;
 
+  /** Minimum stroke weight needed to apply the full path stroking
+   * algorithm that properly generates caps and joing. 
+   */
+  public static final float MIN_CAPS_JOINS_WEIGHT = 2.1f;
+  
   /** Minimum array size to use arrayCopy method(). **/
   static protected final int MIN_ARRAYCOPY_SIZE = 2;
 
