@@ -664,6 +664,122 @@ public class PShape implements PConstants {
     }
   }
 
+  
+  
+  ////////////////////////////////////////////////////////////////////////
+  //
+  // The new copy methods to put an SVG into a PShape3D, for example
+  
+  public PShape copy(PGraphics g) {
+    PShape res = null;
+    if (family == GROUP) {
+      res = g.createShape(GROUP);
+      copyGroup(g, res);      
+    } else if (family == PRIMITIVE) {
+      res = g.createShape(kind, params);
+      copyPrimitive(res);
+    } else if (family == GEOMETRY) {
+      res = g.createShape(kind);
+      copyGeometry(res);
+    } else if (family == PATH) {
+      res = g.createShape(PATH);
+      copyPath(res);
+    }
+    return res;
+  }
+
+  
+  protected void copyGroup(PGraphics g, PShape s) {
+    if (matrix != null) {
+      s.applyMatrix(matrix);  
+    }
+    copyStyles(s);
+    copyImage(s);
+    for (int i = 0; i < childCount; i++) {
+      PShape c = children[i].copy(g);
+      s.addChild(c);
+    }
+  }
+  
+  
+  protected void copyPrimitive(PShape s) {
+    if (matrix != null) {
+      s.applyMatrix(matrix);  
+    }
+    copyStyles(s);
+    copyImage(s);
+  }
+  
+  protected void copyGeometry(PShape s) {
+    if (matrix != null) {
+      s.applyMatrix(matrix);  
+    }
+    copyStyles(s);
+    copyImage(s);
+    
+    if (style) {
+      for (int i = 0; i < vertexCount; i++) {
+        float[] vert = vertices[i];
+//        s.ambient(vert[AR] * 255, vert[AG] * 255, vert[AB] * 255);
+//        s.specular(vert[SPR] * 255, vert[SPG] * 255, vert[SPB] * 255);
+//        s.emissive(vert[ER] * 255, vert[EG] * 255, vert[EB] * 255);
+//        s.shininess(vert[SHINE]);
+        
+        s.normal(vert[NX], vert[NY], vert[NZ]);
+        s.vertex(vert[X], vert[Y], vert[Z], vert[U], vert[V]);        
+      }
+    } else {
+      for (int i = 0; i < vertexCount; i++) {
+        float[] vert = vertices[i];
+        if (vert[PGraphics.Z] == 0) {
+          s.vertex(vert[X], vert[Y]);
+        } else {
+          s.vertex(vert[X], vert[Y], vert[Z]);
+        }
+      }
+    }
+    
+    s.end();  
+  }
+  
+  protected void copyPath(PShape s) {
+    if (matrix != null) {
+      s.applyMatrix(matrix);  
+    }
+    copyStyles(s);
+    copyImage(s);
+    s.close = close;
+    s.setPath(vertexCount, vertices, vertexCodeCount, vertexCodes);
+    
+  }
+  
+  protected void copyStyles(PShape s) {
+    if (stroke) {
+      s.stroke = true;
+      s.strokeColor = strokeColor;
+      s.strokeWeight = strokeWeight;
+      s.strokeCap = strokeCap;
+      s.strokeJoin = strokeJoin;
+    } else {
+      s.stroke = false;
+    }
+
+    if (fill) {
+      s.fill = true;
+      s.fillColor = fillColor;
+    } else {
+      s.fill = false;
+    }
+  } 
+  
+  protected void copyImage(PShape s) {
+    if (image != null) {
+      s.texture(image);
+    }    
+  }
+  
+  ////////////////////////////////////////////////////////////////////////
+  
 
   /**
    * Called by the following (the shape() command adds the g)
@@ -1143,42 +1259,27 @@ public class PShape implements PConstants {
   }    
   
 
-  public void setPath(float[][] coords) {
-    setPath(coords, null);
+  public void setPath(int vcount, float[][] verts) {
+    setPath(vcount, verts, 0, null);
   }
   
   
-  public void setPath(float[][] coords, int[] codes) {
-    if (coords == null || coords.length == 0) return;
-    
-    if (codes == null || codes.length == 0) { 
-      vertexCodeCount = 0;
-    } else {
-      if (codes.length != coords.length) {
-        PGraphics.showWarning("Wrong number of vertex codes");
-        return;
-      }
-      vertexCodeCount = codes.length;
-    }
+  public void setPath(int vcount, float[][] verts, int ccount, int[] codes) {
+    if (verts == null || verts.length < vcount) return;
+    if (0 < ccount && (codes == null || codes.length < ccount)) return;
       
-    int ncoords = coords[0].length;
-    
-    if (vertices == null || 
-        vertices.length != coords.length || 
-        vertices[0].length != ncoords) {
-      vertices = new float[coords.length][ncoords];
-    }
-    
-    for (int i = 0; i < coords.length; i++) {
-      PApplet.arrayCopy(coords[i], vertices[i]);
-    }
-    
+    int ndim = verts[0].length;
+    vertexCount = vcount;
+    vertices = new float[vertexCount][ndim];
+    for (int i = 0; i < vertexCount; i++) {
+      PApplet.arrayCopy(verts[i], vertices[i]);
+    }    
+     
+    vertexCodeCount = ccount;
     if (0 < vertexCodeCount) {
-      if (vertexCodes == null || vertexCodes.length != vertexCodeCount) {
-        vertexCodes = new int[vertexCodeCount];
-      }
-      PApplet.arrayCopy(codes, vertexCodes);
-    }
+      vertexCodes = new int[vertexCodeCount];
+      PApplet.arrayCopy(codes, vertexCodes, vertexCodeCount);
+    }    
   }
   
   
