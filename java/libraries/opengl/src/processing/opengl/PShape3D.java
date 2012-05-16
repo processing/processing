@@ -2453,7 +2453,6 @@ public class PShape3D extends PShape {
       needBufferInit = true;
       
       forceTessellation = false;
-      PApplet.println("tessellating root");
       
       modified = false;
       
