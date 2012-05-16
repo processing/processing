@@ -2485,6 +2485,7 @@ public class PGraphicsOpenGL extends PGraphics {
   void rawPoints() {
     raw.colorMode(RGB);
     raw.noFill();
+    raw.strokeCap(strokeCap);
     raw.beginShape(POINTS);
     
     float[] vertices = tessGeo.pointVertices;
@@ -2492,26 +2493,26 @@ public class PGraphicsOpenGL extends PGraphics {
     float[] attribs = tessGeo.pointSizes;
     short[] indices = tessGeo.pointIndices; 
     
-    IndexCache cache = tessGeo.lineIndexCache;
+    IndexCache cache = tessGeo.pointIndexCache;
     for (int n = 0; n < cache.size; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
       
       int pt = ioffset;
-      while (pt < ioffset + icount) {
+      while (pt < (ioffset + icount) / 3) {
         float size = attribs[2 * pt + 2];
         float weight;
         int perim;
-        if (0 < size) { // Square point
+        if (0 < size) { // round point
           weight = +size / 0.5f;
-          perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * weight / 20));          
-        } else { // round point
+          perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * weight / 20)) + 1;          
+        } else {        // Square point
           weight = -size / 0.5f;
-          perim = 5;
+          perim = 5;          
         }
                 
-        int i0 = voffset + indices[pt];
+        int i0 = voffset + indices[3 * pt];
         int argb0 = PGL.nativeToJavaARGB(color[i0]);
         float[] pt0 = {0, 0, 0, 0};
         
@@ -2569,6 +2570,8 @@ public class PGraphicsOpenGL extends PGraphics {
   void rawLines() {
     raw.colorMode(RGB);
     raw.noFill();
+    raw.strokeCap(strokeCap);
+    raw.strokeJoin(strokeJoin);
     raw.beginShape(LINES);
     
     float[] vertices = tessGeo.lineVertices;
