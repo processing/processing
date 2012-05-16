@@ -653,13 +653,15 @@ public class LineStroker extends LineSink {
       long ldx = (long) (px0 - x0);
       long ldy = (long) (py0 - y0);
       long llen = lineLength(ldx, ldy);
-      long s = (long) lineWidth2 * 65536 / llen;
+      if (0 < llen) {
+        long s = (long) lineWidth2 * 65536 / llen;
 
-      int capx = x0 - (int) (ldx * s >> 16);
-      int capy = y0 - (int) (ldy * s >> 16);
+        int capx = x0 - (int) (ldx * s >> 16);
+        int capy = y0 - (int) (ldy * s >> 16);
 
-      emitLineTo(capx + omx, capy + omy);
-      emitLineTo(capx - omx, capy - omy);
+        emitLineTo(capx + omx, capy + omy);
+        emitLineTo(capx - omx, capy - omy);
+      }
     }
 
     for (int i = rindex - 2; i >= 0; i -= 2) {
@@ -674,13 +676,15 @@ public class LineStroker extends LineSink {
       long ldx = (long) (sx1 - sx0);
       long ldy = (long) (sy1 - sy0);
       long llen = lineLength(ldx, ldy);
-      long s = (long) lineWidth2 * 65536 / llen;
+      if (0  < llen) {
+        long s = (long) lineWidth2 * 65536 / llen;
 
-      int capx = sx0 - (int) (ldx * s >> 16);
-      int capy = sy0 - (int) (ldy * s >> 16);
+        int capx = sx0 - (int) (ldx * s >> 16);
+        int capy = sy0 - (int) (ldy * s >> 16);
 
-      emitLineTo(capx - mx0, capy - my0);
-      emitLineTo(capx + mx0, capy + my0);
+        emitLineTo(capx - mx0, capy - my0);
+        emitLineTo(capx + mx0, capy + my0);
+      }
     }
 
     emitClose();
