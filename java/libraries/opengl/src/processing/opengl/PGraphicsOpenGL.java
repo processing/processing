@@ -9823,9 +9823,14 @@ public class PGraphicsOpenGL extends PGraphics {
               int i0 = first + 2 * ln + 0;
               int i1 = first + 2 * ln + 1;
               path.moveTo(in.vertices[4 * i0 + 0], in.vertices[4 * i0 + 1]);
-              path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+              path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);              
+              if (tess.renderMode == RETAINED) {
+                // The input vertices cannot the tessellated geometry 
+                in.tessMap.addFillIndex(i0, -1);
+                in.tessMap.addFillIndex(i1, -1);
+              }              
             }
-            tessellateLinePath(path);
+            tessellateLinePath(path, false);
           }          
         }
       }
@@ -9877,11 +9882,17 @@ public class PGraphicsOpenGL extends PGraphics {
             int first = in.firstVertex;          
             LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
             path.moveTo(in.vertices[4 * first + 0], in.vertices[4 * first + 1]);
+            if (tess.renderMode == RETAINED) {
+              in.tessMap.addFillIndex(first, -1);
+            }  
             for (int ln = 0; ln < lineCount; ln++) {
               int i1 = first + ln + 1;          
               path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+              if (tess.renderMode == RETAINED) {
+                in.tessMap.addFillIndex(i1, -1);
+              } 
             }    
-            tessellateLinePath(path);            
+            tessellateLinePath(path, false);            
           }
         }
       }
@@ -9935,19 +9946,25 @@ public class PGraphicsOpenGL extends PGraphics {
             int first = in.firstVertex;          
             LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
             path.moveTo(in.vertices[4 * first + 0], in.vertices[4 * first + 1]);
+            if (tess.renderMode == RETAINED) {
+              in.tessMap.addFillIndex(first, -1);
+            }              
             for (int ln = 0; ln < lineCount - 1; ln++) {
               int i1 = first + ln + 1;          
               path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+              if (tess.renderMode == RETAINED) {
+                in.tessMap.addFillIndex(i1, -1);
+              }                
             }    
             path.closePath();
-            tessellateLinePath(path);              
+            tessellateLinePath(path, false);              
           }
         }
       }
       
     }    
     
-    void tessellateEdges() {
+    void tessellateEdges(boolean haveFill) {
       if (stroke) {
         int nInVert = in.getNumLineVertices();
         int nInInd = in.getNumLineIndices();
@@ -9971,7 +9988,7 @@ public class PGraphicsOpenGL extends PGraphics {
           if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, edges           
             tess.fillVertexCheck(nInVert);
             tess.fillIndexCheck(nInInd);
-            int index = in.renderMode == RETAINED ? tess.fillIndexCache.addNew() : tess.fillIndexCache.getLast();
+            int index = in.renderMode == RETAINED && !haveFill ? tess.fillIndexCache.addNew() : tess.fillIndexCache.getLast();
             firstFillIndexCache = index;
             for (int i = in.firstEdge; i <= in.lastEdge; i++) {
               int[] edge = in.edges[i];
@@ -10005,9 +10022,13 @@ public class PGraphicsOpenGL extends PGraphics {
                 path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
                 path.closePath();
                 break;              
-              } 
+              }
+              if (tess.renderMode == RETAINED) {
+                in.tessMap.addFillIndex(i0, -1);
+                in.tessMap.addFillIndex(i1, -1);
+              }                
             }
-            tessellateLinePath(path);             
+            tessellateLinePath(path, haveFill);             
           }
         }
       }
@@ -10145,7 +10166,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
-      tessellateEdges();
+      tessellateEdges(fill && 3 <= nInVert);
     }
 
     void tessellateTriangles(int[] indices) {
@@ -10156,7 +10177,7 @@ public class PGraphicsOpenGL extends PGraphics {
         PApplet.arrayCopy(indices, rawIndices, nInInd);
         partitionRawIndices();        
       }
-      tessellateEdges();
+      tessellateEdges(fill && 3 <= nInVert);
     }
     
     void tessellateTriangleFan() {
@@ -10172,7 +10193,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
-      tessellateEdges();
+      tessellateEdges(fill && 3 <= nInVert);
     }
 
     void tessellateTriangleStrip() {
@@ -10193,7 +10214,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
-      tessellateEdges();
+      tessellateEdges(fill && 3 <= nInVert);
     }
 
     void tessellateQuads() {
@@ -10219,7 +10240,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
-      tessellateEdges();
+      tessellateEdges(fill && 4 <= nInVert);
     }
 
     void tessellateQuadStrip() {
@@ -10245,7 +10266,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
-      tessellateEdges();
+      tessellateEdges(fill && 4 <= nInVert);
     }
 
     // Uses the raw indices to partition the geometry into contiguous 
@@ -10387,7 +10408,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (fill && 3 <= nInVert) {
         firstFillIndexCache = -1;
         
-        callback.calcNormals = calcNormals;
+        callback.init(in.renderMode == RETAINED, calcNormals);
         
         gluTess.beginPolygon();
 
@@ -10435,8 +10456,8 @@ public class PGraphicsOpenGL extends PGraphics {
                                            fa, fr, fg, fb,
                                            in.normals  [3 * i + 0], in.normals  [3 * i + 1], in.normals [3 * i + 2],
                                            in.texcoords[2 * i + 0], in.texcoords[2 * i + 1],
-                                           aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb,
-                                           in.shininess[i], i, 1.0 };
+                                           aa, ar, ag, ab, sa, sr, sg, sb, ea, er, eg, eb, in.shininess[i], 
+                                           i, 1.0 };
 
           gluTess.addVertex(vertex);
         }
@@ -10445,15 +10466,14 @@ public class PGraphicsOpenGL extends PGraphics {
         gluTess.endPolygon();
       }
 
-      tessellateEdges();
+      tessellateEdges(fill && 3 <= nInVert);
     }    
     
     // Tessellates the path given as parameter. This will work only in 2D.
     // Based on the opengl stroke hack described here: 
     // http://wiki.processing.org/w/Stroke_attributes_in_OpenGL
-    public void tessellateLinePath(LinePath path) {
-      //firstFillIndexCache = -1;      
-      callback.calcNormals = true;
+    public void tessellateLinePath(LinePath path, boolean haveFill) {  
+      callback.init(in.renderMode == RETAINED && !haveFill, true);
       
       int cap = strokeCap == ROUND ? LinePath.CAP_ROUND :
                 strokeCap == PROJECT ? LinePath.CAP_SQUARE :
@@ -10503,8 +10523,8 @@ public class PGraphicsOpenGL extends PGraphics {
                                   sa, sr, sg, sb,
                                   0, 0, 1,
                                   0, 0,
-                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                  0, 0, 1.0 }; // what about i!!!!!!!!!!!          
+                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                                  0, 0.0 };          
           
           gluTess.addVertex(vertex);
 
@@ -10539,9 +10559,19 @@ public class PGraphicsOpenGL extends PGraphics {
       int vertCount;
       int primitive;
 
-      public void begin(int type) {
+      public void init(boolean add, boolean calcn) {
+        calcNormals = calcn;
         cache = tess.fillIndexCache;
-        cacheIndex = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();        
+         
+        if (add) {
+          cache.addNew();
+        }
+      }
+      
+      public void begin(int type) {
+        
+        //cacheIndex = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
+        cacheIndex = cache.getLast();
         if (cacheIndex < firstFillIndexCache || firstFillIndexCache == -1) {
           firstFillIndexCache = cacheIndex;
         }

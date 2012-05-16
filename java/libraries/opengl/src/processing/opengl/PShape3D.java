@@ -164,6 +164,7 @@ public class PShape3D extends PShape {
   
   protected boolean tessellated;
   protected boolean needBufferInit;
+  protected boolean forceTessellation;
   
   protected boolean isSolid;
   protected boolean isClosed;
@@ -1792,7 +1793,7 @@ public class PShape3D extends PShape {
     int[] indices;
     int[] indices1;
     float[] vertices;
-    float[] attribs;
+    float[] attribs;    
           
     if (havePoints) {
       indices = inGeo.tessMap.pointIndices[index];
@@ -1830,7 +1831,7 @@ public class PShape3D extends PShape {
       vertices = tessGeo.fillVertices;
       if (-1 < inGeo.tessMap.firstFillIndex) {
         // 1-1 mapping, only need to offset the input index
-        int tessIdx = inGeo.tessMap.firstFillIndex + index;        
+        int tessIdx = inGeo.tessMap.firstFillIndex + index;
         vertices[4 * tessIdx + 0] = x;
         vertices[4 * tessIdx + 1] = y;
         vertices[4 * tessIdx + 2] = z;
@@ -1855,21 +1856,26 @@ public class PShape3D extends PShape {
           //     = xt + w2 * (x2' - x2)
           // This explains the calculations below:
           int tessIdx = indices[i];
-          float weight = weights[i];          
-          float tx0 = vertices[4 * tessIdx + 0];
-          float ty0 = vertices[4 * tessIdx + 1];
-          float tz0 = vertices[4 * tessIdx + 2];        
-          vertices[4 * tessIdx + 0] = tx0 + weight * (x - x0);
-          vertices[4 * tessIdx + 1] = ty0 + weight * (y - y0);
-          vertices[4 * tessIdx + 2] = tz0 + weight * (z - z0);       
-          root.setModifiedFillVertices(tessIdx, tessIdx);
+          if (-1 < tessIdx) {          
+            float weight = weights[i];          
+            float tx0 = vertices[4 * tessIdx + 0];
+            float ty0 = vertices[4 * tessIdx + 1];
+            float tz0 = vertices[4 * tessIdx + 2];        
+            vertices[4 * tessIdx + 0] = tx0 + weight * (x - x0);
+            vertices[4 * tessIdx + 1] = ty0 + weight * (y - y0);
+            vertices[4 * tessIdx + 2] = tz0 + weight * (z - z0);       
+            root.setModifiedFillVertices(tessIdx, tessIdx);
+          } else {
+            root.forceTessellation = true;
+            break;
+          }
         }    
       }  
     }
-    
+
     inGeo.vertices[4 * index + 0] = x;
     inGeo.vertices[4 * index + 1] = y;
-    inGeo.vertices[4 * index + 2] = z;    
+    inGeo.vertices[4 * index + 2] = z;
   }
   
   
@@ -1927,26 +1933,28 @@ public class PShape3D extends PShape {
         float[] weights = inGeo.tessMap.fillWeights[index];
         for (int i = 0; i < indices.length; i++) {
           int tessIdx = indices[i];
-          float weight = weights[i];
-          float tnx0 = normals[3 * tessIdx + 0];
-          float tny0 = normals[3 * tessIdx + 1];
-          float tnz0 = normals[3 * tessIdx + 2];        
-          float tnx = tnx0 + weight * (nx - nx0);
-          float tny = tny0 + weight * (ny - ny0);
-          float tnz = tnz0 + weight * (nz - nz0);
-          
-          // Making sure that the new normal vector is indeed
-          // normalized.
-          float sum = tnx * tnx + tny * tny + tnz * tnz;
-          float len = PApplet.sqrt(sum);
-          tnx /= len;
-          tny /= len;
-          tnz /= len;
-           
-          normals[3 * tessIdx + 0] = tnx;
-          normals[3 * tessIdx + 1] = tny;
-          normals[3 * tessIdx + 2] = tnz;
-          root.setModifiedFillNormals(tessIdx, tessIdx);
+          if (-1 < tessIdx) { 
+            float weight = weights[i];
+            float tnx0 = normals[3 * tessIdx + 0];
+            float tny0 = normals[3 * tessIdx + 1];
+            float tnz0 = normals[3 * tessIdx + 2];        
+            float tnx = tnx0 + weight * (nx - nx0);
+            float tny = tny0 + weight * (ny - ny0);
+            float tnz = tnz0 + weight * (nz - nz0);
+            
+            // Making sure that the new normal vector is indeed
+            // normalized.
+            float sum = tnx * tnx + tny * tny + tnz * tnz;
+            float len = PApplet.sqrt(sum);
+            tnx /= len;
+            tny /= len;
+            tnz /= len;
+             
+            normals[3 * tessIdx + 0] = tnx;
+            normals[3 * tessIdx + 1] = tny;
+            normals[3 * tessIdx + 2] = tnz;
+            root.setModifiedFillNormals(tessIdx, tessIdx);
+          }
         }    
       }          
     }
@@ -1989,14 +1997,16 @@ public class PShape3D extends PShape {
         float[] weights = inGeo.tessMap.fillWeights[index];
         for (int i = 0; i < indices.length; i++) {
           int tessIdx = indices[i];
-          float weight = weights[i];
-          float tu0 = texcoords[2 * tessIdx + 0];
-          float tv0 = texcoords[2 * tessIdx + 1];        
-          float tu = tu0 + weight * (u - u0);
-          float tv = tv0 + weight * (v - v0);           
-          texcoords[2 * tessIdx + 0] = tu;
-          texcoords[2 * tessIdx + 1] = tv;
-          root.setModifiedFillTexcoords(tessIdx, tessIdx);
+          if (-1 < tessIdx) { 
+            float weight = weights[i];
+            float tu0 = texcoords[2 * tessIdx + 0];
+            float tv0 = texcoords[2 * tessIdx + 1];        
+            float tu = tu0 + weight * (u - u0);
+            float tv = tv0 + weight * (v - v0);           
+            texcoords[2 * tessIdx + 0] = tu;
+            texcoords[2 * tessIdx + 1] = tv;
+            root.setModifiedFillTexcoords(tessIdx, tessIdx);
+          }
         }        
       }       
     }    
@@ -2031,7 +2041,10 @@ public class PShape3D extends PShape {
         int fill0 = inGeo.colors[index];
         setColorARGB(colors, fill, fill0, indices, weights);   
         for (int i = 0; i < indices.length; i++) {
-          root.setModifiedFillColors(indices[i], indices[i]);          
+          int tessIdx = indices[i];
+          if (-1 < tessIdx) {           
+            root.setModifiedFillColors(tessIdx, indices[i]);
+          }
         }        
       }  
     }
@@ -2156,7 +2169,10 @@ public class PShape3D extends PShape {
         int ambient0 = inGeo.ambient[index];
         setColorRGB(colors, ambient, ambient0, indices, weights);
         for (int i = 0; i < indices.length; i++) {
-          root.setModifiedFillAmbient(indices[i], indices[i]);          
+          int tessIdx = indices[i];
+          if (-1 < tessIdx) { 
+            root.setModifiedFillAmbient(tessIdx, indices[i]);  
+          }                    
         }        
       }  
     }
@@ -2189,7 +2205,10 @@ public class PShape3D extends PShape {
         int specular0 = inGeo.specular[index];
         setColorRGB(colors, specular, specular0, indices, weights);
         for (int i = 0; i < indices.length; i++) {
-          root.setModifiedFillSpecular(indices[i], indices[i]);          
+          int tessIdx = indices[i];
+          if (-1 < tessIdx) {           
+            root.setModifiedFillSpecular(tessIdx, indices[i]);
+          }
         }        
       }  
     }
@@ -2223,7 +2242,10 @@ public class PShape3D extends PShape {
         int emissive0 = inGeo.emissive[index];
         setColorRGB(colors, emissive, emissive0, indices, weights);
         for (int i = 0; i < indices.length; i++) {
-          root.setModifiedFillEmissive(indices[i], indices[i]);          
+          int tessIdx = indices[i];
+          if (-1 < tessIdx) {           
+            root.setModifiedFillEmissive(tessIdx, indices[i]);
+          }
         }        
       }  
     }
@@ -2255,11 +2277,13 @@ public class PShape3D extends PShape {
         float[] weights = inGeo.tessMap.fillWeights[index];
         for (int i = 0; i < indices.length; i++) {
           int tessIdx = indices[i];
-          float weight = weights[i];
-          float tshine0 = shininess[tessIdx];
-          float tshine = tshine0 + weight * (shine - shine0);          
-          shininess[tessIdx] = tshine;
-          root.setModifiedFillShininess(tessIdx, tessIdx);
+          if (-1 < tessIdx) {  
+            float weight = weights[i];
+            float tshine0 = shininess[tessIdx];
+            float tshine = tshine0 + weight * (shine - shine0);          
+            shininess[tessIdx] = tshine;
+            root.setModifiedFillShininess(tessIdx, tessIdx);
+          }
         }    
       }
     }    
@@ -2281,19 +2305,21 @@ public class PShape3D extends PShape {
 
     for (int i = 0; i < indices.length; i++) {
       int tessIdx = indices[i];
-      float weight = weights[i];
-      int tfill0 = colors[tessIdx];          
-      float ta0 = (tfill0 >> 24) & 0xFF;
-      float tr0 = (tfill0 >> 16) & 0xFF;
-      float tg0 = (tfill0 >>  8) & 0xFF;
-      float tb0 = (tfill0 >>  0) & 0xFF;
-      
-      int ta = (int) (ta0 + weight * (a - a0));
-      int tr = (int) (tr0 + weight * (r - r0));
-      int tg = (int) (tg0 + weight * (g - g0));
-      int tb = (int) (tb0 + weight * (b - b0));
-       
-      colors[tessIdx] = (ta << 24) | (tr << 16) | (tg << 8) | tb;
+      if (-1 < tessIdx) {
+        float weight = weights[i];
+        int tfill0 = colors[tessIdx];          
+        float ta0 = (tfill0 >> 24) & 0xFF;
+        float tr0 = (tfill0 >> 16) & 0xFF;
+        float tg0 = (tfill0 >>  8) & 0xFF;
+        float tb0 = (tfill0 >>  0) & 0xFF;
+        
+        int ta = (int) (ta0 + weight * (a - a0));
+        int tr = (int) (tr0 + weight * (r - r0));
+        int tg = (int) (tg0 + weight * (g - g0));
+        int tb = (int) (tb0 + weight * (b - b0));
+         
+        colors[tessIdx] = (ta << 24) | (tr << 16) | (tg << 8) | tb;
+      }
     }       
   }
   
@@ -2309,17 +2335,19 @@ public class PShape3D extends PShape {
 
     for (int i = 0; i < indices.length; i++) {
       int tessIdx = indices[i];
-      float weight = weights[i];
-      int tfill0 = colors[tessIdx];          
-      float tr0 = (tfill0 >> 16) & 0xFF;
-      float tg0 = (tfill0 >>  8) & 0xFF;
-      float tb0 = (tfill0 >>  0) & 0xFF;
-      
-      int tr = (int) (tr0 + weight * (r - r0));
-      int tg = (int) (tg0 + weight * (g - g0));
-      int tb = (int) (tb0 + weight * (b - b0));
-       
-      colors[tessIdx] = 0xff000000 | (tr << 16) | (tg << 8) | tb;
+      if (-1 < tessIdx) {
+        float weight = weights[i];
+        int tfill0 = colors[tessIdx];          
+        float tr0 = (tfill0 >> 16) & 0xFF;
+        float tg0 = (tfill0 >>  8) & 0xFF;
+        float tb0 = (tfill0 >>  0) & 0xFF;
+        
+        int tr = (int) (tr0 + weight * (r - r0));
+        int tg = (int) (tg0 + weight * (g - g0));
+        int tb = (int) (tb0 + weight * (b - b0));
+         
+        colors[tessIdx] = 0xff000000 | (tr << 16) | (tg << 8) | tb;
+      }
     }       
   }      
   
@@ -2398,7 +2426,15 @@ public class PShape3D extends PShape {
       root.aggregate();
     }
   }
- 
+  
+  
+  protected void updateTessellation(boolean force) {
+    if (force || !root.tessellated || root.contextIsOutdated()) {
+      root.tessellate();
+      root.aggregate();
+    }
+  }
+  
   
   protected void tessellate() {
     if (root == this && parent == null) {      
@@ -2415,6 +2451,9 @@ public class PShape3D extends PShape {
       tessGeo.trim(); 
       
       needBufferInit = true;
+      
+      forceTessellation = false;
+      PApplet.println("tessellating root");
       
       modified = false;
       
@@ -3925,7 +3964,7 @@ public class PShape3D extends PShape {
     if (visible) {      
       pre(g);
       
-      updateTessellation();      
+      updateTessellation(root.forceTessellation);      
       updateGeometry();
       
       if (family == GROUP) {        
