@@ -2484,25 +2484,62 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // TODO: finish when points are properly re-implemented.
   void rawPoints() {
-//    raw.colorMode(RGB);
-//    raw.noFill();
-//    raw.beginShape(POINTS);
+//  raw.colorMode(RGB);
+//  raw.noFill();
+//  raw.beginShape(POINTS);
+//  
+//  float[] vec = tessGeo.pointVertices;
+//  int[] color = tessGeo.pointColors;
+//  float[] attribs = tessGeo.pointSizes;
+//  short[] indices = tessGeo.pointIndices; 
+//  
+//  IndexCache cache = tessGeo.lineIndexCache;
+//  for (int n = 0; n < cache.size; n++) {     
+//    int ioffset = cache.indexOffset[n];
+//    int icount = cache.indexCount[n];
+//    int voffset = cache.vertexOffset[n];
 //    
-//    float[] vec = tessGeo.pointVertices;
-//    int[] color = tessGeo.pointColors;
-//    float[] attribs = tessGeo.pointSizes;
-//    short[] indices = tessGeo.pointIndices; 
+//          
+//  }    
+//  
+//  raw.endShape();
+  
+  
+//  tess.pointSizes[2 * attribIdx + 0] = 0;
+//  tess.pointSizes[2 * attribIdx + 1] = 0;
+//  attribIdx++;
+//  float val = 0;
+//  float inc = (float) SINCOS_LENGTH / perim;
+//  for (int k = 0; k < perim; k++) {
+//    tess.pointSizes[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
+//    tess.pointSizes[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
+//    val = (val + inc) % SINCOS_LENGTH;
+//    attribIdx++;
+//  } 
+  
+//  i0 = first index
+//  if 0 < tess.pointSizes[2 * i0 + 2] -> square point.  
+//      tess.pointSizes[2 * i0 + 2] = 0.5f * strokeWeight;  --> w --> perim
+//      ...    
+//      i0 += perim    
+//  if 0 < tess.pointSizes[2 * i0 + 2] -> round point.
+//      tess.pointSizes[2 * i0 + 2] = -0.5f * strokeWeight;  --> w
+//      ...
+//      i0 += 5   
 //    
-//    IndexCache cache = tessGeo.lineIndexCache;
-//    for (int n = 0; n < cache.size; n++) {     
-//      int ioffset = cache.indexOffset[n];
-//      int icount = cache.indexCount[n];
-//      int voffset = cache.vertexOffset[n];
-//      
-//            
-//    }    
-//    
-//    raw.endShape();
+
+//
+  
+  
+  
+//  tess.pointSizes[2 * attribIdx + 0] = 0;
+//  tess.pointSizes[2 * attribIdx + 1] = 0;
+//  attribIdx++;
+//  for (int k = 0; k < 4; k++) {
+//    tess.pointSizes[2 * attribIdx + 0] = 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
+//    tess.pointSizes[2 * attribIdx + 1] = 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
+//    attribIdx++;
+//  }  
   }
   
 
@@ -8981,7 +9018,8 @@ public class PGraphicsOpenGL extends PGraphics {
     //
     // Add point geometry
     
-    void putPointVertex(InGeometry in, int inIdx, int tessIdx) {
+    // Sets point vertex with index tessIdx using the data from input vertex inIdx.
+    void setPointVertex(int tessIdx, InGeometry in, int inIdx) {
       int index;
 
       index = 4 * inIdx;
@@ -9017,7 +9055,8 @@ public class PGraphicsOpenGL extends PGraphics {
     //
     // Add line geometry
     
-    void putLineVertex(InGeometry in, int inIdx0, int inIdx1, int tessIdx, int rgba, float weight) {
+    // Sets line vertex with index tessIdx using the data from input vertices inIdx0 and inIdx1.
+    void setLineVertex(int tessIdx, InGeometry in, int inIdx0, int inIdx1, int rgba, float weight) {
       int index;
 
       index = 4 * inIdx0;
@@ -9070,6 +9109,76 @@ public class PGraphicsOpenGL extends PGraphics {
     //
     // Add fill geometry
     
+    void setFillVertex(int tessIdx, float x, float y, float z, float w,
+                       int rgba,
+                       InGeometry in, int[] vertices) {
+      setFillVertex(tessIdx, x, y, z, w, 
+                    rgba,
+                    0, 0, 1, 
+                    0, 0, 
+                    0, 0, 0, 0, 
+                    in, vertices);
+    }
+    
+    void setFillVertex(int tessIdx, float x, float y, float z, float w,
+                       int rgba,
+                       float nx, float ny, float nz,
+                       float u, float v,
+                       int am, int sp, int em, float shine, 
+                       InGeometry in, int[] vertices) {
+      int index;      
+
+      if (renderMode == IMMEDIATE && flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
+        PMatrix3D mm = modelview;
+        PMatrix3D nm = modelviewInv;
+
+        index = 4 * tessIdx;
+        fillVertices[index++] = x * mm.m00 + y * mm.m01 + z * mm.m02 + w * mm.m03;
+        fillVertices[index++] = x * mm.m10 + y * mm.m11 + z * mm.m12 + w * mm.m13;
+        fillVertices[index++] = x * mm.m20 + y * mm.m21 + z * mm.m22 + w * mm.m23;
+        fillVertices[index  ] = x * mm.m30 + y * mm.m31 + z * mm.m32 + w * mm.m33;
+
+        index = 3 * tessIdx;
+        fillNormals[index++] = nx * nm.m00 + ny * nm.m10 + nz * nm.m20;
+        fillNormals[index++] = nx * nm.m01 + ny * nm.m11 + nz * nm.m21;
+        fillNormals[index  ] = nx * nm.m02 + ny * nm.m12 + nz * nm.m22;
+      } else {
+        index = 4 * tessIdx;
+        fillVertices[index++] = x;
+        fillVertices[index++] = y;
+        fillVertices[index++] = z;
+        fillVertices[index  ] = w;
+
+        index = 3 * tessIdx;
+        fillNormals[index++] = nx;
+        fillNormals[index++] = ny;
+        fillNormals[index  ] = nz;
+      }
+
+      fillColors[tessIdx] = rgba;
+
+      index = 2 * tessIdx;
+      fillTexcoords[index++] = u;
+      fillTexcoords[index  ] = v;
+
+      fillAmbient[tessIdx] = am;
+      fillSpecular[tessIdx] = sp;
+      fillEmissive[tessIdx] = em;
+      fillShininess[tessIdx] = shine;
+      
+//    NEW TESSMAP API    
+//      if (renderMode == RETAINED) {
+//        ????
+//      }
+      
+      if (renderMode == RETAINED && vertices != null) {
+        int len = vertices.length;
+        for (int i = 0; i < len; i++) {
+          in.tessMap.addFillIndex(vertices[i], tessIdx);
+        }
+      }       
+    }
+    
     void addFillVertex(float x, float y, float z, float w,
                        int rgba,
                        float nx, float ny, float nz,
@@ -9118,6 +9227,7 @@ public class PGraphicsOpenGL extends PGraphics {
       fillEmissive[count] = em;
       fillShininess[count] = shine;
       
+//    NEW TESSMAP API         
 //      if (renderMode == RETAINED) {
 //        in.setWeightedMapping(vertices, weights, count);
 //      }
@@ -9542,7 +9652,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
           // All the tessellated vertices are identical to the center point
           for (int k = 0; k < nPtVert; k++) {
-            tess.putPointVertex(in, i, vertIdx);            
+            tess.setPointVertex(vertIdx, in, i);            
             vertIdx++;
           }
 
@@ -9618,7 +9728,7 @@ public class PGraphicsOpenGL extends PGraphics {
           }        
           
           for (int k = 0; k < nvert; k++) {
-            tess.putPointVertex(in, i, vertIdx);
+            tess.setPointVertex(vertIdx, in, i);
             vertIdx++;
           }
 
@@ -9668,14 +9778,14 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke && 2 <= nInVert) {
         int lineCount = nInVert / 2;
         int first = in.firstVertex;
-        if (is3D()) {
-          // Lines are made up of 4 vertices defining the quad.
-          // Each vertex has its own offset representing the stroke weight.
-          int nvert = lineCount * 4;
-          // Each stroke line has 4 vertices, defining 2 triangles, which
-          // require 3 indices to specify their connectivities.
-          int nind = lineCount * 2 * 3;
-          
+        // Lines are made up of 4 vertices defining the quad.
+        // Each vertex has its own offset representing the stroke weight.
+        int nvert = lineCount * 4;
+        // Each stroke line has 4 vertices, defining 2 triangles, which
+        // require 3 indices to specify their connectivities.
+        int nind = lineCount * 2 * 3;
+        
+        if (is3D()) {          
           tess.lineVertexCheck(nvert);
           tess.lineIndexCheck(nind);
           int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
@@ -9685,34 +9795,51 @@ public class PGraphicsOpenGL extends PGraphics {
             int i1 = first + 2 * ln + 1;
             index = addLine(i0, i1, index, false);
           }
-          lastLineIndexCache = index;        
-          
+          lastLineIndexCache = index;                  
 //        NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }
         } else {
           // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
-          LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-          for (int ln = 0; ln < lineCount; ln++) {
-            int i0 = first + 2 * ln + 0;
-            int i1 = first + 2 * ln + 1;
-            path.moveTo(inGeo.vertices[4 * i0 + 0], inGeo.vertices[4 * i0 + 1]);
-            path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
-          }
-          tessellateLinePath(path);          
+          if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
+            tess.fillVertexCheck(nvert);
+            tess.fillIndexCheck(nind);
+            int index = in.renderMode == RETAINED ? tess.fillIndexCache.addNew() : tess.fillIndexCache.getLast();
+            firstFillIndexCache = index;
+            for (int ln = 0; ln < lineCount; ln++) {
+              int i0 = first + 2 * ln + 0;
+              int i1 = first + 2 * ln + 1;
+              index = addLine2D(i0, i1, index, false);
+            }
+            lastFillIndexCache = index;
+//          NEW TESSMAP API        
+//          if (tess.renderMode == RETAINED) {
+//            ????
+//          }            
+          } else { // full stroking algorithm            
+            LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+            for (int ln = 0; ln < lineCount; ln++) {
+              int i0 = first + 2 * ln + 0;
+              int i1 = first + 2 * ln + 1;
+              path.moveTo(in.vertices[4 * i0 + 0], in.vertices[4 * i0 + 1]);
+              path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+            }
+            tessellateLinePath(path);
+          }          
         }
       }
     }
     
     void tessellateLineStrip() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-      int lineCount = nInVert - 1;
+      int nInVert = in.lastVertex - in.firstVertex + 1;      
       
       if (stroke && 2 <= nInVert) {
+        int lineCount = nInVert - 1;  
+        int nvert = lineCount * 4;
+        int nind = lineCount * 2 * 3;        
+        
         if (is3D()) {
-          int nvert = lineCount * 4;
-          int nind = lineCount * 2 * 3;
           tess.lineVertexCheck(nvert);
           tess.lineIndexCheck(nind);
           int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
@@ -9723,22 +9850,39 @@ public class PGraphicsOpenGL extends PGraphics {
             index = addLine(i0, i1, index, false);
             i0 = i1;
           }         
-          lastLineIndexCache = index;
-          
+          lastLineIndexCache = index;          
 //        NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }           
-        } else {          
+        } else {
           // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
-          int first = in.firstVertex;          
-          LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-          path.moveTo(inGeo.vertices[4 * first + 0], inGeo.vertices[4 * first + 1]);
-          for (int ln = 0; ln < lineCount; ln++) {
-            int i1 = first + ln + 1;          
-            path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
-          }    
-          tessellateLinePath(path);          
+          if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) {  // no caps, joins
+            tess.fillVertexCheck(nvert);
+            tess.fillIndexCheck(nind);
+            int index = in.renderMode == RETAINED ? tess.fillIndexCache.addNew() : tess.fillIndexCache.getLast();
+            firstFillIndexCache = index;
+            int i0 = in.firstVertex;
+            for (int ln = 0; ln < lineCount; ln++) {
+              int i1 = in.firstVertex + ln + 1;
+              index = addLine2D(i0, i1, index, false);
+              i0 = i1;
+            }         
+            lastFillIndexCache = index;          
+//          NEW TESSMAP API        
+//          if (tess.renderMode == RETAINED) {
+//            ?????
+//          }           
+          } else {  // full stroking algorithm
+            int first = in.firstVertex;          
+            LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+            path.moveTo(in.vertices[4 * first + 0], in.vertices[4 * first + 1]);
+            for (int ln = 0; ln < lineCount; ln++) {
+              int i1 = first + ln + 1;          
+              path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+            }    
+            tessellateLinePath(path);            
+          }
         }
       }
     }
@@ -9748,9 +9892,10 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (stroke && 2 <= nInVert) {
         int lineCount = nInVert;
+        int nvert = lineCount * 4;
+        int nind = lineCount * 2 * 3;
+        
         if (is3D()) {
-          int nvert = lineCount * 4;
-          int nind = lineCount * 2 * 3;
           tess.lineVertexCheck(nvert);
           tess.lineIndexCheck(nind);
           int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
@@ -9762,23 +9907,41 @@ public class PGraphicsOpenGL extends PGraphics {
             i0 = i1;
           }
           index = addLine(in.lastVertex, in.firstVertex, index, false);
-          lastLineIndexCache = index;
-          
+          lastLineIndexCache = index;          
 //        NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }          
         } else {
           // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
-          int first = in.firstVertex;          
-          LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-          path.moveTo(inGeo.vertices[4 * first + 0], inGeo.vertices[4 * first + 1]);
-          for (int ln = 0; ln < lineCount - 1; ln++) {
-            int i1 = first + ln + 1;          
-            path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
-          }    
-          path.closePath();
-          tessellateLinePath(path);  
+          if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
+            tess.fillVertexCheck(nvert);
+            tess.fillIndexCheck(nind);
+            int index = in.renderMode == RETAINED ? tess.fillIndexCache.addNew() : tess.fillIndexCache.getLast();
+            firstFillIndexCache = index;
+            int i0 = in.firstVertex;
+            for (int ln = 0; ln < lineCount - 1; ln++) {
+              int i1 = in.firstVertex + ln + 1;
+              index = addLine2D(i0, i1, index, false);
+              i0 = i1;
+            }
+            index = addLine2D(in.lastVertex, in.firstVertex, index, false);
+            lastFillIndexCache = index;          
+//          NEW TESSMAP API        
+//          if (tess.renderMode == RETAINED) {
+//            ?????
+//          }          
+          } else { // full stroking algorithm           
+            int first = in.firstVertex;          
+            LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+            path.moveTo(in.vertices[4 * first + 0], in.vertices[4 * first + 1]);
+            for (int ln = 0; ln < lineCount - 1; ln++) {
+              int i1 = first + ln + 1;          
+              path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+            }    
+            path.closePath();
+            tessellateLinePath(path);              
+          }
         }
       }
       
@@ -9786,10 +9949,10 @@ public class PGraphicsOpenGL extends PGraphics {
     
     void tessellateEdges() {
       if (stroke) {
+        int nInVert = in.getNumLineVertices();
+        int nInInd = in.getNumLineIndices();
+       
         if (is3D()) {
-          int nInVert = in.getNumLineVertices();
-          int nInInd = in.getNumLineIndices();
-
           tess.lineVertexCheck(nInVert);
           tess.lineIndexCheck(nInInd);
           int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
@@ -9798,69 +9961,56 @@ public class PGraphicsOpenGL extends PGraphics {
             int[] edge = in.edges[i];
             index = addLine(edge[0], edge[1], index, true);
           }
-          lastLineIndexCache = index;
-          
+          lastLineIndexCache = index;          
 //        NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }               
         } else {
           // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
-          LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-          for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-            int[] edge = in.edges[i];
-            int i0 = edge[0];
-            int i1 = edge[1];
-            switch (edge[2]) {
-            case EDGE_MIDDLE:
-              path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
-              break;
-            case EDGE_START:
-              path.moveTo(inGeo.vertices[4 * i0 + 0], inGeo.vertices[4 * i0 + 1]);
-              path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
-              break;
-            case EDGE_STOP:
-              path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
-              path.closePath();
-              break;
-            case EDGE_SINGLE:
-              path.moveTo(inGeo.vertices[4 * i0 + 0], inGeo.vertices[4 * i0 + 1]);
-              path.lineTo(inGeo.vertices[4 * i1 + 0], inGeo.vertices[4 * i1 + 1]);
-              path.closePath();
-              break;              
-            } 
+          if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, edges           
+            tess.fillVertexCheck(nInVert);
+            tess.fillIndexCheck(nInInd);
+            int index = in.renderMode == RETAINED ? tess.fillIndexCache.addNew() : tess.fillIndexCache.getLast();
+            firstFillIndexCache = index;
+            for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+              int[] edge = in.edges[i];
+              index = addLine2D(edge[0], edge[1], index, true);
+            }
+            lastFillIndexCache = index;          
+//          NEW TESSMAP API        
+//          if (tess.renderMode == RETAINED) {
+//            ????
+//          } 
+          } else { // full stroking algorithm       
+            LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+            for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+              int[] edge = in.edges[i];
+              int i0 = edge[0];
+              int i1 = edge[1];
+              switch (edge[2]) {
+              case EDGE_MIDDLE:
+                path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+                break;
+              case EDGE_START:
+                path.moveTo(in.vertices[4 * i0 + 0], in.vertices[4 * i0 + 1]);
+                path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+                break;
+              case EDGE_STOP:
+                path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+                path.closePath();
+                break;
+              case EDGE_SINGLE:
+                path.moveTo(in.vertices[4 * i0 + 0], in.vertices[4 * i0 + 1]);
+                path.lineTo(in.vertices[4 * i1 + 0], in.vertices[4 * i1 + 1]);
+                path.closePath();
+                break;              
+              } 
+            }
+            tessellateLinePath(path);             
           }
-          tessellateLinePath(path); 
         }
       }
-      
-      
-      
-//      tessGeo.firstLineIndex = tessGeo.fillIndexCount;
-//      tessGeo.addFillVertices(inGeo.getNumLineVertices());
-//      tessGeo.addFillIndices(inGeo.getNumLineIndices());
-//      tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1; 
-//      int vcount = tessGeo.firstFillVertex;
-//      int icount = tessGeo.firstFillIndex;          
-//      for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
-//        int[] edge = inGeo.edges[i];
-//        addLineToFill(edge[0], edge[1], vcount, icount); vcount += 4; icount += 6;
-//      }     
-
-      // Not using the fancy path tessellation in 2D because it slows down things
-      // significantly (it also calls the GLU tessellator).
-      // It generates the right caps and joins, though.
-      
-//      GeneralPath path = new GeneralPath(GeneralPath.WIND_NON_ZERO);          
-//      for (int i = inGeo.firstEdge; i <= inGeo.lastEdge; i++) {
-//        int[] edge = inGeo.edges[i];
-//        if (startEdge(edge[2])) path.moveTo(inGeo.getVertexX(edge[0]), inGeo.getVertexY(edge[0])); 
-//        path.lineTo(inGeo.getVertexX(edge[1]), inGeo.getVertexY(edge[1]));
-//        if (endEdge(edge[2])) path.closePath();
-//      }        
-//      tessGeo.firstLineIndex = tessGeo.fillIndexCount;        
-//      tessellatePath(path);
-//      tessGeo.lastLineIndex = tessGeo.fillIndexCount - 1;           
     }
 
     // Adding the data that defines a quad starting at vertex i0 and
@@ -9881,18 +10031,18 @@ public class PGraphicsOpenGL extends PGraphics {
       color = constStroke ? strokeColor : in.scolors[i0];
       weight = constStroke ? strokeWeight : in.sweights[i0];
       
-      tess.putLineVertex(in, i0, i1, vidx, color, +weight/2);
+      tess.setLineVertex(vidx, in, i0, i1, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 0);      
       
       vidx++;
-      tess.putLineVertex(in, i0, i1, vidx, color, -weight/2);
+      tess.setLineVertex(vidx, in, i0, i1, color, -weight/2);
       tess.lineIndices[iidx++] = (short) (count + 1);
       
       color = constStroke ? strokeColor : in.scolors[i1];
       weight = constStroke ? strokeWeight : in.sweights[i1];
       
       vidx++;
-      tess.putLineVertex(in, i1, i0, vidx, color, -weight/2);
+      tess.setLineVertex(vidx, in, i1, i0, color, -weight/2);
       tess.lineIndices[iidx++] = (short) (count + 2);
       
       // Starting a new triangle re-using prev vertices.
@@ -9900,7 +10050,7 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.lineIndices[iidx++] = (short) (count + 1);
 
       vidx++;
-      tess.putLineVertex(in, i1, i0, vidx, color, +weight/2);
+      tess.setLineVertex(vidx, in, i1, i0, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 3);
       
 //    NEW TESSMAP API      
@@ -9911,6 +10061,74 @@ public class PGraphicsOpenGL extends PGraphics {
       cache.incCounts(index, 6, 4);
       return index;
     }    
+    
+    
+    // Adding the data that defines a quad starting at vertex i0 and
+    // ending at i1, in the case of pure 2D renderers (line geometry
+    // is added to the fill arrays).
+    int addLine2D(int i0, int i1, int index, boolean constStroke) {
+      IndexCache cache = tess.fillIndexCache;
+      int count = cache.vertexCount[index];
+      if (PGL.MAX_VERTEX_INDEX1 <= count + 4) {
+        // We need to start a new index block for this line.
+        index = cache.addNew();
+        count = 0;
+      }
+      int iidx = cache.indexOffset[index] + cache.indexCount[index];
+      int vidx = cache.vertexOffset[index] + cache.vertexCount[index];
+      int color;
+      float weight;
+      
+      color = constStroke ? strokeColor : in.scolors[i0];
+      weight = constStroke ? strokeWeight : in.sweights[i0];
+      int[] verts = {i0, i1};
+      
+      float x0 = in.vertices[4 * i0 + 0];
+      float y0 = in.vertices[4 * i0 + 1];
+      float w0 = in.vertices[4 * i0 + 3];
+      
+      float x1 = in.vertices[4 * i1 + 0];
+      float y1 = in.vertices[4 * i1 + 1];
+      float w1 = in.vertices[4 * i1 + 3];
+
+      // Calculating direction and normal of the line.
+      float dirx = x1 - x0;
+      float diry = y1 - y0;
+      float llen = PApplet.sqrt(dirx * dirx + diry * diry);
+      float normx = -diry / llen;
+      float normy = +dirx / llen;
+      
+      tess.setFillVertex(vidx, x0 + normx * weight/2, y0 + normy * weight/2, 0, w0, color, in, verts); 
+      tess.fillIndices[iidx++] = (short) (count + 0);      
+      
+      vidx++;
+      tess.setFillVertex(vidx, x0 - normx * weight/2, y0 - normy * weight/2, 0, w0, color, in, verts);
+      tess.fillIndices[iidx++] = (short) (count + 1);
+      
+      color = constStroke ? strokeColor : in.scolors[i1];
+      weight = constStroke ? strokeWeight : in.sweights[i1];
+      
+      vidx++;
+      tess.setFillVertex(vidx, x1 - normx * weight/2, y1 - normy * weight/2, 0, w1, color, in, verts);
+      tess.fillIndices[iidx++] = (short) (count + 2);
+      
+      // Starting a new triangle re-using prev vertices.
+      tess.fillIndices[iidx++] = (short) (count + 2);      
+      tess.fillIndices[iidx++] = (short) (count + 0);
+
+      vidx++;
+      tess.setFillVertex(vidx, x1 + normx * weight/2, y1 + normy * weight/2, 0, w1, color, in, verts);
+      tess.fillIndices[iidx++] = (short) (count + 3);
+      
+//    NEW TESSMAP API      
+//      if (tess.renderMode == RETAINED) {
+//        ????
+//      }      
+      
+      cache.incCounts(index, 6, 4);
+      return index;
+    }  
+    
     
     // -----------------------------------------------------------------
     //
@@ -10165,12 +10383,12 @@ public class PGraphicsOpenGL extends PGraphics {
 //      if (tess.renderMode == RETAINED) {
 //        in.addWeightedMapping(in.firstVertex, in.lastVertex);
 //      }
-      
-      firstFillIndexCache = Integer.MAX_VALUE;
-      
-      callback.calcNormals = calcNormals;
 
       if (fill && 3 <= nInVert) {
+        firstFillIndexCache = -1;
+        
+        callback.calcNormals = calcNormals;
+        
         gluTess.beginPolygon();
 
         if (solid) {
@@ -10233,8 +10451,8 @@ public class PGraphicsOpenGL extends PGraphics {
     // Tessellates the path given as parameter. This will work only in 2D.
     // Based on the opengl stroke hack described here: 
     // http://wiki.processing.org/w/Stroke_attributes_in_OpenGL
-    public void tessellateLinePath(LinePath path) {      
-      firstFillIndexCache = Integer.MAX_VALUE;      
+    public void tessellateLinePath(LinePath path) {
+      //firstFillIndexCache = -1;      
       callback.calcNormals = true;
       
       int cap = strokeCap == ROUND ? LinePath.CAP_ROUND :
@@ -10324,7 +10542,7 @@ public class PGraphicsOpenGL extends PGraphics {
       public void begin(int type) {
         cache = tess.fillIndexCache;
         cacheIndex = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();        
-        if (cacheIndex < firstFillIndexCache) {
+        if (cacheIndex < firstFillIndexCache || firstFillIndexCache == -1) {
           firstFillIndexCache = cacheIndex;
         }
         
