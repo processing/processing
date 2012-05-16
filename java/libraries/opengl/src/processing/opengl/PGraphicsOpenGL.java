@@ -2482,64 +2482,63 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  // TODO: finish when points are properly re-implemented.
   void rawPoints() {
-//  raw.colorMode(RGB);
-//  raw.noFill();
-//  raw.beginShape(POINTS);
-//  
-//  float[] vec = tessGeo.pointVertices;
-//  int[] color = tessGeo.pointColors;
-//  float[] attribs = tessGeo.pointSizes;
-//  short[] indices = tessGeo.pointIndices; 
-//  
-//  IndexCache cache = tessGeo.lineIndexCache;
-//  for (int n = 0; n < cache.size; n++) {     
-//    int ioffset = cache.indexOffset[n];
-//    int icount = cache.indexCount[n];
-//    int voffset = cache.vertexOffset[n];
-//    
-//          
-//  }    
-//  
-//  raw.endShape();
-  
-  
-//  tess.pointSizes[2 * attribIdx + 0] = 0;
-//  tess.pointSizes[2 * attribIdx + 1] = 0;
-//  attribIdx++;
-//  float val = 0;
-//  float inc = (float) SINCOS_LENGTH / perim;
-//  for (int k = 0; k < perim; k++) {
-//    tess.pointSizes[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
-//    tess.pointSizes[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
-//    val = (val + inc) % SINCOS_LENGTH;
-//    attribIdx++;
-//  } 
-  
-//  i0 = first index
-//  if 0 < tess.pointSizes[2 * i0 + 2] -> square point.  
-//      tess.pointSizes[2 * i0 + 2] = 0.5f * strokeWeight;  --> w --> perim
-//      ...    
-//      i0 += perim    
-//  if 0 < tess.pointSizes[2 * i0 + 2] -> round point.
-//      tess.pointSizes[2 * i0 + 2] = -0.5f * strokeWeight;  --> w
-//      ...
-//      i0 += 5   
-//    
-
-//
-  
-  
-  
-//  tess.pointSizes[2 * attribIdx + 0] = 0;
-//  tess.pointSizes[2 * attribIdx + 1] = 0;
-//  attribIdx++;
-//  for (int k = 0; k < 4; k++) {
-//    tess.pointSizes[2 * attribIdx + 0] = 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
-//    tess.pointSizes[2 * attribIdx + 1] = 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
-//    attribIdx++;
-//  }  
+    raw.colorMode(RGB);
+    raw.noFill();
+    raw.beginShape(POINTS);
+    
+    float[] vertices = tessGeo.pointVertices;
+    int[] color = tessGeo.pointColors;
+    float[] attribs = tessGeo.pointSizes;
+    short[] indices = tessGeo.pointIndices; 
+    
+    IndexCache cache = tessGeo.lineIndexCache;
+    for (int n = 0; n < cache.size; n++) {     
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];
+      
+      int pt = ioffset;
+      while (pt < ioffset + icount) {
+        float size = attribs[2 * pt + 2];
+        float weight;
+        int perim;
+        if (0 < size) { // Square point
+          weight = +size / 0.5f;
+          perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * weight / 20));          
+        } else { // round point
+          weight = -size / 0.5f;
+          perim = 5;
+        }
+                
+        int i0 = voffset + indices[pt];
+        int argb0 = PGL.nativeToJavaARGB(color[i0]);
+        float[] pt0 = {0, 0, 0, 0};
+        
+        if (flushMode == FLUSH_CONTINUOUSLY || hints[DISABLE_TRANSFORM_CACHE]) {
+          float[] src0 = {0, 0, 0, 0};          
+          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);          
+          modelview.mult(src0, pt0);
+        } else {
+          PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
+        }        
+        
+        if (raw.is3D()) {
+          raw.strokeWeight(weight);
+          raw.stroke(argb0);
+          raw.vertex(pt0[X], pt0[Y], pt0[Z]);
+        } else if (raw.is2D()) {
+          float sx0 = screenX(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenY(pt0[0], pt0[1], pt0[2], pt0[3]);
+          raw.strokeWeight(weight);
+          raw.stroke(argb0);
+          raw.vertex(sx0, sy0);     
+        }         
+        
+        pt += perim;
+      }
+    }    
+    
+    raw.endShape();
   }
   
 
