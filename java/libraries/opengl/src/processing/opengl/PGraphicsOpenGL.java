@@ -68,7 +68,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static protected final int FLUSH_WHEN_FULL    = 1;     
   
   /** Type of geometry: immediate is that generated with beginShape/vertex/
-   * endShape, retained is the result of creating a PShape3D object with
+   * endShape, retained is the result of creating a PShapeOpenGL object with
    * createShape. */
   static protected final int IMMEDIATE = 0;
   static protected final int RETAINED  = 1;
@@ -1954,34 +1954,34 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public PShape createShape(int type) {
-    PShape3D shape = null;
+    PShapeOpenGL shape = null;
     if (type == PShape.GROUP) {
-      shape = new PShape3D(parent, PShape.GROUP);
+      shape = new PShapeOpenGL(parent, PShape.GROUP);
     } else if (type == PShape.PATH) {
-      shape = new PShape3D(parent, PShape.PATH);
+      shape = new PShapeOpenGL(parent, PShape.PATH);
     } else if (type == POINTS) {
-      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(POINTS);
     } else if (type == LINES) {
-      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(LINES);
     } else if (type == TRIANGLE || type == TRIANGLES) {
-      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(TRIANGLES);
     } else if (type == TRIANGLE_FAN) {
-      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(TRIANGLE_FAN);
     } else if (type == TRIANGLE_STRIP) {
-      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(TRIANGLE_STRIP);
     } else if (type == QUAD || type == QUADS) {
-      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(QUADS);
     } else if (type == QUAD_STRIP) {
-      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(QUAD_STRIP);
     } else if (type == POLYGON) {
-      shape = new PShape3D(parent, PShape.GEOMETRY);
+      shape = new PShapeOpenGL(parent, PShape.GEOMETRY);
       shape.setKind(POLYGON);
     }
     return shape;
@@ -1989,7 +1989,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public PShape createShape(int kind, float... p) {
-    PShape3D shape = null;
+    PShapeOpenGL shape = null;
     int len = p.length;
 
     if (kind == POINT) {
@@ -1997,63 +1997,63 @@ public class PGraphicsOpenGL extends PGraphics {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(POINT);
     } else if (kind == LINE) {
       if (len != 4 && len != 6) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(LINE);
     } else if (kind == TRIANGLE) {
       if (len != 6) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(TRIANGLE);
     } else if (kind == QUAD) {
       if (len != 8) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(QUAD);
     } else if (kind == RECT) {
       if (len != 4 && len != 5 && len != 8) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(RECT);
     } else if (kind == ELLIPSE) {
       if (len != 4) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(ELLIPSE);
     } else if (kind == ARC) {
       if (len != 6) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(ARC);
     } else if (kind == BOX) {
       if (len != 1 && len != 3) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(BOX);
     } else if (kind == SPHERE) {
       if (len != 1) {
         showWarning("Wrong number of parameters");
         return null;
       }
-      shape = new PShape3D(parent, PShape.PRIMITIVE);
+      shape = new PShapeOpenGL(parent, PShape.PRIMITIVE);
       shape.setKind(SPHERE);
     } else {
       showWarning("Unrecognized primitive type");
