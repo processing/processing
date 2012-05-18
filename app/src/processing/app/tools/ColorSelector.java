@@ -3,7 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2006-11 Ben Fry and Casey Reas
+  Copyright (c) 2006-12 Ben Fry and Casey Reas
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License version 2
@@ -42,11 +42,11 @@ import javax.swing.text.*;
  */
 public class ColorSelector implements Tool, DocumentListener {
 
-  Editor editor;
-  
-  /** 
-   * Only create one instance, otherwise we'll have dozens of animation 
-   * threads going if you open/close a lot of editor windows. 
+//  Editor editor;
+
+  /**
+   * Only create one instance, otherwise we'll have dozens of animation
+   * threads going if you open/close a lot of editor windows.
    */
   static JFrame frame;
 
@@ -67,16 +67,16 @@ public class ColorSelector implements Tool, DocumentListener {
   public String getMenuTitle() {
     return "Color Selector";
   }
-  
-  
+
+
   public void init(Editor editor) {
-    this.editor = editor;
+//    this.editor = editor;
     if (frame == null) {
       createFrame();
     }
   }
-  
-  
+
+
   void createFrame() {
     frame = new JFrame("Color Selector");
     frame.getContentPane().setLayout(new BorderLayout());
@@ -118,7 +118,7 @@ public class ColorSelector implements Tool, DocumentListener {
     Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
     frame.setLocation((screen.width - size.width) / 2,
                       (screen.height - size.height) / 2);
-    
+
     frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     frame.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
@@ -130,7 +130,7 @@ public class ColorSelector implements Tool, DocumentListener {
           frame.setVisible(false);
         }
       });
-    
+
     Base.setIcon(frame);
 
     hueField.getDocument().addDocumentListener(this);
@@ -144,10 +144,10 @@ public class ColorSelector implements Tool, DocumentListener {
     hexField.setText("#FFFFFF");
   }
 
-  
+
   public void run() {
     frame.setVisible(true);
-    // You've got to be f--ing kidding me.. why did the following line 
+    // You've got to be f--ing kidding me.. why did the following line
     // get deprecated for the pile of s-- that follows it?
     //frame.setCursor(Cursor.CROSSHAIR_CURSOR);
     frame.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -266,7 +266,7 @@ public class ColorSelector implements Tool, DocumentListener {
 
 
   protected void updateHex() {
-    hexField.setText("#" + 
+    hexField.setText("#" +
                      PApplet.hex(red, 2) +
                      PApplet.hex(green, 2) +
                      PApplet.hex(blue, 2));
@@ -417,7 +417,7 @@ public class ColorSelector implements Tool, DocumentListener {
       colorMode(HSB, 360, 256, 256);
       noFill();
       rectMode(CENTER);
-      
+
       loadPixels();
     }
 
@@ -431,7 +431,7 @@ public class ColorSelector implements Tool, DocumentListener {
       int index = 0;
       for (int j = 0; j < 256; j++) {
         for (int i = 0; i < 256; i++) {
-          g.pixels[index++] = color(hue, i, 255 - j);
+          pixels[index++] = color(hue, i, 255 - j);
         }
       }
 
@@ -472,7 +472,7 @@ public class ColorSelector implements Tool, DocumentListener {
     public Dimension getMaximumSize() {
       return new Dimension(WIDE, HIGH);
     }
-    
+
     public void keyPressed() {
       if (key == ESC) {
         ColorSelector.frame.setVisible(false);
@@ -542,7 +542,7 @@ public class ColorSelector implements Tool, DocumentListener {
     public Dimension getMaximumSize() {
       return new Dimension(WIDE, HIGH);
     }
-    
+
     public void keyPressed() {
       if (key == ESC) {
         ColorSelector.frame.setVisible(false);
@@ -625,5 +625,12 @@ public class ColorSelector implements Tool, DocumentListener {
       // can't call any sort of methods on the enclosing class here
       // seems to have something to do with how Document objects are set up
     }
+  }
+
+
+  static public void main(String[] args) {
+    ColorSelector cs = new ColorSelector();
+    cs.init(null);
+    EventQueue.invokeLater(cs);
   }
 }
