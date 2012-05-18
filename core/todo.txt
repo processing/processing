@@ -22,19 +22,17 @@ X   text(x, y, w, h, z)
 X   textX/Y/Z variables
 _   update changes Wiki
 _ where did hintEnabled() come from?
-
-_ move requestFocusInWindow() to safter EDT place
-_ look into using BufferStrategy again to improve performance
-_   there are more improvements to be made ala issue #729
-_ make sure rendering is happening on the EDT
-_   (hopefully fixes flicker issues)
-_   change PApplet.java javadoc to reflect the change
-_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
-_   http://code.google.com/p/processing/issues/detail?id=775
-_ thread() causes weird flickering
-_   http://code.google.com/p/processing/issues/detail?id=742
-_ Potential race condition when resizing sketches
-_   http://code.google.com/p/processing/issues/detail?id=697
+_ let's remove 'online'
+X   changed to 'appletViewer'
+_   doesn't test net connection to see if 'online'
+_   only tests whether running inside an applet viewer
+X registerSize() has been removed
+_   it hasn't worked for a while, also not a good way to get updates on size
+_   use pre() or something like that instead
+o displayWidth/Height not set until just before setup
+o   don't use size(displayWidth, displayHeight) anymore
+o   to do full screen, should use: 
+X   did not work well
 
 andres
 A polygon shapes without fill slowdown render progressively
@@ -42,7 +40,26 @@ A   http://code.google.com/p/processing/issues/detail?id=1028
 o OPENGL broken in 2.0a5 on Linux (upstream issues)
 o   http://code.google.com/p/processing/issues/detail?id=1026
 A   these were upstream issues
-_ Update JOGL when RC6 arrive: forum.jogamp.org/Road-to-RC6-td3866404.html
+A screenY(x,y,z) returns incorrect coordinate
+A   http://code.google.com/p/processing/issues/detail?id=1007
+A lights() behaving differently with OPENGL2 than original OPENGL
+A   http://code.google.com/p/processing/issues/detail?id=619
+A directionalLight() is wrong on box()
+A   http://code.google.com/p/processing/issues/detail?id=966
+A PShape3D uses a lot of memory
+A   http://code.google.com/p/processing/issues/detail?id=1046
+A triangle in first ring of sphere() not being made properly
+A   http://code.google.com/p/processing/issues/detail?id=1005
+A beginRaw() not working with 3D
+A   http://code.google.com/p/processing/issues/detail?id=744
+A set() in 3D does not work on 2.0a5
+A   http://code.google.com/p/processing/issues/detail?id=1069
+A frustum() and ortho() broken in P3D
+A   http://code.google.com/p/processing/issues/detail?id=867
+A get() with OPENGL is grabbing the wrong part of the image
+A   http://code.google.com/p/processing/issues/detail?id=191
+
+_ simple NPE in OpenGL causes really large, not useful, stack trace
 _ why are LINE_SMOOTH et al being enabled if antialias < 2?
 _ why is initPrimarySurface() public?
 _ why is setFramerate() public? (also should be setFrameRate or just frameRate)
@@ -141,6 +158,27 @@ X   fix build script to include the jnilib, also add more error checks
 X screenX and screenY are both already taken, so not including vars for them
 X   decide on naming for the next release
 
+_ fjen complaint about size(), update with links to new docs:
+_   http://code.google.com/p/processing/issues/detail?id=1071
+_ setAntiAlias() should instead just use parent.smooth
+_ antialias -> smoothMode(), smoothQuality(), quality()
+_   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
+_ move requestFocusInWindow() to safter EDT place
+_ look into using BufferStrategy again to improve performance
+_   there are more improvements to be made ala issue #729
+_ make sure rendering is happening on the EDT
+_   (hopefully fixes flicker issues)
+_   change PApplet.java javadoc to reflect the change
+_   Update http://wiki.processing.org/w/Troubleshooting#Flicker
+_   http://code.google.com/p/processing/issues/detail?id=775
+_ thread() causes weird flickering
+_   http://code.google.com/p/processing/issues/detail?id=742
+_ Potential race condition when resizing sketches
+_   http://code.google.com/p/processing/issues/detail?id=697
+_ doc: OpenGL offscreen requires primary surface to be OpenGL
+_ doc: can't really change the smoothing/options on offscreen
+_ Update JOGL when RC6 arrive: forum.jogamp.org/Road-to-RC6-td3866404.html
+
 _ PUtil -> move match(), lots of other non-gui functions into own class
 _   and merge it in statically via the methods code
 
@@ -154,9 +192,12 @@ o   or background(r, g, b, a) would be the thing
 _   clear() with a color doesn't make (verbal) sense
 _   provide a way to clear the PGraphics with plain alpha
 
+_ in PApplet.main(), windowClosing() should probably be calling 'exit()'
+_   or rather, we should never call System.exit(0), ja?
 _ dispose() method in PApplet should be empty so ppl can override
 _   move that stuff to destroy()
 _ pause()/resume() need to work on the desktop side as well
+_   notify ddf when pause/resume implemented
 _ stop() not called in 1.5
 _   http://code.google.com/p/processing/issues/detail?id=636
 _   In reply to c#1, I noticed that dispose() is getting called. stop() isn't.
@@ -203,8 +244,6 @@ _   also need to copy this over to android
 _ disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
 
 andres 
-_ beginRaw() not working with 3D
-_   http://code.google.com/p/processing/issues/detail?id=744
 _ OpenGL noSmooth() problems
 _   http://code.google.com/p/processing/issues/detail?id=328
 _ inconsistent anti-aliasing with OpenGL
@@ -281,6 +320,7 @@ _   libraries have to do a lot of casting
 _ decision on registered methods
 _   remove registerPre() et al
 _   add register("pause", ...) 
+_   size() should be resize(), so it can be overridden (ala pause())
 _   add PEvent
 _ size() and resize() and whatever? 
 _   should be setSize(), but that's odd for image files
