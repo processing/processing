@@ -65,6 +65,8 @@ X   if no window color set, then don't apply it
 o also add option for FSEM or not
 X   nope, FSEM too buggy and error-prone
 
+_ size(640, 480, P3D ); -> doesn't pick up as a P3D sketch
+
 recent/open
 X add EditorState class, device-aware placement
 X   get rid of restore sketch feature
@@ -256,6 +258,8 @@ _     throws you onto the end of the last tab... exactly the worst location
 _ jer: omitting a semicolon shows the error on the line after it...
 _ find across all tabs (jer request)
 _   http://code.google.com/p/processing/issues/detail?id=25
+_ serial still causing problems on OS X
+_   http://code.google.com/p/processing/issues/detail?id=52
 
 reference/examples
 _ import p5 reference into the javadoc
@@ -304,10 +308,6 @@ _   where the active editor is not being set null
 
 _ Internationalization
 _   http://code.google.com/p/processing/issues/detail?id=593
-
-_ libraries in java tabs (separate .java files) are reported missing
-_   need to scan the .java files for imports that need to be included
-_   http://code.google.com/p/processing/issues/detail?id=459
 
 regressions
 _ strange window flicker when first opened
@@ -383,6 +383,11 @@ _   but it won't reload the library mapping table
 _ make sure there aren't library jar files named the same thing 
 _   i.e. if one library has db.jar, then that's gonna kill another db.jar
 _   when the files are copied over
+_ libraries in java tabs (separate .java files) are reported missing
+_   need to scan the .java files for imports that need to be included
+_   http://code.google.com/p/processing/issues/detail?id=459
+_ library.properties and tool.properties should reflect supported modes
+_   http://code.google.com/p/processing/issues/detail?id=1050
 
 _ when are prefs saved? could instead save whenever changes are made
 _   and then if the file gets modified, it'll put up an error message

@@ -1453,15 +1453,15 @@ public class PGraphicsOpenGL extends PGraphics {
     if (primarySurface) {
       int[] temp = new int[1];
       pgl.glGetIntegerv(PGL.GL_SAMPLES, temp, 0);
-      if (antialias != temp[0] && 1 < temp[0] && 1 < antialias) {
-        antialias = temp[0];
+      if (quality != temp[0] && 1 < temp[0] && 1 < quality) {
+        quality = temp[0];
       }
     }
-    if (antialias < 2) {
+    if (quality < 2) {
       pgl.glDisable(PGL.GL_MULTISAMPLE);
-      pgl.glEnable(PGL.GL_POINT_SMOOTH);
-      pgl.glEnable(PGL.GL_LINE_SMOOTH);
-      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);
+//      pgl.glEnable(PGL.GL_POINT_SMOOTH);
+//      pgl.glEnable(PGL.GL_LINE_SMOOTH);
+//      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);
     } else {
       pgl.glEnable(PGL.GL_MULTISAMPLE);
       pgl.glDisable(PGL.GL_POINT_SMOOTH);
@@ -1647,11 +1647,11 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     pgl.glDepthFunc(PGL.GL_LEQUAL);
 
-    if (antialias < 2) {
+    if (quality < 2) {
       pgl.glDisable(PGL.GL_MULTISAMPLE);
-      pgl.glEnable(PGL.GL_POINT_SMOOTH);
-      pgl.glEnable(PGL.GL_LINE_SMOOTH);
-      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);
+//      pgl.glEnable(PGL.GL_POINT_SMOOTH);
+//      pgl.glEnable(PGL.GL_LINE_SMOOTH);
+//      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);
     } else {
       pgl.glEnable(PGL.GL_MULTISAMPLE);
       pgl.glDisable(PGL.GL_POINT_SMOOTH);
@@ -3099,10 +3099,10 @@ public class PGraphicsOpenGL extends PGraphics {
       level = maxSamples;
     }
 
-    if (antialias != level) {
-      antialias = level;
-      if (antialias == 1) {
-        antialias = 0;
+    if (quality != level) {
+      quality = level;
+      if (quality == 1) {
+        quality = 0;
       }
       // This will trigger a surface restart next time
       // requestDraw() is called.
@@ -3114,8 +3114,8 @@ public class PGraphicsOpenGL extends PGraphics {
   public void noSmooth() {
     smooth = false;
 
-    if (1 < antialias) {
-      antialias = 0;
+    if (1 < quality) {
+      quality = 0;
       // This will trigger a surface restart next time
       // requestDraw() is called.
       pgl.initialized = false;
@@ -5615,7 +5615,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   protected void initPrimary() {
-    pgl.initPrimarySurface(antialias);
+    pgl.initPrimarySurface(quality);
     pg = this;
   }
 
@@ -5638,8 +5638,8 @@ public class PGraphicsOpenGL extends PGraphics {
       offscreenFramebufferMultisample.release();
     }
 
-    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < antialias) {
-      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, antialias, 0,
+    if (PGraphicsOpenGL.fboMultisampleSupported && 1 < quality) {
+      offscreenFramebufferMultisample = new PFramebuffer(parent, texture.glWidth, texture.glHeight, quality, 0,
                                                          depthBits, stencilBits,
                                                          depthBits == 24 && stencilBits == 8 && packedDepthStencilSupported, false);
 
@@ -5653,7 +5653,7 @@ public class PGraphicsOpenGL extends PGraphics {
                                               false, false);
 
     } else {
-      antialias = 0;
+      quality = 0;
       offscreenFramebuffer = new PFramebuffer(parent, texture.glWidth, texture.glHeight, 1, 1,
                                               depthBits, stencilBits,
                                               depthBits == 24 && stencilBits == 8 && packedDepthStencilSupported, false);
