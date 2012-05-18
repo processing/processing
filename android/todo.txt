@@ -9,8 +9,13 @@ _ docs: P2D and P3D are now OpenGL variations
 andres
 A GL2 specific code in Processing 2.0a5 break P3D on GLES2 hardware
 A   http://code.google.com/p/processing/issues/detail?id=1029
-X OpenGL/ES requires precision specifier on float types
-X   http://code.google.com/p/processing/issues/detail?id=1035
+A OpenGL/ES requires precision specifier on float types
+A   http://code.google.com/p/processing/issues/detail?id=1035
+A loadshape with obj file broken in 2.05a android mode.
+A   http://code.google.com/p/processing/issues/detail?id=1048
+A camera() and arc() don't work together
+A   http://code.google.com/p/processing/issues/detail?id=751
+
 _ Android OPENGL renderer + JAVA2D PGraphics results in PTexture exception
 _   http://code.google.com/p/processing/issues/detail?id=1019
 
@@ -20,6 +25,8 @@ X   http://code.google.com/p/processing/issues/detail?id=214
 X remove unnecessary processing.xml.* code from android-core
 X   http://code.google.com/p/processing/issues/detail?id=214
 
+_ sketch names cannot start with underscore
+_   http://code.google.com/p/processing/issues/detail?id=1047
 
 _ Android mode is broken on Windows in Processing 2.0a5
 _   file a bug for this w/ Google
