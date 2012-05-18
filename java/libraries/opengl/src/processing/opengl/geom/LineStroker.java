@@ -27,24 +27,17 @@ package processing.opengl.geom;
 
 import processing.core.PMatrix2D;
 
-public class LineStroker extends LineSink {
-  LineSink output;
-
-  int lineWidth;
-
-  int capStyle;
-
-  int joinStyle;
-
-  int miterLimit;
-
-  int m00, m01;
-
-  int m10, m11;
-
-  int lineWidth2;
-
-  long scaledLineWidth2;
+public class LineStroker /*extends LineSink*/ {
+//  private LineSink output;
+  private LineStroker output;
+//  private int lineWidth;
+  private int capStyle;
+  private int joinStyle;
+//  private int miterLimit;
+  private int m00, m01;
+  private int m10, m11;
+  private int lineWidth2;
+  private long scaledLineWidth2;
 
   // For any pen offset (pen_dx, pen_dy) that does not depend on
   // the line orientation, the pen should be transformed so that:
@@ -59,45 +52,30 @@ public class LineStroker extends LineSink {
   //
   // pen_dx'(r, theta) = r*(m00*cos(theta) + m01*sin(theta))
   // pen_dy'(r, theta) = r*(m10*cos(theta) + m11*sin(theta))
-  int numPenSegments;
+  private int numPenSegments;
+  private int[] pen_dx;
+  private int[] pen_dy;
 
-  int[] pen_dx;
-
-  int[] pen_dy;
-
-  boolean[] penIncluded;
-
-  int[] join;
-
-  int[] offset = new int[2];
-
-  int[] reverse = new int[100];
-
-  int[] miter = new int[2];
-
-  long miterLimitSq;
-
-  int prev;
-
-  int rindex;
-
-  boolean started;
-
-  boolean lineToOrigin;
-
-  boolean joinToOrigin;
-
-  int sx0, sy0, sx1, sy1, x0, y0, x1, y1;
-
-  int mx0, my0, mx1, my1, omx, omy;
-
-  int lx0, ly0, lx1, ly1, lx0p, ly0p, px0, py0;
-
-  double m00_2_m01_2;
-
-  double m10_2_m11_2;
-
-  double m00_m10_m01_m11;
+  private boolean[] penIncluded;
+  private int[] join;
+  private int[] offset = new int[2];
+  private int[] reverse = new int[100];
+  private int[] miter = new int[2];
+  private long miterLimitSq;
+  private int prev;
+  private int rindex;
+  private boolean started;
+  private boolean lineToOrigin;
+  private boolean joinToOrigin;
+//  private int sx0, sy0, sx1, sy1, x0, y0, x1, y1;
+//  private int mx0, my0, mx1, my1, omx, omy;
+//  private int lx0, ly0, lx1, ly1, lx0p, ly0p, px0, py0;
+  private int sx0, sy0, sx1, sy1, x0, y0;
+  private int mx0, my0, omx, omy;
+  private int px0, py0;
+  private double m00_2_m01_2;
+  private double m10_2_m11_2;
+  private double m00_m10_m01_m11;
 
   /**
    * Empty constructor. <code>setOutput</code> and <code>setParameters</code>
@@ -127,7 +105,8 @@ public class LineStroker extends LineSink {
    *          required in order to produce consistently shaped end caps and
    *          joins.
    */
-  public LineStroker(LineSink output, int lineWidth, int capStyle, int joinStyle,
+//  public LineStroker(LineSink output, int lineWidth, int capStyle, int joinStyle,
+  public LineStroker(LineStroker output, int lineWidth, int capStyle, int joinStyle,
                  int miterLimit, PMatrix2D transform) {
     setOutput(output);
     setParameters(lineWidth, capStyle, joinStyle, miterLimit, transform);
@@ -139,7 +118,8 @@ public class LineStroker extends LineSink {
    * @param output
    *          an output <code>LineSink</code>.
    */
-  public void setOutput(LineSink output) {
+//  public void setOutput(LineSink output) {
+  public void setOutput(LineStroker output) {
     this.output = output;
   }
 
@@ -169,12 +149,12 @@ public class LineStroker extends LineSink {
     this.m10 = LinePath.FloatToS15_16(transform.m10);
     this.m11 = LinePath.FloatToS15_16(transform.m11);
 
-    this.lineWidth = lineWidth;
+//    this.lineWidth = lineWidth;
     this.lineWidth2 = lineWidth >> 1;
     this.scaledLineWidth2 = ((long) m00 * lineWidth2) >> 16;
     this.capStyle = capStyle;
     this.joinStyle = joinStyle;
-    this.miterLimit = miterLimit;
+//    this.miterLimit = miterLimit;
 
     this.m00_2_m01_2 = (double) m00 * m00 + (double) m01 * m01;
     this.m10_2_m11_2 = (double) m10 * m10 + (double) m11 * m11;
@@ -203,7 +183,7 @@ public class LineStroker extends LineSink {
 
     for (int i = 0; i < numPenSegments; i++) {
       double r = lineWidth / 2.0;
-      double theta = (double) i * 2.0 * Math.PI / numPenSegments;
+      double theta = i * 2 * Math.PI / numPenSegments;
 
       double cos = Math.cos(theta);
       double sin = Math.sin(theta);
@@ -528,12 +508,12 @@ public class LineStroker extends LineSink {
     emitLineTo(x0 - mx, y0 - my, true);
     emitLineTo(x1 - mx, y1 - my, true);
 
-    lx0 = x1 + mx;
-    ly0 = y1 + my;
-    lx0p = x1 - mx;
-    ly0p = y1 - my;
-    lx1 = x1;
-    ly1 = y1;
+//    lx0 = x1 + mx;
+//    ly0 = y1 + my;
+//    lx0p = x1 - mx;
+//    ly0p = y1 - my;
+//    lx1 = x1;
+//    ly1 = y1;
 
     this.omx = mx;
     this.omy = my;
@@ -639,8 +619,8 @@ public class LineStroker extends LineSink {
 
   long lineLength(long ldx, long ldy) {
     long ldet = ((long) m00 * m11 - (long) m01 * m10) >> 16;
-    long la = ((long) ldy * m00 - (long) ldx * m10) / ldet;
-    long lb = ((long) ldy * m01 - (long) ldx * m11) / ldet;
+    long la = (ldy * m00 - ldx * m10) / ldet;
+    long lb = (ldy * m01 - ldx * m11) / ldet;
     long llen = (int) LinePath.hypot(la, lb);
     return llen;
   }
@@ -650,8 +630,8 @@ public class LineStroker extends LineSink {
       drawRoundJoin(x0, y0, omx, omy, -omx, -omy, 1, false, false,
                     ROUND_JOIN_THRESHOLD);
     } else if (capStyle == LinePath.CAP_SQUARE) {
-      long ldx = (long) (px0 - x0);
-      long ldy = (long) (py0 - y0);
+      long ldx = px0 - x0;
+      long ldy = py0 - y0;
       long llen = lineLength(ldx, ldy);
       if (0 < llen) {
         long s = (long) lineWidth2 * 65536 / llen;
@@ -673,8 +653,8 @@ public class LineStroker extends LineSink {
       drawRoundJoin(sx0, sy0, -mx0, -my0, mx0, my0, 1, false, false,
                     ROUND_JOIN_THRESHOLD);
     } else if (capStyle == LinePath.CAP_SQUARE) {
-      long ldx = (long) (sx1 - sx0);
-      long ldy = (long) (sy1 - sy0);
+      long ldx = sx1 - sx0;
+      long ldy = sy1 - sy0;
       long llen = lineLength(ldx, ldy);
       if (0  < llen) {
         long s = (long) lineWidth2 * 65536 / llen;
