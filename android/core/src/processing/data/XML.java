@@ -68,6 +68,11 @@ public class XML implements Serializable {
   }
 
 
+  public XML(File file) {
+    this(PApplet.createReader(file));
+  }
+
+  
   public XML(Reader reader) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

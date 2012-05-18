@@ -3837,11 +3837,20 @@ public class PApplet extends Activity implements PConstants, Runnable {
     return new XML(this, filename);
   }
 
+  
+  static public XML loadXML(File file) {
+    return new XML(file);
+  }
 
+  
   public Table loadTable(String filename) {
     return new Table(this, filename);
   }
 
+  
+  static public Table loadTable(File file) {
+    return new Table(file);
+  }
 
 
   //////////////////////////////////////////////////////////////
