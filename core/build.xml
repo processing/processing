@@ -16,6 +16,7 @@
     <javac target="1.5" 
 	   encoding="UTF-8"
 	   includeAntRuntime="false"
+	   debug="true"
 	   srcdir="src" destdir="bin" />
     
     <!-- copy the jnilib to the bin folder so it's included -->

@@ -286,24 +286,24 @@ public class PApplet extends Applet
    * <p>
    * This does not include the arguments passed in to PApplet itself.
    */
-  public String args[];
+  public String[] args;
 
   /** Path to sketch folder */
   public String sketchPath; //folder;
 
-  /** When debugging headaches */
-  static final boolean THREAD_DEBUG = false;
+  static final boolean DEBUG = false;
+//  static final boolean DEBUG = true;
 
   /** Default width and height for applet when not specified */
   static public final int DEFAULT_WIDTH = 100;
   static public final int DEFAULT_HEIGHT = 100;
 
   /**
-   * Minimum dimensions for the window holding an applet.
-   * This varies between platforms, Mac OS X 10.3 can do any height
-   * but requires at least 128 pixels width. Windows XP has another
-   * set of limitations. And for all I know, Linux probably lets you
-   * make windows with negative sizes.
+   * Minimum dimensions for the window holding an applet. This varies between
+   * platforms, Mac OS X 10.3 (confirmed with 10.7 and Java 6) can do any
+   * height but requires at least 128 pixels width. Windows XP has another
+   * set of limitations. And for all I know, Linux probably lets you make
+   * windows with negative sizes.
    */
   static public final int MIN_WINDOW_WIDTH = 128;
   static public final int MIN_WINDOW_HEIGHT = 128;
@@ -655,7 +655,7 @@ public class PApplet extends Applet
    * ( end auto-generated )
    * @webref environment
    */
-  public boolean online = false;
+  public boolean appletViewer = false;
 
   /**
    * Time in milliseconds when the applet was started.
@@ -702,9 +702,7 @@ public class PApplet extends Applet
    */
   public int frameCount;
 
-  /**
-   * true if this applet has had it.
-   */
+  /** true if the sketch has stopped permanently. */
   public volatile boolean finished;
 
   /**
@@ -718,9 +716,11 @@ public class PApplet extends Applet
    */
   protected boolean exitCalled;
 
+  Object pauseObject = new Object();
   Thread thread;
 
-  protected RegisteredMethods sizeMethods;
+//  protected RegisteredMethods sizeMethods;
+  protected RegisteredMethods pauseMethods, resumeMethods;
   protected RegisteredMethods preMethods, drawMethods, postMethods;
   protected RegisteredMethods mouseEventMethods, keyEventMethods;
   protected RegisteredMethods disposeMethods;
@@ -797,6 +797,10 @@ public class PApplet extends Applet
   // for 0116, the CRUSTY_THREADS are being disabled to fix lots of bugs.
   //static final boolean CRUSTY_THREADS = false; //true;
 
+  /**
+   * Applet initialization. This can do GUI work because the components have
+   * not been 'realized' yet: things aren't visible, displayed, etc.
+   */
   public void init() {
 //    println("init() called " + Integer.toHexString(hashCode()));
     // using a local version here since the class variable is deprecated
@@ -817,7 +821,9 @@ public class PApplet extends Applet
     firstMouse = true;
 
     // these need to be inited before setup
-    sizeMethods = new RegisteredMethods();
+//    sizeMethods = new RegisteredMethods();
+    pauseMethods = new RegisteredMethods();
+    resumeMethods = new RegisteredMethods();
     preMethods = new RegisteredMethods();
     drawMethods = new RegisteredMethods();
     postMethods = new RegisteredMethods();
@@ -827,9 +833,9 @@ public class PApplet extends Applet
 
     try {
       getAppletContext();
-      online = true;
+      appletViewer = true;
     } catch (NullPointerException e) {
-      online = false;
+      appletViewer = false;
     }
 
     try {
@@ -878,13 +884,19 @@ public class PApplet extends Applet
       }
     });
 
+//    if (thread == null) {
+//    paused = true;
+    thread = new Thread(this, "Animation Thread");
+    thread.start();
+//    }
+
     // this is automatically called in applets
     // though it's here for applications anyway
-    start();
+//    start();
   }
 
 
-  public int sketchSmooth() {
+  public int sketchQuality() {
     return 2;
   }
 
@@ -924,16 +936,22 @@ public class PApplet extends Applet
    * PAppletGL needs to have a usable screen before getting things rolling.
    */
   public void start() {
-//    println("start() called");
+    debug("start() called");
 //    new Exception().printStackTrace(System.out);
 
-    finished = false;
     paused = false; // unpause the thread
+    
+    resume();
+    resumeMethods.handle();
 
-    // if this is the first run, setup and run the thread
-    if (thread == null) {
-      thread = new Thread(this, "Animation Thread");
-      thread.start();
+    debug("un-pausing thread");
+    synchronized (pauseObject) {
+      debug("un-pausing thread 2");
+      debug("start() calling pauseObject.notify()");
+//      try {
+      pauseObject.notifyAll();  // wake up the animation thread
+      debug("un-pausing thread 3");
+//      } catch (InterruptedException e) { }
     }
   }
 
@@ -948,12 +966,51 @@ public class PApplet extends Applet
    */
   public void stop() {
     // this used to shut down the sketch, but that code has
-    // been moved to dispose()
+    // been moved to destroy/dispose()
 
+//    if (paused) {
+//      synchronized (pauseObject) {
+//      try {
+//          pauseObject.wait();
+//        } catch (InterruptedException e) {
+//          // waiting for this interrupt on a start() (resume) call
+//        }
+//      }
+//    }
+
+    // on the next trip through the animation thread, things will go sleepy-by
     paused = true; // causes animation thread to sleep
 
-    //TODO listeners
+    pause();
+    pauseMethods.handle();
+
+    // actual pause will happen in the run() method
+
+//    synchronized (pauseObject) {
+//      debug("stop() calling pauseObject.wait()");
+//      try {
+//        pauseObject.wait();
+//      } catch (InterruptedException e) {
+//        // waiting for this interrupt on a start() (resume) call
+//      }
+//    }
   }
+
+
+  /**
+   * Sketch has been paused. Called when switching tabs in a browser or
+   * swapping to a different application on Android. Also called just before
+   * quitting. Use to safely disable things like serial, sound, or sensors.
+   */
+  public void pause() { }
+
+
+  /**
+   * Sketch has resumed. Called when switching tabs in a browser or
+   * swapping to this application on Android. Also called on startup.
+   * Use this to safely disable things like serial, sound, or sensors.
+   */
+  public void resume() { }
 
 
   /**
@@ -1086,10 +1143,10 @@ public class PApplet extends Applet
   }
 
 
-  public void registerSize(Object o) {
-    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
-    registerWithArgs(sizeMethods, "size", o, methodArgs);
-  }
+//  public void registerSize(Object o) {
+//    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
+//    registerWithArgs(sizeMethods, "size", o, methodArgs);
+//  }
 
   public void registerPre(Object o) {
     registerNoArgs(preMethods, "pre", o);
@@ -1153,10 +1210,10 @@ public class PApplet extends Applet
   }
 
 
-  public void unregisterSize(Object o) {
-    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
-    unregisterWithArgs(sizeMethods, "size", o, methodArgs);
-  }
+//  public void unregisterSize(Object o) {
+//    Class<?> methodArgs[] = new Class[] { Integer.TYPE, Integer.TYPE };
+//    unregisterWithArgs(sizeMethods, "size", o, methodArgs);
+//  }
 
   public void unregisterPre(Object o) {
     unregisterNoArgs(preMethods, "pre", o);
@@ -1373,13 +1430,13 @@ public class PApplet extends Applet
   public void size(final int w, final int h,
                    String renderer, String path) {
     // Run this from the EDT, just cuz it's AWT stuff (or maybe later Swing)
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        // Set the preferred size so that the layout managers can handle it
-        setPreferredSize(new Dimension(w, h));
-        setSize(w, h);
-      }
-    });
+   EventQueue.invokeLater(new Runnable() {
+     public void run() {
+    // Set the preferred size so that the layout managers can handle it
+    setPreferredSize(new Dimension(w, h));
+    setSize(w, h);
+     }
+   });
 
     // ensure that this is an absolute path
     if (path != null) path = savePath(path);
@@ -1522,9 +1579,11 @@ public class PApplet extends Applet
   protected PGraphics makeGraphics(int w, int h,
                                    String renderer, String path,
                                    boolean primary) {
-    String openglError =
+    String openglError = external ?
       "Before using OpenGL, first select " +
-      "Import Library > OpenGL from the Sketch menu.";
+      "Import Library > OpenGL from the Sketch menu." :
+      "The Java classpath and native library path is not " +  // welcome to Java programming!
+      "properly set for using the OpenGL library.";
 
     try {
       Class<?> rendererClass =
@@ -1536,7 +1595,7 @@ public class PApplet extends Applet
       pg.setParent(this);
       pg.setPrimary(primary);
       if (path != null) pg.setPath(path);
-      pg.setAntiAlias(sketchSmooth());
+//      pg.setQuality(sketchQuality());
       pg.setSize(w, h);
 
       // everything worked, return it
@@ -1760,13 +1819,29 @@ public class PApplet extends Applet
       sizeMethods.handle(methodArgs);
      */
 
+    if (!appletViewer) {
+      start();
+    }
+    
     while ((Thread.currentThread() == thread) && !finished) {
-      while (paused) {
-//        println("paused...");
-        try {
-          Thread.sleep(100L);
-        } catch (InterruptedException e) { }  // ignored
+      if (paused) {
+        debug("PApplet.run() paused, calling object wait...");
+        synchronized (pauseObject) {
+          try {
+            pauseObject.wait();
+            debug("out of wait");
+          } catch (InterruptedException e) {
+            // waiting for this interrupt on a start() (resume) call
+          }
+        }
       }
+      debug("done with pause");
+//      while (paused) {
+//        debug("paused...");
+//        try {
+//          Thread.sleep(100L);
+//        } catch (InterruptedException e) { }  // ignored
+//      }
 
       // Don't resize the renderer from the EDT (i.e. from a ComponentEvent),
       // otherwise it may attempt a resize mid-render.
@@ -1843,8 +1918,10 @@ public class PApplet extends Applet
 
   //synchronized public void handleDisplay() {
   public void handleDraw() {
+    debug("handleDraw() " + g + " " + looping + " " + redraw);
     if (g != null && (looping || redraw)) {
       if (!g.canDraw()) {
+        debug("g.canDraw() is false");
         // Don't draw if the renderer is not yet ready.
         // (e.g. OpenGL has to wait for a peer to be on screen)
         return;
@@ -2472,6 +2549,7 @@ public class PApplet extends Applet
     if (looping) {
       enqueueKeyEvent(event);
     } else {
+//      thread.notify();  // wake 'im up
       handleKeyEvent(event);
     }
   }
@@ -2873,7 +2951,7 @@ public class PApplet extends Applet
    * @param name name of the param to read
    */
   public String param(String name) {
-    if (online) {
+    if (appletViewer) {
       return getParameter(name);
 
     } else {
@@ -2901,7 +2979,7 @@ public class PApplet extends Applet
    * @param value any valid String
    */
   public void status(String value) {
-    if (online) {
+    if (appletViewer) {
       showStatus(value);
 
     } else {
@@ -2939,7 +3017,7 @@ public class PApplet extends Applet
    *
    */
   public void link(String url, String target) {
-    if (online) {
+    if (appletViewer) {
       try {
         if (target == null) {
           getAppletContext().showDocument(new URL(url));
@@ -3203,12 +3281,13 @@ public class PApplet extends Applet
     finished = true;  // let the sketch know it is shut down time
 
     // don't run the disposers twice
-    if (thread == null) return;
+    if (thread != null) {
     thread = null;
 
     // shut down renderer
     if (g != null) g.dispose();
     disposeMethods.handle();
+  }
   }
 
 
@@ -3355,7 +3434,7 @@ public class PApplet extends Applet
    * it will be ignored, under the assumption that it's probably not
    * intended to be the frame number.
    */
-  protected String insertFrame(String what) {
+  public String insertFrame(String what) {
     int first = what.indexOf('#');
     int last = what.lastIndexOf('#');
 
@@ -3723,6 +3802,10 @@ public class PApplet extends Applet
     }
   }
 
+
+  static public void debug(String msg) {
+    if (DEBUG) println(msg);
+  }
   //
 
   /*
@@ -5284,11 +5367,19 @@ public class PApplet extends Applet
   }
 
 
+  static public XML loadXML(File file) {
+    return new XML(file);
+  }
+
+  
   public Table loadTable(String filename) {
     return new Table(this, filename);
   }
 
 
+  static public Table loadTable(File file) {
+    return new Table(file);
+  }
 
   //////////////////////////////////////////////////////////////
 
@@ -7761,7 +7852,7 @@ public class PApplet extends Applet
    *
    * ( end auto-generated )
    * @webref data:string_functions
-   * @param what the String to be searched
+   * @param str the String to be searched
    * @param regexp the regexp to be used for matching
    * @see PApplet#match(String, String)
    * @see PApplet#split(String, String)
@@ -7769,9 +7860,9 @@ public class PApplet extends Applet
    * @see PApplet#join(String[], String)
    * @see PApplet#trim(String)
    */
-  static public String[][] matchAll(String what, String regexp) {
+  static public String[][] matchAll(String str, String regexp) {
     Pattern p = matchPattern(regexp);
-    Matcher m = p.matcher(what);
+    Matcher m = p.matcher(str);
     ArrayList<String[]> results = new ArrayList<String[]>();
     int count = m.groupCount() + 1;
     while (m.find()) {
@@ -8829,54 +8920,54 @@ public class PApplet extends Applet
   }
 
   /**
-   * @param x red or hue values relative to the current color range
-   * @param y green or saturation values relative to the current color range
-   * @param z blue or brightness values relative to the current color range
+   * @param v1 red or hue values relative to the current color range
+   * @param v2 green or saturation values relative to the current color range
+   * @param v3 blue or brightness values relative to the current color range
    */
-  public final int color(int x, int y, int z) {
+  public final int color(int v1, int v2, int v3) {
     if (g == null) {
-      if (x > 255) x = 255; else if (x < 0) x = 0;
-      if (y > 255) y = 255; else if (y < 0) y = 0;
-      if (z > 255) z = 255; else if (z < 0) z = 0;
+      if (v1 > 255) v1 = 255; else if (v1 < 0) v1 = 0;
+      if (v2 > 255) v2 = 255; else if (v2 < 0) v2 = 0;
+      if (v3 > 255) v3 = 255; else if (v3 < 0) v3 = 0;
 
-      return 0xff000000 | (x << 16) | (y << 8) | z;
+      return 0xff000000 | (v1 << 16) | (v2 << 8) | v3;
     }
-    return g.color(x, y, z);
+    return g.color(v1, v2, v3);
   }
 
-  public final int color(int x, int y, int z, int alpha) {
+  public final int color(int v1, int v2, int v3, int alpha) {
     if (g == null) {
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
-      if (x > 255) x = 255; else if (x < 0) x = 0;
-      if (y > 255) y = 255; else if (y < 0) y = 0;
-      if (z > 255) z = 255; else if (z < 0) z = 0;
+      if (v1 > 255) v1 = 255; else if (v1 < 0) v1 = 0;
+      if (v2 > 255) v2 = 255; else if (v2 < 0) v2 = 0;
+      if (v3 > 255) v3 = 255; else if (v3 < 0) v3 = 0;
 
-      return (alpha << 24) | (x << 16) | (y << 8) | z;
+      return (alpha << 24) | (v1 << 16) | (v2 << 8) | v3;
     }
-    return g.color(x, y, z, alpha);
+    return g.color(v1, v2, v3, alpha);
   }
 
-  public final int color(float x, float y, float z) {
+  public final int color(float v1, float v2, float v3) {
     if (g == null) {
-      if (x > 255) x = 255; else if (x < 0) x = 0;
-      if (y > 255) y = 255; else if (y < 0) y = 0;
-      if (z > 255) z = 255; else if (z < 0) z = 0;
+      if (v1 > 255) v1 = 255; else if (v1 < 0) v1 = 0;
+      if (v2 > 255) v2 = 255; else if (v2 < 0) v2 = 0;
+      if (v3 > 255) v3 = 255; else if (v3 < 0) v3 = 0;
 
-      return 0xff000000 | ((int)x << 16) | ((int)y << 8) | (int)z;
+      return 0xff000000 | ((int)v1 << 16) | ((int)v2 << 8) | (int)v3;
     }
-    return g.color(x, y, z);
+    return g.color(v1, v2, v3);
   }
 
-  public final int color(float x, float y, float z, float alpha) {
+  public final int color(float v1, float v2, float v3, float alpha) {
     if (g == null) {
       if (alpha > 255) alpha = 255; else if (alpha < 0) alpha = 0;
-      if (x > 255) x = 255; else if (x < 0) x = 0;
-      if (y > 255) y = 255; else if (y < 0) y = 0;
-      if (z > 255) z = 255; else if (z < 0) z = 0;
+      if (v1 > 255) v1 = 255; else if (v1 < 0) v1 = 0;
+      if (v2 > 255) v2 = 255; else if (v2 < 0) v2 = 0;
+      if (v3 > 255) v3 = 255; else if (v3 < 0) v3 = 0;
 
-      return ((int)alpha << 24) | ((int)x << 16) | ((int)y << 8) | (int)z;
+      return ((int)alpha << 24) | ((int)v1 << 16) | ((int)v2 << 8) | (int)v3;
     }
-    return g.color(x, y, z, alpha);
+    return g.color(v1, v2, v3, alpha);
   }
 
 
@@ -8935,11 +9026,15 @@ public class PApplet extends Applet
             if (farm.isVisible()) {
               Insets insets = farm.getInsets();
               Dimension windowSize = farm.getSize();
-              int usableW = windowSize.width - insets.left - insets.right;
-              int usableH = windowSize.height - insets.top - insets.bottom;
-
+            Rectangle newBounds =
+              new Rectangle(insets.left, insets.top,
+                            windowSize.width - insets.left - insets.right,
+                            windowSize.height - insets.top - insets.bottom);
+            Rectangle oldBounds = getBounds();
+            if (!newBounds.equals(oldBounds)) {
               // the ComponentListener in PApplet will handle calling size()
-              setBounds(insets.left, insets.top, usableW, usableH);
+              setBounds(newBounds);
+            }
             }
           }
         }
@@ -9030,7 +9125,12 @@ public class PApplet extends Applet
    *                       editor window, for placement of applet window
    * </PRE>
    */
-  static public void runSketch(String args[], final PApplet constructedApplet) {
+  public static void main(final String[] args) {
+    runSketch(args, null);
+  }
+
+
+  static public void runSketch(final String args[], final PApplet constructedApplet) {
     // Disable abyssmally slow Sun renderer on OS X 10.5.
     if (platform == MACOSX) {
       // Only run this on OS X otherwise it can cause a permissions error.
@@ -9038,6 +9138,9 @@ public class PApplet extends Applet
       System.setProperty("apple.awt.graphics.UseQuartz",
                          String.valueOf(useQuartz));
     }
+
+    // Doesn't seem to do much to help avoid flicker
+    System.setProperty("sun.awt.noerasebackground", "true");
 
     // This doesn't do anything.
 //    if (platform == WINDOWS) {
@@ -9054,6 +9157,15 @@ public class PApplet extends Applet
       System.exit(1);
     }
 
+//    EventQueue.invokeLater(new Runnable() {
+//      public void run() {
+//        runSketchEDT(args, constructedApplet);
+//      }
+//    });
+//  }
+//
+//
+//  static public void runSketchEDT(final String args[], final PApplet constructedApplet) {
     boolean external = false;
     int[] location = null;
     int[] editorLocation = null;
@@ -9185,6 +9297,51 @@ public class PApplet extends Applet
       }
     }
 
+//    frame.setIgnoreRepaint(true);  // does nothing
+//    frame.addComponentListener(new ComponentAdapter() {
+//      public void componentResized(ComponentEvent e) {
+//        Component c = e.getComponent();
+////        Rectangle bounds = c.getBounds();
+//        System.out.println("  " + c.getName() + " wants to be: " + c.getSize());
+//      }
+//    });
+
+//    frame.addComponentListener(new ComponentListener() {
+//
+//      public void componentShown(ComponentEvent e) {
+//        debug("frame: " + e);
+//        debug("  applet valid? " + applet.isValid());
+////        ((PGraphicsJava2D) applet.g).redraw();
+//      }
+//
+//      public void componentResized(ComponentEvent e) {
+//        println("frame: " + e + " " + applet.frame.getInsets());
+//        Insets insets = applet.frame.getInsets();
+//        int wide = e.getComponent().getWidth() - (insets.left + insets.right);
+//        int high = e.getComponent().getHeight() - (insets.top + insets.bottom);
+//        if (applet.getWidth() != wide || applet.getHeight() != high) {
+//          debug("Frame.componentResized() setting applet size " + wide + " " + high);
+//          applet.setSize(wide, high);
+//        }
+//      }
+//
+//      public void componentMoved(ComponentEvent e) {
+//        //println("frame: " + e + " " + applet.frame.getInsets());
+//        Insets insets = applet.frame.getInsets();
+//        int wide = e.getComponent().getWidth() - (insets.left + insets.right);
+//        int high = e.getComponent().getHeight() - (insets.top + insets.bottom);
+//        //applet.g.setsi
+//        if (applet.getWidth() != wide || applet.getHeight() != high) {
+//          debug("Frame.componentMoved() setting applet size " + wide + " " + high);
+//          applet.setSize(wide, high);
+//        }
+//      }
+//
+//      public void componentHidden(ComponentEvent e) {
+//        debug("frame: " + e);
+//      }
+//    });
+
     // A handful of things that need to be set before init/start.
     applet.frame = frame;
     applet.sketchPath = folder;
@@ -9256,6 +9413,7 @@ public class PApplet extends Applet
     frame.setResizable(false);
 
     applet.init();
+//    applet.start();
 
     // Wait until the applet has figured out its width.
     // In a static mode app, this will be after setup() has completed,
@@ -9394,10 +9552,6 @@ public class PApplet extends Applet
     // http://code.google.com/p/processing/issues/detail?id=258
     // (Although this doesn't seem to be the one that was causing problems.)
     //applet.requestFocus(); // ask for keydowns
-  }
-
-  public static void main(final String[] args) {
-    runSketch(args, null);
   }
 
 
