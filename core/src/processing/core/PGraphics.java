@@ -130,6 +130,9 @@ import java.util.HashMap;
    */
 public class PGraphics extends PImage implements PConstants {
 
+  /// Canvas object that covers rendering this graphics on screen.
+  public Canvas canvas;
+
   // ........................................................
 
   // width and height are already inherited from PImage
@@ -148,12 +151,15 @@ public class PGraphics extends PImage implements PConstants {
   public boolean smooth;
 
   /// the anti-aliasing level for renderers that support it
-  protected int antialias;
+  public int quality;
 
   // ........................................................
 
   /// true if defaults() has been called a first time
   protected boolean settingsInited;
+
+  /// true if defaults() has been called a first time
+  protected boolean reapplySettings;
 
   /// set to a PGraphics object being used inside a beginRaw/endRaw() block
   protected PGraphics raw;
@@ -394,9 +400,9 @@ public class PGraphics extends PImage implements PConstants {
   // ........................................................
 
   /**
-   * Java AWT Image object associated with this renderer. For P2D and P3D,
-   * this will be associated with their MemoryImageSource. For PGraphicsJava2D,
-   * it will be the offscreen drawing buffer.
+   * Java AWT Image object associated with this renderer. For the 1.0 version 
+   * of P2D and P3D, this was be associated with their MemoryImageSource. 
+   * For PGraphicsJava2D, it will be the offscreen drawing buffer.
    */
   public Image image;
 
@@ -606,12 +612,12 @@ public class PGraphics extends PImage implements PConstants {
   }
 
 
-  public void setAntiAlias(int samples) {  // ignore
-    this.antialias = samples;
-  }
+//  public void setQuality(int samples) {  // ignore
+//    this.quality = samples;
+//  }
 
 
-  public void setFrameRate(float framerate) {  // ignore
+  public void setFrameRate(float frameRate) {  // ignore
   }
 
 
@@ -718,6 +724,7 @@ public class PGraphics extends PImage implements PConstants {
 
   protected void checkSettings() {
     if (!settingsInited) defaultSettings();
+    if (reapplySettings) reapplySettings();
   }
 
 
@@ -734,7 +741,7 @@ public class PGraphics extends PImage implements PConstants {
 //    System.out.println("PGraphics.defaultSettings() " + width + " " + height);
 
     //smooth();  // 2.0a5
-    if (antialias > 0) {  // 2.0a5
+    if (quality > 0) {  // 2.0a5
       smooth();
     } else {
       noSmooth();
@@ -845,7 +852,7 @@ public class PGraphics extends PImage implements PConstants {
     textAlign(textAlign, textAlignY);
     background(backgroundColor);
 
-    //reapplySettings = false;
+    reapplySettings = false;
   }
 
   // inherit from PImage
@@ -3121,8 +3128,8 @@ public class PGraphics extends PImage implements PConstants {
    *
    * @webref image:loading_displaying
    * @param img the image to display
-   * @param x x-coordinate of the image
-   * @param y y-coordinate of the image
+   * @param a x-coordinate of the image
+   * @param b y-coordinate of the image
    * @see PApplet#loadImage(String, String)
    * @see PImage
    * @see PGraphics#imageMode(int)
@@ -3130,19 +3137,19 @@ public class PGraphics extends PImage implements PConstants {
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#alpha(int)
    */
-  public void image(PImage img, float x, float y) {
+  public void image(PImage img, float a, float b) {
     // Starting in release 0144, image errors are simply ignored.
     // loadImageAsync() sets width and height to -1 when loading fails.
     if (img.width == -1 || img.height == -1) return;
 
     if (imageMode == CORNER || imageMode == CORNERS) {
       imageImpl(img,
-                x, y, x+img.width, y+img.height,
+                a, b, a+img.width, b+img.height,
                 0, 0, img.width, img.height);
 
     } else if (imageMode == CENTER) {
-      float x1 = x - img.width/2;
-      float y1 = y - img.height/2;
+      float x1 = a - img.width/2;
+      float y1 = b - img.height/2;
       imageImpl(img,
                 x1, y1, x1+img.width, y1+img.height,
                 0, 0, img.width, img.height);

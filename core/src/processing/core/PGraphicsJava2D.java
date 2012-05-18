@@ -26,6 +26,7 @@ package processing.core;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
+import java.util.Arrays;
 
 
 /**
@@ -48,7 +49,7 @@ import java.awt.image.*;
  * if it breaks."</p>
  */
 public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
-  Canvas canvas;
+//  Canvas canvas;
 
   public Graphics2D g2;
   protected BufferedImage offscreen;
@@ -838,21 +839,21 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void smooth() {
     smooth = true;
 
-    if (antialias == 0) {
-      antialias = 2;  // change back to bicubic
+    if (quality == 0) {
+      quality = 4;  // change back to bicubic
     }
 
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                        antialias == 1 ?
-                        RenderingHints.VALUE_INTERPOLATION_BILINEAR :
-                        RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                        quality == 4 ?
+                        RenderingHints.VALUE_INTERPOLATION_BICUBIC :
+                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
   }
 
 
   public void smooth(int antialias) {
-    this.antialias = antialias;
+    this.quality = antialias;
     if (antialias == 0) {
       noSmooth();
     } else {
@@ -1726,20 +1727,27 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
       // resident, and would terrify the gc if it were re-created on each trip
       // to background().
       WritableRaster raster = ((BufferedImage) image).getRaster();
+//      WritableRaster raster = image.getRaster();
       if ((clearPixels == null) || (clearPixels.length < width)) {
         clearPixels = new int[width];
       }
-      java.util.Arrays.fill(clearPixels, backgroundColor);
+      Arrays.fill(clearPixels, backgroundColor);
       for (int i = 0; i < height; i++) {
         raster.setDataElements(0, i, width, 1, clearPixels);
       }
     } else {
+      Color bgColor = new Color(backgroundColor);
+      // seems to fire an additional event that causes flickering,
+      // like an extra background erase on OS X
+//      if (canvas != null) {
+//        canvas.setBackground(bgColor);
+//      }
       //new Exception().printStackTrace(System.out);
       // in case people do transformations before background(),
       // need to handle this with a push/reset/pop
       pushMatrix();
       resetMatrix();
-      g2.setColor(new Color(backgroundColor)); //, backgroundAlpha));
+      g2.setColor(bgColor); //, backgroundAlpha));
       g2.fillRect(0, 0, width, height);
       popMatrix();
     }
@@ -1841,6 +1849,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     }
     //((BufferedImage) image).getRGB(0, 0, width, height, pixels, 0, width);
     WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = image.getRaster();
     raster.getDataElements(0, 0, width, height, pixels);
   }
 
@@ -1854,6 +1863,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void updatePixels() {
     //updatePixels(0, 0, width, height);
     WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = image.getRaster();
     raster.setDataElements(0, 0, width, height, pixels);
   }
 
@@ -1885,6 +1895,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) return 0;
     //return ((BufferedImage) image).getRGB(x, y);
     WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = image.getRaster();
     raster.getDataElements(x, y, getset);
     return getset[0];
   }
@@ -1900,6 +1911,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
     // oops, the last parameter is the scan size of the *target* buffer
     //((BufferedImage) image).getRGB(x, y, w, h, output.pixels, 0, w);
     WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = image.getRaster();
     raster.getDataElements(x, y, w, h, output.pixels);
 
     return output;
@@ -1916,6 +1928,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
 //    ((BufferedImage) image).setRGB(x, y, argb);
     getset[0] = argb;
     WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = image.getRaster();
     raster.setDataElements(x, y, getset);
   }
 
@@ -1923,6 +1936,7 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   protected void setImpl(int dx, int dy, int sx, int sy, int sw, int sh,
                          PImage src) {
     WritableRaster raster = ((BufferedImage) (primarySurface ? offscreen : image)).getRaster();
+//    WritableRaster raster = image.getRaster();
     if ((sx == 0) && (sy == 0) && (sw == src.width) && (sh == src.height)) {
       raster.setDataElements(dx, dy, src.width, src.height, src.pixels);
     } else {
@@ -1973,8 +1987,9 @@ public class PGraphicsJava2D extends PGraphics /*PGraphics2D*/ {
   public void copy(int sx, int sy, int sw, int sh,
                    int dx, int dy, int dw, int dh) {
     if ((sw != dw) || (sh != dh)) {
-      Image img = primarySurface ? offscreen : image;
-      g2.drawImage(img, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
+//      Image img = primarySurface ? offscreen : image;
+//      g2.drawImage(img, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
+      g2.drawImage(image, dx, dy, dx + dw, dy + dh, sx, sy, sx + sw, sy + sh, null);
 
     } else {
       dx = dx - sx;  // java2d's "dx" is the delta, not dest
