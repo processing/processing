@@ -23,7 +23,7 @@
  * questions.
  */
 
-package processing.opengl.geom;
+package processing.opengl;
 
 import processing.core.PMatrix2D;
 
