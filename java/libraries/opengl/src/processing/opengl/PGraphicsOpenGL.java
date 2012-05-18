@@ -44,7 +44,6 @@ import java.util.Hashtable;
 import java.util.Set;
 import java.util.Stack;
 
-import processing.opengl.geom.LinePath;
 
 /**
  * OpenGL renderer.
