@@ -182,11 +182,9 @@ public class PGraphicsOpenGL extends PGraphics {
 
   protected InGeometry inGeo;
   protected TessGeometry tessGeo;
-  protected int firstTexIndex;
-  protected int firstTexCache;
-  protected TexCache texCache;
   static protected Tessellator tessellator;
-
+  protected TexCache texCache; 
+  
   // ........................................................
 
   // Camera:
@@ -2314,8 +2312,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
-
-    setFirstTexIndex(tessGeo.fillIndexCount, tessGeo.fillIndexCache.size - 1);
+    tessellator.setTexCache(texCache, textureImage0, textureImage);
 
     if (shape == POINTS) {
       tessellator.tessellatePoints();
@@ -2349,8 +2346,6 @@ public class PGraphicsOpenGL extends PGraphics {
       if (stroke && defaultEdges) inGeo.addPolygonEdges(mode == CLOSE);
       tessellator.tessellatePolygon(false, mode == CLOSE, normalMode == NORMAL_MODE_AUTO);
     }
-
-    setLastTexIndex(tessGeo.lastFillIndex, tessGeo.fillIndexCache.size - 1);
   }
 
   protected void tessellate(int[] indices, int[] edges) {
@@ -2372,28 +2367,9 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
 
-    setFirstTexIndex(tessGeo.fillIndexCount, tessGeo.fillIndexCache.size - 1);
-    
     if (stroke && defaultEdges && edges == null) inGeo.addTrianglesEdges();
     if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTrianglesNormals();
     tessellator.tessellateTriangles(indices);    
-    
-    setLastTexIndex(tessGeo.lastFillIndex, tessGeo.fillIndexCache.size - 1);
-  }
-  
-
-  protected void setFirstTexIndex(int firstIndex, int firstCache) {
-    firstTexIndex = firstIndex;
-    firstTexCache = PApplet.max(0, firstCache);
-  }
-
-
-  protected void setLastTexIndex(int lastIndex, int lastCache) {
-    if (textureImage0 != textureImage || texCache.size == 0) {
-      texCache.addTexture(textureImage, firstTexIndex, firstTexCache, lastIndex, lastCache);
-    } else {
-      texCache.setLastIndex(lastIndex, lastCache);
-    }
   }
 
 
@@ -2473,7 +2449,9 @@ public class PGraphicsOpenGL extends PGraphics {
       shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
       shader.setSizeAttribute(glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
 
-      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);      
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     shader.stop();
@@ -2558,7 +2536,9 @@ public class PGraphicsOpenGL extends PGraphics {
       shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
       shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
 
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
       pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     
     shader.stop();
@@ -2640,21 +2620,23 @@ public class PGraphicsOpenGL extends PGraphics {
     texCache.beginRender();
     for (int i = 0; i < texCache.size; i++) {
       PTexture tex = texCache.getTexture(i);
+
       FillShader shader = getFillShader(lights, tex != null);
-      shader.start();      
-      
+      shader.start();
+       
       int first = texCache.firstCache[i];
       int last = texCache.lastCache[i];
       IndexCache cache = tessGeo.fillIndexCache;
+      
       for (int n = first; n <= last; n++) {
         int ioffset = n == first ? texCache.firstIndex[i] : cache.indexOffset[n];
         int icount = n == last ? texCache.lastIndex[i] - ioffset + 1 : 
                                  cache.indexOffset[n] + cache.indexCount[n] - ioffset;        
         int voffset = cache.vertexOffset[n];
-        
+
         shader.setVertexAttribute(glFillVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
         shader.setColorAttribute(glFillColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-
+        
         if (lights) {
           shader.setNormalAttribute(glFillNormalBufferID, 3, PGL.GL_FLOAT, 0, 3 * voffset * PGL.SIZEOF_FLOAT);
           shader.setAmbientAttribute(glFillAmbientBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
@@ -2662,13 +2644,15 @@ public class PGraphicsOpenGL extends PGraphics {
           shader.setEmissiveAttribute(glFillEmissiveBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
           shader.setShininessAttribute(glFillShininessBufferID, 1, PGL.GL_FLOAT, 0, voffset * PGL.SIZEOF_FLOAT);
         }
-
+        
         if (tex != null) {
           shader.setTexCoordAttribute(glFillTexCoordBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
           shader.setTexture(tex);
         }
-
+        
+        pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glFillIndexBufferID);
         pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
+        pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
       }
 
       shader.stop();
@@ -6172,23 +6156,23 @@ public class PGraphicsOpenGL extends PGraphics {
     public void setTexture(PTexture tex) {
       float scaleu = 1;
       float scalev = 1;
-      float dispu = 0;
-      float dispv = 0;
+      float dispu  = 0;
+      float dispv  = 0;
 
       if (tex.isFlippedX()) {
         scaleu = -1;
-        dispu = 1;
+        dispu  = 1;
       }
 
       if (tex.isFlippedY()) {
         scalev = -1;
-        dispv = 1;
+        dispv  = 1;
       }
 
       scaleu *= tex.maxTexCoordU;
-      dispu *= tex.maxTexCoordU;
+      dispu  *= tex.maxTexCoordU;
       scalev *= tex.maxTexCoordV;
-      dispv *= tex.maxTexCoordV;
+      dispv  *= tex.maxTexCoordV;
 
       if (tcmat == null) {
         tcmat = new float[16];
@@ -6257,23 +6241,23 @@ public class PGraphicsOpenGL extends PGraphics {
     public void setTexture(PTexture tex) {
       float scaleu = 1;
       float scalev = 1;
-      float dispu = 0;
-      float dispv = 0;
+      float dispu  = 0;
+      float dispv  = 0;
 
       if (tex.isFlippedX()) {
         scaleu = -1;
-        dispu = 1;
+        dispu  = 1;
       }
 
       if (tex.isFlippedY()) {
         scalev = -1;
-        dispv = 1;
+        dispv  = 1;
       }
 
       scaleu *= tex.maxTexCoordU;
-      dispu *= tex.maxTexCoordU;
+      dispu  *= tex.maxTexCoordU;
       scalev *= tex.maxTexCoordV;
-      dispv *= tex.maxTexCoordV;
+      dispv  *= tex.maxTexCoordV;
 
       if (tcmat == null) {
         tcmat = new float[16];
@@ -6585,7 +6569,7 @@ public class PGraphicsOpenGL extends PGraphics {
               tex.unbind();
             }
           }
-        }
+        }        
         // Disabling texturing for each of the targets used
         // by textures in the cache.
         for (int i = 0; i < size; i++) {
@@ -6944,6 +6928,8 @@ public class PGraphicsOpenGL extends PGraphics {
     int firstEdge;
     int lastEdge;
     
+    // TODO: use 3 components per vertex, and update copy
+    // to tess accordindgly.
     float[] vertices;
     int[] colors;
     float[] normals;
@@ -8358,6 +8344,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int renderMode;
 
     // Tessellated fill data
+    // TODO: rename to poly...
     int fillVertexCount;
     int firstFillVertex;
     int lastFillVertex;
@@ -8365,6 +8352,11 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] fillColors;
     float[] fillNormals;
     float[] fillTexcoords;
+    // Add polyTypes to use in P2D, and classify each poly vertex as: 
+    // FILL_VERTEX
+    // LINE_VERTEX
+    // POINT_VERTEX
+    // while the line and point arrays will remain null.
 
     // Fill material properties (fillColor is used
     // as the diffuse color when lighting is enabled)
@@ -9540,6 +9532,12 @@ public class PGraphicsOpenGL extends PGraphics {
   protected class Tessellator {
     InGeometry in;
     TessGeometry tess;
+    TexCache texCache; 
+    PImage prevTexImage; 
+    PImage newTexImage;    
+    int firstTexIndex;
+    int firstTexCache;    
+    
     PGL.Tessellator gluTess;
     TessellatorCallback callback;
     
@@ -9603,6 +9601,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void setStrokeCap(int strokeCap) {
       this.strokeCap = strokeCap;
+    }
+    
+    void setTexCache(TexCache texCache, PImage prevTexImage, PImage newTexImage) {
+      this.texCache = texCache;
+      this.prevTexImage = prevTexImage;
+      this.newTexImage = newTexImage;
     }
 
     // -----------------------------------------------------------------
@@ -9695,6 +9699,11 @@ public class PGraphicsOpenGL extends PGraphics {
 //            in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, nPtVert);
 //          }          
         } else {
+          // Point geometry is stored in the fill arrays, but is never textured
+          prevTexImage = newTexImage;
+          newTexImage = null;
+          setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
+          
           tess.fillVertexCheck(nvertTot);
           tess.fillIndexCheck(nindTot);
           int vertIdx = tess.firstFillVertex;
@@ -9747,7 +9756,8 @@ public class PGraphicsOpenGL extends PGraphics {
 //        NEW TESSMAP API        
 //          if (tess.renderMode == RETAINED) {
 //            ????
-//          }                    
+//          }
+          setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);          
         }
       }
     }
@@ -9824,6 +9834,11 @@ public class PGraphicsOpenGL extends PGraphics {
 //            in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, 5);
 //          }                  
         } else {
+          // Point geometry is stored in the fill arrays, but is never textured
+          prevTexImage = newTexImage;
+          newTexImage = null;
+          setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
+          
           tess.fillVertexCheck(nvertTot);
           tess.fillIndexCheck(nindTot);     
           int vertIdx = tess.firstFillVertex;
@@ -9872,8 +9887,10 @@ public class PGraphicsOpenGL extends PGraphics {
 //        NEW TESSMAP API        
 //        if (tess.renderMode == RETAINED) {
 //          ?????
-//        }             
-        }        
+//        }
+          
+          setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
+        }
       }
     }
 
@@ -9910,6 +9927,11 @@ public class PGraphicsOpenGL extends PGraphics {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }
         } else {
+          // Line geometry is stored in the fill arrays, but is never textured
+          prevTexImage = newTexImage;
+          newTexImage = null;
+          setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);          
+          
           // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
           if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
             tess.fillVertexCheck(nvert);
@@ -9942,6 +9964,8 @@ public class PGraphicsOpenGL extends PGraphics {
             tessellateLinePath(path, false);
           }          
         }
+        
+        setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
       }
     }
     
@@ -9970,6 +9994,10 @@ public class PGraphicsOpenGL extends PGraphics {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }           
         } else {
+          prevTexImage = newTexImage;
+          newTexImage = null;
+          setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
+          
           // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
           if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) {  // no caps, joins
             tess.fillVertexCheck(nvert);
@@ -10004,6 +10032,8 @@ public class PGraphicsOpenGL extends PGraphics {
             tessellateLinePath(path, false);            
           }
         }
+        
+        setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
       }
     }
 
@@ -10033,6 +10063,10 @@ public class PGraphicsOpenGL extends PGraphics {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }          
         } else {
+          prevTexImage = newTexImage;
+          newTexImage = null;
+          setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);   
+          
           // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
           if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
             tess.fillVertexCheck(nvert);
@@ -10069,8 +10103,9 @@ public class PGraphicsOpenGL extends PGraphics {
             tessellateLinePath(path, false);              
           }
         }
-      }
-      
+        
+        setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1); 
+      }      
     }    
     
     void tessellateEdges(boolean haveFill) {
@@ -10093,6 +10128,10 @@ public class PGraphicsOpenGL extends PGraphics {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }               
         } else {
+          prevTexImage = newTexImage;
+          newTexImage = null;
+          setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);          
+          
           // 2D renderer, the stroke geometry is stored in the fill array for accurate depth sorting
           if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, edges           
             tess.fillVertexCheck(nInVert);
@@ -10139,6 +10178,8 @@ public class PGraphicsOpenGL extends PGraphics {
             }
             tessellateLinePath(path, haveFill);             
           }
+          
+          setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);          
         }
       }
     }
@@ -10265,6 +10306,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // Fill primitives tessellation      
     
     void tessellateTriangles() {
+      setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
       int nInVert = in.lastVertex - in.firstVertex + 1;
       if (fill && 3 <= nInVert) {
         int nInInd = nInVert;
@@ -10275,10 +10317,12 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
+      setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
       tessellateEdges(fill && 3 <= nInVert);
     }
 
     void tessellateTriangles(int[] indices) {
+      setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
       int nInVert = in.lastVertex - in.firstVertex + 1;
       if (fill && 3 <= nInVert) {
         int nInInd = indices.length;
@@ -10286,10 +10330,12 @@ public class PGraphicsOpenGL extends PGraphics {
         PApplet.arrayCopy(indices, rawIndices, nInInd);
         partitionRawIndices();        
       }
+      setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
       tessellateEdges(fill && 3 <= nInVert);
     }
     
     void tessellateTriangleFan() {
+      setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
       int nInVert = in.lastVertex - in.firstVertex + 1;
       if (fill && 3 <= nInVert) {
         int nInInd = 3 * (nInVert - 2);
@@ -10302,10 +10348,12 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
+      setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
       tessellateEdges(fill && 3 <= nInVert);
     }
 
     void tessellateTriangleStrip() {
+      setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
       int nInVert = in.lastVertex - in.firstVertex + 1;
       if (fill && 3 <= nInVert) {
         int nInInd = 3 * (nInVert - 2);
@@ -10323,10 +10371,12 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
+      setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
       tessellateEdges(fill && 3 <= nInVert);
     }
 
     void tessellateQuads() {
+      setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
       int nInVert = in.lastVertex - in.firstVertex + 1;
       if (fill && 4 <= nInVert) {
         int quadCount = nInVert / 4;
@@ -10349,10 +10399,12 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
+      setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
       tessellateEdges(fill && 4 <= nInVert);
     }
 
     void tessellateQuadStrip() {
+      setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
       int nInVert = in.lastVertex - in.firstVertex + 1;
       if (fill && 4 <= nInVert) {
         int quadCount = nInVert / 2 - 1;
@@ -10375,6 +10427,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
         partitionRawIndices();
       }
+      setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
       tessellateEdges(fill && 4 <= nInVert);
     }
 
@@ -10502,11 +10555,26 @@ public class PGraphicsOpenGL extends PGraphics {
       rawIndices = temp;
     }
     
+    void setFirstTexIndex(int firstIndex, int firstCache) {
+      firstTexIndex = firstIndex;
+      firstTexCache = PApplet.max(0, firstCache);
+    }
+
+    void setLastTexIndex(int lastIndex, int lastCache) {
+      if (prevTexImage != newTexImage || texCache.size == 0) {
+        texCache.addTexture(newTexImage, firstTexIndex, firstTexCache, lastIndex, lastCache);
+      } else {
+        texCache.setLastIndex(lastIndex, lastCache);
+      }
+    }    
+    
     // -----------------------------------------------------------------
     //
     // Polygon tessellation    
     
     void tessellatePolygon(boolean solid, boolean closed, boolean calcNormals) {
+      setFirstTexIndex(tess.fillIndexCount, tess.fillIndexCache.size - 1);
+      
       int nInVert = in.lastVertex - in.firstVertex + 1;
 
 //    NEW TESSMAP API      
@@ -10575,6 +10643,7 @@ public class PGraphicsOpenGL extends PGraphics {
         gluTess.endPolygon();
       }
 
+      setLastTexIndex(tess.lastFillIndex, tess.fillIndexCache.size - 1);
       tessellateEdges(fill && 3 <= nInVert);
     }    
     
