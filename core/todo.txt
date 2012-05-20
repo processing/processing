@@ -21,7 +21,6 @@ X   CENTER_RADIUS, CENTER_DIAMETER, NORMALIZED
 X   text(x, y, w, h, z)
 X   textX/Y/Z variables
 _   update changes Wiki
-_ where did hintEnabled() come from?
 _ let's remove 'online'
 X   changed to 'appletViewer'
 _   doesn't test net connection to see if 'online'
@@ -58,12 +57,7 @@ A frustum() and ortho() broken in P3D
 A   http://code.google.com/p/processing/issues/detail?id=867
 A get() with OPENGL is grabbing the wrong part of the image
 A   http://code.google.com/p/processing/issues/detail?id=191
-
-_ simple NPE in OpenGL causes really large, not useful, stack trace
-_ why are LINE_SMOOTH et al being enabled if antialias < 2?
-_ why is initPrimarySurface() public?
-_ why is setFramerate() public? (also should be setFrameRate or just frameRate)
-_ remove 'params' from createImage (is it on loadImage too?)
+X why are LINE_SMOOTH et al being enabled if antialias < 2?
 
 fixed in 2.0a5
 A OpenGL noSmooth() does not work
@@ -244,6 +238,11 @@ _   also need to copy this over to android
 _ disable smoothing on noSmooth(), use hint to do 2x vs 4x smoothing
 
 andres 
+_ simple NPE in OpenGL causes really large, not useful, stack trace
+_ why is initPrimarySurface() public?
+_ why is setFramerate() public? (also should be setFrameRate or just frameRate)
+_ where did hintEnabled() come from?
+_ remove 'params' from createImage (is it on loadImage too?)
 _ OpenGL noSmooth() problems
 _   http://code.google.com/p/processing/issues/detail?id=328
 _ inconsistent anti-aliasing with OpenGL
