@@ -232,10 +232,11 @@ public class PGL {
   public static final int GL_TRIANGLE_STRIP = GL.GL_TRIANGLE_STRIP;
   public static final int GL_TRIANGLES      = GL.GL_TRIANGLES;
 
-  public static final int GL_VENDOR     = GL.GL_VENDOR;
-  public static final int GL_RENDERER   = GL.GL_RENDERER;
-  public static final int GL_VERSION    = GL.GL_VERSION;
-  public static final int GL_EXTENSIONS = GL.GL_EXTENSIONS;
+  public static final int GL_VENDOR                   = GL.GL_VENDOR;
+  public static final int GL_RENDERER                 = GL.GL_RENDERER;
+  public static final int GL_VERSION                  = GL.GL_VERSION;
+  public static final int GL_EXTENSIONS               = GL.GL_EXTENSIONS;
+  public static final int GL_SHADING_LANGUAGE_VERSION = GL2ES2.GL_SHADING_LANGUAGE_VERSION;
 
   public static final int GL_MAX_TEXTURE_SIZE         = GL.GL_MAX_TEXTURE_SIZE;
   public static final int GL_MAX_SAMPLES              = GL2.GL_MAX_SAMPLES;

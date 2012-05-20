@@ -134,6 +134,7 @@ public class PGraphicsOpenGL extends PGraphics {
   static public String OPENGL_RENDERER;
   static public String OPENGL_VERSION;
   static public String OPENGL_EXTENSIONS;
+  static public String GLSL_VERSION;
 
   // ........................................................
 
@@ -1456,15 +1457,12 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     if (quality < 2) {
       pgl.glDisable(PGL.GL_MULTISAMPLE);
-//      pgl.glEnable(PGL.GL_POINT_SMOOTH);
-//      pgl.glEnable(PGL.GL_LINE_SMOOTH);
-//      pgl.glEnable(PGL.GL_POLYGON_SMOOTH);
     } else {
       pgl.glEnable(PGL.GL_MULTISAMPLE);
-      pgl.glDisable(PGL.GL_POINT_SMOOTH);
-      pgl.glDisable(PGL.GL_LINE_SMOOTH);
-      pgl.glDisable(PGL.GL_POLYGON_SMOOTH);
     }
+    pgl.glDisable(PGL.GL_POINT_SMOOTH);
+    pgl.glDisable(PGL.GL_LINE_SMOOTH);
+    pgl.glDisable(PGL.GL_POLYGON_SMOOTH);    
 
     // setup opengl viewport.
     viewport[0] = 0; viewport[1] = 0; viewport[2] = width; viewport[3] = height;
@@ -5653,7 +5651,9 @@ public class PGraphicsOpenGL extends PGraphics {
     OPENGL_VENDOR     = pgl.glGetString(PGL.GL_VENDOR);
     OPENGL_RENDERER   = pgl.glGetString(PGL.GL_RENDERER);
     OPENGL_VERSION    = pgl.glGetString(PGL.GL_VERSION);
+    OPENGL_VERSION    = pgl.glGetString(PGL.GL_VERSION);
     OPENGL_EXTENSIONS = pgl.glGetString(PGL.GL_EXTENSIONS);
+    GLSL_VERSION      = pgl.glGetString(PGL.GL_SHADING_LANGUAGE_VERSION);
 
     npotTexSupported            = -1 < OPENGL_EXTENSIONS.indexOf("texture_non_power_of_two");
     mipmapGeneration            = -1 < OPENGL_EXTENSIONS.indexOf("generate_mipmap");
