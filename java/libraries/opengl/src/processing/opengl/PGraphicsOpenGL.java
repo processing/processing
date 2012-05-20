@@ -2366,6 +2366,7 @@ public class PGraphicsOpenGL extends PGraphics {
     tessellator.setStrokeWeight(strokeWeight);
     tessellator.setStrokeCap(strokeCap);
     tessellator.setStrokeJoin(strokeJoin);
+    tessellator.setTexCache(texCache, textureImage0, textureImage); 
 
     if (stroke && defaultEdges && edges == null) inGeo.addTrianglesEdges();
     if (normalMode == NORMAL_MODE_AUTO) inGeo.calcTrianglesNormals();
@@ -2403,18 +2404,18 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
 
-      if (hasPoints) {
-        flushPoints();
-        if (raw != null) {
-          rawPoints();
-        }        
-      }
-
       if (hasLines) {
         flushLines();
         if (raw != null) {
           rawLines();
         }                
+      }
+      
+      if (hasPoints) {
+        flushPoints();
+        if (raw != null) {
+          rawPoints();
+        }        
       }
 
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
@@ -10556,15 +10557,19 @@ public class PGraphicsOpenGL extends PGraphics {
     }
     
     void setFirstTexIndex(int firstIndex, int firstCache) {
-      firstTexIndex = firstIndex;
-      firstTexCache = PApplet.max(0, firstCache);
+      if (texCache != null) {
+        firstTexIndex = firstIndex;
+        firstTexCache = PApplet.max(0, firstCache);
+      }
     }
 
     void setLastTexIndex(int lastIndex, int lastCache) {
-      if (prevTexImage != newTexImage || texCache.size == 0) {
-        texCache.addTexture(newTexImage, firstTexIndex, firstTexCache, lastIndex, lastCache);
-      } else {
-        texCache.setLastIndex(lastIndex, lastCache);
+      if (texCache != null) {
+        if (prevTexImage != newTexImage || texCache.size == 0) {
+          texCache.addTexture(newTexImage, firstTexIndex, firstTexCache, lastIndex, lastCache);
+        } else {
+          texCache.setLastIndex(lastIndex, lastCache);
+        }
       }
     }    
     

@@ -2539,7 +2539,8 @@ public class PShapeOpenGL extends PShape {
         tessellator.setStrokeColor(strokeColor);
         tessellator.setStrokeWeight(strokeWeight);
         tessellator.setStrokeCap(strokeCap);
-        tessellator.setStrokeJoin(strokeJoin);       
+        tessellator.setStrokeJoin(strokeJoin);     
+        tessellator.setTexCache(null, null, null);
         
         if (family == GEOMETRY) {
           // The tessellation maps are used to associate input
@@ -4014,13 +4015,13 @@ public class PShapeOpenGL extends PShape {
       // Some error. Root should never be null. At least it should be this.
       return; 
     }
-    
-    if (havePoints) {
-      renderPoints(g);
+
+    if (haveFill) { 
+      renderFill(g, texture);
       if (g.haveRaw()) {
-        rawPoints(g);
-      }      
-    }
+        rawFill(g, texture);        
+      }
+    }    
     
     if (haveLines) {    
       renderLines(g);
@@ -4029,11 +4030,11 @@ public class PShapeOpenGL extends PShape {
       }
     }    
     
-    if (haveFill) { 
-      renderFill(g, texture);
+    if (havePoints) {
+      renderPoints(g);
       if (g.haveRaw()) {
-        rawFill(g, texture);        
-      }
+        rawPoints(g);
+      }      
     }
   }
 
