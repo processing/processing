@@ -66,6 +66,12 @@ o also add option for FSEM or not
 X   nope, FSEM too buggy and error-prone
 
 _ size(640, 480, P3D ); -> doesn't pick up as a P3D sketch
+_ too many warnings re: use of size() command
+_ fjen complaint about size(), update with links to new docs:
+_   http://code.google.com/p/processing/issues/detail?id=1071
+_ setAntiAlias() should instead just use parent.smooth
+_ antialias -> smoothMode(), smoothQuality(), quality()
+_   NEAREST, BILINEAR, BICUBIC, or 0, 2, 4? (need 8x too, so maybe numbers)
 
 recent/open
 X add EditorState class, device-aware placement
