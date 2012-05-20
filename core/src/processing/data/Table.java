@@ -185,7 +185,7 @@ public class Table implements Iterable<TableRow> {
       while (rs.next()) {
         for (int col = 0; col < columnCount; col++) {
           switch (columnTypes[col]) {
-          case STRING: set(row, col, rs.getString(col+1)); break;
+          case STRING: setString(row, col, rs.getString(col+1)); break;
           case INT: setInt(row, col, rs.getInt(col+1)); break;
           case LONG: setLong(row, col, rs.getLong(col+1)); break;
           case FLOAT: setFloat(row, col, rs.getFloat(col+1)); break;
@@ -444,19 +444,19 @@ public class Table implements Iterable<TableRow> {
           if (reader.read() != '\n') {
             reader.reset();
           }
-          set(row, col, new String(c, 0, count));
+          setString(row, col, new String(c, 0, count));
           count = 0;
           row++;
           col = 0;
 
         } else if (ch == '\n') {
-          set(row, col, new String(c, 0, count));
+          setString(row, col, new String(c, 0, count));
           count = 0;
           row++;
           col = 0;
 
         } else if (ch == ',') {
-          set(row, col, new String(c, 0, count));
+          setString(row, col, new String(c, 0, count));
           count = 0;
           // starting a new column, make sure we have room
           col++;
@@ -472,7 +472,7 @@ public class Table implements Iterable<TableRow> {
     }
     // catch any leftovers
     if (count > 0) {
-      set(row, col, new String(c, 0, count));
+      setString(row, col, new String(c, 0, count));
     }
   }
 
@@ -565,7 +565,7 @@ public class Table implements Iterable<TableRow> {
         if (col != 0) {
           writer.print('\t');
         }
-        String entry = get(row, col);
+        String entry = getString(row, col);
         // just write null entries as blanks, rather than spewing 'null'
         // all over the spreadsheet file.
         if (entry != null) {
@@ -595,7 +595,7 @@ public class Table implements Iterable<TableRow> {
         if (col != 0) {
           writer.print(',');
         }
-        String entry = get(row, col);
+        String entry = getString(row, col);
         // just write null entries as blanks, rather than spewing 'null'
         // all over the spreadsheet file.
         if (entry != null) {
@@ -652,7 +652,7 @@ public class Table implements Iterable<TableRow> {
     for (int row = 0; row < getRowCount(); row++) {
       writer.println("  <tr>");
       for (int col = 0; col < getColumnCount(); col++) {
-        String entry = get(row, col);
+        String entry = getString(row, col);
         writer.print("    <td>");
         writeEntryHTML(writer, entry);
 //        String clean = (entry == null) ? "" : HTMLFairy.encodeEntities(entry);
@@ -865,7 +865,7 @@ public class Table implements Iterable<TableRow> {
       case INT: {
         int[] intData = new int[rowCount];
         for (int row = 0; row < rowCount; row++) {
-          String s = get(row, column);
+          String s = getString(row, column);
           intData[row] = PApplet.parseInt(s, missingInt);
         }
         columns[column] = intData;
@@ -874,7 +874,7 @@ public class Table implements Iterable<TableRow> {
       case LONG: {
         long[] longData = new long[rowCount];
         for (int row = 0; row < rowCount; row++) {
-          String s = get(row, column);
+          String s = getString(row, column);
           try {
             longData[row] = Long.parseLong(s);
           } catch (NumberFormatException nfe) {
@@ -887,7 +887,7 @@ public class Table implements Iterable<TableRow> {
       case FLOAT: {
         float[] floatData = new float[rowCount];
         for (int row = 0; row < rowCount; row++) {
-          String s = get(row, column);
+          String s = getString(row, column);
           floatData[row] = PApplet.parseFloat(s, missingFloat);
         }
         columns[column] = floatData;
@@ -896,7 +896,7 @@ public class Table implements Iterable<TableRow> {
       case DOUBLE: {
         double[] doubleData = new double[rowCount];
         for (int row = 0; row < rowCount; row++) {
-          String s = get(row, column);
+          String s = getString(row, column);
           try {
             doubleData[row] = Double.parseDouble(s);
           } catch (NumberFormatException nfe) {
@@ -910,7 +910,7 @@ public class Table implements Iterable<TableRow> {
         if (columnTypes[column] != STRING) {
           String[] stringData = new String[rowCount];
           for (int row = 0; row < rowCount; row++) {
-            stringData[row] = get(row, column);
+            stringData[row] = getString(row, column);
           }
           columns[column] = stringData;
         }
@@ -920,7 +920,7 @@ public class Table implements Iterable<TableRow> {
         int[] indexData = new int[rowCount];
         HashMapBlows categories = new HashMapBlows();
         for (int row = 0; row < rowCount; row++) {
-          String s = get(row, column);
+          String s = getString(row, column);
           indexData[row] = categories.index(s);
         }
         columnCategories[column] = categories;
@@ -955,7 +955,7 @@ public class Table implements Iterable<TableRow> {
     setColumnTitles(dictionary.getStringColumn(0));
     if (dictionary.getColumnCount() > 1) {
       for (int i = 0; i < dictionary.getRowCount(); i++) {
-        setColumnType(i, dictionary.get(i, 1));
+        setColumnType(i, dictionary.getString(i, 1));
       }
     }
   }
@@ -1391,12 +1391,12 @@ public class Table implements Iterable<TableRow> {
   class RowIterator implements Iterator<TableRow> {
     int row;
     TableRow tableRow = new TableRow() {
-      public String get(int column) {
-        return Table.this.get(row, column);
+      public String getString(int column) {
+        return Table.this.getString(row, column);
       }
 
-      public String get(String columnName) {
-        return Table.this.get(row, columnName);
+      public String getString(String columnName) {
+        return Table.this.getString(row, columnName);
       }
 
       public int getInt(int column) {
@@ -1543,7 +1543,7 @@ public class Table implements Iterable<TableRow> {
             }
           }
 
-          public String get(int column) {
+          public String getString(int column) {
             try {
               return rs.getString(column);
             } catch (SQLException e) {
@@ -1551,7 +1551,7 @@ public class Table implements Iterable<TableRow> {
             }
           }
 
-          public String get(String columnName) {
+          public String getString(String columnName) {
             try {
               return rs.getString(columnName);
             } catch (SQLException e) {
@@ -1577,7 +1577,7 @@ public class Table implements Iterable<TableRow> {
       int[] intData = (int[]) columns[column];
       return intData[row];
     }
-    String str = get(row, column);
+    String str = getString(row, column);
     return (str == null || str.equals(missingString)) ?
       missingInt : PApplet.parseInt(str, missingInt);
   }
@@ -1595,7 +1595,7 @@ public class Table implements Iterable<TableRow> {
 
   public void setInt(int row, int column, int what) {
     if (columnTypes[column] == STRING) {
-      set(row, column, String.valueOf(what));
+      setString(row, column, String.valueOf(what));
 
     } else {
       checkSize(row, column);
@@ -1641,7 +1641,7 @@ public class Table implements Iterable<TableRow> {
       long[] longData = (long[]) columns[column];
       return longData[row];
     }
-    String str = get(row, column);
+    String str = getString(row, column);
     if (str == null || str.equals(missingString)) {
       return missingLong;
     }
@@ -1665,7 +1665,7 @@ public class Table implements Iterable<TableRow> {
 
   public void setLong(int row, int column, long what) {
     if (columnTypes[column] == STRING) {
-      set(row, column, String.valueOf(what));
+      setString(row, column, String.valueOf(what));
 
     } else {
       checkSize(row, column);
@@ -1716,7 +1716,7 @@ public class Table implements Iterable<TableRow> {
       float[] floatData = (float[]) columns[column];
       return floatData[row];
     }
-    String str = get(row, column);
+    String str = getString(row, column);
     if (str == null || str.equals(missingString)) {
       return missingFloat;
     }
@@ -1736,7 +1736,7 @@ public class Table implements Iterable<TableRow> {
 
   public void setFloat(int row, int column, float what) {
     if (columnTypes[column] == STRING) {
-      set(row, column, String.valueOf(what));
+      setString(row, column, String.valueOf(what));
 
     } else {
       checkSize(row, column);
@@ -1782,7 +1782,7 @@ public class Table implements Iterable<TableRow> {
       double[] doubleData = (double[]) columns[column];
       return doubleData[row];
     }
-    String str = get(row, column);
+    String str = getString(row, column);
     if (str == null || str.equals(missingString)) {
       return missingDouble;
     }
@@ -1806,7 +1806,7 @@ public class Table implements Iterable<TableRow> {
 
   public void setDouble(int row, int column, double what) {
     if (columnTypes[column] == STRING) {
-      set(row, column, String.valueOf(what));
+      setString(row, column, String.valueOf(what));
 
     } else {
       checkSize(row, column);
@@ -1908,7 +1908,7 @@ public class Table implements Iterable<TableRow> {
    * @param col
    * @return
    */
-  public String get(int row, int col) {
+  public String getString(int row, int col) {
     checkBounds(row, col);
     if (columnTypes[col] == STRING) {
       String[] stringData = (String[]) columns[col];
@@ -1922,8 +1922,8 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public String get(int row, String columnName) {
-    return get(row, getColumnIndex(columnName));
+  public String getString(int row, String columnName) {
+    return getString(row, getColumnIndex(columnName));
   }
 
 
@@ -1932,7 +1932,7 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void set(int row, int column, String what) {
+  public void setString(int row, int column, String what) {
     checkSize(row, column);
     if (columnTypes[column] != STRING) {
       throw new IllegalArgumentException("Column " + column + " is not a String column.");
@@ -1942,9 +1942,9 @@ public class Table implements Iterable<TableRow> {
   }
 
 
-  public void set(int row, String columnName, String what) {
+  public void setString(int row, String columnName, String what) {
     int column = checkColumnIndex(columnName);
-    set(row, column, what);
+    setString(row, column, what);
   }
 
 
@@ -1957,7 +1957,7 @@ public class Table implements Iterable<TableRow> {
   public String[] getStringColumn(int col) {
     String[] outgoing = new String[rowCount];
     for (int i = 0; i < rowCount; i++) {
-      outgoing[i] = get(i, col);
+      outgoing[i] = getString(i, col);
     }
     return outgoing;
   }
@@ -1966,7 +1966,7 @@ public class Table implements Iterable<TableRow> {
   public String[] getStringRow(int row) {
     String[] outgoing = new String[columns.length];
     for (int col = 0; col < columns.length; col++) {
-      outgoing[col] = get(row, col);
+      outgoing[col] = getString(row, col);
     }
     return outgoing;
   }
@@ -2060,7 +2060,7 @@ public class Table implements Iterable<TableRow> {
    */
   public void removeTokens(String tokens, int column) {
     for (int row = 0; row < rowCount; row++) {
-      String s = get(row, column);
+      String s = getString(row, column);
       if (s != null) {
         char[] c = s.toCharArray();
         int index = 0;
@@ -2073,7 +2073,7 @@ public class Table implements Iterable<TableRow> {
           }
         }
         if (index != c.length) {
-          set(row, column, new String(c, 0, index));
+          setString(row, column, new String(c, 0, index));
         }
       }
     }
@@ -2117,7 +2117,7 @@ public class Table implements Iterable<TableRow> {
       }
     } else {  // less efficient, includes conversion as necessary
       for (int row = 0; row < rowCount; row++) {
-        String str = get(row, column);
+        String str = getString(row, column);
         if (str == null) {
           if (what == null) {
             return row;
@@ -2169,7 +2169,7 @@ public class Table implements Iterable<TableRow> {
       }
     } else {  // less efficient, includes conversion as necessary
       for (int row = 0; row < rowCount; row++) {
-        String str = get(row, column);
+        String str = getString(row, column);
         if (str == null) {
           if (what == null) {
             outgoing[count++] = row;
@@ -2214,7 +2214,7 @@ public class Table implements Iterable<TableRow> {
       }
     } else {  // less efficient, includes conversion as necessary
       for (int row = 0; row < rowCount; row++) {
-        String str = get(row, column);
+        String str = getString(row, column);
         if (str != null &&
             PApplet.match(str, regexp) != null) {
           return row;
@@ -2256,7 +2256,7 @@ public class Table implements Iterable<TableRow> {
       }
     } else {  // less efficient, includes conversion as necessary
       for (int row = 0; row < rowCount; row++) {
-        String str = get(row, column);
+        String str = getString(row, column);
         if (str != null &&
             PApplet.match(str, regexp) != null) {
           outgoing[count++] = row;
@@ -2359,7 +2359,7 @@ public class Table implements Iterable<TableRow> {
       int row = rowSubset[i];
       for (int col = 0; col < columns.length; col++) {
         switch (columnTypes[col]) {
-          case STRING: newbie.set(i, col, get(row, col)); break;
+          case STRING: newbie.setString(i, col, getString(row, col)); break;
           case INT: newbie.setInt(i, col, getInt(row, col)); break;
           case LONG: newbie.setLong(i, col, getLong(row, col)); break;
           case FLOAT: newbie.setFloat(i, col, getFloat(row, col)); break;
@@ -2466,7 +2466,7 @@ public class Table implements Iterable<TableRow> {
   public String[] getUnique(int column) {
     HashMapSucks found = new HashMapSucks();
     for (int row = 0; row < getRowCount(); row++) {
-      found.check(get(row, column));
+      found.check(getString(row, column));
     }
     String[] outgoing = new String[found.size()];
     found.keySet().toArray(outgoing);
@@ -2482,7 +2482,7 @@ public class Table implements Iterable<TableRow> {
   public HashMap<String,Integer> getUniqueCount(int column) {
     HashMapSucks outgoing = new HashMapSucks();
     for (int row = 0; row < rowCount; row++) {
-      String entry = get(row, column);
+      String entry = getString(row, column);
       if (entry != null) {
         outgoing.increment(entry);
       }
@@ -2500,7 +2500,7 @@ public class Table implements Iterable<TableRow> {
   public HashMap<String,Integer> getRowLookup(int col) {
     HashMap<String,Integer> outgoing = new HashMap<String, Integer>();
     for (int row = 0; row < getRowCount(); row++) {
-      outgoing.put(get(row, col), row);
+      outgoing.put(getString(row, col), row);
     }
     return outgoing;
   }
