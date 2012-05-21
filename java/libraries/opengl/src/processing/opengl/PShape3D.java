@@ -22,12 +22,17 @@
 
 package processing.opengl;
 
+import processing.core.PApplet;
+
 public class PShape3D extends PShapeOpenGL {
 
+  public PShape3D(PApplet parent, int family) {
+    super(parent, family);
+  }
+  
   public boolean is2D() {
     return false;
   }
-
 
   public boolean is3D() {
     return true;
