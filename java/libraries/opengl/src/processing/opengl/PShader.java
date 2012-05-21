@@ -51,6 +51,8 @@ public class PShader {
   protected int vertexShader;
   protected int fragmentShader;  
 
+  protected boolean active;
+  
   public PShader() {
     parent = null;
     pg = null;
@@ -64,7 +66,9 @@ public class PShader {
     
     programObject = 0;
     vertexShader = 0;
-    fragmentShader = 0;      
+    fragmentShader = 0;
+    
+    active = false;
   }
     
   public PShader(PApplet parent) {
@@ -160,6 +164,14 @@ public class PShader {
   public void stop() {
     pgl.glUseProgram(0);
   }    
+  
+  
+  /**
+   * Returns true if the shader is running, false otherwise.
+   */
+  public boolean active() {
+    return active;
+  }
   
   
   /**
