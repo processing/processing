@@ -2627,6 +2627,7 @@ public class PGraphicsOpenGL extends PGraphics {
     for (int i = 0; i < texCache.size; i++) {
       PTexture tex = texCache.getTexture(i);
 
+      // TODO: lights shouldn't be used in line/point rendering.
       PolyShader shader = getPolyShader(lights, tex != null);
       shader.start();
        
@@ -9636,568 +9637,576 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void tessellateRoundPoints() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-
       if (stroke && 1 <= nInVert) {
-        int perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * strokeWeight / 20));
-        int nPtVert = perim + 1;
+        // Each point generates a separate triangle fan.
+        // The number of triangles of each fan depends on the
+        // stroke weight of the point.        
+        int nPtVert = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * strokeWeight / 20)) + 1;
         if (PGL.MAX_VERTEX_INDEX1 <= nPtVert) {
           throw new RuntimeException("P3D: error in point tessellation.");
         }        
-        
-        // Each point generates a separate triangle fan.
-        // The number of triangles of each fan depends on the
-        // stroke weight of the point.
         int nvertTot = nPtVert * nInVert;
         int nindTot = 3 * (nPtVert - 1) * nInVert;
-
         if (is3D()) { 
-          tess.pointVertexCheck(nvertTot);
-          tess.pointIndexCheck(nindTot);
-          int vertIdx = tess.firstPointVertex;
-          int attribIdx = tess.firstPointVertex;
-          int indIdx = tess.firstPointIndex;
-          IndexCache cache = tess.pointIndexCache;
-          int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
-          firstPointIndexCache = index;        
-          for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-            // Creating the triangle fan for each input vertex.          
-            
-            int count = cache.vertexCount[index];
-            if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
-              // We need to start a new index block for this point.
-              index = cache.addNew();
-              count = 0;
-            }           
-
-            // All the tessellated vertices are identical to the center point
-            for (int k = 0; k < nPtVert; k++) {
-              tess.setPointVertex(vertIdx, in, i);            
-              vertIdx++;
-            }
-
-            // The attributes for each tessellated vertex are the displacement along
-            // the circle perimeter. The point shader will read these attributes and
-            // displace the vertices in screen coordinates so the circles are always
-            // camera facing (bilboards)
-            tess.pointAttribs[2 * attribIdx + 0] = 0;
-            tess.pointAttribs[2 * attribIdx + 1] = 0;
-            attribIdx++;
-            float val = 0;
-            float inc = (float) SINCOS_LENGTH / perim;
-            for (int k = 0; k < perim; k++) {
-              tess.pointAttribs[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
-              tess.pointAttribs[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
-              val = (val + inc) % SINCOS_LENGTH;
-              attribIdx++;
-            }
-
-            // Adding vert0 to take into account the triangles of all
-            // the preceding points.
-            for (int k = 1; k < nPtVert - 1; k++) {
-              tess.pointIndices[indIdx++] = (short) (count + 0);
-              tess.pointIndices[indIdx++] = (short) (count + k);
-              tess.pointIndices[indIdx++] = (short) (count + k + 1);
-            }
-            // Final triangle between the last and first point:
-            tess.pointIndices[indIdx++] = (short) (count + 0);
-            tess.pointIndices[indIdx++] = (short) (count + 1);
-            tess.pointIndices[indIdx++] = (short) (count + nPtVert - 1);
-
-            cache.incCounts(index, 3 * (nPtVert - 1), nPtVert);
-          }
-          lastPointIndexCache = index;
-          
-//        NEW TESSMAP API        
-//          if (tess.renderMode == RETAINED) {
-//            in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, nPtVert);
-//          }          
+          tessellateRoundPoints3D(nvertTot, nindTot, nPtVert);
         } else if (is2D()) {
-          // Point geometry is stored in the poly arrays, but is never textured
-          prevTexImage = newTexImage;
-          newTexImage = null;
-          setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);
-          
-          tess.polyVertexCheck(nvertTot);
-          tess.polyIndexCheck(nindTot);
-          int vertIdx = tess.firstPolyVertex;
-          int indIdx = tess.firstPolyIndex;
-          IndexCache cache = tess.polyIndexCache;
-          int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
-          firstPolyIndexCache = index;        
-          for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-            int count = cache.vertexCount[index];
-            if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
-              // We need to start a new index block for this point.
-              index = cache.addNew();
-              count = 0;
-            }   
-            
-            float x0 = in.vertices[3 * i + 0];
-            float y0 = in.vertices[3 * i + 1];
-            int rgba = in.strokeColors[i];
-            if (in.renderMode == RETAINED) {
-//              in.tessMap.addFillIndex(i, -1);
-            }
-            
-            float val = 0;
-            float inc = (float) SINCOS_LENGTH / perim;            
-            tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, POINT_VERTEX, in, null);              
-            vertIdx++;            
-            for (int k = 0; k < perim; k++) {
-              tess.setPolyVertex(vertIdx, x0 + 0.5f * cosLUT[(int) val] * strokeWeight, 
-                                          y0 + 0.5f * sinLUT[(int) val] * strokeWeight, 0, rgba, POINT_VERTEX, in, null);
-              vertIdx++;
-              val = (val + inc) % SINCOS_LENGTH;
-            }
-            
-            // Adding vert0 to take into account the triangles of all
-            // the preceding points.
-            for (int k = 1; k < nPtVert - 1; k++) {
-              tess.polyIndices[indIdx++] = (short) (count + 0);
-              tess.polyIndices[indIdx++] = (short) (count + k);
-              tess.polyIndices[indIdx++] = (short) (count + k + 1);
-            }
-            // Final triangle between the last and first point:
-            tess.polyIndices[indIdx++] = (short) (count + 0);
-            tess.polyIndices[indIdx++] = (short) (count + 1);
-            tess.polyIndices[indIdx++] = (short) (count + nPtVert - 1);
-
-            cache.incCounts(index, 3 * (nPtVert - 1), nPtVert);            
-          }
-          lastPolyIndexCache = index;          
-//        NEW TESSMAP API        
-//          if (tess.renderMode == RETAINED) {
-//            ????
-//          }
-          setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);          
+          beginNoTex();
+          tessellateRoundPoints2D(nvertTot, nindTot, nPtVert);
+          endNoTex();      
         }
       }
     }
+    
+    void tessellateRoundPoints3D(int nvertTot, int nindTot, int nPtVert) {
+      int perim = nPtVert - 1;
+      tess.pointVertexCheck(nvertTot);
+      tess.pointIndexCheck(nindTot);
+      int vertIdx = tess.firstPointVertex;
+      int attribIdx = tess.firstPointVertex;
+      int indIdx = tess.firstPointIndex;
+      IndexCache cache = tess.pointIndexCache;
+      int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
+      firstPointIndexCache = index;        
+      for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+        // Creating the triangle fan for each input vertex.          
+        
+        int count = cache.vertexCount[index];
+        if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
+          // We need to start a new index block for this point.
+          index = cache.addNew();
+          count = 0;
+        }           
 
+        // All the tessellated vertices are identical to the center point
+        for (int k = 0; k < nPtVert; k++) {
+          tess.setPointVertex(vertIdx, in, i);            
+          vertIdx++;
+        }
+
+        // The attributes for each tessellated vertex are the displacement along
+        // the circle perimeter. The point shader will read these attributes and
+        // displace the vertices in screen coordinates so the circles are always
+        // camera facing (bilboards)
+        tess.pointAttribs[2 * attribIdx + 0] = 0;
+        tess.pointAttribs[2 * attribIdx + 1] = 0;
+        attribIdx++;
+        float val = 0;
+        float inc = (float) SINCOS_LENGTH / perim;
+        for (int k = 0; k < perim; k++) {
+          tess.pointAttribs[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
+          tess.pointAttribs[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
+          val = (val + inc) % SINCOS_LENGTH;
+          attribIdx++;
+        }
+
+        // Adding vert0 to take into account the triangles of all
+        // the preceding points.
+        for (int k = 1; k < nPtVert - 1; k++) {
+          tess.pointIndices[indIdx++] = (short) (count + 0);
+          tess.pointIndices[indIdx++] = (short) (count + k);
+          tess.pointIndices[indIdx++] = (short) (count + k + 1);
+        }
+        // Final triangle between the last and first point:
+        tess.pointIndices[indIdx++] = (short) (count + 0);
+        tess.pointIndices[indIdx++] = (short) (count + 1);
+        tess.pointIndices[indIdx++] = (short) (count + nPtVert - 1);
+
+        cache.incCounts(index, 3 * (nPtVert - 1), nPtVert);
+      }
+      lastPointIndexCache = index;
+      
+//    NEW TESSMAP API        
+//      if (tess.renderMode == RETAINED) {
+//        in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, nPtVert);
+//      }                
+    }
+
+    void tessellateRoundPoints2D(int nvertTot, int nindTot, int nPtVert) {
+      int perim = nPtVert - 1;
+      tess.polyVertexCheck(nvertTot);
+      tess.polyIndexCheck(nindTot);
+      int vertIdx = tess.firstPolyVertex;
+      int indIdx = tess.firstPolyIndex;
+      IndexCache cache = tess.polyIndexCache;
+      int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
+      firstPointIndexCache = index;        
+      for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+        int count = cache.vertexCount[index];
+        if (PGL.MAX_VERTEX_INDEX1 <= count + nPtVert) {
+          // We need to start a new index block for this point.
+          index = cache.addNew();
+          count = 0;
+        }   
+        
+        float x0 = in.vertices[3 * i + 0];
+        float y0 = in.vertices[3 * i + 1];
+        int rgba = in.strokeColors[i];
+        if (in.renderMode == RETAINED) {
+//          in.tessMap.addFillIndex(i, -1);
+        }
+        
+        float val = 0;
+        float inc = (float) SINCOS_LENGTH / perim;            
+        tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, POINT_VERTEX, in, null);              
+        vertIdx++;            
+        for (int k = 0; k < perim; k++) {
+          tess.setPolyVertex(vertIdx, x0 + 0.5f * cosLUT[(int) val] * strokeWeight, 
+                                      y0 + 0.5f * sinLUT[(int) val] * strokeWeight, 0, rgba, POINT_VERTEX, in, null);
+          vertIdx++;
+          val = (val + inc) % SINCOS_LENGTH;
+        }
+        
+        // Adding vert0 to take into account the triangles of all
+        // the preceding points.
+        for (int k = 1; k < nPtVert - 1; k++) {
+          tess.polyIndices[indIdx++] = (short) (count + 0);
+          tess.polyIndices[indIdx++] = (short) (count + k);
+          tess.polyIndices[indIdx++] = (short) (count + k + 1);
+        }
+        // Final triangle between the last and first point:
+        tess.polyIndices[indIdx++] = (short) (count + 0);
+        tess.polyIndices[indIdx++] = (short) (count + 1);
+        tess.polyIndices[indIdx++] = (short) (count + nPtVert - 1);
+
+        cache.incCounts(index, 3 * (nPtVert - 1), nPtVert);            
+      }
+      lastPointIndexCache = lastPolyIndexCache = index; 
+//    NEW TESSMAP API        
+//      if (tess.renderMode == RETAINED) {
+//        ????
+//      }      
+    }    
+    
     void tessellateSquarePoints() {
       int nInVert = in.lastVertex - in.firstVertex + 1;
-
-      if (stroke && 1 <= nInVert) {
-        // Each point generates a separate quad.
-        int quadCount = nInVert;
-
+      if (stroke && 1 <= nInVert) {        
+        int quadCount = nInVert; // Each point generates a separate quad.
         // Each quad is formed by 5 vertices, the center one
         // is the input vertex, and the other 4 define the
         // corners (so, a triangle fan again).
         int nvertTot = 5 * quadCount;
         // So the quad is formed by 4 triangles, each requires
         // 3 indices.
-        int nindTot = 12 * quadCount;
-        
+        int nindTot = 12 * quadCount;        
         if (is3D()) { 
-          tess.pointVertexCheck(nvertTot);
-          tess.pointIndexCheck(nindTot);
-          int vertIdx = tess.firstPointVertex;
-          int attribIdx = tess.firstPointVertex;
-          int indIdx = tess.firstPointIndex;
-          IndexCache cache = tess.pointIndexCache;
-          int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();        
-          firstPointIndexCache = index;
-          for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-            int nvert = 5;
-            int count = cache.vertexCount[index];
-            if (PGL.MAX_VERTEX_INDEX1 <= count + nvert) {
-              // We need to start a new index block for this point.
-              index = cache.addNew();
-              count = 0;
-            }        
-            
-            for (int k = 0; k < nvert; k++) {
-              tess.setPointVertex(vertIdx, in, i);
-              vertIdx++;
-            }
-
-            // The attributes for each tessellated vertex are the displacement along
-            // the quad corners. The point shader will read these attributes and
-            // displace the vertices in screen coordinates so the quads are always
-            // camera facing (bilboards)
-            tess.pointAttribs[2 * attribIdx + 0] = 0;
-            tess.pointAttribs[2 * attribIdx + 1] = 0;
-            attribIdx++;
-            for (int k = 0; k < 4; k++) {
-              tess.pointAttribs[2 * attribIdx + 0] = 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
-              tess.pointAttribs[2 * attribIdx + 1] = 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
-              attribIdx++;
-            }
-
-            // Adding firstVert to take into account the triangles of all
-            // the preceding points.
-            for (int k = 1; k < nvert - 1; k++) {
-              tess.pointIndices[indIdx++] = (short) (count + 0);
-              tess.pointIndices[indIdx++] = (short) (count + k);
-              tess.pointIndices[indIdx++] = (short) (count + k + 1);
-            }
-            // Final triangle between the last and first point:
-            tess.pointIndices[indIdx++] = (short) (count + 0);
-            tess.pointIndices[indIdx++] = (short) (count + 1);
-            tess.pointIndices[indIdx++] = (short) (count + nvert - 1);
-
-            cache.incCounts(index, 12, 5);
-          }
-          lastPointIndexCache = index;
-          
-//        NEW TESSMAP API        
-//          if (tess.renderMode == RETAINED) {
-//            in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, 5);
-//          }                  
+          tessellateSquarePoints3D(nvertTot, nindTot);        
         } else if (is2D()) {
-          // Point geometry is stored in the poly arrays, but is never textured
-          prevTexImage = newTexImage;
-          newTexImage = null;
-          setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);
-          
-          tess.polyVertexCheck(nvertTot);
-          tess.polyIndexCheck(nindTot);     
-          int vertIdx = tess.firstPolyVertex;
-          int indIdx = tess.firstPolyIndex;
-          IndexCache cache = tess.polyIndexCache;
-          int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();        
-          firstPolyIndexCache = index;
-          for (int i = in.firstVertex; i <= in.lastVertex; i++) {
-            int nvert = 5;
-            int count = cache.vertexCount[index];
-            if (PGL.MAX_VERTEX_INDEX1 <= count + nvert) {
-              // We need to start a new index block for this point.
-              index = cache.addNew();
-              count = 0;
-            }        
-            
-            float x0 = in.vertices[3 * i + 0];
-            float y0 = in.vertices[3 * i + 1];
-            int rgba = in.strokeColors[i];
-            if (in.renderMode == RETAINED) {
-//              in.tessMap.addFillIndex(i, -1);
-            }
-
-            tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, POINT_VERTEX, in, null);              
-            vertIdx++;            
-            for (int k = 0; k < nvert - 1; k++) {
-              tess.setPolyVertex(vertIdx, x0 + 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight, 
-                                          y0 + 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight, 0, rgba, POINT_VERTEX, in, null);
-              vertIdx++;
-            }            
-            
-            for (int k = 1; k < nvert - 1; k++) {
-              tess.polyIndices[indIdx++] = (short) (count + 0);
-              tess.polyIndices[indIdx++] = (short) (count + k);
-              tess.polyIndices[indIdx++] = (short) (count + k + 1);
-            }
-            // Final triangle between the last and first point:
-            tess.polyIndices[indIdx++] = (short) (count + 0);
-            tess.polyIndices[indIdx++] = (short) (count + 1);
-            tess.polyIndices[indIdx++] = (short) (count + nvert - 1);
-
-            cache.incCounts(index, 12, 5);            
-          }          
-          lastPolyIndexCache = index;
-//        NEW TESSMAP API        
-//        if (tess.renderMode == RETAINED) {
-//          ?????
-//        }
-          
-          setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
+          beginNoTex();
+          tessellateSquarePoints2D(nvertTot, nindTot);
+          endNoTex();
         }
       }
     }
+    
+    void tessellateSquarePoints3D(int nvertTot, int nindTot) {
+      tess.pointVertexCheck(nvertTot);
+      tess.pointIndexCheck(nindTot);
+      int vertIdx = tess.firstPointVertex;
+      int attribIdx = tess.firstPointVertex;
+      int indIdx = tess.firstPointIndex;
+      IndexCache cache = tess.pointIndexCache;
+      int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();        
+      firstPointIndexCache = index;
+      for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+        int nvert = 5;
+        int count = cache.vertexCount[index];
+        if (PGL.MAX_VERTEX_INDEX1 <= count + nvert) {
+          // We need to start a new index block for this point.
+          index = cache.addNew();
+          count = 0;
+        }        
+        
+        for (int k = 0; k < nvert; k++) {
+          tess.setPointVertex(vertIdx, in, i);
+          vertIdx++;
+        }
 
+        // The attributes for each tessellated vertex are the displacement along
+        // the quad corners. The point shader will read these attributes and
+        // displace the vertices in screen coordinates so the quads are always
+        // camera facing (bilboards)
+        tess.pointAttribs[2 * attribIdx + 0] = 0;
+        tess.pointAttribs[2 * attribIdx + 1] = 0;
+        attribIdx++;
+        for (int k = 0; k < 4; k++) {
+          tess.pointAttribs[2 * attribIdx + 0] = 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
+          tess.pointAttribs[2 * attribIdx + 1] = 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
+          attribIdx++;
+        }
+
+        // Adding firstVert to take into account the triangles of all
+        // the preceding points.
+        for (int k = 1; k < nvert - 1; k++) {
+          tess.pointIndices[indIdx++] = (short) (count + 0);
+          tess.pointIndices[indIdx++] = (short) (count + k);
+          tess.pointIndices[indIdx++] = (short) (count + k + 1);
+        }
+        // Final triangle between the last and first point:
+        tess.pointIndices[indIdx++] = (short) (count + 0);
+        tess.pointIndices[indIdx++] = (short) (count + 1);
+        tess.pointIndices[indIdx++] = (short) (count + nvert - 1);
+
+        cache.incCounts(index, 12, 5);
+      }
+      lastPointIndexCache = index;
+      
+//    NEW TESSMAP API        
+//      if (tess.renderMode == RETAINED) {
+//        in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, 5);
+//      }      
+    }
+
+    void tessellateSquarePoints2D(int nvertTot, int nindTot) {
+      tess.polyVertexCheck(nvertTot);
+      tess.polyIndexCheck(nindTot);     
+      int vertIdx = tess.firstPolyVertex;
+      int indIdx = tess.firstPolyIndex;
+      IndexCache cache = tess.polyIndexCache;
+      int index = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();        
+      firstPointIndexCache = index;
+      for (int i = in.firstVertex; i <= in.lastVertex; i++) {
+        int nvert = 5;
+        int count = cache.vertexCount[index];
+        if (PGL.MAX_VERTEX_INDEX1 <= count + nvert) {
+          // We need to start a new index block for this point.
+          index = cache.addNew();
+          count = 0;
+        }        
+        
+        float x0 = in.vertices[3 * i + 0];
+        float y0 = in.vertices[3 * i + 1];
+        int rgba = in.strokeColors[i];
+        if (in.renderMode == RETAINED) {
+//          in.tessMap.addFillIndex(i, -1);
+        }
+
+        tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, POINT_VERTEX, in, null);              
+        vertIdx++;            
+        for (int k = 0; k < nvert - 1; k++) {
+          tess.setPolyVertex(vertIdx, x0 + 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight, 
+                                      y0 + 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight, 0, rgba, POINT_VERTEX, in, null);
+          vertIdx++;
+        }            
+        
+        for (int k = 1; k < nvert - 1; k++) {
+          tess.polyIndices[indIdx++] = (short) (count + 0);
+          tess.polyIndices[indIdx++] = (short) (count + k);
+          tess.polyIndices[indIdx++] = (short) (count + k + 1);
+        }
+        // Final triangle between the last and first point:
+        tess.polyIndices[indIdx++] = (short) (count + 0);
+        tess.polyIndices[indIdx++] = (short) (count + 1);
+        tess.polyIndices[indIdx++] = (short) (count + nvert - 1);
+
+        cache.incCounts(index, 12, 5);            
+      }          
+      lastPointIndexCache = lastPolyIndexCache = index;
+//    NEW TESSMAP API        
+//    if (tess.renderMode == RETAINED) {
+//      ?????
+//    }      
+    }    
+    
     // -----------------------------------------------------------------
     //
     // Line tessellation    
     
     void tessellateLines() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-      
+      int nInVert = in.lastVertex - in.firstVertex + 1;      
       if (stroke && 2 <= nInVert) {
-        int lineCount = nInVert / 2;
-        int first = in.firstVertex;
-        // Lines are made up of 4 vertices defining the quad.
-        // Each vertex has its own offset representing the stroke weight.
+        // Each individual line is form3ed by two consecutive input vertices.
+        int lineCount = nInVert / 2;        
+        // Lines are made up of 4 vertices defining the quad. 
         int nvert = lineCount * 4;
         // Each stroke line has 4 vertices, defining 2 triangles, which
-        // require 3 indices to specify their connectivities.
-        int nind = lineCount * 2 * 3;
-        
+        // require 3 indices to specify their connectivities.        
+        int nind = lineCount * 2 * 3;        
         if (is3D()) {          
-          tess.lineVertexCheck(nvert);
-          tess.lineIndexCheck(nind);
-          int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
-          firstLineIndexCache = index;
-          for (int ln = 0; ln < lineCount; ln++) {
-            int i0 = first + 2 * ln + 0;
-            int i1 = first + 2 * ln + 1;
-            index = addLine(i0, i1, index, false);
-          }
-          lastLineIndexCache = index;                  
-//        NEW TESSMAP API        
-//        if (tess.renderMode == RETAINED) {
-//          addLineMapping(in.firstVertex, in.lastVertex);
-//        }
+          tessellateLines3D(nvert, nind, lineCount);
         } else if (is2D()) {
-          // Line geometry is stored in the poly arrays, but is never textured
-          prevTexImage = newTexImage;
-          newTexImage = null;
-          setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);          
-          
-          // 2D renderer, the stroke geometry is stored in the poly array for accurate depth sorting
-          if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
-            tess.polyVertexCheck(nvert);
-            tess.polyIndexCheck(nind);
-            int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
-            firstPolyIndexCache = index;
-            for (int ln = 0; ln < lineCount; ln++) {
-              int i0 = first + 2 * ln + 0;
-              int i1 = first + 2 * ln + 1;
-              index = addLine2D(i0, i1, index, false);
-            }
-            lastPolyIndexCache = index;
-//          NEW TESSMAP API        
-//          if (tess.renderMode == RETAINED) {
-//            ????
-//          }            
-          } else { // full stroking algorithm            
-            LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-            for (int ln = 0; ln < lineCount; ln++) {
-              int i0 = first + 2 * ln + 0;
-              int i1 = first + 2 * ln + 1;
-              path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
-              path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);              
-              if (tess.renderMode == RETAINED) {
-                // The input vertices cannot the tessellated geometry 
-//                in.tessMap.addFillIndex(i0, -1);
-//                in.tessMap.addFillIndex(i1, -1);
-              }              
-            }
-            tessellateLinePath(path, false);
-          }          
+          beginNoTex();
+          tessellateLines2D(nvert, nind, lineCount);
+          endNoTex();
         }
-        
-        setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
       }
     }
     
-    void tessellateLineStrip() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;      
-      
-      if (stroke && 2 <= nInVert) {
-        int lineCount = nInVert - 1;  
-        int nvert = lineCount * 4;
-        int nind = lineCount * 2 * 3;        
-        
-        if (is3D()) {
-          tess.lineVertexCheck(nvert);
-          tess.lineIndexCheck(nind);
-          int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
-          firstLineIndexCache = index;
-          int i0 = in.firstVertex;
-          for (int ln = 0; ln < lineCount; ln++) {
-            int i1 = in.firstVertex + ln + 1;
-            index = addLine(i0, i1, index, false);
-            i0 = i1;
-          }         
-          lastLineIndexCache = index;          
-//        NEW TESSMAP API        
-//        if (tess.renderMode == RETAINED) {
-//          addLineMapping(in.firstVertex, in.lastVertex);
-//        }           
-        } else if (is2D()) {
-          prevTexImage = newTexImage;
-          newTexImage = null;
-          setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);
-          
-          // 2D renderer, the stroke geometry is stored in the poly array for accurate depth sorting
-          if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) {  // no caps, joins
-            tess.polyVertexCheck(nvert);
-            tess.polyIndexCheck(nind);
-            int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
-            firstPolyIndexCache = index;
-            int i0 = in.firstVertex;
-            for (int ln = 0; ln < lineCount; ln++) {
-              int i1 = in.firstVertex + ln + 1;
-              index = addLine2D(i0, i1, index, false);
-              i0 = i1;
-            }         
-            lastPolyIndexCache = index;          
-//          NEW TESSMAP API        
-//          if (tess.renderMode == RETAINED) {
-//            ?????
-//          }           
-          } else {  // full stroking algorithm
-            int first = in.firstVertex;          
-            LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-            path.moveTo(in.vertices[3 * first + 0], in.vertices[3 * first + 1]);
-            if (tess.renderMode == RETAINED) {
-//              in.tessMap.addFillIndex(first, -1);
-            }  
-            for (int ln = 0; ln < lineCount; ln++) {
-              int i1 = first + ln + 1;          
-              path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-              if (tess.renderMode == RETAINED) {
-//                in.tessMap.addFillIndex(i1, -1);
-              } 
-            }    
-            tessellateLinePath(path, false);            
-          }
-        }
-        
-        setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
+    void tessellateLines3D(int nvert, int nind, int lineCount) {
+      int first = in.firstVertex;
+      tess.lineVertexCheck(nvert);
+      tess.lineIndexCheck(nind);
+      int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
+      firstLineIndexCache = index;
+      for (int ln = 0; ln < lineCount; ln++) {
+        int i0 = first + 2 * ln + 0;
+        int i1 = first + 2 * ln + 1;
+        index = addLine3D(i0, i1, index, false);
       }
+      lastLineIndexCache = index;                  
+//    NEW TESSMAP API        
+//    if (tess.renderMode == RETAINED) {
+//      addLineMapping(in.firstVertex, in.lastVertex);
+//    }      
     }
 
-    void tessellateLineLoop() {
-      int nInVert = in.lastVertex - in.firstVertex + 1;
-
-      if (stroke && 2 <= nInVert) {
-        int lineCount = nInVert;
-        int nvert = lineCount * 4;
-        int nind = lineCount * 2 * 3;
-        
-        if (is3D()) {
-          tess.lineVertexCheck(nvert);
-          tess.lineIndexCheck(nind);
-          int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
-          firstLineIndexCache = index;
-          int i0 = in.firstVertex;
-          for (int ln = 0; ln < lineCount - 1; ln++) {
-            int i1 = in.firstVertex + ln + 1;
-            index = addLine(i0, i1, index, false);
-            i0 = i1;
-          }
-          index = addLine(in.lastVertex, in.firstVertex, index, false);
-          lastLineIndexCache = index;          
-//        NEW TESSMAP API        
-//        if (tess.renderMode == RETAINED) {
-//          addLineMapping(in.firstVertex, in.lastVertex);
-//        }          
-        } else if (is2D()) {
-          prevTexImage = newTexImage;
-          newTexImage = null;
-          setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);   
-          
-          // 2D renderer, the stroke geometry is stored in the poly array for accurate depth sorting
-          if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
-            tess.polyVertexCheck(nvert);
-            tess.polyIndexCheck(nind);
-            int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
-            firstPolyIndexCache = index;
-            int i0 = in.firstVertex;
-            for (int ln = 0; ln < lineCount - 1; ln++) {
-              int i1 = in.firstVertex + ln + 1;
-              index = addLine2D(i0, i1, index, false);
-              i0 = i1;
-            }
-            index = addLine2D(in.lastVertex, in.firstVertex, index, false);
-            lastPolyIndexCache = index;          
-//          NEW TESSMAP API        
-//          if (tess.renderMode == RETAINED) {
-//            ?????
-//          }          
-          } else { // full stroking algorithm           
-            int first = in.firstVertex;          
-            LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-            path.moveTo(in.vertices[3 * first + 0], in.vertices[3 * first + 1]);
-            if (tess.renderMode == RETAINED) {
-//              in.tessMap.addFillIndex(first, -1);
-            }              
-            for (int ln = 0; ln < lineCount - 1; ln++) {
-              int i1 = first + ln + 1;          
-              path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-              if (tess.renderMode == RETAINED) {
-//                in.tessMap.addFillIndex(i1, -1);
-              }                
-            }    
-            path.closePath();
-            tessellateLinePath(path, false);              
-          }
+    void tessellateLines2D(int nvert, int nind, int lineCount) {
+      int first = in.firstVertex;
+      // 2D renderer, the stroke geometry is stored in the poly array for accurate depth sorting
+      if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
+        tess.polyVertexCheck(nvert);
+        tess.polyIndexCheck(nind);
+        int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
+        firstLineIndexCache = index;
+        for (int ln = 0; ln < lineCount; ln++) {
+          int i0 = first + 2 * ln + 0;
+          int i1 = first + 2 * ln + 1;
+          index = addLine2D(i0, i1, index, false);
         }
-        
-        setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1); 
+        lastLineIndexCache = lastPolyIndexCache = index;
+//      NEW TESSMAP API        
+//      if (tess.renderMode == RETAINED) {
+//        ????
+//      }            
+      } else { // full stroking algorithm            
+        LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+        for (int ln = 0; ln < lineCount; ln++) {
+          int i0 = first + 2 * ln + 0;
+          int i1 = first + 2 * ln + 1;
+          path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
+          path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);              
+          if (tess.renderMode == RETAINED) {
+            // The input vertices cannot the tessellated geometry 
+//            in.tessMap.addFillIndex(i0, -1);
+//            in.tessMap.addFillIndex(i1, -1);
+          }              
+        }
+        tessellateLinePath(path);
       }      
     }    
     
-    void tessellateEdges(boolean haveFill) {
+    void tessellateLineStrip() {
+      int nInVert = in.lastVertex - in.firstVertex + 1;      
+      if (stroke && 2 <= nInVert) {
+        int lineCount = nInVert - 1;  
+        int nvert = lineCount * 4;
+        int nind = lineCount * 2 * 3;                
+        if (is3D()) {
+          tessellateLineStrip3D(nvert, nind, lineCount);
+        } else if (is2D()) {
+          beginNoTex();
+          tessellateLineStrip2D(nvert, nind, lineCount);
+          endNoTex();
+        }  
+      }
+    }
+    
+    void tessellateLineStrip3D(int nvert, int nind, int lineCount) {
+      tess.lineVertexCheck(nvert);
+      tess.lineIndexCheck(nind);
+      int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
+      firstLineIndexCache = index;
+      int i0 = in.firstVertex;
+      for (int ln = 0; ln < lineCount; ln++) {
+        int i1 = in.firstVertex + ln + 1;
+        index = addLine3D(i0, i1, index, false);
+        i0 = i1;
+      }         
+      lastLineIndexCache = index;          
+//    NEW TESSMAP API        
+//    if (tess.renderMode == RETAINED) {
+//      addLineMapping(in.firstVertex, in.lastVertex);
+//    }       
+    }
+
+    void tessellateLineStrip2D(int nvert, int nind, int lineCount) {
+      // 2D renderer, the stroke geometry is stored in the poly array for accurate depth sorting
+      if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) {  // no caps, joins
+        tess.polyVertexCheck(nvert);
+        tess.polyIndexCheck(nind);
+        int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
+        firstLineIndexCache = index;
+        int i0 = in.firstVertex;
+        for (int ln = 0; ln < lineCount; ln++) {
+          int i1 = in.firstVertex + ln + 1;
+          index = addLine2D(i0, i1, index, false);
+          i0 = i1;
+        }         
+        lastLineIndexCache = lastPolyIndexCache = index;
+//      NEW TESSMAP API        
+//      if (tess.renderMode == RETAINED) {
+//        ?????
+//      }           
+      } else {  // full stroking algorithm
+        int first = in.firstVertex;          
+        LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+        path.moveTo(in.vertices[3 * first + 0], in.vertices[3 * first + 1]);
+        if (tess.renderMode == RETAINED) {
+//          in.tessMap.addFillIndex(first, -1);
+        }  
+        for (int ln = 0; ln < lineCount; ln++) {
+          int i1 = first + ln + 1;          
+          path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+          if (tess.renderMode == RETAINED) {
+//            in.tessMap.addFillIndex(i1, -1);
+          } 
+        }    
+        tessellateLinePath(path);            
+      }
+    }    
+    
+    void tessellateLineLoop() {
+      int nInVert = in.lastVertex - in.firstVertex + 1;
+      if (stroke && 2 <= nInVert) {
+        int lineCount = nInVert;
+        int nvert = lineCount * 4;
+        int nind = lineCount * 2 * 3;        
+        if (is3D()) {
+          tessellateLineLoop3D(nvert, nind, lineCount);
+        } else if (is2D()) {
+          beginNoTex();  
+          tessellateLineLoop2D(nvert, nind, lineCount);
+          endNoTex();
+        }          
+      }      
+    }    
+    
+    void tessellateLineLoop3D(int nvert, int nind, int lineCount) {
+      tess.lineVertexCheck(nvert);
+      tess.lineIndexCheck(nind);
+      int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
+      firstLineIndexCache = index;
+      int i0 = in.firstVertex;
+      for (int ln = 0; ln < lineCount - 1; ln++) {
+        int i1 = in.firstVertex + ln + 1;
+        index = addLine3D(i0, i1, index, false);
+        i0 = i1;
+      }
+      index = addLine3D(in.lastVertex, in.firstVertex, index, false);
+      lastLineIndexCache = index;          
+//    NEW TESSMAP API        
+//    if (tess.renderMode == RETAINED) {
+//      addLineMapping(in.firstVertex, in.lastVertex);
+//    }                
+    }
+
+    void tessellateLineLoop2D(int nvert, int nind, int lineCount) {
+      if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, joins
+        tess.polyVertexCheck(nvert);
+        tess.polyIndexCheck(nind);
+        int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
+        firstLineIndexCache = index;
+        int i0 = in.firstVertex;
+        for (int ln = 0; ln < lineCount - 1; ln++) {
+          int i1 = in.firstVertex + ln + 1;
+          index = addLine2D(i0, i1, index, false);
+          i0 = i1;
+        }
+        index = addLine2D(in.lastVertex, in.firstVertex, index, false);
+        lastLineIndexCache = lastPolyIndexCache = index;
+//      NEW TESSMAP API        
+//      if (tess.renderMode == RETAINED) {
+//        ?????
+//      }          
+      } else { // full stroking algorithm           
+        int first = in.firstVertex;          
+        LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+        path.moveTo(in.vertices[3 * first + 0], in.vertices[3 * first + 1]);
+        if (tess.renderMode == RETAINED) {
+//          in.tessMap.addFillIndex(first, -1);
+        }              
+        for (int ln = 0; ln < lineCount - 1; ln++) {
+          int i1 = first + ln + 1;          
+          path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+          if (tess.renderMode == RETAINED) {
+//            in.tessMap.addFillIndex(i1, -1);
+          }                
+        }    
+        path.closePath();
+        tessellateLinePath(path);              
+      }
+    }    
+    
+    void tessellateEdges() {
       if (stroke) {
         int nInVert = in.getNumLineVertices();
-        int nInInd = in.getNumLineIndices();
-       
+        int nInInd = in.getNumLineIndices();       
         if (is3D()) {
-          tess.lineVertexCheck(nInVert);
-          tess.lineIndexCheck(nInInd);
-          int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
-          firstLineIndexCache = index;
-          for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-            int[] edge = in.edges[i];
-            index = addLine(edge[0], edge[1], index, true);
-          }
-          lastLineIndexCache = index;          
-//        NEW TESSMAP API        
-//        if (tess.renderMode == RETAINED) {
-//          addLineMapping(in.firstVertex, in.lastVertex);
-//        }               
+          tessellateEdges3D(nInVert, nInInd);
         } else if (is2D()) {
-          prevTexImage = newTexImage;
-          newTexImage = null;
-          setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);          
-          
-          // 2D renderer, the stroke geometry is stored in the poly array for accurate depth sorting
-          if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, edges           
-            tess.polyVertexCheck(nInVert);
-            tess.polyIndexCheck(nInInd);
-            int index = in.renderMode == RETAINED && !haveFill ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
-            firstPolyIndexCache = index;
-            for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-              int[] edge = in.edges[i];
-              index = addLine2D(edge[0], edge[1], index, true);
-            }
-            lastPolyIndexCache = index;          
-//          NEW TESSMAP API        
-//          if (tess.renderMode == RETAINED) {
-//            ????
-//          } 
-          } else { // full stroking algorithm       
-            LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
-            for (int i = in.firstEdge; i <= in.lastEdge; i++) {
-              int[] edge = in.edges[i];
-              int i0 = edge[0];
-              int i1 = edge[1];
-              switch (edge[2]) {
-              case EDGE_MIDDLE:
-                path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-                break;
-              case EDGE_START:
-                path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
-                path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-                break;
-              case EDGE_STOP:
-                path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-                path.closePath();
-                break;
-              case EDGE_SINGLE:
-                path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
-                path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
-                path.closePath();
-                break;              
-              }
-              if (tess.renderMode == RETAINED) {
-//                in.tessMap.addFillIndex(i0, -1);
-//                in.tessMap.addFillIndex(i1, -1);
-              }                
-            }
-            tessellateLinePath(path, haveFill);             
-          }
-          
-          setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);          
+          beginNoTex();
+          tessellateEdges2D(nInVert, nInInd);
+          endNoTex();
         }
       }
+    }
+    
+    void tessellateEdges3D(int nInVert, int nInInd) {
+      tess.lineVertexCheck(nInVert);
+      tess.lineIndexCheck(nInInd);
+      int index = in.renderMode == RETAINED ? tess.lineIndexCache.addNew() : tess.lineIndexCache.getLast();
+      firstLineIndexCache = index;
+      for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+        int[] edge = in.edges[i];
+        index = addLine3D(edge[0], edge[1], index, true);
+      }
+      lastLineIndexCache = index;          
+//    NEW TESSMAP API        
+//    if (tess.renderMode == RETAINED) {
+//      addLineMapping(in.firstVertex, in.lastVertex);
+//    }               
+    }
+    
+    void tessellateEdges2D(int nInVert, int nInInd) {
+      if (strokeWeight < PGL.MIN_CAPS_JOINS_WEIGHT) { // no caps, edges
+        tess.polyVertexCheck(nInVert);
+        tess.polyIndexCheck(nInInd);
+        int index = in.renderMode == RETAINED ? tess.polyIndexCache.addNew() : tess.polyIndexCache.getLast();
+        firstLineIndexCache = index;            
+        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+          int[] edge = in.edges[i];
+          index = addLine2D(edge[0], edge[1], index, true);
+        }
+        lastLineIndexCache = lastPolyIndexCache = index;          
+//      NEW TESSMAP API        
+//      if (tess.renderMode == RETAINED) {
+//        ????
+//      } 
+      } else { // full stroking algorithm       
+        LinePath path = new LinePath(LinePath.WIND_NON_ZERO);
+        for (int i = in.firstEdge; i <= in.lastEdge; i++) {
+          int[] edge = in.edges[i];
+          int i0 = edge[0];
+          int i1 = edge[1];
+          switch (edge[2]) {
+          case EDGE_MIDDLE:
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+            break;
+          case EDGE_START:
+            path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+            break;
+          case EDGE_STOP:
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+            path.closePath();
+            break;
+          case EDGE_SINGLE:
+            path.moveTo(in.vertices[3 * i0 + 0], in.vertices[3 * i0 + 1]);
+            path.lineTo(in.vertices[3 * i1 + 0], in.vertices[3 * i1 + 1]);
+            path.closePath();
+            break;              
+          }
+          if (tess.renderMode == RETAINED) {
+//            in.tessMap.addFillIndex(i0, -1);
+//            in.tessMap.addFillIndex(i1, -1);
+          }                
+        }
+        tessellateLinePath(path);             
+      }      
     }
 
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1.
-    int addLine(int i0, int i1, int index, boolean constStroke) {
+    int addLine3D(int i0, int i1, int index, boolean constStroke) {
       IndexCache cache = tess.lineIndexCache;
       int count = cache.vertexCount[index];
       if (PGL.MAX_VERTEX_INDEX1 <= count + 4) {
@@ -10243,8 +10252,7 @@ public class PGraphicsOpenGL extends PGraphics {
       cache.incCounts(index, 6, 4);
       return index;
     }    
-    
-    
+        
     // Adding the data that defines a quad starting at vertex i0 and
     // ending at i1, in the case of pure 2D renderers (line geometry
     // is added to the poly arrays).
@@ -10327,7 +10335,7 @@ public class PGraphicsOpenGL extends PGraphics {
         partitionRawIndices();
       }
       setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
-      tessellateEdges(fill && 3 <= nInVert);
+      tessellateEdges();
     }
 
     void tessellateTriangles(int[] indices) {
@@ -10340,7 +10348,7 @@ public class PGraphicsOpenGL extends PGraphics {
         partitionRawIndices();        
       }
       setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
-      tessellateEdges(fill && 3 <= nInVert);
+      tessellateEdges();
     }
     
     void tessellateTriangleFan() {
@@ -10358,7 +10366,7 @@ public class PGraphicsOpenGL extends PGraphics {
         partitionRawIndices();
       }
       setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
-      tessellateEdges(fill && 3 <= nInVert);
+      tessellateEdges();
     }
 
     void tessellateTriangleStrip() {
@@ -10381,7 +10389,7 @@ public class PGraphicsOpenGL extends PGraphics {
         partitionRawIndices();
       }
       setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
-      tessellateEdges(fill && 3 <= nInVert);
+      tessellateEdges();
     }
 
     void tessellateQuads() {
@@ -10409,7 +10417,7 @@ public class PGraphicsOpenGL extends PGraphics {
         partitionRawIndices();
       }
       setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
-      tessellateEdges(fill && 4 <= nInVert);
+      tessellateEdges();
     }
 
     void tessellateQuadStrip() {
@@ -10437,7 +10445,7 @@ public class PGraphicsOpenGL extends PGraphics {
         partitionRawIndices();
       }
       setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
-      tessellateEdges(fill && 4 <= nInVert);
+      tessellateEdges();
     }
 
     // Uses the raw indices to partition the geometry into contiguous 
@@ -10581,6 +10589,16 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }    
     
+    void beginNoTex() {
+      prevTexImage = newTexImage; 
+      newTexImage = null;
+      setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);      
+    }
+    
+    void endNoTex() {
+      setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
+    }    
+    
     // -----------------------------------------------------------------
     //
     // Polygon tessellation    
@@ -10598,7 +10616,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (fill && 3 <= nInVert) {
         firstPolyIndexCache = -1;
         
-        callback.init(in.renderMode == RETAINED, calcNormals, FILL_VERTEX);
+        callback.init(in.renderMode == RETAINED, FILL_VERTEX, false, calcNormals);
         
         gluTess.beginPolygon();
 
@@ -10657,14 +10675,14 @@ public class PGraphicsOpenGL extends PGraphics {
       }
 
       setLastTexIndex(tess.lastPolyIndex, tess.polyIndexCache.size - 1);
-      tessellateEdges(fill && 3 <= nInVert);
+      tessellateEdges();
     }    
     
     // Tessellates the path given as parameter. This will work only in 2D.
     // Based on the opengl stroke hack described here: 
     // http://wiki.processing.org/w/Stroke_attributes_in_OpenGL
-    public void tessellateLinePath(LinePath path, boolean haveFill) {  
-      callback.init(in.renderMode == RETAINED && !haveFill, true, LINE_VERTEX);
+    public void tessellateLinePath(LinePath path) {  
+      callback.init(in.renderMode == RETAINED, LINE_VERTEX, true, false);
       
       int cap = strokeCap == ROUND ? LinePath.CAP_ROUND :
                 strokeCap == PROJECT ? LinePath.CAP_SQUARE :
@@ -10744,6 +10762,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // to eventually come up with an optimized GLU tessellator in native code.
     protected class TessellatorCallback implements PGL.TessellatorCallback {
       boolean calcNormals;
+      boolean strokeTess;
       byte vertexType;
       IndexCache cache;
       int cacheIndex;
@@ -10751,22 +10770,24 @@ public class PGraphicsOpenGL extends PGraphics {
       int vertCount;
       int primitive;
 
-      public void init(boolean add, boolean calcn, byte type) {
-        calcNormals = calcn;
-        vertexType = type;
+      public void init(boolean addCache, byte vertType, boolean strokeTess, boolean calcNorm) {
+        this.vertexType = vertType;
+        this.strokeTess = strokeTess;
+        this.calcNormals = calcNorm;
+        
         cache = tess.polyIndexCache;
-         
-        if (add) {
+        if (addCache) {
           cache.addNew();
         }
       }
       
       public void begin(int type) {
-        
-        //cacheIndex = in.renderMode == RETAINED ? cache.addNew() : cache.getLast();
         cacheIndex = cache.getLast();
-        if (cacheIndex < firstPolyIndexCache || firstPolyIndexCache == -1) {
+        if (firstPolyIndexCache == -1) {
           firstPolyIndexCache = cacheIndex;
+        }
+        if (strokeTess && firstLineIndexCache == -1) {
+          firstLineIndexCache = cacheIndex;
         }
         
         vertFirst = cache.vertexCount[cacheIndex];        
@@ -10842,6 +10863,9 @@ public class PGraphicsOpenGL extends PGraphics {
         
         cache.incCounts(cacheIndex, indCount, vertCount);        
         lastPolyIndexCache = cacheIndex;
+        if (strokeTess) {
+          lastLineIndexCache = cacheIndex;
+        }
       }
 
       protected void addIndex(int tessIdx) {

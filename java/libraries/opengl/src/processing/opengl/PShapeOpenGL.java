@@ -139,7 +139,7 @@ public class PShapeOpenGL extends PShape {
   protected int pointVertexRel;
     
   protected int firstPolyIndexCache;
-  protected int lastpolyIndexCache; 
+  protected int lastPolyIndexCache; 
   protected int firstLineIndexCache;
   protected int lastLineIndexCache;
   protected int firstPointIndexCache;
@@ -2436,7 +2436,7 @@ public class PShapeOpenGL extends PShape {
     tess.noStroke();
     
     IndexCache cache = tessGeo.polyIndexCache;
-    for (int n = firstPolyIndexCache; n <= lastpolyIndexCache; n++) {     
+    for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
@@ -2579,7 +2579,7 @@ public class PShapeOpenGL extends PShape {
     firstLineIndexCache = -1;
     lastLineIndexCache = -1;
     firstPolyIndexCache = -1;
-    lastpolyIndexCache = -1; 
+    lastPolyIndexCache = -1; 
     
     if (family == GROUP) {
       for (int i = 0; i < childCount; i++) {
@@ -2683,7 +2683,7 @@ public class PShapeOpenGL extends PShape {
         firstLineIndexCache = tessellator.firstLineIndexCache;
         lastLineIndexCache = tessellator.lastLineIndexCache;
         firstPolyIndexCache = tessellator.firstPolyIndexCache;
-        lastpolyIndexCache = tessellator.lastPolyIndexCache;
+        lastPolyIndexCache = tessellator.lastPolyIndexCache;
       }
     }
 
@@ -3112,7 +3112,7 @@ public class PShapeOpenGL extends PShape {
         havePoints |= child.havePoints; 
       }    
     } else { // LEAF SHAPE (family either GEOMETRY, PATH or PRIMITIVE)
-      havePolys = -1 < firstPolyIndexCache && -1 < lastpolyIndexCache;
+      havePolys = -1 < firstPolyIndexCache && -1 < lastPolyIndexCache;
       haveLines = -1 < firstLineIndexCache && -1 < lastLineIndexCache; 
       havePoints = -1 < firstPointIndexCache && -1 < lastPointIndexCache; 
     }
@@ -3152,14 +3152,14 @@ public class PShapeOpenGL extends PShape {
       // The index ranges of the child shapes that share the vertex offset
       // are unified into a single range in the parent level.      
 
-      firstPolyIndexCache = lastpolyIndexCache = -1;
+      firstPolyIndexCache = lastPolyIndexCache = -1;
       int gindex = -1; 
           
       for (int i = 0; i < childCount; i++) {        
         PShapeOpenGL child = (PShapeOpenGL) children[i];
         
         int first = child.firstPolyIndexCache;
-        int count = -1 < first ? child.lastpolyIndexCache - first + 1 : -1;        
+        int count = -1 < first ? child.lastPolyIndexCache - first + 1 : -1;        
         for (int n = first; n < first + count; n++) {        
           if (gindex == -1) {
             gindex = cache.addNew(n);
@@ -3178,11 +3178,11 @@ public class PShapeOpenGL extends PShape {
           }
         }
       }
-      lastpolyIndexCache = gindex;
+      lastPolyIndexCache = gindex;
       
-      if (-1 < firstPolyIndexCache && -1 < lastpolyIndexCache) {
+      if (-1 < firstPolyIndexCache && -1 < lastPolyIndexCache) {
         firstPolyVertex = cache.vertexOffset[firstPolyIndexCache]; 
-        lastPolyVertex = cache.vertexOffset[lastpolyIndexCache] + cache.vertexCount[lastpolyIndexCache] - 1;
+        lastPolyVertex = cache.vertexOffset[lastPolyIndexCache] + cache.vertexCount[lastPolyIndexCache] - 1;
       }      
     } else {
       // The index cache is updated in order to reflect the fact that all 
@@ -3198,7 +3198,7 @@ public class PShapeOpenGL extends PShape {
       // to be restarted as well to reflect the new index offset.
             
       firstPolyVertex = lastPolyVertex = cache.vertexOffset[firstPolyIndexCache];
-      for (int n = firstPolyIndexCache; n <= lastpolyIndexCache; n++) {
+      for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {
         int ioffset = cache.indexOffset[n];
         int icount = cache.indexCount[n];
         int vcount = cache.vertexCount[n];
@@ -3214,6 +3214,8 @@ public class PShapeOpenGL extends PShape {
         root.polyVertexAbs += vcount;
         root.polyVertexRel += vcount;        
         lastPolyVertex += vcount;
+        
+        // Checking line and point geometry
       }
       lastPolyVertex--;
     }
@@ -4289,19 +4291,30 @@ public class PShapeOpenGL extends PShape {
   
   protected void renderPolys(PGraphicsOpenGL g, PImage textureImage) {
     PTexture tex = null;
-    if (textureImage != null) {
-      tex = g.getTexture(textureImage);
-      if (tex != null) {
-        pgl.enableTexturing(tex.glTarget);          
-        pgl.glBindTexture(tex.glTarget, tex.glID);        
-      }
-    }    
-    
-    PolyShader shader = g.getPolyShader(g.lights, tex != null);
-    shader.start();
-    
+    boolean lights = false;
+
     IndexCache cache = tessGeo.polyIndexCache;
-    for (int n = firstPolyIndexCache; n <= lastpolyIndexCache; n++) {     
+    for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {
+      if (n < firstLineIndexCache && n < firstPointIndexCache) {
+        // Rendering fill triangles, which can be lit and textured.        
+        if (textureImage != null) {
+          tex = g.getTexture(textureImage);
+          if (tex != null) {
+            pgl.enableTexturing(tex.glTarget);          
+            pgl.glBindTexture(tex.glTarget, tex.glID);        
+          }
+        }
+        
+        lights = g.lights;
+      } else {
+        // Rendering line or point triangles, which are never lit nor textured.
+        tex = null;
+        lights = false;        
+      }
+      
+      PolyShader shader = g.getPolyShader(lights, tex != null);
+      shader.start();
+          
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
@@ -4325,13 +4338,13 @@ public class PShapeOpenGL extends PShape {
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, root.glPolyIndexBufferID);
       pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-    
-    shader.stop();
-    
-    if (tex != null) {
-      pgl.glBindTexture(tex.glTarget, 0); 
-      pgl.disableTexturing(tex.glTarget);
+      
+      shader.stop();
+
+      if (tex != null) {
+        pgl.glBindTexture(tex.glTarget, 0); 
+        pgl.disableTexturing(tex.glTarget);
+      }          
     }    
   }  
   
@@ -4349,7 +4362,7 @@ public class PShapeOpenGL extends PShape {
     short[] indices = tessGeo.polyIndices;  
     
     IndexCache cache = tessGeo.polyIndexCache;
-    for (int n = firstPolyIndexCache; n <= lastpolyIndexCache; n++) {     
+    for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {     
       int ioffset = cache.indexOffset[n];
       int icount = cache.indexCount[n];
       int voffset = cache.vertexOffset[n];
