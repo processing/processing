@@ -11088,8 +11088,8 @@ public class PApplet extends Applet
    *
    * @webref image:loading_displaying
    * @param img the image to display
-   * @param x x-coordinate of the image
-   * @param y y-coordinate of the image
+   * @param a x-coordinate of the image
+   * @param b y-coordinate of the image
    * @see PApplet#loadImage(String, String)
    * @see PImage
    * @see PGraphics#imageMode(int)
@@ -11097,9 +11097,9 @@ public class PApplet extends Applet
    * @see PGraphics#background(float, float, float, float)
    * @see PGraphics#alpha(int)
    */
-  public void image(PImage img, float x, float y) {
-    if (recorder != null) recorder.image(img, x, y);
-    g.image(img, x, y);
+  public void image(PImage img, float a, float b) {
+    if (recorder != null) recorder.image(img, a, b);
+    g.image(img, a, b);
   }
 
 

@@ -3,12 +3,12 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011 Andres Colubri
-  Copyright (c) 2010 Ben Fry and Casey Reas
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License version 2.1 as published by the Free Software Foundation.
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -58,8 +58,8 @@ public class PTexture implements PConstants {
   public int glHeight;
   
   protected boolean usingMipmaps; 
-  protected float maxTexCoordU;
-  protected float maxTexCoordV;
+  protected float maxTexcoordU;
+  protected float maxTexcoordV;
   
   protected boolean flippedX;   
   protected boolean flippedY;
@@ -346,8 +346,8 @@ public class PTexture implements PConstants {
    * Returns the maximum possible value for the texture coordinate U (horizontal).
    * @return float
    */ 
-  public float getMaxTexCoordU() {
-    return maxTexCoordU;
+  public float getMaxU() {
+    return maxTexcoordU;
   }
   
   
@@ -355,8 +355,8 @@ public class PTexture implements PConstants {
    * Returns the maximum possible value for the texture coordinate V (vertical).
    * @return float
    */ 
-  public float getMaxTexCoordV() {
-    return maxTexCoordV;
+  public float getMaxV() {
+    return maxTexcoordV;
   }
   
   
@@ -742,8 +742,8 @@ public class PTexture implements PConstants {
     // is non-power-of-two, then glWidth (glHeight) will be greater than w (h) because it
     // is chosen to be the next power of two, and this quotient will give the appropriate
     // maximum texture coordinate value given this situation.
-    maxTexCoordU = (float)width / glWidth;
-    maxTexCoordV = (float)height / glHeight;    
+    maxTexcoordU = (float)width / glWidth;
+    maxTexcoordV = (float)height / glHeight;    
   }
   
   
@@ -877,8 +877,8 @@ public class PTexture implements PConstants {
     glHeight = src.glHeight;
   
     usingMipmaps = src.usingMipmaps; 
-    maxTexCoordU = src.maxTexCoordU;
-    maxTexCoordV = src.maxTexCoordV;
+    maxTexcoordU = src.maxTexcoordU;
+    maxTexcoordV = src.maxTexcoordV;
   
     flippedX = src.flippedX;   
     flippedY = src.flippedY;
