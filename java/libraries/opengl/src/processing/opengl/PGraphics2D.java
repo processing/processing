@@ -23,12 +23,158 @@
 package processing.opengl;
 
 import processing.core.PMatrix3D;
+import processing.core.PShape;
 
 public class PGraphics2D extends PGraphicsOpenGL {
   
   public PGraphics2D() {
     super();
     hints[ENABLE_PERSPECTIVE_CORRECTED_LINES] = false;
+  }
+
+  //////////////////////////////////////////////////////////////
+
+  // RENDERER SUPPORT QUERIES
+  
+  public boolean is2D() {
+    return true;
+  }
+
+  public boolean is3D() {
+    return false;
+  }  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE CREATORS
+
+
+  public PShape createShape() {
+    return createShape(POLYGON);
+  }
+
+
+  public PShape createShape(int type) {
+    PShape2D shape = null;
+    if (type == PShape.GROUP) {
+      shape = new PShape2D(parent, PShape.GROUP);
+    } else if (type == PShape.PATH) {
+      shape = new PShape2D(parent, PShape.PATH);
+    } else if (type == POINTS) {
+      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape.setKind(POINTS);
+    } else if (type == LINES) {
+      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape.setKind(LINES);
+    } else if (type == TRIANGLE || type == TRIANGLES) {
+      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape.setKind(TRIANGLES);
+    } else if (type == TRIANGLE_FAN) {
+      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape.setKind(TRIANGLE_FAN);
+    } else if (type == TRIANGLE_STRIP) {
+      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape.setKind(TRIANGLE_STRIP);
+    } else if (type == QUAD || type == QUADS) {
+      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape.setKind(QUADS);
+    } else if (type == QUAD_STRIP) {
+      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape.setKind(QUAD_STRIP);
+    } else if (type == POLYGON) {
+      shape = new PShape2D(parent, PShape.GEOMETRY);
+      shape.setKind(POLYGON);
+    }
+    return shape;
+  }
+
+
+  public PShape createShape(int kind, float... p) {
+    PShape2D shape = null;
+    int len = p.length;
+
+    if (kind == POINT) {
+      if (len != 2) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape.setKind(POINT);
+    } else if (kind == LINE) {
+      if (len != 4) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape.setKind(LINE);
+    } else if (kind == TRIANGLE) {
+      if (len != 6) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape.setKind(TRIANGLE);
+    } else if (kind == QUAD) {
+      if (len != 8) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape.setKind(QUAD);
+    } else if (kind == RECT) {
+      if (len != 4 && len != 5 && len != 8) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape.setKind(RECT);
+    } else if (kind == ELLIPSE) {
+      if (len != 4) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape.setKind(ELLIPSE);
+    } else if (kind == ARC) {
+      if (len != 6) {
+        showWarning("Wrong number of parameters");
+        return null;
+      }
+      shape = new PShape2D(parent, PShape.PRIMITIVE);
+      shape.setKind(ARC);
+    } else if (kind == BOX) {
+      showWarning("Primitive not supported in 2D");
+    } else if (kind == SPHERE) {
+      showWarning("Primitive not supported in 2D");
+    } else {
+      showWarning("Unrecognized primitive type");
+    }
+
+    if (shape != null) {
+      shape.setParams(p);
+    }
+
+    return shape;
+  }  
+  
+  //////////////////////////////////////////////////////////////
+
+  // SHAPE I/O
+  
+  protected String[] getSupportedShapeFormats() {
+    return new String[] { "svg" };  
+  }
+
+
+  public PShape loadShape(String filename) {
+    // TODO: loadShape in PApplet probably needs to be 
+    //       re-implemented.
+    PShape svg = parent.loadShape(filename);  
+    
+    // TODO: rework base API in PShape to do this...
+    PShape2D p2d = (PShape2D) svg.copy(this);
+    
+    return p2d;
   }
   
   
@@ -98,6 +244,14 @@ public class PGraphics2D extends PGraphicsOpenGL {
     showDepthWarningXYZ("vertex");
   }  
   
+  //////////////////////////////////////////////////////////////
+
+  // MATRIX TRANSFORMATIONS  
+  
+  public void translate(float tx, float ty, float tz) {
+    showVariationWarning("translate");
+  }
+  
   public void rotateX(float angle) {
     showDepthWarning("rotateX");
   }
@@ -125,6 +279,10 @@ public class PGraphics2D extends PGraphicsOpenGL {
     showDepthWarningXYZ("scale");
   }
   
+  //////////////////////////////////////////////////////////////
+
+  // SCREEN AND MODEL COORDS  
+  
   public float screenX(float x, float y, float z) {
     showDepthWarningXYZ("screenX");
     return 0;
@@ -148,7 +306,6 @@ public class PGraphics2D extends PGraphicsOpenGL {
   public void setMatrix(PMatrix3D source) {
     showVariationWarning("setMatrix");
   }
-  
   
   //////////////////////////////////////////////////////////////  
 
@@ -195,24 +352,4 @@ public class PGraphics2D extends PGraphicsOpenGL {
   public void lightSpecular(float v1, float v2, float v3) {
     showMethodWarning("lightSpecular");
   }
-
-  //////////////////////////////////////////////////////////////
-
-  // RENDERER SUPPORT QUERIES
-  
-  /**
-   * Return true if this renderer supports 2D drawing. Defaults to true.
-   */
-  public boolean is2D() {
-    return true;
-  }
-
-
-  /**
-   * Return true if this renderer supports 2D drawing. Defaults to false.
-   */
-  public boolean is3D() {
-    return false;
-  }  
-  
 }

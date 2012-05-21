@@ -3,8 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-12 Ben Fry and Casey Reas
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -659,6 +658,7 @@ public class PShapeOpenGL extends PShape {
   }
   
   
+  // TODO: what about updating parent?
   protected void removeTexture(PImage tex) {
     if (textures != null) {
       boolean childHasIt = false;
@@ -4128,28 +4128,38 @@ public class PShapeOpenGL extends PShape {
       }
     }    
     
+    boolean renderingFill = false, renderingStroke = false;
     PolyShader shader = null;
     IndexCache cache = tessGeo.polyIndexCache;
     for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {
-      // TODO: make sure that either of these two branches is executed only once...
       if (tex != null && (is3D() || n < firstLineIndexCache && n < firstPointIndexCache)) {
-        // Rendering fill triangles, which can be lit and textured.        
-        shader = g.getPolyShader(g.lights, tex != null);
-        shader.start();
+        // Rendering fill triangles, which can be lit and textured.
+        if (!renderingFill) {
+          shader = g.getPolyShader(g.lights, tex != null);
+          shader.start();
+          renderingFill = true;
+        }
       } else {
         // Rendering line or point triangles, which are never lit nor textured.
-        if (tex != null) {
-          pgl.glBindTexture(tex.glTarget, 0); 
-          pgl.disableTexturing(tex.glTarget);
-          tex = null;
+        if (!renderingStroke) {
+          if (tex != null) {
+            pgl.glBindTexture(tex.glTarget, 0); 
+            pgl.disableTexturing(tex.glTarget);
+            tex = null;
+          }
+          
+          if (shader != null && shader.active()) {
+            shader.stop();  
+          }
+          
+          // If the renderer is 2D, then g.lights should always be false,
+          // so no need to worry about that.          
+          shader = g.getPolyShader(g.lights, false);
+          shader.start();
+          
+          renderingFill = false;
+          renderingStroke = true;
         }
-        
-        if (shader != null) {
-          shader.stop();  
-        }
-        
-        shader = g.getPolyShader(g.lights, false);
-        shader.start();
       }
           
       int ioffset = cache.indexOffset[n];
@@ -4177,7 +4187,9 @@ public class PShapeOpenGL extends PShape {
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
     } 
     
-    shader.stop();
+    if (shader != null && shader.active()) {
+      shader.stop();  
+    }
     
     if (tex != null) {
       pgl.glBindTexture(tex.glTarget, 0); 
