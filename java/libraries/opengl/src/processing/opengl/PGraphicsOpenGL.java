@@ -99,14 +99,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public int glLineVertexBufferID;
   public int glLineColorBufferID;
-  public int glLineDirWidthBufferID;
+  public int glLineAttribBufferID;
   public int glLineIndexBufferID;
   protected boolean lineBuffersCreated = false;
   protected PGL.Context lineBuffersContext;
 
   public int glPointVertexBufferID;
   public int glPointColorBufferID;
-  public int glPointSizeBufferID;
+  public int glPointAttribBufferID;
   public int glPointIndexBufferID;
   protected boolean pointBuffersCreated = false;
   protected PGL.Context pointBuffersContext;
@@ -421,12 +421,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
     glLineVertexBufferID = 0;
     glLineColorBufferID = 0;
-    glLineDirWidthBufferID = 0;
+    glLineAttribBufferID = 0;
     glLineIndexBufferID = 0;
 
     glPointVertexBufferID = 0;
     glPointColorBufferID = 0;
-    glPointSizeBufferID = 0;
+    glPointAttribBufferID = 0;
     glPointIndexBufferID = 0;
   }
 
@@ -1210,8 +1210,8 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glLineDirWidthBufferID = createVertexBufferObject(lineBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
+      glLineAttribBufferID = createVertexBufferObject(lineBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
@@ -1240,8 +1240,8 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.lineColors, 0, size), PGL.GL_STATIC_DRAW);
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineDirWidthBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineDirWidths, 0, 4 * size), PGL.GL_STATIC_DRAW);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glLineAttribBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 4 * sizef, FloatBuffer.wrap(tessGeo.lineAttribs, 0, 4 * size), PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.lineIndexCount * PGL.SIZEOF_INDEX,
@@ -1268,8 +1268,8 @@ public class PGraphicsOpenGL extends PGraphics {
       deleteVertexBufferObject(glLineColorBufferID, lineBuffersContext.code());
       glLineColorBufferID = 0;
 
-      deleteVertexBufferObject(glLineDirWidthBufferID, lineBuffersContext.code());
-      glLineDirWidthBufferID = 0;
+      deleteVertexBufferObject(glLineAttribBufferID, lineBuffersContext.code());
+      glLineAttribBufferID = 0;
 
       deleteVertexBufferObject(glLineIndexBufferID, lineBuffersContext.code());
       glLineIndexBufferID = 0;
@@ -1295,8 +1295,8 @@ public class PGraphicsOpenGL extends PGraphics {
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, null, PGL.GL_STATIC_DRAW);
 
-      glPointSizeBufferID = createVertexBufferObject(pointBuffersContext.code());
-      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
+      glPointAttribBufferID = createVertexBufferObject(pointBuffersContext.code());
+      pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
       pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, null, PGL.GL_STATIC_DRAW);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
@@ -1325,8 +1325,8 @@ public class PGraphicsOpenGL extends PGraphics {
     pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointColorBufferID);
     pgl.glBufferData(PGL.GL_ARRAY_BUFFER, sizei, IntBuffer.wrap(tessGeo.pointColors, 0, size), PGL.GL_STATIC_DRAW);
 
-    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointSizeBufferID);
-    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointSizes, 0, 2 * size), PGL.GL_STATIC_DRAW);
+    pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, glPointAttribBufferID);
+    pgl.glBufferData(PGL.GL_ARRAY_BUFFER, 2 * sizef, FloatBuffer.wrap(tessGeo.pointAttribs, 0, 2 * size), PGL.GL_STATIC_DRAW);
 
     pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
     pgl.glBufferData(PGL.GL_ELEMENT_ARRAY_BUFFER, tessGeo.pointIndexCount * PGL.SIZEOF_INDEX,
@@ -1353,8 +1353,8 @@ public class PGraphicsOpenGL extends PGraphics {
       deleteVertexBufferObject(glPointColorBufferID, pointBuffersContext.code());
       glPointColorBufferID = 0;
 
-      deleteVertexBufferObject(glPointSizeBufferID, pointBuffersContext.code());
-      glPointSizeBufferID = 0;
+      deleteVertexBufferObject(glPointAttribBufferID, pointBuffersContext.code());
+      glPointAttribBufferID = 0;
 
       deleteVertexBufferObject(glPointIndexBufferID, pointBuffersContext.code());
       glPointIndexBufferID = 0;
@@ -2378,12 +2378,13 @@ public class PGraphicsOpenGL extends PGraphics {
   }
 
 
-  public void flush() {
-    boolean hasPoints = 0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount;
-    boolean hasLines = 0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount;
+  public void flush() {    
     boolean hasPolys = 0 < tessGeo.polyVertexCount && 0 < tessGeo.polyIndexCount;
+    boolean hasLines = 0 < tessGeo.lineVertexCount && 0 < tessGeo.lineIndexCount;    
+    boolean hasPoints = 0 < tessGeo.pointVertexCount && 0 < tessGeo.pointIndexCount;    
+    
     boolean hasPixels = modified && pixels != null;
-
+    
     if (hasPixels) {
       // If the user has been manipulating individual pixels,
       // the changes need to be copied to the screen before
@@ -2452,7 +2453,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       shader.setVertexAttribute(glPointVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
       shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-      shader.setSizeAttribute(glPointSizeBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setPointAttribute(glPointAttribBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
 
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
       pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
@@ -2472,7 +2473,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     float[] vertices = tessGeo.pointVertices;
     int[] color = tessGeo.pointColors;
-    float[] attribs = tessGeo.pointSizes;
+    float[] attribs = tessGeo.pointAttribs;
     short[] indices = tessGeo.pointIndices; 
     
     IndexCache cache = tessGeo.pointIndexCache;
@@ -2539,7 +2540,7 @@ public class PGraphicsOpenGL extends PGraphics {
       
       shader.setVertexAttribute(glLineVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
       shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-      shader.setDirWidthAttribute(glLineDirWidthBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setLineAttribute(glLineAttribBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
 
       pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
       pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
@@ -2560,7 +2561,7 @@ public class PGraphicsOpenGL extends PGraphics {
     
     float[] vertices = tessGeo.lineVertices;
     int[] color = tessGeo.lineColors;
-    float[] attribs = tessGeo.lineDirWidths;
+    float[] attribs = tessGeo.lineAttribs;
     short[] indices = tessGeo.lineIndices;    
 
     IndexCache cache = tessGeo.lineIndexCache;
@@ -4669,24 +4670,6 @@ public class PGraphicsOpenGL extends PGraphics {
 
   // public boolean displayable()
 
-  // public boolean dimensional() // from P3D
-
-
-  /**
-   * Return true if this renderer supports 2D drawing. Defaults to true.
-   */
-  public boolean is2D() {
-    return true;
-  }
-
-
-  /**
-   * Return true if this renderer supports 2D drawing. Defaults to false.
-   */
-  public boolean is3D() {
-    return true;
-  }
-
 
   public boolean isGL() {
     return true;
@@ -6304,7 +6287,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected int inVertexLoc;
     protected int inColorLoc;
-    protected int inDirWidthLoc;
+    protected int inAttribLoc;
 
     public LineShader(PApplet parent) {
       super(parent);
@@ -6325,7 +6308,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadAttributes() {
       inVertexLoc = getAttribLocation("inVertex");
       inColorLoc = getAttribLocation("inColor");
-      inDirWidthLoc = getAttribLocation("inDirWidth");
+      inAttribLoc = getAttribLocation("inLine");
     }
 
     public void loadUniforms() {
@@ -6349,16 +6332,16 @@ public class PGraphicsOpenGL extends PGraphics {
       setAttribute(inColorLoc, vboId, size, type, true, stride, offset);
     }
 
-    public void setDirWidthAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inDirWidthLoc, vboId, size, type, false, stride, offset);
+    public void setLineAttribute(int vboId, int size, int type, int stride, int offset) {
+      setAttribute(inAttribLoc, vboId, size, type, false, stride, offset);
     }
 
     public void start() {
       super.start();
 
-      if (-1 < inVertexLoc)   pgl.glEnableVertexAttribArray(inVertexLoc);
-      if (-1 < inColorLoc)    pgl.glEnableVertexAttribArray(inColorLoc);
-      if (-1 < inDirWidthLoc) pgl.glEnableVertexAttribArray(inDirWidthLoc);
+      if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
+      if (-1 < inAttribLoc) pgl.glEnableVertexAttribArray(inAttribLoc);
 
       if (renderer != null) {
         renderer.updateGLProjection();
@@ -6374,9 +6357,9 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     public void stop() {
-      if (-1 < inVertexLoc)   pgl.glDisableVertexAttribArray(inVertexLoc);
-      if (-1 < inColorLoc)    pgl.glDisableVertexAttribArray(inColorLoc);
-      if (-1 < inDirWidthLoc) pgl.glDisableVertexAttribArray(inDirWidthLoc);
+      if (-1 < inVertexLoc) pgl.glDisableVertexAttribArray(inVertexLoc);
+      if (-1 < inColorLoc)  pgl.glDisableVertexAttribArray(inColorLoc);
+      if (-1 < inAttribLoc) pgl.glDisableVertexAttribArray(inAttribLoc);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
@@ -6393,7 +6376,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
     protected int inVertexLoc;
     protected int inColorLoc;
-    protected int inSizeLoc;
+    protected int inPointLoc;
 
     public PointShader(PApplet parent) {
       super(parent);
@@ -6414,7 +6397,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void loadAttributes() {
       inVertexLoc = getAttribLocation("inVertex");
       inColorLoc = getAttribLocation("inColor");
-      inSizeLoc = getAttribLocation("inSize");
+      inPointLoc = getAttribLocation("inPoint");
     }
 
     public void loadUniforms() {
@@ -6435,8 +6418,8 @@ public class PGraphicsOpenGL extends PGraphics {
       setAttribute(inColorLoc, vboId, size, type, true, stride, offset);
     }
 
-    public void setSizeAttribute(int vboId, int size, int type, int stride, int offset) {
-      setAttribute(inSizeLoc, vboId, size, type, false, stride, offset);
+    public void setPointAttribute(int vboId, int size, int type, int stride, int offset) {
+      setAttribute(inPointLoc, vboId, size, type, false, stride, offset);
     }
 
     public void start() {
@@ -6444,7 +6427,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
       if (-1 < inVertexLoc) pgl.glEnableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glEnableVertexAttribArray(inColorLoc);
-      if (-1 < inSizeLoc)   pgl.glEnableVertexAttribArray(inSizeLoc);
+      if (-1 < inPointLoc)  pgl.glEnableVertexAttribArray(inPointLoc);
 
       if (renderer != null) {
         renderer.updateGLProjection();
@@ -6458,7 +6441,7 @@ public class PGraphicsOpenGL extends PGraphics {
     public void stop() {
       if (-1 < inVertexLoc) pgl.glDisableVertexAttribArray(inVertexLoc);
       if (-1 < inColorLoc)  pgl.glDisableVertexAttribArray(inColorLoc);
-      if (-1 < inSizeLoc)   pgl.glDisableVertexAttribArray(inSizeLoc);
+      if (-1 < inPointLoc)  pgl.glDisableVertexAttribArray(inPointLoc);
 
       pgl.glBindBuffer(PGL.GL_ARRAY_BUFFER, 0);
 
@@ -6941,8 +6924,8 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] colors;
     float[] normals;
     float[] texcoords;
-    int[] scolors;
-    float[] sweights;
+    int[] strokeColors;
+    float[] strokeWeights;
     
     // lines
     boolean[] breaks;
@@ -6989,8 +6972,8 @@ public class PGraphicsOpenGL extends PGraphics {
       colors = new int[PGL.DEFAULT_IN_VERTICES];
       normals = new float[3 * PGL.DEFAULT_IN_VERTICES];
       texcoords = new float[2 * PGL.DEFAULT_IN_VERTICES];
-      scolors = new int[PGL.DEFAULT_IN_VERTICES];
-      sweights = new float[PGL.DEFAULT_IN_VERTICES];
+      strokeColors = new int[PGL.DEFAULT_IN_VERTICES];
+      strokeWeights = new float[PGL.DEFAULT_IN_VERTICES];
       ambient = new int[PGL.DEFAULT_IN_VERTICES];
       specular = new int[PGL.DEFAULT_IN_VERTICES];
       emissive = new int[PGL.DEFAULT_IN_VERTICES];
@@ -7011,8 +6994,8 @@ public class PGraphicsOpenGL extends PGraphics {
       colors = null;
       normals = null;
       texcoords = null;
-      scolors = null;
-      sweights = null;
+      strokeColors = null;
+      strokeWeights = null;
       ambient = null;
       specular = null;
       emissive = null;
@@ -7191,14 +7174,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void expandStrokeColors(int n) {
       int temp[] = new int[n];
-      PApplet.arrayCopy(scolors, 0, temp, 0, vertexCount);
-      scolors = temp;
+      PApplet.arrayCopy(strokeColors, 0, temp, 0, vertexCount);
+      strokeColors = temp;
     }
 
     void expandStrokeWeights(int n) {
       float temp[] = new float[n];
-      PApplet.arrayCopy(sweights, 0, temp, 0, vertexCount);
-      sweights = temp;
+      PApplet.arrayCopy(strokeWeights, 0, temp, 0, vertexCount);
+      strokeWeights = temp;
     }
 
     void expandAmbient(int n) {
@@ -7287,14 +7270,14 @@ public class PGraphicsOpenGL extends PGraphics {
 
     void trimStrokeColors() {
       int temp[] = new int[vertexCount];
-      PApplet.arrayCopy(scolors, 0, temp, 0, vertexCount);
-      scolors = temp;
+      PApplet.arrayCopy(strokeColors, 0, temp, 0, vertexCount);
+      strokeColors = temp;
     }
 
     void trimStrokeWeights() {
       float temp[] = new float[vertexCount];
-      PApplet.arrayCopy(sweights, 0, temp, 0, vertexCount);
-      sweights = temp;
+      PApplet.arrayCopy(strokeWeights, 0, temp, 0, vertexCount);
+      strokeWeights = temp;
     }
 
     void trimAmbient() {
@@ -7411,8 +7394,8 @@ public class PGraphicsOpenGL extends PGraphics {
       texcoords[index++] = u;
       texcoords[index  ] = v;
 
-      scolors[vertexCount] = PGL.javaToNativeARGB(scolor);
-      sweights[vertexCount] = sweight;
+      strokeColors[vertexCount] = PGL.javaToNativeARGB(scolor);
+      strokeWeights[vertexCount] = sweight;
 
       ambient[vertexCount] = PGL.javaToNativeARGB(am);
       specular[vertexCount] = PGL.javaToNativeARGB(sp);
@@ -8379,7 +8362,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int lastLineVertex;
     float[] lineVertices;
     int[] lineColors;
-    float[] lineDirWidths;
+    float[] lineAttribs;
 
     int lineIndexCount;
     int firstLineIndex;
@@ -8393,7 +8376,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int lastPointVertex;
     float[] pointVertices;
     int[] pointColors;
-    float[] pointSizes;
+    float[] pointAttribs;
 
     int pointIndexCount;
     int firstPointIndex;
@@ -8424,12 +8407,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
       lineVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineColors = new int[PGL.DEFAULT_TESS_VERTICES];
-      lineDirWidths = new float[4 * PGL.DEFAULT_TESS_VERTICES];
+      lineAttribs = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       lineIndices = new short[PGL.DEFAULT_TESS_VERTICES];
 
       pointVertices = new float[4 * PGL.DEFAULT_TESS_VERTICES];
       pointColors = new int[PGL.DEFAULT_TESS_VERTICES];
-      pointSizes = new float[2 * PGL.DEFAULT_TESS_VERTICES];
+      pointAttribs = new float[2 * PGL.DEFAULT_TESS_VERTICES];
       pointIndices = new short[PGL.DEFAULT_TESS_VERTICES];
 
       clear();
@@ -8464,12 +8447,12 @@ public class PGraphicsOpenGL extends PGraphics {
 
       lineVertices = null;
       lineColors = null;
-      lineDirWidths = null;
+      lineAttribs = null;
       lineIndices = null;
 
       pointVertices = null;
       pointColors = null;
-      pointSizes = null;
+      pointAttribs = null;
       pointIndices = null;
     }
     
@@ -8545,7 +8528,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
         expandLineVertices(newSize);
         expandLineColors(newSize);
-        expandLineAttributes(newSize);
+        expandLineAttribs(newSize);
       }
 
       firstLineVertex = lineVertexCount;
@@ -8573,7 +8556,7 @@ public class PGraphicsOpenGL extends PGraphics {
 
         expandPointVertices(newSize);
         expandPointColors(newSize);
-        expandPointAttributes(newSize);
+        expandPointAttribs(newSize);
       }
 
       firstPointVertex = pointVertexCount;
@@ -8764,10 +8747,10 @@ public class PGraphicsOpenGL extends PGraphics {
       lineColors = temp;
     }
 
-    void expandLineAttributes(int n) {
+    void expandLineAttribs(int n) {
       float temp[] = new float[4 * n];
-      PApplet.arrayCopy(lineDirWidths, 0, temp, 0, 4 * lineVertexCount);
-      lineDirWidths = temp;
+      PApplet.arrayCopy(lineAttribs, 0, temp, 0, 4 * lineVertexCount);
+      lineAttribs = temp;
     }
         
     void expandLineIndices(int n) {
@@ -8788,10 +8771,10 @@ public class PGraphicsOpenGL extends PGraphics {
       pointColors = temp;
     }
 
-    void expandPointAttributes(int n) {
+    void expandPointAttribs(int n) {
       float temp[] = new float[2 * n];
-      PApplet.arrayCopy(pointSizes, 0, temp, 0, 2 * pointVertexCount);
-      pointSizes = temp;
+      PApplet.arrayCopy(pointAttribs, 0, temp, 0, 2 * pointVertexCount);
+      pointAttribs = temp;
     }
     
     void expandPointIndices(int n) {
@@ -8824,7 +8807,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (0 < lineVertexCount && lineVertexCount < lineVertices.length / 4) {
         trimLineVertices();
         trimLineColors();
-        trimLineAttributes();
+        trimLineAttribs();
       }
 
       if (0 < lineIndexCount && lineIndexCount < lineIndices.length) {
@@ -8834,7 +8817,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (0 < pointVertexCount && pointVertexCount < pointVertices.length / 4) {
         trimPointVertices();
         trimPointColors();
-        trimPointAttributes();
+        trimPointAttribs();
       }
 
       if (0 < pointIndexCount && pointIndexCount < pointIndices.length) {
@@ -8914,10 +8897,10 @@ public class PGraphicsOpenGL extends PGraphics {
       lineColors = temp;
     }
 
-    void trimLineAttributes() {
+    void trimLineAttribs() {
       float temp[] = new float[4 * lineVertexCount];
-      PApplet.arrayCopy(lineDirWidths, 0, temp, 0, 4 * lineVertexCount);
-      lineDirWidths = temp;
+      PApplet.arrayCopy(lineAttribs, 0, temp, 0, 4 * lineVertexCount);
+      lineAttribs = temp;
     }
 
     void trimLineIndices() {
@@ -8938,10 +8921,10 @@ public class PGraphicsOpenGL extends PGraphics {
       pointColors = temp;
     }
 
-    void trimPointAttributes() {
+    void trimPointAttribs() {
       float temp[] = new float[2 * pointVertexCount];
-      PApplet.arrayCopy(pointSizes, 0, temp, 0, 2 * pointVertexCount);
-      pointSizes = temp;
+      PApplet.arrayCopy(pointAttribs, 0, temp, 0, 2 * pointVertexCount);
+      pointAttribs = temp;
     }
 
     void trimPointIndices() {
@@ -9055,7 +9038,7 @@ public class PGraphicsOpenGL extends PGraphics {
         pointVertices[index  ] = 1;
       }
 
-      pointColors[tessIdx] = in.scolors[inIdx];    
+      pointColors[tessIdx] = in.strokeColors[inIdx];    
       
       if (renderMode == RETAINED) {
 //        in.tessMap.addPointIndex(inIdx, tessIdx);  
@@ -9090,9 +9073,9 @@ public class PGraphicsOpenGL extends PGraphics {
         lineVertices[index  ] = x0 * mm.m30 + y0 * mm.m31 + z0 * mm.m32 + mm.m33;
 
         index = 4 * tessIdx;
-        lineDirWidths[index++] = x1 * mm.m00 + y1 * mm.m01 + z1 * mm.m02 + mm.m03;
-        lineDirWidths[index++] = x1 * mm.m10 + y1 * mm.m11 + z1 * mm.m12 + mm.m13;
-        lineDirWidths[index  ] = x1 * mm.m20 + y1 * mm.m21 + z1 * mm.m22 + mm.m23;
+        lineAttribs[index++] = x1 * mm.m00 + y1 * mm.m01 + z1 * mm.m02 + mm.m03;
+        lineAttribs[index++] = x1 * mm.m10 + y1 * mm.m11 + z1 * mm.m12 + mm.m13;
+        lineAttribs[index  ] = x1 * mm.m20 + y1 * mm.m21 + z1 * mm.m22 + mm.m23;
       } else {
         index = 4 * tessIdx;
         lineVertices[index++] = x0;
@@ -9101,13 +9084,13 @@ public class PGraphicsOpenGL extends PGraphics {
         lineVertices[index  ] = 1;
 
         index = 4 * tessIdx;
-        lineDirWidths[index++] = x1;
-        lineDirWidths[index++] = y1;
-        lineDirWidths[index  ] = z1;         
+        lineAttribs[index++] = x1;
+        lineAttribs[index++] = y1;
+        lineAttribs[index  ] = z1;         
       }
 
       lineColors[tessIdx] = rgba;      
-      lineDirWidths[4 * tessIdx + 3] = weight;
+      lineAttribs[4 * tessIdx + 3] = weight;
       
       if (renderMode == RETAINED) {
 //        in.tessMap.addLineIndex0(inIdx0, tessIdx);
@@ -9447,16 +9430,16 @@ public class PGraphicsOpenGL extends PGraphics {
           float y = lineVertices[index  ];
 
           index = 4 * i;
-          float xa = lineDirWidths[index++];
-          float ya = lineDirWidths[index  ];
+          float xa = lineAttribs[index++];
+          float ya = lineAttribs[index  ];
 
           index = 4 * i;
           lineVertices[index++] = x * tr.m00 + y * tr.m01 + tr.m02;
           lineVertices[index  ] = x * tr.m10 + y * tr.m11 + tr.m12;
 
           index = 4 * i;
-          lineDirWidths[index++] = xa * tr.m00 + ya * tr.m01 + tr.m02;
-          lineDirWidths[index  ] = xa * tr.m10 + ya * tr.m11 + tr.m12;
+          lineAttribs[index++] = xa * tr.m00 + ya * tr.m01 + tr.m02;
+          lineAttribs[index  ] = xa * tr.m10 + ya * tr.m11 + tr.m12;
         }
       }      
     } 
@@ -9519,9 +9502,9 @@ public class PGraphicsOpenGL extends PGraphics {
           float w = lineVertices[index  ];
 
           index = 4 * i;
-          float xa = lineDirWidths[index++];
-          float ya = lineDirWidths[index++];
-          float za = lineDirWidths[index  ];
+          float xa = lineAttribs[index++];
+          float ya = lineAttribs[index++];
+          float za = lineAttribs[index  ];
 
           index = 4 * i;
           lineVertices[index++] = x * tr.m00 + y * tr.m01 + z * tr.m02 + w * tr.m03;
@@ -9530,9 +9513,9 @@ public class PGraphicsOpenGL extends PGraphics {
           lineVertices[index  ] = x * tr.m30 + y * tr.m31 + z * tr.m32 + w * tr.m33;
 
           index = 4 * i;
-          lineDirWidths[index++] = xa * tr.m00 + ya * tr.m01 + za * tr.m02 + tr.m03;
-          lineDirWidths[index++] = xa * tr.m10 + ya * tr.m11 + za * tr.m12 + tr.m13;
-          lineDirWidths[index  ] = xa * tr.m20 + ya * tr.m21 + za * tr.m22 + tr.m23;
+          lineAttribs[index++] = xa * tr.m00 + ya * tr.m01 + za * tr.m02 + tr.m03;
+          lineAttribs[index++] = xa * tr.m10 + ya * tr.m11 + za * tr.m12 + tr.m13;
+          lineAttribs[index  ] = xa * tr.m20 + ya * tr.m21 + za * tr.m22 + tr.m23;
         }
       }      
     }
@@ -9696,14 +9679,14 @@ public class PGraphicsOpenGL extends PGraphics {
             // the circle perimeter. The point shader will read these attributes and
             // displace the vertices in screen coordinates so the circles are always
             // camera facing (bilboards)
-            tess.pointSizes[2 * attribIdx + 0] = 0;
-            tess.pointSizes[2 * attribIdx + 1] = 0;
+            tess.pointAttribs[2 * attribIdx + 0] = 0;
+            tess.pointAttribs[2 * attribIdx + 1] = 0;
             attribIdx++;
             float val = 0;
             float inc = (float) SINCOS_LENGTH / perim;
             for (int k = 0; k < perim; k++) {
-              tess.pointSizes[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
-              tess.pointSizes[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
+              tess.pointAttribs[2 * attribIdx + 0] = 0.5f * cosLUT[(int) val] * strokeWeight;
+              tess.pointAttribs[2 * attribIdx + 1] = 0.5f * sinLUT[(int) val] * strokeWeight;
               val = (val + inc) % SINCOS_LENGTH;
               attribIdx++;
             }
@@ -9728,7 +9711,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //          if (tess.renderMode == RETAINED) {
 //            in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, nPtVert);
 //          }          
-        } else {
+        } else if (is2D()) {
           // Point geometry is stored in the poly arrays, but is never textured
           prevTexImage = newTexImage;
           newTexImage = null;
@@ -9751,7 +9734,7 @@ public class PGraphicsOpenGL extends PGraphics {
             
             float x0 = in.vertices[3 * i + 0];
             float y0 = in.vertices[3 * i + 1];
-            int rgba = in.scolors[i];
+            int rgba = in.strokeColors[i];
             if (in.renderMode == RETAINED) {
 //              in.tessMap.addFillIndex(i, -1);
             }
@@ -9833,12 +9816,12 @@ public class PGraphicsOpenGL extends PGraphics {
             // the quad corners. The point shader will read these attributes and
             // displace the vertices in screen coordinates so the quads are always
             // camera facing (bilboards)
-            tess.pointSizes[2 * attribIdx + 0] = 0;
-            tess.pointSizes[2 * attribIdx + 1] = 0;
+            tess.pointAttribs[2 * attribIdx + 0] = 0;
+            tess.pointAttribs[2 * attribIdx + 1] = 0;
             attribIdx++;
             for (int k = 0; k < 4; k++) {
-              tess.pointSizes[2 * attribIdx + 0] = 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
-              tess.pointSizes[2 * attribIdx + 1] = 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
+              tess.pointAttribs[2 * attribIdx + 0] = 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight;
+              tess.pointAttribs[2 * attribIdx + 1] = 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight;
               attribIdx++;
             }
 
@@ -9862,7 +9845,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //          if (tess.renderMode == RETAINED) {
 //            in.addPointMapping(in.firstVertex, in.lastVertex, tess.firstPointVertex, 5);
 //          }                  
-        } else {
+        } else if (is2D()) {
           // Point geometry is stored in the poly arrays, but is never textured
           prevTexImage = newTexImage;
           newTexImage = null;
@@ -9886,7 +9869,7 @@ public class PGraphicsOpenGL extends PGraphics {
             
             float x0 = in.vertices[3 * i + 0];
             float y0 = in.vertices[3 * i + 1];
-            int rgba = in.scolors[i];
+            int rgba = in.strokeColors[i];
             if (in.renderMode == RETAINED) {
 //              in.tessMap.addFillIndex(i, -1);
             }
@@ -9954,7 +9937,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }
-        } else {
+        } else if (is2D()) {
           // Line geometry is stored in the poly arrays, but is never textured
           prevTexImage = newTexImage;
           newTexImage = null;
@@ -10021,7 +10004,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }           
-        } else {
+        } else if (is2D()) {
           prevTexImage = newTexImage;
           newTexImage = null;
           setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);
@@ -10090,7 +10073,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }          
-        } else {
+        } else if (is2D()) {
           prevTexImage = newTexImage;
           newTexImage = null;
           setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);   
@@ -10155,7 +10138,7 @@ public class PGraphicsOpenGL extends PGraphics {
 //        if (tess.renderMode == RETAINED) {
 //          addLineMapping(in.firstVertex, in.lastVertex);
 //        }               
-        } else {
+        } else if (is2D()) {
           prevTexImage = newTexImage;
           newTexImage = null;
           setFirstTexIndex(tess.polyIndexCount, tess.polyIndexCache.size - 1);          
@@ -10227,8 +10210,8 @@ public class PGraphicsOpenGL extends PGraphics {
       int color;
       float weight;
       
-      color = constStroke ? strokeColor : in.scolors[i0];
-      weight = constStroke ? strokeWeight : in.sweights[i0];
+      color = constStroke ? strokeColor : in.strokeColors[i0];
+      weight = constStroke ? strokeWeight : in.strokeWeights[i0];
       
       tess.setLineVertex(vidx, in, i0, i1, color, +weight/2);
       tess.lineIndices[iidx++] = (short) (count + 0);      
@@ -10237,8 +10220,8 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.setLineVertex(vidx, in, i0, i1, color, -weight/2);
       tess.lineIndices[iidx++] = (short) (count + 1);
       
-      color = constStroke ? strokeColor : in.scolors[i1];
-      weight = constStroke ? strokeWeight : in.sweights[i1];
+      color = constStroke ? strokeColor : in.strokeColors[i1];
+      weight = constStroke ? strokeWeight : in.strokeWeights[i1];
       
       vidx++;
       tess.setLineVertex(vidx, in, i1, i0, color, -weight/2);
@@ -10278,8 +10261,8 @@ public class PGraphicsOpenGL extends PGraphics {
       int color;
       float weight;
       
-      color = constStroke ? strokeColor : in.scolors[i0];
-      weight = constStroke ? strokeWeight : in.sweights[i0];
+      color = constStroke ? strokeColor : in.strokeColors[i0];
+      weight = constStroke ? strokeWeight : in.strokeWeights[i0];
       int[] verts = {i0, i1};
       
       float x0 = in.vertices[3 * i0 + 0];
@@ -10302,8 +10285,8 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.setPolyVertex(vidx, x0 - normx * weight/2, y0 - normy * weight/2, 0, color, LINE_VERTEX, in, verts);
       tess.polyIndices[iidx++] = (short) (count + 1);
       
-      color = constStroke ? strokeColor : in.scolors[i1];
-      weight = constStroke ? strokeWeight : in.sweights[i1];
+      color = constStroke ? strokeColor : in.strokeColors[i1];
+      weight = constStroke ? strokeWeight : in.strokeWeights[i1];
       
       vidx++;
       tess.setPolyVertex(vidx, x1 - normx * weight/2, y1 - normy * weight/2, 0, color, LINE_VERTEX, in, verts);
