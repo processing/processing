@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 20011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -23,13 +23,13 @@ uniform mat4 modelviewMatrix;
  
 attribute vec4 inVertex;
 attribute vec4 inColor;
-attribute vec2 inSize;
+attribute vec2 inPoint;
 
 varying vec4 vertColor;
 
 void main() {
   vec4 pos = modelviewMatrix * inVertex;
-  pos.xy += inSize.xy;
+  pos.xy += inPoint.xy;
   gl_Position = projectionMatrix * pos;
   
   vertColor = inColor;

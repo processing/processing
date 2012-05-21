@@ -3,8 +3,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2004-12 Ben Fry and Casey Reas
-  Copyright (c) 2001-04 Massachusetts Institute of Technology
+  Copyright (c) 2012 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -25,4 +24,13 @@ package processing.opengl;
 
 public class PShape3D extends PShapeOpenGL {
 
+  public boolean is2D() {
+    return false;
+  }
+
+
+  public boolean is3D() {
+    return true;
+  }
+  
 }
