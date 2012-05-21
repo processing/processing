@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.net.URL;
 import java.nio.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
@@ -76,9 +77,9 @@ public class PGraphicsOpenGL extends PGraphics {
   protected int flushMode = FLUSH_WHEN_FULL;
 
   /** Types of polygon vertices. */
-  static protected final int FILL_VERTEX  = 0;
-  static protected final int LINE_VERTEX  = 1;
-  static protected final int POINT_VERTEX = 2; 
+  static protected final byte FILL_VERTEX  = 0;
+  static protected final byte LINE_VERTEX  = 1;
+  static protected final byte POINT_VERTEX = 2; 
   
   // ........................................................
 
@@ -8505,6 +8506,7 @@ public class PGraphicsOpenGL extends PGraphics {
         expandPolySpecular(newSize);
         expandPolyEmissive(newSize);
         expandPolyShininess(newSize);
+        expandPolyTypes(newSize);
       }
       
       firstPolyVertex = polyVertexCount;
@@ -9104,7 +9106,7 @@ public class PGraphicsOpenGL extends PGraphics {
         lineDirWidths[index  ] = z1;         
       }
 
-      lineColors[tessIdx] = rgba;
+      lineColors[tessIdx] = rgba;      
       lineDirWidths[4 * tessIdx + 3] = weight;
       
       if (renderMode == RETAINED) {
@@ -9118,13 +9120,14 @@ public class PGraphicsOpenGL extends PGraphics {
     // Add poly geometry
     
     void setPolyVertex(int tessIdx, float x, float y, float z,
-                       int rgba,
+                       int rgba, byte type,
                        InGeometry in, int[] vertices) {
       setPolyVertex(tessIdx, x, y, z, 
                     rgba,
                     0, 0, 1, 
                     0, 0, 
-                    0, 0, 0, 0, 
+                    0, 0, 0, 0,
+                    type,
                     in, vertices);
     }
     
@@ -9132,7 +9135,8 @@ public class PGraphicsOpenGL extends PGraphics {
                        int rgba,
                        float nx, float ny, float nz,
                        float u, float v,
-                       int am, int sp, int em, float shine, 
+                       int am, int sp, int em, float shine,
+                       byte type, 
                        InGeometry in, int[] vertices) {
       int index;      
 
@@ -9163,6 +9167,8 @@ public class PGraphicsOpenGL extends PGraphics {
         polyNormals[index  ] = nz;
       }
 
+      polyTypes[tessIdx] = type;
+      
       polyColors[tessIdx] = rgba;
 
       index = 2 * tessIdx;
@@ -9192,6 +9198,7 @@ public class PGraphicsOpenGL extends PGraphics {
                        float nx, float ny, float nz,
                        float u, float v,
                        int am, int sp, int em, float shine, 
+                       byte type,
                        InGeometry in, int[] vertices, float[] weights) {
       polyVertexCheck();
       int index;
@@ -9223,6 +9230,8 @@ public class PGraphicsOpenGL extends PGraphics {
         polyNormals[index++] = ny;
         polyNormals[index  ] = nz;
       }
+      
+      polyTypes[count] = type;
 
       polyColors[count] = rgba;
 
@@ -9248,15 +9257,15 @@ public class PGraphicsOpenGL extends PGraphics {
       }      
     }
     
-    void addPolyVertices(InGeometry in) {
-      addPolyVertices(in, in.firstVertex, in.lastVertex);
+    void addPolyVertices(InGeometry in, byte type) {
+      addPolyVertices(in, in.firstVertex, in.lastVertex, type);
     }    
 
-    void addPolyVertex(InGeometry in, int i) {
-      addPolyVertices(in, i, i);
+    void addPolyVertex(InGeometry in, int i, byte type) {
+      addPolyVertices(in, i, i, type);
     }
     
-    void addPolyVertices(InGeometry in, int i0, int i1) {
+    void addPolyVertices(InGeometry in, int i0, int i1, byte type) {
       int index;
       int nvert = i1 - i0 + 1;
 
@@ -9340,6 +9349,8 @@ public class PGraphicsOpenGL extends PGraphics {
           float u = in.texcoords[index++];
           float v = in.texcoords[index  ];
 
+          polyTypes[tessIdx] = type;
+          
           polyColors[tessIdx] = in.colors[inIdx];
 
           index = 2 * tessIdx;
@@ -9353,6 +9364,7 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       } else {
         PApplet.arrayCopy(in.colors, i0, polyColors, firstPolyVertex, nvert);
+        Arrays.fill(polyTypes, i0, i0 + nvert, type);
         PApplet.arrayCopy(in.texcoords, 2 * i0, polyTexcoords, 2 * firstPolyVertex, 2 * nvert);
         PApplet.arrayCopy(in.ambient, i0, polyAmbient, firstPolyVertex, nvert);
         PApplet.arrayCopy(in.specular, i0, polySpecular, firstPolyVertex, nvert);
@@ -9746,11 +9758,11 @@ public class PGraphicsOpenGL extends PGraphics {
             
             float val = 0;
             float inc = (float) SINCOS_LENGTH / perim;            
-            tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, in, null);              
+            tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, POINT_VERTEX, in, null);              
             vertIdx++;            
             for (int k = 0; k < perim; k++) {
               tess.setPolyVertex(vertIdx, x0 + 0.5f * cosLUT[(int) val] * strokeWeight, 
-                                          y0 + 0.5f * sinLUT[(int) val] * strokeWeight, 0, rgba, in, null);
+                                          y0 + 0.5f * sinLUT[(int) val] * strokeWeight, 0, rgba, POINT_VERTEX, in, null);
               vertIdx++;
               val = (val + inc) % SINCOS_LENGTH;
             }
@@ -9879,11 +9891,11 @@ public class PGraphicsOpenGL extends PGraphics {
 //              in.tessMap.addFillIndex(i, -1);
             }
 
-            tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, in, null);              
+            tess.setPolyVertex(vertIdx, x0, y0, 0, rgba, POINT_VERTEX, in, null);              
             vertIdx++;            
             for (int k = 0; k < nvert - 1; k++) {
               tess.setPolyVertex(vertIdx, x0 + 0.5f * QUAD_POINT_SIGNS[k][0] * strokeWeight, 
-                                          y0 + 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight, 0, rgba, in, null);
+                                          y0 + 0.5f * QUAD_POINT_SIGNS[k][1] * strokeWeight, 0, rgba, POINT_VERTEX, in, null);
               vertIdx++;
             }            
             
@@ -10283,18 +10295,18 @@ public class PGraphicsOpenGL extends PGraphics {
       float normx = -diry / llen;
       float normy = +dirx / llen;
       
-      tess.setPolyVertex(vidx, x0 + normx * weight/2, y0 + normy * weight/2, 0, color, in, verts); 
+      tess.setPolyVertex(vidx, x0 + normx * weight/2, y0 + normy * weight/2, 0, color, LINE_VERTEX, in, verts); 
       tess.polyIndices[iidx++] = (short) (count + 0);      
       
       vidx++;
-      tess.setPolyVertex(vidx, x0 - normx * weight/2, y0 - normy * weight/2, 0, color, in, verts);
+      tess.setPolyVertex(vidx, x0 - normx * weight/2, y0 - normy * weight/2, 0, color, LINE_VERTEX, in, verts);
       tess.polyIndices[iidx++] = (short) (count + 1);
       
       color = constStroke ? strokeColor : in.scolors[i1];
       weight = constStroke ? strokeWeight : in.sweights[i1];
       
       vidx++;
-      tess.setPolyVertex(vidx, x1 - normx * weight/2, y1 - normy * weight/2, 0, color, in, verts);
+      tess.setPolyVertex(vidx, x1 - normx * weight/2, y1 - normy * weight/2, 0, color, LINE_VERTEX, in, verts);
       tess.polyIndices[iidx++] = (short) (count + 2);
       
       // Starting a new triangle re-using prev vertices.
@@ -10302,7 +10314,7 @@ public class PGraphicsOpenGL extends PGraphics {
       tess.polyIndices[iidx++] = (short) (count + 0);
 
       vidx++;
-      tess.setPolyVertex(vidx, x1 + normx * weight/2, y1 + normy * weight/2, 0, color, in, verts);
+      tess.setPolyVertex(vidx, x1 + normx * weight/2, y1 + normy * weight/2, 0, color, LINE_VERTEX, in, verts);
       tess.polyIndices[iidx++] = (short) (count + 3);
       
 //    NEW TESSMAP API      
@@ -10520,7 +10532,7 @@ public class PGraphicsOpenGL extends PGraphics {
           // so we need to wrap-up things anyways.
           
           // So, copy vertices in current region first
-          tess.addPolyVertices(in, inMaxVert0, inMaxVert1);
+          tess.addPolyVertices(in, inMaxVert0, inMaxVert1, FILL_VERTEX);
           
           if (0 < dup) {
             // Adjusting the negative indices so they correspond to vertices added 
@@ -10537,7 +10549,7 @@ public class PGraphicsOpenGL extends PGraphics {
             // Copy duplicated vertices from previous regions last            
             for (int i = 0; i < inDupList.size(); i++) {
               int ri = inDupList.get(i);
-              tess.addPolyVertex(in, ri + inMaxVert0);  
+              tess.addPolyVertex(in, ri + inMaxVert0, FILL_VERTEX);  
             }
           }
           
@@ -10603,7 +10615,7 @@ public class PGraphicsOpenGL extends PGraphics {
       if (fill && 3 <= nInVert) {
         firstPolyIndexCache = -1;
         
-        callback.init(in.renderMode == RETAINED, calcNormals);
+        callback.init(in.renderMode == RETAINED, calcNormals, FILL_VERTEX);
         
         gluTess.beginPolygon();
 
@@ -10669,7 +10681,7 @@ public class PGraphicsOpenGL extends PGraphics {
     // Based on the opengl stroke hack described here: 
     // http://wiki.processing.org/w/Stroke_attributes_in_OpenGL
     public void tessellateLinePath(LinePath path, boolean haveFill) {  
-      callback.init(in.renderMode == RETAINED && !haveFill, true);
+      callback.init(in.renderMode == RETAINED && !haveFill, true, LINE_VERTEX);
       
       int cap = strokeCap == ROUND ? LinePath.CAP_ROUND :
                 strokeCap == PROJECT ? LinePath.CAP_SQUARE :
@@ -10749,14 +10761,16 @@ public class PGraphicsOpenGL extends PGraphics {
     // to eventually come up with an optimized GLU tessellator in native code.
     protected class TessellatorCallback implements PGL.TessellatorCallback {
       boolean calcNormals;
+      byte vertexType;
       IndexCache cache;
       int cacheIndex;
       int vertFirst;
       int vertCount;
       int primitive;
 
-      public void init(boolean add, boolean calcn) {
+      public void init(boolean add, boolean calcn, byte type) {
         calcNormals = calcn;
+        vertexType = type;
         cache = tess.polyIndexCache;
          
         if (add) {
@@ -10889,7 +10903,8 @@ public class PGraphicsOpenGL extends PGraphics {
                                (float) d[ 7],  (float) d[ 8], (float) d[ 9],
                                (float) d[10], (float) d[11],
                                acolor, scolor, ecolor,
-                               (float) d[24], 
+                               (float) d[24],
+                               vertexType,
                                in, vertices, weights);
             
             vertCount++;
