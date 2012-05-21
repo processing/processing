@@ -1,7 +1,7 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 20011-12 Ben Fry and Casey Reas
+  Copyright (c) 2011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,7 @@ uniform int perspective;
 
 attribute vec4 inVertex;
 attribute vec4 inColor;
-attribute vec4 inDirWidth;
+attribute vec4 inLine;
 
 varying vec4 vertColor;
 
@@ -43,7 +43,7 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
   
 void main() {
   vec4 pos_p = inVertex;
-  vec4 pos_q = vec4(inDirWidth.xyz, 1);
+  vec4 pos_q = vec4(inLine.xyz, 1);
     
   vec4 v_p = modelviewMatrix * pos_p;
   vec4 clip_p = projectionMatrix * v_p;
@@ -57,7 +57,7 @@ void main() {
   
   float segment_length = length(tangent.xy);  
   vec2 perp = normalize(vec2(-tangent.y, tangent.x));
-  float thickness = inDirWidth.w;
+  float thickness = inLine.w;
   vec2 window_offset = perp * thickness;
 
   if (0 < perspective) {

@@ -400,6 +400,14 @@ public class PShape implements PConstants {
     return new PVector();
   }
   
+
+  /**
+   * Return true if this shape is 2D. Defaults to true.
+   */  
+  public boolean is2D() {
+    return true;
+  }
+  
   
   /**
    * Return true if this shape is 3D. Defaults to false.
@@ -408,6 +416,14 @@ public class PShape implements PConstants {
     return false;
   }
 
+  
+  /**
+   * Return true if this shape requires rendering through OpenGL. Defaults to false.
+   */  
+  public boolean isGL() {
+    return false;
+  }
+  
 
   ///////////////////////////////////////////////////////////
 
