@@ -452,10 +452,10 @@ public interface PConstants {
   
   // shaders
 
-  static public final int FILL_SHADER_SIMPLE = 0;
-  static public final int FILL_SHADER_LIT = 1;
-  static public final int FILL_SHADER_TEX = 2;
-  static public final int FILL_SHADER_FULL = 3;
+  static public final int POLY_SHADER_SIMPLE = 0;
+  static public final int POLY_SHADER_LIT = 1;
+  static public final int POLY_SHADER_TEX = 2;
+  static public final int POLY_SHADER_FULL = 3;
   static public final int LINE_SHADER = 4;
   static public final int POINT_SHADER = 5;
   

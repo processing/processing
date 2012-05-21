@@ -1,12 +1,11 @@
 /*
   Part of the Processing project - http://processing.org
 
-  Copyright (c) 2011 Andres Colubri
+  Copyright (c) 20011-12 Ben Fry and Casey Reas
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  License version 2.1 as published by the Free Software Foundation.
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,12 +16,11 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
-*/
+ */
 
 uniform mat4 modelviewMatrix;
 uniform mat4 projmodelviewMatrix;
 uniform mat3 normalMatrix;
-uniform mat4 texcoordMatrix;
 
 uniform int lightCount;
 uniform vec4 lightPosition[8];
@@ -36,7 +34,6 @@ uniform vec2 lightSpotParameters[8];
 attribute vec4 inVertex;
 attribute vec4 inColor;
 attribute vec3 inNormal;
-attribute vec2 inTexcoord;
 
 attribute vec4 inAmbient;
 attribute vec4 inSpecular;
@@ -44,7 +41,6 @@ attribute vec4 inEmissive;
 attribute float inShine;
 
 varying vec4 vertColor;
-varying vec4 vertTexcoord;
 
 const float zero_float = 0.0;
 const float one_float = 1.0;
@@ -128,16 +124,13 @@ void main() {
     if (any(greaterThan(lightSpecular[i], zero_vec3))) {
       totalSpecular += lightSpecular[i] * falloff * spotf * 
                        blinnPhongFactor(lightDir, ecVertex, ecNormal, inShine);
-    }   
+    }     
   }    
-  
+
   // Calculating final color as result of all lights (plus emissive term).
   // Transparency is determined exclusively by the diffuse component.
   vertColor = vec4(totalAmbient, 0) * inAmbient + 
               vec4(totalDiffuse, 1) * inColor + 
               vec4(totalSpecular, 0) * inSpecular + 
-              vec4(inEmissive.rgb, 0); 
-              
-  // Calculating texture coordinates, with r and q set both to one
-  vertTexcoord = texcoordMatrix * vec4(inTexcoord, 1.0, 1.0);        
+              vec4(inEmissive.rgb, 0);              
 }
