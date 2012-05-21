@@ -22,15 +22,72 @@
 
 package processing.opengl;
 
+import processing.core.PApplet;
+import processing.core.PGraphics;
+
 public class PShape2D extends PShapeOpenGL {
+  
+  public PShape2D(PApplet parent, int family) {
+    super(parent, family);
+  }  
   
   public boolean is2D() {
     return true;
   }
 
-
   public boolean is3D() {
     return false;
   }
   
+  public void vertex(float x, float y, float z) {
+    PGraphics.showDepthWarningXYZ("vertex");
+  }
+  
+  public void vertex(float x, float y, float z, float u, float v) {
+    PGraphics.showDepthWarningXYZ("vertex");
+  }  
+  
+  public void translate(float tx, float ty, float tz) {
+    PGraphics.showVariationWarning("translate");
+  }  
+  
+  public void rotateX(float angle) {
+    PGraphics.showDepthWarning("rotateX");
+  }
+
+  public void rotateY(float angle) {
+    PGraphics.showDepthWarning("rotateY");
+  }
+
+  public void rotateZ(float angle) {
+    PGraphics.showDepthWarning("rotateZ");
+  }
+
+  public void rotate(float angle, float vx, float vy, float vz) {
+    PGraphics.showVariationWarning("rotate");
+  }  
+  
+  public void applyMatrix(float n00, float n01, float n02, float n03,
+                          float n10, float n11, float n12, float n13,
+                          float n20, float n21, float n22, float n23,
+                          float n30, float n31, float n32, float n33) {
+    PGraphics.showVariationWarning("applyMatrix");
+  }  
+  
+  public void scale(float sx, float sy, float sz) {
+    PGraphics.showDepthWarningXYZ("scale");
+  }
+  
+  public float getVertexZ(int index) {
+    PGraphics.showDepthWarningXYZ("getVertexZ");
+    return 0;
+  }
+  
+  public void setVertex(int index, float x, float y) {
+    super.setVertex(index, x, y, 0);
+  }
+  
+  public void setVertex(int index, float x, float y, float z) {
+    PGraphics.showDepthWarningXYZ("setVertex");
+  }
 }
