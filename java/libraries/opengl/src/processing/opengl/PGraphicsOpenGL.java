@@ -45,6 +45,7 @@ import java.util.Hashtable;
 import java.util.Set;
 import java.util.Stack;
 
+// TODO: implement raw output of lines and points in 2D mode.
 
 /**
  * OpenGL renderer.
@@ -2437,187 +2438,6 @@ public class PGraphicsOpenGL extends PGraphics {
     drawPixels(mx1, my1, mx2 - mx1 + 1, my2 - my1 + 1);
     modified = false;
   }
-
-
-  protected void flushPoints() {
-    updatePointBuffers();
-
-    PointShader shader = getPointShader();
-    shader.start();
-
-    IndexCache cache = tessGeo.pointIndexCache;
-    for (int n = 0; n < cache.size; n++) {     
-      int ioffset = cache.indexOffset[n];
-      int icount = cache.indexCount[n];
-      int voffset = cache.vertexOffset[n];
-
-      shader.setVertexAttribute(glPointVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
-      shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-      shader.setPointAttribute(glPointAttribBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
-
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
-      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-
-    shader.stop();
-    unbindPointBuffers();
-  }
-
-
-  void rawPoints() {
-    raw.colorMode(RGB);
-    raw.noFill();
-    raw.strokeCap(strokeCap);
-    raw.beginShape(POINTS);
-    
-    float[] vertices = tessGeo.pointVertices;
-    int[] color = tessGeo.pointColors;
-    float[] attribs = tessGeo.pointAttribs;
-    short[] indices = tessGeo.pointIndices; 
-    
-    IndexCache cache = tessGeo.pointIndexCache;
-    for (int n = 0; n < cache.size; n++) {     
-      int ioffset = cache.indexOffset[n];
-      int icount = cache.indexCount[n];
-      int voffset = cache.vertexOffset[n];
-      
-      int pt = ioffset;
-      while (pt < (ioffset + icount) / 3) {
-        float size = attribs[2 * pt + 2];
-        float weight;
-        int perim;
-        if (0 < size) { // round point
-          weight = +size / 0.5f;
-          perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * weight / 20)) + 1;          
-        } else {        // Square point
-          weight = -size / 0.5f;
-          perim = 5;          
-        }
-                
-        int i0 = voffset + indices[3 * pt];
-        int argb0 = PGL.nativeToJavaARGB(color[i0]);
-        float[] pt0 = {0, 0, 0, 0};
-        
-        if (flushMode == FLUSH_CONTINUOUSLY || hints[DISABLE_TRANSFORM_CACHE]) {
-          float[] src0 = {0, 0, 0, 0};          
-          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);          
-          modelview.mult(src0, pt0);
-        } else {
-          PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
-        }        
-        
-        if (raw.is3D()) {
-          raw.strokeWeight(weight);
-          raw.stroke(argb0);
-          raw.vertex(pt0[X], pt0[Y], pt0[Z]);
-        } else if (raw.is2D()) {
-          float sx0 = screenX(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenY(pt0[0], pt0[1], pt0[2], pt0[3]);
-          raw.strokeWeight(weight);
-          raw.stroke(argb0);
-          raw.vertex(sx0, sy0);     
-        }         
-        
-        pt += perim;
-      }
-    }    
-    
-    raw.endShape();
-  }
-  
-
-  protected void flushLines() {
-    updateLineBuffers();
-
-    LineShader shader = getLineShader();
-    shader.start();
-
-    IndexCache cache = tessGeo.lineIndexCache;
-    for (int n = 0; n < cache.size; n++) {     
-      int ioffset = cache.indexOffset[n];
-      int icount = cache.indexCount[n];
-      int voffset = cache.vertexOffset[n];
-      
-      shader.setVertexAttribute(glLineVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
-      shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
-      shader.setLineAttribute(glLineAttribBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
-
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
-      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
-      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
-    }
-    
-    shader.stop();
-    unbindLineBuffers();
-  }
-
-  
-  void rawLines() {
-    raw.colorMode(RGB);
-    raw.noFill();
-    raw.strokeCap(strokeCap);
-    raw.strokeJoin(strokeJoin);
-    raw.beginShape(LINES);
-    
-    float[] vertices = tessGeo.lineVertices;
-    int[] color = tessGeo.lineColors;
-    float[] attribs = tessGeo.lineAttribs;
-    short[] indices = tessGeo.lineIndices;    
-
-    IndexCache cache = tessGeo.lineIndexCache;
-    for (int n = 0; n < cache.size; n++) {     
-      int ioffset = cache.indexOffset[n];
-      int icount = cache.indexCount[n];
-      int voffset = cache.vertexOffset[n];    
-          
-      for (int ln = ioffset / 6; ln < (ioffset + icount) / 6; ln++) {
-        // Each line segment is defined by six indices since its
-        // formed by two triangles. We only need the first and last
-        // vertices.
-        int i0 = voffset + indices[6 * ln + 0];
-        int i1 = voffset + indices[6 * ln + 5];
-        
-        float[] pt0 = {0, 0, 0, 0};
-        float[] pt1 = {0, 0, 0, 0};        
-        int argb0 = PGL.nativeToJavaARGB(color[i0]);
-        int argb1 = PGL.nativeToJavaARGB(color[i1]);
-        float sw0 = 2 * attribs[4 * i0 + 3];
-        float sw1 = 2 * attribs[4 * i1 + 3];
-          
-        if (flushMode == FLUSH_CONTINUOUSLY || hints[DISABLE_TRANSFORM_CACHE]) {
-          float[] src0 = {0, 0, 0, 0};
-          float[] src1 = {0, 0, 0, 0};          
-          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);          
-          modelview.mult(src0, pt0);
-          modelview.mult(src1, pt1);
-        } else {
-          PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
-          PApplet.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
-        }
-
-        if (raw.is3D()) {
-          raw.strokeWeight(sw0);
-          raw.stroke(argb0);
-          raw.vertex(pt0[X], pt0[Y], pt0[Z]);
-          raw.strokeWeight(sw1);
-          raw.stroke(argb1);
-          raw.vertex(pt1[X], pt1[Y], pt1[Z]);
-        } else if (raw.is2D()) {
-          float sx0 = screenX(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenY(pt0[0], pt0[1], pt0[2], pt0[3]);
-          float sx1 = screenX(pt1[0], pt1[1], pt1[2], pt1[3]), sy1 = screenY(pt1[0], pt1[1], pt1[2], pt1[3]);
-          raw.strokeWeight(sw0);
-          raw.stroke(argb0);
-          raw.vertex(sx0, sy0);
-          raw.strokeWeight(sw1);
-          raw.stroke(argb1);
-          raw.vertex(sx1, sy1);        
-        }          
-      }      
-    }    
-      
-    raw.endShape();
-  }
   
 
   protected void flushPolys() {
@@ -2627,7 +2447,8 @@ public class PGraphicsOpenGL extends PGraphics {
     for (int i = 0; i < texCache.size; i++) {
       PTexture tex = texCache.getTexture(i);
 
-      // TODO: lights shouldn't be used in line/point rendering.
+      // If the renderer is 2D, then lights should always be false,
+      // so no need to worry about that.
       PolyShader shader = getPolyShader(lights, tex != null);
       shader.start();
        
@@ -2763,6 +2584,187 @@ public class PGraphicsOpenGL extends PGraphics {
       }
     }
         
+    raw.endShape();
+  }
+
+  
+  protected void flushLines() {
+    updateLineBuffers();
+
+    LineShader shader = getLineShader();
+    shader.start();
+
+    IndexCache cache = tessGeo.lineIndexCache;
+    for (int n = 0; n < cache.size; n++) {     
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];
+      
+      shader.setVertexAttribute(glLineVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setColorAttribute(glLineColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+      shader.setLineAttribute(glLineAttribBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glLineIndexBufferID);
+      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+    
+    shader.stop();
+    unbindLineBuffers();
+  }
+
+  
+  void rawLines() {
+    raw.colorMode(RGB);
+    raw.noFill();
+    raw.strokeCap(strokeCap);
+    raw.strokeJoin(strokeJoin);
+    raw.beginShape(LINES);
+    
+    float[] vertices = tessGeo.lineVertices;
+    int[] color = tessGeo.lineColors;
+    float[] attribs = tessGeo.lineAttribs;
+    short[] indices = tessGeo.lineIndices;    
+
+    IndexCache cache = tessGeo.lineIndexCache;
+    for (int n = 0; n < cache.size; n++) {     
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];    
+          
+      for (int ln = ioffset / 6; ln < (ioffset + icount) / 6; ln++) {
+        // Each line segment is defined by six indices since its
+        // formed by two triangles. We only need the first and last
+        // vertices.
+        int i0 = voffset + indices[6 * ln + 0];
+        int i1 = voffset + indices[6 * ln + 5];
+        
+        float[] pt0 = {0, 0, 0, 0};
+        float[] pt1 = {0, 0, 0, 0};        
+        int argb0 = PGL.nativeToJavaARGB(color[i0]);
+        int argb1 = PGL.nativeToJavaARGB(color[i1]);
+        float sw0 = 2 * attribs[4 * i0 + 3];
+        float sw1 = 2 * attribs[4 * i1 + 3];
+          
+        if (flushMode == FLUSH_CONTINUOUSLY || hints[DISABLE_TRANSFORM_CACHE]) {
+          float[] src0 = {0, 0, 0, 0};
+          float[] src1 = {0, 0, 0, 0};          
+          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);
+          PApplet.arrayCopy(vertices, 4 * i1, src1, 0, 4);          
+          modelview.mult(src0, pt0);
+          modelview.mult(src1, pt1);
+        } else {
+          PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
+          PApplet.arrayCopy(vertices, 4 * i1, pt1, 0, 4);
+        }
+
+        if (raw.is3D()) {
+          raw.strokeWeight(sw0);
+          raw.stroke(argb0);
+          raw.vertex(pt0[X], pt0[Y], pt0[Z]);
+          raw.strokeWeight(sw1);
+          raw.stroke(argb1);
+          raw.vertex(pt1[X], pt1[Y], pt1[Z]);
+        } else if (raw.is2D()) {
+          float sx0 = screenX(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenY(pt0[0], pt0[1], pt0[2], pt0[3]);
+          float sx1 = screenX(pt1[0], pt1[1], pt1[2], pt1[3]), sy1 = screenY(pt1[0], pt1[1], pt1[2], pt1[3]);
+          raw.strokeWeight(sw0);
+          raw.stroke(argb0);
+          raw.vertex(sx0, sy0);
+          raw.strokeWeight(sw1);
+          raw.stroke(argb1);
+          raw.vertex(sx1, sy1);        
+        }          
+      }      
+    }    
+      
+    raw.endShape();
+  }
+  
+  
+  protected void flushPoints() {
+    updatePointBuffers();
+
+    PointShader shader = getPointShader();
+    shader.start();
+
+    IndexCache cache = tessGeo.pointIndexCache;
+    for (int n = 0; n < cache.size; n++) {     
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];
+
+      shader.setVertexAttribute(glPointVertexBufferID, 4, PGL.GL_FLOAT, 0, 4 * voffset * PGL.SIZEOF_FLOAT);
+      shader.setColorAttribute(glPointColorBufferID, 4, PGL.GL_UNSIGNED_BYTE, 0, 4 * voffset * PGL.SIZEOF_BYTE);
+      shader.setPointAttribute(glPointAttribBufferID, 2, PGL.GL_FLOAT, 0, 2 * voffset * PGL.SIZEOF_FLOAT);
+
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, glPointIndexBufferID);
+      pgl.glDrawElements(PGL.GL_TRIANGLES, icount, PGL.INDEX_TYPE, ioffset * PGL.SIZEOF_INDEX);
+      pgl.glBindBuffer(PGL.GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    shader.stop();
+    unbindPointBuffers();
+  }
+
+
+  void rawPoints() {
+    raw.colorMode(RGB);
+    raw.noFill();
+    raw.strokeCap(strokeCap);
+    raw.beginShape(POINTS);
+    
+    float[] vertices = tessGeo.pointVertices;
+    int[] color = tessGeo.pointColors;
+    float[] attribs = tessGeo.pointAttribs;
+    short[] indices = tessGeo.pointIndices; 
+    
+    IndexCache cache = tessGeo.pointIndexCache;
+    for (int n = 0; n < cache.size; n++) {     
+      int ioffset = cache.indexOffset[n];
+      int icount = cache.indexCount[n];
+      int voffset = cache.vertexOffset[n];
+      
+      int pt = ioffset;
+      while (pt < (ioffset + icount) / 3) {
+        float size = attribs[2 * pt + 2];
+        float weight;
+        int perim;
+        if (0 < size) { // round point
+          weight = +size / 0.5f;
+          perim = PApplet.max(MIN_POINT_ACCURACY, (int) (TWO_PI * weight / 20)) + 1;          
+        } else {        // Square point
+          weight = -size / 0.5f;
+          perim = 5;          
+        }
+                
+        int i0 = voffset + indices[3 * pt];
+        int argb0 = PGL.nativeToJavaARGB(color[i0]);
+        float[] pt0 = {0, 0, 0, 0};
+        
+        if (flushMode == FLUSH_CONTINUOUSLY || hints[DISABLE_TRANSFORM_CACHE]) {
+          float[] src0 = {0, 0, 0, 0};          
+          PApplet.arrayCopy(vertices, 4 * i0, src0, 0, 4);          
+          modelview.mult(src0, pt0);
+        } else {
+          PApplet.arrayCopy(vertices, 4 * i0, pt0, 0, 4);
+        }        
+        
+        if (raw.is3D()) {
+          raw.strokeWeight(weight);
+          raw.stroke(argb0);
+          raw.vertex(pt0[X], pt0[Y], pt0[Z]);
+        } else if (raw.is2D()) {
+          float sx0 = screenX(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenY(pt0[0], pt0[1], pt0[2], pt0[3]);
+          raw.strokeWeight(weight);
+          raw.stroke(argb0);
+          raw.vertex(sx0, sy0);     
+        }         
+        
+        pt += perim;
+      }
+    }    
+    
     raw.endShape();
   }
   
