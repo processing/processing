@@ -8635,7 +8635,7 @@ public class PGraphicsOpenGL extends PGraphics {
       float y0 = in.vertices[index++];
       float z0 = in.vertices[index  ];
 
-      index = 4 * inIdx1;
+      index = 3 * inIdx1;
       float x1 = in.vertices[index++];
       float y1 = in.vertices[index++];
       float z1 = in.vertices[index  ];
