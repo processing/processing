@@ -9,14 +9,14 @@
 PShape group;
 
 void setup() {
-  size(640, 360, P2D);
+  size(640, 360, P3D);
   smooth();
   // Create the shape as a group
   group = createShape(GROUP);
   
   // Make a polygon PShape
   PShape star = createShape();
-  star.fill(102);
+  star.noFill();
   star.stroke(255);
   star.vertex(0, -50);
   star.vertex(14, -20);
@@ -49,7 +49,7 @@ void setup() {
   // Add them all to the group
   group.addChild(star);
   group.addChild(path);
-  group.addChild(rectangle);
+  group.addChild(rectangle); // Rectangle is missing???
   
 }
 
