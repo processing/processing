@@ -19,7 +19,7 @@ void setup() {
 void draw() {
   background(51);
   // We can dynamically set the stroke and fill of the shape
-  circle.stroke(255);
+  circle.stroke(255);  // Not working in P2D??
   circle.fill(map(mouseX,0,width,0,255));
   // We can use translate to move the PShape
   translate(mouseX, mouseY);

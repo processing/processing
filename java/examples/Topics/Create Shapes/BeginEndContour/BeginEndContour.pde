@@ -7,7 +7,7 @@
 PShape s;
 
 void setup() {
-  size(640, 360, P3D);
+  size(640, 360, P3D); // Not working in P2D?
   smooth();
   // Make a shape
   s = createShape();
@@ -18,7 +18,8 @@ void setup() {
   s.vertex(-100,-100);
   s.vertex(100,-100);
   s.vertex(100,100);
-  s.vertex(100,-100);
+  s.vertex(-100,100);
+  s.vertex(-100,-100);
   s.endContour();
   
   // Interior part of shape
@@ -26,7 +27,8 @@ void setup() {
   s.vertex(-10,-10);
   s.vertex(10,-10);
   s.vertex(10,10);
-  s.vertex(10,-10);
+  s.vertex(-10,10);
+  s.vertex(-10,-10);
   s.endContour();
   
   // Finishing off shape

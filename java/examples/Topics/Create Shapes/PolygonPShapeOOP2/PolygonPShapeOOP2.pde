@@ -11,10 +11,10 @@
 ArrayList<Polygon> polygons;
 
 void setup() {
-  size(640, 360, P3D);
+  size(640, 360, P2D);
   smooth();
   // Make a PShape
-  PShape star = createShape(POLYGON);
+  PShape star = createShape();
   star.fill(0,127);
   star.stroke(0);
   star.vertex(0, -50);
