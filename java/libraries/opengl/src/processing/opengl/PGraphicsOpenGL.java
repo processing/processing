@@ -32,7 +32,6 @@ import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
 
-import java.io.BufferedReader;
 import java.net.URL;
 import java.nio.*;
 import java.util.ArrayList;
@@ -41,7 +40,6 @@ import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Set;
 import java.util.Stack;
 
@@ -1510,9 +1508,11 @@ public class PGraphicsOpenGL extends PGraphics {
       calcProjmodelview();
     }
 
-    noLights();
-    lightFalloff(1, 0, 0);
-    lightSpecular(0, 0, 0);
+    if (is3D()) {
+      noLights();
+      lightFalloff(1, 0, 0);
+      lightSpecular(0, 0, 0);
+    }
 
     // Because y is flipped, the vertices that should be specified by 
     // the user in CCW order to define a front-facing facet, end up being
@@ -2056,17 +2056,17 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void vertex(float x, float y) {
-    vertex(x, y, 0, 0, 0);
+    vertexImpl(x, y, 0, 0, 0);
   }
 
 
   public void vertex(float x, float y, float u, float v) {
-    vertex(x, y, 0, u, v);
+    vertexImpl(x, y, 0, u, v);
   }
 
 
   public void vertex(float x, float y, float z) {
-    vertex(x, y, z, 0, 0);
+    vertexImpl(x, y, z, 0, 0);
   }
 
 
@@ -2317,7 +2317,7 @@ public class PGraphicsOpenGL extends PGraphics {
   
 
   protected void flushPolys() {
-    updatePolyBuffers(lights, texCache.haveTexture);
+    updatePolyBuffers(lights, texCache.hasTexture);
 
     texCache.beginRender();
     for (int i = 0; i < texCache.size; i++) {
@@ -2426,9 +2426,9 @@ public class PGraphicsOpenGL extends PGraphics {
               raw.fill(argb2);
               raw.vertex(pt2[X], pt2[Y], pt2[Z], uv[2 * i2 + 0], uv[2 * i2 + 1]);              
             } else if (raw.is2D()) {
-              float sx0 = screenX(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenY(pt0[0], pt0[1], pt0[2], pt0[3]);
-              float sx1 = screenX(pt1[0], pt1[1], pt1[2], pt1[3]), sy1 = screenY(pt1[0], pt1[1], pt1[2], pt1[3]);
-              float sx2 = screenX(pt2[0], pt2[1], pt2[2], pt2[3]), sy2 = screenY(pt2[0], pt2[1], pt2[2], pt2[3]);              
+              float sx0 = screenXImpl(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenYImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
+              float sx1 = screenXImpl(pt1[0], pt1[1], pt1[2], pt1[3]), sy1 = screenYImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
+              float sx2 = screenXImpl(pt2[0], pt2[1], pt2[2], pt2[3]), sy2 = screenYImpl(pt2[0], pt2[1], pt2[2], pt2[3]);              
               raw.fill(argb0);
               raw.vertex(sx0, sy0, uv[2 * i0 + 0], uv[2 * i0 + 1]);
               raw.fill(argb1);
@@ -2445,9 +2445,9 @@ public class PGraphicsOpenGL extends PGraphics {
               raw.fill(argb2);
               raw.vertex(pt2[X], pt2[Y], pt2[Z]);              
             } else if (raw.is2D()) {
-              float sx0 = screenX(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenY(pt0[0], pt0[1], pt0[2], pt0[3]);
-              float sx1 = screenX(pt1[0], pt1[1], pt1[2], pt1[3]), sy1 = screenY(pt1[0], pt1[1], pt1[2], pt1[3]);
-              float sx2 = screenX(pt2[0], pt2[1], pt2[2], pt2[3]), sy2 = screenY(pt2[0], pt2[1], pt2[2], pt2[3]);              
+              float sx0 = screenXImpl(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenYImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
+              float sx1 = screenXImpl(pt1[0], pt1[1], pt1[2], pt1[3]), sy1 = screenYImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
+              float sx2 = screenXImpl(pt2[0], pt2[1], pt2[2], pt2[3]), sy2 = screenYImpl(pt2[0], pt2[1], pt2[2], pt2[3]);              
               raw.fill(argb0);
               raw.vertex(sx0, sy0);
               raw.fill(argb1);
@@ -2542,8 +2542,8 @@ public class PGraphicsOpenGL extends PGraphics {
           raw.stroke(argb1);
           raw.vertex(pt1[X], pt1[Y], pt1[Z]);
         } else if (raw.is2D()) {
-          float sx0 = screenX(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenY(pt0[0], pt0[1], pt0[2], pt0[3]);
-          float sx1 = screenX(pt1[0], pt1[1], pt1[2], pt1[3]), sy1 = screenY(pt1[0], pt1[1], pt1[2], pt1[3]);
+          float sx0 = screenXImpl(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenYImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
+          float sx1 = screenXImpl(pt1[0], pt1[1], pt1[2], pt1[3]), sy1 = screenYImpl(pt1[0], pt1[1], pt1[2], pt1[3]);
           raw.strokeWeight(sw0);
           raw.stroke(argb0);
           raw.vertex(sx0, sy0);
@@ -2631,7 +2631,7 @@ public class PGraphicsOpenGL extends PGraphics {
           raw.stroke(argb0);
           raw.vertex(pt0[X], pt0[Y], pt0[Z]);
         } else if (raw.is2D()) {
-          float sx0 = screenX(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenY(pt0[0], pt0[1], pt0[2], pt0[3]);
+          float sx0 = screenXImpl(pt0[0], pt0[1], pt0[2], pt0[3]), sy0 = screenYImpl(pt0[0], pt0[1], pt0[2], pt0[3]);
           raw.strokeWeight(weight);
           raw.stroke(argb0);
           raw.vertex(sx0, sy0);     
@@ -2653,15 +2653,24 @@ public class PGraphicsOpenGL extends PGraphics {
   public void bezierVertex(float x2, float y2,
                            float x3, float y3,
                            float x4, float y4) {
-    bezierVertex(x2, y2, 0,
-                 x3, y3, 0,
-                 x4, y4, 0);
+    bezierVertexImpl(x2, y2, 0,
+                     x3, y3, 0,
+                     x4, y4, 0);
   }
 
 
   public void bezierVertex(float x2, float y2, float z2,
                            float x3, float y3, float z3,
                            float x4, float y4, float z4) {
+    bezierVertexImpl(x2, y2, z2, 
+                     x3, y3, z3, 
+                     x4, y4, z4); 
+  }
+
+
+  protected void bezierVertexImpl(float x2, float y2, float z2,
+                                  float x3, float y3, float z3,
+                                  float x4, float y4, float z4) {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -2670,18 +2679,25 @@ public class PGraphicsOpenGL extends PGraphics {
                           x4, y4, z4,
                           fill, stroke, bezierDetail, vertexCode(), shape); 
                           
-  }
-
+  }  
+  
 
   public void quadraticVertex(float cx, float cy,
                               float x3, float y3) {
-    quadraticVertex(cx, cy, 0,
-                    x3, y3, 0);
+    quadraticVertexImpl(cx, cy, 0,
+                        x3, y3, 0);
   }
 
-
+  
   public void quadraticVertex(float cx, float cy, float cz,
                               float x3, float y3, float z3) {
+    quadraticVertexImpl(cx, cy, cz,
+                        x3, y3, z3);
+  }
+
+  
+  protected void quadraticVertexImpl(float cx, float cy, float cz,
+                                     float x3, float y3, float z3) {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);    
@@ -2697,11 +2713,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void curveVertex(float x, float y) {
-    curveVertex(x, y, 0);
+    curveVertexImpl(x, y, 0);
   }
 
-
+  
   public void curveVertex(float x, float y, float z) {
+    curveVertexImpl(x, y, z);
+  }
+
+  
+  protected void curveVertexImpl(float x, float y, float z) {
     inGeo.setMaterial(fillColor, strokeColor, strokeWeight,
                       ambientColor, specularColor, emissiveColor, shininess);
     inGeo.setNormal(normalX, normalY, normalZ);
@@ -2716,11 +2737,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void point(float x, float y) {
-    point(x, y, 0);  
+    pointImpl(x, y, 0);  
   }
 
   
   public void point(float x, float y, float z) {
+    pointImpl(x, y, z);
+  }
+  
+  
+  protected void pointImpl(float x, float y, float z) {
     beginShape(POINTS);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
@@ -2733,12 +2759,18 @@ public class PGraphicsOpenGL extends PGraphics {
 
   
   public void line(float x1, float y1, float x2, float y2) {
-    line(x1, y1, 0, x2, y2, 0);
+    lineImpl(x1, y1, 0, x2, y2, 0);
   }
 
   
   public void line(float x1, float y1, float z1,
                    float x2, float y2, float z2) {
+    lineImpl(x1, y1, z1, x2, y2, z2);
+  }
+  
+  
+  protected void lineImpl(float x1, float y1, float z1,
+                          float x2, float y2, float z2) {
     beginShape(LINES);
     defaultEdges = false;
     normalMode = NORMAL_MODE_SHAPE;
@@ -3255,22 +3287,22 @@ public class PGraphicsOpenGL extends PGraphics {
    * for the confusion.
    */
   public void rotate(float angle) {
-    rotateZ(angle);
+    rotateImpl(angle, 0, 0, 1);
   }
 
 
   public void rotateX(float angle) {
-    rotate(angle, 1, 0, 0);
+    rotateImpl(angle, 1, 0, 0);
   }
 
 
   public void rotateY(float angle) {
-    rotate(angle, 0, 1, 0);
+    rotateImpl(angle, 0, 1, 0);
   }
 
 
   public void rotateZ(float angle) {
-    rotate(angle, 0, 0, 1);
+    rotateImpl(angle, 0, 0, 1);
   }
 
 
@@ -3279,6 +3311,11 @@ public class PGraphicsOpenGL extends PGraphics {
    * takes radians (instead of degrees).
    */
   public void rotate(float angle, float v0, float v1, float v2) {
+    rotateImpl(angle, v0, v1, v2);
+  }
+
+
+  protected void rotateImpl(float angle, float v0, float v1, float v2) {
     if (hints[DISABLE_TRANSFORM_CACHE]) {
       flush();
     }
@@ -3299,10 +3336,10 @@ public class PGraphicsOpenGL extends PGraphics {
     
     modelview.rotate(angle, v0, v1, v2);
     invRotate(modelviewInv, angle, v0, v1, v2);
-    calcProjmodelview(); // Possibly cheaper than doing projmodelview.rotate()
+    calcProjmodelview(); // Possibly cheaper than doing projmodelview.rotate()    
   }
-
-
+  
+  
   static private void invRotate(PMatrix3D matrix, float angle, float v0, float v1, float v2) {
     float c = PApplet.cos(-angle);
     float s = PApplet.sin(-angle);
@@ -3319,7 +3356,7 @@ public class PGraphicsOpenGL extends PGraphics {
    * Same as scale(s, s, s).
    */
   public void scale(float s) {
-    scale(s, s, s);
+    scaleImpl(s, s, s);
   }
 
 
@@ -3327,14 +3364,21 @@ public class PGraphicsOpenGL extends PGraphics {
    * Same as scale(sx, sy, 1).
    */
   public void scale(float sx, float sy) {
-    scale(sx, sy, 1);
+    scaleImpl(sx, sy, 1);
   }
 
-
+  
   /**
    * Scale in three dimensions.
    */
   public void scale(float sx, float sy, float sz) {
+    scaleImpl(sx, sy, sz);
+  }
+  
+  /**
+   * Scale in three dimensions.
+   */
+  protected void scaleImpl(float sx, float sy, float sz) {
     if (hints[DISABLE_TRANSFORM_CACHE]) {
       flush();
     }
@@ -3352,19 +3396,19 @@ public class PGraphicsOpenGL extends PGraphics {
 
   public void shearX(float angle) {
     float t = (float) Math.tan(angle);
-    applyMatrix(1, t, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1);
+    applyMatrixImpl(1, t, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1);
   }
 
 
   public void shearY(float angle) {
     float t = (float) Math.tan(angle);
-    applyMatrix(1, 0, 0, 0,
-                t, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1);
+    applyMatrixImpl(1, 0, 0, 0,
+                    t, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 0, 0, 1);
   }
 
 
@@ -3381,25 +3425,27 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void applyMatrix(PMatrix2D source) {
-    applyMatrix(source.m00, source.m01, source.m02,
-                source.m10, source.m11, source.m12);
+    applyMatrixImpl(source.m00, source.m01, source.m02, 0,
+                    source.m10, source.m11, source.m12, 0,
+                             0,          0,          1, 0,
+                             0,          0,          0, 1);
   }
 
 
   public void applyMatrix(float n00, float n01, float n02,
                           float n10, float n11, float n12) {
-    applyMatrix(n00, n01, n02, 0,
-                n10, n11, n12, 0,
-                0,   0,   1,   0,
-                0,   0,   0,   1);
+    applyMatrixImpl(n00, n01, n02, 0,
+                    n10, n11, n12, 0,
+                      0,   0,   1, 0,
+                      0,   0,   0, 1);
   }
 
 
   public void applyMatrix(PMatrix3D source) {
-    applyMatrix(source.m00, source.m01, source.m02, source.m03,
-                source.m10, source.m11, source.m12, source.m13,
-                source.m20, source.m21, source.m22, source.m23,
-                source.m30, source.m31, source.m32, source.m33);
+    applyMatrixImpl(source.m00, source.m01, source.m02, source.m03,
+                    source.m10, source.m11, source.m12, source.m13,
+                    source.m20, source.m21, source.m22, source.m23,
+                    source.m30, source.m31, source.m32, source.m33);
   }
 
 
@@ -3410,6 +3456,17 @@ public class PGraphicsOpenGL extends PGraphics {
                           float n10, float n11, float n12, float n13,
                           float n20, float n21, float n22, float n23,
                           float n30, float n31, float n32, float n33) {
+    applyMatrixImpl(n00, n01, n02, n03,
+                    n10, n11, n12, n13,
+                    n20, n21, n22, n23,
+                    n30, n31, n32, n33);    
+  }
+  
+  
+  protected void applyMatrixImpl(float n00, float n01, float n02, float n03,
+                                 float n10, float n11, float n12, float n13,
+                                 float n20, float n21, float n22, float n23,
+                                 float n30, float n31, float n32, float n33) {
     if (hints[DISABLE_TRANSFORM_CACHE]) {
       flush();
     }
@@ -3899,25 +3956,40 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public float screenX(float x, float y) {
-    return screenX(x, y, 0);
+    return screenXImpl(x, y, 0);
   }
 
 
   public float screenY(float x, float y) {
-    return screenY(x, y, 0);
+    return screenYImpl(x, y, 0);
   }
 
 
   public float screenX(float x, float y, float z) {
+    return screenXImpl(x, y, z);
+  }
+  
+  
+  public float screenY(float x, float y, float z) {
+    return screenYImpl(x, y, z);
+  }
+  
+  
+  public float screenZ(float x, float y, float z) {
+    return screenZImpl(x, y, z);   
+  }
+  
+  
+  protected float screenXImpl(float x, float y, float z) {
     float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
     float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
     float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
     float aw = modelview.m30 * x + modelview.m31 * y + modelview.m32 * z + modelview.m33;
-    return screenX(ax, ay, az, aw);
+    return screenXImpl(ax, ay, az, aw);
   }
 
   
-  protected float screenX(float x, float y, float z, float w) {
+  protected float screenXImpl(float x, float y, float z, float w) {
     float ox = projection.m00 * x + projection.m01 * y + projection.m02 * z + projection.m03 * w;
     float ow = projection.m30 * x + projection.m31 * y + projection.m32 * z + projection.m33 * w;
 
@@ -3928,17 +4000,17 @@ public class PGraphicsOpenGL extends PGraphics {
     return sx;
   }
   
-
-  public float screenY(float x, float y, float z) {
+  
+  protected float screenYImpl(float x, float y, float z) {
     float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
     float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
     float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
     float aw = modelview.m30 * x + modelview.m31 * y + modelview.m32 * z + modelview.m33;
-    return screenY(ax, ay, az, aw);
+    return screenYImpl(ax, ay, az, aw);
   }
 
 
-  protected float screenY(float x, float y, float z, float w) {
+  protected float screenYImpl(float x, float y, float z, float w) {
     float oy = projection.m10 * x + projection.m11 * y + projection.m12 * z + projection.m13 * w;
     float ow = projection.m30 * x + projection.m31 * y + projection.m32 * z + projection.m33 * w;
 
@@ -3951,17 +4023,17 @@ public class PGraphicsOpenGL extends PGraphics {
     return sy;    
   }
   
-  
-  public float screenZ(float x, float y, float z) {
+    
+  protected float screenZImpl(float x, float y, float z) {
     float ax = modelview.m00 * x + modelview.m01 * y + modelview.m02 * z + modelview.m03;
     float ay = modelview.m10 * x + modelview.m11 * y + modelview.m12 * z + modelview.m13;
     float az = modelview.m20 * x + modelview.m21 * y + modelview.m22 * z + modelview.m23;
     float aw = modelview.m30 * x + modelview.m31 * y + modelview.m32 * z + modelview.m33;
-    return screenZ(ax, ay, az, aw);
+    return screenZImpl(ax, ay, az, aw);
   }
 
   
-  protected float screenZ(float x, float y, float z, float w) {
+  protected float screenZImpl(float x, float y, float z, float w) {
     float oz = projection.m20 * x + projection.m21 * y + projection.m22 * z + projection.m23 * w;
     float ow = projection.m30 * x + projection.m31 * y + projection.m32 * z + projection.m33 * w;
 
@@ -5995,7 +6067,7 @@ public class PGraphicsOpenGL extends PGraphics {
     int[] lastIndex;
     int[] firstCache;
     int[] lastCache;
-    boolean haveTexture;
+    boolean hasTexture;
     PTexture tex0;
 
     TexCache() {
@@ -6009,13 +6081,13 @@ public class PGraphicsOpenGL extends PGraphics {
       firstCache = new int[PGL.DEFAULT_IN_TEXTURES];
       lastCache = new int[PGL.DEFAULT_IN_TEXTURES];
       size = 0;
-      haveTexture = false;
+      hasTexture = false;
     }
 
     void clear() {
       java.util.Arrays.fill(textures, 0, size, null);
       size = 0;
-      haveTexture = false;
+      hasTexture = false;
     }
 
     void dispose() {
@@ -6054,7 +6126,7 @@ public class PGraphicsOpenGL extends PGraphics {
     }
 
     void endRender() {
-      if (haveTexture) {
+      if (hasTexture) {
         // Unbinding all the textures in the cache.
         for (int i = 0; i < size; i++) {
           PImage img = textures[i];
@@ -6089,7 +6161,7 @@ public class PGraphicsOpenGL extends PGraphics {
       lastCache[size] = lastb;
       
       // At least one non-null texture since last reset.
-      haveTexture |= img != null;
+      hasTexture |= img != null;
 
       size++;
     }
