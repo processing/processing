@@ -43,8 +43,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-// TODO: implement raw output of lines and points in 2D mode.
-
 /**
  * OpenGL renderer.
  *
@@ -2286,18 +2284,20 @@ public class PGraphicsOpenGL extends PGraphics {
         }
       }
 
-      if (hasLines) {
-        flushLines();
-        if (raw != null) {
-          rawLines();
-        }                
-      }
-      
-      if (hasPoints) {
-        flushPoints();
-        if (raw != null) {
-          rawPoints();
-        }        
+      if (is3D()) {
+        if (hasLines) {
+          flushLines();
+          if (raw != null) {
+            rawLines();
+          }                
+        }
+        
+        if (hasPoints) {
+          flushPoints();
+          if (raw != null) {
+            rawPoints();
+          }        
+        }
       }
 
       if (flushMode == FLUSH_WHEN_FULL && !hints[DISABLE_TRANSFORM_CACHE]) {
@@ -3257,11 +3257,16 @@ public class PGraphicsOpenGL extends PGraphics {
 
 
   public void translate(float tx, float ty) {
-    translate(tx, ty, 0);
+    translateImpl(tx, ty, 0);
   }
 
 
   public void translate(float tx, float ty, float tz) {
+    translateImpl(tx, ty, tz);
+  }
+
+  
+  protected void translateImpl(float tx, float ty, float tz) {
     if (hints[DISABLE_TRANSFORM_CACHE]) {
       flush();
     }

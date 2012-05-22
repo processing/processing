@@ -363,9 +363,24 @@ public class PShapeOpenGL extends PShape {
         root.tessellated = false;
         tessellated = false;
         
-        if (c3d.texture != null) {
-          addTexture(c3d.texture);
-        }        
+        if (c3d.family == GROUP) {
+          if (c3d.textures != null) {
+            for (PImage tex: c3d.textures) {
+              addTexture(tex);
+            }
+          }
+          if (c3d.strokedTexture) {
+            strokedTexture(true);
+          }
+        } else {
+          if (c3d.texture != null) {
+            addTexture(c3d.texture);
+            if (c3d.stroke) {
+              strokedTexture(true);
+            }
+          } 
+        }
+      
       } else {
         PGraphics.showWarning("Cannot add child shape to non-group shape.");
       }
@@ -971,8 +986,8 @@ public class PShapeOpenGL extends PShape {
             tessGeo.pointAttribs[2 * i + 1] *= resizeFactor;
           }        
           root.setModifiedPointAttributes(firstPointVertex, lastPointVertex);
-        } else {
-          
+        } else if (is2D()) {
+       // TODO: implement...
         }        
       }            
     }    
@@ -1131,7 +1146,7 @@ public class PShapeOpenGL extends PShape {
         Arrays.fill(tessGeo.polyColors, firstPolyVertex, lastPolyVertex + 1, PGL.javaToNativeARGB(fillColor));      
         root.setModifiedPolyColors(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-        
+     // TODO: implement...
       }
     }
   }
@@ -1269,7 +1284,7 @@ public class PShapeOpenGL extends PShape {
           Arrays.fill(tessGeo.lineColors, firstLineVertex, lastLineVertex + 1, PGL.javaToNativeARGB(strokeColor));      
           root.setModifiedLineColors(firstLineVertex, lastLineVertex);
         } else if (is2D()) {
-          
+       // TODO: implement...
         }
       }      
       if (hasPoints) {
@@ -1277,7 +1292,7 @@ public class PShapeOpenGL extends PShape {
           Arrays.fill(tessGeo.pointColors, firstPointVertex, lastPointVertex + 1, PGL.javaToNativeARGB(strokeColor));
           root.setModifiedPointColors(firstPointVertex, lastPointVertex);
         } else if (is2D()) {
-          
+       // TODO: implement...
         }
       }
       
@@ -1397,7 +1412,7 @@ public class PShapeOpenGL extends PShape {
         Arrays.fill(tessGeo.polyColors, firstPolyVertex, lastPolyVertex + 1, PGL.javaToNativeARGB(tintColor));      
         root.setModifiedPolyColors(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-        
+     // TODO: implement...
       }
     }
   }
@@ -1460,7 +1475,7 @@ public class PShapeOpenGL extends PShape {
         Arrays.fill(tessGeo.polyAmbient, firstPolyVertex, lastPolyVertex = 1, PGL.javaToNativeARGB(ambientColor));      
         root.setModifiedPolyAmbient(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-        
+     // TODO: implement...
       }
     }      
   }
@@ -1523,7 +1538,7 @@ public class PShapeOpenGL extends PShape {
         Arrays.fill(tessGeo.polySpecular, firstPolyVertex, lastPolyVertex + 1, PGL.javaToNativeARGB(specularColor));      
         root.setModifiedPolySpecular(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-        
+     // TODO: implement...
       }      
     }
   }
@@ -1586,7 +1601,7 @@ public class PShapeOpenGL extends PShape {
         Arrays.fill(tessGeo.polyEmissive, firstPolyVertex, lastPolyVertex + 1, PGL.javaToNativeARGB(emissiveColor));      
         root.setModifiedPolyEmissive(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-        
+     // TODO: implement...
       }
     }    
   }
@@ -1617,7 +1632,7 @@ public class PShapeOpenGL extends PShape {
         Arrays.fill(tessGeo.polyShininess, firstPolyVertex, lastPolyVertex + 1, shininess);      
         root.setModifiedPolyShininess(firstPolyVertex, lastPolyVertex);
       } else if (is2D()) {
-        
+     // TODO: implement...
       }
     }
   }
@@ -4284,7 +4299,8 @@ public class PShapeOpenGL extends PShape {
     PolyShader shader = null;
     IndexCache cache = tessGeo.polyIndexCache;
     for (int n = firstPolyIndexCache; n <= lastPolyIndexCache; n++) {
-      if (tex != null && (is3D() || n < firstLineIndexCache && n < firstPointIndexCache)) {
+      if (tex != null && (is3D() || (firstLineIndexCache == -1 || n < firstLineIndexCache) && 
+                                    (firstPointIndexCache == -1 || n < firstPointIndexCache))) {
         // Rendering fill triangles, which can be lit and textured.
         if (!renderingFill) {
           shader = g.getPolyShader(g.lights, tex != null);
