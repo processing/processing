@@ -1,31 +1,43 @@
-
+/**
+ * BeginEndContour
+ * 
+ * How to cut a shape out of another using beginContour() and endContour()
+ */
+ 
 PShape s;
 
 void setup() {
-  size(640, 360, P2D);
+  size(640, 360, P3D);
   smooth();
+  // Make a shape
   s = createShape();
   s.noFill();
-  s.stroke(0);
+  s.stroke(255);
+  // Exterior part of shape
   s.beginContour();
-  for (float a = -PI; a < 0; a += 0.1) {
-    float r = random(45, 55);
-    s.vertex(-60+r*cos(a), r*sin(a));
-  }
+  s.vertex(-100,-100);
+  s.vertex(100,-100);
+  s.vertex(100,100);
+  s.vertex(100,-100);
   s.endContour();
-
+  
+  // Interior part of shape
   s.beginContour();
-  for (float a = 0; a < PI; a += 0.1) {
-    float r = random(45, 55);
-    s.vertex(60+r*cos(a), r*sin(a));
-  }
+  s.vertex(-10,-10);
+  s.vertex(10,-10);
+  s.vertex(10,10);
+  s.vertex(10,-10);
   s.endContour();
+  
+  // Finishing off shape
   s.end();
 }
 
 void draw() {
-  background(255);
+  background(52);
+  // Display shape
   translate(width/2, height/2);
+  // Shapes can be rotated
   s.rotate(0.01);
   shape(s);
 }
