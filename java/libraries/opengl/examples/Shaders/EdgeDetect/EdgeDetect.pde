@@ -14,8 +14,8 @@ void setup() {
   img = loadImage("berlin-1.jpg");
     
   pg = (PGraphicsOpenGL)g;
-  shader = pg.loadShader("edges.glsl", FILL_SHADER_TEX);
-  pg.setShader(shader, FILL_SHADER_TEX);
+  shader = pg.loadShader("edges.glsl", POLY_SHADER_TEX);
+  pg.setShader(shader, POLY_SHADER_TEX);
   usingShader = true;
 }
 
@@ -25,10 +25,10 @@ public void draw() {
   
 public void keyPressed() {
   if (usingShader) {
-    pg.resetShader(FILL_SHADER_TEX);
+    pg.resetShader(POLY_SHADER_TEX);
     usingShader = false;
   } else {
-    pg.setShader(shader, FILL_SHADER_TEX);
+    pg.setShader(shader, POLY_SHADER_TEX);
     usingShader = true;
   }
 }
