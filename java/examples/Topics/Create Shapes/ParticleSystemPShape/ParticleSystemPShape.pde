@@ -10,7 +10,7 @@ ParticleSystem ps;
 PImage sprite;  
 
 void setup() {
-  size(640, 360, P3D);
+  size(640, 360, P2D);
   // Load the image
   sprite = loadImage("sprite.png");
   // A new particle system with 10,000 particles

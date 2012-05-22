@@ -47,7 +47,7 @@ class Wiggler {
       r.mult(4);
       r.add(pos);
       // Set the location of each vertex to the new one
-      s.setVertex(i, r.x, r.y, r.z);
+      s.setVertex(i, r.x, r.y);
       // increment perlin noise x value
       xoff+= 0.5;
     }
